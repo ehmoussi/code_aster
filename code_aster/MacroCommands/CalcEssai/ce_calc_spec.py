@@ -27,19 +27,15 @@ from tkinter import (Button, Checkbutton, Entry, Frame, IntVar, Label, Listbox,
 import numpy
 
 import aster
-from ...Messages import MESSAGE_LOGGER, UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import CREA_TABLE, DETRUIRE, IMPR_TABLE, RECU_FONCTION
+from ...Messages import UTMESS
+from ...Messages import MessageLog as mess
 from ...SD.sd_fonction import sd_fonction
 from ..Contrib.calc_spec import CALC_SPEC
 from .cata_ce import CreaTable, InterSpectre, Tempo
 from .outils_ihm import DispFRFDialogue, MultiList, VisuSpectre
-
-# MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
-# messages d'erreur
-mess = MESSAGE_LOGGER()
-
 
 #
 #

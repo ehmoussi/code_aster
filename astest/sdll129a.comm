@@ -20,6 +20,8 @@
 # person_in_charge: mohamed-amine.hassini at edf.fr
 #
 
+from math import pi
+
 import numpy as NP
 
 from code_aster.Commands import *

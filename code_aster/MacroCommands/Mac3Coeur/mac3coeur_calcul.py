@@ -93,11 +93,11 @@ class Mac3CoeurCalcul(object):
     def factory(macro, args):
         """Factory that returns the calculation object"""
         class_ = None
-        if 'DEFORMATION'in args and args['DEFORMATION']:
+        if 'DEFORMATION' in args and args['DEFORMATION']:
             class_ = Mac3CoeurDeformation
-        if 'LAME'in args and args['LAME']:
+        if 'LAME' in args and args['LAME']:
             class_ = Mac3CoeurLame
-        if 'ETAT_INITIAL'in args and args['ETAT_INITIAL']:
+        if 'ETAT_INITIAL' in args and args['ETAT_INITIAL']:
             class_ = Mac3CoeurEtatInitial
         if not class_:
             UTMESS('F', 'DVP_1')
@@ -160,15 +160,10 @@ class Mac3CoeurCalcul(object):
         """Run the calculation itself"""
         raise NotImplementedError('must be defined in a subclass')
 
-    def _build_result(self):
-        """Build the results"""
-
     def run(self,noresu=False):
         """Run all the calculation steps"""
         self._prepare_data(noresu)
-        toReturn = self._run()
-        self._build_result()
-        return toReturn
+        return self._run()
 
     @property
     def niv_fluence(self):
@@ -559,7 +554,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
 
     def __init__(self, macro, args,char_init=None):
         """Initialization"""
-        super(Mac3CoeurDeformation, self).__init__(macro, args)
+        super().__init__(macro, args)
         self.char_init=char_init
 
     def _prepare_data(self,noresu):
@@ -569,7 +564,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             self.subdivis = 5
         self.use_archimede = self.mcf['ARCHIMEDE']
         self._maintien_grille = (self.mcf['MAINTIEN_GRILLE'] == 'OUI')
-        super(Mac3CoeurDeformation, self)._prepare_data(noresu)
+        super()._prepare_data(noresu)
 
     @property
     @cached_property
@@ -593,7 +588,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                 UTMESS('A', 'COEUR0_1')
             mesh = self.set_from_resu('mesh', char_init)
         else:
-            mesh = super(Mac3CoeurDeformation, self).mesh
+            mesh = super().mesh
         return mesh
 
     @property
@@ -610,7 +605,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
         elif char_init :
             model = self.set_from_resu('model', char_init)
         else:
-            model = super(Mac3CoeurDeformation, self).model
+            model = super().model
         return model
 
     def dechargePSC(self,RESU) :
@@ -842,9 +837,10 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
     def _init_properties(self):
         """Initialize all the cached properties to NULL"""
-        super(Mac3CoeurLame, self)._init_properties()
+        super()._init_properties()
         self._layer_load = NULL
-        self._lame=True
+        self._lame = True
+        self.res_def = None
 
     @property
     @cached_property
@@ -953,16 +949,17 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
         __RESFIN = CREA_RESU(**self.cr(_pdt_ini_out,depl_tot_ini))
         CREA_RESU(**self.cr(_pdt_fin_out,depl_tot_fin,reuse=__RESFIN))
-        self.macro.register_result(__RESFIN, self.res_def)
+        if res_def:
+            self.macro.register_result(__RESFIN, self.res_def)
 
 
-    def _prepare_data(self,noresu=None):
+    def _prepare_data(self, noresu=None):
         """Prepare the data for the calculation"""
         self.use_archimede = 'OUI'
         self._maintien_grille = False
-        if (not noresu) :
+        if not noresu:
             self.res_def = self.keyw.get('RESU_DEF')
-        super(Mac3CoeurLame, self)._prepare_data(noresu)
+        super()._prepare_data(noresu)
 
     def _run(self,tinit=None,tfin=None):
         """Run the main part of the calculation"""
@@ -1106,27 +1103,26 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
                 if (el not in ['LAME','DEFORMATION']) :
                     self.args_lame[el] = args[el]
                     self.args_defo[el] = args[el]
-        super(Mac3CoeurEtatInitial, self).__init__(macro, self.args_lame)
-        self.res_def=True
+        super().__init__(macro, self.args_lame)
 
     def _prepare_data(self,noresu):
         """Prepare the data for the calculation"""
         self.niv_fluence = self.mcf['NIVE_FLUENCE']
         if self.keyw['TYPE_COEUR'][:4] == "MONO":
             assert(False)
-        super(Mac3CoeurEtatInitial, self)._prepare_data(noresu)
+        super()._prepare_data(noresu)
 
     def _run(self,tinit=None,tfin=None):
         tinit = self.coeur.temps_simu['T0']
         tfin  = self.coeur.temps_simu['T5']
         print('T0 = %f , T5 = %f'%(tinit,tfin))
-        super(Mac3CoeurEtatInitial, self)._run(tinit,tfin)
+        return super()._run(tinit,tfin)
 
 
     def run(self):
-        super(Mac3CoeurEtatInitial, self).run(noresu=True)
-        self.defo=Mac3CoeurDeformation(self.macro,self.args_defo,self.res_def)
-        self.defo.run()
+        result = super().run(noresu=True)
+        self.defo = Mac3CoeurDeformation(self.macro,self.args_defo,self.res_def)
+        return self.defo.run()
 
 
 # helper functions

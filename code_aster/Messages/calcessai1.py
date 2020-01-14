@@ -21,16 +21,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    3 : _("""
-Aucune variable d'environnement DISPLAY définie !
-%(k1)s ne pourra pas fonctionner. On l'ignore.
-"""),
-
-    9 : _("""
-Exécution de %(k1)s
-"""),
-
-
     20 : _("""
 Exécution terminée.
 """),

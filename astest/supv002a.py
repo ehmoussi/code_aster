@@ -33,8 +33,7 @@ from functools import partial
 from glob import glob
 from subprocess import PIPE, Popen
 
-import code_aster
-import Messages
+import code_aster.Messages
 from code_aster.Messages import UTMESS, MessageLog
 from code_aster.Utilities import convert, is_int
 from code_aster.Utilities import localization as LO
@@ -226,7 +225,7 @@ def get_cata_msg(catamess):
     cata_msg = {}
     try:
         d = {}
-        mod = __import__('Messages.%s' % catamess, d, d, [catamess])
+        mod = __import__("code_aster.Messages.%s" % catamess, d, d, [catamess])
         importlib.reload(mod)
         cata_msg = getattr(mod, 'cata_msg', {})
     except UnicodeDecodeError:
@@ -362,8 +361,6 @@ def supv002_ops(self, ERREUR, **kwargs):
     global logdbg
     if kwargs.get('INFO') == 2:
         logdbg = loginfo
-    if not kwargs.get('unittest'):
-        self.set_icmd(1)
     # existing errors
     previous_errors = set(ERREUR)
     os.environ['LANG'] = 'fr_FR.utf8'
@@ -371,7 +368,7 @@ def supv002_ops(self, ERREUR, **kwargs):
     keys = [k for k in list(os.environ.keys()) if k.startswith('LC_')]
     for k in keys:
         del os.environ[k]
-    msgdir = osp.dirname(Messages.__file__)
+    msgdir = osp.dirname(code_aster.Messages.__file__)
     LCATA = [osp.basename(osp.splitext(cata)[0]) for cata in glob(osp.join(msgdir, '*.py'))]
     #LCATA = [osp.basename(osp.splitext(cata)[0]) for cata in glob(osp.join(msgdir, 'mecanonline9.py'))]
 

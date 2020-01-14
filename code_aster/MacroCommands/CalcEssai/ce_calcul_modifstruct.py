@@ -23,7 +23,6 @@
 #
 import aster
 from libaster import AsterError
-from ...Messages import MESSAGE_LOGGER
 
 from ...Cata.Syntax import _F, ASSD
 from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
@@ -33,14 +32,11 @@ from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
                          MACR_ELEM_STAT, MODE_STATIQUE, NUME_DDL,
                          NUME_DDL_GENE, PROJ_CHAMP, PROJ_MATR_BASE,
                          PROJ_MESU_MODAL, REST_GENE_PHYS)
+from ...Messages import MessageLog as mess
 from ..Modal.mode_iter_inv import MODE_ITER_INV
 from ..Modal.mode_iter_simult import MODE_ITER_SIMULT
 from .cata_ce import ModeMeca, Resultat
 from .ce_calcul_expansion import extract_mac_array
-
-# MESSAGE_LOGGER = classe permettant de formatter et d'afficher les
-# messages d'erreur
-mess = MESSAGE_LOGGER()
 
 
 class CalcEssaiModifStruct:
