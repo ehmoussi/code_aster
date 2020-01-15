@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -277,8 +277,8 @@ class MEFOQU4(Element):
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
-        OP.RIGI_MECA_GE(te=112,
-            para_in=((OP.RIGI_MECA_GE.PCONTRR, ECONTPG), (SP.PGEOMER, NGEOMER),
+        OP.RIGI_GEOM(te=112,
+            para_in=((OP.RIGI_GEOM.PCONTRR, ECONTPG), (SP.PGEOMER, NGEOMER),
                      (SP.PHARMON, LC.CHARMON), ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),

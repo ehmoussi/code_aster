@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -139,7 +139,7 @@ subroutine merige(model_, cara_elem_, sigg, strx, matel,&
         lpaout(1) = 'PMATUUR'
         lchout(1) = matel(1:15)//'.ME001'
 !
-        option = 'RIGI_MECA_GE'
+        option = 'RIGI_GEOM'
 !
         call calcul('S', option, ligrmo, nbpara, lchin,&
                     lpain, 1, lchout, lpaout, base,&
@@ -192,7 +192,7 @@ subroutine merige(model_, cara_elem_, sigg, strx, matel,&
             endif
         endif
 
-        option = 'RIGI_MECA_GE'
+        option = 'RIGI_GEOM'
         call calcul('S', option, ligrmo, nbpara, lchin,&
                     lpain, 1, lchout, lpaout, base,&
                     'OUI')

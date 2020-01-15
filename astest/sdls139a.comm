@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -482,21 +482,7 @@ COM = OBSERVATION( RESULTAT = MODEAIR,
                   );
 
 
-interactif = 0
-if interactif:
-# Pour lancer Meidee en interactif, on peut ecrire :
-    CALC_ESSAI(
-                INTERACTIF = 'OUI',
-                RESU_IDENTIFICATION = (
-                                  _F(TABLE = CO("EFFORTS")), # intsp des efforts phy identifies
-                                  _F(TABLE = CO("DEPL_PHY")), # intsp des deplacements mesures
-                                  _F(TABLE = CO("DEPL_SYN")), # intsp des deplacements resynthetises
-                                       ),
-                );
-
-else:
-    CALC_ESSAI(
-                INTERACTIF = 'NON',
+CALC_ESSAI(
                 EXPANSION        = _F(CALCUL = MODEAIR,
                                       NUME_MODE_CALCUL = (1,2,3,4,5,6,7,8,),
                                       MESURE = MODCRA,
