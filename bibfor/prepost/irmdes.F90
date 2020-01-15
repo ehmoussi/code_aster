@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -118,10 +118,6 @@ subroutine irmdes(idfimd, titre, nbtitr, infmed)
 32  continue
 !
 ! 3.2. ==> ECRITURE
-!
-    if (infmed .gt. 1) then
-        call utmess('I', 'MED_38', sk=descri)
-    endif
 !
     call as_mficow(idfimd, descri, codret)
     if (codret .ne. 0) then

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -845,12 +845,12 @@ class MEDKQU4(Element):
                           para_out=((SP.PMATUUR, MMATUUR), ),
                           ),
 
-        OP.RIGI_MECA_GE(te=428,
+        OP.RIGI_GEOM(te=428,
                         para_in=(
                         (SP.PCACOQU, CCACOQU), (
-                            OP.RIGI_MECA_GE.PCONTRR, ECONTPG),
+                            OP.RIGI_GEOM.PCONTRR, ECONTPG),
                         (SP.PGEOMER, NGEOMER), (
-                            OP.RIGI_MECA_GE.PNBSP_I, ENBSP_I),
+                            OP.RIGI_GEOM.PNBSP_I, ENBSP_I),
                         ),
                         para_out=((SP.PMATUUR, MMATUUR), ),
                         ),
@@ -1030,7 +1030,7 @@ class MEDSQU4(MEDKQU4):
 
         OP.RIGI_MECA_TANG(te=-1),
 
-        OP.RIGI_MECA_GE(te=-1),
+        OP.RIGI_GEOM(te=-1),
 
         OP.VARI_ELNO(te=-1),
 
@@ -1072,7 +1072,7 @@ class MEDSTR3(MEDKQU4):
 
         OP.RIGI_MECA_TANG(te=-1),
 
-        OP.RIGI_MECA_GE(te=-1),
+        OP.RIGI_GEOM(te=-1),
 
         OP.VARI_ELNO(te=-1),
 
@@ -1114,7 +1114,7 @@ class MEQ4QU4(MEDKQU4):
 
         OP.RIGI_MECA_TANG(te=-1),
 
-        OP.RIGI_MECA_GE(te=-1),
+        OP.RIGI_GEOM(te=-1),
 
         OP.VARI_ELNO(te=-1),
 
@@ -1156,7 +1156,7 @@ class MET3TR3(MEDKQU4):
 
         OP.RIGI_MECA_TANG(te=-1),
 
-        OP.RIGI_MECA_GE(te=-1),
+        OP.RIGI_GEOM(te=-1),
 
         OP.VARI_ELNO(te=-1),
 

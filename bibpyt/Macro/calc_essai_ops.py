@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@
 
 
 def calc_essai_ops(self,
-                   INTERACTIF=None,
                    UNITE_RESU=None,
                    EXPANSION=None,
                    IDENTIFICATION=None,
@@ -37,7 +36,9 @@ def calc_essai_ops(self,
                    **args):
 
     from Calc_essai.cata_ce import CalcEssaiObjects
-    from code_aster import onFatalError
+    from Calc_essai.ce_test import MessageBox
+    from Calc_essai.ce_test import TestCalcEssai
+    import aster
     ier = 0
 
     prev = onFatalError()
@@ -60,141 +61,24 @@ def calc_essai_ops(self,
                           "ComptTable": 0,
                           "TablesOut": table_fonction}
 
-    # Mode interactif : ouverture d'une fenetre Tk
-    if INTERACTIF == "OUI":
-        onFatalError('EXCEPTION')
 
-        create_interactive_window(self,
-                                  out_identification,
-                                  out_modifstru,
-                                  )
-    else:
-        from Calc_essai.ce_test import MessageBox
-        from Calc_essai.ce_test import TestCalcEssai
-        mess = MessageBox(UNITE_RESU)
-        mess.disp_mess("Mode non intéractif")
+    mess = MessageBox(UNITE_RESU)
 
-        objects = CalcEssaiObjects(self, mess)
+    objects = CalcEssaiObjects(self, mess)
 
-        # importation des concepts aster existants de la memoire jeveux
-        TestCalcEssai(self,
-                      mess,
-                      out_identification,
-                      out_modifstru,
-                      objects,
-                      EXPANSION,
-                      IDENTIFICATION,
-                      MODIFSTRUCT,
-                      GROUP_NO_CAPTEURS,
-                      GROUP_NO_EXTERIEUR
-                      )
+    # importation des concepts aster existants de la memoire jeveux
+    TestCalcEssai(  self,
+                    mess,
+                    out_identification,
+                    out_modifstru,
+                    objects,
+                    EXPANSION,
+                    IDENTIFICATION,
+                    MODIFSTRUCT,
+                    GROUP_NO_CAPTEURS,
+                    GROUP_NO_EXTERIEUR
+                )
 
-        mess.close_file()
+    mess.close_file()
     onFatalError(prev)
     return ier
-
-
-def create_tab_mess_widgets(tk, tabskeys):
-    """Construits les objects table et boîte à messages."""
-    try:
-        from Pmw import PanedWidget
-    except ImportError:
-        PanedWidget = None
-
-    from Calc_essai.outils_ihm import MessageBoxInteractif, TabbedWindow
-
-    tabsw = tk
-    msgw = tk
-    tk.rowconfigure(0, weight=2)
-    tk.rowconfigure(1, weight=1)
-
-    tabs = TabbedWindow(tabsw, tabskeys)
-
-    tabs.grid(row=0, column=0, sticky='nsew')
-    # pack(side='top',expand=1,fill='both')
-
-    # ecriture des message dans un fichier message
-    mess = MessageBoxInteractif(msgw)
-    mess.grid(row=1, column=0, sticky='nsew')
-
-    return tabs, mess
-
-
-class FermetureCallback:
-
-    """Opérations à appliquer lors de la fermeture de la
-    fenêtre Tk.
-    """
-
-    def __init__(self, main_tk, turbulent):
-        self.main_tk = main_tk
-        self.turbulent = turbulent
-
-    def apply(self):
-        """Enlève les fichiers temporaires de Xmgrace"""
-        if self.turbulent.param_visu.logiciel_courbes is not None:
-            self.turbulent.param_visu.logiciel_courbes.fermer()
-        self.main_tk.quit()
-
-
-def create_interactive_window(macro,
-                              out_identification,
-                              out_modifstru,
-                              ):
-    """Construit la fenêtre interactive comprenant une table pour
-    les 4 domaines de CALC_ESSAI."""
-    from tkinter import Tk
-
-    from Calc_essai.cata_ce import CalcEssaiObjects
-    from Calc_essai.ce_ihm_expansion import InterfaceCorrelation
-    from Calc_essai.ce_ihm_modifstruct import InterfaceModifStruct
-    from Calc_essai.ce_ihm_identification import InterfaceIdentification
-    from Calc_essai.ce_ihm_parametres import InterfaceParametres  # , InterfaceParametres_init
-    from Calc_essai.ce_calc_spec import InterfaceCalcSpec
-# from Calc_essai.ce_ihm_expansion import InterfaceVisual
-
-    # fenetre principale
-    tk = Tk()
-    tk.title("CALC_ESSAI")
-    tk.rowconfigure(0, weight=1)
-    tk.rowconfigure(1, weight=20)
-    tk.rowconfigure(2, weight=1)
-
-    tabskeys = ["Expansion de modeles",
-                "Modification structurale",
-                "Identification de chargement",
-                "Traitement du signal",
-                "Paramètres et visualisation"]
-# "Visualisation"]
-
-    tabs, mess = create_tab_mess_widgets(tk, tabskeys)
-    main = tabs.root()
-
-    # importation des concepts aster de la memoire jeveux
-    objects = CalcEssaiObjects(macro, mess)
-    tabs.set_objects(objects)
-
-    param_visu = InterfaceParametres(main, objects, macro, mess)
-    iface = InterfaceCorrelation(main, objects, macro, mess, param_visu)
-    imodifstruct = InterfaceModifStruct(
-        main, objects, macro, mess, out_modifstru, param_visu)
-    identification = InterfaceIdentification(
-        main, objects, mess, out_identification, param_visu)
-    calc_spec = InterfaceCalcSpec(main, objects, mess, param_visu)
-#
-    tabs.set_tab(tabskeys[0], iface)
-    tabs.set_tab(tabskeys[1], imodifstruct.main)
-    tabs.set_tab(tabskeys[2], identification)
-    tabs.set_tab(tabskeys[3], calc_spec)
-    tabs.set_tab(tabskeys[4], param_visu)
-# tabs.set_tab(tabskeys[5], visual)
-
-    tabs.set_current_tab(tabskeys[4])
-
-    tk.protocol("WM_DELETE_WINDOW",
-                FermetureCallback(tk, identification).apply)
-
-    try:
-        tk.mainloop()
-    except:
-        print("CALC_ESSAI : *ERREUR*")
