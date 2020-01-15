@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -253,7 +253,7 @@ subroutine jni080(elrefe, nmaxob, liobj, nbobj)
 ! MATBSU L=702 L=702 FF REDUITES SUR PT GAUSS NORMAUX
 ! MATRN  L=135 FF SERENDIP PG COMPLET + L=459 FF LAGRANGE PG COMPLET
 ! PK2CAU ZONE TRAVAIL ZR(1550)
-! TE0402 RIGI_MECA_GE UTILISE ZR(127...=POIDS) BTSIG(ZR(127...=POIDS)
+! TE0402 RIGI_GEOM UTILISE ZR(127...=POIDS) BTSIG(ZR(127...=POIDS)
 ! TE0406 INTEGRATION NUMERIQUE ZR(127)
 ! TE0415 SIEF_ELNO ZONE TRAVAIL ZR(2000) LONGUEUR 9*NBGSR
 ! TE0417 UTILISE ZR(127...) ZR(135..)

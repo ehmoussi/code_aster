@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ subroutine xrige3(elrefp, ndim, coorse, igeom, he,&
 !
 !
 !     BUT :
-!         CALCUL  DE L'OPTION RIGI_MECA_GE AVEC X-FEM EN 3D
+!         CALCUL  DE L'OPTION RIGI_GEOM AVEC X-FEM EN 3D
 !
 !
 ! IN  ELREFP  : ÉLÉMENT DE RÉFÉRENCE PARENT
