@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ subroutine te0098(option, nomte)
 !       OPTION : 'RIGI_MECA'
 !
 !    ELEMENT MECA_BARRE
-!       OPTION : 'RIGI_MECA_GE'
+!       OPTION : 'RIGI_GEOM'
 !
 !    Dans tous les cas MAT = 0
 !
@@ -57,10 +57,10 @@ subroutine te0098(option, nomte)
 !       et
 !           MECABL2 et RIGI_MECA
 !           ou
-!           MECA_BARRE et RIGI_MECA_GE
+!           MECA_BARRE et RIGI_GEOM
 !
     okte =  ((nomte.eq.'MECABL2')   .and.(option.eq.'RIGI_MECA'))  .or. &
-            ((nomte.eq.'MECA_BARRE').and.(option.eq.'RIGI_MECA_GE'))
+            ((nomte.eq.'MECA_BARRE').and.(option.eq.'RIGI_GEOM'))
     okte = okte .and. cmd.eq.'CALC_MATR_ELEM'
     if ( .not. okte ) then
         vmessk(1) = cmd

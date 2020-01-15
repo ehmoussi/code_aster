@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ real(kind=8), optional, intent(out) :: vect(*)
     lctlin = is_enr_line()
 !
 !   OPTIONS RELATIVES A UNE MATRICE
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_GE' .or.&
+    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_GEOM' .or.&
         option .eq. 'RIGI_MECA_TANG' .or. option .eq. 'RIGI_MECA' .or.&
         option .eq. 'RIGI_CONT' .or. option .eq. 'MASS_MECA'.or.&
         option .eq. 'RIGI_CONT_M') then

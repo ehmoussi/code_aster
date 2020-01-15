@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ subroutine te0428(option, nomte)
 ! ajout elements
 !
 !    calcul de la matrice de rigidite geometrique des elements de plaque
-!       => option rigi_meca_ge
+!       => option rigi_meca_geom
 !
     integer :: ndim, nno, nnos, npg, ipoids, ivf, idfdx, jgano
     integer :: jgeom, jmatr, iret
@@ -62,7 +62,7 @@ subroutine te0428(option, nomte)
 !
     call utpvgl(nno, 3, pgl, zr(jgeom), xyzl)
 !
-    if (option .eq. 'RIGI_MECA_GE') then
+    if (option .eq. 'RIGI_GEOM') then
 !     --------------------------------------
 !
         if ((nomte.eq.'MEDKTR3') .or. (nomte.eq.'MEDKTG3')) then

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ aster_logical :: resi, rigi
 integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, idff2, lgpg
 integer :: mate
 integer :: vu(3, 27), vg(27), vp(27)
-integer :: codret
+integer :: codret, iret
 real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
 real(kind=8) :: instm, instp
 real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
@@ -210,9 +210,13 @@ character(len=16) :: compor(*), option
         pp = pm+pd
 !
 ! - CALCUL DES FONCTIONS A, B,... DETERMINANT LA RELATION LIANT G ET J
-        call nirela(1, jp, gm, gp, am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa)
+        call nirela(1, jp, gm, gp, am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa, iret)
 !
 ! - PERTINENCE DES GRANDEURS
+        if(iret .ne. 0) then
+            codret = 1
+            goto 999
+        end if
         if (jd .le. 1.d-2 .or. jd .gt. 1.d2) then
             codret = 1
             goto 999

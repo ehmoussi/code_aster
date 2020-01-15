@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmrenu(modelz  , list_func_acti, list_load, ds_contact, nume_dof,&
+subroutine nmrenu(modelz    , list_func_acti, list_load,&
+                  ds_measure, ds_contact    , nume_dof ,&
                   l_renumber)
 !
 use NonLin_Datastructure_type
@@ -28,17 +29,17 @@ implicit none
 #include "asterfort/cfdisl.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/numer3.h"
 #include "asterfort/utmess.h"
+#include "asterfort/nmrinc.h"
+#include "asterfort/nmtime.h"
 !
 character(len=*), intent(in) :: modelz
-character(len=24), intent(inout) :: nume_dof
-character(len=19), intent(in) :: list_load
-type(NL_DS_Contact), intent(inout) :: ds_contact
 integer, intent(in) :: list_func_acti(*)
+character(len=19), intent(in) :: list_load
+type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_Contact), intent(inout) :: ds_contact
+character(len=24), intent(inout) :: nume_dof
 aster_logical, intent(out) :: l_renumber
 !
 ! --------------------------------------------------------------------------------------------------
@@ -53,6 +54,7 @@ aster_logical, intent(out) :: l_renumber
 ! In  model            : name of model datastructure
 ! In  list_load        : list of loads
 ! IO  ds_contact       : datastructure for contact management
+! IO  ds_measure       : datastructure for measure and statistics management
 ! In  list_func_acti   : list of active functionnalities
 ! Out l_renumber       : .true. if renumber
 !
@@ -66,49 +68,48 @@ aster_logical, intent(out) :: l_renumber
 !
     call infdbg('MECANONLINE', ifm, niv)
 !
-! - Initializations
+! - No renumbering !
 !
-    l_renumber   = .false.
-    l_cont       = isfonc(list_func_acti,'CONTACT')
-    if (.not.l_cont) then
-        goto 999
-    endif
+    l_renumber   = ASTER_FALSE
 !
-! - Get identity relation datastructure
+! - Active functionnalities
 !
-    sd_iden_rela = ds_contact%iden_rela
+    l_cont      = isfonc(list_func_acti, 'CONTACT')
+    l_cont_elem = isfonc(list_func_acti, 'ELT_CONTACT')
+    l_cont_xfem = isfonc(list_func_acti, 'CONT_XFEM')
+    l_cont_cont = isfonc(list_func_acti, 'CONT_CONTINU')
 !
-! - Contact method
+! - To change numbering
 !
-    l_cont_elem = isfonc(list_func_acti,'ELT_CONTACT')
-    l_cont_xfem = isfonc(list_func_acti,'CONT_XFEM')
-    l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
-!
-! - Numbering to change ?
-!
-    if (l_cont_elem) then
-        if (l_cont_xfem) then
-            l_cont_xfem_gg = cfdisl(ds_contact%sdcont_defi,'CONT_XFEM_GG')
-            if (l_cont_xfem_gg) then
-               l_renumber = .true.
+    if (l_cont) then
+! ----- Start timer for preparation of contact
+        call nmtime(ds_measure, 'Launch', 'Cont_Prep')
+! ----- Get identity relation datastructure
+        sd_iden_rela = ds_contact%iden_rela
+! ----- Numbering to change ?
+        if (l_cont_elem) then
+            if (l_cont_xfem) then
+                l_cont_xfem_gg = cfdisl(ds_contact%sdcont_defi,'CONT_XFEM_GG')
+                if (l_cont_xfem_gg) then
+                   l_renumber = ASTER_TRUE
+                else
+                   l_renumber = ASTER_FALSE
+                endif
             else
-               l_renumber = .false.
+                l_renumber = ds_contact%l_renumber
+                ds_contact%l_renumber = ASTER_FALSE
             endif
-        else
-            l_renumber = ds_contact%l_renumber
-            ds_contact%l_renumber = .false.
         endif
-    endif
-!
-! - Re-numbering
-!
-    if (l_renumber) then
-        if (niv .ge. 2) then
-            call utmess('I', 'MECANONLINE13_36')
+! ----- Re-numbering
+        if (l_renumber) then
+            if (niv .ge. 2) then
+                call utmess('I', 'MECANONLINE13_36')
+            endif
+            call numer3(modelz, list_load, nume_dof, sd_iden_rela)
         endif
-        call numer3(modelz, list_load, nume_dof, sd_iden_rela)
+! ----- Stop timer for preparation of contact
+        call nmtime(ds_measure, 'Stop', 'Cont_Prep')
+        call nmrinc(ds_measure, 'Cont_Prep')
     endif
-!
-999 continue
 !
 end subroutine

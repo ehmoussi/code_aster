@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -449,14 +449,8 @@ MODEACT = OBSERVATION( INFO = 1,
                                  ),
                      );
 
-
-
-
-interactif = 0
-if not interactif:
-    # Lancement en mode non-interactif
-    CALC_ESSAI(
-                INTERACTIF = 'NON',
+# Lancement en mode non-interactif
+CALC_ESSAI(
                 IDENTIFICATION = _F(
                                       ALPHA = 0.0,
                                       EPS   = 1.0E-7,
@@ -471,20 +465,8 @@ if not interactif:
                                         ),
               );
 
-else:
-    # Lancement en mode interactif
-    CALC_ESSAI(
-                INTERACTIF = 'OUI',
-                RESU_IDENTIFICATION  = (
-                                _F(TABLE = CO('EFFORTS')),  # intsp des efforts phy identifies
-                                _F(TABLE = CO('DEPL_PHY')), # intsp des deplacements mesures
-                                _F(TABLE = CO('DEPL_SYN')), # intsp des deplacements resynthetises
-                                        ),
-              );
-
 #pour test plusieurs NUME_ORDRE_I dans DYNA_ALEA_MODAL/EXCIT
 CALC_ESSAI(
-                INTERACTIF = 'NON',
                 IDENTIFICATION = _F(
                                       ALPHA = 0.0,
                                       EPS   = 1.0E-7,

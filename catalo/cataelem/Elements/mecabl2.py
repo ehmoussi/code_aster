@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -268,8 +268,8 @@ class MECABL2(Element):
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
-        OP.RIGI_MECA_GE(te=86,
-            para_in=((SP.PCACABL, LC.CCACABL), (OP.RIGI_MECA_GE.PCONTRR, EEFGEGA),
+        OP.RIGI_GEOM(te=86,
+            para_in=((SP.PCACABL, LC.CCACABL), (OP.RIGI_GEOM.PCONTRR, EEFGEGA),
                      (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), ),
             para_out=((SP.PMATUUR, MMATUUR), ),

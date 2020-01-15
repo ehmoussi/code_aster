@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -174,9 +174,11 @@ integer :: faccvg, ldccvg
     l_cont_elem   = isfonc(list_func_acti,'ELT_CONTACT')
     l_hho         = isfonc(list_func_acti,'HHO')
 !
-! --- RE-CREATION DU NUME_DDL OU PAS
+! - Renumbering equations ?
 !
-    call nmrenu(modelz, list_func_acti, lischa, ds_contact, numedd, renume)
+    call nmrenu(modelz    , list_func_acti, lischa,&
+                ds_measure, ds_contact    , numedd,&
+                renume)
 !
 ! --- CHOIX DE REASSEMBLAGE DE LA MATRICE GLOBALE
 !
