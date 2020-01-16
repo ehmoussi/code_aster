@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ subroutine te0402(option, nomte)
 !
 !                 COQUE_3D
 !
-!                 OPTION :  RIGI_MECA_GEOM
+!                 OPTION :  RIGI_GEOM
 !
 !    ARGUMENTS :
 !    DONNEES   :       OPTION       -->  OPTION DE CALCUL
@@ -126,14 +126,7 @@ subroutine te0402(option, nomte)
 !
     parameter       ( npge = 3 )
     real(kind=8) :: epsval ( npge ), ksi3s2, poids (npge)
-!
-!
-!
-!
-! DEB
-!
-!---- LES NOMBRES
-!
+
 !
 !       POIDS DES POINTS DE GAUSS DANS LA TRANCHE
 !
@@ -231,7 +224,7 @@ subroutine te0402(option, nomte)
 !
 !---- BOUCLE SUR LES POINTS D INTEGRATION SUR L EPAISSEUR
 !
-    do 600 inte = 1, npge
+    do inte = 1, npge
 !
 !------- COORDONNEE ISOPARAMETRIQUE SUR L EPAISSEUR  DIVISEE PAR DEUX
 !
@@ -239,7 +232,7 @@ subroutine te0402(option, nomte)
 !
 !------- BOUCLE SUR LES POINTS D INTEGRATION SUR LA SURFACE MOYENNE
 !
-        do 610 intsn = 1, npgsn
+        do intsn = 1, npgsn
 !
             kpgs = kpgs + 1
             k1=6*((intsn-1)*npge+inte - 1)
@@ -308,12 +301,6 @@ subroutine te0402(option, nomte)
 !
             call btsig(3 * nb2, 5, zr (lzr - 1 + 127 + intsn - 1) * detj * poids(inte), btild3,&
                        sigmtd, veczn)
-!
-!
-!
-!
-!
-!
 !---------- POUR LE TERME CLASSIQUE
 !
 !---------- BARSIG   ( 9 , 9 )
@@ -340,8 +327,8 @@ subroutine te0402(option, nomte)
             call btdbma(j1dn2, barsig, zr (lzr - 1 + 127 + intsn - 1) * detj * poids(inte), 9,&
                         6 * nb1 + 3, vri)
 !
-610      continue
-600  end do
+        end do
+    end do
 !
 !---- PAS DE RIGIDITE DE ROTATION AUTOUR NORMALE
 !
@@ -351,7 +338,7 @@ subroutine te0402(option, nomte)
 !
 !---- BOULE SUR TOUS LES NOEUDS
 !
-    do 500 in = 1, nb2
+    do in = 1, nb2
 !
 !------- MATRICE ANTISYMETRIQUE    ANTZI ( 3 , 3 ) AU NOEUD
 !
@@ -359,9 +346,9 @@ subroutine te0402(option, nomte)
 !
 !------- NORMALE INITIALE ET SA MATRICE ANTISYM AU NOEUD
 !
-        do 520 ii = 1, 3
+        do ii = 1, 3
             vecni ( ii ) = vectn ( in , ii )
-520      continue
+        end do
 !
         call antisy(vecni, 1.d0, antni)
 !
@@ -375,32 +362,29 @@ subroutine te0402(option, nomte)
         if (in .le. nb1) then
 !
 !---------- NOEUDS DE SERENDIP
-            do 530 jj = 1, 3
-                do 540 ii = 1, 3
+            do jj = 1, 3
+                do ii = 1, 3
                     j = 6 * ( in - 1 ) + jj + 3
                     i = 6 * ( in - 1 ) + ii + 3
                     irig = ( 6 * nb1 + 3 ) * ( j - 1 ) + i
                     vri ( irig ) = vri ( irig ) + ( rignc ( ii , jj )&
                     + rignc ( jj , ii ) ) * 0.5d0
-540              continue
-530          continue
-!
+                end do
+            end do
         else
 !
 !---------- SUPERNOEUD
-            do 531 jj = 1, 3
-                do 541 ii = 1, 3
+            do jj = 1, 3
+                do ii = 1, 3
                     j = 6 * nb1 + jj
                     i = 6 * nb1 + ii
                     irig = ( 6 * nb1 + 3 ) * ( j - 1 ) + i
                     vri ( irig ) = vri ( irig ) + ( rignc ( ii , jj )&
                     + rignc ( jj , ii ) ) * 0.5d0
-541              continue
-531          continue
-!
+                end do
+            end do
         endif
-!
-500  end do
+    end do
 !
 !
 !
@@ -427,23 +411,11 @@ subroutine te0402(option, nomte)
 !
     kompt = 0
 !
-    do 100 j = 1, 6 * nb1 + 3
-!
-        do 110 i = 1, j
-!
+    do j = 1, 6 * nb1 + 3
+        do i = 1, j
             kompt = kompt + 1
-!
-            zr ( imatuu - 1 + kompt ) = + vri ( ( 6 * nb1 + 3 ) * ( j&
-            - 1 ) + i )
-!
-110      continue
-!
-100  end do
-!
-!
-!
-!
-!
-! FIN
+            zr ( imatuu - 1 + kompt ) = + vri ( ( 6 * nb1 + 3 ) * ( j- 1 ) + i )
+        end do
+    end do
 !
 end subroutine
