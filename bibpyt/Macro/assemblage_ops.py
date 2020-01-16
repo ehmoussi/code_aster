@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ def assemblage_ops(
             if CHARGE is not None:
                 if option[0:9] != 'RIGI_GEOM':
                     motscles['CHARGE'] = CHARGE
-            if CHAM_MATER is not None and option != 'RIGI_GEOM':
+            if CHAM_MATER:
                 motscles['CHAM_MATER'] = CHAM_MATER
             if CARA_ELEM is not None:
                 motscles['CARA_ELEM'] = CARA_ELEM
