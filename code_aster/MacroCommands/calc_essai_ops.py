@@ -58,7 +58,7 @@ def calc_essai_ops(self,
     else:
         for res in RESU_IDENTIFICATION:
             table_fonction.append(res['TABLE'])
-    out_identification = {"DeclareOut": self.DeclareOut,
+    out_identification = {"Register": self.register_result,
                           "TypeTables": 'TABLE_FONCTION',
                           "ComptTable": 0,
                           "TablesOut": table_fonction}

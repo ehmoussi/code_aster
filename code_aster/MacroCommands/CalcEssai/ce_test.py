@@ -97,6 +97,8 @@ def TestCalcEssai(macro,
     # 4) Test des fonctions de l'onglet identification #
     #
     if IDENTIFICATION:
+        assert len(IDENTIFICATION) == 1, "'**' but supported here!"
+        IDENTIFICATION = IDENTIFICATION[0]
         calcturb = CalcEssaiIdentification(objects, mess)
 
         inter_spec_name = IDENTIFICATION['INTE_SPEC'].getName()

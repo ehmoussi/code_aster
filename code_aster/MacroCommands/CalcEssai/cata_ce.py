@@ -799,13 +799,8 @@ class CalcEssaiObjects:
 
     def recup_objects(self):
         self.del_weakref()
-        ctx = CONTEXT.get_current_step().get_contexte_courant()
-
-        # NB utile : voir par quelle commande ont ete crees les concepts
-        #        for etape in CONTEXT.get_current_step().jdc.etapes:
-        #            if etape.nom == 'OBSERVATION':
-        #                print etape.get_created_sd()[0].nom, etape.valeur
-
+        # FIXME required in testcases or not? Yes!
+        ctx = {}
         self.modeles = {}
         self.mode_meca = {}
         self.dyna_harmo = {}
@@ -1040,25 +1035,26 @@ def nume_ddl_gene(resu, extract_mode=None):
 
 def CreaTable(mcfact, titre, paras_out, mess):
     """!Sortie des donnees sous forme de sd_interspectre"""
-    TablesOut = paras_out["TablesOut"]
-    DeclareOut = paras_out["DeclareOut"]
+    tablesOut = paras_out["TablesOut"]
+    register = paras_out["Register"]
     compteur = paras_out["ComptTable"]
     paras_out["ComptTable"] = paras_out["ComptTable"] + 1
 
-    if paras_out["ComptTable"] > len(paras_out["TablesOut"]):
+    if paras_out["ComptTable"] > len(tablesOut):
         mess.disp_mess("!! Il n'y a plus de noms de concepts     !!")
         mess.disp_mess("!! disponibles pour sortir des resultats !!")
         mess.disp_mess(" ")
         return
 
-    DeclareOut('__TAB', TablesOut[compteur])
+    # FIXME where is __TAB?!
+    register('__TAB', tablesOut[compteur])
 
     __TAB = DEFI_INTE_SPEC(PAR_FONCTION=mcfact,
                            TITRE=titre,
                            )
 
     mess.disp_mess("Les resultats sont sauves dans la table "
-                   + TablesOut[compteur].nom)
+                   + tablesOut[compteur].nom)
     mess.disp_mess("Cette table porte pour titre : " + titre)
     mess.disp_mess(" ")
 

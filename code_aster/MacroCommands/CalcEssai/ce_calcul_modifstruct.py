@@ -24,7 +24,7 @@
 import aster
 from libaster import AsterError
 
-from ...Cata.Syntax import _F, ASSD
+from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
                          AFFE_MODELE, ASSE_MAILLAGE, ASSE_MATRICE,
                          CALC_MATR_ELEM, CREA_MAILLAGE, DEFI_MAILLAGE,
@@ -33,6 +33,7 @@ from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_MECA, AFFE_MATERIAU,
                          NUME_DDL_GENE, PROJ_CHAMP, PROJ_MATR_BASE,
                          PROJ_MESU_MODAL, REST_GENE_PHYS)
 from ...Messages import MessageLog as mess
+from ...Objects import DataStructure
 from ..Modal.mode_iter_inv import MODE_ITER_INV
 from ..Modal.mode_iter_simult import MODE_ITER_SIMULT
 from .cata_ce import ModeMeca, Resultat
@@ -118,32 +119,32 @@ class CalcEssaiModifStruct:
         self.crit_ponder = None  # ponderation pour MAC_MODES : RIGIDITE / MASSE
         self.crit_method = None  # choix methode pour MAC_MODES
 
-        step = CONTEXT.get_current_step()
+        # FIXME where are these results created?!
         if outputs:
             if outputs['MODELE']:
-                step.DeclareOut("_MDLCPL", outputs['MODELE'])
+                self.macro.register_result("_MDLCPL", outputs['MODELE'])
             if outputs['MAILLAGE']:
-                step.DeclareOut("_MLCPL", outputs['MAILLAGE'])
+                self.macro.register_result("_MLCPL", outputs['MAILLAGE'])
             if outputs['MODE_MECA']:
-                step.DeclareOut("_MODCPL", outputs['MODE_MECA'])
+                self.macro.register_result("_MODCPL", outputs['MODE_MECA'])
             if outputs['NUME_DDL']:
-                step.DeclareOut("_NUMCPL", outputs['NUME_DDL'])
+                self.macro.register_result("_NUMCPL", outputs['NUME_DDL'])
             if outputs['MASS_MECA']:
-                step.DeclareOut("_MASSME", outputs['MASS_MECA'])
+                self.macro.register_result("_MASSME", outputs['MASS_MECA'])
             if outputs['RIGI_MECA']:
-                step.DeclareOut("_RIGIME", outputs['RIGI_MECA'])
+                self.macro.register_result("_RIGIME", outputs['RIGI_MECA'])
             if outputs['AMOR_MECA']:
-                step.DeclareOut("_AMORME", outputs['AMOR_MECA'])
+                self.macro.register_result("_AMORME", outputs['AMOR_MECA'])
             if outputs['MACR_ELEM']:
-                step.DeclareOut("_SSEXP", outputs['MACR_ELEM'])
+                self.macro.register_result("_SSEXP", outputs['MACR_ELEM'])
             if outputs['PROJ_MESU']:
-                step.DeclareOut("_PROJ", outputs['PROJ_MESU'])
+                self.macro.register_result("_PROJ", outputs['PROJ_MESU'])
             if outputs['BASE_ES']:
-                step.DeclareOut("_MEXP", outputs['BASE_ES'])
+                self.macro.register_result("_MEXP", outputs['BASE_ES'])
             if outputs['BASE_LMME']:
-                step.DeclareOut("_MEXP", outputs['BASE_LMME'])
+                self.macro.register_result("_MEXP", outputs['BASE_LMME'])
             if outputs['MODE_STA']:
-                step.DeclareOut("_MODST", outputs['MODE_STA'])
+                self.macro.register_result("_MODST", outputs['MODE_STA'])
 
     def find_experimental_result_from(self, modes_exp_name):
         """Trouve le mode experimental dans la memoire JEVEUX."""
@@ -1117,9 +1118,9 @@ def convert_args(mc, concepts):
         return dest
     elif isinstance(mc, (int, float, str)):
         return mc
-    elif isinstance(mc, ASSD):
-        if mc.nom in concepts:
-            return concepts[mc.nom]
+    elif isinstance(mc, DataStructure):
+        if mc.getName() in concepts:
+            return concepts[mc.getName()]
         return mc
     elif isinstance(mc, (list, tuple)):
         lst = []
