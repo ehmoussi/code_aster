@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,20 +21,21 @@
 interface
     subroutine nirela(irela, jp, gm, gp, am,&
                       ap, bp, boa, aa, bb,&
-                      daa, dbb, dboa, d2boa)
-        integer :: irela
-        real(kind=8) :: jp
-        real(kind=8) :: gm
-        real(kind=8) :: gp
-        real(kind=8) :: am
-        real(kind=8) :: ap
-        real(kind=8) :: bp
-        real(kind=8) :: boa
-        real(kind=8) :: aa
-        real(kind=8) :: bb
-        real(kind=8) :: daa
-        real(kind=8) :: dbb
-        real(kind=8) :: dboa
-        real(kind=8) :: d2boa
+                      daa, dbb, dboa, d2boa, iret)
+        integer, intent(in) :: irela
+        real(kind=8), intent(in) :: jp
+        real(kind=8), intent(in) :: gm
+        real(kind=8), intent(in) :: gp
+        real(kind=8), intent(out) :: am
+        real(kind=8), intent(out) :: ap
+        real(kind=8), intent(out) :: bp
+        real(kind=8), intent(out) :: boa
+        real(kind=8), intent(out) :: aa
+        real(kind=8), intent(out) :: bb
+        real(kind=8), intent(out) :: daa
+        real(kind=8), intent(out) :: dbb
+        real(kind=8), intent(out) :: dboa
+        real(kind=8), intent(out) :: d2boa
+        integer, intent(out) :: iret
     end subroutine nirela
 end interface

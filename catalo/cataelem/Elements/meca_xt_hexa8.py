@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -479,13 +479,13 @@ class MECA_XT_HEXA8(Element):
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
-        OP.RIGI_MECA_GE(te=536,
-            para_in=((OP.RIGI_MECA_GE.PBASLOR, LC.N9NEUT_R), (OP.RIGI_MECA_GE.PCNSETO, LC.E320NEUI),
-                     (OP.RIGI_MECA_GE.PCONTRR, ECONTPG), (SP.PGEOMER, NGEOMER),
-                     (OP.RIGI_MECA_GE.PHEAVTO, LC.E32NEUTI), (OP.RIGI_MECA_GE.PLONCHA, LC.E10NEUTI),
-                     (OP.RIGI_MECA_GE.PLSN, LC.N1NEUT_R), (OP.RIGI_MECA_GE.PLST, LC.N1NEUT_R),
-                     (OP.RIGI_MECA_GE.PPINTTO, E33NEUTR), (OP.RIGI_MECA_GE.PPMILTO, LC.E198NEUT),
-                     (OP.RIGI_MECA_GE.PSTANO, STANO_I), (SP.PMATERC, LC.CMATERC),),
+        OP.RIGI_GEOM(te=536,
+            para_in=((OP.RIGI_GEOM.PBASLOR, LC.N9NEUT_R), (OP.RIGI_GEOM.PCNSETO, LC.E320NEUI),
+                     (OP.RIGI_GEOM.PCONTRR, ECONTPG), (SP.PGEOMER, NGEOMER),
+                     (OP.RIGI_GEOM.PHEAVTO, LC.E32NEUTI), (OP.RIGI_GEOM.PLONCHA, LC.E10NEUTI),
+                     (OP.RIGI_GEOM.PLSN, LC.N1NEUT_R), (OP.RIGI_GEOM.PLST, LC.N1NEUT_R),
+                     (OP.RIGI_GEOM.PPINTTO, E33NEUTR), (OP.RIGI_GEOM.PPMILTO, LC.E198NEUT),
+                     (OP.RIGI_GEOM.PSTANO, STANO_I), (SP.PMATERC, LC.CMATERC),),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 

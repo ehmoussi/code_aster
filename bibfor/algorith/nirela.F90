@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,14 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nirela(irela, jp, gm, gp, am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa)
+subroutine nirela(irela, jp, gm, gp, am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa, iret)
 !
 !
     implicit none
 #include "asterfort/assert.h"
-    integer :: irela
-    real(kind=8) :: jp, gm, gp
-    real(kind=8) :: am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa
+    integer, intent(in) :: irela
+    real(kind=8), intent(in) :: jp, gm, gp
+    real(kind=8), intent(out) :: am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2boa
+    integer, intent(out) :: iret
 !-----------------------------------------------------------------------
 !          CALCUL DES OPTIONS DE MECANIQUE NON LINEAIRE
 !           GRANDES DEFORMATIONS QUASI-INCOMPRESSIBLES
@@ -49,6 +50,18 @@ subroutine nirela(irela, jp, gm, gp, am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2
 ! OUT DBB    DBB/DJ
 ! OUT DBOA   D(B O A)/DG
 ! OUT D2BOA  D2(B O A)/DG2
+! OUT IRET   O (OK) / -1 (ERROR)
+!
+    iret = 0
+    if(jp .le. 0.d0) then
+        iret = -1
+        go to 999
+    elseif (irela == 2 .or. irela == 3) then
+        if(gm.ge. 200 .or. gp.ge.200) then
+            iret = -1
+            go to 999
+        end if
+    end if
 !
     if (irela .eq. 1) then
 !-----------------------------------------------------------------------
@@ -121,6 +134,21 @@ subroutine nirela(irela, jp, gm, gp, am, ap, bp, boa, aa, bb, daa, dbb, dboa, d2
         dboa = 1.d0/(ap)
         d2boa = -1.d0/(ap)**2
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
+!
+999 continue
+!
+    if(iret == -1) then
+        am = 0.d0
+        ap = 0.d0
+        bp = 0.d0
+        boa= 0.d0
+        aa = 0.d0
+        bb = 0.d0
+        daa = 0.d0
+        dbb = 0.d0
+        dboa = 0.d0
+        d2boa = 0.d0
+    end if
 end subroutine
