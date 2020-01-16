@@ -485,7 +485,7 @@ class MECA_XT_HEXA8(Element):
                      (OP.RIGI_GEOM.PHEAVTO, LC.E32NEUTI), (OP.RIGI_GEOM.PLONCHA, LC.E10NEUTI),
                      (OP.RIGI_GEOM.PLSN, LC.N1NEUT_R), (OP.RIGI_GEOM.PLST, LC.N1NEUT_R),
                      (OP.RIGI_GEOM.PPINTTO, E33NEUTR), (OP.RIGI_GEOM.PPMILTO, LC.E198NEUT),
-                     (OP.RIGI_GEOM.PSTANO, STANO_I), (SP.PMATERC, LC.CMATERC),),
+                     (OP.RIGI_GEOM.PSTANO, STANO_I),),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
