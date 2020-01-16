@@ -492,8 +492,7 @@ class MECA_XHT_HEXA8(Element):
                      (OP.RIGI_MECA_GE.PHEAVTO, LC.E32NEUTI), (OP.RIGI_MECA_GE.PHEA_NO, LC.N5NEUTI),
                      (OP.RIGI_MECA_GE.PLONCHA, LC.E10NEUTI), (OP.RIGI_MECA_GE.PLSN, LC.N1NEUT_R),
                      (OP.RIGI_MECA_GE.PLST, LC.N1NEUT_R), (OP.RIGI_MECA_GE.PPINTTO, E33NEUTR),
-                     (OP.RIGI_MECA_GE.PPMILTO, LC.E198NEUT), (OP.RIGI_MECA_GE.PSTANO, STANO_I),
-                     (SP.PMATERC, LC.CMATERC),),
+                     (OP.RIGI_MECA_GE.PPMILTO, LC.E198NEUT), (OP.RIGI_MECA_GE.PSTANO, STANO_I),),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
