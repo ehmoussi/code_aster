@@ -22,6 +22,11 @@ Detailed description
    :members:
    :special-members: __init__
 
+.. automodule:: code_aster.Supervis.ExecuteCommand
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
 .. automodule:: code_aster.Supervis.CommandSyntax
    :show-inheritance:
    :members:

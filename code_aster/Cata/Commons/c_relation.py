@@ -19,7 +19,13 @@
 
 from ..Language.DataStructure import *
 from ..Language.Syntax import *
-from .c_mfront_official import C_MFRONT_OFFICIAL
+
+# c_mfront_official will only be available after installation
+try:
+    from .c_mfront_official import C_MFRONT_OFFICIAL # pragma pylint: disable=import-error
+except ImportError:
+    def C_MFRONT_OFFICIAL():
+        return {}
 
 
 def C_RELATION( COMMAND ):

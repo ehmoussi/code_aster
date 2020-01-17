@@ -26,7 +26,6 @@ No external import of other :py:mod:`code_aster` packages.
 """
 
 from .as_timer import ASTER_TIMER
-from .aster_pkginfo import version_info
 from .base_utils import (Singleton, accept_array, array_to_list, force_list,
                          force_tuple, import_object, is_complex, is_float,
                          is_float_or_int, is_int, is_number, is_sequence,
@@ -47,3 +46,9 @@ from .strfunc import (clean_string, convert, copy_text_to, cut_long_lines,
 from .Tester import TestCase
 from .transpose import transpose
 from .version import get_version, get_version_desc
+
+# aster_pkginfo will only be available after installation
+try:
+    from .aster_pkginfo import version_info
+except ImportError:
+    version_info = ()

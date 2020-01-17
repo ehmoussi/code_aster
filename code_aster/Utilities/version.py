@@ -17,8 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from .aster_pkginfo import version_info
 from .i18n import translate as _
+
+# aster_pkginfo will only be available after installation
+try:
+    from .aster_pkginfo import version_info
+except ImportError:
+    version_info = ()
 
 
 def get_version():

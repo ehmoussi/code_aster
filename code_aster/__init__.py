@@ -40,6 +40,12 @@ For convenience the objects are direcly available here:
     >>> import code_aster
     >>> mymesh = code_aster.Mesh()
 
+
+Here is the diagram of the package organization:
+
+.. image:: ../doc/devguide/img/diagr_code_aster.png
+   :align: center
+
 """
 
 # discourage import *
