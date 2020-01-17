@@ -998,21 +998,7 @@ class CALCULS_ASTER:
         """
            Ajoute un bloc a la fin de l'esclave pour l'affichage des MAC pour l'appariement manuel
         """
-        txt = []
-        txt.append( "from code_aster.MacroCommands.Recal.reca_mac import extract_mac_array, get_modes, fenetre_mac\n" )
-        txt.append( "_mac = extract_mac_array("+str(reponse[0])+")\n" )
-        txt.append( "l_mac=[]\n" )
-        txt.append( "nb_freq=_mac.shape[1]\n" )
-        if (self.DYNAMIQUE['APPARIEMENT_MANUEL'] == 'OUI' and self.graph_mac):
-            txt.append( "frame =fenetre_mac(" + self.DYNAMIQUE['MODE_EXP']+"," + self.DYNAMIQUE['MODE_CALC']+",_mac)\n" )
-            txt.append( "list_exp,list_num =frame.get_list()\n" )
-            txt.append( "list_exp_pour_freq=list_exp" ) ### on duplique les valeurs pour etre reutilisees dans la table des FREQ
-            txt.append( "list_num_pour_freq=list_num" ) ### on duplique les valeurs pour etre reutilisees dans la table des FREQ
-            txt.append( "for i in range(nb_freq): l_mac.append(_mac[int(list_num[i])-1,int(list_exp[i])-1])\n" )
-        else:
-            txt.append( "for i in range(nb_freq): l_mac.append(_mac[i,i])\n" )
-        txt.append( "DETRUIRE(CONCEPT=_F(NOM="+str(reponse[0])+"),)\n" )
-        txt.append( str(reponse[0]) + "=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=list(range(1,nb_freq+1)),),_F(PARA='MAC',LISTE_R=l_mac,),),)\n" )
+        txt = ["# MAC: does not supported anymore!"]
         return '\n'.join(txt)
 
 

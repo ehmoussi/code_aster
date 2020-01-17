@@ -19,13 +19,18 @@
 
 import os
 
-import matplotlib
-
 import aster
+
 from ..Cata.Syntax import _F
-from ..Commands import (CALC_FONCTION, DEFI_FICHIER, DEFI_NAPPE, DETRUIRE, IMPR_FONCTION,
-                                 INFO_EXEC_ASTER)
+from ..Commands import (CALC_FONCTION, DEFI_FICHIER, DEFI_NAPPE, DETRUIRE,
+                        IMPR_FONCTION, INFO_EXEC_ASTER)
 from ..Messages import UTMESS
+
+try:
+    import matplotlib
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
 
 
 def recu_val(tab, para, stop=0, typ=None):
@@ -77,12 +82,8 @@ def liss_spectre_ops(
     # Chemin du repertoire REPE_OUT de l'execution courante d'Aster
     REPE_OUT = os.path.join(os.getcwd(), 'REPE_OUT')
 
-    # disponibilite de matplotlib
-    try:
-        l_matplot = True
-    except:
+    if not HAS_MATPLOTLIB:
         UTMESS('A', 'SPECTRAL0_19')
-        l_matplot = False
 
     directions = ['X','Y','Z','H']
 
@@ -264,7 +265,7 @@ def liss_spectre_ops(
         DEFI_FICHIER (ACTION='LIBERER',UNITE = unite)
 
         # impression en PNG, format LISS_ENVELOPPE
-        if l_matplot:
+        if HAS_MATPLOTLIB:
             nom_fic = dico['batiment']+'_'+dico['plancher']+'_'+dico['direction']+'.png'
             chem_fic = os.path.join(REPE_OUT, nom_fic)
             DEFI_FICHIER(ACTION='ASSOCIER',UNITE = unite,FICHIER=chem_fic)
@@ -322,7 +323,7 @@ def liss_spectre_ops(
         DEFI_FICHIER (ACTION='LIBERER',UNITE = unite)
 
         # impression en PNG, format LISS_ENVELOPPE
-        if l_matplot:
+        if HAS_MATPLOTLIB:
             nom_fic = dico['batiment']+'_'+dico['plancher']+'_'+dico['direction']+'_verif.png'
             chem_fic = os.path.join(REPE_OUT, nom_fic)
             DEFI_FICHIER(ACTION='ASSOCIER',UNITE = unite,FICHIER=chem_fic)
