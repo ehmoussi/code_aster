@@ -46,12 +46,18 @@ from argparse import SUPPRESS, ArgumentParser
 import libaster
 
 from .as_timer import ASTER_TIMER
-from .aster_pkginfo import version_info
 from .base_utils import Singleton, no_new_attributes
 from .logger import DEBUG, INFO, logger
 from .options import Options
 from .strfunc import convert
 from .version import get_version_desc
+
+# aster_pkginfo will only be available after installation
+try:
+    from .aster_pkginfo import version_info
+except ImportError:
+    version_info = ()
+
 
 DEFAULT_MEMORY_LIMIT = 2047 if "32" in platform.architecture()[0] else 4096
 DEFAULT_TIME_LIMIT = 86400

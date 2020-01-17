@@ -24,8 +24,8 @@
 ****************************************
 
 The function :py:func:`define_operators` automatically creates executors objects
-(:py:class:`~code_aster.Commands.ExecuteCommand.ExecuteCommand` or
-:py:class:`~code_aster.Commands.ExecuteCommand.ExecuteMacro`) for operators that
+(:py:class:`~code_aster.Commands.Supervis.ExecuteCommand` or
+:py:class:`~code_aster.Commands.Supervis.ExecuteMacro`) for operators that
 are not already defined in the store.
 
 It is mainly a transtional feature that should make work most of the *legacy*
