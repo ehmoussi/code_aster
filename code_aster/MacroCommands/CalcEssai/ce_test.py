@@ -59,6 +59,8 @@ def TestCalcEssai(macro,
     # 1) Test des fonctions de correlation #
     #
     if EXPANSION:
+        assert len(EXPANSION) == 1, "'**' but supported here!"
+        EXPANSION = EXPANSION[0]
         calc_essai = CalcEssaiExpansion(macro, mess, objects)
 
         # Transformation des objets Aster en classes Python
