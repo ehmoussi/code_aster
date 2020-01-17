@@ -29,14 +29,19 @@ import re
 import sys
 import time
 
-import matplotlib
-import matplotlib.pyplot as plt
 import numpy as np
 
 import aster_core
 
 from ..Messages import UTMESS
 from ..Utilities import ExecutionParameter, value_is_sequence
+
+try:
+    import matplotlib
+    import matplotlib.pyplot as plt
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
 
 
 class Graph(object):
