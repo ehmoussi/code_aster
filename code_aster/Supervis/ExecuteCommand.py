@@ -448,6 +448,8 @@ class ExecuteMacro(ExecuteCommand):
 
     def print_result(self):
         """Print an echo of the result of the command."""
+        if not self.show_syntax():
+            return
         if not self._sdprods and self._result:
             logger.info(command_result(self._counter, self.name,
                                        self._result))
