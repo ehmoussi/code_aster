@@ -1397,6 +1397,7 @@ def macr_adap_mail_ops(self,
 #              du maillage en entree et le numero de passage dans la fonction
 #
     # print ".. Debut de 3.2.1."
+    previous_mesh = args.get("IDENTIFICATION") or Nom_Co_Mail_N
 #
     niter = 0
     saux = "_%d" % numero_passage_fonction
@@ -1417,11 +1418,10 @@ def macr_adap_mail_ops(self,
 #
     if (mode_homard in ("ADAP", "LECT")):
 #
-        # print ".. Nom_Co_Mail_N =", Nom_Co_Mail_N
         for dico in ginfos.run_params:
             # print ".... dico :", dico
 #
-            if dico["Maillage_NP1"] == Nom_Co_Mail_N:
+            if dico["Maillage_NP1"] == previous_mesh:
 #
                 Rep_Calc_HOMARD_local = dico["Rep_Calc_HOMARD_local"]
                 Rep_Calc_HOMARD_global = dico["Rep_Calc_HOMARD_global"]
@@ -1774,7 +1774,7 @@ def macr_adap_mail_ops(self,
     if (mode_homard == "ADAP"):
         # print ".. Debut de 8."
 #
-        ginfos.update_run_params(INFO, niter, Nom_Co_Mail_N, Nom_Co_Mail_NP1,
+        ginfos.update_run_params(INFO, niter, previous_mesh, Nom_Co_Mail_NP1,
                                  maillage_np1, maillage_np1_nom_med,
                                  Nom_Co_Mail_NP1_ANNEXE, Rep_Calc_HOMARD_local,
                                  Rep_Calc_HOMARD_global, fic_homard_niterp1,

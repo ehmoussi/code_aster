@@ -79,6 +79,11 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
   b_maillage = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
                           fr=tr("Lectures de champs aux points de Gauss ou aux noeuds par element."),
+    IDENTIFICATION = SIMP(statut='f',typ='TXM',
+                        fr=tr("Nom du maillage dont on souhaite reprendre "
+                              "l'historique de raffinement dans le cas où "
+                              "MAILLAGE_N en est une légère modification."),
+                        ),
 #
 # 2.2.1. Le concept du maillage final (sortie)
 #
