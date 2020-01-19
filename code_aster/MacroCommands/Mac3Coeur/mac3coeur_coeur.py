@@ -28,13 +28,13 @@ Définition d'une conception de coeur (ensemble d'assemblages).
 import os
 
 from ...Cata.Syntax import _F
-from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_CINE, AFFE_CHAR_MECA,  # DEFI_CONSTANT
-                                 AFFE_CHAR_MECA_F, AFFE_MATERIAU, AFFE_MODELE, CREA_CHAMP,
-                                 CREA_MAILLAGE, CREA_RESU, DEFI_COMPOR, DEFI_FONCTION,
-                                 DEFI_GEOM_FIBRE, DEFI_GROUP, DEFI_LIST_INST, DEFI_LIST_REEL,
-                                 DEFI_MATERIAU, DEFI_NAPPE, DETRUIRE, FORMULE, INCLUDE_MATERIAU,
-                                 RECU_TABLE)
-
+from ...Commands import (AFFE_CARA_ELEM, AFFE_CHAR_CINE, AFFE_CHAR_MECA,
+                         AFFE_CHAR_MECA_F, AFFE_MATERIAU, AFFE_MODELE,
+                         CREA_CHAMP, CREA_MAILLAGE, CREA_RESU, DEFI_COMPOR,
+                         DEFI_FONCTION, DEFI_GEOM_FIBRE, DEFI_GROUP,
+                         DEFI_LIST_INST, DEFI_LIST_REEL, DEFI_MATERIAU,
+                         DEFI_NAPPE, DETRUIRE, FORMULE, INCLUDE_MATERIAU,
+                         RECU_TABLE)
 from .mac3coeur_assemblage import ACFactory
 from .mac3coeur_factory import Mac3Factory
 

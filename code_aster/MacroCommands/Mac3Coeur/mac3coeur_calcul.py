@@ -28,12 +28,10 @@ from functools import wraps
 
 from libaster import ConvergenceError
 
-from ...Cata.DataStructure import maillage_sdaster, modele_sdaster
 from ...Cata.Syntax import _F
 from ...Commands import (AFFE_CHAR_CINE, AFFE_CHAR_MECA, CALC_CHAMP,
-                         CREA_CHAMP, CREA_RESU, DEFI_FONCTION, DETRUIRE,
-                         MODI_MAILLAGE, PERM_MAC3COEUR, POST_RELEVE_T,
-                         STAT_NON_LINE)
+                         CREA_CHAMP, CREA_RESU, DEFI_FONCTION, MODI_MAILLAGE,
+                         POST_RELEVE_T, STAT_NON_LINE)
 from ...Helpers.UniteAster import UniteAster
 from ...Messages import UTMESS
 from ...Utilities import ExecutionParameter
@@ -116,7 +114,9 @@ class Mac3CoeurCalcul(object):
         self.etat_init = None
         self._maintien_grille = None
         self._lame=False
-
+        self.calc_res_def = False
+        self.res_def = None
+        self.res_def_keyw = None
 
         # cached properties
         self._init_properties()
@@ -552,10 +552,10 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
     """Compute the strain of the assemblies"""
     mcfact = 'DEFORMATION'
 
-    def __init__(self, macro, args,char_init=None):
+    def __init__(self, macro, args, char_init=None):
         """Initialization"""
         super().__init__(macro, args)
-        self.char_init=char_init
+        self.char_init = char_init
 
     def _prepare_data(self,noresu):
         """Prepare the data for the calculation"""
@@ -692,7 +692,6 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                   INCREMENT=_F(LIST_INST=self.times),
                                   COMPORTEMENT=self.char_ini_comp,
                                   ))
-            self.macro.register_result(__RESULT, self.macro.sd)
 
         else :
 
@@ -840,7 +839,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         super()._init_properties()
         self._layer_load = NULL
         self._lame = True
-        self.res_def = None
 
     @property
     @cached_property
@@ -947,18 +945,20 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
         self.deform_mesh_inverse(depl_deformed)
 
-        __RESFIN = CREA_RESU(**self.cr(_pdt_ini_out,depl_tot_ini))
-        CREA_RESU(**self.cr(_pdt_fin_out,depl_tot_fin,reuse=__RESFIN))
-        if res_def:
-            self.macro.register_result(__RESFIN, self.res_def)
-
+        self.res_def = CREA_RESU(**self.cr(_pdt_ini_out,depl_tot_ini))
+        self.res_def = CREA_RESU(reuse=self.res_def,
+                                 **self.cr(_pdt_fin_out,depl_tot_fin))
+        if self.res_def_keyw:
+            self.macro.register_result(self.res_def, self.res_def_keyw)
 
     def _prepare_data(self, noresu=None):
         """Prepare the data for the calculation"""
         self.use_archimede = 'OUI'
         self._maintien_grille = False
         if not noresu:
-            self.res_def = self.keyw.get('RESU_DEF')
+            self.res_def_keyw = self.keyw.get('RESU_DEF')
+            if self.res_def_keyw:
+                self.calc_res_def = True
         super()._prepare_data(noresu)
 
     def _run(self,tinit=None,tfin=None):
@@ -1019,18 +1019,12 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                              REAC_ITER=1,),
                             }
                         k.update(kwds)
-                    print()
                     # if i == nb-1 :
                     #     __RESULT = STAT_NON_LINE(**k)
                     # else :
                     __res_int[i]=STAT_NON_LINE(**k)
                 break
             except ConvergenceError:
-                # print 'erreur : %s'%e
-                # try :
-                # DETRUIRE(CONCEPT=_F(NOM=__RESULT))
-                # except :
-                #     print 'pas possible de detruire'
                 ratio = ratio/10.
                 mater.append(self.cham_mater_contact_progressif(ratio))
                 keywords.append(self.snl_lame(CHAM_MATER=mater[-1],
@@ -1082,7 +1076,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                             )
         __RESULT = STAT_NON_LINE(**keywords)
 
-        if self.res_def :
+        if self.calc_res_def:
             self.output_resdef(__RESULT,depl_deformed,tinit,tfin)
         return __RESULT
 
@@ -1104,12 +1098,12 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
                     self.args_lame[el] = args[el]
                     self.args_defo[el] = args[el]
         super().__init__(macro, self.args_lame)
+        self.calc_res_def = True
 
     def _prepare_data(self,noresu):
         """Prepare the data for the calculation"""
         self.niv_fluence = self.mcf['NIVE_FLUENCE']
-        if self.keyw['TYPE_COEUR'][:4] == "MONO":
-            assert(False)
+        assert self.keyw['TYPE_COEUR'][:4] != "MONO"
         super()._prepare_data(noresu)
 
     def _run(self,tinit=None,tfin=None):
@@ -1120,8 +1114,8 @@ class Mac3CoeurEtatInitial(Mac3CoeurLame):
 
 
     def run(self):
-        result = super().run(noresu=True)
-        self.defo = Mac3CoeurDeformation(self.macro,self.args_defo,self.res_def)
+        super().run(noresu=True)
+        self.defo = Mac3CoeurDeformation(self.macro, self.args_defo, self.res_def)
         return self.defo.run()
 
 
