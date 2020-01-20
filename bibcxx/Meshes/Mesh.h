@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Mesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,7 +36,7 @@
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "Meshes/MeshEntities.h"
 #include "Meshes/MeshExplorer.h"
-#include "RunManager/LogicalUnitManagerCython.h"
+#include "PythonBindings/LogicalUnitManager.h"
 #include "Supervis/ResultNaming.h"
 
 /**

@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,19 +26,21 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportGeneralizedModeContainerToPython() {
-    using namespace boost::python;
 
     bool ( GeneralizedModeContainerInstance::*c1 )( const GeneralizedAssemblyMatrixDoublePtr & ) =
         &GeneralizedModeContainerInstance::setStiffnessMatrix;
     bool ( GeneralizedModeContainerInstance::*c2 )( const GeneralizedAssemblyMatrixComplexPtr & ) =
         &GeneralizedModeContainerInstance::setStiffnessMatrix;
 
-    class_< GeneralizedModeContainerInstance, GeneralizedModeContainerPtr,
-            bases< FullResultsContainerInstance > >( "GeneralizedModeContainer", no_init )
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< GeneralizedModeContainerInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< GeneralizedModeContainerInstance >))
+    py::class_< GeneralizedModeContainerInstance, GeneralizedModeContainerPtr,
+                py::bases< FullResultsContainerInstance > >( "GeneralizedModeContainer",
+                                                             py::no_init )
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< GeneralizedModeContainerInstance, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GeneralizedModeContainerInstance >))
         .def( "setDampingMatrix", &GeneralizedModeContainerInstance::setDampingMatrix )
         .def( "getGeneralizedDOFNumbering",
               &GeneralizedModeContainerInstance::getGeneralizedDOFNumbering )
@@ -48,5 +50,4 @@ void exportGeneralizedModeContainerToPython() {
         .def( "setStiffnessMatrix", c2 )
         .def( "getDampingMatrix", &GeneralizedModeContainerInstance::getDampingMatrix )
         .def( "getStiffnessMatrix", &getGeneralizedStiffnessMatrix< GeneralizedModeContainerPtr > );
-
 };

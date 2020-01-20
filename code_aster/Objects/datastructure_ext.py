@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,8 +23,9 @@
 *************************************************
 """
 
-
+import libaster
 from libaster import DataStructure
+
 from ..Utilities import deprecated, import_object, injector
 
 
@@ -66,7 +67,7 @@ class ExtendedDataStructure(object):
             assert cata_sdj, ("The attribute 'cata_sdj' must be defined in "
                               "the class {}".format(self.__class__.__name__))
             if self.ptr_class_sdj is None:
-                self.ptr_class_sdj = import_object(cata_sdj)
+                self.ptr_class_sdj = import_object("code_aster." + cata_sdj)
             self.ptr_sdj = self.ptr_class_sdj(nomj=self.getName())
         return self.ptr_sdj
 
@@ -76,7 +77,6 @@ class ExtendedDataStructure(object):
         Warning: Use only for debugging! Supported datastructures in
         ``PythonBindings/DebugInterface.cxx``.
         """
-        import libaster
         return libaster.use_count(self)
 
     # transitional functions - to remove later

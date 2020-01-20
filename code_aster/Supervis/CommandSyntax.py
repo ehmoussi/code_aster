@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,11 +57,11 @@ operator using the functions:
 
 import random
 
+from ..Cata import Commands
 from ..Objects import DataStructure
 from ..Utilities import (force_list, is_complex, is_float, is_int, is_str,
-                         value_is_sequence)
+                         logger, value_is_sequence)
 from .typeaster import typeaster
-from .logger import logger
 
 
 class CommandSyntax(object):
@@ -111,7 +111,6 @@ class CommandSyntax(object):
         self.setCurrentCommand(self)
         # TODO: remove cata argument (not easy to fill in C++)
         if not cata:
-            from ..Cata import Commands
             cata = getattr(Commands, name, None)
             if not cata:
                 logger.debug("CommandSyntax: catalog not found for {0!r}"

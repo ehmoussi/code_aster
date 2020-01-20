@@ -3,7 +3,7 @@
  * @brief Interface python de StaticNonLinearAnalysis
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,11 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( addBehaviourOnElements_overloads, addBehaviourOnElements, 1,
                                         2 )
 
 void exportStaticNonLinearAnalysisToPython() {
-    using namespace boost::python;
 
     void ( StaticNonLinearAnalysisInstance::*c1 )( const GenericMechanicalLoadPtr & ) =
         &StaticNonLinearAnalysisInstance::addStandardExcitation;
@@ -45,9 +46,9 @@ void exportStaticNonLinearAnalysisToPython() {
                                                    const FunctionPtr &scalF ) =
         &StaticNonLinearAnalysisInstance::addStandardScaledExcitation;
 
-    class_< StaticNonLinearAnalysisInstance, StaticNonLinearAnalysisPtr >(
-        "StaticNonLinearAnalysis", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StaticNonLinearAnalysisInstance >))
+    py::class_< StaticNonLinearAnalysisInstance, StaticNonLinearAnalysisPtr >(
+        "StaticNonLinearAnalysis", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StaticNonLinearAnalysisInstance >))
         // fake initFactoryPtr: not a DataStructure
         .def( "execute", &StaticNonLinearAnalysisInstance::execute )
         .def( "addBehaviourOnElements", &StaticNonLinearAnalysisInstance::addBehaviourOnElements,

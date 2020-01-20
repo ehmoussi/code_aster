@@ -1,6 +1,6 @@
 # coding: utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,10 +26,10 @@
 This modules gives some basic utilities.
 """
 
+import sys
 from array import array
 from decimal import Decimal
 from functools import wraps
-import sys
 
 import numpy
 
@@ -121,16 +121,24 @@ def is_float_or_int(obj):
     return is_float(obj) or is_int(obj)
 
 def is_complex(obj):
-    """Tell if an object is complex number."""
+    """Tell if an object is a complex number."""
     if isinstance(obj, (list, tuple)) and len(obj) == 3 \
         and obj[0] in ('RI', 'MP') and is_float_or_int(obj[1]) \
         and is_float_or_int(obj[2]):
         return True
     return isinstance(obj, complex)
 
+def is_number(obj):
+    """Tell if an object is a number."""
+    return is_float_or_int(obj) or is_complex(obj)
+
 def is_str(obj):
     """Tell if an object is a string."""
     return isinstance(obj, str)
+
+def is_sequence(obj):
+    """Is a sequence (allow iteration, not a string)?"""
+    return isinstance(obj, (list, tuple, numpy.ndarray))
 
 def array_to_list(obj):
     """Convert an object to a list if possible (using `tolist()`) or keep it

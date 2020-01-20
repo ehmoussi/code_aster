@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,30 +24,40 @@
 
 The :py:class:`Starter` starts the execution by initializing the code_aster
 memory manager (*Jeveux*). For this task, it parses the arguments through the
-:py:class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter` object.
+:py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter` object.
 By default, arguments are read from the command line. Otherwise, the arguments
 can be passed to :py:func:`.init`.
 
 Some Python objects that have to be available from :py:mod:`libaster` are
 passed during the initialization to the
-:py:class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter`.
+:py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter`.
 """
 
-import libaster
 import aster
 import aster_core
-from Comportement import catalc
+import libaster
 
+from ..Behaviours import catalc
+from ..Cata.Syntax import tr
 from ..Cata.SyntaxUtils import remove_none
-from ..RunManager import LogicalUnitFile, Serializer, loadObjects
-from ..Supervis import CommandSyntax, ExecutionParameter, Options, logger
+from ..Helpers import LogicalUnitFile, Serializer, loadObjects
+from ..Messages import MessageLog
+from ..Supervis import CommandSyntax, ExecuteCommand
+from ..Supervis.ctopy import checksd, print_header
+from ..Supervis.TestResult import testresu_print
+from ..Utilities import ExecutionParameter, Options, logger
+from ..Utilities.i18n import localization
 
-from .ExecuteCommand import ExecuteCommand
+try:
+    import ptvsd
+    HAS_PTVSD = True
+except ImportError:
+    HAS_PTVSD = False
 
 
 class ExecutionStarter(object):
     """Initialize the
-    :class:`~code_aster.Supervis.ExecutionParameter.ExecutionParameter` object
+    :class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter` object
     for requests from the both sides Python/Fortran."""
     params = _is_initialized = None
 
@@ -69,7 +79,10 @@ class ExecutionStarter(object):
         cls.params.catalc = catalc
         cls.params.logical_unit = LogicalUnitFile
         cls.params.syntax = CommandSyntax
-        aster_core.register(cls.params)
+        cls.params.print_header = print_header
+        cls.params.checksd = checksd
+        cls.params.testresu_print = testresu_print
+        aster_core.register(cls.params, MessageLog)
         libaster.jeveux_init()
         if cls.params.option & Options.Abort:
             libaster.onFatalError('ABORT')
@@ -113,14 +126,10 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        from Utilitai.Utmess import MessageLog
-
         if keywords.get('IMPR_MACRO') == 'OUI':
             ExecutionParameter().enable(Options.ShowChildCmd)
 
         if keywords.get('LANG'):
-            from ..Utilities.i18n import localization
-            from ..Cata.Syntax import tr
             translation = localization.translation(keywords['LANG'])
             tr.set_translator(translation.gettext)
 
@@ -180,8 +189,7 @@ def init(*argv, **kwargs):
         ExecutionParameter().enable(Options.Debug)
     kwargs.pop('debug', None)
 
-    if kwargs.get('ptvsd'):
-        import ptvsd
+    if kwargs.get('ptvsd') and HAS_PTVSD:
         print('Waiting for debugger attach...'),
         ptvsd.enable_attach(address=('127.0.0.1', kwargs['ptvsd']))
         ptvsd.wait_for_attach()

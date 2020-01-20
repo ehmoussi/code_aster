@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,15 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: isabelle.fournier at edf.fr
-#
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 IMPR_OAR =MACRO(nom="IMPR_OAR",
-                op=OPS('Macro.impr_oar_ops.impr_oar_ops'),
+                op=OPS('code_aster.MacroCommands.impr_oar_ops.impr_oar_ops'),
                 sd_prod=None,
                 fr=tr("Impression au format OAR"),
    TYPE_CALC = SIMP(statut='o', typ='TXM',into=('COMPOSANT', 'MEF', 'TUYAUTERIE')),

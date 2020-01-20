@@ -24,13 +24,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "astercxx.h"
 #include "asterc_config.h"
 #include "MFrontBehaviour.h"
 
-using namespace std;
 
 /* Constructor */
-MFrontBehaviour::MFrontBehaviour( string hypo, string lib, string behav )
+MFrontBehaviour::MFrontBehaviour( std::string hypo, std::string lib, std::string behav )
     : _hypothesis( hypo ), _libname( lib ), _bname( behav ), _mpnames_computed( false ) {
     // empty
 }
@@ -40,7 +40,7 @@ MFrontBehaviour::~MFrontBehaviour() {
     // empty
 }
 
-vector< string > MFrontBehaviour::getMaterialPropertiesNames() {
+VectorString MFrontBehaviour::getMaterialPropertiesNames() {
     if ( !_mpnames_computed ) {
         fillMaterialPropertiesNames();
     }
@@ -49,15 +49,14 @@ vector< string > MFrontBehaviour::getMaterialPropertiesNames() {
 
 /* private members */
 void MFrontBehaviour::fillMaterialPropertiesNames() {
-    using namespace tfel::system;
-    // using namespace tfel::material;
+    using tfel::system::ExternalLibraryManager;
 
     ExternalLibraryManager &elm = ExternalLibraryManager::getExternalLibraryManager();
     _mpnames = elm.getUMATMaterialPropertiesNames( _libname, _bname, _hypothesis );
     bool eo = elm.getUMATRequiresStiffnessTensor( _libname, _bname, _hypothesis );
     bool to = elm.getUMATRequiresThermalExpansionCoefficientTensor( _libname, _bname, _hypothesis );
     unsigned short etype = elm.getUMATElasticSymmetryType( _libname, _bname );
-    vector< string > tmp;
+    VectorString tmp;
     if ( etype == 0u ) {
         if ( eo ) {
             tmp.push_back( "YoungModulus" );
@@ -116,23 +115,23 @@ void MFrontBehaviour::fillMaterialPropertiesNames() {
                 tmp.push_back( "ThermalExpansion3" );
             }
         } else {
-            string msg( "MFrontBehaviour::fillMaterialPropertiesNames : "
+            std::string msg( "MFrontBehaviour::fillMaterialPropertiesNames : "
                         "unsupported modelling hypothesis" );
-            throw runtime_error( msg );
+            throw std::runtime_error( msg );
         }
     } else {
-        string msg( "MFrontBehaviour::fillMaterialPropertiesNames : "
+        std::string msg( "MFrontBehaviour::fillMaterialPropertiesNames : "
                     "unsupported behaviour type "
                     "(neither isotropic nor orthotropic)" );
-        throw runtime_error( msg );
+        throw std::runtime_error( msg );
     }
     _mpnames.insert( _mpnames.begin(), tmp.begin(), tmp.end() );
     _mpnames_computed = true;
 }
 
-string toAsterParameter( const string &param ) {
-    string buff;
-    for ( string::const_iterator it = param.begin(); it != param.end(); ++it ) {
+std::string toAsterParameter( const std::string &param ) {
+    std::string buff;
+    for ( std::string::const_iterator it = param.begin(); it != param.end(); ++it ) {
         if ( *it == '[' ) {
             buff.push_back( '_' );
         } else if ( *it != ']' ) {
@@ -142,15 +141,15 @@ string toAsterParameter( const string &param ) {
     return buff;
 }
 
-vector< string > toAsterParameterVect( const vector< string > &svect ) {
-    vector< string > res;
-    for ( vector< string >::const_iterator it = svect.begin(); it != svect.end(); ++it ) {
+VectorString toAsterParameterVect( const VectorString &svect ) {
+    VectorString res;
+    for ( VectorString::const_iterator it = svect.begin(); it != svect.end(); ++it ) {
         res.push_back( toAsterParameter( *it ) );
     }
     return res;
 }
 
-char **vectorOfStringsAsCharArray( const vector< string > &svect, unsigned int *size ) {
+char **vectorOfStringsAsCharArray( const VectorString &svect, unsigned int *size ) {
     char **res;
     *size = (unsigned int)( svect.size() );
     res = (char **)malloc( (size_t)*size * sizeof( char * ) );
@@ -167,22 +166,22 @@ char **getMaterialPropertiesNames( const char *hyp, const char *lib, const char 
     char **res;
 
     MFrontBehaviour behaviour( hyp, lib, funct );
-    vector< string > names = behaviour.getMaterialPropertiesNames();
-    vector< string > conv = toAsterParameterVect( names );
+    VectorString names = behaviour.getMaterialPropertiesNames();
+    VectorString conv = toAsterParameterVect( names );
     res = vectorOfStringsAsCharArray( conv, size );
     return res;
 }
 
 char **getTridimMaterialPropertiesNames( const char *behav, unsigned int *size ) {
     char **res;
-    string bname( behav );
+    std::string bname( behav );
     transform( bname.begin(), bname.end(), bname.begin(), ::tolower );
     bname.insert( 0, "aster" );
 
-    MFrontBehaviour behaviour( "Tridimensional", "lib" + string( ASTERBEHAVIOUR ) + ".so",
+    MFrontBehaviour behaviour( "Tridimensional", "lib" + std::string( ASTERBEHAVIOUR ) + ".so",
                                bname.c_str() );
-    vector< string > names = behaviour.getMaterialPropertiesNames();
-    vector< string > conv = toAsterParameterVect( names );
+    VectorString names = behaviour.getMaterialPropertiesNames();
+    VectorString conv = toAsterParameterVect( names );
     res = vectorOfStringsAsCharArray( conv, size );
     return res;
 }

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,9 @@
 # --------------------------------------------------------------------
 # person_in_charge: yannick.tampango at edf.fr
 
-# The product concept (data-structure) depends on the calculation type and basis
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def dyna_line_sdprod(self, TYPE_CALCUL, BASE_RESU=None, RESU_GENE=None, **args):
@@ -43,7 +42,7 @@ def dyna_line_sdprod(self, TYPE_CALCUL, BASE_RESU=None, RESU_GENE=None, **args):
         return dyna_harmo
 
 DYNA_LINE = MACRO(nom      = "DYNA_LINE",
-                 op=OPS('Macro.dyna_line_ops.dyna_line_ops'),
+                 op=OPS('code_aster.MacroCommands.dyna_line_ops.dyna_line_ops'),
                  sd_prod  = dyna_line_sdprod,
                  reentrant='n',
                  fr       = tr("Calcul dynamique transitoire ou harmonique"),

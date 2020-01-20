@@ -3,7 +3,7 @@
  * @brief Interface python de EventManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,80 +28,83 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportEventManagerToPython() {
-    using namespace boost::python;
 
-    class_< GenericActionInstance, GenericActionPtr >( "GenericAction", no_init );
+    py::class_< GenericActionInstance, GenericActionPtr >( "GenericAction", py::no_init );
 
-    class_< StopOnErrorInstance, StopOnErrorPtr, bases< GenericActionInstance > >( "StopOnError",
-                                                                                   no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StopOnErrorInstance >));
+    py::class_< StopOnErrorInstance, StopOnErrorPtr, py::bases< GenericActionInstance > >(
+        "StopOnError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StopOnErrorInstance >));
 
-    class_< ContinueOnErrorInstance, ContinueOnErrorPtr, bases< GenericActionInstance > >(
-        "ContinueOnError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ContinueOnErrorInstance >));
+    py::class_< ContinueOnErrorInstance, ContinueOnErrorPtr, py::bases< GenericActionInstance > >(
+        "ContinueOnError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ContinueOnErrorInstance >));
 
-    class_< GenericSubstepingOnErrorInstance, GenericSubstepingOnErrorPtr,
-            bases< GenericActionInstance > >( "GenericSubstepingOnError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< GenericSubstepingOnErrorInstance >))
+    py::class_< GenericSubstepingOnErrorInstance, GenericSubstepingOnErrorPtr,
+                py::bases< GenericActionInstance > >( "GenericSubstepingOnError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GenericSubstepingOnErrorInstance >))
         .def( "setAutomatic", &GenericSubstepingOnErrorInstance::setAutomatic )
         .def( "setLevel", &GenericSubstepingOnErrorInstance::setLevel )
         .def( "setMinimumStep", &GenericSubstepingOnErrorInstance::setMinimumStep )
         .def( "setStep", &GenericSubstepingOnErrorInstance::setStep );
 
-    class_< SubstepingOnErrorInstance, SubstepingOnErrorPtr,
-            bases< GenericSubstepingOnErrorInstance > >( "SubstepingOnError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< SubstepingOnErrorInstance >));
+    py::class_< SubstepingOnErrorInstance, SubstepingOnErrorPtr,
+                py::bases< GenericSubstepingOnErrorInstance > >( "SubstepingOnError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SubstepingOnErrorInstance >));
 
-    class_< AddIterationOnErrorInstance, AddIterationOnErrorPtr,
-            bases< GenericSubstepingOnErrorInstance > >( "AddIterationOnError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< AddIterationOnErrorInstance >))
+    py::class_< AddIterationOnErrorInstance, AddIterationOnErrorPtr,
+                py::bases< GenericSubstepingOnErrorInstance > >( "AddIterationOnError",
+                                                                 py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< AddIterationOnErrorInstance >))
         .def( "setPourcentageOfAddedIteration",
               &AddIterationOnErrorInstance::setPourcentageOfAddedIteration );
 
-    class_< SubstepingOnContactInstance, SubstepingOnContactPtr, bases< GenericActionInstance > >(
-        "SubstepingOnContact", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< SubstepingOnContactInstance >))
+    py::class_< SubstepingOnContactInstance, SubstepingOnContactPtr,
+                py::bases< GenericActionInstance > >( "SubstepingOnContact", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SubstepingOnContactInstance >))
         .def( "setSubstepDuration", &SubstepingOnContactInstance::setSubstepDuration )
         .def( "setTimeStepSubstep", &SubstepingOnContactInstance::setTimeStepSubstep );
 
-    class_< PilotageErrorInstance, PilotageErrorPtr, bases< GenericSubstepingOnErrorInstance > >(
-        "PilotageError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< PilotageErrorInstance >));
+    py::class_< PilotageErrorInstance, PilotageErrorPtr,
+                py::bases< GenericSubstepingOnErrorInstance > >( "PilotageError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< PilotageErrorInstance >));
 
-    class_< ChangePenalisationOnErrorInstance, ChangePenalisationOnErrorPtr,
-            bases< GenericActionInstance > >( "ChangePenalisationOnError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ChangePenalisationOnErrorInstance >))
+    py::class_< ChangePenalisationOnErrorInstance, ChangePenalisationOnErrorPtr,
+                py::bases< GenericActionInstance > >( "ChangePenalisationOnError", py::no_init )
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< ChangePenalisationOnErrorInstance >))
         .def( "setMaximumPenalisationCoefficient",
               &ChangePenalisationOnErrorInstance::setMaximumPenalisationCoefficient );
 
-    class_< GenericEventErrorInstance, GenericEventErrorPtr, boost::noncopyable >(
-        "GenericEventError", no_init )
+    py::class_< GenericEventErrorInstance, GenericEventErrorPtr, boost::noncopyable >(
+        "GenericEventError", py::no_init )
         .def( "setAction", &GenericEventErrorInstance::setAction );
 
-    class_< EventErrorInstance, EventErrorPtr,
-            bases< GenericEventErrorInstance > >( "EventError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< EventErrorInstance >));
+    py::class_< EventErrorInstance, EventErrorPtr, py::bases< GenericEventErrorInstance > >(
+        "EventError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< EventErrorInstance >));
 
-    class_< ResidualDivergenceErrorInstance, ResidualDivergenceErrorPtr,
-            bases< GenericEventErrorInstance > >( "ResidualDivergenceError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ResidualDivergenceErrorInstance >));
+    py::class_< ResidualDivergenceErrorInstance, ResidualDivergenceErrorPtr,
+                py::bases< GenericEventErrorInstance > >( "ResidualDivergenceError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ResidualDivergenceErrorInstance >));
 
-    class_< IncrementOverboundErrorInstance, IncrementOverboundErrorPtr,
-            bases< GenericEventErrorInstance > >( "IncrementOverboundError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< IncrementOverboundErrorInstance >))
+    py::class_< IncrementOverboundErrorInstance, IncrementOverboundErrorPtr,
+                py::bases< GenericEventErrorInstance > >( "IncrementOverboundError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< IncrementOverboundErrorInstance >))
         .def( "setValueToInspect", &IncrementOverboundErrorInstance::setValueToInspect );
 
-    class_< ContactDetectionErrorInstance, ContactDetectionErrorPtr,
-            bases< GenericEventErrorInstance > >( "ContactDetectionError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ContactDetectionErrorInstance >));
+    py::class_< ContactDetectionErrorInstance, ContactDetectionErrorPtr,
+                py::bases< GenericEventErrorInstance > >( "ContactDetectionError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ContactDetectionErrorInstance >));
 
-    class_< InterpenetrationErrorInstance, InterpenetrationErrorPtr,
-            bases< GenericEventErrorInstance > >( "InterpenetrationError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< InterpenetrationErrorInstance >))
+    py::class_< InterpenetrationErrorInstance, InterpenetrationErrorPtr,
+                py::bases< GenericEventErrorInstance > >( "InterpenetrationError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< InterpenetrationErrorInstance >))
         .def( "setMaximalPenetration", &InterpenetrationErrorInstance::setMaximalPenetration );
 
-    class_< InstabilityErrorInstance, InstabilityErrorPtr,
-            bases< GenericEventErrorInstance > >( "InstabilityError", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< InstabilityErrorInstance >));
+    py::class_< InstabilityErrorInstance, InstabilityErrorPtr,
+                py::bases< GenericEventErrorInstance > >( "InstabilityError", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< InstabilityErrorInstance >));
 };

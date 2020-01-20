@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,9 @@ import inspect
 import types
 from collections import OrderedDict
 
+from . import DataStructure as DS
 from .DataStructure import DataStructure, UnitBaseType
+from .SyntaxChecker import checkCommandSyntax
 from .SyntaxUtils import (add_none_sdprod, block_utils, debug_message2,
                           disable_0key, enable_0key, force_list, mixedcopy,
                           sorted_dict, value_is_sequence)
@@ -350,10 +352,9 @@ class PartOfSyntax(UIDMixing):
 
     def _def_status(self):
         """Wrapper that returns the value of 'statut' after precondition."""
-        from code_aster.Cata import HAVE_ASTERSTUDY
         definition = self.definition
         value = definition.get("statut", "f")
-        if not HAVE_ASTERSTUDY or value == "c":
+        if value == "c":
             return value
         # In AsterStudy, a simple keyword with a default value...
         if self.getCataTypeId() == IDS.simp and self.hasDefaultValue():
@@ -640,7 +641,6 @@ class Bloc(PartOfSyntax):
 
     def isEnabled(self, context):
         """Tell if the block is enabled by the given context"""
-        from . import DataStructure as DS
         eval_context = {}
         eval_context.update(DS.__dict__)
         eval_context.update(block_utils(eval_context))
@@ -704,7 +704,6 @@ class Command(PartOfSyntax):
         """
         strict = args.pop("__strict__", ConversionLevel.Syntaxic)
         if strict & ConversionLevel.Syntaxic:
-            from .SyntaxChecker import checkCommandSyntax
             checkCommandSyntax(self, args)
             resultType = self.get_type_sd_prod(**args)
         else:

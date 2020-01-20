@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,13 +25,30 @@ This module gives common utilities.
 No external import of other :py:mod:`code_aster` packages.
 """
 
+from .as_timer import ASTER_TIMER
 from .base_utils import (Singleton, accept_array, array_to_list, force_list,
                          force_tuple, import_object, is_complex, is_float,
-                         is_int, is_str, no_new_attributes, value_is_sequence)
+                         is_float_or_int, is_int, is_number, is_sequence,
+                         is_str, no_new_attributes, value_is_sequence)
 from .compatibility import (compat_listr8, deprecated, remove_keyword,
                             required, unsupported)
+from .ExecutionParameter import ExecutionParameter
 from .general import initial_context
-from .i18n import localization, translate
+from .i18n import localization
+from .i18n import translate as _
 from .injector import injector
-from .strfunc import convert, from_unicode, get_encoding, to_unicode
+from .logger import DEBUG, ERROR, INFO, WARNING, logger
+from .options import Options
+from .report import CR
+from .strfunc import (clean_string, convert, copy_text_to, cut_long_lines,
+                      from_unicode, get_encoding, maximize_lines, to_unicode,
+                      ufmt)
 from .Tester import TestCase
+from .transpose import transpose
+from .version import get_version, get_version_desc
+
+# aster_pkginfo will only be available after installation
+try:
+    from .aster_pkginfo import version_info
+except ImportError:
+    version_info = ()

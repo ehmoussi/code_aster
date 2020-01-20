@@ -19,12 +19,22 @@ Common utilities
    :members:
    :special-members: __init__
 
+.. automodule:: code_aster.Utilities.ExecutionParameter
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
 .. automodule:: code_aster.Utilities.i18n
    :show-inheritance:
    :members:
    :special-members: __init__
 
 .. automodule:: code_aster.Utilities.injector
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
+.. automodule:: code_aster.Utilities.logger
    :show-inheritance:
    :members:
    :special-members: __init__

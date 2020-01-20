@@ -1,0 +1,130 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+from ...Cata.Syntax import _F
+from .mode_iter_inv import MODE_ITER_INV
+
+
+def calc_modes_inv(self, stop_erreur, sturm, TYPE_RESU, OPTION,  INFO, **args):
+    """
+       Macro-command CALC_MODES, case of the inverse iterations method
+    """
+
+    args = _F(args)
+    SOLVEUR = args.get("SOLVEUR")
+    SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
+    VERI_MODE = args.get("VERI_MODE")
+    TITRE = args.get("TITRE")
+
+    motcles = {}
+    matrices = {}
+
+    # read the input matrices
+    if TYPE_RESU == 'DYNAMIQUE':
+        type_vp = 'FREQ'
+        matrices['MATR_RIGI'] = args['MATR_RIGI']
+        matrices['MATR_MASS'] = args['MATR_MASS']
+        if 'MATR_AMOR' in args:
+            matrices['MATR_AMOR'] = args['MATR_AMOR']
+
+    elif TYPE_RESU == 'MODE_FLAMB':
+        type_vp = 'CHAR_CRIT'
+        matrices['MATR_RIGI'] = args['MATR_RIGI']
+        matrices['MATR_RIGI_GEOM'] = args['MATR_RIGI_GEOM']
+
+    elif TYPE_RESU == 'GENERAL':
+        type_vp = 'CHAR_CRIT'
+        matrices['MATR_A'] = args['MATR_A']
+        matrices['MATR_B'] = args['MATR_B']
+
+    motcles.update(matrices)
+
+    #
+    # read the keyword CALC_FREQ or CALC_CHAR_CRIT
+    motcles_calc_vp = {}
+
+    calc_vp = args['CALC_' + type_vp]
+    nmax_vp = 'NMAX_' + type_vp
+
+    motcles_calc_vp[type_vp] = calc_vp[type_vp]
+    motcles_calc_vp[nmax_vp] = calc_vp[nmax_vp]
+    motcles_calc_vp['SEUIL_' + type_vp] = calc_vp['SEUIL_' + type_vp]
+
+    motcles['CALC_' + type_vp] = _F(OPTION=OPTION,
+                                    NMAX_ITER_SHIFT=calc_vp[
+                                    'NMAX_ITER_SHIFT'],
+                                    PREC_SHIFT=calc_vp['PREC_SHIFT'],
+                                    NMAX_ITER_SEPARE=SOLVEUR_MODAL[
+                                    'NMAX_ITER_SEPARE'],
+                                    PREC_SEPARE=SOLVEUR_MODAL[
+                                    'PREC_SEPARE'],
+                                    NMAX_ITER_AJUSTE=SOLVEUR_MODAL[
+                                    'NMAX_ITER_AJUSTE'],
+                                    PREC_AJUSTE=SOLVEUR_MODAL[
+                                    'PREC_AJUSTE'],
+                                    **motcles_calc_vp
+                                    )
+
+    #
+    # read the keyword CALC_MODE
+    motcles['CALC_MODE'] = _F(OPTION=SOLVEUR_MODAL['OPTION_INV'],
+                              PREC=SOLVEUR_MODAL['PREC_INV'],
+                              NMAX_ITER=SOLVEUR_MODAL['NMAX_ITER_INV'],
+                              )
+
+    #
+    # read the keyword SOLVEUR (linear solver)
+    solveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
+    if 'TYPE_RESU' in solveur:  # because TYPE_RESU is a keyword with a 'global' position
+        solveur.pop('TYPE_RESU')
+    if 'OPTION' in solveur:    # because OPTION is a keyword with a 'global' position
+        solveur.pop('OPTION')
+    if 'FREQ' in solveur:      # because FREQ can be a keyword with a 'global' position
+        solveur.pop('FREQ')
+    motcles['SOLVEUR'] = _F(**solveur)
+
+    #
+    # read the keyword VERI_MODE
+    if sturm in ('GLOBAL', 'LOCAL','OUI'):
+        # for MODE_ITER_INV, value for STURM can be only OUI or NON. Other
+        # values are equivalent to OUI
+        motveri = 'OUI'
+    elif sturm in ('NON'):
+        # for keyword AMELIORATION
+        motveri = 'NON'
+    else:
+        assert(False)  # Pb parametrage STURM
+
+    motcles['VERI_MODE'] = _F(STOP_ERREUR=stop_erreur,
+                              SEUIL=VERI_MODE['SEUIL'],
+                              STURM=motveri,
+                              PREC_SHIFT=VERI_MODE['PREC_SHIFT']
+                              )
+
+    #
+
+    if TITRE is not None:
+        motcles['TITRE'] = TITRE
+
+    modes = MODE_ITER_INV(TYPE_RESU=TYPE_RESU,
+                          INFO=INFO,
+                          **motcles
+                          )
+
+    return modes

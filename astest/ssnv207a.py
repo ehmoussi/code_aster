@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,20 +17,20 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 import math
+
+import numpy as NP
+
+from code_aster.Cata.DataStructure import (cham_mater, cham_no_sdaster,
+                                           char_meca, listr8_sdaster,
+                                           maillage_sdaster, mater_sdaster,
+                                           modele_sdaster, resultat_sdaster,
+                                           table_sdaster)
 from code_aster.Cata.Syntax import _F, MACRO, SIMP
-from code_aster.Cata.DataStructure import CO as typCO
-from code_aster.Cata.DataStructure import (maillage_sdaster, modele_sdaster, mater_sdaster,
-    cham_no_sdaster, listr8_sdaster, cham_mater, char_meca,resultat_sdaster, table_sdaster)
-from code_aster.Commands.ExecuteCommand import UserMacro
-from code_aster.Commands import DEFI_FONCTION
-from code_aster.Commands import SIMU_POINT_MAT
+from code_aster.Commands import DEFI_FONCTION, SIMU_POINT_MAT
+from code_aster.Supervis.ExecuteCommand import UserMacro
+
 
 def test_init_ops(self,TINI,TFIN,TMIL,MATER,LIST_INST,**args):
-    import numpy as NP
-
-  # On importe les definitions des commandes a utiliser dans la macro
-    SIMU_POINT_MAT = self.get_cmd('SIMU_POINT_MAT')
-    DEFI_FONCTION  = self.get_cmd('DEFI_FONCTION')
 
     __coef1b=DEFI_FONCTION(NOM_PARA='INST',
                      VALE=(0 ,0,

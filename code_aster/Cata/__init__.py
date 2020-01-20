@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,10 +25,4 @@ Cata package
 
 This package give access to the catalogs of commands.
 
-It works as a switch between the legacy supervisor and the next generation
-of the commands language (already used by AsterStudy).
-
 """
-
-# Use the *new* language description
-HAVE_ASTERSTUDY = True

@@ -3,7 +3,7 @@
  * @brief Interface python de MechanicalModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,10 +24,11 @@
 #include "PythonBindings/MechanicalModeContainerInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include "PythonBindings/VariantStiffnessMatrixInterface.h"
 
 void exportMechanicalModeContainerToPython() {
-    using namespace boost::python;
 
     bool ( MechanicalModeContainerInstance::*c1 )( const AssemblyMatrixDisplacementDoublePtr & ) =
         &MechanicalModeContainerInstance::setStiffnessMatrix;
@@ -47,18 +48,19 @@ void exportMechanicalModeContainerToPython() {
     bool ( MechanicalModeContainerInstance::*c8 )( const AssemblyMatrixPressureDoublePtr & ) =
         &MechanicalModeContainerInstance::setMassMatrix;
 
-    class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
-            bases< FullResultsContainerInstance > >( "MechanicalModeContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< MechanicalModeContainerInstance >))
+    py::class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
+                py::bases< FullResultsContainerInstance > >( "MechanicalModeContainer",
+                                                             py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MechanicalModeContainerInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< MechanicalModeContainerInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< MechanicalModeContainerInstance, std::string >))
         .def( "getDOFNumbering", &MechanicalModeContainerInstance::getDOFNumbering )
-        .def( "getStiffnessMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr > )
+        .def("getStiffnessMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr >)
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
         .def( "setStiffnessMatrix", c3 )
         .def( "setStiffnessMatrix", c4 )
-        .def( "getMassMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr > )
+        .def("getMassMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr >)
         .def( "setMassMatrix", c5 )
         .def( "setMassMatrix", c6 )
         .def( "setMassMatrix", c7 )
@@ -67,7 +69,6 @@ void exportMechanicalModeContainerToPython() {
 };
 
 void exportMechanicalModeComplexContainerToPython() {
-    using namespace boost::python;
 
     bool ( MechanicalModeComplexContainerInstance::*c1 )(
         const AssemblyMatrixDisplacementDoublePtr & ) =
@@ -82,12 +83,13 @@ void exportMechanicalModeComplexContainerToPython() {
         const AssemblyMatrixPressureDoublePtr & ) =
         &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
 
-    class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
-            bases< MechanicalModeContainerInstance > >( "MechanicalModeComplexContainer", no_init )
+    py::class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
+                py::bases< MechanicalModeContainerInstance > >( "MechanicalModeComplexContainer",
+                                                                py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< MechanicalModeComplexContainerInstance >))
+              py::make_constructor(&initFactoryPtr< MechanicalModeComplexContainerInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< MechanicalModeComplexContainerInstance, std::string >))
         .def( "setDampingMatrix", &MechanicalModeComplexContainerInstance::setDampingMatrix )
         .def( "setStiffnessMatrix", c1 )

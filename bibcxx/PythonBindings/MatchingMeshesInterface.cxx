@@ -3,7 +3,7 @@
  * @brief Interface python de MatchingMeshes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,13 +25,14 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportMatchingMeshesToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< MatchingMeshesInstance, MatchingMeshesInstance::MatchingMeshesPtr,
-            bases< DataStructure > >( "MatchingMeshes", no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< MatchingMeshesInstance > ) )
+void exportMatchingMeshesToPython() {
+
+    py::class_< MatchingMeshesInstance, MatchingMeshesInstance::MatchingMeshesPtr,
+            py::bases< DataStructure > >( "MatchingMeshes", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< MatchingMeshesInstance > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< MatchingMeshesInstance, std::string > ) )
+              py::make_constructor( &initFactoryPtr< MatchingMeshesInstance, std::string > ) )
         .def( "setFirstMesh", &MatchingMeshesInstance::setFirstMesh );
 };

@@ -3,7 +3,7 @@
  * @brief Interface python de PCFieldOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,19 +24,20 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/GenericDataFieldInterface.h"
 #include "PythonBindings/PCFieldOnMeshInterface.h"
 
 void exportPCFieldOnMeshToPython() {
-    using namespace boost::python;
-    class_< PCFieldOnMeshDoubleInstance, PCFieldOnMeshDoublePtr,
-            bases< GenericDataFieldInstance > >( "PCFieldOnMeshDouble", no_init )
+    py::class_< PCFieldOnMeshDoubleInstance, PCFieldOnMeshDoublePtr,
+            py::bases< GenericDataFieldInstance > >( "PCFieldOnMeshDouble", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< PCFieldOnMeshDoubleInstance, BaseMeshPtr >))
+              py::make_constructor(&initFactoryPtr< PCFieldOnMeshDoubleInstance, BaseMeshPtr >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< PCFieldOnMeshDoubleInstance, std::string, BaseMeshPtr >))
         .def( "getMesh", &PCFieldOnMeshDoubleInstance::getMesh );
 };

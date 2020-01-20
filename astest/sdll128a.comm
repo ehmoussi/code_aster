@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,12 @@
 # CAS_TEST__:SDLL128A
 #
 
+from math import pi
+
 import numpy as NP
+
+from code_aster.Commands import *
+from code_aster.Objects.table_py import Table
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
@@ -28,7 +33,6 @@ DEBUT(CODE=_F(
               PAR_LOT='NON',
               DEBUG=_F(SDVERI='OUI'),)
 
-from Utilitai.Table import Table
 
 DEBV=5000.0
 FINV=6500.0

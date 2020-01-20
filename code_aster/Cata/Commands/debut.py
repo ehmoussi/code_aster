@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,16 +18,15 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEBUT=MACRO(nom="DEBUT",
-            op=OPS("code_aster.Cata.ops.build_debut"),
+            op=None,
             repetable='n',
             fr=tr("Ouverture d'une étude. Allocation des ressources mémoire et disque et fichiers"),
-            sd_prod=ops.DEBUT,
 
          PAR_LOT         =SIMP(fr=tr("mode de traitement des commandes"),statut='f',typ='TXM',
                            into=("OUI","NON"),defaut="OUI"),

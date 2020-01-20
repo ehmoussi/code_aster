@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,10 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
+
 
 def calc_essai_geomeca_prod(self, **args):
     if args.get('__all__'):
@@ -43,17 +44,17 @@ def calc_essai_geomeca_prod(self, **args):
 
 
 CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
-                     op           =OPS('Macro.calc_essai_geomeca_ops.calc_essai_geomeca_ops'),
+                     op           =OPS('code_aster.MacroCommands.calc_essai_geomeca_ops.calc_essai_geomeca_ops'),
                      sd_prod      =calc_essai_geomeca_prod,
                      fr=tr("Simulation 0D des essais de laboratoire pour les lois geomecaniques du Code_Aster (Hujeux, Mohr-Coulomb etc.)"),
                      reentrant    ='n',
                      MATER        = SIMP(statut='o',typ=mater_sdaster),
                      COMPORTEMENT = C_COMPORTEMENT('CALC_ESSAI_GEOMECA'),
                      CONVERGENCE  = C_CONVERGENCE('SIMU_POINT_MAT'),
-                     
+
                      regles=(# COMPORTEMENT est facultatif dans C_COMPORTEMENT
                              AU_MOINS_UN('COMPORTEMENT'),
-                             
+
                              AU_MOINS_UN('ESSAI_TRIA_DR_M_D',
                                          'ESSAI_TRIA_ND_M_D',
                                          'ESSAI_CISA_DR_C_D',
@@ -68,7 +69,7 @@ CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
                      # Essai TRIAxial DRaine Monotone a Deformation imposee (TRIA_DR_M_D)
                      # ---
                      ESSAI_TRIA_DR_M_D = FACT(statut='f',max='**',
-                     
+
                           fr=tr("Essai triaxial monotone draine a deformation controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
@@ -90,7 +91,7 @@ CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
                      #  Essai TRIAxial Non Draine Monotone a Deformation imposee (TRIA_ND_M_D)
                      # ---
                      ESSAI_TRIA_ND_M_D = FACT(statut='f',max='**',
-                     
+
                           fr=tr("Essai triaxial monotone non draine a deformation controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
@@ -113,7 +114,7 @@ CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
                      #  Essai de CISAillement DRaine Cyclique a Deformation imposee (CISA_DR_C_D)
                      # ---
                      ESSAI_CISA_DR_C_D = FACT(statut='f',max='**',
-                     
+
                           fr=tr("Essai de cisaillement cyclique draine a deformation controlee"),
 
                           PRES_CONF    = SIMP(statut='o',typ='R',max='**',),
@@ -144,7 +145,7 @@ CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
                      # ---
                      ESSAI_TRIA_ND_C_F = FACT(statut='f',max='**',
                                               #regles=(UN_PARMI('RU_MAX','EPSI_AXI_MAX',),),
-                     
+
                           fr=tr("Essai triaxial cyclique non draine a force controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
@@ -181,7 +182,7 @@ CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
                      # Essai TRIAxial Non Draine Cylique a Deplacement impose (TRIA_ND_C_D)
                      # ---
                      ESSAI_TRIA_ND_C_D = FACT(statut='f',max='**',
-                     
+
                           fr=tr("Essai triaxial cyclique non draine a deformation controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
@@ -216,7 +217,7 @@ CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
                      # Essai TRIAxial DRaine Cylique a Deplacement impose (TRIA_DR_C_D)
                      # ---
                      ESSAI_TRIA_DR_C_D = FACT(statut='f',max='**',
-                     
+
                           fr=tr("Essai triaxial cyclique draine a deformation controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
@@ -243,12 +244,12 @@ CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
                           TYPE_CHARGE  = SIMP(statut='f',typ='TXM',max=1,defaut='SINUSOIDAL',
                                                    into=("SINUSOIDAL","TRIANGULAIRE"),),
                                       ),
-                                      
+
                      # ---
                      #  Essai OEDOmetrique DRaine Cyclique a force imposee (OEDO_DR_C_F)
                      # ---
                      ESSAI_OEDO_DR_C_F = FACT(statut='f',max='**',
-                     
+
                           fr=tr("Essai eodometrique cyclique draine a force controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),
@@ -274,7 +275,7 @@ CALC_ESSAI_GEOMECA = MACRO(nom    ="CALC_ESSAI_GEOMECA",
                      #  Essai de compression ISOTrope DRainee Cyclique a force imposee (ISOT_DR_C_F)
                      # ---
                      ESSAI_ISOT_DR_C_F = FACT(statut='f',max='**',
-                     
+
                           fr=tr("Essai isotrope cyclique draine a force controlee"),
 
                           PRES_CONF   = SIMP(statut='o',typ='R',max='**',),

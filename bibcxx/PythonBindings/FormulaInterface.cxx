@@ -3,7 +3,7 @@
  * @brief Interface python de Formula
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,16 +25,17 @@
 
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 #include <PythonBindings/factory.h>
 #include "PythonBindings/FormulaInterface.h"
 
 void exportFormulaToPython() {
-    using namespace boost::python;
 
-    class_< FormulaInstance, FormulaInstance::FormulaPtr, bases< GenericFunctionInstance > >
-        ( "Formula", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FormulaInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< FormulaInstance, std::string >))
+    py::class_< FormulaInstance, FormulaInstance::FormulaPtr, py::bases< GenericFunctionInstance > >
+        ( "Formula", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FormulaInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FormulaInstance, std::string >))
 
         .def( "setVariables", &FormulaInstance::setVariables, R"(
 Define the variables names.
@@ -42,7 +43,7 @@ Define the variables names.
 Arguments:
     varnames (list[str]): List of variables names.
         )",
-              ( arg( "self" ), arg( "varnames" ) ) )
+              ( py::arg( "self" ), py::arg( "varnames" ) ) )
 
         .def( "setExpression", &FormulaInstance::setExpression, R"(
 Define the expression of the formula.
@@ -53,12 +54,12 @@ defined using `:func:setContext`.
 Arguments:
     expression (str): Expression of the formula.
         )",
-              ( arg( "self" ), arg( "expression" ) ) )
+              ( py::arg( "self" ), py::arg( "expression" ) ) )
 
         .def( "setComplex", &FormulaInstance::setComplex, R"(
 Set the type of the formula as complex.
         )",
-              ( arg( "self" ) ) )
+              ( py::arg( "self" ) ) )
 
         .def( "setContext", &FormulaInstance::setContext, R"(
 Define the context holding objects required to evaluate the expression.
@@ -66,7 +67,7 @@ Define the context holding objects required to evaluate the expression.
 Arguments:
     context (dict): Context for the evaluation.
         )",
-              ( arg( "self" ), arg( "context" ) ) )
+              ( py::arg( "self" ), py::arg( "context" ) ) )
 
         .def( "evaluate", &FormulaInstance::evaluate, R"(
 Evaluate the formula with the given variables values.
@@ -77,7 +78,7 @@ Arguments:
 Returns:
     float/complex: Value of the formula for these values.
         )",
-              ( arg( "self" ), arg( "*val" ) ) )
+              ( py::arg( "self" ), py::arg( "*val" ) ) )
 
         .def( "getVariables", &FormulaInstance::getVariables, R"(
 Return the variables names.
@@ -85,7 +86,7 @@ Return the variables names.
 Returns:
     list[str]: List of the names of the variables.
         )",
-              ( arg( "self" ) ) )
+              ( py::arg( "self" ) ) )
 
         .def( "getExpression", &FormulaInstance::getExpression, R"(
 Return expression of the formula.
@@ -93,7 +94,7 @@ Return expression of the formula.
 Returns:
     str: Expression of the formula.
         )",
-              ( arg( "self" ) ) )
+              ( py::arg( "self" ) ) )
 
         .def( "getContext", &FormulaInstance::getContext, R"(
 Return the context used to evaluate the formula.
@@ -101,7 +102,7 @@ Return the context used to evaluate the formula.
 Returns:
     dict: Context used for evaluation.
         )",
-              arg( "self" ) )
+              py::arg( "self" ) )
 
         .def( "getProperties", &FormulaInstance::getProperties, R"(
 Return the properties of the formula (for compatibility with function objects).
@@ -109,5 +110,5 @@ Return the properties of the formula (for compatibility with function objects).
 Returns:
     list[str]: List of 6 strings as function objects contain.
         )",
-              arg( "self" ) );
+              py::arg( "self" ) );
 };

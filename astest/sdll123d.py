@@ -1,6 +1,6 @@
 def EXTR_MATR(matrrr,vall) :
-        from SD.sd_stoc_morse import sd_stoc_morse
-        from SD.sd_nume_equa import sd_nume_equa
+        from code_aster.SD.sd_stoc_morse import sd_stoc_morse
+        from code_aster.SD.sd_nume_equa import sd_nume_equa
 # fonction permettant de recuperer les matrices assemblees au format numpy
 # attention a l'espace memoire
         import numpy as NP

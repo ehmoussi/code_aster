@@ -3,7 +3,7 @@
  * @brief Interface python de ParallelMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,6 +24,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/factory.h"
@@ -31,11 +33,11 @@
 #ifdef _USE_MPI
 
 void exportParallelMeshToPython() {
-    using namespace boost::python;
-    class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-            bases< BaseMeshInstance > >( "ParallelMesh", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ParallelMeshInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< ParallelMeshInstance, std::string >))
+    py::class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
+                py::bases< BaseMeshInstance > >( "ParallelMesh", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelMeshInstance >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< ParallelMeshInstance, std::string >))
         .def( "hasLocalGroupOfElements", &ParallelMeshInstance::hasLocalGroupOfElements )
         .def( "hasLocalGroupOfNodes", &ParallelMeshInstance::hasLocalGroupOfNodes )
         .def( "readMedFile", &ParallelMeshInstance::readMedFile );

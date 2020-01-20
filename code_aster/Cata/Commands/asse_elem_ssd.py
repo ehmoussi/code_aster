@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: mathieu.corus at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def asse_elem_ssd_prod(self, RESU_ASSE_SSD, **args):
@@ -42,7 +42,7 @@ def asse_elem_ssd_prod(self, RESU_ASSE_SSD, **args):
 
 
 ASSE_ELEM_SSD=MACRO(nom="ASSE_ELEM_SSD",
-                    op=OPS('Macro.asse_elem_ssd_ops.asse_elem_ssd_ops'),
+                    op=OPS('code_aster.MacroCommands.asse_elem_ssd_ops.asse_elem_ssd_ops'),
                     sd_prod=asse_elem_ssd_prod,
                     reentrant='n',
                     fr=tr("Enchainer les commandes DEFI_MODELE_GENE, NUME_DDL_GENE et ASSE_MATR_GENE"),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 
 # person_in_charge: olivier.boiteau at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_modes_prod( self, TYPE_RESU, **args) :
@@ -55,7 +55,7 @@ def calc_modes_prod( self, TYPE_RESU, **args) :
    raise AsException("type de concept resultat non prevu")
 
 CALC_MODES=MACRO(nom="CALC_MODES",
-                 op=OPS('Modal.calc_modes_ops.calc_modes_ops'),
+                 op=OPS('code_aster.MacroCommands.Modal.calc_modes_ops.calc_modes_ops'),
                  sd_prod=calc_modes_prod,
                  reentrant='n',
                  fr=tr("Calculer les modes propres ou de flambement d'une structure"),

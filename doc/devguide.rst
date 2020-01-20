@@ -17,18 +17,22 @@ Development rules
 
     - Coding standards: http://llvm.org/docs/CodingStandards.html
 
-      Le code peut (*doit*) être reformatté en utilisant
-      :file:`$HOME/dev/codeaster/devtools/bin/beautify` (utilise le style LLVM,
-      plus les paramètres indiqués dans le fichier :file:`.clang-format`).
+      The source code may (*should*) be formatted using
+      :file:`$HOME/dev/codeaster/devtools/bin/beautify` (it uses the LLVM style,
+      and the parameters from :file:`.clang-format`).
 
     - Document all new objects and methods.
 
-      .. todo:: Automatically call the :file:`doc/generate_rst.py` script to
-        include new objects in the documentation.
+      Use :file:`./check_docs.sh` script to check that new objects have been
+      included in the documentation.
 
     - Check that the documentation can be built without warnings/errors.
 
-    - All the *asterxx* testcases must be run before every push.
+    - The ``submit`` command from ``devtools`` checks that the fastest testcases
+      pass without error (``asterxx`` testlist).
+      The continous integration procedure checks more testcases (``ci`` testlist).
+
+    - To execute testcases manually:
 
       Check the sequential testcases:
 
@@ -41,21 +45,6 @@ Development rules
       .. code-block:: sh
 
         run_testcases --root=.. --builddir=build/mpi --testlist=asterxx --resutest=../resutest_mpi
-
-    - Currently, these testcases have been partially truncated because of
-      unsupported features:
-
-      .. todo::
-
-        - test003a: ``Model.enrichWithXfem()`` does not exist.
-
-        - xxCyclicSymmetryMode01b: ``CALC_MATR_ELEM/CHARGE`` does not accept
-          `char_cine` objects.
-
-        - xxFourierCombination001a: ``type(resu)`` is `evol_elas` but only
-          `fourier_elas` or `fourier_ther` is expected.
-
-        - xxMultiSteps01a is currently skipped, cf. `issue27123 <http://aster-rex.der.edf.fr/roundup/REX/issue27123>`_.
 
 
 ****************

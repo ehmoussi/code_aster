@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.corus at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MODE_ITER_CYCL=OPER(nom="MODE_ITER_CYCL",op=  80,sd_prod=mode_cycl,
                     fr=tr("Calcul des modes propres d'une structure à répétitivité cyclique à partir"
@@ -52,7 +52,7 @@ MODE_ITER_CYCL=OPER(nom="MODE_ITER_CYCL",op=  80,sd_prod=mode_cycl,
            b_bande       =BLOC(condition = """equal_to("OPTION", 'BANDE')""",
              FREQ            =SIMP(statut='o',typ='R',min=2,validators=NoRepeat(),max=2),
            ),
-#  NMAX_FREQ n a-t-il pas un sens qu avec OPTION CENTRE                                
+#  NMAX_FREQ n a-t-il pas un sens qu avec OPTION CENTRE
            NMAX_FREQ       =SIMP(statut='f',typ='I',defaut= 10 ),
            PREC_SEPARE     =SIMP(statut='f',typ='R',defaut= 100. ),
            PREC_AJUSTE     =SIMP(statut='f',typ='R',defaut= 1.E-6 ),

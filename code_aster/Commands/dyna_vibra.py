@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,10 +19,13 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullTransientResultsContainer, AssemblyMatrixPressureComplex
-from ..Objects import FullAcousticHarmonicResultsContainer, FullHarmonicResultsContainer
-from ..Objects import TransientGeneralizedResultsContainer, HarmoGeneralizedResultsContainer
-from .ExecuteCommand import ExecuteCommand
+from ..Objects import (AssemblyMatrixPressureComplex,
+                       FullAcousticHarmonicResultsContainer,
+                       FullHarmonicResultsContainer,
+                       FullTransientResultsContainer,
+                       HarmoGeneralizedResultsContainer,
+                       TransientGeneralizedResultsContainer)
+from ..Supervis import ExecuteCommand
 
 
 class VibrationDynamics(ExecuteCommand):

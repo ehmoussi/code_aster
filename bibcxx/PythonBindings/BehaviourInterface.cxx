@@ -3,7 +3,7 @@
  * @brief Interface python de Behaviour
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,12 +25,13 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportBehaviourToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< BehaviourInstance, BehaviourPtr >( "Behaviour", no_init )
-        // .def( "__init__", make_constructor(
+void exportBehaviourToPython() {
+
+    py::class_< BehaviourInstance, BehaviourPtr >( "Behaviour", py::no_init )
+        // .def( "__init__", py::make_constructor(
         //     &initFactoryPtr< BehaviourInstance >) )
-        .def( "__init__", make_constructor(&initFactoryPtr< BehaviourInstance, int >))
-        .def( "__init__", make_constructor(&initFactoryPtr< BehaviourInstance, int, int >));
+        .def( "__init__", py::make_constructor(&initFactoryPtr< BehaviourInstance, int >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< BehaviourInstance, int, int >));
 };

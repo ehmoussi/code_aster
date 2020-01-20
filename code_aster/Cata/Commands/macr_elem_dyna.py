@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,9 @@
 
 # person_in_charge: mathieu.corus at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
                     fr=tr("Definition d'un macro element pour analyse modale ou harmonique par sous structuration dynamique"),
@@ -30,7 +29,7 @@ MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
          regles=(
                  # AMOR_REDUIT et MATR_AMOR sont redondants
                  EXCLUS('MATR_AMOR','AMOR_REDUIT' ),
-                 
+
                  # Si MODELE_MESURE, on ne rentre pas de donnees pour le calcul
                  EXCLUS('MODELE_MESURE','MATR_RIGI' ),
                  EXCLUS('MODELE_MESURE','MATR_MASS' ),
@@ -40,7 +39,7 @@ MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
                  EXCLUS('MODELE_MESURE','MATR_IMPE_RIGI' ),
                  EXCLUS('MODELE_MESURE','MATR_IMPE_MASS' ),
                  EXCLUS('MODELE_MESURE','MATR_IMPE_AMOR' ),
-                 
+
                  PRESENT_ABSENT('MATR_IMPE','MATR_IMPE_RIGI'),
                  PRESENT_ABSENT('MATR_IMPE','MATR_IMPE_MASS'),
                  PRESENT_ABSENT('MATR_IMPE','MATR_IMPE_AMOR'),
@@ -52,7 +51,7 @@ MACR_ELEM_DYNA=OPER(nom="MACR_ELEM_DYNA",op=  81,sd_prod=macr_elem_dyna,
          MATR_RIGI       =SIMP(statut='f',typ=(matr_asse_depl_r,matr_asse_depl_c),),
          MATR_MASS       =SIMP(statut='f',typ=matr_asse_depl_r ),
          MATR_AMOR       =SIMP(statut='f',typ=matr_asse_depl_r ),
-         AMOR_REDUIT     =SIMP(statut='f',typ='R',max='**'), 
+         AMOR_REDUIT     =SIMP(statut='f',typ='R',max='**'),
          SANS_GROUP_NO   =SIMP(statut='f',typ=grno ),
          MATR_IMPE       =SIMP(statut='f',typ=matr_asse_gene_c ),
          MATR_IMPE_RIGI  =SIMP(statut='f',typ=matr_asse_gene_c ),

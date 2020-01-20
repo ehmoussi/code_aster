@@ -3,7 +3,7 @@
  * @brief Interface python de FiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,15 +24,16 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
-#include <PythonBindings/factory.h>
+
+namespace py = boost::python;
 #include "PythonBindings/FiniteElementDescriptorInterface.h"
+#include <PythonBindings/factory.h>
 
 void exportFiniteElementDescriptorToPython() {
-    using namespace boost::python;
 
-    class_< FiniteElementDescriptorInstance,
-            FiniteElementDescriptorInstance::FiniteElementDescriptorPtr, bases< DataStructure > >(
-        "FiniteElementDescriptor", no_init )
+    py::class_< FiniteElementDescriptorInstance,
+                FiniteElementDescriptorInstance::FiniteElementDescriptorPtr,
+                py::bases< DataStructure > >( "FiniteElementDescriptor", py::no_init )
 // fake initFactoryPtr: not directly created by user
 // fake initFactoryPtr: not directly created by user
 #ifdef _USE_MPI

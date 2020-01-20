@@ -2,7 +2,7 @@
 
 from code_aster.Cata.Syntax import _F
 from code_aster.Commands import CALC_TABLE, DETRUIRE, FORMULE, TEST_TABLE
-from Contrib.testcomp_utils import relative_error
+from code_aster.MacroCommands.Utils.testcomp_utils import relative_error
 
 
 def TEST_ECART(ch_param2, label_cal, N_pas, Ncal, nbequi, R_SI, prec_ecart, prec_zero, coef_para):

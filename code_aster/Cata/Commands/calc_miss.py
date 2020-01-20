@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_miss_sdprod(self, TYPE_RESU, **kwargs):
@@ -41,7 +41,7 @@ def calc_miss_sdprod(self, TYPE_RESU, **kwargs):
         return None
 
 CALC_MISS = MACRO(nom="CALC_MISS",
-                  op=OPS('Macro.calc_miss_ops.calc_miss_ops'),
+                  op=OPS('code_aster.MacroCommands.calc_miss_ops.calc_miss_ops'),
                   sd_prod=calc_miss_sdprod,
                   fr=tr("Préparation des données, exécution du logiciel Miss3D, et post-traitement"),
                   regles=(EXCLUS('TABLE_SOL', 'MATER_SOL'),),

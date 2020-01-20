@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 
 import aster
 from libaster import Table
+from .table_py import Table as TablePy
 
 from ..Utilities import injector
 
@@ -92,7 +93,6 @@ class ExtendedTable(object):
                 return None
             else:
                 return l1
-        from Utilitai.Table import Table
         # titre
         titr = self.TITRE()
         # récupération des paramètres
@@ -100,7 +100,7 @@ class ExtendedTable(object):
         v_tblp = self.sdj.TBLP.get()
         if v_tblp == None:
             # retourne une table vide
-            return Table(titr=titr, nom=self.getName())
+            return TablePy(titr=titr, nom=self.getName())
         tabnom=list(v_tblp)
         nparam=len(tabnom) // 4
         lparam=[tabnom[4*i:4*i+4] for i in range(nparam)]
@@ -132,7 +132,7 @@ class ExtendedTable(object):
             for p in lpar:
                d[p]=dval[p][i]
             lisdic.append(d)
-        return Table(lisdic, lpar, ltyp, titr, self.getName())
+        return TablePy(lisdic, lpar, ltyp, titr, self.getName())
 
     def Valeurs(self):
         """

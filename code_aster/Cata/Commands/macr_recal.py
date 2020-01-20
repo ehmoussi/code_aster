@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: thomas.de-soza at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macr_recal_prod(self,**args ):
@@ -32,7 +32,7 @@ def macr_recal_prod(self,**args ):
     return listr8_sdaster
 
 MACR_RECAL = MACRO(nom="MACR_RECAL",
-                   op=OPS('Macro.macr_recal_ops.macr_recal_ops'),
+                   op=OPS('code_aster.MacroCommands.macr_recal_ops.macr_recal_ops'),
                    sd_prod=macr_recal_prod,
                    fr=tr("Réalise le recalage des calculs Aster sur des résultats expérimentaux "
                         "ou sur d'autres résultats de calculs"),

@@ -3,7 +3,7 @@
  * @brief Interface python de InputVariableEvolutionContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,15 +25,16 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportInputVariableEvolutionContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< InputVariableEvolutionContainerInstance, InputVariableEvolutionContainerPtr,
-            bases< TimeDependantResultsContainerInstance > >( "InputVariableEvolutionContainer",
-                                                              no_init )
+void exportInputVariableEvolutionContainerToPython() {
+
+    py::class_< InputVariableEvolutionContainerInstance, InputVariableEvolutionContainerPtr,
+            py::bases< TimeDependantResultsContainerInstance > >( "InputVariableEvolutionContainer",
+                                                              py::no_init )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< InputVariableEvolutionContainerInstance > ) )
+              py::make_constructor( &initFactoryPtr< InputVariableEvolutionContainerInstance > ) )
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< InputVariableEvolutionContainerInstance, std::string > ) );
 };

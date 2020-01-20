@@ -25,7 +25,7 @@
 #include "aster.h"
 #include "asterc_debug.h"
 #include "aster_module.h"
-#include "RunManager/Exceptions.h"
+#include "Supervis/Exceptions.h"
 
 #define FatalError 18   /* kept for backward compatibility only */
 #define EOFError   19
@@ -53,14 +53,12 @@
                             return NULL
 
 /*
- *   PUBLIC FUNCTIONS
+ *   PUBLIC ATTRS
  *
  */
 extern int gExcLvl;
 extern int gExcNumb;
 extern jmp_buf gExcEnv[NIVMAX+1];
-
-extern void initExceptions(PyObject *dict);
 
 /*
  *   PRIVATE/HIDDEN FUNCTIONS

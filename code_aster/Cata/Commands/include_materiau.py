@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,12 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 INCLUDE_MATERIAU = MACRO(nom="INCLUDE_MATERIAU",
-                         op=OPS("Macro.include_materiau_ops.include_materiau_ops"),
+                         op=OPS("code_aster.MacroCommands.include_materiau_ops.include_materiau_ops"),
                          sd_prod=mater_sdaster,
             fr=tr("Récupérer les caractéristiques d'un matériau dans le Catalogue Materiaux d'Aster "),
             regles=(UN_PARMI('NOM_AFNOR', 'FICHIER'),

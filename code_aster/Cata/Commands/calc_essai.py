@@ -20,9 +20,9 @@
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_essai_prod(self,RESU_IDENTIFICATION,
@@ -60,7 +60,7 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
 
 
 CALC_ESSAI = MACRO(nom       = 'CALC_ESSAI',
-                   op        = OPS('Macro.calc_essai_ops.calc_essai_ops'),
+                   op        = OPS('code_aster.MacroCommands.calc_essai_ops.calc_essai_ops'),
                    sd_prod   = calc_essai_prod,
                    reentrant = 'n',
                    fr        = tr("Outil de post-traitement pour Meidee "),

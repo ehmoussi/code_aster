@@ -32,14 +32,11 @@ extern "C" {
  *
  */
 
-/*! Register the CoreOptions object as a global variable */
-extern void register_sh_coreopts(PyObject *);
+/*! Register the ExecutionParameter object as a global variable */
+extern void register_sh_params(PyObject *);
 
 /*! Register the MessageLog object as a global variable */
 extern void register_sh_msglog(PyObject *);
-
-/*! Register the aster_core module as a global variable */
-extern void register_sh_pymod(PyObject *);
 
 /*! Register the current 'etape' object as a global variable */
 extern void register_sh_etape(PyObject *);
@@ -47,14 +44,11 @@ extern void register_sh_etape(PyObject *);
 /*! Register the status of jeveux */
 extern void register_sh_jeveux_status(int);
 
-/*! Return the global CoreOptions object */
-extern PyObject * get_sh_coreopts();
+/*! Return the global ExecutionParameter object */
+extern PyObject * get_sh_params();
 
 /*! Return the global MessageLog object */
 extern PyObject * get_sh_msglog();
-
-/*! Return the global aster_core python module */
-extern PyObject * get_sh_pymod();
 
 /*! Return the current 'etape' object */
 extern PyObject * get_sh_etape();

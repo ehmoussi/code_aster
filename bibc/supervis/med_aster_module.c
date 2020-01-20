@@ -83,7 +83,7 @@ static PyMethodDef methods[] = {
     { NULL, NULL, 0, NULL }
 };
 
-static struct PyModuleDef moduledef = {
+static struct PyModuleDef med_aster_def = {
         PyModuleDef_HEAD_INIT,
         "med_aster",
         NULL,
@@ -98,7 +98,7 @@ static struct PyModuleDef moduledef = {
 #ifndef _WITHOUT_PYMOD_
 PyObject* PyInit_med_aster(void)
 {
-    PyObject* med_aster = PyModule_Create(&moduledef);
+    PyObject* med_aster = PyModule_Create(&med_aster_def);
     return med_aster;
 }
 #endif

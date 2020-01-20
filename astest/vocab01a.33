@@ -4,16 +4,13 @@
 
 import os
 import tempfile
+import types
 
-from code_aster.Cata.Syntax import *
 from code_aster.Cata.Language.SyntaxObjects import IDS
-from code_aster.Cata.Language.SyntaxUtils import force_list
-from code_aster.Commands.ExecuteCommand import UserMacro
-from code_aster.Supervis import logger
-
-
-from Noyau.N_ETAPE import check_sdprod
-from Noyau.N_CR import CR
+from code_aster.Cata.Language.SyntaxUtils import add_none_sdprod
+from code_aster.Cata.Syntax import *
+from code_aster.Supervis.ExecuteCommand import UserMacro
+from code_aster.Utilities import CR, force_list, logger
 
 
 class CataChecker:
@@ -234,7 +231,7 @@ def checkDefinition( commands ):
             # print str(cr)
             # raise TypeError("La vérification du catalogue a échoué pour '{0}'"\
             #                 .format(cmd.name))
-        cr = check_sd_prod(cmd)
+        cr = check_sdprod_safe(cmd)
         if cr:
             err.append([cmd.name, str(cr)])
 
@@ -246,7 +243,57 @@ def checkDefinition( commands ):
                         .format(len(err), len(commands)))
     print("    ok\n")
 
-def check_sd_prod(cmd):
+def check_sdprod(command, func_prod, sd_prod, verbose=True):
+    """Check that 'sd_prod' is type allowed by the function 'func_prod'
+    with '__all__' argument.
+    """
+    def _name(class_):
+        return getattr(class_, '__name__', class_)
+
+    if type(func_prod) != types.FunctionType:
+        return
+
+    cr = CR()
+    args = {}
+    add_none_sdprod(func_prod, args)
+    args['__all__'] = True
+    # eval sd_prod with __all__=True + None for other arguments
+    try:
+        allowed = force_list(func_prod(*(), **args))
+        islist = [isinstance(i, (list, tuple)) for i in allowed]
+        if True in islist:
+            if False in islist:
+                cr.fatal("Error: {0}: for macro-commands, each element must "
+                        "be a list of possible types for each result"
+                        .format(command))
+            else:
+                # can not know which occurrence should be tested
+                allowed = tuple(set().union(*allowed))
+        allowed = tuple(set().union(*[subtypes(i) for i in allowed]))
+        if sd_prod and sd_prod not in allowed:
+            cr.fatal("Error: {0}: type '{1}' is not in the list returned "
+                     "by the 'sd_prod' function with '__all__=True': {2}"
+                     .format(command, _name(sd_prod),
+                             [_name(i) for i in allowed]))
+    except Exception as exc:
+        print("Error: {0}".format(exc))
+        cr.fatal("Error: {0}: the 'sd_prod' function must support "
+                 "the '__all__=True' argument".format(command))
+    if not cr.estvide():
+        if verbose:
+            print(str(cr))
+        raise TypeError(str(cr))
+
+def subtypes(cls):
+    """Return subclasses of 'cls'."""
+    types = [cls]
+    if not cls:
+        return types
+    for subclass in cls.__subclasses__():
+        types.extend(subtypes(subclass))
+    return types
+
+def check_sdprod_safe(cmd):
     """Check sd_prod function."""
     try:
         check_sdprod(cmd.name, getattr(cmd, 'sd_prod', None),
@@ -329,7 +376,7 @@ def printKeywordsUsage( commands, fileList=None ):
 def vocab01_ops(self, EXISTANT, INFO, **kwargs):
     """Fake macro-command to check the catalog"""
     from code_aster.Commands import CREA_TABLE, TEST_TABLE
-    from Utilitai.Utmess import UTMESS
+    from code_aster.Messages import UTMESS
 
     # start the job
     commands = getListOfCommands()

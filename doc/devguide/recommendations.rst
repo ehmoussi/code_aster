@@ -122,12 +122,12 @@ Macro-Commands
 Legacy Macro-commands do not work as is.
 
 #. There is no need to define an executor manually.
-   Default :class:`~code_aster.Commands.ExecuteCommand.ExecuteMacro` is just
+   Default :class:`~code_aster.Supervis.ExecuteCommand.ExecuteMacro` is just
    adapted by :mod:`code_aster.Commands.operator` using the right catalog
    description.
 
 #. The body of the macro-command, the ``ops()`` function, is automatically
-   called by the :meth:`~code_aster.Commands.ExecuteCommand.ExecuteMacro.run`
+   called by the :meth:`~code_aster.Supervis.ExecuteCommand.ExecuteMacro.run`
    factory.
 
 #. Results of macro-commands are created directly by the ``ops()`` function
@@ -143,7 +143,7 @@ official ones). A convenient function allows to easily define this executor:
 
 .. code-block:: python
 
-    from code_aster.Commands.ExecuteCommand import UserMacro
+    from code_aster.Supervis.ExecuteCommand import UserMacro
     MA_MACRO = UserMacro("MA_MACRO", MA_MACRO_cata, ma_macro_ops)
 
 
@@ -193,12 +193,12 @@ Required changes
   Temporarly one can use ``POUTRE = ListFact(POUTRE)`` not to change the code
   and let ``POUTRE.List_F()`` with a dummy ``.List_F()`` function that does nothing.
 
-- Usage of logical units: See :mod:`code_aster.RunManager.LogicalUnit`.
+- Usage of logical units: See :mod:`code_aster.Helpers.LogicalUnit`.
 
 - Additional results (**CO()** objects):
 
   They must be registered with
-  :meth:`~code_aster.Commands.ExecuteCommand.ExecuteMacro.register_result`.
+  :meth:`~code_aster.Supervis.ExecuteCommand.ExecuteMacro.register_result`.
   It replaces *DeclareOut()* but must be called **after** the result creation.
 
   .. code-block:: diff

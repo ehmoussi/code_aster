@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def crea_elem_ssd_prod(self,NUME_DDL,**args):
@@ -34,7 +34,7 @@ def crea_elem_ssd_prod(self,NUME_DDL,**args):
     return macr_elem_dyna
 
 CREA_ELEM_SSD=MACRO(nom="CREA_ELEM_SSD",
-                    op=OPS('Macro.crea_elem_ssd_ops.crea_elem_ssd_ops'),
+                    op=OPS('code_aster.MacroCommands.crea_elem_ssd_ops.crea_elem_ssd_ops'),
                     sd_prod=crea_elem_ssd_prod,
                     reentrant='n',
                     fr=tr("Creation de macro-element dynamique en enchainant les commandes : "

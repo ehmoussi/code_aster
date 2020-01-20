@@ -11,7 +11,7 @@ test = code_aster.TestCase()
 # calling DEBUT/init another time must not fail
 DEBUT()
 
-from code_aster.Supervis.ExecutionParameter import ExecutionParameter
+from code_aster.Utilities.ExecutionParameter import ExecutionParameter
 params = ExecutionParameter()
 
 test.assertEqual( params.get_option('hostname'), platform.node())

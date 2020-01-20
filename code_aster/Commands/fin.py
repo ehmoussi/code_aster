@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@
 
 import libaster
 
-from ..RunManager import saveObjects
-from ..Supervis import ExecutionParameter, logger
-from .ExecuteCommand import ExecuteCommand
+from ..Helpers import saveObjects
+from ..Supervis import ExecuteCommand
+from ..Utilities import ExecutionParameter, logger
 
 
 class Closer(ExecuteCommand):

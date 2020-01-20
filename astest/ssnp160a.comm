@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,18 +19,22 @@
 
 # person_in_charge: emricka.julan at edf.fr
 
+from math import sqrt
+
+import numpy as NP
+
+from code_aster.Commands import *
+from code_aster.MacroCommands.Contrib.diffusion_H2 import (CHAMP_DETOILE,
+                                                           CHAR_GRAD_IMPO,
+                                                           CHAR_GRAD_INI,
+                                                           CHAR_SOURCE)
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',));
 
 ##############
 # appel du fichier contenant la macro de calcul du chargement pour la diffusion H2
 ##############
 
-from Contrib.diffusion_H2 import CHAR_SOURCE
-from Contrib.diffusion_H2 import CHAMP_DETOILE
-from Contrib.diffusion_H2 import CHAR_GRAD_IMPO
-from Contrib.diffusion_H2 import CHAR_GRAD_INI
-import numpy as NP
-from math import sqrt
 
 #......................................................................
 # PLAQUE CARREE 2D CONTRAINTES PLANES

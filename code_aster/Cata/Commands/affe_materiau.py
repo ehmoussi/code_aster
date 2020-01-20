@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mickael.abbas at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
                    fr=tr("Affecter des matériaux à des zones géométriques d'un maillage"),
@@ -216,6 +216,6 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
             "AFFE_VARC": "External state variable assignement",
             "NOM_VARC": "External state variable" ,
             "NOM_CHAM": "Field name",
-            "TOUT": "Everywhere",    
+            "TOUT": "Everywhere",
          }
 )  ;

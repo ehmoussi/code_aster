@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from .ExecuteCommand import ExecuteCommand
+from ..Supervis import ExecuteCommand
 
 
 class ModiRepere(ExecuteCommand):

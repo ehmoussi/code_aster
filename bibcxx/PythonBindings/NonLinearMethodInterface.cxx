@@ -3,7 +3,7 @@
  * @brief Interface python de NonLinearMethod
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,27 +25,28 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportNonLinearMethodToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    enum_< NonLinearMethodEnum >( "NonLinearMethodEnum" )
+void exportNonLinearMethodToPython() {
+
+    py::enum_< NonLinearMethodEnum >( "NonLinearMethodEnum" )
         .value( "NewtonMethod", NewtonMethod )
         .value( "Implex", Implex )
         .value( "NewtonKrylov", NewtonKrylov );
 
-    enum_< PredictionEnum >( "PredictionEnum" )
+    py::enum_< PredictionEnum >( "PredictionEnum" )
         .value( "Tangente", Tangente )
         .value( "Elastique", Elastique )
         .value( "Extrapole", Extrapole )
         .value( "DeplCalcule", DeplCalcule );
 
-    enum_< MatrixEnum >( "MatrixEnum" ).value( "MatriceTangente", MatriceTangente ).value(
+    py::enum_< MatrixEnum >( "MatrixEnum" ).value( "MatriceTangente", MatriceTangente ).value(
         "MatriceElastique", MatriceElastique );
 
-    class_< NonLinearMethodInstance, NonLinearMethodPtr >( "NonLinearMethod", no_init )
+    py::class_< NonLinearMethodInstance, NonLinearMethodPtr >( "NonLinearMethod", py::no_init )
         // fake initFactoryPtr: not a DataStructure
         .def( "__init__",
-              make_constructor(&initFactoryPtr< NonLinearMethodInstance, NonLinearMethodEnum >))
+              py::make_constructor(&initFactoryPtr< NonLinearMethodInstance, NonLinearMethodEnum >))
         .def( "setPrediction", &NonLinearMethodInstance::setPrediction )
         .def( "setMatrix", &NonLinearMethodInstance::setMatrix )
         .def( "forceStiffnessSymetry", &NonLinearMethodInstance::forceStiffnessSymetry );

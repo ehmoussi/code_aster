@@ -3,7 +3,7 @@
  * @brief Interface python de FluidStructureModalBasis
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,16 +24,17 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 
 #include <boost/python.hpp>
-#include <PythonBindings/factory.h>
+
+namespace py = boost::python;
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
+#include <PythonBindings/factory.h>
 
 void exportFluidStructureModalBasisToPython() {
-    using namespace boost::python;
 
-    class_< FluidStructureModalBasisInstance,
-            FluidStructureModalBasisInstance::FluidStructureModalBasisPtr, bases< DataStructure > >(
-        "FluidStructureModalBasis", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance >))
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance, std::string >));
+    py::class_< FluidStructureModalBasisInstance,
+                FluidStructureModalBasisInstance::FluidStructureModalBasisPtr,
+                py::bases< DataStructure > >( "FluidStructureModalBasis", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< FluidStructureModalBasisInstance, std::string >));
 };

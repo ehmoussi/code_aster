@@ -3,7 +3,7 @@
  * @brief Interface python de PrestressingCableDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,18 +25,19 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportPrestressingCableDefinitionToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< PrestressingCableDefinitionInstance,
+void exportPrestressingCableDefinitionToPython() {
+
+    py::class_< PrestressingCableDefinitionInstance,
             PrestressingCableDefinitionInstance::PrestressingCableDefinitionPtr,
-            bases< DataStructure > >( "PrestressingCableDefinition", no_init )
+            py::bases< DataStructure > >( "PrestressingCableDefinition", py::no_init )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< PrestressingCableDefinitionInstance,
+              py::make_constructor( &initFactoryPtr< PrestressingCableDefinitionInstance,
                                                  const ModelPtr &, const MaterialOnMeshPtr &,
                                                  const ElementaryCharacteristicsPtr & > ) )
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< PrestressingCableDefinitionInstance, std::string,
                                    const ModelPtr &, const MaterialOnMeshPtr &,
                                    const ElementaryCharacteristicsPtr & > ) )

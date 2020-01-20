@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@
 
 D = 0.040 # Tube diameter  = 4 cm
 t = 0.005 # Tube thickness = 5 mm
+
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
 
 DEBUT( CODE=_F(NIV_PUB_WEB='INTRANET'),DEBUG=_F(SDVERI='NON'))
 
@@ -123,12 +126,11 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=226.3914026606,
                         FONCTION=FREQ1_AC,),
               )
 
-import aster_core
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""
     import os.path as osp
-    rcdir = aster_core.get_option('rcdir')
+    rcdir = ExecutionParameter().get_option('rcdir')
     return osp.join(rcdir, 'tests_data', theFile)
 
 spec = includeExternalData('sdll152e.msup')

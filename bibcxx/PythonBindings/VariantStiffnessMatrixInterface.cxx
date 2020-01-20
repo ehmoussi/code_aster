@@ -3,7 +3,7 @@
  * @brief Interface python de MechanicalModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,17 +26,18 @@
 #include <boost/python.hpp>
 #include <boost/variant.hpp>
 
+namespace py = boost::python;
+
 void exportStiffnessMatrixVariantToPython()
 {
-    using namespace boost::python;
 
-    to_python_converter< MatrixVariant, variant_to_object >();
-    implicitly_convertible< AssemblyMatrixDisplacementDoublePtr, MatrixVariant >();
-    implicitly_convertible< AssemblyMatrixDisplacementComplexPtr, MatrixVariant >();
-    implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
-    implicitly_convertible< AssemblyMatrixPressureDoublePtr, MatrixVariant >();
+    py::to_python_converter< MatrixVariant, variant_to_object >();
+    py::implicitly_convertible< AssemblyMatrixDisplacementDoublePtr, MatrixVariant >();
+    py::implicitly_convertible< AssemblyMatrixDisplacementComplexPtr, MatrixVariant >();
+    py::implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
+    py::implicitly_convertible< AssemblyMatrixPressureDoublePtr, MatrixVariant >();
 
-    to_python_converter< GeneralizedMatrixVariant, variant_to_object >();
-    implicitly_convertible< GeneralizedAssemblyMatrixDoublePtr, GeneralizedMatrixVariant >();
-    implicitly_convertible< GeneralizedAssemblyMatrixComplexPtr, GeneralizedMatrixVariant >();
+    py::to_python_converter< GeneralizedMatrixVariant, variant_to_object >();
+    py::implicitly_convertible< GeneralizedAssemblyMatrixDoublePtr, GeneralizedMatrixVariant >();
+    py::implicitly_convertible< GeneralizedAssemblyMatrixComplexPtr, GeneralizedMatrixVariant >();
 };

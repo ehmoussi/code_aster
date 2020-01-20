@@ -3,7 +3,7 @@
  * @brief Interface python de State
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,8 +25,9 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportStateToPython() {
-    using namespace boost::python;
 
     void ( StateInstance::*c1 )( const NonLinearEvolutionContainerPtr &, double, double ) =
         &StateInstance::setFromNonLinearEvolution;
@@ -35,10 +36,11 @@ void exportStateToPython() {
     void ( StateInstance::*c4 )( const NonLinearEvolutionContainerPtr & ) =
         &StateInstance::setFromNonLinearEvolution;
 
-    class_< StateInstance, StatePtr >( "State", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER, double >))
-        .def( "__init__", make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER >))
-        .def( "__init__", make_constructor(&initFactoryPtr< StateInstance, double >))
+    py::class_< StateInstance, StatePtr >( "State", py::no_init )
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER, double >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StateInstance, double >))
         .def( "setFromNonLinearEvolution", c1 )
         .def( "setFromNonLinearEvolution", c3 )
         .def( "setFromNonLinearEvolution", c4 )

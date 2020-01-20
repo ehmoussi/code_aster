@@ -3,7 +3,7 @@
  * @brief Interface python de DynamicMacroElement
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,8 +25,9 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportDynamicMacroElementToPython() {
-    using namespace boost::python;
 
     bool ( DynamicMacroElementInstance::*c1 )(
         const AssemblyMatrixDisplacementComplexPtr &matrix ) =
@@ -34,11 +35,11 @@ void exportDynamicMacroElementToPython() {
     bool ( DynamicMacroElementInstance::*c2 )( const AssemblyMatrixDisplacementDoublePtr &matrix ) =
         &DynamicMacroElementInstance::setStiffnessMatrix;
 
-    class_< DynamicMacroElementInstance, DynamicMacroElementInstance::DynamicMacroElementPtr,
-            bases< DataStructure > >( "DynamicMacroElement", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< DynamicMacroElementInstance >))
+    py::class_< DynamicMacroElementInstance, DynamicMacroElementInstance::DynamicMacroElementPtr,
+            py::bases< DataStructure > >( "DynamicMacroElement", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DynamicMacroElementInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< DynamicMacroElementInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< DynamicMacroElementInstance, std::string >))
         .def( "getDampingMatrix", &DynamicMacroElementInstance::getDampingMatrix )
         .def( "getDOFNumbering", &DynamicMacroElementInstance::getDOFNumbering )
         .def( "getImpedanceDampingMatrix",

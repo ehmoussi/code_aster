@@ -3,7 +3,7 @@
  * @brief Interface python de Material
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -22,18 +22,19 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/MaterialInterface.h"
 
 void exportMaterialToPython() {
-    using namespace boost::python;
 
-    class_< MaterialInstance, MaterialInstance::MaterialPtr, bases< DataStructure > >( "Material",
-                                                                                       no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< MaterialInstance, std::string,
-                                                            VectorInt >))
+    py::class_< MaterialInstance, MaterialInstance::MaterialPtr, py::bases< DataStructure > >(
+        "Material", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance, std::string >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< MaterialInstance, std::string, VectorInt >))
         .def( "addMaterialBehaviour", &MaterialInstance::addMaterialBehaviour )
         .def( "build", &MaterialInstance::build )
         .def( "getNumberOfListOfDoubleProperties",

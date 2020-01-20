@@ -3,7 +3,7 @@
  * @brief Interface python de FieldOnElements
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,18 +24,19 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/FieldOnElementsInterface.h"
 
 void exportFieldOnElementsToPython() {
-    using namespace boost::python;
-    class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
-            bases< GenericDataFieldInstance > >( "FieldOnElementsDouble", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FieldOnElementsDoubleInstance >))
+    py::class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
+            py::bases< GenericDataFieldInstance > >( "FieldOnElementsDouble", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnElementsDoubleInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< FieldOnElementsDoubleInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< FieldOnElementsDoubleInstance, std::string >))
         .def( "exportToSimpleFieldOnElements",
               &FieldOnElementsDoubleInstance::exportToSimpleFieldOnElements )
         .def( "getModel", &FieldOnElementsDoubleInstance::getModel )
