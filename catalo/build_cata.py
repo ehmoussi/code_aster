@@ -26,9 +26,15 @@ included in all catalogs.
 """
 
 import builtins
+import optparse
 import os
 import os.path as osp
 import shutil
+
+from cataelem import __DEBUG_ELEMENTS__
+from cataelem.elem import CataElem
+from cataelem.Tools.build_jeveux import impr_cata
+
 
 # avoid importing code_aster because not required during this phase
 def translate(string):
@@ -40,10 +46,7 @@ builtins._ = translate
 
 def build(target, debug, *args):
     """Create the jeveux object of the catalog"""
-    from cataelem.elem import CataElem
-    from cataelem.Tools.build_jeveux import impr_cata
     if args:
-        from cataelem import __DEBUG_ELEMENTS__
         __DEBUG_ELEMENTS__.extend(args)
     cel = CataElem()
     cel.build()
@@ -59,7 +62,6 @@ def build(target, debug, *args):
 
 
 if __name__ == '__main__':
-    import optparse
     parser = optparse.OptionParser(usage=__doc__)
     parser.add_option('-g', '--debug', action='store_true',
                       help='enable debugging')

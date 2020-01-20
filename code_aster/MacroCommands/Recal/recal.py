@@ -97,7 +97,7 @@ def find_parameter(content, param):
     """
     Supprime les parametres du fichier de commande
     """
-    re_start = re.compile('^ *%s *\=' % re.escape(param), re.M)
+    re_start = re.compile('^ *%s *=' % re.escape(param), re.M)
     l = []
     for line in content.split('\n'):
         mat_start = re_start.search(line)
@@ -969,7 +969,7 @@ class CALCULS_ASTER:
             pass
 
         pos, endpos = -1, -1
-        re_start = re.compile('^ *%s *\=' % re.escape(param), re.M)
+        re_start = re.compile('^ *%s *=' % re.escape(param), re.M)
         mat_start = re_start.search(content)
         if mat_start is not None:
             pos = mat_start.start()
@@ -983,7 +983,7 @@ class CALCULS_ASTER:
         """
         Supprime les parametres du fichier de commande
         """
-        re_start = re.compile('^ *%s *\=' % re.escape(param), re.M)
+        re_start = re.compile('^ *%s *=' % re.escape(param), re.M)
         l = []
         for line in content.split('\n'):
             mat_start = re_start.search(line)
