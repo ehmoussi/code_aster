@@ -38,7 +38,7 @@ from ...Supervis import CO
 from .cata_ce import DynaHarmo, Resultat
 
 
-def extract_mac_array(mac_mode, nom_table):
+def extract_mac_array(mac_mode, nom_table="MAC"):
     """!Reconstruit un tableau numpy de modes MAC
 
     /param mac_mode concept Table aster

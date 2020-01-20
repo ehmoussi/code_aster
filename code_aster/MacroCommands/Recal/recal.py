@@ -998,7 +998,15 @@ class CALCULS_ASTER:
         """
            Ajoute un bloc a la fin de l'esclave pour l'affichage des MAC pour l'appariement manuel
         """
-        txt = ["# MAC: does not supported anymore!"]
+        txt = []
+        txt.append( "import code_aster" )
+        txt.append( "from code_aster.MacroCommands.CalcEssai.ce_calcul_expansion import extract_mac_array" )
+        txt.append( "_mac = extract_mac_array("+str(reponse[0])+")" )
+        txt.append( "l_mac=[]" )
+        txt.append( "nb_freq=_mac.shape[1]" )
+        txt.append( "for i in range(nb_freq): l_mac.append(_mac[i,i])" )
+        txt.append( "DETRUIRE(CONCEPT=_F(NOM="+str(reponse[0])+"),)" )
+        txt.append( str(reponse[0]) + "=CREA_TABLE(LISTE=(_F(PARA='NUME_ORDRE',LISTE_I=list(range(1,nb_freq+1)),),_F(PARA='MAC',LISTE_R=l_mac,),),)" )
         return '\n'.join(txt)
 
 
