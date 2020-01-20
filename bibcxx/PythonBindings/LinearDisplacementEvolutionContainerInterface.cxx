@@ -3,7 +3,7 @@
  * @brief Interface python de LinearDisplacementEvolutionContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,14 +25,16 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportLinearDisplacementEvolutionContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< LinearDisplacementEvolutionContainerInstance, LinearDisplacementEvolutionContainerPtr,
-            bases< ResultsContainerInstance > >( "LinearDisplacementEvolutionContainer", no_init )
+void exportLinearDisplacementEvolutionContainerToPython() {
+
+    py::class_< LinearDisplacementEvolutionContainerInstance,
+                LinearDisplacementEvolutionContainerPtr, py::bases< ResultsContainerInstance > >(
+        "LinearDisplacementEvolutionContainer", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< LinearDisplacementEvolutionContainerInstance >))
+              py::make_constructor(&initFactoryPtr< LinearDisplacementEvolutionContainerInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< LinearDisplacementEvolutionContainerInstance, std::string >));
 };

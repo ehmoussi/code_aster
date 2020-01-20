@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def proj_base_prod(self,MATR_ASSE_GENE,VECT_ASSE_GENE,
@@ -49,7 +49,7 @@ def proj_base_prod(self,MATR_ASSE_GENE,VECT_ASSE_GENE,
   return None
 
 PROJ_BASE=MACRO(nom="PROJ_BASE",
-                op=OPS('Macro.proj_base_ops.proj_base_ops'),
+                op=OPS('code_aster.MacroCommands.proj_base_ops.proj_base_ops'),
                 regles=(AU_MOINS_UN('MATR_ASSE_GENE','VECT_ASSE_GENE','RESU_GENE')),
                 sd_prod=proj_base_prod,
          fr=tr("Projection des matrices et/ou vecteurs assembles sur une base (modale ou de RITZ)"),

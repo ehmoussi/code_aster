@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -18,9 +18,10 @@
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
 # person_in_charge: mathieu.courtois@edf.fr
-from ..Objects import Function, FunctionComplex, Formula, Surface
+
+from ..Objects import Formula, Function, FunctionComplex, Surface
+from ..Supervis import ExecuteCommand
 from ..Utilities import compat_listr8
-from .ExecuteCommand import ExecuteCommand
 
 
 class FunctionInterpolation(ExecuteCommand):

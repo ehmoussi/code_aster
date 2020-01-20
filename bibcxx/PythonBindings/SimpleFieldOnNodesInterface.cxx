@@ -3,7 +3,7 @@
  * @brief Interface python de SimpleFieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,26 +24,28 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
 
 void exportSimpleFieldOnNodesToPython() {
-    using namespace boost::python;
-    class_< SimpleFieldOnNodesDoubleInstance, SimpleFieldOnNodesDoublePtr, bases< DataStructure > >(
-        "SimpleFieldOnNodesDouble", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< SimpleFieldOnNodesDoubleInstance >))
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< SimpleFieldOnNodesDoubleInstance, std::string >))
+    py::class_< SimpleFieldOnNodesDoubleInstance, SimpleFieldOnNodesDoublePtr,
+                py::bases< DataStructure > >( "SimpleFieldOnNodesDouble", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesDoubleInstance >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< SimpleFieldOnNodesDoubleInstance, std::string >))
         .def( "getValue", &SimpleFieldOnNodesDoubleInstance::getValue,
-              return_value_policy< return_by_value >() )
+              py::return_value_policy< py::return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnNodesDoubleInstance::updateValuePointers );
-    class_< SimpleFieldOnNodesComplexInstance, SimpleFieldOnNodesComplexPtr,
-            bases< DataStructure > >( "SimpleFieldOnNodesComplex", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< SimpleFieldOnNodesComplexInstance >))
+    py::class_< SimpleFieldOnNodesComplexInstance, SimpleFieldOnNodesComplexPtr,
+                py::bases< DataStructure > >( "SimpleFieldOnNodesComplex", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< SimpleFieldOnNodesComplexInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesComplexInstance >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< SimpleFieldOnNodesComplexInstance, std::string >))
         .def( "getValue", &SimpleFieldOnNodesComplexInstance::getValue,
-              return_value_policy< return_by_value >() )
+              py::return_value_policy< py::return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnNodesComplexInstance::updateValuePointers );
 };

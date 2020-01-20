@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedAssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,41 +29,42 @@
 #include <PythonBindings/factory.h>
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportGeneralizedAssemblyMatrixToPython() {
-    using namespace boost::python;
 
-    bool ( GenericGeneralizedAssemblyMatrixInstance::*c1 )( const MechanicalModeContainerPtr& ) =
+    bool ( GenericGeneralizedAssemblyMatrixInstance::*c1 )( const MechanicalModeContainerPtr & ) =
         &GenericGeneralizedAssemblyMatrixInstance::setModalBasis;
-    bool ( GenericGeneralizedAssemblyMatrixInstance::*c2 )( const GeneralizedModeContainerPtr& ) =
+    bool ( GenericGeneralizedAssemblyMatrixInstance::*c2 )( const GeneralizedModeContainerPtr & ) =
         &GenericGeneralizedAssemblyMatrixInstance::setModalBasis;
 
-    class_< GenericGeneralizedAssemblyMatrixInstance, GenericGeneralizedAssemblyMatrixPtr,
-            bases< DataStructure > >( "GeneralizedAssemblyMatrix", no_init )
+    py::class_< GenericGeneralizedAssemblyMatrixInstance, GenericGeneralizedAssemblyMatrixPtr,
+                py::bases< DataStructure > >( "GeneralizedAssemblyMatrix", py::no_init )
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
         .def( "getGeneralizedDOFNumbering",
               &GenericGeneralizedAssemblyMatrixInstance::getGeneralizedDOFNumbering )
-        .def( "getModalBasis", &getModalBasis< GenericGeneralizedAssemblyMatrixPtr > )
+        .def("getModalBasis", &getModalBasis< GenericGeneralizedAssemblyMatrixPtr >)
         .def( "setGeneralizedDOFNumbering",
               &GenericGeneralizedAssemblyMatrixInstance::setGeneralizedDOFNumbering )
         .def( "setModalBasis", c1 )
         .def( "setModalBasis", c2 );
 
-    class_< GeneralizedAssemblyMatrixDoubleInstance, GeneralizedAssemblyMatrixDoublePtr,
-            bases< GenericGeneralizedAssemblyMatrixInstance > >( "GeneralizedAssemblyMatrixDouble",
-                                                                 no_init )
+    py::class_< GeneralizedAssemblyMatrixDoubleInstance, GeneralizedAssemblyMatrixDoublePtr,
+                py::bases< GenericGeneralizedAssemblyMatrixInstance > >(
+        "GeneralizedAssemblyMatrixDouble", py::no_init )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance > ) )
+              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance >))
         .def( "__init__",
-              make_constructor(
-                  &initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance, std::string > ) );
+              py::make_constructor(
+                  &initFactoryPtr< GeneralizedAssemblyMatrixDoubleInstance, std::string >));
 
-    class_< GeneralizedAssemblyMatrixComplexInstance, GeneralizedAssemblyMatrixComplexPtr,
-            bases< GenericGeneralizedAssemblyMatrixInstance > >( "GeneralizedAssemblyMatrixComplex",
-                                                                 no_init )
+    py::class_< GeneralizedAssemblyMatrixComplexInstance, GeneralizedAssemblyMatrixComplexPtr,
+                py::bases< GenericGeneralizedAssemblyMatrixInstance > >(
+        "GeneralizedAssemblyMatrixComplex", py::no_init )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance > ) )
+              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance >))
         .def( "__init__",
-              make_constructor(
-                  &initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance, std::string > ) );
+              py::make_constructor(
+                  &initFactoryPtr< GeneralizedAssemblyMatrixComplexInstance, std::string >));
 };

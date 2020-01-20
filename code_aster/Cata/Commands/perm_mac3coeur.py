@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,12 @@
 
 # person_in_charge: romeo.fernandes at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 PERM_MAC3COEUR = MACRO(nom="PERM_MAC3COEUR",
-                       op=OPS("Mac3coeur.perm_mac3coeur_ops.perm_mac3coeur_ops"),
+                       op=OPS("code_aster.MacroCommands.Mac3Coeur.perm_mac3coeur_ops.perm_mac3coeur_ops"),
                        sd_prod=evol_noli,
 
          TYPE_COEUR_N   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4")),

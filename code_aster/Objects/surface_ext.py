@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,8 @@
 """
 
 import aster
-from libaster import Surface, DataStructure
+from .function_py import t_fonction, t_nappe
+from libaster import DataStructure, Surface
 
 from ..Utilities import injector
 
@@ -37,7 +38,6 @@ class ExtendedSurface(object):
         """
         Retourne un objet de la classe t_nappe, représentation python de la nappe
         """
-        from Cata_Utils.t_fonction import t_fonction, t_nappe
         para = self.Parametres()
         vale = self.Valeurs()
         l_fonc = []

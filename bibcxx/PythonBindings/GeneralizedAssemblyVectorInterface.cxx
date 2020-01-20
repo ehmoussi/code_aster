@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedAssemblyVector
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,33 +24,34 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
-#include <PythonBindings/factory.h>
+
+namespace py = boost::python;
 #include "PythonBindings/GeneralizedAssemblyVectorInterface.h"
+#include <PythonBindings/factory.h>
 
 void exportGeneralizedAssemblyVectorToPython() {
-    using namespace boost::python;
 
-    class_< GenericGeneralizedAssemblyVectorInstance, GenericGeneralizedAssemblyVectorPtr,
-            bases< DataStructure > >( "GeneralizedAssemblyVector", no_init );
-        // fake initFactoryPtr: created by subclasses
-        // fake initFactoryPtr: created by subclasses
+    py::class_< GenericGeneralizedAssemblyVectorInstance, GenericGeneralizedAssemblyVectorPtr,
+                py::bases< DataStructure > >( "GeneralizedAssemblyVector", py::no_init );
+    // fake initFactoryPtr: created by subclasses
+    // fake initFactoryPtr: created by subclasses
 
-    class_< GeneralizedAssemblyVectorDoubleInstance, GeneralizedAssemblyVectorDoublePtr,
-            bases< GenericGeneralizedAssemblyVectorInstance > >( "GeneralizedAssemblyVectorDouble",
-                                                                 no_init )
+    py::class_< GeneralizedAssemblyVectorDoubleInstance, GeneralizedAssemblyVectorDoublePtr,
+                py::bases< GenericGeneralizedAssemblyVectorInstance > >(
+        "GeneralizedAssemblyVectorDouble", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance >))
+              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance, std::string >));
 
-    class_< GeneralizedAssemblyVectorComplexInstance, GeneralizedAssemblyVectorComplexPtr,
-            bases< GenericGeneralizedAssemblyVectorInstance > >( "GeneralizedAssemblyVectorComplex",
-                                                                 no_init )
+    py::class_< GeneralizedAssemblyVectorComplexInstance, GeneralizedAssemblyVectorComplexPtr,
+                py::bases< GenericGeneralizedAssemblyVectorInstance > >(
+        "GeneralizedAssemblyVectorComplex", py::no_init )
 #include <PythonBindings/factory.h>
         .def( "__init__",
-              make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorComplexInstance >))
+              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorComplexInstance >))
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< GeneralizedAssemblyVectorComplexInstance, std::string >));
 };

@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,16 +19,14 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from ..Objects import EvolutiveThermalLoad
-from ..Objects import LinearDisplacementEvolutionContainer
-from ..Objects import NonLinearEvolutionContainer
-from ..Objects import EvolutiveLoad
-from ..Objects import FullTransientResultsContainer
-from ..Objects import FullHarmonicResultsContainer
-from ..Objects import MechanicalModeContainer, MechanicalModeComplexContainer
-from ..Objects import ModeEmpiContainer
-from ..Objects import InputVariableEvolutionContainer
-from .ExecuteCommand import ExecuteCommand
+from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
+                       FullHarmonicResultsContainer,
+                       FullTransientResultsContainer,
+                       InputVariableEvolutionContainer,
+                       LinearDisplacementEvolutionContainer,
+                       MechanicalModeComplexContainer, MechanicalModeContainer,
+                       ModeEmpiContainer, NonLinearEvolutionContainer)
+from ..Supervis import ExecuteCommand
 
 
 class ResultsReader(ExecuteCommand):

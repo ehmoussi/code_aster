@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,10 +20,9 @@
 # person_in_charge: mickael.abbas at edf.fr
 #
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_BASE_REDUITE=OPER(
     nom="DEFI_BASE_REDUITE",op=53,
@@ -77,13 +76,13 @@ DEFI_BASE_REDUITE=OPER(
         ORTHO_BASE      =SIMP(statut='f',typ='TXM',defaut="NON", into=("OUI","NON",)),
         TYPE_BASE       =SIMP(statut='f',typ='TXM',defaut="STANDARD",into=("IFS_STAB","STANDARD")),
         b_direct        =BLOC(condition = """(equal_to("TYPE_VARI_COEF", 'DIRECT'))""",
-            VARI_PARA   = FACT( statut='f', min= 1, max='**', 
+            VARI_PARA   = FACT( statut='f', min= 1, max='**',
                 NOM_PARA        =SIMP(statut='o',typ='TXM',into=C_PARA_FONCTION(), max=1 ),
                 VALE_PARA       =SIMP(statut='o',typ='R', max = '**'),
                 VALE_INIT       =SIMP(statut='o',typ='R', max = 1),
                               ),
         ),
-        MATR_ASSE   = FACT( statut='f', min= 1, max='**', 
+        MATR_ASSE   = FACT( statut='f', min= 1, max='**',
             regles=(UN_PARMI('COEF_R','COEF_C','FONC_R','FONC_C' ),),
             MATRICE         =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,
                                matr_asse_temp_r,matr_asse_temp_c,
@@ -93,7 +92,7 @@ DEFI_BASE_REDUITE=OPER(
             FONC_R          =SIMP(statut='f',typ=(fonction_sdaster, formule), max = 1),
             FONC_C          =SIMP(statut='f',typ=(fonction_c, formule_c), max = 1),
                           ),
-        VECT_ASSE   = FACT( statut='f', min= 1, max='**', 
+        VECT_ASSE   = FACT( statut='f', min= 1, max='**',
             regles=(UN_PARMI('COEF_R','COEF_C','FONC_R','FONC_C' ),),
             VECTEUR         =SIMP(statut='f',typ=cham_no_sdaster),
             COEF_C          =SIMP(statut='f',typ='C', max = 1),

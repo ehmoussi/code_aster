@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,9 +19,10 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import NonLinearEvolutionContainer, MechanicalModeContainer
-from ..Objects import LinearDisplacementEvolutionContainer, EvolutiveThermalLoad
-from .ExecuteCommand import ExecuteCommand
+from ..Objects import (EvolutiveThermalLoad,
+                       LinearDisplacementEvolutionContainer,
+                       MechanicalModeContainer, NonLinearEvolutionContainer)
+from ..Supervis import ExecuteCommand
 
 
 class XfemFieldPostprocessing(ExecuteCommand):

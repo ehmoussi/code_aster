@@ -1,5 +1,5 @@
 import code_aster
-from code_aster.Supervis import ExecutionParameter, Options
+from code_aster.Utilities import ExecutionParameter, Options
 from code_aster.Commands import *
 
 ExecutionParameter().enable(Options.StrictUnpickling)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ def build(self):
           target = 'elem.1',
              env = env,
             vars = ['CATALO_CMD'],
-             use = ['bibpyt', 'code_aster_py'],
+             use = ['code_aster_py'],
     install_path = self.options.destdir + env.ASTERLIBDIR,
     )
 
@@ -64,8 +64,8 @@ class printcata(Task.Task):
     def run(self):
         """Execute the command"""
         environ = os.environ.copy()
-        # add src/bibpyt + catalo in PYTHONPATH
-        python_path = self.env["BIBPYTPATH"] + ":" + self.inputs[0].abspath()
+        # add src/code_aster + catalo in PYTHONPATH
+        python_path = self.env["CODEASTERPATH"] + ":" + self.inputs[0].abspath()
         add_to_env_paths(environ, "PYTHONPATH", python_path)
         exec_pyaster(self.generator.bld,
                      osp.join(self.inputs[0].abspath(), "build_cata.py"),
@@ -146,7 +146,7 @@ def exec_pyaster(self, pyfile, args, **kwargs):
         cmdenv.append('LD_LIBRARY_PATH="%s"' % environ['LD_LIBRARY_PATH'])
 
     destdir = self.options.destdir
-    python_path = destdir + self.get_tgen_by_name('bibpyt').install_path
+    python_path = destdir + env.ASTERLIBDIR
     add_to_env_paths(environ, 'LIBDIR', destdir + env['LIBDIR'])
     add_to_env_paths(environ, 'BINDIR', destdir + env['BINDIR'])
     add_to_env_paths(environ, 'PYTHONARCHDIR', env['PYTHONARCHDIR'])
@@ -155,7 +155,7 @@ def exec_pyaster(self, pyfile, args, **kwargs):
     add_to_env_paths(environ, 'PYTHONHOME', env['CFG_PYTHONHOME'])
     add_to_env_paths(environ, 'ASTER_ROOT', env['PREFIX'])
 
-    cmdexe = [python, osp.join(python_path, pyfile)] + args
+    cmdexe = [python, pyfile] + args
     # this position allows CATALO_CMD to define an environment variable
     # or a prefix to wrap the executable
     cmdprefix = Utils.to_list(env['CATALO_CMD'])

@@ -1,7 +1,6 @@
-from functools import reduce
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,20 +17,23 @@ from functools import reduce
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from functools import reduce
+
+from code_aster.Cata.Commons import *
+from code_aster.Cata.DataStructure import *
+from code_aster.Cata.Syntax import *
+from code_aster.Commands import *
+from code_aster.Supervis import UserMacro
+
 ########################################################################
 # macro commande de post-traitement (ex POST_GOUJ2E)
 # calcul des reactions cumulees suivant les filets
 
-from code_aster.Commands import *
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-from code_aster.Commands.ExecuteCommand import ExecuteMacro
 
 def POST_GOUJ_ops(self,**args):
   TABLE = args["TABLE"]
 
-  CREA_TABLE  =self.get_cmd('CREA_TABLE')
+  from code_aster.Commands import CREA_TABLE
 
   aa1=TABLE.EXTR_TABLE()
   aaa=aa1.values()
@@ -77,7 +79,7 @@ def POST_GOUJ_ops(self,**args):
 POST_GOUJ_CATA=MACRO(nom="POST_GOUJ",op=POST_GOUJ_ops,sd_prod=table_sdaster,reentrant='n',fr="",
                      TABLE=SIMP(statut='o',typ=table_sdaster),)
 
-POST_GOUJ = ExecuteCommand.UserMacro("POST_GOUJ", POST_GOUJ_CATA, POST_GOUJ_ops)
+POST_GOUJ = UserMacro("POST_GOUJ", POST_GOUJ_CATA, POST_GOUJ_ops)
 ########################################################################
 
 POURSUITE(CODE='OUI')

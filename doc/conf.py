@@ -27,10 +27,10 @@ BUILDDIR = os.environ['BUILDDIR']
 paths = [osp.join(DOCDIR, '_extensions'),
          osp.join(DOCDIR, '_fake'),
          SRCDIR,
-         osp.join(SRCDIR, 'bibpyt'),
+         osp.join(SRCDIR, 'code_aster'),
          BUILDDIR,
          osp.join(BUILDDIR, 'bibc'),
-         osp.join(BUILDDIR, 'bibpyt'),
+         osp.join(BUILDDIR, 'code_aster'),
          osp.join(BUILDDIR, 'mfront')]
 
 sys.path = paths + sys.path

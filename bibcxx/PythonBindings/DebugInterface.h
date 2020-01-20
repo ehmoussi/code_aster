@@ -5,7 +5,7 @@
  * @file DebugInterface.h
  * @brief Debugging utilities
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,6 +25,8 @@
 
 #include "astercxx.h"
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 
 template< typename T >
 static long libaster_debugRefCount( T &ptr ) {

@@ -3,7 +3,7 @@
  * @brief Interface python de StandardModalBasis
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,25 +24,26 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ModalBasisDefinitionInterface.h"
 
 void exportModalBasisDefinitionToPython() {
-    using namespace boost::python;
 
-    class_< GenericModalBasisInstance, GenericModalBasisInstance::GenericModalBasisPtr,
-            bases< DataStructure > >( "GenericModalBasis", no_init );
+    py::class_< GenericModalBasisInstance, GenericModalBasisInstance::GenericModalBasisPtr,
+            py::bases< DataStructure > >( "GenericModalBasis", py::no_init );
         // fake initFactoryPtr: created by subclass
         // fake initFactoryPtr: created by subclass
 
-    class_< StandardModalBasisInstance, StandardModalBasisInstance::StandardModalBasisPtr,
-            bases< GenericModalBasisInstance > >( "StandardModalBasis", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StandardModalBasisInstance >))
+    py::class_< StandardModalBasisInstance, StandardModalBasisInstance::StandardModalBasisPtr,
+            py::bases< GenericModalBasisInstance > >( "StandardModalBasis", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StandardModalBasisInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< StandardModalBasisInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< StandardModalBasisInstance, std::string >));
 
-    class_< RitzBasisInstance, RitzBasisInstance::RitzBasisPtr,
-            bases< GenericModalBasisInstance > >( "RitzBasis", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< RitzBasisInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< RitzBasisInstance, std::string >));
+    py::class_< RitzBasisInstance, RitzBasisInstance::RitzBasisPtr,
+            py::bases< GenericModalBasisInstance > >( "RitzBasis", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RitzBasisInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RitzBasisInstance, std::string >));
 };

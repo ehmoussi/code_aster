@@ -3,7 +3,7 @@
  * @brief Interface python de FullTransientResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,15 +25,17 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportFullTransientResultsContainerToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< FullTransientResultsContainerInstance, FullTransientResultsContainerPtr,
-            bases< FullResultsContainerInstance > >( "FullTransientResultsContainer", no_init )
+void exportFullTransientResultsContainerToPython() {
+
+    py::class_< FullTransientResultsContainerInstance, FullTransientResultsContainerPtr,
+                py::bases< FullResultsContainerInstance > >( "FullTransientResultsContainer",
+                                                             py::no_init )
         .def( "__init__",
-              make_constructor(
+              py::make_constructor(
                   &initFactoryPtr< FullTransientResultsContainerInstance, std::string >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< FullTransientResultsContainerInstance >))
+              py::make_constructor(&initFactoryPtr< FullTransientResultsContainerInstance >))
         .def( "printMedFile", &FullTransientResultsContainerInstance::printMedFile );
 };

@@ -1,3 +1,4 @@
+from code_aster.Commands import *
 
 DEBUT(PAR_LOT='NON');
 
@@ -30,8 +31,8 @@ MAIL1=DEFI_GROUP(reuse =MAIL1,
 MAIL2= CREA_MAILLAGE(MAILLAGE=MAIL1,
                      CREA_POI1 =(_F(NOM_GROUP_MA = 'MASS',
                                 GROUP_NO = 'NO_MA'),
-                                                                
-                                )       
+
+                                )
                      )
 
 
@@ -42,12 +43,12 @@ MODEL=AFFE_MODELE(MAILLAGE=MAIL2,
                         _F(GROUP_MA = 'MASS',
                           PHENOMENE='MECANIQUE',
                           MODELISATION='DIS_T',),
-  
+
                           ),);
 
 #
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES ELEMENTAIRES 
+#                     CARACTERISTIQUES ELEMENTAIRES
 #---------------------------------------------------------------------
 
 CARA_ELE=AFFE_CARA_ELEM(MODELE=MODEL,
@@ -56,12 +57,12 @@ CARA_ELE=AFFE_CARA_ELEM(MODELE=MODEL,
                         DISCRET= _F(  GROUP_MA = 'MASS',
                                      CARA = 'M_T_D_N',
                                      VALE = MP__,),
-         
+
                         );
-                         
+
 
 #---------------------------------------------------------------------
-#                     CARACTERISTIQUES MATERIAUX 
+#                     CARACTERISTIQUES MATERIAUX
 #---------------------------------------------------------------------
 
 ACIER2=DEFI_MATERIAU(ELAS=_F(E=2.E11,
@@ -82,7 +83,7 @@ CHAR = AFFE_CHAR_MECA(MODELE=MODEL,
                     DRX=0., DRY=0., DRZ=0.,))
 
 #---------------------------------------------------------------------
-#                     RESOLUTION 
+#                     RESOLUTION
 #---------------------------------------------------------------------
 
 M_EL_RIG=CALC_MATR_ELEM(OPTION='RIGI_MECA',
@@ -115,7 +116,7 @@ MODES=CALC_MODES(MATR_RIGI=M_AS_RIG,
                  OPTION='PLUS_PETITE',
                  SOLVEUR_MODAL=_F(METHODE='SORENSEN',),
                  CALC_FREQ=_F(NMAX_FREQ=NF),
-                 VERI_MODE=_F(STOP_ERREUR='NON'),             
+                 VERI_MODE=_F(STOP_ERREUR='NON'),
                 );
 #on projete le concept mode_meca calcule sur le maillage experimental
 

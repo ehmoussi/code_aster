@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,12 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 TEST_FICHIER=MACRO(nom="TEST_FICHIER",
-                   op=OPS('Macro.test_fichier_ops.test_fichier_ops'),
+                   op=OPS('code_aster.MacroCommands.test_fichier_ops.test_fichier_ops'),
                    fr=tr("Tester la non régression de fichiers produits par "
                          "des commandes aster"),
    FICHIER          =SIMP(statut='o',typ='TXM',

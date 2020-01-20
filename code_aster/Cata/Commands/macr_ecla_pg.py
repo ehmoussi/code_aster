@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macr_ecla_pg_prod(self,RESULTAT,MAILLAGE,RESU_INIT,**args):
@@ -35,7 +35,7 @@ def macr_ecla_pg_prod(self,RESULTAT,MAILLAGE,RESU_INIT,**args):
 
 
 MACR_ECLA_PG=MACRO(nom="MACR_ECLA_PG",
-                   op=OPS('Macro.macr_ecla_pg_ops.macr_ecla_pg_ops'),
+                   op=OPS('code_aster.MacroCommands.macr_ecla_pg_ops.macr_ecla_pg_ops'),
                    sd_prod=macr_ecla_pg_prod,
                    reentrant='n',
                    fr=tr("Permettre la visualisation des champs aux points de Gauss d'une "

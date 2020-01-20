@@ -3,7 +3,7 @@
  * @brief Interface python de SimpleFieldOnElements
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,18 +24,20 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/SimpleFieldOnElementsInterface.h"
 
 void exportSimpleFieldOnElementsToPython() {
-    using namespace boost::python;
-    class_< SimpleFieldOnElementsDoubleInstance, SimpleFieldOnElementsDoublePtr,
-            bases< DataStructure > >( "SimpleFieldOnElementsDouble", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< SimpleFieldOnElementsDoubleInstance >))
+    py::class_< SimpleFieldOnElementsDoubleInstance, SimpleFieldOnElementsDoublePtr,
+                py::bases< DataStructure > >( "SimpleFieldOnElementsDouble", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< SimpleFieldOnElementsDoubleInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< SimpleFieldOnElementsDoubleInstance >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< SimpleFieldOnElementsDoubleInstance, std::string >))
         .def( "getValue", &SimpleFieldOnElementsDoubleInstance::getValue,
-              return_value_policy< return_by_value >() )
+              py::return_value_policy< py::return_by_value >() )
         .def( "updateValuePointers", &SimpleFieldOnElementsDoubleInstance::updateValuePointers );
 };

@@ -3,7 +3,7 @@
  * @brief Interface python de LinearSolver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,6 +24,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/LinearSolverInterface.h"
 
@@ -33,16 +35,15 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( solveDoubleLinearSystem_overloads, solve
                                         2, 3 )
 
 void exportLinearSolverToPython() {
-    using namespace boost::python;
 
-    enum_< LinearSolverEnum >( "BaseLinearSolverName" )
+    py::enum_< LinearSolverEnum >( "BaseLinearSolverName" )
         .value( "MultFront", MultFront )
         .value( "Ldlt", Ldlt )
         .value( "Mumps", Mumps )
         .value( "Petsc", Petsc )
         .value( "Gcpc", Gcpc );
 
-    enum_< Renumbering >( "Renumbering" )
+    py::enum_< Renumbering >( "Renumbering" )
         .value( "MD", MD )
         .value( "MDA", MDA )
         .value( "Metis", Metis )
@@ -57,7 +58,7 @@ void exportLinearSolverToPython() {
         .value( "Ptscotch", Ptscotch )
         .value( "Sans", Sans );
 
-    enum_< Preconditioning >( "Preconditioning" )
+    py::enum_< Preconditioning >( "Preconditioning" )
         .value( "IncompleteLdlt", IncompleteLdlt )
         .value( "SimplePrecisionLdlt", SimplePrecisionLdlt )
         .value( "Jacobi", Jacobi )
@@ -68,45 +69,45 @@ void exportLinearSolverToPython() {
         .value( "LagrBloc", LagrBloc )
         .value( "Without", Without );
 
-    enum_< IterativeSolverAlgorithm >( "IterativeSolverAlgorithm" )
+    py::enum_< IterativeSolverAlgorithm >( "IterativeSolverAlgorithm" )
         .value( "ConjugateGradiant", ConjugateGradiant )
         .value( "ConjugateResidual", ConjugateResidual )
         .value( "GMRes", GMRes )
         .value( "GCR", GCR )
         .value( "FGMRes", FGMRes );
 
-    enum_< LagrangeTreatment >( "LagrangeTreatment" )
+    py::enum_< LagrangeTreatment >( "LagrangeTreatment" )
         .value( "Eliminate", Eliminate )
         .value( "NotEliminate", NotEliminate )
         .value( "DoubleLagrangeEliminate", DoubleLagrangeEliminate );
 
-    enum_< MemoryManagement >( "MemoryManagement" )
+    py::enum_< MemoryManagement >( "MemoryManagement" )
         .value( "InCore", InCore )
         .value( "OutOfCore", OutOfCore )
         .value( "Automatic", Automatic )
         .value( "Evaluation", Evaluation );
 
-    enum_< MatrixType >( "MatrixType" )
+    py::enum_< MatrixType >( "MatrixType" )
         .value( "NonSymetric", NonSymetric )
         .value( "Symetric", Symetric )
         .value( "SymetricPositiveDefinite", SymetricPositiveDefinite )
         .value( "Undefined", Undefined );
 
-    enum_< MumpsPostTreatment >( "MumpsPostTreatment" )
+    py::enum_< MumpsPostTreatment >( "MumpsPostTreatment" )
         .value( "WithoutPostTreatment", WithoutPostTreatment )
         .value( "AutomaticPostTreatment", AutomaticPostTreatment )
         .value( "ForcedPostTreatment", ForcedPostTreatment )
         .value( "MinimalPostTreatment", MinimalPostTreatment );
 
-    enum_< MumpsAcceleration >( "MumpsAcceleration" )
+    py::enum_< MumpsAcceleration >( "MumpsAcceleration" )
         .value( "AutomaticAcceleration", AutomaticAcceleration )
         .value( "FullRank", FullRank )
         .value( "FullRankPlus", FullRankPlus )
         .value( "LowRank", LowRank )
         .value( "LowRankPlus", LowRankPlus );
 
-    class_< BaseLinearSolverInstance, BaseLinearSolverInstance::BaseLinearSolverPtr,
-            bases< DataStructure > >( "BaseLinearSolver", no_init )
+    py::class_< BaseLinearSolverInstance, BaseLinearSolverInstance::BaseLinearSolverPtr,
+                py::bases< DataStructure > >( "BaseLinearSolver", py::no_init )
         .def( "build", &BaseLinearSolverInstance::build )
         .def( "solveDoubleLinearSystem", &BaseLinearSolverInstance::solveDoubleLinearSystem,
               solveDoubleLinearSystem_overloads() )
@@ -139,46 +140,48 @@ void exportLinearSolverToPython() {
         .def( "setUpdatePreconditioningParameter",
               &BaseLinearSolverInstance::setUpdatePreconditioningParameter );
 
-    class_< MultFrontSolverInstance, MultFrontSolverPtr, bases< BaseLinearSolverInstance > >(
-        "MultFrontSolver", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< MultFrontSolverInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< MultFrontSolverInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< MultFrontSolverInstance, Renumbering >))
-        .def(
-            "__init__",
-            make_constructor(&initFactoryPtr< MultFrontSolverInstance, std::string, Renumbering >));
-
-    class_< LdltSolverInstance, LdltSolverPtr, bases< BaseLinearSolverInstance > >( "LdltSolver",
-                                                                                    no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< LdltSolverInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< LdltSolverInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< LdltSolverInstance, Renumbering >))
+    py::class_< MultFrontSolverInstance, MultFrontSolverPtr,
+                py::bases< BaseLinearSolverInstance > >( "MultFrontSolver", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MultFrontSolverInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< LdltSolverInstance, std::string, Renumbering >));
-
-    class_< MumpsSolverInstance, MumpsSolverPtr, bases< BaseLinearSolverInstance > >( "MumpsSolver",
-                                                                                      no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< MumpsSolverInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< MumpsSolverInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< MumpsSolverInstance, Renumbering >))
+              py::make_constructor(&initFactoryPtr< MultFrontSolverInstance, std::string >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< MumpsSolverInstance, std::string, Renumbering >))
+              py::make_constructor(&initFactoryPtr< MultFrontSolverInstance, Renumbering >))
+        .def( "__init__",
+              py::make_constructor(
+                  &initFactoryPtr< MultFrontSolverInstance, std::string, Renumbering >));
+
+    py::class_< LdltSolverInstance, LdltSolverPtr, py::bases< BaseLinearSolverInstance > >(
+        "LdltSolver", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< LdltSolverInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< LdltSolverInstance, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< LdltSolverInstance, Renumbering >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< LdltSolverInstance, std::string, Renumbering >));
+
+    py::class_< MumpsSolverInstance, MumpsSolverPtr, py::bases< BaseLinearSolverInstance > >(
+        "MumpsSolver", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MumpsSolverInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MumpsSolverInstance, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MumpsSolverInstance, Renumbering >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< MumpsSolverInstance, std::string, Renumbering >))
         .def( "setAcceleration", &BaseLinearSolverInstance::setAcceleration )
         .def( "setPostTreatment", &BaseLinearSolverInstance::setPostTreatment );
 
-    class_< PetscSolverInstance, PetscSolverPtr, bases< BaseLinearSolverInstance > >( "PetscSolver",
-                                                                                      no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< PetscSolverInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< PetscSolverInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< PetscSolverInstance, Renumbering >))
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< PetscSolverInstance, std::string, Renumbering >));
+    py::class_< PetscSolverInstance, PetscSolverPtr, py::bases< BaseLinearSolverInstance > >(
+        "PetscSolver", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< PetscSolverInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< PetscSolverInstance, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< PetscSolverInstance, Renumbering >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< PetscSolverInstance, std::string, Renumbering >));
 
-    class_< GcpcSolverInstance, GcpcSolverPtr, bases< BaseLinearSolverInstance > >( "GcpcSolver",
-                                                                                    no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< GcpcSolverInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< GcpcSolverInstance, std::string >))
-        .def( "__init__", make_constructor(&initFactoryPtr< GcpcSolverInstance, Renumbering >))
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< GcpcSolverInstance, std::string, Renumbering >));
+    py::class_< GcpcSolverInstance, GcpcSolverPtr, py::bases< BaseLinearSolverInstance > >(
+        "GcpcSolver", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GcpcSolverInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GcpcSolverInstance, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GcpcSolverInstance, Renumbering >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< GcpcSolverInstance, std::string, Renumbering >));
 };

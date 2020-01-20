@@ -3,7 +3,7 @@
  * @brief Interface python de KinematicsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,8 +25,9 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
+namespace py = boost::python;
+
 void exportKinematicsLoadToPython() {
-    using namespace boost::python;
 
     bool ( KinematicsMechanicalLoadInstance::*c1 )( const PhysicalQuantityComponent &,
                                                     const double &, const std::string & ) =
@@ -60,39 +61,40 @@ void exportKinematicsLoadToPython() {
                                                  const std::vector< std::string > & ) =
         &KinematicsThermalLoadInstance::addImposedThermalDOFOnNodes;
 
-    class_< KinematicsLoadInstance, KinematicsLoadInstance::KinematicsLoadPtr,
-            bases< DataStructure > >( "KinematicsLoad", no_init )
+    py::class_< KinematicsLoadInstance, KinematicsLoadInstance::KinematicsLoadPtr,
+                py::bases< DataStructure > >( "KinematicsLoad", py::no_init )
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
         .def( "build", &KinematicsLoadInstance::build )
         .def( "setModel", &KinematicsLoadInstance::setModel );
 
-    class_< KinematicsMechanicalLoadInstance,
-            KinematicsMechanicalLoadInstance::KinematicsMechanicalLoadPtr,
-            bases< KinematicsLoadInstance > >( "KinematicsMechanicalLoad", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< KinematicsMechanicalLoadInstance >))
-        .def( "__init__",
-              make_constructor(&initFactoryPtr< KinematicsMechanicalLoadInstance, std::string >))
+    py::class_< KinematicsMechanicalLoadInstance,
+                KinematicsMechanicalLoadInstance::KinematicsMechanicalLoadPtr,
+                py::bases< KinematicsLoadInstance > >( "KinematicsMechanicalLoad", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< KinematicsMechanicalLoadInstance >))
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< KinematicsMechanicalLoadInstance, std::string >))
         .def( "addImposedMechanicalDOFOnElements", c1 )
         .def( "addImposedMechanicalDOFOnElements", c2 )
         .def( "addImposedMechanicalDOFOnNodes", c3 )
         .def( "addImposedMechanicalDOFOnNodes", c4 );
 
-    class_< KinematicsThermalLoadInstance, KinematicsThermalLoadInstance::KinematicsThermalLoadPtr,
-            bases< KinematicsLoadInstance > >( "KinematicsThermalLoad", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< KinematicsThermalLoadInstance >))
+    py::class_< KinematicsThermalLoadInstance,
+                KinematicsThermalLoadInstance::KinematicsThermalLoadPtr,
+                py::bases< KinematicsLoadInstance > >( "KinematicsThermalLoad", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< KinematicsThermalLoadInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< KinematicsThermalLoadInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< KinematicsThermalLoadInstance, std::string >))
         .def( "addImposedThermalDOFOnElements", c5 )
         .def( "addImposedThermalDOFOnElements", c6 )
         .def( "addImposedThermalDOFOnNodes", c7 )
         .def( "addImposedThermalDOFOnNodes", c8 )
         .def( "addImposedThermalDOFOnNodes", c9 );
 
-    class_< KinematicsAcousticLoadInstance,
-            KinematicsAcousticLoadInstance::KinematicsAcousticLoadPtr,
-            bases< KinematicsLoadInstance > >( "KinematicsAcousticLoad", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< KinematicsAcousticLoadInstance >))
+    py::class_< KinematicsAcousticLoadInstance,
+                KinematicsAcousticLoadInstance::KinematicsAcousticLoadPtr,
+                py::bases< KinematicsLoadInstance > >( "KinematicsAcousticLoad", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< KinematicsAcousticLoadInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< KinematicsAcousticLoadInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< KinematicsAcousticLoadInstance, std::string >));
 };

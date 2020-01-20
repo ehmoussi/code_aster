@@ -25,11 +25,6 @@ was ``None``.
 Generic objects
 ===============
 
-.. automodule:: code_aster.Commands.ExecuteCommand
-   :show-inheritance:
-   :members:
-   :special-members: __init__
-
 .. automodule:: code_aster.Commands.__init__
    :show-inheritance:
    :members:

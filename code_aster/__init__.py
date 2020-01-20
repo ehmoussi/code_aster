@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,8 @@ creation. It can be simply called from this toplevel module with:
 
 .. code-block:: python
 
-    import code_aster
-    code_aster.init()
+    >>> import code_aster
+    >>> code_aster.init()
 
 The same job is done by :py:class:`~code_aster.Commands.debut.DEBUT`.
 
@@ -37,8 +37,14 @@ For convenience the objects are direcly available here:
 
 .. code-block:: python
 
-    import code_aster
-    mymesh = code_aster.Mesh()
+    >>> import code_aster
+    >>> mymesh = code_aster.Mesh()
+
+
+Here is the diagram of the package organization:
+
+.. image:: ../doc/devguide/img/diagr_code_aster.png
+   :align: center
 
 """
 
@@ -52,17 +58,12 @@ import aster_fonctions
 import med_aster
 import libaster
 
-# import datastructures enriched by pure python extensions
-from .Objects import *
-
-# import general purpose functions
-from .Supervis import (AsterError, ContactError, ConvergenceError,
-                       IntegrationError, SolverError, TimeLimitError)
-from .RunManager import saveObjects
-from .Utilities import TestCase, translate as _
-
 from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
                          TangentMatrixType)
-
 from .Commands.debut import init
 from .Commands.fin import FIN as close
+from .Helpers import saveObjects
+from .Objects import *
+from .Supervis import (AsterError, ContactError, ConvergenceError,
+                       IntegrationError, SolverError, TimeLimitError)
+from .Utilities import TestCase

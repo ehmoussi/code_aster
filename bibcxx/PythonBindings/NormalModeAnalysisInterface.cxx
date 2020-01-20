@@ -3,7 +3,7 @@
  * @brief Interface python de NormalModeAnalysis
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,12 +25,14 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportNormalModeAnalysisToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >( "NormalModeAnalysis", no_init )
+void exportNormalModeAnalysisToPython() {
+
+    py::class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >( "NormalModeAnalysis",
+                                                                     py::no_init )
         // fake initFactoryPtr: not a DataStructure
-        .def( "__init__", make_constructor(&initFactoryPtr< NormalModeAnalysisInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< NormalModeAnalysisInstance >))
         .def( "execute", &NormalModeAnalysisInstance::execute )
         .def( "setMassMatrix", &NormalModeAnalysisInstance::setMassMatrix )
         .def( "setNumberOfFrequencies", &NormalModeAnalysisInstance::setNumberOfFrequencies )

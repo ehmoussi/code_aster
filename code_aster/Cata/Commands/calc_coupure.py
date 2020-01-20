@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------
 # Copyright (C) 2019 Aether Engineering Solutions - www.aethereng.com
 # Copyright (C) 2019 Kobe Innovation Engineering - www.kobe-ie.com
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,16 +20,17 @@
 # --------------------------------------------------------------------
 # aslint: disable=W4004
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
+
 
 def gc_open_prod(self,TABLE,**args) :
     self.type_sdprod(TABLE,table_sdaster)
-    return maillage_sdaster   
+    return maillage_sdaster
 
-CALC_COUPURE =MACRO(nom='CALC_COUPURE', 
-                    op=OPS('Macro.calc_coupure_ops.calc_coupure_ops'),
+CALC_COUPURE =MACRO(nom='CALC_COUPURE',
+                    op=OPS('code_aster.MacroCommands.calc_coupure_ops.calc_coupure_ops'),
                     sd_prod=table_sdaster,
                     reentrant='n',
                     fr=tr("Extraction des résultantes dans une table sur "
@@ -39,7 +40,7 @@ CALC_COUPURE =MACRO(nom='CALC_COUPURE',
                     # la valeur par défaut est définie dans 'ops'
                     UNITE_MAILLAGE  =SIMP(statut='f',typ=UnitType(), inout='out'),
                     OPERATION       =SIMP(statut='f',typ='TXM',into=("EXTRACTION","RESULTANTE"),defaut="RESULTANTE",),
-               
+
                     b_extrac        =BLOC(condition = """exists("RESULTAT")""",fr=tr("extraction des résultats"),
                                          regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','NUME_MODE','FREQ','LIST_FREQ','NOM_CAS'), ),
                         TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
@@ -54,7 +55,7 @@ CALC_COUPURE =MACRO(nom='CALC_COUPURE',
                              PRECISION       =SIMP(statut='f',typ='R',defaut= 1.E-6,),),
                          b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                              PRECISION       =SIMP(statut='o',typ='R',),),
-                        )                                 
+                        )
                     ),
 
                     LIGN_COUPE     =FACT(statut='o',max='**',

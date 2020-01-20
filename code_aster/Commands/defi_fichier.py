@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,59 +19,6 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..RunManager.LogicalUnit import (Action, FileAccess, FileType,
-                                      LogicalUnitFile)
-from .ExecuteCommand import ExecuteCommandOps
-
-
-class DefineUnitFile(ExecuteCommandOps):
-    """Execute legacy operator DEFI_FICHIER."""
-    command_name = "DEFI_FICHIER"
-    command_op = 26
-
-    def create_result(self, keywords):
-        """Initialize the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        if (keywords["ACTION"] in ("ASSOCIER", "RESERVER") and
-                keywords.get("UNITE") is None):
-            # ask for a free unit
-            filename = keywords.get("FICHIER")
-            is_ascii = keywords.get("TYPE", "ASCII") == "ASCII"
-            mode = keywords.get("ACCES", "NEW") == "NEW"
-            fileobj = LogicalUnitFile.new_free(filename, is_ascii, mode)
-            self._result = fileobj.unit
-        else:
-            self._result = None
-
-    def exec_(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        if self._result is None:
-            super().exec_(keywords)
-        # else it was already executed by 'create_result/new_free'
-
-    def post_exec(self, keywords):
-        """Execute the command.
-
-        Arguments:
-            keywords (dict): User's keywords.
-        """
-        if (keywords["ACTION"] in ("ASSOCIER", "RESERVER") and
-                keywords.get("UNITE") is not None):
-            action = Action.value(keywords["ACTION"])
-            typ = FileType.value(keywords["TYPE"])
-            access = FileAccess.value(keywords["ACCES"])
-            file_name = keywords.get("FICHIER")
-            LogicalUnitFile(keywords["UNITE"], file_name, action, typ,
-                            access, False)
-
-        if keywords["ACTION"] == "LIBERER":
-            LogicalUnitFile.release_from_number(keywords["UNITE"], False)
+from ..Helpers.LogicalUnit import DefineUnitFile
 
 DEFI_FICHIER = DefineUnitFile.run

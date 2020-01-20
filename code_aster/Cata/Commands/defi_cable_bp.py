@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 # person_in_charge: sylvie.michel-ponnelle at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_CABLE_BP=MACRO(nom="DEFI_CABLE_BP",
-                    op=OPS('Macro.defi_cable_bp_ops.defi_cable_bp_ops'),
+                    op=OPS('code_aster.MacroCommands.defi_cable_bp_ops.defi_cable_bp_ops'),
                     sd_prod=cabl_precont,
                     fr=tr("Calculer les profils initiaux de tension le long des cables "
                          "de précontrainte d'une structure en béton"),

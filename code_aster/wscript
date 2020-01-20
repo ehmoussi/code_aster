@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,13 @@
 
 import os
 import os.path as osp
-from pprint import pformat
+import re
 import shutil
+from pprint import pformat
+from subprocess import PIPE, Popen
+from time import strftime
 
-from waflib import Context, Configure, Errors
+from waflib import Configure, Context, Errors, Logs
 
 
 def options(self):
@@ -34,6 +37,9 @@ def options(self):
     group.add_option('--enable-cython', dest='enable_cython',
                      default=None, action='store_true',
                      help='force the Cython support')
+    group.add_option('--without-hg', dest='without_hg',
+                     default=False, action='store_true',
+                     help='build without the source repository')
 
 
 def configure(self):
@@ -51,6 +57,37 @@ def configure(self):
     else:
         self.define('HAVE_CYTHON', 1)
         self.env.BUILD_CYTHON = True
+    self.check_version()
+
+@Configure.conf
+def check_version(self):
+    self.start_msg('Getting code_aster version')
+    try:
+        values = check_aster_version(self)
+    except Exception as exc:
+        raise Errors.ConfigurationError(str(exc))
+    # check values
+    try:
+        assert type(values) in (list, tuple), (1, values)
+        assert len(values) == 7, (2, values)
+        vers, revid, branch, date, frbr, chg, loc = values
+        assert len(vers) == 3, (3, values)
+        assert [type(i) for i in vers] == [int, int, int], (4, values)
+        assert type(revid) is str, (5, values)
+        assert type(branch) is str, (6, values)
+        assert type(date) is str, (7, values)
+        assert type(frbr) is str, (8, values)
+        assert type(chg) is int, (9, values)
+        assert type(loc) in (list, tuple), (10, values)
+        if loc:
+            types = list(set([type(i) for i in loc]))
+            assert len(types) == 1, (11, types)
+            assert types[0] is str, (12, values)
+    except AssertionError as exc:
+        raise Errors.ConfigurationError("Can not find official parent "
+            "revision. Unexpected values: {0}".format(str(exc)))
+    self.env.append_value('ASTER_VERSION', values)
+    self.end_msg(self.env.ASTER_VERSION[:-1])
 
 @Configure.conf
 def check_cython(self):
@@ -73,20 +110,28 @@ def build(self):
     env = self.all_envs[self.variant]
 
     self(
-        features = 'py',
-            name = 'code_aster_py',
-          source = get_srcs('**/*.py'),
+        features = "py",
+            name = "code_aster_py",
+          source = get_srcs("**/*.py"),
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, "code_aster"),
     )
 
     self(
         features = 'subst py',
-            name = 'aster_version',
+            name = 'pytmpl',
+          source = 'aster_pkginfo.pytmpl',
+          target = 'aster_pkginfo.py',
+    install_path = osp.join(env.ASTERLIBDIR, "code_aster", "Utilities"),
+    VERSION_INFO = pformat(env['ASTER_VERSION']),
+    )
+
+    self(
+        features = 'subst py',
+            name = 'pytmpl',
           source = 'aster_version.pytmpl',
           target = 'aster_version.py',
     install_path = osp.join(env.ASTERLIBDIR, "code_aster", "Cata"),
-             use = ['bibpyt'],
     VERSION_INFO = pformat(env['ASTER_VERSION']),
     )
 
@@ -120,3 +165,115 @@ def check_optimization_cython(self):
     self.env.append_unique('CYTHONFLAGS', ["-3", "-a"])
     self.setenv('release')
     self.env.append_unique('CYTHONFLAGS', ["-3"])
+
+
+def check_aster_version(self):
+    """Set ASTER_VERSION to the tuple = (
+        version_as_tuple : last tag found in parents,
+        revision_id      : hex identifier of the parent (join by '+' if
+                           more than one),
+        branch           : branch name,
+        date             : date of the revision,
+        from_branch      : 'official' parent branch,
+        changes          : number of changes after the tagged revision (0 means
+                           no change since the tag was set)
+    )
+    """
+    get_srcs = self.path.get_src().ant_glob
+    # just use the file if it is already in the source tree
+    pkginfo = get_srcs('**/pkginfo.py')
+    if pkginfo:
+        d = {}
+        exec(compile(open(pkginfo[0].abspath()).read(), pkginfo[0].abspath(), 'exec'), d)
+        return d['pkginfo']
+    # get revision informations
+    return get_revision_info(self.options)
+
+
+MAXLEVEL = 25
+
+def get_revision_info_cmd(from_rev=None, rev="."):
+    """Return details about changes on `rev` or the current revision
+    between last official tagged revision"""
+    def exec_cmd(cmd):
+        # avoid conflict between hg and currently used python version
+        env = dict([(k, v) for k, v in os.environ.items()
+                    if not k.startswith('PYTHON')])
+        out = Popen(cmd, stdout=PIPE, env=env).communicate()[0]
+        return out.decode().strip()
+
+    if not from_rev:
+        from_rev = "({0})~{1}".format(rev, MAXLEVEL)
+    ancestors = "({0})::({1})".format(from_rev, rev)
+    BR = ['default'] + ['v%d' % i for i in range(10, 20)]
+    loc = exec_cmd(["hg", "status", "-namrdu"]).split()
+    logs = exec_cmd(["hg", "log", "-r", ancestors,
+                     "--template", "{rev}:{node}:{tags}:{branch}:"
+                                   "{date|shortdate}:{files}\n"]).splitlines()
+    if not logs:
+        raise ValueError("empty revs range: {0}\n"
+                         "Use --without-hg option if you didn't download the "
+                         "hg repository or create manually a file named "
+                         "`code_aster/pkginfo.py` with the necessary informations "
+                         "about the version.".format(ancestors))
+    last = logs[-1].split(":")
+    # print "\n".join(logs)
+    _revn, revid, _tag, branch, date, _files = last
+    Y, m, d = date.strip().split('-')
+    date = '/'.join([d, m, Y])
+    brs = [i.split(":")[3] for i in logs]
+    # search official branch
+    frbr = "?"
+    while brs:
+        br_i = brs.pop()
+        if br_i in BR:
+            frbr = br_i
+            break
+    # search last tag
+    vers = "?"
+    chg = 0
+    for info in reversed(logs):
+        rev, _node, tag, br, _idat, _files = info.split(":")
+        # ignore non official branches
+        if br not in BR:
+            continue
+        if tag not in ("", "tip"):
+            vers = version2tuple(tag)[:3]
+            break
+        chg += 1
+    return [vers, revid, branch, date, frbr, chg, loc]
+
+def get_revision_info(options, from_rev=None, rev="."):
+    """Return details about changes on `rev` or the current revision
+    between last official tagged revision"""
+    date = strftime("%d/%m/%Y")
+    if options.without_hg:
+        return [(0, 0, 1), "?", "?", date, "?", 1, ["no source repository"]]
+    # quick search on last revisions
+    infos = get_revision_info_cmd(from_rev, rev)
+    if infos[0] == "?":
+        try:
+            infos = get_revision_info_cmd("testing or stable", rev)
+        except ValueError:
+            Logs.pprint("YELLOW", "'testing/stable' not found, search in all ancestors...", sep="")
+            infos = get_revision_info_cmd("0", rev)
+    return infos
+
+def version2tuple(vers_string):
+    """1.7.9alpha --> (1, 7, 9, 'alpha')"""
+    numv = [i for i in vers_string.split() if (i.strip()[0]).isdigit()]
+    if not numv:
+        return []
+    vers_string = numv[-1]
+    tupl0 = vers_string.split('.')
+    val = []
+    for v in tupl0:
+        m = re.search('(^[ 0-9]+)(.*)', v)
+        if m:
+            val.append(int(m.group(1)))
+            if m.group(2):
+                val.append(m.group(2).replace('-', '').replace('_', '').strip())
+        else:
+            val.append(v)
+    val.extend([0]*(3-len(val)))
+    return tuple(val)

@@ -6,7 +6,7 @@
  * @brief Python bindings for Fortran interface.
  * @author Mathieu Courtois
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 #include "shared_vars.h"
-#include "RunManager/Fortran.h"
+#include "PythonBindings/Fortran.h"
 
 void exportFortranToPython();
 

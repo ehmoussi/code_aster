@@ -3,7 +3,7 @@
  * @brief Interface python de GenericFunction
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,17 +24,18 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/GenericFunctionInterface.h"
 
 void exportGenericFunctionToPython() {
-    using namespace boost::python;
 
-    class_< GenericFunctionInstance, GenericFunctionInstance::GenericFunctionPtr,
-            bases< DataStructure > >( "GenericFunction", no_init )
-        //         .def( "__init__", make_constructor(
+    py::class_< GenericFunctionInstance, GenericFunctionInstance::GenericFunctionPtr,
+            py::bases< DataStructure > >( "GenericFunction", py::no_init )
+        //         .def( "__init__", py::make_constructor(
         //             &initFactoryPtr< GenericFunctionInstance >) )
-        //         .def( "__init__", make_constructor(
+        //         .def( "__init__", py::make_constructor(
         //             &initFactoryPtr< GenericFunctionInstance,
         //                              std::string >) )
         .def( "getProperties", &GenericFunctionInstance::getProperties )

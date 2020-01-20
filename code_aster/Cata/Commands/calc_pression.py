@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,13 +24,12 @@
 # au frottement et aux éléments de structures si le besoin se manifeste.
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_PRESSION=MACRO(nom="CALC_PRESSION",
-                    op=OPS('Macro.calc_pression_ops.calc_pression_ops'),
+                    op=OPS('code_aster.MacroCommands.calc_pression_ops.calc_pression_ops'),
                     sd_prod=cham_no_sdaster,
                     fr="Calcul de la pression nodale sur une interface a partir de SIEF_NOEU. Cette option n existe que pour les éléments isoparamétriques.",
 

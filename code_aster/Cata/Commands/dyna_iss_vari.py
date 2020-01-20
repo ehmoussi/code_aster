@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 
 # person_in_charge: irmela.zentner at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def dyna_iss_vari_prod(self, EXCIT_SOL,**args):
@@ -35,7 +35,7 @@ def dyna_iss_vari_prod(self, EXCIT_SOL,**args):
    raise AsException("type de concept resultat non prevu")
 
 DYNA_ISS_VARI=MACRO(nom="DYNA_ISS_VARI",
-                    op=OPS('Macro.dyna_iss_vari_ops.dyna_iss_vari_ops'),
+                    op=OPS('code_aster.MacroCommands.dyna_iss_vari_ops.dyna_iss_vari_ops'),
                     sd_prod=dyna_iss_vari_prod,
                     fr=tr("Calcul du spectre de réponse ou de la reponse temporelle "
                          "sismique incoherente par decomposition spectrale"),

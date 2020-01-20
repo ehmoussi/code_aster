@@ -3,7 +3,7 @@
  * @brief Interface python de StaticModeAnalysis
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,11 +25,12 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportStaticModeAnalysisToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< StaticModeDeplInstance, StaticModeDeplPtr >( "StaticModeDepl", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StaticModeDeplInstance >))
+void exportStaticModeAnalysisToPython() {
+
+    py::class_< StaticModeDeplInstance, StaticModeDeplPtr >( "StaticModeDepl", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StaticModeDeplInstance >))
         // fake initFactoryPtr: not a DataStructure
         .def( "setMassMatrix", &StaticModeDeplInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeDeplInstance::setStiffMatrix )
@@ -41,8 +42,8 @@ void exportStaticModeAnalysisToPython() {
         .def( "WantedComponent", &StaticModeDeplInstance::WantedComponent )
         .def( "execute", &StaticModeDeplInstance::execute );
 
-    class_< StaticModeForcInstance, StaticModeForcPtr >( "StaticModeForc", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StaticModeForcInstance >))
+    py::class_< StaticModeForcInstance, StaticModeForcPtr >( "StaticModeForc", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StaticModeForcInstance >))
         // fake initFactoryPtr: not a DataStructure
         .def( "setMassMatrix", &StaticModeForcInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeForcInstance::setStiffMatrix )
@@ -54,8 +55,8 @@ void exportStaticModeAnalysisToPython() {
         .def( "WantedComponent", &StaticModeForcInstance::WantedComponent )
         .def( "execute", &StaticModeForcInstance::execute );
 
-    class_< StaticModePseudoInstance, StaticModePseudoPtr >( "StaticModePseudo", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StaticModePseudoInstance >))
+    py::class_< StaticModePseudoInstance, StaticModePseudoPtr >( "StaticModePseudo", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StaticModePseudoInstance >))
         // fake initFactoryPtr: not a DataStructure
         .def( "setMassMatrix", &StaticModePseudoInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModePseudoInstance::setStiffMatrix )
@@ -70,8 +71,8 @@ void exportStaticModeAnalysisToPython() {
         .def( "WantedComponent", &StaticModePseudoInstance::WantedComponent )
         .def( "execute", &StaticModePseudoInstance::execute );
 
-    class_< StaticModeInterfInstance, StaticModeInterfPtr >( "StaticModeInterf", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< StaticModeInterfInstance >))
+    py::class_< StaticModeInterfInstance, StaticModeInterfPtr >( "StaticModeInterf", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StaticModeInterfInstance >))
         // fake initFactoryPtr: not a DataStructure
         .def( "setMassMatrix", &StaticModeInterfInstance::setMassMatrix )
         .def( "setStiffMatrix", &StaticModeInterfInstance::setStiffMatrix )

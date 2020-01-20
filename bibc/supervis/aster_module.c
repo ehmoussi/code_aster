@@ -2373,7 +2373,7 @@ static char aster_module_documentation[] =
 "C implementation of the Python aster module\n"
 "\n";
 
-static struct PyModuleDef aster_moduledef = {
+static struct PyModuleDef aster_def = {
         PyModuleDef_HEAD_INIT,
         "aster",
         aster_module_documentation,
@@ -2388,14 +2388,10 @@ static struct PyModuleDef aster_moduledef = {
 PyObject* PyInit_aster(void)
 {
     PyObject *aster = (PyObject*)0 ;
-    PyObject *dict = (PyObject*)0 ;
 
     /* Create the module and add the functions */
-    aster = PyModule_Create(&aster_moduledef);
+    aster = PyModule_Create(&aster_def);
 
-    /* Add some symbolic constants to the module */
-    dict = PyModule_GetDict(aster);
-    initExceptions(dict);
     init_etape_stack();
     /* don't take of mpirun arguments */
     aster_mpi_init(0, NULL);

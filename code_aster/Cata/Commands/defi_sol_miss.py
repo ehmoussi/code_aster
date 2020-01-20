@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_SOL_MISS = MACRO(nom="DEFI_SOL_MISS",
-                      op=OPS('Macro.defi_sol_miss_ops.defi_sol_miss_ops'),
+                      op=OPS('code_aster.MacroCommands.defi_sol_miss_ops.defi_sol_miss_ops'),
                       sd_prod=table_sdaster,
                       fr=tr("Définition des données de sol pour Miss"),
                       reentrant='n',
@@ -54,13 +53,13 @@ DEFI_SOL_MISS = MACRO(nom="DEFI_SOL_MISS",
       SURF                 = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="NON"),
       EPAIS_PHYS           = SIMP(statut='o', typ='R', max='**',fr=tr("Epaisseur des couches")),
    b_stratifie   = BLOC(condition="""equal_to("HOMOGENE", 'NON')""",
-       NUME_MATE_SUBSTRATUM = SIMP(statut='o', typ='I',fr="Numéro du matériau du substratum"),      
+       NUME_MATE_SUBSTRATUM = SIMP(statut='o', typ='I',fr="Numéro du matériau du substratum"),
        NUME_MATE            = SIMP(statut='o', typ='I', max='**',fr=tr("Numéro du matériau")),
    ),
    b_surf   = BLOC(condition="""equal_to("SURF", 'OUI')""",
       regles=(PRESENT_PRESENT('GROUP_MA_CONTROL','MAILLAGE'),),
       GROUP_MA_CONTROL     = SIMP(statut='f', typ=grma, max=1,
-                                  fr=tr("Groupe de mailles des points de contrôle")),  
+                                  fr=tr("Groupe de mailles des points de contrôle")),
       MAILLAGE             = SIMP(statut='f',typ=maillage_sdaster),
    ),
    b_enfonce   = BLOC(condition="""equal_to("SURF", 'NON')""",
@@ -74,12 +73,12 @@ DEFI_SOL_MISS = MACRO(nom="DEFI_SOL_MISS",
       GROUP_MA_INTERF      = SIMP(statut='f', typ=grma, max=1,
                                fr="Groupe de mailles de l'interface"),
       GROUP_MA_CONTROL     = SIMP(statut='f', typ=grma, max=1,
-                                  fr=tr("Groupe de mailles des points de contrôle")),  
+                                  fr=tr("Groupe de mailles des points de contrôle")),
       MAILLAGE             = SIMP(statut='o',typ=maillage_sdaster),
       TOLERANCE            = SIMP(statut='f',typ='R',defaut= 1.0E-5 ),
       DECALAGE_AUTO        = SIMP(statut='f', typ='TXM', into=("OUI","NON",), defaut="OUI"),
-   ),      
-   ),   
+   ),
+   ),
    TITRE = SIMP(statut='f', typ='TXM',
                 fr=tr("Titre de la table produite")),
    INFO  = SIMP(statut='f', typ='I', defaut=1, into=(1,2)),

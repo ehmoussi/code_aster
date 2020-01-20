@@ -3,7 +3,7 @@
  * @brief Interface python de Function
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,14 +25,15 @@
 
 #include <boost/python.hpp>
 
-#include "PythonBindings/factory.h"
+namespace py = boost::python;
+
 #include "PythonBindings/FunctionInterface.h"
+#include "PythonBindings/factory.h"
 
 void exportFunctionToPython() {
-    using namespace boost::python;
 
-    class_< BaseFunctionInstance, BaseFunctionInstance::BaseFunctionPtr,
-            bases< GenericFunctionInstance > >( "BaseFunction", no_init )
+    py::class_< BaseFunctionInstance, BaseFunctionInstance::BaseFunctionPtr,
+                py::bases< GenericFunctionInstance > >( "BaseFunction", py::no_init )
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
         .def( "setParameterName", &FunctionInstance::setParameterName )
@@ -41,10 +42,10 @@ void exportFunctionToPython() {
         .def( "setValues", &FunctionInstance::setValues )
         .def( "getValues", &FunctionInstance::getValues );
 
-    class_< FunctionInstance, FunctionInstance::FunctionPtr, bases< BaseFunctionInstance > >(
-        "Function", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FunctionInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< FunctionInstance, std::string >))
+    py::class_< FunctionInstance, FunctionInstance::FunctionPtr,
+                py::bases< BaseFunctionInstance > >( "Function", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionInstance, std::string >))
         .def( "setValues", &FunctionInstance::setValues )
         .def( "size", &FunctionInstance::size )
         .def( "setAsConstant", &FunctionInstance::setAsConstant );
@@ -55,10 +56,11 @@ void exportFunctionToPython() {
     void ( FunctionComplexInstance::*c2 )( const VectorDouble &absc, const VectorComplex &ord ) =
         &FunctionComplexInstance::setValues;
 
-    class_< FunctionComplexInstance, FunctionComplexInstance::FunctionComplexPtr,
-            bases< BaseFunctionInstance > >( "FunctionComplex", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< FunctionComplexInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< FunctionComplexInstance, std::string >))
+    py::class_< FunctionComplexInstance, FunctionComplexInstance::FunctionComplexPtr,
+                py::bases< BaseFunctionInstance > >( "FunctionComplex", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionComplexInstance >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< FunctionComplexInstance, std::string >))
         .def( "setValues", c1 )
         .def( "setValues", c2 )
         .def( "size", &FunctionComplexInstance::size );

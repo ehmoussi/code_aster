@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 import math
+
+from code_aster.Commands import *
 
 try:
   # Import du module de calcul symbolique Sympy
@@ -41,8 +43,8 @@ NU=0.3;
 
 if sympy_available:
 
-  from Utilitai import TensorModule
-  from Utilitai import HookeTensor
+  from code_aster.MacroCommands.Contrib import TensorModule
+  from code_aster.MacroCommands.Contrib import HookeTensor
 
 #================================================================================================
 #================================================================================================
@@ -157,7 +159,7 @@ else:
 #================================================================================================
 # Definition des formules Aster
 #================================================================================================
-  
+
   FUx=FORMULE(VALE="0.2*Y**3*(0.5 - X)", NOM_PARA=('X','Y') );
   FUy=FORMULE(VALE="-0.01*Y - (1 + Y)*(0.5 - X)*(0.025 - 0.05*X)", NOM_PARA=('X','Y') );
 

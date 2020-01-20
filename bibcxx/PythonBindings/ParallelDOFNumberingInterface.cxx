@@ -3,7 +3,7 @@
  * @brief Interface python de ParallelDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,6 +24,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
@@ -31,13 +33,12 @@
 #ifdef _USE_MPI
 
 void exportParallelDOFNumberingToPython() {
-    using namespace boost::python;
 
-    class_< ParallelDOFNumberingInstance, ParallelDOFNumberingInstance::ParallelDOFNumberingPtr,
-            bases< BaseDOFNumberingInstance > >( "ParallelDOFNumbering", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ParallelDOFNumberingInstance >))
+    py::class_< ParallelDOFNumberingInstance, ParallelDOFNumberingInstance::ParallelDOFNumberingPtr,
+            py::bases< BaseDOFNumberingInstance > >( "ParallelDOFNumbering", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelDOFNumberingInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ParallelDOFNumberingInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< ParallelDOFNumberingInstance, std::string >));
 };
 
 #endif /* _USE_MPI */

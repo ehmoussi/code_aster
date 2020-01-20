@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: david.haboussa at edf.fr
-#Quoi qu'il en soit, on sort la table GP
-#Si on est sans copeau et que l'utilisateur souhaite verifier
-#les copeaux automatiquement crees, il peut grace a CHAMP_COP
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+
+
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_gp_prod(self,TRANCHE_2D,GPMAX, **args):
@@ -42,7 +40,7 @@ def calc_gp_prod(self,TRANCHE_2D,GPMAX, **args):
 
 
 CALC_GP =MACRO(nom="CALC_GP",
-                   op=OPS('Macro.calc_gp_ops.calc_gp_ops'),
+                   op=OPS('code_aster.MacroCommands.calc_gp_ops.calc_gp_ops'),
                    sd_prod=calc_gp_prod,
 #                   sd_prod=table_sdaster,
                    reentrant='n',

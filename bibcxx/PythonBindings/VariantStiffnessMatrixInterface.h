@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe VairantStiffmessMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,6 +29,8 @@
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 #include <boost/variant.hpp>
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 
 typedef boost::variant< AssemblyMatrixDisplacementDoublePtr,
                         AssemblyMatrixDisplacementComplexPtr,
@@ -53,7 +55,7 @@ struct variant_to_object : boost::static_visitor< PyObject * >
 
     template < typename T > result_type operator()( T const &t ) const
     {
-        return boost::python::incref( boost::python::object( t ).ptr() );
+        return py::incref( py::object( t ).ptr() );
     };
 };
 

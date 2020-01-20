@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -19,11 +19,15 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDisplacementDouble, AssemblyMatrixDisplacementComplex, \
-    GeneralizedAssemblyMatrixDouble, GeneralizedAssemblyMatrixComplex
-from ..Objects import AssemblyMatrixTemperatureDouble, AssemblyMatrixTemperatureComplex
-from ..Objects import AssemblyMatrixPressureDouble, AssemblyMatrixPressureComplex
-from .ExecuteCommand import ExecuteCommand
+from ..Objects import (AssemblyMatrixDisplacementComplex,
+                       AssemblyMatrixDisplacementDouble,
+                       AssemblyMatrixPressureComplex,
+                       AssemblyMatrixPressureDouble,
+                       AssemblyMatrixTemperatureComplex,
+                       AssemblyMatrixTemperatureDouble,
+                       GeneralizedAssemblyMatrixComplex,
+                       GeneralizedAssemblyMatrixDouble)
+from ..Supervis import ExecuteCommand
 
 
 class MatrixCombination(ExecuteCommand):

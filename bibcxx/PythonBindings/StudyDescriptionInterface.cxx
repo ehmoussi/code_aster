@@ -3,7 +3,7 @@
  * @brief Interface python de StudyDescription
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -22,18 +22,20 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include "PythonBindings/factory.h"
 #include "PythonBindings/StudyDescriptionInterface.h"
 #include "PythonBindings/LoadUtilities.h"
 
 void exportStudyDescriptionToPython() {
-    using namespace boost::python;
 
-    class_< StudyDescriptionInstance, StudyDescriptionPtr > c1( "StudyDescription", no_init );
+    py::class_< StudyDescriptionInstance, StudyDescriptionPtr > c1( "StudyDescription",
+                                                                    py::no_init );
     // fake initFactoryPtr: not a DataStructure
-    c1.def(
-        "__init__",
-        make_constructor(&initFactoryPtr< StudyDescriptionInstance, ModelPtr, MaterialOnMeshPtr >));
+    c1.def( "__init__",
+            py::make_constructor(
+                &initFactoryPtr< StudyDescriptionInstance, ModelPtr, MaterialOnMeshPtr >));
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 };

@@ -3,7 +3,7 @@
  * @brief Interface python de InputVariableConverter
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,13 +27,14 @@
 #include <PythonBindings/factory.h>
 #include <boost/python.hpp>
 
-void exportInputVariableConverterToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< InputVariableConverterInstance,
-            InputVariableConverterPtr >( "InputVariableConverter", no_init )
+void exportInputVariableConverterToPython() {
+
+    py::class_< InputVariableConverterInstance,
+            InputVariableConverterPtr >( "InputVariableConverter", py::no_init )
         .def( "__init__",
-              make_constructor(&initFactoryPtr< InputVariableConverterInstance >))
+              py::make_constructor(&initFactoryPtr< InputVariableConverterInstance >))
         // fake initFactoryPtr: created by subclasses
         .def( "addConverter", &InputVariableConverterInstance::addConverter );
 };

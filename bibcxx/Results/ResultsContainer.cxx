@@ -3,7 +3,7 @@
  * @brief Implementation de ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,7 +26,7 @@
 #include "aster_fort.h"
 
 #include "Results/ResultsContainer.h"
-#include "RunManager/LogicalUnitManagerCython.h"
+#include "PythonBindings/LogicalUnitManager.h"
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/Tools.h"
 
@@ -302,7 +302,7 @@ void ResultsContainerInstance::listFields() const
 
 bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
 {
-    LogicalUnitFileCython a( fileName, Binary, New );
+    LogicalUnitFile a( fileName, Binary, New );
     ASTERINTEGER retour = a.getLogicalUnit();
     CommandSyntax cmdSt( "IMPR_RESU" );
 

@@ -3,7 +3,7 @@
  * @brief Interface python de Model
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -22,18 +22,19 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ModelInterface.h"
 
 void exportModelToPython() {
-    using namespace boost::python;
 
-    enum_< ModelSplitingMethod >( "ModelSplitingMethod" )
+    py::enum_< ModelSplitingMethod >( "ModelSplitingMethod" )
         .value( "Centralized", Centralized )
         .value( "SubDomain", SubDomain )
         .value( "GroupOfElements", GroupOfElementsSplit );
 
-    enum_< GraphPartitioner >( "GraphPartitioner" ).value( "Scotch", ScotchPartitioner ).value(
+    py::enum_< GraphPartitioner >( "GraphPartitioner" ).value( "Scotch", ScotchPartitioner ).value(
         "Metis", MetisPartitioner );
 
     bool ( ModelInstance::*c1 )( MeshPtr & ) = &ModelInstance::setMesh;
@@ -49,9 +50,10 @@ void exportModelToPython() {
 #endif /* _USE_MPI */
     bool ( ModelInstance::*c5 )( BaseMeshPtr & ) = &ModelInstance::setMesh;
 
-    class_< ModelInstance, ModelInstance::ModelPtr, bases< DataStructure > >( "Model", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ModelInstance >))
-        .def( "__init__", make_constructor(&initFactoryPtr< ModelInstance, std::string >))
+    py::class_< ModelInstance, ModelInstance::ModelPtr, py::bases< DataStructure > >( "Model",
+                                                                                      py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelInstance, std::string >))
         .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
         .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
         .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )

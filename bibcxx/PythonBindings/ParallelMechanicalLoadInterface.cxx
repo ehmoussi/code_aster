@@ -3,7 +3,7 @@
  * @brief Interface python de ParallelMechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -22,21 +22,22 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 
 #ifdef _USE_MPI
 
 void exportParallelMechanicalLoadToPython() {
-    using namespace boost::python;
 
-    class_< ParallelMechanicalLoadInstance,
-            ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr, bases< DataStructure > >(
-        "ParallelMechanicalLoad", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< ParallelMechanicalLoadInstance,
+    py::class_< ParallelMechanicalLoadInstance,
+            ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr, py::bases< DataStructure > >(
+        "ParallelMechanicalLoad", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelMechanicalLoadInstance,
                                                             GenericMechanicalLoadPtr, ModelPtr >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< ParallelMechanicalLoadInstance, std::string,
+              py::make_constructor(&initFactoryPtr< ParallelMechanicalLoadInstance, std::string,
                                                 GenericMechanicalLoadPtr, ModelPtr >));
 };
 

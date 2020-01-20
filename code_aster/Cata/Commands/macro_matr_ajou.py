@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: nicolas.greffet at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macro_matr_ajou_prod(self, MATR_AMOR_AJOU=None, MATR_MASS_AJOU=None, MATR_RIGI_AJOU=None, FORC_AJOU=None, **args):
@@ -42,7 +42,7 @@ def macro_matr_ajou_prod(self, MATR_AMOR_AJOU=None, MATR_MASS_AJOU=None, MATR_RI
     return None
 
 MACRO_MATR_AJOU=MACRO(nom="MACRO_MATR_AJOU",
-                      op=OPS('Macro.macro_matr_ajou_ops.macro_matr_ajou_ops'),
+                      op=OPS('code_aster.MacroCommands.macro_matr_ajou_ops.macro_matr_ajou_ops'),
                       sd_prod=macro_matr_ajou_prod,
                       fr=tr("Calculer de facon plus condensée qu'avec CALC_MATR_AJOU des "
                            "matrices de masse, d'amortissement ou de rigidité ajoutés"),

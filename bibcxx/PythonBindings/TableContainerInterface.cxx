@@ -3,7 +3,7 @@
  * @brief Interface python de TableContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,12 +24,13 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/TableContainerInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 
 void exportTableContainerToPython() {
-    using namespace boost::python;
 
     void ( TableContainerInstance::*c1 )( const std::string &,
                                           ElementaryMatrixDisplacementDoublePtr ) =
@@ -43,41 +44,33 @@ void exportTableContainerToPython() {
     void ( TableContainerInstance::*c4 )( const std::string &,
                                           ElementaryVectorTemperatureDoublePtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c5 )( const std::string &,
-                                          FieldOnElementsDoublePtr ) =
+    void ( TableContainerInstance::*c5 )( const std::string &, FieldOnElementsDoublePtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c6 )( const std::string &,
-                                          FieldOnNodesDoublePtr ) =
+    void ( TableContainerInstance::*c6 )( const std::string &, FieldOnNodesDoublePtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c7 )( const std::string &,
-                                          FunctionPtr ) =
+    void ( TableContainerInstance::*c7 )( const std::string &, FunctionPtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c8 )( const std::string &,
-                                          FunctionComplexPtr ) =
+    void ( TableContainerInstance::*c8 )( const std::string &, FunctionComplexPtr ) =
         &TableContainerInstance::addObject;
     void ( TableContainerInstance::*c9 )( const std::string &,
                                           GeneralizedAssemblyMatrixDoublePtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c10 )( const std::string &,
-                                           GenericDataFieldPtr ) =
+    void ( TableContainerInstance::*c10 )( const std::string &, GenericDataFieldPtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c11 )( const std::string &,
-                                           MechanicalModeContainerPtr ) =
+    void ( TableContainerInstance::*c11 )( const std::string &, MechanicalModeContainerPtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c12 )( const std::string &,
-                                           PCFieldOnMeshDoublePtr ) =
+    void ( TableContainerInstance::*c12 )( const std::string &, PCFieldOnMeshDoublePtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c13 )( const std::string &,
-                                           SurfacePtr ) =
+    void ( TableContainerInstance::*c13 )( const std::string &, SurfacePtr ) =
         &TableContainerInstance::addObject;
-    void ( TableContainerInstance::*c14 )( const std::string &,
-                                           TablePtr ) =
+    void ( TableContainerInstance::*c14 )( const std::string &, TablePtr ) =
         &TableContainerInstance::addObject;
 
-    class_< TableContainerInstance, TableContainerInstance::TableContainerPtr,
-            bases< TableInstance > >( "TableContainer", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance >) )
-        .def( "__init__", make_constructor(&initFactoryPtr< TableContainerInstance, std::string >) )
+    py::class_< TableContainerInstance, TableContainerInstance::TableContainerPtr,
+                py::bases< TableInstance > >( "TableContainer", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableContainerInstance >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< TableContainerInstance, std::string >))
         .def( "addObject", c1 )
         .def( "addObject", c2 )
         .def( "addObject", c3 )

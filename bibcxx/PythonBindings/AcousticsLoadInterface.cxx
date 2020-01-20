@@ -3,7 +3,7 @@
  * @brief Interface python de AcousticsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -22,17 +22,18 @@
  */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/AcousticsLoadInterface.h"
 
 void exportAcousticsLoadToPython() {
-    using namespace boost::python;
 
-    class_< AcousticsLoadInstance, AcousticsLoadInstance::AcousticsLoadPtr,
-            bases< DataStructure > >( "AcousticsLoad", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< AcousticsLoadInstance, ModelPtr >))
+    py::class_< AcousticsLoadInstance, AcousticsLoadInstance::AcousticsLoadPtr,
+            py::bases< DataStructure > >( "AcousticsLoad", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< AcousticsLoadInstance, ModelPtr >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< AcousticsLoadInstance, std::string, ModelPtr >))
+              py::make_constructor(&initFactoryPtr< AcousticsLoadInstance, std::string, ModelPtr >))
         .def( "addImposedNormalSpeedOnAllMesh",
               &AcousticsLoadInstance::addImposedNormalSpeedOnAllMesh )
         .def( "addImposedNormalSpeedOnGroupsOfElements",

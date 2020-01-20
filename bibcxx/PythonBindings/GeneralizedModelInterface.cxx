@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedModel
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,14 +25,15 @@
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
-void exportGeneralizedModelToPython() {
-    using namespace boost::python;
+namespace py = boost::python;
 
-    class_< GeneralizedModelInstance, GeneralizedModelInstance::GeneralizedModelPtr,
-            bases< DataStructure > >( "GeneralizedModel", no_init )
-        .def( "__init__", make_constructor( &initFactoryPtr< GeneralizedModelInstance > ) )
+void exportGeneralizedModelToPython() {
+
+    py::class_< GeneralizedModelInstance, GeneralizedModelInstance::GeneralizedModelPtr,
+            py::bases< DataStructure > >( "GeneralizedModel", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< GeneralizedModelInstance > ) )
         .def( "__init__",
-              make_constructor( &initFactoryPtr< GeneralizedModelInstance, std::string > ) )
+              py::make_constructor( &initFactoryPtr< GeneralizedModelInstance, std::string > ) )
         .def( "addDynamicMacroElement", &GeneralizedModelInstance::addDynamicMacroElement )
         .def( "getDynamicMacroElementFromName",
               &GeneralizedModelInstance::getDynamicMacroElementFromName );

@@ -1,7 +1,6 @@
 # coding=utf-8
 
 from code_aster.Commands import *
-import Utilitai
 
 try:
   # Import du module de calcul symbolique Sympy
@@ -12,8 +11,8 @@ except ImportError:
 
 if sympy_available:
 
-  from Utilitai import TensorModule
-  from Utilitai import HookeTensor
+  from code_aster.MacroCommands.Contrib import TensorModule
+  from code_aster.MacroCommands.Contrib import HookeTensor
 
   X,Y,Z = sympy.symbols('X Y Z');
 

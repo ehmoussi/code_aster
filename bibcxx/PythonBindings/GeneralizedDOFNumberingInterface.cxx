@@ -3,7 +3,7 @@
  * @brief Interface python de GeneralizedDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -24,26 +24,27 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <boost/python.hpp>
+
+namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/GeneralizedDOFNumberingInterface.h"
 #include "PythonBindings/VariantModalBasisInterface.h"
 
 void exportGeneralizedDOFNumberingToPython() {
-    using namespace boost::python;
 
-    bool ( GeneralizedDOFNumberingInstance::*c1 )( const MechanicalModeContainerPtr& ) =
+    bool ( GeneralizedDOFNumberingInstance::*c1 )( const MechanicalModeContainerPtr & ) =
         &GeneralizedDOFNumberingInstance::setModalBasis;
-    bool ( GeneralizedDOFNumberingInstance::*c2 )( const GeneralizedModeContainerPtr& ) =
+    bool ( GeneralizedDOFNumberingInstance::*c2 )( const GeneralizedModeContainerPtr & ) =
         &GeneralizedDOFNumberingInstance::setModalBasis;
 
-    class_< GeneralizedDOFNumberingInstance,
-            GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr, bases< DataStructure > >(
-        "GeneralizedDOFNumbering", no_init )
-        .def( "__init__", make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance >))
+    py::class_< GeneralizedDOFNumberingInstance,
+                GeneralizedDOFNumberingInstance::GeneralizedDOFNumberingPtr,
+                py::bases< DataStructure > >( "GeneralizedDOFNumbering", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance >))
         .def( "__init__",
-              make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< GeneralizedDOFNumberingInstance, std::string >))
         .def( "getGeneralizedModel", &GeneralizedDOFNumberingInstance::getGeneralizedModel )
-        .def( "getModalBasis", &getModalBasis< GeneralizedDOFNumberingPtr > )
+        .def("getModalBasis", &getModalBasis< GeneralizedDOFNumberingPtr >)
         .def( "setGeneralizedModel", &GeneralizedDOFNumberingInstance::setGeneralizedModel )
         .def( "setModalBasis", c1 )
         .def( "setModalBasis", c2 );

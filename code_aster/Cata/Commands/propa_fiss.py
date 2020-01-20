@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: samuel.geniaut at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def propa_fiss_prod(self,**args):
@@ -49,7 +49,7 @@ def propa_fiss_prod(self,**args):
   return None
 
 PROPA_FISS=MACRO(nom="PROPA_FISS",
-                 op=OPS('Macro.propa_fiss_ops.propa_fiss_ops'),
+                 op=OPS('code_aster.MacroCommands.propa_fiss_ops.propa_fiss_ops'),
                  sd_prod=propa_fiss_prod,
                  fr=tr("Propagation de fissure avec X-FEM"),reentrant='n',
 

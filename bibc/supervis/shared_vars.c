@@ -36,17 +36,12 @@
 #include "shared_vars.h"
 
 /* Global variables */
-/*! Global variable to handle the JDC object from libaster */
-static PyObject* gJDC = (PyObject*)0;
 
-/*! Global variable to handle the CoreOptions object from libaster */
-static PyObject* gCoreOpts = (PyObject*)0;
+/*! Global variable to handle the ExecutionParameter object */
+static PyObject* gParams = (PyObject*)0;
 
-/*! Global variable to handle the MessageLog object from libaster */
+/*! Global variable to handle the MessageLog object */
 static PyObject* gMsgLog = (PyObject*)0;
-
-/*! Global variable to handle the aster_core python module from libaster */
-static PyObject* gPyMod = (PyObject*)0;
 
 
 /*! gJeveuxStatus is:
@@ -66,21 +61,15 @@ static PyObject *gPileEtapes = (PyObject*)0;
 
 
 /* register functions */
-/*! Register the CoreOptions object as a global variable */
-void register_sh_coreopts(PyObject *obj) {
-    gCoreOpts = obj;
+/*! Register the ExecutionParameter object as a global variable */
+void register_sh_params(PyObject *obj) {
+    gParams = obj;
     return;
 }
 
 /*! Register the MessageLog object as a global variable */
 void register_sh_msglog(PyObject *obj) {
     gMsgLog = obj;
-    return;
-}
-
-/*! Register the aster_core python module as a global variable */
-void register_sh_pymod(PyObject *obj) {
-    gPyMod = obj;
     return;
 }
 
@@ -100,19 +89,14 @@ void register_sh_jeveux_status(int obj) {
 }
 
 /* get functions */
-/*! Return the global CoreOptions object */
-PyObject * get_sh_coreopts() {
-    return gCoreOpts;
+/*! Return the global ExecutionParameter object */
+PyObject * get_sh_params() {
+    return gParams;
 }
 
 /*! Return the global MessageLog object */
 PyObject * get_sh_msglog() {
     return gMsgLog;
-}
-
-/*! Return the global aster_core python module */
-PyObject * get_sh_pymod() {
-    return gPyMod;
 }
 
 /*! Return the current 'etape' object */
