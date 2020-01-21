@@ -170,8 +170,7 @@ class ExecuteCommand(object):
         self.print_syntax(keywords)
         try:
             self.exec_(keywords)
-            self.add_references(keywords)
-            self.post_exec(keywords)
+            self.post_exec_(keywords)
         finally:
             self.print_result()
         ExecuteCommand.level -= 1
@@ -333,11 +332,21 @@ class ExecuteCommand(object):
         if syntax.getResultValue() is not None:
             self._result = syntax.getResultValue()
 
+    def post_exec_(self, keywords):
+        """Post-treatments executed after the `exec_` function. Commands may
+        override `post_exec` method to add specific actions.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self.add_references(keywords)
+        self.post_exec(keywords)
+
     def post_exec(self, keywords):
         """Hook that allows to add post-treatments after the *exec* function.
 
         .. note:: If the Command executes the *op* fortran subroutine and if
-            the result DataStructure references input in a Jeveux object,
+            the result DataStructure references any inputs in a Jeveux object,
             pointers on these inputs must be explicitly references into
             the result.
 

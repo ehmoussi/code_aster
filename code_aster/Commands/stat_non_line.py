@@ -39,7 +39,7 @@ class NonLinearStaticAnalysis(ExecuteCommand):
         else:
             self._result = NonLinearEvolutionContainer()
 
-    def post_exec(self, MODELE, CHAM_MATER, CARA_ELEM=None):
+    def post_exec(self, keywords):
         """Execute the command.
 
         Arguments:
