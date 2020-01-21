@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -78,11 +78,9 @@ character(len=*), optional, intent(in) :: sddynz_
 !
     integer :: ifm, niv
     aster_logical :: l_xfem, l_macr_elem, l_hho
-    integer :: iter
     character(len=1) :: base
     character(len=16) :: option
     character(len=19) :: merigi = ' ', vefint = ' ', sddyna =  ' '
-    character(len=24) :: mate, varc_refe
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -93,9 +91,6 @@ character(len=*), optional, intent(in) :: sddynz_
 !
 ! - Initializations
 !
-    mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
-    iter      = iter_newt+1
     base      = 'V'
     option    = 'RAPH_MECA'
     ldccvg    = 0
@@ -122,11 +117,12 @@ character(len=*), optional, intent(in) :: sddynz_
 !
 ! - Computation
 !
-    call merimo(base           , l_xfem   , l_macr_elem, l_hho,&
-                model          , cara_elem, mate       , iter ,&
-                ds_constitutive, varc_refe,&
-                hval_incr      , hval_algo, hhoField,&
-                option         , merigi   ,vefint      ,&
+    call merimo(base           ,&
+                l_xfem         , l_macr_elem, l_hho      ,&
+                model          , cara_elem  , iter_newt+1,&
+                ds_constitutive, ds_material,&
+                hval_incr      , hval_algo  , hhoField   ,&
+                option         , merigi     , vefint     ,&
                 ldccvg         , sddyna)
 !
 ! - End timer
