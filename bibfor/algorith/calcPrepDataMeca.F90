@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 subroutine calcPrepDataMeca(model          , mate          , cara_elem,&
                             disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                             time_prev      , time_curr     ,&
-                            ds_constitutive, varc_refe     ,&
+                            ds_constitutive, ds_material   ,&
                             hval_incr      , hval_algo     ,&
                             merigi         , vediri        , vefint   , veforc   ,&
                             vevarc_prev    , vevarc_curr   )
@@ -46,25 +46,15 @@ implicit none
 #include "asterfort/nmvcre.h"
 #include "asterfort/sgcomp.h"
 !
-character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
-character(len=24), intent(in) :: cara_elem
-character(len=19), intent(in) :: disp_prev
-character(len=19), intent(in) :: disp_cumu_inst
-character(len=19), intent(in) :: vari_prev
-character(len=19), intent(in) :: sigm_prev
-real(kind=8), intent(in) :: time_prev
-real(kind=8), intent(in) :: time_curr
-type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=24), intent(out) :: varc_refe
-character(len=19), intent(out) :: hval_incr(:)
-character(len=19), intent(out) :: hval_algo(:)
-character(len=19), intent(out) :: merigi
-character(len=19), intent(out) :: vediri
-character(len=19), intent(out) :: vefint
-character(len=19), intent(out) :: veforc
-character(len=19), intent(out) :: vevarc_prev
-character(len=19), intent(out) :: vevarc_curr
+character(len=24), intent(in) :: model, mate, cara_elem
+character(len=19), intent(in) :: disp_prev, disp_cumu_inst
+character(len=19), intent(in) :: vari_prev, sigm_prev
+real(kind=8), intent(in) :: time_prev, time_curr
+type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
+type(NL_DS_Material), intent(out) :: ds_material
+character(len=19), intent(out) :: hval_incr(:), hval_algo(:)
+character(len=19), intent(out) :: merigi, vefint, veforc
+character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -83,8 +73,8 @@ character(len=19), intent(out) :: vevarc_curr
 ! In  sigm_prev        : stress at beginning of step
 ! In  time_prev        : time at beginning of step
 ! In  time_curr        : time at end of step
-! In  ds_constitutive  : datastructure for constitutive laws management
-! Out varc_refe        : name of reference command variables vector
+! IO  ds_constitutive  : datastructure for constitutive laws management
+! Out ds_material      : datastructure for material parameters
 ! Out hval_incr        : hat-variable for incremental values fields
 ! Out hval_algo        : hat-variable for algorithms fields
 ! Out merigi           : name of elementary for tangent matrix
@@ -98,6 +88,7 @@ character(len=19), intent(out) :: vevarc_curr
 !
     integer :: iret
     character(len=19) :: disp_curr, varc_prev, varc_curr, sigm_curr, vari_curr, ligrmo
+    character(len=24) :: varc_refe
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -179,5 +170,10 @@ character(len=19), intent(out) :: vevarc_curr
 !
     call nmcha0('VALINC', 'SIGPLU', sigm_curr, hval_incr)
     call nmcha0('VALINC', 'VARPLU', vari_curr, hval_incr)
+!
+! - Prepare datastructures
+!
+    ds_material%field_mate = mate
+    ds_material%varc_refe  = varc_refe
 !
 end subroutine

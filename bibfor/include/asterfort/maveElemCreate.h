@@ -17,15 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmvcpr(modelz     , cara_elemz     , hval_incr,&
-                      ds_material, ds_constitutive,&
-                      base       , nume_dof)
-        use NonLin_Datastructure_type
-        character(len=*), intent(in) :: modelz, cara_elemz
-        type(NL_DS_Material), intent(in) :: ds_material
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19), intent(in) :: hval_incr(*)
+    subroutine maveElemCreate(base, phenom, mave_elemz, model_, mate_, cara_elem_)
         character(len=1), intent(in) :: base
-        character(len=24), intent(in) :: nume_dof
-    end subroutine nmvcpr
+        character(len=4), intent(in) :: phenom
+        character(len=*), intent(in) :: mave_elemz
+        character(len=*), optional, intent(in) :: model_, mate_, cara_elem_
+    end subroutine maveElemCreate
 end interface

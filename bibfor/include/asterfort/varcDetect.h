@@ -17,15 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmvcpr(modelz     , cara_elemz     , hval_incr,&
-                      ds_material, ds_constitutive,&
-                      base       , nume_dof)
-        use NonLin_Datastructure_type
-        character(len=*), intent(in) :: modelz, cara_elemz
-        type(NL_DS_Material), intent(in) :: ds_material
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19), intent(in) :: hval_incr(*)
-        character(len=1), intent(in) :: base
-        character(len=24), intent(in) :: nume_dof
-    end subroutine nmvcpr
+    subroutine varcDetect(mate, l_temp, l_hydr, l_ptot, l_sech, l_epsa, l_meta)
+        character(len=24), intent(in) :: mate
+        aster_logical, intent(out) :: l_temp, l_hydr, l_ptot
+        aster_logical, intent(out) :: l_sech, l_epsa, l_meta
+    end subroutine varcDetect
 end interface

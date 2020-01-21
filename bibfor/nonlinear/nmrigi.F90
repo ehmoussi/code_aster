@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,8 +86,6 @@ integer, intent(out) :: ldccvg
     character(len=24) :: model
     character(len=16) :: optrig
     aster_logical :: lendo, l_xfem, l_macr_elem, l_hho
-    character(len=24) :: mate, varc_refe
-    integer :: iter
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -98,9 +96,6 @@ integer, intent(out) :: ldccvg
 !
 ! - Initializations
 !
-    mate      = ds_material%field_mate
-    varc_refe = ds_material%varc_refe
-    iter      = iter_newt+1
     base      = 'V'
     optrig    = optioz
     model     = modelz
@@ -110,7 +105,7 @@ integer, intent(out) :: ldccvg
 !
     l_xfem      = isfonc(list_func_acti, 'XFEM')
     l_macr_elem = isfonc(list_func_acti, 'MACR_ELEM_STAT')
-    lendo       = isfonc(list_func_acti,'ENDO_NO')
+    lendo       = isfonc(list_func_acti, 'ENDO_NO')
     l_hho       = isfonc(list_func_acti, 'HHO')
 !
 ! - Elementaries
@@ -133,11 +128,12 @@ integer, intent(out) :: ldccvg
 !
 ! - Computation
 !
-    call merimo(base           , l_xfem   , l_macr_elem, l_hho, &
-                model          , cara_elem, mate       , iter_newt+1,&
-                ds_constitutive, varc_refe,&
-                hval_incr      , hval_algo, hhoField, &
-                optrig         , merigi   , vefint     ,&
+    call merimo(base           ,&
+                l_xfem         , l_macr_elem, l_hho      ,&
+                model          , cara_elem  , iter_newt+1,&
+                ds_constitutive, ds_material, &
+                hval_incr      , hval_algo  , hhoField   ,&
+                optrig         , merigi     , vefint     ,&
                 ldccvg         , sddyna)
 !
 ! - End timer
