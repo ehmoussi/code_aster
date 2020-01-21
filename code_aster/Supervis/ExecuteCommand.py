@@ -360,13 +360,15 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): Dict of keywords.
             level (Optional[int]): Number of frames to rewind to find the
-                caller.
+                caller. Defaults to 2 (1: *here*, 2: *run_*, 3: *run*).
         """
         self._caller = {"filename": "unknown", "lineno": 0, "context": {},
                         "identifier": ""}
         caller = inspect.currentframe()
         try:
             for _ in range(level):
+                if not caller.f_back:
+                    break
                 caller = caller.f_back
             self._caller["filename"] = caller.f_code.co_filename
             self._caller["lineno"] = caller.f_lineno

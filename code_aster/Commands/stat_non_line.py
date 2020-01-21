@@ -23,7 +23,7 @@ from ..Objects import NonLinearEvolutionContainer
 from ..Supervis import ExecuteCommand
 
 
-class StaticNonLinearAnalysisBuild(ExecuteCommand):
+class NonLinearStaticAnalysis(ExecuteCommand):
     """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
     """
     command_name = "STAT_NON_LINE"
@@ -39,7 +39,7 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
         else:
             self._result = NonLinearEvolutionContainer()
 
-    def post_exec(self, keywords):
+    def post_exec(self, MODELE, CHAM_MATER, CARA_ELEM=None):
         """Execute the command.
 
         Arguments:
@@ -52,4 +52,4 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
             self._result.appendElementaryCharacteristicsOnAllRanks(caraElem)
         self._result.update()
 
-STAT_NON_LINE = StaticNonLinearAnalysisBuild.run
+STAT_NON_LINE = NonLinearStaticAnalysis.run
