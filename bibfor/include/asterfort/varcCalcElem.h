@@ -17,15 +17,20 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmvcpr(modelz     , cara_elemz     , hval_incr,&
-                      ds_material, ds_constitutive,&
-                      base       , nume_dof)
-        use NonLin_Datastructure_type
-        character(len=*), intent(in) :: modelz, cara_elemz
-        type(NL_DS_Material), intent(in) :: ds_material
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        character(len=19), intent(in) :: hval_incr(*)
+    subroutine varcCalcElem(modelz    , cara_elemz, matez     ,&
+                            nume_harm , time_comp , l_new     ,&
+                            varc_refez, varc_prevz, varc_currz,&
+                            comporz   , mult_compz,&
+                            base      , vect_elemz,&
+                            sigmz_    , variz_    )
+        character(len=*), intent(in) :: modelz, cara_elemz, matez
+        integer, intent(in) :: nume_harm
+        character(len=1), intent(in) :: time_comp
+        aster_logical, intent(in) :: l_new
+        character(len=*), intent(in) :: varc_refez, varc_prevz, varc_currz
+        character(len=*), intent(in) :: comporz, mult_compz
         character(len=1), intent(in) :: base
-        character(len=24), intent(in) :: nume_dof
-    end subroutine nmvcpr
+        character(len=*), intent(in) :: vect_elemz
+        character(len=*), optional, intent(in) :: sigmz_, variz_
+    end subroutine varcCalcElem
 end interface

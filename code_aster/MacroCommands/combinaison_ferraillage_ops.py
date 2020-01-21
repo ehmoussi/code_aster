@@ -77,25 +77,34 @@ def combinaison_ferraillage_ops(self, **args):
 
     UTMESS('I', 'COMBFERR_12', valk='\n    '.join(lst_type_combo))
 
+
+    count_2D = 0
+    lGroupSelec = []
+    g = []
+    TEST_TOUT = False
     for i_affe in affe :
         structure_type = i_affe.get('TYPE_STRUCTURE')
 
         # [structure_type] selects design algorithm.
         if structure_type == '2D' :
-            # Algorithm is CALC_FERRAILLAGE
-            # __resfer = algo_2D(__resfer, i_affe, lst_inst_value, codification, lst_type_combo)
-            resu = algo_2D(resu, i_affe, lst_inst_index, codification, lst_type_combo)
-
+            if not i_affe.get('GROUP_MA') or i_affe.get('TOUT'):
+                TEST_TOUT = True
+            else:
+                for Ma in i_affe.get('GROUP_MA'):
+                    g.append(Ma)
+                count_2D = count_2D + 1
         elif structure_type == 'POUTRE' :
             # Algorithm un available
             algo_POUTRE()
-
         elif structure_type == 'POTEAU' :
             # Algorithm un available
             algo_POTEAU()
-
         else:
             UTMESS('F', 'COMBFERR_14', valk=structure_type)
+
+    lGroupSelec+=[{'GROUP_MA':g}]
+    resu = algo_2D(resu, affe, lst_inst_index, codification, lst_type_combo)
+
 
     # - Build result type EVOL_ELAS from MULTI_ELAS and combo type list in order
     #   to select the right verify. This because CREA_CHAMP does'nt EXTR the
@@ -149,35 +158,52 @@ def combinaison_ferraillage_ops(self, **args):
     #   DNST :
     # EPSIBE :
     # SIGMBE :
+    
+    if not TEST_TOUT:
+        groupSelection = lGroupSelec[0]
 
     # Workaround to Bug: "ELEM_NEUT_R can use only X1"
     __CHP = [None] * 7
     for cmp_index, cmp_name in enumerate(['DNSXI','DNSXS','DNSYI','DNSYS','DNST','DNSVOL','CONSTRUC']):
 
         # Renaming component(s) in COMB_DIME_ORDRE to avoid overlapping with COMB_DIME_ACIER
-        __CHORD2=CREA_CHAMP(OPERATION='ASSE',
-                          MODELE=modele,
-                          TYPE_CHAM='ELEM_NEUT_R',
-                          ASSE=(
-                                # ~ _F(CHAM_GD=CHORD,TOUT='OUI',NOM_CMP=('DNSXI','DNSXS','DNSYI','DNSYS','DNST','SIGMBE','EPSIBE'),NOM_CMP_RESU=('X8','X9','X10','X11','X12','X13','X14')),
-                                _F(CHAM_GD=__instfer,TOUT='OUI',NOM_CMP=cmp_name,NOM_CMP_RESU='X1',),
-                              ),
-                              PROL_ZERO='OUI',
-                              )
+        if TEST_TOUT :
+            __CHORD2=CREA_CHAMP(OPERATION='ASSE',
+                              MODELE=modele,
+                              TYPE_CHAM='ELEM_NEUT_R',
+                              ASSE=(
+                                    # ~ _F(CHAM_GD=CHORD,TOUT='OUI',NOM_CMP=('DNSXI','DNSXS','DNSYI','DNSYS','DNST','SIGMBE','EPSIBE'),NOM_CMP_RESU=('X8','X9','X10','X11','X12','X13','X14')),
+                                    _F(CHAM_GD=__instfer,TOUT='OUI',NOM_CMP=cmp_name,NOM_CMP_RESU='X1'),
+                                  ),
+                                  PROL_ZERO='OUI',
+                                  )
+        else:
+            __CHORD2=CREA_CHAMP(OPERATION='ASSE',
+                              MODELE=modele,
+                              TYPE_CHAM='ELEM_NEUT_R',
+                              ASSE=(_F(CHAM_GD=__instfer,NOM_CMP=cmp_name,NOM_CMP_RESU='X1',**groupSelection), ),
+                              PROL_ZERO='OUI',)
 
         __FDNSXI=FORMULE(NOM_PARA=(cmp_name,'X1'),VALE="X1 if "+cmp_name+" > 0 else -1")
 
-        __CHFMU=CREA_CHAMP(OPERATION='AFFE',
-                         TYPE_CHAM='ELEM_NEUT_F',
-                         # ~ TYPE_CHAM='CART_NEUT_F',
-                         # ~ TYPE_CHAM='ELGA_NEUT_F',
-                         MODELE=modele,
-                         AFFE=(
-                                # ~ _F(TOUT = 'OUI',NOM_CMP = ('X1','X2','X3','X4','X5','X6','X7'),VALE_F = (FDNSXI,FDNSXS,FDNSYI,FDNSYS,FDNST,FSIGMBE,FEPSIBE)),
-                                _F(TOUT = 'OUI',NOM_CMP = 'X1',VALE_F = __FDNSXI,),
-                              ),
-                              PROL_ZERO='OUI',
-                              )
+        if TEST_TOUT :
+            __CHFMU=CREA_CHAMP(OPERATION='AFFE',
+                             TYPE_CHAM='ELEM_NEUT_F',
+                             # ~ TYPE_CHAM='CART_NEUT_F',
+                             # ~ TYPE_CHAM='ELGA_NEUT_F',
+                             MODELE=modele,
+                             AFFE=(
+                                    # ~ _F(TOUT = 'OUI',NOM_CMP = ('X1','X2','X3','X4','X5','X6','X7'),VALE_F = (FDNSXI,FDNSXS,FDNSYI,FDNSYS,FDNST,FSIGMBE,FEPSIBE)),
+                                    _F(TOUT = 'OUI',NOM_CMP = 'X1',VALE_F = __FDNSXI,),
+                                  ),
+                                  PROL_ZERO='OUI',
+                                  )
+        else:
+            __CHFMU=CREA_CHAMP(OPERATION='AFFE',
+                             TYPE_CHAM='ELEM_NEUT_F',
+                             MODELE=modele,
+                             AFFE=(_F(NOM_CMP = 'X1',VALE_F = __FDNSXI,**groupSelection),),
+                             PROL_ZERO='OUI',)
 
         # Bug 3 : cannot EVAL functions on CART_NEUT_F, ELGA_NEUT_F :
         __CHP[cmp_index]=CREA_CHAMP(OPERATION='EVAL',
@@ -190,21 +216,38 @@ def combinaison_ferraillage_ops(self, **args):
 
     # Bug il n y a pas de paramètre  INOUT  associe a la grandeur: FER2_R  dans l option: TOU_INI_ELEM
     # see https://www.code-aster.org/forum2/viewtopic.php?id=21005
-    __CHORD4=CREA_CHAMP(OPERATION='ASSE',
-                      # ~ TYPE_CHAM='ELEM_FER2_R',
-                      TYPE_CHAM='CART_NEUT_R',
-                      MODELE=modele,
-                      # ~ PROL_ZERO='OUI',
-                      ASSE=(
-                            _F(TOUT='OUI',CHAM_GD=__CHP[0],NOM_CMP=('X1',), NOM_CMP_RESU=('X1',),),
-                            _F(TOUT='OUI',CHAM_GD=__CHP[1],NOM_CMP=('X1',), NOM_CMP_RESU=('X2',),),
-                            _F(TOUT='OUI',CHAM_GD=__CHP[2],NOM_CMP=('X1',), NOM_CMP_RESU=('X3',),),
-                            _F(TOUT='OUI',CHAM_GD=__CHP[3],NOM_CMP=('X1',), NOM_CMP_RESU=('X4',),),
-                            _F(TOUT='OUI',CHAM_GD=__CHP[4],NOM_CMP=('X1',), NOM_CMP_RESU=('X5',),),
-                            _F(TOUT='OUI',CHAM_GD=__CHP[5],NOM_CMP=('X1',), NOM_CMP_RESU=('X6',),),
-                            _F(TOUT='OUI',CHAM_GD=__CHP[6],NOM_CMP=('X1',), NOM_CMP_RESU=('X7',),),
-                          )
-                          )
+    if TEST_TOUT :
+        __CHORD4=CREA_CHAMP(OPERATION='ASSE',
+                          # ~ TYPE_CHAM='ELEM_FER2_R',
+                          TYPE_CHAM='CART_NEUT_R',
+                          MODELE=modele,
+                          # ~ PROL_ZERO='OUI',
+                          ASSE=(
+                                _F(TOUT='OUI',CHAM_GD=__CHP[0],NOM_CMP=('X1',), NOM_CMP_RESU=('X1',),),
+                                _F(TOUT='OUI',CHAM_GD=__CHP[1],NOM_CMP=('X1',), NOM_CMP_RESU=('X2',),),
+                                _F(TOUT='OUI',CHAM_GD=__CHP[2],NOM_CMP=('X1',), NOM_CMP_RESU=('X3',),),
+                                _F(TOUT='OUI',CHAM_GD=__CHP[3],NOM_CMP=('X1',), NOM_CMP_RESU=('X4',),),
+                                _F(TOUT='OUI',CHAM_GD=__CHP[4],NOM_CMP=('X1',), NOM_CMP_RESU=('X5',),),
+                                _F(TOUT='OUI',CHAM_GD=__CHP[5],NOM_CMP=('X1',), NOM_CMP_RESU=('X6',),),
+                                _F(TOUT='OUI',CHAM_GD=__CHP[6],NOM_CMP=('X1',), NOM_CMP_RESU=('X7',),),
+                              )
+                              )
+    else:
+        __CHORD4=CREA_CHAMP(OPERATION='ASSE',
+                          # ~ TYPE_CHAM='ELEM_FER2_R',
+                          TYPE_CHAM='CART_NEUT_R',
+                          MODELE=modele,
+                          # ~ PROL_ZERO='OUI',
+                          ASSE=(
+                                _F(**groupSelection,CHAM_GD=__CHP[0],NOM_CMP=('X1',), NOM_CMP_RESU=('X1',),),
+                                _F(**groupSelection,CHAM_GD=__CHP[1],NOM_CMP=('X1',), NOM_CMP_RESU=('X2',),),
+                                _F(**groupSelection,CHAM_GD=__CHP[2],NOM_CMP=('X1',), NOM_CMP_RESU=('X3',),),
+                                _F(**groupSelection,CHAM_GD=__CHP[3],NOM_CMP=('X1',), NOM_CMP_RESU=('X4',),),
+                                _F(**groupSelection,CHAM_GD=__CHP[4],NOM_CMP=('X1',), NOM_CMP_RESU=('X5',),),
+                                _F(**groupSelection,CHAM_GD=__CHP[5],NOM_CMP=('X1',), NOM_CMP_RESU=('X6',),),
+                                _F(**groupSelection,CHAM_GD=__CHP[6],NOM_CMP=('X1',), NOM_CMP_RESU=('X7',),),
+                              )
+                              )
 
     # Adding COMB_DIME_ACIER and COMB_DIME_ORDRE tu resu
     #
@@ -247,40 +290,43 @@ def combinaison_ferraillage_ops(self, **args):
 
 def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
 
-    dict_affe = affe.List_F()[0]
-    dict_affe.pop('TYPE_STRUCTURE')
-
     for idx, nume_ordre in enumerate(lst_nume_ordre):
 
         # seelction of mot-clè TYPE_COMB by [lst_type_combo]
         dic_type_comb = {}
-
-        # saving dict_affe
-        affe_for_cf = dict_affe.copy()
-
         if type_combo [idx]  == 'ELS_CARACTERISTIQUE':
-            dic_type_comb['TYPE_COMB'] = 'ELS'
-
-        elif type_combo [idx]  == 'ELU_FONDAMENTAL':
-            dic_type_comb['TYPE_COMB'] = 'ELU'
-
-            affe_for_cf.update({'GAMMA_S':affe_for_cf['GAMMA_S_FOND']})
-            affe_for_cf.update({'GAMMA_C':affe_for_cf['GAMMA_C_FOND']})
-
-        elif type_combo [idx]  == 'ELU_ACCIDENTEL':
-            dic_type_comb['TYPE_COMB'] = 'ELU'
-
-            affe_for_cf.update({'GAMMA_S':affe_for_cf['GAMMA_S_ACCI']})
-            affe_for_cf.update({'GAMMA_C':affe_for_cf['GAMMA_C_ACCI']})
-
+           dic_type_comb['TYPE_COMB'] = 'ELS'
         else:
-            dic_type_comb['TYPE_COMB'] = 'ELU'
+           dic_type_comb['TYPE_COMB'] = 'ELU'
 
-        # adjusting affe for calc_ferraillage
-        affe_for_cf.pop('GAMMA_C_FOND')
-        affe_for_cf.pop('GAMMA_S_FOND')
-        affe_for_cf.pop('GAMMA_C_ACCI')
-        affe_for_cf.pop('GAMMA_S_ACCI')
+        lst_tmp_affe = []
+        for i_affe in affe :
+
+            structure_type = i_affe.get('TYPE_STRUCTURE')
+            if structure_type == '2D' :
+                dict_i_affe = i_affe.List_F()[0]
+
+                # saving dict_affe
+                i_affe_for_cf = dict_i_affe.copy();
+                i_affe_for_cf.pop('TYPE_STRUCTURE')
+
+                if type_combo [idx]  == 'ELU_FONDAMENTAL':
+                    i_affe_for_cf.update({'GAMMA_S':i_affe_for_cf['GAMMA_S_FOND']})
+                    i_affe_for_cf.update({'GAMMA_C':i_affe_for_cf['GAMMA_C_FOND']})
+
+                elif type_combo [idx]  == 'ELU_ACCIDENTEL':
+                    i_affe_for_cf.update({'GAMMA_S':i_affe_for_cf['GAMMA_S_ACCI']})
+                    i_affe_for_cf.update({'GAMMA_C':i_affe_for_cf['GAMMA_C_ACCI']})
+
+                # adjusting affe for calc_ferraillage
+                i_affe_for_cf.pop('GAMMA_C_FOND')
+                i_affe_for_cf.pop('GAMMA_S_FOND')
+                i_affe_for_cf.pop('GAMMA_C_ACCI')
+                i_affe_for_cf.pop('GAMMA_S_ACCI')
+            
+                lst_tmp_affe.append(_F(**i_affe_for_cf),)
+
+        dic_type_comb['AFFE']=tuple(lst_tmp_affe)
 
         dic_type_comb['CODIFICATION'] = code
 
@@ -288,7 +334,6 @@ def algo_2D (_resfer, affe, lst_nume_ordre, code, type_combo):
             reuse = _resfer,
             RESULTAT = _resfer,
             NUME_ORDRE = nume_ordre,
-            AFFE = _F(**affe_for_cf),
             **dic_type_comb
         )
 
