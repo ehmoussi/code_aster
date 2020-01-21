@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -98,12 +98,9 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! - Compute CHAR_MECA_*_R for PREDICTOR
 !
-    call nmvcpr(model    , ds_material%field_mate,&
-                cara_elem, ds_material%varc_refe , ds_constitutive%compor, &
-                hval_incr, nume_dof_ = nume_dof, base_ = 'V',&
-                vect_elem_prev_ = '&&VEVCOM',&
-                vect_elem_curr_ = '&&VEVCOP',&
-                cnvcpr_ = ds_material%fvarc_pred)
+    call nmvcpr(model      , cara_elem      , hval_incr,&
+                ds_material, ds_constitutive, &
+                'V'        , nume_dof)
 !
 ! - Compute loads
 !

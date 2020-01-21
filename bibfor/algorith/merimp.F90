@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine merimp(l_xfem         , l_hho, &
-                  model          , cara_elem, mate  , sddyna, iter_newt,&
-                  ds_constitutive, varc_refe,&
-                  hval_incr      , hval_algo, hhoField, caco3d,&
-                  mxchin         , lpain    , lchin , nbin)
+subroutine merimp(l_xfem         , l_dyna     , l_hho   ,&
+                  model          , cara_elem  , sddyna  , iter_newt,&
+                  ds_constitutive, ds_material,&
+                  hval_incr      , hval_algo  , hhoField, caco3d   ,&
+                  mxchin         , lpain      , lchin   , nbin)
 !
 use NonLin_Datastructure_type
 use HHO_type
@@ -29,15 +29,11 @@ use HHO_type
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/cesvar.h"
 #include "asterfort/copisd.h"
 #include "asterfort/exisd.h"
 #include "asterfort/exixfe.h"
-#include "asterfort/infdbg.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
 #include "asterfort/mecact.h"
 #include "asterfort/mecara.h"
 #include "asterfort/megeom.h"
@@ -47,13 +43,12 @@ implicit none
 #include "asterfort/nmvcex.h"
 #include "asterfort/xajcin.h"
 !
-aster_logical, intent(in) :: l_xfem, l_hho
+aster_logical, intent(in) :: l_xfem, l_dyna, l_hho
 character(len=24), intent(in) :: model, cara_elem
-character(len=*), intent(in) :: mate
 character(len=19), intent(in) :: sddyna
 integer, intent(in) :: iter_newt
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-character(len=24), intent(in) :: varc_refe
+type(NL_DS_Material), intent(in) :: ds_material
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
 type(HHO_Field), intent(in) :: hhoField
 character(len=24), intent(in) :: caco3d
@@ -71,17 +66,17 @@ integer, intent(out) :: nbin
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  l_xfem           : flag for XFEM elements
+! In  l_dyna           : flag for dynamic
 ! In  l_hho            : flag for HHO elements
-! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
-! In  mate             : name of material characteristics (field)
+! In  sddyna           : datastructure for dynamic
 ! In  iter_newt        : index of current Newton iteration
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  varc_refe        : name of reference command variables vector
+! In  ds_material      : datastructure for material parameters
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  hhoField         : Field for HHO method
+! In  hhoField         : datastructure for HHO method
 ! In  caco3d           : name of field for COQUE_3D (field of normals)
 ! In  mxchin           : maximum number of input fields
 ! IO  lpain            : list of input parameters
@@ -89,7 +84,6 @@ integer, intent(out) :: nbin
 ! Out nbin             : number of input fields
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm, niv
     integer :: iret
     character(len=24) :: chgeom, chcara(18), chiter
     character(len=19) :: stadyn, depent, vitent
@@ -105,15 +99,8 @@ integer, intent(out) :: nbin
     character(len=19) :: romkm1, romk
     character(len=24) :: ligrmo
     character(len=19) :: disp_iter, disp_cumu_inst
-    aster_logical :: l_dyna
-    integer :: iter
 !
 ! --------------------------------------------------------------------------------------------------
-!
-    call jemarq()
-    call infdbg('MECA_NON_LINE', ifm, niv)
-!
-! - Initializations
 !
     ligrmo    = model(1:8)//'.MODELE'
     option    = 'FULL_MECA'
@@ -121,11 +108,6 @@ integer, intent(out) :: nbin
     vari_iter = '&&MERIMO.VARMOJ'
     stru_iter = '&&MERIMO.STRMOJ'
     nbin      = 0
-    ASSERT(mate(9:18).eq.'.MATE_CODE')
-!
-! - Active functionnalities
-!
-    l_dyna = ndynlo(sddyna,'DYNAMIQUE')
 !
 ! - Get fields from hat-variables - Begin of time step
 !
@@ -164,13 +146,13 @@ integer, intent(out) :: nbin
         call ndynkk(sddyna, 'STADYN', stadyn)
     endif
 !
-! - Get command variables
+! - Get external state variables
 !
     call nmvcex('TOUT', varc_prev, vrcmoi)
     call nmvcex('INST', varc_prev, time_prev)
     call nmvcex('TOUT', varc_curr, vrcplu)
     call nmvcex('INST', varc_curr, time_curr)
-    call nmvcex('TOUT', varc_refe, vrcref)
+    call nmvcex('TOUT', ds_material%varc_refe, vrcref)
 !
 ! - Get internal variables from previous iteration
 !
@@ -209,16 +191,15 @@ integer, intent(out) :: nbin
 !
 ! - Field for iteration number
 !
-    iter = iter_newt
     call mecact('V', chiter, 'MODELE', ligrmo, 'NEUT_I',&
-                ncmp=1, nomcmp='X1', si=iter)
+                ncmp=1, nomcmp='X1', si=iter_newt)
 !
 ! - Input fields
 !
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = ds_material%field_mate(1:19)
     lpain(3) = 'PCONTMR'
     lchin(3) = sigm_prev(1:19)
     lpain(4) = 'PVARIMR'
@@ -340,5 +321,4 @@ integer, intent(out) :: nbin
         lchin(nbin) = hhoField%fieldOUT_cell_ST
     endif
 !
-    call jedema()
 end subroutine
