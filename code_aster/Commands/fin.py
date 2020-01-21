@@ -37,8 +37,8 @@ class Closer(ExecuteCommand):
         """
         # Ensure that `saveObjects` has not been already called
         if libaster.jeveux_status():
-            # 1: here, 2: exec_, 3: run, 4: user space
-            saveObjects(level=4)
+            # 1: here, 2: exec_, 3: run_, 4: run, 5: user space
+            saveObjects(level=5)
 
         logger.info(repr(ExecutionParameter().timer))
 
