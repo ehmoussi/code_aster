@@ -240,7 +240,7 @@ def perm_mac3coeur_ops(self, **args):
                 #print 'tran_z, tran_y, tran_x = ',tran_z, tran_y, tran_x
                 #print 'AC init, AC_fin = ',_coeur.nameAC[nom],_coeurp1.nameAC[nom]
 
-                MACRO_AC_PERMUTE(
+                BIDON = MACRO_AC_PERMUTE(
                     POS_INIT=_coeur.nameAC[nom],
                     POS_FIN=_coeurp1.nameAC[nom],
                     RESU_INI=RESUI,
