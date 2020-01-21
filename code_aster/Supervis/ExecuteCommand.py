@@ -123,31 +123,39 @@ class ExecuteCommand(object):
 
     @classmethod
     def run(cls, **kwargs):
-        """Run the command.
+        """Run the command (class method).
 
         Arguments:
             keywords (dict): User keywords
         """
         cmd = cls()
+        return cmd.run_(**kwargs)
+
+    def run_(self, **kwargs):
+        """Run the command (worker).
+
+        Arguments:
+            keywords (dict): User keywords
+        """
         keywords = mixedcopy(kwargs)
-        cmd.keep_caller_infos(keywords)
+        self.keep_caller_infos(keywords)
         timer = ExecutionParameter().timer
-        if cmd.command_name not in ("DEBUT", "POURSUITE", "FIN"):
+        if self.command_name not in ("DEBUT", "POURSUITE", "FIN"):
             check_jeveux()
 
         ExecuteCommand.level += 1
-        cmd._counter = ExecutionParameter().incr_command_counter()
-        timer.Start(str(cmd._counter), name=cmd.command_name,
-                    hide=not cmd.show_syntax())
+        self._counter = ExecutionParameter().incr_command_counter()
+        timer.Start(str(self._counter), name=self.command_name,
+                    hide=not self.show_syntax())
         timer.Start(" . check syntax", num=1.1e6)
-        cmd.adapt_syntax(keywords)
-        cmd._cata.addDefaultKeywords(keywords)
+        self.adapt_syntax(keywords)
+        self._cata.addDefaultKeywords(keywords)
         remove_none(keywords)
         try:
-            cmd.check_syntax(keywords)
+            self.check_syntax(keywords)
         except CheckerError as exc:
             # in case of syntax error, show the syntax and raise the exception
-            cmd.print_syntax(keywords)
+            self.print_syntax(keywords)
             ExecuteCommand.level -= 1
             if ExecutionParameter().option & Options.Debug:
                 logger.error(exc.msg)
@@ -155,19 +163,19 @@ class ExecuteCommand(object):
             raise exc.original(exc.msg)
         finally:
             timer.Stop(" . check syntax")
-        cmd.create_result(keywords)
-        if hasattr(cmd._result, "userName"):
-            cmd._result.userName = cmd.result_name
+        self.create_result(keywords)
+        if hasattr(self._result, "userName"):
+            self._result.userName = self.result_name
 
-        cmd.print_syntax(keywords)
+        self.print_syntax(keywords)
         try:
-            cmd.exec_(keywords)
-            cmd.add_references(keywords)
-            cmd.post_exec(keywords)
+            self.exec_(keywords)
+            self.add_references(keywords)
+            self.post_exec(keywords)
         finally:
-            cmd.print_result()
+            self.print_result()
         ExecuteCommand.level -= 1
-        return cmd._result
+        return self._result
 
     @classmethod
     def show_syntax(cls):
@@ -292,6 +300,11 @@ class ExecuteCommand(object):
             raise NotImplementedError("Method 'create_result' must be "
                                       "overridden for {0!r}.".format(self.name))
 
+    @property
+    def result(self):
+        """misc: Attribute that holds the result of the Command."""
+        return self._result
+
     def exec_(self, keywords):
         """Execute the command.
 
@@ -341,7 +354,7 @@ class ExecuteCommand(object):
         """
         return self._result_name
 
-    def keep_caller_infos(self, keywords, level=2):
+    def keep_caller_infos(self, keywords, level=3):
         """Register the caller frame infos.
 
         Arguments:

@@ -62,8 +62,6 @@ SOL=DEFI_MATERIAU(ELAS=_F(E=YOUNG, NU=POISSON, ALPHA=0.),
                             ANGDIL   = 27.,
                             COHESION = 1.0E+3,),);
 
-TABTD = CO('TSIMU');
-
 CALC_ESSAI_GEOMECA(INFO=1,
                    MATER=SOL,
                    COMPORTEMENT=_F(RELATION='MOHR_COULOMB',
@@ -75,7 +73,7 @@ CALC_ESSAI_GEOMECA(INFO=1,
                    ESSAI_TRIA_DR_M_D = _F(PRES_CONF   = PCO,
                                  EPSI_IMPOSE = epzz_max,
                                  NB_INST     = nb_inst,
-                                 TABLE_RESU  = TABTD),);
+                                 TABLE_RESU  = CO('TSIMU')),);
 
 IMPR_TABLE(TABLE=TSIMU);
 
