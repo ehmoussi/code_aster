@@ -356,12 +356,6 @@ bool ResultsContainerInstance::update()
                 ASTERINTEGER repi = 0, ier = 0;
                 JeveuxChar32 repk( " " );
                 const std::string arret( "C" );
-                const std::string questi2( "TYPE_SCA" );
-
-                CALLO_DISMOI( questi2, name, typeco, &repi, repk, arret, &ier );
-                const std::string resu2( trim( repk.toString() ) );
-                /*if( resu2 != "R" )
-                    throw std::runtime_error( "Not yet implemented" );*/
 
                 CALLO_DISMOI( questi, name, typeco, &repi, repk, arret, &ier );
                 const std::string resu( trim( repk.toString() ) );

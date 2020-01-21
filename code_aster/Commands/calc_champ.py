@@ -59,6 +59,15 @@ class ComputeAdditionalField(ExecuteCommand):
                     modele = None
             if modele is not None:
                 self._result.appendModelOnAllRanks(modele)
+
+            try:
+                dofNume = keywords["RESULTAT"].getDOFNumbering()
+            except:
+                dofNume = None
+
+            if dofNume is not None:
+                self._result.setDOFNumbering(dofNume)
+
         self._result.update()
 
 
