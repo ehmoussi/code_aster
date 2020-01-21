@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(PAR_LOT='NON', CODE=_F(NIV_PUB_WEB='INTERNET',),);
+DEBUT(PAR_LOT='NON', CODE=_F(NIV_PUB_WEB='INTERNET',),)
 
 from numpy import array,shape,reshape,real
 from cmath import *
@@ -54,22 +54,22 @@ def recal_rayleigh(amor_reduit, f1, f2,):
        [w1-w2     , 1./w1-1./w2       ,],]
   V = [2.*amor_reduit,0.,]
 
-  coef =linalg.solve(T,V); # list
+  coef =linalg.solve(T,V) # list
 
-  return tuple(coef);
+  return tuple(coef)
 
 
-MA = LIRE_MAILLAGE(FORMAT = 'MED',);
+MA = LIRE_MAILLAGE(FORMAT = 'MED',)
 
-MA_PATCH = LIRE_MAILLAGE(FORMAT = 'MED',UNITE=21);
-                                
-MA = DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),);
+MA_PATCH = LIRE_MAILLAGE(FORMAT = 'MED',UNITE=21)
+
+MA = DEFI_GROUP(reuse=MA, MAILLAGE=MA, CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),)
 
 
 # Orientation des mailles surfaciques
 MA = MODI_MAILLAGE(reuse        = MA,
                    MAILLAGE     = MA,
-                   ORIE_PEAU_2D =_F(GROUP_MA=('SLATD','SLATG', 'SFREEDRO','SFREEGAU',),),);
+                   ORIE_PEAU_2D =_F(GROUP_MA=('SLATD','SLATG', 'SFREEDRO','SFREEGAU',),),)
 
 mail_barrage = ('ENR','ENRW','ENROC','ENROCW','TRANS','TRANSW','NOYAU','FILTRE')
 Cotes     = ('DRO', 'GAU')
@@ -79,7 +79,7 @@ Paraxiaux = ('BAS',)
 MA = MODI_MAILLAGE(reuse        = MA,
                    MAILLAGE     = MA,
                    ORIE_PEAU_2D = _F(GROUP_MA=Paraxiaux+Cotes,
-                                     GROUP_MA_SURF=('Fondation'),),);
+                                     GROUP_MA_SURF=('Fondation'),),)
 
 MODYN = AFFE_MODELE(MAILLAGE = MA,
                     AFFE  = (_F(GROUP_MA     = mail_barrage,
@@ -91,19 +91,19 @@ MODYN = AFFE_MODELE(MAILLAGE = MA,
                              _F(GROUP_MA     = Paraxiaux+Cotes,
                                 PHENOMENE    ='MECANIQUE',
                                 MODELISATION ='D_PLAN_ABSO',),),
-                    VERI_JACOBIEN = 'NON',);
+                    VERI_JACOBIEN = 'NON',)
 
 #================================================================================
 #     MATERIAUX
 #================================================================================
 # ROCHER
-YOUNG_1 =50000.E06 ;
-NU_1    =0.48 ;
+YOUNG_1 =50000.E06
+NU_1    =0.48
 
-RHO_1   = 2300 ;
+RHO_1   = 2300
 
 f1,f2,amor_reduit,=4.,22.,.02,
-alpha,beta, = recal_rayleigh(amor_reduit, f1, f2,);
+alpha,beta, = recal_rayleigh(amor_reduit, f1, f2,)
 
 #############################################
 ROCHER= DEFI_MATERIAU (ELAS=_F(E=YOUNG_1,NU=NU_1,RHO =RHO_1,
@@ -112,9 +112,9 @@ ROCHER= DEFI_MATERIAU (ELAS=_F(E=YOUNG_1,NU=NU_1,RHO =RHO_1,
                               ALPHA=0.,
 ),)
 
-YOUNG_2 =500.E06 ;
-NU_2    =0.49 ;
-RHO_2   = 1800  ;  # Valeur Sèche
+YOUNG_2 =500.E06
+NU_2    =0.49
+RHO_2   = 1800    # Valeur Sèche
 GammaRef=1.25e-4
 n_iwan=0.78
 GamRef_2 = GammaRef
@@ -137,7 +137,7 @@ affe_materiau =[_F(GROUP_MA=('Fondation','BAS','DRO','GAU',),MATER=ROCHER,),
 Tout = ('Fondation','BAS','DRO','GAU','ENR','ENRW','ENROC','ENROCW','TRANS','TRANSW','NOYAU','FILTRE')
 
 MATDYN=AFFE_MATERIAU(INFO=1,MAILLAGE=MA,
-                           AFFE = affe_materiau);
+                           AFFE = affe_materiau)
 
 ### ===============================================================
 ###
@@ -170,7 +170,7 @@ CHARGX=AFFE_CHAR_MECA_F(MODELE=MODYN,
                                    TYPE_ONDE='S',
                                    DIST        =72.,
                                    DIRECTION=(0,1,0),
-                                    FONC_SIGNAL=VITX1,),);
+                                    FONC_SIGNAL=VITX1,),)
 
 ONDELATE=AFFE_CHAR_MECA_F(MODELE      =MODYN,
                       ONDE_PLANE  =_F(DIRECTION = (0.,1.,0.),
@@ -179,19 +179,17 @@ ONDELATE=AFFE_CHAR_MECA_F(MODELE      =MODYN,
                                       DIST        =72.,
                                       DIST_REFLECHI=146.,
                                       FONC_SIGNAL =VITX1,
-                                      #DEPL_IMPO=depx,
-),);
+),)
 
 
 TEMPS=DEFI_LIST_REEL(DEBUT=0.,
-                INTERVALLE=_F(JUSQU_A=1.0, PAS=0.01,),);
+                INTERVALLE=_F(JUSQU_A=1.0, PAS=0.01,),)
 
 DEFLIST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =TEMPS,),
-#                                  METHODE='MANUEL', ),
                    ECHEC=_F(SUBD_METHODE='MANUEL',
                             SUBD_PAS=2,
                             SUBD_NIVEAU=10,
-                            SUBD_PAS_MINI=0.,),);
+                            SUBD_PAS_MINI=0.,),)
 
 ##################################################""
 
@@ -204,7 +202,7 @@ ASSEMBLAGE(MODELE    =MODYN,
                       _F(MATRICE=CO('MATRMASS'),
                          OPTION='MASS_MECA',),
                       _F(MATRICE=CO('MATRAMOR'),
-                         OPTION='AMOR_MECA',),),);
+                         OPTION='AMOR_MECA',),),)
 
 
 ###############################################
@@ -237,7 +235,7 @@ CHA_ON=CREA_RESU(OPERATION='CONV_CHAR',
                           CHARGE=(CHARGX,ONDELATE),
                           PRECISION=1.E-6,CRITERE='RELATIF',
                           LIST_INST=TEMPS,),
-                );
+                )
 
 CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
                   TYPE_RESU='EVOL_CHAR',
@@ -248,27 +246,12 @@ CHA_ON2=CREA_RESU(OPERATION='CONV_RESU',
                           PRECISION=1.E-6,CRITERE='RELATIF',
                           LIST_INST=TEMPS,
                           RESU_INIT=CHA_ON),
-                );
+                )
 
 EVOL_CH=AFFE_CHAR_MECA(MODELE=MODYN,
-                        EVOL_CHAR=CHA_ON2,);
+                        EVOL_CHAR=CHA_ON2,)
 
 
-
-#DYNA_V=DYNA_VIBRA(BASE_CALCUL='PHYS',
-#                TYPE_CALCUL='TRAN',
-#                MODELE=MODYN,
-#                MATR_MASS=MATRMASS,
-#                MATR_RIGI=MATRRIGI,
-#                MATR_AMOR=MATRAMOR,
-#                AMOR_MODAL =_F(AMOR_REDUIT=0.0001,MODE_MECA=morime),
-#                SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',
-#                                BETA=0.25,
-#                                GAMMA=0.5),
-#                INCREMENT=_F(LIST_INST=TEMPS),
-#                EXCIT=(_F(CHARGE=CHARGX,),
-#                       _F(CHARGE=ONDELATE,),
-#),)
 
 DYNA_V=DYNA_VIBRA(BASE_CALCUL='PHYS',
                 TYPE_CALCUL='TRAN',
@@ -281,10 +264,7 @@ DYNA_V=DYNA_VIBRA(BASE_CALCUL='PHYS',
                                 BETA=0.25,
                                 GAMMA=0.5),
                 INCREMENT=_F(LIST_INST=TEMPS),
-#                EXCIT_RESU=(_F( RESULTAT = CHA_ON,COEF_MULT= 1.0 ,),),
                 EXCIT=(_F(CHARGE=EVOL_CH,),),
-#                EXCIT=(_F(CHARGE=CHARGX,),
-#                  _F(CHARGE=ONDELATE,),),
 )
 
 
@@ -297,7 +277,7 @@ DYNA_V = CALC_CHAMP(reuse = DYNA_V,
            EXCIT=(_F(CHARGE=CHARGX,),
                   _F(CHARGE=ONDELATE,),),
            CONTRAINTE = ('SIEF_ELGA','SIGM_ELGA'),
-           );
+           )
 
 ky=0.001
 posx=80.
@@ -378,8 +358,6 @@ TEST_TABLE(  TABLE=TAB_RES2,
 TAB_RES3 = POST_NEWMARK(RESULTAT=DYNA_V,
                  KY=ky,
                  MAILLAGE_GLIS = MA_PATCH,
-#                 GROUP_MA_GLISS = 'CERCLE',
-#                 GROUP_MA_LIGNE = 'LIGNE',
                  GROUP_MA_CALC=Tout)
 
 IMPR_TABLE(UNITE=40,TABLE=TAB_RES3)
@@ -411,4 +389,4 @@ TEST_TABLE(  TABLE=TAB_RES3,
               VALE_ABS='NON',)
 
 
-FIN();
+FIN()
