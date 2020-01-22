@@ -20,10 +20,10 @@
 from math import sqrt
 
 from code_aster.Commands import *
-from code_aster.MacroCommands.Contrib.macro_bascule_schema_cata import (
+from code_aster.MacroCommands.Contrib.macro_bascule_schema import (
     MACRO_BASCULE_SCHEMA)
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IGNORE_ALARM=('DYNAMIQUE_3'),);
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),IGNORE_ALARM=('DYNAMIQUE_3'),)
 
 
 # Length of beam
@@ -54,11 +54,11 @@ MAILO=LIRE_MAILLAGE(FORMAT='MED',)
 
 MAILL=CREA_MAILLAGE(MAILLAGE=MAILO,
                     CREA_POI1=_F(NOM_GROUP_MA='BASE',
-                                 GROUP_MA='SBAS',),);
+                                 GROUP_MA='SBAS',),)
 
 MAILL=DEFI_GROUP(reuse =MAILL,
                  MAILLAGE=MAILL,
-                 CREA_GROUP_NO=_F(GROUP_MA='BARRE',),);
+                 CREA_GROUP_NO=_F(GROUP_MA='BARRE',),)
 
 # Model
 MODE=AFFE_MODELE(MAILLAGE=MAILL,
@@ -67,7 +67,7 @@ MODE=AFFE_MODELE(MAILLAGE=MAILL,
                           MODELISATION='3D',),
                        _F(GROUP_MA='BASE',
                           PHENOMENE='MECANIQUE',
-                          MODELISATION='DIS_T',),),);
+                          MODELISATION='DIS_T',),),)
 
 CAR=AFFE_CARA_ELEM(MODELE=MODE,
                     DISCRET=(_F(GROUP_MA='BASE',
@@ -80,7 +80,7 @@ CAR=AFFE_CARA_ELEM(MODELE=MODE,
                                VALE=(0.,),),),
                     ORIENTATION=_F(GROUP_MA='BASE',
                                    CARA='VECT_X_Y',
-                                   VALE=(0.,0.,-1.,0.,1.,0.,),),);
+                                   VALE=(0.,0.,-1.,0.,1.,0.,),),)
 
 # Material
 ACIER=DEFI_MATERIAU(
@@ -88,19 +88,19 @@ ACIER=DEFI_MATERIAU(
                         )
 
 MATCHO=DEFI_MATERIAU(DIS_CONTACT=_F(RIGI_NOR=1.E10,
-                                    JEU=0.,),);
+                                    JEU=0.,),)
 
 CM=AFFE_MATERIAU(MAILLAGE=MAILL,
                  AFFE=(_F(GROUP_MA='BARRE',
                           MATER=ACIER,),
                        _F(GROUP_MA='BASE',
-                          MATER=MATCHO,),),);
+                          MATER=MATCHO,),),)
 
 # Loads
 CH=AFFE_CHAR_MECA(MODELE=MODE,
                   DDL_IMPO=_F(GROUP_MA='BARRE',
                               DX=0.,
-                              DY=0.,),);
+                              DY=0.,),)
 
 RAMPE=DEFI_FONCTION(   NOM_PARA='INST',
             PROL_GAUCHE='CONSTANT',   PROL_DROITE='CONSTANT',
@@ -115,7 +115,7 @@ CHAMP2=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                   AFFE=_F(
                   GROUP_NO='BARRE',
                   NOM_CMP=('DX','DY','DZ',),
-                  VALE=(0.0,0.0,dispIni,),),);
+                  VALE=(0.0,0.0,dispIni,),),)
 
 # Initial speed
 CHAMP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
@@ -124,7 +124,7 @@ CHAMP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                   AFFE=_F(
                   GROUP_NO='BARRE',
                   NOM_CMP=('DX','DY','DZ',),
-                  VALE=(0.0,0.0, viteIni,),),);
+                  VALE=(0.0,0.0, viteIni,),),)
 
 
 
@@ -133,22 +133,22 @@ CHAMP1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
 # UNIQUEMENT SUR LES ELEMENTS ISOPARAMETRIQUES
 # ATTENTION A LA REDUCTION DU PAS DE TEMPS DU A LA PENALISATION DE CHOC
 
-DT_EXP=.1*1.e-6;
-np=50. ;
-DT_IMP=np*DT_EXP;
+DT_EXP=.1*1.e-6
+np=50.
+DT_IMP=np*DT_EXP
 
-temfi1=2.0E-5;
-temfi2=(9.0E-5)+(2*DT_IMP);
-temfi3=2.0E-4;
-temfin=2.1E-4;
+temfi1=2.0E-5
+temfi2=(9.0E-5)+(2*DT_IMP)
+temfi3=2.0E-4
+temfin=2.1E-4
 
 L_IMP=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=(_F(JUSQU_A=temfi2, PAS=DT_IMP,),
                                            _F(JUSQU_A=(temfi2+DT_IMP),PAS=(10*DT_EXP),),
-                                           _F(JUSQU_A=temfin, PAS=DT_IMP,),           ));
+                                           _F(JUSQU_A=temfin, PAS=DT_IMP,),           ))
 
-L_EXP=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F(JUSQU_A=temfin, PAS=DT_EXP,),);
+L_EXP=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F(JUSQU_A=temfin, PAS=DT_EXP,),)
 
-L_BAS=DEFI_LIST_REEL(VALE=(temfi1, temfi2, temfi3),);
+L_BAS=DEFI_LIST_REEL(VALE=(temfi1, temfi2, temfi3),)
 
 #---------------------------------------------------#
 #                                                   #
@@ -179,7 +179,7 @@ U = MACRO_BASCULE_SCHEMA(MODELE=MODE,
                  EQUILIBRAGE=_F(PAS_IMPL=DT_IMP,
                                 PAS_EXPL=DT_EXP,
                                 ),
-                );
+                )
 #
 #---------------------------------------------------#
 #                                                   #
@@ -192,39 +192,39 @@ VITECONT=RECU_FONCTION(RESULTAT=U,
                        NOM_CHAM='VITE',
                        NOM_CMP='DZ',
                        NOEUD='N5',
-                       TITRE='VITE',);
+                       TITRE='VITE',)
 
 VC=CALC_FONCTION(COMB=_F(FONCTION=VITECONT,
-                         COEF=12500.,),);
+                         COEF=12500.,),)
 
-MVC=CALC_FONCTION(INTEGRE=_F(FONCTION=VC,),);
+MVC=CALC_FONCTION(INTEGRE=_F(FONCTION=VC,),)
 
 DE100=RECU_FONCTION(RESULTAT=U,
                     NOM_CHAM='DEPL',
                     NOM_CMP='DZ',
                     NOEUD='N100',
-                    TITRE='DEPL',);
+                    TITRE='DEPL',)
 
 VI100=RECU_FONCTION(RESULTAT=U,
                     NOM_CHAM='VITE',
                     NOM_CMP='DZ',
                     NOEUD='N100',
-                    TITRE='VITE',);
+                    TITRE='VITE',)
 
 DE5=RECU_FONCTION(RESULTAT=U,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DZ',
                   NOEUD='N5',
-                  TITRE='DEPL',);
+                  TITRE='DEPL',)
 
 VI5=RECU_FONCTION(RESULTAT=U,
                   NOM_CHAM='VITE',
                   NOM_CMP='DZ',
                   NOEUD='N5',
-                  TITRE='VITE',);
+                  TITRE='VITE',)
 
 
 tpost=POST_ELEM(ENER_CIN=_F(TOUT='OUI',),
-                RESULTAT=U,);
+                RESULTAT=U,)
 
-FIN();
+FIN()
