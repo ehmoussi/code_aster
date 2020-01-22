@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='TOTALE',
            TABLE=tpost,
            FILTRE=(_F(NOM_PARA='LIEU',
-                      VALE_K='MAILL',),
+                      VALE_K=MAILL.getName(),),
                    _F(CRITERE='ABSOLU',
                       PRECISION=1.E-08,
                       NOM_PARA='INST',
@@ -89,7 +89,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='TOTALE',
            TABLE=tpost,
            FILTRE=(_F(NOM_PARA='LIEU',
-                      VALE_K='MAILL',),
+                      VALE_K=MAILL.getName(),),
                    _F(CRITERE='ABSOLU',
                       PRECISION=1.E-08,
                       NOM_PARA='INST',
