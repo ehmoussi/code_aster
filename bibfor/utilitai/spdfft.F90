@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,106 +16,66 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine spdfft(nsens, nomfon, nbvin, nomfs, nbvout,&
-                  method, sym, base)
+subroutine spdfft(lvar, nbva, nsens, ltra, nbpts1, nbpts, nout, nbpts2,&
+                  sym)
     implicit none
 #include "jeveux.h"
 #include "asterfort/fft.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/wkvect.h"
-    character(len=1) :: base
-    integer :: nsens
+#include "asterfort/vecinc.h"
+#include "asterfort/vecini.h"
+#include "blas/zcopy.h"
+!
 !     REALISATION N.GREFFET
 !     CALCUL DE LA FFT OU DE LA FFT-1 (E. BOYERE 09/06/00)
 !     ----------------------------------------------------------------
-    character(len=16) :: method, sym
-    character(len=19) :: nomfs, nomfon
-    complex(kind=8) :: dcmplx
-    real(kind=8) :: pas, pasfrq
-    integer :: nbval, nbva, nbpts, nbpts1, nbpts2, ltra, lres, lres1, ier
-    integer :: nin, nbvin, nbvout, lvar, n, lfon, i, ii, valmax
+! parametres
+    integer :: lvar, nbva, nsens, ltra, nbpts1, nbpts, nout, nbpts2
+    character(len=16) :: sym
+!
+! variables locales
+    complex(kind=8) :: dcmplx, czero, caux
+    real(kind=8) :: pas, pasfrq, raux, rzero
+    integer :: lfon, i, ii, valmax, lres1
 !     ----------------------------------------------------------------
-    call jemarq()
 !
-!     ---  NOMBRE DE POINTS ----
-    nbval = nbvin
-    call jeveuo(nomfon, 'L', nin)
-    lvar = nin
-    if (nsens .eq. 1) then
-        nbva = nbval/2
-    else if (nsens.eq.-1) then
-        nbva = nbval/3
-    endif
-    n = 1
-100  continue
-    nbpts = 2**n
-    if (nbpts .lt. nbva) then
-        n = n + 1
-        goto 100
-    endif
-!     Methode de prise en compte du signal :
-!     -TRONCATURE : on tronque au 2**N inferieur le plus proche de NBVA
-!     -PROL_ZERO : on prolonge le signal avec des zero pour aller
-!                   au 2**N le plus proche superieur a NBVA
-    if ((method.eq.'TRONCATURE') .and. (nbpts.ne.nbva)) then
-        nbpts = 2**(n-1)
-        nbpts1 = nbpts
-        nbpts2 = 2*nbpts
-    else
-        nbpts = 2**n
-        nbpts1 = nbva
-        nbpts2 = nbpts
-    endif
-!
+    czero=dcmplx(0.D0,0.D0)
+    rzero=0.D0
     lfon = lvar + nbva
 !     --- TRANSFORMATION PAR FOURIER
     if (nsens .eq. 1) then
 !     --- SENS DIRECT
-!     --- RECOPIE DES VARIABLES ---
-        if (sym .eq. 'NON') then
-            nbpts2 = (nbpts/2)
-        endif
-        call wkvect('&&SPDFFT.TRAVAIL', 'V V C', nbpts, ltra)
+!
+!INIT
+        call vecinc(nbpts,czero,zc(ltra),1)
+        call vecinc(2*nbpts2,czero,zc(nout),1)
+!
         do 199 i = 1, nbpts1
             zc(ltra+i-1) = dcmplx(zr(lfon+i-1),0.d0)
 199      continue
         if (nbpts .gt. nbva) then
-            do 1999 i = 1, (nbpts-nbva)
-                zc(ltra+nbva+i-1) = dcmplx(0.d0,0.d0)
-1999          continue
+          call vecinc(nbpts-nbva,czero,zc(ltra+nbva),1)
         endif
-!
         call fft(zc(ltra), nbpts, 1)
         pas = zr(lvar+1)-zr(lvar)
-!         NOMFS = 'FCT_FFT'
-        call jeexin(nomfs, ier)
-        if (ier .ne. 0) call jedetr(nomfs)
-        call wkvect(nomfs, base//' V C', 2*nbpts2, lres)
-        lres1 = lres + nbpts2
+        lres1 = nout + nbpts2
         pasfrq = 1.d0/((dble(nbpts))*pas)
-!         NOUT = LRES
-        nbvout = nbpts2
+        caux=dcmplx(pasfrq,0.d0)
         do 198 i = 1, nbpts2
-            zc(lres+i-1) = dcmplx((i-1)*pasfrq,0.d0)
-198      continue
-        do 200 i = 1, nbpts2
-            zc(lres1+i-1) = zc(ltra+i-1)
-200      continue
+          zc(nout+i-1) = (i-1)*caux
+198     continue
+        call zcopy(nbpts2,zc(ltra),1,zc(lres1),1)
+!
     else if (nsens.eq.-1) then
 !     --- SENS INVERSE
 !
-!        Pour cas tronque
-!         NBPTS=2*NBPTS
-        if (sym .eq. 'NON') then
-            nbpts2 = (2*nbpts)
-        endif
-        call wkvect('&&SPDFFT.TRAVAIL', 'V V C', (nbpts2+1), ltra)
+!INIT
+        call vecinc(nbpts2+1,czero,zc(ltra),1)
+        call vecini(2*nbpts2,rzero,zr(nout))
+!
         valmax = (nbpts2/2)
-        if (nbva .lt. (nbpts2/2)) valmax = nbva
+        if (nbva .lt. (nbpts2/2)) then
+          valmax = nbva
+        endif
         do 201 i = 1, valmax
             ii = (2*i)-1
             zc(ltra+i-1) = dcmplx(zr(lfon+ii-1),zr(lfon+ii))
@@ -124,35 +84,25 @@ subroutine spdfft(nsens, nomfon, nbvin, nomfs, nbvout,&
         zc(ltra+nbpts+1)=dcmplx(((4.d0*zr(lfon+ii-1)-zr(lfon+ii-3)&
         )/3.d0),0.d0)
         if ((nbpts.gt.nbva) .and. (sym.eq.'NON')) then
-            do 2999 i = 1, (nbpts-nbva)
-                zc(ltra+nbva+i-1) = dcmplx(0.d0,0.d0)
-                zc(ltra+nbpts2-nbva-i+1) = dcmplx(0.d0,0.d0)
-2999          continue
+          do i = 1, (nbpts-nbva)
+            zc(ltra+nbva+i-1) = dcmplx(0.d0,0.d0)
+            zc(ltra+nbpts2-nbva-i+1) = dcmplx(0.d0,0.d0)
+          enddo
         endif
-!
         zc(ltra+nbpts+1)=dcmplx(((4.d0*dble(zc(ltra+nbpts)) -dble(zc(&
         ltra+nbpts-1)) )/3.d0),0.d0)
-!
         call fft(zc(ltra), nbpts2, -1)
         pas = zr(lvar+1)-zr(lvar)
-!         NOMFS = 'FCT_FFT'
-        call jeexin(nomfs, ier)
-        if (ier .ne. 0) call jedetr(nomfs)
-        call wkvect(nomfs, base//' V R', 2*nbpts2, lres)
-!         NOUT = LRES
-        nbvout = nbpts2
-        lres1 = lres + nbpts2
+        lres1 = nout + nbpts2
+        raux=1.d0/(dble(nbpts2)*pas)
         do 202 i = 1, nbpts2
-            zr(lres+i-1) = (1.d0/(dble(nbpts2)*pas))*(i-1)
-202      continue
-!         PAS2 = (1.D0/ZR(LVAR+NBVA-1))*(DBLE(NBVA)/DBLE(NBPTS2))
+          zr(nout+i-1) = raux*(i-1)
+202     continue
+! PAS2 = (1.D0/ZR(LVAR+NBVA-1))*(DBLE(NBVA)/DBLE(NBPTS2))
         do 203 i = 1, nbpts2
             zr(lres1+i-1) = dble(zc(ltra+i-1))
 203      continue
+!
     endif
 !
-    call jedetr('&&SPDFFT.TRAVAIL')
-!      CALL JEDETC('V','&&',1)
-!
-    call jedema()
 end subroutine

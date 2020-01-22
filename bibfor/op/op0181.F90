@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,8 @@ subroutine op0181()
 #include "asterfort/ecresu.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
+#include "asterfort/infmaj.h"
+#include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
@@ -35,13 +37,14 @@ subroutine op0181()
 #include "asterfort/utmess.h"
     integer :: nbva, nval, nsens, ngrand, i, ier, ngran0
     character(len=4) :: grand(3), grand0(3), cham
-    character(len=16) :: type, cmd, symetr, method
+    character(len=16) :: type, cmd, symetr, method, kmpi
     character(len=19) :: resin, resou, vectot, k19bid
     character(len=24) :: typres
     character(len=12) :: bl11pt
     integer :: iret, igrand
 !     ------------------------------------------------------------------
     call jemarq()
+    call infmaj()
     call getres(resou, type, cmd)
 !
 !     --- RECUPERATION DES ARGUMENTS UTILISATEUR
@@ -54,6 +57,8 @@ subroutine op0181()
     endif
     call getvtx(' ', 'METHODE', scal=method, nbret=nval)
     call getvtx(' ', 'SYMETRIE', scal=symetr, nbret=nval)
+!        --- ACCELERATION MPI (EFFECTIVE QUE SI MPI_NBCPU>1)
+    call getvtx(' ', 'ACCELERATION_MPI', scal=kmpi, nbret=nval)
 !
 !     --- EVALUATION DU SENS DE LA FFT
     call gettco(resin, typres)
@@ -78,7 +83,7 @@ subroutine op0181()
     ngrand = 0
 !               12345678901.
     bl11pt = '           .'
-    do 5, igrand=1,ngran0
+    do igrand=1,ngran0
     cham = grand0(igrand)
     if (typres(1:9) .eq. 'HARM_GENE') then
 !
@@ -103,7 +108,7 @@ subroutine op0181()
         grand(ngrand+1)=cham
         ngrand = ngrand + 1
     endif
-    5 end do
+    enddo
 !
 !     --- SI AUCUN CHAMP DEMANDE NE PEUT ETRE TRAITE => ERREUR
     if (ngrand .eq. 0) then
@@ -113,16 +118,16 @@ subroutine op0181()
     vectot = '&&OP0181.VECTOT'
 !
 !     --- BOUCLE SUR LES CHAMPS A CALCULER
-    do 10 i = 1, ngrand
+    do i = 1, ngrand
 !        --- CALCUL DES FFT DES CHAMPS
         call prefft(resin, method, symetr, nsens, grand(i),&
-                    vectot, nbva, ier)
+                    vectot, nbva, kmpi, ier)
 !
 !     --- ECRITURE DES RESULTATS
 !
         call ecresu(resin, vectot, nbva, grand(i), resou,&
                     ier)
-10  end do
+    enddo
 !
     call jedema()
 end subroutine

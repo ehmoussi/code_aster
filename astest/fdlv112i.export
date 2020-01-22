@@ -1,9 +1,9 @@
 P time_limit 120
-P memory_limit 1000
+P memory_limit 1012
 P ncpus 1
-P mpi_nbcpu 1
+P mpi_nbcpu 4
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist verification parallel
 
 F comm fdlv112i.comm D 1
 F mail fdlv112i.mail D 20
