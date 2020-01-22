@@ -108,7 +108,7 @@ class ExecuteCommand(object):
     command_name = command_op = command_cata = None
     level = 0
 
-    _cata = _op = _result = _result_name = _counter = _caller = None
+    _cata = _op = _result = _result_name = _counter = _caller = _execok = None
 
     __setattr__ = no_new_attributes(object.__setattr__)
 
@@ -119,7 +119,10 @@ class ExecuteCommand(object):
         self._op = self.command_op or self._cata.definition['op']
         self._result = None
         self._result_name = ""
+        # index of the command
         self._counter = 0
+        # execution status: None=don't, True=sucessfully executed, False:failed
+        self._execok = None
 
     @classmethod
     def run(cls, **kwargs):
@@ -169,10 +172,14 @@ class ExecuteCommand(object):
 
         self.print_syntax(keywords)
         try:
+            self._execok = False
             self.exec_(keywords)
-            self.post_exec_(keywords)
+            self._execok = True
         finally:
-            self.print_result()
+            try:
+                self.post_exec_(keywords)
+            finally:
+                self.print_result()
         ExecuteCommand.level -= 1
         return self._result
 
@@ -491,7 +498,7 @@ class ExecuteMacro(ExecuteCommand):
         """
         output = self._op(self, **keywords)
         assert not isinstance(output, int), \
-            "OPS must now return results, not 'int'."
+            "OPS must return results, not 'int'."
         if ExecutionParameter().option & Options.UseLegacyMode:
             self._result = output
             # re-assign the user variable name

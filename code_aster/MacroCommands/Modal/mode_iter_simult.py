@@ -242,6 +242,8 @@ class ModalCalculationSimult(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        if not self._execok:
+            return
         matrRigi = keywords.get("MATR_RIGI")
         if matrRigi is not None:
             if isinstance(self._result, GeneralizedModeContainer):
