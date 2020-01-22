@@ -147,28 +147,26 @@ DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =TEMPS ),
                                  SUBD_PAS_MINI = 0.000001),)
 
 analysis = NonLinearStaticAnalysis()
-keywords = _F(MODELE=MODELE,
-              CHAM_MATER=CHMAT,
-              EXCIT=(_F(CHARGE=CHAR_DR,  ),
-                     _F(CHARGE=CHAR_GA,  ),
-                     _F(CHARGE = DEPL_BA, ),
-                     _F(CHARGE = DEPL_GA,),
-                     _F(CHARGE = DEPL_HA,
-                        FONC_MULT = COEF,),),
-              COMPORTEMENT=_F( RELATION = 'DRUCK_PRAGER'),
-              INCREMENT=_F( LIST_INST = DEFLIST,),
-              NEWTON=_F( MATRICE = 'TANGENTE',
-                         REAC_ITER = 1,),
-              ETAT_INIT   = _F( SIGM  = SIGINIT,),
-              CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-6,
-                         ITER_GLOB_MAXI =  26,))
-try :
-     U = analysis.run_(**keywords)
+try:
+     U = analysis.run_(MODELE=MODELE,
+                       CHAM_MATER=CHMAT,
+                       EXCIT=(_F(CHARGE=CHAR_DR,  ),
+                              _F(CHARGE=CHAR_GA,  ),
+                              _F(CHARGE = DEPL_BA, ),
+                              _F(CHARGE = DEPL_GA,),
+                              _F(CHARGE = DEPL_HA,
+                                 FONC_MULT = COEF,),),
+                       COMPORTEMENT=_F( RELATION = 'DRUCK_PRAGER'),
+                       INCREMENT=_F( LIST_INST = DEFLIST,),
+                       NEWTON=_F( MATRICE = 'TANGENTE',
+                                  REAC_ITER = 1,),
+                       ETAT_INIT   = _F( SIGM  = SIGINIT,),
+                       CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-6,
+                                  ITER_GLOB_MAXI =  26,))
 except ConvergenceError:
     print("""\nProbleme de convergence pour cause de localisation\n""")
     # ON RECUPERE LE DERNIER INSTANT PROPREMENT CALCULE DANS STAT_NON_LINE
     # POUR FAIRE UNE VERIFICATION EN NON-REGRESSION SUR CE NUMERO D'ORDRE
-    analysis.post_exec(keywords)
     U = analysis.result
     last_iter = U.LIST_VARI_ACCES()['NUME_ORDRE'][-1]
 

@@ -18,6 +18,19 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois@edf.fr
+"""
+:py:class:`FIN` --- Finalization of code_aster
+**********************************************
+
+The :py:class:`Closer` finalizes the execution by closing the code_aster
+memory manager (*Jeveux*).
+
+The objects existing in the context where :py:func:`~code_aster.Commands.FIN`
+is called are pickled while their *Jeveux* content is saved in ``glob.*``
+databases.
+A call to the function :py:func:`~code_aster.Helpers.Serializer.saveObjects`
+is equivalent.
+"""
 
 import libaster
 
