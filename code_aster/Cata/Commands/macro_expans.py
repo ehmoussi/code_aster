@@ -61,7 +61,7 @@ MACRO_EXPANS=MACRO(nom="MACRO_EXPANS",
                            NUME_ORDRE      = SIMP(statut='f',typ='I',validators=NoRepeat(),max='**',defaut=0),
 
                                              ),
-                        NUME_DDL       = SIMP(statut='f',typ=(nume_ddl_sdaster)),
+                        NUME_DDL       = SIMP(statut='o', typ=nume_ddl_sdaster),
                         RESU_NX        = SIMP(statut='f',typ=(mode_meca,dyna_harmo, CO)),
                         RESU_EX        = SIMP(statut='f',typ=(mode_meca,dyna_harmo, CO)),
                         RESU_ET        = SIMP(statut='f',typ=(mode_meca,dyna_harmo, CO)),

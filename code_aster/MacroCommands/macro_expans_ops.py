@@ -145,25 +145,13 @@ def macro_expans_ops(self,
         self.register_result(__resuet, RESU_ET)
     # Restriction des modes mesures etendus sur le maillage capteur
     # -------------------------------------------------------------
-
-    nume = None
-    if NUME_DDL:
-        nume = NUME_DDL
-    if not nume:
-        iret, ibid, tmp = aster.dismoi('NUME_DDL', self.nom, 'RESU_DYNA', 'C')
-        if iret == 0:
-            tmp = tmp.strip()
-            if tmp:
-                nume = self.get_concept(tmp)
-        else:
-            UTMESS('A', 'CALCESSAI0_5')
     __resurd = PROJ_CHAMP(METHODE='COLLOCATION',
                           RESULTAT=__resuet,
                           MODELE_1=MOD_CALCUL,
                           MODELE_2=MOD_MESURE,
                           NOM_CHAM=NOM_CHAM,
                           TOUT_ORDRE='OUI',
-                          NUME_DDL=nume,
+                          NUME_DDL=NUME_DDL,
                           VIS_A_VIS=_F(TOUT_1='OUI',
                                        TOUT_2='OUI',),
                           NOM_PARA=paras,
