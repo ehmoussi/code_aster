@@ -41,7 +41,7 @@ import platform
 import re
 import sys
 import warnings
-from argparse import SUPPRESS, ArgumentParser
+from argparse import SUPPRESS, Action, ArgumentParser
 
 import libaster
 
@@ -268,9 +268,13 @@ class ExecutionParameter(metaclass=Singleton):
             help="turn on running mode for testcase")
 
         parser.add_argument('--memory',
-            action='store', type=float, default=DEFAULT_MEMORY_LIMIT,
+            action=MemoryAction, type=float, default=DEFAULT_MEMORY_LIMIT,
             help="memory limit in MB used for code_aster objects "
                  "(default: {0} MB)".format(DEFAULT_MEMORY_LIMIT))
+        parser.add_argument('--memjeveux', dest="memory",
+            action=MemoryAction, type=float,
+            help=SUPPRESS)
+
         parser.add_argument('--tpmax',
             action='store', type=float, default=DEFAULT_TIME_LIMIT,
             help="time limit of the execution in seconds "
@@ -402,6 +406,21 @@ class ExecutionParameter(metaclass=Singleton):
     @testresu_print.setter
     def testresu_print(self, func):
         self._testresu_print = func
+
+
+class MemoryAction(Action):
+    """Specific action to store the memory limit argument."""
+
+    def __call__(self, parser, namespace, value, optstr):
+        """Check and store the memory limit.
+
+        Arguments:
+            See :py:func:`argparse.Action`.
+        """
+        factor = 8 if "64" in platform.architecture()[0] else 4
+        if optstr == "--memjeveux":
+            value = value * factor
+        namespace.memory = value
 
 
 def get_program_path(program):
