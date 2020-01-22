@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -272,8 +272,10 @@ for k in range(1,NF):
     EVOLT = REST_SPEC_TEMP( RESULTAT = EVOLH ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          TOUT_CHAM = 'OUI'  );
-
+                          TOUT_CHAM = 'OUI',
+                          INFO=2,
+                          ACCELERATION_MPI='OUI', 
+                          );
 # on teste REST_SPEC_TEMP sur un calcul lineaire simple
 
     TEST_RESU(RESU=(_F(GROUP_NO='P3',
@@ -365,8 +367,10 @@ for k in range(1,NF):
     resunlf = REST_SPEC_TEMP( RESULTAT = resunlt ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'DEPL' ,  );
-
+                          NOM_CHAM = 'DEPL' ,
+                          INFO=2,
+                          ACCELERATION_MPI='OUI', 
+                          );
     EVOLH = DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
                          MATR_MASS=masse, MATR_RIGI=rigidite,
                          MATR_AMOR=amorto,
@@ -386,8 +390,10 @@ for k in range(1,NF):
     EVOLT = REST_SPEC_TEMP( RESULTAT = EVOLH ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          TOUT_CHAM = 'OUI'  );
-
+                          TOUT_CHAM = 'OUI',
+                          INFO=2,
+                          ACCELERATION_MPI='OUI', 
+                          );
     DETRUIRE(INFO=1,CONCEPT=_F(NOM=resunlt));
 
     DETRUIRE(INFO=1,CONCEPT=_F(NOM=resunlf));
