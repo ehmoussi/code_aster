@@ -62,7 +62,6 @@ import linecache
 import re
 from collections import namedtuple
 
-import aster
 import libaster
 
 from ..Cata import Commands
@@ -108,7 +107,7 @@ class ExecuteCommand(object):
     command_name = command_op = command_cata = None
     level = 0
 
-    _cata = _op = _result = _result_name = _counter = _caller = _execok = None
+    _cata = _op = _result = _result_name = _counter = _caller = _exc = None
 
     __setattr__ = no_new_attributes(object.__setattr__)
 
@@ -121,8 +120,6 @@ class ExecuteCommand(object):
         self._result_name = ""
         # index of the command
         self._counter = 0
-        # execution status: None=don't, True=sucessfully executed, False:failed
-        self._execok = None
 
     @classmethod
     def run(cls, **kwargs):
@@ -172,9 +169,10 @@ class ExecuteCommand(object):
 
         self.print_syntax(keywords)
         try:
-            self._execok = False
             self.exec_(keywords)
-            self._execok = True
+        except libaster.AsterError as exc:
+            self._exc = exc
+            raise
         finally:
             try:
                 self.post_exec_(keywords)
@@ -182,6 +180,13 @@ class ExecuteCommand(object):
                 self.print_result()
         ExecuteCommand.level -= 1
         return self._result
+
+    @property
+    def exception(self):
+        """*AsterError*: Exception raised during the execution, *None* if the
+        execution was successful.
+        """
+        return self._exc
 
     @classmethod
     def show_syntax(cls):
