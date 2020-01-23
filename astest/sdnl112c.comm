@@ -25,6 +25,8 @@
 from code_aster.Commands import *
 from code_aster.Utilities import ExecutionParameter
 
+from math import log
+
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 #
 
@@ -34,7 +36,7 @@ MODI_MAILLAGE(reuse=TUBE, MAILLAGE=TUBE,ABSC_CURV=_F(NOEUD_ORIG='N_01_001',TOUT=
 TUBE=DEFI_GROUP( reuse=TUBE,   MAILLAGE=TUBE,
                        CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'),
                        CREA_GROUP_NO =_F(NOEUD = 'N_04_001',
-                                         NOM = 'G_NO_04'),);
+                                         NOM = 'G_NO_04'),)
 
 
 #
