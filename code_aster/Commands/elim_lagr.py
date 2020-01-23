@@ -36,4 +36,26 @@ class RemoveLagrangian(ExecuteCommand):
         self._result = AssemblyMatrixDisplacementDouble()
 
 
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+
+        try:
+            numeDof = keywords["MATR_RIGI"].getDOFNumbering()
+        except:
+            numeDof = None
+
+        if numeDof is None:
+            try:
+                numeDof = keywords["MATR_ASSE"].getDOFNumbering()
+            except:
+                numeDof = None
+
+        if numeDof is not None:
+                self._result.setDOFNumbering(numeDof)
+
+
 ELIM_LAGR = RemoveLagrangian.run
