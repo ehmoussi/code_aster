@@ -37,7 +37,6 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     SOLVEUR = args.get("SOLVEUR")
     SOLVEUR_MODAL = args.get("SOLVEUR_MODAL")
     VERI_MODE = args.get("VERI_MODE")
-    TITRE = args.get("TITRE")
 
     MATR_RIGI = args['MATR_RIGI']
     MATR_MASS = args['MATR_MASS']
@@ -50,11 +49,7 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     # 1a. INITIALISATIONS
     #
     # ----------------------------------------------------------------------
-    ier = 0
     dbg = False  # True si on souhaite faire un IMPR_CO intermediaire, False sinon
-    lmatphys = True   # True si matrices d'entrée de type matr_asse_depl_r, False sinon
-    if isinstance(MATR_RIGI, AssemblyMatrixDisplacementDouble):
-        lmatphys = False
 
     # Recuperation parametres solveur lineaire
     dSolveur = SOLVEUR[0].cree_dict_valeurs(SOLVEUR[0].mc_liste)
@@ -76,8 +71,6 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     if 'RESI_RELA' in dSolveur_infomode:
         del dSolveur_infomode['RESI_RELA']
 
-    nompro = None
-    iocc = 0
     # Rang du processus MPI et taille du MPI_COMM_WORLD
     # Lorsqu'on ne veut q'un niveau de parallelisme (celui du solveur lineaire)
     # on bluffe l'algo en posant rang=0/nbproc=1 pour tous les procs.
@@ -119,9 +112,10 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     # ne sont pas parallelises).
     # On remettra le mode de fonctionnement initial en fin de Macro.
     if (nbproc > 1):
-        nommod, old_prtk1 = recup_modele_partition(MATR_RIGI, dbg)
+        _, old_prtk1 = recup_modele_partition(MATR_RIGI, dbg)
         sd_modele = None
-        sd_modele = MATR_RIGI.getModel().getMesh()
+        if MATR_RIGI is not None:
+            sd_modele = MATR_RIGI.getDOFNumbering().getModel()
         if (sd_modele is None):
             assert(False)  # Pb, on arrive pas a recuperer le nom du modele
         if (old_prtk1 is not None):
@@ -140,7 +134,7 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
                              PREC_SHIFT=CALC_FREQ['PREC_SHIFT'],)
 
     # Gestion des frequences
-    ier = gestion_frequence(solveur_lineaire, nnfreq, nbproc)
+    gestion_frequence(solveur_lineaire, nnfreq, nbproc)
 
     # Parametrage du parallelisme pour la couche FORTRAN/MPI
     if (nbproc > 1):
@@ -155,7 +149,7 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
 
     # Gestion des sous-bandes de frequences et construction (si //) de l'objet
     nbmodeth, nbsb_nonvide, proc_sb_nvide = gestion_sous_bande(
-        solveur_lineaire, __nbmodi, nnfreq, nbproc,
+        solveur_lineaire, __nbmodi, nnfreq, nbproc, lborne,
         STOP_BANDE_VIDE == "OUI")
 
     # ----------------------------------------------------------------------
@@ -173,7 +167,6 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
     # precedent. Ce n'est pas la peine de commencer la boucle si un proc
     # fait defaut.
     # ----------------------------------------------------------------------
-    nbmodeef = None
     freq_ini = 1.E+99
     freq_fin = -1.E+99
     motscles = {}
@@ -482,7 +475,7 @@ def recup_modele_partition(MATR_RIGI, dbg):
 # cf. op0032.
 
 
-def gestion_sous_bande(solveur_lineaire, __nbmodi, nnfreq, nbproc, stop):
+def gestion_sous_bande(solveur_lineaire, __nbmodi, nnfreq, nbproc, lborne, stop):
 
     nbsb_nonvide = None
     proc_sb_nvide = []
@@ -541,7 +534,6 @@ def gestion_sous_bande(solveur_lineaire, __nbmodi, nnfreq, nbproc, stop):
         l1 = nbproc // nbsb_nonvide
         l11 = l1 + 1
         l2 = nbproc - (l1 * nbsb_nonvide)
-        l21 = l2 + 1
         num_sb = 0
         for i in range(0, l2):
             num_sb = num_sb + 1
@@ -565,7 +557,6 @@ def gestion_sous_bande(solveur_lineaire, __nbmodi, nnfreq, nbproc, stop):
 
 def gestion_frequence(solveur_lineaire, nnfreq, nbproc):
 
-    ier = 0
     if (nbproc > 1):
         if ((nbproc < nnfreq - 1) | ((nbproc > nnfreq - 1) & (solveur_lineaire != 'MUMPS'))):
             aster.affiche('MESSAGE', 72 * '-')
@@ -581,4 +572,4 @@ def gestion_frequence(solveur_lineaire, nnfreq, nbproc):
             UTMESS('I', 'MODAL_11', vali=(nnfreq - 1, div, div + 1),)
             aster.affiche('MESSAGE', 72 * '-')
 
-    return ier
+    return
