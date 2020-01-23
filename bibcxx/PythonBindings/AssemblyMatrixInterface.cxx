@@ -50,6 +50,8 @@ void exportAssemblyMatrixToPython() {
               &AssemblyMatrixDisplacementDoubleInstance::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixDisplacementDoubleInstance::build )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementDoubleInstance::getDOFNumbering )
+        .def( "getModel", &AssemblyMatrixDisplacementDoubleInstance::getModel )
+        .def( "getMesh", &AssemblyMatrixDisplacementDoubleInstance::getMesh )
         .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementDoubleInstance::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixDisplacementDoubleInstance::getNumberOfElementaryMatrix )

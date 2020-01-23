@@ -115,7 +115,7 @@ def calc_modes_multi_bandes( self, stop_erreur, sturm, INFO, **args):
         _, old_prtk1 = recup_modele_partition(MATR_RIGI, dbg)
         sd_modele = None
         if MATR_RIGI is not None:
-            sd_modele = MATR_RIGI.getDOFNumbering().getModel()
+            sd_modele = MATR_RIGI.getModel()
         if (sd_modele is None):
             assert(False)  # Pb, on arrive pas a recuperer le nom du modele
         if (old_prtk1 is not None):
