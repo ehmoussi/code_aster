@@ -1,0 +1,356 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# VALIDATION DE LA PRISE EN COMPTE DES DEFORMATIONS DUES AUX VARIABLES
+# DE COMMANDE AVEC LA LOI KIT_DDI
+# ----------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
+
+
+MAIL = LIRE_MAILLAGE(FORMAT="ASTER",);
+
+MODELE = AFFE_MODELE(MAILLAGE = MAIL,
+                     AFFE = (_F(GROUP_MA = ('CUBE',),
+                             PHENOMENE = 'MECANIQUE',
+                             MODELISATION = '3D',),
+                             ),
+                     );
+
+# DEFINITION DU MATERIAU
+FONC1 = DEFI_FONCTION(NOM_PARA = 'SECH',
+                      PROL_DROITE = 'LINEAIRE',
+                      PROL_GAUCHE = 'LINEAIRE',
+                      VALE = (0.0, 0.0, 1., 0.0),
+                      );
+
+E = DEFI_CONSTANTE(VALE=310000);
+
+NU = DEFI_CONSTANTE(VALE=0.3);
+
+ALPHA = DEFI_CONSTANTE(VALE=7E-3);
+
+BETON = DEFI_MATERIAU(ELAS_FO = _F(E = E,
+                                   NU = NU,
+                                   FONC_DESORP = FONC1,
+                                   ALPHA = ALPHA ,
+                                   TEMP_DEF_ALPHA=0.,
+                                   K_DESSIC = 3E-4,
+                                   B_ENDOGE = 1E-4,
+                                   ),
+                      MAZARS = _F (EPSD0 = 5.6E-5,
+                                   AT = 0.831,
+                                   BT = 21330.,
+                                   AC = 1.15,
+                                   BC = 1390.,
+                                   K=0.7,
+                                   CHI = 0.6,
+                                   ),
+                      BETON_UMLV = _F(
+                                   K_RS  = 6.0E+10,
+                                   ETA_RS = 1.E+10,
+                                   K_IS = 3.0E+10,
+                                   ETA_IS = 2.4E+10,
+                                   K_RD = 3.4E+10,
+                                   ETA_RD = 4.08E+11,
+                                   ETA_ID = 5.44E+12,
+                                   ),
+                      BETON_ECRO_LINE=_F( SYT = 3.0,
+                                    D_SIGM_EPSI = -6000.,
+                                    SYC = 30.),
+                       );
+
+TEMP0 = CREA_CHAMP(OPERATION = 'AFFE',
+                  TYPE_CHAM = 'NOEU_TEMP_R',
+                  MAILLAGE = MAIL,
+                  AFFE = _F(TOUT = 'OUI',
+                            NOM_CMP = 'TEMP',
+                            VALE = 0.,),
+                  );
+
+TEMP1 = CREA_CHAMP(OPERATION = 'AFFE',
+                  TYPE_CHAM = 'NOEU_TEMP_R',
+                  MAILLAGE = MAIL,
+                  AFFE = _F(TOUT = 'OUI',
+                            NOM_CMP = 'TEMP',
+                            VALE = 20.,),
+                  );
+
+SECH0 = CREA_CHAMP(OPERATION = 'AFFE',
+                  TYPE_CHAM = 'NOEU_TEMP_R',
+                  MAILLAGE = MAIL,
+                  AFFE = _F(TOUT = 'OUI',
+                            NOM_CMP = 'TEMP',
+                            VALE = 0.,),
+                  );
+
+SECH1 = CREA_CHAMP(OPERATION = 'AFFE',
+                  TYPE_CHAM = 'NOEU_TEMP_R',
+                  MAILLAGE = MAIL,
+                  AFFE = _F(TOUT = 'OUI',
+                            NOM_CMP = 'TEMP',
+                            VALE = 1.,),
+                  );
+
+HYDR0=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                  OPERATION='AFFE',
+                  MODELE=MODELE,
+                  AFFE=_F(TOUT = 'OUI',
+                          NOM_CMP='TEMP',
+                          VALE=0.0,),);
+
+HYDR1=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                  OPERATION='AFFE',
+                  MODELE=MODELE,
+                  AFFE=_F(TOUT = 'OUI',
+                          NOM_CMP='TEMP',
+                          VALE=10.0,),);
+
+EVOLTEMP=CREA_RESU(OPERATION='AFFE',
+                 TYPE_RESU='EVOL_VARC',
+                 NOM_CHAM='TEMP',
+                 AFFE=(
+                 _F(CHAM_GD=TEMP0,
+                    INST=0.0,),
+                 _F(CHAM_GD=TEMP1,
+                    INST=1.0,),),);
+
+EVOLSECH=CREA_RESU(OPERATION='AFFE',
+                 TYPE_RESU='EVOL_VARC',
+                 NOM_CHAM='TEMP',
+                 AFFE=(
+                 _F(CHAM_GD=SECH0,
+                    INST=0.0,),
+                 _F(CHAM_GD=SECH1,
+                    INST=1.0,),),);
+
+EVOLHYDR=CREA_RESU(OPERATION='AFFE',
+                 TYPE_RESU='EVOL_VARC',
+                 NOM_CHAM='TEMP',
+                 AFFE=(
+                 _F(CHAM_GD=HYDR0,
+                    INST=0.0,),
+                 _F(CHAM_GD=HYDR1,
+                    INST=1.0,),),);
+
+CAR_MAT = AFFE_MATERIAU(
+                        MAILLAGE = MAIL,
+                        AFFE = _F(MATER = BETON,
+                                  TOUT = 'OUI',
+                                  ),
+                   AFFE_VARC = (_F(TOUT = 'OUI',
+                                   EVOL = EVOLSECH,
+                                   NOM_VARC = 'SECH',
+                                   VALE_REF = 0.),
+                                _F(TOUT = 'OUI',
+                                   EVOL = EVOLTEMP,
+                                   NOM_VARC = 'TEMP',
+                                   VALE_REF = 0.),
+                                _F(TOUT = 'OUI',
+                                   EVOL = EVOLHYDR,
+                                   NOM_VARC = 'HYDR',
+                                   NOM_CHAM='TEMP'
+                                   ),
+                                 ),
+                    VARC_HYDR    =_F(
+                                     NOM_VARC='HYDR', GRANDEUR ='TEMP_R',
+                                     CMP_GD ='TEMP', CMP_VARC='HYDR',
+                                     ),
+                           );
+
+# CONDITIONS AUX LIMITES
+
+
+CLIM1 = AFFE_CHAR_MECA(MODELE = MODELE,
+                     DDL_IMPO = (_F( NOEUD = ('N1',),
+                                    DX = 0., 
+                                    DY = 0.,
+                                   ),
+                                 _F( NOEUD = ('N2',),
+                                    DY = 0.,
+                                   ),
+                                 _F( GROUP_NO = ('ENCAST',),
+                                    DZ = 0.,
+                                   ),
+                                ),
+                     ) ;
+
+L_INS = DEFI_LIST_REEL( DEBUT = 0,
+                        INTERVALLE = (
+                                      _F(JUSQU_A = 1., NOMBRE = 1,),
+                                      ),
+                          );
+
+DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =L_INS ),
+                        )
+
+# SOLUTION DE REFERENCE EN ELAS
+# =============================
+
+
+RESU = STAT_NON_LINE(CHAM_MATER = CAR_MAT,
+                     MODELE = MODELE,
+                     EXCIT = (_F(CHARGE = CLIM1),
+                              ),
+                     COMPORTEMENT = _F(RELATION = 'ELAS',
+                                       GROUP_MA = 'CUBE',),
+                     INCREMENT = _F(LIST_INST = DEFLIST,
+                                    ),
+                         );
+
+
+IMPR_RESU(UNITE=6, FORMAT='RESULTAT', RESU=_F(RESULTAT=RESU, INST =1,
+                                              NOM_CHAM=('DEPL','SIEF_ELGA')))
+
+TEST_RESU(RESU=(_F(INST=1,
+                   NOEUD='N2',
+                   RESULTAT=RESU,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   VALE_CALC=1.39300000000000E-01,
+                   ),
+                _F(INST=1,
+                   NOEUD='N7',
+                   RESULTAT=RESU,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   VALE_CALC=1.39300000000000E-01,
+                   ),
+                _F(INST=1,
+                   NOEUD='N5',
+                   RESULTAT=RESU,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC=1.39300000000000E-01,
+                   ),
+                ),
+          )
+
+# CALCUL BETON_UMLV + MAZARS
+# ==========================
+
+
+
+RESUKIT = STAT_NON_LINE(CHAM_MATER = CAR_MAT,
+                     MODELE = MODELE,
+                     EXCIT = (_F(CHARGE = CLIM1),
+                              ),
+                     COMPORTEMENT = _F(
+                                    RELATION = 'KIT_DDI',
+                                    RELATION_KIT = ('BETON_UMLV', 'MAZARS'),
+                                    DEFORMATION = 'PETIT',
+                                    GROUP_MA = 'CUBE',),
+                     INCREMENT = _F(LIST_INST = DEFLIST,
+                                    ),
+                         );
+
+IMPR_RESU(UNITE=6, FORMAT='RESULTAT', RESU=_F(RESULTAT=RESUKIT, INST =1,
+                                              NOM_CHAM=('DEPL','SIEF_ELGA')))
+
+
+TEST_RESU(RESU=(_F(INST=1,
+                   NOEUD='N2',
+                   RESULTAT=RESUKIT,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   VALE_CALC=1.39300000000000E-01,
+                   VALE_REFE=1.39300000000000E-01,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1E-6,
+                   ),
+                _F(INST=1,
+                   NOEUD='N7',
+                   RESULTAT=RESUKIT,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   VALE_CALC=1.39300000000000E-01,
+                   VALE_REFE=1.39300000000000E-01,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1E-6,
+                   ),
+                _F(INST=1,
+                   NOEUD='N5',
+                   RESULTAT=RESUKIT,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC=1.39300000000000E-01,
+                   VALE_REFE=1.39300000000000E-01,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1E-6,
+                   ),
+                ),
+          )
+
+
+
+# CALCUL BETON_UMLV + ENDO_ISOT_BETON
+# ===================================
+
+RESUKIT2 = STAT_NON_LINE(CHAM_MATER = CAR_MAT,
+                     MODELE = MODELE,
+                     EXCIT = (_F(CHARGE = CLIM1),
+                              ),
+                     COMPORTEMENT = _F(
+                                    RELATION = 'KIT_DDI',
+                                    RELATION_KIT = ('BETON_UMLV', 'ENDO_ISOT_BETON'),
+                                    DEFORMATION = 'PETIT',
+                                    GROUP_MA = 'CUBE',),
+                     INCREMENT = _F(LIST_INST = DEFLIST,
+                                    ),
+                         );
+
+IMPR_RESU(UNITE=6, FORMAT='RESULTAT', RESU=_F(RESULTAT=RESUKIT2, INST =1,
+                                              NOM_CHAM=('DEPL','SIEF_ELGA')))
+
+
+
+TEST_RESU(RESU=(_F(INST=1,
+                   NOEUD='N2',
+                   RESULTAT=RESUKIT2,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   VALE_CALC=1.39300000000000E-01,
+                   VALE_REFE=1.39300000000000E-01,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1E-6,
+                   ),
+                _F(INST=1,
+                   NOEUD='N7',
+                   RESULTAT=RESUKIT2,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   VALE_CALC=1.39300000000000E-01,
+                   VALE_REFE=1.39300000000000E-01,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1E-6,
+                   ),
+                _F(INST=1,
+                   NOEUD='N5',
+                   RESULTAT=RESUKIT2,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC=1.39300000000000E-01,
+                   VALE_REFE=1.39300000000000E-01,
+                   REFERENCE='AUTRE_ASTER',
+                   PRECISION=1E-6,
+                   ),
+                ),
+          )
+
+FIN();
