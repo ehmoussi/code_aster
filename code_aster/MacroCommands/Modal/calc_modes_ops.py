@@ -149,7 +149,7 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
             modes.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
         elif isinstance(modes, MechanicalModeContainer):
             try:
-                model = matrRigi.getDOFNumbering().getModel()
+                model = matrRigi.getModel()
             except:
                 model = None
 

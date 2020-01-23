@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe AssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -48,6 +48,7 @@
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
 #include "Loads/PhysicalQuantity.h"
+#include "Modeling/Model.h"
 
 class BaseLinearSolverInstance;
 
@@ -176,6 +177,32 @@ class AssemblyMatrixInstance : public DataStructure {
      * @return Internal DOFNumbering
      */
     BaseDOFNumberingPtr getDOFNumbering() const { return _dofNum; };
+
+    /**
+     * @brief Get model
+     * @return Internal Model
+     */
+    ModelPtr getModel()
+    {
+        if( _dofNum != nullptr )
+        {
+            return _dofNum->getModel();
+        }
+        return ModelPtr( nullptr );
+    };
+
+    /**
+     * @brief Get mesh
+     * @return Internal mesh
+     */
+    BaseMeshPtr getMesh()
+    {
+        if( _dofNum != nullptr )
+        {
+            return _dofNum->getMesh();
+        }
+        return nullptr;
+    };
 
     /**
      * @brief Get MaterialOnMesh

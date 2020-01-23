@@ -1,7 +1,7 @@
 /**
  * @file FullResultsContainer.cxx
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,8 +25,7 @@
 bool FullResultsContainerInstance::_setDOFNumbering( const BaseDOFNumberingPtr &dofNum ) {
     if ( dofNum != nullptr ) {
         _dofNum = dofNum;
-        if ( _dofNum->getModel() != nullptr )
-            _mesh = _dofNum->getModel()->getMesh();
+        _mesh = _dofNum->getMesh();
         _fieldBuidler.addFieldOnNodesDescription( _dofNum->getFieldOnNodesDescription() );
         return true;
     }

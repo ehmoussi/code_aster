@@ -525,7 +525,7 @@ class CalculMissFichierTemps(CalculMiss):
 
 def get_number_PC(parent, macr_elem, lgrpc):
     """Retourne le nombre de points de contrôle"""
-    mail = macr_elem.getDOFNumbering().getModel().getMesh()
+    mail = macr_elem.getMesh()
     assert mail is not None, \
         'impossible de récupérer le maillage du macro-élément'
     lgrpma = mail.LIST_GROUP_MA()
