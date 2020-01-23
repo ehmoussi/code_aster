@@ -39,6 +39,7 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/assvec.h"
 !
 character(len=19) :: sddyna, valinc(*), measse(*)
 integer, intent(in) :: fonact(*)
@@ -159,6 +160,8 @@ integer :: numins
                              ds_measure , ds_system      ,&
                              time_prev  , time_curr      ,&
                              valinc     , solalg)
+    call assvec('V'               , ds_system%cnfnod, 1     , ds_system%vefnod, [1.d0],&
+                ds_system%nume_dof, ' '             , 'ZERO', 1)
     call jeveuo(ds_system%cnfnod//'.VALE', 'L', vr=cnfno)
     do i_equa = 1, nb_equa
         fexmo(i_equa) = fexmo(i_equa) + cnfno(i_equa)
