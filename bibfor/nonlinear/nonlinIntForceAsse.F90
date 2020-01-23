@@ -90,7 +90,7 @@ type(NL_DS_System), intent(in) :: ds_system
 !
 ! - For GDVARINO
 !
-    if (l_gdvarino) then
+    if (l_gdvarino .and. typeAsse .eq. INTE_FORCE_INTE) then
         call setNodalValuesGDVARINO(ds_system%nume_dof, sdnume, ds_system%cnfint)
     endif
 !
