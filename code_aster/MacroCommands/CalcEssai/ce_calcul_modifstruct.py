@@ -823,32 +823,6 @@ class CopyModelMeca:
         self.concepts = {}  # mapping nom concepts orig->nouvel obj
         self.matr_elem = {}  # mapping matr_elem_orig.nom -> option
 
-    def copy(self):
-        self.create_maillage()
-        if self.orig_mail:
-            self.concepts[self.orig_mail.nom] = self.maillage
-
-        affe_modl = self.retrieve_affe_model(self.orig_modl)
-        self.create_modele(affe_modl)
-        self.concepts[self.orig_modl.nom] = self.modele
-
-        # Essaye de reconstruire le modele support+modif en utilisant modlsup
-        # comme `modele`
-        etapes = self.retrieve_model_param(self.orig_modl.nom.strip())
-        self.affe_cara_elem(etapes.get('AFFE_CARA_ELEM', []))
-        self.affe_materiau(etapes.get('AFFE_MATERIAU', []))
-        self.affe_char_meca(etapes.get('AFFE_CHAR_MECA', []))
-        self.calc_matr_elem(etapes.get('CALC_MATR_ELEM', []))
-
-        # on recupere les noms de concepts produits par matr_elem pour detecter ceux utilises
-        # par nume_ddl
-        nume_args = self.retrieve_nume_ddl(
-            self.orig_modl.nom, list(self.matr_elem.keys()))
-        self.nume_ddl(nume_args)
-        nume_names = [sd.nom for args, sd in nume_args]
-        asse_matr = self.retrieve_asse_matrice(nume_names)
-        self.asse_matrice(asse_matr)
-
     def create_maillage(self):
         """Creation du maillage"""
         # version par defaut suppose que self.maillage est initialise
@@ -924,92 +898,6 @@ class CopyModelMeca:
                 self.mat_mass.append(_TMP)
             elif typ_elem == 'AMOR_MECA':
                 self.mat_amor.append(_TMP)
-
-    def retrieve_affe_model(self, modl):
-        name = modl.nom.strip()
-        jdc = CONTEXT.get_current_step().jdc
-        for etape in jdc.etapes:
-            if not hasattr(etape, 'sd'):
-                continue
-            if not hasattr(etape.sd, 'nom'):
-                continue
-            if etape.sd.nom == name:
-                cara = etape.valeur.copy()
-                return cara['AFFE']
-
-    def retrieve_model_param(self, modname):
-        """Renvoie les parametres des macros affectees a un modele
-
-        XXX: le param modele est facultatif dans AFFE_MATERIAU il faut
-        donc rechercher aussi les etapes portant sur le maillage (mais
-        on peut aussi contraindre l'utilisateur a utiliser MODELE=...
-        pour l'instant)
-        """
-        jdc = CONTEXT.get_current_step().jdc
-        etapes = {}
-
-        for etape in jdc.etapes:
-            if etape.nom not in ('AFFE_MATERIAU', 'AFFE_CARA_ELEM',
-                                 'AFFE_CHAR_MECA', 'CALC_MATR_ELEM',):
-                continue
-            args = etape.valeur
-            modl = etape.valeur.get('MODELE', None)
-            etape_modl_name = obj_get_name(modl)
-
-            if etape_modl_name != modname:
-                continue
-            lst = etapes.setdefault(etape.nom, [])
-            lst.append((args.copy(), etape.sd))
-        return etapes
-
-    def retrieve_nume_ddl(self, modname, noms_matr_elem):
-        """Renvoie les parametres des macros affectees a un modele
-
-        XXX: le param modele est facultatif dans AFFE_MATERIAU il faut
-        donc rechercher aussi les etapes portant sur le maillage (mais
-        on peut aussi contraindre l'utilisateur a utiliser MODELE=...
-        pour l'instant)
-        """
-        jdc = CONTEXT.get_current_step().jdc
-        nume_ddls = []
-        modname = modname.strip()
-        noms_matr_elem = [nom.strip() for nom in noms_matr_elem]
-        for etape in jdc.etapes:
-            if etape.nom != 'NUME_DDL':
-                continue
-            args = etape.valeur
-            modl = etape.valeur.get('MODELE', None)
-            etape_modl_name = obj_get_name(modl)
-            rigi = etape.valeur.get('MATR_RIGI', None)
-            rigi_meca_name = obj_get_name(rigi)
-
-            if etape_modl_name == modname or rigi_meca_name in noms_matr_elem:
-                nume_ddls.append((args.copy(), etape.sd))
-        return nume_ddls
-
-    def retrieve_asse_matrice(self, nume_names):
-        """Renvoie les parametres des macros affectees a un modele
-
-        XXX: le param modele est facultatif dans AFFE_MATERIAU il faut
-        donc rechercher aussi les etapes portant sur le maillage (mais
-        on peut aussi contraindre l'utilisateur a utiliser MODELE=...
-        pour l'instant)
-        """
-        jdc = CONTEXT.get_current_step().jdc
-        asse_matrices = []
-        nume_names = [name.strip() for name in nume_names]
-        for etape in jdc.etapes:
-            if etape.nom != 'ASSE_MATRICE':
-                continue
-            args = etape.valeur
-            # print "FOUND ASSE_MATRICE:"
-            # dump_mc( args )
-            numeddl = etape.valeur.get('NUME_DDL', None)
-            nume_ddl_name = obj_get_name(numeddl)
-
-            if nume_ddl_name in nume_names:
-                asse_matrices.append((args.copy(), etape.sd))
-        return asse_matrices
 
 
 class CreateModeleCouple(CopyModelMeca):
@@ -1152,32 +1040,6 @@ def dump_mc(mc, indent=""):
         print(indent, ")")
     else:
         print(indent, repr(mc))
-
-
-def retrieve_model_param(modname):
-    """Renvoie les parametres des macros affectees a un modele
-
-    """
-    # jdc = CONTEXT.get_current_step().jdc
-    jdc = CONTEXT.get_current_step()
-    etapes = []
-
-    for etape in jdc.etapes:
-        if etape.nom not in (
-            'AFFE_MATERIAU', 'AFFE_CARA_ELEM', 'AFFE_CHAR_MECA', 'CALC_MATR_ELEM',
-        ):
-            continue
-        args = etape.valeur
-        modl = etape.valeur['MODELE']
-        if isinstance(modl, str):
-            modlname = modl
-        else:
-            modlname = modl.nom.strip()
-
-        if modlname != modname:
-            continue
-        etapes.append((etape.nom, args, etape.sd))
-    return etapes
 
 
 def obj_get_name(obj):

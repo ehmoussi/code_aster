@@ -1771,62 +1771,8 @@ def post_t_q_ops(self, **args):
 #  PROPRIETES MATERIAUX DEPENDANTES DE LA TEMPERATURE
     Tempe3D = False
 
-    if e == 0.0 and nu == 0.0:
-        list_oper = valk[: len(valk) // 2]
-        list_fonc = valk[len(valk) // 2:]
-#     valk contient les noms des operandes mis dans defi_materiau dans une premiere partie et
-#     et les noms des concepts de type [fonction] (ecrits derriere les operandes) dans une
-#     une seconde partie
-
-        try:
-            list_oper.remove("B_ENDOGE")
-        except ValueError:
-            pass
-        try:
-            list_oper.remove("RHO")
-        except ValueError:
-            pass
-        try:
-            list_oper.remove("PRECISION")
-        except ValueError:
-            pass
-        try:
-            list_oper.remove("K_DESSIC")
-        except ValueError:
-            pass
-        try:
-            list_oper.remove("TEMP_DEF_ALPHA")
-        except ValueError:
-            pass
-
-        nom_fonc_e = self.get_concept(list_fonc[list_oper.index("E")])
-        nom_fonc_nu = self.get_concept(list_fonc[list_oper.index("NU")])
-        nom_fonc_e_prol = nom_fonc_e.sdj.PROL.get()[0].strip()
-        nom_fonc_nu_prol = nom_fonc_nu.sdj.PROL.get()[0].strip()
-
-#        on verifie que les fonctions dependent bien que de la temperature
-        if ((nom_fonc_e.Parametres()['NOM_PARA'] != 'TEMP' and nom_fonc_e_prol != 'CONSTANT') or
-                (nom_fonc_nu.Parametres()['NOM_PARA'] != 'TEMP' and nom_fonc_nu_prol != 'CONSTANT')):
-            UTMESS('F', 'RUPTURE1_67')
-
-        if 'TEMP_DEF_ALPHA' in dicmat and not EVOL_THER:
-            nompar = ('TEMP',)
-            valpar = (dicmat['TEMP_DEF_ALPHA'],)
-            UTMESS('A', 'RUPTURE0_6', valr=valpar)
-            nomres = ['E', 'NU']
-            valres, codret = MATER.RCVALE('ELAS', nompar, valpar, nomres, 2)
-            if (nom_fonc_e_prol == 'CONSTANT'):
-                e = nom_fonc_e.Ordo()[0]
-            else:
-                e = valres[0]
-
-            if (nom_fonc_nu_prol == 'CONSTANT'):
-                nu = nom_fonc_nu.Ordo()[0]
-            else:
-                nu = valres[1]
-
-        if 'TEMP_DEF_ALPHA' not in dicmat and not EVOL_THER:
-            UTMESS('F', 'RUPTURE0_33')
+    # see history for obsolete code
+    assert not (e == 0.0 and nu == 0.0), "variable material properties unsupported"
 
     if FOND_FISS and EVOL_THER:
 # on recupere juste le nom du resultat thermique (la température est
@@ -2165,12 +2111,7 @@ def post_t_q_ops(self, **args):
 
 
 #        Extraction dep sup/inf sur les normales
-            iret, ibid, n_modele = aster.dismoi(
-                'MODELE', RESULTAT.nom, 'RESULTAT', 'F')
-            n_modele = n_modele.rstrip()
-            if len(n_modele) == 0:
-                UTMESS('F', 'RUPTURE0_18')
-            MODEL = self.get_concept(n_modele)
+            MODEL = RESULTAT.getModel()
 
             (__TlibS,__TlibI,__TlibH, __TlibV, __TlibQ) = get_tab_dep(self, Lnocal, Nnocal, d_coorf, dicVDIR, dicVNOR, RESULTAT, MODEL,
                                              ListmaS, ListmaI, NB_NOEUD_COUPE, hmax, syme_char, PREC_VIS_A_VIS, MAILLAGE)

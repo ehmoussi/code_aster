@@ -190,19 +190,6 @@ def make_include_files(UNITE_INCLUDE, calcul, parametres):
 
 
 # -------------------------------------------------------------------------------
-def mes_concepts(list_concepts=[], base=None):
-    """ Fonction qui liste les concepts créés """
-    for e in base.etapes:
-        if e.getName() in ('INCLUDE', 'MACR_RECAL',) :
-            list_concepts = list(mes_concepts(list_concepts=list_concepts, base=e))
-        elif (e.sd is not None) and (e.parent.getName == 'INCLUDE') :
-            nom_concept = e.sd.getName()
-            if not(nom_concept in list_concepts):
-                list_concepts.append( nom_concept )
-    return tuple(list_concepts)
-
-
-# -------------------------------------------------------------------------------
 def get_tables(tables_calc, tmp_repe_table, prof):
     """ Recupere les resultats Aster (Table Aster -> numpy)
     """

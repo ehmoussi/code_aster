@@ -226,27 +226,3 @@ def lance_modif_struct_calcul(macro, ce_objects,
     calc_freq['SEUIL_FREQ'] = 1e-4
 
     modif_struct.calc_modes_modele_couple(mode_simult, calc_freq)
-
-
-def get_ddl_extract(nom_resu):
-    """ resu est le resultat de l'operateur OBSERVATION. On va y chercher les
-    ddl filtres"""
-    jdc = CONTEXT.get_current_step().jdc
-
-    for etape in jdc.etapes:
-        try:
-            nom_etape = etape.sdnom
-        except AttributeError:
-            pass
-        if nom_etape == nom_resu:
-            grp_no_ma = etape.valeur['FILTRE']
-            if type(grp_no_ma) != list and type(grp_no_ma) != tuple:
-                grp_no_ma = [grp_no_ma]
-            else:
-                pass
-            for dico in grp_no_ma:
-                for ind1, ind2 in list(dico.items()):
-                    if type(ind2) != list and type(ind2) != tuple:
-                        dico[ind1] = [ind2]
-
-            return grp_no_ma
