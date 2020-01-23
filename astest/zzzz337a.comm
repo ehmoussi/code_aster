@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,20 +40,20 @@
 # RQ.3
 # CAS-TEST COMPLEMENTAIRE DE ERREU15 (TEST MSG D'ERREUR) ET DES PERF016 (TEST DES PERFORMANCES).
 ############################################################################################################################
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI') ,IMPR_MACRO='NON');
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI') ,IMPR_MACRO='NON')
 #
-mail0 = LIRE_MAILLAGE(FORMAT='MED', VERI_MAIL=_F(VERIF='OUI'));
+mail0 = LIRE_MAILLAGE(FORMAT='MED', VERI_MAIL=_F(VERIF='OUI'))
 
 mail=CREA_MAILLAGE(MAILLAGE=mail0,
                       CREA_POI1 =(_F(NOM_GROUP_MA = 'PBASE',NOEUD = 'N316'),
                                   _F(NOM_GROUP_MA = 'PFONDAT',GROUP_MA = 'SURFBAS2'),),
-                   );
+                   )
 
 mail=DEFI_GROUP(reuse =mail,
                 MAILLAGE=mail,
                 CREA_GROUP_NO=_F(NOM='ISOLSTR',
                                  GROUP_MA=('SURFBAS2'),),
-               );
+               )
 
 mail=MODI_MAILLAGE( reuse=mail,
                     MAILLAGE=mail,
@@ -70,7 +70,7 @@ mail=MODI_MAILLAGE( reuse=mail,
                                          NOEUD = 'N1043',
                                          GROUP_MA = 'SLIBREM2'),
                                     ),
-                   );
+                   )
 modele=AFFE_MODELE( MAILLAGE= mail,
                       AFFE=( _F(GROUP_MA=( 'STRVOU2' ),
                                 PHENOMENE= 'MECANIQUE',
@@ -80,17 +80,17 @@ modele=AFFE_MODELE( MAILLAGE= mail,
                                 MODELISATION = 'DIS_TR'),
                            ),
                       DISTRIBUTION=_F(METHODE='GROUP_ELEM',),
-                      );
+                      )
 mat1= DEFI_MATERIAU( ELAS=_F( E= 3.6E+10,
                               RHO= 2400.,
                               NU= 0.2,
                             ),
-                       ) ;
+                       )
 
 champmat = AFFE_MATERIAU( MAILLAGE= mail,
                             AFFE=_F( GROUP_MA= ('STRVOU2'),
                                    MATER= mat1 )
-                           );
+                           )
 
 cara_ele=AFFE_CARA_ELEM(MODELE=modele,
                         DISCRET=(_F(GROUP_MA='PBASE',
@@ -102,7 +102,7 @@ cara_ele=AFFE_CARA_ELEM(MODELE=modele,
                                     CARA='K_TR_D_N',
                                     VALE=(0.,0.,0.,0.,0.,0.))
                                  ),
-                        );
+                        )
 
 
 cond_lim = AFFE_CHAR_MECA( MODELE= modele,
@@ -117,7 +117,7 @@ cond_lim = AFFE_CHAR_MECA( MODELE= modele,
                                           DRZ= 0.,
                                       ),
                            LIAISON_SOLIDE=_F(GROUP_NO=('ISOLSTR',),)
-                          );
+                          )
 
 
 rigi_ele = CALC_MATR_ELEM( MODELE= modele ,
@@ -125,19 +125,19 @@ rigi_ele = CALC_MATR_ELEM( MODELE= modele ,
                            CHAM_MATER= champmat,
                            CHARGE= cond_lim,
                            CARA_ELEM=cara_ele,
-                         );
+                         )
 #
 mass_ele = CALC_MATR_ELEM( MODELE= modele ,
                            OPTION= 'MASS_MECA',
                            CHAM_MATER= champmat,
                            CHARGE= cond_lim,
                            CARA_ELEM=cara_ele,
-                         );
+                         )
 
-nume_ddl = NUME_DDL( MATR_RIGI= rigi_ele );
+nume_ddl = NUME_DDL( MATR_RIGI= rigi_ele )
 
-MATRIGI= ASSE_MATRICE( MATR_ELEM= rigi_ele, NUME_DDL= nume_ddl );
-MATMASS= ASSE_MATRICE( MATR_ELEM= mass_ele, NUME_DDL= nume_ddl );
+MATRIGI= ASSE_MATRICE( MATR_ELEM= rigi_ele, NUME_DDL= nume_ddl )
+MATMASS= ASSE_MATRICE( MATR_ELEM= mass_ele, NUME_DDL= nume_ddl )
 
 info=1
 
@@ -985,4 +985,4 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,TOLE_MACHINE=1.E-3,
                   VALE_CALC=0.061221870951274,),
                   ),)
 #
-FIN( );
+FIN( )
