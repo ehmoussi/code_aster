@@ -52,10 +52,9 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
             self.type_sdprod(res['TABLE'],interspectre)
 
     if RESU_MODIFSTRU is not None:
-        for res in RESU_MODIFSTRU:
-            for mc, typ in list(MTYPES.items()):
-                if res[mc]:
-                    self.type_sdprod(res[mc], typ)
+        for mc, typ in list(MTYPES.items()):
+            if RESU_MODIFSTRU[mc]:
+                self.type_sdprod(RESU_MODIFSTRU[mc], typ)
     return None
 
 

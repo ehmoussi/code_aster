@@ -773,9 +773,9 @@ class CalcEssaiObjects:
     CALC_ESSAI dans le catalogue aster"""
 
     def __init__(self, macro, mess):
-        """!Constructeur
+        """Constructeur
 
-        \param macro Le self de la macro qui utilise cet objet
+        macro: Le self de la macro qui utilise cet objet
         """
         self.mess = mess
         self.modeles = {}
