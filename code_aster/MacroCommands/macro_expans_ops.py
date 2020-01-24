@@ -27,7 +27,7 @@ from ..Messages import UTMESS
 def macro_expans_ops(self,
                      MODELE_CALCUL,
                      MODELE_MESURE,
-                     NUME_DDL,
+                     NUME_DDL=None,
                      RESU_NX=None,
                      RESU_EX=None,
                      RESU_ET=None,
@@ -44,6 +44,9 @@ def macro_expans_ops(self,
     MOD_CALCUL = MODELE_CALCUL['MODELE']
     MOD_MESURE = MODELE_MESURE['MODELE']
     NOM_CHAM = MODELE_MESURE['NOM_CHAM']
+
+    if not NUME_DDL:
+        UTMESS('A', 'CALCESSAI0_5')
 
     is_nume_num = is_nume_exp = 0
     if MODELE_CALCUL['NUME_MODE'][0] or MODELE_CALCUL['NUME_ORDRE'][0]:
