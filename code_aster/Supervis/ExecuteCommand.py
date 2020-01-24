@@ -108,6 +108,7 @@ class ExecuteCommand(object):
     level = 0
 
     _cata = _op = _result = _result_name = _counter = _caller = _exc = None
+    _tuplmode = None
 
     __setattr__ = no_new_attributes(object.__setattr__)
 
@@ -120,6 +121,8 @@ class ExecuteCommand(object):
         self._result_name = ""
         # index of the command
         self._counter = 0
+        current_opt = ExecutionParameter().option
+        self._tuplmode = current_opt & Options.UseLegacyMode != 0
 
     @classmethod
     def run(cls, **kwargs):
@@ -137,6 +140,7 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): User keywords
         """
+        self._tuplmode = kwargs.pop("__use_namedtuple__", False)
         keywords = mixedcopy(kwargs)
         self.keep_caller_infos(keywords)
         timer = ExecutionParameter().timer
@@ -504,7 +508,7 @@ class ExecuteMacro(ExecuteCommand):
         output = self._op(self, **keywords)
         assert not isinstance(output, int), \
             "OPS must return results, not 'int'."
-        if ExecutionParameter().option & Options.UseLegacyMode:
+        if not self._tuplmode:
             self._result = output
             # re-assign the user variable name
             if hasattr(self._result, "userName"):
