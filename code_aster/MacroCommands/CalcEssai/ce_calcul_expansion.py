@@ -165,7 +165,6 @@ class CalcEssaiExpansion:
 
         self.mess.disp_mess("Fin de MACRO_EXPANS")
         self.mess.disp_mess(" ")
-        print("DEBUG: results:", result)
         return result
 
     def calc_mac_mode(self, resu1, resu2, norme):
