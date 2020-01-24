@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
 #include "asterfort/vrcomp.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/comp_info.h"
+#include "asterfort/getvid.h"
     integer :: nbordr
     character(len=8) :: resu, chmat, carael, modele
     character(len=16) :: typres
@@ -66,14 +67,14 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
 !
 ! ......................................................................
 !
-    integer :: iordr, lordr, nexci, jpara
+    integer :: iordr, lordr, nexci, jpara, ncmp, nocc
     integer :: i, iret, ibid, nbtrou, tord(1), nume_plan, nb_snap, niv, ifm
     real(kind=8) :: epsi, rbid
-    character(len=8) :: crit, k8bid
+    character(len=8) :: crit, k8bid, resu_reuse
     character(len=19) :: list_load, list_load_save, vari, ligrmo, list_load_resu
-    character(len=24) :: champ, noobj, compor, carcri, mod24, car24
+    character(len=24) :: champ, noobj, compor, carcri, mod24, car24, champ_1
     complex(kind=8) :: cbid
-    aster_logical :: l_etat_init, l_load_user
+    aster_logical :: l_etat_init, l_load_user, l_reuse, l_compor, l_cas
 !
 ! ----------------------------------------------------------------------
 !
@@ -83,12 +84,32 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
     compor = ' '
     l_etat_init = .false.
     l_load_user = .true.
+    l_reuse = .false.
+    l_compor = .false.
+    l_cas = .false.
 !
     list_load      = '&&LRCOMM.LISCHA'
     list_load_resu = '&&LRCOMM.LISCHA'
     compor         = '&&LRCOMM.COMPOR'
     carcri         = '&&LRCOMM.CARCRI'
 !
+    ! detecter si COMPORTEMENT est renseigné
+    call getfac('COMPORTEMENT', ncmp)
+    if (ncmp .gt. 0) then 
+        l_compor=.true.
+    endif
+
+    ! detecter reuse
+    if (.not. (present(from_lire_resu))) then
+        call getvid(' ', 'RESULTAT', scal = resu_reuse, nbret = nocc)
+        if (nocc .ne. 0) then
+            l_reuse = .true.
+        endif
+    endif
+
+    ! cas particulier à traiter : reuse sans COMPORTEMENT
+    l_cas = ((l_reuse) .and. (.not. l_compor))
+
     call rsorac(resu, 'LONUTI', ibid, rbid, k8bid,&
                 cbid, epsi, crit, tord, 1,&
                 nbtrou)
@@ -145,10 +166,29 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
                     iordr=zi(lordr+i-1)
                     call rsexch(' ', resu, 'COMPORTEMENT', iordr, champ,&
                                 iret)
-                    if (iret .le. 100) then
-                        call copisd('CHAMP_GD', 'G', compor(1:19), champ( 1:19))
-                        call rsnoch(resu, 'COMPORTEMENT', iordr)
-                    endif
+                    
+                    if (l_cas) then
+                        ! reuse sans COMPORTEMENT
+                        if (iret .eq. 100)  then
+                            if (iordr .eq. 1) then
+                                ! 1er instant : pas de précédent instant : => ELAS
+                                call copisd('CHAMP_GD', 'G', compor(1:19), champ(1:19))
+                            else 
+                                ! copier la carte COMPORTEMENT du précédent instant
+                                call rsexch(' ', resu, 'COMPORTEMENT', iordr-1, champ_1, iret)
+                                call copisd('CHAMP_GD', 'G', champ_1(1:19), champ(1:19))
+                            endif
+                            call rsnoch(resu, 'COMPORTEMENT', iordr)
+                        endif 
+                    else
+                        ! autres cas (sans reuse, reuse avec compor), ou lire_resu
+                        if (iret .le. 100) then
+                            ! copier compor (ELAS ou celui donné par utilisateurs)
+                            call copisd('CHAMP_GD', 'G', compor(1:19), champ( 1:19))
+                            call rsnoch(resu, 'COMPORTEMENT', iordr)
+                        endif  
+                    endif  
+
                 end do
             endif
         endif
@@ -191,17 +231,25 @@ subroutine lrcomm(resu, typres, nbordr, chmat, carael,&
             iordr=zi(lordr+i-1)
             call rsexch(' ', resu, 'VARI_ELGA', iordr, vari,&
                         iret)
+            
             if (iret .eq. 0) then
                 if (modele .eq. ' ') call utmess('F','UTILITAI_97')
                 call dismoi('NOM_LIGREL', modele, 'MODELE', repk=ligrmo)
                 mod24 = modele
                 car24 = carael
-                call nmdoco(mod24, car24, compor)
+                if (l_cas) then
+                    ! pour le cas reuse sans COMPORTEMENT 
+                    ! vérifier entre VARI_ELGA existant et carte de comportement du resu
+                    call rsexch(' ', resu, 'COMPORTEMENT', iordr, champ_1, iret)
+                else
+                    champ_1=compor
+                endif
+                call nmdoco(mod24, car24, champ_1)
                 if (present(from_lire_resu)) then
-                   call vrcomp(compor, vari, ligrmo, iret, type_stop = 'A',&
+                   call vrcomp(champ_1, vari, ligrmo, iret, type_stop = 'A',&
                                from_lire_resu = from_lire_resu)
                 else
-                   call vrcomp(compor, vari, ligrmo, iret, type_stop = 'A')
+                   call vrcomp(champ_1, vari, ligrmo, iret, type_stop = 'A')
                 endif 
                 if (iret .eq. 1) then
                     call utmess('A', 'RESULT1_1')
