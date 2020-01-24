@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,15 +19,16 @@
 !
 !
 interface
-    subroutine spdfft(nsens, nomfon, nbvin, nomfs, nbvout,&
-                      method, sym, base)
+    subroutine spdfft(lvar, nbva, nsens, ltra, nbpts1, nbpts, nout, nbpts2,&
+                      sym)
+        integer :: lvar
+        integer :: nbva
         integer :: nsens
-        character(len=19) :: nomfon
-        integer :: nbvin
-        character(len=19) :: nomfs
-        integer :: nbvout
-        character(len=16) :: method
+        integer :: ltra
+        integer :: nbpts1
+        integer :: nbpts
+        integer :: nout
+        integer :: nbpts2
         character(len=16) :: sym
-        character(len=1) :: base
     end subroutine spdfft
 end interface

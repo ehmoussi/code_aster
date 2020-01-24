@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -221,24 +221,30 @@ DYNPHGB2=DYNA_LINE(MODELE=MO,
 DYNTPT2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGA2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          TOUT_CHAM = 'OUI'  );
+                          TOUT_CHAM = 'OUI',
+                          INFO=2,
+                          ACCELERATION_MPI='OUI', 
+                          );
 DYNTPUA2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGA2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'DEPL'  );
+                          NOM_CHAM = 'DEPL', 
+                          );
 DYNTPSB2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGB2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'DEPL'  );
+                          NOM_CHAM = 'DEPL',
+                          );
 DYNTPVV2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGA2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'VITE'  );
+                          NOM_CHAM = 'VITE', 
+                          );
 DYNTPAA2 = REST_SPEC_TEMP( RESU_GENE = DYNHAGA2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          NOM_CHAM = 'ACCE'  );
-
+                          NOM_CHAM = 'ACCE', 
+                          );
 DYNTU2 = RECU_FONCTION(RESU_GENE=DYNTPT2,
                       NOEUD = 'P4',NOM_CMP = 'DX',NOM_CHAM = 'DEPL', )
 DYNTV2 = RECU_FONCTION(RESU_GENE=DYNTPT2,
@@ -341,7 +347,10 @@ DYNAHAR2=DYNA_LINE(MODELE=MO,
 DNTPSTP2 = REST_SPEC_TEMP( RESULTAT = DYNAHAR2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          TOUT_CHAM = 'OUI'  );
+                          TOUT_CHAM = 'OUI' ,
+                          INFO=2,
+                          ACCELERATION_MPI='OUI', 
+                          );
 DNTPSUP2 = REST_SPEC_TEMP( RESULTAT = DYNAHAR2 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
@@ -420,7 +429,10 @@ DNAHARM4=REST_GENE_PHYS(    RESU_GENE=DYNHAGA2,
 DYNTPST4 = REST_SPEC_TEMP( RESULTAT = DNAHARM4 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,
-                          TOUT_CHAM = 'OUI'  );
+                          TOUT_CHAM = 'OUI',
+                          INFO=2,
+                          ACCELERATION_MPI='OUI', 
+                          );
 DYNTPSU4 = REST_SPEC_TEMP( RESULTAT = DNAHARM4 ,
                           METHODE = 'PROL_ZERO' ,
                           SYMETRIE = 'NON' ,

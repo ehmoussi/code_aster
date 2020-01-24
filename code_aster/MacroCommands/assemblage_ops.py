@@ -116,7 +116,7 @@ def assemblage_ops(self, MODELE, NUME_DDL, INFO, **args):
             if CHARGE is not None:
                 if option[0:9] != 'RIGI_GEOM':
                     motscles['CHARGE'] = CHARGE
-            if CHAM_MATER is not None and option != 'RIGI_GEOM':
+            if CHAM_MATER:
                 motscles['CHAM_MATER'] = CHAM_MATER
             if CARA_ELEM is not None:
                 motscles['CARA_ELEM'] = CARA_ELEM

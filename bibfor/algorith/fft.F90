@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,10 @@
 subroutine fft(s, n, ifft)
     implicit none
 #include "jeveux.h"
+#include "blas/zscal.h"
 #include "asterc/r8pi.h"
+#include "asterfort/assert.h"
 #include "asterfort/veri32.h"
-    complex(kind=8) :: s(n)
 !-----------------------------------------------------------------------
 ! IN,OUT : S    FONCTION A TRANSFORMER
 ! IN     : N    NOMBRE DE POINTS DE LA FONCTION
@@ -31,17 +32,22 @@ subroutine fft(s, n, ifft)
     complex(kind=8) :: u, w, t
 !     ------------------------------------------------------------------
 !-----------------------------------------------------------------------
-    integer :: i, ifft, ip, isgn, j, k, l
-    integer :: le, le1, m, n, n2, nm1, nv2
-!
+! parametres
+    integer :: n, ifft
+    complex(kind=8) :: s(n)
+! variables locales
+    integer :: i, ip, isgn, j, k, l
+    integer :: le, le1, m, n2, nm1, nv2
+    complex(kind=8) :: calpha
     real(kind=8) :: pi
 !-----------------------------------------------------------------------
+!
     m= int(log(dble(n))/log(2.d0))
-    if (m .gt. 30) call veri32()
+!    if (m .gt. 30) call veri32()
     n2 = 2**m
     if (n2 .ne. n) then
         m = m+1
-        if (m .gt. 30) call veri32()
+!        if (m .gt. 30) call veri32()
         n2 = 2**m
         if (n2 .ne. n) then
             m = m-2
@@ -67,14 +73,14 @@ subroutine fft(s, n, ifft)
         goto 6
  7      continue
         j=j+k
- 8  end do
+ 8  continue
     do 20 l = 1, m
-        if (l .gt. 30) call veri32()
+!        if (l .gt. 30) call veri32()
         le=2**l
         le1=le/2
         u=(1.d0,0.d0)
         w=dcmplx(cos(-pi/dble(le1)),sin(-pi/dble(le1)))
-        do 20 j = 1, le1
+        do 21 j = 1, le1
             do 10 i = j, n, le
                 ip=i+le1
                 t=s(ip)*u
@@ -82,10 +88,10 @@ subroutine fft(s, n, ifft)
                 s(i)=s(i)+t
 10          continue
             u=u*w
-20      continue
+21      continue
+20  continue
     if (ifft .lt. 0) then
-        do 30 i = 1, n2
-            s(i) = s(i)/n2
-30      continue
+      calpha=dcmplx(1.d0,0.d0)/(n2*1.d0)
+      call zscal(n2,calpha,s,1)
     endif
 end subroutine
