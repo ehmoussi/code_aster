@@ -42,9 +42,9 @@ def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,
         UTMESS('F', 'RUPTURE1_58')
 
     # Dimension du modele
-    iret, ndim, rbid = aster.dismoi('DIM_GEOM', model.getName(), 'MODELE', 'F')
+    ndim = model.getMesh().getDimension()
 
-    if iret == 1 or ndim == 23:
+    if ndim == 23:
         UTMESS('F', 'RUPTURE1_57')
 
   #
@@ -187,9 +187,9 @@ def post_bordet_ops(self, RESULTAT, PARAM, TEMP, TOUT=None, GROUP_MA=None,
             EP[ordre][2] = __EPSP.EXTR_COMP('EPZZ', GROUP_MA, 0).valeurs
             EP[ordre][3] = __EPSP.EXTR_COMP('EPXY', GROUP_MA, 0).valeurs
             if ndim == 3:
-                EP[ordre][4] = EPSP[ordre].EXTR_COMP(
+                EP[ordre][4] = __EPSP[ordre].EXTR_COMP(
                     'EPXZ', GROUP_MA, 0).valeurs
-                EP[ordre][5] = EPSP[ordre].EXTR_COMP(
+                EP[ordre][5] = __EPSP[ordre].EXTR_COMP(
                     'EPYZ', GROUP_MA, 0).valeurs
 
         elif TOUT:

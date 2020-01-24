@@ -78,7 +78,6 @@ def InterpolFondFiss(s0, Coorfo):
 # s0     = abscisse curviligne du point considere
 # Coorfo = Coordonnees du fond (extrait de la sd fiss_xfem)
 # en sortie : xyza = Coordonnees du point et abscisse
-    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         xyz = [Coorfo[0], Coorfo[1], Coorfo[2], s0]
         return xyz
@@ -110,7 +109,6 @@ def InterpolBaseFiss(s0, Basefo, Coorfo):
 # Basefo = base locale du fond (VNORx,VNORy,VNORz,VDIRx,VDIRy,VDIRz)
 # Coorfo = Coordonnees et abscisses du fond (extrait de la sd fiss_xfem)
 # en sortie : VDIRVNORi = base locale au point considere (6 coordonnes)
-    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         VDIRVNORi = Basefo[0:6]
         return VDIRVNORi
@@ -135,7 +133,6 @@ def InterpolScalFiss(s0, Scalfo, Coorfo):
 # Coorfo = Coordonnees et abscisses du fond (extrait de la sd fiss_xfem)
 # Scalfo = liste des valeurs de la variable scalaire selon les points de Coorfo
 # en sortie : Vale = valeur de la variable scalaire au point considere
-    n = len(Coorfo) // 4
     if (s0 < Coorfo[3]):
         Vale = Scalfo[0]
         return Vale
@@ -270,7 +267,7 @@ def expand_values(self, tabout, liste_noeu_a_extr, titre, type_para):
 
 def verif_config_init(FOND_FISS):
 
-    iret, ibid, config = aster.dismoi(
+    _, _, config = aster.dismoi(
         'CONFIG_INIT', FOND_FISS.getName(), 'FOND_FISS', 'F')
     if config != 'COLLEE':
         UTMESS('F', 'RUPTURE0_16')
@@ -314,15 +311,6 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
         assert (len(Lnocal) == 1)
 
     elif ndim == 3:
-
-# determination du pas de parcours des noeuds : 1 (tous les noeuds) ou 2
-# (un noeud sur 2)
-        Typ = FOND_FISS.sdj.FOND_TYPE.get()
-        Typ = Typ[0].rstrip()
-        if (Typ == 'SEG2') or (Typ == 'SEG3' and TOUT == 'OUI'):
-            pas = 1
-        elif (Typ == 'SEG3'):
-            pas = 2
 
 #        construction de la liste des noeuds "AVEC" et des noeuds "SANS"
         NO_SANS = []
@@ -625,8 +613,6 @@ def get_noeuds_perp_regle(Lnocal, d_coor, dicoS, dicoI, Lnoff, PREC_VIS_A_VIS, h
                     Ninf = dicoI[ino][k]
                     Pinf = NP.array(
                         [d_coor[Ninf][0], d_coor[Ninf][1], d_coor[Ninf][2]])
-                    absi = NP.sqrt(
-                        NP.dot(NP.transpose(Pfon - Pinf), Pfon - Pinf))
 #                 On verifie que les noeuds sont en vis a vis
                     if abss < rmprec:
                         dist = NP.sqrt(
@@ -1074,7 +1060,7 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
                        'NEUT_R' : 'NEUT1',}
     nomgd_2_nomcmp  = {'TEMP_R' : 'TEMP' ,
                        'NEUT_R' : 'X1'   ,}
-    iret, ibid, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.getName(), 'CHAM_NO', 'F')
+    _, _, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.getName(), 'CHAM_NO', 'F')
     assert nomgd in list(nomgd_2_nompar.keys())
     ChnoVrcExtr = __CHNOVRC.EXTR_COMP(topo=1)
     ChnoVrcNoeu = ChnoVrcExtr.noeud
@@ -1110,7 +1096,7 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
     nompar = (nompar)
     valpar = (valpar)
     nomres = ['E', 'NU']
-    valres, codret = MATER.RCVALE('ELAS', nompar, valpar, nomres, 2)
+    valres, _ = MATER.RCVALE('ELAS', nompar, valpar, nomres, 2)
     e = valres[0]
     nu = valres[1]
 
@@ -1152,7 +1138,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     # seules les varc TEMP et NEUT1 sont autorisees
     nomgd_2_nompar  = {'TEMP_R' : 'TEMP' ,
                        'NEUT_R' : 'NEUT1',}
-    iret, ibid, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.getName(), 'CHAM_NO', 'F')
+    _, _, nomgd = aster.dismoi('NOM_GD', __CHNOVRC.getName(), 'CHAM_NO', 'F')
     assert nomgd in list(nomgd_2_nompar.keys())
     ChnoVrcExtr = __CHNOVRC.EXTR_COMP(topo=1)
     DETRUIRE(CONCEPT=_F(NOM=__CHNOVRC))
@@ -1223,7 +1209,7 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     nompar = (nomgd_2_nompar[nomgd])
     valpar = (ValeVrc[ipt])
     nomres = ['E', 'NU']
-    valres, codret = MATER.RCVALE('ELAS', nompar, valpar, nomres, 2)
+    valres, _ = MATER.RCVALE('ELAS', nompar, valpar, nomres, 2)
     e = valres[0]
     nu = valres[1]
 
@@ -1753,7 +1739,7 @@ def is_present_varc(RESULTAT):
     contenue dans la sd_resultat RESULTAT, retourne false sinon.
     """
 
-    iret, ibid, nom_chamat = aster.dismoi('CHAM_MATER', RESULTAT.getName(), 'RESULTAT', 'F')
+    nom_chamat = RESULTAT.getMaterialOnMesh().getName()
     assert not ( nom_chamat in ['#AUCUN', '#PLUSIEURS'] )
     nom_jvx = nom_chamat.ljust(8)+'.CVRCVARC'
 
@@ -2016,7 +2002,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #     Verification de la presence de symetrie
 #     ----------------------------------
 
-        iret, ibid, syme_char = aster.dismoi(
+        _, _, syme_char = aster.dismoi(
             'SYME', FOND_FISS.getName(), 'FOND_FISS', 'F')
 
 #     Recuperation de la liste des tailles de maille en chaque noeud du fond
@@ -2237,7 +2223,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #        recupération des déplacements sup et inf : ds et di
             (abscs, ds) = get_depl_sup(FOND_FISS, tabsupi,
                                        ndim, Lnofon, d_coor, ino, TYPE_MAILLAGE)
-            (absci, di) = get_depl_inf(FOND_FISS, tabinfi, ndim,
+            (_, di) = get_depl_inf(FOND_FISS, tabinfi, ndim,
                                        Lnofon, syme_char, d_coor, ino, TYPE_MAILLAGE)
 
 #        TESTS NOMBRE DE NOEUDS

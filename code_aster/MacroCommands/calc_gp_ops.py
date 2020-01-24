@@ -215,8 +215,8 @@ def calc_gp_ops(self, **args):
 
 #  modele
     __model = __RESU.getModel()
-    # Dimension du modele
-    iret, ndim, rbid = aster.dismoi('DIM_GEOM', __model.getName(), 'MODELE', 'F')
+# Dimension du modele
+    ndim = __model.getMesh().getDimension()
 #
 #  maillage
     __maillage = __model.getMesh()
@@ -250,7 +250,7 @@ def calc_gp_ops(self, **args):
             UTMESS('F', 'POST0_39')
 
 #    symetrie
-        iret, ibid, syme = aster.dismoi(
+        _, _, syme = aster.dismoi(
             'SYME', args['FOND_FISS'].getName(), 'FOND_FISS', 'F')
         if syme == 'OUI':
             mult = 2

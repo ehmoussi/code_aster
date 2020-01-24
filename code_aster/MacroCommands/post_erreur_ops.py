@@ -41,21 +41,21 @@ def post_erreur_ops(self, OPTION, CHAM_GD, MODELE, GROUP_MA, **args):
     # Le nom de la variable doit etre obligatoirement le nom de la commande
 
     # récupération du phenomene
-    iret,ibid,phenomene = aster.dismoi('PHENOMENE', MODELE.getName(), 'MODELE', 'F')
+    _,_,phenomene = aster.dismoi('PHENOMENE', MODELE.getName(), 'MODELE', 'F')
 
     # seul le phénomène mécanique est pris en charge
     if (phenomene != 'MECANIQUE'):
        UTMESS('F', 'PREPOST_11')
 
     # le modele comporte-t-il des fissures X-FEM ?
-    iret,nfismo,kbid = aster.dismoi('NB_FISS_XFEM', MODELE.getName(), 'MODELE', 'F')
+    _,nfismo,_ = aster.dismoi('NB_FISS_XFEM', MODELE.getName(), 'MODELE', 'F')
     lxfem = nfismo > 0
 
     # récupération du maillage inclus dans le modele
     __MA = MODELE.getMesh()
 
     # récupération de la dimension géométrique
-    iret,dime,kbid = aster.dismoi('DIM_GEOM', __MA.getName(), 'MAILLAGE', 'F')
+    dime = __MA.getDimension()
 
     # extraction des coordonnées des noeuds du maillage
     __CHXN=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_GEOM_R',

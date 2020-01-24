@@ -48,7 +48,7 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
             iret = aster.gmardm(GROUP_MA[igrm], model.getName())
             if iret == 1:
                 UTMESS('F', 'CALCPRESSION0_3')
-    dim = aster.dismoi('DIM_GEOM', model.getName(), 'MODELE', 'F')[1]
+    dim = MAILLAGE.getDimension()
 
 # Corps de la commande
 # Champ de contraintes de Cauchy aux noeuds
