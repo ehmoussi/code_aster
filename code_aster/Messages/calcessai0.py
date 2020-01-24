@@ -35,6 +35,12 @@ Calcul de MAC impossible : bases incompatibles.
 Problème inverse impossible : problème de cohérence entre les données.
 """),
 
+    5: _("""
+Problème de NUME_DDL dans MACRO_EXPANS : il est possible de le préciser
+a l'appel de la macro-commande. Conséquence : erreur fatale possible dans les
+opérations ultérieures (notamment l'opérateur MAC_MODE)
+"""),
+
     6: _("""
 Si vous n'avez pas sélectionné de NUME_ORDRE ou de NUME_MODE dans %(k1)s.
 Il ne faut pas déclarer de concept en sortie de type %(k2)s.
