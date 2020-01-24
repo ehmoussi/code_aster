@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -136,9 +136,11 @@ character(len=8), intent(out) :: disp
     endif
     call getvid(' ', 'CHAM_MATER', scal=chmate, nbret=nocc)
     call dismoi('BESOIN_MATER', model, 'MODELE', repk=answer)
-    if ( (nocc.eq.0) .and. (answer .eq.'OUI')) then
-        call utmess('A', 'MECHANICS1_40')
+    if (nocc .eq. 0) then
         chmate = ' '
+        if (answer .eq. 'OUI') then
+            call utmess('A', 'MECHANICS1_40')
+        endif
     endif
 
     l_ther = ASTER_FALSE

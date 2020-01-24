@@ -35,13 +35,15 @@ def rest_spec_temp_prod(RESU_GENE,RESULTAT,**args):
 
 
 REST_SPEC_TEMP=OPER(nom="REST_SPEC_TEMP",op=181,sd_prod=rest_spec_temp_prod,
-              fr=tr("Transformée de Fourier d'un résultat"),
+              fr=tr("Transformee de Fourier d un resultat"),
               reentrant='n',
          regles=UN_PARMI('RESU_GENE','RESULTAT'),
+         INFO       =SIMP(statut='f',typ='I',defaut=1,into=(1,2) ),
          RESU_GENE       =SIMP(statut='f',typ=(harm_gene,tran_gene,) ),
          RESULTAT        =SIMP(statut='f',typ=(dyna_harmo,dyna_trans,) ),
          METHODE         =SIMP(statut='f',typ='TXM',defaut="PROL_ZERO",into=("PROL_ZERO","TRONCATURE") ),
          SYMETRIE        =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
          TOUT_CHAM       =SIMP(statut='f',typ='TXM',into=("OUI",)),
          NOM_CHAM        =SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=3,into=("DEPL","VITE","ACCE") ),
+         ACCELERATION_MPI=SIMP(statut='c',typ='TXM',defaut="OUI",into=("OUI","NON") ),
 );

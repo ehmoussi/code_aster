@@ -25,18 +25,21 @@ cata_msg = {
 
 
     39 : _("""
- Le modèle contient des éléments de structure, il faut probablement utiliser le mot-clé CARA_ELEM.
- Risque & Conseil :
-     Ce message peut aider à comprendre un éventuel problème ultérieur lors de calculs élémentaires
-     nécessitant des caractéristiques pour les éléments de structure.
-     Vérifiez si votre modélisation nécessite un CARA_ELEM.
+Le modèle contient des éléments de structure, il faut probablement utiliser le
+mot-clé CARA_ELEM.
+
+Risque & Conseil :
+    Ce message peut aider à comprendre un éventuel problème ultérieur lors de calculs élémentaires
+    nécessitant des caractéristiques pour les éléments de structure.
+    Vérifiez si votre modélisation nécessite un CARA_ELEM.
 """),
 
     40 : _("""
- Le modèle a probablement besoin d'un champ de matériau (mot-clé CHAM_MATER).
- Risque & Conseil :
-     Ce message peut aider à comprendre un éventuel problème ultérieur lors de calculs élémentaires
-     nécessitant des caractéristiques matérielles.
-     Vérifiez si votre modélisation nécessite un CHAM_MATER.
+Il se peut que le modèle ait besoin d'un champ de matériau (mot-clé CHAM_MATER).
+
+Risque & Conseil :
+    Ce message peut aider à comprendre un éventuel problème ultérieur lors de
+    calculs élémentaires nécessitant des caractéristiques matérielles.
+    Vérifiez si votre modélisation nécessite un CHAM_MATER.
 """),
 }
