@@ -29,6 +29,7 @@ from libaster import onFatalError
 
 from .CalcEssai.cata_ce import CalcEssaiObjects
 from .CalcEssai.ce_test import MessageBox, TestCalcEssai
+from ..Messages import UTMESS
 
 
 def calc_essai_ops(self,
@@ -42,6 +43,9 @@ def calc_essai_ops(self,
                    RESU_IDENTIFICATION=None,
                    RESU_MODIFSTRU=None,
                    **args):
+    if MODIFSTRUCT:
+        UTMESS('F', 'CALCESSAI0_2')
+
     caller = inspect.currentframe()
     # 1: exec_, 2: run_, 3: run, 4: user
     for _ in range(4):
