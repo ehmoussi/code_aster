@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -366,7 +366,7 @@ Solveur MUMPS :
 Solveur MUMPS :
   Votre exécutable Aster embarque la version de MUMPS: %(k1)s
   Les seules versions de MUMPS supportée dans Code_Aster sont:
-            les 5.0.2/5.1.0 et les 5.0.2consortium/5.1.0consortium (usage EDF seulement)
+            les 5.1.1/5.2.1 et les 5.1.1consortium/5.2.1consortium (usage EDF seulement)
 
 Conseils :
   Télécharger, installer et relier à Code_Aster une version de MUMPS adéquate.

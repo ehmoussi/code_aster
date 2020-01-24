@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -219,7 +219,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
 
 ! ---     OPTIONS AVANCEES (ACCELERATIONS)
 ! ------     TEST DE COMPATIBILITE ACCELERATION/VERSIONS
-        if ((kvers(1:6).eq.'5.1.1 ').or.(kvers(1:6).eq.'5.1.2 ')) then
+        if ((kvers(1:6).eq.'5.2.1 ').or.(kvers(1:6).eq.'5.1.2 ')) then
             select case(kacmum)
             case('FR','LR')
                 !ok
@@ -234,7 +234,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
             case default
                 ASSERT(.false.)
             end select
-        else if ((kvers(1:15).eq.'5.1.1consortium').or.(kvers(1:15).eq.'5.1.2consortium')) then
+        else if ((kvers(1:15).eq.'5.2.1consortium').or.(kvers(1:15).eq.'5.1.2consortium')) then
             select case(kacmum)
             case('FR','FR+','LR','LR+')
                 !ok
