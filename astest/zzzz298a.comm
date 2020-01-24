@@ -226,7 +226,7 @@ IMPR_TABLE(TABLE=TABKNEUT)
 #---
 
 TEST_TABLE(
-           VALE_CALC=209437.6821571,
+           VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABK,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -234,14 +234,14 @@ TEST_TABLE(
            )
 
 # on verifie que l'on trouve la meme valeur pour les points 1 et 2
-TEST_TABLE(VALE_CALC=209437.6821571,
+TEST_TABLE(VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABK,
            FILTRE=_F(NOM_PARA='NUM_PT',
                      VALE_I=1,),
            )
 
-TEST_TABLE(VALE_CALC=209437.6821571,
+TEST_TABLE(VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABK,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -253,7 +253,7 @@ TEST_TABLE(VALE_CALC=209437.6821571,
 #---
 
 TEST_TABLE(
-           VALE_CALC=209437.6821571,
+           VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABKTEMP,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -261,14 +261,14 @@ TEST_TABLE(
            )
 
 # on verifie que l'on trouve la meme valeur pour les points 1 et 2
-TEST_TABLE(VALE_CALC=209437.6821571,
+TEST_TABLE(VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABKTEMP,
            FILTRE=_F(NOM_PARA='NUM_PT',
                      VALE_I=1,),
            )
 
-TEST_TABLE(VALE_CALC=209437.6821571,
+TEST_TABLE(VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABKTEMP,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -280,7 +280,7 @@ TEST_TABLE(VALE_CALC=209437.6821571,
 #---
 
 TEST_TABLE(
-           VALE_CALC=209437.6821571,
+           VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABKNEUT,
            FILTRE=_F(NOM_PARA='NUM_PT',
@@ -288,14 +288,14 @@ TEST_TABLE(
            )
 
 # on verifie que l'on trouve la meme valeur pour les points 1 et 2
-TEST_TABLE(VALE_CALC=209437.6821571,
+TEST_TABLE(VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABKNEUT,
            FILTRE=_F(NOM_PARA='NUM_PT',
                      VALE_I=1,),
            )
 
-TEST_TABLE(VALE_CALC=209437.6821571,
+TEST_TABLE(VALE_CALC=209152.34526359633,
            NOM_PARA='K1',
            TABLE=TABKNEUT,
            FILTRE=_F(NOM_PARA='NUM_PT',

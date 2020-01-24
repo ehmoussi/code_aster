@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
-                  geom2, lraff, dala, listInterc, nbInterc)
+                  geom2, spacedim, dala, listInterc, nbInterc)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -35,6 +35,7 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexatr.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/pj4d2d.h"
 #include "asterfort/pjeflo.h"
 #include "asterfort/pjefmi.h"
 #include "asterfort/reereg.h"
@@ -49,9 +50,8 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
     integer :: nbtm
     parameter    (nbtm=6)
     character(len=8), intent(in) :: elrf2d(nbtm)
-    integer, intent(in) :: nutm2d(nbtm), nbInterc
+    integer, intent(in) :: nutm2d(nbtm), nbInterc, spacedim
     real(kind=8), intent(in) :: geom1(*), geom2(*)
-    aster_logical, intent(in) :: lraff
     real(kind=8), intent(in) :: dala
 !  but :
 !    transformer cortr3 en corres en utilisant les fonc. de forme
@@ -64,8 +64,7 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
 !  in        elrf2d(6) k8 : noms des 6 types de mailles 2d
 !  in        geom1        : geometrie des noeuds du maillage 1
 !  in        geom2        : geometrie des noeuds du maillage 2
-!  in        lraff     l  : .true. => on va utiliser reereg.f
-!                            pour essayer de "raffiner" la precision.
+!  in        spacedim     : dimension de l'espace
 ! ----------------------------------------------------------------------
 
     aster_logical :: lext
@@ -74,12 +73,12 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
     character(len=8) :: m1, m2, elrefa, fapg(nbfamx), nomnoe
     integer :: nbpg(nbfamx), cnquad(3, 2)
     real(kind=8) :: crrefe(3*nbnomx), ksi, eta, xr1(2), xr2(2), xr3(2)
-    real(kind=8) :: ff(nbnomx), cooele(3*nbnomx), x1, x2, vol
+    real(kind=8) :: ff(nbnomx), cooele(3*nbnomx), x1, x2, vol, xg(2)
     integer :: i1conb, i1conu, i2cocf, i2coco
     integer :: i2com1, i2conb, j2xxk1, i2conu, ialim1, ialin1, ialin2
     integer :: ideca1, ideca2, ilcnx1, ima1, ino, ino2
     integer :: iret, itr, itypm, kdim, kk, nbfpg, nbno, ndim, nma1, nma2, nno
-    integer :: nno1, nno2, nnos, nuno, nuno2, nutm
+    integer :: nno1, nno2, nnos, nuno, nuno2, nutm, nunos(nbnomx)
 
     integer :: nbmax
     parameter  (nbmax=5)
@@ -151,6 +150,7 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
     call wkvect(corres//'.PJEF_NB', 'V V I', nno2, i2conb)
     call wkvect(corres//'.PJEF_M1', 'V V I', nno2, i2com1)
     ideca2=0
+
     do ino2 = 1, nno2
 !       ITR : TRIA3 ASSOCIE A INO2
         itr=pjef_tr(ino2)
@@ -239,60 +239,68 @@ subroutine pj2dtr(cortr3, corres, nutm2d, elrf2d, geom1,&
 
         xr1(1) = ksi
         xr1(2) = eta
-
-        if (lraff) then
-!         -- on essaye d'ameliorer la precision de xr1(*) en utilisant reereg :
+        
+!       -- on essaye d'ameliorer la precision de xr1(*) en utilisant reereg :
+        if (spacedim ==3) then
+!           -- en 3d on se place dans le plan de la maille
+            itr=pjef_tr(ino2)
+            do ino = 1, nbno
+                nunos(ino) = connex(1+ zi(ilcnx1-1+ima1)-2+ino)
+            enddo
+            call pj4d2d(tria3, itr, geom1, geom2(3*(ino2-1)+1), nbno,&
+                       nunos, cooele, xg)
+        else
             do ino = 1, nbno
                 nuno = connex(1+ zi(ilcnx1-1+ima1)-2+ino)
                 do kdim = 1, ndim
                     cooele(ndim*(ino-1)+kdim)=geom1(3*(nuno-1)+kdim)
                 enddo
             enddo
-            call reereg('C', elrefa, nno, cooele, geom2(3*(ino2-1)+1),&
-                        ndim, xr2, iret)
+            xg(1:2) = geom2(3*(ino2-1)+1:3*(ino2-1)+2)
+        endif
 
-!           -- on regarde si ino2 est exterieur a ima1 :
-            call pjeflo(elrefa, ndim, iret, xr2, disprj)
-            lext= (disprj.gt.1.0d-02)
+        call reereg('C', elrefa, nno, cooele, xg,&
+                    ndim, xr2, iret)
 
-!           -- on choisit la meilleure approximation entre xr1 et xr2:
-            call pjefmi(elrefa, nno, cooele, geom2(3*(ino2-1)+1), ndim,&
-                        xr1, xr2, lext, xr3, distv)
+!       -- on regarde si ino2 est exterieur a ima1 :
+        call pjeflo(elrefa, ndim, iret, xr2, disprj)
+        lext= (disprj.gt.1.0d-02)
 
-            if (distv.lt.dala) then
-                lext=.false.
-            else
-                if (nint(disprj) .eq. 999) then
+!       -- on choisit la meilleure approximation entre xr1 et xr2:
+        
+        call pjefmi(elrefa, nno, cooele, xg, ndim,&
+                    xr1, xr2, lext, xr3, distv)
+
+        if (distv.lt.dala) then
+            lext=.false.
+        else
+            if (nint(disprj) .eq. 999) then
+                loin2=.true.
+            else if (disprj .gt. 1.0d-01) then
+!               on regarde si le noeud est deja projete par une autre
+!               occurrence de VIS_A_VIS
+                if (nbInterc .ne. 0)then
+                    call jeveuo(listInterc, 'L', vi=vinterc)
+                    do ino = 1,nbInterc
+                        if (ino2 .eq. vinterc(ino))then
+                            zi(i2conb-1+ino2)=0
+                            call jenuno(jexnum(m2//'.NOMNOE', ino2), nomnoe)
+                            call utmess('A','CALCULEL5_47', si=vinterc(nbInterc+1),&
+                                        sk=nomnoe)
+                            exit
+                        endif
+                    enddo
+                endif
+                if (zi(i2conb-1+ino2).ne.0)then
                     loin2=.true.
-                else if (disprj .gt. 1.0d-01) then
-!                   on regarde si le noeud est deja projete par une autre
-!                   occurrence de VIS_A_VIS
-                    if (nbInterc .ne. 0)then
-                        call jeveuo(listInterc, 'L', vi=vinterc)
-                        do ino = 1,nbInterc
-                            if (ino2 .eq. vinterc(ino))then
-                                zi(i2conb-1+ino2)=0
-                                call jenuno(jexnum(m2//'.NOMNOE', ino2), nomnoe)
-                                call utmess('A','CALCULEL5_47', si=vinterc(nbInterc+1),&
-                                            sk=nomnoe)
-                                exit
-                            endif
-                        enddo
-                    endif
-                    if (zi(i2conb-1+ino2).ne.0)then
-                        loin2=.true.
-                        nbnodm = nbnodm + 1
-                        lino_loin(nbnodm)=ino2
-                        call inslri(nbmax, nbnod, tdmin2, tino2m, distv,ino2)
-                    else
-                        ideca1=ideca1+3
-                        cycle
-                    endif
+                    nbnodm = nbnodm + 1
+                    lino_loin(nbnodm)=ino2
+                    call inslri(nbmax, nbnod, tdmin2, tino2m, distv,ino2)
+                else
+                    ideca1=ideca1+3
+                    cycle
                 endif
             endif
-        else
-            xr3(1)=xr1(1)
-            xr3(2)=xr1(2)
         endif
 
         zr(i2coco-1+3*(ino2-1)+1)=xr3(1)
