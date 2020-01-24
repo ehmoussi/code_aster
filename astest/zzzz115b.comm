@@ -214,7 +214,7 @@ TEST_TABLE(  TABLE=tbcoup1,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='VPL',
-             VALE_CALC=-599557.3397567667,
+             VALE_CALC=-599547.9583625881,
              VALE_REFE=cisaillementPL,
              )
 
@@ -225,7 +225,7 @@ TEST_TABLE(  TABLE=tbcoup1,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='MPL',
-             VALE_CALC=-5400464550.2556925,
+             VALE_CALC=-5400497831.193436,
              VALE_REFE=momentPL_d1,
              )
 
@@ -265,7 +265,7 @@ TEST_TABLE(  TABLE=tbcoup1,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='N',
-             VALE_CALC=5996761.100167803,
+             VALE_CALC=5999999.989004114,
              VALE_REFE=effortNormal,
              );
 
@@ -276,7 +276,7 @@ TEST_TABLE(  TABLE=tbcoup1,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='VPL',
-             VALE_CALC=-599579.3020414779,
+             VALE_CALC=-599547.4643182459,
              VALE_REFE=cisaillementPL,
              )
 
@@ -290,7 +290,7 @@ TEST_TABLE(  TABLE=tbcoup1,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='MPL',
-             VALE_CALC=-5310341905.8170395,
+             VALE_CALC=-5310489128.034771,
              VALE_REFE=momentPL_d2,
              )
 
@@ -387,7 +387,7 @@ TEST_TABLE(  TABLE=tbcoup2,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='VHP',
-             VALE_CALC=-99982.45953308493,
+             VALE_CALC=-99982.07698876575,
              VALE_REFE=cisaillementHP,
              )
 
@@ -452,7 +452,7 @@ TEST_TABLE(  TABLE=tbcoup2,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='VHP',
-             VALE_CALC=-99982.55095769282,
+             VALE_CALC=-99977.16681767782,
              VALE_REFE=cisaillementHP,
              )
 
@@ -463,7 +463,7 @@ TEST_TABLE(  TABLE=tbcoup2,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='MHP',
-             VALE_CALC=-885033144.1019521,
+             VALE_CALC=-885008111.6490061,
              VALE_REFE=momentHP_d2,
              )
 

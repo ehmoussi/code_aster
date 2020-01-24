@@ -18,18 +18,16 @@
 
 !
 !
-          interface 
-            subroutine pj2dtr(cortr3,corres,nutm2d,elrf2d,geom1,geom2,  &
-     &spacedim, dala, listInterc, nbInterc)
-              character(len=16), intent(in) :: cortr3
-              character(len=16), intent(in) :: corres
-              integer, intent(in) :: nutm2d(6)
-              character(len=8), intent(in) :: elrf2d(6)
-              real(kind=8), intent(in) :: geom1(*)
-              real(kind=8), intent(in) :: geom2(*)
-              integer, intent(in) :: spacedim
-              real(kind=8), intent(in) :: dala
-              character(len=16), intent(in) :: listInterc
-              integer, intent(in) :: nbInterc
-            end subroutine pj2dtr
-          end interface 
+interface
+    subroutine pj4d2d(tria3, itr, geom1, coorno, nbno, nunos,&
+                      cooele, xg)
+        integer, intent(in) :: tria3(*)
+        integer, intent(in) :: itr
+        real(kind=8), intent(in)  :: geom1(*)
+        real(kind=8), intent(in)  :: coorno(3)
+        integer, intent(in) :: nbno
+        integer, intent(in) :: nunos(*)
+        real(kind=8), intent(out) ::  cooele(*)
+        real(kind=8), intent(out) ::  xg(2)
+    end subroutine pj4d2d
+end interface
