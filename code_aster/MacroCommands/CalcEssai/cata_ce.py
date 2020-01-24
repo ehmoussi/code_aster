@@ -809,12 +809,10 @@ class CalcEssaiObjects:
             if not isinstance(obj, DataStructure):
                 continue
             name = obj.getName()
-            print("DEBUG: recup", username, name, obj)
             self.update(name, obj)
 
     def update(self, name, obj):
         """ Ajout d'un nouvel objet dans self"""
-        print("DEBUG: update", name, obj, obj.getType())
         if obj.getType() == "MODELE_SDASTER":
             self.modeles[name] = Modele(self, name, obj, self.mess)
             self.modeles[name].get_maillage()
@@ -895,31 +893,25 @@ class CalcEssaiObjects:
 
     def get_mode_meca(self, name):
         """!Renvoie un objet resultat identifie par son nom"""
-        print("DEBUG: get_mode_meca", name)
         return self.mode_meca[name]
 
     def get_model(self, name):
         """!Renvoie un modele"""
-        print("DEBUG: get_model", name)
         return self.modeles[name]
 
     def get_inter_spec(self, name):
-        print("DEBUG: get_inter_spec", name)
         return self.inter_spec[name]
 
     def get_matr(self, name):
         """!Renvoie une matrice de masse ou raideur ou None"""
-        print("DEBUG: get_matr", name)
         return self.matrices.get(name)
 
     def get_cara_elem(self, name):
         """recup d'une sd resu dans la liste ci-dessus"""
-        print("DEBUG: get_cara_elem", name)
         return self.cara_elem[name]
 
     def get_cham_mater(self, name):
         """recup d'une sd resu dans la liste ci-dessus"""
-        print("DEBUG: get_cham_mater", name)
         return self.cham_mater[name]
 
 #

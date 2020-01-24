@@ -829,7 +829,6 @@ class CopyModelMeca:
             self.concepts[self.orig_mail.nom] = self.maillage
 
         affe_modl = self.retrieve_affe_model(self.orig_modl)
-        print("DEBUG: affe_modl", affe_modl)
         self.create_modele(affe_modl)
         self.concepts[self.orig_modl.nom] = self.modele
 
@@ -845,7 +844,6 @@ class CopyModelMeca:
         # par nume_ddl
         nume_args = self.retrieve_nume_ddl(
             self.orig_modl.nom, list(self.matr_elem.keys()))
-        print("DEBUG: nume_args", nume_args)
         self.nume_ddl(nume_args)
         nume_names = [sd.nom for args, sd in nume_args]
         asse_matr = self.retrieve_asse_matrice(nume_names)
@@ -928,7 +926,6 @@ class CopyModelMeca:
                 self.mat_amor.append(_TMP)
 
     def retrieve_affe_model(self, modl):
-        print("DEBUG: retrieve_model", modl)
         name = modl.nom.strip()
         jdc = CONTEXT.get_current_step().jdc
         for etape in jdc.etapes:
@@ -948,7 +945,6 @@ class CopyModelMeca:
         on peut aussi contraindre l'utilisateur a utiliser MODELE=...
         pour l'instant)
         """
-        print("DEBUG: retrieve_model_param", modname)
         jdc = CONTEXT.get_current_step().jdc
         etapes = {}
 
@@ -974,7 +970,6 @@ class CopyModelMeca:
         on peut aussi contraindre l'utilisateur a utiliser MODELE=...
         pour l'instant)
         """
-        print("DEBUG: retrieve_nume_ddl", modname, noms_matr_elem)
         jdc = CONTEXT.get_current_step().jdc
         nume_ddls = []
         modname = modname.strip()
@@ -1000,7 +995,6 @@ class CopyModelMeca:
         on peut aussi contraindre l'utilisateur a utiliser MODELE=...
         pour l'instant)
         """
-        print("DEBUG: retrieve_asse_matrice", nume_names)
         jdc = CONTEXT.get_current_step().jdc
         asse_matrices = []
         nume_names = [name.strip() for name in nume_names]
