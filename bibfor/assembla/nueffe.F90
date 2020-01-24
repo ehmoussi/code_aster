@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,11 +21,13 @@ subroutine nueffe(nb_ligr, list_ligr, base , nume_ddlz , renumz,&
 !
 implicit none
 !
-#include "jeveux.h"
+#include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nueffe_lag1.h"
 #include "asterfort/nueffe_lag2.h"
 #include "asterfort/utmess.h"
+#include "jeveux.h"
 !
     integer, intent(in) :: nb_ligr
     character(len=24), pointer :: list_ligr(:)
@@ -77,24 +79,30 @@ implicit none
 !
 ! Verification of number of Lagrange multipliers in load ligrel (single or double)
 !
-    first = .true.
+    first = ASTER_TRUE
+    lag12 = 'LAG2'
+!
     do iligr = 2, nb_ligr
         call jeveuo(list_ligr(iligr)(1:19)//'.LGRF', 'L', jlgrf)
         if( first ) then
             lag12 = zk8(jlgrf+2)
-            first = .false.
+            first = ASTER_FALSE
         else
             if( lag12.ne.zk8(jlgrf+2) ) then
                 call utmess('F', 'ASSEMBLA_6')
             endif
         endif
     enddo
+!
     if( lag12.eq.'LAG1' ) then
+        ASSERT(nb_ligr > 1)
+! Case with simple Lagrange
         call nueffe_lag1(nb_ligr, list_ligr, base, nume_ddlz, renumz,&
                          modelocz, sd_iden_relaz)
     else
+! Case without Lagrange or with double Lagrange
         call nueffe_lag2(nb_ligr, list_ligr, base, nume_ddlz, renumz,&
                          modelocz, sd_iden_relaz)
     endif
-
+!
 end subroutine

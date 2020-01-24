@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine prefft(resin, method, symetr, nsens, grand,&
-                      vectot, nbva, ier)
+                      vectot, nbva, kmpi, ier)
         character(len=19) :: resin
         character(len=16) :: method
         character(len=16) :: symetr
@@ -28,6 +28,7 @@ interface
         character(len=4) :: grand
         character(len=19) :: vectot
         integer :: nbva
+        character(len=16) :: kmpi
         integer :: ier
     end subroutine prefft
 end interface
