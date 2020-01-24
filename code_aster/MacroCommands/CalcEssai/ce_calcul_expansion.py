@@ -68,7 +68,7 @@ class CalcEssaiExpansion:
     def __init__(self, macro, mess, objects):
         """!Constructeur
 
-        \param macro le self de l'objet macro provenant de calc_essai_ops
+        macro: le self de l'objet macro provenant de calc_essai_ops
         """
         self.resu_num = None
         self.resu_exp = None
@@ -109,24 +109,12 @@ class CalcEssaiExpansion:
         self.mode_exp_list = mode_exp_list
         self.param = param
 
-    def calc_proj_resu(self, suffix, basename):
-        """!Mancement de MACRO_EPXANS et export des resultats si demande
-            4 resultats sont crees, nommes basename + suffix, ou
-            suffix = ['_NX','_EX','_ET','_RD']"""
+    def calc_proj_resu(self):
+        """Lancement de MACRO_EPXANS et export des resultats si demande
+        4 resultats sont crees, nommes basename + suffix, ou
+        suffix = ['_NX','_EX','_ET','_RD']"""
         self.mess.disp_mess("Debut de MACRO_EXPANS")
         mdo = self.ce_objects
-
-        if not basename:
-            basename = 'tmp'
-        for suf in suffix:
-            if basename + suf in mdo.resultats:
-                # Destruction des concepts existants si ils existent deja
-                self.mess.disp_mess("destruction de " + basename + suf)
-                DETRUIRE(CONCEPT=_F(NOM=mdo.resultats[basename + suf].obj))
-
-        # res_ET et res_RD sont initialises automatiquement
-        res_ET = CO(basename + suffix[2])
-        res_RD = CO(basename + suffix[3])
 
         # Preparation des donnees de mesure
         nume = None
@@ -138,10 +126,10 @@ class CalcEssaiExpansion:
         # modif : la partie commentee ci-dessus devrait marcher bien comme ca
         if self.mode_exp_list:
             # res_EX est genere que si on a selectionne une partie des modes
-            res_EX = CO(basename + suffix[1])
+            res_EX = CO("EX")
             args.update({'RESU_EX': res_EX})
             mcfact_mesure.update({'NUME_ORDRE': tuple(self.mode_exp_list)})
-            if isinstance(self.resu_exp.obj, dyna_harmo):
+            if self.resu_exp.obj.getType() == "DYNA_HARMO":
                 nume = self.resu_exp.nume_ddl  # aller chercher a la main le nume_ddl
 
         # Preparation des donnees numeriques pour la base d'expansion
@@ -149,7 +137,7 @@ class CalcEssaiExpansion:
                          'BASE': self.resu_num.obj}
         if self.mode_num_list:
             # res_NX est genere que si on a selectionne une partie des modes
-            res_NX = CO(basename + suffix[0])
+            res_NX = CO("NX")
             args.update({'RESU_NX': res_NX})
             mcfact_calcul.update({'NUME_ORDRE': tuple(self.mode_num_list)})
 
@@ -157,12 +145,13 @@ class CalcEssaiExpansion:
         parametres = self.param
 
         try:
-            MACRO_EXPANS(
+            result = MACRO_EXPANS(
+                __use_namedtuple__=True,
                 MODELE_CALCUL=mcfact_calcul,
                 MODELE_MESURE=mcfact_mesure,
                 NUME_DDL=nume,
-                RESU_ET=res_ET,
-                RESU_RD=res_RD,
+                RESU_ET=CO("ET"),
+                RESU_RD=CO("RD"),
                 RESOLUTION=parametres,
                 **args
             )
@@ -172,30 +161,18 @@ class CalcEssaiExpansion:
                 mess.GetText('I', err.id_message, err.valk, err.vali, err.valr)
             self.mess.disp_mess(message)
             UTMESS('A', 'CALCESSAI0_7')
-            for suf in suffix:
-                # destruction : les concepts ont ete initialises, il faut les
-                # detruire, meme s'ils sont vides
-                DETRUIRE(CONCEPT=_F(NOM=(res_NX, res_EX, res_ET, res_RD)))
-
             return
-
-        if self.mode_num_list:
-            mdo.update(res_NX.nom, res_NX)
-        if self.mode_exp_list:
-            mdo.update(res_EX.nom, res_EX)
-        mdo.update(res_ET.nom, res_ET)
-        mdo.update(res_RD.nom, res_RD)
 
         self.mess.disp_mess("Fin de MACRO_EXPANS")
         self.mess.disp_mess(" ")
+        print("DEBUG: results:", result)
+        return result
 
     def calc_mac_mode(self, resu1, resu2, norme):
         """!Calcul de MAC entre deux bases modales compatibles"""
-        o1 = resu1.obj
-        o2 = resu2.obj
         try:
-            __MAC = MAC_MODES(BASE_1=o1,
-                              BASE_2=o2,
+            __MAC = MAC_MODES(BASE_1=resu1,
+                              BASE_2=resu2,
                               MATR_ASSE=norme,
                               INFO=1)
         except AsterError as err:
