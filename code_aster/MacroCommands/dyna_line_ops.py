@@ -26,12 +26,12 @@ import aster
 from libaster import AsterError
 from ..Cata.Syntax import _F
 from ..Commands import (AFFE_CHAR_MECA, ASSE_MATRICE, ASSE_VECTEUR, CALC_CHAR_SEISME,
-                                 CALC_FONCTION, CALC_MATR_ELEM, CALC_MISS, CALC_MODES,
-                                 CALC_VECT_ELEM, CO, COMB_MATR_ASSE, CREA_CHAMP, CREA_RESU,
-                                 DEFI_BASE_MODALE, DEFI_INTERF_DYNA, DYNA_VIBRA, FACTORISER,
-                                 MACR_ELEM_DYNA, MACRO_ELAS_MULT, MACRO_MATR_AJOU, MODE_STATIQUE,
-                                 NUME_DDL, NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE, RESOUDRE,
-                                 REST_GENE_PHYS)
+                        CALC_FONCTION, CALC_MATR_ELEM, CALC_MISS, CALC_MODES,
+                        CALC_VECT_ELEM, CO, COMB_MATR_ASSE, CREA_CHAMP, CREA_RESU,
+                        DEFI_BASE_MODALE, DEFI_INTERF_DYNA, DYNA_VIBRA, FACTORISER,
+                        MACR_ELEM_DYNA, MACRO_ELAS_MULT, MACRO_MATR_AJOU, MODE_STATIQUE,
+                        NUME_DDL, NUME_DDL_GENE, PROJ_MATR_BASE, PROJ_VECT_BASE, RESOUDRE,
+                        REST_GENE_PHYS)
 from ..Utilities import force_list
 from ..Messages import UTMESS
 
@@ -694,17 +694,17 @@ class DynaLineBasis:
         if self.ifs:
             __numeDdlGene = NUME_DDL_GENE(BASE=__dynaModes,
                                           STOCKAGE=self.getStockageType())
-            addedMassCo = CO('addedMass')
-            MACRO_MATR_AJOU(MAILLAGE=self.dynaLineFEM.getMaillage(),
-                            MODELISATION=self.modelisation_flu,
-                            GROUP_MA_FLUIDE=self.group_ma_fluide,
-                            GROUP_MA_INTERF=self.group_ma_interf,
-                            FLUIDE=self.rho_fluide,
-                            DDL_IMPO=self.pression_flu_impo,
-                            MODE_MECA=__dynaModes,
-                            NUME_DDL_GENE=__numeDdlGene,
-                            MATR_MASS_AJOU=addedMassCo,
-                            )
+            res = MACRO_MATR_AJOU(__use_namedtuple__=True,
+                                  MAILLAGE=self.dynaLineFEM.getMaillage(),
+                                  MODELISATION=self.modelisation_flu,
+                                  GROUP_MA_FLUIDE=self.group_ma_fluide,
+                                  GROUP_MA_INTERF=self.group_ma_interf,
+                                  FLUIDE=self.rho_fluide,
+                                  DDL_IMPO=self.pression_flu_impo,
+                                  MODE_MECA=__dynaModes,
+                                  NUME_DDL_GENE=__numeDdlGene,
+                                  MATR_MASS_AJOU=CO('addedMass'),
+                                  )
             __rigiGen=PROJ_MATR_BASE(BASE=__dynaModes,
                                      NUME_DDL_GENE=__numeDdlGene,
                                      MATR_ASSE=self.dynaLineFEM.getRigiPhy())
@@ -713,7 +713,7 @@ class DynaLineBasis:
                                      MATR_ASSE=self.dynaLineFEM.getMassPhy())
             __massGen=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=__massGen,
                                                 COEF_R=1.0,),
-                                             _F(MATR_ASSE=addedMass,
+                                             _F(MATR_ASSE=res.addedMass,
                                                 COEF_R=1.0,),),)
             __dynaModes=CALC_MODES(OPTION='BANDE',
                                    VERI_MODE=_F(STOP_ERREUR="NON"),
@@ -749,12 +749,15 @@ class DynaLineBasis:
             self.addedMass = None
             self.__excitForcAjou = []
             return self.addedMass, self.__excitForcAjou
-        addedMassCo = CO('addedMass')
         keywords = {}
         tmp = []
         if self.forc_ajou:
-            monoAppuiLoadings = [x for x in self.charges if "TYPE_APPUI" in x and x["TYPE_APPUI"]=="MONO"]
-            multiAppuiLoadings = [x for x in self.charges if "TYPE_APPUI" in x and x["TYPE_APPUI"]=="MULTI"]
+            monoAppuiLoadings = [x for x in self.charges
+                                 if "TYPE_APPUI" in x
+                                 and x["TYPE_APPUI"] == "MONO"]
+            multiAppuiLoadings = [x for x in self.charges
+                                  if "TYPE_APPUI" in x
+                                  and x["TYPE_APPUI"] == "MULTI"]
             if monoAppuiLoadings:
                 AppuiLoadings = monoAppuiLoadings
                 keywords['MONO_APPUI'] = 'OUI'
@@ -772,35 +775,36 @@ class DynaLineBasis:
                                    'VECTEUR' : __addeforce}
                     for key in ['NOEUD','GROUP_NO']:
                         if key in charge:
-                            if 'MODE_STAT' in keywords :
-                                d_forc_ajou[key] = force[key]
+                            if 'MODE_STAT' in keywords:
+                                d_forc_ajou[key] = charge[key]
                             else:
                                 del charge[key]
                     if not 'MODE_STAT' in keywords:
                         del charge['TYPE_APPUI']
                         del charge['DIRECTION']
-                    d_excit = {'VECT_ASSE_GENE' : nameToSave}
+                    d_excit = {'attrname' : nameToSave}
                     for key in charge:
                         d_excit[key] = charge[key]
                     keywords['FORC_AJOU'].append(d_forc_ajou)
                     tmp.append(d_excit)
                     count = count + 1
-        MACRO_MATR_AJOU(MAILLAGE=self.dynaLineFEM.getMaillage(),
-                        MODELISATION=self.modelisation_flu,
-                        GROUP_MA_FLUIDE=self.group_ma_fluide,
-                        GROUP_MA_INTERF=self.group_ma_interf,
-                        FLUIDE=self.rho_fluide,
-                        DDL_IMPO=self.pression_flu_impo,
-                        MODE_MECA=self.get(),
-                        NUME_DDL_GENE=self.__getNumeDdlGene(),
-                        MATR_MASS_AJOU=addedMassCo,
-                        **keywords)
+        res = MACRO_MATR_AJOU(__use_namedtuple__=True,
+                              MAILLAGE=self.dynaLineFEM.getMaillage(),
+                              MODELISATION=self.modelisation_flu,
+                              GROUP_MA_FLUIDE=self.group_ma_fluide,
+                              GROUP_MA_INTERF=self.group_ma_interf,
+                              FLUIDE=self.rho_fluide,
+                              DDL_IMPO=self.pression_flu_impo,
+                              MODE_MECA=self.get(),
+                              NUME_DDL_GENE=self.__getNumeDdlGene(),
+                              MATR_MASS_AJOU=CO('addedMass'),
+                              **keywords)
         self.__excitForcAjou = []
         for d_excit in tmp:
-            objToAdd = globals()[d_excit['VECT_ASSE_GENE']]
-            d_excit['VECT_ASSE_GENE'] = objToAdd
+            d_excit['VECT_ASSE_GENE'] = getattr(res, d_excit['attrname'])
+            del d_excit['attrname']
             self.__excitForcAjou.append(d_excit)
-        self.addedMass = addedMass
+        self.addedMass = res.addedMass
         return self.addedMass, self.__excitForcAjou
 
     def __getElasModes(self):
@@ -851,7 +855,8 @@ class DynaLineBasis:
                             "PHAS_DEG"   , "PUIS_PULS"  ]:
                     if key in charge:
                         del charge[key]
-            __elasModes=MACRO_ELAS_MULT(CAS_CHARGE=elasCharges,
+            __elasModes = MACRO_ELAS_MULT(__use_namedtuple__=True,
+                                        CAS_CHARGE=elasCharges,
                                         NUME_DDL=self.dynaLineFEM.getNumeddl(),
                                         **keywords)
         self.__elasModes = __elasModes
