@@ -137,16 +137,15 @@ class Generator(object):
         nom_bamo = bamo.getName()
         self.mat_gene_params['NUME_DDL'] = ddlgene
         self.mat_gene_params['BASE'] = bamo
-        ir, ib, nume_ddl = aster.dismoi('NUME_DDL', nom_bamo,'RESU_DYNA','F')
-        ir, ib, nom_mail = aster.dismoi('NOM_MAILLA', nume_ddl,'NUME_DDL','F')
+        nom_mail = bamo.getDOFNumbering().getMesh().getName()
         self.cohe_params['MAILLAGE'] = nom_mail
-        ir, nbmodt, ib = aster.dismoi('NB_MODES_TOT', nom_bamo,'RESULTAT','F')
-        ir, nbmodd, ib = aster.dismoi('NB_MODES_DYN', nom_bamo,'RESULTAT','F')
-        ir, nbmods, ib = aster.dismoi('NB_MODES_STA', nom_bamo,'RESULTAT','F')
+        _, nbmodt, _ = aster.dismoi('NB_MODES_TOT', nom_bamo,'RESULTAT','F')
+        _, nbmodd, _ = aster.dismoi('NB_MODES_DYN', nom_bamo,'RESULTAT','F')
+        _, nbmods, _ = aster.dismoi('NB_MODES_STA', nom_bamo,'RESULTAT','F')
         self.mat_gene_params['NBMODD'] =  nbmodd
         self.mat_gene_params['NBMODS'] =  nbmods
         self.mat_gene_params['NBMODT'] =  nbmodt
-        l_nom, noe_interf = get_group_nom_coord(
+        _, noe_interf = get_group_nom_coord(
                      self.interf_params['GROUP_NO_INTERF'], nom_mail)
         self.cohe_params['DIST'] = calc_dist2(noe_interf)
         self.cohe_params['NOEUDS_INTERF'] = noe_interf
@@ -191,9 +190,9 @@ class GeneratorTRANS(Generator):
 
         # verification que les abscisses des différents signaux sont les mêmes
         dire0 = list(self.excit_params.keys())[0]
-        tt0, vale_s = self.excit_params[dire0].Valeurs()
+        tt0, _ = self.excit_params[dire0].Valeurs()
         for idi, dire in enumerate(list(self.excit_params.keys())[1:]):
-            tt, vale_s = self.excit_params[dire].Valeurs()
+            tt, _ = self.excit_params[dire].Valeurs()
             if len(tt0) != len(tt):
                 UTMESS('F','SEISME_80', valk=[dire0,dire])
             max_abs = max(abs(NP.array(tt0)))
@@ -213,7 +212,7 @@ class GeneratorTRANS(Generator):
                         _F(FONCTION = self.excit_params[dire0],
                            METHODE = 'PROL_ZERO', ),)
         self.excit_params[dire0] = __foint[0]
-        vale_fre, vale_re, vale_im = __foint[0].Valeurs()
+        vale_fre, _, _ = __foint[0].Valeurs()
         FREQ_PAS = 1. / (len(vale_fre) * DT)
         NB_FREQ = int(floor(len(vale_fre) / 2))
         FREQ_INIT = 0.0
@@ -277,7 +276,7 @@ class GeneratorTRANS(Generator):
 # > on remplace donc le champ en acceleration
 
             # si tous les point on été calculés: pas d'interpolation
-            vale_fre, vale_re, vale_im = self.excit_params[dire].Valeurs()
+            _, vale_re, vale_im = self.excit_params[dire].Valeurs()
             if self.calc_params.get('FREQ_MAX') is None:
                 inul = 0
                 for k, freqk in enumerate(self.liste_freq_sig):
@@ -503,8 +502,8 @@ class GeneratorTRANS(Generator):
         VECRES = self.append_Vec(RS, k, RESU)
         if k > 0:
             DETRUIRE(CONCEPT = _F(NOM = (__impe, __fosi, __rito)), INFO=1)
+#
         return VECRES
-        return calc_miss_vari(self)
 
 
 #     -----------------------------------------------------------------

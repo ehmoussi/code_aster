@@ -26,14 +26,17 @@ from ...Cata.Syntax import _F
 from ...Commands import CREA_CHAMP, DEFI_LIST_REEL, DYNA_NON_LINE
 
 
-def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
-                             INCR_IMPL, INCR_EXPL,
-                             SCHEMA_TEMPS_IMPL, SCHEMA_TEMPS_EXPL, SCHEMA_TEMPS_EQUI,
-                             COMPORTEMENT_IMPL, COMPORTEMENT_EXPL, CONVERGENCE,
-                             EXCIT, NEWTON, ETAT_INIT, LIST_INST_BASCULE, SCHEMA_INIT, EQUILIBRAGE,
-                             SOLVEUR, ARCHIVAGE, OBSERVATION, ENERGIE, **args):
+def macro_bascule_schema_ops(self, **args):
+
+    args = _F(args)
     # On importe les definitions des commandes a utiliser dans la macro
     #
+
+    CARA_ELEM = args.get("CARA_ELEM")
+    MODELE = args.get("MODELE")
+    CHAM_MATER = args.get("CHAM_MATER")
+    SCHEMA_INIT = args.get("SCHEMA_INIT")
+
     motscles = {}
     motscles['MODELE'] = MODELE
     motscles['CHAM_MATER'] = CHAM_MATER
@@ -41,133 +44,49 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
         motscles['CARA_ELEM'] = CARA_ELEM
 
     #
-    dexct = []
-    for j in EXCIT:
-        dexct.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dexct[-1].keys()):
-            if dexct[-1][i] is None:
-                del dexct[-1][i]
+    dexct = args.get("EXCIT")
     #
-    dComp_incri = []
-    for j in COMPORTEMENT_IMPL:
-        dComp_incri.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dComp_incri[-1].keys()):
-            if dComp_incri[-1][i] is None:
-                del dComp_incri[-1][i]
+    dComp_incri = args.get("COMPORTEMENT_IMPL")
     #
-    dComp_incre = []
-    for j in COMPORTEMENT_EXPL:
-        dComp_incre.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dComp_incre[-1].keys()):
-            if dComp_incre[-1][i] is None:
-                del dComp_incre[-1][i]
+    dComp_incre = args.get("COMPORTEMENT_EXPL")
     #
-    dincri = []
-    for j in INCR_IMPL:
-        dincri.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dincri[-1].keys()):
-            if dincri[-1][i] is None:
-                del dincri[-1][i]
+    dincri = [args.get("INCR_IMPL")]
     #
-    dincre = []
-    for j in INCR_EXPL:
-        dincre.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dincre[-1].keys()):
-            if dincre[-1][i] is None:
-                del dincre[-1][i]
+    dincre = [args.get("INCR_EXPL")]
     #
-    dschi = []
-    for j in SCHEMA_TEMPS_IMPL:
-        dschi.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dschi[-1].keys()):
-            if dschi[-1][i] is None:
-                del dschi[-1][i]
+    dschi = args.get("SCHEMA_TEMPS_IMPL")
     #
-    dsche = []
-    for j in SCHEMA_TEMPS_EXPL:
-        dsche.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dsche[-1].keys()):
-            if dsche[-1][i] is None:
-                del dsche[-1][i]
+    dsche = args.get("SCHEMA_TEMPS_EXPL")
     #
-    dscheq = []
-    for j in SCHEMA_TEMPS_EQUI:
-        dscheq.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dscheq[-1].keys()):
-            if dscheq[-1][i] is None:
-                del dscheq[-1][i]
+    dscheq = [args.get("SCHEMA_TEMPS_EQUI")]
     #
-    dnew = []
-    for j in NEWTON:
-        dnew.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dnew[-1].keys()):
-            if dnew[-1][i] is None:
-                del dnew[-1][i]
+    dnew = args.get("NEWTON")
     #
-    dconv = []
-    for j in CONVERGENCE:
-        dconv.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dconv[-1].keys()):
-            if dconv[-1][i] is None:
-                del dconv[-1][i]
+    dconv = args.get("CONVERGENCE")
     #
-    dini = []
-    for j in ETAT_INIT:
-        dini.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dini[-1].keys()):
-            if dini[-1][i] is None:
-                del dini[-1][i]
+    dini = args.get("ETAT_INIT")
     #
-    dequi = []
-    for j in EQUILIBRAGE:
-        dequi.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dequi[-1].keys()):
-            if dequi[-1][i] is None:
-                del dequi[-1][i]
+    dequi = [args.get("EQUILIBRAGE")]
     #
-    dsolv = []
-    for j in SOLVEUR:
-        dsolv.append(j.cree_dict_valeurs(j.mc_liste))
-        for i in list(dsolv[-1].keys()):
-            if dsolv[-1][i] is None:
-                del dsolv[-1][i]
+    dsolv = args.get("SOLVEUR")
     #
-    dobs = []
-    if type(OBSERVATION) is not type(None):
-        for j in OBSERVATION:
-            dobs.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in list(dobs[-1].keys()):
-                if dobs[-1][i] is None:
-                    del dobs[-1][i]
+    dobs = args.get("OBSERVATION")
     #
-    darch = []
-    if type(ARCHIVAGE) is not type(None):
-        for j in ARCHIVAGE:
-            darch.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in list(darch[-1].keys()):
-                if darch[-1][i] is None:
-                    del darch[-1][i]
+    darch = args.get("ARCHIVAGE")
     #
-    dener = []
-    if type(ENERGIE) is not type(None):
-        for j in ENERGIE:
-            dener.append(j.cree_dict_valeurs(j.mc_liste))
-            for i in list(dener[-1].keys()):
-                if dener[-1][i] is None:
-                    del dener[-1][i]
-    #
-    __L0 = LIST_INST_BASCULE['VALE']
-    dincri1 = copy.copy(dincri)
+    dener = args.get("ENERGIE")
+
+    __L0 = args.get("LIST_INST_BASCULE").getValues()
+
+    dincri1 = dincri
     dincri1[-1]['INST_FIN'] = __L0[0]
     #
     __dtimp = dequi[-1]['PAS_IMPL']
     __dtexp = dequi[-1]['PAS_EXPL']
     #
-    __dim = (-1) * len(dComp_incri)
-    __lis = list(range(0, __dim, -1))
     __non_lin = 'NON'
-    for i in __lis:
-        if (dComp_incri[i]['RELATION'] != 'DIS_CHOC' and dComp_incri[i]['RELATION'] != 'ELAS'):
+    for comp in dComp_incri:
+        if (comp['RELATION'] != 'DIS_CHOC' and comp['RELATION'] != 'ELAS'):
             __non_lin = 'OUI'
             break
     #
@@ -178,7 +97,7 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
     MasquerAlarme('COMPOR4_70')
 
     if SCHEMA_INIT == 'IMPLICITE':
-        dincri1 = copy.copy(dincri)
+        dincri1 = dincri
         dincri1[-1]['INST_FIN'] = __L0[0]
         nomres = DYNA_NON_LINE(EXCIT=dexct,
                                COMPORTEMENT=dComp_incri,
@@ -190,7 +109,7 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
         __prc = 'IMPLICITE'
     #
     if SCHEMA_INIT == 'EXPLICITE':
-        dincre1 = copy.copy(dincre)
+        dincre1 = dincre
         dincre1[-1]['INST_FIN'] = __L0[0]
         nomres = DYNA_NON_LINE(MASS_DIAG='OUI',
                                EXCIT=dexct,
@@ -228,12 +147,14 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
             __Vae = CREA_CHAMP(
                 OPERATION='EXTR', PRECISION=1.E-7, RESULTAT=nomres,
                 TYPE_CHAM='ELGA_VARI_R', NOM_CHAM='VARI_ELGA', INST=__L0[j - 1],)
-            dincre1 = copy.copy(dincre)
+            dincre1 = dincre
             dincre1[-1]['INST_INIT'] = __L0[j - 1]
             if (j < __nb):
                 dincre1[-1]['INST_FIN'] = __L0[j]
             else:
-                del dincre1[-1]['INST_FIN']
+                if 'INST_FIN' in dincre1[-1]:
+                    del dincre1[-1]['INST_FIN']
+
             nomres = DYNA_NON_LINE(reuse=nomres,
                                    EXCIT=dexct,
                                    ETAT_INIT=_F(
@@ -312,7 +233,7 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
             #
             # equilibrage du premier pas implicite
             print('Equilibrage du pas explicite stabilisée')
-            dincri1 = copy.copy(dincri)
+            dincri1 = dincri
             dincri1[-1]['INST_FIN'] = ((__L0[j - 1]) + (10 * (__dtexp)))
             dincri1[-1]['INST_INIT'] = (__L0[j - 1])
             nomres = DYNA_NON_LINE(reuse=nomres,
@@ -347,7 +268,7 @@ def macro_bascule_schema_ops(self, MODELE, CHAM_MATER, CARA_ELEM,
                 TYPE_CHAM='ELGA_VARI_R', NOM_CHAM='VARI_ELGA', INST=(__L0[j - 1]) + (10 * (__dtexp)),)
             #
             print('Calcul implicite après équilibrage')
-            dincri1 = copy.copy(dincri)
+            dincri1 = dincri
             dincri1[-1]['INST_INIT'] = ((__L0[j - 1]) + (10 * (__dtexp)))
             if (j < __nb):
                 dincri1[-1]['INST_FIN'] = __L0[j]

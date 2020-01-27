@@ -79,7 +79,7 @@ def post_newmark_ops(self, **args):
     raise NameError("No model")
   __mail = __model.getMesh()
 
-  iret, dim, rbid = aster.dismoi('DIM_GEOM', __mail.getName(), 'MAILLAGE', 'F')
+  dim = __mail.getDimension()
   if dim == 3:
     UTMESS('F', 'POST0_51')
 
@@ -209,7 +209,7 @@ def post_newmark_ops(self, **args):
 
     else :
       seg=[]
-      iret, ibid, yaseg2 = aster.dismoi('EXI_SEG2', __mail_2.getName(), 'MAILLAGE', 'F')
+      _, _, yaseg2 = aster.dismoi('EXI_SEG2', __mail_2.getName(), 'MAILLAGE', 'F')
       if yaseg2 == 'OUI':
 
         seg.append('LIGNE_2')
@@ -219,7 +219,7 @@ def post_newmark_ops(self, **args):
                                        TYPE_MAILLE=('SEG2'),
                                        TOUT='OUI',),)
 
-      iret, ibid, yaseg3 = aster.dismoi('EXI_SEG3', __mail_2.getName(), 'MAILLAGE', 'F')
+      _, _, yaseg3 = aster.dismoi('EXI_SEG3', __mail_2.getName(), 'MAILLAGE', 'F')
       if yaseg3 == 'OUI':
         seg.append('LIGNE_3')
         __mail_2 = DEFI_GROUP(reuse = __mail_2,

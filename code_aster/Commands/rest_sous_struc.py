@@ -80,7 +80,7 @@ class RestSousStrucOper(ExecuteCommand):
                     if mat is None: mat = macroElem.getComplexStiffnessMatrix()
                     if mat is None: mat = macroElem.getDoubleStiffnessMatrix()
                     if mat is not None:
-                        modele = mat.getDOFNumbering().getModel()
+                        modele = mat.getModel()
                         self._result.appendModelOnAllRanks(modele)
         elif squelette is not None:
             self._result.setMesh(squelette)

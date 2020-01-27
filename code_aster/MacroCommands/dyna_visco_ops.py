@@ -237,7 +237,7 @@ def extr_matr_elim_lagr(self, matr_asse):
     #--                                                 --#
     #-----------------------------------------------------#
 
-    iret,ibid,nom_nume = aster.dismoi('NOM_NUME_DDL',matr_asse.getName(),'MATR_ASSE','F')
+    nom_nume = matr_asse.getDOFNumbering().getName()
     Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
     ind_lag1=[]
     ind_nolag=[]

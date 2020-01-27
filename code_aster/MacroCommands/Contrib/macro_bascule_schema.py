@@ -20,13 +20,14 @@
 from ...Cata.Commons import *
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
-from ...Objects import NonLinearEvolutionContainer
-from ...Supervis import ExecuteCommand
+from ...Supervis.ExecuteCommand import UserMacro
 from .macro_bascule_schema_ops import macro_bascule_schema_ops
 
 MACRO_BASCULE_SCHEMA_CATA = MACRO(
-    nom="MACRO_BASCULE_SCHEMA", op=macro_bascule_schema_ops, sd_prod=evol_noli, reentrant='f',
+    nom="MACRO_BASCULE_SCHEMA", op=OPS('code_aster.MacroCommands.Contrib.macro_bascule_schema_ops.macro_bascule_schema_ops'),
+    sd_prod=evol_noli, reentrant='f',
     fr="Macro permettant la bascule de schema en temps dans DYNA_NON_LINE",
+    reuse=SIMP(statut='c', typ=CO),
     MODELE=SIMP(statut='o', typ=modele_sdaster),
     CHAM_MATER=SIMP(statut='o', typ=cham_mater),
     MODE_STAT=SIMP(statut='f', typ=mode_meca),
@@ -95,7 +96,7 @@ MACRO_BASCULE_SCHEMA_CATA = MACRO(
                     ),
     #-------------------------------------------------------------------
     b_reuse=BLOC(
-        condition="reuse", fr="en mode concept reentrant : ETAT_INIT obligatoire",
+        condition = """exists("reuse")""",
         ETAT_INIT=FACT(statut='o',
                        regles=(
                        AU_MOINS_UN(
@@ -126,7 +127,7 @@ MACRO_BASCULE_SCHEMA_CATA = MACRO(
                        INST_ETAT_INIT=SIMP(statut='f', typ='R'),
                        ),),
     b_not_reuse=BLOC(
-        condition="not reuse", fr="en mode concept non reentrant : ETAT_INIT facultatif",
+        condition = """not exists("reuse")""",
         ETAT_INIT=FACT(statut='f',
                        regles=(
                        AU_MOINS_UN(
@@ -357,7 +358,7 @@ MACRO_BASCULE_SCHEMA_CATA = MACRO(
                            condition="SCHEMA=='TCHAMWA'or SCHEMA=='DIFF_CENT'",
                            STOP_CFL=SIMP(
                            statut='f', typ='TXM', defaut="OUI", into=("OUI", "NON"),),
-                           FORMULATION=SIMP(
+                         FORMULATION=SIMP(
                            statut='o', typ='TXM', into=("ACCELERATION",),),),
                            b_implicit=BLOC(
                            condition="SCHEMA!='TCHAMWA'and SCHEMA!='DIFF_CENT'",
@@ -386,20 +387,5 @@ MACRO_BASCULE_SCHEMA_CATA = MACRO(
     TITRE=SIMP(statut='f', typ='TXM', max='**'),
 )
 
-
-class MacroBasculeSchema(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
-    """
-    command_name = "MACRO_BASCULE_SCHEMA"
-    command_cata = MACRO_BASCULE_SCHEMA_CATA
-
-    def create_result(self, keywords):
-        """Initialize the result.
-
-        Arguments:
-            keywords (dict): Keywords arguments of user's keywords.
-        """
-        self._result = NonLinearEvolutionContainer()
-
-
-MACRO_BASCULE_SCHEMA = MacroBasculeSchema.run
+MACRO_BASCULE_SCHEMA = UserMacro("MACRO_BASCULE_SCHEMA", MACRO_BASCULE_SCHEMA_CATA,
+                      macro_bascule_schema_ops)
