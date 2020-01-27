@@ -122,7 +122,7 @@ class ExecuteCommand(object):
         # index of the command
         self._counter = 0
         current_opt = ExecutionParameter().option
-        self._tuplmode = current_opt & Options.UseLegacyMode != 0
+        self._tuplmode = current_opt & Options.UseLegacyMode == 0
 
     @classmethod
     def run(cls, **kwargs):
@@ -140,7 +140,7 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): User keywords
         """
-        self._tuplmode = kwargs.pop("__use_namedtuple__", False)
+        self._tuplmode = kwargs.pop("__use_namedtuple__", self._tuplmode)
         keywords = mixedcopy(kwargs)
         self.keep_caller_infos(keywords)
         timer = ExecutionParameter().timer
