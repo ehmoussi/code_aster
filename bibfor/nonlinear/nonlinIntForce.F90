@@ -95,7 +95,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
     character(len=19) :: sddyna
     type(HHO_Field) :: hhoField
     real(kind=8) :: time_prev, time_curr
-    aster_logical :: l_dyna, l_hho
+    aster_logical :: l_dyna, l_hho, l_fint
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -117,6 +117,10 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
     l_dyna = isfonc(list_func_acti, 'DYNAMIQUE')
     l_hho  = isfonc(list_func_acti, 'HHO')
+    l_fint = l_dyna
+    if (present(ds_algorom_)) then
+        l_fint = l_fint .or. ds_algorom_%phase.eq.'CORR_EF'
+    endif
 !
     if (phaseType .eq. PRED_EULER) then
         ASSERT(iter_newt .eq. 0)
@@ -129,11 +133,13 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
                                      hval_incr  , hval_algo)
         endif
 ! ----- Integration of behaviour
-        call nmfint(model         , cara_elem      ,&
-                    ds_material   , ds_constitutive,&
-                    list_func_acti, iter_newt      , ds_measure, ds_system,&
-                    hval_incr     , hval_algo      , hhoField,&
-                    ldccvg        , sddyna)
+        if (l_fint) then
+            call nmfint(model         , cara_elem      ,&
+                        ds_material   , ds_constitutive,&
+                        list_func_acti, iter_newt      , ds_measure, ds_system,&
+                        hval_incr     , hval_algo      , hhoField,&
+                        ldccvg        , sddyna)
+        endif
 ! ----- Assembly
         if (ldccvg .ne. 1) then
             if (l_dyna) then
