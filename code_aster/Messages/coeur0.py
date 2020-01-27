@@ -30,7 +30,7 @@ Assemblage des %(i1)d permutations
 """),
 
     3 : _("""
-Permutation de l\'assemblage %(k1)s en position %(k2)s
+Permutation de l'assemblage %(k1)s en position %(k2)s
 """),
 
     4 : _("""

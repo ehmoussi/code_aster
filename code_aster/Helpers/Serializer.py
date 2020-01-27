@@ -167,7 +167,7 @@ class Serializer(object):
                     pickler.save_one(obj, main=True)
                     objList.append(name)
                 except Exception:
-                    logger.warn("object can not be pickled: {0}".format(name))
+                    logger.warning("object can not be pickled: {0}".format(name))
                     logger.debug(traceback.format_exc())
                     continue
                 if isinstance(obj, DataStructure):
@@ -236,8 +236,8 @@ class Serializer(object):
 
         not_read = set(objList).difference(names)
         if not_read:
-            logger.warn("These objects have not been reloaded: {0}"
-                        .format(tuple(not_read)))
+            logger.warning("These objects have not been reloaded: {0}"
+                           .format(tuple(not_read)))
         logger.info("Restored objects:")
         for name, obj in zip(names, objects):
             logger.debug("restoring {0}...".format(name))

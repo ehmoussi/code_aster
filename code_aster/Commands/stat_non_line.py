@@ -23,7 +23,7 @@ from ..Objects import NonLinearEvolutionContainer
 from ..Supervis import ExecuteCommand
 
 
-class StaticNonLinearAnalysisBuild(ExecuteCommand):
+class NonLinearStaticAnalysis(ExecuteCommand):
     """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
     """
     command_name = "STAT_NON_LINE"
@@ -45,6 +45,8 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        if self.exception and self.exception.id_message in ("MECANONLINE5_2", ):
+            return
         self._result.appendModelOnAllRanks(keywords["MODELE"])
         self._result.appendMaterialOnMeshOnAllRanks(keywords["CHAM_MATER"])
         caraElem = keywords.get("CARA_ELEM")
@@ -52,4 +54,4 @@ class StaticNonLinearAnalysisBuild(ExecuteCommand):
             self._result.appendElementaryCharacteristicsOnAllRanks(caraElem)
         self._result.update()
 
-STAT_NON_LINE = StaticNonLinearAnalysisBuild.run
+STAT_NON_LINE = NonLinearStaticAnalysis.run

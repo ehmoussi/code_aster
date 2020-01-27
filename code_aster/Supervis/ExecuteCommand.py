@@ -62,7 +62,6 @@ import linecache
 import re
 from collections import namedtuple
 
-import aster
 import libaster
 
 from ..Cata import Commands
@@ -108,7 +107,8 @@ class ExecuteCommand(object):
     command_name = command_op = command_cata = None
     level = 0
 
-    _cata = _op = _result = _result_name = _counter = _caller = None
+    _cata = _op = _result = _result_name = _counter = _caller = _exc = None
+    _tuplmode = None
 
     __setattr__ = no_new_attributes(object.__setattr__)
 
@@ -119,35 +119,47 @@ class ExecuteCommand(object):
         self._op = self.command_op or self._cata.definition['op']
         self._result = None
         self._result_name = ""
+        # index of the command
         self._counter = 0
+        current_opt = ExecutionParameter().option
+        self._tuplmode = current_opt & Options.UseLegacyMode == 0
 
     @classmethod
     def run(cls, **kwargs):
-        """Run the command.
+        """Run the command (class method).
 
         Arguments:
             keywords (dict): User keywords
         """
         cmd = cls()
+        return cmd.run_(**kwargs)
+
+    def run_(self, **kwargs):
+        """Run the command (worker).
+
+        Arguments:
+            keywords (dict): User keywords
+        """
+        self._tuplmode = kwargs.pop("__use_namedtuple__", self._tuplmode)
         keywords = mixedcopy(kwargs)
-        cmd.keep_caller_infos(keywords)
+        self.keep_caller_infos(keywords)
         timer = ExecutionParameter().timer
-        if cmd.command_name not in ("DEBUT", "POURSUITE", "FIN"):
+        if self.command_name not in ("DEBUT", "POURSUITE", "FIN"):
             check_jeveux()
 
         ExecuteCommand.level += 1
-        cmd._counter = ExecutionParameter().incr_command_counter()
-        timer.Start(str(cmd._counter), name=cmd.command_name,
-                    hide=not cmd.show_syntax())
+        self._counter = ExecutionParameter().incr_command_counter()
+        timer.Start(str(self._counter), name=self.command_name,
+                    hide=not self.show_syntax())
         timer.Start(" . check syntax", num=1.1e6)
-        cmd.adapt_syntax(keywords)
-        cmd._cata.addDefaultKeywords(keywords)
+        self.adapt_syntax(keywords)
+        self._cata.addDefaultKeywords(keywords)
         remove_none(keywords)
         try:
-            cmd.check_syntax(keywords)
+            self.check_syntax(keywords)
         except CheckerError as exc:
             # in case of syntax error, show the syntax and raise the exception
-            cmd.print_syntax(keywords)
+            self.print_syntax(keywords)
             ExecuteCommand.level -= 1
             if ExecutionParameter().option & Options.Debug:
                 logger.error(exc.msg)
@@ -155,19 +167,30 @@ class ExecuteCommand(object):
             raise exc.original(exc.msg)
         finally:
             timer.Stop(" . check syntax")
-        cmd.create_result(keywords)
-        if hasattr(cmd._result, "userName"):
-            cmd._result.userName = cmd.result_name
+        self.create_result(keywords)
+        if hasattr(self._result, "userName"):
+            self._result.userName = self.result_name
 
-        cmd.print_syntax(keywords)
+        self.print_syntax(keywords)
         try:
-            cmd.exec_(keywords)
-            cmd.add_references(keywords)
-            cmd.post_exec(keywords)
+            self.exec_(keywords)
+        except libaster.AsterError as exc:
+            self._exc = exc
+            raise
         finally:
-            cmd.print_result()
+            try:
+                self.post_exec_(keywords)
+            finally:
+                self.print_result()
         ExecuteCommand.level -= 1
-        return cmd._result
+        return self._result
+
+    @property
+    def exception(self):
+        """*AsterError*: Exception raised during the execution, *None* if the
+        execution was successful.
+        """
+        return self._exc
 
     @classmethod
     def show_syntax(cls):
@@ -292,6 +315,11 @@ class ExecuteCommand(object):
             raise NotImplementedError("Method 'create_result' must be "
                                       "overridden for {0!r}.".format(self.name))
 
+    @property
+    def result(self):
+        """misc: Attribute that holds the result of the Command."""
+        return self._result
+
     def exec_(self, keywords):
         """Execute the command.
 
@@ -320,11 +348,21 @@ class ExecuteCommand(object):
         if syntax.getResultValue() is not None:
             self._result = syntax.getResultValue()
 
+    def post_exec_(self, keywords):
+        """Post-treatments executed after the `exec_` function. Commands may
+        override `post_exec` method to add specific actions.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords.
+        """
+        self.add_references(keywords)
+        self.post_exec(keywords)
+
     def post_exec(self, keywords):
         """Hook that allows to add post-treatments after the *exec* function.
 
         .. note:: If the Command executes the *op* fortran subroutine and if
-            the result DataStructure references input in a Jeveux object,
+            the result DataStructure references any inputs in a Jeveux object,
             pointers on these inputs must be explicitly references into
             the result.
 
@@ -341,19 +379,21 @@ class ExecuteCommand(object):
         """
         return self._result_name
 
-    def keep_caller_infos(self, keywords, level=2):
+    def keep_caller_infos(self, keywords, level=3):
         """Register the caller frame infos.
 
         Arguments:
             keywords (dict): Dict of keywords.
             level (Optional[int]): Number of frames to rewind to find the
-                caller.
+                caller. Defaults to 2 (1: *here*, 2: *run_*, 3: *run*).
         """
         self._caller = {"filename": "unknown", "lineno": 0, "context": {},
                         "identifier": ""}
         caller = inspect.currentframe()
         try:
             for _ in range(level):
+                if not caller.f_back:
+                    break
                 caller = caller.f_back
             self._caller["filename"] = caller.f_code.co_filename
             self._caller["lineno"] = caller.f_lineno
@@ -467,8 +507,8 @@ class ExecuteMacro(ExecuteCommand):
         """
         output = self._op(self, **keywords)
         assert not isinstance(output, int), \
-            "OPS must now return results, not 'int'."
-        if ExecutionParameter().option & Options.UseLegacyMode:
+            "OPS must return results, not 'int'."
+        if not self._tuplmode:
             self._result = output
             # re-assign the user variable name
             if hasattr(self._result, "userName"):

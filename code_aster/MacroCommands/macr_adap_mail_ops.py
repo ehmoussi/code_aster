@@ -1463,7 +1463,7 @@ def macr_adap_mail_ops(self,
                 os.mkdir(Rep_Calc_HOMARD_global)
             except os.error as codret_partiel:
                 saux = "Code d'erreur de mkdir : %d" % codret_partiel[0]
-                self.logger.warn(saux + " : " + codret_partiel[1])
+                logger.warning(saux + " : " + codret_partiel[1])
                 UTMESS("F", 'HOMARD0_4', valk=Rep_Calc_HOMARD_global)
 #
         else:
@@ -1807,7 +1807,7 @@ def macr_adap_mail_ops(self,
                 os.remove(fic)
             except os.error as codret_partiel:
                 saux = "Code d'erreur de remove : %d" % codret_partiel[0]
-                self.logger.warn(saux + " : " + codret_partiel[1])
+                logger.warning(saux + " : " + codret_partiel[1])
                 UTMESS("F", 'HOMARD0_5', valk=fic)
 #
 # 10.3. Liberation du fichier de ASTER vers HOMARD

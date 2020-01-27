@@ -203,7 +203,7 @@ class LogicalUnitFile(object):
             if filename:
                 kwargs['FICHIER'] = filename
                 if access == FileAccess.New and osp.exists(filename):
-                    logger.warn("remove existing file '{0}'".format(filename))
+                    logger.warning("remove existing file '{0}'".format(filename))
                     os.remove(filename)
             kwargs['TYPE'] = FileType.name(typ)
             kwargs['ACCES'] = FileAccess.name(access)

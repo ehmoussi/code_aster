@@ -31,7 +31,6 @@ import libaster
 from ..Utilities import (Singleton, _, clean_string, convert, copy_text_to,
                          cut_long_lines, force_list, to_unicode, ufmt)
 from ..Utilities.misc import get_time
-from .context_info import message_context_concept
 
 DEBUG = False
 CENTER = 1
@@ -237,18 +236,16 @@ class MESSAGE_LOGGER(metaclass=Singleton):
             if type(cata_msg[numess]) == dict:
                 fmt_msg = cata_msg[numess]['message']
                 flags = eval(cata_msg[numess].get('flags', 0))
-                ctxt_msg = cata_msg[numess].get('context', None)
             else:
                 fmt_msg = cata_msg[numess]
                 flags = 0
-                ctxt_msg = None
 
             dictmess = {
                 'code': code,
                 'flags': flags,
                 'id_message': idmess,
                 'corps_message': ufmt(fmt_msg, dicarg),
-                'context_info': self.get_context(ctxt_msg, idmess, dicarg),
+                'context_info': '', #self.get_context(ctxt_msg, idmess, dicarg),
             }
             if code == 'I':
                 self._cache_txt[idmess] = convert(fmt_msg)
@@ -663,27 +660,6 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
         elif code == 'Z':
             typmess = dictmess.get('exc_name') or 'EXCEPTION'
         return typmess
-
-    def get_context(self, ctxt_msg, idmess, dicarg):
-        """Prise en compte du context du message pour donner d'autres infos
-        à l'utilisateur.
-        ctxt_msg est un dictionnaire. Les clés traitées sont :
-            - CONCEPT
-        """
-        if not ctxt_msg:
-            return ''
-        msg = []
-        # tout dans un try/except car c'est du bonus, il ne faudrait pas
-        # planter !
-        try:
-            if 'CONCEPT' in ctxt_msg:
-                l_co = [dicarg[arg]
-                        for arg in force_list(ctxt_msg['CONCEPT'])]
-                for co in l_co:
-                    msg.append(message_context_concept(co))
-        except:
-            pass
-        return os.linesep.join(msg)
 
     # définitions pour fonctionner sans le module aster
     def affiche(self, unite, txt):

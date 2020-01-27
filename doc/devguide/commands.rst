@@ -39,6 +39,11 @@ Commands executors
    :members:
    :special-members: __init__
 
+.. automodule:: code_aster.Commands.fin
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
 
 Utility functions for executors
 ===============================

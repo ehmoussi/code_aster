@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,10 +41,6 @@ SABLE=DEFI_MATERIAU(ELAS=_F(E=670.E+6, NU=0.25, RHO  =1850., ALPHA=0.),
                               RI_CYC= 0.006,
                               DILA  = 2.,),);
 
-TABTND   = CO('TTND');
-TABTNDC1 = CO('TTNDC1');
-TABTNDC2 = CO('TTNDC2');
-
 CALC_ESSAI_GEOMECA(INFO        =1,
                    MATER       =SABLE,
                    COMPORTEMENT=_F(RELATION      ='HUJEUX',
@@ -65,12 +61,12 @@ CALC_ESSAI_GEOMECA(INFO        =1,
                                    ARRET_LIQUEFACTION='OUI',
                                    VALE_CRIT  = .8,
                                    NB_INST    = 25, # Discr. par quart de cycle
-                                   TABLE_RESU = (TABTNDC1,TABTNDC2,),
+                                   TABLE_RESU = (CO('TTNDC1'), CO('TTNDC2'),),
                                    GRAPHIQUE  = ('P-Q','INST-Q','EPS_AXI-Q',
                                                  'EPS_AXI-PRE_EAU',
                                                   'SIG_AXI-PRE_EAU',),),);
-IMPR_TABLE(TABLE=TABTNDC1,);
-IMPR_TABLE(TABLE=TABTNDC2,);
+IMPR_TABLE(TABLE=TTNDC1,);
+IMPR_TABLE(TABLE=TTNDC2,);
 
 # pour l'essai 'TND_C' -> valeurs de reference de wtnv134b ('TRACE')
 
@@ -81,7 +77,7 @@ TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=167596.551051,
            VALE_REFE=167596.551051,
            NOM_PARA ='P_1',
-           TABLE=TABTNDC1,
+           TABLE=TTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
@@ -93,20 +89,20 @@ TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=109999.984793,
            VALE_REFE=1.1E+05,
            NOM_PARA ='Q_1',
-           TABLE=TABTNDC1,
+           TABLE=TTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
                      VALE=70.,),);
-                     
-# Valeurs de P et Q lors de la 1ere reprise de dilatance   
+
+# Valeurs de P et Q lors de la 1ere reprise de dilatance
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='AUTRE_ASTER',
            PRECISION=2.E-2,
            VALE_CALC=66200.1037075,
            VALE_REFE=65366.1349332,
            NOM_PARA ='P_1',
-           TABLE=TABTNDC1,
+           TABLE=TTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
@@ -118,7 +114,7 @@ TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=-69158.1549861,
            VALE_REFE=-69200.9510567,
            NOM_PARA ='Q_1',
-           TABLE=TABTNDC1,
+           TABLE=TTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
@@ -131,7 +127,7 @@ TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=3626.59504438,
            VALE_REFE=3623.17388583,
            NOM_PARA ='P_1',
-           TABLE=TABTNDC1,
+           TABLE=TTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',
@@ -143,7 +139,7 @@ TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=5926.27717192,
            VALE_REFE=5920.04567725,
            NOM_PARA ='Q_1',
-           TABLE=TABTNDC1,
+           TABLE=TTNDC1,
            FILTRE=_F(CRITERE='ABSOLU',
                      PRECISION=9.0E-05,
                      NOM_PARA='INST_1',

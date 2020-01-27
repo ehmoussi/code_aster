@@ -63,38 +63,6 @@ def transforme_list_Num(parametres, res_exp):
 
 
 # ------------------------------------------------------------------------
-
-def mes_concepts(list_concepts=[], base=None):
-    """
-       Fonction qui liste les concepts créés
-    """
-    for e in base.etapes:
-        if e.getName() in ('INCLUDE', 'MACR_RECAL',):
-            list_concepts = list(
-                mes_concepts(list_concepts=list_concepts, base=e))
-        elif (e.sd is not None) and (e.parent.getName() == 'INCLUDE'):
-            nom_concept = e.sd.getName()
-            if not(nom_concept in list_concepts):
-                list_concepts.append(nom_concept)
-    return tuple(list_concepts)
-
-
-# ------------------------------------------------------------------------
-
-def detr_concepts(self):
-    """
-       Fonction qui detruit les concepts créés
-    """
-    liste_concepts = mes_concepts(base=self.parent)
-    for e in liste_concepts:
-        nom = e.strip()
-        DETRUIRE(OBJET=self.g_context['_F'](CHAINE=nom), INFO=1)
-        if nom in self.jdc.g_context:
-            del self.jdc.g_context[nom]
-    del(liste_concepts)
-
-
-# ------------------------------------------------------------------------
 def Random_Tmp_Name(prefix=None):
     crit = False
     while crit == False:

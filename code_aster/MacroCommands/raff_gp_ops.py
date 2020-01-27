@@ -22,7 +22,7 @@ from numpy import cos, pi, sin
 import aster
 
 from ..Cata.Syntax import _F
-from ..Commands import (AFFE_MODELE, COPIER, CREA_CHAMP, DETRUIRE, FORMULE,
+from ..Commands import (AFFE_MODELE, CREA_CHAMP, DETRUIRE, FORMULE,
                         MACR_ADAP_MAIL)
 from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 from ..Supervis import CO
@@ -70,7 +70,7 @@ def raff_gp_ops(self, **args):
 #
 # RECUPERATION DU MAILLAGE ET DES DONNEES UTILISATEUR
 #
-    __MA0 = args.get('MAILLAGE_N')
+    currentMesh = args.get('MAILLAGE_N')
 
     nb_calc = args.get('NB_RAFF')
 # Manipulation obligatoire pour pouvoir se servir des grandeurs dans les
@@ -81,8 +81,6 @@ def raff_gp_ops(self, **args):
 #
 # INITIALISATIONS
 #
-    __MA = [None] * (nb_calc + 1)
-    __MA[0] = __MA0
     const_context = {
         'origine': TRANCHE_2D['CENTRE'],
         'rayon': TRANCHE_2D['RAYON'],
@@ -113,10 +111,7 @@ def raff_gp_ops(self, **args):
                 VALE='''SEUIL(X,Y,origine[0]-1.2*rayon*ccos,origine[1]-1.2*rayon*ssin,1.2*rayon,taille,nbcop,ccos,ssin)''',
                 NOM_PARA=('X', 'Y'),
                 **const_context)
-        if num_calc == 0:
-            currentMesh = __MA[num_calc]
-        else:
-            currentMesh = globals()['MA_%d' % (num_calc)]
+
         __MO = AFFE_MODELE(MAILLAGE=currentMesh,
                            AFFE=_F(TOUT='OUI',
                                    PHENOMENE='MECANIQUE',
@@ -142,22 +137,20 @@ def raff_gp_ops(self, **args):
                                OPERATION='EVAL',
                                CHAM_F=__f_seuil,
                                CHAM_PARA=(__CHXG),)
-        __MA[num_calc + 1] = CO('MA_%d' % (num_calc + 1))
-        MACR_ADAP_MAIL(ADAPTATION='RAFFINEMENT',
-                       CHAM_GD=__COPEAUX,
-                       CRIT_RAFF_ABS=0.01,
-                       MAILLAGE_N=currentMesh,
-                       MAILLAGE_NP1=__MA[num_calc + 1])
+        res = MACR_ADAP_MAIL(__use_namedtuple__=True,
+                             ADAPTATION='RAFFINEMENT',
+                             CHAM_GD=__COPEAUX,
+                             CRIT_RAFF_ABS=0.01,
+                             MAILLAGE_N=currentMesh,
+                             MAILLAGE_NP1=CO("fineMesh"))
         DETRUIRE(CONCEPT=(_F(NOM=__COPEAUX,),
                           _F(NOM=__MO,),
                  _F(NOM=__CHXN),
             _F(NOM=__CHXG),
             _F(NOM=__f_seuil),
-            _F(NOM=__seuil),
-        ),
-        )
+            _F(NOM=__seuil),),)
+        currentMesh = res.fineMesh
 
-    MAOUT = COPIER(CONCEPT=globals()['MA_%d' % (nb_calc)])
     RetablirAlarme('CALCCHAMP_1')
 
-    return MAOUT
+    return currentMesh

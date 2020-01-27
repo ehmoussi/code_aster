@@ -29,7 +29,7 @@ from ...Behaviours import catalc
 from ...Cata.Syntax import _F
 from ...Commands import (CREA_TABLE, DEFI_FONCTION, DEFI_LIST_INST,
                          DEFI_LIST_REEL, DETRUIRE, IMPR_TABLE, SIMU_POINT_MAT)
-from ..Utils.calc_point_mat import CALC_POINT_MAT
+from ..Utils.calc_point_mat import CalcPointMat
 from .geomec_utils import *
 
 
@@ -1450,11 +1450,11 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
             # Mode debug = True : impression enrichie
             # -----------------------------------------
             info_dbg= False
-            #
+            calc = CalcPointMat()
             try:
                # Contrainte SIGMA_1 imposee
                # -----------------------------------
-                __EVOL = CALC_POINT_MAT(INFO=INFO,
+                calc.run_(INFO=INFO,
 
                     COMPORTEMENT=COMPORTEMENT,
 
@@ -1498,15 +1498,10 @@ def essai_TRIA_ND_C_F(self, str_n_essai, DicoEssai, MATER, COMPORTEMENT,
                      %(message))
 
                 calc_ok  = False
-                __EVPOST = self.get_last_concept()
-                TabRes   = __EVPOST.EXTR_TABLE().values()
+                if not calc.result:
+                    raise
 
-                DETRUIRE(CONCEPT=_F(NOM=__EVPOST), INFO=1)
-
-            else:
-                TabRes = __EVOL.EXTR_TABLE().values()
-
-                DETRUIRE(CONCEPT=_F(NOM=__EVOL), INFO=1)
+            TabRes = calc.result.EXTR_TABLE().values()
 
 # =================================================================================
 # Debut Modifs fiche 23451

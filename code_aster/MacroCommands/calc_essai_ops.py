@@ -23,10 +23,13 @@ Implémentation de la macro CALC_ESSAI
 Ce module contient la partie controle de la macro CALC_ESSAI
 """
 
+import inspect
+
 from libaster import onFatalError
 
 from .CalcEssai.cata_ce import CalcEssaiObjects
 from .CalcEssai.ce_test import MessageBox, TestCalcEssai
+from ..Messages import UTMESS
 
 
 def calc_essai_ops(self,
@@ -40,22 +43,20 @@ def calc_essai_ops(self,
                    RESU_IDENTIFICATION=None,
                    RESU_MODIFSTRU=None,
                    **args):
+    if MODIFSTRUCT:
+        UTMESS('F', 'CALCESSAI0_2')
 
-    ier = 0
+    caller = inspect.currentframe()
+    # 1: exec_, 2: run_, 3: run, 4: user
+    for _ in range(4):
+        caller = caller.f_back
+        context = caller.f_globals
 
     prev = onFatalError()
 
     # gestion des concepts sortants de la macro, declares a priori
     table_fonction = []
-
-    if not RESU_MODIFSTRU:
-        out_modifstru = {}
-    else:
-        out_modifstru = RESU_MODIFSTRU[0]  # max=1 dans le capy
-
-    if not RESU_IDENTIFICATION:
-        RESU_IDENTIFICATION = []
-    else:
+    if RESU_IDENTIFICATION:
         for res in RESU_IDENTIFICATION:
             table_fonction.append(res['TABLE'])
     out_identification = {"Register": self.register_result,
@@ -63,10 +64,12 @@ def calc_essai_ops(self,
                           "ComptTable": 0,
                           "TablesOut": table_fonction}
 
+    out_modifstru = RESU_MODIFSTRU or {}
 
     mess = MessageBox(UNITE_RESU)
 
-    objects = CalcEssaiObjects(self, mess)
+    objects = CalcEssaiObjects(mess)
+    objects.recup_objects(context)
 
     # importation des concepts aster existants de la memoire jeveux
     TestCalcEssai(  self,
@@ -83,4 +86,3 @@ def calc_essai_ops(self,
 
     mess.close_file()
     onFatalError(prev)
-    return ier

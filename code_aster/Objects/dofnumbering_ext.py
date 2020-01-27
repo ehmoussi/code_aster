@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`DOFNumbering` --- DOFNumberinging definition
+:py:class:`DOFNumbering` --- DOFNumbering definition
 *****************************************
 """
 
