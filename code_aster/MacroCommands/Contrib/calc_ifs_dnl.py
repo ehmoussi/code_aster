@@ -32,6 +32,7 @@ CALC_IFS_DNL_CATA = MACRO(nom='CALC_IFS_DNL',
       op=OPS("code_aster.MacroCommands.Contrib.calc_ifs_dnl_ops.calc_ifs_dnl_ops"),
       sd_prod=evol_noli,
       reentrant='f',
+      reuse=SIMP(statut='c', typ=CO),
       fr=tr("Calcul de l'évolution dynamique d'une structure couplée à un "
                          "domaine fluide (résolu avec le code Saturne) via YACS"),
 
@@ -111,9 +112,9 @@ CALC_IFS_DNL_CATA = MACRO(nom='CALC_IFS_DNL',
 #-------------------------------------------------------------------
          COMPORTEMENT       =C_COMPORTEMENT('DYNA_NON_LINE'),
 #-------------------------------------------------------------------
-         b_reuse =BLOC(condition = "reuse",fr=tr("en mode concept reentrant : ETAT_INIT obligatoire"),
+         b_reuse =BLOC(condition = """exists("reuse")""",fr=tr("en mode concept reentrant : ETAT_INIT obligatoire"),
             ETAT_INIT         =C_ETAT_INIT('DYNA_NON_LINE','o'),),
-         b_notreuse =BLOC(condition = "not reuse",fr=tr("en mode concept reentrant : ETAT_INIT facultatif"),
+         b_notreuse =BLOC(condition = """not exists("reuse")""",fr=tr("en mode concept reentrant : ETAT_INIT facultatif"),
             ETAT_INIT         =C_ETAT_INIT('DYNA_NON_LINE','f'),),
 #-------------------------------------------------------------------
 #IFS : pas besoin d'INCREMENT

@@ -60,8 +60,21 @@ void exportDOFNumberingToPython() {
     c1.def( "setElementaryMatrix", f2 );
     c1.def( "setElementaryMatrix", f3 );
     c1.def( "setElementaryMatrix", f4 );
-    c1.def( "getModel", &BaseDOFNumberingInstance::getModel );
+    c1.def( "getModel", &BaseDOFNumberingInstance::getModel, R"(
+Return the model
+
+Returns:
+    ModelPtr: a pointer to the model
+        )",
+              ( py::arg( "self" ) )  );
     c1.def( "setModel", &BaseDOFNumberingInstance::setModel );
+    c1.def( "getMesh", &BaseDOFNumberingInstance::getMesh, R"(
+Return the mesh
+
+Returns:
+    MeshPtr: a pointer to the mesh
+        )",
+              ( py::arg( "self" ) ) );
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 

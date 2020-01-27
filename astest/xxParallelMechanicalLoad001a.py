@@ -63,7 +63,7 @@ resu = STAT_NON_LINE(CHAM_MATER=AFFMAT,
                      INCREMENT=_F(LIST_INST=LI),
                      MODELE=model,
                      NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,),
-                     SOLVEUR=_F(METHODE='PETSC',RESI_RELA=1.e-1,PRE_COND='LDLT_SP'),)
+                     SOLVEUR=_F(METHODE='PETSC',RESI_RELA=1.e-7,PRE_COND='LDLT_SP'),)
 
 #if (parallel):
    #rank = code_aster.getMPIRank()

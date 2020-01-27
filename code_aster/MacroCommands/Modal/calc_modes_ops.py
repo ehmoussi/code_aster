@@ -148,8 +148,13 @@ def calc_modes_ops(self, TYPE_RESU, OPTION, AMELIORATION, INFO, **args):
         if isinstance(modes, GeneralizedModeContainer):
             modes.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
         elif isinstance(modes, MechanicalModeContainer):
-            model = matrRigi.getDOFNumbering().getModel()
-            modes.appendModelOnAllRanks(model)
+            try:
+                model = matrRigi.getModel()
+            except:
+                model = None
+
+            if model is not None:
+                modes.appendModelOnAllRanks(model)
         else:
             modes.setDOFNumbering(matrRigi.getDOFNumbering())
         modes.setStiffnessMatrix(matrRigi)

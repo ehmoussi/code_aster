@@ -43,31 +43,25 @@ def force_iss_vari(self,imod,MATR_GENE,NOM_CMP,ISSF,INFO,UNITE_RESU_FORC,
     FREQ_INIT = fini
     GROUP_NO_INTER = INTERF['GROUP_NO_INTERF']
     # MAILLAGE NUME_DDL
-    nom_bamo = MATR_GENE['BASE']
     resultat = MATR_GENE['BASE']
-    nom_bam2 = nom_bamo.nom
-    iret, ibid, nume_ddl = aster.dismoi('NUME_DDL',nom_bam2,'RESU_DYNA','F')
-    iret,ibid, nom_mail = aster.dismoi('NOM_MAILLA',nume_ddl,'NUME_DDL','F')
+    n_resultat = resultat.getName()
+    nume_ddl = resultat.getDOFNumbering()
+    nom_mail = nume_ddl.getMesh().getName()
     # MODELE, DDLGENE
 
     nume_ddlgene = MATR_GENE['NUME_DDL_GENE']
-  #   iret,ibid,nom_modele = aster.dismoi('NOM_MODELE',nume_ddl,'NUME_DDL','F')
- #    nbnot, nbl, nbma, nbsm, nbsmx, dime = maillage.DIME.get()
-    # coordonnees des noeuds
- #    l_coordo = maillage.COORDO.VALE.get()
- #    t_coordo = NP.array(l_coordo)
- #    t_coordo.shape = nbnot, 3
 
-    l_nom, noe_interf = get_group_nom_coord(
+
+    _, noe_interf = get_group_nom_coord(
                      GROUP_NO_INTER, nom_mail)
 
  #   del nume_ddl, nom_mail, nom_modele
        # MODES
-    iret,nbmodd,kbid=aster.dismoi('NB_MODES_DYN', nom_bam2,'RESULTAT','F')
-    iret,nbmods,kbid=aster.dismoi('NB_MODES_STA', nom_bam2,'RESULTAT','F')
-    iret,nbmodt,kbid=aster.dismoi('NB_MODES_TOT',nom_bam2,'RESULTAT','F')
+    _,nbmodd,_=aster.dismoi('NB_MODES_DYN', n_resultat,'RESULTAT','F')
+    _,nbmods,_=aster.dismoi('NB_MODES_STA', n_resultat,'RESULTAT','F')
+    _,nbmodt,_=aster.dismoi('NB_MODES_TOT',n_resultat,'RESULTAT','F')
     FSIST = NP.zeros((NB_FREQ,nbmodt))+0j
-    nbno, nbval = noe_interf.shape
+    nbno, _ = noe_interf.shape
 
 
     if INFO==2:

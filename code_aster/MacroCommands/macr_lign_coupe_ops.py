@@ -799,7 +799,7 @@ def macr_lign_coupe_ops(self, LIGN_COUPE, RESULTAT=None, CHAM_GD=None,
         Mesh = Model.getMesh()
     # le maillage est-il 2D ou 3D ?
     n_mailla = Mesh.getName()
-    iret, dime, kbid = aster.dismoi('DIM_GEOM', n_mailla, 'MAILLAGE', 'F')
+    dime = Mesh.getDimension()
     collgrma = aster.getcolljev(n_mailla.ljust(8) + '.GROUPEMA')
     collgrno = aster.getcolljev(n_mailla.ljust(8) + '.GROUPENO')
     typma = aster.getvectjev(n_mailla.ljust(8) + '.TYPMAIL')

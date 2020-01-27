@@ -167,7 +167,22 @@ class BaseMeshInstance : public DataStructure {
             return 0;
         if ( !_dimensionInformations->updateValuePointer() )
             return 0;
-        return ( *_dimensionInformations )[5];
+
+        const int dimGeom = ( *_dimensionInformations )[5];
+
+        if( dimGeom == 3)
+        {
+            const std::string typeco( "MAILLAGE" );
+            ASTERINTEGER repi = 0, ier = 0;
+            JeveuxChar32 repk( " " );
+            const std::string arret( "F" );
+            const std::string questi( "DIM_GEOM" );
+
+            CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier);
+
+            return repi;
+        }
+        return dimGeom;
     };
 
     /**

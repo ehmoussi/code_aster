@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------- */
-/* Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org             */
+/* Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org             */
 /* This file is part of code_aster.                                     */
 /*                                                                      */
 /* code_aster is free software: you can redistribute it and/or modify   */
@@ -24,7 +24,7 @@
  * @brief Fichier entete de la classe BaseDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+ *   Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
  *   This file is part of code_aster.
  *
  *   code_aster is free software: you can redistribute it and/or modify
@@ -332,6 +332,20 @@ class BaseDOFNumberingInstance : public DataStructure
                 return boost::apply_visitor( ElementaryMatrixGetModel(), _matrix[0] );
         }
         return ModelPtr( nullptr );
+    };
+
+    /**
+     * @brief Get mesh
+     * @return Internal mesh
+     */
+    BaseMeshPtr getMesh()
+    {
+        const auto model = this->getModel();
+        if( model != nullptr )
+        {
+            return model->getMesh();
+        }
+        return nullptr;
     };
 
     /**
