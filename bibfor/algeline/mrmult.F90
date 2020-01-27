@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine mrmult(cumul, lmat, vect, xsol, nbvect,&
-                  prepos)
+                  prepos,  lrom)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -39,7 +39,8 @@ subroutine mrmult(cumul, lmat, vect, xsol, nbvect,&
     character(len=*) :: cumul
     integer :: lmat, nbvect
     real(kind=8) :: vect(*), xsol(*)
-    aster_logical :: prepos, prepo2
+    aster_logical :: prepos
+    aster_logical, optional :: lrom
 !    EFFECTUE LE PRODUIT D'UNE MATRICE PAR N VECTEURS REELS. LE RESULTAT
 !    EST STOCKE DANS N VECTEURS REELS
 !     ATTENTION:
@@ -61,7 +62,7 @@ subroutine mrmult(cumul, lmat, vect, xsol, nbvect,&
     character(len=3) :: kmpic, kmatd
     character(len=19) :: matas
     integer :: neq, neql, jsmhc, jsmdi
-    aster_logical :: lmatd
+    aster_logical :: lmatd, prepo2
     real(kind=8), pointer :: vectmp(:) => null()
     real(kind=8), pointer :: xtemp(:) => null()
     character(len=24), pointer :: refa(:) => null()
@@ -73,7 +74,9 @@ subroutine mrmult(cumul, lmat, vect, xsol, nbvect,&
     matas=zk24(zi(lmat+1))(1:19)
     ASSERT(zi(lmat+3).eq.1)
     call jeveuo(matas//'.REFA', 'L', vk24=refa)
-    if (refa(3) .eq. 'ELIMF') call mtmchc(matas, 'ELIML')
+    if (.not. present(lrom)) then
+        if (refa(3) .eq. 'ELIMF') call mtmchc(matas, 'ELIML')
+    endif
     neq=zi(lmat+2)
     AS_ALLOCATE(vr=vectmp, size=neq)
 !
