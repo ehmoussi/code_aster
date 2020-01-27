@@ -49,7 +49,7 @@ class CalcEssaiModifStruct:
     def __init__(self, macro, ce_objects, mess, outputs):
         """!Constructeur
 
-        \param macro le self de l'objet macro provenant de calc_essai_ops
+        macro: le self de l'objet macro provenant de calc_essai_ops
 
         :ce_objects; objects de la memoire JEVEUX
         :parap mess: ecrit les erreurs dans un fichier.
@@ -120,7 +120,7 @@ class CalcEssaiModifStruct:
         self.crit_method = None  # choix methode pour MAC_MODES
 
         # FIXME where are these results created?!
-        if outputs:
+        if False and outputs:
             if outputs['MODELE']:
                 self.macro.register_result("_MDLCPL", outputs['MODELE'])
             if outputs['MAILLAGE']:

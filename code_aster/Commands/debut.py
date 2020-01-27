@@ -108,17 +108,22 @@ class Starter(ExecuteCommand):
         super(Starter, cls).run(**keywords)
 
     @classmethod
+    def _run_with_argv(cls, **keywords):
+        """Wrapper to have the same depth calling loadObjects..."""
+        cmd = cls()
+        cmd._result = None
+        cmd._cata.addDefaultKeywords(keywords)
+        remove_none(keywords)
+        cmd.exec_(keywords)
+
+    @classmethod
     def run_with_argv(cls, **keywords):
         """Run the command with the arguments from the command line.
 
         Arguments:
             keywords (dict): User keywords
         """
-        cmd = cls()
-        cmd._result = None
-        cmd._cata.addDefaultKeywords(keywords)
-        remove_none(keywords)
-        cmd.exec_(keywords)
+        cls._run_with_argv(**keywords)
 
     def exec_(self, keywords):
         """Execute the command.
@@ -164,9 +169,11 @@ class Restarter(Starter):
 
         logger.info("restarting from a previous execution...")
         libaster.call_poursuite(syntax)
-        # 1:_call_oper, 2-3:exec_, 4:Restarter.run, 5:ExecuteCmd.run, 6:user
-        # 1:_call_oper, 2-3:exec_, 4:run_with_argv, 5:init, 6:user
-        loadObjects(level=6)
+        # 1:_call_oper, 2:ExecuteCommand.exec_, 3:Starter.exec_,
+        #  4:Restarter.run, 5:ExecuteCommand.run_, 6:ExecuteCmd.run, 7:user
+        # 1:_call_oper, 2:ExecuteCommand.exec_, 3:Starter.exec_,
+        #  4:_run_with_argv, 5:run_with_argv, 6:init, 7:user
+        loadObjects(level=7)
 
 
 DEBUT = Starter.run

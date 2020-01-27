@@ -355,13 +355,13 @@ class CommandSyntax(object):
             maxval (int): Maximum number of values read.
 
         Returns:
-            int, list, int: Returns three values ``(size, values, isdef)``.
+            int, list: Returns three values ``(size, values)``.
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of result names.
         """
         value = self.getValue( factName, occurrence, simpName )
-        value = [i.getName()if hasattr(i, 'getName') else i for i in value]
+        value = [i.getName() if hasattr(i, 'getName') else i for i in value]
         size = len(value)
         if size > maxval:
             size = -size
@@ -377,7 +377,7 @@ class CommandSyntax(object):
             maxval (int): Maximum number of values read.
 
         Returns:
-            int, list, int: Returns three values ``(size, values, isdef)``.
+            int, list: Returns three values ``(size, values)``.
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of strings.
@@ -399,7 +399,7 @@ class CommandSyntax(object):
             maxval (int): Maximum number of values read.
 
         Returns:
-            int, list, int: Returns three values ``(size, values, isdef)``.
+            int, list: Returns three values ``(size, values)``.
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of integers.
@@ -422,7 +422,7 @@ class CommandSyntax(object):
             maxval (int): Maximum number of values read.
 
         Returns:
-            int, list, int: Returns three values ``(size, values, isdef)``.
+            int, list: Returns three values ``(size, values)``.
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of floats.
@@ -448,7 +448,7 @@ class CommandSyntax(object):
             maxval (int): Maximum number of values read.
 
         Returns:
-            int, list, int: Returns three values ``(size, values, isdef)``.
+            int, list: Returns three values ``(size, values)``.
             ``size`` is the number of the values provided by the user.
             If ``size > maxval``, ``-size`` is returned.
             ``values`` is a list of complex numbers.

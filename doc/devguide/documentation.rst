@@ -90,6 +90,23 @@ The objects are the same but the documentation of
     the docstrings to improve the navigation in the documentation.
 
 
+=================
+Link to functions
+=================
+
+Use the same pattern to add a link to a function.
+Remember to use the full/native *path* to generate the hyperlink::
+
+    :py:func:`~code_aster.Helpers.Serializer.saveObjects`
+
+and not::
+
+    :py:func:`code_aster.saveObjects`
+
+even if :py:func:`~code_aster.Helpers.Serializer.saveObjects` is imported
+at the toplevel of the package.
+
+
 .. _devguide-documentation-link_to_paragraph:
 
 ================================

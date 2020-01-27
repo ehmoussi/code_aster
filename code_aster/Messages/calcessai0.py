@@ -27,6 +27,10 @@ cata_msg = {
 Le modèle mesuré doit être un concept de type DYNA_HARMO ou MODE_MECA.
 """),
 
+    2: _("""
+L'utilisation de modification structurale de CALC_ESSAI n'est plus supportée.
+"""),
+
     3: _("""
 Calcul de MAC impossible : bases incompatibles.
 """),

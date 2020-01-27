@@ -44,6 +44,7 @@ from ...Cata.Syntax import _F
 from ...Commands import (CREA_CHAMP, DEFI_FONCTION, DEFI_INTE_SPEC, DETRUIRE,
                          RECU_FONCTION)
 from ...Messages import UTMESS
+from ...Objects import DataStructure
 
 
 class Resultat:
@@ -772,131 +773,87 @@ class CalcEssaiObjects:
     """!Classe qui recupere les objets pouvant etre utilises par
     CALC_ESSAI dans le catalogue aster"""
 
-    def __init__(self, macro, mess):
-        """!Constructeur
+    def __init__(self, mess):
+        """Constructeur
 
-        \param macro Le self de la macro qui utilise cet objet
+        Arguments:
+            mess (MessageBox): Objet chargé des impressions.
         """
         self.mess = mess
-        self.modeles = {}
-        self.maillages = {}
         self.groupno = {}
-        self.resultats = {}
-        self.dyna_harmo = {}
-        self.mode_meca = {}
-        self.matrices = {}
         self.maillage_modeles = {}
         self.groupno_maillage = {}
-        self.cara_elem = {}
-        self.cham_mater = {}
-        self.inter_spec = {}
-        self.list_tempo = {}
-        self.nume_ddl = {}
-        self.macro = macro
-        self.weakref = []
-        self.recup_objects()
-        self.grno = {}
+        self._init()
 
-    def recup_objects(self):
-        self.del_weakref()
-        # FIXME required in testcases or not? Yes!
-        ctx = {}
+    def _init(self):
         self.modeles = {}
         self.mode_meca = {}
         self.dyna_harmo = {}
-        self.matrices = {}
         self.maillages = {}
+        self.matrices = {}
         self.cara_elem = {}
         self.cham_mater = {}
         self.inter_spec = {}
         self.list_tempo = {}
         self.nume_ddl = {}
+        self.resultats = {}
 
-        for i, v in list(ctx.items()):
-            if isinstance(v, modele_sdaster):
-                self.modeles[i] = Modele(
-                    objects=self, nom=i, obj_ast=v, mess=self.mess)
-            elif isinstance(v, mode_meca):
-                self.mode_meca[i] = ModeMeca(
-                    objects=self, nom=i, obj_ast=v, mess=self.mess)
-            elif isinstance(v, dyna_harmo):
-                self.dyna_harmo[i] = DynaHarmo(
-                    objects=self, nom=i, obj_ast=v, mess=self.mess)
-            elif isinstance(v, matr_asse_depl_r) or isinstance(v, matr_asse_gene_r):
-                self.matrices[i] = v
-            elif isinstance(v, maillage_sdaster):
-                self.maillages[i] = v
-            elif isinstance(v, cara_elem):
-                self.cara_elem[i] = v
-            elif isinstance(v, cham_mater):
-                self.cham_mater[i] = v
-            elif isinstance(v, interspectre):
-                self.inter_spec[i] = InterSpectre(
-                    nom=i, obj_ast=v, mess=self.mess)
-            elif isinstance(v, table_sdaster):
-                # test du type de table :
-                typ_table = self.test_table(v)
-                if typ_table == 'tempo':
-                    self.list_tempo[i] = Tempo(
-                        nom=i, obj_ast=v, mess=self.mess)
-                else:
-                    pass
-            elif isinstance(v, nume_ddl_sdaster):
-                self.nume_ddl[i] = v
+    def recup_objects(self, context):
+        """Constructeur
 
-        self.resultats = self.mode_meca.copy()
-        self.resultats.update(self.dyna_harmo)
-
-        # self.debug()
-        # Liaison des concepts entre eux (resu <=> maillage <=> modele)
-        for modes in list(self.mode_meca.values()):
-            modes.get_nume()
-            modes.get_modele()
-            modes.get_matrices()
-            modes.get_maillage()
-
-        for modele in list(self.modeles.values()):
-            modele.get_maillage()
-            modele.get_nume()
-
-        for dyna in list(self.dyna_harmo.values()):
-            dyna.get_nume()
-            dyna.get_maillage()
-            dyna.get_modele()
+        Arguments:
+            args (dict): Mots-clés.
+        """
+        self._init()
+        for username, obj in context.items():
+            if not isinstance(obj, DataStructure):
+                continue
+            name = obj.getName()
+            self.update(name, obj)
 
     def update(self, name, obj):
         """ Ajout d'un nouvel objet dans self"""
-        if isinstance(obj, modele_sdaster):
+        if obj.getType() == "MODELE_SDASTER":
             self.modeles[name] = Modele(self, name, obj, self.mess)
-        if isinstance(obj, nume_ddl_sdaster):
-            self.nume_ddl[name] = obj
-        if isinstance(obj, maillage_sdaster):
+            self.modeles[name].get_maillage()
+            self.modeles[name].get_nume()
+        elif obj.getType() == "MAILLAGE_SDASTER":
             self.maillages[name] = obj
-        if isinstance(obj, interspectre):
+        elif obj.getType() in ("MATR_ASSE_DEPL_R", "MATR_ASSE_GENE_R"):
+            self.matrices[name] = obj
+        elif obj.getType() == "CARA_ELEM":
+            self.cara_elem[name] = obj
+        elif obj.getType() == "CHAM_MATER":
+            self.cham_mater[name] = obj
+        elif obj.getType() == "NUME_DDL_SDASTER":
+            self.nume_ddl[name] = obj
+        elif obj.getType() == "INTERSPECTRE":
             self.inter_spec[name] = InterSpectre(
                 nom=name, obj_ast=obj, mess=self.mess)
-        if isinstance(obj, mode_meca):
+        elif obj.getType() == "MODE_MECA":
             self.mode_meca[name] = ModeMeca(self, name, obj, self.mess)
             self.mode_meca[name].get_modele()
             self.mode_meca[name].get_matrices()
             self.mode_meca[name].get_nume()
             self.mode_meca[name].get_maillage()
-        if isinstance(obj, dyna_harmo):
+        elif obj.getType() == "DYNA_HARMO":
             self.dyna_harmo[name] = DynaHarmo(self, name, obj, self.mess)
             self.dyna_harmo[name].get_modele()
             self.dyna_harmo[name].get_nume()
             self.dyna_harmo[name].get_maillage()
-        if isinstance(obj, table_sdaster):
+        elif obj.getType() == "TABLE_SDASTER":
             # test du type de table :
             typ_table = self.test_table(obj)
             if typ_table == 'tempo':
                 self.list_tempo[name] = Tempo(
                     nom=name, obj_ast=obj, mess=self.mess)
-            else:
-                pass
-        self.resultats = self.mode_meca.copy()
+        else:
+            return
+
+        # dict ou on met toutes les sd resu
+        self.resultats = {}
+        self.resultats.update(self.mode_meca)
         self.resultats.update(self.dyna_harmo)
-                              # dict ou on met toutes les sd resu
 
     def debug(self):
         self.mess.disp_mess(("Modeles" + self.modeles))
@@ -904,8 +861,8 @@ class CalcEssaiObjects:
         self.mess.disp_mess(("Matrices" + self.matrices))
         self.mess.disp_mess(("Resultats"))
         self.mess.disp_mess((" "))
-        for v in list(self.resultats.values()):
-            v.show_linked_concepts()
+        for i in list(self.resultats.values()):
+            i.show_linked_concepts()
 
     def test_table(self, obj):
         """ test si la table est composee de fonctions et si ces
@@ -956,22 +913,6 @@ class CalcEssaiObjects:
     def get_cham_mater(self, name):
         """recup d'une sd resu dans la liste ci-dessus"""
         return self.cham_mater[name]
-
-    def register_weakref(self, name):
-        """ garde les NOMS des concepts destines a etre supprimes a chaque
-            mise a jour de CalcEssaiObjects """
-
-        self.weakref.append(name)
-
-    def del_weakref(self):
-        liste = ""
-        if len(self.weakref) != 0:
-            for obj in self.weakref:
-                DETRUIRE(CONCEPT=_F(NOM=obj), INFO=1)
-                liste = liste + ", " + obj.nom
-            self.weakref = []
-            self.mess.disp_mess("Destruction des objects temporaires " + liste)
-
 
 #
 #
@@ -1046,15 +987,13 @@ def CreaTable(mcfact, titre, paras_out, mess):
         mess.disp_mess(" ")
         return
 
-    # FIXME where is __TAB?!
-    register('__TAB', tablesOut[compteur])
-
-    __TAB = DEFI_INTE_SPEC(PAR_FONCTION=mcfact,
+    tab = DEFI_INTE_SPEC(PAR_FONCTION=mcfact,
                            TITRE=titre,
                            )
+    register(tab, tablesOut[compteur])
 
     mess.disp_mess("Les resultats sont sauves dans la table "
-                   + tablesOut[compteur].nom)
+                   + tablesOut[compteur].userName)
     mess.disp_mess("Cette table porte pour titre : " + titre)
     mess.disp_mess(" ")
 

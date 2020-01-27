@@ -19,7 +19,7 @@
 
 # person_in_charge: emricka.julan at edf.fr
 
-import numpy as NP
+from math import exp, sqrt
 
 from code_aster.Commands import *
 from code_aster.MacroCommands.Contrib.diffusion_H2 import (CHAMP_DETOILE,
@@ -136,7 +136,7 @@ Ctot0=Cl0+Ct0
 Cl=Cl0/Ctot0
 
 Nl=5.1e29
-Kt=NP.exp(60000./8.3144/293.)
+Kt=exp(60000./8.3144/293.)
 a1=23.26
 a2=-2.33
 a3=-5.5
@@ -250,8 +250,7 @@ CT2=CALC_FONCTION(COMB=(
                   ))
 
 def NT(epsp) :
-   import numpy as NP
-   lnt = a1+a2*NP.exp(a3*epsp)
+   lnt = a1+a2*exp(a3*epsp)
    Nt=10**(lnt)
    return Nt
 

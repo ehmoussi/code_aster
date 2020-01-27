@@ -24,8 +24,7 @@ from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
 from ...Cata.Syntax import _F
 from ...Commands import CREA_RESU
-
-# ------------------------------------------------------------------------
+from ...Supervis import UserMacro
 
 
 def mac3coeur_ac_permute(self, **args):
@@ -33,14 +32,14 @@ def mac3coeur_ac_permute(self, **args):
 
     # On importe les definitions des commandes a utiliser dans la macro
 
-    POS_INIT = self['POS_INIT']
-    POS_FIN = self['POS_FIN']
-    RESU_INI = self['RESU_INI']
-    RESU_FIN = self['RESU_FIN']
-    INSTANT = self['INSTANT']
-    MA_INI = self['MAILLAGE_INIT']
-    MA_FIN = self['MAILLAGE_FINAL']
-    VECT = self['TRAN']
+    POS_INIT = args['POS_INIT']
+    POS_FIN = args['POS_FIN']
+    RESU_INI = args['RESU_INI']
+    RESU_FIN = args['RESU_FIN']
+    INSTANT = args['INSTANT']
+    MA_INI = args['MAILLAGE_INIT']
+    MA_FIN = args['MAILLAGE_FINAL']
+    VECT = args['TRAN']
 
     CREA_RESU(reuse=RESU_FIN,
               OPERATION='PERM_CHAM',
@@ -149,19 +148,27 @@ def mac3coeur_ac_permute(self, **args):
                             GROUP_MA_FINAL='MNT_' + POS_FIN,
                             TRAN=VECT,
                             PRECISION=1.E-10),))
+    return RESU_FIN
 
-MACRO_AC_PERMUTE = MACRO(nom="MACRO_AC_PERMUTE",
-                         op=mac3coeur_ac_permute,
-                         fr="PERMUTATION DES ASSEMBLAGES",
-                         POS_INIT=SIMP(statut='o', typ='TXM',),
-                         POS_FIN=SIMP(statut='o', typ='TXM',),
-                         RESU_INI=SIMP(statut='o', typ=evol_noli),
-                         RESU_FIN=SIMP(statut='o', typ=evol_noli),
-                         INSTANT=SIMP(
-                         statut='o', typ='R', validators=NoRepeat(), max=1),
-                         MAILLAGE_INIT=SIMP(statut='o', typ=maillage_sdaster,),
-                         MAILLAGE_FINAL=SIMP(
-                             statut='o', typ=maillage_sdaster,),
-                         MODELE_FINAL=SIMP(statut='o', typ=modele_sdaster),
-                         TRAN=SIMP(statut='o', typ='R', min=3, max=3),
-                         )
+
+MACRO_AC_PERMUTE_CATA = MACRO(
+    nom="MACRO_AC_PERMUTE",
+    sd_prod=evol_noli,
+    op=mac3coeur_ac_permute,
+    fr="PERMUTATION DES ASSEMBLAGES",
+    POS_INIT=SIMP(statut='o', typ='TXM',),
+    POS_FIN=SIMP(statut='o', typ='TXM',),
+    RESU_INI=SIMP(statut='o', typ=evol_noli),
+    RESU_FIN=SIMP(statut='o', typ=evol_noli),
+    INSTANT=SIMP(
+    statut='o', typ='R', validators=NoRepeat(), max=1),
+    MAILLAGE_INIT=SIMP(statut='o', typ=maillage_sdaster,),
+    MAILLAGE_FINAL=SIMP(
+        statut='o', typ=maillage_sdaster,),
+    MODELE_FINAL=SIMP(statut='o', typ=modele_sdaster),
+    TRAN=SIMP(statut='o', typ='R', min=3, max=3),
+)
+
+MACRO_AC_PERMUTE = UserMacro("MACRO_AC_PERMUTE",
+                             MACRO_AC_PERMUTE_CATA,
+                             mac3coeur_ac_permute)

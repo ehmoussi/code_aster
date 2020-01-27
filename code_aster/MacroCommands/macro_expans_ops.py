@@ -27,7 +27,7 @@ from ..Messages import UTMESS
 def macro_expans_ops(self,
                      MODELE_CALCUL,
                      MODELE_MESURE,
-                     NUME_DDL,
+                     NUME_DDL=None,
                      RESU_NX=None,
                      RESU_EX=None,
                      RESU_ET=None,
@@ -44,6 +44,9 @@ def macro_expans_ops(self,
     MOD_CALCUL = MODELE_CALCUL['MODELE']
     MOD_MESURE = MODELE_MESURE['MODELE']
     NOM_CHAM = MODELE_MESURE['NOM_CHAM']
+
+    if not NUME_DDL:
+        UTMESS('A', 'CALCESSAI0_5')
 
     is_nume_num = is_nume_exp = 0
     if MODELE_CALCUL['NUME_MODE'][0] or MODELE_CALCUL['NUME_ORDRE'][0]:
@@ -145,25 +148,13 @@ def macro_expans_ops(self,
         self.register_result(__resuet, RESU_ET)
     # Restriction des modes mesures etendus sur le maillage capteur
     # -------------------------------------------------------------
-
-    nume = None
-    if NUME_DDL:
-        nume = NUME_DDL
-    if not nume:
-        iret, ibid, tmp = aster.dismoi('NUME_DDL', self.nom, 'RESU_DYNA', 'C')
-        if iret == 0:
-            tmp = tmp.strip()
-            if tmp:
-                nume = self.get_concept(tmp)
-        else:
-            UTMESS('A', 'CALCESSAI0_5')
     __resurd = PROJ_CHAMP(METHODE='COLLOCATION',
                           RESULTAT=__resuet,
                           MODELE_1=MOD_CALCUL,
                           MODELE_2=MOD_MESURE,
                           NOM_CHAM=NOM_CHAM,
                           TOUT_ORDRE='OUI',
-                          NUME_DDL=nume,
+                          NUME_DDL=NUME_DDL,
                           VIS_A_VIS=_F(TOUT_1='OUI',
                                        TOUT_2='OUI',),
                           NOM_PARA=paras,
