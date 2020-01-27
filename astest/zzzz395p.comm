@@ -1,0 +1,88 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+
+mesh=LIRE_MAILLAGE(FORMAT='MED',);
+
+model = AFFE_MODELE(AFFE=_F(MODELISATION=('3D', ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+mater = DEFI_MATERIAU(ELAS=_F(E=210000000.0,
+                              NU=0.3))
+
+fieldmat = AFFE_MATERIAU(AFFE=_F(MATER=(mater, ),
+                                 TOUT='OUI'),
+                         MODELE=model)
+
+listr = DEFI_LIST_REEL(DEBUT=0.0,
+                       INTERVALLE=_F(JUSQU_A=1.0,
+                                     NOMBRE=5))
+
+func = DEFI_FONCTION(NOM_PARA='INST',
+                     VALE=(0.0, 0.0, 1.0, 1.0))
+
+load = AFFE_CHAR_CINE(MECA_IMPO=(_F(DX=0.0,
+                                    DY=0.0,
+                                    DZ=0.0,
+                                    GROUP_MA=('S_inf', )),
+                                 _F(DZ=-0.2,
+                                    GROUP_MA=('S_f', ))),
+                      MODELE=model)
+
+resnonl = STAT_NON_LINE(CHAM_MATER=fieldmat,
+                        EXCIT=_F(CHARGE=load,
+                                 FONC_MULT=func),
+                        INCREMENT=_F(LIST_INST=listr),
+                        MODELE=model)
+
+modes = DEFI_BASE_REDUITE(NOM_CHAM='DEPL',
+                          RESULTAT=resnonl)
+
+resred = STAT_NON_LINE(CHAM_MATER=fieldmat,
+                       EXCIT=_F(CHARGE=load,
+                                FONC_MULT=func),
+                       INCREMENT=_F(LIST_INST=listr),
+                       METHODE='MODELE_REDUIT',
+                       MODELE=model,
+                       MODELE_REDUIT=_F(BASE_PRIMAL=modes))
+
+TEST_RESU(RESU=_F(INST=1.0,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DZ',
+                  RESULTAT=resnonl,
+                  REFERENCE = 'ANALYTIQUE',
+                  TYPE_TEST='MIN',
+                  VALE_REFE=(-0.2, ),
+                  VALE_CALC=(-0.2, )))
+
+TEST_RESU(RESU=_F(INST=1.0,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DZ',
+                  RESULTAT=resred,
+                  REFERENCE = 'ANALYTIQUE',
+                  TYPE_TEST='MIN',
+                  VALE_REFE=(-0.2, ),
+                  VALE_CALC=(-0.2, )))
+
+
+
+FIN();

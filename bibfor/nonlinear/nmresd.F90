@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,7 @@ integer :: rescvg
 !
     aster_logical :: lprmo, l_rom
     character(len=19) :: depso1, depso2
-    character(len=24) :: mata24, vect24
+    character(len=24) :: mata24, vect24, cncine24
     integer :: ifm, niv
 !
 ! --------------------------------------------------------------------------------------------------
@@ -117,7 +117,8 @@ integer :: rescvg
             rescvg = 0
             mata24 = matass
             vect24 = cndonn
-            call romAlgoNLSystemSolve(mata24, vect24, ds_algorom_, depso1)
+            cncine24 = cncine
+            call romAlgoNLSystemSolve(mata24, vect24, cncine24, ds_algorom_, depso1)
         elseif (ds_algorom_%phase .eq. 'CORR_EF') then
             vect24 = cndonn
             call romAlgoNLCorrEFMatrixModify(numedd, matass, ds_algorom_)

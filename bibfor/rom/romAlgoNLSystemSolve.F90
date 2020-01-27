@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,14 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romAlgoNLSystemSolve(matr_asse, vect_2mbr, ds_algorom, vect_solu, l_update_redu_)
+subroutine romAlgoNLSystemSolve(matr_asse , vect_2mbr, vect_cine,&
+                                ds_algorom, vect_solu, l_update_redu_)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
@@ -36,11 +38,15 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/vtaxpy.h"
 #include "asterfort/vtzero.h"
+#include "asterfort/csmbgg.h"
+#include "asterfort/mrconl.h"
+#include "asterfort/mtmchc.h"
 #include "asterfort/utmess.h"
 #include "blas/ddot.h"
 !
 character(len=24), intent(in) :: matr_asse
 character(len=24), intent(in) :: vect_2mbr
+character(len=24), intent(in) :: vect_cine
 type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 character(len=19), intent(in) :: vect_solu
 aster_logical, optional, intent(in) :: l_update_redu_
@@ -55,6 +61,7 @@ aster_logical, optional, intent(in) :: l_update_redu_
 !
 ! In  matr_asse        : matrix
 ! In  vect_2mbr        : second member
+! In  vect_cine        : vector for AFFE_CHAR_CINE load
 ! In  ds_algorom       : datastructure for ROM parameters
 ! In  vect_solu        : solution
 ! In  l_update_redu    : flag for update reduced coordinates
@@ -70,12 +77,16 @@ aster_logical, optional, intent(in) :: l_update_redu_
     integer :: jv_matr, iret
     aster_logical :: l_hrom, l_rom, l_update_redu
     character(len=8) :: base
-    character(len=19) :: mode
+    complex(kind=8) :: cbid
+    character(len=19) :: mode, vcine19
     real(kind=8) :: term1, term2, det, term
     real(kind=8), pointer :: v_matr_rom(:) => null()
     real(kind=8), pointer :: v_vect_rom(:) => null()
     real(kind=8), pointer :: v_mrmult(:) => null()
     real(kind=8), pointer :: v_mode(:) => null()
+    real(kind=8), pointer :: v_vect_cine(:) => null()
+    real(kind=8), pointer :: v_vect_solu(:) => null()
+    cbid = dcmplx(0.d0, 0.d0)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -93,6 +104,7 @@ aster_logical, optional, intent(in) :: l_update_redu_
     nb_mode     = ds_algorom%ds_empi%nb_mode
     nb_equa     = ds_algorom%ds_empi%ds_mode%nb_equa
     field_name  = ds_algorom%ds_empi%ds_mode%field_name
+    vcine19     = vect_cine(1:19)
     ASSERT(l_rom)
     l_update_redu = ASTER_TRUE
     if (present(l_update_redu_)) then
@@ -111,12 +123,21 @@ aster_logical, optional, intent(in) :: l_update_redu_
 !
 ! - Access to matrix
 !
+    call mtmchc(matr_asse, 'ELIMF')
     call jeveuo(matr_asse(1:19)//'.&INT', 'L', jv_matr)
     call dismoi('NB_EQUA', matr_asse, 'MATR_ASSE', repi = nb_equa_matr)
-    ASSERT(nb_equa .eq. nb_equa_matr)
+    ASSERT(nb_equa .eq. zi(jv_matr+2))
+
+
+!
+! - Sceond member correction for AFFE_CHAR_CINE
+!
+    call jeveuo(vcine19//'.VALE', 'L', vr= v_vect_cine)
+    call mrconl('MULT', jv_matr, 0, 'R', v_vect_2mbr, 1)
+    call csmbgg(jv_matr, v_vect_2mbr, v_vect_cine, [cbid], [cbid], 'R')
 !
 ! - Truncation of second member
-!    
+!
     if (l_hrom) then
         do i_equa = 1, nb_equa
             if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
@@ -138,7 +159,7 @@ aster_logical, optional, intent(in) :: l_update_redu_
         call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
         term1 = ddot(nb_equa, v_mode, 1, v_vect_2mbr, 1)
         v_vect_rom(i_mode) = term1
-        call mrmult('ZERO', jv_matr, v_mode, v_mrmult, 1, .false._1)
+        call mrmult('ZERO', jv_matr, v_mode, v_mrmult, 1, .false._1,l_rom)
         if (l_hrom) then
             do i_equa = 1, nb_equa
                 if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
@@ -151,24 +172,26 @@ aster_logical, optional, intent(in) :: l_update_redu_
             call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
             term2 = ddot(nb_equa, v_mode, 1, v_mrmult, 1)
             v_matr_rom(nb_mode*(i_mode-1)+j_mode) = term2
-        end do 
+        end do
     end do
 !
 ! - Solve system
-!    
+!
     call mgauss('NFSP', v_matr_rom, v_vect_rom, nb_mode, nb_mode, 1, det, iret)
     if (l_update_redu) then
         v_gamma = v_gamma + v_vect_rom
     endif
 !
 ! - Project in physical space
-!    
+!
     call vtzero(vect_solu)
     do i_mode = 1 , nb_mode
         term = v_vect_rom(i_mode)
         call rsexch(' ', base, field_name, i_mode, mode, iret)
         call vtaxpy(term, mode, vect_solu)
     enddo
+    call jeveuo(vect_solu(1:19)//'.VALE', 'E'     , vr = v_vect_solu)
+    call mrconl('MULT', jv_matr, 0, 'R', v_vect_solu, 1)
 !
 ! - Clean
 !

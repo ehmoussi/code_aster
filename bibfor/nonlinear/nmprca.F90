@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -126,7 +126,7 @@ character(len=19) :: depest
     character(len=19) :: depso1, depso2, cncine
     character(len=19) :: solu1, solu2, cndonn, cnpilo, cncind
     aster_logical :: l_update_redu, l_rom
-    character(len=24) :: mata24, vect24
+    character(len=24) :: mata24, vect24, cncine24
     real(kind=8), pointer :: dep1(:) => null()
     real(kind=8), pointer :: dep2(:) => null()
     real(kind=8), pointer :: sol1(:) => null()
@@ -195,7 +195,8 @@ character(len=19) :: depest
         rescvg = 0
         mata24 = matass
         vect24 = cndonn
-        call romAlgoNLSystemSolve(mata24, vect24, ds_algorom, solu1, l_update_redu)
+        cncine24 = cncine
+        call romAlgoNLSystemSolve(mata24, vect24, cncine24, ds_algorom, solu1, l_update_redu)
     else
         call nmreso(fonact, cndonn, cnpilo, cncind, solveu,&
                     maprec, matass, solu1, solu2, rescvg)
