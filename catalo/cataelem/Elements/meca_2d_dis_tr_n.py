@@ -101,7 +101,7 @@ ZVARIPG  = LocatedComponents(phys=PHY.VARI_R, type='ELGA', location='RIGI',
     components=('VARI',))
 
 
-CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
+CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
     components=('EPXX',))
 
 

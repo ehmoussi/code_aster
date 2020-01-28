@@ -64,7 +64,7 @@ NVITER = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
                            components=('DX', 'DY', 'DZ',))
 
 
-CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
+CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
                             components=('EPX', 'KY', 'KZ',))
                             
                             

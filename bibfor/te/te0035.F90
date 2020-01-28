@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,9 +40,9 @@ subroutine te0035(option, nomte)
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
     integer :: ndim, nno, nnos, npg, ipoids, ivf, idfdx, jgano
-    integer :: i, jgeom, jcaco, jvecg, idefi, iret
+    integer :: i, jgeom, jcaco, jvecg, idefi, iret, ncomp, ig
     real(kind=8) :: pgl(3, 3), xyzl(3, 4)
-    real(kind=8) :: epsini(6)
+    real(kind=8) :: epsini(32)
     real(kind=8) :: bsigma(24), sigt(32)
     character(len=8) :: epsinif(6)
     character(len=16) :: optio2
@@ -54,6 +54,8 @@ subroutine te0035(option, nomte)
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PCACOQU', 'L', jcaco)
     call jevech('PVECTUR', 'E', jvecg)
+
+    ncomp = 6
 !
 ! --- DETERMINATION DE LA MATRICE DE PASSAGE DU REPERE GLOBAL
 ! --- AU REPERE LOCAL A L'ELEMENT
@@ -81,12 +83,14 @@ subroutine te0035(option, nomte)
 !
         call jevech('PEPSINR', 'L', idefi)
 !
-        epsini(1) = zr(idefi+1-1)
-        epsini(2) = zr(idefi+2-1)
-        epsini(3) = zr(idefi+3-1)
-        epsini(4) = zr(idefi+4-1)
-        epsini(5) = zr(idefi+5-1)
-        epsini(6) = zr(idefi+6-1)
+        do ig = 1, npg
+            epsini(ncomp*(ig-1)+1) = zr(idefi+ncomp*(ig-1)+1-1)
+            epsini(ncomp*(ig-1)+2) = zr(idefi+ncomp*(ig-1)+2-1)
+            epsini(ncomp*(ig-1)+3) = zr(idefi+ncomp*(ig-1)+3-1)
+            epsini(ncomp*(ig-1)+4) = zr(idefi+ncomp*(ig-1)+4-1)
+            epsini(ncomp*(ig-1)+5) = zr(idefi+ncomp*(ig-1)+5-1)
+            epsini(ncomp*(ig-1)+6) = zr(idefi+ncomp*(ig-1)+6-1)
+        enddo
 !
         call dxefgi(nomte, pgl, epsini, sigt)
 !

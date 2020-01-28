@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,12 +20,23 @@ subroutine cbchei(char, noma, ligrmo, fonree)
     implicit   none
 #include "asterc/getfac.h"
 #include "asterfort/cachei.h"
+#include "asterfort/alcart.h"
+#include "asterfort/getvid.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/nocart.h"
+#include "asterfort/utmess.h"
     character(len=4) :: fonree
     character(len=8) :: char, noma
     character(len=*) :: ligrmo
-    integer :: nbfac
+    integer :: nbfac, iepsi, ncmp
     character(len=5) :: para
     character(len=16) :: motfac
+    character(len=19) :: carte
+    character(len=24) :: chepsi
+    character(len=8), pointer :: valv(:) => null()
+    character(len=8), pointer :: vncmp(:) => null()
 !     ------------------------------------------------------------------
 !
     motfac = 'PRE_EPSI'
@@ -33,8 +44,31 @@ subroutine cbchei(char, noma, ligrmo, fonree)
 !
     if (nbfac .ne. 0) then
         para = 'EPSIN'
-        call cachei(char, ligrmo, noma, fonree, para,&
-                    motfac)
+        
+        iepsi = 0
+        if (fonree .eq. 'REEL') then
+            call getvid(motfac, 'EPSI', iocc=1, scal=chepsi, nbret=iepsi)
+        endif
+        
+        if (iepsi .eq. 0) then
+            call cachei(char, ligrmo, noma, fonree, para,&
+                        motfac)
+        else
+            if (nbfac.gt.1) call utmess('F', 'CHARGES_5')
+!
+            carte = char//'.CHME.'//para
+!
+! ---            MODELE ASSOCIE AU LIGREL DE CHARGE
+!
+            call alcart('G', carte, noma, 'NEUT_K8')
+            call jeveuo(carte//'.NCMP', 'E', vk8=vncmp)
+            call jeveuo(carte//'.VALV', 'E', vk8=valv)
+!
+            ncmp = 1
+            vncmp(1) = 'Z1'
+            valv(1) = chepsi
+            call nocart(carte, 1, ncmp)
+        endif
     endif
 !
 end subroutine
