@@ -1,0 +1,183 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+
+MA=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20,);
+
+MO=AFFE_MODELE( MAILLAGE=MA,
+                AFFE=_F(TOUT='OUI', PHENOMENE='MECANIQUE', MODELISATION='3D',),);
+
+BETON=DEFI_MATERIAU(ELAS=_F(E=3.7272000000E10, NU=0.0,  RHO=2400.0,),)
+
+
+CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
+                    AFFE=_F(TOUT='OUI', MATER=BETON,),
+                    );
+
+BLOCAGE=AFFE_CHAR_MECA( MODELE=MO,
+                        DDL_IMPO=(_F(GROUP_NO='ENCAST', DX=0.0, DY=0.0, DZ=0.0,),
+                                 ),);
+CHARGE=AFFE_CHAR_MECA(  MODELE=MO,
+                        FORCE_NODALE=(_F(GROUP_NO='TRAC',FX = 8E4,FY = 2E4,FZ = 5E5)
+                                 ),);
+
+FOFO=DEFI_FONCTION(NOM_PARA='INST',
+                   VALE=(0.0,0.0,1.,1.),
+                   PROL_DROITE='EXCLU',
+                   PROL_GAUCHE='EXCLU',);
+
+
+LINST=DEFI_LIST_REEL(   DEBUT=0.0,
+                        INTERVALLE=(_F(JUSQU_A=1,  NOMBRE=1,),
+                                    
+                                    ),
+                    );
+
+UINIT = STAT_NON_LINE(MODELE=MO,
+                 CHAM_MATER=CHMAT,
+                 EXCIT=(_F(CHARGE=BLOCAGE,),
+                        _F(CHARGE=CHARGE,
+                           FONC_MULT=FOFO,),),
+                 COMPORTEMENT=(_F(RELATION='ELAS'),),
+                 INCREMENT=_F(LIST_INST=LINST,),
+                 )
+
+UINIT=CALC_CHAMP(reuse =UINIT,
+                 RESULTAT=UINIT,
+                 DEFORMATION=('EPSI_ELGA'),
+                 );
+
+
+IMPR_RESU(UNITE=6, FORMAT="RESULTAT",RESU=_F(RESULTAT=UINIT, INST = 1.0, 
+                                    NOM_CHAM=('EPSI_ELGA')))
+
+TEST_RESU(RESU=(_F(MAILLE='M1',
+                   POINT = 1,
+                   CRITERE='RELATIF',
+                   INST = 1.0,
+                   NOM_CMP='EPZZ',
+                   RESULTAT=UINIT,
+                   NOM_CHAM='EPSI_ELGA',
+                   VALE_CALC=6.60517336164333E-05,),
+                _F(MAILLE='M1',
+                   POINT = 5,
+                   CRITERE='RELATIF',
+                   INST = 1.0,
+                   NOM_CMP='EPZZ',
+                   RESULTAT=UINIT,
+                   NOM_CHAM='EPSI_ELGA',
+                   VALE_CALC=4.62242935927500E-05,),
+                _F(MAILLE='M1',
+                   POINT = 1,
+                   CRITERE='RELATIF',
+                   INST = 1.0,
+                   NOM_CMP='EPXZ',
+                   RESULTAT=UINIT,
+                   NOM_CHAM='EPSI_ELGA',
+                   VALE_CALC=1.35423933821819E-05,),
+                _F(MAILLE='M1',
+                   POINT = 2,
+                   CRITERE='RELATIF',
+                   INST = 1.0,
+                   NOM_CMP='EPXZ',
+                   RESULTAT=UINIT,
+                   NOM_CHAM='EPSI_ELGA',
+                   VALE_CALC=3.62867337034025E-06,),
+               ),
+          )
+
+
+
+
+CH=CREA_CHAMP(TYPE_CHAM='ELGA_EPSI_R',
+               OPERATION='EXTR',
+               RESULTAT=UINIT,
+               NUME_ORDRE=1,
+               NOM_CHAM='EPSI_ELGA',)
+
+PRE_EPSI=AFFE_CHAR_MECA(MODELE=MO,
+                        PRE_EPSI = _F(EPSI=CH,)
+                       )
+
+U = STAT_NON_LINE(MODELE=MO,
+                 CHAM_MATER=CHMAT,
+                 EXCIT=(_F(CHARGE=BLOCAGE,),
+                        _F(CHARGE=PRE_EPSI,),),
+                 COMPORTEMENT=(_F(RELATION='ELAS'),),
+                 INCREMENT=_F(LIST_INST=LINST,),
+                 )
+
+U=CALC_CHAMP(reuse =U,
+                 RESULTAT=U,
+                 DEFORMATION=('EPSI_ELGA'),
+                 );
+
+IMPR_RESU(UNITE=6, FORMAT="RESULTAT",RESU=_F(RESULTAT=U, INST = 1.0, 
+                                    NOM_CHAM=('EPSI_ELGA')))
+
+
+TEST_RESU(RESU=(_F(MAILLE='M1',
+                   POINT = 1,
+                   CRITERE='RELATIF',
+                   INST = 1.0,
+                   REFERENCE='ANALYTIQUE',
+                   NOM_CMP='EPZZ',
+                   RESULTAT=U,
+                   NOM_CHAM='EPSI_ELGA',
+                   VALE_CALC=6.60517336164333E-05,
+                   VALE_REFE=6.60517336164333E-05,),
+                _F(MAILLE='M1',
+                   POINT = 5,
+                   CRITERE='RELATIF',
+                   INST = 1.0,
+                   REFERENCE='ANALYTIQUE',
+                   NOM_CMP='EPZZ',
+                   RESULTAT=U,
+                   NOM_CHAM='EPSI_ELGA',
+                   VALE_CALC=4.62242935927500E-05,
+                   VALE_REFE=4.62242935927500E-05,),
+                _F(MAILLE='M1',
+                   POINT = 1,
+                   CRITERE='RELATIF',
+                   INST = 1.0,
+                   REFERENCE='ANALYTIQUE',
+                   NOM_CMP='EPXZ',
+                   RESULTAT=U,
+                   NOM_CHAM='EPSI_ELGA',
+                   VALE_CALC=1.35423933821819E-05,
+                   VALE_REFE=1.35423933821819E-05,),
+                _F(MAILLE='M1',
+                   POINT = 2,
+                   CRITERE='RELATIF',
+                   INST = 1.0,
+                   REFERENCE='ANALYTIQUE',
+                   NOM_CMP='EPXZ',
+                   RESULTAT=U,
+                   NOM_CHAM='EPSI_ELGA',
+                   VALE_CALC=3.62867337034025E-06,
+                   VALE_REFE=3.62867337034025E-06,),
+               ),
+          )
+
+
+
+
+FIN()

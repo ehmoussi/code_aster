@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,9 +62,9 @@ subroutine epsimc(option, xyz, nno, npg, ndim,&
     zero = 0.0d0
     deux = 2.0d0
 !
-    do 10 i = 1, nbsig*npg
+    do i = 1, nbsig*npg
         eps(i) = zero
-10  end do
+    end do
 !
 !      -------
 ! ---- CAS 2D
@@ -76,19 +76,20 @@ subroutine epsimc(option, xyz, nno, npg, ndim,&
         if (option(16:16) .eq. 'R') then
 !
             call jevech('PEPSINR', 'L', idefi)
-            exx=zr(idefi)
-            eyy=zr(idefi+1)
-            ezz=zr(idefi+2)
-            exy=zr(idefi+3)
 !
 ! ---  BOUCLE SUR LES POINTS D'INTEGRATION
 !      -----------------------------------
-            do 20 igau = 1, npg
+            do igau = 1, npg
+                exx=zr(idefi+nbsig*(igau-1)-1+1)
+                eyy=zr(idefi+nbsig*(igau-1)-1+2)
+                ezz=zr(idefi+nbsig*(igau-1)-1+3)
+                exy=zr(idefi+nbsig*(igau-1)-1+4)
+
                 eps(1+nbsig*(igau-1)) = exx
                 eps(2+nbsig*(igau-1)) = eyy
                 eps(3+nbsig*(igau-1)) = ezz
                 eps(4+nbsig*(igau-1)) = exy*deux
-20          continue
+            enddo
         else
             call jevech('PEPSINF', 'L', idefi)
             call jevech('PTEMPSR', 'L', itemps)
@@ -99,17 +100,17 @@ subroutine epsimc(option, xyz, nno, npg, ndim,&
 !
 ! ---  BOUCLE SUR LES POINTS D'INTEGRATION
 !      -----------------------------------
-            do 30 igau = 1, npg
+            do igau = 1, npg
 !
 !  --      COORDONNEES DU POINT D'INTEGRATION COURANT
 !          -----------------------------------------
                 xgau = zero
                 ygau = zero
 !
-                do 40 i = 1, nno
+                do i = 1, nno
                     xgau = xgau + ni(i+nno*(igau-1))*xyz(1+2*(i-1))
                     ygau = ygau + ni(i+nno*(igau-1))*xyz(2+2*(i-1))
-40              continue
+                enddo
 !
                 valpar(1) = xgau
                 valpar(2) = ygau
@@ -130,7 +131,7 @@ subroutine epsimc(option, xyz, nno, npg, ndim,&
                 eps(3+nbsig*(igau-1)) = ezz
                 eps(4+nbsig*(igau-1)) = exy*deux
 !
-30          continue
+            enddo
 !
         endif
 !
@@ -144,23 +145,25 @@ subroutine epsimc(option, xyz, nno, npg, ndim,&
         if (option(16:16) .eq. 'R') then
 !
             call jevech('PEPSINR', 'L', idefi)
-            exx=zr(idefi)
-            eyy=zr(idefi+1)
-            ezz=zr(idefi+2)
-            exy=zr(idefi+3)
-            exz=zr(idefi+4)
-            eyz=zr(idefi+5)
 !
 ! ---  BOUCLE SUR LES POINTS D'INTEGRATION
 !      -----------------------------------
-            do 50 igau = 1, npg
+            do igau = 1, npg
+                
+                exx=zr(idefi+nbsig*(igau-1)-1+1)
+                eyy=zr(idefi+nbsig*(igau-1)-1+2)
+                ezz=zr(idefi+nbsig*(igau-1)-1+3)
+                exy=zr(idefi+nbsig*(igau-1)-1+4)
+                exz=zr(idefi+nbsig*(igau-1)-1+5)
+                eyz=zr(idefi+nbsig*(igau-1)-1+6)
+                
                 eps(1+nbsig*(igau-1)) = exx
                 eps(2+nbsig*(igau-1)) = eyy
                 eps(3+nbsig*(igau-1)) = ezz
                 eps(4+nbsig*(igau-1)) = exy*deux
                 eps(5+nbsig*(igau-1)) = exz*deux
                 eps(6+nbsig*(igau-1)) = eyz*deux
-50          continue
+            enddo
         else
             call jevech('PEPSINF', 'L', idefi)
             call jevech('PTEMPSR', 'L', itemps)
@@ -172,7 +175,7 @@ subroutine epsimc(option, xyz, nno, npg, ndim,&
 !
 ! ---  BOUCLE SUR LES POINTS D'INTEGRATION
 !      -----------------------------------
-            do 60 igau = 1, npg
+            do igau = 1, npg
 !
 !  --      COORDONNEES DU POINT D'INTEGRATION COURANT
 !          -----------------------------------------
@@ -180,11 +183,11 @@ subroutine epsimc(option, xyz, nno, npg, ndim,&
                 ygau = zero
                 zgau = zero
 !
-                do 70 i = 1, nno
+                do i = 1, nno
                     xgau = xgau + ni(i+nno*(igau-1))*xyz(1+3*(i-1))
                     ygau = ygau + ni(i+nno*(igau-1))*xyz(2+3*(i-1))
                     zgau = zgau + ni(i+nno*(igau-1))*xyz(3+3*(i-1))
-70              continue
+                enddo
 !
                 valpar(1) = xgau
                 valpar(2) = ygau
@@ -212,7 +215,7 @@ subroutine epsimc(option, xyz, nno, npg, ndim,&
                 eps(5+nbsig*(igau-1)) = exz*deux
                 eps(6+nbsig*(igau-1)) = eyz*deux
 !
-60          continue
+            enddo
 !
         endif
 !
