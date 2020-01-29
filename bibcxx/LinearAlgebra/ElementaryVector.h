@@ -34,7 +34,7 @@
 #include "DataFields/FieldOnNodes.h"
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
-#include "DataFields/ElementaryResult.h"
+#include "DataFields/ElementaryTerm.h"
 #include "Loads/PhysicalQuantity.h"
 
 /**
@@ -52,11 +52,11 @@ class ElementaryVectorClass : public DataStructure {
     /** @brief Objet Jeveux '.RERR' */
     JeveuxVectorChar24 _description;
     /** @brief Objet Jeveux '.RELR' */
-    JeveuxVectorChar24 _listOfElementaryResults;
+    JeveuxVectorChar24 _listOfElementaryTerms;
     /** @brief Booleen indiquant si la sd est vide */
     bool _isEmpty;
     /** @brief Vectors of RESUELEM */
-    std::vector< ElementaryResultDoublePtr > _realVector;
+    std::vector< ElementaryTermDoublePtr > _realVector;
 
     /** @brief Liste de charges */
     ListOfLoadsPtr _listOfLoads;
@@ -78,7 +78,7 @@ class ElementaryVectorClass : public DataStructure {
                               const std::string type = "VECT_ELEM" )
         : DataStructure( name, 19, type, memType ),
           _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
-          _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ), _isEmpty( true ),
+          _listOfElementaryTerms( JeveuxVectorChar24( getName() + ".RELR" ) ), _isEmpty( true ),
           _listOfLoads( new ListOfLoadsClass( memType ) ),
           _corichRept( JeveuxBidirectionalMapChar24( "&&CORICH." + getName8() + ".REPT" ) ){};
 
@@ -159,18 +159,18 @@ class ElementaryVectorClass : public DataStructure {
     void setListOfLoads( const ListOfLoadsPtr &currentList ) { _listOfLoads = currentList; };
 
     /**
-     * @brief function to update ElementaryResultClass
+     * @brief function to update ElementaryTermClass
      */
     bool update()
     {
-        _listOfElementaryResults->updateValuePointer();
+        _listOfElementaryTerms->updateValuePointer();
         _realVector.clear();
-        for ( int pos = 0; pos < _listOfElementaryResults->size(); ++pos )
+        for ( int pos = 0; pos < _listOfElementaryTerms->size(); ++pos )
         {
-            const std::string name = ( *_listOfElementaryResults )[pos].toString();
+            const std::string name = ( *_listOfElementaryTerms )[pos].toString();
             if ( trim( name ) != "" )
             {
-                ElementaryResultDoublePtr toPush( new ElementaryResultClass< double >( name ) );
+                ElementaryTermDoublePtr toPush( new ElementaryTermClass< double >( name ) );
                 _realVector.push_back( toPush );
             }
         }

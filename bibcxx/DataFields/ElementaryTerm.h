@@ -2,8 +2,8 @@
 #define ELEMENTARYRESULT_H_
 
 /**
- * @file ElementaryResult.h
- * @brief Fichier entete de la classe ElementaryResult
+ * @file ElementaryTerm.h
+ * @brief Fichier entete de la classe ElementaryTerm
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -31,11 +31,11 @@
 #include "MemoryManager/JeveuxCollection.h"
 
 /**
- * @class ElementaryResultClass
+ * @class ElementaryTermClass
  * @brief Class which describe a RESUELEM
  * @author Nicolas Sellenet
  */
-template < class ValueType > class ElementaryResultClass : public DataStructure {
+template < class ValueType > class ElementaryTermClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.NOLI' */
     JeveuxVectorChar24 _noli;
@@ -46,16 +46,16 @@ template < class ValueType > class ElementaryResultClass : public DataStructure 
 
   public:
     /**
-     * @typedef ElementaryResultPtr
-     * @brief Pointeur intelligent vers un ElementaryResult
+     * @typedef ElementaryTermPtr
+     * @brief Pointeur intelligent vers un ElementaryTerm
      */
-    typedef boost::shared_ptr< ElementaryResultClass > ElementaryResultPtr;
+    typedef boost::shared_ptr< ElementaryTermClass > ElementaryTermPtr;
 
     /**
      * @brief Constructor
      * @param name Jeveux name
      */
-    ElementaryResultClass( const std::string name, const std::string type = "RESUELEM",
+    ElementaryTermClass( const std::string name, const std::string type = "RESUELEM",
                               const JeveuxMemory memType = Permanent )
         : DataStructure( name, 19, type, memType ),
           _noli( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -66,7 +66,7 @@ template < class ValueType > class ElementaryResultClass : public DataStructure 
      * @brief Constructor
      * @param memType allocation memory
      */
-    ElementaryResultClass( const JeveuxMemory memType = Permanent,
+    ElementaryTermClass( const JeveuxMemory memType = Permanent,
                               const std::string type = "RESUELEM" )
         : DataStructure( type, memType, 19 ), _noli( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
@@ -74,13 +74,13 @@ template < class ValueType > class ElementaryResultClass : public DataStructure 
 };
 
 /**
- * @typedef ElementaryResultDoublePtr
+ * @typedef ElementaryTermDoublePtr
  */
-typedef boost::shared_ptr< ElementaryResultClass< double > > ElementaryResultDoublePtr;
+typedef boost::shared_ptr< ElementaryTermClass< double > > ElementaryTermDoublePtr;
 
 /**
- * @typedef ElementaryResultComplexPtr
+ * @typedef ElementaryTermComplexPtr
  */
-typedef boost::shared_ptr< ElementaryResultClass< DoubleComplex > > ElementaryResultComplexPtr;
+typedef boost::shared_ptr< ElementaryTermClass< DoubleComplex > > ElementaryTermComplexPtr;
 
 #endif /* ELEMENTARYRESULT_H_ */
