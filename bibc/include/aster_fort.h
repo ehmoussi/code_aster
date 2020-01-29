@@ -364,6 +364,9 @@ void DEFSSSSSSSPPPP(CACHVC,cachvc, const char*, STRING_SIZE, const char*, STRING
 void DEFSSPSS(FOCAIN,focain, const char*, STRING_SIZE, const char*, STRING_SIZE,
                              ASTERDOUBLE*, const char*, STRING_SIZE, const char*, STRING_SIZE);
 
+#define CALLO_CREATE_ENTHALPY(a, b) CALLOO(CREATE_ENTHALPY, create_enthalpy, a, b)
+void DEFSS(CREATE_ENTHALPY, create_enthalpy, const char*, STRING_SIZE, const char*, STRING_SIZE);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)

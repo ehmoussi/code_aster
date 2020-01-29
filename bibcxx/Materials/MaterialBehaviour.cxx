@@ -4,7 +4,7 @@
  * @author Nicolas Sellenet
  * @todo autoriser le type Function pour les paramètres matériau
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -303,21 +303,11 @@ bool TherNlMaterialBehaviourInstance::buildJeveuxVectors(
         const auto curIter2 = _mapOfFunctionMaterialProperties.find( "Rho_cp" );
         const auto name = std::string( complexValues->getName(), 0, 8 );
         auto func = curIter2->second.getValue();
-        const std::string method( "TRAPEZE" );
         const std::string nameIn = func->getName();
-        double val = 0.;
         const std::string nameOut = _enthalpyFunction->getName();
-        const std::string base( "G" );
-        CALLO_FOCAIN( method, nameIn, &val, nameOut, base );
+        CALLO_CREATE_ENTHALPY( nameIn, nameOut );
+
         setFunctionValue( "Beta", _enthalpyFunction );
-        auto prop = func->getProperties();
-        auto prop2 = _enthalpyFunction->getProperties();
-        std::string prol( prop2[4] );
-        if( prop[4][0] == 'C' )
-            prol[0] = 'L';
-        if( prop[4][1] == 'C' )
-            prol[1] = 'L';
-        _enthalpyFunction->setExtrapolation( prol );
     }
     return GeneralMaterialBehaviourInstance::buildJeveuxVectors(complexValues,
                                                                 doubleValues,
