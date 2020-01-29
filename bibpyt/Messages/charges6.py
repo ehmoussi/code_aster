@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,8 +48,4 @@ Si vous êtes en deux dimensions, les éléments doivent être des segments.
 Si vous êtes en trois dimensions, les éléments doivent être des triangles ou des quadrangles.
 """),
 
-    6 : _("""
- Erreur lors de l'opération LIAISON_MAIL.
- Le TYPE_RACCORD='MASSIF_COQUE' n'est pas utilisable avec des COQUE_3D.
-"""),
 }
