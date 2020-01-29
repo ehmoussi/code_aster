@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine calir5(noma, lisrel, nono2, nuno2, jcoor,&
-                      idecal, jconb, jcocf, jconu)
+                      idecal, jconb, jcocf, jconu, j2coco)
         character(len=8) :: noma
         character(len=19) :: lisrel
         character(len=8) :: nono2
@@ -30,5 +30,6 @@ interface
         integer :: jconb
         integer :: jcocf
         integer :: jconu
+        integer :: j2coco
     end subroutine calir5
 end interface
