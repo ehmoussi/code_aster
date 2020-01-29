@@ -29,28 +29,28 @@ namespace py = boost::python;
 
 void exportAcousticsLoadToPython() {
 
-    py::class_< AcousticsLoadInstance, AcousticsLoadInstance::AcousticsLoadPtr,
+    py::class_< AcousticsLoadClass, AcousticsLoadClass::AcousticsLoadPtr,
             py::bases< DataStructure > >( "AcousticsLoad", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< AcousticsLoadInstance, ModelPtr >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< AcousticsLoadClass, ModelPtr >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< AcousticsLoadInstance, std::string, ModelPtr >))
+              py::make_constructor(&initFactoryPtr< AcousticsLoadClass, std::string, ModelPtr >))
         .def( "addImposedNormalSpeedOnAllMesh",
-              &AcousticsLoadInstance::addImposedNormalSpeedOnAllMesh )
+              &AcousticsLoadClass::addImposedNormalSpeedOnAllMesh )
         .def( "addImposedNormalSpeedOnGroupsOfElements",
-              &AcousticsLoadInstance::addImposedNormalSpeedOnGroupsOfElements )
-        .def( "addImpedanceOnAllMesh", &AcousticsLoadInstance::addImpedanceOnAllMesh )
+              &AcousticsLoadClass::addImposedNormalSpeedOnGroupsOfElements )
+        .def( "addImpedanceOnAllMesh", &AcousticsLoadClass::addImpedanceOnAllMesh )
         .def( "addImpedanceOnGroupsOfElements",
-              &AcousticsLoadInstance::addImpedanceOnGroupsOfElements )
-        .def( "addImposedPressureOnAllMesh", &AcousticsLoadInstance::addImposedPressureOnAllMesh )
+              &AcousticsLoadClass::addImpedanceOnGroupsOfElements )
+        .def( "addImposedPressureOnAllMesh", &AcousticsLoadClass::addImposedPressureOnAllMesh )
         .def( "addImposedPressureOnGroupsOfElements",
-              &AcousticsLoadInstance::addImposedPressureOnGroupsOfElements )
+              &AcousticsLoadClass::addImposedPressureOnGroupsOfElements )
         .def( "addImposedPressureOnGroupsOfNodes",
-              &AcousticsLoadInstance::addImposedPressureOnGroupsOfNodes )
+              &AcousticsLoadClass::addImposedPressureOnGroupsOfNodes )
         .def( "addUniformConnectionOnGroupsOfElements",
-              &AcousticsLoadInstance::addUniformConnectionOnGroupsOfElements )
+              &AcousticsLoadClass::addUniformConnectionOnGroupsOfElements )
         .def( "addUniformConnectionOnGroupsOfNodes",
-              &AcousticsLoadInstance::addUniformConnectionOnGroupsOfNodes )
-        .def( "build", &AcousticsLoadInstance::build )
-        .def( "getFiniteElementDescriptor", &AcousticsLoadInstance::getFiniteElementDescriptor )
-        .def( "getModel", &AcousticsLoadInstance::getModel );
+              &AcousticsLoadClass::addUniformConnectionOnGroupsOfNodes )
+        .def( "build", &AcousticsLoadClass::build )
+        .def( "getFiniteElementDescriptor", &AcousticsLoadClass::getFiniteElementDescriptor )
+        .def( "getModel", &AcousticsLoadClass::getModel );
 };

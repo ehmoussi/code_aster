@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Table
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,11 +37,11 @@
 #include "Functions/Function.h"
 
 /**
- * @class TableInstance
+ * @class TableClass
  * @brief Cette classe template permet de definir une table Aster
  * @author Nicolas Sellenet
  */
-class TableInstance : public DataStructure {
+class TableClass : public DataStructure {
   protected:
     /** @brief Vecteur Jeveux '.TBBA' */
     JeveuxVectorChar8 _memoryLocation;
@@ -55,9 +55,9 @@ class TableInstance : public DataStructure {
   public:
     /**
     * @typedef TablePtr
-    * @brief Definition of a smart pointer to a TableInstance
+    * @brief Definition of a smart pointer to a TableClass
     */
-    typedef boost::shared_ptr< TableInstance > TablePtr;
+    typedef boost::shared_ptr< TableClass > TablePtr;
 
     // FIXME: Development documentation says 17 chars + "  ", for 'LG' logicals.
 
@@ -65,7 +65,7 @@ class TableInstance : public DataStructure {
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    TableInstance( const std::string &name, const std::string type = "TABLE" )
+    TableClass( const std::string &name, const std::string type = "TABLE" )
         : DataStructure( name, 19, type ),
           _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
           _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
@@ -74,13 +74,13 @@ class TableInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    TableInstance()
+    TableClass()
         : DataStructure( ResultNaming::getNewResultName(), 19, "TABLE" ),
           _memoryLocation( JeveuxVectorChar8( getName() + ".TBBA" ) ),
           _description( JeveuxVectorLong( getName() + ".TBNP" ) ),
           _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ) {};
 
-    ~TableInstance() {
+    ~TableClass() {
 #ifdef _DEBUG_CXX
         std::cout << "DEBUG: Table.destr: " << this->getName() << std::endl;
 #endif
@@ -102,38 +102,38 @@ class TableInstance : public DataStructure {
 
 /**
   * @typedef TablePtr
-  * @brief Definition of a smart pointer to a TableInstance
+  * @brief Definition of a smart pointer to a TableClass
   */
-typedef boost::shared_ptr< TableInstance > TablePtr;
+typedef boost::shared_ptr< TableClass > TablePtr;
 
 /**
- * @typedef TableOfFunctionsInstance
- * @brief Definition of TableOfFunctionsInstance (table_fonction)
+ * @typedef TableOfFunctionsClass
+ * @brief Definition of TableOfFunctionsClass (table_fonction)
  */
-class TableOfFunctionsInstance : public TableInstance {
+class TableOfFunctionsClass : public TableClass {
   private:
     std::vector< GenericFunctionPtr > _vecOfFunctions;
 
   public:
     /**
     * @typedef TableOfFunctionsPtr
-    * @brief Definition of a smart pointer to a TableOfFunctionsInstance
+    * @brief Definition of a smart pointer to a TableOfFunctionsClass
     */
-    typedef boost::shared_ptr< TableOfFunctionsInstance > TableOfFunctionsPtr;
+    typedef boost::shared_ptr< TableOfFunctionsClass > TableOfFunctionsPtr;
 
     /**
     * @brief Constructeur
     * @param name Nom Jeveux du champ aux noeuds
     */
-    TableOfFunctionsInstance( const std::string &name ):
-        TableInstance( name, "TABLE_FONCTION" )
+    TableOfFunctionsClass( const std::string &name ):
+        TableClass( name, "TABLE_FONCTION" )
     {};
 
     /**
      * @brief Constructeur
      */
-    TableOfFunctionsInstance():
-        TableInstance( ResultNaming::getNewResultName(), "TABLE_FONCTION" )
+    TableOfFunctionsClass():
+        TableClass( ResultNaming::getNewResultName(), "TABLE_FONCTION" )
     {};
 
     /**

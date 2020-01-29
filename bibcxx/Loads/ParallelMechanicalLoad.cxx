@@ -3,7 +3,7 @@
  * @brief Implementation de ParallelMechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,16 +28,16 @@
 
 #ifdef _USE_MPI
 
-ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance(
+ParallelMechanicalLoadClass::ParallelMechanicalLoadClass(
         const std::string& name,
         const GenericMechanicalLoadPtr& load,
         const ModelPtr& model ):
     DataStructure( name, 8, "CHAR_MECA" ),
-    _FEDesc( new ParallelFiniteElementDescriptorInstance
+    _FEDesc( new ParallelFiniteElementDescriptorClass
                     ( getName() + ".CHME.LIGRE", load->getMechanicalLoadDescription()._FEDesc,
                       load->getModel()->getPartialMesh(), model ) ),
-    _cimpo( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CIMPO", _FEDesc ) ),
-    _cmult( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.CMULT", _FEDesc ) ),
+    _cimpo( new PCFieldOnMeshDoubleClass( getName() + ".CHME.CIMPO", _FEDesc ) ),
+    _cmult( new PCFieldOnMeshDoubleClass( getName() + ".CHME.CMULT", _FEDesc ) ),
     _type( getName() + ".TYPE" ),
     _modelName( getName() + ".CHME.MODEL.NOMO" )
 {
@@ -50,7 +50,7 @@ ParallelMechanicalLoadInstance::ParallelMechanicalLoadInstance(
     transferPCFieldOnMesh( load->getMechanicalLoadDescription()._cmult, _cmult );
 };
 
-void ParallelMechanicalLoadInstance::transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
+void ParallelMechanicalLoadClass::transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
                                                             PCFieldOnMeshDoublePtr& fieldOut )
 
 {

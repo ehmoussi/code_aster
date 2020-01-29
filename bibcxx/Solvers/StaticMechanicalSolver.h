@@ -40,7 +40,7 @@
 #include "Solvers/GenericSolver.h"
 #include "Studies/StudyDescription.h"
 
-class StaticMechanicalSolverInstance : public GenericSolver {
+class StaticMechanicalSolverClass : public GenericSolver {
   private:
     /** @typedef std::list de MechanicalLoad */
     typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;
@@ -72,7 +72,7 @@ class StaticMechanicalSolverInstance : public GenericSolver {
     /**
      * @brief Constructeur
      */
-    StaticMechanicalSolverInstance( const ModelPtr &, const MaterialOnMeshPtr &,
+    StaticMechanicalSolverClass( const ModelPtr &, const MaterialOnMeshPtr &,
                                     const ElementaryCharacteristicsPtr &cara = nullptr );
 
     /**
@@ -103,8 +103,8 @@ class StaticMechanicalSolverInstance : public GenericSolver {
 
 /**
  * @typedef StaticMechanicalSolverPtr
- * @brief Enveloppe d'un pointeur intelligent vers un StaticMechanicalSolverInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un StaticMechanicalSolverClass
  */
-typedef boost::shared_ptr< StaticMechanicalSolverInstance > StaticMechanicalSolverPtr;
+typedef boost::shared_ptr< StaticMechanicalSolverClass > StaticMechanicalSolverPtr;
 
 #endif /* STATICMECHANICALSOLVER_H_ */

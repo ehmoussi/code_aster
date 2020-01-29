@@ -31,14 +31,14 @@ namespace py = boost::python;
 
 void exportGenericFunctionToPython() {
 
-    py::class_< GenericFunctionInstance, GenericFunctionInstance::GenericFunctionPtr,
+    py::class_< GenericFunctionClass, GenericFunctionClass::GenericFunctionPtr,
             py::bases< DataStructure > >( "GenericFunction", py::no_init )
         //         .def( "__init__", py::make_constructor(
-        //             &initFactoryPtr< GenericFunctionInstance >) )
+        //             &initFactoryPtr< GenericFunctionClass >) )
         //         .def( "__init__", py::make_constructor(
-        //             &initFactoryPtr< GenericFunctionInstance,
+        //             &initFactoryPtr< GenericFunctionClass,
         //                              std::string >) )
-        .def( "getProperties", &GenericFunctionInstance::getProperties )
-        .def( "setExtrapolation", &GenericFunctionInstance::setExtrapolation )
+        .def( "getProperties", &GenericFunctionClass::getProperties )
+        .def( "setExtrapolation", &GenericFunctionClass::setExtrapolation )
         ;
 };

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ListOfFloats
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,11 +32,11 @@
 #include "MemoryManager/JeveuxVector.h"
 
 /**
- * @class ListOfFloatsInstance
+ * @class ListOfFloatsClass
  * @brief Cette classe correspond a une listr8
  * @author Nicolas Sellenet
  */
-class ListOfFloatsInstance : public DataStructure {
+class ListOfFloatsClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.BINT' */
     JeveuxVectorDouble _bint;
@@ -52,17 +52,17 @@ class ListOfFloatsInstance : public DataStructure {
      * @typedef ListOfFloatsPtr
      * @brief Pointeur intelligent vers un ListOfFloats
      */
-    typedef boost::shared_ptr< ListOfFloatsInstance > ListOfFloatsPtr;
+    typedef boost::shared_ptr< ListOfFloatsClass > ListOfFloatsPtr;
 
     /**
      * @brief Constructeur
      */
-    ListOfFloatsInstance() : ListOfFloatsInstance( ResultNaming::getNewResultName() ){};
+    ListOfFloatsClass() : ListOfFloatsClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ListOfFloatsInstance( const std::string name )
+    ListOfFloatsClass( const std::string name )
         : DataStructure( name, 19, "LISTR8", Permanent ),
           _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
           _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
@@ -78,8 +78,8 @@ class ListOfFloatsInstance : public DataStructure {
 
 /**
  * @typedef ListOfFloatsPtr
- * @brief Pointeur intelligent vers un ListOfFloatsInstance
+ * @brief Pointeur intelligent vers un ListOfFloatsClass
  */
-typedef boost::shared_ptr< ListOfFloatsInstance > ListOfFloatsPtr;
+typedef boost::shared_ptr< ListOfFloatsClass > ListOfFloatsPtr;
 
 #endif /* LISTOFFLOATS_H_ */

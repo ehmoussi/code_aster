@@ -1,6 +1,6 @@
 /**
  * @file PrestressingCableDefinition.cxx
- * @brief Implementation de PrestressingCableDefinitionInstance
+ * @brief Implementation de PrestressingCableDefinitionClass
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 22018 EDF R&D                www.code-aster.org
@@ -28,19 +28,19 @@
 #include "Modeling/PrestressingCableDefinition.h"
 #include "Supervis/ResultNaming.h"
 
-PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
+PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
     const std::string jeveuxName, const ModelPtr &model, const MaterialOnMeshPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
     : DataStructure( jeveuxName, 8, "CABL_PRECONT" ), _model( model ), _mater( mater ),
       _cara( cara ),
-      _mesh( boost::static_pointer_cast< MeshInstance >( _model->getMesh() ) ),
-      _sigin( new PCFieldOnMeshDoubleInstance( getName() + ".CHME.SIGIN", _mesh ) ),
-      _cableBP( new TableInstance( getName() + "CABLEBP    " ) ),
-      _cableGL( new TableInstance( getName() + "CABLEGL    " ) ),
+      _mesh( boost::static_pointer_cast< MeshClass >( _model->getMesh() ) ),
+      _sigin( new PCFieldOnMeshDoubleClass( getName() + ".CHME.SIGIN", _mesh ) ),
+      _cableBP( new TableClass( getName() + "CABLEBP    " ) ),
+      _cableGL( new TableClass( getName() + "CABLEGL    " ) ),
       _lirela( new ListOfLinearRelationsDouble( getName() + ".LIRELA    " ) ), _isEmpty( true ) {}
 
-PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
+PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
     const ModelPtr &model, const MaterialOnMeshPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
-    : PrestressingCableDefinitionInstance::PrestressingCableDefinitionInstance(
+    : PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
           ResultNaming::getNewResultName(), model, mater, cara ) {}

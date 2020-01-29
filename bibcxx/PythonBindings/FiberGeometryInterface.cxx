@@ -31,9 +31,9 @@ namespace py = boost::python;
 
 void exportFiberGeometryToPython() {
 
-    py::class_< FiberGeometryInstance, FiberGeometryInstance::FiberGeometryPtr,
+    py::class_< FiberGeometryClass, FiberGeometryClass::FiberGeometryPtr,
                 py::bases< DataStructure > >( "FiberGeometry", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FiberGeometryInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FiberGeometryClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FiberGeometryInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< FiberGeometryClass, std::string >));
 };

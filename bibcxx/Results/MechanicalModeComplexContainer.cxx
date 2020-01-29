@@ -3,7 +3,7 @@
  * @brief Implementation de MechanicalModeComplexContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,7 +29,7 @@
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/Tools.h"
 
-FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getEmptyFieldOnNodesComplex(
+FieldOnNodesComplexPtr MechanicalModeComplexContainerClass::getEmptyFieldOnNodesComplex(
     const std::string name, const int rank ) {
     const ASTERINTEGER nbRanks = getNumberOfRanks();
     if ( rank > nbRanks || rank <= 0 )
@@ -42,7 +42,7 @@ FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getEmptyFieldOnNo
     CALLO_RSEXCH( null, getName(), name, &rankLong, returnName, &retour );
     CALLO_RSNOCH( getName(), name, &rankLong );
     std::string bis( returnName.c_str(), 19 );
-    FieldOnNodesComplexPtr result( new FieldOnNodesComplexInstance( bis ) );
+    FieldOnNodesComplexPtr result( new FieldOnNodesComplexClass( bis ) );
 
     auto curIter = _dictOfVectorOfComplexFieldsNodes.find( name );
     if ( curIter == _dictOfVectorOfComplexFieldsNodes.end() ) {
@@ -52,7 +52,7 @@ FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getEmptyFieldOnNo
     return result;
 };
 
-FieldOnNodesComplexPtr MechanicalModeComplexContainerInstance::getComplexFieldOnNodes(
+FieldOnNodesComplexPtr MechanicalModeComplexContainerClass::getComplexFieldOnNodes(
     const std::string name, const int rank ) const {
     const ASTERINTEGER nbRanks = getNumberOfRanks();
     if ( rank > nbRanks || rank <= 0 )

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe AcousticModeContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,11 +31,11 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class AcousticModeContainerInstance
+ * @class AcousticModeContainerClass
  * @brief Cette classe correspond a un mode_acou
  * @author Natacha Béreux
  */
-class AcousticModeContainerInstance : public FullResultsContainerInstance {
+class AcousticModeContainerClass : public FullResultsContainerClass {
   private:
     /** @brief Stiffness displacement matrix */
     AssemblyMatrixPressureDoublePtr _rigidityMatrix;
@@ -44,11 +44,11 @@ class AcousticModeContainerInstance : public FullResultsContainerInstance {
     /**
      * @brief Constructeur
      */
-    AcousticModeContainerInstance( const std::string &name )
-        : FullResultsContainerInstance( name, "MODE_ACOU" ), _rigidityMatrix( nullptr ){};
+    AcousticModeContainerClass( const std::string &name )
+        : FullResultsContainerClass( name, "MODE_ACOU" ), _rigidityMatrix( nullptr ){};
 
-    AcousticModeContainerInstance()
-        : AcousticModeContainerInstance( ResultNaming::getNewResultName() ){};
+    AcousticModeContainerClass()
+        : AcousticModeContainerClass( ResultNaming::getNewResultName() ){};
     /**
      * @brief Set the rigidity matrix
      * @param matr AssemblyMatrixPressureDoublePtr
@@ -58,13 +58,13 @@ class AcousticModeContainerInstance : public FullResultsContainerInstance {
         return true;
     };
 
-    bool update() { return ResultsContainerInstance::update(); };
+    bool update() { return ResultsContainerClass::update(); };
 };
 
 /**
  * @typedef AcousticModeContainerPtr
- * @brief Pointeur intelligent vers un AcousticModeContainerInstance
+ * @brief Pointeur intelligent vers un AcousticModeContainerClass
  */
-typedef boost::shared_ptr< AcousticModeContainerInstance > AcousticModeContainerPtr;
+typedef boost::shared_ptr< AcousticModeContainerClass > AcousticModeContainerPtr;
 
 #endif /* ACOUSTICMODECONTAINER_H_ */

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ForwardMechanicalModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,8 +28,8 @@
 
 #include "astercxx.h"
 
-class MechanicalModeContainerInstance;
-typedef boost::shared_ptr< MechanicalModeContainerInstance > MechanicalModeContainerPtr;
+class MechanicalModeContainerClass;
+typedef boost::shared_ptr< MechanicalModeContainerClass > MechanicalModeContainerPtr;
 
 /**
  * @class ForwardMechanicalModeContainerPtr
@@ -38,7 +38,7 @@ typedef boost::shared_ptr< MechanicalModeContainerInstance > MechanicalModeConta
  */
 class ForwardMechanicalModeContainerPtr {
   private:
-    /** @brief Pointer to MechanicalModeContainerInstance */
+    /** @brief Pointer to MechanicalModeContainerClass */
     MechanicalModeContainerPtr _ptr;
     bool _isSet;
 

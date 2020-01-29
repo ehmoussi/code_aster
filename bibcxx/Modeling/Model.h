@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Model
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -68,16 +68,16 @@ const int nbGraphPartitioner = 2;
 extern const char *const GraphPartitionerNames[nbGraphPartitioner];
 
 /**
- * @class ModelInstance
+ * @class ModelClass
  * @brief Produit une sd identique a celle produite par AFFE_MODELE
  * @author Nicolas Sellenet
  */
-class ModelInstance : public DataStructure {
+class ModelClass : public DataStructure {
   public:
     /**
      * @brief Forward declaration for the XFEM enrichment
      */
-    typedef boost::shared_ptr< ModelInstance > ModelPtr;
+    typedef boost::shared_ptr< ModelClass > ModelPtr;
 
   protected:
     // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
@@ -135,14 +135,14 @@ class ModelInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    ModelInstance( const std::string name = ResultNaming::getNewResultName() ):
+    ModelClass( const std::string name = ResultNaming::getNewResultName() ):
     DataStructure( name, 8, "MODELE" ),
         _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
         _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
         _saneModel( nullptr ),
         _baseMesh( MeshPtr() ), _splitMethod( SubDomain ),
-        _graphPartitioner( MetisPartitioner ), _ligrel( new FiniteElementDescriptorInstance(
+        _graphPartitioner( MetisPartitioner ), _ligrel( new FiniteElementDescriptorClass(
                                                     getName() + ".MODELE", _baseMesh ) )
     {};
 
@@ -345,8 +345,8 @@ class ModelInstance : public DataStructure {
 
 /**
  * @typedef Model
- * @brief Pointeur intelligent vers un ModelInstance
+ * @brief Pointeur intelligent vers un ModelClass
  */
-typedef boost::shared_ptr< ModelInstance > ModelPtr;
+typedef boost::shared_ptr< ModelClass > ModelPtr;
 
 #endif /* MODEL_H_ */

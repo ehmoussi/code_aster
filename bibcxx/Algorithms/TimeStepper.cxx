@@ -3,7 +3,7 @@
  * @brief Implementation de TimeStepper
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,14 +25,14 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-bool TimeStepperInstance::setValues( const VectorDouble &values ) {
+bool TimeStepperClass::setValues( const VectorDouble &values ) {
     if ( _values->isAllocated() )
         _values->deallocate();
 
     //     _values->allocate( getMemoryType(), values.size() + 1 );
     _values->allocate( getMemoryType(), values.size() );
     if ( !_values->updateValuePointer() )
-        throw std::runtime_error( "Unable to update pointers of TimeStepperInstance" );
+        throw std::runtime_error( "Unable to update pointers of TimeStepperClass" );
 
     int compteur = 0;
     double save = 0.;

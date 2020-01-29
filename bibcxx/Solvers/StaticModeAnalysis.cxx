@@ -1,9 +1,9 @@
 /**
  * @file Model.cxx
- * @brief Implementation de ModelInstance
+ * @brief Implementation de ModelClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,17 +31,17 @@
 
 #include "Supervis/CommandSyntax.h"
 
-// StaticModeDeplInstance::StaticModeDeplInstance():  //?????
+// StaticModeDeplClass::StaticModeDeplClass():  //?????
 //                                _model( ModelPtr() ),
 //                               _materialOnMesh( MaterialOnMeshPtr() ),
-//                              _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ),
-//                             _loadStep( TimeStepperPtr( new TimeStepperInstance( Temporary ) ) ),
+//                              _listOfLoads( ListOfLoadsPtr( new ListOfLoadsClass() ) ),
+//                             _loadStep( TimeStepperPtr( new TimeStepperClass( Temporary ) ) ),
 //                            _nonLinearMethod( NonLinearMethodPtr())
 //?????
 //{};
 
-ResultsContainerPtr StaticModeDeplInstance::execute() {
-    ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
+ResultsContainerPtr StaticModeDeplClass::execute() {
+    ResultsContainerPtr resultC( new ResultsContainerClass( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
     CommandSyntax cmdSt( "MODE_STATIQUE" );
@@ -101,8 +101,8 @@ ResultsContainerPtr StaticModeDeplInstance::execute() {
     return resultC;
 };
 
-ResultsContainerPtr StaticModeForcInstance::execute() {
-    ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
+ResultsContainerPtr StaticModeForcClass::execute() {
+    ResultsContainerPtr resultC( new ResultsContainerClass( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
     CommandSyntax cmdSt( "MODE_STATIQUE" );
@@ -163,8 +163,8 @@ ResultsContainerPtr StaticModeForcInstance::execute() {
     return resultC;
 };
 
-ResultsContainerPtr StaticModePseudoInstance::execute() {
-    ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
+ResultsContainerPtr StaticModePseudoClass::execute() {
+    ResultsContainerPtr resultC( new ResultsContainerClass( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
     CommandSyntax cmdSt( "MODE_STATIQUE" );
@@ -231,8 +231,8 @@ ResultsContainerPtr StaticModePseudoInstance::execute() {
     return resultC;
 };
 
-ResultsContainerPtr StaticModeInterfInstance::execute() {
-    ResultsContainerPtr resultC( new ResultsContainerInstance( std::string( "MODE_MECA" ) ) );
+ResultsContainerPtr StaticModeInterfClass::execute() {
+    ResultsContainerPtr resultC( new ResultsContainerClass( std::string( "MODE_MECA" ) ) );
     std::string nameOfSD = resultC->getName();
 
     CommandSyntax cmdSt( "MODE_STATIQUE" );

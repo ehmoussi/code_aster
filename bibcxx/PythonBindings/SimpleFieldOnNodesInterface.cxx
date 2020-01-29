@@ -31,21 +31,21 @@ namespace py = boost::python;
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
 
 void exportSimpleFieldOnNodesToPython() {
-    py::class_< SimpleFieldOnNodesDoubleInstance, SimpleFieldOnNodesDoublePtr,
+    py::class_< SimpleFieldOnNodesDoubleClass, SimpleFieldOnNodesDoublePtr,
                 py::bases< DataStructure > >( "SimpleFieldOnNodesDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesDoubleInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesDoubleClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< SimpleFieldOnNodesDoubleInstance, std::string >))
-        .def( "getValue", &SimpleFieldOnNodesDoubleInstance::getValue,
+                              &initFactoryPtr< SimpleFieldOnNodesDoubleClass, std::string >))
+        .def( "getValue", &SimpleFieldOnNodesDoubleClass::getValue,
               py::return_value_policy< py::return_by_value >() )
-        .def( "updateValuePointers", &SimpleFieldOnNodesDoubleInstance::updateValuePointers );
-    py::class_< SimpleFieldOnNodesComplexInstance, SimpleFieldOnNodesComplexPtr,
+        .def( "updateValuePointers", &SimpleFieldOnNodesDoubleClass::updateValuePointers );
+    py::class_< SimpleFieldOnNodesComplexClass, SimpleFieldOnNodesComplexPtr,
                 py::bases< DataStructure > >( "SimpleFieldOnNodesComplex", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesComplexInstance >))
+              py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesComplexClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< SimpleFieldOnNodesComplexInstance, std::string >))
-        .def( "getValue", &SimpleFieldOnNodesComplexInstance::getValue,
+                              &initFactoryPtr< SimpleFieldOnNodesComplexClass, std::string >))
+        .def( "getValue", &SimpleFieldOnNodesComplexClass::getValue,
               py::return_value_policy< py::return_by_value >() )
-        .def( "updateValuePointers", &SimpleFieldOnNodesComplexInstance::updateValuePointers );
+        .def( "updateValuePointers", &SimpleFieldOnNodesComplexClass::updateValuePointers );
 };

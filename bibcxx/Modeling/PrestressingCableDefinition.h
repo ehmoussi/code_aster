@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe PrestressingCableDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -40,12 +40,12 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class PrestressingCableDefinitionInstance
+ * @class PrestressingCableDefinitionClass
  * @brief Produit une sd identique a celle produite par DEFI_CABLE_BP
  * @author Nicolas Sellenet
  * @todo ajouter un test pour valider des qu'on aura les macros
  */
-class PrestressingCableDefinitionInstance : public DataStructure {
+class PrestressingCableDefinitionClass : public DataStructure {
   private:
     ModelPtr _model;
     ElementaryCharacteristicsPtr _cara;
@@ -65,17 +65,17 @@ class PrestressingCableDefinitionInstance : public DataStructure {
   public:
     /**
      * @typedef PrestressingCableDefinition
-     * @brief Pointeur intelligent vers un PrestressingCableDefinitionInstance
+     * @brief Pointeur intelligent vers un PrestressingCableDefinitionClass
      */
-    typedef boost::shared_ptr< PrestressingCableDefinitionInstance > PrestressingCableDefinitionPtr;
+    typedef boost::shared_ptr< PrestressingCableDefinitionClass > PrestressingCableDefinitionPtr;
 
     /**
      * @brief Constructeur
      */
-    PrestressingCableDefinitionInstance( const ModelPtr &, const MaterialOnMeshPtr &,
+    PrestressingCableDefinitionClass( const ModelPtr &, const MaterialOnMeshPtr &,
                                          const ElementaryCharacteristicsPtr & );
 
-    PrestressingCableDefinitionInstance( const std::string jeveuxName, const ModelPtr &,
+    PrestressingCableDefinitionClass( const std::string jeveuxName, const ModelPtr &,
                                          const MaterialOnMeshPtr &,
                                          const ElementaryCharacteristicsPtr & );
 
@@ -96,8 +96,8 @@ class PrestressingCableDefinitionInstance : public DataStructure {
 
 /**
  * @typedef PrestressingCableDefinition
- * @brief Pointeur intelligent vers un PrestressingCableDefinitionInstance
+ * @brief Pointeur intelligent vers un PrestressingCableDefinitionClass
  */
-typedef boost::shared_ptr< PrestressingCableDefinitionInstance > PrestressingCableDefinitionPtr;
+typedef boost::shared_ptr< PrestressingCableDefinitionClass > PrestressingCableDefinitionPtr;
 
 #endif /* PRESTRESSINGCABLEDEFINITION_H_ */

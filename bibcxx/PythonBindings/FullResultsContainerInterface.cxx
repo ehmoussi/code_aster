@@ -29,18 +29,18 @@ namespace py = boost::python;
 
 void exportFullResultsContainerToPython() {
 
-    py::class_< FullResultsContainerInstance, FullResultsContainerPtr,
-            py::bases< ResultsContainerInstance > >( "FullResultsContainer", py::no_init )
+    py::class_< FullResultsContainerClass, FullResultsContainerPtr,
+            py::bases< ResultsContainerClass > >( "FullResultsContainer", py::no_init )
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< FullResultsContainerInstance, std::string, std::string > ) )
+                  &initFactoryPtr< FullResultsContainerClass, std::string, std::string > ) )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< FullResultsContainerInstance, std::string > ) )
-        .def( "getDOFNumbering", &FullResultsContainerInstance::getDOFNumbering )
-        .def( "printMedFile", &FullResultsContainerInstance::printMedFile )
-        .def( "setDOFNumbering", &FullResultsContainerInstance::setDOFNumbering )
+              py::make_constructor( &initFactoryPtr< FullResultsContainerClass, std::string > ) )
+        .def( "getDOFNumbering", &FullResultsContainerClass::getDOFNumbering )
+        .def( "printMedFile", &FullResultsContainerClass::printMedFile )
+        .def( "setDOFNumbering", &FullResultsContainerClass::setDOFNumbering )
 #ifdef _USE_MPI
-        .def( "setDOFNumbering", &FullResultsContainerInstance::setParallelDOFNumbering )
+        .def( "setDOFNumbering", &FullResultsContainerClass::setParallelDOFNumbering )
 #endif
         ;
 };

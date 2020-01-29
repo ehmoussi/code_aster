@@ -1,9 +1,9 @@
 /**
  * @file XfemCrack.cxx
- * @brief Implementation de MaterialInstance
+ * @brief Implementation de MaterialClass
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,7 +31,7 @@
 
 #include "Modeling/CrackShape.h"
 
-XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr mesh )
+XfemCrackClass::XfemCrackClass( const std::string name, MeshPtr mesh )
     : DataStructure( name, 8, "FISS_XFEM" ), _jeveuxName( ResultNaming::getCurrentName() ),
       _mesh( mesh ), _auxiliaryGrid( MeshPtr() ),
       _existingCrackWithGrid( XfemCrackPtr() ), _discontinuityType( "Crack" ), _crackLipsEntity(),
@@ -40,11 +40,11 @@ XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr mesh )
       _enrichedElements(), _discontinuousField( "DEPL" ), _enrichmentType( std::string() ),
       _enrichmentRadiusZone( 0 ), _enrichedLayersNumber( 0 ),
 
-      _tangentialLevelSetField( new FieldOnNodesDoubleInstance( _jeveuxName + ".LTNO      " ) ),
-      _normalLevelSetField( new FieldOnNodesDoubleInstance( _jeveuxName + ".LNNO      " ) ),
-      _tangentialLevelSetGradient( new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLTNO    " ) ),
-      _normalLevelSetGradient( new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLNNO    " ) ),
-      _localBasis( new FieldOnNodesDoubleInstance( _jeveuxName + ".BASLOC    " ) ),
+      _tangentialLevelSetField( new FieldOnNodesDoubleClass( _jeveuxName + ".LTNO      " ) ),
+      _normalLevelSetField( new FieldOnNodesDoubleClass( _jeveuxName + ".LNNO      " ) ),
+      _tangentialLevelSetGradient( new FieldOnNodesDoubleClass( _jeveuxName + ".GRLTNO    " ) ),
+      _normalLevelSetGradient( new FieldOnNodesDoubleClass( _jeveuxName + ".GRLNNO    " ) ),
+      _localBasis( new FieldOnNodesDoubleClass( _jeveuxName + ".BASLOC    " ) ),
       _crackTipCoords( JeveuxVectorDouble( _jeveuxName + ".FONDFISS" ) ),
       _crackTipBasis( JeveuxVectorDouble( _jeveuxName + ".BASEFOND" ) ),
       _crackTipMultiplicity( JeveuxVectorLong( _jeveuxName + ".FONDMULT" ) ),
@@ -55,10 +55,10 @@ XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr mesh )
       _heavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
       _crackTipAndHeavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) ){};
 
-XfemCrackInstance::XfemCrackInstance( MeshPtr mesh )
-    : XfemCrackInstance( ResultNaming::getNewResultName(), mesh ){};
+XfemCrackClass::XfemCrackClass( MeshPtr mesh )
+    : XfemCrackClass( ResultNaming::getNewResultName(), mesh ){};
 
-bool XfemCrackInstance::build() {
+bool XfemCrackClass::build() {
     CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "FISS_XFEM" );
 
@@ -190,11 +190,11 @@ bool XfemCrackInstance::build() {
     return true;
 };
 
-ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) {
+ModelPtr XfemCrackClass::enrichModelWithXfem( ModelPtr &baseModel ) {
     CommandSyntax cmdSt( "MODI_MODELE_XFEM" );
 
     // Create empty model and get its name
-    ModelPtr newModelPtr( new ModelInstance() );
+    ModelPtr newModelPtr( new ModelClass() );
     cmdSt.setResult( newModelPtr->getName(), "MODELE" );
 
     SyntaxMapContainer dict;

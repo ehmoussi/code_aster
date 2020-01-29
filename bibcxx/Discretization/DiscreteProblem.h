@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe DiscreteProblem
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,11 +36,11 @@
 #include "Studies/StudyDescription.h"
 
 /**
- * @class DiscreteProblemInstance
+ * @class DiscreteProblemClass
  * @brief Cette classe permet de definir une étude au sens Aster
  * @author Nicolas Sellenet
  */
-class DiscreteProblemInstance {
+class DiscreteProblemClass {
   private:
     /** @brief Etude definie par l'utilisateur */
     StudyDescriptionPtr _study;
@@ -61,18 +61,18 @@ class DiscreteProblemInstance {
      * @typedef DiscreteProblemPtr
      * @brief Pointeur intelligent vers un DiscreteProblem
      */
-    typedef boost::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
+    typedef boost::shared_ptr< DiscreteProblemClass > DiscreteProblemPtr;
 
     /**
      * @brief Constructeur
      * @param StudyDescriptionPtr Etude utilisateur
      */
-    DiscreteProblemInstance( const StudyDescriptionPtr &currentStudy ) : _study( currentStudy ){};
+    DiscreteProblemClass( const StudyDescriptionPtr &currentStudy ) : _study( currentStudy ){};
 
     /**
      * @brief Desctructeur
      */
-    ~DiscreteProblemInstance(){};
+    ~DiscreteProblemClass(){};
 
     /**
      * @brief Calcul des matrices elementaires pour l'option CHAR_MECA
@@ -168,6 +168,6 @@ class DiscreteProblemInstance {
  * @typedef DiscreteProblemPtr
  * @brief Pointeur intelligent vers un DiscreteProblem
  */
-typedef boost::shared_ptr< DiscreteProblemInstance > DiscreteProblemPtr;
+typedef boost::shared_ptr< DiscreteProblemClass > DiscreteProblemPtr;
 
 #endif /* DISCRETEPROBLEM_H_ */

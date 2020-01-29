@@ -3,7 +3,7 @@
  * @brief Implementation de
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,10 +28,10 @@
 
 #ifdef _USE_MPI
 
-PartialMeshInstance::PartialMeshInstance( const std::string& name,
+PartialMeshClass::PartialMeshClass( const std::string& name,
                                           const ParallelMeshPtr& mesh,
                                           const VectorString& toFind ):
-    BaseMeshInstance( name, "MAILLAGE_PARTIEL" ),
+    BaseMeshClass( name, "MAILLAGE_PARTIEL" ),
     _pMesh( mesh ),
     _localNumbering( getName() + ".LOCAL" ),
     _globalNumbering( getName() + ".GLOBAL" ),

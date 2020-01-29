@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TimeDependantResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,30 +32,30 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class TimeDependantResultsContainerInstance
+ * @class TimeDependantResultsContainerClass
  * @brief Cette classe correspond a un evol_sd_aster
  * @author Natacha Béreux
  */
-class TimeDependantResultsContainerInstance : public ResultsContainerInstance {
+class TimeDependantResultsContainerClass : public ResultsContainerClass {
   private:
   public:
     /**
      * @brief Constructeur
      */
-    TimeDependantResultsContainerInstance( const std::string resuTyp = "EVOL" )
-        : TimeDependantResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
+    TimeDependantResultsContainerClass( const std::string resuTyp = "EVOL" )
+        : TimeDependantResultsContainerClass( ResultNaming::getNewResultName(), resuTyp ){};
 
     /**
      * @brief Constructeur
      */
-    TimeDependantResultsContainerInstance( const std::string name, const std::string resuTyp )
-        : ResultsContainerInstance( name, resuTyp ){};
+    TimeDependantResultsContainerClass( const std::string name, const std::string resuTyp )
+        : ResultsContainerClass( name, resuTyp ){};
 };
 
 /**
  * @typedef TimeDependantResultsContainerPtr
- * @brief Pointeur intelligent vers un TimeDependantResultsContainerInstance
+ * @brief Pointeur intelligent vers un TimeDependantResultsContainerClass
  */
-typedef boost::shared_ptr< TimeDependantResultsContainerInstance > TimeDependantResultsContainerPtr;
+typedef boost::shared_ptr< TimeDependantResultsContainerClass > TimeDependantResultsContainerPtr;
 
 #endif /* TIMEDEPENDANTRESULTSCONTAINER_H_ */

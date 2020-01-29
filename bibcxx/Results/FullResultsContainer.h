@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FullResultsContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,11 +32,11 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class FullResultsContainerInstance
+ * @class FullResultsContainerClass
  * @brief Cette classe correspond à un sd_dyna_phys
  * @author Natacha Béreux
  */
-class FullResultsContainerInstance : public ResultsContainerInstance {
+class FullResultsContainerClass : public ResultsContainerClass {
   protected:
     /** @brief indexage des résultats de calcul dynamiques */
     DynamicResultsIndexingPtr _index;
@@ -48,12 +48,12 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullResultsContainerInstance( const std::string &name, const std::string &resuTyp )
-        : ResultsContainerInstance( name, resuTyp ),
-          _index( new DynamicResultsIndexingInstance( name, resuTyp ) ), _dofNum( nullptr ){};
+    FullResultsContainerClass( const std::string &name, const std::string &resuTyp )
+        : ResultsContainerClass( name, resuTyp ),
+          _index( new DynamicResultsIndexingClass( name, resuTyp ) ), _dofNum( nullptr ){};
 
-    FullResultsContainerInstance( const std::string &resuTyp )
-        : FullResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
+    FullResultsContainerClass( const std::string &resuTyp )
+        : FullResultsContainerClass( ResultNaming::getNewResultName(), resuTyp ){};
 
     BaseDOFNumberingPtr getDOFNumbering() const
     {
@@ -61,7 +61,7 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
     };
 
     bool printMedFile( std::string fileName ) const {
-        return ResultsContainerInstance::printMedFile( fileName );
+        return ResultsContainerClass::printMedFile( fileName );
     };
 
     bool _setDOFNumbering( const BaseDOFNumberingPtr & );
@@ -73,8 +73,8 @@ class FullResultsContainerInstance : public ResultsContainerInstance {
 
 /**
  * @typedef FullResultsContainerPtr
- * @brief Pointeur intelligent vers un FullResultsContainerInstance
+ * @brief Pointeur intelligent vers un FullResultsContainerClass
  */
-typedef boost::shared_ptr< FullResultsContainerInstance > FullResultsContainerPtr;
+typedef boost::shared_ptr< FullResultsContainerClass > FullResultsContainerPtr;
 
 #endif /* FULLRESULTSCONTAINER_H_ */

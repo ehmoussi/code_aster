@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StructureInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -43,11 +43,11 @@ extern const std::vector< InterfaceTypeEnum > allInterfaceType;
 extern const std::vector< std::string > allInterfaceTypeNames;
 
 /**
- * @class StructureInterfaceInstance
+ * @class StructureInterfaceClass
  * @brief Cette classe permet de definir les interfaces d'une structure et leur affecter un type
  * @author Nicolas Sellenet
  */
-class StructureInterfaceInstance : public DataStructure {
+class StructureInterfaceClass : public DataStructure {
   private:
     /** @brief Numérotation */
     const DOFNumberingPtr _dofNum;
@@ -98,18 +98,18 @@ class StructureInterfaceInstance : public DataStructure {
      * @typedef StructureInterfacePtr
      * @brief Pointeur intelligent vers un StructureInterface
      */
-    typedef boost::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
+    typedef boost::shared_ptr< StructureInterfaceClass > StructureInterfacePtr;
 
     /**
      * @brief Constructeur
      */
-    StructureInterfaceInstance() : StructureInterfaceInstance( ResultNaming::getNewResultName() ){};
+    StructureInterfaceClass() : StructureInterfaceClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
 
-    StructureInterfaceInstance( const std::string name )
+    StructureInterfaceClass( const std::string name )
         : DataStructure( name, 8, "INTERF_DYNA_CLAS", Permanent ), _frequency( 1. ),
           _isEmpty( true ), _codingNumbers( JeveuxCollectionLong( getName() + ".IDC_DDAC" ) ),
           _numbering( JeveuxVectorLong( getName() + ".IDC_DEFO" ) ),
@@ -123,14 +123,14 @@ class StructureInterfaceInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    StructureInterfaceInstance( const DOFNumberingPtr &curDof )
-        : StructureInterfaceInstance( ResultNaming::getNewResultName(), curDof ){};
+    StructureInterfaceClass( const DOFNumberingPtr &curDof )
+        : StructureInterfaceClass( ResultNaming::getNewResultName(), curDof ){};
 
     /**
      * @brief Constructeur
      */
 
-    StructureInterfaceInstance( const std::string name, const DOFNumberingPtr &curDof )
+    StructureInterfaceClass( const std::string name, const DOFNumberingPtr &curDof )
         : DataStructure( name, 8, "INTERF_DYNA_CLAS", Permanent ), _frequency( 1. ),
           _isEmpty( true ), _codingNumbers( JeveuxCollectionLong( getName() + ".IDC_DDAC" ) ),
           _numbering( JeveuxVectorLong( getName() + ".IDC_DEFO" ) ),
@@ -156,8 +156,8 @@ class StructureInterfaceInstance : public DataStructure {
 
 /**
  * @typedef StructureInterfacePtr
- * @brief Enveloppe d'un pointeur intelligent vers un StructureInterfaceInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un StructureInterfaceClass
  */
-typedef boost::shared_ptr< StructureInterfaceInstance > StructureInterfacePtr;
+typedef boost::shared_ptr< StructureInterfaceClass > StructureInterfacePtr;
 
 #endif /* STRUCTUREINTERFACE_H_ */

@@ -29,8 +29,8 @@ namespace py = boost::python;
 
 void exportCrackTipToPython() {
 
-    py::class_< CrackTipInstance, CrackTipInstance::CrackTipPtr, py::bases< DataStructure > >(
+    py::class_< CrackTipClass, CrackTipClass::CrackTipPtr, py::bases< DataStructure > >(
         "CrackTip", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< CrackTipInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< CrackTipInstance, std::string >));
+        .def( "__init__", py::make_constructor(&initFactoryPtr< CrackTipClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< CrackTipClass, std::string >));
 };

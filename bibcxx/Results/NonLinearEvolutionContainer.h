@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe NonLinearEvolutionContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,30 +31,30 @@
 #include "Results/TimeDependantResultsContainer.h"
 
 /**
- * @class NonLinearEvolutionContainerInstance
+ * @class NonLinearEvolutionContainerClass
  * @brief Cette classe correspond a un evol_noli, elle hérite de ResultsContainer
           et stocke des champs
  * @author Natacha Béreux
  */
-class NonLinearEvolutionContainerInstance : public TimeDependantResultsContainerInstance {
+class NonLinearEvolutionContainerClass : public TimeDependantResultsContainerClass {
   private:
   public:
     /**
      * @brief Constructeur
      */
-    NonLinearEvolutionContainerInstance() : TimeDependantResultsContainerInstance( "EVOL_NOLI" ){};
+    NonLinearEvolutionContainerClass() : TimeDependantResultsContainerClass( "EVOL_NOLI" ){};
 
     /**
      * @brief Constructeur
      */
-    NonLinearEvolutionContainerInstance( const std::string name )
-        : TimeDependantResultsContainerInstance( name, "EVOL_NOLI" ){};
+    NonLinearEvolutionContainerClass( const std::string name )
+        : TimeDependantResultsContainerClass( name, "EVOL_NOLI" ){};
 };
 
 /**
  * @typedef NonLinearEvolutionContainerPtr
- * @brief Pointeur intelligent vers un NonLinearEvolutionContainerInstance
+ * @brief Pointeur intelligent vers un NonLinearEvolutionContainerClass
  */
-typedef boost::shared_ptr< NonLinearEvolutionContainerInstance > NonLinearEvolutionContainerPtr;
+typedef boost::shared_ptr< NonLinearEvolutionContainerClass > NonLinearEvolutionContainerPtr;
 
 #endif /* NONLINEAREVOLUTIONCONTAINER_H_ */

@@ -3,7 +3,7 @@
  * @brief Implementation de ParallelFiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,10 +27,10 @@
 
 #ifdef _USE_MPI
 
-ParallelFiniteElementDescriptorInstance::ParallelFiniteElementDescriptorInstance
+ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
     ( const std::string& name, const FiniteElementDescriptorPtr& FEDesc,
       const PartialMeshPtr& mesh, const ModelPtr& model, const JeveuxMemory memType ):
-                    FiniteElementDescriptorInstance( name, model->getMesh(), memType ),
+                    FiniteElementDescriptorClass( name, model->getMesh(), memType ),
                     _joins( JeveuxVectorLong( getName() + ".DOMJ" ) ),
                     _owner( JeveuxVectorLong( getName() + ".PNOE" ) ),
                     _multiplicity( JeveuxVectorLong( getName() + ".MULT" ) ),

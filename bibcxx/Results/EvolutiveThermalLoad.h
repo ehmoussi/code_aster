@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe EvolutiveThermalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,23 +32,23 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class EvolutiveThermalLoadInstance
+ * @class EvolutiveThermalLoadClass
  * @brief Cette classe correspond a un evol_ther
  * @author Nicolas Sellenet
  */
-class EvolutiveThermalLoadInstance : public TimeDependantResultsContainerInstance {
+class EvolutiveThermalLoadClass : public TimeDependantResultsContainerClass {
   public:
     /**
      * @brief Constructeur
      */
-    EvolutiveThermalLoadInstance( const std::string name = ResultNaming::getNewResultName() )
-        : TimeDependantResultsContainerInstance( name, "EVOL_THER" ){};
+    EvolutiveThermalLoadClass( const std::string name = ResultNaming::getNewResultName() )
+        : TimeDependantResultsContainerClass( name, "EVOL_THER" ){};
 };
 
 /**
  * @typedef EvolutiveThermalLoadPtr
- * @brief Pointeur intelligent vers un EvolutiveThermalLoadInstance
+ * @brief Pointeur intelligent vers un EvolutiveThermalLoadClass
  */
-typedef boost::shared_ptr< EvolutiveThermalLoadInstance > EvolutiveThermalLoadPtr;
+typedef boost::shared_ptr< EvolutiveThermalLoadClass > EvolutiveThermalLoadPtr;
 
 #endif /* EVOLUTIVETHERMALLOAD_H_ */

@@ -6,7 +6,7 @@
  * @brief Fichier entete de MaterialOnMeshBuilder
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,11 +33,11 @@
 #include <stdexcept>
 
 /**
- * @class MaterialOnMeshBuilderInstance
+ * @class MaterialOnMeshBuilderClass
  * @author Nicolas Sellenet
  */
-class MaterialOnMeshBuilderInstance : public DataStructure {
-    friend class MaterialOnMeshInstance;
+class MaterialOnMeshBuilderClass : public DataStructure {
+    friend class MaterialOnMeshClass;
 
   protected:
     /**
@@ -45,16 +45,16 @@ class MaterialOnMeshBuilderInstance : public DataStructure {
      * @param curMater Material to build
      * @param curInputVariables Input variables to add in MaterialOnMeshPtr
      */
-    static void buildInstance( MaterialOnMeshInstance &curMater,
+    static void buildClass( MaterialOnMeshClass &curMater,
                                const InputVariableOnMeshPtr &curInputVariables = nullptr,
                                const InputVariableConverterPtr &converter = nullptr );
 
   public:
     /**
      * @typedef MaterialOnMeshBuilderPtr
-     * @brief Pointeur intelligent vers un MaterialOnMeshBuilderInstance
+     * @brief Pointeur intelligent vers un MaterialOnMeshBuilderClass
      */
-    typedef boost::shared_ptr< MaterialOnMeshBuilderInstance > MaterialOnMeshBuilderPtr;
+    typedef boost::shared_ptr< MaterialOnMeshBuilderClass > MaterialOnMeshBuilderPtr;
 
     /**
      * @brief Build MaterialOnMeshPtr

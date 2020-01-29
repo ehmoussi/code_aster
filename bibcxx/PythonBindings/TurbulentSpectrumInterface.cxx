@@ -31,9 +31,9 @@ namespace py = boost::python;
 
 void exportTurbulentSpectrumToPython() {
 
-    py::class_< TurbulentSpectrumInstance, TurbulentSpectrumInstance::TurbulentSpectrumPtr,
+    py::class_< TurbulentSpectrumClass, TurbulentSpectrumClass::TurbulentSpectrumPtr,
             py::bases< DataStructure > >( "TurbulentSpectrum", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< TurbulentSpectrumInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TurbulentSpectrumClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< TurbulentSpectrumInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< TurbulentSpectrumClass, std::string >));
 };

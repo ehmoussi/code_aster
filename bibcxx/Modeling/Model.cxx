@@ -1,9 +1,9 @@
 /**
  * @file Model.cxx
- * @brief Implementation de ModelInstance
+ * @brief Implementation de ModelClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,7 +35,7 @@ const char *const ModelSplitingMethodNames[nbModelSplitingMethod] = {"CENTRALISE
                                                                      "GROUP_ELEM"};
 const char *const GraphPartitionerNames[nbGraphPartitioner] = {"SCOTCH", "METIS"};
 
-SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const {
+SyntaxMapContainer ModelClass::buildModelingsSyntaxMapContainer() const {
     SyntaxMapContainer dict;
 
     dict.container["VERI_JACOBIEN"] = "OUI";
@@ -64,7 +64,7 @@ SyntaxMapContainer ModelInstance::buildModelingsSyntaxMapContainer() const {
     return dict;
 };
 
-bool ModelInstance::buildWithSyntax( SyntaxMapContainer &dict ) {
+bool ModelClass::buildWithSyntax( SyntaxMapContainer &dict ) {
     CommandSyntax cmdSt( "AFFE_MODELE" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "MODELE" );
     cmdSt.define( dict );
@@ -82,7 +82,7 @@ bool ModelInstance::buildWithSyntax( SyntaxMapContainer &dict ) {
     return true;
 };
 
-bool ModelInstance::build() {
+bool ModelClass::build() {
     SyntaxMapContainer dict = buildModelingsSyntaxMapContainer();
     if ( _baseMesh->isParallel() ) {
         ListSyntaxMapContainer listeDISTRIBUTION;
@@ -102,7 +102,7 @@ bool ModelInstance::build() {
     return buildWithSyntax( dict );
 };
 
-bool ModelInstance::existsThm() {
+bool ModelClass::existsThm() {
     const std::string typeco( "MODELE" );
     ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk( " " );
@@ -116,7 +116,7 @@ bool ModelInstance::existsThm() {
     return false;
 };
 
-bool ModelInstance::existsMultiFiberBeam() {
+bool ModelClass::existsMultiFiberBeam() {
     const std::string typeco( "MODELE" );
     ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk( " " );
@@ -130,7 +130,7 @@ bool ModelInstance::existsMultiFiberBeam() {
     return false;
 };
 
-bool ModelInstance::xfemPreconditioningEnable() {
+bool ModelClass::xfemPreconditioningEnable() {
     const std::string typeco( "MODELE" );
     ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk( " " );

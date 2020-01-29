@@ -22,7 +22,7 @@
 #include "Results/FullResultsContainer.h"
 
 
-bool FullResultsContainerInstance::_setDOFNumbering( const BaseDOFNumberingPtr &dofNum ) {
+bool FullResultsContainerClass::_setDOFNumbering( const BaseDOFNumberingPtr &dofNum ) {
     if ( dofNum != nullptr ) {
         _dofNum = dofNum;
         _mesh = _dofNum->getMesh();
@@ -32,13 +32,13 @@ bool FullResultsContainerInstance::_setDOFNumbering( const BaseDOFNumberingPtr &
     return false;
 }
 
-bool FullResultsContainerInstance::setDOFNumbering( const DOFNumberingPtr &dofNum ) {
-    FullResultsContainerInstance::_setDOFNumbering( dofNum );
+bool FullResultsContainerClass::setDOFNumbering( const DOFNumberingPtr &dofNum ) {
+    FullResultsContainerClass::_setDOFNumbering( dofNum );
 }
 
 #ifdef _USE_MPI
-bool FullResultsContainerInstance::setParallelDOFNumbering(
+bool FullResultsContainerClass::setParallelDOFNumbering(
         const ParallelDOFNumberingPtr &dofNum ) {
-    FullResultsContainerInstance::_setDOFNumbering( dofNum );
+    FullResultsContainerClass::_setDOFNumbering( dofNum );
 }
 #endif

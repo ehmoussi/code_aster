@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe InputVariableEvolutionContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,27 +32,27 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class InputVariableEvolutionContainerInstance
+ * @class InputVariableEvolutionContainerClass
  * @brief Cette classe correspond a un evol_varc, elle hérite de ResultsContainer
           et stocke des champs
  * @author Natacha Béreux
  */
-class InputVariableEvolutionContainerInstance : public TimeDependantResultsContainerInstance {
+class InputVariableEvolutionContainerClass : public TimeDependantResultsContainerClass {
   private:
   public:
     /**
      * @brief Constructeur
      */
-    InputVariableEvolutionContainerInstance(
+    InputVariableEvolutionContainerClass(
         const std::string name = ResultNaming::getNewResultName() )
-        : TimeDependantResultsContainerInstance( name, "EVOL_VARC" ){};
+        : TimeDependantResultsContainerClass( name, "EVOL_VARC" ){};
 };
 
 /**
  * @typedef InputVariableEvolutionContainerPtr
- * @brief Pointeur intelligent vers un InputVariableEvolutionContainerInstance
+ * @brief Pointeur intelligent vers un InputVariableEvolutionContainerClass
  */
-typedef boost::shared_ptr< InputVariableEvolutionContainerInstance >
+typedef boost::shared_ptr< InputVariableEvolutionContainerClass >
     InputVariableEvolutionContainerPtr;
 
 #endif /* INPUTVARIABLEEVOLUTIONCONTAINER_H_ */

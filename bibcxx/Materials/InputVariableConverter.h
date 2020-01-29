@@ -2,11 +2,11 @@
 #define INPUTVARIABLECONVERTER_H_
 
 /**
- * @file InputVariableConverterInstance.h
- * @brief Fichier entete de la classe InputVariableConverterInstance
+ * @file InputVariableConverterClass.h
+ * @brief Fichier entete de la classe InputVariableConverterClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,11 +29,11 @@
 #include "astercxx.h"
 
 /**
- * @class InputVariableConverterInstance
+ * @class InputVariableConverterClass
  * @brief Input variable converter
  * @author Nicolas Sellenet
  */
-class InputVariableConverterInstance
+class InputVariableConverterClass
 {
   private:
     class Container
@@ -130,8 +130,8 @@ class InputVariableConverterInstance
 
 /**
  * @typedef InputVariableConverterPtr
- * @brief Pointeur intelligent vers un InputVariableConverterInstance
+ * @brief Pointeur intelligent vers un InputVariableConverterClass
  */
-typedef boost::shared_ptr< InputVariableConverterInstance > InputVariableConverterPtr;
+typedef boost::shared_ptr< InputVariableConverterClass > InputVariableConverterPtr;
 
 #endif /* INPUTVARIABLECONVERTER_H_ */

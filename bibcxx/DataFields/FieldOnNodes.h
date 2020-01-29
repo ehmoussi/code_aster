@@ -42,7 +42,7 @@
 
 /**
  * @struct AllowedFieldType
- * @brief Structure template permettant de limiter le type instanciable de JeveuxVectorInstance
+ * @brief Structure template permettant de limiter le type instanciable de JeveuxVectorClass
  * @tparam T Type autorise
  */
 template < typename T > struct AllowedFieldType; // undefined for bad types!
@@ -62,16 +62,16 @@ template <> struct AllowedFieldType< DoubleComplex > {
 class FieldBuilder;
 
 /**
- * @class FieldOnNodesInstance
+ * @class FieldOnNodesClass
  * @brief Cette classe template permet de definir un champ aux noeuds Aster
  * @author Nicolas Sellenet
  */
 template < class ValueType >
-class FieldOnNodesInstance : public GenericDataFieldInstance,
+class FieldOnNodesClass : public GenericDataFieldClass,
                              private AllowedFieldType< ValueType > {
   private:
-    typedef SimpleFieldOnNodesInstance< ValueType > SimpleFieldOnNodesValueTypeInstance;
-    typedef boost::shared_ptr< SimpleFieldOnNodesValueTypeInstance > SimpleFieldOnNodesValueTypePtr;
+    typedef SimpleFieldOnNodesClass< ValueType > SimpleFieldOnNodesValueTypeClass;
+    typedef boost::shared_ptr< SimpleFieldOnNodesValueTypeClass > SimpleFieldOnNodesValueTypePtr;
 
     /** @brief Vecteur Jeveux '.DESC' */
     JeveuxVectorLong _descriptor;
@@ -93,14 +93,14 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
      * @typedef FieldOnNodesPtr
      * @brief Pointeur intelligent vers un FieldOnNodes
      */
-    typedef boost::shared_ptr< FieldOnNodesInstance > FieldOnNodesPtr;
+    typedef boost::shared_ptr< FieldOnNodesClass > FieldOnNodesPtr;
 
     /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    FieldOnNodesInstance( const std::string name ):
-        GenericDataFieldInstance( name, "CHAM_NO" ),
+    FieldOnNodesClass( const std::string name ):
+        GenericDataFieldClass( name, "CHAM_NO" ),
         _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
         _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
         _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
@@ -112,8 +112,8 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    FieldOnNodesInstance( const JeveuxMemory memType = Permanent ):
-        GenericDataFieldInstance( memType, "CHAM_NO" ),
+    FieldOnNodesClass( const JeveuxMemory memType = Permanent ):
+        GenericDataFieldClass( memType, "CHAM_NO" ),
         _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
         _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
         _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
@@ -123,8 +123,8 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
     /**
      * @brief Constructeur from a MeshCoordinatesFieldPtr&
      */
-    FieldOnNodesInstance( MeshCoordinatesFieldPtr &toCopy ):
-        GenericDataFieldInstance( toCopy->getMemoryType(), "CHAM_NO" ),
+    FieldOnNodesClass( MeshCoordinatesFieldPtr &toCopy ):
+        GenericDataFieldClass( toCopy->getMemoryType(), "CHAM_NO" ),
         _descriptor( toCopy->_descriptor ), _reference( toCopy->_reference ),
         _valuesList( toCopy->_valuesList ), _dofNum( nullptr ), _dofDescription( nullptr ),
         _title( JeveuxVectorChar80( getName() + ".TITR" ) )
@@ -150,7 +150,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
      * @return renvoit true si l'addition s'est bien deroulée, false sinon
      * @todo ajouter une vérification sur la structure des champs
      */
-    bool addFieldOnNodes( FieldOnNodesInstance< ValueType > &tmp ) {
+    bool addFieldOnNodes( FieldOnNodesClass< ValueType > &tmp ) {
         bool retour = tmp.updateValuePointers();
         retour = ( retour && _valuesList->updateValuePointer() );
         int taille = _valuesList->size();
@@ -163,7 +163,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
      * @brief Allouer un champ au noeud à partir d'un autre
      * @return renvoit true
      */
-    bool allocateFrom( const FieldOnNodesInstance< ValueType > &tmp ) {
+    bool allocateFrom( const FieldOnNodesClass< ValueType > &tmp ) {
         this->_descriptor->deallocate();
         this->_reference->deallocate();
         this->_valuesList->deallocate();
@@ -194,7 +194,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
      */
     SimpleFieldOnNodesValueTypePtr exportToSimpleFieldOnNodes() {
         SimpleFieldOnNodesValueTypePtr toReturn(
-            new SimpleFieldOnNodesValueTypeInstance( getMemoryType() ) );
+            new SimpleFieldOnNodesValueTypeClass( getMemoryType() ) );
         const std::string resultName = toReturn->getName();
         const std::string inName = getName();
         CALLO_CNOCNS( inName, JeveuxMemoryTypesNames[getMemoryType()], resultName );
@@ -262,7 +262,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
         if ( _dofNum != nullptr ) {
             _dofDescription = _dofNum->getFieldOnNodesDescription();
         } else if ( _dofDescription == nullptr && updateValuePointers() ) {
-            typedef FieldOnNodesDescriptionInstance FONDesc;
+            typedef FieldOnNodesDescriptionClass FONDesc;
             typedef FieldOnNodesDescriptionPtr FONDescP;
 
             const std::string name2 = trim( ( *_reference )[1].toString() );
@@ -286,7 +286,7 @@ class FieldOnNodesInstance : public GenericDataFieldInstance,
 };
 
 template < class ValueType >
-bool FieldOnNodesInstance< ValueType >::printMedFile( const std::string fileName ) const
+bool FieldOnNodesClass< ValueType >::printMedFile( const std::string fileName ) const
     {
     LogicalUnitFile a( fileName, Binary, New );
     int retour = a.getLogicalUnit();
@@ -314,31 +314,31 @@ bool FieldOnNodesInstance< ValueType >::printMedFile( const std::string fileName
     return true;
 };
 
-/** @typedef FieldOnNodesInstanceDouble Instance d'un champ aux noeuds de double */
-typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
+/** @typedef FieldOnNodesClassDouble Class d'un champ aux noeuds de double */
+typedef FieldOnNodesClass< double > FieldOnNodesDoubleClass;
 
 /**
  * @typedef FieldOnNodesPtrDouble
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< FieldOnNodesDoubleInstance > FieldOnNodesDoublePtr;
+typedef boost::shared_ptr< FieldOnNodesDoubleClass > FieldOnNodesDoublePtr;
 
-/** @typedef FieldOnNodesLongInstance Instance d'une carte de long */
-typedef FieldOnNodesInstance< ASTERINTEGER > FieldOnNodesLongInstance;
+/** @typedef FieldOnNodesLongClass Class d'une carte de long */
+typedef FieldOnNodesClass< ASTERINTEGER > FieldOnNodesLongClass;
 
 /**
  * @typedef FieldOnNodesLongPtr
  * @brief Definition d'un champ aux noeuds de long
  */
-typedef boost::shared_ptr< FieldOnNodesLongInstance > FieldOnNodesLongPtr;
+typedef boost::shared_ptr< FieldOnNodesLongClass > FieldOnNodesLongPtr;
 
-/** @typedef FieldOnNodesInstanceComplex Instance d'un champ aux noeuds de complexes */
-typedef FieldOnNodesInstance< DoubleComplex > FieldOnNodesComplexInstance;
+/** @typedef FieldOnNodesClassComplex Class d'un champ aux noeuds de complexes */
+typedef FieldOnNodesClass< DoubleComplex > FieldOnNodesComplexClass;
 
 /**
  * @typedef FieldOnNodesComplexPtr
  * @brief Definition d'un champ aux noeuds de complexes
  */
-typedef boost::shared_ptr< FieldOnNodesComplexInstance > FieldOnNodesComplexPtr;
+typedef boost::shared_ptr< FieldOnNodesComplexClass > FieldOnNodesComplexPtr;
 
 #endif /* FIELDONNODES_H_ */

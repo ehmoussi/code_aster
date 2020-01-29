@@ -29,10 +29,10 @@ namespace py = boost::python;
 
 void exportEvolutiveThermalLoadToPython() {
 
-    py::class_< EvolutiveThermalLoadInstance, EvolutiveThermalLoadPtr,
-                py::bases< TimeDependantResultsContainerInstance > >( "EvolutiveThermalLoad",
+    py::class_< EvolutiveThermalLoadClass, EvolutiveThermalLoadPtr,
+                py::bases< TimeDependantResultsContainerClass > >( "EvolutiveThermalLoad",
                                                                       py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< EvolutiveThermalLoadInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< EvolutiveThermalLoadClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< EvolutiveThermalLoadInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< EvolutiveThermalLoadClass, std::string >));
 };

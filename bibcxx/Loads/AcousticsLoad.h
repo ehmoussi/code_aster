@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe AcousticsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -42,21 +42,21 @@ extern const char SANS_GROUP_MA[];
 extern const char SANS_GROUP_NO[];
 
 /**
- * @class GenericUnitaryAcousticsLoadInstance
+ * @class GenericUnitaryAcousticsLoadClass
  * @brief Classe definissant une charge acoustique générique (issue d'AFFE_CHAR_ACOU)
  * @author Nicolas Sellenet
  */
-struct GenericUnitaryAcousticsLoadInstance {};
+struct GenericUnitaryAcousticsLoadClass {};
 
 /**
- * @class UnitaryAcousticsLoadInstance
+ * @class UnitaryAcousticsLoadClass
  * @brief Classe template definissant une charge acoustique
  * @author Nicolas Sellenet
  */
 template < typename Phys, typename Loc >
-class UnitaryAcousticsLoadInstance : public Phys, public Loc {
+class UnitaryAcousticsLoadClass : public Phys, public Loc {
   public:
-    UnitaryAcousticsLoadInstance() : Phys(), Loc(){};
+    UnitaryAcousticsLoadClass() : Phys(), Loc(){};
 
     CapyConvertibleContainer getCapyConvertibleContainer() {
         return Phys::getCapyConvertibleContainer() + Loc::getCapyConvertibleContainer();
@@ -68,31 +68,31 @@ typedef CapyLocalizationManager< GroupOfElementsManager<>, GroupOfNodesManager<>
                                  GroupOfNodesManager< SANS_GROUP_NO > >
     AllNodesElementsWithoutLocalization;
 
-typedef boost::shared_ptr< GenericUnitaryAcousticsLoadInstance > GenericAcousticsLoadPtr;
+typedef boost::shared_ptr< GenericUnitaryAcousticsLoadClass > GenericAcousticsLoadPtr;
 
-template class UnitaryAcousticsLoadInstance< PressureComplexInstance,
+template class UnitaryAcousticsLoadClass< PressureComplexClass,
                                              AllNodesElementsWithoutLocalization >;
-typedef UnitaryAcousticsLoadInstance< PressureComplexInstance, AllNodesElementsWithoutLocalization >
-    ImposedComplexPressureInstance;
-typedef boost::shared_ptr< ImposedComplexPressureInstance > ImposedComplexPressurePtr;
+typedef UnitaryAcousticsLoadClass< PressureComplexClass, AllNodesElementsWithoutLocalization >
+    ImposedComplexPressureClass;
+typedef boost::shared_ptr< ImposedComplexPressureClass > ImposedComplexPressurePtr;
 
-template class UnitaryAcousticsLoadInstance< NormalSpeedComplexInstance, AllElementsLocalization >;
-typedef UnitaryAcousticsLoadInstance< NormalSpeedComplexInstance, AllElementsLocalization >
-    ImposedComplexNormalSpeedInstance;
-typedef boost::shared_ptr< ImposedComplexNormalSpeedInstance > ImposedComplexNormalSpeedPtr;
+template class UnitaryAcousticsLoadClass< NormalSpeedComplexClass, AllElementsLocalization >;
+typedef UnitaryAcousticsLoadClass< NormalSpeedComplexClass, AllElementsLocalization >
+    ImposedComplexNormalSpeedClass;
+typedef boost::shared_ptr< ImposedComplexNormalSpeedClass > ImposedComplexNormalSpeedPtr;
 
-template class UnitaryAcousticsLoadInstance< ImpedanceComplexInstance, AllElementsLocalization >;
-typedef UnitaryAcousticsLoadInstance< ImpedanceComplexInstance, AllElementsLocalization >
-    ComplexImpedanceInstance;
-typedef boost::shared_ptr< ComplexImpedanceInstance > ComplexImpedancePtr;
+template class UnitaryAcousticsLoadClass< ImpedanceComplexClass, AllElementsLocalization >;
+typedef UnitaryAcousticsLoadClass< ImpedanceComplexClass, AllElementsLocalization >
+    ComplexImpedanceClass;
+typedef boost::shared_ptr< ComplexImpedanceClass > ComplexImpedancePtr;
 
-class UniformConnectionInstance {
+class UniformConnectionClass {
   private:
     VectorComponent _values;
     CapyConvertibleContainer _toCapyConverter;
 
   public:
-    UniformConnectionInstance(){};
+    UniformConnectionClass(){};
 
     void setValue( const VectorComponent &values ) {
         _values = values;
@@ -105,12 +105,12 @@ class UniformConnectionInstance {
     CapyConvertibleContainer getCapyConvertibleContainer() { return _toCapyConverter; };
 };
 
-template class UnitaryAcousticsLoadInstance< UniformConnectionInstance, AllElementsLocalization >;
-typedef UnitaryAcousticsLoadInstance< UniformConnectionInstance, NodesElementsLocalization >
+template class UnitaryAcousticsLoadClass< UniformConnectionClass, AllElementsLocalization >;
+typedef UnitaryAcousticsLoadClass< UniformConnectionClass, NodesElementsLocalization >
     UniformConnection;
 typedef boost::shared_ptr< UniformConnection > UniformConnectionPtr;
 
-class AcousticsLoadInstance : public DataStructure {
+class AcousticsLoadClass : public DataStructure {
   private:
     ModelPtr _model;
     BaseMeshPtr _mesh;
@@ -136,37 +136,37 @@ class AcousticsLoadInstance : public DataStructure {
      * @typedef AcousticsLoadPtr
      * @brief Pointeur intelligent vers un AcousticsLoad
      */
-    typedef boost::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;
+    typedef boost::shared_ptr< AcousticsLoadClass > AcousticsLoadPtr;
 
     /**
      * @brief Constructeur
      */
-    AcousticsLoadInstance( const ModelPtr &model )
-        : AcousticsLoadInstance( ResultNaming::getNewResultName(), model ){};
+    AcousticsLoadClass( const ModelPtr &model )
+        : AcousticsLoadClass( ResultNaming::getNewResultName(), model ){};
 
     /**
      * @brief Constructeur
      */
-    AcousticsLoadInstance( const std::string name, const ModelPtr &model )
+    AcousticsLoadClass( const std::string name, const ModelPtr &model )
         : DataStructure( name, 8, "CHAR_ACOU" ), _model( model ),
           _mesh( model->getMesh() ),
           _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),
           _type( JeveuxVectorChar8( getName() + ".TYPE" ) ),
           _imposedValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexInstance( getName() + ".CHAC.CIMPO", _mesh ) ) ),
+              new PCFieldOnMeshComplexClass( getName() + ".CHAC.CIMPO", _mesh ) ) ),
           _multiplier( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexInstance( getName() + ".CHAC.CMULT", _mesh ) ) ),
+              new PCFieldOnMeshComplexClass( getName() + ".CHAC.CMULT", _mesh ) ) ),
           _impedanceValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexInstance( getName() + ".CHAC.IMPED", _mesh ) ) ),
+              new PCFieldOnMeshComplexClass( getName() + ".CHAC.IMPED", _mesh ) ) ),
           _speedValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexInstance( getName() + ".CHAC.VITFA", _mesh ) ) ),
-          _FEDesc( new FiniteElementDescriptorInstance( name + "CHAC.LIGRE", _mesh ) ) {
+              new PCFieldOnMeshComplexClass( getName() + ".CHAC.VITFA", _mesh ) ) ),
+          _FEDesc( new FiniteElementDescriptorClass( name + "CHAC.LIGRE", _mesh ) ) {
         _toCapyConverter.add(
             new CapyConvertibleValue< ModelPtr >( true, "MODELE", _model, true ) );
     };
 
     void addImposedNormalSpeedOnAllMesh( const DoubleComplex &speed ) {
-        ImposedComplexNormalSpeedPtr toAdd( new ImposedComplexNormalSpeedInstance() );
+        ImposedComplexNormalSpeedPtr toAdd( new ImposedComplexNormalSpeedClass() );
         toAdd->setValue( Vnor, speed );
         toAdd->setOnAllMeshEntities();
         _speed.push_back( toAdd );
@@ -174,7 +174,7 @@ class AcousticsLoadInstance : public DataStructure {
 
     void addImposedNormalSpeedOnGroupsOfElements( const VectorString &names,
                                                   const DoubleComplex &speed ) {
-        ImposedComplexNormalSpeedPtr toAdd( new ImposedComplexNormalSpeedInstance() );
+        ImposedComplexNormalSpeedPtr toAdd( new ImposedComplexNormalSpeedClass() );
         toAdd->setValue( Vnor, speed );
         for ( auto name : names )
             toAdd->GroupOfElementsManager<>::addGroupOfElements( name );
@@ -182,14 +182,14 @@ class AcousticsLoadInstance : public DataStructure {
     };
 
     void addImpedanceOnAllMesh( const DoubleComplex &impe ) {
-        ComplexImpedancePtr toAdd( new ComplexImpedanceInstance() );
+        ComplexImpedancePtr toAdd( new ComplexImpedanceClass() );
         toAdd->setValue( Impe, impe );
         toAdd->setOnAllMeshEntities();
         _impedance.push_back( toAdd );
     };
 
     void addImpedanceOnGroupsOfElements( const VectorString &names, const DoubleComplex &impe ) {
-        ComplexImpedancePtr toAdd( new ComplexImpedanceInstance() );
+        ComplexImpedancePtr toAdd( new ComplexImpedanceClass() );
         toAdd->setValue( Impe, impe );
         for ( auto name : names )
             toAdd->GroupOfElementsManager<>::addGroupOfElements( name );
@@ -197,7 +197,7 @@ class AcousticsLoadInstance : public DataStructure {
     };
 
     void addImposedPressureOnAllMesh( const DoubleComplex &pres ) {
-        ImposedComplexPressurePtr toAdd( new ImposedComplexPressureInstance() );
+        ImposedComplexPressurePtr toAdd( new ImposedComplexPressureClass() );
         toAdd->setValue( Pres, pres );
         toAdd->setOnAllMeshEntities();
         _pressure.push_back( toAdd );
@@ -205,7 +205,7 @@ class AcousticsLoadInstance : public DataStructure {
 
     void addImposedPressureOnGroupsOfElements( const VectorString &names,
                                                const DoubleComplex &pres ) {
-        ImposedComplexPressurePtr toAdd( new ImposedComplexPressureInstance() );
+        ImposedComplexPressurePtr toAdd( new ImposedComplexPressureClass() );
         toAdd->setValue( Pres, pres );
         for ( auto name : names )
             toAdd->GroupOfElementsManager<>::addGroupOfElements( name );
@@ -213,7 +213,7 @@ class AcousticsLoadInstance : public DataStructure {
     };
 
     void addImposedPressureOnGroupsOfNodes( const VectorString &names, const DoubleComplex &pres ) {
-        ImposedComplexPressurePtr toAdd( new ImposedComplexPressureInstance() );
+        ImposedComplexPressurePtr toAdd( new ImposedComplexPressureClass() );
         toAdd->setValue( Pres, pres );
         for ( auto name : names )
             toAdd->GroupOfNodesManager<>::addGroupOfNodes( name );
@@ -254,6 +254,6 @@ class AcousticsLoadInstance : public DataStructure {
     };
 };
 
-typedef boost::shared_ptr< AcousticsLoadInstance > AcousticsLoadPtr;
+typedef boost::shared_ptr< AcousticsLoadClass > AcousticsLoadPtr;
 
 #endif /* ACOUSTICSLOAD_H_ */

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ResultsContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -45,11 +45,11 @@
 #include "Results/FieldBuilder.h"
 
 /**
- * @class ResultsContainerInstance
+ * @class ResultsContainerClass
  * @brief Cette classe correspond a la sd_resultat de Code_Aster, elle stocke des champs
  * @author Nicolas Sellenet
  */
-class ResultsContainerInstance : public DataStructure {
+class ResultsContainerClass : public DataStructure {
   private:
     typedef std::vector< FieldOnNodesDoublePtr > VectorOfFieldsNodes;
     typedef std::vector< FieldOnElementsDoublePtr > VectorOfFieldsElements;
@@ -125,20 +125,20 @@ class ResultsContainerInstance : public DataStructure {
   public:
     /**
      * @typedef ResultsContainerPtr
-     * @brief Pointeur intelligent vers un ResultsContainerInstance
+     * @brief Pointeur intelligent vers un ResultsContainerClass
      */
-    typedef boost::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
+    typedef boost::shared_ptr< ResultsContainerClass > ResultsContainerPtr;
 
     /**
      * @brief Constructeur
      */
-    ResultsContainerInstance( const std::string &resuTyp )
-        : ResultsContainerInstance( ResultNaming::getNewResultName(), resuTyp ){};
+    ResultsContainerClass( const std::string &resuTyp )
+        : ResultsContainerClass( ResultNaming::getNewResultName(), resuTyp ){};
 
     /**
      * @brief Constructeur
      */
-    ResultsContainerInstance( const std::string &name, const std::string &resuTyp )
+    ResultsContainerClass( const std::string &name, const std::string &resuTyp )
         : DataStructure( name, 19, resuTyp ),
           _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
           _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
@@ -354,8 +354,8 @@ class ResultsContainerInstance : public DataStructure {
 
 /**
  * @typedef ResultsContainerPtr
- * @brief Pointeur intelligent vers un ResultsContainerInstance
+ * @brief Pointeur intelligent vers un ResultsContainerClass
  */
-typedef boost::shared_ptr< ResultsContainerInstance > ResultsContainerPtr;
+typedef boost::shared_ptr< ResultsContainerClass > ResultsContainerPtr;
 
 #endif /* RESULTSCONTAINER_H_ */

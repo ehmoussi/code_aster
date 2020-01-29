@@ -33,9 +33,9 @@ namespace py = boost::python;
 
 void exportTimeStepperToPython() {
 
-    py::class_< TimeStepperInstance, TimeStepperInstance::TimeStepperPtr,
+    py::class_< TimeStepperClass, TimeStepperClass::TimeStepperPtr,
                 py::bases< DataStructure > >( "TimeStepper", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< TimeStepperInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< TimeStepperInstance, std::string >))
-        .def( "setValues", &TimeStepperInstance::setValues );
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TimeStepperClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TimeStepperClass, std::string >))
+        .def( "setValues", &TimeStepperClass::setValues );
 };

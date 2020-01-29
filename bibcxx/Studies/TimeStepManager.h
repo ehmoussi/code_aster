@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TimeStepManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,12 +36,12 @@
 #include "Utilities/GenericParameter.h"
 
 /**
- * @class TimeStepManagerInstance
+ * @class TimeStepManagerClass
  * @brief Cette classe permet de definir un gestionnaire de pas de temps
  * @author Nicolas Sellenet
  * @todo ajouter les mots cles manquants
  */
-class TimeStepManagerInstance : public DataStructure {
+class TimeStepManagerClass : public DataStructure {
   private:
     /** @brief Liste d'instants */
     JeveuxVectorDouble _timeList;
@@ -73,7 +73,7 @@ class TimeStepManagerInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    TimeStepManagerInstance( const std::string name = ResultNaming::getNewResultName() )
+    TimeStepManagerClass( const std::string name = ResultNaming::getNewResultName() )
         : DataStructure( name, 8, "LIST_INST" ),
           _timeList( JeveuxVectorDouble( getName() + ".LIST.DITR" ) ),
           _infoList( JeveuxVectorDouble( getName() + ".LIST.INFOR" ) ),
@@ -84,7 +84,7 @@ class TimeStepManagerInstance : public DataStructure {
           _maximumTS( "PAS_MAXI", false ),
           _nbMaxiOfTS( "NB_PAS_MAXI", (ASTERINTEGER)1000000, false ){};
 
-    ~TimeStepManagerInstance(){};
+    ~TimeStepManagerClass(){};
 
     /**
      * @brief Fonction permettant d'ajouter un gestionnaire d'erreur
@@ -148,6 +148,6 @@ class TimeStepManagerInstance : public DataStructure {
  * @typedef TimeStepManagerPtr
  * @brief Pointeur intelligent vers un TimeStepManager
  */
-typedef boost::shared_ptr< TimeStepManagerInstance > TimeStepManagerPtr;
+typedef boost::shared_ptr< TimeStepManagerClass > TimeStepManagerPtr;
 
 #endif /* TIMESTEPMANAGER_H_ */

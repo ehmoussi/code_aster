@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MaterialBehaviour
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -56,7 +56,7 @@ static const std::string JeveuxTypesNames[10] = {"I",   "I4",  "R",   "C",   "K8
 
 /**
  * @struct AllowedJeveuxType
- * @brief Structure template permettant de limiter le type instanciable de JeveuxVectorInstance
+ * @brief Structure template permettant de limiter le type instanciable de JeveuxVectorClass
  * @tparam T Type autorise
  */
 template < typename T > struct AllowedJeveuxType; // undefined for bad types!

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe EvolutiveLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,23 +31,23 @@
 #include "Results/TimeDependantResultsContainer.h"
 
 /**
- * @class EvolutiveLoadInstance
+ * @class EvolutiveLoadClass
  * @brief Cette classe correspond a un comb_fourier
  * @author Nicolas Sellenet
  */
-class EvolutiveLoadInstance : public TimeDependantResultsContainerInstance {
+class EvolutiveLoadClass : public TimeDependantResultsContainerClass {
   public:
     /**
      * @brief Constructeur
      */
-    EvolutiveLoadInstance( const std::string name = ResultNaming::getNewResultName() )
-        : TimeDependantResultsContainerInstance( name, "EVOL_CHAR" ){};
+    EvolutiveLoadClass( const std::string name = ResultNaming::getNewResultName() )
+        : TimeDependantResultsContainerClass( name, "EVOL_CHAR" ){};
 };
 
 /**
  * @typedef EvolutiveLoadPtr
- * @brief Pointeur intelligent vers un EvolutiveLoadInstance
+ * @brief Pointeur intelligent vers un EvolutiveLoadClass
  */
-typedef boost::shared_ptr< EvolutiveLoadInstance > EvolutiveLoadPtr;
+typedef boost::shared_ptr< EvolutiveLoadClass > EvolutiveLoadPtr;
 
 #endif /* EVOLUTIVELOAD_H_ */

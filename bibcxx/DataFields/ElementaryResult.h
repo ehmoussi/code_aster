@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElementaryResult
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,11 +31,11 @@
 #include "MemoryManager/JeveuxCollection.h"
 
 /**
- * @class ElementaryResultInstance
+ * @class ElementaryResultClass
  * @brief Class which describe a RESUELEM
  * @author Nicolas Sellenet
  */
-template < class ValueType > class ElementaryResultInstance : public DataStructure {
+template < class ValueType > class ElementaryResultClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.NOLI' */
     JeveuxVectorChar24 _noli;
@@ -49,13 +49,13 @@ template < class ValueType > class ElementaryResultInstance : public DataStructu
      * @typedef ElementaryResultPtr
      * @brief Pointeur intelligent vers un ElementaryResult
      */
-    typedef boost::shared_ptr< ElementaryResultInstance > ElementaryResultPtr;
+    typedef boost::shared_ptr< ElementaryResultClass > ElementaryResultPtr;
 
     /**
      * @brief Constructor
      * @param name Jeveux name
      */
-    ElementaryResultInstance( const std::string name, const std::string type = "RESUELEM",
+    ElementaryResultClass( const std::string name, const std::string type = "RESUELEM",
                               const JeveuxMemory memType = Permanent )
         : DataStructure( name, 19, type, memType ),
           _noli( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -66,7 +66,7 @@ template < class ValueType > class ElementaryResultInstance : public DataStructu
      * @brief Constructor
      * @param memType allocation memory
      */
-    ElementaryResultInstance( const JeveuxMemory memType = Permanent,
+    ElementaryResultClass( const JeveuxMemory memType = Permanent,
                               const std::string type = "RESUELEM" )
         : DataStructure( type, memType, 19 ), _noli( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
@@ -76,11 +76,11 @@ template < class ValueType > class ElementaryResultInstance : public DataStructu
 /**
  * @typedef ElementaryResultDoublePtr
  */
-typedef boost::shared_ptr< ElementaryResultInstance< double > > ElementaryResultDoublePtr;
+typedef boost::shared_ptr< ElementaryResultClass< double > > ElementaryResultDoublePtr;
 
 /**
  * @typedef ElementaryResultComplexPtr
  */
-typedef boost::shared_ptr< ElementaryResultInstance< DoubleComplex > > ElementaryResultComplexPtr;
+typedef boost::shared_ptr< ElementaryResultClass< DoubleComplex > > ElementaryResultComplexPtr;
 
 #endif /* ELEMENTARYRESULT_H_ */

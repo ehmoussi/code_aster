@@ -6,7 +6,7 @@
  * @brief Definition of the static non linear analysis
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -49,7 +49,7 @@
  a static non linear analysis on the FE_Model.
 */
 
-class StaticNonLinearAnalysisInstance : public GenericSolver {
+class StaticNonLinearAnalysisClass : public GenericSolver {
   private:
     /** @typedef std::list of Excitations */
     typedef std::list< ExcitationPtr > ListExcitation;
@@ -103,7 +103,7 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
     /**
      * @brief Constructor
      */
-    StaticNonLinearAnalysisInstance();
+    StaticNonLinearAnalysisClass();
     /**
      * @brief Define a Constitutive Law on a MeshEntity
      * @param BehaviourPtr is the constitutive law
@@ -132,7 +132,7 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
                                                     "of the behaviour " );
         // Insert the current behaviour with its Mesh Entity in the list of behaviours
         _listOfBehaviours.push_back(
-            LocatedBehaviourPtr( new LocatedBehaviourInstance( behaviour, meshEntity ) ) );
+            LocatedBehaviourPtr( new LocatedBehaviourClass( behaviour, meshEntity ) ) );
     };
 
     /**
@@ -216,8 +216,8 @@ class StaticNonLinearAnalysisInstance : public GenericSolver {
 
 /**
  * @typedef StaticNonLinearAnalysisPtr
- * @brief smart pointer to a StaticNonLinearAnalysisInstance
+ * @brief smart pointer to a StaticNonLinearAnalysisClass
  */
-typedef boost::shared_ptr< StaticNonLinearAnalysisInstance > StaticNonLinearAnalysisPtr;
+typedef boost::shared_ptr< StaticNonLinearAnalysisClass > StaticNonLinearAnalysisPtr;
 
 #endif /* STATICNONLINEARANALYSIS_H_ */

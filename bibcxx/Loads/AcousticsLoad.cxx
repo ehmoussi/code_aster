@@ -3,7 +3,7 @@
  * @brief Implementation de AcousticsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,7 +28,7 @@
 const char SANS_GROUP_MA[] = "SANS_GROUP_MA";
 const char SANS_GROUP_NO[] = "SANS_GROUP_NO";
 
-bool AcousticsLoadInstance::build() {
+bool AcousticsLoadClass::build() {
     if ( !_model )
         throw std::runtime_error( "Model not set" );
 
@@ -42,28 +42,28 @@ bool AcousticsLoadInstance::build() {
         CapyConvertibleFactorKeyword zonePres( "PRES_IMPO" );
         for ( const auto &curPresPtr : _pressure )
             zonePres.addContainer(
-                curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
+                curPresPtr->UnitaryAcousticsLoadClass::getCapyConvertibleContainer() );
         syntax.addFactorKeywordValues( zonePres );
     }
     if ( _speed.size() != 0 ) {
         CapyConvertibleFactorKeyword zoneVite( "VITE_FACE" );
         for ( const auto &curPresPtr : _speed )
             zoneVite.addContainer(
-                curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
+                curPresPtr->UnitaryAcousticsLoadClass::getCapyConvertibleContainer() );
         syntax.addFactorKeywordValues( zoneVite );
     }
     if ( _impedance.size() != 0 ) {
         CapyConvertibleFactorKeyword zoneImpe( "IMPE_FACE" );
         for ( const auto &curPresPtr : _impedance )
             zoneImpe.addContainer(
-                curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
+                curPresPtr->UnitaryAcousticsLoadClass::getCapyConvertibleContainer() );
         syntax.addFactorKeywordValues( zoneImpe );
     }
     if ( _connection.size() != 0 ) {
         CapyConvertibleFactorKeyword zoneConnect( "LIAISON_UNIF" );
         for ( const auto &curPresPtr : _connection )
             zoneConnect.addContainer(
-                curPresPtr->UnitaryAcousticsLoadInstance::getCapyConvertibleContainer() );
+                curPresPtr->UnitaryAcousticsLoadClass::getCapyConvertibleContainer() );
         syntax.addFactorKeywordValues( zoneConnect );
     }
 

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedModeContainer
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,11 +32,11 @@
 #include "Discretization/GeneralizedDOFNumbering.h"
 
 /**
- * @class GeneralizedModeContainerInstance
+ * @class GeneralizedModeContainerClass
  * @brief Cette classe correspond à un mode_gene
  * @author Nicolas Sellenet
  */
-class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
+class GeneralizedModeContainerClass : public FullResultsContainerClass {
   private:
     /** @brief Damping matrix */
     GeneralizedAssemblyMatrixDoublePtr _dampingMatrix;
@@ -52,16 +52,16 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    GeneralizedModeContainerInstance( const std::string &name )
-        : FullResultsContainerInstance( name, "MODE_GENE" ), _rigidityDoubleMatrix( nullptr ),
+    GeneralizedModeContainerClass( const std::string &name )
+        : FullResultsContainerClass( name, "MODE_GENE" ), _rigidityDoubleMatrix( nullptr ),
           _rigidityComplexMatrix( nullptr ), _genDOFNum( nullptr ){};
 
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    GeneralizedModeContainerInstance()
-        : GeneralizedModeContainerInstance( ResultNaming::getNewResultName() ){};
+    GeneralizedModeContainerClass()
+        : GeneralizedModeContainerClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Get GeneralizedDOFNumering
@@ -136,13 +136,13 @@ class GeneralizedModeContainerInstance : public FullResultsContainerInstance {
         return _rigidityComplexMatrix;
     };
 
-    bool update() { return ResultsContainerInstance::update(); };
+    bool update() { return ResultsContainerClass::update(); };
 };
 
 /**
  * @typedef GeneralizedModeContainerPtr
- * @brief Pointeur intelligent vers un GeneralizedModeContainerInstance
+ * @brief Pointeur intelligent vers un GeneralizedModeContainerClass
  */
-typedef boost::shared_ptr< GeneralizedModeContainerInstance > GeneralizedModeContainerPtr;
+typedef boost::shared_ptr< GeneralizedModeContainerClass > GeneralizedModeContainerPtr;
 
 #endif /* GENERALIZEDMODECONTAINER_H_ */

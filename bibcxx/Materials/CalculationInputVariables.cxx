@@ -1,9 +1,9 @@
 /**
  * @file CalculationInputVariables.cxx
- * @brief Implementation de CalculationInputVariablesInstance
+ * @brief Implementation de CalculationInputVariablesClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,15 +25,15 @@
 
 #include "Materials/CalculationInputVariables.h"
 
-CalculationInputVariablesInstance::CalculationInputVariablesInstance(
+CalculationInputVariablesClass::CalculationInputVariablesClass(
     const ModelPtr &model, const MaterialOnMeshPtr &mater,
     const ElementaryCharacteristicsPtr &cara, const CodedMaterialPtr &codMater ):
         DataStructure( "VARI_COM", Permanent, 14 ), _model( model ), _mater( mater ),
         _codMater( codMater ), _elemCara( cara ),
-        _varRef( new FieldOnElementsDoubleInstance( _model->getName() + ".CHVCREF" ) ),
-        _varInst( new FieldOnElementsDoubleInstance( getName() + ".TOUT" ) ),
+        _varRef( new FieldOnElementsDoubleClass( _model->getName() + ".CHVCREF" ) ),
+        _varInst( new FieldOnElementsDoubleClass( getName() + ".TOUT" ) ),
         _timeValue(
-          new PCFieldOnMeshDoubleInstance( getName() + ".INST", _model->getMesh() ) ),
+          new PCFieldOnMeshDoubleClass( getName() + ".INST", _model->getMesh() ) ),
         _currentTime( -1.0 ), _pTot( _mater->existsCalculationInputVariable( "PTOT" ) ),
         _hydr( _mater->existsCalculationInputVariable( "HYDR" ) ),
         _sech( _mater->existsCalculationInputVariable( "SECH" ) ),
@@ -46,7 +46,7 @@ CalculationInputVariablesInstance::CalculationInputVariablesInstance(
     CALLO_VRCREF( modName, matName, carName, _varRef->getName() );
 };
 
-void CalculationInputVariablesInstance::compute( const double &time )
+void CalculationInputVariablesClass::compute( const double &time )
 {
     _currentTime = time;
     _varInst->deallocate();
@@ -67,7 +67,7 @@ void CalculationInputVariablesInstance::compute( const double &time )
 };
 
 FieldOnNodesDoublePtr
-CalculationInputVariablesInstance::computeMechanicalLoads( const BaseDOFNumberingPtr &dofNUM )
+CalculationInputVariablesClass::computeMechanicalLoads( const BaseDOFNumberingPtr &dofNUM )
 {
     const auto &codedMater = _codMater->getCodedMaterialField();
     std::string modName( _model->getName(), 0, 8 );
@@ -90,7 +90,7 @@ CalculationInputVariablesInstance::computeMechanicalLoads( const BaseDOFNumberin
                   out, &a, &b, &c, &d );
     JeveuxVectorChar24 vectOut( out );
     vectOut->updateValuePointer();
-    FieldOnNodesDoublePtr toReturn( new FieldOnNodesDoubleInstance( ( *vectOut )[0].toString() ) );
+    FieldOnNodesDoublePtr toReturn( new FieldOnNodesDoubleClass( ( *vectOut )[0].toString() ) );
     toReturn->updateValuePointers();
     return toReturn;
 };

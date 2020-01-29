@@ -3,7 +3,7 @@
  * @brief Class to describe the possible shape of cracks for XFEM
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -22,9 +22,9 @@
  */
 #include "CrackShape.h"
 
-CrackShapeInstance::CrackShapeInstance() { _shape = Shape::NoShape; };
+CrackShapeClass::CrackShapeClass() { _shape = Shape::NoShape; };
 
-void CrackShapeInstance::setEllipseCrackShape( double semiMajorAxis, double semiMinorAxis,
+void CrackShapeClass::setEllipseCrackShape( double semiMajorAxis, double semiMinorAxis,
                                                std::vector< double > center,
                                                std::vector< double > vectX,
                                                std::vector< double > vectY,
@@ -38,7 +38,7 @@ void CrackShapeInstance::setEllipseCrackShape( double semiMajorAxis, double semi
     _crackSide = crackSide;
 };
 
-void CrackShapeInstance::setSquareCrackShape( double semiMajorAxis, double semiMinorAxis,
+void CrackShapeClass::setSquareCrackShape( double semiMajorAxis, double semiMinorAxis,
                                               double filletRadius, std::vector< double > center,
                                               std::vector< double > vectX,
                                               std::vector< double > vectY, std::string crackSide ) {
@@ -52,7 +52,7 @@ void CrackShapeInstance::setSquareCrackShape( double semiMajorAxis, double semiM
     _crackSide = crackSide;
 };
 
-void CrackShapeInstance::setCylinderCrackShape( double semiMajorAxis, double semiMinorAxis,
+void CrackShapeClass::setCylinderCrackShape( double semiMajorAxis, double semiMinorAxis,
                                                 std::vector< double > center,
                                                 std::vector< double > vectX,
                                                 std::vector< double > vectY ) {
@@ -64,7 +64,7 @@ void CrackShapeInstance::setCylinderCrackShape( double semiMajorAxis, double sem
     _vectY = vectY;
 };
 
-void CrackShapeInstance::setNotchCrackShape( double halfLength, double filletRadius,
+void CrackShapeClass::setNotchCrackShape( double halfLength, double filletRadius,
                                              std::vector< double > center,
                                              std::vector< double > vectX,
                                              std::vector< double > vectY ) {
@@ -76,7 +76,7 @@ void CrackShapeInstance::setNotchCrackShape( double halfLength, double filletRad
     _vectY = vectY;
 };
 
-void CrackShapeInstance::setHalfPlaneCrackShape( std::vector< double > endPoint,
+void CrackShapeClass::setHalfPlaneCrackShape( std::vector< double > endPoint,
                                                  std::vector< double > normal,
                                                  std::vector< double > tangent ) {
     _shape = Shape::HalfPlane;
@@ -84,21 +84,21 @@ void CrackShapeInstance::setHalfPlaneCrackShape( std::vector< double > endPoint,
     _normal = normal;
     _tangent = tangent;
 };
-void CrackShapeInstance::setSegmentCrackShape( std::vector< double > startingPoint,
+void CrackShapeClass::setSegmentCrackShape( std::vector< double > startingPoint,
                                                std::vector< double > endPoint ) {
     _shape = Shape::Segment;
     _startingPoint = startingPoint;
     _endPoint = endPoint;
 };
 
-void CrackShapeInstance::setHalfLineCrackShape( std::vector< double > startingPoint,
+void CrackShapeClass::setHalfLineCrackShape( std::vector< double > startingPoint,
                                                 std::vector< double > tangent ) {
     _shape = Shape::HalfLine;
     _startingPoint = startingPoint;
     _tangent = tangent;
 };
 
-void CrackShapeInstance::setLineCrackShape( std::vector< double > startingPoint,
+void CrackShapeClass::setLineCrackShape( std::vector< double > startingPoint,
                                             std::vector< double > tangent ) {
     _shape = Shape::Line;
     _startingPoint = startingPoint;

@@ -29,9 +29,9 @@ namespace py = boost::python;
 
 void exportStaticMacroElementToPython() {
 
-    py::class_< StaticMacroElementInstance, StaticMacroElementInstance::StaticMacroElementPtr,
+    py::class_< StaticMacroElementClass, StaticMacroElementClass::StaticMacroElementPtr,
             py::bases< DataStructure > >( "StaticMacroElement", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< StaticMacroElementInstance > ) )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< StaticMacroElementClass > ) )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< StaticMacroElementInstance, std::string > ) );
+              py::make_constructor( &initFactoryPtr< StaticMacroElementClass, std::string > ) );
 };

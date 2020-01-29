@@ -29,10 +29,10 @@ namespace py = boost::python;
 
 void exportAcousticModeContainerToPython() {
 
-    py::class_< AcousticModeContainerInstance, AcousticModeContainerPtr,
-            py::bases< FullResultsContainerInstance > >( "AcousticModeContainer", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< AcousticModeContainerInstance >))
+    py::class_< AcousticModeContainerClass, AcousticModeContainerPtr,
+            py::bases< FullResultsContainerClass > >( "AcousticModeContainer", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< AcousticModeContainerClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< AcousticModeContainerInstance, std::string >))
-        .def( "setStiffnessMatrix", &AcousticModeContainerInstance::setStiffnessMatrix );
+              py::make_constructor(&initFactoryPtr< AcousticModeContainerClass, std::string >))
+        .def( "setStiffnessMatrix", &AcousticModeContainerClass::setStiffnessMatrix );
 };

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MechanicalModeComplexContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,13 +32,13 @@
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 
 /**
- * @class MechanicalModeComplexContainerInstance
+ * @class MechanicalModeComplexContainerClass
  * @brief Cette classe correspond a un mode_meca_c
- * On a choisi de définir un MechanicalModeComplexContainerInstance comme
+ * On a choisi de définir un MechanicalModeComplexContainerClass comme
    un résultat disposant, en plus des membres usuels d'un résultat, de champs aux noeuds complexes.
  * @author Natacha Béreux
  */
-class MechanicalModeComplexContainerInstance : public MechanicalModeContainerInstance {
+class MechanicalModeComplexContainerClass : public MechanicalModeContainerClass {
   private:
     typedef std::vector< FieldOnNodesComplexPtr > VectorOfComplexFieldsNodes;
 
@@ -71,15 +71,15 @@ class MechanicalModeComplexContainerInstance : public MechanicalModeContainerIns
     /**
      * @brief Constructeur
      */
-    MechanicalModeComplexContainerInstance():
-        MechanicalModeComplexContainerInstance( ResultNaming::getNewResultName() )
+    MechanicalModeComplexContainerClass():
+        MechanicalModeComplexContainerClass( ResultNaming::getNewResultName() )
     {};
 
     /**
      * @brief Constructeur
      */
-    MechanicalModeComplexContainerInstance( const std::string &name ):
-       MechanicalModeContainerInstance ( name, "MODE_MECA_C" ),
+    MechanicalModeComplexContainerClass( const std::string &name ):
+       MechanicalModeContainerClass ( name, "MODE_MECA_C" ),
         _structureInterface( StructureInterfacePtr() ),
         _dampingMatrix( nullptr ),
         _rigidityDispDMatrix( nullptr ),
@@ -236,15 +236,15 @@ class MechanicalModeComplexContainerInstance : public MechanicalModeContainerIns
             if ( model != nullptr )
                 _mesh = model->getMesh();
         }
-        return ResultsContainerInstance::update();
+        return ResultsContainerClass::update();
     };
 };
 
 /**
  * @typedef MechanicalModeComplexContainerPtr
- * @brief Pointeur intelligent vers un MechanicalModeComplexContainerInstance
+ * @brief Pointeur intelligent vers un MechanicalModeComplexContainerClass
  */
-typedef boost::shared_ptr< MechanicalModeComplexContainerInstance >
+typedef boost::shared_ptr< MechanicalModeComplexContainerClass >
     MechanicalModeComplexContainerPtr;
 
 #endif /* MECHANICALMODECOMPLEXCONTAINER_H_ */

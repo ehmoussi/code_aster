@@ -29,9 +29,9 @@ namespace py = boost::python;
 
 void exportMultElasContainerToPython() {
 
-    py::class_< MultElasContainerInstance, MultElasContainerPtr,
-                py::bases< ResultsContainerInstance > >( "MultElasContainer", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MultElasContainerInstance >))
+    py::class_< MultElasContainerClass, MultElasContainerPtr,
+                py::bases< ResultsContainerClass > >( "MultElasContainer", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MultElasContainerClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< MultElasContainerInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< MultElasContainerClass, std::string >));
 };

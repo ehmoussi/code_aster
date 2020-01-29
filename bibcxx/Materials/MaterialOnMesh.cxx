@@ -3,7 +3,7 @@
  * @brief Implementation de MaterialOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,34 +33,34 @@
 
 #include "Materials/MaterialOnMeshBuilder.h"
 
-MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
+MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
                                                 const MeshPtr& mesh ):
     _mesh( mesh ),
     _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+        new PCFieldOnMeshChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+        new PCFieldOnMeshDoubleClass( getName() + ".TEMPE_REF ", mesh ) ) ),
     _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+        new PCFieldOnMeshDoubleClass( getName() + ".COMPOR ", mesh ) ) ),
     _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
     _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
     _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
     _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) )
 {};
 
-MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
+MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
                                                 const SkeletonPtr& mesh ):
     _mesh( mesh ),
     _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+        new PCFieldOnMeshChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+        new PCFieldOnMeshDoubleClass( getName() + ".TEMPE_REF ", mesh ) ) ),
     _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+        new PCFieldOnMeshDoubleClass( getName() + ".COMPOR ", mesh ) ) ),
     _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
     _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
     _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
@@ -68,17 +68,17 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
 {};
 
 #ifdef _USE_MPI
-MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
+MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
                                                 const ParallelMeshPtr& mesh ):
     _mesh( mesh ),
     _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
     _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Instance( getName() + ".CHAMP_MAT ", mesh ) ) ),
+        new PCFieldOnMeshChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
     _listOfTemperatures( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".TEMPE_REF ", mesh ) ) ),
+        new PCFieldOnMeshDoubleClass( getName() + ".TEMPE_REF ", mesh ) ) ),
     _behaviourField( PCFieldOnMeshDoublePtr(
-        new PCFieldOnMeshDoubleInstance( getName() + ".COMPOR ", mesh ) ) ),
+        new PCFieldOnMeshDoubleClass( getName() + ".COMPOR ", mesh ) ) ),
     _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
     _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
     _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
@@ -86,14 +86,14 @@ MaterialOnMeshInstance::MaterialOnMeshInstance( const std::string &name,
 {};
 #endif /* _USE_MPI */
 
-bool MaterialOnMeshInstance::buildWithoutInputVariables()
+bool MaterialOnMeshClass::buildWithoutInputVariables()
 {
-    MaterialOnMeshBuilderInstance::buildInstance(*this);
+    MaterialOnMeshBuilderClass::buildClass(*this);
 
     return true;
 };
 
-std::vector< MaterialPtr > MaterialOnMeshInstance::getVectorOfMaterial() const
+std::vector< MaterialPtr > MaterialOnMeshClass::getVectorOfMaterial() const
 {
     std::vector< MaterialPtr > toReturn;
     for( const auto& curIter : _materialsOnMeshEntity )
@@ -103,19 +103,19 @@ std::vector< MaterialPtr > MaterialOnMeshInstance::getVectorOfMaterial() const
 };
 
 std::vector< PartOfMaterialOnMeshPtr >
-MaterialOnMeshInstance::getVectorOfPartOfMaterialOnMesh() const
+MaterialOnMeshClass::getVectorOfPartOfMaterialOnMesh() const
 {
     std::vector< PartOfMaterialOnMeshPtr > toReturn;
     for( const auto& curIter : _materialsOnMeshEntity )
     {
-        PartOfMaterialOnMeshPtr toPush( new PartOfMaterialOnMeshInstance( curIter.first,
+        PartOfMaterialOnMeshPtr toPush( new PartOfMaterialOnMeshClass( curIter.first,
                                                                           curIter.second ) );
         toReturn.push_back( toPush );
     }
     return toReturn;
 };
 
-bool MaterialOnMeshInstance::existsCalculationInputVariable( const std::string& name )
+bool MaterialOnMeshClass::existsCalculationInputVariable( const std::string& name )
 {
     if( _cvrcVarc->exists() )
     {

@@ -32,9 +32,9 @@ namespace py = boost::python;
 
 void exportGenericDataFieldToPython() {
 
-    py::class_< GenericDataFieldInstance, GenericDataFieldPtr, py::bases< DataStructure > >(
+    py::class_< GenericDataFieldClass, GenericDataFieldPtr, py::bases< DataStructure > >(
         "GenericDataField", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< GenericDataFieldInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GenericDataFieldClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GenericDataFieldInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< GenericDataFieldClass, std::string >));
 };

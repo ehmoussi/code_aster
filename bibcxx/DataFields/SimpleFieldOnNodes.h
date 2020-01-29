@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe SimpleFieldOnNodes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,11 +36,11 @@
 #include "DataStructures/DataStructure.h"
 
 /**
- * @class SimpleFieldOnNodesInstance
+ * @class SimpleFieldOnNodesClass
  * @brief Cette classe template permet de definir un champ aux noeuds Aster
  * @author Nicolas Sellenet
  */
-template < class ValueType > class SimpleFieldOnNodesInstance : public DataStructure {
+template < class ValueType > class SimpleFieldOnNodesClass : public DataStructure {
   private:
     /** @brief Vecteur Jeveux '.CNSK' */
     JeveuxVectorChar8 _descriptor;
@@ -62,13 +62,13 @@ template < class ValueType > class SimpleFieldOnNodesInstance : public DataStruc
      * @typedef SimpleFieldOnNodesPtr
      * @brief Pointeur intelligent vers un SimpleFieldOnNodes
      */
-    typedef boost::shared_ptr< SimpleFieldOnNodesInstance > SimpleFieldOnNodesPtr;
+    typedef boost::shared_ptr< SimpleFieldOnNodesClass > SimpleFieldOnNodesPtr;
 
     /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    SimpleFieldOnNodesInstance( const std::string name )
+    SimpleFieldOnNodesClass( const std::string name )
         : DataStructure( name, 19, "CHAM_NO_S" ),
           _descriptor( JeveuxVectorChar8( getName() + ".CNSK" ) ),
           _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
@@ -80,7 +80,7 @@ template < class ValueType > class SimpleFieldOnNodesInstance : public DataStruc
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    SimpleFieldOnNodesInstance( const JeveuxMemory memType = Permanent )
+    SimpleFieldOnNodesClass( const JeveuxMemory memType = Permanent )
         : DataStructure( "CHAM_NO_S", memType, 19 ),
           _descriptor( JeveuxVectorChar8( getName() + ".CNSK" ) ),
           _size( JeveuxVectorLong( getName() + ".CNSD" ) ),
@@ -126,31 +126,31 @@ template < class ValueType > class SimpleFieldOnNodesInstance : public DataStruc
     };
 };
 
-/** @typedef SimpleFieldOnNodesDoubleInstance Instance d'une champ simple de doubles */
-typedef SimpleFieldOnNodesInstance< double > SimpleFieldOnNodesDoubleInstance;
+/** @typedef SimpleFieldOnNodesDoubleClass Class d'une champ simple de doubles */
+typedef SimpleFieldOnNodesClass< double > SimpleFieldOnNodesDoubleClass;
 
 /**
  * @typedef SimpleFieldOnNodesPtrDouble
  * @brief Definition d'un champ simple de doubles
  */
-typedef boost::shared_ptr< SimpleFieldOnNodesDoubleInstance > SimpleFieldOnNodesDoublePtr;
+typedef boost::shared_ptr< SimpleFieldOnNodesDoubleClass > SimpleFieldOnNodesDoublePtr;
 
-/** @typedef SimpleFieldOnNodesInstanceLong Instance d'un champ simple de long */
-typedef SimpleFieldOnNodesInstance< long > SimpleFieldOnNodesLongInstance;
+/** @typedef SimpleFieldOnNodesClassLong Class d'un champ simple de long */
+typedef SimpleFieldOnNodesClass< long > SimpleFieldOnNodesLongClass;
 
 /**
  * @typedef SimpleFieldOnNodesPtrLong
  * @brief Definition d'un champ simple de long
  */
-typedef boost::shared_ptr< SimpleFieldOnNodesLongInstance > SimpleFieldOnNodesLongPtr;
+typedef boost::shared_ptr< SimpleFieldOnNodesLongClass > SimpleFieldOnNodesLongPtr;
 
-/** @typedef SimpleFieldOnNodesComplexInstance
-    @brief Instance d'un champ simple de complexes */
-typedef SimpleFieldOnNodesInstance< DoubleComplex > SimpleFieldOnNodesComplexInstance;
+/** @typedef SimpleFieldOnNodesComplexClass
+    @brief Class d'un champ simple de complexes */
+typedef SimpleFieldOnNodesClass< DoubleComplex > SimpleFieldOnNodesComplexClass;
 
 /**
  * @typedef SimpleFieldOnNodesComplexPtr
  * @brief Definition d'un champ simple aux noeuds de complexes
  */
-typedef boost::shared_ptr< SimpleFieldOnNodesComplexInstance > SimpleFieldOnNodesComplexPtr;
+typedef boost::shared_ptr< SimpleFieldOnNodesComplexClass > SimpleFieldOnNodesComplexPtr;
 #endif /* SIMPLEFIELDONNODES_H_ */

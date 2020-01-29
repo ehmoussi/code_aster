@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TurbulentSpectrum
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,11 +33,11 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class TurbulentSpectrumInstance
+ * @class TurbulentSpectrumClass
  * @brief Cette classe correspond a une sd spectre
  * @author Nicolas Sellenet
  */
-class TurbulentSpectrumInstance : public DataStructure {
+class TurbulentSpectrumClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.VAIN' */
     JeveuxVectorLong _vain;
@@ -53,17 +53,17 @@ class TurbulentSpectrumInstance : public DataStructure {
      * @typedef TurbulentSpectrumPtr
      * @brief Pointeur intelligent vers un TurbulentSpectrum
      */
-    typedef boost::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
+    typedef boost::shared_ptr< TurbulentSpectrumClass > TurbulentSpectrumPtr;
 
     /**
      * @brief Constructeur
      */
-    TurbulentSpectrumInstance() : TurbulentSpectrumInstance( ResultNaming::getNewResultName() ){};
+    TurbulentSpectrumClass() : TurbulentSpectrumClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    TurbulentSpectrumInstance( const std::string name )
+    TurbulentSpectrumClass( const std::string name )
         : DataStructure( name, 19, "SPECTRE", Permanent ),
           _vain( JeveuxVectorLong( getName() + ".REFE" ) ),
           _vare( JeveuxVectorDouble( getName() + ".DISC" ) ),
@@ -73,8 +73,8 @@ class TurbulentSpectrumInstance : public DataStructure {
 
 /**
  * @typedef TurbulentSpectrumPtr
- * @brief Pointeur intelligent vers un TurbulentSpectrumInstance
+ * @brief Pointeur intelligent vers un TurbulentSpectrumClass
  */
-typedef boost::shared_ptr< TurbulentSpectrumInstance > TurbulentSpectrumPtr;
+typedef boost::shared_ptr< TurbulentSpectrumClass > TurbulentSpectrumPtr;
 
 #endif /* TURBULENTSPECTRUM_H_ */

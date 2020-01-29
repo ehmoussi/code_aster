@@ -1,6 +1,6 @@
 /**
  * @file Mesh.cxx
- * @brief Implementation de BaseMeshInstance
+ * @brief Implementation de BaseMeshClass
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -34,7 +34,7 @@
 #include "Supervis/ResultNaming.h"
 #include "Utilities/CapyConvertibleValue.h"
 
-bool MeshInstance::addGroupOfNodesFromNodes( const std::string &name,
+bool MeshClass::addGroupOfNodesFromNodes( const std::string &name,
                                              const VectorString &vec ) {
     CommandSyntax cmdSt( "DEFI_GROUP" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
@@ -61,7 +61,7 @@ bool MeshInstance::addGroupOfNodesFromNodes( const std::string &name,
     return true;
 };
 
-bool BaseMeshInstance::readMeshFile( const std::string &fileName, const std::string &format ) {
+bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string &format ) {
     FileType type = Ascii;
     if ( format == "MED" )
         type = Binary;
@@ -119,25 +119,25 @@ bool BaseMeshInstance::readMeshFile( const std::string &fileName, const std::str
     return true;
 };
 
-bool MeshInstance::readAsterMeshFile( const std::string &fileName ) {
+bool MeshClass::readAsterMeshFile( const std::string &fileName ) {
     readMeshFile( fileName, "ASTER" );
 
     return true;
 };
 
-bool MeshInstance::readGibiFile( const std::string &fileName ) {
+bool MeshClass::readGibiFile( const std::string &fileName ) {
     readMeshFile( fileName, "GIBI" );
 
     return true;
 };
 
-bool MeshInstance::readGmshFile( const std::string &fileName ) {
+bool MeshClass::readGmshFile( const std::string &fileName ) {
     readMeshFile( fileName, "GMSH" );
 
     return true;
 };
 
-bool BaseMeshInstance::readMedFile( const std::string &fileName ) {
+bool BaseMeshClass::readMedFile( const std::string &fileName ) {
     readMeshFile( fileName, "MED" );
 
     return true;

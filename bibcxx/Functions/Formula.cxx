@@ -2,7 +2,7 @@
  * @file ResultNaming.cxx
  * @brief Implementation of automatic naming of jeveux objects.
  * @section LICENCE
- * Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -31,26 +31,26 @@
 #include "Supervis/ResultNaming.h"
 #include "Utilities/Tools.h"
 
-FormulaInstance::FormulaInstance( const std::string jeveuxName )
-    : GenericFunctionInstance( jeveuxName, "FORMULE", "FORMULE" ), _jeveuxName( getName() ),
+FormulaClass::FormulaClass( const std::string jeveuxName )
+    : GenericFunctionClass( jeveuxName, "FORMULE", "FORMULE" ), _jeveuxName( getName() ),
       _variables( JeveuxVectorChar24( getName() + ".NOVA" ) ),
       _pointers( JeveuxVectorLong( getName() + ".ADDR" ) ), _expression( "" ), _code( NULL ),
       _context( NULL ) {
     _context = PyDict_New();
 }
 
-FormulaInstance::FormulaInstance()
-    : FormulaInstance::FormulaInstance( ResultNaming::getNewResultName() ) {
+FormulaClass::FormulaClass()
+    : FormulaClass::FormulaClass( ResultNaming::getNewResultName() ) {
     propertyAllocate();
     _pointers->allocate( Permanent, 2 );
 }
 
-FormulaInstance::~FormulaInstance() {
+FormulaClass::~FormulaClass() {
     Py_XDECREF( _code );
     Py_XDECREF( _context );
 }
 
-void FormulaInstance::setVariables( const std::vector< std::string > &names ) {
+void FormulaClass::setVariables( const std::vector< std::string > &names ) {
     const int nbvar = names.size();
     _variables->allocate( Permanent, nbvar );
 
@@ -61,7 +61,7 @@ void FormulaInstance::setVariables( const std::vector< std::string > &names ) {
         ++idx;
     }
 }
-std::vector< std::string > FormulaInstance::getVariables() const {
+std::vector< std::string > FormulaClass::getVariables() const {
     _variables->updateValuePointer();
     long nbvars = _variables->size();
     std::vector< std::string > vars;
@@ -71,7 +71,7 @@ std::vector< std::string > FormulaInstance::getVariables() const {
     return vars;
 }
 
-void FormulaInstance::setExpression( const std::string expression ) {
+void FormulaClass::setExpression( const std::string expression ) {
     const std::string name = "formula";
     _expression = expression;
     Py_XDECREF( _code );
@@ -86,7 +86,7 @@ void FormulaInstance::setExpression( const std::string expression ) {
     }
 }
 
-VectorDouble FormulaInstance::evaluate( const VectorDouble &values ) const
+VectorDouble FormulaClass::evaluate( const VectorDouble &values ) const
     {
     int iret = 0;
     std::vector< std::string > vars = getVariables();

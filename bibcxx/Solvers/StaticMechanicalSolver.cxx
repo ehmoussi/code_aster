@@ -35,17 +35,17 @@
 #include "Solvers/StaticMechanicalSolver.h"
 #include "Supervis/CommandSyntax.h"
 
-StaticMechanicalSolverInstance::StaticMechanicalSolverInstance(
+StaticMechanicalSolverClass::StaticMechanicalSolverClass(
     const ModelPtr &model, const MaterialOnMeshPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
     : _model( model ), _materialOnMesh( mater ), _linearSolver( BaseLinearSolverPtr() ),
-      _timeStep( TimeStepperPtr( new TimeStepperInstance() ) ),
-      _study( new StudyDescriptionInstance( _model, _materialOnMesh, cara ) ) {
+      _timeStep( TimeStepperPtr( new TimeStepperClass() ) ),
+      _study( new StudyDescriptionClass( _model, _materialOnMesh, cara ) ) {
     _timeStep->setValues( VectorDouble( 1, 0. ) );
 };
 
-ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
-    ElasticEvolutionContainerPtr resultC( new ElasticEvolutionContainerInstance() );
+ElasticEvolutionContainerPtr StaticMechanicalSolverClass::execute() {
+    ElasticEvolutionContainerPtr resultC( new ElasticEvolutionContainerClass() );
 
     _study->getCodedMaterial()->allocate(true);
 
@@ -57,7 +57,7 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
         resultC->allocate( _timeStep->size() );
 
     // Define the discrete problem
-    DiscreteProblemPtr dProblem( new DiscreteProblemInstance( _study ) );
+    DiscreteProblemPtr dProblem( new DiscreteProblemClass( _study ) );
 
     if ( _model->getMesh()->isParallel() ) {
         if ( !_linearSolver->isHPCCompliant() )
@@ -80,7 +80,7 @@ ElasticEvolutionContainerPtr StaticMechanicalSolverInstance::execute() {
     dofNum1 = dProblem->computeDOFNumbering( dofNum1 );
 
     StaticMechanicalContext currentContext( dProblem, _linearSolver, resultC );
-    typedef Algorithm< TimeStepperInstance, StaticMechanicalContext, StaticMechanicalAlgorithm >
+    typedef Algorithm< TimeStepperClass, StaticMechanicalContext, StaticMechanicalAlgorithm >
         MSAlgo;
     MSAlgo::runAllStepsOverAlgorithm( *_timeStep, currentContext );
 

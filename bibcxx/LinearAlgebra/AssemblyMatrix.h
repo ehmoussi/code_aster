@@ -50,19 +50,19 @@
 #include "Loads/PhysicalQuantity.h"
 #include "Modeling/Model.h"
 
-class BaseLinearSolverInstance;
+class BaseLinearSolverClass;
 
 /**
- * @class AssemblyMatrixInstance
+ * @class AssemblyMatrixClass
  * @brief Classe template definissant une sd_matr_asse.
  *        Cette classe est volontairement succinte car on n'en connait pas encore l'usage
  * @author Nicolas Sellenet
  * @todo revoir le template pour prendre la grandeur en plus
  */
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-class AssemblyMatrixInstance : public DataStructure {
+class AssemblyMatrixClass : public DataStructure {
   private:
-    typedef boost::shared_ptr< ElementaryMatrixInstance< ValueType, PhysicalQuantity > >
+    typedef boost::shared_ptr< ElementaryMatrixClass< ValueType, PhysicalQuantity > >
         ElementaryMatrixPtr;
     /** @typedef std::list de KinematicsLoad */
     typedef std::list< KinematicsLoadPtr > ListKinematicsLoad;
@@ -110,32 +110,32 @@ class AssemblyMatrixInstance : public DataStructure {
     /** @brief Solver name (MUMPS or PETSc) */
     std::string _solverName;
 
-    friend class BaseLinearSolverInstance;
+    friend class BaseLinearSolverClass;
 
   public:
     /**
      * @typedef AssemblyMatrixPtr
      * @brief Pointeur intelligent vers un AssemblyMatrix
      */
-    typedef boost::shared_ptr< AssemblyMatrixInstance< ValueType, PhysicalQuantity > >
+    typedef boost::shared_ptr< AssemblyMatrixClass< ValueType, PhysicalQuantity > >
         AssemblyMatrixPtr;
 
     /**
      * @brief Constructeur
      */
-    AssemblyMatrixInstance( const JeveuxMemory memType = Permanent );
+    AssemblyMatrixClass( const JeveuxMemory memType = Permanent );
 
     /**
      * @brief Constructeur
      */
-    AssemblyMatrixInstance( const std::string &name );
+    AssemblyMatrixClass( const std::string &name );
 
     /**
      * @brief Destructeur
      */
-    ~AssemblyMatrixInstance() {
+    ~AssemblyMatrixClass() {
 #ifdef _DEBUG_CXX
-        std::cout << "DEBUG: AssemblyMatrixInstance.destr: " << this->getName() << std::endl;
+        std::cout << "DEBUG: AssemblyMatrixClass.destr: " << this->getName() << std::endl;
 #endif
         if ( _description->exists() && ( _solverName == "MUMPS" || _solverName == "PETSC" ) ) {
             CALLO_DELETE_MATRIX( getName(), _solverName );
@@ -272,42 +272,42 @@ class AssemblyMatrixInstance : public DataStructure {
 };
 
 /** @typedef Definition d'une matrice assemblee de double */
-template class AssemblyMatrixInstance< double, Displacement >;
-typedef AssemblyMatrixInstance< double, Displacement > AssemblyMatrixDisplacementDoubleInstance;
+template class AssemblyMatrixClass< double, Displacement >;
+typedef AssemblyMatrixClass< double, Displacement > AssemblyMatrixDisplacementDoubleClass;
 /** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrixInstance< DoubleComplex, Displacement >
-    AssemblyMatrixDisplacementComplexInstance;
+typedef AssemblyMatrixClass< DoubleComplex, Displacement >
+    AssemblyMatrixDisplacementComplexClass;
 
 /** @typedef Definition d'une matrice assemblee de double temperature */
-template class AssemblyMatrixInstance< double, Temperature >;
-typedef AssemblyMatrixInstance< double, Temperature > AssemblyMatrixTemperatureDoubleInstance;
+template class AssemblyMatrixClass< double, Temperature >;
+typedef AssemblyMatrixClass< double, Temperature > AssemblyMatrixTemperatureDoubleClass;
 
 /** @typedef Definition d'une matrice assemblee de double pression */
-template class AssemblyMatrixInstance< double, Pressure >;
-typedef AssemblyMatrixInstance< double, Pressure > AssemblyMatrixPressureDoubleInstance;
+template class AssemblyMatrixClass< double, Pressure >;
+typedef AssemblyMatrixClass< double, Pressure > AssemblyMatrixPressureDoubleClass;
 
 /** @typedef Definition d'une matrice assemblee de DoubleComplex temperature */
-template class AssemblyMatrixInstance< DoubleComplex, Temperature >;
-typedef AssemblyMatrixInstance< DoubleComplex, Temperature >
-    AssemblyMatrixTemperatureComplexInstance;
+template class AssemblyMatrixClass< DoubleComplex, Temperature >;
+typedef AssemblyMatrixClass< DoubleComplex, Temperature >
+    AssemblyMatrixTemperatureComplexClass;
 
 /** @typedef Definition d'une matrice assemblee de DoubleComplex pression */
-template class AssemblyMatrixInstance< DoubleComplex, Pressure >;
-typedef AssemblyMatrixInstance< DoubleComplex, Pressure > AssemblyMatrixPressureComplexInstance;
+template class AssemblyMatrixClass< DoubleComplex, Pressure >;
+typedef AssemblyMatrixClass< DoubleComplex, Pressure > AssemblyMatrixPressureComplexClass;
 
-typedef boost::shared_ptr< AssemblyMatrixDisplacementDoubleInstance >
+typedef boost::shared_ptr< AssemblyMatrixDisplacementDoubleClass >
     AssemblyMatrixDisplacementDoublePtr;
-typedef boost::shared_ptr< AssemblyMatrixDisplacementComplexInstance >
+typedef boost::shared_ptr< AssemblyMatrixDisplacementComplexClass >
     AssemblyMatrixDisplacementComplexPtr;
-typedef boost::shared_ptr< AssemblyMatrixTemperatureDoubleInstance >
+typedef boost::shared_ptr< AssemblyMatrixTemperatureDoubleClass >
     AssemblyMatrixTemperatureDoublePtr;
-typedef boost::shared_ptr< AssemblyMatrixTemperatureComplexInstance >
+typedef boost::shared_ptr< AssemblyMatrixTemperatureComplexClass >
     AssemblyMatrixTemperatureComplexPtr;
-typedef boost::shared_ptr< AssemblyMatrixPressureDoubleInstance > AssemblyMatrixPressureDoublePtr;
-typedef boost::shared_ptr< AssemblyMatrixPressureComplexInstance > AssemblyMatrixPressureComplexPtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureDoubleClass > AssemblyMatrixPressureDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureComplexClass > AssemblyMatrixPressureComplexPtr;
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance(
+AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass(
     const JeveuxMemory memType )
     : DataStructure( "MATR_ASSE_" + std::string( PhysicalQuantityNames[PhysicalQuantity] ) +
                          ( typeid( ValueType ) == typeid(double)? "_R" : "_C" ),
@@ -325,10 +325,10 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance(
       _ccll( JeveuxVectorLong( getName() + ".CCLL" ) ),
       _ccva( JeveuxVector< ValueType >( getName() + ".CCVA" ) ),
       _ccii( JeveuxVectorLong( getName() + ".CCII" ) ), _isEmpty( true ), _isFactorized( false ),
-      _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance( memType ) ) ){};
+      _listOfLoads( ListOfLoadsPtr( new ListOfLoadsClass( memType ) ) ){};
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance(
+AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass(
     const std::string &name )
     : DataStructure( name, 19, "MATR_ASSE_" +
                                    std::string( PhysicalQuantityNames[PhysicalQuantity] ) +
@@ -346,10 +346,10 @@ AssemblyMatrixInstance< ValueType, PhysicalQuantity >::AssemblyMatrixInstance(
       _ccll( JeveuxVectorLong( getName() + ".CCLL" ) ),
       _ccva( JeveuxVector< ValueType >( getName() + ".CCVA" ) ),
       _ccii( JeveuxVectorLong( getName() + ".CCII" ) ), _isEmpty( true ), _isFactorized( false ),
-      _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ){};
+      _listOfLoads( ListOfLoadsPtr( new ListOfLoadsClass() ) ){};
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() {
+bool AssemblyMatrixClass< ValueType, PhysicalQuantity >::build() {
     if ( _dofNum->isEmpty() )
         throw std::runtime_error( "Numbering is empty" );
 
@@ -385,7 +385,7 @@ bool AssemblyMatrixInstance< ValueType, PhysicalQuantity >::build() {
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 Mat
-AssemblyMatrixInstance< ValueType, PhysicalQuantity >::toPetsc4py() {
+AssemblyMatrixClass< ValueType, PhysicalQuantity >::toPetsc4py() {
     Mat myMat;
     PetscErrorCode ierr;
 

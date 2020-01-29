@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe XfemCrack
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,16 +35,16 @@
 #include "Modeling/CrackShape.h"
 
 /**
- * @class XfemCrackInstance
+ * @class XfemCrackClass
  * @brief generates a data structure identical to DEFI_FISS_XFEM
  * @author Nicolas Tardieu
  */
-class XfemCrackInstance : public DataStructure {
+class XfemCrackClass : public DataStructure {
   public:
     /**
          * @brief kind of forward declaration
          */
-    typedef boost::shared_ptr< XfemCrackInstance > XfemCrackPtr;
+    typedef boost::shared_ptr< XfemCrackClass > XfemCrackPtr;
 
   private:
     /** @typedef Definition of a smart pointer on VirtualMeshEntity */
@@ -121,15 +121,15 @@ class XfemCrackInstance : public DataStructure {
     /**
          * @brief Constructeur
          */
-    XfemCrackInstance( MeshPtr mesh );
+    XfemCrackClass( MeshPtr mesh );
 
     /**
          * @brief Constructeur
          */
-    XfemCrackInstance( const std::string name, MeshPtr mesh );
+    XfemCrackClass( const std::string name, MeshPtr mesh );
 
     /**
-         * @brief Construction du XfemCrackInstance
+         * @brief Construction du XfemCrackClass
          * @return Booleen indiquant que la construction s'est bien deroulee
          */
     bool build() ;
@@ -300,8 +300,8 @@ class XfemCrackInstance : public DataStructure {
 
 /**
  * @typedef MaterialPtr
- * @brief Pointeur intelligent vers un XfemCrackInstance
+ * @brief Pointeur intelligent vers un XfemCrackClass
  */
-typedef boost::shared_ptr< XfemCrackInstance > XfemCrackPtr;
+typedef boost::shared_ptr< XfemCrackClass > XfemCrackPtr;
 
 #endif /* XFEMCRACK_H_ */

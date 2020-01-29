@@ -31,14 +31,14 @@ namespace py = boost::python;
 
 void exportElementaryCharacteristicsToPython() {
 
-    py::class_< ElementaryCharacteristicsInstance,
-            ElementaryCharacteristicsInstance::ElementaryCharacteristicsPtr,
+    py::class_< ElementaryCharacteristicsClass,
+            ElementaryCharacteristicsClass::ElementaryCharacteristicsPtr,
             py::bases< DataStructure > >( "ElementaryCharacteristics", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryCharacteristicsInstance, ModelPtr >))
+              py::make_constructor(&initFactoryPtr< ElementaryCharacteristicsClass, ModelPtr >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< ElementaryCharacteristicsInstance, std::string, ModelPtr >))
-        .def( "getModel", &ElementaryCharacteristicsInstance::getModel,
+                  &initFactoryPtr< ElementaryCharacteristicsClass, std::string, ModelPtr >))
+        .def( "getModel", &ElementaryCharacteristicsClass::getModel,
               py::return_value_policy< py::copy_const_reference >() );
 };

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ListOfIntegers
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,11 +32,11 @@
 #include "MemoryManager/JeveuxVector.h"
 
 /**
- * @class ListOfIntegersInstance
+ * @class ListOfIntegersClass
  * @brief Cette classe correspond a une listr8
  * @author Nicolas Sellenet
  */
-class ListOfIntegersInstance : public DataStructure {
+class ListOfIntegersClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.BINT' */
     JeveuxVectorDouble _bint;
@@ -52,17 +52,17 @@ class ListOfIntegersInstance : public DataStructure {
      * @typedef ListOfIntegersPtr
      * @brief Pointeur intelligent vers un ListOfIntegers
      */
-    typedef boost::shared_ptr< ListOfIntegersInstance > ListOfIntegersPtr;
+    typedef boost::shared_ptr< ListOfIntegersClass > ListOfIntegersPtr;
 
     /**
      * @brief Constructeur
      */
-    ListOfIntegersInstance() : ListOfIntegersInstance( ResultNaming::getNewResultName() ){};
+    ListOfIntegersClass() : ListOfIntegersClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ListOfIntegersInstance( const std::string name )
+    ListOfIntegersClass( const std::string name )
         : DataStructure( name, 19, "LISTIS", Permanent ),
           _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
           _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
@@ -72,8 +72,8 @@ class ListOfIntegersInstance : public DataStructure {
 
 /**
  * @typedef ListOfIntegersPtr
- * @brief Pointeur intelligent vers un ListOfIntegersInstance
+ * @brief Pointeur intelligent vers un ListOfIntegersClass
  */
-typedef boost::shared_ptr< ListOfIntegersInstance > ListOfIntegersPtr;
+typedef boost::shared_ptr< ListOfIntegersClass > ListOfIntegersPtr;
 
 #endif /* LISTOFINTEGERS_H_ */

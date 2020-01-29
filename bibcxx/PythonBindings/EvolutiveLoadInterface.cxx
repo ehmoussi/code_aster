@@ -29,9 +29,9 @@ namespace py = boost::python;
 
 void exportEvolutiveLoadToPython() {
 
-    py::class_< EvolutiveLoadInstance, EvolutiveLoadPtr,
-            py::bases< TimeDependantResultsContainerInstance > >( "EvolutiveLoad", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< EvolutiveLoadInstance > ) )
+    py::class_< EvolutiveLoadClass, EvolutiveLoadPtr,
+            py::bases< TimeDependantResultsContainerClass > >( "EvolutiveLoad", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< EvolutiveLoadClass > ) )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< EvolutiveLoadInstance, std::string > ) );
+              py::make_constructor( &initFactoryPtr< EvolutiveLoadClass, std::string > ) );
 };

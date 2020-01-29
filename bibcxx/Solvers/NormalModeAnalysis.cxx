@@ -3,7 +3,7 @@
  * @brief Fichier source contenant le source du solveur de calcul de modes propres
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,8 +25,8 @@
 
 #include "Solvers/NormalModeAnalysis.h"
 
-MechanicalModeContainerPtr NormalModeAnalysisInstance::execute() {
-    MechanicalModeContainerPtr result( new MechanicalModeContainerInstance() );
+MechanicalModeContainerPtr NormalModeAnalysisClass::execute() {
+    MechanicalModeContainerPtr result( new MechanicalModeContainerClass() );
 
     CommandSyntax cmdSt( "MODE_ITER_SIMULT" );
     cmdSt.setResult( result->getName(), result->getType() );

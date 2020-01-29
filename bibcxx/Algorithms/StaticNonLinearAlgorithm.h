@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StaticNonLinearAlgorithm
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -159,7 +159,7 @@ template < class Stepper > void StaticNonLinearAlgorithm< Stepper >::oneStep() {
        DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
        ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryTangentMatrix( _loadStep );
        // Build assembly matrix
-       AssemblyMatrixDisplacementDoublePtr aMatrix( new AssemblyMatrixDisplacementDoubleInstance(
+       AssemblyMatrixDisplacementDoublePtr aMatrix( new AssemblyMatrixDisplacementDoubleClass(
    Temporary ) ); aMatrix->appendElementaryMatrix( matrElem ); aMatrix->setDOFNumbering( dofNum1 );
        aMatrix->setListOfLoads( _listOfLoads );
        aMatrix->setLinearSolver( linSolv );

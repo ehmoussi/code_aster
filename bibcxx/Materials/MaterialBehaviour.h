@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MaterialBehaviour
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -111,7 +111,7 @@ typedef ConvertibleValue< std::string, double > StringToDoubleValue;
 
 /**
  * @struct template AllowedMaterialPropertyType
- * @brief Structure permettant de limiter le type instanciable de MaterialPropertyInstance
+ * @brief Structure permettant de limiter le type instanciable de MaterialPropertyClass
  * @author Nicolas Sellenet
  */
 template < typename T > struct AllowedMaterialPropertyType;
@@ -138,7 +138,7 @@ template <> struct AllowedMaterialPropertyType< VectorFunction > {};
 
 template <> struct AllowedMaterialPropertyType< StringToDoubleValue > {};
 
-class GeneralMaterialBehaviourInstance;
+class GeneralMaterialBehaviourClass;
 
 template < typename T1 > struct is_convertible;
 
@@ -153,14 +153,14 @@ template <> struct is_convertible< StringToDoubleValue > {
 };
 
 /**
- * @class MaterialPropertyInstance
+ * @class MaterialPropertyClass
  * @brief Cette classe template permet de definir un type elementaire de propriete materielle
  * @author Nicolas Sellenet
  * @todo on pourrait detemplatiser cette classe pour qu'elle prenne soit des doubles soit des fct
  *       on pourrait alors fusionner elas et elasFo par exemple
  */
 template < class ValueType >
-class MaterialPropertyInstance : private AllowedMaterialPropertyType< ValueType > {
+class MaterialPropertyClass : private AllowedMaterialPropertyType< ValueType > {
   public:
     typedef typename is_convertible< ValueType >::value_type ReturnValue;
     typedef typename is_convertible< ValueType >::init_value BaseValue;
@@ -180,16 +180,16 @@ class MaterialPropertyInstance : private AllowedMaterialPropertyType< ValueType 
 
   public:
     /**
-     * @brief Constructeur vide (utile pour ajouter une MaterialPropertyInstance a une std::map
+     * @brief Constructeur vide (utile pour ajouter une MaterialPropertyClass a une std::map
      */
-    MaterialPropertyInstance(){};
+    MaterialPropertyClass(){};
 
     /**
      * @brief Constructeur
      * @param name Nom Aster du parametre materiau (ex : "NU")
      * @param description Description libre
      */
-    MaterialPropertyInstance( const std::string name, const bool isMandatory )
+    MaterialPropertyClass( const std::string name, const bool isMandatory )
         : _name( name ), _isMandatory( isMandatory ), _description( "" ), _existsValue( false ){};
 
     /**
@@ -198,7 +198,7 @@ class MaterialPropertyInstance : private AllowedMaterialPropertyType< ValueType 
      * @param ValueType Valeur par défaut
      * @param description Description libre
      */
-    MaterialPropertyInstance( const std::string name, const ValueType &currentValue,
+    MaterialPropertyClass( const std::string name, const ValueType &currentValue,
                               const bool isMandatory )
         : _name( name ), _isMandatory( isMandatory ), _description( "" ), _value( currentValue ),
           _existsValue( true ){};
@@ -266,39 +266,39 @@ class MaterialPropertyInstance : private AllowedMaterialPropertyType< ValueType 
         _value = currentValue;
     };
 
-    friend class GeneralMaterialBehaviourInstance;
+    friend class GeneralMaterialBehaviourClass;
 };
 
 /** @typedef Definition d'une propriete materiau de type double */
-typedef MaterialPropertyInstance< double > ElementaryMaterialPropertyDouble;
+typedef MaterialPropertyClass< double > ElementaryMaterialPropertyDouble;
 /** @typedef Definition d'une propriete materiau de type double */
-typedef MaterialPropertyInstance< DoubleComplex > ElementaryMaterialPropertyComplex;
+typedef MaterialPropertyClass< DoubleComplex > ElementaryMaterialPropertyComplex;
 /** @typedef Definition d'une propriete materiau de type string */
-typedef MaterialPropertyInstance< std::string > ElementaryMaterialPropertyString;
+typedef MaterialPropertyClass< std::string > ElementaryMaterialPropertyString;
 /** @typedef Definition d'une propriete materiau de type Function */
-typedef MaterialPropertyInstance< FunctionPtr > ElementaryMaterialPropertyFunction;
+typedef MaterialPropertyClass< FunctionPtr > ElementaryMaterialPropertyFunction;
 /** @typedef Definition d'une propriete materiau de type Table */
-typedef MaterialPropertyInstance< TablePtr > ElementaryMaterialPropertyTable;
+typedef MaterialPropertyClass< TablePtr > ElementaryMaterialPropertyTable;
 /** @typedef Definition d'une propriete materiau de type Surface */
-typedef MaterialPropertyInstance< SurfacePtr > ElementaryMaterialPropertySurface;
+typedef MaterialPropertyClass< SurfacePtr > ElementaryMaterialPropertySurface;
 /** @typedef Definition d'une propriete materiau de type Formula */
-typedef MaterialPropertyInstance< FormulaPtr > ElementaryMaterialPropertyFormula;
+typedef MaterialPropertyClass< FormulaPtr > ElementaryMaterialPropertyFormula;
 /** @typedef Definition d'une propriete materiau de type DataStructure */
-typedef MaterialPropertyInstance< GenericFunctionPtr > ElementaryMaterialPropertyDataStructure;
+typedef MaterialPropertyClass< GenericFunctionPtr > ElementaryMaterialPropertyDataStructure;
 /** @typedef Definition d'une propriete materiau de type vector double */
-typedef MaterialPropertyInstance< VectorDouble > ElementaryMaterialPropertyVectorDouble;
+typedef MaterialPropertyClass< VectorDouble > ElementaryMaterialPropertyVectorDouble;
 /** @typedef Definition d'une propriete materiau de type vector Function */
-typedef MaterialPropertyInstance< std::vector< FunctionPtr > >
+typedef MaterialPropertyClass< std::vector< FunctionPtr > >
     ElementaryMaterialPropertyVectorFunction;
 /** @typedef Definition d'une propriete materiau de type Convertible string double */
-typedef MaterialPropertyInstance< StringToDoubleValue > ElementaryMaterialPropertyConvertible;
+typedef MaterialPropertyClass< StringToDoubleValue > ElementaryMaterialPropertyConvertible;
 
 /**
- * @class GeneralMaterialBehaviourInstance
+ * @class GeneralMaterialBehaviourClass
  * @brief Cette classe permet de definir un ensemble de type elementaire de propriete materielle
  * @author Nicolas Sellenet
  */
-class GeneralMaterialBehaviourInstance {
+class GeneralMaterialBehaviourClass {
   protected:
     /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyDouble */
     typedef std::map< std::string, ElementaryMaterialPropertyDouble > mapStrEMPD;
@@ -369,33 +369,33 @@ class GeneralMaterialBehaviourInstance {
     typedef ListString::iterator ListStringIter;
     typedef ListString::const_iterator ListStringConstIter;
 
-    /** @brief Chaine correspondant au nom Aster du MaterialBehaviourInstance */
+    /** @brief Chaine correspondant au nom Aster du MaterialBehaviourClass */
     // ex : ELAS ou ELASFo
     std::string _asterName;
     std::string _asterNewName;
     /** @brief Map contenant les noms des proprietes double ainsi que les
-               MaterialPropertyInstance correspondant */
+               MaterialPropertyClass correspondant */
     mapStrEMPD _mapOfDoubleMaterialProperties;
     /** @brief Map contenant les noms des proprietes complex ainsi que les
-               MaterialPropertyInstance correspondant */
+               MaterialPropertyClass correspondant */
     mapStrEMPC _mapOfComplexMaterialProperties;
     /** @brief Map contenant les noms des proprietes chaine ainsi que les
-               MaterialPropertyInstance correspondant */
+               MaterialPropertyClass correspondant */
     mapStrEMPS _mapOfStringMaterialProperties;
     /** @brief Map contenant les noms des proprietes function ainsi que les
-               MaterialPropertyInstance correspondant */
+               MaterialPropertyClass correspondant */
     mapStrEMPF _mapOfFunctionMaterialProperties;
     /** @brief Map contenant les noms des proprietes table ainsi que les
-               MaterialPropertyInstance correspondant */
+               MaterialPropertyClass correspondant */
     mapStrEMPT _mapOfTableMaterialProperties;
     /** @brief Map contenant les noms des proprietes vector double ainsi que les
-               MaterialPropertyInstance correspondant */
+               MaterialPropertyClass correspondant */
     mapStrEMPVD _mapOfVectorDoubleMaterialProperties;
     /** @brief Map contenant les noms des proprietes vector Function ainsi que les
-               MaterialPropertyInstance correspondant */
+               MaterialPropertyClass correspondant */
     mapStrEMPVF _mapOfVectorFunctionMaterialProperties;
     /** @brief Map contenant les noms des proprietes double ainsi que les
-               MaterialPropertyInstance correspondant */
+               MaterialPropertyClass correspondant */
     mapStrEMPCSD _mapOfConvertibleMaterialProperties;
     /** @brief Liste contenant les infos du .ORDR */
     VectorString _vectOrdr;
@@ -406,17 +406,17 @@ class GeneralMaterialBehaviourInstance {
     /**
      * @brief Constructeur
      */
-    GeneralMaterialBehaviourInstance() : _asterNewName( "" ){};
+    GeneralMaterialBehaviourClass() : _asterNewName( "" ){};
 
     /**
      * @brief Constructeur
      */
-    GeneralMaterialBehaviourInstance( const std::string asterName,
+    GeneralMaterialBehaviourClass( const std::string asterName,
                                       const std::string asterNewName = "" )
         : _asterName( asterName ), _asterNewName( asterNewName ){};
 
     /**
-     * @brief Recuperation du nom Aster du GeneralMaterialBehaviourInstance
+     * @brief Recuperation du nom Aster du GeneralMaterialBehaviourClass
      *        ex : 'ELAS', 'ELASFo', ...
      * @return Chaine contenant le nom Aster
      */
@@ -524,7 +524,7 @@ class GeneralMaterialBehaviourInstance {
     int getNumberOfPropertiesWithValue() const;
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value Double correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -540,7 +540,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value Double correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -556,7 +556,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value string correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -579,7 +579,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value Function correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -595,7 +595,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value Table correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -611,7 +611,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value Surface correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -627,7 +627,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value Formula correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -643,7 +643,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value VectorDouble correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -660,7 +660,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourInstance
+     * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
      * @param value VectorFunction correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -687,7 +687,7 @@ class GeneralMaterialBehaviourInstance {
     };
 
     /**
-     * @brief Construction du GeneralMaterialBehaviourInstance
+     * @brief Construction du GeneralMaterialBehaviourClass
      * @return Booleen valant true si la tache s'est bien deroulee
      * @todo vérifier les valeurs réelles par défaut du .VALR
      */
@@ -793,11 +793,11 @@ class GeneralMaterialBehaviourInstance {
 };
 
 /**
- * @class MaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance
+ * @class MaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass
  * @author Jean-Pierre Lefebvre
  */
-class MaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class MaterialBehaviourClass : public GeneralMaterialBehaviourClass {
     std::string capitalizeName( const std::string &nameInit ) {
         std::string name( nameInit );
         if ( !name.empty() ) {
@@ -813,8 +813,8 @@ class MaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
     /**
      * @brief Constructeur
      */
-    MaterialBehaviourInstance( const std::string asterName, const std::string asterNewName = "" )
-        : GeneralMaterialBehaviourInstance( asterName, asterNewName ){};
+    MaterialBehaviourClass( const std::string asterName, const std::string asterNewName = "" )
+        : GeneralMaterialBehaviourClass( asterName, asterNewName ){};
 
     bool addNewDoubleProperty( std::string name, const bool mandatory ) {
         return addDoubleProperty( capitalizeName( name ),
@@ -869,19 +869,19 @@ class MaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau */
-typedef boost::shared_ptr< MaterialBehaviourInstance > MaterialBehaviourPtr;
+typedef boost::shared_ptr< MaterialBehaviourClass > MaterialBehaviourPtr;
 
 /**
- * @class BetonDoubleDpMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonDoubleDp
+ * @class BetonDoubleDpMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau BetonDoubleDp
  * @author Jean-Pierre Lefebvre
  */
-class BetonDoubleDpMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class BetonDoubleDpMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    BetonDoubleDpMaterialBehaviourInstance() {
+    BetonDoubleDpMaterialBehaviourClass() {
         // Mot cle "BETON_DOUBLE_DP" dans Aster
         _asterName = "BETON_DOUBLE_DP";
 
@@ -923,20 +923,20 @@ class BetonDoubleDpMaterialBehaviourInstance : public GeneralMaterialBehaviourIn
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonDoubleDp */
-typedef boost::shared_ptr< BetonDoubleDpMaterialBehaviourInstance >
+typedef boost::shared_ptr< BetonDoubleDpMaterialBehaviourClass >
     BetonDoubleDpMaterialBehaviourPtr;
 
 /**
- * @class BetonRagMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau BetonRag
+ * @class BetonRagMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau BetonRag
  * @author Jean-Pierre Lefebvre
  */
-class BetonRagMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class BetonRagMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    BetonRagMaterialBehaviourInstance() {
+    BetonRagMaterialBehaviourClass() {
         // Mot cle "BETON_RAG" dans Aster
         _asterName = "BETON_RAG";
 
@@ -1000,19 +1000,19 @@ class BetonRagMaterialBehaviourInstance : public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau BetonRag */
-typedef boost::shared_ptr< BetonRagMaterialBehaviourInstance > BetonRagMaterialBehaviourPtr;
+typedef boost::shared_ptr< BetonRagMaterialBehaviourClass > BetonRagMaterialBehaviourPtr;
 
 /**
- * @class DisEcroTracMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau DisEcroTrac
+ * @class DisEcroTracMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau DisEcroTrac
  * @author Jean-Pierre Lefebvre
  */
-class DisEcroTracMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class DisEcroTracMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    DisEcroTracMaterialBehaviourInstance() {
+    DisEcroTracMaterialBehaviourClass() {
         // Mot cle "DIS_ECRO_TRAC" dans Aster
         _asterName = "DIS_ECRO_TRAC";
 
@@ -1039,18 +1039,18 @@ class DisEcroTracMaterialBehaviourInstance : public GeneralMaterialBehaviourInst
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau DisEcroTrac */
-typedef boost::shared_ptr< DisEcroTracMaterialBehaviourInstance > DisEcroTracMaterialBehaviourPtr;
+typedef boost::shared_ptr< DisEcroTracMaterialBehaviourClass > DisEcroTracMaterialBehaviourPtr;
 
 /**
- * @class CableGaineFrotMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CableGaineFrot
+ * @class CableGaineFrotMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau CableGaineFrot
  */
-class CableGaineFrotMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class CableGaineFrotMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    CableGaineFrotMaterialBehaviourInstance() {
+    CableGaineFrotMaterialBehaviourClass() {
         // Mot cle "CABLE_GAINE_FROT" dans Aster
         _asterName = "CABLE_GAINE_FROT";
 
@@ -1082,20 +1082,20 @@ class CableGaineFrotMaterialBehaviourInstance : public GeneralMaterialBehaviourI
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CableGaineFrot */
-typedef boost::shared_ptr< CableGaineFrotMaterialBehaviourInstance >
+typedef boost::shared_ptr< CableGaineFrotMaterialBehaviourClass >
     CableGaineFrotMaterialBehaviourPtr;
 
 /**
- * @class ElasMetaMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasMeta
+ * @class ElasMetaMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau ElasMeta
  * @author Jean-Pierre Lefebvre
  */
-class ElasMetaMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class ElasMetaMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    ElasMetaMaterialBehaviourInstance() {
+    ElasMetaMaterialBehaviourClass() {
         // Mot cle "ELAS_META" dans Aster
         _asterName = "ELAS_META";
 
@@ -1141,19 +1141,19 @@ class ElasMetaMaterialBehaviourInstance : public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasMeta */
-typedef boost::shared_ptr< ElasMetaMaterialBehaviourInstance > ElasMetaMaterialBehaviourPtr;
+typedef boost::shared_ptr< ElasMetaMaterialBehaviourClass > ElasMetaMaterialBehaviourPtr;
 
 /**
- * @class ElasMetaFoMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau ElasMetaFo
+ * @class ElasMetaFoMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau ElasMetaFo
  * @author Jean-Pierre Lefebvre
  */
-class ElasMetaFoMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class ElasMetaFoMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    ElasMetaFoMaterialBehaviourInstance() {
+    ElasMetaFoMaterialBehaviourClass() {
         // Mot cle "ELAS_META_FO" dans Aster
         _asterName = "ELAS_META_FO";
         _asterNewName = "ELAS_META";
@@ -1214,19 +1214,19 @@ class ElasMetaFoMaterialBehaviourInstance : public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau ElasMetaFo */
-typedef boost::shared_ptr< ElasMetaFoMaterialBehaviourInstance > ElasMetaFoMaterialBehaviourPtr;
+typedef boost::shared_ptr< ElasMetaFoMaterialBehaviourClass > ElasMetaFoMaterialBehaviourPtr;
 
 /**
- * @class MetaTractionMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau MetaTraction
+ * @class MetaTractionMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau MetaTraction
  * @author Jean-Pierre Lefebvre
  */
-class MetaTractionMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class MetaTractionMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    MetaTractionMaterialBehaviourInstance() {
+    MetaTractionMaterialBehaviourClass() {
         // Mot cle "META_TRACTION" dans Aster
         _asterName = "META_TRACTION";
 
@@ -1268,19 +1268,19 @@ class MetaTractionMaterialBehaviourInstance : public GeneralMaterialBehaviourIns
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau MetaTraction */
-typedef boost::shared_ptr< MetaTractionMaterialBehaviourInstance > MetaTractionMaterialBehaviourPtr;
+typedef boost::shared_ptr< MetaTractionMaterialBehaviourClass > MetaTractionMaterialBehaviourPtr;
 
 /**
- * @class RuptFragMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau RuptFrag
+ * @class RuptFragMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau RuptFrag
  * @author Jean-Pierre Lefebvre
  */
-class RuptFragMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class RuptFragMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    RuptFragMaterialBehaviourInstance() {
+    RuptFragMaterialBehaviourClass() {
         // Mot cle "RUPT_FRAG" dans Aster
         _asterName = "RUPT_FRAG";
 
@@ -1317,19 +1317,19 @@ class RuptFragMaterialBehaviourInstance : public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RuptFrag */
-typedef boost::shared_ptr< RuptFragMaterialBehaviourInstance > RuptFragMaterialBehaviourPtr;
+typedef boost::shared_ptr< RuptFragMaterialBehaviourClass > RuptFragMaterialBehaviourPtr;
 
 /**
- * @class RuptFragFoMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau RuptFragFo
+ * @class RuptFragFoMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau RuptFragFo
  * @author Jean-Pierre Lefebvre
  */
-class RuptFragFoMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class RuptFragFoMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    RuptFragFoMaterialBehaviourInstance() {
+    RuptFragFoMaterialBehaviourClass() {
         // Mot cle "RUPT_FRAG_FO" dans Aster
         _asterName = "RUPT_FRAG_FO";
         _asterNewName = "RUPT_FRAG";
@@ -1368,19 +1368,19 @@ class RuptFragFoMaterialBehaviourInstance : public GeneralMaterialBehaviourInsta
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau RuptFragFo */
-typedef boost::shared_ptr< RuptFragFoMaterialBehaviourInstance > RuptFragFoMaterialBehaviourPtr;
+typedef boost::shared_ptr< RuptFragFoMaterialBehaviourClass > RuptFragFoMaterialBehaviourPtr;
 
 /**
- * @class CzmLabMixMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau CzmLabMix
+ * @class CzmLabMixMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau CzmLabMix
  * @author Nicolas Pignet
  */
-class CzmLabMixMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class CzmLabMixMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    CzmLabMixMaterialBehaviourInstance() {
+    CzmLabMixMaterialBehaviourClass() {
         // Mot cle "CZM_LAB_MIX" dans Aster
         _asterName = "CZM_LAB_MIX";
 
@@ -1416,19 +1416,19 @@ class CzmLabMixMaterialBehaviourInstance : public GeneralMaterialBehaviourInstan
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau CzmLabMix */
-typedef boost::shared_ptr< CzmLabMixMaterialBehaviourInstance > CzmLabMixMaterialBehaviourPtr;
+typedef boost::shared_ptr< CzmLabMixMaterialBehaviourClass > CzmLabMixMaterialBehaviourPtr;
 
 /**
- * @class TractionMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau Traction
+ * @class TractionMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau Traction
  * @author Jean-Pierre Lefebvre
  */
-class TractionMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class TractionMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    TractionMaterialBehaviourInstance() {
+    TractionMaterialBehaviourClass() {
         // Mot cle "TRACTION" dans Aster
         _asterName = "TRACTION";
 
@@ -1462,14 +1462,14 @@ class TractionMaterialBehaviourInstance : public GeneralMaterialBehaviourInstanc
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau Traction */
-typedef boost::shared_ptr< TractionMaterialBehaviourInstance > TractionMaterialBehaviourPtr;
+typedef boost::shared_ptr< TractionMaterialBehaviourClass > TractionMaterialBehaviourPtr;
 
 /**
- * @class TherNlMaterialBehaviourInstance
- * @brief Classe fille de GeneralMaterialBehaviourInstance definissant un materiau TherNl
+ * @class TherNlMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau TherNl
  * @author Jean-Pierre Lefebvre
  */
-class TherNlMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance {
+class TherNlMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   private:
     FunctionPtr _enthalpyFunction;
 
@@ -1477,7 +1477,7 @@ class TherNlMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance 
     /**
      * @brief Constructeur
      */
-    TherNlMaterialBehaviourInstance() : _enthalpyFunction( new FunctionInstance() ) {
+    TherNlMaterialBehaviourClass() : _enthalpyFunction( new FunctionClass() ) {
         // Mot cle "THER_NL" dans Aster
         _asterName = "THER_NL";
 
@@ -1507,7 +1507,7 @@ class TherNlMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance 
     bool hasEnthalpyFunction() { return true; };
 
     /**
-     * @brief Construction du GeneralMaterialBehaviourInstance
+     * @brief Construction du GeneralMaterialBehaviourClass
      * @return Booleen valant true si la tache s'est bien deroulee
      * @todo vérifier les valeurs réelles par défaut du .VALR
      */
@@ -1518,9 +1518,9 @@ class TherNlMaterialBehaviourInstance : public GeneralMaterialBehaviourInstance 
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherNl */
-typedef boost::shared_ptr< TherNlMaterialBehaviourInstance > TherNlMaterialBehaviourPtr;
+typedef boost::shared_ptr< TherNlMaterialBehaviourClass > TherNlMaterialBehaviourPtr;
 
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
-typedef boost::shared_ptr< GeneralMaterialBehaviourInstance > GeneralMaterialBehaviourPtr;
+typedef boost::shared_ptr< GeneralMaterialBehaviourClass > GeneralMaterialBehaviourPtr;
 
 #endif

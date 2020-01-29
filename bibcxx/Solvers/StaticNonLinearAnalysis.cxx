@@ -3,7 +3,7 @@
  * @brief Fichier source contenant le source du solveur de mecanique statique
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,22 +30,22 @@
 #include "Discretization/DiscreteProblem.h"
 #include "Supervis/CommandSyntax.h"
 
-StaticNonLinearAnalysisInstance::StaticNonLinearAnalysisInstance()
+StaticNonLinearAnalysisClass::StaticNonLinearAnalysisClass()
     : _model( ModelPtr() ), _materialOnMesh( MaterialOnMeshPtr() ),
       _loadStepManager( TimeStepManagerPtr() ),
-      _nonLinearMethod( NonLinearMethodPtr( new NonLinearMethodInstance() ) ),
-      _control( NonLinearControlPtr( new NonLinearControlInstance() ) ),
-      _linearSolver( BaseLinearSolverPtr( new BaseLinearSolverInstance() ) ),
+      _nonLinearMethod( NonLinearMethodPtr( new NonLinearMethodClass() ) ),
+      _control( NonLinearControlPtr( new NonLinearControlClass() ) ),
+      _linearSolver( BaseLinearSolverPtr( new BaseLinearSolverClass() ) ),
       _lineSearch( LineSearchMethodPtr() ){};
 
 /** @brief main routine to run a static, nonlinear analysis
  */
 NonLinearEvolutionContainerPtr
-StaticNonLinearAnalysisInstance::execute() {
+StaticNonLinearAnalysisClass::execute() {
     // cmdSNL is the command Syntax object associated to Code_Aster STAT_NON_LINE command
     CommandSyntax cmdSNL( "STAT_NON_LINE" );
     // Init name of result
-    NonLinearEvolutionContainerPtr resultSNL( new NonLinearEvolutionContainerInstance() );
+    NonLinearEvolutionContainerPtr resultSNL( new NonLinearEvolutionContainerClass() );
     cmdSNL.setResult( resultSNL->getName(), "STAT_NON_LINE" );
     // Build a dictionnary of keywords/values used to define the command syntax object
     SyntaxMapContainer dict;
@@ -143,60 +143,60 @@ StaticNonLinearAnalysisInstance::execute() {
 
 /** @brief Implementation of the member functions to add an excitation (source term)
  */
-void StaticNonLinearAnalysisInstance::addMechanicalExcitation(
+void StaticNonLinearAnalysisClass::addMechanicalExcitation(
     const GenericMechanicalLoadPtr &currentLoad, ExcitationEnum typeOfExcit,
     const FunctionPtr &scalF ) {
-    ExcitationPtr curExcit( new ExcitationInstance( typeOfExcit ) );
+    ExcitationPtr curExcit( new ExcitationClass( typeOfExcit ) );
     curExcit->setMechanicalLoad( currentLoad );
     if ( scalF )
         curExcit->setMultiplicativeFunction( scalF );
     _listOfExcitations.push_back( curExcit );
 };
 
-void StaticNonLinearAnalysisInstance::addKinematicExcitation( const KinematicsLoadPtr &currentLoad,
+void StaticNonLinearAnalysisClass::addKinematicExcitation( const KinematicsLoadPtr &currentLoad,
                                                               ExcitationEnum typeOfExcit,
                                                               const FunctionPtr &scalF ) {
-    ExcitationInstance *curExcit( new ExcitationInstance( typeOfExcit ) );
+    ExcitationClass *curExcit( new ExcitationClass( typeOfExcit ) );
     curExcit->setKinematicLoad( currentLoad );
     if ( scalF )
         curExcit->setMultiplicativeFunction( scalF );
     _listOfExcitations.push_back( ExcitationPtr( curExcit ) );
 };
 
-void StaticNonLinearAnalysisInstance::addStandardExcitation(
+void StaticNonLinearAnalysisClass::addStandardExcitation(
     const GenericMechanicalLoadPtr &currentLoad ) {
     addMechanicalExcitation( currentLoad, StandardExcitation, nullptr );
 };
-void StaticNonLinearAnalysisInstance::addStandardScaledExcitation(
+void StaticNonLinearAnalysisClass::addStandardScaledExcitation(
     const GenericMechanicalLoadPtr &currentLoad, const FunctionPtr &scalF ) {
     addMechanicalExcitation( currentLoad, StandardExcitation, scalF );
 };
 void
-StaticNonLinearAnalysisInstance::addStandardExcitation( const KinematicsLoadPtr &currentLoad ) {
+StaticNonLinearAnalysisClass::addStandardExcitation( const KinematicsLoadPtr &currentLoad ) {
     addKinematicExcitation( currentLoad, StandardExcitation, nullptr );
 };
 void
-StaticNonLinearAnalysisInstance::addStandardScaledExcitation( const KinematicsLoadPtr &currentLoad,
+StaticNonLinearAnalysisClass::addStandardScaledExcitation( const KinematicsLoadPtr &currentLoad,
                                                               const FunctionPtr &scalF ) {
     addKinematicExcitation( currentLoad, StandardExcitation, scalF );
 };
-void StaticNonLinearAnalysisInstance::addDrivenExcitation(
+void StaticNonLinearAnalysisClass::addDrivenExcitation(
     const GenericMechanicalLoadPtr &currentLoad ) {
     addMechanicalExcitation( currentLoad, DrivenExcitation, nullptr );
 };
-void StaticNonLinearAnalysisInstance::addExcitationOnUpdatedGeometry(
+void StaticNonLinearAnalysisClass::addExcitationOnUpdatedGeometry(
     const GenericMechanicalLoadPtr &currentLoad ) {
     addMechanicalExcitation( currentLoad, OnUpdatedGeometryExcitation, nullptr );
 };
-void StaticNonLinearAnalysisInstance::addScaledExcitationOnUpdatedGeometry(
+void StaticNonLinearAnalysisClass::addScaledExcitationOnUpdatedGeometry(
     const GenericMechanicalLoadPtr &currentLoad, const FunctionPtr &scalF ) {
     addMechanicalExcitation( currentLoad, OnUpdatedGeometryExcitation, scalF );
 };
-void StaticNonLinearAnalysisInstance::addIncrementalDirichletExcitation(
+void StaticNonLinearAnalysisClass::addIncrementalDirichletExcitation(
     const GenericMechanicalLoadPtr &currentLoad ) {
     addMechanicalExcitation( currentLoad, IncrementalDirichletExcitation, nullptr );
 };
-void StaticNonLinearAnalysisInstance::addIncrementalDirichletScaledExcitation(
+void StaticNonLinearAnalysisClass::addIncrementalDirichletScaledExcitation(
     const GenericMechanicalLoadPtr &currentLoad, const FunctionPtr &scalF ) {
     addMechanicalExcitation( currentLoad, IncrementalDirichletExcitation, scalF );
 };

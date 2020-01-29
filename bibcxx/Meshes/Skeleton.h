@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Skeleton
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,11 +32,11 @@
 #include "Meshes/Mesh.h"
 
 /**
- * @class SkeletonInstance
+ * @class SkeletonClass
  * @brief Cette classe correspond a une sd_squelette
  * @author Nicolas Sellenet
  */
-class SkeletonInstance : public BaseMeshInstance {
+class SkeletonClass : public BaseMeshClass {
   private:
     /** @brief Objet Jeveux '.INV.SKELETON' */
     JeveuxVectorLong _invSkeleton;
@@ -52,20 +52,20 @@ class SkeletonInstance : public BaseMeshInstance {
   public:
     /**
      * @typedef SkeletonPtr
-     * @brief Pointeur intelligent vers un SkeletonInstance
+     * @brief Pointeur intelligent vers un SkeletonClass
      */
-    typedef boost::shared_ptr< SkeletonInstance > SkeletonPtr;
+    typedef boost::shared_ptr< SkeletonClass > SkeletonPtr;
 
     /**
      * @brief Constructeur
      */
-    SkeletonInstance() : SkeletonInstance( ResultNaming::getNewResultName() ){};
+    SkeletonClass() : SkeletonClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    SkeletonInstance( const std::string &name )
-        : BaseMeshInstance( name, "SQUELETTE" ),
+    SkeletonClass( const std::string &name )
+        : BaseMeshClass( name, "SQUELETTE" ),
           _invSkeleton( JeveuxVectorLong( getName() + ".INV.SKELETON" ) ),
           _corres( JeveuxVectorLong( getName() + ".CORRES" ) ),
           _nomSst( JeveuxVectorChar24( getName() + ".NOMSST" ) ),
@@ -75,8 +75,8 @@ class SkeletonInstance : public BaseMeshInstance {
 
 /**
  * @typedef SkeletonPtr
- * @brief Pointeur intelligent vers un SkeletonInstance
+ * @brief Pointeur intelligent vers un SkeletonClass
  */
-typedef boost::shared_ptr< SkeletonInstance > SkeletonPtr;
+typedef boost::shared_ptr< SkeletonClass > SkeletonPtr;
 
 #endif /* SKELETON_H_ */

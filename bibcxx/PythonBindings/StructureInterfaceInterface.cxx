@@ -27,7 +27,7 @@ namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/StructureInterfaceInterface.h"
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( StructureInterfaceInstance_overloads, addInterface, 3, 4 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( StructureInterfaceClass_overloads, addInterface, 3, 4 )
 
 void exportStructureInterfaceToPython() {
 
@@ -37,16 +37,16 @@ void exportStructureInterfaceToPython() {
         .value( "HarmonicCraigBampton", HarmonicCraigBampton )
         .value( "None", NoInterfaceType );
 
-    py::class_< StructureInterfaceInstance, StructureInterfaceInstance::StructureInterfacePtr,
+    py::class_< StructureInterfaceClass, StructureInterfaceClass::StructureInterfacePtr,
             py::bases< DataStructure > >( "StructureInterface", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< StructureInterfaceInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StructureInterfaceClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< StructureInterfaceInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< StructureInterfaceClass, std::string >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< StructureInterfaceInstance, DOFNumberingPtr >))
+              py::make_constructor(&initFactoryPtr< StructureInterfaceClass, DOFNumberingPtr >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< StructureInterfaceInstance, std::string, DOFNumberingPtr >))
-        .def( "addInterface", &StructureInterfaceInstance::addInterface,
-              StructureInterfaceInstance_overloads() );
+                  &initFactoryPtr< StructureInterfaceClass, std::string, DOFNumberingPtr >))
+        .def( "addInterface", &StructureInterfaceClass::addInterface,
+              StructureInterfaceClass_overloads() );
 };
