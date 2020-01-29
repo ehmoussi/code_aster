@@ -109,7 +109,7 @@ exclude_patterns = ['_build']
 #show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+# pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
@@ -122,8 +122,8 @@ pygments_style = 'sphinx'
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-# html_theme = 'sphinx_rtd_theme'
-html_theme = 'python_docs_theme'
+html_theme = 'sphinx_rtd_theme'
+# html_theme = 'python_docs_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -295,7 +295,7 @@ napoleon_include_private_with_doc = True
 # Show todo blocks
 todo_include_todos = True
 
-# Highlight todo blocks
+# adapt css
 def setup(app):
     app.add_stylesheet('mystyles.css')
 
