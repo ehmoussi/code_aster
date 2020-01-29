@@ -79,7 +79,7 @@ namespace py = boost::python;
 #include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/GeneralizedModelInterface.h"
 #include "PythonBindings/GeneralizedResultsContainerInterface.h"
-#include "PythonBindings/GenericDataFieldInterface.h"
+#include "PythonBindings/DataFieldInterface.h"
 #include "PythonBindings/GenericFunctionInterface.h"
 #include "PythonBindings/GridInterface.h"
 #include "PythonBindings/InputVariableDefinitionInterface.h"
@@ -204,7 +204,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportElementaryCharacteristicsToPython();
     exportFiniteElementDescriptorToPython();
     exportFiberGeometryToPython();
-    exportGenericDataFieldToPython();
+    exportDataFieldToPython();
     exportFieldOnCellsToPython();
     exportFieldOnNodesToPython();
     exportPCFieldOnMeshToPython();

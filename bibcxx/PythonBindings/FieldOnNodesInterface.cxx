@@ -35,7 +35,7 @@ namespace py = boost::python;
 void exportFieldOnNodesToPython() {
 
     py::class_< FieldOnNodesDoubleClass, FieldOnNodesDoublePtr,
-                py::bases< GenericDataFieldClass > >( "FieldOnNodesDouble", py::no_init )
+                py::bases< DataFieldClass > >( "FieldOnNodesDouble", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleClass >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleClass, std::string >))
@@ -51,7 +51,7 @@ void exportFieldOnNodesToPython() {
         .def( "update", &FieldOnNodesDoubleClass::update )
         .def( "updateValuePointers", &FieldOnNodesDoubleClass::updateValuePointers );
     py::class_< FieldOnNodesComplexClass, FieldOnNodesComplexPtr,
-                py::bases< GenericDataFieldClass > >( "FieldOnNodesComplex", py::no_init )
+                py::bases< DataFieldClass > >( "FieldOnNodesComplex", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesComplexClass >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< FieldOnNodesComplexClass, std::string >))

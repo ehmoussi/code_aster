@@ -55,7 +55,7 @@ void exportTableContainerToPython() {
     void ( TableContainerClass::*c9 )( const std::string &,
                                           GeneralizedAssemblyMatrixDoublePtr ) =
         &TableContainerClass::addObject;
-    void ( TableContainerClass::*c10 )( const std::string &, GenericDataFieldPtr ) =
+    void ( TableContainerClass::*c10 )( const std::string &, DataFieldPtr ) =
         &TableContainerClass::addObject;
     void ( TableContainerClass::*c11 )( const std::string &, MechanicalModeContainerPtr ) =
         &TableContainerClass::addObject;
@@ -99,7 +99,7 @@ void exportTableContainerToPython() {
         .def( "getFunctionComplex", &TableContainerClass::getFunctionComplex )
         .def( "getGeneralizedAssemblyMatrix",
               &TableContainerClass::getGeneralizedAssemblyMatrix )
-        .def( "getGenericDataField", &TableContainerClass::getGenericDataField )
+        .def( "getDataField", &TableContainerClass::getDataField )
         .def( "getMechanicalModeContainer", &TableContainerClass::getMechanicalModeContainer )
         .def( "getPCFieldOnMeshDouble", &TableContainerClass::getPCFieldOnMeshDouble )
         .def( "getSurface", &TableContainerClass::getSurface )

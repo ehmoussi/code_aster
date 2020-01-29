@@ -81,7 +81,7 @@ void TableContainerClass::addObject( const std::string& a,
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        GenericDataFieldPtr b )
+                                        DataFieldPtr b )
 {
     _mapGDF[a] = b;
 };
@@ -198,12 +198,12 @@ TableContainerClass::getGeneralizedAssemblyMatrix( const std::string& a ) const
     return curIter->second;
 };
 
-GenericDataFieldPtr TableContainerClass::getGenericDataField( const std::string& a ) const
+DataFieldPtr TableContainerClass::getDataField( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapGDF.find(aa);
     if( curIter == _mapGDF.end() )
-        return GenericDataFieldPtr( nullptr );
+        return DataFieldPtr( nullptr );
     return curIter->second;
 };
 
@@ -347,8 +347,8 @@ bool TableContainerClass::update()
             else if( type == "CHAM_GD_SDASTER" )
                 {
                 if ( _mapGDF[name] == nullptr )
-                _mapGDF[name] = GenericDataFieldPtr
-                                    ( new GenericDataFieldClass( sdName ) );
+                _mapGDF[name] = DataFieldPtr
+                                    ( new DataFieldClass( sdName ) );
                 }
             else if( type == "CHAM_NO_SDASTER" )
                 {

@@ -32,7 +32,7 @@
 #include "aster_fort.h"
 #include "astercxx.h"
 
-#include "DataFields/GenericDataField.h"
+#include "DataFields/DataField.h"
 #include "DataFields/MeshCoordinatesField.h"
 #include "DataFields/SimpleFieldOnNodes.h"
 #include "Discretization/DOFNumbering.h"
@@ -67,7 +67,7 @@ class FieldBuilder;
  * @author Nicolas Sellenet
  */
 template < class ValueType >
-class FieldOnNodesClass : public GenericDataFieldClass,
+class FieldOnNodesClass : public DataFieldClass,
                              private AllowedFieldType< ValueType > {
   private:
     typedef SimpleFieldOnNodesClass< ValueType > SimpleFieldOnNodesValueTypeClass;
@@ -100,7 +100,7 @@ class FieldOnNodesClass : public GenericDataFieldClass,
      * @param name Nom Jeveux du champ aux noeuds
      */
     FieldOnNodesClass( const std::string name ):
-        GenericDataFieldClass( name, "CHAM_NO" ),
+        DataFieldClass( name, "CHAM_NO" ),
         _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
         _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
         _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
@@ -113,7 +113,7 @@ class FieldOnNodesClass : public GenericDataFieldClass,
      * @param memType Mémoire d'allocation
      */
     FieldOnNodesClass( const JeveuxMemory memType = Permanent ):
-        GenericDataFieldClass( memType, "CHAM_NO" ),
+        DataFieldClass( memType, "CHAM_NO" ),
         _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
         _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
         _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
@@ -124,7 +124,7 @@ class FieldOnNodesClass : public GenericDataFieldClass,
      * @brief Constructeur from a MeshCoordinatesFieldPtr&
      */
     FieldOnNodesClass( MeshCoordinatesFieldPtr &toCopy ):
-        GenericDataFieldClass( toCopy->getMemoryType(), "CHAM_NO" ),
+        DataFieldClass( toCopy->getMemoryType(), "CHAM_NO" ),
         _descriptor( toCopy->_descriptor ), _reference( toCopy->_reference ),
         _valuesList( toCopy->_valuesList ), _dofNum( nullptr ), _dofDescription( nullptr ),
         _title( JeveuxVectorChar80( getName() + ".TITR" ) )

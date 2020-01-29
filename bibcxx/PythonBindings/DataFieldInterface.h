@@ -1,6 +1,9 @@
+#ifndef GENERICDATAFIELDINTERFACE_H_
+#define GENERICDATAFIELDINTERFACE_H_
+
 /**
- * @file GenericDataFieldInterface.cxx
- * @brief Interface python de GenericDataField
+ * @file DataFieldInterface.h
+ * @brief Fichier entete de la classe DataFieldInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -22,19 +25,13 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "astercxx.h"
+#include "DataFields/DataField.h"
 #include <boost/python.hpp>
 
 namespace py = boost::python;
-#include <PythonBindings/factory.h>
 
-#include "PythonBindings/DataStructureInterface.h"
-#include "PythonBindings/GenericDataFieldInterface.h"
+void exportDataFieldToPython();
 
-void exportGenericDataFieldToPython() {
-
-    py::class_< GenericDataFieldClass, GenericDataFieldPtr, py::bases< DataStructure > >(
-        "GenericDataField", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< GenericDataFieldClass >))
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GenericDataFieldClass, std::string >));
-};
+#endif /* GENERICDATAFIELDINTERFACE_H_ */

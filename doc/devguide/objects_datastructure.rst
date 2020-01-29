@@ -623,10 +623,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.GenericDataField` object
+:py:class:`~code_aster.Objects.DataField` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.GenericDataField
+.. autoclass:: code_aster.Objects.DataField
    :show-inheritance:
    :members:
 
