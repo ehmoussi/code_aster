@@ -19,20 +19,20 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`FieldOnElementsDouble` --- Fields defined per element
+:py:class:`FieldOnCellsDouble` --- Fields defined per element
 ****************************************************************
 """
 
 import numpy
 
 import aster
-from libaster import FieldOnElementsDouble
+from libaster import FieldOnCellsDouble
 
 from ..Utilities import injector
 
 
-@injector(FieldOnElementsDouble)
-class ExtendedFieldOnElementsDouble(object):
+@injector(FieldOnCellsDouble)
+class ExtendedFieldOnCellsDouble(object):
     cata_sdj = "SD.sd_champ.sd_cham_elem_class"
 
     def EXTR_COMP(self, comp, lgma=[], topo=0):
@@ -81,7 +81,7 @@ class ExtendedFieldOnElementsDouble(object):
 
 class post_comp_cham_el:
     """Container object that store the results of
-    :py:meth:`code_aster.Objects.FieldOnElementsDouble.EXTR_COMP`.
+    :py:meth:`code_aster.Objects.FieldOnCellsDouble.EXTR_COMP`.
 
     The support of the field may be unknown. In this case, :py:attr:`maille`,
     :py:attr:`point` and :py:attr:`sous_point` are set to *None*.

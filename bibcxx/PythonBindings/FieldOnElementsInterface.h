@@ -1,12 +1,12 @@
-#ifndef FIELDONELEMENTSINTERFACE_H_
-#define FIELDONELEMENTSINTERFACE_H_
+#ifndef FieldOnCellsINTERFACE_H_
+#define FieldOnCellsINTERFACE_H_
 
 /**
- * @file FieldOnElementsInterface.h
- * @brief Fichier entete de la classe FieldOnElementsInterface
+ * @file FieldOnCellsInterface.h
+ * @brief Fichier entete de la classe FieldOnCellsInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,8 +27,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
-#include "DataFields/FieldOnElements.h"
+#include "DataFields/FieldOnCells.h"
 
-void exportFieldOnElementsToPython();
+void exportFieldOnCellsToPython();
 
-#endif /* FIELDONELEMENTSINTERFACE_H_ */
+#endif /* FieldOnCellsINTERFACE_H_ */

@@ -36,7 +36,7 @@
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/FieldOnNodes.h"
-#include "DataFields/FieldOnElements.h"
+#include "DataFields/FieldOnCells.h"
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ParallelDOFNumbering.h"
 #include "Supervis/ResultNaming.h"
@@ -52,7 +52,7 @@
 class ResultsContainerClass : public DataStructure {
   private:
     typedef std::vector< FieldOnNodesDoublePtr > VectorOfFieldsNodes;
-    typedef std::vector< FieldOnElementsDoublePtr > VectorOfFieldsElements;
+    typedef std::vector< FieldOnCellsDoublePtr > VectorOfFieldsElements;
 
     /** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
     typedef std::map< std::string, VectorOfFieldsNodes > mapStrVOFN;
@@ -303,9 +303,9 @@ class ResultsContainerClass : public DataStructure {
      * @brief Obtenir un champ aux noeuds réel à partir de son nom et de son numéro d'ordre
      * @param name nom Aster du champ
      * @param rank numéro d'ordre
-     * @return FieldOnElementsDoublePtr pointant vers le champ
+     * @return FieldOnCellsDoublePtr pointant vers le champ
      */
-    FieldOnElementsDoublePtr getRealFieldOnElements( const std::string name, const int rank ) const
+    FieldOnCellsDoublePtr getRealFieldOnCells( const std::string name, const int rank ) const
         ;
 
     /**

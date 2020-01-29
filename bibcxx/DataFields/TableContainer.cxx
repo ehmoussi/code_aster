@@ -51,7 +51,7 @@ void TableContainerClass::addObject( const std::string& a,
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        FieldOnElementsDoublePtr b )
+                                        FieldOnCellsDoublePtr b )
 {
     _mapFOED[a] = b;
 };
@@ -150,13 +150,13 @@ TableContainerClass::getElementaryVectorTemperatureDouble( const std::string& a 
     return curIter->second;
 };
 
-FieldOnElementsDoublePtr TableContainerClass::getFieldOnElementsDouble
+FieldOnCellsDoublePtr TableContainerClass::getFieldOnCellsDouble
     ( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapFOED.find(aa);
     if( curIter == _mapFOED.end() )
-        return FieldOnElementsDoublePtr( nullptr );
+        return FieldOnCellsDoublePtr( nullptr );
     return curIter->second;
 };
 
@@ -362,8 +362,8 @@ bool TableContainerClass::update()
             else if( type == "CHAM_ELEM" )
                 {
                 if ( _mapFOED[name] == nullptr )
-                _mapFOED[name] = FieldOnElementsDoublePtr
-                                    ( new FieldOnElementsDoubleClass( sdName ) );
+                _mapFOED[name] = FieldOnCellsDoublePtr
+                                    ( new FieldOnCellsDoubleClass( sdName ) );
                 }
             else if( type == "MODE_MECA" )
                 {

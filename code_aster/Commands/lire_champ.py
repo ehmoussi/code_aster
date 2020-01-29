@@ -19,14 +19,14 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (FieldOnElementsDouble, FieldOnNodesDouble,
+from ..Objects import (FieldOnCellsDouble, FieldOnNodesDouble,
                        PCFieldOnMeshDouble)
 from ..Supervis import ExecuteCommand
 
 
 class FieldReader(ExecuteCommand):
     """Command that creates fields that may be
-    :class:`~code_aster.Objects.FieldOnElementsDouble` or
+    :class:`~code_aster.Objects.FieldOnCellsDouble` or
     :class:`~code_aster.Objects.FieldOnNodesDouble` or
     :class:`~code_aster.Objects.PCFieldOnMeshDouble`."""
     command_name = "LIRE_CHAMP"
@@ -50,7 +50,7 @@ class FieldReader(ExecuteCommand):
             self._result = FieldOnNodesDouble()
         else:
             # ELGA_
-            self._result = FieldOnElementsDouble()
+            self._result = FieldOnCellsDouble()
 
 
 

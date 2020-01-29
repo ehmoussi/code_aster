@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (FieldOnElementsDouble, FieldOnNodesComplex,
+from ..Objects import (FieldOnCellsDouble, FieldOnNodesComplex,
                        FieldOnNodesDouble, FullResultsContainer,
                        PCFieldOnMeshDouble)
 from ..Supervis import ExecuteCommand
@@ -68,7 +68,7 @@ class FieldCreator(ExecuteCommand):
                 self._result.setMesh(mesh)
         else:
             # ELGA_
-            self._result = FieldOnElementsDouble()
+            self._result = FieldOnCellsDouble()
         numeDdl = keywords.get("NUME_DDL")
         if numeDdl is not None:
             self._result.setDOFNumbering(numeDdl)

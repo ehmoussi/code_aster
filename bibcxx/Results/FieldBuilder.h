@@ -29,13 +29,13 @@
 #include "astercxx.h"
 
 #include "DataFields/FieldOnNodes.h"
-#include "DataFields/FieldOnElements.h"
+#include "DataFields/FieldOnCells.h"
 #include "Discretization/DOFNumbering.h"
 #include "Modeling/FiniteElementDescriptor.h"
 
 /**
  * @class FieldBuilderClass
- * @brief This class builds FieldOnNodes and FieldOnElements with respect of
+ * @brief This class builds FieldOnNodes and FieldOnCells with respect of
  *        FieldOnNodesDescription and FiniteElementDescriptor
  * @author Nicolas Sellenet
  */
@@ -65,16 +65,16 @@ class FieldBuilder {
     };
 
     /**
-     * @brief Build a FieldOnElements with a FiniteElementDescriptor
+     * @brief Build a FieldOnCells with a FiniteElementDescriptor
      */
     template < typename ValueType >
-    boost::shared_ptr< FieldOnElementsClass< ValueType > >
-    buildFieldOnElements( const std::string &name, const BaseMeshPtr mesh ) {
+    boost::shared_ptr< FieldOnCellsClass< ValueType > >
+    buildFieldOnCells( const std::string &name, const BaseMeshPtr mesh ) {
         typedef FiniteElementDescriptorClass FEDDesc;
         typedef FiniteElementDescriptorPtr FEDDescP;
 
-        boost::shared_ptr< FieldOnElementsClass< ValueType > > result(
-            new FieldOnElementsDoubleClass( name ) );
+        boost::shared_ptr< FieldOnCellsClass< ValueType > > result(
+            new FieldOnCellsDoubleClass( name ) );
         result->updateValuePointers();
 
         const std::string name2 = trim( ( *( *result )._reference )[0].toString() );
@@ -93,7 +93,7 @@ class FieldBuilder {
     };
 
     /**
-     * @brief Build a FieldOnElements with a FieldOnNodesDescription
+     * @brief Build a FieldOnCells with a FieldOnNodesDescription
      */
     template < typename ValueType >
     boost::shared_ptr< FieldOnNodesClass< ValueType > > buildFieldOnNodes( std::string name ) {

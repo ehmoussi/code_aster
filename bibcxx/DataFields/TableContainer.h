@@ -40,7 +40,7 @@
 #include "DataFields/GenericDataField.h"
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/PCFieldOnMesh.h"
-#include "DataFields/FieldOnElements.h"
+#include "DataFields/FieldOnCells.h"
 #include "Results/MechanicalModeContainer.h"
 #include "Functions/Function.h"
 #include "Functions/Surface.h"
@@ -69,7 +69,7 @@ class TableContainerClass : public TableClass
     std::map< std::string, GenericDataFieldPtr > _mapGDF;
     std::map< std::string, FieldOnNodesDoublePtr > _mapFOND;
     std::map< std::string, PCFieldOnMeshDoublePtr > _mapPCFOMD;
-    std::map< std::string, FieldOnElementsDoublePtr > _mapFOED;
+    std::map< std::string, FieldOnCellsDoublePtr > _mapFOED;
     std::map< std::string, MechanicalModeContainerPtr > _mapMMC;
     std::map< std::string, TablePtr > _mapT;
     std::map< std::string, FunctionPtr > _mapF;
@@ -124,10 +124,10 @@ class TableContainerClass : public TableClass
     void addObject( const std::string&, ElementaryVectorTemperatureDoublePtr );
 
     /**
-     * @brief Add FieldOnElementsDouble to TableContainer
+     * @brief Add FieldOnCellsDouble to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, FieldOnElementsDoublePtr );
+    void addObject( const std::string&, FieldOnCellsDoublePtr );
 
     /**
      * @brief Add FieldOnNodesDouble to TableContainer
@@ -212,10 +212,10 @@ class TableContainerClass : public TableClass
         ( const std::string& ) const;
 
     /**
-     * @brief Get FieldOnElementsDouble stored in TableContainer
+     * @brief Get FieldOnCellsDouble stored in TableContainer
      * @param name key used to find object
      */
-    FieldOnElementsDoublePtr getFieldOnElementsDouble( const std::string& ) const;
+    FieldOnCellsDoublePtr getFieldOnCellsDouble( const std::string& ) const;
 
     /**
      * @brief Get FieldOnNodesDouble stored in TableContainer

@@ -39,7 +39,7 @@ from ..Objects import (AsFloat, AsInteger, ElementaryMatrixDisplacementDouble,
                        ElementaryMatrixTemperatureDouble,
                        ElementaryVectorDisplacementDouble,
                        ElementaryVectorTemperatureDouble,
-                       FieldOnElementsDouble, FieldOnNodesDouble, Function,
+                       FieldOnCellsDouble, FieldOnNodesDouble, Function,
                        FunctionComplex, GeneralizedAssemblyMatrixDouble,
                        GenericDataField, MechanicalModeContainer,
                        PCFieldOnMeshDouble, Surface, Table)
@@ -81,7 +81,7 @@ class ExtrTable(ExecuteCommand):
         elif typeResu == 'CARTE_SDASTER':
             self._result = PCFieldOnMeshDouble()
         elif typeResu == 'CHAM_ELEM':
-            self._result = FieldOnElementsDouble()
+            self._result = FieldOnCellsDouble()
         elif typeResu == 'CHAM_NO_SDASTER':
             self._result = FieldOnNodesDouble()
         elif typeResu == 'CHAM_GD_SDASTER':

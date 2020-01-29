@@ -1,6 +1,6 @@
 /**
- * @file FieldOnElementsInterface.cxx
- * @brief Interface python de FieldOnElements
+ * @file FieldOnCellsInterface.cxx
+ * @brief Interface python de FieldOnCells
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -29,18 +29,18 @@ namespace py = boost::python;
 #include <PythonBindings/factory.h>
 
 #include "PythonBindings/DataStructureInterface.h"
-#include "PythonBindings/FieldOnElementsInterface.h"
+#include "PythonBindings/FieldOnCellsInterface.h"
 
-void exportFieldOnElementsToPython() {
-    py::class_< FieldOnElementsDoubleClass, FieldOnElementsDoublePtr,
-            py::bases< GenericDataFieldClass > >( "FieldOnElementsDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnElementsDoubleClass >))
+void exportFieldOnCellsToPython() {
+    py::class_< FieldOnCellsDoubleClass, FieldOnCellsDoublePtr,
+            py::bases< GenericDataFieldClass > >( "FieldOnCellsDouble", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnCellsDoubleClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FieldOnElementsDoubleClass, std::string >))
-        .def( "exportToSimpleFieldOnElements",
-              &FieldOnElementsDoubleClass::exportToSimpleFieldOnElements )
-        .def( "getModel", &FieldOnElementsDoubleClass::getModel )
-        .def( "setDescription", &FieldOnElementsDoubleClass::setDescription )
-        .def( "setModel", &FieldOnElementsDoubleClass::setModel )
-        .def( "update", &FieldOnElementsDoubleClass::update );
+              py::make_constructor(&initFactoryPtr< FieldOnCellsDoubleClass, std::string >))
+        .def( "exportToSimpleFieldOnCells",
+              &FieldOnCellsDoubleClass::exportToSimpleFieldOnCells )
+        .def( "getModel", &FieldOnCellsDoubleClass::getModel )
+        .def( "setDescription", &FieldOnCellsDoubleClass::setDescription )
+        .def( "setModel", &FieldOnCellsDoubleClass::setModel )
+        .def( "update", &FieldOnCellsDoubleClass::update );
 };

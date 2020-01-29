@@ -260,7 +260,7 @@ std::vector< long > ResultsContainerClass::getRanks() const
     return v;
 };
 
-FieldOnElementsDoublePtr ResultsContainerClass::getRealFieldOnElements( const std::string name,
+FieldOnCellsDoublePtr ResultsContainerClass::getRealFieldOnCells( const std::string name,
                                                                            const int rank ) const
 {
     if ( rank > _nbRanks || rank <= 0 )
@@ -270,7 +270,7 @@ FieldOnElementsDoublePtr ResultsContainerClass::getRealFieldOnElements( const st
     if ( curIter == _dictOfVectorOfFieldsElements.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 
-    FieldOnElementsDoublePtr toReturn = curIter->second[rank - 1];
+    FieldOnCellsDoublePtr toReturn = curIter->second[rank - 1];
     return toReturn;
 };
 
@@ -380,20 +380,20 @@ bool ResultsContainerClass::update()
                     const auto &curIter2 = _dictOfVectorOfFieldsElements.find( nomSymb );
                     if ( curIter2 == _dictOfVectorOfFieldsElements.end() )
                         _dictOfVectorOfFieldsElements[nomSymb] = VectorOfFieldsElements(
-                            numberOfSerialNum, FieldOnElementsDoublePtr( nullptr ) );
+                            numberOfSerialNum, FieldOnCellsDoublePtr( nullptr ) );
                     else if ( curIter2->second.size() != numberOfSerialNum ) {
                         curIter2->second.resize( numberOfSerialNum,
-                                                 FieldOnElementsDoublePtr( nullptr ) );
+                                                 FieldOnCellsDoublePtr( nullptr ) );
                     }
 
                     ASTERINTEGER test2 = _dictOfVectorOfFieldsElements[nomSymb][rank].use_count();
                     if ( test2 == 0 ) {
                         if ( curMesh == nullptr )
                             throw std::runtime_error(
-                                "No mesh, impossible to build FieldOnElements" );
-                        FieldOnElementsDoublePtr result =
-                            _fieldBuidler.buildFieldOnElements< double >( name, curMesh );
-                        ( new FieldOnElementsDoubleClass( name ) );
+                                "No mesh, impossible to build FieldOnCells" );
+                        FieldOnCellsDoublePtr result =
+                            _fieldBuidler.buildFieldOnCells< double >( name, curMesh );
+                        ( new FieldOnCellsDoubleClass( name ) );
                         _dictOfVectorOfFieldsElements[nomSymb][rank] = result;
                     }
                 }

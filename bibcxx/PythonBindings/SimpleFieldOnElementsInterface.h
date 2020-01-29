@@ -1,12 +1,12 @@
-#ifndef SIMPLEFIELDONELEMENTSINTERFACE_H_
-#define SIMPLEFIELDONELEMENTSINTERFACE_H_
+#ifndef SIMPLEFieldOnCellsINTERFACE_H_
+#define SIMPLEFieldOnCellsINTERFACE_H_
 
 /**
- * @file SimpleFieldOnElementsInterface.h
- * @brief Fichier entete de la classe SimpleFieldOnElementsInterface
+ * @file SimpleFieldOnCellsInterface.h
+ * @brief Fichier entete de la classe SimpleFieldOnCellsInterface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,8 +27,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
-#include "DataFields/SimpleFieldOnElements.h"
+#include "DataFields/SimpleFieldOnCells.h"
 
-void exportSimpleFieldOnElementsToPython();
+void exportSimpleFieldOnCellsToPython();
 
-#endif /* SIMPLEFIELDONELEMENTSINTERFACE_H_ */
+#endif /* SIMPLEFieldOnCellsINTERFACE_H_ */

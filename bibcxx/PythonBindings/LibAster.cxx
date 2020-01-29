@@ -58,7 +58,7 @@ namespace py = boost::python;
 #include "PythonBindings/EvolutiveThermalLoadInterface.h"
 #include "PythonBindings/EventManagerInterface.h"
 #include "PythonBindings/FiberGeometryInterface.h"
-#include "PythonBindings/FieldOnElementsInterface.h"
+#include "PythonBindings/FieldOnCellsInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
 #include "PythonBindings/FiniteElementDescriptorInterface.h"
 #include "PythonBindings/FluidStructureInteractionInterface.h"
@@ -119,7 +119,7 @@ namespace py = boost::python;
 #include "PythonBindings/PrestressingCableDefinitionInterface.h"
 #include "PythonBindings/ResultNamingInterface.h"
 #include "PythonBindings/ResultsContainerInterface.h"
-#include "PythonBindings/SimpleFieldOnElementsInterface.h"
+#include "PythonBindings/SimpleFieldOnCellsInterface.h"
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
 #include "PythonBindings/SkeletonInterface.h"
 #include "PythonBindings/StateInterface.h"
@@ -205,10 +205,10 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportFiniteElementDescriptorToPython();
     exportFiberGeometryToPython();
     exportGenericDataFieldToPython();
-    exportFieldOnElementsToPython();
+    exportFieldOnCellsToPython();
     exportFieldOnNodesToPython();
     exportPCFieldOnMeshToPython();
-    exportSimpleFieldOnElementsToPython();
+    exportSimpleFieldOnCellsToPython();
     exportSimpleFieldOnNodesToPython();
     exportTableToPython();
     exportTableContainerToPython();

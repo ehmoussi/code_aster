@@ -42,7 +42,7 @@ from .elementarymatrix_ext import (ElementaryMatrixDisplacementComplex,
                                    ElementaryMatrixDisplacementDouble,
                                    ElementaryMatrixPressureComplex,
                                    ElementaryMatrixTemperatureDouble)
-from .fieldonelements_ext import FieldOnElementsDouble
+from .FieldOnCells_ext import FieldOnCellsDouble
 from .fieldonnodes_ext import FieldOnNodesDouble
 from .formula_ext import Formula
 from .function_ext import Function
