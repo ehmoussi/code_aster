@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,86 +15,87 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0152(option, nomte)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
-#include "asterc/r8prem.h"
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
-#include "asterfort/rcvalb.h"
+#include "asterfort/getFluidPara.h"
 #include "asterfort/utmess.h"
 !
-    character(len=*) :: option, nomte
-!     CALCULE DES TERMES PROPRES A UN STRUCTURE
-!     OPTION : 'MASS_INER'              (ELEMENTS FLUIDES 3D)
-!     ------------------------------------------------------------------
-!-----------------------------------------------------------------------
-    integer :: l, lcastr, nbres, ndim, nnos
-    real(kind=8) :: rho, xxi, yyi, zero, zzi
-!-----------------------------------------------------------------------
-    parameter (nbres=2)
-    character(len=8) :: fami, poum
-    character(len=16) :: nomres(nbres)
+character(len=16), intent(in) :: option, nomte
 !
-    integer :: icodre(nbres)
-    real(kind=8) :: valres(nbres)
-    real(kind=8) :: poids, volume
-    real(kind=8) :: x(27), y(27), z(27), xg, yg, zg, matine(6)
-    integer :: ipoids, ivf, idfde, igeom
-    integer :: jgano, nno, kp, npg, i, j, imate, kpg, spt
-!     ------------------------------------------------------------------
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+! --------------------------------------------------------------------------------------------------
 !
-    zero = 0.d0
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
+! Elementary computation
 !
-    call jevech('PGEOMER', 'L', igeom)
-    call jevech('PMATERC', 'L', imate)
+! Elements: 3D_FLUIDE
 !
-    nomres(1) = 'RHO'
-    nomres(2) = 'CELE_R'
-    call rcvalb(fami, kpg, spt, poum, zi(imate),&
-                ' ', 'FLUIDE', 0, ' ', [0.d0],&
-                2, nomres, valres, icodre, 1)
-    rho = valres(1)
-    if (rho .le. r8prem()) then
-        call utmess('F', 'ELEMENTS5_45')
-    endif
+! Options: MASS_INER
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: jv_geom, jv_mate, jv_mass
+    integer :: npg, nno
+    integer :: i, j, l, ipg
+    real(kind=8) :: xxi, yyi, zzi
+    real(kind=8) :: poids, volume, rho
+    real(kind=8) :: x(27), y(27), z(27), xg, yg, zg
+    real(kind=8) :: matine(6)
+    integer :: ipoids, ivf, idfde
+    integer :: j_mater
+!
+! --------------------------------------------------------------------------------------------------
+!
+    matine = 0.d0
+!
+! - Input fields
+!
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PMATERC', 'L', jv_mate)
+!
+! - Get element parameters
+!
+    call elrefe_info(fami='RIGI',&
+                     nno=nno, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde)
+!
+! - Get material properties for fluid
+!
+    j_mater = zi(jv_mate)
+    call getFluidPara(j_mater, rho)
+!
+! - Output field
+!
+    call jevech('PMASSINE', 'E', jv_mass)
+    do i = 0, 3
+        zr(jv_mass+i) = 0.d0
+    end do
+!
+! - Get geometry
 !
     do i = 1, nno
-        x(i) = zr(igeom+3* (i-1))
-        y(i) = zr(igeom+3*i-2)
-        z(i) = zr(igeom+3*i-1)
+        x(i) = zr(jv_geom+3* (i-1))
+        y(i) = zr(jv_geom+3*i-2)
+        z(i) = zr(jv_geom+3*i-1)
     end do
 !
-    call jevech('PMASSINE', 'E', lcastr)
-    do i = 0, 3
-        zr(lcastr+i) = zero
-    end do
-    do i = 1, 6
-        matine(i) = zero
-    end do
+! - Loop on Gauss points
 !
-!     --- BOUCLE SUR LES POINTS DE GAUSS
     volume = 0.d0
-    do kp = 1, npg
-        l = (kp-1)*nno
-        call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
+    do ipg = 1, npg
+        l = (ipg-1)*nno
+        call dfdm3d(nno, ipg, ipoids, idfde, zr(jv_geom),&
                     poids)
-!
         volume = volume + poids
         do i = 1, nno
-!           --- CDG ---
-            zr(lcastr+1) = zr(lcastr+1) + poids*x(i)*zr(ivf+l+i-1)
-            zr(lcastr+2) = zr(lcastr+2) + poids*y(i)*zr(ivf+l+i-1)
-            zr(lcastr+3) = zr(lcastr+3) + poids*z(i)*zr(ivf+l+i-1)
-!           --- INERTIE ---
+            zr(jv_mass+1) = zr(jv_mass+1) + poids*x(i)*zr(ivf+l+i-1)
+            zr(jv_mass+2) = zr(jv_mass+2) + poids*y(i)*zr(ivf+l+i-1)
+            zr(jv_mass+3) = zr(jv_mass+3) + poids*z(i)*zr(ivf+l+i-1)
             xxi = 0.d0
             yyi = 0.d0
             zzi = 0.d0
@@ -102,9 +103,9 @@ subroutine te0152(option, nomte)
                 xxi = xxi + x(i)*zr(ivf+l+i-1)*x(j)*zr(ivf+l+j-1)
                 yyi = yyi + y(i)*zr(ivf+l+i-1)*y(j)*zr(ivf+l+j-1)
                 zzi = zzi + z(i)*zr(ivf+l+i-1)*z(j)*zr(ivf+l+j-1)
-                matine(2) = matine(2) + poids*x(i)*zr(ivf+l+i-1)*y(j)* zr(ivf+l+j-1)
-                matine(4) = matine(4) + poids*x(i)*zr(ivf+l+i-1)*z(j)* zr(ivf+l+j-1)
-                matine(5) = matine(5) + poids*y(i)*zr(ivf+l+i-1)*z(j)* zr(ivf+l+j-1)
+                matine(2) = matine(2) + poids*x(i)*zr(ivf+l+i-1)*y(j)*zr(ivf+l+j-1)
+                matine(4) = matine(4) + poids*x(i)*zr(ivf+l+i-1)*z(j)*zr(ivf+l+j-1)
+                matine(5) = matine(5) + poids*y(i)*zr(ivf+l+i-1)*z(j)*zr(ivf+l+j-1)
             end do
             matine(1) = matine(1) + poids* (yyi+zzi)
             matine(3) = matine(3) + poids* (xxi+zzi)
@@ -112,20 +113,21 @@ subroutine te0152(option, nomte)
         end do
     end do
 !
-    xg = zr(lcastr+1)/volume
-    yg = zr(lcastr+2)/volume
-    zg = zr(lcastr+3)/volume
-    zr(lcastr) = volume*rho
-    zr(lcastr+1) = xg
-    zr(lcastr+2) = yg
-    zr(lcastr+3) = zg
+    xg = zr(jv_mass+1)/volume
+    yg = zr(jv_mass+2)/volume
+    zg = zr(jv_mass+3)/volume
 !
-!     ---ON DONNE LES INERTIES EN G ---
-    zr(lcastr+4) = matine(1)*rho - zr(lcastr)* (yg*yg+zg*zg)
-    zr(lcastr+5) = matine(3)*rho - zr(lcastr)* (xg*xg+zg*zg)
-    zr(lcastr+6) = matine(6)*rho - zr(lcastr)* (xg*xg+yg*yg)
-    zr(lcastr+7) = matine(2)*rho - zr(lcastr)* (xg*yg)
-    zr(lcastr+8) = matine(4)*rho - zr(lcastr)* (xg*zg)
-    zr(lcastr+9) = matine(5)*rho - zr(lcastr)* (yg*zg)
+! - Save results
+!
+    zr(jv_mass) = volume*rho
+    zr(jv_mass+1) = xg
+    zr(jv_mass+2) = yg
+    zr(jv_mass+3) = zg
+    zr(jv_mass+4) = matine(1)*rho - zr(jv_mass)*(yg*yg+zg*zg)
+    zr(jv_mass+5) = matine(3)*rho - zr(jv_mass)*(xg*xg+zg*zg)
+    zr(jv_mass+6) = matine(6)*rho - zr(jv_mass)*(xg*xg+yg*yg)
+    zr(jv_mass+7) = matine(2)*rho - zr(jv_mass)*(xg*yg)
+    zr(jv_mass+8) = matine(4)*rho - zr(jv_mass)*(xg*zg)
+    zr(jv_mass+9) = matine(5)*rho - zr(jv_mass)*(yg*zg)
 !
 end subroutine
