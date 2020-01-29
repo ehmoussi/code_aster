@@ -55,9 +55,9 @@ U2 = MECA_STATIQUE(MODELE=MO,
                  LIST_INST=LINST,
                  );
 
-fieldOnElem = U2.getRealFieldOnElements("SIEF_ELGA", 31)
+fieldOnElem = U2.getRealFieldOnCells("SIEF_ELGA", 31)
 
-sfon = fieldOnElem.exportToSimpleFieldOnElements()
+sfon = fieldOnElem.exportToSimpleFieldOnCells()
 
 test.assertAlmostEqual(sfon.getValue(0, 0), -325.03920740223253)
 

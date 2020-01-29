@@ -30,8 +30,8 @@ CalculationInputVariablesClass::CalculationInputVariablesClass(
     const ElementaryCharacteristicsPtr &cara, const CodedMaterialPtr &codMater ):
         DataStructure( "VARI_COM", Permanent, 14 ), _model( model ), _mater( mater ),
         _codMater( codMater ), _elemCara( cara ),
-        _varRef( new FieldOnElementsDoubleClass( _model->getName() + ".CHVCREF" ) ),
-        _varInst( new FieldOnElementsDoubleClass( getName() + ".TOUT" ) ),
+        _varRef( new FieldOnCellsDoubleClass( _model->getName() + ".CHVCREF" ) ),
+        _varInst( new FieldOnCellsDoubleClass( getName() + ".TOUT" ) ),
         _timeValue(
           new PCFieldOnMeshDoubleClass( getName() + ".INST", _model->getMesh() ) ),
         _currentTime( -1.0 ), _pTot( _mater->existsCalculationInputVariable( "PTOT" ) ),

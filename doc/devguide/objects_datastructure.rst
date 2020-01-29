@@ -344,10 +344,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.FieldOnElementsDouble` object
+:py:class:`~code_aster.Objects.FieldOnCellsDouble` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.FieldOnElementsDouble
+.. autoclass:: code_aster.Objects.FieldOnCellsDouble
    :show-inheritance:
    :members:
 
@@ -1037,10 +1037,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.SimpleFieldOnElementsDouble` object
+:py:class:`~code_aster.Objects.SimpleFieldOnCellsDouble` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.SimpleFieldOnElementsDouble
+.. autoclass:: code_aster.Objects.SimpleFieldOnCellsDouble
    :show-inheritance:
    :members:
 
@@ -1232,4 +1232,3 @@
 .. autoclass:: code_aster.Objects.XfemCrack
    :show-inheritance:
    :members:
-

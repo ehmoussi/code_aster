@@ -1,9 +1,9 @@
-#ifndef SIMPLEFIELDONELEMENTS_H_
-#define SIMPLEFIELDONELEMENTS_H_
+#ifndef SIMPLEFieldOnCells_H_
+#define SIMPLEFieldOnCells_H_
 
 /**
- * @file SimpleFieldOnElements.h
- * @brief Fichier entete de la classe SimpleFieldOnElements
+ * @file SimpleFieldOnCells.h
+ * @brief Fichier entete de la classe SimpleFieldOnCells
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -36,11 +36,11 @@
 #include "DataStructures/DataStructure.h"
 
 /**
- * @class SimpleFieldOnElementsClass
+ * @class SimpleFieldOnCellsClass
  * @brief Cette classe template permet de definir un champ aux éléments Aster
  * @author Nicolas Sellenet
  */
-template < class ValueType > class SimpleFieldOnElementsClass : public DataStructure {
+template < class ValueType > class SimpleFieldOnCellsClass : public DataStructure {
   private:
     /** @brief Vecteur Jeveux '.CESK' */
     JeveuxVectorChar8 _descriptor;
@@ -63,16 +63,16 @@ template < class ValueType > class SimpleFieldOnElementsClass : public DataStruc
 
   public:
     /**
-     * @typedef SimpleFieldOnElementsPtr
-     * @brief Pointeur intelligent vers un SimpleFieldOnElements
+     * @typedef SimpleFieldOnCellsPtr
+     * @brief Pointeur intelligent vers un SimpleFieldOnCells
      */
-    typedef boost::shared_ptr< SimpleFieldOnElementsClass > SimpleFieldOnElementsPtr;
+    typedef boost::shared_ptr< SimpleFieldOnCellsClass > SimpleFieldOnCellsPtr;
 
     /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux éléments
      */
-    SimpleFieldOnElementsClass( const std::string name )
+    SimpleFieldOnCellsClass( const std::string name )
         : DataStructure( name, 19, "CHAM_ELEM_S" ),
           _descriptor( JeveuxVectorChar8( getName() + ".CESK" ) ),
           _size( JeveuxVectorLong( getName() + ".CESD" ) ),
@@ -85,7 +85,7 @@ template < class ValueType > class SimpleFieldOnElementsClass : public DataStruc
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    SimpleFieldOnElementsClass( const JeveuxMemory memType = Permanent )
+    SimpleFieldOnCellsClass( const JeveuxMemory memType = Permanent )
         : DataStructure( "CHAM_NO_S", memType, 19 ),
           _descriptor( JeveuxVectorChar8( getName() + ".CESK" ) ),
           _size( JeveuxVectorLong( getName() + ".CESD" ) ),
@@ -133,22 +133,22 @@ template < class ValueType > class SimpleFieldOnElementsClass : public DataStruc
     };
 };
 
-/** @typedef SimpleFieldOnElementsClassDouble Class d'une carte de double */
-typedef SimpleFieldOnElementsClass< double > SimpleFieldOnElementsDoubleClass;
+/** @typedef SimpleFieldOnCellsClassDouble Class d'une carte de double */
+typedef SimpleFieldOnCellsClass< double > SimpleFieldOnCellsDoubleClass;
 
 /**
- * @typedef SimpleFieldOnElementsPtrDouble
+ * @typedef SimpleFieldOnCellsPtrDouble
  * @brief Definition d'un champ aux éléments de double
  */
-typedef boost::shared_ptr< SimpleFieldOnElementsDoubleClass > SimpleFieldOnElementsDoublePtr;
+typedef boost::shared_ptr< SimpleFieldOnCellsDoubleClass > SimpleFieldOnCellsDoublePtr;
 
-/** @typedef SimpleFieldOnElementsClassLong Class d'une carte de long */
-typedef SimpleFieldOnElementsClass< ASTERINTEGER > SimpleFieldOnElementsLongClass;
+/** @typedef SimpleFieldOnCellsClassLong Class d'une carte de long */
+typedef SimpleFieldOnCellsClass< ASTERINTEGER > SimpleFieldOnCellsLongClass;
 
 /**
- * @typedef SimpleFieldOnElementsPtrLong
+ * @typedef SimpleFieldOnCellsPtrLong
  * @brief Definition d'un champ aux éléments de long
  */
-typedef boost::shared_ptr< SimpleFieldOnElementsLongClass > SimpleFieldOnElementsLongPtr;
+typedef boost::shared_ptr< SimpleFieldOnCellsLongClass > SimpleFieldOnCellsLongPtr;
 
-#endif /* SIMPLEFIELDONELEMENTS_H_ */
+#endif /* SIMPLEFieldOnCells_H_ */

@@ -82,7 +82,7 @@ u=resu.getRealFieldOnNodes('DEPL',2)
 z=u.EXTR_COMP()
 test.assertEqual(len(z.valeurs),81)
 
-sixx=resu.getRealFieldOnElements('SIEF_ELGA',1)
+sixx=resu.getRealFieldOnCells('SIEF_ELGA',1)
 z=sixx.EXTR_COMP('SIXX')
 test.assertEqual(len(z.valeurs),64)
 

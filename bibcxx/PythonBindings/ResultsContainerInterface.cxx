@@ -70,7 +70,7 @@ void exportResultsContainerToPython() {
         .def( "getNumberOfRanks", &ResultsContainerClass::getNumberOfRanks )
         .def( "getRanks", &ResultsContainerClass::getRanks )
         .def( "getRealFieldOnNodes", &ResultsContainerClass::getRealFieldOnNodes )
-        .def( "getRealFieldOnElements", &ResultsContainerClass::getRealFieldOnElements )
+        .def( "getRealFieldOnCells", &ResultsContainerClass::getRealFieldOnCells )
         .def( "printMedFile", &ResultsContainerClass::printMedFile )
         .def( "setMesh", &ResultsContainerClass::setMesh )
         .def( "update", &ResultsContainerClass::update );

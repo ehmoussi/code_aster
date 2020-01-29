@@ -32,7 +32,7 @@
 #include "Materials/CodedMaterial.h"
 #include "Modeling/Model.h"
 #include "Discretization/ElementaryCharacteristics.h"
-#include "DataFields/FieldOnElements.h"
+#include "DataFields/FieldOnCells.h"
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "DataStructures/DataStructure.h"
@@ -49,8 +49,8 @@ class CalculationInputVariablesClass : public DataStructure {
     MaterialOnMeshPtr _mater;
     CodedMaterialPtr _codMater;
     ElementaryCharacteristicsPtr _elemCara;
-    FieldOnElementsDoublePtr _varRef;
-    FieldOnElementsDoublePtr _varInst;
+    FieldOnCellsDoublePtr _varRef;
+    FieldOnCellsDoublePtr _varInst;
     PCFieldOnMeshDoublePtr _timeValue;
     double _currentTime;
     bool _pTot;

@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FieldOnElementsDouble
+from ..Objects import FieldOnCellsDouble
 from ..Supervis import ExecuteCommand
 
 
 class CalcChamElem(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.FieldOnElementsDouble`.
+    """Command that defines :class:`~code_aster.Objects.FieldOnCellsDouble`.
     """
     command_name = "CALC_CHAM_ELEM"
 
@@ -34,7 +34,7 @@ class CalcChamElem(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FieldOnElementsDouble()
+        self._result = FieldOnCellsDouble()
 
     def post_exec(self, keywords):
         """Execute the command.

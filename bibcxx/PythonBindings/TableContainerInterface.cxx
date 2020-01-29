@@ -44,7 +44,7 @@ void exportTableContainerToPython() {
     void ( TableContainerClass::*c4 )( const std::string &,
                                           ElementaryVectorTemperatureDoublePtr ) =
         &TableContainerClass::addObject;
-    void ( TableContainerClass::*c5 )( const std::string &, FieldOnElementsDoublePtr ) =
+    void ( TableContainerClass::*c5 )( const std::string &, FieldOnCellsDoublePtr ) =
         &TableContainerClass::addObject;
     void ( TableContainerClass::*c6 )( const std::string &, FieldOnNodesDoublePtr ) =
         &TableContainerClass::addObject;
@@ -93,7 +93,7 @@ void exportTableContainerToPython() {
               &TableContainerClass::getElementaryVectorDisplacementDouble )
         .def( "getElementaryVectorTemperatureDouble",
               &TableContainerClass::getElementaryVectorTemperatureDouble )
-        .def( "getFieldOnElementsDouble", &TableContainerClass::getFieldOnElementsDouble )
+        .def( "getFieldOnCellsDouble", &TableContainerClass::getFieldOnCellsDouble )
         .def( "getFieldOnNodesDouble", &TableContainerClass::getFieldOnNodesDouble )
         .def( "getFunction", &TableContainerClass::getFunction )
         .def( "getFunctionComplex", &TableContainerClass::getFunctionComplex )
