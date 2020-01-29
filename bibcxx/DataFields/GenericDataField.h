@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GenericDataField
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,24 +29,24 @@
 #include "DataStructures/DataStructure.h"
 
 /**
- * @class GenericDataFieldInstance
+ * @class GenericDataFieldClass
  * @brief Generic class which describe a field of data
  * @author Nicolas Sellenet
  */
-class GenericDataFieldInstance : public DataStructure {
+class GenericDataFieldClass : public DataStructure {
   private:
   public:
     /**
      * @typedef GenericDataFieldPtr
      * @brief Pointeur intelligent vers un GenericDataField
      */
-    typedef boost::shared_ptr< GenericDataFieldInstance > GenericDataFieldPtr;
+    typedef boost::shared_ptr< GenericDataFieldClass > GenericDataFieldPtr;
 
     /**
      * @brief Constructor
      * @param name Jeveux name
      */
-    GenericDataFieldInstance( const std::string name, const std::string type = "CHAM_GD",
+    GenericDataFieldClass( const std::string name, const std::string type = "CHAM_GD",
                               const JeveuxMemory memType = Permanent )
         : DataStructure( name, 19, type, memType ){};
 
@@ -54,7 +54,7 @@ class GenericDataFieldInstance : public DataStructure {
      * @brief Constructor
      * @param memType allocation memory
      */
-    GenericDataFieldInstance( const JeveuxMemory memType = Permanent,
+    GenericDataFieldClass( const JeveuxMemory memType = Permanent,
                               const std::string type = "CHAM_GD" )
         : DataStructure( type, memType, 19 ){};
 };
@@ -62,6 +62,6 @@ class GenericDataFieldInstance : public DataStructure {
 /**
  * @typedef GenericDataFieldPtrDouble
  */
-typedef boost::shared_ptr< GenericDataFieldInstance > GenericDataFieldPtr;
+typedef boost::shared_ptr< GenericDataFieldClass > GenericDataFieldPtr;
 
 #endif /* GENERICDATAFIELD_H_ */

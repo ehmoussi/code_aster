@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnElements
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,14 +39,14 @@
 #include "Modeling/FiniteElementDescriptor.h"
 
 /**
- * @class FieldOnElementsInstance
+ * @class FieldOnElementsClass
  * @brief Cette classe template permet de definir un champ aux éléments Aster
  * @author Nicolas Sellenet
  */
-template < class ValueType > class FieldOnElementsInstance : public GenericDataFieldInstance {
+template < class ValueType > class FieldOnElementsClass : public GenericDataFieldClass {
   private:
-    typedef SimpleFieldOnElementsInstance< ValueType > SimpleFieldOnElementsValueTypeInstance;
-    typedef boost::shared_ptr< SimpleFieldOnElementsDoubleInstance >
+    typedef SimpleFieldOnElementsClass< ValueType > SimpleFieldOnElementsValueTypeClass;
+    typedef boost::shared_ptr< SimpleFieldOnElementsDoubleClass >
         SimpleFieldOnElementsValueTypePtr;
 
     /** @brief Vecteur Jeveux '.CELD' */
@@ -67,14 +67,14 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
      * @typedef FieldOnElementsPtr
      * @brief Pointeur intelligent vers un FieldOnElements
      */
-    typedef boost::shared_ptr< FieldOnElementsInstance > FieldOnElementsPtr;
+    typedef boost::shared_ptr< FieldOnElementsClass > FieldOnElementsPtr;
 
     /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux éléments
      */
-    FieldOnElementsInstance( const std::string name )
-        : GenericDataFieldInstance( name, "CHAM_ELEM" ),
+    FieldOnElementsClass( const std::string name )
+        : GenericDataFieldClass( name, "CHAM_ELEM" ),
           _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
           _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _model( nullptr ),
@@ -84,8 +84,8 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    FieldOnElementsInstance( const JeveuxMemory memType = Permanent )
-        : GenericDataFieldInstance( memType, "CHAM_ELEM" ),
+    FieldOnElementsClass( const JeveuxMemory memType = Permanent )
+        : GenericDataFieldClass( memType, "CHAM_ELEM" ),
           _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
           _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _model( nullptr ),
@@ -107,7 +107,7 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
      */
     SimpleFieldOnElementsValueTypePtr exportToSimpleFieldOnElements() {
         SimpleFieldOnElementsValueTypePtr toReturn(
-            new SimpleFieldOnElementsValueTypeInstance( getMemoryType() ) );
+            new SimpleFieldOnElementsValueTypeClass( getMemoryType() ) );
         const std::string resultName = toReturn->getName();
         const std::string inName = getName();
         const std::string copyNan( "OUI" );
@@ -172,22 +172,22 @@ template < class ValueType > class FieldOnElementsInstance : public GenericDataF
     friend class FieldBuilder;
 };
 
-/** @typedef FieldOnElementsInstanceDouble Instance d'une carte de double */
-typedef FieldOnElementsInstance< double > FieldOnElementsDoubleInstance;
+/** @typedef FieldOnElementsClassDouble Class d'une carte de double */
+typedef FieldOnElementsClass< double > FieldOnElementsDoubleClass;
 
 /**
  * @typedef FieldOnElementsPtrDouble
  * @brief Definition d'un champ aux éléments de double
  */
-typedef boost::shared_ptr< FieldOnElementsDoubleInstance > FieldOnElementsDoublePtr;
+typedef boost::shared_ptr< FieldOnElementsDoubleClass > FieldOnElementsDoublePtr;
 
-/** @typedef FieldOnElementsInstanceLong Instance d'une carte de long */
-typedef FieldOnElementsInstance< ASTERINTEGER > FieldOnElementsLongInstance;
+/** @typedef FieldOnElementsClassLong Class d'une carte de long */
+typedef FieldOnElementsClass< ASTERINTEGER > FieldOnElementsLongClass;
 
 /**
  * @typedef FieldOnElementsPtrLong
  * @brief Definition d'un champ aux éléments de long
  */
-typedef boost::shared_ptr< FieldOnElementsLongInstance > FieldOnElementsLongPtr;
+typedef boost::shared_ptr< FieldOnElementsLongClass > FieldOnElementsLongPtr;
 
 #endif /* FIELDONELEMENTS_H_ */

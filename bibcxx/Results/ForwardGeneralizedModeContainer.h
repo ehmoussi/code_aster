@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ForwardGeneralizedModeContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,8 +28,8 @@
 
 #include "astercxx.h"
 
-class GeneralizedModeContainerInstance;
-typedef boost::shared_ptr< GeneralizedModeContainerInstance > GeneralizedModeContainerPtr;
+class GeneralizedModeContainerClass;
+typedef boost::shared_ptr< GeneralizedModeContainerClass > GeneralizedModeContainerPtr;
 
 /**
  * @class ForwardGeneralizedModeContainerPtr
@@ -38,7 +38,7 @@ typedef boost::shared_ptr< GeneralizedModeContainerInstance > GeneralizedModeCon
  */
 class ForwardGeneralizedModeContainerPtr {
   private:
-    /** @brief Pointer to GeneralizedModeContainerInstance */
+    /** @brief Pointer to GeneralizedModeContainerClass */
     GeneralizedModeContainerPtr _ptr;
     bool _isSet;
 

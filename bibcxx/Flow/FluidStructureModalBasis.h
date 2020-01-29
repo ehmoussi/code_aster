@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FluidStructureModalBasis
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,11 +33,11 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class FluidStructureModalBasisInstance
+ * @class FluidStructureModalBasisClass
  * @brief Cette classe correspond a une sd_melasflu
  * @author Natacha Béreux
  */
-class FluidStructureModalBasisInstance : public DataStructure {
+class FluidStructureModalBasisClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.REMF' */
     JeveuxVectorChar8 _remf;
@@ -59,17 +59,17 @@ class FluidStructureModalBasisInstance : public DataStructure {
      * @typedef FluidStructureModalBasisPtr
      * @brief Pointeur intelligent vers un FluidStructureModalBasis
      */
-    typedef boost::shared_ptr< FluidStructureModalBasisInstance > FluidStructureModalBasisPtr;
+    typedef boost::shared_ptr< FluidStructureModalBasisClass > FluidStructureModalBasisPtr;
 
     /**
      * @brief Constructeur
      */
-    FluidStructureModalBasisInstance()
-        : FluidStructureModalBasisInstance( ResultNaming::getNewResultName() ){};
+    FluidStructureModalBasisClass()
+        : FluidStructureModalBasisClass( ResultNaming::getNewResultName() ){};
     /**
      * @brief Constructeur
      */
-    FluidStructureModalBasisInstance( const std::string name )
+    FluidStructureModalBasisClass( const std::string name )
         : DataStructure( name, 8, "MELASFLU", Permanent ),
           _remf( JeveuxVectorChar8( getName() + ".REMF" ) ),
           _desc( JeveuxVectorChar16( getName() + ".DESC" ) ),
@@ -82,8 +82,8 @@ class FluidStructureModalBasisInstance : public DataStructure {
 
 /**
  * @typedef FluidStructureModalBasisPtr
- * @brief Pointeur intelligent vers un FluidStructureModalBasisInstance
+ * @brief Pointeur intelligent vers un FluidStructureModalBasisClass
  */
-typedef boost::shared_ptr< FluidStructureModalBasisInstance > FluidStructureModalBasisPtr;
+typedef boost::shared_ptr< FluidStructureModalBasisClass > FluidStructureModalBasisPtr;
 
 #endif /* FLUIDSTRUCTMODALBASIS_H_ */

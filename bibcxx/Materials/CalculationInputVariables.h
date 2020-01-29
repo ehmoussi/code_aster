@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe CalculationInputVariables
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,11 +39,11 @@
 #include "Discretization/DOFNumbering.h"
 
 /**
- * @class CalculationInputVariablesInstance
+ * @class CalculationInputVariablesClass
  * @brief Calculation Input Variables
  * @author Nicolas Sellenet
  */
-class CalculationInputVariablesInstance : public DataStructure {
+class CalculationInputVariablesClass : public DataStructure {
   private:
     ModelPtr _model;
     MaterialOnMeshPtr _mater;
@@ -63,19 +63,19 @@ class CalculationInputVariablesInstance : public DataStructure {
      * @typedef CalculationInputVariablesPtr
      * @brief Pointeur intelligent vers un CalculationInputVariables
      */
-    typedef boost::shared_ptr< CalculationInputVariablesInstance > CalculationInputVariablesPtr;
+    typedef boost::shared_ptr< CalculationInputVariablesClass > CalculationInputVariablesPtr;
 
     /**
      * @brief Constructeur
      */
-    CalculationInputVariablesInstance( const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    CalculationInputVariablesClass( const ModelPtr &model, const MaterialOnMeshPtr &mater,
                                        const ElementaryCharacteristicsPtr &cara,
                                        const CodedMaterialPtr &codMater );
 
     /**
      * @brief Destructeur
      */
-    ~CalculationInputVariablesInstance() { return; };
+    ~CalculationInputVariablesClass() { return; };
 
     /**
      * @brief Compute Input Variables at a given time
@@ -92,8 +92,8 @@ class CalculationInputVariablesInstance : public DataStructure {
 
 /**
  * @typedef CalculationInputVariablesPtr
- * @brief Pointeur intelligent vers un CalculationInputVariablesInstance
+ * @brief Pointeur intelligent vers un CalculationInputVariablesClass
  */
-typedef boost::shared_ptr< CalculationInputVariablesInstance > CalculationInputVariablesPtr;
+typedef boost::shared_ptr< CalculationInputVariablesClass > CalculationInputVariablesPtr;
 
 #endif /* CALCULATIONINPUTVARIABLES_H_ */

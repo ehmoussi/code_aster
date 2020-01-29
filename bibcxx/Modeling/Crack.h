@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Crack
  * @author Nicolas Pignet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,11 +32,11 @@
 #include "astercxx.h"
 
 /**
- * @class CrackInstance
+ * @class CrackClass
  * @brief Cette classe decrit un fond_fissure
  * @author Nicolas Pignet
  */
-class CrackInstance : public DataStructure {
+class CrackClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.INFO' */
     JeveuxVectorChar8 _info;
@@ -80,20 +80,20 @@ class CrackInstance : public DataStructure {
   public:
     /**
      * @typedef CrackPtr
-     * @brief Pointeur intelligent vers un CrackInstance
+     * @brief Pointeur intelligent vers un CrackClass
      */
-    typedef boost::shared_ptr< CrackInstance > CrackPtr;
+    typedef boost::shared_ptr< CrackClass > CrackPtr;
 
     /**
      * @brief Constructeur
      */
-    CrackInstance( const std::string name = ResultNaming::getNewResultName() );
+    CrackClass( const std::string name = ResultNaming::getNewResultName() );
 };
 
 /**
  * @typedef CrackPtr
- * @brief Pointeur intelligent vers un CrackInstance
+ * @brief Pointeur intelligent vers un CrackClass
  */
-typedef boost::shared_ptr< CrackInstance > CrackPtr;
+typedef boost::shared_ptr< CrackClass > CrackPtr;
 
 #endif /* CRACK_H_ */

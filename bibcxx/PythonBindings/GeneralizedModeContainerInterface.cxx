@@ -30,24 +30,24 @@ namespace py = boost::python;
 
 void exportGeneralizedModeContainerToPython() {
 
-    bool ( GeneralizedModeContainerInstance::*c1 )( const GeneralizedAssemblyMatrixDoublePtr & ) =
-        &GeneralizedModeContainerInstance::setStiffnessMatrix;
-    bool ( GeneralizedModeContainerInstance::*c2 )( const GeneralizedAssemblyMatrixComplexPtr & ) =
-        &GeneralizedModeContainerInstance::setStiffnessMatrix;
+    bool ( GeneralizedModeContainerClass::*c1 )( const GeneralizedAssemblyMatrixDoublePtr & ) =
+        &GeneralizedModeContainerClass::setStiffnessMatrix;
+    bool ( GeneralizedModeContainerClass::*c2 )( const GeneralizedAssemblyMatrixComplexPtr & ) =
+        &GeneralizedModeContainerClass::setStiffnessMatrix;
 
-    py::class_< GeneralizedModeContainerInstance, GeneralizedModeContainerPtr,
-                py::bases< FullResultsContainerInstance > >( "GeneralizedModeContainer",
+    py::class_< GeneralizedModeContainerClass, GeneralizedModeContainerPtr,
+                py::bases< FullResultsContainerClass > >( "GeneralizedModeContainer",
                                                              py::no_init )
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< GeneralizedModeContainerInstance, std::string >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< GeneralizedModeContainerInstance >))
-        .def( "setDampingMatrix", &GeneralizedModeContainerInstance::setDampingMatrix )
+                              &initFactoryPtr< GeneralizedModeContainerClass, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GeneralizedModeContainerClass >))
+        .def( "setDampingMatrix", &GeneralizedModeContainerClass::setDampingMatrix )
         .def( "getGeneralizedDOFNumbering",
-              &GeneralizedModeContainerInstance::getGeneralizedDOFNumbering )
+              &GeneralizedModeContainerClass::getGeneralizedDOFNumbering )
         .def( "setGeneralizedDOFNumbering",
-              &GeneralizedModeContainerInstance::setGeneralizedDOFNumbering )
+              &GeneralizedModeContainerClass::setGeneralizedDOFNumbering )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
-        .def( "getDampingMatrix", &GeneralizedModeContainerInstance::getDampingMatrix )
+        .def( "getDampingMatrix", &GeneralizedModeContainerClass::getDampingMatrix )
         .def( "getStiffnessMatrix", &getGeneralizedStiffnessMatrix< GeneralizedModeContainerPtr > );
 };

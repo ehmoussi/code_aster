@@ -31,10 +31,10 @@ namespace py = boost::python;
 
 void exportInputVariableConverterToPython() {
 
-    py::class_< InputVariableConverterInstance,
+    py::class_< InputVariableConverterClass,
             InputVariableConverterPtr >( "InputVariableConverter", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< InputVariableConverterInstance >))
+              py::make_constructor(&initFactoryPtr< InputVariableConverterClass >))
         // fake initFactoryPtr: created by subclasses
-        .def( "addConverter", &InputVariableConverterInstance::addConverter );
+        .def( "addConverter", &InputVariableConverterClass::addConverter );
 };

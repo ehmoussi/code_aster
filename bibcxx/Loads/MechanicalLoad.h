@@ -5,7 +5,7 @@
  * @file MechanicalLoad.h
  * @author Natacha Bereux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -254,11 +254,11 @@ template <> struct LoadTraits< THMFlux > {
 };
 
 /**
- * @class GenericMechanicalLoadInstance
+ * @class GenericMechanicalLoadClass
  * @brief Define a generic mechanical load
  * @author Nicolas Sellenet
  */
-class GenericMechanicalLoadInstance : public DataStructure {
+class GenericMechanicalLoadClass : public DataStructure {
   public:
     struct MecaLoad {
         /** @brief Modele */
@@ -328,29 +328,29 @@ class GenericMechanicalLoadInstance : public DataStructure {
               _temperatureField( name + ".TEMPE.TEMP" ), _modelName( name + ".MODEL.NOMO" ),
               _nameOfAssemblyVector( name + ".VEASS" ), _veiss( name + ".VEISS" ),
               _evolChar( name + ".EVOL.CHAR" ),
-              _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE", _mesh ) ),
-              _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
-              _cmult( new PCFieldOnMeshDoubleInstance( name + ".CMULT", _FEDesc ) ),
-              _dpgen( new PCFieldOnMeshDoubleInstance( name + ".DPGEN", _FEDesc ) ),
-              _epsin( new PCFieldOnMeshDoubleInstance( name + ".EPSIN", _FEDesc ) ),
-              _f1d2d( new PCFieldOnMeshDoubleInstance( name + ".F1D2D", _FEDesc ) ),
-              _f1d3d( new PCFieldOnMeshDoubleInstance( name + ".F1D3D", _FEDesc ) ),
-              _f2d3d( new PCFieldOnMeshDoubleInstance( name + ".F2D3D", _FEDesc ) ),
-              _fco2d( new PCFieldOnMeshDoubleInstance( name + ".FCO2D", _FEDesc ) ),
-              _fco3d( new PCFieldOnMeshDoubleInstance( name + ".FCO3D", _FEDesc ) ),
-              _felec( new PCFieldOnMeshDoubleInstance( name + ".FELEC", _FEDesc ) ),
-              _fl101( new PCFieldOnMeshDoubleInstance( name + ".FL101", _FEDesc ) ),
-              _fl102( new PCFieldOnMeshDoubleInstance( name + ".FL102", _FEDesc ) ),
-              _forno( new PCFieldOnMeshDoubleInstance( name + ".FORNO", _FEDesc ) ),
-              _impe( new PCFieldOnMeshDoubleInstance( name + ".IMPE", _FEDesc ) ),
-              _pesan( new PCFieldOnMeshDoubleInstance( name + ".PESAN", _FEDesc ) ),
-              _press( new PCFieldOnMeshDoubleInstance( name + ".PRESS", _FEDesc ) ),
-              _rotat( new PCFieldOnMeshDoubleInstance( name + ".ROTAT", _FEDesc ) ),
-              _sigin( new PCFieldOnMeshDoubleInstance( name + ".SIGIN", _FEDesc ) ),
-              _siint( new PCFieldOnMeshDoubleInstance( name + ".SIINT", _FEDesc ) ),
-              _vnor( new PCFieldOnMeshDoubleInstance( name + ".VNOR", _FEDesc ) ),
-              _ondpl( new PCFieldOnMeshDoubleInstance( name + ".ONDPL", _FEDesc ) ),
-              _ondpr( new PCFieldOnMeshDoubleInstance( name + ".ONDPR", _FEDesc ) ){};
+              _FEDesc( new FiniteElementDescriptorClass( name + ".LIGRE", _mesh ) ),
+              _cimpo( new PCFieldOnMeshDoubleClass( name + ".CIMPO", _FEDesc ) ),
+              _cmult( new PCFieldOnMeshDoubleClass( name + ".CMULT", _FEDesc ) ),
+              _dpgen( new PCFieldOnMeshDoubleClass( name + ".DPGEN", _FEDesc ) ),
+              _epsin( new PCFieldOnMeshDoubleClass( name + ".EPSIN", _FEDesc ) ),
+              _f1d2d( new PCFieldOnMeshDoubleClass( name + ".F1D2D", _FEDesc ) ),
+              _f1d3d( new PCFieldOnMeshDoubleClass( name + ".F1D3D", _FEDesc ) ),
+              _f2d3d( new PCFieldOnMeshDoubleClass( name + ".F2D3D", _FEDesc ) ),
+              _fco2d( new PCFieldOnMeshDoubleClass( name + ".FCO2D", _FEDesc ) ),
+              _fco3d( new PCFieldOnMeshDoubleClass( name + ".FCO3D", _FEDesc ) ),
+              _felec( new PCFieldOnMeshDoubleClass( name + ".FELEC", _FEDesc ) ),
+              _fl101( new PCFieldOnMeshDoubleClass( name + ".FL101", _FEDesc ) ),
+              _fl102( new PCFieldOnMeshDoubleClass( name + ".FL102", _FEDesc ) ),
+              _forno( new PCFieldOnMeshDoubleClass( name + ".FORNO", _FEDesc ) ),
+              _impe( new PCFieldOnMeshDoubleClass( name + ".IMPE", _FEDesc ) ),
+              _pesan( new PCFieldOnMeshDoubleClass( name + ".PESAN", _FEDesc ) ),
+              _press( new PCFieldOnMeshDoubleClass( name + ".PRESS", _FEDesc ) ),
+              _rotat( new PCFieldOnMeshDoubleClass( name + ".ROTAT", _FEDesc ) ),
+              _sigin( new PCFieldOnMeshDoubleClass( name + ".SIGIN", _FEDesc ) ),
+              _siint( new PCFieldOnMeshDoubleClass( name + ".SIINT", _FEDesc ) ),
+              _vnor( new PCFieldOnMeshDoubleClass( name + ".VNOR", _FEDesc ) ),
+              _ondpl( new PCFieldOnMeshDoubleClass( name + ".ONDPL", _FEDesc ) ),
+              _ondpr( new PCFieldOnMeshDoubleClass( name + ".ONDPR", _FEDesc ) ){};
     };
 
   protected:
@@ -378,18 +378,18 @@ class GenericMechanicalLoadInstance : public DataStructure {
      * @typedef MechanicalLoadPtr
      * @brief Pointeur intelligent vers un MechanicalLoad
      */
-    typedef boost::shared_ptr< GenericMechanicalLoadInstance > GenericMechanicalLoadPtr;
+    typedef boost::shared_ptr< GenericMechanicalLoadClass > GenericMechanicalLoadPtr;
 
     /**
      * @brief Constructor
      */
-    GenericMechanicalLoadInstance( const ModelPtr &currentModel )
-        : GenericMechanicalLoadInstance( ResultNaming::getNewResultName(), currentModel ){};
+    GenericMechanicalLoadClass( const ModelPtr &currentModel )
+        : GenericMechanicalLoadClass( ResultNaming::getNewResultName(), currentModel ){};
 
     /**
      * @brief Constructor
      */
-    GenericMechanicalLoadInstance( const std::string name, const ModelPtr &currentModel )
+    GenericMechanicalLoadClass( const std::string name, const ModelPtr &currentModel )
         : DataStructure( name, 8, "CHAR_MECA" ), _mecaLoad( getName() + ".CHME", currentModel ),
           _type( getName() + ".TYPE" ), _lisma01( getName() + ".LISMA01" ),
           _lisma02( getName() + ".LISMA02" ), _trans01( getName() + ".TRANS01" ),
@@ -398,7 +398,7 @@ class GenericMechanicalLoadInstance : public DataStructure {
     /**
      * @brief Destructor
      */
-    ~GenericMechanicalLoadInstance(){};
+    ~GenericMechanicalLoadClass(){};
 
     /**
      * @brief Get the finite element descriptor
@@ -423,12 +423,12 @@ class GenericMechanicalLoadInstance : public DataStructure {
 };
 
 /**
- * @class MechanicalLoadInstance
+ * @class MechanicalLoadClass
  * @brief Define a mechanical load
  * @author Natacha Bereux
  */
 template < class PhysicalQuantity, LoadEnum Load >
-class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
+class MechanicalLoadClass : public GenericMechanicalLoadClass {
   public:
     /** @typedef Traits Define the Traits type */
     typedef LoadTraits< Load > Traits;
@@ -447,23 +447,23 @@ class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
      * @typedef MechanicalLoadPtr
      * @brief Pointeur intelligent vers un MechanicalLoad
      */
-    typedef boost::shared_ptr< MechanicalLoadInstance< PhysicalQuantity, Load > > MechanicalLoadPtr;
+    typedef boost::shared_ptr< MechanicalLoadClass< PhysicalQuantity, Load > > MechanicalLoadPtr;
 
     /**
      * @brief Constructor
      */
-    MechanicalLoadInstance( const ModelPtr &model ) : GenericMechanicalLoadInstance( model ){};
+    MechanicalLoadClass( const ModelPtr &model ) : GenericMechanicalLoadClass( model ){};
 
     /**
      * @brief Constructor
      */
-    MechanicalLoadInstance( const std::string name, const ModelPtr &model )
-        : GenericMechanicalLoadInstance( name, model ){};
+    MechanicalLoadClass( const std::string name, const ModelPtr &model )
+        : GenericMechanicalLoadClass( name, model ){};
 
     /**
      * @brief Destructor
      */
-    ~MechanicalLoadInstance(){};
+    ~MechanicalLoadClass(){};
 
     /**
      * @brief Set a physical quantity on a MeshEntity (group of nodes
@@ -556,138 +556,138 @@ class MechanicalLoadInstance : public GenericMechanicalLoadInstance {
 /**********************************************************/
 
 /** @typedef GenericMechanicalLoad  */
-typedef boost::shared_ptr< GenericMechanicalLoadInstance > GenericMechanicalLoadPtr;
+typedef boost::shared_ptr< GenericMechanicalLoadClass > GenericMechanicalLoadPtr;
 
 /* Appliquer une force nodale sur une modélisation 3D */
 /** @typedef NodalForceDouble  */
-template class MechanicalLoadInstance< ForceDoubleInstance, NodalForce >;
-typedef MechanicalLoadInstance< ForceDoubleInstance, NodalForce > NodalForceDoubleInstance;
-typedef boost::shared_ptr< NodalForceDoubleInstance > NodalForceDoublePtr;
+template class MechanicalLoadClass< ForceDoubleClass, NodalForce >;
+typedef MechanicalLoadClass< ForceDoubleClass, NodalForce > NodalForceDoubleClass;
+typedef boost::shared_ptr< NodalForceDoubleClass > NodalForceDoublePtr;
 
 /* Appliquer une force nodale sur des éléments de structure */
 /** @typedef NodalStructuralForceDouble  */
-template class MechanicalLoadInstance< StructuralForceDoubleInstance, NodalForce >;
-typedef MechanicalLoadInstance< StructuralForceDoubleInstance, NodalForce >
-    NodalStructuralForceDoubleInstance;
-typedef boost::shared_ptr< NodalStructuralForceDoubleInstance > NodalStructuralForceDoublePtr;
+template class MechanicalLoadClass< StructuralForceDoubleClass, NodalForce >;
+typedef MechanicalLoadClass< StructuralForceDoubleClass, NodalForce >
+    NodalStructuralForceDoubleClass;
+typedef boost::shared_ptr< NodalStructuralForceDoubleClass > NodalStructuralForceDoublePtr;
 
 /** @typedef ForceOnFaceDouble  */
-template class MechanicalLoadInstance< ForceDoubleInstance, ForceOnFace >;
-typedef MechanicalLoadInstance< ForceDoubleInstance, ForceOnFace > ForceOnFaceDoubleInstance;
-typedef boost::shared_ptr< ForceOnFaceDoubleInstance > ForceOnFaceDoublePtr;
+template class MechanicalLoadClass< ForceDoubleClass, ForceOnFace >;
+typedef MechanicalLoadClass< ForceDoubleClass, ForceOnFace > ForceOnFaceDoubleClass;
+typedef boost::shared_ptr< ForceOnFaceDoubleClass > ForceOnFaceDoublePtr;
 
 /* Appliquer une force sur une arête d'élément volumique */
 /** @typedef ForceOnEdgeDouble  */
-template class MechanicalLoadInstance< ForceDoubleInstance, ForceOnEdge >;
-typedef MechanicalLoadInstance< ForceDoubleInstance, ForceOnEdge > ForceOnEdgeDoubleInstance;
-typedef boost::shared_ptr< ForceOnEdgeDoubleInstance > ForceOnEdgeDoublePtr;
+template class MechanicalLoadClass< ForceDoubleClass, ForceOnEdge >;
+typedef MechanicalLoadClass< ForceDoubleClass, ForceOnEdge > ForceOnEdgeDoubleClass;
+typedef boost::shared_ptr< ForceOnEdgeDoubleClass > ForceOnEdgeDoublePtr;
 
 /* Appliquer une force sur une arête d'élément de structure (coque/plaque) */
 /** @typedef StructuralForceOnEdgeDouble  */
-template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnEdge >;
-typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnEdge >
-    StructuralForceOnEdgeDoubleInstance;
-typedef boost::shared_ptr< StructuralForceOnEdgeDoubleInstance > StructuralForceOnEdgeDoublePtr;
+template class MechanicalLoadClass< StructuralForceDoubleClass, ForceOnEdge >;
+typedef MechanicalLoadClass< StructuralForceDoubleClass, ForceOnEdge >
+    StructuralForceOnEdgeDoubleClass;
+typedef boost::shared_ptr< StructuralForceOnEdgeDoubleClass > StructuralForceOnEdgeDoublePtr;
 
 /** @typedef LineicForceDouble  */
-template class MechanicalLoadInstance< ForceDoubleInstance, LineicForce >;
-typedef MechanicalLoadInstance< ForceDoubleInstance, LineicForce > LineicForceDoubleInstance;
-typedef boost::shared_ptr< LineicForceDoubleInstance > LineicForceDoublePtr;
+template class MechanicalLoadClass< ForceDoubleClass, LineicForce >;
+typedef MechanicalLoadClass< ForceDoubleClass, LineicForce > LineicForceDoubleClass;
+typedef boost::shared_ptr< LineicForceDoubleClass > LineicForceDoublePtr;
 
 /** @typedef InternalForceDouble  */
-template class MechanicalLoadInstance< ForceDoubleInstance, InternalForce >;
-typedef MechanicalLoadInstance< ForceDoubleInstance, InternalForce > InternalForceDoubleInstance;
-typedef boost::shared_ptr< InternalForceDoubleInstance > InternalForceDoublePtr;
+template class MechanicalLoadClass< ForceDoubleClass, InternalForce >;
+typedef MechanicalLoadClass< ForceDoubleClass, InternalForce > InternalForceDoubleClass;
+typedef boost::shared_ptr< InternalForceDoubleClass > InternalForceDoublePtr;
 
 /* Appliquer une force (définie dans le repère global) à une poutre */
 /** @typedef StructuralForceOnBeamDouble  */
-template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnBeam >;
-typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnBeam >
-    StructuralForceOnBeamDoubleInstance;
-typedef boost::shared_ptr< StructuralForceOnBeamDoubleInstance > StructuralForceOnBeamDoublePtr;
+template class MechanicalLoadClass< StructuralForceDoubleClass, ForceOnBeam >;
+typedef MechanicalLoadClass< StructuralForceDoubleClass, ForceOnBeam >
+    StructuralForceOnBeamDoubleClass;
+typedef boost::shared_ptr< StructuralForceOnBeamDoubleClass > StructuralForceOnBeamDoublePtr;
 
 /* Appliquer une force (définie dans le repère local) à une poutre */
 /** @typedef LocalForceOnBeamDouble  */
-template class MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam >;
-typedef MechanicalLoadInstance< LocalBeamForceDoubleInstance, ForceOnBeam >
-    LocalForceOnBeamDoubleInstance;
-typedef boost::shared_ptr< LocalForceOnBeamDoubleInstance > LocalForceOnBeamDoublePtr;
+template class MechanicalLoadClass< LocalBeamForceDoubleClass, ForceOnBeam >;
+typedef MechanicalLoadClass< LocalBeamForceDoubleClass, ForceOnBeam >
+    LocalForceOnBeamDoubleClass;
+typedef boost::shared_ptr< LocalForceOnBeamDoubleClass > LocalForceOnBeamDoublePtr;
 
 /* Appliquer une force (définie dans le repère global) à une coque/plaque */
 /** @typedef StructuralForceOnShellDouble  */
-template class MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnShell >;
-typedef MechanicalLoadInstance< StructuralForceDoubleInstance, ForceOnShell >
-    StructuralForceOnShellDoubleInstance;
-typedef boost::shared_ptr< StructuralForceOnShellDoubleInstance > StructuralForceOnShellDoublePtr;
+template class MechanicalLoadClass< StructuralForceDoubleClass, ForceOnShell >;
+typedef MechanicalLoadClass< StructuralForceDoubleClass, ForceOnShell >
+    StructuralForceOnShellDoubleClass;
+typedef boost::shared_ptr< StructuralForceOnShellDoubleClass > StructuralForceOnShellDoublePtr;
 
 /* Appliquer une force (définie dans le repère local) à une coque/plaque */
 /** @typedef LocalForceOnShellDouble  */
-template class MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell >;
-typedef MechanicalLoadInstance< LocalShellForceDoubleInstance, ForceOnShell >
-    LocalForceOnShellDoubleInstance;
-typedef boost::shared_ptr< LocalForceOnShellDoubleInstance > LocalForceOnShellDoublePtr;
+template class MechanicalLoadClass< LocalShellForceDoubleClass, ForceOnShell >;
+typedef MechanicalLoadClass< LocalShellForceDoubleClass, ForceOnShell >
+    LocalForceOnShellDoubleClass;
+typedef boost::shared_ptr< LocalForceOnShellDoubleClass > LocalForceOnShellDoublePtr;
 
 /* Appliquer une pression à une coque/plaque */
 /** @typedef PressureOnShellDouble  */
-template class MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, ForceOnShell >
-    PressureOnShellDoubleInstance;
-typedef boost::shared_ptr< PressureOnShellDoubleInstance > PressureOnShellDoublePtr;
+template class MechanicalLoadClass< PressureDoubleClass, ForceOnShell >;
+typedef MechanicalLoadClass< PressureDoubleClass, ForceOnShell >
+    PressureOnShellDoubleClass;
+typedef boost::shared_ptr< PressureOnShellDoubleClass > PressureOnShellDoublePtr;
 
 /* Appliquer une pression à un tuyau */
 /** @typedef PressureOnPipeDouble  */
-template class MechanicalLoadInstance< PressureDoubleInstance, PressureOnPipe >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, PressureOnPipe >
-    PressureOnPipeDoubleInstance;
-typedef boost::shared_ptr< PressureOnPipeDoubleInstance > PressureOnPipeDoublePtr;
+template class MechanicalLoadClass< PressureDoubleClass, PressureOnPipe >;
+typedef MechanicalLoadClass< PressureDoubleClass, PressureOnPipe >
+    PressureOnPipeDoubleClass;
+typedef boost::shared_ptr< PressureOnPipeDoubleClass > PressureOnPipeDoublePtr;
 
 /* Imposer un déplacement sur des noeuds */
 /** @typedef ImposedDisplacementDouble  */
-template class MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDoF >;
-typedef MechanicalLoadInstance< DisplacementDoubleInstance, ImposedDoF >
-    ImposedDisplacementDoubleInstance;
-typedef boost::shared_ptr< ImposedDisplacementDoubleInstance > ImposedDisplacementDoublePtr;
+template class MechanicalLoadClass< DisplacementDoubleClass, ImposedDoF >;
+typedef MechanicalLoadClass< DisplacementDoubleClass, ImposedDoF >
+    ImposedDisplacementDoubleClass;
+typedef boost::shared_ptr< ImposedDisplacementDoubleClass > ImposedDisplacementDoublePtr;
 
 /* Imposer une pression sur des noeuds */
 /** @typedef ImposedPressureDouble  */
-template class MechanicalLoadInstance< PressureDoubleInstance, ImposedDoF >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, ImposedDoF > ImposedPressureDoubleInstance;
-typedef boost::shared_ptr< ImposedPressureDoubleInstance > ImposedPressureDoublePtr;
+template class MechanicalLoadClass< PressureDoubleClass, ImposedDoF >;
+typedef MechanicalLoadClass< PressureDoubleClass, ImposedDoF > ImposedPressureDoubleClass;
+typedef boost::shared_ptr< ImposedPressureDoubleClass > ImposedPressureDoublePtr;
 
 /** @typedef DistributedPressureDouble  */
-template class MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, DistributedPressure >
-    DistributedPressureDoubleInstance;
-typedef boost::shared_ptr< DistributedPressureDoubleInstance > DistributedPressureDoublePtr;
+template class MechanicalLoadClass< PressureDoubleClass, DistributedPressure >;
+typedef MechanicalLoadClass< PressureDoubleClass, DistributedPressure >
+    DistributedPressureDoubleClass;
+typedef boost::shared_ptr< DistributedPressureDoubleClass > DistributedPressureDoublePtr;
 
 /** @typedef ImpedanceOnFaceDouble  */
-template class MechanicalLoadInstance< ImpedanceDoubleInstance, ImpedanceOnFace >;
-typedef MechanicalLoadInstance< ImpedanceDoubleInstance, ImpedanceOnFace >
-    ImpedanceOnFaceDoubleInstance;
-typedef boost::shared_ptr< ImpedanceOnFaceDoubleInstance > ImpedanceOnFaceDoublePtr;
+template class MechanicalLoadClass< ImpedanceDoubleClass, ImpedanceOnFace >;
+typedef MechanicalLoadClass< ImpedanceDoubleClass, ImpedanceOnFace >
+    ImpedanceOnFaceDoubleClass;
+typedef boost::shared_ptr< ImpedanceOnFaceDoubleClass > ImpedanceOnFaceDoublePtr;
 
 /** @typedef NormalSpeedOnFaceDouble  */
-template class MechanicalLoadInstance< NormalSpeedDoubleInstance, NormalSpeedOnFace >;
-typedef MechanicalLoadInstance< NormalSpeedDoubleInstance, NormalSpeedOnFace >
-    NormalSpeedOnFaceDoubleInstance;
-typedef boost::shared_ptr< NormalSpeedOnFaceDoubleInstance > NormalSpeedOnFaceDoublePtr;
+template class MechanicalLoadClass< NormalSpeedDoubleClass, NormalSpeedOnFace >;
+typedef MechanicalLoadClass< NormalSpeedDoubleClass, NormalSpeedOnFace >
+    NormalSpeedOnFaceDoubleClass;
+typedef boost::shared_ptr< NormalSpeedOnFaceDoubleClass > NormalSpeedOnFaceDoublePtr;
 
 /** @typedef WavePressureOnFaceDouble  */
-template class MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace >;
-typedef MechanicalLoadInstance< PressureDoubleInstance, WavePressureOnFace >
-    WavePressureOnFaceDoubleInstance;
-typedef boost::shared_ptr< WavePressureOnFaceDoubleInstance > WavePressureOnFaceDoublePtr;
+template class MechanicalLoadClass< PressureDoubleClass, WavePressureOnFace >;
+typedef MechanicalLoadClass< PressureDoubleClass, WavePressureOnFace >
+    WavePressureOnFaceDoubleClass;
+typedef boost::shared_ptr< WavePressureOnFaceDoubleClass > WavePressureOnFaceDoublePtr;
 
 /** @typedef DistributedHeatFluxDouble  */
-template class MechanicalLoadInstance< HeatFluxDoubleInstance, THMFlux >;
-typedef MechanicalLoadInstance< HeatFluxDoubleInstance, THMFlux > DistributedHeatFluxDoubleInstance;
-typedef boost::shared_ptr< DistributedHeatFluxDoubleInstance > DistributedHeatFluxDoublePtr;
+template class MechanicalLoadClass< HeatFluxDoubleClass, THMFlux >;
+typedef MechanicalLoadClass< HeatFluxDoubleClass, THMFlux > DistributedHeatFluxDoubleClass;
+typedef boost::shared_ptr< DistributedHeatFluxDoubleClass > DistributedHeatFluxDoublePtr;
 
 /** @typedef DistributedHydraulicFluxDouble  */
-template class MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux >;
-typedef MechanicalLoadInstance< HydraulicFluxDoubleInstance, THMFlux >
-    DistributedHydraulicFluxDoubleInstance;
-typedef boost::shared_ptr< DistributedHydraulicFluxDoubleInstance >
+template class MechanicalLoadClass< HydraulicFluxDoubleClass, THMFlux >;
+typedef MechanicalLoadClass< HydraulicFluxDoubleClass, THMFlux >
+    DistributedHydraulicFluxDoubleClass;
+typedef boost::shared_ptr< DistributedHydraulicFluxDoubleClass >
     DistributedHydraulicFluxDoublePtr;
 
 /** @typedef std::list de MechanicalLoad */

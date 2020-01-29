@@ -32,16 +32,16 @@ namespace py = boost::python;
 
 void exportTableToPython() {
 
-    py::class_< TableInstance, TableInstance::TablePtr, py::bases< DataStructure > >( "Table",
+    py::class_< TableClass, TableClass::TablePtr, py::bases< DataStructure > >( "Table",
                                                                                       py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< TableInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< TableInstance, std::string >));
-    py::class_< TableOfFunctionsInstance, TableOfFunctionsInstance::TableOfFunctionsPtr,
-                py::bases< TableInstance > >( "TableOfFunctions", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< TableOfFunctionsInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableClass, std::string >));
+    py::class_< TableOfFunctionsClass, TableOfFunctionsClass::TableOfFunctionsPtr,
+                py::bases< TableClass > >( "TableOfFunctions", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< TableOfFunctionsClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< TableOfFunctionsInstance, std::string >))
-        .def( "addFunction", &TableOfFunctionsInstance::addFunction )
-        .def( "getFunction", &TableOfFunctionsInstance::getFunction )
-        .def( "getNumberOfFunctions", &TableOfFunctionsInstance::getNumberOfFunctions );
+              py::make_constructor(&initFactoryPtr< TableOfFunctionsClass, std::string >))
+        .def( "addFunction", &TableOfFunctionsClass::addFunction )
+        .def( "getFunction", &TableOfFunctionsClass::getFunction )
+        .def( "getNumberOfFunctions", &TableOfFunctionsClass::getNumberOfFunctions );
 };

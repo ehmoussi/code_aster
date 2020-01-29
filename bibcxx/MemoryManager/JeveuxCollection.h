@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe JeveuxCollection
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -294,7 +294,7 @@ enum JeveuxCollectionObjectSizes { Constant, Variable };
 
 /**
  * @struct AllowedNamePointerType
- * @brief Structure template permettant de limiter les type dans JeveuxCollectionInstance
+ * @brief Structure template permettant de limiter les type dans JeveuxCollectionClass
  * @tparam T Type autorise
  */
 template < typename T > struct AllowedNamePointerType; // undefined for bad types!
@@ -312,12 +312,12 @@ template < typename T, typename U >
 using IsNotSame = typename std::enable_if< !std::is_same< T, U >::value >::type;
 
 /**
- * @class JeveuxCollectionInstance
+ * @class JeveuxCollectionClass
  * @brief Cette classe template permet de definir une collection Jeveux
  * @author Nicolas Sellenet
  */
 template < class ValueType, class PointerType = int >
-class JeveuxCollectionInstance : public JeveuxObjectInstance,
+class JeveuxCollectionClass : public JeveuxObjectClass,
                                  private AllowedNamePointerType< PointerType > {
   private:
     /** @brief Definition d'un objet de collection du type ValueType */
@@ -390,18 +390,18 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
      * @param name Chaine representant le nom de la collection
      */
     template < typename T1 = PointerType, typename = IsSame< T1, int > >
-    JeveuxCollectionInstance( const std::string &name )
-        : JeveuxObjectInstance( name ), _isNamed( false ), _isEmpty( true ), _nameMap( 0 ) {}
+    JeveuxCollectionClass( const std::string &name )
+        : JeveuxObjectClass( name ), _isNamed( false ), _isEmpty( true ), _nameMap( 0 ) {}
 
     /**
      * @brief Constructeur dans le cas où PointerType est un JeveuxBidirectionalMap
      * @param name Chaine representant le nom de la collection
      */
     template < typename T1 = PointerType, typename = IsNotSame< T1, int > >
-    JeveuxCollectionInstance( const std::string &name, PointerType ptr )
-        : JeveuxObjectInstance( name ), _isNamed( false ), _isEmpty( true ), _nameMap( ptr ){};
+    JeveuxCollectionClass( const std::string &name, PointerType ptr )
+        : JeveuxObjectClass( name ), _isNamed( false ), _isEmpty( true ), _nameMap( ptr ){};
 
-    ~JeveuxCollectionInstance(){};
+    ~JeveuxCollectionClass(){};
 
     struct const_iterator {
         int position;
@@ -639,7 +639,7 @@ class JeveuxCollectionInstance : public JeveuxObjectInstance,
 };
 
 template < class ValueType, class PointerType >
-bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux( bool force ) {
+bool JeveuxCollectionClass< ValueType, PointerType >::buildFromJeveux( bool force ) {
     ASTERINTEGER iret = 0;
     CALLO_JEEXIN( _name, &iret );
     if ( iret == 0 )
@@ -685,7 +685,7 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::buildFromJeveux( bool f
 
 template < class ValueType, class PointerType >
 bool
-JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const std::string &name ) const {
+JeveuxCollectionClass< ValueType, PointerType >::existsObject( const std::string &name ) const {
     std::string charJeveuxName( 32, ' ' );
     ASTERINTEGER returnBool;
     CALLO_JEXNOM( charJeveuxName, _name, name );
@@ -696,7 +696,7 @@ JeveuxCollectionInstance< ValueType, PointerType >::existsObject( const std::str
 };
 
 template < class ValueType, class PointerType >
-bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject(
+bool JeveuxCollectionClass< ValueType, PointerType >::existsObject(
     const ASTERINTEGER &number ) const {
     const char *collName = _name.c_str();
     std::string charJeveuxName( 32, ' ' );
@@ -710,7 +710,7 @@ bool JeveuxCollectionInstance< ValueType, PointerType >::existsObject(
 
 template < class ValueType, class PointerType >
 std::vector< JeveuxChar32 >
-JeveuxCollectionInstance< ValueType, PointerType >::getObjectNames() const {
+JeveuxCollectionClass< ValueType, PointerType >::getObjectNames() const {
     std::vector< JeveuxChar32 > toReturn;
 
     for ( auto curObject : _listObjects )
@@ -720,12 +720,12 @@ JeveuxCollectionInstance< ValueType, PointerType >::getObjectNames() const {
 
 /**
  * @class JeveuxCollection
- * @brief Enveloppe d'un pointeur intelligent vers un JeveuxCollectionInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un JeveuxCollectionClass
  * @author Nicolas Sellenet
  */
 template < class ValueType, class PointerType = int > class JeveuxCollection {
   public:
-    typedef boost::shared_ptr< JeveuxCollectionInstance< ValueType, PointerType > >
+    typedef boost::shared_ptr< JeveuxCollectionClass< ValueType, PointerType > >
         JeveuxCollectionTypePtr;
 
   private:
@@ -738,7 +738,7 @@ template < class ValueType, class PointerType = int > class JeveuxCollection {
      */
     template < typename T1 = PointerType, typename = IsSame< T1, int > >
     JeveuxCollection( const std::string &nom )
-        : _jeveuxCollectionPtr( new JeveuxCollectionInstance< ValueType, PointerType >( nom ) ) {}
+        : _jeveuxCollectionPtr( new JeveuxCollectionClass< ValueType, PointerType >( nom ) ) {}
 
     /**
      * @brief Constructeur dans le cas où PointerType est un JeveuxBidirectionalMap
@@ -747,7 +747,7 @@ template < class ValueType, class PointerType = int > class JeveuxCollection {
     template < typename T1 = PointerType, typename = IsNotSame< T1, int > >
     JeveuxCollection( const std::string &nom, PointerType ptr )
         : _jeveuxCollectionPtr(
-              new JeveuxCollectionInstance< ValueType, PointerType >( nom, ptr ) ){};
+              new JeveuxCollectionClass< ValueType, PointerType >( nom, ptr ) ){};
 
     ~JeveuxCollection(){};
 
@@ -758,7 +758,7 @@ template < class ValueType, class PointerType = int > class JeveuxCollection {
 
     const JeveuxCollectionTypePtr &operator->() const { return _jeveuxCollectionPtr; };
 
-    JeveuxCollectionInstance< ValueType, PointerType > &operator*( void ) const {
+    JeveuxCollectionClass< ValueType, PointerType > &operator*( void ) const {
         return *_jeveuxCollectionPtr;
     };
 

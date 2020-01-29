@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MechanicalModeContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,11 +33,11 @@
 #include "Discretization/DOFNumbering.h"
 
 /**
- * @class MechanicalModeContainerInstance
+ * @class MechanicalModeContainerClass
  * @brief Cette classe correspond a un mode_meca
  * @author Nicolas Sellenet
  */
-class MechanicalModeContainerInstance : public FullResultsContainerInstance
+class MechanicalModeContainerClass : public FullResultsContainerClass
 {
   private:
     StructureInterfacePtr _structureInterface;
@@ -70,16 +70,16 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance():
-        MechanicalModeContainerInstance( ResultNaming::getNewResultName(), "MODE_MECA" )
+    MechanicalModeContainerClass():
+        MechanicalModeContainerClass( ResultNaming::getNewResultName(), "MODE_MECA" )
     {};
 
     /**
      * @brief Constructeur
      */
-    MechanicalModeContainerInstance( const std::string &name,
+    MechanicalModeContainerClass( const std::string &name,
                                      const std::string type = "MODE_MECA" ):
-        FullResultsContainerInstance( name, type ),
+        FullResultsContainerClass( name, type ),
         _structureInterface( StructureInterfacePtr() ),
         _rigidityDispDMatrix( nullptr ),
         _rigidityDispCMatrix( nullptr ),
@@ -379,14 +379,14 @@ class MechanicalModeContainerInstance : public FullResultsContainerInstance
             if ( model != nullptr )
                 _mesh = model->getMesh();
         }
-        return ResultsContainerInstance::update();
+        return ResultsContainerClass::update();
     };
 };
 
 /**
  * @typedef MechanicalModeContainerPtr
- * @brief Pointeur intelligent vers un MechanicalModeContainerInstance
+ * @brief Pointeur intelligent vers un MechanicalModeContainerClass
  */
-typedef boost::shared_ptr< MechanicalModeContainerInstance > MechanicalModeContainerPtr;
+typedef boost::shared_ptr< MechanicalModeContainerClass > MechanicalModeContainerPtr;
 
 #endif /* MECHANICALMODECONTAINER_H_ */

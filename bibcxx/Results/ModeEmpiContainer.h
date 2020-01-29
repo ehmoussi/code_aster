@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ModeEmpiContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,29 +29,29 @@
 #include "Results/ResultsContainer.h"
 
 /**
- * @class ModeEmpiContainerInstance
+ * @class ModeEmpiContainerClass
  * @brief Cette classe correspond a un mode_empi
  * @author Nicolas Sellenet
  */
-class ModeEmpiContainerInstance : public ResultsContainerInstance {
+class ModeEmpiContainerClass : public ResultsContainerClass {
   private:
   public:
     /**
      * @brief Constructeur
      */
-    ModeEmpiContainerInstance() : ResultsContainerInstance( "MODE_EMPI" ){};
+    ModeEmpiContainerClass() : ResultsContainerClass( "MODE_EMPI" ){};
 
     /**
      * @brief Constructeur
      */
-    ModeEmpiContainerInstance( const std::string &name )
-        : ResultsContainerInstance( name, "MODE_EMPI" ){};
+    ModeEmpiContainerClass( const std::string &name )
+        : ResultsContainerClass( name, "MODE_EMPI" ){};
 };
 
 /**
  * @typedef ModeEmpiContainerPtr
- * @brief Pointeur intelligent vers un ModeEmpiContainerInstance
+ * @brief Pointeur intelligent vers un ModeEmpiContainerClass
  */
-typedef boost::shared_ptr< ModeEmpiContainerInstance > ModeEmpiContainerPtr;
+typedef boost::shared_ptr< ModeEmpiContainerClass > ModeEmpiContainerPtr;
 
 #endif /* MODEEMPICONTAINER_H_ */

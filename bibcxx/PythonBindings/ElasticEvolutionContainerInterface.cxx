@@ -29,11 +29,11 @@ namespace py = boost::python;
 
 void exportElasticEvolutionContainerToPython() {
 
-    py::class_< ElasticEvolutionContainerInstance, ElasticEvolutionContainerPtr,
-                py::bases< TimeDependantResultsContainerInstance > >( "ElasticEvolutionContainer",
+    py::class_< ElasticEvolutionContainerClass, ElasticEvolutionContainerPtr,
+                py::bases< TimeDependantResultsContainerClass > >( "ElasticEvolutionContainer",
                                                                       py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElasticEvolutionContainerInstance >))
+              py::make_constructor(&initFactoryPtr< ElasticEvolutionContainerClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< ElasticEvolutionContainerInstance, std::string >));
+                              &initFactoryPtr< ElasticEvolutionContainerClass, std::string >));
 };

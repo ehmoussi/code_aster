@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe JeveuxBidirectionnalMap
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,12 +33,12 @@
 #include "aster_utils.h"
 
 /**
- * @class JeveuxBidirectionalMapInstance
+ * @class JeveuxBidirectionalMapClass
  * @brief Equivalent du pointeur de nom dans Jeveux
  * @author Nicolas Sellenet
  */
 template < typename ValueType >
-class JeveuxBidirectionalMapInstance : public JeveuxObjectInstance,
+class JeveuxBidirectionalMapClass : public JeveuxObjectClass,
                                        private AllowedJeveuxType< ValueType > {
   private:
     ASTERINTEGER _size;
@@ -48,13 +48,13 @@ class JeveuxBidirectionalMapInstance : public JeveuxObjectInstance,
      * @brief Constructeur
      * @param name Nom Jeveux de l'objet
      */
-    JeveuxBidirectionalMapInstance( std::string name, JeveuxMemory mem = Permanent )
-        : JeveuxObjectInstance( name, mem ), _size( 0 ){};
+    JeveuxBidirectionalMapClass( std::string name, JeveuxMemory mem = Permanent )
+        : JeveuxObjectClass( name, mem ), _size( 0 ){};
 
     /**
      * @brief Destructeur
      */
-    ~JeveuxBidirectionalMapInstance(){};
+    ~JeveuxBidirectionalMapClass(){};
 
     /**
      * @brief Ajout d'un élément
@@ -140,12 +140,12 @@ class JeveuxBidirectionalMapInstance : public JeveuxObjectInstance,
 
 /**
  * class JeveuxBidirectionalMap
- *   Enveloppe d'un pointeur intelligent vers un JeveuxBidirectionalMapInstance
+ *   Enveloppe d'un pointeur intelligent vers un JeveuxBidirectionalMapClass
  * @author Nicolas Sellenet
  */
 template < class ValueType > class JeveuxBidirectionalMap {
   public:
-    typedef boost::shared_ptr< JeveuxBidirectionalMapInstance< ValueType > >
+    typedef boost::shared_ptr< JeveuxBidirectionalMapClass< ValueType > >
         JeveuxBidirectionalMapPtr;
 
   private:
@@ -153,7 +153,7 @@ template < class ValueType > class JeveuxBidirectionalMap {
 
   public:
     JeveuxBidirectionalMap( std::string nom )
-        : _jeveuxBidirectionalMapPtr( new JeveuxBidirectionalMapInstance< ValueType >( nom ) ){};
+        : _jeveuxBidirectionalMapPtr( new JeveuxBidirectionalMapClass< ValueType >( nom ) ){};
 
     ~JeveuxBidirectionalMap(){};
 

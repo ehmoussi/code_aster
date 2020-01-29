@@ -1,9 +1,9 @@
 /**
  * @file CrackTip.cxx
- * @brief Implementation de CrackTipInstance
+ * @brief Implementation de CrackTipClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,7 +25,7 @@
 
 #include "Modeling/CrackTip.h"
 
-CrackTipInstance::CrackTipInstance( const std::string name )
+CrackTipClass::CrackTipClass( const std::string name )
     : DataStructure( name, 8, "FOND_FISS", Permanent ),
       _info( JeveuxVectorChar8( getName() + ".INFO" ) ),
       _fondFiss( JeveuxVectorDouble( getName() + ".FONDFISS" ) ),
@@ -36,9 +36,9 @@ CrackTipInstance::CrackTipInstance( const std::string name )
       _fondFisG( JeveuxVectorDouble( getName() + ".FONDFISG" ) ),
       _normale( JeveuxVectorDouble( getName() + ".NORMALE" ) ),
       _baseFond( JeveuxVectorDouble( getName() + ".BASEFOND" ) ),
-      _ltno( new FieldOnNodesDoubleInstance( getName() + ".LTNO      " ) ),
-      _lnno( new FieldOnNodesDoubleInstance( getName() + ".LNNO      " ) ),
-      _basLoc( new FieldOnNodesDoubleInstance( getName() + ".BASLOC    " ) ),
+      _ltno( new FieldOnNodesDoubleClass( getName() + ".LTNO      " ) ),
+      _lnno( new FieldOnNodesDoubleClass( getName() + ".LNNO      " ) ),
+      _basLoc( new FieldOnNodesDoubleClass( getName() + ".BASLOC    " ) ),
       _fondTailleR( JeveuxVectorDouble( getName() + ".FOND.TAILLE_R" ) ),
       _dtanOrigine( JeveuxVectorDouble( getName() + ".DTAN_ORIGINE" ) ),
       _dtanExtremite( JeveuxVectorDouble( getName() + ".DTAN_EXTREMITE" ) ),

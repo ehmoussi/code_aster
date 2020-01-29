@@ -30,31 +30,31 @@ namespace py = boost::python;
 
 void exportMechanicalModeContainerToPython() {
 
-    bool ( MechanicalModeContainerInstance::*c1 )( const AssemblyMatrixDisplacementDoublePtr & ) =
-        &MechanicalModeContainerInstance::setStiffnessMatrix;
-    bool ( MechanicalModeContainerInstance::*c2 )( const AssemblyMatrixTemperatureDoublePtr & ) =
-        &MechanicalModeContainerInstance::setStiffnessMatrix;
-    bool ( MechanicalModeContainerInstance::*c3 )( const AssemblyMatrixDisplacementComplexPtr & ) =
-        &MechanicalModeContainerInstance::setStiffnessMatrix;
-    bool ( MechanicalModeContainerInstance::*c4 )( const AssemblyMatrixPressureDoublePtr & ) =
-        &MechanicalModeContainerInstance::setStiffnessMatrix;
+    bool ( MechanicalModeContainerClass::*c1 )( const AssemblyMatrixDisplacementDoublePtr & ) =
+        &MechanicalModeContainerClass::setStiffnessMatrix;
+    bool ( MechanicalModeContainerClass::*c2 )( const AssemblyMatrixTemperatureDoublePtr & ) =
+        &MechanicalModeContainerClass::setStiffnessMatrix;
+    bool ( MechanicalModeContainerClass::*c3 )( const AssemblyMatrixDisplacementComplexPtr & ) =
+        &MechanicalModeContainerClass::setStiffnessMatrix;
+    bool ( MechanicalModeContainerClass::*c4 )( const AssemblyMatrixPressureDoublePtr & ) =
+        &MechanicalModeContainerClass::setStiffnessMatrix;
 
-    bool ( MechanicalModeContainerInstance::*c5 )( const AssemblyMatrixDisplacementDoublePtr & ) =
-        &MechanicalModeContainerInstance::setMassMatrix;
-    bool ( MechanicalModeContainerInstance::*c6 )( const AssemblyMatrixTemperatureDoublePtr & ) =
-        &MechanicalModeContainerInstance::setMassMatrix;
-    bool ( MechanicalModeContainerInstance::*c7 )( const AssemblyMatrixDisplacementComplexPtr & ) =
-        &MechanicalModeContainerInstance::setMassMatrix;
-    bool ( MechanicalModeContainerInstance::*c8 )( const AssemblyMatrixPressureDoublePtr & ) =
-        &MechanicalModeContainerInstance::setMassMatrix;
+    bool ( MechanicalModeContainerClass::*c5 )( const AssemblyMatrixDisplacementDoublePtr & ) =
+        &MechanicalModeContainerClass::setMassMatrix;
+    bool ( MechanicalModeContainerClass::*c6 )( const AssemblyMatrixTemperatureDoublePtr & ) =
+        &MechanicalModeContainerClass::setMassMatrix;
+    bool ( MechanicalModeContainerClass::*c7 )( const AssemblyMatrixDisplacementComplexPtr & ) =
+        &MechanicalModeContainerClass::setMassMatrix;
+    bool ( MechanicalModeContainerClass::*c8 )( const AssemblyMatrixPressureDoublePtr & ) =
+        &MechanicalModeContainerClass::setMassMatrix;
 
-    py::class_< MechanicalModeContainerInstance, MechanicalModeContainerPtr,
-                py::bases< FullResultsContainerInstance > >( "MechanicalModeContainer",
+    py::class_< MechanicalModeContainerClass, MechanicalModeContainerPtr,
+                py::bases< FullResultsContainerClass > >( "MechanicalModeContainer",
                                                              py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MechanicalModeContainerInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MechanicalModeContainerClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< MechanicalModeContainerInstance, std::string >))
-        .def( "getDOFNumbering", &MechanicalModeContainerInstance::getDOFNumbering )
+              py::make_constructor(&initFactoryPtr< MechanicalModeContainerClass, std::string >))
+        .def( "getDOFNumbering", &MechanicalModeContainerClass::getDOFNumbering )
         .def("getStiffnessMatrix", &getStiffnessMatrix< MechanicalModeContainerPtr >)
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
@@ -65,37 +65,37 @@ void exportMechanicalModeContainerToPython() {
         .def( "setMassMatrix", c6 )
         .def( "setMassMatrix", c7 )
         .def( "setMassMatrix", c8 )
-        .def( "setStructureInterface", &MechanicalModeContainerInstance::setStructureInterface );
+        .def( "setStructureInterface", &MechanicalModeContainerClass::setStructureInterface );
 };
 
 void exportMechanicalModeComplexContainerToPython() {
 
-    bool ( MechanicalModeComplexContainerInstance::*c1 )(
+    bool ( MechanicalModeComplexContainerClass::*c1 )(
         const AssemblyMatrixDisplacementDoublePtr & ) =
-        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
-    bool ( MechanicalModeComplexContainerInstance::*c2 )(
+        &MechanicalModeComplexContainerClass::setStiffnessMatrix;
+    bool ( MechanicalModeComplexContainerClass::*c2 )(
         const AssemblyMatrixDisplacementComplexPtr & ) =
-        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
-    bool ( MechanicalModeComplexContainerInstance::*c3 )(
+        &MechanicalModeComplexContainerClass::setStiffnessMatrix;
+    bool ( MechanicalModeComplexContainerClass::*c3 )(
         const AssemblyMatrixDisplacementComplexPtr & ) =
-        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
-    bool ( MechanicalModeComplexContainerInstance::*c4 )(
+        &MechanicalModeComplexContainerClass::setStiffnessMatrix;
+    bool ( MechanicalModeComplexContainerClass::*c4 )(
         const AssemblyMatrixPressureDoublePtr & ) =
-        &MechanicalModeComplexContainerInstance::setStiffnessMatrix;
+        &MechanicalModeComplexContainerClass::setStiffnessMatrix;
 
-    py::class_< MechanicalModeComplexContainerInstance, MechanicalModeComplexContainerPtr,
-                py::bases< MechanicalModeContainerInstance > >( "MechanicalModeComplexContainer",
+    py::class_< MechanicalModeComplexContainerClass, MechanicalModeComplexContainerPtr,
+                py::bases< MechanicalModeContainerClass > >( "MechanicalModeComplexContainer",
                                                                 py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< MechanicalModeComplexContainerInstance >))
+              py::make_constructor(&initFactoryPtr< MechanicalModeComplexContainerClass >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< MechanicalModeComplexContainerInstance, std::string >))
-        .def( "setDampingMatrix", &MechanicalModeComplexContainerInstance::setDampingMatrix )
+                  &initFactoryPtr< MechanicalModeComplexContainerClass, std::string >))
+        .def( "setDampingMatrix", &MechanicalModeComplexContainerClass::setDampingMatrix )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )
         .def( "setStiffnessMatrix", c3 )
         .def( "setStiffnessMatrix", c4 )
         .def( "setStructureInterface",
-              &MechanicalModeComplexContainerInstance::setStructureInterface );
+              &MechanicalModeComplexContainerClass::setStructureInterface );
 };

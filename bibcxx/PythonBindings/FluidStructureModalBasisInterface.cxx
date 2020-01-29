@@ -31,10 +31,10 @@ namespace py = boost::python;
 
 void exportFluidStructureModalBasisToPython() {
 
-    py::class_< FluidStructureModalBasisInstance,
-                FluidStructureModalBasisInstance::FluidStructureModalBasisPtr,
+    py::class_< FluidStructureModalBasisClass,
+                FluidStructureModalBasisClass::FluidStructureModalBasisPtr,
                 py::bases< DataStructure > >( "FluidStructureModalBasis", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FluidStructureModalBasisInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FluidStructureModalBasisClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< FluidStructureModalBasisInstance, std::string >));
+                              &initFactoryPtr< FluidStructureModalBasisClass, std::string >));
 };

@@ -5,7 +5,7 @@
  * @file Function.h
  * @brief Implementation of functions.
  * @section LICENCE
- * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -31,11 +31,11 @@
 #include "Functions/GenericFunction.h"
 
 /**
- * class BaseFunctionInstance
+ * class BaseFunctionClass
  *   Create a datastructure for a function with real values
  * @author Mathieu Courtois
  */
-class BaseFunctionInstance : public GenericFunctionInstance {
+class BaseFunctionClass : public GenericFunctionClass {
   private:
 
   protected:
@@ -47,17 +47,17 @@ class BaseFunctionInstance : public GenericFunctionInstance {
      * @typedef BaseFunctionPtr
      * @brief Pointeur intelligent vers un BaseFunction
      */
-    typedef boost::shared_ptr< BaseFunctionInstance > BaseFunctionPtr;
+    typedef boost::shared_ptr< BaseFunctionClass > BaseFunctionPtr;
 
     /**
      * Constructeur
      */
-    BaseFunctionInstance( const std::string type, const std::string type2 );
+    BaseFunctionClass( const std::string type, const std::string type2 );
 
-    BaseFunctionInstance( const std::string jeveuxName, const std::string type,
+    BaseFunctionClass( const std::string jeveuxName, const std::string type,
                           const std::string type2 );
 
-    ~BaseFunctionInstance(){};
+    ~BaseFunctionClass(){};
 
     /**
      * @brief Allocate function
@@ -160,49 +160,49 @@ class BaseFunctionInstance : public GenericFunctionInstance {
 };
 
 /**
- * class FunctionInstance
+ * class FunctionClass
  *   Create a datastructure for a function with real values
  * @author Mathieu Courtois
  */
-class FunctionInstance : public BaseFunctionInstance {
+class FunctionClass : public BaseFunctionClass {
 
   public:
     /**
      * @typedef FunctionPtr
      * @brief Pointeur intelligent vers un Function
      */
-    typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
+    typedef boost::shared_ptr< FunctionClass > FunctionPtr;
 
     /**
     * Constructeur
     */
-    FunctionInstance() : BaseFunctionInstance( "FONCTION", "FONCTION" ){};
+    FunctionClass() : BaseFunctionClass( "FONCTION", "FONCTION" ){};
 
-    FunctionInstance( const std::string jeveuxName )
-        : BaseFunctionInstance( jeveuxName, "FONCTION", "FONCTION" ){};
+    FunctionClass( const std::string jeveuxName )
+        : BaseFunctionClass( jeveuxName, "FONCTION", "FONCTION" ){};
 };
 
 /**
- * class FunctionComplexInstance
+ * class FunctionComplexClass
  *   Create a datastructure for a function with complex values
  * @author Mathieu Courtois
  */
-class FunctionComplexInstance : public BaseFunctionInstance {
+class FunctionComplexClass : public BaseFunctionClass {
 
   public:
     /**
      * @typedef FunctionPtr
      * @brief Pointeur intelligent vers un FunctionComplex
      */
-    typedef boost::shared_ptr< FunctionComplexInstance > FunctionComplexPtr;
+    typedef boost::shared_ptr< FunctionComplexClass > FunctionComplexPtr;
 
     /**
     * Constructeur
     */
-    FunctionComplexInstance( const std::string jeveuxName )
-        : BaseFunctionInstance( jeveuxName, "FONCTION_C", "FONCT_C" ) {};
+    FunctionComplexClass( const std::string jeveuxName )
+        : BaseFunctionClass( jeveuxName, "FONCTION_C", "FONCT_C" ) {};
 
-    FunctionComplexInstance() : BaseFunctionInstance( "FONCTION_C", "FONCT_C" ) {};
+    FunctionComplexClass() : BaseFunctionClass( "FONCTION_C", "FONCT_C" ) {};
 
     /**
      * @brief Allocate function
@@ -243,21 +243,21 @@ class FunctionComplexInstance : public BaseFunctionInstance {
 
 /**
  * @typedef BaseFunctionPtr
- * @brief  Pointer to a BaseFunctionInstance
+ * @brief  Pointer to a BaseFunctionClass
  */
-typedef boost::shared_ptr< BaseFunctionInstance > BaseFunctionPtr;
+typedef boost::shared_ptr< BaseFunctionClass > BaseFunctionPtr;
 
 /**
  * @typedef FunctionPtr
- * @brief  Pointer to a FunctionInstance
+ * @brief  Pointer to a FunctionClass
  */
-typedef boost::shared_ptr< FunctionInstance > FunctionPtr;
+typedef boost::shared_ptr< FunctionClass > FunctionPtr;
 
 /**
  * @typedef FunctionComplexPtr
- * @brief  Pointer to a FunctionComplexInstance
+ * @brief  Pointer to a FunctionComplexClass
  */
-typedef boost::shared_ptr< FunctionComplexInstance > FunctionComplexPtr;
+typedef boost::shared_ptr< FunctionComplexClass > FunctionComplexPtr;
 
 /**
  * @name emptyDoubleFunction

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe State
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,7 +32,7 @@
 #include "Results/NonLinearEvolutionContainer.h"
 
 /**
- * @class StateInstance
+ * @class StateClass
  * @brief Cette classe permet de definir l'état d'une analyse (par exemple d'une analyse
  * non-linéaire)
  * L'algorithme (non-linéaire) permet de calculer l'état courant (i.e. la valeur des champs de
@@ -40,7 +40,7 @@
  * de variables internes) à partir de l'état précédent (valeur des mêmes champs au pas précédent)
  * @author Natacha Béreux
  */
-class StateInstance {
+class StateClass {
   private:
     /** @brief current index  */
     ASTERINTEGER _currentIndex;
@@ -67,7 +67,7 @@ class StateInstance {
      * @brief Constructeur
      * @param step index (default value 0)
      */
-    StateInstance( ASTERINTEGER index = 0, double step = 0.0 )
+    StateClass( ASTERINTEGER index = 0, double step = 0.0 )
         : _currentIndex( index ), _currentStep( step ), _evolParam( "EVOL_NOLI", false ),
           _sourceStepParam( "INST", false ), _sourceIndexParam( "NUME_ORDRE", false ),
           _DirichletSourceIndexParam( "NUME_DIDI", false ),
@@ -85,7 +85,7 @@ class StateInstance {
     /**
      * @brief Destructeur
      */
-    ~StateInstance(){};
+    ~StateClass(){};
 
     /** @brief define the state from the result of a previous nonlinear anaysis
         @todo réaliser l'extraction des champs depuis l'evol_noli et associer les pointeurs _depl
@@ -152,8 +152,8 @@ class StateInstance {
 
 /**
  * @typedef StatePtr
- * @brief Pointeur intelligent vers un StateInstance
+ * @brief Pointeur intelligent vers un StateClass
  */
-typedef boost::shared_ptr< StateInstance > StatePtr;
+typedef boost::shared_ptr< StateClass > StatePtr;
 
 #endif /* STATE_H_ */

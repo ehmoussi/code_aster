@@ -31,9 +31,9 @@ namespace py = boost::python;
 
 void exportInterspectralMatrixToPython() {
 
-    py::class_< InterspectralMatrixInstance, InterspectralMatrixInstance::InterspectralMatrixPtr,
+    py::class_< InterspectralMatrixClass, InterspectralMatrixClass::InterspectralMatrixPtr,
             py::bases< DataStructure > >( "InterspectralMatrix", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< InterspectralMatrixInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< InterspectralMatrixClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< InterspectralMatrixInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< InterspectralMatrixClass, std::string >));
 };

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StaticMechanicalAlgorithm
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,8 +32,8 @@
 #include "Algorithms/AlgorithmException.h"
 
 template <>
-void updateContextFromStepper< TimeStepperInstance::const_iterator, StaticMechanicalContext >(
-    const TimeStepperInstance::const_iterator &curStep, StaticMechanicalContext &context );
+void updateContextFromStepper< TimeStepperClass::const_iterator, StaticMechanicalContext >(
+    const TimeStepperClass::const_iterator &curStep, StaticMechanicalContext &context );
 
 /**
  * @class StaticMechanicalAlgorithm

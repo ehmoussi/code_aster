@@ -6,7 +6,7 @@
  * @brief Definition of the normal mode solver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,7 +31,7 @@
 #include "Solvers/GenericSolver.h"
 #include "Utilities/CapyConvertibleValue.h"
 
-class NormalModeAnalysisInstance : public GenericSolver {
+class NormalModeAnalysisClass : public GenericSolver {
   private:
     AssemblyMatrixDisplacementDoublePtr _rigidity;
     AssemblyMatrixDisplacementDoublePtr _mass;
@@ -44,7 +44,7 @@ class NormalModeAnalysisInstance : public GenericSolver {
     /**
      * @brief Constructeur
      */
-    NormalModeAnalysisInstance() : _numberOfFreq( 10 ), _containerCalcFreq( "CALC_FREQ" ) {
+    NormalModeAnalysisClass() : _numberOfFreq( 10 ), _containerCalcFreq( "CALC_FREQ" ) {
         _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >(
             false, "MATR_RIGI", _rigidity, false ) );
         _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >(
@@ -70,8 +70,8 @@ class NormalModeAnalysisInstance : public GenericSolver {
 
 /**
  * @typedef NormalModeAnalysisPtr
- * @brief Enveloppe d'un pointeur intelligent vers un NormalModeAnalysisInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un NormalModeAnalysisClass
  */
-typedef boost::shared_ptr< NormalModeAnalysisInstance > NormalModeAnalysisPtr;
+typedef boost::shared_ptr< NormalModeAnalysisClass > NormalModeAnalysisPtr;
 
 #endif /* NORMALMODEANALYSIS_H_ */

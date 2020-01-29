@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe ParallelMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,11 +37,11 @@
 #include <set>
 
 /**
- * @class ParallelMeshInstance
+ * @class ParallelMeshClass
  * @brief Cette classe decrit un maillage Aster parallèle
  * @author Nicolas Sellenet
  */
-class ParallelMeshInstance : public BaseMeshInstance {
+class ParallelMeshClass : public BaseMeshClass {
   private:
     typedef std::set< std::string > SetOfString;
     typedef SetOfString::iterator SetOfStringIter;
@@ -71,20 +71,20 @@ class ParallelMeshInstance : public BaseMeshInstance {
   public:
     /**
      * @typedef ParallelMeshPtr
-     * @brief Pointeur intelligent vers un ParallelMeshInstance
+     * @brief Pointeur intelligent vers un ParallelMeshClass
      */
-    typedef boost::shared_ptr< ParallelMeshInstance > ParallelMeshPtr;
+    typedef boost::shared_ptr< ParallelMeshClass > ParallelMeshPtr;
 
     /**
      * @brief Constructeur
      */
-    ParallelMeshInstance() : ParallelMeshInstance( ResultNaming::getNewResultName() ){};
+    ParallelMeshClass() : ParallelMeshClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ParallelMeshInstance( const std::string &name )
-        : BaseMeshInstance( name, "MAILLAGE_P" ), _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
+    ParallelMeshClass( const std::string &name )
+        : BaseMeshClass( name, "MAILLAGE_P" ), _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
           _allGroupOfEements( getName() + ".PAR_GRPMAI" ), _outerNodes( getName() + ".NOEX" ),
           _globalNumbering( getName() + ".NULOGL" ),
           _listOfSendingJoins( getName() + ".NO_JO_ENV" ),
@@ -156,9 +156,9 @@ class ParallelMeshInstance : public BaseMeshInstance {
 
 /**
  * @typedef ParallelMeshPtr
- * @brief Pointeur intelligent vers un ParallelMeshInstance
+ * @brief Pointeur intelligent vers un ParallelMeshClass
  */
-typedef boost::shared_ptr< ParallelMeshInstance > ParallelMeshPtr;
+typedef boost::shared_ptr< ParallelMeshClass > ParallelMeshPtr;
 
 #endif /* PARALLELMESH_H_ */
 

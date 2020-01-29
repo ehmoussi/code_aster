@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe CodedMaterial
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,11 +32,11 @@
 #include "DataFields/PCFieldOnMesh.h"
 
 /**
- * @class CodedMaterialInstance
+ * @class CodedMaterialClass
  * @brief Coded material
  * @author Nicolas Sellenet
  */
-class CodedMaterialInstance
+class CodedMaterialClass
 {
 private:
     std::string                       _name;
@@ -55,17 +55,17 @@ public:
      * @typedef CodedMaterialPtr
      * @brief Pointeur intelligent vers un CodedMaterial
      */
-    typedef boost::shared_ptr< CodedMaterialInstance > CodedMaterialPtr;
+    typedef boost::shared_ptr< CodedMaterialClass > CodedMaterialPtr;
 
     /**
      * @brief Constructeur
      */
-    CodedMaterialInstance( const MaterialOnMeshPtr& mater, const ModelPtr& model );
+    CodedMaterialClass( const MaterialOnMeshPtr& mater, const ModelPtr& model );
 
     /**
      * @brief Destructeur
      */
-    ~CodedMaterialInstance()
+    ~CodedMaterialClass()
     {
         return;
     };
@@ -111,9 +111,9 @@ public:
 
 /**
  * @typedef CodedMaterialPtr
- * @brief Pointeur intelligent vers un CodedMaterialInstance
+ * @brief Pointeur intelligent vers un CodedMaterialClass
  */
-typedef boost::shared_ptr< CodedMaterialInstance > CodedMaterialPtr;
+typedef boost::shared_ptr< CodedMaterialClass > CodedMaterialPtr;
 
 
 #endif /* CODEDMATERIAL_H_ */

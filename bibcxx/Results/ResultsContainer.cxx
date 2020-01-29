@@ -31,7 +31,7 @@
 #include "Utilities/Tools.h"
 
 void
-ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacteristicsPtr &cara,
+ResultsContainerClass::addElementaryCharacteristics( const ElementaryCharacteristicsPtr &cara,
                                                         int rank ) {
     if( !cara )
         throw std::runtime_error( "ElementaryCharacteristics is empty" );
@@ -41,7 +41,7 @@ ResultsContainerInstance::addElementaryCharacteristics( const ElementaryCharacte
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, cara->getName(), type );
 };
 
-void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr &load,
+void ResultsContainerClass::addListOfLoads( const ListOfLoadsPtr &load,
                                                int rank ) {
     _mapLoads[rank] = load;
     ASTERINTEGER rang = rank;
@@ -49,7 +49,7 @@ void ResultsContainerInstance::addListOfLoads( const ListOfLoadsPtr &load,
     CALLO_RSADPA_ZK24_WRAP( getName(), &rang, load->getName(), type );
 };
 
-void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater,
+void ResultsContainerClass::addMaterialOnMesh( const MaterialOnMeshPtr &mater,
                                                   int rank ) {
     if( !mater )
         throw std::runtime_error( "MaterialOnMesh is empty" );
@@ -59,7 +59,7 @@ void ResultsContainerInstance::addMaterialOnMesh( const MaterialOnMeshPtr &mater
     CALLO_RSADPA_ZK8_WRAP( getName(), &rang, mater->getName(), type );
 };
 
-void ResultsContainerInstance::addModel( const ModelPtr &model,
+void ResultsContainerClass::addModel( const ModelPtr &model,
                                          int rank ) {
     if( !model )
         throw std::runtime_error( "Model is empty" );
@@ -71,13 +71,13 @@ void ResultsContainerInstance::addModel( const ModelPtr &model,
     _fieldBuidler.addFiniteElementDescriptor( fed );
 };
 
-void ResultsContainerInstance::addTimeValue( double value, int rank ) {
+void ResultsContainerClass::addTimeValue( double value, int rank ) {
     ASTERINTEGER rang = rank;
     std::string type( "INST" );
     CALLO_RSADPA_ZR_WRAP( getName(), &rang, &value, type );
 };
 
-bool ResultsContainerInstance::allocate( int nbRanks ) {
+bool ResultsContainerClass::allocate( int nbRanks ) {
     std::string base( JeveuxMemoryTypesNames[getMemoryType()] );
     ASTERINTEGER nbordr = nbRanks;
     CALLO_RSCRSD( base, getName(), getType(), &nbordr );
@@ -85,7 +85,7 @@ bool ResultsContainerInstance::allocate( int nbRanks ) {
     return true;
 };
 
-void ResultsContainerInstance::appendElementaryCharacteristicsOnAllRanks
+void ResultsContainerClass::appendElementaryCharacteristicsOnAllRanks
     ( const ElementaryCharacteristicsPtr& cara )
 {
     _serialNumber->updateValuePointer();
@@ -97,7 +97,7 @@ void ResultsContainerInstance::appendElementaryCharacteristicsOnAllRanks
     }
 };
 
-void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr &mater ) {
+void ResultsContainerClass::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr &mater ) {
     _serialNumber->updateValuePointer();
     ASTERINTEGER nbRanks = _serialNumber->usedSize();
     for ( int rank = 0; rank < nbRanks; ++rank ) {
@@ -107,7 +107,7 @@ void ResultsContainerInstance::appendMaterialOnMeshOnAllRanks( const MaterialOnM
     }
 };
 
-void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr &model ) {
+void ResultsContainerClass::appendModelOnAllRanks( const ModelPtr &model ) {
     _serialNumber->updateValuePointer();
     ASTERINTEGER nbRanks = _serialNumber->usedSize();
     for ( int rank = 0; rank < nbRanks; ++rank ) {
@@ -117,18 +117,18 @@ void ResultsContainerInstance::appendModelOnAllRanks( const ModelPtr &model ) {
     }
 };
 
-BaseDOFNumberingPtr ResultsContainerInstance::getEmptyDOFNumbering() {
+BaseDOFNumberingPtr ResultsContainerClass::getEmptyDOFNumbering() {
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
     ASTERINTEGER a = 10, b = 14;
     CALLO_GNOMSD( resuName, name, &a, &b );
-    DOFNumberingPtr retour( new DOFNumberingInstance( name.substr( 0, 14 ) ) );
+    DOFNumberingPtr retour( new DOFNumberingClass( name.substr( 0, 14 ) ) );
     _listOfDOFNum.push_back( retour );
     return retour;
 };
 
 FieldOnNodesDoublePtr
-ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
+ResultsContainerClass::getEmptyFieldOnNodesDouble( const std::string name,
                                                       const int rank ) {
     if ( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
@@ -140,7 +140,7 @@ ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
     CALLO_RSEXCH( null, getName(), name, &rankLong, returnName, &retour );
     CALLO_RSNOCH( getName(), name, &rankLong );
     std::string bis( returnName.c_str(), 19 );
-    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleInstance( bis ) );
+    FieldOnNodesDoublePtr result( new FieldOnNodesDoubleClass( bis ) );
 
     auto curIter = _dictOfVectorOfFieldsNodes.find( name );
     if ( curIter == _dictOfVectorOfFieldsNodes.end() ) {
@@ -151,18 +151,18 @@ ResultsContainerInstance::getEmptyFieldOnNodesDouble( const std::string name,
 };
 
 #ifdef _USE_MPI
-BaseDOFNumberingPtr ResultsContainerInstance::getEmptyParallelDOFNumbering() {
+BaseDOFNumberingPtr ResultsContainerClass::getEmptyParallelDOFNumbering() {
     std::string resuName( getName() );
     std::string name( "12345678.00000          " );
     ASTERINTEGER a = 10, b = 14;
     CALLO_GNOMSD( resuName, name, &a, &b );
-    ParallelDOFNumberingPtr retour( new ParallelDOFNumberingInstance( name.substr( 0, 14 ) ) );
+    ParallelDOFNumberingPtr retour( new ParallelDOFNumberingClass( name.substr( 0, 14 ) ) );
     _listOfDOFNum.push_back( retour );
     return retour;
 };
 #endif /* _USE_MPI */
 
-ElementaryCharacteristicsPtr ResultsContainerInstance::getElementaryCharacteristics() {
+ElementaryCharacteristicsPtr ResultsContainerClass::getElementaryCharacteristics() {
     std::string name( "" );
     ElementaryCharacteristicsPtr toReturn( nullptr );
     for ( const auto &curIter : _mapElemCara ) {
@@ -177,21 +177,21 @@ ElementaryCharacteristicsPtr ResultsContainerInstance::getElementaryCharacterist
 };
 
 ElementaryCharacteristicsPtr
-ResultsContainerInstance::getElementaryCharacteristics( int rank ) {
+ResultsContainerClass::getElementaryCharacteristics( int rank ) {
     auto curIter = _mapElemCara.find( rank );
     if ( curIter == _mapElemCara.end() )
         throw std::runtime_error( "Rank not find" );
     return ( *curIter ).second;
 };
 
-ListOfLoadsPtr ResultsContainerInstance::getListOfLoads( int rank ) {
+ListOfLoadsPtr ResultsContainerClass::getListOfLoads( int rank ) {
     auto curIter = _mapLoads.find( rank );
     if ( curIter == _mapLoads.end() )
         throw std::runtime_error( "Rank not find" );
     return ( *curIter ).second;
 };
 
-MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() {
+MaterialOnMeshPtr ResultsContainerClass::getMaterialOnMesh() {
     std::string name( "" );
     MaterialOnMeshPtr toReturn( nullptr );
     for ( const auto &curIter : _mapMaterial ) {
@@ -206,14 +206,14 @@ MaterialOnMeshPtr ResultsContainerInstance::getMaterialOnMesh() {
 };
 
 MaterialOnMeshPtr
-ResultsContainerInstance::getMaterialOnMesh( int rank ) {
+ResultsContainerClass::getMaterialOnMesh( int rank ) {
     auto curIter = _mapMaterial.find( rank );
     if ( curIter == _mapMaterial.end() )
         throw std::runtime_error( "Rank not find" );
     return ( *curIter ).second;
 };
 
-BaseMeshPtr ResultsContainerInstance::getMesh()
+BaseMeshPtr ResultsContainerClass::getMesh()
 {
     if( _mesh != nullptr )
         return _mesh;
@@ -223,7 +223,7 @@ BaseMeshPtr ResultsContainerInstance::getMesh()
     return nullptr;
 };
 
-ModelPtr ResultsContainerInstance::getModel() {
+ModelPtr ResultsContainerClass::getModel() {
     std::string name( "" );
     ModelPtr toReturn( nullptr );
     for ( const auto &curIter : _mapModel ) {
@@ -237,7 +237,7 @@ ModelPtr ResultsContainerInstance::getModel() {
     return toReturn;
 };
 
-ModelPtr ResultsContainerInstance::getModel( int rank )
+ModelPtr ResultsContainerClass::getModel( int rank )
 {
     auto curIter = _mapModel.find( rank );
     if ( curIter == _mapModel.end() )
@@ -245,12 +245,12 @@ ModelPtr ResultsContainerInstance::getModel( int rank )
     return ( *curIter ).second;
 };
 
-int ResultsContainerInstance::getNumberOfRanks() const
+int ResultsContainerClass::getNumberOfRanks() const
 {
     return _serialNumber->usedSize();
 };
 
-std::vector< long > ResultsContainerInstance::getRanks() const
+std::vector< long > ResultsContainerClass::getRanks() const
 {
     std::vector< long > v;
     _serialNumber->updateValuePointer();
@@ -260,7 +260,7 @@ std::vector< long > ResultsContainerInstance::getRanks() const
     return v;
 };
 
-FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const std::string name,
+FieldOnElementsDoublePtr ResultsContainerClass::getRealFieldOnElements( const std::string name,
                                                                            const int rank ) const
 {
     if ( rank > _nbRanks || rank <= 0 )
@@ -274,7 +274,7 @@ FieldOnElementsDoublePtr ResultsContainerInstance::getRealFieldOnElements( const
     return toReturn;
 };
 
-FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::string name,
+FieldOnNodesDoublePtr ResultsContainerClass::getRealFieldOnNodes( const std::string name,
                                                                      const int rank ) const
 {
     if ( rank > _nbRanks || rank <= 0 )
@@ -288,7 +288,7 @@ FieldOnNodesDoublePtr ResultsContainerInstance::getRealFieldOnNodes( const std::
     return toReturn;
 };
 
-void ResultsContainerInstance::listFields() const
+void ResultsContainerClass::listFields() const
 {
     std::cout << "Content of DataStructure : ";
     for ( auto curIter : _dictOfVectorOfFieldsNodes ) {
@@ -300,7 +300,7 @@ void ResultsContainerInstance::listFields() const
     std::cout << std::endl;
 };
 
-bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
+bool ResultsContainerClass::printMedFile( const std::string fileName ) const
 {
     LogicalUnitFile a( fileName, Binary, New );
     ASTERINTEGER retour = a.getLogicalUnit();
@@ -329,7 +329,7 @@ bool ResultsContainerInstance::printMedFile( const std::string fileName ) const
     return true;
 };
 
-bool ResultsContainerInstance::update()
+bool ResultsContainerClass::update()
 {
     _serialNumber->updateValuePointer();
     auto boolRet = _namesOfFields->buildFromJeveux( true );
@@ -393,7 +393,7 @@ bool ResultsContainerInstance::update()
                                 "No mesh, impossible to build FieldOnElements" );
                         FieldOnElementsDoublePtr result =
                             _fieldBuidler.buildFieldOnElements< double >( name, curMesh );
-                        ( new FieldOnElementsDoubleInstance( name ) );
+                        ( new FieldOnElementsDoubleClass( name ) );
                         _dictOfVectorOfFieldsElements[nomSymb][rank] = result;
                     }
                 }

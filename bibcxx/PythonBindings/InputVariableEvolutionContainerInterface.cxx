@@ -29,12 +29,12 @@ namespace py = boost::python;
 
 void exportInputVariableEvolutionContainerToPython() {
 
-    py::class_< InputVariableEvolutionContainerInstance, InputVariableEvolutionContainerPtr,
-            py::bases< TimeDependantResultsContainerInstance > >( "InputVariableEvolutionContainer",
+    py::class_< InputVariableEvolutionContainerClass, InputVariableEvolutionContainerPtr,
+            py::bases< TimeDependantResultsContainerClass > >( "InputVariableEvolutionContainer",
                                                               py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< InputVariableEvolutionContainerInstance > ) )
+              py::make_constructor( &initFactoryPtr< InputVariableEvolutionContainerClass > ) )
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< InputVariableEvolutionContainerInstance, std::string > ) );
+                  &initFactoryPtr< InputVariableEvolutionContainerClass, std::string > ) );
 };

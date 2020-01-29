@@ -58,11 +58,11 @@
 #include "Modeling/Model.h"
 
 /**
- * @class FieldOnNodesDescriptionInstance
+ * @class FieldOnNodesDescriptionClass
  * @brief This class describes the structure of dof stored in a field on nodes
  * @author Nicolas Sellenet
  */
-class FieldOnNodesDescriptionInstance : public DataStructure {
+class FieldOnNodesDescriptionClass : public DataStructure {
     /** @brief Objet Jeveux '.PRNO' */
     JeveuxCollectionLong _componentsOnNodes;
     /** @brief Objet Jeveux '.LILI' */
@@ -76,30 +76,30 @@ class FieldOnNodesDescriptionInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    FieldOnNodesDescriptionInstance( const JeveuxMemory memType = Permanent );
+    FieldOnNodesDescriptionClass( const JeveuxMemory memType = Permanent );
 
     /**
      * @brief Destructor
      */
-    ~FieldOnNodesDescriptionInstance(){};
+    ~FieldOnNodesDescriptionClass(){};
 
     /**
      * @brief Constructeur
-     * @param name nom souhaité de la sd (utile pour le FieldOnNodesDescriptionInstance d'une
+     * @param name nom souhaité de la sd (utile pour le FieldOnNodesDescriptionClass d'une
      * sd_resu)
      */
-    FieldOnNodesDescriptionInstance( const std::string name,
+    FieldOnNodesDescriptionClass( const std::string name,
                                      const JeveuxMemory memType = Permanent );
 };
-typedef boost::shared_ptr< FieldOnNodesDescriptionInstance > FieldOnNodesDescriptionPtr;
+typedef boost::shared_ptr< FieldOnNodesDescriptionClass > FieldOnNodesDescriptionPtr;
 
 /**
- * @class BaseDOFNumberingInstance
+ * @class BaseDOFNumberingClass
  * @brief Class definissant un nume_ddl
  *        Cette classe est volontairement succinte car on n'en connait pas encore l'usage
  * @author Nicolas Sellenet
  */
-class BaseDOFNumberingInstance : public DataStructure
+class BaseDOFNumberingClass : public DataStructure
 {
   private:
     typedef boost::variant< ElementaryMatrixDisplacementDoublePtr,
@@ -128,7 +128,7 @@ class BaseDOFNumberingInstance : public DataStructure
     };
 
   private:
-    class MultFrontGarbageInstance {
+    class MultFrontGarbageClass {
         /** @brief Objet Jeveux '.ADNT' */
         JeveuxVectorShort _adnt;
         /** @brief Objet Jeveux '.GLOB' */
@@ -178,7 +178,7 @@ class BaseDOFNumberingInstance : public DataStructure
         /** @brief Objet Jeveux '.SUPN' */
         JeveuxVectorLong _supn;
 
-        MultFrontGarbageInstance( const std::string &DOFNumName )
+        MultFrontGarbageClass( const std::string &DOFNumName )
             : _adnt( DOFNumName + ".ADNT" ), _glob( DOFNumName + ".GLOB" ),
               _locl( DOFNumName + ".LOCL" ), _pnti( DOFNumName + ".PNTI" ),
               _renu( DOFNumName + ".RENU" ), _adpi( DOFNumName + ".ADPI" ),
@@ -191,11 +191,11 @@ class BaseDOFNumberingInstance : public DataStructure
               _nbli( DOFNumName + ".NBLI" ), _nbcl( DOFNumName + ".NCBL" ),
               _nouv( DOFNumName + ".NOUV" ), _pare( DOFNumName + ".PARE" ),
               _sequ( DOFNumName + ".SEQU" ), _supn( DOFNumName + ".SUPN" ){};
-        friend class BaseDOFNumberingInstance;
+        friend class BaseDOFNumberingClass;
     };
-    typedef boost::shared_ptr< MultFrontGarbageInstance > MultFrontGarbagePtr;
+    typedef boost::shared_ptr< MultFrontGarbageClass > MultFrontGarbagePtr;
 
-    class GlobalEquationNumberingInstance {
+    class GlobalEquationNumberingClass {
         /** @brief Objet Jeveux '.NEQU' */
         JeveuxVectorLong _numberOfEquations;
         /** @brief Objet Jeveux '.REFN' */
@@ -203,14 +203,14 @@ class BaseDOFNumberingInstance : public DataStructure
         /** @brief Objet Jeveux '.DELG' */
         JeveuxVectorLong _lagrangianInformations;
 
-        GlobalEquationNumberingInstance( const std::string &DOFNumName )
+        GlobalEquationNumberingClass( const std::string &DOFNumName )
             : _numberOfEquations( DOFNumName + ".NEQU" ), _informations( DOFNumName + ".REFN" ),
               _lagrangianInformations( DOFNumName + ".DELG" ){};
-        friend class BaseDOFNumberingInstance;
+        friend class BaseDOFNumberingClass;
     };
-    typedef boost::shared_ptr< GlobalEquationNumberingInstance > GlobalEquationNumberingPtr;
+    typedef boost::shared_ptr< GlobalEquationNumberingClass > GlobalEquationNumberingPtr;
 
-    class LocalEquationNumberingInstance {
+    class LocalEquationNumberingClass {
         /** @brief Objet Jeveux '.NEQU' */
         JeveuxVectorLong _numberOfEquations;
         /** @brief Objet Jeveux '.DELG' */
@@ -224,14 +224,14 @@ class BaseDOFNumberingInstance : public DataStructure
         /** @brief Objet Jeveux '.DELG' */
         JeveuxVectorLong _LocalToGlobal;
 
-        LocalEquationNumberingInstance( const std::string &DOFNumName )
+        LocalEquationNumberingClass( const std::string &DOFNumName )
             : _numberOfEquations( DOFNumName + ".NEQU" ),
               _lagrangianInformations( DOFNumName + ".DELG" ),
               _componentsOnNodes( DOFNumName + ".PRNO" ), _indexationVector( DOFNumName + ".NUEQ" ),
               _globalToLocal( DOFNumName + ".NULG" ), _LocalToGlobal( DOFNumName + ".NUGL" ){};
-        friend class BaseDOFNumberingInstance;
+        friend class BaseDOFNumberingClass;
     };
-    typedef boost::shared_ptr< LocalEquationNumberingInstance > LocalEquationNumberingPtr;
+    typedef boost::shared_ptr< LocalEquationNumberingClass > LocalEquationNumberingPtr;
 
     // !!! Classe succinte car on ne sait pas comment elle sera utiliser !!!
     /** @brief Objet Jeveux '.NSLV' */
@@ -265,13 +265,13 @@ class BaseDOFNumberingInstance : public DataStructure
     /**
      * @brief Constructeur
      */
-    BaseDOFNumberingInstance( const std::string &type, const JeveuxMemory memType = Permanent );
+    BaseDOFNumberingClass( const std::string &type, const JeveuxMemory memType = Permanent );
 
     /**
      * @brief Constructeur
-     * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingInstance d'une sd_resu)
+     * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingClass d'une sd_resu)
      */
-    BaseDOFNumberingInstance( const std::string name, const std::string &type,
+    BaseDOFNumberingClass( const std::string name, const std::string &type,
                               const JeveuxMemory memType = Permanent );
 
   public:
@@ -279,7 +279,7 @@ class BaseDOFNumberingInstance : public DataStructure
      * @typedef BaseDOFNumberingPtr
      * @brief Pointeur intelligent vers un BaseDOFNumbering
      */
-    typedef boost::shared_ptr< BaseDOFNumberingInstance > BaseDOFNumberingPtr;
+    typedef boost::shared_ptr< BaseDOFNumberingClass > BaseDOFNumberingPtr;
 
     /**
      * @brief Add a FiniteElementDescriptor to elementary matrix
@@ -437,30 +437,30 @@ class BaseDOFNumberingInstance : public DataStructure
 };
 
 /**
- * @class DOFNumberingInstance
+ * @class DOFNumberingClass
  * @brief Class definissant un nume_ddl
  * @author Nicolas Sellenet
  */
-class DOFNumberingInstance : public BaseDOFNumberingInstance {
+class DOFNumberingClass : public BaseDOFNumberingClass {
   public:
     /**
      * @typedef DOFNumberingPtr
      * @brief Pointeur intelligent vers un DOFNumbering
      */
-    typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+    typedef boost::shared_ptr< DOFNumberingClass > DOFNumberingPtr;
 
     /**
      * @brief Constructeur
      */
-    DOFNumberingInstance( const JeveuxMemory memType = Permanent )
-        : BaseDOFNumberingInstance( "NUME_DDL", memType ){};
+    DOFNumberingClass( const JeveuxMemory memType = Permanent )
+        : BaseDOFNumberingClass( "NUME_DDL", memType ){};
 
     /**
      * @brief Constructeur
-     * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingInstance d'une sd_resu)
+     * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingClass d'une sd_resu)
      */
-    DOFNumberingInstance( const std::string name, const JeveuxMemory memType = Permanent )
-        : BaseDOFNumberingInstance( name, "NUME_DDL", memType ){};
+    DOFNumberingClass( const std::string name, const JeveuxMemory memType = Permanent )
+        : BaseDOFNumberingClass( name, "NUME_DDL", memType ){};
 
     /**
      * @brief Methode permettant de definir les matrices elementaires
@@ -471,7 +471,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Mesh must not be parallel" );
-        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+        BaseDOFNumberingClass::setElementaryMatrix( currentMatrix );
     };
 
     /**
@@ -483,7 +483,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Mesh must not be parallel" );
-        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+        BaseDOFNumberingClass::setElementaryMatrix( currentMatrix );
     };
 
     /**
@@ -495,7 +495,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Mesh must not be parallel" );
-        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+        BaseDOFNumberingClass::setElementaryMatrix( currentMatrix );
     };
 
     /**
@@ -507,7 +507,7 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
             throw std::runtime_error( "Mesh must not be parallel" );
-        BaseDOFNumberingInstance::setElementaryMatrix( currentMatrix );
+        BaseDOFNumberingClass::setElementaryMatrix( currentMatrix );
     };
 
     /**
@@ -517,22 +517,22 @@ class DOFNumberingInstance : public BaseDOFNumberingInstance {
     void setModel( const ModelPtr &currentModel ) {
         if ( currentModel->getMesh()->isParallel() )
             throw std::runtime_error( "Mesh must not be parallel" );
-        BaseDOFNumberingInstance::setModel( currentModel );
+        BaseDOFNumberingClass::setModel( currentModel );
     };
 };
 
 /**
  * @typedef BaseDOFNumberingPtr
- * @brief Enveloppe d'un pointeur intelligent vers un BaseDOFNumberingInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un BaseDOFNumberingClass
  * @author Nicolas Sellenet
  */
-typedef boost::shared_ptr< BaseDOFNumberingInstance > BaseDOFNumberingPtr;
+typedef boost::shared_ptr< BaseDOFNumberingClass > BaseDOFNumberingPtr;
 
 /**
  * @typedef DOFNumberingPtr
- * @brief Enveloppe d'un pointeur intelligent vers un DOFNumberingInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un DOFNumberingClass
  * @author Nicolas Sellenet
  */
-typedef boost::shared_ptr< DOFNumberingInstance > DOFNumberingPtr;
+typedef boost::shared_ptr< DOFNumberingClass > DOFNumberingPtr;
 
 #endif /* DOFNUMBERING_H_ */

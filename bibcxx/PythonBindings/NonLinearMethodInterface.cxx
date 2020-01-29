@@ -43,11 +43,11 @@ void exportNonLinearMethodToPython() {
     py::enum_< MatrixEnum >( "MatrixEnum" ).value( "MatriceTangente", MatriceTangente ).value(
         "MatriceElastique", MatriceElastique );
 
-    py::class_< NonLinearMethodInstance, NonLinearMethodPtr >( "NonLinearMethod", py::no_init )
+    py::class_< NonLinearMethodClass, NonLinearMethodPtr >( "NonLinearMethod", py::no_init )
         // fake initFactoryPtr: not a DataStructure
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< NonLinearMethodInstance, NonLinearMethodEnum >))
-        .def( "setPrediction", &NonLinearMethodInstance::setPrediction )
-        .def( "setMatrix", &NonLinearMethodInstance::setMatrix )
-        .def( "forceStiffnessSymetry", &NonLinearMethodInstance::forceStiffnessSymetry );
+              py::make_constructor(&initFactoryPtr< NonLinearMethodClass, NonLinearMethodEnum >))
+        .def( "setPrediction", &NonLinearMethodClass::setPrediction )
+        .def( "setMatrix", &NonLinearMethodClass::setMatrix )
+        .def( "forceStiffnessSymetry", &NonLinearMethodClass::forceStiffnessSymetry );
 };

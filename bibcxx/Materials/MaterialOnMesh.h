@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MaterialOnMesh
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,24 +39,24 @@
 #include "Supervis/ResultNaming.h"
 #include "Materials/BehaviourDefinition.h"
 
-class MaterialOnMeshBuilderInstance;
+class MaterialOnMeshBuilderClass;
 
 /**
- * @class PartOfMaterialOnMeshInstance
+ * @class PartOfMaterialOnMeshClass
  * @brief It contains a BehaviourDefinitionPtr and a MeshEntityPtr
  * @author Nicolas Sellenet
  */
-class PartOfMaterialOnMeshInstance
+class PartOfMaterialOnMeshClass
 {
 private:
     std::vector< MaterialPtr > _vecOfMater;
     MeshEntityPtr              _entity;
 
 public:
-    PartOfMaterialOnMeshInstance(): _entity( nullptr )
+    PartOfMaterialOnMeshClass(): _entity( nullptr )
     {};
 
-    PartOfMaterialOnMeshInstance( const std::vector< MaterialPtr >& vecOfMater,
+    PartOfMaterialOnMeshClass( const std::vector< MaterialPtr >& vecOfMater,
                                   const MeshEntityPtr& entity ):
         _vecOfMater( vecOfMater ),
         _entity( entity )
@@ -81,18 +81,18 @@ public:
 
 /**
  * @typedef PartOfMaterialOnMeshPtr
- * @brief Smart pointer on PartOfMaterialOnMeshInstance
+ * @brief Smart pointer on PartOfMaterialOnMeshClass
  */
-typedef boost::shared_ptr< PartOfMaterialOnMeshInstance > PartOfMaterialOnMeshPtr;
+typedef boost::shared_ptr< PartOfMaterialOnMeshClass > PartOfMaterialOnMeshPtr;
 
 /**
- * @class MaterialOnMeshInstance
+ * @class MaterialOnMeshClass
  * @brief produit une sd identique a celle produite par AFFE_MATERIAU
  * @author Nicolas Sellenet
  */
-class MaterialOnMeshInstance: public DataStructure
+class MaterialOnMeshClass: public DataStructure
 {
-    friend class MaterialOnMeshBuilderInstance;
+    friend class MaterialOnMeshBuilderClass;
 
     private:
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
@@ -141,52 +141,52 @@ class MaterialOnMeshInstance: public DataStructure
     public:
         /**
          * @typedef MaterialOnMeshPtr
-         * @brief Pointeur intelligent vers un MaterialOnMeshInstance
+         * @brief Pointeur intelligent vers un MaterialOnMeshClass
          */
-        typedef boost::shared_ptr< MaterialOnMeshInstance > MaterialOnMeshPtr;
+        typedef boost::shared_ptr< MaterialOnMeshClass > MaterialOnMeshPtr;
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance( const MeshPtr& mesh ):
-            MaterialOnMeshInstance( ResultNaming::getNewResultName(), mesh )
+        MaterialOnMeshClass( const MeshPtr& mesh ):
+            MaterialOnMeshClass( ResultNaming::getNewResultName(), mesh )
         {};
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance( const SkeletonPtr& mesh ):
-            MaterialOnMeshInstance( ResultNaming::getNewResultName(), mesh )
+        MaterialOnMeshClass( const SkeletonPtr& mesh ):
+            MaterialOnMeshClass( ResultNaming::getNewResultName(), mesh )
         {};
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance( const std::string &, const MeshPtr& );
+        MaterialOnMeshClass( const std::string &, const MeshPtr& );
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance( const std::string &, const SkeletonPtr& );
+        MaterialOnMeshClass( const std::string &, const SkeletonPtr& );
 
 #ifdef _USE_MPI
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance( const ParallelMeshPtr& mesh ):
-            MaterialOnMeshInstance( ResultNaming::getNewResultName(), mesh )
+        MaterialOnMeshClass( const ParallelMeshPtr& mesh ):
+            MaterialOnMeshClass( ResultNaming::getNewResultName(), mesh )
         {};
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshInstance( const std::string &, const ParallelMeshPtr& );
+        MaterialOnMeshClass( const std::string &, const ParallelMeshPtr& );
 #endif /* _USE_MPI */
 
         /**
          * @brief Destructor
          */
-        ~MaterialOnMeshInstance()
+        ~MaterialOnMeshClass()
         {};
 
         /**
@@ -364,8 +364,8 @@ class MaterialOnMeshInstance: public DataStructure
 
 /**
  * @typedef MaterialOnMeshPtr
- * @brief Pointeur intelligent vers un MaterialOnMeshInstance
+ * @brief Pointeur intelligent vers un MaterialOnMeshClass
  */
-typedef boost::shared_ptr< MaterialOnMeshInstance > MaterialOnMeshPtr;
+typedef boost::shared_ptr< MaterialOnMeshClass > MaterialOnMeshPtr;
 
 #endif /* MATERIALONMESH_H_ */

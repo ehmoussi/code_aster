@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe PhysicalQuantityManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,9 +29,9 @@
 
 template < typename T > class Singleton {
   public:
-    static T &Instance() {
-        static T theSingleInstance;
-        return theSingleInstance;
+    static T &Class() {
+        static T theSingleClass;
+        return theSingleClass;
     }
 };
 

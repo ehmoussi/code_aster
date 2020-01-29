@@ -29,21 +29,21 @@ namespace py = boost::python;
 
 void exportMaterialToPython() {
 
-    py::class_< MaterialInstance, MaterialInstance::MaterialPtr, py::bases< DataStructure > >(
+    py::class_< MaterialClass, MaterialClass::MaterialPtr, py::bases< DataStructure > >(
         "Material", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialInstance, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialClass, std::string >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< MaterialInstance, std::string, VectorInt >))
-        .def( "addMaterialBehaviour", &MaterialInstance::addMaterialBehaviour )
-        .def( "build", &MaterialInstance::build )
+              py::make_constructor(&initFactoryPtr< MaterialClass, std::string, VectorInt >))
+        .def( "addMaterialBehaviour", &MaterialClass::addMaterialBehaviour )
+        .def( "build", &MaterialClass::build )
         .def( "getNumberOfListOfDoubleProperties",
-              &MaterialInstance::getNumberOfListOfDoubleProperties )
+              &MaterialClass::getNumberOfListOfDoubleProperties )
         .def( "getNumberOfListOfFunctionProperties",
-              &MaterialInstance::getNumberOfListOfFunctionProperties )
-        .def( "getNumberOfMaterialBehviour", &MaterialInstance::getNumberOfMaterialBehviour )
+              &MaterialClass::getNumberOfListOfFunctionProperties )
+        .def( "getNumberOfMaterialBehviour", &MaterialClass::getNumberOfMaterialBehviour )
         .def( "getNumberOfUserMaterialBehviour",
-              &MaterialInstance::getNumberOfUserMaterialBehviour )
-        .def( "getVectorOfMaterialBehaviours", &MaterialInstance::getVectorOfMaterialBehaviours )
-        .def( "setReferenceMaterial", &MaterialInstance::setReferenceMaterial );
+              &MaterialClass::getNumberOfUserMaterialBehviour )
+        .def( "getVectorOfMaterialBehaviours", &MaterialClass::getVectorOfMaterialBehaviours )
+        .def( "setReferenceMaterial", &MaterialClass::setReferenceMaterial );
 };

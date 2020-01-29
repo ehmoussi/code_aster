@@ -6,7 +6,7 @@
  * @brief Header of class FieldBuilder
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,7 +34,7 @@
 #include "Modeling/FiniteElementDescriptor.h"
 
 /**
- * @class FieldBuilderInstance
+ * @class FieldBuilderClass
  * @brief This class builds FieldOnNodes and FieldOnElements with respect of
  *        FieldOnNodesDescription and FiniteElementDescriptor
  * @author Nicolas Sellenet
@@ -68,13 +68,13 @@ class FieldBuilder {
      * @brief Build a FieldOnElements with a FiniteElementDescriptor
      */
     template < typename ValueType >
-    boost::shared_ptr< FieldOnElementsInstance< ValueType > >
+    boost::shared_ptr< FieldOnElementsClass< ValueType > >
     buildFieldOnElements( const std::string &name, const BaseMeshPtr mesh ) {
-        typedef FiniteElementDescriptorInstance FEDDesc;
+        typedef FiniteElementDescriptorClass FEDDesc;
         typedef FiniteElementDescriptorPtr FEDDescP;
 
-        boost::shared_ptr< FieldOnElementsInstance< ValueType > > result(
-            new FieldOnElementsDoubleInstance( name ) );
+        boost::shared_ptr< FieldOnElementsClass< ValueType > > result(
+            new FieldOnElementsDoubleClass( name ) );
         result->updateValuePointers();
 
         const std::string name2 = trim( ( *( *result )._reference )[0].toString() );
@@ -96,12 +96,12 @@ class FieldBuilder {
      * @brief Build a FieldOnElements with a FieldOnNodesDescription
      */
     template < typename ValueType >
-    boost::shared_ptr< FieldOnNodesInstance< ValueType > > buildFieldOnNodes( std::string name ) {
-        typedef FieldOnNodesDescriptionInstance FONDesc;
+    boost::shared_ptr< FieldOnNodesClass< ValueType > > buildFieldOnNodes( std::string name ) {
+        typedef FieldOnNodesDescriptionClass FONDesc;
         typedef FieldOnNodesDescriptionPtr FONDescP;
 
-        boost::shared_ptr< FieldOnNodesInstance< ValueType > > result(
-            new FieldOnNodesDoubleInstance( name ) );
+        boost::shared_ptr< FieldOnNodesClass< ValueType > > result(
+            new FieldOnNodesDoubleClass( name ) );
         result->updateValuePointers();
 
         const std::string name2 = trim( ( *( *result )._reference )[1].toString() );

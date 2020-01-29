@@ -6,7 +6,7 @@
  * @brief Definition of the static mode solver
  * @author Guillaume Drouet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,7 +37,7 @@
  a static mode analysis from ....
 */
 
-class StaticModeAnalysisInstance : public GenericSolver {
+class StaticModeAnalysisClass : public GenericSolver {
   protected:
     /** @brief Mass Matrix */
     AssemblyMatrixDisplacementDoublePtr _MassMatrix;
@@ -53,7 +53,7 @@ class StaticModeAnalysisInstance : public GenericSolver {
     /**
      * @brief Constructeur
      */
-    StaticModeAnalysisInstance() : _cmp( "TOUT_CMP", true ), _loc( "TOUT", true ){};
+    StaticModeAnalysisClass() : _cmp( "TOUT_CMP", true ), _loc( "TOUT", true ){};
 
     /**
      * @brief Set GROUP_NO
@@ -121,13 +121,13 @@ class StaticModeAnalysisInstance : public GenericSolver {
     };
 };
 
-class StaticModeDeplInstance : public StaticModeAnalysisInstance {
+class StaticModeDeplClass : public StaticModeAnalysisClass {
   protected:
   public:
     /**
      * @brief Constructeur
      */
-    StaticModeDeplInstance(){};
+    StaticModeDeplClass(){};
 
     /**
      * @brief Lancement de la resolution en appelant op0093
@@ -135,13 +135,13 @@ class StaticModeDeplInstance : public StaticModeAnalysisInstance {
     ResultsContainerPtr execute() ;
 };
 
-class StaticModeForcInstance : public StaticModeAnalysisInstance {
+class StaticModeForcClass : public StaticModeAnalysisClass {
   protected:
   public:
     /**
      * @brief Constructeur
      */
-    StaticModeForcInstance(){};
+    StaticModeForcClass(){};
 
     /**
      * @brief Lancement de la resolution en appelant op0093
@@ -149,7 +149,7 @@ class StaticModeForcInstance : public StaticModeAnalysisInstance {
     ResultsContainerPtr execute() ;
 };
 
-class StaticModePseudoInstance : public StaticModeAnalysisInstance {
+class StaticModePseudoClass : public StaticModeAnalysisClass {
   protected:
     /** @brief keyword NOM_DIR description */
     GenParam _dirname;
@@ -158,7 +158,7 @@ class StaticModePseudoInstance : public StaticModeAnalysisInstance {
     /**
      * @brief Constructeur
      */
-    StaticModePseudoInstance() : _dirname( "NOM_DIR", false ){};
+    StaticModePseudoClass() : _dirname( "NOM_DIR", false ){};
 
     /**
      * @brief Setdir
@@ -190,7 +190,7 @@ class StaticModePseudoInstance : public StaticModeAnalysisInstance {
     ResultsContainerPtr execute() ;
 };
 
-class StaticModeInterfInstance : public StaticModeAnalysisInstance {
+class StaticModeInterfClass : public StaticModeAnalysisClass {
   protected:
     /** @brief keyword diranme description */
     GenParam _shift;
@@ -200,7 +200,7 @@ class StaticModeInterfInstance : public StaticModeAnalysisInstance {
     /**
      * @brief Constructeur
      */
-    StaticModeInterfInstance()
+    StaticModeInterfClass()
         : _nbmod( "NB_MODE", (ASTERINTEGER)1, true ), _shift( "SHIFT", 1.0, true ){};
 
     /**
@@ -222,11 +222,11 @@ class StaticModeInterfInstance : public StaticModeAnalysisInstance {
 };
 /**
  * @typedef StaticNonLinearAnalysisPtr
- * @brief Enveloppe d'un pointeur intelligent vers un StaticModeAnalysisInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un StaticModeAnalysisClass
  */
-typedef boost::shared_ptr< StaticModeDeplInstance > StaticModeDeplPtr;
-typedef boost::shared_ptr< StaticModeForcInstance > StaticModeForcPtr;
-typedef boost::shared_ptr< StaticModePseudoInstance > StaticModePseudoPtr;
-typedef boost::shared_ptr< StaticModeInterfInstance > StaticModeInterfPtr;
+typedef boost::shared_ptr< StaticModeDeplClass > StaticModeDeplPtr;
+typedef boost::shared_ptr< StaticModeForcClass > StaticModeForcPtr;
+typedef boost::shared_ptr< StaticModePseudoClass > StaticModePseudoPtr;
+typedef boost::shared_ptr< StaticModeInterfClass > StaticModeInterfPtr;
 
 #endif /* STATICMODEANALYSIS_H_ */

@@ -1,9 +1,9 @@
 /**
  * @file MaterialOnMeshBuilder.cxx
- * @brief Implementation de MaterialOnMeshBuilderInstance::build
+ * @brief Implementation de MaterialOnMeshBuilderClass::build
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,7 +31,7 @@
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/SyntaxDictionary.h"
 
-void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMater,
+void MaterialOnMeshBuilderClass::buildClass( MaterialOnMeshClass &curMater,
                                                    const InputVariableOnMeshPtr &curInputVariables,
                                                    const InputVariableConverterPtr &converter )
 {
@@ -157,11 +157,11 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
 };
 
 MaterialOnMeshPtr
-MaterialOnMeshBuilderInstance::build( MaterialOnMeshPtr &curMater,
+MaterialOnMeshBuilderClass::build( MaterialOnMeshPtr &curMater,
                                       const InputVariableOnMeshPtr &curInputVariables,
                                       const InputVariableConverterPtr &converter )
 
 {
-    MaterialOnMeshBuilderInstance::buildInstance( *curMater, curInputVariables, converter );
+    MaterialOnMeshBuilderClass::buildClass( *curMater, curInputVariables, converter );
     return curMater;
 };

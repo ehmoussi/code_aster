@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FourierElasContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,24 +30,24 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class FourierElasContainerInstance
+ * @class FourierElasContainerClass
  * @brief Cette classe correspond a un fourier_elas
  * @author Nicolas Sellenet
  */
-class FourierElasContainerInstance : public ResultsContainerInstance {
+class FourierElasContainerClass : public ResultsContainerClass {
   private:
   public:
     /**
      * @brief Constructeur
      */
-    FourierElasContainerInstance( const std::string name = ResultNaming::getNewResultName() )
-        : ResultsContainerInstance( name, "FOURIER_ELAS" ){};
+    FourierElasContainerClass( const std::string name = ResultNaming::getNewResultName() )
+        : ResultsContainerClass( name, "FOURIER_ELAS" ){};
 };
 
 /**
  * @typedef FourierElasContainerPtr
- * @brief Pointeur intelligent vers un FourierElasContainerInstance
+ * @brief Pointeur intelligent vers un FourierElasContainerClass
  */
-typedef boost::shared_ptr< FourierElasContainerInstance > FourierElasContainerPtr;
+typedef boost::shared_ptr< FourierElasContainerClass > FourierElasContainerPtr;
 
 #endif /* FOURIERELASCONTAINER_H_ */

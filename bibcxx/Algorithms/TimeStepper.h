@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TimeStepper
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,11 +34,11 @@
 typedef VectorDouble::const_iterator VectorDoubleCIter;
 
 /**
- * @class TimeStepperInstance
+ * @class TimeStepperClass
  * @brief Cette classe permet de definir une liste d'instants
  * @author Nicolas Sellenet
  */
-class TimeStepperInstance : public DataStructure, public GenericStepper {
+class TimeStepperClass : public DataStructure, public GenericStepper {
   private:
     /** @brief Liste des instants */
     JeveuxVectorDouble _values;
@@ -48,24 +48,24 @@ class TimeStepperInstance : public DataStructure, public GenericStepper {
      * @typedef TimeStepperPtr
      * @brief Pointeur intelligent vers un TimeStepper
      */
-    typedef boost::shared_ptr< TimeStepperInstance > TimeStepperPtr;
+    typedef boost::shared_ptr< TimeStepperClass > TimeStepperPtr;
 
     /**
      * @brief Constructeur
      */
-    TimeStepperInstance( const std::string jeveuxName, const JeveuxMemory memType = Permanent )
+    TimeStepperClass( const std::string jeveuxName, const JeveuxMemory memType = Permanent )
         : DataStructure( jeveuxName, 8, "LIST_INST", memType ), _values( getName() + ".LIST" ){};
 
     /**
      * @brief Constructeur
      */
-    TimeStepperInstance( JeveuxMemory memType = Permanent )
-        : TimeStepperInstance( DataStructureNaming::getNewName( memType, 8 ), memType ){};
+    TimeStepperClass( JeveuxMemory memType = Permanent )
+        : TimeStepperClass( DataStructureNaming::getNewName( memType, 8 ), memType ){};
 
     /**
      * @brief Destructeur
      */
-    ~TimeStepperInstance(){};
+    ~TimeStepperClass(){};
 
     struct const_iterator {
         double *position;
@@ -154,6 +154,6 @@ class TimeStepperInstance : public DataStructure, public GenericStepper {
  * @typedef TimeStepperPtr
  * @brief Pointeur intelligent vers un TimeStepper
  */
-typedef boost::shared_ptr< TimeStepperInstance > TimeStepperPtr;
+typedef boost::shared_ptr< TimeStepperClass > TimeStepperPtr;
 
 #endif /* TIMESTEPPER_H_ */

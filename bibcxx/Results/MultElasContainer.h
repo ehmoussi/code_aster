@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MultElasContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,24 +30,24 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class MultElasContainerInstance
+ * @class MultElasContainerClass
  * @brief Cette classe correspond a un mode_meca
  * @author Nicolas Sellenet
  */
-class MultElasContainerInstance : public ResultsContainerInstance {
+class MultElasContainerClass : public ResultsContainerClass {
   private:
   public:
     /**
      * @brief Constructeur
      */
-    MultElasContainerInstance( const std::string name = ResultNaming::getNewResultName() )
-        : ResultsContainerInstance( name, "MULT_ELAS" ){};
+    MultElasContainerClass( const std::string name = ResultNaming::getNewResultName() )
+        : ResultsContainerClass( name, "MULT_ELAS" ){};
 };
 
 /**
  * @typedef MultElasContainerPtr
- * @brief Pointeur intelligent vers un MultElasContainerInstance
+ * @brief Pointeur intelligent vers un MultElasContainerClass
  */
-typedef boost::shared_ptr< MultElasContainerInstance > MultElasContainerPtr;
+typedef boost::shared_ptr< MultElasContainerClass > MultElasContainerPtr;
 
 #endif /* MULTELASCONTAINER_H_ */

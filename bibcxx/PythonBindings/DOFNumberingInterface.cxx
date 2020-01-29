@@ -32,43 +32,43 @@ namespace py = boost::python;
 
 void exportDOFNumberingToPython() {
 
-    py::class_< FieldOnNodesDescriptionInstance, FieldOnNodesDescriptionPtr,
+    py::class_< FieldOnNodesDescriptionClass, FieldOnNodesDescriptionPtr,
                 py::bases< DataStructure > >( "FieldOnNodesDescription", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDescriptionInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDescriptionClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< FieldOnNodesDescriptionInstance, std::string >));
+                              &initFactoryPtr< FieldOnNodesDescriptionClass, std::string >));
 
-    void ( BaseDOFNumberingInstance::*f1 )( const ElementaryMatrixDisplacementDoublePtr & ) =
-        &BaseDOFNumberingInstance::setElementaryMatrix;
-    void ( BaseDOFNumberingInstance::*f2 )( const ElementaryMatrixDisplacementComplexPtr & ) =
-        &BaseDOFNumberingInstance::setElementaryMatrix;
-    void ( BaseDOFNumberingInstance::*f3 )( const ElementaryMatrixTemperatureDoublePtr & ) =
-        &BaseDOFNumberingInstance::setElementaryMatrix;
-    void ( BaseDOFNumberingInstance::*f4 )( const ElementaryMatrixPressureComplexPtr & ) =
-        &BaseDOFNumberingInstance::setElementaryMatrix;
+    void ( BaseDOFNumberingClass::*f1 )( const ElementaryMatrixDisplacementDoublePtr & ) =
+        &BaseDOFNumberingClass::setElementaryMatrix;
+    void ( BaseDOFNumberingClass::*f2 )( const ElementaryMatrixDisplacementComplexPtr & ) =
+        &BaseDOFNumberingClass::setElementaryMatrix;
+    void ( BaseDOFNumberingClass::*f3 )( const ElementaryMatrixTemperatureDoublePtr & ) =
+        &BaseDOFNumberingClass::setElementaryMatrix;
+    void ( BaseDOFNumberingClass::*f4 )( const ElementaryMatrixPressureComplexPtr & ) =
+        &BaseDOFNumberingClass::setElementaryMatrix;
 
-    py::class_< BaseDOFNumberingInstance, BaseDOFNumberingInstance::BaseDOFNumberingPtr,
+    py::class_< BaseDOFNumberingClass, BaseDOFNumberingClass::BaseDOFNumberingPtr,
                 py::bases< DataStructure > > c1( "BaseDOFNumbering", py::no_init );
     // fake initFactoryPtr: created by subclasses
     // fake initFactoryPtr: created by subclasses
-    c1.def( "addFiniteElementDescriptor", &BaseDOFNumberingInstance::addFiniteElementDescriptor );
-    c1.def( "computeNumbering", &BaseDOFNumberingInstance::computeNumbering );
-    c1.def( "getFieldOnNodesDescription", &BaseDOFNumberingInstance::getFieldOnNodesDescription );
-    c1.def( "getFiniteElementDescriptors", &BaseDOFNumberingInstance::getFiniteElementDescriptors );
-    c1.def( "isParallel", &BaseDOFNumberingInstance::isParallel );
+    c1.def( "addFiniteElementDescriptor", &BaseDOFNumberingClass::addFiniteElementDescriptor );
+    c1.def( "computeNumbering", &BaseDOFNumberingClass::computeNumbering );
+    c1.def( "getFieldOnNodesDescription", &BaseDOFNumberingClass::getFieldOnNodesDescription );
+    c1.def( "getFiniteElementDescriptors", &BaseDOFNumberingClass::getFiniteElementDescriptors );
+    c1.def( "isParallel", &BaseDOFNumberingClass::isParallel );
     c1.def( "setElementaryMatrix", f1 );
     c1.def( "setElementaryMatrix", f2 );
     c1.def( "setElementaryMatrix", f3 );
     c1.def( "setElementaryMatrix", f4 );
-    c1.def( "getModel", &BaseDOFNumberingInstance::getModel, R"(
+    c1.def( "getModel", &BaseDOFNumberingClass::getModel, R"(
 Return the model
 
 Returns:
     ModelPtr: a pointer to the model
         )",
               ( py::arg( "self" ) )  );
-    c1.def( "setModel", &BaseDOFNumberingInstance::setModel );
-    c1.def( "getMesh", &BaseDOFNumberingInstance::getMesh, R"(
+    c1.def( "setModel", &BaseDOFNumberingClass::setModel );
+    c1.def( "getMesh", &BaseDOFNumberingClass::getMesh, R"(
 Return the mesh
 
 Returns:
@@ -78,10 +78,10 @@ Returns:
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 
-    py::class_< DOFNumberingInstance, DOFNumberingInstance::DOFNumberingPtr,
-                py::bases< BaseDOFNumberingInstance > >( "DOFNumbering", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DOFNumberingInstance >))
+    py::class_< DOFNumberingClass, DOFNumberingClass::DOFNumberingPtr,
+                py::bases< BaseDOFNumberingClass > >( "DOFNumbering", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DOFNumberingClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DOFNumberingInstance, std::string >))
-        .def( "getFieldOnNodesDescription", &DOFNumberingInstance::getFieldOnNodesDescription );
+              py::make_constructor(&initFactoryPtr< DOFNumberingClass, std::string >))
+        .def( "getFieldOnNodesDescription", &DOFNumberingClass::getFieldOnNodesDescription );
 };

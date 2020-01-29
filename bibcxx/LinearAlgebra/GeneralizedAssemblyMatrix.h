@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedAssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,11 +36,11 @@
 #include "MemoryManager/JeveuxVector.h"
 
 /**
- * @class GenericGeneralizedAssemblyMatrixInstance
+ * @class GenericGeneralizedAssemblyMatrixClass
  * @brief Cette classe correspond a un matr_asse_gene
  * @author Nicolas Sellenet
  */
-class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
+class GenericGeneralizedAssemblyMatrixClass: public DataStructure
 {
   private:
     /** @brief Objet Jeveux '.DESC' */
@@ -59,13 +59,13 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
      * @typedef GeneralizedAssemblyMatrixPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
      */
-    typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
+    typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixClass >
         GenericGeneralizedAssemblyMatrixPtr;
 
     /**
      * @brief Constructeur
      */
-    GenericGeneralizedAssemblyMatrixInstance( const std::string name ):
+    GenericGeneralizedAssemblyMatrixClass( const std::string name ):
         DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
         _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
         _refe( JeveuxVectorChar24( getName() + ".REFE" ) ),
@@ -146,12 +146,12 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
 };
 
 /**
- * @class GeneralizedAssemblyMatrixInstance
+ * @class GeneralizedAssemblyMatrixClass
  * @brief Cette classe correspond a un matr_asse_gene
  * @author Nicolas Sellenet
  */
 template < class ValueType >
-class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatrixInstance
+class GeneralizedAssemblyMatrixClass : public GenericGeneralizedAssemblyMatrixClass
 {
   private:
     /** @brief Objet Jeveux '.VALM' */
@@ -181,51 +181,51 @@ class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatri
      * @typedef GeneralizedAssemblyMatrixPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
      */
-    typedef boost::shared_ptr< GeneralizedAssemblyMatrixInstance< ValueType > >
+    typedef boost::shared_ptr< GeneralizedAssemblyMatrixClass< ValueType > >
         GeneralizedAssemblyMatrixPtr;
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyMatrixInstance()
-        : GeneralizedAssemblyMatrixInstance( ResultNaming::getNewResultName() )
+    GeneralizedAssemblyMatrixClass()
+        : GeneralizedAssemblyMatrixClass( ResultNaming::getNewResultName() )
     {};
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyMatrixInstance( const std::string name )
-        : GenericGeneralizedAssemblyMatrixInstance( name ),
+    GeneralizedAssemblyMatrixClass( const std::string name )
+        : GenericGeneralizedAssemblyMatrixClass( name ),
           _valm( JeveuxVector< ValueType >( getName() + ".VALM" ) )
     {
-        GeneralizedAssemblyMatrixInstance< ValueType >::setMatrixType();
+        GeneralizedAssemblyMatrixClass< ValueType >::setMatrixType();
     };
 };
 
 /** @typedef Definition d'une matrice assemblee généralisée de double */
-typedef GeneralizedAssemblyMatrixInstance< double > GeneralizedAssemblyMatrixDoubleInstance;
+typedef GeneralizedAssemblyMatrixClass< double > GeneralizedAssemblyMatrixDoubleClass;
 /** @typedef Definition d'une matrice assemblee généralisée de complexe */
-typedef GeneralizedAssemblyMatrixInstance< DoubleComplex > GeneralizedAssemblyMatrixComplexInstance;
+typedef GeneralizedAssemblyMatrixClass< DoubleComplex > GeneralizedAssemblyMatrixComplexClass;
 
 /**
  * @typedef GenericGeneralizedAssemblyMatrixPtr
- * @brief Pointeur intelligent vers un GenericGeneralizedAssemblyMatrixInstance
+ * @brief Pointeur intelligent vers un GenericGeneralizedAssemblyMatrixClass
  */
-typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
+typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixClass >
     GenericGeneralizedAssemblyMatrixPtr;
 
 /**
  * @typedef GeneralizedAssemblyMatrixDoublePtr
- * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixDoubleInstance
+ * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixDoubleClass
  */
-typedef boost::shared_ptr< GeneralizedAssemblyMatrixDoubleInstance >
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixDoubleClass >
     GeneralizedAssemblyMatrixDoublePtr;
 
 /**
  * @typedef GeneralizedAssemblyMatrixComplexPtr
- * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixComplexInstance
+ * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixComplexClass
  */
-typedef boost::shared_ptr< GeneralizedAssemblyMatrixComplexInstance >
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixComplexClass >
     GeneralizedAssemblyMatrixComplexPtr;
 
 #endif /* GENERALIZEDASSEMBLYMATRIX_H_ */

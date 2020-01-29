@@ -29,9 +29,9 @@ namespace py = boost::python;
 
 void exportFourierCombinationToPython() {
 
-    py::class_< FourierCombinationInstance, FourierCombinationPtr,
-                py::bases< ResultsContainerInstance > >( "FourierCombination", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FourierCombinationInstance >))
+    py::class_< FourierCombinationClass, FourierCombinationPtr,
+                py::bases< ResultsContainerClass > >( "FourierCombination", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FourierCombinationClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FourierCombinationInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< FourierCombinationClass, std::string >));
 };

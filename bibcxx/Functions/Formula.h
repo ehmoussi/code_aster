@@ -5,7 +5,7 @@
  * @file Formula.h
  * @brief Implementation of functions.
  * @section LICENCE
- * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -34,11 +34,11 @@
 #include "Functions/GenericFunction.h"
 
 /**
- * class FormulaInstance
+ * class FormulaClass
  *   Create a datastructure for a formula with real values
  * @author Mathieu Courtois
  */
-class FormulaInstance : public GenericFunctionInstance {
+class FormulaClass : public GenericFunctionClass {
   private:
     // Nom Jeveux de la SD
     /** @todo remettre le const */
@@ -70,16 +70,16 @@ class FormulaInstance : public GenericFunctionInstance {
      * @typedef FormulaPtr
      * @brief Pointeur intelligent vers un Formula
      */
-    typedef boost::shared_ptr< FormulaInstance > FormulaPtr;
+    typedef boost::shared_ptr< FormulaClass > FormulaPtr;
 
     /**
      * Constructeur
      */
-    FormulaInstance();
+    FormulaClass();
 
-    FormulaInstance( const std::string jeveuxName );
+    FormulaClass( const std::string jeveuxName );
 
-    ~FormulaInstance();
+    ~FormulaClass();
 
     /**
      * @brief Get the result name
@@ -178,10 +178,10 @@ class FormulaInstance : public GenericFunctionInstance {
 
 /**
  * @typedef FormulaPtr
- * @brief  Pointer to a FormulaInstance
+ * @brief  Pointer to a FormulaClass
  * @author Mathieu Courtois
  */
-typedef boost::shared_ptr< FormulaInstance > FormulaPtr;
+typedef boost::shared_ptr< FormulaClass > FormulaPtr;
 
 /**
  * @brief Evaluate Python code of a Formula

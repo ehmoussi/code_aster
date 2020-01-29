@@ -31,11 +31,11 @@ namespace py = boost::python;
 
 void exportFluidStructureInteractionToPython() {
 
-    py::class_< FluidStructureInteractionInstance,
-                FluidStructureInteractionInstance::FluidStructureInteractionPtr,
+    py::class_< FluidStructureInteractionClass,
+                FluidStructureInteractionClass::FluidStructureInteractionPtr,
                 py::bases< DataStructure > >( "FluidStructureInteraction", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FluidStructureInteractionInstance >))
+              py::make_constructor(&initFactoryPtr< FluidStructureInteractionClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< FluidStructureInteractionInstance, std::string >));
+                              &initFactoryPtr< FluidStructureInteractionClass, std::string >));
 };

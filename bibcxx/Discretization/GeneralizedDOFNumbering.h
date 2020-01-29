@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedDOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,11 +39,11 @@
 #include "Results/ForwardGeneralizedModeContainer.h"
 
 /**
- * @class GeneralizedFieldOnNodesDescriptionInstance
+ * @class GeneralizedFieldOnNodesDescriptionClass
  * @brief This class describes the structure of dof stored in a field on nodes
  * @author Nicolas Sellenet
  */
-class GeneralizedFieldOnNodesDescriptionInstance : public DataStructure {
+class GeneralizedFieldOnNodesDescriptionClass : public DataStructure {
     /** @brief Objet Jeveux '.DESC' */
     JeveuxVectorLong _desc;
     /** @brief Objet Jeveux '.NEQU' */
@@ -67,7 +67,7 @@ class GeneralizedFieldOnNodesDescriptionInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    GeneralizedFieldOnNodesDescriptionInstance( const JeveuxMemory memType = Permanent )
+    GeneralizedFieldOnNodesDescriptionClass( const JeveuxMemory memType = Permanent )
         : DataStructure( ResultNaming::getNewResultName(), 19, "PROF_GENE", memType ),
           _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nequ( JeveuxVectorLong( getName() + ".NEQU" ) ),
@@ -82,14 +82,14 @@ class GeneralizedFieldOnNodesDescriptionInstance : public DataStructure {
     /**
      * @brief Destructor
      */
-    ~GeneralizedFieldOnNodesDescriptionInstance(){};
+    ~GeneralizedFieldOnNodesDescriptionClass(){};
 
     /**
      * @brief Constructeur
-     * @param name nom souhaité de la sd (utile pour le GeneralizedFieldOnNodesDescriptionInstance
+     * @param name nom souhaité de la sd (utile pour le GeneralizedFieldOnNodesDescriptionClass
      * d'une sd_resu)
      */
-    GeneralizedFieldOnNodesDescriptionInstance( const std::string name,
+    GeneralizedFieldOnNodesDescriptionClass( const std::string name,
                                                 const JeveuxMemory memType = Permanent )
         : DataStructure( name, 19, "PROF_GENE", memType ),
           _desc( JeveuxVectorLong( getName() + ".DESC" ) ),
@@ -102,15 +102,15 @@ class GeneralizedFieldOnNodesDescriptionInstance : public DataStructure {
           _prno( JeveuxCollectionLong( getName() + ".PRNO" ) ),
           _orig( JeveuxCollectionLong( getName() + ".ORIG" ) ){};
 };
-typedef boost::shared_ptr< GeneralizedFieldOnNodesDescriptionInstance >
+typedef boost::shared_ptr< GeneralizedFieldOnNodesDescriptionClass >
     GeneralizedFieldOnNodesDescriptionPtr;
 
 /**
- * @class GeneralizedDOFNumberingInstance
+ * @class GeneralizedDOFNumberingClass
  * @brief Cette classe correspond a un sd_nume_ddl_gene
  * @author Nicolas Sellenet
  */
-class GeneralizedDOFNumberingInstance : public DataStructure {
+class GeneralizedDOFNumberingClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.BASE' */
     JeveuxVectorDouble _base;
@@ -136,25 +136,25 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
      * @typedef GeneralizedDOFNumberingPtr
      * @brief Pointeur intelligent vers un GeneralizedDOFNumbering
      */
-    typedef boost::shared_ptr< GeneralizedDOFNumberingInstance > GeneralizedDOFNumberingPtr;
+    typedef boost::shared_ptr< GeneralizedDOFNumberingClass > GeneralizedDOFNumberingPtr;
 
     /**
      * @brief Constructeur
      */
-    GeneralizedDOFNumberingInstance()
-        : GeneralizedDOFNumberingInstance( ResultNaming::getNewResultName() ){};
+    GeneralizedDOFNumberingClass()
+        : GeneralizedDOFNumberingClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    GeneralizedDOFNumberingInstance( const std::string name ):
+    GeneralizedDOFNumberingClass( const std::string name ):
         DataStructure( name, 14, "NUME_DDL_GENE", Permanent ),
         _base( JeveuxVectorDouble( getName() + ".ELIM.BASE" ) ),
         _noms( JeveuxVectorChar8( getName() + ".ELIM.NOMS" ) ),
         _tail( JeveuxVectorLong( getName() + ".ELIM.TAIL" ) ),
-        _smos( new MorseStorageInstance( getName() + ".SMOS" ) ),
-        _slcs( new LigneDeCielInstance( getName() + ".SLCS" ) ),
-        _nume( new GeneralizedFieldOnNodesDescriptionInstance( getName() + ".NUME" ) ),
+        _smos( new MorseStorageClass( getName() + ".SMOS" ) ),
+        _slcs( new LigneDeCielClass( getName() + ".SLCS" ) ),
+        _nume( new GeneralizedFieldOnNodesDescriptionClass( getName() + ".NUME" ) ),
         _model( nullptr ),
         _basis1( nullptr ),
         _basis2( nullptr )
@@ -224,8 +224,8 @@ class GeneralizedDOFNumberingInstance : public DataStructure {
 
 /**
  * @typedef GeneralizedDOFNumberingPtr
- * @brief Pointeur intelligent vers un GeneralizedDOFNumberingInstance
+ * @brief Pointeur intelligent vers un GeneralizedDOFNumberingClass
  */
-typedef boost::shared_ptr< GeneralizedDOFNumberingInstance > GeneralizedDOFNumberingPtr;
+typedef boost::shared_ptr< GeneralizedDOFNumberingClass > GeneralizedDOFNumberingPtr;
 
 #endif /* GENERALIZEDDOFNUMBERING_H_ */

@@ -29,49 +29,49 @@ namespace py = boost::python;
 
 void exportResultsContainerToPython() {
 
-    MaterialOnMeshPtr ( ResultsContainerInstance::*c1 )() =
-        &ResultsContainerInstance::getMaterialOnMesh;
-    MaterialOnMeshPtr ( ResultsContainerInstance::*c2 )( int ) =
-        &ResultsContainerInstance::getMaterialOnMesh;
+    MaterialOnMeshPtr ( ResultsContainerClass::*c1 )() =
+        &ResultsContainerClass::getMaterialOnMesh;
+    MaterialOnMeshPtr ( ResultsContainerClass::*c2 )( int ) =
+        &ResultsContainerClass::getMaterialOnMesh;
 
-    ModelPtr ( ResultsContainerInstance::*c3 )() =
-        &ResultsContainerInstance::getModel;
-    ModelPtr ( ResultsContainerInstance::*c4 )( int ) =
-        &ResultsContainerInstance::getModel;
+    ModelPtr ( ResultsContainerClass::*c3 )() =
+        &ResultsContainerClass::getModel;
+    ModelPtr ( ResultsContainerClass::*c4 )( int ) =
+        &ResultsContainerClass::getModel;
 
-    ElementaryCharacteristicsPtr ( ResultsContainerInstance::*c5 )() =
-        &ResultsContainerInstance::getElementaryCharacteristics;
-    ElementaryCharacteristicsPtr ( ResultsContainerInstance::*c6 )( int ) =
-        &ResultsContainerInstance::getElementaryCharacteristics;
+    ElementaryCharacteristicsPtr ( ResultsContainerClass::*c5 )() =
+        &ResultsContainerClass::getElementaryCharacteristics;
+    ElementaryCharacteristicsPtr ( ResultsContainerClass::*c6 )( int ) =
+        &ResultsContainerClass::getElementaryCharacteristics;
 
-    py::class_< ResultsContainerInstance, ResultsContainerInstance::ResultsContainerPtr,
+    py::class_< ResultsContainerClass, ResultsContainerClass::ResultsContainerPtr,
             py::bases< DataStructure > >( "ResultsContainer", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ResultsContainerInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< ResultsContainerClass, std::string >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< ResultsContainerInstance, std::string, std::string >))
-        .def( "addFieldOnNodesDescription", &ResultsContainerInstance::addFieldOnNodesDescription )
-        .def( "addMaterialOnMesh", &ResultsContainerInstance::addMaterialOnMesh )
-        .def( "addModel", &ResultsContainerInstance::addModel )
+                  &initFactoryPtr< ResultsContainerClass, std::string, std::string >))
+        .def( "addFieldOnNodesDescription", &ResultsContainerClass::addFieldOnNodesDescription )
+        .def( "addMaterialOnMesh", &ResultsContainerClass::addMaterialOnMesh )
+        .def( "addModel", &ResultsContainerClass::addModel )
         .def( "appendElementaryCharacteristicsOnAllRanks",
-              &ResultsContainerInstance::appendElementaryCharacteristicsOnAllRanks )
+              &ResultsContainerClass::appendElementaryCharacteristicsOnAllRanks )
         .def( "appendMaterialOnMeshOnAllRanks",
-              &ResultsContainerInstance::appendMaterialOnMeshOnAllRanks )
-        .def( "appendModelOnAllRanks", &ResultsContainerInstance::appendModelOnAllRanks )
-        .def( "listFields", &ResultsContainerInstance::listFields )
+              &ResultsContainerClass::appendMaterialOnMeshOnAllRanks )
+        .def( "appendModelOnAllRanks", &ResultsContainerClass::appendModelOnAllRanks )
+        .def( "listFields", &ResultsContainerClass::listFields )
         .def( "getElementaryCharacteristics", c5 )
         .def( "getElementaryCharacteristics", c6 )
         .def( "getMaterialOnMesh", c1 )
         .def( "getMaterialOnMesh", c2 )
-        .def( "getMesh", &ResultsContainerInstance::getMesh )
+        .def( "getMesh", &ResultsContainerClass::getMesh )
         .def( "getModel", c3 )
         .def( "getModel", c4 )
-        .def( "getNumberOfRanks", &ResultsContainerInstance::getNumberOfRanks )
-        .def( "getRanks", &ResultsContainerInstance::getRanks )
-        .def( "getRealFieldOnNodes", &ResultsContainerInstance::getRealFieldOnNodes )
-        .def( "getRealFieldOnElements", &ResultsContainerInstance::getRealFieldOnElements )
-        .def( "printMedFile", &ResultsContainerInstance::printMedFile )
-        .def( "setMesh", &ResultsContainerInstance::setMesh )
-        .def( "update", &ResultsContainerInstance::update );
+        .def( "getNumberOfRanks", &ResultsContainerClass::getNumberOfRanks )
+        .def( "getRanks", &ResultsContainerClass::getRanks )
+        .def( "getRealFieldOnNodes", &ResultsContainerClass::getRealFieldOnNodes )
+        .def( "getRealFieldOnElements", &ResultsContainerClass::getRealFieldOnElements )
+        .def( "printMedFile", &ResultsContainerClass::printMedFile )
+        .def( "setMesh", &ResultsContainerClass::setMesh )
+        .def( "update", &ResultsContainerClass::update );
 };

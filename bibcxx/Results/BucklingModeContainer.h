@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe BucklingModeContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,11 +32,11 @@
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 
 /**
- * @class BucklingModeContainerInstance
+ * @class BucklingModeContainerClass
  * @brief Cette classe correspond a un mode_flamb
  * @author Natacha Béreux
  */
-class BucklingModeContainerInstance : public FullResultsContainerInstance
+class BucklingModeContainerClass : public FullResultsContainerClass
 {
   private:
     /** @brief Stiffness double displacement matrix */
@@ -56,12 +56,12 @@ class BucklingModeContainerInstance : public FullResultsContainerInstance
     /**
      * @brief Constructeur
      */
-    BucklingModeContainerInstance():
-        BucklingModeContainerInstance( ResultNaming::getNewResultName() )
+    BucklingModeContainerClass():
+        BucklingModeContainerClass( ResultNaming::getNewResultName() )
     {};
 
-    BucklingModeContainerInstance( const std::string &name ):
-        FullResultsContainerInstance( name, "MODE_FLAMB" ),
+    BucklingModeContainerClass( const std::string &name ):
+        FullResultsContainerClass( name, "MODE_FLAMB" ),
         _rigidityDispDMatrix( nullptr ),
         _rigidityDispCMatrix( nullptr ),
         _rigidityTempDMatrix( nullptr ),
@@ -210,14 +210,14 @@ class BucklingModeContainerInstance : public FullResultsContainerInstance
             if ( model != nullptr )
                 _mesh = model->getMesh();
         }
-        return ResultsContainerInstance::update();
+        return ResultsContainerClass::update();
     };
 };
 
 /**
  * @typedef BucklingModeContainerPtr
- * @brief Pointeur intelligent vers un BucklingModeContainerInstance
+ * @brief Pointeur intelligent vers un BucklingModeContainerClass
  */
-typedef boost::shared_ptr< BucklingModeContainerInstance > BucklingModeContainerPtr;
+typedef boost::shared_ptr< BucklingModeContainerClass > BucklingModeContainerPtr;
 
 #endif /* BUCKLINGMODECONTAINER_H_ */

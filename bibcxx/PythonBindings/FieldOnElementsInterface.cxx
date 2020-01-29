@@ -32,15 +32,15 @@ namespace py = boost::python;
 #include "PythonBindings/FieldOnElementsInterface.h"
 
 void exportFieldOnElementsToPython() {
-    py::class_< FieldOnElementsDoubleInstance, FieldOnElementsDoublePtr,
-            py::bases< GenericDataFieldInstance > >( "FieldOnElementsDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnElementsDoubleInstance >))
+    py::class_< FieldOnElementsDoubleClass, FieldOnElementsDoublePtr,
+            py::bases< GenericDataFieldClass > >( "FieldOnElementsDouble", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnElementsDoubleClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FieldOnElementsDoubleInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< FieldOnElementsDoubleClass, std::string >))
         .def( "exportToSimpleFieldOnElements",
-              &FieldOnElementsDoubleInstance::exportToSimpleFieldOnElements )
-        .def( "getModel", &FieldOnElementsDoubleInstance::getModel )
-        .def( "setDescription", &FieldOnElementsDoubleInstance::setDescription )
-        .def( "setModel", &FieldOnElementsDoubleInstance::setModel )
-        .def( "update", &FieldOnElementsDoubleInstance::update );
+              &FieldOnElementsDoubleClass::exportToSimpleFieldOnElements )
+        .def( "getModel", &FieldOnElementsDoubleClass::getModel )
+        .def( "setDescription", &FieldOnElementsDoubleClass::setDescription )
+        .def( "setModel", &FieldOnElementsDoubleClass::setModel )
+        .def( "update", &FieldOnElementsDoubleClass::update );
 };

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe StudyDescription
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -40,11 +40,11 @@
 #include "Materials/CalculationInputVariables.h"
 
 /**
- * @class StudyDescriptionInstance
+ * @class StudyDescriptionClass
  * @brief Cette classe permet de definir une étude au sens Aster
  * @author Nicolas Sellenet
  */
-class StudyDescriptionInstance {
+class StudyDescriptionClass {
   private:
     /** @brief Modele */
     ModelPtr _model;
@@ -65,15 +65,15 @@ class StudyDescriptionInstance {
      * @param ModelPtr Modèle de l'étude
      * @param MaterialOnMeshPtr Matériau de l'étude
      */
-    StudyDescriptionInstance( const ModelPtr &curModel, const MaterialOnMeshPtr &curMat,
+    StudyDescriptionClass( const ModelPtr &curModel, const MaterialOnMeshPtr &curMat,
                               const ElementaryCharacteristicsPtr &cara = nullptr )
         : _model( curModel ), _materialOnMesh( curMat ),
-          _listOfLoads( ListOfLoadsPtr( new ListOfLoadsInstance() ) ), _elemChara( cara ),
-          _codedMater( new CodedMaterialInstance( _materialOnMesh, _model ) ),
-          _varCom( new CalculationInputVariablesInstance( _model, _materialOnMesh,
+          _listOfLoads( ListOfLoadsPtr( new ListOfLoadsClass() ) ), _elemChara( cara ),
+          _codedMater( new CodedMaterialClass( _materialOnMesh, _model ) ),
+          _varCom( new CalculationInputVariablesClass( _model, _materialOnMesh,
                                                           _elemChara, _codedMater ) ){};
 
-    ~StudyDescriptionInstance(){};
+    ~StudyDescriptionClass(){};
 
     /**
      * @brief Add a load (mechanical or kinematic) with function, formula...
@@ -133,6 +133,6 @@ class StudyDescriptionInstance {
  * @typedef StudyDescriptionPtr
  * @brief Pointeur intelligent vers un StudyDescription
  */
-typedef boost::shared_ptr< StudyDescriptionInstance > StudyDescriptionPtr;
+typedef boost::shared_ptr< StudyDescriptionClass > StudyDescriptionPtr;
 
 #endif /* STUDYDESCRIPTION_H_ */

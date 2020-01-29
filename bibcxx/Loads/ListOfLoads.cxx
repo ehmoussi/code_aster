@@ -3,7 +3,7 @@
  * @brief Implementation de ListOfLoads
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,14 +28,14 @@
 #include "Loads/ListOfLoads.h"
 #include "Supervis/CommandSyntax.h"
 
-ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType )
+ListOfLoadsClass::ListOfLoadsClass( const JeveuxMemory memType )
     : DataStructure( DataStructureNaming::getNewName( memType, 8 ) + ".LIST_LOAD", 19, "L_CHARGES",
                      memType ),
       _loadInformations( JeveuxVectorLong( getName() + ".INFC" ) ),
       _list( JeveuxVectorChar24( getName() + ".LCHA" ) ),
       _listOfFunctions( JeveuxVectorChar24( getName() + ".FCHA" ) ), _isEmpty( true ){};
 
-bool ListOfLoadsInstance::build() {
+bool ListOfLoadsClass::build() {
     if ( !_isEmpty )
         return true;
     CommandSyntax cmdSt( "MECA_STATIQUE" );
@@ -86,7 +86,7 @@ bool ListOfLoadsInstance::build() {
 
 /* buildListExcit : construit la liste des charges utilisées pour valoriser le mot-clé facteur EXCIT
 dans STAT_NON_LINE. C'est une méthode temporaire qui disparaîtra avec la réécriture d'op0070 */
-ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() {
+ListSyntaxMapContainer ListOfLoadsClass::buildListExcit() {
     ListSyntaxMapContainer listeExcit;
     int pos = 0;
     for ( ListMecaLoadCIter curIter = _listOfMechanicalLoads.begin();

@@ -31,27 +31,27 @@ namespace py = boost::python;
 
 void exportGeneralizedAssemblyVectorToPython() {
 
-    py::class_< GenericGeneralizedAssemblyVectorInstance, GenericGeneralizedAssemblyVectorPtr,
+    py::class_< GenericGeneralizedAssemblyVectorClass, GenericGeneralizedAssemblyVectorPtr,
                 py::bases< DataStructure > >( "GeneralizedAssemblyVector", py::no_init );
     // fake initFactoryPtr: created by subclasses
     // fake initFactoryPtr: created by subclasses
 
-    py::class_< GeneralizedAssemblyVectorDoubleInstance, GeneralizedAssemblyVectorDoublePtr,
-                py::bases< GenericGeneralizedAssemblyVectorInstance > >(
+    py::class_< GeneralizedAssemblyVectorDoubleClass, GeneralizedAssemblyVectorDoublePtr,
+                py::bases< GenericGeneralizedAssemblyVectorClass > >(
         "GeneralizedAssemblyVectorDouble", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance >))
+              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorDoubleClass >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< GeneralizedAssemblyVectorDoubleInstance, std::string >));
+                  &initFactoryPtr< GeneralizedAssemblyVectorDoubleClass, std::string >));
 
-    py::class_< GeneralizedAssemblyVectorComplexInstance, GeneralizedAssemblyVectorComplexPtr,
-                py::bases< GenericGeneralizedAssemblyVectorInstance > >(
+    py::class_< GeneralizedAssemblyVectorComplexClass, GeneralizedAssemblyVectorComplexPtr,
+                py::bases< GenericGeneralizedAssemblyVectorClass > >(
         "GeneralizedAssemblyVectorComplex", py::no_init )
 #include <PythonBindings/factory.h>
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorComplexInstance >))
+              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorComplexClass >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< GeneralizedAssemblyVectorComplexInstance, std::string >));
+                  &initFactoryPtr< GeneralizedAssemblyVectorComplexClass, std::string >));
 };

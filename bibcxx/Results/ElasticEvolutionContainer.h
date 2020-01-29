@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElasticEvolutionContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,30 +32,30 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class ElasticEvolutionContainerInstance
+ * @class ElasticEvolutionContainerClass
  * @brief Cette classe correspond a un evol_elas
  * @author Natacha Béreux
  */
-class ElasticEvolutionContainerInstance : public TimeDependantResultsContainerInstance {
+class ElasticEvolutionContainerClass : public TimeDependantResultsContainerClass {
   private:
   public:
     /**
      * @brief Constructeur
      */
-    ElasticEvolutionContainerInstance()
-        : ElasticEvolutionContainerInstance( ResultNaming::getNewResultName() ){};
+    ElasticEvolutionContainerClass()
+        : ElasticEvolutionContainerClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ElasticEvolutionContainerInstance( const std::string name )
-        : TimeDependantResultsContainerInstance( name, "EVOL_ELAS" ){};
+    ElasticEvolutionContainerClass( const std::string name )
+        : TimeDependantResultsContainerClass( name, "EVOL_ELAS" ){};
 };
 
 /**
  * @typedef ElasticEvolutionContainerPtr
- * @brief Pointeur intelligent vers un ElasticEvolutionContainerInstance
+ * @brief Pointeur intelligent vers un ElasticEvolutionContainerClass
  */
-typedef boost::shared_ptr< ElasticEvolutionContainerInstance > ElasticEvolutionContainerPtr;
+typedef boost::shared_ptr< ElasticEvolutionContainerClass > ElasticEvolutionContainerPtr;
 
 #endif /* ELASTICEVOLUTIONCONTAINER_H_ */

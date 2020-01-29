@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe DynamicMacroElement
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,11 +38,11 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class DynamicMacroElementInstance
+ * @class DynamicMacroElementClass
  * @brief Cette classe correspond a un MACR_ELEM_DYNA
  * @author Nicolas Sellenet
  */
-class DynamicMacroElementInstance : public DataStructure {
+class DynamicMacroElementClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.DESM' */
     JeveuxVectorLong _desm;
@@ -106,17 +106,17 @@ class DynamicMacroElementInstance : public DataStructure {
   public:
     /**
      * @typedef DynamicMacroElementPtr
-     * @brief Pointeur intelligent vers un DynamicMacroElementInstance
+     * @brief Pointeur intelligent vers un DynamicMacroElementClass
      */
-    typedef boost::shared_ptr< DynamicMacroElementInstance > DynamicMacroElementPtr;
+    typedef boost::shared_ptr< DynamicMacroElementClass > DynamicMacroElementPtr;
 
     /**
      * @brief Constructeur
      */
-    DynamicMacroElementInstance()
-        : DynamicMacroElementInstance( ResultNaming::getNewResultName() ){};
+    DynamicMacroElementClass()
+        : DynamicMacroElementClass( ResultNaming::getNewResultName() ){};
 
-    DynamicMacroElementInstance( const std::string name )
+    DynamicMacroElementClass( const std::string name )
         : DataStructure( name, 8, "MACR_ELEM_DYNA", Permanent ),
           _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
           _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
@@ -285,8 +285,8 @@ class DynamicMacroElementInstance : public DataStructure {
 
 /**
  * @typedef DynamicMacroElementPtr
- * @brief Pointeur intelligent vers un DynamicMacroElementInstance
+ * @brief Pointeur intelligent vers un DynamicMacroElementClass
  */
-typedef boost::shared_ptr< DynamicMacroElementInstance > DynamicMacroElementPtr;
+typedef boost::shared_ptr< DynamicMacroElementClass > DynamicMacroElementPtr;
 
 #endif /* DYNAMICMACROELEMENT_H_ */

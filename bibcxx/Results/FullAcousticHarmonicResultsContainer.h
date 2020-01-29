@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FullAcousticHarmonicResultsContainer
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,28 +30,28 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class FullAcousticHarmonicResultsContainerInstance
+ * @class FullAcousticHarmonicResultsContainerClass
  * @brief Cette classe correspond à un acou_harmo
  * @author Natacha Béreux
  */
-class FullAcousticHarmonicResultsContainerInstance : public FullResultsContainerInstance {
+class FullAcousticHarmonicResultsContainerClass : public FullResultsContainerClass {
   private:
   public:
     /**
      * @brief Constructeur
      * @todo  Ajouter les objets Jeveux de la SD
      */
-    FullAcousticHarmonicResultsContainerInstance( const std::string &name )
-        : FullResultsContainerInstance( name, "ACOU_HARMO" ){};
-    FullAcousticHarmonicResultsContainerInstance()
-        : FullResultsContainerInstance( ResultNaming::getNewResultName(), "ACOU_HARMO" ){};
+    FullAcousticHarmonicResultsContainerClass( const std::string &name )
+        : FullResultsContainerClass( name, "ACOU_HARMO" ){};
+    FullAcousticHarmonicResultsContainerClass()
+        : FullResultsContainerClass( ResultNaming::getNewResultName(), "ACOU_HARMO" ){};
 };
 
 /**
  * @typedef FullAcousticHarmonicResultsContainerPtr
- * @brief Pointeur intelligent vers un FullAcousticHarmonicResultsContainerInstance
+ * @brief Pointeur intelligent vers un FullAcousticHarmonicResultsContainerClass
  */
-typedef boost::shared_ptr< FullAcousticHarmonicResultsContainerInstance >
+typedef boost::shared_ptr< FullAcousticHarmonicResultsContainerClass >
     FullAcousticHarmonicResultsContainerPtr;
 
 #endif /* FULLACOUSTICHARMONICRESULTSCONTAINER_H_ */

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FourierCombination
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,23 +32,23 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class FourierCombinationInstance
+ * @class FourierCombinationClass
  * @brief Cette classe correspond a un comb_fourier
  * @author Nicolas Sellenet
  */
-class FourierCombinationInstance : public ResultsContainerInstance {
+class FourierCombinationClass : public ResultsContainerClass {
   public:
     /**
      * @brief Constructeur
      */
-    FourierCombinationInstance( const std::string name = ResultNaming::getNewResultName() )
-        : ResultsContainerInstance( name, "COMB_FOURIER" ){};
+    FourierCombinationClass( const std::string name = ResultNaming::getNewResultName() )
+        : ResultsContainerClass( name, "COMB_FOURIER" ){};
 };
 
 /**
  * @typedef FourierCombinationPtr
- * @brief Pointeur intelligent vers un FourierCombinationInstance
+ * @brief Pointeur intelligent vers un FourierCombinationClass
  */
-typedef boost::shared_ptr< FourierCombinationInstance > FourierCombinationPtr;
+typedef boost::shared_ptr< FourierCombinationClass > FourierCombinationPtr;
 
 #endif /* FOURIERCOMBINATION_H_ */

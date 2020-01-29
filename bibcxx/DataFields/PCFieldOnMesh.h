@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe PCFieldOnMesh
  * @author Natacha Bereux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -119,11 +119,11 @@ template < class ValueType > class PCFieldValues {
 };
 
 /**
- * @class PCFieldOnMeshInstance Piecewise Constant (PC) Field on Mesh template
+ * @class PCFieldOnMeshClass Piecewise Constant (PC) Field on Mesh template
  * @brief Cette classe permet de definir une carte (champ défini sur les mailles)
  * @author Natacha Bereux
  */
-template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFieldInstance {
+template < class ValueType > class PCFieldOnMeshClass : public GenericDataFieldClass {
   private:
     /** @brief Vecteur Jeveux '.NOMA' */
     JeveuxVectorChar8 _meshName;
@@ -157,7 +157,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
         bool test = _componentNames->updateValuePointer();
         test = test && _valuesListTmp->updateValuePointer();
         if ( !test )
-            throw std::runtime_error( "PCFieldOnMeshInstance not allocate" );
+            throw std::runtime_error( "PCFieldOnMeshClass not allocate" );
         const ASTERINTEGER taille = _componentNames->size();
 
         const ASTERINTEGER tVerif1 = component->size();
@@ -189,7 +189,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
         bool test = _componentNames->updateValuePointer();
         test = test && _valuesListTmp->updateValuePointer();
         if ( !test )
-            throw std::runtime_error( "PCFieldOnMeshInstance not allocate" );
+            throw std::runtime_error( "PCFieldOnMeshClass not allocate" );
         const ASTERINTEGER taille = _componentNames->size();
 
         const ASTERINTEGER tVerif1 = component.size();
@@ -228,16 +228,16 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      * @typedef PCFieldOnBaseMeshPtr
      * @brief Pointeur intelligent vers un PCFieldOnMesh
      */
-    typedef boost::shared_ptr< PCFieldOnMeshInstance > PCFieldOnBaseMeshPtr;
+    typedef boost::shared_ptr< PCFieldOnMeshClass > PCFieldOnBaseMeshPtr;
 
     /**
      * @brief Constructeur
      * @param name Nom Jeveux de la carte
      * @param mesh Maillage
      */
-    PCFieldOnMeshInstance( const std::string &name, const BaseMeshPtr &mesh,
+    PCFieldOnMeshClass( const std::string &name, const BaseMeshPtr &mesh,
                            const JeveuxMemory memType = Permanent )
-        : GenericDataFieldInstance( name, "CARTE", memType ),
+        : GenericDataFieldClass( name, "CARTE", memType ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -251,9 +251,9 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      * @param name Nom Jeveux de la carte
      * @param ligrel Ligrel support
      */
-    PCFieldOnMeshInstance( std::string name, const FiniteElementDescriptorPtr &ligrel,
+    PCFieldOnMeshClass( std::string name, const FiniteElementDescriptorPtr &ligrel,
                            const JeveuxMemory memType = Permanent )
-        : GenericDataFieldInstance( name, "CARTE", memType ),
+        : GenericDataFieldClass( name, "CARTE", memType ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -267,8 +267,8 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      * @param mesh Maillage
      * @param name Nom Jeveux de la carte
      */
-    PCFieldOnMeshInstance( const BaseMeshPtr &mesh, const JeveuxMemory memType = Permanent )
-        : GenericDataFieldInstance( memType, "CARTE" ),
+    PCFieldOnMeshClass( const BaseMeshPtr &mesh, const JeveuxMemory memType = Permanent )
+        : GenericDataFieldClass( memType, "CARTE" ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -282,9 +282,9 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
      * @param ligrel Ligrel support
      * @param name Nom Jeveux de la carte
      */
-    PCFieldOnMeshInstance( const FiniteElementDescriptorPtr &ligrel,
+    PCFieldOnMeshClass( const FiniteElementDescriptorPtr &ligrel,
                            const JeveuxMemory memType = Permanent )
-        : GenericDataFieldInstance( memType, "CARTE" ),
+        : GenericDataFieldClass( memType, "CARTE" ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -293,12 +293,12 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
           _mesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
-    typedef boost::shared_ptr< PCFieldOnMeshInstance< ValueType > > PCFieldOnMeshValueTypePtr;
+    typedef boost::shared_ptr< PCFieldOnMeshClass< ValueType > > PCFieldOnMeshValueTypePtr;
 
     /**
      * @brief Destructeur
      */
-    ~PCFieldOnMeshInstance(){};
+    ~PCFieldOnMeshClass(){};
 
     /**
      * @brief Allocation de la carte
@@ -356,7 +356,7 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     std::string getPhysicalQuantityName() const {
         _descriptor->updateValuePointer();
         ASTERINTEGER gdeur = ( *_descriptor )[0];
-        return PhysicalQuantityManager::Instance().getPhysicalQuantityName( gdeur );
+        return PhysicalQuantityManager::Class().getPhysicalQuantityName( gdeur );
     };
 
     /**
@@ -378,9 +378,9 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
 
         ASTERINTEGER nbZoneMax = ( *_descriptor )[1];
         ASTERINTEGER gdeur = ( *_descriptor )[0];
-        const auto name1 = PhysicalQuantityManager::Instance().getPhysicalQuantityName( gdeur );
-        ASTERINTEGER nec = PhysicalQuantityManager::Instance().getNumberOfEncodedInteger( gdeur );
-        const auto &compNames = PhysicalQuantityManager::Instance().getComponentNames( gdeur );
+        const auto name1 = PhysicalQuantityManager::Class().getPhysicalQuantityName( gdeur );
+        ASTERINTEGER nec = PhysicalQuantityManager::Class().getNumberOfEncodedInteger( gdeur );
+        const auto &compNames = PhysicalQuantityManager::Class().getComponentNames( gdeur );
         const ASTERINTEGER nbCmpMax = compNames.size();
         VectorString cmpToReturn;
         std::vector< ValueType > valToReturn;
@@ -574,44 +574,44 @@ template < class ValueType > class PCFieldOnMeshInstance : public GenericDataFie
     };
 };
 
-/** @typedef PCFieldOnMeshDoubleInstance Instance d'une carte de double */
-typedef PCFieldOnMeshInstance< double > PCFieldOnMeshDoubleInstance;
-/** @typedef PCFieldOnMeshLongInstance Instance d'une carte de long */
-typedef PCFieldOnMeshInstance< ASTERINTEGER > PCFieldOnMeshLongInstance;
-/** @typedef PCFieldOnMeshComplexInstance Instance d'une carte de complexe */
-typedef PCFieldOnMeshInstance< DoubleComplex > PCFieldOnMeshComplexInstance;
-/** @typedef PCFieldOnMeshChar8Instance Instance d'une carte de char*8 */
-typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshChar8Instance;
-/** @typedef PCFieldOnMeshChar16Instance Instance d'une carte de char*16 */
-typedef PCFieldOnMeshInstance< JeveuxChar8 > PCFieldOnMeshChar16Instance;
+/** @typedef PCFieldOnMeshDoubleClass Class d'une carte de double */
+typedef PCFieldOnMeshClass< double > PCFieldOnMeshDoubleClass;
+/** @typedef PCFieldOnMeshLongClass Class d'une carte de long */
+typedef PCFieldOnMeshClass< ASTERINTEGER > PCFieldOnMeshLongClass;
+/** @typedef PCFieldOnMeshComplexClass Class d'une carte de complexe */
+typedef PCFieldOnMeshClass< DoubleComplex > PCFieldOnMeshComplexClass;
+/** @typedef PCFieldOnMeshChar8Class Class d'une carte de char*8 */
+typedef PCFieldOnMeshClass< JeveuxChar8 > PCFieldOnMeshChar8Class;
+/** @typedef PCFieldOnMeshChar16Class Class d'une carte de char*16 */
+typedef PCFieldOnMeshClass< JeveuxChar8 > PCFieldOnMeshChar16Class;
 
 /**
  * @typedef PCFieldOnBaseMeshPtrDouble
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshDoubleInstance > PCFieldOnMeshDoublePtr;
+typedef boost::shared_ptr< PCFieldOnMeshDoubleClass > PCFieldOnMeshDoublePtr;
 
 /**
  * @typedef PCFieldOnMeshLongPtr
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshLongInstance > PCFieldOnMeshLongPtr;
+typedef boost::shared_ptr< PCFieldOnMeshLongClass > PCFieldOnMeshLongPtr;
 
 /**
  * @typedef PCFieldOnBaseMeshPtrComplex
  * @brief   Definition d'une carte de complexe
  */
-typedef boost::shared_ptr< PCFieldOnMeshComplexInstance > PCFieldOnMeshComplexPtr;
+typedef boost::shared_ptr< PCFieldOnMeshComplexClass > PCFieldOnMeshComplexPtr;
 
 /**
  * @typedef PCFieldOnBaseMeshPtrChar8 Definition d'une carte de char[8]
- * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
+ * @brief Pointeur intelligent vers un PCFieldOnMeshClass
  */
-typedef boost::shared_ptr< PCFieldOnMeshChar8Instance > PCFieldOnMeshChar8Ptr;
+typedef boost::shared_ptr< PCFieldOnMeshChar8Class > PCFieldOnMeshChar8Ptr;
 
 /**
  * @typedef PCFieldOnBaseMeshPtrChar16 Definition d'une carte de char[16]
- * @brief Pointeur intelligent vers un PCFieldOnMeshInstance
+ * @brief Pointeur intelligent vers un PCFieldOnMeshClass
  */
-typedef boost::shared_ptr< PCFieldOnMeshChar16Instance > PCFieldOnMeshChar16Ptr;
+typedef boost::shared_ptr< PCFieldOnMeshChar16Class > PCFieldOnMeshChar16Ptr;
 #endif /* PCFIELDONMESH_H_ */

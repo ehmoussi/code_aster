@@ -30,20 +30,20 @@ namespace py = boost::python;
 
 void exportStaticMechanicalSolverToPython() {
 
-    py::class_< StaticMechanicalSolverInstance, StaticMechanicalSolverPtr > c1(
+    py::class_< StaticMechanicalSolverClass, StaticMechanicalSolverPtr > c1(
         "StaticMechanicalSolver", py::no_init );
     c1.def( "__init__",
             py::make_constructor(
-                &initFactoryPtr< StaticMechanicalSolverInstance, ModelPtr, MaterialOnMeshPtr >));
+                &initFactoryPtr< StaticMechanicalSolverClass, ModelPtr, MaterialOnMeshPtr >));
     c1.def( "__init__",
-            py::make_constructor(&initFactoryPtr< StaticMechanicalSolverInstance, ModelPtr,
+            py::make_constructor(&initFactoryPtr< StaticMechanicalSolverClass, ModelPtr,
                                               MaterialOnMeshPtr, ElementaryCharacteristicsPtr >));
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 #ifdef _USE_MPI
     addParallelMechanicalLoadToInterface( c1 );
 #endif /* _USE_MPI */
-    c1.def( "execute", &StaticMechanicalSolverInstance::execute );
-    c1.def( "setLinearSolver", &StaticMechanicalSolverInstance::setLinearSolver );
-    c1.def( "setTimeStepManager", &StaticMechanicalSolverInstance::setTimeStepManager );
+    c1.def( "execute", &StaticMechanicalSolverClass::execute );
+    c1.def( "setLinearSolver", &StaticMechanicalSolverClass::setLinearSolver );
+    c1.def( "setTimeStepManager", &StaticMechanicalSolverClass::setTimeStepManager );
 };

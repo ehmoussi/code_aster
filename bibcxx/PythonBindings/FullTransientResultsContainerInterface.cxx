@@ -29,13 +29,13 @@ namespace py = boost::python;
 
 void exportFullTransientResultsContainerToPython() {
 
-    py::class_< FullTransientResultsContainerInstance, FullTransientResultsContainerPtr,
-                py::bases< FullResultsContainerInstance > >( "FullTransientResultsContainer",
+    py::class_< FullTransientResultsContainerClass, FullTransientResultsContainerPtr,
+                py::bases< FullResultsContainerClass > >( "FullTransientResultsContainer",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< FullTransientResultsContainerInstance, std::string >))
+                  &initFactoryPtr< FullTransientResultsContainerClass, std::string >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FullTransientResultsContainerInstance >))
-        .def( "printMedFile", &FullTransientResultsContainerInstance::printMedFile );
+              py::make_constructor(&initFactoryPtr< FullTransientResultsContainerClass >))
+        .def( "printMedFile", &FullTransientResultsContainerClass::printMedFile );
 };

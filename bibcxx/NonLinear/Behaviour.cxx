@@ -3,7 +3,7 @@
  * @brief Definition of the (nonlinear) behaviour
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,7 +33,7 @@
 
 #include "NonLinear/Behaviour.h"
 
-BehaviourInstance::BehaviourInstance( ConstitutiveLawEnum law, StrainEnum strain )
+BehaviourClass::BehaviourClass( ConstitutiveLawEnum law, StrainEnum strain )
     : _constitutiveLaw( law ), _strain( strain ) {
 
     _toCapyConverter.add( new CapyConvertibleValue< ConstitutiveLawEnum >(

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe NonLinearControl
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,12 +37,12 @@
  * @author Natacha Béreux
  */
 
-class NonLinearControlInstance : public SolverControlInstance {
+class NonLinearControlClass : public SolverControlClass {
   public:
-    NonLinearControlInstance( double rTol = 1.e-6, int nIterMax = 10, double maxTol = 1.e-6,
+    NonLinearControlClass( double rTol = 1.e-6, int nIterMax = 10, double maxTol = 1.e-6,
                               double relMaxTol = 0.0, double relTolCmp = 0.0 );
 
-    ~NonLinearControlInstance() {}
+    ~NonLinearControlClass() {}
 
     /** @brief Eval convergence status
         @param dProblem discrete problem
@@ -75,5 +75,5 @@ class NonLinearControlInstance : public SolverControlInstance {
  * @typedef NonLinearControlPtr
  * @brief Pointeur intelligent vers un NonLinearControl
  */
-typedef boost::shared_ptr< NonLinearControlInstance > NonLinearControlPtr;
+typedef boost::shared_ptr< NonLinearControlClass > NonLinearControlPtr;
 #endif

@@ -1,9 +1,9 @@
 /**
  * @file Material.cxx
- * @brief Implementation de MaterialInstance
+ * @brief Implementation de MaterialClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,7 +29,7 @@
 #include "Materials/Material.h"
 #include "Supervis/ResultNaming.h"
 
-void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& curMaterBehav )
+void MaterialClass::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& curMaterBehav )
 {
     ++_nbMaterialBehaviour;
     _vecMatBehaviour.push_back( curMaterBehav );
@@ -76,7 +76,7 @@ void MaterialInstance::addMaterialBehaviour( const GeneralMaterialBehaviourPtr& 
     }
 };
 
-void MaterialInstance::deallocateJeveuxVectors()
+void MaterialClass::deallocateJeveuxVectors()
 {
     _materialBehaviourNames->deallocate();
     _doubleValues->deallocate();
@@ -96,7 +96,7 @@ void MaterialInstance::deallocateJeveuxVectors()
     }
 };
 
-bool MaterialInstance::build() {
+bool MaterialClass::build() {
     if( _mater != nullptr )
     {
         if( getName() == _mater->getName() )
@@ -145,7 +145,7 @@ bool MaterialInstance::build() {
     return true;
 };
 
-void MaterialInstance::setStateAfterUnpickling( const VectorInt& vec )
+void MaterialClass::setStateAfterUnpickling( const VectorInt& vec )
 {
     if( _nbMaterialBehaviour != 0 )
         throw std::runtime_error( "Object already fill in" );

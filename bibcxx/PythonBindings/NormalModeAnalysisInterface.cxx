@@ -29,12 +29,12 @@ namespace py = boost::python;
 
 void exportNormalModeAnalysisToPython() {
 
-    py::class_< NormalModeAnalysisInstance, NormalModeAnalysisPtr >( "NormalModeAnalysis",
+    py::class_< NormalModeAnalysisClass, NormalModeAnalysisPtr >( "NormalModeAnalysis",
                                                                      py::no_init )
         // fake initFactoryPtr: not a DataStructure
-        .def( "__init__", py::make_constructor(&initFactoryPtr< NormalModeAnalysisInstance >))
-        .def( "execute", &NormalModeAnalysisInstance::execute )
-        .def( "setMassMatrix", &NormalModeAnalysisInstance::setMassMatrix )
-        .def( "setNumberOfFrequencies", &NormalModeAnalysisInstance::setNumberOfFrequencies )
-        .def( "setStiffnessMatrix", &NormalModeAnalysisInstance::setStiffnessMatrix );
+        .def( "__init__", py::make_constructor(&initFactoryPtr< NormalModeAnalysisClass >))
+        .def( "execute", &NormalModeAnalysisClass::execute )
+        .def( "setMassMatrix", &NormalModeAnalysisClass::setMassMatrix )
+        .def( "setNumberOfFrequencies", &NormalModeAnalysisClass::setNumberOfFrequencies )
+        .def( "setStiffnessMatrix", &NormalModeAnalysisClass::setStiffnessMatrix );
 };

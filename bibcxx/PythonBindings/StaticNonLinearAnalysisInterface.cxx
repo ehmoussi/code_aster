@@ -32,46 +32,46 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( addBehaviourOnElements_overloads, addBeh
 
 void exportStaticNonLinearAnalysisToPython() {
 
-    void ( StaticNonLinearAnalysisInstance::*c1 )( const GenericMechanicalLoadPtr & ) =
-        &StaticNonLinearAnalysisInstance::addStandardExcitation;
+    void ( StaticNonLinearAnalysisClass::*c1 )( const GenericMechanicalLoadPtr & ) =
+        &StaticNonLinearAnalysisClass::addStandardExcitation;
 
-    void ( StaticNonLinearAnalysisInstance::*c2 )( const KinematicsLoadPtr & ) =
-        &StaticNonLinearAnalysisInstance::addStandardExcitation;
+    void ( StaticNonLinearAnalysisClass::*c2 )( const KinematicsLoadPtr & ) =
+        &StaticNonLinearAnalysisClass::addStandardExcitation;
 
-    void ( StaticNonLinearAnalysisInstance::*c3 )( const GenericMechanicalLoadPtr &,
+    void ( StaticNonLinearAnalysisClass::*c3 )( const GenericMechanicalLoadPtr &,
                                                    const FunctionPtr &scalF ) =
-        &StaticNonLinearAnalysisInstance::addStandardScaledExcitation;
+        &StaticNonLinearAnalysisClass::addStandardScaledExcitation;
 
-    void ( StaticNonLinearAnalysisInstance::*c4 )( const KinematicsLoadPtr &,
+    void ( StaticNonLinearAnalysisClass::*c4 )( const KinematicsLoadPtr &,
                                                    const FunctionPtr &scalF ) =
-        &StaticNonLinearAnalysisInstance::addStandardScaledExcitation;
+        &StaticNonLinearAnalysisClass::addStandardScaledExcitation;
 
-    py::class_< StaticNonLinearAnalysisInstance, StaticNonLinearAnalysisPtr >(
+    py::class_< StaticNonLinearAnalysisClass, StaticNonLinearAnalysisPtr >(
         "StaticNonLinearAnalysis", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< StaticNonLinearAnalysisInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StaticNonLinearAnalysisClass >))
         // fake initFactoryPtr: not a DataStructure
-        .def( "execute", &StaticNonLinearAnalysisInstance::execute )
-        .def( "addBehaviourOnElements", &StaticNonLinearAnalysisInstance::addBehaviourOnElements,
+        .def( "execute", &StaticNonLinearAnalysisClass::execute )
+        .def( "addBehaviourOnElements", &StaticNonLinearAnalysisClass::addBehaviourOnElements,
               addBehaviourOnElements_overloads() )
-        .def( "setNonLinearMethod", &StaticNonLinearAnalysisInstance::setNonLinearMethod )
-        .def( "setLinearSolver", &StaticNonLinearAnalysisInstance::setLinearSolver )
-        .def( "setInitialState", &StaticNonLinearAnalysisInstance::setInitialState )
-        .def( "setLineSearchMethod", &StaticNonLinearAnalysisInstance::setLineSearchMethod )
-        .def( "setMaterialOnMesh", &StaticNonLinearAnalysisInstance::setMaterialOnMesh )
-        .def( "setLoadStepManager", &StaticNonLinearAnalysisInstance::setLoadStepManager )
-        .def( "setModel", &StaticNonLinearAnalysisInstance::setModel )
-        .def( "setDriving", &StaticNonLinearAnalysisInstance::setDriving )
+        .def( "setNonLinearMethod", &StaticNonLinearAnalysisClass::setNonLinearMethod )
+        .def( "setLinearSolver", &StaticNonLinearAnalysisClass::setLinearSolver )
+        .def( "setInitialState", &StaticNonLinearAnalysisClass::setInitialState )
+        .def( "setLineSearchMethod", &StaticNonLinearAnalysisClass::setLineSearchMethod )
+        .def( "setMaterialOnMesh", &StaticNonLinearAnalysisClass::setMaterialOnMesh )
+        .def( "setLoadStepManager", &StaticNonLinearAnalysisClass::setLoadStepManager )
+        .def( "setModel", &StaticNonLinearAnalysisClass::setModel )
+        .def( "setDriving", &StaticNonLinearAnalysisClass::setDriving )
         .def( "addStandardExcitation", c1 )
         .def( "addStandardExcitation", c2 )
         .def( "addStandardScaledExcitation", c3 )
         .def( "addStandardScaledExcitation", c4 )
-        .def( "addDrivenExcitation", &StaticNonLinearAnalysisInstance::addDrivenExcitation )
+        .def( "addDrivenExcitation", &StaticNonLinearAnalysisClass::addDrivenExcitation )
         .def( "addExcitationOnUpdatedGeometry",
-              &StaticNonLinearAnalysisInstance::addExcitationOnUpdatedGeometry )
+              &StaticNonLinearAnalysisClass::addExcitationOnUpdatedGeometry )
         .def( "addScaledExcitationOnUpdatedGeometry",
-              &StaticNonLinearAnalysisInstance::addScaledExcitationOnUpdatedGeometry )
+              &StaticNonLinearAnalysisClass::addScaledExcitationOnUpdatedGeometry )
         .def( "addIncrementalDirichletExcitation",
-              &StaticNonLinearAnalysisInstance::addIncrementalDirichletExcitation )
+              &StaticNonLinearAnalysisClass::addIncrementalDirichletExcitation )
         .def( "addIncrementalDirichletScaledExcitation",
-              &StaticNonLinearAnalysisInstance::addIncrementalDirichletScaledExcitation );
+              &StaticNonLinearAnalysisClass::addIncrementalDirichletScaledExcitation );
 };

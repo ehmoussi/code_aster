@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TableContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -47,10 +47,10 @@
 #include <map>
 
 /**
- * @typedef TableContainerInstance
- * @brief Definition of TableContainerInstance (table_container)
+ * @typedef TableContainerClass
+ * @brief Definition of TableContainerClass (table_container)
  */
-class TableContainerInstance : public TableInstance
+class TableContainerClass : public TableClass
 {
   private:
     JeveuxVectorChar16 _objectName;
@@ -79,23 +79,23 @@ class TableContainerInstance : public TableInstance
   public:
     /**
     * @typedef TableContainerPtr
-    * @brief Definition of a smart pointer to a TableContainerInstance
+    * @brief Definition of a smart pointer to a TableContainerClass
     */
-    typedef boost::shared_ptr< TableContainerInstance > TableContainerPtr;
+    typedef boost::shared_ptr< TableContainerClass > TableContainerPtr;
 
     /**
     * @brief Constructeur
     * @param name Nom Jeveux du champ aux noeuds
     */
-    TableContainerInstance( const std::string &name ):
-        TableInstance( name, "TABLE_CONTAINER" )
+    TableContainerClass( const std::string &name ):
+        TableClass( name, "TABLE_CONTAINER" )
     {};
 
     /**
      * @brief Constructeur
      */
-    TableContainerInstance():
-        TableContainerInstance( ResultNaming::getNewResultName() )
+    TableContainerClass():
+        TableContainerClass( ResultNaming::getNewResultName() )
     {};
 
     /**

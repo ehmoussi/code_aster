@@ -30,20 +30,20 @@ namespace py = boost::python;
 
 void exportBucklingModeContainerToPython() {
 
-    bool ( BucklingModeContainerInstance::*c1 )( const AssemblyMatrixDisplacementDoublePtr & ) =
-        &BucklingModeContainerInstance::setStiffnessMatrix;
-    bool ( BucklingModeContainerInstance::*c2 )( const AssemblyMatrixTemperatureDoublePtr & ) =
-        &BucklingModeContainerInstance::setStiffnessMatrix;
-    bool ( BucklingModeContainerInstance::*c3 )( const AssemblyMatrixDisplacementComplexPtr & ) =
-        &BucklingModeContainerInstance::setStiffnessMatrix;
-    bool ( BucklingModeContainerInstance::*c4 )( const AssemblyMatrixPressureDoublePtr & ) =
-        &BucklingModeContainerInstance::setStiffnessMatrix;
+    bool ( BucklingModeContainerClass::*c1 )( const AssemblyMatrixDisplacementDoublePtr & ) =
+        &BucklingModeContainerClass::setStiffnessMatrix;
+    bool ( BucklingModeContainerClass::*c2 )( const AssemblyMatrixTemperatureDoublePtr & ) =
+        &BucklingModeContainerClass::setStiffnessMatrix;
+    bool ( BucklingModeContainerClass::*c3 )( const AssemblyMatrixDisplacementComplexPtr & ) =
+        &BucklingModeContainerClass::setStiffnessMatrix;
+    bool ( BucklingModeContainerClass::*c4 )( const AssemblyMatrixPressureDoublePtr & ) =
+        &BucklingModeContainerClass::setStiffnessMatrix;
 
-    py::class_< BucklingModeContainerInstance, BucklingModeContainerPtr,
-            py::bases< FullResultsContainerInstance > >( "BucklingModeContainer", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< BucklingModeContainerInstance >))
+    py::class_< BucklingModeContainerClass, BucklingModeContainerPtr,
+            py::bases< FullResultsContainerClass > >( "BucklingModeContainer", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< BucklingModeContainerClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< BucklingModeContainerInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< BucklingModeContainerClass, std::string >))
         .def( "getStiffnessMatrix", &getStiffnessMatrix< BucklingModeContainerPtr > )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 )

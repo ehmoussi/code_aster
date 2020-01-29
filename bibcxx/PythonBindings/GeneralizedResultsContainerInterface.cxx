@@ -33,7 +33,7 @@ void exportGeneralizedResultsContainerToPython()
 {
 
 
-    py::class_< GeneralizedResultsContainerDoubleInstance,
+    py::class_< GeneralizedResultsContainerDoubleClass,
             GeneralizedResultsContainerDoublePtr,
             py::bases< DataStructure > >
             ( "GeneralizedResultsContainerDouble", py::no_init )
@@ -41,7 +41,7 @@ void exportGeneralizedResultsContainerToPython()
         // fake initFactoryPtr: created by subclasses
     ;
 
-    py::class_< GeneralizedResultsContainerComplexInstance,
+    py::class_< GeneralizedResultsContainerComplexClass,
             GeneralizedResultsContainerComplexPtr,
             py::bases< DataStructure > >
             ( "GeneralizedResultsContainerComplex", py::no_init )
@@ -49,41 +49,41 @@ void exportGeneralizedResultsContainerToPython()
         // fake initFactoryPtr: created by subclasses
     ;
 
-    py::class_< TransientGeneralizedResultsContainerInstance,
+    py::class_< TransientGeneralizedResultsContainerClass,
             TransientGeneralizedResultsContainerPtr,
-            py::bases< GeneralizedResultsContainerDoubleInstance > >
+            py::bases< GeneralizedResultsContainerDoubleClass > >
             ( "TransientGeneralizedResultsContainer", py::no_init )
         .def( "__init__", py::make_constructor(
-            &initFactoryPtr< TransientGeneralizedResultsContainerInstance >) )
+            &initFactoryPtr< TransientGeneralizedResultsContainerClass >) )
         .def( "__init__", py::make_constructor(
-            &initFactoryPtr< TransientGeneralizedResultsContainerInstance,
+            &initFactoryPtr< TransientGeneralizedResultsContainerClass,
                              std::string >) )
         .def( "setGeneralizedDOFNumbering",
-              &TransientGeneralizedResultsContainerInstance::setGeneralizedDOFNumbering )
+              &TransientGeneralizedResultsContainerClass::setGeneralizedDOFNumbering )
         .def( "getGeneralizedDOFNumbering",
-              &TransientGeneralizedResultsContainerInstance::getGeneralizedDOFNumbering )
+              &TransientGeneralizedResultsContainerClass::getGeneralizedDOFNumbering )
         .def( "setDOFNumbering",
-              &TransientGeneralizedResultsContainerInstance::setDOFNumbering )
+              &TransientGeneralizedResultsContainerClass::setDOFNumbering )
         .def( "getDOFNumbering",
-              &TransientGeneralizedResultsContainerInstance::getDOFNumbering )
+              &TransientGeneralizedResultsContainerClass::getDOFNumbering )
     ;
 
-    py::class_< HarmoGeneralizedResultsContainerInstance,
+    py::class_< HarmoGeneralizedResultsContainerClass,
             HarmoGeneralizedResultsContainerPtr,
-            py::bases< GeneralizedResultsContainerComplexInstance > >
+            py::bases< GeneralizedResultsContainerComplexClass > >
             ( "HarmoGeneralizedResultsContainer", py::no_init )
         .def( "__init__", py::make_constructor(
-            &initFactoryPtr< HarmoGeneralizedResultsContainerInstance >) )
+            &initFactoryPtr< HarmoGeneralizedResultsContainerClass >) )
         .def( "__init__", py::make_constructor(
-            &initFactoryPtr< HarmoGeneralizedResultsContainerInstance,
+            &initFactoryPtr< HarmoGeneralizedResultsContainerClass,
                              std::string >) )
         .def( "getGeneralizedDOFNumbering",
-              &HarmoGeneralizedResultsContainerInstance::getGeneralizedDOFNumbering )
+              &HarmoGeneralizedResultsContainerClass::getGeneralizedDOFNumbering )
         .def( "setGeneralizedDOFNumbering",
-              &HarmoGeneralizedResultsContainerInstance::setGeneralizedDOFNumbering )
+              &HarmoGeneralizedResultsContainerClass::setGeneralizedDOFNumbering )
         .def( "setDOFNumbering",
-              &HarmoGeneralizedResultsContainerInstance::setDOFNumbering )
+              &HarmoGeneralizedResultsContainerClass::setDOFNumbering )
         .def( "getDOFNumbering",
-              &HarmoGeneralizedResultsContainerInstance::getDOFNumbering )
+              &HarmoGeneralizedResultsContainerClass::getDOFNumbering )
     ;
 };

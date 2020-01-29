@@ -40,11 +40,11 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class BaseMeshInstance
+ * @class BaseMeshClass
  * @brief Cette classe decrit un maillage Aster
  * @author Nicolas Sellenet
  */
-class BaseMeshInstance : public DataStructure {
+class BaseMeshClass : public DataStructure {
   public:
     typedef MeshExplorer< ElementBuilderFromConnectivity, const JeveuxCollectionLong &,
                           const JeveuxVectorLong & >
@@ -89,11 +89,11 @@ class BaseMeshInstance : public DataStructure {
      * @param name nom jeveux de l'objet
      * @param type jeveux de l'objet
      */
-    BaseMeshInstance( const std::string &name, const std::string &type )
+    BaseMeshClass( const std::string &name, const std::string &type )
         : DataStructure( name, 8, type ),
           _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
           _nameOfNodes( JeveuxBidirectionalMapChar8( getName() + ".NOMNOE    " ) ),
-          _coordinates( new MeshCoordinatesFieldInstance( getName() + ".COORDO    " ) ),
+          _coordinates( new MeshCoordinatesFieldClass( getName() + ".COORDO    " ) ),
           _nameOfGrpNodes( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMNOE " ) ),
           _groupsOfNodes(
               JeveuxCollectionLongNamePtr( getName() + ".GROUPENO  ", _nameOfGrpNodes ) ),
@@ -109,9 +109,9 @@ class BaseMeshInstance : public DataStructure {
   public:
     /**
      * @typedef BaseMeshPtr
-     * @brief Pointeur intelligent vers un BaseMeshInstance
+     * @brief Pointeur intelligent vers un BaseMeshClass
      */
-    typedef boost::shared_ptr< BaseMeshInstance > BaseMeshPtr;
+    typedef boost::shared_ptr< BaseMeshClass > BaseMeshPtr;
 
     /**
      * @brief Get the connectivity
@@ -229,34 +229,34 @@ class BaseMeshInstance : public DataStructure {
 };
 
 /**
- * @class MeshInstance
+ * @class MeshClass
  * @brief Cette classe decrit un maillage Aster
  * @author Nicolas Sellenet
  */
-class MeshInstance : public BaseMeshInstance {
+class MeshClass : public BaseMeshClass {
   protected:
     /**
      * @brief Constructeur
      */
-    MeshInstance( const std::string name, const std::string type )
-        : BaseMeshInstance( name, type ){};
+    MeshClass( const std::string name, const std::string type )
+        : BaseMeshClass( name, type ){};
 
   public:
     /**
      * @typedef MeshPtr
-     * @brief Pointeur intelligent vers un MeshInstance
+     * @brief Pointeur intelligent vers un MeshClass
      */
-    typedef boost::shared_ptr< MeshInstance > MeshPtr;
+    typedef boost::shared_ptr< MeshClass > MeshPtr;
 
     /**
      * @brief Constructeur
      */
-    MeshInstance() : BaseMeshInstance( ResultNaming::getNewResultName(), "MAILLAGE" ){};
+    MeshClass() : BaseMeshClass( ResultNaming::getNewResultName(), "MAILLAGE" ){};
 
     /**
      * @brief Constructeur
      */
-    MeshInstance( const std::string name ) : BaseMeshInstance( name, "MAILLAGE" ){};
+    MeshClass( const std::string name ) : BaseMeshClass( name, "MAILLAGE" ){};
 
     /**
      * @brief Ajout d'un groupe de noeuds au maillage en partant d'une liste noeuds
@@ -304,14 +304,14 @@ class MeshInstance : public BaseMeshInstance {
 
 /**
  * @typedef BaseMeshPtr
- * @brief Pointeur intelligent vers un BaseMeshInstance
+ * @brief Pointeur intelligent vers un BaseMeshClass
  */
-typedef boost::shared_ptr< BaseMeshInstance > BaseMeshPtr;
+typedef boost::shared_ptr< BaseMeshClass > BaseMeshPtr;
 
 /**
  * @typedef MeshPtr
- * @brief Pointeur intelligent vers un MeshInstance
+ * @brief Pointeur intelligent vers un MeshClass
  */
-typedef boost::shared_ptr< MeshInstance > MeshPtr;
+typedef boost::shared_ptr< MeshClass > MeshPtr;
 
 #endif /* MESH_H_ */
