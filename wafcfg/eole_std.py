@@ -43,7 +43,7 @@ def configure(self):
     opts.with_prog_salome = True
     opts.with_prog_europlexus = True
 
-    self.env['ADDMEM'] = 700
+    self.env['ADDMEM'] = 750
     self.env.append_value('OPT_ENV', [
         'module unload mkl',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
