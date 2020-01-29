@@ -30,7 +30,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "DataFields/GenericDataField.h"
+#include "DataFields/DataField.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Meshes/Mesh.h"
@@ -123,7 +123,7 @@ template < class ValueType > class PCFieldValues {
  * @brief Cette classe permet de definir une carte (champ défini sur les mailles)
  * @author Natacha Bereux
  */
-template < class ValueType > class PCFieldOnMeshClass : public GenericDataFieldClass {
+template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
   private:
     /** @brief Vecteur Jeveux '.NOMA' */
     JeveuxVectorChar8 _meshName;
@@ -237,7 +237,7 @@ template < class ValueType > class PCFieldOnMeshClass : public GenericDataFieldC
      */
     PCFieldOnMeshClass( const std::string &name, const BaseMeshPtr &mesh,
                            const JeveuxMemory memType = Permanent )
-        : GenericDataFieldClass( name, "CARTE", memType ),
+        : DataFieldClass( name, "CARTE", memType ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -253,7 +253,7 @@ template < class ValueType > class PCFieldOnMeshClass : public GenericDataFieldC
      */
     PCFieldOnMeshClass( std::string name, const FiniteElementDescriptorPtr &ligrel,
                            const JeveuxMemory memType = Permanent )
-        : GenericDataFieldClass( name, "CARTE", memType ),
+        : DataFieldClass( name, "CARTE", memType ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -268,7 +268,7 @@ template < class ValueType > class PCFieldOnMeshClass : public GenericDataFieldC
      * @param name Nom Jeveux de la carte
      */
     PCFieldOnMeshClass( const BaseMeshPtr &mesh, const JeveuxMemory memType = Permanent )
-        : GenericDataFieldClass( memType, "CARTE" ),
+        : DataFieldClass( memType, "CARTE" ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
@@ -284,7 +284,7 @@ template < class ValueType > class PCFieldOnMeshClass : public GenericDataFieldC
      */
     PCFieldOnMeshClass( const FiniteElementDescriptorPtr &ligrel,
                            const JeveuxMemory memType = Permanent )
-        : GenericDataFieldClass( memType, "CARTE" ),
+        : DataFieldClass( memType, "CARTE" ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),

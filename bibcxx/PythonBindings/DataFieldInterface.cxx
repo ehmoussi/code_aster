@@ -1,6 +1,6 @@
 /**
- * @file FieldOnCellsInterface.cxx
- * @brief Interface python de FieldOnCells
+ * @file DataFieldInterface.cxx
+ * @brief Interface python de DataField
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -22,25 +22,19 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
-
 #include <boost/python.hpp>
 
 namespace py = boost::python;
 #include <PythonBindings/factory.h>
 
 #include "PythonBindings/DataStructureInterface.h"
-#include "PythonBindings/FieldOnCellsInterface.h"
+#include "PythonBindings/DataFieldInterface.h"
 
-void exportFieldOnCellsToPython() {
-    py::class_< FieldOnCellsDoubleClass, FieldOnCellsDoublePtr,
-            py::bases< GenericDataFieldClass > >( "FieldOnCellsDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnCellsDoubleClass >))
+void exportDataFieldToPython() {
+
+    py::class_< DataFieldClass, DataFieldPtr, py::bases< DataStructure > >(
+        "DataField", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DataFieldClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FieldOnCellsDoubleClass, std::string >))
-        .def( "exportToSimpleFieldOnCells",
-              &FieldOnCellsDoubleClass::exportToSimpleFieldOnCells )
-        .def( "getModel", &FieldOnCellsDoubleClass::getModel )
-        .def( "setDescription", &FieldOnCellsDoubleClass::setDescription )
-        .def( "setModel", &FieldOnCellsDoubleClass::setModel )
-        .def( "update", &FieldOnCellsDoubleClass::update );
+              py::make_constructor(&initFactoryPtr< DataFieldClass, std::string >));
 };

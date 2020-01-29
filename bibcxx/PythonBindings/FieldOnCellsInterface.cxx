@@ -1,6 +1,6 @@
 /**
- * @file PCFieldOnMeshInterface.cxx
- * @brief Interface python de PCFieldOnMesh
+ * @file FieldOnCellsInterface.cxx
+ * @brief Interface python de FieldOnCells
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -27,17 +27,20 @@
 
 namespace py = boost::python;
 #include <PythonBindings/factory.h>
-#include "PythonBindings/DataStructureInterface.h"
-#include "PythonBindings/DataFieldInterface.h"
-#include "PythonBindings/PCFieldOnMeshInterface.h"
 
-void exportPCFieldOnMeshToPython() {
-    py::class_< PCFieldOnMeshDoubleClass, PCFieldOnMeshDoublePtr,
-            py::bases< DataFieldClass > >( "PCFieldOnMeshDouble", py::no_init )
+#include "PythonBindings/DataStructureInterface.h"
+#include "PythonBindings/FieldOnCellsInterface.h"
+
+void exportFieldOnCellsToPython() {
+    py::class_< FieldOnCellsDoubleClass, FieldOnCellsDoublePtr,
+            py::bases< DataFieldClass > >( "FieldOnCellsDouble", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnCellsDoubleClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< PCFieldOnMeshDoubleClass, BaseMeshPtr >))
-        .def( "__init__",
-              py::make_constructor(
-                  &initFactoryPtr< PCFieldOnMeshDoubleClass, std::string, BaseMeshPtr >))
-        .def( "getMesh", &PCFieldOnMeshDoubleClass::getMesh );
+              py::make_constructor(&initFactoryPtr< FieldOnCellsDoubleClass, std::string >))
+        .def( "exportToSimpleFieldOnCells",
+              &FieldOnCellsDoubleClass::exportToSimpleFieldOnCells )
+        .def( "getModel", &FieldOnCellsDoubleClass::getModel )
+        .def( "setDescription", &FieldOnCellsDoubleClass::setDescription )
+        .def( "setModel", &FieldOnCellsDoubleClass::setModel )
+        .def( "update", &FieldOnCellsDoubleClass::update );
 };

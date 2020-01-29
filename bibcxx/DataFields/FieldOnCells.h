@@ -33,7 +33,7 @@
 #include "aster_fort.h"
 
 #include "MemoryManager/JeveuxVector.h"
-#include "DataFields/GenericDataField.h"
+#include "DataFields/DataField.h"
 #include "DataFields/SimpleFieldOnCells.h"
 #include "Modeling/Model.h"
 #include "Modeling/FiniteElementDescriptor.h"
@@ -43,7 +43,7 @@
  * @brief Cette classe template permet de definir un champ aux éléments Aster
  * @author Nicolas Sellenet
  */
-template < class ValueType > class FieldOnCellsClass : public GenericDataFieldClass {
+template < class ValueType > class FieldOnCellsClass : public DataFieldClass {
   private:
     typedef SimpleFieldOnCellsClass< ValueType > SimpleFieldOnCellsValueTypeClass;
     typedef boost::shared_ptr< SimpleFieldOnCellsDoubleClass >
@@ -74,7 +74,7 @@ template < class ValueType > class FieldOnCellsClass : public GenericDataFieldCl
      * @param name Nom Jeveux du champ aux éléments
      */
     FieldOnCellsClass( const std::string name )
-        : GenericDataFieldClass( name, "CHAM_ELEM" ),
+        : DataFieldClass( name, "CHAM_ELEM" ),
           _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
           _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _model( nullptr ),
@@ -85,7 +85,7 @@ template < class ValueType > class FieldOnCellsClass : public GenericDataFieldCl
      * @param memType Mémoire d'allocation
      */
     FieldOnCellsClass( const JeveuxMemory memType = Permanent )
-        : GenericDataFieldClass( memType, "CHAM_ELEM" ),
+        : DataFieldClass( memType, "CHAM_ELEM" ),
           _descriptor( JeveuxVectorLong( getName() + ".CELD" ) ),
           _reference( JeveuxVectorChar24( getName() + ".CELK" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".CELV" ) ), _model( nullptr ),

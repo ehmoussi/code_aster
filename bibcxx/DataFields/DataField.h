@@ -2,8 +2,8 @@
 #define GENERICDATAFIELD_H_
 
 /**
- * @file GenericDataField.h
- * @brief Fichier entete de la classe GenericDataField
+ * @file DataField.h
+ * @brief Fichier entete de la classe DataField
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -29,24 +29,24 @@
 #include "DataStructures/DataStructure.h"
 
 /**
- * @class GenericDataFieldClass
+ * @class DataFieldClass
  * @brief Generic class which describe a field of data
  * @author Nicolas Sellenet
  */
-class GenericDataFieldClass : public DataStructure {
+class DataFieldClass : public DataStructure {
   private:
   public:
     /**
-     * @typedef GenericDataFieldPtr
-     * @brief Pointeur intelligent vers un GenericDataField
+     * @typedef DataFieldPtr
+     * @brief Pointeur intelligent vers un DataField
      */
-    typedef boost::shared_ptr< GenericDataFieldClass > GenericDataFieldPtr;
+    typedef boost::shared_ptr< DataFieldClass > DataFieldPtr;
 
     /**
      * @brief Constructor
      * @param name Jeveux name
      */
-    GenericDataFieldClass( const std::string name, const std::string type = "CHAM_GD",
+    DataFieldClass( const std::string name, const std::string type = "CHAM_GD",
                               const JeveuxMemory memType = Permanent )
         : DataStructure( name, 19, type, memType ){};
 
@@ -54,14 +54,14 @@ class GenericDataFieldClass : public DataStructure {
      * @brief Constructor
      * @param memType allocation memory
      */
-    GenericDataFieldClass( const JeveuxMemory memType = Permanent,
+    DataFieldClass( const JeveuxMemory memType = Permanent,
                               const std::string type = "CHAM_GD" )
         : DataStructure( type, memType, 19 ){};
 };
 
 /**
- * @typedef GenericDataFieldPtrDouble
+ * @typedef DataFieldPtrDouble
  */
-typedef boost::shared_ptr< GenericDataFieldClass > GenericDataFieldPtr;
+typedef boost::shared_ptr< DataFieldClass > DataFieldPtr;
 
 #endif /* GENERICDATAFIELD_H_ */

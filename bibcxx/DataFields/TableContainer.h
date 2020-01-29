@@ -37,7 +37,7 @@
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/ElementaryVector.h"
-#include "DataFields/GenericDataField.h"
+#include "DataFields/DataField.h"
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/PCFieldOnMesh.h"
 #include "DataFields/FieldOnCells.h"
@@ -66,7 +66,7 @@ class TableContainerClass : public TableClass
     std::map< std::string, ElementaryMatrixTemperatureDoublePtr > _mapEMTD;
     std::map< std::string, ElementaryVectorDisplacementDoublePtr > _mapEVDD;
     std::map< std::string, ElementaryVectorTemperatureDoublePtr > _mapEVTD;
-    std::map< std::string, GenericDataFieldPtr > _mapGDF;
+    std::map< std::string, DataFieldPtr > _mapGDF;
     std::map< std::string, FieldOnNodesDoublePtr > _mapFOND;
     std::map< std::string, PCFieldOnMeshDoublePtr > _mapPCFOMD;
     std::map< std::string, FieldOnCellsDoublePtr > _mapFOED;
@@ -154,10 +154,10 @@ class TableContainerClass : public TableClass
     void addObject( const std::string&, GeneralizedAssemblyMatrixDoublePtr );
 
     /**
-     * @brief Add GenericDataField to TableContainer
+     * @brief Add DataField to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, GenericDataFieldPtr );
+    void addObject( const std::string&, DataFieldPtr );
 
     /**
      * @brief Add MechanicalModeContainer to TableContainer
@@ -242,10 +242,10 @@ class TableContainerClass : public TableClass
     GeneralizedAssemblyMatrixDoublePtr getGeneralizedAssemblyMatrix( const std::string& ) const;
 
     /**
-     * @brief Get GenericDataField stored in TableContainer
+     * @brief Get DataField stored in TableContainer
      * @param name key used to find object
      */
-    GenericDataFieldPtr getGenericDataField( const std::string& ) const;
+    DataFieldPtr getDataField( const std::string& ) const;
 
     /**
      * @brief Get MechanicalModeContainer stored in TableContainer

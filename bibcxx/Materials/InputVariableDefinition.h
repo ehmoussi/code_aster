@@ -30,7 +30,7 @@
 #include "Meshes/Mesh.h"
 #include "Meshes/Skeleton.h"
 #include "Meshes/ParallelMesh.h"
-#include "DataFields/GenericDataField.h"
+#include "DataFields/DataField.h"
 #include "Results/TimeDependantResultsContainer.h"
 #include "Functions/Function.h"
 #include "Functions/Formula.h"
@@ -163,7 +163,7 @@ class GenericInputVariableClass {
     MeshEntityPtr _localization;
     double _refValue;
     bool _refValueSet;
-    GenericDataFieldPtr _chamGd;
+    DataFieldPtr _chamGd;
     EvolutionParameterPtr _evolParam;
 
   public:
@@ -204,7 +204,7 @@ class GenericInputVariableClass {
     /**
      * @brief Get the field of values of the input variable
      */
-    GenericDataFieldPtr getInputValuesField() const { return _chamGd; };
+    DataFieldPtr getInputValuesField() const { return _chamGd; };
 
     /**
      * @brief Get the reference value of input variable
@@ -234,7 +234,7 @@ class GenericInputVariableClass {
     /**
      * @brief Function to set the field of values of the input variable
      */
-    void setInputValuesField( const GenericDataFieldPtr &field ) {
+    void setInputValuesField( const DataFieldPtr &field ) {
         _evolParam = nullptr;
         _chamGd = field;
     };

@@ -41,7 +41,7 @@ from ..Objects import (AsFloat, AsInteger, ElementaryMatrixDisplacementDouble,
                        ElementaryVectorTemperatureDouble,
                        FieldOnCellsDouble, FieldOnNodesDouble, Function,
                        FunctionComplex, GeneralizedAssemblyMatrixDouble,
-                       GenericDataField, MechanicalModeContainer,
+                       DataField, MechanicalModeContainer,
                        PCFieldOnMeshDouble, Surface, Table)
 from ..Supervis import ExecuteCommand
 
@@ -85,7 +85,7 @@ class ExtrTable(ExecuteCommand):
         elif typeResu == 'CHAM_NO_SDASTER':
             self._result = FieldOnNodesDouble()
         elif typeResu == 'CHAM_GD_SDASTER':
-            self._result = GenericDataField()
+            self._result = DataField()
         elif typeResu == 'ENTIER':
             self._result = AsInteger()
         elif typeResu == 'REEL':
