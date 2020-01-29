@@ -32,7 +32,7 @@
 #include "Modeling/Model.h"
 #include "Materials/MaterialOnMesh.h"
 #include "Loads/MechanicalLoad.h"
-#include "DataFields/ElementaryResult.h"
+#include "DataFields/ElementaryTerm.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Loads/PhysicalQuantity.h"
 
@@ -47,7 +47,7 @@ protected:
     /** @brief Objet Jeveux '.RERR' */
     JeveuxVectorChar24 _description;
     /** @brief Objet Jeveux '.RELR' */
-    JeveuxVectorChar24 _listOfElementaryResults;
+    JeveuxVectorChar24 _listOfElementaryTerms;
     /** @brief Booleen indiquant si la sd est vide */
     bool _isEmpty;
     /** @brief Modele */
@@ -66,7 +66,7 @@ protected:
                                   const std::string type = "MATR_ELEM" ):
         DataStructure( name, 19, type, memType ),
         _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
-        _listOfElementaryResults( JeveuxVectorChar24( getName() + ".RELR" ) ),
+        _listOfElementaryTerms( JeveuxVectorChar24( getName() + ".RELR" ) ),
         _isEmpty( true ),
         _model( nullptr ), _materOnMesh( nullptr )
     {};
@@ -162,8 +162,8 @@ class ElementaryMatrixClass : public BaseElementaryMatrixClass
 {
   private:
     /** @brief Vectors of RESUELEM */
-    std::vector< ElementaryResultDoublePtr > _realVector;
-    std::vector< ElementaryResultComplexPtr > _complexVector;
+    std::vector< ElementaryTermDoublePtr > _realVector;
+    std::vector< ElementaryTermComplexPtr > _complexVector;
 
   public:
     /**
@@ -190,15 +190,15 @@ class ElementaryMatrixClass : public BaseElementaryMatrixClass
     {};
 
     /**
-     * @brief function to update ElementaryResultClass
+     * @brief function to update ElementaryTermClass
      */
     bool update() {
-        _listOfElementaryResults->updateValuePointer();
+        _listOfElementaryTerms->updateValuePointer();
         _realVector.clear();
-        for ( int pos = 0; pos < _listOfElementaryResults->size(); ++pos ) {
-            const std::string name = ( *_listOfElementaryResults )[pos].toString();
+        for ( int pos = 0; pos < _listOfElementaryTerms->size(); ++pos ) {
+            const std::string name = ( *_listOfElementaryTerms )[pos].toString();
             if ( trim( name ) != "" ) {
-                ElementaryResultDoublePtr toPush( new ElementaryResultClass< double >( name ) );
+                ElementaryTermDoublePtr toPush( new ElementaryTermClass< double >( name ) );
                 _realVector.push_back( toPush );
             }
         }
