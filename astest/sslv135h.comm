@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: sarah.plessis at edf.fr
+# person_in_charge: tanguy.mathieu at edf.fr
 #
 #
 #----------------------------------------------------------------------
@@ -224,9 +224,11 @@ SOL_NL = STAT_NON_LINE ( TITRE      =
                        INCREMENT  =_F ( LIST_INST    = LINST, ),
                        NEWTON     =_F(  MATRICE = 'TANGENTE',
                                         REAC_ITER = 1),
-                       CONVERGENCE=_F(  RESI_REFE_RELA=1.,
-                                        SIGM_REFE     =4.8E-3,
-                             #   RESI_GLOB_RELA = 1.E-8,
+                       CONVERGENCE=_F(  #RESI_REFE_RELA=1.,
+                                        #SIGM_REFE     =4.8E-3,
+                                        #RESI_GLOB_RELA à 1.e-8 nécessaire afin d'éviter
+                                        #une erreur en floating point exception sur gaia 
+                                        RESI_GLOB_RELA = 1.E-8,
                                         ITER_GLOB_MAXI = 50),
 
                        SOLVEUR=_F(METHODE = 'MULT_FRONT'),
