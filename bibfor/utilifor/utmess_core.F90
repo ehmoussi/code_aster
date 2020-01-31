@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine utmess_core(typ, idmess, nk, valk, ni,&
-                       vali, nr, valr, fname)
+                       vali, nr, valr, nexcep, fname)
 ! person_in_charge: mathieu.courtois at edf.fr
 !
     use message_module, only: Message, init_message, free_message
@@ -48,10 +48,8 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     integer, intent(in) :: vali(*)
     integer, intent(in) :: nr
     real(kind=8), intent(in) :: valr(*)
+    integer, intent(in) :: nexcep
     character(len=*), intent(in) :: fname
-!
-    integer :: nexcep
-    common /utexc /  nexcep
 !
     integer :: recurs
     character(len=24) :: msgId
@@ -114,7 +112,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     ltrb = labort .or. (lerror .and. msgId(1:4).eq.'DVP_') .or. idf.eq.8
 !
     numex = nexcep
-    if (lerror .and. idf .ne. 7) then
+    if (numex .eq. 0 .or. (lerror .and. idf .ne. 7)) then
 !     SI EXCEPTION, NEXCEP EST FIXE PAR COMMON VIA UTEXCP
 !     SINON ON LEVE L'EXCEPTION DE BASE ASTER.ERROR
         numex = 21

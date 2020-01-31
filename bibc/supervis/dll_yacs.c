@@ -34,9 +34,9 @@ PyObject* get_dll_register_dict();
 
 
 /* *********************************************************************
- * 
+ *
  *                      YACS/CALCIUM interface
- * 
+ *
  * *********************************************************************/
 #define LIB_YACS "libCalciumC.so"
 
@@ -83,7 +83,7 @@ void load_yacs_lib()
     char symbol[12];
     PyObject* DLL_DICT;
     DLL_DICT = get_dll_register_dict();
-    
+
     printf("Loading %s... ", LIB_YACS);
     yacs_handle = dlopen(LIB_YACS, RTLD_NOW);
     if ( ! yacs_handle ) {
@@ -92,7 +92,8 @@ void load_yacs_lib()
         valk = MakeTabFStr(nk, VALK_SIZE);
         SetTabFStr(valk, 0, "YACS/Calcium", VALK_SIZE);
         SetTabFStr(valk, 1, LIB_YACS, VALK_SIZE);
-        CALL_UTMESS_CORE("F", "FERMETUR_13", &nk, valk, &n0, &ibid, &n0, &rbid, " ");
+        CALL_UTMESS_CORE("F", "FERMETUR_13", &nk, valk, &n0,
+                         &ibid, &n0, &rbid, &n0, " ");
         FreeStr(valk);  // uncallable
     }
 
@@ -244,16 +245,17 @@ void load_yacs_lib()
         SetTabFStr(valk, 0, "YACS/Calcium", VALK_SIZE);
         SetTabFStr(valk, 1, LIB_YACS, VALK_SIZE);
         SetTabFStr(valk, 2, symbol, VALK_SIZE);
-        CALL_UTMESS_CORE("F", "FERMETUR_14", &nk, valk, &n0, &ibid, &n0, &rbid, " ");
+        CALL_UTMESS_CORE("F", "FERMETUR_14", &nk, valk, &n0,
+                         &ibid, &n0, &rbid, &n0, " ");
         FreeStr(valk);  // unreachable
     }
 }
 #endif
 
 /* *********************************************************************
- * 
+ *
  * The following wrapper functions are called from fortran source files.
- * 
+ *
  * *********************************************************************/
 
 /* SUBROUTINE CPECH */
@@ -273,7 +275,7 @@ void DEFPPPPSPSP(CPECH,cpech,
     if ( ! libsymb_is_known(DLL_DICT, LIB_YACS, symbol) ) {
         load_yacs_lib();
     }
-    
+
     f_cpech = (FUNC_CPECH())libsymb_get_symbol(DLL_DICT, LIB_YACS, symbol);
 
     //assert lnomvar == 144 !
@@ -305,7 +307,7 @@ void DEFPPPPSPPP(CPEDB,cpedb,
     if ( ! libsymb_is_known(DLL_DICT, LIB_YACS, symbol) ) {
         load_yacs_lib();
     }
-    
+
     f_cpedb = (FUNC_CPEDB())libsymb_get_symbol(DLL_DICT, LIB_YACS, symbol);
 
     //assert lnomvar == 144 !
@@ -334,7 +336,7 @@ void DEFPPPPSPPP(CPEEN,cpeen,
     if ( ! libsymb_is_known(DLL_DICT, LIB_YACS, symbol) ) {
         load_yacs_lib();
     }
-    
+
     f_cpeen = (FUNC_CPEEN())libsymb_get_symbol(DLL_DICT, LIB_YACS, symbol);
 
     //assert lnomvar == 144 !
@@ -364,7 +366,7 @@ void DEFPPPPPSPPSP(CPLCH,cplch,
     if ( ! libsymb_is_known(DLL_DICT, LIB_YACS, symbol) ) {
         load_yacs_lib();
     }
-    
+
     f_cplch = (FUNC_CPLCH())libsymb_get_symbol(DLL_DICT, LIB_YACS, symbol);
 
     //assert lnomvar == 144 !
@@ -397,7 +399,7 @@ void DEFPPPPPSPPPP(CPLDB,cpldb,
     if ( ! libsymb_is_known(DLL_DICT, LIB_YACS, symbol) ) {
         load_yacs_lib();
     }
-    
+
     f_cpldb = (FUNC_CPLDB())libsymb_get_symbol(DLL_DICT, LIB_YACS, symbol);
 
     //assert lnomvar == 144 !
@@ -427,7 +429,7 @@ void DEFPPPPPSPPPP(CPLEN,cplen,
     if ( ! libsymb_is_known(DLL_DICT, LIB_YACS, symbol) ) {
         load_yacs_lib();
     }
-    
+
     f_cplen = (FUNC_CPLEN())libsymb_get_symbol(DLL_DICT, LIB_YACS, symbol);
 
     //assert lnomvar == 144 !
