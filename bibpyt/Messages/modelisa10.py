@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,6 @@
 # --------------------------------------------------------------------
 
 cata_msg = {
-
-    3 : _("""
-On ne sait pas calculer l'option %(k1)s pour une élasticité de type %(k2)s.
-"""),
 
     4 : _("""
 Les mailles affectées à la modélisation TUYAU ne semblent pas former des lignes continues.
