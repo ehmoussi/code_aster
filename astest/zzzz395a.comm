@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -104,6 +104,7 @@ thnl = CREA_RESU(OPERATION='ASSE',
 base_p=DEFI_BASE_REDUITE(RESULTAT = thnl,
                          MODELE   = model,
                          INFO     = 2,
+                         SNAPSHOT = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
                          NOM_CHAM = 'TEMP',
                          TOLE_SVD = 1.E-3,);
 

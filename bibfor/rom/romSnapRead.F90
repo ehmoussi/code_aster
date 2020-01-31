@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,8 +24,11 @@ implicit none
 !
 #include "asterc/getfac.h"
 #include "asterfort/assert.h"
+#include "asterfort/jeveuo.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
+#include "asterfort/getvid.h"
+#include "asterfort/getvis.h"
 #include "asterfort/infniv.h"
 #include "asterfort/rsutnu.h"
 #include "asterfort/utmess.h"
@@ -44,17 +47,15 @@ implicit none
 ! Read parameters for snapshot selection
 !
 ! --------------------------------------------------------------------------------------------------
-! 
+!
 ! In  result           : results datastructure for selection (EVOL_*)
 ! IO  ds_snap          : datastructure for snapshot selection
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nocc, iret
+    integer :: iret
     integer :: nb_snap = 0
-    real(kind=8) :: prec
-    character(len=8)  :: crit = ' '
     character(len=24) :: list_snap = '&&ROM.LIST_SNAP'
     integer, pointer :: v_list_snap(:) => null()
 !
@@ -65,20 +66,14 @@ implicit none
         call utmess('I', 'ROM2_4')
     endif
 !
-! - Select list of snapshots (from SNAP factor keyword)
+! - Select list of snapshots (from LIST_SNAP keyword) or from result
 !
-    if (.false.) then
-        call getfac('SNAP', nocc)
-        ASSERT(nocc .le. 1)
-        call getvr8('SNAP', 'PRECISION', iocc=1, scal=prec)
-        call getvtx('SNAP', 'CRITERE'  , iocc=1, scal=crit)
-        call rsutnu(result, 'SNAP', 1, list_snap, nb_snap, prec, crit, iret)
-        if (iret .ne. 0) then
-            call utmess('F', 'ROM2_11', sk = result)
-        endif
-        if (nb_snap .eq. 0) then
-            call utmess('F','ROM2_10')
-        endif
+    call getvis('','SNAPSHOT', nbret=iret)
+    iret=abs(iret)
+    if (iret .gt. 1) then
+        nb_snap = iret
+        call wkvect(list_snap, 'V V I', nb_snap, vi = v_list_snap)
+        call getvis('','SNAPSHOT', nbval=nb_snap, vect=v_list_snap)
     else
         call rs_get_liststore(result, nb_snap)
         if (nb_snap .eq. 0) then

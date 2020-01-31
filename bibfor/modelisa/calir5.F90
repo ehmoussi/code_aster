@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,18 +17,19 @@
 ! --------------------------------------------------------------------
 
 subroutine calir5(noma, lisrel, nono2, nuno2, jcoor,&
-                  idecal, jconb, jcocf, jconu)
+                  idecal, jconb, jcocf, jconu, j2coco)
     implicit none
 #include "jeveux.h"
 #include "asterfort/afrela.h"
 #include "asterfort/assert.h"
+#include "asterfort/elrfvf.h"
 #include "asterfort/imprel.h"
 #include "asterfort/jenuno.h"
 #include "asterfort/jexnum.h"
 !
     character(len=19) :: lisrel
     character(len=8) :: nono2, noma
-    integer :: nuno2, jconb, jcocf, jconu, jcoor
+    integer :: nuno2, jconb, jcocf, jconu, j2coco, jcoor
 ! person_in_charge: jacques.pellet at edf.fr
 ! BUT : ECRIRE LES RELATIONS LINEAIRES LIANT LES TRANSLATIONS D'UN NOEUD
 !       "MASSIF" AVEC LES TRANSLATIONS ET ROTATIONS D'1 NOEUD "COQUE"
@@ -41,11 +42,11 @@ subroutine calir5(noma, lisrel, nono2, nuno2, jcoor,&
     character(len=4) :: typcoe
 !
     real(kind=8) :: coefr(29), direct(3*29), coef1
-    real(kind=8) :: a(3), n2(3), an2(3)
+    real(kind=8) :: a(3), n2(3), an2(3), xr3(2), ff(8)
     complex(kind=8) :: cbid, betac
-    character(len=8) :: kbeta, noeud(28), ddl(28), nono1, cmp
+    character(len=8) :: kbeta, noeud(28), ddl(28), nono1, cmp, elrefa
     integer :: dimens(28), nbterm, ndim
-    integer :: n1, ino1, nuno1, k, idec, idecal
+    integer :: n1, ino1, nuno1, k, idec, idecal, ntr
     cbid = dcmplx(0.d0, 0.d0)
 ! ----------------------------------------------------------------------
 !
@@ -61,7 +62,23 @@ subroutine calir5(noma, lisrel, nono2, nuno2, jcoor,&
     n1=zi(jconb-1+nuno2)
     ASSERT(n1.ge.3 .and. n1.le.9)
 !
-    nbterm=1+n1*ndim
+    if (n1.eq.7 .or. n1.eq.9) then
+!       case TR7 or QU9, translation dof are defined on TR6 or QU8
+        ntr = n1 - 1
+        xr3(1)=zr(j2coco-1+3*(nuno2-1)+1)
+        xr3(2)=zr(j2coco-1+3*(nuno2-1)+2)
+        if (ntr.eq.6) then
+            elrefa='TR6'
+        else
+            elrefa='QU8'
+        endif
+        call elrfvf(elrefa, xr3, 8, ff, ntr)
+    else
+        ntr = n1
+        ff(1:ntr) = zr(jcocf+idecal:jcocf+idecal-1+ntr)
+    endif
+!
+    nbterm=1+n1*(ndim-1)+ntr
     ASSERT(nbterm.le.28)
 !
 !
@@ -94,9 +111,10 @@ subroutine calir5(noma, lisrel, nono2, nuno2, jcoor,&
         coefr(1)=-1.d0
 !
         idec=2
-        do ino1 = 1, n1
+!
+        do ino1 = 1, ntr
             nuno1=zi(jconu+idecal-1+ino1)
-            coef1=zr(jcocf+idecal-1+ino1)
+            coef1=ff(ino1)
             call jenuno(jexnum(noma//'.NOMNOE', nuno1), nono1)
             noeud(idec)=nono1
             ddl(idec)=cmp
