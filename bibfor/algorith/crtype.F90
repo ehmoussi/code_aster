@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -586,7 +586,7 @@ subroutine crtype()
             if (iret .eq. 0) then
                 call rsadpa(resu, 'L', 1, typabs, icompt,&
                             0, sjv=iad, styp=k8b)
-                valkk(1) = champs(icompt)
+                valkk(1) = nsymb
                 valkk(2) = champ(1:8)
                 valrr(1) = zr(iad)
                 valrr(2) = tps

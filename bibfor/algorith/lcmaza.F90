@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -188,24 +188,19 @@ subroutine lcmaza(fami, kpg, ksp, ndim, typmod,&
     lambda = e * nu / (1.d0+nu) / (1.d0 - 2.d0*nu)
     deuxmu = e/(1.d0+nu)
 ! --- LECTURE DU RETRAIT ENDOGENE ET RETRAIT DE DESSICCATION
-!     SAUF EN CAS DE COUPLAGE
-    if (compor(1)(1:6) .eq. 'MAZARS') then
-        nomres(1)='B_ENDOGE'
-        nomres(2)='K_DESSIC'
-        call rcvala(imate, ' ', 'ELAS', 0, ' ',&
-                    [0.d0], 1, nomres(1), valres(1), icodre(1),&
-                    0)
-        if (icodre(1) .ne. 0) valres(1) = 0.d0
-        bendo = valres(1)
-        call rcvala(imate, ' ', 'ELAS', 0, ' ',&
-                    [0.d0], 1, nomres(2), valres(2), icodre(2),&
-                    0)
-        if (icodre(2) .ne. 0) valres(2) = 0.d0
-        kdess = valres(2)
-    else
-        bendo = 0.d0
-        kdess = 0.d0
-    endif
+    nomres(1)='B_ENDOGE'
+    nomres(2)='K_DESSIC'
+    call rcvala(imate, ' ', 'ELAS', 0, ' ',&
+                [0.d0], 1, nomres(1), valres(1), icodre(1),&
+                0)
+    if (icodre(1) .ne. 0) valres(1) = 0.d0
+    bendo = valres(1)
+    call rcvala(imate, ' ', 'ELAS', 0, ' ',&
+                [0.d0], 1, nomres(2), valres(2), icodre(2),&
+                0)
+    if (icodre(2) .ne. 0) valres(2) = 0.d0
+    kdess = valres(2)
+
 !    LECTURE DES CARACTERISTIQUES D'ENDOMMAGEMENT
     nomres(1) = 'EPSD0'
     nomres(2) = 'AC'

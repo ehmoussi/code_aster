@@ -108,10 +108,12 @@ La rotation de réseau n'est pas compatible avec RUNGE_KUTTA. Utiliser l'intégr
 """),
 
     23: _("""
-   Il y a incohérence entre le champ des variables internes et le comportement affecté sur les mailles (si vous ne l'avez pas précisé, on suppose par défaut
-que le comportement est élastique).
+   Il y a incohérence entre le champ des variables internes et le comportement affecté sur les mailles :
+   si vous ne l'avez pas précisé (sans reuse), on suppose par défaut que le comportement est élastique.
+   
    On ne peut pas modifier le champ des variables internes de manière automatique.
-   Mais comme vous semblez être dans un cas autorisé (voir message précédent), la reprise de ce champ dans un calcul non-linéaire devrait bien se passer (correction automatique dans l'opérateur).
+   Mais comme vous semblez être dans un cas autorisé (voir message précédent), la reprise de ce champ 
+   dans un calcul non-linéaire devrait bien se passer (correction automatique dans l'opérateur).
 """),
 
     24 : _("""
