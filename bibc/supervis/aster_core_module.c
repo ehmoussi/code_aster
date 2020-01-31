@@ -498,8 +498,8 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
        PyTuple_SetItem( tup_valr, i, PyFloat_FromDouble((double)valr[i]) ) ;
     }
 
-    args = Py_BuildValue("s#s#OOO", typmess, ltype, idmess, lidmess, tup_valk,
-                                    tup_vali, tup_valr, (int)*exc_typ);
+    args = Py_BuildValue("s#s#OOOi", typmess, ltype, idmess, lidmess, tup_valk,
+                                     tup_vali, tup_valr, (int)*exc_typ);
     kwargs = PyDict_New();
     pyfname = PyUnicode_FromStringAndSize(fname, lfn);
     iret = PyDict_SetItemString(kwargs, "files", pyfname);
