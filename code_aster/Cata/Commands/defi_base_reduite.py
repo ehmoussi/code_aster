@@ -48,6 +48,8 @@ DEFI_BASE_REDUITE=OPER(
                                SECTION   = SIMP(statut='o',typ=grno ,max=1)),
         TOLE_SVD         =SIMP(statut='f',typ='R',defaut=1.E-6),
         NB_MODE          =SIMP(statut='f',typ='I'),
+        SNAPSHOT         =SIMP(statut='f',typ='I',min=1,max='**',
+                               fr =tr("Numéros d'ordre dans RESULTAT à converser comme snapshot")),
         MODELE           =SIMP(statut='f',typ=modele_sdaster),
     ),
 
@@ -68,6 +70,8 @@ DEFI_BASE_REDUITE=OPER(
         NB_MODE          =SIMP(statut='f',typ='I'),
         MODELE           =SIMP(statut='f',typ=modele_sdaster),
         TABL_COOR_REDUIT =SIMP(statut='f',typ=table_sdaster),
+        SNAPSHOT         =SIMP(statut='f',typ='I',validators=NoRepeat(),min=1,max='**',
+                               fr =tr("Numéros d'ordre dans RESULTAT à converser comme snapshot")),
     ),
 
     b_type_rb       =BLOC(condition ="""(equal_to("OPERATION", 'GLOUTON'))""",

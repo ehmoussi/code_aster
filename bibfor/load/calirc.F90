@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,6 @@ implicit none
 #include "asterfort/getvr8.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
-#include "asterfort/checkModelOnElements.h"
 !
 character(len=*), intent(in) :: phenom_
 character(len=8), intent(in) :: load
@@ -80,7 +79,7 @@ character(len=8), intent(in) :: mesh
     integer :: ibid, nnomx, idmax, igeom
     integer :: iagno2, nbma1, nbno2, nbno2t
     integer :: nno1, i, lno
-    integer :: jconb, jconu, jcocf, idecal
+    integer :: jconb, jconu, jcocf, j2coco, idecal
     integer :: jconb1, jconu1, jcocf1, jcom11, ideca1
     integer :: jconb2, jconu2, jcocf2, jcom12, ideca2
     integer :: nbtyp, nddl2, nbma2, jlistk, jdim, ndim1
@@ -396,26 +395,11 @@ character(len=8), intent(in) :: mesh
 !
         endif
 !
-! ----- No COQUE_3D with MASSIF_COQUE
-!
-        if (typrac.eq.'MASSIF_COQUE') then
-            AS_ALLOCATE(vk16 = v_list_type, size = 2)
-            v_list_type(1) = 'MEC3TR7H'
-            v_list_type(2) = 'MEC3QU9H'
-            call checkModelOnElements(model,&
-                            nbma1, limanu1,&
-                            2, v_list_type,&
-                            nb_found)
-            if (nb_found .ne. 0) then
-                call utmess('F', 'CHARGES6_6')
-            endif
-            AS_DEALLOCATE(vk16 = v_list_type)
-        endif
-!
         call jeveuo(corres//'.PJEF_NB', 'L', jconb)
         call jeveuo(corres//'.PJEF_M1', 'L', vi=com1)
         call jeveuo(corres//'.PJEF_NU', 'L', jconu)
         call jeveuo(corres//'.PJEF_CF', 'L', jcocf)
+        call jeveuo(corres//'.PJEF_CO', 'L', j2coco)
 !
         if (typrac .eq. 'COQUE_MASSIF') then
             call jeveuo(corre1//'.PJEF_NB', 'L', jconb1)
@@ -517,7 +501,7 @@ character(len=8), intent(in) :: mesh
                         else if (typrac.eq.'MASSIF_COQUE') then
                             call jeveuo(mesh//'.COORDO    .VALE', 'L', jcoor)
                             call calir5(mesh, lisrel, nono2, nuno2, jcoor,&
-                                        idecal, jconb, jcocf, jconu)
+                                        idecal, jconb, jcocf, jconu, j2coco)
                         endif
 !
 !

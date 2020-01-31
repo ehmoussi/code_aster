@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -90,7 +90,7 @@ real(kind=8), pointer :: q(:)
     AS_ALLOCATE(vr = q, size = m * n)
 !
 ! - Save the [Q] matrix depend on which type of reduced base
-!    
+!
     if (base_type .eq. 'LINEIQUE') then
         call dbr_calcpod_ql(ds_empi, &
                             result , field_name , nb_equa,&
@@ -100,7 +100,10 @@ real(kind=8), pointer :: q(:)
         do i_snap = 1, nb_snap
             nume_inst = v_list_snap(i_snap)
             call rsexch(' '  , result, field_name, nume_inst, field_resu, iret)
-            ASSERT(iret .eq. 0)
+            ! Error if nume_inst does not exist in result
+            if (iret .ne. 0) then
+                call utmess('F','ROM2_11',sk = result)
+            endif
             call jeveuo(field_resu(1:19)//'.VALE', 'L', vr = v_field_resu)
             do i_equa = 1, nb_equa
                 q(i_equa + nb_equa*(i_snap - 1)) = v_field_resu(i_equa)
