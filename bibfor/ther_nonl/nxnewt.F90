@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -137,7 +137,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
     call ascova('D', varesi, bidon, 'INST', r8bid,&
                 typres, cnresi)
 !
-! - Dirichlet - BT LAMBDA 
+! - Dirichlet - BT LAMBDA
 !
     call vethbt(model, lload_name, lload_info, cara_elem, mate,&
                 temp_iter, vebtla, 'V')
@@ -233,10 +233,10 @@ type(NL_DS_Print), intent(inout) :: ds_print
     endif
 !
 ! - Solve linear system
-! 
+!
     if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'HROM') then
         call copisd('CHAMP_GD', 'V', temp_prev, chsol)
-        call romAlgoNLSystemSolve(matass, cn2mbr, ds_algorom, chsol)
+        call romAlgoNLSystemSolve(matass, cn2mbr, cnchci, ds_algorom, chsol)
     else if (ds_algorom%l_rom .and. ds_algorom%phase .eq. 'CORR_EF') then
         call romAlgoNLCorrEFMatrixModify(nume_dof, matass, ds_algorom)
         call romAlgoNLCorrEFResiduModify(cn2mbr, ds_algorom)
