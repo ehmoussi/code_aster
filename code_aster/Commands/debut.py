@@ -40,9 +40,9 @@ import libaster
 from ..Behaviours import catalc
 from ..Cata.Syntax import tr
 from ..Cata.SyntaxUtils import remove_none
-from ..Helpers import LogicalUnitFile, Serializer, loadObjects
+from ..Helpers import LogicalUnitFile
 from ..Messages import MessageLog
-from ..Supervis import CommandSyntax, ExecuteCommand
+from ..Supervis import CommandSyntax, ExecuteCommand, Serializer, loadObjects
 from ..Supervis.ctopy import checksd, print_header
 from ..Supervis.TestResult import testresu_print
 from ..Utilities import ExecutionParameter, Options, logger
