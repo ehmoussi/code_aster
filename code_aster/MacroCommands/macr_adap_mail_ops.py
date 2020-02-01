@@ -35,10 +35,9 @@ import aster
 from ..Cata.Syntax import _F
 from ..Commands import (DEFI_FICHIER, EXEC_LOGICIEL, IMPR_RESU, LIRE_CHAMP,
                         LIRE_MAILLAGE)
-from ..Helpers import Serializer
 from ..Helpers.UniteAster import UniteAster
-#
 from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
+from ..Supervis import Serializer
 from ..Utilities import ExecutionParameter, logger
 from .Utils import creation_donnees_homard
 

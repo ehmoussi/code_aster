@@ -224,6 +224,13 @@ Fermeture des bases jeveux afin de permettre la POURSUITE ultérieure du calcul.
 """), 'flags' : 'DECORATED',
            },
 
-    99 : _(u"""Une erreur s'est produite."""),
+    # Texte en majuscule car utilisé tel quel pour le diagnostic
+    98 : _("""
+
+    <S> ARRET PAR MANQUE DE TEMPS
+
+    """),
+
+    99 : _("""Une erreur s'est produite."""),
 
 }

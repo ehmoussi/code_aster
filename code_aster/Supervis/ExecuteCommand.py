@@ -68,13 +68,15 @@ from ..Cata import Commands
 from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
+from ..Messages import UTMESS
 from ..Objects import DataStructure, PyDataStructure
-from ..Supervis import CommandSyntax
 from ..Utilities import (ExecutionParameter, Options, deprecated,
                          import_object, logger, no_new_attributes)
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time,
                                  decorate_name)
+from .CommandSyntax import CommandSyntax
+from .Serializer import saveObjects
 
 
 class ExecuteCommand(object):
@@ -176,13 +178,21 @@ class ExecuteCommand(object):
             self.exec_(keywords)
         except libaster.AsterError as exc:
             self._exc = exc
-            raise
+            # try to push the result in the user context
+            valid = "VALID" in libaster.onFatalError()
+            if valid and hasattr(self._result, "userName"):
+                publish_in(self._caller["context"],
+                           {self._result.userName: self._result})
+            if not isinstance(self._exc, libaster.TimeLimitError):
+                raise
         finally:
-            try:
-                self.post_exec_(keywords)
-            finally:
-                self.print_result()
+            self.post_exec_(keywords)
         ExecuteCommand.level -= 1
+        # Interrupt execution in case of TimeLimitError
+        if isinstance(self._exc, libaster.TimeLimitError):
+            UTMESS("I", "SUPERVIS_98") # "<S>" in the message for diagnostic
+            saveObjects(level=3)
+            raise SystemExit(1)
         return self._result
 
     @property
@@ -355,8 +365,11 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self.add_references(keywords)
-        self.post_exec(keywords)
+        try:
+            self.add_references(keywords)
+            self.post_exec(keywords)
+        finally:
+            self.print_result()
 
     def post_exec(self, keywords):
         """Hook that allows to add post-treatments after the *exec* function.

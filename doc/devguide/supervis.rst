@@ -27,6 +27,11 @@ Detailed description
    :members:
    :special-members: __init__
 
+.. automodule:: code_aster.Supervis.Serializer
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
 .. automodule:: code_aster.Supervis.CommandSyntax
    :show-inheritance:
    :members:
@@ -48,11 +53,6 @@ Detailed description
 ..    :special-members: __init__
 
 .. automodule:: code_aster.Helpers.LogicalUnit
-   :show-inheritance:
-   :members:
-   :special-members: __init__
-
-.. automodule:: code_aster.Helpers.Serializer
    :show-inheritance:
    :members:
    :special-members: __init__
