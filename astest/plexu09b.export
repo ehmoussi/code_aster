@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm plexu09b.comm D 1
-F mail plexu09a.mail D 20
+F mail zzzz122a.mail D 20
