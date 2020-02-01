@@ -5,5 +5,7 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist ci verification sequential
 
+P expected_diag <S>_CPU_LIMIT
+
 F comm erreu09b.comm D 1
 F mmed erreu09b.mmed D 20
