@@ -24,6 +24,15 @@ fabs.debugPrint( 6 )
 arrabs = fabs.getValuesAsArray()
 test.assertTrue( np.alltrue( arrabs[:, 1] >= 0. ) )
 
+# Warning: xxMultiSteps01a_imp has not been imported in this session
+# so it is "replayed", a new 'fcos' object is created.
+from xxMultiSteps01a_imp import fcos as fcos2
+test.assertNotEqual(fcos.getName(), fcos2.getName())
+
+# 'form' was created during the first import, not now
+from xxMultiSteps01a_imp import form
+test.assertEqual(form(1.), 2.)
+
 test.printSummary()
 
 FIN()
