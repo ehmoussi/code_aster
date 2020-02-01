@@ -113,9 +113,9 @@ tpsnl = 7.
 print(("Decrease time limit from {0} to {1} s to force STAT_NON_LINE to "
       "interrupt.".format(tpmax, tpsnl)))
 params.set_option("tpmax", tpsnl)
-is_ok = 0
-try:
-  RESU=STAT_NON_LINE(
+
+# should raise TimeLimitError and exit(1)
+RESU = STAT_NON_LINE(
                      MODELE=MO,
                      CHAM_MATER=CHMAT,
                      EXCIT=_F(CHARGE=CHA,
@@ -136,25 +136,3 @@ try:
                               PREDICTION='ELASTIQUE',MATR_RIGI_SYME='OUI',
                               REAC_ITER=1,),
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
-except TimeLimitError as msg:
-   assert msg.id_message in ("MECANONLINE9_1", "MECANONLINE9_2"), msg.id_message
-   is_ok = 1
-
-print("Restore time limit to {0} s".format(tpmax))
-params.set_option("tpmax", tpmax)
-
-
-TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
-                       _F(PARA='BOOLEEN',LISTE_I=is_ok,),
-                      ),
-               )
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC_I=1,
-           VALE_REFE_I=1,
-           NOM_PARA='BOOLEEN',
-           TABLE=TAB1,
-           FILTRE=_F(NOM_PARA='TEST',
-                     VALE_K='VALEUR  ',),
-           )
-
-FIN();
