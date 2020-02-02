@@ -23,12 +23,12 @@
 # ----- PERTE DE COHESION DE 5% DANS LA MAILLE (M1) EN QUESTION. -------
 # ======================================================================
 
-from code_aster import ConvergenceError, NonLinearEvolutionContainer
+from code_aster import ConvergenceError
 from code_aster.Commands import *
-from code_aster.Commands.stat_non_line import NonLinearStaticAnalysis
 
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'),
+      ERREUR=_F(ERREUR_F='EXCEPTION'))
 
 MAILLAGE=LIRE_MAILLAGE(FORMAT='MED', );
 
@@ -146,9 +146,8 @@ DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =TEMPS ),
                                  SUBD_PAS      = 10,
                                  SUBD_PAS_MINI = 0.000001),)
 
-analysis = NonLinearStaticAnalysis()
 try:
-     U = analysis.run_(MODELE=MODELE,
+     U = STAT_NON_LINE(MODELE=MODELE,
                        CHAM_MATER=CHMAT,
                        EXCIT=(_F(CHARGE=CHAR_DR,  ),
                               _F(CHARGE=CHAR_GA,  ),
@@ -167,10 +166,7 @@ except ConvergenceError:
     print("""\nProbleme de convergence pour cause de localisation\n""")
     # ON RECUPERE LE DERNIER INSTANT PROPREMENT CALCULE DANS STAT_NON_LINE
     # POUR FAIRE UNE VERIFICATION EN NON-REGRESSION SUR CE NUMERO D'ORDRE
-    U = analysis.result
     last_iter = U.LIST_VARI_ACCES()['NUME_ORDRE'][-1]
-
-del analysis
 
 U=CALC_CHAMP(reuse=U,CRITERES=('INDL_ELGA'),RESULTAT=U,NUME_ORDRE=(19,last_iter))
 
