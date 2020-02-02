@@ -84,8 +84,6 @@ class ExecutionStarter(object):
         cls.params.testresu_print = testresu_print
         aster_core.register(cls.params, MessageLog)
         libaster.jeveux_init()
-        if cls.params.option & Options.Abort:
-            libaster.onFatalError('ABORT')
         cls._is_initialized = True
         return True
 

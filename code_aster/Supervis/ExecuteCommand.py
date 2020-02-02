@@ -187,7 +187,7 @@ class ExecuteCommand(object):
                 raise
         finally:
             self.post_exec_(keywords)
-        ExecuteCommand.level -= 1
+            ExecuteCommand.level -= 1
         # Interrupt execution in case of TimeLimitError
         if isinstance(self._exc, libaster.TimeLimitError):
             UTMESS("I", "SUPERVIS_98") # "<S>" in the message for diagnostic
