@@ -198,11 +198,13 @@ class ExecutionParameter(metaclass=Singleton):
         self._bool |= option
 
         # for options that required an action
-        if option == Options.Debug:
+        if option & Options.Debug:
             logger.setLevel(DEBUG)
-        elif option == Options.ShowDeprecated:
+        if option & Options.ShowDeprecated:
             # disabled by default in python2.7
             warnings.simplefilter('default')
+        if option & Options.Abort:
+            libaster.onFatalError("ABORT")
 
     def disable(self, option):
         """Disable a boolean option.
@@ -213,10 +215,12 @@ class ExecutionParameter(metaclass=Singleton):
         self._bool = (self._bool | option) ^ option
 
         # for options that required an action
-        if option == Options.Debug:
+        if option & Options.Debug:
             logger.setLevel(INFO)
-        elif option == Options.ShowDeprecated:
+        if option & Options.ShowDeprecated:
             warnings.resetwarnings()
+        if option & Options.Abort:
+            libaster.onFatalError("EXCEPTION")
 
     @property
     def option(self):
