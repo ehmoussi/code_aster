@@ -23,8 +23,7 @@
 
 All user's Commands are imported from this module.
 
-By default, an automatic implementation of all Commands are published here
-using their catalog definition.
+For details about the execution of the commands see :ref:`devguide-supervis`.
 
 """
 

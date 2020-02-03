@@ -166,7 +166,8 @@ except ConvergenceError:
     print("""\nProbleme de convergence pour cause de localisation\n""")
     # ON RECUPERE LE DERNIER INSTANT PROPREMENT CALCULE DANS STAT_NON_LINE
     # POUR FAIRE UNE VERIFICATION EN NON-REGRESSION SUR CE NUMERO D'ORDRE
-    last_iter = U.LIST_VARI_ACCES()['NUME_ORDRE'][-1]
+    last_iter = U.getRanks()[-1]
+
 
 U=CALC_CHAMP(reuse=U,CRITERES=('INDL_ELGA'),RESULTAT=U,NUME_ORDRE=(19,last_iter))
 
