@@ -104,6 +104,19 @@ class ExecuteCommand(object):
 
         - :meth:`.post_exec` that allows to execute additional code after
           the main function. Does nothing by default.
+
+    If a :attr:`libaster.AsterError` exception (or a derivated) is raised
+    during :meth:`exec_` the behaviour depends on the execution mode.
+
+    - In a standard study, the results are saved and the execution is
+      interrupted. The current result is available if it is validated by the
+      command and the study can be restarted.
+
+    - In the testcase mode (option ``--test`` used, see
+      :class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter` or
+      ``CODE`` in :func:`DEBUT`/:func:`POURSUITE`), the exception is raised
+      and can be catched in the commands file. The current result will be
+      available in the ``except`` statement if it is validated by the command.
     """
     # class attributes
     command_name = command_op = command_cata = None
@@ -174,6 +187,7 @@ class ExecuteCommand(object):
             self._result.userName = self.result_name
 
         self.print_syntax(keywords)
+        stop = False
         try:
             self.exec_(keywords)
         except libaster.AsterError as exc:
@@ -183,14 +197,20 @@ class ExecuteCommand(object):
             if valid and hasattr(self._result, "userName"):
                 publish_in(self._caller["context"],
                            {self._result.userName: self._result})
-            if not isinstance(self._exc, libaster.TimeLimitError):
+            stop = (isinstance(self._exc, libaster.TimeLimitError)
+                    or not ExecutionParameter().option & Options.TestMode)
+            if not stop:
                 raise
         finally:
             self.post_exec_(keywords)
             ExecuteCommand.level -= 1
         # Interrupt execution in case of TimeLimitError
-        if isinstance(self._exc, libaster.TimeLimitError):
-            UTMESS("I", "SUPERVIS_98") # "<S>" in the message for diagnostic
+        if stop:
+            # "<S>" in the message for diagnostic
+            if isinstance(self._exc, libaster.TimeLimitError):
+                UTMESS("I", "SUPERVIS_98")
+            else:
+                UTMESS("I", "SUPERVIS_95")
             saveObjects(level=3)
             raise SystemExit(1)
         return self._result
