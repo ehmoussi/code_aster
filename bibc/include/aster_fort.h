@@ -364,6 +364,9 @@ void DEFSSSSSSSPPPP(CACHVC,cachvc, const char*, STRING_SIZE, const char*, STRING
 void DEFSSPSS(FOCAIN,focain, const char*, STRING_SIZE, const char*, STRING_SIZE,
                              ASTERDOUBLE*, const char*, STRING_SIZE, const char*, STRING_SIZE);
 
+#define CALLO_CREATE_ENTHALPY(a, b) CALLOO(CREATE_ENTHALPY, create_enthalpy, a, b)
+void DEFSS(CREATE_ENTHALPY, create_enthalpy, const char*, STRING_SIZE, const char*, STRING_SIZE);
+
 /* routines d'accès aux OBJETS JEVEUX (vecteurs, collections, champs) */
 #define CALL_GETCON(nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob) \
     CALLSPPPPPPS(GETCON,getcon,nomsd,iob,ishf,ilng,ctype,lcon,iaddr,nomob)
@@ -458,18 +461,21 @@ extern void DEFSS(UTMESS_CWRAP, utmess_cwrap, char *, STRING_SIZE, char *, STRIN
 
 /* particulier car on fixe les longueurs des chaines valk */
 #define VALK_SIZE 128
-extern void DEFSSPSPPPPS(UTMESS_CORE, utmess_core, char *, STRING_SIZE, char *, STRING_SIZE,
-                         ASTERINTEGER *, char *, STRING_SIZE, ASTERINTEGER *,
-                         ASTERINTEGER *, ASTERINTEGER *, ASTERDOUBLE *,
-                         char *, STRING_SIZE);
+extern void DEFSSPSPPPPPS(UTMESS_CORE, utmess_core,
+                          char *, STRING_SIZE, char *, STRING_SIZE,
+                          ASTERINTEGER *, char *, STRING_SIZE, ASTERINTEGER *,
+                          ASTERINTEGER *, ASTERINTEGER *, ASTERDOUBLE *,
+                          ASTERINTEGER *, char *, STRING_SIZE);
 #ifdef _STRLEN_AT_END
-#define CALL_UTMESS_CORE(cod, idmess, nk, valk, ni, vali, nr, valr, fname) \
-    F_FUNC(UTMESS_CORE, utmess_core)(cod, idmess, nk, valk, ni, vali, nr, valr, fname, \
-                                     strlen(cod), strlen(idmess), VALK_SIZE, strlen(fname))
+#define CALL_UTMESS_CORE(cod, idmess, nk, valk, ni, vali, nr, valr, nexcep, fname) \
+    F_FUNC(UTMESS_CORE, utmess_core)(cod, idmess, nk, valk, ni, vali, nr, valr, \
+                                     nexcep, fname, strlen(cod), strlen(idmess), \
+                                     VALK_SIZE, strlen(fname))
 #else
-#define CALL_UTMESS_CORE(cod, idmess, nk, valk, ni, vali, nr, valr, fname) \
+#define CALL_UTMESS_CORE(cod, idmess, nk, valk, ni, vali, nr, valr, nexcep, fname) \
     F_FUNC(UTMESS_CORE, utmess_core)(cod, strlen(cod), idmess, strlen(idmess), nk, \
-                                     valk, VALK_SIZE, ni, vali, nr, valr, fname, strlen(fname))
+                                     valk, VALK_SIZE, ni, vali, nr, valr,
+                                     nexcep, fname, strlen(fname))
 #endif
 
 

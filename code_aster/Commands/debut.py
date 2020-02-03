@@ -33,16 +33,15 @@ passed during the initialization to the
 :py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter`.
 """
 
-import aster
 import aster_core
 import libaster
 
 from ..Behaviours import catalc
 from ..Cata.Syntax import tr
 from ..Cata.SyntaxUtils import remove_none
-from ..Helpers import LogicalUnitFile, Serializer, loadObjects
-from ..Messages import MessageLog
-from ..Supervis import CommandSyntax, ExecuteCommand
+from ..Helpers import LogicalUnitFile
+from ..Messages import UTMESS, MessageLog
+from ..Supervis import CommandSyntax, ExecuteCommand, Serializer, loadObjects
 from ..Supervis.ctopy import checksd, print_header
 from ..Supervis.TestResult import testresu_print
 from ..Utilities import ExecutionParameter, Options, logger
@@ -84,8 +83,6 @@ class ExecutionStarter(object):
         cls.params.testresu_print = testresu_print
         aster_core.register(cls.params, MessageLog)
         libaster.jeveux_init()
-        if cls.params.option & Options.Abort:
-            libaster.onFatalError('ABORT')
         cls._is_initialized = True
         return True
 
@@ -131,6 +128,37 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        iwarn = False
+        stop_with = "EXCEPTION"
+        if keywords.get('CODE'):
+            ExecutionParameter().enable(Options.TestMode)
+            stop_with = "ABORT"
+            iwarn = True
+
+        erreur = keywords.get('ERREUR')
+        if erreur:
+            if erreur.get('ERREUR_F'):
+                stop_with = keywords['ERREUR']['ERREUR_F']
+        libaster.onFatalError(stop_with)
+
+        debug = keywords.get('DEBUG')
+        if debug:
+            jxveri = debug.get('JXVERI', 'NON') == 'OUI'
+            ExecutionParameter().set_option("jxveri", int(jxveri))
+            if jxveri:
+                UTMESS("I", "SUPERVIS_23")
+            sdveri = debug.get('SDVERI', 'NON') == 'OUI'
+            ExecutionParameter().set_option("sdveri", int(sdveri))
+            if sdveri:
+                UTMESS("I", "SUPERVIS_24")
+            dbgjeveux = debug.get('JEVEUX', 'NON') == 'OUI'
+            ExecutionParameter().set_option("dbgjeveux", int(dbgjeveux))
+            if dbgjeveux:
+                UTMESS("I", "SUPERVIS_12")
+            iwarn = iwarn or jxveri or sdveri or dbgjeveux
+        if iwarn:
+            UTMESS('I', 'SUPERVIS_22')
+
         if keywords.get('IMPR_MACRO') == 'OUI':
             ExecutionParameter().enable(Options.ShowChildCmd)
 
@@ -184,6 +212,8 @@ def init(*argv, **kwargs):
     """Initialize code_aster as `DEBUT`/`POURSUITE` command does + command
     line options.
 
+    .. note:: :func:`init` automatically enables the ``--test`` option.
+
     Arguments:
         argv (list): List of command line arguments.
         kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'
@@ -192,6 +222,7 @@ def init(*argv, **kwargs):
     if not ExecutionStarter.init(argv):
         return
 
+    ExecutionParameter().enable(Options.TestMode)
     if kwargs.get('debug'):
         ExecutionParameter().enable(Options.Debug)
     kwargs.pop('debug', None)

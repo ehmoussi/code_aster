@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,6 @@ subroutine debut()
 #include "asterfort/getvtx.h"
 #include "asterfort/ibbase.h"
 #include "asterfort/ibcata.h"
-#include "asterfort/ibcode.h"
 #include "asterfort/ibdbgs.h"
 #include "asterfort/ibfhdf.h"
 #include "asterfort/ibtcpu.h"
@@ -40,9 +39,9 @@ subroutine debut()
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
     character(len=8) :: k8b, repons
-    character(len=16) :: nomcmd, k16b, cmpdef, cmput, cmpout
+    character(len=16) :: nomcmd, k16b
     character(len=80) :: fichdf
-    integer :: ier, lout, n, ncode
+    integer :: ier, n
     integer :: ipass=0
 !
     if (ipass .ne. 0) then
@@ -51,22 +50,6 @@ subroutine debut()
     ipass = 1
 !
     fichdf=' '
-!
-!   ERREUR / ERREUR_F : mot-cle CODE present ?
-    call ibcode(ncode)
-    if (ncode .ne. 0) then
-        cmpdef = 'ABORT'
-    else
-        call prhead(3)
-        cmpdef = 'EXCEPTION'
-!       fermeture du .code (ouvert par ib0mai)
-        call ulopen(-15, ' ', ' ', ' ', ' ')
-    endif
-    call getvtx('ERREUR', 'ERREUR_F', iocc=1, scal=cmput, nbret=n)
-    if (n .eq. 1) then
-        cmpdef = cmput
-    endif
-    call onerrf(cmpdef, cmpout, lout)
 !
 ! --- LECTURE DU MOT CLE FACTEUR DEBUG OU DE GESTION MEMOIRE DEMANDE
     call ibdbgs()

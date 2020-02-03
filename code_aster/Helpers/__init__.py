@@ -25,4 +25,3 @@ This module gives objects to manage the execution.
 
 from .LogicalUnit import (Action, FileAccess, FileType, LogicalUnitFile,
                           ReservedUnitUsed)
-from .Serializer import Serializer, loadObjects, saveObjects

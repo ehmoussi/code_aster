@@ -11,8 +11,8 @@ Introduction
 The documentation is written in `reStructuredText`_ using the
 `Sphinx Documentation Generator <http://www.sphinx-doc.org>`_.
 
-The theme is based on `Python Docs Sphinx Theme
-<https://github.com/codeaster/python-docs-theme>`_ with a few modifications.
+The theme is based on `Read The Docs Sphinx Theme
+<https://readthedocs.org/>`_ with a few modifications.
 
 See the Sphinx Documentation for details.
 
@@ -97,13 +97,13 @@ Link to functions
 Use the same pattern to add a link to a function.
 Remember to use the full/native *path* to generate the hyperlink::
 
-    :py:func:`~code_aster.Helpers.Serializer.saveObjects`
+    :py:func:`~code_aster.Supervis.Serializer.saveObjects`
 
 and not::
 
     :py:func:`code_aster.saveObjects`
 
-even if :py:func:`~code_aster.Helpers.Serializer.saveObjects` is imported
+even if :py:func:`~code_aster.Supervis.Serializer.saveObjects` is imported
 at the toplevel of the package.
 
 

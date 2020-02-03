@@ -29,3 +29,4 @@ from .exceptions_ext import (AsterError, ContactError, ConvergenceError,
                              IntegrationError, SolverError, TimeLimitError)
 from .ExecuteCommand import (CO, ExecuteCommand, ExecuteCommandOps,
                              ExecuteMacro, UserMacro)
+from .Serializer import Serializer, loadObjects, saveObjects
