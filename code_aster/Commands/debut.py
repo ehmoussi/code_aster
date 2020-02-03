@@ -212,6 +212,8 @@ def init(*argv, **kwargs):
     """Initialize code_aster as `DEBUT`/`POURSUITE` command does + command
     line options.
 
+    .. note:: :func:`init` automatically enables the ``--test`` option.
+
     Arguments:
         argv (list): List of command line arguments.
         kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'
@@ -220,6 +222,7 @@ def init(*argv, **kwargs):
     if not ExecutionStarter.init(argv):
         return
 
+    ExecutionParameter().enable(Options.TestMode)
     if kwargs.get('debug'):
         ExecutionParameter().enable(Options.Debug)
     kwargs.pop('debug', None)
