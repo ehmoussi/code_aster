@@ -28,14 +28,13 @@ memory manager (*Jeveux*).
 The objects existing in the context where :py:func:`~code_aster.Commands.FIN`
 is called are pickled while their *Jeveux* content is saved in ``glob.*``
 databases.
-A call to the function :py:func:`~code_aster.Helpers.Serializer.saveObjects`
+A call to the function :py:func:`~code_aster.Supervis.Serializer.saveObjects`
 is equivalent.
 """
 
 import libaster
 
-from ..Helpers import saveObjects
-from ..Supervis import ExecuteCommand
+from ..Supervis import ExecuteCommand, saveObjects
 from ..Utilities import ExecutionParameter, logger
 
 

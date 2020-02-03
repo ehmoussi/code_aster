@@ -34,6 +34,7 @@ class Options(object):
     UseLegacyMode = 0x0010
     ShowDeprecated = 0x0020
     ShowChildCmd = 0x0040
+    TestMode = 0x0080
 
     @classmethod
     def by_name(cls, name):

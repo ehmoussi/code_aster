@@ -66,7 +66,7 @@ Appels récursifs de messages d'erreur ou d'alarme.
 """),
 
     70: _("""
-  Validation du concept '%(k1)s' (accessible si la commande est réentrante).
+  Validation du concept '%(k1)s'.
 """),
 
     87: _("""

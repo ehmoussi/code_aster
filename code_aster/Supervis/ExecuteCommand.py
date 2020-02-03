@@ -68,13 +68,15 @@ from ..Cata import Commands
 from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
+from ..Messages import UTMESS
 from ..Objects import DataStructure, PyDataStructure
-from ..Supervis import CommandSyntax
 from ..Utilities import (ExecutionParameter, Options, deprecated,
                          import_object, logger, no_new_attributes)
 from ..Utilities.outputs import (command_header, command_result,
                                  command_separator, command_text, command_time,
                                  decorate_name)
+from .CommandSyntax import CommandSyntax
+from .Serializer import saveObjects
 
 
 class ExecuteCommand(object):
@@ -102,6 +104,19 @@ class ExecuteCommand(object):
 
         - :meth:`.post_exec` that allows to execute additional code after
           the main function. Does nothing by default.
+
+    If a :attr:`libaster.AsterError` exception (or a derivated) is raised
+    during :meth:`exec_` the behaviour depends on the execution mode.
+
+    - In a standard study, the results are saved and the execution is
+      interrupted. The current result is available if it is validated by the
+      command and the study can be restarted.
+
+    - In the testcase mode (option ``--test`` used, see
+      :class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter` or
+      ``CODE`` in :func:`DEBUT`/:func:`POURSUITE`), the exception is raised
+      and can be catched in the commands file. The current result will be
+      available in the ``except`` statement if it is validated by the command.
     """
     # class attributes
     command_name = command_op = command_cata = None
@@ -172,17 +187,32 @@ class ExecuteCommand(object):
             self._result.userName = self.result_name
 
         self.print_syntax(keywords)
+        stop = False
         try:
             self.exec_(keywords)
         except libaster.AsterError as exc:
             self._exc = exc
-            raise
+            # try to push the result in the user context
+            valid = "VALID" in libaster.onFatalError()
+            if valid and hasattr(self._result, "userName"):
+                publish_in(self._caller["context"],
+                           {self._result.userName: self._result})
+            stop = (isinstance(self._exc, libaster.TimeLimitError)
+                    or not ExecutionParameter().option & Options.TestMode)
+            if not stop:
+                raise
         finally:
-            try:
-                self.post_exec_(keywords)
-            finally:
-                self.print_result()
-        ExecuteCommand.level -= 1
+            self.post_exec_(keywords)
+            ExecuteCommand.level -= 1
+        # Interrupt execution in case of TimeLimitError
+        if stop:
+            # "<S>" in the message for diagnostic
+            if isinstance(self._exc, libaster.TimeLimitError):
+                UTMESS("I", "SUPERVIS_98")
+            else:
+                UTMESS("I", "SUPERVIS_95")
+            saveObjects(level=3)
+            raise SystemExit(1)
         return self._result
 
     @property
@@ -355,8 +385,11 @@ class ExecuteCommand(object):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self.add_references(keywords)
-        self.post_exec(keywords)
+        try:
+            self.add_references(keywords)
+            self.post_exec(keywords)
+        finally:
+            self.print_result()
 
     def post_exec(self, keywords):
         """Hook that allows to add post-treatments after the *exec* function.

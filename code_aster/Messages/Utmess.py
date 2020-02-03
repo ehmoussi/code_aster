@@ -44,8 +44,17 @@ contacter_assistance = _("""
 Il y a probablement une erreur dans la programmation.
 Veuillez contacter votre assistance technique.""")
 
-# voir en fin de fin les faux appels à UTMESS pour la vérification des messages
+# Exceptions ids - keep consistency with astercxx.h/asterf.h
+EXCNUM = {
+    1: ("AsterError", libaster.AsterError),
+    2: ("ConvergenceError", libaster.ConvergenceError),
+    3: ("IntegrationError", libaster.IntegrationError),
+    4: ("SolverError", libaster.SolverError),
+    5: ("ContactError", libaster.ContactError),
+    6: ("TimeLimitError", libaster.TimeLimitError),
+}
 
+# voir en fin de fin les faux appels à UTMESS pour la vérification des messages
 
 def list_unit(code):
     """Retourne la liste des noms de fichiers (logiques) sur lesquels doit
@@ -286,7 +295,7 @@ Exception : %s
         # type d'exception
         if exc_typ:
             if isinstance(exc_typ, int):
-                exc_args = (None, RuntimeError)
+                exc_args = EXCNUM.get(exc_typ, (None, RuntimeError))
             else:
                 # exc_typ is an Exception
                 exc_args = exc_typ.__class__.__name__, exc_typ
