@@ -33,7 +33,6 @@ passed during the initialization to the
 :py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter`.
 """
 
-import aster
 import aster_core
 import libaster
 
@@ -41,7 +40,7 @@ from ..Behaviours import catalc
 from ..Cata.Syntax import tr
 from ..Cata.SyntaxUtils import remove_none
 from ..Helpers import LogicalUnitFile
-from ..Messages import MessageLog
+from ..Messages import UTMESS, MessageLog
 from ..Supervis import CommandSyntax, ExecuteCommand, Serializer, loadObjects
 from ..Supervis.ctopy import checksd, print_header
 from ..Supervis.TestResult import testresu_print
@@ -129,6 +128,37 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        iwarn = False
+        stop_with = "EXCEPTION"
+        if keywords.get('CODE'):
+            ExecutionParameter().enable(Options.TestMode)
+            stop_with = "ABORT"
+            iwarn = True
+
+        erreur = keywords.get('ERREUR')
+        if erreur:
+            if erreur.get('ERREUR_F'):
+                stop_with = keywords['ERREUR']['ERREUR_F']
+        libaster.onFatalError(stop_with)
+
+        debug = keywords.get('DEBUG')
+        if debug:
+            jxveri = debug.get('JXVERI', 'NON') == 'OUI'
+            ExecutionParameter().set_option("jxveri", int(jxveri))
+            if jxveri:
+                UTMESS("I", "SUPERVIS_23")
+            sdveri = debug.get('SDVERI', 'NON') == 'OUI'
+            ExecutionParameter().set_option("sdveri", int(sdveri))
+            if sdveri:
+                UTMESS("I", "SUPERVIS_24")
+            dbgjeveux = debug.get('JEVEUX', 'NON') == 'OUI'
+            ExecutionParameter().set_option("dbgjeveux", int(dbgjeveux))
+            if dbgjeveux:
+                UTMESS("I", "SUPERVIS_12")
+            iwarn = iwarn or jxveri or sdveri or dbgjeveux
+        if iwarn:
+            UTMESS('I', 'SUPERVIS_22')
+
         if keywords.get('IMPR_MACRO') == 'OUI':
             ExecutionParameter().enable(Options.ShowChildCmd)
 
