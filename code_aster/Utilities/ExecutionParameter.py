@@ -95,7 +95,6 @@ class ExecutionParameter(metaclass=Singleton):
         self._args['dbgjeveux'] = 0
         self._args['jxveri'] = 0
         self._args['sdveri'] = 0
-        self._args['icode'] = 0
         self._args['jeveux_sysaddr'] = 0
 
         self._args['memory'] = 0.
@@ -253,6 +252,9 @@ class ExecutionParameter(metaclass=Singleton):
             action='store_const', const=1, default=0,
             help="abort execution in case of error (testcase mode, by default "
                  "raise an exception)")
+        parser.add_argument('--test', dest='TestMode',
+            action='store_const', const=1, default=0,
+            help="set execution in testcase mode")
 
         parser.add_argument('--dbgjeveux',
             action='store_const', const=1, default=0,
@@ -267,9 +269,6 @@ class ExecutionParameter(metaclass=Singleton):
         parser.add_argument('--impr_macro', dest='ShowChildCmd',
             action='store_const', const=1, default=0,
             help="show syntax of commands called by macro-commands")
-        parser.add_argument('--icode',
-            action='store_const', const=1, default=0,
-            help="turn on running mode for testcase")
 
         parser.add_argument('--memory',
             action=MemoryAction, type=float, default=DEFAULT_MEMORY_LIMIT,

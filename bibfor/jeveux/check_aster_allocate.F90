@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,9 +43,9 @@ use allocate_module
     if (abs(cuvtrav) > r8prem()) then
         call utmess('A', 'DVP_6', sr=cuvtrav*lois/1.e6)
         if (icode < 0) then
-            icode = jdcget('icode')
+            icode = jdcget('TestMode')
         endif
-        if (icode == 1) then
+        if (icode .ne. 0) then
             ASSERT(abs(cuvtrav) < r8prem())
         endif
         call deallocate_all_slvec()
