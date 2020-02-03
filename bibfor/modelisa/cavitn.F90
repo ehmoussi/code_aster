@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ subroutine cavitn(char, ligrmo, noma, fonree)
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterfort/alcart.h"
+#include "asterfort/assert.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/jedema.h"
@@ -30,9 +31,10 @@ subroutine cavitn(char, ligrmo, noma, fonree)
 #include "asterfort/nocart.h"
 #include "asterfort/reliem.h"
 #include "asterfort/utmess.h"
-    character(len=4) :: fonree
-    character(len=8) :: char, noma
-    character(len=*) :: ligrmo
+!
+character(len=4) :: fonree
+character(len=8) :: char, noma
+character(len=*) :: ligrmo
 !
 ! BUT : STOCKAGE DE LA VITESSE NORMALE DANS UNE CARTE ALLOUEE SUR LE
 !       LIGREL DU MODELE
@@ -59,11 +61,11 @@ subroutine cavitn(char, ligrmo, noma, fonree)
     carte =char//'.CHME.VNOR'
 !
     if (fonree .eq. 'REEL') then
-        call alcart('G', carte, noma, 'SOUR_R')
+        call alcart('G', carte, noma, 'VNOR_R')
     else if (fonree.eq.'FONC') then
-        call alcart('G', carte, noma, 'SOUR_F')
+        call alcart('G', carte, noma, 'VNOR_F')
     else
-        call utmess('F', 'MODELISA2_37', sk=fonree)
+        ASSERT(ASTER_FALSE)
     endif
 !
     call jeveuo(carte//'.NCMP', 'E', vk8=ncmp)
@@ -87,7 +89,7 @@ subroutine cavitn(char, ligrmo, noma, fonree)
 !
 ! --- STOCKAGE DANS LA CARTE
 !
-    do 10 iocc = 1, nvnor
+    do iocc = 1, nvnor
 !
         if (fonree .eq. 'REEL') then
             call getvr8(motclf, 'VNOR', iocc=iocc, scal=zr(jvalv), nbret=n)
@@ -97,13 +99,13 @@ subroutine cavitn(char, ligrmo, noma, fonree)
 !
         call reliem(ligrmo, noma, 'NU_MAILLE', motclf, iocc,&
                     2, motcle, typmcl, mesmai, nbma)
-        if (nbma .eq. 0) goto 10
+        if (nbma .eq. 0) cycle
         call jeveuo(mesmai, 'L', jma)
         call nocart(carte, 3, 1, mode='NUM', nma=nbma,&
                     limanu=zi(jma))
         call jedetr(mesmai)
 !
-10  end do
+     end do
 !
     call jedema()
 end subroutine
