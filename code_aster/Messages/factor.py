@@ -37,10 +37,10 @@ La valeur par défaut est 8. Au pire il peut monter jusqu'à 11. Avec une valeur
 l'algorithme de détection de singularité.
 
 Avec cette valeur particulière, certains problèmes de mise en données (degré de liberté mal bloqué, condition limite redondante...)
-ne seront alors pas détectés. Vous risquer donc de résoudre un problème différent de celui escompté.
+ne seront alors pas détectés. Vous risquez donc de résoudre un problème différent de celui escompté.
 
-D'autre part, certains algorithmes peuvent alors produire des résultats incorrects si il n'existe pas d'autres garde-fous
-algorithmiques ou si ceux-ci sont débranchés. Parmi ces garde-fous il y'a, par exemple, les paramètres:
+D'autre part, certains algorithmes peuvent alors produire des résultats incorrects s'il n'existe pas d'autres garde-fous
+algorithmiques ou si ceux-ci sont débranchés. Parmi ces garde-fous il y a, par exemple, les paramètres:
     * RESI_RELA du bloc SOLVEUR si METHODE='MUMPS'(pour tous les opérateurs),
     * RESI_GLOB_RELA du bloc CONVERGENCE (pour les opérateurs STAT/DYNA_NON_LINE)...
 Conseils:
