@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine lisexp(list_load)
+subroutine loadExcludedForAnalysis(list_load)
 !
 implicit none
 !
@@ -33,7 +33,7 @@ character(len=19), intent(in) :: list_load
 !
 ! List of loads - Utility
 !
-! Exclude some loads with PILOTAGE
+! Exclude loads for analysis operator
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,11 +41,9 @@ character(len=19), intent(in) :: list_load
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_excl_load = 6
+    integer, parameter :: nb_excl_load = 1
     character(len=6), parameter :: ligr_excl_char(nb_excl_load) = (/&
-         '.ROTAT', '.FL1  ',&
-         '.FELEC', '.EPSIN',&
-         '.ONDPL', '.SIINT'/)
+         '.VNOR '/)
     character(len=24) :: lload_name, lload_info
     integer, pointer :: v_load_info(:) => null()
     character(len=24), pointer :: v_load_name(:) => null()
@@ -69,15 +67,13 @@ character(len=19), intent(in) :: list_load
     do i_load = 1, nb_load
         load_name = v_load_name(i_load)(1:8)
         load_nume = v_load_info(nb_load+i_load+1)
-        if (load_nume .eq. 5) then
-            do i_excl_load = 1, nb_excl_load
-                lchin = load_name(1:8)//'.CHME.LIGRE'//ligr_excl_char(i_excl_load)//'.DESC'
-                call jeexin(lchin, iret)
-                if (iret .ne. 0) then
-                    call utmess('F', 'CHARGES_26', sk=load_name)
-                endif
-            enddo
-        endif
+        do i_excl_load = 1, nb_excl_load
+            lchin = load_name(1:8)//'.CHME'//ligr_excl_char(i_excl_load)//'.DESC'
+            call jeexin(lchin, iret)
+            if (iret .ne. 0) then
+                call utmess('F', 'CHARGES_58', sk=load_name)
+            endif
+        enddo
     end do
 !
 end subroutine
