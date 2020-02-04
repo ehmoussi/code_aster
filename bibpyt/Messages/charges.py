@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -159,4 +159,5 @@ La charge %(k1)s dépend de la vitesse: elle doit être suiveuse.
 La charge %(k1)s dépend de la vitesse: elle ne peut être utilisable qu'en dynamique.
 """),
 
+    58 : _("""La charge %(k1)s utilise un type de chargement impossible dans cet opérateur."""),
 }

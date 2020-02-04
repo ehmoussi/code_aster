@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,12 +60,12 @@ integer, intent(out) :: i_neum_lapl
 ! --------------------------------------------------------------------------------------------------
 !
     integer, parameter :: nb_lapl_maxi = 99
-    integer, parameter :: nb_type_neum = 18
+    integer, parameter :: nb_type_neum = 19
     character(len=6), parameter :: ligr_name(nb_type_neum) = (/'.FORNO','.F3D3D','.F2D3D','.F1D3D',&
                                                                '.F2D2D','.F1D2D','.F1D1D','.PESAN',&
                                                                '.ROTAT','.PRESS','.FELEC','.FCO3D',&
                                                                '.FCO2D','.EPSIN','.FLUX ','.VEASS',&
-                                                               '.ONDPL','.SIINT'/)
+                                                               '.ONDPL','.SIINT','.VNOR '/)
     integer :: i_type_neum, iret, iret_cable_cine, infc, i_lapl
     character(len=5) :: suffix, para_inst, para_vite
     character(len=24) :: info_type, lchin
