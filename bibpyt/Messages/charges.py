@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -166,5 +166,6 @@ Vous essayez d'appliquer un déplacement selon DZ à une modélisation qui n'est
 Conseil: Vérifié vos conditions aux limites.
 """),
 
+    58 : _("""La charge %(k1)s utilise un type de chargement impossible dans cet opérateur."""),
 
 }

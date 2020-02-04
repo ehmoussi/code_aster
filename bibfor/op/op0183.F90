@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,13 +64,13 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/comp_info.h"
     integer :: ibid
-    integer :: i, iachar, iad, ichar
+    integer :: i, iad
     integer :: iordr, iret, iret2, j
-    integer :: jfo, jinfc
+    integer :: jfo
     integer :: jordr, ifm, niv
-    integer :: lonch, lvafon, n0, n2, nbchar
+    integer :: lonch, lvafon, n0, n2
     integer :: nbddl, nbordr, nc, nh, np
-    integer :: ii, ltps, ltps2
+    integer :: ltps, ltps2
     real(kind=8) :: time, prec, partps(3)
 !
     character(len=2) :: codret
@@ -79,8 +79,8 @@ implicit none
     character(len=8) :: kiord
     character(len=16) :: option, type, oper, k16bid
     character(len=16) :: compex
-    character(len=19) :: resuco, knum, infcha, ligrel, resuc1, chdep2
-    character(len=24) :: modele, mater, carac, charge, infoch, chamno
+    character(len=19) :: resuco, knum, ligrel, resuc1, chdep2, list_load
+    character(len=24) :: modele, mater, carac, chamno
     character(len=24) :: nume, vfono, vafono, sigma, chdepl, k24bid
     character(len=24) :: vreno, compor, chvive, chacve, raide
     character(len=24) :: bidon, chvarc
@@ -95,7 +95,6 @@ implicit none
     real(kind=8), pointer :: noch(:) => null()
 !
 !     ------------------------------------------------------------------
-    data infcha/'&&INFCHA.INFCHA'/
     data k24bid/' '/
     data chvarc/'&&OP0183.CHVARC'/
 !     ------------------------------------------------------------------
@@ -110,6 +109,8 @@ implicit none
     call onerrf('EXCEPTION+VALID', k16bid, ibid)
 !
     call infmue()
+!
+    list_load = '&&OP0183.LIST_LOAD'
 !
 ! --- OPTIONS A CALCULER
 !
@@ -152,7 +153,6 @@ implicit none
     l_implex = .false.
     exitim=.true.
     carac=' '
-    charge=' '
     mater=' '
     call rscrsd('G', resuc1, type, nbordr)
     call getvid(' ', 'MODELE', scal=modele, nbret=n0)
@@ -166,14 +166,6 @@ implicit none
     endif
     carac=' '
     call getvid(' ', 'CARA_ELEM', scal=carac, nbret=n0)
-!
-! INFO. RELATIVE AUX CHARGES
-    charge=infcha//'.LCHA'
-    infoch=infcha//'.INFC'
-    call jeexin(infoch, iret)
-    ASSERT(iret.eq.0)
-    nbchar=0
-    ichar=1
 !
 !
 !
@@ -195,26 +187,26 @@ implicit none
     do i = 1, nbordr
         call jemarq()
         iordr=zi(jordr+i-1)
-        charge=infcha//'.LCHA'
-        infoch=infcha//'.INFC'
-        call jeexin(infoch, iret)
-        if (iret .ne. 0) then
-            call jeveuo(infoch, 'L', jinfc)
-            nbchar=zi(jinfc)
-            if (nbchar .ne. 0) then
-                call jeveuo(charge, 'L', iachar)
-                call jedetr('&&'//nompro//'.L_CHARGE')
-                call wkvect('&&'//nompro//'.L_CHARGE', 'V V K8', nbchar, ichar)
-                do ii = 1, nbchar
-                    zk8(ichar-1+ii)=zk24(iachar-1+ii)(1:8)
-                end do
-            else
-                ichar=1
-            endif
-        else
-            nbchar=0
-            ichar=1
-        endif
+        !charge=infcha//'.LCHA'
+        !infoch=infcha//'.INFC'
+        !call jeexin(infoch, iret)
+        !if (iret .ne. 0) then
+        !    call jeveuo(infoch, 'L', jinfc)
+        !    nbchar=zi(jinfc)
+        !    if (nbchar .ne. 0) then
+        !        call jeveuo(charge, 'L', iachar)
+        !        call jedetr('&&'//nompro//'.L_CHARGE')
+        !        call wkvect('&&'//nompro//'.L_CHARGE', 'V V K8', nbchar, ichar)
+        !        do ii = 1, nbchar
+        !            zk8(ichar-1+ii)=zk24(iachar-1+ii)(1:8)
+        !        end do
+        !    else
+        !        ichar=1
+        !    endif
+        !else
+        !    nbchar=0
+        !    ichar=1
+        !endif
 !
 !
 !
@@ -334,7 +326,7 @@ implicit none
         end do
 !
         call rsnoch(resuc1, 'DEPL', iordr)
-        call nmdome(modele, mater, carac, infcha, resuc1(1:8),&
+        call nmdome(modele, mater, carac, list_load, resuc1(1:8),&
                     iordr)
 !
         call detrsd('CHAMP_GD', '&&'//nompro//'.SIEF')
