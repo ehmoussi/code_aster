@@ -36,7 +36,7 @@ DEFI_BASE_REDUITE=OPER(
     OPERATION = SIMP(statut='f',typ='TXM',defaut="POD",into=("POD","POD_INCR",'GLOUTON','TRONCATURE',"ORTHO")),
 
     b_pod  = BLOC(condition ="""(equal_to("OPERATION", 'POD'))""",
-        RESULTAT         =SIMP(statut='o',typ=resultat_sdaster),
+        RESULTAT         =SIMP(statut='o',typ=(evol_ther,evol_noli)),
         b_thermique      =BLOC(condition = """is_type("RESULTAT") == evol_ther""",
                                NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('TEMP','FLUX_NOEU')),
                           ),
@@ -55,7 +55,7 @@ DEFI_BASE_REDUITE=OPER(
     ),
 
     b_incr = BLOC(condition ="""(equal_to("OPERATION", 'POD_INCR'))""",
-        RESULTAT         =SIMP(statut='o',typ=resultat_sdaster),
+        RESULTAT         =SIMP(statut='o',typ=(evol_ther,evol_noli)),
         b_thermique      =BLOC(condition = """is_type("RESULTAT") == evol_ther""",
                                NOM_CHAM  = SIMP(statut='o',typ='TXM',max=1,into=('TEMP','FLUX_NOEU')),
                           ),
