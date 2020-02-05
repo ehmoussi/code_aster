@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ subroutine te0039(option, nomte)
     real(kind=8) :: sim(12), sip(12), fono(12), varmo(8), varpl(8)
     real(kind=8) :: forref, momref
 !
-    integer :: lorien, lmater, in
+    integer :: lorien, lmater, ii
     integer :: i, ivectu, icontg, neq, nc, nno,ndim
     integer :: iplouf, infodi, itype, ibid
     integer :: igeom, ideplm, ideplp, icompo, nbt, jdc, irep, ifono, ilogic
@@ -68,26 +68,24 @@ subroutine te0039(option, nomte)
     parameter (zero=0.0d0)
 !     ------------------------------------------------------------------
     infodi = 1
-
-
-!   ON VERIFIE QUE LES CARACTERISTIQUES ONT ETE AFFECTEES
-!   LE CODE DU DISCRET
+!   on verifie que les caracteristiques ont ete affectees
+!   le code du discret
     call infdis('CODE', ibid, r8bid, nomte)
-!   LE CODE STOKE DANS LA CARTE
+!   le code stoke dans la carte
     call infdis('TYDI', infodi, r8bid, k8bid)
     if (infodi .ne. ibid) then
         call utmess('F+', 'DISCRETS_25', sk=nomte)
         call infdis('DUMP', ibid, r8bid, 'F+')
     endif
-!   DISCRET DE TYPE RAIDEUR
+!   discret de type raideur
     call infdis('DISK', infodi, r8bid, k8bid)
     if (infodi .eq. 0) then
         call utmess('A+', 'DISCRETS_27', sk=nomte)
         call infdis('DUMP', ibid, r8bid, 'A+')
     endif
-!   MATRICE DE RAIDEUR SYMETRIQUE OU PAS, POUR LES DISCRETS
+!   matrice de raideur symetrique ou pas, pour les discrets
     call infdis('SYMK', infodi, r8bid, k8bid)
-!   RECUPERE LES INFORMATIONS SUR LES ELEMENTS
+!   recupere les informations sur les elements
     call infted(nomte, infodi, nbt, nno, nc,&
                 ndim, itype)
     neq = nno*nc
@@ -98,34 +96,34 @@ subroutine te0039(option, nomte)
         if (lteatt('MODELI','DTR')) then
             call terefe('EFFORT_REFE', 'MECA_DISCRET', forref)
             call terefe('MOMENT_REFE', 'MECA_DISCRET', momref)
-            do  in = 1, nno
+            do  ii = 1, nno
                 do i = 1, 3
-                    zr(ivectu+(in-1)*nc+i-1)=forref
+                    zr(ivectu+(ii-1)*nc+i-1)=forref
                 enddo
                 do i = 4, nc
-                    zr(ivectu+(in-1)*nc+i-1)=momref
+                    zr(ivectu+(ii-1)*nc+i-1)=momref
                 enddo
             enddo
         else if (lteatt('MODELI','2DT')) then
             call terefe('EFFORT_REFE', 'MECA_DISCRET', forref)
-            do  in = 1, nno
-                zr(ivectu+(in-1)*nc)=forref
-                zr(ivectu+(in-1)*nc+1)=forref
+            do  ii = 1, nno
+                zr(ivectu+(ii-1)*nc)=forref
+                zr(ivectu+(ii-1)*nc+1)=forref
             enddo
         else if (lteatt('MODELI','2TR')) then
             call terefe('EFFORT_REFE', 'MECA_DISCRET', forref)
             call terefe('MOMENT_REFE', 'MECA_DISCRET', momref)
-            do in = 1, nno
-                zr(ivectu+(in-1)*nc)=forref
-                zr(ivectu+(in-1)*nc+1)=forref
-                zr(ivectu+(in-1)*nc+2)=momref
+            do ii = 1, nno
+                zr(ivectu+(ii-1)*nc)=forref
+                zr(ivectu+(ii-1)*nc+1)=forref
+                zr(ivectu+(ii-1)*nc+2)=momref
             enddo
         else if (lteatt('MODELI','DIT')) then
             call terefe('EFFORT_REFE', 'MECA_DISCRET', forref)
-            do in = 1, nno
-                zr(ivectu+(in-1)*nc)=forref
-                zr(ivectu+(in-1)*nc+1)=forref
-                zr(ivectu+(in-1)*nc+2)=forref
+            do ii = 1, nno
+                zr(ivectu+(ii-1)*nc)=forref
+                zr(ivectu+(ii-1)*nc+1)=forref
+                zr(ivectu+(ii-1)*nc+2)=forref
             enddo
         else
             kmess(1) = option
@@ -148,10 +146,10 @@ subroutine te0039(option, nomte)
 !                 UGM = DEPLACEMENT PRECEDENT
 !                 DUG = INCREMENT DE DEPLACEMENT
 !                 UGP = DEPLACEMENT COURANT
-            do 300 i = 1, neq
+            do i = 1, neq
                 dug(i) = zr(ideplp+i-1)
                 ugp(i) = zr(ideplm+i-1) + dug(i)
-300          continue
+            enddo
 !           DEPLACEMENTS DANS LE REPERE LOCAL
 !              ULM = DEPLACEMENT PRECEDENT    = PLG * UGM
 !              DUL = INCREMENT DE DEPLACEMENT = PLG * DUG
@@ -163,7 +161,7 @@ subroutine te0039(option, nomte)
                 call ut2vgl(nno, nc, pgl, dug, dul)
                 call ut2vgl(nno, nc, pgl, ugp, ulp)
             endif
-!           SEUL LE CAS SYMETRIQUE EST TRAITE
+!           seul le cas symetrique est traite
             call infdis('SYMK', iplouf, r8bid, k8bid)
             if (iplouf .ne. 1) then
                 kmess(1) = option
@@ -186,10 +184,10 @@ subroutine te0039(option, nomte)
                 call r8inir(12, zero, dve, 1)
 !              RELATION DE COMPORTEMENT DE CHOC : FORCES NODALES
                 call jevech('PVECTUR', 'E', ifono)
-                do 501 i = 1, neq
+                do  i = 1, neq
                     zr(ifono+i-1) = 0.d0
                     sim(i) = 0.d0
-501              continue
+                enddo
 !
                 ilogic = 0
                 plouf = 0.d0
@@ -205,27 +203,27 @@ subroutine te0039(option, nomte)
                 call disief(nbt, neq, nno, nc, pgl,&
                             klv, ulp, sim, ilogic, duly,&
                             sip, zr(ifono), force, ndim)
-                do 601 i = 1, neq
+                do i = 1, neq
                     zr(ifono+i-1) = zr(ifono+i-1)-fono(i)
-601              continue
+                enddo
                 if (nno .eq. 2) then
-                    do 602 i = 1, nc
+                    do i = 1, nc
                         zr(ifono+i-1) = 0.d0
-602                  continue
+                    enddo
                 endif
             endif
         endif
-    elseif (option .eq. 'FORC_NODA') then
+    else if (option .eq. 'FORC_NODA') then
         call jevech('PCONTMR', 'L', icontg)
         call jevech('PVECTUR', 'E', ivectu)
         if (nno .eq. 1) then
-            do in = 1, neq
-                fs(in) = zr(icontg+in-1)
+            do ii = 1, neq
+                fs(ii) = zr(icontg+ii-1)
             enddo
         else
-            do  in = 1, nc
-                fs(in) = -zr(icontg+in-1)
-                fs(in+nc) = zr(icontg+in+nc-1)
+            do  ii = 1, nc
+                fs(ii) = -zr(icontg+ii-1)
+                fs(ii+nc) = zr(icontg+ii+nc-1)
             enddo
         endif
         call jevech('PCAORIE', 'L', lorien)
@@ -239,5 +237,5 @@ subroutine te0039(option, nomte)
     else
         ASSERT(.false.)
     endif
-! --- ------------------------------------------------------------------
+!
 end subroutine

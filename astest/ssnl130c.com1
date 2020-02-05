@@ -1,0 +1,149 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+# CAS_TEST__:SSNL130C
+#
+
+def Pression(t,x,y,z):
+   Pressy = 5.0*(y-2.0)**2
+   if ( t <= 1.0 ): return Pressy*t
+   return Pressy
+
+def Deplacer(t,x,y,z):
+   if ( t<= 1.0): return 0.0
+   return (t-1.0)*0.5E-02
+
+
+POURSUITE(CODE='OUI',FORMAT_HDF='OUI')
+
+PRESS = FORMULE(VALE='Pression(INST,X,Y,Z)',
+                Pression=Pression,
+                NOM_PARA=['INST', 'X', 'Y', 'Z'],)
+DEPLA = FORMULE(VALE='Deplacer(INST,X,Y,Z)',
+                Deplacer=Deplacer,
+                NOM_PARA=['INST', 'X', 'Y', 'Z'],)
+
+Aresu=STAT_NON_LINE(
+   MODELE=model,
+   CHAM_MATER=mater,
+   CARA_ELEM=carelem,SOLVEUR=_F(NPREC=9),
+   EXCIT=_F(CHARGE=CHARGE,),
+   COMPORTEMENT=(
+      _F(RELATION='ELAS',        DEFORMATION='PETIT', TOUT='OUI'),
+      _F(RELATION='DIS_CONTACT', DEFORMATION='PETIT', GROUP_MA='RESSORT'),
+   ),
+   NEWTON=(_F(REAC_INCR=1,MATRICE='TANGENTE',REAC_ITER=1,),),
+   CONVERGENCE= _F(ITER_GLOB_MAXI=60,),
+   INCREMENT=_F(LIST_INST=ll, INST_FIN=2.0,),
+);
+
+
+TEST_RESU(RESU=(_F(GROUP_NO='PT01',
+                   INST=1.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=Aresu,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-3.533438598779059E-03,
+                   VALE_REFE=-3.5329087048832273E-3,
+                   CRITERE='RELATIF',
+                   PRECISION= 4.0E-4,
+                   ),
+                _F(GROUP_NO='PT02',
+                   INST=1.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=Aresu,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC=-3.533438585676486E-03,
+                   VALE_REFE=-3.5329087048832273E-3,
+                   CRITERE='RELATIF',
+                   PRECISION= 4.0E-4,
+                   ),
+                _F(GROUP_NO='PT03',
+                   INST=1.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=Aresu,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC= 1.1420473532326226E-03,
+                   VALE_REFE= 1.1497631879797486E-03,
+                   CRITERE='RELATIF',
+                   PRECISION= 7.2E-3,
+                   ),
+                _F(GROUP_NO='PT04',
+                   INST=1.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=Aresu,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC= 1.1420473663352082E-03,
+                   VALE_REFE= 1.1497631879797486E-03,
+                   CRITERE='RELATIF',
+                   PRECISION= 7.2E-3,
+                   ),
+                _F(GROUP_NO='PT01',
+                   INST=2.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=Aresu,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC= 1.4665614575437593E-03,
+                   VALE_REFE= 1.4670912951167728E-03,
+                   CRITERE='RELATIF',
+                   PRECISION= 4.0E-4,
+                   ),
+                _F(GROUP_NO='PT02',
+                   INST=2.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=Aresu,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC= 1.466561457543759E-03,
+                   VALE_REFE= 1.4670912951167728E-03,
+                   CRITERE='RELATIF',
+                   PRECISION= 4.0E-4,
+                   ),
+                _F(GROUP_NO='PT03',
+                   INST=2.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=Aresu,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC= 6.1420472321994345E-03,
+                   VALE_REFE= 6.149763187979749E-03,
+                   CRITERE='RELATIF',
+                   PRECISION= 7.0E-3,
+                   ),
+                _F(GROUP_NO='PT04',
+                   INST=2.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=Aresu,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   VALE_CALC= 6.142047232199437E-03,
+                   VALE_REFE= 6.149763187979749E-03,
+                   CRITERE='RELATIF',
+                   PRECISION= 7.0E-3,
+                   ),
+                ),
+          )
+
+FIN();

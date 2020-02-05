@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,14 @@
 ! --------------------------------------------------------------------
 
 subroutine te0047(optioz, nomtez)
+!
     implicit none
+    character(len=*) :: optioz, nomtez
+!
 #include "jeveux.h"
 #include "asterfort/diarm0.h"
 #include "asterfort/dibili.h"
+#include "asterfort/dis_contact_frot.h"
 #include "asterfort/dicho0.h"
 #include "asterfort/dicora.h"
 #include "asterfort/diecci.h"
@@ -40,14 +44,11 @@ subroutine te0047(optioz, nomtez)
 #include "asterfort/utpvgl.h"
 #include "blas/dcopy.h"
 !
-    character(len=16) :: option, nomte
-    character(len=*) :: optioz, nomtez
-!
-! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 !         COMPORTEMENT LINEAIRE ET NON-LINEAIRE POUR LES DISCRETS
 !
+! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 ! elements concernes
@@ -75,11 +76,12 @@ subroutine te0047(optioz, nomtez)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=16) :: option, nomte
     real(kind=8) :: ang(3), pgl(3, 3)
     real(kind=8) :: ugm(12), dug(12), ulm(12), dul(12)
     real(kind=8) :: r8bid
 !
-    integer :: nbt, nno, nc, neq, igeom, ideplm, ideplp, icompo
+    integer :: nbt, nno, nc, neq, ideplm, ideplp, icompo
     integer :: ii, ndim, jcret, itype, lorien
     integer :: iadzi, iazk24, ibid, infodi, iret
 !
@@ -116,17 +118,15 @@ subroutine te0047(optioz, nomtez)
 !       nc    = nombre de composante par noeud
 !       ndim  = dimension de l'élément
 !       itype = type de l'élément
-    call infted(nomte, infodi, nbt, nno, nc,&
-                ndim, itype)
+    call infted(nomte, infodi, nbt, nno, nc, ndim, itype)
     neq = nno*nc
 !   récupération des adresses jeveux
-    call jevech('PGEOMER', 'L', igeom)
     call jevech('PDEPLMR', 'L', ideplm)
     call jevech('PDEPLPR', 'L', ideplp)
 !   récupération des infos concernant les comportements :
 !       zk16(icompo)      NOM_DU_COMPORTEMENT
 !       zk16(icompo+1)    nbvar = read (zk16(icompo+1),'(i16)')
-!       zk16(icompo+2)    petit   PETIT_REAC  GROT_GDEP
+!       zk16(icompo+2)    PETIT   PETIT_REAC  GROT_GDEP
 !       zk16(icompo+3)    COMP_ELAS   COMP_INCR
     call jevech('PCOMPOR', 'L', icompo)
     if (zk16(icompo+2) .ne. 'PETIT') then
@@ -176,7 +176,7 @@ subroutine te0047(optioz, nomtez)
         dug(ii) = zr(ideplp+ii-1)
     enddo
 !
-!   matrice mgl de passage repère global -> repère local
+!   matrice pgl de passage repère global -> repère local
     call matrot(ang, pgl)
 !   déplacements dans le repère local :
 !       ulm = déplacement précédent    = pgl * ugm
@@ -192,44 +192,37 @@ subroutine te0047(optioz, nomtez)
     iret = 0
     if (zk16(icompo) .eq. 'ELAS') then
 !       comportement élastique
-        call dielas(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+        call dielas(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'DIS_VISC') then
 !       comportement DIS_ZENER
-        call dizeng(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+        call dizeng(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'DIS_ECRO_TRAC') then
 !       comportement ISOTROPE
-        call diisotrope(option, nomte, ndim, nbt, nno,&
-                        nc, ulm, dul, pgl, iret)
+        call diisotrope(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo)(1:10).eq.'DIS_GOUJ2E') then
 !       comportement DIS_GOUJON : application : gouj2ech
-        call digou2(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+        call digou2(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'ARME') then
 !       comportement armement
-        call diarm0(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+        call diarm0(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'ASSE_CORN') then
 !       comportement CORNIÈRE
-        call dicora(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+        call dicora(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'DIS_GRICRA') then
 !       comportement DIS_GRICRA : liaison grille-crayon combu
-        call digric(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+        call digric(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'DIS_CHOC') then
-!       comportement choc
-        call dicho0(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+!       comportement choc sans frottement de coulomb et sans amortissement
+        call dicho0(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
+    else if (zk16(icompo).eq.'DIS_CONTACT') then
+!       comportement choc avec frottement de coulomb avec amortissement
+        call dis_contact_frot(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'DIS_ECRO_CINE') then
 !       comportement DIS_ECRO_CINE : DISCRET_NON_LINE
-        call diecci(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+        call diecci(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'DIS_BILI_ELAS') then
 !       comportement DIS_BILI_ELAS : DISCRET_NON_LINE
-        call dibili(option, nomte, ndim, nbt, nno,&
-                    nc, ulm, dul, pgl, iret)
+        call dibili(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
     else
 !       si on passe par ici c'est qu'aucun comportement n'est valide
         messak(1) = nomte

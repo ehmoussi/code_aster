@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,23 +30,16 @@ MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",)
 #
 # DESCRIPTION DES PAS DE CALCUL ET D ARCHIVAGE
 #---------------------------------------------
-L_INST=DEFI_LIST_REEL(  DEBUT=0.,
-                         INTERVALLE=_F(  JUSQU_A = 0.5,  PAS = 0.001))
-
-L_INST2=DEFI_LIST_REEL(  DEBUT=0.,
-                         INTERVALLE=_F(  JUSQU_A = 0.5,  PAS = 0.001))
-
-LISTIMP=DEFI_LIST_REEL(  DEBUT=0.001,
-               INTERVALLE=_F(  JUSQU_A = 0.5,   PAS = 0.001))
-
+L_INST =DEFI_LIST_REEL( DEBUT=0.0,   INTERVALLE=_F(JUSQU_A = 0.5, PAS = 0.001))
+L_INST2=DEFI_LIST_REEL( DEBUT=0.0,   INTERVALLE=_F(JUSQU_A = 0.5, PAS = 0.001))
+LISTIMP=DEFI_LIST_REEL( DEBUT=0.001, INTERVALLE=_F(JUSQU_A = 0.5, PAS = 0.001))
 #
 # DESCRIPTION DE L'ACCELEROGRAMME
 #--------------------------------
 OMEGAA=2.*pi*10.
 
-ACCE1 = FORMULE(VALE='sin(OMEGAA*INST) ',
-                OMEGAA=OMEGAA,
-                NOM_PARA='INST',)
+ACCE1 = FORMULE(VALE='sin(OMEGAA*INST) ', OMEGAA=OMEGAA, NOM_PARA='INST',)
+
 ACCELER1=CALC_FONC_INTERP( FONCTION=ACCE1,  LIST_PARA=L_INST,
                            NOM_PARA = 'INST',
                            PROL_DROITE='LINEAIRE',
@@ -57,19 +50,20 @@ ACCELER1=CALC_FONC_INTERP( FONCTION=ACCE1,  LIST_PARA=L_INST,
 # MATERIAU
 #
 MAT_CHO=DEFI_MATERIAU(
-              DIS_CONTACT=_F(  RIGI_NOR = 5.76E7,
-                            DIST_1 = 0.4495,  JEU = 0.45) #J=5D-4
-                        )
+    DIS_CONTACT=_F(  RIGI_NOR = 5.76E7, DIST_1 = 0.4495,  JEU = 0.4500) #J=5D-4
+)
 
 MATBID=DEFI_MATERIAU(
-              ELAS=_F(  E = 1.E10,  NU = 0.3,  RHO = 0.)
-                        )
+    ELAS=_F(  E = 1.E10,  NU = 0.3,  RHO = 0.)
+)
 
 #
-CH_MAT=AFFE_MATERIAU(  MAILLAGE=MAILLAGE,AFFE=(
-             _F(  GROUP_MA = 'RESSORT1',  MATER = MATBID),
-             _F(  GROUP_MA = 'MASSES1',   MATER = MAT_CHO))
-                     )
+CH_MAT=AFFE_MATERIAU(  MAILLAGE=MAILLAGE,
+    AFFE=(
+        _F(  GROUP_MA = 'RESSORT1',  MATER = MATBID),
+        _F(  GROUP_MA = 'MASSES1',   MATER = MAT_CHO),
+    )
+)
 
 
 #
@@ -80,167 +74,191 @@ CH_MAT=AFFE_MATERIAU(  MAILLAGE=MAILLAGE,AFFE=(
 #
 # MODELISATION
 #
-MODELE=AFFE_MODELE(  MAILLAGE=MAILLAGE,AFFE=(
-              _F(  PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_T',
-                     GROUP_MA = 'RESSORT1'),
-                   _F(  PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_T',
-                     GROUP_MA = 'MASSES1'))
-                    )
+MODELE=AFFE_MODELE(MAILLAGE=MAILLAGE,
+    AFFE=(
+        _F(PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_T', GROUP_MA = 'RESSORT1'),
+        _F(PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_T', GROUP_MA = 'MASSES1'),
+    ),
+)
 
-CON_LIM=AFFE_CHAR_MECA(  MODELE=MODELE,DDL_IMPO=(
-               _F(  NOEUD = 'NO1',   DX = 0.,  DY = 0.,  DZ = 0.),
-               _F(  GROUP_NO = ( 'MASSES1', ), DY = 0.,  DZ = 0.))
-                       )
+CON_LIM=AFFE_CHAR_MECA(MODELE=MODELE,
+    DDL_IMPO=(
+        _F(  NOEUD = 'NO1',   DX = 0.,  DY = 0.,  DZ = 0.),
+        _F(  GROUP_NO = ( 'MASSES1', ), DY = 0.,  DZ = 0.))
+)
 
 #
-CARA_ELE=AFFE_CARA_ELEM(  MODELE=MODELE,
-                          DISCRET=( _F(  CARA = 'K_T_D_L',  REPERE = 'GLOBAL',
-                                         GROUP_MA = 'RESSORT1',
-                                         VALE = (98696.,  0.,  0., )),
-                                _F(  CARA = 'M_T_L',  REPERE = 'GLOBAL', GROUP_MA = 'RESSORT1',
-                                        VALE = (0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                        0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,)),
-                                    _F(  CARA = 'M_T_D_N',  GROUP_MA = 'MASSES1',
-                                         VALE = 25.))
-                         )
+CARA_ELE=AFFE_CARA_ELEM(
+    MODELE=MODELE,
+    DISCRET=(
+        _F(CARA = 'K_T_D_L', REPERE='GLOBAL', GROUP_MA = 'RESSORT1', VALE = (98696., 0., 0.,)),
+        _F(CARA = 'M_T_L',   REPERE='GLOBAL', GROUP_MA = 'RESSORT1',
+           VALE = (0.,0.,0.,0.,0.,0.,0.,0.,0.,0., 0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),
+        _F(CARA = 'M_T_D_N',  GROUP_MA = 'MASSES1', VALE = 25.),
+    ),
+    ORIENTATION=_F(GROUP_MA='MASSES1', CARA='VECT_X_Y', VALE=(-1.0,0.0,0.0, 0.0,1.0,0.0),)
+)
 
 
-CHAM_NO=AFFE_CHAR_MECA(  MODELE=MODELE,
-                PESANTEUR=_F(GRAVITE= 1.,
-                           DIRECTION=( -1., 0., 0.,),)
-                        )
+CHAM_NO=AFFE_CHAR_MECA(
+    MODELE=MODELE,
+    PESANTEUR=_F(GRAVITE=1.0, DIRECTION=(-1.0, 0.0, 0.0,),)
+)
 
 # CALCUL DIRECT
 # -------------
 #
-TRAN_DY=DYNA_NON_LINE(  MODELE=MODELE,
-                CHAM_MATER=CH_MAT,   CARA_ELEM=CARA_ELE,
-                MASS_DIAG='NON',
-               EXCIT=(_F(  CHARGE = CON_LIM),
-                      _F(  CHARGE = CHAM_NO,
-                            FONC_MULT= ACCELER1 )),
-               COMPORTEMENT=(
-               _F(  RELATION = 'ELAS',
-                           GROUP_MA = 'RESSORT1'),
-               _F(  RELATION = 'DIS_CHOC',
-                           GROUP_MA = 'MASSES1')),
-               SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENT',
-                               FORMULATION='ACCELERATION',
-                               STOP_CFL='NON',),
-               NEWTON=_F(  REAC_ITER = 1),
-               SOLVEUR=_F(  METHODE = 'LDLT', ),
-               INCREMENT=_F(  LIST_INST = L_INST),
-               ARCHIVAGE=_F(  LIST_INST = L_INST2),
-                      )
+TRAN_DY1=DYNA_NON_LINE(
+    MODELE=MODELE,
+    CHAM_MATER=CH_MAT,   CARA_ELEM=CARA_ELE,
+    MASS_DIAG='NON',
+    EXCIT=(
+        _F(  CHARGE = CON_LIM),
+        _F(  CHARGE = CHAM_NO, FONC_MULT= ACCELER1 )),
+    COMPORTEMENT=(
+        _F(  RELATION = 'ELAS', GROUP_MA = 'RESSORT1'),
+        _F(  RELATION = 'DIS_CHOC', GROUP_MA = 'MASSES1')),
+    SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENT',
+                    FORMULATION='ACCELERATION',
+                    STOP_CFL='NON',),
+    NEWTON=_F(  REAC_ITER = 1),
+    SOLVEUR=_F(  METHODE = 'LDLT', ),
+    INCREMENT=_F(  LIST_INST = L_INST),
+    ARCHIVAGE=_F(  LIST_INST = L_INST2),
+)
 
 
-NOA_DXDR = RECU_FONCTION( NOEUD= 'NO2',  NOM_CMP='DX' ,
-                     NOM_CHAM='DEPL',
-                     LIST_INST=LISTIMP,
-                     PROL_DROITE=  'LINEAIRE',
-                     PROL_GAUCHE= 'LINEAIRE',
-                     RESULTAT=  TRAN_DY  );
-NOA_DXVR = RECU_FONCTION( NOEUD= 'NO2' , NOM_CMP='DX' ,
-                     NOM_CHAM='VITE',
-                     LIST_INST=LISTIMP,
-                     PROL_DROITE=  'LINEAIRE',
-                     PROL_GAUCHE= 'LINEAIRE',
-                     RESULTAT= TRAN_DY   );
-NOA_DXAR = RECU_FONCTION( NOEUD= 'NO2',  NOM_CMP='DX' ,
-                     NOM_CHAM='ACCE',
-                     LIST_INST=LISTIMP,
-                     PROL_DROITE=  'LINEAIRE',
-                     PROL_GAUCHE= 'LINEAIRE',
-                     RESULTAT=  TRAN_DY  );
+NOA_DXDR = RECU_FONCTION(
+    NOEUD= 'NO2',  NOM_CMP='DX' , NOM_CHAM='DEPL', LIST_INST=LISTIMP,
+    PROL_DROITE=  'LINEAIRE', PROL_GAUCHE= 'LINEAIRE', RESULTAT=  TRAN_DY1  );
+NOA_DXVR = RECU_FONCTION(
+    NOEUD= 'NO2' , NOM_CMP='DX' , NOM_CHAM='VITE', LIST_INST=LISTIMP,
+    PROL_DROITE=  'LINEAIRE', PROL_GAUCHE= 'LINEAIRE', RESULTAT= TRAN_DY1   );
+NOA_DXAR = RECU_FONCTION(
+    NOEUD= 'NO2',  NOM_CMP='DX' , NOM_CHAM='ACCE', LIST_INST=LISTIMP,
+    PROL_DROITE=  'LINEAIRE', PROL_GAUCHE= 'LINEAIRE', RESULTAT=  TRAN_DY1  );
 
 
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=-1.565203E-4,
-                         VALE_PARA=0.1,
-                         FONCTION=NOA_DXDR,
-                         ),
-                      _F(VALE_CALC=-5.148320E-4,
-                         VALE_PARA=0.2,
-                         FONCTION=NOA_DXDR,
-                         ),
-                      _F(VALE_CALC=2.812914E-4,
-                         VALE_PARA=0.3,
-                         FONCTION=NOA_DXDR,
-                         ),
-                      _F(VALE_CALC=-4.493425E-4,
-                         VALE_PARA=0.4,
-                         FONCTION=NOA_DXDR,
-                         ),
-                      _F(VALE_CALC=-3.757078E-4,
-                         VALE_PARA=0.5,
-                         FONCTION=NOA_DXDR,
-                         ),
-                      ),
-              )
+TEST_FONCTION(
+    VALEUR=(
+        _F(VALE_CALC=-1.565203E-4, VALE_PARA=0.1, FONCTION=NOA_DXDR, ),
+        _F(VALE_CALC=-5.148320E-4, VALE_PARA=0.2, FONCTION=NOA_DXDR, ),
+        _F(VALE_CALC= 2.812914E-4, VALE_PARA=0.3, FONCTION=NOA_DXDR, ),
+        _F(VALE_CALC=-4.493425E-4, VALE_PARA=0.4, FONCTION=NOA_DXDR, ),
+        _F(VALE_CALC=-3.757078E-4, VALE_PARA=0.5, FONCTION=NOA_DXDR, ),
+    ),
+)
 
 # CALCUL DIRECT AVEC DISSIPATION NUMERIQUE
 # ----------------------------------------
-TRAN_DYT=DYNA_NON_LINE(  MODELE=MODELE,
-                CHAM_MATER=CH_MAT,   CARA_ELEM=CARA_ELE,
-                MASS_DIAG='NON',
-               EXCIT=(_F(  CHARGE = CON_LIM),
-                      _F(  CHARGE = CHAM_NO,
-                            FONC_MULT= ACCELER1 )),
-               COMPORTEMENT=(
-               _F(  RELATION = 'ELAS',
-                           GROUP_MA = 'RESSORT1'),
-               _F(  RELATION = 'DIS_CHOC',
-                           GROUP_MA = 'MASSES1')),
-               NEWTON=_F(  REAC_ITER = 1),
-               SCHEMA_TEMPS=_F(SCHEMA='TCHAMWA',
-                               FORMULATION='ACCELERATION',
-                               PHI=1.05,STOP_CFL='NON',),
-               SOLVEUR=_F(  METHODE = 'LDLT', ),
-               INCREMENT=_F(  LIST_INST = L_INST),
-               ARCHIVAGE=_F(  LIST_INST = L_INST2),
-                      )
+TRAN_DY2=DYNA_NON_LINE(
+    MODELE=MODELE,
+    CHAM_MATER=CH_MAT,   CARA_ELEM=CARA_ELE,
+    MASS_DIAG='NON',
+    EXCIT=(
+        _F(  CHARGE = CON_LIM),
+        _F(  CHARGE = CHAM_NO, FONC_MULT= ACCELER1 )),
+    COMPORTEMENT=(
+        _F(  RELATION = 'ELAS', GROUP_MA = 'RESSORT1'),
+        _F(  RELATION = 'DIS_CHOC', GROUP_MA = 'MASSES1')),
+    NEWTON=_F(  REAC_ITER = 1),
+    SCHEMA_TEMPS=_F(SCHEMA='TCHAMWA',
+                    FORMULATION='ACCELERATION',
+                    PHI=1.05,STOP_CFL='NON',),
+    SOLVEUR=_F(  METHODE = 'LDLT', ),
+    INCREMENT=_F(  LIST_INST = L_INST),
+    ARCHIVAGE=_F(  LIST_INST = L_INST2),
+)
 
 
-NOADXDRT = RECU_FONCTION( NOEUD= 'NO2',  NOM_CMP='DX' ,
-                     NOM_CHAM='DEPL',
-                     LIST_INST=LISTIMP,
-                     PROL_DROITE=  'LINEAIRE',
-                     PROL_GAUCHE= 'LINEAIRE',
-                     RESULTAT=  TRAN_DYT  );
-NOADXVRT = RECU_FONCTION( NOEUD= 'NO2' , NOM_CMP='DX' ,
-                     NOM_CHAM='VITE',
-                     LIST_INST=LISTIMP,
-                     PROL_DROITE=  'LINEAIRE',
-                     PROL_GAUCHE= 'LINEAIRE',
-                     RESULTAT= TRAN_DYT   );
-NOADXART = RECU_FONCTION( NOEUD= 'NO2',  NOM_CMP='DX' ,
-                     NOM_CHAM='ACCE',
-                     LIST_INST=LISTIMP,
-                     PROL_DROITE=  'LINEAIRE',
-                     PROL_GAUCHE= 'LINEAIRE',
-                     RESULTAT=  TRAN_DYT  );
+NOADXDRT = RECU_FONCTION(
+    NOEUD= 'NO2',  NOM_CMP='DX' , NOM_CHAM='DEPL', LIST_INST=LISTIMP,
+    PROL_DROITE=  'LINEAIRE', PROL_GAUCHE= 'LINEAIRE', RESULTAT=  TRAN_DY2  );
+NOADXVRT = RECU_FONCTION(
+    NOEUD= 'NO2' , NOM_CMP='DX' , NOM_CHAM='VITE', LIST_INST=LISTIMP,
+    PROL_DROITE=  'LINEAIRE', PROL_GAUCHE= 'LINEAIRE', RESULTAT= TRAN_DY2   );
+NOADXART = RECU_FONCTION(
+    NOEUD= 'NO2',  NOM_CMP='DX' , NOM_CHAM='ACCE', LIST_INST=LISTIMP,
+    PROL_DROITE=  'LINEAIRE', PROL_GAUCHE= 'LINEAIRE', RESULTAT=  TRAN_DY2  );
 
 
-TEST_FONCTION(VALEUR=(_F(VALE_CALC=-1.569111E-4,
-                         VALE_PARA=0.1,
-                         FONCTION=NOADXDRT,
-                         ),
-                      _F(VALE_CALC=-4.945058E-4,
-                         VALE_PARA=0.2,
-                         FONCTION=NOADXDRT,
-                         ),
-                      _F(VALE_CALC=3.026381E-4,
-                         VALE_PARA=0.3,
-                         FONCTION=NOADXDRT,
-                         ),
-                      _F(VALE_CALC=-3.805100E-4,
-                         VALE_PARA=0.4,
-                         FONCTION=NOADXDRT,
-                         ),
-                      _F(VALE_CALC=-3.922959E-4,
-                         VALE_PARA=0.5,
-                         FONCTION=NOADXDRT,
-                         ),
-                      ),
-              )
+TEST_FONCTION(
+    VALEUR=(
+        _F(VALE_CALC=-1.569111E-4, VALE_PARA=0.1, FONCTION=NOADXDRT, ),
+        _F(VALE_CALC=-4.945058E-4, VALE_PARA=0.2, FONCTION=NOADXDRT, ),
+        _F(VALE_CALC= 3.026381E-4, VALE_PARA=0.3, FONCTION=NOADXDRT, ),
+        _F(VALE_CALC=-3.805100E-4, VALE_PARA=0.4, FONCTION=NOADXDRT, ),
+        _F(VALE_CALC=-3.922959E-4, VALE_PARA=0.5, FONCTION=NOADXDRT, ),
+    ),
+)
 
+"""
+# --------------------------------------------------------------------------------------------------
+#
+# Les sorties pour la documentation
+#
+# --------------------------------------------------------------------------------------------------
+repout = "/tmp/runtest_astout/"
+#
+for calc in [1,2]:
+    if ( calc == 1 ):
+        TABDEPL1=CREA_TABLE(RESU=_F(RESULTAT=TRAN_DY1,GROUP_MA='RESSORT1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+        TABVITE1=CREA_TABLE(RESU=_F(RESULTAT=TRAN_DY1,GROUP_MA='RESSORT1',NOM_CHAM='VITE',TOUT_CMP='OUI',),)
+        TABACCE1=CREA_TABLE(RESU=_F(RESULTAT=TRAN_DY1,GROUP_MA='RESSORT1',NOM_CHAM='ACCE',TOUT_CMP='OUI',),)
+    else:
+        TABDEPL1=CREA_TABLE(RESU=_F(RESULTAT=TRAN_DY2,GROUP_MA='RESSORT1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+        TABVITE1=CREA_TABLE(RESU=_F(RESULTAT=TRAN_DY2,GROUP_MA='RESSORT1',NOM_CHAM='VITE',TOUT_CMP='OUI',),)
+        TABACCE1=CREA_TABLE(RESU=_F(RESULTAT=TRAN_DY2,GROUP_MA='RESSORT1',NOM_CHAM='ACCE',TOUT_CMP='OUI',),)
+    #
+    premier = True
+    for noeud in ['NO2',]:
+        TABDEPLi=CALC_TABLE(TABLE=TABDEPL1,
+            ACTION=(
+                _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K=noeud),
+                _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX',),),
+                _F(OPERATION='RENOMME',NOM_PARA=('DX','DX%s'%noeud,),),
+            ),
+        )
+        TABVITEi=CALC_TABLE(TABLE=TABVITE1,
+        ACTION=(
+            _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K=noeud),
+            _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX',),),
+            _F(OPERATION='RENOMME',NOM_PARA=('DX','VIX%s'%noeud,),),
+            ),
+        )
+        TABACCEi=CALC_TABLE(TABLE=TABACCE1,
+            ACTION=(
+                _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K=noeud),
+                _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX',),),
+                _F(OPERATION='RENOMME',NOM_PARA=('DX','ACX%s'%noeud,),),
+            ),
+        )
+        if ( premier ):
+            TABRES1= CALC_TABLE(TABLE=TABDEPLi,
+                ACTION=(
+                    _F(OPERATION='COMB',TABLE=TABVITEi,NOM_PARA='NUME_ORDRE'),
+                    _F(OPERATION='COMB',TABLE=TABACCEi,NOM_PARA='NUME_ORDRE'),
+                ),
+            )
+            premier = False
+        else:
+            TABRES1= CALC_TABLE(reuse=TABRES1,TABLE=TABRES1,
+                ACTION=(
+                    _F(OPERATION='COMB',TABLE=TABDEPLi,NOM_PARA='NUME_ORDRE'),
+                    _F(OPERATION='COMB',TABLE=TABVITEi,NOM_PARA='NUME_ORDRE'),
+                    _F(OPERATION='COMB',TABLE=TABACCEi,NOM_PARA='NUME_ORDRE'),
+                ),
+            )
+        #
+        DETRUIRE(INFO=1,CONCEPT=(_F(NOM=TABDEPLi,),_F(NOM=TABVITEi,),_F(NOM=TABACCEi,),),)
+    #
+    lefic = repout+'sdnd102d%d.dat' % calc
+    unite=DEFI_FICHIER(FICHIER=lefic, ACTION='ASSOCIER', TYPE='LIBRE', ACCES='NEW')
+    IMPR_TABLE(UNITE=unite,TABLE=TABRES1,FORMAT_R='E17.10')
+    DEFI_FICHIER(UNITE=unite, ACTION='LIBERER',)
+    DETRUIRE(INFO=1,CONCEPT=(_F(NOM=unite,),),)
+    #
+    DETRUIRE(INFO=1,CONCEPT=(_F(NOM=TABDEPL1,),_F(NOM=TABVITE1,),_F(NOM=TABACCE1,),_F(NOM=TABRES1,),),)
+    #
+"""
 FIN( )
