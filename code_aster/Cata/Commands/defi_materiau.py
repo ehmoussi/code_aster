@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -755,15 +755,17 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              KRZ             =SIMP(statut='o',typ='R'),
              R_P0            =SIMP(statut='f',typ='R',defaut= 1.E+4 ),
            ),
-           DIS_CONTACT     =FACT(statut='f',
-             RIGI_NOR        =SIMP(statut='f',typ='R' ),
-             RIGI_TAN        =SIMP(statut='f',typ='R',defaut= 0.E+0 ),
-             AMOR_NOR        =SIMP(statut='f',typ='R' ),
-             AMOR_TAN        =SIMP(statut='f',typ='R' ),
-             COULOMB         =SIMP(statut='f',typ='R',defaut= 0.E+0 ),
-             DIST_1          =SIMP(statut='f',typ='R',defaut= 0.E+0 ),
-             DIST_2          =SIMP(statut='f',typ='R',defaut= 0.E+0 ),
-             JEU             =SIMP(statut='f',typ='R',defaut= 0.E+0 ),
+            DIS_CONTACT =FACT(statut='f',
+                regles=(PRESENT_ABSENT('DIST_2','JEU',)),
+                RIGI_NOR =SIMP(statut='f',typ='R', ),
+                RIGI_TAN =SIMP(statut='f',typ='R', ),
+                AMOR_NOR =SIMP(statut='f',typ='R', ),
+                AMOR_TAN =SIMP(statut='f',typ='R', ),
+                COULOMB  =SIMP(statut='f',typ='R', val_min=0.0 ),
+                DIST_1   =SIMP(statut='f',typ='R', val_min=0.0 ),
+                DIST_2   =SIMP(statut='f',typ='R', val_min=0.0 ),
+                JEU      =SIMP(statut='f',typ='R', val_min=0.0 ),
+                INST_COMP_INIT=SIMP(statut='f',typ='R',max=2,min=2),
            ),
            ENDO_SCALAIRE   =FACT(statut='f',
              K               =SIMP(statut='o',typ='R',val_min=0.0),

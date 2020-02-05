@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -233,39 +233,6 @@ DYNA_VIBRA : Pour l'élément discret de type DIS_VISC ou DIS_ECRO_TRAC.
 
 Sa longueur est nulle ou trop petite.
 Il n'est pas possible de calculer le vecteur directeur de l'élément.
-
-"""),
-
-    50 : _("""
-L'utilisation du comportement DIS_CHOC avec frottement (COULOMB !=0 dans DEFI_MATERIAU/DIS_CONTACT)
-n'est pas encore développé pour l'élément %(k1)s
-"""),
-
-    52 : _("""
-Dans le cas d'une analyse réalisée avec DYNA_NON_LINE, l'utilisation du comportement DIS_CHOC avec
-le matériau DIS_CONTACT peut conduire à des résultats faux.
-Le critère de Coulomb peut ne pas être respecté. On doit toujours avoir :
-                Effort tangentiel <= Coefficient Coulomb * Effort Normal
-
-Le cas identifié est :
-  Analyse réalisée avec DYNA_NON_LINE
-  et frottement de COULOMB <> 0
-  et (AMOR_NOR <> 0 ou AMOR_TAN <> 0)
-
-Dans ce cas particulier l'utilisateur doit vérifier le critère de Coulomb en post-traitant les
-efforts sur le discret concerné par la loi de comportement.
-
-Exemple de commandes :
-# Coefficient de frottement de Coulomb
-mu = 0.3
-# Si Seuil <=0.0 le critère est vérifié
-Seuil = FORMULE(NOM_PARA=('N','VY','VZ'), VALE="(VY**2+VZ**2)**0.5 - mu*N" )
-#
-TABLE=CREA_TABLE(RESU=_F(RESULTAT=RESU,GROUP_MA='Le discret',NOM_CHAM='SIEF_ELGA',),)
-#
-TABLE = CALC_TABLE(reuse=TABLE, TABLE=TABLE,
-    ACTION= _F(OPERATION='OPER',NOM_PARA='SEUIL',FORMULE=Seuil,),
-)
 
 """),
 

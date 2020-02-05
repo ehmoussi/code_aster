@@ -1,0 +1,196 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+# CALCUL DE LA REPONSE TRANSITOIRE NON-LINEAIRE D'UNE POUTRE EN FLEXION
+# CHOQUANT SUR UN APPUI ELASTIQUE.
+#
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+#
+MAYA=LIRE_MAILLAGE(FORMAT="ASTER", )
+#
+MATERIO1=DEFI_MATERIAU(  ELAS=_F( RHO = 1.E06,  NU = 0.3,  E = 1.E10))
+#
+dist1 = 1.0 - 1.0E-4
+MATERIO2=DEFI_MATERIAU(DIS_CONTACT=_F(RIGI_NOR=1.E+8, DIST_1 = dist1,), )
+#
+CHMAT=AFFE_MATERIAU(
+    MAILLAGE=MAYA,
+    AFFE=(
+        _F(GROUP_MA='TOUT', MATER = MATERIO1),
+        _F(GROUP_MA='C1',   MATER = MATERIO2),
+    ),
+)
+#
+BARRE=AFFE_MODELE(
+    MAILLAGE=MAYA,
+    AFFE=(
+        _F(GROUP_MA='TOUT', MODELISATION='POU_D_E', PHENOMENE='MECANIQUE'),
+        _F(GROUP_MA='C1',   MODELISATION='DIS_T', PHENOMENE='MECANIQUE'),
+    ),
+)
+#
+CARA=AFFE_CARA_ELEM(
+    MODELE=BARRE,
+    POUTRE=_F(GROUP_MA = 'TOUT', SECTION = 'CERCLE', CARA = 'R',VALE = 0.1),
+    DISCRET=(
+        _F(CARA = 'K_T_D_L',  GROUP_MA = 'C1', VALE = ( 0.,0.,0.,),),
+        _F(CARA = 'M_T_D_L',  GROUP_MA = 'C1', VALE = ( 0.,),), ),
+    ORIENTATION=_F(GROUP_MA='C1', CARA='VECT_Y', VALE=(-1.,0.,0.,), ),
+)
+#
+GUIDAGE=AFFE_CHAR_MECA(
+    MODELE=BARRE,
+    DDL_IMPO=(
+        _F(TOUT  = 'OUI', DX = 0., DZ = 0., DRX = 0., DRY = 0.),
+        _F(NOEUD = 'N1',  DY = 0., DRZ = 0.),
+        _F(NOEUD = 'N12', DY = 0., DZ = 0., DX=0.,),
+    ),
+)
+#
+CHARTRAN=AFFE_CHAR_MECA(MODELE=BARRE, FORCE_NODALE=_F(NOEUD='N11',FY=-1000.),)
+#
+K_ELEM=CALC_MATR_ELEM(
+    MODELE=BARRE, CARA_ELEM=CARA, CHAM_MATER=CHMAT, OPTION='RIGI_MECA', CHARGE=GUIDAGE,
+)
+#
+M_ELEM=CALC_MATR_ELEM(
+    MODELE=BARRE, CARA_ELEM=CARA, CHAM_MATER=CHMAT, OPTION='MASS_MECA', CHARGE=GUIDAGE,
+)
+#
+V_ELEM=CALC_VECT_ELEM(OPTION='CHAR_MECA', CHARGE=CHARTRAN )
+#
+NUM=NUME_DDL(MATR_RIGI=K_ELEM)
+#
+K_ASSE=ASSE_MATRICE(MATR_ELEM=K_ELEM,NUME_DDL=NUM)
+M_ASSE=ASSE_MATRICE(MATR_ELEM=M_ELEM,NUME_DDL=NUM)
+V_ASSE=ASSE_VECTEUR(VECT_ELEM=V_ELEM,NUME_DDL=NUM)
+#
+MODES=CALC_MODES(
+    MATR_RIGI=K_ASSE,
+    MATR_MASS=M_ASSE,
+    CALC_FREQ=_F(NMAX_FREQ=5),
+)
+#
+#
+# CALCULS DYNAMIQUE NON-LINEAIRE
+t_fin = 0.16
+NPAS  = 1600
+
+LIST_R=DEFI_LIST_REEL(
+    DEBUT=0.,
+    INTERVALLE=_F( JUSQU_A = t_fin, NOMBRE = NPAS)
+)
+
+
+DNL=DYNA_NON_LINE(
+    MODELE=BARRE,
+    CHAM_MATER=CHMAT,
+    CARA_ELEM=CARA,
+    EXCIT=(
+        _F(CHARGE=GUIDAGE,),
+        _F(CHARGE=CHARTRAN,),
+    ),
+    COMPORTEMENT=(
+        _F(RELATION='DIS_CONTACT', GROUP_MA='C1',),
+        _F(RELATION='ELAS', GROUP_MA='TOUT',),
+    ),
+    INCREMENT=_F(LIST_INST=LIST_R,),
+    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK', FORMULATION='ACCELERATION',),
+    NEWTON=_F(REAC_ITER=1,),
+)
+
+"""
+# --------------------------------------------------------------------------------------------------
+#
+# Les sorties pour la documentation
+#
+# --------------------------------------------------------------------------------------------------
+repout = "/tmp/runtest_astout/"
+#
+TABDEPL1=CREA_TABLE(RESU=_F(RESULTAT=DNL,GROUP_MA='C1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+TABVITE1=CREA_TABLE(RESU=_F(RESULTAT=DNL,GROUP_MA='C1',NOM_CHAM='VITE',TOUT_CMP='OUI',),)
+TABACCE1=CREA_TABLE(RESU=_F(RESULTAT=DNL,GROUP_MA='C1',NOM_CHAM='ACCE',TOUT_CMP='OUI',),)
+
+TABDEPL1=CALC_TABLE(reuse=TABDEPL1,TABLE=TABDEPL1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='N11'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DY',),),
+    ),
+)
+TABVITE1=CALC_TABLE(reuse=TABVITE1,TABLE=TABVITE1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='N11'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DY',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DY','VIY',),),
+    ),
+)
+TABACCE1=CALC_TABLE(reuse=TABACCE1,TABLE=TABACCE1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='N11'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DY',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DY','ACY',),),
+    ),
+)
+
+TABRES1= CALC_TABLE(TABLE=TABDEPL1,
+    ACTION=(
+        _F(OPERATION='COMB',TABLE=TABVITE1,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABACCE1,NOM_PARA='NUME_ORDRE'),
+    ),
+)
+lefic = repout+'sdnl104a.dat'
+unite=DEFI_FICHIER(FICHIER=lefic, ACTION='ASSOCIER', TYPE='LIBRE', ACCES='NEW')
+IMPR_TABLE(UNITE=unite,TABLE=TABRES1,FORMAT_R='E17.10')
+DEFI_FICHIER(UNITE=unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1,CONCEPT=(_F(NOM=unite,),),)
+"""
+
+
+t_depl = 0.1315  # max depl
+t_vite = 0.1566  # max vite
+#
+TEST_RESU(RESU=(
+    _F(INST=t_depl, RESULTAT=DNL, NOM_CHAM='DEPL', NOEUD='N11',
+       NOM_CMP='DY', VALE_CALC=  -1.8533389678E-06,),
+    _F(INST=t_vite, RESULTAT=DNL, NOM_CHAM='VITE', NOEUD='N11',
+       NOM_CMP='DY', VALE_CALC=  -4.6328401459E-03,),
+    )
+)
+
+
+t_cin1=POST_ELEM(
+    ENER_CIN=_F(GROUP_MA='TOUT', ),
+    MODELE=BARRE,
+    CHAM_MATER=CHMAT,
+    CARA_ELEM=CARA,
+    RESULTAT=DNL,
+)
+TEST_TABLE(VALE_CALC= 0.0514080228,
+    NOM_PARA='TOTALE',
+    TABLE=t_cin1,
+    FILTRE=(
+        _F(NOM_PARA='LIEU', VALE_K='TOUT',),
+        _F(NOM_PARA='INST', VALE=t_fin, PRECISION=1e-4, ),
+    ),
+)
+#
+
+FIN()
+#
