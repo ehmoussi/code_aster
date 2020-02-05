@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,6 @@ subroutine asmpi_comm_point(optmpi, typsca, nudest, numess, nbval,&
 ! inout scr    : réel a echanger      (si typsca='R')
 !----------------------------------------------------------------------
     implicit none
-! aslint: disable=W1304
 ! DECLARATION PARAMETRES D'APPELS
 #include "asterf.h"
 #include "asterf_debug.h"

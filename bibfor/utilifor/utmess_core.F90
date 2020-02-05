@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     integer :: nexcep
     common /utexc /  nexcep
 !
-    integer :: recurs
+    integer, save :: recurs
     character(len=24) :: msgId
     character(len=16) :: compex
     character(len=8) :: nomres, k8b
@@ -62,10 +62,8 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     integer :: lout, idf, i, lc, imaap
     integer :: numex
 !
-    aster_logical :: isFirst=ASTER_TRUE
-    type(Message) :: firstMsg, excMsg
-!
-    save             recurs, firstMsg, isFirst
+    aster_logical, save :: isFirst=ASTER_TRUE
+    type(Message), save :: firstMsg, excMsg
 !
 !     TYPES DE MESSAGES :
 !     ERREURS :
