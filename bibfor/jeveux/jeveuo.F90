@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
                   vi4, vr, vc, vk8, vk16,&
                   vk24, vk32, vk80)
 ! person_in_charge: j-pierre.lefebvre at edf.fr
-! aslint: disable=W0405,C1002,W1304
+! aslint: disable=W0405,C1002
     use iso_c_binding, only: c_loc, c_ptr, c_f_pointer
     implicit none
 #include "asterf_types.h"
@@ -126,7 +126,7 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
         ixiadd = iszon ( jiszon + ibacol + idiadd )
         ixdeso = iszon ( jiszon + ibacol + iddeso )
 !
-! ----   on traite l'accès au pointeur de longueur         
+! ----   on traite l'accès au pointeur de longueur
 !
         if (noml8 .eq. '$$XATR  ') then
             ixlono = numatr
@@ -137,13 +137,13 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
             call jxlocs(zi, genri, ltypi, lonoi, iblono,&
                         .false._1, jctab)
             n1 = long ( jlong(iclaco) + ixlono )
-            ktyp='I'     
+            ktyp='I'
             if (present(jadr)) then
                 goto 100
-            else 
-                jad=jctab              
+            else
+                jad=jctab
                 goto 102
-            endif 
+            endif
         else
             if (noml8 .ne. ' ') then
                 inat = 3
@@ -167,9 +167,9 @@ subroutine jeveuo(nomlu, cel, jadr, vl, vi,&
 !   ON PREND LA PRECAUTION DE REDIMENSIONNER LE NOMBRE D'ENREGISTREMENTS SI
 !   BESOIN DU FICHIER ASSOCIÉ A LA BASE
 !
-    if ((100*nbluti(ic)) .gt. (50*nblmax(ic))) then 
+    if ((100*nbluti(ic)) .gt. (50*nblmax(ic))) then
        call jjagod (ic, 2*nblmax(ic) )
-    endif  
+    endif
 !
     call jjalty(typei, ltypi, cel, inatb, jctab)
     if (inat .eq. 3 .and. ixiadd .eq. 0) then

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 subroutine modexp(modgen, sst1, indin1, lino1, nbmod,&
                   numlia, tramod, modet, solveu)
-! aslint: disable=W1304
 !-------------------------------------------------------------C
 !--                                                         --C
 !--  ROUTINE QUI REALISE L'EXPANSION DES MODES D'INTERFACE  --C
