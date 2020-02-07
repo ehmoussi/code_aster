@@ -78,6 +78,7 @@ def C_RELATION( COMMAND ):
                                         "CZM_TAC_MIX",
                                         "CZM_LAB_MIX",
                                         "CZM_TRA_MIX",
+                                        "DASHPOT",
                                         "DIS_BILI_ELAS",
                                         "DIS_CHOC",
                                         "DIS_CONTACT",
