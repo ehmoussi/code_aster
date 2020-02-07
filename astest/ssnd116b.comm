@@ -1,0 +1,423 @@
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+import numpy as NU
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
+
+MA=LIRE_MAILLAGE(FORMAT="ASTER")
+
+MO=AFFE_MODELE(
+    MAILLAGE=MA,
+    AFFE=(_F(GROUP_MA=('L1',), PHENOMENE='MECANIQUE', MODELISATION='DIS_T'),),
+)
+
+Knul=0.0
+CAELEM=AFFE_CARA_ELEM(
+    MODELE=MO,
+    DISCRET=(
+        _F(REPERE='LOCAL',CARA='K_T_D_L', GROUP_MA=('L1'), VALE=(Knul, Knul, Knul,),),
+    ),
+)
+
+BLOC=AFFE_CHAR_MECA(
+    MODELE=MO,
+    DDL_IMPO=(
+        _F(GROUP_NO='PT2', DX=0. ,DY=0. ,DZ=0., ),
+    ),
+)
+
+# --------------------------------------------------------------------------------------------------
+#
+# Déplacements imposés sur le Noeud 1 : trajet 1
+#
+#         0.10 + 0.21213203435596423 = 0.31213203435596423
+DeplaS2 = 0.10 + 2.0E+04*0.30/20000.0/NU.sqrt(2.0)
+#
+temps = NU.array([0.00, 1.00, 2.00, 3.00, 4.00, 5.00, 6.00,  7.00, 8.00, 9.00, 10.0,    11.0,])
+Ux    = NU.array([0.00, 1.00, 1.00, 1.00, 1.00, 0.50, 0.00, -0.50, 0.00, 2.00, 2.00,    2.00,])
+Uy    = NU.array([0.00, 0.00, 1.00, 1.50, 1.00, 0.50, 0.25,  0.10, 0.10, 0.10, DeplaS2, 0.35,])
+Uz    = NU.array([0.00, 0.00, 1.00, 1.50, 1.00, 0.50, 0.25,  0.10, 0.10, 0.10, DeplaS2, 0.35,])
+#
+MAT1 = DEFI_MATERIAU(
+    DIS_CONTACT= _F(RIGI_NOR=10000.0, RIGI_TAN=20000.0, COULOMB=0.3,
+                    AMOR_TAN=10.0,
+                    DIST_1=0.5, DIST_2=0.5),
+)
+MATER1=AFFE_MATERIAU(MAILLAGE=MA,AFFE=_F(GROUP_MA='L1',MATER=MAT1,),)
+
+# Fonctions
+Dx1 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Ux)
+Dy1 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Uy)
+Dz1 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Uz)
+Tfin = max(temps)
+
+DEPL1=AFFE_CHAR_MECA_F(
+    MODELE=MO,
+    DDL_IMPO=(
+        _F(GROUP_NO='PT1', DX=Dx1, DY=Dy1, DZ=Dz1, ),
+    ),
+)
+
+linst1=DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE=(
+        _F(JUSQU_A=Tfin,PAS=0.50,),
+    ),
+)
+llinst1=DEFI_LIST_INST(METHODE='MANUEL',DEFI_LIST=_F(LIST_INST=linst1,),)
+
+RESU1=STAT_NON_LINE(
+    MODELE=MO,
+    CHAM_MATER=MATER1,
+    CARA_ELEM=CAELEM,
+    EXCIT=(
+        _F(CHARGE=BLOC,),
+        _F(CHARGE=DEPL1,),
+    ),
+    COMPORTEMENT=(
+        _F(GROUP_MA='L1',RELATION='DIS_CONTACT',),
+    ),
+    INCREMENT=_F(LIST_INST=llinst1,),
+    NEWTON=_F(REAC_INCR=1, MATRICE='TANGENTE', REAC_ITER=1,),
+)
+
+TABSIEF1=CREA_TABLE(RESU=_F(RESULTAT=RESU1,GROUP_MA='L1',NOM_CHAM='SIEF_ELGA',TOUT_CMP='OUI',),)
+TABSIEF1=CALC_TABLE(reuse=TABSIEF1,TABLE=TABSIEF1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','N','VY','VZ',),)
+    ),
+)
+
+
+# --------------------------------------------------------------------------------------------------
+#
+# Déplacements imposés sur le Noeud 1 : trajet 2
+#
+drota    = 5.0
+temps  = NU.array([-4.0,-3.00,-2.00,-1.00, ])
+Ux     = NU.array([0.00, 1.00, 1.00, 1.00, ])
+Uy     = NU.array([0.00, 0.00, 1.00, 1.00, ])
+Uz     = NU.array([0.00, 0.00,-1.00, 0.00, ])
+Angles = NU.arange(0.0, 360.0+drota, drota)*NU.pi/180.0
+temps  = NU.concatenate( (temps, NU.arange(0.0, 360.0+drota, drota)) )
+Ux     = NU.concatenate( (Ux, [Ux[-1]]*len(Angles)) )
+Uy     = NU.concatenate( (Uy, [NU.cos(x) for x in Angles]) )
+Uz     = NU.concatenate( (Uz, [NU.sin(x) for x in Angles]) )
+#
+MAT2 = DEFI_MATERIAU(
+    DIS_CONTACT= _F(RIGI_NOR=10000.0, RIGI_TAN=20000000.0, COULOMB=0.3,
+                    AMOR_TAN=10.0,
+                    DIST_1=0.5, DIST_2=0.5),
+)
+MATER2=AFFE_MATERIAU(MAILLAGE=MA,AFFE=_F(GROUP_MA='L1',MATER=MAT2,),)
+
+# Fonctions
+Dx2 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Ux)
+Dy2 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Uy)
+Dz2 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Uz)
+Tfin   = max(temps)
+Tdebut = min(temps)
+
+DEPL2=AFFE_CHAR_MECA_F(
+    MODELE=MO,
+    DDL_IMPO=(
+        _F(GROUP_NO='PT1', DX=Dx2, DY=Dy2, DZ=Dz2, ),
+    ),
+)
+
+linst2 =DEFI_LIST_REEL(DEBUT=Tdebut,
+    INTERVALLE=(
+        _F(JUSQU_A=0.0, PAS=1.0,),
+        _F(JUSQU_A=Tfin,PAS=drota,),
+    ),
+)
+llinst2=DEFI_LIST_INST(METHODE='MANUEL',DEFI_LIST=_F(LIST_INST=linst2,),)
+
+RESU2=STAT_NON_LINE(
+    MODELE=MO,
+    CHAM_MATER=MATER2,
+    CARA_ELEM=CAELEM,
+    EXCIT=(
+        _F(CHARGE=BLOC,),
+        _F(CHARGE=DEPL2,),
+    ),
+    COMPORTEMENT=(
+        _F(GROUP_MA='L1',RELATION='DIS_CONTACT',),
+    ),
+    INCREMENT=_F(LIST_INST=llinst2,),
+    NEWTON=_F(REAC_INCR=1, MATRICE='TANGENTE', REAC_ITER=1,),
+)
+
+
+TABSIEF2=CREA_TABLE(RESU=_F(RESULTAT=RESU2,GROUP_MA='L1',NOM_CHAM='SIEF_ELGA',TOUT_CMP='OUI',),)
+TABSIEF2=CALC_TABLE(reuse=TABSIEF2,TABLE=TABSIEF2,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','N','VY','VZ',),)
+    ),
+)
+
+
+# --------------------------------------------------------------------------------------------------
+#
+# Déplacements imposés sur le Noeud 1 : trajet 3
+#
+#   Le discret est enfoncé initialement de 0.25 :
+#       Les déplacements Ux3 = Ux1 -0.25
+#
+#         0.10 + 0.21213203435596423 = 0.31213203435596423
+DeplaS2 = 0.10 + 2.0E+04*0.30/20000.0/NU.sqrt(2.0)
+#
+temps = NU.array([0.00, 1.00, 2.00, 3.00, 4.00, 5.00,  6.00,  7.00,  8.00, 9.00, 10.0,    11.0,])
+Ux    = NU.array([0.00, 0.75, 0.75, 0.75, 0.75, 0.25, -0.25, -0.75, -0.25, 1.75, 1.75,    1.75,])
+Uy    = NU.array([0.00, 0.00, 1.00, 1.50, 1.00, 0.50,  0.25,  0.10,  0.10, 0.10, DeplaS2, 0.35,])
+Uz    = NU.array([0.00, 0.00, 1.00, 1.50, 1.00, 0.50,  0.25,  0.10,  0.10, 0.10, DeplaS2, 0.35,])
+#
+MAT3 = DEFI_MATERIAU(
+    DIS_CONTACT= _F(RIGI_NOR=10000.0, RIGI_TAN=20000.0, COULOMB=0.3,
+                    AMOR_TAN=10.0,
+                    DIST_1=0.5, DIST_2=0.75),
+)
+MATER3=AFFE_MATERIAU(MAILLAGE=MA,AFFE=_F(GROUP_MA='L1',MATER=MAT3,),)
+
+# Fonctions
+Dx3 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Ux)
+Dy3 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Uy)
+Dz3 = DEFI_FONCTION(NOM_PARA='INST', ABSCISSE=temps, ORDONNEE=Uz)
+Tfin = max(temps)
+
+DEPL3=AFFE_CHAR_MECA_F(
+    MODELE=MO,
+    DDL_IMPO=(
+        _F(GROUP_NO='PT1', DX=Dx3, DY=Dy3, DZ=Dz3, ),
+    ),
+)
+
+linst3=DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE=(
+        _F(JUSQU_A=Tfin,PAS=0.50,),
+    ),
+)
+llinst3=DEFI_LIST_INST(METHODE='MANUEL',DEFI_LIST=_F(LIST_INST=linst3,),)
+
+RESU3=STAT_NON_LINE(
+    MODELE=MO,
+    CHAM_MATER=MATER3,
+    CARA_ELEM=CAELEM,
+    EXCIT=(
+        _F(CHARGE=BLOC,),
+        _F(CHARGE=DEPL3,),
+    ),
+    COMPORTEMENT=(
+        _F(GROUP_MA='L1',RELATION='DIS_CONTACT',),
+    ),
+    INCREMENT=_F(LIST_INST=llinst3,),
+    NEWTON=_F(REAC_INCR=1, MATRICE='TANGENTE', REAC_ITER=1,),
+)
+
+TABSIEF3=CREA_TABLE(RESU=_F(RESULTAT=RESU3,GROUP_MA='L1',NOM_CHAM='SIEF_ELGA',TOUT_CMP='OUI',),)
+TABSIEF3=CALC_TABLE(reuse=TABSIEF3,TABLE=TABSIEF3,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','N','VY','VZ',),)
+    ),
+)
+
+
+
+# --------------------------------------------------------------------------------------------------
+# Trajet 1 et Trajet 3
+# On teste par INST les N VY VZ
+Seuil1 = 1.0E+04*0.30/NU.sqrt(2.0)
+Seuil2 = 2.0E+04*0.30/NU.sqrt(2.0)
+# ORDRE  INST  N         VY        VZ
+ResuRefe={
+ 3 : (   1.5, -1.0E+04, -Seuil1,  -Seuil1  ),
+ 7 : (   3.5, -1.0E+04,  Seuil1,   Seuil1  ),
+ 8 : (   4.0, -1.0E+04,  Seuil1,   Seuil1  ),
+12 : (   6.0,  0.0E+00,  0.0E+00,  0.0E+00 ),
+18 : (   9.0, -2.0E+04,  0.0E+00,  0.0E+00 ),
+20 : (  10.0, -2.0E+04, -Seuil2,  -Seuil2  ),
+22 : (  11.0, -2.0E+04, -Seuil2,  -Seuil2  ),
+}
+
+for UnInst, Nrefe, VYrefe, VZrefe in ResuRefe.values():
+    # Le Trajet 1
+    arg={}
+    if (abs(Nrefe)<1e-6):
+        arg={'CRITERE':'ABSOLU', 'PRECISION':1.0E-04,}
+        if (abs(Nrefe)<1e-16): arg['ORDRE_GRANDEUR']=100.0
+    TEST_TABLE(TABLE = TABSIEF1,
+        NOM_PARA = 'N', FILTRE= _F(NOM_PARA='INST', VALE= UnInst),
+        VALE_CALC = Nrefe , REFERENCE ='ANALYTIQUE', VALE_REFE = Nrefe,**arg )
+    arg={}
+    if (abs(VYrefe)<1e-6):
+        arg={'CRITERE':'ABSOLU', 'PRECISION':1.0E-04,}
+        if (abs(VYrefe)<1e-16): arg['ORDRE_GRANDEUR']=100.0
+    TEST_TABLE(TABLE = TABSIEF1,
+        NOM_PARA = 'VY', FILTRE= _F(NOM_PARA='INST', VALE= UnInst),
+        VALE_CALC = VYrefe , REFERENCE ='ANALYTIQUE', VALE_REFE = VYrefe,**arg)
+    arg={}
+    if (abs(VZrefe)<1e-6):
+        arg={'CRITERE':'ABSOLU', 'PRECISION':1.0E-04}
+        if (abs(VZrefe)<1e-16): arg['ORDRE_GRANDEUR']=100.0
+    TEST_TABLE(TABLE = TABSIEF1,
+        NOM_PARA = 'VZ', FILTRE= _F(NOM_PARA='INST', VALE= UnInst),
+        VALE_CALC = VZrefe , REFERENCE ='ANALYTIQUE', VALE_REFE = VZrefe,**arg)
+    # Le Trajet 3
+    arg={}
+    if (abs(Nrefe)<1e-6):
+        arg={'CRITERE':'ABSOLU', 'PRECISION':1.0E-04,}
+        if (abs(Nrefe)<1e-16): arg['ORDRE_GRANDEUR']=100.0
+    TEST_TABLE(TABLE = TABSIEF3,
+        NOM_PARA = 'N', FILTRE= _F(NOM_PARA='INST', VALE= UnInst),
+        VALE_CALC = Nrefe , REFERENCE ='ANALYTIQUE', VALE_REFE = Nrefe,**arg )
+    arg={}
+    if (abs(VYrefe)<1e-6):
+        arg={'CRITERE':'ABSOLU', 'PRECISION':1.0E-04,}
+        if (abs(VYrefe)<1e-16): arg['ORDRE_GRANDEUR']=100.0
+    TEST_TABLE(TABLE = TABSIEF3,
+        NOM_PARA = 'VY', FILTRE= _F(NOM_PARA='INST', VALE= UnInst),
+        VALE_CALC = VYrefe , REFERENCE ='ANALYTIQUE', VALE_REFE = VYrefe,**arg)
+    arg={}
+    if (abs(VZrefe)<1e-6):
+        arg={'CRITERE':'ABSOLU', 'PRECISION':1.0E-04}
+        if (abs(VZrefe)<1e-16): arg['ORDRE_GRANDEUR']=100.0
+    TEST_TABLE(TABLE = TABSIEF3,
+        NOM_PARA = 'VZ', FILTRE= _F(NOM_PARA='INST', VALE= UnInst),
+        VALE_CALC = VZrefe , REFERENCE ='ANALYTIQUE', VALE_REFE = VZrefe,**arg)
+
+
+# --------------------------------------------------------------------------------------------------
+# Trajet 2
+# On teste pour les ANGLE les VY VZ
+LesAngles = NU.array([0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330,360])
+for Angle in LesAngles:
+    if ( abs(Angle) < 1.0e-05 ):
+        UnVYrefe =  0.0
+        UnVZrefe = -3000.0
+    else:
+        UnVYrefe =  1.0E+04*0.30*NU.sin((Angle-drota*0.5)*NU.pi/180.0)
+        UnVZrefe = -1.0E+04*0.30*NU.cos((Angle-drota*0.5)*NU.pi/180.0)
+    arg={}
+    if (abs(UnVYrefe)<1e-6):
+        arg={'CRITERE':'ABSOLU', 'PRECISION':1.0E-04,}
+        if (abs(UnVYrefe)<1e-16): arg['ORDRE_GRANDEUR']=100.0
+    TEST_TABLE(TABLE = TABSIEF2,
+        NOM_PARA = 'VY', FILTRE= _F(NOM_PARA='INST', VALE= Angle),
+        VALE_REFE = UnVYrefe , REFERENCE ='ANALYTIQUE', VALE_CALC = UnVYrefe,**arg)
+    arg={}
+    if (abs(UnVZrefe)<1e-6):
+        arg={'CRITERE':'ABSOLU', 'PRECISION':1.0E-04,}
+        if (abs(UnVZrefe)<1e-16): arg['ORDRE_GRANDEUR']=100.0
+    TEST_TABLE(TABLE = TABSIEF2,
+        NOM_PARA = 'VZ', FILTRE= _F(NOM_PARA='INST', VALE= Angle),
+        VALE_REFE = UnVZrefe , REFERENCE ='ANALYTIQUE', VALE_CALC = UnVZrefe,**arg)
+
+
+"""
+# --------------------------------------------------------------------------------------------------
+#
+# Les sorties pour la documentation
+#
+# --------------------------------------------------------------------------------------------------
+repout = "/tmp/runtest_astout/"
+#
+# Trajet 1
+#
+TABDEPL1=CREA_TABLE(RESU=_F(RESULTAT=RESU1,GROUP_MA='L1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+TABVARI1=CREA_TABLE(RESU=_F(RESULTAT=RESU1,GROUP_MA='L1',NOM_CHAM='VARI_ELGA',TOUT_CMP='OUI',),)
+TABDEPL1=CALC_TABLE(reuse=TABDEPL1,TABLE=TABDEPL1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='N1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX','DY','DZ',),)
+    ),
+)
+TABVARI1=CALC_TABLE(reuse=TABVARI1,TABLE=TABVARI1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','V1','V2','V3','V4','V5',),)
+    ),
+)
+TABRES1= CALC_TABLE(TABLE=TABDEPL1,
+    ACTION=(
+        _F(OPERATION='COMB',TABLE=TABSIEF1,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABVARI1,NOM_PARA='NUME_ORDRE'),
+    ),
+)
+#
+# --------------------------------------------------------------------------------------------------
+# Trajet 2
+#
+TABDEPL2=CREA_TABLE(RESU=_F(RESULTAT=RESU2,GROUP_MA='L1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+TABVARI2=CREA_TABLE(RESU=_F(RESULTAT=RESU2,GROUP_MA='L1',NOM_CHAM='VARI_ELGA',TOUT_CMP='OUI',),)
+TABDEPL2=CALC_TABLE(reuse=TABDEPL2,TABLE=TABDEPL2,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='N1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX','DY','DZ',),)
+    ),
+)
+TABVARI2=CALC_TABLE(reuse=TABVARI2,TABLE=TABVARI2,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','V1','V2','V3','V4','V5',),)
+    ),
+)
+TABRES2= CALC_TABLE(TABLE=TABDEPL2,
+    ACTION=(
+        _F(OPERATION='COMB',TABLE=TABSIEF2,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABVARI2,NOM_PARA='NUME_ORDRE'),
+    ),
+)
+#
+# --------------------------------------------------------------------------------------------------
+# Trajet 3
+#
+TABDEPL3=CREA_TABLE(RESU=_F(RESULTAT=RESU3,GROUP_MA='L1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+TABVARI3=CREA_TABLE(RESU=_F(RESULTAT=RESU3,GROUP_MA='L1',NOM_CHAM='VARI_ELGA',TOUT_CMP='OUI',),)
+TABDEPL3=CALC_TABLE(reuse=TABDEPL3,TABLE=TABDEPL3,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='N1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX','DY','DZ',),)
+    ),
+)
+TABVARI3=CALC_TABLE(reuse=TABVARI3,TABLE=TABVARI3,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','V1','V2','V3','V4','V5',),)
+    ),
+)
+TABRES3= CALC_TABLE(TABLE=TABDEPL3,
+    ACTION=(
+        _F(OPERATION='COMB',TABLE=TABSIEF3,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABVARI3,NOM_PARA='NUME_ORDRE'),
+    ),
+)
+#
+lefic = repout+'ssnd116b.dat'
+unite=DEFI_FICHIER(FICHIER=lefic, ACTION='ASSOCIER', TYPE='LIBRE', ACCES='NEW')
+IMPR_TABLE(UNITE=unite,TABLE=TABRES1,FORMAT_R='E17.10')
+IMPR_TABLE(UNITE=unite,TABLE=TABRES3,FORMAT_R='E17.10')
+IMPR_TABLE(UNITE=unite,TABLE=TABRES2,FORMAT_R='E17.10')
+DEFI_FICHIER(UNITE=unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1,CONCEPT=(_F(NOM=unite,),),)
+"""
+
+FIN()

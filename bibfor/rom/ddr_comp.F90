@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,6 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1304
 !
 subroutine ddr_comp(ds_empi, v_equa)
 !
@@ -55,7 +54,7 @@ integer, pointer  :: v_equa(:)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv, iret
-    integer :: i_equa, i_mode, i_vect, i_matr, k_mode    
+    integer :: i_equa, i_mode, i_vect, i_matr, k_mode
     integer :: nb_equa, nb_mode, nb_vect, jv_para, nb_motr
     integer :: equa_maxi, lval, ntp, ntm
     integer(kind=4) :: info
@@ -81,7 +80,7 @@ integer, pointer  :: v_equa(:)
     endif
 !
 ! - Get parameters
-!        
+!
     nb_equa     = ds_empi%ds_mode%nb_equa
     nb_mode     = ds_empi%nb_mode
     base        = ds_empi%base

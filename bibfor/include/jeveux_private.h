@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 #define JEVEUX_PRIVATE_H
 !
 ! --------- DEBUT COMMONS INTERNES JEVEUX
-! aslint: disable=W1304,C1002
+! aslint: disable=C1002
 #include "asterf_types.h"
     volatile         iacce
     volatile         ltyp,    long,    date,    iadd,    iadm

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -187,7 +187,7 @@ character(len=19) :: matele
         endif
         call meamme(optmat, model, nbchar, zk8(jchar2), ds_material%field_mate,&
                     carele, instam, 'V', merigi,&
-                    memass, matele, varplu)
+                    memass, matele, varplu, ds_constitutive%compor)
 !
 ! --- MATR_ELEM POUR CHARGES SUIVEUSES
 !

@@ -236,39 +236,6 @@ Il n'est pas possible de calculer le vecteur directeur de l'élément.
 
 """),
 
-    50 : _("""
-L'utilisation du comportement DIS_CHOC avec frottement (COULOMB !=0 dans DEFI_MATERIAU/DIS_CONTACT)
-n'est pas encore développé pour l'élément %(k1)s
-"""),
-
-    52 : _("""
-Dans le cas d'une analyse réalisée avec DYNA_NON_LINE, l'utilisation du comportement DIS_CHOC avec
-le matériau DIS_CONTACT peut conduire à des résultats faux.
-Le critère de Coulomb peut ne pas être respecté. On doit toujours avoir :
-                Effort tangentiel <= Coefficient Coulomb * Effort Normal
-
-Le cas identifié est :
-  Analyse réalisée avec DYNA_NON_LINE
-  et frottement de COULOMB <> 0
-  et (AMOR_NOR <> 0 ou AMOR_TAN <> 0)
-
-Dans ce cas particulier l'utilisateur doit vérifier le critère de Coulomb en post-traitant les
-efforts sur le discret concerné par la loi de comportement.
-
-Exemple de commandes :
-# Coefficient de frottement de Coulomb
-mu = 0.3
-# Si Seuil <=0.0 le critère est vérifié
-Seuil = FORMULE(NOM_PARA=('N','VY','VZ'), VALE="(VY**2+VZ**2)**0.5 - mu*N" )
-#
-TABLE=CREA_TABLE(RESU=_F(RESULTAT=RESU,GROUP_MA='Le discret',NOM_CHAM='SIEF_ELGA',),)
-#
-TABLE = CALC_TABLE(reuse=TABLE, TABLE=TABLE,
-    ACTION= _F(OPERATION='OPER',NOM_PARA='SEUIL',FORMULE=Seuil,),
-)
-
-"""),
-
     61 : _("""
 Le prolongement à droite étant exclu pour la fonction %(k1)s, il n'est pas
 possible d'extrapoler la fonction au delà de %(r1)f

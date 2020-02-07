@@ -1,0 +1,173 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+#
+# Une masse qui chuuuuute
+#
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
+#
+import numpy as NP
+#
+Masse       =   1.0
+Pesanteur   =  10.0
+Jeu         =  -2.0
+V0          =  -1.0
+#
+RaidNor     =  1.0E+02
+Raidxyz     =  1.0E+04
+#
+BILLE=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20)
+MODELE=AFFE_MODELE(MAILLAGE=BILLE,
+    AFFE=_F(MAILLE='EL1', PHENOMENE='MECANIQUE', MODELISATION='DIS_T'),
+)
+#
+MATCH=DEFI_MATERIAU(
+    DIS_CONTACT=_F(RIGI_NOR=RaidNor, JEU=-Jeu),
+)
+CHAMPCAR=AFFE_CARA_ELEM(
+    MODELE=MODELE,
+    DISCRET=(
+        _F(MAILLE = 'EL1',  CARA = 'K_T_D_N',  VALE = (Raidxyz, Raidxyz, Raidxyz,),),
+        _F(MAILLE = 'EL1',  CARA = 'M_T_D_N',  VALE = Masse),
+        _F(MAILLE = 'EL1',  CARA = 'A_T_D_N',  VALE = (0.0, 0.0, 0.0), ),
+    ),
+    ORIENTATION=_F(MAILLE='EL1', CARA='VECT_X_Y', VALE=(0.0, 0.0, 1.0, 0.0, 1.0, 0.0),),
+)
+#
+CHMAT=AFFE_MATERIAU(MAILLAGE=BILLE,
+    AFFE=_F(  MAILLE = 'EL1',  MATER = MATCH)
+)
+#
+CHARGE=AFFE_CHAR_MECA(MODELE=MODELE,
+    PESANTEUR=_F(MAILLE='EL1',GRAVITE=Pesanteur,DIRECTION=(0.0,0.0,-1.0),),
+    DDL_IMPO=_F(NOEUD='NO1', DX=0.0, DY=0.0),
+)
+#
+Acce0 = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',OPERATION='AFFE',MODELE=MODELE,
+    AFFE=_F(TOUT='OUI',
+            NOM_CMP=('DX', 'DY', 'DZ',),
+            VALE   =( 0.0,  0.0,  -Pesanteur,),),
+)
+Vite0 = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',OPERATION='AFFE',MODELE=MODELE,
+    AFFE=_F(TOUT='OUI',
+            NOM_CMP=('DX', 'DY', 'DZ',),
+            VALE   =( 0.0,  0.0,  V0,),),
+)
+#
+TempsChute = 0.54031242374329
+TempsDecol = 0.88545615307643
+L_INST=DEFI_LIST_REEL(DEBUT=0.0,
+    INTERVALLE=(
+        _F(JUSQU_A = TempsChute, NOMBRE= 100),
+        _F(JUSQU_A = TempsDecol, NOMBRE= 200),
+        _F(JUSQU_A = 1.0,        NOMBRE=  25),
+        _F(JUSQU_A = 1.1,        NOMBRE=  20),
+    ),
+)
+
+DEFLIST =DEFI_LIST_INST(
+    DEFI_LIST=_F(LIST_INST =L_INST ),
+    ECHEC=_F(EVENEMENT     = 'ERREUR',
+             ACTION        = 'DECOUPE',
+             SUBD_METHODE  = 'MANUEL',
+             SUBD_PAS      = 4,),
+)
+#
+DYNL1=DYNA_NON_LINE(
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT,
+    CARA_ELEM=CHAMPCAR,
+    EXCIT=_F(CHARGE = CHARGE),
+    ETAT_INIT=_F(VITE=Vite0, ACCE=Acce0),
+    COMPORTEMENT=_F(RELATION = 'DIS_CONTACT', MAILLE = 'EL1', RESI_INTE_RELA=1.0E-04),
+    INCREMENT=_F(LIST_INST = DEFLIST,),
+    SCHEMA_TEMPS=_F(SCHEMA='HHT', FORMULATION='DEPLACEMENT'),
+    #SCHEMA_TEMPS=_F(SCHEMA='NEWMARK', FORMULATION='DEPLACEMENT'),
+    SOLVEUR=_F(METHODE = 'LDLT',),
+    CONVERGENCE=_F(RESI_REFE_RELA=1.0E-05, EFFORT_REFE=1.0),
+    ARCHIVAGE=_F(LIST_INST=L_INST),
+)
+
+# IMPR_RESU(FORMAT='RESULTAT',UNITE=6,RESU=_F(RESULTAT=DYNL1))
+
+#
+# --------------------------------------------------------------------------------------------------
+#       Inst        Reférence       Calculé             Précision
+Resu1Refe={
+ 1 : ( TempsChute, -2.00000,        -2.000000000000000,  1.0e-06, ),
+ 2 : ( TempsDecol, -2.00000,        -2.001036612021182,  1.0e-02, ),
+ 3 : (        1.0, -1.332162981855, -1.340273870505455,  1.0e-02, ),
+ 4 : (        1.1, -0.856394405035, -0.8706794915515317, 2.0e-02, ),
+}
+#
+for ii in Resu1Refe.keys():
+    TEST_RESU(RESU=(
+        _F( INST     =Resu1Refe[ii][0], RESULTAT=DYNL1, NOM_CHAM='DEPL', NOEUD='NO1', NOM_CMP='DZ',
+            VALE_REFE=Resu1Refe[ii][1], REFERENCE='ANALYTIQUE',
+            VALE_CALC=Resu1Refe[ii][2],
+            PRECISION=Resu1Refe[ii][3],),
+        ),
+    )
+
+
+"""
+# --------------------------------------------------------------------------------------------------
+#
+# Les sorties pour la documentation
+#
+# --------------------------------------------------------------------------------------------------
+repout = "/tmp/runtest_astout/"
+#
+TABDEPL1=CREA_TABLE(RESU=_F(RESULTAT=DYNL1,MAILLE='EL1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+TABVITE1=CREA_TABLE(RESU=_F(RESULTAT=DYNL1,MAILLE='EL1',NOM_CHAM='VITE',TOUT_CMP='OUI',),)
+TABACCE1=CREA_TABLE(RESU=_F(RESULTAT=DYNL1,MAILLE='EL1',NOM_CHAM='ACCE',TOUT_CMP='OUI',),)
+
+TABDEPL1=CALC_TABLE(reuse=TABDEPL1,TABLE=TABDEPL1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='NO1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DZ',),),
+    ),
+)
+TABVITE1=CALC_TABLE(reuse=TABVITE1,TABLE=TABVITE1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='NO1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DZ',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DZ','VIZ',),),
+    ),
+)
+TABACCE1=CALC_TABLE(reuse=TABACCE1,TABLE=TABACCE1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='NO1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DZ',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DZ','ACZ',),),
+    ),
+)
+
+TABRES1= CALC_TABLE(TABLE=TABDEPL1,
+    ACTION=(
+        _F(OPERATION='COMB',TABLE=TABVITE1,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABACCE1,NOM_PARA='NUME_ORDRE'),
+    ),
+)
+lefic = repout+'sdnd108a.dat'
+unite=DEFI_FICHIER(FICHIER=lefic, ACTION='ASSOCIER', TYPE='LIBRE', ACCES='NEW')
+IMPR_TABLE(UNITE=unite,TABLE=TABRES1,FORMAT_R='E17.10')
+DEFI_FICHIER(UNITE=unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1,CONCEPT=(_F(NOM=unite,),),)
+"""
+FIN()

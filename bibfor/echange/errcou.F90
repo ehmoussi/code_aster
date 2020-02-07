@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! *   LOGICIEL CODE_ASTER - COUPLAGE ASTER/EDYOS - Copyright EDF 2009  *
 ! This file is part of code_aster.
 !
@@ -109,7 +109,6 @@ subroutine errcou(nomprg, numpas, nomvar, info, nprog,&
 !***********************************************************************
 !%W% %D% %T%
 !
-! aslint: disable=W1304
     implicit none
 !
 !     ARGUMENTS

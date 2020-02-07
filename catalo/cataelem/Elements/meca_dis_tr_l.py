@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -147,6 +147,7 @@ class MECA_DIS_TR_L(Element):
             para_in=((SP.PCADISA, CCADISA), (OP.AMOR_MECA.PCAORIE, CCAORIE),
                      (SP.PCINFDI, LC.CCINFDI), (SP.PMATERC, LC.CMATERC),
                      (SP.PRIGIEL, MMATUUR), (OP.AMOR_MECA.PVARCPR, LC.ZVARCPG),
+                     (OP.AMOR_MECA.PCOMPOR, LC.CCOMPOR),
                      ),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
                      ),

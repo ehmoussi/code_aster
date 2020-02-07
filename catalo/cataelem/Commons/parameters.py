@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1036,6 +1036,12 @@ PVENTCX = InputParameter(phys=PHY.VENTCX_F,
                          comment="""""")
 
 PVITENC = InputParameter(phys=PHY.VNOR_C,
+                         comment="""""")
+
+PVITENR = InputParameter(phys=PHY.VNOR_R,
+                         comment="""""")
+
+PVITENF = InputParameter(phys=PHY.VNOR_F,
                          comment="""""")
 
 PVITENT = InputParameter(phys=PHY.DEPL_R,

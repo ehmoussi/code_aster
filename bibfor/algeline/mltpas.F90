@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@ subroutine mltpas(nbnd, nbsn, supnd, xadj, adjncy,&
                   diag, col, lmat, place)
 ! person_in_charge: olivier.boiteau at edf.fr
 !
-! aslint: disable=W1304
     implicit none
     integer :: nbnd, nbsn, nbloc, ncbloc(*), lgbloc(*)
     integer :: supnd(nbsn+1), diag(0:nbnd), seq(nbsn)

@@ -51,7 +51,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     integer, intent(in) :: nexcep
     character(len=*), intent(in) :: fname
 !
-    integer :: recurs
+    integer, save :: recurs
     character(len=24) :: msgId
     character(len=16) :: compex
     character(len=8) :: nomres, k8b
@@ -60,10 +60,8 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     integer :: lout, idf, i, lc, imaap
     integer :: numex
 !
-    aster_logical :: isFirst=ASTER_TRUE
-    type(Message) :: firstMsg, excMsg
-!
-    save             recurs, firstMsg, isFirst
+    aster_logical, save :: isFirst=ASTER_TRUE
+    type(Message), save :: firstMsg, excMsg
 !
 !     TYPES DE MESSAGES :
 !     ERREURS :

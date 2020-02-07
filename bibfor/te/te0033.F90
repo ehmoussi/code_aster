@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -223,7 +223,7 @@ subroutine te0033(option, nomte)
         elseif (phenom .eq. 'ELAS_COQUE')then
             call dxsit3(nomte, zi(jmate), pgl, zr(jsigm))
         else
-            ASSERT(.false.)
+            call utmess('F', 'PLATE1_1', nk=2, valk=[option, phenom])
         endif
 !     ----------------------------
     else if (option(1:9) .eq. 'EPSI_ELGA') then
