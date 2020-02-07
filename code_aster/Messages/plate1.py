@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from ..Utilities import _
 
 cata_msg = {
     1 : _("""On ne sait pas calculer l'option %(k1)s avec une élasticité de type %(k2)s pour cet élément."""),
