@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,6 +45,7 @@ implicit none
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/loadGetNeumannType.h"
+#include "asterfort/loadExcludedForAnalysis.h"
 !
 character(len=19), intent(in) :: list_load
 aster_logical, intent(in) :: l_load_user
@@ -78,7 +79,7 @@ character(len=1), optional, intent(in) :: base
     character(len=19) :: lisdbl, list_load_resu
     character(len=24) :: ligrch, lchin
     integer :: i_neum_lapl, i_diri_suiv
-    aster_logical :: l_func_c, l_zero_allowed, l_diri_undead, l_stat
+    aster_logical :: l_func_c, l_zero_allowed, l_diri_undead, l_stat, l_calc
     integer :: nb_info_type
     integer, pointer :: v_ll_infc(:) => null()
     integer, pointer :: v_llresu_info(:) => null()
@@ -111,6 +112,14 @@ character(len=1), optional, intent(in) :: base
     i_load_new     = 0
     i_diri_suiv    = 0
     l_diri_undead = ASTER_FALSE
+!
+! - Command for computation ?
+!
+    l_calc = nomcmd.eq.'DYNA_NON_LINE'.or.&
+             nomcmd.eq.'STAT_NON_LINE'.or.&
+             nomcmd.eq.'MECA_STATIQUE'.or.&
+             nomcmd.eq.'CALC_FORC_NONL'.or.&
+             nomcmd.eq.'DYNA_VIBRA'
 !
 ! - Get model
 !
@@ -324,6 +333,12 @@ character(len=1), optional, intent(in) :: base
 !
         if (npilo .ge. 1) then
             call lisexp(list_load)
+        endif
+!
+! ----- Some loads are prohibited
+!
+        if (l_calc) then
+            call loadExcludedForAnalysis(list_load)
         endif
     endif
 !

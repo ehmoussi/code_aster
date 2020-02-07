@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 interface
     subroutine meamme(optioz, modele, nchar, lchar, mate,&
                       cara, time, base, merigi,&
-                      memass, meamor, varplu)
+                      memass, meamor, varplu, compor_)
         character(len=*) :: optioz
         character(len=*) :: modele
         integer :: nchar
@@ -36,5 +36,6 @@ interface
         character(len=*) :: memass
         character(len=*) :: meamor
         character(len=*) :: varplu
+        character(len=*), optional  :: compor_
     end subroutine meamme
 end interface

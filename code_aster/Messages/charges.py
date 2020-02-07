@@ -168,5 +168,6 @@ Vous essayez d'appliquer un déplacement selon DZ à une modélisation qui n'est
 Conseil: Vérifié vos conditions aux limites.
 """),
 
+    58 : _("""La charge %(k1)s utilise un type de chargement impossible dans cet opérateur."""),
 
 }

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -3646,12 +3646,20 @@ VENTCX_F = PhysicalQuantity(type='K8',
        FCXP :
 """)
 
+VNOR_R   = PhysicalQuantity(type='R',
+    components=(
+       'VNOR',
+    ),
+    comment="""  Vitesse normale appliquee a une face de maille
+       VNOR : valeur de la vitesse normale
+""")
+
 
 VNOR_C   = PhysicalQuantity(type='C',
     components=(
        'VNOR',
     ),
-    comment="""  VNOR_C Type:C Vitesse normale appliquee a une face de maille (acoustique)
+    comment="""  Vitesse normale appliquee a une face de maille
        VNOR : valeur de la vitesse normale
 """)
 
@@ -3660,7 +3668,7 @@ VNOR_F   = PhysicalQuantity(type='K8',
     components=(
        'VNOR',
     ),
-    comment="""  VNOR_F Type:K8 Vitesse normale appliquee a une face de maille (acoustique)
+    comment="""  Vitesse normale appliquee a une face de maille
        VNOR : fonction de la vitesse normale
 """)
 
