@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ subroutine te0174(option, nomte)
                 1, 'RHO', rho, icodre, 1)
 !
     call jevech('PVECTUR', 'E', ivectu)
-    call jevech('PSOURCF', 'L', ivnor)
+    call jevech('PVITENF', 'L', ivnor)
 !
     do 11 i = 1, 2*nno
         zr(ivectu+i-1) = 0.0d0

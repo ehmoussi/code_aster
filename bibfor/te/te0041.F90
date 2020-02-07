@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,15 +18,44 @@
 
 subroutine te0041(option, nomte)
     implicit none
+    character(len=16) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+! person_in_charge: jean-luc.flejou at edf.fr
+!
+!
+!        CALCUL DES MATRICES DE RAIDEUR, MASSE, AMORTISSEMENT
+!                   POUR  LES ELEMENTS DISCRETS
+!
+! --------------------------------------------------------------------------------------------------
+!
+!     option : nom de l'option a calculer
+!        pour discrets : symétriques  et non-symetriques
+!           RIGI_MECA   MASS_MECA  MASS_MECA_DIAG  AMOR_MECA
+!        pour discrets : symétriques
+!           RIGI_MECA_HYST   RIGI_MECA_TANG   RIGI_FLUI_STRU
+!           M_GAMMA          MASS_FLUI_STRU   MASS_MECA_EXPLI
+!
+!     nomte  : nom du type d'élément
+!           MECA_DIS_T_N      MECA_DIS_T_L
+!           MECA_DIS_TR_N     MECA_DIS_TR_L
+!           MECA_2D_DIS_T_N   MECA_2D_DIS_T_L
+!           MECA_2D_DIS_TR_N  MECA_2D_DIS_TR_L
+!
+! --------------------------------------------------------------------------------------------------
+!
+#include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/getres.h"
+#include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdis.h"
 #include "asterfort/infted.h"
 #include "asterfort/jevech.h"
+#include "asterfort/lteatt.h"
 #include "asterfort/matrot.h"
 #include "asterfort/pmavec.h"
 #include "asterfort/rcvala.h"
-#include "asterfort/rcvalb.h"
 #include "asterfort/tecach.h"
 #include "asterfort/ut2mlg.h"
 #include "asterfort/ut2plg.h"
@@ -35,69 +64,60 @@ subroutine te0041(option, nomte)
 #include "asterfort/utpsgl.h"
 #include "asterfort/utpslg.h"
 #include "asterfort/vecma.h"
-#include "asterfort/lteatt.h"
-    character(len=16) :: option, nomte
 !
-!        CALCUL DES MATRICES DE RAIDEUR, MASSE, AMORTISSEMENT
-!                   POUR  LES ELEMENTS DISCRETS
+! --------------------------------------------------------------------------------------------------
+    integer         ::  nddlm, nl1, nl2, infodi, ntermx, icompo
+    parameter  (nddlm=12,nl1=nddlm*(nddlm+1)/2,nl2=nddlm*nddlm,ntermx=144)
 !
-! --- --------------------------------------------------------------
-!  IN
-!     OPTION : NOM DE L'OPTION A CALCULER
-!        POUR DISCRETS : SYMETRIQUES  ET NON-SYMETRIQUES
-!           RIGI_MECA   MASS_MECA  MASS_MECA_DIAG  AMOR_MECA
-!        POUR DISCRETS : SYMETRIQUES
-!           RIGI_MECA_HYST   RIGI_MECA_TANG   RIGI_FLUI_STRU
-!           M_GAMMA          MASS_FLUI_STRU   MASS_MECA_EXPLI
-!     NOMTE  : NOM DU TYPE_ELEMENT
-!           MECA_DIS_T_N      MECA_DIS_T_L
-!           MECA_DIS_TR_N     MECA_DIS_TR_L
-!           MECA_2D_DIS_T_N   MECA_2D_DIS_T_L
-!           MECA_2D_DIS_TR_N  MECA_2D_DIS_TR_L
-! --- --------------------------------------------------------------
+    real(kind=8)    :: mata1(nl1), mata2(nl1), mata3(nl2), mata4(nl2)
 !
-! --- ------------------------------------------------------------------
-    integer :: nddlm, nl1, nl2, infodi
-    parameter     (nddlm=12,nl1=nddlm*(nddlm+1)/2,nl2=nddlm*nddlm)
-!
-    real(kind=8) :: pgl(3, 3), matv1(nl1), matv2(nl1), matp(nddlm, nddlm)
-    real(kind=8) :: mata1(nl1), mata2(nl1), mata3(nl2), mata4(nl2)
-    real(kind=8) :: eta, r8bid, un, zero, valpar, valres(3)
+    integer         :: ibid, itype, irep, nbterm, nno, nc, ndim, nddl, i, j, iret
+    integer         :: jdr, jdm, lorien, jdc, iacce, ivect, jma
+    real(kind=8)    :: pgl(3,3), matv1(nl1), matp(nddlm, nddlm)
+    real(kind=8)    :: eta, r8bid, xrota
+    real(kind=8)    :: tempo(ntermx)
     complex(kind=8) :: hyst, dcmplx
-    integer :: icodre(3), kpg, spt
-    character(len=8) :: k8bid, fami, poum
-    character(len=16) :: nomres(3)
-    character(len=24) :: valk(2)
-    integer :: ibid, itype, irep, nbterm, nno, nc, ndim, nddl, i, iret, j
-    integer :: jdr, jdm, lorien, jdc, jma, iacce, ivect
-    integer :: ntermx
-    parameter     (zero=0.0d0,un=1.0d0,ntermx=144)
-    real(kind=8) :: tempo(ntermx)
-! --- ------------------------------------------------------------------
 !
+    character(len=8)    :: k8bid
+    character(len=24)   :: valk(2)
 !
-    ! Ce sont bien des elements discrets :
+    integer             :: icodre(3)
+    real(kind=8)        :: valres(3)
+    character(len=16)   :: nomres(3)
+! --------------------------------------------------------------------------------------------------
+    character(len=8)    :: nomu
+    character(len=16)   :: concep,cmd
+    aster_logical       :: assemble_amor
+! --------------------------------------------------------------------------------------------------
+!   Ce sont bien des éléments discrets
     ASSERT(lteatt('DIM_TOPO_MODELI','-1'))
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
 !
-!     ON VERIFIE QUE LES CARACTERISTIQUES ONT ETE AFFECTEES
-!     LE CODE DU DISCRET
+!   On vérifie que les caractéristiques ont été affectées
+!   Le code du discret
     call infdis('CODE', ibid, r8bid, nomte)
-!     LE CODE STOKE DANS LA CARTE
+!   Le code stoke dans la carte
     call infdis('TYDI', infodi, r8bid, k8bid)
     if (infodi .ne. ibid) then
         call utmess('F+', 'DISCRETS_25', sk=nomte)
         call infdis('DUMP', ibid, r8bid, 'F+')
     endif
 !
-    valpar = 0.0d0
-    infodi = 1
-    irep = 1
+!   La commande qui utilise cette option
+    call getres(nomu,concep,cmd)
+!   Commande ASSEMBLAGE, pas de comportement juste le matéraiu
+!       concep  : MATR_ELEM_DEPL_R
+!       cmd     : CALC_MATR_ELEM
 !
-    if (option .eq. 'RIGI_MECA') then
+    assemble_amor = (option.eq.'AMOR_MECA')
+    if ( assemble_amor ) then
+        assemble_amor = (concep.eq.'MATR_ELEM_DEPL_R').and.(cmd.eq.'CALC_MATR_ELEM')
+        if ( .not. assemble_amor ) then
+            call jevech('PCOMPOR', 'L', icompo)
+            assemble_amor = zk16(icompo).eq.'DIS_CHOC'
+        endif
+    endif
+!
+    if      (option .eq. 'RIGI_MECA') then
         call infdis('SYMK', infodi, r8bid, k8bid)
     else if (option.eq.'MASS_MECA') then
         call infdis('SYMM', infodi, r8bid, k8bid)
@@ -106,49 +126,53 @@ subroutine te0041(option, nomte)
     else if (option.eq.'AMOR_MECA') then
         call infdis('SYMA', infodi, r8bid, k8bid)
     else
-!       -- POUR LES AUTRES OPTIONS C'EST SYMETRIQUE
-        call infdis('SKMA', ibid, r8bid, k8bid)
-        if (ibid .ne. 3) then
+!       Pour les autres options toutes les matrices doivent être symétriques
+        call infdis('SKMA', infodi, r8bid, k8bid)
+        if (infodi .ne. 3) then
             valk(1)=option
             valk(2)=nomte
             call utmess('F', 'DISCRETS_32', nk=2, valk=valk)
         endif
+        ! Elles sont toutes symétriques
+        infodi = 1
     endif
 !
-! --- INFORMATIONS SUR LES DISCRETS :
-!        NBTERM   = NOMBRE DE COEFFICIENTS DANS K
-!        NNO      = NOMBRE DE NOEUDS
-!        NC       = NOMBRE DE COMPOSANTE PAR NOEUD
-!        NDIM     = DIMENSION DE L'ELEMENT
-!        ITYPE    = TYPE DE L'ELEMENT
-    call infted(nomte, infodi, nbterm, nno, nc,&
-                ndim, itype)
+!   Informations sur les discrets :
+!       nbterm   = nombre de coefficients dans K
+!       nno      = nombre de noeuds
+!       nc       = nombre de composante par noeud
+!       ndim     = dimension de l'élément
+!       itype    = type de l'élément
+    call infted(nomte, infodi, nbterm, nno, nc, ndim, itype)
+!   Nombre de DDL par noeuds
+    nddl = nno * nc
 !
-!     MATRICES SYMETRIQUES
+    if ((infodi .eq. 1).and.(option .eq. 'RIGI_MECA_HYST')) then
+        call jevech('PRIGIEL', 'L', jdr)
+        call jevech('PMATUUC', 'E', jdm)
+        call infdis('ETAK', ibid, eta, k8bid)
+        hyst = dcmplx(1.0,eta)
+        do i = 1, nbterm
+            zc(jdm+i-1) = zr(jdr+i-1) * hyst
+        enddo
+        goto 999
+    endif
+!
+!   Matrice de passage global vers local
+    call jevech('PCAORIE', 'L', lorien)
+    call matrot(zr(lorien), pgl)
+    xrota = abs(zr(lorien)) + abs(zr(lorien+1)) + abs(zr(lorien+2))
+!
+!   Matrices symétriques
     if (infodi .eq. 1) then
-        nddl = nno * nc
-        do 5 i = 1, nl1
-            mata1(i) = zero
-            mata2(i) = zero
-            matv1(i) = zero
-            matv2(i) = zero
- 5      continue
-        if (option .eq. 'RIGI_MECA_HYST') then
-            call jevech('PRIGIEL', 'L', jdr)
-            call jevech('PMATUUC', 'E', jdm)
-            call infdis('ETAK', ibid, eta, k8bid)
-            hyst = dcmplx(un,eta)
-            do 10 i = 1, nbterm
-                zc(jdm+i-1) = zr(jdr+i-1) * hyst
-10          continue
-            goto 999
-        endif
+        matv1(:) = 0.0
+        mata1(:) = 0.0
+        mata2(:) = 0.0
 !
-        call jevech('PCAORIE', 'L', lorien)
-        call matrot(zr(lorien), pgl)
-        if (option .eq. 'RIGI_MECA' .or. option .eq. 'RIGI_MECA_TANG' .or. option .eq.&
-            'RIGI_FLUI_STRU' .or. option .eq. 'RIGI_MECA_ELAS') then
-!           DISCRET DE TYPE RAIDEUR
+        if ((option .eq. 'RIGI_MECA') .or. &
+            (option .eq. 'RIGI_MECA_TANG') .or. &
+            (option .eq. 'RIGI_FLUI_STRU')) then
+!           Discret de type raideur
             call infdis('DISK', infodi, r8bid, k8bid)
             if (infodi .eq. 0) then
                 call utmess('A+', 'DISCRETS_27', sk=nomte)
@@ -157,11 +181,11 @@ subroutine te0041(option, nomte)
             call jevech('PCADISK', 'L', jdc)
             call infdis('REPK', irep, r8bid, k8bid)
             call jevech('PMATUUR', 'E', jdm)
-            elseif ( option.eq.'MASS_MECA' .or.&
-     &            option.eq.'MASS_MECA_DIAG' .or.&
-     &            option.eq.'MASS_MECA_EXPLI' .or.&
-     &            option.eq.'MASS_FLUI_STRU') then
-!           DISCRET DE TYPE MASSE
+        else if ((option .eq. 'MASS_MECA') .or. &
+                 (option .eq. 'MASS_MECA_DIAG') .or. &
+                 (option .eq. 'MASS_MECA_EXPLI') .or. &
+                 (option .eq. 'MASS_FLUI_STRU')) then
+!           Discret de type masse
             call infdis('DISM', infodi, r8bid, k8bid)
             if (infodi .eq. 0) then
                 call utmess('A+', 'DISCRETS_26', sk=nomte)
@@ -170,8 +194,8 @@ subroutine te0041(option, nomte)
             call jevech('PCADISM', 'L', jdc)
             call infdis('REPM', irep, r8bid, k8bid)
             call jevech('PMATUUR', 'E', jdm)
-        else if (option.eq.'AMOR_MECA') then
-!           DISCRET DE TYPE AMORTISSEMENT
+        else if (option .eq. 'AMOR_MECA') then
+!           Discret de type amortissement
             call infdis('DISA', infodi, r8bid, k8bid)
             if (infodi .eq. 0) then
                 call utmess('A+', 'DISCRETS_28', sk=nomte)
@@ -180,48 +204,49 @@ subroutine te0041(option, nomte)
             call jevech('PCADISA', 'L', jdc)
             call infdis('REPA', irep, r8bid, k8bid)
             call jevech('PMATUUR', 'E', jdm)
-            if (ndim .ne. 3) goto 6
-            call tecach('ONO', 'PRIGIEL', 'L', iret, iad=jdr)
-            if (jdr .eq. 0) goto 6
-            call tecach('NNN', 'PMATERC', 'L', iret, iad=jma)
-            if ((jma.eq.0) .or. (iret.ne.0)) goto 6
-            nomres(1) = 'RIGI_NOR'
-            nomres(2) = 'AMOR_NOR'
-            nomres(3) = 'AMOR_TAN'
-            valres(1) = zero
-            valres(2) = zero
-            valres(3) = zero
-            call utpsgl(nno, nc, pgl, zr(jdr), matv1)
-            call rcvala(zi(jma), ' ', 'DIS_CONTACT', 0, ' ',&
-                        [valpar], 3, nomres, valres, icodre,&
-                        0)
-            if (icodre(1) .eq. 0 .and. valres(1) .ne. zero) then
-                if (icodre(2) .eq. 0) then
-                    mata1(1)=matv1(1)*valres(2)/valres(1)
+!           Traitement du cas de assemble_amor
+            if ( assemble_amor ) then
+                if (ndim .ne. 3) goto 666
+                call tecach('ONO', 'PRIGIEL', 'L', iret, iad=jdr)
+                if (jdr .eq. 0) goto 666
+                call tecach('NNN', 'PMATERC', 'L', iret, iad=jma)
+                if ((jma.eq.0).or.(iret.ne.0)) goto 666
+                nomres(1) = 'RIGI_NOR'
+                nomres(2) = 'AMOR_NOR'
+                nomres(3) = 'AMOR_TAN'
+                valres(:) = 0.0
+                call utpsgl(nno, nc, pgl, zr(jdr), matv1)
+                call rcvala(zi(jma), ' ', 'DIS_CONTACT', 0, ' ',&
+                            [0.0d0], 3, nomres, valres, icodre,0)
+                if ((icodre(1).eq.0).and.(abs(valres(1))>r8prem())) then
+                    if (icodre(2).eq.0) then
+                        mata1(1) = matv1(1)*valres(2)/valres(1)
+                    endif
+                    if (icodre(3).eq.0) then
+                        mata1(3) = matv1(1)*valres(3)/valres(1)
+                    endif
+                    mata1(6) = mata1(3)
                 endif
-                if (icodre(3) .eq. 0) then
-                    mata1(3)=matv1(1)*valres(3)/valres(1)
+                if ((nno.eq.2).and.(nc.eq.3)) then
+                    mata1(7)  = -mata1(1)
+                    mata1(10) =  mata1(1)
+                    mata1(15) =  mata1(3)
+                    mata1(21) =  mata1(3)
+                    mata1(12) = -mata1(3)
+                    mata1(18) = -mata1(3)
+                else if ((nno.eq.2).and.(nc.eq.6)) then
+                    mata1(22) = -mata1(1)
+                    mata1(28) =  mata1(1)
+                    mata1(36) =  mata1(3)
+                    mata1(45) =  mata1(3)
+                    mata1(30) = -mata1(3)
+                    mata1(39) = -mata1(3)
                 endif
-                mata1(6) = mata1(3)
+                call utpslg(nno, nc, pgl, mata1, mata2)
+666             continue
             endif
-            if (nno .eq. 2 .and. nc .eq. 3) then
-                mata1(7) = -mata1(1)
-                mata1(10) = mata1(1)
-                mata1(15) = mata1(3)
-                mata1(21) = mata1(3)
-                mata1(12) = -mata1(3)
-                mata1(18) = -mata1(3)
-            else if (nno.eq.2.and.nc.eq.6) then
-                mata1(22) = -mata1(1)
-                mata1(28) = mata1(1)
-                mata1(36) = mata1(3)
-                mata1(45) = mata1(3)
-                mata1(30) = -mata1(3)
-                mata1(39) = -mata1(3)
-            endif
- 6          continue
         else if (option.eq.'M_GAMMA') then
-!           DISCRET DE TYPE MASSE
+!           Discret de type masse
             call infdis('DISM', infodi, r8bid, k8bid)
             if (infodi .eq. 0) then
                 call utmess('A+', 'DISCRETS_26', sk=nomte)
@@ -232,44 +257,34 @@ subroutine te0041(option, nomte)
             call jevech('PACCELR', 'L', iacce)
             call jevech('PVECTUR', 'E', ivect)
         else
-! --- ---   OPTION DE CALCUL INVALIDE
+!           Option de calcul invalide
             ASSERT(.false.)
         endif
 !
-        if (ndim .eq. 3) call utpslg(nno, nc, pgl, mata1, mata2)
         if (irep .eq. 1) then
-! --- ---   REPERE GLOBAL ==> PAS DE ROTATION ---
+!           Repère global ==> pas de rotation
             if (option .eq. 'M_GAMMA') then
                 call vecma(zr(jdc), nbterm, matp, nddl)
                 call pmavec('ZERO', nddl, matp, zr(iacce), zr(ivect))
             else
-                do 20 i = 1, nbterm
-                    zr(jdm+i-1) = zr(jdc+i-1)
-                    if (option .eq. 'AMOR_MECA') then
-                        zr(jdm+i-1) = zr(jdm+i-1) + mata2(i)
-                    endif
-20              continue
+                do i = 1, nbterm
+                    zr(jdm+i-1) = zr(jdc+i-1) + mata2(i)
+                enddo
             endif
-!
         else if (irep.eq.2) then
-! --- ---   LOCAL ==> GLOBAL ---
-            if (zr(lorien) .eq. 0.d0 .and. zr(lorien+1) .eq. 0.d0 .and. zr(lorien+2) .eq.&
-                0.d0) then
-! --- --- ---  ANGLES NULS  ===>  PAS DE ROTATION ---
+!           Local ==> Global
+            if ( xrota <= r8prem() )  then
+!               Angles quasi nuls  ===>  pas de rotation
                 if (option .eq. 'M_GAMMA') then
                     call vecma(zr(jdc), nbterm, matp, nddl)
                     call pmavec('ZERO', nddl, matp, zr(iacce), zr(ivect))
                 else
-                    do 30 i = 1, nbterm
-                        zr(jdm+i-1) = zr(jdc+i-1)
-                        if (option .eq. 'AMOR_MECA') then
-                            zr(jdm+i-1) = zr(jdm+i-1) + mata2(i)
-                        endif
-30                  continue
+                    do i = 1, nbterm
+                        zr(jdm+i-1) = zr(jdc+i-1) + mata2(i)
+                    enddo
                 endif
             else
-! --- --- ---  ANGLES NON NULS  ===>  ROTATION ---
-!              CALL MATROT ( ZR(LORIEN) , PGL )
+!               Angles non nuls  ===>  rotation
                 if (option .eq. 'M_GAMMA') then
                     if (ndim .eq. 3) then
                         call utpslg(nno, nc, pgl, zr(jdc), matv1)
@@ -281,10 +296,10 @@ subroutine te0041(option, nomte)
                 else
                     if (ndim .eq. 3) then
                         call utpslg(nno, nc, pgl, zr(jdc), zr(jdm))
-                        if (option .eq. 'AMOR_MECA') then
-                            do 25 i = 1, nbterm
+                        if ( assemble_amor ) then
+                            do i = 1, nbterm
                                 zr(jdm+i-1) = zr(jdm+i-1) + mata2(i)
-25                          continue
+                            enddo
                         endif
                     else if (ndim.eq.2) then
                         call ut2mlg(nno, nc, pgl, zr(jdc), zr(jdm))
@@ -292,19 +307,16 @@ subroutine te0041(option, nomte)
                 endif
             endif
         endif
-!
-!     MATRICES NON-SYMETRIQUES
+
+!   Matrices non-symétriques
     else
-        nddl = nno * nc
-        do 7 i = 1, nl2
-            mata3(i) = zero
-            mata4(i) = zero
- 7      continue
+        matv1(:) = 0.0
+        mata3(:) = 0.0
+        mata4(:) = 0.0
+        tempo(:) = 0.0
 !
-        call jevech('PCAORIE', 'L', lorien)
-        call matrot(zr(lorien), pgl)
         if (option .eq. 'RIGI_MECA') then
-!           DISCRET DE TYPE RAIDEUR
+!           Discret de type raideur
             call infdis('DISK', infodi, r8bid, k8bid)
             if (infodi .eq. 0) then
                 call utmess('A+', 'DISCRETS_27', sk=nomte)
@@ -313,9 +325,9 @@ subroutine te0041(option, nomte)
             call jevech('PCADISK', 'L', jdc)
             call infdis('REPK', irep, r8bid, k8bid)
             call jevech('PMATUNS', 'E', jdm)
-            elseif ( option.eq.'MASS_MECA'.or. option.eq.'MASS_MECA_DIAG')&
-        then
-!           DISCRET DE TYPE MASSE
+        else if ((option .eq. 'MASS_MECA') .or. &
+                 (option .eq. 'MASS_MECA_DIAG') ) then
+!           Discret de type masse
             call infdis('DISM', infodi, r8bid, k8bid)
             if (infodi .eq. 0) then
                 call utmess('A+', 'DISCRETS_26', sk=nomte)
@@ -325,7 +337,7 @@ subroutine te0041(option, nomte)
             call infdis('REPM', irep, r8bid, k8bid)
             call jevech('PMATUNS', 'E', jdm)
         else if (option.eq.'AMOR_MECA') then
-!           DISCRET DE TYPE AMORTISSEMENT
+!           Discret de type amortissement
             call infdis('DISA', infodi, r8bid, k8bid)
             if (infodi .eq. 0) then
                 call utmess('A+', 'DISCRETS_28', sk=nomte)
@@ -334,90 +346,82 @@ subroutine te0041(option, nomte)
             call jevech('PCADISA', 'L', jdc)
             call infdis('REPA', irep, r8bid, k8bid)
             call jevech('PMATUNS', 'E', jdm)
-            if (ndim .ne. 3) goto 8
-            call tecach('ONO', 'PRIGIEL', 'L', iret, iad=jdr)
-            if (jdr .eq. 0) goto 8
-            call tecach('NNN', 'PMATERC', 'L', iret, iad=jma)
-            if ((jma.eq.0) .or. (iret.ne.0)) goto 8
-            nomres(1) = 'RIGI_NOR'
-            nomres(2) = 'AMOR_NOR'
-            nomres(3) = 'AMOR_TAN'
-            valres(1) = zero
-            valres(2) = zero
-            valres(3) = zero
-            call utpsgl(nno, nc, pgl, zr(jdr), matv2)
-            call rcvalb(fami, kpg, spt, poum, zi(jma),&
-                        ' ', 'DIS_CONTACT', 0, ' ', [valpar],&
-                        3, nomres, valres, icodre, 0)
-            if (icodre(1) .eq. 0 .and. valres(1) .ne. zero) then
-                if (icodre(2) .eq. 0) then
-                    mata3(1)=matv2(1)*valres(2)/valres(1)
+            if ( assemble_amor ) then
+                if (ndim .ne. 3) goto 777
+                call tecach('ONO', 'PRIGIEL', 'L', iret, iad=jdr)
+                if (jdr .eq. 0) goto 777
+                call tecach('NNN', 'PMATERC', 'L', iret, iad=jma)
+                if ((jma.eq.0) .or. (iret.ne.0)) goto 777
+                nomres(1) = 'RIGI_NOR'
+                nomres(2) = 'AMOR_NOR'
+                nomres(3) = 'AMOR_TAN'
+                valres(:) = 0.0
+                call utpsgl(nno, nc, pgl, zr(jdr), matv1)
+                call rcvala(zi(jma), ' ', 'DIS_CONTACT', 0, ' ',&
+                            [0.0d0], 3, nomres, valres, icodre,0)
+                if ((icodre(1).eq.0).and.(abs(valres(1))>r8prem())) then
+                    if (icodre(2).eq.0) then
+                        mata3(1) = matv1(1)*valres(2)/valres(1)
+                    endif
+                    if (icodre(3).eq.0) then
+                        mata3(3) = matv1(1)*valres(3)/valres(1)
+                    endif
                 endif
-                if (icodre(3) .eq. 0) then
-                    mata3(3)=matv2(1)*valres(3)/valres(1)
+                if ((nno.eq.2).and.(nc.eq.3)) then
+                    mata3(19) = -mata3(1)
+                    mata3(22) =  mata3(1)
+                    mata3(29) =  mata3(3)
+                    mata3(36) =  mata3(3)
+                    mata3(26) = -mata3(3)
+                    mata3(33) = -mata3(3)
+                    mata3(8)  =  mata3(3)
+                    mata3(15) =  mata3(3)
+                    mata3(4)  =  mata3(19)
+                    mata3(11) =  mata3(26)
+                    mata3(18) =  mata3(33)
+                    mata3(3)  = 0.d0
+                else if ((nno.eq.2).and.(nc.eq.6)) then
+                    mata3(73) = -mata3(1)
+                    mata3(79) =  mata3(1)
+                    mata3(92) =  mata3(3)
+                    mata3(105)=  mata3(3)
+                    mata3(86) = -mata3(3)
+                    mata3(99) = -mata3(3)
+                    mata3(7)  =  mata3(73)
+                    mata3(20) =  mata3(86)
+                    mata3(33) =  mata3(99)
+                    mata3(14) =  mata3(3)
+                    mata3(27) =  mata3(3)
+                    mata3(3)  = 0.d0
                 endif
+                call utpplg(nno, nc, pgl, mata3, mata4)
+777             continue
             endif
-            if (nno .eq. 2 .and. nc .eq. 3) then
-                mata3(19) = -mata3(1)
-                mata3(22) = mata3(1)
-                mata3(29) = mata3(3)
-                mata3(36) = mata3(3)
-                mata3(26) = -mata3(3)
-                mata3(33) = -mata3(3)
-                mata3(8) = mata3(3)
-                mata3(15) = mata3(3)
-                mata3(4) = mata3(19)
-                mata3(11) = mata3(26)
-                mata3(18) = mata3(33)
-                mata3(3) = 0.d0
-            else if (nno.eq.2.and.nc.eq.6) then
-                mata3(73) = -mata3(1)
-                mata3(79) = mata3(1)
-                mata3(92) = mata3(3)
-                mata3(105)= mata3(3)
-                mata3(86) = -mata3(3)
-                mata3(99) = -mata3(3)
-                mata3(7) = mata3(73)
-                mata3(20) = mata3(86)
-                mata3(33) = mata3(99)
-                mata3(14) = mata3(3)
-                mata3(27) = mata3(3)
-                mata3(3) = 0.d0
-            endif
- 8          continue
         else
-! --- ---   OPTION DE CALCUL INVALIDE
+!           Option de calcul invalide
             ASSERT(.false.)
         endif
-        if (ndim .eq. 3) call utpplg(nno, nc, pgl, mata3, mata4)
+!
         if (irep .eq. 1) then
-! --- ---   REPERE GLOBAL ==> PAS DE ROTATION ---
-            do 21 i = 1, nbterm
-                tempo(i) = zr(jdc+i-1)
-                if (option .eq. 'AMOR_MECA') then
-                    tempo(i) = tempo(i) + mata4(i)
-                endif
-21          continue
+!           Repère global ==> pas de rotation
+            do i = 1, nbterm
+                tempo(i) = zr(jdc+i-1) + mata4(i)
+            enddo
         else if (irep.eq.2) then
-! --- ---   LOCAL ==> GLOBAL ---
-            if (zr(lorien) .eq. 0.d0 .and. zr(lorien+1) .eq. 0.d0 .and. zr(lorien+2) .eq.&
-                0.d0) then
-! --- --- ---  ANGLES NULS  ===>  PAS DE ROTATION ---
-                do 31 i = 1, nbterm
-                    tempo(i) = zr(jdc+i-1)
-                    if (option .eq. 'AMOR_MECA') then
-                        tempo(i) = tempo(i) + mata4(i)
-                    endif
-31              continue
+!           Local ==> global
+            if ( xrota <= r8prem() )  then
+!               Angles quasi nuls  ===>  pas de rotation
+                do i = 1, nbterm
+                    tempo(i) = zr(jdc+i-1) + mata4(i)
+                enddo
             else
-! --- --- --- ANGLES NON NULS  ===>  ROTATION ---
-!              CALL MATROT ( ZR(LORIEN) , PGL )
+!               Angles non nuls  ===>  rotation
                 if (ndim .eq. 3) then
                     call utpplg(nno, nc, pgl, zr(jdc), tempo)
-                    if (option .eq. 'AMOR_MECA') then
-                        do 26 i = 1, nbterm
+                    if ( assemble_amor ) then
+                        do i = 1, nbterm
                             tempo(i) = tempo(i) + mata4(i)
-26                      continue
+                        enddo
                     endif
                 else if (ndim.eq.2) then
                     call ut2plg(nno, nc, pgl, zr(jdc), tempo)
@@ -425,11 +429,11 @@ subroutine te0041(option, nomte)
             endif
         endif
 !
-        do 27 i = 1, nddl
-            do 28 j = 1, nddl
+        do i = 1, nddl
+            do j = 1, nddl
                 zr(jdm+(i-1)*nddl+j-1)=tempo((j-1)*nddl+i)
-28          continue
-27      continue
+            enddo
+        enddo
     endif
 !
 999  continue

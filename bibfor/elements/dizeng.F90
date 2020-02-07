@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,6 +51,8 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 #include "jeveux.h"
 #include "asterc/r8miem.h"
 #include "asterfort/assert.h"
+#include "asterfort/diraidklv.h"
+#include "asterfort/diklvraid.h"
 #include "asterfort/infdis.h"
 #include "asterfort/jevech.h"
 #include "asterfort/pmavec.h"
@@ -71,7 +73,7 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
     integer :: imat, ivarim, jdc, irep, jtp, jtm, ifono, icontp, ivarip, iadzi, iazk24, icompo
     integer :: icarcr
     integer :: icontm, ii, neq
-    real(kind=8) :: r8bid, raidex, fl(12), klv(78), klc(144),raideurDeno
+    real(kind=8) :: r8bid, raide(6), fl(12), klv(78), klc(144),raideurDeno
     character(len=8) :: k8bid
     character(len=24) :: messak(5)
 !   pour la loi de comportement
@@ -123,14 +125,15 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
     endif
 !   les caractéristiques sont toujours dans le repère local. on fait seulement une copie
     call dcopy(nbt, zr(jdc), 1, klv, 1)
-!
+!   Récupération des termes diagonaux : raide = klv(i,i)
+    call diraidklv(nomte,raide,klv)
 !   les incréments de déplacement sont nuls
 !       ==> récupération de la matrice tangente précédente, si possible
 !       ==> si pas possible, calcul d'une tangente pas trop mauvaise, après lecture des paramètres
     if (option .eq. 'RIGI_MECA_TANG') then
 !       tangente précédente
         if (abs(zr(ivarim+3)) .gt. r8miem()) then
-            raidex = zr(ivarim+3)
+            raide(1) = zr(ivarim+3)
             goto 800
         endif
     endif
@@ -187,7 +190,7 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 !       ==> la récupération de la matrice tangente précédente a échouée
 !       ==> calcul d'une tangente pas trop mauvaise
     if (option .eq. 'RIGI_MECA_TANG') then
-        raidex=(1.0d0 + ldcpar(2)*ldcpar(3))/raideurDeno
+        raide(1)=(1.0d0 + ldcpar(2)*ldcpar(3))/raideurDeno
         goto 800
     endif
 !
@@ -227,42 +230,17 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
     if (iret .ne. 0) goto 999
 !   calcul de la tangente au comportement
     if (abs(resu(nbequa+3)) .gt. precis) then
-        raidex = resu(nbequa + 1)/resu(nbequa + 3)
+        raide(1) = resu(nbequa + 1)/resu(nbequa + 3)
     else
-        raidex = resu(nbequa + 1)
+        raide(1) = resu(nbequa + 1)
     endif
-    if ( abs(raidex) .lt. precis ) then
-        raidex=(1.0d0 + ldcpar(2)*ldcpar(3))/raideurDeno
+    if ( abs(raide(1)) .lt. precis ) then
+        raide(1)=(1.0d0 + ldcpar(2)*ldcpar(3))/raideurDeno
     endif
-!   actualisation de la matrice quasi-tangente
-800  continue
 !
-    if (nomte .eq. 'MECA_DIS_TR_L') then
-        klv(1)  =  raidex
-        klv(28) =  raidex
-        klv(22) = -raidex
-    else if (nomte.eq.'MECA_DIS_TR_N') then
-        klv(1)  = raidex
-    else if (nomte.eq.'MECA_DIS_T_L') then
-        klv(1)  =  raidex
-        klv(10) =  raidex
-        klv(7)  = -raidex
-    else if (nomte.eq.'MECA_DIS_T_N') then
-        klv(1)  =  raidex
-    else if (nomte.eq.'MECA_2D_DIS_T_L') then
-        klv(1)  =  raidex
-        klv(6)  =  raidex
-        klv(4)  = -raidex
-    else if (nomte.eq.'MECA_2D_DIS_T_N') then
-        klv(1)  =  raidex
-    else if (nomte.eq.'MECA_2D_DIS_TR_L') then
-        klv(1)  =  raidex
-        klv(10) =  raidex
-        klv(7)  = -raidex
-    else if (nomte.eq.'MECA_2D_DIS_TR_N') then
-        klv(1)  =  raidex
-    endif
-!   actualisation de la matrice quasi-tangente
+800  continue
+!   Actualisation de la matrice tangente : klv(i,i) = raide(i)
+    call diklvraid(nomte, klv, raide)
     if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
         call jevech('PMATUUR', 'E', imat)
         if (ndim .eq. 3) then
@@ -312,12 +290,12 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
         zr(ivarip)   = resu(1)
         zr(ivarip+1) = resu(2)
         zr(ivarip+2) = resu(4)
-        zr(ivarip+3) = raidex
+        zr(ivarip+3) = raide(1)
         if (nno .eq. 2) then
             zr(ivarip+4)   = resu(1)
             zr(ivarip+4+1) = resu(2)
             zr(ivarip+4+2) = resu(4)
-            zr(ivarip+4+3) = raidex
+            zr(ivarip+4+3) = raide(1)
         endif
     endif
 999  continue

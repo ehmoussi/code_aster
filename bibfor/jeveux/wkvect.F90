@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@ subroutine wkvect(nom, carac, dim, jadr, vl,&
                   vi, vi4, vr, vc, vk8,&
                   vk16, vk24, vk32, vk80)
 ! person_in_charge: jacques.pellet at edf.fr
-! aslint: disable=W1304
     use iso_c_binding, only: c_loc, c_ptr, c_f_pointer
     implicit none
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ MAT_3=DEFI_MATERIAU(  ELAS=_F(
 # CREATION DU MATERIAU CONTACT
 
 CONTACT=DEFI_MATERIAU(
-                      DIS_CONTACT = _F( ),
+                      DIS_CONTACT = _F(COULOMB=0.0 ),
                       );
 
 CHAMPMAT=AFFE_MATERIAU(   MAILLAGE=MAILLAGE,AFFE=(
@@ -365,7 +365,7 @@ CARA_ELE=AFFE_CARA_ELEM( MODELE=STICKMOD,
 
          ORIENTATION=_F(  GROUP_MA = 'PRADIER',
                           CARA = 'VECT_X_Y',
-                          VALE = ( 0., 0., -1., 0., 1., 0., ),
+                          VALE = ( 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, ),
                                                               ),
 
   RIGI_PARASOL=_F(
@@ -1085,7 +1085,7 @@ TB=POST_DECOLLEMENT(RESULTAT=EVOL,
 
 TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=0.0,
-           
+
            NOM_PARA='%DECOL',
            TABLE=TB,
            FILTRE=_F(NOM_PARA='INST',
@@ -1094,7 +1094,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=0.61110755195604,
-           
+
            NOM_PARA='%DECOL',
            TABLE=TB,
            FILTRE=_F(NOM_PARA='INST',
@@ -1103,7 +1103,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=2.4085153030045,
-           
+
            NOM_PARA='%DECOL',
            TABLE=TB,
            FILTRE=_F(NOM_PARA='INST',
@@ -1112,7 +1112,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=0.61110755195604,
-           
+
            NOM_PARA='%DECOL',
            TABLE=TB,
            FILTRE=_F(NOM_PARA='INST',
@@ -1121,7 +1121,7 @@ TEST_TABLE(CRITERE='RELATIF',
 
 TEST_TABLE(CRITERE='RELATIF',
            VALE_CALC=0.0,
-           
+
            NOM_PARA='%DECOL',
            TABLE=TB,
            FILTRE=_F(NOM_PARA='INST',

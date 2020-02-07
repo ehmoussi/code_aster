@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -214,7 +214,11 @@ CARA_ELE=AFFE_CARA_ELEM(MODELE=MODELE,
                                  _F(CARA='A_T_D_N',
                                     GROUP_MA='MASSES1',
                                     VALE=(0.,0.,0.),),
-                                    ),);
+                                    ),
+
+                        ORIENTATION=_F(GROUP_MA='MASSES1',CARA='VECT_X_Y',
+                                       VALE=(-1.0,0.0,0.0, 0.0,1.0,0.0),)
+);
 
 ASSEMBLAGE(MODELE=MODELE,
                 CARA_ELEM=CARA_ELE,
@@ -778,13 +782,15 @@ EFFOCHOC=RECU_FONCTION(RESULTAT=TRAN_DY2,
 # TESTS
 # -----
 
-MAXF_CHO=INFO_FONCTION(MAX=_F(FONCTION=EFF_CHOC,),);
+IMPR_FONCTION(FORMAT='TABLEAU',UNITE=6,COURBE=_F(FONCTION=EFF_CHOC))
+IMPR_FONCTION(FORMAT='TABLEAU',UNITE=6,COURBE=_F(FONCTION=EFFOCHOC))
 
+MAXF_CHO=INFO_FONCTION(MAX=_F(FONCTION=EFF_CHOC,),);
 MAXFCHOC=INFO_FONCTION(MAX=_F(FONCTION=EFFOCHOC,),);
 
 TEST_TABLE(PRECISION=1.E-2,
-           VALE_CALC=629.304205396,
-           VALE_REFE=629.28700000000003,
+           VALE_CALC=-629.304205396,
+           VALE_REFE=-629.28700000000003,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='N',
            TABLE=MAXF_CHO,
@@ -793,7 +799,7 @@ TEST_TABLE(PRECISION=1.E-2,
                    _F(NOM_PARA='INST',
                       VALE=0.376,),
                    _F(NOM_PARA='TYPE',
-                      VALE_K='MAXI',),
+                      VALE_K='MINI',),
                    ),
            )
 

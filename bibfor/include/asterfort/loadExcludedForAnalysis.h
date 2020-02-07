@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dis_contact(dimele, nno, nc, icodma,&
-                  utl, xg, pgl, force, klv, option,&
-                  varmo, varpl)
-    character(len=*) :: option
-    integer ::      nno, nc, icodma, dimele
-    real(kind=8) :: dul(nno*nc), utl(nno*nc)
-    real(kind=8) :: klv(nno*nc,nno*nc), xg(nno*3), pgl(3, 3)
-    real(kind=8) :: varmo(8), varpl(8), force(3)
-    end subroutine dis_contact
+    subroutine loadExcludedForAnalysis(list_load)
+        character(len=19), intent(in) :: list_load
+    end subroutine loadExcludedForAnalysis
 end interface

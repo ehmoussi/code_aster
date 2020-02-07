@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine meamme(optioz, modele, nchar, lchar, mate,&
                   cara, time, base, merigi,&
-                  memass, meamor, varplu)
+                  memass, meamor, varplu, compor_)
 !
 !
     implicit none
@@ -50,6 +50,8 @@ subroutine meamme(optioz, modele, nchar, lchar, mate,&
     character(len=*) :: merigi, memass, meamor, varplu
     character(len=8) :: lchar(*)
     character(len=1) :: base
+    character(len=*), optional :: compor_
+
 !
 ! ----------------------------------------------------------------------
 !
@@ -129,7 +131,7 @@ subroutine meamme(optioz, modele, nchar, lchar, mate,&
 !
 ! --- NOM DES RESUELEM DE RIGIDITE
 !
-    rigich = ' '
+    rigich = ' '; ires1 = 0
     if (merigi(1:1) .ne. ' ') then
         call jeexin(merigi(1:19)//'.RELR', iret)
         if (iret .gt. 0) then
@@ -250,12 +252,15 @@ subroutine meamme(optioz, modele, nchar, lchar, mate,&
         lpain(nop) = 'PVARIPG'
         lchin(nop) = varplu(1:19)
     endif
-!   -- pour les PMF :
+!   Comportement
     nop=nop+1
     lpain(nop) = 'PCOMPOR'
-    lchin(nop) = mate(1:8)//'.COMPOR'
-    
-    
+    if ( present(compor_) ) then
+        lchin(nop) = compor_
+    else
+        lchin(nop) = mate(1:8)//'.COMPOR'
+    endif
+
     call calcul('S', option, ligrmo, nop, lchin,&
                 lpain, 2, lchout, lpaout, base,&
                 'OUI')
