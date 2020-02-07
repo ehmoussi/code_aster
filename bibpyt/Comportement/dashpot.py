@@ -24,10 +24,10 @@ from .cata_comportement import LoiComportement
 loi = LoiComportement(
     nom            = 'DASHPOT',
     lc_type        = ('MECANIQUE',),
-    doc            =   """Relation de type Dashpot pour les elements discrets"""              ,
+    doc            =   """Relation de type Dashpot pour les éléments discrets"""              ,
     num_lc         = 0,
     nb_vari        = 1,
-    nom_vari       = ('VIDE',),
+    nom_vari       = ('VIDE',), 
     mc_mater       = None,
     modelisation   = ('DIS_T',),
     deformation    = ('PETIT','PETIT_REAC','GROT_GDEP',),
