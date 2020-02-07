@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -240,12 +240,14 @@ integer :: nbordr
 !     ------------------------------------------------------------------
     if (types2 .eq. 'EVOL_ELAS') then
 !
-        nbcham=ncmeca
+        nbcham=ncmeca + 1
         call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
         call jeecra(noms2//'.DESC', 'DOCU', cval='EVEL')
-        do i = 1, nbcham
+        do i = 1, ncmeca
             call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
         enddo
+
+        call jecroc(jexnom(noms2//'.DESC', 'PRES_NOEU'))
 !
         goto 99
 !
@@ -287,12 +289,14 @@ integer :: nbordr
 !     ------------------------------------------------------------------
     else if (types2.eq.'EVOL_NOLI') then
 !
-        nbcham=ncmeca
+        nbcham=ncmeca + 1
         call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
         call jeecra(noms2//'.DESC', 'DOCU', cval='EVNO')
-        do i = 1, nbcham
+        do i = 1, ncmeca
             call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
         enddo
+               
+        call jecroc(jexnom(noms2//'.DESC', 'PRES_NOEU'))
 !
         goto 99
 !

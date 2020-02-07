@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,8 @@
 import os
 
 
-def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args):
+def calc_pression_ops(self, MAILLAGE, RESULTAT,TOUT_ORDRE, GROUP_MA, INST,
+                      GEOMETRIE,CRITERE,PRECISION, **args):
     """
            Macro permettant le calcul des pressions aux interfaces d'un solide
            à partir du champ de contraintes sigma_n. Elle fonctionne
@@ -32,19 +33,24 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
     """
     import aster
     from code_aster.Cata.Syntax import _F
-    from Utilitai.Utmess import UTMESS
+    from Utilitai.Utmess import MasquerAlarme, RetablirAlarme, UTMESS
+    from code_aster.Cata.DataStructure import (evol_elas, evol_noli)
 
     # La macro compte pour 1 dans la numerotation des commandes
     self.set_icmd(1)
 
      # Le concept sortant (de type cham_no) est chpout
-    self.DeclareOut('chpout', self.sd)
+    self.DeclareOut('__RESU', self.sd)
+    Mail = self.DeclareOut('Mail', MAILLAGE)
 
     # On importe les definitions des commandes a utiliser dans la macro
     # Le nom de la variable doit etre obligatoirement le nom de la commande
     CREA_CHAMP = self.get_cmd('CREA_CHAMP')
+    CALC_CHAMP = self.get_cmd('CALC_CHAMP')
+    CREA_RESU = self.get_cmd('CREA_RESU')
     MODI_MAILLAGE = self.get_cmd('MODI_MAILLAGE')
     FORMULE = self.get_cmd('FORMULE')
+    DETRUIRE = self.get_cmd('DETRUIRE')
 
     # RESULTAT
     __RESU = self['RESULTAT']
@@ -88,45 +94,18 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
 
 # Corps de la commande
 # Champ de contraintes de Cauchy aux noeuds
-    __sigm = CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
-                        OPERATION='EXTR',
+
+    if isinstance(RESULTAT, evol_noli) :
+        typxx = 'EVOL_NOLI'
+    elif isinstance(RESULTAT, evol_elas) :
+        typxx = 'EVOL_ELAS'
+
+
+    MasquerAlarme('CALCCHAMP_1')
+    __RESU = CALC_CHAMP(reuse =RESULTAT,
                         RESULTAT=RESULTAT,
-                        NOM_CHAM='SIEF_NOEU',
-                        INST=INST,
-                        )
-
-    if  GEOMETRIE == 'DEFORMEE' :
-        __depl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                            OPERATION='EXTR',
-                            RESULTAT=RESULTAT,
-                            NOM_CHAM='DEPL',
-                            INST=INST,
-                           )
-
-        __mdepl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                             OPERATION='COMB',
-                             COMB=_F(CHAM_GD=__depl,
-                                     COEF_R=-1.0,),
-                            )
-
-    # Normale sur la configuration finale
-    Mail = self.DeclareOut('Mail', MAILLAGE)
-    if GEOMETRIE == 'DEFORMEE' :
-        Mail = MODI_MAILLAGE(reuse=MAILLAGE,
-                             MAILLAGE=MAILLAGE,
-                             DEFORME=_F(OPTION='TRAN',
-                                        DEPL=__depl,),)
-
-    __NormaleF = CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
-                            OPERATION='NORMALE',
-                            MODELE=__model,
-                            GROUP_MA=GROUP_MA,
-                            )
-    if  GEOMETRIE == 'DEFORMEE' :
-        Mail = MODI_MAILLAGE(reuse=MAILLAGE,
-                         MAILLAGE=MAILLAGE,
-                         DEFORME=_F(OPTION='TRAN',
-                                    DEPL=__mdepl,),)
+                        CONTRAINTE='SIEF_NOEU',)
+    RetablirAlarme('CALCCHAMP_1')
 
     # Pression à l'interface
     if dim == 3:
@@ -139,25 +118,98 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
         __Pression = FORMULE(VALE='(SIXX*X*X+SIYY*Y*Y+2*SIXY*X*Y)',
                              NOM_PARA=('SIXX', 'SIYY', 'SIXY', 'X', 'Y'),)
 
-    __Pres = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
-                        OPERATION='AFFE',
-                        MAILLAGE=MAILLAGE,
-                        AFFE=_F(GROUP_MA=GROUP_MA,
-                                NOM_CMP='X1',
-                                VALE_F=__Pression,),)
+    # boucle pour INST
+    if INST is not None :
+        time = INST
+        linst = len(INST)
+    elif TOUT_ORDRE is not None :
+        time = RESULTAT.LIST_VARI_ACCES()['INST']
+        linst = len(time)
 
-    __pF = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
-                      OPERATION='EVAL',
-                      CHAM_F=__Pres,
-                      CHAM_PARA=(__NormaleF, __sigm,),)
 
-    # champ de pression
-    chpout = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                        OPERATION='ASSE',
-                        MODELE=__model,
-                        ASSE=_F(GROUP_MA=GROUP_MA,
-                                CHAM_GD=__pF,
-                                NOM_CMP='X1',
-                                NOM_CMP_RESU='LAGS_C',),)
+    for iinst in range(linst):
+        print('iinst=', iinst)
+        __sigm = CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
+                            OPERATION='EXTR',
+                            RESULTAT=RESULTAT,
+                            NOM_CHAM='SIEF_NOEU',
+                            INST=time[iinst],
+                            )
+        if  GEOMETRIE == 'DEFORMEE' :
+            __depl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                                OPERATION='EXTR',
+                                RESULTAT=RESULTAT,
+                                NOM_CHAM='DEPL',
+                                INST=time[iinst],
+                               )
+            __mdepl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                                 OPERATION='COMB',
+                                 COMB=_F(CHAM_GD=__depl,
+                                         COEF_R=-1.0,),
+                                )
+        # Normale sur la configuration finale 
+        if GEOMETRIE == 'DEFORMEE' :
+            Mail = MODI_MAILLAGE(reuse=MAILLAGE,
+                                 MAILLAGE=MAILLAGE,
+                                 DEFORME=_F(OPTION='TRAN',
+                                            DEPL=__depl,),)
+# 
+        __NormaleF = CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
+                                OPERATION='NORMALE',
+                                MODELE=__model,
+                                GROUP_MA=GROUP_MA,
+                                )
+# 
+        if  GEOMETRIE == 'DEFORMEE' :
+            Mail = MODI_MAILLAGE(reuse=MAILLAGE,
+                             MAILLAGE=MAILLAGE,
+                             DEFORME=_F(OPTION='TRAN',
+                                        DEPL=__mdepl,),)
+# 
+        __Pres = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
+                            OPERATION='AFFE',
+                            MAILLAGE=MAILLAGE,
+                            AFFE=_F(GROUP_MA=GROUP_MA,
+                                    NOM_CMP='X1',
+                                    VALE_F=__Pression,),)
+        __pF = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
+                          OPERATION='EVAL',
+                          CHAM_F=__Pres,
+                          CHAM_PARA=(__NormaleF, __sigm,),)
+# 
+        __chp = CREA_CHAMP(TYPE_CHAM='NOEU_PRES_R',
+                                OPERATION='ASSE',
+                                MODELE=__model,
+                                ASSE=_F(GROUP_MA=GROUP_MA,
+                                        CHAM_GD=__pF,
+                                        NOM_CMP='X1',
+                                        NOM_CMP_RESU='PRES',),)     
+                                  
+# 
+        #MasquerAlarme('ALGORITH11_87')  
+        MasquerAlarme('COMPOR2_23') 
 
+        __RESU = CREA_RESU( reuse =RESULTAT,
+                            RESULTAT=RESULTAT,
+                            TYPE_RESU=typxx,
+                            NOM_CHAM='PRES_NOEU',
+                            OPERATION='AFFE',
+                            AFFE=_F(INST=time[iinst],
+                                    CHAM_GD=__chp,
+                                    MODELE=__model,
+                                    PRECISION=1.0e-6,
+                                    CRITERE='ABSOLU',
+                                    ),)  
+                                    
+        RetablirAlarme('COMPOR2_23')                            
+# 
+        DETRUIRE(CONCEPT=_F(NOM=__sigm,), INFO=1)
+        DETRUIRE(CONCEPT=_F(NOM=__NormaleF,), INFO=1)
+        DETRUIRE(CONCEPT=_F(NOM=__Pres,), INFO=1)
+        DETRUIRE(CONCEPT=_F(NOM=__pF,), INFO=1)
+        DETRUIRE(CONCEPT=_F(NOM=__chp,), INFO=1)
+        if  GEOMETRIE == 'DEFORMEE' :
+            DETRUIRE(CONCEPT=_F(NOM=__depl,), INFO=1)
+            DETRUIRE(CONCEPT=_F(NOM=__mdepl,), INFO=1)
+     
     return
