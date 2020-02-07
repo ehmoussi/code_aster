@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,7 +95,7 @@ STNL=CALC_CHAMP(reuse=STNL,RESULTAT=STNL,CRITERES=('SIEQ_ELGA','SIEQ_ELNO'),CONT
 
 
 STNL=CALC_CHAMP(reuse =STNL,
- RESULTAT=STNL,
+  RESULTAT=STNL,
  CONTRAINTE='SIEF_NOEU',CRITERES='SIEQ_NOEU');
 
 # -- Groupe de noeuds oriente depuis le centre de la zone de contact esclave
@@ -179,21 +179,33 @@ IMPR_RESU(FORMAT='MED',
 # Vérification de calc_pression
 
 # via la macro-commandes
-press=CALC_PRESSION(MAILLAGE=MA,
-   RESULTAT=STNL,
-GROUP_MA=('CONT1','CONT2',),
-INST=1.0,
-);
+STNL=CALC_PRESSION(reuse=STNL,
+                   MAILLAGE=MA,
+                   RESULTAT=STNL,
+                   GROUP_MA=('CONT1','CONT2',),
+                   INST=(0.1, 0.1, 1.0,),
+                   #TOUT_ORDRE='OUI',
+                   );
 
-IMPR_RESU(FORMAT="RESULTAT",UNITE=17,RESU=_F(CHAM_GD=press,GROUP_NO='C1',)) ;
 
-TEST_RESU(CHAM_NO=_F(CHAM_GD   = press,
+TEST_RESU(RESU=_F(
    GROUP_NO  = 'C1',
-   NOM_CMP   = 'LAGS_C' ,
+   INST=1.0,
+   RESULTAT=STNL,
+   NOM_CHAM='PRES_NOEU',
+   NOM_CMP   = 'PRES' ,
    REFERENCE = 'ANALYTIQUE' ,
    VALE_CALC = -2.92258312299337E+03 ,
    VALE_REFE = -2798.3286697476105 ,
+   CRITERE='RELATIF',
    PRECISION = 0.05 ,), )
+
+
+IMPR_RESU(FORMAT="RESULTAT",
+          UNITE=17,
+          RESU=_F(RESULTAT=STNL,GROUP_NO='C1',
+                  INST = 1.0, NOM_CHAM=('PRES_NOEU'),
+                  )) ;
 
 
 FIN();
