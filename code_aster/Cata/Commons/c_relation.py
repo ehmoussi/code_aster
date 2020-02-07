@@ -84,6 +84,7 @@ def C_RELATION( COMMAND ):
                                         "CZM_TRA_MIX",
                                         "DIS_BILI_ELAS",
                                         "DIS_CHOC",
+                                        "DIS_CONTACT",
                                         "DIS_ECRO_CINE",
                                         "DIS_GOUJ2E_ELAS",
                                         "DIS_GOUJ2E_PLAS",

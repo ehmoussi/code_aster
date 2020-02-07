@@ -21,10 +21,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    3 : _("""
-On ne sait pas calculer l'option %(k1)s pour une élasticité de type %(k2)s.
-"""),
-
     4 : _("""
 Les mailles affectées à la modélisation TUYAU ne semblent pas former des lignes continues.
 Il y a probablement un problème dans le maillage (superposition d'éléments par exemple).

@@ -80,7 +80,7 @@ CAR=AFFE_CARA_ELEM(MODELE=MODE,
                                VALE=(0.,),),),
                     ORIENTATION=_F(GROUP_MA='BASE',
                                    CARA='VECT_X_Y',
-                                   VALE=(0.,0.,-1.,0.,1.,0.,),),)
+                                   VALE=(0.,0.,1.,0.,1.,0.,),),)
 
 # Material
 ACIER=DEFI_MATERIAU(

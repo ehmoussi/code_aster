@@ -1,0 +1,369 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#   Liaison dis_contact a un noeud / methode : dyna_non_line
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
+# SDVERI='NON' car la verification est trop couteuse en CPU
+
+#
+Masse   = 1.0
+Raidxyz = 1.0E+04
+Raidx   = 20.0
+U0      = 0.85E-03
+Rac2_2  = (2.0**0.5)/2.0
+U1      = U0*Rac2_2
+#
+Frott   = 10.0
+dist1   = Frott/Raidx
+#
+omega = (Raidxyz/Masse)**0.5
+#
+Coulomb  = 0.10
+#
+Raidpena = 40000000.0
+#
+POUTRE=LIRE_MAILLAGE(FORMAT="ASTER")
+MODELE=AFFE_MODELE(MAILLAGE=POUTRE,
+    AFFE=_F(MAILLE=('EL1',), PHENOMENE='MECANIQUE', MODELISATION='DIS_T'),
+)
+#
+# Déplacement tangent
+DTAN=DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE=(  -3.0  ,  0.0,
+            -2.0  ,  0.0,
+            -1.0  ,  U1,
+             0.0  ,  U1,),
+)
+#
+MonPi = pi/omega
+nbpas = 200
+L_INST=DEFI_LIST_REEL(DEBUT=-3.0,
+    INTERVALLE=(
+        _F(JUSQU_A = 0.0, PAS = 0.50),
+        _F(JUSQU_A =     MonPi, PAS = MonPi/nbpas),
+        _F(JUSQU_A = 2.0*MonPi, PAS = MonPi/nbpas),
+        _F(JUSQU_A = 3.0*MonPi, PAS = MonPi/nbpas),
+        _F(JUSQU_A = 4.0*MonPi, PAS = MonPi/nbpas),
+        _F(JUSQU_A = 5.0*MonPi, PAS = MonPi/nbpas),
+    ),
+)
+DEFLIST =DEFI_LIST_INST(
+    DEFI_LIST=_F(LIST_INST =L_INST ),
+    ECHEC=_F(EVENEMENT     = 'ERREUR',
+             ACTION        = 'DECOUPE',
+             SUBD_METHODE  = 'MANUEL',
+             SUBD_PAS      = 4,),
+)
+#
+# --------------------------------------------------------------------------------------------------
+Tfin = 5.0*MonPi
+#
+MATCH1=DEFI_MATERIAU(
+    DIS_CONTACT=_F(RIGI_NOR=Raidx, RIGI_TAN=Raidpena, COULOMB=Coulomb),
+)
+#
+CHMAT1=AFFE_MATERIAU(MAILLAGE=POUTRE,
+    AFFE=_F(  MAILLE = 'EL1',  MATER = MATCH1)
+)
+#
+CARA1=AFFE_CARA_ELEM(
+    MODELE=MODELE,
+    DISCRET=(
+        _F(MAILLE = 'EL1',  CARA = 'K_T_D_N',  VALE = (Raidxyz, Raidxyz, Raidxyz,),),
+        _F(MAILLE = 'EL1',  CARA = 'M_T_D_N',  VALE = Masse),
+        _F(MAILLE = 'EL1',  CARA = 'A_T_D_N',  VALE = (0.0, 0.0, 0.0), ),
+    ),
+    ORIENTATION=_F(MAILLE='EL1', CARA='VECT_X_Y', VALE=(1.0, 0.0, 0.0, 0.0, 1.0, 0.0),),
+)
+#
+# Déplacement normal
+DNOR1=DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE=(  -3.0  ,  0.0,
+            -2.0  , -dist1,
+            -1.0  , -dist1,
+             0.0  , -dist1,),
+)
+#
+CHARG1=AFFE_CHAR_MECA(MODELE=MODELE,
+    DDL_IMPO=_F(NOEUD='NO1', DX=-dist1),
+    LIAISON_DDL=_F(NOEUD=('NO1', 'NO1',), DDL=('DY', 'DZ',),
+                COEF_MULT=(Rac2_2,-Rac2_2), COEF_IMPO=0.0),
+)
+#
+CHARGT1=AFFE_CHAR_MECA_F(MODELE=MODELE,
+    DDL_IMPO=(
+        _F(NOEUD='NO1', DX=DNOR1, DY=DTAN, DZ=DTAN),
+    ),
+)
+#
+DYNL1=DYNA_NON_LINE(
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT1,
+    CARA_ELEM=CARA1,
+    EXCIT=_F(CHARGE = CHARGT1),
+    COMPORTEMENT=_F(RELATION = 'DIS_CONTACT', MAILLE = 'EL1'),
+    INCREMENT=_F(LIST_INST = DEFLIST, INST_FIN=0.0),
+    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK', FORMULATION='DEPLACEMENT'),
+    CONVERGENCE=_F(RESI_REFE_RELA=1.0E-03, EFFORT_REFE=1.0),
+    SOLVEUR=_F(METHODE = 'LDLT',),
+)
+#
+DYNL1=DYNA_NON_LINE(reuse=DYNL1,
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT1,
+    CARA_ELEM=CARA1,
+    ETAT_INIT=_F(EVOL_NOLI=DYNL1),
+    EXCIT=_F(CHARGE = CHARG1),
+    COMPORTEMENT=_F(RELATION = 'DIS_CONTACT', MAILLE = 'EL1'),
+    INCREMENT=_F(LIST_INST = DEFLIST, INST_FIN=Tfin),
+    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK', FORMULATION='DEPLACEMENT'),
+    CONVERGENCE=_F(RESI_REFE_RELA=1.0E-03, EFFORT_REFE=1.0),
+    SOLVEUR=_F(METHODE = 'LDLT',),
+)
+
+# --------------------------------------------------------------------------------------------------
+Tfin = 5.0*MonPi
+#
+MATCH2=DEFI_MATERIAU(
+    DIS_CONTACT=_F(RIGI_NOR=Raidx, RIGI_TAN=Raidpena, COULOMB=Coulomb, DIST_1=dist1),
+)
+#
+CHMAT2=AFFE_MATERIAU(MAILLAGE=POUTRE,
+    AFFE=_F(  MAILLE = 'EL1',  MATER = MATCH2)
+)
+#
+CARA2=AFFE_CARA_ELEM(
+    MODELE=MODELE,
+    DISCRET=(
+        _F(MAILLE = 'EL1',  CARA = 'K_T_D_N',  VALE = (Raidxyz, Raidxyz, Raidxyz,),),
+        _F(MAILLE = 'EL1',  CARA = 'M_T_D_N',  VALE = Masse),
+        _F(MAILLE = 'EL1',  CARA = 'A_T_D_N',  VALE = (0.0, 0.0, 0.0), ),
+    ),
+    ORIENTATION=_F(MAILLE='EL1', CARA='VECT_X_Y', VALE=(0.0, 0.0, 1.0, 0.0, 1.0, 0.0),),
+)
+#
+# Déplacement normal
+DNOR2=DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE=(  -3.0  , 0.0,
+            -2.0  , 0.0,
+            -1.0  , 0.0,
+             0.0  , 0.0,),
+)
+#
+CHARG2=AFFE_CHAR_MECA(MODELE=MODELE,
+    DDL_IMPO=_F(NOEUD='NO1', DZ=0.0),
+    LIAISON_DDL=_F(NOEUD=('NO1', 'NO1',), DDL=('DX', 'DY',),
+                COEF_MULT=(Rac2_2,-Rac2_2), COEF_IMPO=0.0),
+)
+#
+CHARGT2=AFFE_CHAR_MECA_F(MODELE=MODELE,
+    DDL_IMPO=(
+        _F(NOEUD='NO1', DZ=DNOR2, DX=DTAN, DY=DTAN),
+    ),
+)
+#
+DYNL2=DYNA_NON_LINE(
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT2,
+    CARA_ELEM=CARA2,
+    EXCIT=_F(CHARGE = CHARGT2),
+    COMPORTEMENT=_F(RELATION = 'DIS_CONTACT', MAILLE = 'EL1'),
+    INCREMENT=_F(LIST_INST = DEFLIST, INST_FIN=0.0),
+    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK', FORMULATION='DEPLACEMENT'),
+    CONVERGENCE=_F(RESI_REFE_RELA=1.0E-03, EFFORT_REFE=1.0),
+    SOLVEUR=_F(METHODE = 'LDLT',),
+)
+#
+DYNL2=DYNA_NON_LINE(reuse=DYNL2,
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT2,
+    CARA_ELEM=CARA2,
+    ETAT_INIT=_F(EVOL_NOLI=DYNL2),
+    EXCIT=_F(CHARGE = CHARG2),
+    COMPORTEMENT=_F(RELATION = 'DIS_CONTACT', MAILLE = 'EL1'),
+    INCREMENT=_F(LIST_INST = DEFLIST, INST_FIN=Tfin),
+    SCHEMA_TEMPS=_F(SCHEMA='NEWMARK', FORMULATION='DEPLACEMENT'),
+    CONVERGENCE=_F(RESI_REFE_RELA=1.0E-03, EFFORT_REFE=1.0),
+    SOLVEUR=_F(METHODE = 'LDLT',),
+)
+#
+# --------------------------------------------------------------------------------------------------
+#     Inst         Reférence      Calculé                 Précision
+Resu1Refe={
+  1 : (     MonPi, -6.5E-04*Rac2_2, -4.59588378585501E-04, 1.0e-04, ),
+# 2 : ( 2.0*MonPi,  4.5E-04*Rac2_2,  3.18208468510095E-04, 1.0e-04, ),
+  2 : ( 2.0*MonPi,  4.5E-04*Rac2_2,  3.18209117685711E-04, 1.0e-04, ),
+# 3 : ( 3.0*MonPi, -2.5E-04*Rac2_2, -1.76796206637701E-04, 1.5e-04, ),
+  3 : ( 3.0*MonPi, -2.5E-04*Rac2_2, -1.76796206637701E-04, 1.5e-04, ),
+# 4 : ( 4.0*MonPi,  0.5E-04*Rac2_2,  3.53947069603435E-05, 1.5e-03, ),
+  4 : ( 4.0*MonPi,  0.5E-04*Rac2_2,  3.53850337696221E-05, 1.5e-03, ),
+}
+#
+for ii in Resu1Refe.keys():
+    TEST_RESU(RESU=(
+        _F( INST     =Resu1Refe[ii][0], RESULTAT=DYNL1, NOM_CHAM='DEPL', NOEUD='NO1', NOM_CMP='DY',
+            VALE_REFE=Resu1Refe[ii][1], REFERENCE='ANALYTIQUE',
+            VALE_CALC=Resu1Refe[ii][2], CRITERE='ABSOLU',
+            PRECISION=Resu1Refe[ii][3],),
+        _F( INST     =Resu1Refe[ii][0], RESULTAT=DYNL1, NOM_CHAM='DEPL', NOEUD='NO1', NOM_CMP='DZ',
+            VALE_REFE=Resu1Refe[ii][1], REFERENCE='ANALYTIQUE',
+            VALE_CALC=Resu1Refe[ii][2], CRITERE='ABSOLU',
+            PRECISION=Resu1Refe[ii][3],),
+        ),
+    )
+#
+# --------------------------------------------------------------------------------------------------
+#     Inst         Reférence      Calculé                 Précision
+Resu2Refe={
+  1 : (     MonPi, -6.5E-04*Rac2_2, -4.59588626478570E-04, 1.0e-04, ),
+# 2 : ( 2.0*MonPi,  4.5E-04*Rac2_2,  3.18206837567229E-04, 1.0e-04, ),
+  2 : ( 2.0*MonPi,  4.5E-04*Rac2_2,  3.18208527298136E-04, 1.0e-04, ),
+# 3 : ( 3.0*MonPi, -2.5E-04*Rac2_2, -1.76801715890405E-04, 1.5e-04, ),
+  3 : ( 3.0*MonPi, -2.5E-04*Rac2_2, -1.76797074506929E-04, 1.5e-04, ),
+# 4 : ( 4.0*MonPi,  0.5E-04*Rac2_2,  3.53915433916929E-05, 1.1e-03, ),
+  4 : ( 4.0*MonPi,  0.5E-04*Rac2_2,  3.53882051215731E-05, 1.1e-03, ),
+}
+#
+for ii in Resu2Refe.keys():
+    TEST_RESU(RESU=(
+        _F( INST     =Resu2Refe[ii][0], RESULTAT=DYNL2, NOM_CHAM='DEPL', NOEUD='NO1', NOM_CMP='DY',
+            VALE_REFE=Resu2Refe[ii][1], REFERENCE='ANALYTIQUE',
+            VALE_CALC=Resu2Refe[ii][2], CRITERE='ABSOLU',
+            PRECISION=Resu2Refe[ii][3],),
+        _F( INST     =Resu2Refe[ii][0], RESULTAT=DYNL2, NOM_CHAM='DEPL', NOEUD='NO1', NOM_CMP='DX',
+            VALE_REFE=Resu2Refe[ii][1], REFERENCE='ANALYTIQUE',
+            VALE_CALC=Resu2Refe[ii][2], CRITERE='ABSOLU',
+            PRECISION=Resu2Refe[ii][3],),
+        ),
+    )
+
+"""
+# --------------------------------------------------------------------------------------------------
+#
+# Les sorties pour la documentation
+#
+# --------------------------------------------------------------------------------------------------
+repout = "/tmp/runtest_astout/"
+#
+#
+TABDEPL1=CREA_TABLE(RESU=_F(RESULTAT=DYNL1,MAILLE='EL1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+TABVITE1=CREA_TABLE(RESU=_F(RESULTAT=DYNL1,MAILLE='EL1',NOM_CHAM='VITE',TOUT_CMP='OUI',),)
+TABSIEF1=CREA_TABLE(RESU=_F(RESULTAT=DYNL1,MAILLE='EL1',NOM_CHAM='SIEF_ELGA',TOUT_CMP='OUI',),)
+TABVARI1=CREA_TABLE(RESU=_F(RESULTAT=DYNL1,MAILLE='EL1',NOM_CHAM='VARI_ELGA',TOUT_CMP='OUI',),)
+
+
+TABDEPL1=CALC_TABLE(reuse=TABDEPL1,TABLE=TABDEPL1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='NO1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX','DY','DZ',),),
+    ),
+)
+TABVITE1=CALC_TABLE(reuse=TABVITE1,TABLE=TABVITE1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='NO1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX','DY','DZ',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DX','VIX',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DY','VIY',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DZ','VIZ',),),
+    ),
+)
+TABSIEF1=CALC_TABLE(reuse=TABSIEF1,TABLE=TABSIEF1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','N','VY','VZ',),),
+    ),
+)
+TABVARI1=CALC_TABLE(reuse=TABVARI1,TABLE=TABVARI1,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','V1','V2',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('V1','FCY',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('V2','FCZ',),),
+    ),
+)
+TABRES1= CALC_TABLE(TABLE=TABDEPL1,
+    ACTION=(
+        _F(OPERATION='COMB',TABLE=TABSIEF1,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABVARI1,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABVITE1,NOM_PARA='NUME_ORDRE'),
+    ),
+)
+#
+lefic = repout+'sdnd100e1.dat'
+unite=DEFI_FICHIER(FICHIER=lefic, ACTION='ASSOCIER', TYPE='LIBRE', ACCES='NEW')
+IMPR_TABLE(UNITE=unite,TABLE=TABRES1,FORMAT_R='E17.10')
+DEFI_FICHIER(UNITE=unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1,CONCEPT=(_F(NOM=unite,),),)
+
+
+
+
+TABDEPL2=CREA_TABLE(RESU=_F(RESULTAT=DYNL2,MAILLE='EL1',NOM_CHAM='DEPL',TOUT_CMP='OUI',),)
+TABVITE2=CREA_TABLE(RESU=_F(RESULTAT=DYNL2,MAILLE='EL1',NOM_CHAM='VITE',TOUT_CMP='OUI',),)
+TABSIEF2=CREA_TABLE(RESU=_F(RESULTAT=DYNL2,MAILLE='EL1',NOM_CHAM='SIEF_ELGA',TOUT_CMP='OUI',),)
+TABVARI2=CREA_TABLE(RESU=_F(RESULTAT=DYNL2,MAILLE='EL1',NOM_CHAM='VARI_ELGA',TOUT_CMP='OUI',),)
+
+TABDEPL2=CALC_TABLE(reuse=TABDEPL2,TABLE=TABDEPL2,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='NO1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX','DY','DZ',),),
+    ),
+)
+TABVITE2=CALC_TABLE(reuse=TABVITE2,TABLE=TABVITE2,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='NOEUD',CRIT_COMP='EQ',VALE_K='NO1'),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','DX','DY','DZ',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DX','VIX',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DY','VIY',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('DZ','VIZ',),),
+    ),
+)
+TABSIEF2=CALC_TABLE(reuse=TABSIEF2,TABLE=TABSIEF2,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','N','VY','VZ',),),
+    ),
+)
+TABVARI2=CALC_TABLE(reuse=TABVARI2,TABLE=TABVARI2,
+    ACTION=(
+        _F(OPERATION='FILTRE',NOM_PARA='POINT',CRIT_COMP='EQ',VALE=1),
+        _F(OPERATION='EXTR',NOM_PARA=('NUME_ORDRE','INST','V1','V2',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('V1','FCY',),),
+        _F(OPERATION='RENOMME',NOM_PARA=('V2','FCZ',),),
+    ),
+)
+TABRES2= CALC_TABLE(TABLE=TABDEPL2,
+    ACTION=(
+        _F(OPERATION='COMB',TABLE=TABSIEF2,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABVARI2,NOM_PARA='NUME_ORDRE'),
+        _F(OPERATION='COMB',TABLE=TABVITE2,NOM_PARA='NUME_ORDRE'),
+    ),
+)
+#
+lefic = repout+'sdnd100e2.dat'
+unite=DEFI_FICHIER(FICHIER=lefic, ACTION='ASSOCIER', TYPE='LIBRE', ACCES='NEW')
+IMPR_TABLE(UNITE=unite,TABLE=TABRES2,FORMAT_R='E17.10')
+DEFI_FICHIER(UNITE=unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1,CONCEPT=(_F(NOM=unite,),),)
+"""
+FIN()

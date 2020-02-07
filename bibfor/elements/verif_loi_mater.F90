@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ subroutine verif_loi_mater(mater)
 !               VÉRIFICATION D'INFORMATIONS DONNÉES POUR LES LDC
 !
 !   Lois traitées
-!       - DIS_CONTACT                responsable : jean-luc.flejou at edf.fr
 !       - DIS_ECRO_TRAC              responsable : jean-luc.flejou at edf.fr
 !
 ! --------------------------------------------------------------------------------------------------
@@ -33,7 +32,6 @@ subroutine verif_loi_mater(mater)
     character(len=8) :: mater
 !
 #include "jeveux.h"
-#include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
@@ -59,8 +57,7 @@ subroutine verif_loi_mater(mater)
     character(len=16), pointer  :: matk(:)      => null()
     character(len=32), pointer  :: vnomrc(:)    => null()
 !
-    integer :: icoulomb, ia_nor, ia_tan, iecro, ifx, ifyz, tecro
-    logical :: alarme
+    integer :: iecro, ifx, ifyz, tecro
 !
     real(kind=8) :: precis
     parameter (precis=1.0e-08)
@@ -75,35 +72,7 @@ subroutine verif_loi_mater(mater)
 !   Boucle sur les relations de comportement
     do cc = 1, nbcrme
         nomrc = vnomrc(cc)
-        if ( nomrc .eq. 'DIS_CONTACT' ) then
-            call rccome(mater, nomrc, iret, iarret=1, k11_ind_nomrc=k11)
-            noobrc = mater//k11
-!           Récupération des noms et valeurs des paramètres
-            call jelira(noobrc//'.VALR', 'LONUTI', nbr)
-            call jelira(noobrc//'.VALK', 'LONUTI', nbk)
-            ASSERT( nbr.eq.nbk )
-            call jeveuo(noobrc//'.VALR', 'L', vr  =matr)
-            call jeveuo(noobrc//'.VALK', 'L', vk16=matk)
-!           Vérifications
-!               Si COULOMB et (AMOR_NOR ou AMOR_TAN) différents de 0 ==> <A>
-            icoulomb = indk16(matk,'COULOMB',1,nbk)
-            if (icoulomb .ne. 0) then
-                if ( abs(matr(icoulomb)).gt.r8prem() ) then
-                    ia_nor = indk16(matk,'AMOR_NOR',1,nbk)
-                    ia_tan = indk16(matk,'AMOR_TAN',1,nbk)
-                    alarme = .False.
-                    if (ia_nor.ne.0) then
-                        if ( abs(matr(ia_nor)).gt.r8prem() ) alarme = .True.
-                    endif
-                    if (ia_tan.ne.0) then
-                        if ( abs(matr(ia_tan)).gt.r8prem() ) alarme = .True.
-                    endif
-                    if ( alarme ) then
-                        call utmess('A', 'DISCRETS_52')
-                    endif
-                endif
-            endif
-        else if ( nomrc .eq. 'DIS_ECRO_TRAC' ) then
+        if ( nomrc .eq. 'DIS_ECRO_TRAC' ) then
             call rccome(mater, vnomrc(cc), iret, iarret=1, k11_ind_nomrc=k11)
             noobrc = mater//k11
             ! Nombre de : réel, complexe , chaine de caractères

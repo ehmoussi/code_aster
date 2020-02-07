@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "blas/zgesvx.h"
 !
-! aslint: disable=W1304,W1306
+! aslint: disable=W1306
 !
     integer, intent(in) :: dim
     integer, intent(in) :: nb

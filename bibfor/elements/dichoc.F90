@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,21 +20,8 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
                   dul, utl, xg, pgl, klv,&
                   duly, dvl, dpe, dve, force,&
                   varmo, varpl, dimele)
-! ----------------------------------------------------------------------
-    implicit none
-#include "asterc/r8prem.h"
-#include "asterfort/r8inir.h"
-#include "asterfort/rcvala.h"
-#include "asterfort/ut2vgl.h"
-#include "asterfort/utpvgl.h"
-#include "asterfort/vdiff.h"
-#include "blas/dcopy.h"
-    integer :: nbt, neq, nno, nc, icodma, dimele
-    real(kind=8) :: dul(neq), utl(neq), dvl(neq)
-    real(kind=8) :: dpe(neq), dve(neq)
-    real(kind=8) :: klv(nbt), duly, xg(6), pgl(3, 3)
-    real(kind=8) :: varmo(8), varpl(8), force(3)
 !
+! ----------------------------------------------------------------------
 !
 !     RELATION DE COMPORTEMENT "DIS_CHOC"
 !
@@ -50,91 +37,106 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
 ! OUT :  KLV    : MATRICE TANGENTE
 !        DULY   :
 !
-! =============== DECLARATION DES VARIABLES LOCALES ====================
+! ----------------------------------------------------------------------
 !
-    integer :: nbre1, nbpar, n
-    parameter     (nbre1=8)
-    real(kind=8) :: valre1(nbre1)
-    integer :: codre1(nbre1)
-    character(len=8) :: nompar, nomre1(nbre1)
+    implicit none
+#include "asterc/r8prem.h"
+#include "asterfort/rcvala.h"
+#include "asterfort/ut2vgl.h"
+#include "asterfort/utpvgl.h"
+#include "asterfort/vdiff.h"
+#include "blas/dcopy.h"
 !
-    real(kind=8) :: xl(6), xd(3), dirl(6), zero, rignor, rigtan
+    integer :: nbt, neq, nno, nc, icodma, dimele
+    real(kind=8) :: dul(neq), utl(neq), dvl(neq)
+    real(kind=8) :: dpe(neq), dve(neq)
+    real(kind=8) :: klv(nbt), duly, xg(6), pgl(3, 3)
+    real(kind=8) :: varmo(8), varpl(8), force(3)
+! ----------------------------------------------------------------------
+!
+    integer, parameter  :: nbre1=8
+    real(kind=8)        :: valre1(nbre1)
+    integer             :: codre1(nbre1)
+    character(len=8)    :: nomre1(nbre1)
+!
+    real(kind=8) :: xl(6), xd(3), dirl(6), rignor, rigtan
     real(kind=8) :: coulom, dist12, utot, vit2, vit3, depx, depy, depz, psca
-    real(kind=8) :: vitt, valpar, vity, vitz, fort, dist0, kty
+    real(kind=8) :: vitt, vity, vitz, fort, kty
 !
-    data nomre1 /'RIGI_NOR','RIGI_TAN','AMOR_NOR','AMOR_TAN'&
-     &            ,'COULOMB','DIST_1','DIST_2','JEU'/
+    data nomre1 /'RIGI_NOR','RIGI_TAN','AMOR_NOR','AMOR_TAN', &
+                 'COULOMB','DIST_1','DIST_2','JEU'/
 ! ----------------------------------------------------------------------
 !
 ! --- DEFINITION DES PARAMETRES
-    zero = 0.d0
-    call r8inir(6, zero, xl, 1)
-    call r8inir(6, zero, dirl, 1)
-    call r8inir(3, zero, xd, 1)
-!     COORDONNEES DANS LE REPERE LOCAL
+    xl(:) = 0.0 ; dirl(:) = 0.0 ; xd(:) = 0.0
+!   COORDONNEES DANS LE REPERE LOCAL
     if (dimele .eq. 3) then
         call utpvgl(nno, 3, pgl, xg, xl)
     else if (dimele.eq.2) then
         call ut2vgl(nno, 2, pgl, xg, xl)
     endif
 !
-!     ELEMENT A 2 NOEUDS
-    if (nno .eq. 2) then
-        nbpar = 0
-        nompar = ' '
-        valpar = 0.d0
-        call r8inir(nbre1, zero, valre1, 1)
-! ---    CARACTERISTIQUES DU MATERIAU
-!        SI MOT_CLE RIGI_NOR ==> RIGNOR = VALRE1(1)
-!        SINON               ==> RIGNOR = KLV(1)
-        call rcvala(icodma, ' ', 'DIS_CONTACT', nbpar, nompar,&
-                    [valpar], nbre1, nomre1, valre1, codre1, 0)
-        if (codre1(1) .eq. 0) then
-            rignor = valre1(1)
-        else
-            rignor = klv(1)
-        endif
+    valre1(:) = 0.0
+!   CARACTERISTIQUES DU MATERIAU
+!       SI MOT_CLE RIGI_NOR ==> RIGNOR = VALRE1(1)
+!       SINON               ==> RIGNOR = KLV(1)
+    call rcvala(icodma, ' ', 'DIS_CONTACT', 0, ' ',&
+                [0.0d0], nbre1, nomre1, valre1, codre1, 0, nan='NON')
+    if (codre1(1) .eq. 0) then
+        rignor = valre1(1)
+    else
+        rignor = klv(1)
+    endif
+    if ( codre1(2) .eq. 0) then
         rigtan = valre1(2)
+    else
+        rigtan = 0.0
+    endif
 !        AMONOR = VALRE1(3)
 !        AMOTAN = VALRE1(4)
-        coulom = valre1(5)
+    coulom = valre1(5)
+!
+!   ELEMENT A 2 NOEUDS
+    if (nno .eq. 2) then
         dist12 = valre1(6)+valre1(7)
-!        DANS L'AXE DU DISCRET
+!       DANS L'AXE DU DISCRET
         duly = dul(1+nc)-dul(1)
         utot = utl(1+nc)-utl(1)
-!        VITESSE TANGENTE
+!       VITESSE TANGENTE
         vit2 = dvl(2+nc)-dvl(2)
-        vit3 = zero
-        if (dimele .eq. 3) vit3 = dvl(3+nc)-dvl(3)
-!        LONGUEUR DU DISCRET
+        vit3 = 0.0
+        if (dimele .eq. 3) then
+            vit3 = dvl(3+nc)-dvl(3)
+        endif
+!       LONGUEUR DU DISCRET
         call vdiff(dimele, xl(1+dimele), xl(1), xd)
         call dcopy(dimele, dpe(1), 1, dirl, 1)
         call dcopy(dimele, dpe(1+nc), 1, dirl(4), 1)
         depx = xd(1) - dist12 + utot + dirl(4) - dirl(1)
         depx = depx - r8prem()
         depy = xd(2) + utl(2+nc) - utl(2) + dirl(5) - dirl(2)
-        depz = zero
+        depz = 0.0
         if (dimele .eq. 3) then
             depz = xd(3) + utl(3+nc) - utl(3) + dirl(6) - dirl(3)
         endif
         call dcopy(dimele, dve(1), 1, dirl, 1)
         call dcopy(dimele, dve(1+nc), 1, dirl(4), 1)
-!        VITESSE TANGENTE
+!       VITESSE TANGENTE
         vity = vit2 + dirl(5) - dirl(2)
-        vitz = zero
+        vitz = 0.0
         if (dimele .eq. 3) then
             vitz = vit3 + dirl(6) - dirl(3)
         endif
-        if (depx .le. zero) then
-            kty = rignor
+        if (depx .le. 0.0) then
+            kty      = rignor
             force(1) = rignor*depx
-            if (force(1) .gt. zero) force(1) = zero
+            if (force(1) .gt. 0.0) force(1) = 0.0
             psca = varmo(5)*vity + varmo(6)*vitz
-            if (psca .ge. zero .and. varmo(7) .eq. 1.d0) then
+            if (psca .ge. 0.0d0 .and. varmo(7) .eq. 1.0d0) then
                 vitt = (vity**2 + vitz**2)**0.5d0
-                force(2) = zero
-                force(3) = zero
-                if (vitt .ne. zero) then
+                force(2) = 0.0
+                force(3) = 0.0
+                if (vitt .ne. 0.0d0) then
                     force(2) = -coulom*force(1)*vity/vitt
                     force(3) = -coulom*force(1)*vitz/vitt
                 endif
@@ -142,13 +144,13 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
             else
                 force(2) = rigtan*(depy-varmo(1)) + varmo(5)
                 force(3) = rigtan*(depz-varmo(2)) + varmo(6)
-                varpl(7) = zero
+                varpl(7) = 0.0
                 fort = (force(2)**2 + force(3)**2)**0.5d0
                 if (fort .gt. abs(coulom*force(1))) then
                     vitt = (vity**2 + vitz**2)**0.5d0
-                    force(2) = zero
-                    force(3) = zero
-                    if (vitt .ne. zero) then
+                    force(2) = 0.0
+                    force(3) = 0.0
+                    if (vitt .ne. 0.0d0) then
                         force(2) = -coulom*force(1)*vity/vitt
                         force(3) = -coulom*force(1)*vitz/vitt
                         varpl(7) = 1.d0
@@ -183,16 +185,14 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
                 endif
             endif
         else
-            kty = zero
-            force(1) = zero
-            force(2) = zero
-            force(3) = zero
-            varpl(5) = zero
-            varpl(6) = zero
-            varpl(7) = zero
-            do 10 n = 1, nbt
-                klv(n)= zero
-10          continue
+            kty = 0.0
+            force(1) = 0.0
+            force(2) = 0.0
+            force(3) = 0.0
+            varpl(5) = 0.0
+            varpl(6) = 0.0
+            varpl(7) = 0.0
+            klv(1:nbt)= 0.0
         endif
         varpl(1) = depy
         varpl(2) = depz
@@ -200,71 +200,58 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
         varpl(4) = vitz
         varpl(8) = depx
 !
-!     ELEMENT A 1 NOEUD
+!   ELEMENT A 1 NOEUD
     else
-        nbpar = 0
-        nompar = ' '
-        valpar = 0.d0
-        call r8inir(nbre1, zero, valre1, 1)
-! ---    CARACTERISTIQUES DU MATERIAU
-!        SI MOT_CLE RIGI_NOR ==> RIGNOR = VALRE1(1)
-!        SINON               ==> RIGNOR = KLV(1)
-        call rcvala(icodma, ' ', 'DIS_CONTACT', nbpar, nompar,&
-                    [valpar], nbre1, nomre1, valre1, codre1, 0)
-        if (codre1(1) .eq. 0) then
-            rignor = valre1(1)
-        else
-            rignor = klv(1)
-        endif
-        rigtan = valre1(2)
-!        AMONOR = VALRE1(3)
-!        AMOTAN = VALRE1(4)
-        coulom = valre1(5)
-        dist12 = valre1(6)
-        dist0 = valre1(8)
-!        DANS L'AXE DU DISCRET
+        dist12 = valre1(8) - valre1(6)
+!       DANS L'AXE DU DISCRET
         duly = dul(1)
-!        VITESSE TANGENTE
+!       VITESSE TANGENTE
         vit2 = dvl(2)
-        vit3 = zero
-        if (dimele .eq. 3) vit3 = dvl(3)
-!        LONGUEUR DU DISCRET
+        vit3 = 0.0
+        if (dimele .eq. 3) then
+            vit3 = dvl(3)
+        endif
+!       LONGUEUR DU DISCRET
         call dcopy(dimele, dpe(1), 1, dirl, 1)
-        depx = utl(1) + dist12 + dirl(1) - dist0
+        depx = utl(1) + dist12 + dirl(1)
         depy = utl(2) + dirl(2)
-        depz = zero
-        if (dimele .eq. 3) depz = utl(3) + dirl(3)
+        depz = 0.0
+        if (dimele .eq. 3) then
+            depz = utl(3) + dirl(3)
+        endif
         call dcopy(dimele, dve(1), 1, dirl, 1)
-!        VITESSE TANGENTE
+!       VITESSE TANGENTE
         vity = vit2 + dirl(2)
-        vitz = zero
-        if (dimele .eq. 3) vitz = vit3 + dirl(3)
-        if (depx .ge. zero) then
-            kty = rignor
+        vitz = 0.0
+        if (dimele .eq. 3) then
+            vitz = vit3 + dirl(3)
+        endif
+        if (depx .le. 0.0d0) then
+            kty      = rignor
             force(1) = rignor*depx
-            if (force(1) .lt. zero) force(1) = zero
+            if (force(1) .gt. 0.0) force(1) = 0.0
             psca = varmo(5)*vity + varmo(6)*vitz
-            if (psca .ge. zero .and. varmo(7) .eq. 1.d0) then
+            if (psca .ge. 0.0d0 .and. varmo(7) .eq. 1.d0) then
                 vitt = (vity**2 + vitz**2)**0.5d0
-                force(2) = zero
-                force(3) = zero
-                if (vitt .ne. zero) then
-                    force(2) = coulom*force(1)*vity/vitt
-                    force(3) = coulom*force(1)*vitz/vitt
+                force(2) = 0.0
+                force(3) = 0.0
+                if (vitt .ne. 0.0) then
+                    force(2) = -coulom*force(1)*vity/vitt
+                    force(3) = -coulom*force(1)*vitz/vitt
                 endif
                 varpl(7) = 1.d0
             else
                 force(2) = rigtan*(depy-varmo(1)) + varmo(5)
                 force(3) = rigtan*(depz-varmo(2)) + varmo(6)
-                varpl(7) = zero
+                varpl(7) = 0.0
                 fort = (force(2)**2 + force(3)**2)**0.5d0
                 if (fort .gt. abs(coulom*force(1))) then
                     vitt = (vity**2 + vitz**2)**0.5d0
-                    force(2) = zero
-                    force(3) = zero
-                    if (vitt .ne. zero) then
-                        force(2) = coulom*force(1)*vity/vitt
-                        force(3) = coulom*force(1)*vitz/vitt
+                    force(2) = 0.0
+                    force(3) = 0.0
+                    if (vitt .ne. 0.0d0) then
+                        force(2) = -coulom*force(1)*vity/vitt
+                        force(3) = -coulom*force(1)*vitz/vitt
                         varpl(7) = 1.d0
                     endif
                 endif
@@ -275,16 +262,14 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
             if (dimele .eq. 3) force(3) = force(3) + klv(6)*utl(3)
             klv(1) = kty
         else
-            kty = zero
-            force(1) = zero
-            force(2) = zero
-            force(3) = zero
-            varpl(5) = zero
-            varpl(6) = zero
-            varpl(7) = zero
-            do 20 n = 1, nbt
-                klv(n)= zero
-20          continue
+            kty = 0.0
+            force(1) = 0.0
+            force(2) = 0.0
+            force(3) = 0.0
+            varpl(5) = 0.0
+            varpl(6) = 0.0
+            varpl(7) = 0.0
+            klv(1:nbt)= 0.0
         endif
         varpl(1) = depy
         varpl(2) = depz

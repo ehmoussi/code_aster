@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ subroutine mltcc1(nbloc, ncbloc, decal, supnd, fils,&
 !     LE STOCKAGE DES COLONNES DE LA FACTORISEE EST MODIFIE, ET AINSI
 !      ADPER LES COLONNES FORMENT UN BLOC RECTANGULAIRE
 !
-! aslint: disable=W1304,W1504
+! aslint: disable=W1504
     implicit none
 #include "jeveux.h"
 !

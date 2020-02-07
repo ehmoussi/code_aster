@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine lisexp(list_load)
 !
 implicit none
@@ -26,9 +27,7 @@ implicit none
 #include "asterfort/lisnch.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=19), intent(in) :: list_load
+character(len=19), intent(in) :: list_load
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -51,7 +50,7 @@ implicit none
     integer, pointer :: v_load_info(:) => null()
     character(len=24), pointer :: v_load_name(:) => null()
     integer :: i_load, i_excl_load, nb_load, iret, load_nume
-    character(len=19) :: lchin
+    character(len=24) :: lchin
     character(len=8) :: load_name
 !
 ! --------------------------------------------------------------------------------------------------
@@ -72,7 +71,7 @@ implicit none
         load_nume = v_load_info(nb_load+i_load+1)
         if (load_nume .eq. 5) then
             do i_excl_load = 1, nb_excl_load
-                lchin = load_name(1:8)//'.CHME.LIGRE'//ligr_excl_char(i_excl_load)
+                lchin = load_name(1:8)//'.CHME.LIGRE'//ligr_excl_char(i_excl_load)//'.DESC'
                 call jeexin(lchin, iret)
                 if (iret .ne. 0) then
                     call utmess('F', 'CHARGES_26', sk=load_name)

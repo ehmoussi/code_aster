@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,6 @@
 
 subroutine cbvalr(rouc, neq, smhc, smdi, idlexc,&
                   coefr, coefc, valmi, valmr, valmc)
-! aslint: disable=W1304
     implicit none
 !     BUT : ACCUMULTATION DANS VALMR (OU VALMC) DE COEF*VALMI
 !     ROUC=
