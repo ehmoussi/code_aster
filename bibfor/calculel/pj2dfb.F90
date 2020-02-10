@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ subroutine pj2dfb(boite, tria3, geom1, geom2)
     real(kind=8) :: xmin
     real(kind=8) :: yymax, yymin, ymax, ymin
     integer :: p1, q1, p2, q2, p, q, nx, ny
-    aster_logical :: dbg=.false.
+    aster_logical :: dbg
 !
 ! DEB ------------------------------------------------------------------
 !-----------------------------------------------------------------------
@@ -60,6 +60,7 @@ subroutine pj2dfb(boite, tria3, geom1, geom2)
     call jemarq()
     ntr3 = tria3(1)
     rbig = r8maem()
+    dbg=ASTER_FALSE
     ASSERT(ntr3.ne.0)
 !
     call jeveuo('&&PJXXCO.LINO1', 'L', vi=lino1)
@@ -74,20 +75,20 @@ subroutine pj2dfb(boite, tria3, geom1, geom2)
     ymin = rbig
     xmax = -rbig
     ymax = -rbig
-    do 10 i = 1, nno1
-        if (lino1(i) .eq. 0) goto 10
+    do i = 1, nno1
+        if (lino1(i) .eq. 0) cycle
         xmin = min(xmin,geom1(3* (i-1)+1))
         xmax = max(xmax,geom1(3* (i-1)+1))
         ymin = min(ymin,geom1(3* (i-1)+2))
         ymax = max(ymax,geom1(3* (i-1)+2))
- 10 end do
-    do 20 i = 1, nno2
-        if (lino2(i) .eq. 0) goto 20
+    end do
+    do i = 1, nno2
+        if (lino2(i) .eq. 0) cycle
         xmin = min(xmin,geom2(3* (i-1)+1))
         xmax = max(xmax,geom2(3* (i-1)+1))
         ymin = min(ymin,geom2(3* (i-1)+2))
         ymax = max(ymax,geom2(3* (i-1)+2))
- 20 end do
+    end do
     stotal = (xmax-xmin)* (ymax-ymin)
     sboite = (stotal/ntr3)*5.d0
     dx = sqrt(sboite)
@@ -125,74 +126,74 @@ subroutine pj2dfb(boite, tria3, geom1, geom2)
 !     3. : ON COMPTE COMBIEN DE TRIA3 SERONT CONTENUS
 !             DANS CHAQUE BOITE(P,Q)
 !     -------------------------------------------------------
-    do 60 i = 1, ntr3
+    do  i = 1, ntr3
         xxmin = rbig
         yymin = rbig
         xxmax = -rbig
         yymax = -rbig
-        do 30 k = 1, 3
+        do k = 1, 3
             ino = tria3(1+4* (i-1)+k)
             xxmin = min(xxmin,geom1(3* (ino-1)+1))
             xxmax = max(xxmax,geom1(3* (ino-1)+1))
             yymin = min(yymin,geom1(3* (ino-1)+2))
             yymax = max(yymax,geom1(3* (ino-1)+2))
- 30     continue
+        end do
         p1 = int((xxmin-xmin)/dx) + 1
         p2 = int((xxmax-xmin)/dx) + 1
         q1 = int((yymin-ymin)/dy) + 1
         q2 = int((yymax-ymin)/dy) + 1
-        do 50 p = p1, p2
-            do 40 q = q1, q2
+        do p = p1, p2
+            do q = q1, q2
                 zi(iabtnb-1+ (q-1)*nx+p) = zi(iabtnb-1+ (q-1)*nx+p) + 1
- 40         continue
- 50     continue
+            end do
+        end do
 !
- 60 end do
+    end do
 !
 !
 !
 !     4. : ON REMPLIT .BT2DCO  ET .BT2DLC :
 !     -------------------------------------------------------
     zi(iabtlc-1+1) = 0
-    do 70 ib = 1, nx*ny
+    do ib = 1, nx*ny
         zi(iabtlc-1+ib+1) = zi(iabtlc-1+ib) + zi(iabtnb-1+ib)
         zi(iabtnb-1+ib) = 0
- 70 end do
+    end do
 !
 !
     lont = zi(iabtlc-1+1+nx*ny)
     call wkvect(boite//'.BT2DCO', 'V V I', lont, iabtco)
 !
-    do 110 i = 1, ntr3
+    do i = 1, ntr3
         xxmin = rbig
         yymin = rbig
         xxmax = -rbig
         yymax = -rbig
-        do 80 k = 1, 3
+        do  k = 1, 3
             ino = tria3(1+4* (i-1)+k)
             xxmin = min(xxmin,geom1(3* (ino-1)+1))
             xxmax = max(xxmax,geom1(3* (ino-1)+1))
             yymin = min(yymin,geom1(3* (ino-1)+2))
             yymax = max(yymax,geom1(3* (ino-1)+2))
- 80     continue
+        end do
         p1 = int((xxmin-xmin)/dx) + 1
         p2 = int((xxmax-xmin)/dx) + 1
         q1 = int((yymin-ymin)/dy) + 1
         q2 = int((yymax-ymin)/dy) + 1
-        do 100 p = p1, p2
-            do 90 q = q1, q2
+        do p = p1, p2
+            do q = q1, q2
                 zi(iabtnb-1+ (q-1)*nx+p) = zi(iabtnb-1+ (q-1)*nx+p) + 1
                 iposi = zi(iabtlc-1+ (q-1)*nx+p) + zi(iabtnb-1+ (q-1)* nx+p)
                 ASSERT((iposi.ge.1) .and. (iposi.le.lont))
                 zi(iabtco-1+iposi) = i
- 90         continue
-100     continue
+            end do
+        end do
 !
-110 end do
+    end do
 !
     if (dbg) then
         ifm = iunifi('MESSAGE')
-        call utimsd(ifm, 2, .false._1, .true._1, boite,&
+        call utimsd(ifm, 2, ASTER_FALSE, ASTER_TRUE, boite,&
                     1, ' ')
     endif
     call jedema()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ subroutine lcesel(eps,rigi,elas,prece,sigela,sigelu,dsade,dsude)
     real(kind=8), dimension(6), parameter :: kr = (/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
     real(kind=8)::eigeps(3),unieps(6),dereps(6,6),treps,se(6),unitr,dertr
     real(kind=8)::dsede(6,6)
-    real(kind=8)::safe=1.d2
+    real(kind=8), parameter::safe=1.d2
 ! --------------------------------------------------------------------------------------------------
     real(kind=8) :: lambda, deuxmu, troisk, gamma, rigmin, pc, pr, epsth
     common /lcee/ lambda,deuxmu,troisk,gamma,rigmin,pc,pr,epsth
@@ -51,7 +51,7 @@ subroutine lcesel(eps,rigi,elas,prece,sigela,sigelu,dsade,dsude)
 
 !   TENSEUR E
     treps  = eps(1)+eps(2)+eps(3)
-    
+
 !   PARTIE POSITIVE DES DEFORMATIONS ET DERIVEE
     if (.not. elas) then
         call lcesun(treps,unitr,dertr)
@@ -69,9 +69,7 @@ subroutine lcesel(eps,rigi,elas,prece,sigela,sigelu,dsade,dsude)
     se = lambda*treps*kr + deuxmu*eps
     sigelu = lambda*unitr*kr + deuxmu*unieps
     sigela = se - sigelu
-
-
-
+!
 !   DERIVEES
     if (rigi) then
 

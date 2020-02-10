@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,30 +60,30 @@ character(len=16), intent(in) :: option, nomte
     integer :: indco
     character(len=8) :: typmae, typmam
     character(len=4) :: phase
-    aster_logical :: laxis = .false. , leltf = .false.
-    aster_logical :: l_pena_cont = .false. , l_pena_fric = .false.
-    aster_logical :: lcont = .false., ladhe = .false., l_fric_no = .false.
-    aster_logical :: debug = .false.
-    real(kind=8) :: coefff = 0.0
-    real(kind=8) :: lambda = 0.0, lambds = 0.0
-    real(kind=8) :: coefac = 0.0, coefaf = 0.0
+    aster_logical :: laxis, leltf
+    aster_logical :: l_pena_cont, l_pena_fric
+    aster_logical :: lcont, ladhe, l_fric_no
+    aster_logical :: debug
+    real(kind=8) :: coefff
+    real(kind=8) :: lambda, lambds
+    real(kind=8) :: coefac, coefaf
     real(kind=8) :: wpg, jacobi
-    real(kind=8) :: norm(3) = 0.0, tau1(3) = 0.0, tau2(3) = 0.0
-    real(kind=8) :: jeusup=0.0
-    real(kind=8) :: dlagrc=0.0, dlagrf(2)=0.0
-    real(kind=8) :: jeu=0.0, djeut(3)=0.0
-    real(kind=8) :: rese(3)=0.0, nrese=0.0
-    real(kind=8) :: mprojt(3, 3)=0.0
-    real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
-    real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0, mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
-    real(kind=8) :: kappa(2, 2)=0.0
+    real(kind=8) :: norm(3), tau1(3), tau2(3)
+    real(kind=8) :: jeusup
+    real(kind=8) :: dlagrc, dlagrf(2)
+    real(kind=8) :: jeu, djeut(3)
+    real(kind=8) :: rese(3), nrese
+    real(kind=8) :: mprojt(3,3)
+    real(kind=8) :: mprt1n(3,3), mprt2n(3,3)
+    real(kind=8) :: mprt11(3,3), mprt12(3,3), mprt21(3,3), mprt22(3,3)
+    real(kind=8) :: kappa(2, 2)
     real(kind=8) :: ffe(9), ffm(9), ffl(9)
     real(kind=8) :: ddffm(3, 9), dffm(2, 9)
-    real(kind=8) :: alpha_cont=0.0
+    real(kind=8) :: alpha_cont
     real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: xpc, ypc, xpr, ypr
-    aster_logical :: l_large_slip = ASTER_FALSE
-    real(kind=8) :: djeu(3)=0.0
+    aster_logical :: l_large_slip
+    real(kind=8) :: djeu(3)
 !
     real(kind=8) :: vectcc(9)
     real(kind=8) :: vectff(18)
@@ -100,7 +100,37 @@ character(len=16), intent(in) :: option, nomte
     vectcm(:) = 0.d0
     vectfe(:) = 0.d0
     vectfm(:) = 0.d0
+    djeu(:)=0.0
+    alpha_cont=0.0
+    coefff = 0.0
+    lambda = 0.0
+    lambds = 0.0
+    coefac = 0.0
+    coefaf = 0.0
+    norm(:) = 0.0
+    tau1(:) = 0.0
+    tau2(:) = 0.0
+    jeusup=0.0
+    dlagrc=0.0
+    dlagrf(:)=0.0
+    jeu=0.0
+    djeut(:)=0.0
+    rese(:)=0.0
+    nrese=0.0
+    mprojt(:,:) = 0.d0
+    mprt1n(:,:) = 0.d0
+    mprt2n(:,:) = 0.d0
+    mprt11(:,:) = 0.d0
+    mprt12(:,:) = 0.d0
+    mprt21(:,:) = 0.d0
+    mprt22(:,:) = 0.d0
     debug = ASTER_FALSE
+    laxis = ASTER_FALSE
+    leltf = ASTER_FALSE
+    lcont = ASTER_FALSE
+    ladhe = ASTER_FALSE
+    l_fric_no = ASTER_FALSE
+    l_large_slip = ASTER_FALSE
 !
 ! - Get informations on cell (slave and master)
 !

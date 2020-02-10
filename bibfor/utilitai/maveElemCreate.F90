@@ -45,11 +45,14 @@ character(len=*), optional, intent(in) :: model_, mate_, cara_elem_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: mave_elem, mate = ' ', model = ' ', cara_elem = ' '
+    character(len=19) :: mave_elem, mate, model, cara_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
     mave_elem = mave_elemz
+    mate = ' '
+    model = ' '
+    cara_elem = ' '
     if (present(model_)) then
         model = model_
     endif

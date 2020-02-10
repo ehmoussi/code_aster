@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ use petsc_data_module
 !----------------------------------------------------------------
     integer :: k,isol,neq
     character(len=24) :: precon,kperm
-    character(len=19) :: matas2,nosolv,vcin2, vcine_avant=' '
+    character(len=19) :: matas2,nosolv,vcin2, vcine_avant
     character(len=24), dimension(:), pointer :: slvk => null()
     real(kind=8), dimension(:), pointer :: tempor => null()
     real(kind=8), dimension(:), pointer :: vciv1 => null()
@@ -76,6 +76,7 @@ use petsc_data_module
     ASSERT(kptsc.ge.1 .and. kptsc.le.5)
     matas2='&&apldlt.matr'
     kperm='&&apldlt.perm'
+    vcine_avant=' '
 
     nomat_courant=nomats(kptsc)
     nonu_courant=nonus(kptsc)

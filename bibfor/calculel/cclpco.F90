@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ subroutine cclpco(option, resuou, numord, nbpaou, lipaou,&
 !   LICHOU  K8*  LISTE DES CHAMPS OUT
 ! ----------------------------------------------------------------------
 ! person_in_charge: nicolas.sellenet at edf.fr
-    integer :: opt, iaopds, iaoplo, iapara, nparin, ipara, ierd
+    integer :: opt, iaopds, iapara, nparin, ipara, ierd
     integer :: nparou, kpara, nugd
 !
     character(len=8) :: nomgd, tsca
@@ -67,10 +67,7 @@ subroutine cclpco(option, resuou, numord, nbpaou, lipaou,&
 !
     nparin = zi(iaopds-1+2)
     nparou = zi(iaopds-1+3)
-
-
-
-
+!
     if (nparou.eq.1) then
         ipara=1
 

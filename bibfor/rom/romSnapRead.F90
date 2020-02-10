@@ -55,8 +55,8 @@ implicit none
 !
     integer :: ifm, niv
     integer :: iret
-    integer :: nb_snap = 0
-    character(len=24) :: list_snap = '&&ROM.LIST_SNAP'
+    integer :: nb_snap
+    character(len=24), parameter :: list_snap = '&&ROM.LIST_SNAP'
     integer, pointer :: v_list_snap(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -65,6 +65,8 @@ implicit none
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_4')
     endif
+!
+    nb_snap = 0
 !
 ! - Select list of snapshots (from LIST_SNAP keyword) or from result
 !

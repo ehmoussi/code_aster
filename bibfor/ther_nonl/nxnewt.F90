@@ -105,7 +105,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
     real(kind=8) :: time_curr
     character(len=24) :: lload_name, lload_info
     real(kind=8) :: resi_rela, resi_maxi
-    character(len=16) :: name_dof_rela = ' ', name_dof_maxi = ' '
+    character(len=16) :: name_dof_rela, name_dof_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -123,6 +123,8 @@ type(NL_DS_Print), intent(inout) :: ds_print
     time_curr = tpsthe(1)
     lload_name = list_load(1:19)//'.LCHA'
     lload_info = list_load(1:19)//'.INFC'
+    name_dof_rela = ' '
+    name_dof_maxi = ' '
 !
 ! - Neumann loads elementary vectors (residuals)
 !

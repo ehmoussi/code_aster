@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ use bloc_fe_module, only: prod_sb, add_fint
     real(kind=8)  :: r_ini,r_def,dff_ini(nno,ndim),dff_def(nno,ndim),poids_ini,poids_def
     real(kind=8)  :: bu(2*ndim,ndim,nno),bg(2+ndim,2,nnob),bq(2,2,nnob)
     real(kind=8)  :: siefu(2*ndim),siefg(2+ndim),siefq(2)
-    real(kind=8)  :: rbid=0.d0
+    real(kind=8)  :: rbid
 
 ! ----------------------------------------------------------------------
 
@@ -83,6 +83,7 @@ use bloc_fe_module, only: prod_sb, add_fint
     neq = 2
 
     fint = 0
+    rbid=0.d0
 
     ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
     forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + ndq + i

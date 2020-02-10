@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,12 +50,12 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nocc, ifm, niv
-    aster_logical :: l_tabl_user = .false._1
-    real(kind=8) :: tole_svd = 0.d0, tole_incr = 0.d0
-    character(len=16) :: field_name = ' '
-    character(len=8)  :: axe_line = ' ', surf_num = ' ', base_type = ' '
-    character(len=8)  :: result_in = ' ', model_user = ' ', tabl_user = ' '
-    integer :: nb_mode_maxi = 0
+    aster_logical :: l_tabl_user
+    real(kind=8) :: tole_svd, tole_incr
+    character(len=16) :: field_name
+    character(len=8)  :: axe_line, surf_num, base_type
+    character(len=8)  :: result_in, model_user, tabl_user
+    integer :: nb_mode_maxi
     type(ROM_DS_Snap) :: ds_snap
     type(ROM_DS_Result) :: ds_result
 !
@@ -65,6 +65,18 @@ type(ROM_DS_ParaDBR_POD), intent(inout) :: ds_para_pod
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_18')
     endif
+!
+    l_tabl_user = .false._1
+    tole_svd = 0.d0
+    tole_incr = 0.d0
+    nb_mode_maxi = 0
+    field_name = ' '
+    axe_line = ' '
+    surf_num = ' '
+    base_type = ' '
+    result_in = ' '
+    model_user = ' '
+    tabl_user = ' '
 !
 ! - Get parameters - Results to process
 !

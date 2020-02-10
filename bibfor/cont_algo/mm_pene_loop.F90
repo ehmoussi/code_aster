@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,18 +80,17 @@ implicit none
     integer :: ztabf
     integer :: ifm, niv
     integer :: jdecme, elem_slav_indx
-    integer :: indi_cont_curr=0
+    integer :: indi_cont_curr
     integer :: i_zone, i_elem_slav, i_cont_poin, i_poin_elem
     integer :: model_ndim, nb_cont_zone, loop_cont_vali
     integer ::  nb_poin_elem, nb_elem_slav
-    real(kind=8) :: gap=0.0
-    real(kind=8) :: time_curr=0.0
-    aster_logical :: l_glis=.false._1
-    aster_logical :: l_veri=.false._1, l_exis_glis=.false._1
-    aster_logical :: loop_cont_conv=.false._1, l_loop_cont=.false._1
-    aster_logical :: l_frot_zone=.false._1, l_pena_frot=.false._1
-    aster_logical :: l_frot=.false._1,l_pena_cont=.false._1
-    
+    real(kind=8) :: gap
+    real(kind=8) :: time_curr
+    aster_logical :: l_glis
+    aster_logical :: l_veri, l_exis_glis
+    aster_logical :: loop_cont_conv, l_loop_cont
+    aster_logical :: l_frot_zone, l_pena_frot
+    aster_logical :: l_frot,l_pena_cont
     integer :: type_adap, continue_calcul
     character(len=24) :: sdcont_cyccoe, sdcont_cyceta
     real(kind=8), pointer :: v_sdcont_cyccoe(:) => null()
@@ -102,7 +101,7 @@ implicit none
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
     character(len=24) :: sdcont_pene
     real(kind=8), pointer :: v_sdcont_pene(:) => null()
-    real(kind=8) ::  dist_max=1.0,vale_pene=1.0
+    real(kind=8) ::  dist_max,vale_pene
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -114,13 +113,26 @@ implicit none
 !
 ! - Initializations
 !
-    loop_cont_conv = .true.
+    l_glis=ASTER_FALSE
+    l_veri=ASTER_FALSE
+    l_exis_glis=ASTER_FALSE
+    loop_cont_conv=ASTER_FALSE
+    l_loop_cont=ASTER_FALSE
+    l_frot_zone=ASTER_FALSE
+    l_pena_frot=ASTER_FALSE
+    l_frot=ASTER_FALSE
+    l_pena_cont=ASTER_FALSE
+    loop_cont_conv = ASTER_TRUE
     loop_cont_vali = 0
     continue_calcul = 0
+    indi_cont_curr=0
+    gap=0.0
+    time_curr=0.0
+    dist_max=1.0
+    vale_pene=1.0
 !
 ! - Parameters
 !
-    
     l_exis_glis  = cfdisl(ds_contact%sdcont_defi,'EXIS_GLISSIERE')
     l_loop_cont  = cfdisl(ds_contact%sdcont_defi,'CONT_BOUCLE')
     type_adap    = cfdisi(ds_contact%sdcont_defi,'TYPE_ADAPT')
@@ -173,13 +185,13 @@ implicit none
         l_pena_frot  = mminfl(ds_contact%sdcont_defi,'ALGO_FROT_PENA' , i_zone)
         l_pena_cont  = mminfl(ds_contact%sdcont_defi,'ALGO_CONT_PENA' , i_zone)
         vale_pene    = mminfr(ds_contact%sdcont_defi,'PENE_MAXI' , i_zone)
-        
+
 
 !
 ! ----- Loop on slave elements
 !
         do i_elem_slav = 1, nb_elem_slav
-      
+
 !
 ! --------- Slave element index in contact datastructure
 !
@@ -193,7 +205,7 @@ implicit none
 !
             do i_poin_elem = 1, nb_poin_elem
 !
-! ------------- Get informations from 
+! ------------- Get informations from
 !
                 gap            = v_sdcont_apjeu(i_cont_poin)
                 indi_cont_curr = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+23))
@@ -204,9 +216,9 @@ implicit none
                         ds_contact%continue_pene = 0
                         v_sdcont_pene((i_cont_poin-1)+1)  = abs(gap)
                         ! On cherche le max des penetrations
-                        if (i_cont_poin .gt. 1 ) then 
+                        if (i_cont_poin .gt. 1 ) then
                             if (v_sdcont_pene((i_cont_poin-1)+1) .gt. &
-                                v_sdcont_pene((i_cont_poin-1)+1-1)) then 
+                                v_sdcont_pene((i_cont_poin-1)+1-1)) then
                                 ds_contact%calculated_penetration =&
                                         v_sdcont_pene((i_cont_poin-1)+1)
                             else
@@ -218,14 +230,14 @@ implicit none
                         endif
                         if (ds_contact%iteration_newton .ge. ds_contact%it_adapt_maxi-6) then
                                 ds_contact%continue_pene = 1.0
-                         endif 
+                         endif
 !                    elseif (l_pena_cont .and. (indi_cont_curr .eq. 0) .and.&
-!                            (ds_contact%calculated_penetration .le. 1.d-299)) then 
+!                            (ds_contact%calculated_penetration .le. 1.d-299)) then
 !                    ! PENALISATION ADAPTATIF ACTIF mais pas encore de contact,
 !                    ! la penetration n'a pas de sens
 !                        ds_contact%continue_pene = 5
                     endif
-                        
+
 !
 ! ------------- Next contact point
 !

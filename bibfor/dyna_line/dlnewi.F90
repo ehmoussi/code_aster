@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,6 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    
     integer :: iinteg, neq, imat(3), nchar, nveca, liad(*), nume, nondp
     integer :: numrep, nb_matr
     character(len=1) :: coef_type(3), resu_type
@@ -149,7 +148,7 @@ implicit none
     character(len=3) :: repk
     character(len=4) :: typ1(nbtyar)
     character(len=8) :: k8b, matr_resu, modsta
-    character(len=8) :: nomddl =' '
+    character(len=8) :: nomddl
     character(len=8) :: mailla
     character(len=19) :: nolig
     character(len=16) :: typear(nbtyar), nomte, k16bid, typres
@@ -158,12 +157,12 @@ implicit none
     character(len=19) :: lisarc
     character(len=24) :: lispas, libint, linbpa
     character(len=24) :: lisins
-    character(len=24) :: k24amo = '&&K24AMO'
+    character(len=24), parameter :: k24amo = '&&K24AMO'
     character(len=24) :: ligrel
-    character(len=24) :: vitini = '&&VITINI'
-    character(len=24) :: vitent = '&&VITENT'
+    character(len=24), parameter :: vitini = '&&VITINI'
+    character(len=24), parameter :: vitent = '&&VITENT', famomo = '&&FAMOMO'
     character(len=24) :: veanec, vaanec, deeq, vaonde, veonde
-    character(len=24) :: valmod = '&&VALMOD', basmod = '&&BASMOD', famomo = '&&FAMOMO'
+    character(len=24):: valmod, basmod
     real(kind=8) :: lastarch
     real(kind=8) :: tps1(4), tps2(4)
     real(kind=8) :: a0, a1, a2, a3, a4, a5, a6, a7, a8
@@ -176,7 +175,7 @@ implicit none
     real(kind=8), pointer :: epl1(:) => null()
     real(kind=8), pointer :: fammo(:) => null()
     real(kind=8), pointer :: vien(:) => null()
-    real(kind=8), pointer :: vite(:) => null() 
+    real(kind=8), pointer :: vite(:) => null()
     character(len=19), intent(inout) :: sd_obsv
     character(len=*), intent(in) :: mesh
 !
@@ -196,12 +195,15 @@ implicit none
 ! 1.2. ==> NOM DES STRUCTURES
 !
     maprec       = '&&DLNEWI.MAPREC'
+    valmod       = '&&VALMOD'
+    basmod       = '&&BASMOD'
     lmodst       = ASTER_FALSE
     l_harm       = ASTER_FALSE
     l_damp_modal = ASTER_FALSE
     l_matr_impe  = ASTER_FALSE
     impe         = ' '
     resu_type    = 'R'
+    nomddl       = ' '
 !
 ! N: SAISIE DES DONNEES AMOR_MODAL
 !    (  MOT CLE FACTEUR: AMOR_MODAL  )
@@ -239,7 +241,7 @@ implicit none
 !
  10 continue
 !
-! 1.4. ==> 
+! 1.4. ==>
 !
 
     call dismoi('CHAM_MATER', rigid, 'MATR_ASSE', repk=k8b, arret = 'C', ier = ierc)
@@ -411,7 +413,7 @@ implicit none
                 t0, lcrea, typres, masse, rigid,&
                 amort, dep0, vit0, acc0, fexte,&
                 famor, fliai, numedd, nume, nbtyar,&
-                typear)               
+                typear)
 !
 !====
 ! 3. CALCUL
@@ -498,7 +500,7 @@ implicit none
             temps = t0 + dt*ipepa
             tempm = t0 + dt* (ipepa-1)
             archiv = zi(jstoc+ipas-1)
-                        
+
             call dlnew0(result, force0, force1, iinteg, neq,&
                         istoc, iarchi, nbexci, nondp, nmodam,&
                         lamort, limped, lmodst, imat, masse,&
@@ -528,13 +530,13 @@ implicit none
                 end if
             end if
             !
-            
-            ! - SI OBSERVATION 
-!            
+
+            ! - SI OBSERVATION
+!
             l_obsv = ASTER_FALSE
             call lobs(sd_obsv, ipas, temps, l_obsv)
             if (l_obsv) then
-                call nmobse(mesh, sd_obsv  , t0)   
+                call nmobse(mesh, sd_obsv  , t0)
             endif
 
 !

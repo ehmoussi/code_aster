@@ -63,7 +63,9 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     integer :: numex
 !
     aster_logical, save :: isFirst=ASTER_TRUE
-    type(Message), save :: firstMsg, excMsg
+    type(Message), save :: firstMsg
+    type(Message) :: excMsg
+!
 !
 !     TYPES DE MESSAGES :
 !     ERREURS :

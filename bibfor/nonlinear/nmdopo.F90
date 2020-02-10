@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,8 +56,8 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     integer :: iret, iocc, nb_dof_excl, nb_dof_stab, nocc
     integer :: ifm, niv
     aster_logical :: l_dyna, l_stat, l_impl
-    aster_logical :: l_crit_stab = ASTER_FALSE, l_mode_vibr = ASTER_FALSE
-    aster_logical :: l_small = ASTER_FALSE, l_strip = ASTER_FALSE
+    aster_logical :: l_crit_stab, l_mode_vibr
+    aster_logical :: l_small, l_strip
     character(len=16) :: option, type_matr_rigi, keywfact, answer, instab_sign
     integer :: nb_eigen, coef_dim_espace
     real(kind=8) :: strip(2)
@@ -78,6 +78,8 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     strip(2)    = 10.d0
     l_mode_vibr = ASTER_FALSE
     l_crit_stab = ASTER_FALSE
+    l_small     = ASTER_FALSE
+    l_strip     = ASTER_FALSE
 !
 ! - Active functionnalities
 !
