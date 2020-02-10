@@ -10,8 +10,7 @@ test = code_aster.TestCase()
 MA = code_aster.Mesh()
 MA.readMedFile("xxContact001a.mmed")
 
-MO2 = code_aster.Model()
-MO2.setMesh(MA)
+MO2 = code_aster.Model(MA)
 MO2.addModelingOnAllMesh(code_aster.Physics.Acoustic, code_aster.Modelings.Tridimensional)
 MO2.build()
 

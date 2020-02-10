@@ -33,7 +33,7 @@ class XfemModelModication(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Model()
+        self._result = Model(keywords["MODELE_IN"].getMesh())
 
     def post_exec(self, keywords):
         """Execute the command.
@@ -46,7 +46,6 @@ class XfemModelModication(ExecuteCommand):
             self._result.setSaneModel(modeleIn)
             if type(modeleIn) is tuple:
                 modeleIn = modeleIn[0]
-            self._result.setMesh(modeleIn.getMesh())
 
 
 MODI_MODELE_XFEM = XfemModelModication.run

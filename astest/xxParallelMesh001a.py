@@ -19,9 +19,8 @@ pMesh = code_aster.ParallelMesh()
 pMesh.readMedFile("xxParallelMesh001a")
 pMesh.debugPrint(rank+30)
 
-model = code_aster.Model()
+model = code_aster.Model(pMesh)
 test.assertEqual(model.getType(), "MODELE_SDASTER")
-model.setMesh(pMesh)
 model.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                            code_aster.Modelings.Tridimensional)
 model.build()

@@ -193,10 +193,6 @@ bool XfemCrackClass::build() {
 ModelPtr XfemCrackClass::enrichModelWithXfem( ModelPtr &baseModel ) {
     CommandSyntax cmdSt( "MODI_MODELE_XFEM" );
 
-    // Create empty model and get its name
-    ModelPtr newModelPtr( new ModelClass() );
-    cmdSt.setResult( newModelPtr->getName(), "MODELE" );
-
     SyntaxMapContainer dict;
 
     dict.container["MODELE_IN"] = baseModel->getName();
@@ -210,6 +206,10 @@ ModelPtr XfemCrackClass::enrichModelWithXfem( ModelPtr &baseModel ) {
     dict.container["PRETRAITEMENTS"] = "AUTO";
 
     cmdSt.define( dict );
+
+    // Create model and get its name
+    ModelPtr newModelPtr( new ModelClass(baseModel->getMesh()) );
+    cmdSt.setResult( newModelPtr->getName(), "MODELE" );
 
     // Call  OP00113
     try {

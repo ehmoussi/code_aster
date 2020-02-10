@@ -10,22 +10,21 @@ test = code_aster.TestCase()
 monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
-monModel = code_aster.Model()
-monModel.setMesh( monMaillage )
+monModel = code_aster.Model(monMaillage)
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
 test.assertEqual( monModel.getType(), "MODELE_SDASTER" )
 
-YOUNG = 200000.0;
-POISSON = 0.3;
+YOUNG = 200000.0
+POISSON = 0.3
 
 Kinv= 3.2841e-4
 Kv=1./Kinv
-SY = 437.0;
-Rinf = 758.0;
-Qzer   = 758.0-437.;
-Qinf   = Qzer + 100.;
-b = 2.3;
+SY = 437.0
+Rinf = 758.0
+Qzer = 758.0-437.
+Qinf = Qzer + 100.
+b = 2.3
 C1inf = 63767.0/2.0
 C2inf = 63767.0/2.0
 Gam1 = 341.0

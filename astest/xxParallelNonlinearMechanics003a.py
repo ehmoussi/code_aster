@@ -10,8 +10,7 @@ test = code_aster.TestCase()
 monMaillage = code_aster.ParallelMesh()
 monMaillage.readMedFile("xxParallelNonlinearMechanics003a")
 
-monModel = code_aster.Model()
-monModel.setMesh(monMaillage)
+monModel = code_aster.Model(monMaillage)
 monModel.addModelingOnAllMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 # monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,

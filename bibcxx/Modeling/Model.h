@@ -110,7 +110,7 @@ class ModelClass : public DataStructure {
  * @todo a supprimer en templatisant Model etc.
  */
 #ifdef _USE_MPI
-    PartialMeshPtr PartialMesh;
+    PartialMeshPtr _partialMesh;
 #endif /* _USE_MPI */
     /** @brief Méthode de parallélisation du modèle */
     ModelSplitingMethod _splitMethod;
@@ -133,18 +133,41 @@ class ModelClass : public DataStructure {
 
   public:
     /**
-     * @brief Constructeur
+     * @brief Constructor: a mesh is mandatory
      */
-    ModelClass( const std::string name = ResultNaming::getNewResultName() ):
-    DataStructure( name, 8, "MODELE" ),
+    ModelClass(void) = delete;
+
+    ModelClass(const BaseMeshPtr mesh,
+               const std::string name = ResultNaming::getNewResultName() ):
+        DataStructure( name, 8, "MODELE" ),
         _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
         _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-        _saneModel( nullptr ),
-        _baseMesh( MeshPtr() ), _splitMethod( SubDomain ),
-        _graphPartitioner( MetisPartitioner ), _ligrel( new FiniteElementDescriptorClass(
-                                                    getName() + ".MODELE", _baseMesh ) )
-    {};
+        _saneModel( nullptr ), _baseMesh( mesh ),
+        _splitMethod( SubDomain ), _graphPartitioner( MetisPartitioner ),
+         _ligrel( new FiniteElementDescriptorClass(getName() + ".MODELE", _baseMesh ) )
+    {
+        if ( _baseMesh->isEmpty() )
+            throw std::runtime_error( "Mesh is empty" );
+    };
+
+#ifdef _USE_MPI
+    ModelClass(const PartialMeshPtr mesh,
+               const std::string name = ResultNaming::getNewResultName() ):
+        DataStructure( name, 8, "MODELE" ),
+        _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+        _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
+        _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
+        _saneModel( nullptr ), _baseMesh( mesh ), _partialMesh(mesh),
+        _splitMethod( Centralized ), _graphPartitioner( MetisPartitioner ),
+        _ligrel( new FiniteElementDescriptorClass(getName() + ".MODELE", _baseMesh ) )
+    {
+        if ( _baseMesh->isEmpty() )
+            throw std::runtime_error( "Mesh is empty" );
+        if ( _partialMesh->isEmpty() )
+            throw std::runtime_error( "Partial mesh is empty" );
+    };
+#endif /* _USE_MPI */
 
     /**
      * @brief Ajout d'une nouvelle modelisation sur tout le maillage
@@ -227,9 +250,9 @@ class ModelClass : public DataStructure {
 
 #ifdef _USE_MPI
     PartialMeshPtr getPartialMesh() const {
-        if ( ( !PartialMesh ) || PartialMesh->isEmpty() )
-            throw std::runtime_error( "Mesh of current model is empty" );
-        return PartialMesh;
+        if ( ( !_partialMesh ) || _partialMesh->isEmpty() )
+            throw std::runtime_error( "Mesh of model is empty" );
+        return _partialMesh;
     };
 #endif /* _USE_MPI */
 
@@ -248,7 +271,7 @@ class ModelClass : public DataStructure {
 
     BaseMeshPtr getMesh() const {
         if ( ( !_baseMesh ) || _baseMesh->isEmpty() )
-            throw std::runtime_error( "Mesh of current model is empty" );
+            throw std::runtime_error( "Mesh of model is empty" );
         return _baseMesh;
     };
 
@@ -269,7 +292,13 @@ class ModelClass : public DataStructure {
     /**
      * @brief Definition de la methode de partition
      */
-    void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner ) {
+    void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner )
+    {
+#ifdef _USE_MPI
+        if ( !(_partialMesh->isEmpty()) && split != Centralized)
+            throw std::runtime_error( "For Parallel mesh, Centralized splitting is mandatory" );
+#endif /* _USE_MPI */
+
         _splitMethod = split;
         _graphPartitioner = partitioner;
     };
@@ -277,69 +306,14 @@ class ModelClass : public DataStructure {
     /**
      * @brief Definition de la methode de partition
      */
-    void setSplittingMethod( ModelSplitingMethod split ) { _splitMethod = split; };
-
-    /**
-     * @brief Definition du maillage
-     * @param currentMesh objet MeshPtr sur lequel le modele reposera
-     */
-    bool setMesh( MeshPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _baseMesh = currentMesh;
-        _ligrel->setMesh(currentMesh);
-        return true;
-    };
-
-    /**
-     * @brief Definition du maillage
-     * @param currentMesh objet SkeletonPtr sur lequel le modele reposera
-     */
-    bool setMesh( SkeletonPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Skeleton is empty" );
-        _baseMesh = currentMesh;
-        return true;
-    };
-
-/**
- * @brief Definition du maillage
- * @param currentMesh objet MeshPtr sur lequel le modele reposera
- */
+    void setSplittingMethod( ModelSplitingMethod split )
+    {
 #ifdef _USE_MPI
-    bool setMesh( ParallelMeshPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _baseMesh = currentMesh;
-        _ligrel->setMesh(currentMesh);
-        return true;
-    };
+        if ( !(_partialMesh->isEmpty()) && split != Centralized)
+            throw std::runtime_error( "For Parallel mesh, Centralized splitting is mandatory" );
 #endif /* _USE_MPI */
 
-/**
- * @brief Definition du maillage
- * @param currentMesh objet PartialMeshPtr sur lequel le modele reposera
- */
-#ifdef _USE_MPI
-    bool setMesh( PartialMeshPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _baseMesh = currentMesh;
-        PartialMesh = currentMesh;
-        _ligrel->setMesh(currentMesh);
-        return true;
-    };
-#endif /* _USE_MPI */
-       /**
-        * @brief Definition du maillage
-        * @param currentMesh objet BasePtr sur lequel le modele reposera
-        */
-    bool setMesh( BaseMeshPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _baseMesh = currentMesh;
-        _ligrel->setMesh(currentMesh);
-        return true;
+         _splitMethod = split;
     };
 };
 
