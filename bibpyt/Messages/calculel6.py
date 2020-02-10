@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -305,7 +305,10 @@ Risques et conseils :
   Type de la valeur de référence incompatible avec le type des valeurs du champ.
 """),
 
-
+    96: _("""
+  TYPE_TEST teste une quantité calculée globalement sur tout le champ.
+  Il ne prend pas en compte les GROUP_NO ou GROUP_MA renseignés.
+"""),
 
     97: _("""
   Mot-clé POINT interdit pour le champ au noeud issu de %(k1)s à l'ordre %(i1)d:
