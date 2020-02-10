@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -501,12 +501,7 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',
-                          NPREC=15,
-                          RENUM='AMF',
-                          GESTION_MEMOIRE='OUT_OF_CORE',
-                          ELIM_LAGR='NON',
-                          PCENT_PIVOT=200,),
+            'SOLVEUR': _F(METHODE='MUMPS',),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)
@@ -538,12 +533,7 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',
-                          NPREC=15,
-                          RENUM='AMF',
-                          GESTION_MEMOIRE='OUT_OF_CORE',
-                          ELIM_LAGR='NON',
-                          PCENT_PIVOT=200,),
+            'SOLVEUR': _F(METHODE='MUMPS',),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)

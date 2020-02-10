@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,21 +19,28 @@
 #ifndef ASTERF_MUMPS_H
 #define ASTERF_MUMPS_H
 !
-!    include necessaire a la gestion des instances MUMPS
+!    include necessaire a la gestion des instances MUMPS afin de
+!    faire le lien, sans erreur, entre l'occurence MUMPS manipulee
+!    et la matrice code_aster
+!    En plus: stockage des versions MUMPS autorisees
 !----------------------------------------------------------------
 #   include "smumps_struc.h"
 #   include "cmumps_struc.h"
 #   include "dmumps_struc.h"
 #   include "zmumps_struc.h"
 
+! Les deux versions de MUMPS autorisees (+ leurs pendants consortium)
+    character(len=19), parameter :: vmump1="5.1.1"
+    character(len=19), parameter :: vmump2="5.1.1consortium"
+    character(len=19), parameter :: vmump3="5.2.1"
+    character(len=19), parameter :: vmump4="5.2.1consortium"
     integer :: nmxins
-    parameter (nmxins=5)
-
+    parameter (nmxins=5)        
     character(len=1) :: roucs(nmxins), precs(nmxins)
     character(len=4) :: etams(nmxins)
     character(len=14) :: nonus(nmxins)
     character(len=19) :: nomats(nmxins), nosols(nmxins)
-
+   
     common /mumpsh/ nonus,nomats,nosols,etams,roucs,precs
 
     type (smumps_struc) , target :: smps(nmxins)

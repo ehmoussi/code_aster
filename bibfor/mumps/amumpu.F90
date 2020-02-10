@@ -35,7 +35,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 ! OPTION=31 IDEM MAIS ON CREE UNE OCCURENCE MUMPS TEMPORAIRE. OPERATION
 !    UN PEU COUTEUSE A NE FAIRE QU'UNE FOIS PAR OPERATEUR(SD_SOLVEUR).
 ! DANS CES DEUX MODES, ON CONTROLE LE CARACTERE LICITE DU NUMERO DE
-! VERSIONS: 5.1.1/5.1.2(consortium) SINON UTMESS_F.
+! VERSIONS: CF. VERSIONS PERMISES DANS ASTERF_MUMPS SINON UTMESS_F.
 !
 ! OPTION=4 RECUPERE LE DETERMINANT ET ON LE STOCKE DS L'OBJET JEVEUX
 !          '&&AMUMP.DETERMINANT' (V V R DIM=3)
@@ -106,6 +106,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
     character(len=2) :: fstring
     character(len=8) :: k8tab(3)
     character(len=10) :: strpid
+    character(len=19) :: valk(4)
     character(len=24) :: kpiv, ksizemu
     character(len=80) :: nvers
 !
@@ -265,14 +266,14 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
         select case (icntl35)
 !       Full rank
         case (0,3)
-        maxmem_ic=infog16
-        maxmem_ooc=infog26
+          maxmem_ic=infog16
+          maxmem_ooc=infog26
 !       Low rank
         case (1,2)
-        maxmem_ic=infog36
-        maxmem_ooc=infog38
+          maxmem_ic=infog36
+          maxmem_ooc=infog38
         case default 
-        ASSERT(.false.)
+          ASSERT(.false.)
         end select 
 !
         ASSERT(nbproc>0)
@@ -599,10 +600,15 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 !
         kvers=''
         kvers=trim(adjustl(nvers))
+        valk(1)=vmump1
+        valk(2)=vmump2
+        valk(3)=vmump3
+        valk(4)=vmump4
         select case (kvers)
-        case('5.2.1','5.2.1consortium','5.1.2','5.1.2consortium')
+        case(vmump1,vmump2,vmump3,vmump4)
+! OK bonne version
         case default
-            call utmess('F', 'FACTOR_72', sk=kvers)
+          call utmess('F', 'FACTOR_72', sk=kvers, valk=valk)
         end select
 !
 !       ------------------------------------------------
