@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ use elg_data_module
     mpi_int :: mpicomm, nbproc, rang
     integer :: ifm, niv
     real(kind=8) :: norm
-    aster_logical :: info, debug=.false.
+    aster_logical :: info, debug
     PetscInt :: n1, n2, n3
     PetscInt :: reason
     PetscErrorCode :: ierr
@@ -77,6 +77,7 @@ use elg_data_module
     call jemarq()
     call infniv(ifm, niv)
     info=niv.eq.2
+    debug = .false.
     !
 !   -- COMMUNICATEUR MPI DE TRAVAIL
     call asmpi_comm('GET_WORLD', mpicomm)

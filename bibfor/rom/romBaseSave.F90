@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,10 +65,10 @@ integer, optional, pointer      :: v_nume_slice_(:)
 !
     integer :: ifm, niv
     integer :: i_mode
-    integer :: nb_equa = 0, nume_slice
+    integer :: nb_equa, nume_slice
     real(kind=8) :: mode_freq
-    character(len=8)  :: base = ' ', model = ' '
-    character(len=24) :: field_refe = ' ', field_name = ' '
+    character(len=8)  :: base , model
+    character(len=24) :: field_refe, field_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,6 +79,7 @@ integer, optional, pointer      :: v_nume_slice_(:)
 !
 ! - Initializations
 !
+    nb_equa = 0
     nume_slice = 0
     mode_freq  = 0.d0
 !

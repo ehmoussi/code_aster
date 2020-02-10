@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,13 +42,10 @@ subroutine te0580(nomopt, nomte)
     character(len=24) :: valk(2)
     character(len=32) :: phenom
     character(len=8) :: param
-    character(len=8) :: lparam1(2)=(/ 'PPRESSR', 'PPRESSF' /)
-    character(len=8) :: lparam2(6)
-    character(len=8) :: lparam3(2)=(/ 'PFRCO3D', 'PFFCO3D' /)
-
-    data  lparam2 / 'PPRESSR', 'PPRESSF', 'PFR2D3D', &
-                    'PFF2D3D', 'PFR1D2D', 'PFF1D2D' /
-
+    character(len=8), parameter :: lparam1(2)=(/ 'PPRESSR', 'PPRESSF' /)
+    character(len=8), parameter :: lparam2(6)=['PPRESSR', 'PPRESSF', 'PFR2D3D', 'PFF2D3D', &
+                                                'PFR1D2D', 'PFF1D2D']
+    character(len=8), parameter :: lparam3(2)=(/ 'PFRCO3D', 'PFFCO3D' /)
 !-----------------------------------------------------------------------
 ! Cette routine realise les calculs elementaires "triviaux" qui ne sont pas
 ! encore programmes par les elements.

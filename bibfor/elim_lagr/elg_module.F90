@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,12 +51,12 @@ contains
 
 #ifdef _HAVE_PETSC
 !
-! The routine builds a elg_context that is a container 
-! with everything needed for the elimination of 
-! Lagrange multipliers. The main step is to build a nullbasis for 
-! the constraints matrix. 
+! The routine builds a elg_context that is a container
+! with everything needed for the elimination of
+! Lagrange multipliers. The main step is to build a nullbasis for
+! the constraints matrix.
 !
-subroutine build_elg_context( full_matas )   
+subroutine build_elg_context( full_matas )
     !
     ! Dummy arguments
     character(len=19), intent(in) :: full_matas
@@ -65,25 +65,26 @@ subroutine build_elg_context( full_matas )
     !
     integer :: iret, ii
     integer :: kptsc, kptscr, ifm, niv, nlag
-    aster_logical :: verbose 
+    aster_logical :: verbose
     character(len=3) :: matd
     character(len=19) :: kbid
     type(saddlepoint_ctxt)    :: sp_ctxt
     type(elim_lagr_ctxt), pointer :: elg_ctxt => null()
     logical :: k_mat_to_free
     character(len=19) :: nomat_save
-    PetscErrorCode :: ierr 
+    PetscErrorCode :: ierr
     PetscReal :: tol, val
-    PC :: pc 
-    Mat :: factor       
+    PC :: pc
+    Mat :: factor
     PetscInt :: ival,icntl
+!
     k_mat_to_free = .false.
     !
     call infniv(ifm, niv)
     verbose = ( niv == 2 )
     ! Retrouve l'identifiant de l'objet elg_context associe
-    ! a la matrice full_matas. 
-    ! En effet, on a appelé elg_gest_data('NOTE', full_matas, reduced_matas) 
+    ! a la matrice full_matas.
+    ! En effet, on a appelé elg_gest_data('NOTE', full_matas, reduced_matas)
     ! dans elg_preres.
     call elg_gest_data('CHERCHE', full_matas, ' ' , ' ')
     ! Alias vers cet objet
@@ -100,8 +101,8 @@ subroutine build_elg_context( full_matas )
     ! le systeme aster complet (avec doubles multiplicateurs de Lagrange)
     ! La matrice est deja enregistree et possede l'id kptsc
     ! On prealloue la matrice PETSc correspondante
-    if ( ap(kptsc) /= PETSC_NULL_MAT )  then 
-        call MatDestroy( ap(kptsc), ierr ) 
+    if ( ap(kptsc) /= PETSC_NULL_MAT )  then
+        call MatDestroy( ap(kptsc), ierr )
     endif
     call apalmc(kptsc)
     ! On copie les valeurs de la matr_asse dans la matrice PETSc
@@ -117,10 +118,10 @@ subroutine build_elg_context( full_matas )
     !
     kptscr = kptsc
     if ( elg_ctxt%k_matas /= " ") then
-       if ( verbose ) then 
+       if ( verbose ) then
           write(6,*)  " C'est la matrice ", elg_ctxt%k_matas, &
-    " qui contient les relations linéaires de ", elg_ctxt%full_matas 
-       endif 
+    " qui contient les relations linéaires de ", elg_ctxt%full_matas
+       endif
        kptscr = get_mat_id( elg_ctxt%k_matas )
     !  S'il n'existe pas encore (ou deja plus) un clone PETSc de cette matrice
        if ( kptscr == 0 ) then
@@ -151,7 +152,7 @@ subroutine build_elg_context( full_matas )
        endif
     endif
     !
-    ! Construction d'un saddle_point_context 
+    ! Construction d'un saddle_point_context
     sp_ctxt = new_saddle_point_context( full_matas, replicated_data, &
         ap(kptsc), ap(kptscr) )
     !  et on libere le clone PETSc de full_matas
@@ -162,16 +163,16 @@ subroutine build_elg_context( full_matas )
       call  apmain('DETR_MAT', kptscr, [0.d0], kbid, 0, iret)
     endif
     ! On vérifie que la matrice des contraintes n'est pas vide
-    nlag = get_num_of_constraints( sp_ctxt ) 
+    nlag = get_num_of_constraints( sp_ctxt )
     if ( nlag == 0 ) then
         if ( elg_ctxt%k_matas /= " ") then
             call utmess( 'F', 'ELIMLAGR_10', sk=elg_ctxt%k_matas)
-        else 
+        else
             call utmess( 'F', 'ELIMLAGR_10', sk=full_matas)
         endif
-    endif 
-    ! Remplissage de elg_ctxt (à l'aide des matrices définies dans le 
-    ! saddle_point_context) 
+    endif
+    ! Remplissage de elg_ctxt (à l'aide des matrices définies dans le
+    ! saddle_point_context)
     call MatConvert( sp_ctxt%k_mat, MATSAME, MAT_INITIAL_MATRIX, &
          elg_ctxt%matb, ierr)
     ASSERT( ierr == 0 )
@@ -182,25 +183,25 @@ subroutine build_elg_context( full_matas )
     elg_ctxt%nphys = sp_ctxt%nphys
     elg_ctxt%nlag = sp_ctxt%nlag1
     !
-    ! On n'a plus besoin du saddle_point context 
+    ! On n'a plus besoin du saddle_point context
     call free_saddle_point_context( sp_ctxt )
     !
     if (elg_ctxt%tfinal == PETSC_NULL_MAT ) then
-    ! Calcul de la base du noyau (appel SuperLU) 
-        if (verbose) then 
+    ! Calcul de la base du noyau (appel SuperLU)
+        if (verbose) then
           write(6,*) " -- Construction de la base du noyau "
         endif
         call get_nullbasis( elg_ctxt%matc, elg_ctxt%tfinal )
-    endif 
-    if ( elg_ctxt%cct == PETSC_NULL_MAT ) then 
+    endif
+    if ( elg_ctxt%cct == PETSC_NULL_MAT ) then
     !   -- Calcul de CCT = C * transpose(C)
-        if (verbose) then 
+        if (verbose) then
           write(6,*) " -- Construction de CCT "
         endif
         call MatMatTransposeMult(elg_ctxt%matc, elg_ctxt%matc,&
         MAT_INITIAL_MATRIX, PETSC_DEFAULT_REAL, elg_ctxt%cct, ierr)
         ASSERT( ierr == 0 )
-        if (verbose) then 
+        if (verbose) then
           write(6,*) " -- Factorisation de CCT "
         endif
     endif
@@ -245,11 +246,11 @@ subroutine build_elg_context( full_matas )
         ASSERT( ierr == 0 )
         call KSPSetUp(elg_ctxt%ksp,ierr)
         ASSERT( ierr == 0 )
-    endif 
+    endif
     !
-    ! Projection T'*(MatB*T) 
+    ! Projection T'*(MatB*T)
     !
-    if (verbose) then 
+    if (verbose) then
           write(6,*) " -- Projection du problème sur la base du noyau "
         endif
     call MatPtAP(elg_ctxt%matb, elg_ctxt%tfinal, MAT_INITIAL_MATRIX, 1.d0, &
@@ -258,17 +259,17 @@ subroutine build_elg_context( full_matas )
    !
 end subroutine build_elg_context
 !
-! On entry, c_mat is a PETSc MATSEQ matrix containing the 
-! the constraints imposed on the physical dofs. 
-! On exit, z_mat is a new PETSc MATSEQ matrix containing 
-! a basis of the nullspace of c_mat 
+! On entry, c_mat is a PETSc MATSEQ matrix containing the
+! the constraints imposed on the physical dofs.
+! On exit, z_mat is a new PETSc MATSEQ matrix containing
+! a basis of the nullspace of c_mat
 !
 subroutine get_nullbasis( c_mat, z_mat )
     ! Dummy arguments
     Mat, intent(in)  :: c_mat
     Mat, intent(out) :: z_mat
     ! Local variables
-    aster_logical :: verbose, debug=.false.
+    aster_logical :: verbose, debug
     PetscErrorCode :: ierr
     integer :: ifm, niv
     real (kind=8)::  t0,t1
@@ -276,60 +277,61 @@ subroutine get_nullbasis( c_mat, z_mat )
     type(csc_matrix) :: ct_csc, b_csc, z_csc
     Mat :: cz_mat
     PetscScalar :: c_nrm, cz_nrm, z_nrm
-    PetscInt , dimension(:), pointer :: ia , ja 
-    PetscScalar, dimension(:), pointer :: val
-    PetscInt :: nn 
-    PetscInt :: mm_z, nn_z 
+    PetscInt , dimension(:), pointer :: ia=>null() , ja => null()
+    PetscScalar, dimension(:), pointer :: val => null()
+    PetscInt :: nn
+    PetscInt :: mm_z, nn_z
 !
     call infniv(ifm, niv)
     verbose= ( niv == 2 )
+    debug=.false.
 !
     call CPU_time(t0)
 !   Conversion de c_mat au format CSR
     call matseq2csr(  c_mat, nn, ia, ja, val )
 !   Les tableaux obtenus définissent C^T au format CSC
     call define_csc_matrix_from_array( "CT", one_based, to_aster_int(nn), ja, &
-    ia, val, ct_csc ) 
-!   Si la matrice C.T n'est pas de rang maximal (existence de contraintes 
-!   redondantes ou dépendantes), on commence par se ramener à une matrice 
-!   de rang maximal B 
+    ia, val, ct_csc )
+!   Si la matrice C.T n'est pas de rang maximal (existence de contraintes
+!   redondantes ou dépendantes), on commence par se ramener à une matrice
+!   de rang maximal B
     call get_columnspace_basis( ct_csc, b_csc )
 !   On n'a plus besoin de ct_csc
     call free_csc_matrix( ct_csc )
 !   On calcule une base du noyau de B stockée dans Z
     call get_nullbasis_trans( b_csc, z_csc )
-!   On change de format et on stocke la base dans une matrice PETSc (Tfinal) 
-    call csc2matseq( z_csc, z_mat) 
-!   Vérification  
+!   On change de format et on stocke la base dans une matrice PETSc (Tfinal)
+    call csc2matseq( z_csc, z_mat)
+!   Vérification
     call MatGetSize( z_mat, mm_z, nn_z, ierr )
-    ASSERT( ierr == 0 ) 
+    ASSERT( ierr == 0 )
     call MatMatMult( c_mat, z_mat, MAT_INITIAL_MATRIX,&
-        PETSC_DEFAULT_REAL, cz_mat, ierr ) 
-    ASSERT( ierr == 0 ) 
+        PETSC_DEFAULT_REAL, cz_mat, ierr )
+    ASSERT( ierr == 0 )
     call MatNorm( cz_mat, NORM_FROBENIUS, cz_nrm, ierr )
     ASSERT( ierr == 0 )
     call MatNorm( c_mat, NORM_FROBENIUS, c_nrm, ierr )
     ASSERT( ierr == 0 )
     call MatNorm( z_mat, NORM_FROBENIUS, z_nrm, ierr )
     ASSERT( ierr == 0 )
-    
+
     call CPU_time(t1)
-    if ( verbose ) then    
+    if ( verbose ) then
        call utmess('I', 'ELIMLAGR_13', si = to_aster_int(nn_z), &
        nr=4, valr =(/c_nrm, z_nrm, cz_nrm, t1-t0 /))
-    endif 
+    endif
     if (debug) then
         print*, "ELG Norme de C                             : ",  c_nrm
         print*, "ELG Norme de Z                             : ",  z_nrm
         print*, "ELG Norme de CZ                            : ",  cz_nrm
-        print*, "ELG Norme de CZ/( Norme de C * Norme de Z ): ",  cz_nrm/( c_nrm * z_nrm ) 
+        print*, "ELG Norme de CZ/( Norme de C * Norme de Z ): ",  cz_nrm/( c_nrm * z_nrm )
     endif
-    ASSERT( cz_nrm/(c_nrm*z_nrm) < 1.e-2 ) 
-! Libération de la mémoire 
+    ASSERT( cz_nrm/(c_nrm*z_nrm) < 1.e-2 )
+! Libération de la mémoire
     call free_csc_matrix( b_csc )
     call free_csc_matrix( z_csc )
-    call MatDestroy( cz_mat, ierr ) 
-    ASSERT( ierr == 0 )  
+    call MatDestroy( cz_mat, ierr )
+    ASSERT( ierr == 0 )
 !
 end subroutine get_nullbasis
 !

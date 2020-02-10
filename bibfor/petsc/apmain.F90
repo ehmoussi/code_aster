@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -107,7 +107,9 @@ use lmp_module, only : lmp_update
     real(kind=8), dimension(:), pointer :: slvr => null()
     complex(kind=8) :: cbid
 !
-    aster_logical :: lmd, dbg=.false.
+    aster_logical :: lmd
+    aster_logical, parameter :: dbg=.false.
+
 !
 !----------------------------------------------------------------
 !     Variables PETSc
@@ -443,21 +445,21 @@ use lmp_module, only : lmp_update
 !
             call VecDestroy(xlocal, ierr)
             ASSERT(ierr.eq.0)
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             xlocal = PETSC_NULL_OBJECT
 #else
             xlocal = PETSC_NULL_VEC
 #endif
             call VecDestroy(xglobal, ierr)
             ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             xglobal = PETSC_NULL_OBJECT
 #else
             xglobal = PETSC_NULL_VEC
 #endif
             call VecScatterDestroy(xscatt, ierr)
             ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
+#if PETSC_VERSION_LT(3,8,0)
             xscatt = PETSC_NULL_OBJECT
 #else
             xscatt = PETSC_NULL_VECSCATTER
@@ -485,16 +487,16 @@ use lmp_module, only : lmp_update
 !        -- DESTRUCTION DES OBJETS PETSC GENERAUX
         call MatDestroy(a, ierr)
         ASSERT(ierr.eq.0)
-! 
-#if PETSC_VERSION_LT(3,8,0) 
+!
+#if PETSC_VERSION_LT(3,8,0)
         call KSPDestroy(ksp, ierr)
         ASSERT(ierr.eq.0)
 #else
-        if ( ksp /= PETSC_NULL_KSP) then 
+        if ( ksp /= PETSC_NULL_KSP) then
            call KSPDestroy(ksp, ierr)
            ASSERT(ierr.eq.0)
         endif
-#endif         
+#endif
 !
 !        -- SUPRESSION DE L'INSTANCE PETSC
         nomats(kptsc) = ' '

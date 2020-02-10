@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,53 +61,53 @@ character(len=16), intent(in) :: option, nomte
     integer :: indco, indco_prev, indadhe_prev, indadhe2_prev
     character(len=8) :: typmae, typmam
     character(len=4) :: phase, phase_prev
-    aster_logical :: laxis = .false. , leltf = .false.
-    aster_logical :: lpenac = .false. , lpenaf = .false.
-    aster_logical :: lcont = .false., ladhe = .false., l_fric_no = .false.
-    aster_logical :: l_prev_cont = .false., l_prev_fric = .false.
-    aster_logical :: l_previous = .false.
-    aster_logical :: debug = .false., l_large_slip = .false.
-    aster_logical :: lcont_prev = .false., ladhe_prev = .false., l_fric_no_p = .false.
-    real(kind=8) :: coefff = 0.0
-    real(kind=8) :: lambda = 0.0, lambds = 0.0
-    real(kind=8) :: lambda_prev = 0.0 , lambds_prev =0.0
-    real(kind=8) :: coefac = 0.0, coefaf = 0.0
-    real(kind=8) :: wpg=0.0, jacobi=0.0
-    real(kind=8) :: wpg_prev=0.0, jacobi_prev=0.0
-    real(kind=8) :: norm(3) = 0.0, tau1(3) = 0.0, tau2(3) = 0.0
-    real(kind=8) :: jeusup=0.0
-    real(kind=8) :: dlagrc=0.0, dlagrf(2)=0.0
-    real(kind=8) :: jeu=0.0, djeut(3)=0.0
-    real(kind=8) :: rese(3)=0.0, nrese=0.0
-    real(kind=8) :: mprojt(3, 3)=0.0
-    real(kind=8) :: mprt1n(3, 3)=0.0, mprt2n(3, 3)=0.0
-    real(kind=8) :: mprnt1(3, 3)=0.0, mprnt2(3, 3)=0.0
-    real(kind=8) :: mprt11(3, 3)=0.0, mprt12(3, 3)=0.0
-    real(kind=8) :: mprt21(3, 3)=0.0, mprt22(3, 3)=0.0
-    real(kind=8) :: kappa(2, 2)=0.0
-    real(kind=8) :: mprojn(3, 3)=0.0, h(2, 2)=0.d0
-    real(kind=8) :: vech1(3)=0.0, vech2(3)=0.0
-    real(kind=8) :: ffe(9)=0.0, ffm(9)=0.0, ffl(9)=0.0, dffm(2, 9)=0.0,ddffm(3, 9)
-    real(kind=8) :: ffe_prev(9)=0.0, ffm_prev(9)=0.0, ffl_prev(9)=0.0
-    real(kind=8) :: dffm_prev(2, 9)=0.0,ddffm_prev(3, 9)
-    real(kind=8) :: alpha_cont=0.0
+    aster_logical :: laxis, leltf
+    aster_logical :: lpenac, lpenaf
+    aster_logical :: lcont, ladhe , l_fric_no
+    aster_logical :: l_prev_cont, l_prev_fric
+    aster_logical :: l_previous
+    aster_logical :: debug, l_large_slip
+    aster_logical :: lcont_prev, ladhe_prev , l_fric_no_p
+    real(kind=8) :: coefff
+    real(kind=8) :: lambda , lambds
+    real(kind=8) :: lambda_prev  , lambds_prev
+    real(kind=8) :: coefac , coefaf
+    real(kind=8) :: wpg, jacobi
+    real(kind=8) :: wpg_prev, jacobi_prev
+    real(kind=8) :: norm(3) , tau1(3) , tau2(3)
+    real(kind=8) :: jeusup
+    real(kind=8) :: dlagrc, dlagrf(2)
+    real(kind=8) :: jeu, djeut(3)
+    real(kind=8) :: rese(3), nrese
+    real(kind=8) :: mprojt(3, 3)
+    real(kind=8) :: mprt1n(3, 3), mprt2n(3, 3)
+    real(kind=8) :: mprnt1(3, 3), mprnt2(3, 3)
+    real(kind=8) :: mprt11(3, 3), mprt12(3, 3)
+    real(kind=8) :: mprt21(3, 3), mprt22(3, 3)
+    real(kind=8) :: kappa(2, 2)
+    real(kind=8) :: mprojn(3, 3), h(2, 2)
+    real(kind=8) :: vech1(3), vech2(3)
+    real(kind=8) :: ffe(9), ffm(9), ffl(9), dffm(2, 9),ddffm(3, 9)
+    real(kind=8) :: ffe_prev(9), ffm_prev(9), ffl_prev(9)
+    real(kind=8) :: dffm_prev(2, 9),ddffm_prev(3, 9)
+    real(kind=8) :: alpha_cont
     real(kind=8) :: dnepmait1, dnepmait2, taujeu1, taujeu2
     real(kind=8) :: xpc, ypc, xpr, ypr
     real(kind=8) :: xpc_prev, ypc_prev, xpr_prev, ypr_prev
-    real(kind=8) :: mprojn_prev(3, 3)=0.0, mprojt_prev(3, 3)=0.0
-    real(kind=8) :: norm_prev(3) = 0.0 , tau1_prev(3) = 0.0 , tau2_prev(3)=0.0
-    real(kind=8) :: coefac_prev =0.0, coefaf_prev=0.0
-    real(kind=8) :: rese_prev(3)=0.0, nrese_prev=0.0
-    real(kind=8) :: dlagrc_prev=0.0, dlagrf_prev(2)=0.0
-    real(kind=8) :: hah(2,2)=0.0, hah_prev(2,2)=0.0
-    real(kind=8) :: jeu_prev=0.0, djeut_prev(3) = 0.0
+    real(kind=8) :: mprojn_prev(3, 3), mprojt_prev(3, 3)
+    real(kind=8) :: norm_prev(3)  , tau1_prev(3)  , tau2_prev(3)
+    real(kind=8) :: coefac_prev , coefaf_prev
+    real(kind=8) :: rese_prev(3), nrese_prev
+    real(kind=8) :: dlagrc_prev, dlagrf_prev(2)
+    real(kind=8) :: hah(2,2), hah_prev(2,2)
+    real(kind=8) :: jeu_prev, djeut_prev(3)
     real(kind=8) :: dnepmait1_prev, dnepmait2_prev, taujeu1_prev, taujeu2_prev
-    real(kind=8) :: mprt1n_prev(3, 3)=0.0, mprt2n_prev(3, 3)=0.0
-    real(kind=8) :: mprnt1_prev(3, 3)=0.0, mprnt2_prev(3, 3)=0.0
-    real(kind=8) :: mprt11_prev(3, 3)=0.0, mprt12_prev(3, 3)=0.0
-    real(kind=8) :: mprt21_prev(3, 3)=0.0, mprt22_prev(3, 3)=0.0
-    real(kind=8) :: kappa_prev(2, 2)=0., h_prev(2, 2)=0.0
-    real(kind=8) :: vech1_prev(3)=0.0, vech2_prev(3)=0.0
+    real(kind=8) :: mprt1n_prev(3, 3), mprt2n_prev(3, 3)
+    real(kind=8) :: mprnt1_prev(3, 3), mprnt2_prev(3, 3)
+    real(kind=8) :: mprt11_prev(3, 3), mprt12_prev(3, 3)
+    real(kind=8) :: mprt21_prev(3, 3), mprt22_prev(3, 3)
+    real(kind=8) :: kappa_prev(2, 2), h_prev(2, 2)
+    real(kind=8) :: vech1_prev(3), vech2_prev(3)
     real(kind=8) :: matr_cont(81, 81), matr_conp(81, 81)
     real(kind=8) :: matr_fric(81, 81), matr_frip(81, 81)
 !
@@ -118,6 +118,93 @@ character(len=16), intent(in) :: option, nomte
     matr_conp(:,:) = 0.d0
     matr_fric(:,:) = 0.d0
     matr_frip(:,:) = 0.d0
+    laxis = ASTER_FALSE
+    leltf = ASTER_FALSE
+    lpenac = ASTER_FALSE
+    lpenaf = ASTER_FALSE
+    lcont = ASTER_FALSE
+    ladhe = ASTER_FALSE
+    l_fric_no = ASTER_FALSE
+    l_prev_cont = ASTER_FALSE
+    l_prev_fric = ASTER_FALSE
+    l_previous = ASTER_FALSE
+    debug = ASTER_FALSE
+    l_large_slip = ASTER_FALSE
+    lcont_prev = ASTER_FALSE
+    ladhe_prev = ASTER_FALSE
+    l_fric_no_p = ASTER_FALSE
+    coefff = 0.d0
+    lambda = 0.d0
+    lambds = 0.d0
+    lambda_prev = 0.d0
+    lambds_prev  = 0.d0
+    coefac = 0.d0
+    coefaf = 0.d0
+    wpg = 0.d0
+    jacobi = 0.d0
+    wpg_prev = 0.d0
+    jacobi_prev = 0.d0
+    norm(:) = 0.d0
+    tau1(:) = 0.d0
+    tau2(:) = 0.d0
+    jeusup = 0.d0
+    dlagrc = 0.d0
+    dlagrf(:) = 0.d0
+    jeu = 0.d0
+    djeut(:) = 0.d0
+    rese(:) = 0.d0
+    nrese = 0.d0
+    mprojt(:, :) = 0.d0
+    mprt1n(:, :) = 0.d0
+    mprt2n(:, :) = 0.d0
+    mprnt1(:, :) = 0.d0
+    mprnt2(:, :) = 0.d0
+    mprt11(:, :) = 0.d0
+    mprt12(:, :) = 0.d0
+    mprt21(:, :) = 0.d0
+    mprt22(:, :) = 0.d0
+    kappa(:, :) = 0.d0
+    mprojn(:, :) = 0.d0
+    h(:, :) = 0.d0
+    vech1(:) = 0.d0
+    vech2(:) = 0.d0
+    ffe(:) = 0.d0
+    ffm(:) = 0.d0
+    ffl(:) = 0.d0
+    dffm(:, :) = 0.d0
+    ddffm(:, :) = 0.d0
+    ffe_prev(:) = 0.d0
+    ffm_prev(:) = 0.d0
+    ffl_prev(:) = 0.d0
+    dffm_prev(:, :) = 0.d0
+    ddffm_prev(:, :) = 0.d0
+    mprojn_prev(:, :) = 0.d0
+    mprojt_prev(:, :) = 0.d0
+    norm_prev(:) = 0.d0
+    tau1_prev(:) = 0.d0
+    tau2_prev(:) = 0.d0
+    coefac_prev = 0.d0
+    coefaf_prev = 0.d0
+    rese_prev(:) = 0.d0
+    nrese_prev = 0.d0
+    dlagrc_prev = 0.d0
+    dlagrf_prev(:) = 0.d0
+    hah(:,:) = 0.d0
+    hah_prev(:,:) = 0.d0
+    jeu_prev = 0.d0
+    djeut_prev(:) = 0.d0
+    mprt1n_prev(:, :) = 0.d0
+    mprt2n_prev(:, :) = 0.d0
+    mprnt1_prev(:, :) = 0.d0
+    mprnt2_prev(:, :) = 0.d0
+    mprt11_prev(:, :) = 0.d0
+    mprt12_prev(:, :) = 0.d0
+    mprt21_prev(:, :) = 0.d0
+    mprt22_prev(:, :) = 0.d0
+    kappa_prev(:, :) = 0.d0
+    h_prev(:,:) = 0.d0
+    vech1_prev(:) = 0.d0
+    vech2_prev(:) = 0.d0
 !
 ! - Get informations on cell (slave and master)
 !

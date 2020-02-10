@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,8 +51,8 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=16) :: k16bid, operation = ' '
-    character(len=8) :: result_out = ' ', result_reuse = ' '
+    character(len=16) :: k16bid, operation
+    character(len=8) :: result_out, result_reuse
     integer :: ireuse
     aster_logical :: l_reuse
 !
@@ -62,6 +62,10 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_10')
     endif
+!
+    operation = ' '
+    result_out = ' '
+    result_reuse = ' '
 !
 ! - Output datastructure
 !

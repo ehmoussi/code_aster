@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ use calcul_module, only : ca_option_, ca_nomte_, ca_icaelk_, ca_ialiel_,&
 !         ...
 !-----------------------------------------------------------------------------------
     implicit none
-    
+
 #include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/assert.h"
@@ -50,7 +50,7 @@ use calcul_module, only : ca_option_, ca_nomte_, ca_icaelk_, ca_ialiel_,&
     integer :: nno,ino,nuno,jcoor
     character(len=24) :: valkc(9), ligrma(4),nomgrm,grpmav
     character(len=8) :: ma,nomail
-    character(len=256) :: ufname  = ' '
+    character(len=256) :: ufname
     real(kind=8) :: valrc(3)
 !-----------------------------------------------------------------------------------
     call jemarq()
@@ -60,6 +60,7 @@ use calcul_module, only : ca_option_, ca_nomte_, ca_icaelk_, ca_ialiel_,&
     nbgrma = 0
     nno = 0
     nomail='XXX'
+    ufname  = ' '
     ima = zi(ca_ialiel_-1+zi(ca_illiel_+ca_igr_-1)+ca_iel_-1)
     if (ima .gt. 0) then
         call jenuno(jexnum(ma//'.NOMMAI', ima), nomail)

@@ -62,7 +62,7 @@ integer, pointer  :: v_equa(:)
     integer(kind=4), pointer :: IPIV(:) => null()
     character(len=8)  :: base
     character(len=24) :: field_name
-    character(len=24) :: mode = '&&CEIM_MODE'
+    character(len=24) :: mode
     real(kind=8) :: vale_maxi, term
     real(kind=8), pointer :: v_mode(:) => null()
     real(kind=8), pointer :: v_resi(:) => null()
@@ -82,6 +82,7 @@ integer, pointer  :: v_equa(:)
 !
 ! - Get parameters
 !        
+    mode        = '&&CEIM_MODE'
     nb_equa     = ds_empi%ds_mode%nb_equa
     nb_mode     = ds_empi%nb_mode
     base        = ds_empi%base

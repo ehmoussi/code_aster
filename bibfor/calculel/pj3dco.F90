@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ subroutine pj3dco(mocle, moa1, moa2, nbma1, lima1,&
     integer :: nbma1, lima1(*), nbno2, lino2(*)
     character(len=16), optional :: listIntercz
     integer, optional :: nbIntercz
-    
+
 ! BUT :
 !   CREER UNE SD CORRESP_2_MAILLA
 !   DONNANT LA CORRESPONDANCE ENTRE LES NOEUDS DE MOA2 ET LES MAILLES DE
@@ -87,7 +87,7 @@ subroutine pj3dco(mocle, moa1, moa2, nbma1, lima1,&
     integer :: ialim1, ialin1, ilcnx1, ialin2, nbpt0, ino2_0, idecal_0
     integer :: iaconb, itypm, idecal, itr3, nbtrou, nbInterc
 
-    aster_logical :: dbg=.false., l_dmax, loin
+    aster_logical :: dbg, l_dmax, loin
     real(kind=8) :: dmax, dmin, dala
     real(kind=8) :: cobary(4)
 
@@ -102,6 +102,8 @@ subroutine pj3dco(mocle, moa1, moa2, nbma1, lima1,&
 ! DEB ------------------------------------------------------------------
     call jemarq()
     call infniv(ifm, niv)
+
+    dbg=ASTER_FALSE
 
     call pjxxut('3D', mocle, moa1, moa2, nbma1,&
                 lima1, nbno2, lino2, m1, m2,&
@@ -151,7 +153,7 @@ subroutine pj3dco(mocle, moa1, moa2, nbma1, lima1,&
         else if ((itypm.eq.nutm(9)).or.(itypm.eq.nutm(10))) then
             ico=ico+2
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     end do
 
@@ -427,9 +429,9 @@ subroutine pj3dco(mocle, moa1, moa2, nbma1, lima1,&
                 zr(iacoo2), dala, listInterc, nbInterc)
 
     if (dbg) then
-        call utimsd(ifm, 2, .false._1, .true._1, '&&PJ3DCO',&
+        call utimsd(ifm, 2, ASTER_FALSE, ASTER_TRUE, '&&PJ3DCO',&
                     1, ' ')
-        call utimsd(ifm, 2, .false._1, .true._1, corres,&
+        call utimsd(ifm, 2, ASTER_FALSE, ASTER_TRUE, corres,&
                     1, ' ')
     endif
     call detrsd('CORRESP_2_MAILLA', cortr3)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -166,30 +166,17 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
     real(kind=8) :: ctor, coehsd, zmax, quotient, a, b, c
     aster_logical :: vecteu, matric, dkt, dkq, leul
     real(kind=8) :: dvt(2),vt(2)
-!    real(kind=8) ::  lambda(4)
     real(kind=8) :: dfel(3, 3), dmel(3, 3), dmfel(3, 3), dcel(2, 2), dciel(2, 2)
     real(kind=8) :: dmcel(3, 2), dfcel(3, 2)
-!    real(kind=8) :: hel(3, 3)
     real(kind=8) :: d1iel(2, 2)
-!    real(kind=8) ::  d2iel(2, 4)
     real(kind=8) :: depfel(3*nno)
-!    real(kind=8) ::  depmel(3*nno)
-!    real(kind=8) :: ddepfel(3*nno)
-!    real(kind=8) :: smel(3), sfel(3), hlt2el(4, 6)
     real(kind=8) :: hft2el(2, 6)
     real(kind=8) ::   t2iuel(4), t2uiel(4), t1veel(9)
-!    real(kind=8) ::   cist(2)
-!    integer :: t1i,t1j,t2i,t2j
-!    real(kind=8) :: t1veelm(3,3),t2veelm(3,3)
     aster_logical :: coupmfel
-!    aster_logical ::  lmulti
-!    integer :: iniv,
     integer :: multicel,pcontr
-    character(len=4) :: fami = 'RIGI'
+    character(len=4), parameter :: fami = 'RIGI'
 !     ------------------------------------------------------------------
 !
-
-
     call elrefe_info(fami='RIGI', ndim=ndim, nno=nnoel, nnos=nnos, npg=npg,&
                      jpoids=ipoids, jcoopg=icoopg, jvf=ivf, jdfde=idfdx, jdfd2=idfd2,&
                      jgano=jgano)
@@ -317,7 +304,7 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
     quotient = 1.d0*zmax**3-3*zmax**2*zmin + 3*zmax*zmin**2-1.d0*zmin**3
     a = -6.d0/quotient
     b = 6.d0*(zmin+zmax)/quotient
-    c = -6.d0*zmax*zmin/quotient 
+    c = -6.d0*zmax*zmin/quotient
 !
 !===============================================================
 !
@@ -350,7 +337,7 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
         qsi = zr(icoopg-1+ndim*(ipg-1)+1)
         eta = zr(icoopg-1+ndim*(ipg-1)+2)
 
-    
+
         if (dkq) then
             call jquad4(xyzl, qsi, eta, jacob)
             poids = zr(ipoids+ipg-1)*jacob(1)
@@ -451,7 +438,7 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
                 call r8inir(3, r8vide(), angmas, 1)
                 do pcontr =1,5
                     zr(icontp+icpg+pcontr)=0.0
-                enddo    
+                enddo
                 call nmcomp('RIGI', ipg, ksp, 2, typmod,&
                             zi(imate), zk16(icompo), zr(icarcr), instm, instp,&
                             4, eps2d, deps2d, 4, sigm,&
@@ -478,31 +465,31 @@ subroutine dktnli(nomte, opt, xyzl, pgl, ul, dul,&
 !                  -- EN MULTICOUCHES
 !                  -- ON CALCULE TOUT D'UN COUP
 !                      iniv = igauh - 2
-!                      lmulti = .true.                      
+!                      lmulti = .true.
 !                      call dxdmul(lmulti, icou, iniv, t1veel, t2uiel,&
 !                                     hel, d1iel, d2iel, zic, hic)
-!                      if (dkt) then               
+!                      if (dkt) then
 !!                           ------- CALCUL DU PRODUIT HL.T2 ---------------------------
 !                            call dsxhlt(dfel, cara(9), hlt2el)
 !!                           ------ LAMBDA = HLT2.TKT.DEPF -----------------------------
 !                            call dktlxy(cara(16), cara(13), hlt2el, depfel, lambda)
-!                      elseif (dkq) then        
+!                      elseif (dkq) then
 !!                          ------- CALCUL DU PRODUIT HL.T2 -----------------------
 !                                     call dsxhlt(dfel, jacob(2), hlt2el)
 !!                          ------ LAMBDA = HLT2.TKT.DEPF -------------------------
 !                                     call dkqlxy(qsi, eta, hlt2el, depfel, cara(13),&
 !                                                 cara(9), lambda)
-!                      endif 
+!                      endif
 !                      cist(1) = d1iel(1,1)*vt(1) + d1iel(1,2)*vt(2)
 !                      cist(2) = d1iel(2,1)*vt(1) + d1iel(2,2)*vt(2)
 !                      do  j = 1, 4
 !                          cist(1) = cist(1) + d2iel(1,j)*lambda(j)
 !                          cist(2) = cist(2) + d2iel(2,j)*lambda(j)
-!                      enddo   
+!                      enddo
 !                     zr(icontp+icpg+4) = cist(1)
 !                     zr(icontp+icpg+5) = cist(2)
 !                endif
-                
+
 !
 !           COD=1 : ECHEC INTEGRATION LOI DE COMPORTEMENT
 !           COD=3 : C_PLAN DEBORST SIGZZ NON NUL

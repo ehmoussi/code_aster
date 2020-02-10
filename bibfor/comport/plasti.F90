@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -179,7 +179,7 @@ implicit none
     toler = carcri(3)
     theta = carcri(4)
     rela_compor = compor(1)
-    defo_compor = compor(3) 
+    defo_compor = compor(3)
     mult_compor = ' '
     if (present(mult_compor_)) then
         mult_compor = mult_compor_
@@ -309,10 +309,8 @@ implicit none
             etatf = 'ELASTIC'
 ! ---       MISE A JOUR DE VINF EN FONCTION DE LA LOI
 !           ET POST-TRAITEMENTS POUR DES LOIS PARTICULIERES
-            call lcelpl(mod, rela_compor, nmat, materd, materf,&
-                        instam, instap, deps, nvi, vim,&
-                        vip, nr, yd, yf, sigm,&
-                        sigp, drdy)
+            call lcelpl(rela_compor, nmat, materf,&
+                        deps, nvi, vim, vip)
         endif
 !
 !        POST-TRAITEMENTS PARTICULIERS

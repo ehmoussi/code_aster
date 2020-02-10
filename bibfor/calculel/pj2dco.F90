@@ -86,7 +86,7 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
     integer :: ialim1, ialin1, ilcnx1, ialin2
     integer :: iaconb, itypm, idecal, itr3, nbtrou, nbInterc
 
-    aster_logical :: dbg=.false., l_dmax, loin, lraff
+    aster_logical :: dbg, l_dmax, loin, lraff
     real(kind=8) :: dmax, dmin, dala, cobary(3)
 
     integer :: nbnod
@@ -100,6 +100,8 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
 ! DEB ------------------------------------------------------------------
     call jemarq()
     call infniv(ifm, niv)
+
+    dbg=ASTER_FALSE
 
     call pjxxut('2D', mocle, moa1, moa2, nbma1,&
                 lima1, nbno2, lino2, m1, m2,&
@@ -146,7 +148,7 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
         else if (itypm.eq.nutm(6)) then
             ico=ico+2
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
  51     continue
     end do
@@ -337,9 +339,9 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
     call pj2dtr(cortr3, corres, nutm, elrf, zr(iacoo1),&
                 zr(iacoo2), lraff, dala, listInterc, nbInterc)
     if (dbg) then
-        call utimsd(ifm, 2, .false._1, .true._1, '&&PJ2DCO',&
+        call utimsd(ifm, 2, ASTER_FALSE, ASTER_TRUE, '&&PJ2DCO',&
                     1, ' ')
-        call utimsd(ifm, 2, .false._1, .true._1, corres,&
+        call utimsd(ifm, 2, ASTER_FALSE, ASTER_TRUE, corres,&
                     1, ' ')
     endif
     call detrsd('CORRESP_2_MAILLA', cortr3)

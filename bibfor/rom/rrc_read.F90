@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,9 +48,9 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
     integer :: ifm, niv
     type(ROM_DS_Empi) :: empi_prim, empi_dual
-    character(len=8)  :: base_prim = ' ', base_dual = ' '
-    character(len=8)  :: result_dom = ' ', result_rom = ' ', model_dom = ' '
-    character(len=16) :: k16bid = ' ', answer
+    character(len=8)  :: base_prim , base_dual
+    character(len=8)  :: result_dom , result_rom , model_dom
+    character(len=16) :: k16bid , answer
     character(len=24) :: grnode_int
     aster_logical :: l_prev_dual, l_corr_ef
 !
@@ -60,6 +60,13 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_10')
     endif
+!
+    base_prim = ' '
+    base_dual = ' '
+    result_dom = ' '
+    result_rom = ' '
+    model_dom = ' '
+    k16bid = ' '
 !
 ! - Output datastructure
 !

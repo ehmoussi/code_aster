@@ -52,10 +52,10 @@ implicit none
 !
     integer :: ifm, niv
     integer :: nocc, iret
-    integer :: nb_snap = 0
+    integer :: nb_snap
     real(kind=8) :: prec
-    character(len=8)  :: crit = ' '
-    character(len=24) :: list_snap = '&&ROM.LIST_SNAP'
+    character(len=8)  :: crit
+    character(len=24) :: list_snap
     integer, pointer :: v_list_snap(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -64,6 +64,10 @@ implicit none
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_4')
     endif
+!
+    nb_snap = 0
+    crit = ' '
+    list_snap = '&&ROM.LIST_SNAP'
 !
 ! - Select list of snapshots (from SNAP factor keyword)
 !

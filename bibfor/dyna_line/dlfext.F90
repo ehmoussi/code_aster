@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -81,7 +81,7 @@ character(len=24) :: modele, carele, charge, mate, numedd
     character(len=4) :: typmat, para
     character(len=16) :: method
     character(len=19) :: lischa
-    character(len=24) :: vechmp = ' ', vachmp = ' ', cnchmp = ' '
+    character(len=24) :: vechmp, vachmp, cnchmp
     real(kind=8), pointer :: f1(:) => null()
     real(kind=8), pointer :: f2(:) => null()
 !
@@ -94,9 +94,11 @@ character(len=24) :: modele, carele, charge, mate, numedd
     lischa = charge(1:19)
     ASSERT(lischa.eq.infoch(1:19))
 !
-    partps(1) = temps
-    partps(2) = r8vide()
-    partps(3) = r8vide()
+    partps(1:3) = [temps, r8vide(), r8vide()]
+!
+    vechmp = ' '
+    vachmp = ' '
+    cnchmp = ' '
 !
 ! --- METHODE D'INTEGRATION
 !

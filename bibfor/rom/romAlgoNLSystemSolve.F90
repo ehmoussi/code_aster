@@ -69,7 +69,7 @@ aster_logical, optional, intent(in) :: l_update_redu_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: gamma = ' ', field_name = ' '
+    character(len=24) :: gamma, field_name
     real(kind=8), pointer :: v_gamma(:) => null()
     real(kind=8), pointer :: v_vect_2mbr(:) => null()
     integer :: nb_equa_2mbr, nb_equa_matr, nb_equa, nb_mode

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ use petsc_data_module
     integer:: jprno,n1,ino,ino_model,ecmax(10),ec1,ec2,nnz
     integer:: kbloc,i,ilig1,ilig2,k2,pos1_0,ieq,ieq1,ieq2
     integer:: jnueq,kcmp,neq2,nbnomo,nbddlt,ico,vali(4)
-    aster_logical :: dbg=.false.
+    aster_logical, parameter :: dbg=.false.
 !
 !----------------------------------------------------------------
     call jemarq()

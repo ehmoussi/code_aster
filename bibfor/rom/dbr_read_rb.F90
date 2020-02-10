@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,8 +48,8 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode_maxi = 0, nocc
-    character(len=16) :: stab_fsi = ' ', ortho_base = ' '
+    integer :: nb_mode_maxi, nocc
+    character(len=16) :: stab_fsi, ortho_base
     aster_logical :: l_stab_fsi, l_ortho_base
     real(kind=8) :: tole_greedy
 !
@@ -59,6 +59,10 @@ type(ROM_DS_ParaDBR_RB), intent(inout) :: ds_para_rb
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_27')
     endif
+!
+    stab_fsi = ' '
+    ortho_base = ' '
+    nb_mode_maxi = 0
 !
 ! - Maximum number of modes
 !

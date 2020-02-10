@@ -78,7 +78,7 @@ integer, intent(out) :: ldccvg
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: merigi = ' ', vefint = ' '
+    character(len=19) :: merigi, vefint
     character(len=1) :: base
     character(len=24) :: model
     character(len=16) :: optrig

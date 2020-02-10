@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -90,13 +90,13 @@ character(len=24), intent(in) :: mediri
                                                  'R       ','RHO     '/)
     character(len=24) :: ligrmo
     character(len=24) :: vadiri, vachtp, vatntp
-    character(len=24) :: merigi = '&&METRIG           .RELR'
-    character(len=24) :: memass = '&&METMAS           .RELR'
-    character(len=24) :: vediri = '&&VEDIRI           .RELR'
-    character(len=24) :: vechtp = '&&VECHTP           .RELR'
-    character(len=24) :: vetntp = '&&VETNTP           .RELR'
-    character(len=24) :: cntntp = ' '
-    character(len=24) :: cnchtp = ' '
+    character(len=24), parameter  :: merigi = '&&METRIG           .RELR'
+    character(len=24), parameter  :: memass = '&&METMAS           .RELR'
+    character(len=24) :: vediri
+    character(len=24) :: vechtp
+    character(len=24), parameter  :: vetntp = '&&VETNTP           .RELR'
+    character(len=24) :: cntntp
+    character(len=24) :: cnchtp
     character(len=24) :: lload_name, lload_info, lload_func
     character(len=24), pointer :: v_resu_elem(:) => null()
     integer, parameter :: nb_max = 9
@@ -113,7 +113,11 @@ character(len=24), intent(in) :: mediri
     vect_coef(:) = 0.d0
     vect_name(:) = ' '
     matr_name(:) = ' '
+    cntntp       = ' '
+    cnchtp       = ' '
     ligrmo       = model(1:8)//'.MODELE'
+    vediri       = '&&VEDIRI           .RELR'
+    vechtp       = '&&VECHTP           .RELR'
     vadiri       = '&&NTACMV.VADIRI'
     vachtp       = '&&NTACMV.VACHTP'
     vatntp       = '&&NTACMV.VATNTP'
@@ -128,7 +132,7 @@ character(len=24), intent(in) :: mediri
                 codret)
 !
 ! - Update <CARTE> for time
-!  
+!
     call mecact('V', time, 'MODELE', ligrmo, 'INST_R',&
                 ncmp=6, lnomcmp=nomcmp, vr=tpsthe)
 !

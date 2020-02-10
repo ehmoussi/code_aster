@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ subroutine ngvlog(fami, option, typmod, ndim, nno, &
 
 use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
                         gdlog_rigeo, gdlog_nice_cauchy, gdlog_delete
- 
+
 use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
 
 
@@ -58,7 +58,7 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
 
 ! ----------------------------------------------------------------------
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
-!           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D 
+!           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D
 !          A GRADIENT DE VARIABLE INTERNE : XXXX_GRAD_INCO
 ! ----------------------------------------------------------------------
 ! IN  FAMI    : FAMILLE DE POINTS DE GAUSS
@@ -71,7 +71,7 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
 ! IN  NDDL    : DEGRES DE LIBERTE D'UN ELEMENT ENRICHI
 ! IN  IW      : PTR. POIDS DES POINTS DE GAUSS
 ! IN  VFF     : VALEUR  DES FONCTIONS DE FORME DE DEPLACEMENT
-! IN  VFFB    : VALEUR  DES FONCTIONS DE FORME DE A ET LAMBDA 
+! IN  VFFB    : VALEUR  DES FONCTIONS DE FORME DE A ET LAMBDA
 ! IN  IDFF    : PTR. DERIVEE DES FONCTIONS DE FORME DE DEPLACEMENT ELEMENT DE REF.
 ! IN  IDFFB   : PTR. DERIVEE DES FONCTIONS DE FORME DE A ET LAMBDA ELEMENT DE REF.
 ! IN  GEOMI   : COORDONNEES DES NOEUDS (CONFIGURATION INITIALE)
@@ -120,15 +120,15 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
     real(kind=8)  :: dsde(3*ndim+2,3*ndim+2)
     real(kind=8)  :: kefuu(2*ndim,2*ndim),kefug(2*ndim,2+ndim)
     real(kind=8)  :: kefgu(2+ndim,2*ndim),kefgg(2+ndim,2+ndim)
-    real(kind=8)  :: rbid=0.d0
-    real(kind=8)  :: tbid(6)=(/0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    real(kind=8)  :: rbid
+    real(kind=8)  :: tbid(6)
 ! ----------------------------------------------------------------------
 
 
 ! Remarque sur l'ordre des composantes (cf. grandeurs premieres)
 ! degres de liberte : DX,DY,DZ,PRES,GONF,VARI,LAG_GV
-! Contraintes EF    : SIXX, .., SIYZ, SIGONF, SIP, SIGV_A, SIGV_L, SIGV_GX, ..., SIVG_GZ, 
-! Deformations ldc  : R2*EPXX, ..., R2*EPZZ, A, L, GX, ..., GZ 
+! Contraintes EF    : SIXX, .., SIYZ, SIGONF, SIP, SIGV_A, SIGV_L, SIGV_GX, ..., SIVG_GZ,
+! Deformations ldc  : R2*EPXX, ..., R2*EPZZ, A, L, GX, ..., GZ
 
 
 ! Tests de coherence
@@ -147,12 +147,14 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
     ndg = 2
     neu = 2*ndim
     neg = 2+ndim
+    tbid(:) = 0.d0
+    rbid = 0.d0
 
     call gdlog_init(gdlm,ndu,nnu,axi,rigi)
     call gdlog_init(gdlp,ndu,nnu,axi,rigi)
     if (resi) fint = 0
     if (rigi) matr = 0
-    cod = 0  
+    cod = 0
 
     ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
     forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg) + ndu + i
@@ -165,14 +167,14 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
     forall (i=1:ndu, n=1:nnu) dup(i,n) = dum(i,n) + ddld(xu(i,n))
     forall (i=1:ndg, n=1:nng) dgp(i,n) = dgm(i,n) + ddld(xg(i,n))
 
-    
-    gauss: do g = 1, npg
- 
+
+    do g = 1, npg
+
         ! -----------------------!
         !  ELEMENTS CINEMATIQUES !
         ! -----------------------!
 
-        ! Calcul des derivees des fonctions de forme P1 
+        ! Calcul des derivees des fonctions de forme P1
         call dfdmip(ndim, nnob, axi, geomi, g, iw, vffb(1,g), idffb, r, poids,dffb)
 
         ! Calcul des derivees des fonctions de forme P2, du rayon r et des poids
@@ -198,13 +200,13 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
         ! Calcul des deformations non mecaniques aux points de Gauss
         epefgm = prod_bd(bg,dgm)
         epefgp = prod_bd(bg,dgp)
-       
+
 
         ! -----------------------!
         !   LOI DE COMPORTEMENT  !
         ! -----------------------!
 
-        ! Preparation des deformations generalisees de ldc en t- et t+  
+        ! Preparation des deformations generalisees de ldc en t- et t+
         eplcm(1:neu) = epefum
         eplcp(1:neu) = epefup
         eplcm(neu+1:neu+neg) = epefgm
@@ -242,7 +244,7 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
             ! Forces interieures au point de Gauss g
             call add_fint(fint,xu,poids*prod_sb(siefup,bu))
             call add_fint(fint,xg,poids*prod_sb(siefgp,bg))
-            
+
             ! Stockage des contraintes generalisees (avec Cauchy au lieu de T)
             siefp(1:neu,g) = gdlog_nice_cauchy(gdlp,siefup)
             siefp(neu+1:neu+neg,g) = siefgp
@@ -253,7 +255,7 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
         ! -----------------------!
         !    MATRICE TANGENTE    !
         ! -----------------------!
-    
+
         if (rigi) then
 
             ! Contraintes generalisees EF (bloc mecanique pour la rigidite geometrique)
@@ -281,7 +283,7 @@ use bloc_fe_module, only: prod_bd, prod_sb, prod_bkb, add_fint, add_matr
             end if
         end if
 
-    end do gauss
+    end do
 
 
 ! - SYNTHESE DES CODES RETOURS ET LIBERATION DES OBJETS

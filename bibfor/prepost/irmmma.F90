@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ character(len=*) :: nomamd
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=6), parameter :: nompro = 'IRMMMA'
-    integer :: edfuin = 0, edmail = 0, ednoda = 0
+    integer :: edfuin, edmail, ednoda
     integer :: codret
     integer :: ipoin, ityp, letype
     integer :: ino
@@ -107,6 +107,9 @@ character(len=*) :: nomamd
 ! 2.1. ==> DECOMPTE DU NOMBRE DE MAILLES PAR TYPE
 !          EN FAIT, ON VEUT JUSTE SAVOIR S'IL Y EN A OU PAS.
 !
+    edfuin = 0
+    edmail = 0
+    ednoda = 0
     nmatyp(1:) = 0
     do ima = 1, nbmail
         nmatyp(typma(ima)) = nmatyp(typma(ima)) + 1

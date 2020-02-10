@@ -48,7 +48,7 @@ subroutine te0174(option, nomte)
 !-----------------------------------------------------------------------
     integer :: i, ier, ii, ino, iret, itemps, ivnor
     integer :: j, jno, mater, n, nbpar
-    real(kind=8) :: r8b=0.d0, rho(1), x, y, z
+    real(kind=8) :: r8b, rho(1), x, y, z
 !-----------------------------------------------------------------------
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
   npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
@@ -57,6 +57,7 @@ subroutine te0174(option, nomte)
     kpg=1
     spt=1
     poum='+'
+    r8b=0.d0
 !
     call jevech('PGEOMER', 'L', igeom)
 !
@@ -69,21 +70,21 @@ subroutine te0174(option, nomte)
     call jevech('PVECTUR', 'E', ivectu)
     call jevech('PSOURCF', 'L', ivnor)
 !
-    do 11 i = 1, 2*nno
+    do i = 1, 2*nno
         zr(ivectu+i-1) = 0.0d0
-11  end do
+    end do
 !
 !    CALCUL DES PRODUITS VECTORIELS OMI X OMJ
 !
-    do 21 ino = 1, nno
+    do ino = 1, nno
         i = igeom + 3*(ino-1) -1
-        do 22 jno = 1, nno
+        do jno = 1, nno
             j = igeom + 3*(jno-1) -1
             sx(ino,jno) = zr(i+2) * zr(j+3) - zr(i+3) * zr(j+2)
             sy(ino,jno) = zr(i+3) * zr(j+1) - zr(i+1) * zr(j+3)
             sz(ino,jno) = zr(i+1) * zr(j+2) - zr(i+2) * zr(j+1)
-22      continue
-21  end do
+        end do
+    end do
 !
     nompar(1) = 'X'
     nompar(2) = 'Y'
@@ -100,7 +101,7 @@ subroutine te0174(option, nomte)
 !
 !    BOUCLE SUR LES POINTS DE GAUSS
 !
-    do 101 ipg = 1, npg1
+    do ipg = 1, npg1
         kdec=(ipg-1)*nno*ndim
         ldec=(ipg-1)*nno
 !
@@ -108,11 +109,11 @@ subroutine te0174(option, nomte)
         x = 0.d0
         y = 0.d0
         z = 0.d0
-        do 105 n = 0, nno-1
+        do n = 0, nno-1
             x = x + zr(igeom+3*n ) * zr(ivf+ldec+n)
             y = y + zr(igeom+3*n+1) * zr(ivf+ldec+n)
             z = z + zr(igeom+3*n+2) * zr(ivf+ldec+n)
-105      continue
+        end do
 !
 !        VALEUR DE LA VITESSE
         valpar(1) = x
@@ -143,11 +144,11 @@ subroutine te0174(option, nomte)
 !
         jac = sqrt (nx*nx + ny*ny + nz*nz)
 !
-        do 103 i = 1, nno
+        do i = 1, nno
             ii = 2*i
             zr(ivectu+ii-1) = zr(ivectu+ii-1)-jac*zr(ipoids+ipg-1) * vnorf * rho(1) * zr(ivf+ldec&
                               &+i-1)
-103      continue
-101  end do
+        end do
+    end do
 !
 end subroutine

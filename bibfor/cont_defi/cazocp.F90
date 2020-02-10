@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ character(len=8), intent(in) :: model
     character(len=16) :: algo_reso_cont, algo_reso_frot, algo_reso_geom
     integer :: noc
     real(kind=8) :: resi_abso, gcp_coef_resi
-    real(kind=8) :: geom_resi, frot_resi, cont_resi=-1
+    real(kind=8) :: geom_resi, frot_resi, cont_resi
     aster_logical :: l_cont_gcp
     aster_logical :: l_cont_disc, l_cont_cont, l_cont_xfem, l_frot, l_cont_lac
     aster_logical :: l_xfem_mortar

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,51 +59,79 @@ subroutine dkqrig(nomte, xyzl, option, pgl, rig,&
 !     ------------------------------------------------------------------
     integer :: ndim, nno, nnos, npg, ipoids, icoopg, ivf, idfdx, idfd2, jgano
     integer :: multic, i, jcoqu, jdepg
+    real(kind=8), parameter :: un=1.d0
     real(kind=8) :: wgt
-    real(kind=8) :: df(9)=0.0, dm(9)=0.0, dmf(9)=0.0, dc(4)=0.0, dci(4)=0.0
-    real(kind=8) :: df2(9)=0.0, dm2(9)=0.0, dmf2(9)=0.0
-    real(kind=8) :: dmc(3, 2)=0.0, dfc(3, 2)=0.0
-    real(kind=8) :: bf(3, 12)=0.0, bm(3, 8)=0.0
-    real(kind=8) :: xab1(3, 12)=0.0, depl(24)=0.0, caraq4(25)=0.0, jacob(5)=0.0
-    real(kind=8) :: qsi=0.0, eta=0.0
+    real(kind=8) :: df(9), dm(9), dmf(9), dc(4), dci(4)
+    real(kind=8) :: df2(9), dm2(9), dmf2(9)
+    real(kind=8) :: dmc(3, 2), dfc(3, 2)
+    real(kind=8) :: bf(3, 12), bm(3, 8)
+    real(kind=8) :: xab1(3, 12), depl(24), caraq4(25), jacob(5)
+    real(kind=8) :: qsi, eta
     real(kind=8) :: flex(144), memb(64), mefl(96)
-    real(kind=8) :: t2iu(4)=0.0, t2ui(4)=0.0, t1ve(9)=0.0
-    real(kind=8) :: bsigth(24)=0.0, enerth=0.0, excent=0.0, un, ctor=0.0
-    aster_logical :: coupmf=.false., exce=.false., indith=.false.
-
+    real(kind=8) :: t2iu(4), t2ui(4), t1ve(9)
+    real(kind=8) :: bsigth(24), enerth, excent, ctor
+    aster_logical :: coupmf, exce, indith
 !
 !   LOCAL VARIABLES FOR COEF_RIGI_DRZ
 
     integer :: j, ii, jj,irot
-!    integer :: iishp,jjshp
     integer, parameter :: npgmx=9
     real(kind=8) :: shp(3,4,npgmx), shpr1(3,4,npgmx), shpr2(3,4,npgmx), bb(12,npgmx)
     real(kind=8) :: gshp1(3,4), gshp2(3,4)
-    real(kind=8) :: dArea=0.0, gam=0.0, epais=0.0, fact=0.0, gm(3, 4)
+    real(kind=8) :: dArea, gam, epais, fact, gm(3, 4)
     real(kind=8) :: gmemb(4,4), btgmemb(8,4), gmefl(4,12)
-!    real(kind=8) :: nm1(8), nm2(8), gm1(4), gm2(4)
     real(kind=8) :: bxb(12,12)
-
-    aster_logical :: dri = .false.
-
-
+    aster_logical :: dri
+!
+    df=0.d0
+    dm=0.d0
+    dmf=0.d0
+    dc=0.d0
+    dci=0.0
+    df2=0.d0
+    dm2=0.d0
+    dmf2=0.0
+    dmc=0.d0
+    dfc=0.0
+    bf=0.d0
+    bm=0.0
+    xab1=0.d0
+    depl=0.d0
+    caraq4=0.d0
+    jacob=0.0
+    qsi=0.d0
+    eta=0.0
+    t2iu=0.d0
+    t2ui=0.d0
+    t1ve=0.0
+    bsigth=0.d0
+    enerth=0.d0
+    excent=0.d0
+    ctor=0.0
+    dArea=0.d0
+    gam=0.d0
+    epais=0.d0
+    fact=0.0
+    coupmf=ASTER_FALSE
+    exce=ASTER_FALSE
+    indith=ASTER_FALSE
+    dri = ASTER_FALSE
 !
     call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
                      jpoids=ipoids, jcoopg=icoopg, jvf=ivf, jdfde=idfdx, jdfd2=idfd2,&
                      jgano=jgano)
 !
-    un = 1.0d0
     enerth = 0.0d0
 
     call jevech('PCACOQU', 'L', jcoqu)
     ctor = zr(jcoqu+3)
     excent = zr(jcoqu+4)
     epais = zr(jcoqu)
-    exce = .false.
+    exce = ASTER_FALSE
 ! COEF_RIGI_DRZ ACTIVE = -1 --> dri = true,  dri =  false sinon
-    dri = .false.
-    if (ctor .lt. 0.0d0 ) dri = .true.
-    if (abs(excent) .gt. un/r8gaem()) exce = .true.
+    dri = ASTER_FALSE
+    if (ctor .lt. 0.0d0 ) dri = ASTER_TRUE
+    if (abs(excent) .gt. un/r8gaem()) exce = ASTER_TRUE
 !
 !     ----- MISE A ZERO DES MATRICES : FLEX ,MEMB ET MEFL :
     call r8inir(144, 0.d0, flex, 1)
@@ -292,7 +320,7 @@ subroutine dkqrig(nomte, xyzl, option, pgl, rig,&
             call utctab('CUMU', 3, 12, 8, dmf2,&
                         bf, bm, xab1, mefl)
           else
-             ASSERT(.false.)
+             ASSERT(ASTER_FALSE)
 
           endif
         endif
@@ -311,7 +339,7 @@ subroutine dkqrig(nomte, xyzl, option, pgl, rig,&
          call dxqlocdri3(gmefl, rig)
          call dxqlocdri4(bxb, rig)
          else
-          ASSERT(.false.)
+          ASSERT(ASTER_FALSE)
         endif
 !
 !
@@ -335,7 +363,7 @@ subroutine dkqrig(nomte, xyzl, option, pgl, rig,&
          call dxqlocdri4(bxb, rig)
        call dxqloe_NV(coupmf,rig,depl, ener)
        else
-         ASSERT(.false.)
+         ASSERT(ASTER_FALSE)
        endif
         call bsthpl(nomte, bsigth, indith)
         if (indith) then

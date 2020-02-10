@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2
 !
     integer :: i, j, inom, idim
     real(kind=8) :: ddgeo1(3), ddgeo2(3), ddgeo3(3), detkap, ddepmait1(3), ddepmait2(3)
-    real(kind=8) :: long_mmait(24), valmoy=0.0, kappa_in(2,2)
+    real(kind=8) :: long_mmait(24), valmoy, kappa_in(2,2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -138,6 +138,7 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2
     ddepmait1(:)  = 0.d0
     ddepmait2(:)  = 0.d0
     long_mmait(:) = 0.d0
+    valmoy        = 0.d0
 
     if (l_large_slip) then
         do idim = 1, ndim

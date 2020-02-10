@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,10 +42,10 @@ implicit none
 !   OUT  FF     : FONCTIONS DE FORMES EN X,Y,Z
 !        NNO    : NOMBRE DE NOEUDS
 ! --------------------------------------------------------------------------------------------------
-    real(kind=8) :: x0=0.0, y0=0.0, z0=0.0, al=0.0, z01=0.0, z02=0.0, z04=0.0, pface1=0.0
-    real(kind=8) :: pface2 = 0.0
-    real(kind=8) :: pface3 =0.0, pface4=0.0, pmili1=0.0, pmili2=0.0, pmili3=0.0, pmili4=0.0
-    real(kind=8) :: x1=0.0, x2=0.0, x3=0.0, x4=0.0, d1=0.0, d2=0.0, d3=0.0, d4=0.0
+    real(kind=8) :: x0, y0, z0, al, z01, z02, z04, pface1
+    real(kind=8) :: pface2
+    real(kind=8) :: pface3 , pface4, pmili1, pmili2, pmili3, pmili4
+    real(kind=8) :: x1, x2, x3, x4, d1, d2, d3, d4
     real(kind=8), parameter :: zero = 0.d0, un = 1.d0, deux = 2.d0, quatre = 4.d0
     real(kind=8), parameter :: undemi = 0.5d0, uns4 = 0.25d0, uns8 = 0.125d0
 !
@@ -56,6 +56,30 @@ implicit none
 #define al33(u)   0.5d0*(u)* (u+1.d0)
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    x0=0.d0
+    y0=0.d0
+    z0=0.d0
+    al=0.d0
+    z01=0.d0
+    z02=0.d0
+    z04=0.d0
+    pface1=0.0
+    pface2 = 0.0
+    pface3 =0.d0
+    pface4=0.d0
+    pmili1=0.d0
+    pmili2=0.d0
+    pmili3=0.d0
+    pmili4=0.0
+    x1=0.d0
+    x2=0.d0
+    x3=0.d0
+    x4=0.d0
+    d1=0.d0
+    d2=0.d0
+    d3=0.d0
+    d4=0.0
 !
     call elrfno(elrefz, nno)
     ASSERT(dimf.ge.nno)

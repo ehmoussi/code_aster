@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,18 +47,20 @@ subroutine te0545(option, nomte)
 !                      NOMTE        -->  NOM DU TYPE ELEMENT
 ! ......................................................................
     character(len=8) :: typmod(2)
-    aster_logical :: resi, rigi, axi,matsym=ASTER_FALSE
+    aster_logical :: resi, rigi, axi,matsym
     integer :: nno, nnob, npg, ndim, nddl, neps, lgpg
     integer :: ipoids, ivf, idfde, ivfb, idfdeb
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
     integer :: ivectu, icontp, ivarip, imatuu, icarcr, ivarix, igeom, icoret
     integer :: iret, nnos, jgano, jganob, itab(7)
     integer :: i
-    real(kind=8) :: xyz(3)=0.d0, angmas(7)
+    real(kind=8) :: xyz(3), angmas(7)
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
 !
 
 ! - INITIALISATION
+    matsym=ASTER_FALSE
+    xyz(:)=0.d0
 !
     resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'

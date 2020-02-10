@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,15 +52,22 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret, nume_first, nume_pl, nb_snap, i_mode
-    integer :: nb_mode = 0
-    character(len=8)  :: model = ' ', axe_line = ' ', base_type = ' '
-    character(len=24) :: surf_num = ' ', field_refe = ' ', field_name = ' '
-    character(len=19) :: tabl_coor = ' '
+    integer :: nb_mode
+    character(len=8)  :: model, axe_line, base_type
+    character(len=24) :: surf_num, field_refe, field_name
+    character(len=19) :: tabl_coor
     type(ROM_DS_Field) :: ds_field
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    WRITE(6,*) 'XT: ',base
+    nb_mode = 0
+    model = ' '
+    axe_line = ' '
+    base_type = ' '
+    surf_num = ' '
+    field_refe = ' '
+    field_name = ' '
+    tabl_coor = ' '
 !
 ! - Get name of COOR_REDUIT table
 !
