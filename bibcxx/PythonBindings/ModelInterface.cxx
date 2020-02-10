@@ -37,23 +37,22 @@ void exportModelToPython() {
     py::enum_< GraphPartitioner >( "GraphPartitioner" ).value( "Scotch", ScotchPartitioner ).value(
         "Metis", MetisPartitioner );
 
-    bool ( ModelClass::*c1 )( MeshPtr & ) = &ModelClass::setMesh;
-    bool ( ModelClass::*c4 )( SkeletonPtr & ) = &ModelClass::setMesh;
 
     void ( ModelClass::*split1 )( ModelSplitingMethod ) = &ModelClass::setSplittingMethod;
 
     void ( ModelClass::*split2 )( ModelSplitingMethod, GraphPartitioner ) =
         &ModelClass::setSplittingMethod;
-#ifdef _USE_MPI
-    bool ( ModelClass::*c2 )( ParallelMeshPtr & ) = &ModelClass::setMesh;
-    bool ( ModelClass::*c3 )( PartialMeshPtr & ) = &ModelClass::setMesh;
-#endif /* _USE_MPI */
-    bool ( ModelClass::*c5 )( BaseMeshPtr & ) = &ModelClass::setMesh;
 
     py::class_< ModelClass, ModelClass::ModelPtr, py::bases< DataStructure > >( "Model",
                                                                                       py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass , BaseMeshPtr>))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, BaseMeshPtr,
+                                               std::string >))
+#ifdef _USE_MPI
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass , PartialMeshPtr>))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, PartialMeshPtr,
+                                               std::string >))
+#endif /* _USE_MPI */
         .def( "addModelingOnAllMesh", &ModelClass::addModelingOnAllMesh )
         .def( "addModelingOnGroupOfElements", &ModelClass::addModelingOnGroupOfElements )
         .def( "addModelingOnGroupOfNodes", &ModelClass::addModelingOnGroupOfNodes )
@@ -65,14 +64,7 @@ void exportModelToPython() {
         .def( "getSplittingMethod", &ModelClass::getSplittingMethod )
         .def( "getGraphPartitioner", &ModelClass::getGraphPartitioner )
         .def( "setSaneModel", &ModelClass::setSaneModel )
-        .def( "setMesh", c1 )
-        .def( "setMesh", c4 )
         .def( "setSplittingMethod", split1 )
         .def( "setSplittingMethod", split2 )
-#ifdef _USE_MPI
-        .def( "setMesh", c2 )
-        .def( "setMesh", c3 )
-#endif /* _USE_MPI */
-        .def( "setMesh", c5 )
         .def( "getFiniteElementDescriptor", &ModelClass::getFiniteElementDescriptor );
 };

@@ -9,13 +9,12 @@ test = code_aster.TestCase()
 monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
-monModel = code_aster.Model()
-monModel.setMesh( monMaillage )
+monModel = code_aster.Model(monMaillage)
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
 
-YOUNG = 200000.0;
-POISSON = 0.3;
+YOUNG = 200000.0
+POISSON = 0.3
 
 acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
                                 NU = POISSON,),)
@@ -51,7 +50,7 @@ statNonLine1.setMaterialOnMesh( affectMat )
 statNonLine1.setLinearSolver( monSolver )
 elas = code_aster.Behaviour(code_aster.ConstitutiveLaw.Elas,
                                    code_aster.StrainType.SmallStrain )
-statNonLine1.addBehaviourOnElements( elas );
+statNonLine1.addBehaviourOnElements( elas )
 
 
 temps = [0., 0.5 ]

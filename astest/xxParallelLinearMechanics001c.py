@@ -11,8 +11,7 @@ rank = code_aster.getMPIRank()
 pMesh = code_aster.ParallelMesh()
 pMesh.readMedFile("xxParallelMesh001a")
 
-monModel = code_aster.Model()
-monModel.setMesh(pMesh)
+monModel = code_aster.Model(pMesh)
 monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                               code_aster.Modelings.Tridimensional)
 monModel.build()

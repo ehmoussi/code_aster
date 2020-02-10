@@ -27,11 +27,7 @@ MODT=AFFE_MODELE(MAILLAGE=MAIL,
                          MODELISATION='D_PLAN',),
                  DISTRIBUTION=_F(METHODE='CENTRALISE',),);
 
-#MODT = code_aster.Model()
-#MODT.setMesh(MAIL)
-#MODT.addModelingOnAllMesh(code_aster.Physics.Mechanics,code_aster.Modelings.PlaneStrain)
-#MODT.build()
-#MODT.debugPrint()
+#MODT = code_aster.Model(MAIL))
 
 charCine = code_aster.KinematicsMechanicalLoad()
 charCine.setModel(MODT)
