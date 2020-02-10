@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ contains
         type(HHO_basis_cell) :: hhoBasisCell
         type(HHO_quadrature)  :: hhoQuad
         real(kind=8), dimension(MSIZE_CELL_SCAL):: basisScalEval
-        integer :: dimMat = 0, ipg, ndim = 0
+        integer :: dimMat, ipg, ndim
 ! --------------------------------------------------------------------------------------------------
 !
         ndim = hhoCell%ndim
@@ -134,7 +134,7 @@ contains
         type(HHO_basis_face) :: hhoBasisFace
         type(HHO_quadrature)  :: hhoQuad
         real(kind=8), dimension(MSIZE_FACE_SCAL) :: basisScalEval
-        integer :: dimMat = 0, ipg, ndim = 0
+        integer :: dimMat, ipg, ndim
 ! --------------------------------------------------------------------------------------------------
 !
         ndim = hhoFace%ndim

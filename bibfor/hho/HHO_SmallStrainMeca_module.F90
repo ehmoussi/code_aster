@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -134,10 +134,11 @@ contains
         real(kind=8) :: AT(MSIZE_CELL_MAT, MSIZE_CELL_MAT), bT(MSIZE_CELL_MAT)
         real(kind=8) :: TMP(MSIZE_CELL_MAT, MSIZE_TDOFS_VEC)
         integer:: cbs, fbs, total_dofs, faces_dofs, gbs, ipg, gbs_cmp, gbs_sym, nb_sig
-        integer :: cod(27) = 0
+        integer :: cod(27)
         aster_logical :: l_tang
 ! --------------------------------------------------------------------------------------------------
 !
+        cod = 0
 ! ------ number of dofs
         call hhoMecaNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs, gbs_sym)
         faces_dofs = total_dofs - cbs

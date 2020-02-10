@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,8 +59,8 @@ use HHO_utils_module
 !---------------------------------------------------------------------------------------------------
 !
     integer, parameter :: maxpara = 4
-    real(kind=8) :: valpar(maxpara) = 0.d0
-    character(len=8) :: nompar(maxpara) = (/ 'XXXXXXXX', 'XXXXXXXX', 'XXXXXXXX', 'XXXXXXXX' /)
+    real(kind=8) :: valpar(maxpara)
+    character(len=8) :: nompar(maxpara)
     type(HHO_Data) :: hhoData
     type(HHO_Face) :: hhoFace
     type(HHO_Quadrature) :: hhoQuadFace
@@ -82,6 +82,8 @@ use HHO_utils_module
     celldim = hhoFace%ndim + 1
     PresQP = 0.d0
     NeumValuesQP = 0.d0
+    nompar(:) = 'XXXXXXXX'
+    valpar(:) = 0.d0
 !
 ! ---- Which option ?
 !

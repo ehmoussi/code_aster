@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: fonact(100) = 0
+    integer :: fonact(100)
     integer, parameter :: zmeelm = 8
     integer, parameter :: zmeass = 4
     integer, parameter :: zveelm = 13
@@ -91,7 +91,8 @@ implicit none
 !
     character(len=16) :: k16bid
     character(len=19) :: list_load
-    character(len=19) :: solver, maprec, matass
+    character(len=19) :: maprec
+    character(len=19) :: matass, solver
     character(len=24) :: model, mate, cara_elem
     character(len=24) :: numedd, numfix
 !
@@ -101,9 +102,11 @@ implicit none
 !
 ! --- STRUCTURES DE DONNEES
 !
-    character(len=24) :: sderro
+    character(len=24), parameter :: sderro='&&OP0070.ERRE.'
     character(len=24) :: sd_suiv
-    character(len=19) :: sdpilo, sdnume, sddyna, sddisc, sdcrit
+    character(len=19), parameter :: sdpilo='&&OP0070.PILO.', sdnume='&&OP0070.NUME.ROTAT'
+    character(len=19), parameter :: sddisc='&&OP0070.DISC.', sdcrit='&&OP0070.CRIT.'
+    character(len=19) :: sddyna
     character(len=19) :: sd_obsv
     type(NL_DS_Print)        :: ds_print
     type(NL_DS_Conv)         :: ds_conv
@@ -119,7 +122,7 @@ implicit none
     type(NL_DS_ErrorIndic)   :: ds_errorindic
     type(NL_DS_System)       :: ds_system
     type(HHO_Field)          :: hhoField
-    aster_logical            :: l_hho = ASTER_FALSE
+    aster_logical            :: l_hho
 !
 ! --- VARIABLES CHAPEAUX
 !
@@ -132,21 +135,15 @@ implicit none
 !
 ! ----------------------------------------------------------------------
 !
-    data sdpilo            /'&&OP0070.PILO.'/
-    data sderro            /'&&OP0070.ERRE.'/
-    data sdnume            /'&&OP0070.NUME.ROTAT'/
-    data sddisc            /'&&OP0070.DISC.'/
-    data sdcrit            /'&&OP0070.CRIT.'/
-    data list_load         /'&&OP0070.LISCHA'/
-    data solver            /'&&OP0070.SOLVEUR'/
-    data maprec            /'&&OP0070.MAPREC'/
-!
-! ----------------------------------------------------------------------
-!
     call titre()
     call infmaj()
     call inidbg()
+!
     fonact(:) = 0
+    l_hho     = ASTER_FALSE
+    solver    ='&&OP0070.SOLVEUR'
+    list_load = '&&OP0070.LISCHA'
+    maprec    ='&&OP0070.MAPREC'
 !
 ! ======================================================================
 !     RECUPERATION DES OPERANDES ET INITIALISATION

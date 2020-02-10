@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,10 +63,10 @@ subroutine verif_bord(modele,ligrel)
     integer :: nbmamo,nbmalg,numa,kma,nbmat
     integer :: iconx1,iconx2,nno,nuno,kno,nbnot
 
-    character(len=24) :: linumamo = '&&VERIF_BORD.NUMAMO'
-    character(len=24) :: linutemo = '&&VERIF_BORD.NUTEMO'
-    character(len=24) :: linumalg = '&&VERIF_BORD.NUMALG'
-    character(len=24) :: linutelg = '&&VERIF_BORD.NUTELG'
+    character(len=24), parameter :: linumamo = '&&VERIF_BORD.NUMAMO'
+    character(len=24), parameter :: linutemo = '&&VERIF_BORD.NUTEMO'
+    character(len=24), parameter :: linumalg = '&&VERIF_BORD.NUMALG'
+    character(len=24), parameter :: linutelg = '&&VERIF_BORD.NUTELG'
 
     integer, pointer :: numamo(:) => null()
     integer, pointer :: numalg(:) => null()

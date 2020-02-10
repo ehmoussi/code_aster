@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! In  ds_algorom       : datastructure for ROM parameters
 ! In  ds_system        : datastructure for non-linear system management
 ! In  matass           : matrix
-! In  nume_inst        : index of current time step    
+! In  nume_inst        : index of current time step
 ! In  eta              : coefficient for pilotage (continuation)
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
@@ -107,24 +107,24 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ifm=0, niv=0
+    integer :: ifm, niv
     integer, pointer :: v_ccid(:) => null()
-    integer :: nb_equa=0, i_equa=0
+    integer :: nb_equa, i_equa
     character(len=24) :: mate, varc_refe
     aster_logical :: l_stat, l_load_cine, l_cont_cont, l_cont_lac, l_rom, l_macr
     aster_logical :: l_resi_refe, l_varc_init, l_resi_comp, l_rela
     aster_logical :: l_no_disp, l_pilo, l_disp
-    character(len=19) :: profch=' '
-    character(len=19) :: varc_prev=' ', disp_prev=' '
-    character(len=19) :: cndiri=' ', cnbudi=' ', cnfext=' '
-    character(len=19) :: cnrefe=' '
-    character(len=19) :: cndfdo=' ', cnequi = ' ', cndipi = ' ', cnsstr = ' '
-    real(kind=8) :: vale_equi=0.d0, vale_refe=0.d0, vale_varc=0.d0
-    integer :: r_rela_indx=0, r_resi_indx=0, r_equi_indx=0
-    integer :: r_refe_indx=0, r_char_indx=0, r_comp_indx=0
+    character(len=19) :: profch
+    character(len=19) :: varc_prev, disp_prev
+    character(len=19) :: cndiri, cnbudi, cnfext
+    character(len=19) :: cnrefe
+    character(len=19) :: cndfdo, cnequi, cndipi, cnsstr
+    real(kind=8) :: vale_equi, vale_refe, vale_varc
+    integer :: r_rela_indx, r_resi_indx, r_equi_indx
+    integer :: r_refe_indx, r_char_indx, r_comp_indx
     real(kind=8) :: resi_glob_rela, resi_glob_maxi
-    character(len=16) :: r_fric_name=' ', r_geom_name=' ', r_comp_name=' '
-    character(len=24) :: sdnuco=' '
+    character(len=16) :: r_fric_name, r_geom_name, r_comp_name
+    character(len=24) :: sdnuco
     integer, pointer :: v_sdnuco(:) => null()
     real(kind=8) :: r_rela_vale, r_refe_vale, r_varc_vale
     real(kind=8) :: r_comp_vale, r_fric_vale, r_geom_vale, r_pene_vale
@@ -146,6 +146,17 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 !
 ! - Initialisations
 !
+    profch    = ' '
+    varc_prev = ' '
+    disp_prev = ' '
+    cndiri    = ' '
+    cnbudi    = ' '
+    cnfext    = ' '
+    cnrefe    = ' '
+    cndfdo    = ' '
+    cnequi    = ' '
+    cndipi    = ' '
+    cnsstr    = ' '
     mate      = ds_material%field_mate
     varc_refe = ds_material%varc_refe
     call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=nb_equa)
@@ -157,11 +168,19 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     r_varc_vale = 0.d0
     r_fric_vale = 0.d0
     r_geom_vale = 0.d0
-    r_rela_indx = 0
-    r_refe_indx = 0
-    r_resi_indx = 0
-    r_char_indx = 0
-    r_comp_indx = 0    
+    r_rela_indx = 0.d0
+    r_refe_indx = 0.d0
+    r_resi_indx = 0.d0
+    r_char_indx = 0.d0
+    r_comp_indx = 0.d0
+    r_equi_indx = 0.d0
+    r_fric_name = ' '
+    r_geom_name = ' '
+    r_comp_name = ' '
+    sdnuco      = ' '
+    vale_equi   = 0.d0
+    vale_refe   = 0.d0
+    vale_varc   = 0.d0
 !
 ! - Active functionnalities
 !

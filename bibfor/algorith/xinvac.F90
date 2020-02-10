@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ subroutine xinvac(elp, ndim, tabar, s, ksi)
 !
     real(kind=8) :: coef1, coef2, coef3, ptint(1)
     real(kind=8) :: pt1(3), pt2(3), pt3(3)
-    real(kind=8) :: d, epsmax, tab(8, ndim)
+    real(kind=8) :: d, epsmax
     integer :: itemax, i
     character(len=6) :: name
 !

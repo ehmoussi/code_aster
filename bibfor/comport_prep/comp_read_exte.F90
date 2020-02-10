@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ integer, intent(out) :: nb_vari_umat
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: saux08
-    aster_logical :: l_kit_thm = .false._1
+    aster_logical :: l_kit_thm
     integer :: scali, nbret
 !
 ! --------------------------------------------------------------------------------------------------
@@ -70,6 +70,7 @@ integer, intent(out) :: nb_vari_umat
     libr_name    = ' '
     subr_name    = ' '
     nb_vari_umat = 0
+    l_kit_thm    = ASTER_FALSE
 !
 ! - Get parameters
 !

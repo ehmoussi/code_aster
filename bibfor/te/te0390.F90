@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,21 +74,23 @@ subroutine te0390(option, nomte)
     integer :: lorien, lsig, lsigma, ndim, ne, nno
     integer :: nnos, nord, npg
     real(kind=8) :: a, ajacob, alfnmk, ay, az, delnmk, demi
-    real(kind=8) :: deux, e, g, pas, pjacob, r8bid=0.d0, rho
+    real(kind=8) :: deux, e, g, pas, pjacob, r8bid, rho
     real(kind=8) :: stoudy, un, xiy, xiz, xjx, zero
 !-----------------------------------------------------------------------
     integer, parameter :: nb_cara = 6
     real(kind=8) :: vale_cara(nb_cara)
     character(len=8) :: noms_cara(nb_cara)
-    data noms_cara /'A1','IY1','IZ1','AY1','AZ1','JX1'/
 !-----------------------------------------------------------------------
     call elref1(elrefe)
     if (option .eq. 'FORC_NODA') goto 210
 !
+    r8bid=0.d0
     zero = 0.d0
     demi = 5.d-1
     un = 1.d0
     deux = 2.d0
+    noms_cara(1) = 'A1'
+    noms_cara(2:6)=['IY1','IZ1','AY1','AZ1','JX1']
 !
 !* STOUDY VAUT: 1., SI L'ON EST EN DYNAMIQUE
 !*              0., SI L'ON EST EN STATIQUE

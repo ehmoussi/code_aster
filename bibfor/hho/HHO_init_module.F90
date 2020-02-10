@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -227,8 +227,8 @@ contains
 ! Out elem_dim          : dimension of the element
 ! --------------------------------------------------------------------------------------------------
 !
-        aster_logical :: l_debug = ASTER_FALSE
-        integer :: jv_geom = 0, iadzi = 0, iazk24 = 0
+        aster_logical, parameter :: l_debug = ASTER_FALSE
+        integer :: jv_geom, iadzi, iazk24
         integer :: inode, idim, iret
 ! --------------------------------------------------------------------------------------------------
 !
@@ -332,8 +332,8 @@ contains
 ! Out elem_dim          : dimension of the element
 ! --------------------------------------------------------------------------------------------------
 !
-        aster_logical :: l_debug = ASTER_FALSE
-        integer :: jv_geom = 0
+        aster_logical, parameter :: l_debug = ASTER_FALSE
+        integer :: jv_geom
         integer :: inode, idim, iret, iadzi, iazk24
 !
 ! --- Init
@@ -482,17 +482,23 @@ contains
 ! Out hhoCell           : a HHO cell
 ! --------------------------------------------------------------------------------------------------
 !
-        aster_logical :: l_debug = ASTER_FALSE
+        aster_logical, parameter :: l_debug = ASTER_FALSE
         integer, parameter                      :: max_faces = 6
         integer, parameter                      :: max_nodes = 4
-        integer, dimension(max_nodes,max_faces) :: nodes_faces = 0
-        integer, dimension(max_faces)           :: nbnodes_faces = 0
-        character(len=8), dimension(max_faces)  :: type_faces = ''
-        real(kind=8), dimension(3,max_nodes)    :: coor_face = 0.d0
-        integer, dimension(max_nodes)           :: numnodes_face = 0
+        integer, dimension(max_nodes,max_faces) :: nodes_faces
+        integer, dimension(max_faces)           :: nbnodes_faces
+        character(len=8), dimension(max_faces)  :: type_faces
+        real(kind=8), dimension(3,max_nodes)    :: coor_face
+        integer, dimension(max_nodes)           :: numnodes_face
         integer :: i_face, i_node
 ! --------------------------------------------------------------------------------------------------
 ! --- Init
+        nodes_faces = 0
+        nbnodes_faces = 0
+        type_faces = ' '
+        coor_face = 0.d0
+        numnodes_face = 0
+!
         if(typma(1:6) == 'HEXA27') then
             hhoCell%typema = 'HEXA8'
             hhoCell%nbnodes = 8
@@ -645,7 +651,8 @@ contains
 ! Out hhoData  :: information on the modelisation
 ! --------------------------------------------------------------------------------------------------
 !
-        aster_logical :: l_debug = ASTER_FALSE, l_stab = ASTER_TRUE, l_precalc, l_adapt_coeff
+        aster_logical, parameter :: l_debug = ASTER_FALSE
+        aster_logical :: l_stab, l_precalc, l_adapt_coeff
         integer :: grad_deg, face_deg, cell_deg
         integer :: jv_carcri, jtab(1), iret
         real(kind=8) :: coef_stab
@@ -682,6 +689,7 @@ contains
         iret = -1
         l_precalc  = ASTER_FALSE
         l_adapt_coeff = ASTER_TRUE
+        l_stab = ASTER_TRUE
         call tecach('NNN', 'PCARCRI', 'L', iret, nval=1, itab=jtab)
         if (iret .eq. 0) then
             call jevech('PCARCRI','L', jv_carcri)
@@ -749,10 +757,11 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         integer :: numnodes(27), nbnodes, elem_dim
-        character(len=8) :: typma = ''
-        real(kind=8) :: coor(3,27) = 0.d0
+        character(len=8) :: typma
+        real(kind=8) :: coor(3,27)
         aster_logical :: l_ortho
-
+!
+        coor = 0.d0
         l_ortho = ASTER_TRUE
         if(present(l_ortho_)) then
             l_ortho = l_ortho_
@@ -808,7 +817,7 @@ contains
 !
         integer :: nbnodes, elem_dim, numnodes(9)
         real(kind=8) :: nodes_coor(3,9)
-        character(len=8) :: typma = ''
+        character(len=8) :: typma
 !
 ! --- Get HHO informations
 !
@@ -841,7 +850,7 @@ contains
     implicit none
 !
         character(len=19), intent(in) :: field
-        real(kind=8), intent(in)    :: value
+        real(kind=8), intent(in)      :: value
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -65,7 +65,8 @@ use petsc_data_module
     integer :: nbloc, kbloc, k1, k2, k3
 !
     character(len=19) :: nomat, nosolv
-    character(len=16) :: idxi1, idxi2, trans1, trans2
+    character(len=16), parameter :: idxi1='&&APMAMC.IDXI1__', idxi2='&&APMAMC.IDXI2__'
+    character(len=16), parameter :: trans1='&&APMAMC.TRANS1_', trans2='&&APMAMC.TRANS2_'
     character(len=14) :: nonu
 !
     aster_logical :: lmnsy
@@ -73,11 +74,6 @@ use petsc_data_module
     real(kind=8) :: valm
     integer, pointer :: smdi(:) => null()
     integer(kind=4), pointer :: smhc(:) => null()
-!
-    parameter (idxi1 ='&&APMAMC.IDXI1__')
-    parameter (idxi2 ='&&APMAMC.IDXI2__')
-    parameter (trans1='&&APMAMC.TRANS1_')
-    parameter (trans2='&&APMAMC.TRANS2_')
 !
 !----------------------------------------------------------------
 !     Variables PETSc

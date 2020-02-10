@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -91,9 +91,9 @@ integer, intent(out) :: nb_grel
     integer :: typg_slav_nume, typg_mast_nume
     character(len=8) :: typg_slav_name, typg_mast_name, elem_slav_name, elem_mast_name
     character(len=16) :: typf_slav_name, typg_cont_name,typf_cont_name, valk(6)
-    character(len=24) :: linuma = '&&MMLIGE.LINUMA'
+    character(len=24), parameter :: linuma = '&&MMLIGE.LINUMA'
     integer, pointer :: v_linuma(:) => null()
-    character(len=24) :: linute = '&&MMLIGE.LINUTE'
+    character(len=24), parameter :: linute = '&&MMLIGE.LINUTE'
     integer, pointer :: v_linute(:) => null()
     aster_logical :: l_frot, l_cont_cont, l_cont_lac, l_axi
     integer, pointer :: v_mesh_typmail(:) => null()
@@ -199,11 +199,11 @@ integer, intent(out) :: nb_grel
             i_zone         = v_sdappa_apli(3*(i_cont_pair-1)+3)
             l_frot         = .false._1
             elem_slav_nume = v_sdappa_apli(3*(i_cont_pair-1)+1)
-            elem_mast_nume = v_sdappa_apli(3*(i_cont_pair-1)+2)   
+            elem_mast_nume = v_sdappa_apli(3*(i_cont_pair-1)+2)
         endif
 !
 ! ----- Type of slave/master element
-!  
+!
         typg_slav_nume = v_mesh_typmail(elem_slav_nume)
         typg_mast_nume = v_mesh_typmail(elem_mast_nume)
         call jenuno(jexnum('&CATA.TM.NOMTM', typg_slav_nume), typg_slav_name)
@@ -227,7 +227,7 @@ integer, intent(out) :: nb_grel
 !
             indx_slav_name = elem_slav_nume + 1 - linuma_min
             typf_slav_name = v_tp_slav_name(indx_slav_name)
-            
+
             call mmelem_data_l(l_axi_          = l_axi         ,&
                                typg_slav_name_ = typg_slav_name, typg_mast_name_ = typg_mast_name,&
                                typf_slav_name_ = typf_slav_name,&
@@ -258,7 +258,7 @@ integer, intent(out) :: nb_grel
         v_list_pair(2*(i_cont_pair-1)+2) = nb_node_elem
 !
 ! ----- Save contact/friction element FE parameters
-!  
+!
         if (l_frot) then
             v_list_type(5*(elem_indx-1)+2) = v_list_type(5*(elem_indx-1)+2) + 1
             v_list_type(5*(elem_indx-1)+3) = typf_cont_nume

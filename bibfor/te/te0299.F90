@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ subroutine te0299(option, nomte)
     real(kind=8) :: dfdi(18), f(3, 3), eps(6), fno(18), sigin(6), dsigin(6,3)
     real(kind=8) :: dudm(3, 4), dfdm(3, 4), dtdm(3, 4), der(4)
     real(kind=8) :: du1dm(3, 4), du2dm(3, 4), epsref(6)
-    real(kind=8) :: rhocst, rho, om, omo, rbid=0.d0, e, nu, rbid2(3, 3, 3)
+    real(kind=8) :: rhocst, rho, om, omo, rbid, e, nu, rbid2(3, 3, 3)
     real(kind=8) :: thet, tno(20), tgdm(3),rac2
     real(kind=8) :: xg, yg, e1(3), e2(3), e3(3)
     real(kind=8) :: c1, c2, c3, cs, u1(2), u2(2)
@@ -83,9 +83,7 @@ subroutine te0299(option, nomte)
 !
 ! ----------------------------------------------------------------------
 !
-
-!
-
+    rbid=0.d0
     fami = 'RIGI'
     call elref1(elrefp)
     call elrefe_info(fami=fami, ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
@@ -174,7 +172,7 @@ subroutine te0299(option, nomte)
     endif
 !
 ! --- VERFICATION DU COMPORTEMENT : ELASTICITE INCREMENTALE AUTORISEE
-!  
+!
     do i = 1, 4
         compor(i) = zk16(icomp+i-1)
     end do
@@ -263,8 +261,8 @@ subroutine te0299(option, nomte)
 !
 ! --- RECUPERATION DE LA CONTRAINTE INITIALE
     call tecach('ONO', 'PSIGINR', 'L', iret, iad=isigi)
-    
-    
+
+
 ! ----------------------------------------------------------------------
 !
 !     BOUCLE SUR LES POINTS DE GAUSS
@@ -337,7 +335,7 @@ subroutine te0299(option, nomte)
         endif
 !
         call rccoma(matcod, 'ELAS', 1, phenom, icodre(1))
-       
+
 
 !
 ! ----- RECUPERATION DE E, NU
@@ -409,7 +407,7 @@ subroutine te0299(option, nomte)
             epsref(1)=-(1.d0/e)*(sigin(1)-(nu*(sigin(2)+sigin(3))))
             epsref(2)=-(1.d0/e)*(sigin(2)-(nu*(sigin(3)+sigin(1))))
             epsref(3)=-(1.d0/e)*(sigin(3)-(nu*(sigin(1)+sigin(2))))
-            epsref(4)=-(1.d0/mu)*sigin(4)  
+            epsref(4)=-(1.d0/mu)*sigin(4)
         endif
 !
 !
@@ -491,7 +489,7 @@ subroutine te0299(option, nomte)
           guv2 = 0.d0
 
         cs = 0.5d0
-        
+
         call gbilin(fami, kp, zi(imate), dudm, du2dm,&
                     dtdm, dfdm, tgdm, poids, sigin,&
                     dsigin, epsref, c1,&
