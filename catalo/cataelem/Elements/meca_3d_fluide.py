@@ -269,6 +269,14 @@ class MEFL_FACE3(Element):
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
+        OP.CHAR_MECA_PRES_F(te=99,
+           para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+        
+        OP.CHAR_MECA_PRES_R(te=99,
+           para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+
         OP.CHAR_MECA_VNOR(te=173,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVITENR, LC.EVITENR), ),

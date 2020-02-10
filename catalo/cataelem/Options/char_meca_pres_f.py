@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -138,6 +138,9 @@ CHAR_MECA_PRES_F = Option(
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'GRM'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'GRC'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.MODELI,'MMB'),)),
+
+#     On autorise d'appliquer une pression NULLE sur le bord du domaine fluide
+      CondCalcul('+', ((AT.FLUIDE,'OUI'),(AT.BORD,'-1'))),
 
 #     Ce chargement concerne les elements XFEM "massifs" :
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),(AT.LXFEM,'OUI'),)),
