@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,8 +42,9 @@ MODI_REPERE=OPER(nom="MODI_REPERE",op=191,sd_prod=modi_repere_prod,
 #   Traitement de RESULTAT
     b_resultat=BLOC(condition="""exists("RESULTAT")""",
                     fr="Changement de repère d'un champ extrait d'un résultat",
-        regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','FREQ','NUME_MODE',
+        regles=(EXCLUS('TOUT_ORDRE','NUME_ORDRE','INST','FREQ','LIST_ORDRE','NUME_MODE',
                        'NOEUD_CMP','LIST_INST','LIST_FREQ','NOM_CAS'),),
+        LIST_ORDRE  =SIMP(statut='f',typ=listis_sdaster),
         TOUT_ORDRE  =SIMP(statut='f',typ='TXM',into=("OUI",) ),
         NUME_ORDRE  =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
         NUME_MODE   =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
