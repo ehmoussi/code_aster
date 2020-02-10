@@ -43,20 +43,17 @@ from cataelem.Options.options import OP
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('PRES','PHI',))
 
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
     components=('PRES','PHI',))
-
-
-
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
     components=('X','Y','Z',))
 
-
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
     components=('X','Y','Z','W',))
 
+ESOURCR  = LocatedComponents(phys=PHY.SOUR_R, type='ELGA', location='RIGI',
+    components=('VNOR',))
 
 MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
 
@@ -255,4 +252,98 @@ class MEFL_TETRA4(MEFL_HEXA20):
     elrefe =(
             ElrefeLoc(MT.TE4, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('FPG1',),),
             ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3',),),
+        )
+
+#------------------------------------------------------------
+class MEFL_FACE3(Element):
+    """Please document this element"""
+    meshType = MT.TRIA3
+    elrefe =(
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','FPG1=FPG1',), mater=('FPG1',),),
+        )
+    calculs = (
+
+        OP.CHAR_MECA_ONDE(te=369,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PONDECR, LC.EONDEPR), ),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.CHAR_MECA_VNOR(te=173,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PVITENR, LC.EVITENR), ),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.CHAR_MECA_VNOR_F(te=174,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PVITENF, LC.EVITENF), ),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.COOR_ELGA(te=488,
+            para_in=((SP.PGEOMER, NGEOMER), ),
+            para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
+        ),
+
+        OP.IMPE_MECA(te=10,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PIMPEDR, LC.EIMPEDR),
+                     (SP.PMATERC, LC.CMATERC), ),
+            para_out=((SP.PMATUUR, MMATUUR), ),
+        ),
+
+        OP.ONDE_FLUI(te=374,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PONDECR, LC.EONDEPR), ),
+            para_out=((SP.PMATUUR, MMATUUR), ),
+        ),
+
+        OP.TOU_INI_ELEM(te=99,
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
+        ),
+
+        OP.TOU_INI_ELGA(te=99,
+            para_out=((OP.TOU_INI_ELGA.PGEOM_R, EGGEOP_R), ),
+        ),
+
+        OP.TOU_INI_ELNO(te=99,
+            para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), ),
+        ),
+
+    )
+
+
+#------------------------------------------------------------
+class MEFL_FACE4(MEFL_FACE3):
+    """Please document this element"""
+    meshType = MT.QUAD4
+    elrefe =(
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('FPG1',),),
+        )
+
+
+#------------------------------------------------------------
+class MEFL_FACE6(MEFL_FACE3):
+    """Please document this element"""
+    meshType = MT.TRIA6
+    elrefe =(
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('FPG1',),),
+        )
+
+
+#------------------------------------------------------------
+class MEFL_FACE8(MEFL_FACE3):
+    """Please document this element"""
+    meshType = MT.QUAD8
+    elrefe =(
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','FPG1=FPG1',), mater=('FPG1',),),
+        )
+
+
+#------------------------------------------------------------
+class MEFL_FACE9(MEFL_FACE3):
+    """Please document this element"""
+    meshType = MT.QUAD9
+    elrefe =(
+            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','FPG1=FPG1',), mater=('FPG1',),),
         )
