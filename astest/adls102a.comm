@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,9 @@ MAYA=CREA_MAILLAGE(MAILLAGE=MAYA0,
 )
 
 MODELE=AFFE_MODELE(  MAILLAGE=MAYA,INFO=2,AFFE=(
-                      _F( GROUP_MA = 'EFLUIDE',
+                      _F( 
+                            #TOUT='OUI',
+                            GROUP_MA=('EFLUIDE','LFL12'),
                              PHENOMENE = 'MECANIQUE',
                              MODELISATION = '2D_FLUIDE'),
                       _F( GROUP_MA = ('EFS_P_IN','EFS_PIST','EFS_P_OU'),
@@ -70,7 +72,7 @@ FICTIF=DEFI_MATERIAU(  ELAS=_F(
 #  AFFECTATION DES MATERIAUX
 
 CHAMPMAT=AFFE_MATERIAU(   MAILLAGE=MAYA,AFFE=(
-               _F(  GROUP_MA = 'EFLUIDE', MATER = EAU),
+               _F(  TOUT='OUI', MATER = EAU),
                _F(  GROUP_MA = ('EFS_P_IN','EFS_PIST','EFS_P_OU'),
                                           MATER = EAU),
                _F(  GROUP_MA = ('E_P_IN','ES_P_IN','E_P_OU'),
@@ -79,7 +81,7 @@ CHAMPMAT=AFFE_MATERIAU(   MAILLAGE=MAYA,AFFE=(
                       )
 
 CHAMPMA2=AFFE_MATERIAU(   MAILLAGE=MAYA,AFFE=(
-               _F(  GROUP_MA = 'EFLUIDE', MATER = EAU),
+               _F(  TOUT='OUI', MATER = EAU),
                _F(  GROUP_MA = ('EFS_P_IN','EFS_PIST','EFS_P_OU'),
                                           MATER = EAU),
                _F(  GROUP_MA = ('E_P_IN','ES_P_IN','E_P_OU'),
