@@ -219,7 +219,16 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
 
 ! ---     OPTIONS AVANCEES (ACCELERATIONS)
 ! ------     TEST DE COMPATIBILITE ACCELERATION/VERSIONS
-        if ((kvers(1:6).eq.'5.2.1 ').or.(kvers(1:6).eq.'5.1.2 ')) then
+        if (kvers(6:15).eq.'consortium') then
+            select case(kacmum)
+            case('FR','FR+','LR','LR+')
+                !ok
+            case('AUTO')
+                kacmum='FR'
+            case default
+                ASSERT(.false.)
+            end select
+        else
             select case(kacmum)
             case('FR','LR')
                 !ok
@@ -234,17 +243,6 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
             case default
                 ASSERT(.false.)
             end select
-        else if ((kvers(1:15).eq.'5.2.1consortium').or.(kvers(1:15).eq.'5.1.2consortium')) then
-            select case(kacmum)
-            case('FR','FR+','LR','LR+')
-                !ok
-            case('AUTO')
-                kacmum='FR'
-            case default
-                ASSERT(.false.)
-            end select
-        else
-            ASSERT(.false.)
         endif
 ! ------     API MUMPS ACCELERATION
         select case(kacmum)
@@ -269,8 +267,10 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
             endif
         case('LR')
 ! BLR std
+! pour la version la plus recente, ICNTL(36/39) non encore exploitee
             icntl(35)=1
             cntl(7)=blreps
+
         case('LR+')
 ! BLR+ + aggressive optimizations
             icntl(35)=1
@@ -298,14 +298,15 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
         
 !
 ! ---     MESSAGES/ALERTES MUMPS
-        icntl(1) = to_mumps_int(ifm)
-        icntl(2) = 0
-        icntl(3) = 0
-        icntl(4) = 1
+        icntl(1) = -1
+        icntl(2) = -1
+        icntl(3) = -1
+        icntl(4) = 0
         if (niv .ge. 2) then
-! ---     ICNTL(4) = 1/ERROR MESSAGES ONLY 2/ERRORS, WARNINGS, 3 PUIS 4
-            icntl(3) = to_mumps_int(ifm)
-            icntl(4) = 2
+          icntl(1) = to_mumps_int(ifm)
+          icntl(2) = to_mumps_int(ifm)
+          icntl(3) = to_mumps_int(ifm)
+          icntl(4) = 2
         endif
 ! ---     FORMAT MATRICE
         icntl(5) = 0

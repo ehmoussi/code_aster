@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@ F_FORC=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.0,0.0,
 L_TPS=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=20.0,
                                    NOMBRE=20,),);
-
+#MATRICE QUASI-SINGULIERE, NE FONCTIONNE QU'AVEC MUMPS
 RESU0=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=CHMAT,
                    CARA_ELEM=CAR_DIS,
@@ -122,7 +122,7 @@ RESU0=STAT_NON_LINE(MODELE=MO,
                    CONTACT  = CONT,
                    COMPORTEMENT=_F(RELATION='ELAS',),
                    INCREMENT=_F(LIST_INST=L_TPS,),
-                   SOLVEUR=_F(),
+                   SOLVEUR=_F(METHODE='MUMPS',NPREC=-1),
                    );
 
 
@@ -138,7 +138,7 @@ RESU=STAT_NON_LINE(MODELE=MO,
                  NEWTON=_F(REAC_ITER=1,PREDICTION='DEPL_CALCULE',EVOL_NOLI=RESU0),
                  COMPORTEMENT=_F(RELATION='ELAS',),
                  INCREMENT=_F(LIST_INST=L_TPS,),
-                 SOLVEUR=_F(),
+                   SOLVEUR=_F(METHODE='MUMPS',NPREC=-1),
                  );
 
 RESU=CALC_CHAMP(reuse =RESU,
@@ -442,7 +442,7 @@ RESU_TA=STAT_NON_LINE(MODELE=MO,
                    COMPORTEMENT=_F(RELATION='ELAS',),
                    INCREMENT=_F(LIST_INST=L_TPS,),
                 #   CONVERGENCE=_F(RESI_GLOB_MAXI=1.0E-6,),
-                   SOLVEUR=_F(),
+                   SOLVEUR=_F(METHODE='MUMPS',NPREC=-1),
                    );
 
 RESUC_TA=STAT_NON_LINE(MODELE=MO,
@@ -458,7 +458,7 @@ RESUC_TA=STAT_NON_LINE(MODELE=MO,
                    INCREMENT=_F(LIST_INST=L_TPS,),
                  #  CONVERGENCE=_F(RESI_GLOB_MAXI=1.0E-6,),
                    NEWTON=_F(REAC_ITER=1),
-                   SOLVEUR=_F(),
+                   SOLVEUR=_F(METHODE='MUMPS',NPREC=-1),
                    );
 
 

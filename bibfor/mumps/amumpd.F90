@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -284,18 +284,18 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
             if (iaux .lt. 0) then
                 call utmess('F', 'FACTOR_55', si=iaux)
             else
-                if (.not.lpreco) then
+                if ((.not.lpreco).and.(niv.ge.2)) then
                     call utmess('A', 'FACTOR_55', si=iaux)
                 endif
             endif
         endif
         if ((slvk(4) .ne.'AUTO').and.(dmpsk%icntl(7).ne.dmpsk%infog(7)).and.&
-            (.not.lpreco).and.(dmpsk%infog(32).eq.1)) then
-            call utmess('A', 'FACTOR_50', sk=slvk(4))
+            (.not.lpreco).and.(dmpsk%infog(32).eq.1).and.(niv.ge.2)) then
+            call utmess('I', 'FACTOR_50', sk=slvk(4))
         endif
         if ((slvk(4) .ne.'AUTO').and.(dmpsk%icntl(29).ne.dmpsk%infog(7)).and.&
-            (.not.lpreco).and.(dmpsk%infog(32).eq.2)) then
-            call utmess('A', 'FACTOR_50', sk=slvk(4))
+            (.not.lpreco).and.(dmpsk%infog(32).eq.2).and.(niv.ge.2)) then
+            call utmess('I', 'FACTOR_50', sk=slvk(4))
         endif
 !
 !       -----------------------------------------------------
@@ -369,7 +369,8 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !
 ! --- TRAITEMENT CORRECTIF ICNTL(23)
 ! --- CE N'EST UTILE QU' UNE FOIS D'OU LE CONTROLE DE LPB13
-                else if (((iaux.eq.-13).or.((iaux.eq.-9).and.(iaux1.ne.0))).and.(.not.lpb13)) then
+                else if (((iaux.eq.-13).or.((iaux.eq.-9).and.(iaux1.ne.0)).or.(iaux.eq.-19))&
+                           .and.(.not.lpb13)) then
 ! ---  ICNTL(23): ON MODIFIE DES PARAMETRES POUR LA NOUVELLE TENTATIVE  ET ON REVIENT A L'ANALYSE
                     if ((niv.ge.2) .and. (.not.lpreco)) then
                         vali(1)=dmpsk%icntl(23)
@@ -423,7 +424,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
             if (iaux .lt. 0) then
                 call utmess('F', 'FACTOR_55', si=iaux)
             else
-                if (.not.lpreco) then
+                if ((.not.lpreco).and.(niv.ge.2)) then
                     call utmess('A', 'FACTOR_55', si=iaux)
                 endif
             endif
@@ -498,7 +499,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !              -- C'EST OK
         else if ((dmpsk%infog(1).eq.8).and.(lquali)) then
             iaux=dmpsk%infog(10)
-            if (.not.lpreco) then
+            if ((.not.lpreco).and.(niv.ge.2)) then
                 call utmess('A', 'FACTOR_62', si=iaux)
             endif
         else if (dmpsk%infog(1).lt.0) then
@@ -510,7 +511,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !          -- PAS GRAVE POUR ASTER.
         else
             iaux=dmpsk%infog(1)
-            if ((.not.lpreco).and.(iaux.ne.2)) then
+            if ((.not.lpreco).and.(iaux.ne.2).and.(niv.ge.2)) then
                 call utmess('A', 'FACTOR_55', si=iaux)
             endif
         endif
