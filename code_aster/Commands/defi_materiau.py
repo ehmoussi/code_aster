@@ -120,7 +120,7 @@ class MaterialDefinition(ExecuteCommand):
                                                   "{0} <{1}>"
                                                   .format(skwName, type(skw)))
                 elif type(skw) in (list, tuple) and type(skw[0]) in (float, int, numpy.float64):
-                        cRet = matBehav.setVectorOfRealValue(iName, skw)
+                        cRet = matBehav.setVectorOfRealValue(iName, list(skw))
                 else:
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"
