@@ -1620,7 +1620,6 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                         MATR_AMOR = __AMORTIH,
                         SOLVEUR=_F(
                                 STOP_SINGULIER='NON',
-                                #NPREC=15,
                                 METHODE='MUMPS',),
                         EXCIT_RESU=(
                                  _F( RESULTAT = __CHAONF,
@@ -1645,10 +1644,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                        _F(VECT_ASSE=__VECASX, FONC_MULT=__UN,),
                                        ),
                                        SOLVEUR=_F(
-                                                  #RENUM='METIS',
                                                   STOP_SINGULIER='OUI',
                                                   METHODE='MUMPS',
-                                                  #NPREC=17,
                                                   ),
                                        )
 
@@ -1664,10 +1661,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                        _F(VECT_ASSE=__VECASX, FONC_MULT=__UN,),
                                        ),
                                        SOLVEUR=_F(
-                                                  #RENUM='METIS',
                                                   STOP_SINGULIER='OUI',
                                                   METHODE='MUMPS',
-                                                  #NPREC=17,
                                                   ),
                                        )
           else:
@@ -1685,10 +1680,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                        _F(VECT_ASSE=__VECASZ, FONC_MULT=__UN,),
                                        ),
                                        SOLVEUR=_F(
-                                                  #RENUM='METIS',
                                                   STOP_SINGULIER='OUI',
                                                   METHODE='MUMPS',
-                                                  #NPREC=17,
                                                   ),
                                        )
 
@@ -1706,10 +1699,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                        _F(VECT_ASSE=__VECASZ, FONC_MULT=__UN,),
                                        ),
                                        SOLVEUR=_F(
-                                                  #RENUM='METIS',
                                                   STOP_SINGULIER='OUI',
                                                   METHODE='MUMPS',
-                                                  #NPREC=17,
                                                   ),
                                        )
         if ( (dime == "2D") and (ldevi=='OUI') ):
@@ -3581,10 +3572,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                            EXCIT=_F(VECT_ASSE=__VECASXR,
                                                     FONC_MULT=__AX_RA,),
                                            SOLVEUR=_F(
-                                                      #RENUM='METIS',
                                                       STOP_SINGULIER='OUI',
                                                       METHODE='MUMPS',
-                                                      #NPREC=15,
                                                       ),
                                            )
 
