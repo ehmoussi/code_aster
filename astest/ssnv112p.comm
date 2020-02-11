@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -308,7 +308,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   RESULTAT=EVOL,
                   NOM_CHAM='ERME_ELEM',
                   NOM_CMP='NUEST',
-                  VALE_CALC=0.148713862986,
+                  VALE_CALC=0.14871401203218093,
                   CRITERE='RELATIF',
                   MAILLE='M1',
                   ),
@@ -319,7 +319,7 @@ TEST_RESU(RESU=_F(GROUP_NO='A',
                   RESULTAT=EVOL,
                   NOM_CHAM='ERME_ELNO',
                   NOM_CMP='ERREST',
-                  VALE_CALC=9.52296383685E-05,
+                  VALE_CALC=9.52297340788059E-05,
                   CRITERE='RELATIF',
                   MAILLE='M1',
                   ),
