@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -368,7 +368,7 @@ POST_ELEM=OPER(nom="POST_ELEM",op=107,sd_prod=table_sdaster,reentrant='n',
                        ),
 
 
-         MINMAX  = FACT(statut='f',max=1,
+         MINMAX  = FACT(statut='f',max='**',
                        fr=tr("calcul des extrema en espace d'une CMP d'un champ, pour tous les instants spécifiés"),
                        regles=(UN_PARMI('CHAM_GD','RESULTAT'),
                                PRESENT_PRESENT('CHAM_GD','MODELE'),

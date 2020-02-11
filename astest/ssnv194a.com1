@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 #
-POURSUITE(CODE='OUI',);
+POURSUITE(CODE='OUI',)
 
 NB_GRAINS=10
 
@@ -51,7 +51,7 @@ VIMAX=CREA_CHAMP( OPERATION='EXTR',
                    NOM_CHAM='VARI_ELGA',
                    TYPE_MAXI='MAXI',
                    TYPE_RESU='VALE',
-                 ) ;
+                 )
 
 
 MAX_VI=POST_ELEM(
@@ -68,17 +68,36 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
            TABLE=MAX_VI,)
 
 MAX_EP=POST_ELEM(
-                   MINMAX=_F(NOM_CHAM='EPSP_ELGA',RESULTAT=SOLNL,
+                   MINMAX=(_F(NOM_CHAM='EPSP_ELGA',RESULTAT=SOLNL,
                                 NOM_CMP=('EPXX','EPYY','EPZZ'),
-                                GROUP_MA='ALL'),)
+                                GROUP_MA='ALL'),
+                           _F(NOM_CHAM='EPSP_ELGA',RESULTAT=SOLNL,
+                                NOM_CMP=('EPXX','EPYY','EPZZ'),
+                                TOUT='OUI')     ,),)
+
+IMPR_TABLE(TABLE=MAX_EP, UNITE=6)
+TEST_TABLE(REFERENCE='AUTRE_ASTER',
+           VALE_CALC= 9.3330808151363E-04,
+           VALE_REFE=9.3330799999999999E-4,
+           NOM_PARA='MIN_EPZZ',
+           TABLE=MAX_EP,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=5.0E-3,),
+                   _F(NOM_PARA='GROUP_MA',
+                     VALE_K='ALL',),
+           ),
+           )
 
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
            VALE_CALC= 9.3330808151363E-04,
            VALE_REFE=9.3330799999999999E-4,
            NOM_PARA='MIN_EPZZ',
            TABLE=MAX_EP,
-           FILTRE=_F(NOM_PARA='INST',
+           FILTRE=(_F(NOM_PARA='INST',
                      VALE=5.0E-3,),
+                   _F(NOM_PARA='TOUT',
+                     VALE_K='TOUT',),
+           ),
            )
 
 MAX_DE1=POST_ELEM(
@@ -178,7 +197,7 @@ TEST_TABLE(
            )
 
 CH1=CREA_CHAMP(OPERATION = 'EXTR',TYPE_CHAM='ELGA_EPSI_R',NOM_CHAM  = 'EPSP_ELGA',
-               RESULTAT  = SOLNL, NUME_ORDRE=9,);
+               RESULTAT  = SOLNL, NUME_ORDRE=9,)
 
 CH2=CREA_CHAMP(TYPE_CHAM = 'ELGA_NEUT_R', OPERATION = 'ASSE',MODELE = TROISD, PROL_ZERO = 'OUI',
                   ASSE = _F(TOUT='OUI',
@@ -187,7 +206,7 @@ CH2=CREA_CHAMP(TYPE_CHAM = 'ELGA_NEUT_R', OPERATION = 'ASSE',MODELE = TROISD, PR
                             NOM_CMP_RESU =('X1','X2','X3','X4','X5','X6'),),)
 
 CH3=CREA_CHAMP(OPERATION = 'DISC', TYPE_CHAM = 'NOEU_NEUT_R',
-                 CHAM_GD=CH2, MODELE = TROISD);
+                 CHAM_GD=CH2, MODELE = TROISD)
 
 CH4=CREA_CHAMP(TYPE_CHAM = 'NOEU_EPSI_R', OPERATION = 'ASSE',MODELE = TROISD,
                   ASSE = _F(TOUT='OUI',
@@ -230,13 +249,13 @@ INT3EPX=POST_ELEM(  RESULTAT=SOLNL,
 ng=10
 prefix='GM'
 intesig = {}
-intesig['INTEGRALE'] = []                        
+intesig['INTEGRALE'] = []
 for IP in range (ng):
    intesig['INTEGRALE'].append(_F(NOM_CHAM='SIEF_ELGA', NOM_CMP=('SIXX','SIYY','SIZZ'),
                                                         TYPE_MAILLE='3D',
                                                         GROUP_MA=prefix+str(IP+1)))
 
-INSIG=POST_ELEM(MODELE=TROISD,RESULTAT=SOLNL, **intesig);
+INSIG=POST_ELEM(MODELE=TROISD,RESULTAT=SOLNL, **intesig)
 
 # la table contient tous les instants et tous les grains
 
@@ -268,9 +287,9 @@ CHFON=CREA_CHAMP(OPERATION='AFFE',
                  MODELE=TROISD,
                  AFFE=(_F( TOUT='OUI', NOM_CMP = 'X1', VALE_F = MASQ),
                       )
-                );
+                )
 CHEXT=CREA_CHAMP(OPERATION = 'EXTR',TYPE_CHAM='NOEU_EPSI_R',NOM_CHAM  = 'EPSP_NOEU',
-               RESULTAT  = SOLNL, NUME_ORDRE=10,);
+               RESULTAT  = SOLNL, NUME_ORDRE=10,)
 
 
 CHNEXT=CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R', OPERATION = 'ASSE',MODELE = TROISD,
@@ -283,7 +302,7 @@ CHNEXT=CREA_CHAMP(TYPE_CHAM = 'NOEU_NEUT_R', OPERATION = 'ASSE',MODELE = TROISD,
 CHEVA=CREA_CHAMP(OPERATION='EVAL',
                  TYPE_CHAM='NOEU_NEUT_R',
                  CHAM_F=CHFON,
-                 CHAM_PARA=CHNEXT);
+                 CHAM_PARA=CHNEXT)
 
 
 INTVOL=POST_ELEM( CHAM_GD=CHEVA,
@@ -318,10 +337,10 @@ CHFON2=CREA_CHAMP(OPERATION='AFFE',
                  MODELE=TROISD,PROL_ZERO='OUI',
                  AFFE=(_F( TOUT='OUI', NOM_CMP = 'X1', VALE_F = MASQ2),
                       )
-                );
+                )
 
 CHEXT2=CREA_CHAMP(OPERATION = 'EXTR',TYPE_CHAM='ELGA_EPSI_R',NOM_CHAM  = 'EPSP_ELGA',
-               RESULTAT  = SOLNL, NUME_ORDRE=10,);
+               RESULTAT  = SOLNL, NUME_ORDRE=10,)
 
 CHNEX2=CREA_CHAMP(TYPE_CHAM = 'ELGA_NEUT_R', OPERATION = 'ASSE',MODELE = TROISD, PROL_ZERO = 'OUI',
                   ASSE = _F(TOUT='OUI',
@@ -332,7 +351,7 @@ CHNEX2=CREA_CHAMP(TYPE_CHAM = 'ELGA_NEUT_R', OPERATION = 'ASSE',MODELE = TROISD,
 CHEVA2=CREA_CHAMP(OPERATION='EVAL',
                  TYPE_CHAM='ELGA_NEUT_R',
                  CHAM_F=CHFON2,
-                 CHAM_PARA=CHNEX2);
+                 CHAM_PARA=CHNEX2)
 
 CHEVA3=CREA_CHAMP(TYPE_CHAM = 'ELGA_NEUT_R', OPERATION = 'ASSE',MODELE = TROISD, PROL_ZERO = 'OUI',
                   ASSE = _F(TOUT='OUI',
@@ -421,7 +440,7 @@ TEST_TABLE(
 CSIXX=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                  OPERATION='EXTR',
                  RESULTAT=SOLNL,NUME_ORDRE=10,
-                 NOM_CHAM='SIEF_ELGA');
+                 NOM_CHAM='SIEF_ELGA')
 
 VSIXX=POST_ELEM(MODELE=TROISD,
                 CHAM_MATER=MAT,
@@ -447,14 +466,14 @@ TEST_TABLE(
 ng=10
 prefix='GM'
 intesig = {}
-intesig['VOLUMOGRAMME'] = []                        
+intesig['VOLUMOGRAMME'] = []
 for IP in range (ng):
    intesig['VOLUMOGRAMME'].append(_F(NOM_CHAM='EPSP_ELGA',
                                      NOM_CMP=('EPXX'),
                                      GROUP_MA=prefix+str(IP+1),
                                      NB_INTERV=5,))
 
-VEPXX3=POST_ELEM(MODELE=TROISD,RESULTAT=SOLNL, **intesig);
+VEPXX3=POST_ELEM(MODELE=TROISD,RESULTAT=SOLNL, **intesig)
 
 # la table contient tous les instants et tous les grains
 
@@ -532,36 +551,36 @@ for IP in range (NB_GRAINS):
 
   FSX[IP]=RECU_FONCTION(TABLE=COMX[IP],
                            PARA_X='INST',
-                           PARA_Y='INTE_SIXX',);
+                           PARA_Y='INTE_SIXX',)
 
   FSY[IP]=RECU_FONCTION(TABLE=COMY[IP],
                            PARA_X='INST',
-                           PARA_Y='INTE_SIYY',);
+                           PARA_Y='INTE_SIYY',)
 
   FSZ[IP]=RECU_FONCTION(TABLE=COMZ[IP],
                            PARA_X='INST',
-                           PARA_Y='INTE_SIZZ',);
+                           PARA_Y='INTE_SIZZ',)
 
   FEX[IP]=RECU_FONCTION(TABLE=COMX[IP],
                            PARA_X='INST',
-                           PARA_Y='INTE_EPXX',);
-                
+                           PARA_Y='INTE_EPXX',)
+
   FEY[IP]=RECU_FONCTION(TABLE=COMY[IP],
                            PARA_X='INST',
-                           PARA_Y='INTE_EPYY',);
-                
+                           PARA_Y='INTE_EPYY',)
+
   FEZ[IP]=RECU_FONCTION(TABLE=COMZ[IP],
                            PARA_X='INST',
-                           PARA_Y='INTE_EPZZ',);
+                           PARA_Y='INTE_EPZZ',)
 
 
 motcles = {}
-motcles['COURBE'] = []                        
+motcles['COURBE'] = []
 for IP in range (NB_GRAINS):
    motcles['COURBE'].append(_F(FONC_X=FEX[IP], FONC_Y=FSX[IP]))
    motcles['COURBE'].append(_F(FONC_X=FEY[IP], FONC_Y=FSY[IP]))
    motcles['COURBE'].append(_F(FONC_X=FEZ[IP], FONC_Y=FSZ[IP]))
 
-IMPR_FONCTION(FORMAT ='XMGRACE',PILOTE='POSTSCRIPT', UNITE = 24, **motcles);
+IMPR_FONCTION(FORMAT ='XMGRACE',PILOTE='POSTSCRIPT', UNITE = 24, **motcles)
 
-FIN () ;
+FIN ()
