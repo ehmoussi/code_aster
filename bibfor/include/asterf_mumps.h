@@ -30,8 +30,8 @@
 #   include "zmumps_struc.h"
 
 ! Les deux versions de MUMPS autorisees (+ leurs pendants consortium)
-    character(len=19), parameter :: vmump1="5.1.1"
-    character(len=19), parameter :: vmump2="5.1.1consortium"
+    character(len=19), parameter :: vmump1="5.1.2"
+    character(len=19), parameter :: vmump2="5.1.2consortium"
     character(len=19), parameter :: vmump3="5.2.1"
     character(len=19), parameter :: vmump4="5.2.1consortium"
     integer :: nmxins
