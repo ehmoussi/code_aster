@@ -11,12 +11,13 @@ monMaillage = code_aster.ParallelMesh()
 monMaillage.readMedFile("xxParallelNonlinearMechanics003a")
 
 monModel = code_aster.Model(monMaillage)
-monModel.addModelingOnAllMesh(
-    code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
-# monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
-                                   # code_aster.Modelings.Tridimensional,"Vol")
-# monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
-                                   # code_aster.Modelings.Tridimensional,"Surf5")
+#monModel.addModelingOnAllMesh(
+#    code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
+monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
+                                    code_aster.Modelings.Tridimensional,"Vol")
+monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
+                                    code_aster.Modelings.Tridimensional,"Surf5")
+
 monModel.build()
 
 acier = DEFI_MATERIAU(ELAS=_F(E=200000.,
