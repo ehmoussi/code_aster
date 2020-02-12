@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import GeneralizedAssemblyMatrixDouble
+from ..Objects import GeneralizedAssemblyMatrixReal
 from ..Supervis import ExecuteCommand
 
 
 class CalcMatrAjou(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.GeneralizedAssemblyMatrixDouble`.
+    """Command that defines :class:`~code_aster.Objects.GeneralizedAssemblyMatrixReal`.
     """
     command_name = "CALC_MATR_AJOU"
 
@@ -34,7 +34,7 @@ class CalcMatrAjou(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = GeneralizedAssemblyMatrixDouble()
+        self._result = GeneralizedAssemblyMatrixReal()
 
     def post_exec(self, keywords):
         """Execute the command.

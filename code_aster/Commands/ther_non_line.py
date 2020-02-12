@@ -19,13 +19,13 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
-from ..Objects import EvolutiveThermalLoad
+from ..Objects import ThermalResult
 from ..Supervis import ExecuteCommand
 
 
 class NonLinearThermalAnalysis(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.EvolutiveThermalLoad` by assigning
-    finite elements on a :class:`~code_aster.Objects.EvolutiveThermalLoad`."""
+    """Command that creates the :class:`~code_aster.Objects.ThermalResult` by assigning
+    finite elements on a :class:`~code_aster.Objects.ThermalResult`."""
     command_name = "THER_NON_LINE"
 
     def create_result(self, keywords):
@@ -37,7 +37,7 @@ class NonLinearThermalAnalysis(ExecuteCommand):
         if("reuse" in keywords):
             self._result = keywords["reuse"]
         else:
-            self._result = EvolutiveThermalLoad()
+            self._result = ThermalResult()
 
     def post_exec(self, keywords):
         """Execute the command.

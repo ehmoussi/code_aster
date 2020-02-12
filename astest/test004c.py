@@ -31,23 +31,23 @@ beton = DEFI_MATERIAU(ELAS = _F(E = Young,
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( beton )
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 
 # Chargement
-imposedDof1 = code_aster.DisplacementDouble()
+imposedDof1 = code_aster.DisplacementReal()
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dy, 0.0 )
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
-charMeca1 = code_aster.ImposedDisplacementDouble(monModel)
+charMeca1 = code_aster.ImposedDisplacementReal(monModel)
 charMeca1.setValue( imposedDof1, "N0" )
 charMeca1.build()
 
 #TODO un chargement avec liaison_ddl
 
-imposedDof2 = code_aster.DisplacementDouble()
+imposedDof2 = code_aster.DisplacementReal()
 imposedDof2.setValue( code_aster.PhysicalQuantityComponent.Dx, 1.0 )
-charMeca2 = code_aster.ImposedDisplacementDouble(monModel)
+charMeca2 = code_aster.ImposedDisplacementReal(monModel)
 charMeca2.setValue( imposedDof1, "N1" )
 charMeca2.build()
 
@@ -59,7 +59,7 @@ timeList.setTimeList( temps )
 timeList.build()
 
 # Analyse non-linéaire pour cette première phase
-statNonLine1 = code_aster.StaticNonLinearAnalysis()
+statNonLine1 = code_aster.NonLinearStaticAnalysis()
 statNonLine1.addStandardExcitation( charMeca1 )
 statNonLine1.addStandardExcitation( charMeca2 )
 statNonLine1.setModel( monModel )
@@ -84,7 +84,7 @@ timeList.build()
 
 
 # Analyse non-linéaire pour la seconde phase (avec pilotage)
-statNonLine2 = code_aster.StaticNonLinearAnalysis()
+statNonLine2 = code_aster.NonLinearStaticAnalysis()
 statNonLine2.addStandardExcitation( charMeca1 )
 statNonLine2.addStandardExcitation( charMeca2 )
 statNonLine2.setModel( monModel )
@@ -96,7 +96,7 @@ statNonLine2.setLoadStepManager( timeList )
 # Define the initial state of the current analysis
 start = code_aster.State(0)
 # from the last computed step of the previous analysis
-#start.setFromNonLinearEvolution( resu1, 1.0 )
+#start.setFromNonLinearResult( resu1, 1.0 )
 #statNonLine2.setInitialState( start )
 
 pilotage=code_aster.Driving( code_aster.DrivingType.ElasticityLimit )

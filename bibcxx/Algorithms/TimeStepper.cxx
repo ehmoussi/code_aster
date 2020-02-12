@@ -25,7 +25,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-bool TimeStepperClass::setValues( const VectorDouble &values ) {
+bool TimeStepperClass::setValues( const VectorReal &values ) {
     if ( _values->isAllocated() )
         _values->deallocate();
 
@@ -36,7 +36,7 @@ bool TimeStepperClass::setValues( const VectorDouble &values ) {
 
     int compteur = 0;
     double save = 0.;
-    for ( VectorDoubleCIter tmp = values.begin(); tmp != values.end(); ++tmp ) {
+    for ( VectorRealCIter tmp = values.begin(); tmp != values.end(); ++tmp ) {
         ( *_values )[compteur] = *tmp;
         const double &curVal = *tmp;
         if ( compteur != 0 && save >= curVal )

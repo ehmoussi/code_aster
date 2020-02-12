@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AcousticsLoad
+from ..Objects import AcousticLoad
 from ..Supervis import ExecuteCommand
 
 
 class AffeCharAcou(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.AcousticsLoad`.
+    """Command that defines :class:`~code_aster.Objects.AcousticLoad`.
     """
     command_name = "AFFE_CHAR_ACOU"
 
@@ -34,6 +34,6 @@ class AffeCharAcou(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = AcousticsLoad(keywords["MODELE"])
+        self._result = AcousticLoad(keywords["MODELE"])
 
 AFFE_CHAR_ACOU = AffeCharAcou.run

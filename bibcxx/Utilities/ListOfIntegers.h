@@ -39,9 +39,9 @@
 class ListOfIntegersClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.BINT' */
-    JeveuxVectorDouble _bint;
+    JeveuxVectorReal _bint;
     /** @brief Objet Jeveux '.LPAS' */
-    JeveuxVectorDouble _lpas;
+    JeveuxVectorReal _lpas;
     /** @brief Objet Jeveux '.NBPA' */
     JeveuxVectorLong _nbPa;
     /** @brief Objet Jeveux '.VALE' */
@@ -64,8 +64,8 @@ class ListOfIntegersClass : public DataStructure {
      */
     ListOfIntegersClass( const std::string name )
         : DataStructure( name, 19, "LISTIS", Permanent ),
-          _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
-          _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
+          _bint( JeveuxVectorReal( getName() + ".BINT" ) ),
+          _lpas( JeveuxVectorReal( getName() + ".LPAS" ) ),
           _nbPa( JeveuxVectorLong( getName() + ".NBPA" ) ),
           _vale( JeveuxVectorLong( getName() + ".VALE" ) ){};
 };

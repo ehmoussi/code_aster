@@ -31,7 +31,7 @@
 #include "DataStructures/DataStructure.h"
 #include "Algorithms/GenericStepper.h"
 
-typedef VectorDouble::const_iterator VectorDoubleCIter;
+typedef VectorReal::const_iterator VectorRealCIter;
 
 /**
  * @class TimeStepperClass
@@ -41,7 +41,7 @@ typedef VectorDouble::const_iterator VectorDoubleCIter;
 class TimeStepperClass : public DataStructure, public GenericStepper {
   private:
     /** @brief Liste des instants */
-    JeveuxVectorDouble _values;
+    JeveuxVectorReal _values;
 
   public:
     /**
@@ -127,15 +127,15 @@ class TimeStepperClass : public DataStructure, public GenericStepper {
      * @brief Fonction permettant de mettre a jour le stepper
      * @return true si tout s'est bien passé
      */
-    bool operator=( const VectorDouble &vecDouble ) {
-        return setValues( vecDouble );
+    bool operator=( const VectorReal &vecReal ) {
+        return setValues( vecReal );
     };
 
     /**
      * @brief Fonction permettant de fixer la liste de pas de temps
      * @param values Liste des valeurs
      */
-    bool setValues( const VectorDouble &values ) ;
+    bool setValues( const VectorReal &values ) ;
 
     /**
      * @brief Fonction permettant de connaître le nombre de pas de temps

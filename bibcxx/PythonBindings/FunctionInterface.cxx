@@ -51,9 +51,9 @@ void exportFunctionToPython() {
         .def( "setAsConstant", &FunctionClass::setAsConstant );
 
     // Candidates for setValues
-    void ( FunctionComplexClass::*c1 )( const VectorDouble &absc, const VectorDouble &ord ) =
+    void ( FunctionComplexClass::*c1 )( const VectorReal &absc, const VectorReal &ord ) =
         &FunctionComplexClass::setValues;
-    void ( FunctionComplexClass::*c2 )( const VectorDouble &absc, const VectorComplex &ord ) =
+    void ( FunctionComplexClass::*c2 )( const VectorReal &absc, const VectorComplex &ord ) =
         &FunctionComplexClass::setValues;
 
     py::class_< FunctionComplexClass, FunctionComplexClass::FunctionComplexPtr,

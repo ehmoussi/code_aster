@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FieldOnCellsDouble, MatchingMeshes
+from ..Objects import FieldOnCellsReal, MatchingMeshes
 from ..Supervis import ExecuteCommand
 
 
@@ -43,7 +43,7 @@ class FieldProjector(ExecuteCommand):
             self._result = type(keywords["RESULTAT"])()
             return
         if chamGd != None and methode == "SOUS_POINT":
-            self._result = FieldOnCellsDouble()
+            self._result = FieldOnCellsReal()
             return
         else:
             self._result = type(chamGd)()

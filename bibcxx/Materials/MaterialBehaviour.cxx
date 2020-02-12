@@ -28,9 +28,9 @@
 #include "Materials/MaterialBehaviour.h"
 
 bool GeneralMaterialBehaviourClass::buildJeveuxVectors(
-    JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
+    JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
-    std::vector< JeveuxVectorDouble > &userDoubles,
+    std::vector< JeveuxVectorReal > &userReals,
     std::vector< JeveuxVectorChar8 > &userFunctions )
 {
     const int nbOfMaterialProperties = getNumberOfPropertiesWithValue();
@@ -57,8 +57,8 @@ bool GeneralMaterialBehaviourClass::buildJeveuxVectors(
     for ( int i = 0; i < _vectKW.size() / 2; ++i ) {
         auto nameOfProperty2 = _vectKW[2 * i];
         auto nameOfProperty = _vectKW[2 * i + 1];
-        auto curIter1 = _mapOfDoubleMaterialProperties.find( nameOfProperty2 );
-        if ( curIter1 == _mapOfDoubleMaterialProperties.end() )
+        auto curIter1 = _mapOfRealMaterialProperties.find( nameOfProperty2 );
+        if ( curIter1 == _mapOfRealMaterialProperties.end() )
             continue;
 
         auto curIter = *curIter1;
@@ -159,16 +159,16 @@ bool GeneralMaterialBehaviourClass::buildJeveuxVectors(
     }
 
     int position3 = 0;
-    for ( auto curIter : _mapOfVectorDoubleMaterialProperties ) {
+    for ( auto curIter : _mapOfVectorRealMaterialProperties ) {
         std::string nameOfProperty = curIter.second.getName();
         if ( curIter.second.hasValue() ) {
             nameOfProperty.resize( 16, ' ' );
             ( *char16Values )[position] = nameOfProperty.c_str();
-            ( *char16Values )[position2] = userDoubles[position3]->getName();
+            ( *char16Values )[position2] = userReals[position3]->getName();
 
             auto values = curIter.second.getValue();
-            userDoubles[position3]->allocate( Permanent, values.size() );
-            ( *userDoubles[position3] ) = values;
+            userReals[position3]->allocate( Permanent, values.size() );
+            ( *userReals[position3] ) = values;
             ++position;
             ++position2;
             ++position3;
@@ -254,7 +254,7 @@ bool MetaTractionMaterialBehaviourClass::buildTractionFunction( FunctionPtr &dou
 
 int GeneralMaterialBehaviourClass::getNumberOfPropertiesWithValue() const {
     int toReturn = 0;
-    for ( auto curIter : _mapOfDoubleMaterialProperties )
+    for ( auto curIter : _mapOfRealMaterialProperties )
         if ( curIter.second.hasValue() )
             ++toReturn;
 
@@ -274,7 +274,7 @@ int GeneralMaterialBehaviourClass::getNumberOfPropertiesWithValue() const {
         if ( curIter.second.hasValue() )
             ++toReturn;
 
-    for ( auto curIter : _mapOfVectorDoubleMaterialProperties )
+    for ( auto curIter : _mapOfVectorRealMaterialProperties )
         if ( curIter.second.hasValue() )
             ++toReturn;
 
@@ -290,10 +290,10 @@ int GeneralMaterialBehaviourClass::getNumberOfPropertiesWithValue() const {
 };
 
 
-bool TherNlMaterialBehaviourClass::buildJeveuxVectors(
-    JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
+bool ThermalNlMaterialBehaviourClass::buildJeveuxVectors(
+    JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
-    std::vector< JeveuxVectorDouble > &userDoubles,
+    std::vector< JeveuxVectorReal > &userReals,
     std::vector< JeveuxVectorChar8 > &userFunctions )
 {
     const auto curIter = _mapOfFunctionMaterialProperties.find( "Beta" )->second;
@@ -314,6 +314,6 @@ bool TherNlMaterialBehaviourClass::buildJeveuxVectors(
                                                                 char16Values,
                                                                 ordr,
                                                                 kOrd,
-                                                                userDoubles,
+                                                                userReals,
                                                                 userFunctions);
 };

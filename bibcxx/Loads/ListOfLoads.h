@@ -103,7 +103,7 @@ class ListOfLoadsClass : public DataStructure {
      * @param func multiplier function
      */
     void addLoad( const KinematicsLoadPtr &currentLoad,
-                  const FunctionPtr &func = emptyDoubleFunction ) {
+                  const FunctionPtr &func = emptyRealFunction ) {
         _isEmpty = true;
         _listOfKinematicsLoads.push_back( currentLoad );
         _listOfKineFun.push_back( func );
@@ -137,7 +137,7 @@ class ListOfLoadsClass : public DataStructure {
      * @param func multiplier function
      */
     void addLoad( const GenericMechanicalLoadPtr &currentLoad,
-                  const FunctionPtr &func = emptyDoubleFunction ) {
+                  const FunctionPtr &func = emptyRealFunction ) {
         _isEmpty = true;
         _listOfMechanicalLoads.push_back( currentLoad );
         _listOfMechaFun.push_back( func );
@@ -172,7 +172,7 @@ class ListOfLoadsClass : public DataStructure {
      * @param func multiplier function
      */
     void addLoad( const ParallelMechanicalLoadPtr &currentLoad,
-                  const FunctionPtr &func = emptyDoubleFunction ) {
+                  const FunctionPtr &func = emptyRealFunction ) {
         _isEmpty = true;
         _listOfParallelMechanicalLoads.push_back( currentLoad );
         _listOfParaMechaFun.push_back( func );

@@ -43,26 +43,26 @@ class KinematicsLoadClass : public DataStructure {
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
-    /** @typedef std::list de DoubleLoadDisplacement */
-    typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
-    /** @typedef Iterateur sur ListDoubleDisp */
-    typedef ListDoubleDisp::iterator ListDoubleDispIter;
+    /** @typedef std::list de RealLoadDisplacement */
+    typedef std::list< RealLoadDisplacement > ListRealDisp;
+    /** @typedef Iterateur sur ListRealDisp */
+    typedef ListRealDisp::iterator ListRealDispIter;
 
-    /** @typedef std::list de DoubleLoadTemperature */
-    typedef std::list< DoubleLoadTemperature > ListDoubleTemp;
+    /** @typedef std::list de RealLoadTemperature */
+    typedef std::list< RealLoadTemperature > ListRealTemp;
     typedef std::list< FunctionLoadTemperature > ListFunctionTemp;
-    /** @typedef Iterateur sur ListDoubleTemp */
-    typedef ListDoubleTemp::iterator ListDoubleTempIter;
+    /** @typedef Iterateur sur ListRealTemp */
+    typedef ListRealTemp::iterator ListRealTempIter;
 
     /** @brief Modele */
     ModelPtr _model;
     /** @brief Listes des valeurs imposees DEPL_R et TEMP_R */
-    ListDoubleDisp _listOfDoubleImposedDisplacement;
-    ListDoubleTemp _listOfDoubleImposedTemperature;
+    ListRealDisp _listOfRealImposedDisplacement;
+    ListRealTemp _listOfRealImposedTemperature;
     ListFunctionTemp _listOfFunctionImposedTemperature;
     JeveuxVectorLong _intParam;
     JeveuxVectorChar8 _charParam;
-    JeveuxVectorDouble _doubleParam;
+    JeveuxVectorReal _doubleParam;
     /** @brief La SD est-elle vide ? */
     bool _isEmpty;
 
@@ -142,8 +142,8 @@ class KinematicsMechanicalLoadClass : public KinematicsLoadClass {
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-        DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-        _listOfDoubleImposedDisplacement.push_back( resu );
+        RealLoadDisplacement resu( meshEnt, coordinate, value );
+        _listOfRealImposedDisplacement.push_back( resu );
         return true;
     };
 
@@ -179,8 +179,8 @@ class KinematicsMechanicalLoadClass : public KinematicsLoadClass {
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-        DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-        _listOfDoubleImposedDisplacement.push_back( resu );
+        RealLoadDisplacement resu( meshEnt, coordinate, value );
+        _listOfRealImposedDisplacement.push_back( resu );
         return true;
     };
 
@@ -241,8 +241,8 @@ class KinematicsThermalLoadClass : public KinematicsLoadClass {
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-        DoubleLoadTemperature resu( meshEnt, coordinate, value );
-        _listOfDoubleImposedTemperature.push_back( resu );
+        RealLoadTemperature resu( meshEnt, coordinate, value );
+        _listOfRealImposedTemperature.push_back( resu );
         return true;
     };
 
@@ -277,8 +277,8 @@ class KinematicsThermalLoadClass : public KinematicsLoadClass {
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-        DoubleLoadTemperature resu( meshEnt, coordinate, value );
-        _listOfDoubleImposedTemperature.push_back( resu );
+        RealLoadTemperature resu( meshEnt, coordinate, value );
+        _listOfRealImposedTemperature.push_back( resu );
         return true;
     };
 

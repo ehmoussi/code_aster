@@ -83,7 +83,7 @@ bool CodedMaterialClass::allocate(bool force) {
         const int nbMB = curIter->getNumberOfMaterialBehviour();
         for( int i = 0; i < nbMB; ++i )
         {
-            auto vecVec1 = curIter->getBehaviourVectorOfDoubleValues( i );
+            auto vecVec1 = curIter->getBehaviourVectorOfRealValues( i );
             auto vecVec2 = curIter->getBehaviourVectorOfFunctions( i );
             for( auto vec1 : vecVec1 )
                 if( vec1->exists() )
@@ -91,7 +91,7 @@ bool CodedMaterialClass::allocate(bool force) {
                     const std::string name( vec1->getName(), 0, 16 );
                     const std::string name1 = name + ".LISV_VR";
                     const std::string name2 = name + ".LISV_IA";
-                    _vecOfR8.push_back( JeveuxVectorDouble( name1 ) );
+                    _vecOfR8.push_back( JeveuxVectorReal( name1 ) );
                     _vecOfIa.push_back( JeveuxVectorLong( name2 ) );
                 }
             for( auto vec2 : vecVec2 )
@@ -100,7 +100,7 @@ bool CodedMaterialClass::allocate(bool force) {
                     const std::string name( vec2->getName(), 0, 16 );
                     const std::string name1 = name + ".LISV_VR";
                     const std::string name2 = name + ".LISV_IA";
-                    _vecOfR8.push_back( JeveuxVectorDouble( name1 ) );
+                    _vecOfR8.push_back( JeveuxVectorReal( name1 ) );
                     _vecOfIa.push_back( JeveuxVectorLong( name2 ) );
                 }
         }

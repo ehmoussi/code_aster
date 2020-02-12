@@ -19,9 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (FullHarmonicResultsContainer,
-                       FullTransientResultsContainer, MechanicalModeContainer,
-                       NonLinearEvolutionContainer)
+from ..Objects import (FullHarmonicResult,
+                       FullTransientResult, ModeResult,
+                       NonLinearResult)
 from ..Supervis import ExecuteCommand
 
 
@@ -39,21 +39,21 @@ class RestSousStrucOper(ExecuteCommand):
         resultat = keywords.get("RESULTAT")
         if resu_gene is not None:
             if resu_gene.getType() == "TRAN_GENE":
-                self._result = FullTransientResultsContainer()
+                self._result = FullTransientResult()
             if resu_gene.getType() == "MODE_GENE":
-                self._result = MechanicalModeContainer()
+                self._result = ModeResult()
             if resu_gene.getType() == "MODE_CYCL":
-                self._result = MechanicalModeContainer()
+                self._result = ModeResult()
             if resu_gene.getType() == "HARM_GENE":
-                self._result = FullHarmonicResultsContainer()
+                self._result = FullHarmonicResult()
 
         if resultat is not None:
             if resultat.getType() == "EVOL_NOLI":
-                self._result = NonLinearEvolutionContainer()
+                self._result = NonLinearResult()
             if resultat.getType() == "DYNA_TRANS":
-                self._result = FullTransientResultsContainer()
+                self._result = FullTransientResult()
             if resultat.getType() == "MODE_MECA":
-                self._result = MechanicalModeContainer()
+                self._result = ModeResult()
 
     def post_exec(self, keywords):
         """Execute the command.
@@ -78,7 +78,7 @@ class RestSousStrucOper(ExecuteCommand):
                     if mat is None: mat = macroElem.getImpedanceStiffnessMatrix()
                     if mat is None: mat = macroElem.getMassMatrix()
                     if mat is None: mat = macroElem.getComplexStiffnessMatrix()
-                    if mat is None: mat = macroElem.getDoubleStiffnessMatrix()
+                    if mat is None: mat = macroElem.getRealStiffnessMatrix()
                     if mat is not None:
                         modele = mat.getModel()
                         self._result.appendModelOnAllRanks(modele)

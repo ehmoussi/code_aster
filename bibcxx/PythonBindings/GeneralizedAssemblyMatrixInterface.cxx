@@ -33,9 +33,9 @@ namespace py = boost::python;
 
 void exportGeneralizedAssemblyMatrixToPython() {
 
-    bool ( GenericGeneralizedAssemblyMatrixClass::*c1 )( const MechanicalModeContainerPtr & ) =
+    bool ( GenericGeneralizedAssemblyMatrixClass::*c1 )( const ModeResultPtr & ) =
         &GenericGeneralizedAssemblyMatrixClass::setModalBasis;
-    bool ( GenericGeneralizedAssemblyMatrixClass::*c2 )( const GeneralizedModeContainerPtr & ) =
+    bool ( GenericGeneralizedAssemblyMatrixClass::*c2 )( const GeneralizedModeResultPtr & ) =
         &GenericGeneralizedAssemblyMatrixClass::setModalBasis;
 
     py::class_< GenericGeneralizedAssemblyMatrixClass, GenericGeneralizedAssemblyMatrixPtr,
@@ -50,14 +50,14 @@ void exportGeneralizedAssemblyMatrixToPython() {
         .def( "setModalBasis", c1 )
         .def( "setModalBasis", c2 );
 
-    py::class_< GeneralizedAssemblyMatrixDoubleClass, GeneralizedAssemblyMatrixDoublePtr,
+    py::class_< GeneralizedAssemblyMatrixRealClass, GeneralizedAssemblyMatrixRealPtr,
                 py::bases< GenericGeneralizedAssemblyMatrixClass > >(
-        "GeneralizedAssemblyMatrixDouble", py::no_init )
+        "GeneralizedAssemblyMatrixReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyMatrixDoubleClass >))
+              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyMatrixRealClass >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< GeneralizedAssemblyMatrixDoubleClass, std::string >));
+                  &initFactoryPtr< GeneralizedAssemblyMatrixRealClass, std::string >));
 
     py::class_< GeneralizedAssemblyMatrixComplexClass, GeneralizedAssemblyMatrixComplexPtr,
                 py::bases< GenericGeneralizedAssemblyMatrixClass > >(

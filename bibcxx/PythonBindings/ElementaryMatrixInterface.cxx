@@ -32,28 +32,28 @@ namespace py = boost::python;
 void exportElementaryMatrixToPython() {
 
     py::class_< BaseElementaryMatrixClass, BaseElementaryMatrixPtr,
-            py::bases< DataStructure > >( "ElementaryMatrixDisplacementDouble", py::no_init )
+            py::bases< DataStructure > >( "ElementaryMatrixDisplacementReal", py::no_init )
     // fake initFactoryPtr: not buildable
     // fake initFactoryPtr: not buildable
         .def( "addFiniteElementDescriptor",
-              &ElementaryMatrixDisplacementDoubleClass::addFiniteElementDescriptor )
+              &ElementaryMatrixDisplacementRealClass::addFiniteElementDescriptor )
         .def( "getFiniteElementDescriptors",
-              &ElementaryMatrixDisplacementDoubleClass::getFiniteElementDescriptors )
-        .def( "getMaterialOnMesh", &ElementaryMatrixDisplacementDoubleClass::getMaterialOnMesh )
-        .def( "getModel", &ElementaryMatrixDisplacementDoubleClass::getModel )
-        .def( "setMaterialOnMesh", &ElementaryMatrixDisplacementDoubleClass::setMaterialOnMesh )
-        .def( "setModel", &ElementaryMatrixDisplacementDoubleClass::setModel );
+              &ElementaryMatrixDisplacementRealClass::getFiniteElementDescriptors )
+        .def( "getMaterialOnMesh", &ElementaryMatrixDisplacementRealClass::getMaterialOnMesh )
+        .def( "getModel", &ElementaryMatrixDisplacementRealClass::getModel )
+        .def( "setMaterialOnMesh", &ElementaryMatrixDisplacementRealClass::setMaterialOnMesh )
+        .def( "setModel", &ElementaryMatrixDisplacementRealClass::setModel );
 
-    py::class_< ElementaryMatrixDisplacementDoubleClass,
-            ElementaryMatrixDisplacementDoubleClass::ElementaryMatrixPtr,
-            py::bases< BaseElementaryMatrixClass > >( "ElementaryMatrixDisplacementDouble",
+    py::class_< ElementaryMatrixDisplacementRealClass,
+            ElementaryMatrixDisplacementRealClass::ElementaryMatrixPtr,
+            py::bases< BaseElementaryMatrixClass > >( "ElementaryMatrixDisplacementReal",
                                                      py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementDoubleClass >))
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementRealClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementDoubleClass,
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixDisplacementRealClass,
                                                 std::string >))
-        .def( "update", &ElementaryMatrixDisplacementDoubleClass::update );
+        .def( "update", &ElementaryMatrixDisplacementRealClass::update );
 
     py::class_< ElementaryMatrixDisplacementComplexClass,
             ElementaryMatrixDisplacementComplexClass::ElementaryMatrixPtr,
@@ -66,16 +66,16 @@ void exportElementaryMatrixToPython() {
                                                 std::string >))
         .def( "update", &ElementaryMatrixDisplacementComplexClass::update );
 
-    py::class_< ElementaryMatrixTemperatureDoubleClass,
-            ElementaryMatrixTemperatureDoubleClass::ElementaryMatrixPtr,
-            py::bases< BaseElementaryMatrixClass > >( "ElementaryMatrixTemperatureDouble",
+    py::class_< ElementaryMatrixTemperatureRealClass,
+            ElementaryMatrixTemperatureRealClass::ElementaryMatrixPtr,
+            py::bases< BaseElementaryMatrixClass > >( "ElementaryMatrixTemperatureReal",
                                                      py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryMatrixTemperatureDoubleClass >))
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixTemperatureRealClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryMatrixTemperatureDoubleClass,
+              py::make_constructor(&initFactoryPtr< ElementaryMatrixTemperatureRealClass,
                                                 std::string >))
-        .def( "update", &ElementaryMatrixTemperatureDoubleClass::update );
+        .def( "update", &ElementaryMatrixTemperatureRealClass::update );
 
     py::class_< ElementaryMatrixPressureComplexClass,
             ElementaryMatrixPressureComplexClass::ElementaryMatrixPtr,

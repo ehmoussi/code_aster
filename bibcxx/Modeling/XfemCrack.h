@@ -74,9 +74,9 @@ class XfemCrackClass : public DataStructure {
      * cohesive case */
     std::vector< std::string > _cohesiveCrackTipForPropagation;
     /** @brief Field defining the normal level set */
-    FieldOnNodesDoublePtr _normalLevelSetField;
+    FieldOnNodesRealPtr _normalLevelSetField;
     /** @brief Field defining the tangential level set */
-    FieldOnNodesDoublePtr _tangentialLevelSetField;
+    FieldOnNodesRealPtr _tangentialLevelSetField;
     /** @brief MeshEntity defining the enriched elements */
     std::vector< std::string > _enrichedElements;
     /** @brief Name of the discontinuous field */
@@ -93,21 +93,21 @@ class XfemCrackClass : public DataStructure {
     std::vector< double > _pointForJunctingCracks;
 
     /** @brief Nodal Field named '.GRLTNO' */
-    FieldOnNodesDoublePtr _tangentialLevelSetGradient;
+    FieldOnNodesRealPtr _tangentialLevelSetGradient;
     /** @brief Nodal Field  named '.GRLNNO' */
-    FieldOnNodesDoublePtr _normalLevelSetGradient;
+    FieldOnNodesRealPtr _normalLevelSetGradient;
     /** @brief Nodal Field named '.BASLOC' */
-    FieldOnNodesDoublePtr _localBasis;
-    /** @brief JeveuxVectorDouble  named '.FONDFISS' */
-    JeveuxVectorDouble _crackTipCoords;
-    /** @brief JeveuxVectorDouble  named '.BASEFOND' */
-    JeveuxVectorDouble _crackTipBasis;
+    FieldOnNodesRealPtr _localBasis;
+    /** @brief JeveuxVectorReal  named '.FONDFISS' */
+    JeveuxVectorReal _crackTipCoords;
+    /** @brief JeveuxVectorReal  named '.BASEFOND' */
+    JeveuxVectorReal _crackTipBasis;
     /** @brief JeveuxVectorLong  named '.FONDMULT' */
     JeveuxVectorLong _crackTipMultiplicity;
-    /** @brief JeveuxVectorDouble  named '.CARAFOND' */
-    JeveuxVectorDouble _crackTipCharacteristics;
-    /** @brief JeveuxVectorDouble  named '.FOND.TAILLE_R' */
-    JeveuxVectorDouble _elementSize;
+    /** @brief JeveuxVectorReal  named '.CARAFOND' */
+    JeveuxVectorReal _crackTipCharacteristics;
+    /** @brief JeveuxVectorReal  named '.FOND.TAILLE_R' */
+    JeveuxVectorReal _elementSize;
     /** @brief JeveuxVectorLong  named '.GROUP_NO_ENRI' */
     JeveuxVectorLong _enrichedNodes;
     /** @brief JeveuxVectorLong  named '.MAILFISS.CTIP' */
@@ -232,12 +232,12 @@ class XfemCrackClass : public DataStructure {
         }
     }
 
-    FieldOnNodesDoublePtr getNormalLevelSetField() const {
+    FieldOnNodesRealPtr getNormalLevelSetField() const {
         _normalLevelSetField->updateValuePointers();
         return _normalLevelSetField;
     }
 
-    void setNormalLevelSetField( const FieldOnNodesDoublePtr &normalLevelSetField ) {
+    void setNormalLevelSetField( const FieldOnNodesRealPtr &normalLevelSetField ) {
         if ( !( _crackShape && _crackLipsEntity.size() != 0 && _normalLevelSetFunction ) ) {
             _normalLevelSetField = normalLevelSetField;
         } else {
@@ -246,12 +246,12 @@ class XfemCrackClass : public DataStructure {
         }
     }
 
-    FieldOnNodesDoublePtr getTangentialLevelSetField() const {
+    FieldOnNodesRealPtr getTangentialLevelSetField() const {
         _tangentialLevelSetField->updateValuePointers();
         return _tangentialLevelSetField;
     }
 
-    void setTangentialLevelSetField( const FieldOnNodesDoublePtr &tangentialLevelSet ) {
+    void setTangentialLevelSetField( const FieldOnNodesRealPtr &tangentialLevelSet ) {
         _tangentialLevelSetField = tangentialLevelSet;
     }
 

@@ -1,5 +1,5 @@
-#ifndef FIELDONELEMENTS_H_
-#define FIELDONELEMENTS_H_
+#ifndef FIELDONCELLS_H_
+#define FIELDONCELLS_H_
 
 /**
  * @file FieldOnCells.h
@@ -46,7 +46,7 @@
 template < class ValueType > class FieldOnCellsClass : public DataFieldClass {
   private:
     typedef SimpleFieldOnCellsClass< ValueType > SimpleFieldOnCellsValueTypeClass;
-    typedef boost::shared_ptr< SimpleFieldOnCellsDoubleClass >
+    typedef boost::shared_ptr< SimpleFieldOnCellsRealClass >
         SimpleFieldOnCellsValueTypePtr;
 
     /** @brief Vecteur Jeveux '.CELD' */
@@ -172,14 +172,14 @@ template < class ValueType > class FieldOnCellsClass : public DataFieldClass {
     friend class FieldBuilder;
 };
 
-/** @typedef FieldOnCellsClassDouble Class d'une carte de double */
-typedef FieldOnCellsClass< double > FieldOnCellsDoubleClass;
+/** @typedef FieldOnCellsClassReal Class d'une carte de double */
+typedef FieldOnCellsClass< double > FieldOnCellsRealClass;
 
 /**
- * @typedef FieldOnCellsPtrDouble
+ * @typedef FieldOnCellsPtrReal
  * @brief Definition d'un champ aux éléments de double
  */
-typedef boost::shared_ptr< FieldOnCellsDoubleClass > FieldOnCellsDoublePtr;
+typedef boost::shared_ptr< FieldOnCellsRealClass > FieldOnCellsRealPtr;
 
 /** @typedef FieldOnCellsClassLong Class d'une carte de long */
 typedef FieldOnCellsClass< ASTERINTEGER > FieldOnCellsLongClass;
@@ -190,4 +190,4 @@ typedef FieldOnCellsClass< ASTERINTEGER > FieldOnCellsLongClass;
  */
 typedef boost::shared_ptr< FieldOnCellsLongClass > FieldOnCellsLongPtr;
 
-#endif /* FIELDONELEMENTS_H_ */
+#endif /* FIELDONCELLS_H_ */

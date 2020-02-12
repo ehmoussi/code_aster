@@ -31,25 +31,25 @@ from .datastructure_ext import (AsFloat, AsInteger, DataStructure,
                                 OnlyParallelObject, PyDataStructure)
 
 # extend DataStructures using metaclasses
-from .acousticsload_ext import AcousticsLoad
+from .acousticload_ext import AcousticLoad
 from .assemblymatrix_ext import (AssemblyMatrixDisplacementComplex,
-                                 AssemblyMatrixDisplacementDouble)
+                                 AssemblyMatrixDisplacementReal)
 from .dofnumbering_ext import DOFNumbering
 from .dynamicmacroelement_ext import DynamicMacroElement
-from .dynamicresults_ext import TransientGeneralizedResultsContainer
+from .dynamicresults_ext import TransientGeneralizedResult
 from .elementarycharacteristics_ext import ElementaryCharacteristics
 from .elementarymatrix_ext import (ElementaryMatrixDisplacementComplex,
-                                   ElementaryMatrixDisplacementDouble,
+                                   ElementaryMatrixDisplacementReal,
                                    ElementaryMatrixPressureComplex,
-                                   ElementaryMatrixTemperatureDouble)
-from .FieldOnCells_ext import FieldOnCellsDouble
-from .fieldonnodes_ext import FieldOnNodesDouble
+                                   ElementaryMatrixTemperatureReal)
+from .fieldoncells_ext import FieldOnCellsReal
+from .fieldonnodes_ext import FieldOnNodesReal
 from .formula_ext import Formula
 from .function_ext import Function
 from .generalizedassemblymatrix_ext import (GeneralizedAssemblyMatrixComplex,
-                                            GeneralizedAssemblyMatrixDouble)
+                                            GeneralizedAssemblyMatrixReal)
 from .generalizedassemblyvector_ext import (GeneralizedAssemblyVectorComplex,
-                                            GeneralizedAssemblyVectorDouble)
+                                            GeneralizedAssemblyVectorReal)
 from .generalizedmodel_ext import GeneralizedModel
 from .listoffloats import ListOfFloats
 from .listofintegers_ext import ListOfIntegers
@@ -59,14 +59,14 @@ from .mechanicalload_ext import GenericMechanicalLoad
 from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
-from .pcfieldonmesh_ext import PCFieldOnMeshDouble
-from .resultscontainer_ext import ResultsContainer
+from .pcfieldonmesh_ext import PCFieldOnMeshReal
+from .resultscontainer_ext import Result
 from .surface_ext import Surface
 from .table_ext import Table
 from .tablecontainer_ext import TableContainer
 from .thermalload_ext import ThermalLoad
 from .timestepmanager_ext import TimeStepManager
-from .transientgeneralizedresultscontainer_ext import TransientGeneralizedResultsContainer
+from .transientgeneralizedresultscontainer_ext import TransientGeneralizedResult
 from .xfemcrack_ext import XfemCrack
 
 # Define unusable objects

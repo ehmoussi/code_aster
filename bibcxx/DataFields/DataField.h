@@ -1,5 +1,5 @@
-#ifndef GENERICDATAFIELD_H_
-#define GENERICDATAFIELD_H_
+#ifndef DATAFIELD_H_
+#define DATAFIELD_H_
 
 /**
  * @file DataField.h
@@ -30,7 +30,7 @@
 
 /**
  * @class DataFieldClass
- * @brief Generic class which describe a field of data
+ * @brief class which describe a field of data
  * @author Nicolas Sellenet
  */
 class DataFieldClass : public DataStructure {
@@ -60,8 +60,8 @@ class DataFieldClass : public DataStructure {
 };
 
 /**
- * @typedef DataFieldPtrDouble
+ * @typedef DataFieldPtrReal
  */
 typedef boost::shared_ptr< DataFieldClass > DataFieldPtr;
 
-#endif /* GENERICDATAFIELD_H_ */
+#endif /* DATAFIELD_H_ */

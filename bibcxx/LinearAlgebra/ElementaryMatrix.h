@@ -162,7 +162,7 @@ class ElementaryMatrixClass : public BaseElementaryMatrixClass
 {
   private:
     /** @brief Vectors of RESUELEM */
-    std::vector< ElementaryTermDoublePtr > _realVector;
+    std::vector< ElementaryTermRealPtr > _realVector;
     std::vector< ElementaryTermComplexPtr > _complexVector;
 
   public:
@@ -198,7 +198,7 @@ class ElementaryMatrixClass : public BaseElementaryMatrixClass
         for ( int pos = 0; pos < _listOfElementaryTerms->size(); ++pos ) {
             const std::string name = ( *_listOfElementaryTerms )[pos].toString();
             if ( trim( name ) != "" ) {
-                ElementaryTermDoublePtr toPush( new ElementaryTermClass< double >( name ) );
+                ElementaryTermRealPtr toPush( new ElementaryTermClass< double >( name ) );
                 _realVector.push_back( toPush );
             }
         }
@@ -210,29 +210,29 @@ class ElementaryMatrixClass : public BaseElementaryMatrixClass
 
 /** @typedef Definition d'une matrice élémentaire de double */
 template class ElementaryMatrixClass< double, Displacement >;
-typedef ElementaryMatrixClass< double, Displacement > ElementaryMatrixDisplacementDoubleClass;
+typedef ElementaryMatrixClass< double, Displacement > ElementaryMatrixDisplacementRealClass;
 
 /** @typedef Definition d'une matrice élémentaire de complexe */
-template class ElementaryMatrixClass< DoubleComplex, Displacement >;
-typedef ElementaryMatrixClass< DoubleComplex,
+template class ElementaryMatrixClass< RealComplex, Displacement >;
+typedef ElementaryMatrixClass< RealComplex,
                                   Displacement > ElementaryMatrixDisplacementComplexClass;
 
 /** @typedef Definition d'une matrice élémentaire de double temperature */
 template class ElementaryMatrixClass< double, Temperature >;
 typedef ElementaryMatrixClass< double,
-                                  Temperature > ElementaryMatrixTemperatureDoubleClass;
+                                  Temperature > ElementaryMatrixTemperatureRealClass;
 
-/** @typedef Definition d'une matrice élémentaire de DoubleComplex pression */
-template class ElementaryMatrixClass< DoubleComplex, Pressure >;
-typedef ElementaryMatrixClass< DoubleComplex,
+/** @typedef Definition d'une matrice élémentaire de RealComplex pression */
+template class ElementaryMatrixClass< RealComplex, Pressure >;
+typedef ElementaryMatrixClass< RealComplex,
                                   Pressure > ElementaryMatrixPressureComplexClass;
 
-typedef boost::shared_ptr< ElementaryMatrixDisplacementDoubleClass >
-    ElementaryMatrixDisplacementDoublePtr;
+typedef boost::shared_ptr< ElementaryMatrixDisplacementRealClass >
+    ElementaryMatrixDisplacementRealPtr;
 typedef boost::shared_ptr< ElementaryMatrixDisplacementComplexClass >
     ElementaryMatrixDisplacementComplexPtr;
-typedef boost::shared_ptr< ElementaryMatrixTemperatureDoubleClass >
-    ElementaryMatrixTemperatureDoublePtr;
+typedef boost::shared_ptr< ElementaryMatrixTemperatureRealClass >
+    ElementaryMatrixTemperatureRealPtr;
 typedef boost::shared_ptr< ElementaryMatrixPressureComplexClass >
     ElementaryMatrixPressureComplexPtr;
 

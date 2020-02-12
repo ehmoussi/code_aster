@@ -6,7 +6,7 @@
  * @brief Auxiliary definitions for the constitutive equations
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -45,7 +45,7 @@ enum ConstitutiveLawEnum {
     Asse_Corn,
     Barcelone,
     Beton_Burger_Fp,
-    Beton_Double_Dp,
+    Beton_Real_Dp,
     Beton_Rag,
     Beton_Regle_Pr,
     Beton_Umlv_Fp,

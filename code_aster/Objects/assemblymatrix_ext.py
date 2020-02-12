@@ -19,23 +19,23 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`AssemblyMatrixDisplacementDouble` --- Assembly matrix
+:py:class:`AssemblyMatrixDisplacementReal` --- Assembly matrix
 ****************************************************
 """
 
 import numpy as NP
 
 from libaster import (AssemblyMatrixDisplacementComplex,
-                      AssemblyMatrixDisplacementDouble)
+                      AssemblyMatrixDisplacementReal)
 
 from ..SD.sd_stoc_morse import sd_stoc_morse
 from ..Utilities import injector
 
-_orig_getType = AssemblyMatrixDisplacementDouble.getType
+_orig_getType = AssemblyMatrixDisplacementReal.getType
 
 
-@injector(AssemblyMatrixDisplacementDouble)
-class ExtendedAssemblyMatrixDisplacementDouble(object):
+@injector(AssemblyMatrixDisplacementReal)
+class ExtendedAssemblyMatrixDisplacementReal(object):
     cata_sdj = "SD.sd_matr_asse.sd_matr_asse"
 
     def __getstate__(self):

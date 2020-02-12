@@ -42,7 +42,7 @@ class TurbulentSpectrumClass : public DataStructure {
     /** @brief Objet Jeveux '.VAIN' */
     JeveuxVectorLong _vain;
     /** @brief Objet Jeveux '.VARE' */
-    JeveuxVectorDouble _vare;
+    JeveuxVectorReal _vare;
     /** @brief Objet Jeveux '.VATE' */
     JeveuxVectorChar16 _vate;
     /** @brief Objet Jeveux '.NNOE' */
@@ -66,7 +66,7 @@ class TurbulentSpectrumClass : public DataStructure {
     TurbulentSpectrumClass( const std::string name )
         : DataStructure( name, 19, "SPECTRE", Permanent ),
           _vain( JeveuxVectorLong( getName() + ".REFE" ) ),
-          _vare( JeveuxVectorDouble( getName() + ".DISC" ) ),
+          _vare( JeveuxVectorReal( getName() + ".DISC" ) ),
           _vate( JeveuxVectorChar16( getName() + ".VALE" ) ),
           _nnoe( JeveuxVectorChar8( getName() + ".NUMI" ) ){};
 };

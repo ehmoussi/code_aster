@@ -46,7 +46,7 @@ bool ListOfLoadsClass::build() {
     for ( const auto &curIter : _listOfMechanicalLoads ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = curIter->getName();
-        if ( _listOfMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfMechaFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -56,7 +56,7 @@ bool ListOfLoadsClass::build() {
     for ( const auto &curIter : _listOfParallelMechanicalLoads ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = curIter->getName();
-        if ( _listOfParaMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfParaMechaFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfParaMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -66,7 +66,7 @@ bool ListOfLoadsClass::build() {
     for ( const auto &curIter : _listOfKinematicsLoads ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = curIter->getName();
-        if ( _listOfKineFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfKineFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfKineFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -93,7 +93,7 @@ ListSyntaxMapContainer ListOfLoadsClass::buildListExcit() {
           curIter != _listOfMechanicalLoads.end(); ++curIter ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = ( *curIter )->getName();
-        if ( _listOfMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfMechaFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -103,7 +103,7 @@ ListSyntaxMapContainer ListOfLoadsClass::buildListExcit() {
     for ( const auto &curIter : _listOfParallelMechanicalLoads ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = curIter->getName();
-        if ( _listOfParaMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfParaMechaFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfParaMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -114,7 +114,7 @@ ListSyntaxMapContainer ListOfLoadsClass::buildListExcit() {
           curIter != _listOfKinematicsLoads.end(); ++curIter ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = ( *curIter )->getName();
-        if ( _listOfKineFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfKineFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfKineFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );

@@ -19,16 +19,16 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (FieldOnCellsDouble, FieldOnNodesDouble,
-                       PCFieldOnMeshDouble)
+from ..Objects import (FieldOnCellsReal, FieldOnNodesReal,
+                       PCFieldOnMeshReal)
 from ..Supervis import ExecuteCommand
 
 
 class FieldReader(ExecuteCommand):
     """Command that creates fields that may be
-    :class:`~code_aster.Objects.FieldOnCellsDouble` or
-    :class:`~code_aster.Objects.FieldOnNodesDouble` or
-    :class:`~code_aster.Objects.PCFieldOnMeshDouble`."""
+    :class:`~code_aster.Objects.FieldOnCellsReal` or
+    :class:`~code_aster.Objects.FieldOnNodesReal` or
+    :class:`~code_aster.Objects.PCFieldOnMeshReal`."""
     command_name = "LIRE_CHAMP"
 
     def create_result(self, keywords):
@@ -45,12 +45,12 @@ class FieldReader(ExecuteCommand):
                 mesh = keywords["MAILLAGE"]
             else:
                 mesh = keywords["MODELE"].getMesh()
-            self._result = PCFieldOnMeshDouble(mesh)
+            self._result = PCFieldOnMeshReal(mesh)
         elif location == "NOEU_":
-            self._result = FieldOnNodesDouble()
+            self._result = FieldOnNodesReal()
         else:
             # ELGA_
-            self._result = FieldOnCellsDouble()
+            self._result = FieldOnCellsReal()
 
 
 

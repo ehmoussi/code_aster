@@ -32,13 +32,13 @@
 
 namespace py = boost::python;
 
-typedef boost::variant< AssemblyMatrixDisplacementDoublePtr,
+typedef boost::variant< AssemblyMatrixDisplacementRealPtr,
                         AssemblyMatrixDisplacementComplexPtr,
-                        AssemblyMatrixTemperatureDoublePtr,
-                        AssemblyMatrixPressureDoublePtr > MatrixVariant;
+                        AssemblyMatrixTemperatureRealPtr,
+                        AssemblyMatrixPressureRealPtr > MatrixVariant;
 
 
-typedef boost::variant< GeneralizedAssemblyMatrixDoublePtr,
+typedef boost::variant< GeneralizedAssemblyMatrixRealPtr,
                         GeneralizedAssemblyMatrixComplexPtr > GeneralizedMatrixVariant;
 
 struct variant_to_object : boost::static_visitor< PyObject * >
@@ -62,23 +62,23 @@ struct variant_to_object : boost::static_visitor< PyObject * >
 template< typename ObjectPointer >
 MatrixVariant getStiffnessMatrix( ObjectPointer self )
 {
-    auto mat1 = self->getDisplacementDoubleStiffnessMatrix();
+    auto mat1 = self->getDisplacementRealStiffnessMatrix();
     if ( mat1 != nullptr )
         return MatrixVariant( mat1 );
     auto mat3 = self->getDisplacementComplexStiffnessMatrix();
     if ( mat3 != nullptr )
         return MatrixVariant( mat3 );
-    auto mat4 = self->getPressureDoubleStiffnessMatrix();
+    auto mat4 = self->getPressureRealStiffnessMatrix();
     if ( mat4 != nullptr )
         return MatrixVariant( mat4 );
-    auto mat2 = self->getTemperatureDoubleStiffnessMatrix();
+    auto mat2 = self->getTemperatureRealStiffnessMatrix();
     return MatrixVariant( mat2 );
 };
 
 template< typename ObjectPointer >
 GeneralizedMatrixVariant getGeneralizedStiffnessMatrix( ObjectPointer self)
 {
-    auto mat1 = self->getDoubleGeneralizedStiffnessMatrix();
+    auto mat1 = self->getRealGeneralizedStiffnessMatrix();
     if ( mat1 != nullptr )
         return GeneralizedMatrixVariant( mat1 );
     auto mat2 = self->getComplexGeneralizedStiffnessMatrix();

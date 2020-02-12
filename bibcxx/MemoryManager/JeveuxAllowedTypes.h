@@ -38,7 +38,7 @@
 enum JeveuxTypes {
     Integer,
     Integer4,
-    Double,
+    Real,
     Complex,
     Char8,
     Char16,
@@ -72,13 +72,13 @@ template <> struct AllowedJeveuxType< short int > {
 };
 
 template <> struct AllowedJeveuxType< double > {
-    static const unsigned short numTypeJeveux = Double;
+    static const unsigned short numTypeJeveux = Real;
     typedef double type;
 };
 
-template <> struct AllowedJeveuxType< DoubleComplex > {
+template <> struct AllowedJeveuxType< RealComplex > {
     static const unsigned short numTypeJeveux = Complex;
-    typedef DoubleComplex type;
+    typedef RealComplex type;
 };
 
 template <> struct AllowedJeveuxType< JeveuxChar8 > {

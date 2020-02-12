@@ -25,19 +25,19 @@
 
 #include "Utilities/ListOfFloats.h"
 
-VectorDouble ListOfFloatsClass::getValues() const {
+VectorReal ListOfFloatsClass::getValues() const {
     if ( !_vale->exists() )
         throw std::runtime_error( "No list of values in ListOfFloats" );
 
     _vale->updateValuePointer();
-    VectorDouble toReturn;
+    VectorReal toReturn;
     auto size = _vale->size();
     for ( int pos = 0; pos < size; ++pos )
         toReturn.push_back( ( *_vale )[pos] );
     return toReturn;
 };
 
-void ListOfFloatsClass::setVectorValues( const VectorDouble &vec ) {
+void ListOfFloatsClass::setVectorValues( const VectorReal &vec ) {
     ( *_vale ) = vec;
 };
 

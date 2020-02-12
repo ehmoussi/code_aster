@@ -61,7 +61,7 @@ class StructureInterfaceClass : public DataStructure {
     JeveuxVectorChar8 _names;
     JeveuxVectorChar24 _reference;
     JeveuxVectorChar8 _types;
-    JeveuxVectorDouble _frequencyValue;
+    JeveuxVectorReal _frequencyValue;
     CapyConvertibleContainer _container;
 
     struct InterfaceDefinition {
@@ -118,7 +118,7 @@ class StructureInterfaceClass : public DataStructure {
           _names( JeveuxVectorChar8( getName() + ".IDC_NOMS" ) ),
           _reference( JeveuxVectorChar24( getName() + ".IDC_REFE" ) ),
           _types( JeveuxVectorChar8( getName() + ".IDC_TYPE" ) ),
-          _frequencyValue( JeveuxVectorDouble( getName() + ".IDC_DY_FREQ" ) ){};
+          _frequencyValue( JeveuxVectorReal( getName() + ".IDC_DY_FREQ" ) ){};
 
     /**
      * @brief Constructeur
@@ -139,7 +139,7 @@ class StructureInterfaceClass : public DataStructure {
           _names( JeveuxVectorChar8( getName() + ".IDC_NOMS" ) ),
           _reference( JeveuxVectorChar24( getName() + ".IDC_REFE" ) ),
           _types( JeveuxVectorChar8( getName() + ".IDC_TYPE" ) ),
-          _frequencyValue( JeveuxVectorDouble( getName() + ".IDC_DY_FREQ" ) ), _dofNum( curDof ) {
+          _frequencyValue( JeveuxVectorReal( getName() + ".IDC_DY_FREQ" ) ), _dofNum( curDof ) {
         _container.add(
             new CapyConvertibleValue< DOFNumberingPtr >( true, "NUME_DDL", _dofNum, true ) );
         _container.add(

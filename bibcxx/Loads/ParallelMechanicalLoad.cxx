@@ -36,8 +36,8 @@ ParallelMechanicalLoadClass::ParallelMechanicalLoadClass(
     _FEDesc( new ParallelFiniteElementDescriptorClass
                     ( getName() + ".CHME.LIGRE", load->getMechanicalLoadDescription()._FEDesc,
                       load->getModel()->getPartialMesh(), model ) ),
-    _cimpo( new PCFieldOnMeshDoubleClass( getName() + ".CHME.CIMPO", _FEDesc ) ),
-    _cmult( new PCFieldOnMeshDoubleClass( getName() + ".CHME.CMULT", _FEDesc ) ),
+    _cimpo( new PCFieldOnMeshRealClass( getName() + ".CHME.CIMPO", _FEDesc ) ),
+    _cmult( new PCFieldOnMeshRealClass( getName() + ".CHME.CMULT", _FEDesc ) ),
     _type( getName() + ".TYPE" ),
     _modelName( getName() + ".CHME.MODEL.NOMO" )
 {
@@ -50,8 +50,8 @@ ParallelMechanicalLoadClass::ParallelMechanicalLoadClass(
     transferPCFieldOnMesh( load->getMechanicalLoadDescription()._cmult, _cmult );
 };
 
-void ParallelMechanicalLoadClass::transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
-                                                            PCFieldOnMeshDoublePtr& fieldOut )
+void ParallelMechanicalLoadClass::transferPCFieldOnMesh( const PCFieldOnMeshRealPtr& fieldIn,
+                                                            PCFieldOnMeshRealPtr& fieldOut )
 
 {
     const auto& toKeep = _FEDesc->getDelayedElementsToKeep();

@@ -32,7 +32,7 @@ void exportDynamicMacroElementToPython() {
     bool ( DynamicMacroElementClass::*c1 )(
         const AssemblyMatrixDisplacementComplexPtr &matrix ) =
         &DynamicMacroElementClass::setStiffnessMatrix;
-    bool ( DynamicMacroElementClass::*c2 )( const AssemblyMatrixDisplacementDoublePtr &matrix ) =
+    bool ( DynamicMacroElementClass::*c2 )( const AssemblyMatrixDisplacementRealPtr &matrix ) =
         &DynamicMacroElementClass::setStiffnessMatrix;
 
     py::class_< DynamicMacroElementClass, DynamicMacroElementClass::DynamicMacroElementPtr,
@@ -51,7 +51,7 @@ void exportDynamicMacroElementToPython() {
         .def( "getMassMatrix", &DynamicMacroElementClass::getMassMatrix )
         .def( "getNumberOfNodes", &DynamicMacroElementClass::getNumberOfNodes )
         .def( "getComplexStiffnessMatrix", &DynamicMacroElementClass::getComplexStiffnessMatrix )
-        .def( "getDoubleStiffnessMatrix", &DynamicMacroElementClass::getDoubleStiffnessMatrix )
+        .def( "getRealStiffnessMatrix", &DynamicMacroElementClass::getRealStiffnessMatrix )
         .def( "setDampingMatrix", &DynamicMacroElementClass::setDampingMatrix )
         .def( "setDOFNumbering", &DynamicMacroElementClass::setDOFNumbering )
         .def( "setImpedanceDampingMatrix", &DynamicMacroElementClass::setImpedanceDampingMatrix )

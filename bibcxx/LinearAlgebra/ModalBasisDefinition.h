@@ -31,11 +31,11 @@
 #include "Utilities/CapyConvertibleValue.h"
 #include "LinearAlgebra/LinearSolver.h"
 #include "LinearAlgebra/StructureInterface.h"
-#include "Results/MechanicalModeContainer.h"
+#include "Results/ModeResult.h"
 #include "Discretization/DOFNumbering.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 
-typedef std::vector< MechanicalModeContainerPtr > VectorOfMechaModePtr;
+typedef std::vector< ModeResultPtr > VectorOfMechaModePtr;
 
 /**
  * @class GenericModalBasisClass
@@ -70,9 +70,9 @@ class GenericModalBasisClass : public DataStructure {
         GenericModalBasisPtr _basis;
         VectorOfMechaModePtr _vecOfMechaMode;
         VectorInt _vecOfInt;
-        MechanicalModeContainerPtr _interfaceModes;
+        ModeResultPtr _interfaceModes;
         StructureInterfacePtr _structInterf;
-        AssemblyMatrixDisplacementDoublePtr _matrD;
+        AssemblyMatrixDisplacementRealPtr _matrD;
         AssemblyMatrixDisplacementComplexPtr _matrC;
 
         CapyConvertibleContainer _container;
@@ -117,11 +117,11 @@ class GenericModalBasisClass : public DataStructure {
                     new CapyConvertibleValue< VectorInt >( false, "NMAX_MODE", _vecOfInt, true ) );
         };
 
-        UnitaryModalBasis( const std::string &name, const MechanicalModeContainerPtr &interf,
+        UnitaryModalBasis( const std::string &name, const ModeResultPtr &interf,
                            const VectorInt &vecOfInt = {} )
             : _interfaceModes( interf ), _vecOfInt( vecOfInt ),
               _container( CapyConvertibleContainer( name ) ) {
-            _container.add( new CapyConvertibleValue< MechanicalModeContainerPtr >(
+            _container.add( new CapyConvertibleValue< ModeResultPtr >(
                 false, "MODE_INTF", _interfaceModes, true ) );
 
             if ( _vecOfInt.size() != 0 )
@@ -129,31 +129,31 @@ class GenericModalBasisClass : public DataStructure {
                     new CapyConvertibleValue< VectorInt >( false, "NMAX_MODE", _vecOfInt, true ) );
         };
 
-        UnitaryModalBasis( const std::string &name, const MechanicalModeContainerPtr &basis,
-                           const AssemblyMatrixDisplacementDoublePtr &matr )
+        UnitaryModalBasis( const std::string &name, const ModeResultPtr &basis,
+                           const AssemblyMatrixDisplacementRealPtr &matr )
             : _interfaceModes( basis ), _matrD( matr ),
               _container( CapyConvertibleContainer( name ) ) {
-            _container.add( new CapyConvertibleValue< MechanicalModeContainerPtr >(
+            _container.add( new CapyConvertibleValue< ModeResultPtr >(
                 true, "BASE", _interfaceModes, true ) );
-            _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >(
+            _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementRealPtr >(
                 true, "MATRICE", _matrD, true ) );
         };
 
-        UnitaryModalBasis( const std::string &name, const MechanicalModeContainerPtr &basis,
+        UnitaryModalBasis( const std::string &name, const ModeResultPtr &basis,
                            const AssemblyMatrixDisplacementComplexPtr &matr )
             : _interfaceModes( basis ), _matrC( matr ),
               _container( CapyConvertibleContainer( name ) ) {
-            _container.add( new CapyConvertibleValue< MechanicalModeContainerPtr >(
+            _container.add( new CapyConvertibleValue< ModeResultPtr >(
                 true, "BASE", _interfaceModes, true ) );
             _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementComplexPtr >(
                 true, "MATRICE", _matrC, true ) );
         };
 
-        UnitaryModalBasis( const std::string &name, const MechanicalModeContainerPtr &basis,
+        UnitaryModalBasis( const std::string &name, const ModeResultPtr &basis,
                            const VectorOfMechaModePtr &vecOfMechaMode )
             : _interfaceModes( basis ), _vecOfMechaMode( vecOfMechaMode ),
               _container( CapyConvertibleContainer( name ) ) {
-            _container.add( new CapyConvertibleValue< MechanicalModeContainerPtr >(
+            _container.add( new CapyConvertibleValue< ModeResultPtr >(
                 true, "MODE_STAT", _interfaceModes, true ) );
             _container.add( new CapyConvertibleValue< VectorOfMechaModePtr >(
                 true, "MODE_MECA", _vecOfMechaMode, true ) );
@@ -201,7 +201,7 @@ class StandardModalBasisClass : public GenericModalBasisClass {
     };
 
     void setModalBasis( const StructureInterfacePtr &structInterf,
-                        const MechanicalModeContainerPtr &mechaMode,
+                        const ModeResultPtr &mechaMode,
                         const VectorInt &vecOfInt = {} ) {
         setModalBasis( structInterf, ( VectorOfMechaModePtr ){mechaMode}, vecOfInt );
     };
@@ -211,10 +211,10 @@ class RitzBasisClass : public GenericModalBasisClass {
   private:
     StructureInterfacePtr _interf;
     DOFNumberingPtr _dofNum;
-    AssemblyMatrixDisplacementDoublePtr _matrD;
+    AssemblyMatrixDisplacementRealPtr _matrD;
     AssemblyMatrixDisplacementComplexPtr _matrC;
     bool _reortho;
-    VectorDouble _dampingVector;
+    VectorReal _dampingVector;
 
   public:
     /**
@@ -252,7 +252,7 @@ class RitzBasisClass : public GenericModalBasisClass {
         _vectorOfModalBasis.emplace_back( "RITZ", vecOfMechaMode, vecOfInt );
     };
 
-    void addModalBasis( const MechanicalModeContainerPtr &interf,
+    void addModalBasis( const ModeResultPtr &interf,
                         const VectorInt &vecOfInt = {} ) {
         if ( _vectorOfModalBasis.size() == 2 )
             throw std::runtime_error( "Only 2 basis allowed" );
@@ -266,17 +266,17 @@ class RitzBasisClass : public GenericModalBasisClass {
             false, "MATRICE", _matrC, true ) );
     };
 
-    void reorthonormalising( const AssemblyMatrixDisplacementDoublePtr &matr ) {
+    void reorthonormalising( const AssemblyMatrixDisplacementRealPtr &matr ) {
         _matrD = matr;
         _reortho = true;
-        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementDoublePtr >(
+        _container.add( new CapyConvertibleValue< AssemblyMatrixDisplacementRealPtr >(
             false, "MATRICE", _matrD, true ) );
     };
 
-    void setListOfModalDamping( const VectorDouble &vec ) {
+    void setListOfModalDamping( const VectorReal &vec ) {
         _dampingVector = vec;
         _container.add(
-            new CapyConvertibleValue< VectorDouble >( false, "LIST_AMOR", _dampingVector, true ) );
+            new CapyConvertibleValue< VectorReal >( false, "LIST_AMOR", _dampingVector, true ) );
     };
 
     void setStructureInterface( const StructureInterfacePtr &interf ) {
@@ -299,8 +299,8 @@ class RitzBasisClass : public GenericModalBasisClass {
 
 class OrthonormalizedBasisClass : public GenericModalBasisClass {
   private:
-    MechanicalModeContainerPtr _basis;
-    AssemblyMatrixDisplacementDoublePtr _matrD;
+    ModeResultPtr _basis;
+    AssemblyMatrixDisplacementRealPtr _matrD;
     AssemblyMatrixDisplacementComplexPtr _matrC;
 
   public:
@@ -313,15 +313,15 @@ class OrthonormalizedBasisClass : public GenericModalBasisClass {
     /**
      * @brief Constructeur
      */
-    OrthonormalizedBasisClass( const MechanicalModeContainerPtr &basis,
-                                  const AssemblyMatrixDisplacementDoublePtr &matr )
+    OrthonormalizedBasisClass( const ModeResultPtr &basis,
+                                  const AssemblyMatrixDisplacementRealPtr &matr )
         : OrthonormalizedBasisClass( ResultNaming::getNewResultName(), basis, matr ){};
 
     /**
      * @brief Constructeur
      */
-    OrthonormalizedBasisClass( const std::string name, const MechanicalModeContainerPtr &basis,
-                                  const AssemblyMatrixDisplacementDoublePtr &matr )
+    OrthonormalizedBasisClass( const std::string name, const ModeResultPtr &basis,
+                                  const AssemblyMatrixDisplacementRealPtr &matr )
         : GenericModalBasisClass( name ), _basis( basis ), _matrD( matr ) {
         _vectorOfModalBasis.emplace_back( "ORTHO_BASE", basis, matr );
     };
@@ -329,14 +329,14 @@ class OrthonormalizedBasisClass : public GenericModalBasisClass {
     /**
      * @brief Constructeur
      */
-    OrthonormalizedBasisClass( const MechanicalModeContainerPtr &basis,
+    OrthonormalizedBasisClass( const ModeResultPtr &basis,
                                   const AssemblyMatrixDisplacementComplexPtr &matr )
         : OrthonormalizedBasisClass( ResultNaming::getNewResultName(), basis, matr ){};
 
     /**
      * @brief Constructeur
      */
-    OrthonormalizedBasisClass( const std::string name, const MechanicalModeContainerPtr &basis,
+    OrthonormalizedBasisClass( const std::string name, const ModeResultPtr &basis,
                                   const AssemblyMatrixDisplacementComplexPtr &matr )
         : GenericModalBasisClass( name ), _basis( basis ), _matrC( matr ) {
         _vectorOfModalBasis.emplace_back( "ORTHO_BASE", basis, matr );
@@ -345,7 +345,7 @@ class OrthonormalizedBasisClass : public GenericModalBasisClass {
 
 class OrthogonalBasisWithoutMassClass : public GenericModalBasisClass {
   private:
-    MechanicalModeContainerPtr _modeStat;
+    ModeResultPtr _modeStat;
     VectorOfMechaModePtr _modeMeca;
 
   public:
@@ -358,7 +358,7 @@ class OrthogonalBasisWithoutMassClass : public GenericModalBasisClass {
     /**
      * @brief Constructeur
      */
-    OrthogonalBasisWithoutMassClass( const MechanicalModeContainerPtr &basis,
+    OrthogonalBasisWithoutMassClass( const ModeResultPtr &basis,
                                         const VectorOfMechaModePtr &vec )
         : OrthogonalBasisWithoutMassClass( ResultNaming::getNewResultName(), basis, vec ){};
 
@@ -366,7 +366,7 @@ class OrthogonalBasisWithoutMassClass : public GenericModalBasisClass {
      * @brief Constructeur
      */
     OrthogonalBasisWithoutMassClass( const std::string name,
-                                        const MechanicalModeContainerPtr &basis,
+                                        const ModeResultPtr &basis,
                                         const VectorOfMechaModePtr &vec )
         : GenericModalBasisClass( name ), _modeStat( basis ), _modeMeca( vec ) {
         _vectorOfModalBasis.emplace_back( "DIAG_MASS", basis, vec );

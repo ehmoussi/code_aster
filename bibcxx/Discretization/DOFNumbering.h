@@ -102,9 +102,9 @@ typedef boost::shared_ptr< FieldOnNodesDescriptionClass > FieldOnNodesDescriptio
 class BaseDOFNumberingClass : public DataStructure
 {
   private:
-    typedef boost::variant< ElementaryMatrixDisplacementDoublePtr,
+    typedef boost::variant< ElementaryMatrixDisplacementRealPtr,
                             ElementaryMatrixDisplacementComplexPtr,
-                            ElementaryMatrixTemperatureDoublePtr,
+                            ElementaryMatrixTemperatureRealPtr,
                             ElementaryMatrixPressureComplexPtr > MatrElem;
 
     class ElementaryMatrixGetModel: public boost::static_visitor< ModelPtr >
@@ -364,7 +364,7 @@ class BaseDOFNumberingClass : public DataStructure
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    virtual void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
+    virtual void setElementaryMatrix( const ElementaryMatrixDisplacementRealPtr &currentMatrix )
 
     {
         if ( _model )
@@ -390,7 +390,7 @@ class BaseDOFNumberingClass : public DataStructure
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    virtual void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
+    virtual void setElementaryMatrix( const ElementaryMatrixTemperatureRealPtr &currentMatrix )
 
     {
         if ( _model )
@@ -466,7 +466,7 @@ class DOFNumberingClass : public BaseDOFNumberingClass {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
+    void setElementaryMatrix( const ElementaryMatrixDisplacementRealPtr &currentMatrix )
 
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )
@@ -490,7 +490,7 @@ class DOFNumberingClass : public BaseDOFNumberingClass {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
+    void setElementaryMatrix( const ElementaryMatrixTemperatureRealPtr &currentMatrix )
 
     {
         if ( currentMatrix->getModel()->getMesh()->isParallel() )

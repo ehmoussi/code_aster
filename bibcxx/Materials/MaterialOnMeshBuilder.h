@@ -26,9 +26,9 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Materials/InputVariableDefinition.h"
+#include "Materials/ExternalVariableDefinition.h"
 #include "Materials/MaterialOnMesh.h"
-#include "Materials/InputVariableConverter.h"
+#include "Materials/ExternalVariableConverter.h"
 #include "astercxx.h"
 #include <stdexcept>
 
@@ -43,11 +43,11 @@ class MaterialOnMeshBuilderClass : public DataStructure {
     /**
      * @brief Build MaterialOnMeshPtr
      * @param curMater Material to build
-     * @param curInputVariables Input variables to add in MaterialOnMeshPtr
+     * @param curExternalVariable Input variables to add in MaterialOnMeshPtr
      */
     static void buildClass( MaterialOnMeshClass &curMater,
-                               const InputVariableOnMeshPtr &curInputVariables = nullptr,
-                               const InputVariableConverterPtr &converter = nullptr );
+                               const ExternalVariableOnMeshPtr &curExternalVariable = nullptr,
+                               const ExternalVariableConverterPtr &converter = nullptr );
 
   public:
     /**
@@ -59,11 +59,11 @@ class MaterialOnMeshBuilderClass : public DataStructure {
     /**
      * @brief Build MaterialOnMeshPtr
      * @param curMater Material to build
-     * @param curInputVariables Input variables to add in MaterialOnMeshPtr
+     * @param curExternalVariable Input variables to add in MaterialOnMeshPtr
      */
     static MaterialOnMeshPtr build( MaterialOnMeshPtr &curMater,
-                                    const InputVariableOnMeshPtr &curInputVariables = nullptr,
-                                    const InputVariableConverterPtr &converter = nullptr );
+                                    const ExternalVariableOnMeshPtr &curExternalVariable = nullptr,
+                                    const ExternalVariableConverterPtr &converter = nullptr );
 };
 
 #endif /* MATERIALONMESHBUILDER_H_ */

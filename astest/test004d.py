@@ -23,7 +23,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 
 kine1 = code_aster.KinematicsMechanicalLoad()
@@ -41,7 +41,7 @@ kine2.build()
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
 # Define a first nonlinear Analysis
-statNonLine1 = code_aster.StaticNonLinearAnalysis()
+statNonLine1 = code_aster.NonLinearStaticAnalysis()
 
 statNonLine1.addStandardExcitation( kine1 )
 statNonLine1.addStandardExcitation( kine2 )

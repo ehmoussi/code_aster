@@ -47,29 +47,29 @@ class ElementaryCharacteristicsClass : public DataStructure {
     /** @brief Objet Jeveux '.CANBSP' */
     PCFieldOnMeshLongPtr _numberOfSubpoints;
     /** @brief Objet Jeveux '.CARARCPO' */
-    PCFieldOnMeshDoublePtr _curveBeam;
+    PCFieldOnMeshRealPtr _curveBeam;
     /** @brief Objet Jeveux '.CARCABLE' */
-    PCFieldOnMeshDoublePtr _cable;
+    PCFieldOnMeshRealPtr _cable;
     /** @brief Objet Jeveux '.CARCOQUE' */
-    PCFieldOnMeshDoublePtr _shell;
+    PCFieldOnMeshRealPtr _shell;
     /** @brief Objet Jeveux '.CARDISCA' */
-    PCFieldOnMeshDoublePtr _dumping;
+    PCFieldOnMeshRealPtr _dumping;
     /** @brief Objet Jeveux '.CARDISCK' */
-    PCFieldOnMeshDoublePtr _rigidity;
+    PCFieldOnMeshRealPtr _rigidity;
     /** @brief Objet Jeveux '.CARDISCM' */
-    PCFieldOnMeshDoublePtr _mass;
+    PCFieldOnMeshRealPtr _mass;
     /** @brief Objet Jeveux '.CARGENBA' */
-    PCFieldOnMeshDoublePtr _bar;
+    PCFieldOnMeshRealPtr _bar;
     /** @brief Objet Jeveux '.CARGENPO' */
-    PCFieldOnMeshDoublePtr _beamSection;
+    PCFieldOnMeshRealPtr _beamSection;
     /** @brief Objet Jeveux '.CARGEOPO' */
-    PCFieldOnMeshDoublePtr _beamGeometry;
+    PCFieldOnMeshRealPtr _beamGeometry;
     /** @brief Objet Jeveux '.CARMASSI' */
-    PCFieldOnMeshDoublePtr _orthotropicBasis;
+    PCFieldOnMeshRealPtr _orthotropicBasis;
     /** @brief Objet Jeveux '.CARORIEN' */
-    PCFieldOnMeshDoublePtr _localBasis;
+    PCFieldOnMeshRealPtr _localBasis;
     /** @brief Objet Jeveux '.CARPOUFL' */
-    PCFieldOnMeshDoublePtr _beamCharacteristics;
+    PCFieldOnMeshRealPtr _beamCharacteristics;
 
     /** @brief Booleen indiquant si le maillage est vide */
     bool _isEmpty;

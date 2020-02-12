@@ -52,13 +52,13 @@ class PrestressingCableDefinitionClass : public DataStructure {
     MaterialOnMeshPtr _mater;
     MeshPtr _mesh;
     /** @brief Carte '.CHME.SIGIN' */
-    PCFieldOnMeshDoublePtr _sigin;
+    PCFieldOnMeshRealPtr _sigin;
     /** @brief Table 'CABLEBP' */
     TablePtr _cableBP;
     /** @brief Table 'CABLEGL' */
     TablePtr _cableGL;
     /** @brief Table '.LIRELA' */
-    ListOfLinearRelationsDoublePtr _lirela;
+    ListOfLinearRelationsRealPtr _lirela;
     /** @brief Booleen indiquant si la sd a deja ete remplie */
     bool _isEmpty;
 

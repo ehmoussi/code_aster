@@ -46,13 +46,13 @@ class FluidStructureInteractionClass : public DataStructure {
     /** @brief Objet Jeveux '.FSVK' */
     JeveuxVectorChar8 _fsvk;
     /** @brief Objet Jeveux '.FSVR' */
-    JeveuxVectorDouble _fsvr;
+    JeveuxVectorReal _fsvr;
     /** @brief Objet Jeveux '.FSGM' */
     JeveuxVectorChar24 _fsgm;
     /** @brief Objet Jeveux '.FSGR' */
-    JeveuxVectorDouble _fsgr;
+    JeveuxVectorReal _fsgr;
     /** @brief Objet Jeveux '.FSCR' */
-    JeveuxVectorDouble _fscr;
+    JeveuxVectorReal _fscr;
     /** @brief Objet Jeveux '.UNIT_FAISCEAU' */
     JeveuxVectorLong _unitFaisceau;
     /** @brief Objet Jeveux '.UNIT_GRAPPES' */
@@ -78,10 +78,10 @@ class FluidStructureInteractionClass : public DataStructure {
           _fsic( JeveuxVectorLong( getName() + "           .FSIC" ) ),
           _fsvi( JeveuxVectorLong( getName() + "           .FSVI" ) ),
           _fsvk( JeveuxVectorChar8( getName() + "           .FSVK" ) ),
-          _fsvr( JeveuxVectorDouble( getName() + "           .FSVR" ) ),
+          _fsvr( JeveuxVectorReal( getName() + "           .FSVR" ) ),
           _fsgm( JeveuxVectorChar24( getName() + "           .FSGM" ) ),
-          _fsgr( JeveuxVectorDouble( getName() + "           .FSGR" ) ),
-          _fscr( JeveuxVectorDouble( getName() + "           .FSCR" ) ),
+          _fsgr( JeveuxVectorReal( getName() + "           .FSGR" ) ),
+          _fscr( JeveuxVectorReal( getName() + "           .FSCR" ) ),
           _unitFaisceau( JeveuxVectorLong( getName() + ".UNIT_FAISCEAU" ) ),
           _unitGrappes( JeveuxVectorLong( getName() + ".UNIT_GRAPPES" ) ){};
 };

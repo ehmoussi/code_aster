@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FieldOnNodesDouble
+from ..Objects import FieldOnNodesReal
 from ..Supervis import ExecuteCommand
 
 
@@ -33,7 +33,7 @@ class KinematicsLoadComputation(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FieldOnNodesDouble()
+        self._result = FieldOnNodesReal()
 
 
 CALC_CHAR_CINE = KinematicsLoadComputation.run

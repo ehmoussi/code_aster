@@ -37,8 +37,8 @@ void exportMaterialToPython() {
               py::make_constructor(&initFactoryPtr< MaterialClass, std::string, VectorInt >))
         .def( "addMaterialBehaviour", &MaterialClass::addMaterialBehaviour )
         .def( "build", &MaterialClass::build )
-        .def( "getNumberOfListOfDoubleProperties",
-              &MaterialClass::getNumberOfListOfDoubleProperties )
+        .def( "getNumberOfListOfRealProperties",
+              &MaterialClass::getNumberOfListOfRealProperties )
         .def( "getNumberOfListOfFunctionProperties",
               &MaterialClass::getNumberOfListOfFunctionProperties )
         .def( "getNumberOfMaterialBehviour", &MaterialClass::getNumberOfMaterialBehviour )

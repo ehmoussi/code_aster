@@ -39,13 +39,13 @@
 class ListOfFloatsClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.BINT' */
-    JeveuxVectorDouble _bint;
+    JeveuxVectorReal _bint;
     /** @brief Objet Jeveux '.LPAS' */
-    JeveuxVectorDouble _lpas;
+    JeveuxVectorReal _lpas;
     /** @brief Objet Jeveux '.NBPA' */
     JeveuxVectorLong _nbPa;
     /** @brief Objet Jeveux '.VALE' */
-    JeveuxVectorDouble _vale;
+    JeveuxVectorReal _vale;
 
   public:
     /**
@@ -64,14 +64,14 @@ class ListOfFloatsClass : public DataStructure {
      */
     ListOfFloatsClass( const std::string name )
         : DataStructure( name, 19, "LISTR8", Permanent ),
-          _bint( JeveuxVectorDouble( getName() + ".BINT" ) ),
-          _lpas( JeveuxVectorDouble( getName() + ".LPAS" ) ),
+          _bint( JeveuxVectorReal( getName() + ".BINT" ) ),
+          _lpas( JeveuxVectorReal( getName() + ".LPAS" ) ),
           _nbPa( JeveuxVectorLong( getName() + ".NBPA" ) ),
-          _vale( JeveuxVectorDouble( getName() + ".VALE" ) ){};
+          _vale( JeveuxVectorReal( getName() + ".VALE" ) ){};
 
-    VectorDouble getValues() const ;
+    VectorReal getValues() const ;
 
-    void setVectorValues( const VectorDouble & ) ;
+    void setVectorValues( const VectorReal & ) ;
 
     int size();
 };

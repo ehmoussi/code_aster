@@ -39,10 +39,10 @@
 #include "astercxx.h"
 
 /**
- * @struct StaticMechanicalSolverClass predefinition
+ * @struct LinearStaticAnalysisClass predefinition
  * @todo to remove
  */
-class StaticMechanicalSolverClass;
+class LinearStaticAnalysisClass;
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -148,7 +148,7 @@ class BaseLinearSolverClass : public DataStructure {
     Preconditioning _preconditioning;
 
     JeveuxVectorChar24 _charValues;
-    JeveuxVectorDouble _doubleValues;
+    JeveuxVectorReal _doubleValues;
     JeveuxVectorLong _integerValues;
 
     GenParam _algo;
@@ -176,7 +176,7 @@ class BaseLinearSolverClass : public DataStructure {
     GenParam _resolutionType;
     GenParam _acceleration;
     ListGenParam _listOfParameters;
-    AssemblyMatrixDisplacementDoublePtr _matrixPrec;
+    AssemblyMatrixDisplacementRealPtr _matrixPrec;
     std::string _commandName;
     bool _xfem;
 
@@ -211,7 +211,7 @@ class BaseLinearSolverClass : public DataStructure {
         DataStructure( name, 19, "SOLVEUR" ), _linearSolver( currentBaseLinearSolver ),
         _renumber( currentRenumber ), _isEmpty( true ), _preconditioning( Without ),
         _charValues( JeveuxVectorChar24( getName() + ".SLVK" ) ),
-        _doubleValues( JeveuxVectorDouble( getName() + ".SLVR" ) ),
+        _doubleValues( JeveuxVectorReal( getName() + ".SLVR" ) ),
         _integerValues( JeveuxVectorLong( getName() + ".SLVI" ) ), _algo( "ALGORITHME", false ),
         _lagr( "ELIM_LAGR", false ), _matrFilter( "FILTRAGE_MATRICE", false ),
         _memory( "GESTION_MEMOIRE", false ), _lowRankThreshold( "LOW_RANK_SEUIL", false ),
@@ -225,7 +225,7 @@ class BaseLinearSolverClass : public DataStructure {
         _residual( "RESI_RELA", false ), _precondResidual( "RESI_RELA_PC", false ),
         _stopSingular( "STOP_SINGULIER", false ), _resolutionType( "TYPE_RESOL", false ),
         _acceleration( "ACCELERATION", false ),
-        _matrixPrec( new AssemblyMatrixDisplacementDoubleClass(
+        _matrixPrec( new AssemblyMatrixDisplacementRealClass(
             ResultNaming::getNewResultName() + ".PREC" ) ),
         _commandName( "SOLVEUR" ),
         _xfem( false )
@@ -366,7 +366,7 @@ class BaseLinearSolverClass : public DataStructure {
      * @brief Factorisation d'une matrice
      * @param currentMatrix Matrice assemblee
      */
-    bool matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix );
+    bool matrixFactorization( AssemblyMatrixDisplacementRealPtr currentMatrix );
 
     /**
      * @brief Inversion du systeme lineaire
@@ -376,11 +376,11 @@ class BaseLinearSolverClass : public DataStructure {
      * @param result champ aux noeuds résultat (optionnel)
      * @return champ aux noeuds resultat
      */
-    FieldOnNodesDoublePtr
-    solveDoubleLinearSystem( const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
-                             const FieldOnNodesDoublePtr &currentRHS,
-                             FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr(
-                                 new FieldOnNodesDoubleClass( Permanent ) ) ) const;
+    FieldOnNodesRealPtr
+    solveRealLinearSystem( const AssemblyMatrixDisplacementRealPtr &currentMatrix,
+                             const FieldOnNodesRealPtr &currentRHS,
+                             FieldOnNodesRealPtr result = FieldOnNodesRealPtr(
+                                 new FieldOnNodesRealClass( Permanent ) ) ) const;
 
     /**
      * @brief Inversion du systeme lineaire
@@ -390,11 +390,11 @@ class BaseLinearSolverClass : public DataStructure {
      * @param result champ aux noeuds résultat (optionnel)
      * @return champ aux noeuds resultat
      */
-    FieldOnNodesDoublePtr solveDoubleLinearSystemWithKinematicsLoad(
-        const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
-        const FieldOnNodesDoublePtr &kinematicsField, const FieldOnNodesDoublePtr &currentRHS,
-        FieldOnNodesDoublePtr result =
-            FieldOnNodesDoublePtr( new FieldOnNodesDoubleClass( Permanent ) ) ) const;
+    FieldOnNodesRealPtr solveRealLinearSystemWithKinematicsLoad(
+        const AssemblyMatrixDisplacementRealPtr &currentMatrix,
+        const FieldOnNodesRealPtr &kinematicsField, const FieldOnNodesRealPtr &currentRHS,
+        FieldOnNodesRealPtr result =
+            FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) ) ) const;
 
     void disablePreprocessing() {
         if ( _linearSolver != Mumps )
@@ -523,7 +523,7 @@ class BaseLinearSolverClass : public DataStructure {
         _reac = value;
     };
 
-    friend class StaticMechanicalSolverClass;
+    friend class LinearStaticAnalysisClass;
 };
 
 /**

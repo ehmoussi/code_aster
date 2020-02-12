@@ -44,15 +44,15 @@ class FluidStructureModalBasisClass : public DataStructure {
     /** @brief Objet Jeveux '.DESC' */
     JeveuxVectorChar16 _desc;
     /** @brief Objet Jeveux '.FACT' */
-    JeveuxVectorDouble _fact;
+    JeveuxVectorReal _fact;
     /** @brief Objet Jeveux '.FREQ' */
-    JeveuxVectorDouble _freq;
+    JeveuxVectorReal _freq;
     /** @brief Objet Jeveux '.MASG' */
-    JeveuxVectorDouble _masg;
+    JeveuxVectorReal _masg;
     /** @brief Objet Jeveux '.NUMO' */
     JeveuxVectorLong _numo;
     /** @brief Objet Jeveux '.VITE' */
-    JeveuxVectorDouble _vite;
+    JeveuxVectorReal _vite;
 
   public:
     /**
@@ -73,11 +73,11 @@ class FluidStructureModalBasisClass : public DataStructure {
         : DataStructure( name, 8, "MELASFLU", Permanent ),
           _remf( JeveuxVectorChar8( getName() + ".REMF" ) ),
           _desc( JeveuxVectorChar16( getName() + ".DESC" ) ),
-          _fact( JeveuxVectorDouble( getName() + ".FACT" ) ),
-          _freq( JeveuxVectorDouble( getName() + ".FREQ" ) ),
-          _masg( JeveuxVectorDouble( getName() + ".MASG" ) ),
+          _fact( JeveuxVectorReal( getName() + ".FACT" ) ),
+          _freq( JeveuxVectorReal( getName() + ".FREQ" ) ),
+          _masg( JeveuxVectorReal( getName() + ".MASG" ) ),
           _numo( JeveuxVectorLong( getName() + ".NUMO" ) ),
-          _vite( JeveuxVectorDouble( getName() + ".VITE" ) ){};
+          _vite( JeveuxVectorReal( getName() + ".VITE" ) ){};
 };
 
 /**

@@ -32,9 +32,9 @@ namespace py = boost::python;
 
 void exportGeneralizedDOFNumberingToPython() {
 
-    bool ( GeneralizedDOFNumberingClass::*c1 )( const MechanicalModeContainerPtr & ) =
+    bool ( GeneralizedDOFNumberingClass::*c1 )( const ModeResultPtr & ) =
         &GeneralizedDOFNumberingClass::setModalBasis;
-    bool ( GeneralizedDOFNumberingClass::*c2 )( const GeneralizedModeContainerPtr & ) =
+    bool ( GeneralizedDOFNumberingClass::*c2 )( const GeneralizedModeResultPtr & ) =
         &GeneralizedDOFNumberingClass::setModalBasis;
 
     py::class_< GeneralizedDOFNumberingClass,

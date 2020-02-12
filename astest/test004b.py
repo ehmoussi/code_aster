@@ -24,26 +24,26 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
-imposedDof1 = code_aster.DisplacementDouble()
+imposedDof1 = code_aster.DisplacementReal()
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dy, 0.0 )
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
-charMeca1 = code_aster.ImposedDisplacementDouble(monModel)
+charMeca1 = code_aster.ImposedDisplacementReal(monModel)
 charMeca1.setValue( imposedDof1, "Bas" )
 charMeca1.build()
 
-imposedPres1 = code_aster.PressureDouble()
+imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
-charMeca2 = code_aster.DistributedPressureDouble(monModel)
+charMeca2 = code_aster.DistributedPressureReal(monModel)
 charMeca2.setValue( imposedPres1, "Haut" )
 charMeca2.build()
 
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
 # Define a first nonlinear Analysis
-statNonLine1 = code_aster.StaticNonLinearAnalysis()
+statNonLine1 = code_aster.NonLinearStaticAnalysis()
 statNonLine1.addStandardExcitation( charMeca1 )
 statNonLine1.addStandardExcitation( charMeca2 )
 statNonLine1.setModel( monModel )
@@ -76,7 +76,7 @@ resu = statNonLine1.execute()
 #resu.debugPrint( 6 )
 
 # Define a second nonlinear Analysis
-statNonLine2 = code_aster.StaticNonLinearAnalysis()
+statNonLine2 = code_aster.NonLinearStaticAnalysis()
 statNonLine2.addStandardExcitation( charMeca1 )
 statNonLine2.addStandardExcitation( charMeca2 )
 statNonLine2.setModel( monModel )
@@ -85,7 +85,7 @@ statNonLine2.addBehaviourOnElements( elas )
 # Define the initial state of the current analysis
 start = code_aster.State(0)
 # from the last computed step of the previous analysis
-start.setFromNonLinearEvolution( resu, 0.5, 1.e-6 )
+start.setFromNonLinearResult( resu, 0.5, 1.e-6 )
 statNonLine2.setInitialState( start )
 #
 temps =[1.0, 1.5];

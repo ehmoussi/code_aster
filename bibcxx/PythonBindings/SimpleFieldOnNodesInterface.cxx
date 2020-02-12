@@ -31,14 +31,14 @@ namespace py = boost::python;
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
 
 void exportSimpleFieldOnNodesToPython() {
-    py::class_< SimpleFieldOnNodesDoubleClass, SimpleFieldOnNodesDoublePtr,
-                py::bases< DataStructure > >( "SimpleFieldOnNodesDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesDoubleClass >))
+    py::class_< SimpleFieldOnNodesRealClass, SimpleFieldOnNodesRealPtr,
+                py::bases< DataStructure > >( "SimpleFieldOnNodesReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SimpleFieldOnNodesRealClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< SimpleFieldOnNodesDoubleClass, std::string >))
-        .def( "getValue", &SimpleFieldOnNodesDoubleClass::getValue,
+                              &initFactoryPtr< SimpleFieldOnNodesRealClass, std::string >))
+        .def( "getValue", &SimpleFieldOnNodesRealClass::getValue,
               py::return_value_policy< py::return_by_value >() )
-        .def( "updateValuePointers", &SimpleFieldOnNodesDoubleClass::updateValuePointers );
+        .def( "updateValuePointers", &SimpleFieldOnNodesRealClass::updateValuePointers );
     py::class_< SimpleFieldOnNodesComplexClass, SimpleFieldOnNodesComplexPtr,
                 py::bases< DataStructure > >( "SimpleFieldOnNodesComplex", py::no_init )
         .def( "__init__",

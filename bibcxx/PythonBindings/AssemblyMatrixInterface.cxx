@@ -31,44 +31,44 @@ namespace py = boost::python;
 
 void exportAssemblyMatrixToPython() {
 
-    void ( AssemblyMatrixDisplacementDoubleClass::*c1 )( const KinematicsLoadPtr &currentLoad ) =
-        &AssemblyMatrixDisplacementDoubleClass::addLoad;
-    void ( AssemblyMatrixDisplacementDoubleClass::*c2 )( const KinematicsLoadPtr &currentLoad,
+    void ( AssemblyMatrixDisplacementRealClass::*c1 )( const KinematicsLoadPtr &currentLoad ) =
+        &AssemblyMatrixDisplacementRealClass::addLoad;
+    void ( AssemblyMatrixDisplacementRealClass::*c2 )( const KinematicsLoadPtr &currentLoad,
                                                             const FunctionPtr &func ) =
-        &AssemblyMatrixDisplacementDoubleClass::addLoad;
+        &AssemblyMatrixDisplacementRealClass::addLoad;
 
-    py::class_< AssemblyMatrixDisplacementDoubleClass, AssemblyMatrixDisplacementDoublePtr,
-                py::bases< DataStructure > >( "AssemblyMatrixDisplacementDouble", py::no_init )
+    py::class_< AssemblyMatrixDisplacementRealClass, AssemblyMatrixDisplacementRealPtr,
+                py::bases< DataStructure > >( "AssemblyMatrixDisplacementReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< AssemblyMatrixDisplacementDoubleClass >))
+              py::make_constructor(&initFactoryPtr< AssemblyMatrixDisplacementRealClass >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< AssemblyMatrixDisplacementDoubleClass, std::string >))
+                  &initFactoryPtr< AssemblyMatrixDisplacementRealClass, std::string >))
         .def( "addKinematicsLoad", c1 )
         .def( "addKinematicsLoad", c2 )
         .def( "appendElementaryMatrix",
-              &AssemblyMatrixDisplacementDoubleClass::appendElementaryMatrix )
-        .def( "build", &AssemblyMatrixDisplacementDoubleClass::build )
-        .def( "getDOFNumbering", &AssemblyMatrixDisplacementDoubleClass::getDOFNumbering )
-        .def( "getModel", &AssemblyMatrixDisplacementDoubleClass::getModel, R"(
+              &AssemblyMatrixDisplacementRealClass::appendElementaryMatrix )
+        .def( "build", &AssemblyMatrixDisplacementRealClass::build )
+        .def( "getDOFNumbering", &AssemblyMatrixDisplacementRealClass::getDOFNumbering )
+        .def( "getModel", &AssemblyMatrixDisplacementRealClass::getModel, R"(
 Return the model.
 
 Returns:
     ModelPtr: a pointer to the model
         )",
               ( py::arg( "self" )))
-        .def( "getMesh", &AssemblyMatrixDisplacementDoubleClass::getMesh, R"(
+        .def( "getMesh", &AssemblyMatrixDisplacementRealClass::getMesh, R"(
 Return the mesh.
 
 Returns:
     MeshPtr: a pointer to the mesh
         )",
               ( py::arg( "self" ) ) )
-        .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementDoubleClass::getMaterialOnMesh )
+        .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementRealClass::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
-              &AssemblyMatrixDisplacementDoubleClass::getNumberOfElementaryMatrix )
-        .def( "setDOFNumbering", &AssemblyMatrixDisplacementDoubleClass::setDOFNumbering )
-        .def( "setSolverName", &AssemblyMatrixDisplacementDoubleClass::setSolverName );
+              &AssemblyMatrixDisplacementRealClass::getNumberOfElementaryMatrix )
+        .def( "setDOFNumbering", &AssemblyMatrixDisplacementRealClass::setDOFNumbering )
+        .def( "setSolverName", &AssemblyMatrixDisplacementRealClass::setSolverName );
 
     void ( AssemblyMatrixDisplacementComplexClass::*c3 )(
         const KinematicsLoadPtr &currentLoad ) =
@@ -96,30 +96,30 @@ Returns:
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementComplexClass::setDOFNumbering )
         .def( "setSolverName", &AssemblyMatrixDisplacementComplexClass::setSolverName );
 
-    void ( AssemblyMatrixTemperatureDoubleClass::*c5 )( const KinematicsLoadPtr &currentLoad ) =
-        &AssemblyMatrixTemperatureDoubleClass::addLoad;
-    void ( AssemblyMatrixTemperatureDoubleClass::*c6 )( const KinematicsLoadPtr &currentLoad,
+    void ( AssemblyMatrixTemperatureRealClass::*c5 )( const KinematicsLoadPtr &currentLoad ) =
+        &AssemblyMatrixTemperatureRealClass::addLoad;
+    void ( AssemblyMatrixTemperatureRealClass::*c6 )( const KinematicsLoadPtr &currentLoad,
                                                            const FunctionPtr &func ) =
-        &AssemblyMatrixTemperatureDoubleClass::addLoad;
+        &AssemblyMatrixTemperatureRealClass::addLoad;
 
-    py::class_< AssemblyMatrixTemperatureDoubleClass, AssemblyMatrixTemperatureDoublePtr,
-                py::bases< DataStructure > >( "AssemblyMatrixTemperatureDouble", py::no_init )
+    py::class_< AssemblyMatrixTemperatureRealClass, AssemblyMatrixTemperatureRealPtr,
+                py::bases< DataStructure > >( "AssemblyMatrixTemperatureReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< AssemblyMatrixTemperatureDoubleClass >))
+              py::make_constructor(&initFactoryPtr< AssemblyMatrixTemperatureRealClass >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< AssemblyMatrixTemperatureDoubleClass, std::string >))
+                  &initFactoryPtr< AssemblyMatrixTemperatureRealClass, std::string >))
         .def( "addKinematicsLoad", c5 )
         .def( "addKinematicsLoad", c6 )
         .def( "appendElementaryMatrix",
-              &AssemblyMatrixTemperatureDoubleClass::appendElementaryMatrix )
-        .def( "build", &AssemblyMatrixTemperatureDoubleClass::build )
-        .def( "getDOFNumbering", &AssemblyMatrixTemperatureDoubleClass::getDOFNumbering )
-        .def( "getMaterialOnMesh", &AssemblyMatrixTemperatureDoubleClass::getMaterialOnMesh )
+              &AssemblyMatrixTemperatureRealClass::appendElementaryMatrix )
+        .def( "build", &AssemblyMatrixTemperatureRealClass::build )
+        .def( "getDOFNumbering", &AssemblyMatrixTemperatureRealClass::getDOFNumbering )
+        .def( "getMaterialOnMesh", &AssemblyMatrixTemperatureRealClass::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
-              &AssemblyMatrixTemperatureDoubleClass::getNumberOfElementaryMatrix )
-        .def( "setDOFNumbering", &AssemblyMatrixTemperatureDoubleClass::setDOFNumbering )
-        .def( "setSolverName", &AssemblyMatrixTemperatureDoubleClass::setSolverName );
+              &AssemblyMatrixTemperatureRealClass::getNumberOfElementaryMatrix )
+        .def( "setDOFNumbering", &AssemblyMatrixTemperatureRealClass::setDOFNumbering )
+        .def( "setSolverName", &AssemblyMatrixTemperatureRealClass::setSolverName );
 
     void ( AssemblyMatrixTemperatureComplexClass::*c7 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixTemperatureComplexClass::addLoad;
@@ -146,29 +146,29 @@ Returns:
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureComplexClass::setDOFNumbering )
         .def( "setSolverName", &AssemblyMatrixTemperatureComplexClass::setSolverName );
 
-    void ( AssemblyMatrixPressureDoubleClass::*c9 )( const KinematicsLoadPtr &currentLoad ) =
-        &AssemblyMatrixPressureDoubleClass::addLoad;
-    void ( AssemblyMatrixPressureDoubleClass::*c10 )( const KinematicsLoadPtr &currentLoad,
+    void ( AssemblyMatrixPressureRealClass::*c9 )( const KinematicsLoadPtr &currentLoad ) =
+        &AssemblyMatrixPressureRealClass::addLoad;
+    void ( AssemblyMatrixPressureRealClass::*c10 )( const KinematicsLoadPtr &currentLoad,
                                                          const FunctionPtr &func ) =
-        &AssemblyMatrixPressureDoubleClass::addLoad;
+        &AssemblyMatrixPressureRealClass::addLoad;
 
-    py::class_< AssemblyMatrixPressureDoubleClass, AssemblyMatrixPressureDoublePtr,
-                py::bases< DataStructure > >( "AssemblyMatrixPressureDouble", py::no_init )
+    py::class_< AssemblyMatrixPressureRealClass, AssemblyMatrixPressureRealPtr,
+                py::bases< DataStructure > >( "AssemblyMatrixPressureReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< AssemblyMatrixPressureDoubleClass >))
+              py::make_constructor(&initFactoryPtr< AssemblyMatrixPressureRealClass >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< AssemblyMatrixPressureDoubleClass, std::string >))
+                              &initFactoryPtr< AssemblyMatrixPressureRealClass, std::string >))
         .def( "addKinematicsLoad", c9 )
         .def( "addKinematicsLoad", c10 )
         .def( "appendElementaryMatrix",
-              &AssemblyMatrixPressureDoubleClass::appendElementaryMatrix )
-        .def( "build", &AssemblyMatrixPressureDoubleClass::build )
-        .def( "getDOFNumbering", &AssemblyMatrixPressureDoubleClass::getDOFNumbering )
-        .def( "getMaterialOnMesh", &AssemblyMatrixPressureDoubleClass::getMaterialOnMesh )
+              &AssemblyMatrixPressureRealClass::appendElementaryMatrix )
+        .def( "build", &AssemblyMatrixPressureRealClass::build )
+        .def( "getDOFNumbering", &AssemblyMatrixPressureRealClass::getDOFNumbering )
+        .def( "getMaterialOnMesh", &AssemblyMatrixPressureRealClass::getMaterialOnMesh )
         .def( "getNumberOfElementaryMatrix",
-              &AssemblyMatrixPressureDoubleClass::getNumberOfElementaryMatrix )
-        .def( "setDOFNumbering", &AssemblyMatrixPressureDoubleClass::setDOFNumbering )
-        .def( "setSolverName", &AssemblyMatrixPressureDoubleClass::setSolverName );
+              &AssemblyMatrixPressureRealClass::getNumberOfElementaryMatrix )
+        .def( "setDOFNumbering", &AssemblyMatrixPressureRealClass::setDOFNumbering )
+        .def( "setSolverName", &AssemblyMatrixPressureRealClass::setSolverName );
 
     void ( AssemblyMatrixPressureComplexClass::*c11 )( const KinematicsLoadPtr &currentLoad ) =
         &AssemblyMatrixPressureComplexClass::addLoad;

@@ -19,18 +19,18 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`TransientGeneralizedResultsContainer` --- Assignment of mesh
+:py:class:`TransientGeneralizedResult` --- Assignment of mesh
 ************************************************************************
 """
 
 import aster
-from libaster import TransientGeneralizedResultsContainer
+from libaster import TransientGeneralizedResult
 
 from ..Utilities import injector
 
 
-@injector(TransientGeneralizedResultsContainer)
-class ExtendedTransientGeneralizedResultsContainer(object):
+@injector(TransientGeneralizedResult)
+class ExtendedTransientGeneralizedResult(object):
     cata_sdj = "SD.sd_dyna_gene.sd_dyna_gene"
 
     def _check_input_inoli(self, inoli):

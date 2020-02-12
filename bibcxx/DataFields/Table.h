@@ -92,9 +92,9 @@ class TableClass : public DataStructure {
             // l'appel à JEDETR
             for ( int i = 0; i < nbParam; ++i ) {
                 const JeveuxChar24 &name1 = ( *_parameterDescription )[i * 4 + 2];
-                JeveuxVectorDouble test1( name1.toString() );
+                JeveuxVectorReal test1( name1.toString() );
                 const JeveuxChar24 &name2 = ( *_parameterDescription )[i * 4 + 3];
-                JeveuxVectorDouble test2( name2.toString() );
+                JeveuxVectorReal test2( name2.toString() );
             }
         }
     };

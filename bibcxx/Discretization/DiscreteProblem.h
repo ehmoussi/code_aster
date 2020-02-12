@@ -53,7 +53,7 @@ class DiscreteProblemClass {
     /**
      * @brief Calcul des matrices elementaires pour une option quelconque
      */
-    ElementaryMatrixDisplacementDoublePtr
+    ElementaryMatrixDisplacementRealPtr
     computeMechanicalMatrix( const std::string &optionName ) ;
 
   public:
@@ -102,30 +102,30 @@ class DiscreteProblemClass {
      * @return Vecteur élémentaire
      */
     ElementaryVectorPtr
-    buildElementaryNeumannVector( const VectorDouble time,
-                                  CalculationInputVariablesPtr ) ;
+    buildElementaryNeumannVector( const VectorReal time,
+                                  CalculationExternalVariablePtr ) ;
 
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires de rigidité
      * @param time Instant de calcul
      * @return Vecteur élémentaire contenant la rigidité mécanique
      */
-    ElementaryMatrixDisplacementDoublePtr buildElementaryStiffnessMatrix( double time = 0. );
+    ElementaryMatrixDisplacementRealPtr buildElementaryStiffnessMatrix( double time = 0. );
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires pour la matrice tangente
      * utilisée pour l'étape de prédiction de la méthode de Newton
      * @param time Instant de calcul
      * @return Matrice élémentaire contenant la rigidité mécanique
      */
-    ElementaryMatrixDisplacementDoublePtr buildElementaryTangentMatrix( double time = 0. );
+    ElementaryMatrixDisplacementRealPtr buildElementaryTangentMatrix( double time = 0. );
 
-    ElementaryMatrixDisplacementDoublePtr buildElementaryJacobianMatrix( double time = 0. );
+    ElementaryMatrixDisplacementRealPtr buildElementaryJacobianMatrix( double time = 0. );
 
     /**
      * @brief Construction d'un vecteur de chargement cinématique
      * @return Booleen indiquant que tout s'est bien passe
      */
-    FieldOnNodesDoublePtr buildKinematicsLoad( const BaseDOFNumberingPtr &curDOFNum,
+    FieldOnNodesRealPtr buildKinematicsLoad( const BaseDOFNumberingPtr &curDOFNum,
                                                const double &time,
                                                const JeveuxMemory &memType = Permanent ) const
         ;
@@ -140,21 +140,21 @@ class DiscreteProblemClass {
     /**
      * @brief Calcul des matrices elementaires pour l'option AMOR_MECA
      */
-    ElementaryMatrixDisplacementDoublePtr
-    computeMechanicalDampingMatrix( const ElementaryMatrixDisplacementDoublePtr &rigidity,
-                                    const ElementaryMatrixDisplacementDoublePtr &mass )
+    ElementaryMatrixDisplacementRealPtr
+    computeMechanicalDampingMatrix( const ElementaryMatrixDisplacementRealPtr &rigidity,
+                                    const ElementaryMatrixDisplacementRealPtr &mass )
         ;
 
     /**
      * @brief Calcul des matrices elementaires pour l'option RIGI_MECA
      */
-    ElementaryMatrixDisplacementDoublePtr computeMechanicalStiffnessMatrix()
+    ElementaryMatrixDisplacementRealPtr computeMechanicalStiffnessMatrix()
         ;
 
     /**
      * @brief Calcul des matrices elementaires pour l'option MASS_MECA
      */
-    ElementaryMatrixDisplacementDoublePtr computeMechanicalMassMatrix()
+    ElementaryMatrixDisplacementRealPtr computeMechanicalMassMatrix()
         ;
 
     /**

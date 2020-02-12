@@ -34,7 +34,7 @@
 /** @brief Forward declaration of FieldOnNodesClass */
 template < class ValueType > class FieldOnNodesClass;
 
-typedef FieldOnNodesClass< double > FieldOnNodesDoubleClass;
+typedef FieldOnNodesClass< double > FieldOnNodesRealClass;
 
 /**
  * @class MeshCoordinatesFieldClass
@@ -48,9 +48,9 @@ class MeshCoordinatesFieldClass : public DataStructure {
     /** @brief Vecteur Jeveux '.REFE' */
     JeveuxVectorChar24 _reference;
     /** @brief Vecteur Jeveux '.VALE' */
-    JeveuxVectorDouble _valuesList;
+    JeveuxVectorReal _valuesList;
 
-    friend FieldOnNodesDoubleClass;
+    friend FieldOnNodesRealClass;
 
   public:
     /**
@@ -67,7 +67,7 @@ class MeshCoordinatesFieldClass : public DataStructure {
         : DataStructure( name, 19, "CHAM_NO" ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-          _valuesList( JeveuxVectorDouble( getName() + ".VALE" ) ) {
+          _valuesList( JeveuxVectorReal( getName() + ".VALE" ) ) {
         assert( name.size() == 19 );
     };
 
@@ -84,7 +84,7 @@ class MeshCoordinatesFieldClass : public DataStructure {
     /**
      * @brief Get _valuesList
      */
-    const JeveuxVectorDouble getFieldValues() const { return _valuesList; };
+    const JeveuxVectorReal getFieldValues() const { return _valuesList; };
 
     /**
      * @brief Surcharge de l'operateur []

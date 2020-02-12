@@ -19,20 +19,20 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`FieldOnNodesDouble` --- Fields defined on nodes of elements
+:py:class:`FieldOnNodesReal` --- Fields defined on nodes of elements
 **********************************************************************
 """
 
 import numpy
 
 import aster
-from libaster import FieldOnNodesDouble
+from libaster import FieldOnNodesReal
 
 from ..Utilities import injector
 
 
-@injector(FieldOnNodesDouble)
-class ExtendedFieldOnNodesDouble(object):
+@injector(FieldOnNodesReal)
+class ExtendedFieldOnNodesReal(object):
     cata_sdj = "SD.sd_champ.sd_cham_no_class"
 
     def EXTR_COMP(self, comp=' ', lgno=[], topo=0):
@@ -81,7 +81,7 @@ class ExtendedFieldOnNodesDouble(object):
 
 class post_comp_cham_no:
     """Container object that store the results of
-    :py:meth:`code_aster.Objects.FieldOnNodesDouble.EXTR_COMP`.
+    :py:meth:`code_aster.Objects.FieldOnNodesReal.EXTR_COMP`.
 
     The support of the field may be unknown. In this case, :py:attr:`noeud`
     and :py:attr:`comp` are set to *None*.

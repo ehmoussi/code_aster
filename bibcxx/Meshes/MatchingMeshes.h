@@ -48,11 +48,11 @@ class MatchingMeshesClass : public DataStructure {
     /** @brief Objet Jeveux '.PJEF_M1' */
     JeveuxVectorLong _pjefM1;
     /** @brief Objet Jeveux '.PJEF_CF' */
-    JeveuxVectorDouble _pjefCf;
+    JeveuxVectorReal _pjefCf;
     /** @brief Objet Jeveux '.PJEF_TR' */
     JeveuxVectorLong _pjefTr;
     /** @brief Objet Jeveux '.PJEF_CO' */
-    JeveuxVectorDouble _pjefCo;
+    JeveuxVectorReal _pjefCo;
     /** @brief Objet Jeveux '.PJEF_EL' */
     JeveuxVectorLong _pjefEl;
     /** @brief Objet Jeveux '.PJEF_MP' */

@@ -19,7 +19,7 @@ MATER=DEFI_MATERIAU(ELAS=_F(E=10000.0,
 
 affectMat = code_aster.MaterialOnMesh(MAIL)
 affectMat.addMaterialOnAllMesh(MATER)
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 MODT=AFFE_MODELE(MAILLAGE=MAIL,
                  AFFE=_F(TOUT='OUI',
@@ -60,7 +60,7 @@ numeDDL.setElementaryMatrix(matr_elem)
 numeDDL.computeNumbering()
 #numeDDL.debugPrint()
 
-matrAsse = code_aster.AssemblyMatrixDisplacementDouble()
+matrAsse = code_aster.AssemblyMatrixDisplacementReal()
 matrAsse.appendElementaryMatrix(matr_elem)
 matrAsse.setDOFNumbering(numeDDL)
 matrAsse.addKinematicsLoad(charCine)
@@ -72,7 +72,7 @@ retour = vect_elem.assembleVector( numeDDL )
 # FIXME matrixFactorization seems corrupt memory
 if False:
     monSolver.matrixFactorization( matrAsse )
-    resu = monSolver.solveDoubleLinearSystem( matrAsse, retour )
+    resu = monSolver.solveRealLinearSystem( matrAsse, retour )
     #resu.debugPrint(6)
 
     try:

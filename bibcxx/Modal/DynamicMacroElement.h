@@ -34,7 +34,7 @@
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Results/MechanicalModeContainer.h"
+#include "Results/ModeResult.h"
 #include "Supervis/ResultNaming.h"
 
 /**
@@ -59,41 +59,41 @@ class DynamicMacroElementClass : public DataStructure {
     /** @brief Objet Jeveux '.LICH' */
     JeveuxCollectionChar8 _lich;
     /** @brief Objet Jeveux '.LICA' */
-    JeveuxCollectionDouble _lica;
+    JeveuxCollectionReal _lica;
     /** @brief Objet Jeveux '.MAEL_RAID_DESC' */
     JeveuxVectorLong _maelRaidDesc;
     /** @brief Objet Jeveux '.MAEL_RAID_REFE' */
     JeveuxVectorChar24 _maelRaidRefe;
     /** @brief Objet Jeveux '.MAEL_RAID_VALE' */
-    JeveuxVectorDouble _maelRaidVale;
+    JeveuxVectorReal _maelRaidVale;
     /** @brief Objet Jeveux '.MAEL_MASS_DESC' */
     JeveuxVectorLong _maelMassDesc;
     /** @brief Objet Jeveux '.MAEL_MASS_REFE' */
     JeveuxVectorChar24 _maelMassRefe;
     /** @brief Objet Jeveux '.MAEL_MASS_VALE' */
-    JeveuxVectorDouble _maelMassVale;
+    JeveuxVectorReal _maelMassVale;
     /** @brief Objet Jeveux '.MAEL_AMOR_DESC' */
     JeveuxVectorLong _maelAmorDesc;
     /** @brief Objet Jeveux '.MAEL_AMOR_REFE' */
     JeveuxVectorChar24 _maelAmorRefe;
     /** @brief Objet Jeveux '.MAEL_AMOR_VALE' */
-    JeveuxVectorDouble _maelAmorVale;
+    JeveuxVectorReal _maelAmorVale;
     /** @brief Objet Jeveux '.MAEL_INER_REFE' */
     JeveuxVectorChar24 _maelInerRefe;
     /** @brief Objet Jeveux '.MAEL_INER_VALE' */
-    JeveuxVectorDouble _maelInterVale;
+    JeveuxVectorReal _maelInterVale;
     /** @brief Objet NUME_DDL */
     DOFNumberingPtr _numeDdl;
     /** @brief Mode Meca sur lequel repose le macro emement */
-    MechanicalModeContainerPtr _mechanicalMode;
+    ModeResultPtr _mechanicalMode;
     /** @brief double rigidity matrix */
-    AssemblyMatrixDisplacementDoublePtr _rigidityDMatrix;
+    AssemblyMatrixDisplacementRealPtr _rigidityDMatrix;
     /** @brief complex rigidity matrix */
     AssemblyMatrixDisplacementComplexPtr _rigidityCMatrix;
     /** @brief mass matrix */
-    AssemblyMatrixDisplacementDoublePtr _massMatrix;
+    AssemblyMatrixDisplacementRealPtr _massMatrix;
     /** @brief damping matrix */
-    AssemblyMatrixDisplacementDoublePtr _dampingMatrix;
+    AssemblyMatrixDisplacementRealPtr _dampingMatrix;
     /** @brief MATR_IMPE */
     GeneralizedAssemblyMatrixComplexPtr _impeMatrix;
     /** @brief MATR_IMPE_RIGI */
@@ -125,20 +125,20 @@ class DynamicMacroElementClass : public DataStructure {
           _maelDesc( JeveuxVectorLong( getName() + ".MAEL_DESC" ) ),
           _maelRefe( JeveuxVectorChar24( getName() + ".MAEL_REFE" ) ),
           _lich( JeveuxCollectionChar8( getName() + ".LICH" ) ),
-          _lica( JeveuxCollectionDouble( getName() + ".LICA" ) ),
+          _lica( JeveuxCollectionReal( getName() + ".LICA" ) ),
           _maelRaidDesc( JeveuxVectorLong( getName() + ".MAEL_RAID_DESC" ) ),
           _maelRaidRefe( JeveuxVectorChar24( getName() + ".MAEL_RAID_REFE" ) ),
-          _maelRaidVale( JeveuxVectorDouble( getName() + ".MAEL_RAID_VALE" ) ),
+          _maelRaidVale( JeveuxVectorReal( getName() + ".MAEL_RAID_VALE" ) ),
           _maelMassDesc( JeveuxVectorLong( getName() + ".MAEL_MASS_DESC" ) ),
           _maelMassRefe( JeveuxVectorChar24( getName() + ".MAEL_MASS_REFE" ) ),
-          _maelMassVale( JeveuxVectorDouble( getName() + ".MAEL_MASS_VALE" ) ),
+          _maelMassVale( JeveuxVectorReal( getName() + ".MAEL_MASS_VALE" ) ),
           _maelAmorDesc( JeveuxVectorLong( getName() + ".MAEL_AMOR_DESC" ) ),
           _maelAmorRefe( JeveuxVectorChar24( getName() + ".MAEL_AMOR_REFE" ) ),
-          _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
+          _maelAmorVale( JeveuxVectorReal( getName() + ".MAEL_AMOR_VALE" ) ),
           _maelInerRefe( JeveuxVectorChar24( getName() + ".MAEL_INER_REFE" ) ),
-          _maelInterVale( JeveuxVectorDouble( getName() + ".MAEL_INER_VALE" ) ),
+          _maelInterVale( JeveuxVectorReal( getName() + ".MAEL_INER_VALE" ) ),
           _numeDdl( nullptr ),
-          _mechanicalMode( MechanicalModeContainerPtr() ), _rigidityDMatrix( nullptr ),
+          _mechanicalMode( ModeResultPtr() ), _rigidityDMatrix( nullptr ),
           _rigidityCMatrix( nullptr ), _massMatrix( nullptr ), _dampingMatrix( nullptr ),
           _impeMatrix( nullptr ), _impeRigiMatrix( nullptr ), _impeMassMatrix( nullptr ),
           _impeAmorMatrix( nullptr ){};
@@ -146,7 +146,7 @@ class DynamicMacroElementClass : public DataStructure {
     /**
      * @brief Get damping matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getDampingMatrix() { return _dampingMatrix; };
+    AssemblyMatrixDisplacementRealPtr getDampingMatrix() { return _dampingMatrix; };
 
     DOFNumberingPtr getDOFNumbering() const
     {
@@ -176,7 +176,7 @@ class DynamicMacroElementClass : public DataStructure {
     /**
      * @brief Get mass matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getMassMatrix() { return _massMatrix; };
+    AssemblyMatrixDisplacementRealPtr getMassMatrix() { return _massMatrix; };
 
     /**
      * @brief Get size of object .LINO
@@ -191,13 +191,13 @@ class DynamicMacroElementClass : public DataStructure {
     /**
      * @brief Get rigidity matrix
      */
-    AssemblyMatrixDisplacementDoublePtr getDoubleStiffnessMatrix() { return _rigidityDMatrix; };
+    AssemblyMatrixDisplacementRealPtr getRealStiffnessMatrix() { return _rigidityDMatrix; };
 
     /**
      * @brief Set damping matrix
-     * @param matrix AssemblyMatrixDisplacementDoublePtr object
+     * @param matrix AssemblyMatrixDisplacementRealPtr object
      */
-    bool setDampingMatrix( const AssemblyMatrixDisplacementDoublePtr &matrix ) {
+    bool setDampingMatrix( const AssemblyMatrixDisplacementRealPtr &matrix ) {
         _dampingMatrix = matrix;
         return true;
     };
@@ -210,7 +210,7 @@ class DynamicMacroElementClass : public DataStructure {
 
     /**
      * @brief Set impedance matrix
-     * @param matrix AssemblyMatrixDisplacementDoublePtr object
+     * @param matrix AssemblyMatrixDisplacementRealPtr object
      */
     bool setImpedanceDampingMatrix( const GeneralizedAssemblyMatrixComplexPtr &matrix ) {
         _impeAmorMatrix = matrix;
@@ -219,7 +219,7 @@ class DynamicMacroElementClass : public DataStructure {
 
     /**
      * @brief Set impedance matrix
-     * @param matrix AssemblyMatrixDisplacementDoublePtr object
+     * @param matrix AssemblyMatrixDisplacementRealPtr object
      */
     bool setImpedanceMatrix( const GeneralizedAssemblyMatrixComplexPtr &matrix ) {
         _impeMatrix = matrix;
@@ -228,7 +228,7 @@ class DynamicMacroElementClass : public DataStructure {
 
     /**
      * @brief Set impedance matrix
-     * @param matrix AssemblyMatrixDisplacementDoublePtr object
+     * @param matrix AssemblyMatrixDisplacementRealPtr object
      */
     bool setImpedanceMassMatrix( const GeneralizedAssemblyMatrixComplexPtr &matrix ) {
         _impeMassMatrix = matrix;
@@ -237,7 +237,7 @@ class DynamicMacroElementClass : public DataStructure {
 
     /**
      * @brief Set impedance matrix
-     * @param matrix AssemblyMatrixDisplacementDoublePtr object
+     * @param matrix AssemblyMatrixDisplacementRealPtr object
      */
     bool setImpedanceStiffnessMatrix( const GeneralizedAssemblyMatrixComplexPtr &matrix ) {
         _impeRigiMatrix = matrix;
@@ -246,18 +246,18 @@ class DynamicMacroElementClass : public DataStructure {
 
     /**
      * @brief Set mass matrix
-     * @param matrix AssemblyMatrixDisplacementDoublePtr object
+     * @param matrix AssemblyMatrixDisplacementRealPtr object
      */
-    bool setMassMatrix( const AssemblyMatrixDisplacementDoublePtr &matrix ) {
+    bool setMassMatrix( const AssemblyMatrixDisplacementRealPtr &matrix ) {
         _massMatrix = matrix;
         return true;
     };
 
     /**
-     * @brief Set the MechanicalModeContainer
-     * @param mechanicalMode MechanicalModeContainerPtr object
+     * @brief Set the ModeResult
+     * @param mechanicalMode ModeResultPtr object
      */
-    bool setMechanicalMode( MechanicalModeContainerPtr &mechanicalMode ) {
+    bool setMechanicalMode( ModeResultPtr &mechanicalMode ) {
         _mechanicalMode = mechanicalMode;
         return true;
     };
@@ -274,9 +274,9 @@ class DynamicMacroElementClass : public DataStructure {
 
     /**
      * @brief Set rigidity matrix
-     * @param matrix AssemblyMatrixDisplacementDoublePtr object
+     * @param matrix AssemblyMatrixDisplacementRealPtr object
      */
-    bool setStiffnessMatrix( const AssemblyMatrixDisplacementDoublePtr &matrix ) {
+    bool setStiffnessMatrix( const AssemblyMatrixDisplacementRealPtr &matrix ) {
         _rigidityDMatrix = matrix;
         _rigidityCMatrix = nullptr;
         return true;

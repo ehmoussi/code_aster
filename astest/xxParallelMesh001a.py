@@ -41,7 +41,7 @@ testMesh2 = affectMat.getMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
 
 affectMat.addMaterialOnAllMesh(acier)
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 charCine = code_aster.KinematicsMechanicalLoad()
 charCine.setModel(model)
@@ -59,7 +59,7 @@ numeDDL.setElementaryMatrix(matr_elem)
 numeDDL.computeNumbering()
 numeDDL.debugPrint(rank+30)
 
-matrAsse = code_aster.AssemblyMatrixDisplacementDouble()
+matrAsse = code_aster.AssemblyMatrixDisplacementReal()
 matrAsse.appendElementaryMatrix(matr_elem)
 matrAsse.setDOFNumbering(numeDDL)
 matrAsse.addKinematicsLoad(charCine)

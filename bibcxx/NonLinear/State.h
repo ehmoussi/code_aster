@@ -29,7 +29,7 @@
 #include "astercxx.h"
 
 #include "DataFields/FieldOnNodes.h"
-#include "Results/NonLinearEvolutionContainer.h"
+#include "Results/NonLinearResult.h"
 
 /**
  * @class StateClass
@@ -47,7 +47,7 @@ class StateClass {
     /** @brief current step */
     double _currentStep;
     /** @brief Champ de déplacement */
-    FieldOnNodesDoublePtr _depl;
+    FieldOnNodesRealPtr _depl;
     /** @brief Champ de contraintes */
     // FieldOnGaussPointsTensorPtr _sigm;
     /** @brief Champ de variables internes */
@@ -91,7 +91,7 @@ class StateClass {
         @todo réaliser l'extraction des champs depuis l'evol_noli et associer les pointeurs _depl
        etc
     */
-    void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr &evol_noli,
+    void setFromNonLinearResult( const NonLinearResultPtr &evol_noli,
                                     double sourceStep, double precision = 1.E-06 ) {
         _evolParam = evol_noli->getName();
         _sourceStepParam = sourceStep;
@@ -102,7 +102,7 @@ class StateClass {
     /** @brief define the state from the result of a previous nonlinear anaysis
     */
 
-    void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr &evol_noli,
+    void setFromNonLinearResult( const NonLinearResultPtr &evol_noli,
                                     ASTERINTEGER sourceIndex ) {
         _evolParam = evol_noli->getName();
         _sourceIndexParam = sourceIndex;
@@ -115,9 +115,9 @@ class StateClass {
     * ni numéro d'ordre (sourceIndex), l'état est initialisé à partir du dernier
     * calcul effectué (de numéro d'ordre lastIndex dans la sd evol_noli)
     */
-    void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr &evol_noli ) {
+    void setFromNonLinearResult( const NonLinearResultPtr &evol_noli ) {
         ASTERINTEGER lastIndex = evol_noli->getNumberOfRanks();
-        setFromNonLinearEvolution( evol_noli, lastIndex );
+        setFromNonLinearResult( evol_noli, lastIndex );
     }
     /** @brief set the value of the current step
     */
@@ -129,7 +129,7 @@ class StateClass {
     /**
     * @brief Define a displacement field as  state of an analysis
     */
-    void setDisplacement( FieldOnNodesDoublePtr depl ) { _depl = depl; };
+    void setDisplacement( FieldOnNodesRealPtr depl ) { _depl = depl; };
 
     /**
     * @brief get current step
@@ -142,7 +142,7 @@ class StateClass {
     /**
     * @brief Get the  displacement field
     */
-    FieldOnNodesDoublePtr getDisplacement() const { return _depl; };
+    FieldOnNodesRealPtr getDisplacement() const { return _depl; };
     /**
      * @brief Récupération de la liste des paramètres
      * @return Liste constante des paramètres déclarés

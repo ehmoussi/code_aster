@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MechanicalModeContainer
+from ..Objects import ModeResult
 from ..Supervis import ExecuteCommand
 
 
 class ModiBaseModale(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.MechanicalModeContainer`.
+    """Command that defines :class:`~code_aster.Objects.ModeResult`.
     """
     command_name = "MODI_BASE_MODALE"
 
@@ -34,6 +34,6 @@ class ModiBaseModale(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = MechanicalModeContainer()
+        self._result = ModeResult()
 
 MODI_BASE_MODALE = ModiBaseModale.run

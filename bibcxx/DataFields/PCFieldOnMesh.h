@@ -574,22 +574,22 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
     };
 };
 
-/** @typedef PCFieldOnMeshDoubleClass Class d'une carte de double */
-typedef PCFieldOnMeshClass< double > PCFieldOnMeshDoubleClass;
+/** @typedef PCFieldOnMeshRealClass Class d'une carte de double */
+typedef PCFieldOnMeshClass< double > PCFieldOnMeshRealClass;
 /** @typedef PCFieldOnMeshLongClass Class d'une carte de long */
 typedef PCFieldOnMeshClass< ASTERINTEGER > PCFieldOnMeshLongClass;
 /** @typedef PCFieldOnMeshComplexClass Class d'une carte de complexe */
-typedef PCFieldOnMeshClass< DoubleComplex > PCFieldOnMeshComplexClass;
+typedef PCFieldOnMeshClass< RealComplex > PCFieldOnMeshComplexClass;
 /** @typedef PCFieldOnMeshChar8Class Class d'une carte de char*8 */
 typedef PCFieldOnMeshClass< JeveuxChar8 > PCFieldOnMeshChar8Class;
 /** @typedef PCFieldOnMeshChar16Class Class d'une carte de char*16 */
 typedef PCFieldOnMeshClass< JeveuxChar8 > PCFieldOnMeshChar16Class;
 
 /**
- * @typedef PCFieldOnBaseMeshPtrDouble
+ * @typedef PCFieldOnBaseMeshPtrReal
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshDoubleClass > PCFieldOnMeshDoublePtr;
+typedef boost::shared_ptr< PCFieldOnMeshRealClass > PCFieldOnMeshRealPtr;
 
 /**
  * @typedef PCFieldOnMeshLongPtr

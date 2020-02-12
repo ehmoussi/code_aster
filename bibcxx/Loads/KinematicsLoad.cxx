@@ -34,13 +34,13 @@ KinematicsLoadClass::KinematicsLoadClass( const std::string &type )
     : DataStructure( ResultNaming::getNewResultName(), 19, "CHAR_CINE" + type ),
       _model( ModelPtr() ), _intParam( JeveuxVectorLong( getName() + ".AFCI" ) ),
       _charParam( JeveuxVectorChar8( getName() + ".AFCK" ) ),
-      _doubleParam( JeveuxVectorDouble( getName() + ".AFCV" ) ), _isEmpty( true ){};
+      _doubleParam( JeveuxVectorReal( getName() + ".AFCV" ) ), _isEmpty( true ){};
 
 KinematicsLoadClass::KinematicsLoadClass( const std::string &name, const std::string &type )
     : DataStructure( name, 19, "CHAR_CINE" + type ), _model( ModelPtr() ),
       _intParam( JeveuxVectorLong( getName() + ".AFCI" ) ),
       _charParam( JeveuxVectorChar8( getName() + ".AFCK" ) ),
-      _doubleParam( JeveuxVectorDouble( getName() + ".AFCV" ) ), _isEmpty( true ){};
+      _doubleParam( JeveuxVectorReal( getName() + ".AFCV" ) ), _isEmpty( true ){};
 
 bool KinematicsLoadClass::build() {
     std::string cmd = "AFFE_CHAR_CINE";
@@ -55,10 +55,10 @@ bool KinematicsLoadClass::build() {
     dict.container["MODELE"] = _model->getName();
 
     // Definition de mot cle facteur MECA_IMPO
-    if ( _listOfDoubleImposedDisplacement.size() != 0 ) {
+    if ( _listOfRealImposedDisplacement.size() != 0 ) {
         ListSyntaxMapContainer listeMecaImpo;
-        for ( ListDoubleDispIter curIter = _listOfDoubleImposedDisplacement.begin();
-              curIter != _listOfDoubleImposedDisplacement.end(); ++curIter ) {
+        for ( ListRealDispIter curIter = _listOfRealImposedDisplacement.begin();
+              curIter != _listOfRealImposedDisplacement.end(); ++curIter ) {
             SyntaxMapContainer dict2;
             const MeshEntityPtr &tmp = curIter->getMeshEntityPtr();
             if ( tmp->getType() == AllMeshEntitiesType ) {

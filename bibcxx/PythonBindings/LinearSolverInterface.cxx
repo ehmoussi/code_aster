@@ -29,9 +29,9 @@ namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/LinearSolverInterface.h"
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( solveDoubleLinearSystemWithKinematicsLoad_overloads,
-                                        solveDoubleLinearSystemWithKinematicsLoad, 3, 4 )
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( solveDoubleLinearSystem_overloads, solveDoubleLinearSystem,
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( solveRealLinearSystemWithKinematicsLoad_overloads,
+                                        solveRealLinearSystemWithKinematicsLoad, 3, 4 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( solveRealLinearSystem_overloads, solveRealLinearSystem,
                                         2, 3 )
 
 void exportLinearSolverToPython() {
@@ -79,7 +79,7 @@ void exportLinearSolverToPython() {
     py::enum_< LagrangeTreatment >( "LagrangeTreatment" )
         .value( "Eliminate", Eliminate )
         .value( "NotEliminate", NotEliminate )
-        .value( "DoubleLagrangeEliminate", DoubleLagrangeEliminate );
+        .value( "RealLagrangeEliminate", RealLagrangeEliminate );
 
     py::enum_< MemoryManagement >( "MemoryManagement" )
         .value( "InCore", InCore )
@@ -109,11 +109,11 @@ void exportLinearSolverToPython() {
     py::class_< BaseLinearSolverClass, BaseLinearSolverClass::BaseLinearSolverPtr,
                 py::bases< DataStructure > >( "BaseLinearSolver", py::no_init )
         .def( "build", &BaseLinearSolverClass::build )
-        .def( "solveDoubleLinearSystem", &BaseLinearSolverClass::solveDoubleLinearSystem,
-              solveDoubleLinearSystem_overloads() )
-        .def( "solveDoubleLinearSystemWithKinematicsLoad",
-              &BaseLinearSolverClass::solveDoubleLinearSystemWithKinematicsLoad,
-              solveDoubleLinearSystemWithKinematicsLoad_overloads() )
+        .def( "solveRealLinearSystem", &BaseLinearSolverClass::solveRealLinearSystem,
+              solveRealLinearSystem_overloads() )
+        .def( "solveRealLinearSystemWithKinematicsLoad",
+              &BaseLinearSolverClass::solveRealLinearSystemWithKinematicsLoad,
+              solveRealLinearSystemWithKinematicsLoad_overloads() )
         .def( "disablePreprocessing", &BaseLinearSolverClass::disablePreprocessing )
         .def( "matrixFactorization", &BaseLinearSolverClass::matrixFactorization )
         .def( "setAlgorithm", &BaseLinearSolverClass::setAlgorithm )

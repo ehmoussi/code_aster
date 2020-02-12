@@ -36,14 +36,14 @@ void exportGeneralizedAssemblyVectorToPython() {
     // fake initFactoryPtr: created by subclasses
     // fake initFactoryPtr: created by subclasses
 
-    py::class_< GeneralizedAssemblyVectorDoubleClass, GeneralizedAssemblyVectorDoublePtr,
+    py::class_< GeneralizedAssemblyVectorRealClass, GeneralizedAssemblyVectorRealPtr,
                 py::bases< GenericGeneralizedAssemblyVectorClass > >(
-        "GeneralizedAssemblyVectorDouble", py::no_init )
+        "GeneralizedAssemblyVectorReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorDoubleClass >))
+              py::make_constructor(&initFactoryPtr< GeneralizedAssemblyVectorRealClass >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< GeneralizedAssemblyVectorDoubleClass, std::string >));
+                  &initFactoryPtr< GeneralizedAssemblyVectorRealClass, std::string >));
 
     py::class_< GeneralizedAssemblyVectorComplexClass, GeneralizedAssemblyVectorComplexPtr,
                 py::bases< GenericGeneralizedAssemblyVectorClass > >(

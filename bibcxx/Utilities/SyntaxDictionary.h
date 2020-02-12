@@ -61,11 +61,11 @@ typedef VectorString::iterator VectorStringIter;
 typedef VectorString::const_iterator VectorStringCIter;
 
 /**
- * @typedef VectorDouble
+ * @typedef VectorReal
  * @brief Vecteur STL de doubles
  */
-typedef VectorDouble::iterator VectorDoubleIter;
-typedef VectorDouble::const_iterator VectorDoubleCIter;
+typedef VectorReal::iterator VectorRealIter;
+typedef VectorReal::const_iterator VectorRealCIter;
 
 /**
  * @typedef VectorComplex
@@ -84,8 +84,8 @@ class SyntaxMapContainer {
     /** @brief Typedef definissant un map associant une chaine a divers types */
     typedef std::map<
         std::string,
-        boost::variant< ASTERINTEGER, std::string, double, DoubleComplex, VectorLong, VectorString,
-                        VectorDouble, VectorComplex, ListSyntaxMapContainer > > SyntaxMap;
+        boost::variant< ASTERINTEGER, std::string, double, RealComplex, VectorLong, VectorString,
+                        VectorReal, VectorComplex, ListSyntaxMapContainer > > SyntaxMap;
     typedef SyntaxMap::iterator SyntaxMapIter;
     typedef SyntaxMap::const_iterator SyntaxMapCIter;
 

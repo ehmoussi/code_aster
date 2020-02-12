@@ -52,10 +52,10 @@ template <> struct AllowedFieldType< ASTERINTEGER > {
 };
 
 template <> struct AllowedFieldType< double > {
-    static const unsigned short numTypeJeveux = Double;
+    static const unsigned short numTypeJeveux = Real;
 };
 
-template <> struct AllowedFieldType< DoubleComplex > {
+template <> struct AllowedFieldType< RealComplex > {
     static const unsigned short numTypeJeveux = Complex;
 };
 
@@ -314,14 +314,14 @@ bool FieldOnNodesClass< ValueType >::printMedFile( const std::string fileName ) 
     return true;
 };
 
-/** @typedef FieldOnNodesClassDouble Class d'un champ aux noeuds de double */
-typedef FieldOnNodesClass< double > FieldOnNodesDoubleClass;
+/** @typedef FieldOnNodesClassReal Class d'un champ aux noeuds de double */
+typedef FieldOnNodesClass< double > FieldOnNodesRealClass;
 
 /**
- * @typedef FieldOnNodesPtrDouble
+ * @typedef FieldOnNodesPtrReal
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< FieldOnNodesDoubleClass > FieldOnNodesDoublePtr;
+typedef boost::shared_ptr< FieldOnNodesRealClass > FieldOnNodesRealPtr;
 
 /** @typedef FieldOnNodesLongClass Class d'une carte de long */
 typedef FieldOnNodesClass< ASTERINTEGER > FieldOnNodesLongClass;
@@ -333,7 +333,7 @@ typedef FieldOnNodesClass< ASTERINTEGER > FieldOnNodesLongClass;
 typedef boost::shared_ptr< FieldOnNodesLongClass > FieldOnNodesLongPtr;
 
 /** @typedef FieldOnNodesClassComplex Class d'un champ aux noeuds de complexes */
-typedef FieldOnNodesClass< DoubleComplex > FieldOnNodesComplexClass;
+typedef FieldOnNodesClass< RealComplex > FieldOnNodesComplexClass;
 
 /**
  * @typedef FieldOnNodesComplexPtr

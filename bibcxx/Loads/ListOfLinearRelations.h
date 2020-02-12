@@ -82,13 +82,13 @@ template < class ValueType > class ListOfLinearRelationsClass : public DataStruc
     };
 };
 
-/** @typedef PCFieldOnMeshClassDouble Class d'une carte de double */
-typedef ListOfLinearRelationsClass< double > ListOfLinearRelationsDouble;
+/** @typedef PCFieldOnMeshClassReal Class d'une carte de double */
+typedef ListOfLinearRelationsClass< double > ListOfLinearRelationsReal;
 
 /**
- * @typedef ListOfLinearRelationsDouble
+ * @typedef ListOfLinearRelationsReal
  * @brief Pointeur intelligent vers un ListOfLinearRelationsClass
  */
-typedef boost::shared_ptr< ListOfLinearRelationsDouble > ListOfLinearRelationsDoublePtr;
+typedef boost::shared_ptr< ListOfLinearRelationsReal > ListOfLinearRelationsRealPtr;
 
 #endif /* LISTOFLINEARRELATIONS_H_ */

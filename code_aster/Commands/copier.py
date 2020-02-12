@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Model, PrestressingCableDefinition, ResultsContainer
+from ..Objects import Model, PrestressingCableDefinition, Result
 from ..Supervis import ExecuteCommand
 
 
@@ -40,7 +40,7 @@ class Copier(ExecuteCommand):
                 other.getModel(),
                 other.getMaterialOnMesh(),
                 other.getElementaryCharacteristics())
-        elif isinstance(other, ResultsContainer):
+        elif isinstance(other, Result):
             # do not support several models
             mesh = other.getModel().getMesh()
             self._result = type(other)()

@@ -48,15 +48,15 @@ class GeneralizedModelClass : public DataStructure {
     /** @brief Objet Jeveux '.MODG.LIPR' */
     JeveuxVectorLong _modgLipr;
     /** @brief Objet Jeveux '.MODG.LIMA' */
-    JeveuxVectorDouble _modgLima;
+    JeveuxVectorReal _modgLima;
     /** @brief Objet Jeveux '.MODG.SSME' */
     JeveuxVectorChar8 _modgSsme;
     /** @brief Objet Jeveux '.MODG.SSNO' */
     JeveuxVectorChar8 _modgSsno;
     /** @brief Objet Jeveux '.MODG.SSOR' */
-    JeveuxVectorDouble _modgSsor;
+    JeveuxVectorReal _modgSsor;
     /** @brief Objet Jeveux '.MODG.SSTR' */
-    JeveuxVectorDouble _modgSstr;
+    JeveuxVectorReal _modgSstr;
     typedef std::map< std::string, DynamicMacroElementPtr > MapStrMacroElem;
     typedef MapStrMacroElem::iterator MapStrMacroElemIter;
     /** @brief Map which associates a name to a DynamicMacroElementPtr */
@@ -77,11 +77,11 @@ class GeneralizedModelClass : public DataStructure {
           _modgDesc( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
           _modgLidf( JeveuxCollectionChar8( getName() + ".MODG.DESC" ) ),
           _modgLipr( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
-          _modgLima( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ),
+          _modgLima( JeveuxVectorReal( getName() + ".MODG.DESC" ) ),
           _modgSsme( JeveuxVectorChar8( getName() + ".MODG.DESC" ) ),
           _modgSsno( JeveuxVectorChar8( getName() + ".MODG.DESC" ) ),
-          _modgSsor( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ),
-          _modgSstr( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ){};
+          _modgSsor( JeveuxVectorReal( getName() + ".MODG.DESC" ) ),
+          _modgSstr( JeveuxVectorReal( getName() + ".MODG.DESC" ) ){};
 
     /**
      * @brief Add a DynamicMacroElement associated to a name

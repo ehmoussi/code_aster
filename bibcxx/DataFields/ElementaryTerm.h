@@ -1,5 +1,5 @@
-#ifndef ELEMENTARYRESULT_H_
-#define ELEMENTARYRESULT_H_
+#ifndef ELEMENTARYTERM_H_
+#define ELEMENTARYTERM_H_
 
 /**
  * @file ElementaryTerm.h
@@ -74,13 +74,13 @@ template < class ValueType > class ElementaryTermClass : public DataStructure {
 };
 
 /**
- * @typedef ElementaryTermDoublePtr
+ * @typedef ElementaryTermRealPtr
  */
-typedef boost::shared_ptr< ElementaryTermClass< double > > ElementaryTermDoublePtr;
+typedef boost::shared_ptr< ElementaryTermClass< double > > ElementaryTermRealPtr;
 
 /**
  * @typedef ElementaryTermComplexPtr
  */
-typedef boost::shared_ptr< ElementaryTermClass< DoubleComplex > > ElementaryTermComplexPtr;
+typedef boost::shared_ptr< ElementaryTermClass< RealComplex > > ElementaryTermComplexPtr;
 
-#endif /* ELEMENTARYRESULT_H_ */
+#endif /* ELEMENTARYTERM_H_ */

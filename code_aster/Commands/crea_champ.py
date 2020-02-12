@@ -19,16 +19,16 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (FieldOnCellsDouble, FieldOnNodesComplex,
-                       FieldOnNodesDouble, FullResultsContainer,
-                       PCFieldOnMeshDouble)
+from ..Objects import (FieldOnCellsReal, FieldOnNodesComplex,
+                       FieldOnNodesReal, FullResult,
+                       PCFieldOnMeshReal)
 from ..Supervis import ExecuteCommand
 
 
 class FieldCreator(ExecuteCommand):
     """Command that creates fields that may be
-    :class:`~code_aster.Objects.FieldOnNodesDouble` or
-    :class:`~code_aster.Objects.PCFieldOnMeshDouble`."""
+    :class:`~code_aster.Objects.FieldOnNodesReal` or
+    :class:`~code_aster.Objects.PCFieldOnMeshReal`."""
     command_name = "CREA_CHAMP"
 
     def create_result(self, keywords):
@@ -58,17 +58,17 @@ class FieldCreator(ExecuteCommand):
         if location == "CART_":
             if mesh is None:
                 raise NotImplementedError("Must have Mesh, Model or ElementaryCharacteristics")
-            self._result = PCFieldOnMeshDouble(mesh)
+            self._result = PCFieldOnMeshReal(mesh)
         elif location == "NOEU_":
             if typ == "C":
                 self._result = FieldOnNodesComplex()
             else:
-                self._result = FieldOnNodesDouble()
+                self._result = FieldOnNodesReal()
             if mesh is not None:
                 self._result.setMesh(mesh)
         else:
             # ELGA_
-            self._result = FieldOnCellsDouble()
+            self._result = FieldOnCellsReal()
         numeDdl = keywords.get("NUME_DDL")
         if numeDdl is not None:
             self._result.setDOFNumbering(numeDdl)
@@ -79,7 +79,7 @@ class FieldCreator(ExecuteCommand):
             if modele is not None:
                 self._result.setModel(modele)
             elif resultat is not None:
-                if isinstance(resultat, FullResultsContainer):
+                if isinstance(resultat, FullResult):
                     try:
                         dofNum = resultat.getDOFNumbering()
                         self._result.setDescription(dofNum.getFiniteElementDescriptors()[0])

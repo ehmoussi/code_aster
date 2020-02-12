@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import AssemblyMatrixDisplacementDouble
+from ..Objects import AssemblyMatrixDisplacementReal
 from ..Supervis import ExecuteCommand
 
 
 class RemoveLagrangian(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.AssemblyMatrixDisplacementDouble`"""
+    """Command that creates the :class:`~code_aster.Objects.AssemblyMatrixDisplacementReal`"""
     command_name = "ELIM_LAGR"
 
     def create_result(self, keywords):
@@ -33,7 +33,7 @@ class RemoveLagrangian(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = AssemblyMatrixDisplacementDouble()
+        self._result = AssemblyMatrixDisplacementReal()
 
 
     def post_exec(self, keywords):

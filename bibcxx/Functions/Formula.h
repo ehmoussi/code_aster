@@ -126,7 +126,7 @@ class FormulaClass : public GenericFunctionClass {
      */
     std::string getExpression() const { return _expression; }
 
-    VectorDouble evaluate( const VectorDouble &values ) const ;
+    VectorReal evaluate( const VectorReal &values ) const ;
 
     /**
      * @brief Assign the context for evaluation
@@ -186,9 +186,9 @@ typedef boost::shared_ptr< FormulaClass > FormulaPtr;
 /**
  * @brief Evaluate Python code of a Formula
  */
-VectorDouble evaluate_formula( const PyObject *code, PyObject *globals,
+VectorReal evaluate_formula( const PyObject *code, PyObject *globals,
                                const std::vector< std::string > &variables,
-                               const VectorDouble &values, int *retcode );
+                               const VectorReal &values, int *retcode );
 
 #ifdef __cplusplus
 extern "C" {

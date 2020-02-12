@@ -56,7 +56,7 @@ class ElementaryVectorClass : public DataStructure {
     /** @brief Booleen indiquant si la sd est vide */
     bool _isEmpty;
     /** @brief Vectors of RESUELEM */
-    std::vector< ElementaryTermDoublePtr > _realVector;
+    std::vector< ElementaryTermRealPtr > _realVector;
 
     /** @brief Liste de charges */
     ListOfLoadsPtr _listOfLoads;
@@ -114,7 +114,7 @@ class ElementaryVectorClass : public DataStructure {
      * @param currentNumerotation objet DOFNumbering
      * @todo prendre en compte les fonctions multiplicatrices
      */
-    FieldOnNodesDoublePtr
+    FieldOnNodesRealPtr
     assembleVector( const DOFNumberingPtr &currentNumerotation ) {
         return assembleVector( currentNumerotation, 0., Permanent );
     };
@@ -125,7 +125,7 @@ class ElementaryVectorClass : public DataStructure {
  * @todo prendre en compte les fonctions multiplicatrices
  */
 #ifdef _USE_MPI
-    FieldOnNodesDoublePtr assembleVector(
+    FieldOnNodesRealPtr assembleVector(
         const ParallelDOFNumberingPtr &currentNumerotation ) {
         return assembleVector( currentNumerotation, 0., Permanent );
     };
@@ -136,7 +136,7 @@ class ElementaryVectorClass : public DataStructure {
      * @param currentNumerotation objet DOFNumbering
      * @todo prendre en compte les fonctions multiplicatrices
      */
-    FieldOnNodesDoublePtr
+    FieldOnNodesRealPtr
     assembleVector( const BaseDOFNumberingPtr &currentNumerotation, const double &time = 0.,
                     const JeveuxMemory memType = Permanent ) ;
 
@@ -170,7 +170,7 @@ class ElementaryVectorClass : public DataStructure {
             const std::string name = ( *_listOfElementaryTerms )[pos].toString();
             if ( trim( name ) != "" )
             {
-                ElementaryTermDoublePtr toPush( new ElementaryTermClass< double >( name ) );
+                ElementaryTermRealPtr toPush( new ElementaryTermClass< double >( name ) );
                 _realVector.push_back( toPush );
             }
         }
@@ -225,22 +225,22 @@ class TemplateElementaryVectorClass: public ElementaryVectorClass
 /** @typedef Definition d'une matrice élémentaire de double */
 template class TemplateElementaryVectorClass< double, Displacement >;
 typedef TemplateElementaryVectorClass< double,
-                                          Displacement > ElementaryVectorDisplacementDoubleClass;
+                                          Displacement > ElementaryVectorDisplacementRealClass;
 
 /** @typedef Definition d'une matrice élémentaire de double temperature */
 template class TemplateElementaryVectorClass< double, Temperature >;
 typedef TemplateElementaryVectorClass< double,
-                                          Temperature > ElementaryVectorTemperatureDoubleClass;
+                                          Temperature > ElementaryVectorTemperatureRealClass;
 
-/** @typedef Definition d'une matrice élémentaire de DoubleComplex pression */
-template class TemplateElementaryVectorClass< DoubleComplex, Pressure >;
-typedef TemplateElementaryVectorClass< DoubleComplex,
+/** @typedef Definition d'une matrice élémentaire de RealComplex pression */
+template class TemplateElementaryVectorClass< RealComplex, Pressure >;
+typedef TemplateElementaryVectorClass< RealComplex,
                                           Pressure > ElementaryVectorPressureComplexClass;
 
-typedef boost::shared_ptr< ElementaryVectorDisplacementDoubleClass >
-    ElementaryVectorDisplacementDoublePtr;
-typedef boost::shared_ptr< ElementaryVectorTemperatureDoubleClass >
-    ElementaryVectorTemperatureDoublePtr;
+typedef boost::shared_ptr< ElementaryVectorDisplacementRealClass >
+    ElementaryVectorDisplacementRealPtr;
+typedef boost::shared_ptr< ElementaryVectorTemperatureRealClass >
+    ElementaryVectorTemperatureRealPtr;
 typedef boost::shared_ptr< ElementaryVectorPressureComplexClass >
     ElementaryVectorPressureComplexPtr;
 

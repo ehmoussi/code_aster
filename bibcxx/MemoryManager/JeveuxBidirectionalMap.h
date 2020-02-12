@@ -178,9 +178,9 @@ typedef JeveuxBidirectionalMap< ASTERINTEGER > JeveuxBidirectionalMapLong;
 /** @typedef Definition d'un pointeur de nom Jeveux short int */
 typedef JeveuxBidirectionalMap< short int > JeveuxBidirectionalMapShort;
 /** @typedef Definition d'un pointeur de nom Jeveux double */
-typedef JeveuxBidirectionalMap< double > JeveuxBidirectionalMapDouble;
+typedef JeveuxBidirectionalMap< double > JeveuxBidirectionalMapReal;
 /** @typedef Definition d'un pointeur de nom Jeveux double complex */
-typedef JeveuxBidirectionalMap< DoubleComplex > JeveuxBidirectionalMapComplex;
+typedef JeveuxBidirectionalMap< RealComplex > JeveuxBidirectionalMapComplex;
 /** @typedef Definition d'un vecteur de JeveuxChar8 */
 typedef JeveuxBidirectionalMap< JeveuxChar8 > JeveuxBidirectionalMapChar8;
 /** @typedef Definition d'un pointeur de nom JeveuxChar16 */

@@ -20,11 +20,11 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (AssemblyMatrixPressureComplex,
-                       FullAcousticHarmonicResultsContainer,
-                       FullHarmonicResultsContainer,
-                       FullTransientResultsContainer,
-                       HarmoGeneralizedResultsContainer,
-                       TransientGeneralizedResultsContainer)
+                       FullHarmonicAcousticResult,
+                       FullHarmonicResult,
+                       FullTransientResult,
+                       HarmoGeneralizedResult,
+                       TransientGeneralizedResult)
 from ..Supervis import ExecuteCommand
 
 
@@ -46,17 +46,17 @@ class VibrationDynamics(ExecuteCommand):
             matrRigi = keywords["MATR_RIGI"]
             if base == "PHYS":
                 if typ == "TRAN":
-                    self._result = FullTransientResultsContainer()
+                    self._result = FullTransientResult()
                     return
                 if isinstance(matrRigi, AssemblyMatrixPressureComplex):
-                    self._result = FullAcousticHarmonicResultsContainer()
+                    self._result = FullHarmonicAcousticResult()
                     return
-                self._result = FullHarmonicResultsContainer()
+                self._result = FullHarmonicResult()
             else:
                 if typ == "TRAN":
-                    self._result = TransientGeneralizedResultsContainer()
+                    self._result = TransientGeneralizedResult()
                 else:
-                    self._result = HarmoGeneralizedResultsContainer()
+                    self._result = HarmoGeneralizedResult()
 
     def post_exec(self, keywords):
         """Execute the command.
@@ -73,8 +73,8 @@ class VibrationDynamics(ExecuteCommand):
         if keywords["BASE_CALCUL"] == "GENE":
             stiffnessMatrix = keywords["MATR_RIGI"]
             dofGeneNum = stiffnessMatrix.getGeneralizedDOFNumbering()
-            if isinstance(self._result, HarmoGeneralizedResultsContainer) or \
-               isinstance(self._result, TransientGeneralizedResultsContainer):
+            if isinstance(self._result, HarmoGeneralizedResult) or \
+               isinstance(self._result, TransientGeneralizedResult):
                 self._result.setGeneralizedDOFNumbering(dofGeneNum)
             else:
                 raise Exception("Unknown result type")

@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`GeneralizedAssemblyMatrixDouble` --- Generalized Assembly matrix
+:py:class:`GeneralizedAssemblyMatrixReal` --- Generalized Assembly matrix
 ****************************************************
 """
 
@@ -27,7 +27,7 @@ import numpy as NP
 
 import aster
 from libaster import (GeneralizedAssemblyMatrixComplex,
-                      GeneralizedAssemblyMatrixDouble)
+                      GeneralizedAssemblyMatrixReal)
 
 from ..Utilities import injector
 
@@ -146,8 +146,8 @@ class ExtendedGeneralizedAssemblyMatrixComplex(object):
             raise KeyError
         return
 
-@injector(GeneralizedAssemblyMatrixDouble)
-class ExtendedGeneralizedAssemblyMatrixDouble():
+@injector(GeneralizedAssemblyMatrixReal)
+class ExtendedGeneralizedAssemblyMatrixReal():
     cata_sdj = "SD.sd_matr_asse_gene.sd_matr_asse_gene"
 
     def __getstate__(self):

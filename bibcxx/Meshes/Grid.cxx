@@ -27,5 +27,5 @@
 
 GridClass::GridClass( const std::string name )
     : MeshClass( name, "GRILLE" ),
-      _grlr( JeveuxVectorDouble( getName() + ".GRLR" ) ),
+      _grlr( JeveuxVectorReal( getName() + ".GRLR" ) ),
       _grli( JeveuxVectorLong( getName() + ".GRLI" ) ){};

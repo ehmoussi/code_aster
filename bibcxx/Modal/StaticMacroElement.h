@@ -46,15 +46,15 @@ class ProjMesuClass : public DataStructure {
     /** @brief Objet Jeveux '.PJMRG' */
     JeveuxVectorChar8 _pjmrg;
     /** @brief Objet Jeveux '.PJMBP' */
-    JeveuxVectorDouble _pjmbp;
+    JeveuxVectorReal _pjmbp;
     /** @brief Objet Jeveux '.PJMRF' */
     JeveuxVectorChar16 _pjmrf;
     /** @brief Objet Jeveux '.PJMOR' */
-    JeveuxVectorDouble _pjmor;
+    JeveuxVectorReal _pjmor;
     /** @brief Objet Jeveux '.PJMMM' */
-    JeveuxVectorDouble _pjmmm;
+    JeveuxVectorReal _pjmmm;
     /** @brief Objet Jeveux '.PJMIG' */
-    JeveuxVectorDouble _pjmig;
+    JeveuxVectorReal _pjmig;
 
   public:
     /**
@@ -64,11 +64,11 @@ class ProjMesuClass : public DataStructure {
         : DataStructure( name, 18, "PROJ_MESU", Permanent ),
           _pjmno( JeveuxVectorLong( getName() + ".PJMNO" ) ),
           _pjmrg( JeveuxVectorChar8( getName() + ".PJMRG" ) ),
-          _pjmbp( JeveuxVectorDouble( getName() + ".PJMBP" ) ),
+          _pjmbp( JeveuxVectorReal( getName() + ".PJMBP" ) ),
           _pjmrf( JeveuxVectorChar16( getName() + ".PJMRF" ) ),
-          _pjmor( JeveuxVectorDouble( getName() + ".PJMOR" ) ),
-          _pjmmm( JeveuxVectorDouble( getName() + ".PJMMM" ) ),
-          _pjmig( JeveuxVectorDouble( getName() + ".PJMIG" ) ){};
+          _pjmor( JeveuxVectorReal( getName() + ".PJMOR" ) ),
+          _pjmmm( JeveuxVectorReal( getName() + ".PJMMM" ) ),
+          _pjmig( JeveuxVectorReal( getName() + ".PJMIG" ) ){};
 };
 
 /**
@@ -91,23 +91,23 @@ class StaticMacroElementClass : public DataStructure {
     /** @brief Objet Jeveux '.REFM' */
     JeveuxVectorChar8 _refm;
     /** @brief Objet Jeveux '.VARM' */
-    JeveuxVectorDouble _varm;
+    JeveuxVectorReal _varm;
     /** @brief Objet Jeveux '.CONX' */
     JeveuxVectorLong _conx;
     /** @brief Objet Jeveux '.RIGIMECA' */
-    AssemblyMatrixDisplacementDoublePtr _rigiMeca;
+    AssemblyMatrixDisplacementRealPtr _rigiMeca;
     /** @brief Objet Jeveux '.MAEL_RAID_VALE' */
-    JeveuxVectorDouble _maelRaidVale;
+    JeveuxVectorReal _maelRaidVale;
     /** @brief Objet Jeveux '.PHI_IE' */
-    JeveuxCollectionDouble _phiIe;
+    JeveuxCollectionReal _phiIe;
     /** @brief Objet Jeveux '.MASSMECA' */
-    AssemblyMatrixDisplacementDoublePtr _masseMeca;
+    AssemblyMatrixDisplacementRealPtr _masseMeca;
     /** @brief Objet Jeveux '.MAEL_MASS_VALE' */
-    JeveuxVectorDouble _maelMassVale;
+    JeveuxVectorReal _maelMassVale;
     /** @brief Objet Jeveux '.MAEL_AMOR_VALE' */
-    JeveuxVectorDouble _maelAmorVale;
+    JeveuxVectorReal _maelAmorVale;
     /** @brief Objet Jeveux '.LICA' */
-    JeveuxCollectionDouble _lica;
+    JeveuxCollectionReal _lica;
     /** @brief Objet Jeveux '.LICH' */
     JeveuxCollectionChar8 _lich;
     /** @brief Objet PROJ_MESU '        .PROJM    ' */
@@ -128,15 +128,15 @@ class StaticMacroElementClass : public DataStructure {
           _desm( JeveuxVectorLong( getName() + ".DESM" ) ),
           _lino( JeveuxVectorLong( getName() + ".LINO" ) ),
           _refm( JeveuxVectorChar8( getName() + ".REFM" ) ),
-          _varm( JeveuxVectorDouble( getName() + ".VARM" ) ),
+          _varm( JeveuxVectorReal( getName() + ".VARM" ) ),
           _conx( JeveuxVectorLong( getName() + ".CONX" ) ),
-          _rigiMeca( new AssemblyMatrixDisplacementDoubleClass( getName() + ".RIGIMECA" ) ),
-          _maelRaidVale( JeveuxVectorDouble( getName() + ".MAEL_RAID_VALE" ) ),
-          _phiIe( JeveuxCollectionDouble( getName() + ".PHI_IE" ) ),
-          _masseMeca( new AssemblyMatrixDisplacementDoubleClass( getName() + ".MASSMECA" ) ),
-          _maelMassVale( JeveuxVectorDouble( getName() + ".MAEL_MASS_VALE" ) ),
-          _maelAmorVale( JeveuxVectorDouble( getName() + ".MAEL_AMOR_VALE" ) ),
-          _lica( JeveuxCollectionDouble( getName() + ".LICA" ) ),
+          _rigiMeca( new AssemblyMatrixDisplacementRealClass( getName() + ".RIGIMECA" ) ),
+          _maelRaidVale( JeveuxVectorReal( getName() + ".MAEL_RAID_VALE" ) ),
+          _phiIe( JeveuxCollectionReal( getName() + ".PHI_IE" ) ),
+          _masseMeca( new AssemblyMatrixDisplacementRealClass( getName() + ".MASSMECA" ) ),
+          _maelMassVale( JeveuxVectorReal( getName() + ".MAEL_MASS_VALE" ) ),
+          _maelAmorVale( JeveuxVectorReal( getName() + ".MAEL_AMOR_VALE" ) ),
+          _lica( JeveuxCollectionReal( getName() + ".LICA" ) ),
           _lich( JeveuxCollectionChar8( getName() + ".LICH" ) ),
           _projM( new ProjMesuClass( getName() + ".PROJM    " ) ){};
 };

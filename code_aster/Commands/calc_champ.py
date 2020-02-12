@@ -24,7 +24,7 @@ from ..Supervis import ExecuteCommand
 
 class ComputeAdditionalField(ExecuteCommand):
     """Command that computes additional fields in a
-    :class:`~code_aster.Objects.ResultsContainer`.
+    :class:`~code_aster.Objects.Result`.
     """
     command_name = "CALC_CHAMP"
 

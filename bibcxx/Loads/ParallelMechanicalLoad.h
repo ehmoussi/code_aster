@@ -44,8 +44,8 @@
 class ParallelMechanicalLoadClass: public DataStructure
 {
 private:
-    void transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
-                                PCFieldOnMeshDoublePtr& fieldOut )
+    void transferPCFieldOnMesh( const PCFieldOnMeshRealPtr& fieldIn,
+                                PCFieldOnMeshRealPtr& fieldOut )
         ;
 
 protected:
@@ -54,9 +54,9 @@ protected:
     /** @brief Vecteur Jeveux '.LIGRE' */
     ParallelFiniteElementDescriptorPtr _FEDesc;
     /** @brief Carte '.CIMPO' */
-    PCFieldOnMeshDoublePtr             _cimpo;
+    PCFieldOnMeshRealPtr             _cimpo;
     /** @brief Carte '.CMULT' */
-    PCFieldOnMeshDoublePtr             _cmult;
+    PCFieldOnMeshRealPtr             _cmult;
     /** @brief Vecteur Jeveux '.TYPE' */
     JeveuxVectorChar8                  _type;
     /** @brief Vecteur Jeveux '.MODEL.NOMO' */

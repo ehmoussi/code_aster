@@ -35,18 +35,18 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (ConcreteDryingInputVariable,
-                       ConcreteHydratationInputVariable,
-                       CorrosionInputVariable, EvolutionParameter,
-                       GeometryInputVariable, InputVariableConverter,
-                       InputVariableOnMesh, IrradiationInputVariable,
-                       IrreversibleDeformationInputVariable, MaterialOnMesh,
-                       MaterialOnMeshBuilder, Neutral1InputVariable,
-                       Neutral2InputVariable, Neutral3InputVariable,
-                       SteelPhasesInputVariable, TemperatureInputVariable,
-                       TotalFluidPressureInputVariable,
-                       VolumetricDeformationInputVariable,
-                       ZircaloyPhasesInputVariable)
+from ..Objects import (ConcreteDryingExternalVariable,
+                       ConcreteHydratationExternalVariable,
+                       CorrosionExternalVariable, EvolutionParameter,
+                       GeometryExternalVariable, ExternalVariableConverter,
+                       ExternalVariableOnMesh, IrradiationExternalVariable,
+                       IrreversibleDeformationExternalVariable, MaterialOnMesh,
+                       MaterialOnMeshBuilder, Neutral1ExternalVariable,
+                       Neutral2ExternalVariable, Neutral3ExternalVariable,
+                       SteelPhasesExternalVariable, TemperatureExternalVariable,
+                       TotalFluidPressureExternalVariable,
+                       VolumetricDeformationExternalVariable,
+                       ZircaloyPhasesExternalVariable)
 from ..Supervis import ExecuteCommand
 from ..Utilities import force_list
 
@@ -105,21 +105,21 @@ class MaterialAssignment(ExecuteCommand):
         else:
             mesh = keywords["MODELE"].getMesh()
 
-        inputVarOnMesh = InputVariableOnMesh(mesh)
+        externalVarOnMesh = ExternalVariableOnMesh(mesh)
         fkw = keywords.get("AFFE_VARC")
         if fkw is not None:
             if isinstance(fkw, dict):
-                self._addInputVariable(inputVarOnMesh, fkw, mesh)
+                self._addExternalVariable(externalVarOnMesh, fkw, mesh)
             elif type(fkw) in (list, tuple):
                 for curDict in fkw:
-                    self._addInputVariable(inputVarOnMesh, curDict, mesh)
+                    self._addExternalVariable(externalVarOnMesh, curDict, mesh)
             else:
                 raise TypeError("Unexpected type: {0!r} {1}".format(fkw, type(fkw)))
 
         varc = ["VARC_NEUT1", "VARC_NEUT2", "VARC_TEMP", "VARC_GEOM", "VARC_PTOT", "VARC_SECH",
                 "VARC_HYDR", "VARC_CORR", "VARC_IRRA", "VARC_DIVU", "VARC_EPSA", "VARC_M_ACIER",
                 "VARC_M_ZIRC"]
-        inputVariableConverter = InputVariableConverter()
+        externalVariableConverter = ExternalVariableConverter()
         for varcName in varc:
             fkw = keywords[varcName]
             name1 = fkw["NOM_VARC"]
@@ -134,10 +134,10 @@ class MaterialAssignment(ExecuteCommand):
                 comp2 = [comp2]
             if type(comp2) is tuple:
                 comp2 = list(comp2)
-            inputVariableConverter.addConverter(name1, comp1, name2, comp2)
+            externalVariableConverter.addConverter(name1, comp1, name2, comp2)
 
-        self._result = MaterialOnMeshBuilder.build(self._result, inputVarOnMesh,
-                                                   inputVariableConverter)
+        self._result = MaterialOnMeshBuilder.build(self._result, externalVarOnMesh,
+                                                   externalVariableConverter)
 
     def _addBehaviour(self, fkw):
         kwTout = fkw.get("TOUT")
@@ -154,7 +154,7 @@ class MaterialAssignment(ExecuteCommand):
             raise TypeError("At least {0} or {1} is required"
                             .format("TOUT", "GROUP_MA"))
 
-    def _addInputVariable(self, inputVarOnMesh, fkw, mesh):
+    def _addExternalVariable(self, externalVarOnMesh, fkw, mesh):
         kwTout = fkw.get("TOUT")
         kwGrMa = fkw.get("GROUP_MA")
         kwMail = fkw.get("MAILLE")
@@ -165,42 +165,42 @@ class MaterialAssignment(ExecuteCommand):
 
         obj = None
         if nomVarc == "TEMP":
-            obj = TemperatureInputVariable
+            obj = TemperatureExternalVariable
         elif nomVarc == "GEOM":
-            obj = GeometryInputVariable
+            obj = GeometryExternalVariable
         elif nomVarc == "CORR":
-            obj = CorrosionInputVariable
+            obj = CorrosionExternalVariable
         elif nomVarc == "EPSA":
-            obj = IrreversibleDeformationInputVariable
+            obj = IrreversibleDeformationExternalVariable
         elif nomVarc == "HYDR":
-            obj = ConcreteHydratationInputVariable
+            obj = ConcreteHydratationExternalVariable
         elif nomVarc == "IRRA":
-            obj = IrradiationInputVariable
+            obj = IrradiationExternalVariable
         elif nomVarc == "M_ACIER":
-            obj = SteelPhasesInputVariable
+            obj = SteelPhasesExternalVariable
         elif nomVarc == "M_ZIRC":
-            obj = ZircaloyPhasesInputVariable
+            obj = ZircaloyPhasesExternalVariable
         elif nomVarc == "NEUT1":
-            obj = Neutral1InputVariable
+            obj = Neutral1ExternalVariable
         elif nomVarc == "NEUT2":
-            obj = Neutral2InputVariable
+            obj = Neutral2ExternalVariable
         elif nomVarc == "NEUT3":
-            obj = Neutral3InputVariable
+            obj = Neutral3ExternalVariable
         elif nomVarc == "SECH":
-            obj = ConcreteDryingInputVariable
+            obj = ConcreteDryingExternalVariable
         elif nomVarc == "PTOT":
-            obj = TotalFluidPressureInputVariable
+            obj = TotalFluidPressureExternalVariable
         elif nomVarc == "DIVU":
-            obj = VolumetricDeformationInputVariable
+            obj = VolumetricDeformationExternalVariable
         else:
             raise TypeError("Input Variable not allowed")
 
-        inputVar = obj(mesh)
+        externalVar = obj(mesh)
         if valeRef is not None:
-            inputVar.setReferenceValue(valeRef)
+            externalVar.setReferenceValue(valeRef)
 
         if chamGd is not None:
-            inputVar.setInputValuesField(chamGd)
+            externalVar.setInputValuesField(chamGd)
 
         if evol is not None:
             evolParam = EvolutionParameter(evol)
@@ -227,20 +227,20 @@ class MaterialAssignment(ExecuteCommand):
                 if prolGauche == "LINEAIRE":
                     evolParam.setLinearLeftExtension()
 
-            inputVar.setEvolutionParameter(evolParam)
+            externalVar.setEvolutionParameter(evolParam)
 
         if kwTout is not None:
-            inputVarOnMesh.addInputVariableOnAllMesh(inputVar)
+            externalVarOnMesh.addExternalVariableOnAllMesh(externalVar)
         elif kwMail is not None:
             kwMail = force_list(kwMail)
             for elem in kwMail:
-                inputVarOnMesh.addInputVariableOnElement(inputVar, elem)
+                externalVarOnMesh.addExternalVariableOnElement(externalVar, elem)
         elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
-                inputVarOnMesh.addInputVariableOnGroupOfElements(inputVar, grp)
+                externalVarOnMesh.addExternalVariableOnGroupOfElements(externalVar, grp)
         else:
-            inputVarOnMesh.addInputVariableOnAllMesh(inputVar)
+            externalVarOnMesh.addExternalVariableOnAllMesh(externalVar)
 
     def _addMaterial(self, fkw):
         kwTout = fkw.get("TOUT")

@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullTransientResultsContainer, MechanicalModeContainer
+from ..Objects import FullTransientResult, ModeResult
 from ..Supervis import ExecuteCommand
 
 
@@ -36,9 +36,9 @@ class RestModeNonl(ExecuteCommand):
         """
 
         if keywords["TYPE_RESU"] == 'DYNA_TRANS':
-            self._result = FullTransientResultsContainer()
+            self._result = FullTransientResult()
         elif keywords["TYPE_RESU"] ==  'MODE_MECA' :
-            self._result = MechanicalModeContainer()
+            self._result = ModeResult()
 
 
 REST_MODE_NONL = RestModeNonl.run

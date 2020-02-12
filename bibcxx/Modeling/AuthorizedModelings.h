@@ -6,7 +6,7 @@
  * @brief Fichier definissant les modelisations autorisees
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -50,10 +50,10 @@ struct WrapThermal {
 };
 
 /**
- * @struct WrapAcoustics
+ * @struct WrapAcoustic
  * @brief Structure destinee a definir les modelisations autorisees en thermique
  */
-struct WrapAcoustics {
+struct WrapAcoustic {
     static const std::set< Modelings > setOfModelings;
 };
 
@@ -79,7 +79,7 @@ typedef ModelingsChecker< WrapMechanics > MechanicsModelingsChecker;
 /** @typedef Definition du verificateur pour la thermique */
 typedef ModelingsChecker< WrapThermal > ThermalModelingsChecker;
 /** @typedef Definition du verificateur pour l'acoustic */
-typedef ModelingsChecker< WrapAcoustics > AcousticsModelingsChecker;
+typedef ModelingsChecker< WrapAcoustic > AcousticModelingsChecker;
 
 /**
  * @struct PhysicsChecker
@@ -97,8 +97,8 @@ struct PhysicsChecker {
             return MechanicsModelingsChecker::isAllowedModeling( model );
         case Thermal:
             return ThermalModelingsChecker::isAllowedModeling( model );
-        case Acoustics:
-            return AcousticsModelingsChecker::isAllowedModeling( model );
+        case Acoustic:
+            return AcousticModelingsChecker::isAllowedModeling( model );
         default:
             throw std::runtime_error( "Not a valid physics" );
         }

@@ -31,7 +31,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh(acier)
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()
 charMeca1.setModel(monModel)
@@ -56,7 +56,7 @@ monSolver = code_aster.PetscSolver(code_aster.Renumbering.Sans)
 monSolver.setPreconditioning(code_aster.Preconditioning.Ml)
 
 # Define a nonlinear Analysis
-statNonLine = code_aster.StaticNonLinearAnalysis()
+statNonLine = code_aster.NonLinearStaticAnalysis()
 statNonLine.addStandardExcitation(charMeca1)
 statNonLine.addStandardExcitation(charMeca2)
 statNonLine.setModel(monModel)

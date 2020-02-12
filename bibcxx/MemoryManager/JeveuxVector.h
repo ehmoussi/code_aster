@@ -296,9 +296,9 @@ typedef JeveuxVector< ASTERINTEGER > JeveuxVectorLong;
 /** @typedef Definition d'un vecteur Jeveux short int */
 typedef JeveuxVector< short int > JeveuxVectorShort;
 /** @typedef Definition d'un vecteur Jeveux double */
-typedef JeveuxVector< double > JeveuxVectorDouble;
+typedef JeveuxVector< double > JeveuxVectorReal;
 /** @typedef Definition d'un vecteur Jeveux double complex */
-typedef JeveuxVector< DoubleComplex > JeveuxVectorComplex;
+typedef JeveuxVector< RealComplex > JeveuxVectorComplex;
 /** @typedef Definition d'un vecteur de JeveuxChar8 */
 typedef JeveuxVector< JeveuxChar8 > JeveuxVectorChar8;
 /** @typedef Definition d'un vecteur JeveuxChar16 */

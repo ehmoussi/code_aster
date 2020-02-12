@@ -38,11 +38,11 @@ void exportDOFNumberingToPython() {
         .def( "__init__", py::make_constructor(
                               &initFactoryPtr< FieldOnNodesDescriptionClass, std::string >));
 
-    void ( BaseDOFNumberingClass::*f1 )( const ElementaryMatrixDisplacementDoublePtr & ) =
+    void ( BaseDOFNumberingClass::*f1 )( const ElementaryMatrixDisplacementRealPtr & ) =
         &BaseDOFNumberingClass::setElementaryMatrix;
     void ( BaseDOFNumberingClass::*f2 )( const ElementaryMatrixDisplacementComplexPtr & ) =
         &BaseDOFNumberingClass::setElementaryMatrix;
-    void ( BaseDOFNumberingClass::*f3 )( const ElementaryMatrixTemperatureDoublePtr & ) =
+    void ( BaseDOFNumberingClass::*f3 )( const ElementaryMatrixTemperatureRealPtr & ) =
         &BaseDOFNumberingClass::setElementaryMatrix;
     void ( BaseDOFNumberingClass::*f4 )( const ElementaryMatrixPressureComplexPtr & ) =
         &BaseDOFNumberingClass::setElementaryMatrix;

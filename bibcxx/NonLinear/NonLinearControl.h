@@ -50,7 +50,7 @@ class NonLinearControlClass : public SolverControlClass {
         @param nIter current step
     */
     virtual ConvergenceState check( const DiscreteProblemPtr &dProblem,
-                                    const FieldOnNodesDoublePtr &uField, int nIter );
+                                    const FieldOnNodesRealPtr &uField, int nIter );
 
     /** @brief Print convergence history */
     void printLog();

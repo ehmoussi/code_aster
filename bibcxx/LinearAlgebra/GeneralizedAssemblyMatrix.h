@@ -30,8 +30,8 @@
 
 #include "DataStructures/DataStructure.h"
 #include "Discretization/ForwardGeneralizedDOFNumbering.h"
-#include "Results/ForwardMechanicalModeContainer.h"
-#include "Results/ForwardGeneralizedModeContainer.h"
+#include "Results/ForwardModeResult.h"
+#include "Results/ForwardGeneralizedModeResult.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 
@@ -44,15 +44,15 @@ class GenericGeneralizedAssemblyMatrixClass: public DataStructure
 {
   private:
     /** @brief Objet Jeveux '.DESC' */
-    JeveuxVectorDouble _desc;
+    JeveuxVectorReal _desc;
     /** @brief Objet Jeveux '.REFE' */
     JeveuxVectorChar24 _refe;
     /** @brief GeneralizedDOFNumbering */
     ForwardGeneralizedDOFNumberingPtr _dofNum;
-    /** @brief MechanicalModeContainer */
-    ForwardMechanicalModeContainerPtr _mecaModeC;
-    /** @brief GeneralizedModeContainer */
-    ForwardGeneralizedModeContainerPtr _geneModeC;
+    /** @brief ModeResult */
+    ForwardModeResultPtr _mecaModeC;
+    /** @brief GeneralizedModeResult */
+    ForwardGeneralizedModeResultPtr _geneModeC;
 
   public:
     /**
@@ -67,7 +67,7 @@ class GenericGeneralizedAssemblyMatrixClass: public DataStructure
      */
     GenericGeneralizedAssemblyMatrixClass( const std::string name ):
         DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
-        _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
+        _desc( JeveuxVectorReal( getName() + ".DESC" ) ),
         _refe( JeveuxVectorChar24( getName() + ".REFE" ) ),
         _dofNum( nullptr ),
         _mecaModeC( nullptr ),
@@ -84,23 +84,23 @@ class GenericGeneralizedAssemblyMatrixClass: public DataStructure
     };
 
     /**
-     * @brief Get GeneralizedModeContainer
+     * @brief Get GeneralizedModeResult
      */
-    GeneralizedModeContainerPtr getModalBasisFromGeneralizedModeContainer()
+    GeneralizedModeResultPtr getModalBasisFromGeneralizedModeResult()
     {
         if ( _geneModeC.isSet() )
             return _geneModeC.getPointer();
-        return GeneralizedModeContainerPtr( nullptr );
+        return GeneralizedModeResultPtr( nullptr );
     };
 
     /**
-     * @brief Get MechanicalModeContainer
+     * @brief Get ModeResult
      */
-    MechanicalModeContainerPtr getModalBasisFromMechanicalModeContainer()
+    ModeResultPtr getModalBasisFromModeResult()
     {
         if ( _mecaModeC.isSet() )
             return _mecaModeC.getPointer();
-        return MechanicalModeContainerPtr( nullptr );
+        return ModeResultPtr( nullptr );
     };
 
     /**
@@ -117,9 +117,9 @@ class GenericGeneralizedAssemblyMatrixClass: public DataStructure
     };
 
     /**
-     * @brief Set GeneralizedModeContainer
+     * @brief Set GeneralizedModeResult
      */
-    bool setModalBasis( const GeneralizedModeContainerPtr &mecaModeC )
+    bool setModalBasis( const GeneralizedModeResultPtr &mecaModeC )
     {
         if ( mecaModeC != nullptr )
         {
@@ -131,9 +131,9 @@ class GenericGeneralizedAssemblyMatrixClass: public DataStructure
     };
 
     /**
-     * @brief Set MechanicalModeContainer
+     * @brief Set ModeResult
      */
-    bool setModalBasis( const MechanicalModeContainerPtr &mecaModeC )
+    bool setModalBasis( const ModeResultPtr &mecaModeC )
     {
         if ( mecaModeC != nullptr )
         {
@@ -170,7 +170,7 @@ class GeneralizedAssemblyMatrixClass : public GenericGeneralizedAssemblyMatrixCl
      * @brief definir le type
      */
     template < class type = ValueType >
-    typename std::enable_if< std::is_same< type, DoubleComplex >::value, void >::type
+    typename std::enable_if< std::is_same< type, RealComplex >::value, void >::type
     setMatrixType()
     {
         setType( "MATR_ASSE_GENE_C" );
@@ -203,9 +203,9 @@ class GeneralizedAssemblyMatrixClass : public GenericGeneralizedAssemblyMatrixCl
 };
 
 /** @typedef Definition d'une matrice assemblee généralisée de double */
-typedef GeneralizedAssemblyMatrixClass< double > GeneralizedAssemblyMatrixDoubleClass;
+typedef GeneralizedAssemblyMatrixClass< double > GeneralizedAssemblyMatrixRealClass;
 /** @typedef Definition d'une matrice assemblee généralisée de complexe */
-typedef GeneralizedAssemblyMatrixClass< DoubleComplex > GeneralizedAssemblyMatrixComplexClass;
+typedef GeneralizedAssemblyMatrixClass< RealComplex > GeneralizedAssemblyMatrixComplexClass;
 
 /**
  * @typedef GenericGeneralizedAssemblyMatrixPtr
@@ -215,11 +215,11 @@ typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixClass >
     GenericGeneralizedAssemblyMatrixPtr;
 
 /**
- * @typedef GeneralizedAssemblyMatrixDoublePtr
- * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixDoubleClass
+ * @typedef GeneralizedAssemblyMatrixRealPtr
+ * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixRealClass
  */
-typedef boost::shared_ptr< GeneralizedAssemblyMatrixDoubleClass >
-    GeneralizedAssemblyMatrixDoublePtr;
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixRealClass >
+    GeneralizedAssemblyMatrixRealPtr;
 
 /**
  * @typedef GeneralizedAssemblyMatrixComplexPtr

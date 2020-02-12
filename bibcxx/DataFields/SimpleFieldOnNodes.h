@@ -126,14 +126,14 @@ template < class ValueType > class SimpleFieldOnNodesClass : public DataStructur
     };
 };
 
-/** @typedef SimpleFieldOnNodesDoubleClass Class d'une champ simple de doubles */
-typedef SimpleFieldOnNodesClass< double > SimpleFieldOnNodesDoubleClass;
+/** @typedef SimpleFieldOnNodesRealClass Class d'une champ simple de doubles */
+typedef SimpleFieldOnNodesClass< double > SimpleFieldOnNodesRealClass;
 
 /**
- * @typedef SimpleFieldOnNodesPtrDouble
+ * @typedef SimpleFieldOnNodesPtrReal
  * @brief Definition d'un champ simple de doubles
  */
-typedef boost::shared_ptr< SimpleFieldOnNodesDoubleClass > SimpleFieldOnNodesDoublePtr;
+typedef boost::shared_ptr< SimpleFieldOnNodesRealClass > SimpleFieldOnNodesRealPtr;
 
 /** @typedef SimpleFieldOnNodesClassLong Class d'un champ simple de long */
 typedef SimpleFieldOnNodesClass< long > SimpleFieldOnNodesLongClass;
@@ -146,7 +146,7 @@ typedef boost::shared_ptr< SimpleFieldOnNodesLongClass > SimpleFieldOnNodesLongP
 
 /** @typedef SimpleFieldOnNodesComplexClass
     @brief Class d'un champ simple de complexes */
-typedef SimpleFieldOnNodesClass< DoubleComplex > SimpleFieldOnNodesComplexClass;
+typedef SimpleFieldOnNodesClass< RealComplex > SimpleFieldOnNodesComplexClass;
 
 /**
  * @typedef SimpleFieldOnNodesComplexPtr
