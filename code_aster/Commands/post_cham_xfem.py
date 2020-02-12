@@ -19,9 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (EvolutiveThermalLoad,
-                       LinearDisplacementEvolutionContainer,
-                       MechanicalModeContainer, NonLinearEvolutionContainer)
+from ..Objects import (ThermalResult,
+                       ElasticResult,
+                       ModeResult, NonLinearResult)
 from ..Supervis import ExecuteCommand
 
 
@@ -37,13 +37,13 @@ class XfemFieldPostprocessing(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         if keywords["RESULTAT"].getType() == "EVOL_NOLI":
-            self._result = NonLinearEvolutionContainer()
+            self._result = NonLinearResult()
         elif keywords["RESULTAT"].getType() == "MODE_MECA":
-            self._result = MechanicalModeContainer()
+            self._result = ModeResult()
         elif keywords["RESULTAT"].getType() == "EVOL_ELAS":
-            self._result = LinearDisplacementEvolutionContainer()
+            self._result = ElasticResult()
         elif keywords["RESULTAT"].getType() == "EVOL_THER":
-            self._result = EvolutiveThermalLoad()
+            self._result = ThermalResult()
 
     def post_exec(self, keywords):
         """Execute the command.

@@ -47,7 +47,7 @@ class MaterialClass: public DataStructure
 
         typedef std::vector< GeneralMaterialBehaviourPtr > VectorOfGeneralMaterialBehaviour;
         typedef VectorOfGeneralMaterialBehaviour::iterator VectorOfGeneralMaterialIter;
-        typedef std::vector< JeveuxVectorDouble > VectorOfJeveuxVectorDouble;
+        typedef std::vector< JeveuxVectorReal > VectorOfJeveuxVectorReal;
         typedef std::vector< JeveuxVectorChar8 > VectorOfJeveuxVectorChar8;
 
     private:
@@ -61,19 +61,19 @@ class MaterialClass: public DataStructure
 
         /** @brief Vector of JeveuxVectorComplex named 'CPT.XXXXXX.VALC' */
         std::vector< JeveuxVectorComplex > _vectorOfComplexValues;
-        /** @brief Vector of JeveuxVectorDouble named 'CPT.XXXXXX.VALR' */
-        std::vector< JeveuxVectorDouble >  _vectorOfDoubleValues;
+        /** @brief Vector of JeveuxVectorReal named 'CPT.XXXXXX.VALR' */
+        std::vector< JeveuxVectorReal >  _vectorOfRealValues;
         /** @brief Vector of JeveuxVectorChar16 named 'CPT.XXXXXX.VALK' */
         std::vector< JeveuxVectorChar16 >  _vectorOfChar16Values;
         /** @brief Vector of JeveuxVectorChar16 named '.ORDR' */
         std::vector< JeveuxVectorChar16 >  _vectorOrdr;
         /** @brief Vector of JeveuxVectorLong named '.KORD' */
         std::vector< JeveuxVectorLong >    _vectorKOrdr;
-        /** @brief Vector of JeveuxVectorDouble named '.XXXXXXX.LISV_R8' */
-        std::vector< VectorOfJeveuxVectorDouble > _vectorOfUserDoubleValues;
+        /** @brief Vector of JeveuxVectorReal named '.XXXXXXX.LISV_R8' */
+        std::vector< VectorOfJeveuxVectorReal > _vectorOfUserRealValues;
         /** @brief Vector of JeveuxVectorChar8 named '.XXXXXXX.LISV_FO' */
         std::vector< VectorOfJeveuxVectorChar8 >  _vectorOfUserFunctionValues;
-        /** @brief Vector of JeveuxVectorDouble named '.&&RDEP' */
+        /** @brief Vector of JeveuxVectorReal named '.&&RDEP' */
         FunctionPtr                        _doubleValues;
         MaterialPtr                        _mater;
 
@@ -125,11 +125,11 @@ class MaterialClass: public DataStructure
          * @brief Get the number of list of double properties for one MaterialBehaviour
          * @return number of list of double properties
          */
-        int getNumberOfListOfDoubleProperties( int position )
+        int getNumberOfListOfRealProperties( int position )
         {
-            if( position >= _vectorOfUserDoubleValues.size() )
+            if( position >= _vectorOfUserRealValues.size() )
                 throw std::runtime_error("Out of bound");
-            return _vectorOfUserDoubleValues[ position ].size();
+            return _vectorOfUserRealValues[ position ].size();
         };
 
         /**
@@ -166,11 +166,11 @@ class MaterialClass: public DataStructure
          * @param position index of vector
          * @return jeveux vector of double values
          */
-        VectorOfJeveuxVectorDouble getBehaviourVectorOfDoubleValues( int position )
+        VectorOfJeveuxVectorReal getBehaviourVectorOfRealValues( int position )
         {
-            if( position >= _vectorOfUserDoubleValues.size() )
+            if( position >= _vectorOfUserRealValues.size() )
                 throw std::runtime_error("Out of bound");
-            return _vectorOfUserDoubleValues[ position ];
+            return _vectorOfUserRealValues[ position ];
         };
 
         /**

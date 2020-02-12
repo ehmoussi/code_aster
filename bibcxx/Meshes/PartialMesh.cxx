@@ -114,7 +114,7 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
     }
     boolToSend.clear();
 
-    VectorDouble coords;
+    VectorReal coords;
     VectorLong numbering;
     const auto& meshCoords = mesh->getCoordinates();
     meshCoords->updateValuePointers();
@@ -130,7 +130,7 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
         numbering.push_back( (*globalNum)[ nodeNum ] );
         numbering.push_back( rank );
     }
-    VectorDouble completeCoords;
+    VectorReal completeCoords;
     VectorLong completeMatchingNumbering;
     VectorLong completeElementsType;
     std::vector<VectorLong> completeConnectivity;
@@ -147,7 +147,7 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
         }
         else
         {
-            VectorDouble buffer( taille, 0. );
+            VectorReal buffer( taille, 0. );
             aster_mpi_bcast( buffer.data(), taille, MPI_DOUBLE, proc, commWorld );
             completeCoords.insert( completeCoords.end(), buffer.begin(), buffer.end() );
         }

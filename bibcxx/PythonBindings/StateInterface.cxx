@@ -29,21 +29,21 @@ namespace py = boost::python;
 
 void exportStateToPython() {
 
-    void ( StateClass::*c1 )( const NonLinearEvolutionContainerPtr &, double, double ) =
-        &StateClass::setFromNonLinearEvolution;
-    void ( StateClass::*c3 )( const NonLinearEvolutionContainerPtr &, ASTERINTEGER ) =
-        &StateClass::setFromNonLinearEvolution;
-    void ( StateClass::*c4 )( const NonLinearEvolutionContainerPtr & ) =
-        &StateClass::setFromNonLinearEvolution;
+    void ( StateClass::*c1 )( const NonLinearResultPtr &, double, double ) =
+        &StateClass::setFromNonLinearResult;
+    void ( StateClass::*c3 )( const NonLinearResultPtr &, ASTERINTEGER ) =
+        &StateClass::setFromNonLinearResult;
+    void ( StateClass::*c4 )( const NonLinearResultPtr & ) =
+        &StateClass::setFromNonLinearResult;
 
     py::class_< StateClass, StatePtr >( "State", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< StateClass, ASTERINTEGER, double >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< StateClass, ASTERINTEGER >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< StateClass, double >))
-        .def( "setFromNonLinearEvolution", c1 )
-        .def( "setFromNonLinearEvolution", c3 )
-        .def( "setFromNonLinearEvolution", c4 )
+        .def( "setFromNonLinearResult", c1 )
+        .def( "setFromNonLinearResult", c3 )
+        .def( "setFromNonLinearResult", c4 )
         .def( "setCurrentStep", &StateClass::setCurrentStep )
         .def( "setDisplacement", &StateClass::setDisplacement );
 };

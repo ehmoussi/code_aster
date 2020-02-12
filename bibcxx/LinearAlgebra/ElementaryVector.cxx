@@ -45,7 +45,7 @@
 #include "LinearAlgebra/ElementaryVector.h"
 #include "Supervis/CommandSyntax.h"
 
-FieldOnNodesDoublePtr
+FieldOnNodesRealPtr
 ElementaryVectorClass::assembleVector( const BaseDOFNumberingPtr &currentNumerotation,
                                           const double &time,
                                           const JeveuxMemory memType ) {
@@ -55,7 +55,7 @@ ElementaryVectorClass::assembleVector( const BaseDOFNumberingPtr &currentNumerot
     if ( ( !currentNumerotation ) || currentNumerotation->isEmpty() )
         throw std::runtime_error( "Numerotation is empty" );
 
-    FieldOnNodesDoublePtr vectTmp( new FieldOnNodesDoubleClass( Permanent ) );
+    FieldOnNodesRealPtr vectTmp( new FieldOnNodesRealClass( Permanent ) );
     std::string name( " " );
     name.resize( 24, ' ' );
 
@@ -93,7 +93,7 @@ ElementaryVectorClass::assembleVector( const BaseDOFNumberingPtr &currentNumerot
     JeveuxVectorChar24 vectTmp2( name );
     vectTmp2->updateValuePointer();
     std::string name2( ( *vectTmp2 )[0].toString(), 0, 19 );
-    FieldOnNodesDoublePtr vectTmp3( new FieldOnNodesDoubleClass( name2 ) );
+    FieldOnNodesRealPtr vectTmp3( new FieldOnNodesRealClass( name2 ) );
     vectTmp->allocateFrom( *vectTmp3 );
 
     CALLO_ASCOVA( detr, name, fomult, param, &time, typres, vectTmp->getName() );

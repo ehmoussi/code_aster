@@ -32,7 +32,7 @@
 #include "Loads/ListOfLoads.h"
 #include "NonLinear/NonLinearMethod.h"
 #include "NonLinear/State.h"
-#include "Results/ResultsContainer.h"
+#include "Results/Result.h"
 
 /**
  * @class StaticNonLinearAlgorithm
@@ -47,7 +47,7 @@ class StaticNonLinearAlgorithm : public GenericUnitaryAlgorithm< Stepper > {
     /** @brief Solveur non linéaire */
     //       NonLinearMethodPtr  _nonLinearMethod;
     /** @brief Sd de stockage des résultats */
-    ResultsContainerPtr _results;
+    ResultPtr _results;
     /** @brief Chargements */
     ListOfLoadsPtr _listOfLoads;
     /** @brief Pas de chargement courant */
@@ -62,11 +62,11 @@ class StaticNonLinearAlgorithm : public GenericUnitaryAlgorithm< Stepper > {
      * @brief Constructeur
      * @param DiscreteProblemPtr Problème discret a résoudre par l'algo
      * @param BaseLinearSolverPtr Solveur linéaire qui sera utilisé
-     * @param ResultContainerPtr Résultat pour le stockage des déplacements
+     * @param ResultPtr Résultat pour le stockage des déplacements
      */
     StaticNonLinearAlgorithm( const DiscreteProblemPtr &curPb,
                               //                        const NonLinearMethodPtr nLMethod,
-                              const ResultsContainerPtr container )
+                              const ResultPtr container )
         : _discreteProblem( curPb ),
           //          _nonLinearMethod( nLMethod ),
           _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
@@ -87,9 +87,9 @@ class StaticNonLinearAlgorithm : public GenericUnitaryAlgorithm< Stepper > {
     void prepareStep( AlgorithmStepperIter &curStep );
 
     void doPrediction( DiscreteProblemPtr dProblem, BaseLinearSolverPtr linSolv,
-                       FieldOnNodesDoublePtr uField );
+                       FieldOnNodesRealPtr uField );
 
-    void doCorrection( DiscreteProblemPtr _discreteProblem, FieldOnNodesDoublePtr duField,
+    void doCorrection( DiscreteProblemPtr _discreteProblem, FieldOnNodesRealPtr duField,
                        int nIter );
 };
 
@@ -105,9 +105,9 @@ template < class Stepper > void StaticNonLinearAlgorithm< Stepper >::oneStep() {
       // BaseLinearSolverPtr linSolv(_nonLinearMethod->getBaseLinearSolver());
        // C'est dans le résultat qu'on trouve le
        // champ aux noeuds contenant les déplacements
-       FieldOnNodesDoublePtr uField = _results->getEmptyFieldOnNodesDouble( "DEPL", _loadStep );
+       FieldOnNodesRealPtr uField = _results->getEmptyFieldOnNodesReal( "DEPL", _loadStep );
        // Il est initialisé au déplacement au pas de chargement précédent
-       // uField = copy ( _results->getEmptyFieldOnNodesDouble( "DEPL", _lastLoadStep );
+       // uField = copy ( _results->getEmptyFieldOnNodesReal( "DEPL", _lastLoadStep );
 
        // TODO pour un calcul non linéaire plus compliqué on devra aussi stocker le champ de
    contraintes
@@ -118,7 +118,7 @@ template < class Stepper > void StaticNonLinearAlgorithm< Stepper >::oneStep() {
        // Il contient l'incrément de déplacement
        // duField = uField->clone()
        // dUField -> zero()
-       FieldOnNodesDoublePtr duField;
+       FieldOnNodesRealPtr duField;
        // *******************
        // Etape de prédiction
        // *******************
@@ -153,13 +153,13 @@ template < class Stepper > void StaticNonLinearAlgorithm< Stepper >::oneStep() {
 
    template< class Stepper >
    void StaticNonLinearAlgorithm< Stepper >::doPrediction( DiscreteProblemPtr dProblem,
-       BaseLinearSolverPtr linSolv, FieldOnNodesDoublePtr uField )
+       BaseLinearSolverPtr linSolv, FieldOnNodesRealPtr uField )
    {
        // A déplacer
        DOFNumberingPtr dofNum1 = _results->getLastDOFNumbering();
        ElementaryMatrixPtr matrElem = _discreteProblem->buildElementaryTangentMatrix( _loadStep );
        // Build assembly matrix
-       AssemblyMatrixDisplacementDoublePtr aMatrix( new AssemblyMatrixDisplacementDoubleClass(
+       AssemblyMatrixDisplacementRealPtr aMatrix( new AssemblyMatrixDisplacementRealClass(
    Temporary ) ); aMatrix->appendElementaryMatrix( matrElem ); aMatrix->setDOFNumbering( dofNum1 );
        aMatrix->setListOfLoads( _listOfLoads );
        aMatrix->setLinearSolver( linSolv );
@@ -168,38 +168,38 @@ template < class Stepper > void StaticNonLinearAlgorithm< Stepper >::oneStep() {
        // Build Dirichlet loads
        ElementaryVectorPtr vectElem1 = _discreteProblem->buildElementaryDirichletVector( _loadStep
    );
-       FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, _loadStep, Temporary );
+       FieldOnNodesRealPtr chNoDir = vectElem1->assembleVector( dofNum1, _loadStep, Temporary );
 
        // Build Laplace forces
        ElementaryVectorPtr vectElem2 = _discreteProblem->buildElementaryLaplaceVector();
-       FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, _loadStep, Temporary );
+       FieldOnNodesRealPtr chNoLap = vectElem2->assembleVector( dofNum1, _loadStep, Temporary );
 
        // Build Neumann loads
-       VectorDouble times;
+       VectorReal times;
        times.push_back( _loadStep );
        times.push_back( 0. );
        times.push_back( 0. );
        ElementaryVectorPtr vectElem3 = _discreteProblem->buildElementaryNeumannVector( times );
-       FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, _loadStep, Temporary );
+       FieldOnNodesRealPtr chNoNeu = vectElem3->assembleVector( dofNum1, _loadStep, Temporary );
 
        chNoDir->addFieldOnNodes( *chNoLap );
        chNoDir->addFieldOnNodes( *chNoNeu );
 
-       FieldOnNodesDoublePtr kineLoadsFON = _listOfLoads->buildKinematicsLoad( dofNum1, _loadStep,
+       FieldOnNodesRealPtr kineLoadsFON = _listOfLoads->buildKinematicsLoad( dofNum1, _loadStep,
                                                                                Temporary );
 
 
        // Matrix factorization
        linSolv->matrixFactorization( aMatrix );
 
-       uField = linSolv->solveDoubleLinearSystem( aMatrix, kineLoadsFON,
+       uField = linSolv->solveRealLinearSystem( aMatrix, kineLoadsFON,
                                                            chNoDir, uField );
    */
 }
 
 template < class Stepper >
 void StaticNonLinearAlgorithm< Stepper >::doCorrection( DiscreteProblemPtr _discreteProblem,
-                                                        FieldOnNodesDoublePtr duField, int nIter ) {
+                                                        FieldOnNodesRealPtr duField, int nIter ) {
     std::cout << " Etape de correction : " << nIter << std::endl;
 }
 

@@ -107,7 +107,7 @@ template < class ValueType1, class ValueType2 > class ConvertibleValue {
     };
 };
 
-typedef ConvertibleValue< std::string, double > StringToDoubleValue;
+typedef ConvertibleValue< std::string, double > StringToRealValue;
 
 /**
  * @struct template AllowedMaterialPropertyType
@@ -118,7 +118,7 @@ template < typename T > struct AllowedMaterialPropertyType;
 
 template <> struct AllowedMaterialPropertyType< double > {};
 
-template <> struct AllowedMaterialPropertyType< DoubleComplex > {};
+template <> struct AllowedMaterialPropertyType< RealComplex > {};
 
 template <> struct AllowedMaterialPropertyType< std::string > {};
 
@@ -132,11 +132,11 @@ template <> struct AllowedMaterialPropertyType< FormulaPtr > {};
 
 template <> struct AllowedMaterialPropertyType< GenericFunctionPtr > {};
 
-template <> struct AllowedMaterialPropertyType< VectorDouble > {};
+template <> struct AllowedMaterialPropertyType< VectorReal > {};
 
 template <> struct AllowedMaterialPropertyType< VectorFunction > {};
 
-template <> struct AllowedMaterialPropertyType< StringToDoubleValue > {};
+template <> struct AllowedMaterialPropertyType< StringToRealValue > {};
 
 class GeneralMaterialBehaviourClass;
 
@@ -147,9 +147,9 @@ template < class T > struct is_convertible {
     typedef T init_value;
 };
 
-template <> struct is_convertible< StringToDoubleValue > {
-    typedef typename StringToDoubleValue::ReturnValue value_type;
-    typedef typename StringToDoubleValue::BaseValue init_value;
+template <> struct is_convertible< StringToRealValue > {
+    typedef typename StringToRealValue::ReturnValue value_type;
+    typedef typename StringToRealValue::BaseValue init_value;
 };
 
 /**
@@ -214,7 +214,7 @@ class MaterialPropertyClass : private AllowedMaterialPropertyType< ValueType > {
      * @return la valeur du parametre
      */
     template < typename T = ValueType >
-    typename std::enable_if< std::is_same< T, StringToDoubleValue >::value,
+    typename std::enable_if< std::is_same< T, StringToRealValue >::value,
                              const ReturnValue & >::type
     getValue() const {
         return _value.getValue();
@@ -225,7 +225,7 @@ class MaterialPropertyClass : private AllowedMaterialPropertyType< ValueType > {
      * @return la valeur du parametre
      */
     template < typename T = ValueType >
-    typename std::enable_if< !std::is_same< T, StringToDoubleValue >::value,
+    typename std::enable_if< !std::is_same< T, StringToRealValue >::value,
                              const ReturnValue & >::type
     getValue() const {
         return _value;
@@ -242,7 +242,7 @@ class MaterialPropertyClass : private AllowedMaterialPropertyType< ValueType > {
      * @return true si la valeur a été précisée
      */
     template < typename T = ValueType >
-    typename std::enable_if< std::is_same< T, StringToDoubleValue >::value, bool >::type
+    typename std::enable_if< std::is_same< T, StringToRealValue >::value, bool >::type
     hasValue() const {
         return _value.hasValue();
     };
@@ -252,7 +252,7 @@ class MaterialPropertyClass : private AllowedMaterialPropertyType< ValueType > {
      * @return true si la valeur a été précisée
      */
     template < typename T = ValueType >
-    typename std::enable_if< !std::is_same< T, StringToDoubleValue >::value, bool >::type
+    typename std::enable_if< !std::is_same< T, StringToRealValue >::value, bool >::type
     hasValue() const {
         return _existsValue;
     };
@@ -270,9 +270,9 @@ class MaterialPropertyClass : private AllowedMaterialPropertyType< ValueType > {
 };
 
 /** @typedef Definition d'une propriete materiau de type double */
-typedef MaterialPropertyClass< double > ElementaryMaterialPropertyDouble;
+typedef MaterialPropertyClass< double > ElementaryMaterialPropertyReal;
 /** @typedef Definition d'une propriete materiau de type double */
-typedef MaterialPropertyClass< DoubleComplex > ElementaryMaterialPropertyComplex;
+typedef MaterialPropertyClass< RealComplex > ElementaryMaterialPropertyComplex;
 /** @typedef Definition d'une propriete materiau de type string */
 typedef MaterialPropertyClass< std::string > ElementaryMaterialPropertyString;
 /** @typedef Definition d'une propriete materiau de type Function */
@@ -286,12 +286,12 @@ typedef MaterialPropertyClass< FormulaPtr > ElementaryMaterialPropertyFormula;
 /** @typedef Definition d'une propriete materiau de type DataStructure */
 typedef MaterialPropertyClass< GenericFunctionPtr > ElementaryMaterialPropertyDataStructure;
 /** @typedef Definition d'une propriete materiau de type vector double */
-typedef MaterialPropertyClass< VectorDouble > ElementaryMaterialPropertyVectorDouble;
+typedef MaterialPropertyClass< VectorReal > ElementaryMaterialPropertyVectorReal;
 /** @typedef Definition d'une propriete materiau de type vector Function */
 typedef MaterialPropertyClass< std::vector< FunctionPtr > >
     ElementaryMaterialPropertyVectorFunction;
 /** @typedef Definition d'une propriete materiau de type Convertible string double */
-typedef MaterialPropertyClass< StringToDoubleValue > ElementaryMaterialPropertyConvertible;
+typedef MaterialPropertyClass< StringToRealValue > ElementaryMaterialPropertyConvertible;
 
 /**
  * @class GeneralMaterialBehaviourClass
@@ -300,8 +300,8 @@ typedef MaterialPropertyClass< StringToDoubleValue > ElementaryMaterialPropertyC
  */
 class GeneralMaterialBehaviourClass {
   protected:
-    /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyDouble */
-    typedef std::map< std::string, ElementaryMaterialPropertyDouble > mapStrEMPD;
+    /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyReal */
+    typedef std::map< std::string, ElementaryMaterialPropertyReal > mapStrEMPD;
     /** @typedef Iterateur sur mapStrEMPD */
     typedef mapStrEMPD::iterator mapStrEMPDIterator;
     typedef mapStrEMPD::const_iterator mapStrEMPDConstIterator;
@@ -340,8 +340,8 @@ class GeneralMaterialBehaviourClass {
     /** @typedef Valeur contenue dans un mapStrEMPT */
     typedef mapStrEMPT::value_type mapStrEMPTValue;
 
-    /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyVectorDouble */
-    typedef std::map< std::string, ElementaryMaterialPropertyVectorDouble > mapStrEMPVD;
+    /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyVectorReal */
+    typedef std::map< std::string, ElementaryMaterialPropertyVectorReal > mapStrEMPVD;
     /** @typedef Iterateur sur mapStrEMPVD */
     typedef mapStrEMPVD::iterator mapStrEMPVDIterator;
     typedef mapStrEMPVD::const_iterator mapStrEMPVDConstIterator;
@@ -375,7 +375,7 @@ class GeneralMaterialBehaviourClass {
     std::string _asterNewName;
     /** @brief Map contenant les noms des proprietes double ainsi que les
                MaterialPropertyClass correspondant */
-    mapStrEMPD _mapOfDoubleMaterialProperties;
+    mapStrEMPD _mapOfRealMaterialProperties;
     /** @brief Map contenant les noms des proprietes complex ainsi que les
                MaterialPropertyClass correspondant */
     mapStrEMPC _mapOfComplexMaterialProperties;
@@ -390,7 +390,7 @@ class GeneralMaterialBehaviourClass {
     mapStrEMPT _mapOfTableMaterialProperties;
     /** @brief Map contenant les noms des proprietes vector double ainsi que les
                MaterialPropertyClass correspondant */
-    mapStrEMPVD _mapOfVectorDoubleMaterialProperties;
+    mapStrEMPVD _mapOfVectorRealMaterialProperties;
     /** @brief Map contenant les noms des proprietes vector Function ainsi que les
                MaterialPropertyClass correspondant */
     mapStrEMPVF _mapOfVectorFunctionMaterialProperties;
@@ -427,8 +427,8 @@ class GeneralMaterialBehaviourClass {
     /**
      * @brief Get number of properties containing a list of doubles
      */
-    int getNumberOfListOfDoubleProperties() const {
-        return _mapOfVectorDoubleMaterialProperties.size();
+    int getNumberOfListOfRealProperties() const {
+        return _mapOfVectorRealMaterialProperties.size();
     };
 
     /**
@@ -438,15 +438,15 @@ class GeneralMaterialBehaviourClass {
         return _mapOfVectorFunctionMaterialProperties.size();
     };
 
-    double getDoubleValue( std::string nameOfProperty )
+    double getRealValue( std::string nameOfProperty )
     {
-        auto curIter = _mapOfDoubleMaterialProperties.find( nameOfProperty );
-        if ( curIter != _mapOfDoubleMaterialProperties.end() )
+        auto curIter = _mapOfRealMaterialProperties.find( nameOfProperty );
+        if ( curIter != _mapOfRealMaterialProperties.end() )
             return ( *curIter ).second.getValue();
         throw std::runtime_error( nameOfProperty + " is not a double value" );
     };
 
-    DoubleComplex getComplexValue( std::string nameOfProperty )
+    RealComplex getComplexValue( std::string nameOfProperty )
     {
         auto curIter = _mapOfComplexMaterialProperties.find( nameOfProperty );
         if ( curIter != _mapOfComplexMaterialProperties.end() )
@@ -478,10 +478,10 @@ class GeneralMaterialBehaviourClass {
         throw std::runtime_error( nameOfProperty + " is not a table value" );
     };
 
-    double hasDoubleValue( std::string nameOfProperty )
+    double hasRealValue( std::string nameOfProperty )
     {
-        auto curIter = _mapOfDoubleMaterialProperties.find( nameOfProperty );
-        if ( curIter == _mapOfDoubleMaterialProperties.end() )
+        auto curIter = _mapOfRealMaterialProperties.find( nameOfProperty );
+        if ( curIter == _mapOfRealMaterialProperties.end() )
             return false;
         return true;
     };
@@ -526,13 +526,13 @@ class GeneralMaterialBehaviourClass {
     /**
      * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
-     * @param value Double correspondant a la valeur donnee par l'utilisateur
+     * @param value Real correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
      */
-    bool setDoubleValue( std::string nameOfProperty, double value ) {
+    bool setRealValue( std::string nameOfProperty, double value ) {
         // Recherche de la propriete materielle
-        mapStrEMPDIterator curIter = _mapOfDoubleMaterialProperties.find( nameOfProperty );
-        if ( curIter == _mapOfDoubleMaterialProperties.end() )
+        mapStrEMPDIterator curIter = _mapOfRealMaterialProperties.find( nameOfProperty );
+        if ( curIter == _mapOfRealMaterialProperties.end() )
             return false;
         // Ajout de la valeur
         ( *curIter ).second.setValue( value );
@@ -542,10 +542,10 @@ class GeneralMaterialBehaviourClass {
     /**
      * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
-     * @param value Double correspondant a la valeur donnee par l'utilisateur
+     * @param value Real correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
      */
-    bool setComplexValue( std::string nameOfProperty, DoubleComplex value ) {
+    bool setComplexValue( std::string nameOfProperty, RealComplex value ) {
         // Recherche de la propriete materielle
         mapStrEMPCIterator curIter = _mapOfComplexMaterialProperties.find( nameOfProperty );
         if ( curIter == _mapOfComplexMaterialProperties.end() )
@@ -645,13 +645,13 @@ class GeneralMaterialBehaviourClass {
     /**
      * @brief Fonction servant a fixer un parametre materiau au GeneralMaterialBehaviourClass
      * @param nameOfProperty Nom de la propriete
-     * @param value VectorDouble correspondant a la valeur donnee par l'utilisateur
+     * @param value VectorReal correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
      */
-    bool setVectorOfDoubleValue( std::string nameOfProperty, const VectorDouble &value ) {
+    bool setVectorOfRealValue( std::string nameOfProperty, const VectorReal &value ) {
         // Recherche de la propriete materielle
-        auto curIter = _mapOfVectorDoubleMaterialProperties.find( nameOfProperty );
-        if ( curIter == _mapOfVectorDoubleMaterialProperties.end() )
+        auto curIter = _mapOfVectorRealMaterialProperties.find( nameOfProperty );
+        if ( curIter == _mapOfVectorRealMaterialProperties.end() )
             return false;
         // Ajout de la valeur
         ( *curIter ).second._value = value;
@@ -692,9 +692,9 @@ class GeneralMaterialBehaviourClass {
      * @todo vérifier les valeurs réelles par défaut du .VALR
      */
     virtual bool buildJeveuxVectors( JeveuxVectorComplex &complexValues,
-                                     JeveuxVectorDouble &doubleValues,
+                                     JeveuxVectorReal &doubleValues,
                                      JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr,
-                                     JeveuxVectorLong &kOrdr, std::vector< JeveuxVectorDouble > &,
+                                     JeveuxVectorLong &kOrdr, std::vector< JeveuxVectorReal > &,
                                      std::vector< JeveuxVectorChar8 > & );
 
     /**
@@ -717,8 +717,8 @@ class GeneralMaterialBehaviourClass {
     /**
      * @brief Function to know if behaviour own a list of double parameter
      */
-    bool hasVectorOfDoubleParameters() const {
-        if ( _mapOfVectorDoubleMaterialProperties.size() != 0 )
+    bool hasVectorOfRealParameters() const {
+        if ( _mapOfVectorRealMaterialProperties.size() != 0 )
             return true;
         return false;
     };
@@ -733,8 +733,8 @@ class GeneralMaterialBehaviourClass {
     };
 
   protected:
-    bool addDoubleProperty( std::string key, ElementaryMaterialPropertyDouble value ) {
-        _mapOfDoubleMaterialProperties[key] = value;
+    bool addRealProperty( std::string key, ElementaryMaterialPropertyReal value ) {
+        _mapOfRealMaterialProperties[key] = value;
         _vectKW.push_back( key );
         _vectKW.push_back( value.getName() );
         return true;
@@ -768,9 +768,9 @@ class GeneralMaterialBehaviourClass {
         return true;
     };
 
-    bool addVectorOfDoubleProperty( std::string key,
-                                    ElementaryMaterialPropertyVectorDouble value ) {
-        _mapOfVectorDoubleMaterialProperties[key] = value;
+    bool addVectorOfRealProperty( std::string key,
+                                    ElementaryMaterialPropertyVectorReal value ) {
+        _mapOfVectorRealMaterialProperties[key] = value;
         _vectKW.push_back( key );
         _vectKW.push_back( value.getName() );
         return true;
@@ -816,14 +816,14 @@ class MaterialBehaviourClass : public GeneralMaterialBehaviourClass {
     MaterialBehaviourClass( const std::string asterName, const std::string asterNewName = "" )
         : GeneralMaterialBehaviourClass( asterName, asterNewName ){};
 
-    bool addNewDoubleProperty( std::string name, const bool mandatory ) {
-        return addDoubleProperty( capitalizeName( name ),
-                                  ElementaryMaterialPropertyDouble( name, mandatory ) );
+    bool addNewRealProperty( std::string name, const bool mandatory ) {
+        return addRealProperty( capitalizeName( name ),
+                                  ElementaryMaterialPropertyReal( name, mandatory ) );
     };
 
-    bool addNewDoubleProperty( std::string name, const double &value, const bool mandatory ) {
-        return addDoubleProperty( capitalizeName( name ),
-                                  ElementaryMaterialPropertyDouble( name, value, mandatory ) );
+    bool addNewRealProperty( std::string name, const double &value, const bool mandatory ) {
+        return addRealProperty( capitalizeName( name ),
+                                  ElementaryMaterialPropertyReal( name, value, mandatory ) );
     };
 
     bool addNewComplexProperty( std::string name, const bool mandatory ) {
@@ -851,9 +851,9 @@ class MaterialBehaviourClass : public GeneralMaterialBehaviourClass {
                                  ElementaryMaterialPropertyTable( name, mandatory ) );
     };
 
-    bool addNewVectorOfDoubleProperty( std::string name, const bool mandatory ) {
-        return addVectorOfDoubleProperty(
-            capitalizeName( name ), ElementaryMaterialPropertyVectorDouble( name, mandatory ) );
+    bool addNewVectorOfRealProperty( std::string name, const bool mandatory ) {
+        return addVectorOfRealProperty(
+            capitalizeName( name ), ElementaryMaterialPropertyVectorReal( name, mandatory ) );
     };
 
     bool addNewVectorOfFunctionProperty( std::string name, const bool mandatory ) {
@@ -872,16 +872,16 @@ class MaterialBehaviourClass : public GeneralMaterialBehaviourClass {
 typedef boost::shared_ptr< MaterialBehaviourClass > MaterialBehaviourPtr;
 
 /**
- * @class BetonDoubleDpMaterialBehaviourClass
- * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau BetonDoubleDp
+ * @class BetonRealDpMaterialBehaviourClass
+ * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau BetonRealDp
  * @author Jean-Pierre Lefebvre
  */
-class BetonDoubleDpMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
+class BetonRealDpMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   public:
     /**
      * @brief Constructeur
      */
-    BetonDoubleDpMaterialBehaviourClass() {
+    BetonRealDpMaterialBehaviourClass() {
         // Mot cle "BETON_DOUBLE_DP" dans Aster
         _asterName = "BETON_DOUBLE_DP";
 
@@ -894,20 +894,20 @@ class BetonDoubleDpMaterialBehaviourClass : public GeneralMaterialBehaviourClass
             "Ener_comp_rupt", ElementaryMaterialPropertyDataStructure( "ENER_COMP_RUPT", true ) );
         this->addFunctionProperty(
             "Ener_trac_rupt", ElementaryMaterialPropertyDataStructure( "ENER_TRAC_RUPT", true ) );
-        this->addDoubleProperty( "Coef_elas_comp",
-                                 ElementaryMaterialPropertyDouble( "COEF_ELAS_COMP", true ) );
-        this->addDoubleProperty( "Long_cara",
-                                 ElementaryMaterialPropertyDouble( "LONG_CARA", false ) );
+        this->addRealProperty( "Coef_elas_comp",
+                                 ElementaryMaterialPropertyReal( "COEF_ELAS_COMP", true ) );
+        this->addRealProperty( "Long_cara",
+                                 ElementaryMaterialPropertyReal( "LONG_CARA", false ) );
         this->addConvertibleProperty(
             "Ecro_comp_p_pic",
             ElementaryMaterialPropertyConvertible(
                 "ECRO_COMP_P_PIC",
-                StringToDoubleValue( {{"LINEAIRE", 0.}, {"PARABOLE", 1.}}, "LINEAIRE" ), false ) );
+                StringToRealValue( {{"LINEAIRE", 0.}, {"PARABOLE", 1.}}, "LINEAIRE" ), false ) );
         this->addConvertibleProperty(
             "Ecro_trac_p_pic",
             ElementaryMaterialPropertyConvertible(
                 "ECRO_TRAC_P_PIC",
-                StringToDoubleValue( {{"LINEAIRE", 0.}, {"EXPONENT", 1.}}, "LINEAIRE" ), false ) );
+                StringToRealValue( {{"LINEAIRE", 0.}, {"EXPONENT", 1.}}, "LINEAIRE" ), false ) );
     };
 
     /**
@@ -922,9 +922,9 @@ class BetonDoubleDpMaterialBehaviourClass : public GeneralMaterialBehaviourClass
     static bool hasConvertibleValues() { return true; };
 };
 
-/** @typedef Pointeur intelligent vers un comportement materiau BetonDoubleDp */
-typedef boost::shared_ptr< BetonDoubleDpMaterialBehaviourClass >
-    BetonDoubleDpMaterialBehaviourPtr;
+/** @typedef Pointeur intelligent vers un comportement materiau BetonRealDp */
+typedef boost::shared_ptr< BetonRealDpMaterialBehaviourClass >
+    BetonRealDpMaterialBehaviourPtr;
 
 /**
  * @class BetonRagMaterialBehaviourClass
@@ -945,46 +945,46 @@ class BetonRagMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
             "Comp_beton",
             ElementaryMaterialPropertyConvertible(
                 "TYPE_LOI",
-                StringToDoubleValue( {{"ENDO", 1.}, {"ENDO_FLUA", 2.}, {"ENDO_FLUA_RAG", 3.}} ),
+                StringToRealValue( {{"ENDO", 1.}, {"ENDO_FLUA", 2.}, {"ENDO_FLUA_RAG", 3.}} ),
                 true ) );
-        this->addDoubleProperty( "Endo_mc", ElementaryMaterialPropertyDouble( "ENDO_MC", false ) );
-        this->addDoubleProperty( "Endo_mt", ElementaryMaterialPropertyDouble( "ENDO_MT", false ) );
-        this->addDoubleProperty( "Endo_siguc",
-                                 ElementaryMaterialPropertyDouble( "ENDO_SIGUC", false ) );
-        this->addDoubleProperty( "Endo_sigut",
-                                 ElementaryMaterialPropertyDouble( "ENDO_SIGUT", false ) );
-        this->addDoubleProperty( "Endo_drupra",
-                                 ElementaryMaterialPropertyDouble( "ENDO_DRUPRA", false ) );
-        this->addDoubleProperty( "Flua_sph_kr",
-                                 ElementaryMaterialPropertyDouble( "FLUA_SPH_KR", false ) );
-        this->addDoubleProperty( "Flua_sph_ki",
-                                 ElementaryMaterialPropertyDouble( "FLUA_SPH_KI", false ) );
-        this->addDoubleProperty( "Flua_sph_nr",
-                                 ElementaryMaterialPropertyDouble( "FLUA_SPH_NR", false ) );
-        this->addDoubleProperty( "Flua_sph_ni",
-                                 ElementaryMaterialPropertyDouble( "FLUA_SPH_NI", false ) );
-        this->addDoubleProperty( "Flua_dev_kr",
-                                 ElementaryMaterialPropertyDouble( "FLUA_DEV_KR", false ) );
-        this->addDoubleProperty( "Flua_dev_ki",
-                                 ElementaryMaterialPropertyDouble( "FLUA_DEV_KI", false ) );
-        this->addDoubleProperty( "Flua_dev_nr",
-                                 ElementaryMaterialPropertyDouble( "FLUA_DEV_NR", false ) );
-        this->addDoubleProperty( "Flua_dev_ni",
-                                 ElementaryMaterialPropertyDouble( "FLUA_DEV_NI", false ) );
-        this->addDoubleProperty( "Gel_alpha0",
-                                 ElementaryMaterialPropertyDouble( "GEL_ALPHA0", false ) );
-        this->addDoubleProperty( "Gel_tref",
-                                 ElementaryMaterialPropertyDouble( "GEL_TREF", false ) );
-        this->addDoubleProperty( "Gel_ear", ElementaryMaterialPropertyDouble( "GEL_EAR", false ) );
-        this->addDoubleProperty( "Gel_sr0", ElementaryMaterialPropertyDouble( "GEL_SR0", false ) );
-        this->addDoubleProperty( "Gel_vg", ElementaryMaterialPropertyDouble( "GEL_VG", false ) );
-        this->addDoubleProperty( "Gel_mg", ElementaryMaterialPropertyDouble( "GEL_MG", false ) );
-        this->addDoubleProperty( "Gel_bg", ElementaryMaterialPropertyDouble( "GEL_BG", false ) );
-        this->addDoubleProperty( "Gel_a0", ElementaryMaterialPropertyDouble( "GEL_A0", false ) );
-        this->addDoubleProperty( "Rag_epsi0",
-                                 ElementaryMaterialPropertyDouble( "RAG_EPSI0", false ) );
-        this->addDoubleProperty( "Pw_a", ElementaryMaterialPropertyDouble( "PW_A", false ) );
-        this->addDoubleProperty( "Pw_b", ElementaryMaterialPropertyDouble( "PW_B", false ) );
+        this->addRealProperty( "Endo_mc", ElementaryMaterialPropertyReal( "ENDO_MC", false ) );
+        this->addRealProperty( "Endo_mt", ElementaryMaterialPropertyReal( "ENDO_MT", false ) );
+        this->addRealProperty( "Endo_siguc",
+                                 ElementaryMaterialPropertyReal( "ENDO_SIGUC", false ) );
+        this->addRealProperty( "Endo_sigut",
+                                 ElementaryMaterialPropertyReal( "ENDO_SIGUT", false ) );
+        this->addRealProperty( "Endo_drupra",
+                                 ElementaryMaterialPropertyReal( "ENDO_DRUPRA", false ) );
+        this->addRealProperty( "Flua_sph_kr",
+                                 ElementaryMaterialPropertyReal( "FLUA_SPH_KR", false ) );
+        this->addRealProperty( "Flua_sph_ki",
+                                 ElementaryMaterialPropertyReal( "FLUA_SPH_KI", false ) );
+        this->addRealProperty( "Flua_sph_nr",
+                                 ElementaryMaterialPropertyReal( "FLUA_SPH_NR", false ) );
+        this->addRealProperty( "Flua_sph_ni",
+                                 ElementaryMaterialPropertyReal( "FLUA_SPH_NI", false ) );
+        this->addRealProperty( "Flua_dev_kr",
+                                 ElementaryMaterialPropertyReal( "FLUA_DEV_KR", false ) );
+        this->addRealProperty( "Flua_dev_ki",
+                                 ElementaryMaterialPropertyReal( "FLUA_DEV_KI", false ) );
+        this->addRealProperty( "Flua_dev_nr",
+                                 ElementaryMaterialPropertyReal( "FLUA_DEV_NR", false ) );
+        this->addRealProperty( "Flua_dev_ni",
+                                 ElementaryMaterialPropertyReal( "FLUA_DEV_NI", false ) );
+        this->addRealProperty( "Gel_alpha0",
+                                 ElementaryMaterialPropertyReal( "GEL_ALPHA0", false ) );
+        this->addRealProperty( "Gel_tref",
+                                 ElementaryMaterialPropertyReal( "GEL_TREF", false ) );
+        this->addRealProperty( "Gel_ear", ElementaryMaterialPropertyReal( "GEL_EAR", false ) );
+        this->addRealProperty( "Gel_sr0", ElementaryMaterialPropertyReal( "GEL_SR0", false ) );
+        this->addRealProperty( "Gel_vg", ElementaryMaterialPropertyReal( "GEL_VG", false ) );
+        this->addRealProperty( "Gel_mg", ElementaryMaterialPropertyReal( "GEL_MG", false ) );
+        this->addRealProperty( "Gel_bg", ElementaryMaterialPropertyReal( "GEL_BG", false ) );
+        this->addRealProperty( "Gel_a0", ElementaryMaterialPropertyReal( "GEL_A0", false ) );
+        this->addRealProperty( "Rag_epsi0",
+                                 ElementaryMaterialPropertyReal( "RAG_EPSI0", false ) );
+        this->addRealProperty( "Pw_a", ElementaryMaterialPropertyReal( "PW_A", false ) );
+        this->addRealProperty( "Pw_b", ElementaryMaterialPropertyReal( "PW_B", false ) );
     };
 
     /**
@@ -1023,7 +1023,7 @@ class DisEcroTracMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
         this->addConvertibleProperty(
             "Ecrouissage",
             ElementaryMaterialPropertyConvertible(
-                "ECRO", StringToDoubleValue( {{"ISOTROPE", 1.}, {"CINEMATIQUE", 2.}} ), false ) );
+                "ECRO", StringToRealValue( {{"ISOTROPE", 1.}, {"CINEMATIQUE", 2.}} ), false ) );
     };
 
     /**
@@ -1059,14 +1059,14 @@ class CableGaineFrotMaterialBehaviourClass : public GeneralMaterialBehaviourClas
             "Type",
             ElementaryMaterialPropertyConvertible(
                 "TYPE",
-                StringToDoubleValue( {{"FROTTANT", 1.}, {"GLISSANT", 2.}, {"ADHERENT", 3.}} ),
+                StringToRealValue( {{"FROTTANT", 1.}, {"GLISSANT", 2.}, {"ADHERENT", 3.}} ),
                 true ) );
-        this->addDoubleProperty( "Frot_line",
-                                 ElementaryMaterialPropertyDouble( "FROT_LINE", 0., false ) );
-        this->addDoubleProperty( "Frot_courb",
-                                 ElementaryMaterialPropertyDouble( "FROT_COURB", 0., false ) );
-        this->addDoubleProperty( "Pena_lagr",
-                                 ElementaryMaterialPropertyDouble( "PENA_LAGR", true ) );
+        this->addRealProperty( "Frot_line",
+                                 ElementaryMaterialPropertyReal( "FROT_LINE", 0., false ) );
+        this->addRealProperty( "Frot_courb",
+                                 ElementaryMaterialPropertyReal( "FROT_COURB", 0., false ) );
+        this->addRealProperty( "Pena_lagr",
+                                 ElementaryMaterialPropertyReal( "PENA_LAGR", true ) );
     };
 
     /**
@@ -1100,30 +1100,30 @@ class ElasMetaMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
         _asterName = "ELAS_META";
 
         // Parametres matériau
-        this->addDoubleProperty( "E", ElementaryMaterialPropertyDouble( "E", true ) );
-        this->addDoubleProperty( "Nu", ElementaryMaterialPropertyDouble( "NU", true ) );
-        this->addDoubleProperty( "F_alpha", ElementaryMaterialPropertyDouble( "F_ALPHA", true ) );
-        this->addDoubleProperty( "C_alpha", ElementaryMaterialPropertyDouble( "C_ALPHA", true ) );
+        this->addRealProperty( "E", ElementaryMaterialPropertyReal( "E", true ) );
+        this->addRealProperty( "Nu", ElementaryMaterialPropertyReal( "NU", true ) );
+        this->addRealProperty( "F_alpha", ElementaryMaterialPropertyReal( "F_ALPHA", true ) );
+        this->addRealProperty( "C_alpha", ElementaryMaterialPropertyReal( "C_ALPHA", true ) );
         this->addConvertibleProperty(
             "Phase_refe",
             ElementaryMaterialPropertyConvertible(
-                "PHASE_REFE", StringToDoubleValue( {{"CHAUD", 1.}, {"FROID", 0.}} ), true ) );
-        this->addDoubleProperty( "Epsf_epsc_tref",
-                                 ElementaryMaterialPropertyDouble( "EPSF_EPSC_TREF", true ) );
-        this->addDoubleProperty( "Precision",
-                                 ElementaryMaterialPropertyDouble( "PRECISION", 1.0E+0, false ) );
-        this->addDoubleProperty( "F1_sy", ElementaryMaterialPropertyDouble( "F1_SY", false ) );
-        this->addDoubleProperty( "F2_sy", ElementaryMaterialPropertyDouble( "F2_SY", false ) );
-        this->addDoubleProperty( "F3_sy", ElementaryMaterialPropertyDouble( "F3_SY", false ) );
-        this->addDoubleProperty( "F4_sy", ElementaryMaterialPropertyDouble( "F4_SY", false ) );
-        this->addDoubleProperty( "C_sy", ElementaryMaterialPropertyDouble( "C_SY", false ) );
+                "PHASE_REFE", StringToRealValue( {{"CHAUD", 1.}, {"FROID", 0.}} ), true ) );
+        this->addRealProperty( "Epsf_epsc_tref",
+                                 ElementaryMaterialPropertyReal( "EPSF_EPSC_TREF", true ) );
+        this->addRealProperty( "Precision",
+                                 ElementaryMaterialPropertyReal( "PRECISION", 1.0E+0, false ) );
+        this->addRealProperty( "F1_sy", ElementaryMaterialPropertyReal( "F1_SY", false ) );
+        this->addRealProperty( "F2_sy", ElementaryMaterialPropertyReal( "F2_SY", false ) );
+        this->addRealProperty( "F3_sy", ElementaryMaterialPropertyReal( "F3_SY", false ) );
+        this->addRealProperty( "F4_sy", ElementaryMaterialPropertyReal( "F4_SY", false ) );
+        this->addRealProperty( "C_sy", ElementaryMaterialPropertyReal( "C_SY", false ) );
         this->addFunctionProperty( "Sy_melange",
                                    ElementaryMaterialPropertyDataStructure( "SY_MELANGE", false ) );
-        this->addDoubleProperty( "F1_s_vp", ElementaryMaterialPropertyDouble( "F1_S_VP", false ) );
-        this->addDoubleProperty( "F2_s_vp", ElementaryMaterialPropertyDouble( "F2_S_VP", false ) );
-        this->addDoubleProperty( "F3_s_vp", ElementaryMaterialPropertyDouble( "F3_S_VP", false ) );
-        this->addDoubleProperty( "F4_s_vp", ElementaryMaterialPropertyDouble( "F4_S_VP", false ) );
-        this->addDoubleProperty( "C_s_vp", ElementaryMaterialPropertyDouble( "C_S_VP", false ) );
+        this->addRealProperty( "F1_s_vp", ElementaryMaterialPropertyReal( "F1_S_VP", false ) );
+        this->addRealProperty( "F2_s_vp", ElementaryMaterialPropertyReal( "F2_S_VP", false ) );
+        this->addRealProperty( "F3_s_vp", ElementaryMaterialPropertyReal( "F3_S_VP", false ) );
+        this->addRealProperty( "F4_s_vp", ElementaryMaterialPropertyReal( "F4_S_VP", false ) );
+        this->addRealProperty( "C_s_vp", ElementaryMaterialPropertyReal( "C_S_VP", false ) );
         this->addFunctionProperty(
             "S_vp_melange", ElementaryMaterialPropertyDataStructure( "S_VP_MELANGE", false ) );
     };
@@ -1168,13 +1168,13 @@ class ElasMetaFoMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
         this->addConvertibleProperty(
             "Phase_refe",
             ElementaryMaterialPropertyConvertible(
-                "PHASE_REFE", StringToDoubleValue( {{"CHAUD", 1.}, {"FROID", 0.}} ), true ) );
-        this->addDoubleProperty( "Epsf_epsc_tref",
-                                 ElementaryMaterialPropertyDouble( "EPSF_EPSC_TREF", true ) );
-        this->addDoubleProperty( "Temp_def_alpha",
-                                 ElementaryMaterialPropertyDouble( "TEMP_DEF_ALPHA", false ) );
-        this->addDoubleProperty( "Precision",
-                                 ElementaryMaterialPropertyDouble( "PRECISION", 1.0E+0, false ) );
+                "PHASE_REFE", StringToRealValue( {{"CHAUD", 1.}, {"FROID", 0.}} ), true ) );
+        this->addRealProperty( "Epsf_epsc_tref",
+                                 ElementaryMaterialPropertyReal( "EPSF_EPSC_TREF", true ) );
+        this->addRealProperty( "Temp_def_alpha",
+                                 ElementaryMaterialPropertyReal( "TEMP_DEF_ALPHA", false ) );
+        this->addRealProperty( "Precision",
+                                 ElementaryMaterialPropertyReal( "PRECISION", 1.0E+0, false ) );
         this->addFunctionProperty( "F1_sy",
                                    ElementaryMaterialPropertyDataStructure( "F1_SY", false ) );
         this->addFunctionProperty( "F2_sy",
@@ -1285,21 +1285,21 @@ class RuptFragMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
         _asterName = "RUPT_FRAG";
 
         // Parametres matériau
-        this->addDoubleProperty( "Gc", ElementaryMaterialPropertyDouble( "GC", true ) );
-        this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C", false ) );
-        this->addDoubleProperty( "Pena_adherence",
-                                 ElementaryMaterialPropertyDouble( "PENA_ADHERENCE", false ) );
-        this->addDoubleProperty( "Pena_contact",
-                                 ElementaryMaterialPropertyDouble( "PENA_CONTACT", 1., false ) );
-        this->addDoubleProperty( "Pena_lagr",
-                                 ElementaryMaterialPropertyDouble( "PENA_LAGR", 1.0E2, false ) );
-        this->addDoubleProperty( "Rigi_glis",
-                                 ElementaryMaterialPropertyDouble( "RIGI_GLIS", 1.0E1, false ) );
+        this->addRealProperty( "Gc", ElementaryMaterialPropertyReal( "GC", true ) );
+        this->addRealProperty( "Sigm_c", ElementaryMaterialPropertyReal( "SIGM_C", false ) );
+        this->addRealProperty( "Pena_adherence",
+                                 ElementaryMaterialPropertyReal( "PENA_ADHERENCE", false ) );
+        this->addRealProperty( "Pena_contact",
+                                 ElementaryMaterialPropertyReal( "PENA_CONTACT", 1., false ) );
+        this->addRealProperty( "Pena_lagr",
+                                 ElementaryMaterialPropertyReal( "PENA_LAGR", 1.0E2, false ) );
+        this->addRealProperty( "Rigi_glis",
+                                 ElementaryMaterialPropertyReal( "RIGI_GLIS", 1.0E1, false ) );
         this->addConvertibleProperty(
             "Cinematique",
             ElementaryMaterialPropertyConvertible(
                 "CINEMATIQUE",
-                StringToDoubleValue( {{"UNILATER", 0.}, {"GLIS_1D", 1.}, {"GLIS_2D", 2.}},
+                StringToRealValue( {{"UNILATER", 0.}, {"GLIS_1D", 1.}, {"GLIS_2D", 2.}},
                                      "UNILATER" ),
                 false ) );
     };
@@ -1340,17 +1340,17 @@ class RuptFragFoMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
                                    ElementaryMaterialPropertyDataStructure( "SIGM_C", false ) );
         this->addFunctionProperty(
             "Pena_adherence", ElementaryMaterialPropertyDataStructure( "PENA_ADHERENCE", false ) );
-        this->addDoubleProperty( "Pena_contact",
-                                 ElementaryMaterialPropertyDouble( "PENA_CONTACT", 1., false ) );
-        this->addDoubleProperty( "Pena_lagr",
-                                 ElementaryMaterialPropertyDouble( "PENA_LAGR", 1.0E2, false ) );
-        this->addDoubleProperty( "Rigi_glis",
-                                 ElementaryMaterialPropertyDouble( "RIGI_GLIS", 1.0E1, false ) );
+        this->addRealProperty( "Pena_contact",
+                                 ElementaryMaterialPropertyReal( "PENA_CONTACT", 1., false ) );
+        this->addRealProperty( "Pena_lagr",
+                                 ElementaryMaterialPropertyReal( "PENA_LAGR", 1.0E2, false ) );
+        this->addRealProperty( "Rigi_glis",
+                                 ElementaryMaterialPropertyReal( "RIGI_GLIS", 1.0E1, false ) );
         this->addConvertibleProperty(
             "Cinematique",
             ElementaryMaterialPropertyConvertible(
                 "CINEMATIQUE",
-                StringToDoubleValue( {{"UNILATER", 0.}, {"GLIS_1D", 1.}, {"GLIS_2D", 2.}},
+                StringToRealValue( {{"UNILATER", 0.}, {"GLIS_1D", 1.}, {"GLIS_2D", 2.}},
                                      "UNILATER" ),
                 false ) );
     };
@@ -1385,20 +1385,20 @@ class CzmLabMixMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
         _asterName = "CZM_LAB_MIX";
 
         // Parametres matériau
-        this->addDoubleProperty( "Sigm_c", ElementaryMaterialPropertyDouble( "SIGM_C", false ) );
-        this->addDoubleProperty( "Glis_c",
-                                 ElementaryMaterialPropertyDouble( "GLIS_C", false ) );
-        this->addDoubleProperty( "Alpha",
-                                 ElementaryMaterialPropertyDouble( "ALPHA", 0.5, false ) );
-        this->addDoubleProperty( "Beta",
-                                 ElementaryMaterialPropertyDouble( "BETA", 1.0, false ) );
-        this->addDoubleProperty( "Pena_lagr",
-                                 ElementaryMaterialPropertyDouble( "PENA_LAGR", 100., false ) );
+        this->addRealProperty( "Sigm_c", ElementaryMaterialPropertyReal( "SIGM_C", false ) );
+        this->addRealProperty( "Glis_c",
+                                 ElementaryMaterialPropertyReal( "GLIS_C", false ) );
+        this->addRealProperty( "Alpha",
+                                 ElementaryMaterialPropertyReal( "ALPHA", 0.5, false ) );
+        this->addRealProperty( "Beta",
+                                 ElementaryMaterialPropertyReal( "BETA", 1.0, false ) );
+        this->addRealProperty( "Pena_lagr",
+                                 ElementaryMaterialPropertyReal( "PENA_LAGR", 100., false ) );
         this->addConvertibleProperty(
             "Cinematique",
             ElementaryMaterialPropertyConvertible(
                 "CINEMATIQUE",
-                StringToDoubleValue( {{"UNILATER", 0.}, {"GLIS_1D", 1.}, {"GLIS_2D", 2.}},
+                StringToRealValue( {{"UNILATER", 0.}, {"GLIS_1D", 1.}, {"GLIS_2D", 2.}},
                                      "GLIS_1D" ),
                 false ) );
     };
@@ -1465,11 +1465,11 @@ class TractionMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
 typedef boost::shared_ptr< TractionMaterialBehaviourClass > TractionMaterialBehaviourPtr;
 
 /**
- * @class TherNlMaterialBehaviourClass
+ * @class ThermalNlMaterialBehaviourClass
  * @brief Classe fille de GeneralMaterialBehaviourClass definissant un materiau TherNl
  * @author Jean-Pierre Lefebvre
  */
-class TherNlMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
+class ThermalNlMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
   private:
     FunctionPtr _enthalpyFunction;
 
@@ -1477,7 +1477,7 @@ class TherNlMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
     /**
      * @brief Constructeur
      */
-    TherNlMaterialBehaviourClass() : _enthalpyFunction( new FunctionClass() ) {
+    ThermalNlMaterialBehaviourClass() : _enthalpyFunction( new FunctionClass() ) {
         // Mot cle "THER_NL" dans Aster
         _asterName = "THER_NL";
 
@@ -1511,14 +1511,14 @@ class TherNlMaterialBehaviourClass : public GeneralMaterialBehaviourClass {
      * @return Booleen valant true si la tache s'est bien deroulee
      * @todo vérifier les valeurs réelles par défaut du .VALR
      */
-    bool buildJeveuxVectors( JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
+    bool buildJeveuxVectors( JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
                              JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr,
-                             JeveuxVectorLong &kOrdr, std::vector< JeveuxVectorDouble > &,
+                             JeveuxVectorLong &kOrdr, std::vector< JeveuxVectorReal > &,
                              std::vector< JeveuxVectorChar8 > & );
 };
 
 /** @typedef Pointeur intelligent vers un comportement materiau TherNl */
-typedef boost::shared_ptr< TherNlMaterialBehaviourClass > TherNlMaterialBehaviourPtr;
+typedef boost::shared_ptr< ThermalNlMaterialBehaviourClass > ThermalNlMaterialBehaviourPtr;
 
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
 typedef boost::shared_ptr< GeneralMaterialBehaviourClass > GeneralMaterialBehaviourPtr;

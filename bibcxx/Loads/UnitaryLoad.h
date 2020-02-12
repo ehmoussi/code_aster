@@ -85,10 +85,10 @@ template < class PhysicalQuantityType > class UnitaryLoad {
 };
 
 /** @typedef Definition d'un chargement sur DEPL_R */
-typedef UnitaryLoad< DisplacementDoubleClass > DoubleLoadDisplacement;
+typedef UnitaryLoad< DisplacementRealClass > RealLoadDisplacement;
 /** @typedef Definition d'un chargement sur TEMP_R */
-typedef UnitaryLoad< TemperatureDoubleClass > DoubleLoadTemperature;
+typedef UnitaryLoad< TemperatureRealClass > RealLoadTemperature;
 typedef UnitaryLoad< TemperatureFunctionClass > FunctionLoadTemperature;
 /** @typedef Definition d'un chargement pression */
-typedef UnitaryLoad< PressureDoubleClass > DoubleLoadPressure;
+typedef UnitaryLoad< PressureRealClass > RealLoadPressure;
 #endif /* UNITARYLOAD_H_ */

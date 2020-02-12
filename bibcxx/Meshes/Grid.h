@@ -39,7 +39,7 @@
 class GridClass : public MeshClass {
   private:
     /** @brief Objet Jeveux '.GRLR' */
-    JeveuxVectorDouble _grlr;
+    JeveuxVectorReal _grlr;
     /** @brief Objet Jeveux '.GRLI' */
     JeveuxVectorLong _grli;
 

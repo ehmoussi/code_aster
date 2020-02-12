@@ -70,7 +70,7 @@ class ParallelDOFNumberingClass : public BaseDOFNumberingClass {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    void setElementaryMatrix( const ElementaryMatrixDisplacementDoublePtr &currentMatrix )
+    void setElementaryMatrix( const ElementaryMatrixDisplacementRealPtr &currentMatrix )
 
     {
         if ( !currentMatrix->getModel()->getMesh()->isParallel() )
@@ -94,7 +94,7 @@ class ParallelDOFNumberingClass : public BaseDOFNumberingClass {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentMatrix objet ElementaryMatrix
      */
-    void setElementaryMatrix( const ElementaryMatrixTemperatureDoublePtr &currentMatrix )
+    void setElementaryMatrix( const ElementaryMatrixTemperatureRealPtr &currentMatrix )
 
     {
         if ( !currentMatrix->getModel()->getMesh()->isParallel() )

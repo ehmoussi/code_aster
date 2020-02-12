@@ -37,7 +37,7 @@
 #include "Loads/ListOfLoads.h"
 #include "Discretization/DOFNumbering.h"
 #include "Discretization/ElementaryCharacteristics.h"
-#include "Materials/CalculationInputVariables.h"
+#include "Materials/CalculationExternalVariable.h"
 
 /**
  * @class StudyDescriptionClass
@@ -57,7 +57,7 @@ class StudyDescriptionClass {
     /** @brief coded material */
     CodedMaterialPtr _codedMater;
     /** @brief Input variables */
-    CalculationInputVariablesPtr _varCom;
+    CalculationExternalVariablePtr _varCom;
 
   public:
     /**
@@ -70,7 +70,7 @@ class StudyDescriptionClass {
         : _model( curModel ), _materialOnMesh( curMat ),
           _listOfLoads( ListOfLoadsPtr( new ListOfLoadsClass() ) ), _elemChara( cara ),
           _codedMater( new CodedMaterialClass( _materialOnMesh, _model ) ),
-          _varCom( new CalculationInputVariablesClass( _model, _materialOnMesh,
+          _varCom( new CalculationExternalVariableClass( _model, _materialOnMesh,
                                                           _elemChara, _codedMater ) ){};
 
     ~StudyDescriptionClass(){};

@@ -19,11 +19,11 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (FullHarmonicResultsContainer,
-                       FullTransientResultsContainer, GeneralizedModeContainer,
-                       HarmoGeneralizedResultsContainer,
-                       MechanicalModeContainer,
-                       TransientGeneralizedResultsContainer)
+from ..Objects import (FullHarmonicResult,
+                       FullTransientResult, GeneralizedModeResult,
+                       HarmoGeneralizedResult,
+                       ModeResult,
+                       TransientGeneralizedResult)
 from ..Supervis import ExecuteCommand
 
 
@@ -38,12 +38,12 @@ class RestGenePhys(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if isinstance(keywords["RESU_GENE"], TransientGeneralizedResultsContainer):
-            self._result = FullTransientResultsContainer()
-        elif isinstance(keywords["RESU_GENE"], HarmoGeneralizedResultsContainer):
-            self._result = FullHarmonicResultsContainer()
-        elif isinstance(keywords["RESU_GENE"], GeneralizedModeContainer):
-            self._result = MechanicalModeContainer()
+        if isinstance(keywords["RESU_GENE"], TransientGeneralizedResult):
+            self._result = FullTransientResult()
+        elif isinstance(keywords["RESU_GENE"], HarmoGeneralizedResult):
+            self._result = FullHarmonicResult()
+        elif isinstance(keywords["RESU_GENE"], GeneralizedModeResult):
+            self._result = ModeResult()
         else:
             raise Exception("Unknown result type")
 
@@ -54,8 +54,8 @@ class RestGenePhys(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         resu_gene = keywords["RESU_GENE"]
-        if isinstance(resu_gene, (TransientGeneralizedResultsContainer,
-                                    HarmoGeneralizedResultsContainer)):
+        if isinstance(resu_gene, (TransientGeneralizedResult,
+                                    HarmoGeneralizedResult)):
             dofNum = resu_gene.getDOFNumbering()
 
             if dofNum is not None:
@@ -76,7 +76,7 @@ class RestGenePhys(ExecuteCommand):
                                 self._result.appendModelOnAllRanks(modele)
                                 self._result.update()
 
-        elif isinstance(resu_gene, GeneralizedModeContainer):
+        elif isinstance(resu_gene, GeneralizedModeResult):
             matrRigi = resu_gene.getStiffnessMatrix()
             if matrRigi is not None:
                 modalBasis = matrRigi.getModalBasis()

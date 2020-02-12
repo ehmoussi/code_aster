@@ -93,7 +93,7 @@ ElementaryVectorPtr DiscreteProblemClass::buildElementaryLaplaceVector() {
 };
 
 ElementaryVectorPtr DiscreteProblemClass::buildElementaryNeumannVector(
-    const VectorDouble time, CalculationInputVariablesPtr varCom ) {
+    const VectorReal time, CalculationExternalVariablePtr varCom ) {
     if ( time.size() != 3 )
         throw std::runtime_error( "Invalid number of parameter" );
 
@@ -135,11 +135,11 @@ ElementaryVectorPtr DiscreteProblemClass::buildElementaryNeumannVector(
     return retour;
 };
 
-ElementaryMatrixDisplacementDoublePtr
+ElementaryMatrixDisplacementRealPtr
     DiscreteProblemClass::buildElementaryStiffnessMatrix( double time )
 {
-    ElementaryMatrixDisplacementDoublePtr
-        retour( new ElementaryMatrixDisplacementDoubleClass( Permanent ) );
+    ElementaryMatrixDisplacementRealPtr
+        retour( new ElementaryMatrixDisplacementRealClass( Permanent ) );
     ModelPtr curModel = _study->getModel();
     retour->setModel( curModel );
     MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
@@ -179,20 +179,20 @@ ElementaryMatrixDisplacementDoublePtr
 };
 
 // TODO calcul de la matrice tangente pour l'étape de prédiction de la méthode de Newton
-ElementaryMatrixDisplacementDoublePtr DiscreteProblemClass::buildElementaryTangentMatrix
+ElementaryMatrixDisplacementRealPtr DiscreteProblemClass::buildElementaryTangentMatrix
     ( double time )
 {
     return this->buildElementaryStiffnessMatrix( time );
 };
 
 // TODO calcul de la matrice jacobienne pour l'étape de correction de la méthode de Newton
-ElementaryMatrixDisplacementDoublePtr DiscreteProblemClass::buildElementaryJacobianMatrix
+ElementaryMatrixDisplacementRealPtr DiscreteProblemClass::buildElementaryJacobianMatrix
     ( double time )
 {
     return this->buildElementaryStiffnessMatrix( time );
 };
 
-FieldOnNodesDoublePtr DiscreteProblemClass::buildKinematicsLoad(
+FieldOnNodesRealPtr DiscreteProblemClass::buildKinematicsLoad(
     const BaseDOFNumberingPtr &curDOFNum, const double &time, const JeveuxMemory &memType ) const
     {
     const auto &_listOfLoad = _study->getListOfLoads();
@@ -203,7 +203,7 @@ FieldOnNodesDoublePtr DiscreteProblemClass::buildKinematicsLoad(
         _listOfLoad->build();
     //         throw std::runtime_error( "ListOfLoads is empty" );
 
-    FieldOnNodesDoublePtr retour( new FieldOnNodesDoubleClass( memType ) );
+    FieldOnNodesRealPtr retour( new FieldOnNodesRealClass( memType ) );
     std::string resuName = retour->getName();
     std::string dofNumName = curDOFNum->getName();
 
@@ -302,11 +302,11 @@ SyntaxMapContainer DiscreteProblemClass::computeMatrixSyntax( const std::string 
     return dict;
 };
 
-ElementaryMatrixDisplacementDoublePtr DiscreteProblemClass::computeMechanicalMatrix(
+ElementaryMatrixDisplacementRealPtr DiscreteProblemClass::computeMechanicalMatrix(
     const std::string &optionName )
 {
-    ElementaryMatrixDisplacementDoublePtr retour(
-         new ElementaryMatrixDisplacementDoubleClass( Permanent ) );
+    ElementaryMatrixDisplacementRealPtr retour(
+         new ElementaryMatrixDisplacementRealClass( Permanent ) );
     retour->setModel( _study->getModel() );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
@@ -327,12 +327,12 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemClass::computeMechanicalMat
     return retour;
 };
 
-ElementaryMatrixDisplacementDoublePtr DiscreteProblemClass::computeMechanicalDampingMatrix(
-    const ElementaryMatrixDisplacementDoublePtr &rigidity,
-    const ElementaryMatrixDisplacementDoublePtr &mass )
+ElementaryMatrixDisplacementRealPtr DiscreteProblemClass::computeMechanicalDampingMatrix(
+    const ElementaryMatrixDisplacementRealPtr &rigidity,
+    const ElementaryMatrixDisplacementRealPtr &mass )
 {
-    ElementaryMatrixDisplacementDoublePtr
-        retour( new ElementaryMatrixDisplacementDoubleClass( Permanent ) );
+    ElementaryMatrixDisplacementRealPtr
+        retour( new ElementaryMatrixDisplacementRealClass( Permanent ) );
     retour->setModel( rigidity->getModel() );
 
     // Definition du bout de fichier de commande correspondant a CALC_MATR_ELEM
@@ -355,12 +355,12 @@ ElementaryMatrixDisplacementDoublePtr DiscreteProblemClass::computeMechanicalDam
     return retour;
 };
 
-ElementaryMatrixDisplacementDoublePtr
+ElementaryMatrixDisplacementRealPtr
 DiscreteProblemClass::computeMechanicalMassMatrix() {
     return computeMechanicalMatrix( "RIGI_MECA" );
 };
 
-ElementaryMatrixDisplacementDoublePtr
+ElementaryMatrixDisplacementRealPtr
 DiscreteProblemClass::computeMechanicalStiffnessMatrix() {
     return computeMechanicalMatrix( "RIGI_MECA" );
 };

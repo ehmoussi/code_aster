@@ -34,10 +34,10 @@ PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
     : DataStructure( jeveuxName, 8, "CABL_PRECONT" ), _model( model ), _mater( mater ),
       _cara( cara ),
       _mesh( boost::static_pointer_cast< MeshClass >( _model->getMesh() ) ),
-      _sigin( new PCFieldOnMeshDoubleClass( getName() + ".CHME.SIGIN", _mesh ) ),
+      _sigin( new PCFieldOnMeshRealClass( getName() + ".CHME.SIGIN", _mesh ) ),
       _cableBP( new TableClass( getName() + "CABLEBP    " ) ),
       _cableGL( new TableClass( getName() + "CABLEGL    " ) ),
-      _lirela( new ListOfLinearRelationsDouble( getName() + ".LIRELA    " ) ), _isEmpty( true ) {}
+      _lirela( new ListOfLinearRelationsReal( getName() + ".LIRELA    " ) ), _isEmpty( true ) {}
 
 PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
     const ModelPtr &model, const MaterialOnMeshPtr &mater,

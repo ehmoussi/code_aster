@@ -27,7 +27,7 @@ acier = DEFI_MATERIAU(ELAS=_F(E=200000.,
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh(acier)
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()
 charMeca1.setModel(monModel)
@@ -39,9 +39,9 @@ charMeca1.addImposedMechanicalDOFOnNodes(
     code_aster.PhysicalQuantityComponent.Dz, 0., "Surf6N")
 charMeca1.build()
 
-imposedPres1 = code_aster.PressureDouble()
+imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue(code_aster.PhysicalQuantityComponent.Pres, 1.)
-charMeca2 = code_aster.DistributedPressureDouble(monModel)
+charMeca2 = code_aster.DistributedPressureReal(monModel)
 charMeca2.setValue(imposedPres1, "Surf5")
 charMeca2.build()
 

@@ -45,9 +45,9 @@ class SkeletonClass : public BaseMeshClass {
     /** @brief Objet Jeveux '.NOMSST' */
     JeveuxVectorChar24 _nomSst;
     /** @brief Objet Jeveux '.ANGL_NAUT' */
-    JeveuxVectorDouble _anglNaut;
+    JeveuxVectorReal _anglNaut;
     /** @brief Objet Jeveux '.TRANS' */
-    JeveuxVectorDouble _trans;
+    JeveuxVectorReal _trans;
 
   public:
     /**
@@ -69,8 +69,8 @@ class SkeletonClass : public BaseMeshClass {
           _invSkeleton( JeveuxVectorLong( getName() + ".INV.SKELETON" ) ),
           _corres( JeveuxVectorLong( getName() + ".CORRES" ) ),
           _nomSst( JeveuxVectorChar24( getName() + ".NOMSST" ) ),
-          _anglNaut( JeveuxVectorDouble( getName() + ".ANGL_NAUT" ) ),
-          _trans( JeveuxVectorDouble( getName() + ".TRANS" ) ){};
+          _anglNaut( JeveuxVectorReal( getName() + ".ANGL_NAUT" ) ),
+          _trans( JeveuxVectorReal( getName() + ".TRANS" ) ){};
 };
 
 /**

@@ -24,7 +24,7 @@ acier.debugPrint(6)
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()
 charMeca1.setModel(monModel)
@@ -33,9 +33,9 @@ charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy
 charMeca1.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 0., "Bas")
 charMeca1.build()
 
-imposedPres1 = code_aster.PressureDouble()
+imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
-charMeca2 = code_aster.DistributedPressureDouble(monModel)
+charMeca2 = code_aster.DistributedPressureReal(monModel)
 charMeca2.setValue( imposedPres1, "Haut" )
 charMeca2.build()
 
@@ -46,7 +46,7 @@ monSolver.setPreconditioning(code_aster.Preconditioning.Ml)
 lineSearch = code_aster.LineSearchMethod(code_aster.LineSearchEnum.Corde )
 
 # Define a nonlinear Analysis
-statNonLine = code_aster.StaticNonLinearAnalysis()
+statNonLine = code_aster.NonLinearStaticAnalysis()
 statNonLine.addStandardExcitation( charMeca1 )
 statNonLine.addStandardExcitation( charMeca2 )
 statNonLine.setModel( monModel )

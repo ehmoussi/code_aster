@@ -31,10 +31,10 @@ namespace py = boost::python;
 
 void exportElementaryVectorToPython() {
 
-    FieldOnNodesDoublePtr ( ElementaryVectorClass::*c1 )( const DOFNumberingPtr & ) =
+    FieldOnNodesRealPtr ( ElementaryVectorClass::*c1 )( const DOFNumberingPtr & ) =
         &ElementaryVectorClass::assembleVector;
 #ifdef _USE_MPI
-    FieldOnNodesDoublePtr ( ElementaryVectorClass::*c2 )( const ParallelDOFNumberingPtr & ) =
+    FieldOnNodesRealPtr ( ElementaryVectorClass::*c2 )( const ParallelDOFNumberingPtr & ) =
         &ElementaryVectorClass::assembleVector;
 #endif /* _USE_MPI */
 
@@ -55,22 +55,22 @@ void exportElementaryVectorToPython() {
         .def( "setListOfLoads", &ElementaryVectorClass::setListOfLoads )
         .def( "update", &ElementaryVectorClass::update );
 
-    py::class_< ElementaryVectorDisplacementDoubleClass,
-            ElementaryVectorDisplacementDoublePtr, py::bases< ElementaryVectorClass > >
-            ( "ElementaryVectorDisplacementDouble", py::no_init )
+    py::class_< ElementaryVectorDisplacementRealClass,
+            ElementaryVectorDisplacementRealPtr, py::bases< ElementaryVectorClass > >
+            ( "ElementaryVectorDisplacementReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryVectorDisplacementDoubleClass > ) )
+              py::make_constructor(&initFactoryPtr< ElementaryVectorDisplacementRealClass > ) )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryVectorDisplacementDoubleClass,
+              py::make_constructor(&initFactoryPtr< ElementaryVectorDisplacementRealClass,
                                                 std::string >));
 
-    py::class_< ElementaryVectorTemperatureDoubleClass,
-            ElementaryVectorTemperatureDoublePtr, py::bases< ElementaryVectorClass > >
-            ( "ElementaryVectorTemperatureDouble", py::no_init )
+    py::class_< ElementaryVectorTemperatureRealClass,
+            ElementaryVectorTemperatureRealPtr, py::bases< ElementaryVectorClass > >
+            ( "ElementaryVectorTemperatureReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryVectorTemperatureDoubleClass > ) )
+              py::make_constructor(&initFactoryPtr< ElementaryVectorTemperatureRealClass > ) )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ElementaryVectorTemperatureDoubleClass,
+              py::make_constructor(&initFactoryPtr< ElementaryVectorTemperatureRealClass,
                                                 std::string >));
 
     py::class_< ElementaryVectorPressureComplexClass,

@@ -42,11 +42,11 @@ NonLinearControlClass::NonLinearControlClass( double rTol, int nIterMax, double 
 }
 
 ConvergenceState NonLinearControlClass::check( const DiscreteProblemPtr &dProblem,
-                                                  const FieldOnNodesDoublePtr &uField, int nIter ) {
+                                                  const FieldOnNodesRealPtr &uField, int nIter ) {
     double relativeResNorm( 0.0 );
     // Get the residual
     /* Aucune de ces fonctions  n'existe encore ...
-    FieldOnNodesDoublePtr res =  dProblem->buildResidual( uField );
+    FieldOnNodesRealPtr res =  dProblem->buildResidual( uField );
     resnorm = res-> getNorm( "NORM2" );
     // Normalisation ??
     double relativeResNorm = dProblem-> getRelativeResidualNorm( "NORM2" );

@@ -34,22 +34,22 @@ namespace py = boost::python;
 
 void exportFieldOnNodesToPython() {
 
-    py::class_< FieldOnNodesDoubleClass, FieldOnNodesDoublePtr,
-                py::bases< DataFieldClass > >( "FieldOnNodesDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleClass >))
+    py::class_< FieldOnNodesRealClass, FieldOnNodesRealPtr,
+                py::bases< DataFieldClass > >( "FieldOnNodesReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesRealClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleClass, std::string >))
+              py::make_constructor(&initFactoryPtr< FieldOnNodesRealClass, std::string >))
 
         .def( "exportToSimpleFieldOnNodes",
-              &FieldOnNodesDoubleClass::exportToSimpleFieldOnNodes )
-        .def( "getMesh", &FieldOnNodesDoubleClass::getMesh )
+              &FieldOnNodesRealClass::exportToSimpleFieldOnNodes )
+        .def( "getMesh", &FieldOnNodesRealClass::getMesh )
         .def( "__getitem__",
-              +[]( const FieldOnNodesDoubleClass &v, int i ) { return v.operator[]( i ); } )
-        .def( "printMedFile", &FieldOnNodesDoubleClass::printMedFile )
-        .def( "setDOFNumbering", &FieldOnNodesDoubleClass::setDOFNumbering )
-        .def( "setMesh", &FieldOnNodesDoubleClass::setMesh )
-        .def( "update", &FieldOnNodesDoubleClass::update )
-        .def( "updateValuePointers", &FieldOnNodesDoubleClass::updateValuePointers );
+              +[]( const FieldOnNodesRealClass &v, int i ) { return v.operator[]( i ); } )
+        .def( "printMedFile", &FieldOnNodesRealClass::printMedFile )
+        .def( "setDOFNumbering", &FieldOnNodesRealClass::setDOFNumbering )
+        .def( "setMesh", &FieldOnNodesRealClass::setMesh )
+        .def( "update", &FieldOnNodesRealClass::update )
+        .def( "updateValuePointers", &FieldOnNodesRealClass::updateValuePointers );
     py::class_< FieldOnNodesComplexClass, FieldOnNodesComplexPtr,
                 py::bases< DataFieldClass > >( "FieldOnNodesComplex", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesComplexClass >))

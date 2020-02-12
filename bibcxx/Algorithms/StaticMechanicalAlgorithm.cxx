@@ -51,23 +51,23 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) {
     // Build Dirichlet loads
     ElementaryVectorPtr vectElem1 =
         ctx._discreteProblem->buildElementaryDirichletVector( ctx._time );
-    FieldOnNodesDoublePtr chNoDir = vectElem1->assembleVector( dofNum1, ctx._time, Temporary );
+    FieldOnNodesRealPtr chNoDir = vectElem1->assembleVector( dofNum1, ctx._time, Temporary );
 
     // Build Laplace forces
     ElementaryVectorPtr vectElem2 = ctx._discreteProblem->buildElementaryLaplaceVector();
-    FieldOnNodesDoublePtr chNoLap = vectElem2->assembleVector( dofNum1, ctx._time, Temporary );
+    FieldOnNodesRealPtr chNoLap = vectElem2->assembleVector( dofNum1, ctx._time, Temporary );
 
     ctx._varCom->compute( ctx._time );
 
     // Build Neumann loads
-    VectorDouble times;
+    VectorReal times;
     times.push_back( ctx._time );
     times.push_back( 0. );
     times.push_back( 0. );
     ElementaryVectorPtr vectElem3 = ctx._discreteProblem->buildElementaryNeumannVector( times,
                                                                                         ctx._varCom
                                                                                       );
-    FieldOnNodesDoublePtr chNoNeu = vectElem3->assembleVector( dofNum1, ctx._time, Temporary );
+    FieldOnNodesRealPtr chNoNeu = vectElem3->assembleVector( dofNum1, ctx._time, Temporary );
 
     chNoDir->addFieldOnNodes( *chNoLap );
     chNoDir->addFieldOnNodes( *chNoNeu );
@@ -80,13 +80,13 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) {
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( ctx._results->getName(), ctx._results->getType() );
 
-    FieldOnNodesDoublePtr kineLoadsFON =
+    FieldOnNodesRealPtr kineLoadsFON =
         ctx._discreteProblem->buildKinematicsLoad( dofNum1, ctx._time, Temporary );
 
-    FieldOnNodesDoublePtr resultField =
-        ctx._results->getEmptyFieldOnNodesDouble( "DEPL", ctx._rank );
+    FieldOnNodesRealPtr resultField =
+        ctx._results->getEmptyFieldOnNodesReal( "DEPL", ctx._rank );
 
-    resultField = ctx._linearSolver->solveDoubleLinearSystemWithKinematicsLoad(
+    resultField = ctx._linearSolver->solveRealLinearSystemWithKinematicsLoad(
         ctx._aMatrix, kineLoadsFON, chNoDir, resultField );
 
     const auto &study = ctx._discreteProblem->getStudyDescription();

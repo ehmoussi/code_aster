@@ -53,38 +53,38 @@ class ThermalLoadClass : public DataStructure {
         /** @brief Vecteur Jeveux '.LIGRE' */
         FiniteElementDescriptorPtr _FEDesc;
         /** @brief Carte '.CIMPO' */
-        PCFieldOnMeshDoublePtr _cimpo;
+        PCFieldOnMeshRealPtr _cimpo;
         /** @brief Carte '.CMULT' */
-        PCFieldOnMeshDoublePtr _cmult;
+        PCFieldOnMeshRealPtr _cmult;
         /** @brief Carte '.COEFH' */
-        PCFieldOnMeshDoublePtr _coefh;
+        PCFieldOnMeshRealPtr _coefh;
         /** @brief Carte '.FLUNL' */
-        PCFieldOnMeshDoublePtr _flunl;
+        PCFieldOnMeshRealPtr _flunl;
         /** @brief Carte '.FLURE' */
-        PCFieldOnMeshDoublePtr _flure;
+        PCFieldOnMeshRealPtr _flure;
         /** @brief Carte '.GRAIN' */
-        PCFieldOnMeshDoublePtr _grain;
+        PCFieldOnMeshRealPtr _grain;
         /** @brief Carte '.HECHP' */
-        PCFieldOnMeshDoublePtr _hechp;
+        PCFieldOnMeshRealPtr _hechp;
         /** @brief Carte '.SOURE' */
-        PCFieldOnMeshDoublePtr _soure;
+        PCFieldOnMeshRealPtr _soure;
         /** @brief Carte '.T_EXT' */
-        PCFieldOnMeshDoublePtr _tExt;
+        PCFieldOnMeshRealPtr _tExt;
 
         /** @brief Constructeur */
         TherLoad( const std::string &name, const ModelPtr &currentModel )
             : _model( currentModel ), _mesh( _model->getMesh() ),
               _modelName( name + ".MODEL.NOMO" ), _convection( name + ".CONVE.VALE" ),
               _FEDesc( new FiniteElementDescriptorClass( name + ".LIGRE", _mesh ) ),
-              _cimpo( new PCFieldOnMeshDoubleClass( name + ".CIMPO", _FEDesc ) ),
-              _cmult( new PCFieldOnMeshDoubleClass( name + ".CMULT", _FEDesc ) ),
-              _coefh( new PCFieldOnMeshDoubleClass( name + ".COEFH", _FEDesc ) ),
-              _flunl( new PCFieldOnMeshDoubleClass( name + ".FLUNL", _FEDesc ) ),
-              _flure( new PCFieldOnMeshDoubleClass( name + ".FLURE", _FEDesc ) ),
-              _grain( new PCFieldOnMeshDoubleClass( name + ".GRAIN", _FEDesc ) ),
-              _hechp( new PCFieldOnMeshDoubleClass( name + ".HECHP", _FEDesc ) ),
-              _soure( new PCFieldOnMeshDoubleClass( name + ".SOURE", _FEDesc ) ),
-              _tExt( new PCFieldOnMeshDoubleClass( name + ".T_EXT", _FEDesc ) ){};
+              _cimpo( new PCFieldOnMeshRealClass( name + ".CIMPO", _FEDesc ) ),
+              _cmult( new PCFieldOnMeshRealClass( name + ".CMULT", _FEDesc ) ),
+              _coefh( new PCFieldOnMeshRealClass( name + ".COEFH", _FEDesc ) ),
+              _flunl( new PCFieldOnMeshRealClass( name + ".FLUNL", _FEDesc ) ),
+              _flure( new PCFieldOnMeshRealClass( name + ".FLURE", _FEDesc ) ),
+              _grain( new PCFieldOnMeshRealClass( name + ".GRAIN", _FEDesc ) ),
+              _hechp( new PCFieldOnMeshRealClass( name + ".HECHP", _FEDesc ) ),
+              _soure( new PCFieldOnMeshRealClass( name + ".SOURE", _FEDesc ) ),
+              _tExt( new PCFieldOnMeshRealClass( name + ".T_EXT", _FEDesc ) ){};
     };
 
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */

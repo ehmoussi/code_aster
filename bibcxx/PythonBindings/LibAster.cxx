@@ -32,31 +32,36 @@ namespace py = boost::python;
 #include "PythonBindings/Fortran.h"
 
 // Please keep '*Interface.h' files in alphabetical order to ease merging
-#include "PythonBindings/AcousticModeContainerInterface.h"
-#include "PythonBindings/AcousticsLoadInterface.h"
+#include "PythonBindings/AcousticLoadInterface.h"
+#include "PythonBindings/AcousticModeResultInterface.h"
 #include "PythonBindings/AssemblyMatrixInterface.h"
 #include "PythonBindings/BehaviourDefinitionInterface.h"
 #include "PythonBindings/BehaviourInterface.h"
-#include "PythonBindings/BucklingModeContainerInterface.h"
+#include "PythonBindings/BucklingModeResultInterface.h"
+#include "PythonBindings/CombinedFourierResultInterface.h"
 #include "PythonBindings/ContactDefinitionInterface.h"
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
+#include "PythonBindings/CrackInterface.h"
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/CrackTipInterface.h"
-#include "PythonBindings/CrackInterface.h"
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
-#include "PythonBindings/DOFNumberingInterface.h"
+#include "PythonBindings/DataFieldInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DebugInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
+#include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DrivingInterface.h"
 #include "PythonBindings/DynamicMacroElementInterface.h"
-#include "PythonBindings/ElasticEvolutionContainerInterface.h"
+#include "PythonBindings/ElasticFourierResultInterface.h"
+#include "PythonBindings/ElasticResultInterface.h"
 #include "PythonBindings/ElementaryCharacteristicsInterface.h"
 #include "PythonBindings/ElementaryMatrixInterface.h"
 #include "PythonBindings/ElementaryVectorInterface.h"
-#include "PythonBindings/EvolutiveLoadInterface.h"
-#include "PythonBindings/EvolutiveThermalLoadInterface.h"
+#include "PythonBindings/EmpiricalModeResultInterface.h"
 #include "PythonBindings/EventManagerInterface.h"
+#include "PythonBindings/ExternalVariableConverterInterface.h"
+#include "PythonBindings/ExternalVariableDefinitionInterface.h"
+#include "PythonBindings/ExternalVariableResultInterface.h"
 #include "PythonBindings/FiberGeometryInterface.h"
 #include "PythonBindings/FieldOnCellsInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
@@ -65,81 +70,73 @@ namespace py = boost::python;
 #include "PythonBindings/FluidStructureModalBasisInterface.h"
 #include "PythonBindings/FormulaInterface.h"
 #include "PythonBindings/FortranInterface.h"
-#include "PythonBindings/FourierCombinationInterface.h"
-#include "PythonBindings/FourierElasContainerInterface.h"
-#include "PythonBindings/FourierTherContainerInterface.h"
-#include "PythonBindings/FullAcousticHarmonicResultsContainerInterface.h"
-#include "PythonBindings/FullHarmonicResultsContainerInterface.h"
-#include "PythonBindings/FullResultsContainerInterface.h"
-#include "PythonBindings/FullTransientResultsContainerInterface.h"
+#include "PythonBindings/FullHarmonicAcousticResultInterface.h"
+#include "PythonBindings/FullHarmonicResultInterface.h"
+#include "PythonBindings/FullResultInterface.h"
+#include "PythonBindings/FullTransientResultInterface.h"
 #include "PythonBindings/FunctionInterface.h"
 #include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
 #include "PythonBindings/GeneralizedAssemblyVectorInterface.h"
 #include "PythonBindings/GeneralizedDOFNumberingInterface.h"
-#include "PythonBindings/GeneralizedModeContainerInterface.h"
 #include "PythonBindings/GeneralizedModelInterface.h"
-#include "PythonBindings/GeneralizedResultsContainerInterface.h"
-#include "PythonBindings/DataFieldInterface.h"
+#include "PythonBindings/GeneralizedModeResultInterface.h"
+#include "PythonBindings/GeneralizedResultInterface.h"
 #include "PythonBindings/GenericFunctionInterface.h"
 #include "PythonBindings/GridInterface.h"
-#include "PythonBindings/InputVariableDefinitionInterface.h"
-#include "PythonBindings/InputVariableConverterInterface.h"
-#include "PythonBindings/InputVariableEvolutionContainerInterface.h"
 #include "PythonBindings/InterspectralMatrixInterface.h"
 #include "PythonBindings/KinematicsLoadInterface.h"
-#include "PythonBindings/LineSearchMethodInterface.h"
-#include "PythonBindings/LinearDisplacementEvolutionContainerInterface.h"
 #include "PythonBindings/LinearSolverInterface.h"
+#include "PythonBindings/LinearStaticAnalysisInterface.h"
+#include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
 #include "PythonBindings/ListOfIntegersInterface.h"
-#include "PythonBindings/MPIInfosInterface.h"
+#include "PythonBindings/LoadResultInterface.h"
 #include "PythonBindings/MatchingMeshesInterface.h"
 #include "PythonBindings/MaterialBehaviourInterface.h"
 #include "PythonBindings/MaterialInterface.h"
 #include "PythonBindings/MaterialOnMeshBuilderInterface.h"
 #include "PythonBindings/MaterialOnMeshInterface.h"
 #include "PythonBindings/MechanicalLoadInterface.h"
-#include "PythonBindings/MechanicalModeContainerInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 #include "PythonBindings/MeshInterface.h"
 #include "PythonBindings/ModalBasisDefinitionInterface.h"
-#include "PythonBindings/ModeEmpiContainerInterface.h"
 #include "PythonBindings/ModelInterface.h"
-#include "PythonBindings/MultElasContainerInterface.h"
-#include "PythonBindings/NonLinearEvolutionContainerInterface.h"
+#include "PythonBindings/ModeResultInterface.h"
+#include "PythonBindings/MPIInfosInterface.h"
+#include "PythonBindings/MultipleElasticResultInterface.h"
 #include "PythonBindings/NonLinearMethodInterface.h"
-#include "PythonBindings/NormalModeAnalysisInterface.h"
-#include "PythonBindings/PCFieldOnMeshInterface.h"
+#include "PythonBindings/NonLinearResultInterface.h"
+#include "PythonBindings/NonLinearStaticAnalysisInterface.h"
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/PartialMeshInterface.h"
+#include "PythonBindings/PCFieldOnMeshInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include "PythonBindings/PrestressingCableDefinitionInterface.h"
+#include "PythonBindings/ResultInterface.h"
 #include "PythonBindings/ResultNamingInterface.h"
-#include "PythonBindings/ResultsContainerInterface.h"
 #include "PythonBindings/SimpleFieldOnCellsInterface.h"
 #include "PythonBindings/SimpleFieldOnNodesInterface.h"
 #include "PythonBindings/SkeletonInterface.h"
 #include "PythonBindings/StateInterface.h"
 #include "PythonBindings/StaticMacroElementInterface.h"
-#include "PythonBindings/StaticMechanicalSolverInterface.h"
-#include "PythonBindings/StaticModeAnalysisInterface.h"
-#include "PythonBindings/StaticNonLinearAnalysisInterface.h"
 #include "PythonBindings/StructureInterfaceInterface.h"
 #include "PythonBindings/StudyDescriptionInterface.h"
 #include "PythonBindings/SurfaceInterface.h"
-#include "PythonBindings/TableInterface.h"
 #include "PythonBindings/TableContainerInterface.h"
+#include "PythonBindings/TableInterface.h"
+#include "PythonBindings/ThermalFourierResultInterface.h"
 #include "PythonBindings/ThermalLoadInterface.h"
-#include "PythonBindings/TimeDependantResultsContainerInterface.h"
+#include "PythonBindings/ThermalResultInterface.h"
 #include "PythonBindings/TimeStepManagerInterface.h"
 #include "PythonBindings/TimeStepperInterface.h"
+#include "PythonBindings/TransientResultInterface.h"
 #include "PythonBindings/TurbulentSpectrumInterface.h"
 #include "PythonBindings/UnitaryThermalLoadInterface.h"
-#include "PythonBindings/VariantStiffnessMatrixInterface.h"
 #include "PythonBindings/VariantModalBasisInterface.h"
+#include "PythonBindings/VariantStiffnessMatrixInterface.h"
 #include "PythonBindings/VectorUtilitiesInterface.h"
 #include "PythonBindings/XfemCrackInterface.h"
 // Please keep '*Interface.h' files in alphabetical order to ease merging
@@ -193,6 +190,7 @@ BOOST_PYTHON_MODULE( libaster ) {
 
     py::def( "raiseAsterError", &raiseAsterError, raiseAsterError_overloads() );
 
+    // do not sort (compilation error)
     exportStiffnessMatrixVariantToPython();
     exportModalBasisVariantToPython();
     exportVectorUtilitiesToPython();
@@ -231,7 +229,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportLinearSolverToPython();
     exportModalBasisDefinitionToPython();
     exportStructureInterfaceToPython();
-    exportAcousticsLoadToPython();
+    exportAcousticLoadToPython();
     exportKinematicsLoadToPython();
     exportMechanicalLoadToPython();
     exportPhysicalQuantityToPython();
@@ -259,37 +257,35 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportLineSearchMethodToPython();
     exportNonLinearMethodToPython();
     exportStateToPython();
-    exportResultsContainerToPython();
-    exportTimeDependantResultsContainerToPython();
-    exportEvolutiveLoadToPython();
-    exportEvolutiveThermalLoadToPython();
-    exportFourierCombinationToPython();
-    exportFourierElasContainerToPython();
-    exportFourierTherContainerToPython();
-    exportMultElasContainerToPython();
-    exportNonLinearEvolutionContainerToPython();
-    exportNormalModeAnalysisToPython();
-    exportStaticMechanicalSolverToPython();
-    exportStaticModeAnalysisToPython();
-    exportStaticNonLinearAnalysisToPython();
+    exportResultToPython();
+    exportTransientResultToPython();
+    exportLoadResultToPython();
+    exportThermalResultToPython();
+    exportCombinedFourierResultToPython();
+    exportElasticFourierResultToPython();
+    exportThermalFourierResultToPython();
+    exportMultipleElasticResultToPython();
+    exportNonLinearResultToPython();
+    exportLinearStaticAnalysisToPython();
+    exportNonLinearStaticAnalysisToPython();
     exportEventManagerToPython();
     exportStudyDescriptionToPython();
     exportTimeStepManagerToPython();
     exportCppToFortranGlossaryToPython();
     exportCyclicSymmetryModeToPython();
-    exportFullResultsContainerToPython();
-    exportMechanicalModeContainerToPython();
-    exportMechanicalModeComplexContainerToPython();
-    exportAcousticModeContainerToPython();
-    exportBucklingModeContainerToPython();
-    exportGeneralizedResultsContainerToPython();
-    exportLinearDisplacementEvolutionContainerToPython();
+    exportFullResultToPython();
+    exportModeResultToPython();
+    exportModeResultComplexToPython();
+    exportAcousticModeResultToPython();
+    exportBucklingModeResultToPython();
+    exportGeneralizedResultToPython();
+    exportElasticResultToPython();
     exportMeshCoordinatesFieldToPython();
-    exportFullTransientResultsContainerToPython();
-    exportFullHarmonicResultsContainerToPython();
-    exportFullAcousticHarmonicResultsContainerToPython();
+    exportFullTransientResultToPython();
+    exportFullHarmonicResultToPython();
+    exportFullHarmonicAcousticResultToPython();
     exportFluidStructureModalBasisToPython();
-    exportGeneralizedModeContainerToPython();
+    exportGeneralizedModeResultToPython();
 
 #ifdef _USE_MPI
     /* These objects must be declared in Objects/__init__.py as
@@ -304,10 +300,10 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportResultNamingToPython();
     exportListOfFloatsToPython();
     exportListOfIntegersToPython();
-    exportInputVariableDefinitionToPython();
-    exportInputVariableConverterToPython();
-    exportModeEmpiContainerToPython();
-    exportElasticEvolutionContainerToPython();
-    exportInputVariableEvolutionContainerToPython();
+    exportExternalVariableDefinitionToPython();
+    exportExternalVariableConverterToPython();
+    exportEmpiricalModeResultToPython();
+    exportElasticResultToPython();
+    exportExternalVariableResultToPython();
     exportMaterialOnMeshBuilderToPython();
 };

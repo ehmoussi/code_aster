@@ -248,7 +248,7 @@ template < class ValueType > class ExchangeWallClass : public UnitaryThermalLoad
 
     VectorOfMeshEntityPtr _entity1, _entity2;
     ValueType _coef_h;
-    VectorDouble _tran;
+    VectorReal _tran;
     CapyConvertibleContainer _toCapyConverter;
 
   public:
@@ -269,10 +269,10 @@ template < class ValueType > class ExchangeWallClass : public UnitaryThermalLoad
             new CapyConvertibleValue< double >( true, "COEF_H", _coef_h, false ) );
     };
 
-    void setTranslation( const VectorDouble &vec ) {
+    void setTranslation( const VectorReal &vec ) {
         _tran = vec;
         _toCapyConverter.add(
-            new CapyConvertibleValue< VectorDouble >( false, "TRAN", _tran, false ) );
+            new CapyConvertibleValue< VectorReal >( false, "TRAN", _tran, false ) );
     };
 
     void addGroupOfElements( const std::string &nameOfGroup ) {
@@ -440,40 +440,40 @@ template < class ValueType > class ThermalGradientClass : public UnitaryThermalL
  * @brief Pointeur intelligent vers un UnitaryThermalLoadClass
  */
 template class ImposedTemperatureClass< double >;
-typedef ImposedTemperatureClass< double > DoubleImposedTemperatureClass;
-typedef boost::shared_ptr< DoubleImposedTemperatureClass > DoubleImposedTemperaturePtr;
+typedef ImposedTemperatureClass< double > RealImposedTemperatureClass;
+typedef boost::shared_ptr< RealImposedTemperatureClass > RealImposedTemperaturePtr;
 
 template class DistributedFlowClass< double >;
-typedef DistributedFlowClass< double > DoubleDistributedFlowClass;
-typedef boost::shared_ptr< DoubleDistributedFlowClass > DoubleDistributedFlowPtr;
+typedef DistributedFlowClass< double > RealDistributedFlowClass;
+typedef boost::shared_ptr< RealDistributedFlowClass > RealDistributedFlowPtr;
 
 template class NonLinearFlowClass< double >;
-typedef NonLinearFlowClass< double > DoubleNonLinearFlowClass;
-typedef boost::shared_ptr< DoubleNonLinearFlowClass > DoubleNonLinearFlowPtr;
+typedef NonLinearFlowClass< double > RealNonLinearFlowClass;
+typedef boost::shared_ptr< RealNonLinearFlowClass > RealNonLinearFlowPtr;
 
 template class ExchangeClass< double >;
-typedef ExchangeClass< double > DoubleExchangeClass;
-typedef boost::shared_ptr< DoubleExchangeClass > DoubleExchangePtr;
+typedef ExchangeClass< double > RealExchangeClass;
+typedef boost::shared_ptr< RealExchangeClass > RealExchangePtr;
 
 template class ExchangeWallClass< double >;
-typedef ExchangeWallClass< double > DoubleExchangeWallClass;
-typedef boost::shared_ptr< DoubleExchangeWallClass > DoubleExchangeWallPtr;
+typedef ExchangeWallClass< double > RealExchangeWallClass;
+typedef boost::shared_ptr< RealExchangeWallClass > RealExchangeWallPtr;
 
 template class SourceClass< double >;
-typedef SourceClass< double > DoubleSourceClass;
-typedef boost::shared_ptr< DoubleSourceClass > DoubleSourcePtr;
+typedef SourceClass< double > RealSourceClass;
+typedef boost::shared_ptr< RealSourceClass > RealSourcePtr;
 
 template class NonLinearSourceClass< double >;
-typedef NonLinearSourceClass< double > DoubleNonLinearSourceClass;
-typedef boost::shared_ptr< DoubleNonLinearSourceClass > DoubleNonLinearSourcePtr;
+typedef NonLinearSourceClass< double > RealNonLinearSourceClass;
+typedef boost::shared_ptr< RealNonLinearSourceClass > RealNonLinearSourcePtr;
 
 template class ThermalRadiationClass< double >;
-typedef ThermalRadiationClass< double > DoubleThermalRadiationClass;
-typedef boost::shared_ptr< DoubleThermalRadiationClass > DoubleThermalRadiationPtr;
+typedef ThermalRadiationClass< double > RealThermalRadiationClass;
+typedef boost::shared_ptr< RealThermalRadiationClass > RealThermalRadiationPtr;
 
 template class ThermalGradientClass< double >;
-typedef ThermalGradientClass< double > DoubleThermalGradientClass;
-typedef boost::shared_ptr< DoubleThermalGradientClass > DoubleThermalGradientPtr;
+typedef ThermalGradientClass< double > RealThermalGradientClass;
+typedef boost::shared_ptr< RealThermalGradientClass > RealThermalGradientPtr;
 
 typedef boost::shared_ptr< UnitaryThermalLoadClass > UnitaryThermalLoadPtr;
 /** @typedef std::list de UnitaryThermalLoad */

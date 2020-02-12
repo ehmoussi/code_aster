@@ -35,8 +35,8 @@
 #include "Modeling/GeneralizedModel.h"
 #include "Supervis/ResultNaming.h"
 
-#include "Results/ForwardMechanicalModeContainer.h"
-#include "Results/ForwardGeneralizedModeContainer.h"
+#include "Results/ForwardModeResult.h"
+#include "Results/ForwardGeneralizedModeResult.h"
 
 /**
  * @class GeneralizedFieldOnNodesDescriptionClass
@@ -113,7 +113,7 @@ typedef boost::shared_ptr< GeneralizedFieldOnNodesDescriptionClass >
 class GeneralizedDOFNumberingClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.BASE' */
-    JeveuxVectorDouble _base;
+    JeveuxVectorReal _base;
     /** @brief Objet Jeveux '.NOMS' */
     JeveuxVectorChar8 _noms;
     /** @brief Objet Jeveux '.TAIL' */
@@ -127,9 +127,9 @@ class GeneralizedDOFNumberingClass : public DataStructure {
     /** @brief GeneralizedFieldOnNodesDescription */
     GeneralizedModelPtr _model;
     /** @brief modal basis */
-    ForwardMechanicalModeContainerPtr _basis1;
+    ForwardModeResultPtr _basis1;
     /** @brief modal basis */
-    ForwardGeneralizedModeContainerPtr _basis2;
+    ForwardGeneralizedModeResultPtr _basis2;
 
   public:
     /**
@@ -149,7 +149,7 @@ class GeneralizedDOFNumberingClass : public DataStructure {
      */
     GeneralizedDOFNumberingClass( const std::string name ):
         DataStructure( name, 14, "NUME_DDL_GENE", Permanent ),
-        _base( JeveuxVectorDouble( getName() + ".ELIM.BASE" ) ),
+        _base( JeveuxVectorReal( getName() + ".ELIM.BASE" ) ),
         _noms( JeveuxVectorChar8( getName() + ".ELIM.NOMS" ) ),
         _tail( JeveuxVectorLong( getName() + ".ELIM.TAIL" ) ),
         _smos( new MorseStorageClass( getName() + ".SMOS" ) ),
@@ -168,21 +168,21 @@ class GeneralizedDOFNumberingClass : public DataStructure {
     /**
      * @brief Get modal basis
      */
-    GeneralizedModeContainerPtr getModalBasisFromGeneralizedModeContainer()
+    GeneralizedModeResultPtr getModalBasisFromGeneralizedModeResult()
     {
         if ( _basis2.isSet() )
             return _basis2.getPointer();
-        return GeneralizedModeContainerPtr( nullptr );
+        return GeneralizedModeResultPtr( nullptr );
     };
 
     /**
      * @brief Get modal basis
      */
-    MechanicalModeContainerPtr getModalBasisFromMechanicalModeContainer()
+    ModeResultPtr getModalBasisFromModeResult()
     {
         if ( _basis1.isSet() )
             return _basis1.getPointer();
-        return MechanicalModeContainerPtr( nullptr );
+        return ModeResultPtr( nullptr );
     };
 
     /**
@@ -196,7 +196,7 @@ class GeneralizedDOFNumberingClass : public DataStructure {
     /**
      * @brief Set modal basis
      */
-    bool setModalBasis( const GeneralizedModeContainerPtr &mecaModeC )
+    bool setModalBasis( const GeneralizedModeResultPtr &mecaModeC )
     {
         if ( mecaModeC != nullptr )
         {
@@ -210,7 +210,7 @@ class GeneralizedDOFNumberingClass : public DataStructure {
     /**
      * @brief Set modal basis
      */
-    bool setModalBasis( const MechanicalModeContainerPtr &mecaModeC )
+    bool setModalBasis( const ModeResultPtr &mecaModeC )
     {
         if ( mecaModeC != nullptr )
         {

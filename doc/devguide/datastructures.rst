@@ -24,7 +24,7 @@ Class diagram
 .. inheritance-diagram::
     code_aster.Objects.assemblymatrix_ext
     code_aster.Objects.datastructure_ext
-    code_aster.Objects.FieldOnCells_ext
+    code_aster.Objects.fieldoncells_ext
     code_aster.Objects.fieldonnodes_ext
     code_aster.Objects.function_ext
     code_aster.Objects.listoffloats

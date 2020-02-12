@@ -36,12 +36,12 @@
 #include <complex>
 #include <boost/shared_ptr.hpp>
 
-typedef std::complex< double > DoubleComplex;
+typedef std::complex< double > RealComplex;
 
 typedef std::vector< int > VectorInt;
 typedef std::vector< ASTERINTEGER > VectorLong;
-typedef std::vector< double > VectorDouble;
-typedef std::vector< DoubleComplex > VectorComplex;
+typedef std::vector< double > VectorReal;
+typedef std::vector< RealComplex > VectorComplex;
 typedef std::vector< std::string > VectorString;
 
 extern "C" {

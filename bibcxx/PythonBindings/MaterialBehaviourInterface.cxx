@@ -39,38 +39,38 @@ void exportMaterialBehaviourToPython() {
         .def( "hasTractionFunction", &GeneralMaterialBehaviourClass::hasTractionFunction )
         .def( "hasEnthalpyFunction", &GeneralMaterialBehaviourClass::hasEnthalpyFunction )
         .def( "getComplexValue", &GeneralMaterialBehaviourClass::getComplexValue )
-        .def( "getDoubleValue", &GeneralMaterialBehaviourClass::getDoubleValue )
+        .def( "getRealValue", &GeneralMaterialBehaviourClass::getRealValue )
         .def( "getStringValue", &GeneralMaterialBehaviourClass::getStringValue )
         .def( "getGenericFunctionValue",
               &GeneralMaterialBehaviourClass::getGenericFunctionValue )
-        .def( "getNumberOfListOfDoubleProperties",
-              &GeneralMaterialBehaviourClass::getNumberOfListOfDoubleProperties )
+        .def( "getNumberOfListOfRealProperties",
+              &GeneralMaterialBehaviourClass::getNumberOfListOfRealProperties )
         .def( "getNumberOfListOfFunctionProperties",
               &GeneralMaterialBehaviourClass::getNumberOfListOfFunctionProperties )
         .def( "getTableValue", &GeneralMaterialBehaviourClass::getTableValue )
         .def( "hasComplexValue", &GeneralMaterialBehaviourClass::hasComplexValue )
-        .def( "hasDoubleValue", &GeneralMaterialBehaviourClass::hasDoubleValue )
+        .def( "hasRealValue", &GeneralMaterialBehaviourClass::hasRealValue )
         .def( "hasStringValue", &GeneralMaterialBehaviourClass::hasStringValue )
         .def( "hasGenericFunctionValue",
               &GeneralMaterialBehaviourClass::hasGenericFunctionValue )
         .def( "hasTableValue", &GeneralMaterialBehaviourClass::hasTableValue )
         .def( "setComplexValue", &GeneralMaterialBehaviourClass::setComplexValue )
-        .def( "setDoubleValue", &GeneralMaterialBehaviourClass::setDoubleValue )
+        .def( "setRealValue", &GeneralMaterialBehaviourClass::setRealValue )
         .def( "setStringValue", &GeneralMaterialBehaviourClass::setStringValue )
         .def( "setFunctionValue", &GeneralMaterialBehaviourClass::setFunctionValue )
         .def( "setTableValue", &GeneralMaterialBehaviourClass::setTableValue )
         .def( "setSurfaceValue", &GeneralMaterialBehaviourClass::setSurfaceValue )
         .def( "setFormulaValue", &GeneralMaterialBehaviourClass::setFormulaValue )
-        .def( "setVectorOfDoubleValue", &GeneralMaterialBehaviourClass::setVectorOfDoubleValue )
+        .def( "setVectorOfRealValue", &GeneralMaterialBehaviourClass::setVectorOfRealValue )
         .def( "setVectorOfFunctionValue",
               &GeneralMaterialBehaviourClass::setVectorOfFunctionValue )
         .def( "setSortedListParameters",
               &GeneralMaterialBehaviourClass::setSortedListParameters );
 
     bool ( MaterialBehaviourClass::*c1 )( std::string, const bool ) =
-        &MaterialBehaviourClass::addNewDoubleProperty;
+        &MaterialBehaviourClass::addNewRealProperty;
     bool ( MaterialBehaviourClass::*c2 )( std::string, const double &, const bool ) =
-        &MaterialBehaviourClass::addNewDoubleProperty;
+        &MaterialBehaviourClass::addNewRealProperty;
     bool ( MaterialBehaviourClass::*c3 )( std::string, const bool ) =
         &MaterialBehaviourClass::addNewStringProperty;
     bool ( MaterialBehaviourClass::*c4 )( std::string, const std::string &, const bool ) =
@@ -83,28 +83,28 @@ void exportMaterialBehaviourToPython() {
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< MaterialBehaviourClass, std::string, std::string >))
-        .def( "addNewDoubleProperty", c1 )
-        .def( "addNewDoubleProperty", c2 )
+        .def( "addNewRealProperty", c1 )
+        .def( "addNewRealProperty", c2 )
         .def( "addNewComplexProperty", &MaterialBehaviourClass::addNewComplexProperty )
         .def( "addNewStringProperty", c3 )
         .def( "addNewStringProperty", c4 )
         .def( "addNewFunctionProperty", &MaterialBehaviourClass::addNewFunctionProperty )
         .def( "addNewTableProperty", &MaterialBehaviourClass::addNewTableProperty )
-        .def( "addNewVectorOfDoubleProperty",
-              &MaterialBehaviourClass::addNewVectorOfDoubleProperty )
+        .def( "addNewVectorOfRealProperty",
+              &MaterialBehaviourClass::addNewVectorOfRealProperty )
         .def( "addNewVectorOfFunctionProperty",
               &MaterialBehaviourClass::addNewVectorOfFunctionProperty )
         .def( "getName", &MaterialBehaviourClass::getName );
 
-    py::class_< BetonDoubleDpMaterialBehaviourClass, BetonDoubleDpMaterialBehaviourPtr,
-                py::bases< GeneralMaterialBehaviourClass > >( "BetonDoubleDpMaterialBehaviour",
+    py::class_< BetonRealDpMaterialBehaviourClass, BetonRealDpMaterialBehaviourPtr,
+                py::bases< GeneralMaterialBehaviourClass > >( "BetonRealDpMaterialBehaviour",
                                                                  py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< BetonDoubleDpMaterialBehaviourClass >))
-        .def( "getName", &BetonDoubleDpMaterialBehaviourClass::getName )
+              py::make_constructor(&initFactoryPtr< BetonRealDpMaterialBehaviourClass >))
+        .def( "getName", &BetonRealDpMaterialBehaviourClass::getName )
         .staticmethod( "getName" )
         .def( "hasConvertibleValues",
-              &BetonDoubleDpMaterialBehaviourClass::hasConvertibleValues )
+              &BetonRealDpMaterialBehaviourClass::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< BetonRagMaterialBehaviourClass, BetonRagMaterialBehaviourPtr,
@@ -210,13 +210,13 @@ void exportMaterialBehaviourToPython() {
         .staticmethod( "hasConvertibleValues" )
         .def( "hasTractionFunction", &TractionMaterialBehaviourClass::hasTractionFunction );
 
-    py::class_< TherNlMaterialBehaviourClass, TherNlMaterialBehaviourPtr,
-                py::bases< GeneralMaterialBehaviourClass > >( "TherNlMaterialBehaviour",
+    py::class_< ThermalNlMaterialBehaviourClass, ThermalNlMaterialBehaviourPtr,
+                py::bases< GeneralMaterialBehaviourClass > >( "ThermalNlMaterialBehaviour",
                                                                  py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< TherNlMaterialBehaviourClass >))
-        .def( "getName", &TherNlMaterialBehaviourClass::getName )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ThermalNlMaterialBehaviourClass >))
+        .def( "getName", &ThermalNlMaterialBehaviourClass::getName )
         .staticmethod( "getName" )
-        .def( "hasConvertibleValues", &TherNlMaterialBehaviourClass::hasConvertibleValues )
+        .def( "hasConvertibleValues", &ThermalNlMaterialBehaviourClass::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" )
-        .def( "hasEnthalpyFunction", &TherNlMaterialBehaviourClass::hasEnthalpyFunction );
+        .def( "hasEnthalpyFunction", &ThermalNlMaterialBehaviourClass::hasEnthalpyFunction );
 };

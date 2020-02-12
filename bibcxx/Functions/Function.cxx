@@ -29,12 +29,12 @@
 #include "Supervis/ResultNaming.h"
 #include "astercxx.h"
 
-FunctionPtr emptyDoubleFunction( new FunctionClass( "" ) );
+FunctionPtr emptyRealFunction( new FunctionClass( "" ) );
 
 BaseFunctionClass::BaseFunctionClass( const std::string jeveuxName, const std::string type,
                                             const std::string type2 )
     : GenericFunctionClass( jeveuxName, type, type2 ),
-      _value( JeveuxVectorDouble( getName() + ".VALE" ) ) {}
+      _value( JeveuxVectorReal( getName() + ".VALE" ) ) {}
 
 BaseFunctionClass::BaseFunctionClass( const std::string type,
                                             const std::string type2 )
@@ -62,8 +62,8 @@ void FunctionComplexClass::allocate( JeveuxMemory mem,
     throw std::runtime_error( "Not yet implemented!" );
 }
 
-void BaseFunctionClass::setValues( const VectorDouble &absc,
-                                      const VectorDouble &ordo ) {
+void BaseFunctionClass::setValues( const VectorReal &absc,
+                                      const VectorReal &ordo ) {
     if ( absc.size() != ordo.size() )
         throw std::runtime_error( "Function: length of abscissa and ordinates must be equal" );
 
@@ -72,8 +72,8 @@ void BaseFunctionClass::setValues( const VectorDouble &absc,
     _value->allocate( Permanent, 2 * nbpts );
 
     // Loop on the points
-    VectorDouble::const_iterator abscIt = absc.begin();
-    VectorDouble::const_iterator ordoIt = ordo.begin();
+    VectorReal::const_iterator abscIt = absc.begin();
+    VectorReal::const_iterator ordoIt = ordo.begin();
     int idx = 0;
     for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt ) {
         ( *_value )[idx] = *abscIt;
@@ -109,8 +109,8 @@ void BaseFunctionClass::setAsConstant() {
 }
 
 /* Complex function */
-void FunctionComplexClass::setValues( const VectorDouble &absc,
-                                         const VectorDouble &ordo ) {
+void FunctionComplexClass::setValues( const VectorReal &absc,
+                                         const VectorReal &ordo ) {
     if ( absc.size() * 2 != ordo.size() )
         throw std::runtime_error(
             "Function: The length of ordinates must be twice that of abscissas." );
@@ -120,8 +120,8 @@ void FunctionComplexClass::setValues( const VectorDouble &absc,
     _value->allocate( Permanent, 3 * nbpts );
 
     // Loop on the points
-    VectorDouble::const_iterator abscIt = absc.begin();
-    VectorDouble::const_iterator ordoIt = ordo.begin();
+    VectorReal::const_iterator abscIt = absc.begin();
+    VectorReal::const_iterator ordoIt = ordo.begin();
     int idx = 0;
     for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt ) {
         ( *_value )[idx] = *abscIt;
@@ -132,7 +132,7 @@ void FunctionComplexClass::setValues( const VectorDouble &absc,
     }
 }
 
-void FunctionComplexClass::setValues( const VectorDouble &absc,
+void FunctionComplexClass::setValues( const VectorReal &absc,
                                          const VectorComplex &ordo ) {
     throw std::runtime_error( "Not yet implemented!" );
 }

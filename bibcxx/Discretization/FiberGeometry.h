@@ -49,7 +49,7 @@ class FiberGeometryClass : public DataStructure {
     /** @brief Objet Jeveux '.TYPE_GROUPE' */
     JeveuxVectorLong _typeGroupe;
     /** @brief Objet Jeveux '.CARFI' */
-    JeveuxVectorDouble _carfi;
+    JeveuxVectorReal _carfi;
     /** @brief Objet Jeveux '.GFMA' */
     JeveuxVectorChar8 _gfma;
     /** @brief Objet Jeveux '.CARACSD' */
@@ -79,7 +79,7 @@ class FiberGeometryClass : public DataStructure {
           _nbFibreGroupe( JeveuxVectorLong( getName() + ".NB_FIBRE_GROUPE" ) ),
           _pointeur( JeveuxVectorLong( getName() + ".POINTEUR" ) ),
           _typeGroupe( JeveuxVectorLong( getName() + ".TYPE_GROUPE" ) ),
-          _carfi( JeveuxVectorDouble( getName() + ".CARFI" ) ),
+          _carfi( JeveuxVectorReal( getName() + ".CARFI" ) ),
           _gfma( JeveuxVectorChar8( getName() + ".GFMA" ) ),
           _caracsd( JeveuxVectorLong( getName() + ".CARACSD" ) ), _isEmpty( true ){};
 

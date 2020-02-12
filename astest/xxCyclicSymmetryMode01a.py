@@ -30,7 +30,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = Young,
 
 affeMat = code_aster.MaterialOnMesh(secteur)
 affeMat.addMaterialOnAllMesh(acier)
-affeMat.buildWithoutInputVariables()
+affeMat.buildWithoutExternalVariable()
 
 charCine = code_aster.KinematicsMechanicalLoad()
 charCine.setModel(modele)
@@ -51,13 +51,13 @@ numeDDL = code_aster.DOFNumbering()
 numeDDL.setElementaryMatrix(rigiElem)
 numeDDL.computeNumbering()
 
-rigiAsse = code_aster.AssemblyMatrixDisplacementDouble()
+rigiAsse = code_aster.AssemblyMatrixDisplacementReal()
 rigiAsse.appendElementaryMatrix(rigiElem)
 rigiAsse.setDOFNumbering(numeDDL)
 rigiAsse.addKinematicsLoad(charCine)
 rigiAsse.build()
 
-massAsse = code_aster.AssemblyMatrixDisplacementDouble()
+massAsse = code_aster.AssemblyMatrixDisplacementReal()
 massAsse.appendElementaryMatrix(massElem)
 massAsse.setDOFNumbering(numeDDL)
 massAsse.addKinematicsLoad(charCine)

@@ -40,7 +40,7 @@ class BaseFunctionClass : public GenericFunctionClass {
 
   protected:
     // Vecteur Jeveux '.VALE'
-    JeveuxVectorDouble _value;
+    JeveuxVectorReal _value;
 
   public:
     /**
@@ -122,8 +122,8 @@ class BaseFunctionClass : public GenericFunctionClass {
      * @param ord values of the ordinates
      * @type  ord vector of double
      */
-    virtual void setValues( const VectorDouble &absc,
-                            const VectorDouble &ord ) ;
+    virtual void setValues( const VectorReal &absc,
+                            const VectorReal &ord ) ;
 
     /**
      * @brief Return the values of the function as an unidimensional vector
@@ -228,7 +228,7 @@ class FunctionComplexClass : public BaseFunctionClass {
      * @param ord values of the ordinates (real1, imag1, real2, imag2...)
      * @type  ord vector of double
      */
-    void setValues( const VectorDouble &absc, const VectorDouble &ord ) ;
+    void setValues( const VectorReal &absc, const VectorReal &ord ) ;
 
     /**
      * @brief Assign the values of the function
@@ -237,7 +237,7 @@ class FunctionComplexClass : public BaseFunctionClass {
      * @param ord values of the ordinates
      * @type  ord vector of complex
      */
-    void setValues( const VectorDouble &absc,
+    void setValues( const VectorReal &absc,
                     const VectorComplex &ord ) ;
 };
 
@@ -260,10 +260,10 @@ typedef boost::shared_ptr< FunctionClass > FunctionPtr;
 typedef boost::shared_ptr< FunctionComplexClass > FunctionComplexPtr;
 
 /**
- * @name emptyDoubleFunction
+ * @name emptyRealFunction
  * @brief  Empty function
  */
-extern FunctionPtr emptyDoubleFunction;
+extern FunctionPtr emptyRealFunction;
 
 /**
  * @typedef ListOfFunctions

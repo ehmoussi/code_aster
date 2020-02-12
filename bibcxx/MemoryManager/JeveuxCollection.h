@@ -263,9 +263,9 @@ typedef JeveuxCollectionObject< ASTERINTEGER > JeveuxCollectionObjectLong;
 /** @typedef Definition d'un objet de collection de type short int */
 typedef JeveuxCollectionObject< short int > JeveuxCollectionObjectShort;
 /** @typedef Definition d'un objet de collection de type double */
-typedef JeveuxCollectionObject< double > JeveuxCollectionObjectDouble;
+typedef JeveuxCollectionObject< double > JeveuxCollectionObjectReal;
 /** @typedef Definition d'un objet de collection de type double complex */
-typedef JeveuxCollectionObject< DoubleComplex > JeveuxCollectionObjectComplex;
+typedef JeveuxCollectionObject< RealComplex > JeveuxCollectionObjectComplex;
 /** @typedef Definition d'un objet de collection de JeveuxChar8 */
 typedef JeveuxCollectionObject< JeveuxChar8 > JeveuxCollectionObjectChar8;
 /** @typedef Definition d'un objet de collection de JeveuxChar16 */
@@ -774,9 +774,9 @@ typedef JeveuxCollection< ASTERINTEGER > JeveuxCollectionLong;
 /** @typedef Definition d'une collection de type short int */
 typedef JeveuxCollection< short int > JeveuxCollectionShort;
 /** @typedef Definition d'une collection de type double */
-typedef JeveuxCollection< double > JeveuxCollectionDouble;
+typedef JeveuxCollection< double > JeveuxCollectionReal;
 /** @typedef Definition d'une collection de type double complex */
-typedef JeveuxCollection< DoubleComplex > JeveuxCollectionComplex;
+typedef JeveuxCollection< RealComplex > JeveuxCollectionComplex;
 /** @typedef Definition d'une collection de JeveuxChar8 */
 typedef JeveuxCollection< JeveuxChar8 > JeveuxCollectionChar8;
 /** @typedef Definition d'une collection de JeveuxChar16 */

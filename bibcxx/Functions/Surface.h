@@ -41,9 +41,9 @@
 class SurfaceClass : public GenericFunctionClass {
   private:
     // Vecteur Jeveux '.PARA'
-    JeveuxVectorDouble _parameters;
+    JeveuxVectorReal _parameters;
     // Vecteur Jeveux '.VALE'
-    JeveuxCollectionDouble _value;
+    JeveuxCollectionReal _value;
 
   public:
     /**
@@ -62,8 +62,8 @@ class SurfaceClass : public GenericFunctionClass {
      */
     SurfaceClass( const std::string name )
         : GenericFunctionClass( name, "NAPPE", "NAPPE" ),
-          _parameters( JeveuxVectorDouble( getName() + ".PARA" ) ),
-          _value( JeveuxCollectionDouble( getName() + ".VALE" ) ){};
+          _parameters( JeveuxVectorReal( getName() + ".PARA" ) ),
+          _value( JeveuxCollectionReal( getName() + ".VALE" ) ){};
 
     /**
      * @brief Copy extension parameters to python list

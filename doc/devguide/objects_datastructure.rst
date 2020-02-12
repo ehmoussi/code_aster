@@ -20,19 +20,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AcousticModeContainer` object
+:py:class:`~code_aster.Objects.AcousticLoad` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AcousticModeContainer
+.. autoclass:: code_aster.Objects.AcousticLoad
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AcousticsLoad` object
+:py:class:`~code_aster.Objects.AcousticModeResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AcousticsLoad
+.. autoclass:: code_aster.Objects.AcousticModeResult
    :show-inheritance:
    :members:
 
@@ -47,10 +47,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixDisplacementDouble` object
+:py:class:`~code_aster.Objects.AssemblyMatrixDisplacementReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixDisplacementDouble
+.. autoclass:: code_aster.Objects.AssemblyMatrixDisplacementReal
    :show-inheritance:
    :members:
 
@@ -65,10 +65,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixPressureDouble` object
+:py:class:`~code_aster.Objects.AssemblyMatrixPressureReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixPressureDouble
+.. autoclass:: code_aster.Objects.AssemblyMatrixPressureReal
    :show-inheritance:
    :members:
 
@@ -83,10 +83,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.AssemblyMatrixTemperatureDouble` object
+:py:class:`~code_aster.Objects.AssemblyMatrixTemperatureReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.AssemblyMatrixTemperatureDouble
+.. autoclass:: code_aster.Objects.AssemblyMatrixTemperatureReal
    :show-inheritance:
    :members:
 
@@ -137,10 +137,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.BucklingModeContainer` object
+:py:class:`~code_aster.Objects.BucklingModeResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.BucklingModeContainer
+.. autoclass:: code_aster.Objects.BucklingModeResult
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.CombinedFourierResult` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.CombinedFourierResult
    :show-inheritance:
    :members:
 
@@ -191,28 +200,37 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.DistributedHeatFluxDouble` object
+:py:class:`~code_aster.Objects.DataField` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.DistributedHeatFluxDouble
+.. autoclass:: code_aster.Objects.DataField
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.DistributedHydraulicFluxDouble` object
+:py:class:`~code_aster.Objects.DistributedHeatFluxReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.DistributedHydraulicFluxDouble
+.. autoclass:: code_aster.Objects.DistributedHeatFluxReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.DistributedPressureDouble` object
+:py:class:`~code_aster.Objects.DistributedHydraulicFluxReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.DistributedPressureDouble
+.. autoclass:: code_aster.Objects.DistributedHydraulicFluxReal
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.DistributedPressureReal` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.DistributedPressureReal
    :show-inheritance:
    :members:
 
@@ -227,10 +245,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ElasticEvolutionContainer` object
+:py:class:`~code_aster.Objects.ElasticFourierResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ElasticEvolutionContainer
+.. autoclass:: code_aster.Objects.ElasticFourierResult
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ElasticResult` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ElasticResult
    :show-inheritance:
    :members:
 
@@ -254,10 +281,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ElementaryMatrixDisplacementDouble` object
+:py:class:`~code_aster.Objects.ElementaryMatrixDisplacementReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ElementaryMatrixDisplacementDouble
+.. autoclass:: code_aster.Objects.ElementaryMatrixDisplacementReal
    :show-inheritance:
    :members:
 
@@ -272,10 +299,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ElementaryMatrixTemperatureDouble` object
+:py:class:`~code_aster.Objects.ElementaryMatrixTemperatureReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ElementaryMatrixTemperatureDouble
+.. autoclass:: code_aster.Objects.ElementaryMatrixTemperatureReal
    :show-inheritance:
    :members:
 
@@ -290,10 +317,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ElementaryVectorDisplacementDouble` object
+:py:class:`~code_aster.Objects.ElementaryVectorDisplacementReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ElementaryVectorDisplacementDouble
+.. autoclass:: code_aster.Objects.ElementaryVectorDisplacementReal
    :show-inheritance:
    :members:
 
@@ -308,28 +335,28 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ElementaryVectorTemperatureDouble` object
+:py:class:`~code_aster.Objects.ElementaryVectorTemperatureReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ElementaryVectorTemperatureDouble
+.. autoclass:: code_aster.Objects.ElementaryVectorTemperatureReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.EvolutiveLoad` object
+:py:class:`~code_aster.Objects.EmpiricalModeResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.EvolutiveLoad
+.. autoclass:: code_aster.Objects.EmpiricalModeResult
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.EvolutiveThermalLoad` object
+:py:class:`~code_aster.Objects.ExternalVariableResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.EvolutiveThermalLoad
+.. autoclass:: code_aster.Objects.ExternalVariableResult
    :show-inheritance:
    :members:
 
@@ -344,10 +371,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.FieldOnCellsDouble` object
+:py:class:`~code_aster.Objects.FieldOnCellsReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.FieldOnCellsDouble
+.. autoclass:: code_aster.Objects.FieldOnCellsReal
    :show-inheritance:
    :members:
 
@@ -371,10 +398,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.FieldOnNodesDouble` object
+:py:class:`~code_aster.Objects.FieldOnNodesReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.FieldOnNodesDouble
+.. autoclass:: code_aster.Objects.FieldOnNodesReal
    :show-inheritance:
    :members:
 
@@ -407,19 +434,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ForceOnEdgeDouble` object
+:py:class:`~code_aster.Objects.ForceOnEdgeReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ForceOnEdgeDouble
+.. autoclass:: code_aster.Objects.ForceOnEdgeReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ForceOnFaceDouble` object
+:py:class:`~code_aster.Objects.ForceOnFaceReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ForceOnFaceDouble
+.. autoclass:: code_aster.Objects.ForceOnFaceReal
    :show-inheritance:
    :members:
 
@@ -434,64 +461,37 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.FourierCombination` object
+:py:class:`~code_aster.Objects.FullHarmonicAcousticResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.FourierCombination
+.. autoclass:: code_aster.Objects.FullHarmonicAcousticResult
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.FourierElasContainer` object
+:py:class:`~code_aster.Objects.FullHarmonicResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.FourierElasContainer
+.. autoclass:: code_aster.Objects.FullHarmonicResult
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.FourierTherContainer` object
+:py:class:`~code_aster.Objects.FullResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.FourierTherContainer
+.. autoclass:: code_aster.Objects.FullResult
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.FullAcousticHarmonicResultsContainer` object
+:py:class:`~code_aster.Objects.FullTransientResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.FullAcousticHarmonicResultsContainer
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.FullHarmonicResultsContainer` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.FullHarmonicResultsContainer
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.FullResultsContainer` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.FullResultsContainer
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.FullTransientResultsContainer` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.FullTransientResultsContainer
+.. autoclass:: code_aster.Objects.FullTransientResult
    :show-inheritance:
    :members:
 
@@ -542,10 +542,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.GeneralizedAssemblyMatrixDouble` object
+:py:class:`~code_aster.Objects.GeneralizedAssemblyMatrixReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.GeneralizedAssemblyMatrixDouble
+.. autoclass:: code_aster.Objects.GeneralizedAssemblyMatrixReal
    :show-inheritance:
    :members:
 
@@ -569,10 +569,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.GeneralizedAssemblyVectorDouble` object
+:py:class:`~code_aster.Objects.GeneralizedAssemblyVectorReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.GeneralizedAssemblyVectorDouble
+.. autoclass:: code_aster.Objects.GeneralizedAssemblyVectorReal
    :show-inheritance:
    :members:
 
@@ -587,10 +587,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.GeneralizedModeContainer` object
+:py:class:`~code_aster.Objects.GeneralizedModeResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.GeneralizedModeContainer
+.. autoclass:: code_aster.Objects.GeneralizedModeResult
    :show-inheritance:
    :members:
 
@@ -605,28 +605,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.GeneralizedResultsContainerComplex` object
+:py:class:`~code_aster.Objects.GeneralizedResultComplex` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.GeneralizedResultsContainerComplex
+.. autoclass:: code_aster.Objects.GeneralizedResultComplex
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.GeneralizedResultsContainerDouble` object
+:py:class:`~code_aster.Objects.GeneralizedResultReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.GeneralizedResultsContainerDouble
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.DataField` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.DataField
+.. autoclass:: code_aster.Objects.GeneralizedResultReal
    :show-inheritance:
    :members:
 
@@ -668,55 +659,46 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.HarmoGeneralizedResultsContainer` object
+:py:class:`~code_aster.Objects.HarmoGeneralizedResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.HarmoGeneralizedResultsContainer
+.. autoclass:: code_aster.Objects.HarmoGeneralizedResult
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ImpedanceOnFaceDouble` object
+:py:class:`~code_aster.Objects.ImpedanceOnFaceReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ImpedanceOnFaceDouble
+.. autoclass:: code_aster.Objects.ImpedanceOnFaceReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ImposedDisplacementDouble` object
+:py:class:`~code_aster.Objects.ImposedDisplacementReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ImposedDisplacementDouble
+.. autoclass:: code_aster.Objects.ImposedDisplacementReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ImposedPressureDouble` object
+:py:class:`~code_aster.Objects.ImposedPressureReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ImposedPressureDouble
+.. autoclass:: code_aster.Objects.ImposedPressureReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.InputVariableEvolutionContainer` object
+:py:class:`~code_aster.Objects.InternalForceReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.InputVariableEvolutionContainer
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.InternalForceDouble` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.InternalForceDouble
+.. autoclass:: code_aster.Objects.InternalForceReal
    :show-inheritance:
    :members:
 
@@ -776,19 +758,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.LinearDisplacementEvolutionContainer` object
+:py:class:`~code_aster.Objects.LineicForceReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.LinearDisplacementEvolutionContainer
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.LineicForceDouble` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.LineicForceDouble
+.. autoclass:: code_aster.Objects.LineicForceReal
    :show-inheritance:
    :members:
 
@@ -812,19 +785,28 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.LocalForceOnBeamDouble` object
+:py:class:`~code_aster.Objects.LoadResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.LocalForceOnBeamDouble
+.. autoclass:: code_aster.Objects.LoadResult
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.LocalForceOnShellDouble` object
+:py:class:`~code_aster.Objects.LocalForceOnBeamReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.LocalForceOnShellDouble
+.. autoclass:: code_aster.Objects.LocalForceOnBeamReal
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.LocalForceOnShellReal` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.LocalForceOnShellReal
    :show-inheritance:
    :members:
 
@@ -857,24 +839,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.MechanicalModeComplexContainer` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.MechanicalModeComplexContainer
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.MechanicalModeContainer` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.MechanicalModeContainer
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.Mesh` object
 ================================================================================
 
@@ -893,10 +857,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ModeEmpiContainer` object
+:py:class:`~code_aster.Objects.ModeResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ModeEmpiContainer
+.. autoclass:: code_aster.Objects.ModeResult
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.ModeResultComplex` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ModeResultComplex
    :show-inheritance:
    :members:
 
@@ -911,19 +884,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.MultElasContainer` object
+:py:class:`~code_aster.Objects.MultFrontSolver` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.MultElasContainer
+.. autoclass:: code_aster.Objects.MultFrontSolver
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.MultFrontSolver` object
+:py:class:`~code_aster.Objects.MultipleElasticResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.MultFrontSolver
+.. autoclass:: code_aster.Objects.MultipleElasticResult
    :show-inheritance:
    :members:
 
@@ -938,46 +911,46 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.NodalForceDouble` object
+:py:class:`~code_aster.Objects.NodalForceReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.NodalForceDouble
+.. autoclass:: code_aster.Objects.NodalForceReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.NodalStructuralForceDouble` object
+:py:class:`~code_aster.Objects.NodalStructuralForceReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.NodalStructuralForceDouble
+.. autoclass:: code_aster.Objects.NodalStructuralForceReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.NonLinearEvolutionContainer` object
+:py:class:`~code_aster.Objects.NonLinearResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.NonLinearEvolutionContainer
+.. autoclass:: code_aster.Objects.NonLinearResult
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.NormalSpeedOnFaceDouble` object
+:py:class:`~code_aster.Objects.NormalSpeedOnFaceReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.NormalSpeedOnFaceDouble
+.. autoclass:: code_aster.Objects.NormalSpeedOnFaceReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.PCFieldOnMeshDouble` object
+:py:class:`~code_aster.Objects.PCFieldOnMeshReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.PCFieldOnMeshDouble
+.. autoclass:: code_aster.Objects.PCFieldOnMeshReal
    :show-inheritance:
    :members:
 
@@ -992,19 +965,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.PressureOnPipeDouble` object
+:py:class:`~code_aster.Objects.PressureOnPipeReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.PressureOnPipeDouble
+.. autoclass:: code_aster.Objects.PressureOnPipeReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.PressureOnShellDouble` object
+:py:class:`~code_aster.Objects.PressureOnShellReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.PressureOnShellDouble
+.. autoclass:: code_aster.Objects.PressureOnShellReal
    :show-inheritance:
    :members:
 
@@ -1019,10 +992,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ResultsContainer` object
+:py:class:`~code_aster.Objects.Result` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ResultsContainer
+.. autoclass:: code_aster.Objects.Result
    :show-inheritance:
    :members:
 
@@ -1037,10 +1010,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.SimpleFieldOnCellsDouble` object
+:py:class:`~code_aster.Objects.SimpleFieldOnCellsReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.SimpleFieldOnCellsDouble
+.. autoclass:: code_aster.Objects.SimpleFieldOnCellsReal
    :show-inheritance:
    :members:
 
@@ -1055,10 +1028,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.SimpleFieldOnNodesDouble` object
+:py:class:`~code_aster.Objects.SimpleFieldOnNodesReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.SimpleFieldOnNodesDouble
+.. autoclass:: code_aster.Objects.SimpleFieldOnNodesReal
    :show-inheritance:
    :members:
 
@@ -1091,28 +1064,28 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.StructuralForceOnBeamDouble` object
+:py:class:`~code_aster.Objects.StructuralForceOnBeamReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.StructuralForceOnBeamDouble
+.. autoclass:: code_aster.Objects.StructuralForceOnBeamReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.StructuralForceOnEdgeDouble` object
+:py:class:`~code_aster.Objects.StructuralForceOnEdgeReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.StructuralForceOnEdgeDouble
+.. autoclass:: code_aster.Objects.StructuralForceOnEdgeReal
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.StructuralForceOnShellDouble` object
+:py:class:`~code_aster.Objects.StructuralForceOnShellReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.StructuralForceOnShellDouble
+.. autoclass:: code_aster.Objects.StructuralForceOnShellReal
    :show-inheritance:
    :members:
 
@@ -1163,6 +1136,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ThermalFourierResult` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ThermalFourierResult
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.ThermalLoad` object
 ================================================================================
 
@@ -1172,10 +1154,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.TimeDependantResultsContainer` object
+:py:class:`~code_aster.Objects.ThermalResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.TimeDependantResultsContainer
+.. autoclass:: code_aster.Objects.ThermalResult
    :show-inheritance:
    :members:
 
@@ -1199,10 +1181,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.TransientGeneralizedResultsContainer` object
+:py:class:`~code_aster.Objects.TransientGeneralizedResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.TransientGeneralizedResultsContainer
+.. autoclass:: code_aster.Objects.TransientGeneralizedResult
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.TransientResult` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.TransientResult
    :show-inheritance:
    :members:
 
@@ -1217,10 +1208,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.WavePressureOnFaceDouble` object
+:py:class:`~code_aster.Objects.WavePressureOnFaceReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.WavePressureOnFaceDouble
+.. autoclass:: code_aster.Objects.WavePressureOnFaceReal
    :show-inheritance:
    :members:
 
@@ -1232,3 +1223,4 @@
 .. autoclass:: code_aster.Objects.XfemCrack
    :show-inheritance:
    :members:
+

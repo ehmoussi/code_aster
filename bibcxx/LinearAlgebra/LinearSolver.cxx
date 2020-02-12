@@ -81,7 +81,7 @@ bool BaseLinearSolverClass::build() {
 };
 
 bool BaseLinearSolverClass::matrixFactorization(
-    AssemblyMatrixDisplacementDoublePtr currentMatrix ) {
+    AssemblyMatrixDisplacementRealPtr currentMatrix ) {
     if ( _isEmpty )
         build();
 
@@ -106,11 +106,11 @@ bool BaseLinearSolverClass::matrixFactorization(
     return true;
 };
 
-FieldOnNodesDoublePtr BaseLinearSolverClass::solveDoubleLinearSystem(
-    const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
-    const FieldOnNodesDoublePtr &currentRHS, FieldOnNodesDoublePtr result ) const {
+FieldOnNodesRealPtr BaseLinearSolverClass::solveRealLinearSystem(
+    const AssemblyMatrixDisplacementRealPtr &currentMatrix,
+    const FieldOnNodesRealPtr &currentRHS, FieldOnNodesRealPtr result ) const {
     if ( result->getName() == "" )
-        result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleClass( Permanent ) );
+        result = FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) );
 
     std::string blanc( " " );
     ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;
@@ -126,12 +126,12 @@ FieldOnNodesDoublePtr BaseLinearSolverClass::solveDoubleLinearSystem(
     return result;
 };
 
-FieldOnNodesDoublePtr BaseLinearSolverClass::solveDoubleLinearSystemWithKinematicsLoad(
-    const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
-    const FieldOnNodesDoublePtr &kinematicsField, const FieldOnNodesDoublePtr &currentRHS,
-    FieldOnNodesDoublePtr result ) const {
+FieldOnNodesRealPtr BaseLinearSolverClass::solveRealLinearSystemWithKinematicsLoad(
+    const AssemblyMatrixDisplacementRealPtr &currentMatrix,
+    const FieldOnNodesRealPtr &kinematicsField, const FieldOnNodesRealPtr &currentRHS,
+    FieldOnNodesRealPtr result ) const {
     if ( result->getName() == "" )
-        result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleClass( Permanent ) );
+        result = FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) );
 
     std::string blanc( " " );
     ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;

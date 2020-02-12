@@ -41,7 +41,7 @@ class ExtendedMaterial(object):
         toReturn = self.getName(),
         state = []
         for i in range(self.getNumberOfMaterialBehviour()):
-            state.append(self.getNumberOfListOfDoubleProperties(i))
+            state.append(self.getNumberOfListOfRealProperties(i))
         toReturn = toReturn + (state,)
         return toReturn
 

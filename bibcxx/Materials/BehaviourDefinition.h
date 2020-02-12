@@ -41,7 +41,7 @@ class BehaviourDefinitionClass : public DataStructure {
     /** @brief Objet '.CPRK' */
     JeveuxVectorChar24 _cprk;
     /** @brief Objet '.CPRR' */
-    JeveuxVectorDouble _cprr;
+    JeveuxVectorReal _cprr;
     /** @brief Objet '.CPRI' */
     JeveuxVectorLong _cpri;
 
@@ -64,7 +64,7 @@ class BehaviourDefinitionClass : public DataStructure {
     BehaviourDefinitionClass( const std::string &name )
         : DataStructure( name, 19, "COMPOR", Permanent ),
           _cprk( JeveuxVectorChar24( getName() + ".CPRK" ) ),
-          _cprr( JeveuxVectorDouble( getName() + ".CPRR" ) ),
+          _cprr( JeveuxVectorReal( getName() + ".CPRR" ) ),
           _cpri( JeveuxVectorLong( getName() + ".CPRI" ) ){};
 };
 

@@ -23,7 +23,7 @@ from ...Messages import UTMESS
 
 from ...Cata.Syntax import _F
 from ...Commands import EXTR_MODE, IMPR_CO, INFO_MODE, MODI_MODELE, NUME_DDL
-from ...Objects import AssemblyMatrixDisplacementDouble
+from ...Objects import AssemblyMatrixDisplacementReal
 from .mode_iter_simult import MODE_ITER_SIMULT
 
 

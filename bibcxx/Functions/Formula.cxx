@@ -86,11 +86,11 @@ void FormulaClass::setExpression( const std::string expression ) {
     }
 }
 
-VectorDouble FormulaClass::evaluate( const VectorDouble &values ) const
+VectorReal FormulaClass::evaluate( const VectorReal &values ) const
     {
     int iret = 0;
     std::vector< std::string > vars = getVariables();
-    VectorDouble result = evaluate_formula( _code, _context, vars, values, &iret );
+    VectorReal result = evaluate_formula( _code, _context, vars, values, &iret );
     if ( iret == 1 ) {
         const long nbvars = vars.size();
         const long nbvalues = values.size();
@@ -103,19 +103,19 @@ VectorDouble FormulaClass::evaluate( const VectorDouble &values ) const
 }
 
 /* functions shared with evaluation from Fortran */
-VectorDouble evaluate_formula( const PyObject *code, PyObject *globals,
+VectorReal evaluate_formula( const PyObject *code, PyObject *globals,
                                const std::vector< std::string > &variables,
-                               const VectorDouble &values, int *retcode ) {
+                               const VectorReal &values, int *retcode ) {
     if ( !code ) {
         std::cerr << "Formula has no expression:" << std::endl;
         *retcode = 4;
-        return VectorDouble( 0., 0 );
+        return VectorReal( 0., 0 );
     }
     const long nbvars = variables.size();
     const long nbvalues = values.size();
     if ( nbvalues != nbvars ) {
         *retcode = 1;
-        return VectorDouble( 0., 0 );
+        return VectorReal( 0., 0 );
     }
 
     PyObject *locals = PyDict_New();
@@ -135,10 +135,10 @@ VectorDouble evaluate_formula( const PyObject *code, PyObject *globals,
         }
         *retcode = 4;
         Py_DECREF( locals );
-        return VectorDouble( 0., 0 );
+        return VectorReal( 0., 0 );
     }
 
-    VectorDouble result;
+    VectorReal result;
     if ( PyTuple_Check( res ) ) {
         const long nbres = PyTuple_Size( res );
         for ( long i = 0; i < nbres; ++i ) {
@@ -165,14 +165,14 @@ void DEFPPSPPPPP( EVAL_FORMULA, eval_formula, ASTERINTEGER *pcode, ASTERINTEGER 
     PyObject *globals = (PyObject *)( *pglobals );
 
     std::vector< std::string > vars;
-    VectorDouble values;
+    VectorReal values;
     for ( int i = 0; i < *nbvar; ++i ) {
         vars.push_back( std::string( array_vars + i * lenvars, lenvars ) );
         values.push_back( array_values[i] );
     }
 
     int ret = 0;
-    VectorDouble retvalues = evaluate_formula( code, globals, vars, values, &ret );
+    VectorReal retvalues = evaluate_formula( code, globals, vars, values, &ret );
     *iret = (ASTERINTEGER)ret;
     if ( ret == 0 ) {
         for ( long i = 0; i < retvalues.size() && i < ( *nbres ); ++i ) {

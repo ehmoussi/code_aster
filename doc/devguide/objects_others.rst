@@ -39,10 +39,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.DisplacementDouble` object
+:py:class:`~code_aster.Objects.DisplacementReal` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.DisplacementDouble
+.. autoclass:: code_aster.Objects.DisplacementReal
    :show-inheritance:
    :members:
 
@@ -66,10 +66,28 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.ForceDouble` object
+:py:class:`~code_aster.Objects.ExternalVariableConverter` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.ForceDouble
+.. autoclass:: code_aster.Objects.ExternalVariableConverter
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
+:py:class:`~code_aster.Objects.ExternalVariableOnMesh` object
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.ExternalVariableOnMesh
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
+:py:class:`~code_aster.Objects.ForceReal` object
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.ForceReal
    :show-inheritance:
    :members:
 
@@ -149,66 +167,66 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.GenericInputVariable` subclasses
+:py:class:`~code_aster.Objects.GenericExternalVariable` subclasses
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.GenericInputVariable
+.. autoclass:: code_aster.Objects.GenericExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.ConcreteDryingInputVariable
+.. autoclass:: code_aster.Objects.ConcreteDryingExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.ConcreteHydratationInputVariable
+.. autoclass:: code_aster.Objects.ConcreteHydratationExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.CorrosionInputVariable
+.. autoclass:: code_aster.Objects.CorrosionExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.GeometryInputVariable
+.. autoclass:: code_aster.Objects.GeometryExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.IrradiationInputVariable
+.. autoclass:: code_aster.Objects.IrradiationExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.IrreversibleDeformationInputVariable
+.. autoclass:: code_aster.Objects.IrreversibleDeformationExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.Neutral1InputVariable
+.. autoclass:: code_aster.Objects.Neutral1ExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.Neutral2InputVariable
+.. autoclass:: code_aster.Objects.Neutral2ExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.Neutral3InputVariable
+.. autoclass:: code_aster.Objects.Neutral3ExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.SteelPhasesInputVariable
+.. autoclass:: code_aster.Objects.SteelPhasesExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.TemperatureInputVariable
+.. autoclass:: code_aster.Objects.TemperatureExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.TotalFluidPressureInputVariable
+.. autoclass:: code_aster.Objects.TotalFluidPressureExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.VolumetricDeformationInputVariable
+.. autoclass:: code_aster.Objects.VolumetricDeformationExternalVariable
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.ZircaloyPhasesInputVariable
+.. autoclass:: code_aster.Objects.ZircaloyPhasesExternalVariable
    :show-inheritance:
    :members:
 
@@ -223,46 +241,28 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.HeatFluxDouble` object
+:py:class:`~code_aster.Objects.HeatFluxReal` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.HeatFluxDouble
+.. autoclass:: code_aster.Objects.HeatFluxReal
    :show-inheritance:
    :members:
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.HydraulicFluxDouble` object
+:py:class:`~code_aster.Objects.HydraulicFluxReal` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.HydraulicFluxDouble
+.. autoclass:: code_aster.Objects.HydraulicFluxReal
    :show-inheritance:
    :members:
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.ImpedanceDouble` object
+:py:class:`~code_aster.Objects.ImpedanceReal` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.ImpedanceDouble
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.InputVariableConverter` object
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.InputVariableConverter
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.InputVariableOnMesh` object
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.InputVariableOnMesh
+.. autoclass:: code_aster.Objects.ImpedanceReal
    :show-inheritance:
    :members:
 
@@ -286,19 +286,28 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.LocalBeamForceDouble` object
+:py:class:`~code_aster.Objects.LinearStaticAnalysis` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.LocalBeamForceDouble
+.. autoclass:: code_aster.Objects.LinearStaticAnalysis
    :show-inheritance:
    :members:
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.LocalShellForceDouble` object
+:py:class:`~code_aster.Objects.LocalBeamForceReal` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.LocalShellForceDouble
+.. autoclass:: code_aster.Objects.LocalBeamForceReal
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
+:py:class:`~code_aster.Objects.LocalShellForceReal` object
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.LocalShellForceReal
    :show-inheritance:
    :members:
 
@@ -343,19 +352,19 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.NormalModeAnalysis` object
+:py:class:`~code_aster.Objects.NonLinearStaticAnalysis` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.NormalModeAnalysis
+.. autoclass:: code_aster.Objects.NonLinearStaticAnalysis
    :show-inheritance:
    :members:
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.NormalSpeedDouble` object
+:py:class:`~code_aster.Objects.NormalSpeedReal` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.NormalSpeedDouble
+.. autoclass:: code_aster.Objects.NormalSpeedReal
    :show-inheritance:
    :members:
 
@@ -370,10 +379,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.PressureDouble` object
+:py:class:`~code_aster.Objects.PressureReal` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.PressureDouble
+.. autoclass:: code_aster.Objects.PressureReal
    :show-inheritance:
    :members:
 
@@ -397,64 +406,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.StaticMechanicalSolver` object
+:py:class:`~code_aster.Objects.StructuralForceReal` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.StaticMechanicalSolver
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.StaticModeDepl` object
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.StaticModeDepl
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.StaticModeForc` object
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.StaticModeForc
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.StaticModeInterf` object
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.StaticModeInterf
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.StaticModePseudo` object
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.StaticModePseudo
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.StaticNonLinearAnalysis` object
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.StaticNonLinearAnalysis
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.StructuralForceDouble` object
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.StructuralForceDouble
+.. autoclass:: code_aster.Objects.StructuralForceReal
    :show-inheritance:
    :members:
 
@@ -476,39 +431,39 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleDistributedFlow
+.. autoclass:: code_aster.Objects.RealDistributedFlow
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleExchange
+.. autoclass:: code_aster.Objects.RealExchange
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleExchangeWall
+.. autoclass:: code_aster.Objects.RealExchangeWall
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleImposedTemperature
+.. autoclass:: code_aster.Objects.RealImposedTemperature
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleNonLinearFlow
+.. autoclass:: code_aster.Objects.RealNonLinearFlow
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleNonLinearSource
+.. autoclass:: code_aster.Objects.RealNonLinearSource
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleSource
+.. autoclass:: code_aster.Objects.RealSource
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleThermalGradient
+.. autoclass:: code_aster.Objects.RealThermalGradient
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.DoubleThermalRadiation
+.. autoclass:: code_aster.Objects.RealThermalRadiation
    :show-inheritance:
    :members:
 

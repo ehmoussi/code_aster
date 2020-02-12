@@ -40,7 +40,7 @@
 class GenericGeneralizedAssemblyVectorClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.DESC' */
-    JeveuxVectorDouble _desc;
+    JeveuxVectorReal _desc;
     /** @brief Objet Jeveux '.REFE' */
     JeveuxVectorChar24 _refe;
 
@@ -50,7 +50,7 @@ class GenericGeneralizedAssemblyVectorClass : public DataStructure {
      */
     GenericGeneralizedAssemblyVectorClass( const std::string name )
         : DataStructure( name, 19, "VECT_ASSE_GENE", Permanent ),
-          _desc( JeveuxVectorDouble( getName() + ".DISC" ) ),
+          _desc( JeveuxVectorReal( getName() + ".DISC" ) ),
           _refe( JeveuxVectorChar24( getName() + ".REFE" ) ){};
 };
 
@@ -77,7 +77,7 @@ class GeneralizedAssemblyVectorClass : public GenericGeneralizedAssemblyVectorCl
      * @brief definir le type
      */
     template < class type = ValueType >
-    typename std::enable_if< std::is_same< type, DoubleComplex >::value, void >::type
+    typename std::enable_if< std::is_same< type, RealComplex >::value, void >::type
     setVectorType() {
         setType( "VECT_ASSE_GENE_C" );
     };
@@ -108,9 +108,9 @@ class GeneralizedAssemblyVectorClass : public GenericGeneralizedAssemblyVectorCl
 };
 
 /** @typedef Definition d'une matrice assemblee généralisée de double */
-typedef GeneralizedAssemblyVectorClass< double > GeneralizedAssemblyVectorDoubleClass;
+typedef GeneralizedAssemblyVectorClass< double > GeneralizedAssemblyVectorRealClass;
 /** @typedef Definition d'une matrice assemblee généralisée de complexe */
-typedef GeneralizedAssemblyVectorClass< DoubleComplex > GeneralizedAssemblyVectorComplexClass;
+typedef GeneralizedAssemblyVectorClass< RealComplex > GeneralizedAssemblyVectorComplexClass;
 
 /**
  * @typedef GenericGeneralizedAssemblyVectorPtr
@@ -120,11 +120,11 @@ typedef boost::shared_ptr< GenericGeneralizedAssemblyVectorClass >
     GenericGeneralizedAssemblyVectorPtr;
 
 /**
- * @typedef GeneralizedAssemblyVectorDoublePtr
- * @brief Pointeur intelligent vers un GeneralizedAssemblyVectorDoubleClass
+ * @typedef GeneralizedAssemblyVectorRealPtr
+ * @brief Pointeur intelligent vers un GeneralizedAssemblyVectorRealClass
  */
-typedef boost::shared_ptr< GeneralizedAssemblyVectorDoubleClass >
-    GeneralizedAssemblyVectorDoublePtr;
+typedef boost::shared_ptr< GeneralizedAssemblyVectorRealClass >
+    GeneralizedAssemblyVectorRealPtr;
 
 /**
  * @typedef GeneralizedAssemblyVectorComplexPtr

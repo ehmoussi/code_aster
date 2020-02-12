@@ -19,13 +19,13 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import EvolutiveThermalLoad
+from ..Objects import ThermalResult
 from ..Supervis import ExecuteCommand
 
 
 class TherNonLineMo(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.EvolutiveThermalLoad` by assigning
-    finite elements on a :class:`~code_aster.Objects.EvolutiveThermalLoad`."""
+    """Command that creates the :class:`~code_aster.Objects.ThermalResult` by assigning
+    finite elements on a :class:`~code_aster.Objects.ThermalResult`."""
     command_name = "THER_NON_LINE_MO"
 
     def create_result(self, keywords):
@@ -34,7 +34,7 @@ class TherNonLineMo(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = EvolutiveThermalLoad()
+        self._result = ThermalResult()
 
     def post_exec(self, keywords):
         """Execute the command.

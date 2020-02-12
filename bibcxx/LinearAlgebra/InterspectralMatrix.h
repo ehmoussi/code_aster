@@ -42,9 +42,9 @@ class InterspectralMatrixClass : public DataStructure {
     /** @brief Objet Jeveux '.REFE' */
     JeveuxVectorChar16 _refe;
     /** @brief Objet Jeveux '.DISC' */
-    JeveuxVectorDouble _disc;
+    JeveuxVectorReal _disc;
     /** @brief Objet Jeveux '.VALE' */
-    JeveuxCollectionDouble _vale;
+    JeveuxCollectionReal _vale;
     /** @brief Objet Jeveux '.NUMI' */
     JeveuxVectorLong _numi;
     /** @brief Objet Jeveux '.NUMJ' */
@@ -79,8 +79,8 @@ class InterspectralMatrixClass : public DataStructure {
     InterspectralMatrixClass( const std::string name )
         : DataStructure( name, 8, "INTERSPECTRE", Permanent ),
           _refe( JeveuxVectorChar16( getName() + ".REFE" ) ),
-          _disc( JeveuxVectorDouble( getName() + ".DISC" ) ),
-          _vale( JeveuxCollectionDouble( getName() + ".VALE" ) ),
+          _disc( JeveuxVectorReal( getName() + ".DISC" ) ),
+          _vale( JeveuxCollectionReal( getName() + ".VALE" ) ),
           _numi( JeveuxVectorLong( getName() + ".NUMI" ) ),
           _numj( JeveuxVectorLong( getName() + ".NUMJ" ) ),
           _numeOrdre( JeveuxVectorLong( getName() + ".NUME_ORDRE" ) ),

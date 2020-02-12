@@ -122,9 +122,9 @@ class MaterialOnMeshClass: public DataStructure
         /** @brief Carte '.CHAMP_MAT' */
         PCFieldOnMeshChar8Ptr  _listOfMaterials;
         /** @brief Carte '.TEMPE_REF' */
-        PCFieldOnMeshDoublePtr _listOfTemperatures;
+        PCFieldOnMeshRealPtr _listOfTemperatures;
         /** @brief Carte '.COMPOR' */
-        PCFieldOnMeshDoublePtr _behaviourField;
+        PCFieldOnMeshRealPtr _behaviourField;
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
         listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Link to a  */
@@ -312,15 +312,15 @@ class MaterialOnMeshClass: public DataStructure
         };
 
         /**
-         * @brief Build MaterialOnMeshPtr without InputVariables
+         * @brief Build MaterialOnMeshPtr without ExternalVariable
          * @return true
          */
-        bool buildWithoutInputVariables() ;
+        bool buildWithoutExternalVariable() ;
 
         /**
          * @brief Return the PCFieldOnMesh of behaviour
          */
-        PCFieldOnMeshDoublePtr getBehaviourField() const
+        PCFieldOnMeshRealPtr getBehaviourField() const
         {
             _behaviourField->updateValuePointers();
             return _behaviourField;
@@ -340,7 +340,7 @@ class MaterialOnMeshClass: public DataStructure
          * @brief Function to know if a given Calculation Input Variables exists
          * @return true if exists
          */
-        bool existsCalculationInputVariable( const std::string& );
+        bool existsCalculationExternalVariable( const std::string& );
 
         /**
          * @brief Obtenir le maillage

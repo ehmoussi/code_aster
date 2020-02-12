@@ -74,7 +74,7 @@ class AssemblyMatrixClass : public DataStructure {
     /** @brief Collection '.VALM' */
     JeveuxCollection< ValueType > _matrixValues;
     /** @brief Objet '.CONL' */
-    JeveuxVectorDouble _scaleFactorLagrangian;
+    JeveuxVectorReal _scaleFactorLagrangian;
     /** @brief Objet Jeveux '.LIME' */
     JeveuxVectorChar24 _listOfElementaryMatrix;
     /** @brief Objet Jeveux '.VALF' */
@@ -273,37 +273,37 @@ class AssemblyMatrixClass : public DataStructure {
 
 /** @typedef Definition d'une matrice assemblee de double */
 template class AssemblyMatrixClass< double, Displacement >;
-typedef AssemblyMatrixClass< double, Displacement > AssemblyMatrixDisplacementDoubleClass;
+typedef AssemblyMatrixClass< double, Displacement > AssemblyMatrixDisplacementRealClass;
 /** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrixClass< DoubleComplex, Displacement >
+typedef AssemblyMatrixClass< RealComplex, Displacement >
     AssemblyMatrixDisplacementComplexClass;
 
 /** @typedef Definition d'une matrice assemblee de double temperature */
 template class AssemblyMatrixClass< double, Temperature >;
-typedef AssemblyMatrixClass< double, Temperature > AssemblyMatrixTemperatureDoubleClass;
+typedef AssemblyMatrixClass< double, Temperature > AssemblyMatrixTemperatureRealClass;
 
 /** @typedef Definition d'une matrice assemblee de double pression */
 template class AssemblyMatrixClass< double, Pressure >;
-typedef AssemblyMatrixClass< double, Pressure > AssemblyMatrixPressureDoubleClass;
+typedef AssemblyMatrixClass< double, Pressure > AssemblyMatrixPressureRealClass;
 
-/** @typedef Definition d'une matrice assemblee de DoubleComplex temperature */
-template class AssemblyMatrixClass< DoubleComplex, Temperature >;
-typedef AssemblyMatrixClass< DoubleComplex, Temperature >
+/** @typedef Definition d'une matrice assemblee de RealComplex temperature */
+template class AssemblyMatrixClass< RealComplex, Temperature >;
+typedef AssemblyMatrixClass< RealComplex, Temperature >
     AssemblyMatrixTemperatureComplexClass;
 
-/** @typedef Definition d'une matrice assemblee de DoubleComplex pression */
-template class AssemblyMatrixClass< DoubleComplex, Pressure >;
-typedef AssemblyMatrixClass< DoubleComplex, Pressure > AssemblyMatrixPressureComplexClass;
+/** @typedef Definition d'une matrice assemblee de RealComplex pression */
+template class AssemblyMatrixClass< RealComplex, Pressure >;
+typedef AssemblyMatrixClass< RealComplex, Pressure > AssemblyMatrixPressureComplexClass;
 
-typedef boost::shared_ptr< AssemblyMatrixDisplacementDoubleClass >
-    AssemblyMatrixDisplacementDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixDisplacementRealClass >
+    AssemblyMatrixDisplacementRealPtr;
 typedef boost::shared_ptr< AssemblyMatrixDisplacementComplexClass >
     AssemblyMatrixDisplacementComplexPtr;
-typedef boost::shared_ptr< AssemblyMatrixTemperatureDoubleClass >
-    AssemblyMatrixTemperatureDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixTemperatureRealClass >
+    AssemblyMatrixTemperatureRealPtr;
 typedef boost::shared_ptr< AssemblyMatrixTemperatureComplexClass >
     AssemblyMatrixTemperatureComplexPtr;
-typedef boost::shared_ptr< AssemblyMatrixPressureDoubleClass > AssemblyMatrixPressureDoublePtr;
+typedef boost::shared_ptr< AssemblyMatrixPressureRealClass > AssemblyMatrixPressureRealPtr;
 typedef boost::shared_ptr< AssemblyMatrixPressureComplexClass > AssemblyMatrixPressureComplexPtr;
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
@@ -314,7 +314,7 @@ AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass(
                      memType, 19 ),
       _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
       _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
-      _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
+      _scaleFactorLagrangian( JeveuxVectorReal( getName() + ".CONL" ) ),
       _listOfElementaryMatrix( JeveuxVectorChar24( getName() + ".LIME" ) ),
       _valf( JeveuxVector< ValueType >( getName() + ".VALF" ) ),
       _walf( JeveuxVector< ValueType >( getName() + ".WALF" ) ),
@@ -335,7 +335,7 @@ AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass(
                                    ( typeid( ValueType ) == typeid(double)? "_R" : "_C" ) ),
       _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
       _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
-      _scaleFactorLagrangian( JeveuxVectorDouble( getName() + ".CONL" ) ),
+      _scaleFactorLagrangian( JeveuxVectorReal( getName() + ".CONL" ) ),
       _listOfElementaryMatrix( JeveuxVectorChar24( getName() + ".LIME" ) ),
       _valf( JeveuxVector< ValueType >( getName() + ".VALF" ) ),
       _walf( JeveuxVector< ValueType >( getName() + ".WALF" ) ),

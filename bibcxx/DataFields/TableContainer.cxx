@@ -27,37 +27,37 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 void TableContainerClass::addObject( const std::string& a,
-                                        ElementaryMatrixDisplacementDoublePtr b )
+                                        ElementaryMatrixDisplacementRealPtr b )
 {
     _mapEMDD[a] = b;
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        ElementaryMatrixTemperatureDoublePtr b )
+                                        ElementaryMatrixTemperatureRealPtr b )
 {
     _mapEMTD[a] = b;
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        ElementaryVectorDisplacementDoublePtr b )
+                                        ElementaryVectorDisplacementRealPtr b )
 {
     _mapEVDD[a] = b;
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        ElementaryVectorTemperatureDoublePtr b )
+                                        ElementaryVectorTemperatureRealPtr b )
 {
     _mapEVTD[a] = b;
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        FieldOnCellsDoublePtr b )
+                                        FieldOnCellsRealPtr b )
 {
     _mapFOED[a] = b;
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        FieldOnNodesDoublePtr b )
+                                        FieldOnNodesRealPtr b )
 {
     _mapFOND[a] = b;
 };
@@ -75,7 +75,7 @@ void TableContainerClass::addObject( const std::string& a,
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        GeneralizedAssemblyMatrixDoublePtr b )
+                                        GeneralizedAssemblyMatrixRealPtr b )
 {
     _mapGAMD[a] = b;
 };
@@ -87,13 +87,13 @@ void TableContainerClass::addObject( const std::string& a,
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        MechanicalModeContainerPtr b )
+                                        ModeResultPtr b )
 {
     _mapMMC[a] = b;
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        PCFieldOnMeshDoublePtr b )
+                                        PCFieldOnMeshRealPtr b )
 {
     _mapPCFOMD[a] = b;
 };
@@ -110,63 +110,63 @@ void TableContainerClass::addObject( const std::string& a,
     _mapT[a] = b;
 };
 
-ElementaryMatrixDisplacementDoublePtr
-TableContainerClass::getElementaryMatrixDisplacementDouble( const std::string& a ) const
+ElementaryMatrixDisplacementRealPtr
+TableContainerClass::getElementaryMatrixDisplacementReal( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapEMDD.find(aa);
     if( curIter == _mapEMDD.end() )
-        return ElementaryMatrixDisplacementDoublePtr( nullptr );
+        return ElementaryMatrixDisplacementRealPtr( nullptr );
     return curIter->second;
 };
 
-ElementaryMatrixTemperatureDoublePtr
-TableContainerClass::getElementaryMatrixTemperatureDouble( const std::string& a ) const
+ElementaryMatrixTemperatureRealPtr
+TableContainerClass::getElementaryMatrixTemperatureReal( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapEMTD.find(aa);
     if( curIter == _mapEMTD.end() )
-        return ElementaryMatrixTemperatureDoublePtr( nullptr );
+        return ElementaryMatrixTemperatureRealPtr( nullptr );
     return curIter->second;
 };
 
-ElementaryVectorDisplacementDoublePtr TableContainerClass::getElementaryVectorDisplacementDouble
+ElementaryVectorDisplacementRealPtr TableContainerClass::getElementaryVectorDisplacementReal
     ( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapEVDD.find(aa);
     if( curIter == _mapEVDD.end() )
-        return ElementaryVectorDisplacementDoublePtr( nullptr );
+        return ElementaryVectorDisplacementRealPtr( nullptr );
     return curIter->second;
 };
 
-ElementaryVectorTemperatureDoublePtr
-TableContainerClass::getElementaryVectorTemperatureDouble( const std::string& a ) const
+ElementaryVectorTemperatureRealPtr
+TableContainerClass::getElementaryVectorTemperatureReal( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapEVTD.find(aa);
     if( curIter == _mapEVTD.end() )
-        return ElementaryVectorTemperatureDoublePtr( nullptr );
+        return ElementaryVectorTemperatureRealPtr( nullptr );
     return curIter->second;
 };
 
-FieldOnCellsDoublePtr TableContainerClass::getFieldOnCellsDouble
+FieldOnCellsRealPtr TableContainerClass::getFieldOnCellsReal
     ( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapFOED.find(aa);
     if( curIter == _mapFOED.end() )
-        return FieldOnCellsDoublePtr( nullptr );
+        return FieldOnCellsRealPtr( nullptr );
     return curIter->second;
 };
 
-FieldOnNodesDoublePtr
-TableContainerClass::getFieldOnNodesDouble( const std::string& a ) const
+FieldOnNodesRealPtr
+TableContainerClass::getFieldOnNodesReal( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapFOND.find(aa);
     if( curIter == _mapFOND.end() )
-        return FieldOnNodesDoublePtr( nullptr );
+        return FieldOnNodesRealPtr( nullptr );
     return curIter->second;
 };
 
@@ -188,13 +188,13 @@ FunctionComplexPtr TableContainerClass::getFunctionComplex( const std::string& a
     return curIter->second;
 };
 
-GeneralizedAssemblyMatrixDoublePtr
+GeneralizedAssemblyMatrixRealPtr
 TableContainerClass::getGeneralizedAssemblyMatrix( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapGAMD.find(aa);
     if( curIter == _mapGAMD.end() )
-        return GeneralizedAssemblyMatrixDoublePtr( nullptr );
+        return GeneralizedAssemblyMatrixRealPtr( nullptr );
     return curIter->second;
 };
 
@@ -207,22 +207,22 @@ DataFieldPtr TableContainerClass::getDataField( const std::string& a ) const
     return curIter->second;
 };
 
-MechanicalModeContainerPtr
-TableContainerClass::getMechanicalModeContainer( const std::string& a ) const
+ModeResultPtr
+TableContainerClass::getModeResult( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapMMC.find(aa);
     if( curIter == _mapMMC.end() )
-        return MechanicalModeContainerPtr( nullptr );
+        return ModeResultPtr( nullptr );
     return curIter->second;
 };
 
-PCFieldOnMeshDoublePtr TableContainerClass::getPCFieldOnMeshDouble( const std::string& a ) const
+PCFieldOnMeshRealPtr TableContainerClass::getPCFieldOnMeshReal( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapPCFOMD.find(aa);
     if( curIter == _mapPCFOMD.end() )
-        return PCFieldOnMeshDoublePtr( nullptr );
+        return PCFieldOnMeshRealPtr( nullptr );
     return curIter->second;
 };
 
@@ -317,32 +317,32 @@ bool TableContainerClass::update()
             if( type == "MATR_ASSE_GENE_R" )
                 {
                 if ( _mapGAMD[name] == nullptr )
-                _mapGAMD[name] = GeneralizedAssemblyMatrixDoublePtr
-                                    ( new GeneralizedAssemblyMatrixDoubleClass( sdName ) );
+                _mapGAMD[name] = GeneralizedAssemblyMatrixRealPtr
+                                    ( new GeneralizedAssemblyMatrixRealClass( sdName ) );
                 }
             else if( type == "MATR_ELEM_DEPL_R" )
                 {
                 if (  _mapEMDD[name]  == nullptr )
-                _mapEMDD[name] = ElementaryMatrixDisplacementDoublePtr
-                                    ( new ElementaryMatrixDisplacementDoubleClass( sdName ) );
+                _mapEMDD[name] = ElementaryMatrixDisplacementRealPtr
+                                    ( new ElementaryMatrixDisplacementRealClass( sdName ) );
                 }
             else if( type == "MATR_ELEM_TEMP_R" )
                 {
                 if ( _mapEMTD[name] == nullptr )
-                _mapEMTD[name] = ElementaryMatrixTemperatureDoublePtr
-                                    ( new ElementaryMatrixTemperatureDoubleClass( sdName ) );
+                _mapEMTD[name] = ElementaryMatrixTemperatureRealPtr
+                                    ( new ElementaryMatrixTemperatureRealClass( sdName ) );
                 }
             else if( type == "VECT_ELEM_DEPL_R" )
                 {
                 if (  _mapEVDD[name] == nullptr )
-                _mapEVDD[name] = ElementaryVectorDisplacementDoublePtr
-                                    ( new ElementaryVectorDisplacementDoubleClass( sdName ) );
+                _mapEVDD[name] = ElementaryVectorDisplacementRealPtr
+                                    ( new ElementaryVectorDisplacementRealClass( sdName ) );
                 }
             else if( type == "VECT_ELEM_TEMP_R" )
                 {
                 if ( _mapEVTD[name] == nullptr )
-                _mapEVTD[name] = ElementaryVectorTemperatureDoublePtr
-                                    ( new ElementaryVectorTemperatureDoubleClass( sdName ) );
+                _mapEVTD[name] = ElementaryVectorTemperatureRealPtr
+                                    ( new ElementaryVectorTemperatureRealClass( sdName ) );
                 }
             else if( type == "CHAM_GD_SDASTER" )
                 {
@@ -353,23 +353,23 @@ bool TableContainerClass::update()
             else if( type == "CHAM_NO_SDASTER" )
                 {
                 if ( _mapFOND[name] == nullptr )
-                _mapFOND[name] = FieldOnNodesDoublePtr
-                                    ( new FieldOnNodesDoubleClass( sdName ) );
+                _mapFOND[name] = FieldOnNodesRealPtr
+                                    ( new FieldOnNodesRealClass( sdName ) );
                 }
 //             else if( type == "CARTE_SDASTER" )
-//                 _mapPCFOMD[name] = PCFieldOnMeshDoublePtr
-//                                     ( new PCFieldOnMeshDoubleClass( sdName ) );
+//                 _mapPCFOMD[name] = PCFieldOnMeshRealPtr
+//                                     ( new PCFieldOnMeshRealClass( sdName ) );
             else if( type == "CHAM_ELEM" )
                 {
                 if ( _mapFOED[name] == nullptr )
-                _mapFOED[name] = FieldOnCellsDoublePtr
-                                    ( new FieldOnCellsDoubleClass( sdName ) );
+                _mapFOED[name] = FieldOnCellsRealPtr
+                                    ( new FieldOnCellsRealClass( sdName ) );
                 }
             else if( type == "MODE_MECA" )
                 {
                 if ( _mapMMC[name] == nullptr )
-                    _mapMMC[name] = MechanicalModeContainerPtr
-                                    ( new MechanicalModeContainerClass( sdName ) );
+                    _mapMMC[name] = ModeResultPtr
+                                    ( new ModeResultClass( sdName ) );
                 }
             else if( type == "TABLE_SDASTER" )
                 {

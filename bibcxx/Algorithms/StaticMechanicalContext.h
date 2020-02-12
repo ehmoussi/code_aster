@@ -28,9 +28,9 @@
 
 #include "Discretization/DiscreteProblem.h"
 #include "LinearAlgebra/LinearSolver.h"
-#include "Results/ResultsContainer.h"
+#include "Results/Result.h"
 #include "Loads/ListOfLoads.h"
-#include "Materials/CalculationInputVariables.h"
+#include "Materials/CalculationExternalVariable.h"
 
 class StaticMechanicalAlgorithm;
 
@@ -46,7 +46,7 @@ class StaticMechanicalContext {
     /** @brief Solveur linéaire */
     BaseLinearSolverPtr _linearSolver;
     /** @brief Sd de stockage des résultats */
-    ResultsContainerPtr _results;
+    ResultPtr _results;
     /** @brief Chargements */
     ListOfLoadsPtr _listOfLoads;
     /** @brief Pas de temps courant */
@@ -54,27 +54,27 @@ class StaticMechanicalContext {
     /** @brief rank */
     int _rank;
     /** @brief Assembly matrix */
-    AssemblyMatrixDisplacementDoublePtr _aMatrix;
+    AssemblyMatrixDisplacementRealPtr _aMatrix;
     /** @brief Are elastic properties constant */
     bool _isConst;
     /** @brief Input variables */
-    CalculationInputVariablesPtr _varCom;
+    CalculationExternalVariablePtr _varCom;
 
   public:
     /**
      * @brief Constructeur
      * @param DiscreteProblemPtr Problème discret a résoudre par l'algo
      * @param BaseLinearSolverPtr Sovleur linéaire qui sera utilisé
-     * @param ResultContainerPtr Résultat pour le stockage des déplacements
+     * @param ResultPtr Résultat pour le stockage des déplacements
      */
     StaticMechanicalContext( const DiscreteProblemPtr &curPb, const BaseLinearSolverPtr linSolv,
-                             const ResultsContainerPtr container )
+                             const ResultPtr container )
         : _discreteProblem( curPb ), _linearSolver( linSolv ),
           _listOfLoads( _discreteProblem->getStudyDescription()->getListOfLoads() ),
           _results( container ), _time( 0. ), _rank( 1 ),
-          _aMatrix( new AssemblyMatrixDisplacementDoubleClass( Temporary ) ),
+          _aMatrix( new AssemblyMatrixDisplacementRealClass( Temporary ) ),
           _isConst( _discreteProblem->getStudyDescription()->getCodedMaterial()->constant() ),
-          _varCom( new CalculationInputVariablesClass(
+          _varCom( new CalculationExternalVariableClass(
               _discreteProblem->getStudyDescription()->getModel(),
               _discreteProblem->getStudyDescription()->getMaterialOnMesh(),
               _discreteProblem->getStudyDescription()->getElementaryCharacteristics(),
