@@ -64,9 +64,7 @@ type(NL_DS_Energy), intent(out) :: ds_energy
 
 !
 ! - Create table
-!
-    print*,'coucou nonlinDSEnergyCreate'
-    
+!   
     call nonlinDSTableIOVoid(table%table_io)
     table%table_io%table_type = 'PARA_CALC'
     table%nb_cols             = nb_col_defi

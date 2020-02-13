@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -67,6 +67,7 @@ character(len=16), intent(in) :: mfront_valk(16)
     character(len=16) :: mf_prop_name, valk(4)
     character(len=16) :: mf_prop_valk, as_prop_valk, prop_name, prop_name_mf
     real(kind=8) :: mf_prop_valr, as_prop_valr, test, valr(2)
+    aster_logical :: l_prop_find
     character(len=16), pointer :: v_valk(:) => null()
     real(kind=8), pointer :: v_valr(:) => null()
 !
@@ -119,29 +120,34 @@ character(len=16), intent(in) :: mfront_valk(16)
 ! ----- Value of property (aster)
         as_prop_valr = v_valr(i_prop_r)
 ! ----- Name of property (MFront)
+        prop_name_mf = ' '
         call mateMFrontToAsterProperties(prop_name_mf, prop_name, index_ = indexE)
         if (indexE .gt. 0) then
 ! --------- Value of property (MFront)
+            l_prop_find = .false.
             do i_mfront = 1, mfront_nbvale
                 mf_prop_name = mfront_prop(i_mfront)
                 mf_prop_valr = mfront_valr(i_mfront)
                 if (mf_prop_name .eq. prop_name_mf) then
+                    l_prop_find = .true.
                     exit
                 endif
             end do
 ! --------- Test
-            valk(1) = prop_name_mf
-            valk(2) = prop_name
-            if (mf_prop_valr .le. r8prem()) then
-                test = abs(as_prop_valr - mf_prop_valr)
-            else
-                test = abs(as_prop_valr - mf_prop_valr)/abs(mf_prop_valr)
-            endif
-            if (test .gt. r8prem()) then
-                valr(1) = mf_prop_valr
-                valr(2) = as_prop_valr
-                call utmess('F', 'MATERIAL2_14', nk = 2, valk=valk,&
-                                                 nr = 2, valr=valr)
+            if (l_prop_find) then
+                valk(1) = prop_name_mf
+                valk(2) = prop_name
+                if (mf_prop_valr .le. r8prem()) then
+                    test = abs(as_prop_valr - mf_prop_valr)
+                else
+                    test = abs(as_prop_valr - mf_prop_valr)/abs(mf_prop_valr)
+                endif
+                if (test .gt. r8prem()) then
+                    valr(1) = mf_prop_valr
+                    valr(2) = as_prop_valr
+                    call utmess('F', 'MATERIAL2_14', nk = 2, valk=valk,&
+                                                     nr = 2, valr=valr)
+                endif
             endif
         endif
     end do
@@ -154,23 +160,28 @@ character(len=16), intent(in) :: mfront_valk(16)
 ! ----- Value of property (aster)
         as_prop_valk = v_valk(nb_prop+i_prop_k)
 ! ----- Name of property (MFront)
+        prop_name_mf = ' '
         call mateMFrontToAsterProperties(prop_name_mf, prop_name, index_ = indexE)
         if (indexE .gt. 0) then
 ! --------- Value of property (MFront)
+            l_prop_find = .false.
             do i_mfront = 1, mfront_nbvale
                 mf_prop_name = mfront_prop(i_mfront)
                 mf_prop_valk = mfront_valk(i_mfront)
                 if (mf_prop_name .eq. prop_name_mf) then
+                    l_prop_find = .true.
                     exit
                 endif
             end do
 ! --------- Test
-            valk(1) = prop_name_mf
-            valk(2) = prop_name
-            valk(3) = mf_prop_valk
-            valk(4) = as_prop_valk
-            if (as_prop_valk .ne. mf_prop_valk) then
-                call utmess('F', 'MATERIAL2_12', nk = 4, valk=valk)
+            if (l_prop_find) then
+                valk(1) = prop_name_mf
+                valk(2) = prop_name
+                valk(3) = mf_prop_valk
+                valk(4) = as_prop_valk
+                if (as_prop_valk .ne. mf_prop_valk) then
+                    call utmess('F', 'MATERIAL2_12', nk = 4, valk=valk)
+                endif
             endif
         endif
     end do
