@@ -29,5 +29,7 @@ cata_msg = {
    12 : _("""Calcul des coordonnées réduites."""),
 
    14 : _("""Nombre final de clichés retenus dans l'algorithme incrémental: %(i1)d."""),
+   
+   33 : _("""La pente de décroissance des valeurs singulière de la POD: %(r1)13.6G."""), 
 
 }

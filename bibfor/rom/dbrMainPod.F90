@@ -35,6 +35,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/romTableSave.h"
 #include "asterfort/utmess.h"
+#include "asterfort/dbr_calcpod_rate.h"
 !
 type(ROM_DS_ParaDBR_POD), intent(in) :: paraPod
 type(ROM_DS_Empi), intent(in) :: baseOut
@@ -58,7 +59,7 @@ type(ROM_DS_Empi), intent(in) :: baseOut
     real(kind=8), pointer :: v(:) => null()
     real(kind=8), pointer :: s(:) => null() 
     real(kind=8), pointer :: v_gamma(:) => null()
-    real(kind=8) :: toleSVD
+    real(kind=8) :: toleSVD, rate
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,6 +86,10 @@ type(ROM_DS_Empi), intent(in) :: baseOut
 ! - Compute modes by SVD
 !
     call dbr_calcpod_svd(m, n, q, s, v, nbSing)
+!
+! - Compute singular value decay rate
+!
+    call dbr_calcpod_rate(s, nbSing, rate)
 !
 ! - Select modes
 !
