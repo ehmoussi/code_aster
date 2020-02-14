@@ -56,6 +56,18 @@ class MEFSSE2(Element):
             para_out = ((SP.PVECTUR, MVECTUR),),
         ),
 
+        OP.CHAR_MECA_VNOR(te=384,
+            para_in  = ((SP.PGEOMER, LC.EGEOM2D), (SP.PMATERC, LC.CMATERC),
+                        (SP.PVITENR, LC.EVITENR),),
+            para_out = ((SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.CHAR_MECA_VNOR_F(te=384,
+            para_in  = ((SP.PGEOMER, LC.EGEOM2D), (SP.PMATERC, LC.CMATERC),
+                        (SP.PVITENF, LC.EVITENF),),
+            para_out = ((SP.PVECTUR, MVECTUR), ),
+        ),
+
         OP.COOR_ELGA(te=478,
             para_in  = ((SP.PGEOMER, LC.EGEOM2D),),
             para_out = ((OP.COOR_ELGA.PCOORPG, LC.EGGAU2D),),
