@@ -112,8 +112,8 @@ CARA_ELE=AFFE_CARA_ELEM( MODELE=MODELE,
 # CHARGEMENT ET LIAISONS
 
 CHARGS=AFFE_CHAR_MECA( MODELE=MODELE,
-            PRES_REP=_F( GROUP_MA='ES_P_IN',
-                         PRES=17.0E+06),
+            PRES_REP=_F( GROUP_MA='EFS_P_IN',
+                         PRES=-17.0E+06),
            DDL_IMPO=(_F( GROUP_NO='MASSPONC',
                          DX=0.,),
                      _F( GROUP_MA='AMORPONC',
