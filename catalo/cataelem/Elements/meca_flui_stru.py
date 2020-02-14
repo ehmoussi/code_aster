@@ -56,6 +56,18 @@ class MEFS_FACE3(Element):
             para_out = ((SP.PVECTUR, MVECTUR),),
         ),
 
+        OP.CHAR_MECA_VNOR(te=213,
+            para_in  = ((SP.PGEOMER, LC.EGEOM3D), (SP.PMATERC, LC.CMATERC),
+                        (SP.PVITENR, LC.EVITENR),),
+            para_out = ((SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.CHAR_MECA_VNOR_F(te=213,
+            para_in  = ((SP.PGEOMER, LC.EGEOM3D), (SP.PMATERC, LC.CMATERC),
+                        (SP.PVITENF, LC.EVITENF),),
+            para_out = ((SP.PVECTUR, MVECTUR), ),
+        ),
+
         OP.COOR_ELGA(te=488,
             para_in  = ((SP.PGEOMER, LC.EGEOM3D),),
             para_out = ((OP.COOR_ELGA.PCOORPG, LC.EGGAU3D),),
