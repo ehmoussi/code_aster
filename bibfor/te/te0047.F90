@@ -27,6 +27,7 @@ subroutine te0047(optioz, nomtez)
 #include "asterfort/dis_contact_frot.h"
 #include "asterfort/dicho0.h"
 #include "asterfort/dicora.h"
+#include "asterfort/didashpot.h"
 #include "asterfort/diecci.h"
 #include "asterfort/dielas.h"
 #include "asterfort/digou2.h"
@@ -193,6 +194,10 @@ subroutine te0047(optioz, nomtez)
     if (zk16(icompo) .eq. 'ELAS') then
 !       comportement élastique
         call dielas(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)
+    else if (zk16(icompo) .eq. 'DASHPOT') then
+!       comportement dashpot
+        call didashpot(option, nomte, ndim, nbt, nno,&
+                       nc, ulm, dul, pgl, iret)
     else if (zk16(icompo).eq.'DIS_VISC') then
 !       comportement DIS_ZENER
         call dizeng(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, iret)

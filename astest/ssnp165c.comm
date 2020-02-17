@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -155,14 +155,13 @@ RESU=CALC_CHAMP(reuse=RESU,
 
 pr_esc = [None]*5
 l_inst =[.4,.6,.8,.9,1.]
-for i in range(5):
-    pr_esc[i]=CALC_PRESSION(MAILLAGE=MA,
+
+RESU=CALC_PRESSION(MAILLAGE=MA,reuse=RESU,
                             RESULTAT=RESU,
                             GEOMETRIE = 'INITIALE',
                             GROUP_MA=('SCO1',),
-                            INST=l_inst[i],
+                            INST=l_inst,
                         );
-
 
 IMPR_RESU(UNITE=80,
           FORMAT='MED',
@@ -304,56 +303,76 @@ TEST_RESU(RESU=(_F(RESULTAT=RESU,
                    VALE_CALC=-10.0417082392,),
                 ),);
 
-TEST_RESU(CHAM_NO=(_F(CHAM_GD=pr_esc[0],
-                      NOM_CMP='LAGS_C',
+
+TEST_RESU(RESU=(_F(INST=l_inst[0],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PA',
                       VALE_CALC=-38.0540781024,),
-                   _F(CHAM_GD=pr_esc[1],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[1],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PA',
                       VALE_CALC=-20.9725592227,),
-                   _F(CHAM_GD=pr_esc[2],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[2],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PA',
                       CRITERE='ABSOLU',
                       TOLE_MACHINE = 1e-2,
                       VALE_CALC=0.816493530878,),
-                   _F(CHAM_GD=pr_esc[3],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[3],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PA',
                       CRITERE='ABSOLU',
                       TOLE_MACHINE = 1e-2,
                       VALE_CALC=0.270696939406,),
-                   _F(CHAM_GD=pr_esc[4],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[4],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PA',
                       CRITERE='ABSOLU',
                       TOLE_MACHINE = 1e-2,
                       VALE_CALC=0.351288981919,),
-                   _F(CHAM_GD=pr_esc[0],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[0],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PB',
                       CRITERE='ABSOLU',
                       TOLE_MACHINE = 1e-2,
                       VALE_CALC=0.499900286493,),
-                   _F(CHAM_GD=pr_esc[1],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[1],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PB',
                       VALE_CALC=-41.5031676375,),
-                   _F(CHAM_GD=pr_esc[2],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[2],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PB',
                       VALE_CALC=-119.336297656,),
-                   _F(CHAM_GD=pr_esc[3],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[3],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PB',
                       VALE_CALC=-96.7796073035,),
-                   _F(CHAM_GD=pr_esc[4],
-                      NOM_CMP='LAGS_C',
+                   _F(INST=l_inst[4],
+                      RESULTAT=RESU,
+                      NOM_CHAM='PRES_NOEU',
+                      NOM_CMP='PRES',
                       GROUP_NO='PB',
                       VALE_CALC=-106.947679442,),
                    ),);
-
 
 
 FIN();

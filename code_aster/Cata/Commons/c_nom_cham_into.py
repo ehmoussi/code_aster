@@ -365,6 +365,8 @@ class NOM_CHAM_INTO:  #COMMUN#
                                  tr("Variable de commande 'neutre'"), ),
             "PRES":             ( (),
                                  tr("Chargement de pression"), ),
+            "PRES_NOEU":        ( ("lin", "nonlin",),
+                                 tr("Pression aux noeuds"), ),                     
             "PTOT":             ( (),
                                  tr("Pression totale de fluide en THM"), ),
             "SISE_ELNO":        ( (),

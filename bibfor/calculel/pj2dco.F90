@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -84,9 +84,9 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
     integer :: iatr3, iacoo1, iacoo2, nbpt0, ino2_0, idecal_0
     integer :: iabtco, jxxk1, iaconu, iacocf, iacotr
     integer :: ialim1, ialin1, ilcnx1, ialin2
-    integer :: iaconb, itypm, idecal, itr3, nbtrou, nbInterc
+    integer :: iaconb, itypm, idecal, itr3, nbtrou, nbInterc,spacedim
 
-    aster_logical :: dbg=.false., l_dmax, loin, lraff
+    aster_logical :: dbg=.false., l_dmax, loin
     real(kind=8) :: dmax, dmin, dala, cobary(3)
 
     integer :: nbnod
@@ -325,7 +325,7 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
 
 !   5. on transforme cortr3 en corres (retour aux vraies mailles)
 !   -------------------------------------------------------------
-    lraff=.true.
+    spacedim = 2
     if (present(listIntercz))then
         ASSERT(present(nbIntercz))
         listInterc = listIntercz
@@ -335,7 +335,7 @@ subroutine pj2dco(mocle, moa1, moa2, nbma1, lima1,&
         nbInterc = 0
     endif
     call pj2dtr(cortr3, corres, nutm, elrf, zr(iacoo1),&
-                zr(iacoo2), lraff, dala, listInterc, nbInterc)
+                zr(iacoo2), spacedim, dala, listInterc, nbInterc)
     if (dbg) then
         call utimsd(ifm, 2, .false._1, .true._1, '&&PJ2DCO',&
                     1, ' ')

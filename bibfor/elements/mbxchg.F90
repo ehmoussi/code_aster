@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -110,7 +110,7 @@ subroutine mbxchg(option,fami,nddl,nno,ncomp,kpg, npg,iepsin,itemps,ipoids,igeom
             call r8inir(3, 0.d0, sig, 1)
             do c = 1, ncomp
                 do cc = 1, ncomp
-                    sig(c) = sig(c) + zr(iepsin+cc-1)*rig(cc,c)
+                    sig(c) = sig(c) + zr(iepsin+ncomp*(kpg-1)+cc-1)*rig(cc,c)
                 end do
             end do
 !
