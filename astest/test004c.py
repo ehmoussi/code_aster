@@ -49,6 +49,7 @@ imposedDof2.setValue( code_aster.PhysicalQuantityComponent.Dx, 1.0 )
 charMeca2 = code_aster.ImposedDisplacementReal(monModel)
 charMeca2.setValue( imposedDof1, "N1" )
 charMeca2.build()
+test.assertEqual(charMeca2.getType(), "CHAR_MECA")
 
 # Instants de calcul pour la première phase de calcul
 
@@ -107,7 +108,7 @@ statNonLine2.setDriving( pilotage )
 
 #resu2 = statNonLine2.execute()
 # at least it pass here!
-test.assertTrue( True )
+
 test.printSummary()
 
 FIN()

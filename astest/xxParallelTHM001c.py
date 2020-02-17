@@ -4,6 +4,9 @@ import code_aster
 from code_aster.Commands import *
 import os
 
+# test = petsc04c en parallèle = xxFieldsplit001d
+# mais sans préciser l'option de PETSC
+
 test = code_aster.TestCase()
 
 code_aster.init()
@@ -132,6 +135,8 @@ resnonl = STAT_NON_LINE(
                         INFO=2,
 )
 
+# ajouter TEST_RESU comme petsc04c
+
 # if parallel:
 #     rank = code_aster.getMPIRank()
 #     resnonl.printMedFile('/tmp/par_%d.resu.med'%rank)
@@ -140,7 +145,6 @@ resnonl = STAT_NON_LINE(
 
 
 # at least it pass here!
-test.assertTrue(True)
 test.printSummary()
 
 FIN()

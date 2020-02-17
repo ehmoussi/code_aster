@@ -31,11 +31,13 @@ kine1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dx,
 kine1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dy, 0., "Bas")
 kine1.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dz, 0., "Bas")
 kine1.build()
+test.assertEqual(kine1.getType(), "CHAR_CINE_MECA")
 
 kine2=code_aster.KinematicsMechanicalLoad()
 kine2.setModel(monModel)
 kine2.addImposedMechanicalDOFOnElements(code_aster.PhysicalQuantityComponent.Dz, 0.1, "Haut")
 kine2.build()
+test.assertEqual(kine2.getType(), "CHAR_CINE_MECA")
 
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
@@ -73,7 +75,6 @@ statNonLine1.setLoadStepManager( timeList )
 #resu = statNonLine1.execute()
 #resu.debugPrint( 6 )
 
-test.assertTrue( True )
 test.printSummary()
 
 FIN()

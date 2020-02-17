@@ -23,6 +23,7 @@ monModel.build()
 # @@@@
 
 CHA = code_aster.ThermalLoad(monModel)
+test.assertEqual(CHA.getType(),"CHAR_THER")
 
 a = code_aster.RealImposedTemperature(456.0)
 a.addGroupOfNodes("test_node")
@@ -71,7 +72,6 @@ CHA.addUnitaryThermalLoad(e)
 # help(CHA)
 
 # at least it pass here!
-test.assertTrue( True )
 test.printSummary()
 
 FIN()

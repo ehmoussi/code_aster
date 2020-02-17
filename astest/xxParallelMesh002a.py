@@ -54,6 +54,7 @@ monSolver.setPreconditioning(code_aster.Preconditioning.Without)
 numeDDL = code_aster.ParallelDOFNumbering()
 numeDDL.setElementaryMatrix(matr_elem)
 numeDDL.computeNumbering()
+test.assertEqual(numeDDL.getType(), "NUME_DDL_P")
 #numeDDL.debugPrint()
 
 matrAsse = code_aster.AssemblyMatrixDisplacementReal()
@@ -61,6 +62,7 @@ matrAsse.appendElementaryMatrix(matr_elem)
 matrAsse.setDOFNumbering(numeDDL)
 matrAsse.addKinematicsLoad(charCine)
 matrAsse.build()
+test.assertEqual(matrAsse.getType(), "MATR_ASSE_DEPL_R")
 #matrAsse.debugPrint()
 
 retour = vect_elem.assembleVector( numeDDL )
@@ -93,8 +95,6 @@ if False:
         (S,) = A.getSubMatrices(rows, cols)
         v = petsc4py.PETSc.Viewer().createASCII("xxParallelMesh002a_rank"+str(rank)+".out",comm=S.getComm())
         S.view(v)
-
-test.assertTrue( True )
 
 test.printSummary()
 

@@ -15,12 +15,12 @@ MO.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridi
 MO.build()
 
 z1 = code_aster.ContactDefinition()
+test.assertEqual(z1.getType(), "CHAR_CONTACT")
 #cDef.setModel( MO )
 #cDef.build()
 #cDef.debugPrint(8)
 
 # just check it pass here!
-test.assertTrue( True )
 test.printSummary()
 
 FIN()
