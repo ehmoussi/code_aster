@@ -135,8 +135,8 @@ class TANGENT:
         liste_diff = []
         for ind in affi:
             for pos in ind:
-                i = pos // self.nddl
-                j = pos % self.nddl
+                i = int(pos // self.nddl)
+                j = int(pos % self.nddl)
                 liste_i.append(i + 1)
                 liste_j.append(j + 1)
                 liste_matt.append(self.mat[i, j])
