@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,9 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeexin.h"
+#include "asterfort/jenuno.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -91,13 +93,14 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
     logical :: l_suiv(nb_type_neum)
     character(len=7) :: para_matr(nb_type_neum)
 !
-    integer :: iret, i_field_in
+    integer :: iret, i_field_in, ig
     character(len=24) :: identify
     character(len=19) :: ligrel_load, name_input
-    character(len=8) :: affcha
+    character(len=8) :: affcha, ng
     logical :: l_constant, l_fonct_0, l_fonct_t, l_sigm_int
     character(len=8), pointer :: p_vale_sigm(:) => null()
     character(len=8), pointer :: p_vect_asse(:) => null()
+    integer, pointer :: desc(:) => null()
 !
 ! - Object name construct in AFFE_CHAR_MECA
 !
@@ -290,6 +293,18 @@ subroutine load_neum_spec(load_name    , load_nume  , load_type  , ligrel_calc, 
             i_field_in = i_field_in+1
             lpain(i_field_in) = para_r(i_type_neum)
             lchin(i_field_in) = name_input(1:19)
+!
+            if (lpain(i_field_in).eq.'PEPSINR')then
+                call jeveuo(ligrel_load(1:13)//'.EPSIN.DESC', 'L', vi=desc)
+                ig = desc(1)
+                call jenuno(jexnum('&CATA.GD.NOMGD', ig), ng)
+!               recuperation du nom du champ stocké dans la carte "bidon"
+                if (ng.eq.'NEUT_K8')then
+                    call jeveuo(ligrel_load(1:13)//'.EPSIN.VALE', 'L', vk8=p_vale_sigm)
+                    lchin(i_field_in) = p_vale_sigm(1)
+                endif
+            endif
+            
             if (load_option .eq. 'CHAR_MECA_EFON_R') then
                 i_field_in = i_field_in+1
                 lpain(i_field_in) = 'PPREFFR'

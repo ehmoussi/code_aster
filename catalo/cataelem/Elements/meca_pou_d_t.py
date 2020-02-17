@@ -82,7 +82,7 @@ EENERR = LocatedComponents(phys=PHY.ENER_R, type='ELEM',
                            components=('TOTALE', 'TRAC_COM', 'TORSION', 'FLEX_Y', 'FLEX_Z',))
 
 
-CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
+CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
                             components=('EPX', 'KY', 'KZ',))
                             
                             

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -424,7 +424,7 @@ IMPR_TABLE(TABLE=TABL_K5,);
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC=1601977.9909364379,
+           VALE_CALC=1601975.60309,
            VALE_REFE=1.595769E6,
            NOM_PARA='K1',
            TABLE=TABL_K5,
@@ -445,7 +445,7 @@ IMPR_TABLE(TABLE=TABL_K6)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-2,
-           VALE_CALC=1601977.9909364379,
+           VALE_CALC=1601975.60309,
            VALE_REFE=1.595769E6,
            NOM_PARA='K1',
            TABLE=TABL_K6,

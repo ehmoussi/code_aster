@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     ('EN2',('DX','DY',)),))
 
 
-CEPSINF  = LocatedComponents(phys=PHY.EPSI_F, type='ELEM',
+CEPSINF  = LocatedComponents(phys=PHY.EPSI_F, type='ELGA', location='RIGI',
     components=('EPXX','EPYY','EPZZ','EPXY',))
 
 
@@ -548,4 +548,3 @@ class GVI_AX_TR6(GVI_DP_TR6):
 class GVI_AX_QU8(GVI_DP_QU8):
     """Please document this element"""
     pass
-

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI',),
-      INFO=1,);
+      INFO=1);
 
 lisi=DEFI_LIST_REEL(DEBUT=0,
                     INTERVALLE=_F(JUSQU_A=1,
@@ -39,6 +39,10 @@ Mail = LIRE_MAILLAGE(UNITE=20,
 Mail=MODI_MAILLAGE(reuse =Mail,
                    MAILLAGE=Mail,
                    ORIE_PEAU_2D=_F(GROUP_MA=('Group_3','Group_4','Group_2','Group_1')),);
+
+Mail = DEFI_GROUP (reuse = Mail, MAILLAGE= Mail,
+                   CREA_GROUP_NO= (_F(GROUP_MA=('Group_2','Group_1'),)),
+                   )
 
 Mail2=CREA_MAILLAGE(MAILLAGE=Mail,
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='Group_2',
@@ -105,54 +109,70 @@ CALC_CHAMP(reuse=RES,
            CONTRAINTE=('SIEF_NOEU',),
            CRITERES=('SIEQ_NOEU',),);
 
-pr_esc=CALC_PRESSION(MAILLAGE=Mail2,
+
+RES=CALC_PRESSION(MAILLAGE=Mail2,reuse=RES,
                 RESULTAT=RES,
-                GROUP_MA=('Group_2',),
+                GROUP_MA=('Group_2','Group_1',),
                 INST=1.0,
                 );
 
-pr_mat=CALC_PRESSION(MAILLAGE=Mail2,
-                RESULTAT=RES,
-                GROUP_MA=('Group_1',),
-                INST=1.0,
-                );
 
-TEST_RESU(CHAM_NO=(_F(TYPE_TEST='MIN',
-                      CHAM_GD=pr_esc,
-                      LEGENDE='CALC_PRESSION esclave',
-                      NOM_CMP='LAGS_C',
-                      VALE_CALC=-4.89501722311,
-                      VALE_REFE=-4.894178,
-                      PRECISION=0.01,
-                      REFERENCE='ANALYTIQUE',
-                      ),
-                    _F(TYPE_TEST='MAX',
-                       CHAM_GD=pr_esc,
-                       LEGENDE='CALC_PRESSION esclave',
-                       NOM_CMP='LAGS_C',
-                       VALE_CALC=-4.88470006473,
-                       VALE_REFE=-4.894178,
-                       PRECISION=0.01,
-                       REFERENCE='ANALYTIQUE',
-                       ),
-                    _F(TYPE_TEST='MIN',
-                       CHAM_GD=pr_mat,
-                       LEGENDE='CALC_PRESSION maitre',
-                       NOM_CMP='LAGS_C',
-                       VALE_CALC=-4.88631208469,
-                       VALE_REFE=-4.894178,
-                       PRECISION=0.01,
-                       REFERENCE='ANALYTIQUE',
-                       ),
-                    _F(TYPE_TEST='MAX',
-                       CHAM_GD=pr_mat,
-                       LEGENDE='CALC_PRESSION maitre',
-                       NOM_CMP='LAGS_C',
-                       VALE_CALC=-4.87625975077,
-                       VALE_REFE=-4.894178,
-                       PRECISION=0.01,
-                       REFERENCE='ANALYTIQUE',
-                       ),),);
+post2= POST_RELEVE_T( ACTION =_F( 
+                    INTITULE  = 'pres',
+                        RESULTAT=RES, 
+                        INST=1.0,
+                        GROUP_NO='Group_2',
+                        NOM_CHAM   = 'PRES_NOEU',
+                        NOM_CMP   = 'PRES',
+                        OPERATION = 'EXTRACTION' ,) , 
+                    )
+
+post1= POST_RELEVE_T( ACTION =_F( 
+                    INTITULE  = 'pres',
+                        RESULTAT=RES, 
+                        INST=1.0,
+                        GROUP_NO='Group_1',
+                        NOM_CHAM   = 'PRES_NOEU',
+                        NOM_CMP   = 'PRES',
+                        OPERATION = 'EXTRACTION' ,) , 
+                    )
+
+TEST_TABLE(TABLE=post2,
+           NOM_PARA='PRES',
+           TYPE_TEST='MIN',
+           LEGENDE='CALC_PRESSION esclave',
+           VALE_CALC=-4.89501722311,
+           VALE_REFE=-4.894178,
+           PRECISION=0.01,
+           REFERENCE='ANALYTIQUE',)
+
+TEST_TABLE(TABLE=post2,
+           NOM_PARA='PRES',
+           TYPE_TEST='MAX',
+           LEGENDE='CALC_PRESSION esclave',
+           VALE_CALC=-4.88470006473,
+           VALE_REFE=-4.894178,
+           PRECISION=0.01,
+           REFERENCE='ANALYTIQUE',)
+
+TEST_TABLE(TABLE=post1,
+           NOM_PARA='PRES',
+           TYPE_TEST='MIN',
+           LEGENDE='CALC_PRESSION maitre',
+           VALE_CALC=-4.88631208469,
+           VALE_REFE=-4.894178,
+           PRECISION=0.01,
+           REFERENCE='ANALYTIQUE',)
+
+TEST_TABLE(TABLE=post1,
+           NOM_PARA='PRES',
+           TYPE_TEST='MAX',
+           LEGENDE='CALC_PRESSION maitre',
+           VALE_CALC=-4.87625975077,
+           VALE_REFE=-4.894178,
+           PRECISION=0.01,
+           REFERENCE='ANALYTIQUE',)
+
 
 TEST_RESU(RESU=(_F(INST=1.0,
                    TYPE_TEST='MIN',

@@ -28,16 +28,33 @@ from ..Commons import *
 from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
+def calc_pression_prod(self, RESULTAT,**args):
+    if args.get('__all__'):
+        return (evol_elas, evol_noli, evol_ther, mult_elas, mode_meca,
+                mode_meca_c, dyna_trans, dyna_harmo, fourier_elas,
+                fourier_ther, evol_varc, evol_char)
+    
+    if AsType(RESULTAT) is not None : return AsType(RESULTAT)
+    raise AsException("type de concept resultat non prevu")
+
 CALC_PRESSION=MACRO(nom="CALC_PRESSION",
                     op=OPS('code_aster.MacroCommands.calc_pression_ops.calc_pression_ops'),
-                    sd_prod=cham_no_sdaster,
+                    sd_prod=calc_pression_prod,
+                    reentrant='o:RESULTAT',
                     fr="Calcul de la pression nodale sur une interface a partir de SIEF_NOEU. Cette option n existe que pour les éléments isoparamétriques.",
-
+         reuse=SIMP(statut='c', typ=CO),
          MAILLAGE        =SIMP(statut='o',typ=maillage_sdaster),
-         RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli)),
+         RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli),),
          GROUP_MA        =SIMP(statut='o',typ=grma ,validators=NoRepeat(),max='**'),
-         INST            =SIMP(statut='o',typ='R',max='**'),
+         regles=(EXCLUS('TOUT_ORDRE','INST',),),
+         INST            =SIMP(statut='f',typ='R',max='**'),
+         TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          MODELE          =SIMP(statut='f',typ=modele_sdaster),
-         GEOMETRIE      = SIMP(statut='f',typ='TXM',defaut="DEFORMEE",into=("INITIALE","DEFORMEE")),
+         GEOMETRIE       =SIMP(statut='f',typ='TXM',defaut="DEFORMEE",into=("INITIALE","DEFORMEE")),
+         CRITERE         =SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU",) ),
+         b_prec_rela = BLOC(condition="""(equal_to("CRITERE", 'RELATIF'))""",
+                            PRECISION   = SIMP(statut='f',typ='R',defaut= 1.E-6),),
+         b_prec_abso = BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
+                            PRECISION   = SIMP(statut='o',typ='R'),),
          INFO            =SIMP(statut='f',typ='I',defaut=1,into=(1,2)),
 );

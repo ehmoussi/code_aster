@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,10 +52,11 @@ subroutine dxefgi(nomte, pgl, epsini, sigt)
 ! --- INITIALISATIONS :
 !     -----------------
 !-----------------------------------------------------------------------
-    integer :: i, igau, nno, npg
+    integer :: i, igau, nno, npg, ncomp
     real(kind=8) :: epxx, epxy, epyy, zero
 !-----------------------------------------------------------------------
     zero = 0.0d0
+    ncomp = 6
 !
     do i = 1, 32
         sigt(i) = zero
@@ -82,20 +83,19 @@ subroutine dxefgi(nomte, pgl, epsini, sigt)
     call dxmate('RIGI', df, dm, dmf, dc,&
                 dci, dmc, dfc, nno, pgl,&
                 multic, coupmf, t2iu, t2ui, t1ve)
-!
-! --- CHOIX DE NOTATIONS PLUS EXPLICITES POUR LES DEFORMATIONS
-! --- INITIALES
-!     ---------
-    epxx = epsini(1)
-    epyy = epsini(2)
-    epxy = 2.d0*epsini(3)
-    kxx = epsini(4)
-    kyy = epsini(5)
-    kxy = 2.d0*epsini(6)
+
+    
 !
 ! --- BOUCLE SUR LES POINTS D'INTEGRATION
 !     -----------------------------------
     do igau = 1, npg
+!
+        epxx = epsini(ncomp*(igau-1)+1)
+        epyy = epsini(ncomp*(igau-1)+2)
+        epxy = 2.d0*epsini(ncomp*(igau-1)+3)
+        kxx = epsini(ncomp*(igau-1)+4)
+        kyy = epsini(ncomp*(igau-1)+5)
+        kxy = 2.d0*epsini(ncomp*(igau-1)+6)
 !
         sigt(1+8* (igau-1)) = dm(1,1)*epxx + dm(1,2)*epyy + dm(1,3)* epxy
         sigt(2+8* (igau-1)) = dm(2,1)*epxx + dm(2,2)*epyy + dm(2,3)* epxy

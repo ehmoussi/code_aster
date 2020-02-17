@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -133,7 +133,7 @@ IMPR_RESU(FORMAT='MED',
 # ===========================================
 
 # champ de contraintes de Cauchy aux noeuds
-p_appr_F=CALC_PRESSION(MAILLAGE=MESH,
+RESU=CALC_PRESSION(MAILLAGE=MESH,reuse=RESU,
                              RESULTAT=RESU,
                                 GROUP_MA=('Bottom_C','Top_B',),
                             INST=1.0,
@@ -152,18 +152,18 @@ mdepl=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 );
 
 # abscisse curviligne sur la deformee
-CALC_PSF=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
-                                INTITULE='P_S',
-                                CHAM_GD=p_appr_F,
+CALC_PSF=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',RESULTAT=RESU,
+                                INTITULE='P_S',INST=1.0,
+                                NOM_CHAM='PRES_NOEU',NOM_CMP='PRES',
                                 GROUP_NO='Bottom_n',
-                                TOUT_CMP='OUI',),);
+                                ),);
 
 # abscisse curviligne sur la deformee
-CALC_PMF=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
-                                INTITULE='P_M',
-                                CHAM_GD=p_appr_F,
+CALC_PMF=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',RESULTAT=RESU,
+                                INTITULE='P_S',INST=1.0,
+                                NOM_CHAM='PRES_NOEU',NOM_CMP='PRES',
                                 GROUP_NO='Top_n',
-                                TOUT_CMP='OUI',),);
+                                ),);
 
 MESH=MODI_MAILLAGE(reuse=MESH,
                    MAILLAGE=MESH,
@@ -172,11 +172,11 @@ MESH=MODI_MAILLAGE(reuse=MESH,
 
 PS_FONCF=RECU_FONCTION(TABLE=CALC_PSF,
                       PARA_X='ABSC_CURV',
-                      PARA_Y='LAGS_C',);
+                      PARA_Y='PRES',);
 
 PM_FONCF=RECU_FONCTION(TABLE=CALC_PMF,
                       PARA_X='ABSC_CURV',
-                      PARA_Y='LAGS_C',);
+                      PARA_Y='PRES',);
 
 # ===========================================
 

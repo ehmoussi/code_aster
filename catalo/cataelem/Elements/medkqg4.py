@@ -81,7 +81,7 @@ EDEFGPC = LocatedComponents(phys=PHY.EPSI_C, type='ELGA', location='RIGI',
                                         'KXY', 'GAX', 'GAY',))
 
 
-CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
+CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
                             components=('EXX', 'EYY', 'EXY', 'KXX', 'KYY',
                                         'KXY',))
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -96,9 +96,9 @@ implicit none
     integer :: iatr3, iacoo1, iacoo2
     integer :: iabtco, jxxk1, iaconu, iacocf, iacotr
     integer :: ialim1, ialin1, ilcnx1, ialin2
-    integer :: iaconb, itypm, idecal, itr3, nbtrou
+    integer :: iaconb, itypm, idecal, itr3, nbtrou, spacedim
 
-    aster_logical :: dbg, l_dmax, loin, loin2, lraff
+    aster_logical :: dbg, l_dmax, loin, loin2
     real(kind=8) :: dmin, cobary(3)
 
     integer :: nbmax
@@ -348,9 +348,9 @@ implicit none
 
 !   5. on transforme cortr3 en corres (retour aux vraies mailles)
 !   -------------------------------------------------------------
-    lraff=.true.
+    spacedim = 3
     charbid = ' '
-    call pj2dtr(cortr3, corres, nutm, elrf, zr(iacoo1), zr(iacoo2), lraff, dala,&
+    call pj2dtr(cortr3, corres, nutm, elrf, zr(iacoo1), zr(iacoo2), spacedim, dala,&
                charbid, 0)
     dbg=.false.
     if (dbg) then

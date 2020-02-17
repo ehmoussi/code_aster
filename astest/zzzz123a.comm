@@ -1,0 +1,82 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'),PAR_LOT='NON',)
+
+# Liste des classes de béton de l'Eurocode 2
+lClasse = ['C12/15','C16/20','C20/25','C25/30','C30/37','C35/45','C40/50','C45/55','C50/60','C55/67','C60/75','C70/85','C80/95','C90/105']
+
+# Valeurs référence des propriétés matériau du bétron pour les classes de l'Eurocode 2 (non utilisé pour les TEST_RESU)
+lref = {}
+lref['FCJ'] = [20.,24.,28.,33.,38.,43.,48.,53.,58.,63.,68.,78.,88.,98.]
+lref['FTJ'] = [1.6,1.9,2.2,2.6,2.9,3.2,3.5,3.8,4.1,4.2,4.4,4.6,4.8,5.0]
+lref['EPSI_C'] = [1.8,1.9,2.0,2.1,2.2,2.25,2.3,2.4,2.45,2.5,2.6,2.7,2.8,2.8]
+lref['E']=[27.,29.,30.,31.,33.,34.,35.,36.,37.,38.,39.,41.,42.,44.]
+
+# Valeurs référence des propriétés élastiques et GLRC pour les TEST_RESU de chaque classe de béton
+testrefELAS=[27085177094.78816, 28607904896.161404, 29961951055.84031, 31475806211.219345, 32836568032.53079,
+34077146200.38933, 35220462290.13441, 36283188220.11413, 37277869092.81466, 38214206462.839, 39099873709.24906,
+40742817785.74898, 42244238170.13582, 43630531501.858055]
+testrefGLRC=[21572444.83829715, 25904881.264236677, 30210418.901150834, 35564963.92208441, 40896468.15597876,
+46209962.44394156, 51508821.288179696, 56795446.99625462, 62071626.42735704, 67214293.62061588, 72354742.31802382,
+82610473.65224817, 92838650.66043425, 103044637.80715597]
+
+# Listes des propriétés matériau d'intérêt (non utilisé pour les TEST_RESU)
+nomresELAS   = ['E',]
+nomresGLRC = ['FCJ','FTJ','EPSI_C',]
+
+valCara = {}
+for jj in range(len(nomresELAS)):   valCara[nomresELAS[jj]] = []
+for jj in range(len(nomresGLRC)): valCara[nomresGLRC[jj]]  = []
+
+# Boucle sur les classes de béton Eurocode 2
+for kk,cc in enumerate(lClasse) :
+#    print(cc)
+
+# Définition d'un béton BETON_GLRC:CODIFICATION='EC2' via DEFI_MATER_GC
+    BETONG = DEFI_MATER_GC(INFO=2,
+        BETON_GLRC=_F(CODIFICATION='EC2', UNITE_CONTRAINTE="Pa", CLASSE = cc,),
+    )
+
+# Sortie des propriétés d'intérêt du béton
+    # print('Caracteristiques ELAS')
+    # valres, codret = BETONG.RCVALE('ELAS', [''], [0.0], nomresELAS, 2)
+    # for ii,var in enumerate(nomresELAS):
+    #     valCara[nomresELAS[ii]].append( valres[ii] )
+    #     print(nomresELAS[ii]+' = '+str(valres[ii]))
+
+    # print('Caracteristiques GLRC')
+    # valres, codret = BETONG.RCVALE('BETON_GLRC', [''], [0.0], nomresGLRC, 2)
+    # for jj in range(len(nomresGLRC)):
+    #     valCara[nomresGLRC[jj]].append( valres[jj] )
+    #     print(nomresGLRC[jj]+' = '+str(valres[jj]))
+
+# Vérification de la non-régression des propriétés du matériau généré
+    TEST_RESU(OBJET=_F(NOM='BETONG  .CPT.000001.VALR        ',
+            VALE_CALC=testrefELAS[kk]))
+    TEST_RESU(OBJET=_F(NOM='BETONG  .CPT.000002.VALR        ',
+            VALE_CALC=testrefGLRC[kk]))
+    
+    DETRUIRE(CONCEPT=_F(NOM=BETONG))
+
+
+
+FIN()
+
+
