@@ -33,18 +33,8 @@ from ..Utilities import injector
 class ExtendedModel(object):
     cata_sdj = "SD.sd_modele.sd_modele"
 
-    def __getstate__(self):
-        """Return internal state.
-
-        Returns:
-            dict: Internal state.
+    def __getinitargs__(self):
+        """Returns the argument required to reinitialize a
+        ElementaryCharacteristics object during unpickling.
         """
-        return (self.getMesh(), )
-
-    def __setstate__(self, state):
-        """Restore internal state.
-
-        Arguments:
-            state (dict): Internal state.
-        """
-        self.setMesh(state[0])
+        return (self.getName(), self.getMesh())
