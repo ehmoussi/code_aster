@@ -44,14 +44,14 @@ void exportModelToPython() {
         &ModelClass::setSplittingMethod;
 
     py::class_< ModelClass, ModelClass::ModelPtr, py::bases< DataStructure > >( "Model",
-                                                                                      py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass , BaseMeshPtr>))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, BaseMeshPtr,
-                                               std::string >))
+                                                                                 py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, BaseMeshPtr>))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, std::string,
+                                                                BaseMeshPtr>))
 #ifdef _USE_MPI
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass , PartialMeshPtr>))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, PartialMeshPtr,
-                                               std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, PartialMeshPtr>))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, std::string,
+                                                                            PartialMeshPtr>))
 #endif /* _USE_MPI */
         .def( "addModelingOnAllMesh", &ModelClass::addModelingOnAllMesh )
         .def( "addModelingOnGroupOfElements", &ModelClass::addModelingOnGroupOfElements )
@@ -60,7 +60,13 @@ void exportModelToPython() {
         .def( "existsThm", &ModelClass::existsThm )
         .def( "existsMultiFiberBeam", &ModelClass::existsMultiFiberBeam )
         .def( "getSaneModel", &ModelClass::getSaneModel )
-        .def( "getMesh", &ModelClass::getMesh )
+        .def( "getMesh", &ModelClass::getMesh, R"(
+Return the mesh
+
+Returns:
+    MeshPtr: a pointer to the mesh
+        )",
+              ( py::arg( "self" ) )  )
         .def( "getSplittingMethod", &ModelClass::getSplittingMethod )
         .def( "getGraphPartitioner", &ModelClass::getGraphPartitioner )
         .def( "setSaneModel", &ModelClass::setSaneModel )

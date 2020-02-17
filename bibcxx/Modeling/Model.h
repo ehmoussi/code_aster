@@ -137,8 +137,7 @@ class ModelClass : public DataStructure {
      */
     ModelClass(void) = delete;
 
-    ModelClass(const BaseMeshPtr mesh,
-               const std::string name = ResultNaming::getNewResultName() ):
+    ModelClass(const std::string name, const BaseMeshPtr mesh):
         DataStructure( name, 8, "MODELE" ),
         _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
@@ -151,9 +150,11 @@ class ModelClass : public DataStructure {
             throw std::runtime_error( "Mesh is empty" );
     };
 
+    ModelClass(const BaseMeshPtr mesh):
+       ModelClass(ResultNaming::getNewResultName(), mesh){};
+
 #ifdef _USE_MPI
-    ModelClass(const PartialMeshPtr mesh,
-               const std::string name = ResultNaming::getNewResultName() ):
+    ModelClass(const std::string name, const PartialMeshPtr mesh):
         DataStructure( name, 8, "MODELE" ),
         _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
@@ -167,11 +168,14 @@ class ModelClass : public DataStructure {
         if ( _partialMesh->isEmpty() )
             throw std::runtime_error( "Partial mesh is empty" );
     };
+
+    ModelClass(const PartialMeshPtr mesh):
+        ModelClass(ResultNaming::getNewResultName(), mesh){};
 #endif /* _USE_MPI */
 
     /**
      * @brief Ajout d'une nouvelle modelisation sur tout le maillage
-     * @param phys Physique a ajouter
+     * @param phys Physique a ajouters
      * @param mod Modelisation a ajouter
      */
     void addModelingOnAllMesh( Physics phys, Modelings mod ) {
