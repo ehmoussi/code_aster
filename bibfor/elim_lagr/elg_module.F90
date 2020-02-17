@@ -22,7 +22,6 @@ module elg_module
 #include "asterf_petsc.h"
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
 !
 use aster_petsc_module
 use elg_context_type

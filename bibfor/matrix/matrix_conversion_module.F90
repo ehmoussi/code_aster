@@ -24,7 +24,6 @@ use aster_petsc_module
 implicit none
 !
 ! person_in_charge: natacha.bereux at edf.fr
-! aslint:disable=C1308
 !
 private
 #include "asterf_petsc.h"

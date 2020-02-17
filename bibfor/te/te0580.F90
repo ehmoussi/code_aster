@@ -18,7 +18,6 @@
 
 subroutine te0580(nomopt, nomte)
     implicit none
-! aslint: disable=C1505
 #include "jeveux.h"
 #include "asterfort/utmess.h"
 #include "asterfort/fointe.h"

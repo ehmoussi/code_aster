@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -236,6 +236,18 @@ Les signaux d'entraînements ne sont pas discrétisés de la même manière. Vé
 
     41 : _("""
 Les signaux servant de supports à la détermination des signaux d'entraînement ne sont pas discrétisés de la même manière. Vérifier le pas de chaque signaux ainsi que leur longueur.
+"""),
+
+    42: _("""
+ Le pas de temps est négatif ou nul : %(r1)f
+
+ Vérifiez votre mise en données
+"""),
+
+    43: _("""
+ L'instant de fin de calcul (t=%(r1)f) est inférieur à l'instant initial (t=%(r2)f)
+
+ Vérifiez votre mise en données
 """),
 
     50 : _("""
