@@ -33,7 +33,7 @@ def calc_pression_prod(self, RESULTAT,**args):
         return (evol_elas, evol_noli, evol_ther, mult_elas, mode_meca,
                 mode_meca_c, dyna_trans, dyna_harmo, fourier_elas,
                 fourier_ther, evol_varc, evol_char)
-    
+
     if AsType(RESULTAT) is not None : return AsType(RESULTAT)
     raise AsException("type de concept resultat non prevu")
 
@@ -46,7 +46,7 @@ CALC_PRESSION=MACRO(nom="CALC_PRESSION",
          MAILLAGE        =SIMP(statut='o',typ=maillage_sdaster),
          RESULTAT        =SIMP(statut='o',typ=(evol_elas,evol_noli),),
          GROUP_MA        =SIMP(statut='o',typ=grma ,validators=NoRepeat(),max='**'),
-         regles=(EXCLUS('TOUT_ORDRE','INST',),),
+         regles=(UN_PARMI('TOUT_ORDRE','INST',),),
          INST            =SIMP(statut='f',typ='R',max='**'),
          TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          MODELE          =SIMP(statut='f',typ=modele_sdaster),

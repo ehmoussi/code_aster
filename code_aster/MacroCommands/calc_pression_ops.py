@@ -25,7 +25,7 @@ from ..Commands import (CALC_CHAMP, CREA_CHAMP, CREA_RESU, FORMULE,
 from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 
-def calc_pression_ops(self, MAILLAGE, RESULTAT, TOUT_ORDRE, GROUP_MA, INST,
+def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA,
                       GEOMETRIE, CRITERE, PRECISION, **args):
     """
            Macro permettant le calcul des pressions aux interfaces d'un solide
@@ -71,16 +71,13 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, TOUT_ORDRE, GROUP_MA, INST,
                              NOM_PARA=('SIXX', 'SIYY', 'SIXY', 'X', 'Y'),)
 
     # boucle pour INST
-    if INST is not None :
-        time = INST
-        linst = len(INST)
-    elif TOUT_ORDRE is not None :
+    time = args.get("INST")
+    if not time:
+        # TOUT_ORDRE
         time = RESULTAT.LIST_VARI_ACCES()['INST']
-        linst = len(time)
-
+    linst = len(time)
 
     for iinst in range(linst):
-        print('iinst=', iinst)
         __sigm = CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
                             OPERATION='EXTR',
                             RESULTAT=RESULTAT,
@@ -101,10 +98,10 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, TOUT_ORDRE, GROUP_MA, INST,
                                 )
         # Normale sur la configuration finale
         if GEOMETRIE == 'DEFORMEE' :
-            Mail = MODI_MAILLAGE(reuse=MAILLAGE,
-                                 MAILLAGE=MAILLAGE,
-                                 DEFORME=_F(OPTION='TRAN',
-                                            DEPL=__depl,),)
+            MAILLAGE = MODI_MAILLAGE(reuse=MAILLAGE,
+                                     MAILLAGE=MAILLAGE,
+                                     DEFORME=_F(OPTION='TRAN',
+                                                DEPL=__depl,),)
 #
         __NormaleF = CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
                                 OPERATION='NORMALE',
@@ -113,10 +110,10 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, TOUT_ORDRE, GROUP_MA, INST,
                                 )
 #
         if  GEOMETRIE == 'DEFORMEE' :
-            Mail = MODI_MAILLAGE(reuse=MAILLAGE,
-                             MAILLAGE=MAILLAGE,
-                             DEFORME=_F(OPTION='TRAN',
-                                        DEPL=__mdepl,),)
+            MAILLAGE = MODI_MAILLAGE(reuse=MAILLAGE,
+                                     MAILLAGE=MAILLAGE,
+                                     DEFORME=_F(OPTION='TRAN',
+                                                DEPL=__mdepl,),)
 #
         __Pres = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                             OPERATION='AFFE',
