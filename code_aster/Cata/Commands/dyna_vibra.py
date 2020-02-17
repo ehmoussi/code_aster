@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -150,9 +150,9 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
                NB_POIN_PERIODE=          SIMP(statut='f',typ='I',defaut= 50),),
 
                b_alladapt  =         BLOC(condition = """is_in("SCHEMA", ('RUNGE_KUTTA_54','RUNGE_KUTTA_32','DEVOGE','ADAPT_ORDRE1','ADAPT_ORDRE2'))""",
-               PAS_MINI    =             SIMP(statut='f',typ='R'),
-               PAS_MAXI    =             SIMP(statut='f',typ='R'),
-               NMAX_ITER_PAS=            SIMP(statut='f',typ='I',defaut= 16),),
+               PAS_MINI    =             SIMP(statut='f',typ='R', val_min=1E-16,),
+               PAS_MAXI    =             SIMP(statut='f',typ='R', val_min=1E-16,),
+               NMAX_ITER_PAS=            SIMP(statut='f',typ='I',defaut= 16, min=0,),),
                ),
                b_not_gene = BLOC(condition = """not equal_to("BASE_CALCUL",'GENE')""",
                SCHEMA      =         SIMP(statut='f', typ='TXM', defaut="DIFF_CENTRE",
@@ -174,13 +174,13 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
                VITE_MIN    =             SIMP(statut='f',typ='TXM',defaut="NORM",into=("MAXI","NORM"),),
                COEF_MULT_PAS=            SIMP(statut='f',typ='R',defaut= 1.1),
                COEF_DIVI_PAS=            SIMP(statut='f',typ='R',defaut= 1.3333334),
-               PAS_LIMI_RELA=            SIMP(statut='f',typ='R',defaut= 1.E-6),
+               PAS_LIMI_RELA=            SIMP(statut='f',typ='R',defaut= 1.E-6, val_min=0.0,),
                NB_POIN_PERIODE=          SIMP(statut='f',typ='I',defaut= 50),),
 
                b_alladapt  =         BLOC(condition = """is_in("SCHEMA", ('RUNGE_KUTTA_54','RUNGE_KUTTA_32','DEVOGE','ADAPT_ORDRE1','ADAPT_ORDRE2'))""",
-               PAS_MINI    =             SIMP(statut='f',typ='R'),
-               PAS_MAXI    =             SIMP(statut='f',typ='R'),
-               NMAX_ITER_PAS=            SIMP(statut='f',typ='I',defaut= 16),),
+               PAS_MINI    =             SIMP(statut='f',typ='R', val_min=1E-16,),
+               PAS_MAXI    =             SIMP(statut='f',typ='R', val_min=1E-16,),
+               NMAX_ITER_PAS=            SIMP(statut='f',typ='I',defaut= 16, min=0,),),
                ),
            ), # end fkw_schema_temps
 
@@ -191,7 +191,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
                NUME_FIN    =             SIMP(statut='f',typ='I'),
                INST_FIN    =             SIMP(statut='f',typ='R'),),
 
-               PAS         =         SIMP(statut='f',typ='R'),
+               PAS         =         SIMP(statut='f',typ='R', val_min=1E-16,),
                b_pas       =         BLOC(condition = """exists("PAS")""",
                INST_INIT   =             SIMP(statut='f',typ='R'),
                INST_FIN    =             SIMP(statut='o',typ='R'),),
@@ -263,7 +263,7 @@ DYNA_VIBRA = OPER (nom      = "DYNA_VIBRA",
         ), # end b_dlt_prec
         b_not_dlt_prec  =  BLOC(condition="""not equal_to("BASE_CALCUL", 'PHYS') and equal_to("TYPE_CALCUL", 'TRAN')""",
           ARCHIVAGE       = FACT(statut='f', max=1, regles=(EXCLUS('LIST_INST','INST'), AU_MOINS_UN('LIST_INST','INST','PAS_ARCH')),
-               PAS_ARCH    =     SIMP(statut='f',typ='I'),
+               PAS_ARCH    =     SIMP(statut='f',typ='I', min=0,),
                LIST_INST   =     SIMP(statut='f',typ=(listr8_sdaster),),
                INST        =     SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
 #               CHAM_EXCLU  =     SIMP(statut='f',typ='TXM',validators=NoRepeat(),max=2,into=("DEPL","VITE","ACCE"),),
