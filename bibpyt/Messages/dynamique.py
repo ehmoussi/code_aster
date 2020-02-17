@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     1: _("""
@@ -468,7 +466,6 @@ Entrée/Changement d'état de choc détecté à l'instant %(r1)12.5e
     94 : _("""    >> Premier passage dans cet état, mise à jour des matrices dynamiques et calcul d'une
        nouvelle base de modes propres :
        """),
-    95 : _("""[%(i1)3d%%] Fréquence calculée :%(r1)12.5e, archivée au numéro d'ordre : %(i2)5d"""),
 
     96 : _("""    >> champs archivés       : %(k1)s
 
