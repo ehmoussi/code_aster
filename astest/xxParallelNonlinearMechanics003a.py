@@ -5,6 +5,9 @@ from code_aster.Commands import *
 
 code_aster.init()
 
+# test = xxParallelNonlinearMechanics002a mais chargement sur noeuds
+#                                     (addImposedMechanicalDOFOnNodes)
+
 test = code_aster.TestCase()
 
 monMaillage = code_aster.ParallelMesh()
@@ -38,6 +41,7 @@ charMeca1.addImposedMechanicalDOFOnNodes(
 charMeca1.addImposedMechanicalDOFOnNodes(
     code_aster.PhysicalQuantityComponent.Dz, 0., "Surf6N")
 charMeca1.build()
+test.assertEqual(charMeca1.getType(), "CHAR_CINE_MECA")
 
 imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue(code_aster.PhysicalQuantityComponent.Pres, 1.)

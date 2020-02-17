@@ -4,6 +4,7 @@ import code_aster
 from code_aster.Commands import *
 import os
 
+# test = petsc04c, mais avec solveur MUMPS
 test = code_aster.TestCase()
 
 code_aster.init()
@@ -14,9 +15,10 @@ if (parallel):
     MAIL = code_aster.ParallelMesh()
     MAIL.readMedFile("xxParallelTHM001a")
 else:
-    MAIL = code_aster.Mesh()
-    MAIL.readMedFile("xxParallelTHM001a.med")
+    MAIL_LIN = code_aster.Mesh()
+    MAIL_LIN.readMedFile("petsc04a.mmed")
 
+MAIL = CREA_MAILLAGE(LINE_QUAD=_F(TOUT='OUI',PREF_NOEUD='X',), MAILLAGE=MAIL_LIN,)
 
 MODELE = AFFE_MODELE(
                     AFFE=_F(MODELISATION='3D_THM', PHENOMENE='MECANIQUE', TOUT='OUI'),
@@ -24,7 +26,7 @@ MODELE = AFFE_MODELE(
 )
 
 #  LISTE DES INSTANTS DE CALCUL
-LI = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=100.0, NOMBRE=1))
+LI = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=100.0, NOMBRE=2))
 
 # DEFINITION DES FONCTIONS DE COMPORTEMENT :
 # VISCOSITE LIQUIDE ET GAZ : UNITE : PA.S
@@ -74,7 +76,7 @@ ARGILE0 = DEFI_MATERIAU(
                         COMP_THM='LIQU_SATU',
                         ELAS=_F(ALPHA=8e-06, E=225000000.0, NU=0.0, RHO=2000.0),
                         THM_DIFFU=_F(
-                                     BIOT_COEF=1.,
+                                     BIOT_COEF=1.e-12,
                                      CP=2850000.0,
                                      D_PERM_LIQU_SATU=ZERO,
                                      D_PERM_PRES_GAZ=DPERGPG,
@@ -115,6 +117,12 @@ CHAR0 =  AFFE_CHAR_CINE(
     MODELE=MODELE
 )
 
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',
+                    VALE=(0.0,0.0,
+                          100.0,1.0,
+                          ),
+                    PROL_DROITE='LINEAIRE',
+                    PROL_GAUCHE='LINEAIRE',);
 
 resnonl = STAT_NON_LINE(
                         CHAM_MATER=CHMAT0,
@@ -123,12 +131,28 @@ resnonl = STAT_NON_LINE(
                                         RELATION='KIT_THM',
                                         RELATION_KIT=('ELAS', 'LIQU_SATU', 'HYDR_UTIL')
                         ),
-                        EXCIT=_F(CHARGE=CHAR0),
+                        EXCIT=_F(CHARGE=CHAR0, FONC_MULT=RAMPE,),
                         INCREMENT=_F(LIST_INST=LI),
                         MODELE=MODELE,
                         NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,),
                         INFO=2,
 )
+
+TEST_RESU(
+   RESU=_F(
+       CRITERE='ABSOLU',
+       NOEUD='N165',
+       NOM_CHAM='DEPL',
+       NOM_CMP='DX',
+       NUME_ORDRE=2,
+       PRECISION=1.e-6,
+       REFERENCE='AUTRE_ASTER',
+        RESULTAT=resnonl,
+        VALE_CALC=7.98054127843E-06,
+        VALE_REFE=7.98054129752E-06,
+    )
+)
+
 
 # if parallel:
 #     rank = code_aster.getMPIRank()
@@ -137,7 +161,7 @@ resnonl = STAT_NON_LINE(
 #     resnonl.printMedFile('/tmp/seq.resu.med')
 
 # at least it pass here!
-test.assertTrue(True)
+
 test.printSummary()
 
 FIN()

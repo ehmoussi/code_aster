@@ -59,8 +59,28 @@ resnonl = STAT_NON_LINE(
                         INFO=2,
                     )
 
+
+rank = code_aster.getMPIRank()
+if rank == 1 : # MAIL.hasLocalGroupOfNodes('pNode') :   
+    print("rank=", rank)
+    TEST_RESU(RESU=_F(
+        CRITERE='ABSOLU',
+        NOEUD='N105',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        NUME_ORDRE=1,
+        PRECISION=1.e-6,
+        REFERENCE='AUTRE_ASTER',
+        RESULTAT=resnonl,
+        VALE_CALC=-0.121808156632,
+        VALE_REFE=-0.121808122439,))
+else : pass
+
+
+
+
 # at least it pass here!
-test.assertTrue(True)
+
 test.printSummary()
 
 # if parallel:

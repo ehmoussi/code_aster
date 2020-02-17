@@ -82,6 +82,8 @@ MESTAT = STAT_NON_LINE(
                         INFO=2,
 )
 
+# à remplacer par test_resu : 
+test.assertEqual(resu.getType(), "EVOL_NOLI")
 
 # if (parallel):
 #    rank = code_aster.getMPIRank()
@@ -120,7 +122,6 @@ MESTAT = STAT_NON_LINE(
 # else:
 #     MESTAT.printMedFile('/tmp/seq.resu.med')
 
-test.assertTrue(True)
 
 test.printSummary()
 

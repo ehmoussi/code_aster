@@ -76,10 +76,10 @@ timeList.build()
 statNonLine.setLoadStepManager(timeList)
 # Run the nonlinear analysis
 resu = statNonLine.execute()
+test.assertEqual(resu.getType(), "EVOL_NOLI")
 # resu.debugPrint( 6 )
 
 # at least it pass here!
-test.assertTrue(True)
 test.printSummary()
 
 # if parallel:
