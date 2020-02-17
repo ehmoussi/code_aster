@@ -303,7 +303,6 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportExternalVariableDefinitionToPython();
     exportExternalVariableConverterToPython();
     exportEmpiricalModeResultToPython();
-    exportElasticResultToPython();
     exportExternalVariableResultToPython();
     exportMaterialOnMeshBuilderToPython();
 };
