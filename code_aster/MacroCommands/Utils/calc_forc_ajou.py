@@ -19,13 +19,13 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ...Objects import GeneralizedAssemblyVectorDouble
+from ...Objects import GeneralizedAssemblyVectorReal
 from ...Supervis import ExecuteCommand
 from .calc_forc_ajou_cata import CALC_FORC_AJOU_CATA
 
 
 class CalcForcAjou(ExecuteCommand):
-    """Command that defines a :class:`~code_aster.Objects.GeneralizedAssemblyVectorDouble`
+    """Command that defines a :class:`~code_aster.Objects.GeneralizedAssemblyVectorReal`
     """
     command_name = "CALC_FORC_AJOU"
     command_cata = CALC_FORC_AJOU_CATA
@@ -36,7 +36,7 @@ class CalcForcAjou(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = GeneralizedAssemblyVectorDouble()
+        self._result = GeneralizedAssemblyVectorReal()
 
 
 CALC_FORC_AJOU = CalcForcAjou.run

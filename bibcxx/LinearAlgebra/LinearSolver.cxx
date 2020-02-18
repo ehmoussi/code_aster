@@ -3,7 +3,7 @@
  * @brief Initialisation des renumeroteurs autorises pour les solvers
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -45,14 +45,14 @@ const std::set< Renumbering >
 const std::set< Renumbering >
     WrapGcpc::setOfAllowedRenumbering( GcpcRenumbering, GcpcRenumbering + nbRenumberingGcpc );
 
-ListSyntaxMapContainer BaseLinearSolverInstance::buildListSyntax() {
+ListSyntaxMapContainer BaseLinearSolverClass::buildListSyntax() {
     ListSyntaxMapContainer listeSolver;
     SyntaxMapContainer dict1 = buildSyntaxMapFromParamList( _listOfParameters );
     listeSolver.push_back( dict1 );
     return listeSolver;
 };
 
-bool BaseLinearSolverInstance::build() {
+bool BaseLinearSolverClass::build() {
     if ( _charValues->exists() ) {
         _charValues->deallocate();
         _doubleValues->deallocate();
@@ -80,8 +80,8 @@ bool BaseLinearSolverInstance::build() {
     return true;
 };
 
-bool BaseLinearSolverInstance::matrixFactorization(
-    AssemblyMatrixDisplacementDoublePtr currentMatrix ) {
+bool BaseLinearSolverClass::matrixFactorization(
+    AssemblyMatrixDisplacementRealPtr currentMatrix ) {
     if ( _isEmpty )
         build();
 
@@ -106,11 +106,11 @@ bool BaseLinearSolverInstance::matrixFactorization(
     return true;
 };
 
-FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
-    const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
-    const FieldOnNodesDoublePtr &currentRHS, FieldOnNodesDoublePtr result ) const {
+FieldOnNodesRealPtr BaseLinearSolverClass::solveRealLinearSystem(
+    const AssemblyMatrixDisplacementRealPtr &currentMatrix,
+    const FieldOnNodesRealPtr &currentRHS, FieldOnNodesRealPtr result ) const {
     if ( result->getName() == "" )
-        result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) );
+        result = FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) );
 
     std::string blanc( " " );
     ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;
@@ -126,12 +126,12 @@ FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystem(
     return result;
 };
 
-FieldOnNodesDoublePtr BaseLinearSolverInstance::solveDoubleLinearSystemWithKinematicsLoad(
-    const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
-    const FieldOnNodesDoublePtr &kinematicsField, const FieldOnNodesDoublePtr &currentRHS,
-    FieldOnNodesDoublePtr result ) const {
+FieldOnNodesRealPtr BaseLinearSolverClass::solveRealLinearSystemWithKinematicsLoad(
+    const AssemblyMatrixDisplacementRealPtr &currentMatrix,
+    const FieldOnNodesRealPtr &kinematicsField, const FieldOnNodesRealPtr &currentRHS,
+    FieldOnNodesRealPtr result ) const {
     if ( result->getName() == "" )
-        result = FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) );
+        result = FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) );
 
     std::string blanc( " " );
     ASTERINTEGER nsecm = 0, prepos = 1, istop = 0, iret = 0;

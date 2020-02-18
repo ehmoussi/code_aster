@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import GeneralizedAssemblyVectorDouble
+from ..Objects import GeneralizedAssemblyVectorReal
 from ..Supervis import ExecuteCommand
 
 
 class RecuGene(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.GeneralizedAssemblyVectorDouble`.
+    """Command that defines :class:`~code_aster.Objects.GeneralizedAssemblyVectorReal`.
     """
     command_name = "RECU_GENE"
 
@@ -34,6 +34,6 @@ class RecuGene(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = GeneralizedAssemblyVectorDouble()
+        self._result = GeneralizedAssemblyVectorReal()
 
 RECU_GENE = RecuGene.run

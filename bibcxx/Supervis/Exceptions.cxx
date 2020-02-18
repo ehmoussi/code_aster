@@ -89,7 +89,7 @@ extern "C" void DEFPSPSPPPP( UEXCEP, uexcep, _IN ASTERINTEGER *exc_id, _IN char 
                              _IN ASTERINTEGER *nbr, _IN ASTERDOUBLE *valr ) {
     VectorString argk = {};
     VectorLong argi = {};
-    VectorDouble argr = {};
+    VectorReal argr = {};
     for ( int i = 0; i < *nbk; ++i ) {
         argk.push_back( trim( std::string( valk + i*lvk, lvk ) ) );
     }

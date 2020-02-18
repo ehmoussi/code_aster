@@ -31,14 +31,14 @@ namespace py = boost::python;
 
 void exportFiniteElementDescriptorToPython() {
 
-    py::class_< FiniteElementDescriptorInstance,
-                FiniteElementDescriptorInstance::FiniteElementDescriptorPtr,
+    py::class_< FiniteElementDescriptorClass,
+                FiniteElementDescriptorClass::FiniteElementDescriptorPtr,
                 py::bases< DataStructure > >( "FiniteElementDescriptor", py::no_init )
 // fake initFactoryPtr: not directly created by user
 // fake initFactoryPtr: not directly created by user
 #ifdef _USE_MPI
         .def( "transferDofDescriptorFrom",
-              &FiniteElementDescriptorInstance::transferDofDescriptorFrom )
+              &FiniteElementDescriptorClass::transferDofDescriptorFrom )
 #endif /* _USE_MPI */
         ;
 };

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe BehaviourDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,16 +32,16 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class BehaviourDefinitionInstance
+ * @class BehaviourDefinitionClass
  * @brief produit une sd identique a celle produite par DEFI_COMPOR
  * @author Nicolas Sellenet
  */
-class BehaviourDefinitionInstance : public DataStructure {
+class BehaviourDefinitionClass : public DataStructure {
   private:
     /** @brief Objet '.CPRK' */
     JeveuxVectorChar24 _cprk;
     /** @brief Objet '.CPRR' */
-    JeveuxVectorDouble _cprr;
+    JeveuxVectorReal _cprr;
     /** @brief Objet '.CPRI' */
     JeveuxVectorLong _cpri;
 
@@ -50,28 +50,28 @@ class BehaviourDefinitionInstance : public DataStructure {
      * @typedef BehaviourDefinitionPtr
      * @brief Pointeur intelligent vers un BehaviourDefinition
      */
-    typedef boost::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
+    typedef boost::shared_ptr< BehaviourDefinitionClass > BehaviourDefinitionPtr;
 
     /**
      * @brief Constructeur
      */
-    BehaviourDefinitionInstance()
-        : BehaviourDefinitionInstance( ResultNaming::getNewResultName() ){};
+    BehaviourDefinitionClass()
+        : BehaviourDefinitionClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    BehaviourDefinitionInstance( const std::string &name )
+    BehaviourDefinitionClass( const std::string &name )
         : DataStructure( name, 19, "COMPOR", Permanent ),
           _cprk( JeveuxVectorChar24( getName() + ".CPRK" ) ),
-          _cprr( JeveuxVectorDouble( getName() + ".CPRR" ) ),
+          _cprr( JeveuxVectorReal( getName() + ".CPRR" ) ),
           _cpri( JeveuxVectorLong( getName() + ".CPRI" ) ){};
 };
 
 /**
  * @typedef BehaviourDefinitionPtr
- * @brief Pointeur intelligent vers un BehaviourDefinitionInstance
+ * @brief Pointeur intelligent vers un BehaviourDefinitionClass
  */
-typedef boost::shared_ptr< BehaviourDefinitionInstance > BehaviourDefinitionPtr;
+typedef boost::shared_ptr< BehaviourDefinitionClass > BehaviourDefinitionPtr;
 
 #endif /* BEHAVIOURDEFINITION_H_ */

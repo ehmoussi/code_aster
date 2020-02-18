@@ -29,10 +29,10 @@ namespace py = boost::python;
 
 void exportMatchingMeshesToPython() {
 
-    py::class_< MatchingMeshesInstance, MatchingMeshesInstance::MatchingMeshesPtr,
+    py::class_< MatchingMeshesClass, MatchingMeshesClass::MatchingMeshesPtr,
             py::bases< DataStructure > >( "MatchingMeshes", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< MatchingMeshesInstance > ) )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< MatchingMeshesClass > ) )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< MatchingMeshesInstance, std::string > ) )
-        .def( "setFirstMesh", &MatchingMeshesInstance::setFirstMesh );
+              py::make_constructor( &initFactoryPtr< MatchingMeshesClass, std::string > ) )
+        .def( "setFirstMesh", &MatchingMeshesClass::setFirstMesh );
 };

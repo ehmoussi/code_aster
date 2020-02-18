@@ -33,14 +33,14 @@ namespace py = boost::python;
 #ifdef _USE_MPI
 
 void exportParallelMeshToPython() {
-    py::class_< ParallelMeshInstance, ParallelMeshInstance::ParallelMeshPtr,
-                py::bases< BaseMeshInstance > >( "ParallelMesh", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelMeshInstance >))
+    py::class_< ParallelMeshClass, ParallelMeshClass::ParallelMeshPtr,
+                py::bases< BaseMeshClass > >( "ParallelMesh", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelMeshClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ParallelMeshInstance, std::string >))
-        .def( "hasLocalGroupOfElements", &ParallelMeshInstance::hasLocalGroupOfElements )
-        .def( "hasLocalGroupOfNodes", &ParallelMeshInstance::hasLocalGroupOfNodes )
-        .def( "readMedFile", &ParallelMeshInstance::readMedFile );
+              py::make_constructor(&initFactoryPtr< ParallelMeshClass, std::string >))
+        .def( "hasLocalGroupOfElements", &ParallelMeshClass::hasLocalGroupOfElements )
+        .def( "hasLocalGroupOfNodes", &ParallelMeshClass::hasLocalGroupOfNodes )
+        .def( "readMedFile", &ParallelMeshClass::readMedFile );
 };
 
 #endif /* _USE_MPI */

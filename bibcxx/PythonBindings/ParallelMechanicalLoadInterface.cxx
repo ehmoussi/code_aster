@@ -31,13 +31,13 @@ namespace py = boost::python;
 
 void exportParallelMechanicalLoadToPython() {
 
-    py::class_< ParallelMechanicalLoadInstance,
-            ParallelMechanicalLoadInstance::ParallelMechanicalLoadPtr, py::bases< DataStructure > >(
+    py::class_< ParallelMechanicalLoadClass,
+            ParallelMechanicalLoadClass::ParallelMechanicalLoadPtr, py::bases< DataStructure > >(
         "ParallelMechanicalLoad", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelMechanicalLoadInstance,
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelMechanicalLoadClass,
                                                             GenericMechanicalLoadPtr, ModelPtr >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ParallelMechanicalLoadInstance, std::string,
+              py::make_constructor(&initFactoryPtr< ParallelMechanicalLoadClass, std::string,
                                                 GenericMechanicalLoadPtr, ModelPtr >));
 };
 

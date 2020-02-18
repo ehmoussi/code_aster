@@ -29,8 +29,8 @@ namespace py = boost::python;
 
 void exportCrackToPython() {
 
-    py::class_< CrackInstance, CrackInstance::CrackPtr, py::bases< DataStructure > >( "Crack",
+    py::class_< CrackClass, CrackClass::CrackPtr, py::bases< DataStructure > >( "Crack",
                                                                                        py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< CrackInstance > ) )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< CrackInstance, std::string > ) );
+        .def( "__init__", py::make_constructor( &initFactoryPtr< CrackClass > ) )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< CrackClass, std::string > ) );
 };

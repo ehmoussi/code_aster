@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Model, PrestressingCableDefinition, ResultsContainer
+from ..Objects import Model, PrestressingCableDefinition, Result
 from ..Supervis import ExecuteCommand
 
 
@@ -40,11 +40,13 @@ class Copier(ExecuteCommand):
                 other.getModel(),
                 other.getMaterialOnMesh(),
                 other.getElementaryCharacteristics())
-        elif isinstance(other, ResultsContainer):
+        elif isinstance(other, Result):
             # do not support several models
             mesh = other.getModel().getMesh()
             self._result = type(other)()
             self._result.setMesh(mesh)
+        elif isinstance(other, Model):
+            self._result = Model(other.getMesh())
         else:
             self._result = type(other)()
 
@@ -53,8 +55,6 @@ class Copier(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if isinstance(self._result, Model):
-            self._result.setMesh(keywords['CONCEPT'].getMesh())
 
 
 COPIER = Copier.run

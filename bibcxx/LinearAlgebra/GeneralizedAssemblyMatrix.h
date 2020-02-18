@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedAssemblyMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,44 +30,44 @@
 
 #include "DataStructures/DataStructure.h"
 #include "Discretization/ForwardGeneralizedDOFNumbering.h"
-#include "Results/ForwardMechanicalModeContainer.h"
-#include "Results/ForwardGeneralizedModeContainer.h"
+#include "Results/ForwardModeResult.h"
+#include "Results/ForwardGeneralizedModeResult.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
 
 /**
- * @class GenericGeneralizedAssemblyMatrixInstance
+ * @class GenericGeneralizedAssemblyMatrixClass
  * @brief Cette classe correspond a un matr_asse_gene
  * @author Nicolas Sellenet
  */
-class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
+class GenericGeneralizedAssemblyMatrixClass: public DataStructure
 {
   private:
     /** @brief Objet Jeveux '.DESC' */
-    JeveuxVectorDouble _desc;
+    JeveuxVectorReal _desc;
     /** @brief Objet Jeveux '.REFE' */
     JeveuxVectorChar24 _refe;
     /** @brief GeneralizedDOFNumbering */
     ForwardGeneralizedDOFNumberingPtr _dofNum;
-    /** @brief MechanicalModeContainer */
-    ForwardMechanicalModeContainerPtr _mecaModeC;
-    /** @brief GeneralizedModeContainer */
-    ForwardGeneralizedModeContainerPtr _geneModeC;
+    /** @brief ModeResult */
+    ForwardModeResultPtr _mecaModeC;
+    /** @brief GeneralizedModeResult */
+    ForwardGeneralizedModeResultPtr _geneModeC;
 
   public:
     /**
      * @typedef GeneralizedAssemblyMatrixPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
      */
-    typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
+    typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixClass >
         GenericGeneralizedAssemblyMatrixPtr;
 
     /**
      * @brief Constructeur
      */
-    GenericGeneralizedAssemblyMatrixInstance( const std::string name ):
+    GenericGeneralizedAssemblyMatrixClass( const std::string name ):
         DataStructure( name, 19, "MATR_ASSE_GENE", Permanent ),
-        _desc( JeveuxVectorDouble( getName() + ".DESC" ) ),
+        _desc( JeveuxVectorReal( getName() + ".DESC" ) ),
         _refe( JeveuxVectorChar24( getName() + ".REFE" ) ),
         _dofNum( nullptr ),
         _mecaModeC( nullptr ),
@@ -84,23 +84,23 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
-     * @brief Get GeneralizedModeContainer
+     * @brief Get GeneralizedModeResult
      */
-    GeneralizedModeContainerPtr getModalBasisFromGeneralizedModeContainer()
+    GeneralizedModeResultPtr getModalBasisFromGeneralizedModeResult()
     {
         if ( _geneModeC.isSet() )
             return _geneModeC.getPointer();
-        return GeneralizedModeContainerPtr( nullptr );
+        return GeneralizedModeResultPtr( nullptr );
     };
 
     /**
-     * @brief Get MechanicalModeContainer
+     * @brief Get ModeResult
      */
-    MechanicalModeContainerPtr getModalBasisFromMechanicalModeContainer()
+    ModeResultPtr getModalBasisFromModeResult()
     {
         if ( _mecaModeC.isSet() )
             return _mecaModeC.getPointer();
-        return MechanicalModeContainerPtr( nullptr );
+        return ModeResultPtr( nullptr );
     };
 
     /**
@@ -117,9 +117,9 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
-     * @brief Set GeneralizedModeContainer
+     * @brief Set GeneralizedModeResult
      */
-    bool setModalBasis( const GeneralizedModeContainerPtr &mecaModeC )
+    bool setModalBasis( const GeneralizedModeResultPtr &mecaModeC )
     {
         if ( mecaModeC != nullptr )
         {
@@ -131,9 +131,9 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
     };
 
     /**
-     * @brief Set MechanicalModeContainer
+     * @brief Set ModeResult
      */
-    bool setModalBasis( const MechanicalModeContainerPtr &mecaModeC )
+    bool setModalBasis( const ModeResultPtr &mecaModeC )
     {
         if ( mecaModeC != nullptr )
         {
@@ -146,12 +146,12 @@ class GenericGeneralizedAssemblyMatrixInstance: public DataStructure
 };
 
 /**
- * @class GeneralizedAssemblyMatrixInstance
+ * @class GeneralizedAssemblyMatrixClass
  * @brief Cette classe correspond a un matr_asse_gene
  * @author Nicolas Sellenet
  */
 template < class ValueType >
-class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatrixInstance
+class GeneralizedAssemblyMatrixClass : public GenericGeneralizedAssemblyMatrixClass
 {
   private:
     /** @brief Objet Jeveux '.VALM' */
@@ -170,7 +170,7 @@ class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatri
      * @brief definir le type
      */
     template < class type = ValueType >
-    typename std::enable_if< std::is_same< type, DoubleComplex >::value, void >::type
+    typename std::enable_if< std::is_same< type, RealComplex >::value, void >::type
     setMatrixType()
     {
         setType( "MATR_ASSE_GENE_C" );
@@ -181,51 +181,51 @@ class GeneralizedAssemblyMatrixInstance : public GenericGeneralizedAssemblyMatri
      * @typedef GeneralizedAssemblyMatrixPtr
      * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrix
      */
-    typedef boost::shared_ptr< GeneralizedAssemblyMatrixInstance< ValueType > >
+    typedef boost::shared_ptr< GeneralizedAssemblyMatrixClass< ValueType > >
         GeneralizedAssemblyMatrixPtr;
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyMatrixInstance()
-        : GeneralizedAssemblyMatrixInstance( ResultNaming::getNewResultName() )
+    GeneralizedAssemblyMatrixClass()
+        : GeneralizedAssemblyMatrixClass( ResultNaming::getNewResultName() )
     {};
 
     /**
      * @brief Constructeur
      */
-    GeneralizedAssemblyMatrixInstance( const std::string name )
-        : GenericGeneralizedAssemblyMatrixInstance( name ),
+    GeneralizedAssemblyMatrixClass( const std::string name )
+        : GenericGeneralizedAssemblyMatrixClass( name ),
           _valm( JeveuxVector< ValueType >( getName() + ".VALM" ) )
     {
-        GeneralizedAssemblyMatrixInstance< ValueType >::setMatrixType();
+        GeneralizedAssemblyMatrixClass< ValueType >::setMatrixType();
     };
 };
 
 /** @typedef Definition d'une matrice assemblee généralisée de double */
-typedef GeneralizedAssemblyMatrixInstance< double > GeneralizedAssemblyMatrixDoubleInstance;
+typedef GeneralizedAssemblyMatrixClass< double > GeneralizedAssemblyMatrixRealClass;
 /** @typedef Definition d'une matrice assemblee généralisée de complexe */
-typedef GeneralizedAssemblyMatrixInstance< DoubleComplex > GeneralizedAssemblyMatrixComplexInstance;
+typedef GeneralizedAssemblyMatrixClass< RealComplex > GeneralizedAssemblyMatrixComplexClass;
 
 /**
  * @typedef GenericGeneralizedAssemblyMatrixPtr
- * @brief Pointeur intelligent vers un GenericGeneralizedAssemblyMatrixInstance
+ * @brief Pointeur intelligent vers un GenericGeneralizedAssemblyMatrixClass
  */
-typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixInstance >
+typedef boost::shared_ptr< GenericGeneralizedAssemblyMatrixClass >
     GenericGeneralizedAssemblyMatrixPtr;
 
 /**
- * @typedef GeneralizedAssemblyMatrixDoublePtr
- * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixDoubleInstance
+ * @typedef GeneralizedAssemblyMatrixRealPtr
+ * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixRealClass
  */
-typedef boost::shared_ptr< GeneralizedAssemblyMatrixDoubleInstance >
-    GeneralizedAssemblyMatrixDoublePtr;
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixRealClass >
+    GeneralizedAssemblyMatrixRealPtr;
 
 /**
  * @typedef GeneralizedAssemblyMatrixComplexPtr
- * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixComplexInstance
+ * @brief Pointeur intelligent vers un GeneralizedAssemblyMatrixComplexClass
  */
-typedef boost::shared_ptr< GeneralizedAssemblyMatrixComplexInstance >
+typedef boost::shared_ptr< GeneralizedAssemblyMatrixComplexClass >
     GeneralizedAssemblyMatrixComplexPtr;
 
 #endif /* GENERALIZEDASSEMBLYMATRIX_H_ */

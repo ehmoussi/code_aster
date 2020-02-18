@@ -6,7 +6,7 @@
  * @brief Fichier entete de la class GenericParameter
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -138,8 +138,8 @@ template < typename Type > class GenericParameter {
 
 /** @typedef Definition d'un GenericParameter d'un type boost::variant */
 typedef GenericParameter<
-    boost::variant< double, ASTERINTEGER, std::string, DoubleComplex, std::vector< double >,
-                    std::vector< ASTERINTEGER >, std::vector< DoubleComplex >,
+    boost::variant< double, ASTERINTEGER, std::string, RealComplex, std::vector< double >,
+                    std::vector< ASTERINTEGER >, std::vector< RealComplex >,
                     std::vector< std::string > > > GenParam;
 
 /** @typedef Definition d'une list de GenParam */

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Model
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -68,16 +68,16 @@ const int nbGraphPartitioner = 2;
 extern const char *const GraphPartitionerNames[nbGraphPartitioner];
 
 /**
- * @class ModelInstance
+ * @class ModelClass
  * @brief Produit une sd identique a celle produite par AFFE_MODELE
  * @author Nicolas Sellenet
  */
-class ModelInstance : public DataStructure {
+class ModelClass : public DataStructure {
   public:
     /**
      * @brief Forward declaration for the XFEM enrichment
      */
-    typedef boost::shared_ptr< ModelInstance > ModelPtr;
+    typedef boost::shared_ptr< ModelClass > ModelPtr;
 
   protected:
     // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
@@ -110,7 +110,7 @@ class ModelInstance : public DataStructure {
  * @todo a supprimer en templatisant Model etc.
  */
 #ifdef _USE_MPI
-    PartialMeshPtr PartialMesh;
+    PartialMeshPtr _partialMesh;
 #endif /* _USE_MPI */
     /** @brief Méthode de parallélisation du modèle */
     ModelSplitingMethod _splitMethod;
@@ -133,22 +133,49 @@ class ModelInstance : public DataStructure {
 
   public:
     /**
-     * @brief Constructeur
+     * @brief Constructor: a mesh is mandatory
      */
-    ModelInstance( const std::string name = ResultNaming::getNewResultName() ):
-    DataStructure( name, 8, "MODELE" ),
+    ModelClass(void) = delete;
+
+    ModelClass(const std::string name, const BaseMeshPtr mesh):
+        DataStructure( name, 8, "MODELE" ),
         _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
         _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-        _saneModel( nullptr ),
-        _baseMesh( MeshPtr() ), _splitMethod( SubDomain ),
-        _graphPartitioner( MetisPartitioner ), _ligrel( new FiniteElementDescriptorInstance(
-                                                    getName() + ".MODELE", _baseMesh ) )
-    {};
+        _saneModel( nullptr ), _baseMesh( mesh ),
+        _splitMethod( SubDomain ), _graphPartitioner( MetisPartitioner ),
+         _ligrel( new FiniteElementDescriptorClass(getName() + ".MODELE", _baseMesh ) )
+    {
+        if ( _baseMesh->isEmpty() )
+            throw std::runtime_error( "Mesh is empty" );
+    };
+
+    ModelClass(const BaseMeshPtr mesh):
+       ModelClass(ResultNaming::getNewResultName(), mesh){};
+
+#ifdef _USE_MPI
+    ModelClass(const std::string name, const PartialMeshPtr mesh):
+        DataStructure( name, 8, "MODELE" ),
+        _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+        _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
+        _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
+        _saneModel( nullptr ), _baseMesh( mesh ), _partialMesh(mesh),
+        _splitMethod( Centralized ), _graphPartitioner( MetisPartitioner ),
+        _ligrel( new FiniteElementDescriptorClass(getName() + ".MODELE", _baseMesh ) )
+    {
+        if ( _baseMesh->isEmpty() )
+            throw std::runtime_error( "Mesh is empty" );
+        if ( _partialMesh->isEmpty() )
+            throw std::runtime_error( "Partial mesh is empty" );
+    };
+
+    ModelClass(const PartialMeshPtr mesh):
+        ModelClass(ResultNaming::getNewResultName(), mesh){};
+#endif /* _USE_MPI */
 
     /**
      * @brief Ajout d'une nouvelle modelisation sur tout le maillage
-     * @param phys Physique a ajouter
+     * @param phys Physique a ajouters
      * @param mod Modelisation a ajouter
      */
     void addModelingOnAllMesh( Physics phys, Modelings mod ) {
@@ -227,9 +254,9 @@ class ModelInstance : public DataStructure {
 
 #ifdef _USE_MPI
     PartialMeshPtr getPartialMesh() const {
-        if ( ( !PartialMesh ) || PartialMesh->isEmpty() )
-            throw std::runtime_error( "Mesh of current model is empty" );
-        return PartialMesh;
+        if ( ( !_partialMesh ) || _partialMesh->isEmpty() )
+            throw std::runtime_error( "Mesh of model is empty" );
+        return _partialMesh;
     };
 #endif /* _USE_MPI */
 
@@ -248,7 +275,7 @@ class ModelInstance : public DataStructure {
 
     BaseMeshPtr getMesh() const {
         if ( ( !_baseMesh ) || _baseMesh->isEmpty() )
-            throw std::runtime_error( "Mesh of current model is empty" );
+            throw std::runtime_error( "Mesh of model is empty" );
         return _baseMesh;
     };
 
@@ -269,7 +296,13 @@ class ModelInstance : public DataStructure {
     /**
      * @brief Definition de la methode de partition
      */
-    void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner ) {
+    void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner )
+    {
+#ifdef _USE_MPI
+        if ( !(_partialMesh->isEmpty()) && split != Centralized)
+            throw std::runtime_error( "For Parallel mesh, Centralized splitting is mandatory" );
+#endif /* _USE_MPI */
+
         _splitMethod = split;
         _graphPartitioner = partitioner;
     };
@@ -277,76 +310,21 @@ class ModelInstance : public DataStructure {
     /**
      * @brief Definition de la methode de partition
      */
-    void setSplittingMethod( ModelSplitingMethod split ) { _splitMethod = split; };
-
-    /**
-     * @brief Definition du maillage
-     * @param currentMesh objet MeshPtr sur lequel le modele reposera
-     */
-    bool setMesh( MeshPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _baseMesh = currentMesh;
-        _ligrel->setMesh(currentMesh);
-        return true;
-    };
-
-    /**
-     * @brief Definition du maillage
-     * @param currentMesh objet SkeletonPtr sur lequel le modele reposera
-     */
-    bool setMesh( SkeletonPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Skeleton is empty" );
-        _baseMesh = currentMesh;
-        return true;
-    };
-
-/**
- * @brief Definition du maillage
- * @param currentMesh objet MeshPtr sur lequel le modele reposera
- */
+    void setSplittingMethod( ModelSplitingMethod split )
+    {
 #ifdef _USE_MPI
-    bool setMesh( ParallelMeshPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _baseMesh = currentMesh;
-        _ligrel->setMesh(currentMesh);
-        return true;
-    };
+        if ( !(_partialMesh->isEmpty()) && split != Centralized)
+            throw std::runtime_error( "For Parallel mesh, Centralized splitting is mandatory" );
 #endif /* _USE_MPI */
 
-/**
- * @brief Definition du maillage
- * @param currentMesh objet PartialMeshPtr sur lequel le modele reposera
- */
-#ifdef _USE_MPI
-    bool setMesh( PartialMeshPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _baseMesh = currentMesh;
-        PartialMesh = currentMesh;
-        _ligrel->setMesh(currentMesh);
-        return true;
-    };
-#endif /* _USE_MPI */
-       /**
-        * @brief Definition du maillage
-        * @param currentMesh objet BasePtr sur lequel le modele reposera
-        */
-    bool setMesh( BaseMeshPtr &currentMesh ) {
-        if ( currentMesh->isEmpty() )
-            throw std::runtime_error( "Mesh is empty" );
-        _baseMesh = currentMesh;
-        _ligrel->setMesh(currentMesh);
-        return true;
+         _splitMethod = split;
     };
 };
 
 /**
  * @typedef Model
- * @brief Pointeur intelligent vers un ModelInstance
+ * @brief Pointeur intelligent vers un ModelClass
  */
-typedef boost::shared_ptr< ModelInstance > ModelPtr;
+typedef boost::shared_ptr< ModelClass > ModelPtr;
 
 #endif /* MODEL_H_ */

@@ -6,7 +6,7 @@
  * @brief Fichier definissant les physiques et les modelisations disponibles
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,7 +31,7 @@
  * @brief Physiques existantes dans Code_Aster
  * @author Nicolas Sellenet
  */
-enum Physics { Mechanics, Thermal, Acoustics };
+enum Physics { Mechanics, Thermal, Acoustic };
 const int nbPhysics = 3;
 /**
  * @var PhysicNames
@@ -68,7 +68,7 @@ extern const Modelings MechanicsModelings[nbModelingsMechanics];
 const int nbModelingsThermal = 3;
 extern const Modelings ThermalModelings[nbModelingsThermal];
 
-const int nbModelingsAcoustics = 2;
-extern const Modelings AcousticsModelings[nbModelingsAcoustics];
+const int nbModelingsAcoustic = 2;
+extern const Modelings AcousticModelings[nbModelingsAcoustic];
 
 #endif /* PHYSICSANDMODELISATIONS_H_ */

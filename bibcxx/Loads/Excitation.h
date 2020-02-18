@@ -7,7 +7,7 @@
  *        This class allows to define a source term for a nonlinear analysis
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -51,11 +51,11 @@ extern const std::vector< ExcitationEnum > allExcitation;
 extern const std::vector< std::string > allExcitationNames;
 
 /**
- * @class ExcitationInstance
+ * @class ExcitationClass
  * @brief It is a source term used in a nonlinear static analysis
  * @author Natacha Béreux
  */
-class ExcitationInstance {
+class ExcitationClass {
   private:
     ExcitationEnum _typeExcit;
     KinematicsLoadPtr _kinematicLoad;
@@ -64,7 +64,7 @@ class ExcitationInstance {
     CapyConvertibleContainer _toCapyConverter;
 
   public:
-    ExcitationInstance( ExcitationEnum typeExcit = StandardExcitation ) : _typeExcit( typeExcit ) {
+    ExcitationClass( ExcitationEnum typeExcit = StandardExcitation ) : _typeExcit( typeExcit ) {
         _toCapyConverter.add(
             new CapyConvertibleValue< FunctionPtr >( false, "FONC_MULT", _multFunction, false ) );
         _toCapyConverter.add( new CapyConvertibleValue< ExcitationEnum >(
@@ -116,6 +116,6 @@ class ExcitationInstance {
  * @typedef
  * @brief Pointeur intelligent vers une excitation
  */
-typedef boost::shared_ptr< ExcitationInstance > ExcitationPtr;
+typedef boost::shared_ptr< ExcitationClass > ExcitationPtr;
 
 #endif /*EXCITATION_H_ */

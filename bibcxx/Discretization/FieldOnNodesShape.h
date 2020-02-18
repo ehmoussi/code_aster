@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FieldOnNodesShape
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,30 +34,30 @@
 #include "MemoryManager/JeveuxVector.h"
 
 /**
- * @class FieldOnNodesShapeInstance
+ * @class FieldOnNodesShapeClass
  * @brief Class definissant un prof_chno
  * @author Nicolas Sellenet
  */
-class FieldOnNodesShapeInstance : public DataStructure {
+class FieldOnNodesShapeClass : public DataStructure {
   private:
   public:
     /**
      * @brief Constructeur
      */
-    FieldOnNodesShapeInstance() : DataStructure( "", Permanent, 8 ){};
+    FieldOnNodesShapeClass() : DataStructure( "", Permanent, 8 ){};
 
     /**
      * @typedef FieldOnNodesShapePtr
      * @brief Pointeur intelligent vers un FieldOnNodesShape
      */
-    typedef boost::shared_ptr< FieldOnNodesShapeInstance > FieldOnNodesShapePtr;
+    typedef boost::shared_ptr< FieldOnNodesShapeClass > FieldOnNodesShapePtr;
 };
 
 /**
  * @typedef FieldOnNodesShapePtr
- * @brief Enveloppe d'un pointeur intelligent vers un FieldOnNodesShapeInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un FieldOnNodesShapeClass
  * @author Nicolas Sellenet
  */
-typedef boost::shared_ptr< FieldOnNodesShapeInstance > FieldOnNodesShapePtr;
+typedef boost::shared_ptr< FieldOnNodesShapeClass > FieldOnNodesShapePtr;
 
 #endif /* FIELDONNODESSHAPE_H_ */

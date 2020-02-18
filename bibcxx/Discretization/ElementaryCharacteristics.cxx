@@ -1,9 +1,9 @@
 /**
  * @file ElementaryCharacteristics.cxx
- * @brief Implementation de ElementaryCharacteristicsInstance
+ * @brief Implementation de ElementaryCharacteristicsClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,20 +28,20 @@
 #include "Python.h"
 #include "Discretization/ElementaryCharacteristics.h"
 
-ElementaryCharacteristicsInstance::ElementaryCharacteristicsInstance( const std::string name,
+ElementaryCharacteristicsClass::ElementaryCharacteristicsClass( const std::string name,
                                                                       const ModelPtr &model )
     : DataStructure( name, 8, "CARA_ELEM" ), _model( model ), _mesh( model->getMesh() ),
-      _numberOfSubpoints( new PCFieldOnMeshLongInstance( getName() + ".CANBSP", _mesh ) ),
-      _curveBeam( new PCFieldOnMeshDoubleInstance( getName() + ".CARARCPO", _mesh ) ),
-      _cable( new PCFieldOnMeshDoubleInstance( getName() + ".CARCABLE", _mesh ) ),
-      _shell( new PCFieldOnMeshDoubleInstance( getName() + ".CARCOQUE", _mesh ) ),
-      _dumping( new PCFieldOnMeshDoubleInstance( getName() + ".CARDISCA", _mesh ) ),
-      _rigidity( new PCFieldOnMeshDoubleInstance( getName() + ".CARDISCK", _mesh ) ),
-      _mass( new PCFieldOnMeshDoubleInstance( getName() + ".CARDISCM", _mesh ) ),
-      _bar( new PCFieldOnMeshDoubleInstance( getName() + ".CARGENBA", _mesh ) ),
-      _beamSection( new PCFieldOnMeshDoubleInstance( getName() + ".CARGENPO", _mesh ) ),
-      _beamGeometry( new PCFieldOnMeshDoubleInstance( getName() + ".CARGEOPO", _mesh ) ),
-      _orthotropicBasis( new PCFieldOnMeshDoubleInstance( getName() + ".CARMASSI", _mesh ) ),
-      _localBasis( new PCFieldOnMeshDoubleInstance( getName() + ".CARORIEN", _mesh ) ),
-      _beamCharacteristics( new PCFieldOnMeshDoubleInstance( getName() + ".CARPOUFL", _mesh ) ),
+      _numberOfSubpoints( new PCFieldOnMeshLongClass( getName() + ".CANBSP", _mesh ) ),
+      _curveBeam( new PCFieldOnMeshRealClass( getName() + ".CARARCPO", _mesh ) ),
+      _cable( new PCFieldOnMeshRealClass( getName() + ".CARCABLE", _mesh ) ),
+      _shell( new PCFieldOnMeshRealClass( getName() + ".CARCOQUE", _mesh ) ),
+      _dumping( new PCFieldOnMeshRealClass( getName() + ".CARDISCA", _mesh ) ),
+      _rigidity( new PCFieldOnMeshRealClass( getName() + ".CARDISCK", _mesh ) ),
+      _mass( new PCFieldOnMeshRealClass( getName() + ".CARDISCM", _mesh ) ),
+      _bar( new PCFieldOnMeshRealClass( getName() + ".CARGENBA", _mesh ) ),
+      _beamSection( new PCFieldOnMeshRealClass( getName() + ".CARGENPO", _mesh ) ),
+      _beamGeometry( new PCFieldOnMeshRealClass( getName() + ".CARGEOPO", _mesh ) ),
+      _orthotropicBasis( new PCFieldOnMeshRealClass( getName() + ".CARMASSI", _mesh ) ),
+      _localBasis( new PCFieldOnMeshRealClass( getName() + ".CARORIEN", _mesh ) ),
+      _beamCharacteristics( new PCFieldOnMeshRealClass( getName() + ".CARPOUFL", _mesh ) ),
       _isEmpty( true ){};

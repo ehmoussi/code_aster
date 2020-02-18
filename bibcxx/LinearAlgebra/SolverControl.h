@@ -6,7 +6,7 @@
  * @brief Control class to check if an iterative solver has converged
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -36,11 +36,11 @@ enum ConvergenceState { failure, success, iterate };
  * @brief Base control class used to check convergence of an iterative solver
  * @author Natacha Béreux
  */
-class SolverControlInstance {
+class SolverControlClass {
   public:
-    SolverControlInstance( double rTol = 1.e-6, ASTERINTEGER nIterMax = 100 );
+    SolverControlClass( double rTol = 1.e-6, ASTERINTEGER nIterMax = 100 );
 
-    ~SolverControlInstance() {}
+    ~SolverControlClass() {}
 
     virtual ConvergenceState check( const double relativeResNorm, const ASTERINTEGER iter ) const;
 
@@ -60,6 +60,6 @@ class SolverControlInstance {
  * @typedef SolverControlPtr
  * @brief Pointeur intelligent vers un SolverControl
  */
-typedef boost::shared_ptr< SolverControlInstance > SolverControlPtr;
+typedef boost::shared_ptr< SolverControlClass > SolverControlPtr;
 
 #endif

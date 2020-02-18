@@ -49,8 +49,8 @@ test.assertEqual(x.comp[0:3],('X', 'Y', 'Z'))
 test.assertEqual(x.noeud[-3:],(27, 27, 27))
 
 
-MyFieldOnElements = resu.getRealFieldOnElements("SIGM_ELNO", 1)
-z=MyFieldOnElements.EXTR_COMP('SIXX',topo=1)
+MyFieldOnCells = resu.getRealFieldOnCells("SIGM_ELNO", 1)
+z=MyFieldOnCells.EXTR_COMP('SIXX',topo=1)
 test.assertEqual(len(z.valeurs), 64)
 
 MyFieldOnNodes = resu.getRealFieldOnNodes("DEPL", 1)

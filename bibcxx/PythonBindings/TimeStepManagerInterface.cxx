@@ -29,16 +29,16 @@ namespace py = boost::python;
 
 void exportTimeStepManagerToPython() {
 
-    py::class_< TimeStepManagerInstance, TimeStepManagerPtr, py::bases< DataStructure > >(
+    py::class_< TimeStepManagerClass, TimeStepManagerPtr, py::bases< DataStructure > >(
         "TimeStepManager", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< TimeStepManagerInstance > ) )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< TimeStepManagerClass > ) )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< TimeStepManagerInstance, std::string > ) )
-        .def( "addErrorManager", &TimeStepManagerInstance::addErrorManager )
-        .def( "build", &TimeStepManagerInstance::build )
-        .def( "setAutomaticManagement", &TimeStepManagerInstance::setAutomaticManagement )
-        .def( "setMaximumNumberOfTimeStep", &TimeStepManagerInstance::setMaximumNumberOfTimeStep )
-        .def( "setMaximumTimeStep", &TimeStepManagerInstance::setMaximumTimeStep )
-        .def( "setMinimumTimeStep", &TimeStepManagerInstance::setMinimumTimeStep )
-        .def( "setTimeList", &TimeStepManagerInstance::setTimeList );
+              py::make_constructor( &initFactoryPtr< TimeStepManagerClass, std::string > ) )
+        .def( "addErrorManager", &TimeStepManagerClass::addErrorManager )
+        .def( "build", &TimeStepManagerClass::build )
+        .def( "setAutomaticManagement", &TimeStepManagerClass::setAutomaticManagement )
+        .def( "setMaximumNumberOfTimeStep", &TimeStepManagerClass::setMaximumNumberOfTimeStep )
+        .def( "setMaximumTimeStep", &TimeStepManagerClass::setMaximumTimeStep )
+        .def( "setMinimumTimeStep", &TimeStepManagerClass::setMinimumTimeStep )
+        .def( "setTimeList", &TimeStepManagerClass::setTimeList );
 };

@@ -57,14 +57,14 @@ def getBornes(listIn, valTest):
     return (v1, v2)
 
 
-def interpoleLin(listDoublet, X):
+def interpoleLin(listRealt, X):
     """
-       Interpole linéairement entre deux bornes définies par listDoublets[(X0, Y0), (X1, Y1)] la valeur Y en X
+       Interpole linéairement entre deux bornes définies par listRealts[(X0, Y0), (X1, Y1)] la valeur Y en X
     """
-    X0 = listDoublet[0][0]
-    Y0 = listDoublet[0][1]
-    X1 = listDoublet[1][0]
-    Y1 = listDoublet[1][1]
+    X0 = listRealt[0][0]
+    Y0 = listRealt[0][1]
+    X1 = listRealt[1][0]
+    Y1 = listRealt[1][1]
 
     return Y0 + (X - X0) * (Y1 - Y0) / (X1 - X0)
 
@@ -463,12 +463,12 @@ class composant(OAR_element):
 
         # 4. Construction de dictInstAbscTemp
         for i in range(0, len(list(dictInstAbscTemp.keys()))):
-            listDoublets = list()
+            listRealts = list()
             for absc, temp in zip(tableAbsc, tableTemp[i]):
-                listDoublets.append((absc, temp))
+                listRealts.append((absc, temp))
 
             inst = list(dictInstAbscTemp.keys())[i]
-            dictInstAbscTemp[inst] = listDoublets
+            dictInstAbscTemp[inst] = listRealts
 
     def buildTablesTher(self, label, para_resu, tabAbscisses, dictInstAbscSig, offset=0.0):
         """
@@ -527,12 +527,12 @@ class composant(OAR_element):
 
         # 4. Assemblage du dictionnaire
         for i in range(0, len(list(dictInstAbscSig.keys()))):
-            listDoublet = list()
+            listRealt = list()
             for j in range(0, len(tabAbscisses)):
-                listDoublet.append(
+                listRealt.append(
                     (tabAbscisses[j], listListListSigAbscInst[i][j]))
 
-            dictInstAbscSig[list(dictInstAbscSig.keys())[i]] = listDoublet
+            dictInstAbscSig[list(dictInstAbscSig.keys())[i]] = listRealt
 
     def mergeDictTher(self):
         """
@@ -592,8 +592,8 @@ class composant(OAR_element):
         """
         # 1. Récupération des abscisses associées aux températures
         listAbsc = list()
-        lstDoublet = self.dictInstAbscTemp[list(self.dictInstAbscTemp.keys())[0]]
-        for val in lstDoublet:
+        lstRealt = self.dictInstAbscTemp[list(self.dictInstAbscTemp.keys())[0]]
+        for val in lstRealt:
             listAbsc.append(val[0])
 
         # 2. Comparaison des deux listes
@@ -676,9 +676,9 @@ class composant(OAR_element):
         # Création de l'arborescence "résultat thermo_mécanique"
         if self.noResuTher == False:
             # Création des abscisses
-            listDoublet = self.dictInstAbscTemp[
+            listRealt = self.dictInstAbscTemp[
                 list(self.dictInstAbscTemp.keys())[0]]
-            for val in listDoublet:
+            for val in listRealt:
                 nodeLigneCoupe.append("ABSCISSE", val[0])
 
             nodeLigneCoupe.append('PSI', self.angle_c)

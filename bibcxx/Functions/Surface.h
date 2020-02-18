@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Surface
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,36 +34,36 @@
 #include "Functions/GenericFunction.h"
 
 /**
- * @class SurfaceInstance
+ * @class SurfaceClass
  * @brief Cette classe correspond a une nappe
  * @author Nicolas Sellenet
  */
-class SurfaceInstance : public GenericFunctionInstance {
+class SurfaceClass : public GenericFunctionClass {
   private:
     // Vecteur Jeveux '.PARA'
-    JeveuxVectorDouble _parameters;
+    JeveuxVectorReal _parameters;
     // Vecteur Jeveux '.VALE'
-    JeveuxCollectionDouble _value;
+    JeveuxCollectionReal _value;
 
   public:
     /**
      * @typedef SurfacePtr
      * @brief Pointeur intelligent vers un Surface
      */
-    typedef boost::shared_ptr< SurfaceInstance > SurfacePtr;
+    typedef boost::shared_ptr< SurfaceClass > SurfacePtr;
 
     /**
      * @brief Constructeur
      */
-    SurfaceInstance() : SurfaceInstance( ResultNaming::getNewResultName() ){};
+    SurfaceClass() : SurfaceClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    SurfaceInstance( const std::string name )
-        : GenericFunctionInstance( name, "NAPPE", "NAPPE" ),
-          _parameters( JeveuxVectorDouble( getName() + ".PARA" ) ),
-          _value( JeveuxCollectionDouble( getName() + ".VALE" ) ){};
+    SurfaceClass( const std::string name )
+        : GenericFunctionClass( name, "NAPPE", "NAPPE" ),
+          _parameters( JeveuxVectorReal( getName() + ".PARA" ) ),
+          _value( JeveuxCollectionReal( getName() + ".VALE" ) ){};
 
     /**
      * @brief Copy extension parameters to python list
@@ -122,8 +122,8 @@ class SurfaceInstance : public GenericFunctionInstance {
 
 /**
  * @typedef SurfacePtr
- * @brief Pointeur intelligent vers un SurfaceInstance
+ * @brief Pointeur intelligent vers un SurfaceClass
  */
-typedef boost::shared_ptr< SurfaceInstance > SurfacePtr;
+typedef boost::shared_ptr< SurfaceClass > SurfacePtr;
 
 #endif /* SURFACE_H_ */

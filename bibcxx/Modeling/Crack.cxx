@@ -1,9 +1,9 @@
 /**
  * @file Crack.cxx
- * @brief Implementation de CrackInstance
+ * @brief Implementation de CrackClass
  * @author Nicolas Pignet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -25,23 +25,23 @@
 
 #include "Modeling/Crack.h"
 
-CrackInstance::CrackInstance( const std::string name )
+CrackClass::CrackClass( const std::string name )
     : DataStructure( name, 8, "FOND_FISSURE", Permanent ),
       _info( JeveuxVectorChar8( getName() + ".INFO" ) ),
-      _fondFiss( JeveuxVectorDouble( getName() + ".FONDFISS" ) ),
+      _fondFiss( JeveuxVectorReal( getName() + ".FONDFISS" ) ),
       _fondType( JeveuxVectorChar8( getName() + ".FOND.TYPE" ) ),
       _fondNoeu( JeveuxVectorChar8( getName() + ".FOND.NOEUD" ) ),
       _fondInfNoeu( JeveuxVectorChar8( getName() + ".FONDINF.NOEU" ) ),
       _fondSupNoeu( JeveuxVectorChar8( getName() + ".FONDSUP.NOEU" ) ),
-      _fondFisG( JeveuxVectorDouble( getName() + ".FONDFISG" ) ),
-      _normale( JeveuxVectorDouble( getName() + ".NORMALE" ) ),
-      _baseFond( JeveuxVectorDouble( getName() + ".BASEFOND" ) ),
-      _ltno( new FieldOnNodesDoubleInstance( getName() + ".LTNO      " ) ),
-      _lnno( new FieldOnNodesDoubleInstance( getName() + ".LNNO      " ) ),
-      _basLoc( new FieldOnNodesDoubleInstance( getName() + ".BASLOC    " ) ),
-      _fondTailleR( JeveuxVectorDouble( getName() + ".FOND.TAILLE_R" ) ),
-      _dtanOrigine( JeveuxVectorDouble( getName() + ".DTAN_ORIGINE" ) ),
-      _dtanExtremite( JeveuxVectorDouble( getName() + ".DTAN_EXTREMITE" ) ),
+      _fondFisG( JeveuxVectorReal( getName() + ".FONDFISG" ) ),
+      _normale( JeveuxVectorReal( getName() + ".NORMALE" ) ),
+      _baseFond( JeveuxVectorReal( getName() + ".BASEFOND" ) ),
+      _ltno( new FieldOnNodesRealClass( getName() + ".LTNO      " ) ),
+      _lnno( new FieldOnNodesRealClass( getName() + ".LNNO      " ) ),
+      _basLoc( new FieldOnNodesRealClass( getName() + ".BASLOC    " ) ),
+      _fondTailleR( JeveuxVectorReal( getName() + ".FOND.TAILLE_R" ) ),
+      _dtanOrigine( JeveuxVectorReal( getName() + ".DTAN_ORIGINE" ) ),
+      _dtanExtremite( JeveuxVectorReal( getName() + ".DTAN_EXTREMITE" ) ),
       _levreSupMail( JeveuxVectorChar8( getName() + ".LEVRESUP.MAIL" ) ),
       _supNormNoeu( JeveuxVectorChar8( getName() + ".SUPNORM.NOEU" ) ),
       _levreInfMail( JeveuxVectorChar8( getName() + ".LEVREINF.MAIL" ) ),

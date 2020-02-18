@@ -29,8 +29,8 @@ namespace py = boost::python;
 
 void exportSkeletonToPython() {
 
-    py::class_< SkeletonInstance, SkeletonInstance::SkeletonPtr, py::bases< BaseMeshInstance > >(
+    py::class_< SkeletonClass, SkeletonClass::SkeletonPtr, py::bases< BaseMeshClass > >(
         "Skeleton", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< SkeletonInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< SkeletonInstance, std::string >));
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SkeletonClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< SkeletonClass, std::string >));
 };

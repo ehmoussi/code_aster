@@ -226,7 +226,7 @@ def post_dyna_alea_ops(self, INFO, **args):
 
         #   fin FRAGILITE
         tabout = CREA_TABLE(
-            LISTE=mcfact, TITRE='POST_DYNA_ALEA concept : ' + self.result_name)
+            LISTE=mcfact, TITRE='POST_DYNA_ALEA - Fragilite')
 
 #  ------------------------------------------------------------------
 
@@ -247,7 +247,7 @@ def post_dyna_alea_ops(self, INFO, **args):
         FRACTILE = INTERSPECTRE['FRACTILE']
 
         # table résultat
-        tabres = Table(titr='POST_DYNA_ALEA concept : %s' % self.result_name)
+        tabres = Table(titr='POST_DYNA_ALEA - Interspectre')
 
 #     ------------------------------------------------------------------
 #     Liste des moments spectraux

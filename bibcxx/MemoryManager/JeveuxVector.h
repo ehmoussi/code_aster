@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe JeveuxVector
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,13 +37,13 @@
 #include <string>
 
 /**
- * @class JeveuxVectorInstance
+ * @class JeveuxVectorClass
  * @brief Cette classe template permet de definir un vecteur Jeveux
  * @author Nicolas Sellenet
  * @todo rajouter un constructeur de nom jeveux pour que .NSLV soit bien placé (cf DOFNumbering.cxx)
  */
 template < typename ValueType >
-class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxType< ValueType > {
+class JeveuxVectorClass : public JeveuxObjectClass, private AllowedJeveuxType< ValueType > {
   private:
     /** @brief Pointeur vers la premiere position du vecteur Jeveux */
     ValueType *_valuePtr;
@@ -53,15 +53,15 @@ class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxT
      * @brief Constructeur
      * @param name Nom jeveux du vecteur
      *   Attention, le pointeur est mis a zero. Avant d'utiliser ce vecteur,
-     *   il faut donc faire appel a JeveuxVectorInstance::updateValuePointer
+     *   il faut donc faire appel a JeveuxVectorClass::updateValuePointer
      */
-    JeveuxVectorInstance( const std::string &nom, JeveuxMemory mem = Permanent )
-        : JeveuxObjectInstance( nom, mem ), _valuePtr( nullptr ){};
+    JeveuxVectorClass( const std::string &nom, JeveuxMemory mem = Permanent )
+        : JeveuxObjectClass( nom, mem ), _valuePtr( nullptr ){};
 
     /**
      * @brief Destructeur
      */
-    ~JeveuxVectorInstance() {
+    ~JeveuxVectorClass() {
 #ifdef _DEBUG_CXX
         std::cout << "DEBUG: JeveuxVector.destr: " << _name << std::endl;
 #endif
@@ -71,7 +71,7 @@ class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxT
     /**
      * @brief Surcharge de l'operateur =
      */
-    JeveuxVectorInstance &operator=( JeveuxVectorInstance< ValueType > &toCopy ) {
+    JeveuxVectorClass &operator=( JeveuxVectorClass< ValueType > &toCopy ) {
         if ( this->size() != 0 )
             this->deallocate();
         this->allocate( _mem, toCopy.size() );
@@ -84,7 +84,7 @@ class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxT
     /**
      * @brief Surcharge de l'operateur =
      */
-    JeveuxVectorInstance &operator=( const std::vector< ValueType > &toCopy ) {
+    JeveuxVectorClass &operator=( const std::vector< ValueType > &toCopy ) {
         if ( this->size() != 0 )
             this->deallocate();
         this->allocate( _mem, toCopy.size() );
@@ -251,13 +251,13 @@ class JeveuxVectorInstance : public JeveuxObjectInstance, private AllowedJeveuxT
 
 /**
  * @class JeveuxVector
- * @brief Enveloppe d'un pointeur intelligent vers un JeveuxVectorInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un JeveuxVectorClass
  * @author Nicolas Sellenet
  * @todo Supprimer la classe enveloppe
  */
 template < class ValueType > class JeveuxVector {
   public:
-    typedef boost::shared_ptr< JeveuxVectorInstance< ValueType > > JeveuxVectorTypePtr;
+    typedef boost::shared_ptr< JeveuxVectorClass< ValueType > > JeveuxVectorTypePtr;
 
   private:
     JeveuxVectorTypePtr _jeveuxVectorPtr;
@@ -269,7 +269,7 @@ template < class ValueType > class JeveuxVector {
     JeveuxVector() : _jeveuxVectorPtr( nullptr ){};
 
     JeveuxVector( std::string nom )
-        : _jeveuxVectorPtr( new JeveuxVectorInstance< ValueType >( nom ) ){};
+        : _jeveuxVectorPtr( new JeveuxVectorClass< ValueType >( nom ) ){};
 
     ~JeveuxVector(){};
 
@@ -280,7 +280,7 @@ template < class ValueType > class JeveuxVector {
 
     const JeveuxVectorTypePtr &operator->( void ) const { return _jeveuxVectorPtr; };
 
-    JeveuxVectorInstance< ValueType > &operator*( void ) const { return *_jeveuxVectorPtr; };
+    JeveuxVectorClass< ValueType > &operator*( void ) const { return *_jeveuxVectorPtr; };
 
     bool isEmpty() const {
         if ( _jeveuxVectorPtr == nullptr )
@@ -296,9 +296,9 @@ typedef JeveuxVector< ASTERINTEGER > JeveuxVectorLong;
 /** @typedef Definition d'un vecteur Jeveux short int */
 typedef JeveuxVector< short int > JeveuxVectorShort;
 /** @typedef Definition d'un vecteur Jeveux double */
-typedef JeveuxVector< double > JeveuxVectorDouble;
+typedef JeveuxVector< double > JeveuxVectorReal;
 /** @typedef Definition d'un vecteur Jeveux double complex */
-typedef JeveuxVector< DoubleComplex > JeveuxVectorComplex;
+typedef JeveuxVector< RealComplex > JeveuxVectorComplex;
 /** @typedef Definition d'un vecteur de JeveuxChar8 */
 typedef JeveuxVector< JeveuxChar8 > JeveuxVectorChar8;
 /** @typedef Definition d'un vecteur JeveuxChar16 */

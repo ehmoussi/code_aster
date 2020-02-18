@@ -26,33 +26,33 @@ POVOL=AFFE_MODELE(MAILLAGE = MAYA,
                           MODELISATION = '3D',
                           PHENOMENE = 'MECANIQUE',),)
 
-imposedPres1 = code_aster.PressureDouble()
+imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 500000. )
-PRESSION = code_aster.DistributedPressureDouble(POVOL)
+PRESSION = code_aster.DistributedPressureReal(POVOL)
 PRESSION.setValue( imposedPres1, "PRESSION" )
 PRESSION.build()
 
-imposedDof1 = code_aster.DisplacementDouble()
+imposedDof1 = code_aster.DisplacementReal()
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dy, 0.0 )
-CharMeca1 = code_aster.ImposedDisplacementDouble(POVOL)
+CharMeca1 = code_aster.ImposedDisplacementReal(POVOL)
 CharMeca1.setValue( imposedDof1, "COND1" )
 CharMeca1.build()
 
-imposedDof2 = code_aster.DisplacementDouble()
+imposedDof2 = code_aster.DisplacementReal()
 imposedDof2.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
-CharMeca2 = code_aster.ImposedDisplacementDouble(POVOL)
+CharMeca2 = code_aster.ImposedDisplacementReal(POVOL)
 CharMeca2.setValue( imposedDof1, "CONDZG" )
 CharMeca2.build()
 
-imposedDof3 = code_aster.DisplacementDouble()
+imposedDof3 = code_aster.DisplacementReal()
 imposedDof3.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
-CharMeca3 = code_aster.ImposedDisplacementDouble(POVOL)
+CharMeca3 = code_aster.ImposedDisplacementReal(POVOL)
 CharMeca3.setValue( imposedDof1, "N26" )
 CharMeca3.build()
 
-imposedDof4 = code_aster.DisplacementDouble()
+imposedDof4 = code_aster.DisplacementReal()
 imposedDof4.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
-CharMeca4 = code_aster.ImposedDisplacementDouble(POVOL)
+CharMeca4 = code_aster.ImposedDisplacementReal(POVOL)
 CharMeca4.setValue( imposedDof1, "DROITE" )
 CharMeca4.build()
 

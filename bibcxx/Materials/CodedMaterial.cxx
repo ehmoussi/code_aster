@@ -1,9 +1,9 @@
 /**
  * @file CodedMaterial.cxx
- * @brief Implementation de CodedMaterialInstance
+ * @brief Implementation de CodedMaterialClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,15 +26,15 @@
 #include "Materials/CodedMaterial.h"
 #include "aster_fort.h"
 
-CodedMaterialInstance::CodedMaterialInstance( const MaterialOnMeshPtr &mater,
+CodedMaterialClass::CodedMaterialClass( const MaterialOnMeshPtr &mater,
                                               const ModelPtr &model )
     : _name( mater->getName() ), _type( "MATER_CODE" ), _mater( mater ), _model( model ),
-      _field( new PCFieldOnMeshLongInstance( getName() + ".MATE_CODE", _model->getMesh(),
+      _field( new PCFieldOnMeshLongClass( getName() + ".MATE_CODE", _model->getMesh(),
                                              Permanent ) ),
       _grp( JeveuxVectorChar8( getName() + ".MATE_CODE.GRP" ) ),
       _nGrp( JeveuxVectorLong( getName() + ".MATE_CODE.NGRP" ) ){};
 
-bool CodedMaterialInstance::allocate(bool force) {
+bool CodedMaterialClass::allocate(bool force) {
     if( ! force && _field->exists() )
         return false;
     if( _field->exists() )
@@ -83,7 +83,7 @@ bool CodedMaterialInstance::allocate(bool force) {
         const int nbMB = curIter->getNumberOfMaterialBehviour();
         for( int i = 0; i < nbMB; ++i )
         {
-            auto vecVec1 = curIter->getBehaviourVectorOfDoubleValues( i );
+            auto vecVec1 = curIter->getBehaviourVectorOfRealValues( i );
             auto vecVec2 = curIter->getBehaviourVectorOfFunctions( i );
             for( auto vec1 : vecVec1 )
                 if( vec1->exists() )
@@ -91,7 +91,7 @@ bool CodedMaterialInstance::allocate(bool force) {
                     const std::string name( vec1->getName(), 0, 16 );
                     const std::string name1 = name + ".LISV_VR";
                     const std::string name2 = name + ".LISV_IA";
-                    _vecOfR8.push_back( JeveuxVectorDouble( name1 ) );
+                    _vecOfR8.push_back( JeveuxVectorReal( name1 ) );
                     _vecOfIa.push_back( JeveuxVectorLong( name2 ) );
                 }
             for( auto vec2 : vecVec2 )
@@ -100,7 +100,7 @@ bool CodedMaterialInstance::allocate(bool force) {
                     const std::string name( vec2->getName(), 0, 16 );
                     const std::string name1 = name + ".LISV_VR";
                     const std::string name2 = name + ".LISV_IA";
-                    _vecOfR8.push_back( JeveuxVectorDouble( name1 ) );
+                    _vecOfR8.push_back( JeveuxVectorReal( name1 ) );
                     _vecOfIa.push_back( JeveuxVectorLong( name2 ) );
                 }
         }
@@ -108,7 +108,7 @@ bool CodedMaterialInstance::allocate(bool force) {
     return true;
 };
 
-bool CodedMaterialInstance::constant() const {
+bool CodedMaterialClass::constant() const {
     const std::string typeco( "CHAM_MATER" );
     ASTERINTEGER repi = 0, ier = 0;
     JeveuxChar32 repk( " " );

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe UnitaryThermalLoad
  * @author Jean-Pierre Lefebvre
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,26 +31,26 @@
 #include "Utilities/CapyConvertibleValue.h"
 
 /**
- * @class UnitaryThermalLoadInstance
+ * @class UnitaryThermalLoadClass
  * @brief Classe definissant une charge thermique (issue d'AFFE_CHAR_THER)
  * @author Jean-Pierre Lefebvre
  */
-class UnitaryThermalLoadInstance : public DataStructure {
+class UnitaryThermalLoadClass : public DataStructure {
   private:
   public:
     /**
      * @typedef UnitaryThermalLoadPtr
      * @brief Pointeur intelligent vers un UnitaryThermalLoad
      */
-    typedef boost::shared_ptr< UnitaryThermalLoadInstance > UnitaryThermalLoadPtr;
+    typedef boost::shared_ptr< UnitaryThermalLoadClass > UnitaryThermalLoadPtr;
 
     /**
      * @brief Constructeur
      */
-    UnitaryThermalLoadInstance() : DataStructure( "", Permanent, 8 ){};
+    UnitaryThermalLoadClass() : DataStructure( "", Permanent, 8 ){};
 };
 
-template < class ValueType > class ImposedTemperatureInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class ImposedTemperatureClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfNodes > GroupOfNodesPtr;
@@ -68,12 +68,12 @@ template < class ValueType > class ImposedTemperatureInstance : public UnitaryTh
      * @typedef ImposedTemperaturePtr
      * @brief Pointeur intelligent vers un ImposedTemperature
      */
-    typedef boost::shared_ptr< ImposedTemperatureInstance > ImposedTemperaturePtr;
+    typedef boost::shared_ptr< ImposedTemperatureClass > ImposedTemperaturePtr;
 
     /**
      * @brief Constructeur
      */
-    ImposedTemperatureInstance( ValueType val = 100. ) : _value( val ){};
+    ImposedTemperatureClass( ValueType val = 100. ) : _value( val ){};
 
     void addGroupOfNodes( const std::string &nameOfGroup ) {
         _entity.push_back( GroupOfNodesPtr( new GroupOfNodes( nameOfGroup ) ) );
@@ -82,7 +82,7 @@ template < class ValueType > class ImposedTemperatureInstance : public UnitaryTh
     };
 };
 
-template < class ValueType > class DistributedFlowInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class DistributedFlowClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
@@ -98,12 +98,12 @@ template < class ValueType > class DistributedFlowInstance : public UnitaryTherm
      * @typedef DistributedFlowPtr
      * @brief Pointeur intelligent vers un DistributedFlow
      */
-    typedef boost::shared_ptr< DistributedFlowInstance > DistributedFlowPtr;
+    typedef boost::shared_ptr< DistributedFlowClass > DistributedFlowPtr;
 
     /**
      * @brief Constructeur
      */
-    DistributedFlowInstance( ValueType val = 200. ) : _fluxn( val ) {
+    DistributedFlowClass( ValueType val = 200. ) : _fluxn( val ) {
         _toCapyConverter.add(
             new CapyConvertibleValue< double >( true, "FLUX_REP", _fluxn, false ) );
     };
@@ -143,7 +143,7 @@ template < class ValueType > class DistributedFlowInstance : public UnitaryTherm
     };
 };
 
-template < class ValueType > class NonLinearFlowInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class NonLinearFlowClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
@@ -158,12 +158,12 @@ template < class ValueType > class NonLinearFlowInstance : public UnitaryThermal
      * @typedef NonLinearFlowPtr
      * @brief Pointeur intelligent vers un NonLinearFlow
      */
-    typedef boost::shared_ptr< NonLinearFlowInstance > NonLinearFlowPtr;
+    typedef boost::shared_ptr< NonLinearFlowClass > NonLinearFlowPtr;
 
     /**
      * @brief Constructeur
      */
-    NonLinearFlowInstance( ValueType val = 200. ) : _fluxn( val ){};
+    NonLinearFlowClass( ValueType val = 200. ) : _fluxn( val ){};
 
     void addGroupOfElements( const std::string &nameOfGroup ) {
         _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
@@ -178,7 +178,7 @@ template < class ValueType > class NonLinearFlowInstance : public UnitaryThermal
     };
 };
 
-template < class ValueType > class ExchangeInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class ExchangeClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
@@ -193,12 +193,12 @@ template < class ValueType > class ExchangeInstance : public UnitaryThermalLoadI
      * @typedef ExchangePtr
      * @brief Pointeur intelligent vers un Exchange
      */
-    typedef boost::shared_ptr< ExchangeInstance > ExchangePtr;
+    typedef boost::shared_ptr< ExchangeClass > ExchangePtr;
 
     /**
      * @brief Constructeur
      */
-    ExchangeInstance( ValueType val1 = 20.0, ValueType val2 = 15.0 )
+    ExchangeClass( ValueType val1 = 20.0, ValueType val2 = 15.0 )
         : _coef_h( val1 ), _temp_ext( val2 ){};
 
     void addGroupOfElements( const std::string &nameOfGroup ) {
@@ -240,7 +240,7 @@ template < class ValueType > class ExchangeInstance : public UnitaryThermalLoadI
     };
 };
 
-template < class ValueType > class ExchangeWallInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class ExchangeWallClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
@@ -248,7 +248,7 @@ template < class ValueType > class ExchangeWallInstance : public UnitaryThermalL
 
     VectorOfMeshEntityPtr _entity1, _entity2;
     ValueType _coef_h;
-    VectorDouble _tran;
+    VectorReal _tran;
     CapyConvertibleContainer _toCapyConverter;
 
   public:
@@ -256,12 +256,12 @@ template < class ValueType > class ExchangeWallInstance : public UnitaryThermalL
      * @typedef ExchangeWallPtr
      * @brief Pointeur intelligent vers un ExchangeWall
      */
-    typedef boost::shared_ptr< ExchangeWallInstance > ExchangeWallPtr;
+    typedef boost::shared_ptr< ExchangeWallClass > ExchangeWallPtr;
 
     /**
      * @brief Constructeur
      */
-    ExchangeWallInstance( ValueType val = 20.0 ) : _coef_h( val ){};
+    ExchangeWallClass( ValueType val = 20.0 ) : _coef_h( val ){};
 
     void setExchangeCoefficient( ValueType val = 0.0 ) {
         _coef_h = val;
@@ -269,10 +269,10 @@ template < class ValueType > class ExchangeWallInstance : public UnitaryThermalL
             new CapyConvertibleValue< double >( true, "COEF_H", _coef_h, false ) );
     };
 
-    void setTranslation( const VectorDouble &vec ) {
+    void setTranslation( const VectorReal &vec ) {
         _tran = vec;
         _toCapyConverter.add(
-            new CapyConvertibleValue< VectorDouble >( false, "TRAN", _tran, false ) );
+            new CapyConvertibleValue< VectorReal >( false, "TRAN", _tran, false ) );
     };
 
     void addGroupOfElements( const std::string &nameOfGroup ) {
@@ -285,7 +285,7 @@ template < class ValueType > class ExchangeWallInstance : public UnitaryThermalL
     };
 };
 
-template < class ValueType > class SourceInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class SourceClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
@@ -300,12 +300,12 @@ template < class ValueType > class SourceInstance : public UnitaryThermalLoadIns
      * @typedef SourcePtr
      * @brief Pointeur intelligent vers un Source
      */
-    typedef boost::shared_ptr< SourceInstance > SourcePtr;
+    typedef boost::shared_ptr< SourceClass > SourcePtr;
 
     /**
      * @brief Constructeur
      */
-    SourceInstance( ValueType val = 0.0 ) : _source( val ){};
+    SourceClass( ValueType val = 0.0 ) : _source( val ){};
 
     void setSource( ValueType val = 0.0 ) {
         _source = val;
@@ -319,7 +319,7 @@ template < class ValueType > class SourceInstance : public UnitaryThermalLoadIns
     };
 };
 
-template < class ValueType > class NonLinearSourceInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class NonLinearSourceClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
@@ -334,12 +334,12 @@ template < class ValueType > class NonLinearSourceInstance : public UnitaryTherm
      * @typedef NonLinearSourcePtr
      * @brief Pointeur intelligent vers un NonLinearSource
      */
-    typedef boost::shared_ptr< NonLinearSourceInstance > NonLinearSourcePtr;
+    typedef boost::shared_ptr< NonLinearSourceClass > NonLinearSourcePtr;
 
     /**
      * @brief Constructeur
      */
-    NonLinearSourceInstance( ValueType val = 0.0 ) : _source( val ){};
+    NonLinearSourceClass( ValueType val = 0.0 ) : _source( val ){};
 
     void setSource( ValueType val = 0.0 ) {
         _source = val;
@@ -353,7 +353,7 @@ template < class ValueType > class NonLinearSourceInstance : public UnitaryTherm
     };
 };
 
-template < class ValueType > class ThermalRadiationInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class ThermalRadiationClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
@@ -368,12 +368,12 @@ template < class ValueType > class ThermalRadiationInstance : public UnitaryTher
      * @typedef ThermalRadiationPtr
      * @brief Pointeur intelligent vers un ThermalRadiation
      */
-    typedef boost::shared_ptr< ThermalRadiationInstance > ThermalRadiationPtr;
+    typedef boost::shared_ptr< ThermalRadiationClass > ThermalRadiationPtr;
 
     /**
      * @brief Constructeur
      */
-    ThermalRadiationInstance( ValueType val1 = 20.0, ValueType val2 = 1.0, ValueType val3 = 15.0 )
+    ThermalRadiationClass( ValueType val1 = 20.0, ValueType val2 = 1.0, ValueType val3 = 15.0 )
         : _sigma( val1 ), _epsilon( val2 ), _temp_ext( val3 ){};
 
     void setExternalTemperature( ValueType val = 20.0 ) {
@@ -400,7 +400,7 @@ template < class ValueType > class ThermalRadiationInstance : public UnitaryTher
     };
 };
 
-template < class ValueType > class ThermalGradientInstance : public UnitaryThermalLoadInstance {
+template < class ValueType > class ThermalGradientClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
@@ -415,12 +415,12 @@ template < class ValueType > class ThermalGradientInstance : public UnitaryTherm
      * @typedef ThermalGradientPtr
      * @brief Pointeur intelligent vers un ThermalGradient
      */
-    typedef boost::shared_ptr< ThermalGradientInstance > ThermalGradientPtr;
+    typedef boost::shared_ptr< ThermalGradientClass > ThermalGradientPtr;
 
     /**
      * @brief Constructeur
      */
-    ThermalGradientInstance( ValueType val1 = 0.0, ValueType val2 = 0.0, ValueType val3 = 0.0 )
+    ThermalGradientClass( ValueType val1 = 0.0, ValueType val2 = 0.0, ValueType val3 = 0.0 )
         : _fluxx( val1 ), _fluxy( val2 ), _fluxz( val3 ){};
 
     void setFlowXYZ( ValueType valx = 0.0, ValueType valy = 0.0,
@@ -437,45 +437,45 @@ template < class ValueType > class ThermalGradientInstance : public UnitaryTherm
 
 /**
  * @typedef UnitaryThermalLoad
- * @brief Pointeur intelligent vers un UnitaryThermalLoadInstance
+ * @brief Pointeur intelligent vers un UnitaryThermalLoadClass
  */
-template class ImposedTemperatureInstance< double >;
-typedef ImposedTemperatureInstance< double > DoubleImposedTemperatureInstance;
-typedef boost::shared_ptr< DoubleImposedTemperatureInstance > DoubleImposedTemperaturePtr;
+template class ImposedTemperatureClass< double >;
+typedef ImposedTemperatureClass< double > RealImposedTemperatureClass;
+typedef boost::shared_ptr< RealImposedTemperatureClass > RealImposedTemperaturePtr;
 
-template class DistributedFlowInstance< double >;
-typedef DistributedFlowInstance< double > DoubleDistributedFlowInstance;
-typedef boost::shared_ptr< DoubleDistributedFlowInstance > DoubleDistributedFlowPtr;
+template class DistributedFlowClass< double >;
+typedef DistributedFlowClass< double > RealDistributedFlowClass;
+typedef boost::shared_ptr< RealDistributedFlowClass > RealDistributedFlowPtr;
 
-template class NonLinearFlowInstance< double >;
-typedef NonLinearFlowInstance< double > DoubleNonLinearFlowInstance;
-typedef boost::shared_ptr< DoubleNonLinearFlowInstance > DoubleNonLinearFlowPtr;
+template class NonLinearFlowClass< double >;
+typedef NonLinearFlowClass< double > RealNonLinearFlowClass;
+typedef boost::shared_ptr< RealNonLinearFlowClass > RealNonLinearFlowPtr;
 
-template class ExchangeInstance< double >;
-typedef ExchangeInstance< double > DoubleExchangeInstance;
-typedef boost::shared_ptr< DoubleExchangeInstance > DoubleExchangePtr;
+template class ExchangeClass< double >;
+typedef ExchangeClass< double > RealExchangeClass;
+typedef boost::shared_ptr< RealExchangeClass > RealExchangePtr;
 
-template class ExchangeWallInstance< double >;
-typedef ExchangeWallInstance< double > DoubleExchangeWallInstance;
-typedef boost::shared_ptr< DoubleExchangeWallInstance > DoubleExchangeWallPtr;
+template class ExchangeWallClass< double >;
+typedef ExchangeWallClass< double > RealExchangeWallClass;
+typedef boost::shared_ptr< RealExchangeWallClass > RealExchangeWallPtr;
 
-template class SourceInstance< double >;
-typedef SourceInstance< double > DoubleSourceInstance;
-typedef boost::shared_ptr< DoubleSourceInstance > DoubleSourcePtr;
+template class SourceClass< double >;
+typedef SourceClass< double > RealSourceClass;
+typedef boost::shared_ptr< RealSourceClass > RealSourcePtr;
 
-template class NonLinearSourceInstance< double >;
-typedef NonLinearSourceInstance< double > DoubleNonLinearSourceInstance;
-typedef boost::shared_ptr< DoubleNonLinearSourceInstance > DoubleNonLinearSourcePtr;
+template class NonLinearSourceClass< double >;
+typedef NonLinearSourceClass< double > RealNonLinearSourceClass;
+typedef boost::shared_ptr< RealNonLinearSourceClass > RealNonLinearSourcePtr;
 
-template class ThermalRadiationInstance< double >;
-typedef ThermalRadiationInstance< double > DoubleThermalRadiationInstance;
-typedef boost::shared_ptr< DoubleThermalRadiationInstance > DoubleThermalRadiationPtr;
+template class ThermalRadiationClass< double >;
+typedef ThermalRadiationClass< double > RealThermalRadiationClass;
+typedef boost::shared_ptr< RealThermalRadiationClass > RealThermalRadiationPtr;
 
-template class ThermalGradientInstance< double >;
-typedef ThermalGradientInstance< double > DoubleThermalGradientInstance;
-typedef boost::shared_ptr< DoubleThermalGradientInstance > DoubleThermalGradientPtr;
+template class ThermalGradientClass< double >;
+typedef ThermalGradientClass< double > RealThermalGradientClass;
+typedef boost::shared_ptr< RealThermalGradientClass > RealThermalGradientPtr;
 
-typedef boost::shared_ptr< UnitaryThermalLoadInstance > UnitaryThermalLoadPtr;
+typedef boost::shared_ptr< UnitaryThermalLoadClass > UnitaryThermalLoadPtr;
 /** @typedef std::list de UnitaryThermalLoad */
 typedef std::list< UnitaryThermalLoadPtr > ListThermalLoad;
 /** @typedef Iterateur sur une std::list de UnitaryThermalLoad */

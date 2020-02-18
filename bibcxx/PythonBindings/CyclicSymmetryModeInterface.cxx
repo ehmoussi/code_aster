@@ -29,9 +29,9 @@ namespace py = boost::python;
 
 void exportCyclicSymmetryModeToPython() {
 
-    py::class_< CyclicSymmetryModeInstance, CyclicSymmetryModeInstance::CyclicSymmetryModePtr,
+    py::class_< CyclicSymmetryModeClass, CyclicSymmetryModeClass::CyclicSymmetryModePtr,
             py::bases< DataStructure > >( "CyclicSymmetryMode", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance > ) )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< CyclicSymmetryModeClass > ) )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< CyclicSymmetryModeInstance, std::string > ) );
+              py::make_constructor( &initFactoryPtr< CyclicSymmetryModeClass, std::string > ) );
 };

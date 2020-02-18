@@ -19,8 +19,8 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (BucklingModeContainer, MechanicalModeComplexContainer,
-                       MechanicalModeContainer)
+from ..Objects import (BucklingModeResult, ModeResultComplex,
+                       ModeResult)
 from ..Supervis import ExecuteCommand
 from ..Utilities import logger
 
@@ -41,19 +41,19 @@ class NormMode(ExecuteCommand):
             if toReuse is not None:
                 self._result = toReuse
             else:
-                self._result = MechanicalModeContainer()
+                self._result = ModeResult()
             return
         if modeType == "MODE_MECA_C":
             if toReuse is not None:
                 self._result = toReuse
             else:
-                self._result = MechanicalModeComplexContainer()
+                self._result = ModeResultComplex()
             return
         if modeType == "MODE_FLAMB":
             if toReuse is not None:
                 self._result = toReuse
             else:
-                self._result = BucklingModeContainer()
+                self._result = BucklingModeResult()
             return
         raise TypeError("unexpected type for keyword MODE")
 

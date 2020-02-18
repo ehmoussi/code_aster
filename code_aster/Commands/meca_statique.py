@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (GenericMechanicalLoad, KinematicsLoad,
-                       ParallelMechanicalLoad, StaticMechanicalSolver)
+                       ParallelMechanicalLoad, LinearStaticAnalysis)
 from ..Supervis import ExecuteCommand
 from ..Utilities import force_list, unsupported
 from .calc_champ import CALC_CHAMP
@@ -70,9 +70,9 @@ class MechanicalSolver(ExecuteCommand):
 
         mechaSolv = None
         if caraElem != None:
-            mechaSolv = StaticMechanicalSolver(model, matOnMesh, caraElem)
+            mechaSolv = LinearStaticAnalysis(model, matOnMesh, caraElem)
         else:
-            mechaSolv = StaticMechanicalSolver(model, matOnMesh)
+            mechaSolv = LinearStaticAnalysis(model, matOnMesh)
 
         inst = keywords.get("INST")
         if inst != None:

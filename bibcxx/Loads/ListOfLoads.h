@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ListOfLoads
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -62,11 +62,11 @@ class GenericLoadFunction {
 typedef std::vector< GenericLoadFunction > ListOfLoadFunctions;
 
 /**
- * @class ListOfLoadInstance
+ * @class ListOfLoadClass
  * @brief Classe definissant une liste de charge
  * @author Nicolas Sellenet
  */
-class ListOfLoadsInstance : public DataStructure {
+class ListOfLoadsClass : public DataStructure {
   private:
     /** @brief Chargements cinematiques */
     ListKineLoad _listOfKinematicsLoads;
@@ -95,7 +95,7 @@ class ListOfLoadsInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    ListOfLoadsInstance( const JeveuxMemory memType = Permanent );
+    ListOfLoadsClass( const JeveuxMemory memType = Permanent );
 
     /**
      * @brief Function d'ajout d'une charge cinematique
@@ -103,7 +103,7 @@ class ListOfLoadsInstance : public DataStructure {
      * @param func multiplier function
      */
     void addLoad( const KinematicsLoadPtr &currentLoad,
-                  const FunctionPtr &func = emptyDoubleFunction ) {
+                  const FunctionPtr &func = emptyRealFunction ) {
         _isEmpty = true;
         _listOfKinematicsLoads.push_back( currentLoad );
         _listOfKineFun.push_back( func );
@@ -137,7 +137,7 @@ class ListOfLoadsInstance : public DataStructure {
      * @param func multiplier function
      */
     void addLoad( const GenericMechanicalLoadPtr &currentLoad,
-                  const FunctionPtr &func = emptyDoubleFunction ) {
+                  const FunctionPtr &func = emptyRealFunction ) {
         _isEmpty = true;
         _listOfMechanicalLoads.push_back( currentLoad );
         _listOfMechaFun.push_back( func );
@@ -172,7 +172,7 @@ class ListOfLoadsInstance : public DataStructure {
      * @param func multiplier function
      */
     void addLoad( const ParallelMechanicalLoadPtr &currentLoad,
-                  const FunctionPtr &func = emptyDoubleFunction ) {
+                  const FunctionPtr &func = emptyRealFunction ) {
         _isEmpty = true;
         _listOfParallelMechanicalLoads.push_back( currentLoad );
         _listOfParaMechaFun.push_back( func );
@@ -269,8 +269,8 @@ class ListOfLoadsInstance : public DataStructure {
 
 /**
  * @typedef ListOfLoad
- * @brief Pointeur intelligent vers un ListOfLoadInstance
+ * @brief Pointeur intelligent vers un ListOfLoadClass
  */
-typedef boost::shared_ptr< ListOfLoadsInstance > ListOfLoadsPtr;
+typedef boost::shared_ptr< ListOfLoadsClass > ListOfLoadsPtr;
 
 #endif /* LISTOFLOADS_H_ */

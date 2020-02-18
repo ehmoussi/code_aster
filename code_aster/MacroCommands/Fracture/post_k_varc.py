@@ -21,7 +21,7 @@
 
 from ...Cata.DataStructure import cham_no_sdaster, evol_elas, evol_noli
 from ...Cata.Syntax import OPER, SIMP
-from ...Objects import FieldOnNodesDouble
+from ...Objects import FieldOnNodesReal
 from ...Supervis import ExecuteCommand
 
 POST_K_VARC_CATA = OPER(
@@ -45,6 +45,6 @@ class PostKVarc(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FieldOnNodesDouble()
+        self._result = FieldOnNodesReal()
 
 POST_K_VARC = PostKVarc.run

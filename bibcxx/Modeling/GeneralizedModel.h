@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe GeneralizedModel
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,11 +35,11 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class GeneralizedModelInstance
+ * @class GeneralizedModelClass
  * @brief Cette classe correspond a un sd_modele_gene
  * @author Nicolas Sellenet
  */
-class GeneralizedModelInstance : public DataStructure {
+class GeneralizedModelClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.MODG.DESC' */
     JeveuxVectorLong _modgDesc;
@@ -48,15 +48,15 @@ class GeneralizedModelInstance : public DataStructure {
     /** @brief Objet Jeveux '.MODG.LIPR' */
     JeveuxVectorLong _modgLipr;
     /** @brief Objet Jeveux '.MODG.LIMA' */
-    JeveuxVectorDouble _modgLima;
+    JeveuxVectorReal _modgLima;
     /** @brief Objet Jeveux '.MODG.SSME' */
     JeveuxVectorChar8 _modgSsme;
     /** @brief Objet Jeveux '.MODG.SSNO' */
     JeveuxVectorChar8 _modgSsno;
     /** @brief Objet Jeveux '.MODG.SSOR' */
-    JeveuxVectorDouble _modgSsor;
+    JeveuxVectorReal _modgSsor;
     /** @brief Objet Jeveux '.MODG.SSTR' */
-    JeveuxVectorDouble _modgSstr;
+    JeveuxVectorReal _modgSstr;
     typedef std::map< std::string, DynamicMacroElementPtr > MapStrMacroElem;
     typedef MapStrMacroElem::iterator MapStrMacroElemIter;
     /** @brief Map which associates a name to a DynamicMacroElementPtr */
@@ -65,23 +65,23 @@ class GeneralizedModelInstance : public DataStructure {
   public:
     /**
      * @typedef GeneralizedModelPtr
-     * @brief Pointeur intelligent vers un GeneralizedModelInstance
+     * @brief Pointeur intelligent vers un GeneralizedModelClass
      */
-    typedef boost::shared_ptr< GeneralizedModelInstance > GeneralizedModelPtr;
+    typedef boost::shared_ptr< GeneralizedModelClass > GeneralizedModelPtr;
 
     /**
      * @brief Constructeur
      */
-    GeneralizedModelInstance( const std::string name = ResultNaming::getNewResultName())
+    GeneralizedModelClass( const std::string name = ResultNaming::getNewResultName())
         : DataStructure( name, 14, "MODELE_GENE", Permanent ),
           _modgDesc( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
           _modgLidf( JeveuxCollectionChar8( getName() + ".MODG.DESC" ) ),
           _modgLipr( JeveuxVectorLong( getName() + ".MODG.DESC" ) ),
-          _modgLima( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ),
+          _modgLima( JeveuxVectorReal( getName() + ".MODG.DESC" ) ),
           _modgSsme( JeveuxVectorChar8( getName() + ".MODG.DESC" ) ),
           _modgSsno( JeveuxVectorChar8( getName() + ".MODG.DESC" ) ),
-          _modgSsor( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ),
-          _modgSstr( JeveuxVectorDouble( getName() + ".MODG.DESC" ) ){};
+          _modgSsor( JeveuxVectorReal( getName() + ".MODG.DESC" ) ),
+          _modgSstr( JeveuxVectorReal( getName() + ".MODG.DESC" ) ){};
 
     /**
      * @brief Add a DynamicMacroElement associated to a name
@@ -101,8 +101,8 @@ class GeneralizedModelInstance : public DataStructure {
 
 /**
  * @typedef GeneralizedModelPtr
- * @brief Pointeur intelligent vers un GeneralizedModelInstance
+ * @brief Pointeur intelligent vers un GeneralizedModelClass
  */
-typedef boost::shared_ptr< GeneralizedModelInstance > GeneralizedModelPtr;
+typedef boost::shared_ptr< GeneralizedModelClass > GeneralizedModelPtr;
 
 #endif /* GENERALIZEDMODEL_H_ */

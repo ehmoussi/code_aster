@@ -153,7 +153,7 @@ def creation_elements_interface_3D(maillage, groupMa_1, groupMa_2, nom_interface
    print "Durée écoulée :", t4-t3, "s"
    print "Étape de doublage des noeuds"
    noeuds_avant = set(maillage.GetNodesId())
-   code_retour = maillage.DoubleNodeGroups([gr_noeuds_inter],[volume_2, face_2, edge_2])
+   code_retour = maillage.RealNodeGroups([gr_noeuds_inter],[volume_2, face_2, edge_2])
    #print code_retour
    noeuds_apres = set(maillage.GetNodesId())
    nouveauxNoeuds = noeuds_apres - noeuds_avant

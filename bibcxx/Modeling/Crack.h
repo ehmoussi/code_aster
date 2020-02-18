@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Crack
  * @author Nicolas Pignet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,16 +32,16 @@
 #include "astercxx.h"
 
 /**
- * @class CrackInstance
+ * @class CrackClass
  * @brief Cette classe decrit un fond_fissure
  * @author Nicolas Pignet
  */
-class CrackInstance : public DataStructure {
+class CrackClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.INFO' */
     JeveuxVectorChar8 _info;
     /** @brief Objet Jeveux '.FONDFISS' */
-    JeveuxVectorDouble _fondFiss;
+    JeveuxVectorReal _fondFiss;
     /** @brief Objet Jeveux '.FOND.TYPE' */
     JeveuxVectorChar8 _fondType;
     /** @brief Objet Jeveux '.FOND.NOEUD' */
@@ -51,23 +51,23 @@ class CrackInstance : public DataStructure {
     /** @brief Objet Jeveux '.FONDSUP.NOEU' */
     JeveuxVectorChar8 _fondSupNoeu;
     /** @brief Objet Jeveux '.FONDFISG' */
-    JeveuxVectorDouble _fondFisG;
+    JeveuxVectorReal _fondFisG;
     /** @brief Objet Jeveux '.NORMALE' */
-    JeveuxVectorDouble _normale;
+    JeveuxVectorReal _normale;
     /** @brief Objet Jeveux '.BASEFOND' */
-    JeveuxVectorDouble _baseFond;
+    JeveuxVectorReal _baseFond;
     /** @brief Objet Jeveux '.LTNO' */
-    FieldOnNodesDoublePtr _ltno;
+    FieldOnNodesRealPtr _ltno;
     /** @brief Objet Jeveux '.LNNO' */
-    FieldOnNodesDoublePtr _lnno;
+    FieldOnNodesRealPtr _lnno;
     /** @brief Objet Jeveux '.BASLOC' */
-    FieldOnNodesDoublePtr _basLoc;
+    FieldOnNodesRealPtr _basLoc;
     /** @brief Objet Jeveux '.FOND.TAILLE_R' */
-    JeveuxVectorDouble _fondTailleR;
+    JeveuxVectorReal _fondTailleR;
     /** @brief Objet Jeveux '.DTAN_ORIGINE' */
-    JeveuxVectorDouble _dtanOrigine;
+    JeveuxVectorReal _dtanOrigine;
     /** @brief Objet Jeveux '.DTAN_EXTREMITE' */
-    JeveuxVectorDouble _dtanExtremite;
+    JeveuxVectorReal _dtanExtremite;
     /** @brief Objet Jeveux '.LEVRESUP.MAIL' */
     JeveuxVectorChar8 _levreSupMail;
     /** @brief Objet Jeveux '.SUPNORM.NOEU' */
@@ -80,20 +80,20 @@ class CrackInstance : public DataStructure {
   public:
     /**
      * @typedef CrackPtr
-     * @brief Pointeur intelligent vers un CrackInstance
+     * @brief Pointeur intelligent vers un CrackClass
      */
-    typedef boost::shared_ptr< CrackInstance > CrackPtr;
+    typedef boost::shared_ptr< CrackClass > CrackPtr;
 
     /**
      * @brief Constructeur
      */
-    CrackInstance( const std::string name = ResultNaming::getNewResultName() );
+    CrackClass( const std::string name = ResultNaming::getNewResultName() );
 };
 
 /**
  * @typedef CrackPtr
- * @brief Pointeur intelligent vers un CrackInstance
+ * @brief Pointeur intelligent vers un CrackClass
  */
-typedef boost::shared_ptr< CrackInstance > CrackPtr;
+typedef boost::shared_ptr< CrackClass > CrackPtr;
 
 #endif /* CRACK_H_ */
