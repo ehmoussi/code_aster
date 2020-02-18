@@ -45,6 +45,8 @@ class Copier(ExecuteCommand):
             mesh = other.getModel().getMesh()
             self._result = type(other)()
             self._result.setMesh(mesh)
+        elif isinstance(other, Model):
+            self._result = Model(other.getMesh())
         else:
             self._result = type(other)()
 
@@ -53,8 +55,6 @@ class Copier(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if isinstance(self._result, Model):
-            self._result.setMesh(keywords['CONCEPT'].getMesh())
 
 
 COPIER = Copier.run
