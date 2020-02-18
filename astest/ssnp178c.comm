@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -55,15 +55,15 @@ times = DEFI_LIST_INST(
 FY = FORMULE(NOM_PARA=('X', 'Y', 'INST'), VALE='0.1125')
 
 # Nombre de calculs :
-nb_calcul = 2
-model_ = ['D_PLAN_HHO_121', 'D_PLAN_HHO_222']
+nb_calcul = 1
+model_ = ['D_PLAN_HHO_121']
 
-AY = [2.12537332819, 2.13036294229]
-AX = [-1.60812747638, -1.61283391525]
-AT = [-0.0461839413768, -0.157346603321]
-CY = [0.353650820982, 0.350867874359]
-CX = [-0.0282822391384, -0.0257117599263]
-CT = [0.423421678989, 0.417452611243]
+AY = [2.12537332819]
+AX = [-1.60812747638]
+AT = [-0.0461839413768]
+CY = [0.353650820982]
+CX = [-0.0282822391384]
+CT = [0.423421678989]
 
 for i in range(nb_calcul):
 
