@@ -50,7 +50,7 @@ listr = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=(
     _F(JUSQU_A=0.1, NOMBRE=1),
     _F(JUSQU_A=0.5, NOMBRE=3),
     _F(JUSQU_A=0.8, NOMBRE=4),
-    _F(JUSQU_A=1.0, NOMBRE=8),
+    _F(JUSQU_A=1.0, NOMBRE=4),
 ),)
 
 times = DEFI_LIST_INST(
@@ -58,16 +58,18 @@ times = DEFI_LIST_INST(
     ECHEC=_F(ACTION='DECOUPE', EVENEMENT='ERREUR', SUBD_NIVEAU=4)
 )
 
+FY = FORMULE(NOM_PARA=('X', 'Y', 'INST'), VALE='0.3125')
+
 # Nombre de calculs :
 nb_calcul = 1
-model_ = ['D_PLAN_HHO_121']
+model_ = ['D_PLAN_HHO_222']
 
-AY = [7.016499504441331]
-AX = [-6.317053086130687]
-AT = [-1.7072201830160605]
-CY = [1.478014800124048]
-CX = [-0.2141497453475518]
-CT = [0.8118729853174264]
+AY = [6.912721426496892]
+AX = [-6.15491278514281]
+AT = [-0.1514049252089674]
+CY = [1.4229550820617674]
+CX = [-0.18346541090289903]
+CT = [0.8157534665224041]
 
 for i in range(nb_calcul):
 
@@ -80,8 +82,8 @@ for i in range(nb_calcul):
         MECA_IMPO=_F(DX=0.0, DY=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
     )
 
-    load = AFFE_CHAR_MECA(
-        FORCE_CONTOUR=_F(FY=0.3125, GROUP_MA=('load', )), MODELE=model
+    load = AFFE_CHAR_MECA_F(
+        FORCE_CONTOUR=_F(FY=FY, GROUP_MA=('load', )), MODELE=model
     )
 
     resnonl = STAT_NON_LINE(
@@ -94,11 +96,11 @@ for i in range(nb_calcul):
             _F(CHARGE=load, FONC_MULT=rampe,
                TYPE_CHARGE='FIXE_CSTE'),
         ),
+        HHO=_F(OPTIMISATION='TEMPS',),
         INCREMENT=_F(LIST_INST=times),
         MODELE=model,
         NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
-        SOLVEUR=_F(METHODE='MUMPS'),
-        HHO=_F(STABILISATION='MANUEL', COEF_STAB=E, OPTIMISATION='TEMPS'),
+        SOLVEUR=_F(METHODE='MUMPS',),
         INFO=1,
     )
 
