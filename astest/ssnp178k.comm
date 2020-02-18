@@ -43,27 +43,27 @@ rampe = DEFI_FONCTION(NOM_PARA='INST', VALE=(
     0.0, 0.0, 1.0, 1.0), PROL_DROITE='LINEAIRE', PROL_GAUCHE='EXCLU',)
 
 listr = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=(
-    _F(JUSQU_A=0.4, NOMBRE=1),
-    _F(JUSQU_A=0.8, NOMBRE=4),
-    _F(JUSQU_A=0.95, NOMBRE=6),
-    _F(JUSQU_A=1.0, NOMBRE=4),
+    _F(JUSQU_A=0.3, NOMBRE=1),
+    _F(JUSQU_A=1.0, NOMBRE=7),
 ),)
 
 times = DEFI_LIST_INST(
     DEFI_LIST=_F(LIST_INST=listr),
-    ECHEC=_F(ACTION='DECOUPE', EVENEMENT='ERREUR', SUBD_NIVEAU=4)
+    ECHEC=_F(ACTION='DECOUPE', EVENEMENT='ERREUR', SUBD_NIVEAU=3)
 )
+
+FY = FORMULE(NOM_PARA=('X', 'Y', 'INST'), VALE='0.1125')
 
 # Nombre de calculs :
 nb_calcul = 1
-model_ = ['D_PLAN_HHO_121']
+model_ = [ 'D_PLAN_HHO_222']
 
-AY = [2.191028993521375]
-AX = [-1.6776058352999696]
-AT = [-0.6420691050111974]
-CY = [0.3534234536862735]
-CX = [-0.029223410354370333]
-CT = [0.4132436624158596]
+AY = [ 2.13036294229]
+AX = [-1.61283391525]
+AT = [ -0.157346603321]
+CY = [0.350867874359]
+CX = [ -0.0257117599263]
+CT = [ 0.417452611243]
 
 for i in range(nb_calcul):
 
@@ -76,8 +76,8 @@ for i in range(nb_calcul):
         MECA_IMPO=_F(DX=0.0, DY=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
     )
 
-    load = AFFE_CHAR_MECA(
-        FORCE_CONTOUR=_F(FY=0.1125, GROUP_MA=('load', )), MODELE=model
+    load = AFFE_CHAR_MECA_F(
+        FORCE_CONTOUR=_F(FY=FY, GROUP_MA=('load', )), MODELE=model
     )
 
     resnonl = STAT_NON_LINE(
@@ -94,7 +94,7 @@ for i in range(nb_calcul):
         MODELE=model,
         NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
         SOLVEUR=_F(METHODE='MUMPS'),
-        HHO=_F(STABILISATION='MANUEL', COEF_STAB=10*E, OPTIMISATION='TEMPS',),
+        HHO=_F(OPTIMISATION='TEMPS',),
         INFO=1,
     )
 
@@ -115,7 +115,7 @@ for i in range(nb_calcul):
                       VALE_CALC=AY[i],
                       VALE_REFE=2.13651,
                       CRITERE='RELATIF',
-                      PRECISION=3.E-2,),
+                      PRECISION=1.E-2,),
               )
 
     TEST_RESU(RESU=_F(INST=1.0,
@@ -127,7 +127,7 @@ for i in range(nb_calcul):
                       VALE_CALC=AX[i],
                       VALE_REFE=-1.61818,
                       CRITERE='RELATIF',
-                      PRECISION=4.E-2,),
+                      PRECISION=1.E-2,),
               )
 
     TEST_RESU(RESU=_F(INST=1.0,
