@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,39 +25,41 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-MAIL=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='MED',);
+MAIL=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='MED',)
 
 MO=AFFE_MODELE(AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
                        MODELISATION='DKT',),
-               MAILLAGE=MAIL,);
+               MAILLAGE=MAIL,)
 
 CAR_ELE=AFFE_CARA_ELEM(MODELE=MO,
                        COQUE=_F(GROUP_MA='TOUT_ELT',
-                                EPAIS=0.0508,),);
+                                EPAIS=0.0508,),)
 
 MAT=DEFI_MATERIAU(ELAS=_F(NU=0.35,
-                          E=22752510.,),);
+                          E=22752510.,),)
 
 CHAM_MAT=AFFE_MATERIAU(AFFE=_F(MATER=MAT,
                                TOUT='OUI',),
-                       MAILLAGE=MAIL,);
+                       MAILLAGE=MAIL,)
 
-CHA=AFFE_CHAR_MECA(DDL_IMPO=_F(GROUP_MA='ENCASTR',
+CINE=AFFE_CHAR_CINE(MECA_IMPO=_F(GROUP_MA='ENCASTR',
                                DZ=0.0,
                                DX=0.0,
                                DY=0.0,
                                DRZ=0.0,
                                DRX=0.0,
                                DRY=0.0,),
-                   MODELE=MO,
+                   MODELE=MO,)
+
+CHA=AFFE_CHAR_MECA(MODELE=MO,
                    FORCE_ARETE=_F(GROUP_MA='LIBRE',
-                                  FZ=8.7594,),);
+                                  FZ=8.7594,),)
 
 RESU=MECA_STATIQUE(CHAM_MATER=CHAM_MAT,
                    MODELE=MO,
                    CARA_ELEM=CAR_ELE,
-                   EXCIT=_F(CHARGE=CHA,),);
+                   EXCIT=(_F(CHARGE=CHA,),_F(CHARGE=CINE)),)
 
 RESU=CALC_CHAMP(reuse=RESU,RESULTAT=RESU,CONTRAINTE=('SIGM_ELNO'))
 
@@ -67,7 +69,7 @@ DEP_Z=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
                               GROUP_NO= ('C','D'),
                               NOM_CMP='DZ',
                               RESULTAT=RESU,
-                              NOM_CHAM='DEPL',),);
+                              NOM_CHAM='DEPL',),)
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    GROUP_NO='C',
@@ -94,4 +96,4 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 ),
           )
 
-FIN();
+FIN()

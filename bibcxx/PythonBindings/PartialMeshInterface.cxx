@@ -32,12 +32,12 @@ namespace py = boost::python;
 void exportPartialMeshToPython() {
 
 #ifdef _USE_MPI
-    py::class_< PartialMeshInstance, PartialMeshInstance::PartialMeshPtr,
-                py::bases< BaseMeshInstance > >( "PartialMesh", py::no_init )
+    py::class_< PartialMeshClass, PartialMeshClass::PartialMeshPtr,
+                py::bases< BaseMeshClass > >( "PartialMesh", py::no_init )
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< PartialMeshInstance, ParallelMeshPtr, VectorString >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< PartialMeshInstance, std::string,
+                  &initFactoryPtr< PartialMeshClass, ParallelMeshPtr, VectorString >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< PartialMeshClass, std::string,
                                                                 ParallelMeshPtr, VectorString >));
 #endif /* _USE_MPI */
 };

@@ -336,8 +336,7 @@ use petsc_data_module
     call jedetr(trans2)
 
 ! -- Close the logical unit dedicated to dump the matrix
-    flush(11+rang)
-
+    if(ldebug) flush(11+rang)
 
     call jedema()
 

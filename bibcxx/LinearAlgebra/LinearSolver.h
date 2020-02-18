@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe LinearSolver
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -39,10 +39,10 @@
 #include "astercxx.h"
 
 /**
- * @struct StaticMechanicalSolverInstance predefinition
+ * @struct LinearStaticAnalysisClass predefinition
  * @todo to remove
  */
-class StaticMechanicalSolverInstance;
+class LinearStaticAnalysisClass;
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
@@ -132,12 +132,12 @@ typedef RenumberingChecker< WrapPetsc > PetscRenumberingChecker;
 typedef RenumberingChecker< WrapGcpc > GcpcRenumberingChecker;
 
 /**
- * @class BaseLinearSolverInstance
+ * @class BaseLinearSolverClass
  * @brief Cette classe permet de definir un solveur lineaire
  * @author Nicolas Sellenet
  * @todo verifier que tous les mots-clés sont modifiables par des set
  */
-class BaseLinearSolverInstance : public DataStructure {
+class BaseLinearSolverClass : public DataStructure {
   protected:
     /** @brief Type du solveur lineaire */
     LinearSolverEnum _linearSolver;
@@ -148,7 +148,7 @@ class BaseLinearSolverInstance : public DataStructure {
     Preconditioning _preconditioning;
 
     JeveuxVectorChar24 _charValues;
-    JeveuxVectorDouble _doubleValues;
+    JeveuxVectorReal _doubleValues;
     JeveuxVectorLong _integerValues;
 
     GenParam _algo;
@@ -176,16 +176,16 @@ class BaseLinearSolverInstance : public DataStructure {
     GenParam _resolutionType;
     GenParam _acceleration;
     ListGenParam _listOfParameters;
-    AssemblyMatrixDisplacementDoublePtr _matrixPrec;
+    AssemblyMatrixDisplacementRealPtr _matrixPrec;
     std::string _commandName;
     bool _xfem;
 
   public:
     /**
      * @typedef BaseLinearSolverPtr
-     * @brief Pointeur intelligent vers un BaseLinearSolverInstance
+     * @brief Pointeur intelligent vers un BaseLinearSolverClass
      */
-    typedef boost::shared_ptr< BaseLinearSolverInstance > BaseLinearSolverPtr;
+    typedef boost::shared_ptr< BaseLinearSolverClass > BaseLinearSolverPtr;
 
     /**
      * @brief Constructeur
@@ -193,9 +193,9 @@ class BaseLinearSolverInstance : public DataStructure {
      * @param currentRenumber Type de renumeroteur
      * @todo recuperer le code retour de isAllowedRenumberingForSolver
      */
-    BaseLinearSolverInstance( const LinearSolverEnum currentBaseLinearSolver = MultFront,
+    BaseLinearSolverClass( const LinearSolverEnum currentBaseLinearSolver = MultFront,
                               const Renumbering currentRenumber = Metis )
-        : BaseLinearSolverInstance( ResultNaming::getNewResultName(), currentBaseLinearSolver,
+        : BaseLinearSolverClass( ResultNaming::getNewResultName(), currentBaseLinearSolver,
                                     currentRenumber ){};
 
     /**
@@ -205,13 +205,13 @@ class BaseLinearSolverInstance : public DataStructure {
      * @param currentRenumber Type de renumeroteur
      * @todo recuperer le code retour de isAllowedRenumberingForSolver
      */
-    BaseLinearSolverInstance( const std::string name,
+    BaseLinearSolverClass( const std::string name,
                               const LinearSolverEnum currentBaseLinearSolver = MultFront,
                               const Renumbering currentRenumber = Metis ):
         DataStructure( name, 19, "SOLVEUR" ), _linearSolver( currentBaseLinearSolver ),
         _renumber( currentRenumber ), _isEmpty( true ), _preconditioning( Without ),
         _charValues( JeveuxVectorChar24( getName() + ".SLVK" ) ),
-        _doubleValues( JeveuxVectorDouble( getName() + ".SLVR" ) ),
+        _doubleValues( JeveuxVectorReal( getName() + ".SLVR" ) ),
         _integerValues( JeveuxVectorLong( getName() + ".SLVI" ) ), _algo( "ALGORITHME", false ),
         _lagr( "ELIM_LAGR", false ), _matrFilter( "FILTRAGE_MATRICE", false ),
         _memory( "GESTION_MEMOIRE", false ), _lowRankThreshold( "LOW_RANK_SEUIL", false ),
@@ -225,7 +225,7 @@ class BaseLinearSolverInstance : public DataStructure {
         _residual( "RESI_RELA", false ), _precondResidual( "RESI_RELA_PC", false ),
         _stopSingular( "STOP_SINGULIER", false ), _resolutionType( "TYPE_RESOL", false ),
         _acceleration( "ACCELERATION", false ),
-        _matrixPrec( new AssemblyMatrixDisplacementDoubleInstance(
+        _matrixPrec( new AssemblyMatrixDisplacementRealClass(
             ResultNaming::getNewResultName() + ".PREC" ) ),
         _commandName( "SOLVEUR" ),
         _xfem( false )
@@ -305,7 +305,7 @@ class BaseLinearSolverInstance : public DataStructure {
     /**
      * @brief Destructor
      */
-    ~BaseLinearSolverInstance(){};
+    ~BaseLinearSolverClass(){};
 
     /** @brief Returns a ListSyntaxMapContainer object "listsyntax",
         ready to be inserted  in a CommandSyntax object with the key SOLVEUR
@@ -366,7 +366,7 @@ class BaseLinearSolverInstance : public DataStructure {
      * @brief Factorisation d'une matrice
      * @param currentMatrix Matrice assemblee
      */
-    bool matrixFactorization( AssemblyMatrixDisplacementDoublePtr currentMatrix );
+    bool matrixFactorization( AssemblyMatrixDisplacementRealPtr currentMatrix );
 
     /**
      * @brief Inversion du systeme lineaire
@@ -376,11 +376,11 @@ class BaseLinearSolverInstance : public DataStructure {
      * @param result champ aux noeuds résultat (optionnel)
      * @return champ aux noeuds resultat
      */
-    FieldOnNodesDoublePtr
-    solveDoubleLinearSystem( const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
-                             const FieldOnNodesDoublePtr &currentRHS,
-                             FieldOnNodesDoublePtr result = FieldOnNodesDoublePtr(
-                                 new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
+    FieldOnNodesRealPtr
+    solveRealLinearSystem( const AssemblyMatrixDisplacementRealPtr &currentMatrix,
+                             const FieldOnNodesRealPtr &currentRHS,
+                             FieldOnNodesRealPtr result = FieldOnNodesRealPtr(
+                                 new FieldOnNodesRealClass( Permanent ) ) ) const;
 
     /**
      * @brief Inversion du systeme lineaire
@@ -390,11 +390,11 @@ class BaseLinearSolverInstance : public DataStructure {
      * @param result champ aux noeuds résultat (optionnel)
      * @return champ aux noeuds resultat
      */
-    FieldOnNodesDoublePtr solveDoubleLinearSystemWithKinematicsLoad(
-        const AssemblyMatrixDisplacementDoublePtr &currentMatrix,
-        const FieldOnNodesDoublePtr &kinematicsField, const FieldOnNodesDoublePtr &currentRHS,
-        FieldOnNodesDoublePtr result =
-            FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( Permanent ) ) ) const;
+    FieldOnNodesRealPtr solveRealLinearSystemWithKinematicsLoad(
+        const AssemblyMatrixDisplacementRealPtr &currentMatrix,
+        const FieldOnNodesRealPtr &kinematicsField, const FieldOnNodesRealPtr &currentRHS,
+        FieldOnNodesRealPtr result =
+            FieldOnNodesRealPtr( new FieldOnNodesRealClass( Permanent ) ) ) const;
 
     void disablePreprocessing() {
         if ( _linearSolver != Mumps )
@@ -523,38 +523,38 @@ class BaseLinearSolverInstance : public DataStructure {
         _reac = value;
     };
 
-    friend class StaticMechanicalSolverInstance;
+    friend class LinearStaticAnalysisClass;
 };
 
 /**
  * @typedef BaseLinearSolverPtr
- * @brief Pointeur intelligent vers un BaseLinearSolverInstance
+ * @brief Pointeur intelligent vers un BaseLinearSolverClass
  */
-typedef boost::shared_ptr< BaseLinearSolverInstance > BaseLinearSolverPtr;
+typedef boost::shared_ptr< BaseLinearSolverClass > BaseLinearSolverPtr;
 
 /**
- * @class LinearSolverInstance
+ * @class LinearSolverClass
  * @brief Cette classe permet de definir un solveur lineaire
  * @author Nicolas Sellenet
  * @todo verifier que tous les mots-clés sont modifiables par des set
  */
-template < typename linSolvWrap > class LinearSolverInstance : public BaseLinearSolverInstance {
+template < typename linSolvWrap > class LinearSolverClass : public BaseLinearSolverClass {
   public:
     /**
      * @typedef LinearSolverPtr
      * @brief Pointeur intelligent vers un LinearSolver
      */
-    typedef boost::shared_ptr< LinearSolverInstance< linSolvWrap > > LinearSolverPtr;
+    typedef boost::shared_ptr< LinearSolverClass< linSolvWrap > > LinearSolverPtr;
 
     /**
      * @brief Constructeur
      */
-    LinearSolverInstance( const Renumbering currentRenumber = Metis )
-        : LinearSolverInstance( ResultNaming::getNewResultName(), currentRenumber )
+    LinearSolverClass( const Renumbering currentRenumber = Metis )
+        : LinearSolverClass( ResultNaming::getNewResultName(), currentRenumber )
     {};
 
-    LinearSolverInstance( const std::string name, const Renumbering currentRenumber = Metis )
-        : BaseLinearSolverInstance( name, linSolvWrap::solverType, currentRenumber )
+    LinearSolverClass( const std::string name, const Renumbering currentRenumber = Metis )
+        : BaseLinearSolverClass( name, linSolvWrap::solverType, currentRenumber )
     {
         RenumberingChecker< linSolvWrap >::isAllowedRenumbering( currentRenumber );
     };
@@ -562,25 +562,25 @@ template < typename linSolvWrap > class LinearSolverInstance : public BaseLinear
     bool isHPCCompliant() { return RenumberingChecker< linSolvWrap >::isHPCCompliant(); };
 };
 
-typedef LinearSolverInstance< WrapMultFront > MultFrontSolverInstance;
-typedef LinearSolverInstance< WrapLdlt > LdltSolverInstance;
-typedef LinearSolverInstance< WrapMumps > MumpsSolverInstance;
-typedef LinearSolverInstance< WrapPetsc > PetscSolverInstance;
-typedef LinearSolverInstance< WrapGcpc > GcpcSolverInstance;
+typedef LinearSolverClass< WrapMultFront > MultFrontSolverClass;
+typedef LinearSolverClass< WrapLdlt > LdltSolverClass;
+typedef LinearSolverClass< WrapMumps > MumpsSolverClass;
+typedef LinearSolverClass< WrapPetsc > PetscSolverClass;
+typedef LinearSolverClass< WrapGcpc > GcpcSolverClass;
 
-/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< MultFront > */
-typedef boost::shared_ptr< MultFrontSolverInstance > MultFrontSolverPtr;
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverClass< MultFront > */
+typedef boost::shared_ptr< MultFrontSolverClass > MultFrontSolverPtr;
 
-/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< Ldlt > */
-typedef boost::shared_ptr< LdltSolverInstance > LdltSolverPtr;
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverClass< Ldlt > */
+typedef boost::shared_ptr< LdltSolverClass > LdltSolverPtr;
 
-/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< Mumps > */
-typedef boost::shared_ptr< MumpsSolverInstance > MumpsSolverPtr;
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverClass< Mumps > */
+typedef boost::shared_ptr< MumpsSolverClass > MumpsSolverPtr;
 
-/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< Petsc > */
-typedef boost::shared_ptr< PetscSolverInstance > PetscSolverPtr;
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverClass< Petsc > */
+typedef boost::shared_ptr< PetscSolverClass > PetscSolverPtr;
 
-/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverInstance< Gcpc > */
-typedef boost::shared_ptr< GcpcSolverInstance > GcpcSolverPtr;
+/** @brief Enveloppe d'un pointeur intelligent vers un BaseLinearSolverClass< Gcpc > */
+typedef boost::shared_ptr< GcpcSolverClass > GcpcSolverPtr;
 
 #endif /* LINEARSOLVER_H_ */

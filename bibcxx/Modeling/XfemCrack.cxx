@@ -1,9 +1,9 @@
 /**
  * @file XfemCrack.cxx
- * @brief Implementation de MaterialInstance
+ * @brief Implementation de MaterialClass
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,7 +31,7 @@
 
 #include "Modeling/CrackShape.h"
 
-XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr mesh )
+XfemCrackClass::XfemCrackClass( const std::string name, MeshPtr mesh )
     : DataStructure( name, 8, "FISS_XFEM" ), _jeveuxName( ResultNaming::getCurrentName() ),
       _mesh( mesh ), _auxiliaryGrid( MeshPtr() ),
       _existingCrackWithGrid( XfemCrackPtr() ), _discontinuityType( "Crack" ), _crackLipsEntity(),
@@ -40,25 +40,25 @@ XfemCrackInstance::XfemCrackInstance( const std::string name, MeshPtr mesh )
       _enrichedElements(), _discontinuousField( "DEPL" ), _enrichmentType( std::string() ),
       _enrichmentRadiusZone( 0 ), _enrichedLayersNumber( 0 ),
 
-      _tangentialLevelSetField( new FieldOnNodesDoubleInstance( _jeveuxName + ".LTNO      " ) ),
-      _normalLevelSetField( new FieldOnNodesDoubleInstance( _jeveuxName + ".LNNO      " ) ),
-      _tangentialLevelSetGradient( new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLTNO    " ) ),
-      _normalLevelSetGradient( new FieldOnNodesDoubleInstance( _jeveuxName + ".GRLNNO    " ) ),
-      _localBasis( new FieldOnNodesDoubleInstance( _jeveuxName + ".BASLOC    " ) ),
-      _crackTipCoords( JeveuxVectorDouble( _jeveuxName + ".FONDFISS" ) ),
-      _crackTipBasis( JeveuxVectorDouble( _jeveuxName + ".BASEFOND" ) ),
+      _tangentialLevelSetField( new FieldOnNodesRealClass( _jeveuxName + ".LTNO      " ) ),
+      _normalLevelSetField( new FieldOnNodesRealClass( _jeveuxName + ".LNNO      " ) ),
+      _tangentialLevelSetGradient( new FieldOnNodesRealClass( _jeveuxName + ".GRLTNO    " ) ),
+      _normalLevelSetGradient( new FieldOnNodesRealClass( _jeveuxName + ".GRLNNO    " ) ),
+      _localBasis( new FieldOnNodesRealClass( _jeveuxName + ".BASLOC    " ) ),
+      _crackTipCoords( JeveuxVectorReal( _jeveuxName + ".FONDFISS" ) ),
+      _crackTipBasis( JeveuxVectorReal( _jeveuxName + ".BASEFOND" ) ),
       _crackTipMultiplicity( JeveuxVectorLong( _jeveuxName + ".FONDMULT" ) ),
-      _crackTipCharacteristics( JeveuxVectorDouble( _jeveuxName + ".CARAFOND" ) ),
-      _elementSize( JeveuxVectorDouble( _jeveuxName + ".FOND.TAILLE_R" ) ),
+      _crackTipCharacteristics( JeveuxVectorReal( _jeveuxName + ".CARAFOND" ) ),
+      _elementSize( JeveuxVectorReal( _jeveuxName + ".FOND.TAILLE_R" ) ),
       _enrichedNodes( JeveuxVectorLong( _jeveuxName + ".GROUP_NO_ENRI" ) ),
       _crackTipElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.CTIP" ) ),
       _heavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
       _crackTipAndHeavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) ){};
 
-XfemCrackInstance::XfemCrackInstance( MeshPtr mesh )
-    : XfemCrackInstance( ResultNaming::getNewResultName(), mesh ){};
+XfemCrackClass::XfemCrackClass( MeshPtr mesh )
+    : XfemCrackClass( ResultNaming::getNewResultName(), mesh ){};
 
-bool XfemCrackInstance::build() {
+bool XfemCrackClass::build() {
     CommandSyntax cmdSt( "DEFI_FISS_XFEM" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "FISS_XFEM" );
 
@@ -190,12 +190,8 @@ bool XfemCrackInstance::build() {
     return true;
 };
 
-ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) {
+ModelPtr XfemCrackClass::enrichModelWithXfem( ModelPtr &baseModel ) {
     CommandSyntax cmdSt( "MODI_MODELE_XFEM" );
-
-    // Create empty model and get its name
-    ModelPtr newModelPtr( new ModelInstance() );
-    cmdSt.setResult( newModelPtr->getName(), "MODELE" );
 
     SyntaxMapContainer dict;
 
@@ -210,6 +206,10 @@ ModelPtr XfemCrackInstance::enrichModelWithXfem( ModelPtr &baseModel ) {
     dict.container["PRETRAITEMENTS"] = "AUTO";
 
     cmdSt.define( dict );
+
+    // Create model and get its name
+    ModelPtr newModelPtr( new ModelClass(baseModel->getMesh()) );
+    cmdSt.setResult( newModelPtr->getName(), "MODELE" );
 
     // Call  OP00113
     try {

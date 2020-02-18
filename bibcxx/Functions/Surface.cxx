@@ -28,7 +28,7 @@
 
 namespace py = boost::python;
 
-PyObject *SurfaceInstance::exportExtensionToPython() const {
+PyObject *SurfaceClass::exportExtensionToPython() const {
     if ( !_property->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
@@ -42,7 +42,7 @@ PyObject *SurfaceInstance::exportExtensionToPython() const {
     return py::incref( toReturn.ptr() );
 };
 
-PyObject *SurfaceInstance::exportParametersToPython() const {
+PyObject *SurfaceClass::exportParametersToPython() const {
     if ( !_parameters->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
@@ -55,7 +55,7 @@ PyObject *SurfaceInstance::exportParametersToPython() const {
     return py::incref( toReturn.ptr() );
 };
 
-PyObject *SurfaceInstance::exportValuesToPython() const {
+PyObject *SurfaceClass::exportValuesToPython() const {
     if ( !_value->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 

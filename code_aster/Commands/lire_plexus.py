@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import EvolutiveLoad
+from ..Objects import LoadResult
 from ..Supervis import ExecuteCommand
 
 
 class LirePlexus(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.EvolutiveLoad`.
+    """Command that defines :class:`~code_aster.Objects.LoadResult`.
     """
     command_name = "LIRE_PLEXUS"
 
@@ -34,7 +34,7 @@ class LirePlexus(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = EvolutiveLoad()
+        self._result = LoadResult()
 
     def post_exec(self, keywords):
         """Execute the command.

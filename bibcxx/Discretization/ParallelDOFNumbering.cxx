@@ -1,9 +1,9 @@
 /**
  * @file ParallelDOFNumbering.cxx
- * @brief Implementation de ParallelDOFNumberingInstance
+ * @brief Implementation de ParallelDOFNumberingClass
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *

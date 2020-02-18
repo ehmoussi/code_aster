@@ -33,11 +33,11 @@ namespace py = boost::python;
 
 void exportMeshCoordinatesFieldToPython() {
 
-    py::class_< MeshCoordinatesFieldInstance, MeshCoordinatesFieldPtr, py::bases< DataStructure > >(
+    py::class_< MeshCoordinatesFieldClass, MeshCoordinatesFieldPtr, py::bases< DataStructure > >(
         "MeshCoordinatesField", py::no_init )
         // fake initFactoryPtr: no default constructor, only for restart
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< MeshCoordinatesFieldInstance, std::string > ) )
+              py::make_constructor( &initFactoryPtr< MeshCoordinatesFieldClass, std::string > ) )
         .def( "__getitem__",
-              +[]( const MeshCoordinatesFieldInstance &v, int i ) { return v.operator[]( i ); } );
+              +[]( const MeshCoordinatesFieldClass &v, int i ) { return v.operator[]( i ); } );
 };

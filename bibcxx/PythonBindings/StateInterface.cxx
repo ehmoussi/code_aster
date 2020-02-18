@@ -29,21 +29,21 @@ namespace py = boost::python;
 
 void exportStateToPython() {
 
-    void ( StateInstance::*c1 )( const NonLinearEvolutionContainerPtr &, double, double ) =
-        &StateInstance::setFromNonLinearEvolution;
-    void ( StateInstance::*c3 )( const NonLinearEvolutionContainerPtr &, ASTERINTEGER ) =
-        &StateInstance::setFromNonLinearEvolution;
-    void ( StateInstance::*c4 )( const NonLinearEvolutionContainerPtr & ) =
-        &StateInstance::setFromNonLinearEvolution;
+    void ( StateClass::*c1 )( const NonLinearResultPtr &, double, double ) =
+        &StateClass::setFromNonLinearResult;
+    void ( StateClass::*c3 )( const NonLinearResultPtr &, ASTERINTEGER ) =
+        &StateClass::setFromNonLinearResult;
+    void ( StateClass::*c4 )( const NonLinearResultPtr & ) =
+        &StateClass::setFromNonLinearResult;
 
-    py::class_< StateInstance, StatePtr >( "State", py::no_init )
+    py::class_< StateClass, StatePtr >( "State", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER, double >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< StateInstance, ASTERINTEGER >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< StateInstance, double >))
-        .def( "setFromNonLinearEvolution", c1 )
-        .def( "setFromNonLinearEvolution", c3 )
-        .def( "setFromNonLinearEvolution", c4 )
-        .def( "setCurrentStep", &StateInstance::setCurrentStep )
-        .def( "setDisplacement", &StateInstance::setDisplacement );
+              py::make_constructor(&initFactoryPtr< StateClass, ASTERINTEGER, double >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StateClass, ASTERINTEGER >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StateClass, double >))
+        .def( "setFromNonLinearResult", c1 )
+        .def( "setFromNonLinearResult", c3 )
+        .def( "setFromNonLinearResult", c4 )
+        .def( "setCurrentStep", &StateClass::setCurrentStep )
+        .def( "setDisplacement", &StateClass::setDisplacement );
 };

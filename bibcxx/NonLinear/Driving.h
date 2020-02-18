@@ -6,7 +6,7 @@
  * @brief Header file for Driving  Class
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -69,11 +69,11 @@ extern const std::vector< SelectionCriterionEnum > allSelectionCriterion;
 extern const std::vector< std::string > allSelectionCriterionNames;
 
 /**
- * @class DrivingInstance
+ * @class DrivingClass
  * @brief defines a driving method and its parameters.
  * @author Natacha Béreux
  */
-class DrivingInstance {
+class DrivingClass {
   private:
     /** @brief Pointeur intelligent vers un VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
@@ -94,7 +94,7 @@ class DrivingInstance {
     CapyConvertibleContainer _toCapyConverter;
 
   public:
-    DrivingInstance( DrivingTypeEnum type )
+    DrivingClass( DrivingTypeEnum type )
         : _type( type ), _coefMult( 1.0 ), _keepInRange( true ),
           _criterion( SmallestDisplacementIncrement ), _monotony( 0 ) {
         _toCapyConverter.add( new CapyConvertibleValue< DrivingTypeEnum >(
@@ -232,6 +232,6 @@ class DrivingInstance {
     };
 };
 
-typedef boost::shared_ptr< DrivingInstance > DrivingPtr;
+typedef boost::shared_ptr< DrivingClass > DrivingPtr;
 
 #endif /* DRIVING_H_ */

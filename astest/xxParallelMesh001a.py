@@ -19,9 +19,8 @@ pMesh = code_aster.ParallelMesh()
 pMesh.readMedFile("xxParallelMesh001a")
 pMesh.debugPrint(rank+30)
 
-model = code_aster.Model()
+model = code_aster.Model(pMesh)
 test.assertEqual(model.getType(), "MODELE_SDASTER")
-model.setMesh(pMesh)
 model.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                            code_aster.Modelings.Tridimensional)
 model.build()
@@ -41,7 +40,7 @@ testMesh2 = affectMat.getMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
 
 affectMat.addMaterialOnAllMesh(acier)
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 charCine = code_aster.KinematicsMechanicalLoad()
 charCine.setModel(model)
@@ -59,7 +58,7 @@ numeDDL.setElementaryMatrix(matr_elem)
 numeDDL.computeNumbering()
 numeDDL.debugPrint(rank+30)
 
-matrAsse = code_aster.AssemblyMatrixDisplacementDouble()
+matrAsse = code_aster.AssemblyMatrixDisplacementReal()
 matrAsse.appendElementaryMatrix(matr_elem)
 matrAsse.setDOFNumbering(numeDDL)
 matrAsse.addKinematicsLoad(charCine)

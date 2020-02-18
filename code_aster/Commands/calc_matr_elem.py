@@ -20,9 +20,9 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (ElementaryMatrixDisplacementComplex,
-                       ElementaryMatrixDisplacementDouble,
+                       ElementaryMatrixDisplacementReal,
                        ElementaryMatrixPressureComplex,
-                       ElementaryMatrixTemperatureDouble)
+                       ElementaryMatrixTemperatureReal)
 from ..Supervis import ExecuteCommand
 
 
@@ -42,11 +42,11 @@ class ComputeElementaryMatrix(ExecuteCommand):
                         'MASS_FLUI_STRU', 'MASS_MECA', 'MASS_MECA_DIAG',
                         'MECA_GYRO', 'ONDE_FLUI', 'RIGI_FLUI_STRU', 'RIGI_GEOM',
                         'RIGI_GYRO', 'RIGI_MECA', 'RIGI_ROTA'):
-            self._result = ElementaryMatrixDisplacementDouble()
+            self._result = ElementaryMatrixDisplacementReal()
         elif myOption == "RIGI_MECA_HYST":
             self._result = ElementaryMatrixDisplacementComplex()
         elif myOption in ("RIGI_THER", "MASS_THER"):
-            self._result = ElementaryMatrixTemperatureDouble()
+            self._result = ElementaryMatrixTemperatureReal()
         elif myOption in ("RIGI_ACOU", "MASS_ACOU", "AMOR_ACOU"):
             self._result = ElementaryMatrixPressureComplex()
 

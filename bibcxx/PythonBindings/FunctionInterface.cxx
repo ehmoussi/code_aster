@@ -32,36 +32,36 @@ namespace py = boost::python;
 
 void exportFunctionToPython() {
 
-    py::class_< BaseFunctionInstance, BaseFunctionInstance::BaseFunctionPtr,
-                py::bases< GenericFunctionInstance > >( "BaseFunction", py::no_init )
+    py::class_< BaseFunctionClass, BaseFunctionClass::BaseFunctionPtr,
+                py::bases< GenericFunctionClass > >( "BaseFunction", py::no_init )
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
-        .def( "setParameterName", &FunctionInstance::setParameterName )
-        .def( "setResultName", &FunctionInstance::setResultName )
-        .def( "setInterpolation", &FunctionInstance::setInterpolation )
-        .def( "setValues", &FunctionInstance::setValues )
-        .def( "getValues", &FunctionInstance::getValues );
+        .def( "setParameterName", &FunctionClass::setParameterName )
+        .def( "setResultName", &FunctionClass::setResultName )
+        .def( "setInterpolation", &FunctionClass::setInterpolation )
+        .def( "setValues", &FunctionClass::setValues )
+        .def( "getValues", &FunctionClass::getValues );
 
-    py::class_< FunctionInstance, FunctionInstance::FunctionPtr,
-                py::bases< BaseFunctionInstance > >( "Function", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionInstance, std::string >))
-        .def( "setValues", &FunctionInstance::setValues )
-        .def( "size", &FunctionInstance::size )
-        .def( "setAsConstant", &FunctionInstance::setAsConstant );
+    py::class_< FunctionClass, FunctionClass::FunctionPtr,
+                py::bases< BaseFunctionClass > >( "Function", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionClass, std::string >))
+        .def( "setValues", &FunctionClass::setValues )
+        .def( "size", &FunctionClass::size )
+        .def( "setAsConstant", &FunctionClass::setAsConstant );
 
     // Candidates for setValues
-    void ( FunctionComplexInstance::*c1 )( const VectorDouble &absc, const VectorDouble &ord ) =
-        &FunctionComplexInstance::setValues;
-    void ( FunctionComplexInstance::*c2 )( const VectorDouble &absc, const VectorComplex &ord ) =
-        &FunctionComplexInstance::setValues;
+    void ( FunctionComplexClass::*c1 )( const VectorReal &absc, const VectorReal &ord ) =
+        &FunctionComplexClass::setValues;
+    void ( FunctionComplexClass::*c2 )( const VectorReal &absc, const VectorComplex &ord ) =
+        &FunctionComplexClass::setValues;
 
-    py::class_< FunctionComplexInstance, FunctionComplexInstance::FunctionComplexPtr,
-                py::bases< BaseFunctionInstance > >( "FunctionComplex", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionComplexInstance >))
+    py::class_< FunctionComplexClass, FunctionComplexClass::FunctionComplexPtr,
+                py::bases< BaseFunctionClass > >( "FunctionComplex", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionComplexClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FunctionComplexInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< FunctionComplexClass, std::string >))
         .def( "setValues", c1 )
         .def( "setValues", c2 )
-        .def( "size", &FunctionComplexInstance::size );
+        .def( "size", &FunctionComplexClass::size );
 };

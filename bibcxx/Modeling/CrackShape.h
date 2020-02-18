@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe XfemCrack
  * @author Nicolas Tardieu
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,7 +34,7 @@
  * @author Nicolas Tardieu
  */
 enum Shape { NoShape, Ellipse, Square, Cylinder, Notch, HalfPlane, Segment, HalfLine, Line };
-class CrackShapeInstance {
+class CrackShapeClass {
   private:
     Shape _shape;
     double _semiMajorAxis;
@@ -53,14 +53,14 @@ class CrackShapeInstance {
   public:
     /**
      * @typedef CrackShapePtr
-     * @brief Pointeur intelligent vers un CrackShapeInstance
+     * @brief Pointeur intelligent vers un CrackShapeClass
      */
-    typedef boost::shared_ptr< CrackShapeInstance > CrackShapePtr;
+    typedef boost::shared_ptr< CrackShapeClass > CrackShapePtr;
 
     /**
      * @brief Constructeur
      */
-    CrackShapeInstance();
+    CrackShapeClass();
 
     /**
      * @brief Define the Crack Shape as Ellise
@@ -161,8 +161,8 @@ class CrackShapeInstance {
 
 /**
  * @typedef CrackShapePtr
- * @brief Pointeur intelligent vers un CrackShapeInstance
+ * @brief Pointeur intelligent vers un CrackShapeClass
  */
-typedef boost::shared_ptr< CrackShapeInstance > CrackShapePtr;
+typedef boost::shared_ptr< CrackShapeClass > CrackShapePtr;
 
 #endif /* CRACKSHAPE_H_ */

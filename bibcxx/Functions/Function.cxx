@@ -2,7 +2,7 @@
  * @file ResultNaming.cxx
  * @brief Implementation of automatic naming of jeveux objects.
  * @section LICENCE
- * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -29,18 +29,18 @@
 #include "Supervis/ResultNaming.h"
 #include "astercxx.h"
 
-FunctionPtr emptyDoubleFunction( new FunctionInstance( "" ) );
+FunctionPtr emptyRealFunction( new FunctionClass( "" ) );
 
-BaseFunctionInstance::BaseFunctionInstance( const std::string jeveuxName, const std::string type,
+BaseFunctionClass::BaseFunctionClass( const std::string jeveuxName, const std::string type,
                                             const std::string type2 )
-    : GenericFunctionInstance( jeveuxName, type, type2 ),
-      _value( JeveuxVectorDouble( getName() + ".VALE" ) ) {}
+    : GenericFunctionClass( jeveuxName, type, type2 ),
+      _value( JeveuxVectorReal( getName() + ".VALE" ) ) {}
 
-BaseFunctionInstance::BaseFunctionInstance( const std::string type,
+BaseFunctionClass::BaseFunctionClass( const std::string type,
                                             const std::string type2 )
-    : BaseFunctionInstance::BaseFunctionInstance( ResultNaming::getNewResultName(), type, type2 ) {}
+    : BaseFunctionClass::BaseFunctionClass( ResultNaming::getNewResultName(), type, type2 ) {}
 
-void BaseFunctionInstance::allocate( JeveuxMemory mem,
+void BaseFunctionClass::allocate( JeveuxMemory mem,
                                      ASTERINTEGER size ) {
     if ( _property->exists() )
         _property->deallocate();
@@ -51,19 +51,19 @@ void BaseFunctionInstance::allocate( JeveuxMemory mem,
     _value->allocate( mem, 2 * size );
 }
 
-void BaseFunctionInstance::deallocate()
+void BaseFunctionClass::deallocate()
 {
     _property->deallocate();
     _value->deallocate();
 }
 
-void FunctionComplexInstance::allocate( JeveuxMemory mem,
+void FunctionComplexClass::allocate( JeveuxMemory mem,
                                         ASTERINTEGER size ) {
     throw std::runtime_error( "Not yet implemented!" );
 }
 
-void BaseFunctionInstance::setValues( const VectorDouble &absc,
-                                      const VectorDouble &ordo ) {
+void BaseFunctionClass::setValues( const VectorReal &absc,
+                                      const VectorReal &ordo ) {
     if ( absc.size() != ordo.size() )
         throw std::runtime_error( "Function: length of abscissa and ordinates must be equal" );
 
@@ -72,8 +72,8 @@ void BaseFunctionInstance::setValues( const VectorDouble &absc,
     _value->allocate( Permanent, 2 * nbpts );
 
     // Loop on the points
-    VectorDouble::const_iterator abscIt = absc.begin();
-    VectorDouble::const_iterator ordoIt = ordo.begin();
+    VectorReal::const_iterator abscIt = absc.begin();
+    VectorReal::const_iterator ordoIt = ordo.begin();
     int idx = 0;
     for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt ) {
         ( *_value )[idx] = *abscIt;
@@ -82,7 +82,7 @@ void BaseFunctionInstance::setValues( const VectorDouble &absc,
     }
 }
 
-void BaseFunctionInstance::setInterpolation( const std::string type ) {
+void BaseFunctionClass::setInterpolation( const std::string type ) {
     std::string interp;
     if ( !_property->isAllocated() )
         propertyAllocate();
@@ -101,7 +101,7 @@ void BaseFunctionInstance::setInterpolation( const std::string type ) {
     ( *_property )[1] = type.c_str();
 }
 
-void BaseFunctionInstance::setAsConstant() {
+void BaseFunctionClass::setAsConstant() {
     if ( !_property->isAllocated() )
         propertyAllocate();
     _funct_type = "CONSTANT";
@@ -109,8 +109,8 @@ void BaseFunctionInstance::setAsConstant() {
 }
 
 /* Complex function */
-void FunctionComplexInstance::setValues( const VectorDouble &absc,
-                                         const VectorDouble &ordo ) {
+void FunctionComplexClass::setValues( const VectorReal &absc,
+                                         const VectorReal &ordo ) {
     if ( absc.size() * 2 != ordo.size() )
         throw std::runtime_error(
             "Function: The length of ordinates must be twice that of abscissas." );
@@ -120,8 +120,8 @@ void FunctionComplexInstance::setValues( const VectorDouble &absc,
     _value->allocate( Permanent, 3 * nbpts );
 
     // Loop on the points
-    VectorDouble::const_iterator abscIt = absc.begin();
-    VectorDouble::const_iterator ordoIt = ordo.begin();
+    VectorReal::const_iterator abscIt = absc.begin();
+    VectorReal::const_iterator ordoIt = ordo.begin();
     int idx = 0;
     for ( ; abscIt != absc.end(); ++abscIt, ++ordoIt ) {
         ( *_value )[idx] = *abscIt;
@@ -132,7 +132,7 @@ void FunctionComplexInstance::setValues( const VectorDouble &absc,
     }
 }
 
-void FunctionComplexInstance::setValues( const VectorDouble &absc,
+void FunctionComplexClass::setValues( const VectorReal &absc,
                                          const VectorComplex &ordo ) {
     throw std::runtime_error( "Not yet implemented!" );
 }

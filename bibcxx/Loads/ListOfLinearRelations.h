@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ListOfLinearRelations
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D     www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D     www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,12 +31,12 @@
 #include "DataStructures/DataStructure.h"
 
 /**
- * @class ListOfLinearRelationsInstance
+ * @class ListOfLinearRelationsClass
  * @brief Classe definissant une liste_rela
  * @author Nicolas Sellenet
  * @todo Prendre en compte le cas Function
  */
-template < class ValueType > class ListOfLinearRelationsInstance : public DataStructure {
+template < class ValueType > class ListOfLinearRelationsClass : public DataStructure {
   private:
     /** @brief Objet '.RLCO' */
     JeveuxVector< ValueType > _coefficients;
@@ -65,7 +65,7 @@ template < class ValueType > class ListOfLinearRelationsInstance : public DataSt
     /**
         * @brief Constructeur
         */
-    ListOfLinearRelationsInstance( const std::string name )
+    ListOfLinearRelationsClass( const std::string name )
         : DataStructure( name, 19, "LISTE_RELA" ),
           _coefficients( JeveuxVector< ValueType >( getName() + ".RLCO" ) ),
           _rhs( JeveuxVector< ValueType >( getName() + ".RLBE" ) ),
@@ -82,13 +82,13 @@ template < class ValueType > class ListOfLinearRelationsInstance : public DataSt
     };
 };
 
-/** @typedef PCFieldOnMeshInstanceDouble Instance d'une carte de double */
-typedef ListOfLinearRelationsInstance< double > ListOfLinearRelationsDouble;
+/** @typedef PCFieldOnMeshClassReal Class d'une carte de double */
+typedef ListOfLinearRelationsClass< double > ListOfLinearRelationsReal;
 
 /**
- * @typedef ListOfLinearRelationsDouble
- * @brief Pointeur intelligent vers un ListOfLinearRelationsInstance
+ * @typedef ListOfLinearRelationsReal
+ * @brief Pointeur intelligent vers un ListOfLinearRelationsClass
  */
-typedef boost::shared_ptr< ListOfLinearRelationsDouble > ListOfLinearRelationsDoublePtr;
+typedef boost::shared_ptr< ListOfLinearRelationsReal > ListOfLinearRelationsRealPtr;
 
 #endif /* LISTOFLINEARRELATIONS_H_ */

@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..Objects import FieldOnNodesDouble
+from ..Objects import FieldOnNodesReal
 from ..Supervis import ExecuteCommand
 
 
@@ -31,7 +31,7 @@ class SismicLoading(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FieldOnNodesDouble()
+        self._result = FieldOnNodesReal()
 
 
 CALC_CHAR_SEISME = SismicLoading.run

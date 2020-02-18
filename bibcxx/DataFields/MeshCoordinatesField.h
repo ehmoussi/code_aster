@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MeshCoordinatesField
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,43 +31,43 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"
 
-/** @brief Forward declaration of FieldOnNodesInstance */
-template < class ValueType > class FieldOnNodesInstance;
+/** @brief Forward declaration of FieldOnNodesClass */
+template < class ValueType > class FieldOnNodesClass;
 
-typedef FieldOnNodesInstance< double > FieldOnNodesDoubleInstance;
+typedef FieldOnNodesClass< double > FieldOnNodesRealClass;
 
 /**
- * @class MeshCoordinatesFieldInstance
+ * @class MeshCoordinatesFieldClass
  * @brief Cette classe template permet de definir un champ aux noeuds Aster
  * @author Nicolas Sellenet
  */
-class MeshCoordinatesFieldInstance : public DataStructure {
+class MeshCoordinatesFieldClass : public DataStructure {
   private:
     /** @brief Vecteur Jeveux '.DESC' */
     JeveuxVectorLong _descriptor;
     /** @brief Vecteur Jeveux '.REFE' */
     JeveuxVectorChar24 _reference;
     /** @brief Vecteur Jeveux '.VALE' */
-    JeveuxVectorDouble _valuesList;
+    JeveuxVectorReal _valuesList;
 
-    friend FieldOnNodesDoubleInstance;
+    friend FieldOnNodesRealClass;
 
   public:
     /**
      * @typedef MeshCoordinatesFieldPtr
      * @brief Pointeur intelligent vers un MeshCoordinatesField
      */
-    typedef boost::shared_ptr< MeshCoordinatesFieldInstance > MeshCoordinatesFieldPtr;
+    typedef boost::shared_ptr< MeshCoordinatesFieldClass > MeshCoordinatesFieldPtr;
 
     /**
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    MeshCoordinatesFieldInstance( const std::string &name )
+    MeshCoordinatesFieldClass( const std::string &name )
         : DataStructure( name, 19, "CHAM_NO" ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-          _valuesList( JeveuxVectorDouble( getName() + ".VALE" ) ) {
+          _valuesList( JeveuxVectorReal( getName() + ".VALE" ) ) {
         assert( name.size() == 19 );
     };
 
@@ -84,7 +84,7 @@ class MeshCoordinatesFieldInstance : public DataStructure {
     /**
      * @brief Get _valuesList
      */
-    const JeveuxVectorDouble getFieldValues() const { return _valuesList; };
+    const JeveuxVectorReal getFieldValues() const { return _valuesList; };
 
     /**
      * @brief Surcharge de l'operateur []
@@ -109,12 +109,12 @@ class MeshCoordinatesFieldInstance : public DataStructure {
  * @typedef MeshCoordinatesFieldPtr
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< MeshCoordinatesFieldInstance > MeshCoordinatesFieldPtr;
+typedef boost::shared_ptr< MeshCoordinatesFieldClass > MeshCoordinatesFieldPtr;
 
 /**
  * @typedef MeshCoordinatesFieldPtr
  * @brief Definition d'un champ aux noeuds de double
  */
-typedef boost::shared_ptr< const MeshCoordinatesFieldInstance > ConstMeshCoordinatesFieldPtr;
+typedef boost::shared_ptr< const MeshCoordinatesFieldClass > ConstMeshCoordinatesFieldPtr;
 
 #endif /* MESHCOORDINATESFIELD_H_ */

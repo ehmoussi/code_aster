@@ -2,7 +2,7 @@
  * @file ResultNaming.cxx
  * @brief Implementation of automatic naming of jeveux objects.
  * @section LICENCE
- * Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+ * Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
  * This file is part of code_aster.
  *
  * code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
 #include "astercxx.h"
 
 
-void GenericFunctionInstance::setExtrapolation( const std::string type ) {
+void GenericFunctionClass::setExtrapolation( const std::string type ) {
     if ( !_property->isAllocated() )
         propertyAllocate();
 

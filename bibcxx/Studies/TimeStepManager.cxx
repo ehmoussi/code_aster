@@ -3,7 +3,7 @@
  * @brief Implementation de TimeStepManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,7 +27,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-void TimeStepManagerInstance::build() {
+void TimeStepManagerClass::build() {
     CommandSyntax cmdSt( "DEFI_LIST_INST" );
     cmdSt.setResult( ResultNaming::getCurrentName(), "LIST_INST" );
 
@@ -57,7 +57,7 @@ void TimeStepManagerInstance::build() {
         ListSyntaxMapContainer listeECHEC;
         for ( ListConvErrorCIter curIter = _listErrorManager.begin();
               curIter != _listErrorManager.end(); ++curIter ) {
-            GenericActionInstance &curAction = *( ( *curIter )->getAction() );
+            GenericActionClass &curAction = *( ( *curIter )->getAction() );
 
             const ListGenParam &listParam = curAction.getListOfParameters();
             SyntaxMapContainer dict2 = buildSyntaxMapFromParamList( listParam );

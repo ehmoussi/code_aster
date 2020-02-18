@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TimeStepManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -30,33 +30,33 @@
 
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Results/ResultsContainer.h"
+#include "Results/Result.h"
 #include "Studies/EventManager.h"
 #include "Supervis/ResultNaming.h"
 #include "Utilities/GenericParameter.h"
 
 /**
- * @class TimeStepManagerInstance
+ * @class TimeStepManagerClass
  * @brief Cette classe permet de definir un gestionnaire de pas de temps
  * @author Nicolas Sellenet
  * @todo ajouter les mots cles manquants
  */
-class TimeStepManagerInstance : public DataStructure {
+class TimeStepManagerClass : public DataStructure {
   private:
     /** @brief Liste d'instants */
-    JeveuxVectorDouble _timeList;
+    JeveuxVectorReal _timeList;
     /** @brief Liste d'informations portant sur la liste d'instants */
-    JeveuxVectorDouble _infoList;
+    JeveuxVectorReal _infoList;
 
     /** @brief Liste de double pour la gestion des échecs */
-    JeveuxVectorDouble _doubleFailureManagerInfo;
+    JeveuxVectorReal _doubleFailureManagerInfo;
     /** @brief Liste de chaine pour la gestion des échecs */
     JeveuxVectorChar16 _charFailureManagerInfo;
     /** @brief Liste de double pour la gestion des échecs */
-    JeveuxVectorDouble _doubleFailureManagerInfo2;
+    JeveuxVectorReal _doubleFailureManagerInfo2;
 
     /** @brief Liste de pas de temps donnée par l'utilisateur */
-    VectorDouble _timeListVector;
+    VectorReal _timeListVector;
     /** @brief Gestion automatique du pas de temps */
     bool _isAutomatic;
     /** @brief Liste de comportement en cas d'erreurs */
@@ -73,18 +73,18 @@ class TimeStepManagerInstance : public DataStructure {
     /**
      * @brief Constructeur
      */
-    TimeStepManagerInstance( const std::string name = ResultNaming::getNewResultName() )
+    TimeStepManagerClass( const std::string name = ResultNaming::getNewResultName() )
         : DataStructure( name, 8, "LIST_INST" ),
-          _timeList( JeveuxVectorDouble( getName() + ".LIST.DITR" ) ),
-          _infoList( JeveuxVectorDouble( getName() + ".LIST.INFOR" ) ),
-          _doubleFailureManagerInfo( JeveuxVectorDouble( getName() + ".ECHE.EVENR" ) ),
+          _timeList( JeveuxVectorReal( getName() + ".LIST.DITR" ) ),
+          _infoList( JeveuxVectorReal( getName() + ".LIST.INFOR" ) ),
+          _doubleFailureManagerInfo( JeveuxVectorReal( getName() + ".ECHE.EVENR" ) ),
           _charFailureManagerInfo( JeveuxVectorChar16( getName() + ".ECHE.INFOK" ) ),
-          _doubleFailureManagerInfo2( JeveuxVectorDouble( getName() + ".ECHE.SUBDR" ) ),
+          _doubleFailureManagerInfo2( JeveuxVectorReal( getName() + ".ECHE.SUBDR" ) ),
           _isAutomatic( false ), _isEmpty( true ), _minimumTS( "PAS_MINI", false ),
           _maximumTS( "PAS_MAXI", false ),
           _nbMaxiOfTS( "NB_PAS_MAXI", (ASTERINTEGER)1000000, false ){};
 
-    ~TimeStepManagerInstance(){};
+    ~TimeStepManagerClass(){};
 
     /**
      * @brief Fonction permettant d'ajouter un gestionnaire d'erreur
@@ -134,12 +134,12 @@ class TimeStepManagerInstance : public DataStructure {
      * @brief Function de définition de la liste d'instants
      * @param timeList liste d'instants
      */
-    void setTimeList( const VectorDouble &timeList ) { _timeListVector = timeList; };
+    void setTimeList( const VectorReal &timeList ) { _timeListVector = timeList; };
 
     /**
      * @brief Function de définition de la liste d'instants à partir d'un résu
      */
-    void setTimeListFromResultsContainer() {
+    void setTimeListFromResult() {
         throw std::runtime_error( "Not yet implemented" );
     };
 };
@@ -148,6 +148,6 @@ class TimeStepManagerInstance : public DataStructure {
  * @typedef TimeStepManagerPtr
  * @brief Pointeur intelligent vers un TimeStepManager
  */
-typedef boost::shared_ptr< TimeStepManagerInstance > TimeStepManagerPtr;
+typedef boost::shared_ptr< TimeStepManagerClass > TimeStepManagerPtr;
 
 #endif /* TIMESTEPMANAGER_H_ */

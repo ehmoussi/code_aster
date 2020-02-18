@@ -24,7 +24,7 @@ from ..Utilities import required
 
 
 class ComputeError(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.ResultsContainer`"""
+    """Command that creates the :class:`~code_aster.Objects.Result`"""
     command_name = "CALC_ERREUR"
 
     def create_result(self, keywords):

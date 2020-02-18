@@ -9,7 +9,7 @@ Class diagram
 *************
 
 .. inheritance-diagram::
-    code_aster.Objects.fieldonelements_ext
+    code_aster.Objects.fieldoncells_ext
     code_aster.Objects.fieldonnodes_ext
     code_aster.Objects.listoffloats
     code_aster.Objects.datastructure_ext
@@ -25,9 +25,9 @@ Detailed description
    :members:
    :special-members: __init__
 
-.. automodule:: code_aster.Objects.fieldonelements_ext
+.. automodule:: code_aster.Objects.fieldoncells_ext
 
-.. autoclass:: code_aster.Objects.fieldonelements_ext.post_comp_cham_el
+.. autoclass:: code_aster.Objects.fieldoncells_ext.post_comp_cham_el
    :show-inheritance:
    :members:
 

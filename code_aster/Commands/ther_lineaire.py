@@ -19,13 +19,13 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import EvolutiveThermalLoad
+from ..Objects import ThermalResult
 from ..Supervis import ExecuteCommand
 
 
 class LinearThermalAnalysisBuild(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.EvolutiveThermalLoad` by assigning
-    finite elements on a :class:`~code_aster.Objects.EvolutiveThermalLoad`."""
+    """Command that creates the :class:`~code_aster.Objects.ThermalResult` by assigning
+    finite elements on a :class:`~code_aster.Objects.ThermalResult`."""
     command_name = "THER_LINEAIRE"
 
     def create_result(self, keywords):
@@ -37,7 +37,7 @@ class LinearThermalAnalysisBuild(ExecuteCommand):
         if keywords.get("reuse") != None:
             self._result = keywords["reuse"]
         else:
-            self._result = EvolutiveThermalLoad()
+            self._result = ThermalResult()
 
     def post_exec(self, keywords):
         """Execute the command.

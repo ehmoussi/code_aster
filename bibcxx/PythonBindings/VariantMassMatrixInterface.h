@@ -32,10 +32,10 @@
 
 namespace py = boost::python;
 
-typedef boost::variant< AssemblyMatrixDisplacementDoublePtr,
+typedef boost::variant< AssemblyMatrixDisplacementRealPtr,
                         AssemblyMatrixDisplacementComplexPtr,
-                        AssemblyMatrixTemperatureDoublePtr,
-                        AssemblyMatrixPressureDoublePtr > MatrixVariant;
+                        AssemblyMatrixTemperatureRealPtr,
+                        AssemblyMatrixPressureRealPtr > MatrixVariant;
 
 struct variant_to_object : boost::static_visitor< PyObject * >
 {
@@ -53,16 +53,16 @@ struct variant_to_object : boost::static_visitor< PyObject * >
 template< typename ObjectPointer >
 MatrixVariant getMassMatrix( ObjectPointer self )
 {
-    auto mat1 = self->getDisplacementDoubleMassMatrix();
+    auto mat1 = self->getDisplacementRealMassMatrix();
     if ( mat1 != nullptr )
         return MatrixVariant( mat1 );
     auto mat3 = self->getDisplacementComplexMassMatrix();
     if ( mat3 != nullptr )
         return MatrixVariant( mat3 );
-    auto mat4 = self->getPressureDoubleMassMatrix();
+    auto mat4 = self->getPressureRealMassMatrix();
     if ( mat4 != nullptr )
         return MatrixVariant( mat4 );
-    auto mat2 = self->getTemperatureDoubleMassMatrix();
+    auto mat2 = self->getTemperatureRealMassMatrix();
     return MatrixVariant( mat2 );
 };
 

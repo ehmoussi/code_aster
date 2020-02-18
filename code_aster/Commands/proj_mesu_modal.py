@@ -19,9 +19,9 @@
 
 # person_in_charge: natacha.bereux@edf.fr
 
-from ..Objects import (GeneralizedModeContainer,
-                       HarmoGeneralizedResultsContainer,
-                       TransientGeneralizedResultsContainer)
+from ..Objects import (GeneralizedModeResult,
+                       HarmoGeneralizedResult,
+                       TransientGeneralizedResult)
 from ..Supervis import ExecuteCommand
 
 
@@ -38,13 +38,13 @@ class ProjMesuModal(ExecuteCommand):
         """
         mesure = keywords["MODELE_MESURE"]["MESURE"]
         if mesure.getType() == "DYNA_TRANS":
-            self._result = TransientGeneralizedResultsContainer()
+            self._result = TransientGeneralizedResult()
         elif mesure.getType() == "DYNA_HARMO":
-            self._result = HarmoGeneralizedResultsContainer()
+            self._result = HarmoGeneralizedResult()
         elif mesure.getType() == "MODE_MECA":
-            self._result = GeneralizedModeContainer()
+            self._result = GeneralizedModeResult()
         elif mesure.getType() == "MODE_MECA_C":
-            self._result = GeneralizedModeContainer()
+            self._result = GeneralizedModeResult()
         else:
             raise TypeError("Type not allowed")
 
@@ -55,7 +55,7 @@ class ProjMesuModal(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         base = keywords["MODELE_CALCUL"]["BASE"]
-        if isinstance(self._result, TransientGeneralizedResultsContainer) or \
-           isinstance(self._result, HarmoGeneralizedResultsContainer)  :
+        if isinstance(self._result, TransientGeneralizedResult) or \
+           isinstance(self._result, HarmoGeneralizedResult)  :
             self._result.setDOFNumbering(base.getDOFNumbering())
 PROJ_MESU_MODAL = ProjMesuModal.run

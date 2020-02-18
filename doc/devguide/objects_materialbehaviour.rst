@@ -20,19 +20,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.BetonDoubleDpMaterialBehaviour` object
+:py:class:`~code_aster.Objects.BetonRagMaterialBehaviour` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.BetonDoubleDpMaterialBehaviour
+.. autoclass:: code_aster.Objects.BetonRagMaterialBehaviour
    :show-inheritance:
    :members:
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.BetonRagMaterialBehaviour` object
+:py:class:`~code_aster.Objects.BetonRealDpMaterialBehaviour` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.BetonRagMaterialBehaviour
+.. autoclass:: code_aster.Objects.BetonRealDpMaterialBehaviour
    :show-inheritance:
    :members:
 
@@ -119,10 +119,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.TherNlMaterialBehaviour` object
+:py:class:`~code_aster.Objects.ThermalNlMaterialBehaviour` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.TherNlMaterialBehaviour
+.. autoclass:: code_aster.Objects.ThermalNlMaterialBehaviour
    :show-inheritance:
    :members:
 

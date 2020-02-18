@@ -34,35 +34,35 @@ namespace py = boost::python;
 
 void exportFieldOnNodesToPython() {
 
-    py::class_< FieldOnNodesDoubleInstance, FieldOnNodesDoublePtr,
-                py::bases< GenericDataFieldInstance > >( "FieldOnNodesDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance >))
+    py::class_< FieldOnNodesRealClass, FieldOnNodesRealPtr,
+                py::bases< DataFieldClass > >( "FieldOnNodesReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesRealClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FieldOnNodesDoubleInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< FieldOnNodesRealClass, std::string >))
 
         .def( "exportToSimpleFieldOnNodes",
-              &FieldOnNodesDoubleInstance::exportToSimpleFieldOnNodes )
-        .def( "getMesh", &FieldOnNodesDoubleInstance::getMesh )
+              &FieldOnNodesRealClass::exportToSimpleFieldOnNodes )
+        .def( "getMesh", &FieldOnNodesRealClass::getMesh )
         .def( "__getitem__",
-              +[]( const FieldOnNodesDoubleInstance &v, int i ) { return v.operator[]( i ); } )
-        .def( "printMedFile", &FieldOnNodesDoubleInstance::printMedFile )
-        .def( "setDOFNumbering", &FieldOnNodesDoubleInstance::setDOFNumbering )
-        .def( "setMesh", &FieldOnNodesDoubleInstance::setMesh )
-        .def( "update", &FieldOnNodesDoubleInstance::update )
-        .def( "updateValuePointers", &FieldOnNodesDoubleInstance::updateValuePointers );
-    py::class_< FieldOnNodesComplexInstance, FieldOnNodesComplexPtr,
-                py::bases< GenericDataFieldInstance > >( "FieldOnNodesComplex", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance >))
+              +[]( const FieldOnNodesRealClass &v, int i ) { return v.operator[]( i ); } )
+        .def( "printMedFile", &FieldOnNodesRealClass::printMedFile )
+        .def( "setDOFNumbering", &FieldOnNodesRealClass::setDOFNumbering )
+        .def( "setMesh", &FieldOnNodesRealClass::setMesh )
+        .def( "update", &FieldOnNodesRealClass::update )
+        .def( "updateValuePointers", &FieldOnNodesRealClass::updateValuePointers );
+    py::class_< FieldOnNodesComplexClass, FieldOnNodesComplexPtr,
+                py::bases< DataFieldClass > >( "FieldOnNodesComplex", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FieldOnNodesComplexClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< FieldOnNodesComplexInstance, std::string >))
+              py::make_constructor(&initFactoryPtr< FieldOnNodesComplexClass, std::string >))
         .def( "exportToSimpleFieldOnNodes",
-              &FieldOnNodesComplexInstance::exportToSimpleFieldOnNodes )
-        .def( "getMesh", &FieldOnNodesComplexInstance::getMesh )
+              &FieldOnNodesComplexClass::exportToSimpleFieldOnNodes )
+        .def( "getMesh", &FieldOnNodesComplexClass::getMesh )
         .def( "__getitem__",
-              +[]( const FieldOnNodesComplexInstance &v, int i ) { return v.operator[]( i ); } )
-        .def( "printMedFile", &FieldOnNodesComplexInstance::printMedFile )
-        .def( "setDOFNumbering", &FieldOnNodesComplexInstance::setDOFNumbering )
-        .def( "setMesh", &FieldOnNodesComplexInstance::setMesh )
-        .def( "update", &FieldOnNodesComplexInstance::update )
-        .def( "updateValuePointers", &FieldOnNodesComplexInstance::updateValuePointers );
+              +[]( const FieldOnNodesComplexClass &v, int i ) { return v.operator[]( i ); } )
+        .def( "printMedFile", &FieldOnNodesComplexClass::printMedFile )
+        .def( "setDOFNumbering", &FieldOnNodesComplexClass::setDOFNumbering )
+        .def( "setMesh", &FieldOnNodesComplexClass::setMesh )
+        .def( "update", &FieldOnNodesComplexClass::update )
+        .def( "updateValuePointers", &FieldOnNodesComplexClass::updateValuePointers );
 };

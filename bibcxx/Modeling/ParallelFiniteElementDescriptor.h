@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe ParallelFiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,11 +35,11 @@
 #include "ParallelUtilities/CommunicationGraph.h"
 
 /**
- * @class ParallelFiniteElementDescriptorInstance
+ * @class ParallelFiniteElementDescriptorClass
  * @brief Classe definissant un ligrel parallèle
  * @author Nicolas Sellenet
  */
-class ParallelFiniteElementDescriptorInstance: public FiniteElementDescriptorInstance
+class ParallelFiniteElementDescriptorClass: public FiniteElementDescriptorClass
 {
 protected:
     /** @brief Matching numbering between keeped delayed elements and base elements */
@@ -63,7 +63,7 @@ public:
     /**
      * @brief Constructeur
      */
-    ParallelFiniteElementDescriptorInstance( const std::string& name,
+    ParallelFiniteElementDescriptorClass( const std::string& name,
                                              const FiniteElementDescriptorPtr& FEDesc,
                                              const PartialMeshPtr& mesh,
                                              const ModelPtr& model,
@@ -92,15 +92,15 @@ public:
      * @typedef ParallelFiniteElementDescriptorPtr
      * @brief Pointeur intelligent vers un ParallelFiniteElementDescriptor
      */
-    typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance >
+    typedef boost::shared_ptr< ParallelFiniteElementDescriptorClass >
         ParallelFiniteElementDescriptorPtr;
 };
 
 /**
  * @typedef ParallelFiniteElementDescriptorPtr
- * @brief Pointeur intelligent vers un ParallelFiniteElementDescriptorInstance
+ * @brief Pointeur intelligent vers un ParallelFiniteElementDescriptorClass
  */
-typedef boost::shared_ptr< ParallelFiniteElementDescriptorInstance >
+typedef boost::shared_ptr< ParallelFiniteElementDescriptorClass >
     ParallelFiniteElementDescriptorPtr;
 
 #endif /* PARALLELFINITEELEMENTDESCRIPTOR_H_ */

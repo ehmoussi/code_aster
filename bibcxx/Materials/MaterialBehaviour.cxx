@@ -1,6 +1,6 @@
 /**
  * @file MaterialBehaviour.cxx
- * @brief Implementation de GeneralMaterialBehaviourInstance
+ * @brief Implementation de GeneralMaterialBehaviourClass
  * @author Nicolas Sellenet
  * @todo autoriser le type Function pour les paramètres matériau
  * @section LICENCE
@@ -27,10 +27,10 @@
 #include <stdexcept>
 #include "Materials/MaterialBehaviour.h"
 
-bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
-    JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
+bool GeneralMaterialBehaviourClass::buildJeveuxVectors(
+    JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
-    std::vector< JeveuxVectorDouble > &userDoubles,
+    std::vector< JeveuxVectorReal > &userReals,
     std::vector< JeveuxVectorChar8 > &userFunctions )
 {
     const int nbOfMaterialProperties = getNumberOfPropertiesWithValue();
@@ -57,8 +57,8 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
     for ( int i = 0; i < _vectKW.size() / 2; ++i ) {
         auto nameOfProperty2 = _vectKW[2 * i];
         auto nameOfProperty = _vectKW[2 * i + 1];
-        auto curIter1 = _mapOfDoubleMaterialProperties.find( nameOfProperty2 );
-        if ( curIter1 == _mapOfDoubleMaterialProperties.end() )
+        auto curIter1 = _mapOfRealMaterialProperties.find( nameOfProperty2 );
+        if ( curIter1 == _mapOfRealMaterialProperties.end() )
             continue;
 
         auto curIter = *curIter1;
@@ -159,16 +159,16 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
     }
 
     int position3 = 0;
-    for ( auto curIter : _mapOfVectorDoubleMaterialProperties ) {
+    for ( auto curIter : _mapOfVectorRealMaterialProperties ) {
         std::string nameOfProperty = curIter.second.getName();
         if ( curIter.second.hasValue() ) {
             nameOfProperty.resize( 16, ' ' );
             ( *char16Values )[position] = nameOfProperty.c_str();
-            ( *char16Values )[position2] = userDoubles[position3]->getName();
+            ( *char16Values )[position2] = userReals[position3]->getName();
 
             auto values = curIter.second.getValue();
-            userDoubles[position3]->allocate( Permanent, values.size() );
-            ( *userDoubles[position3] ) = values;
+            userReals[position3]->allocate( Permanent, values.size() );
+            ( *userReals[position3] ) = values;
             ++position;
             ++position2;
             ++position3;
@@ -205,33 +205,12 @@ bool GeneralMaterialBehaviourInstance::buildJeveuxVectors(
     return true;
 };
 
-bool GeneralMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
+bool GeneralMaterialBehaviourClass::buildTractionFunction( FunctionPtr &doubleValues ) const
     {
     return true;
 };
 
-bool TractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
-    {
-    ASTERINTEGER maxSize = 0, maxSize2 = 0;
-    std::string resName;
-    for ( auto curIter : _mapOfFunctionMaterialProperties ) {
-        std::string nameOfProperty = curIter.second.getName();
-        if ( curIter.second.hasValue() ) {
-            const auto func = curIter.second.getValue();
-            CALLO_RCSTOC_VERIF( func->getName(), nameOfProperty, _asterName, &maxSize2 );
-            const auto size = func->maximumSize();
-            if ( size > maxSize )
-                maxSize = size;
-            resName = curIter.second.getValue()->getResultName();
-        }
-    }
-    doubleValues->allocate( Permanent, maxSize );
-    doubleValues->setParameterName( "EPSI" );
-    doubleValues->setResultName( resName );
-    return true;
-};
-
-bool MetaTractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &doubleValues ) const
+bool TractionMaterialBehaviourClass::buildTractionFunction( FunctionPtr &doubleValues ) const
     {
     ASTERINTEGER maxSize = 0, maxSize2 = 0;
     std::string resName;
@@ -252,9 +231,30 @@ bool MetaTractionMaterialBehaviourInstance::buildTractionFunction( FunctionPtr &
     return true;
 };
 
-int GeneralMaterialBehaviourInstance::getNumberOfPropertiesWithValue() const {
+bool MetaTractionMaterialBehaviourClass::buildTractionFunction( FunctionPtr &doubleValues ) const
+    {
+    ASTERINTEGER maxSize = 0, maxSize2 = 0;
+    std::string resName;
+    for ( auto curIter : _mapOfFunctionMaterialProperties ) {
+        std::string nameOfProperty = curIter.second.getName();
+        if ( curIter.second.hasValue() ) {
+            const auto func = curIter.second.getValue();
+            CALLO_RCSTOC_VERIF( func->getName(), nameOfProperty, _asterName, &maxSize2 );
+            const auto size = func->maximumSize();
+            if ( size > maxSize )
+                maxSize = size;
+            resName = curIter.second.getValue()->getResultName();
+        }
+    }
+    doubleValues->allocate( Permanent, maxSize );
+    doubleValues->setParameterName( "EPSI" );
+    doubleValues->setResultName( resName );
+    return true;
+};
+
+int GeneralMaterialBehaviourClass::getNumberOfPropertiesWithValue() const {
     int toReturn = 0;
-    for ( auto curIter : _mapOfDoubleMaterialProperties )
+    for ( auto curIter : _mapOfRealMaterialProperties )
         if ( curIter.second.hasValue() )
             ++toReturn;
 
@@ -274,7 +274,7 @@ int GeneralMaterialBehaviourInstance::getNumberOfPropertiesWithValue() const {
         if ( curIter.second.hasValue() )
             ++toReturn;
 
-    for ( auto curIter : _mapOfVectorDoubleMaterialProperties )
+    for ( auto curIter : _mapOfVectorRealMaterialProperties )
         if ( curIter.second.hasValue() )
             ++toReturn;
 
@@ -290,10 +290,10 @@ int GeneralMaterialBehaviourInstance::getNumberOfPropertiesWithValue() const {
 };
 
 
-bool TherNlMaterialBehaviourInstance::buildJeveuxVectors(
-    JeveuxVectorComplex &complexValues, JeveuxVectorDouble &doubleValues,
+bool ThermalNlMaterialBehaviourClass::buildJeveuxVectors(
+    JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
-    std::vector< JeveuxVectorDouble > &userDoubles,
+    std::vector< JeveuxVectorReal > &userReals,
     std::vector< JeveuxVectorChar8 > &userFunctions )
 {
     const auto curIter = _mapOfFunctionMaterialProperties.find( "Beta" )->second;
@@ -309,11 +309,11 @@ bool TherNlMaterialBehaviourInstance::buildJeveuxVectors(
 
         setFunctionValue( "Beta", _enthalpyFunction );
     }
-    return GeneralMaterialBehaviourInstance::buildJeveuxVectors(complexValues,
+    return GeneralMaterialBehaviourClass::buildJeveuxVectors(complexValues,
                                                                 doubleValues,
                                                                 char16Values,
                                                                 ordr,
                                                                 kOrd,
-                                                                userDoubles,
+                                                                userReals,
                                                                 userFunctions);
 };

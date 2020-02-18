@@ -33,32 +33,32 @@ BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( buildKinematicsLoad_overloads, buildKine
 
 void exportDiscreteProblemToPython() {
 
-    py::class_< DiscreteProblemInstance, DiscreteProblemInstance::DiscreteProblemPtr >(
+    py::class_< DiscreteProblemClass, DiscreteProblemClass::DiscreteProblemPtr >(
         "DiscreteProblem", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DiscreteProblemInstance, StudyDescriptionPtr >))
+              py::make_constructor(&initFactoryPtr< DiscreteProblemClass, StudyDescriptionPtr >))
         // fake initFactoryPtr: not a DataStructure
         .def( "buildElementaryMechanicalLoadsVector",
-              &DiscreteProblemInstance::buildElementaryMechanicalLoadsVector )
+              &DiscreteProblemClass::buildElementaryMechanicalLoadsVector )
         .def( "buildElementaryDirichletVector",
-              &DiscreteProblemInstance::buildElementaryDirichletVector )
+              &DiscreteProblemClass::buildElementaryDirichletVector )
         .def( "buildElementaryLaplaceVector",
-              &DiscreteProblemInstance::buildElementaryLaplaceVector )
+              &DiscreteProblemClass::buildElementaryLaplaceVector )
         .def( "buildElementaryNeumannVector",
-              &DiscreteProblemInstance::buildElementaryNeumannVector )
+              &DiscreteProblemClass::buildElementaryNeumannVector )
         .def( "buildElementaryStiffnessMatrix",
-              &DiscreteProblemInstance::buildElementaryStiffnessMatrix )
+              &DiscreteProblemClass::buildElementaryStiffnessMatrix )
         .def( "buildElementaryTangentMatrix",
-              &DiscreteProblemInstance::buildElementaryTangentMatrix )
+              &DiscreteProblemClass::buildElementaryTangentMatrix )
         .def( "buildElementaryJacobianMatrix",
-              &DiscreteProblemInstance::buildElementaryJacobianMatrix )
-        .def( "buildKinematicsLoad", &DiscreteProblemInstance::buildKinematicsLoad,
+              &DiscreteProblemClass::buildElementaryJacobianMatrix )
+        .def( "buildKinematicsLoad", &DiscreteProblemClass::buildKinematicsLoad,
               buildKinematicsLoad_overloads() )
-        .def( "computeDOFNumbering", &DiscreteProblemInstance::computeDOFNumbering )
+        .def( "computeDOFNumbering", &DiscreteProblemClass::computeDOFNumbering )
         .def( "computeMechanicalDampingMatrix",
-              &DiscreteProblemInstance::computeMechanicalDampingMatrix )
+              &DiscreteProblemClass::computeMechanicalDampingMatrix )
         .def( "computeMechanicalStiffnessMatrix",
-              &DiscreteProblemInstance::computeMechanicalStiffnessMatrix )
-        .def( "computeMechanicalMassMatrix", &DiscreteProblemInstance::computeMechanicalMassMatrix )
-        .def( "getStudyDescription", &DiscreteProblemInstance::getStudyDescription );
+              &DiscreteProblemClass::computeMechanicalStiffnessMatrix )
+        .def( "computeMechanicalMassMatrix", &DiscreteProblemClass::computeMechanicalMassMatrix )
+        .def( "getStudyDescription", &DiscreteProblemClass::getStudyDescription );
 };

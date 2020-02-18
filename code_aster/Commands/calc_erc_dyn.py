@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MechanicalModeContainer
+from ..Objects import ModeResult
 from ..Supervis import ExecuteCommand
 
 
 class CalcErcDyn(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.MechanicalModeContainer`"""
+    """Command that creates the :class:`~code_aster.Objects.ModeResult`"""
     command_name = "CALC_ERC_DYN"
 
     def create_result(self, keywords):
@@ -34,7 +34,7 @@ class CalcErcDyn(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
 
-        self._result = MechanicalModeContainer()
+        self._result = ModeResult()
 
     def post_exec(self, keywords):
         """Execute the command.

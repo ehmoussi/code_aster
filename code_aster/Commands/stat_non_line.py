@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import NonLinearEvolutionContainer
+from ..Objects import NonLinearResult
 from ..Supervis import ExecuteCommand
 
 
 class NonLinearStaticAnalysis(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.NonLinearEvolutionContainer`.
+    """Command that defines :class:`~code_aster.Objects.NonLinearResult`.
     """
     command_name = "STAT_NON_LINE"
 
@@ -37,7 +37,7 @@ class NonLinearStaticAnalysis(ExecuteCommand):
         if keywords.get("reuse") != None:
             self._result = keywords["reuse"]
         else:
-            self._result = NonLinearEvolutionContainer()
+            self._result = NonLinearResult()
 
     def post_exec(self, keywords):
         """Execute the command.

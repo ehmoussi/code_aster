@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Grid
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,34 +32,34 @@
 #include "astercxx.h"
 
 /**
- * @class GridInstance
+ * @class GridClass
  * @brief Cette classe decrit une sd_grille
  * @author Nicolas Sellenet
  */
-class GridInstance : public MeshInstance {
+class GridClass : public MeshClass {
   private:
     /** @brief Objet Jeveux '.GRLR' */
-    JeveuxVectorDouble _grlr;
+    JeveuxVectorReal _grlr;
     /** @brief Objet Jeveux '.GRLI' */
     JeveuxVectorLong _grli;
 
   public:
     /**
      * @typedef GridPtr
-     * @brief Pointeur intelligent vers un GridInstance
+     * @brief Pointeur intelligent vers un GridClass
      */
-    typedef boost::shared_ptr< GridInstance > GridPtr;
+    typedef boost::shared_ptr< GridClass > GridPtr;
 
     /**
      * @brief Constructeur
      */
-    GridInstance( const std::string name = ResultNaming::getNewResultName() );
+    GridClass( const std::string name = ResultNaming::getNewResultName() );
 };
 
 /**
  * @typedef GridPtr
- * @brief Pointeur intelligent vers un GridInstance
+ * @brief Pointeur intelligent vers un GridClass
  */
-typedef boost::shared_ptr< GridInstance > GridPtr;
+typedef boost::shared_ptr< GridClass > GridPtr;
 
 #endif /* GRID_H_ */

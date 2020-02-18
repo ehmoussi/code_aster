@@ -31,9 +31,9 @@ namespace py = boost::python;
 
 void exportContactDefinitionToPython() {
 
-    py::class_< ContactDefinitionInstance, ContactDefinitionInstance::ContactDefinitionPtr,
+    py::class_< ContactDefinitionClass, ContactDefinitionClass::ContactDefinitionPtr,
             py::bases< DataStructure > >( "ContactDefinition", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ContactDefinitionInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ContactDefinitionClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ContactDefinitionInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< ContactDefinitionClass, std::string >));
 };

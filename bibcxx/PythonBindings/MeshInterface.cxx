@@ -66,27 +66,27 @@ void exportMeshToPython() {
         // fake initFactoryPtr: created by subclass
         ;
 
-    py::class_< BaseMeshInstance, BaseMeshInstance::BaseMeshPtr, py::bases< DataStructure > >(
+    py::class_< BaseMeshClass, BaseMeshClass::BaseMeshPtr, py::bases< DataStructure > >(
         "BaseMesh", py::no_init )
         // fake initFactoryPtr: created by subclass
         // fake initFactoryPtr: created by subclass
-        //         .def( "getCoordinates", +[](const BaseMeshInstance& v)
+        //         .def( "getCoordinates", +[](const BaseMeshClass& v)
         //         {
-        //             return ConstViewer<MeshCoordinatesFieldInstance>( v.getCoordinates() );
+        //             return ConstViewer<MeshCoordinatesFieldClass>( v.getCoordinates() );
         //         })
-        .def( "getCoordinates", &BaseMeshInstance::getCoordinates )
-        .def( "isParallel", &BaseMeshInstance::isParallel )
-        .def( "getDimension", &BaseMeshInstance::getDimension );
+        .def( "getCoordinates", &BaseMeshClass::getCoordinates )
+        .def( "isParallel", &BaseMeshClass::isParallel )
+        .def( "getDimension", &BaseMeshClass::getDimension );
 
-    py::class_< MeshInstance, MeshInstance::MeshPtr, py::bases< BaseMeshInstance > >( "Mesh",
+    py::class_< MeshClass, MeshClass::MeshPtr, py::bases< BaseMeshClass > >( "Mesh",
                                                                                       py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MeshInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MeshInstance, std::string >))
-        .def( "addGroupOfNodesFromNodes", &MeshInstance::addGroupOfNodesFromNodes )
-        .def( "hasGroupOfElements", &MeshInstance::hasGroupOfElements )
-        .def( "hasGroupOfNodes", &MeshInstance::hasGroupOfNodes )
-        .def( "readAsterMeshFile", &MeshInstance::readAsterMeshFile )
-        .def( "readGibiFile", &MeshInstance::readGibiFile )
-        .def( "readGmshFile", &MeshInstance::readGmshFile )
-        .def( "readMedFile", &MeshInstance::readMedFile );
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MeshClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< MeshClass, std::string >))
+        .def( "addGroupOfNodesFromNodes", &MeshClass::addGroupOfNodesFromNodes )
+        .def( "hasGroupOfElements", &MeshClass::hasGroupOfElements )
+        .def( "hasGroupOfNodes", &MeshClass::hasGroupOfNodes )
+        .def( "readAsterMeshFile", &MeshClass::readAsterMeshFile )
+        .def( "readGibiFile", &MeshClass::readGibiFile )
+        .def( "readGmshFile", &MeshClass::readGmshFile )
+        .def( "readMedFile", &MeshClass::readMedFile );
 };

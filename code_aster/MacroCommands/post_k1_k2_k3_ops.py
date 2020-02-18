@@ -30,7 +30,7 @@ from ..Cata.Syntax import _F
 from ..Commands import (AFFE_MODELE, CALC_TABLE, CREA_MAILLAGE, CREA_TABLE,
                         DETRUIRE, FORMULE, MACR_LIGN_COUPE, POST_RELEVE_T,
                         PROJ_CHAMP)
-from ..Objects import MechanicalModeContainer
+from ..Objects import ModeResult
 from ..Objects.table_py import Table, merge
 from ..SD.sd_mater import sd_compor1
 from ..Utilities.misc import get_titre_concept
@@ -2177,7 +2177,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 #  V. BOUCLE SUR NOEUDS DU FOND
 #  ------------------------------------------------------------------
 
-    if isinstance(RESULTAT, MechanicalModeContainer) == True:
+    if isinstance(RESULTAT, ModeResult) == True:
         type_para = 'FREQ'
     else:
         type_para = 'INST'

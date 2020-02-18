@@ -43,7 +43,7 @@ vecass    = ASSE_VECTEUR(VECT_ELEM=vecel, NUME_DDL=numeddl)
 
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 monSolver.matrixFactorization(matass)
-resu1 = monSolver.solveDoubleLinearSystem( matass, vecass )
+resu1 = monSolver.solveRealLinearSystem( matass, vecass )
 y1=resu1.EXTR_COMP().valeurs
 
 
@@ -62,7 +62,7 @@ vcine     = CALC_CHAR_CINE(NUME_DDL=numeddl, CHAR_CINE=bloq)
 
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 monSolver.matrixFactorization(matass)
-resu2=monSolver.solveDoubleLinearSystemWithKinematicsLoad(matass, vcine, vecass)
+resu2=monSolver.solveRealLinearSystemWithKinematicsLoad(matass, vcine, vecass)
 y2=resu2.EXTR_COMP().valeurs
 
 

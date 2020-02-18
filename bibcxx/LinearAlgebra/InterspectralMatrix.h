@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe InterspectralMatrix
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,18 +33,18 @@
 #include "MemoryManager/JeveuxCollection.h"
 
 /**
- * @class InterspectralMatrixInstance
+ * @class InterspectralMatrixClass
  * @brief Cette classe correspond a un comb_fourier
  * @author Nicolas Sellenet
  */
-class InterspectralMatrixInstance : public DataStructure {
+class InterspectralMatrixClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.REFE' */
     JeveuxVectorChar16 _refe;
     /** @brief Objet Jeveux '.DISC' */
-    JeveuxVectorDouble _disc;
+    JeveuxVectorReal _disc;
     /** @brief Objet Jeveux '.VALE' */
-    JeveuxCollectionDouble _vale;
+    JeveuxCollectionReal _vale;
     /** @brief Objet Jeveux '.NUMI' */
     JeveuxVectorLong _numi;
     /** @brief Objet Jeveux '.NUMJ' */
@@ -65,22 +65,22 @@ class InterspectralMatrixInstance : public DataStructure {
      * @typedef InterspectralMatrixPtr
      * @brief Pointeur intelligent vers un InterspectralMatrix
      */
-    typedef boost::shared_ptr< InterspectralMatrixInstance > InterspectralMatrixPtr;
+    typedef boost::shared_ptr< InterspectralMatrixClass > InterspectralMatrixPtr;
 
     /**
      * @brief Constructeur
      */
-    InterspectralMatrixInstance()
-        : InterspectralMatrixInstance( ResultNaming::getNewResultName() ){};
+    InterspectralMatrixClass()
+        : InterspectralMatrixClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    InterspectralMatrixInstance( const std::string name )
+    InterspectralMatrixClass( const std::string name )
         : DataStructure( name, 8, "INTERSPECTRE", Permanent ),
           _refe( JeveuxVectorChar16( getName() + ".REFE" ) ),
-          _disc( JeveuxVectorDouble( getName() + ".DISC" ) ),
-          _vale( JeveuxCollectionDouble( getName() + ".VALE" ) ),
+          _disc( JeveuxVectorReal( getName() + ".DISC" ) ),
+          _vale( JeveuxCollectionReal( getName() + ".VALE" ) ),
           _numi( JeveuxVectorLong( getName() + ".NUMI" ) ),
           _numj( JeveuxVectorLong( getName() + ".NUMJ" ) ),
           _numeOrdre( JeveuxVectorLong( getName() + ".NUME_ORDRE" ) ),
@@ -92,8 +92,8 @@ class InterspectralMatrixInstance : public DataStructure {
 
 /**
  * @typedef InterspectralMatrixPtr
- * @brief Pointeur intelligent vers un InterspectralMatrixInstance
+ * @brief Pointeur intelligent vers un InterspectralMatrixClass
  */
-typedef boost::shared_ptr< InterspectralMatrixInstance > InterspectralMatrixPtr;
+typedef boost::shared_ptr< InterspectralMatrixClass > InterspectralMatrixPtr;
 
 #endif /* INTERSPECTRAL_H_ */

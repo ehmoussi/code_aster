@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import GeneralizedAssemblyVectorDouble
+from ..Objects import GeneralizedAssemblyVectorReal
 from ..Supervis import ExecuteCommand
 
 
 class GeneralizedVectorBuilder(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.GeneralizedAssemblyVectorDouble`"""
+    """Command that creates the :class:`~code_aster.Objects.GeneralizedAssemblyVectorReal`"""
     command_name = "ASSE_VECT_GENE"
 
     def create_result(self, keywords):
@@ -34,7 +34,7 @@ class GeneralizedVectorBuilder(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
 
-        self._result = GeneralizedAssemblyVectorDouble()
+        self._result = GeneralizedAssemblyVectorReal()
 
 
 ASSE_VECT_GENE = GeneralizedVectorBuilder.run

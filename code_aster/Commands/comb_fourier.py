@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FourierCombination
+from ..Objects import CombinedFourierResult
 from ..Supervis import ExecuteCommand
 
 
 class CombFourier(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.FourierCombination`"""
+    """Command that creates the :class:`~code_aster.Objects.CombinedFourierResult`"""
     command_name = "COMB_FOURIER"
 
     def create_result(self, keywords):
@@ -33,7 +33,7 @@ class CombFourier(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FourierCombination()
+        self._result = CombinedFourierResult()
 
     def post_exec(self, keywords):
         """Execute the command.

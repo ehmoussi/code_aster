@@ -10,14 +10,13 @@ test = code_aster.TestCase()
 monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
-monModel = code_aster.Model()
-monModel.setMesh( monMaillage )
+monModel = code_aster.Model(monMaillage)
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics,
                                code_aster.Modelings.Tridimensional )
 monModel.build()
 
-YOUNG = 200000.0;
-POISSON = 0.3;
+YOUNG = 200000.0
+POISSON = 0.3
 
 acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
                                     NU = POISSON,),)
@@ -25,25 +24,25 @@ acier.debugPrint(6)
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
-imposedDof1 = code_aster.DisplacementDouble()
+imposedDof1 = code_aster.DisplacementReal()
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dy, 0.0 )
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
-CharMeca1 = code_aster.ImposedDisplacementDouble(monModel)
+CharMeca1 = code_aster.ImposedDisplacementReal(monModel)
 CharMeca1.setValue( imposedDof1, "Bas" )
 CharMeca1.build()
 
-imposedPres1 = code_aster.PressureDouble()
+imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
-CharMeca2 = code_aster.DistributedPressureDouble(monModel)
+CharMeca2 = code_aster.DistributedPressureReal(monModel)
 CharMeca2.setValue( imposedPres1, "Haut" )
 CharMeca2.build()
 
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
-mecaStatique = code_aster.StaticMechanicalSolver(monModel, affectMat)
+mecaStatique = code_aster.LinearStaticAnalysis(monModel, affectMat)
 mecaStatique.addMechanicalLoad( CharMeca1 )
 mecaStatique.addMechanicalLoad( CharMeca2 )
 mecaStatique.setLinearSolver( monSolver )

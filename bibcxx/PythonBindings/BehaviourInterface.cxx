@@ -29,9 +29,9 @@ namespace py = boost::python;
 
 void exportBehaviourToPython() {
 
-    py::class_< BehaviourInstance, BehaviourPtr >( "Behaviour", py::no_init )
+    py::class_< BehaviourClass, BehaviourPtr >( "Behaviour", py::no_init )
         // .def( "__init__", py::make_constructor(
-        //     &initFactoryPtr< BehaviourInstance >) )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< BehaviourInstance, int >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< BehaviourInstance, int, int >));
+        //     &initFactoryPtr< BehaviourClass >) )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< BehaviourClass, int >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< BehaviourClass, int, int >));
 };

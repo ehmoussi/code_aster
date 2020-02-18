@@ -31,19 +31,19 @@ namespace py = boost::python;
 
 void exportModalBasisDefinitionToPython() {
 
-    py::class_< GenericModalBasisInstance, GenericModalBasisInstance::GenericModalBasisPtr,
+    py::class_< GenericModalBasisClass, GenericModalBasisClass::GenericModalBasisPtr,
             py::bases< DataStructure > >( "GenericModalBasis", py::no_init );
         // fake initFactoryPtr: created by subclass
         // fake initFactoryPtr: created by subclass
 
-    py::class_< StandardModalBasisInstance, StandardModalBasisInstance::StandardModalBasisPtr,
-            py::bases< GenericModalBasisInstance > >( "StandardModalBasis", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< StandardModalBasisInstance >))
+    py::class_< StandardModalBasisClass, StandardModalBasisClass::StandardModalBasisPtr,
+            py::bases< GenericModalBasisClass > >( "StandardModalBasis", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StandardModalBasisClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< StandardModalBasisInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< StandardModalBasisClass, std::string >));
 
-    py::class_< RitzBasisInstance, RitzBasisInstance::RitzBasisPtr,
-            py::bases< GenericModalBasisInstance > >( "RitzBasis", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< RitzBasisInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< RitzBasisInstance, std::string >));
+    py::class_< RitzBasisClass, RitzBasisClass::RitzBasisPtr,
+            py::bases< GenericModalBasisClass > >( "RitzBasis", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RitzBasisClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RitzBasisClass, std::string >));
 };

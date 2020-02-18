@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FieldOnNodesDouble
+from ..Objects import FieldOnNodesReal
 from ..Supervis import ExecuteCommand
 
 
 class ProdMatrCham(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.FieldOnNodesDouble`.
+    """Command that defines :class:`~code_aster.Objects.FieldOnNodesReal`.
     """
     command_name = "PROD_MATR_CHAM"
 
@@ -34,6 +34,6 @@ class ProdMatrCham(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = FieldOnNodesDouble()
+        self._result = FieldOnNodesReal()
 
 PROD_MATR_CHAM = ProdMatrCham.run

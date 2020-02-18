@@ -5,7 +5,7 @@
  * a nonlinear iterative method
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,20 +33,20 @@
  * @author Natacha Béreux
  */
 
-NonLinearControlInstance::NonLinearControlInstance( double rTol, int nIterMax, double maxTol,
+NonLinearControlClass::NonLinearControlClass( double rTol, int nIterMax, double maxTol,
                                                     double relMaxTol, double relTolCmp )
-    : SolverControlInstance( rTol, nIterMax ), _maxTol( maxTol ), _relativeMaxTol( relMaxTol ),
+    : SolverControlClass( rTol, nIterMax ), _maxTol( maxTol ), _relativeMaxTol( relMaxTol ),
       _relativeTolByComponent( relTolCmp ) {
     std::vector< double > v( nIterMax, 0. );
     _relResNorm = v;
 }
 
-ConvergenceState NonLinearControlInstance::check( const DiscreteProblemPtr &dProblem,
-                                                  const FieldOnNodesDoublePtr &uField, int nIter ) {
+ConvergenceState NonLinearControlClass::check( const DiscreteProblemPtr &dProblem,
+                                                  const FieldOnNodesRealPtr &uField, int nIter ) {
     double relativeResNorm( 0.0 );
     // Get the residual
     /* Aucune de ces fonctions  n'existe encore ...
-    FieldOnNodesDoublePtr res =  dProblem->buildResidual( uField );
+    FieldOnNodesRealPtr res =  dProblem->buildResidual( uField );
     resnorm = res-> getNorm( "NORM2" );
     // Normalisation ??
     double relativeResNorm = dProblem-> getRelativeResidualNorm( "NORM2" );
@@ -68,7 +68,7 @@ ConvergenceState NonLinearControlInstance::check( const DiscreteProblemPtr &dPro
 }
 
 /* Clean convergence history */
-void NonLinearControlInstance::cleanLog() {
+void NonLinearControlClass::cleanLog() {
     for ( std::vector< double >::iterator it( _relResNorm.begin() ); it < _relResNorm.end();
           it++ ) {
         *it = 0.0;
@@ -76,7 +76,7 @@ void NonLinearControlInstance::cleanLog() {
 }
 
 /* Print convergence history */
-void NonLinearControlInstance::printLog() {
+void NonLinearControlClass::printLog() {
     for ( int ii( 0 ); ii < _relResNorm.size(); ii++ ) {
         if ( _relResNorm[ii] > 0.0 )
             std::cout << " Résidu à l'itération  " << ii << " : " << _relResNorm[ii] << std::endl;

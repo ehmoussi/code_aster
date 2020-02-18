@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe KinematicsLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,54 +34,54 @@
 #include <string>
 
 /**
- * @class KinematicsLoadInstance
+ * @class KinematicsLoadClass
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsLoadInstance : public DataStructure {
+class KinematicsLoadClass : public DataStructure {
   protected:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
     typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
-    /** @typedef std::list de DoubleLoadDisplacement */
-    typedef std::list< DoubleLoadDisplacement > ListDoubleDisp;
-    /** @typedef Iterateur sur ListDoubleDisp */
-    typedef ListDoubleDisp::iterator ListDoubleDispIter;
+    /** @typedef std::list de RealLoadDisplacement */
+    typedef std::list< RealLoadDisplacement > ListRealDisp;
+    /** @typedef Iterateur sur ListRealDisp */
+    typedef ListRealDisp::iterator ListRealDispIter;
 
-    /** @typedef std::list de DoubleLoadTemperature */
-    typedef std::list< DoubleLoadTemperature > ListDoubleTemp;
+    /** @typedef std::list de RealLoadTemperature */
+    typedef std::list< RealLoadTemperature > ListRealTemp;
     typedef std::list< FunctionLoadTemperature > ListFunctionTemp;
-    /** @typedef Iterateur sur ListDoubleTemp */
-    typedef ListDoubleTemp::iterator ListDoubleTempIter;
+    /** @typedef Iterateur sur ListRealTemp */
+    typedef ListRealTemp::iterator ListRealTempIter;
 
     /** @brief Modele */
     ModelPtr _model;
     /** @brief Listes des valeurs imposees DEPL_R et TEMP_R */
-    ListDoubleDisp _listOfDoubleImposedDisplacement;
-    ListDoubleTemp _listOfDoubleImposedTemperature;
+    ListRealDisp _listOfRealImposedDisplacement;
+    ListRealTemp _listOfRealImposedTemperature;
     ListFunctionTemp _listOfFunctionImposedTemperature;
     JeveuxVectorLong _intParam;
     JeveuxVectorChar8 _charParam;
-    JeveuxVectorDouble _doubleParam;
+    JeveuxVectorReal _doubleParam;
     /** @brief La SD est-elle vide ? */
     bool _isEmpty;
 
     /**
      * @brief Constructeur
      */
-    KinematicsLoadInstance( const std::string &type );
+    KinematicsLoadClass( const std::string &type );
 
     /**
      * @brief Constructeur
      */
-    KinematicsLoadInstance( const std::string &name, const std::string &type );
+    KinematicsLoadClass( const std::string &name, const std::string &type );
 
   public:
     /**
      * @typedef KinematicsLoadPtr
      * @brief Pointeur intelligent vers un KinematicsLoad
      */
-    typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
+    typedef boost::shared_ptr< KinematicsLoadClass > KinematicsLoadPtr;
 
     /**
      * @brief Construction de la charge (appel a OP0101)
@@ -102,28 +102,28 @@ class KinematicsLoadInstance : public DataStructure {
 };
 
 /**
- * @class KinematicsMechanicalLoadInstance
+ * @class KinematicsMechanicalLoadClass
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
+class KinematicsMechanicalLoadClass : public KinematicsLoadClass {
   public:
     /**
      * @brief Constructeur
      */
-    KinematicsMechanicalLoadInstance() : KinematicsLoadInstance( "_MECA" ){};
+    KinematicsMechanicalLoadClass() : KinematicsLoadClass( "_MECA" ){};
 
     /**
      * @brief Constructeur
      */
-    KinematicsMechanicalLoadInstance( const std::string name )
-        : KinematicsLoadInstance( name, "_MECA" ){};
+    KinematicsMechanicalLoadClass( const std::string name )
+        : KinematicsLoadClass( name, "_MECA" ){};
 
     /**
      * @typedef KinematicsMechanicalLoadPtr
      * @brief Pointeur intelligent vers un KinematicsMechanicalLoad
      */
-    typedef boost::shared_ptr< KinematicsMechanicalLoadInstance > KinematicsMechanicalLoadPtr;
+    typedef boost::shared_ptr< KinematicsMechanicalLoadClass > KinematicsMechanicalLoadPtr;
 
     /**
      * @brief Ajout d'une valeur mecanique imposee sur un groupe de mailles
@@ -142,8 +142,8 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-        DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-        _listOfDoubleImposedDisplacement.push_back( resu );
+        RealLoadDisplacement resu( meshEnt, coordinate, value );
+        _listOfRealImposedDisplacement.push_back( resu );
         return true;
     };
 
@@ -179,8 +179,8 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-        DoubleLoadDisplacement resu( meshEnt, coordinate, value );
-        _listOfDoubleImposedDisplacement.push_back( resu );
+        RealLoadDisplacement resu( meshEnt, coordinate, value );
+        _listOfRealImposedDisplacement.push_back( resu );
         return true;
     };
 
@@ -200,28 +200,28 @@ class KinematicsMechanicalLoadInstance : public KinematicsLoadInstance {
 };
 
 /**
- * @class KinematicsThermalLoadInstance
+ * @class KinematicsThermalLoadClass
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
+class KinematicsThermalLoadClass : public KinematicsLoadClass {
   public:
     /**
      * @brief Constructeur
      */
-    KinematicsThermalLoadInstance() : KinematicsLoadInstance( "_THER" ){};
+    KinematicsThermalLoadClass() : KinematicsLoadClass( "_THER" ){};
 
     /**
      * @brief Constructeur
      */
-    KinematicsThermalLoadInstance( const std::string name )
-        : KinematicsLoadInstance( name, "_THER" ){};
+    KinematicsThermalLoadClass( const std::string name )
+        : KinematicsLoadClass( name, "_THER" ){};
 
     /**
      * @typedef KinematicsThermalLoadPtr
      * @brief Pointeur intelligent vers un KinematicsThermalLoad
      */
-    typedef boost::shared_ptr< KinematicsThermalLoadInstance > KinematicsThermalLoadPtr;
+    typedef boost::shared_ptr< KinematicsThermalLoadClass > KinematicsThermalLoadPtr;
 
     /**
      * @brief Ajout d'une valeur thermique imposee sur un groupe de mailles
@@ -241,8 +241,8 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
-        DoubleLoadTemperature resu( meshEnt, coordinate, value );
-        _listOfDoubleImposedTemperature.push_back( resu );
+        RealLoadTemperature resu( meshEnt, coordinate, value );
+        _listOfRealImposedTemperature.push_back( resu );
         return true;
     };
 
@@ -277,8 +277,8 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         MeshEntityPtr meshEnt( new GroupOfNodes( nameOfGroup ) );
-        DoubleLoadTemperature resu( meshEnt, coordinate, value );
-        _listOfDoubleImposedTemperature.push_back( resu );
+        RealLoadTemperature resu( meshEnt, coordinate, value );
+        _listOfRealImposedTemperature.push_back( resu );
         return true;
     };
 
@@ -334,28 +334,28 @@ class KinematicsThermalLoadInstance : public KinematicsLoadInstance {
 };
 
 /**
- * @class KinematicsAcousticLoadInstance
+ * @class KinematicsAcousticLoadClass
  * @brief Classe definissant une charge cinematique (issue d'AFFE_CHAR_CINE)
  * @author Nicolas Sellenet
  */
-class KinematicsAcousticLoadInstance : public KinematicsLoadInstance {
+class KinematicsAcousticLoadClass : public KinematicsLoadClass {
   public:
     /**
      * @brief Constructeur
      */
-    KinematicsAcousticLoadInstance() : KinematicsLoadInstance( "_ACOU" ){};
+    KinematicsAcousticLoadClass() : KinematicsLoadClass( "_ACOU" ){};
 
     /**
      * @brief Constructeur
      */
-    KinematicsAcousticLoadInstance( const std::string name )
-        : KinematicsLoadInstance( name, "_ACOU" ){};
+    KinematicsAcousticLoadClass( const std::string name )
+        : KinematicsLoadClass( name, "_ACOU" ){};
 
     /**
      * @typedef KinematicsAcousticLoadPtr
      * @brief Pointeur intelligent vers un KinematicsAcousticLoad
      */
-    typedef boost::shared_ptr< KinematicsAcousticLoadInstance > KinematicsAcousticLoadPtr;
+    typedef boost::shared_ptr< KinematicsAcousticLoadClass > KinematicsAcousticLoadPtr;
 
     /**
      * @brief Ajout d'une valeur acoustique imposee sur un groupe de mailles
@@ -382,27 +382,27 @@ class KinematicsAcousticLoadInstance : public KinematicsLoadInstance {
 
 /**
  * @typedef KinematicsLoad
- * @brief Pointeur intelligent vers un KinematicsLoadInstance
+ * @brief Pointeur intelligent vers un KinematicsLoadClass
  */
-typedef boost::shared_ptr< KinematicsLoadInstance > KinematicsLoadPtr;
+typedef boost::shared_ptr< KinematicsLoadClass > KinematicsLoadPtr;
 
 /**
  * @typedef KinematicsMechanicalLoadPtr
  * @brief Pointeur intelligent vers un KinematicsMechanicalLoad
  */
-typedef boost::shared_ptr< KinematicsMechanicalLoadInstance > KinematicsMechanicalLoadPtr;
+typedef boost::shared_ptr< KinematicsMechanicalLoadClass > KinematicsMechanicalLoadPtr;
 
 /**
  * @typedef KinematicsThermalLoadPtr
  * @brief Pointeur intelligent vers un KinematicsThermalLoad
  */
-typedef boost::shared_ptr< KinematicsThermalLoadInstance > KinematicsThermalLoadPtr;
+typedef boost::shared_ptr< KinematicsThermalLoadClass > KinematicsThermalLoadPtr;
 
 /**
  * @typedef KinematicsAcousticLoadPtr
  * @brief Pointeur intelligent vers un KinematicsAcousticLoad
  */
-typedef boost::shared_ptr< KinematicsAcousticLoadInstance > KinematicsAcousticLoadPtr;
+typedef boost::shared_ptr< KinematicsAcousticLoadClass > KinematicsAcousticLoadPtr;
 
 /** @typedef std::list de KinematicsLoad */
 typedef std::list< KinematicsLoadPtr > ListKineLoad;

@@ -13,8 +13,7 @@ mesh = code_aster.Mesh()
 mesh.readMedFile("test001f.mmed")
 
 
-model = code_aster.Model()
-model.setMesh(mesh)
+model = code_aster.Model(mesh)
 model.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 model.build()
 
@@ -27,21 +26,21 @@ acier = DEFI_MATERIAU(ELAS = _F(E = young,
 
 affe_mat = code_aster.MaterialOnMesh(mesh)
 affe_mat.addMaterialOnAllMesh(acier)
-affe_mat.buildWithoutInputVariables()
+affe_mat.buildWithoutExternalVariable()
 
-imposed_dof_1 = code_aster.DisplacementDouble()
+imposed_dof_1 = code_aster.DisplacementReal()
 imposed_dof_1.setValue(code_aster.PhysicalQuantityComponent.Dx, 0.0)
 imposed_dof_1.setValue(code_aster.PhysicalQuantityComponent.Dy, 0.0)
 imposed_dof_1.setValue(code_aster.PhysicalQuantityComponent.Dz, 0.0)
 
-char_meca_1 = code_aster.ImposedDisplacementDouble(model)
+char_meca_1 = code_aster.ImposedDisplacementReal(model)
 char_meca_1.setValue(imposed_dof_1, "Bas")
 char_meca_1.build()
 
-imposed_pres_1 = code_aster.PressureDouble()
+imposed_pres_1 = code_aster.PressureReal()
 imposed_pres_1.setValue(code_aster.PhysicalQuantityComponent.Pres, 1000.)
 
-char_meca_2 = code_aster.DistributedPressureDouble(model)
+char_meca_2 = code_aster.DistributedPressureReal(model)
 char_meca_2.setValue(imposed_pres_1, "Haut")
 char_meca_2.build()
 
@@ -61,7 +60,7 @@ nume_ddl_k.setElementaryMatrix(matr_elem_k)
 nume_ddl_k.computeNumbering()
 
 
-matr_asse_k = code_aster.AssemblyMatrixDisplacementDouble()
+matr_asse_k = code_aster.AssemblyMatrixDisplacementReal()
 matr_asse_k.appendElementaryMatrix(matr_elem_k)
 matr_asse_k.setDOFNumbering(nume_ddl_k)
 matr_asse_k.build()
