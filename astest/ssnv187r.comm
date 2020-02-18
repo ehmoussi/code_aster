@@ -22,7 +22,7 @@ CREA_LIB_MFRONT(UNITE_MFRONT=38, UNITE_LIBRAIRIE=39)
 
 # Nombre de calculs :
 nb_calcul = 1
-model = ['D_PLAN_HHO_121']
+model = ['D_PLAN_HHO_222']
 
 MAIL0 = LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
 

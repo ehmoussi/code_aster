@@ -18,17 +18,22 @@
 # --------------------------------------------------------------------
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-CREA_LIB_MFRONT(UNITE_MFRONT=38, UNITE_LIBRAIRIE=39)
-
 # Nombre de calculs :
 nb_calcul = 1
-model = ['D_PLAN_HHO_121']
+model = ['D_PLAN_HHO_222']
 
 MAIL0 = LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
+
+MAIL0 = MODI_MAILLAGE(reuse=MAIL0,
+                      MAILLAGE=MAIL0,
+                      ORIE_PEAU_2D=_F(GROUP_MA=('Sup',)))
 
 MAIL = CREA_MAILLAGE(MAILLAGE=MAIL0,
                      LINE_QUAD=_F(TOUT='OUI',),)
 
+MAIL = MODI_MAILLAGE(reuse=MAIL,
+                     MAILLAGE=MAIL,
+                     ORIE_PEAU_2D=_F(GROUP_MA=('Sup',)))
 
 # MATERIAU HYPERELASTIQUE: MOONEY-RIVLIN
 C01 = 2.3456
@@ -38,13 +43,9 @@ NU = 0.499
 K = (6*(C10+C01))/(3*(1-2*NU))
 
 # MATERIAU HYPERELASTIQUE: MOONEY-RIVLIN
-RUBBER1 = DEFI_MATERIAU(ELAS_HYPER=_F(C10=C10,
-                                      C01=C01,
-                                      C20=C20,
-                                      K=K,
-                                      RHO=1000.0),
-                        MFRONT=_F(LISTE_COEF=(C01, C10, C20, K),),
-                        )
+RUBBER1 = DEFI_MATERIAU(
+    ELAS_HYPER=_F(C01=C01, C10=C10, C20=C20, K=K)
+)
 
 CHMAT1 = AFFE_MATERIAU(AFFE=_F(MATER=RUBBER1, TOUT='OUI'), MAILLAGE=MAIL)
 
@@ -60,13 +61,9 @@ NU = 0.499
 
 K = (6. * (C10 + C01)) / (3. * (1. - 2. * NU))
 
-RUBBER2 = DEFI_MATERIAU(ELAS_HYPER=_F(C10=C10,
-                                      C01=C01,
-                                      C20=C20,
-                                      K=K,
-                                      RHO=1000.0),
-                        MFRONT=_F(LISTE_COEF=(C01, C10, C20, K),),
-                        )
+RUBBER2 = DEFI_MATERIAU(
+    ELAS_HYPER=_F(C01=C01, C10=C10, C20=C20, NU=NU, RHO=1000.0)
+)
 
 CHMAT2 = AFFE_MATERIAU(AFFE=_F(MATER=RUBBER2, TOUT='OUI'), MAILLAGE=MAIL)
 
@@ -82,17 +79,13 @@ NU = 0.499
 
 K = (6. * (C10 + C01)) / (3. * (1. - 2. * NU))
 
-RUBBER3 = DEFI_MATERIAU(ELAS_HYPER=_F(C10=C10,
-                                      C01=C01,
-                                      C20=C20,
-                                      K=K,
-                                      RHO=1000.0),
-                        MFRONT=_F(LISTE_COEF=(C01, C10, C20, K),),
-                        )
+RUBBER3 = DEFI_MATERIAU(
+    ELAS_HYPER=_F(C01=C01, C10=C10, C20=C20, K=K, RHO=1000.0)
+)
 
 CHMAT3 = AFFE_MATERIAU(AFFE=_F(MATER=RUBBER3, TOUT='OUI'), MAILLAGE=MAIL)
 
-LISTE = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=1.0, NOMBRE=4))
+LISTE = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=1.0, NOMBRE=2))
 
 RAMPE = DEFI_FONCTION(NOM_PARA='INST', VALE=(0.0, 0.0, 1.0, 1.0))
 
@@ -113,20 +106,15 @@ for i in range(nb_calcul):
 
     RESU1 = STAT_NON_LINE(
         CHAM_MATER=CHMAT1,
-        COMPORTEMENT=_F(
-            RELATION='MFRONT',
-            DEFORMATION='GROT_GDEP',
-            NOM_ROUTINE='astersignorini',
-            UNITE_LIBRAIRIE=39,
-            RESI_INTE_MAXI=1e-11,
-        ),
+        COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                        RELATION='ELAS_HYPER', TOUT='OUI'),
         CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
         EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
         INCREMENT=_F(LIST_INST=LISTE),
+        SOLVEUR=_F(METHODE='MULT_FRONT',),
         MODELE=MODELE,
         NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
-        HHO=_F(STABILISATION='AUTO', OPTIMISATION='MEMOIRE',),
-        INFO=2,
+        HHO=_F(STABILISATION='MANUEL', COEF_STAB=10, OPTIMISATION='TEMPS',),
     )
 
     RESU1 = CALC_CHAMP(reuse=RESU1,
@@ -135,19 +123,15 @@ for i in range(nb_calcul):
 
     RESU2 = STAT_NON_LINE(
         CHAM_MATER=CHMAT2,
-        COMPORTEMENT=_F(
-            RELATION='MFRONT',
-            DEFORMATION='GROT_GDEP',
-            NOM_ROUTINE='astersignorini',
-            UNITE_LIBRAIRIE=39,
-            RESI_INTE_MAXI=1e-11,
-        ),
+        COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                        RELATION='ELAS_HYPER', TOUT='OUI'),
         CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
         EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
         INCREMENT=_F(LIST_INST=LISTE),
         MODELE=MODELE,
+        SOLVEUR=_F(METHODE='MUMPS',),
         NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
-        HHO=_F(STABILISATION='AUTO', OPTIMISATION='TEMPS',),
+        HHO=_F(STABILISATION='AUTO',),
     )
 
     RESU2 = CALC_CHAMP(reuse=RESU2,
@@ -156,19 +140,15 @@ for i in range(nb_calcul):
 
     RESU3 = STAT_NON_LINE(
         CHAM_MATER=CHMAT3,
-        COMPORTEMENT=_F(
-            RELATION='MFRONT',
-            DEFORMATION='GROT_GDEP',
-            NOM_ROUTINE='astersignorini',
-            UNITE_LIBRAIRIE=39,
-            RESI_INTE_MAXI=1e-11,
-        ),
+        COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                        RELATION='ELAS_HYPER', TOUT='OUI'),
         CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
         EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
         INCREMENT=_F(LIST_INST=LISTE),
         MODELE=MODELE,
+        SOLVEUR=_F(METHODE='MUMPS',),
         NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
-        HHO=_F(STABILISATION='MANUEL', COEF_STAB=10, OPTIMISATION='MEMOIRE',),
+        INFO=2,
     )
 
     RESU3 = CALC_CHAMP(reuse=RESU3,
@@ -181,7 +161,7 @@ for i in range(nb_calcul):
             GROUP_NO=('TestDisp', ),
             NOM_CHAM='DEPL',
             NOM_CMP='DY',
-            NUME_ORDRE=4,
+            NUME_ORDRE=2,
             PRECISION=0.002,
             REFERENCE='ANALYTIQUE',
             RESULTAT=RESU1,
@@ -196,7 +176,7 @@ for i in range(nb_calcul):
             GROUP_NO=('MiddleNode', ),
             NOM_CHAM='SIGM_NOEU',
             NOM_CMP='SIYY',
-            NUME_ORDRE=4,
+            NUME_ORDRE=2,
             RESULTAT=RESU1,
             VALE_CALC=(-0.846268961317, ),
         ),
@@ -208,11 +188,11 @@ for i in range(nb_calcul):
             GROUP_NO=('TestDisp', ),
             NOM_CHAM='DEPL',
             NOM_CMP='DY',
-            NUME_ORDRE=4,
+            NUME_ORDRE=2,
             PRECISION=0.002,
             REFERENCE='ANALYTIQUE',
             RESULTAT=RESU2,
-            VALE_CALC=(-0.0783308313502, ),
+            VALE_CALC=(-0.0783309313502, ),
             VALE_REFE=(-0.07818, )
         )
     )
@@ -223,7 +203,7 @@ for i in range(nb_calcul):
             GROUP_NO=('MiddleNode', ),
             NOM_CHAM='SIGM_NOEU',
             NOM_CMP='SIYY',
-            NUME_ORDRE=4,
+            NUME_ORDRE=2,
             RESULTAT=RESU2,
             VALE_CALC=(-0.807653804187, ),
         ),
@@ -235,7 +215,7 @@ for i in range(nb_calcul):
             GROUP_NO=('TestDisp', ),
             NOM_CHAM='DEPL',
             NOM_CMP='DY',
-            NUME_ORDRE=4,
+            NUME_ORDRE=2,
             PRECISION=0.002,
             REFERENCE='ANALYTIQUE',
             RESULTAT=RESU3,
@@ -250,7 +230,7 @@ for i in range(nb_calcul):
             GROUP_NO=('MiddleNode', ),
             NOM_CHAM='SIGM_NOEU',
             NOM_CMP='SIYY',
-            NUME_ORDRE=4,
+            NUME_ORDRE=2,
             RESULTAT=RESU3,
             VALE_CALC=(-0.813992493333, ),
         ),
