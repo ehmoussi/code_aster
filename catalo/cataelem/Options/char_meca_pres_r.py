@@ -142,6 +142,8 @@ CHAR_MECA_PRES_R = Option(
 
 #     On autorise d'appliquer une pression NULLE sur le bord du domaine fluide
       CondCalcul('+', ((AT.FLUIDE,'OUI'),(AT.BORD,'-1'))),
+#     On autorise d'appliquer une pression sur une interface IFS
+      CondCalcul('+', ((AT.FSI,'OUI'),)),
 
 #     Ce chargement concerne les elements XFEM "massifs" :
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),(AT.LXFEM,'OUI'),)),
