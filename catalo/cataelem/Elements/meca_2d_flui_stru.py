@@ -25,71 +25,64 @@ import cataelem.Commons.parameters as SP
 import cataelem.Commons.mesh_types as MT
 from cataelem.Options.options import OP
 
-#----------------
-# Modes locaux :
-#----------------
-
+#----------------------------------------------------------------------------------------------
+# Located components
+#----------------------------------------------------------------------------------------------
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
                              components=('DX', 'DY', 'PHI',))
 
+MMATUUR  = ArrayOfComponents(phys=PHY.MDEP_R, locatedComponents=DDL_MECA)
 
-NGEOMER = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-                            components=('X', 'Y',))
+MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
 
-
-EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-                             components=('X', 'Y', 'W',))
-
-
-MMATUUR = ArrayOfComponents(
-    phys=PHY.MDEP_R, locatedComponents=DDL_MECA)
-
-
-#------------------------------------------------------------
+#----------------------------------------------------------------------------------------------
 class MEFSSE2(Element):
-
-    """Please document this element"""
+    """Element for FSI interaction (U,P,PHI) - 2D - On SE2"""
     meshType = MT.SEG2
     elrefe = (
-        ElrefeLoc(
-            MT.SE2, gauss=('RIGI=FPG2', 'FPG1=FPG1',), mater=('FPG1',),),
+        ElrefeLoc(MT.SE2, gauss=('RIGI=FPG2', 'FPG1=FPG1',), mater=('FPG1',),),
     )
     calculs = (
-
-        OP.COOR_ELGA(te=478,
-                     para_in=((SP.PGEOMER, NGEOMER), ),
-                     para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
-                     ),
-
-        OP.MASS_MECA(te=257,
-                     para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                              ),
-                     para_out=((SP.PMATUUR, MMATUUR), ),
-                     ),
-
-        OP.TOU_INI_ELGA(te=99,
-                        para_out=((OP.TOU_INI_ELGA.PGEOM_R, EGGEOP_R), ),
-                        ),
-
-        OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
+        OP.CHAR_MECA_PRES_F(te=204,
+            para_in  = ((SP.PGEOMER, LC.EGEOM2D), (SP.PPRESSF, LC.CPRE2DF),
+                        (SP.PTEMPSR, LC.MTEMPSR),),
+            para_out = ((SP.PVECTUR, MVECTUR),),
+        ),
+        
+        OP.CHAR_MECA_PRES_R(te=204,
+            para_in  = ((SP.PGEOMER, LC.EGEOM2D), (SP.PPRESSR, LC.EPRE2DR),
+                        (SP.PTEMPSR, LC.MTEMPSR),),
+            para_out = ((SP.PVECTUR, MVECTUR),),
         ),
 
+        OP.COOR_ELGA(te=478,
+            para_in  = ((SP.PGEOMER, LC.EGEOM2D),),
+            para_out = ((OP.COOR_ELGA.PCOORPG, LC.EGGAU2D),),
+        ),
+
+        OP.MASS_MECA(te=257,
+            para_in  = ((SP.PGEOMER, LC.EGEOM2D), (SP.PMATERC, LC.CMATERC),),
+            para_out = ((SP.PMATUUR, MMATUUR),),
+        ),
+
+        OP.TOU_INI_ELEM(te=99,
+            para_out = ((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D),),
+        ),
+
+        OP.TOU_INI_ELGA(te=99,
+            para_out = ((OP.TOU_INI_ELGA.PGEOM_R, LC.EGGAU2D),),
+        ),
 
         OP.TOU_INI_ELNO(te=99,
-                        para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), ),
-                        ),
-
+            para_out = ((OP.TOU_INI_ELNO.PGEOM_R, LC.EGEOM2D),),
+        ),
     )
 
-
-#------------------------------------------------------------
+#----------------------------------------------------------------------------------------------
 class MEFSSE3(MEFSSE2):
-
-    """Please document this element"""
+    """Element for FSI interaction (U,P,PHI) - 2D - On SE3"""
     meshType = MT.SEG3
     elrefe = (
-        ElrefeLoc(
-            MT.SE3, gauss=('RIGI=FPG4', 'FPG1=FPG1',), mater=('FPG1',),),
+        ElrefeLoc(MT.SE3, gauss=('RIGI=FPG4', 'FPG1=FPG1',), mater=('FPG1',),),
     )
