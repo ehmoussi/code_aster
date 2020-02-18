@@ -22,7 +22,7 @@ CREA_LIB_MFRONT(UNITE_MFRONT=38, UNITE_LIBRAIRIE=39)
 
 # Nombre de calculs :
 nb_calcul = 1
-model = ['3D_HHO_121']
+model = ['3D_HHO_222']
 
 MAIL = LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
 
@@ -138,6 +138,7 @@ for i in range(nb_calcul):
                               UNITE_LIBRAIRIE=39,
                               RESI_INTE_MAXI=1e-11,
                           ),
+                          HHO=_F(OPTIMISATION='TEMPS',),
                           CONVERGENCE=(_F(ARRET='OUI',
                                           ITER_GLOB_MAXI=20)),
                           INCREMENT=_F(LIST_INST=LISTE,),)
