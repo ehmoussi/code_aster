@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -256,34 +256,34 @@ DETRUIRE(CONCEPT=_F(NOM=(TAB1),),)
 
 
 
-# CM2C : CHAMP DE MATERIAU F(TEMP,SECH)  + SECH OUBLIE SUR QUELQUES MAILLES => CALCULEL6_62 :
-#--------------------------------------------------------------------------------------------
-CM2C=AFFE_MATERIAU(MAILLAGE=M,
-                 AFFE=_F(TOUT='OUI', MATER=BETON2, ),
-                 AFFE_VARC=(  _F(MAILLE=('M1','M3'),EVOL=SECH1,NOM_VARC='SECH',NOM_CHAM='TEMP',VALE_REF=100),
-                              _F(TOUT='OUI',EVOL=TEMP1,NOM_VARC='TEMP',NOM_CHAM='TEMP',VALE_REF=20),
-                              ))
+# # CM2C : CHAMP DE MATERIAU F(TEMP,SECH)  + SECH OUBLIE SUR QUELQUES MAILLES => CALCULEL6_62 :
+# #--------------------------------------------------------------------------------------------
+# CM2C=AFFE_MATERIAU(MAILLAGE=M,
+#                  AFFE=_F(TOUT='OUI', MATER=BETON2, ),
+#                  AFFE_VARC=(  _F(MAILLE=('M1','M3'),EVOL=SECH1,NOM_VARC='SECH',NOM_CHAM='TEMP',VALE_REF=100),
+#                               _F(TOUT='OUI',EVOL=TEMP1,NOM_VARC='TEMP',NOM_CHAM='TEMP',VALE_REF=20),
+#                               ))
 
-is_ok = 0
-try :
-    U2C=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2C, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
-except AsterError as err:
-   print(fmt_raison % str(err))
-   # on verifie que l'erreur fatale est bien celle que l'on attendait :
-   if err.id_message == "CALCULEL6_62":
-      is_ok = 1
+# is_ok = 0
+# try :
+#     U2C=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2C, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
+# except AsterError as err:
+#    print(fmt_raison % str(err))
+#    # on verifie que l'erreur fatale est bien celle que l'on attendait :
+#    if err.id_message == "CALCULEL6_62":
+#       is_ok = 1
 
-TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',), _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC_I=1,
-           VALE_REFE_I=1,
-           NOM_PARA='BOOLEEN',
-           TABLE=TAB1,
-           FILTRE=_F(NOM_PARA='TEST',
-                     VALE_K='VALEUR  ',),
-           )
+# TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',), _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+# TEST_TABLE(REFERENCE='ANALYTIQUE',
+#            VALE_CALC_I=1,
+#            VALE_REFE_I=1,
+#            NOM_PARA='BOOLEEN',
+#            TABLE=TAB1,
+#            FILTRE=_F(NOM_PARA='TEST',
+#                      VALE_K='VALEUR  ',),
+#            )
 
-DETRUIRE(CONCEPT=_F(NOM=(TAB1),),)
+# DETRUIRE(CONCEPT=_F(NOM=(TAB1),),)
 
 
 
