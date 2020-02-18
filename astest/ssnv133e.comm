@@ -63,7 +63,7 @@ L_INST = DEFI_LIST_REEL(DEBUT=0., INTERVALLE=(
 
 # Nombre de calculs :
 nb_calcul = 1
-model = ['3D_HHO_121']
+model = [ '3D_HHO_222']
 
 
 for i in range(nb_calcul):
