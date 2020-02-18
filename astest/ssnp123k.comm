@@ -40,9 +40,9 @@ CH_MATER = AFFE_MATERIAU(MAILLAGE=MA,
 
 INSTANTS = DEFI_LIST_REEL(DEBUT=0.0,
                           INTERVALLE=(_F(JUSQU_A=0.1,
-                                         NOMBRE=6,),
+                                         NOMBRE=10,),
                                       _F(JUSQU_A=1.0,
-                                         NOMBRE=6,),),)
+                                         NOMBRE=10,),),)
 
 RAMPE = DEFI_FONCTION(NOM_PARA='INST',
                       VALE=(0.0, 0.0,
@@ -52,16 +52,18 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=INSTANTS),
                          ECHEC=_F(EVENEMENT='ERREUR',
                                   ACTION='DECOUPE',
                                   SUBD_METHODE='MANUEL',
-                                  SUBD_PAS=4,
-                                  SUBD_PAS_MINI=0.001),)
+                                  SUBD_PAS=6,
+                                  SUBD_PAS_MINI=0.00001),)
 
 # Nombre de calculs :
 nb_calcul = 1
-model = ['D_PLAN_HHO_121']
+model = ['D_PLAN_HHO_222']
 
-Test1 = [233.71461587437184]
-Test2 = [241.36700125741766]
-Test3 = [297.0823133922637]
+Test1 = [234.63374793192267]
+Test2 = [242.13791894157538]
+Test3 = [297.776637447608]
+Test4 = [420.9738474468938]
+Test5 = [1.3074001191591271]
 
 
 for i in range(nb_calcul):
@@ -89,12 +91,12 @@ for i in range(nb_calcul):
                          EXCIT=(_F(CHARGE=TRAC,
                                    FONC_MULT=RAMPE,),
                                 _F(CHARGE=SYM,),),
-                         COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',
-                                         DEFORMATION='GDEF_LOG'),
+                         COMPORTEMENT=_F(
+                             RELATION='VMIS_ISOT_LINE', DEFORMATION='PETIT'),
                          INCREMENT=_F(LIST_INST=DEFLIST),
                          SOLVEUR=_F(METHODE='MUMPS',),
                          NEWTON=_F(REAC_ITER=1,),
-                         HHO=_F(OPTIMISATION='TEMPS',),
+                         HHO=_F(STABILISATION='MANUEL', COEF_STAB=E,OPTIMISATION='TEMPS',),
                          ARCHIVAGE=_F(LIST_INST=INSTANTS,),)
 
 # POST TRAITEMENT
@@ -128,7 +130,7 @@ for i in range(nb_calcul):
                )
 
     TEST_TABLE(REFERENCE='AUTRE_ASTER',
-               PRECISION=0.004,
+               PRECISION=0.007,
                VALE_CALC=Test2[i],
                VALE_REFE=241.963621081,
                NOM_PARA='SIYY',
@@ -145,7 +147,31 @@ for i in range(nb_calcul):
                FILTRE=_F(NOM_PARA='COOR_X', VALE=3.0,),
                )
 
-# -------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------
+#
+#  TEST SUR LES CONTRAINTES AU POINT B
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      RESULTAT=RESU,
+                      NOM_CHAM='SIGM_ELNO',
+                      NOEUD='N6',
+                      NOM_CMP='SIYY',
+                      VALE_CALC=Test4[i],
+                      CRITERE='RELATIF',
+                      MAILLE='M20',
+                      ),
+              )
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      RESULTAT=RESU,
+                      NOM_CHAM='SIGM_ELNO',
+                      NOEUD='N6',
+                      NOM_CMP='SIXX',
+                      VALE_CALC=Test5[i],
+                      CRITERE='RELATIF',
+                      MAILLE='M20',
+                      ),
+              )
 
     DETRUIRE(CONCEPT=_F(NOM=(SYM, MO, RESU, S_T, TRAC,),),
              INFO=1,)

@@ -39,10 +39,11 @@ CH_MATER = AFFE_MATERIAU(MAILLAGE=MA,
                                  MATER=MATERIAU,),)
 
 INSTANTS = DEFI_LIST_REEL(DEBUT=0.0,
-                          INTERVALLE=(_F(JUSQU_A=0.1,
+                          INTERVALLE=(
+                                      _F(JUSQU_A=0.1,
                                          NOMBRE=6,),
                                       _F(JUSQU_A=1.0,
-                                         NOMBRE=6,),),)
+                                         NOMBRE=5,),),)
 
 RAMPE = DEFI_FONCTION(NOM_PARA='INST',
                       VALE=(0.0, 0.0,
@@ -57,11 +58,11 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=INSTANTS),
 
 # Nombre de calculs :
 nb_calcul = 1
-model = ['D_PLAN_HHO_121']
+model = [ 'D_PLAN_HHO_222']
 
-Test1 = [233.71461587437184]
-Test2 = [241.36700125741766]
-Test3 = [297.0823133922637]
+Test1 = [ 233.66623193267637]
+Test2 = [ 241.2367950210654]
+Test3 = [ 297.2269540454972]
 
 
 for i in range(nb_calcul):
@@ -93,8 +94,8 @@ for i in range(nb_calcul):
                                          DEFORMATION='GDEF_LOG'),
                          INCREMENT=_F(LIST_INST=DEFLIST),
                          SOLVEUR=_F(METHODE='MUMPS',),
-                         NEWTON=_F(REAC_ITER=1,),
                          HHO=_F(OPTIMISATION='TEMPS',),
+                         NEWTON=_F(REAC_ITER=1,),
                          ARCHIVAGE=_F(LIST_INST=INSTANTS,),)
 
 # POST TRAITEMENT

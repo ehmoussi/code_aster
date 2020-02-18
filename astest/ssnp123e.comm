@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -56,14 +56,14 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=INSTANTS),
                                   SUBD_PAS_MINI=0.00001),)
 
 # Nombre de calculs :
-nb_calcul = 2
-model = ['D_PLAN_HHO_121', 'D_PLAN_HHO_222']
+nb_calcul = 1
+model = ['D_PLAN_HHO_121']
 
-Test1 = [233.72155936261046, 234.63374793192267]
-Test2 = [243.48151675568482, 242.13791894157538]
-Test3 = [298.1768218594375, 297.776637447608]
-Test4 = [424.441764539898, 420.9738474468938]
-Test5 = [-0.26038606580598733, 1.3074001191591271]
+Test1 = [233.72155936261046]
+Test2 = [243.48151675568482]
+Test3 = [298.1768218594375]
+Test4 = [424.441764539898]
+Test5 = [-0.26038606580598733]
 
 
 for i in range(nb_calcul):
