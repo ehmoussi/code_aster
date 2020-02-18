@@ -19,6 +19,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
+# ON COMPARE UN CALCUL AVEC UN FORMALISME GRANDES DEFORMATIONS A UN CALCUL EN HPP
+
 # DEFINITION DU PROBLEME
 # =======================
 
@@ -40,9 +42,9 @@ CH_MATER = AFFE_MATERIAU(MAILLAGE=MA,
 
 INSTANTS = DEFI_LIST_REEL(DEBUT=0.0,
                           INTERVALLE=(_F(JUSQU_A=0.1,
-                                         NOMBRE=6,),
+                                         NOMBRE=5,),
                                       _F(JUSQU_A=1.0,
-                                         NOMBRE=6,),),)
+                                         NOMBRE=5,),),)
 
 RAMPE = DEFI_FONCTION(NOM_PARA='INST',
                       VALE=(0.0, 0.0,
@@ -57,11 +59,13 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=INSTANTS),
 
 # Nombre de calculs :
 nb_calcul = 1
-model = ['D_PLAN_HHO_121']
+model = ['D_PLAN_HHO_222']
 
-Test1 = [233.71461587437184]
-Test2 = [241.36700125741766]
-Test3 = [297.0823133922637]
+Test1 = [233.578929464]
+Test2 = [241.541199372]
+Test3 = [296.454953242]
+Test4 = [422.765288448]
+Test5 = [-0.794435800209]
 
 
 for i in range(nb_calcul):
@@ -119,7 +123,7 @@ for i in range(nb_calcul):
 # ON TESTE PAR RAPPORT A LA MODELISATION B : ELEMENTS QUASI-INCOMPRESSIBLES
 
     TEST_TABLE(REFERENCE='AUTRE_ASTER',
-               PRECISION=0.004,
+               PRECISION=0.022,
                VALE_CALC=Test1[i],
                VALE_REFE=234.17369549492,
                NOM_PARA='SIYY',
@@ -128,7 +132,7 @@ for i in range(nb_calcul):
                )
 
     TEST_TABLE(REFERENCE='AUTRE_ASTER',
-               PRECISION=0.004,
+               PRECISION=0.02,
                VALE_CALC=Test2[i],
                VALE_REFE=241.963621081,
                NOM_PARA='SIYY',
@@ -137,7 +141,7 @@ for i in range(nb_calcul):
                )
 
     TEST_TABLE(REFERENCE='AUTRE_ASTER',
-               PRECISION=0.004,
+               PRECISION=0.01,
                VALE_CALC=Test3[i],
                VALE_REFE=298.02665342,
                NOM_PARA='SIYY',
@@ -145,7 +149,31 @@ for i in range(nb_calcul):
                FILTRE=_F(NOM_PARA='COOR_X', VALE=3.0,),
                )
 
-# -------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------
+#
+#  TEST SUR LES CONTRAINTES AU POINT B
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      RESULTAT=RESU,
+                      NOM_CHAM='SIGM_ELNO',
+                      NOEUD='N6',
+                      NOM_CMP='SIYY',
+                      VALE_CALC=Test4[i],
+                      CRITERE='RELATIF',
+                      MAILLE='M20',
+                      ),
+              )
+
+    TEST_RESU(RESU=_F(INST=1.0,
+                      RESULTAT=RESU,
+                      NOM_CHAM='SIGM_ELNO',
+                      NOEUD='N6',
+                      NOM_CMP='SIXX',
+                      VALE_CALC=Test5[i],
+                      CRITERE='RELATIF',
+                      MAILLE='M20',
+                      ),
+              )
 
     DETRUIRE(CONCEPT=_F(NOM=(SYM, MO, RESU, S_T, TRAC,),),
              INFO=1,)

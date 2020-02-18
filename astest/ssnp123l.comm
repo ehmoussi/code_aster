@@ -63,23 +63,23 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=INSTANTS),
 
 coor1 = [0.0, 1.53224, 3.2689, 3.80797, 4.40378, 5.0]
 
-Test1 = [233.777855963]
+Test1 = [233.432428374]
 
-Test2 = [260.171176209]
+Test2 = [258.856776487]
 
-Test3 = [297.326050547]
+Test3 = [297.261282303]
 
-Test4 = [265.80514287]
+Test4 = [265.841456549]
 
-Test5 = [183.561680595]
+Test5 = [189.00026172]
 
-Test6 = [422.462955858]
+Test6 = [422.973924462]
 
-Test7 = [-0.52525831846]
+Test7 = [-0.0820213381475]
 
 # Nombre de calculs :
 nb_calcul = 1
-model = ['3D_HHO_121']
+model = ['3D_HHO_222']
 
 for i in range(nb_calcul):
 
