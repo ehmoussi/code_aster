@@ -117,7 +117,7 @@ class MECA_FACE3(Element):
                         (SP.PVECTU5, MVECTUR), (SP.PVECTU6, MVECTUR),),
         ),
 
-        OP.CHAR_MECA_EFON_F(te=19,
+        OP.CHAR_MECA_EFON_F(te=18,
             para_in  = ((SP.PEFOND, LC.CEFOND), (SP.PGEOMER, LC.EGEOM3D),
                         (SP.PPREFFF, LC.CPRE3DF), (SP.PTEMPSR, LC.MTEMPSR),),
             para_out = ((SP.PVECTUR, MVECTUR),),
@@ -129,7 +129,7 @@ class MECA_FACE3(Element):
             para_out = ((SP.PVECTUR, MVECTUR),),
         ),
 
-        OP.CHAR_MECA_EFSU_F(te=425,
+        OP.CHAR_MECA_EFSU_F(te=424,
             para_in  = ((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                         (SP.PEFOND, LC.CEFOND), (SP.PGEOMER, LC.EGEOM3D),
                         (SP.PPREFFF, LC.CPRE3DF), (SP.PTEMPSR, LC.MTEMPSR),),
@@ -154,7 +154,7 @@ class MECA_FACE3(Element):
             para_out = ((SP.PVECTUR, MVECTUR),),
         ),
 
-        OP.CHAR_MECA_PRES_F(te=19,
+        OP.CHAR_MECA_PRES_F(te=18,
             para_in  = ((SP.PGEOMER, LC.EGEOM3D), (SP.PPRESSF, LC.CPRE3DF),
                         (SP.PTEMPSR, LC.MTEMPSR),),
             para_out = ((SP.PVECTUR, MVECTUR),),
@@ -165,7 +165,7 @@ class MECA_FACE3(Element):
             para_out = ((SP.PVECTUR, MVECTUR),),
         ),
 
-        OP.CHAR_MECA_PRSU_F(te=425,
+        OP.CHAR_MECA_PRSU_F(te=424,
             para_in  = ((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                         (SP.PGEOMER, LC.EGEOM3D), (SP.PPRESSF, LC.CPRE3DF),
                         (SP.PTEMPSR, LC.MTEMPSR),),
@@ -198,7 +198,7 @@ class MECA_FACE3(Element):
             para_out = ((SP.PDCEL_I, LC.EDCEL_I),),
         ),
 
-        OP.RIGI_MECA_EFSU_F(te=425,
+        OP.RIGI_MECA_EFSU_F(te=424,
             para_in  = ((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                         (SP.PEFOND, LC.CEFOND),
                         (SP.PGEOMER, LC.EGEOM3D),
@@ -213,7 +213,7 @@ class MECA_FACE3(Element):
             para_out = ((SP.PMATUNS, MMATUNS),),
         ),
 
-        OP.RIGI_MECA_PRSU_F(te=425,
+        OP.RIGI_MECA_PRSU_F(te=424,
             para_in  = ((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                         (SP.PGEOMER, LC.EGEOM3D), (SP.PPRESSF, LC.CPRE3DF),
                         (SP.PTEMPSR, LC.MTEMPSR),),

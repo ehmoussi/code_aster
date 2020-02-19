@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,27 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmpr3d_vect(nno, npg, poidsg, vff, dff,&
-                       geom, p, vect)
+! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmpr3d_vect(nno   , npg , ndof,&
+                       poidsg, vff , dff ,&
+                       geom  , pres, vect)
+!
+implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/subaco.h"
 #include "asterfort/sumetr.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    integer, intent(in) :: nno
-    integer, intent(in) :: npg
-    real(kind=8), intent(in) :: poidsg(npg)
-    real(kind=8), intent(in) :: vff(nno, npg)
-    real(kind=8), intent(in) :: dff(2, nno, npg)
-    real(kind=8), intent(in) :: geom(3, nno)
-    real(kind=8), intent(in) :: p(npg)
-    real(kind=8), intent(out) :: vect(3, nno)
+integer, intent(in) :: nno, npg, ndof
+real(kind=8), intent(in) :: poidsg(npg), vff(nno, npg), dff(2, nno, npg)
+real(kind=8), intent(in) :: geom(3, nno)
+real(kind=8), intent(in) :: pres(npg)
+real(kind=8), intent(out) :: vect(ndof, nno)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,15 +41,15 @@ subroutine nmpr3d_vect(nno, npg, poidsg, vff, dff,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!
-! In  nno       : number of nodes
-! In  nng       : number of Gauss points
-! In  poidsg    : weight of Gauss points
-! In  vff       : shape functions at Gauss points
-! In  dff       : derivative of shape functions at Gauss point point
-! In  geom      : coordinates of nodes
-! In  p         : pressure at Gauss points
-! Out vect      : second member
+! In  nno              : number of nodes
+! In  nng              : number of Gauss points
+! In  ndof             : number of dof by node
+! In  poidsg           : weight of Gauss points
+! In  vff              : shape functions at Gauss points
+! In  dff              : derivative of shape functions at Gauss point point
+! In  geom             : coordinates of nodes
+! In  pres             : pressure at Gauss points
+! Out vect             : second member
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,29 +58,22 @@ subroutine nmpr3d_vect(nno, npg, poidsg, vff, dff,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! - Initializations
-!
-    call r8inir(nno*3, 0.d0, vect, 1)
+    vect(1:ndof, 1:nno) = 0.d0
 !
 ! - Loop on Gauss points
 !
     do kpg = 1, npg
-!
 ! ----- Covariant basis
-!
         call subaco(nno, dff(1, 1, kpg), geom, cova)
-!
 ! ----- Metric tensor
-!
         call sumetr(cova, metr, jac)
-!
-! ----- Second member
-!
-         do n = 1, nno
+! ----- Compute
+        do n = 1, nno
             do i = 1, 3
-                vect(i,n) = vect(i,n) - poidsg(kpg)*jac * p(kpg) * cova(i,3)*vff(n,kpg)
+                vect(i,n) = vect(i,n) - &
+                            poidsg(kpg) * jac * pres(kpg) * cova(i,3)*vff(n,kpg)
             enddo
-         enddo
+        enddo
      enddo
 !
 end subroutine

@@ -17,13 +17,6 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmpr3d_vect(nno   , npg , ndof,&
-                           poidsg, vff , dff ,&
-                           geom  , pres, vect)
-        integer, intent(in) :: nno, npg, ndof
-        real(kind=8), intent(in) :: poidsg(npg), vff(nno, npg), dff(2, nno, npg)
-        real(kind=8), intent(in) :: geom(3, nno)
-        real(kind=8), intent(in) :: pres(npg)
-        real(kind=8), intent(out) :: vect(ndof, nno)
-    end subroutine nmpr3d_vect
+    subroutine mb_pres()
+    end subroutine mb_pres
 end interface
