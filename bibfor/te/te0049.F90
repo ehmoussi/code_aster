@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,14 +65,14 @@ subroutine te0049(option, nomte)
 !      -----------------------------------------
     nbsig = nbsigm()
 !
-    do 10 i = 1, nbsig*npg1
+    do i = 1, nbsig*npg1
         epsi(i) = zero
         sigi(i) = zero
-10  end do
+    end do
 !
-    do 20 i = 1, ndim*nno
+    do i = 1, ndim*nno
         bsigma(i) = zero
-20  end do
+    end do
 !
 ! ---- RECUPERATION DES COORDONNEES DES CONNECTIVITES
 !      ----------------------------------------------
@@ -89,11 +89,11 @@ subroutine te0049(option, nomte)
     bary(1) = 0.d0
     bary(2) = 0.d0
     bary(3) = 0.d0
-    do 150 i = 1, nno
-        do 140 idim = 1, ndim
+    do i = 1, nno
+        do idim = 1, ndim
             bary(idim) = bary(idim)+zr(igeom+idim+ndim*(i-1)-1)/nno
-140      continue
-150  end do
+        enddo
+    end do
     call ortrep(ndim, bary, repere)
 !
 ! ---- RECUPERATION DE L'INSTANT
@@ -126,9 +126,9 @@ subroutine te0049(option, nomte)
 !      -------------------------------------------------
     call jevech('PVECTUR', 'E', ivectu)
 !
-    do 30 i = 1, ndim*nno
+    do i = 1, ndim*nno
         zr(ivectu+i-1) = bsigma(i)
-30  end do
+    end do
 !
 ! FIN ------------------------------------------------------------------
 end subroutine

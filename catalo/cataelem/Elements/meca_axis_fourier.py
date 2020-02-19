@@ -61,7 +61,7 @@ CEPSINF  = LocatedComponents(phys=PHY.EPSI_F, type='ELEM',
           'EPYZ',))
 
 
-CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
+CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
     components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
           'EPYZ',))
 

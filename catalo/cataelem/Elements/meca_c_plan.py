@@ -78,7 +78,7 @@ EDEFONO  = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
     components=('EPXX','EPYY','EPZZ','EPXY',))
 
 
-CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
+CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
     components=('EPXX','EPYY','EPZZ','EPXY',))
 
 

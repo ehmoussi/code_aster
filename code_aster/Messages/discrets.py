@@ -164,6 +164,18 @@ Pour information :
    Maille   : <%(k5)s>
 """),
 
+    23: _("""
+Pour l'élément discret %(k5)s.
+Pour ce comportement la modélisation doit être soit :
+-  DIS_T_L : élément SEG2 et modélisation DIS_T
+-  DIS_T_N : élément POI1 et modélisation DIS_T
+Pour information :
+- Modèle   : <%(k1)s>, Option   : <%(k2)s>
+- Comportement : <%(k3)s>, Relation : <%(k4)s>
+   Maille   : <%(k5)s>
+"""),
+
+
     25 : _("""
 Vous utilisez des discrets %(k1)s alors que vous n'avez pas affecté ses caractéristiques.
 Il faut vérifier les affectations sous AFFE_CARA_ELEM/DISCRET OU DISCRET_2D.

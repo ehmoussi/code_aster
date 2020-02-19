@@ -18,12 +18,15 @@
 # --------------------------------------------------------------------
 
 import aster
+
 from ..Cata.Syntax import _F
-from ..Commands import CREA_CHAMP, FORMULE, MODI_MAILLAGE
-from ..Messages import UTMESS
+from ..Commands import (CALC_CHAMP, CREA_CHAMP, CREA_RESU, FORMULE,
+                        MODI_MAILLAGE)
+from ..Messages import UTMESS, MasquerAlarme, RetablirAlarme
 
 
-def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args):
+def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA,
+                      GEOMETRIE, CRITERE, PRECISION, **args):
     """
            Macro permettant le calcul des pressions aux interfaces d'un solide
            à partir du champ de contraintes sigma_n. Elle fonctionne
@@ -50,47 +53,12 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
                 UTMESS('F', 'CALCPRESSION0_3')
     dim = MAILLAGE.getDimension()
 
-# Corps de la commande
-# Champ de contraintes de Cauchy aux noeuds
-    __sigm = CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
-                        OPERATION='EXTR',
+    MasquerAlarme('CALCCHAMP_1')
+    RESULTAT = CALC_CHAMP(reuse=RESULTAT,
                         RESULTAT=RESULTAT,
-                        NOM_CHAM='SIEF_NOEU',
-                        INST=INST,
-                        )
+                        CONTRAINTE='SIEF_NOEU',)
+    RetablirAlarme('CALCCHAMP_1')
 
-    if  GEOMETRIE == 'DEFORMEE' :
-        __depl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                            OPERATION='EXTR',
-                            RESULTAT=RESULTAT,
-                            NOM_CHAM='DEPL',
-                            INST=INST,
-                           )
-
-        __mdepl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                             OPERATION='COMB',
-                             COMB=_F(CHAM_GD=__depl,
-                                     COEF_R=-1.0,),
-                            )
-
-    # Normale sur la configuration finale
-    if GEOMETRIE == 'DEFORMEE' :
-        MODI_MAILLAGE(reuse=MAILLAGE,
-                      MAILLAGE=MAILLAGE,
-                      DEFORME=_F(OPTION='TRAN',
-                                 DEPL=__depl,),)
-
-    __NormaleF = CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
-                            OPERATION='NORMALE',
-                            MODELE=model,
-                            GROUP_MA=GROUP_MA,
-                            )
-
-    if GEOMETRIE == 'DEFORMEE' :
-        MODI_MAILLAGE(reuse=MAILLAGE,
-                  MAILLAGE=MAILLAGE,
-                  DEFORME=_F(OPTION='TRAN',
-                             DEPL=__mdepl,),)
     # Pression à l'interface
     if dim == 3:
     # Formule en dimension 3 :
@@ -102,25 +70,82 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA, INST,GEOMETRIE, **args
         __Pression = FORMULE(VALE='(SIXX*X*X+SIYY*Y*Y+2*SIXY*X*Y)',
                              NOM_PARA=('SIXX', 'SIYY', 'SIXY', 'X', 'Y'),)
 
-    __Pres = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
-                        OPERATION='AFFE',
-                        MAILLAGE=MAILLAGE,
-                        AFFE=_F(GROUP_MA=GROUP_MA,
-                                NOM_CMP='X1',
-                                VALE_F=__Pression,),)
+    # boucle pour INST
+    time = args.get("INST")
+    if not time:
+        # TOUT_ORDRE
+        time = RESULTAT.LIST_VARI_ACCES()['INST']
+    linst = len(time)
 
-    __pF = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
-                      OPERATION='EVAL',
-                      CHAM_F=__Pres,
-                      CHAM_PARA=(__NormaleF, __sigm,),)
+    for iinst in range(linst):
+        __sigm = CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
+                            OPERATION='EXTR',
+                            RESULTAT=RESULTAT,
+                            NOM_CHAM='SIEF_NOEU',
+                            INST=time[iinst],
+                            )
+        if  GEOMETRIE == 'DEFORMEE' :
+            __depl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                                OPERATION='EXTR',
+                                RESULTAT=RESULTAT,
+                                NOM_CHAM='DEPL',
+                                INST=time[iinst],
+                               )
+            __mdepl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                                 OPERATION='COMB',
+                                 COMB=_F(CHAM_GD=__depl,
+                                         COEF_R=-1.0,),
+                                )
+        # Normale sur la configuration finale
+        if GEOMETRIE == 'DEFORMEE' :
+            MAILLAGE = MODI_MAILLAGE(reuse=MAILLAGE,
+                                     MAILLAGE=MAILLAGE,
+                                     DEFORME=_F(OPTION='TRAN',
+                                                DEPL=__depl,),)
+#
+        __NormaleF = CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
+                                OPERATION='NORMALE',
+                                MODELE=model,
+                                GROUP_MA=GROUP_MA,
+                                )
+#
+        if  GEOMETRIE == 'DEFORMEE' :
+            MAILLAGE = MODI_MAILLAGE(reuse=MAILLAGE,
+                                     MAILLAGE=MAILLAGE,
+                                     DEFORME=_F(OPTION='TRAN',
+                                                DEPL=__mdepl,),)
+#
+        __Pres = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
+                            OPERATION='AFFE',
+                            MAILLAGE=MAILLAGE,
+                            AFFE=_F(GROUP_MA=GROUP_MA,
+                                    NOM_CMP='X1',
+                                    VALE_F=__Pression,),)
+        __pF = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_R',
+                          OPERATION='EVAL',
+                          CHAM_F=__Pres,
+                          CHAM_PARA=(__NormaleF, __sigm,),)
+#
+        __chp = CREA_CHAMP(TYPE_CHAM='NOEU_PRES_R',
+                                OPERATION='ASSE',
+                                MODELE=model,
+                                ASSE=_F(GROUP_MA=GROUP_MA,
+                                        CHAM_GD=__pF,
+                                        NOM_CMP='X1',
+                                        NOM_CMP_RESU='PRES',),)
 
-    # champ de pression
-    chpout = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                        OPERATION='ASSE',
-                        MODELE=model,
-                        ASSE=_F(GROUP_MA=GROUP_MA,
-                                CHAM_GD=__pF,
-                                NOM_CMP='X1',
-                                NOM_CMP_RESU='LAGS_C',),)
+        MasquerAlarme('COMPOR2_23')
+        RESULTAT = CREA_RESU(reuse=RESULTAT,
+                            RESULTAT=RESULTAT,
+                            TYPE_RESU=RESULTAT.getType(),
+                            NOM_CHAM='PRES_NOEU',
+                            OPERATION='AFFE',
+                            AFFE=_F(INST=time[iinst],
+                                    CHAM_GD=__chp,
+                                    MODELE=model,
+                                    PRECISION=1.0e-6,
+                                    CRITERE='ABSOLU',
+                                    ),)
+        RetablirAlarme('COMPOR2_23')
 
-    return chpout
+    return RESULTAT
