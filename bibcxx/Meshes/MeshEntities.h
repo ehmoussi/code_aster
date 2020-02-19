@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MeshEntities
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -98,7 +98,7 @@ public:
 };
 
 /**
- * @class GroupOfNodesInstance
+ * @class GroupOfNodesClass
  * @brief Cette classe permet de definir des groupes de noeuds
  * @author Nicolas Sellenet
  */

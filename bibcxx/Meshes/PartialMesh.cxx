@@ -3,7 +3,7 @@
  * @brief Implementation de
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,10 +28,10 @@
 
 #ifdef _USE_MPI
 
-PartialMeshInstance::PartialMeshInstance( const std::string& name,
+PartialMeshClass::PartialMeshClass( const std::string& name,
                                           const ParallelMeshPtr& mesh,
                                           const VectorString& toFind ):
-    BaseMeshInstance( name, "MAILLAGE_PARTIEL" ),
+    BaseMeshClass( name, "MAILLAGE_PARTIEL" ),
     _pMesh( mesh ),
     _localNumbering( getName() + ".LOCAL" ),
     _globalNumbering( getName() + ".GLOBAL" ),
@@ -114,7 +114,7 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
     }
     boolToSend.clear();
 
-    VectorDouble coords;
+    VectorReal coords;
     VectorLong numbering;
     const auto& meshCoords = mesh->getCoordinates();
     meshCoords->updateValuePointers();
@@ -130,7 +130,7 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
         numbering.push_back( (*globalNum)[ nodeNum ] );
         numbering.push_back( rank );
     }
-    VectorDouble completeCoords;
+    VectorReal completeCoords;
     VectorLong completeMatchingNumbering;
     VectorLong completeElementsType;
     std::vector<VectorLong> completeConnectivity;
@@ -147,7 +147,7 @@ PartialMeshInstance::PartialMeshInstance( const std::string& name,
         }
         else
         {
-            VectorDouble buffer( taille, 0. );
+            VectorReal buffer( taille, 0. );
             aster_mpi_bcast( buffer.data(), taille, MPI_DOUBLE, proc, commWorld );
             completeCoords.insert( completeCoords.end(), buffer.begin(), buffer.end() );
         }

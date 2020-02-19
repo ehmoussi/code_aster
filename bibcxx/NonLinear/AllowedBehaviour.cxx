@@ -3,7 +3,7 @@
  * @brief Initialise les noms et possibles pour les comportements
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,7 +26,7 @@
 const std::vector< ConstitutiveLawEnum > allConstitutiveLaw = {
     Elas,                      Elas_Vmis_Line,  Elas_Vmis_Trac,      Elas_Vmis_Puis,
     Elas_Hyper,                Elas_Poutre_Gr,  Cable,               Arme,
-    Asse_Corn,                 Barcelone,       Beton_Burger_Fp,     Beton_Double_Dp,
+    Asse_Corn,                 Barcelone,       Beton_Burger_Fp,     Beton_Real_Dp,
     Beton_Rag,                 Beton_Regle_Pr,  Beton_Umlv_Fp,       Cable_Gaine_Frot,
     Cam_Clay,                  Cjs,             Corr_Acier,          Czm_Exp,
     Czm_Exp_Reg,               Czm_Exp_Mix,     Czm_Fat_Mix,         Czm_Lin_Reg,

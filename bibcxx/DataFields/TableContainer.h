@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TableContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,20 +37,20 @@
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/ElementaryVector.h"
-#include "DataFields/GenericDataField.h"
+#include "DataFields/DataField.h"
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/PCFieldOnMesh.h"
-#include "DataFields/FieldOnElements.h"
-#include "Results/MechanicalModeContainer.h"
+#include "DataFields/FieldOnCells.h"
+#include "Results/ModeResult.h"
 #include "Functions/Function.h"
 #include "Functions/Surface.h"
 #include <map>
 
 /**
- * @typedef TableContainerInstance
- * @brief Definition of TableContainerInstance (table_container)
+ * @typedef TableContainerClass
+ * @brief Definition of TableContainerClass (table_container)
  */
-class TableContainerInstance : public TableInstance
+class TableContainerClass : public TableClass
 {
   private:
     JeveuxVectorChar16 _objectName;
@@ -61,16 +61,16 @@ class TableContainerInstance : public TableInstance
     std::vector< JeveuxVectorLong > _others;
 
 
-    std::map< std::string, GeneralizedAssemblyMatrixDoublePtr > _mapGAMD;
-    std::map< std::string, ElementaryMatrixDisplacementDoublePtr > _mapEMDD;
-    std::map< std::string, ElementaryMatrixTemperatureDoublePtr > _mapEMTD;
-    std::map< std::string, ElementaryVectorDisplacementDoublePtr > _mapEVDD;
-    std::map< std::string, ElementaryVectorTemperatureDoublePtr > _mapEVTD;
-    std::map< std::string, GenericDataFieldPtr > _mapGDF;
-    std::map< std::string, FieldOnNodesDoublePtr > _mapFOND;
-    std::map< std::string, PCFieldOnMeshDoublePtr > _mapPCFOMD;
-    std::map< std::string, FieldOnElementsDoublePtr > _mapFOED;
-    std::map< std::string, MechanicalModeContainerPtr > _mapMMC;
+    std::map< std::string, GeneralizedAssemblyMatrixRealPtr > _mapGAMD;
+    std::map< std::string, ElementaryMatrixDisplacementRealPtr > _mapEMDD;
+    std::map< std::string, ElementaryMatrixTemperatureRealPtr > _mapEMTD;
+    std::map< std::string, ElementaryVectorDisplacementRealPtr > _mapEVDD;
+    std::map< std::string, ElementaryVectorTemperatureRealPtr > _mapEVTD;
+    std::map< std::string, DataFieldPtr > _mapGDF;
+    std::map< std::string, FieldOnNodesRealPtr > _mapFOND;
+    std::map< std::string, PCFieldOnMeshRealPtr > _mapPCFOMD;
+    std::map< std::string, FieldOnCellsRealPtr > _mapFOED;
+    std::map< std::string, ModeResultPtr > _mapMMC;
     std::map< std::string, TablePtr > _mapT;
     std::map< std::string, FunctionPtr > _mapF;
     std::map< std::string, FunctionComplexPtr > _mapFC;
@@ -79,61 +79,61 @@ class TableContainerInstance : public TableInstance
   public:
     /**
     * @typedef TableContainerPtr
-    * @brief Definition of a smart pointer to a TableContainerInstance
+    * @brief Definition of a smart pointer to a TableContainerClass
     */
-    typedef boost::shared_ptr< TableContainerInstance > TableContainerPtr;
+    typedef boost::shared_ptr< TableContainerClass > TableContainerPtr;
 
     /**
     * @brief Constructeur
     * @param name Nom Jeveux du champ aux noeuds
     */
-    TableContainerInstance( const std::string &name ):
-        TableInstance( name, "TABLE_CONTAINER" )
+    TableContainerClass( const std::string &name ):
+        TableClass( name, "TABLE_CONTAINER" )
     {};
 
     /**
      * @brief Constructeur
      */
-    TableContainerInstance():
-        TableContainerInstance( ResultNaming::getNewResultName() )
+    TableContainerClass():
+        TableContainerClass( ResultNaming::getNewResultName() )
     {};
 
     /**
-     * @brief Add ElementaryMatrixDisplacementDouble to TableContainer
+     * @brief Add ElementaryMatrixDisplacementReal to TableContainer
      * @param name key used to find object
      */
     void addObject
-        ( const std::string& name, ElementaryMatrixDisplacementDoublePtr );
+        ( const std::string& name, ElementaryMatrixDisplacementRealPtr );
 
     /**
-     * @brief Add ElementaryMatrixTemperatureDouble to TableContainer
+     * @brief Add ElementaryMatrixTemperatureReal to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, ElementaryMatrixTemperatureDoublePtr );
+    void addObject( const std::string&, ElementaryMatrixTemperatureRealPtr );
 
     /**
-     * @brief Add ElementaryVectorDisplacementDouble to TableContainer
+     * @brief Add ElementaryVectorDisplacementReal to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, ElementaryVectorDisplacementDoublePtr );
+    void addObject( const std::string&, ElementaryVectorDisplacementRealPtr );
 
     /**
-     * @brief Add ElementaryVectorTemperatureDouble to TableContainer
+     * @brief Add ElementaryVectorTemperatureReal to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, ElementaryVectorTemperatureDoublePtr );
+    void addObject( const std::string&, ElementaryVectorTemperatureRealPtr );
 
     /**
-     * @brief Add FieldOnElementsDouble to TableContainer
+     * @brief Add FieldOnCellsReal to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, FieldOnElementsDoublePtr );
+    void addObject( const std::string&, FieldOnCellsRealPtr );
 
     /**
-     * @brief Add FieldOnNodesDouble to TableContainer
+     * @brief Add FieldOnNodesReal to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, FieldOnNodesDoublePtr );
+    void addObject( const std::string&, FieldOnNodesRealPtr );
 
     /**
      * @brief Add Function to TableContainer
@@ -151,25 +151,25 @@ class TableContainerInstance : public TableInstance
      * @brief Add generalized assembly matrix to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, GeneralizedAssemblyMatrixDoublePtr );
+    void addObject( const std::string&, GeneralizedAssemblyMatrixRealPtr );
 
     /**
-     * @brief Add GenericDataField to TableContainer
+     * @brief Add DataField to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, GenericDataFieldPtr );
+    void addObject( const std::string&, DataFieldPtr );
 
     /**
-     * @brief Add MechanicalModeContainer to TableContainer
+     * @brief Add ModeResult to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, MechanicalModeContainerPtr );
+    void addObject( const std::string&, ModeResultPtr );
 
     /**
-     * @brief Add PCFieldOnMeshDouble to TableContainer
+     * @brief Add PCFieldOnMeshReal to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, PCFieldOnMeshDoublePtr );
+    void addObject( const std::string&, PCFieldOnMeshRealPtr );
 
     /**
      * @brief Add Surface to TableContainer
@@ -184,44 +184,44 @@ class TableContainerInstance : public TableInstance
     void addObject( const std::string&, TablePtr );
 
     /**
-     * @brief Get ElementaryMatrixDisplacementDouble stored in TableContainer
+     * @brief Get ElementaryMatrixDisplacementReal stored in TableContainer
      * @param name key used to find object
      */
-    ElementaryMatrixDisplacementDoublePtr getElementaryMatrixDisplacementDouble
+    ElementaryMatrixDisplacementRealPtr getElementaryMatrixDisplacementReal
         ( const std::string& name ) const;
 
     /**
-     * @brief Get ElementaryMatrixTemperatureDouble stored in TableContainer
+     * @brief Get ElementaryMatrixTemperatureReal stored in TableContainer
      * @param name key used to find object
      */
-    ElementaryMatrixTemperatureDoublePtr getElementaryMatrixTemperatureDouble
+    ElementaryMatrixTemperatureRealPtr getElementaryMatrixTemperatureReal
         ( const std::string& ) const;
 
     /**
-     * @brief Get ElementaryVectorDisplacementDouble stored in TableContainer
+     * @brief Get ElementaryVectorDisplacementReal stored in TableContainer
      * @param name key used to find object
      */
-    ElementaryVectorDisplacementDoublePtr getElementaryVectorDisplacementDouble
+    ElementaryVectorDisplacementRealPtr getElementaryVectorDisplacementReal
         ( const std::string& ) const;
 
     /**
-     * @brief Get ElementaryVectorTemperatureDouble stored in TableContainer
+     * @brief Get ElementaryVectorTemperatureReal stored in TableContainer
      * @param name key used to find object
      */
-    ElementaryVectorTemperatureDoublePtr getElementaryVectorTemperatureDouble
+    ElementaryVectorTemperatureRealPtr getElementaryVectorTemperatureReal
         ( const std::string& ) const;
 
     /**
-     * @brief Get FieldOnElementsDouble stored in TableContainer
+     * @brief Get FieldOnCellsReal stored in TableContainer
      * @param name key used to find object
      */
-    FieldOnElementsDoublePtr getFieldOnElementsDouble( const std::string& ) const;
+    FieldOnCellsRealPtr getFieldOnCellsReal( const std::string& ) const;
 
     /**
-     * @brief Get FieldOnNodesDouble stored in TableContainer
+     * @brief Get FieldOnNodesReal stored in TableContainer
      * @param name key used to find object
      */
-    FieldOnNodesDoublePtr getFieldOnNodesDouble( const std::string& ) const;
+    FieldOnNodesRealPtr getFieldOnNodesReal( const std::string& ) const;
 
     /**
      * @brief Get Function stored in TableContainer
@@ -239,25 +239,25 @@ class TableContainerInstance : public TableInstance
      * @brief Get generalized assembly matrix stored in TableContainer
      * @param name key used to find object
      */
-    GeneralizedAssemblyMatrixDoublePtr getGeneralizedAssemblyMatrix( const std::string& ) const;
+    GeneralizedAssemblyMatrixRealPtr getGeneralizedAssemblyMatrix( const std::string& ) const;
 
     /**
-     * @brief Get GenericDataField stored in TableContainer
+     * @brief Get DataField stored in TableContainer
      * @param name key used to find object
      */
-    GenericDataFieldPtr getGenericDataField( const std::string& ) const;
+    DataFieldPtr getDataField( const std::string& ) const;
 
     /**
-     * @brief Get MechanicalModeContainer stored in TableContainer
+     * @brief Get ModeResult stored in TableContainer
      * @param name key used to find object
      */
-    MechanicalModeContainerPtr getMechanicalModeContainer( const std::string& ) const;
+    ModeResultPtr getModeResult( const std::string& ) const;
 
     /**
-     * @brief Get PCFieldOnMeshDouble stored in TableContainer
+     * @brief Get PCFieldOnMeshReal stored in TableContainer
      * @param name key used to find object
      */
-    PCFieldOnMeshDoublePtr getPCFieldOnMeshDouble( const std::string& ) const;
+    PCFieldOnMeshRealPtr getPCFieldOnMeshReal( const std::string& ) const;
 
     /**
      * @brief Get Surface stored in TableContainer

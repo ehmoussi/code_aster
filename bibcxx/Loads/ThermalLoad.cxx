@@ -3,7 +3,7 @@
  * @brief Implementation de ThermalLoad
  * @author Jean-Pierre Lefebvre
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,7 +28,7 @@
 #include "Loads/ThermalLoad.h"
 #include "Supervis/ResultNaming.h"
 
-bool ThermalLoadInstance::build() {
+bool ThermalLoadClass::build() {
     CapyConvertibleSyntax syntax;
     //    syntax.setSimpleKeywordValues( _toCapyConverter );
 

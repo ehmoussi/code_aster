@@ -35,7 +35,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MechanicalModeContainer, TableContainer
+from ..Objects import ModeResult, TableContainer
 from ..Supervis import ExecuteCommand
 
 
@@ -65,7 +65,7 @@ class ModeNonLine(ExecuteCommand):
         nrow=self._result.get_nrow()
         for irow in range(nrow):
             nom_obj=self._result["NOM_OBJET",irow+1]
-            mode_meca=self._result.getMechanicalModeContainer(nom_obj)
+            mode_meca=self._result.getModeResult(nom_obj)
             mode_meca.setMassMatrix(keywords['MATR_MASS'])
             mode_meca.setStiffnessMatrix(keywords['MATR_RIGI'])
 

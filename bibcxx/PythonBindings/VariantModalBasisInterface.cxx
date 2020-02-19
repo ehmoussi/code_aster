@@ -32,6 +32,6 @@ void exportModalBasisVariantToPython()
 {
 
     py::to_python_converter< ModalBasisVariant, ModalBasisToObject >();
-    py::implicitly_convertible< MechanicalModeContainerPtr, ModalBasisVariant >();
-    py::implicitly_convertible< GeneralizedModeContainerPtr, ModalBasisVariant >();
+    py::implicitly_convertible< ModeResultPtr, ModalBasisVariant >();
+    py::implicitly_convertible< GeneralizedModeResultPtr, ModalBasisVariant >();
 };

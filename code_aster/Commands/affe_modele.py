@@ -34,7 +34,7 @@ class ModelAssignment(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Model()
+        self._result = Model(keywords["MAILLAGE"])
 
     def post_exec(self, keywords):
         """Execute the command.
@@ -42,7 +42,6 @@ class ModelAssignment(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        self._result.setMesh(keywords["MAILLAGE"])
 
 
 AFFE_MODELE = ModelAssignment.run

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe MatchingMeshes
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -33,11 +33,11 @@
 #include "Meshes/Mesh.h"
 
 /**
- * @class MatchingMeshesInstance
+ * @class MatchingMeshesClass
  * @brief Cette classe decrit un corresp_2_mailla
  * @author Nicolas Sellenet
  */
-class MatchingMeshesInstance : public DataStructure {
+class MatchingMeshesClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.PJXX_K1' */
     JeveuxVectorChar24 _pjxxK1;
@@ -48,11 +48,11 @@ class MatchingMeshesInstance : public DataStructure {
     /** @brief Objet Jeveux '.PJEF_M1' */
     JeveuxVectorLong _pjefM1;
     /** @brief Objet Jeveux '.PJEF_CF' */
-    JeveuxVectorDouble _pjefCf;
+    JeveuxVectorReal _pjefCf;
     /** @brief Objet Jeveux '.PJEF_TR' */
     JeveuxVectorLong _pjefTr;
     /** @brief Objet Jeveux '.PJEF_CO' */
-    JeveuxVectorDouble _pjefCo;
+    JeveuxVectorReal _pjefCo;
     /** @brief Objet Jeveux '.PJEF_EL' */
     JeveuxVectorLong _pjefEl;
     /** @brief Objet Jeveux '.PJEF_MP' */
@@ -67,14 +67,14 @@ class MatchingMeshesInstance : public DataStructure {
   public:
     /**
      * @typedef MatchingMeshesPtr
-     * @brief Pointeur intelligent vers un MatchingMeshesInstance
+     * @brief Pointeur intelligent vers un MatchingMeshesClass
      */
-    typedef boost::shared_ptr< MatchingMeshesInstance > MatchingMeshesPtr;
+    typedef boost::shared_ptr< MatchingMeshesClass > MatchingMeshesPtr;
 
     /**
      * @brief Constructeur
      */
-    MatchingMeshesInstance( const std::string name = ResultNaming::getNewResultName() );
+    MatchingMeshesClass( const std::string name = ResultNaming::getNewResultName() );
 
     bool setFirstMesh( MeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
@@ -86,8 +86,8 @@ class MatchingMeshesInstance : public DataStructure {
 
 /**
  * @typedef MatchingMeshesPtr
- * @brief Pointeur intelligent vers un MatchingMeshesInstance
+ * @brief Pointeur intelligent vers un MatchingMeshesClass
  */
-typedef boost::shared_ptr< MatchingMeshesInstance > MatchingMeshesPtr;
+typedef boost::shared_ptr< MatchingMeshesClass > MatchingMeshesPtr;
 
 #endif /* MATCHINGMESHES_H_ */

@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe ParallelMechanicalLoad
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -37,15 +37,15 @@
 #include "Loads/MechanicalLoad.h"
 
 /**
- * @class ParallelMechanicalLoadInstance
+ * @class ParallelMechanicalLoadClass
  * @brief Classe definissant une charge dualisée parallèle
  * @author Nicolas Sellenet
  */
-class ParallelMechanicalLoadInstance: public DataStructure
+class ParallelMechanicalLoadClass: public DataStructure
 {
 private:
-    void transferPCFieldOnMesh( const PCFieldOnMeshDoublePtr& fieldIn,
-                                PCFieldOnMeshDoublePtr& fieldOut )
+    void transferPCFieldOnMesh( const PCFieldOnMeshRealPtr& fieldIn,
+                                PCFieldOnMeshRealPtr& fieldOut )
         ;
 
 protected:
@@ -54,9 +54,9 @@ protected:
     /** @brief Vecteur Jeveux '.LIGRE' */
     ParallelFiniteElementDescriptorPtr _FEDesc;
     /** @brief Carte '.CIMPO' */
-    PCFieldOnMeshDoublePtr             _cimpo;
+    PCFieldOnMeshRealPtr             _cimpo;
     /** @brief Carte '.CMULT' */
-    PCFieldOnMeshDoublePtr             _cmult;
+    PCFieldOnMeshRealPtr             _cmult;
     /** @brief Vecteur Jeveux '.TYPE' */
     JeveuxVectorChar8                  _type;
     /** @brief Vecteur Jeveux '.MODEL.NOMO' */
@@ -66,16 +66,16 @@ public:
     /**
      * @brief Constructeur
      */
-    ParallelMechanicalLoadInstance( const GenericMechanicalLoadPtr& load,
+    ParallelMechanicalLoadClass( const GenericMechanicalLoadPtr& load,
                                     const ModelPtr& model ):
-        ParallelMechanicalLoadInstance( ResultNaming::getNewResultName(),
+        ParallelMechanicalLoadClass( ResultNaming::getNewResultName(),
                                         load, model )
     {};
 
     /**
      * @brief Constructeur
      */
-    ParallelMechanicalLoadInstance( const std::string& name,
+    ParallelMechanicalLoadClass( const std::string& name,
                                     const GenericMechanicalLoadPtr& load,
                                     const ModelPtr& model );
 
@@ -83,14 +83,14 @@ public:
      * @typedef ParallelMechanicalLoadPtr
      * @brief Pointeur intelligent vers un ParallelMechanicalLoad
      */
-    typedef boost::shared_ptr< ParallelMechanicalLoadInstance > ParallelMechanicalLoadPtr;
+    typedef boost::shared_ptr< ParallelMechanicalLoadClass > ParallelMechanicalLoadPtr;
 };
 
 /**
  * @typedef ParallelMechanicalLoadPtr
- * @brief Pointeur intelligent vers un ParallelMechanicalLoadInstance
+ * @brief Pointeur intelligent vers un ParallelMechanicalLoadClass
  */
-typedef boost::shared_ptr< ParallelMechanicalLoadInstance > ParallelMechanicalLoadPtr;
+typedef boost::shared_ptr< ParallelMechanicalLoadClass > ParallelMechanicalLoadPtr;
 
 /** @typedef std::list de ParallelMechanicalLoad */
 typedef std::list< ParallelMechanicalLoadPtr > ListParaMecaLoad;

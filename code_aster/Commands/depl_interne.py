@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MechanicalModeContainer
+from ..Objects import ModeResult
 from ..Supervis import ExecuteCommand
 
 
@@ -35,7 +35,7 @@ class DeplInterne(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         if keywords['DEPL_GLOBAL'] == "MODE_MECA":
-            self._result = MechanicalModeContainer()
+            self._result = ModeResult()
         else:
             self._result = type(keywords['DEPL_GLOBAL'])()
 

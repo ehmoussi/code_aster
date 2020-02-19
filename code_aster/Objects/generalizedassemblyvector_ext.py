@@ -27,7 +27,7 @@ import numpy
 
 import aster
 from libaster import (GeneralizedAssemblyVectorComplex,
-                      GeneralizedAssemblyVectorDouble)
+                      GeneralizedAssemblyVectorReal)
 
 from ..Utilities import injector
 
@@ -65,8 +65,8 @@ class ExtendedGeneralizedAssemblyVectorComplex(object):
                          1)
         return
 
-@injector(GeneralizedAssemblyVectorDouble)
-class ExtendedGeneralizedAssemblyVectorDouble(object):
+@injector(GeneralizedAssemblyVectorReal)
+class ExtendedGeneralizedAssemblyVectorReal(object):
     cata_sdj = "SD.sd_cham_gene.sd_cham_gene"
 
     def EXTR_VECT_GENE_R(self) :

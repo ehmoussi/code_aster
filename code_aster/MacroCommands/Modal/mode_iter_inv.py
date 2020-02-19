@@ -17,15 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from ...Objects import (AssemblyMatrixDisplacementDouble, AssemblyMatrixPressureDouble,
-                        GeneralizedAssemblyMatrixDouble)
+from ...Objects import (AssemblyMatrixDisplacementReal, AssemblyMatrixPressureReal,
+                        GeneralizedAssemblyMatrixReal)
 from ...Cata.Commons import *
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
 from ...Supervis import ExecuteCommand
-from ...Objects import (AcousticModeContainer, BucklingModeContainer,
-                                GeneralizedModeContainer, MechanicalModeComplexContainer,
-                                MechanicalModeContainer)
+from ...Objects import (AcousticModeResult, BucklingModeResult,
+                                GeneralizedModeResult, ModeResultComplex,
+                                ModeResult)
 
 
 def mode_iter_inv_prod(TYPE_RESU, **args ):
@@ -144,19 +144,19 @@ class ModalCalculationInv(ExecuteCommand):
         """
         TYPE_RESU = keywords.get("TYPE_RESU")
         if TYPE_RESU in ("MODE_FLAMB", "GENERAL"):
-            self._result = BucklingModeContainer()
+            self._result = BucklingModeResult()
             return
 
         vale_rigi = keywords.get("MATR_RIGI")
         vale_amor = keywords.get("MATR_AMOR")
-        if vale_amor is not None and isinstance(vale_amor, AssemblyMatrixDisplacementDouble):
-            self._result = MechanicalModeComplexContainer()
-        elif isinstance(vale_rigi, AssemblyMatrixDisplacementDouble):
-            self._result = MechanicalModeContainer()
-        elif isinstance(vale_rigi, AssemblyMatrixPressureDouble):
-            self._result = AcousticModeContainer()
-        elif isinstance(vale_rigi, GeneralizedAssemblyMatrixDouble):
-            self._result = GeneralizedModeContainer()
+        if vale_amor is not None and isinstance(vale_amor, AssemblyMatrixDisplacementReal):
+            self._result = ModeResultComplex()
+        elif isinstance(vale_rigi, AssemblyMatrixDisplacementReal):
+            self._result = ModeResult()
+        elif isinstance(vale_rigi, AssemblyMatrixPressureReal):
+            self._result = AcousticModeResult()
+        elif isinstance(vale_rigi, GeneralizedAssemblyMatrixReal):
+            self._result = GeneralizedModeResult()
 
     def post_exec(self, keywords):
         """Execute the command.
@@ -166,7 +166,7 @@ class ModalCalculationInv(ExecuteCommand):
         """
         matrRigi = keywords.get("MATR_RIGI")
         if matrRigi is not None:
-            if isinstance(self._result, GeneralizedModeContainer):
+            if isinstance(self._result, GeneralizedModeResult):
                 self._result.setGeneralizedDOFNumbering(matrRigi.getGeneralizedDOFNumbering())
             else:
                 self._result.setDOFNumbering(matrRigi.getDOFNumbering())

@@ -11,8 +11,7 @@ rank = code_aster.getMPIRank()
 pMesh = code_aster.ParallelMesh()
 pMesh.readMedFile("xxParallelMesh001a")
 
-monModel = code_aster.Model()
-monModel.setMesh(pMesh)
+monModel = code_aster.Model(pMesh)
 monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics,
                               code_aster.Modelings.Tridimensional)
 monModel.build()
@@ -25,7 +24,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = 2.e11,
 
 affectMat = code_aster.MaterialOnMesh(pMesh)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 
 testMesh2 = affectMat.getMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
@@ -44,7 +43,7 @@ charCine2.build()
 
 monSolver = code_aster.MumpsSolver(code_aster.Renumbering.Metis)
 
-mecaStatique = code_aster.StaticMechanicalSolver(monModel, affectMat)
+mecaStatique = code_aster.LinearStaticAnalysis(monModel, affectMat)
 mecaStatique.addKinematicsLoad(charCine)
 mecaStatique.addKinematicsLoad(charCine2)
 mecaStatique.setLinearSolver(monSolver)

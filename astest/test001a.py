@@ -26,9 +26,8 @@ with test.assertRaises(TypeError):
     coord[3] = 5.0
 
 # Definition du modele Aster
-model = code_aster.Model()
+model = code_aster.Model(mesh)
 test.assertEqual(model.getType(), "MODELE_SDASTER")
-model.setMesh(mesh)
 model.addModelingOnAllMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
@@ -43,8 +42,7 @@ test.assertEqual(model.getSplittingMethod(),
 model.build()
 
 # Definition du modele Aster
-model2 = code_aster.Model()
-model2.setMesh(mesh)
+model2 = code_aster.Model(mesh)
 
 with test.assertRaisesRegex(RuntimeError, 'not allowed'):
     model2.addModelingOnAllMesh(

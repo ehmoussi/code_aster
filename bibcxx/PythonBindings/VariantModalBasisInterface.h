@@ -25,15 +25,15 @@
  */
 
 #include "astercxx.h"
-#include "Results/MechanicalModeContainer.h"
-#include "Results/GeneralizedModeContainer.h"
+#include "Results/ModeResult.h"
+#include "Results/GeneralizedModeResult.h"
 #include <boost/variant.hpp>
 #include <boost/python.hpp>
 
 namespace py = boost::python;
 
-typedef boost::variant< MechanicalModeContainerPtr,
-                        GeneralizedModeContainerPtr > ModalBasisVariant;
+typedef boost::variant< ModeResultPtr,
+                        GeneralizedModeResultPtr > ModalBasisVariant;
 
 struct ModalBasisToObject: boost::static_visitor< PyObject * >
 {
@@ -51,10 +51,10 @@ struct ModalBasisToObject: boost::static_visitor< PyObject * >
 template< typename ObjectPointer >
 ModalBasisVariant getModalBasis( ObjectPointer self )
 {
-    auto mat1 = self->getModalBasisFromGeneralizedModeContainer();
+    auto mat1 = self->getModalBasisFromGeneralizedModeResult();
     if ( mat1 != nullptr )
         return ModalBasisVariant( mat1 );
-    auto mat2 = self->getModalBasisFromMechanicalModeContainer();
+    auto mat2 = self->getModalBasisFromModeResult();
     return ModalBasisVariant( mat2 );
 };
 

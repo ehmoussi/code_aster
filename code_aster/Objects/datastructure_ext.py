@@ -93,7 +93,7 @@ DICT_SDJ = {
     "Crack": "SD.sd_fond_fissure.sd_fond_fissure",
     "DOFNumbering": "SD.sd_nume_ddl.sd_nume_ddl",
     "DynamicMacroElement": "SD.sd_macr_elem_dyna.sd_macr_elem_dyna",
-    "HarmoGeneralizedResultsContainer": "SD.sd_dyna_gene.sd_dyna_gene",
+    "HarmoGeneralizedResult": "SD.sd_dyna_gene.sd_dyna_gene",
     "Material": "SD.sd_mater.sd_mater",
 }
 

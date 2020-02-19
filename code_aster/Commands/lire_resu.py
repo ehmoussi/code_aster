@@ -19,13 +19,13 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from ..Objects import (EvolutiveLoad, EvolutiveThermalLoad,
-                       FullHarmonicResultsContainer,
-                       FullTransientResultsContainer,
-                       InputVariableEvolutionContainer,
-                       LinearDisplacementEvolutionContainer,
-                       MechanicalModeComplexContainer, MechanicalModeContainer,
-                       ModeEmpiContainer, NonLinearEvolutionContainer)
+from ..Objects import (LoadResult, ThermalResult,
+                       FullHarmonicResult,
+                       FullTransientResult,
+                       ExternalVariableResult,
+                       ElasticResult,
+                       ModeResultComplex, ModeResult,
+                       EmpiricalModeResult, NonLinearResult)
 from ..Supervis import ExecuteCommand
 
 
@@ -42,25 +42,25 @@ class ResultsReader(ExecuteCommand):
         """
         typ = keywords["TYPE_RESU"]
         if typ == "EVOL_THER":
-            self._result = EvolutiveThermalLoad()
+            self._result = ThermalResult()
         elif typ == "EVOL_ELAS":
-            self._result = LinearDisplacementEvolutionContainer()
+            self._result = ElasticResult()
         elif typ == "EVOL_NOLI":
-            self._result = NonLinearEvolutionContainer()
+            self._result = NonLinearResult()
         elif typ == "EVOL_CHAR":
-            self._result = EvolutiveLoad()
+            self._result = LoadResult()
         elif typ == "DYNA_TRANS":
-            self._result = FullTransientResultsContainer()
+            self._result = FullTransientResult()
         elif typ == "DYNA_HARMO":
-            self._result = FullHarmonicResultsContainer()
+            self._result = FullHarmonicResult()
         elif typ == "MODE_MECA":
-            self._result = MechanicalModeContainer()
+            self._result = ModeResult()
         elif typ == "MODE_EMPI":
-            self._result = ModeEmpiContainer()
+            self._result = EmpiricalModeResult()
         elif typ == "MODE_MECA_C":
-            self._result = MechanicalModeComplexContainer()
+            self._result = ModeResultComplex()
         elif typ == "EVOL_VARC":
-            self._result = InputVariableEvolutionContainer()
+            self._result = ExternalVariableResult()
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))

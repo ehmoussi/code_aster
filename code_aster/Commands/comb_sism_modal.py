@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MechanicalModeContainer
+from ..Objects import ModeResult
 from ..Supervis import ExecuteCommand
 
 
@@ -33,7 +33,7 @@ class ModalSeismicCombination(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = MechanicalModeContainer()
+        self._result = ModeResult()
 
     def post_exec(self, keywords):
         """Execute the command.

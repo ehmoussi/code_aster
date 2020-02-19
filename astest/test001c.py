@@ -24,8 +24,7 @@ with test.assertRaises(TypeError):
     coord[3] = 5.0
 
 # Definition du modele Aster
-monModel = code_aster.Model()
-monModel.setMesh(monMaillage)
+monModel = code_aster.Model(monMaillage)
 monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
 # delete monMaillage and check that the C++ object still exists because

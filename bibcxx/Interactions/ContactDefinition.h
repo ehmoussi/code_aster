@@ -6,7 +6,7 @@
  * @brief Fichier entete de la class ContactDefinition
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,7 +35,7 @@
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 
-class ContactDefinitionInstance : public DataStructure {
+class ContactDefinitionClass : public DataStructure {
   private:
     /** @brief La SD est-elle vide ? */
     bool _isEmpty;
@@ -47,16 +47,16 @@ class ContactDefinitionInstance : public DataStructure {
     * @typedef ContactDefinitionPt
     * @brief Pointeur intelligent vers un ContactDefinition
     */
-    typedef boost::shared_ptr< ContactDefinitionInstance > ContactDefinitionPtr;
+    typedef boost::shared_ptr< ContactDefinitionClass > ContactDefinitionPtr;
     /**
      * @brief Constructeur
      */
-    ContactDefinitionInstance() : ContactDefinitionInstance( ResultNaming::getNewResultName() ){};
+    ContactDefinitionClass() : ContactDefinitionClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ContactDefinitionInstance( const std::string name )
+    ContactDefinitionClass( const std::string name )
         : DataStructure( name, 8, "CHAR_CONTACT" ), _model( ModelPtr() ), _isEmpty( true ){};
 };
 
@@ -64,6 +64,6 @@ class ContactDefinitionInstance : public DataStructure {
 * @typedef ContactDefinitionPt
 * @brief Pointeur intelligent vers un ContactDefinition
 */
-typedef boost::shared_ptr< ContactDefinitionInstance > ContactDefinitionPtr;
+typedef boost::shared_ptr< ContactDefinitionClass > ContactDefinitionPtr;
 
 #endif /* CONTACTDEFINITION_H_ */

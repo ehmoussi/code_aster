@@ -1,6 +1,6 @@
 /**
- * @file MechanicalModeContainerInterface.cxx
- * @brief Interface python de MechanicalModeContainer
+ * @file MechanicalModeResultInterface.cxx
+ * @brief Interface python de MechanicalModeResult
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -32,12 +32,12 @@ void exportStiffnessMatrixVariantToPython()
 {
 
     py::to_python_converter< MatrixVariant, variant_to_object >();
-    py::implicitly_convertible< AssemblyMatrixDisplacementDoublePtr, MatrixVariant >();
+    py::implicitly_convertible< AssemblyMatrixDisplacementRealPtr, MatrixVariant >();
     py::implicitly_convertible< AssemblyMatrixDisplacementComplexPtr, MatrixVariant >();
-    py::implicitly_convertible< AssemblyMatrixTemperatureDoublePtr, MatrixVariant >();
-    py::implicitly_convertible< AssemblyMatrixPressureDoublePtr, MatrixVariant >();
+    py::implicitly_convertible< AssemblyMatrixTemperatureRealPtr, MatrixVariant >();
+    py::implicitly_convertible< AssemblyMatrixPressureRealPtr, MatrixVariant >();
 
     py::to_python_converter< GeneralizedMatrixVariant, variant_to_object >();
-    py::implicitly_convertible< GeneralizedAssemblyMatrixDoublePtr, GeneralizedMatrixVariant >();
+    py::implicitly_convertible< GeneralizedAssemblyMatrixRealPtr, GeneralizedMatrixVariant >();
     py::implicitly_convertible< GeneralizedAssemblyMatrixComplexPtr, GeneralizedMatrixVariant >();
 };

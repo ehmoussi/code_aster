@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import MechanicalModeContainer
+from ..Objects import ModeResult
 from ..Supervis import ExecuteCommand
 
 
@@ -36,7 +36,7 @@ class ExtrMode(ExecuteCommand):
         """
         mode = keywords['FILTRE_MODE'][0]['MODE']
         if mode.getType() == "MODE_MECA":
-            self._result = MechanicalModeContainer()
+            self._result = ModeResult()
         else:
             self._result = type(mode)()
 
@@ -51,7 +51,7 @@ class ExtrMode(ExecuteCommand):
             self._result.setDOFNumbering(mode.getDOFNumbering())
         except:
             pass
-        if isinstance(mode, MechanicalModeContainer):
+        if isinstance(mode, ModeResult):
             stiffMat = mode.getStiffnessMatrix()
             if stiffMat is not None:
                 self._result.setStiffnessMatrix(stiffMat)

@@ -19,13 +19,13 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FieldOnElementsDouble, FieldOnNodesDouble
+from ..Objects import FieldOnCellsReal, FieldOnNodesReal
 from ..Supervis import ExecuteCommand
 
 
 class CalcFatigue(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.FieldOnNodesDouble`
-                        or   class:`~code_aster.Objects.FieldOnElementsDouble`.
+    """Command that defines :class:`~code_aster.Objects.FieldOnNodesReal`
+                        or   class:`~code_aster.Objects.FieldOnCellsReal`.
     """
     command_name = "CALC_FATIGUE"
 
@@ -37,8 +37,8 @@ class CalcFatigue(ExecuteCommand):
         """
 
         if keywords['TYPE_CALCUL'] == "FATIGUE_MULTI" and keywords['OPTION'] == "DOMA_NOEUD":
-            self._result = FieldOnNodesDouble()
+            self._result = FieldOnNodesReal()
         else:
-            self._result = FieldOnElementsDouble()
+            self._result = FieldOnCellsReal()
 
 CALC_FATIGUE = CalcFatigue.run

@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe TimeStepper
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,41 +31,41 @@
 #include "DataStructures/DataStructure.h"
 #include "Algorithms/GenericStepper.h"
 
-typedef VectorDouble::const_iterator VectorDoubleCIter;
+typedef VectorReal::const_iterator VectorRealCIter;
 
 /**
- * @class TimeStepperInstance
+ * @class TimeStepperClass
  * @brief Cette classe permet de definir une liste d'instants
  * @author Nicolas Sellenet
  */
-class TimeStepperInstance : public DataStructure, public GenericStepper {
+class TimeStepperClass : public DataStructure, public GenericStepper {
   private:
     /** @brief Liste des instants */
-    JeveuxVectorDouble _values;
+    JeveuxVectorReal _values;
 
   public:
     /**
      * @typedef TimeStepperPtr
      * @brief Pointeur intelligent vers un TimeStepper
      */
-    typedef boost::shared_ptr< TimeStepperInstance > TimeStepperPtr;
+    typedef boost::shared_ptr< TimeStepperClass > TimeStepperPtr;
 
     /**
      * @brief Constructeur
      */
-    TimeStepperInstance( const std::string jeveuxName, const JeveuxMemory memType = Permanent )
+    TimeStepperClass( const std::string jeveuxName, const JeveuxMemory memType = Permanent )
         : DataStructure( jeveuxName, 8, "LIST_INST", memType ), _values( getName() + ".LIST" ){};
 
     /**
      * @brief Constructeur
      */
-    TimeStepperInstance( JeveuxMemory memType = Permanent )
-        : TimeStepperInstance( DataStructureNaming::getNewName( memType, 8 ), memType ){};
+    TimeStepperClass( JeveuxMemory memType = Permanent )
+        : TimeStepperClass( DataStructureNaming::getNewName( memType, 8 ), memType ){};
 
     /**
      * @brief Destructeur
      */
-    ~TimeStepperInstance(){};
+    ~TimeStepperClass(){};
 
     struct const_iterator {
         double *position;
@@ -127,15 +127,15 @@ class TimeStepperInstance : public DataStructure, public GenericStepper {
      * @brief Fonction permettant de mettre a jour le stepper
      * @return true si tout s'est bien passé
      */
-    bool operator=( const VectorDouble &vecDouble ) {
-        return setValues( vecDouble );
+    bool operator=( const VectorReal &vecReal ) {
+        return setValues( vecReal );
     };
 
     /**
      * @brief Fonction permettant de fixer la liste de pas de temps
      * @param values Liste des valeurs
      */
-    bool setValues( const VectorDouble &values ) ;
+    bool setValues( const VectorReal &values ) ;
 
     /**
      * @brief Fonction permettant de connaître le nombre de pas de temps
@@ -154,6 +154,6 @@ class TimeStepperInstance : public DataStructure, public GenericStepper {
  * @typedef TimeStepperPtr
  * @brief Pointeur intelligent vers un TimeStepper
  */
-typedef boost::shared_ptr< TimeStepperInstance > TimeStepperPtr;
+typedef boost::shared_ptr< TimeStepperClass > TimeStepperPtr;
 
 #endif /* TIMESTEPPER_H_ */

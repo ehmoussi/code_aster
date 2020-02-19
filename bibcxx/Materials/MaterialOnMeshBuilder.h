@@ -6,7 +6,7 @@
  * @brief Fichier entete de MaterialOnMeshBuilder
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -26,44 +26,44 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Materials/InputVariableDefinition.h"
+#include "Materials/ExternalVariableDefinition.h"
 #include "Materials/MaterialOnMesh.h"
-#include "Materials/InputVariableConverter.h"
+#include "Materials/ExternalVariableConverter.h"
 #include "astercxx.h"
 #include <stdexcept>
 
 /**
- * @class MaterialOnMeshBuilderInstance
+ * @class MaterialOnMeshBuilderClass
  * @author Nicolas Sellenet
  */
-class MaterialOnMeshBuilderInstance : public DataStructure {
-    friend class MaterialOnMeshInstance;
+class MaterialOnMeshBuilderClass : public DataStructure {
+    friend class MaterialOnMeshClass;
 
   protected:
     /**
      * @brief Build MaterialOnMeshPtr
      * @param curMater Material to build
-     * @param curInputVariables Input variables to add in MaterialOnMeshPtr
+     * @param curExternalVariable Input variables to add in MaterialOnMeshPtr
      */
-    static void buildInstance( MaterialOnMeshInstance &curMater,
-                               const InputVariableOnMeshPtr &curInputVariables = nullptr,
-                               const InputVariableConverterPtr &converter = nullptr );
+    static void buildClass( MaterialOnMeshClass &curMater,
+                               const ExternalVariableOnMeshPtr &curExternalVariable = nullptr,
+                               const ExternalVariableConverterPtr &converter = nullptr );
 
   public:
     /**
      * @typedef MaterialOnMeshBuilderPtr
-     * @brief Pointeur intelligent vers un MaterialOnMeshBuilderInstance
+     * @brief Pointeur intelligent vers un MaterialOnMeshBuilderClass
      */
-    typedef boost::shared_ptr< MaterialOnMeshBuilderInstance > MaterialOnMeshBuilderPtr;
+    typedef boost::shared_ptr< MaterialOnMeshBuilderClass > MaterialOnMeshBuilderPtr;
 
     /**
      * @brief Build MaterialOnMeshPtr
      * @param curMater Material to build
-     * @param curInputVariables Input variables to add in MaterialOnMeshPtr
+     * @param curExternalVariable Input variables to add in MaterialOnMeshPtr
      */
     static MaterialOnMeshPtr build( MaterialOnMeshPtr &curMater,
-                                    const InputVariableOnMeshPtr &curInputVariables = nullptr,
-                                    const InputVariableConverterPtr &converter = nullptr );
+                                    const ExternalVariableOnMeshPtr &curExternalVariable = nullptr,
+                                    const ExternalVariableConverterPtr &converter = nullptr );
 };
 
 #endif /* MATERIALONMESHBUILDER_H_ */

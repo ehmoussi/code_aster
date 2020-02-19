@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe JeveuxObject
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -44,11 +44,11 @@ enum JeveuxMemory { Permanent, Temporary };
 static const std::string JeveuxMemoryTypesNames[2] = {"G", "V"};
 
 /**
- * @class JeveuxObjectInstance
+ * @class JeveuxObjectClass
  * @brief Cette classe permet de definir un objet Jeveux
  * @author Nicolas Sellenet
  */
-class JeveuxObjectInstance {
+class JeveuxObjectClass {
   protected:
     /** @brief Nom de l'objet Jeveux */
     std::string _name;
@@ -60,13 +60,13 @@ class JeveuxObjectInstance {
      * @brief Constructeur
      * @param name Nom jeveux du vecteur
      */
-    JeveuxObjectInstance( const std::string &nom, JeveuxMemory mem = Permanent )
+    JeveuxObjectClass( const std::string &nom, JeveuxMemory mem = Permanent )
         : _name( nom ), _mem( mem ){};
 
     /**
      * @brief Destructeur
      */
-    ~JeveuxObjectInstance() {
+    ~JeveuxObjectClass() {
         if ( _name != "" && get_sh_jeveux_status() == 1 ) {
             CALLO_JEDETR( _name );
         }

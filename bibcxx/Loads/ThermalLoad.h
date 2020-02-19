@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ThermalLoad
  * @author Jean-Pierre Lefebvre
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,11 +35,11 @@
 #include "DataFields/PCFieldOnMesh.h"
 
 /**
- * @class ThermalLoadInstance
+ * @class ThermalLoadClass
  * @brief Classe definissant une charge thermique (issue d'AFFE_CHAR_THER)
  * @author Jean-Pierre Lefebvre
  */
-class ThermalLoadInstance : public DataStructure {
+class ThermalLoadClass : public DataStructure {
   private:
     struct TherLoad {
         /** @brief Modele */
@@ -53,38 +53,38 @@ class ThermalLoadInstance : public DataStructure {
         /** @brief Vecteur Jeveux '.LIGRE' */
         FiniteElementDescriptorPtr _FEDesc;
         /** @brief Carte '.CIMPO' */
-        PCFieldOnMeshDoublePtr _cimpo;
+        PCFieldOnMeshRealPtr _cimpo;
         /** @brief Carte '.CMULT' */
-        PCFieldOnMeshDoublePtr _cmult;
+        PCFieldOnMeshRealPtr _cmult;
         /** @brief Carte '.COEFH' */
-        PCFieldOnMeshDoublePtr _coefh;
+        PCFieldOnMeshRealPtr _coefh;
         /** @brief Carte '.FLUNL' */
-        PCFieldOnMeshDoublePtr _flunl;
+        PCFieldOnMeshRealPtr _flunl;
         /** @brief Carte '.FLURE' */
-        PCFieldOnMeshDoublePtr _flure;
+        PCFieldOnMeshRealPtr _flure;
         /** @brief Carte '.GRAIN' */
-        PCFieldOnMeshDoublePtr _grain;
+        PCFieldOnMeshRealPtr _grain;
         /** @brief Carte '.HECHP' */
-        PCFieldOnMeshDoublePtr _hechp;
+        PCFieldOnMeshRealPtr _hechp;
         /** @brief Carte '.SOURE' */
-        PCFieldOnMeshDoublePtr _soure;
+        PCFieldOnMeshRealPtr _soure;
         /** @brief Carte '.T_EXT' */
-        PCFieldOnMeshDoublePtr _tExt;
+        PCFieldOnMeshRealPtr _tExt;
 
         /** @brief Constructeur */
         TherLoad( const std::string &name, const ModelPtr &currentModel )
             : _model( currentModel ), _mesh( _model->getMesh() ),
               _modelName( name + ".MODEL.NOMO" ), _convection( name + ".CONVE.VALE" ),
-              _FEDesc( new FiniteElementDescriptorInstance( name + ".LIGRE", _mesh ) ),
-              _cimpo( new PCFieldOnMeshDoubleInstance( name + ".CIMPO", _FEDesc ) ),
-              _cmult( new PCFieldOnMeshDoubleInstance( name + ".CMULT", _FEDesc ) ),
-              _coefh( new PCFieldOnMeshDoubleInstance( name + ".COEFH", _FEDesc ) ),
-              _flunl( new PCFieldOnMeshDoubleInstance( name + ".FLUNL", _FEDesc ) ),
-              _flure( new PCFieldOnMeshDoubleInstance( name + ".FLURE", _FEDesc ) ),
-              _grain( new PCFieldOnMeshDoubleInstance( name + ".GRAIN", _FEDesc ) ),
-              _hechp( new PCFieldOnMeshDoubleInstance( name + ".HECHP", _FEDesc ) ),
-              _soure( new PCFieldOnMeshDoubleInstance( name + ".SOURE", _FEDesc ) ),
-              _tExt( new PCFieldOnMeshDoubleInstance( name + ".T_EXT", _FEDesc ) ){};
+              _FEDesc( new FiniteElementDescriptorClass( name + ".LIGRE", _mesh ) ),
+              _cimpo( new PCFieldOnMeshRealClass( name + ".CIMPO", _FEDesc ) ),
+              _cmult( new PCFieldOnMeshRealClass( name + ".CMULT", _FEDesc ) ),
+              _coefh( new PCFieldOnMeshRealClass( name + ".COEFH", _FEDesc ) ),
+              _flunl( new PCFieldOnMeshRealClass( name + ".FLUNL", _FEDesc ) ),
+              _flure( new PCFieldOnMeshRealClass( name + ".FLURE", _FEDesc ) ),
+              _grain( new PCFieldOnMeshRealClass( name + ".GRAIN", _FEDesc ) ),
+              _hechp( new PCFieldOnMeshRealClass( name + ".HECHP", _FEDesc ) ),
+              _soure( new PCFieldOnMeshRealClass( name + ".SOURE", _FEDesc ) ),
+              _tExt( new PCFieldOnMeshRealClass( name + ".T_EXT", _FEDesc ) ){};
     };
 
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
@@ -113,18 +113,18 @@ class ThermalLoadInstance : public DataStructure {
      * @typedef ThermalLoadPtr
      * @brief Pointeur intelligent vers un ThermalLoad
      */
-    typedef boost::shared_ptr< ThermalLoadInstance > ThermalLoadPtr;
+    typedef boost::shared_ptr< ThermalLoadClass > ThermalLoadPtr;
 
     /**
      * @brief Constructeur
      */
-    ThermalLoadInstance( const ModelPtr &currentModel )
-        : ThermalLoadInstance( ResultNaming::getNewResultName(), currentModel ){};
+    ThermalLoadClass( const ModelPtr &currentModel )
+        : ThermalLoadClass( ResultNaming::getNewResultName(), currentModel ){};
 
     /**
      * @brief Constructeur
      */
-    ThermalLoadInstance( const std::string name, const ModelPtr &currentModel )
+    ThermalLoadClass( const std::string name, const ModelPtr &currentModel )
         : DataStructure( name, 8, "CHAR_THER" ), _therLoad( getName() + ".CHTH", currentModel ),
           _type( getName() + ".TYPE" ), _model( currentModel ), _isEmpty( true ){};
 
@@ -163,8 +163,8 @@ class ThermalLoadInstance : public DataStructure {
 
 /**
  * @typedef ThermalLoad
- * @brief Pointeur intelligent vers un ThermalLoadInstance
+ * @brief Pointeur intelligent vers un ThermalLoadClass
  */
-typedef boost::shared_ptr< ThermalLoadInstance > ThermalLoadPtr;
+typedef boost::shared_ptr< ThermalLoadClass > ThermalLoadPtr;
 
 #endif /* THERMALLOAD_H_ */

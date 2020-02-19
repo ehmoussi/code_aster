@@ -1,9 +1,9 @@
 /**
  * @file MaterialOnMeshBuilder.cxx
- * @brief Implementation de MaterialOnMeshBuilderInstance::build
+ * @brief Implementation de MaterialOnMeshBuilderClass::build
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,9 +31,9 @@
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/SyntaxDictionary.h"
 
-void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMater,
-                                                   const InputVariableOnMeshPtr &curInputVariables,
-                                                   const InputVariableConverterPtr &converter )
+void MaterialOnMeshBuilderClass::buildClass( MaterialOnMeshClass &curMater,
+                                             const ExternalVariableOnMeshPtr &curExternalVariable,
+                                             const ExternalVariableConverterPtr &converter )
 {
     SyntaxMapContainer dict;
 
@@ -82,20 +82,20 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
     }
     dict.container["AFFE_COMPOR"] = listeAFFE_COMPOR;
 
-    if( curInputVariables != nullptr ) {
+    if( curExternalVariable != nullptr ) {
         ListSyntaxMapContainer listeAFFE_VARC;
-        for ( auto &curIter : curInputVariables->_inputVars ) {
+        for ( auto &curIter : curExternalVariable->_externalVars ) {
             SyntaxMapContainer dict2;
 
-            const auto &inputVar = ( *curIter.first );
-            dict2.container["NOM_VARC"] = inputVar.getVariableName();
-            const auto &inputField = inputVar.getInputValuesField();
-            const auto &evolParam = inputVar.getEvolutionParameter();
+            const auto &externalVar = ( *curIter.first );
+            dict2.container["NOM_VARC"] = externalVar.getVariableName();
+            const auto &inputField = externalVar.getInputValuesField();
+            const auto &evolParam = externalVar.getEvolutionParameter();
             if ( inputField != nullptr )
                 dict2.container["CHAM_GD"] = inputField->getName();
 
             if ( evolParam != nullptr ) {
-                dict2.container["EVOL"] = evolParam->getTimeDependantResultsContainer()->getName();
+                dict2.container["EVOL"] = evolParam->getTransientResult()->getName();
                 dict2.container["PROL_DROITE"] = evolParam->getRightExtension();
                 dict2.container["PROL_GAUCHE"] = evolParam->getLeftExtension();
                 if ( evolParam->getFieldName() != "" )
@@ -105,8 +105,8 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
                 if ( evolParam->getTimeFunction() != nullptr )
                     dict2.container["FONC_INST"] = evolParam->getTimeFunction()->getName();
             }
-            if ( inputVar.existsReferenceValue() )
-                dict2.container["VALE_REF"] = inputVar.getReferenceValue();
+            if ( externalVar.existsReferenceValue() )
+                dict2.container["VALE_REF"] = externalVar.getReferenceValue();
 
             const MeshEntityPtr &tmp = curIter.second;
             if ( tmp->getType() == AllMeshEntitiesType )
@@ -157,11 +157,11 @@ void MaterialOnMeshBuilderInstance::buildInstance( MaterialOnMeshInstance &curMa
 };
 
 MaterialOnMeshPtr
-MaterialOnMeshBuilderInstance::build( MaterialOnMeshPtr &curMater,
-                                      const InputVariableOnMeshPtr &curInputVariables,
-                                      const InputVariableConverterPtr &converter )
+MaterialOnMeshBuilderClass::build( MaterialOnMeshPtr &curMater,
+                                      const ExternalVariableOnMeshPtr &curExternalVariable,
+                                      const ExternalVariableConverterPtr &converter )
 
 {
-    MaterialOnMeshBuilderInstance::buildInstance( *curMater, curInputVariables, converter );
+    MaterialOnMeshBuilderClass::buildClass( *curMater, curExternalVariable, converter );
     return curMater;
 };

@@ -31,9 +31,9 @@ namespace py = boost::python;
 
 void exportListOfIntegersToPython() {
 
-    py::class_< ListOfIntegersInstance, ListOfIntegersInstance::ListOfIntegersPtr,
+    py::class_< ListOfIntegersClass, ListOfIntegersClass::ListOfIntegersPtr,
                 py::bases< DataStructure > >( "ListOfIntegers", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ListOfIntegersInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ListOfIntegersClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ListOfIntegersInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< ListOfIntegersClass, std::string >));
 };

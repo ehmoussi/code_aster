@@ -31,13 +31,13 @@ namespace py = boost::python;
 
 void exportListOfFloatsToPython() {
 
-    py::class_< ListOfFloatsInstance, ListOfFloatsInstance::ListOfFloatsPtr,
+    py::class_< ListOfFloatsClass, ListOfFloatsClass::ListOfFloatsPtr,
                 py::bases< DataStructure > >( "ListOfFloats", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ListOfFloatsInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ListOfFloatsClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ListOfFloatsInstance, std::string >))
-        .def( "getValues", &ListOfFloatsInstance::getValues )
-        .def( "setVectorValues", &ListOfFloatsInstance::setVectorValues )
-        //         .def( "size", &ListOfFloatsInstance::size )
-        .add_property( "size", &ListOfFloatsInstance::size );
+              py::make_constructor(&initFactoryPtr< ListOfFloatsClass, std::string >))
+        .def( "getValues", &ListOfFloatsClass::getValues )
+        .def( "setVectorValues", &ListOfFloatsClass::setVectorValues )
+        //         .def( "size", &ListOfFloatsClass::size )
+        .add_property( "size", &ListOfFloatsClass::size );
 };

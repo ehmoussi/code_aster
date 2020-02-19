@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe Material
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -32,22 +32,22 @@
 #include "Functions/Function.h"
 
 /**
- * @class MaterialInstance
+ * @class MaterialClass
  * @brief produit une sd identique a celle produite par DEFI_MATERIAU
  * @author Nicolas Sellenet
  */
-class MaterialInstance: public DataStructure
+class MaterialClass: public DataStructure
 {
     public:
         /**
          * @typedef MaterialPtr
          * @brief Pointeur intelligent vers un Material
          */
-        typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
+        typedef boost::shared_ptr< MaterialClass > MaterialPtr;
 
         typedef std::vector< GeneralMaterialBehaviourPtr > VectorOfGeneralMaterialBehaviour;
         typedef VectorOfGeneralMaterialBehaviour::iterator VectorOfGeneralMaterialIter;
-        typedef std::vector< JeveuxVectorDouble > VectorOfJeveuxVectorDouble;
+        typedef std::vector< JeveuxVectorReal > VectorOfJeveuxVectorReal;
         typedef std::vector< JeveuxVectorChar8 > VectorOfJeveuxVectorChar8;
 
     private:
@@ -61,19 +61,19 @@ class MaterialInstance: public DataStructure
 
         /** @brief Vector of JeveuxVectorComplex named 'CPT.XXXXXX.VALC' */
         std::vector< JeveuxVectorComplex > _vectorOfComplexValues;
-        /** @brief Vector of JeveuxVectorDouble named 'CPT.XXXXXX.VALR' */
-        std::vector< JeveuxVectorDouble >  _vectorOfDoubleValues;
+        /** @brief Vector of JeveuxVectorReal named 'CPT.XXXXXX.VALR' */
+        std::vector< JeveuxVectorReal >  _vectorOfRealValues;
         /** @brief Vector of JeveuxVectorChar16 named 'CPT.XXXXXX.VALK' */
         std::vector< JeveuxVectorChar16 >  _vectorOfChar16Values;
         /** @brief Vector of JeveuxVectorChar16 named '.ORDR' */
         std::vector< JeveuxVectorChar16 >  _vectorOrdr;
         /** @brief Vector of JeveuxVectorLong named '.KORD' */
         std::vector< JeveuxVectorLong >    _vectorKOrdr;
-        /** @brief Vector of JeveuxVectorDouble named '.XXXXXXX.LISV_R8' */
-        std::vector< VectorOfJeveuxVectorDouble > _vectorOfUserDoubleValues;
+        /** @brief Vector of JeveuxVectorReal named '.XXXXXXX.LISV_R8' */
+        std::vector< VectorOfJeveuxVectorReal > _vectorOfUserRealValues;
         /** @brief Vector of JeveuxVectorChar8 named '.XXXXXXX.LISV_FO' */
         std::vector< VectorOfJeveuxVectorChar8 >  _vectorOfUserFunctionValues;
-        /** @brief Vector of JeveuxVectorDouble named '.&&RDEP' */
+        /** @brief Vector of JeveuxVectorReal named '.&&RDEP' */
         FunctionPtr                        _doubleValues;
         MaterialPtr                        _mater;
 
@@ -86,34 +86,34 @@ class MaterialInstance: public DataStructure
         /**
          * @brief Constructeur
          */
-        MaterialInstance():
-            MaterialInstance( ResultNaming::getNewResultName() )
+        MaterialClass():
+            MaterialClass( ResultNaming::getNewResultName() )
         {};
 
-        MaterialInstance( const std::string& name ):
+        MaterialClass( const std::string& name ):
             DataStructure( name, 8, "MATER" ),
             _materialBehaviourNames( JeveuxVectorChar32( name + ".MATERIAU.NOMRC " ) ),
             _nbMaterialBehaviour( 0 ),
             _nbUserMaterialBehaviour( 0 ),
-            _doubleValues( new FunctionInstance( name + ".&&RDEP" ) ),
+            _doubleValues( new FunctionClass( name + ".&&RDEP" ) ),
             _mater( nullptr )
         {};
 
-        MaterialInstance( const std::string& name, VectorInt vec ):
-            MaterialInstance( name )
+        MaterialClass( const std::string& name, VectorInt vec ):
+            MaterialClass( name )
         {
             setStateAfterUnpickling( vec );
         };
 
         /**
          * @brief Ajout d'un GeneralMaterialBehaviourPtr
-         * @param curMaterBehav GeneralMaterialBehaviourPtr a ajouter au MaterialInstance
+         * @param curMaterBehav GeneralMaterialBehaviourPtr a ajouter au MaterialClass
          * @todo pouvoiur utiliser addMaterialBehaviour plusieurs fois après build
          */
         void addMaterialBehaviour( const GeneralMaterialBehaviourPtr& curMaterBehav );
 
         /**
-         * @brief Construction du MaterialInstance
+         * @brief Construction du MaterialClass
          *   A partir des GeneralMaterialBehaviourPtr ajoutes par l'utilisateur :
          *   creation de objets Jeveux
          * @return Booleen indiquant que la construction s'est bien deroulee
@@ -125,11 +125,11 @@ class MaterialInstance: public DataStructure
          * @brief Get the number of list of double properties for one MaterialBehaviour
          * @return number of list of double properties
          */
-        int getNumberOfListOfDoubleProperties( int position )
+        int getNumberOfListOfRealProperties( int position )
         {
-            if( position >= _vectorOfUserDoubleValues.size() )
+            if( position >= _vectorOfUserRealValues.size() )
                 throw std::runtime_error("Out of bound");
-            return _vectorOfUserDoubleValues[ position ].size();
+            return _vectorOfUserRealValues[ position ].size();
         };
 
         /**
@@ -166,11 +166,11 @@ class MaterialInstance: public DataStructure
          * @param position index of vector
          * @return jeveux vector of double values
          */
-        VectorOfJeveuxVectorDouble getBehaviourVectorOfDoubleValues( int position )
+        VectorOfJeveuxVectorReal getBehaviourVectorOfRealValues( int position )
         {
-            if( position >= _vectorOfUserDoubleValues.size() )
+            if( position >= _vectorOfUserRealValues.size() )
                 throw std::runtime_error("Out of bound");
-            return _vectorOfUserDoubleValues[ position ];
+            return _vectorOfUserRealValues[ position ];
         };
 
         /**
@@ -194,7 +194,7 @@ class MaterialInstance: public DataStructure
         };
 
         /**
-         * @brief Add a reference to an existing MaterialInstance to enrich
+         * @brief Add a reference to an existing MaterialClass to enrich
          */
         void setReferenceMaterial( const MaterialPtr& curMater )
         {
@@ -210,9 +210,9 @@ class MaterialInstance: public DataStructure
 
 /**
  * @typedef MaterialPtr
- * @brief Pointeur intelligent vers un MaterialInstance
+ * @brief Pointeur intelligent vers un MaterialClass
  */
-typedef boost::shared_ptr< MaterialInstance > MaterialPtr;
+typedef boost::shared_ptr< MaterialClass > MaterialPtr;
 
 
 #endif /* MATERIAL_H_ */

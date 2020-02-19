@@ -22,7 +22,7 @@
 from ...Cata.Commons import *
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
-from ...Objects import TransientGeneralizedResultsContainer
+from ...Objects import TransientGeneralizedResult
 from ...Supervis import ExecuteCommand
 
 PROJ_RESU_BASE_CATA=OPER(nom="PROJ_RESU_BASE",op=  79,sd_prod=tran_gene,
@@ -44,6 +44,6 @@ class ProjResuBase(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = TransientGeneralizedResultsContainer()
+        self._result = TransientGeneralizedResult()
 
 PROJ_RESU_BASE = ProjResuBase.run

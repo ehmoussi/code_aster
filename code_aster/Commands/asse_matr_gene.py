@@ -20,12 +20,12 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (GeneralizedAssemblyMatrixComplex,
-                       GeneralizedAssemblyMatrixDouble)
+                       GeneralizedAssemblyMatrixReal)
 from ..Supervis import ExecuteCommand
 
 
 class GeneralizedMatrixBuilder(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.GeneralizedAssemblyMatrixDouble`
+    """Command that creates the :class:`~code_aster.Objects.GeneralizedAssemblyMatrixReal`
     and `~code_aster.Objects.GeneralizedAssemblyMatrixComplex`"""
     command_name = "ASSE_MATR_GENE"
 
@@ -37,11 +37,11 @@ class GeneralizedMatrixBuilder(ExecuteCommand):
         """
 
         if keywords["METHODE"] == "INITIAL":
-            self._result = GeneralizedAssemblyMatrixDouble()
+            self._result = GeneralizedAssemblyMatrixReal()
         elif keywords['OPTION'] == "RIGI_GENE_C":
             self._result = GeneralizedAssemblyMatrixComplex()
         else:
-            self._result = GeneralizedAssemblyMatrixDouble()
+            self._result = GeneralizedAssemblyMatrixReal()
 
     def post_exec(self, keywords):
         """Store references to ElementaryMatrix objects.

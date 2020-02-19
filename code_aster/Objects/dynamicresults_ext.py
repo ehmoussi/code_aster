@@ -19,21 +19,21 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`TransientGeneralizedResultsContainer` --- Results container
+:py:class:`TransientGeneralizedResult` --- Results container
 **************************************************
 """
 
 import numpy
 
 import aster
-from libaster import TransientGeneralizedResultsContainer
+from libaster import TransientGeneralizedResult
 
 from ..Cata.Syntax import AsException
 from ..Utilities import injector
 
 
-@injector(TransientGeneralizedResultsContainer)
-class ExtendedTransientGeneralizedResultsContainer(object):
+@injector(TransientGeneralizedResult)
+class ExtendedTransientGeneralizedResult(object):
     cata_sdj = "SD.sd_dyna_gene.sd_dyna_gene"
 
     def _check_input_inoli(self, inoli):

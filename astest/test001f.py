@@ -10,22 +10,21 @@ test = code_aster.TestCase()
 monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
-monModel = code_aster.Model()
-monModel.setMesh( monMaillage )
+monModel = code_aster.Model(monMaillage)
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
 test.assertEqual( monModel.getType(), "MODELE_SDASTER" )
 
-YOUNG = 200000.0;
-POISSON = 0.3;
+YOUNG = 200000.0
+POISSON = 0.3
 
 Kinv= 3.2841e-4
 Kv=1./Kinv
-SY = 437.0;
-Rinf = 758.0;
-Qzer   = 758.0-437.;
-Qinf   = Qzer + 100.;
-b = 2.3;
+SY = 437.0
+Rinf = 758.0
+Qzer = 758.0-437.
+Qinf = Qzer + 100.
+b = 2.3
 C1inf = 63767.0/2.0
 C2inf = 63767.0/2.0
 Gam1 = 341.0
@@ -51,21 +50,21 @@ test.assertEqual( acier.getType(), "MATER_SDASTER" )
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.buildWithoutInputVariables()
+affectMat.buildWithoutExternalVariable()
 test.assertEqual( affectMat.getType(), "CHAM_MATER" )
 
-imposedDof1 = code_aster.DisplacementDouble()
+imposedDof1 = code_aster.DisplacementReal()
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dy, 0.0 )
 imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
-CharMeca1 = code_aster.ImposedDisplacementDouble(monModel)
+CharMeca1 = code_aster.ImposedDisplacementReal(monModel)
 CharMeca1.setValue( imposedDof1, "Bas" )
 CharMeca1.build()
 test.assertEqual( CharMeca1.getType(), "CHAR_MECA" )
 
-imposedPres1 = code_aster.PressureDouble()
+imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
-CharMeca2 = code_aster.DistributedPressureDouble(monModel)
+CharMeca2 = code_aster.DistributedPressureReal(monModel)
 CharMeca2.setValue( imposedPres1, "Haut" )
 CharMeca2.build()
 test.assertEqual( CharMeca2.getType(), "CHAR_MECA" )
@@ -92,7 +91,7 @@ test.assertEqual( vectElem.getType(), "VECT_ELEM_DEPL_R" )
 
 retour = vectElem.assembleVector( numeDDL )
 
-matrAsse = code_aster.AssemblyMatrixDisplacementDouble()
+matrAsse = code_aster.AssemblyMatrixDisplacementReal()
 matrAsse.appendElementaryMatrix( matr_elem )
 matrAsse.setDOFNumbering( numeDDL )
 matrAsse.build()
@@ -114,7 +113,7 @@ monSolver.matrixFactorization(matrAsse)
 test.assertEqual( matrAsse.getType(), "MATR_ASSE_DEPL_R" )
 
 vcine = dProblem.buildKinematicsLoad(numeDDL, 0.)
-resu = monSolver.solveDoubleLinearSystemWithKinematicsLoad( matrAsse, vcine, retour )
+resu = monSolver.solveRealLinearSystemWithKinematicsLoad( matrAsse, vcine, retour )
 
 y=resu.EXTR_COMP()
 test.assertEqual( len(y.valeurs), 81 )

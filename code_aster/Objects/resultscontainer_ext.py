@@ -19,18 +19,18 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`ResultsContainer` --- Results container
+:py:class:`Result` --- Results container
 **************************************************
 """
 
 import aster
-from libaster import MaterialOnMesh, Model, ResultsContainer
+from libaster import MaterialOnMesh, Model, Result
 
 from ..Utilities import injector
 
 
-@injector(ResultsContainer)
-class ExtendedResultsContainer(object):
+@injector(Result)
+class ExtendedResult(object):
     cata_sdj = "SD.sd_resultat.sd_resultat"
 
     def __getstate__(self):

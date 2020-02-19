@@ -20,13 +20,13 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (AssemblyMatrixDisplacementComplex,
-                       AssemblyMatrixDisplacementDouble,
+                       AssemblyMatrixDisplacementReal,
                        AssemblyMatrixPressureComplex,
-                       AssemblyMatrixTemperatureDouble,
+                       AssemblyMatrixTemperatureReal,
                        ElementaryMatrixDisplacementComplex,
-                       ElementaryMatrixDisplacementDouble,
+                       ElementaryMatrixDisplacementReal,
                        ElementaryMatrixPressureComplex,
-                       ElementaryMatrixTemperatureDouble)
+                       ElementaryMatrixTemperatureReal)
 from ..Supervis import ExecuteCommand
 
 
@@ -41,12 +41,12 @@ class AssembleMatrixOperator(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         matrElem = keywords['MATR_ELEM']
-        if isinstance(matrElem, ElementaryMatrixDisplacementDouble):
-            self._result = AssemblyMatrixDisplacementDouble()
+        if isinstance(matrElem, ElementaryMatrixDisplacementReal):
+            self._result = AssemblyMatrixDisplacementReal()
         elif isinstance(matrElem, ElementaryMatrixDisplacementComplex):
             self._result = AssemblyMatrixDisplacementComplex()
-        elif isinstance(matrElem, ElementaryMatrixTemperatureDouble):
-            self._result = AssemblyMatrixTemperatureDouble()
+        elif isinstance(matrElem, ElementaryMatrixTemperatureReal):
+            self._result = AssemblyMatrixTemperatureReal()
         elif isinstance(matrElem, ElementaryMatrixPressureComplex):
             self._result = AssemblyMatrixPressureComplex()
         else:

@@ -41,11 +41,11 @@ class AbstractErrorCpp : public std::exception {
     std::string _idmess;
     VectorString _valk;
     VectorLong _vali;
-    VectorDouble _valr;
+    VectorReal _valr;
 
   public:
     AbstractErrorCpp( std::string idmess, VectorString valk = {}, VectorLong vali = {},
-                   VectorDouble valr = {} )
+                   VectorReal valr = {} )
         : _idmess( idmess ), _valk( valk ), _vali( vali ), _valr( valr ) {}
 
     const char *what() const noexcept { return _idmess.c_str(); }
@@ -63,7 +63,7 @@ template < int Id > class ErrorCpp : public AbstractErrorCpp {
 
   public:
     ErrorCpp< Id >( std::string idmess, VectorString valk = {}, VectorLong vali = {},
-                    VectorDouble valr = {} )
+                    VectorReal valr = {} )
         : AbstractErrorCpp( idmess, valk, vali, valr ) {}
 };
 

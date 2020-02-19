@@ -3,7 +3,7 @@
  * @brief Implementation de FiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -27,7 +27,7 @@
 #include "ParallelUtilities/MPIInfos.h"
 #include <algorithm>
 
-FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::string &name,
+FiniteElementDescriptorClass::FiniteElementDescriptorClass( const std::string &name,
                                                                   const BaseMeshPtr mesh,
                                                                   const JeveuxMemory memType )
     : DataStructure( name, 19, "LIGREL", memType ),
@@ -46,16 +46,16 @@ FiniteElementDescriptorInstance::FiniteElementDescriptorInstance( const std::str
 
 #ifdef _USE_MPI
 void
-FiniteElementDescriptorInstance::transferDofDescriptorFrom( FiniteElementDescriptorPtr &other ) {
+FiniteElementDescriptorClass::transferDofDescriptorFrom( FiniteElementDescriptorPtr &other ) {
     if ( !getMesh()->isPartial() )
         throw std::runtime_error(
-            "the mesh associated to finiteElementDescriptorInstance is not a partial mesh" );
+            "the mesh associated to finiteElementDescriptorClass is not a partial mesh" );
     const PartialMeshPtr partialMesh =
-        boost::static_pointer_cast< PartialMeshInstance >( getMesh() );
+        boost::static_pointer_cast< PartialMeshClass >( getMesh() );
     if ( partialMesh->getParallelMesh() != other->getMesh() )
         throw std::runtime_error(
-            "parallel mesh associated to partial mesh of FiniteElementDescriptorInstance \n"
-            "does not correspond to other FiniteElementDescriptorInstance mesh" );
+            "parallel mesh associated to partial mesh of FiniteElementDescriptorClass \n"
+            "does not correspond to other FiniteElementDescriptorClass mesh" );
     getPhysicalNodesComponentDescriptor();
 
     const int rank = getMPIRank();

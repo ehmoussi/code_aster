@@ -17,13 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..Objects import GeneralizedAssemblyVectorDouble
+from ..Objects import GeneralizedAssemblyVectorReal
 from ..Supervis import ExecuteCommand
 
 
 class MissForceReader(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.GeneralizedAssemblyVectorDouble` by assigning
-    finite elements on a :class:`~code_aster.Objects.GeneralizedAssemblyVectorDouble`."""
+    """Command that creates the :class:`~code_aster.Objects.GeneralizedAssemblyVectorReal` by assigning
+    finite elements on a :class:`~code_aster.Objects.GeneralizedAssemblyVectorReal`."""
     command_name = "LIRE_FORC_MISS"
 
     def create_result(self, keywords):
@@ -32,7 +32,7 @@ class MissForceReader(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = GeneralizedAssemblyVectorDouble()
+        self._result = GeneralizedAssemblyVectorReal()
 
 
 LIRE_FORC_MISS = MissForceReader.run
