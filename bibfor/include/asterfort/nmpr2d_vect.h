@@ -15,9 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine te0574(option, nomte)
-        character(len=16), intent(in) :: option, nomte
-    end subroutine te0574
+    subroutine nmpr2d_vect(l_axis,&
+                           nno   , npg , ndof ,&
+                           ipoids, ivf , idfde,&
+                           geom  , pres, cisa ,&
+                           vect)
+        aster_logical, intent(in) :: l_axis
+        integer, intent(in) :: nno, npg, ndof
+        integer, intent(in) :: ipoids, ivf, idfde
+        real(kind=8), intent(in) :: geom(2, nno)
+        real(kind=8), intent(in) :: pres(npg), cisa(npg)
+        real(kind=8), intent(out) :: vect(ndof, nno)
+    end subroutine nmpr2d_vect
 end interface

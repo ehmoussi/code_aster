@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,25 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine nmpr2d(mode, laxi, nno, npg, poidsg,&
-                      vff, dff, geom, p, vect,&
-                      matc)
-        integer :: npg
-        integer :: nno
-        integer :: mode
-        aster_logical :: laxi
-        real(kind=8) :: poidsg(npg)
-        real(kind=8) :: vff(nno, npg)
-        real(kind=8) :: dff(nno, npg)
-        real(kind=8) :: geom(2, nno)
-        real(kind=8) :: p(2, npg)
-        real(kind=8) :: vect(2, nno)
-        real(kind=8) :: matc(2, nno, 2, nno)
+    subroutine nmpr2d(l_axis, nno  , npg ,&
+                      poidsg, vff  , dff ,&
+                      geom  , pres , cisa,&
+                      vect_ , matr_)
+        aster_logical, intent(in):: l_axis
+        integer, intent(in) :: nno, npg
+        real(kind=8), intent(in) :: poidsg(npg), vff(nno, npg), dff(nno, npg)
+        real(kind=8), intent(in) :: geom(2, nno), pres(npg), cisa(npg)
+        real(kind=8), intent(out), optional :: vect_(2, nno), matr_(2, nno, 2, nno)
     end subroutine nmpr2d
 end interface
