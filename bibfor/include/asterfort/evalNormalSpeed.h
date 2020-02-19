@@ -17,7 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine te0255(option, nomte)
-        character(len=16), intent(in) :: option, nomte
-    end subroutine te0255
+    subroutine evalNormalSpeed(l_func , l_time , time    ,&
+                               nb_node, ndim   , ipg     ,&
+                               jv_shap, jv_geom, jv_speed,&
+                               vnor)
+        aster_logical, intent(in) :: l_func, l_time
+        integer, intent(in) :: ndim, nb_node, ipg
+        integer, intent(in) :: jv_geom, jv_shap, jv_speed
+        real(kind=8), intent(in) :: time
+        real(kind=8), intent(out) :: vnor
+    end subroutine evalNormalSpeed
 end interface

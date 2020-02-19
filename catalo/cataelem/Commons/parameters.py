@@ -227,6 +227,9 @@ PCOHES = InputParameter(phys=PHY.NEUT_R,
                         comment=""" XFEM
 """)
 
+PCOMPOR = InputParameter(phys=PHY.COMPOR,
+                         comment=""" Informations for non-linear behaviour """)
+
 PCONFR = InputParameter(phys=PHY.N120_R,
                         comment=""" INFORMATION AUX POINTS POUR LE CONTACT - VOIR MMCHML
 """)
@@ -620,6 +623,8 @@ PFRVOLUP = InputParameter(phys=PHY.FORC_R,
 
 PFTRC = InputParameter(phys=PHY.ADRSJEVN,
                        comment="""""")
+
+PGEOM_R = OutputParameter(phys=PHY.GEOM_R, type='ELEM')
 
 PGEOMER = InputParameter(phys=PHY.GEOM_R, container='MAIL!.COORDO',
                          comment=""" Initial coordinates of nodes (from mesh)""")

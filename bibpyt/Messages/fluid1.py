@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,8 @@
 
 cata_msg = {
 
-    1  : _("""
- Le comportement ne peut être qu'élastique sur une modélisation de type 3D_FLUIDE, AXIS_FLUIDE ou 2D_FLUIDE.
-"""),
+    1  : _("""Le comportement ne peut être qu'élastique sur une modélisation de type 3D_FLUIDE, AXIS_FLUIDE ou 2D_FLUIDE."""),
 
+    2  : _("""Le calcul de l'option n'est pas possible avec la formulation %(k1)s. Il faut demander une évolution."""),
 
 }
