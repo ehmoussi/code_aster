@@ -7,5 +7,6 @@ P testlist verification sequential
 
 F comm ssnl130c.comm D 1
 F comm ssnl130c.com1 D 1
+F nom ssnl130c_form.py D 0
 F datg ssnl130a.datg D 16
 F mmed ssnl130a.mmed D 20
