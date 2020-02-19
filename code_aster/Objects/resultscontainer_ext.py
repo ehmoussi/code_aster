@@ -27,6 +27,7 @@ import aster
 from libaster import MaterialOnMesh, Model, Result
 
 from ..Utilities import injector
+from .datastructure_ext import get_depends, set_depends
 
 
 @injector(Result)
@@ -37,7 +38,7 @@ class ExtendedResult(object):
         """Return internal state.
 
         Returns:
-            dict: Internal state.
+            list: Internal state.
         """
         models = []
         materials = []
@@ -45,35 +46,40 @@ class ExtendedResult(object):
         for i in ranks:
             try:
                 models.append(self.getModel(i))
-            except: pass
+            except:
+                pass
             try:
                 materials.append(self.getMaterialOnMesh(i))
-            except: pass
+            except:
+                pass
         if len(ranks) != len(models):
             models = []
         if len(ranks) != len(materials):
             materials = []
-        tupleOut = tuple(ranks) + tuple(models) + tuple(materials)
-        return tupleOut
+        state = get_depends(self)
+        state.append(len(ranks))
+        state.extend(ranks)
+        state.extend(models)
+        state.extend(materials)
+        return state
 
     def __setstate__(self, state):
         """Restore internal state.
 
         Arguments:
-            state (dict): Internal state.
+            state (list): Internal state.
         """
+        set_depends(self, state)
+        nbranks = state.pop(0)
         ranks = []
-        rankModel = 0
-        rankMater = 0
-        for obj in state:
-            if type(obj) == int:
-                ranks.append(obj)
-            if isinstance(obj, Model):
-                self.addModel(obj, ranks[rankModel])
-                rankModel = rankModel + 1
-            if isinstance(obj, MaterialOnMesh):
-                self.addMaterialOnMesh(obj, ranks[rankMater])
-                rankMater = rankMater + 1
+        for _ in range(nbranks):
+            ranks.append(state.pop(0))
+        if state:
+            assert len(state) == 2 * nbranks
+            for i in ranks:
+                self.addModel(state.pop(0), i)
+            for i in ranks:
+                self.addMaterialOnMesh(state.pop(0), i)
 
     def LIST_CHAMPS (self) :
         return aster.GetResu(self.getName(), "CHAMPS")

@@ -57,6 +57,22 @@ class ExtendedDataStructure(object):
         """
         return (self.getName(), )
 
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            list: Internal state.
+        """
+        return get_depends(self)
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (list): Internal state.
+        """
+        set_depends(self, state)
+
     @property
     def sdj(self):
         """Return the DataStructure catalog."""
@@ -144,3 +160,28 @@ class AsFloat(PyDataStructure):
     @classmethod
     def getType(cls):
         return 'REEL'
+
+
+def get_depends(obj):
+    """Return dependencies as internal state.
+
+    Arguments:
+        obj (*DataStructure*): DataStructure object.
+
+    Returns:
+        list[*DataStructure*]: Number and list of dependencies.
+    """
+    deps = obj.getDependencies()
+    state = [len(deps)] + deps
+    return state
+
+def set_depends(obj, state):
+    """Restore dependencies from internal state.
+
+    Arguments:
+        obj (*DataStructure*): DataStructure object.
+        state (list): Number and list of dependencies.
+    """
+    nbdeps = state.pop(0)
+    for _ in range(nbdeps):
+        obj.addDependency(state.pop(0))
