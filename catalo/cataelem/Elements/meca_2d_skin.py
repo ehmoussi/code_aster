@@ -105,7 +105,7 @@ class MEPLSE2(Element):
             para_out = ((SP.PVECTUR, MVECTUR),),
         ),
 
-        OP.CHAR_MECA_PRES_F(te=89,
+        OP.CHAR_MECA_PRES_F(te=88,
             para_in  = ((SP.PGEOMER, LC.EGEOM2D), (SP.PPRESSF, LC.CPRE2DF),
                         (SP.PTEMPSR, LC.MTEMPSR),),
             para_out = ((SP.PVECTUR, MVECTUR),),
@@ -116,7 +116,7 @@ class MEPLSE2(Element):
             para_out = ((SP.PVECTUR, MVECTUR),),
         ),
 
-        OP.CHAR_MECA_PRSU_F(te=574,
+        OP.CHAR_MECA_PRSU_F(te=573,
             para_in  = ((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                         (SP.PGEOMER, LC.EGEOM2D), (SP.PPRESSF, LC.CPRE2DF),
                         (SP.PTEMPSR, LC.MTEMPSR),),
@@ -149,7 +149,7 @@ class MEPLSE2(Element):
             para_out = ((SP.PDCEL_I, LC.EDCEL_I),),
         ),
 
-        OP.RIGI_MECA_PRSU_F(te=574,
+        OP.RIGI_MECA_PRSU_F(te=573,
             para_in  = ((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                         (SP.PGEOMER, LC.EGEOM2D),
                         (SP.PPRESSF, LC.CPRE2DF), (SP.PTEMPSR, LC.MTEMPSR),),
