@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ subroutine cachei(char, ligrmo, noma, fonree, param, motcl)
 !
     integer :: i, nchei, ncmp, jvale, jvalv,  iocc, nxx, nyy, nzz
     integer :: nxy, nxz, nyz, nex, nky, nkz, nexx, neyy, nexy, nkxx, nkyy, nkxy
-    integer :: nbtou, nbma, jma
+    integer :: nbtou, nbma, jma, nepsi
     real(kind=8) :: epxx, epyy, epzz, epxy, epxz, epyz, epx, xky, xkz, xexx
     real(kind=8) :: xeyy, xexy, xkxx, xkyy, xkxy
     character(len=8) :: k8b, kepxx, kepyy, kepzz, kepxy, kepxz, kepyz, mod
@@ -61,7 +61,7 @@ subroutine cachei(char, ligrmo, noma, fonree, param, motcl)
     character(len=8) :: modeli, typmcl(2)
     character(len=16) :: motclf, motcle(2)
     character(len=19) :: carte
-    character(len=24) :: mesmai
+    character(len=24) :: mesmai, chepsi
     character(len=8), pointer :: vncmp(:) => null()
 !     ------------------------------------------------------------------
 !
@@ -124,6 +124,10 @@ subroutine cachei(char, ligrmo, noma, fonree, param, motcl)
 !
     do iocc = 1, nchei
         if (fonree .eq. 'REEL') then
+            
+            call getvid(motclf, 'EPSI', iocc=iocc, scal=chepsi, nbret=nepsi)
+            if (nepsi .ne. 0) call utmess('F', 'CHARGES_5')
+            
             call getvr8(motclf, 'EPXX', iocc=iocc, scal=epxx, nbret=nxx)
             call getvr8(motclf, 'EPYY', iocc=iocc, scal=epyy, nbret=nyy)
             call getvr8(motclf, 'EPZZ', iocc=iocc, scal=epzz, nbret=nzz)

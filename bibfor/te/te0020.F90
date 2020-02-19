@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -130,9 +130,9 @@ subroutine te0020(nomopt, nomte)
         epx(1) = zr(idefi)
         xky(1) = zr(idefi+1)
         xkz(1) = zr(idefi+2)
-        epx(2) = zr(idefi)
-        xky(2) = zr(idefi+1)
-        xkz(2) = zr(idefi+2)
+        epx(2) = zr(idefi+3)
+        xky(2) = zr(idefi+4)
+        xkz(2) = zr(idefi+5)
     else
         call jevech('PEPSINF', 'L', idefi)
         call jevech('PTEMPSR', 'L', itemps)
@@ -154,17 +154,16 @@ subroutine te0020(nomopt, nomte)
             call fointe('FM', zk8(idefi+2), 4, nompar, valpar,&
                         xkz(ino), ier)
         enddo
-!       les valeurs doivent être les mêmes aux deux noeuds
-        if (abs(epx(1)-epx(2)).gt. 1d3*r8prem())then
-            call utmess('F', 'CHARGES_4', sk='EPX', nr=2, valr=epx)
-        endif
-        if (abs(xky(1)-xky(2)).gt. 1d3*r8prem())then
-            call utmess('F', 'CHARGES_4', sk='KY', nr=2, valr=epx)
-        endif
-        if (abs(xkz(1)-xkz(2)).gt. 1d3*r8prem())then
-            call utmess('F', 'CHARGES_4', sk='KZ', nr=2, valr=epx)
-        endif
-        
+    endif
+!   les valeurs doivent être les mêmes aux deux noeuds
+    if (abs(epx(1)-epx(2)).gt. 1d3*r8prem())then
+        call utmess('F', 'CHARGES_4', sk='EPX', nr=2, valr=epx)
+    endif
+    if (abs(xky(1)-xky(2)).gt. 1d3*r8prem())then
+        call utmess('F', 'CHARGES_4', sk='KY', nr=2, valr=xky)
+    endif
+    if (abs(xkz(1)-xkz(2)).gt. 1d3*r8prem())then
+        call utmess('F', 'CHARGES_4', sk='KZ', nr=2, valr=xkz)
     endif
 !
     fs(1) = e*a*epx(1)

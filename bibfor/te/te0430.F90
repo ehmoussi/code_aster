@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -163,7 +163,7 @@ subroutine te0430(option, nomte)
                 call rcvalb(fami, kpg, 1, '+', zi(imate),&
                             ' ', 'ELAS', 0, ' ', [0.d0],&
                             1, nomres, valres, codres, 1)
-                sig=valres(1)*zr(iepsin)
+                sig=valres(1)*zr(iepsin+kpg-1)
 
             else if (option.eq.'CHAR_MECA_EPSI_F') then
                 nomres(1) = 'E'

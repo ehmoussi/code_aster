@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,6 +66,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
+    ds_contact%nb_cont_pair = nb_pair
     if (nb_pair.ne.0) then
         sdappa       = ds_contact%sdcont_solv(1:14)//'.APPA'
         sdappa_apli  = sdappa(1:19)//'.APLI'
@@ -88,12 +89,24 @@ implicit none
         v_sdappa_apli3(1:16*nb_pair) = list_ptitsl(1:16*nb_pair)
         v_sdappa_apli4(1:16*nb_pair) = list_ptitma(1:16*nb_pair)
         v_sdappa_apli5(1:72*nb_pair) = list_ptgama(1:72*nb_pair)
-        AS_DEALLOCATE(vi=list_pair)
-        AS_DEALLOCATE(vi=list_nbptit)
-        AS_DEALLOCATE(vr=list_ptitsl)
-        AS_DEALLOCATE(vr=list_ptitma)
-        AS_DEALLOCATE(vr=list_ptgama)
-        ds_contact%nb_cont_pair = nb_pair
+    else
+        sdappa       = ds_contact%sdcont_solv(1:14)//'.APPA'
+        sdappa_apli  = sdappa(1:19)//'.APLI'
+        sdappa_apli2 = sdappa(1:19)//'.APNP'
+        sdappa_apli3 = sdappa(1:19)//'.APTS'
+        sdappa_apli4 = sdappa(1:19)//'.APTM'
+        sdappa_apli5 = sdappa(1:19)//'.AP2M'
+        call jedetr(sdappa_apli)
+        call jedetr(sdappa_apli2)
+        call jedetr(sdappa_apli3)
+        call jedetr(sdappa_apli4)
+        call jedetr(sdappa_apli5)
     end if
+    AS_DEALLOCATE(vi=list_pair)
+    AS_DEALLOCATE(vi=list_nbptit)
+    AS_DEALLOCATE(vr=list_ptitsl)
+    AS_DEALLOCATE(vr=list_ptitma)
+    AS_DEALLOCATE(vr=list_ptgama)
+
     call jedema()
 end subroutine

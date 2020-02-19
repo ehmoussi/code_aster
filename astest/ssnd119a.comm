@@ -1,0 +1,504 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+#
+# --------------------------------------------------------------------------------------------------
+#
+#                   DISCRET VALIDATION Dashpot
+#
+#               Validation du comportement avec STAT_NON_LINE
+#
+#
+# --------------------------------------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
+
+MAIL=LIRE_MAILLAGE(FORMAT="ASTER",)
+
+# Définition du matériau
+
+k = 1.0
+
+#RESULTAT (ELAS) & RESUDIS
+Zener = DEFI_MATERIAU(
+    ELAS=_F(E=1.0, NU=0.1),
+)
+
+Chmater=AFFE_MATERIAU(
+    MAILLAGE=MAIL,
+    AFFE= _F(TOUT='OUI',  MATER=Zener,),)
+
+# Modèle
+Modele=AFFE_MODELE(
+    MAILLAGE=MAIL,
+    AFFE=_F( GROUP_MA=('RESSORTS'), PHENOMENE='MECANIQUE', MODELISATION='DIS_T',),
+)
+
+# Caractéristiques Ressorts / Masse
+CaraElem=AFFE_CARA_ELEM(
+    MODELE=Modele,
+    DISCRET=(
+         _F( REPERE='GLOBAL',CARA='K_T_D_N', GROUP_MA='PT01', VALE=( k,0,0,), ),
+         _F( REPERE='LOCAL' ,CARA='K_T_D_N', GROUP_MA='PT02', VALE=( k,0,0,), ),
+         _F( REPERE='GLOBAL',CARA='K_T_D_L', GROUP_MA='SG01', VALE=( k,0,0,), ),
+         _F( REPERE='LOCAL' ,CARA='K_T_D_L', GROUP_MA='SG02', VALE=( k,0,0,), ),
+    ),
+    ORIENTATION=(_F(CARA='ANGL_NAUT', VALE=(30,30,30), GROUP_MA=('PT02')),),
+)
+#
+Frequence = 50.0
+Tsignal = 4.0/Frequence
+Pulsation = 2.0*pi*Frequence
+Amplitude =1.0
+
+fDiff = FORMULE(VALE='abs(Force-ForceAna)',
+                 NOM_PARA=('Force','ForceAna'),)
+
+
+# premier calcul avec petits incréments
+# -------------------------------------
+
+pas=0.0001
+
+
+Linst  = DEFI_LIST_REEL(
+    DEBUT=0.,
+    INTERVALLE=(
+        _F(JUSQU_A = 2.0*Tsignal, PAS = pas),
+    )
+)
+
+Linst2  = DEFI_LIST_REEL(
+    DEBUT=pas,
+    INTERVALLE=(
+        _F(JUSQU_A = 2.0*Tsignal, PAS = pas),
+    )
+)
+
+#
+Deplace = FORMULE(
+                  VALE='Amplitude*sin(Pulsation*INST)',
+                  Amplitude=Amplitude,
+                  Pulsation=Pulsation,
+                  NOM_PARA='INST',)
+                  
+zero=DEFI_CONSTANTE(VALE=0.0,);
+
+DEPLX=AFFE_CHAR_MECA_F(MODELE=Modele,
+                       DDL_IMPO=_F(GROUP_NO='TRAC_X',
+                                   DX=Deplace,
+                                   DY=zero,DZ=zero,
+                                   ),);
+
+DEPLYZ=AFFE_CHAR_MECA_F(MODELE=Modele,
+                       DDL_IMPO=_F(GROUP_NO='TRAC_YZ',
+                                   DY=Deplace,
+                                   DX=zero,DZ=Deplace,
+                                   ),);
+
+
+
+
+
+ENCA=AFFE_CHAR_MECA(MODELE=Modele,
+                    DDL_IMPO=_F(GROUP_NO='ENCA',
+                                   DX=0.,
+                                   DY=0.,
+                                   DZ=0.,
+                                   ),);
+
+# Analytical solution: ressort
+
+#rq : on décale de -pas/2 la formule analytique, afin d'être plus
+# cohérent avec ce que fait le code.
+
+
+fxAn = FORMULE(VALE='k*Amplitude*sin(Pulsation*(INST-pas/2))',
+                 Amplitude=Amplitude,
+                 k=k,
+                 Pulsation=Pulsation,
+                 pas=pas,
+                 NOM_PARA='INST',)
+
+fxAna=CALC_FONC_INTERP(FONCTION=fxAn, NOM_PARA = 'INST',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        LIST_PARA=Linst2);
+
+
+# Analytical solution: dashpot
+
+fx2An = FORMULE(VALE='k*Amplitude*Pulsation*pas*cos(Pulsation*(INST-pas/2))',
+                 Amplitude=Amplitude,
+                 k=k,
+                 pas=pas,
+                 Pulsation=Pulsation,
+                 NOM_PARA='INST',)
+
+fx2Ana=CALC_FONC_INTERP(FONCTION=fx2An, NOM_PARA = 'INST',
+                        NOM_RESU = 'ForceAna',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        LIST_PARA=Linst2);
+
+
+Tab2Ana = CREA_TABLE(FONCTION=_F(FONCTION=fx2Ana))
+
+
+# DASHPOT - temps court
+Resultat=STAT_NON_LINE(
+    MODELE=Modele,
+    CHAM_MATER=Chmater,
+    CARA_ELEM=CaraElem,
+    EXCIT=(
+        _F(CHARGE=DEPLX,),
+        _F(CHARGE=DEPLYZ,),
+        _F(CHARGE=ENCA,),
+    ),
+    COMPORTEMENT=(
+        _F(RELATION='DASHPOT',     GROUP_MA='RESSORTS'),
+    ),
+    INCREMENT=_F(LIST_INST=Linst,),
+)
+
+Resultat=CALC_CHAMP(reuse=Resultat,
+    RESULTAT=Resultat,
+    FORCE='FORC_NODA', TOUT_ORDRE='OUI', TOUT='OUI',
+)
+
+
+Force1=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DX',
+    GROUP_NO='PT01',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+Force2=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DY',
+    GROUP_NO='PT02',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+Force3=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DX',
+    GROUP_NO='SG01TRAC',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+Force4=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DY',
+    GROUP_NO='SG02TRAC',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+
+Force5=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DZ',
+    GROUP_NO='SG02TRAC',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+
+
+
+TabF1 = CREA_TABLE(FONCTION=_F(FONCTION=Force1))
+TabF2 = CREA_TABLE(FONCTION=_F(FONCTION=Force2))
+TabF3 = CREA_TABLE(FONCTION=_F(FONCTION=Force3))
+TabF4 = CREA_TABLE(FONCTION=_F(FONCTION=Force4))
+TabF5 = CREA_TABLE(FONCTION=_F(FONCTION=Force5))
+
+
+DiffF1 = CALC_TABLE(TABLE=TabF1,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF1 = CALC_TABLE(reuse=DiffF1, TABLE=DiffF1, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+                              
+DiffF2 = CALC_TABLE(TABLE=TabF2,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF2 = CALC_TABLE(reuse=DiffF2, TABLE=DiffF2, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+
+DiffF3 = CALC_TABLE(TABLE=TabF3,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF3 = CALC_TABLE(reuse=DiffF3, TABLE=DiffF3, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+
+DiffF4 = CALC_TABLE(TABLE=TabF4,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF4 = CALC_TABLE(reuse=DiffF4, TABLE=DiffF4, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+
+DiffF5 = CALC_TABLE(TABLE=TabF5,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF5 = CALC_TABLE(reuse=DiffF5, TABLE=DiffF5, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+
+#IMPR_TABLE(UNITE=6, TABLE=Tab2Ana)
+#IMPR_TABLE(UNITE=6, TABLE=TabF1)
+#IMPR_TABLE(UNITE=6, TABLE=DiffF1)
+
+
+TEST_TABLE(TABLE=DiffF1,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-5,
+           VALE_REFE=0.,
+           VALE_CALC= 1.2917528820835522E-06)
+           
+TEST_TABLE(TABLE=DiffF2,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=5.E-2,
+           VALE_REFE=0.,
+           VALE_CALC= 0.03232316233232034)
+
+TEST_TABLE(TABLE=DiffF3,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-5,
+           VALE_REFE=0.,
+           VALE_CALC= 1.2917528820835522E-06)
+           
+TEST_TABLE(TABLE=DiffF4,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-5,
+           VALE_REFE=0.,
+           VALE_CALC= 1.2917528820835522E-06)
+
+
+         
+TEST_TABLE(TABLE=DiffF5,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-5,
+           VALE_REFE=0.,
+           VALE_CALC= 1.2917528820835522E-06)
+
+
+DETRUIRE(CONCEPT=_F(NOM=(Linst,Linst2,fx2An,Tab2Ana,Resultat,
+                         Force2,Force3,Force4,TabF1,TabF2,TabF3,TabF4,
+                         DiffF1,DiffF2,DiffF3,DiffF4)))
+
+
+# second calcul avec grands incréments
+# -------------------------------------
+
+pas=0.001
+
+
+Linst  = DEFI_LIST_REEL(
+    DEBUT=0.,
+    INTERVALLE=(
+        _F(JUSQU_A = 2.0*Tsignal, PAS = pas),
+    )
+)
+
+Linst2  = DEFI_LIST_REEL(
+    DEBUT=pas,
+    INTERVALLE=(
+        _F(JUSQU_A = 2.0*Tsignal, PAS = pas),
+    )
+)
+
+# Analytical solution: dashpot
+
+#rq : on décale de -pas/2 la formule analytique, afin d'être plus
+# cohérent avec ce que fait le code.
+
+fx2An = FORMULE(VALE='k*Amplitude*Pulsation*pas*cos(Pulsation*(INST-pas/2))',
+                 Amplitude=Amplitude,
+                 k=k,
+                 pas=pas,
+                 Pulsation=Pulsation,
+                 NOM_PARA='INST',)
+
+fx2AnaL=CALC_FONC_INTERP(FONCTION=fx2An, NOM_PARA = 'INST',
+                        NOM_RESU = 'ForceAna',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        LIST_PARA=Linst2);
+
+
+Tab2Ana = CREA_TABLE(FONCTION=_F(FONCTION=fx2AnaL))
+
+
+# DASHPOT - temps plus long
+Resultat=STAT_NON_LINE(
+    MODELE=Modele,
+    CHAM_MATER=Chmater,
+    CARA_ELEM=CaraElem,
+    EXCIT=(
+        _F(CHARGE=DEPLX,),
+        _F(CHARGE=DEPLYZ,),
+        _F(CHARGE=ENCA,),
+    ),
+    COMPORTEMENT=(
+        _F(RELATION='DASHPOT',     GROUP_MA='RESSORTS'),
+    ),
+    INCREMENT=_F(LIST_INST=Linst,),
+)
+
+Resultat=CALC_CHAMP(reuse=Resultat,
+    RESULTAT=Resultat,
+    FORCE='FORC_NODA', TOUT_ORDRE='OUI', TOUT='OUI',
+)
+
+
+Force1L=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DX',
+    GROUP_NO='PT01',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+Force2=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DY',
+    GROUP_NO='PT02',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+Force3=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DX',
+    GROUP_NO='SG01TRAC',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+Force4=RECU_FONCTION(NOM_RESU='Force',
+    RESULTAT=Resultat, LIST_INST=Linst2,
+    NOM_CHAM='FORC_NODA', NOM_CMP='DY',
+    GROUP_NO='SG02TRAC',
+    PROL_DROITE='LINEAIRE',
+    PROL_GAUCHE='LINEAIRE',
+)
+
+
+TabF1 = CREA_TABLE(FONCTION=_F(FONCTION=Force1L))
+TabF2 = CREA_TABLE(FONCTION=_F(FONCTION=Force2))
+TabF3 = CREA_TABLE(FONCTION=_F(FONCTION=Force3))
+TabF4 = CREA_TABLE(FONCTION=_F(FONCTION=Force4))
+
+
+DiffF1 = CALC_TABLE(TABLE=TabF1,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF1 = CALC_TABLE(reuse=DiffF1, TABLE=DiffF1, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+                              
+DiffF2 = CALC_TABLE(TABLE=TabF2,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF2 = CALC_TABLE(reuse=DiffF2, TABLE=DiffF2, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+
+DiffF3 = CALC_TABLE(TABLE=TabF3,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF3 = CALC_TABLE(reuse=DiffF3, TABLE=DiffF3, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+
+DiffF4 = CALC_TABLE(TABLE=TabF4,ACTION=(_F(OPERATION='COMB',TABLE=Tab2Ana,
+                                           NOM_PARA = 'INST',),))
+DiffF4 = CALC_TABLE(reuse=DiffF4, TABLE=DiffF4, ACTION=(_F(OPERATION='OPER',
+                              FORMULE=fDiff,NOM_PARA = 'DIFF',),))
+
+#IMPR_TABLE(UNITE=6, TABLE=Tab2Ana)
+#IMPR_TABLE(UNITE=6, TABLE=TabF1)
+#IMPR_TABLE(UNITE=6, TABLE=DiffF1)
+
+
+TEST_TABLE(TABLE=DiffF1,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=2.E-3,
+           VALE_REFE=0.,
+           VALE_CALC= 0.0012744491100895594)
+           
+TEST_TABLE(TABLE=DiffF2,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=2.E-3,
+           VALE_REFE=0.31925489887215125,
+           VALE_CALC= 0.31925489887215125)
+
+TEST_TABLE(TABLE=DiffF3,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=2.E-3,
+           VALE_REFE=0.,
+           VALE_CALC= 0.0012744491100895594)
+           
+TEST_TABLE(TABLE=DiffF4,
+           TYPE_TEST='MAX',
+           NOM_PARA='DIFF',
+           CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           PRECISION=2.E-3,
+           VALE_REFE=0.,
+           VALE_CALC= 0.0012744491100895594)
+
+
+
+# IMPRESSION
+'''
+ymin,ymax = -k,k
+IMPR_FONCTION(UNITE=29,
+    FORMAT='XMGRACE',
+    PILOTE='PNG',
+    LEGENDE_X='INST',LEGENDE_Y='FORCE',TITRE='Dashpot',
+    BORNE_Y =( ymin , ymax ),
+    COURBE=(
+        _F(FONCTION=fxAna, LEGENDE="Ressort Analytique Kt=1", MARQUEUR=0, COULEUR=1),
+        _F(FONCTION=fx2Ana, LEGENDE="Dashpot Analytique : Kt=1, pas = 0.0001", STYLE=4, MARQUEUR=0, COULEUR=2),
+        _F(FONCTION=Force1, LEGENDE="Dashpot PT01 : Kt=1, pas = 0.0001", STYLE=0, MARQUEUR=8, COULEUR=3, FREQ_MARQUEUR = 25),
+        _F(FONCTION=fx2AnaL, LEGENDE="Dashpot Analytique : Kt=1, pas = 0.001", STYLE=5, MARQUEUR=0, COULEUR=4),
+        _F(FONCTION=Force1L, LEGENDE="Dashpot PT01 : Kt=1, pas = 0.001",STYLE=0, MARQUEUR=9, COULEUR=10),
+    ),
+)
+'''
+FIN()
