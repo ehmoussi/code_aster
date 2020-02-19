@@ -22,6 +22,7 @@
  */
 
 #include "PythonBindings/VectorUtilitiesInterface.h"
+#include "DataStructures/DataStructure.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Materials/Material.h"
 #include "Modeling/FiniteElementDescriptor.h"
@@ -43,4 +44,5 @@ void exportVectorUtilitiesToPython() {
     exportVectorUtilities< FunctionPtr >();
     exportVectorUtilities< PartOfMaterialOnMeshPtr >();
     exportVectorUtilities< GeneralMaterialBehaviourPtr >();
+    exportVectorUtilities< DataStructurePtr >();
 };

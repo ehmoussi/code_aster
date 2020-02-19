@@ -29,7 +29,7 @@
 
 namespace py = boost::python;
 
-template < typename T > struct Vector_to_python_list {
+template < typename T > struct VectorToPythonList {
     static PyObject *convert( std::vector< T > const &v ) {
         py::list blst;
         typename std::vector< T >::const_iterator p;
@@ -40,11 +40,11 @@ template < typename T > struct Vector_to_python_list {
     }
 };
 
-template < typename T > struct Vector_from_python_list {
-    Vector_from_python_list() {
+template < typename T > struct VectorFromPythonList {
+    VectorFromPythonList() {
         py::converter::registry::push_back(
-            &Vector_from_python_list< T >::convertible,
-            &Vector_from_python_list< T >::construct,
+            &VectorFromPythonList< T >::convertible,
+            &VectorFromPythonList< T >::construct,
             py::type_id< std::vector< T > >() );
     }
 
@@ -59,12 +59,7 @@ template < typename T > struct Vector_from_python_list {
     // Convert obj_ptr into a std::vector<T>
     static void construct( PyObject *obj_ptr,
                            py::converter::rvalue_from_python_stage1_data *data ) {
-        // Extract the character data from the python string
-        //      const char* value = PyUnicode_AsString(obj_ptr);
         py::list blst( py::handle<>( py::borrowed( obj_ptr ) ) );
-
-        // // Verify that obj_ptr is a string (should be ensured by convertible())
-        // assert(value);
 
         // Grab pointer to memory into which to construct the new std::vector<T>
         void *storage =
@@ -72,7 +67,7 @@ template < typename T > struct Vector_from_python_list {
                 ->storage.bytes;
 
         // in-place construct the new std::vector<T> using the character data
-        // extraced from the python object
+        // extracted from the python object
         std::vector< T > &v = *( new ( storage ) std::vector< T >() );
 
         // populate the vector from list contains !!!
@@ -102,10 +97,10 @@ template < typename T > struct Vector_from_python_list {
 template < class T > void exportVectorUtilities() {
 
     // register the to-python converter
-    py::to_python_converter< std::vector< T >, Vector_to_python_list< T > >();
+    py::to_python_converter< std::vector< T >, VectorToPythonList< T > >();
 
     // register the from-python converter
-    Vector_from_python_list< T >();
+    VectorFromPythonList< T >();
 };
 
 void exportVectorUtilitiesToPython();

@@ -87,8 +87,12 @@ DataStructure::~DataStructure() {
 #endif
 };
 
-void DataStructure::addReference( const DataStructurePtr &ds ) {
-    _referenceVector.push_back( ds );
+void DataStructure::addDependency( const DataStructurePtr &ds ) {
+    _depsVector.push_back( ds );
+}
+
+std::vector< DataStructure::DataStructurePtr > DataStructure::getDependencies() const {
+    return _depsVector;
 }
 
 void DataStructure::debugPrint( int logicalUnit ) const {
