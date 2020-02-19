@@ -3,7 +3,7 @@
  * @brief
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,7 +29,7 @@ const std::vector< InterfaceTypeEnum > allInterfaceType = {MacNeal, CraigBampton
                                                            HarmonicCraigBampton, NoInterfaceType};
 const std::vector< std::string > allInterfaceTypeNames = {"MNEAL", "CRAIGB", "CB_HARMO", "AUCUN"};
 
-bool StructureInterfaceInstance::build() {
+bool StructureInterfaceClass::build() {
     CommandSyntax cmdSt( "DEFI_INTERF_DYNA" );
     cmdSt.setResult( getName(), "INTERF_DYNA_CLAS" );
 

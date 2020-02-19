@@ -6,7 +6,7 @@
  * @brief Definition of the (nonlinear) behaviour
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -35,7 +35,7 @@
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/GenericParameter.h"
 
-class BehaviourInstance {
+class BehaviourClass {
   private:
     typedef std::vector< ConstitutiveLawEnum > VectorOfLaw;
     /** @brief ConstitutiveLaw*/
@@ -72,9 +72,9 @@ class BehaviourInstance {
     /**
      * @brief Constructeur
      */
-    BehaviourInstance( ConstitutiveLawEnum law = Elas, StrainEnum strain = SmallStrain );
+    BehaviourClass( ConstitutiveLawEnum law = Elas, StrainEnum strain = SmallStrain );
 
-    BehaviourInstance( int law = 0, int strain = 0 )
+    BehaviourClass( int law = 0, int strain = 0 )
         : _constitutiveLaw( allConstitutiveLaw[law] ), _strain( allStrain[strain] ){};
 
     /**
@@ -148,22 +148,22 @@ class BehaviourInstance {
 
 /**
  * @typedef BehaviourPtr
- * @brief Enveloppe d'un pointeur intelligent vers un BehaviourInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un BehaviourClass
  */
-typedef boost::shared_ptr< BehaviourInstance > BehaviourPtr;
+typedef boost::shared_ptr< BehaviourClass > BehaviourPtr;
 
 /** @typedef Smart pointer on a  VirtualMeshEntity */
 typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
 
 /** @typedef LocatedBehaviour is a Behaviour located on a MeshEntity */
-class LocatedBehaviourInstance {
+class LocatedBehaviourClass {
   private:
     BehaviourPtr _behaviour;
     MeshEntityPtr _entity;
     CapyConvertibleContainer _toCapyConverter;
 
   public:
-    LocatedBehaviourInstance( BehaviourPtr behaviour, MeshEntityPtr entity )
+    LocatedBehaviourClass( BehaviourPtr behaviour, MeshEntityPtr entity )
         : _behaviour( behaviour ), _entity( entity ) {
         std::string entityName;
         if ( _entity->getType() == AllMeshEntitiesType ) {
@@ -182,6 +182,6 @@ class LocatedBehaviourInstance {
     };
 };
 
-typedef boost::shared_ptr< LocatedBehaviourInstance > LocatedBehaviourPtr;
+typedef boost::shared_ptr< LocatedBehaviourClass > LocatedBehaviourPtr;
 
 #endif /* BEHAVIOUR_H_ */

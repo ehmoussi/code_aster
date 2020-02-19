@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import ModeEmpiContainer
+from ..Objects import EmpiricalModeResult
 from ..Supervis import ExecuteCommand
 
 
@@ -36,7 +36,7 @@ class ReducedBaseDefinition(ExecuteCommand):
         if "reuse" in keywords:
             self._result = keywords["reuse"]
         else:
-            self._result = ModeEmpiContainer()
+            self._result = EmpiricalModeResult()
 
     def post_exec(self, keywords):
         """Execute the command.

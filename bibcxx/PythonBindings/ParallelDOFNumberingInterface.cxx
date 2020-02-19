@@ -34,11 +34,11 @@ namespace py = boost::python;
 
 void exportParallelDOFNumberingToPython() {
 
-    py::class_< ParallelDOFNumberingInstance, ParallelDOFNumberingInstance::ParallelDOFNumberingPtr,
-            py::bases< BaseDOFNumberingInstance > >( "ParallelDOFNumbering", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelDOFNumberingInstance >))
+    py::class_< ParallelDOFNumberingClass, ParallelDOFNumberingClass::ParallelDOFNumberingPtr,
+            py::bases< BaseDOFNumberingClass > >( "ParallelDOFNumbering", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ParallelDOFNumberingClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ParallelDOFNumberingInstance, std::string >));
+              py::make_constructor(&initFactoryPtr< ParallelDOFNumberingClass, std::string >));
 };
 
 #endif /* _USE_MPI */

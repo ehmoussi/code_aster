@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe EventManager
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -78,12 +78,12 @@ const int nbErrors = 7;
 extern const char *ErrorNames[nbErrors];
 
 /**
- * @class GenericActionInstance
+ * @class GenericActionClass
  * @brief Cette classe définit une action générique en cas d'erreur détéctée
  * @author Nicolas Sellenet
  * @todo peut-être passer le type d'action en argument template
  */
-class GenericActionInstance {
+class GenericActionClass {
   private:
     /** @brief Nom (capy) de l'action */
     GenParam _actionName;
@@ -99,7 +99,7 @@ class GenericActionInstance {
      * @brief Constructeur
      * @param type Type de l'action
      */
-    GenericActionInstance( ActionTypeEnum type )
+    GenericActionClass( ActionTypeEnum type )
         : _actionName( "ACTION", std::string( ActionNames[type] ), true ), _type( type ) {
         _listParam.push_back( &_actionName );
     };
@@ -107,7 +107,7 @@ class GenericActionInstance {
     /**
      * @brief Constructeur par défaut
      */
-    GenericActionInstance()
+    GenericActionClass()
         : _actionName( "ACTION", std::string( ActionNames[NoActionType] ), true ),
           _type( NoActionType ){};
 
@@ -125,33 +125,33 @@ class GenericActionInstance {
 };
 
 /**
- * @class StopOnErrorInstance
+ * @class StopOnErrorClass
  * @brief Classe correspondant à l'action "ARRET"
  * @author Nicolas Sellenet
  */
-class StopOnErrorInstance : public GenericActionInstance {
+class StopOnErrorClass : public GenericActionClass {
   public:
     /** @brief Constructeur par défaut */
-    StopOnErrorInstance() : GenericActionInstance( StopOnErrorType ){};
+    StopOnErrorClass() : GenericActionClass( StopOnErrorType ){};
 };
 
 /**
- * @class ContinueOnErrorInstance
+ * @class ContinueOnErrorClass
  * @brief Classe correspondant à l'action "CONTINUE"
  * @author Nicolas Sellenet
  */
-class ContinueOnErrorInstance : public GenericActionInstance {
+class ContinueOnErrorClass : public GenericActionClass {
   public:
     /** @brief Constructeur par défaut */
-    ContinueOnErrorInstance() : GenericActionInstance( ContinueOnErrorType ){};
+    ContinueOnErrorClass() : GenericActionClass( ContinueOnErrorType ){};
 };
 
 /**
- * @class GenericSubstepingOnErrorInstance
+ * @class GenericSubstepingOnErrorClass
  * @brief Classe correspondant à l'action générique "DECOUPE"
  * @author Nicolas Sellenet
  */
-class GenericSubstepingOnErrorInstance : public GenericActionInstance {
+class GenericSubstepingOnErrorClass : public GenericActionClass {
   private:
     /** @brief Paramètre SUBD_METHODE */
     GenParam _isAuto;
@@ -167,8 +167,8 @@ class GenericSubstepingOnErrorInstance : public GenericActionInstance {
      * @brief Constructeur appelable depuis les classes filles
      * @param type ActionTypeEnum
      */
-    GenericSubstepingOnErrorInstance( ActionTypeEnum type )
-        : GenericActionInstance( type ), _isAuto( "SUBD_METHODE", std::string( "MANUEL" ), false ),
+    GenericSubstepingOnErrorClass( ActionTypeEnum type )
+        : GenericActionClass( type ), _isAuto( "SUBD_METHODE", std::string( "MANUEL" ), false ),
           _step( "SUBD_PAS", (ASTERINTEGER)4, false ),
           _level( "SUBD_NIVEAU", (ASTERINTEGER)3, false ),
           _minimumStep( "SUBD_PAS_MINI", 0., false ) {
@@ -180,9 +180,9 @@ class GenericSubstepingOnErrorInstance : public GenericActionInstance {
 
   public:
     /** @brief Constructeur par défaut */
-    GenericSubstepingOnErrorInstance() : GenericSubstepingOnErrorInstance( NoActionType ){};
+    GenericSubstepingOnErrorClass() : GenericSubstepingOnErrorClass( NoActionType ){};
 
-    ~GenericSubstepingOnErrorInstance(){};
+    ~GenericSubstepingOnErrorClass(){};
 
     /**
      * @brief Fixer la méthode de découpage du pas de temps
@@ -219,34 +219,34 @@ class GenericSubstepingOnErrorInstance : public GenericActionInstance {
 };
 
 /**
- * @class SubstepingOnErrorInstance
+ * @class SubstepingOnErrorClass
  * @brief Classe correspondant à l'action "DECOUPE"
  * @author Nicolas Sellenet
  */
-class SubstepingOnErrorInstance : public GenericSubstepingOnErrorInstance {
+class SubstepingOnErrorClass : public GenericSubstepingOnErrorClass {
   public:
     /** @brief Constructeur */
-    SubstepingOnErrorInstance() : GenericSubstepingOnErrorInstance( SubstepingOnErrorType ){};
+    SubstepingOnErrorClass() : GenericSubstepingOnErrorClass( SubstepingOnErrorType ){};
 };
 
 /**
- * @class AddIterationOnErrorInstance
+ * @class AddIterationOnErrorClass
  * @brief Classe correspondant à l'action générique "ITER_SUPPL"
  * @author Nicolas Sellenet
  */
-class AddIterationOnErrorInstance : public GenericSubstepingOnErrorInstance {
+class AddIterationOnErrorClass : public GenericSubstepingOnErrorClass {
   private:
     /** @brief Paramètre PCENT_ITER_PLUS */
     GenParam _pcent;
 
   public:
-    AddIterationOnErrorInstance()
-        : GenericSubstepingOnErrorInstance( AddIterationOnErrorType ),
+    AddIterationOnErrorClass()
+        : GenericSubstepingOnErrorClass( AddIterationOnErrorType ),
           _pcent( "PCENT_ITER_PLUS", 50., false ) {
         _listParam.push_back( &_pcent );
     };
 
-    ~AddIterationOnErrorInstance(){};
+    ~AddIterationOnErrorClass(){};
 
     /**
      * @brief Fixer PCENT_ITER_PLUS
@@ -256,11 +256,11 @@ class AddIterationOnErrorInstance : public GenericSubstepingOnErrorInstance {
 };
 
 /**
- * @class SubstepingOnContactInstance
+ * @class SubstepingOnContactClass
  * @brief Classe correspondant à l'action "DECOUPE" en situation de contact
  * @author Nicolas Sellenet
  */
-class SubstepingOnContactInstance : public GenericActionInstance {
+class SubstepingOnContactClass : public GenericActionClass {
   private:
     /** @brief Paramètre SUBD_METHODE */
     GenParam _isAuto;
@@ -277,8 +277,8 @@ class SubstepingOnContactInstance : public GenericActionInstance {
 
   public:
     /** @brief Constructeur */
-    SubstepingOnContactInstance()
-        : GenericActionInstance( SubstepingOnContactType ),
+    SubstepingOnContactClass()
+        : GenericActionClass( SubstepingOnContactType ),
           _isAuto( "SUBD_METHODE", std::string( "AUTO" ), false ), _step( "SUBD_PAS", false ),
           _level( "SUBD_NIVEAU", false ), _minimumStep( "SUBD_PAS_MINI", false ),
           _timeStepSubstep( "SUBD_INST", 0., true ), _substepDuration( "SUBD_DUREE", 0., true ) {
@@ -290,7 +290,7 @@ class SubstepingOnContactInstance : public GenericActionInstance {
         _listParam.push_back( &_substepDuration );
     };
 
-    ~SubstepingOnContactInstance(){};
+    ~SubstepingOnContactClass(){};
 
     /**
      * @brief Fixer la méthode de découpage du pas de temps
@@ -351,66 +351,66 @@ class SubstepingOnContactInstance : public GenericActionInstance {
 };
 
 /**
- * @class PilotageErrorInstance
+ * @class PilotageErrorClass
  * @brief Classe correspondant à l'action "AUTRE_PILOTAGE"
  * @author Nicolas Sellenet
  */
-class PilotageErrorInstance : public GenericSubstepingOnErrorInstance {
+class PilotageErrorClass : public GenericSubstepingOnErrorClass {
   public:
     /** @brief Constructeur */
-    PilotageErrorInstance() : GenericSubstepingOnErrorInstance( PilotageErrorType ){};
+    PilotageErrorClass() : GenericSubstepingOnErrorClass( PilotageErrorType ){};
 };
 
 /**
- * @class PilotageErrorInstance
+ * @class PilotageErrorClass
  * @brief Classe correspondant à l'action "ADAPT_COEF_PENA"
  * @author Nicolas Sellenet
  */
-class ChangePenalisationOnErrorInstance : public GenericActionInstance {
+class ChangePenalisationOnErrorClass : public GenericActionClass {
   private:
     GenParam _coefMax;
 
   public:
     /** @brief Constructeur */
-    ChangePenalisationOnErrorInstance()
-        : GenericActionInstance( ChangePenalisationOnErrorType ),
+    ChangePenalisationOnErrorClass()
+        : GenericActionClass( ChangePenalisationOnErrorType ),
           _coefMax( "COEF_MAXI", 1e12, false ) {
         _listParam.push_back( &_coefMax );
     };
 
-    ~ChangePenalisationOnErrorInstance(){};
+    ~ChangePenalisationOnErrorClass(){};
 
     /** @brief Fixer COEF_MAXI */
     void setMaximumPenalisationCoefficient( const double &coef ) { _coefMax = coef; };
 };
 
-/** @typedef Pointeur intelligent vers un GenericActionInstance */
-typedef boost::shared_ptr< GenericActionInstance > GenericActionPtr;
+/** @typedef Pointeur intelligent vers un GenericActionClass */
+typedef boost::shared_ptr< GenericActionClass > GenericActionPtr;
 
-/** @typedef Pointeur intelligent vers un StopOnErrorInstance */
-typedef boost::shared_ptr< StopOnErrorInstance > StopOnErrorPtr;
-/** @typedef Pointeur intelligent vers un GenericSubstepingOnErrorInstance */
-typedef boost::shared_ptr< GenericSubstepingOnErrorInstance > GenericSubstepingOnErrorPtr;
-/** @typedef Pointeur intelligent vers un SubstepingOnErrorInstance */
-typedef boost::shared_ptr< SubstepingOnErrorInstance > SubstepingOnErrorPtr;
-/** @typedef Pointeur intelligent vers un SubstepingOnContactInstance */
-typedef boost::shared_ptr< SubstepingOnContactInstance > SubstepingOnContactPtr;
-/** @typedef Pointeur intelligent vers un AddIterationOnErrorInstance */
-typedef boost::shared_ptr< AddIterationOnErrorInstance > AddIterationOnErrorPtr;
-/** @typedef Pointeur intelligent vers un PilotageErrorInstance */
-typedef boost::shared_ptr< PilotageErrorInstance > PilotageErrorPtr;
-/** @typedef Pointeur intelligent vers un ChangePenalisationOnErrorInstance */
-typedef boost::shared_ptr< ChangePenalisationOnErrorInstance > ChangePenalisationOnErrorPtr;
-/** @typedef Pointeur intelligent vers un ContinueOnErrorInstance */
-typedef boost::shared_ptr< ContinueOnErrorInstance > ContinueOnErrorPtr;
+/** @typedef Pointeur intelligent vers un StopOnErrorClass */
+typedef boost::shared_ptr< StopOnErrorClass > StopOnErrorPtr;
+/** @typedef Pointeur intelligent vers un GenericSubstepingOnErrorClass */
+typedef boost::shared_ptr< GenericSubstepingOnErrorClass > GenericSubstepingOnErrorPtr;
+/** @typedef Pointeur intelligent vers un SubstepingOnErrorClass */
+typedef boost::shared_ptr< SubstepingOnErrorClass > SubstepingOnErrorPtr;
+/** @typedef Pointeur intelligent vers un SubstepingOnContactClass */
+typedef boost::shared_ptr< SubstepingOnContactClass > SubstepingOnContactPtr;
+/** @typedef Pointeur intelligent vers un AddIterationOnErrorClass */
+typedef boost::shared_ptr< AddIterationOnErrorClass > AddIterationOnErrorPtr;
+/** @typedef Pointeur intelligent vers un PilotageErrorClass */
+typedef boost::shared_ptr< PilotageErrorClass > PilotageErrorPtr;
+/** @typedef Pointeur intelligent vers un ChangePenalisationOnErrorClass */
+typedef boost::shared_ptr< ChangePenalisationOnErrorClass > ChangePenalisationOnErrorPtr;
+/** @typedef Pointeur intelligent vers un ContinueOnErrorClass */
+typedef boost::shared_ptr< ContinueOnErrorClass > ContinueOnErrorPtr;
 
 /**
- * @class GenericEventErrorInstance
+ * @class GenericEventErrorClass
  * @brief Cette classe définit une erreur générique de convergence dont
  *        les autres doivent hériter
  * @author Nicolas Sellenet
  */
-class GenericEventErrorInstance {
+class GenericEventErrorClass {
   private:
     /** @brief Action à réaliser en cas d'erreur */
     GenericActionPtr _actionOnError;
@@ -425,17 +425,17 @@ class GenericEventErrorInstance {
      * @brief Constructeur
      * @param type EventErrorTypeEnum décrivant le type de l'erreur
      */
-    GenericEventErrorInstance( EventErrorTypeEnum type )
+    GenericEventErrorClass( EventErrorTypeEnum type )
         : _eventName( "EVENEMENT", std::string( ErrorNames[type] ), true ) {
         _listSyntaxParam.push_back( &_eventName );
     };
 
   public:
     /** @brief Constructeur par défaut */
-    GenericEventErrorInstance()
+    GenericEventErrorClass()
         : _eventName( "EVENEMENT", std::string( ErrorNames[NoErrorType] ), true ){};
 
-    ~GenericEventErrorInstance(){};
+    ~GenericEventErrorClass(){};
 
   private:
     /**
@@ -478,11 +478,11 @@ class GenericEventErrorInstance {
 };
 
 /**
- * @class EventErrorInstance
+ * @class EventErrorClass
  * @brief Classe décriant l'événement ERREUR
  * @author Nicolas Sellenet
  */
-class EventErrorInstance : public GenericEventErrorInstance {
+class EventErrorClass : public GenericEventErrorClass {
   private:
     /**
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
@@ -497,17 +497,17 @@ class EventErrorInstance : public GenericEventErrorInstance {
 
   public:
     /** @brief Constructeur */
-    EventErrorInstance() : GenericEventErrorInstance( EventErrorType ){};
+    EventErrorClass() : GenericEventErrorClass( EventErrorType ){};
 
-    ~EventErrorInstance(){};
+    ~EventErrorClass(){};
 };
 
 /**
- * @class ResidualDivergenceErrorInstance
+ * @class ResidualDivergenceErrorClass
  * @brief Classe décriant l'événement DIVE_RESI
  * @author Nicolas Sellenet
  */
-class ResidualDivergenceErrorInstance : public GenericEventErrorInstance {
+class ResidualDivergenceErrorClass : public GenericEventErrorClass {
   private:
     /**
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
@@ -521,18 +521,18 @@ class ResidualDivergenceErrorInstance : public GenericEventErrorInstance {
 
   public:
     /** @brief Constructeur */
-    ResidualDivergenceErrorInstance()
-        : GenericEventErrorInstance( ResidualDivergenceErrorType ){};
+    ResidualDivergenceErrorClass()
+        : GenericEventErrorClass( ResidualDivergenceErrorType ){};
 
-    ~ResidualDivergenceErrorInstance(){};
+    ~ResidualDivergenceErrorClass(){};
 };
 
 /**
- * @class IncrementOverboundErrorInstance
+ * @class IncrementOverboundErrorClass
  * @brief Classe décriant l'événement DELTA_GRANDEUR
  * @author Nicolas Sellenet
  */
-class IncrementOverboundErrorInstance : public GenericEventErrorInstance {
+class IncrementOverboundErrorClass : public GenericEventErrorClass {
   private:
     /** @brief Paramètre VALE_REF */
     GenParam _value;
@@ -553,8 +553,8 @@ class IncrementOverboundErrorInstance : public GenericEventErrorInstance {
 
   public:
     /** @brief Constructeur */
-    IncrementOverboundErrorInstance()
-        : GenericEventErrorInstance( IncrementOverboundErrorType ),
+    IncrementOverboundErrorClass()
+        : GenericEventErrorClass( IncrementOverboundErrorType ),
           _value( "VALE_REF", true ), _fieldName( "NOM_CHAM", "", true ),
           _component( "NOM_CMP", true ) {
         _listSyntaxParam.push_back( &_value );
@@ -562,7 +562,7 @@ class IncrementOverboundErrorInstance : public GenericEventErrorInstance {
         _listSyntaxParam.push_back( &_component );
     };
 
-    ~IncrementOverboundErrorInstance(){};
+    ~IncrementOverboundErrorClass(){};
 
     /**
      * @brief Fixer la valeur à vérifier
@@ -579,11 +579,11 @@ class IncrementOverboundErrorInstance : public GenericEventErrorInstance {
 };
 
 /**
- * @class ContactDetectionErrorInstance
+ * @class ContactDetectionErrorClass
  * @brief Classe décriant l'événement COLLISION
  * @author Nicolas Sellenet
  */
-class ContactDetectionErrorInstance : public GenericEventErrorInstance {
+class ContactDetectionErrorClass : public GenericEventErrorClass {
   private:
     /**
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
@@ -597,18 +597,18 @@ class ContactDetectionErrorInstance : public GenericEventErrorInstance {
 
   public:
     /** @brief Constructeur */
-    ContactDetectionErrorInstance()
-        : GenericEventErrorInstance( ContactDetectionErrorType ){};
+    ContactDetectionErrorClass()
+        : GenericEventErrorClass( ContactDetectionErrorType ){};
 
-    ~ContactDetectionErrorInstance(){};
+    ~ContactDetectionErrorClass(){};
 };
 
 /**
- * @class InterpenetrationErrorInstance
+ * @class InterpenetrationErrorClass
  * @brief Classe décriant l'événement INTERPENETRATION
  * @author Nicolas Sellenet
  */
-class InterpenetrationErrorInstance : public GenericEventErrorInstance {
+class InterpenetrationErrorClass : public GenericEventErrorClass {
   private:
     /** @brief Paramètre PENE_MAXI */
     GenParam _maxPenetration;
@@ -625,13 +625,13 @@ class InterpenetrationErrorInstance : public GenericEventErrorInstance {
 
   public:
     /** @brief Constructeur */
-    InterpenetrationErrorInstance()
-        : GenericEventErrorInstance( InterpenetrationErrorType ),
+    InterpenetrationErrorClass()
+        : GenericEventErrorClass( InterpenetrationErrorType ),
           _maxPenetration( "PENE_MAXI", true ) {
         _listSyntaxParam.push_back( &_maxPenetration );
     };
 
-    ~InterpenetrationErrorInstance(){};
+    ~InterpenetrationErrorClass(){};
 
     /**
      * @brief Fixer la valeur maximale de l'interpénétration
@@ -641,11 +641,11 @@ class InterpenetrationErrorInstance : public GenericEventErrorInstance {
 };
 
 /**
- * @class InstabilityErrorInstance
+ * @class InstabilityErrorClass
  * @brief Classe décriant l'événement INSTABILITE
  * @author Nicolas Sellenet
  */
-class InstabilityErrorInstance : public GenericEventErrorInstance {
+class InstabilityErrorClass : public GenericEventErrorClass {
   private:
     /**
      * @brief Fonction permettant de vérifier qu'une action est bien autorisée
@@ -661,25 +661,25 @@ class InstabilityErrorInstance : public GenericEventErrorInstance {
     /**
      * @brief Constructeur
      */
-    InstabilityErrorInstance() : GenericEventErrorInstance( InstabilityErrorType ){};
+    InstabilityErrorClass() : GenericEventErrorClass( InstabilityErrorType ){};
 
-    ~InstabilityErrorInstance(){};
+    ~InstabilityErrorClass(){};
 };
 
-/** @typedef Pointeur intelligent vers un GenericEventErrorInstance */
-typedef boost::shared_ptr< GenericEventErrorInstance > GenericEventErrorPtr;
-/** @typedef Pointeur intelligent vers un EventErrorInstance */
-typedef boost::shared_ptr< EventErrorInstance > EventErrorPtr;
-/** @typedef Pointeur intelligent vers un ResidualDivergenceErrorInstance */
-typedef boost::shared_ptr< ResidualDivergenceErrorInstance > ResidualDivergenceErrorPtr;
-/** @typedef Pointeur intelligent vers un IncrementOverboundErrorInstance */
-typedef boost::shared_ptr< IncrementOverboundErrorInstance > IncrementOverboundErrorPtr;
-/** @typedef Pointeur intelligent vers un ContactDetectionErrorInstance */
-typedef boost::shared_ptr< ContactDetectionErrorInstance > ContactDetectionErrorPtr;
-/** @typedef Pointeur intelligent vers un InterpenetrationErrorInstance */
-typedef boost::shared_ptr< InterpenetrationErrorInstance > InterpenetrationErrorPtr;
-/** @typedef Pointeur intelligent vers un InstabilityErrorInstance */
-typedef boost::shared_ptr< InstabilityErrorInstance > InstabilityErrorPtr;
+/** @typedef Pointeur intelligent vers un GenericEventErrorClass */
+typedef boost::shared_ptr< GenericEventErrorClass > GenericEventErrorPtr;
+/** @typedef Pointeur intelligent vers un EventErrorClass */
+typedef boost::shared_ptr< EventErrorClass > EventErrorPtr;
+/** @typedef Pointeur intelligent vers un ResidualDivergenceErrorClass */
+typedef boost::shared_ptr< ResidualDivergenceErrorClass > ResidualDivergenceErrorPtr;
+/** @typedef Pointeur intelligent vers un IncrementOverboundErrorClass */
+typedef boost::shared_ptr< IncrementOverboundErrorClass > IncrementOverboundErrorPtr;
+/** @typedef Pointeur intelligent vers un ContactDetectionErrorClass */
+typedef boost::shared_ptr< ContactDetectionErrorClass > ContactDetectionErrorPtr;
+/** @typedef Pointeur intelligent vers un InterpenetrationErrorClass */
+typedef boost::shared_ptr< InterpenetrationErrorClass > InterpenetrationErrorPtr;
+/** @typedef Pointeur intelligent vers un InstabilityErrorClass */
+typedef boost::shared_ptr< InstabilityErrorClass > InstabilityErrorPtr;
 
 /** @typedef std::list de GenericEventErrorPtr */
 typedef std::list< GenericEventErrorPtr > ListConvError;

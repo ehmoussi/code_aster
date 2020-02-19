@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FullTransientResultsContainer
+from ..Objects import FullTransientResult
 from ..Supervis import ExecuteCommand
 
 
@@ -39,7 +39,7 @@ class RestCondTran(ExecuteCommand):
             self._result = reuse
         else:
             if keywords["TYPE_RESU"] == "DYNA_TRANS":
-                self._result = FullTransientResultsContainer()
+                self._result = FullTransientResult()
             else:
                 self._result = type(keywords["RESULTAT"])()
 

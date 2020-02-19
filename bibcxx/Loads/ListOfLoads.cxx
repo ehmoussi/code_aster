@@ -3,7 +3,7 @@
  * @brief Implementation de ListOfLoads
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -28,14 +28,14 @@
 #include "Loads/ListOfLoads.h"
 #include "Supervis/CommandSyntax.h"
 
-ListOfLoadsInstance::ListOfLoadsInstance( const JeveuxMemory memType )
+ListOfLoadsClass::ListOfLoadsClass( const JeveuxMemory memType )
     : DataStructure( DataStructureNaming::getNewName( memType, 8 ) + ".LIST_LOAD", 19, "L_CHARGES",
                      memType ),
       _loadInformations( JeveuxVectorLong( getName() + ".INFC" ) ),
       _list( JeveuxVectorChar24( getName() + ".LCHA" ) ),
       _listOfFunctions( JeveuxVectorChar24( getName() + ".FCHA" ) ), _isEmpty( true ){};
 
-bool ListOfLoadsInstance::build() {
+bool ListOfLoadsClass::build() {
     if ( !_isEmpty )
         return true;
     CommandSyntax cmdSt( "MECA_STATIQUE" );
@@ -46,7 +46,7 @@ bool ListOfLoadsInstance::build() {
     for ( const auto &curIter : _listOfMechanicalLoads ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = curIter->getName();
-        if ( _listOfMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfMechaFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -56,7 +56,7 @@ bool ListOfLoadsInstance::build() {
     for ( const auto &curIter : _listOfParallelMechanicalLoads ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = curIter->getName();
-        if ( _listOfParaMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfParaMechaFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfParaMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -66,7 +66,7 @@ bool ListOfLoadsInstance::build() {
     for ( const auto &curIter : _listOfKinematicsLoads ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = curIter->getName();
-        if ( _listOfKineFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfKineFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfKineFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -86,14 +86,14 @@ bool ListOfLoadsInstance::build() {
 
 /* buildListExcit : construit la liste des charges utilisées pour valoriser le mot-clé facteur EXCIT
 dans STAT_NON_LINE. C'est une méthode temporaire qui disparaîtra avec la réécriture d'op0070 */
-ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() {
+ListSyntaxMapContainer ListOfLoadsClass::buildListExcit() {
     ListSyntaxMapContainer listeExcit;
     int pos = 0;
     for ( ListMecaLoadCIter curIter = _listOfMechanicalLoads.begin();
           curIter != _listOfMechanicalLoads.end(); ++curIter ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = ( *curIter )->getName();
-        if ( _listOfMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfMechaFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -103,7 +103,7 @@ ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() {
     for ( const auto &curIter : _listOfParallelMechanicalLoads ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = curIter->getName();
-        if ( _listOfParaMechaFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfParaMechaFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfParaMechaFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );
@@ -114,7 +114,7 @@ ListSyntaxMapContainer ListOfLoadsInstance::buildListExcit() {
           curIter != _listOfKinematicsLoads.end(); ++curIter ) {
         SyntaxMapContainer dict2;
         dict2.container["CHARGE"] = ( *curIter )->getName();
-        if ( _listOfKineFun[pos].getName() != emptyDoubleFunction->getName() )
+        if ( _listOfKineFun[pos].getName() != emptyRealFunction->getName() )
             dict2.container["FONC_MULT"] = _listOfKineFun[pos].getName();
         ++pos;
         listeExcit.push_back( dict2 );

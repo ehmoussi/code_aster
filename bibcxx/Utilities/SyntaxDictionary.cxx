@@ -3,7 +3,7 @@
  * @brief Implementation de SyntaxMapContainer
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -58,18 +58,18 @@ PyObject *SyntaxMapContainer::convertToPythonDictionnary( PyObject *returnDict )
             const double &tmp = boost::get< double >( ( *curIter ).second );
             PyDict_SetItemString( returnDict, ( *curIter ).first.c_str(),
                                   PyFloat_FromDouble( tmp ) );
-        } else if ( ( *curIter ).second.type() == typeid( VectorDouble ) ) {
-            const VectorDouble &currentList = boost::get< VectorDouble >( ( *curIter ).second );
+        } else if ( ( *curIter ).second.type() == typeid( VectorReal ) ) {
+            const VectorReal &currentList = boost::get< VectorReal >( ( *curIter ).second );
             PyObject *listValues = PyList_New( currentList.size() );
             int count = 0;
-            for ( VectorDoubleCIter iter = currentList.begin(); iter != currentList.end();
+            for ( VectorRealCIter iter = currentList.begin(); iter != currentList.end();
                   ++iter ) {
                 PyList_SetItem( listValues, count, PyFloat_FromDouble( *iter ) );
                 ++count;
             }
             PyDict_SetItemString( returnDict, ( *curIter ).first.c_str(), listValues );
-        } else if ( ( *curIter ).second.type() == typeid( DoubleComplex ) ) {
-            const DoubleComplex &tmp = boost::get< DoubleComplex >( ( *curIter ).second );
+        } else if ( ( *curIter ).second.type() == typeid( RealComplex ) ) {
+            const RealComplex &tmp = boost::get< RealComplex >( ( *curIter ).second );
             PyDict_SetItemString( returnDict, ( *curIter ).first.c_str(),
                                   PyComplex_FromDoubles( tmp.real(), tmp.imag() ) );
         } else if ( ( *curIter ).second.type() == typeid( VectorComplex ) ) {

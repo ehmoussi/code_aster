@@ -29,38 +29,38 @@ namespace py = boost::python;
 
 void exportDynamicMacroElementToPython() {
 
-    bool ( DynamicMacroElementInstance::*c1 )(
+    bool ( DynamicMacroElementClass::*c1 )(
         const AssemblyMatrixDisplacementComplexPtr &matrix ) =
-        &DynamicMacroElementInstance::setStiffnessMatrix;
-    bool ( DynamicMacroElementInstance::*c2 )( const AssemblyMatrixDisplacementDoublePtr &matrix ) =
-        &DynamicMacroElementInstance::setStiffnessMatrix;
+        &DynamicMacroElementClass::setStiffnessMatrix;
+    bool ( DynamicMacroElementClass::*c2 )( const AssemblyMatrixDisplacementRealPtr &matrix ) =
+        &DynamicMacroElementClass::setStiffnessMatrix;
 
-    py::class_< DynamicMacroElementInstance, DynamicMacroElementInstance::DynamicMacroElementPtr,
+    py::class_< DynamicMacroElementClass, DynamicMacroElementClass::DynamicMacroElementPtr,
             py::bases< DataStructure > >( "DynamicMacroElement", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DynamicMacroElementInstance >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DynamicMacroElementClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DynamicMacroElementInstance, std::string >))
-        .def( "getDampingMatrix", &DynamicMacroElementInstance::getDampingMatrix )
-        .def( "getDOFNumbering", &DynamicMacroElementInstance::getDOFNumbering )
+              py::make_constructor(&initFactoryPtr< DynamicMacroElementClass, std::string >))
+        .def( "getDampingMatrix", &DynamicMacroElementClass::getDampingMatrix )
+        .def( "getDOFNumbering", &DynamicMacroElementClass::getDOFNumbering )
         .def( "getImpedanceDampingMatrix",
-&DynamicMacroElementInstance::getImpedanceDampingMatrix )
-        .def( "getImpedanceMatrix", &DynamicMacroElementInstance::getImpedanceMatrix )
-        .def( "getImpedanceMassMatrix", &DynamicMacroElementInstance::getImpedanceMassMatrix )
+&DynamicMacroElementClass::getImpedanceDampingMatrix )
+        .def( "getImpedanceMatrix", &DynamicMacroElementClass::getImpedanceMatrix )
+        .def( "getImpedanceMassMatrix", &DynamicMacroElementClass::getImpedanceMassMatrix )
         .def( "getImpedanceStiffnessMatrix",
-              &DynamicMacroElementInstance::getImpedanceStiffnessMatrix )
-        .def( "getMassMatrix", &DynamicMacroElementInstance::getMassMatrix )
-        .def( "getNumberOfNodes", &DynamicMacroElementInstance::getNumberOfNodes )
-        .def( "getComplexStiffnessMatrix", &DynamicMacroElementInstance::getComplexStiffnessMatrix )
-        .def( "getDoubleStiffnessMatrix", &DynamicMacroElementInstance::getDoubleStiffnessMatrix )
-        .def( "setDampingMatrix", &DynamicMacroElementInstance::setDampingMatrix )
-        .def( "setDOFNumbering", &DynamicMacroElementInstance::setDOFNumbering )
-        .def( "setImpedanceDampingMatrix", &DynamicMacroElementInstance::setImpedanceDampingMatrix )
-        .def( "setImpedanceMatrix", &DynamicMacroElementInstance::setImpedanceMatrix )
-        .def( "setImpedanceMassMatrix", &DynamicMacroElementInstance::setImpedanceMassMatrix )
+              &DynamicMacroElementClass::getImpedanceStiffnessMatrix )
+        .def( "getMassMatrix", &DynamicMacroElementClass::getMassMatrix )
+        .def( "getNumberOfNodes", &DynamicMacroElementClass::getNumberOfNodes )
+        .def( "getComplexStiffnessMatrix", &DynamicMacroElementClass::getComplexStiffnessMatrix )
+        .def( "getRealStiffnessMatrix", &DynamicMacroElementClass::getRealStiffnessMatrix )
+        .def( "setDampingMatrix", &DynamicMacroElementClass::setDampingMatrix )
+        .def( "setDOFNumbering", &DynamicMacroElementClass::setDOFNumbering )
+        .def( "setImpedanceDampingMatrix", &DynamicMacroElementClass::setImpedanceDampingMatrix )
+        .def( "setImpedanceMatrix", &DynamicMacroElementClass::setImpedanceMatrix )
+        .def( "setImpedanceMassMatrix", &DynamicMacroElementClass::setImpedanceMassMatrix )
         .def( "setImpedanceStiffnessMatrix",
-              &DynamicMacroElementInstance::setImpedanceStiffnessMatrix )
-        .def( "setMassMatrix", &DynamicMacroElementInstance::setMassMatrix )
-        .def( "setMechanicalMode", &DynamicMacroElementInstance::setMechanicalMode )
+              &DynamicMacroElementClass::setImpedanceStiffnessMatrix )
+        .def( "setMassMatrix", &DynamicMacroElementClass::setMassMatrix )
+        .def( "setMechanicalMode", &DynamicMacroElementClass::setMechanicalMode )
         .def( "setStiffnessMatrix", c1 )
         .def( "setStiffnessMatrix", c2 );
 };

@@ -25,15 +25,15 @@
 
 import aster
 from libaster import (ElementaryMatrixDisplacementComplex,
-                      ElementaryMatrixDisplacementDouble,
+                      ElementaryMatrixDisplacementReal,
                       ElementaryMatrixPressureComplex,
-                      ElementaryMatrixTemperatureDouble)
+                      ElementaryMatrixTemperatureReal)
 
 from ..Utilities import injector
 
 
-@injector(ElementaryMatrixDisplacementDouble)
-class ExtendedElementaryMatrixDisplacementDouble():
+@injector(ElementaryMatrixDisplacementReal)
+class ExtendedElementaryMatrixDisplacementReal():
     cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
 
     def __getinitargs__(self):
@@ -52,8 +52,8 @@ class ExtendedElementaryMatrixDisplacementComplex(object):
         """
         return (self.getName(), )
 
-@injector(ElementaryMatrixTemperatureDouble)
-class ExtendedElementaryMatrixTemperatureDouble(object):
+@injector(ElementaryMatrixTemperatureReal)
+class ExtendedElementaryMatrixTemperatureReal(object):
     cata_sdj = "SD.sd_matr_elem.sd_matr_elem"
 
     def __getinitargs__(self):

@@ -73,7 +73,7 @@ def calc_stabilite_ops(self, **args):
         filtre['FILTRE'] = _F(NOM_PARA= 'NUME_ORDRE',
                           VALE_I= num_ordr)
         nom_obj=mnl["NOM_OBJET", num_ordr]
-        __sol_per = mnl.getMechanicalModeContainer( nom_obj )
+        __sol_per = mnl.getModeResult( nom_obj )
 
         if not recup_para:
             kass=__sol_per.getStiffnessMatrix()

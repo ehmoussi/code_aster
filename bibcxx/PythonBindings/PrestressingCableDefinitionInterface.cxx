@@ -29,25 +29,25 @@ namespace py = boost::python;
 
 void exportPrestressingCableDefinitionToPython() {
 
-    py::class_< PrestressingCableDefinitionInstance,
-            PrestressingCableDefinitionInstance::PrestressingCableDefinitionPtr,
+    py::class_< PrestressingCableDefinitionClass,
+            PrestressingCableDefinitionClass::PrestressingCableDefinitionPtr,
             py::bases< DataStructure > >( "PrestressingCableDefinition", py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< PrestressingCableDefinitionInstance,
+              py::make_constructor( &initFactoryPtr< PrestressingCableDefinitionClass,
                                                  const ModelPtr &, const MaterialOnMeshPtr &,
                                                  const ElementaryCharacteristicsPtr & > ) )
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< PrestressingCableDefinitionInstance, std::string,
+                  &initFactoryPtr< PrestressingCableDefinitionClass, std::string,
                                    const ModelPtr &, const MaterialOnMeshPtr &,
                                    const ElementaryCharacteristicsPtr & > ) )
-        .def( "getModel", &PrestressingCableDefinitionInstance::getModel, R"(
+        .def( "getModel", &PrestressingCableDefinitionClass::getModel, R"(
 Return the Model.
 
 Returns:
     *Model*: Model object.
         )" )
-        .def( "getMaterialOnMesh", &PrestressingCableDefinitionInstance::getMaterialOnMesh )
+        .def( "getMaterialOnMesh", &PrestressingCableDefinitionClass::getMaterialOnMesh )
         .def( "getElementaryCharacteristics",
-              &PrestressingCableDefinitionInstance::getElementaryCharacteristics );
+              &PrestressingCableDefinitionClass::getElementaryCharacteristics );
 };

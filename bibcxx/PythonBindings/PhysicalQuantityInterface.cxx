@@ -65,63 +65,63 @@ void exportPhysicalQuantityToPython() {
         .value( "FlunHydr1", FlunHydr1 )
         .value( "FlunHydr2", FlunHydr2 );
 
-    py::class_< ForceDoubleInstance, ForceDoubleInstance::PhysicalQuantityPtr >( "ForceDouble",
+    py::class_< ForceRealClass, ForceRealClass::PhysicalQuantityPtr >( "ForceReal",
                                                                                  py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ForceDoubleInstance >))
-        .def( "debugPrint", &ForceDoubleInstance::debugPrint )
-        .def( "setValue", &ForceDoubleInstance::setValue );
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ForceRealClass >))
+        .def( "debugPrint", &ForceRealClass::debugPrint )
+        .def( "setValue", &ForceRealClass::setValue );
 
-    py::class_< StructuralForceDoubleInstance, StructuralForceDoubleInstance::PhysicalQuantityPtr >(
-        "StructuralForceDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< StructuralForceDoubleInstance >))
-        .def( "debugPrint", &StructuralForceDoubleInstance::debugPrint )
-        .def( "setValue", &StructuralForceDoubleInstance::setValue );
+    py::class_< StructuralForceRealClass, StructuralForceRealClass::PhysicalQuantityPtr >(
+        "StructuralForceReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< StructuralForceRealClass >))
+        .def( "debugPrint", &StructuralForceRealClass::debugPrint )
+        .def( "setValue", &StructuralForceRealClass::setValue );
 
-    py::class_< LocalBeamForceDoubleInstance, LocalBeamForceDoubleInstance::PhysicalQuantityPtr >(
-        "LocalBeamForceDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< LocalBeamForceDoubleInstance >))
-        .def( "debugPrint", &LocalBeamForceDoubleInstance::debugPrint )
-        .def( "setValue", &LocalBeamForceDoubleInstance::setValue );
+    py::class_< LocalBeamForceRealClass, LocalBeamForceRealClass::PhysicalQuantityPtr >(
+        "LocalBeamForceReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< LocalBeamForceRealClass >))
+        .def( "debugPrint", &LocalBeamForceRealClass::debugPrint )
+        .def( "setValue", &LocalBeamForceRealClass::setValue );
 
-    py::class_< LocalShellForceDoubleInstance, LocalShellForceDoubleInstance::PhysicalQuantityPtr >(
-        "LocalShellForceDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< LocalShellForceDoubleInstance >))
-        .def( "debugPrint", &LocalShellForceDoubleInstance::debugPrint )
-        .def( "setValue", &LocalShellForceDoubleInstance::setValue );
+    py::class_< LocalShellForceRealClass, LocalShellForceRealClass::PhysicalQuantityPtr >(
+        "LocalShellForceReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< LocalShellForceRealClass >))
+        .def( "debugPrint", &LocalShellForceRealClass::debugPrint )
+        .def( "setValue", &LocalShellForceRealClass::setValue );
 
-    py::class_< DisplacementDoubleInstance, DisplacementDoubleInstance::PhysicalQuantityPtr >(
-        "DisplacementDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DisplacementDoubleInstance >))
-        .def( "debugPrint", &DisplacementDoubleInstance::debugPrint )
-        .def( "setValue", &DisplacementDoubleInstance::setValue );
+    py::class_< DisplacementRealClass, DisplacementRealClass::PhysicalQuantityPtr >(
+        "DisplacementReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DisplacementRealClass >))
+        .def( "debugPrint", &DisplacementRealClass::debugPrint )
+        .def( "setValue", &DisplacementRealClass::setValue );
 
-    py::class_< PressureDoubleInstance, PressureDoubleInstance::PhysicalQuantityPtr >(
-        "PressureDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< PressureDoubleInstance >))
-        .def( "debugPrint", &PressureDoubleInstance::debugPrint )
-        .def( "setValue", &PressureDoubleInstance::setValue );
+    py::class_< PressureRealClass, PressureRealClass::PhysicalQuantityPtr >(
+        "PressureReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< PressureRealClass >))
+        .def( "debugPrint", &PressureRealClass::debugPrint )
+        .def( "setValue", &PressureRealClass::setValue );
 
-    py::class_< ImpedanceDoubleInstance, ImpedanceDoubleInstance::PhysicalQuantityPtr >(
-        "ImpedanceDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ImpedanceDoubleInstance >))
-        .def( "debugPrint", &ImpedanceDoubleInstance::debugPrint )
-        .def( "setValue", &ImpedanceDoubleInstance::setValue );
+    py::class_< ImpedanceRealClass, ImpedanceRealClass::PhysicalQuantityPtr >(
+        "ImpedanceReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ImpedanceRealClass >))
+        .def( "debugPrint", &ImpedanceRealClass::debugPrint )
+        .def( "setValue", &ImpedanceRealClass::setValue );
 
-    py::class_< NormalSpeedDoubleInstance, NormalSpeedDoubleInstance::PhysicalQuantityPtr >(
-        "NormalSpeedDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< NormalSpeedDoubleInstance >))
-        .def( "debugPrint", &NormalSpeedDoubleInstance::debugPrint )
-        .def( "setValue", &NormalSpeedDoubleInstance::setValue );
+    py::class_< NormalSpeedRealClass, NormalSpeedRealClass::PhysicalQuantityPtr >(
+        "NormalSpeedReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< NormalSpeedRealClass >))
+        .def( "debugPrint", &NormalSpeedRealClass::debugPrint )
+        .def( "setValue", &NormalSpeedRealClass::setValue );
 
-    py::class_< HeatFluxDoubleInstance, HeatFluxDoubleInstance::PhysicalQuantityPtr >(
-        "HeatFluxDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< HeatFluxDoubleInstance >))
-        .def( "debugPrint", &HeatFluxDoubleInstance::debugPrint )
-        .def( "setValue", &HeatFluxDoubleInstance::setValue );
+    py::class_< HeatFluxRealClass, HeatFluxRealClass::PhysicalQuantityPtr >(
+        "HeatFluxReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< HeatFluxRealClass >))
+        .def( "debugPrint", &HeatFluxRealClass::debugPrint )
+        .def( "setValue", &HeatFluxRealClass::setValue );
 
-    py::class_< HydraulicFluxDoubleInstance, HydraulicFluxDoubleInstance::PhysicalQuantityPtr >(
-        "HydraulicFluxDouble", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< HydraulicFluxDoubleInstance >))
-        .def( "debugPrint", &HydraulicFluxDoubleInstance::debugPrint )
-        .def( "setValue", &HydraulicFluxDoubleInstance::setValue );
+    py::class_< HydraulicFluxRealClass, HydraulicFluxRealClass::PhysicalQuantityPtr >(
+        "HydraulicFluxReal", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< HydraulicFluxRealClass >))
+        .def( "debugPrint", &HydraulicFluxRealClass::debugPrint )
+        .def( "setValue", &HydraulicFluxRealClass::setValue );
 };

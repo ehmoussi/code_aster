@@ -30,56 +30,56 @@ namespace py = boost::python;
 void exportMaterialOnMeshToPython()
 {
 
-    py::class_< PartOfMaterialOnMeshInstance,
+    py::class_< PartOfMaterialOnMeshClass,
             PartOfMaterialOnMeshPtr > c2( "PartOfMaterialOnMesh", py::no_init );
     c2.def( "__init__", py::make_constructor(
-            &initFactoryPtr< PartOfMaterialOnMeshInstance > ) );
+            &initFactoryPtr< PartOfMaterialOnMeshClass > ) );
     c2.def( "__init__", py::make_constructor(
-            &initFactoryPtr< PartOfMaterialOnMeshInstance,
+            &initFactoryPtr< PartOfMaterialOnMeshClass,
                              std::vector< MaterialPtr >, MeshEntityPtr > ) );
-    c2.def( "getVectorOfMaterial", &PartOfMaterialOnMeshInstance::getVectorOfMaterial );
-    c2.def( "getMeshEntity", &PartOfMaterialOnMeshInstance::getMeshEntity );
+    c2.def( "getVectorOfMaterial", &PartOfMaterialOnMeshClass::getVectorOfMaterial );
+    c2.def( "getMeshEntity", &PartOfMaterialOnMeshClass::getMeshEntity );
 
-    py::class_< MaterialOnMeshInstance, MaterialOnMeshInstance::MaterialOnMeshPtr,
+    py::class_< MaterialOnMeshClass, MaterialOnMeshClass::MaterialOnMeshPtr,
             py::bases< DataStructure > > c1( "MaterialOnMesh", py::no_init );
     c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialOnMeshInstance,
+            &initFactoryPtr< MaterialOnMeshClass,
                              const MeshPtr& > ) );
     c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialOnMeshInstance,
+            &initFactoryPtr< MaterialOnMeshClass,
                              const SkeletonPtr& > ) );
     c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialOnMeshInstance,
+            &initFactoryPtr< MaterialOnMeshClass,
                              const std::string&,
                              const MeshPtr& > ) );
 #ifdef _USE_MPI
     c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialOnMeshInstance,
+            &initFactoryPtr< MaterialOnMeshClass,
                              const ParallelMeshPtr& > ) );
     c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialOnMeshInstance,
+            &initFactoryPtr< MaterialOnMeshClass,
                              const std::string&,
                              const ParallelMeshPtr& > ) );
 #endif /* _USE_MPI */
-    c1.def( "addBehaviourOnAllMesh", &MaterialOnMeshInstance::addBehaviourOnAllMesh );
+    c1.def( "addBehaviourOnAllMesh", &MaterialOnMeshClass::addBehaviourOnAllMesh );
     c1.def( "addBehaviourOnGroupOfElements",
-              &MaterialOnMeshInstance::addBehaviourOnGroupOfElements );
+              &MaterialOnMeshClass::addBehaviourOnGroupOfElements );
     c1.def( "addBehaviourOnElement",
-              &MaterialOnMeshInstance::addBehaviourOnElement );
-    c1.def( "addMaterialsOnAllMesh", &MaterialOnMeshInstance::addMaterialsOnAllMesh );
+              &MaterialOnMeshClass::addBehaviourOnElement );
+    c1.def( "addMaterialsOnAllMesh", &MaterialOnMeshClass::addMaterialsOnAllMesh );
     c1.def( "addMaterialsOnGroupOfElements",
-              &MaterialOnMeshInstance::addMaterialsOnGroupOfElements );
+              &MaterialOnMeshClass::addMaterialsOnGroupOfElements );
     c1.def( "addMaterialsOnElement",
-              &MaterialOnMeshInstance::addMaterialsOnElement );
-    c1.def( "addMaterialOnAllMesh", &MaterialOnMeshInstance::addMaterialOnAllMesh );
+              &MaterialOnMeshClass::addMaterialsOnElement );
+    c1.def( "addMaterialOnAllMesh", &MaterialOnMeshClass::addMaterialOnAllMesh );
     c1.def( "addMaterialOnGroupOfElements",
-              &MaterialOnMeshInstance::addMaterialOnGroupOfElements );
+              &MaterialOnMeshClass::addMaterialOnGroupOfElements );
     c1.def( "addMaterialOnElement",
-              &MaterialOnMeshInstance::addMaterialOnElement );
-    c1.def( "buildWithoutInputVariables", &MaterialOnMeshInstance::buildWithoutInputVariables );
-    c1.def( "getMesh", &MaterialOnMeshInstance::getMesh );
-    c1.def( "getVectorOfMaterial", &MaterialOnMeshInstance::getVectorOfMaterial );
+              &MaterialOnMeshClass::addMaterialOnElement );
+    c1.def( "buildWithoutExternalVariable", &MaterialOnMeshClass::buildWithoutExternalVariable );
+    c1.def( "getMesh", &MaterialOnMeshClass::getMesh );
+    c1.def( "getVectorOfMaterial", &MaterialOnMeshClass::getVectorOfMaterial );
     c1.def( "getVectorOfPartOfMaterialOnMesh",
-            &MaterialOnMeshInstance::getVectorOfPartOfMaterialOnMesh );
-    c1.def( "setModel", &MaterialOnMeshInstance::setModel );
+            &MaterialOnMeshClass::getVectorOfPartOfMaterialOnMesh );
+    c1.def( "setModel", &MaterialOnMeshClass::setModel );
 };

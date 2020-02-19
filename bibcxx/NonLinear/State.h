@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe State
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -29,10 +29,10 @@
 #include "astercxx.h"
 
 #include "DataFields/FieldOnNodes.h"
-#include "Results/NonLinearEvolutionContainer.h"
+#include "Results/NonLinearResult.h"
 
 /**
- * @class StateInstance
+ * @class StateClass
  * @brief Cette classe permet de definir l'état d'une analyse (par exemple d'une analyse
  * non-linéaire)
  * L'algorithme (non-linéaire) permet de calculer l'état courant (i.e. la valeur des champs de
@@ -40,14 +40,14 @@
  * de variables internes) à partir de l'état précédent (valeur des mêmes champs au pas précédent)
  * @author Natacha Béreux
  */
-class StateInstance {
+class StateClass {
   private:
     /** @brief current index  */
     ASTERINTEGER _currentIndex;
     /** @brief current step */
     double _currentStep;
     /** @brief Champ de déplacement */
-    FieldOnNodesDoublePtr _depl;
+    FieldOnNodesRealPtr _depl;
     /** @brief Champ de contraintes */
     // FieldOnGaussPointsTensorPtr _sigm;
     /** @brief Champ de variables internes */
@@ -67,7 +67,7 @@ class StateInstance {
      * @brief Constructeur
      * @param step index (default value 0)
      */
-    StateInstance( ASTERINTEGER index = 0, double step = 0.0 )
+    StateClass( ASTERINTEGER index = 0, double step = 0.0 )
         : _currentIndex( index ), _currentStep( step ), _evolParam( "EVOL_NOLI", false ),
           _sourceStepParam( "INST", false ), _sourceIndexParam( "NUME_ORDRE", false ),
           _DirichletSourceIndexParam( "NUME_DIDI", false ),
@@ -85,13 +85,13 @@ class StateInstance {
     /**
      * @brief Destructeur
      */
-    ~StateInstance(){};
+    ~StateClass(){};
 
     /** @brief define the state from the result of a previous nonlinear anaysis
         @todo réaliser l'extraction des champs depuis l'evol_noli et associer les pointeurs _depl
        etc
     */
-    void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr &evol_noli,
+    void setFromNonLinearResult( const NonLinearResultPtr &evol_noli,
                                     double sourceStep, double precision = 1.E-06 ) {
         _evolParam = evol_noli->getName();
         _sourceStepParam = sourceStep;
@@ -102,7 +102,7 @@ class StateInstance {
     /** @brief define the state from the result of a previous nonlinear anaysis
     */
 
-    void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr &evol_noli,
+    void setFromNonLinearResult( const NonLinearResultPtr &evol_noli,
                                     ASTERINTEGER sourceIndex ) {
         _evolParam = evol_noli->getName();
         _sourceIndexParam = sourceIndex;
@@ -115,9 +115,9 @@ class StateInstance {
     * ni numéro d'ordre (sourceIndex), l'état est initialisé à partir du dernier
     * calcul effectué (de numéro d'ordre lastIndex dans la sd evol_noli)
     */
-    void setFromNonLinearEvolution( const NonLinearEvolutionContainerPtr &evol_noli ) {
+    void setFromNonLinearResult( const NonLinearResultPtr &evol_noli ) {
         ASTERINTEGER lastIndex = evol_noli->getNumberOfRanks();
-        setFromNonLinearEvolution( evol_noli, lastIndex );
+        setFromNonLinearResult( evol_noli, lastIndex );
     }
     /** @brief set the value of the current step
     */
@@ -129,7 +129,7 @@ class StateInstance {
     /**
     * @brief Define a displacement field as  state of an analysis
     */
-    void setDisplacement( FieldOnNodesDoublePtr depl ) { _depl = depl; };
+    void setDisplacement( FieldOnNodesRealPtr depl ) { _depl = depl; };
 
     /**
     * @brief get current step
@@ -142,7 +142,7 @@ class StateInstance {
     /**
     * @brief Get the  displacement field
     */
-    FieldOnNodesDoublePtr getDisplacement() const { return _depl; };
+    FieldOnNodesRealPtr getDisplacement() const { return _depl; };
     /**
      * @brief Récupération de la liste des paramètres
      * @return Liste constante des paramètres déclarés
@@ -152,8 +152,8 @@ class StateInstance {
 
 /**
  * @typedef StatePtr
- * @brief Pointeur intelligent vers un StateInstance
+ * @brief Pointeur intelligent vers un StateClass
  */
-typedef boost::shared_ptr< StateInstance > StatePtr;
+typedef boost::shared_ptr< StateClass > StatePtr;
 
 #endif /* STATE_H_ */

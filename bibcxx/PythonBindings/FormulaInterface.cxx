@@ -32,12 +32,12 @@ namespace py = boost::python;
 
 void exportFormulaToPython() {
 
-    py::class_< FormulaInstance, FormulaInstance::FormulaPtr, py::bases< GenericFunctionInstance > >
+    py::class_< FormulaClass, FormulaClass::FormulaPtr, py::bases< GenericFunctionClass > >
         ( "Formula", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FormulaInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< FormulaInstance, std::string >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FormulaClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< FormulaClass, std::string >))
 
-        .def( "setVariables", &FormulaInstance::setVariables, R"(
+        .def( "setVariables", &FormulaClass::setVariables, R"(
 Define the variables names.
 
 Arguments:
@@ -45,7 +45,7 @@ Arguments:
         )",
               ( py::arg( "self" ), py::arg( "varnames" ) ) )
 
-        .def( "setExpression", &FormulaInstance::setExpression, R"(
+        .def( "setExpression", &FormulaClass::setExpression, R"(
 Define the expression of the formula.
 
 If the expression uses non builtin objects, the evaluation context must be
@@ -56,12 +56,12 @@ Arguments:
         )",
               ( py::arg( "self" ), py::arg( "expression" ) ) )
 
-        .def( "setComplex", &FormulaInstance::setComplex, R"(
+        .def( "setComplex", &FormulaClass::setComplex, R"(
 Set the type of the formula as complex.
         )",
               ( py::arg( "self" ) ) )
 
-        .def( "setContext", &FormulaInstance::setContext, R"(
+        .def( "setContext", &FormulaClass::setContext, R"(
 Define the context holding objects required to evaluate the expression.
 
 Arguments:
@@ -69,7 +69,7 @@ Arguments:
         )",
               ( py::arg( "self" ), py::arg( "context" ) ) )
 
-        .def( "evaluate", &FormulaInstance::evaluate, R"(
+        .def( "evaluate", &FormulaClass::evaluate, R"(
 Evaluate the formula with the given variables values.
 
 Arguments:
@@ -80,7 +80,7 @@ Returns:
         )",
               ( py::arg( "self" ), py::arg( "*val" ) ) )
 
-        .def( "getVariables", &FormulaInstance::getVariables, R"(
+        .def( "getVariables", &FormulaClass::getVariables, R"(
 Return the variables names.
 
 Returns:
@@ -88,7 +88,7 @@ Returns:
         )",
               ( py::arg( "self" ) ) )
 
-        .def( "getExpression", &FormulaInstance::getExpression, R"(
+        .def( "getExpression", &FormulaClass::getExpression, R"(
 Return expression of the formula.
 
 Returns:
@@ -96,7 +96,7 @@ Returns:
         )",
               ( py::arg( "self" ) ) )
 
-        .def( "getContext", &FormulaInstance::getContext, R"(
+        .def( "getContext", &FormulaClass::getContext, R"(
 Return the context used to evaluate the formula.
 
 Returns:
@@ -104,7 +104,7 @@ Returns:
         )",
               py::arg( "self" ) )
 
-        .def( "getProperties", &FormulaInstance::getProperties, R"(
+        .def( "getProperties", &FormulaClass::getProperties, R"(
 Return the properties of the formula (for compatibility with function objects).
 
 Returns:

@@ -19,9 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (ElementaryVectorDisplacementDouble,
+from ..Objects import (ElementaryVectorDisplacementReal,
                        ElementaryVectorPressureComplex,
-                       ElementaryVectorTemperatureDouble)
+                       ElementaryVectorTemperatureReal)
 from ..Supervis import ExecuteCommand
 
 
@@ -36,8 +36,8 @@ class ComputeElementaryVector(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        if keywords['OPTION'] == "CHAR_MECA": self._result = ElementaryVectorDisplacementDouble()
-        elif keywords['OPTION'] == "CHAR_THER": self._result = ElementaryVectorTemperatureDouble()
+        if keywords['OPTION'] == "CHAR_MECA": self._result = ElementaryVectorDisplacementReal()
+        elif keywords['OPTION'] == "CHAR_THER": self._result = ElementaryVectorTemperatureReal()
         elif keywords['OPTION'] == "CHAR_ACOU": self._result = ElementaryVectorPressureComplex()
         else: raise NotImplementedError("Must be implemented")
 

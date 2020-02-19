@@ -6,7 +6,7 @@
  * @brief Definition of the static mechanical solver
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -41,7 +41,7 @@ enum MatrixEnum { MatriceTangente, MatriceElastique };
 const int nbMatrix = 2;
 extern const char *MatrixNames[nbMatrix];
 
-class NonLinearMethodInstance {
+class NonLinearMethodClass {
   private:
     /** @brief Nonlinear method */
     NonLinearMethodEnum _nonLinearMethod;
@@ -68,7 +68,7 @@ class NonLinearMethodInstance {
     /**
      * @brief Constructeur
      */
-    NonLinearMethodInstance( const NonLinearMethodEnum curNLMethod = NewtonMethod )
+    NonLinearMethodClass( const NonLinearMethodEnum curNLMethod = NewtonMethod )
         : _nonLinearMethod( curNLMethod ), _methode( "METHODE", false ),
           _prediction( "PREDICTION", false ), _matr_rigi_syme( "MATR_RIGI_SYME", false ),
           _matrice( "MATRICE", false ), _reac_incr( "REAC_INCR", false ),
@@ -135,8 +135,8 @@ class NonLinearMethodInstance {
 
 /**
  * @typedef NonLinearMethodPtr
- * @brief Enveloppe d'un pointeur intelligent vers un NonLinearMethodInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un NonLinearMethodClass
  */
-typedef boost::shared_ptr< NonLinearMethodInstance > NonLinearMethodPtr;
+typedef boost::shared_ptr< NonLinearMethodClass > NonLinearMethodPtr;
 
 #endif /* NONLINEARMETHOD_H_ */

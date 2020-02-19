@@ -38,19 +38,19 @@ void exportDrivingToPython() {
         .value( "MonotonicStrain", MonotonicStrain )
         .value( "ElasticityLimit", ElasticityLimit );
 
-    py::class_< DrivingInstance, DrivingPtr >( "Driving", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DrivingInstance, DrivingTypeEnum >))
+    py::class_< DrivingClass, DrivingPtr >( "Driving", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< DrivingClass, DrivingTypeEnum >))
         // fake initFactoryPtr: not a DataStructure
-        .def( "addObservationGroupOfNodes", &DrivingInstance::addObservationGroupOfNodes )
-        .def( "addObservationGroupOfElements", &DrivingInstance::addObservationGroupOfElements )
-        .def( "setDrivingDirectionOnCrack", &DrivingInstance::setDrivingDirectionOnCrack )
+        .def( "addObservationGroupOfNodes", &DrivingClass::addObservationGroupOfNodes )
+        .def( "addObservationGroupOfElements", &DrivingClass::addObservationGroupOfElements )
+        .def( "setDrivingDirectionOnCrack", &DrivingClass::setDrivingDirectionOnCrack )
         .def( "setMaximumValueOfDrivingParameter",
-              &DrivingInstance::setMaximumValueOfDrivingParameter )
+              &DrivingClass::setMaximumValueOfDrivingParameter )
         .def( "setMinimumValueOfDrivingParameter",
-              &DrivingInstance::setMinimumValueOfDrivingParameter )
-        .def( "setLowerBoundOfDrivingParameter", &DrivingInstance::setLowerBoundOfDrivingParameter )
-        .def( "setUpperBoundOfDrivingParameter", &DrivingInstance::setUpperBoundOfDrivingParameter )
-        .def( "activateThreshold", &DrivingInstance::activateThreshold )
-        .def( "deactivateThreshold", &DrivingInstance::deactivateThreshold )
-        .def( "setMultiplicativeCoefficient", &DrivingInstance::setMultiplicativeCoefficient );
+              &DrivingClass::setMinimumValueOfDrivingParameter )
+        .def( "setLowerBoundOfDrivingParameter", &DrivingClass::setLowerBoundOfDrivingParameter )
+        .def( "setUpperBoundOfDrivingParameter", &DrivingClass::setUpperBoundOfDrivingParameter )
+        .def( "activateThreshold", &DrivingClass::activateThreshold )
+        .def( "deactivateThreshold", &DrivingClass::deactivateThreshold )
+        .def( "setMultiplicativeCoefficient", &DrivingClass::setMultiplicativeCoefficient );
 };

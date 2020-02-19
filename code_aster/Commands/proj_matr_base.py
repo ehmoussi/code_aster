@@ -19,9 +19,9 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (AssemblyMatrixDisplacementDouble,
+from ..Objects import (AssemblyMatrixDisplacementReal,
                        GeneralizedAssemblyMatrixComplex,
-                       GeneralizedAssemblyMatrixDouble)
+                       GeneralizedAssemblyMatrixReal)
 from ..Supervis import ExecuteCommand
 
 
@@ -39,8 +39,8 @@ class ProjMatrBase(ExecuteCommand):
         if "MATR_ASSE_GENE" in keywords:
             self._result = type(keywords["MATR_ASSE_GENE"])()
         else:
-            if type(keywords["MATR_ASSE"]) == AssemblyMatrixDisplacementDouble:
-                self._result = GeneralizedAssemblyMatrixDouble()
+            if type(keywords["MATR_ASSE"]) == AssemblyMatrixDisplacementReal:
+                self._result = GeneralizedAssemblyMatrixReal()
             else:
                 self._result = GeneralizedAssemblyMatrixComplex()
 

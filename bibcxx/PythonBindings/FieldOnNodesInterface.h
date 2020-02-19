@@ -36,7 +36,7 @@ struct MeshCoordinatesFieldToFieldOnNodes {
     static PyObject *convert( MeshCoordinatesFieldPtr toConvert ) {
         return py::incref(
             py::object(
-                FieldOnNodesDoublePtr( new FieldOnNodesDoubleInstance( toConvert ) ) ).ptr() );
+                FieldOnNodesRealPtr( new FieldOnNodesRealClass( toConvert ) ) ).ptr() );
     }
 };
 

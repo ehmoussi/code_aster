@@ -35,8 +35,8 @@ Default arguments in Boost Interface
 When a C++ method has default arguments, the number of these arguments must be
 explicitly described by the boost wrapper.
 
-See as example :meth:`StaticNonLinearAnalysisInstance.addBehaviourOnElements`
-and its interface in :file:`bibcxx/PythonBindings/StaticNonLinearAnalysisInterface.cxx`.
+See as example :meth:`NonLinearStaticAnalysisInstance.addBehaviourOnElements`
+and its interface in :file:`bibcxx/PythonBindings/NonLinearStaticAnalysisInterface.cxx`.
 The macro generates a wrapper with between 1 and 2 arguments.
 
 .. code-block:: c++
@@ -44,14 +44,14 @@ The macro generates a wrapper with between 1 and 2 arguments.
     BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addBehaviourOnElements_overloads,
         addBehaviourOnElements, 1, 2)
 
-    void exportStaticNonLinearAnalysisToPython()
+    void exportNonLinearStaticAnalysisToPython()
     {
         using namespace boost::python;
 
-        class_< StaticNonLinearAnalysisInstance, StaticNonLinearAnalysisPtr >
-            ( "StaticNonLinearAnalysis", no_init )
+        class_< NonLinearStaticAnalysisInstance, NonLinearStaticAnalysisPtr >
+            ( "NonLinearStaticAnalysis", no_init )
             .def( "addBehaviourOnElements",
-                  &StaticNonLinearAnalysisInstance::addBehaviourOnElements,
+                  &NonLinearStaticAnalysisInstance::addBehaviourOnElements,
                   addBehaviourOnElements_overloads())
 
 

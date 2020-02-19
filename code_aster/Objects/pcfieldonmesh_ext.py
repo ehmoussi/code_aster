@@ -19,22 +19,22 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`PCFieldOnMeshDouble` --- Results container
+:py:class:`PCFieldOnMeshReal` --- Results container
 **************************************************
 """
 
 import aster
-from libaster import PCFieldOnMeshDouble
+from libaster import PCFieldOnMeshReal
 
 from ..Utilities import injector
 
 
-@injector(PCFieldOnMeshDouble)
-class ExtendedPCFieldOnMeshDouble(object):
+@injector(PCFieldOnMeshReal)
+class ExtendedPCFieldOnMeshReal(object):
     cata_sdj = "SD.sd_carte.sd_carte"
 
     def __getinitargs__(self):
-        """Returns the argument required to reinitialize a PCFieldOnMeshDouble
+        """Returns the argument required to reinitialize a PCFieldOnMeshReal
         object during unpickling.
         """
         return (self.getName(), self.getMesh())

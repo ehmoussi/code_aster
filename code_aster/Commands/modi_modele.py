@@ -38,7 +38,7 @@ class ModiModele(ExecuteCommand):
         if "reuse" in keywords:
             self._result = keywords["reuse"]
         else:
-            self._result = Model()
+            self._result = Model(keywords["MODELE"].getMesh())
 
     def post_exec(self, keywords):
         """Execute the command.
@@ -46,7 +46,5 @@ class ModiModele(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
-        if "reuse" not in keywords:
-            self._result.setMesh(keywords["MODELE"].getMesh())
 
 MODI_MODELE = ModiModele.run

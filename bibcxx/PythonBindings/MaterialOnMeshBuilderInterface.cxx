@@ -27,17 +27,17 @@
 
 namespace py = boost::python;
 
-BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild, MaterialOnMeshBuilderInstance::build,
+BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild, MaterialOnMeshBuilderClass::build,
                                  1, 3 )
 
 void exportMaterialOnMeshBuilderToPython() {
 
-    py::class_< MaterialOnMeshBuilderInstance,
-                MaterialOnMeshBuilderInstance::MaterialOnMeshBuilderPtr >
+    py::class_< MaterialOnMeshBuilderClass,
+                MaterialOnMeshBuilderClass::MaterialOnMeshBuilderPtr >
         c1( "MaterialOnMeshBuilder", py::no_init );
     // fake initFactoryPtr: no constructor
     // fake initFactoryPtr: no constructor
 
-    c1.def( "build", &MaterialOnMeshBuilderInstance::build, MaterialOnMeshBuilderbuild() );
+    c1.def( "build", &MaterialOnMeshBuilderClass::build, MaterialOnMeshBuilderbuild() );
     c1.staticmethod( "build" );
 };

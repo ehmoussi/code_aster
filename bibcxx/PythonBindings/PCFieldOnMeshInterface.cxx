@@ -28,16 +28,16 @@
 namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DataStructureInterface.h"
-#include "PythonBindings/GenericDataFieldInterface.h"
+#include "PythonBindings/DataFieldInterface.h"
 #include "PythonBindings/PCFieldOnMeshInterface.h"
 
 void exportPCFieldOnMeshToPython() {
-    py::class_< PCFieldOnMeshDoubleInstance, PCFieldOnMeshDoublePtr,
-            py::bases< GenericDataFieldInstance > >( "PCFieldOnMeshDouble", py::no_init )
+    py::class_< PCFieldOnMeshRealClass, PCFieldOnMeshRealPtr,
+            py::bases< DataFieldClass > >( "PCFieldOnMeshReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< PCFieldOnMeshDoubleInstance, BaseMeshPtr >))
+              py::make_constructor(&initFactoryPtr< PCFieldOnMeshRealClass, BaseMeshPtr >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< PCFieldOnMeshDoubleInstance, std::string, BaseMeshPtr >))
-        .def( "getMesh", &PCFieldOnMeshDoubleInstance::getMesh );
+                  &initFactoryPtr< PCFieldOnMeshRealClass, std::string, BaseMeshPtr >))
+        .def( "getMesh", &PCFieldOnMeshRealClass::getMesh );
 };

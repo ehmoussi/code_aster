@@ -122,7 +122,7 @@ class ExecuteCommand(object):
     command_name = command_op = command_cata = None
     level = 0
 
-    _cata = _op = _result = _result_name = _counter = _caller = _exc = None
+    _cata = _op = _result = _counter = _caller = _exc = None
     _tuplmode = None
 
     __setattr__ = no_new_attributes(object.__setattr__)
@@ -133,7 +133,6 @@ class ExecuteCommand(object):
         self._cata = self.command_cata or getattr(Commands, self.command_name)
         self._op = self.command_op or self._cata.definition['op']
         self._result = None
-        self._result_name = ""
         # index of the command
         self._counter = 0
         current_opt = ExecutionParameter().option
@@ -184,7 +183,9 @@ class ExecuteCommand(object):
             timer.Stop(" . check syntax")
         self.create_result(keywords)
         if hasattr(self._result, "userName"):
-            self._result.userName = self.result_name
+            self._result.userName = get_user_name(self.command_name,
+                                          self._caller["filename"],
+                                          self._caller["lineno"])
 
         self.print_syntax(keywords)
         stop = False
@@ -298,7 +299,8 @@ class ExecuteCommand(object):
         logger.info(command_separator())
         logger.info(command_header(self._counter, filename, lineno))
         max_print = ExecutionParameter().get_option("max_print")
-        logger.info(command_text(self.name, printed_args, self.result_name,
+        user_name = get_user_name(self.command_name,filename,lineno)
+        logger.info(command_text(self.name, printed_args, user_name,
                                  limit=max_print))
 
     def print_result(self):
@@ -403,15 +405,6 @@ class ExecuteCommand(object):
             keywords (dict): Keywords arguments of user's keywords.
         """
 
-    @property
-    def result_name(self):
-        """Return the name of the result of the Command.
-
-        Returns:
-            str: Name of the result returned by the Command.
-        """
-        return self._result_name
-
     def keep_caller_infos(self, keywords, level=3):
         """Register the caller frame infos.
 
@@ -431,9 +424,7 @@ class ExecuteCommand(object):
             self._caller["filename"] = caller.f_code.co_filename
             self._caller["lineno"] = caller.f_lineno
             self._caller["context"] = caller.f_globals
-            self._result_name = get_user_name(self.command_name,
-                                              self._caller["filename"],
-                                              self._caller["lineno"])
+
         finally:
             del caller
 
@@ -545,7 +536,10 @@ class ExecuteMacro(ExecuteCommand):
             self._result = output
             # re-assign the user variable name
             if hasattr(self._result, "userName"):
-                self._result.userName = self.result_name
+                user_name = get_user_name(self.command_name,
+                                          self._caller["filename"],
+                                          self._caller["lineno"])
+                self._result.userName = user_name
             if self._add_results:
                 publish_in(self._caller["context"], self._add_results)
             return

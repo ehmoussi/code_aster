@@ -11,7 +11,7 @@
  * @brief Fichier entete de la classe
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -38,12 +38,12 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class PartialMeshInstance
+ * @class PartialMeshClass
  * @brief Cette classe decrit un maillage partiel reconstruit a partir d'une liste de groupe de
  * noeuds
  * @author Nicolas Sellenet
  */
-class PartialMeshInstance : public BaseMeshInstance {
+class PartialMeshClass : public BaseMeshClass {
   private:
     typedef JeveuxCollection< ASTERINTEGER, JeveuxBidirectionalMapChar24 >
         JeveuxCollectionLongNamePtr;
@@ -59,20 +59,20 @@ class PartialMeshInstance : public BaseMeshInstance {
   public:
     /**
      * @typedef PartialMeshPtr
-     * @brief Pointeur intelligent vers un PartialMeshInstance
+     * @brief Pointeur intelligent vers un PartialMeshClass
      */
-    typedef boost::shared_ptr< PartialMeshInstance > PartialMeshPtr;
+    typedef boost::shared_ptr< PartialMeshClass > PartialMeshPtr;
 
     /**
      * @brief Constructeur
      */
-    PartialMeshInstance( const ParallelMeshPtr &mesh, const VectorString &toFind )
-        : PartialMeshInstance( ResultNaming::getNewResultName(), mesh, toFind ){};
+    PartialMeshClass( const ParallelMeshPtr &mesh, const VectorString &toFind )
+        : PartialMeshClass( ResultNaming::getNewResultName(), mesh, toFind ){};
 
     /**
      * @brief Constructeur
      */
-    PartialMeshInstance( const std::string &name, const ParallelMeshPtr &, const VectorString & );
+    PartialMeshClass( const std::string &name, const ParallelMeshPtr &, const VectorString & );
 
     const JeveuxVectorLong &getGlobalNumbering() const { return _globalNumbering; };
 
@@ -94,9 +94,9 @@ class PartialMeshInstance : public BaseMeshInstance {
 
 /**
  * @typedef PartialMeshPtr
- * @brief Pointeur intelligent vers un PartialMeshInstance
+ * @brief Pointeur intelligent vers un PartialMeshClass
  */
-typedef boost::shared_ptr< PartialMeshInstance > PartialMeshPtr;
+typedef boost::shared_ptr< PartialMeshClass > PartialMeshPtr;
 
 #endif /* PARTIALMESH_H_ */
 

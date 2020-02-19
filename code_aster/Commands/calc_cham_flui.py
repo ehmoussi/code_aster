@@ -19,12 +19,12 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import EvolutiveThermalLoad
+from ..Objects import ThermalResult
 from ..Supervis import ExecuteCommand
 
 
 class CalcChamFlui(ExecuteCommand):
-    """Command that defines :class:`~code_aster.Objects.EvolutiveThermalLoad`.
+    """Command that defines :class:`~code_aster.Objects.ThermalResult`.
     """
     command_name = "CALC_CHAM_FLUI"
 
@@ -34,6 +34,6 @@ class CalcChamFlui(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = EvolutiveThermalLoad()
+        self._result = ThermalResult()
 
 CALC_CHAM_FLUI = CalcChamFlui.run

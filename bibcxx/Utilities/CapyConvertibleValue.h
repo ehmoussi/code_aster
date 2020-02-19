@@ -6,7 +6,7 @@
  * @brief Fichier entete de la class CapyConvertibleValue
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -214,9 +214,9 @@ template <
     // Pour le reste, le MatchingType sera un std::string
     typename MatchingType = typename std::conditional<
         std::is_same< Type, ASTERINTEGER >::value || std::is_same< Type, double >::value ||
-            std::is_same< Type, DoubleComplex >::value ||
+            std::is_same< Type, RealComplex >::value ||
             std::is_same< Type, std::vector< double > >::value ||
-            std::is_same< Type, std::vector< DoubleComplex > >::value ||
+            std::is_same< Type, std::vector< RealComplex > >::value ||
             std::is_same< Type, std::vector< ASTERINTEGER > >::value,
         Type, typename std::conditional< is_vector< Type >::value, std::vector< std::string >,
                                          std::string >::type >::type >
@@ -296,9 +296,9 @@ class CapyConvertibleValue : public GenericCapyConvertibleValue {
     template < typename T = Type, typename M = MatchingType >
     typename std::enable_if< ( std::is_same< T, ASTERINTEGER >::value ||
                                std::is_same< T, double >::value ||
-                               std::is_same< T, DoubleComplex >::value ||
+                               std::is_same< T, RealComplex >::value ||
                                std::is_same< T, std::vector< double > >::value ||
-                               std::is_same< T, std::vector< DoubleComplex > >::value ||
+                               std::is_same< T, std::vector< RealComplex > >::value ||
                                std::is_same< T, std::vector< ASTERINTEGER > >::value ) &&
                                  !std::is_same< M, std::string >::value,
                              GenParam * >::type
@@ -329,7 +329,7 @@ class CapyConvertibleValue : public GenericCapyConvertibleValue {
     template < typename T = Type, typename M = MatchingType >
     typename std::enable_if<
         is_vector< T >::value && !std::is_same< T, std::vector< double > >::value &&
-            !std::is_same< T, std::vector< DoubleComplex > >::value &&
+            !std::is_same< T, std::vector< RealComplex > >::value &&
             !std::is_same< T, std::vector< ASTERINTEGER > >::value &&
             !( is_vector< T >::value &&
                std::is_base_of< DataStructure,
@@ -418,9 +418,9 @@ class CapyConvertibleValue : public GenericCapyConvertibleValue {
     template < typename T = Type, typename M = MatchingType >
     typename std::enable_if<
         !std::is_same< T, ASTERINTEGER >::value && !std::is_same< T, double >::value &&
-            !std::is_same< T, DoubleComplex >::value &&
+            !std::is_same< T, RealComplex >::value &&
             !std::is_same< T, std::vector< double > >::value &&
-            !std::is_same< T, std::vector< DoubleComplex > >::value &&
+            !std::is_same< T, std::vector< RealComplex > >::value &&
             !std::is_same< T, std::vector< ASTERINTEGER > >::value && !is_vector< T >::value &&
             !( is_vector< T >::value &&
                std::is_base_of< DataStructure,

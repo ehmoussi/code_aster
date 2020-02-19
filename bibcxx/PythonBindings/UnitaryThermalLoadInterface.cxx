@@ -28,150 +28,150 @@ namespace py = boost::python;
 #include "PythonBindings/UnitaryThermalLoadInterface.h"
 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DistributedFlowsetNormalFlow,
-                                        DoubleDistributedFlowInstance::setNormalFlow, 0, 1 )
+                                        RealDistributedFlowClass::setNormalFlow, 0, 1 )
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DistributedFlowsetLowerNormalFlow,
-                                        DoubleDistributedFlowInstance::setLowerNormalFlow, 0, 1 )
+                                        RealDistributedFlowClass::setLowerNormalFlow, 0, 1 )
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DistributedFlowsetUpperNormalFlow,
-                                        DoubleDistributedFlowInstance::setUpperNormalFlow, 0, 1 )
+                                        RealDistributedFlowClass::setUpperNormalFlow, 0, 1 )
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DistributedFlowsetFlowXYZ,
-                                        DoubleDistributedFlowInstance::setFlowXYZ, 0, 3 )
+                                        RealDistributedFlowClass::setFlowXYZ, 0, 3 )
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleNonLinearFlowsetFlow,
-                                        DoubleNonLinearFlowInstance::setFlow, 0, 1 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealNonLinearFlowsetFlow,
+                                        RealNonLinearFlowClass::setFlow, 0, 1 )
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleExchangesetExchangeCoefficient,
-                                        DoubleExchangeInstance::setExchangeCoefficient, 0, 1 )
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleExchangesetExternalTemperature,
-                                        DoubleExchangeInstance::setExternalTemperature, 0, 1 )
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleExchangesetExchangeCoefficientInfSup,
-                                        DoubleExchangeInstance::setExchangeCoefficientInfSup, 0, 2 )
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleExchangesetExternalTemperatureInfSup,
-                                        DoubleExchangeInstance::setExternalTemperatureInfSup, 0, 2 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealExchangesetExchangeCoefficient,
+                                        RealExchangeClass::setExchangeCoefficient, 0, 1 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealExchangesetExternalTemperature,
+                                        RealExchangeClass::setExternalTemperature, 0, 1 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealExchangesetExchangeCoefficientInfSup,
+                                        RealExchangeClass::setExchangeCoefficientInfSup, 0, 2 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealExchangesetExternalTemperatureInfSup,
+                                        RealExchangeClass::setExternalTemperatureInfSup, 0, 2 )
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleExchangeWallsetExchangeCoefficient,
-                                        DoubleExchangeWallInstance::setExchangeCoefficient, 0, 1 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealExchangeWallsetExchangeCoefficient,
+                                        RealExchangeWallClass::setExchangeCoefficient, 0, 1 )
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleSourcesetSource, DoubleSourceInstance::setSource, 0,
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealSourcesetSource, RealSourceClass::setSource, 0,
                                         1 )
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleNonLinearSourcesetSource,
-                                        DoubleNonLinearSourceInstance::setSource, 0, 1 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealNonLinearSourcesetSource,
+                                        RealNonLinearSourceClass::setSource, 0, 1 )
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleThermalRadiationsetExternalTemperature,
-                                        DoubleThermalRadiationInstance::setExternalTemperature, 0,
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealThermalRadiationsetExternalTemperature,
+                                        RealThermalRadiationClass::setExternalTemperature, 0,
                                         1 )
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleThermalRadiationsetEpsilon,
-                                        DoubleThermalRadiationInstance::setEpsilon, 0, 1 )
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleThermalRadiationsetSigma,
-                                        DoubleThermalRadiationInstance::setSigma, 0, 1 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealThermalRadiationsetEpsilon,
+                                        RealThermalRadiationClass::setEpsilon, 0, 1 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealThermalRadiationsetSigma,
+                                        RealThermalRadiationClass::setSigma, 0, 1 )
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( DoubleThermalGradientsetFlowXYZ,
-                                        DoubleThermalGradientInstance::setFlowXYZ, 0, 3 )
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( RealThermalGradientsetFlowXYZ,
+                                        RealThermalGradientClass::setFlowXYZ, 0, 3 )
 
 void exportUnitaryThermalLoadToPython() {
 
-    py::class_< UnitaryThermalLoadInstance, UnitaryThermalLoadInstance::UnitaryThermalLoadPtr >(
+    py::class_< UnitaryThermalLoadClass, UnitaryThermalLoadClass::UnitaryThermalLoadPtr >(
         "UnitaryThermalLoad", py::no_init );
 
-    py::class_< DoubleImposedTemperatureInstance, DoubleImposedTemperaturePtr,
-                py::bases< UnitaryThermalLoadInstance > >( "DoubleImposedTemperature", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleImposedTemperatureInstance >))
+    py::class_< RealImposedTemperatureClass, RealImposedTemperaturePtr,
+                py::bases< UnitaryThermalLoadClass > >( "RealImposedTemperature", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealImposedTemperatureClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleImposedTemperatureInstance, double >))
-        .def( "addGroupOfNodes", &DoubleImposedTemperatureInstance::addGroupOfNodes );
+              py::make_constructor(&initFactoryPtr< RealImposedTemperatureClass, double >))
+        .def( "addGroupOfNodes", &RealImposedTemperatureClass::addGroupOfNodes );
 
-    py::class_< DoubleDistributedFlowInstance, DoubleDistributedFlowPtr,
-                py::bases< UnitaryThermalLoadInstance > >( "DoubleDistributedFlow", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleDistributedFlowInstance >))
+    py::class_< RealDistributedFlowClass, RealDistributedFlowPtr,
+                py::bases< UnitaryThermalLoadClass > >( "RealDistributedFlow", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealDistributedFlowClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleDistributedFlowInstance, double >))
-        .def( "addGroupOfElements", &DoubleDistributedFlowInstance::addGroupOfElements )
-        .def( "setNormalFlow", &DoubleDistributedFlowInstance::setNormalFlow,
+              py::make_constructor(&initFactoryPtr< RealDistributedFlowClass, double >))
+        .def( "addGroupOfElements", &RealDistributedFlowClass::addGroupOfElements )
+        .def( "setNormalFlow", &RealDistributedFlowClass::setNormalFlow,
               DistributedFlowsetNormalFlow() )
-        .def( "setLowerNormalFlow", &DoubleDistributedFlowInstance::setLowerNormalFlow,
+        .def( "setLowerNormalFlow", &RealDistributedFlowClass::setLowerNormalFlow,
               DistributedFlowsetLowerNormalFlow() )
-        .def( "setUpperNormalFlow", &DoubleDistributedFlowInstance::setUpperNormalFlow,
+        .def( "setUpperNormalFlow", &RealDistributedFlowClass::setUpperNormalFlow,
               DistributedFlowsetUpperNormalFlow() )
-        .def( "setFlowXYZ", &DoubleDistributedFlowInstance::setFlowXYZ,
+        .def( "setFlowXYZ", &RealDistributedFlowClass::setFlowXYZ,
               DistributedFlowsetFlowXYZ() );
 
-    py::class_< DoubleNonLinearFlowInstance, DoubleNonLinearFlowPtr,
-                py::bases< UnitaryThermalLoadInstance > >( "DoubleNonLinearFlow", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleNonLinearFlowInstance >))
+    py::class_< RealNonLinearFlowClass, RealNonLinearFlowPtr,
+                py::bases< UnitaryThermalLoadClass > >( "RealNonLinearFlow", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealNonLinearFlowClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleNonLinearFlowInstance, double >))
-        .def( "addGroupOfElements", &DoubleNonLinearFlowInstance::addGroupOfElements )
-        .def( "setFlow", &DoubleNonLinearFlowInstance::setFlow, DoubleNonLinearFlowsetFlow() );
+              py::make_constructor(&initFactoryPtr< RealNonLinearFlowClass, double >))
+        .def( "addGroupOfElements", &RealNonLinearFlowClass::addGroupOfElements )
+        .def( "setFlow", &RealNonLinearFlowClass::setFlow, RealNonLinearFlowsetFlow() );
 
-    py::class_< DoubleExchangeInstance, DoubleExchangePtr,
-                py::bases< UnitaryThermalLoadInstance > >( "DoubleExchange", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleExchangeInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleExchangeInstance, double >))
-        .def( "addGroupOfElements", &DoubleExchangeInstance::addGroupOfElements )
-        .def( "setExchangeCoefficient", &DoubleExchangeInstance::setExchangeCoefficient,
-              DoubleExchangesetExchangeCoefficient() )
-        .def( "setExternalTemperature", &DoubleExchangeInstance::setExternalTemperature,
-              DoubleExchangesetExternalTemperature() )
-        .def( "setExchangeCoefficientInfSup", &DoubleExchangeInstance::setExchangeCoefficientInfSup,
-              DoubleExchangesetExchangeCoefficientInfSup() )
-        .def( "setExternalTemperatureInfSup", &DoubleExchangeInstance::setExternalTemperatureInfSup,
-              DoubleExchangesetExternalTemperatureInfSup() );
+    py::class_< RealExchangeClass, RealExchangePtr,
+                py::bases< UnitaryThermalLoadClass > >( "RealExchange", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealExchangeClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealExchangeClass, double >))
+        .def( "addGroupOfElements", &RealExchangeClass::addGroupOfElements )
+        .def( "setExchangeCoefficient", &RealExchangeClass::setExchangeCoefficient,
+              RealExchangesetExchangeCoefficient() )
+        .def( "setExternalTemperature", &RealExchangeClass::setExternalTemperature,
+              RealExchangesetExternalTemperature() )
+        .def( "setExchangeCoefficientInfSup", &RealExchangeClass::setExchangeCoefficientInfSup,
+              RealExchangesetExchangeCoefficientInfSup() )
+        .def( "setExternalTemperatureInfSup", &RealExchangeClass::setExternalTemperatureInfSup,
+              RealExchangesetExternalTemperatureInfSup() );
 
-    py::class_< DoubleExchangeWallInstance, DoubleExchangeWallPtr,
-                py::bases< UnitaryThermalLoadInstance > >( "DoubleExchangeWall", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleExchangeWallInstance >))
+    py::class_< RealExchangeWallClass, RealExchangeWallPtr,
+                py::bases< UnitaryThermalLoadClass > >( "RealExchangeWall", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealExchangeWallClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleExchangeWallInstance, double >))
-        .def( "addGroupOfElements", &DoubleExchangeWallInstance::addGroupOfElements )
-        .def( "setExchangeCoefficient", &DoubleExchangeWallInstance::setExchangeCoefficient,
-              DoubleExchangeWallsetExchangeCoefficient() )
-        .def( "setTranslation", &DoubleExchangeWallInstance::setTranslation );
+              py::make_constructor(&initFactoryPtr< RealExchangeWallClass, double >))
+        .def( "addGroupOfElements", &RealExchangeWallClass::addGroupOfElements )
+        .def( "setExchangeCoefficient", &RealExchangeWallClass::setExchangeCoefficient,
+              RealExchangeWallsetExchangeCoefficient() )
+        .def( "setTranslation", &RealExchangeWallClass::setTranslation );
 
-    py::class_< DoubleSourceInstance, DoubleSourcePtr, py::bases< UnitaryThermalLoadInstance > >(
-        "DoubleSource", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleSourceInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleSourceInstance, double >))
-        .def( "addGroupOfElements", &DoubleSourceInstance::addGroupOfElements )
-        .def( "setSource", &DoubleSourceInstance::setSource, DoubleSourcesetSource() );
+    py::class_< RealSourceClass, RealSourcePtr, py::bases< UnitaryThermalLoadClass > >(
+        "RealSource", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealSourceClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealSourceClass, double >))
+        .def( "addGroupOfElements", &RealSourceClass::addGroupOfElements )
+        .def( "setSource", &RealSourceClass::setSource, RealSourcesetSource() );
 
-    py::class_< DoubleNonLinearSourceInstance, DoubleNonLinearSourcePtr,
-                py::bases< UnitaryThermalLoadInstance > >( "DoubleNonLinearSource", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleNonLinearSourceInstance >))
+    py::class_< RealNonLinearSourceClass, RealNonLinearSourcePtr,
+                py::bases< UnitaryThermalLoadClass > >( "RealNonLinearSource", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealNonLinearSourceClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleNonLinearSourceInstance, double >))
-        .def( "addGroupOfElements", &DoubleNonLinearSourceInstance::addGroupOfElements )
-        .def( "setSource", &DoubleNonLinearSourceInstance::setSource,
-              DoubleNonLinearSourcesetSource() );
+              py::make_constructor(&initFactoryPtr< RealNonLinearSourceClass, double >))
+        .def( "addGroupOfElements", &RealNonLinearSourceClass::addGroupOfElements )
+        .def( "setSource", &RealNonLinearSourceClass::setSource,
+              RealNonLinearSourcesetSource() );
 
-    py::class_< DoubleThermalRadiationInstance, DoubleThermalRadiationPtr,
-                py::bases< UnitaryThermalLoadInstance > >( "DoubleThermalRadiation", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleThermalRadiationInstance >))
+    py::class_< RealThermalRadiationClass, RealThermalRadiationPtr,
+                py::bases< UnitaryThermalLoadClass > >( "RealThermalRadiation", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealThermalRadiationClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleThermalRadiationInstance, double >))
+              py::make_constructor(&initFactoryPtr< RealThermalRadiationClass, double >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< DoubleThermalRadiationInstance, double, double >))
+                              &initFactoryPtr< RealThermalRadiationClass, double, double >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< DoubleThermalRadiationInstance, double, double, double >))
-        .def( "addGroupOfElements", &DoubleThermalRadiationInstance::addGroupOfElements )
-        .def( "setExternalTemperature", &DoubleThermalRadiationInstance::setExternalTemperature,
-              DoubleThermalRadiationsetExternalTemperature() )
-        .def( "setEpsilon", &DoubleThermalRadiationInstance::setEpsilon,
-              DoubleThermalRadiationsetEpsilon() )
-        .def( "setSigma", &DoubleThermalRadiationInstance::setSigma,
-              DoubleThermalRadiationsetSigma() );
+                  &initFactoryPtr< RealThermalRadiationClass, double, double, double >))
+        .def( "addGroupOfElements", &RealThermalRadiationClass::addGroupOfElements )
+        .def( "setExternalTemperature", &RealThermalRadiationClass::setExternalTemperature,
+              RealThermalRadiationsetExternalTemperature() )
+        .def( "setEpsilon", &RealThermalRadiationClass::setEpsilon,
+              RealThermalRadiationsetEpsilon() )
+        .def( "setSigma", &RealThermalRadiationClass::setSigma,
+              RealThermalRadiationsetSigma() );
 
-    py::class_< DoubleThermalGradientInstance, DoubleThermalGradientPtr,
-                py::bases< UnitaryThermalLoadInstance > >( "DoubleThermalGradient", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< DoubleThermalGradientInstance >))
+    py::class_< RealThermalGradientClass, RealThermalGradientPtr,
+                py::bases< UnitaryThermalLoadClass > >( "RealThermalGradient", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< RealThermalGradientClass >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DoubleThermalGradientInstance, double >))
+              py::make_constructor(&initFactoryPtr< RealThermalGradientClass, double >))
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< DoubleThermalGradientInstance, double, double >))
+                              &initFactoryPtr< RealThermalGradientClass, double, double >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< DoubleThermalGradientInstance, double, double, double >))
-        .def( "addGroupOfElements", &DoubleThermalGradientInstance::addGroupOfElements )
-        .def( "setFlowXYZ", &DoubleThermalGradientInstance::setFlowXYZ,
-              DoubleThermalGradientsetFlowXYZ() );
+                  &initFactoryPtr< RealThermalGradientClass, double, double, double >))
+        .def( "addGroupOfElements", &RealThermalGradientClass::addGroupOfElements )
+        .def( "setFlowXYZ", &RealThermalGradientClass::setFlowXYZ,
+              RealThermalGradientsetFlowXYZ() );
 };

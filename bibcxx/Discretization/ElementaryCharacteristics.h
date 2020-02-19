@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe ElementaryCharacteristics
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,11 +34,11 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class ElementaryCharacteristicsInstance
+ * @class ElementaryCharacteristicsClass
  * @brief Cette classe decrit un cara_elem
  * @author Nicolas Sellenet
  */
-class ElementaryCharacteristicsInstance : public DataStructure {
+class ElementaryCharacteristicsClass : public DataStructure {
   private:
     /** @brief Model */
     ModelPtr _model;
@@ -47,29 +47,29 @@ class ElementaryCharacteristicsInstance : public DataStructure {
     /** @brief Objet Jeveux '.CANBSP' */
     PCFieldOnMeshLongPtr _numberOfSubpoints;
     /** @brief Objet Jeveux '.CARARCPO' */
-    PCFieldOnMeshDoublePtr _curveBeam;
+    PCFieldOnMeshRealPtr _curveBeam;
     /** @brief Objet Jeveux '.CARCABLE' */
-    PCFieldOnMeshDoublePtr _cable;
+    PCFieldOnMeshRealPtr _cable;
     /** @brief Objet Jeveux '.CARCOQUE' */
-    PCFieldOnMeshDoublePtr _shell;
+    PCFieldOnMeshRealPtr _shell;
     /** @brief Objet Jeveux '.CARDISCA' */
-    PCFieldOnMeshDoublePtr _dumping;
+    PCFieldOnMeshRealPtr _dumping;
     /** @brief Objet Jeveux '.CARDISCK' */
-    PCFieldOnMeshDoublePtr _rigidity;
+    PCFieldOnMeshRealPtr _rigidity;
     /** @brief Objet Jeveux '.CARDISCM' */
-    PCFieldOnMeshDoublePtr _mass;
+    PCFieldOnMeshRealPtr _mass;
     /** @brief Objet Jeveux '.CARGENBA' */
-    PCFieldOnMeshDoublePtr _bar;
+    PCFieldOnMeshRealPtr _bar;
     /** @brief Objet Jeveux '.CARGENPO' */
-    PCFieldOnMeshDoublePtr _beamSection;
+    PCFieldOnMeshRealPtr _beamSection;
     /** @brief Objet Jeveux '.CARGEOPO' */
-    PCFieldOnMeshDoublePtr _beamGeometry;
+    PCFieldOnMeshRealPtr _beamGeometry;
     /** @brief Objet Jeveux '.CARMASSI' */
-    PCFieldOnMeshDoublePtr _orthotropicBasis;
+    PCFieldOnMeshRealPtr _orthotropicBasis;
     /** @brief Objet Jeveux '.CARORIEN' */
-    PCFieldOnMeshDoublePtr _localBasis;
+    PCFieldOnMeshRealPtr _localBasis;
     /** @brief Objet Jeveux '.CARPOUFL' */
-    PCFieldOnMeshDoublePtr _beamCharacteristics;
+    PCFieldOnMeshRealPtr _beamCharacteristics;
 
     /** @brief Booleen indiquant si le maillage est vide */
     bool _isEmpty;
@@ -79,23 +79,23 @@ class ElementaryCharacteristicsInstance : public DataStructure {
      * @typedef ElementaryCharacteristicsPtr
      * @brief Pointeur intelligent vers un ElementaryCharacteristics
      */
-    typedef boost::shared_ptr< ElementaryCharacteristicsInstance > ElementaryCharacteristicsPtr;
+    typedef boost::shared_ptr< ElementaryCharacteristicsClass > ElementaryCharacteristicsPtr;
 
     /**
      * @brief Constructeur
      */
-    ElementaryCharacteristicsInstance( const std::string name, const ModelPtr &model );
+    ElementaryCharacteristicsClass( const std::string name, const ModelPtr &model );
 
     /**
      * @brief Constructeur
      */
-    ElementaryCharacteristicsInstance( const ModelPtr &model )
-        : ElementaryCharacteristicsInstance( ResultNaming::getNewResultName(), model ){};
+    ElementaryCharacteristicsClass( const ModelPtr &model )
+        : ElementaryCharacteristicsClass( ResultNaming::getNewResultName(), model ){};
 
     /**
      * @brief Destructeur
      */
-    ~ElementaryCharacteristicsInstance(){};
+    ~ElementaryCharacteristicsClass(){};
 
     /**
      * @brief Get the model
@@ -115,8 +115,8 @@ class ElementaryCharacteristicsInstance : public DataStructure {
 
 /**
  * @typedef ElementaryCharacteristicsPtr
- * @brief Pointeur intelligent vers un ElementaryCharacteristicsInstance
+ * @brief Pointeur intelligent vers un ElementaryCharacteristicsClass
  */
-typedef boost::shared_ptr< ElementaryCharacteristicsInstance > ElementaryCharacteristicsPtr;
+typedef boost::shared_ptr< ElementaryCharacteristicsClass > ElementaryCharacteristicsPtr;
 
 #endif /* ELEMENTARYCHARACTERISTICS_H_ */

@@ -6,7 +6,7 @@
  * @brief Definition of the linesearch method
  * @author Natacha Béreux
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -34,7 +34,7 @@ enum LineSearchEnum { Corde, Mixte, Pilotage };
 const int nbLineSearch = 4;
 extern const char *LineSearchNames[nbLineSearch];
 
-class LineSearchMethodInstance {
+class LineSearchMethodClass {
   private:
     /** @brief LineSearch Method */
     LineSearchEnum _lineSearchMethod;
@@ -56,9 +56,9 @@ class LineSearchMethodInstance {
     /**
      * @brief Constructeur
      */
-    LineSearchMethodInstance( LineSearchEnum curLineSearch = Corde )
+    LineSearchMethodClass( LineSearchEnum curLineSearch = Corde )
         : _lineSearchMethod( curLineSearch ),
-          _control( SolverControlPtr( new SolverControlInstance() ) ), _methode( "METHODE", false ),
+          _control( SolverControlPtr( new SolverControlClass() ) ), _methode( "METHODE", false ),
           _rhoMin( "RHO_MIN", 1.e-2, false ), _rhoMax( "RHO_MAX", 1.e1, false ),
           _rhoExcl( "RHO_EXCL", 9.e-3, false ), _resi_line_rela( "RESI_LINE_RELA", false ),
           _iter_line_maxi( "ITER_LINE_MAXI", false ) {
@@ -112,8 +112,8 @@ class LineSearchMethodInstance {
 
 /**
  * @typedef NonLinearMethodPtr
- * @brief Enveloppe d'un pointeur intelligent vers un LineSearchMethodInstance
+ * @brief Enveloppe d'un pointeur intelligent vers un LineSearchMethodClass
  */
-typedef boost::shared_ptr< LineSearchMethodInstance > LineSearchMethodPtr;
+typedef boost::shared_ptr< LineSearchMethodClass > LineSearchMethodPtr;
 
 #endif /* LINESEARCHMETHOD_H_ */

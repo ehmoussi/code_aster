@@ -29,12 +29,12 @@ namespace py = boost::python;
 
 void exportGeneralizedModelToPython() {
 
-    py::class_< GeneralizedModelInstance, GeneralizedModelInstance::GeneralizedModelPtr,
+    py::class_< GeneralizedModelClass, GeneralizedModelClass::GeneralizedModelPtr,
             py::bases< DataStructure > >( "GeneralizedModel", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< GeneralizedModelInstance > ) )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< GeneralizedModelClass > ) )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< GeneralizedModelInstance, std::string > ) )
-        .def( "addDynamicMacroElement", &GeneralizedModelInstance::addDynamicMacroElement )
+              py::make_constructor( &initFactoryPtr< GeneralizedModelClass, std::string > ) )
+        .def( "addDynamicMacroElement", &GeneralizedModelClass::addDynamicMacroElement )
         .def( "getDynamicMacroElementFromName",
-              &GeneralizedModelInstance::getDynamicMacroElementFromName );
+              &GeneralizedModelClass::getDynamicMacroElementFromName );
 };

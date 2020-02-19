@@ -6,7 +6,7 @@
  * @brief Fichier entete de la classe FiniteElementDescriptor
  * @author Nicolas Sellenet
  * @section LICENCE
- *   Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+ *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
  *   This file is part of Code_Aster.
  *
@@ -31,20 +31,20 @@
 #include "Meshes/MeshExplorer.h"
 #include "Meshes/Mesh.h"
 
-class FiniteElementDescriptorInstance;
+class FiniteElementDescriptorClass;
 
 /**
  * @typedef FiniteElementDescriptor
- * @brief Pointeur intelligent vers un FiniteElementDescriptorInstance
+ * @brief Pointeur intelligent vers un FiniteElementDescriptorClass
  */
-typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
+typedef boost::shared_ptr< FiniteElementDescriptorClass > FiniteElementDescriptorPtr;
 
 /**
- * @class FiniteElementDescriptorInstance
+ * @class FiniteElementDescriptorClass
  * @brief Class which describes the finite elements
  * @author Nicolas Sellenet
  */
-class FiniteElementDescriptorInstance: public DataStructure
+class FiniteElementDescriptorClass: public DataStructure
 {
 public:
     typedef MeshExplorer< ElementBuilderFromFiniteElementDescriptor,
@@ -82,21 +82,21 @@ public:
     /**
      * @brief Constructeur
      */
-    FiniteElementDescriptorInstance( const std::string& name,
+    FiniteElementDescriptorClass( const std::string& name,
                                      const BaseMeshPtr mesh,
                                      const JeveuxMemory memType = Permanent );
 
     /**
      * @brief Destructor
      */
-    ~FiniteElementDescriptorInstance()
+    ~FiniteElementDescriptorClass()
     {};
 
     /**
      * @typedef FiniteElementDescriptorPtr
      * @brief Pointeur intelligent vers un FiniteElementDescriptor
      */
-    typedef boost::shared_ptr< FiniteElementDescriptorInstance > FiniteElementDescriptorPtr;
+    typedef boost::shared_ptr< FiniteElementDescriptorClass > FiniteElementDescriptorPtr;
 
     const ConnectivityDelayedElementsExplorer& getDelayedElementsExplorer() const
     {

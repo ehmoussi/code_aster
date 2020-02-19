@@ -35,14 +35,14 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import (AsFloat, AsInteger, ElementaryMatrixDisplacementDouble,
-                       ElementaryMatrixTemperatureDouble,
-                       ElementaryVectorDisplacementDouble,
-                       ElementaryVectorTemperatureDouble,
-                       FieldOnElementsDouble, FieldOnNodesDouble, Function,
-                       FunctionComplex, GeneralizedAssemblyMatrixDouble,
-                       GenericDataField, MechanicalModeContainer,
-                       PCFieldOnMeshDouble, Surface, Table)
+from ..Objects import (AsFloat, AsInteger, ElementaryMatrixDisplacementReal,
+                       ElementaryMatrixTemperatureReal,
+                       ElementaryVectorDisplacementReal,
+                       ElementaryVectorTemperatureReal,
+                       FieldOnCellsReal, FieldOnNodesReal, Function,
+                       FunctionComplex, GeneralizedAssemblyMatrixReal,
+                       DataField, ModeResult,
+                       PCFieldOnMeshReal, Surface, Table)
 from ..Supervis import ExecuteCommand
 
 
@@ -59,9 +59,9 @@ class ExtrTable(ExecuteCommand):
         """
         typeResu = keywords['TYPE_RESU']
         if typeResu == 'VECT_ELEM_DEPL_R':
-            self._result = ElementaryVectorDisplacementDouble()
+            self._result = ElementaryVectorDisplacementReal()
         elif typeResu == 'VECT_ELEM_TEMP_R':
-            self._result = ElementaryVectorTemperatureDouble()
+            self._result = ElementaryVectorTemperatureReal()
         elif typeResu == 'FONCTION_SDASTER':
             self._result = Function()
         elif typeResu == 'FONCTION_C':
@@ -69,23 +69,23 @@ class ExtrTable(ExecuteCommand):
         elif typeResu == 'TABLE_SDASTER':
             self._result  = Table()
         elif typeResu == 'MATR_ASSE_GENE_R':
-            self._result = GeneralizedAssemblyMatrixDouble()
+            self._result = GeneralizedAssemblyMatrixReal()
         elif typeResu == 'MATR_ELEM_DEPL_R':
-            self._result = ElementaryMatrixDisplacementDouble()
+            self._result = ElementaryMatrixDisplacementReal()
         elif typeResu == 'MATR_ELEM_TEMP_R':
-            self._result = ElementaryMatrixTemperatureDouble()
+            self._result = ElementaryMatrixTemperatureReal()
         elif typeResu == 'NAPPE_SDASTER':
             self._result = Surface()
         elif typeResu == 'MODE_MECA':
-            self._result = MechanicalModeContainer()
+            self._result = ModeResult()
         elif typeResu == 'CARTE_SDASTER':
-            self._result = PCFieldOnMeshDouble()
+            self._result = PCFieldOnMeshReal()
         elif typeResu == 'CHAM_ELEM':
-            self._result = FieldOnElementsDouble()
+            self._result = FieldOnCellsReal()
         elif typeResu == 'CHAM_NO_SDASTER':
-            self._result = FieldOnNodesDouble()
+            self._result = FieldOnNodesReal()
         elif typeResu == 'CHAM_GD_SDASTER':
-            self._result = GenericDataField()
+            self._result = DataField()
         elif typeResu == 'ENTIER':
             self._result = AsInteger()
         elif typeResu == 'REEL':

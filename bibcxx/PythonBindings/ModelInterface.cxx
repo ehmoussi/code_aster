@@ -37,42 +37,40 @@ void exportModelToPython() {
     py::enum_< GraphPartitioner >( "GraphPartitioner" ).value( "Scotch", ScotchPartitioner ).value(
         "Metis", MetisPartitioner );
 
-    bool ( ModelInstance::*c1 )( MeshPtr & ) = &ModelInstance::setMesh;
-    bool ( ModelInstance::*c4 )( SkeletonPtr & ) = &ModelInstance::setMesh;
 
-    void ( ModelInstance::*split1 )( ModelSplitingMethod ) = &ModelInstance::setSplittingMethod;
+    void ( ModelClass::*split1 )( ModelSplitingMethod ) = &ModelClass::setSplittingMethod;
 
-    void ( ModelInstance::*split2 )( ModelSplitingMethod, GraphPartitioner ) =
-        &ModelInstance::setSplittingMethod;
+    void ( ModelClass::*split2 )( ModelSplitingMethod, GraphPartitioner ) =
+        &ModelClass::setSplittingMethod;
+
+    py::class_< ModelClass, ModelClass::ModelPtr, py::bases< DataStructure > >( "Model",
+                                                                                 py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, BaseMeshPtr>))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, std::string,
+                                                                BaseMeshPtr>))
 #ifdef _USE_MPI
-    bool ( ModelInstance::*c2 )( ParallelMeshPtr & ) = &ModelInstance::setMesh;
-    bool ( ModelInstance::*c3 )( PartialMeshPtr & ) = &ModelInstance::setMesh;
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, PartialMeshPtr>))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, std::string,
+                                                                            PartialMeshPtr>))
 #endif /* _USE_MPI */
-    bool ( ModelInstance::*c5 )( BaseMeshPtr & ) = &ModelInstance::setMesh;
+        .def( "addModelingOnAllMesh", &ModelClass::addModelingOnAllMesh )
+        .def( "addModelingOnGroupOfElements", &ModelClass::addModelingOnGroupOfElements )
+        .def( "addModelingOnGroupOfNodes", &ModelClass::addModelingOnGroupOfNodes )
+        .def( "build", &ModelClass::build )
+        .def( "existsThm", &ModelClass::existsThm )
+        .def( "existsMultiFiberBeam", &ModelClass::existsMultiFiberBeam )
+        .def( "getSaneModel", &ModelClass::getSaneModel )
+        .def( "getMesh", &ModelClass::getMesh, R"(
+Return the mesh
 
-    py::class_< ModelInstance, ModelInstance::ModelPtr, py::bases< DataStructure > >( "Model",
-                                                                                      py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelInstance >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< ModelInstance, std::string >))
-        .def( "addModelingOnAllMesh", &ModelInstance::addModelingOnAllMesh )
-        .def( "addModelingOnGroupOfElements", &ModelInstance::addModelingOnGroupOfElements )
-        .def( "addModelingOnGroupOfNodes", &ModelInstance::addModelingOnGroupOfNodes )
-        .def( "build", &ModelInstance::build )
-        .def( "existsThm", &ModelInstance::existsThm )
-        .def( "existsMultiFiberBeam", &ModelInstance::existsMultiFiberBeam )
-        .def( "getSaneModel", &ModelInstance::getSaneModel )
-        .def( "getMesh", &ModelInstance::getMesh )
-        .def( "getSplittingMethod", &ModelInstance::getSplittingMethod )
-        .def( "getGraphPartitioner", &ModelInstance::getGraphPartitioner )
-        .def( "setSaneModel", &ModelInstance::setSaneModel )
-        .def( "setMesh", c1 )
-        .def( "setMesh", c4 )
+Returns:
+    MeshPtr: a pointer to the mesh
+        )",
+              ( py::arg( "self" ) )  )
+        .def( "getSplittingMethod", &ModelClass::getSplittingMethod )
+        .def( "getGraphPartitioner", &ModelClass::getGraphPartitioner )
+        .def( "setSaneModel", &ModelClass::setSaneModel )
         .def( "setSplittingMethod", split1 )
         .def( "setSplittingMethod", split2 )
-#ifdef _USE_MPI
-        .def( "setMesh", c2 )
-        .def( "setMesh", c3 )
-#endif /* _USE_MPI */
-        .def( "setMesh", c5 )
-        .def( "getFiniteElementDescriptor", &ModelInstance::getFiniteElementDescriptor );
+        .def( "getFiniteElementDescriptor", &ModelClass::getFiniteElementDescriptor );
 };

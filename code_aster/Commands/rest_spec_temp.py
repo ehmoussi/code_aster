@@ -19,16 +19,16 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import (FullHarmonicResultsContainer,
-                       FullTransientResultsContainer,
-                       HarmoGeneralizedResultsContainer,
-                       TransientGeneralizedResultsContainer)
+from ..Objects import (FullHarmonicResult,
+                       FullTransientResult,
+                       HarmoGeneralizedResult,
+                       TransientGeneralizedResult)
 from ..Supervis import ExecuteCommand
 
 
 class FourierTransformation(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.EvolutiveThermalLoad` by assigning
-    finite elements on a :class:`~code_aster.Objects.EvolutiveThermalLoad`."""
+    """Command that creates the :class:`~code_aster.Objects.ThermalResult` by assigning
+    finite elements on a :class:`~code_aster.Objects.ThermalResult`."""
     command_name = "REST_SPEC_TEMP"
 
     def create_result(self, keywords):
@@ -38,14 +38,14 @@ class FourierTransformation(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         input = keywords.get('RESULTAT') or keywords['RESU_GENE']
-        if isinstance(input, FullHarmonicResultsContainer):
-            self._result = FullTransientResultsContainer()
-        elif isinstance(input, FullTransientResultsContainer):
-            self._result = FullHarmonicResultsContainer()
-        elif isinstance(input, HarmoGeneralizedResultsContainer):
-            self._result = TransientGeneralizedResultsContainer()
-        elif isinstance(input, TransientGeneralizedResultsContainer):
-            self._result = HarmoGeneralizedResultsContainer()
+        if isinstance(input, FullHarmonicResult):
+            self._result = FullTransientResult()
+        elif isinstance(input, FullTransientResult):
+            self._result = FullHarmonicResult()
+        elif isinstance(input, HarmoGeneralizedResult):
+            self._result = TransientGeneralizedResult()
+        elif isinstance(input, TransientGeneralizedResult):
+            self._result = HarmoGeneralizedResult()
         else:
             raise TypeError("unsupported input type: {0}".format(input))
 

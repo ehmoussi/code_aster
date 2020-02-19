@@ -82,13 +82,13 @@ class MaterialDefinition(ExecuteCommand):
                     continue
                 iName = skwName.capitalize()
                 if fkwName in ("MFRONT", "UMAT"):
-                    matBehav.setVectorOfDoubleValue(iName, list(skw))
+                    matBehav.setVectorOfRealValue(iName, list(skw))
                     continue
                 if fkwName in ("MFRONT_FO", "UMAT_FO"):
                     matBehav.setVectorOfFunctionValue(iName, list(skw))
                     continue
                 if type(skw) in (float, int, numpy.float64):
-                    cRet = matBehav.setDoubleValue(iName, float(skw))
+                    cRet = matBehav.setRealValue(iName, float(skw))
                     if not cRet:
                         print(ValueError("Can not assign keyword '{1}'/'{0}' "
                                          "(as '{3}'/'{2}') "
@@ -120,7 +120,7 @@ class MaterialDefinition(ExecuteCommand):
                                                   "{0} <{1}>"
                                                   .format(skwName, type(skw)))
                 elif type(skw) in (list, tuple) and type(skw[0]) in (float, int, numpy.float64):
-                        cRet = matBehav.setVectorOfDoubleValue(iName, skw)
+                        cRet = matBehav.setVectorOfRealValue(iName, list(skw))
                 else:
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"
@@ -166,7 +166,7 @@ class MaterialDefinition(ExecuteCommand):
                     if kwName == "ORDRE_PARAM":
                         continue
                     if curType in (float, int, numpy.float64):
-                        mater.addNewDoubleProperty(kwName, mandatory)
+                        mater.addNewRealProperty(kwName, mandatory)
                     elif curType is complex:
                         mater.addNewComplexProperty(kwName, mandatory)
                     elif curType is str:
@@ -179,7 +179,7 @@ class MaterialDefinition(ExecuteCommand):
                         mater.addNewTableProperty(kwName, mandatory)
                     elif type(kwValue) in (list, tuple):
                         if type(kwValue[0]) is float:
-                            mater.addNewVectorOfDoubleProperty(
+                            mater.addNewVectorOfRealProperty(
                                 kwName, mandatory)
                         elif isinstance(kwValue[0], DataStructure):
                             mater.addNewVectorOfFunctionProperty(
