@@ -37,14 +37,64 @@ void exportDataStructureToPython() {
         .enable_pickling()
         // fake initFactoryPtr: created by subclasses
         // fake initFactoryPtr: created by subclasses
-        .def( "addReference", &DataStructure::addReference )
-        .def( "getName", &DataStructure::getName, py::return_value_policy< py::return_by_value >() )
+        .def( "addDependency", &DataStructure::addDependency,
+        R"(
+Add a dependency to a *DataStructure*.
+
+Arguments:
+    ds (*DataStructure*): Parent *DataStructure* to depend on.
+        )",
+            ( py::arg( "self" ), py::arg( "ds" ) ) )
+
+        .def( "getDependencies", &DataStructure::getDependencies,
+        R"(
+Return the explicit dependencies.
+
+Returns:
+    list[*DataStructure*]: List of parents (dependencies) *DataStructure*.
+        )",
+            ( py::arg( "self" ) ) )
+
+        .def( "getName", &DataStructure::getName, py::return_value_policy< py::return_by_value >(),
+        R"(
+Return the internal (*Jeveux*) name of the *DataStructure*.
+
+Returns:
+    str: Internal/*Jeveux* name.
+        )",
+            ( py::arg( "self" ) ) )
+
         .add_property( "userName",
                        make_function( &DataStructure::getUserName,
                                       py::return_value_policy< py::return_by_value >() ),
-                       &DataStructure::setUserName )
-        .def( "getType", &DataStructure::getType, py::return_value_policy< py::return_by_value >() )
+                       &DataStructure::setUserName,
+                       R"(
+str: Name of the user variable that holds this object.
+        )" )
+        .def( "getType", &DataStructure::getType, py::return_value_policy< py::return_by_value >(),
+        R"(
+Return the name of the *DataStructure* type.
+
+Returns:
+    str: Name of the *DataStructure* type.
+        )",
+            ( py::arg( "self" ) ) )
         .def( "debugPrint", c1 )
         .def( "debugPrint", c2 )
-        .def( "update", &DataStructure::update );
+        .def( "update", &DataStructure::update,
+        R"(
+Update the *DataStructure* attributes from the *Jeveux* objects.
+*Only use internally after calling fortran subroutines*.
+
+Returns:
+    bool: *True* if all went ok, *False* otherwise.
+        )",
+            ( py::arg( "self" ) ) );
 };
+
+/* Don't know how to document a property (for userName):
+        R"(
+str: Name of the user variable that holds this object.
+        )",
+                                        ( py::arg( "self" ) ) ),
+*/
