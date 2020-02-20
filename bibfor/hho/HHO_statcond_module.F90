@@ -31,12 +31,17 @@ private
 #include "asterfort/HHO_size_module.h"
 #include "asterfort/assert.h"
 #include "asterfort/calcul.h"
+#include "asterfort/celces.h"
+#include "asterfort/cesexi.h"
 #include "asterfort/copisd.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/getResuElem.h"
 #include "asterfort/infniv.h"
 #include "asterfort/inical.h"
+#include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
+#include "asterfort/jemarq.h"
 #include "asterfort/jevech.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/megeom.h"
@@ -48,6 +53,7 @@ private
 #include "asterfort/readVector.h"
 #include "asterfort/reajre.h"
 #include "asterfort/redetr.h"
+#include "asterfort/sdmpic.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrrefe.h"
 #include "asterfort/writeMatrix.h"
@@ -71,7 +77,7 @@ private
 ! --------------------------------------------------------------------------------------------------
     public :: hhoCondStaticMeca, hhoDecondStaticMeca
     public :: hhoMecaDecondOP, hhoMecaCondOP
-    private :: hhoUpdateCellValues
+    private :: hhoUpdateCellValues, hhoCodeRet
 !
 contains
 !
@@ -79,7 +85,98 @@ contains
 !
 !===================================================================================================
 !
-    subroutine hhoCondStaticMeca(hhoCell, hhoData, lhs, rhs, l_lhs_sym, lhs_local, rhs_local)
+    subroutine hhoCodeRet(codret, index_success)
+
+    implicit none
+!
+        character(len=19), intent(in) :: codret
+        integer, intent(out)          :: index_success
+!
+! ----------------------------------------------------------------------
+!
+! HHO - mechanics
+!
+! Summarize error of static condensation
+!
+! ----------------------------------------------------------------------
+!
+!
+! In  codret  : CHAM_ELEM from TE
+! Out index_success :  0 if success / 1  if fails
+!
+        integer :: iret, jcesd, jcesl, nbmail, icmp
+        integer :: ima, iad
+        character(len=8) :: nomgd
+        character(len=19) :: chamns
+        integer, pointer :: cesv(:) => null()
+        character(len=8), pointer :: cesk(:) => null()
+!
+! ----------------------------------------------------------------------
+!
+        call jemarq()
+!
+        index_success = 0
+!
+! --- ON TRANSFORME LE "CHAM_ELEM" EN UN "CHAM_ELEM_S"
+!
+        chamns = '&&HHO.CHAMNS'
+!
+! -- EN ATTENDANT DE FAIRE MIEUX, POUR PERMETTRE MUMPS/DISTRIBUE :
+        call sdmpic('CHAM_ELEM', codret)
+!
+        call celces(codret, 'V', chamns)
+!
+! --- ACCES AU CHAM_ELEM_S
+!
+        call jeveuo(chamns//'.CESK', 'L', vk8=cesk)
+        call jeveuo(chamns//'.CESD', 'L', jcesd)
+        call jeveuo(chamns//'.CESV', 'L', vi=cesv)
+        call jeveuo(chamns//'.CESL', 'L', jcesl)
+!
+!     CHAM_ELEM/ELGA MAIS EN FAIT : 1 POINT ET 1 SOUS_POINT PAR ELEMENT
+        if ((zi(jcesd-1+3).ne.1) .or. (zi(jcesd-1+4).ne.1)) then
+            ASSERT(ASTER_FALSE)
+        endif
+!
+        nomgd = cesk(2)
+        if (nomgd .ne. 'CODE_I') then
+            ASSERT(ASTER_FALSE)
+        endif
+!
+        nbmail = zi(jcesd-1+1)
+        icmp = zi(jcesd-1+2)
+        if (icmp .ne. 1) then
+            ASSERT(ASTER_FALSE)
+        endif
+!
+        do ima = 1, nbmail
+!
+            call cesexi('C', jcesd, jcesl, ima, 1,&
+                        1, icmp, iad)
+            if (iad > 0) then
+                iret = cesv(iad)
+                if (iret > 0) then
+                    index_success = 1
+                    go to 999
+                else if (iret < 0) then
+                    call utmess('A', 'HHO1_14', si=iret)
+                endif
+            end if
+        end do
+!
+999 continue
+!
+        call detrsd('CHAM_ELEM_S', chamns)
+!
+        call jedema()
+    end subroutine
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    subroutine hhoCondStaticMeca(hhoCell, hhoData, lhs, rhs, l_lhs_sym, lhs_local, rhs_local, &
+                                 codret)
 !
     implicit none
 !
@@ -90,6 +187,7 @@ contains
         aster_logical, intent(in)  :: l_lhs_sym
         real(kind=8), intent(out)  :: lhs_local(MSIZE_FDOFS_VEC, MSIZE_FDOFS_VEC)
         real(kind=8), intent(out)  :: rhs_local(MSIZE_FDOFS_VEC)
+        integer, intent(out)       :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !   HHO - mechanics
@@ -102,7 +200,7 @@ contains
 !   In l_lhs_sym    : lhs is symmetric ?
 !   Out lhs_local   : lhs after static condensation (is symmetric)
 !   Out rhs_local   : rhs after static condensation
-!
+!   Out codret      : sucess - 0 / fail - index of the line
 ! --------------------------------------------------------------------------------------------------
 !
 ! ----- Local variables
@@ -123,6 +221,7 @@ contains
         K_FF = 0.d0
         rhs_T = 0.d0
         rhs_F = 0.d0
+        codret = 0
 !
         K_TT(1:cbs, 1:cbs) = lhs(1:cbs, 1:cbs)
         K_TF(1:cbs, 1 : faces_dofs) = lhs(1 : cbs, (cbs+1) : total_dofs)
@@ -139,7 +238,9 @@ contains
 !
 ! ---- Sucess ?
             if(info .ne. 0) then
-                call utmess('E', 'HHO1_8', si = info)
+                codret = info
+                call utmess('A', 'HHO1_8', si = info)
+                go to 999
             end if
 !
 ! ---- Solve K_TF = K_TT^-1 * K_TF
@@ -209,6 +310,8 @@ contains
 !
         rhs_local = 0.d0
         rhs_local(1:faces_dofs) = rhs_F(1:faces_dofs)
+!
+999 continue
 !
     end subroutine
 !
@@ -428,13 +531,14 @@ contains
 !
 !===================================================================================================
 !
-    subroutine hhoMecaCondOP(model, hhoField, merigi, vefint)
+    subroutine hhoMecaCondOP(model, hhoField, merigi, vefint, index_success)
 !
     implicit none
 !
         character(len=24), intent(in) :: model
         type(HHO_Field), intent(in)   :: hhoField
         character(len=19), intent(in) :: merigi, vefint
+        integer, intent(out)          :: index_success
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -448,11 +552,11 @@ contains
 ! In  hhoField         : fields for HHO
 ! In  merigi           : elementary matrix for rigidity
 ! In  vefint           : elementary vector for internal forces
-!
+! Out index_success    :  0 if success / 1  if fails
 ! --------------------------------------------------------------------------------------------------
 !
         integer, parameter :: nbin = 4
-        integer, parameter :: nbout = 5
+        integer, parameter :: nbout = 6
         character(len=8)  :: lpain(nbin), lpaout(nbout)
         character(len=19) :: lchin(nbin), lchout(nbout)
         character(len=19) :: ligrel_model, resu_elem
@@ -526,6 +630,8 @@ contains
         lchout(4) = merigi(1:15)//'.M01'
         lpaout(5) = 'PVECTUR'
         lchout(5) = vefint(1:15)//'.R01'
+        lpaout(6) = 'PCODRET'
+        lchout(6) = hhoField%stat_cond_error
 !
 ! - Compute
 !
@@ -539,6 +645,8 @@ contains
         call reajre(merigi, lchout(4), base)
         call redetr(merigi)
         call reajre(vefint, lchout(5), base)
+!
+        call hhoCodeRet(hhoField%stat_cond_error, index_success)
 !
     end subroutine
 !

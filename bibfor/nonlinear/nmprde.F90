@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ subroutine nmprde(mesh    , modele, numedd         , numfix    , ds_material, ca
                   fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                   valinc, solalg         , matass    , maprec     , ds_contact,&
                   sddyna, meelem         , measse    , veelem     , veasse    ,&
-                  ldccvg, faccvg         , rescvg)
+                  ldccvg, faccvg         , rescvg    , condcvg)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -42,7 +42,7 @@ implicit none
 !
 integer :: fonact(*)
 character(len=8), intent(in) :: mesh
-integer :: numins, ldccvg, faccvg, rescvg
+integer :: numins, ldccvg, faccvg, rescvg, condcvg
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 character(len=19) :: maprec, matass
 type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -108,7 +108,10 @@ character(len=19) :: solalg(*), valinc(*)
 !                 1 : ECHEC DE L'INTEGRATION DE LA LDC
 !                 2 : ERREUR SUR LA NON VERIF. DE CRITERES PHYSIQUES
 !                 3 : SIZZ PAS NUL POUR C_PLAN DEBORST
-!
+! OUT CONDCVG : CODE RETOUR DE LA CONDANSATION STATIQUE
+!                -1 : PAS DE CONDENSATION
+!                 0 : CAS DU FONCTIONNEMENT NORMAL
+!                 1 : ECHEC DE LA CONDENSATION
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=19) :: incest, depest, depmoi
@@ -130,6 +133,7 @@ character(len=19) :: solalg(*), valinc(*)
     faccvg = -1
     rescvg = -1
     ldccvg = -1
+    condcvg = -1
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
 !
@@ -165,7 +169,7 @@ character(len=19) :: solalg(*), valinc(*)
                     fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass     , maprec     , ds_contact,&
                     sddyna, meelem         , measse     , veelem     , veasse    ,&
-                    depest, ldccvg         , faccvg     , rescvg)
+                    depest, ldccvg         , faccvg     , rescvg     , condcvg)
     endif
 !
 end subroutine

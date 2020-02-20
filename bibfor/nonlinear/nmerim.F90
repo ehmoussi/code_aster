@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ subroutine nmerim(sderro)
 !
 ! --- EMISSION DES MESSAGES D'ERREUR
 !
-    do 10 ieven = 1, zeven
+    do ieven = 1, zeven
         icode = zi(jeeact-1+ieven)
         teven = zk16(jeeniv-1+ieven)(1:9)
         meven = zk24(jeemsg-1+ieven)
@@ -108,11 +108,13 @@ subroutine nmerim(sderro)
                 call utmess('I', 'MECANONLINE10_20')
             else if (meven.eq.'MECANONLINE10_24') then
                 call utmess('I', 'MECANONLINE10_24')
+            else if (meven.eq.'MECANONLINE10_36') then
+                call utmess('I', 'MECANONLINE10_36')
             else
                 ASSERT(.false.)
             endif
         endif
- 10 end do
+    end do
 !
     call jedema()
 end subroutine

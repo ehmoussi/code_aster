@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,14 +23,14 @@ interface
                       nume_inst      , hval_incr, hval_algo  , hhoField, matass     , maprec,&
                       ds_contact     , sddyna   , hval_meelem, hval_measse, hval_veelem,&
                       hval_veasse    , sdnume   , ldccvg     , faccvg,&
-                      rescvg    )
+                      rescvg         , condcvg)
         use NonLin_Datastructure_type
         use ROM_Datastructure_type
         use HHO_type
 
         character(len=8), intent(in) :: mesh
         integer :: list_func_acti(*)
-        integer :: nume_inst, faccvg, rescvg, ldccvg
+        integer :: nume_inst, faccvg, rescvg, ldccvg, condcvg
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Measure), intent(inout) :: ds_measure
