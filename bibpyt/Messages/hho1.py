@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -70,4 +70,7 @@ Condensation statique: la matrice de la cellule n'est pas factorisable
     Conseil: Essayez d'augmenter le coefficient de stabilisation
 """),
 
+    14: _("""
+Condensation statique: le code retour %(i1)d n'est pas traité
+"""),
 }

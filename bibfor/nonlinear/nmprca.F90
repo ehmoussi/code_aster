@@ -23,7 +23,7 @@ subroutine nmprca(mesh, modele, numedd         , numfix     , ds_material, carel
                   fonact, ds_print       , ds_measure , ds_algorom, sddisc     , numins    ,&
                   valinc, solalg         , matass     , maprec     , ds_contact,&
                   sddyna, meelem         , measse     , veelem     , veasse    ,&
-                  depest, ldccvg         , faccvg     , rescvg)
+                  depest, ldccvg         , faccvg     , rescvg     , condcvg)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -51,7 +51,7 @@ implicit none
 !
 integer :: fonact(*)
 character(len=8), intent(in) :: mesh
-integer :: numins, ldccvg, faccvg, rescvg
+integer :: numins, ldccvg, faccvg, rescvg, condcvg
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_Material), intent(in) :: ds_material
 character(len=19) :: maprec, matass
@@ -120,6 +120,10 @@ character(len=19) :: depest
 !                 1 : ECHEC DE L'INTEGRATION DE LA LDC
 !                 2 : ERREUR SUR LA NON VERIF. DE CRITERES PHYSIQUES
 !                 3 : SIZZ PAS NUL POUR C_PLAN DEBORST
+! OUT CONDCVG : CODE RETOUR DE LA CONDANSATION STATIQUE
+!                -1 : PAS DE CONDENSATION
+!                 0 : CAS DU FONCTIONNEMENT NORMAL
+!                 1 : ECHEC DE LA CONDENSATION
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -152,6 +156,7 @@ character(len=19) :: depest
     call dismoi('NB_EQUA', numedd, 'NUME_DDL', repi=neq)
     ldccvg = -1
     faccvg = -1
+    condcvg = -1
     l_rom = isfonc(fonact, 'ROM')
 !
 ! --- DECOMPACTION DES VARIABLES CHAPEAUX
@@ -167,7 +172,7 @@ character(len=19) :: depest
                 ds_print, ds_measure, ds_algorom, sddisc,&
                 sddyna     , numins  , fonact, ds_contact,&
                 valinc     , solalg  , hhoField, meelem, measse,&
-                maprec     , matass  , faccvg, ldccvg)
+                maprec     , matass  , faccvg, ldccvg, condcvg)
 !
 ! --- ERREUR SANS POSSIBILITE DE CONTINUER
 !
