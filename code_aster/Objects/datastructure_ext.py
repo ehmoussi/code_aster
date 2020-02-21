@@ -33,6 +33,7 @@ from ..Utilities import deprecated, import_object, injector
 class ExtendedDataStructure(object):
     """This class defines the base class of the DataStructures.
     """
+    # __getstate_manages_dict__ = 1
     cata_sdj = None
     ptr_class_sdj = None
     ptr_sdj = None
@@ -171,9 +172,10 @@ def get_depends(obj):
     Returns:
         list[*DataStructure*]: Number and list of dependencies.
     """
-    deps = obj.getDependencies()
-    state = [len(deps)] + deps
-    return state
+    return []
+    # deps = obj.getDependencies()
+    # state = [len(deps)] + deps
+    # return state
 
 def set_depends(obj, state):
     """Restore dependencies from internal state.
@@ -182,6 +184,7 @@ def set_depends(obj, state):
         obj (*DataStructure*): DataStructure object.
         state (list): Number and list of dependencies.
     """
-    nbdeps = state.pop(0)
-    for _ in range(nbdeps):
-        obj.addDependency(state.pop(0))
+    return
+    # nbdeps = state.pop(0)
+    # for _ in range(nbdeps):
+    #     obj.addDependency(state.pop(0))
