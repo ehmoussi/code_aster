@@ -180,14 +180,14 @@ ElementaryCharacteristicsPtr
 ResultClass::getElementaryCharacteristics( int rank ) {
     auto curIter = _mapElemCara.find( rank );
     if ( curIter == _mapElemCara.end() )
-        throw std::runtime_error( "Rank not find" );
+        throw std::runtime_error( "Rank not found" );
     return ( *curIter ).second;
 };
 
 ListOfLoadsPtr ResultClass::getListOfLoads( int rank ) {
     auto curIter = _mapLoads.find( rank );
     if ( curIter == _mapLoads.end() )
-        throw std::runtime_error( "Rank not find" );
+        throw std::runtime_error( "Rank not found" );
     return ( *curIter ).second;
 };
 
@@ -209,7 +209,7 @@ MaterialOnMeshPtr
 ResultClass::getMaterialOnMesh( int rank ) {
     auto curIter = _mapMaterial.find( rank );
     if ( curIter == _mapMaterial.end() )
-        throw std::runtime_error( "Rank not find" );
+        throw std::runtime_error( "Rank not found" );
     return ( *curIter ).second;
 };
 
@@ -241,7 +241,7 @@ ModelPtr ResultClass::getModel( int rank )
 {
     auto curIter = _mapModel.find( rank );
     if ( curIter == _mapModel.end() )
-        throw std::runtime_error( "Rank not find" );
+        throw std::runtime_error( "Rank not found" );
     return ( *curIter ).second;
 };
 

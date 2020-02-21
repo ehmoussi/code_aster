@@ -56,9 +56,9 @@ DataStructure::DataStructure( const std::string type, const JeveuxMemory memType
                                     nameLength, type, memType ) {}
 
 DataStructure::~DataStructure() {
-#ifdef _DEBUG_CXX
-    std::cout << "DEBUG: DataStructure.destr: " << this->getName() << std::endl;
-#endif
+// #ifdef _DEBUG_CXX
+//     std::cout << "DEBUG: DataStructure.destr: " << this->getName() << std::endl;
+// #endif
     std::string nameWithoutBlanks = trim( _name );
     // empty name or no memory manager : skip silently
     if ( nameWithoutBlanks == "" || get_sh_jeveux_status() != 1 )
