@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,6 @@ implicit none
 #include "asterfort/search_opt_coef.h"
 #include "asterfort/bussetta_algorithm.h"
 #include "Contact_type.h"
-!#include "asterfort/proscal.h"
 !
 type(NL_DS_Contact), intent(inout) :: ds_contact
 aster_logical, intent(in) :: l_frot_zone
@@ -69,13 +68,13 @@ aster_logical, intent(out) :: mmcvca
 !
 ! ROUTINE CONTACT (METHODE CONTINUE - CONTRAINTES ACTIVES)
 ! Cette routine va adapter le calcul des matrices de contact-frottement
-! suivant les cas de cyclage. 
-! Il permet également de faire des heuristiques particulières (cas du flip-flop) 
-! pour aider à la convergence 
-! sur les statuts de contact. Cete routine permet également 
-! de faire une recherche optimale du coefficient de 
+! suivant les cas de cyclage.
+! Il permet également de faire des heuristiques particulières (cas du flip-flop)
+! pour aider à la convergence
+! sur les statuts de contact. Cete routine permet également
+! de faire une recherche optimale du coefficient de
 ! C'est également dans cette routine qu'on s'assure de la convergence
-! de la boucle sur les statuts. 
+! de la boucle sur les statuts.
 !
 ! TRAITEMENT DES DIFFERENTS CAS
 !
@@ -101,30 +100,55 @@ aster_logical, intent(out) :: mmcvca
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: coef_cont_prev = 0.0, coef_frot_prev=0.0
-    real(kind=8) :: coef_cont_curr=0.0, coef_frot_curr=0.0
-    aster_logical:: coef_found=.false._1,treatment =.true._1
-    aster_logical:: l_coef_adap = .false._1,mmcvca_frot=.true._1
-    integer      ::  mode_cycl = 0
-    real(kind=8) :: pres_frot_prev(3)=0.0, pres_cont_prev=0.0
-    real(kind=8) :: dist_frot_prev(3)=0.0, dist_cont_prev=0.0
-    integer :: indi_cont_prev=0, indi_frot_prev=0,indi(2)=0,i_reso_cont=0
-    real(kind=8) :: coef_frot_mini=0.0, coef_frot_maxi=0.0
-    real(kind=8) :: alpha_cont_matr=0.0, alpha_cont_vect=0.0
-    real(kind=8) :: alpha_frot_matr=0.0, alpha_frot_vect=0.0
-    real(kind=8) :: coef_opt=0.0,pres_cont(2)=0.0, dist_cont(2)=0.0
-    real(kind=8) :: coef_bussetta=0.0, dist_max=0.0, coe1=0.
+    real(kind=8) :: coef_cont_prev, coef_frot_prev
+    real(kind=8) :: coef_cont_curr, coef_frot_curr
+    aster_logical:: coef_found,treatment
+    aster_logical:: l_coef_adap,mmcvca_frot
+    integer      ::  mode_cycl
+    real(kind=8) :: pres_frot_prev(3), pres_cont_prev
+    real(kind=8) :: dist_frot_prev(3), dist_cont_prev
+    integer :: indi_cont_prev, indi_frot_prev   ,indi(2),i_reso_cont
+    real(kind=8) :: coef_frot_mini, coef_frot_maxi
+    real(kind=8) :: alpha_cont_matr, alpha_cont_vect
+    real(kind=8) :: alpha_frot_matr, alpha_frot_vect
+    real(kind=8) :: coef_opt,pres_cont(2), dist_cont(2)
+    real(kind=8) :: coef_bussetta, dist_max, coe1
     integer :: n_cychis
-!    real(kind=8) :: coef_bussetta=0.0, dist_max, coef_tmp
     real(kind=8) ::  coef_tmp
     real(kind=8) :: bound_coef(2)
-    bound_coef(1)     = 1.d-8
-    bound_coef(2)     = 1.d8
-    mmcvca_frot=.true._1
-    
-
-
-
+!
+    bound_coef(1:2)  = [1.d-8, 1.d8]
+    mmcvca_frot=ASTER_TRUE
+    coef_cont_prev = 0.0
+    coef_frot_prev=0.0
+    coef_cont_curr=0.0
+    coef_frot_curr=0.0
+    coef_found=ASTER_FALSE
+    treatment =ASTER_TRUE
+    l_coef_adap = ASTER_FALSE
+    mmcvca_frot=ASTER_TRUE
+    mode_cycl = 0
+    pres_frot_prev(:)=0.0
+    pres_cont_prev=0.0
+    dist_frot_prev(:)=0.0
+    dist_cont_prev=0.0
+    indi_cont_prev=0
+    indi_frot_prev=0
+    indi(:)=0
+    i_reso_cont=0
+    coef_frot_mini=0.0
+    coef_frot_maxi=0.0
+    alpha_cont_matr=0.0
+    alpha_cont_vect=0.0
+    alpha_frot_matr=0.0
+    alpha_frot_vect=0.0
+    coef_opt=0.0
+    pres_cont(:)=0.0
+    dist_cont(:)=0.0
+    coef_bussetta=0.0
+    dist_max=0.0
+    coe1=0.d0
+!
     i_reso_cont  = cfdisi(ds_contact%sdcont_defi,'ALGO_RESO_CONT')
 !
 ! ---------------------------------------------------------------------
@@ -135,7 +159,7 @@ aster_logical, intent(out) :: mmcvca
     n_cychis  = ds_contact%n_cychis
     l_coef_adap = ((type_adap .eq. 1) .or. (type_adap .eq. 2) .or. &
                   (type_adap .eq. 5) .or. (type_adap .eq. 6 ) )
-    
+
 
 !----------------------TRAITEMENT CYCLAGE -------------------------
 ! Quand est-ce qu'on fait de l'adaptation des matrices de contact-frottement
@@ -144,7 +168,7 @@ aster_logical, intent(out) :: mmcvca
 ! CAS 1 : adaptation .eq. 'CYCLAGE' + Quelque soit ALGO_CONT/ALGO_FROT, type_adap=4
 ! CAS 2 : adaptation .eq. 'TOUT' + NEWT_FROT , type_adap=5
 ! CAS 3 : adaptation .eq. 'TOUT' + NEWT_FROT , ALGO_CONT = PENALISATION, type_adap=6
-! CAS 4 : adaptation .eq. 'TOUT' + POINT_FIXE_FROT OU PAS DE FROT + 
+! CAS 4 : adaptation .eq. 'TOUT' + POINT_FIXE_FROT OU PAS DE FROT +
 ! ALGO_CONT = PENALISATION, type_adap=7
 ! CAS 5 : tous les autres cas du moment ou adaptation .eq. 'TOUT' actif, type_adap=4
     treatment =  ((type_adap .eq. 4) .or. (type_adap .eq. 5) .or. &
@@ -156,13 +180,13 @@ aster_logical, intent(out) :: mmcvca
 !        Precaution :  "la maille maitre a changé : on ne fait pas de cyclage
         treatment =.false.
     endif
-    
+
 ! - Previous informations
     indi_cont_prev = nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1))
     coef_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2)
     pres_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3)
     dist_cont_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4)
-    
+
     indi_frot_prev = nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+5))
     coef_frot_prev = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+6)
     pres_frot_prev(1) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+7)
@@ -174,7 +198,7 @@ aster_logical, intent(out) :: mmcvca
 ! - Current max/min ratio
     coef_frot_mini = v_sdcont_cyccoe(6*(zone_index-1)+5)
     coef_frot_maxi = v_sdcont_cyccoe(6*(zone_index-1)+6)
-    
+
 
 
 !
@@ -185,7 +209,7 @@ aster_logical, intent(out) :: mmcvca
 
     call mm_cycl_detect(ds_contact,  l_frot_zone, i_cont_poin,&
                          coef_cont_prev,coef_frot_prev, pres_cont_prev,&
-                         dist_cont_prev, pres_frot_curr,pres_frot_prev ,& 
+                         dist_cont_prev, pres_frot_curr,pres_frot_prev ,&
                          indi_frot_prev, dist_frot_prev, indi_cont_eval,&
                          indi_frot_eval, indi_cont_prev, dist_cont_curr, pres_cont_curr,&
                          dist_frot_curr,alpha_cont_matr, alpha_cont_vect,&
@@ -199,7 +223,7 @@ aster_logical, intent(out) :: mmcvca
 ! ----------------------------------------------------------------------
 !
 
-! L'ordre de traitement est le suivant : 
+! L'ordre de traitement est le suivant :
 ! Step 1. Traitement de l'adaptation des coefficients
 ! Step 2. Traitement spécial du mot-clef GLIISIERE=OUI, label 236
 ! Step 3. Traitement du FLIP-FLOP : POINT_FIXE SUR LE CONTACT
@@ -228,13 +252,13 @@ aster_logical, intent(out) :: mmcvca
     if (coef_frot_curr .le. coef_frot_mini) coef_frot_mini = coef_frot_curr
     v_sdcont_cyccoe(6*(zone_index-1)+5) = coef_frot_mini
     v_sdcont_cyccoe(6*(zone_index-1)+6) = coef_frot_maxi
-    
+
 !
 ! Step 2. Traitement spécial du mot-clef GLIISIERE=OUI, label 236
 !
-    if (l_glis_init) then 
+    if (l_glis_init) then
         indi_cont_curr = 1
-        mmcvca = .true. 
+        mmcvca = .true.
         goto 236
     endif
 
@@ -251,7 +275,7 @@ aster_logical, intent(out) :: mmcvca
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+10) = dist_frot_curr(1)
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+11) = dist_frot_curr(2)
     v_sdcont_cychis(n_cychis*(i_cont_poin-1)+12) = dist_frot_curr(3)
-    
+
 
 
 !
@@ -272,7 +296,7 @@ aster_logical, intent(out) :: mmcvca
                 if (ds_contact%resi_pressure .lt. 1.d-4*ds_contact%cont_pressure) &
                 mmcvca = .true.
                 ctcsta = 0
-            else 
+            else
             !ADAPTATION DE MATRICES, VECTEURS ET COEFF POUR LES TE :
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.9
@@ -287,35 +311,35 @@ aster_logical, intent(out) :: mmcvca
        pres_cont(2) = pres_cont_prev
        dist_cont(1) = dist_cont_curr
        dist_cont(2) = dist_cont_prev
-       
+
        call search_opt_coef(bound_coef, &
                                        indi, pres_cont, dist_cont, &
                                        coef_opt,coef_found)
        if (coef_found) then
            if (i_reso_cont .eq. ALGO_NEWT) then
                indi_cont_curr =  indi(1)
-               indi_cont_prev =  indi(2)  
+               indi_cont_prev =  indi(2)
                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
-!                mmcvca = .true. 
-!                goto 236 
+!                mmcvca = .true.
+!                goto 236
            endif
            dist_cont_curr =  dist_cont(1)
            dist_cont_prev =  dist_cont(2)
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)    = coef_opt
-           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_opt       
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+2) = coef_opt
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
            v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
-           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev          
+           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev
        endif
-         
+
     endif
 
 ! CYCLAGE FROTTEMENT    : ADHE_GLIS
-                
+
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
-       (v_sdcont_cyceta(4*(i_cont_poin-1)+2) .ge. 10 ) .and. treatment   ) then   
+       (v_sdcont_cyceta(4*(i_cont_poin-1)+2) .ge. 10 ) .and. treatment   ) then
         ! Cyclage ADHE_GLIS purement et simplement debranchee :
         ! Se referer a la version 14.1 mmalgo, pour rebranchement si besoin
         ! test sur ssnv128p : on passe de 10 iterations a 182 itertions
@@ -324,10 +348,10 @@ aster_logical, intent(out) :: mmcvca
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55) = 1.0
 !         write (6,*) "Cyclage GLI_ADHE_GLIS"
     endif
-    
+
 ! CYCLAGE FROTTEMENT: GLIAV_AR
     if ((ds_contact%iteration_newton .ge. 3 ) .and. &
-       (v_sdcont_cyceta(4*(i_cont_poin-1)+3) .ge. 10 )  .and. treatment  ) then   
+       (v_sdcont_cyceta(4*(i_cont_poin-1)+3) .ge. 10 )  .and. treatment  ) then
         ! Cyclage GLIAV_AR  : comme conseille dans un cours de IPSI 2004
         ! Statut de frottement mis à adherence
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5) = 1
@@ -339,34 +363,34 @@ aster_logical, intent(out) :: mmcvca
 
 !
 !  Algorithm of Bussetta
-!  
+!
 
     if ((type_adap .eq. 2) .or. (type_adap .eq. 3) .or. &
         (type_adap .eq. 6) .or. (type_adap .eq. 7) .or. &
         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51) .eq.  4.0) then
-        
+
             coef_bussetta = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
             coef_tmp = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2)
-            
+
             if (indi_cont_curr .eq. 1 .and. l_pena_cont) then
-                if (nint(vale_pene) .eq. -1) then 
-                ! Mode relatif 
+                if (nint(vale_pene) .eq. -1) then
+                ! Mode relatif
                     dist_max = 1.d-2*ds_contact%arete_min
                 else
                 ! Mode absolu
                     dist_max = vale_pene
                 endif
-            
+
 !           mmcvca = mmcvca .and. (ctcsta .eq. 0)
 !           call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
 !           v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2) = max(coef_bussetta,&
 !                                                   v_sdcont_cychis(n_cychis*(i_cont_poin-1)+2))
             !endif
-                                                    
-            ! Traitement de fortes interpenetrations         
-            !if (indi_cont_curr .eq. 1 .and. l_pena_cont) then            
-                    
-                if (dist_cont_curr .gt. dist_max) then 
+
+            ! Traitement de fortes interpenetrations
+            !if (indi_cont_curr .eq. 1 .and. l_pena_cont) then
+
+                if (dist_cont_curr .gt. dist_max) then
                     coef_tmp =coef_tmp*(abs(dist_cont_curr)/dist_max)
                     call bussetta_algorithm(dist_cont_curr, dist_cont_prev,dist_max, coef_bussetta)
                     if (coef_bussetta .lt. coef_tmp) coef_bussetta = coef_tmp
@@ -386,9 +410,9 @@ aster_logical, intent(out) :: mmcvca
             endif
 !       ! cas ALGO_CONT=PENALISATION, ALGO_FROT=STANDARD
 !       ! On fixe un statut adherent en cas de fortes interpenetration
-!       if ((.not. l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then 
+!       if ((.not. l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then
 !           if ((dist_cont_curr .gt. dist_max) .and. (indi_frot_curr .eq. 0.)&
-!                .and. (norm2(dist_frot_curr) .lt. 0.01*dist_max)) then 
+!                .and. (norm2(dist_frot_curr) .lt. 0.01*dist_max)) then
 !               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 1
 !               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
 !               1.d1*ds_contact%arete_max/ds_contact%arete_min*coef_frot_curr
@@ -396,28 +420,28 @@ aster_logical, intent(out) :: mmcvca
 !       endif
 !        ! cas ALGO_CONT=PENALISATION, ALGO_FROT=PENALISATION
 !        ! On fixe un statut glissement en cas de fortes interpenetration
-!       if ((l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then 
+!       if ((l_pena_frot .and. l_pena_cont ).and. indi_cont_curr .eq. 1) then
 !           if ((dist_cont_curr .lt. dist_max) .and. (indi_frot_curr .eq. 0.)&
 !                .and. (norm2(dist_frot_curr) .lt. 1.d-6*dist_max) .and. &
-!                (indi_frot_curr .eq. indi_frot_prev )) then 
+!                (indi_frot_curr .eq. indi_frot_prev )) then
 !               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)  = 0
 !               v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
 !               1.d-1*ds_contact%arete_min/ds_contact%arete_max*coef_frot_curr
 !           endif
 !       endif
-       
+
     endif
 
 
 
 !        ! cas ALGO_CONT=STANDARD, ALGO_FROT=PENALISATION
 !        ! On fixe un statut glissement en cas de fortes interpenetration
-    if ((l_pena_frot .and. (.not. l_pena_cont) ).and. indi_cont_curr .eq. 1) then 
-        if ((norm2(dist_frot_curr) .gt. 1.d-6*glis_maxi)  ) then 
+    if ((l_pena_frot .and. (.not. l_pena_cont) ).and. indi_cont_curr .eq. 1) then
+        if ((norm2(dist_frot_curr) .gt. 1.d-6*glis_maxi)  ) then
             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
                1.d1*ds_contact%arete_max/ds_contact%arete_min*1/glis_maxi
-        endif 
-           
+        endif
+
     endif
 
 
@@ -429,11 +453,11 @@ aster_logical, intent(out) :: mmcvca
 !
     mmcvca =  (indi_cont_prev .eq. indi_cont_curr) .and. mmcvca_frot
     if (.not. mmcvca .and. treatment) then
-!       On Bascule en mode penalise automatiquement jusqu'à convergence puis 
+!       On Bascule en mode penalise automatiquement jusqu'à convergence puis
 !       On revient en standard quand le statut de contact se stabilise : ssnv128z
         mode_cycl = 1
         if (mode_cycl .eq. 1 .and. &
-            ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then  
+            ds_contact%iteration_newton .gt. ds_contact%it_cycl_maxi+3 ) then
             ! On fait la projection sur le cône négatif des valeurs admissibles
               if (dist_cont_curr .gt. 1.d-6 )  dist_cont_curr = 0.0
               if (pres_cont_curr .gt. 1.d-6 )  pres_cont_curr = -1.d-15
@@ -444,11 +468,11 @@ aster_logical, intent(out) :: mmcvca
                  call mmstac(dist_cont_prev, pres_cont_prev,coe1,indi_cont_prev)
                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+1)    = indi_cont_curr
                  v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1) = indi_cont_prev
-             endif       
+             endif
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+3)    = pres_cont_curr
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3) = pres_cont_prev
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+4)    = dist_cont_curr
-             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev      
+             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4) = dist_cont_prev
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+57) = 1.0
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59) = 0.99
              v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) = 1.0
@@ -466,7 +490,7 @@ aster_logical, intent(out) :: mmcvca
                 mmcvca =  indi_cont_prev .eq. indi_cont_curr
         endif
     endif
-    
+
     if (.not. mmcvca ) ctcsta = ctcsta+1
     mmcvca = (mmcvca .and. (ctcsta .eq. 0))
 ! Ne pas effracer ce comment &  .or. (ds_contact%resi_pressure .lt. 1.d-6*ds_contact%cont_pressure))

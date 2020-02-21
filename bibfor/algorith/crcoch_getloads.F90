@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,8 @@ character(len=8), pointer :: v_ondp(:)
     integer :: iocc, nocc, iret, i_neum_lapl
     integer :: i_load, i_load_dble
     integer :: nb_info_type
-    character(len=8) :: load_name, load_type, load_func, const_func = '&&NMDOME'
+    character(len=8) :: load_name, load_type, load_func
+    character(len=8), parameter :: const_func = '&&NMDOME'
     character(len=19) :: ligrch, lchin, nomf19
     character(len=8), pointer :: v_list_dble(:) => null()
     character(len=8), pointer :: v_list_load(:) => null()

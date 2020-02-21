@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -109,8 +109,8 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     character(len=19) :: chdepd
     aster_logical :: l_glis
     aster_logical :: l_glis_init, l_veri, l_exis_glis, loop_cont_conv, l_loop_cont
-    aster_logical :: l_frot_zone=.false._1, l_pena_frot=.false._1, l_frot=.false._1
-    aster_logical :: l_pena_cont=.false._1
+    aster_logical :: l_frot_zone, l_pena_frot, l_frot
+    aster_logical :: l_pena_cont
     integer :: loop_geom_count, loop_fric_count, loop_cont_count
     integer :: type_adap
     character(len=24) :: sdcont_cychis, sdcont_cyccoe, sdcont_cyceta
@@ -121,9 +121,9 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
     real(kind=8), pointer :: v_sdcont_jsupco(:) => null()
     real(kind=8), pointer :: v_sdcont_apjeu(:) => null()
-    real(kind=8)  :: vale_pene = 0.0, glis_maxi = 0., resi_cont=-1.0
-    real(kind=8)  :: sum_cont_press=-1.0,resi_press_curr=1.D6
-    real(kind=8)  :: coor_escl_curr(3) = 0.0,coor_proj_curr(3) = 0.0
+    real(kind=8)  :: vale_pene, glis_maxi, resi_cont
+    real(kind=8)  :: sum_cont_press,resi_press_curr
+    real(kind=8)  :: coor_escl_curr(3),coor_proj_curr(3)
     real(kind=8)  :: wpg_old
     aster_logical :: l_coef_adap
     character(len=8) :: iptxt
@@ -140,11 +140,22 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! - Initializations
 !
-    loop_cont_conv = .true.
+    l_frot_zone=ASTER_FALSE
+    l_pena_frot=ASTER_FALSE
+    l_frot=ASTER_FALSE
+    l_pena_cont=ASTER_FALSE
+    loop_cont_conv = ASTER_TRUE
     loop_cont_vali = 0
     ds_contact%critere_geom = 0.0
     resi_geom = 0.0
     n_cychis  = ds_contact%n_cychis
+    vale_pene = 0.0
+    glis_maxi = 0.d0
+    resi_cont=-1.0
+    sum_cont_press=-1.0
+    resi_press_curr=1.D6
+    coor_escl_curr(:) = 0.0
+    coor_proj_curr(:) = 0.0
 !
 ! - Parameters
 !
@@ -191,7 +202,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     cnscon = '&&MMMBCA.CNSCON'
     call mmfield_prep(disp_curr, cnscon,&
-                      l_sort_ = .true._1, nb_cmp_ = 1, list_cmp_ = ['LAGS_C  '])
+                      l_sort_ = ASTER_TRUE, nb_cmp_ = 1, list_cmp_ = ['LAGS_C  '])
 !
 ! - Prepare displacement field to get friction Lagrangien multiplier
 !
@@ -200,13 +211,13 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     cnsfr2 = '&&MMMBCA.CNSFR2'
     if (l_frot) then
         call mmfield_prep(disp_cumu_inst, cnsfr1,&
-                          l_sort_ = .true._1, nb_cmp_ = 1, list_cmp_ = ['LAGS_F1 '])
+                          l_sort_ = ASTER_TRUE, nb_cmp_ = 1, list_cmp_ = ['LAGS_F1 '])
         if (model_ndim .eq. 3) then
             call mmfield_prep(disp_cumu_inst, cnsfr2,&
-                              l_sort_ = .true._1, nb_cmp_ = 1, list_cmp_ = ['LAGS_F2 '])
+                              l_sort_ = ASTER_TRUE, nb_cmp_ = 1, list_cmp_ = ['LAGS_F2 '])
         endif
         call mmfield_prep(oldgeo, chdepd,&
-                          l_update_ = .true._1, field_update_ = disp_cumu_inst)
+                          l_update_ = ASTER_TRUE, field_update_ = disp_cumu_inst)
     endif
 !
 ! - Loop on contact zones
@@ -269,7 +280,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
                 if (model_ndim .eq. 3) then
                     call mmextm(ds_contact%sdcont_defi, cnsfr2, elem_slav_indx, lagr_fro2_node)
                 endif
-            endif       
+            endif
 !
 ! --------- Loop on integration points
 !
@@ -279,7 +290,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
                 elem_mast_nume = nint(v_sdcont_tabfin(ztabf*(i_cont_poin-1)+3))
 !
-! ------------- Get coordinates of the contact point 
+! ------------- Get coordinates of the contact point
 !
                 ksipc1 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+4)
                 ksipc2 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+5)
@@ -287,7 +298,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
                 ksipc2_old = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+20)
                 wpg_old    = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+74)
 !
-! ------------- Get coordinates of the projection of contact point 
+! ------------- Get coordinates of the projection of contact point
 !
                 ksipr1 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+6)
                 ksipr2 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+7)
@@ -326,17 +337,17 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66)
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+75) =&
                 wpg_old
-                
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+13) = tau1(1) 
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+14) = tau1(2) 
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+15) = tau1(3) 
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+16) = tau2(1) 
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+17) = tau2(2) 
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+18) = tau2(3) 
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+19) = ksipc1 
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+20) = ksipc2 
+
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+13) = tau1(1)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+14) = tau1(2)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+15) = tau1(3)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+16) = tau2(1)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+17) = tau2(2)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+18) = tau2(3)
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+19) = ksipc1
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+20) = ksipc2
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+22) = ksipr1
-                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+23) = ksipr2 
+                v_sdcont_cychis(n_cychis*(i_cont_poin-1)+23) = ksipr2
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24) = elem_mast_nume
 
 !
@@ -360,7 +371,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+65) = coor_proj_curr(2)
                 v_sdcont_cychis(n_cychis*(i_cont_poin-1)+66) = coor_proj_curr(3)
 !
-                if (l_granglis) then 
+                if (l_granglis) then
                      v_sdcont_cychis(n_cychis*(i_cont_poin-1)+73) = 1
                 else
                      v_sdcont_cychis(n_cychis*(i_cont_poin-1)+73) = 0
@@ -433,14 +444,14 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
                                       -coor_proj_curr(3))**2 &
                                     ))
                     enddo
-                    if (ds_contact%arete_max .gt. 1.d-15 ) then 
+                    if (ds_contact%arete_max .gt. 1.d-15 ) then
                         resi_geom = resi_geom/ds_contact%arete_max
                     else
                         resi_geom = resi_geom
                     endif
 
                     if (resi_geom .gt. ds_contact%critere_geom .and.&
-                        ds_contact%iteration_newton .ge. 2) then 
+                        ds_contact%iteration_newton .ge. 2) then
                         ds_contact%critere_geom = resi_geom
                         call codent(i_poin_elem, 'G', iptxt)
                         ds_contact%crit_geom_noeu = 'NPOINCO'//iptxt//' '
@@ -477,7 +488,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     resi_press_curr = abs(ds_contact%cont_pressure-abs(sum_cont_press))
     if  (resi_press_curr .lt. resi_cont*abs(sum_cont_press) .and. .not. loop_cont_conv  &
          .and. .not. l_loop_cont ) then
-         loop_cont_conv = .true.
+         loop_cont_conv = ASTER_TRUE
     endif
     ds_contact%resi_press_glob = resi_press_curr
     ds_contact%cont_pressure = abs(sum_cont_press)

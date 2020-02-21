@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ implicit none
     integer :: freqpr, last_prperc, perc, nbpheq
     aster_logical :: newcal, calgen
     aster_logical :: l_damp, l_damp_modal, l_impe
-    real(kind=8) :: depi, freq, omega, omeg2, fmin, fmax
+    real(kind=8) :: depi, freq, omega, omeg2, fmin, fmax, last_freq
     real(kind=8) :: rval, coef_vale(6), tps1(4), rtab(2)
     real(kind=8) :: fcal_min, fcal_max, epsi
     complex(kind=8) :: cval, czero
@@ -407,6 +407,8 @@ implicit none
         if (freq.lt.fcal_min) fcal_min = freq
         if (freq.gt.fcal_max) fcal_max = freq
     enddo
+
+    last_freq = zr(lfreq-1+nbfreq)
 !
 ! --- IMPRESSIONS RECAPITULATIVES POUR L'UTILISATEUR
     print_type             = 'PHYSique'
@@ -526,8 +528,8 @@ implicit none
         perc = int(100.d0*(real(ifreq)/real(nbfreq)))
         if ((perc.ne.last_prperc).or.(ifreq.eq.1) )then
             if ((mod(perc,freqpr).eq.0).or.(ifreq.eq.1)) then
-                call utmess('I', 'DYNAMIQUE_95', ni=2, vali=[perc, ifreq],&
-                                                 sr=freq)
+                call utmess('I', 'PROGRESS_2', ni=2, vali=[perc, ifreq], nr=2,&
+                            valr=[freq, last_freq])
                 last_prperc = perc
             end if
         end if

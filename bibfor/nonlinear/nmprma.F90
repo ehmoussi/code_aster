@@ -148,7 +148,7 @@ integer :: faccvg, ldccvg
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
     aster_logical :: l_contact_adapt,l_cont_cont
-    real(kind=8) ::  minmat=0.0, maxmat=0.0,exponent_val=0.0
+    real(kind=8) ::  minmat, maxmat,exponent_val
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -297,6 +297,9 @@ integer :: faccvg, ldccvg
     endif
     l_cont_cont         = isfonc(fonact,'CONT_CONTINU')
     if (l_cont_cont) then
+        minmat=0.0
+        maxmat=0.0
+        exponent_val=0.0
     !   -- Avant la factorisation et pour le cas ou il y a du contact continu avec adaptation de
     !      coefficient
     !   -- On cherche le coefficient optimal pour eviter une possible singularite de matrice

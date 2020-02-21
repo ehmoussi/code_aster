@@ -366,7 +366,7 @@ Solveur MUMPS :
 Solveur MUMPS :
   Votre exécutable Aster embarque la version de MUMPS: %(k1)s
   Les seules versions de MUMPS supportée dans Code_Aster sont:
-            les 5.0.2/5.1.0 et les 5.0.2consortium/5.1.0consortium (usage EDF seulement)
+     %(k1)s, %(k2)s, %(k3)s et %(k4)s.
 
 Conseils :
   Télécharger, installer et relier à Code_Aster une version de MUMPS adéquate.

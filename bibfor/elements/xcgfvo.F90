@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,13 +47,15 @@ subroutine xcgfvo(option, ndim, nnop, fno)
 !
 !
     integer :: igeom, imate, iforc, iforf, itemps, ipesa, irota
-    integer :: iret, ino, j, kk, mxstac
+    integer :: iret, ino, j, kk
+    integer, parameter :: mxstac=1000
     aster_logical :: fonc
-    real(kind=8) :: valpar(4), rbid=0.d0, om, omo, val(1), rhocst
+    real(kind=8) :: valpar(4), rbid, om, omo, val(1), rhocst
     integer :: icodre(1)
     character(len=8) :: nompar(4)
     character(len=16) :: phenom
-    parameter   (mxstac=1000)
+!
+    rbid=0.d0
 !
 !     VERIF QUE LES TABLEAUX LOCAUX DYNAMIQUES NE SONT PAS TROP GRANDS
 !     (VOIR CRS 1404)
@@ -126,12 +128,12 @@ subroutine xcgfvo(option, ndim, nnop, fno)
 !
     if ((ipesa.ne.0) .or. (irota.ne.0)) then
 !
-!       on est sur de la presence de RHO suite a l'appel a cgverho 
+!       on est sur de la presence de RHO suite a l'appel a cgverho
         call rccoma(zi(imate), 'ELAS', 1, phenom, icodre(1))
         call rcvalb('RIGI', 1, 1, '+', zi(imate),&
                     ' ', phenom, 1, ' ', [rbid],&
                     1, 'RHO', val, icodre(1), 1)
-        rhocst=val(1)            
+        rhocst=val(1)
 !
         if (ipesa .ne. 0) then
             do 60 ino = 1, nnop

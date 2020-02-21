@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 ! OPTION=31 IDEM MAIS ON CREE UNE OCCURENCE MUMPS TEMPORAIRE. OPERATION
 !    UN PEU COUTEUSE A NE FAIRE QU'UNE FOIS PAR OPERATEUR(SD_SOLVEUR).
 ! DANS CES DEUX MODES, ON CONTROLE LE CARACTERE LICITE DU NUMERO DE
-! VERSIONS: 5.1.1/5.1.2(consortium) SINON UTMESS_F.
+! VERSIONS: CF. VERSIONS PERMISES DANS ASTERF_MUMPS SINON UTMESS_F.
 !
 ! OPTION=4 RECUPERE LE DETERMINANT ET ON LE STOCKE DS L'OBJET JEVEUX
 !          '&&AMUMP.DETERMINANT' (V V R DIM=3)
@@ -94,7 +94,8 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
     type(zmumps_struc), pointer :: zmpsk => null()
     real(kind=8) :: rval(3), rval1, rval2, rval3, rval2b, rval3b, rinf12
     real(kind=8) :: rinf13
-    integer :: info16, info26, vali(10), icoefm, icn22, icn23, rang, n, iaux1
+    integer :: infog16, infog26, infog36, infog38, icntl35
+    integer :: maxmem_ic, maxmem_ooc, vali(10), icoefm, icn22, icn23, rang, n, iaux1
     integer :: info3, nbproc, ifm, niv, ibid, ipiv, info28, info12, i
     integer :: tmax, tmaxb, ltot, iret, isizemu, nsizemu, nsizema, execmu
     integer :: info34, icnt33
@@ -105,6 +106,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
     character(len=2) :: fstring
     character(len=8) :: k8tab(3)
     character(len=10) :: strpid
+    character(len=19) :: valk(4)
     character(len=24) :: kpiv, ksizemu
     character(len=80) :: nvers
 !
@@ -208,8 +210,8 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 ! ---   INITS GENERALES
         lpb1=.false.
         lpbmem=.false.
-        info16=-9999
-        info26=-9999
+        maxmem_ic=-9999
+        maxmem_ooc=-9999
         info3=-9999
         tmax=-9999
         tmaxb=-9999
@@ -221,25 +223,59 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
         rval3=-9999.0
         rval2b=-9999.0
         rval3b=-9999.0
+!
 ! ---   INITS. PROPRE A L'OPTION
+!       On récupère dans la structure de données MUMPS
+!       quelques paramètres : 
+!       - icntl(35) => low rank/full rank
+!       - estimations MUMPS de la mémoire nécessaire, 
+!         qui sont stockées dans des cases différentes
+!         du vecteur infog selon que l'on est en full rank
+!         ou bien en low rank
         select case (type)
             case ('S')
-            info16=smpsk%infog(16)
-            info26=smpsk%infog(26)
+            infog16=smpsk%infog(16)
+            infog26=smpsk%infog(26)
+            infog36=smpsk%infog(36)
+            infog38=smpsk%infog(38)
+            icntl35=smpsk%icntl(35)
             info3=smpsk%infog(3)*4
             case ('C')
-            info16=cmpsk%infog(16)
-            info26=cmpsk%infog(26)
+            infog16=cmpsk%infog(16)
+            infog26=cmpsk%infog(26)
+            infog36=cmpsk%infog(36)
+            infog38=cmpsk%infog(38)
+            icntl35=cmpsk%icntl(35)
             info3=cmpsk%infog(3)*8
             case ('D')
-            info16=dmpsk%infog(16)
-            info26=dmpsk%infog(26)
+            infog16=dmpsk%infog(16)
+            infog26=dmpsk%infog(26)
+            infog36=dmpsk%infog(36)
+            infog38=dmpsk%infog(38)
+            icntl35=dmpsk%icntl(35)
             info3=dmpsk%infog(3)*8
             case ('Z')
-            info16=zmpsk%infog(16)
-            info26=zmpsk%infog(26)
+            infog16=zmpsk%infog(16)
+            infog26=zmpsk%infog(26)
+            infog36=zmpsk%infog(36)
+            infog38=zmpsk%infog(38)
+            icntl35=zmpsk%icntl(35)
             info3=zmpsk%infog(3)*16
         end select
+!
+        select case (icntl35)
+!       Full rank
+        case (0,3)
+          maxmem_ic=infog16
+          maxmem_ooc=infog26
+!       Low rank
+        case (1,2)
+          maxmem_ic=infog36
+          maxmem_ooc=infog38
+        case default 
+          ASSERT(.false.)
+        end select 
+!
         ASSERT(nbproc>0)
         if (info3 .lt. 0) then
             info3=-info3/nbproc
@@ -269,9 +305,9 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
         if (n .lt. 100) icoefm=50
 !
 ! ---   CONSO MUMPS  + VERIFICATION DE SA VALIDITE
-        info16=int(info16*((icoefm+100)*1.d0/100.d0))
-        info26=int(info26*((icoefm+100)*1.d0/100.d0))
-        if ((info16.lt.0) .or. (info26.lt.0) .or. (nsizema.lt.0)) then
+        maxmem_ic=int(maxmem_ic*((icoefm+100)*1.d0/100.d0))
+        maxmem_ooc=int(maxmem_ooc*((icoefm+100)*1.d0/100.d0))
+        if ((maxmem_ic.lt.0) .or. (maxmem_ooc.lt.0) .or. (nsizema.lt.0)) then
             lpbmem=.true.
             call utmess('A', 'FACTOR_83')
             if (usersm(1:4) .eq. 'AUTO') then
@@ -301,8 +337,8 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
             tmax=max(int(0.95*(rval2-rval3)/nbfact),1)
         endif
 !
-        if (niv .ge. 2) write(ifm, *)'<AMUMPU> RVAL1/2/3, INFO16/26, NSIZEMA, TMAX ', rval1,&
-                        rval2, rval3, info16, info26, nsizema, tmax
+        if (niv .ge. 2) write(ifm, *)'<AMUMPU> RVAL1/2/3, maxmem_ic/26, NSIZEMA, TMAX ', rval1,&
+                        rval2, rval3, maxmem_ic, maxmem_ooc, nsizema, tmax
 !
         select case (usersm)
             case('IN_CORE')
@@ -311,8 +347,8 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 ! --------------
             icn22=0
             icn23=0
-            if ((tmax.lt.info16) .and. (.not.lpbmem)) then
-                vali(1)=info16
+            if ((tmax.lt.maxmem_ic) .and. (.not.lpbmem)) then
+                vali(1)=maxmem_ic
                 vali(2)=tmax
                 vali(3)=nsizema+execmu
                 vali(4)=nbfact
@@ -324,8 +360,8 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 !-------------------
             icn22=1
             icn23=0
-            if ((tmax.lt.info26) .and. (.not.lpbmem)) then
-                vali(1)=info26
+            if ((tmax.lt.maxmem_ooc) .and. (.not.lpbmem)) then
+                vali(1)=maxmem_ooc
                 vali(2)=tmax
                 vali(3)=nsizema+execmu
                 vali(4)=nbfact
@@ -336,11 +372,11 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 ! ----- STRATEGIE DECIDEE EN FONCTION DES CAPACITES MACHINES ET DES
 ! ----- CONSOMMATIONS REQUISES PAR MUMPS
 ! -----------------------------------------------------------------
-            ASSERT((tmax.gt.0).and.(.not.lpbmem).and.(info16.gt.0))
-            ASSERT((info26.gt.0).and.(nsizema.gt.0))
-            if (tmax .ge. info16) then
+            ASSERT((tmax.gt.0).and.(.not.lpbmem).and.(maxmem_ic.ge.0))
+            ASSERT((maxmem_ooc.ge.0).and.(nsizema.gt.0))
+            if (tmax .ge. maxmem_ic) then
                 icn22=0
-                icn23=max(min(3*info16,tmax),1)
+                icn23=max(min(3*maxmem_ic,tmax),1)
             else
                 call jjldyn(0, -1, ltot)
                 k8tab(1)='MEM_TOTA'
@@ -362,19 +398,19 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
                         call utmess('I', 'FACTOR_51', si=vali(1))
                     endif
                 endif
-                if ((tmaxb.gt.info16) .and. (.not.lpbmem)) then
+                if ((tmaxb.gt.maxmem_ic) .and. (.not.lpbmem)) then
                     icn22=0
-                    icn23=max(min(3*info16,tmaxb),1)
-                else if ((tmaxb.gt.info26).and.(tmaxb.lt.info16).and.(.not.lpbmem)) then
+                    icn23=max(min(3*maxmem_ic,tmaxb),1)
+                else if ((tmaxb.gt.maxmem_ooc).and.(tmaxb.lt.maxmem_ic).and.(.not.lpbmem)) then
                     icn22=1
-                    icn23=max(min(3*info26,tmaxb),1)
+                    icn23=max(min(3*maxmem_ooc,tmaxb),1)
                 else
                     icn22=1
                     icn23=0
                     vali(1)=tmax
                     vali(2)=tmaxb
-                    vali(3)=info16
-                    vali(4)=info26
+                    vali(3)=maxmem_ic
+                    vali(4)=maxmem_ooc
                     vali(5)=nsizema+execmu
                     vali(6)=nbfact
                     if (.not.lpbmem) then
@@ -399,8 +435,8 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
             iaux1=int(nbfact*rval1+rval2)
             vali(1)=n
             vali(2)=max(iaux1,1)
-            vali(3)=max((info16+nsizema)*nbfact+execmu,1)
-            vali(4)=max((info26+nsizema)*nbfact+execmu,1)
+            vali(3)=max((maxmem_ic+nsizema)*nbfact+execmu,1)
+            vali(4)=max((maxmem_ooc+nsizema)*nbfact+execmu,1)
             vali(5)=max(info3*nbfact,1)
             vali(6)=vali(2)+vali(3)
             vali(7)=vali(2)+vali(4)
@@ -462,7 +498,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
             endif
             write(strpid,'('//fstring//')')pid
 !          str=""
-!          str="/proc/"//trim(adjustl(strpid))//"/status"
+!          str="/proc/"//trim(adjustl(strpid))//"/status"info
 !          CALL SYSTEM("cat "//str//" > fort.11")
 !          CALL SYSTEM('free -m >> fort.11')
             write(ifm,*)
@@ -470,7 +506,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
             write(ifm,*)'<AMUMPU> GESTION MEMOIRE USERSM/ICN22/ICN23/NBFACT: ',&
      &      usersm,icn22,icn23,nbfact
             write(ifm,*)'<AMUMPU> CONSO MUMPS EXEC/OBJET_AIRNJCN/IC/OOC ',&
-     &                 execmu,nsizema,info16,info26
+     &                 execmu,nsizema,maxmem_ic,maxmem_ooc
             write(ifm,*)'<AMUMPU> 1ERE ESTIMATION VMSIZE/MEM_TOTA/TMAX: ',&
      &                 rval3,rval2,tmax
             write(ifm,*)'<AMUMPU> 2NDE ESTIMATION VMSIZE/MEM_TOTA/TMAX: ',&
@@ -564,10 +600,15 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 !
         kvers=''
         kvers=trim(adjustl(nvers))
+        valk(1)=vmump1
+        valk(2)=vmump2
+        valk(3)=vmump3
+        valk(4)=vmump4
         select case (kvers)
-        case('5.1.1','5.1.1consortium','5.1.2','5.1.2consortium')
+        case(vmump1,vmump2,vmump3,vmump4)
+! OK bonne version
         case default
-            call utmess('F', 'FACTOR_72', sk=kvers)
+          call utmess('F', 'FACTOR_72', sk=kvers, valk=valk)
         end select
 !
 !       ------------------------------------------------

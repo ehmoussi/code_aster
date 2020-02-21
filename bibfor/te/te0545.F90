@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,17 +60,20 @@ character(len=16), intent(in) :: option, nomte
 !
     character(len=8) :: typmod(2)
     character(len=16) :: defo_comp
-    aster_logical :: resi, rigi, axi,matsym=ASTER_FALSE
+    aster_logical :: resi, rigi, axi,matsym
     integer :: nnoQ, nnoL, npg, ndim, nddl, neps, lgpg
     integer :: jv_poids, jv_vfQ, jv_dfdeQ, jv_vfL, jv_dfdeL
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
     integer :: ivectu, icontp, ivarip, imatuu, icarcr, ivarix, igeom, icoret
     integer :: iret, nnos, jv_ganoQ, jv_ganoL, itab(7)
     integer :: i
-    real(kind=8) :: xyz(3)=0.d0, angmas(7)
+    real(kind=8) :: xyz(3), angmas(7)
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
 !
 ! --------------------------------------------------------------------------------------------------
+!
+    matsym=ASTER_FALSE
+    xyz(:)=0.d0
 !
     resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
     rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,8 +44,8 @@ subroutine detlsp(matasz, solvez)
     character(len=19) :: solveu, matass
     character(len=24) :: metres, precon, solvbd, usersmbd
     integer ::  iret, pcpivbd
-    real(kind=8) :: r8bid=0.d0
-    complex(kind=8) :: c16bid=dcmplx(0.d0,0.d0)
+    real(kind=8) :: r8bid
+    complex(kind=8) :: c16bid
     character(len=24), pointer :: slvk(:) => null()
 !
 ! ----------------------------------------------------------------------
@@ -54,6 +54,9 @@ subroutine detlsp(matasz, solvez)
 !
     solveu = solvez
     matass = matasz
+!
+    c16bid=dcmplx(0.d0,0.d0)
+    r8bid=0.d0
 !
     call jeveuo(solveu//'.SLVK', 'L', vk24=slvk)
     metres = slvk(1)

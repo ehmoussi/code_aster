@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ subroutine dtmforc_yacs(sd_dtm_, sd_nl_, itime, time, dt, depl, vite, fext)
       real(kind=8)                        :: tinit, tfin, dtmin, dtmax
       logical , save                      :: premier_passage = .true.
 
-      
+
 
 
       ! thanks for visiting but there is nothing to do
@@ -73,20 +73,20 @@ subroutine dtmforc_yacs(sd_dtm_, sd_nl_, itime, time, dt, depl, vite, fext)
       sd_nl  = sd_nl_
 
       ! this call should be performed from dtmprep_noli_lub not from here !
-      ! but i can't do it since time step is not set when dtmprep_noli_xxx 
+      ! but i can't do it since time step is not set when dtmprep_noli_xxx
       ! are called
       !
       if (premier_passage) then
-            premier_passage = .false.            
+            premier_passage = .false.
             call dtmget(sd_dtm, _INST_FIN, rscal = tfin)
             call dtmget(sd_dtm, _DT_MIN, rscal = dtmin)
             call dtmget(sd_dtm, _DT_MAX, rscal = dtmax)
             call dtmget(sd_dtm, _INST_INI, rscal = tinit)
-            call set_params(itime, time, tinit, tfin, dt, dtmin, dtmax)
+            call set_params(time, tinit, tfin, dt, dtmin, dtmax)
       endif
 
-      
-      ! in order to have parallel computing it is better 
+
+      ! in order to have parallel computing it is better
       ! to send all informations first and then read on all inlet ports
 
       current => first_trandata
@@ -100,7 +100,7 @@ subroutine dtmforc_yacs(sd_dtm_, sd_nl_, itime, time, dt, depl, vite, fext)
                      call send_values(current, vite, itime, time)
 
                 case (CHAM_FORCE)
-                    ! inlets port are handled after outlets ports to 
+                    ! inlets port are handled after outlets ports to
                     ! take advantage of yacs parallel computing
                     continue
 
@@ -122,7 +122,7 @@ subroutine dtmforc_yacs(sd_dtm_, sd_nl_, itime, time, dt, depl, vite, fext)
 
       end do
 
-      
+
       call jedema()
 
 end subroutine

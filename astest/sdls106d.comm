@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -252,6 +252,7 @@ RIGGEN=ASSE_MATR_GENE(  NUME_DDL_GENE=NUMEGE,
 
 #   CALCUL DES MODES PROPRES DE LA STRUCTURE GLOBALE
 
+# SOLVEUR/NPREC BOUGE POUR DECALAGE MODAL
 RESGEN=CALC_MODES(INFO=1,
                   MATR_RIGI=RIGGEN,
                   VERI_MODE=_F(PREC_SHIFT=5.0000000000000001E-3,
@@ -263,7 +264,7 @@ RESGEN=CALC_MODES(INFO=1,
                   CALC_FREQ=_F(NMAX_FREQ=10,
                                ),
                   SOLVEUR=_F(METHODE='MUMPS',
-                             NPREC=9,
+                             NPREC=11,
                              ),
                   MATR_MASS=MASGEN,
                   STOP_BANDE_VIDE='NON',

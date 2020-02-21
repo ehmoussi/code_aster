@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,13 +49,12 @@ character(len=24), intent(out) :: chtime
     integer, parameter :: nb_cmp = 6
     character(len=8), parameter :: list_cmp(nb_cmp) = (/'INST    ','DELTAT  ','THETA   ',&
                                                         'KHI     ','R       ','RHO     '/)
-    real(kind=8) :: list_vale(nb_cmp)   = (/0.d0,1.d0,1.d0,0.d0,0.d0,0.d0/)
+    real(kind=8) :: list_vale(nb_cmp)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     chtime       = '&&CHTIME'
-    list_vale(1) = time_curr
-    list_vale(2) = time_incr
+    list_vale(1:6) = [time_curr,time_incr,1.d0,0.d0,0.d0,0.d0]
 !
     if ((option.eq.'RIGI_THER') .or. (option.eq.'MASS_THER')) then
         call mecact('V', chtime, 'MODELE', model//'.MODELE', 'INST_R',&

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ real(kind=8), optional, intent(in) :: time_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: prec_local = 5
+    integer, parameter :: prec_local = 5
     character(len=8) :: for8
     character(len=9) :: for9
     character(len=4) :: for4
@@ -156,7 +156,7 @@ real(kind=8), optional, intent(in) :: time_
                 ASSERT(ASTER_FALSE)
             endif
         endif
-    elseif (present(value_k_)) then 
+    elseif (present(value_k_)) then
         if (length .le. 0) then
             forma = '(A)'
         else if (length .gt. zlig) then
@@ -166,7 +166,7 @@ real(kind=8), optional, intent(in) :: time_
         endif
         ASSERT(output_unit .gt. 0)
         write(output_unit,forma) value_k_(1:length)
-    elseif (present(time_)) then 
+    elseif (present(time_)) then
         if (time_ .lt. 60.d0) then
             write(output_string,10) time_
         else
@@ -186,7 +186,7 @@ real(kind=8), optional, intent(in) :: time_
     endif
 !
     if (present(output_string_ )) then
-        output_string_ = output_string 
+        output_string_ = output_string
     endif
 !
 10  format (16x               ,f6.3,' s')

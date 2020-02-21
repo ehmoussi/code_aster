@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,8 +45,8 @@ type(ROM_DS_ParaDBR_POD), intent(in) :: ds_para_pod
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: field_name = ' ', surf_num = ' '
-    character(len=8)  :: axe_line = ' '
+    character(len=24) :: field_name, surf_num
+    character(len=8)  :: axe_line
     real(kind=8) :: tole_svd, tole_incr
     integer :: nb_mode_maxi
     aster_logical :: l_tabl_user

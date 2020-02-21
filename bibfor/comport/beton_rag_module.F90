@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -237,12 +237,17 @@ contains
         !
         ! ------------------------------------------------------------------------------------------
         !
-        real(kind=8) :: epsmeca(6)=0.0d0, epsflua(6)=0.0d0, epsanel(6)=0.0d0, epsvrag(6)=0.0d0
+        real(kind=8) :: epsmeca(6), epsflua(6), epsanel(6), epsvrag(6)
         type(beton_rag_pression) :: grandeur_press
         !
         ! ------------------------------------------------------------------------------------------
         !
         iret = 0
+        epsmeca(:)=0.d0
+        epsflua(:)=0.d0
+        epsanel(:)=0.d0
+        epsvrag(:)=0.d0
+!
         if      ( param_br%loi_integre == 1 ) then
             ! Déformations : Thermique, Hydratation
             if ( param_br%istemper ) then
@@ -467,10 +472,14 @@ contains
         integer, parameter  :: nbequa=30
         real(kind=8)        :: y0(nbequa), dy0(nbequa), resu(nbequa*2), ynorme(nbequa)
         !
-        real(kind=8) :: epsmeca(6)=0.0d0, epsflua(6)=0.0d0, epsanel(6)=0.0d0, epsvrag(6)=0.0d0
+        real(kind=8) :: epsmeca(6), epsflua(6), epsanel(6), epsvrag(6)
         type(beton_rag_pression) :: grandeur_press
         !
         ! ------------------------------------------------------------------------------------------
+        epsmeca(:)=0.d0
+        epsflua(:)=0.d0
+        epsanel(:)=0.d0
+        epsvrag(:)=0.d0
         ! Déformation
         y0(1:6) = epsm
         ! Température (-)
@@ -565,12 +574,16 @@ contains
         !
         real(kind=8)   :: deps(6), sigma_m(6), vip(1), dsidep(6, 6), epsflua(6)
         real(kind=8)   :: vimloc(BR_VARI_NOMBRE)
-        real(kind=8)   :: epsmeca(6) = 0.0d0 , epsanel(6) = 0.0d0, epsvrag(6)=0.0d0
+        real(kind=8)   :: epsmeca(6), epsanel(6), epsvrag(6)
         real(kind=8)   :: k1, n1, k2, n2, sigma_sph, vaux1, xx1
         type(SpheDev)  :: TSpheDev
         type(beton_rag_parametres) :: param_br_loc
         integer, parameter :: iflu = 10
         ! ------------------------------------------------------------------------------------------
+        epsmeca(:)=0.d0
+        epsflua(:)=0.d0
+        epsanel(:)=0.d0
+        epsvrag(:)=0.d0
         ! On ne met pas à jour les vip(*) et dsidep(*) de la mécanique.
         param_br_loc = param_br
         param_br_loc%fluage = ASTER_TRUE
@@ -818,10 +831,10 @@ contains
         !
         ! initialisation des tables de cash-karp
         ! taba : ( 0.0 , 0.2 , 0.3, 0.6, 1.0 , 7/8 ). remarque  taba(i)= somme( tabb(i,:) )
-        data tabc/9.78835978835978781642524d-02, 0.0d0, 4.02576489533011283583619d-01, &
-            2.10437710437710451261140d-01, 0.0d0, 2.89102202145680386990989d-01/
-        data tabe/1.02177372685185188783130d-01, 0.0d0, 3.83907903439153430635855d-01, &
-            2.44592737268518517490534d-01, 1.93219866071428561515866d-02, 0.25d0/
+        tabc = [9.78835978835978781642524d-02, 0.0d0, 4.02576489533011283583619d-01, &
+            2.10437710437710451261140d-01, 0.0d0, 2.89102202145680386990989d-01]
+        tabe = [1.02177372685185188783130d-01, 0.0d0, 3.83907903439153430635855d-01, &
+            2.44592737268518517490534d-01, 1.93219866071428561515866d-02, 0.25d0]
         !
         tabb(:,:) = 0.0d0
         tabb(2, 1) = 0.20d0

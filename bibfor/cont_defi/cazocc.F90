@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ integer, optional, intent(in) :: nb_cont_zone
     real(kind=8) :: algo_cont, algo_frot
     real(kind=8) :: type_inte, cont_init, seuil_auto
     integer :: inte_order
-    integer :: nbret=-3
+    integer :: nbret
     aster_logical :: l_inte_node, l_frot, l_node_excl, l_frot_excl, l_dire_excl_frot
     aster_logical :: l_gliss
     integer :: zcmcf, zexcl
@@ -78,8 +78,8 @@ integer, optional, intent(in) :: nb_cont_zone
     real(kind=8), pointer :: v_sdcont_exclfr(:) => null()
     character(len=24) :: sdcont_paraci
     integer, pointer :: v_sdcont_paraci(:) => null()
-    aster_logical ::  l_newt_fr = ASTER_FALSE, l_cont_cont = ASTER_FALSE
-    aster_logical ::  l_granglis = ASTER_FALSE
+    aster_logical ::  l_newt_fr, l_cont_cont
+    aster_logical ::  l_granglis
     character(len=24) :: sdcont_paracr
     real(kind=8), pointer :: v_sdcont_paracr(:) => null()
     real(kind=8) :: pene_critere
@@ -111,11 +111,13 @@ integer, optional, intent(in) :: nb_cont_zone
     l_dire_excl_frot  = ASTER_FALSE
     l_newt_fr         = ASTER_FALSE
     l_cont_cont       = ASTER_FALSE
+    l_granglis        = ASTER_FALSE
     s_algo_cont       = ' '
     s_algo_frot       = ' '
     iadapt            = 0
     pene_maxi         = 1.d3
     glis_maxi         = 1.d3
+    nbret             = -3
 !
 ! - Datastructure for contact
 !
@@ -208,7 +210,7 @@ integer, optional, intent(in) :: nb_cont_zone
         if (l_cont_cont) then
             if (l_newt_fr) then
                 iadapt = 1
-                if (s_algo_cont .eq. 'PENALISATION') then 
+                if (s_algo_cont .eq. 'PENALISATION') then
                     iadapt = 2
                 endif
                 if (s_algo_frot .eq. 'PENALISATION' .and. s_algo_cont .eq. 'STANDARD') then
@@ -248,7 +250,7 @@ integer, optional, intent(in) :: nb_cont_zone
                 iadapt = iadapt + 0
             endif
         endif
-    else 
+    else
         ASSERT(ASTER_FALSE)
     endif
     v_sdcont_paraci(20) = iadapt

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -109,7 +109,7 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
     integer ::    jlima01, jlima02,jlimac1, jlimac2,lontav1,lontav2
     integer :: nbcmp, nec, nbnema, nbrela, nbteli, nbterm, nddla
     integer :: jliel0, jlielc, jnema0, jnemac, nbrela2, nbterm2
-    character(len=3) :: rapide='OUI'
+    character(len=3), parameter :: rapide='OUI'
     aster_logical :: detr_lisrel, l_lag1
 
     integer :: niv, numel, nunewm, iexi, jlgns

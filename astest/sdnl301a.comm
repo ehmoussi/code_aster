@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -147,6 +147,7 @@ VECT=ASSE_VECTEUR(VECT_ELEM=VELEM, NUME_DDL=NDDL);
 # (jusqu'a 4800 Hz)
 
 MODE=CALC_MODES(MATR_RIGI=MATR,
+                SOLVEUR_MODAL=_F(COEF_DIM_ESPACE=4),
                 OPTION='PLUS_PETITE',
                 CALC_FREQ=_F(NMAX_FREQ=30,
                              ),
