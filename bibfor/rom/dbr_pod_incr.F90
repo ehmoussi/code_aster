@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ integer, intent(out) :: nb_snap_redu
     character(len=24) :: typval
     integer :: nbval, iret
     real(kind=8), pointer :: v_gm(:) => null()
-    character(len=24) :: mode = '&&IPOD_MODE'
+    character(len=24) :: mode
     real(kind=8), pointer :: v_mode(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -106,6 +106,7 @@ integer, intent(out) :: nb_snap_redu
 !
 ! - Get parameters
 !
+    mode         = '&&IPOD_MODE'
     nb_equa      = ds_empi%ds_mode%nb_equa
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
     base         = ds_empi%base

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 2016 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 2016 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -314,19 +314,11 @@ subroutine set_workspace( ctxt )
     ASSERT( ierr == 0 )
     call VecDuplicate( ctxt%x1, ctxt%xtmp, ierr )
     ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-    call MatCreateVecs( ctxt%c_mat, PETSC_NULL_OBJECT, ctxt%x2, ierr )
-#else
     call MatCreateVecs( ctxt%c_mat, PETSC_NULL_VEC, ctxt%x2, ierr )
-#endif
     ASSERT( ierr == 0 )
     call VecDuplicate( ctxt%x2, ctxt%y2, ierr )
     ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-    call MatCreateVecs( ctxt%d_mat, PETSC_NULL_OBJECT, ctxt%x3, ierr )
-#else
     call MatCreateVecs( ctxt%d_mat, PETSC_NULL_VEC, ctxt%x3, ierr )
-#endif
     ASSERT( ierr == 0 )
     call VecDuplicate( ctxt%x3, ctxt%y3, ierr )
     ASSERT( ierr == 0 )
@@ -352,29 +344,13 @@ subroutine set_scatter( a_mat, ctxt )
     ASSERT( ctxt%work_setup )
     ASSERT( .not. ctxt%scatter_setup )
     !
-#if PETSC_VERSION_LT(3,8,0) 
-    call MatCreateVecs( a_mat, x, PETSC_NULL_OBJECT, ierr )
-#else
     call MatCreateVecs( a_mat, x, PETSC_NULL_VEC, ierr )
-#endif
     ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-    call VecScatterCreate(ctxt%x1,PETSC_NULL_OBJECT,x, ctxt%is_phys, ctxt%scatter_to_phys, ierr)
-#else
     call VecScatterCreate(ctxt%x1,PETSC_NULL_IS,x, ctxt%is_phys, ctxt%scatter_to_phys, ierr)
-#endif
     ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-    call VecScatterCreate(ctxt%x2,PETSC_NULL_OBJECT,x, ctxt%is_lag1, ctxt%scatter_to_lag1, ierr)
-#else
     call VecScatterCreate(ctxt%x2,PETSC_NULL_IS,x, ctxt%is_lag1, ctxt%scatter_to_lag1, ierr)
-#endif
     ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0)
-    call VecScatterCreate(ctxt%x3,PETSC_NULL_OBJECT,x, ctxt%is_lag2, ctxt%scatter_to_lag2, ierr)
-#else 
     call VecScatterCreate(ctxt%x3,PETSC_NULL_IS,x, ctxt%is_lag2, ctxt%scatter_to_lag2, ierr)
-#endif
     ASSERT( ierr == 0 )
     !
     call VecDestroy( x, ierr )

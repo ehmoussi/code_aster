@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ subroutine trresu(ific, nocc)
     character(len=3) :: ssigne
     character(len=4) :: typch, chpt
     character(len=8) :: crit, crit2, nomail, noddl, nomma
-    character(len=8) :: noresu, typtes, nomgd
+    character(len=8) :: noresu, typtes, nomgd, exclgr
     character(len=8) :: leresu, model
     character(len=11) :: motcle
     character(len=16) :: nopara, k16b, tbtxt(2), tbref(2),nomcha, nom_vari
@@ -294,6 +294,14 @@ subroutine trresu(ific, nocc)
 !
             if (n1 .ne. 0) then
 !
+                !EXCLUS('NOEUD','GROUP_NO','POINT') avec 'TYPE_TEST'
+                call getvtx('RESU', 'NOEUD', iocc=iocc, scal=exclgr, nbret=n2)
+                call getvtx('RESU', 'GROUP_NO', iocc=iocc, scal=exclgr, nbret=n3)
+                call getvtx('RESU', 'POINT', iocc=iocc, scal=exclgr, nbret=n4)
+                if ((n2+n3+n4) .gt. 0) then 
+                    call utmess('A', 'CALCULEL6_96')
+                endif
+
                 nl1 = lxlgut(lign1)
                 nl2 = lxlgut(lign2)
                 lign1(1:nl1+16)=lign1(1:nl1-1)//' TYPE_TEST'

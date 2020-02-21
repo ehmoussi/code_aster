@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,21 +26,12 @@
 
 ! Inclusion des interfaces Fortran de PETSc
 
-#if PETSC_VERSION_LT(3,8,0) 
-#include <petsc/finclude/petscsysdef.h>
-#include <petsc/finclude/petscvecdef.h>
-#include <petsc/finclude/petscmatdef.h>
-#include <petsc/finclude/petscpcdef.h>
-#include <petsc/finclude/petsckspdef.h>
-#include <petsc/finclude/petscviewerdef.h>
-#else
 #include <petsc/finclude/petscsys.h>
 #include <petsc/finclude/petscvec.h>
 #include <petsc/finclude/petscmat.h>
 #include <petsc/finclude/petscpc.h>
 #include <petsc/finclude/petscksp.h>
 #include <petsc/finclude/petscviewer.h>
-#endif
 !
 #endif
 #endif 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ implicit none
     character(len=24), intent(in) :: model_
     integer, intent(in) :: list_func_acti(*)
     integer, intent(in) :: iter_newt
-    integer, intent(in) :: nume_inst 
+    integer, intent(in) :: nume_inst
     character(len=19), intent(in) :: sddisc
     character(len=19), intent(in) :: sddyna
     type(NL_DS_Measure), intent(inout) :: ds_measure
@@ -79,14 +79,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_cont_disc=.false._1, l_cont_cont=.false._1, l_newt_cont=.false._1
-    aster_logical :: loop_cont_conv=.false._1
-    character(len=8) :: model=' '
-    real(kind=8) :: r8bid=0.d0, loop_cont_vale
+    aster_logical :: l_cont_disc, l_cont_cont, l_newt_cont
+    aster_logical :: loop_cont_conv
+    character(len=8) :: model
+    real(kind=8) :: r8bid, loop_cont_vale
     integer :: loop_cont_vali
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    r8bid=0.d0
     model = model_(1:8)
 !
 ! - Get parameters

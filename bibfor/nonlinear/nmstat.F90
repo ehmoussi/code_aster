@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,16 +65,20 @@ character(len=24), intent(in) :: sderro
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_print = .false._1
-    real(kind=8) :: time_other = 0.d0, time_curr
-    real(kind=8) :: time_time_step = 0.d0
-    real(kind=8) :: time_sub = 0.d0, time = 0.d0
+    aster_logical :: l_print
+    real(kind=8) :: time_other, time_curr
+    real(kind=8) :: time_time_step
+    real(kind=8) :: time_sub, time
     integer :: i_device, nb_device
     type(NL_DS_Device) :: device
     character(len=10) :: device_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    time_other = 0.d0
+    time_time_step = 0.d0
+    time_sub = 0.d0
+    time = 0.d0
 !
 ! - Current time
 !

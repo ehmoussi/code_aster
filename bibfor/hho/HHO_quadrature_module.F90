@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -136,8 +136,8 @@ contains
         integer, parameter :: max_order = 7
         integer, parameter :: max_pg = 4
         character(len=8), dimension(0:max_order) ::rules
-        integer :: dimp = 0, nbpg = 0, ipg
-        real(kind=8), dimension(max_pg) :: xpg = 0.d0, poidpg = 0.d0
+        integer :: dimp, nbpg, ipg
+        real(kind=8), dimension(max_pg) :: xpg, poidpg
 !
 ! ----- check order of integration
         call check_order(this%order,max_order)
@@ -148,6 +148,8 @@ contains
         v1 = (coorno(1:3,2) - coorno(1:3,1)) / 2.d0
 !
 !------ get quadrature points
+        xpg = 0.d0
+        poidpg = 0.d0
         call elraga('SE2', rules(this%order), dimp, nbpg, xpg, poidpg)
 !
 ! ----- fill hhoQuad
@@ -263,8 +265,8 @@ contains
         integer, parameter :: max_order = 7
         integer, parameter :: max_pg = 16
         character(len=8), dimension(0:max_order) ::rules
-        integer :: dimp = 0, nbpg = 0, ipg
-        real(kind=8) :: coorpg(max_pg * 2) = 0.d0, poidpg(max_pg) = 0.d0, x, y, jaco
+        integer :: dimp, nbpg, ipg
+        real(kind=8) :: coorpg(max_pg * 2), poidpg(max_pg), x, y, jaco
 !
 ! ----- check order of integration
         call check_order(this%order,max_order)
@@ -272,6 +274,8 @@ contains
         rules = (/ 'FPG1 ', 'FPG1 ', 'FPG4 ', 'FPG4 ', 'FPG9 ', 'FPG9 ', 'FPG16', 'FPG16' /)
 !
 !------ get quadrature points
+        coorpg = 0.d0
+        poidpg = 0.d0
         call elraga('QU4', rules(this%order), dimp, nbpg, coorpg, poidpg)
 !
 ! ----- fill hhoQuad
@@ -373,8 +377,8 @@ contains
         integer, parameter :: max_order = 7
         integer, parameter :: max_pg = 64
         character(len=8), dimension(0:max_order) :: rules
-        integer :: dimp = 0, nbpg = 0, ipg
-        real(kind=8) :: coorpg(max_pg * 3) = 0.d0, poidpg(max_pg) = 0.d0, x, y, z
+        integer :: dimp, nbpg, ipg
+        real(kind=8) :: coorpg(max_pg * 3), poidpg(max_pg), x, y, z
 !
 ! ----- check order of integration
         call check_order(this%order,max_order)
@@ -382,6 +386,8 @@ contains
         rules = (/ 'FPG1 ', 'FPG1 ', 'FPG8 ', 'FPG8 ', 'FPG27', 'FPG27', 'FPG64', 'FPG64' /)
 !
 !------ get quadrature points
+        coorpg = 0.d0
+        poidpg = 0.d0
         call elraga('HE8', rules(this%order), dimp, nbpg, coorpg, poidpg)
 !
 ! ----- fill hhoQuad
@@ -425,8 +431,8 @@ contains
         integer, parameter :: max_order = 8
         integer, parameter :: max_pg = 16
         character(len=8), dimension(0:max_order) ::rules
-        integer :: dimp = 0, nbpg = 0, ipg
-        real(kind=8) :: coorpg(max_pg * 2) = 0.d0, poidpg(max_pg) = 0.d0, x, y, deuxmeas
+        integer :: dimp, nbpg, ipg
+        real(kind=8) :: coorpg(max_pg * 2), poidpg(max_pg), x, y, deuxmeas
 !
 ! ----- check order of integration
         call check_order(this%order,max_order)
@@ -439,6 +445,8 @@ contains
         deuxmeas = 2.d0 * measure
 !
 !------ get quadrature points
+        coorpg = 0.d0
+        poidpg = 0.d0
         call elraga('TR3', rules(this%order), dimp, nbpg, coorpg, poidpg)
 !
 ! ----- fill hhoQuad
@@ -480,7 +488,7 @@ contains
         integer, parameter :: max_order = 6
         integer, parameter :: max_pg = 23
         character(len=8), dimension(0:max_order) :: rules
-        integer :: dimp = 0, nbpg = 0, ipg
+        integer :: dimp, nbpg, ipg
         real(kind=8) :: coorpg(max_pg * 3), poidpg(max_pg), x, y, z, sixmeas
 !
 ! ----- check order of integration
@@ -498,6 +506,8 @@ contains
         sixmeas = 6.d0 * measure
 !
 !------ get quadrature points
+        coorpg = 0.d0
+        poidpg = 0.d0
         call elraga('TE4', rules(this%order), dimp, nbpg, coorpg, poidpg)
 !
 ! ----- fill hhoQuad

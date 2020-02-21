@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,9 +43,7 @@ subroutine crvloc(dim, adcom0, iatyma, jconnex0, jconnexc, vgeloc,&
     integer :: ptvois, mv, adcomv, nbnomv, nbsomv, nsco, is, iv, tyvoi
     integer :: nusglo, nuslo0, nuslov
     character(len=8) :: typemv
-    integer :: tymas=0, nbsomvs
-    save tymas, nbsomvs
-
+    integer, save :: tymas=0, nbsomvs
 !
 !
 !  IATYME  ADRESSE JEVEUX DES TYPES DE MAILLE

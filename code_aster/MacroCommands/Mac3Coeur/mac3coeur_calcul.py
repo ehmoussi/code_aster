@@ -490,12 +490,7 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',
-                          NPREC=15,
-                          RENUM='AMF',
-                          GESTION_MEMOIRE='OUT_OF_CORE',
-                          ELIM_LAGR='NON',
-                          PCENT_PIVOT=200,),
+            'SOLVEUR': _F(METHODE='MUMPS',),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)
@@ -527,12 +522,7 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',
-                          NPREC=15,
-                          RENUM='AMF',
-                          GESTION_MEMOIRE='OUT_OF_CORE',
-                          ELIM_LAGR='NON',
-                          PCENT_PIVOT=200,),
+            'SOLVEUR': _F(METHODE='MUMPS',),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)

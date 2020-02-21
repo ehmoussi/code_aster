@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -108,7 +108,7 @@ CHF=AFFE_CHAR_MECA_F(MODELE=MODELEK,
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=_F(JUSQU_A=1.0,
                                     NOMBRE=1));
-
+#MATRICE QUASI-SINGULIERE, NE FONCTIONNE QU'AVEC MUMPS
 UTOT1=STAT_NON_LINE(MODELE=MODELEK,
                    CHAM_MATER=CHAMPMAT,
                    EXCIT=(_F(CHARGE=CH1),
@@ -117,8 +117,7 @@ UTOT1=STAT_NON_LINE(MODELE=MODELEK,
                    COMPORTEMENT=_F(RELATION='ELAS',
                                 GROUP_MA='VOL'),
                    INCREMENT=_F(LIST_INST=L_INST),
-                   SOLVEUR=_F(METHODE='MUMPS',
-                              ),
+                   SOLVEUR=_F(METHODE='MUMPS',NPREC=-1),
                    NEWTON=_F(REAC_ITER=1),
                    ARCHIVAGE=_F(CHAM_EXCLU='VARI_ELGA'),
                    INFO=1);

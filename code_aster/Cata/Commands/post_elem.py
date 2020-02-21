@@ -367,7 +367,7 @@ POST_ELEM=OPER(nom="POST_ELEM",op=107,sd_prod=table_sdaster,reentrant='n',
                        ),
 
 
-         MINMAX  = FACT(statut='f',max=1,
+         MINMAX  = FACT(statut='f',max='**',
                        fr=tr("calcul des extrema en espace d'une CMP d'un champ, pour tous les instants spécifiés"),
                        regles=(UN_PARMI('CHAM_GD','RESULTAT'),
                                PRESENT_PRESENT('CHAM_GD','MODELE'),

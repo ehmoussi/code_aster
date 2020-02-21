@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ implicit none
     integer :: i_vari,inum
     integer :: iret, i_elem, i_zone, jv_vari
     integer :: nume_elem, nb_vari_zone
-    aster_logical :: dbg=.false.
+    aster_logical, parameter :: dbg=.false.
     character(len=19) :: compor, ligrmo
     character(len=19) :: compor_info
     integer, pointer :: v_compor_ptma(:) => null()

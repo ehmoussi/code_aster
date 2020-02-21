@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -287,7 +287,7 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         real(kind=8), dimension(MSIZE_CELL_SCAL) :: BSCEval
-        real(kind=8) :: mat(3,3) = 0.d0
+        real(kind=8) :: mat(3,3)
         integer :: i, j, size_cmp, deca
 !
         if(hhoCell%ndim == 2) then
@@ -302,6 +302,7 @@ contains
         call hhoBasisCell%BSEval(hhoCell, pt, 0, order, BSCEval)
 !
         deca = 0
+        mat = 0.d0
         do i = 1, hhoCell%ndim
             mat(i,i) = ddot(size_cmp, coeff(deca+1: deca+size_cmp), 1, BSCEval, 1)
             deca = deca + size_cmp

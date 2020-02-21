@@ -84,7 +84,7 @@ character(len=8), intent(in) :: mesh
     integer :: jconb2, jconu2, jcocf2, jcom12, ideca2
     integer :: nbtyp, nddl2, nbma2, jlistk, jdim, ndim1
     integer :: jnorm, idim, ij, ima1, jlisv1
-    integer :: kno2, kkno2, jcoor, n1, nb_found
+    integer :: kno2, kkno2, jcoor, n1
     aster_logical :: lrota, dnor
     real(kind=8) :: beta, coef1, mrota(3, 3), zero, normal(3)
     complex(kind=8) :: betac
@@ -118,7 +118,6 @@ character(len=8), intent(in) :: mesh
     integer, pointer :: linonu2bis(:) => null()
     character(len=8), pointer :: nomddl(:) => null()
     character(len=8), pointer :: nomnoe(:) => null()
-    character(len=16), pointer :: v_list_type(:) => null()
     aster_logical :: l_error
     character(len=8) :: elem_error
 !

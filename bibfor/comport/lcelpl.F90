@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcelpl(mod, loi, nmat, materd, materf,&
-                  timed, timef, deps, nvi, vind,&
-                  vinf, nr, yd, yf, sigd,&
-                  sigf, drdy)
-! aslint: disable=W1306
+subroutine lcelpl(loi, nmat, materf,&
+                 deps, nvi, vind, vinf)
     implicit none
 !
 ! ----------------------------------------------------------------
@@ -33,21 +30,12 @@ subroutine lcelpl(mod, loi, nmat, materd, materf,&
 !      VINF(NVI) = 0.0
 ! ----------------------------------------------------------------
 !  IN
-!     MOD    :  TYPE DE MODELISATION
 !     LOI    :  NOM DE LA LOI
 !     NMAT   :  DIMENSION MATER ET DE NBCOMM
-!     MATERD :  COEF MATERIAU A T
 !     MATERF :  COEF MATERIAU A T+DT
-!     TIMED  :  INSTANT T
-!     TIMEF  :  INSTANT T+DT
 !     IDPLAS :  INDICATEUR PLASTIQUE
 !     NVI    :  NOMBRE VARIABLES INTERNES
 !     VIND   :  VARIABLES INTERNES A T
-!     SIGD   :  CONTRAINTES A T
-!     SIGF   :  CONTRAINTES A T+DT
-!     NR     :  NB EQUATION SYSTEME INTEGRE A RESOUDRE
-!     YD     :  VECTEUR SOLUTION A T
-!     YF     :  VECTEUR SOLUTION A T+DT
 !  OUT
 !     VINF   :  VARIABLES INTERNES A T+DT
 !     DRDY   :  MATRICE JACOBIENNE POUR BETON_BURGER
@@ -59,12 +47,10 @@ subroutine lcelpl(mod, loi, nmat, materd, materf,&
     common /tdim/   ndt  , ndi
 !     ------------------------------------------------------------
     character(len=16) :: loi
-    integer :: nmat, nvi, nr, i, j, ndi, ndt
-    real(kind=8) :: materd(nmat, 2), materf(nmat, 2)
-    real(kind=8) :: vinf(nvi), vind(nvi), dy(nr), drdy(nr, nr)
-    real(kind=8) :: timed, timef, dt, yd(nr), yf(nr)
-    real(kind=8) :: deps(6), sigf(6), sigd(6)
-    character(len=8) :: mod
+    integer :: nmat, nvi, ndi, ndt
+    real(kind=8) ::  materf(nmat, 2)
+    real(kind=8) :: vinf(nvi), vind(nvi)
+    real(kind=8) :: deps(6)
 ! ----------------------------------------------------------------
     if (loi(1:7) .eq. 'IRRAD3M') then
         call irrlnf(nmat, materf, vind, 0.0d0, vinf)

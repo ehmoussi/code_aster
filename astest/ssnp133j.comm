@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -212,6 +212,7 @@ DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =INSTANTS ),
                                  ),)
 
 # calcul
+# MATRICE QUASI-SINGULIERE
 EVOL = STAT_NON_LINE(INFO=1,
   MODELE = MODELEK,
   CHAM_MATER = CHMAT,
@@ -247,7 +248,7 @@ EVOL = STAT_NON_LINE(INFO=1,
      RESI_GLOB_RELA = 1.E-6,
      ITER_GLOB_MAXI = 12,
      ),
-  SOLVEUR    = _F(METHODE = 'MUMPS', NPREC=10),
+  SOLVEUR    = _F(METHODE = 'MUMPS', NPREC=-1),
   ARCHIVAGE = _F(
     LIST_INST      = INS_ARCH
     )
