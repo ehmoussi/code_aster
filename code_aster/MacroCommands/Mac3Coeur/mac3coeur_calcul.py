@@ -700,6 +700,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                              INST_FIN=0.),
                                 EXCIT=loads,
                                ))
+                # for debugging: return __RESULT
                 self.etat_init = _F(EVOL_NOLI=__RESULT,)
             keywords.append(self.snl(CHAM_MATER=mater[-1],
                                 INCREMENT=_F(LIST_INST=self.times_woSubd,
@@ -958,8 +959,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         _snl_lame = STAT_NON_LINE(**self.snl_lame(
                                   INCREMENT=_F(LIST_INST=self.times,
                                                INST_INIT=0.,
-                                               INST_FIN=coeur.temps_simu[
-                                                   'T1']),
+                                               INST_FIN=coeur.temps_simu['T1']),
                                   ARCHIVAGE=_F(INST=coeur.temps_simu['T1']),
                                   EXCIT=self.archimede_load + self.vessel_head_load +
                                   self.vessel_dilatation_load + self.gravity_load +
