@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,17 +56,24 @@ type(NL_DS_SelectList), intent(out) :: selectList
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=16) :: keywfact
-    character(len=8) :: criterion = 'RELATIF'
-    real(kind=8) :: precision = 0.d0 , prec_default = 1.d-6, incr_mini = 0.d0
+    character(len=8) :: criterion
+    real(kind=8) :: precision, prec_default, incr_mini
     integer :: n1, n2, n3, iret
-    integer :: nb_value = 0, freq_step = 0
-    aster_logical :: l_abso = ASTER_FALSE
+    integer :: nb_value, freq_step
+    aster_logical :: l_abso
     character(len=19) :: list
     real(kind=8), pointer :: v_vale(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
     keywfact     = keywfactz
+    precision = 0.d0
+    prec_default = 1.d-6
+    incr_mini = 0.d0
+    nb_value = 0
+    freq_step = 0
+    l_abso = ASTER_FALSE
+    criterion = 'RELATIF'
 !
 ! - Get parameters to select real value
 !

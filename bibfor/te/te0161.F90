@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,22 +53,23 @@ character(len=16), intent(in) :: option, nomte
     integer :: ipoids, ivf, igeom, imate, iforc
     integer :: itemps, nbpar, idepla, ideplp, k, l, ic, neu, iret, neum1
     aster_logical :: normal
-    real(kind=8) :: r8min, r8bid=0.d0, rho(1), a, coef
+    real(kind=8) :: r8min, r8bid, rho(1), a, coef
     real(kind=8) :: s, s2, s3, s4, s5, x(4), c1, c2(3), w(6), u(3), v(3), w2(3)
 !
     integer :: ifcx, idfdk, jgano, ndim, nnos
-    character(len=8) :: nompar(10), nompav(1)
+    character(len=8) :: nompar(10)
+    character(len=8), parameter :: nompav(1) = ['VITE']
     real(kind=8) :: valpav(1), fcx, vite2, vp(3)
     aster_logical :: okvent, fozero
     real(kind=8) :: valpar(10), xv(3) ,wv(6)
     integer      :: ivite
-
-! --- ------------------------------------------------------------------
-    data nompar/'X','Y','Z','DX','DY','DZ',&
-     &                  'VITE_X','VITE_Y','VITE_Z','INST'/
-    data nompav/'VITE'/
 ! --- ------------------------------------------------------------------
     r8min = r8miem()
+    r8bid=0.d0
+    nompar(1:3) = (/'X','Y','Z'/)
+    nompar(4:6) = (/'DX','DY','DZ'/)
+    nompar(7:9) = (/'VITE_X','VITE_Y','VITE_Z'/)
+    nompar(10)  = 'INST'
 !
     if (nomte .eq. 'MECA_POU_D_T_GD') then
         nddl = 6
@@ -136,13 +137,13 @@ character(len=16), intent(in) :: option, nomte
     if (option .eq. 'CHAR_MECA_SR1D1D' .or. option .eq. 'CHAR_MECA_SF1D1D') then
         call jevech('PDEPLMR', 'L', idepla)
         call jevech('PDEPLPR', 'L', ideplp)
-!CCP         w(1 2 3 4 5 6) => position  
+!CCP         w(1 2 3 4 5 6) => position
         do i = 1, 3
             w(i) = zr(igeom+i-1) + zr(idepla-1+i) + zr(ideplp-1+i)
             w(i+3) = zr(igeom+i+2) + zr(idepla-1+i+nddl) + zr(ideplp- 1+i+nddl)
             w2(i) = w(i+3) - w(i)
         enddo
-!CCP       wv (1 2 3 4 5 6) => Vitesses 
+!CCP       wv (1 2 3 4 5 6) => Vitesses
          call tecach('NNO', 'PVITPLU', 'L', iret, iad=ivite)
          do i = 1, 3
              wv(i)   = zr(ivite+i-1)
@@ -197,7 +198,7 @@ character(len=16), intent(in) :: option, nomte
                 call utmess('F', 'ELEMENTS3_1', sk=nomte)
             endif
 !
-!CCP       x(1 2 3) => position 
+!CCP       x(1 2 3) => position
             do ic = 1, 3
                 x(ic) = 0.d0
                 do neu = 1, nno
@@ -205,13 +206,13 @@ character(len=16), intent(in) :: option, nomte
                 enddo
             enddo
 
-!CCP       xv (1 2 3) => Vitesses 
+!CCP       xv (1 2 3) => Vitesses
             do ic = 1, 3
                xv(ic) = 0.d0
                do neu = 1, nno
                   xv(ic) = xv(ic) + wv(3*neu+ic-3)*zr(ivf+l+neu-1)
                enddo
-            enddo 
+            enddo
 
 ! ici : x designe la position du point de gauss, w2 le vecteur directeur de l element cable
 !CCP    PG i
@@ -223,8 +224,8 @@ character(len=16), intent(in) :: option, nomte
             valpar(6)  = w2(3)
             valpar(7)  = xv(1)
             valpar(8)  = xv(2)
-            valpar(9)  = xv(3) 
-            valpar(10) = x(4)    
+            valpar(9)  = xv(3)
+            valpar(10) = x(4)
 
             do ic = 1, 3
                 call fointe('FM', zk8(iforc+ic-1), nbpar, nompar, valpar,&

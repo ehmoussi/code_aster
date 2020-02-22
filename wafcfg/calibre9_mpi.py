@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,15 +41,15 @@ def configure(self):
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/lib',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/MPI/lib',
-        YAMMROOT + '/prerequisites/Petsc_mpi-394_aster/lib',
+        YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/MPI/lib',
+        YAMMROOT + '/prerequisites/Petsc_mpi-3123_aster/lib',
     ])
 
     self.env.prepend_value('INCLUDES', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/MPI/include',
-        YAMMROOT + '/prerequisites/Petsc_mpi-394_aster/include',
+        YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/MPI/include',
+        YAMMROOT + '/prerequisites/Petsc_mpi-3123_aster/include',
     ])
 
     opts.enable_petsc = True

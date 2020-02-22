@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ real(kind=8), intent(in) :: time_curr
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: vali(1)
-    character(len=8) :: k8bid = ' '
+    character(len=8) :: k8bid
     complex(kind=8), parameter :: c16bid =(0.d0,0.d0)
     real(kind=8) :: valr(1)
 !
@@ -53,6 +53,7 @@ real(kind=8), intent(in) :: time_curr
 !
     vali(1) = nume_reuse
     valr(1) = time_curr
+    k8bid = ' '
 !
 ! - Add line in table
 !

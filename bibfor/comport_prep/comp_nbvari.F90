@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ integer, optional, intent(out) :: nume_comp_(4)
     aster_logical :: l_kit, l_meca_mfront
     aster_logical :: l_mfront_proto, l_mfront_offi, l_umat, l_implex
     character(len=16) :: kit_comp(4), post_iter, mult_comp, rela_meca
-    integer :: nb_vari_exte, nume_comp(4)=0, nb_vari_comp(4)=0
+    integer :: nb_vari_exte, nume_comp(4), nb_vari_comp(4)
     integer :: nb_vari_umat, model_dim
     character(len=255) :: libr_name, subr_name
     character(len=16) :: model_mfront
@@ -94,6 +94,8 @@ integer, optional, intent(out) :: nume_comp_(4)
     nb_vari       = 0
     l_implex      = .false.
     l_meca_mfront = .false.
+    nume_comp(:)  = 0
+    nb_vari_comp(:)=0
     if (present(kit_comp_)) then
         kit_comp(1:4) = kit_comp_(1:4)
     endif

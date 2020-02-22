@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -159,13 +159,13 @@ contains
     character(len=8), pointer :: v_field_valv(:) => null()
     character(len=8), pointer :: p_cata_nomcmp(:) => null()
     character(len=8), pointer :: v_field_ncmp(:) => null()
-    character(len=19) :: connex_inv = '&&HHOMEC.CONINV'
+    character(len=19), parameter :: connex_inv = '&&HHOMEC.CONINV'
     aster_logical, pointer :: v_elem_affe(:) => null()
     integer, pointer :: v_coninv(:) => null()
     integer, pointer :: v_connex(:) => null()
     integer, pointer :: v_cata_tmdim(:) => null()
     integer, pointer :: v_coninv_longcum(:) => null()
-    integer :: i_load, nb_load, ibid = 0, elem_nume, node_nume, nb_node_elem, i_elem, i_elem_affe
+    integer :: i_load, nb_load, ibid, elem_nume, node_nume, nb_node_elem, i_elem, i_elem_affe
     integer :: i_affe_cine, nb_affe_cine, node_nume_loc, i_node, nb_node, nume_cmp, dim_cmp
     character(len=24) :: lload_name, lload_info
     integer, pointer :: v_load_info(:) => null()
@@ -188,6 +188,7 @@ contains
 !
         name_gd = 'NEUT_K8'
         call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
+        ibid = 0
 !
 ! ----- Get type of HHO
 !
@@ -202,7 +203,6 @@ contains
         else
             ASSERT(ASTER_FALSE)
         end if
-!
 !
 ! ----- Read catalog
 !
@@ -361,7 +361,6 @@ contains
         type(HHO_Field), intent(in)   :: hhoField
         integer, intent(in) :: i_affe_cine
         real(kind=8) :: res
-
 !
 !
 ! --------------------------------------------------------------------------------------------------
@@ -375,7 +374,8 @@ contains
 !
 ! --------------------------------------------------------------------------------------------------
 !
-        character(len=24) :: cesVale = '&&HHOMECA_VALS', celVale
+        character(len=24), parameter :: cesVale = '&&HHOMECA_VALS'
+        character(len=24) :: celVale
         integer :: elem_nume, node_nume_loc, nume_cmp
         integer :: jv_cesd, jv_cesl, jv_cesv, iad
 !

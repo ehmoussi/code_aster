@@ -15,86 +15,122 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0255(option, nomte)
-!.......................................................................
-    implicit none
 !
-!     BUT: CALCUL DES VECTEURS ELEMENTAIRES EN MECANIQUE
-!          ELEMENTS ISOPARAMETRIQUES 1D
+implicit none
 !
-!          OPTION : 'CHAR_MECA_VNOR '
-!
-!     ENTREES  ---> OPTION : OPTION DE CALCUL
-!          ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
-!
-#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
-#include "asterfort/rcvalb.h"
+#include "asterfort/getFluidPara.h"
 #include "asterfort/vff2dn.h"
+#include "asterfort/utmess.h"
+#include "asterfort/tecach.h"
+#include "asterfort/evalNormalSpeed.h"
 !
-    integer :: icodre(1)
-    character(len=16) :: nomte, option
-    real(kind=8) :: poids, nx, ny
-    integer :: ipoids, ivf, idfde, igeom, ivnor
-    integer :: nno, kp, npg, ivectu, imate, ldec, kpg, spt
-    aster_logical :: laxi
-    character(len=8) :: fami, poum
+character(len=16), intent(in) :: option, nomte
 !
+! --------------------------------------------------------------------------------------------------
 !
-!-----------------------------------------------------------------------
-    integer :: i, ii, jgano, ndim, nnos
-    real(kind=8) :: r, rho(1)
-!-----------------------------------------------------------------------
-    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
-                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
+! Elementary computation
 !
-    laxi = .false.
-    if (lteatt('AXIS','OUI')) laxi = .true.
+! Elements: 2D_FLUIDE, AXIS_FLUIDE (boundary)
 !
-    call jevech('PGEOMER', 'L', igeom)
-    call jevech('PVECTUR', 'E', ivectu)
-    call jevech('PMATERC', 'L', imate)
-    call jevech('PVITENR', 'L', ivnor)
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
-    call rcvalb(fami, kpg, spt, poum, zi(imate),&
-                ' ', 'FLUIDE', 0, ' ', [0.d0],&
-                1, 'RHO', rho, icodre, 1)
+! Options: CHAR_MECA_VNOR
 !
-    do 10 i = 1, 2*nno
-        zr(ivectu+i-1) = 0.0d0
- 10 end do
+! --------------------------------------------------------------------------------------------------
 !
-!     BOUCLE SUR LES POINTS DE GAUSS
+    aster_logical :: l_func, l_time
+    integer :: jv_geom, jv_mate, jv_speed, jv_time, jv_vect
+    real(kind=8) :: nx, ny
+    real(kind=8) :: rho, poids
+    real(kind=8) :: time, vnor
+    integer :: ipoids, ivf, idfde
+    integer :: nno, npg, ndim
+    integer :: ldec
+    integer :: i, ii, ipg
+    aster_logical :: l_axis
+    real(kind=8) :: r
+    integer :: j_mater, iret
+    character(len=16) :: fsi_form
 !
-    do 40 kp = 1, npg
-        ldec = (kp-1)*nno
+! --------------------------------------------------------------------------------------------------
 !
-        nx = 0.0d0
-        ny = 0.0d0
+    l_func = (option .eq. 'CHAR_MECA_VNOR_F')
 !
-        call vff2dn(ndim, nno, kp, ipoids, idfde,&
-                    zr(igeom), nx, ny, poids)
-        if (laxi) then
+! - Input fields
+!
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PMATERC', 'L', jv_mate)
+    if (l_func) then
+        call jevech('PVITENF', 'L', jv_speed)
+    else
+        call jevech('PVITENR', 'L', jv_speed)
+    endif
+!
+! - Get time if present
+!
+    call tecach('NNO', 'PTEMPSR', 'L', iret, iad=jv_time)
+    l_time = ASTER_FALSE
+    time   = 0.d0
+    if (jv_time .ne. 0) then
+        l_time = ASTER_TRUE
+        time   = zr(jv_time)
+    endif
+!
+! - Get element parameters
+!
+    l_axis = (lteatt('AXIS','OUI'))
+    fsi_form = 'U_P_PHI'
+    call elrefe_info(fami='RIGI',&
+                     nno=nno, npg=npg, ndim = ndim,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde)
+!
+! - Get material properties for fluid
+!
+    j_mater = zi(jv_mate)
+    call getFluidPara(j_mater, rho)
+!
+! - Output field
+!
+    call jevech('PVECTUR', 'E', jv_vect)
+    do i = 1, 2*nno
+        zr(jv_vect+i-1) = 0.d0
+    end do
+!
+! - Loop on Gauss points
+!
+    do ipg = 1, npg
+        ldec = (ipg-1)*nno
+! ----- Compute normal
+        nx = 0.d0
+        ny = 0.d0
+        call vff2dn(ndim, nno, ipg, ipoids, idfde,&
+                    zr(jv_geom), nx, ny, poids)
+        if (l_axis) then
             r = 0.d0
-            do 20 i = 1, nno
-                r = r + zr(igeom+2* (i-1))*zr(ivf+ldec+i-1)
- 20         continue
+            do i = 1, nno
+                r = r + zr(jv_geom+2*(i-1))*zr(ivf+ldec+i-1)
+            end do
             poids = poids*r
         endif
-!
-        do 30 i = 1, nno
-            ii = 2*i
-            zr(ivectu+ii-1) = zr(ivectu+ii-1) - poids*zr(ivnor+kp-1)* rho(1)*zr(ivf+ldec+i-1)
- 30     continue
-!
- 40 end do
+! ----- Get value of normal speed
+        call evalNormalSpeed(l_func, l_time , time    ,&
+                             nno   , ndim   , ipg     ,&
+                             ivf   , jv_geom, jv_speed,&
+                             vnor)
+        if (fsi_form .eq. 'U_P_PHI') then
+            do i = 1, nno
+                ii = 2*i
+                zr(jv_vect+ii-1) = zr(jv_vect+ii-1) -&
+                                   poids *&
+                                   zr(ivf+ldec+i-1) * vnor * rho
+            end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
+    end do
 !
 end subroutine

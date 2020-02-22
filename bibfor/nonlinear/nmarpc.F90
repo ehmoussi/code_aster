@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! 
+!
 subroutine nmarpc(ds_energy, nume_reuse, time_curr)
 !
 use NonLin_Datastructure_type
@@ -47,7 +47,7 @@ real(kind=8), intent(in) :: time_curr
 !
     integer :: nb_cols, i_col, i_para_real
     integer :: vali(1)
-    character(len=8) :: k8bid = ' '
+    character(len=8) :: k8bid
     complex(kind=8), parameter :: c16bid =(0.d0,0.d0)
     real(kind=8) :: valr(7), vale_r
     type(NL_DS_Table) :: table
@@ -57,6 +57,7 @@ real(kind=8), intent(in) :: time_curr
 ! --------------------------------------------------------------------------------------------------
 !
     table    = ds_energy%table
+    k8bid = ' '
 !
 ! - Get table parameters
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,10 +61,11 @@ real(kind=8), intent(inout) :: q(:)
     integer :: nume_inst, iret
     type(ROM_DS_LineicNumb) :: ds_line
     real(kind=8), pointer :: v_field_resu(:) => null()
-    character(len=24) :: field_resu = '&&ROM_FIELDRESU'
+    character(len=24) :: field_resu
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    field_resu= '&&ROM_FIELDRESU'
     ds_line   = ds_empi%ds_lineic
     nb_slice  = ds_line%nb_slice
     nb_cmp    = ds_line%nb_cmp

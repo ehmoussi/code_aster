@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,12 +77,12 @@ contains
         type(HHO_Face)  :: hhoFace
         type(HHO_basis_cell) :: hhoBasisCell
         real(kind=8) :: invH
-        real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_CELL_SCAL) :: massMat, M1 = 0.d0, M2 = 0.d0
+        real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_CELL_SCAL) :: massMat, M1, M2
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_FACE_SCAL) :: faceMass, piKF
-        real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_TDOFS_SCAL) :: proj1 = 0.d0
+        real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_TDOFS_SCAL) :: proj1
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_CELL_SCAL) :: MR1, MR2, traceMat
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_TDOFS_SCAL) :: proj2, proj3, TMP
-        integer :: dimMassMat = 0, ifromM1, itoM1, ifromM2, itoM2, dimM1, colsM2, i, j
+        integer :: dimMassMat, ifromM1, itoM1, ifromM2, itoM2, dimM1, colsM2, i, j
         integer :: cbs, fbs, total_dofs, iface, offset_face, info, fromFace, toFace
 ! --------------------------------------------------------------------------------------------------
 !
@@ -103,15 +103,18 @@ contains
         colsM2 = hhoBasisCell%BSSize(1, hhoData%face_degree() + 1)
 !
 ! -- extract M1:
+        M1 = 0.d0
         M1(1:dimM1, 1:dimM1) = massMat(ifromM1:itoM1, ifromM1:itoM1)
 !
 ! -- extract M2:
+        M2 = 0.d0
         M2(1:dimM1, 1:colsM2) = massMat(ifromM1:itoM1, ifromM2:itoM2)
 !
 ! -- Verif size
         ASSERT(MSIZE_CELL_SCAL >= colsM2 .and. MSIZE_TDOFS_SCAL >= dimM1)
 !
-        stab = 0.d0
+        stab  = 0.d0
+        proj1 = 0.d0
 !
 ! -- Build \pi_F^k (v_F - P_T^K v) equations (21) and (22)
 ! -- compute proj1: Step 1: compute \pi_T^k p_T^k v (third term).
@@ -290,9 +293,9 @@ contains
         type(HHO_Face)  :: hhoFace
         type(HHO_basis_cell) :: hhoBasisCell
         real(kind=8) :: invH
-        real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_CELL_SCAL) :: massMat, M1 = 0.d0, M2 = 0.d0
+        real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_CELL_SCAL) :: massMat, M1, M2
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_FACE_SCAL) :: faceMass, piKF
-        real(kind=8), dimension(MSIZE_CELL_VEC, MSIZE_TDOFS_VEC) :: proj1 = 0.d0
+        real(kind=8), dimension(MSIZE_CELL_VEC, MSIZE_TDOFS_VEC) :: proj1
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_CELL_SCAL) :: MR1, MR2, traceMat
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_TDOFS_VEC) :: proj2, proj3, TMP
         integer :: dimMassMat, ifromM1, itoM1, ifromM2, itoM2, dimM1, colsM2, i, j, idir
@@ -321,6 +324,7 @@ contains
         colsM2 = hhoBasisCell%BSSize(1, hhoData%face_degree() + 1)
 !
 ! -- extract M1:
+        M1 = 0.d0
         M1(1:dimM1, 1:dimM1) = massMat(ifromM1:itoM1, ifromM1:itoM1)
 !
 ! -- factorize M1
@@ -333,12 +337,14 @@ contains
         end if
 !
 ! -- extract M2:
+        M2 = 0.d0
         M2(1:dimM1, 1:colsM2) = massMat(ifromM1:itoM1, ifromM2:itoM2)
 !
 ! -- Verif size
         ASSERT(MSIZE_CELL_SCAL >= colsM2 .and. MSIZE_TDOFS_SCAL >= dimM1)
 !
-        stab = 0.d0
+        stab  = 0.d0
+        proj1 = 0.d0
 !
 ! -- Build \pi_F^k (v_F - P_T^K v) equations (21) and (22)
 ! -- compute proj1: Step 1: compute \pi_T^k p_T^k v (third term).
@@ -505,7 +511,7 @@ contains
         type(HHO_basis_cell) :: hhoBasisCell
         real(kind=8) :: invH
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_FACE_SCAL) :: faceMass, piKF
-        real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_TDOFS_SCAL) :: proj1 = 0.d0
+        real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_TDOFS_SCAL) :: proj1
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_CELL_SCAL) ::  traceMat
         real(kind=8), dimension(MSIZE_FACE_SCAL, MSIZE_TDOFS_SCAL) :: proj3, TMP
         integer :: cbs, fbs, total_dofs, iface, offset_face, info, fromFace, toFace, i, j
@@ -517,7 +523,8 @@ contains
 ! -- number of dofs
         call hhoTherDofs(hhoCell, hhoData, cbs, fbs, total_dofs)
 !
-        stab = 0.d0
+        stab  = 0.d0
+        proj1 = 0.d0
 !
 ! --  Step 1: v_T
 ! -- Compute proj1 =  I_Cell

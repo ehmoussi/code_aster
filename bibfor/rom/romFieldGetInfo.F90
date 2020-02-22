@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,9 +51,9 @@ aster_logical, optional, intent(in) :: l_chck_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_equa = 0, nb_node = 0, nb_cmp = 0
-    character(len=8)  :: mesh = ' '
-    aster_logical :: l_lagr = ASTER_FALSE, l_chck
+    integer :: nb_equa, nb_node, nb_cmp
+    character(len=8)  :: mesh
+    aster_logical :: l_lagr, l_chck
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,6 +61,12 @@ aster_logical, optional, intent(in) :: l_chck_
     if (present(l_chck_)) then
         l_chck = l_chck_
     endif
+!
+    l_lagr = ASTER_FALSE
+    mesh = ' '
+    nb_equa = 0
+    nb_node = 0
+    nb_cmp  = 0
 !
 ! - Get main parameters
 !

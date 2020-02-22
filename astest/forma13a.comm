@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -246,9 +246,9 @@ SQUEL=DEFI_SQUELETTE(MODELE_GENE=POMPE_GE,
                                  _F(NOM='TUY_GE',
                                     GROUP_MA=('Tuy_3D','Tuy_2D',),),),);
 
-
+# SOLVEUR/NPREC BOUGE POUR DECALAGE MODAL
 MODES_GE=CALC_MODES(MATR_RIGI=RIGI_GE,
-                    OPTION='PLUS_PETITE',
+                    OPTION='PLUS_PETITE',SOLVEUR=_F(NPREC=9),
                     CALC_FREQ=_F(NMAX_FREQ=10,
                                  ),
                     MATR_MASS=MASS_GE,

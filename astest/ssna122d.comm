@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ MESH=DEFI_GROUP(reuse =MESH,
                                    GROUP_MA='P_cont',
                                    GROUP_NO_ORIG='P',),),);
 # Calcul sans frottement
-
+# NPREC NECESSAIRE
 RESU=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=MA,
                    CARA_ELEM=CELEM,
@@ -112,7 +112,7 @@ RESU=STAT_NON_LINE(MODELE=MO,
                                  RELATION='ELAS',),),
                    INCREMENT=_F(LIST_INST=L_INST,),
                    CONVERGENCE=_F(ITER_GLOB_MAXI=50,),
-                   SOLVEUR=_F(),
+                   SOLVEUR=_F(NPREC=9),
                    NEWTON=_F(MATRICE='TANGENTE',
                              REAC_ITER=1,),);
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode_crea = 0, nb_mode_maxi = 0
+    integer :: nb_mode_crea, nb_mode_maxi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,6 +64,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get informations from parameters
 !
+    nb_mode_crea = 0
     nb_mode_maxi = ds_para_pod%nb_mode_maxi
 !
 ! - Create empiric base

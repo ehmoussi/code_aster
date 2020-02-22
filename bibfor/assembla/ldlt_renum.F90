@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -97,8 +97,8 @@ implicit none
     integer, pointer :: nueq2(:) => null()
     integer, pointer :: m2lc(:) => null()
     integer, pointer :: lc2m(:) => null()
-    character(len=16), SAVE :: nomcom_sav=' ', nomres_sav=' '
-    integer, SAVE :: neq_sav=0
+    character(len=16), save :: nomcom_sav=' ', nomres_sav=' '
+    integer, save :: neq_sav=0
 
 ! --------------------------------------------------------------------------------------------------
     call jemarq()
@@ -108,7 +108,7 @@ implicit none
 
 !   -- On ne veut pas ecrire les informations de numerotation (RCMK, ...)
 !      a chaque resolution (si INFO=1).
-    limpr=.true.
+    limpr=ASTER_TRUE
     call infniv(ifm, niv)
     if (nomcom.eq.nomcom_sav .and. nomres.eq.nomres_sav) then
         if (neq.eq.neq_sav .and. niv.eq.1) limpr=.false.

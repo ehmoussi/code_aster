@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ implicit none
     real(kind=8) :: pres_frot(3), dist_frot(3)
     aster_logical :: propa, l_frot_zone
     real(kind=8) :: tole_stick, tole_slide
-    integer :: zone_frot=0, zone_frot_prop=0,it=0
+    integer :: zone_frot, zone_frot_prop,it
     integer :: n_cychis
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,6 +67,9 @@ implicit none
     n_cychis     = ds_contact%n_cychis
     tole_stick   = 0.95
     tole_slide   = 1.05
+    zone_frot = 0
+    zone_frot_prop = 0
+    it = 0
 !
 ! - Acces to cycling objects
 !
@@ -101,7 +104,7 @@ implicit none
                 call mm_cycl_laugf(pres_frot, dist_frot, coef_frot_maxi, nrese_maxi)
                 call mm_cycl_laugf(pres_frot, dist_frot, coef_frot_mini, nrese_mini)
                 nrese_prop = nrese_maxi
-!           
+!
      10         continue
 !
 ! ------------- Friction zone
@@ -141,7 +144,7 @@ implicit none
                 if (propa) then
                     if ( (coef_frot .ge. coef_frot_maxi-1.d-15) .or.&
                          (coef_frot .le. coef_frot_maxi+1.d-15) ) then
-            
+
                         coef_frot = max(coef_frot_maxi,coef_frot)
                     endif
                 else
@@ -154,8 +157,8 @@ implicit none
                 endif
             endif
             v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) = coef_frot
-            
+
         endif
-    enddo    
+    enddo
 !
 end subroutine

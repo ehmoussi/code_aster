@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,10 +48,10 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_equa = 0, nb_node = 0, nb_mode_maxi = 0
-    character(len=8)  :: model = ' ', mesh = ' ', matr_name = ' '
+    integer :: nb_equa, nb_node, nb_mode_maxi
+    character(len=8)  :: model, mesh, matr_name
     character(len=24) :: field_refe
-    character(len=24) :: field_name = ' '
+    character(len=24) :: field_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,6 +59,14 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_28')
     endif
+!
+    model = ' '
+    mesh = ' '
+    matr_name = ' '
+    field_name = ' '
+    nb_equa = 0
+    nb_node = 0
+    nb_mode_maxi = 0
 !
 ! - Get "representative" matrix
 !
@@ -83,14 +91,14 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     field_refe = ds_para_rb%algoGreedy%solveDOM%syst_solu
 !
 ! - Nomber of mode maxi given by user
-!    
+!
     nb_mode_maxi = ds_para_rb%nb_mode_maxi
 !
 ! - For FSI: three basis
 !
-    if (ds_para_rb%l_stab_fsi) then 
+    if (ds_para_rb%l_stab_fsi) then
         nb_mode_maxi = 3*nb_mode_maxi
-    end if 
+    end if
 !
 ! - Save in empiric base
 !

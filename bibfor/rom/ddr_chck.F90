@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ type(ROM_DS_ParaDDR), intent(in) :: ds_para
 !
     integer :: ifm, niv
     integer :: iret
-    character(len=24) :: grelem_rid  = ' ', grnode_int  = ' '
+    character(len=24) :: grelem_rid, grnode_int
     type(ROM_DS_Empi) :: empi_prim, empi_dual
     character(len=8) :: mesh_prim, mesh_dual, model_prim, model_dual, mesh
 !

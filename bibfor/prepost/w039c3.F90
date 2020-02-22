@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,15 +48,14 @@ subroutine w039c3(carele, modele, ifi, form, titre, aunoeud)
 !     VARIABLES LOCALES
 !
     integer :: iret,jaux
-    character(len=1) :: nomcmp(3)
+    character(len=1), parameter :: nomcmp(3) = ['X' , 'Y' , 'Z']
     character(len=8) :: typech, sdcarm, carele8
     character(len=19) :: chrel1, chrel2, chrel3, chrelno1, chrelno2, chrelno3, ligrel, celmod
     character(len=19) :: chrmed(3)
     character(len=64) :: nommed(3)
     character(len=85) :: titrz,messk(3)
-    character(len=16) :: field_type = 'Unknown'
+    character(len=16) :: field_type
     aster_logical :: l3d
-    data  nomcmp / 'X' , 'Y' , 'Z' /
 ! ----------------------------------------------------------------------
     call jemarq()
 !
@@ -125,6 +124,7 @@ subroutine w039c3(carele, modele, ifi, form, titre, aunoeud)
         typech='ELEM'
     endif
 !
+    field_type = 'Unknown'
     if (form .eq. 'MED') then
 !     -------------------------
         call irceme(ifi, nommed(1), chrmed(1), typech, modele, 0, nomcmp, ' ', ' ', 0,&

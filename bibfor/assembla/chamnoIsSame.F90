@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ integer, intent(out) :: ier
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_same
-    integer :: nb_refe1, nb_refe2, nb_ligr1, nb_ligr2, nbno = 0
+    integer :: nb_refe1, nb_refe2, nb_ligr1, nb_ligr2, nbno
     character(len=19) :: chamno1, chamno2, prchno1, prchno2, ligrel
     character(len=24) :: refe1, refe2
     character(len=24), pointer :: v_refe1(:) => null()
@@ -59,6 +59,7 @@ integer, intent(out) :: ier
     ier = 0
     chamno1 = chamno1_
     chamno2 = chamno2_
+    nbno = 0
 !
 ! - For REFE objects
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ real(kind=8), optional, intent(out) :: epsi_(6)
     real(kind=8) :: grad(3, 3), ur
     real(kind=8), parameter :: r2 = sqrt(2.d0)/2.d0
     real(kind=8), parameter :: unity(9) = (/1.d0, 0.d0, 0.d0, 0.d0, 1.d0, 0.d0, 0.d0, 0.d0, 1.d0/)
-    real(kind=8) :: kron(3,3) = reshape(unity, (/3,3/))
+    real(kind=8), parameter :: kron(3,3) = reshape(unity, (/3,3/))
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -82,7 +82,7 @@ real(kind=8), optional, intent(out) :: epsi_(6)
     call dcopy(9, kron, 1, f, 1)
     if (l_large) then
         call daxpy(9, 1.d0, grad, 1, f, 1)
-        if (l_axi) then 
+        if (l_axi) then
             f(3,3) = f(3,3) + ur/r
         endif
     endif

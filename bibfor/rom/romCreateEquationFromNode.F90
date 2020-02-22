@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,9 +64,9 @@ integer, pointer, optional :: v_list_node_(:)
     integer :: ifm, niv
     integer :: nb_node, nb_equa, nb_cmp
     integer, pointer :: v_list_node(:) => null()
-    character(len=8), pointer :: v_list_cmp(:) => null() 
-    character(len=24) :: field_name = ' '
-    character(len=8) :: mesh = ' '
+    character(len=8), pointer :: v_list_cmp(:) => null()
+    character(len=24) :: field_name
+    character(len=8) :: mesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -125,4 +125,3 @@ integer, pointer, optional :: v_list_node_(:)
     AS_DEALLOCATE(vk8 = v_list_cmp)
 !
 end subroutine
-

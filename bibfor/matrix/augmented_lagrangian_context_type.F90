@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 2016 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 2016 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -118,11 +118,7 @@ subroutine set_precond_data( ctxt )
     integer :: pre_type
     Mat :: f
     !
-#if PETSC_VERSION_LT(3,7,0)
-    pre_type = icc_pre
-#else
     pre_type = mumps_pre
-#endif
     ! TODO déterminer les bonnes valeurs
     niremp=1
     fillp =1.0
@@ -176,17 +172,10 @@ subroutine set_precond_data( ctxt )
     ! avec support de l'interface MUMPS
        call PCSetType(ctxt%pcphy, PCLU, ierr)
        ASSERT(ierr == 0)
-#if PETSC_VERSION_LT(3,9,0)
-       call PCFactorSetMatSolverPackage(ctxt%pcphy,MATSOLVERMUMPS,ierr)
-       ASSERT(ierr.eq.0)
-       call PCFactorSetUpMatSolverPackage(ctxt%pcphy,ierr)
-       ASSERT(ierr.eq.0)
-#else
        call PCFactorSetMatSolverType(ctxt%pcphy,MATSOLVERMUMPS,ierr)
        ASSERT(ierr.eq.0)
        call PCFactorSetUpMatSolverType(ctxt%pcphy,ierr)
        ASSERT(ierr.eq.0)
-#endif
        call PCFactorGetMatrix(ctxt%pcphy,F,ierr)
        ASSERT(ierr.eq.0)
  ! ICNTL(7) (sequential matrix ordering): 5 (METIS)

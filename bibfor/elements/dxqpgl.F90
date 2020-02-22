@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,12 +52,11 @@ subroutine dxqpgl(xyzg, pgl, kstop, iret)
 !     VERIFICATION QUE L'ELEMENT EST REELLEMENT PLAN
 !
 !     ------------------------------------------------------------------
-    real(kind=8) :: vx=0.0, vy=0.0, vz=0.0, xi=0.0, yi=0.0, zzi=0.0, xj=0.0
-    real(kind=8) :: yj=0.0, zzj=0.0, xk=0.0, yk=0.0, zzk=0.0, xl=0.0, yl=0.0
-    real(kind=8) :: zzl=0.0
-    real(kind=8) :: norm=0.0
-    real(kind=8) :: x12=0.0, y12=0.0, z12=0.0, x13=0.0, y13=0.0, z13=0.0, x14=0.0, y14=0.0, z14=0.0
-    real(kind=8) :: ux=0.0, uy=0.0, uz=0.0, pscal=0.0, normu=0.0, norm4=0.0, dist=0.0
+    real(kind=8) :: vx, vy, vz, xi, yi, zzi, xj
+    real(kind=8) :: yj, zzj, xk, yk, zzk, xl, yl, zzl
+    real(kind=8) :: norm
+    real(kind=8) :: x12, y12, z12, x13, y13, z13, x14, y14, z14
+    real(kind=8) :: ux, uy, uz, pscal, normu, norm4, dist
     integer :: iadzi, iazk24
 !     ------------------------------------------------------------------
     real(kind=8) :: valr

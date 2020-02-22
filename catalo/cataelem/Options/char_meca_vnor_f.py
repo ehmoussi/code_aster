@@ -40,7 +40,7 @@ CHAR_MECA_VNOR_F = Option(
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.FLUIDE,'OUI'),(AT.BORD,'-1'),)),
-      CondCalcul('-', ((AT.FSI,'OUI'),)),
+      CondCalcul('+', ((AT.FSI,'OUI'),)),
     ),
     comment=""" CHAR_MECA_VNOR_F (MOT-CLE: VITE_FACE): CALCUL DU SECOND MEMBRE
            ELEMENTAIRE CORRESPONDANT A UNE VITESSE NORMALE APPLIQUEE A
