@@ -48,7 +48,7 @@ MODEL = AFFE_MODELE(MAILLAGE=MA,
 
 # Définition des caractéristiques des éléments coque et poutre
 
-CAREL  = AFFE_CARA_ELEM(MODELE = MODEL, 
+CAREL  = AFFE_CARA_ELEM(MODELE = MODEL,
                         COQUE  = _F(GROUP_MA=('DALLES','VOILES')  ,
                                     EPAIS   =0.30                 ,
                                     ),
@@ -74,6 +74,4 @@ CHMAT = AFFE_MATERIAU(MAILLAGE =MA,
                       )
 
 
-MODES=CALC_MODES(CALC_FREQ = _F(FREQ=(0., 780.),
 FIN()
-
