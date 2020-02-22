@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,13 +86,13 @@ character(len=19), optional, intent(out) :: xcohes_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: chgeom=' ', chmlcf=' ', sdappa_psno=' ', sdappa = ' '
-    character(len=19) :: cpoint=' ', cpinte=' ', cainte=' ', ccface=' '
-    character(len=19) :: lnno  =' ', ltno  =' ', stano =' ', fissno=' '
-    character(len=19) :: heavno=' ', hea_no=' ', hea_fa=' '
-    character(len=19) :: pinter=' ', ainter=' ', cface =' ', faclon=' ', baseco=' '
-    character(len=19) :: xdonco=' ', xindco=' ', xseuco=' ', xcohes=' ', basefo=' '
-    character(len=19) :: fisco =' '
+    character(len=19) :: chgeom, chmlcf, sdappa_psno, sdappa
+    character(len=19) :: cpoint, cpinte, cainte, ccface
+    character(len=19) :: lnno  , ltno  , stano , fissno
+    character(len=19) :: heavno, hea_no, hea_fa
+    character(len=19) :: pinter, ainter, cface , faclon, baseco
+    character(len=19) :: xdonco, xindco, xseuco, xcohes, basefo
+    character(len=19) :: fisco
     aster_logical :: l_cont_cont, l_cont_xfem, l_cont_xfem_gg, l_cont_lac, l_xfem_czm
     integer, pointer :: v_model_xfemcont(:) => null()
 !
@@ -100,6 +100,31 @@ character(len=19), optional, intent(out) :: xcohes_
 !
     chgeom = '&&NMELCO.CHGEOM'
     option = ' '
+    chmlcf=' '
+    sdappa_psno=' '
+    sdappa = ' '
+    cpoint=' '
+    cpinte=' '
+    cainte=' '
+    ccface=' '
+    lnno  =' '
+    ltno  =' '
+    stano =' '
+    fissno=' '
+    heavno=' '
+    hea_no=' '
+    hea_fa=' '
+    pinter=' '
+    ainter=' '
+    cface =' '
+    faclon=' '
+    baseco=' '
+    xdonco=' '
+    xindco=' '
+    xseuco=' '
+    xcohes=' '
+    basefo=' '
+    fisco =' '
 !
 ! - Get contact parameters
 !

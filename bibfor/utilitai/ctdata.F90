@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
     integer :: n5, igrel,jcmp16
     integer, pointer :: repe(:) => null()
     character(len=8) :: nomo, nomgd, noca
-    character(len=8) :: typmcl(4), lpain(6), lpaout(1),sdresu=' '
+    character(len=8) :: typmcl(4), lpain(6), lpaout(1),sdresu
     character(len=16) :: motcle(4),nocham
     character(len=19) :: ligrel, ligrmo
     character(len=24) :: chgeom, lchin(6), lchout(1)
@@ -94,6 +94,7 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
     ligrel = '&&CTDATA.LIGREL'
     nomo=' '
     tsca=' '
+    sdresu=' '
     exicar=.false.
     call getvid('RESU', 'RESULTAT', iocc=1, scal=sdresu, nbret=n0)
     call getvid('RESU', 'CHAM_GD', iocc=1, nbval=0, nbret=n4)

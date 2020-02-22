@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,6 @@ subroutine lcddcc(taus, coeft, ifa, nmat, nbcomm,&
     real(kind=8) :: t8, t9
     real(kind=8) :: rs, d1, lambda, alphat, ls, tauslt, tauslr, gamnuc
     real(kind=8) ::  airr, rhoirr, depdt, tauc, t10
-    aster_logical :: new
     common /deps6/depsdt
     integer :: irr, decirr, nbsyst, decal, gdef
     common/polycr/irr,decirr,nbsyst,decal,gdef

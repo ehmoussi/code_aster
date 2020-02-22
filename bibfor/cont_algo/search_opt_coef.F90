@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,6 @@ implicit none
     real(kind=8), intent(inout) :: dist_cont(2)
     real(kind=8), intent(out) :: coef_opt
     aster_logical, intent(out) :: terminate
- 
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -43,25 +42,26 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  
-! Out 
+! In
+! Out
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer      :: indi_curr,indi_prev, it,mode_cycl = 1
+    integer      :: indi_curr,indi_prev, it, mode_cycl
     real(kind=8) :: save_coefficient, coefficient
     real(kind=8) :: valmin, valmax
-    
-    terminate   = .false.
+
+    terminate   = ASTER_FALSE
     coefficient = coef(1)
     save_coefficient = coefficient
     valmin      = coef(1)
     valmax      = coef(2)
-    it = 1 
-    
+    it = 1
+    mode_cycl = 1
+
     do while ( (coefficient .lt. valmax) .and. (.not. terminate))
-       
-! Optimalite du coefficient : 
+
+! Optimalite du coefficient :
 !     (pres_prev -coef*dist_prev)*(pres_curr -coef*dist_curr) > 0
        if (mode_cycl .eq. 1) then
            if (dist_cont(1) .gt. 1.d-6 )   dist_cont(1) = 0.0
@@ -71,42 +71,42 @@ implicit none
        endif
        call mmstac(dist_cont(1), pres_cont(1),coefficient,indi_curr)
        call mmstac(dist_cont(2), pres_cont(2),coefficient,indi_prev)
-        
+
        if ((indi_curr + indi_prev .eq. 0) .or.&
-           (indi_curr + indi_prev .eq. 2)     ) then 
-           terminate = .true.
+           (indi_curr + indi_prev .eq. 2)     ) then
+           terminate = ASTER_TRUE
            indi(1)   = indi_prev
            indi(2)   = indi_curr
-           
-       elseif (indi_curr + indi_prev .eq. 1) then 
-           terminate = .false.
-           
-       else  
-           ASSERT(.false.)
-           
+
+       elseif (indi_curr + indi_prev .eq. 1) then
+           terminate = ASTER_FALSE
+
+       else
+           ASSERT(ASTER_FALSE)
+
        endif
-       
-! Dichotomie : continue iteration using dichotomie 
+
+! Dichotomie : continue iteration using dichotomie
        if (terminate .and. (it .lt. 500)) then
-           it = it + 1 
-           save_coefficient = coefficient  
+           it = it + 1
+           save_coefficient = coefficient
            valmax = (log(coefficient) + log(valmax)) / 2
-           if (valmax .lt. log(coef(2))) then 
+           if (valmax .lt. log(coef(2))) then
                valmax = 10**valmax
-               terminate = .false. 
-           else 
-               terminate = .true.
+               terminate = ASTER_FALSE
+           else
+               terminate = ASTER_TRUE
            endif
-           
+
        else
            save_coefficient = coefficient
-           
+
        endif
-      coefficient = coefficient *4.0d0     
+      coefficient = coefficient *4.0d0
 ! Dichotomie :
-      
+
     end do
-    
+
     coef_opt = save_coefficient
-    
+
 end subroutine

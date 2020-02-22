@@ -305,7 +305,10 @@ Risques et conseils :
   Type de la valeur de référence incompatible avec le type des valeurs du champ.
 """),
 
-
+    96: _("""
+  TYPE_TEST teste une quantité calculée globalement sur tout le champ.
+  Il ne prend pas en compte les GROUP_NO ou GROUP_MA renseignés.
+"""),
 
     97: _("""
   Mot-clé POINT interdit pour le champ au noeud issu de %(k1)s à l'ordre %(i1)d:

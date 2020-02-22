@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -64,19 +64,20 @@ real(kind=8), intent(out) :: algo_inte_r
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret
-    character(len=16) :: texte(3)=(/ ' ',' ',' '/)
+    character(len=16) :: texte(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     algo_inte   = ' '
     algo_inte_r = 0.d0
+    texte = (/ ' ',' ',' '/)
 !
 ! - Get ALGO_INTE
 !
     call getvtx(keywf, 'ALGO_INTE', iocc = i_comp, scal = algo_inte, nbret = iret)
     if (iret .eq. 0) then
         call lcalgo(rela_code_py, algo_inte)
-    else  
+    else
         call lctest(meca_code_py, 'ALGO_INTE', algo_inte, iret)
         if (iret .eq. 0) then
             texte(1) = algo_inte

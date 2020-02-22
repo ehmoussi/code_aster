@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -75,8 +75,8 @@ character(len=*) :: nomamd
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=6) :: nompro = 'IRMMFA'
-    integer :: tygeno = 0
+    character(len=6), parameter :: nompro = 'IRMMFA'
+    integer :: tygeno
     integer :: codret
     integer :: iaux, jaux, kaux
     integer :: numfam
@@ -101,6 +101,7 @@ character(len=*) :: nomamd
 !     PAR DEFAUT, JEVEUX MET TOUT A 0. CELA SIGNIFIE QUE, PAR DEFAUT,
 !     LES ENTITES APPARTIENNENT A LA FAMILLE NULLE.
 !               12   345678   9012345678901234
+    tygeno = 0
     nufano = '&&'//nompro//'.NU_FAM_NOE     '
     nufama = '&&'//nompro//'.NU_FAM_MAI     '
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 !     /'VERSION' : POUR RECUPERER LE NUMERO DE VERSION (SEULEMENT LA
 !              SD_SOLVEUR OU LA MATAS SONT REQUIS). CE NUMERO EST
 !              STOCKEE DANS SD_SOLVEUR.SLVK(12). IL DOIT ETRE LICITE
-!              (5.1.1/5.1.2(consortium)) SINON UTMESS_F.
+!              (CF. VERSIONS PERMISES DANS ASTERF_MUMPS) SINON UTMESS_F.
 !              PAR DEFAUT ON CHERCHE LE NUMERO DS LA SD_SOLVEUR, SINON ON PREND CELUI LIE
 !              AU PACKAGE MUMPS LINKE.
 !     /'PRERES'  : POUR DEMANDER LES ETAPES ANALYSE+FACTORISATION
@@ -115,7 +115,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
     character(len=4) :: etam
     character(len=12) :: k12bid
     character(len=14) :: nonu, nu, impr
-    character(len=19) :: matas, vcine, nomat, nosolv, solveu
+    character(len=19) :: matas, vcine, nomat, nosolv, solveu, valk(4)
     character(len=24) :: kvers, kpiv
     character(len=24), pointer :: slvk(:) => null()
     integer, pointer :: slvi(:) => null()
@@ -249,10 +249,15 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 ! --- ON TESTE JUSTE LE CARACTERE LICITE DU NUMERO DE VERSION DEJA
 ! --- STOCKE DANS LA SD_SOLVEUR
                     kvers=trim(adjustl(slvk(12)))
+                    valk(1)=vmump1
+                    valk(2)=vmump2
+                    valk(3)=vmump3
+                    valk(4)=vmump4
                     select case (kvers)
-                        case('5.1.1','5.1.1consortium','5.1.2','5.1.2consortium')
+                    case(vmump1,vmump2,vmump3,vmump4)
+! OK bonne version
                     case default
-                        call utmess('F', 'FACTOR_72', sk=kvers)
+                      call utmess('F', 'FACTOR_72', sk=kvers, valk=valk)
                     end select
                 endif
                 goto 999

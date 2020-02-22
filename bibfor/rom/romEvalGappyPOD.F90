@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ integer, intent(in) :: ind_dual
 !
     type(ROM_DS_Empi):: ds_empi
     integer :: ifm, niv
-    integer :: nb_equa_rom, nb_mode, nb_equa_ridi = 0
+    integer :: nb_equa_rom, nb_mode, nb_equa_ridi
     integer :: i_store, i_mode, nume_store, iret, i_ord
     integer(kind=4) :: info
     real(kind=8), pointer    :: v_matr(:) => null()
@@ -78,6 +78,7 @@ integer, intent(in) :: ind_dual
 !
 ! - Get parameters
 !
+    nb_equa_ridi = 0
     if (ind_dual .eq. 0) then
         ds_empi = ds_para%ds_empi_prim
     else

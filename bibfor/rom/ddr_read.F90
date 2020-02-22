@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,14 +53,14 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_layer_rid = 0, nb_layer_sub = 0, nocc
-    integer :: nb_node = 0, nb_mail = 0
-    aster_logical :: l_corr_ef = .false._1
+    integer :: nb_layer_rid , nb_layer_sub , nocc
+    integer :: nb_node , nb_mail
+    aster_logical :: l_corr_ef
     type(ROM_DS_Empi) :: empi_prim, empi_dual
-    character(len=8)  :: base_prim = ' ', base_dual = ' ', mesh = ' ', mesh_reuse = ' '
-    character(len=16) :: k16bid = ' ', answer, keywf
-    character(len=24) :: grelem_rid  = ' ', grnode_int  = ' ', grnode_sub = ' '
-    character(len=24) :: list_node, list_mail = ' '
+    character(len=8)  :: base_prim, base_dual, mesh, mesh_reuse
+    character(len=16) :: k16bid, answer, keywf
+    character(len=24) :: grelem_rid , grnode_int , grnode_sub
+    character(len=24) :: list_node, list_mail
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,6 +68,21 @@ type(ROM_DS_ParaDDR), intent(inout) :: ds_para
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_10')
     endif
+!
+    base_prim = ' '
+    base_dual = ' '
+    mesh = ' '
+    mesh_reuse = ' '
+     k16bid = ' '
+    grelem_rid  = ' '
+    grnode_int  = ' '
+    grnode_sub = ' '
+    list_mail = ' '
+    nb_layer_rid = 0
+    nb_layer_sub = 0
+    nb_node = 0
+    nb_mail = 0
+    l_corr_ef = .false._1
 !
 ! - Output datastructure
 !

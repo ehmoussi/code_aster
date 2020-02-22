@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -799,10 +799,10 @@ contains
         ! ------------------------------------------------------------------------------------------
         !
         ! nperm         : nombre max d'itérations de la méthode de jacobi
-        integer         :: nperm = 12
+        integer, parameter :: nperm = 12
         ! tol           : précision de convergence
         ! toldyn        : précision de petitesse dynamique
-        real(kind=8)    :: tol=1.0d-10, toldyn=1.0d-02
+        real(kind=8), parameter :: tol=1.0d-10, toldyn=1.0d-02
         !
         ! ------------------------------------------------------------------------------------------
         !
@@ -944,7 +944,7 @@ contains
             dif = abs(valpro(i) - valaux(i))
             if (dif .gt. abs(rtol)) then
                 okconv = .false.
-                goto 9998
+                goto 998
             endif
         enddo
         ! Calcul des facteurs de couplage et test de convergence sur ces facteurs
@@ -964,12 +964,12 @@ contains
                 compb = eps * abs(br(jj) * br(kk))
                 if ((epsa .ge. compa) .or. (epsb .ge. compb)) then
                     okconv = .false.
-                    goto 9998
+                    goto 998
                 endif
             enddo
         enddo
         !
-        9998 continue
+        998 continue
         !
         ! Si on n'a pas convergé
         if (.not.okconv) then

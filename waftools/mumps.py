@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -124,9 +124,9 @@ int main(void){
         ret = self.check_cc(fragment=fragment, use='MUMPS',
                             mandatory=True, execute=True, define_ret=True)
         self.env['MUMPS_VERSION'] = ret
-        if dict_vers.get(ret, ret) != '5.1.1' and dict_vers.get(ret, ret) != '5.1.1consortium' and dict_vers.get(ret, ret) != '5.1.2' and dict_vers.get(ret, ret) != '5.1.2consortium':
+        if dict_vers.get(ret, ret) != '5.2.1' and dict_vers.get(ret, ret) != '5.2.1consortium' and dict_vers.get(ret, ret) != '5.1.2' and dict_vers.get(ret, ret) != '5.1.2consortium':
             raise Errors.ConfigurationError("expected versions: {0}".
-                                             format('5.1.1/5.1.2(consortium)'))
+                                             format('5.2.1/5.1.2(consortium)'))
     except:
         self.end_msg('no', 'YELLOW')
         raise

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -335,9 +335,8 @@ CHCONT=DEFI_CONTACT(MODELE      = MO,
                             ),
                     )
 #
-
-CHDEP1B=STAT_NON_LINE(SOLVEUR=_F(
-                                 METHODE= 'MUMPS',),
+#MATRICE QUASI-SINGULIERE, NE FONCTIONNE QU'AVEC MUMPS
+CHDEP1B=STAT_NON_LINE(SOLVEUR=_F(NPREC=-1,METHODE='MUMPS'),
                       MODELE=MO,
                       CHAM_MATER=CHMTB1,INFO=2,
                       EXCIT=_F( CHARGE = CH1B),
@@ -484,8 +483,8 @@ CH2B=AFFE_CHAR_MECA(           MODELE=MO,
                                                 DDL = ('DY',  'DY',))
                             )
 #
-CHDEP2B=STAT_NON_LINE(SOLVEUR=_F(
-                                 METHODE= 'MUMPS',),
+#MATRICE QUASI-SINGULIERE, NE FONCTIONNE QU'AVEC MUMPS
+CHDEP2B=STAT_NON_LINE(SOLVEUR=_F(NPREC=-1,METHODE='MUMPS'),
                       MODELE=MO,
                       CHAM_MATER=CHMTB2,
                       EXCIT=_F( CHARGE = CH2B),
@@ -634,8 +633,8 @@ CH3B=AFFE_CHAR_MECA(           MODELE=MO,
                             )
 
 #
-CHDEP3B=STAT_NON_LINE(SOLVEUR=_F(
-                                 METHODE= 'MUMPS',),
+#MATRICE QUASI-SINGULIERE, NE FONCTIONNE QU'AVEC MUMPS
+CHDEP3B=STAT_NON_LINE(SOLVEUR=_F(NPREC=-1,METHODE='MUMPS'),
                       MODELE=MO,
                       CHAM_MATER=CHMTB3,
                       EXCIT=_F( CHARGE = CH3B),

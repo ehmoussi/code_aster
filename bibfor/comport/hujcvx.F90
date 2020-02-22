@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ subroutine hujcvx(mod, nmat, materf, vinf, deps,&
     integer :: i
     aster_logical :: rdctps
     character(len=7) :: etatf
-    real(kind=8) :: un, bid66(6, 6), zero, somme, matert(22, 2)
+    real(kind=8) :: un, zero, somme, matert(22, 2)
 !
     parameter     ( zero = 0.d0 )
     parameter     ( un   = 1.d0 )

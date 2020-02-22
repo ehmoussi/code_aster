@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -98,7 +98,7 @@ subroutine op0010()
 !     MESSAGES
 !
 !     CRACK ADVANCEMENT
-    real(kind=8) :: damax=0.d0, dttot=0.d0, vmax=0.d0, rayon=0.d0, dafiss=0.d0, bmax=0.d0
+    real(kind=8) :: damax, dttot, vmax, rayon, dafiss, bmax
     character(len=24) :: vvit, vbeta, vgamma
     character(len=19) :: cnsbet, listp
     integer :: crack, jbeta, jgamma, jvit, nbval, nfiss
@@ -116,18 +116,18 @@ subroutine op0010()
     character(len=19) :: dcnslt, dcnsln, dgrlt, dgrln, dcnxin
 !
 !     FIELD PROJECTION
-    real(kind=8) :: radtor=0.d0
+    real(kind=8) :: radtor
     character(len=16) :: corres
     character(len=19) :: ndomp, edomg
 !
 !     TEST_MAIL
-    real(kind=8) :: dist=0.d0, distol=0.d0
+    real(kind=8) :: dist, distol
 !
 !     DOMAINE LOCALISATION
     integer :: nbno, jgltl, jglnl
     character(len=19) :: grltc, grlnc
     aster_logical :: ldpre
-    real(kind=8) :: radimp=0.d0, radlim=0.d0
+    real(kind=8) :: radimp, radlim
 !
 !     FRONT SUR LA GRILLE
     aster_logical :: goinop
@@ -144,6 +144,18 @@ subroutine op0010()
     call jemarq()
     call infmaj()
     call infdbg('XFEM', ifm, niv)
+!
+    damax=0.d0
+    dttot=0.d0
+    vmax=0.d0
+    rayon=0.d0
+    dafiss=0.d0
+    bmax=0.d0
+    radtor=0.d0
+    dist=0.d0
+    distol=0.d0
+    radimp=0.d0
+    radlim=0.d0
 !
 ! --- NOM DU CONCEPT FISSURE
 !
@@ -222,12 +234,12 @@ subroutine op0010()
             call utmess('A', 'XFEM_69')
         endif
     endif
-    
+
 !   CHECK IF THE AUXILIARY GRID USED WHITH THE SIMPLEXE METHODE
     if (method .eq. 'SIMPLEXE' .and. grille) then
         call utmess('F', 'XFEM_27')
-    endif     
-    
+    endif
+
 !
 !     CHECK IF THE LOCALIZATION OF THE DOMAIN SHOULD BE ACTIVATED
     locdom=.false.
@@ -330,7 +342,7 @@ subroutine op0010()
 !
     call getvr8(' ', 'ANGLE_BETA', nbval=-nbval, vect=zr(jbeta), nbret=ibid)
     call getvr8(' ', 'ANGLE_GAMMA', nbval=-nbval, vect=zr(jgamma), nbret=ibid)
-    call getvr8(' ', 'VITESSE', nbval=-nbval, vect=zr(jvit), nbret=ibid)    
+    call getvr8(' ', 'VITESSE', nbval=-nbval, vect=zr(jvit), nbret=ibid)
 !
     if(operation.ne.'DETECT_COHESIF') then
         call getvr8(' ', 'DA_FISS', scal=dafiss, nbret=ibid)
@@ -541,7 +553,7 @@ subroutine op0010()
     endif
 !
     call xprini(dnoma, dcnxin, grille, noesom, vcn, grlr, lcmin, ndim)
-    
+
 !-----------------------------------------------------------------------
 !     CALCUL DES POINTS DU FOND DE FISSURE SUR LA GRILLE
 !     DANS LE CADRE DE L'UTILISATION D'UN FOND VIRTUEL
@@ -595,23 +607,23 @@ subroutine op0010()
     cnsdis='&&OP0010.CNSDIS'
     delta='&&OP0010.DELTA'
 !
-    if ((method.eq.'GEOMETRI' .or. method .eq.'SIMPLEXE') & 
+    if ((method.eq.'GEOMETRI' .or. method .eq.'SIMPLEXE') &
          .and. (operation.ne.'PROPA_COHESIF')) then
 
          call pre_traitement(dnoma, fispre, ndim, vbeta, vgamma)
-!         
+!
          call xprvit(dnoma, fispre, ndim, vvit, vbeta,&
                 lcmin, cnsvt, cnsvn, vpoint, cnsbl,&
                 cnsdis, disfr, cnsbet, listp, damax,&
                 locdom, radimp, radtor, delta, ucnslt,&
-                ucnsln)    
-    else          
+                ucnsln)
+    else
           call xprvit(dnoma, fispre, ndim, vvit, vbeta,&
                 lcmin, cnsvt, cnsvn, vpoint, cnsbl,&
                 cnsdis, disfr, cnsbet, listp, damax,&
                 locdom, radimp, radtor, delta, ucnslt,&
                 ucnsln)
-    endif 
+    endif
 !
 !
 !-----------------------------------------------------------------------
@@ -714,7 +726,7 @@ subroutine op0010()
             meserr(2)=lcmin
             call utmess('F', 'XFEM2_64', nr=2, valr=meserr)
         endif
-!    
+!
 !       THE VALUE OF DAMAX SHOULD BE GREATER THAN THE SHORTEST EDGE IN THE
 !       MESH. IF THIS IS NOT TRUE, THE MESH COULD FAIL TO CORRECTLY
 !       REPRESENT THE LEVEL SETS. THIS IS NOT A FATAL ERROR AND A WARNING
@@ -806,14 +818,14 @@ subroutine op0010()
                              dgrlt, isozro, nodtor, eletor, liggrd,&
                              vpoint ,cnsbl ,dttot ,cnsbet ,listp,nbrinit)
     endif
-    
+
     if (method .eq. 'SIMPLEXE') then
         call xprfastmarching('REINITLN', dnoma, cnxinv, &
                               noesom, lcmin, dcnsln, dgrln, dcnslt, &
                               dgrlt, isozro, nodtor, eletor, liggrd,&
                               vpoint ,cnsbl ,cnsbet ,listp)
-     endif    
-    
+     endif
+
     call jedetr(isozro)
 !
 !-----------------------------------------------------------------------
@@ -836,13 +848,13 @@ subroutine op0010()
            call jedetr(isozro)
         enddo
     endif
-    
-    if (method .eq. 'SIMPLEXE') then    
+
+    if (method .eq. 'SIMPLEXE') then
         call xprfastmarching('REINITLT', dnoma, cnxinv, &
                              noesom, lcmin, dcnsln, dgrln, dcnslt, &
                              dgrlt, isozro, nodtor, eletor, liggrd,&
                              vpoint ,cnsbl ,cnsbet ,listp)
-        call jedetr(isozro)                             
+        call jedetr(isozro)
     endif
 
     call jedetr(cnsbl)
@@ -930,7 +942,7 @@ subroutine op0010()
     endif
 !
 !   ON RAJOUTE UN CRITERE LST PLUS LACHE POUR EVITER DES OSCILLATIONS
-!   NUMERIQUE LORS DE LA PROPAGATION / EN THEORIE CE N EST PAS BIEN DE 
+!   NUMERIQUE LORS DE LA PROPAGATION / EN THEORIE CE N EST PAS BIEN DE
 !   DE RETOUCHER LA GEOMETRIE A LA VOLEE
 !
     call xajuls(noma, nbma, cnslt, cnsln, jconx1,&

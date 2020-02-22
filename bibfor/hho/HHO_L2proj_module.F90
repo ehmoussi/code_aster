@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,9 +72,10 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         real(kind=8) :: faceMass(MSIZE_FACE_SCAL, MSIZE_FACE_SCAL)
-        integer :: info = 0, mbs
+        integer :: info, mbs
 ! --------------------------------------------------------------------------------------------------
 !
+        info = 0
         if(2 * degree > hhoQuad%order) then
             call utmess('F', 'HHO1_12')
         end if
@@ -126,10 +127,11 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         real(kind=8) :: faceMass(MSIZE_FACE_SCAL, MSIZE_FACE_SCAL)
-        integer :: info = 0, mbs
+        integer :: info, mbs
 !
 ! --------------------------------------------------------------------------------------------------
 !
+        info = 0
         if(2 * degree > hhoQuad%order) then
             call utmess('F', 'HHO1_12')
         end if
@@ -181,9 +183,10 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         real(kind=8) :: cellMass(MSIZE_CELL_SCAL, MSIZE_CELL_SCAL)
-        integer :: info = 0, mbs
+        integer :: info, mbs
 ! --------------------------------------------------------------------------------------------------
 !
+        info = 0
         if(2 * degree > hhoQuad%order) then
             call utmess('F', 'HHO1_12')
         end if
@@ -235,10 +238,11 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         real(kind=8) :: cellMass(MSIZE_CELL_SCAL, MSIZE_CELL_SCAL)
-        integer :: info = 0, mbs
+        integer :: info, mbs
 !
 ! --------------------------------------------------------------------------------------------------
 !
+        info = 0
         if(2 * degree > hhoQuad%order) then
             call utmess('F', 'HHO1_12')
         end if
@@ -290,10 +294,11 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         real(kind=8) :: cellMass(MSIZE_CELL_SCAL, MSIZE_CELL_SCAL)
-        integer :: info = 0, ndim2, mbs
+        integer :: info, ndim2, mbs
 !
 ! --------------------------------------------------------------------------------------------------
 !
+        info = 0
         if(2 * degree > hhoQuad%order) then
             call utmess('F', 'HHO1_12')
         end if

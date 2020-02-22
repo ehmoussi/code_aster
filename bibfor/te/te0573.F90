@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,128 +15,138 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine te0573(option, nomte)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine te0573(option, nomte)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
-!
 #include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/jevecd.h"
 #include "asterfort/jevech.h"
-#include "asterfort/lteatt.h"
+#include "asterfort/evalPressure.h"
 #include "asterfort/nmpr2d.h"
+#include "asterfort/tecach.h"
+#include "asterfort/lteatt.h"
 #include "blas/dcopy.h"
-    character(len=16) :: nomte, option
 !
-! ----------------------------------------------------------------------
+character(len=16), intent(in) :: option, nomte
 !
-! ROUTINE CALCUL ELEMENTAIRE
+! --------------------------------------------------------------------------------------------------
 !
-! CALCUL DES OPTIONS ELEMENTAIRES EN MECANIQUE CORRESPONDANT A UN
-! CHARGEMENT EN PRESSION SUIVEUSE SUR DES ARETES D'ELEMENTS
-! ISOPARAMETRIQUES 2D
+! Elementary computation
 !
-! LA PRESSION EST UNE CONSTANTE RELLE
+! Elements: 2D (skin elements)
 !
-! ----------------------------------------------------------------------
+! Options: RIGI_MECA_PRSU_*
+!          CHAR_MECA_PRSU_*
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  OPTION : OPTION DE CALCUL
-!               CHAR_MECA_PRSU_R
-!               RIGI_MECA_PRSU_R
-! IN  NOMTE  : NOM DU TYPE ELEMENT
+    integer, parameter :: mxnoeu=3, mxnpg=4, mxvect=2*3, mxmatr=2*3*2*3
+    aster_logical :: l_func, l_time
+    aster_logical :: l_axis
+    integer :: jv_geom, jv_time, jv_pres
+    integer :: jv_depm, jv_depp
+    integer :: jv_vect, jv_matr
+    real(kind=8) :: time
+    integer :: ipoids, ivf, idfde
+    integer :: nno, npg, ndim, ndofbynode, ndof
+    integer :: iret, kpg, idof, i, j, k
+    real(kind=8) :: vect(mxvect), matr(mxmatr), geom_reac(mxvect)
+    real(kind=8) :: pres, pres_pg(mxnpg)
+    real(kind=8) :: cisa, cisa_pg(mxnpg)
 !
+! --------------------------------------------------------------------------------------------------
 !
+    pres_pg = 0.d0
+    cisa_pg = 0.d0
+    l_func = (option .eq. 'CHAR_MECA_PRSU_F') .or. (option .eq. 'RIGI_MECA_PRSU_F')
 !
+! - Input fields: for pressure, no node affected -> 0
 !
-!
-    integer :: mxnoeu, mxnpg, mxvect, mxmatr
-    parameter     (mxnoeu=3,mxnpg=4,mxvect=2*3,mxmatr=2*3*2*3)
-!
-    aster_logical :: laxi
-    integer :: ndim, nno, npg, nnos, nddl
-    integer :: iddl, ino, ipg
-    integer :: jpoids, jvf, jdf, jgano
-    integer :: jvect, jmatr
-    integer :: jgeom, jdepm, jdepp, jpres
-    integer :: kdec, i, j, k
-!
-    real(kind=8) :: p(2, mxnpg)
-    real(kind=8) :: vect(mxvect), matr(mxmatr)
-!
-! ----------------------------------------------------------------------
-!
-!
-! --- CARACTERISTIQUES ELEMENT
-!
-    laxi = lteatt('AXIS','OUI')
-    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
-                     jpoids=jpoids, jvf=jvf, jdfde=jdf, jgano=jgano)
-    nddl = 2*nno
-    ASSERT(nno .le.mxnoeu)
-    ASSERT(npg .le.mxnpg)
-!
-! --- ACCES CHAMPS
-!
-    call jevech('PGEOMER', 'L', jgeom)
-    call jevech('PDEPLMR', 'L', jdepm)
-    call jevech('PDEPLPR', 'L', jdepp)
-    call jevech('PPRESSR', 'L', jpres)
-!
-! --- REACTUALISATION DE LA GEOMETRIE PAR LE DEPLACEMENT
-!
-    do 10 iddl = 1, nddl
-        zr(jgeom+iddl-1) = zr(jgeom+iddl-1) + zr(jdepm+iddl-1) + zr(jdepp+iddl-1)
- 10 end do
-!
-! --- CALCUL DE LA PRESSION AUX POINTS DE GAUSS (A PARTIR DES NOEUDS)
-!
-    do 100 ipg = 1, npg
-        kdec = (ipg-1) * nno
-        p(1,ipg) = 0.d0
-        p(2,ipg) = 0.d0
-        do 105 ino = 1, nno
-            p(1,ipg) = p(1,ipg) + zr(jpres+2*(ino-1)+1-1) * zr(jvf+ kdec+ino-1)
-            p(2,ipg) = p(2,ipg) + zr(jpres+2*(ino-1)+2-1) * zr(jvf+ kdec+ino-1)
-105     continue
-100 end do
-!
-! --- CALCUL EFFECTIF DE LA RIGIDITE
-!
-    if (option .eq. 'CHAR_MECA_PRSU_R') then
-        call nmpr2d(1, laxi, nno, npg, zr(jpoids),&
-                    zr(jvf), zr(jdf), zr( jgeom), p, vect,&
-                    matr)
-!
-! --- RECOPIE DU VECTEUR ELEMENTAIRE
-!
-        call jevech('PVECTUR', 'E', jvect)
-        call dcopy(nddl, vect, 1, zr(jvect), 1)
-!
-    else if (option.eq.'RIGI_MECA_PRSU_R') then
-        call nmpr2d(2, laxi, nno, npg, zr(jpoids),&
-                    zr(jvf), zr(jdf), zr( jgeom), p, vect,&
-                    matr)
-!
-! --- RECOPIE DE LA MATRICE ELEMENTAIRE (NON-SYMETRIQUE)
-! --- LES MATRICES NON SYMETRIQUES SONT ENTREES EN LIGNE
-!
-        call jevech('PMATUNS', 'E', jmatr)
-        k = 0
-        do 110 i = 1, nddl
-            do 120 j = 1, nddl
-                k = k + 1
-                zr(jmatr-1+k) = matr((j-1)*nddl+i)
-120         continue
-110     end do
-        ASSERT(k.eq.nddl*nddl)
-!
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PDEPLMR', 'L', jv_depm)
+    call jevech('PDEPLPR', 'L', jv_depp)
+    if (l_func) then
+        call jevecd('PPRESSF', jv_pres, 0.d0)
     else
-        ASSERT(.false.)
+        call jevecd('PPRESSR', jv_pres, 0.d0)
+    endif
+!
+! - Get time if present
+!
+    call tecach('NNO', 'PTEMPSR', 'L', iret, iad=jv_time)
+    l_time = ASTER_FALSE
+    time   = 0.d0
+    if (jv_time .ne. 0) then
+        l_time = ASTER_TRUE
+        time   = zr(jv_time)
+    endif
+!
+! - Get element parameters
+!
+    call elrefe_info(fami='RIGI',&
+                     nno=nno, npg=npg, ndim=ndim,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde)
+    l_axis = lteatt('AXIS','OUI')
+    ASSERT(nno .le. mxnoeu)
+    ASSERT(npg .le. mxnpg)
+!
+! - Pressure are on skin elements but DOF are volumic
+!
+    ASSERT(ndim .eq. 1)
+    ndofbynode = ndim + 1
+!
+! - Total number of dof
+!
+    ndof = ndofbynode*nno
+!
+! - Update geometry
+!
+    do idof = 1, ndof
+        geom_reac(idof) = zr(jv_geom+idof-1) + zr(jv_depm+idof-1) + zr(jv_depp+idof-1)
+    end do
+!
+! - Evaluation of pressure (and shear) at Gauss points (from nodes)
+!
+    do kpg = 1, npg
+        call evalPressure(l_func, l_time , time     ,&
+                          nno   , ndim   , kpg      ,&
+                          ivf   , jv_geom, jv_pres  ,&
+                          pres  , cisa   , geom_reac)
+        pres_pg(kpg) = pres
+        cisa_pg(kpg) = cisa
+    end do
+!
+! - Output
+!
+    if (option(1:9) .eq. 'CHAR_MECA') then
+        call jevech('PVECTUR', 'E', jv_vect)
+        call nmpr2d(l_axis    , nno    , npg      ,&
+                    zr(ipoids), zr(ivf), zr(idfde),&
+                    geom_reac , pres_pg, cisa_pg  ,&
+                    vect)
+        call dcopy(ndof, vect, 1, zr(jv_vect), 1)
+    else if (option(1:9) .eq. 'RIGI_MECA') then
+        call jevech('PMATUNS', 'E', jv_matr)
+        call nmpr2d(l_axis    , nno    , npg      ,&
+                    zr(ipoids), zr(ivf), zr(idfde),&
+                    geom_reac , pres_pg, cisa_pg  ,&
+                    matr_ = matr)
+        k = 0
+        do i = 1, ndof
+            do j = 1, ndof
+                k = k + 1
+                zr(jv_matr-1+k) = matr((j-1)*ndof+i)
+            end do
+        end do
+        ASSERT(k .eq. ndof*ndof)
+    else
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

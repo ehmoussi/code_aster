@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ subroutine abscur(ma)
     integer :: jmesma, jmesno, numa, iexi, nbnoseg
     real(kind=8) :: s, stot
     real(kind=8) :: s13, s32, s34, s42, abscurv(4), coor(3, 4)
-    aster_logical :: dbg=.false.
+    aster_logical, parameter :: dbg=.false.
     integer, pointer :: icoseg(:) => null()
     integer, pointer :: nu2seg(:) => null()
     integer, pointer :: segordo(:) => null()
@@ -132,7 +132,7 @@ subroutine abscur(ma)
     call jeveuo(typmai, 'L', itypm)
     nbseg=0
     nbpoi1=0
-    do 12 kma = 1, nbma
+    do kma = 1, nbma
         numa=zi(jmesma-1+kma)
         call jenuno(jexnum('&CATA.TM.NOMTM', zi(itypm+numa-1)), typm)
         if (typm .eq. 'SEG2' .or. typm .eq. 'SEG3' .or. typm .eq. 'SEG4') then
@@ -144,7 +144,7 @@ subroutine abscur(ma)
         else
             call utmess('F', 'MODELISA_2')
         endif
- 12 end do
+    end do
 !
 !
 !   --  5. Les segments doivent former une ligne ouverte avec
@@ -275,7 +275,7 @@ subroutine abscur(ma)
 !
 !   --  8. calcul de l'abscisse curviligne
 !   ---------------------------------------
-    do 10 kseg = 1, nbseg
+    do kseg = 1, nbseg
         mi = segordo(kseg)
         numa=zi(jseg-1+abs(mi))
         call jenuno(jexnum('&CATA.TM.NOMTM', zi(itypm+numa-1)), typm)
@@ -358,12 +358,12 @@ subroutine abscur(ma)
         call nocart(ma//'.ABSC_CURV', 3, nbnoseg, mode='NUM', nma=1,&
                     limanu=[numa])
 !
- 10 end do
+    end do
 !
 !
 !   --  cas des poi1 :
 !   --------------------
-    do 20 ipoi1 = 1, nbpoi1
+    do ipoi1 = 1, nbpoi1
         numa=zi(jpoi+ipoi1-1)
         mi=zi(icor2+ipoi1-1)
         if (mi .gt. 0) then
@@ -374,10 +374,9 @@ subroutine abscur(ma)
         valv(1) = s
         call nocart(ma//'.ABSC_CURV', 3, 1, mode='NUM', nma=1,&
                     limanu=[numa])
- 20 end do
+    end do
 !
 !
-    dbg=.false.
     if (dbg) call imprsd('CHAMP', ma//'.ABSC_CURV', 6, 'ABSC_CURV')
 !
 !

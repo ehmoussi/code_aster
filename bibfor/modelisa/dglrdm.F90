@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -98,8 +98,8 @@ subroutine dglrdm()
     integer :: nnap, ibid, ilit, jlm, jmelk
     integer :: jmelr, jmelc, lonobj
     integer :: iret, icisai
-    integer :: ibid1, ibid2, ibid3
-    integer :: nimpr, impr, ifr, iendo, ipentetrac, nalphat, ipenteflex
+    integer :: ibid1, ibid2
+    integer :: nimpr, impr, ifr, ipentetrac, nalphat, ipenteflex
 !
     real(kind=8) :: ea(3*na), sya(3*na), eb, nub, b, b1, a
     real(kind=8) :: h, np, emaxm, kapflex, alphat
@@ -115,7 +115,6 @@ subroutine dglrdm()
     character(len=6) :: k6
     character(len=8) :: mater, k8b
     character(len=16) :: nomres(6)
-    character(len=19) :: mendom
     character(len=19) :: cisail, pentetrac, penteflex
     character(len=16) :: type, nomcmd, fichie
 !
@@ -278,7 +277,7 @@ subroutine dglrdm()
 
 !   PENTE/TRACTION
     call getvtx('PENTE', 'TRACTION', iocc=1, scal=pentetrac, nbret=ibid1)
-    
+
     if (pentetrac .eq. 'UTIL') then
         ipentetrac = 3
         call getvr8('PENTE', 'EPSI_MEMB',  iocc=1, scal=emaxm, nbret=ibid1)
@@ -324,7 +323,7 @@ subroutine dglrdm()
                 ipentetrac, ipenteflex, icisai, emaxm, kapflex, nnap, omx(1), rx, ry,&
                 np, dxp, pendt,drp, mp, pendf)
 ! - DETERMINATION DES PARAMETRES D ENDOMMAGEMENT
-    call dgendo(em, h, ea(1), sya(1), fcj, epsi_c, & 
+    call dgendo(em, h, ea(1), sya(1), fcj, epsi_c, &
                 nyt, nyc, num, pendt, pendf, pelast, pelasf,&
                 icisai, gt, gf, gc, ipentetrac,&
                 np, dxp, b,alpha_c)

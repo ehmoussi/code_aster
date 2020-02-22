@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -383,7 +383,7 @@ contains
 !   Out ito                 : last index of the monomials
 ! --------------------------------------------------------------------------------------------------
 !
-        integer :: ndim = 0
+        integer :: ndim
 !
         ndim = this%hhoMono%ndim
 !
@@ -425,7 +425,7 @@ contains
 !   Out ito                 : last index of the monomials
 ! --------------------------------------------------------------------------------------------------
 !
-        integer :: ndim = 0
+        integer :: ndim
 !
         ndim = this%hhoMono%ndim
 !
@@ -543,7 +543,7 @@ contains
 !
 ! --------------------------------------------------------------------------------------------------
 !
-        real(kind=8), dimension(3) :: peval = 0.d0
+        real(kind=8), dimension(3) :: peval
         integer :: imono, ifrom, ito, size_basis, ind
         integer, dimension(3) :: power
 !
@@ -553,6 +553,7 @@ contains
         size_basis = this%BSSize(min_order, max_order)
         call this%BSRange(min_order, max_order, ifrom, ito)
 ! ----  scaled point
+        peval = 0.d0
         peval = (point - hhoCell%barycenter) / (0.5d0 * hhoCell%length_box)
 !
 ! ----- Eval monomials
@@ -619,8 +620,8 @@ contains
 !
 ! --------------------------------------------------------------------------------------------------
 !
-        integer :: size_basis = 0, ifrom = 0, ito = 0
-        real(kind=8), dimension(3) :: peval = 0.d0, func, dfunc
+        integer :: size_basis, ifrom, ito
+        real(kind=8), dimension(3) :: peval, func, dfunc
         integer :: ind, imono
         integer, dimension(3) :: power
         real(kind=8) :: ihx, ihy, ihz
@@ -839,7 +840,7 @@ contains
 !
 ! --------------------------------------------------------------------------------------------------
 !
-        real(kind=8), dimension(3) :: peval = 0.d0
+        real(kind=8), dimension(3) :: peval
         integer :: ind, imono, ifrom, ito, size_mono, i_basis
         integer, dimension(2) :: power
         real(kind=8), dimension(MSIZE_FACE_SCAL) :: basisMonoEval
@@ -909,7 +910,7 @@ contains
 !
 ! --------------------------------------------------------------------------------------------------
 !
-        real(kind=8), dimension(3) :: ep = 0.d0
+        real(kind=8), dimension(3) :: ep
         real(kind=8) :: eta, xi, h
 !
         ep(1:3) = point(1:3) - hhoFace%barycenter(1:3)

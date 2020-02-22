@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ integer,intent(out)            :: codret
 !
 ! ----------------------------------------------------------------------
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
-!           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D 
+!           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D
 !          A GRADIENT DE VARIABLE INTERNE : XXXX_GRAD_INCO
 ! ----------------------------------------------------------------------
 ! IN  FAMI    : FAMILLE DE POINTS DE GAUSS
@@ -68,7 +68,7 @@ integer,intent(out)            :: codret
 ! IN  NDDL    : DEGRES DE LIBERTE D'UN ELEMENT ENRICHI
 ! IN  IW      : PTR. POIDS DES POINTS DE GAUSS
 ! IN  VFF     : VALEUR  DES FONCTIONS DE FORME DE DEPLACEMENT
-! IN  VFFB    : VALEUR  DES FONCTIONS DE FORME DE A ET LAMBDA 
+! IN  VFFB    : VALEUR  DES FONCTIONS DE FORME DE A ET LAMBDA
 ! IN  IDFF    : PTR. DERIVEE DES FONCTIONS DE FORME DE DEPLACEMENT ELEMENT DE REF.
 ! IN  IDFFB   : PTR. DERIVEE DES FONCTIONS DE FORME DE A ET LAMBDA ELEMENT DE REF.
 ! IN  GEOMI   : COORDONNEES DES NOEUDS (CONFIGURATION INITIALE)
@@ -132,15 +132,15 @@ integer,intent(out)            :: codret
     real(kind=8)  :: kefuu(2*ndim,2*ndim),kefug(2*ndim,2+ndim),kefuq(2*ndim,2    )
     real(kind=8)  :: kefgu(2+ndim,2*ndim),kefgg(2+ndim,2+ndim),kefgq(2+ndim,2    )
     real(kind=8)  :: kefqu(2     ,2*ndim),kefqg(2     ,2+ndim),kefqq(2     ,2    )
-    real(kind=8)  :: tbid(6)=(/0.d0,0.d0,0.d0,0.d0,0.d0,0.d0/)
+    real(kind=8)  :: tbid(6)
     type(Behaviour_Integ) :: BEHinteg
 ! ----------------------------------------------------------------------
 
 
 ! Remarque sur l'ordre des composantes (cf. grandeurs premieres)
 ! degres de liberte : DX,DY,DZ,PRES,GONF,VARI,LAG_GV
-! Contraintes EF    : SIXX, .., SIYZ, SIGONF, SIP, SIGV_A, SIGV_L, SIGV_GX, ..., SIVG_GZ, 
-! Deformations ldc  : R2*EPXX, ..., R2*EPZZ, A, L, GX, ..., GZ 
+! Contraintes EF    : SIXX, .., SIYZ, SIGONF, SIP, SIGV_A, SIGV_L, SIGV_GX, ..., SIVG_GZ,
+! Deformations ldc  : R2*EPXX, ..., R2*EPZZ, A, L, GX, ..., GZ
 
 !
 ! - Initialisation of behaviour datastructure
@@ -168,12 +168,13 @@ integer,intent(out)            :: codret
     kr  = kron(1:neu)
     hyd = projhyd(1:neu)
     dev = projdev(1:neu,1:neu)
+    tbid(:) = 0.d0
 
     call gdlog_init(gdlm,ndu,nnu,axi,rigi)
     call gdlog_init(gdlp,ndu,nnu,axi,rigi)
     if (resi) fint = 0
     if (rigi) matr = 0
-    cod = 0  
+    cod = 0
 
     ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
     forall (i=1:ndg,n=1:nng) xg(i,n) = (n-1)*(ndu+ndg+ndq) + ndu + ndq + i
@@ -189,14 +190,14 @@ integer,intent(out)            :: codret
     forall (i=1:ndg, n=1:nng) dgp(i,n) = dgm(i,n) + ddld(xg(i,n))
     forall (i=1:ndq, n=1:nnq) dqp(i,n) = dqm(i,n) + ddld(xq(i,n))
 
-    
+
     gauss: do g = 1, npg
- 
+
         ! -----------------------!
         !  ELEMENTS CINEMATIQUES !
         ! -----------------------!
 
-        ! Calcul des derivees des fonctions de forme P1 
+        ! Calcul des derivees des fonctions de forme P1
         call dfdmip(ndim, nnob, axi, geomi, g, iw, vffb(1,g), idffb, r, poids,dffb)
 
         ! Calcul des derivees des fonctions de forme P2, du rayon r et des poids
@@ -227,13 +228,13 @@ integer,intent(out)            :: codret
         epefgp = prod_bd(bg,dgp)
         epefqm = prod_bd(bq,dqm)
         epefqp = prod_bd(bq,dqp)
-       
+
 
         ! -----------------------!
         !   LOI DE COMPORTEMENT  !
         ! -----------------------!
 
-        ! Preparation des deformations generalisees de ldc en t- et t+  
+        ! Preparation des deformations generalisees de ldc en t- et t+
         eplcm(1:neu) = matmul(dev,epefum) + epefqm(2)*hyd
         eplcp(1:neu) = matmul(dev,epefup) + epefqp(2)*hyd
         eplcm(neu+1:neu+neg) = epefgm
@@ -274,7 +275,7 @@ integer,intent(out)            :: codret
             call add_fint(fint,xu,poids*prod_sb(siefup,bu))
             call add_fint(fint,xg,poids*prod_sb(siefgp,bg))
             call add_fint(fint,xq,poids*prod_sb(siefqp,bq))
-            
+
             ! Stockage des contraintes generalisees (avec Cauchy au lieu de T)
             siefp(1:neu,g) = gdlog_nice_cauchy(gdlp,siefup)
             siefp(neu+1:neu+neq,g) = siefqp
@@ -286,7 +287,7 @@ integer,intent(out)            :: codret
         ! -----------------------!
         !    MATRICE TANGENTE    !
         ! -----------------------!
-    
+
         if (rigi) then
 
             ! Contraintes generalisees EF (bloc mecanique pour la rigidite geometrique)

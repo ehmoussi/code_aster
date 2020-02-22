@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ subroutine w039c4(carte, ifi, form)
     integer :: jcesk, jcesd, jcesc, jcesv, jcesl
     character(len=8) :: typech, tsca, nomgd, k8bid
     character(len=19) :: cart1, chels1, chels2
-    character(len=16) :: field_type = 'Unknown'
+    character(len=16) :: field_type
     character(len=64) :: nommed
     integer, pointer :: desc(:) => null()
 ! ----------------------------------------------------------------------
@@ -110,6 +110,7 @@ subroutine w039c4(carte, ifi, form)
 !
 ! --- ECRITURE DES CHAMPS AU FORMAT MED
     k8bid = ' '
+    field_type = 'Unknown'
     call ircame(ifi, nommed, chels1, typech, k8bid,&
                 0, k8bid, k8bid, k8bid, 0,&
                 0.0d0, 0, jcesk, jcesd, jcesc,&

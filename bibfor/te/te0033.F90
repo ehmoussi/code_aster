@@ -71,7 +71,7 @@ subroutine te0033(option, nomte)
     integer :: icodre(1), kpg, spt
 !
     real(kind=8) :: epi(1), epais, eptot, alpha, beta
-    real(kind=8) :: pgl(3, 3), xyzl(3, 4), r8bid=0.d0, valr(2)
+    real(kind=8) :: pgl(3, 3), xyzl(3, 4), r8bid, valr(2)
     real(kind=8) :: depl(24)
     real(kind=8) :: effgt(32), effpg(32)
     real(kind=8) :: t2iu(4), t2ui(4), c, s
@@ -86,6 +86,7 @@ subroutine te0033(option, nomte)
     character(len=32) :: phenom
 !     ------------------------------------------------------------------
 !
+    r8bid=0.d0
 !
     if (option(6:9) .eq. 'ELNO') then
         fami = 'NOEU'

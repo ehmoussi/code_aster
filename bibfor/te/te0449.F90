@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,12 +60,13 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: rhs(MSIZE_TDOFS_VEC), rhs_loc(MSIZE_FDOFS_VEC)
     real(kind=8), dimension(MSIZE_FDOFS_VEC, MSIZE_FDOFS_VEC)  :: lhs_loc
     real(kind=8), dimension(MSIZE_TDOFS_VEC, MSIZE_TDOFS_VEC)  :: lhs
-    aster_logical :: l_lhs_sym = ASTER_TRUE
+    aster_logical :: l_lhs_sym
 !
 ! --------------------------------------------------------------------------------------------------
 !
     ASSERT(option == 'HHO_COND_MECA')
 !
+    l_lhs_sym = ASTER_TRUE
     lhs = 0.d0
     rhs = 0.d0
 !

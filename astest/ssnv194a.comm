@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: david.haboussa at edf.fr
 
 DEBUT(CODE=_F(
-              NIV_PUB_WEB='INTERNET',));
+              NIV_PUB_WEB='INTERNET',))
 
-CUBE=LIRE_MAILLAGE(FORMAT='MED',);
+CUBE=LIRE_MAILLAGE(FORMAT='MED',)
 
 PRECIS=1.E-6
 
@@ -48,15 +48,13 @@ CUBE=DEFI_GROUP(reuse =CUBE,
                                 NOM='ARRIERE',
                                 POINT=(0.0,0.0,0.0,),
                                 VECT_NORMALE=(1.0,0.0,0.0,),
-                                PRECISION=PRECIS,),),);
+                                PRECISION=PRECIS,),),)
 
 TROISD=AFFE_MODELE(MAILLAGE=CUBE,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='3D',),);
-TFIN = 0.005;
-
-
+                           MODELISATION='3D',),)
+TFIN = 0.005
 
 
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
@@ -66,7 +64,7 @@ LINST=DEFI_LIST_REEL(DEBUT=0.0,
                                     NOMBRE=4,),
                                  _F(JUSQU_A=TFIN,
                                     NOMBRE=5,),
-                                    ),);
+                                    ),)
 
 ACIER=DEFI_MATERIAU(ELAS=_F(E=145200.0,
                             NU=0.3,),
@@ -81,16 +79,16 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=145200.0,
                                   H3=1.0,
                                   H4=1.0,
                                   ),
-                    MONO_CINE1=_F(D=36.68,),);
+                    MONO_CINE1=_F(D=36.68,),)
 
 COEF=DEFI_FONCTION(NOM_PARA='INST',
                    VALE=(0.0,0.0,1.0,1.0,),
                    PROL_DROITE='LINEAIRE',
-                   PROL_GAUCHE='LINEAIRE',);
+                   PROL_GAUCHE='LINEAIRE',)
 
 MAT=AFFE_MATERIAU(MAILLAGE=CUBE,
                   AFFE=_F(TOUT='OUI',
-                          MATER=ACIER,),);
+                          MATER=ACIER,),)
 
 TRAC=AFFE_CHAR_MECA(MODELE=TROISD,
                     DDL_IMPO=(
@@ -109,7 +107,7 @@ MONO1=DEFI_COMPOR(MONOCRISTAL=(_F(MATER=ACIER,
                                     ECRO_ISOT='MONO_ISOT1',
                                     ECRO_CINE='MONO_CINE1',
                                     ELAS='ELAS',
-                                    FAMI_SYST_GLIS='BCC24',),),);
+                                    FAMI_SYST_GLIS='BCC24',),),)
 
 
 ORIEN=AFFE_CARA_ELEM(MODELE=TROISD,
@@ -124,7 +122,7 @@ ORIEN=AFFE_CARA_ELEM(MODELE=TROISD,
                                _F(GROUP_MA='GM8',ANGL_EULER=(-5.67599,15.61819,154.676,),),
                                _F(GROUP_MA='GM9',ANGL_EULER=(-6.64634,33.864,155.646,),),
                                _F(GROUP_MA='GM10',ANGL_EULER=(6.86224,41.5917,142.138,),),
-                               ),);
+                               ),)
 
 SOLNL=STAT_NON_LINE(MODELE=TROISD,
                     CHAM_MATER=MAT,
@@ -147,7 +145,7 @@ SOLNL=CALC_CHAMP(reuse=SOLNL,RESULTAT=SOLNL,DEFORMATION=('EPSI_ELGA','EPSP_ELGA'
 
 SOLNL=CALC_CHAMP(reuse =SOLNL,
                  RESULTAT=SOLNL,
-                 DEFORMATION='EPSP_NOEU');
+                 DEFORMATION='EPSP_NOEU')
 
 
 
@@ -239,7 +237,7 @@ SOLNL_CI=CALC_CHAMP(reuse=SOLNL_CI,RESULTAT=SOLNL_CI,DEFORMATION=('EPSI_ELGA','E
 
 SOLNL_CI=CALC_CHAMP(reuse =SOLNL_CI,
                  RESULTAT=SOLNL_CI,
-                 DEFORMATION='EPSP_NOEU');
+                 DEFORMATION='EPSP_NOEU')
 
 
 

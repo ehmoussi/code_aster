@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ subroutine pjloin(nbnod,nbnodm,m2,geom2,nbmax,tino2m,tdmin2,lino_loin)
     integer ::  ibid
 !
     integer :: vali(2)
-    integer :: ii, ino2m, unite, ico=0
+    integer :: ii, ino2m, unite, ico
     real(kind=8) :: valr(4)
     character(len=80) :: valk(2)
     character(len=8) :: nono2
@@ -67,6 +67,7 @@ subroutine pjloin(nbnod,nbnodm,m2,geom2,nbmax,tino2m,tdmin2,lino_loin)
 !
     call jemarq()
 !
+    ico = 0
     if (nbnodm .ne. 0) then
         alarme='OUI'
         call getres(k16bid, k16bid, nomcmd)

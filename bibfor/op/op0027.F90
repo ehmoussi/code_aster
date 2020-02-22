@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,9 +65,9 @@ subroutine op0027()
 !
     character(len=16) :: option, k16bid, linopa(nxpara)
     integer :: ier, ifond, ifiss, nbpara, ndim, numfon, ibid, lfond
-    aster_logical :: lmoda = .false.
-! 
-    character(len=24) :: chfond='&&0100.FONDFISS'
+    aster_logical, parameter :: lmoda = ASTER_FALSE
+!
+    character(len=24), parameter :: chfond='&&0100.FONDFISS'
 !
     call jemarq()
     call infmaj()
@@ -122,7 +122,7 @@ subroutine op0027()
     k8bid = 'K8_BIDON'
     call tbajvk(table, nbpara, 'NOEUD', k8bid, livk)
 !
-    iord = 1 
+    iord = 1
     call tbajvi(table, nbpara, 'NUME_ORDRE', iord, livi)
     time = 2.0
     call tbajvr(table, nbpara, 'INST', time, livr)

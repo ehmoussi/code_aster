@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -124,7 +124,7 @@ contains
 !  Out vol         :: volume
 ! --------------------------------------------------------------------------------------------------
 !
-        real(kind=8), dimension(3)  :: v0 = 0.d0, v1 = 0.d0, v2 = 0.d0, cross= 0.d0
+        real(kind=8), dimension(3)  :: v0, v1, v2, cross
 ! --------------------------------------------------------------------------------------------------
 !
          vol = 0.d0
@@ -193,7 +193,7 @@ contains
 !  Out vol         :: surface
 !---------------------------------------------------------------------------------------------------
 !
-        real(kind=8), dimension(3) :: v0, v1, v2 = 0.d0
+        real(kind=8), dimension(3) :: v0, v1, v2
 !
         surface = 0.d0
         v0(1:3) = nodes(1:3,2) - nodes(1:3,1)
@@ -220,7 +220,7 @@ contains
 !  Out vol         :: length
 ! --------------------------------------------------------------------------------------------------
 !
-        real(kind=8), dimension(3)  :: v0 = 0.d0
+        real(kind=8), dimension(3)  :: v0
 ! --------------------------------------------------------------------------------------------------
 !
         v0(1:3) = nodes(1:3,2) - nodes(1:3,1)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -69,31 +69,31 @@ aster_logical, intent(in), optional :: l_implex_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: keywordfact=' ', answer
-    integer :: i_comp=0, iret=0, nb_comp=0
-    character(len=16) :: type_matr_tang=' ', method=' ', post_iter=' ', post_incr=' '
-    real(kind=8) :: parm_theta=0.d0, vale_pert_rela=0.d0
-    real(kind=8) :: resi_deborst_max=0.d0
-    real(kind=8) :: resi_radi_rela=0.d0
-    real(kind=8) :: parm_theta_thm=0.d0, parm_alpha_thm=0.d0
-    integer :: type_matr_t=0, iter_inte_pas=0, iter_deborst_max=0
-    integer :: ipostiter=0, ipostincr=0, iveriborne=0
-    character(len=8) :: mesh = ' '
-    character(len=16) :: rela_code_py=' ', defo_code_py=' ', meca_code_py=' ', comp_code_py=' '
-    character(len=16) :: veri_borne=' '
-    character(len=16) :: kit_comp(4) = (/'VIDE','VIDE','VIDE','VIDE'/)
-    character(len=16) :: defo_comp=' ',  rela_comp=' '
-    character(len=16) :: thmc_comp=' ', hydr_comp=' ', ther_comp=' ', meca_comp=' '
-    aster_logical :: l_kit_thm=ASTER_FALSE, l_kit_ddi = ASTER_FALSE, l_exist_thm = ASTER_FALSE
-    aster_logical :: l_kit = ASTER_FALSE, l_implex = ASTER_FALSE
+    character(len=16) :: keywordfact, answer
+    integer :: i_comp, iret, nb_comp
+    character(len=16) :: type_matr_tang, method, post_iter, post_incr
+    real(kind=8) :: parm_theta, vale_pert_rela
+    real(kind=8) :: resi_deborst_max
+    real(kind=8) :: resi_radi_rela
+    real(kind=8) :: parm_theta_thm, parm_alpha_thm
+    integer :: type_matr_t, iter_inte_pas, iter_deborst_max
+    integer :: ipostiter, ipostincr, iveriborne
+    character(len=8) :: mesh
+    character(len=16) :: rela_code_py, defo_code_py, meca_code_py, comp_code_py
+    character(len=16) :: veri_borne
+    character(len=16) :: kit_comp(4)
+    character(len=16) :: defo_comp,  rela_comp
+    character(len=16) :: thmc_comp, hydr_comp, ther_comp, meca_comp
+    aster_logical :: l_kit_thm, l_kit_ddi, l_exist_thm
+    aster_logical :: l_kit, l_implex
     aster_logical :: plane_stress, l_mfront_proto, l_mfront_offi
-    character(len=24) :: list_elem_affe
+    character(len=24), parameter :: list_elem_affe = '&&CARCREAD.LIST'
     aster_logical :: l_affe_all, l_matr_unsymm, l_comp_external
     integer :: nb_elem_affe
-    integer :: cptr_nbvarext=0, cptr_namevarext=0, cptr_fct_ldc=0
-    integer :: cptr_nameprop=0, cptr_nbprop=0
-    integer :: jvariext1 = 0, jvariext2 = 0, exte_strain = 0
-    character(len=16) :: texte(3)=(/ ' ',' ',' '/)
+    integer :: cptr_nbvarext, cptr_namevarext, cptr_fct_ldc
+    integer :: cptr_nameprop, cptr_nbprop
+    integer :: jvariext1, jvariext2, exte_strain
+    character(len=16) :: texte(3)
     integer, pointer :: v_model_elem(:) => null()
     character(len=16) :: algo_inte
     real(kind=8) :: algo_inte_r, iter_inte_maxi, resi_inte_rela
@@ -101,7 +101,45 @@ aster_logical, intent(in), optional :: l_implex_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    list_elem_affe = '&&CARCREAD.LIST'
+    keywordfact=' '
+    i_comp=0
+    iret=0
+    nb_comp=0
+    type_matr_tang=' '
+    method=' '
+    post_iter=' '
+    post_incr=' '
+    parm_theta=0.d0
+    vale_pert_rela=0.d0
+    resi_deborst_max=0.d0
+    resi_radi_rela=0.d0
+    parm_theta_thm=0.d0
+    parm_alpha_thm=0.d0
+    type_matr_t=0
+    iter_inte_pas=0
+    iter_deborst_max=0
+    ipostiter=0
+    ipostincr=0
+    iveriborne=0
+    mesh = ' '
+    rela_code_py=' '
+    defo_code_py=' '
+    meca_code_py=' '
+    comp_code_py=' '
+    veri_borne=' '
+    kit_comp(1:4) = (/'VIDE','VIDE','VIDE','VIDE'/)
+    defo_comp=' '
+    rela_comp=' '
+    thmc_comp=' '
+    hydr_comp=' '
+    ther_comp=' '
+    meca_comp=' '
+    l_kit_thm=ASTER_FALSE
+    l_kit_ddi = ASTER_FALSE
+    l_exist_thm = ASTER_FALSE
+    l_kit = ASTER_FALSE
+    l_implex = ASTER_FALSE
+    texte(:)=(/ ' ',' ',' '/)
     keywordfact    = 'COMPORTEMENT'
     nb_comp        = ds_compor_para%nb_comp
     mesh           = ' '

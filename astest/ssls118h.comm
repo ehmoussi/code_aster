@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -136,7 +136,7 @@ CHA_P=AFFE_CHAR_MECA_F(MODELE=MO,
                        FORCE_COQUE=_F(TOUT='OUI',
                                       PRES=P,),);
 
-RESU=MECA_STATIQUE(MODELE=MO,
+RESU=MECA_STATIQUE(MODELE=MO,SOLVEUR=_F(NPREC=9),
                    CHAM_MATER=CHAM_MAT,
                    CARA_ELEM=CAR_ELE,
                    EXCIT=(_F(CHARGE=CHA,),

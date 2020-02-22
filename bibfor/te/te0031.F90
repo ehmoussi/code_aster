@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ subroutine te0031(option, nomte)
     real(kind=8) :: pgl(3, 3), xyzl(3, 4), bsigma(24), effgt(32)
     real(kind=8) :: effref, momref
     real(kind=8) :: vecloc(24), ener(3), matp(24, 24), matv(300)
-    real(kind=8) :: epi(1), eptot, r8bid=0.d0, valr(2)
+    real(kind=8) :: epi(1), eptot, r8bid, valr(2)
     real(kind=8) :: foref, moref
 !
     character(len=2) :: val

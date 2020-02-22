@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,11 +37,11 @@ def configure(self):
     opts = self.options
 
     official_programs.configure(self)
-    official_programs.check_prerequisites_package(self, YAMMROOT, '20191017')
+    official_programs.check_prerequisites_package(self, YAMMROOT, '20200117')
 
 #   for using metis with standard integer (since Metis_aster-510_aster4)
     self.env.append_value('CFLAGS', ['-DINTSIZE32'])
- 
+
 #   adjust PATH to find gcc 4.9.2 in Mfront build
     self.env.append_value('OPT_ENV', [
         'export PATH=/home/aster/public/gcc_4_9_2/bin:' + YAMMROOT + '/prerequisites/Medfichier-400/bin:$PATH'])
@@ -61,7 +61,7 @@ def configure(self):
         YAMMROOT + '/prerequisites/Medfichier-400/lib',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/lib',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/lib',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/lib',
+        YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/SEQ/lib',
         TFELHOME + '/lib',
         # for openblas
         ASTER_ROOT + '/public/lib',
@@ -73,8 +73,8 @@ def configure(self):
         YAMMROOT + '/prerequisites/Medfichier-400/include',
         YAMMROOT + '/prerequisites/Metis_aster-510_aster4/include',
         YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/include',
-        YAMMROOT + '/prerequisites/Mumps-512_consortium_aster4/SEQ/include_seq',
+        YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/SEQ/include',
+        YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/SEQ/include_seq',
         TFELHOME + '/include',
     ])
 

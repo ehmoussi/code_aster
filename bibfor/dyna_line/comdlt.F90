@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ implicit none
 #include "asterc/getfac.h"
 #include "asterc/r8vide.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/cochre.h"
 #include "asterfort/nonlinDSEnergyCreate.h"
 #include "asterfort/nonlinDSEnergyInit.h"
@@ -119,7 +120,7 @@ implicit none
     aster_logical :: l_obsv
     integer, parameter :: zvalin = 28
     character(len=19) :: valinc(zvalin)
-    character(len=19) :: depmoi, vitmoi, accmoi 
+    character(len=19) :: depmoi, vitmoi, accmoi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -144,6 +145,12 @@ implicit none
     charep = ' '
     chtime = ' '
     base = 'G'
+    nbpas = 0
+    nbpas_min = 0
+    nbpas_max = 0
+    dt        = 0.d0
+    dtmin     = 0.d0
+    dtmax     = 0.d0
 !
 ! - Names of datastructures
 !
@@ -172,7 +179,7 @@ implicit none
 !====
 ! 3. CREATION DES VECTEURS DE TRAVAIL SUR BASE VOLATILE
 !====
-!   NOUVEAUX OBJETS DEPL VITE ACCE DE DYNA_LINE_TRAN 
+!   NOUVEAUX OBJETS DEPL VITE ACCE DE DYNA_LINE_TRAN
 ! ----------------------------------------
 !     ancienne routine : nmcrch
 ! --- CREATION DES CHAMPS DE BASE - ETAT EN T-
@@ -181,18 +188,18 @@ implicit none
     call nmchex(valinc, 'VALINC', 'DEPMOI', depmoi)
     call nmchex(valinc, 'VALINC', 'VITMOI', vitmoi)
     call nmchex(valinc, 'VALINC', 'ACCMOI', accmoi)
-    
+
     call vtcreb(depmoi, 'V', 'R', nume_ddlz = numedd)
     call vtcreb(vitmoi, 'V', 'R', nume_ddlz = numedd)
     call vtcreb(accmoi, 'V', 'R', nume_ddlz = numedd)
 
 !---lecture d adresse depl/vite/acce
 !
-    call jeveuo(depmoi//'.VALE', 'L', idepl0)  
-    call jeveuo(vitmoi//'.VALE', 'L', ivite0)    
+    call jeveuo(depmoi//'.VALE', 'L', idepl0)
+    call jeveuo(vitmoi//'.VALE', 'L', ivite0)
     call jeveuo(accmoi//'.VALE', 'L', iacce0)
-    
-!    ANCIENS OBJETS DEPL VITE ACCE DE DYNA_LINE_TRAN    
+
+!    ANCIENS OBJETS DEPL VITE ACCE DE DYNA_LINE_TRAN
 !-----------------------------------------------------------
 !    call wkvect('&&COMDLT.DEPL0', 'V V R', neq, idepl0)
 !    call wkvect('&&COMDLT.VITE0', 'V V R', neq, ivite0)
@@ -243,8 +250,19 @@ implicit none
         call jelira(linst//'.VALE', 'LONMAX', nbpas)
         tinit = zr(jinst)
         tfin  = zr(jinst+nbpas-1)
+        ASSERT(nbpas .gt. 1)
         dt = (tfin-tinit)/real(nbpas-1)
     end if
+!
+! -- Check
+!
+    if(dt.le.0.0) then
+        call utmess('F', 'DYNAMIQUE_42', sr=dt)
+    end if
+    if(tfin.le.tinit) then
+        call utmess('F', 'DYNAMIQUE_43', nr=2, valr=[tfin, tinit])
+    end if
+!
     if (iinteg.ne.4) then
         nbpas = nint((tfin-tinit)/dt)
         call utmess('I', 'DYNAMIQUE_70', nk=2, valk=[schema, schtyp],&
@@ -345,30 +363,28 @@ implicit none
         end if
     end do
     call utmess('I', 'DYNAMIQUE_96', sk=champs)
-
-
-    
+!
 ! -  LECTURE DES DONNEES ET INITIALISATION POUR ds_inout
 !
-    call nonlinDSInOutRead('VIBR', result, ds_inout)    
+    call nonlinDSInOutRead('VIBR', result, ds_inout)
     call nonlinDSInOutInit('VIBR', ds_inout)
-    
+
 !--- Create observation datastructure
-! -  routine in stat_non_line : nmcrob => dvcrob 
+! -  routine in stat_non_line : nmcrob => dvcrob
 !
     call dismoi('NOM_MAILLA', modele, 'MODELE', repk=mesh)
     call dvcrob(mesh , modele,  ds_inout , materi, sd_obsv)
 
 ! - Make initial observation
 
-    l_obsv = ASTER_FALSE    
-    call lobs(sd_obsv, nume, t0, l_obsv)    
+    l_obsv = ASTER_FALSE
+    call lobs(sd_obsv, nume, t0, l_obsv)
     if (l_obsv) then
-        call nmobse(mesh, sd_obsv  , t0)   
+        call nmobse(mesh, sd_obsv  , t0)
         if (nume.eq.0) then
             call nmobsw(sd_obsv  ,   ds_inout )
-        endif    
-    endif    
+        endif
+    endif
 !
 !====
 ! 6. INTEGRATION SELON LE TYPE SPECIFIE
@@ -393,7 +409,7 @@ implicit none
                     zr(ifamor), zr(ifliai), t0, nchar, nveca,&
                     zi(iaadve), zk24(ialifo), modele, mate, carele,&
                     charge, infoch, fomult, numedd, nume,&
-                    solveu, criter, zk8(iondp), nondp, numrep, ds_energy,& 
+                    solveu, criter, zk8(iondp), nondp, numrep, ds_energy,&
                     sd_obsv, mesh)
 !
     else if (iinteg.eq.3) then
@@ -403,7 +419,7 @@ implicit none
                     zr(ivite0), zr(iacce0), zr(ifexte), zr(ifamor), zr(ifliai),&
                     t0, nchar, nveca, zi(iaadve), zk24(ialifo),&
                     modele, mate, carele, charge, infoch,&
-                    fomult, numedd, nume, numrep, ds_energy,& 
+                    fomult, numedd, nume, numrep, ds_energy,&
                     sd_obsv, mesh)
 !
     else if (iinteg.eq.4) then
@@ -413,7 +429,7 @@ implicit none
                     zr(ivite0), zr(iacce0), zr(ifexte), zr(ifamor), zr(ifliai),&
                     nchar, nveca, zi(iaadve), zk24(ialifo), modele,&
                     mate, carele, charge, infoch, fomult,&
-                    numedd, nume, numrep, ds_energy,& 
+                    numedd, nume, numrep, ds_energy,&
                     sd_obsv, mesh)
 !
     endif

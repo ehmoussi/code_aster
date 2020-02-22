@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_matr = 0, nb_vect = 0
+    integer :: nb_matr, nb_vect
     integer :: i_matr, i_vect, i_vari_para, nbret, nb_vari_coef, nb_vari_para
     character(len=1)  :: matr_type, vect_type, ktyp, matr_elem_type, vect_elem_type
     character(len=16) :: keywfact, type_vari_coef
@@ -77,6 +77,8 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_25')
     endif
+    nb_matr = 0
+    nb_vect = 0
     keywfact  = 'MATR_ASSE'
     matr_type = 'R'
     call getfac(keywfact, nb_matr)
@@ -136,7 +138,7 @@ type(ROM_DS_MultiPara), intent(inout) :: ds_multipara
                 vect_elem_type = 'R'
             else
                 ASSERT(.false.)
-            endif   
+            endif
         endif
         call romMultiCoefRead(ds_multicoef, keywfact, i_vect)
         ds_multipara%vect_name(i_vect) = vect_asse

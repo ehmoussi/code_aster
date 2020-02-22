@@ -238,6 +238,18 @@ Les signaux d'entraînements ne sont pas discrétisés de la même manière. Vé
 Les signaux servant de supports à la détermination des signaux d'entraînement ne sont pas discrétisés de la même manière. Vérifier le pas de chaque signaux ainsi que leur longueur.
 """),
 
+    42: _("""
+ Le pas de temps est négatif ou nul : %(r1)f
+
+ Vérifiez votre mise en données
+"""),
+
+    43: _("""
+ L'instant de fin de calcul (t=%(r1)f) est inférieur à l'instant initial (t=%(r2)f)
+
+ Vérifiez votre mise en données
+"""),
+
     50 : _("""
 Schéma multi-pas
 On n'a pas trouvé l'instant précédent dans la structure de données résultat du mot-clef ETAT_INIT.
@@ -456,7 +468,6 @@ Entrée/Changement d'état de choc détecté à l'instant %(r1)12.5e
     94 : _("""    >> Premier passage dans cet état, mise à jour des matrices dynamiques et calcul d'une
        nouvelle base de modes propres :
        """),
-    95 : _("""[%(i1)3d%%] Fréquence calculée :%(r1)12.5e, archivée au numéro d'ordre : %(i2)5d"""),
 
     96 : _("""    >> champs archivés       : %(k1)s
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,15 +74,15 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: varc_name
-    integer :: nb2vrc
+    integer :: nb2vrc, k
     integer :: varc_indx, ibid, nbsp, kpgvrc
     integer :: iadzi, iazk24, kpgmat
-    integer :: iprem = 0
-    integer :: k, itabm(7), itabp(7), itabr(7)
+    integer, save :: iprem = 0
+    integer, save :: itabm(7), itabp(7), itabr(7)
     character(len=24) :: valk(4)
     character(len=8) :: nomail
-    real(kind=8) :: valvrm, valvrp, rundf
-    save itabm,itabp,itabr,rundf
+    real(kind=8) :: valvrm, valvrp
+    real(kind=8), save :: rundf
 !
 ! --------------------------------------------------------------------------------------------------
 !
