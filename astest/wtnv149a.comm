@@ -189,7 +189,7 @@ UTOT1=STAT_NON_LINE(MODELE      = MODELEK,
                                      ITER_GLOB_MAXI = 1000,
                                     ),
                     SOLVEUR     = _F(METHODE='MUMPS',
-                                     NPREC=-1),
+                                     NPREC=11),
                     INCREMENT   = _F(LIST_INST = L_INS,),
                     INFO=1,
                    )

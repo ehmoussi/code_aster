@@ -276,7 +276,6 @@ for i in range(nb_pas) :
                               CONVERGENCE = _F(RESI_GLOB_RELA = 1.E-6,
                                                ITER_GLOB_MAXI = 15),
                               SOLVEUR    = _F(METHODE = 'MUMPS',
-                                              NPREC=-1,
                                               ),
                               ARCHIVAGE = _F(CHAM_EXCLU=('VARI_ELGA',),INST=L_INS1[i+1]),
                               INFO=1,);
@@ -303,7 +302,6 @@ for i in range(nb_pas) :
                                                ITER_GLOB_MAXI = 15),
                               SOLVEUR    = _F(METHODE = 'MUMPS',
                                               ELIM_LAGR2='OUI',
-                                              NPREC=-1,
                                               ),
                               ARCHIVAGE = _F(CHAM_EXCLU=('VARI_ELGA',),INST=L_INS1[i+1]),
                               INFO=1,);

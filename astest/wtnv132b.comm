@@ -700,7 +700,6 @@ U9B=DYNA_NON_LINE(
                  
                  SOLVEUR=_F(RENUM='METIS',
                             METHODE='MUMPS',
-                            NPREC=20,
                           ),
                  ETAT_INIT=_F(DEPL=DEP[9],
                               SIGM=SIG[9],

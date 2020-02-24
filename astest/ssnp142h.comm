@@ -242,7 +242,7 @@ U_HM=STAT_NON_LINE(MODELE=MO,
                                    RESI_REFE_RELA = 1.E-6,
                                    SIGM_REFE      = sigma_max,
                                    FLUX_HYD1_REFE = flux_min),
-                  SOLVEUR=_F(METHODE='MUMPS',NPREC=12),
+                  SOLVEUR=_F(METHODE='MUMPS',),
                   AFFICHAGE =_F(INFO_RESIDU='OUI'),
                   ARCHIVAGE = _F(LIST_INST = LR)
                   );

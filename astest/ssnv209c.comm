@@ -250,7 +250,7 @@ UTOT1=STAT_NON_LINE(MODELE=MODELEK,
                                    ),
                     SOLVEUR=_F(METHODE='MUMPS',
 
-                               NPREC=-1.,
+                               NPREC=15,
                                ),
                     NEWTON=_F(REAC_ITER=1),INFO=2,
                     ARCHIVAGE=_F(CHAM_EXCLU='VARI_ELGA'),

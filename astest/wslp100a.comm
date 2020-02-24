@@ -210,8 +210,6 @@ LI1=DEFI_LIST_REEL(DEBUT=-1.e4,
 
 CINIT=STAT_NON_LINE(MODELE=MODELE,
                      CHAM_MATER=CHMATO,
-
-                     #SOLVEUR=_F(METHODE='MUMPS',PCENT_PIVOT=100,NPREC=-1,),
                      SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA',),
 
                      EXCIT=(_F(CHARGE=CHAR0,),
@@ -254,8 +252,6 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST    = LI2,),
                                         SUBD_NIVEAU  =  2,),);
 MESTAT=STAT_NON_LINE(MODELE=MODELE,
                      CHAM_MATER=CHMATO,
-
-                     #SOLVEUR=_F(METHODE='MUMPS',PCENT_PIVOT=100,NPREC=8,),
                      SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA',),
 
                      EXCIT=(_F(CHARGE=CHAR0,),

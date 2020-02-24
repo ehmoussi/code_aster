@@ -72,7 +72,7 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                    NEWTON=_F(REAC_ITER=1),
                    CONVERGENCE=_F(SIGM_REFE=60.0,
                                   EPSI_REFE=3.E-4,
-                                  RESI_REFE_RELA=1.E-3),
+                                  RESI_REFE_RELA=1.E-5),
                    SOLVEUR=_F(METHODE='MUMPS',
    NPREC=-1));
 

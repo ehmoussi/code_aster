@@ -197,8 +197,7 @@ SNL=STAT_NON_LINE(MODELE=MODELE,
                                  RESI_GLOB_RELA=1E-09,
                                  ITER_GLOB_MAXI=500,
                                  ),
-                  SOLVEUR=_F(METHODE='MULT_FRONT',
-                             NPREC=15,),);
+                  SOLVEUR=_F(METHODE='MULT_FRONT',),);
 
 IMPR_RESU(PROC0='NON', FORMAT='MED', UNITE=81, 
           RESU=_F(RESULTAT=SNL,

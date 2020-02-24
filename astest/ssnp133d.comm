@@ -162,8 +162,6 @@ EVOL = STAT_NON_LINE(
   CONVERGENCE = _F(RESI_GLOB_RELA = 1.E-6,
                    ITER_GLOB_MAXI = 10),
   SOLVEUR    = _F(METHODE = 'MUMPS',
-                  NPREC=-1,
-
                   ),
   ARCHIVAGE = _F(CHAM_EXCLU='VARI_ELGA')
   )
