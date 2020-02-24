@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ BC = AFFE_CHAR_CINE(
                                 _F(DY=0.0, GROUP_MA=('Yinf', 'Ysup')),
                                 _F(DX=0.0, GROUP_MA=('Xsup', 'Xinf')),
                                 _F(DX=1.0, DZ=0.0, GROUP_MA=('Zsup', )),
-                                _F(PRES=0.0, NOEUD='N165',),
+                                _F(PRES=0.0, GROUP_NO='N_test',),
                     ),
                     MODELE=model
                 )
@@ -65,18 +65,32 @@ resnonl = STAT_NON_LINE(
                     )
 
 TEST_RESU(
-    RESU=_F(
+    RESU=(_F(
         CRITERE='ABSOLU',
-        NOEUD='N165',
+        GROUP_NO='N_test',
         NOM_CHAM='DEPL',
         NOM_CMP='DX',
         NUME_ORDRE=1,
         PRECISION=1.e-6,
         REFERENCE='AUTRE_ASTER',
         RESULTAT=resnonl,
-        VALE_CALC=-0.121808156632,
-        VALE_REFE=-0.121808122439,
-    )
+        VALE_CALC=-0.121908649820,
+        VALE_REFE=-0.121908649820,
+    ),
+    _F(
+        CRITERE='ABSOLU',
+        GROUP_NO='N_test2',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        NUME_ORDRE=1,
+        PRECISION=1.e-6,
+        REFERENCE='AUTRE_ASTER',
+        RESULTAT=resnonl,
+        VALE_CALC=0.09623615926,
+        VALE_REFE=0.09623615926,
+    ),)
 )
+
+
 
 FIN()
