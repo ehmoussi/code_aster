@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -778,8 +778,12 @@ def SRO2DSP(FREQ_COUP, DUREE_PHASE_FORTE, FONC_SPEC, AMORT, FMIN, NORME, PAS=Non
         lw.append(freqi)
         lf.append(freqi / 2. / pi)
 
-    f_out = t_fonction(lw, DSP, para=f_in.para)
-    f_iter_sro_ref = t_fonction(lf, lsro, para=f_in.para)
+    para = dict(f_in.para)
+    print("para",para)
+    para.update({'INTERPOL':['LIN','LIN']})
+    print("para ap",para)
+    f_out = t_fonction(lw, DSP, para=para)
+    f_iter_sro_ref = t_fonction(lf, lsro, para=para)
     if NITER > 0:
     # iteration sans simulation: formule de rice
     # PSA for frequency list lw (rad/s), physical units (not g)!!
