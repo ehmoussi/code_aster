@@ -60,7 +60,7 @@ from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
 from .pcfieldonmesh_ext import PCFieldOnMeshReal
-from .resultscontainer_ext import Result
+from .result_ext import Result
 from .surface_ext import Surface
 from .table_ext import Table
 from .tablecontainer_ext import TableContainer

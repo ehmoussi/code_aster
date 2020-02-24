@@ -30,6 +30,7 @@ from libaster import (GeneralizedAssemblyMatrixComplex,
                       GeneralizedAssemblyMatrixReal)
 
 from ..Utilities import injector
+from .datastructure_ext import get_depends, set_depends
 
 
 def VALM_triang2array(dict_VALM, dim, dtype=None):
@@ -66,20 +67,22 @@ class ExtendedGeneralizedAssemblyMatrixComplex(object):
         """Return internal state.
 
         Returns:
-            dict: Internal state.
+            list: Internal state.
         """
-        return (True, self.getGeneralizedDOFNumbering(), self.getModalBasis())
+        return get_depends(self) + [
+            self.getGeneralizedDOFNumbering(), self.getModalBasis()]
 
     def __setstate__(self, state):
         """Restore internal state.
 
         Arguments:
-            state (dict): Internal state.
+            state (list): Internal state.
         """
-        if state[1] is not None:
-            self.setGeneralizedDOFNumbering(state[1])
-        if state[2] is not None:
-            self.setModalBasis(state[2])
+        set_depends(self, state)
+        if state[0]:
+            self.setGeneralizedDOFNumbering(state[0])
+        if state[1]:
+            self.setModalBasis(state[1])
 
     def EXTR_MATR_GENE(self) :
         desc = self.sdj.DESC.get()

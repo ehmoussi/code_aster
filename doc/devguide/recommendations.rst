@@ -24,7 +24,7 @@ The header files ``.h`` should only contain definitions. Exceptions are allowed
 for *properties* that directly return the content of an attribute
 (example: ``DataStructure.getName()``).
 Others functions should be implemented in the ``.cxx`` file
-(example: ``DataStructure.addReference()``).
+(example: ``DataStructure.addDependency()``).
 
 It avoids to rebuild every thing for a small change.
 

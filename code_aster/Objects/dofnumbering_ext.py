@@ -27,6 +27,7 @@ import aster
 from libaster import DOFNumbering
 
 from ..Utilities import injector
+from .datastructure_ext import get_depends, set_depends
 
 
 @injector(DOFNumbering)
@@ -37,15 +38,16 @@ class ExtendedDOFNumbering(object):
         """Return internal state.
 
         Returns:
-            dict: Internal state.
+            list: Internal state.
         """
-        return (self.getModel(), )
+        return get_depends(self) + [self.getModel(), ]
 
     def __setstate__(self, state):
         """Restore internal state.
 
         Arguments:
-            state (dict): Internal state.
+            state (list): Internal state.
         """
-        if state[0] is not None:
+        set_depends(self, state)
+        if state[0]:
             self.setModel(state[0])

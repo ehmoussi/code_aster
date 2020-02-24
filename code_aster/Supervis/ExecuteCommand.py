@@ -246,21 +246,21 @@ class ExecuteCommand(object):
         """Returns the command name."""
         return self._cata.name
 
-    def _visitSyntax(self, toVisit):
+    def _add_deps_keywords(self, toVisit):
         name = self._result.getName()
         if type(toVisit) in (list, tuple):
             for value in toVisit:
                 if isinstance(value, DataStructure):
                     if name != value.getName():
-                        self._result.addReference(value)
+                        self._result.addDependency(value)
                 else:
-                    self._visitSyntax(value)
+                    self._add_deps_keywords(value)
         elif type(toVisit) in (dict, _F):
             for value in toVisit.values():
-                self._visitSyntax(value)
+                self._add_deps_keywords(value)
         elif isinstance(toVisit, DataStructure):
             if name != toVisit.getName():
-                self._result.addReference(toVisit)
+                self._result.addDependency(toVisit)
 
     def add_references(self, keywords):
         """Add reference to DataStructure in self._result
@@ -270,7 +270,7 @@ class ExecuteCommand(object):
                 in place.
         """
         if isinstance(self._result, DataStructure):
-            self._visitSyntax(keywords)
+            self._add_deps_keywords(keywords)
 
     def adapt_syntax(self, keywords):
         """Hook to adapt syntax from a old version or for compatibility reasons.
