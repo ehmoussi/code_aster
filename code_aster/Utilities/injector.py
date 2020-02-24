@@ -43,7 +43,7 @@ def injector(boost_class):
             if name.startswith("__"):
                 if name not in ("__call__", "__getattr__", "__getinitargs__",
                                 "__getitem__", "__getstate__",
-                                "__getstate_manages_dict__, ""__len__",
+                                "__getstate_manages_dict__", "__len__",
                                 "__setstate__"):
                     continue
             setattr(boost_class, name, attr)
