@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -204,6 +204,7 @@ class Generator(object):
         # simulation depend de generator:
         self.simulator = Simulator.factory(params.simulation_keys)
         # parametres des t_fonctions  a creer
+        # INTERPOL est modifié dans certains cas
         self.para_fonc_traj = {
             'NOM_PARA': 'INST', 'NOM_RESU': 'ACCE', 'PROL_DROITE': 'EXCLU',
             'PROL_GAUCHE': 'EXCLU', 'TITRE': params.simulation_keys['TITRE'], }
@@ -349,7 +350,10 @@ class GeneratorSpectrum(Generator):
             sro_ref.append(ZPA)
 #            l_freq_sro.append(FREQ_COUP)
             l_freq_sro.append(self.sampler.FREQ_COUP)
-        f_spec = t_fonction(l_freq_sro, sro_ref, para=self.para_sro)
+        para_sro = dict(self.para_sro)
+        para_sro['INTERPOL'] = spec_osci.Parametres()['INTERPOL']
+        f_spec = t_fonction(l_freq_sro, sro_ref, para=para_sro)
+
         self.SRO_args.update({'FONC_SPEC': f_spec,
                               'FMIN': F_MIN,
                               'AMORT': self.method_params['AMOR_REDUIT']})
@@ -358,11 +362,13 @@ class GeneratorSpectrum(Generator):
                 {'METHODE_SRO': self.method_params['METHODE']})
         if 'SPEC_1_SIGMA' in self.method_params:
             spec_sigma = self.method_params['SPEC_1_SIGMA']
+            para_sro = dict(self.para_sro)
+            para_sro['INTERPOL'] = spec_sigma.Parametres()['INTERPOL']
             f_spec_sigma = t_fonction(spec_sigma.Absc(), spec_sigma.Ordo(),
-                                      para=self.para_sro)
+                                      para=para_sro)
             f_spec_sigma = f_spec_sigma.evalfonc(l_freq_sro)
             sro_beta = NP.log(f_spec_sigma.vale_y / sro_ref)
-            f_beta = t_fonction(l_freq_sro, sro_beta, para=self.para_sro)
+            f_beta = t_fonction(l_freq_sro, sro_beta, para=para_sro)
             self.SRO_args.update({'FONC_BETA': f_beta})
         if 'FREQ_PAS' in self.method_params:
             self.SRO_args.update({'PAS': self.method_params['FREQ_PAS']})
