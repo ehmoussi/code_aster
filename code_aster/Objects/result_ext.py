@@ -59,7 +59,9 @@ class ExtendedResult(object):
         state = get_depends(self)
         state.append(len(ranks))
         state.extend(ranks)
+        state.append(len(models))
         state.extend(models)
+        state.append(len(materials))
         state.extend(materials)
         return state
 
@@ -74,12 +76,12 @@ class ExtendedResult(object):
         ranks = []
         for _ in range(nbranks):
             ranks.append(state.pop(0))
-        if state:
-            assert len(state) == 2 * nbranks
-            for i in ranks:
-                self.addModel(state.pop(0), i)
-            for i in ranks:
-                self.addMaterialOnMesh(state.pop(0), i)
+        nbmod = state.pop(0)
+        for i in range(nbmod):
+            self.addModel(state.pop(0), ranks[i])
+        nbmat = state.pop(0)
+        for i in range(nbmat):
+            self.addMaterialOnMesh(state.pop(0), ranks[i])
 
     def LIST_CHAMPS (self) :
         return aster.GetResu(self.getName(), "CHAMPS")
