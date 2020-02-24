@@ -27,6 +27,7 @@ import aster
 from libaster import EntityType, MaterialOnMesh
 
 from ..Utilities import injector
+from .datastructure_ext import get_depends, set_depends
 
 
 @injector(MaterialOnMesh)
@@ -43,33 +44,34 @@ class ExtendedMaterialOnMesh(object):
         """Return internal state.
 
         Returns:
-            dict: Internal state.
+            list: Internal state.
         """
-        vecOfPartOfMaterialOnMesh = self.getVectorOfPartOfMaterialOnMesh()
-        state = ()
+        state = get_depends(self)
         for part in self.getVectorOfPartOfMaterialOnMesh():
             vecOfMater = part.getVectorOfMaterial()
-            partState = (len(vecOfMater),) + tuple(vecOfMater)
+            partState = [len(vecOfMater)]
+            partState.extend(vecOfMater)
             names = part.getMeshEntity().getNames()
             type = part.getMeshEntity().getType()
             if type is EntityType.AllMeshEntitiesType:
-                partState = partState + (0, names, )
+                partState.extend([0, names])
             elif type is EntityType.GroupOfElementsType:
-                partState = partState + (1, names, )
+                partState.extend([1, names])
             elif type is EntityType.ElementType:
-                partState = partState + (2, names, )
+                partState.extend([2, names])
             else:
                 assert False
-            state = state + partState
+            state.extend(partState)
         return state
 
     def __setstate__(self, state):
         """Restore internal state.
 
         Arguments:
-            state (dict): Internal state.
+            state (list): Internal state.
         """
-        if state is not ():
+        set_depends(self, state)
+        if state:
             nbMater = len(state)
 
             searchForSize = True

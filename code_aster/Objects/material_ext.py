@@ -38,11 +38,11 @@ class ExtendedMaterial(object):
         """Returns the argument required to reinitialize a MaterialOnMesh
         object during unpickling.
         """
-        toReturn = self.getName(),
+        toReturn = (self.getName(), )
         state = []
         for i in range(self.getNumberOfMaterialBehviour()):
             state.append(self.getNumberOfListOfRealProperties(i))
-        toReturn = toReturn + (state,)
+        toReturn = toReturn + (state, )
         return toReturn
 
     def RCVALE(self, phenomene, nompar=(), valpar=(), nomres=(), stop=1):

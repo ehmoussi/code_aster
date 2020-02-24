@@ -327,7 +327,7 @@ class GeneratorDSP(Generator):
         dict_keywords = self.tab.dict_CREA_TABLE()
         tab_out = CREA_TABLE(TYPE_TABLE='TABLE_FONCTION', **dict_keywords)
         for func in self.tab.referenceToDataStructure:
-            tab_out.addReference(func)
+            tab_out.addDependency(func)
         return tab_out
 
 
@@ -424,7 +424,7 @@ class GeneratorSpectrum(Generator):
         dict_keywords = self.tab.dict_CREA_TABLE()
         tab_out = CREA_TABLE(TYPE_TABLE='TABLE_FONCTION', **dict_keywords)
         for func in self.tab.referenceToDataStructure:
-            tab_out.addReference(func)
+            tab_out.addDependency(func)
         return tab_out
 
 

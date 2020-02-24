@@ -63,9 +63,11 @@ import libaster
 
 from .. import Objects
 from ..Objects import DataStructure, ResultNaming
-from ..Utilities import ExecutionParameter, Options, logger
+from ..Utilities import (DEBUG, ExecutionParameter, Options, logger,
+                         no_new_attributes)
 
 ARGS = '_MARK_DS_ARGS_'
+NOARGS = '_MARK_DS_NOARGS_'
 STATE = '_MARK_DS_STATE_'
 LIST = '_MARK_LIST_'
 DICT = '_MARK_DICT_'
@@ -92,6 +94,9 @@ class Serializer(object):
     _pick_filename = "pick.code_aster.objects"
     _info_filename = "pick.code_aster.infos"
     _base = "glob.1"
+    _ctxt = None
+
+    __setattr__ = no_new_attributes(object.__setattr__)
 
     def __init__(self, context=None):
         """Initialization
@@ -163,7 +168,7 @@ class Serializer(object):
                 if name == "CO":
                     continue
                 try:
-                    logger.info("{0:<24s} {1}".format(name, type(obj)))
+                    logger.info("{0:<24s} {1} {2}".format(name, type(obj), obj))
                     pickler.save_one(obj, main=True)
                     objList.append(name)
                 except Exception:
@@ -224,7 +229,7 @@ class Serializer(object):
                     except Exception as exc:
                         if isinstance(exc, EOFError):
                             raise
-                        logger.debug("can not restore object: {0}\n{1}"
+                        logger.info("can not restore object: {0}\n{1}"
                                      .format(name, traceback.format_exc()))
                         if should_fail:
                             raise
@@ -287,14 +292,17 @@ def saveObjects(level=1, delete=True):
     finally:
         del caller
 
-    if ExecutionParameter().option & Options.Debug:
-        libaster.debugJeveuxContent("Saved jeveux objects:")
+    # if ExecutionParameter().option & Options.Debug:
+    #     libaster.debugJeveuxContent("Saved jeveux objects:")
 
+    # orig = logger.getEffectiveLevel()
+    # logger.setLevel(DEBUG)
     pickler = Serializer(context)
     saved = pickler.save()
     # close Jeveux files (should not be done before pickling)
     libaster.jeveux_finalize(True)
     pickler.sign()
+    # logger.setLevel(orig)
 
     if delete:
         # Remove the objects from the context
@@ -309,16 +317,19 @@ def loadObjects(level=1):
         level (int): Number of frames to go back to find the user context.
     """
     caller = inspect.currentframe()
-    for i in range(level):
+    for _ in range(level):
         caller = caller.f_back
     try:
         context = caller.f_globals
         logger.debug("load objects in frame: {0}".format(context['__name__']))
     finally:
         del caller
-    if ExecutionParameter().option & Options.Debug:
-        libaster.debugJeveuxContent("Reloaded jeveux objects:")
+    # if ExecutionParameter().option & Options.Debug:
+    #     libaster.debugJeveuxContent("Reloaded jeveux objects:")
+    # orig = logger.getEffectiveLevel()
+    # logger.setLevel(DEBUG)
     Serializer(context).load()
+    # logger.setLevel(orig)
 
 
 def contains_datastructure(sequence):
@@ -355,45 +366,59 @@ class AsterPickler(pickle.Pickler):
     documentation.
     """
 
+    def __init__(self, *args, **kwargs):
+        pickle.Pickler.__init__(self, *args, **kwargs)
+        self._memods = set()
+
     def save_one(self, obj, main=False):
         """Save one object.
 
         Arguments:
             obj (*misc*): Object to save.
         """
-
+        logger.debug("SAVE_ONE: {0} / {1}".format(main, obj))
         if main and isinstance(obj, (list, tuple)):
             if obj and contains_datastructure(obj):
-                self.dump(LIST)
-                self.dump(len(obj))
+                self.save_one(LIST)
+                self.save_one(len(obj))
                 for item in obj:
                     self.save_one(item)
         elif main and isinstance(obj, dict):
             if obj and contains_datastructure(list(obj.values())):
-                self.dump(DICT)
-                self.dump(len(obj))
+                self.save_one(DICT)
+                self.save_one(len(obj))
                 for item in list(obj.values()):
                     self.save_one(item)
         elif isinstance(obj, DataStructure):
-            # save initial arguments
-            if hasattr(obj, "__getinitargs__"):
-                init_args = obj.__getinitargs__()
+            ds_id = unique_id(obj)
+            if ds_id not in self._memods:
+                self._memods.add(ds_id)
+                name = obj.getName()
+                # save initial arguments
+                if hasattr(obj, "__getinitargs__"):
+                    init_args = obj.__getinitargs__()
+                    assert isinstance(init_args, tuple), (name, init_args)
+                else:
+                    init_args = ()
+                self.save_one(ARGS)
+                self.save_one(len(init_args))
+                # logger.debug("ARGS: len {0}: {1}".format(len(init_args), init_args))
+                self.save_one(name)
+                for item in init_args:
+                    self.save_one(item)
+                # save state
+                if hasattr(obj, "__getstate__"):
+                    state = obj.__getstate__()
+                    assert isinstance(state, (list, tuple)), state
+                else:
+                    state = ()
+                self.save_one(STATE)
+                self.save_one(len(state))
+                logger.debug("STATE: len {0}: {1}".format(len(state), state))
+                for item in state:
+                    self.save_one(item)
             else:
-                init_args = ()
-            self.dump(ARGS)
-            # logger.debug("ARGS: %s: %s" % (obj.getName(), init_args))
-            self.save_one([obj.getName(), init_args])
-            # save state
-            if hasattr(obj, "__getstate__"):
-                state = obj.__getstate__()
-                assert isinstance(state, (list, tuple)), state
-            else:
-                state = ()
-            self.dump(STATE)
-            self.dump(len(state))
-            # logger.debug("STATE: len %d" % len(state))
-            for item in state:
-                self.save_one(item)
+                logger.debug("skip object {0}".format(ds_id))
 
         self.dump(obj)
 
@@ -404,13 +429,24 @@ class AsterPickler(pickle.Pickler):
             str: Identifier containing " mark, class name, object name".
         """
         if isinstance(obj, DataStructure):
-            class_ = type(obj).__name__
-            pers_id = "DataStructure", class_, obj.getName().strip()
+            pers_id = unique_id(obj)
             logger.debug("persistent id: {0}".format(pers_id))
-            return str(pers_id)
+            return pers_id
 
         # other objects, pickled as usual
         return None
+
+
+def unique_id(obj):
+    """Compute a unique id for DataStructure, used as *persistent_id* for
+    pickle.
+
+    Returns:
+        str: Identifier containing " mark, class name, object name".
+    """
+    class_ = type(obj).__name__
+    pers_id = ("DataStructure", class_, obj.getName().strip())
+    return str(pers_id)
 
 
 class AsterUnpickler(pickle.Unpickler):
@@ -554,11 +590,17 @@ class AsterUnpickler(pickle.Unpickler):
                 self.load_one()
             return UNSTACKED
         elif obj == ARGS:
-            name, init_args = self.load_one()
+            nbobj = self.load_one()
+            name = self.load_one()
+            init_args = []
+            for _ in range(nbobj):
+                init_args.append(self.load_one())
             buffer = self._stack.buffer(name)
             buffer.args = init_args
+            logger.debug("loaded init args: {0}".format(init_args))
             # expecting the STATE mark
-            assert self.load_one() == STATE
+            mark = self.load_one()
+            assert mark == STATE, mark
             try:
                 nbobj = self.load_one()
                 new_state = []
@@ -566,7 +608,7 @@ class AsterUnpickler(pickle.Unpickler):
                     new_state.append(self.load_one())
                 buffer.state = new_state
             except:
-                logger.debug("internal state can not be loaded\n{0}"
+                logger.info("internal state can not be loaded\n{0}"
                              .format(traceback.format_exc()))
                 buffer.state = ()
                 raise pickle.PicklingError("internal state can not be loaded")
