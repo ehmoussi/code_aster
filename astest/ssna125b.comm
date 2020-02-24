@@ -239,8 +239,7 @@ UTOT1=STAT_NON_LINE(MODELE=MODELEK,
                    INCREMENT=_F(LIST_INST=INSTS,),
                    CONVERGENCE=(_F(ITER_GLOB_MAXI=5,
                                    RESI_GLOB_RELA=1E-6,),),
-                   SOLVEUR=_F(METHODE='MUMPS',
-                              NPREC=-6,),
+                   SOLVEUR=_F(METHODE='MUMPS',),
                          
                    INFO=1,);
 MA_G=POST_MAIL_XFEM(MODELE        = MODELEK,

@@ -182,7 +182,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 # ----------------------------------------------
 RESU3=MECA_STATIQUE(       MODELE=MO, CHAM_MATER=CHAM_MAT, LIST_INST=L1,INFO=1,
                            EXCIT=( _F(CHARGE = CHARCI3),_F(CHARGE = CHARP)  ),
-                   SOLVEUR=_F(METHODE='MUMPS', TYPE_RESOL='SYMDEF',NPREC=-8))
+                   SOLVEUR=_F(METHODE='MUMPS', TYPE_RESOL='SYMDEF',))
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   GROUP_NO='C',
                   REFERENCE='AUTRE_ASTER',

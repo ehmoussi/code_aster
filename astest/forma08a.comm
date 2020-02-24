@@ -186,7 +186,8 @@ U=STAT_NON_LINE(
                    RESI_GLOB_RELA = 5.E-5,
                    ITER_GLOB_MAXI = 20,
                   ),
-  SOLVEUR = _F(METHODE = 'MUMPS', NPREC=-1),
+  SOLVEUR = _F(METHODE = 'MUMPS', #NPREC=-1
+   ),
   ARCHIVAGE = _F(
     LIST_INST     = INS_ARCH
   ))

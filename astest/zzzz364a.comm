@@ -346,7 +346,7 @@ for modeli in lmodeli :
                        NEWTON=_F(REAC_ITER=1),
                        CONVERGENCE=_F(ARRET='OUI', RESI_GLOB_MAXI=resi_glob_maxi,
                                       ITER_GLOB_MAXI=maxiter,),
-                       SOLVEUR=_F(METHODE='MUMPS', RESI_RELA=resi_rela, NPREC=-1, POSTTRAITEMENTS='FORCE', ),
+                       SOLVEUR=_F(METHODE='MUMPS', RESI_RELA=resi_rela, POSTTRAITEMENTS='FORCE', ),
 
                        );
     #IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U1, NOM_CHAM='SIEF_ELGA', INST=(2.,), GROUP_MA=solide),UNITE=6)

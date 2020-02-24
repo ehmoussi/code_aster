@@ -151,8 +151,7 @@ U=STAT_NON_LINE(MODELE=MOMECA,
                              ),
                 INCREMENT=_F(LIST_INST=L_INST),
                 CONVERGENCE=_F(ITER_GLOB_MAXI=10),
-                SOLVEUR=_F(METHODE='MUMPS',
-   NPREC=-1));
+                SOLVEUR=_F(METHODE='MUMPS',));
 
 U=CALC_CHAMP(reuse=U,RESULTAT=U,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_ELNO'),DEFORMATION=('EPSI_ELNO', 'EPSL_ELNO'))
 

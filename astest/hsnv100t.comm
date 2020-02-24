@@ -154,8 +154,7 @@ U=STAT_NON_LINE(MODELE=MOMECA,
                 CONVERGENCE=_F(EPSI_REFE=SIGY/YOUNG,
                                SIGM_REFE=SIGY,
                                RESI_REFE_RELA=1.E-5,),
-                SOLVEUR=_F(METHODE='MUMPS',
-                           NPREC=-1),);
+                SOLVEUR=_F(METHODE='MUMPS',),);
 
 U=CALC_CHAMP(reuse=U,RESULTAT=U,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_ELNO'),DEFORMATION=('EPSI_ELNO', 'EPSL_ELNO'))
 

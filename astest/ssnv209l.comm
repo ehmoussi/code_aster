@@ -326,9 +326,7 @@ UTOT1=STAT_NON_LINE(MODELE=MODELEK,
                     CONVERGENCE=_F(ARRET='OUI',
                                    ITER_GLOB_MAXI=10),
                     SOLVEUR=_F(METHODE='MUMPS',
-
-                               RESI_RELA=-1.,
-                               NPREC=-1),
+                               RESI_RELA=-1.,),
                     NEWTON=_F(REAC_ITER=1),
                     ARCHIVAGE=_F(CHAM_EXCLU='VARI_ELGA'),
                     );

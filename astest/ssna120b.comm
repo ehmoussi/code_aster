@@ -160,7 +160,7 @@ UP=STAT_NON_LINE(MODELE=MO,
                  CONVERGENCE = _F(
                                   ITER_GLOB_MAXI = 12,
                   ),
-                 SOLVEUR    = _F(METHODE = 'MUMPS', NPREC=-1),
+                 SOLVEUR    = _F(METHODE = 'MUMPS',),
                  NEWTON     = _F(MATRICE = 'TANGENTE', REAC_ITER=1),
                  ARCHIVAGE=_F(LIST_INST=LIS_ARCH),
                            );
