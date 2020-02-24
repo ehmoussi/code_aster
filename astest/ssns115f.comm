@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,11 +30,8 @@ poisson = 0.3
 # Comportement materiau
 relation = 'ELAS_MEMBRANE_NH'
 
-## Pression suiveuse
-#Pression finale 
-pressfinale = -0.00132
 # Nombre de pas de temps 
-nbPasPress = 2
+nbPasPress = 10
 
 # --------------------------------------------------------------------------- #
 # * * * * * * * * * * * * * * *  Initialisation * * * * * * * * * * * * * * * #
@@ -106,23 +103,16 @@ ENCAST=AFFE_CHAR_MECA(MODELE=MODELE,
 # -----------------------------------------------------------------------------
 
 # DEFINITION DES CONDITIONS AUX LIMITES ET CHARGEMENTS
+# pression = 1. N/m^2 = 1.e-6 N/mm^2
 CHARGT=AFFE_CHAR_MECA(MODELE=MODELE,
                       PRES_REP=_F(GROUP_MA='membrane',
-                                  PRES=1.,),);
+                                  PRES=-1.e-6,),);
 
 # CALCUL
-FONCCB=DEFI_FONCTION(
-                     NOM_PARA='INST',
-                     VALE=(0.0 ,0.0,
-                           1.0 ,pressfinale ,),
-                     PROL_DROITE='LINEAIRE',
-                     PROL_GAUCHE='LINEAIRE',);
-
-
-LISTR=DEFI_LIST_REEL(DEBUT=0.,
+LIST1=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=1.0,
                                    NOMBRE=nbPasPress,),);
-LIST1=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=LISTR, SUBD_PAS=2))
+
 
 RES1=STAT_NON_LINE(MODELE=MODELE,
                    CHAM_MATER=CHMAT,
@@ -130,8 +120,7 @@ RES1=STAT_NON_LINE(MODELE=MODELE,
                    EXCIT=(_F(CHARGE=ENCAST,
                              TYPE_CHARGE='FIXE_CSTE',),
                           _F(CHARGE=CHARGT,
-                             FONC_MULT=FONCCB,
-                             TYPE_CHARGE='SUIV',),),
+                             TYPE_CHARGE='SUIV_PILO',),),
                    COMPORTEMENT=(_F(GROUP_MA='membrane',
                                     RELATION=relation,
                                     DEFORMATION='GROT_GDEP',
@@ -148,7 +137,10 @@ RES1=STAT_NON_LINE(MODELE=MODELE,
                              MATRICE='TANGENTE',
                              REAC_ITER=1,
                              REAC_ITER_ELAS=0,),
-                   RECH_LINEAIRE=_F(),
+                   PILOTAGE=_F(TYPE='DDL_IMPO',
+                                COEF_MULT=1./2500.,
+                                GROUP_NO='point_O',
+                                NOM_CMP='DZ'),
                    CONVERGENCE=_F(ITER_GLOB_MAXI=200,
                                   ITER_GLOB_ELAS=25,
                                   ARRET='OUI',),
@@ -174,17 +166,112 @@ IMPR_RESU(FORMAT='MED',
                   NOM_CHAM=('DEPL','SIEF_ELGA',),),);
 
 # Test resultat
-TEST_RESU(RESU=_F(LEGENDE='Depl point O',
-                  RESULTAT=RES1,
-                  INST=1.,
-                  NOM_CHAM='DEPL',
-                  NOM_CMP='DZ',
-                  GROUP_NO='point_O',
-                  VALE_CALC=1047.4759,
-                  REFERENCE='SOURCE_EXTERNE',
-                  VALE_REFE=1047.,
-                  PRECISION=1E-3,),);
 
+ETA_PILO=RECU_FONCTION(RESULTAT=RES1,
+                       TOUT_ORDRE='OUI',
+                       NOM_PARA_RESU='ETA_PILOTAGE',);
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.1,
+                  VALE_CALC=117.9389051459,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=109.55,
+                  PRECISION=8E-2,),)
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.2,
+                  VALE_CALC=523.8127101838,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=531.73,
+                  PRECISION=2E-2,),)
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.3,
+                  VALE_CALC=1008.348999164,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=995.8,
+                  PRECISION=2E-2,),)
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.4,
+                  VALE_CALC=1291.555431996,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=1276.2,
+                  PRECISION=2E-2,),)
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.5,
+                  VALE_CALC=1375.154003401,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=1366.9,
+                  PRECISION=7E-3,),)
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.6,
+                  VALE_CALC=1351.614467450,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=1344.7,
+                  PRECISION=6E-3,),);
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.7,
+                  VALE_CALC=1284.914324230,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=1280.6,
+                  PRECISION=4E-3,),)
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.8,
+                  VALE_CALC=1205.182500085,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=1203.0,
+                  PRECISION=3E-3,),)
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=0.9,
+                  VALE_CALC=1125.091524353,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=1124.4,
+                  PRECISION=1E-3,),)
+
+TEST_FONCTION(VALEUR=_F(
+                  FONCTION=ETA_PILO,
+                  NOM_PARA='INST',
+                  VALE_PARA=1.0,
+                  VALE_CALC=1049.643929873,
+                  REFERENCE='SOURCE_EXTERNE',
+                  VALE_REFE=1049.0,
+                  PRECISION=1E-3,),)
+
+#DEFI_FICHIER( UNITE = 85, FICHIER = '~/ssns115f.resu')
+#IMPR_FONCTION(FORMAT='TABLEAU',
+#              COURBE=_F(FONCTION=ETA_PILO,),
+#              UNITE=85,);                  
+#DEFI_FICHIER( UNITE = 85, ACTION = 'LIBERER')
+#
+#TAB = CREA_TABLE(RESU=_F(RESULTAT=RES1,NOM_CHAM='DEPL',NOM_CMP='DZ', GROUP_NO='point_O',)
+#)
+#DEFI_FICHIER( UNITE = 85, FICHIER = '~/ssns115f_depl.resu')
+#IMPR_TABLE(TABLE=TAB,UNITE=85,);                  
+#DEFI_FICHIER( UNITE = 85, ACTION = 'LIBERER')
 
 FIN();
 #CHECKSUM:6486cbb01d689c5212139f50f89b9437  -:FIN CHECKSUM
