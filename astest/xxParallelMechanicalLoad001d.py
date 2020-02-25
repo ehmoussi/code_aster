@@ -14,8 +14,7 @@ pMesh2.readMedFile("xxParallelMechanicalLoad001c")
 model = AFFE_MODELE(MAILLAGE = pMesh2,
                     AFFE = _F(MODELISATION = "D_PLAN",
                               PHENOMENE = "MECANIQUE",
-                              TOUT = "OUI",),
-                    DISTRIBUTION=_F(METHODE='CENTRALISE',),)
+                              TOUT = "OUI",),)
 
 char_cin = AFFE_CHAR_CINE(MODELE=model,
                           MECA_IMPO=(_F(GROUP_NO="N2",

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ cable = DEFI_MATERIAU(
     ELAS=_F(ALPHA=Alpha, E=Young, NU=0.3, RHO=8e-09)
 )
 
-mailc = LIRE_MAILLAGE(UNITE=20, FORMAT='ASTER'),
+mailc = LIRE_MAILLAGE(UNITE=20, FORMAT='ASTER')
 
 model = AFFE_MODELE(
     MAILLAGE=mailc,
