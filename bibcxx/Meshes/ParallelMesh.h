@@ -59,10 +59,6 @@ class ParallelMeshClass : public BaseMeshClass {
     JeveuxVectorLong _outerNodes;
     /** @brief Global numbering */
     JeveuxVectorLong _globalNumbering;
-    /** @brief List of joins (send) */
-    JeveuxVectorChar24 _listOfSendingJoins;
-    /** @brief List of joins (receive) */
-    JeveuxVectorChar24 _listOfReceivingJoins;
     /** @brief List of opposite domain */
     JeveuxVectorChar24 _listOfOppositeDomain;
     /** @brief Vector of JeveuxVectorLong which contains matching nodes */
@@ -87,8 +83,6 @@ class ParallelMeshClass : public BaseMeshClass {
         : BaseMeshClass( name, "MAILLAGE_P" ), _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
           _allGroupOfEements( getName() + ".PAR_GRPMAI" ), _outerNodes( getName() + ".NOEX" ),
           _globalNumbering( getName() + ".NULOGL" ),
-          _listOfSendingJoins( getName() + ".NO_JO_ENV" ),
-          _listOfReceivingJoins( getName() + ".NO_JO_REC" ),
           _listOfOppositeDomain( getName() + ".DOMJOINTS" ){};
 
     /**
