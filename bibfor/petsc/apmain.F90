@@ -527,25 +527,15 @@ use lmp_module, only : lmp_update
 !
             call VecDestroy(xlocal, ierr)
             ASSERT(ierr.eq.0)
-#if PETSC_VERSION_LT(3,8,0)
-            xlocal = PETSC_NULL_OBJECT
-#else
             xlocal = PETSC_NULL_VEC
-#endif
+!
             call VecDestroy(xglobal, ierr)
             ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0)
-            xglobal = PETSC_NULL_OBJECT
-#else
             xglobal = PETSC_NULL_VEC
-#endif
+!
             call VecScatterDestroy(xscatt, ierr)
             ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0)
-            xscatt = PETSC_NULL_OBJECT
-#else
             xscatt = PETSC_NULL_VECSCATTER
-#endif
 !           ON STOCKE LE NOMBRE D'ITERATIONS DU KSP
             call KSPGetIterationNumber(ksp, maxits, ierr)
             ASSERT(ierr.eq.0)
@@ -570,27 +560,17 @@ use lmp_module, only : lmp_update
         call MatDestroy(a, ierr)
         ASSERT(ierr.eq.0)
 !
-#if PETSC_VERSION_LT(3,8,0)
-        call KSPDestroy(ksp, ierr)
-        ASSERT(ierr.eq.0)
-#else
         if ( ksp /= PETSC_NULL_KSP) then
            call KSPDestroy(ksp, ierr)
            ASSERT(ierr.eq.0)
         endif
-#endif
 !
 !        -- SUPRESSION DE L'INSTANCE PETSC
         nomats(kptsc) = ' '
         nosols(kptsc) = ' '
         nonus(kptsc) = ' '
-#if PETSC_VERSION_LT(3,8,0)
-        ap(kptsc) = PETSC_NULL_OBJECT
-        kp(kptsc) = PETSC_NULL_OBJECT
-#else
         ap(kptsc) = PETSC_NULL_MAT
         kp(kptsc) = PETSC_NULL_KSP
-#endif
         tblocs(kptsc) = -1
 !
 !        -- PRECONDITIONNEUR UTILISE
