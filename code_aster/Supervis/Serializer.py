@@ -168,7 +168,7 @@ class Serializer(object):
                 if name == "CO":
                     continue
                 try:
-                    logger.info("{0:<24s} {1} {2}".format(name, type(obj), obj))
+                    logger.info("{0:<24s} {1}".format(name, type(obj)))
                     pickler.save_one(obj, main=True)
                     objList.append(name)
                 except Exception:
