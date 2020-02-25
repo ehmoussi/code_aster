@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,6 +65,8 @@ type(NL_DS_Energy), intent(out) :: ds_energy
 !
 ! - Create table
 !
+    print*,'coucou nonlinDSEnergyCreate'
+    
     call nonlinDSTableIOVoid(table%table_io)
     table%table_io%table_type = 'PARA_CALC'
     table%nb_cols             = nb_col_defi
@@ -85,8 +87,9 @@ type(NL_DS_Energy), intent(out) :: ds_energy
         else
             ASSERT(.false.)
         endif
-        table%cols(i_col)      = column
-        table%indx_vale(i_col) = i_col
+        table%cols(i_col)        = column
+        table%l_cols_acti(i_col) = ASTER_FALSE
+        table%indx_vale(i_col)   = i_col
     end do
 !
 ! - Set main parameters
