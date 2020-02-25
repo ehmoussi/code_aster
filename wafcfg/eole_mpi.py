@@ -63,8 +63,6 @@ def configure(self):
     self.env.append_value('LIB_METIS', ('parmetis'))
     self.env.append_value('LIB_SCOTCH', ('ptscotch','ptscotcherr','ptscotcherrexit'))
 
-    # allow to compile the elements catalog using the executable on one processor
-    self.env['CATALO_CMD'] = 'I_MPI_FABRICS=shm'
     # produce an executable file with symbols for INTEL16 with mpiifort wrapper
     self.env.append_value('LINKFLAGS', ('-nostrip'))
     self.env.prepend_value('LINKFLAGS', ('-L/opt/impi-2017.0.098/lib64'))
