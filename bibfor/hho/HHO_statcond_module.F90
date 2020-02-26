@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -106,16 +106,23 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
 ! ----- Local variables
-        integer :: faces_dofs, info = 0, cbs, fbs, total_dofs, ipiv(MSIZE_CELL_VEC)
-        real(kind=8) :: rhs_T(MSIZE_CELL_VEC) = 0.d0, rhs_F(MSIZE_FDOFS_VEC) = 0.d0
-        real(kind=8) :: K_TT(MSIZE_CELL_VEC, MSIZE_CELL_VEC) = 0.d0
-        real(kind=8) :: K_FT(MSIZE_FDOFS_VEC, MSIZE_CELL_VEC) = 0.d0
-        real(kind=8) :: K_TF(MSIZE_CELL_VEC, MSIZE_FDOFS_VEC) = 0.d0
-        real(kind=8) :: K_FF(MSIZE_FDOFS_VEC, MSIZE_FDOFS_VEC) = 0.d0
+        integer :: faces_dofs, info, cbs, fbs, total_dofs, ipiv(MSIZE_CELL_VEC)
+        real(kind=8) :: rhs_T(MSIZE_CELL_VEC), rhs_F(MSIZE_FDOFS_VEC)
+        real(kind=8) :: K_TT(MSIZE_CELL_VEC, MSIZE_CELL_VEC)
+        real(kind=8) :: K_FT(MSIZE_FDOFS_VEC, MSIZE_CELL_VEC)
+        real(kind=8) :: K_TF(MSIZE_CELL_VEC, MSIZE_FDOFS_VEC)
+        real(kind=8) :: K_FF(MSIZE_FDOFS_VEC, MSIZE_FDOFS_VEC)
 !
 ! ---- Number of dofs
         call hhoMecaDofs(hhoCell, hhoData, cbs, fbs, total_dofs)
         faces_dofs = total_dofs - cbs
+!
+        K_TT = 0.d0
+        K_TF = 0.d0
+        K_FT = 0.d0
+        K_FF = 0.d0
+        rhs_T = 0.d0
+        rhs_F = 0.d0
 !
         K_TT(1:cbs, 1:cbs) = lhs(1:cbs, 1:cbs)
         K_TF(1:cbs, 1 : faces_dofs) = lhs(1 : cbs, (cbs+1) : total_dofs)
@@ -124,6 +131,7 @@ contains
         rhs_T(1:cbs) = rhs(1:cbs)
         rhs_F(1:faces_dofs) = rhs((cbs+1):total_dofs)
 !
+        info = 0
         if(l_lhs_sym) then
 ! ---- factorize K_TT
             info = 0
@@ -225,12 +233,16 @@ contains
 !
 ! ----- Local variables
         integer :: faces_dofs, cbs, fbs, total_dofs, jincm
-        real(kind=8) :: K_TF(MSIZE_CELL_VEC, MSIZE_FDOFS_VEC) = 0.d0
-        real(kind=8) :: rhs_T(MSIZE_CELL_VEC) = 0.d0, sol_F(MSIZE_FDOFS_VEC) = 0.d0
+        real(kind=8) :: K_TF(MSIZE_CELL_VEC, MSIZE_FDOFS_VEC)
+        real(kind=8) :: rhs_T(MSIZE_CELL_VEC), sol_F(MSIZE_FDOFS_VEC)
 !
 ! ---- Number of dofs
         call hhoMecaDofs(hhoCell, hhoData, cbs, fbs, total_dofs)
         faces_dofs = total_dofs - cbs
+!
+        K_TF = 0.d0
+        rhs_T = 0.d0
+        sol_F = 0.d0
 !
 ! ---- We get the solution on the faces (!! respect the order of faces)
         call readVector('PDEPLPR', faces_dofs, sol_F)

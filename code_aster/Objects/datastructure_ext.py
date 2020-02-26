@@ -33,6 +33,7 @@ from ..Utilities import deprecated, import_object, injector
 class ExtendedDataStructure(object):
     """This class defines the base class of the DataStructures.
     """
+    # __getstate_manages_dict__ = 1
     cata_sdj = None
     ptr_class_sdj = None
     ptr_sdj = None
@@ -56,6 +57,22 @@ class ExtendedDataStructure(object):
             a constructor accepting the Jeveux name.
         """
         return (self.getName(), )
+
+    def __getstate__(self):
+        """Return internal state.
+
+        Returns:
+            list: Internal state.
+        """
+        return get_depends(self)
+
+    def __setstate__(self, state):
+        """Restore internal state.
+
+        Arguments:
+            state (list): Internal state.
+        """
+        set_depends(self, state)
 
     @property
     def sdj(self):
@@ -144,3 +161,30 @@ class AsFloat(PyDataStructure):
     @classmethod
     def getType(cls):
         return 'REEL'
+
+
+def get_depends(obj):
+    """Return dependencies as internal state.
+
+    Arguments:
+        obj (*DataStructure*): DataStructure object.
+
+    Returns:
+        list[*DataStructure*]: Number and list of dependencies.
+    """
+    return []
+    # deps = obj.getDependencies()
+    # state = [len(deps)] + deps
+    # return state
+
+def set_depends(obj, state):
+    """Restore dependencies from internal state.
+
+    Arguments:
+        obj (*DataStructure*): DataStructure object.
+        state (list): Number and list of dependencies.
+    """
+    return
+    # nbdeps = state.pop(0)
+    # for _ in range(nbdeps):
+    #     obj.addDependency(state.pop(0))

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,9 +56,9 @@ aster_logical, intent(in), optional :: l_line_search_
 !
     integer :: ifm, niv
     integer :: iret, nb_mode
-    character(len=8) :: mesh_base = ' ', model_base = ' '
-    character(len=8) :: mesh_algo = ' ', model_algo = ' '
-    character(len=24) :: field_name = ' '
+    character(len=8) :: mesh_base, model_base
+    character(len=8) :: mesh_algo, model_algo
+    character(len=24) :: field_name
     character(len=24) :: grnode_int
     aster_logical :: l_hrom
     type(ROM_DS_Empi) :: ds_empi
@@ -76,7 +76,7 @@ aster_logical, intent(in), optional :: l_line_search_
     model_algo = model_algoz
     ds_empi    = ds_algorom%ds_empi
     l_hrom     = ds_algorom%l_hrom
-    grnode_int = ds_algorom%grnode_int 
+    grnode_int = ds_algorom%grnode_int
 !
 ! - Check mesh
 !
@@ -138,6 +138,6 @@ aster_logical, intent(in), optional :: l_line_search_
 !
     else
         ASSERT(.false.)
-    endif   
+    endif
 !
 end subroutine

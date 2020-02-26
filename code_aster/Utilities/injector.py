@@ -29,7 +29,8 @@ def injector(boost_class):
 
     Private methods are not injected, except a sublist:
     ``__call__``, ``__getattr__``, ``__getinitargs__``, ``__getitem__``,
-    ``__getstate__``, ``__len__``, ``__setstate__``.
+    ``__getstate__``, ``__getstate_manages_dict__``, ``__len__``,
+    ``__setstate__``.
 
     Arguments:
         boost_class (*boost-python class*): Boost-Python class to enrich.
@@ -41,7 +42,8 @@ def injector(boost_class):
         for name, attr in cls.__dict__.items():
             if name.startswith("__"):
                 if name not in ("__call__", "__getattr__", "__getinitargs__",
-                                "__getitem__", "__getstate__", "__len__",
+                                "__getitem__", "__getstate__",
+                                "__getstate_manages_dict__", "__len__",
                                 "__setstate__"):
                     continue
             setattr(boost_class, name, attr)

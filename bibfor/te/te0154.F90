@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,12 +59,13 @@ subroutine te0154(option, nomte)
     character(len=4) :: fami
     character(len=16) :: ch16
     aster_logical :: lteimp
-    real(kind=8) :: aire, epsth, e(1), r8bid=0.d0, rho(1), xfl1, xfl4, xl, xmas, xrig
+    real(kind=8) :: aire, epsth, e(1), r8bid, rho(1), xfl1, xfl4, xl, xmas, xrig
     integer :: ii, iif, itype, j, jdepl, jeffo, jende, jfreq, jdefo, kanl
     integer :: lmater, lorien, lsect, iret, nc, nno
     integer :: jvite
 !     ------------------------------------------------------------------
 !
+    r8bid=0.d0
     lteimp = .false.
     nno = 2
     nc = 3

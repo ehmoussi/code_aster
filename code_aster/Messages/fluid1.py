@@ -21,9 +21,8 @@ from ..Utilities import _
 
 cata_msg = {
 
-    1  : _("""
- Le comportement ne peut être qu'élastique sur une modélisation de type 3D_FLUIDE, AXIS_FLUIDE ou 2D_FLUIDE.
-"""),
+    1  : _("""Le comportement ne peut être qu'élastique sur une modélisation de type 3D_FLUIDE, AXIS_FLUIDE ou 2D_FLUIDE."""),
 
+    2  : _("""Le calcul de l'option n'est pas possible avec la formulation %(k1)s. Il faut demander une évolution."""),
 
 }

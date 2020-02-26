@@ -132,8 +132,11 @@ MASSE=POST_ELEM(MASS_INER=_F(TOUT='OUI',),
 #*******************************************************
 # CALCUL D'UNE BASE DE MODES DYNAMIQUES POUR L'EXPANSION
 #*******************************************************
-
+# SOLVEUR/NPREC BOUGE POUR DECALAGE MODAL
 MODES=CALC_MODES(MATR_RIGI=KASS,
+                  SOLVEUR=_F(METHODE='MUMPS',
+                             NPREC=9,
+                             ),                 
                  VERI_MODE=_F(STOP_ERREUR='NON',
                               SEUIL=1.0E-4,
                               ),

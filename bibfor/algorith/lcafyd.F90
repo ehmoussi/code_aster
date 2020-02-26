@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ subroutine lcafyd(comp, materd, materf, nbcomm, cpmono,&
     integer :: ndt, nvi, nmat, ndi, ns, i, nbcomm(nmat, 3), nr
     real(kind=8) :: yd(*), materd(nmat, 2), materf(nmat, 2), vind(*)
     real(kind=8) :: id(3, 3), hookf(6, 6), dkooh(6, 6), epsegl(6), fe(3, 3)
-    real(kind=8) :: eisp, epsfi(6), dtot, vinf(nvi), sigd(6)
+    real(kind=8) :: dtot, vinf(nvi), sigd(6)
     character(len=16) :: loi, comp(*), necoul
     character(len=24) :: cpmono(5*nmat+1)
     character(len=8) :: mod

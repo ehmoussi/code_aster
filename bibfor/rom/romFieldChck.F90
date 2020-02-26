@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,17 +40,18 @@ character(len=*), optional, intent(in) :: field_name_
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_field         : datastructure for field
-! In  field_name       : name of field where empiric modes have been constructed 
+! In  field_name       : name of field where empiric modes have been constructed
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: field_name = ' '
+    character(len=24) :: field_name
     integer :: nb_cmp_chck, nb_cmp
     integer :: i_cmp, i_cmp_chck, indx_cmp
     character(len=8) :: name_cmp_chck(6), name_cmp
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    field_name = ' '
     nb_cmp     = ds_field%nb_cmp
     if (present(field_name_)) then
         field_name = field_name_

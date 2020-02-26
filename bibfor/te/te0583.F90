@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ subroutine te0583(option, nomte)
     real(kind=8) :: pgl(3, 3), pgl1(3, 3), pgl2(3, 3), pgl3(3, 3), omega
     real(kind=8) :: hk, poids, rayon, theta, tk(4), ck, sk
     real(kind=8) :: cosfi, sinfi, te, pgl4(3, 3), fpesa4(6), xpg(4)
-    real(kind=8) :: r8b=0.d0, rext, sec, rho(1), r, time, valpar(5)
+    real(kind=8) :: r8b, rext, sec, rho(1), r, time, valpar(5)
     integer :: codres(1), kpg, spt
     character(len=8) :: nompar(5), fami, poum
     character(len=16) :: phenom
@@ -66,12 +66,12 @@ subroutine te0583(option, nomte)
     parameter (nbsecm=32,nbcoum=10)
     real(kind=8) :: poicou(2*nbcoum+1), poisec(2*nbsecm+1), abscn(4)
     aster_logical :: normal, global
-!-----------------------------------------------------------------------    
+!-----------------------------------------------------------------------
     integer, parameter :: nb_cara1 = 2
     real(kind=8) :: vale_cara1(nb_cara1)
-    character(len=8) :: noms_cara1(nb_cara1)
-    data noms_cara1 /'R1','EP1'/
+    character(len=8), parameter :: noms_cara1(nb_cara1) = ['R1 ','EP1']
 !----------------------------------------------------------------------
+    r8b=0.d0
     call elrefe_info(fami='MASS', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
                      jpoids=ipoids, jcoopg=jcoopg, jvf=ivf, jdfde=idfdk, jdfd2=jdfd2,&
                      jgano=jgano)

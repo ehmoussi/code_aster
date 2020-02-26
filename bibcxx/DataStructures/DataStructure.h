@@ -60,7 +60,7 @@ class DataStructure {
     /** @brief Object that stores the DataStructure type for jeveux requests */
     JeveuxVectorChar24 _tco;
     /** @brief Vector which contains reference to other DataStructure */
-    std::vector< DataStructurePtr > _referenceVector;
+    std::vector< DataStructurePtr > _depsVector;
 
   public:
     /**
@@ -90,7 +90,9 @@ class DataStructure {
      * @brief Function to add a reference to another datastructure
      * @param ds datastructure to reference
      */
-    void addReference( const DataStructurePtr & );
+    void addDependency( const DataStructurePtr & );
+
+    std::vector< DataStructurePtr > getDependencies() const;
 
     /**
      * @brief Function membre debugPrint

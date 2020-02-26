@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,14 +66,14 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/Behaviour_type.h"
 !
-! TOUTES LES VARIABLES EN DEHORS 
+! TOUTES LES VARIABLES EN DEHORS
 ! DE LA BOUCLE SUR LES POINTS DE GAUSS PEUVENT ETRE
 ! INITIALISES AU MOMENT DE LA DECLARATION
-! matloc et vecloc SONT INITIALISES EN FONCTION DE 
+! matloc et vecloc SONT INITIALISES EN FONCTION DE
 ! L OPTION FULL_MECA, RIGI_MECA_*
     integer :: codret
-    real(kind=8) :: pgl(3, 3)=0.0, xyzl(3, 4)=0.0d0
-    real(kind=8) :: ul(6, 4)=0.d0, dul(6, 4)=0.d0, angmas(3)=0.0d0
+    real(kind=8) :: pgl(3, 3), xyzl(3, 4)
+    real(kind=8) :: ul(6, 4), dul(6, 4), angmas(3)
     real(kind=8) :: matloc((6*4)*(6*4+1)/2), vecloc(6, 4)
     character(len=16) :: option, nomte, compor
 !
@@ -135,28 +135,28 @@ implicit none
 !            DC:     MATRICE DE RIGIDITE ELASTIQUE MATERIELLE
 !                                                         (CISAILLEMENT)
 !
-    real(kind=8) :: dff(3, 3) = 0.0d0, dmm(3, 3) = 0.0d0, dmff(3, 3) = 0.0d0
-    real(kind=8) :: dcc(2, 2) = 0.0d0, dci(2, 2) = 0.0d0, dmc(3, 2) = 0.0d0, dfc(3, 2) = 0.0d0
+    real(kind=8) :: dff(3, 3) , dmm(3, 3) , dmff(3, 3)
+    real(kind=8) :: dcc(2, 2) , dci(2, 2) , dmc(3, 2) , dfc(3, 2)
 !
-    real(kind=8) :: bf(3, 3*4)=0.d0, bm(3, 2*4)=0.d0, bmq(2, 3)=0.d0, bc(2, 3*4)=0.d0
+    real(kind=8) :: bf(3, 3*4), bm(3, 2*4), bmq(2, 3), bc(2, 3*4)
 !            BF :    MATRICE "B" (FLEXION)
 !            BM :    MATRICE "B" (MEMBRANE)
 !            BC :    MATRICE "B" (CISAILLEMENT)
-    real(kind=8) :: flex(3*4, 3*4)=0.d0, memb(2*4, 2*4)=0.d0, flexi(3*4, 3*4)=0.d0
-    real(kind=8) :: mefl(2*4, 3*4)=0.d0, work(3, 3*4)=0.d0
+    real(kind=8) :: flex(3*4, 3*4), memb(2*4, 2*4), flexi(3*4, 3*4)
+    real(kind=8) :: mefl(2*4, 3*4), work(3, 3*4)
 !           MEMB:    MATRICE DE RIGIDITE DE MEMBRANE
 !           FLEX:    MATRICE DE RIGIDITE DE FLEXION
 !           WORK:    TABLEAU DE TRAVAIL
 !           MEFL:    MATRICE DE COUPLAGE MEMBRANE-FLEXION
 !           LE MATERIAU EST SUPPOSE HOMOGENE
 !
-    real(kind=8) :: t2iu(4)=0.0d0, t2ui(4)=0.0d0, t1ve(9), c, s
+    real(kind=8) :: t2iu(4), t2ui(4), t1ve(9), c, s
 !
     aster_logical :: t3g, q4g
     aster_logical :: leul, lrgm
     aster_logical :: resi, rigi
     aster_logical :: q4gg
-    aster_logical :: coupmf  = .false.
+    aster_logical :: coupmf
     aster_logical :: is_param_opt(2)
 !
     integer :: ndim, nno, nnos, npg, ipoids, icoopg, ivf, idfdx
@@ -167,7 +167,7 @@ implicit none
     integer :: i, i1, i2, j, k, l
     integer :: icpg, icpv
     integer :: jtab(7), nbsig
-    integer :: multic = -1
+    integer :: multic
 !
     real(kind=8) :: delas(6, 6), dsidep(6, 6)
     real(kind=8) :: lambda, deuxmu, deumuf, lamf, gt, gc, gf, seuil, alphaf
@@ -193,18 +193,44 @@ implicit none
 !
     integer      ::  codret2(1)
     character(len=32) :: phenom
+!
+    pgl=0.0
+    xyzl=0.0d0
+    ul=0.d0
+    dul=0.d0
+    angmas=0.0d0
+    dff = 0.0d0
+    dmm = 0.0d0
+    dmff = 0.0d0
+    dcc = 0.0d0
+    dci = 0.0d0
+    dmc = 0.0d0
+    dfc = 0.0d0
+    bf=0.d0
+    bm=0.d0
+    bmq=0.d0
+    bc=0.d0
+    flex=0.d0
+    memb=0.d0
+    flexi=0.d0
+    mefl=0.d0
+    work=0.d0
+    t2iu=0.0d0
+    t2ui=0.0d0
+    multic = -1
     codret = 0
     nbsig = 6
-    q4gg = .false.
-    t3g = .false.
-    q4g = .false.
-    leul = .false.
+    q4gg = ASTER_FALSE
+    t3g = ASTER_FALSE
+    q4g = ASTER_FALSE
+    leul = ASTER_FALSE
+    coupmf  = ASTER_FALSE
     mult_comp = ' '
 !
     if (nomte .eq. 'MEDKTG3' .or. nomte .eq. 'MET3GG3') then
-        t3g = .true.
+        t3g = ASTER_TRUE
     else if (nomte.eq.'MEDKQG4' .or. nomte.eq.'MEQ4GG4') then
-        q4g = .true.
+        q4g = ASTER_TRUE
     else
         valk(1) = nomte
         valk(2) = option
@@ -212,7 +238,7 @@ implicit none
     endif
 !
     if (nomte .eq. 'MEQ4GG4' .or. nomte .eq. 'MET3GG3') then
-        q4gg = .true.
+        q4gg = ASTER_TRUE
         nbsig = 8
     endif
 !
@@ -234,7 +260,7 @@ implicit none
     call utpvgl(nno, 3, pgl, zr(igeom), xyzl)
 !
 
-        call jevech('PMATERC', 'L', imate)            
+        call jevech('PMATERC', 'L', imate)
 ! ---   COQUE HOMOGENEISEE ?
         if ((option.eq.'FULL_MECA') .or. (option.eq.'RAPH_MECA') .or.&
                 (option.eq.'RIGI_MECA_TANG')) then
@@ -300,7 +326,7 @@ implicit none
             icompo=1
             icontm=1
         endif
-        
+
         call r8inir(8, 0.d0, sig, 1)
         call r8inir(8, 0.d0, dsig, 1)
 !
@@ -425,7 +451,7 @@ implicit none
                 poids = carat3(8)
             endif
 !
-  
+
             call r8inir(3, 0.d0, eps, 1)
             call r8inir(6, 0.d0, deps, 1)
             call r8inir(6, 0.d0, epsm, 1)
@@ -480,16 +506,16 @@ implicit none
             endif
 !
 !EXCENTREMENT RAJOUTE UN COUPLAGE MEMBRANE_FLEXION : EPSI = EPSI+EXCENT*KHI
-             if (compor(1:4) .ne. 'ELAS' .and. excen .gt. 0.0d0) then 
+             if (compor(1:4) .ne. 'ELAS' .and. excen .gt. 0.0d0) then
                 do i = 1, 3
                     epsm(i) = epsm(i)+excen*khi(i)
                     deps(i) = deps(i)+excen*khi(i)
                 end do
             endif
-            
-            
+
+
             if (compor(1:4) .eq. 'ELAS') then
-  
+
                 call r8inir(3*3, 0.d0, dff, 1)
                 call r8inir(3*3, 0.d0, dmm, 1)
                 call r8inir(3*3, 0.d0, dmff, 1)
@@ -631,7 +657,7 @@ implicit none
                              sig, ecrp, a0, c0, aa_t,&
                              ga_t, ab_, gb_, ac_, gc_,&
                              aa_c, ga_c, cstseu, zr(icarcr), codret,&
-                             dsidep, .false._1)
+                             dsidep, ASTER_FALSE)
 !A DECOMMENTER POUR DEBUG DE L INTEGRATION DE LA LOI
 !                if (codret .eq. 1 ) then
 !                    codret = 0
@@ -683,12 +709,12 @@ implicit none
                 end do
 !               -- PRISE EN COMPTE DE L'EXCENTREMENT DANS LE TERME DE FLEXION (VOIR AUSSI DKTNLI)
 
-             if (compor(1:4) .ne. 'ELAS' .and. excen .gt. 0.0d0) then 
+             if (compor(1:4) .ne. 'ELAS' .and. excen .gt. 0.0d0) then
                     do i = 1, 3
                         m(i) =   m(i) + excen*n(i)
                     end do
             endif
-                    
+
                     do i = 1, 2
                         q(i) = sig(i+6)
                     end do
@@ -803,7 +829,7 @@ implicit none
         endif
 !
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

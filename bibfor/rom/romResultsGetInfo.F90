@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,13 +54,18 @@ type(ROM_DS_Result), intent(inout) :: ds_result
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret, nume_first
-    integer :: nb_node = 0
-    character(len=8)  :: model = ' ', mesh = ' '
-    character(len=24) :: field_refe = '&&ROM_COMP.FIELD', field_name
+    integer :: nb_node
+    character(len=8)  :: model, mesh
+    character(len=24) :: field_refe
+    character(len=24) :: field_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
     field_name = field_namez
+    nb_node = 0
+    model = ' '
+    mesh  = ' '
+    field_refe = '&&ROM_COMP.FIELD'
 !
 ! - Get information about model
 !

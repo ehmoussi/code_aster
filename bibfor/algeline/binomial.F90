@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,11 +40,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, dimension(20) :: coeff = 0
+    integer, dimension(20) :: coeff
 !
 !
     ASSERT(k .lt. n)
 !
+    coeff(:) = 0
     binomial = 0
     if(k < 0) then
         binomial = 0

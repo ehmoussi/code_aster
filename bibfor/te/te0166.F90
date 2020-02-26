@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,8 +45,9 @@ subroutine te0166(option, nomte)
 !
 !
 !-----------------------------------------------------------------------
-    real(kind=8) :: r8b=0.d0
+    real(kind=8) :: r8b
 !-----------------------------------------------------------------------
+    r8b=0.d0
     fami='FPG1'
     kpg=1
     spt=1
@@ -65,18 +66,18 @@ subroutine te0166(option, nomte)
     endif
     call jevech('PDEPLPR', 'L', ideplp)
 !
-    do 10 i = 1, 9
+    do i = 1, 9
         w(i)=zr(idepla-1+i)+zr(ideplp-1+i)
-10  end do
+    end do
 !
-    do 21 kc = 1, 3
+    do kc = 1, 3
         l1(kc) = w(kc ) + zr(igeom-1+kc) - w(6+kc) - zr(igeom+5+kc)
         l10(kc) = zr(igeom-1+kc) - zr(igeom+5+kc)
-21  end do
-    do 22 kc = 1, 3
+    end do
+    do kc = 1, 3
         l2(kc) = w(3+kc) + zr(igeom+2+kc) - w(6+kc) - zr(igeom+5+kc)
         l20(kc) = zr(igeom+2+kc) - zr(igeom+5+kc)
-22  end do
+    end do
     norml1=ddot(3,l1,1,l1,1)
     norml2=ddot(3,l2,1,l2,1)
     norl10=ddot(3,l10,1,l10,1)
@@ -97,11 +98,11 @@ subroutine te0166(option, nomte)
     poids(3) = poids(1) + poids(2)
 !
 !
-    do 32 neu = 1, 3
+    do neu = 1, 3
         neum1 = neu - 1
-        do 31 ic = 1, 3
+        do ic = 1, 3
             zr(ivectu + 3*neum1 + ic-1) = poids(neu) * zr(ipesa+ic)
-31      end do
-32  end do
+        end do
+    end do
 !
 end subroutine

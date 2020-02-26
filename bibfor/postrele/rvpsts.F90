@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -84,7 +84,7 @@ subroutine rvpsts(iocc, sdlieu, sdeval, sdmoye)
     integer :: deb, fin, lmoye, nbcp, nbco, nbsp, nboc, nbsgt, nres, nmom
     integer :: l1, l2, l3, l5, ioc, i, j, k, l, n, nbpt
 !
-    real(kind=8) :: t1, t(3), x, y, z, xpi=0.d0, ypi=0.d0, zpi=0.d0, rx, ry, rz, mx, my, mz
+    real(kind=8) :: t1, t(3), x, y, z, xpi, ypi, zpi, rx, ry, rz, mx, my, mz
     real(kind=8) :: zero
 !
 !==================== CORPS DE LA ROUTINE =============================
@@ -96,6 +96,9 @@ subroutine rvpsts(iocc, sdlieu, sdeval, sdmoye)
 !-----------------------------------------------------------------------
     call jemarq()
     zero = 0.0d0
+    xpi=0.d0
+    ypi=0.d0
+    zpi=0.d0
 !
     ntab = '&&RVPSTM.VECT.INTER'
     nabsc = sdlieu(1:19)//'.ABSC'
@@ -135,9 +138,9 @@ subroutine rvpsts(iocc, sdlieu, sdeval, sdmoye)
     if (nmom .eq. 0) then
         call wkvect(nsocp, 'V V K8', nbcp, deb)
         call jeveuo(sdeval//'.NOCP', 'L', fin)
-        do 15, ioc = 1, nbcp, 1
+        do ioc = 1, nbcp, 1
         zk8(deb + ioc-1) = zk8(fin + ioc-1)
-15      continue
+        end do
         lmoye = nbcp*nbco*nbsp
     else
         call wkvect(nsocp, 'V V K8', 6, deb)
@@ -151,15 +154,15 @@ subroutine rvpsts(iocc, sdlieu, sdeval, sdmoye)
     endif
 !
     nbsgt = 0
-    do 99, ioc = 1, nboc, 1
+    do ioc = 1, nboc, 1
     call jelira(jexnum(nabsc , ioc), 'LONMAX', fin)
     nbsgt = max(nbsgt,fin)
-    99 end do
+    end do
     call wkvect(ntab, 'V V R', l3*(nbsgt+1), atab)
 !
     fin = 0
 !
-    do 100, ioc = 1, nboc, 1
+    do ioc = 1, nboc, 1
 !
     call jecroc(jexnum(nsova, ioc))
     call jeecra(jexnum(nsova, ioc), 'LONMAX', lmoye)
@@ -351,7 +354,7 @@ subroutine rvpsts(iocc, sdlieu, sdeval, sdmoye)
 150      continue
     endif
 !
-    100 end do
+    end do
 !
     call jedetr(ntab)
 !

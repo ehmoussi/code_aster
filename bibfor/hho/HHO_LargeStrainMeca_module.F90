@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -156,9 +156,11 @@ contains
         real(kind=8) :: TMP(MSIZE_CELL_MAT, MSIZE_TDOFS_VEC)
         real(kind=8) :: jac_prev, jac_curr, coorpg(3), weight
         integer :: cbs, fbs, total_dofs, faces_dofs, gbs, ipg, gbs_cmp, gbs_sym
-        integer :: cod(27) = 0, nbsig
+        integer :: cod(27), nbsig
         aster_logical :: l_gdeflog, l_grotgdepl, l_hyperelas, l_simo_miehe, l_tang
 ! --------------------------------------------------------------------------------------------------
+!
+        cod = 0
 !
 ! ------ number of dofs
 !

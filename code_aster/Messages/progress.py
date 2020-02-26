@@ -16,11 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+# person_in_charge: mathieu.courtois at edf.fr
 
 from ..Utilities import _
 
 cata_msg = {
 
     1 : _("""[%(i1)3d%%] Instant calculé :%(r1)12.5e, dernier instant archivé :%(r2)12.5e, au numéro d'ordre : %(i2)5d"""),
+
+    2 : _("""[%(i1)3d%%] Fréquence calculée :%(r1)12.5e, dernière fréquence archivée :%(r2)12.5e, au numéro d'ordre : %(i2)5d"""),
 
 }

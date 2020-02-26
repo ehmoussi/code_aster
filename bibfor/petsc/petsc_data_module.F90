@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 2016 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 2016 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -103,11 +103,7 @@ function get_mat_id( matas ) result ( kptsc )
         if ((nomats(k).eq.matas) .and. (nonus (k).eq.nu )) then
 ! si de plus le clone PETSc a ete cree, on verifie que les dimensions
 ! des matrices aster et petsc sont coherentes
-#if PETSC_VERSION_LT(3,8,0)
-          if ( ap(k) .ne. PETSC_NULL_OBJECT ) then
-#else
           if ( ap(k) .ne. PETSC_NULL_MAT ) then
-#endif
              call MatGetSize(ap(k), m, n, ierr)
              ASSERT(ierr.eq.0)
              ASSERT(m.eq.n)

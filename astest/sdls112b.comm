@@ -172,8 +172,8 @@ NUMSTAT = NUME_DDL( MATR_RIGI = KELSTAT,);
 KASTAT = ASSE_MATRICE( MATR_ELEM=KELSTAT,
                        NUME_DDL=NUMSTAT,);
 
-
-MODSTAT = MODE_STATIQUE( MATR_RIGI = KASTAT,
+# NPREC NECESSAIRE
+MODSTAT = MODE_STATIQUE( MATR_RIGI = KASTAT, SOLVEUR=_F(NPREC=9),
                          MODE_STAT = _F(NOEUD = noeuds,
                                         AVEC_CMP = ('DX','DY','DZ')))
 

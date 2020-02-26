@@ -14,8 +14,7 @@ pMesh2.readMedFile("xxParallelMechanicalLoad001h")
 model = AFFE_MODELE(MAILLAGE = pMesh2,
                     AFFE = _F(MODELISATION = "POU_D_T",
                               PHENOMENE = "MECANIQUE",
-                              TOUT = "OUI",),
-                    DISTRIBUTION=_F(METHODE='CENTRALISE',),)
+                              TOUT = "OUI",),)
 
 cara_elem =AFFE_CARA_ELEM(MODELE=model,
                           POUTRE=_F(GROUP_MA='poutre',

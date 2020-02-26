@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -71,7 +71,7 @@ subroutine adalig(ligrz,sd_partit1)
     character(len=19) :: ligr
     character(len=1) :: clas
     character(len=8) :: noma
-    character(len=16) :: typsd='****'
+    character(len=16) :: typsd
     character(len=24) :: liel, tliel
     integer :: i, iret, nbtg, iad, iadp, iadt, iadtp, jliel, jtlie2
     integer ::  jtliel, igrel, itype, j, jtype
@@ -92,6 +92,7 @@ subroutine adalig(ligrz,sd_partit1)
     nbproc = to_aster_int(msize)
     ligr = ligrz
     liel=ligr//'.LIEL'
+    typsd='****'
     call jeexin(liel, iret)
     if (iret .eq. 0) then
         goto 999

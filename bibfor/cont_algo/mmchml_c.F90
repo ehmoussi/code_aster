@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,18 +62,18 @@ real(kind=8), intent(in) :: time_incr
     integer, parameter :: ncmp   = 60
     integer, parameter :: nceld1 = 4
     integer, parameter :: nceld2 = 4
-    integer, parameter :: nceld3 = 4 
+    integer, parameter :: nceld3 = 4
     integer :: ztabf
     integer :: i_cont_poin, i_zone, nt_cont_poin
     integer :: vale_indx, decal
     aster_logical :: l_dyna
     integer :: dyna_form
-    real(kind=8) :: coef_fric, glis_maxi = 0.
+    real(kind=8) :: coef_fric, glis_maxi
     integer :: i_algo_cont, i_algo_fric, i_reso_fric, i_reso_geom
     integer :: nt_liel, nb_grel, nb_liel, i_grel, i_liel
     character(len=24) :: chmlcf_celv
     integer :: jv_chmlcf_celv
-    character(len=24) :: chmlcf_celd  
+    character(len=24) :: chmlcf_celd
     integer, pointer :: v_chmlcf_celd(:) => null()
     integer, pointer :: v_ligrcf_liel(:) => null()
     character(len=24) :: sdcont_tabfin, sdcont_jsupco
@@ -86,6 +86,8 @@ real(kind=8), intent(in) :: time_incr
 ! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
+!
+    glis_maxi = 0.d0
 !
 ! - Active functionnalities
 !
@@ -159,7 +161,7 @@ real(kind=8), intent(in) :: time_incr
 !            A la premiere iteration on ne passe pas par mmalgo
 !            On prend directement la valeur de coef*_cont venant de nmprma
             if (nint(ds_contact%update_init_coefficient) .eq. 1 .and. &
-                ds_contact%iteration_newton .le. 1 )  then 
+                ds_contact%iteration_newton .le. 1 )  then
                 zr(vale_indx-1+16) = max(ds_contact%estimated_coefficient,&
                                         zr(vale_indx-1+16) )
                 if (i_algo_cont .ne. 3) zr(vale_indx-1+16) = zr(vale_indx-1+16)*1.d-6
@@ -170,7 +172,7 @@ real(kind=8), intent(in) :: time_incr
             zr(vale_indx-1+18) = i_algo_fric
             zr(vale_indx-1+19) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6)
             if ((i_algo_cont .ne. 3) .and. (i_algo_fric .eq. 3) .and. &
-                (ds_contact%iteration_newton .eq. 1)) then 
+                (ds_contact%iteration_newton .eq. 1)) then
                         glis_maxi    = mminfr(ds_contact%sdcont_defi,'GLIS_MAXI' , i_zone)
                         v_sdcont_cychis(n_cychis*(i_cont_poin-1)+6) =&
                             1.d-3*ds_contact%estimated_coefficient*ds_contact%arete_min/glis_maxi
@@ -180,17 +182,17 @@ real(kind=8), intent(in) :: time_incr
             zr(vale_indx-1+22) = dyna_form
             zr(vale_indx-1+23) = time_incr
             zr(vale_indx-1+24) = 0.d0
-!           Previous iteration state      
-            ! previous pressure      
-            zr(vale_indx-1+26) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3)    
-            ! previous contact status      
+!           Previous iteration state
+            ! previous pressure
+            zr(vale_indx-1+26) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+3)
+            ! previous contact status
             zr(vale_indx-1+27) = nint(v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+1))
             ! alpha_cont_matr
             zr(vale_indx-1+28) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+59)
             ! alpha_frot_matr
-            zr(vale_indx-1+42) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55)  
+            zr(vale_indx-1+42) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+55)
             ! alpha_frot_vect
-            zr(vale_indx-1+43) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54)  
+            zr(vale_indx-1+43) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+54)
             ! previous gap
             zr(vale_indx-1+29) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+4)
             ! treatment of cycling or not cycling
@@ -199,7 +201,7 @@ real(kind=8), intent(in) :: time_incr
             !    glis_av-glis_ar cycling
             zr(vale_indx-1+44) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+50)
             ! alpha_cont_vect
-            zr(vale_indx-1+31) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56) 
+            zr(vale_indx-1+31) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+56)
             ! Previous tangentials
             zr(vale_indx-1+32) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+13)
             zr(vale_indx-1+33) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+24+14)
@@ -216,11 +218,11 @@ real(kind=8), intent(in) :: time_incr
             zr(vale_indx-1+45) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+51)
             !mode robuste frottement
             zr(vale_indx-1+46) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+52)
-            !mode adaptatif : frottement penalise      
+            !mode adaptatif : frottement penalise
             if ((i_algo_cont .eq. 3) .and. (i_algo_fric .eq. 1) ) then
                 zr(vale_indx-1+47) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+5)
             endif
-            if (ds_contact%iteration_newton .le. 2) then  
+            if (ds_contact%iteration_newton .le. 2) then
                 zr(vale_indx-1+48) = 0
             else
                 zr(vale_indx-1+48) = v_sdcont_cychis(n_cychis*(i_cont_poin-1)+73)

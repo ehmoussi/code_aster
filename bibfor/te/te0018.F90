@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,130 +15,127 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine te0018(option, nomte)
 !
-    implicit none
+implicit none
 !
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevecd.h"
 #include "asterfort/jevech.h"
-#include "asterfort/fointe.h"
+#include "asterfort/evalPressure.h"
 #include "asterfort/nmpr3d_vect.h"
-#include "asterfort/rccoma.h"
+#include "asterfort/mb_pres.h"
 #include "asterfort/tecach.h"
-#include "asterfort/utmess.h"
+#include "asterfort/lteatt.h"
 !
-! aslint: disable=W0413
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=16), intent(in) :: option
-    character(len=16), intent(in) :: nomte
+character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Elementary computation
 !
-! Elements: 3D and membrane (only CHAR_MECA_PRES_R)
-! Option: CHAR_MECA_PRES_R
-!         CHAR_MECA_EFON_R
+! Elements: 3D (skin elements)
+!           MEMBRANE
+!
+! Options: CHAR_MECA_PRES_* (for 3D skin elements only)
+!          CHAR_MECA_EFON_*
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=32) :: phenom
-    character(len=8) :: param
-    integer :: ndim, nno, npg, nnos, jgano, kpg, kdec, n
-    integer :: ipoids, ivf, idf
-    integer :: j_geom, j_pres, j_vect, j_effe
-    integer :: imate, icodre, itab(8), iret, jad, nbv, ier
-    integer :: k
-    real(kind=8) :: pres, pres_point(27), coef_mult
-    real(kind=8) :: pr
+    integer, parameter :: mxnoeu=9, mxnpg=27
+    aster_logical :: l_func, l_time, l_efff
+    integer :: jv_geom, jv_time, jv_pres, jv_effe
+    integer :: jv_vect
+    real(kind=8) :: time
+    integer :: ipoids, ivf, idfde
+    integer :: nno, npg, ndim, ndofbynode
+    integer :: iret, kpg
+    real(kind=8) :: pres, pres_pg(mxnpg), coef_mult
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ASSERT(option.eq.'CHAR_MECA_PRES_R'.or.option.eq.'CHAR_MECA_EFON_R')
+    pres_pg = 0.d0
+    l_func = (option .eq. 'CHAR_MECA_PRES_F') .or. (option .eq. 'CHAR_MECA_EFON_F')
+    l_efff = (option .eq. 'CHAR_MECA_EFON_R') .or. (option .eq. 'CHAR_MECA_EFON_F')
 !
 ! - For membrane in small strain, we allow pressure only if it is null
-    if(nomte(1:4).eq.'MEMB') then
-        call jevech('PMATERC', 'L', imate)
-        call rccoma(zi(imate), 'ELAS_MEMBRANE', 0, phenom, icodre)
-! -     Only small strains work with ELAS_MEMBRANE behavior
-        if (icodre .eq. 0) then
-            param='PPRESSR'
-            call tecach('NNO', param, 'L', iret, nval=8, itab=itab)
-            if (iret.eq.0) then
-                jad=itab(1)
-                nbv=itab(2)
-                ASSERT(itab(5).eq.1 .or. itab(5).eq.4)
-                if (itab(5).eq.1) then
-                    do k=1,nbv
-                        if (zr(jad-1+k).ne.0.d0) then
-                            call utmess('F', 'CALCUL_48')
-                        endif
-                    enddo
-                else
-                    do k=1,nbv
-                        if (zk8(jad-1+k).ne.'&FOZERO') then
-                            call fointe(' ', zk8(jad-1+k), 0, ' ', [0.d0], pr, ier)
-                            if (ier.eq.0 .and. pr.eq.0.d0) then
-                                ! tout va bien ...
-                            else
-                                call utmess('F', 'CALCUL_48')
-                            endif
-                        endif
-                    enddo
-                endif
-            endif
+!
+    if (lteatt('TYPMOD','MEMBRANE')) then
+        call mb_pres()
+    endif
+!
+! - Input fields: for pressure, no node affected -> 0
+!
+    call jevech('PGEOMER', 'L', jv_geom)
+    if (l_func) then
+        if (l_efff) then
+            call jevecd('PPREFFF', jv_pres, 0.d0)
+        else
+            call jevecd('PPRESSF', jv_pres, 0.d0)
+        endif
+    else
+        if (l_efff) then
+            call jevecd('PPREFFR', jv_pres, 0.d0)
+        else
+            call jevecd('PPRESSR', jv_pres, 0.d0)
         endif
     endif
-
-!
-! - Finite element parameters
-!
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idf,jgano=jgano)
-!
-! - IN fields
-!
-    call jevech('PGEOMER', 'L', j_geom)
-!
-! - OUT fields
-!
-    call jevech('PVECTUR', 'E', j_vect)
-!
-! - For pressure, no node affected -> 0
-!
-    if (option.eq.'CHAR_MECA_PRES_R') then
-        call jevecd('PPRESSR', j_pres, 0.d0)
-    elseif (option.eq.'CHAR_MECA_EFON_R') then
-        call jevecd('PPREFFR', j_pres, 0.d0)
+    if (l_efff) then
+        call jevech('PEFOND', 'L', jv_effe)
     endif
+!
+! - Get time if present
+!
+    call tecach('NNO', 'PTEMPSR', 'L', iret, iad=jv_time)
+    l_time = ASTER_FALSE
+    time   = 0.d0
+    if (jv_time .ne. 0) then
+        l_time = ASTER_TRUE
+        time   = zr(jv_time)
+    endif
+!
+! - Output fields
+!
+    call jevech('PVECTUR', 'E', jv_vect)
+!
+! - Get element parameters
+!
+    call elrefe_info(fami='RIGI',&
+                     nno=nno, npg=npg, ndim=ndim,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde)
+    ASSERT(nno .le. mxnoeu)
+    ASSERT(npg .le. mxnpg)
+!
+! - Pressure are on skin elements but DOF are volumic
+!
+    ASSERT(ndim .eq. 2)
+    ndofbynode = ndim + 1
 !
 ! - Multiplicative ratio for pressure (EFFE_FOND)
 !
     coef_mult = 1.d0
-    if (option.eq.'CHAR_MECA_EFON_R') then
-        call jevech('PEFOND', 'L', j_effe)
-        coef_mult = zr(j_effe-1+1)
+    if (l_efff) then
+        coef_mult = zr(jv_effe-1+1)
     endif
 !
 ! - Evaluation of pressure at Gauss points (from nodes)
 !
-    do kpg = 0, npg-1
-        kdec = kpg*nno
-        pres = 0.d0
-        do n = 0, nno-1
-            pres = pres + zr(j_pres+n) * zr(ivf+kdec+n)
-        end do
-        pres_point(kpg+1) = coef_mult * pres
+    do kpg = 1, npg
+        call evalPressure(l_func, l_time , time   ,&
+                          nno   , ndim   , kpg    ,&
+                          ivf   , jv_geom, jv_pres,&
+                          pres  )
+        pres_pg(kpg) = coef_mult * pres
     end do
 !
 ! - Second member
 !
-    call nmpr3d_vect(nno, npg, zr(ipoids), zr(ivf), zr(idf), &
-                     zr(j_geom), pres_point, zr(j_vect))
+    call nmpr3d_vect(nno, npg, ndofbynode,&
+                     zr(ipoids), zr(ivf), zr(idfde),&
+                     zr(jv_geom), pres_pg, zr(jv_vect))
 !
 end subroutine
