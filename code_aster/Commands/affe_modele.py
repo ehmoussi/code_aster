@@ -28,6 +28,16 @@ class ModelAssignment(ExecuteCommand):
     finite elements on a :class:`~code_aster.Objects.Mesh`."""
     command_name = "AFFE_MODELE"
 
+    def adapt_syntax(self, keywords):
+        """Hook to adapt syntax from a old version or for compatibility reasons.
+
+        Arguments:
+            keywords (dict): Keywords arguments of user's keywords, changed
+                in place.
+        """
+
+        if (keywords["MAILLAGE"].isParallel()):
+            keywords["DISTRIBUTION"] = {'METHODE': 'CENTRALISE'}
     def create_result(self, keywords):
         """Initialize the result.
 

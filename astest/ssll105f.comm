@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -161,7 +161,7 @@ listinst=DEFI_LIST_REEL(DEBUT=0.0,
 
 list1=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = listinst,),
                     ECHEC=_F(EVENEMENT='INSTABILITE',ACTION='CONTINUE',),);
-
+#SOLVEUR/NPREC MODIFIE CAR MATRICE QUASI-SINGULIERE
 res=STAT_NON_LINE(MODELE=MODELE,
                   CHAM_MATER=CH_MAT,
                   CARA_ELEM=CARAC,
@@ -171,6 +171,9 @@ res=STAT_NON_LINE(MODELE=MODELE,
                   COMPORTEMENT=_F(RELATION='ELAS',),
                   INCREMENT=_F(LIST_INST=list1,),
                   NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=0),
+                  SOLVEUR=_F(METHODE='MUMPS',
+                             NPREC=9,
+                             ),
                   CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0,2)),
                   );
 
@@ -199,7 +202,7 @@ TEST_TABLE(
            )
 
 
-
+#SOLVEUR/NPREC MODIFIE CAR MATRICE QUASI-SINGULIERE
 res2=STAT_NON_LINE(MODELE=MODELE,
                    CHAM_MATER=CH_MAT,
                    CARA_ELEM=CARAC,
@@ -209,6 +212,9 @@ res2=STAT_NON_LINE(MODELE=MODELE,
                    COMPORTEMENT=_F(RELATION='ELAS'),
                    INCREMENT=_F(LIST_INST=list1,),
                    NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=0),
+                  SOLVEUR=_F(METHODE='MUMPS',
+                             NPREC=9,
+                             ),
                    CRIT_STAB=_F(OPTION='BANDE',CHAR_CRIT=(0,2)),
                    );
 
@@ -236,4 +242,3 @@ TEST_TABLE(
            )
 
 FIN()
-#

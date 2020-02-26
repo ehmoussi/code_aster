@@ -19,6 +19,8 @@
 
 # CAS_TEST__:SSNL130C
 #
+from ssnl130c_form import Deplacer, Pression
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ), DEBUG=_F(SDVERI='OUI'))
 
 mail=LIRE_MAILLAGE(FORMAT='MED',);
@@ -71,14 +73,6 @@ ll=DEFI_LIST_REEL(DEBUT=0.0,
    ),
 );
 
-def Pression(t,x,y,z):
-   Pressy = 5.0*(y-2.0)**2
-   if ( t <= 1.0 ): return Pressy*t
-   return Pressy
-
-def Deplacer(t,x,y,z):
-   if ( t<= 1.0): return 0.0
-   return (t-1.0)*0.5E-02
 
 PRESS = FORMULE(VALE='Pression(INST,X,Y,Z)',
                 Pression=Pression,
@@ -207,7 +201,5 @@ TEST_RESU(RESU=(_F(GROUP_NO='PT01',
                    ),
                 ),
           )
-
-DETRUIRE(CONCEPT=_F(NOM=(PRESS, DEPLA)))
 
 FIN(FORMAT_HDF='OUI');

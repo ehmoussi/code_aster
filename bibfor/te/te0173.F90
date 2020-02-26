@@ -15,108 +15,134 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0173(option, nomte)
-!.......................................................................
-    implicit none
 !
-!     BUT: CALCUL DES VECTEURS ELEMENTAIRES EN MECANIQUE
-!          ELEMENTS ISOPARAMETRIQUES 3D
-!
-!          OPTION : 'CHAR_MECA_VNOR '
-!
-!     ENTREES  ---> OPTION : OPTION DE CALCUL
-!          ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
+implicit none
 !
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
-#include "asterfort/rcvalb.h"
+#include "asterfort/getFluidPara.h"
+#include "asterfort/utmess.h"
+#include "asterfort/tecach.h"
+#include "asterfort/evalNormalSpeed.h"
 !
-    integer :: icodre(1), kpg, spt
-    character(len=8) :: fami, poum
-    character(len=16) :: nomte, option
-    real(kind=8) :: jac, nx, ny, nz, sx(9, 9), sy(9, 9), sz(9, 9)
-    integer :: ipoids, ivf, idfdx, idfdy, igeom
-    integer :: ndim, nno, ipg, npg1, ivectu, imate
-    integer :: idec, jdec, kdec, ldec, nnos, jgano
+character(len=16), intent(in) :: option, nomte
 !
+! --------------------------------------------------------------------------------------------------
 !
-!-----------------------------------------------------------------------
-    integer :: i, ii, ino, ivnor, j, jno, mater
+! Elementary computation
 !
-    real(kind=8) :: rho(1)
-!-----------------------------------------------------------------------
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
+! Elements: 3D_FLUIDE (boundary)
+!
+! Options: CHAR_MECA_VNOR
+!
+! --------------------------------------------------------------------------------------------------
+!
+    aster_logical :: l_func, l_time
+    integer :: jv_geom, jv_mate, jv_speed, jv_time, jv_vect
+    real(kind=8) :: nx, ny, nz, sx(9, 9), sy(9, 9), sz(9, 9)
+    real(kind=8) :: jac, rho
+    real(kind=8) :: time, vnor
+    integer :: ipoids, ivf, idfdx, idfdy
+    integer :: nno, npg, ndim
+    integer :: idec, jdec, kdec, ldec
+    integer :: i, ii, ino, j, jno, ipg
+    integer :: j_mater, iret
+    character(len=16) :: fsi_form
+!
+! --------------------------------------------------------------------------------------------------
+!
+    l_func = (option .eq. 'CHAR_MECA_VNOR_F')
+!
+! - Input fields
+!
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PMATERC', 'L', jv_mate)
+    if (l_func) then
+        call jevech('PVITENF', 'L', jv_speed)
+    else
+        call jevech('PVITENR', 'L', jv_speed)
+    endif
+!
+! - Get time if present
+!
+    call tecach('NNO', 'PTEMPSR', 'L', iret, iad=jv_time)
+    l_time = ASTER_FALSE
+    time   = 0.d0
+    if (jv_time .ne. 0) then
+        l_time = ASTER_TRUE
+        time   = zr(jv_time)
+    endif
+!
+! - Get element parameters
+!
+    fsi_form = 'U_P_PHI'
+    call elrefe_info(fami='RIGI',&
+                     nno=nno, npg=npg, ndim = ndim,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfdx)
     idfdy = idfdx + 1
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
 !
-    call jevech('PGEOMER', 'L', igeom)
+! - Get material properties for fluid
 !
-    call jevech('PMATERC', 'L', imate)
-    mater = zi(imate)
-    call rcvalb(fami, kpg, spt, poum, mater,&
-                ' ', 'FLUIDE', 0, ' ', [0.d0],&
-                1, 'RHO', rho, icodre, 1)
+    j_mater = zi(jv_mate)
+    call getFluidPara(j_mater, rho)
 !
-    call jevech('PVECTUR', 'E', ivectu)
-    call jevech('PVITENR', 'L', ivnor)
+! - Output field
 !
+    call jevech('PVECTUR', 'E', jv_vect)
     do i = 1, 2*nno
-        zr(ivectu+i-1) = 0.0d0
+        zr(jv_vect+i-1) = 0.d0
     end do
 !
-!     CALCUL DES PRODUITS VECTORIELS OMI X OMJ
+! - CALCUL DES PRODUITS VECTORIELS OMI X OMJ
 !
     do ino = 1, nno
-        i = igeom + 3*(ino-1) -1
+        i = jv_geom + 3*(ino-1) -1
         do jno = 1, nno
-            j = igeom + 3*(jno-1) -1
+            j = jv_geom + 3*(jno-1) -1
             sx(ino,jno) = zr(i+2) * zr(j+3) - zr(i+3) * zr(j+2)
             sy(ino,jno) = zr(i+3) * zr(j+1) - zr(i+1) * zr(j+3)
             sz(ino,jno) = zr(i+1) * zr(j+2) - zr(i+2) * zr(j+1)
         end do
     end do
 !
-!     BOUCLE SUR LES POINTS DE GAUSS
+! - Loop on Gauss points
 !
-    do ipg = 1, npg1
-        kdec=(ipg-1)*nno*ndim
-        ldec=(ipg-1)*nno
-!
-        nx = 0.0d0
-        ny = 0.0d0
-        nz = 0.0d0
-!
-!        CALCUL DE LA NORMALE AU POINT DE GAUSS IPG
-!
+    do ipg = 1, npg
+        kdec = (ipg-1)*nno*ndim
+        ldec = (ipg-1)*nno
+! ----- Compute normal
+        nx = 0.d0
+        ny = 0.d0
+        nz = 0.d0
         do i = 1, nno
             idec = (i-1)*ndim
             do j = 1, nno
                 jdec = (j-1)*ndim
-!
                 nx = nx + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sx(i,j)
                 ny = ny + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sy(i,j)
                 nz = nz + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sz(i,j)
             end do
         end do
-!
-!        CALCUL DU JACOBIEN AU POINT DE GAUSS IPG
-!
+! ----- Compute jacobian
         jac = sqrt (nx*nx + ny*ny + nz*nz)
-!
-!
-        do i = 1, nno
-            ii = 2*i
-            zr(ivectu+ii-1) = zr(ivectu+ii-1) - jac*zr(ipoids+ipg-1) * zr(ivnor+ipg-1) * rho(1) * &
-                              zr(ivf+ldec+i-1)
-        end do
-!
+! ----- Get value of normal speed
+        call evalNormalSpeed(l_func, l_time , time    ,&
+                             nno   , ndim   , ipg     ,&
+                             ivf   , jv_geom, jv_speed,&
+                             vnor)
+        if (fsi_form .eq. 'U_P_PHI') then
+            do i = 1, nno
+                ii = 2*i
+                zr(jv_vect+ii-1) = zr(jv_vect+ii-1) -&
+                                   jac*zr(ipoids+ipg-1) *&
+                                   zr(ivf+ldec+i-1) * vnor * rho
+            end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
     end do
 !
 end subroutine

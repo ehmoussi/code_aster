@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -129,13 +129,14 @@ contains
 !
         type(HHO_basis_face) :: hhoBasisFace
         integer :: size, idir, begin, i
-        real(kind=8) :: Values(MAX_QP_FACE) = 0.d0
+        real(kind=8) :: Values(MAX_QP_FACE)
 !
 ! -- init face basis
         call hhoBasisFace%initialize(hhoFace)
         size = hhoBasisFace%BSSize(0, degree)
 !
         rhs = 0.d0
+        Values = 0.d0
 !
         do idir = 1, hhoFace%ndim + 1
             begin = (idir - 1) * size + 1
@@ -225,13 +226,14 @@ contains
 !
         type(HHO_basis_cell) :: hhoBasisCell
         integer :: size, idir, begin, i
-        real(kind=8) :: Values(MAX_QP_CELL) = 0.d0
+        real(kind=8) :: Values(MAX_QP_CELL)
 !
 ! -- init face basis
         call hhoBasisCell%initialize(hhoCell)
         size = hhoBasisCell%BSSize(0, degree)
 !
         rhs = 0.d0
+        Values = 0.d0
 !
         do idir = 1, hhoCell%ndim
             begin = (idir - 1) * size + 1
@@ -271,13 +273,14 @@ contains
 !
         type(HHO_basis_cell) :: hhoBasisCell
         integer :: size, idir1, idir2, begin, ipg
-        real(kind=8) :: Values(MAX_QP_CELL) = 0.d0
+        real(kind=8) :: Values(MAX_QP_CELL)
 !
 ! -- init face basis
         call hhoBasisCell%initialize(hhoCell)
         size = hhoBasisCell%BSSize(0, degree)
 !
         rhs = 0.d0
+        Values = 0.d0
 !
         begin = 1
         do idir1 = 1, hhoCell%ndim

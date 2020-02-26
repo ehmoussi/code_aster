@@ -698,9 +698,11 @@ class Coeur(object):
         """Return the list of timesteps"""
 
         def m_time(a):
+            # for debugging use NOMBRE=1
             m_time = (
                 _F(JUSQU_A=self.temps_simu[self._time[a]],
-                   NOMBRE=int(self.sub_temps_simu[self._subtime[a]]),),)
+                   NOMBRE=int(self.sub_temps_simu[self._subtime[a]]),
+                   ),)
             return m_time
 
         self.init_temps_simu(fluence, subdivis)

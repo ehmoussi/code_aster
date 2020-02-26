@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -109,25 +109,13 @@ implicit none
   !   ---------------------
   call VecDestroy(xlocal, ierr)
   ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-  xlocal = PETSC_NULL_OBJECT
-#else
   xlocal = PETSC_NULL_VEC
-#endif
   call VecDestroy(xglobal, ierr)
   ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-  xglobal = PETSC_NULL_OBJECT
-#else
   xglobal = PETSC_NULL_VEC
-#endif
   call VecScatterDestroy(xscatt, ierr)
   ASSERT( ierr == 0 )
-#if PETSC_VERSION_LT(3,8,0) 
-  xscatt = PETSC_NULL_OBJECT
-#else
   xscatt = PETSC_NULL_VECSCATTER
-#endif
   call apksp(kptsc)
   call appcrs(kptsc, lmd)
   call KSPSolve(ksp, b, x, ierr)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ CHARGE=AFFE_CHAR_MECA(MODELE=MOEL,
 #                        RESOLUTION
 #---------------------------------------------------------------------
 
-RES=MECA_STATIQUE(    MODELE=MOEL,SOLVEUR=_F(POSTTRAITEMENTS='MINI'),
+RES=MECA_STATIQUE(    MODELE=MOEL,SOLVEUR=_F(POSTTRAITEMENTS='MINI',NPREC=9),
                       CHAM_MATER=CHAM_MAT,
                       CARA_ELEM=CAEL,EXCIT=(
                            _F( CHARGE = CON_LI,  ),
@@ -98,6 +98,7 @@ ASSEMBLAGE ( MODELE=MOEL,
               _F( MATRICE= CO('MAS_RI_G'), OPTION= 'RIGI_GEOM',SIEF_ELGA=SIG),),);
 
 RESULT=CALC_MODES(MATR_RIGI_GEOM=MAS_RI_G,
+                  SOLVEUR=_F(NPREC=9),
                   VERI_MODE=_F(SEUIL=2.5E-8,),
                   OPTION='PLUS_PETITE',
                   MATR_RIGI=MAS_RI_M,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ module yacsnl_module
     implicit none
 !
 ! person_in_charge: mohamed-amine.hassini@edf.fr
-! 
+!
 !
 !---------------------------------------------------------------------------
 ! This module is in charge of the nonlinearities defined in dyna_vibra and
@@ -91,7 +91,7 @@ contains
             real(kind=8), pointer :: mdefmod(:)
             character(len=*), intent(in) :: cham
             integer :: nele, n
-            logical :: exist = .false.
+            logical :: exist
 
             integer :: tc
 
@@ -102,13 +102,15 @@ contains
                 ASSERT(.false.)
             endif
 
+            exist = .false.
+
             nele = size(list_ddl)
             n= size(mdefmod)
 
             tc = get_type_cham(cham)
 
 
-            
+
             if( .not. associated( first_trandata ) ) then
                 call build_trandata(num, port_name, tc, nele, 'R8', first_trandata)
                 ! TODO : move what is next inside build_trandata subroutine
@@ -151,7 +153,7 @@ contains
 
             if( are_trandata_equals(mtd, first_trandata ) ) then
 
-                first_trandata => first_trandata % next              
+                first_trandata => first_trandata % next
                 call clean_trandata(precedent)
                 count = count - 1
 
@@ -168,14 +170,14 @@ contains
         end subroutine
 
 
-!--    
+!--
 
         subroutine get_previous_element(element, backele)
             ! return the element before
             type(trandata), pointer  :: element
-            type(trandata), pointer :: backele 
-            type(trandata), pointer              :: current => null()
-            
+            type(trandata), pointer :: backele
+            type(trandata), pointer  :: current => null()
+
             backele => null()
             current => first_trandata
 
@@ -195,16 +197,16 @@ contains
         subroutine is_trandata_exist(num, exist, current)
             integer , intent(in) :: num
             logical , intent(out) :: exist
-            type(trandata), pointer, optional :: current 
-            
-            current => null()
+            type(trandata), pointer :: current
+
             exist = .false.
+            current => null()
 
             if(associated(first_trandata)) then
 
                 current => first_trandata
 
-                do 
+                do
                     if( num .eq. current%num) then
                         exist = .true.
                         exit
@@ -309,9 +311,8 @@ contains
 
 !--
 
-        subroutine set_params(itime, time, tinit, tfin, dt, dtmin, dtmax)
+        subroutine set_params(time, tinit, tfin, dt, dtmin, dtmax)
 
-            integer, intent(in) :: itime
             real(kind=8), intent(in) :: time, dt, tinit, tfin, dtmin, dtmax
 
             !
@@ -360,7 +361,7 @@ contains
         subroutine clean_trandata(mtd)
             type(trandata), pointer :: mtd
 
-            if(.not.associated( mtd )) return 
+            if(.not.associated( mtd )) return
 
 !            print *, "cleaning trandata num #" , mtd%num
 
@@ -378,7 +379,7 @@ contains
 
 
 
-!-- 
+!--
 
         subroutine build_trandata(num, port_name, type_cham, nele, typ,  trd)
             ! this subroutine should be private
@@ -393,7 +394,7 @@ contains
 
             if( associated(trd) ) then
                 ASSERT(.false.)
-            endif 
+            endif
 
             allocate( trd )
 
@@ -467,8 +468,5 @@ contains
             get_type_cham = resu
 
         end function
-
-
-
 
 end module

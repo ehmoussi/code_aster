@@ -50,7 +50,7 @@ use calcul_module, only : ca_option_, ca_nomte_, ca_icaelk_, ca_ialiel_,&
     integer :: nno,ino,nuno,jcoor
     character(len=24) :: valkc(9), ligrma(4),nomgrm,grpmav
     character(len=8) :: ma,nomail
-    character(len=256) :: ufname  = ' '
+    character(len=256) :: ufname
     real(kind=8) :: valrc(3)
 !-----------------------------------------------------------------------------------
     call jemarq()
@@ -60,6 +60,7 @@ use calcul_module, only : ca_option_, ca_nomte_, ca_icaelk_, ca_ialiel_,&
     nbgrma = 0
     nno = 0
     nomail='XXX'
+    ufname  = ' '
     ima = zi(ca_ialiel_-1+zi(ca_illiel_+ca_igr_-1)+ca_iel_-1)
     if (ima .gt. 0) then
         call jenuno(jexnum(ma//'.NOMMAI', ima), nomail)

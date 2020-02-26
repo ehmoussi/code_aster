@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,29 +63,26 @@ subroutine dkqmas(xyzl, option, pgl, mas, ener)
 !     OUT MAS    : MATRICE DE RIGIDITE
 !     OUT ENER   : TERMES POUR ENER_CIN (ECIN_ELEM)
 !     ------------------------------------------------------------------
-    integer :: i, j, k, i1, i2, int, ii(8), jj(8), ll(16)
+    integer, parameter :: ii(8) = [1, 10, 19, 28, 37, 46, 55, 64]
+    integer, parameter :: jj(8) = [5, 14, 23, 32, 33, 42, 51, 60]
+    integer, parameter :: ll(16) = [3, 7, 12, 16, 17, 21, 26, 30, 35, 39, 44, 48, 49, 53, 58, 62]
+    real(kind=8), parameter :: zero=0.d0, un=1.d0, neuf=9.d0
+    real(kind=8), parameter :: douze=12.d0, unquar=0.25d0, undemi=0.5d0
+    integer :: i, j, k, i1, i2, int
     integer :: ndim, nno, nnos, npg, ipoids, icoopg, ivf, idfdx, idfd2, jgano
     integer :: jdepg, jcoqu, jvitg, iret
-    real(kind=8) :: roe=0.0, rho=0.0, epais=0.0, rof=0.0, zero=0.0, douze=0.0
-    real(kind=8) :: qsi=0.0, eta=0.0
-    real(kind=8) :: detj=0.0, wgt=0.0
-    real(kind=8) :: nfx(12)=0.0, nfy(12)=0.0, nmi(4)=0.0, vite(24)=0.0
-    real(kind=8) :: wkq(12)=0.0, depl(24)=0.0
-    real(kind=8) :: masloc(300)=0.0, masglo(300)=0.0
-    real(kind=8) :: flex(12, 12)=0.0, memb(8, 8)=0.0, mefl(8, 12)=0.0, amemb(64)=0.0
-    real(kind=8) :: unquar, undemi, un, neuf, excent=0.0, xinert=0.0
-    real(kind=8) :: coefm=0.0, wgtf=0.0, wgtmf=0.0, caraq4(25)=0.0, jacob(5)=0.0
+    real(kind=8) :: roe, rho, epais, rof
+    real(kind=8) :: qsi, eta
+    real(kind=8) :: detj, wgt
+    real(kind=8) :: nfx(12), nfy(12), nmi(4), vite(24)
+    real(kind=8) :: wkq(12), depl(24)
+    real(kind=8) :: masloc(300), masglo(300)
+    real(kind=8) :: flex(12, 12), memb(8, 8), mefl(8, 12), amemb(64)
+    real(kind=8) :: excent, xinert
+    real(kind=8) :: coefm, wgtf, wgtmf, caraq4(25), jacob(5)
     character(len=3) :: stopz
-    aster_logical :: exce=.false., iner=.false.
-!     ------------------------------------------------------------------
-    real(kind=8) :: ctor=0.0
-    data (ii(k),k=1,8)&
-     &   / 1, 10, 19, 28, 37, 46, 55, 64 /
-    data (jj(k),k=1,8)&
-     &   / 5, 14, 23, 32, 33, 42, 51, 60 /
-    data (ll(k),k=1,16)&
-     &   / 3, 7, 12, 16, 17, 21, 26, 30, 35, 39, 44, 48, 49, 53, 58, 62/
-!     ------------------------------------------------------------------
+    aster_logical :: exce, iner
+    real(kind=8) :: ctor
 !
 !WARNING BB local variable is not used !
 !   LOCAL VARIABLES FOR COEF_RIGI_DRZ
@@ -93,30 +90,72 @@ subroutine dkqmas(xyzl, option, pgl, mas, ener)
     integer            :: iishp , jjshp
     real(kind=8) :: shp(3,4,npgmx), shpr1(3,4,npgmx), shpr2(3,4,npgmx), bb(12,npgmx)
     real(kind=8) :: gshp1(3,4), gshp2(3,4)
-    real(kind=8) :: dArea=0.0
+    real(kind=8) :: dArea
     ! WARNING = BTGMEMB in dkqrig is ntgm in dkqmas
     real(kind=8) :: gmemb(4,4), ntgm(8,4), gmefl(4,12)
     real(kind=8) :: nm1(8), nm2(8), gm1(4), gm2(4), gm(3, 4)
-    real(kind=8) :: bxb(12,12),fact=0.0,gam=0.0
-    real(kind=8) :: df(9)=0.0, dm(9)=0.0, dmf(9)=0.0, dc(4)=0.0, dci(4)=0.0
-    real(kind=8) :: dmf2(9)=0.0
-    real(kind=8) :: dmc(3, 2)=0.0, dfc(3, 2)=0.0
-    real(kind=8) :: t2iu(4)=0.0, t2ui(4)=0.0, t1ve(9)=0.0
+    real(kind=8) :: bxb(12,12),fact,gam
+    real(kind=8) :: df(9), dm(9), dmf(9), dc(4), dci(4)
+    real(kind=8) :: dmf2(9)
+    real(kind=8) :: dmc(3, 2), dfc(3, 2)
+    real(kind=8) :: t2iu(4), t2ui(4), t1ve(9)
     integer      :: multic,irot
-    real(kind=8) :: xab1(3, 12)=0.0,bf(3, 12)=0.0, bm(3, 8)=0.0
-
-    aster_logical :: dri = .false., coupmf = .false.
+    real(kind=8) :: xab1(3, 12),bf(3, 12), bm(3, 8)
+    aster_logical :: dri, coupmf
 !
     call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
                      jpoids=ipoids, jcoopg=icoopg, jvf=ivf, jdfde=idfdx, jdfd2=idfd2,&
                      jgano=jgano)
 !
-    zero = 0.0d0
-    unquar = 0.25d0
-    undemi = 0.5d0
-    un = 1.0d0
-    neuf = 9.0d0
-    douze = 12.0d0
+    roe=0.0
+    rho=0.0
+    epais=0.0
+    rof=0.0
+    ctor=0.0
+    qsi=0.0
+    eta=0.0
+    detj=0.0
+    wgt=0.0
+    nfx(:)=0.0
+    nfy(:)=0.0
+    nmi(:)=0.0
+    vite(:)=0.0
+    wkq(:)=0.0
+    depl(:)=0.0
+    masloc(:)=0.0
+    masglo(:)=0.0
+    flex(:, :)=0.0
+    memb(:, :)=0.0
+    mefl(:, :)=0.0
+    amemb(:)=0.0
+    excent=0.0
+    xinert=0.0
+    coefm=0.0
+    wgtf=0.0
+    wgtmf=0.0
+    caraq4(:)=0.0
+    jacob(:)=0.0
+    fact=0.0
+    gam=0.0
+    dArea=0.0
+    df(9)=0.0
+    dm(9)=0.0
+    dmf(9)=0.0
+    dc(4)=0.0
+    dci(4)=0.0
+    dmf2(9)=0.0
+    dmc(3, 2)=0.0
+    dfc(3, 2)=0.0
+    t2iu(4)=0.0
+    t2ui(4)=0.0
+    t1ve(9)=0.0
+    xab1(3, 12)=0.0
+    bf(3, 12)=0.0
+    bm(3, 8)=0.0
+    dri = ASTER_FALSE
+    coupmf = ASTER_FALSE
+    exce=ASTER_FALSE
+    iner=ASTER_FALSE
 !
     call dxroep(rho, epais)
     roe = rho * epais
@@ -128,13 +167,13 @@ subroutine dkqmas(xyzl, option, pgl, mas, ener)
     excent = zr(jcoqu+4)
     xinert = zr(jcoqu+5)
 ! COEF_RIGI_DRZ ACTIVE = -1 --> dri = true,  dri =  false sinon
-    dri = .false.
-    if (ctor .lt. 0.0d0 ) dri = .true.
+    dri = ASTER_FALSE
+    if (ctor .lt. 0.0d0 ) dri = ASTER_TRUE
 !
-    exce = .false.
-    iner = .false.
-    if (abs(excent) .gt. un/r8gaem()) exce = .true.
-    if (abs(xinert) .gt. un/r8gaem()) iner = .true.
+    exce = ASTER_FALSE
+    iner = ASTER_FALSE
+    if (abs(excent) .gt. un/r8gaem()) exce = ASTER_TRUE
+    if (abs(xinert) .gt. un/r8gaem()) iner = ASTER_TRUE
     if (.not. iner) rof = 0.0d0
 !
 ! --- CALCUL DES GRANDEURS GEOMETRIQUES SUR LE QUADRANGLE :
@@ -437,7 +476,7 @@ subroutine dkqmas(xyzl, option, pgl, mas, ener)
 !        end do
 !     endif
           else
-             ASSERT(.false.)
+             ASSERT(ASTER_FALSE)
         endif
    endif
 ! ---   FIN DU TRAITEMENT DU CAS D'UN ELEMENT EXCENTRE
@@ -524,7 +563,7 @@ subroutine dkqmas(xyzl, option, pgl, mas, ener)
           call dxqlocdri3(gmefl, mas)
           call dxqlocdri4(bxb, mas)
          else
-          ASSERT(.false.)
+          ASSERT(ASTER_FALSE)
         endif
 !
     else if (option.eq.'MASS_MECA_DIAG' .or. option.eq.'MASS_MECA_EXPLI') then
@@ -546,7 +585,7 @@ subroutine dkqmas(xyzl, option, pgl, mas, ener)
          call dialum(4, 6, 24, wgt, masglo,&
                     mas)
          else
-          ASSERT(.false.)
+          ASSERT(ASTER_FALSE)
         endif
 !
     else if (option .eq. 'ECIN_ELEM') then
@@ -555,13 +594,13 @@ subroutine dkqmas(xyzl, option, pgl, mas, ener)
         call tecach(stopz, 'PVITESR', 'L', iret, iad=jvitg)
         if (iret .eq. 0) then
             call utpvgl(4, 6, pgl, zr(jvitg), vite)
-            call dxqloe(flex, memb, mefl, ctor, .false._1,&
+            call dxqloe(flex, memb, mefl, ctor, ASTER_FALSE,&
                         vite, ener)
         else
             call tecach(stopz, 'PDEPLAR', 'L', iret, iad=jdepg)
             if (iret .eq. 0) then
                 call utpvgl(4, 6, pgl, zr(jdepg), depl)
-                call dxqloe(flex, memb, mefl, ctor, .false._1,&
+                call dxqloe(flex, memb, mefl, ctor, ASTER_FALSE,&
                             depl, ener)
             else
                 call utmess('F', 'ELEMENTS2_1', sk=option)

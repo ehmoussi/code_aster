@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ character(len=19), intent(in) :: sdnume
     integer :: ifm, niv, i_load, nb_load_init, iret
     character(len=8) :: lag12
     character(len=24) :: sdnuro, sdnuen, sdnuco
-    character(len=24) :: lload_info, lload_list, load_n, load_type
+    character(len=24) :: lload_info, lload_list, load_n
     integer, pointer :: v_load_info(:) => null()
     character(len=8), pointer :: v_lgrf(:) => null()
     character(len=24), pointer :: v_load_list(:) => null()
@@ -113,7 +113,7 @@ character(len=19), intent(in) :: sdnume
         endif
     enddo
 !
-! - Create numbering 
+! - Create numbering
 !
     call nmprof(model               , result, list_load, nume_dof,&
                 ds_contact%iden_rela)
@@ -123,12 +123,12 @@ character(len=19), intent(in) :: sdnume
     sdnuro = sdnume(1:19)//'.NDRO'
     call nurota(model, nume_dof, compor, sdnuro)
 !
-! - Get position of damaged dof 
+! - Get position of damaged dof
 !
     sdnuen = sdnume(1:19)//'.ENDO'
     call nuendo(model, nume_dof, sdnuen)
 !
-! - Get position of contact dof 
+! - Get position of contact dof
 !
     sdnuco = sdnume(1:19)//'.NUCO'
     if (ds_contact%l_form_cont) then

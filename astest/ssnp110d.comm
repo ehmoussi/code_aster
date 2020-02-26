@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -147,7 +147,7 @@ L_INST=DEFI_LIST_REEL(DEBUT=0.,
                                   _F( JUSQU_A = 0.3,  NOMBRE = npas),
                                   )
                         )
-
+#MATRICE QUASI-SINGULIERE, NE FONCTIONNE QU'AVEC MUMPS
 UTOT1=STAT_NON_LINE(MODELE=MODELEK,
                    CHAM_MATER=CHAMPMA1,
                    EXCIT=(
@@ -160,7 +160,7 @@ UTOT1=STAT_NON_LINE(MODELE=MODELEK,
                                     DEFORMATION = 'PETIT'),
                    INCREMENT=_F(LIST_INST = L_INST),
                    CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-5),
-                   SOLVEUR=_F(   METHODE='MUMPS'),
+                   SOLVEUR=_F(   METHODE='MUMPS',NPREC=-1),
                    NEWTON=_F(REAC_ITER=1,
                              MATRICE='TANGENTE',
                             ),

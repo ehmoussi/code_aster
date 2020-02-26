@@ -61,7 +61,7 @@ real(kind=8), pointer :: q(:)
     character(len=24) :: field_name, list_snap
     integer, pointer :: v_list_snap(:) => null()
     real(kind=8), pointer :: v_field_resu(:) => null()
-    character(len=24) :: field_resu = '&&ROM_FIELDRESU'
+    character(len=24) :: field_resu
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,6 +69,8 @@ real(kind=8), pointer :: q(:)
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_1')
     endif
+!
+    field_resu = '&&ROM_FIELDRESU'
 !
 ! - Get parameters
 !

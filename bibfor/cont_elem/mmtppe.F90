@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -126,14 +126,14 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: jv_disp_incr, jv_disp
-    real(kind=8) :: ppe=0.0
-    real(kind=8) :: ddepmam(9, 3)=0.0
-    real(kind=8) :: geomm(3)=0.0, geome(3)=0.0
-    real(kind=8) :: ddeple(3)=0.0, ddeplm(3)=0.0
-    real(kind=8) :: deplme(3)=0.0, deplmm(3)=0.0
-    real(kind=8) :: djeu(3)=0.0
-    real(kind=8) :: gene11(3,3)=0.0, gene21(3,3)=0.0, gene22(3,3)=0.0
-    real(kind=8) :: a(2, 2)=0.0, ha(2, 2)=0.0
+    real(kind=8) :: ppe
+    real(kind=8) :: ddepmam(9, 3)
+    real(kind=8) :: geomm(3), geome(3)
+    real(kind=8) :: ddeple(3), ddeplm(3)
+    real(kind=8) :: deplme(3), deplmm(3)
+    real(kind=8) :: djeu(3)
+    real(kind=8) :: gene11(3,3), gene21(3,3), gene22(3,3)
+    real(kind=8) :: a(2, 2), ha(2, 2)
     real(kind=8) :: elem_slav_init(9, 3), elem_mast_init(9, 3)
     real(kind=8) :: elem_slav_coor(9, 3), elem_mast_coor(9, 3)
     real(kind=8) :: elem_slav_temp(nne, ndim), elem_mast_temp(nnm, ndim)
@@ -147,35 +147,36 @@ real(kind=8), intent(out) :: dnepmait1, dnepmait2, taujeu1, taujeu2
 !
 ! - Initialisations
 !
-    jeu=0
-    djeu=0
-    djeut=0
-    norm=0
-    mprojn=0
-    mprojt=0
-    mprt1n=0
-    mprt2n=0
-    mprt11=0
-    mprt21=0
-    mprt22=0
-    gene11=0 
-    gene21=0
-    gene22=0
-    kappa=0
-    a=0
-    h=0
-    ha=0
-    hah=0
-    vech1=0 
-    vech2=0
+    jeu=0.d0
+    djeu=0.d0
+    djeut=0.d0
+    norm=0.d0
+    mprojn=0.d0
+    mprojt=0.d0
+    mprt1n=0.d0
+    mprt2n=0.d0
+    mprt11=0.d0
+    mprt21=0.d0
+    mprt22=0.d0
+    gene11=0.d0
+    gene21=0.d0
+    gene22=0.d0
+    kappa=0.d0
+    a=0.d0
+    h=0.d0
+    ha=0.d0
+    hah=0.d0
+    vech1=0.d0
+    vech2=0.d0
     elem_slav_coor = 0.d0
     elem_mast_coor = 0.d0
-    geomm=0
-    geome=0
-    ddeple=0
-    ddeplm=0
-    deplme=0
-    deplmm=0
+    geomm=0.d0
+    geome=0.d0
+    ddeple=0.d0
+    ddeplm=0.d0
+    deplme=0.d0
+    deplmm=0.d0
+    ddepmam=0.d0
 !
 ! - Coefficient to update geometry
 !

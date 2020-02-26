@@ -542,7 +542,7 @@ class PostMissTabl(PostMiss):
         tabout = CREA_TABLE(TYPE_TABLE='TABLE',
                             **dprod)
         for val in self.tab.referenceToDataStructure:
-            tabout.addReference(val)
+            tabout.addDependency(val)
         self.initco()
         return tabout
 
@@ -755,7 +755,7 @@ class PostMissControl(PostMiss):
         tabout = CREA_TABLE(TYPE_TABLE='TABLE',
                             **dprod)
         for val in self.tab.referenceToDataStructure:
-            tabout.addReference(val)
+            tabout.addDependency(val)
         self.initco()
         return tabout
 

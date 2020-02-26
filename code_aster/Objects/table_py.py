@@ -369,7 +369,7 @@ class Table(TableBase):
         """Return internal state.
 
         Returns:
-            dict: Internal state.
+            tuple: Internal state.
         """
         return (self.rows, self.para, self.type, self.titr, self.nom)
 
@@ -377,7 +377,7 @@ class Table(TableBase):
         """Restore internal state.
 
         Arguments:
-            state (dict): Internal state.
+            state (tuple): Internal state.
         """
         if isinstance(state, tuple) and len(state) == 5:
             self.rows, self.para, self.type, self.titr, self.nom = state
@@ -777,7 +777,7 @@ class Colonne(TableBase):
         """Return internal state.
 
         Returns:
-            dict: Internal state.
+            tuple: Internal state.
         """
         return self.Table, self.para, self.type, self.titr
 
@@ -785,7 +785,7 @@ class Colonne(TableBase):
         """Restore internal state.
 
         Arguments:
-            state (dict): Internal state.
+            state (tuple): Internal state.
         """
         if isinstance(state, tuple) and len(state) == 4:
             self.Table, self.para, self.type, self.titr = state

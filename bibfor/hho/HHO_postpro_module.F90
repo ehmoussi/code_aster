@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -87,11 +87,14 @@ contains
         integer, parameter :: max_comp = 81
         type(HHO_basis_cell) :: hhoBasisCell
         integer :: total_dofs, cbs, fbs, jvect, i, ino, ndim, idim, comp_dim
-        real(kind=8), dimension(MSIZE_CELL_VEC) :: sol_T = 0.d0
-        real(kind=8), dimension(MSIZE_CELL_SCAL) :: sol_T_dim = 0.d0
-        real(kind=8), dimension(3,max_comp) :: post_sol = 0.d0
+        real(kind=8), dimension(MSIZE_CELL_VEC) :: sol_T
+        real(kind=8), dimension(MSIZE_CELL_SCAL) :: sol_T_dim
+        real(kind=8), dimension(3,max_comp) :: post_sol
 !
         ndim = hhoCell%ndim
+        sol_T = 0.d0
+        sol_T_dim = 0.d0
+        post_sol = 0.d0
 !
 ! --- number of dofs
 !

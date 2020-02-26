@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,26 +73,23 @@ use petsc_data_module
     integer :: k, iligl, jcoll, nzdeb, nzfin
     integer :: iterm, jterm, jcolg, iligg, jnugll
     integer :: jnequ, nloc, nglo, jnequl
-    PetscInt :: mm, nn 
+    PetscInt :: mm, nn
 !
     character(len=19) :: nomat, nosolv
-    character(len=16) :: idxi1, idxi2, trans1, trans2
+    character(len=16), parameter :: idxi1='&&APMAMD.IDXI1__', idxi2='&&APMAMD.IDXI2__'
+    character(len=16), parameter :: trans1='&&APMAMD.TRANS1_', trans2='&&APMAMD.TRANS2_'
     character(len=14) :: nonu
 !
     aster_logical :: lmnsy
 !
     real(kind=8) :: valm
 !
-    parameter (idxi1 ='&&APMAMD.IDXI1__')
-    parameter (idxi2 ='&&APMAMD.IDXI2__')
-    parameter (trans1='&&APMAMD.TRANS1_')
-    parameter (trans2='&&APMAMD.TRANS2_')
 !
 !----------------------------------------------------------------
 !     Variables PETSc
     PetscInt :: neql, neqg
     PetscErrorCode ::  ierr
-    PetscInt :: one = 1
+    PetscInt, parameter :: one = 1
     Mat :: a
 !----------------------------------------------------------------
     call jemarq()

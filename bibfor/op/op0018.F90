@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -434,6 +434,9 @@ implicit none
     call getvtx('DISTRIBUTION', 'METHODE', iocc=1, scal=kdis, nbret=n1)
     ASSERT(n1.eq.1)
     if (nbproc.eq.1) kdis='CENTRALISE'
+    if ((lparallel_mesh) .and. (kdis.ne.'CENTRALISE')) then
+        call utmess('F','MODELE1_11', nk = 2, valk = [kdis, mesh])
+    end if
     if (kdis.eq.'SOUS_DOM.OLD' .or. kdis.eq.'SOUS_DOMAINE') then
         call gcncon('_', sd_partit1)
         call getvtx('DISTRIBUTION', 'PARTITIONNEUR', iocc=1, scal=methode, nbret=n1)

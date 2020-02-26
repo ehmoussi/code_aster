@@ -490,12 +490,7 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',
-                          NPREC=15,
-                          RENUM='AMF',
-                          GESTION_MEMOIRE='OUT_OF_CORE',
-                          ELIM_LAGR='NON',
-                          PCENT_PIVOT=200,),
+            'SOLVEUR': _F(METHODE='MUMPS',),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)
@@ -527,12 +522,7 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',
-                          NPREC=15,
-                          RENUM='AMF',
-                          GESTION_MEMOIRE='OUT_OF_CORE',
-                          ELIM_LAGR='NON',
-                          PCENT_PIVOT=200,),
+            'SOLVEUR': _F(METHODE='MUMPS',),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)
@@ -710,6 +700,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                              INST_FIN=0.),
                                 EXCIT=loads,
                                ))
+                # for debugging: return __RESULT
                 self.etat_init = _F(EVOL_NOLI=__RESULT,)
             keywords.append(self.snl(CHAM_MATER=mater[-1],
                                 INCREMENT=_F(LIST_INST=self.times_woSubd,
@@ -968,8 +959,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         _snl_lame = STAT_NON_LINE(**self.snl_lame(
                                   INCREMENT=_F(LIST_INST=self.times,
                                                INST_INIT=0.,
-                                               INST_FIN=coeur.temps_simu[
-                                                   'T1']),
+                                               INST_FIN=coeur.temps_simu['T1']),
                                   ARCHIVAGE=_F(INST=coeur.temps_simu['T1']),
                                   EXCIT=self.archimede_load + self.vessel_head_load +
                                   self.vessel_dilatation_load + self.gravity_load +

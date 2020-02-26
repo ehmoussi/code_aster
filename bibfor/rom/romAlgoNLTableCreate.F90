@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,10 +44,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: tabl_name = ' '
+    character(len=19) :: tabl_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    tabl_name = ' '
     call romTableCreate(result, tabl_name)
 !
 ! - Save name of table

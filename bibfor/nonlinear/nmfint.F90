@@ -80,7 +80,7 @@ character(len=*), optional, intent(in) :: sddynz_
     aster_logical :: l_xfem, l_macr_elem, l_hho
     character(len=1) :: base
     character(len=16) :: option
-    character(len=19) :: merigi = ' ', vefint = ' ', sddyna =  ' '
+    character(len=19) :: merigi, vefint, sddyna
 !
 ! --------------------------------------------------------------------------------------------------
 !

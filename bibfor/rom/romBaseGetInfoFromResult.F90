@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,8 +47,8 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret
-    character(len=8) :: model = ' '
-    character(len=19) :: tabl_coor = ' '
+    character(len=8) :: model
+    character(len=19) :: tabl_coor
     type(ROM_DS_Field) :: ds_field
 !
 ! --------------------------------------------------------------------------------------------------
@@ -56,6 +56,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get name of COOR_REDUIT table
 !
+    tabl_coor = ' '
     call ltnotb(base, 'COOR_REDUIT', tabl_coor, iret)
     ASSERT(iret .ne. 1)
 !
