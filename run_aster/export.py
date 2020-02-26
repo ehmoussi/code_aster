@@ -17,43 +17,136 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import os
 import os.path as osp
 import re
 
+# just set to __DEPRECATED__ to ignore such parameters
+DEPRECATED = "str"
+
+PARAMS_TYPE = {
+    "actions": "list[str]",
+    "debug": "str",
+    "expected_diag": "list[str]",
+    "facmtps": "float",
+    "memjeveux": "float",
+    "memjob": "int",
+    "memory_limit": "float",
+    "mpi_nbcpu": "int",
+    "mpi_nbnoeud": "int",
+    "nbmaxnook": "int",
+    "ncpus": "int",
+    "testlist": "list[str]",
+    "time_limit": "float",
+    "tpmax": "float",
+    "tpsjob": "int",
+    "version": "str",
+    # deprecated for simple execution
+    "cpresok": DEPRECATED,
+    "diag_pickled": DEPRECATED,
+    "mclient": DEPRECATED,
+    "mode": DEPRECATED,
+    "noeud": DEPRECATED,
+    "nomjob": DEPRECATED,
+    "parent": DEPRECATED,
+    "rep_trav": DEPRECATED,
+    "origine": DEPRECATED,
+    "serveur": DEPRECATED,
+    "service": DEPRECATED,
+    "username": DEPRECATED,
+    "uclient": DEPRECATED,
+}
 
 class Parameter:
-    """A parameter defined in a Export object."""
+    """A parameter defined in a Export object.
 
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value
+    Attributes:
+        name (str): Parameter name.
+        value (misc): Value of the parameter.
+    """
+
+    @staticmethod
+    def factory(name):
+        """Create a Parameter of the right type."""
+        typ = PARAMS_TYPE.get(name)
+        # assert typ is not None, f"unknown parameter: '{name}'"
+        if typ == "__DEPRECATED__":
+            return None
+        if typ is None:
+            print(f"unknown parameter: '{name}'")
+            typ = "list[str]"
+        if typ is "str":
+            klass = ParameterStr
+        elif typ is "int":
+            klass = ParameterInt
+        elif typ is "float":
+            klass = ParameterFloat
+        elif typ == "list[str]":
+            klass = ParameterListStr
+        else:
+            raise TypeError(typ)
+        return klass(name)
+
+    def __init__(self, name):
+        self._name = name
+        self._value = None
 
     @property
     def name(self):
         """str: Attribute that holds the 'name' property."""
         return self._name
 
-    @name.setter
-    def name(self, new_name):
-        self._name = new_name
-
     @property
     def value(self):
         """misc: Attribute that holds the 'value' property."""
         return self._value
 
-    @value.setter
-    def value(self, value):
-        if not isinstance(value, (list, tuple)):
-            value = [value]
-        self._value = list(value)
+    def _convert(self, value):
+        raise NotImplementedError("must be subclassed!")
 
-    def add(self, value):
-        """Add new value(s)."""
+    def set(self, value):
+        """Convert and set the value.
+
+        Arguments:
+            value (misc): New value.
+        """
+        self._value = self._convert(value)
+
+
+class ParameterStr(Parameter):
+    """A parameter defined in a Export object of type string."""
+
+    def _convert(self, value):
+        if isinstance(value, (list, tuple)):
+            value = " ".join(value)
+        return str(value)
+
+
+class ParameterInt(Parameter):
+    """A parameter defined in a Export object of type integer."""
+
+    def _convert(self, value):
+        if isinstance(value, (list, tuple)):
+            value = " ".join(value)
+        return int(float(value))
+
+
+class ParameterFloat(Parameter):
+    """A parameter defined in a Export object of type float."""
+
+    def _convert(self, value):
+        if isinstance(value, (list, tuple)):
+            value = " ".join(value)
+        return float(value)
+
+
+class ParameterListStr(Parameter):
+    """A parameter defined in a Export object of type list of strings."""
+
+    def _convert(self, value):
         if not isinstance(value, (list, tuple)):
             value = [value]
-        self._value.extend(value)
+        value = [str(i) for i in value]
+        return value
 
 
 class File:
@@ -160,8 +253,11 @@ class Export:
             if typ in ("P", "A"):
                 name = spl.pop(0)
                 store = self._params if typ == "P" else self._args
-                param = store.setdefault(name, Parameter(name, []))
-                param.add(spl)
+                param = store.setdefault(name, Parameter.factory(name))
+                if not param:
+                    del store[name]
+                    continue
+                param.set(spl)
                 store[name] = param
             elif typ in ("F", "R"):
                 filetype = spl.pop(0)
