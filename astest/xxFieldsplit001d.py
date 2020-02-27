@@ -152,20 +152,6 @@ MESTAT = STAT_NON_LINE(
                         INFO=1,
 )
 
-TEST_RESU(
-   RESU=_F(
-       CRITERE='ABSOLU',
-       NOEUD='N165',
-       NOM_CHAM='DEPL',
-       NOM_CMP='DX',
-       NUME_ORDRE=2,
-       PRECISION=1.e-6,
-       REFERENCE='AUTRE_ASTER',
-        RESULTAT=MESTAT,
-        VALE_CALC=7.98054127843E-06,
-        VALE_REFE=7.98054129752E-06,
-    )
-)
 
 if MAIL.hasLocalGroupOfNodes('N_test') : 
     tab = POST_RELEVE_T( ACTION =_F( 
