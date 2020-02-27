@@ -168,7 +168,6 @@ class TestExport(unittest.TestCase):
             "A abort",
         ])
         export = Export(from_string=text)
-        export.check()
         self.assertSequenceEqual(export.args,
             ["--continue", "--memjeveux", "512",
              "--max_base", "1000", "--abort",
@@ -180,6 +179,29 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get_argument_value("abort", bool), True)
         self.assertEqual(export.get_argument_value("tpmax", float), None)
         self.assertEqual(export.get_argument_value("dbgjeveux", bool), False)
+
+    def test_memory(self):
+        text = "P memory_limit 4096.0"
+        export = Export(from_string=text)
+        self.assertEqual(export.get("memory_limit"), 4096.0)
+        self.assertEqual(export.get_argument_value("memory", float), 4096.0)
+
+    def test_time(self):
+        text = "P tpsjob 60"
+        export = Export(from_string=text)
+        self.assertEqual(export.get("tpsjob"), 60)
+        self.assertEqual(export.get("time_limit"), 3600.0)
+        self.assertEqual(export.get_argument_value("tpmax", float), 3600.0)
+
+    def test_time2(self):
+        text = "\n".join([
+            "P tpsjob 60",
+            "P time_limit 1800",
+        ])
+        export = Export(from_string=text)
+        self.assertEqual(export.get("tpsjob"), 60)
+        self.assertEqual(export.get("time_limit"), 1800.0)
+        self.assertEqual(export.get_argument_value("tpmax", float), 1800.0)
 
 
 result = unittest.main(argv=["asrun01b"], exit=False).result
