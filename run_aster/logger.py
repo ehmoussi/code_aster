@@ -117,7 +117,7 @@ def build_logger(level=logging.INFO, raise_exception=True):
     Returns:
         Logger: logger object.
     """
-    logger = logging.getLogger("code_aster")
+    logger = logging.getLogger("run_aster")
     # keep only debug, info and error
     logger.critical = logger.fatal = None
     logger.setLevel(level)
@@ -129,8 +129,9 @@ def build_logger(level=logging.INFO, raise_exception=True):
         logger._error_orig = logger.error
 
         def _error(self, *args, **kwargs):
+            exception = kwargs.pop("exception", RuntimeError)
             logger._error_orig(self, *args, **kwargs)
-            raise RuntimeError
+            raise exception
 
         logger.error = _error
 

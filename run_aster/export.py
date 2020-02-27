@@ -42,7 +42,6 @@ PARAMS_TYPE = {
     "time_limit": "float",
     "tpmax": "float",
     "tpsjob": "int",
-    "version": "str",
     # deprecated for simple execution
     "consbtc": DEPRECATED,
     "cpresok": DEPRECATED,
@@ -60,6 +59,9 @@ PARAMS_TYPE = {
     "soumbtc": DEPRECATED,
     "username": DEPRECATED,
     "uclient": DEPRECATED,
+    "version": DEPRECATED,
+    # command line arguments
+    "args": "list[str]",
 }
 
 class Parameter:
@@ -106,6 +108,13 @@ class Parameter:
         """misc: Attribute that holds the 'value' property."""
         return self._value
 
+    def convert(self, value):
+        """Convert a value for the parameter type."""
+        try:
+            return self._convert(value)
+        except (TypeError, ValueError) as exc:
+            logger.error(f"Parameter '{self.name}': {exc}", exception=exc)
+
     def _convert(self, value):
         raise NotImplementedError("must be subclassed!")
 
@@ -115,7 +124,7 @@ class Parameter:
         Arguments:
             value (misc): New value.
         """
-        self._value = self._convert(value)
+        self._value = self.convert(value)
 
 
 class ParameterStr(Parameter):
@@ -243,7 +252,8 @@ class Export:
     """
 
     def __init__(self, filename):
-        self._filename = filename
+        self._filename = osp.abspath(filename)
+        self._root = osp.dirname(self._filename)
         self._params = {}
         self._args = {}
         self._files = []
@@ -294,7 +304,7 @@ class Export:
                 unit = spl.pop()
                 drc = spl.pop()
                 path = " ".join(spl)
-                entry = File(path, filetype, unit, isdir,
+                entry = File(osp.join(self._root, path), filetype, unit, isdir,
                              "D" in drc, "R" in drc, "C" in drc)
                 self._files.append(entry)
         self._read = True
