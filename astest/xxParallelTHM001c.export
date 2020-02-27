@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist asterxx ci verification parallel
 
 F comm xxParallelTHM001c.py D 1
-R nom  xxParallelTHM001a D 0
+R nom  xxFieldsplit001a D 0 

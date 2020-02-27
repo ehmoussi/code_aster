@@ -13,7 +13,7 @@ parallel= (nProc>1)
 
 if (parallel):
     MAIL = code_aster.ParallelMesh()
-    MAIL.readMedFile("xxParallelTHM001a")
+    MAIL.readMedFile("xxFieldsplit001a")
 else:
     MAIL_LIN = code_aster.Mesh()
     MAIL_LIN.readMedFile("petsc04a.mmed")
@@ -141,7 +141,7 @@ resnonl = STAT_NON_LINE(
 TEST_RESU(
    RESU=_F(
        CRITERE='ABSOLU',
-       NOEUD='N165',
+       GROUP_NO='N_test',
        NOM_CHAM='DEPL',
        NOM_CMP='DX',
        NUME_ORDRE=2,
