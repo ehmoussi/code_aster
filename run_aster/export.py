@@ -20,14 +20,17 @@
 import os.path as osp
 import re
 
-# just set to __DEPRECATED__ to ignore such parameters
-DEPRECATED = "str"
+from .logger import logger
+
+
+DEPRECATED = "__DEPRECATED__"
 
 PARAMS_TYPE = {
     "actions": "list[str]",
     "debug": "str",
     "expected_diag": "list[str]",
     "facmtps": "float",
+    "max_base": "float",
     "memjeveux": "float",
     "memjob": "int",
     "memory_limit": "float",
@@ -41,9 +44,11 @@ PARAMS_TYPE = {
     "tpsjob": "int",
     "version": "str",
     # deprecated for simple execution
+    "consbtc": DEPRECATED,
     "cpresok": DEPRECATED,
     "diag_pickled": DEPRECATED,
     "mclient": DEPRECATED,
+    "mem_aster": DEPRECATED,
     "mode": DEPRECATED,
     "noeud": DEPRECATED,
     "nomjob": DEPRECATED,
@@ -52,6 +57,7 @@ PARAMS_TYPE = {
     "origine": DEPRECATED,
     "serveur": DEPRECATED,
     "service": DEPRECATED,
+    "soumbtc": DEPRECATED,
     "username": DEPRECATED,
     "uclient": DEPRECATED,
 }
@@ -68,12 +74,12 @@ class Parameter:
     def factory(name):
         """Create a Parameter of the right type."""
         typ = PARAMS_TYPE.get(name)
-        # assert typ is not None, f"unknown parameter: '{name}'"
-        if typ == "__DEPRECATED__":
-            return None
         if typ is None:
-            print(f"unknown parameter: '{name}'")
+            logger.warning(f"unknown parameter: '{name}'")
             typ = "list[str]"
+        if typ == DEPRECATED:
+            typ = "str"
+            return None
         if typ is "str":
             klass = ParameterStr
         elif typ is "int":
@@ -117,7 +123,7 @@ class ParameterStr(Parameter):
 
     def _convert(self, value):
         if isinstance(value, (list, tuple)):
-            value = " ".join(value)
+            value = " ".join([str(i) for i in value])
         return str(value)
 
 
@@ -126,7 +132,7 @@ class ParameterInt(Parameter):
 
     def _convert(self, value):
         if isinstance(value, (list, tuple)):
-            value = " ".join(value)
+            value = " ".join([str(i) for i in value])
         return int(float(value))
 
 
@@ -135,7 +141,7 @@ class ParameterFloat(Parameter):
 
     def _convert(self, value):
         if isinstance(value, (list, tuple)):
-            value = " ".join(value)
+            value = " ".join([str(i) for i in value])
         return float(value)
 
 
@@ -150,15 +156,29 @@ class ParameterListStr(Parameter):
 
 
 class File:
-    """A file or directory defined in a Export object."""
+    """A file or directory defined in a Export object.
 
-    def __init__(self, path, filetype='libr', ul=0, isdir=False,
+    Arguments:
+        path (str): File or directory path.
+        filetype (str, optional): File type ("comm", "libr", "nom", "repe"...).
+        unit (int, optional): Logical unit number.
+        isdir (bool, optional): *True* for a directory, *False* for a file.
+            If the file or directory exists, it is automatically set.
+        data (bool, optional): *True* if it is an input. If neither *data* or
+            *resu* is set, *data* is automatically set to *True*.
+        resu (bool, optional): *True* if it is an output.
+        compr (bool, optional):*True* if it is compressed.
+    """
+
+    def __init__(self, path, filetype='libr', unit=0, isdir=False,
                  data=False, resu=False, compr=False):
         self._path = path
         self._typ = filetype
-        self._ul = ul
+        self._unit = int(unit)
+        if osp.exists(path):
+            isdir = osp.isdir(path)
         self._dir = isdir
-        self._data = data
+        self._data = data or not resu
         self._resu = resu
         self._compr = compr
 
@@ -173,9 +193,9 @@ class File:
         return self._typ
 
     @property
-    def ul(self):
-        """int: Attribute that holds the 'ul' property."""
-        return self._ul
+    def unit(self):
+        """int: Attribute that holds the 'unit' property."""
+        return self._unit
 
     @property
     def compr(self):
@@ -211,7 +231,7 @@ class File:
             txt += 'R'
         if self.compr:
             txt += 'C'
-        txt += ' ' +  str(self.ul)
+        txt += ' ' +  str(self.unit)
         return txt
 
 
@@ -223,13 +243,22 @@ class Export:
     """
 
     def __init__(self, filename):
-        assert osp.isfile(filename), f"file not found: {filename}"
         self._filename = filename
         self._params = {}
         self._args = {}
         self._files = []
         self._read = False
         self.parse()
+
+    @property
+    def datafiles(self):
+        """list[File]: List of input File objects."""
+        return [i for i in self._files if i.data]
+
+    @property
+    def resultfiles(self):
+        """list[File]: List of output File objects."""
+        return [i for i in self._files if i.resu]
 
     def parse(self, force=False):
         """Parse the export content.
@@ -262,10 +291,10 @@ class Export:
             elif typ in ("F", "R"):
                 filetype = spl.pop(0)
                 isdir = typ == "R"
-                ul = spl.pop()
+                unit = spl.pop()
                 drc = spl.pop()
                 path = " ".join(spl)
-                entry = File(path, filetype, ul, isdir,
+                entry = File(path, filetype, unit, isdir,
                              "D" in drc, "R" in drc, "C" in drc)
                 self._files.append(entry)
         self._read = True
@@ -285,14 +314,49 @@ class Export:
             txt.append("Command line arguments:")
             for param in self._args.values():
                 txt.append("    {0.name}: {0.value}".format(param))
-        data = [entry for entry in self._files if entry.data]
+        data = self.datafiles
         if data:
             txt.append("Data files/directories:")
             for entry in data:
                 txt.append("    " + repr(entry))
-        result = [entry for entry in self._files if entry.resu]
+        result = self.resultfiles
         if result:
             txt.append("Result files/directories:")
             for entry in result:
                 txt.append("    " + repr(entry))
         return "\n".join(txt)
+
+    def has_param(self, key):
+        """Tell if `key` is a known parameter.
+
+        Arguments:
+            key (str): Parameter name.
+
+        Returns:
+            bool: *True* it the parameter is defined, *False* otherwise.
+        """
+        return key in self._params
+
+    def get_param(self, key):
+        """Return a parameter.
+
+        Arguments:
+            key (str): Parameter name.
+
+        Returns:
+            misc: Parameter.
+        """
+        param = self._params.get(key)
+        return param
+
+    def get(self, key):
+        """Return a parameter value.
+
+        Arguments:
+            key (str): Parameter name.
+
+        Returns:
+            misc: Parameter value.
+        """
+        param = self.get_param(key)
+        return param and param.value
