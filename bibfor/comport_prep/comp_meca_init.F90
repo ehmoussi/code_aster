@@ -47,6 +47,8 @@ type(Behaviour_Para), intent(out) :: ds_comporPara
     ds_comporPara%kit_comp(:)     = 'VIDE'
     ds_comporPara%mult_comp       = 'VIDE'
     ds_comporPara%post_iter       = 'VIDE'
+    ds_comporPara%defo_ldc        = 'VIDE'
+    ds_comporPara%rigi_geom       = 'VIDE'
     ds_comporPara%nb_vari         = 0
     ds_comporPara%nb_vari_comp(:) = 0
     ds_comporPara%nume_comp(:)    = 0
