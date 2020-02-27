@@ -50,6 +50,7 @@ test.assertEqual( acier.getType(), "MATER_SDASTER" )
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
+affectMat.addMaterialOnGroupOfElements( acier, ['Haut', 'Bas'] )
 affectMat.buildWithoutExternalVariable()
 test.assertEqual( affectMat.getType(), "CHAM_MATER" )
 

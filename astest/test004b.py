@@ -19,7 +19,7 @@ POISSON = 0.3
 
 acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
                                 NU = POISSON,),)
-#acier.debugPrint(6)
+acier.debugPrint(6)
 
 affectMat = code_aster.MaterialOnMesh(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
@@ -32,12 +32,14 @@ imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
 charMeca1 = code_aster.ImposedDisplacementReal(monModel)
 charMeca1.setValue( imposedDof1, "Bas" )
 charMeca1.build()
+test.assertEqual(charMeca1.getType(), "CHAR_MECA")
 
 imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
 charMeca2 = code_aster.DistributedPressureReal(monModel)
 charMeca2.setValue( imposedPres1, "Haut" )
 charMeca2.build()
+test.assertEqual(charMeca2.getType(), "CHAR_MECA")
 
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
@@ -72,6 +74,7 @@ timeList.build()
 statNonLine1.setLoadStepManager( timeList )
 # Run the nonlinear analysis
 resu = statNonLine1.execute()
+test.assertEqual(resu.getType(), "EVOL_NOLI")
 #resu.debugPrint( 6 )
 
 # Define a second nonlinear Analysis
@@ -98,10 +101,10 @@ error1.setAction( action1 )
 timeList.addErrorManager( error1 )
 timeList.build()
 statNonLine2.setLoadStepManager( timeList )
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! commenter: execute of the 2nd nonlinear Analysis
 #statNonLine2.execute()
 
 # at least it pass here!
-test.assertTrue( True )
 test.printSummary()
 
 FIN()

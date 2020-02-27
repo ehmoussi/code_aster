@@ -33,12 +33,14 @@ imposedDof1.setValue( code_aster.PhysicalQuantityComponent.Dz, 0.0 )
 CharMeca1 = code_aster.ImposedDisplacementReal(monModel)
 CharMeca1.setValue( imposedDof1, "Bas" )
 CharMeca1.build()
+test.assertEqual(CharMeca1.getType(), "CHAR_MECA")
 
 imposedPres1 = code_aster.PressureReal()
 imposedPres1.setValue( code_aster.PhysicalQuantityComponent.Pres, 1000. )
 CharMeca2 = code_aster.DistributedPressureReal(monModel)
 CharMeca2.setValue( imposedPres1, "Haut" )
 CharMeca2.build()
+test.assertEqual(CharMeca2.getType(), "CHAR_MECA")
 
 monSolver = code_aster.MumpsSolver( code_aster.Renumbering.Metis )
 
@@ -66,9 +68,9 @@ timeList.debugPrint( 8 )
 
 resu = mecaStatique.execute()
 resu.debugPrint( 8 )
+test.assertEqual(resu.getType(), "EVOL_ELAS")
 
 # at least it pass here!
-test.assertTrue( True )
 test.printSummary()
 
 FIN()

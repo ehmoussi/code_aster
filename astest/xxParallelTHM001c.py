@@ -4,6 +4,9 @@ import code_aster
 from code_aster.Commands import *
 import os
 
+# test = petsc04c en parallèle = xxFieldsplit001d
+# mais sans préciser l'option de PETSC
+
 test = code_aster.TestCase()
 
 code_aster.init()
@@ -12,10 +15,10 @@ parallel= (nProc>1)
 
 if (parallel):
     MAIL = code_aster.ParallelMesh()
-    MAIL.readMedFile("xxParallelTHM001a")
+    MAIL.readMedFile("xxFieldsplit001a")
 else:
     MAIL = code_aster.Mesh()
-    MAIL.readMedFile("xxParallelTHM001a.med")
+    MAIL.readMedFile("petsc04a.mmed")
 
 
 MODELE = AFFE_MODELE(
@@ -75,7 +78,7 @@ ARGILE0 = DEFI_MATERIAU(
                         COMP_THM='LIQU_SATU',
                         ELAS=_F(ALPHA=8e-06, E=225000000.0, NU=0.0, RHO=2000.0),
                         THM_DIFFU=_F(
-                                     BIOT_COEF=1.,
+                                     BIOT_COEF=1.e-12,
                                      CP=2850000.0,
                                      D_PERM_LIQU_SATU=ZERO,
                                      D_PERM_PRES_GAZ=DPERGPG,
@@ -116,6 +119,12 @@ CHAR0 =  AFFE_CHAR_CINE(
     MODELE=MODELE
 )
 
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',
+                    VALE=(0.0,0.0,
+                          100.0,1.0,
+                          ),
+                    PROL_DROITE='LINEAIRE',
+                    PROL_GAUCHE='LINEAIRE',);
 
 resnonl = STAT_NON_LINE(
                         CHAM_MATER=CHMAT0,
@@ -132,6 +141,43 @@ resnonl = STAT_NON_LINE(
                         INFO=2,
 )
 
+# ajouter TEST_RESU comme petsc04c
+if MAIL.hasLocalGroupOfNodes('N_test') : 
+    tab = POST_RELEVE_T( ACTION =_F( 
+                    INTITULE  = 'dx',
+                        RESULTAT=resnonl, 
+                        NUME_ORDRE=1,
+                        GROUP_NO='N_test',
+                        NOM_CHAM   = 'DEPL',
+                        NOM_CMP   = 'DX',
+                        OPERATION = 'EXTRACTION' ,) , 
+                      )
+  
+    TEST_TABLE(TABLE=tab,
+           NOM_PARA='DX',
+           VALE_CALC=7.98054127843E-06,
+           VALE_REFE=7.98054127843E-06,
+           PRECISION=1.E-6,
+           REFERENCE='AUTRE_ASTER',)
+
+elif MAIL.hasLocalGroupOfNodes('N_test2') :  
+    tab2 = POST_RELEVE_T( ACTION =_F( 
+                    INTITULE  = 'dx',
+                        RESULTAT=resnonl, 
+                        NUME_ORDRE=1,
+                        GROUP_NO='N_test2',
+                        NOM_CHAM   = 'DEPL',
+                        NOM_CMP   = 'DX',
+                        OPERATION = 'EXTRACTION' ,) , 
+                      )
+  
+    TEST_TABLE(TABLE=tab2,
+           NOM_PARA='DX',
+           VALE_CALC=3.46633156137E-05,
+           VALE_REFE=3.46633156137E-05,
+           PRECISION=1.E-6,
+           REFERENCE='AUTRE_ASTER',)
+
 # if parallel:
 #     rank = code_aster.getMPIRank()
 #     resnonl.printMedFile('/tmp/par_%d.resu.med'%rank)
@@ -140,7 +186,6 @@ resnonl = STAT_NON_LINE(
 
 
 # at least it pass here!
-test.assertTrue(True)
 test.printSummary()
 
 FIN()

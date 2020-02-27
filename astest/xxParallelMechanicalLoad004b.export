@@ -1,10 +1,10 @@
 P time_limit 60
 P memory_limit 128
 P ncpus 1
-P mpi_nbcpu 1
+P mpi_nbcpu 2
 P mpi_nbnoeud 1
 P testlist asterxx ci verification parallel
 
-F comm xxParallelMechanicalLoad004a.py D 1
+F comm xxParallelMechanicalLoad004b.py D 1
 R nom  xxParallelMechanicalLoad004a D 0
 F nom  xxParallelMechanicalLoad004a.med D 0
