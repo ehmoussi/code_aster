@@ -291,15 +291,10 @@ class Export:
                 name = spl.pop(0)
                 if name != "args":
                     spl.insert(0, f"--{name}")
-                self._set_arg(spl)
+                self.set_argument(spl)
             elif typ == "P":
                 name = spl.pop(0)
-                param = self._params.setdefault(name, Parameter.factory(name))
-                if not param:
-                    del self._params[name]
-                    continue
-                param.set(spl)
-                self._params[name] = param
+                self.set_parameter(name, spl)
             elif typ in ("F", "R"):
                 filetype = spl.pop(0)
                 isdir = typ == "R"
@@ -309,10 +304,26 @@ class Export:
                 entry = File(osp.join(self._root, path), filetype, unit, isdir,
                              "D" in drc, "R" in drc, "C" in drc)
                 self._files.append(entry)
+        self.check()
         self._read = True
 
-    def _set_arg(self, opts):
+    def set_parameter(self, name, value):
+        """Add a parameter.
+
+        Arguments:
+            name (str): Parameter name.
+            value (misc): Parameter value.
+        """
+        param = self._params.setdefault(name, Parameter.factory(name))
+        if not param:
+            del self._params[name]
+            return
+        param.set(value)
+
+    def set_argument(self, opts):
         """Add command line arguments.
+        *The caller must check if the options are not already present or if they
+        can appear several times.*
 
         Arguments:
             opts (list[str]): List of arguments (for example: "-c", "--abort",
@@ -320,20 +331,36 @@ class Export:
         """
         new = []
         for i in opts:
-            new.extend(i.split("="))
+            new.extend(str(i).split("="))
         self._pargs.set(self.args + new)
 
     def check(self):
         """Check consistency, add arguments that replace deprecated ones...
         """
         args = self.args
-        # memory in MB == memjeveux in Mwords (memory_limit only used by tests)
-        factor = 8 if "64" in platform.architecture()[0] else 4
-        if "--memory" not in args and "--memjeveux" in args:
-            idx = args.index("--memjeveux") + 1
-            if idx < len(args):
-                value = float(args[idx]) * factor
-                self._pargs.set(args + ["--memory", value])
+        # memory_limit in MB, --memory in MB (required), --memjeveux in Mwords
+        if "--memory" not in args:
+            value = None
+            if "--memjeveux" in args:
+                idx = args.index("--memjeveux") + 1
+                if idx < len(args):
+                    factor = 8 if "64" in platform.architecture()[0] else 4
+                    value = float(args[idx]) * factor
+            elif self.has_param("memory_limit"):
+                value = self.get("memory_limit")
+            if value:
+                self.set_argument(["--memory", value])
+        # time_limit in s (required), tpsjob in min, --tpmax in s (required)
+        if "--tpmax" not in args:
+            value = None
+            if self.has_param("tpsjob"):
+                value = self.get("tpsjob") * 60
+            if self.has_param("time_limit"):
+                value = self.get("time_limit")
+            if value:
+                self.set_argument(["--tpmax", value])
+                if not self.has_param("time_limit"):
+                    self.set_parameter("time_limit", value)
 
     def __repr__(self):
         """Return a representation of the Export object.
