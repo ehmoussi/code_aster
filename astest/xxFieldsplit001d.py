@@ -153,8 +153,45 @@ MESTAT = STAT_NON_LINE(
 )
 
 
+if MAIL.hasLocalGroupOfNodes('N_test') : 
+    tab = POST_RELEVE_T( ACTION =_F( 
+                    INTITULE  = 'dx',
+                        RESULTAT=MESTAT, 
+                        NUME_ORDRE=2,
+                        GROUP_NO='N_test',
+                        NOM_CHAM   = 'DEPL',
+                        NOM_CMP   = 'DX',
+                        OPERATION = 'EXTRACTION' ,) , 
+                      )
+  
+    TEST_TABLE(TABLE=tab,
+           NOM_PARA='DX',
+           VALE_CALC=7.98054127843E-06,
+           VALE_REFE=7.98054127843E-06,
+           PRECISION=1.E-6,
+           REFERENCE='AUTRE_ASTER',)
+
+elif MAIL.hasLocalGroupOfNodes('N_test2') :  
+    tab2 = POST_RELEVE_T( ACTION =_F( 
+                    INTITULE  = 'dx',
+                        RESULTAT=MESTAT, 
+                        NUME_ORDRE=2,
+                        GROUP_NO='N_test2',
+                        NOM_CHAM   = 'DEPL',
+                        NOM_CMP   = 'DX',
+                        OPERATION = 'EXTRACTION' ,) , 
+                      )
+  
+    TEST_TABLE(TABLE=tab2,
+           NOM_PARA='DX',
+           VALE_CALC=3.46633156137E-05,
+           VALE_REFE=3.46633156137E-05,
+           PRECISION=1.E-6,
+           REFERENCE='AUTRE_ASTER',)
+
+
 # at least it pass here!
-test.assertTrue(True)
+
 test.printSummary()
 
 # if parallel:

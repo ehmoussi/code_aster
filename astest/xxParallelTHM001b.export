@@ -1,9 +1,0 @@
-P time_limit 60
-P memory_limit 128
-P ncpus 1
-P mpi_nbcpu 2
-P mpi_nbnoeud 1
-P testlist verification parallel
-
-F comm xxParallelTHM001b.py D 1
-R nom  xxParallelTHM001a D 0

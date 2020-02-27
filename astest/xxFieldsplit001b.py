@@ -15,7 +15,7 @@ if parallel:
     MAIL.readMedFile("xxFieldsplit001a")
 else:
     MAIL = code_aster.Mesh()
-    MAIL.readMedFile("xxFieldsplit001a.mmed")
+    MAIL.readMedFile("petsc04a.mmed")
 
 model = AFFE_MODELE(
                     AFFE=_F(MODELISATION=('3D_INCO_UP', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
@@ -44,7 +44,7 @@ BC = AFFE_CHAR_CINE(
                                 _F(DY=0.0, GROUP_MA=('Yinf', 'Ysup')),
                                 _F(DX=0.0, GROUP_MA=('Xsup', 'Xinf')),
                                 _F(DX=1.0, DZ=0.0, GROUP_MA=('Zsup', )),
-                                _F(PRES=0.0, GROUP_NO='pNode',),
+                                _F(PRES=0.0, GROUP_NO='N_test',),
                     ),
                     MODELE=model
                 )
@@ -59,8 +59,48 @@ resnonl = STAT_NON_LINE(
                         INFO=2,
                     )
 
+
+if MAIL.hasLocalGroupOfNodes('N_test') : 
+    tab = POST_RELEVE_T( ACTION =_F( 
+                    INTITULE  = 'dx',
+                        RESULTAT=resnonl, 
+                        NUME_ORDRE=1,
+                        GROUP_NO='N_test',
+                        NOM_CHAM   = 'DEPL',
+                        NOM_CMP   = 'DX',
+                        OPERATION = 'EXTRACTION' ,) , 
+                      )
+  
+    TEST_TABLE(TABLE=tab,
+           NOM_PARA='DX',
+           VALE_CALC=-0.121908649820, 
+           VALE_REFE=-0.121908649820,
+           PRECISION=1.E-6,
+           REFERENCE='AUTRE_ASTER',)
+
+elif MAIL.hasLocalGroupOfNodes('N_test2') : 
+    tab2 = POST_RELEVE_T( ACTION =_F( 
+                    INTITULE  = 'dx',
+                        RESULTAT=resnonl, 
+                        NUME_ORDRE=1,
+                        GROUP_NO='N_test2',
+                        NOM_CHAM   = 'DEPL',
+                        NOM_CMP   = 'DX',
+                        OPERATION = 'EXTRACTION' ,) , 
+                      )
+  
+    TEST_TABLE(TABLE=tab2,
+           NOM_PARA='DX',
+           VALE_CALC=0.09623615926, 
+           VALE_REFE=0.09623615926,
+           PRECISION=1.E-6,
+           REFERENCE='AUTRE_ASTER',)
+
+
+
+
 # at least it pass here!
-test.assertTrue(True)
+
 test.printSummary()
 
 # if parallel:

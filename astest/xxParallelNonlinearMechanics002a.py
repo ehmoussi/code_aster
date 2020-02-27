@@ -5,6 +5,8 @@ from code_aster.Commands import *
 
 code_aster.init()
 
+# test = xxParallelNonlinearMechanics001a mais Preconditioning.Gamg
+# en ajoutant un Frampe pour le chargement
 test = code_aster.TestCase()
 
 #parallel=False
@@ -65,6 +67,7 @@ fMult.setParameterName("INST")
 fMult.setValues([0.,1.], [0.,1.])
 #fMult.debugPrint( 6 )
 
+# set fMult dans STAT_NON_LINE en python ??
 resu=STAT_NON_LINE( MODELE=monModel,
                     CHAM_MATER=affectMat,
                     EXCIT=( _F( CHARGE = charMeca1,),
@@ -84,7 +87,7 @@ resu=STAT_NON_LINE( MODELE=monModel,
 #resu.debugPrint( 6 )
 
 # at least it passes here!
-test.assertTrue( True )
+test.assertEqual(resu.getType(), "EVOL_NOLI")
 test.printSummary()
 
 # if (parallel):
