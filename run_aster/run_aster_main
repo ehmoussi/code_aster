@@ -28,14 +28,17 @@ import os
 import os.path as osp
 import sys
 
+
 try:
-    import run_aster
+    from run_aster import RunAster
 except ImportError:
     root = osp.dirname(osp.dirname(osp.abspath(__file__)))
     lib = osp.join(root, "lib", "aster")
     sys.path.append(lib)
+    from run_aster import RunAster
 
-from run_aster import RunAster
+from run_aster.logger import DEBUG, logger
+
 
 __DOC__ = __doc__
 
@@ -55,6 +58,8 @@ def parse_args(argv):
                         help="Export file defining the calculation.")
 
     args = parser.parse_args(argv)
+    if args.debug:
+        logger.setLevel(DEBUG)
     return args
 
 

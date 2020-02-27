@@ -21,4 +21,5 @@
 Execution of code_aster from a ``.export`` file.
 """
 
+from .export import Export
 from .run import RunAster

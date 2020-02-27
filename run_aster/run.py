@@ -18,9 +18,13 @@
 # --------------------------------------------------------------------
 
 import os
+import os.path as osp
+import shutil
 import tempfile
+from math import log10
 
 from .export import Export
+from .logger import logger
 
 
 class RunAster:
@@ -31,19 +35,48 @@ class RunAster:
     """
 
     def __init__(self, export_file):
-        self._export_file = export_file
-        self._export = Export(export_file)
-        print(self._export)
+        self.export_file = export_file
+        self.export = Export(export_file)
+        self.workdir = None
+        self.jobnum = str(os.getpid())
+        logger.debug(f"Export file: {export_file}")
+        logger.debug(self.export)
+
+    def _wrk(self, path):
+        return osp.join(self.workdir, path)
 
     def run(self):
-        # read export
+        """Execution in a temporary directory."""
+        with tempfile.TemporaryDirectory() as self.workdir:
+            exit_code = self._run()
+        return exit_code
 
-        # set rep_trav + write reptrav in the export
+    def _run(self):
+        """Execution.
+
+        Returns:
+            int: 0 if the execution is successful, non null otherwise.
+        """
         # add reptrav to LD_LIBRARY_PATH (to find dynamic libs provided by user)
-        # copy export in rep_trav
-
+        old = os.environ.get("LD_LIBRARY_PATH", "")
+        new = (self.workdir + os.pathsep + old).strip(os.pathsep)
+        os.environ["LD_LIBRARY_PATH"] = new
         # Preparation of environment
+        # copy export in rep_trav
+        shutil.copyfile(self.export_file,
+                        self._wrk(self.jobnum + ".export"))
+        os.makedirs(self._wrk("REPE_OUT"))
+
         # Copying datas
+        self.copy_data()
         # Execution
         # Copying results
-        pass
+
+        return 0
+
+
+    def copy_data(self):
+        """Copy data files into the working directory."""
+        data = self.export.datafiles
+        nbcomm = len([i for i in data if i.filetype == "comm"])
+        fmt = '%%0%dd' % (int(log10(max(1, nbcomm))) + 1)
