@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import argparse
 import os.path as osp
+import platform
 import re
 
 from .logger import logger
-
 
 DEPRECATED = "__DEPRECATED__"
 
@@ -30,10 +31,9 @@ PARAMS_TYPE = {
     "debug": "str",
     "expected_diag": "list[str]",
     "facmtps": "float",
-    "max_base": "float",
-    "memjeveux": "float",
     "memjob": "int",
     "memory_limit": "float",
+    "mode": "str",
     "mpi_nbcpu": "int",
     "mpi_nbnoeud": "int",
     "nbmaxnook": "int",
@@ -42,27 +42,19 @@ PARAMS_TYPE = {
     "time_limit": "float",
     "tpmax": "float",
     "tpsjob": "int",
-    # deprecated for simple execution
-    "consbtc": DEPRECATED,
-    "cpresok": DEPRECATED,
-    "diag_pickled": DEPRECATED,
-    "mclient": DEPRECATED,
-    "mem_aster": DEPRECATED,
-    "mode": DEPRECATED,
-    "noeud": DEPRECATED,
-    "nomjob": DEPRECATED,
-    "parent": DEPRECATED,
-    "rep_trav": DEPRECATED,
-    "origine": DEPRECATED,
-    "serveur": DEPRECATED,
-    "service": DEPRECATED,
-    "soumbtc": DEPRECATED,
-    "username": DEPRECATED,
-    "uclient": DEPRECATED,
-    "version": DEPRECATED,
     # command line arguments
     "args": "list[str]",
 }
+
+# deprecated for simple execution
+PARAMS_TYPE.update({}.fromkeys(
+    ["MASTER_memory_limit", "MASTER_time_limit", "aster_root", "consbtc",
+     "cpresok", "diag_pickled", "mclient", "mem_aster", "noeud", "nomjob",
+     "parent", "platform", "protocol_copyfrom", "protocol_copyto",
+     "protocol_exec", "proxy_dir", "rep_trav", "origine", "server", "serveur",
+     "service", "soumbtc", "studyid", "username", "uclient", "version"],
+    DEPRECATED))
+
 
 class Parameter:
     """A parameter defined in a Export object.
@@ -247,15 +239,24 @@ class File:
 class Export:
     """This object represents a `.export` file.
 
+
     Arguments:
-        export_file (str): File name of the export file.
+        export_file (str, optional): File name of the export file.
+        from_string (str, optional): Export content as string.
     """
 
-    def __init__(self, filename):
-        self._filename = osp.abspath(filename)
-        self._root = osp.dirname(self._filename)
+    def __init__(self, filename=None, from_string=None):
+        assert filename or from_string, "Export(): invalid arguments"
+        if filename:
+            self._root = osp.dirname(osp.abspath(filename))
+            with open(filename, "r") as fobj:
+                self._content = fobj.read()
+        else:
+            self._content = from_string
+            self._root = ""
         self._params = {}
-        self._args = {}
+        self._pargs = ParameterListStr("args")
+        self._pargs.set([])
         self._files = []
         self._read = False
         self.parse()
@@ -279,25 +280,26 @@ class Export:
         if self._read and not force:
             return
 
-        with open(self._filename, "r") as fobj:
-            content = fobj.read()
         comment = re.compile("^ *#")
-
-        for line in content.splitlines():
+        for line in self._content.splitlines():
             if comment.search(line) or not line.strip():
                 continue
             spl = line.split()
             typ = spl.pop(0)
             assert typ in ("P", "A", "F", "R"), f"unknown type: {typ}"
-            if typ in ("P", "A"):
+            if typ == "A":
                 name = spl.pop(0)
-                store = self._params if typ == "P" else self._args
-                param = store.setdefault(name, Parameter.factory(name))
+                if name != "args":
+                    spl.insert(0, f"--{name}")
+                self._set_arg(spl)
+            elif typ == "P":
+                name = spl.pop(0)
+                param = self._params.setdefault(name, Parameter.factory(name))
                 if not param:
-                    del store[name]
+                    del self._params[name]
                     continue
                 param.set(spl)
-                store[name] = param
+                self._params[name] = param
             elif typ in ("F", "R"):
                 filetype = spl.pop(0)
                 isdir = typ == "R"
@@ -308,6 +310,30 @@ class Export:
                              "D" in drc, "R" in drc, "C" in drc)
                 self._files.append(entry)
         self._read = True
+
+    def _set_arg(self, opts):
+        """Add command line arguments.
+
+        Arguments:
+            opts (list[str]): List of arguments (for example: "-c", "--abort",
+                "--memory=1024"...).
+        """
+        new = []
+        for i in opts:
+            new.extend(i.split("="))
+        self._pargs.set(self.args + new)
+
+    def check(self):
+        """Check consistency, add arguments that replace deprecated ones...
+        """
+        args = self.args
+        # memory in MB == memjeveux in Mwords (memory_limit only used by tests)
+        factor = 8 if "64" in platform.architecture()[0] else 4
+        if "--memory" not in args and "--memjeveux" in args:
+            idx = args.index("--memjeveux") + 1
+            if idx < len(args):
+                value = float(args[idx]) * factor
+                self._pargs.set(args + ["--memory", value])
 
     def __repr__(self):
         """Return a representation of the Export object.
@@ -320,10 +346,9 @@ class Export:
             txt.append("Parameters:")
             for param in self._params.values():
                 txt.append("    {0.name}: {0.value}".format(param))
-        if self._args:
+        if self.args:
             txt.append("Command line arguments:")
-            for param in self._args.values():
-                txt.append("    {0.name}: {0.value}".format(param))
+            txt.append("    {0}".format(self.args))
         data = self.datafiles
         if data:
             txt.append("Data files/directories:")
@@ -370,3 +395,30 @@ class Export:
         """
         param = self.get_param(key)
         return param and param.value
+
+    @property
+    def args(self):
+        """Return the arguments list.
+
+        Returns:
+            list[str]: List of arguments.
+        """
+        return self._pargs.value[:]
+
+    def get_argument_value(self, key, typ):
+        """Return the value of a command line argument.
+
+        Arguments:
+            key (str): Argument name.
+            typ (str|int|float|bool): Type of expected value.
+        """
+        parser = argparse.ArgumentParser()
+        if typ is bool:
+            parser.add_argument(f"--{key}", action="store_true")
+        else:
+            parser.add_argument(f"--{key}", type=typ)
+        try:
+            args, _ = parser.parse_known_args(["main"] + self.args)
+        except argparse.ArgumentError:
+            return None
+        return getattr(args, key)

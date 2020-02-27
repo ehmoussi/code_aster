@@ -17,11 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import os.path as osp
 import json
+import os
+import os.path as osp
 
 from .logger import logger
 from .utils import ROOT
+
+DEFAULT_CONFIG = {
+    "python": "python3",
+    "tmpdir": "/tmp",
+}
+USERCFG = osp.join(os.getenv("HOME", ""), ".run_aster.js")
 
 
 class Config:
@@ -32,15 +39,14 @@ class Config:
     """
 
     def __init__(self, configjs):
-        self._cfg = {
-            "tmpdir": "/tmp",
-        }
-        logger.debug(f"reading {configjs}")
-        try:
-            with open(configjs, "rb") as jsfile:
-                self._cfg.update(json.load(jsfile))
-        except FileNotFoundError:
-            logger.debug("file not found, use default values")
+        self._cfg = DEFAULT_CONFIG.copy()
+        for cfg in (configjs, USERCFG):
+            logger.debug(f"reading configuration file {cfg}")
+            try:
+                with open(cfg, "rb") as jsfile:
+                    self._cfg.update(json.load(jsfile))
+            except FileNotFoundError:
+                logger.debug("file not found")
 
     def get(self, key, default=None):
         """Return the value of `key` parameter or `default` if it is not

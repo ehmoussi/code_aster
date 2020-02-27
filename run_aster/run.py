@@ -24,6 +24,7 @@ from glob import glob
 from math import log10
 
 from .config import config
+from .execute import execute
 from .export import Export
 from .logger import logger
 from .utils import copy, gunzip, make_writable
@@ -96,11 +97,31 @@ class RunAster:
 
         copy_datafiles(self.export.datafiles)
 
-        os.system('pwd ; ls -la')
+        logger.info(f"Content of directory '{self.workdir}' before execution:")
+        os.system('ls -la')
         # Execution
+        self.execute_study()
         # Copying results
 
         return 0
+
+    def command_line(self):
+        """Build the command line.
+
+        Returns:
+            list[str]: List of command line arguments.
+        """
+        cmd = [config.get("python")]
+        if self.export.has_param("interact"):
+            cmd.append("-i")
+        # TODO add pid + mode to identify the process
+        cmd.extend(self.export.args)
+
+        return cmd
+
+    def execute_study(self):
+        """Execute the study."""
+
 
 
 def copy_datafiles(files):
