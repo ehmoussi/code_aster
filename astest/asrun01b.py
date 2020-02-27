@@ -147,20 +147,39 @@ class TestExport(unittest.TestCase):
             export = Export(fexp + "XX")
 
         export = Export(fexp)
-        print(export)
         self.assertIn("/asrun01b.py", repr(export))
         self.assertTrue(export.has_param("time_limit"))
-        self.assertFalse(export.has_param("max_base"))
+        self.assertFalse(export.has_param("consbtc"))
         self.assertIsInstance(export.get_param("time_limit"), ParameterFloat)
-        self.assertIsNone(export.get_param("max_base"))
+        self.assertIsNone(export.get_param("consbtc"))
         self.assertEqual(export.get("time_limit"), 60.0)
-        self.assertIsNone(export.get("max_base"))
+        self.assertIsNone(export.get("consbtc"))
         self.assertEqual(len(export.datafiles), 1)
         self.assertEqual(len(export.resultfiles), 0)
         comm = [i for i in export.datafiles if i.filetype == "comm"][0]
         self.assertEqual(osp.basename(comm.path), "asrun01b.py")
         self.assertEqual(comm.unit, 1)
         self.assertTrue(comm.data)
+
+    def test_args(self):
+        text = "\n".join([
+            "A args --continue --memjeveux=512",
+            "A max_base 1000",
+            "A abort",
+        ])
+        export = Export(from_string=text)
+        export.check()
+        self.assertSequenceEqual(export.args,
+            ["--continue", "--memjeveux", "512",
+             "--max_base", "1000", "--abort",
+             "--memory", "4096.0"])
+        self.assertEqual(export.get_argument_value("memjeveux", float), 512.0)
+        self.assertEqual(export.get_argument_value("memory", float), 4096.0)
+        self.assertEqual(export.get_argument_value("max_base", float), 1000.0)
+        self.assertEqual(export.get_argument_value("continue", bool), True)
+        self.assertEqual(export.get_argument_value("abort", bool), True)
+        self.assertEqual(export.get_argument_value("tpmax", float), None)
+        self.assertEqual(export.get_argument_value("dbgjeveux", bool), False)
 
 
 result = unittest.main(argv=["asrun01b"], exit=False).result
