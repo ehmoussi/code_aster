@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,9 +40,9 @@ CH_MATER = AFFE_MATERIAU(MAILLAGE=MA,
 
 INSTANTS = DEFI_LIST_REEL(DEBUT=0.0,
                           INTERVALLE=(_F(JUSQU_A=0.1,
-                                         NOMBRE=10,),
+                                         NOMBRE=6,),
                                       _F(JUSQU_A=1.0,
-                                         NOMBRE=10,),),)
+                                         NOMBRE=6,),),)
 
 RAMPE = DEFI_FONCTION(NOM_PARA='INST',
                       VALE=(0.0, 0.0,
@@ -56,12 +56,12 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=INSTANTS),
                                   SUBD_PAS_MINI=0.001),)
 
 # Nombre de calculs :
-nb_calcul = 2
-model = ['D_PLAN_HHO_121', 'D_PLAN_HHO_222']
+nb_calcul = 1
+model = ['D_PLAN_HHO_121']
 
-Test1 = [233.748562074, 233.774109504]
-Test2 = [241.323236201, 241.124053456]
-Test3 = [297.188196281, 297.424746572]
+Test1 = [233.71461587437184]
+Test2 = [241.36700125741766]
+Test3 = [297.0823133922637]
 
 
 for i in range(nb_calcul):
@@ -94,6 +94,7 @@ for i in range(nb_calcul):
                          INCREMENT=_F(LIST_INST=DEFLIST),
                          SOLVEUR=_F(METHODE='MUMPS',),
                          NEWTON=_F(REAC_ITER=1,),
+                         HHO=_F(OPTIMISATION='TEMPS',),
                          ARCHIVAGE=_F(LIST_INST=INSTANTS,),)
 
 # POST TRAITEMENT

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,8 +62,8 @@ L_INST = DEFI_LIST_REEL(DEBUT=0., INTERVALLE=(
 
 
 # Nombre de calculs :
-nb_calcul = 2
-model = ['3D_HHO_121', '3D_HHO_222']
+nb_calcul = 1
+model = ['3D_HHO_121']
 
 
 for i in range(nb_calcul):
