@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
                       ds_system  , ds_print, ds_measure , ds_algorom, sddisc,&
                       sddyna     , numins  , fonact     , ds_contact, valinc,&
                       solalg     , hhoField, meelem  , measse      ,maprec    , matass,&
-                      faccvg     , ldccvg)
+                      faccvg     , ldccvg, condcvg)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
         use HHO_type
@@ -53,7 +53,7 @@ interface
         character(len=19) :: measse(*)
         character(len=19) :: maprec
         character(len=19) :: matass
-        integer :: faccvg
+        integer :: faccvg, condcvg
         integer :: ldccvg
     end subroutine nmprma
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -114,7 +114,7 @@ aster_logical :: lerrit
     character(len=16) :: option
     aster_logical :: l_cont_disc, l_unil, leltc, l_hho
     aster_logical :: l_disp, l_vite, l_acce, l_dyna
-    integer :: ldccvg
+    integer :: ldccvg, condcvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -128,6 +128,7 @@ aster_logical :: lerrit
     mate      = ds_material%field_mate
     varc_refe = ds_material%varc_refe
     ldccvg    = -1
+    condcvg   = -1
 !
 ! --- FONCTIONNALITES ACTIVEES
 !
@@ -189,7 +190,8 @@ aster_logical :: lerrit
             call nmchex(hval_measse, 'MEASSE', 'MERIGI', rigid)
             call hhoPrepMatrix(model, mate, ds_system%merigi, ds_system%vefint, rigid, hhoField,&
                                list_func_acti, hval_meelem, nume_dof, list_load, ds_algopara,&
-                               ds_system, ds_measure, l_cond = ASTER_TRUE, l_asse = ASTER_FALSE)
+                               ds_system, ds_measure, condcvg, &
+                               l_cond = ASTER_TRUE, l_asse = ASTER_FALSE)
         end if
     endif
 !
@@ -243,6 +245,7 @@ aster_logical :: lerrit
 ! --- TRANSFORMATION DES CODES RETOURS EN EVENEMENTS
 !
     call nmcret(sderro, 'LDC', ldccvg)
+    call nmcret(sderro, 'HHO', condcvg)
 !
 ! --- EVENEMENT ERREUR ACTIVE ?
 !

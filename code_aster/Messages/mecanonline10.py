@@ -123,6 +123,10 @@ cata_msg = {
  <Action> On essaie d'adapter le coefficient de pénalisation.
  """),
 
+    36  : _("""
+ <Erreur> Échec dans la condensation statique pour la modélisation HHO
+"""),
+
     42 : _(""" <Action><Échec> On a déjà choisi l'autre solution de pilotage."""),
 
     43 : _(""" <Action> On choisit l'autre solution de pilotage."""),
@@ -133,5 +137,7 @@ cata_msg = {
 
     46 : _("""          Sur la zone <%(i1)d>, le coefficient de pénalisation adapté vaut <%(r1)13.6G>.
  """),
+
+
 
 }
