@@ -22,12 +22,31 @@ import os.path as osp
 import tempfile
 from glob import glob
 from math import log10
+from subprocess import run
 
 from .config import CFG
 from .execute import execute
 from .export import Export
 from .logger import logger
 from .utils import copy, gunzip, make_writable
+
+from contextlib import contextmanager
+
+@contextmanager
+def temporary_dir(delete=True):
+    """"""
+    previous = os.getcwd()
+    if delete:
+        with tempfile.TemporaryDirectory(prefix="run_aster_",
+                                         dir=CFG.get("tmpdir")) as wrkdir:
+            os.chdir(wrkdir)
+            yield wrkdir
+            os.chdir(previous)
+    else:
+        wrkdir = tempfile.mkdtemp(prefix="run_aster_", dir=CFG.get("tmpdir"))
+        os.chdir(wrkdir)
+        yield wrkdir
+        os.chdir(previous)
 
 
 class RunAster:
@@ -41,22 +60,9 @@ class RunAster:
         self.export_file = osp.abspath(export_file)
         self._orig = osp.dirname(self.export_file)
         self.export = Export(self.export_file)
-        self.workdir = None
         self.jobnum = str(os.getpid())
         logger.debug(f"Export file: {self.export_file}")
         logger.debug(self.export)
-
-    def wrk(self, path):
-        """Return the absolute path of a pathname that may be relative to the
-        working directory.
-
-        Arguments:
-            path (str): Path, relative to the working directory.
-
-        Returns:
-            str: Absolute path.
-        """
-        return osp.normpath(osp.join(self.workdir, path))
 
     def exp(self, path):
         """Return the absolute path of a pathname that may be relative to the
@@ -70,40 +76,24 @@ class RunAster:
         """
         return osp.normpath(osp.join(self._orig, path))
 
-    def run(self):
+    def execute(self):
         """Execution in a temporary directory."""
-        previous = os.getcwd()
-        with tempfile.TemporaryDirectory(prefix="run_aster_",
-                                         dir=CFG.get("tmpdir")) as workdir:
-            self.workdir = workdir
-            os.chdir(workdir)
-            exit_code = self._run()
-            os.chdir(previous)
+        self.prepare_current_directory()
+        exit_code = self.execute_study()
+        # Copying results
         return exit_code
 
-    def _run(self):
+    def prepare_current_directory(self):
         """Execution.
-
-        Returns:
-            int: 0 if the execution is successful, non null otherwise.
         """
         # add reptrav to LD_LIBRARY_PATH (to find dynamic libs provided by user)
         old = os.environ.get("LD_LIBRARY_PATH", "")
-        new = (self.workdir + os.pathsep + old).strip(os.pathsep)
+        new = (os.getcwd() + os.pathsep + old).strip(os.pathsep)
         os.environ["LD_LIBRARY_PATH"] = new
 
-        copy(self.export_file, self.wrk(self.jobnum + ".export"))
-        os.makedirs(self.wrk("REPE_OUT"))
-
+        copy(self.export_file, self.jobnum + ".export")
+        os.makedirs("REPE_OUT")
         copy_datafiles(self.export.datafiles)
-
-        logger.info(f"Content of directory '{self.workdir}' before execution:")
-        os.system('ls -la')
-        # Execution
-        self.execute_study()
-        # Copying results
-
-        return 0
 
     def command_line(self, commfile):
         """Build the command line.
@@ -121,12 +111,18 @@ class RunAster:
         return cmd
 
     def execute_study(self):
-        """Execute the study."""
-        commfiles = [i for i in self.export.datafiles if i.filetype == "comm"]
+        """Execute the study.
+
+        Returns:
+            int: 0 if the execution is successful, non null otherwise.
+        """
+        logger.info(f"Content of {os.getcwd()} before execution:")
+        run(["ls", "-l"])
+        commfiles = glob("fort.1.*")
         for comm in commfiles:
-            cmd = self.command_line(comm.path)
+            cmd = self.command_line(comm)
 
-
+        return 0
 
 def copy_datafiles(files):
     """Copy data files into the working directory.
