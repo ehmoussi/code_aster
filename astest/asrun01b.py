@@ -264,7 +264,9 @@ class TestCommandFiles(unittest.TestCase):
             "FIN(PROC0='OUI')"
         ])
         res = stop_at_end(text)
-        self.assertEqual(res, "DEBUT()\nraise EOFError\nFIN(PROC0='OUI')")
+        self.assertIn("DEBUT()", res)
+        self.assertIn("raise EOFError", res)
+        self.assertIn("FIN(PROC0='OUI')", res)
 
 
 if __name__ == "__main__":
