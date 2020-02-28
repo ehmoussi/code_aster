@@ -34,6 +34,7 @@ global access (no C interface currently)...
 """
 
 import logging
+import os
 import sys
 import tempfile
 from functools import partial
@@ -55,18 +56,18 @@ class PerLevelFormatter(logging.Formatter):
 
     """Formatter for messages"""
 
-    def _adjust_format(self, level):
-        """Adjust the format for the given level"""
-        if level != logging.INFO:
-            self._fmt = "%(levelname)-7s %(message)s"
-        else:
-            self._fmt = "%(message)s"
+    formats = {
+        ERROR: "ERROR: %(msg)s",
+        WARNING: "WARNING: %(msg)s",
+        INFO: "%(msg)s",
+        DEBUG: "DEBUG: %(msg)s",
+    }
 
     def format(self, record):
         """Enhance error and warning messages"""
-        lvl = record.levelno
-        self._adjust_format(lvl)
-        return logging.Formatter.format(self, record)
+        log_fmt = self.formats.get(record.levelno, self.formats[INFO])
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
 
 
 class PerLevelColorFormatter(PerLevelFormatter):
@@ -76,9 +77,9 @@ class PerLevelColorFormatter(PerLevelFormatter):
     def _adjust_color(self, level):
         """Choose a color function according to the level"""
         func = lambda message: message
-        if level >= logging.ERROR:
+        if level >= ERROR:
             func = red
-        elif level >= logging.WARNING:
+        elif level >= WARNING:
             func = blue
         return func
 
@@ -96,7 +97,7 @@ class HgStreamHandler(logging.StreamHandler):
     def _adjust_stream(self, level):
         """Adjust the stream according to the given level"""
         self.flush()
-        if level >= logging.WARNING:
+        if level >= WARNING:
             self.stream = sys.stderr
         else:
             self.stream = sys.stdout
@@ -107,7 +108,7 @@ class HgStreamHandler(logging.StreamHandler):
         return logging.StreamHandler.emit(self, record)
 
 
-def build_logger(level=logging.INFO, raise_exception=True):
+def build_logger(level=INFO, raise_exception=True):
     """Initialize the logger with its handlers.
 
     Arguments:
@@ -121,6 +122,8 @@ def build_logger(level=logging.INFO, raise_exception=True):
     logger = logging.getLogger("code_aster")
     # keep only debug, info and error
     logger.critical = logger.fatal = None
+    if int(os.getenv("DEBUG", 0)):
+        level = DEBUG
     logger.setLevel(level)
     term = HgStreamHandler(sys.stdout)
     term.setFormatter(PerLevelFormatter())
