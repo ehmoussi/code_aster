@@ -22,7 +22,9 @@ import os
 import os.path as osp
 import shutil
 import stat
+import sys
 from glob import glob
+from subprocess import PIPE, STDOUT, Popen
 
 from run_aster.logger import logger
 
@@ -74,3 +76,26 @@ def make_writable(filename):
         filename (str): File name.
     """
     os.chmod(filename, os.stat(filename).st_mode | stat.S_IWUSR)
+
+
+def run_command(cmd, logfile):
+    """Execute a command and duplicate output to `logfile`.
+
+    Arguments:
+        logfile (file-object): File-object (opened with 'wb').
+
+    Returns:
+        int: exit code.
+    """
+    with Popen(cmd, stdout=PIPE, stderr=STDOUT) as proc:
+        while True:
+            byte = proc.stdout.read(1)
+            if byte:
+                sys.stdout.buffer.write(byte)
+                sys.stdout.flush()
+                logfile.write(byte)
+                # logfile.flush()
+            else:
+                break
+        iret = proc.returncode
+    return iret

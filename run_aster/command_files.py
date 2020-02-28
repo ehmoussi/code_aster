@@ -68,5 +68,11 @@ def stop_at_end(text):
         str: Changed content.
     """
     refin = re.compile(r"^(?P<cmd>FIN *\()", re.M)
-    text = refin.sub("raise EOFError\n\\g<cmd>", text)
+    subst = "\n".join([
+        "print('Type <Enter> to enter in interactive mode "
+        "(it is normal to see EOFError).')",
+        "raise EOFError",
+        r"\g<cmd>"
+    ])
+    text = refin.sub(subst, text)
     return text

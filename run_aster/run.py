@@ -30,7 +30,7 @@ from .config import CFG
 from .execute import execute
 from .export import Export
 from .logger import logger
-from .utils import copy, gunzip, make_writable
+from .utils import copy, gunzip, make_writable, run_command
 
 
 @contextmanager
@@ -118,7 +118,7 @@ class RunAster:
             int: 0 if the execution is successful, non null otherwise.
         """
         logger.info(f"TITLE Content of {os.getcwd()} before execution:")
-        run(["ls", "-l"])
+        run(["ls", "-l", ".", "REPE_IN"])
         commfiles = glob("fort.1.*")
         if not commfiles:
             logger.error("no .comm file found")
@@ -138,10 +138,16 @@ class RunAster:
             if not self.export.get("hide-command"):
                 logger.info(f"\nContent of the file to execute:\n{text}\n")
 
-            proc = run(cmd)
-            iret = proc.returncode
+            with open("exec.output", "wb") as log:
+                iret = run_command(cmd, log)
             if iret != 0:
                 logger.info(f"\n <I>_EXIT_CODE = {iret}\n\n")
+            # TODO diag
+            # TODO backup bases
+        # TODO coredump analysis
+
+        logger.info(f"TITLE Content of {os.getcwd()} after execution:")
+        run(["ls", "-l", ".", "REPE_OUT"])
 
         return iret
 
