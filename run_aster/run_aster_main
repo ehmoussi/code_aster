@@ -36,13 +36,13 @@ except ImportError:
 
 
 try:
-    from run_aster import RunAster
+    import run_aster
 except ImportError:
     root = osp.dirname(osp.dirname(osp.abspath(__file__)))
     lib = osp.join(root, "lib", "aster")
     sys.path.append(lib)
-    from run_aster import RunAster
 
+from run_aster.run import RunAster, temporary_dir
 from run_aster.logger import DEBUG, logger
 
 
@@ -64,6 +64,8 @@ def parse_args(argv):
                              "DEBUG=1 in environment)")
     parser.add_argument('--ptvsd', action='store', type=int,
                         help="ptvsd port number")
+    parser.add_argument('-w', '--wrkdir', action='store',
+                        help="use this existing directory as working directory")
     parser.add_argument('export', metavar='EXPORT',
                         help="Export file defining the calculation.")
 
@@ -87,7 +89,12 @@ def main(argv=None):
         ptvsd.break_into_debugger()
 
     calc = RunAster(args.export)
-    calc.run()
+    if args.wrkdir:
+        os.chdir(args.wrkdir)
+        calc.execute()
+    else:
+        with temporary_dir():
+            calc.execute()
 
 
 if __name__ == '__main__':
