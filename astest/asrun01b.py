@@ -32,6 +32,7 @@ from run_aster.export import (Export, File, Parameter, ParameterBool,
                               ParameterFloat, ParameterInt, ParameterListStr,
                               ParameterStr)
 from run_aster.logger import ERROR, logger
+from run_aster.command_files import add_import_commands, stop_at_end
 
 # run silently
 logger.setLevel(ERROR + 1)
@@ -69,7 +70,7 @@ class TestParameter(unittest.TestCase):
         self.assertEqual(para.value, "2 debug")
 
     def test_bool(self):
-        para = ParameterBool("hide-command")
+        para = ParameterBool("interact")
         para.set([])
         self.assertTrue(para.value)
         para.set(False)
@@ -236,6 +237,34 @@ class TestExport(unittest.TestCase):
         # how to disable a bool parameter
         param.set(False)
         self.assertFalse(export.get("hide-command"))
+
+
+class TestCommandFiles(unittest.TestCase):
+    """Check operations on command files"""
+
+    def test_import(self):
+        text = ""
+        res = add_import_commands(text)
+        self.assertEqual(res, "# coding=utf-8\n")
+
+        text = "DEBUT()"
+        res = add_import_commands(text)
+        self.assertIn("# coding=utf-8", res)
+        self.assertIn("import code_aster", res)
+        self.assertIn("from code_aster.Commands import *", res)
+        self.assertIn("from math import *", res)
+        self.assertIn("DEBUT()", res)
+
+        res2 = add_import_commands(res)
+        self.assertEqual(res, res2)
+
+    def test_end(self):
+        text = "\n".join([
+            "DEBUT()",
+            "FIN(PROC0='OUI')"
+        ])
+        res = stop_at_end(text)
+        self.assertEqual(res, "DEBUT()\nraise EOFError\nFIN(PROC0='OUI')")
 
 
 if __name__ == "__main__":
