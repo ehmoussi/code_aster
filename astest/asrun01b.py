@@ -28,13 +28,8 @@ import os.path as osp
 import unittest
 from glob import glob
 
-import code_aster
-from code_aster.Commands import *
 from run_aster.export import (Export, File, Parameter, ParameterFloat,
                               ParameterInt, ParameterListStr, ParameterStr)
-
-code_aster.init()
-test = code_aster.TestCase()
 
 
 class TestParameter(unittest.TestCase):
@@ -142,7 +137,9 @@ class TestExport(unittest.TestCase):
     """Check Export object"""
 
     def test(self):
-        fexp = glob("*.export")[0]
+        lfexp = glob("*.export")
+        self.assertEqual(len(lfexp), 1)
+        fexp = lfexp[0]
         with self.assertRaises(FileNotFoundError):
             export = Export(fexp + "XX")
 
@@ -154,10 +151,10 @@ class TestExport(unittest.TestCase):
         self.assertIsNone(export.get_param("consbtc"))
         self.assertEqual(export.get("time_limit"), 60.0)
         self.assertIsNone(export.get("consbtc"))
-        self.assertEqual(len(export.datafiles), 1)
+        self.assertEqual(len(export.datafiles), 2)
         self.assertEqual(len(export.resultfiles), 0)
         comm = [i for i in export.datafiles if i.filetype == "comm"][0]
-        self.assertEqual(osp.basename(comm.path), "asrun01b.py")
+        self.assertEqual(osp.basename(comm.path), "asrun01b.comm")
         self.assertEqual(comm.unit, 1)
         self.assertTrue(comm.data)
 
@@ -204,9 +201,5 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get_argument_value("tpmax", float), 1800.0)
 
 
-result = unittest.main(argv=["asrun01b"], exit=False).result
-
-test.assertTrue( result.wasSuccessful() )
-test.printSummary()
-
-FIN()
+if __name__ == "__main__":
+    unittest.main()
