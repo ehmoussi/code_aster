@@ -29,13 +29,15 @@ implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/HHO_size_module.h"
-#include "asterfort/tecach.h"
-#include "asterfort/writeVector.h"
-#include "asterfort/readVector.h"
+#include "asterfort/jevech.h"
 #include "asterfort/readMatrix.h"
+#include "asterfort/readVector.h"
+#include "asterfort/tecach.h"
 #include "asterfort/writeMatrix.h"
+#include "asterfort/writeVector.h"
 #include "blas/dscal.h"
 #include "blas/dcopy.h"
+#include "jeveux.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -56,7 +58,7 @@ character(len=16), intent(in) :: option, nomte
 !
     type(HHO_Data) :: hhoData
     type(HHO_Cell) :: hhoCell
-    integer :: cbs, fbs, total_dofs, faces_dofs, iret, iad
+    integer :: cbs, fbs, total_dofs, faces_dofs, iret, iad, codret, jcret
     real(kind=8) :: rhs(MSIZE_TDOFS_VEC), rhs_loc(MSIZE_FDOFS_VEC)
     real(kind=8), dimension(MSIZE_FDOFS_VEC, MSIZE_FDOFS_VEC)  :: lhs_loc
     real(kind=8), dimension(MSIZE_TDOFS_VEC, MSIZE_TDOFS_VEC)  :: lhs
@@ -69,6 +71,7 @@ character(len=16), intent(in) :: option, nomte
     l_lhs_sym = ASTER_TRUE
     lhs = 0.d0
     rhs = 0.d0
+    codret = 0
 !
 ! - Get HHO informations
 !
@@ -101,24 +104,32 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Static condensation
 !
-    call hhoCondStaticMeca(hhoCell, hhoData, lhs, rhs, l_lhs_sym, lhs_loc, rhs_loc)
+    call hhoCondStaticMeca(hhoCell, hhoData, lhs, rhs, l_lhs_sym, lhs_loc, rhs_loc, codret)
+!
+! --- Test static condensation
+!
+    if (codret .ne. 0) then
+        call jevech('PCODRET', 'E', jcret)
+        zi(jcret) = codret
+    else
 !
 ! - Copy data
 ! - !!! we have to save the opposite of the residu (the minus is add during the assembling)
 !
-    faces_dofs = total_dofs - cbs
-    call dscal(faces_dofs, -1.d0, rhs_loc, 1)
+        faces_dofs = total_dofs - cbs
+        call dscal(faces_dofs, -1.d0, rhs_loc, 1)
 !
 ! - Copy of rhs_loc in PVECTUR ('OUT' to fill)
 !
-    call writeVector('PVECTUR', faces_dofs, rhs_loc)
+        call writeVector('PVECTUR', faces_dofs, rhs_loc)
 !
 ! - Copy of lhs_loc ('OUT' to fill)
 !
-    if(l_lhs_sym) then
-        call writeMatrix('PMATUUR', faces_dofs, faces_dofs, l_lhs_sym, lhs_loc)
-    else
-        call writeMatrix('PMATUNS', faces_dofs, faces_dofs, l_lhs_sym, lhs_loc)
+        if(l_lhs_sym) then
+            call writeMatrix('PMATUUR', faces_dofs, faces_dofs, l_lhs_sym, lhs_loc)
+        else
+            call writeMatrix('PMATUNS', faces_dofs, faces_dofs, l_lhs_sym, lhs_loc)
+        end if
     end if
 !
 end subroutine

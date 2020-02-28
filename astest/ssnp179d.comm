@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -59,15 +59,15 @@ times = DEFI_LIST_INST(
 )
 
 # Nombre de calculs :
-nb_calcul = 2
-model_ = ['D_PLAN_HHO_121', 'D_PLAN_HHO_222']
+nb_calcul = 1
+model_ = ['D_PLAN_HHO_121']
 
-AY = [7.016499504441331, 7.00378719411895]
-AX = [-6.317053086130687, -6.248657137717466]
-AT = [-1.7072201830160605, -1.2559017584457226]
-CY = [1.478014800124048, 1.4820276983613372]
-CX = [-0.2141497453475518, -0.21448200457279487]
-CT = [0.8118729853174264, 0.8135674860916374]
+AY = [7.016499504441331]
+AX = [-6.317053086130687]
+AT = [-1.7072201830160605]
+CY = [1.478014800124048]
+CX = [-0.2141497453475518]
+CT = [0.8118729853174264]
 
 for i in range(nb_calcul):
 
@@ -98,7 +98,7 @@ for i in range(nb_calcul):
         MODELE=model,
         NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
         SOLVEUR=_F(METHODE='MUMPS'),
-        HHO=_F(STABILISATION='MANUEL', COEF_STAB=E,),
+        HHO=_F(STABILISATION='MANUEL', COEF_STAB=E, OPTIMISATION='TEMPS'),
         INFO=1,
     )
 

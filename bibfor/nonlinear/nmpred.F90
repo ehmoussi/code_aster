@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -106,7 +106,7 @@ aster_logical :: lerrit
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: faccvg, rescvg, ldccvg
+    integer :: faccvg, rescvg, ldccvg, condcvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -132,7 +132,7 @@ aster_logical :: lerrit
                     numins    , valinc         , solalg     , hhoField, matass     , maprec,&
                     ds_contact, sddyna         , meelem     , measse     , veelem,&
                     veasse    , sdnume         , ldccvg     , faccvg,&
-                    rescvg    )
+                    rescvg    , condcvg)
 !
 ! --- PREDICTION PAR EXTRAPOLATION DU PAS PRECEDENT OU PAR DEPLACEMENT
 ! --- CALCULE
@@ -144,7 +144,7 @@ aster_logical :: lerrit
                     fonact, ds_print       , ds_measure, ds_algorom, sddisc     , numins    ,&
                     valinc, solalg         , matass    , maprec     , ds_contact,&
                     sddyna, meelem         , measse    , veelem     , veasse    ,&
-                    ldccvg, faccvg         , rescvg)
+                    ldccvg, faccvg         , rescvg    , condcvg)
     else
         ASSERT(ASTER_FALSE)
     endif
@@ -154,6 +154,7 @@ aster_logical :: lerrit
     call nmcret(sderro, 'LDC', ldccvg)
     call nmcret(sderro, 'FAC', faccvg)
     call nmcret(sderro, 'RES', rescvg)
+    call nmcret(sderro, 'HHO', condcvg)
 !
 ! --- EVENEMENT ERREUR ACTIVE ?
 !

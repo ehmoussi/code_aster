@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -325,6 +325,7 @@ class MECA_DPQ8_HHO222(Element):
                       (OP.HHO_COND_MECA.PMATUNS, MMATUNS),
                       (OP.HHO_COND_MECA.PMATUUR, MMATUUR),
                       (OP.HHO_COND_MECA.PVECTUR, MVECTUR),
+                      (SP.PCODRET, LC.ECODRET),
                     ),
         ),
 

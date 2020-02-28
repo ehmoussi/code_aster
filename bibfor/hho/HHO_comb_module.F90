@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -220,7 +220,7 @@ contains
 !
     subroutine hhoPrepMatrix(model         , mate       , merigi  , vefint   , rigid, hhoField,&
                              list_func_acti, hval_meelem, nume_dof, list_load, ds_algopara,&
-                             ds_system, ds_measure, l_cond        , l_asse)
+                             ds_system, ds_measure, index_success , l_cond        , l_asse)
 !
     implicit none
 !
@@ -236,6 +236,7 @@ contains
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Measure), intent(inout) :: ds_measure
         aster_logical, intent(in) :: l_cond, l_asse
+        integer, intent(out)      :: index_success
 !
 ! --------------------------------------------------------------------------------------------------
 !   HHO - mechanics
@@ -247,6 +248,7 @@ contains
 !   In vefint       : name of the resultant rigidity vector
 !   In hhoField     : fields for HHO
 !   IO  ds_measure  : datastructure for measure and statistics management
+!   Out index_success :  0 if success / 1  if fails
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -283,7 +285,7 @@ contains
 !
             call nmtime(ds_measure, 'Init', 'HHO_Cond')
             call nmtime(ds_measure, 'Launch', 'HHO_Cond')
-            call hhoMecaCondOP(model, hhoField, merigi, vefint)
+            call hhoMecaCondOP(model, hhoField, merigi, vefint, index_success)
             call nmtime(ds_measure, 'Stop', 'HHO_Cond')
         endif
 !
