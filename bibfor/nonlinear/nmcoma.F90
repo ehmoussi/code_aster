@@ -141,7 +141,7 @@ integer :: faccvg, ldccvg
     character(len=24) :: model
     aster_logical :: renume
     integer :: ifm, niv
-    integer :: nb_matr, ibid
+    integer :: nb_matr, ibid, condcvg
     character(len=6) :: list_matr_type(20)
     character(len=16) :: list_calc_opti(20), list_asse_opti(20)
     aster_logical :: list_l_asse(20), list_l_calc(20)
@@ -161,6 +161,7 @@ integer :: faccvg, ldccvg
     model = modelz
     faccvg = -1
     ldccvg = -1
+    condcvg = -1
     renume = ASTER_FALSE
     lcamor = ASTER_FALSE
 !
@@ -280,7 +281,8 @@ integer :: faccvg, ldccvg
     if (l_hho) then
         call hhoPrepMatrix(modelz, ds_material%field_mate, ds_system%merigi, ds_system%vefint, &
                            rigid, hhoField, list_func_acti, meelem, numedd, lischa, ds_algopara, &
-                           ds_system, ds_measure, l_cond = ASTER_FALSE, l_asse = ASTER_TRUE)
+                           ds_system, ds_measure, condcvg,&
+                           l_cond = ASTER_FALSE, l_asse = ASTER_TRUE)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE

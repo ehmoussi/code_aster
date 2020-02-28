@@ -23,7 +23,7 @@ subroutine nmprma(mesh       , modelz     , ds_material, carele    , ds_constitu
                   ds_print   , ds_measure , ds_algorom, sddisc         ,&
                   sddyna     , numins     , fonact    , ds_contact     ,&
                   valinc     , solalg     , hhoField  , meelem    , measse,&
-                  maprec     , matass     , faccvg    , ldccvg)
+                  maprec     , matass     , faccvg    , ldccvg    , condcvg)
 !
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
@@ -83,7 +83,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 character(len=19) :: maprec, matass
 character(len=8) :: partit
 aster_logical :: ldist
-integer :: faccvg, ldccvg
+integer :: faccvg, ldccvg, condcvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -131,7 +131,10 @@ integer :: faccvg, ldccvg
 !                 1 : ECHEC DE L'INTEGRATION DE LA LDC
 !                 2 : ERREUR SUR LA NON VERIF. DE CRITERES PHYSIQUES
 !                 3 : SIZZ PAS NUL POUR C_PLAN DEBORST
-!
+! OUT CONDCVG : CODE RETOUR DE LA CONDANSATION STATIQUE
+!                -1 : PAS DE CONDENSATION
+!                 0 : CAS DU FONCTIONNEMENT NORMAL
+!                 1 : ECHEC DE LA CONDENSATION
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: reasma, renume, lmhpc
@@ -174,6 +177,7 @@ integer :: faccvg, ldccvg
     list_matr_type(1:20) = ' '
     faccvg = -1
     ldccvg = -1
+    condcvg = -1
     iterat = 0
     lcamor = ASTER_FALSE
 !
@@ -271,7 +275,7 @@ integer :: faccvg, ldccvg
     if (l_hho) then
         call hhoPrepMatrix(modelz, ds_material%field_mate, ds_system%merigi, ds_system%vefint, &
                            rigid, hhoField, fonact, meelem, numedd, lischa, ds_algopara, ds_system,&
-                           ds_measure, l_cond = ASTER_TRUE, l_asse = ASTER_TRUE)
+                           ds_measure, condcvg, l_cond = ASTER_TRUE, l_asse = ASTER_TRUE)
     endif
 !
 ! --- CALCUL ET ASSEMBLAGE DES MATR_ELEM DE LA LISTE

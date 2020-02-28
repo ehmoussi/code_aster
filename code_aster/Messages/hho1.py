@@ -72,4 +72,7 @@ Condensation statique: la matrice de la cellule n'est pas factorisable
     Conseil: Essayez d'augmenter le coefficient de stabilisation
 """),
 
+    14: _("""
+Condensation statique: le code retour %(i1)d n'est pas traité
+"""),
 }

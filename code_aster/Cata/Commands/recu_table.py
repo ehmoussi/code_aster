@@ -27,8 +27,9 @@ RECU_TABLE=OPER(nom="RECU_TABLE",op= 174,sd_prod=table_sdaster,
          fr=tr("Récupérer dans une table les valeurs d'un paramètre d'une SD Résultat ou d'extraire une table contenue"
              " dans une autre SD pour celles qui le permettent"),
          CO              =SIMP(statut='o',typ=assd),
-         regles=(UN_PARMI('NOM_TABLE','NOM_PARA')),
+         regles=(UN_PARMI('NOM_TABLE','NOM_PARA','TOUT_PARA')),
          NOM_TABLE       =SIMP(statut='f',typ='TXM' ),
          NOM_PARA        =SIMP(statut='f',typ='TXM',max='**'),
+         TOUT_PARA       =SIMP(statut='f',typ='TXM', into=('OUI',), ),
          TITRE           =SIMP(statut='f',typ='TXM'),
 )  ;

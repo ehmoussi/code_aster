@@ -26,6 +26,10 @@ cata_msg = {
  la configuration étudiée est du type "FAISCEAU_TRANS"
 """),
 
+    3 : _("""
+ Le concept fourni ne possède aucun paramètre.
+"""),
+
     4 : _("""
  le nom d'un paramètre ne peut pas dépasser 16 caractères
 """),
@@ -36,10 +40,6 @@ cata_msg = {
 
     6 : _("""
  seuls les paramètres de types réel, entier ou complexe sont traites
-"""),
-
-    7 : _("""
- erreur DPVP_2
 """),
 
     8 : _("""
