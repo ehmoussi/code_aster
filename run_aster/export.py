@@ -335,7 +335,8 @@ class Export:
         self._pargs.set(self.args + new)
 
     def check(self):
-        """Check consistency, add arguments that replace deprecated ones...
+        """Check consistency, fill arguments from parameter, add arguments
+        that replace deprecated ones...
         """
         args = self.args
         # memory_limit in MB, --memory in MB (required), --memjeveux in Mwords
@@ -361,6 +362,13 @@ class Export:
                 self.set_argument(["--tpmax", value])
                 if not self.has_param("time_limit"):
                     self.set_parameter("time_limit", value)
+        # ncpus/numthreads
+        if "--numthreads" not in args:
+            value = self.get("ncpus") # TODO or get limit from config
+            if value:
+                self.set_argument(["--numthreads", value])
+        # TODO check resources limits here?
+
 
     def __repr__(self):
         """Return a representation of the Export object.

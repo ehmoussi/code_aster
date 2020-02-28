@@ -62,4 +62,4 @@ class Config:
         return self._cfg.get(key, default)
 
 
-config = Config(osp.join(ROOT, "share", "aster", "config.js"))
+CFG = Config(osp.join(ROOT, "share", "aster", "config.js"))

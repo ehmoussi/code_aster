@@ -23,7 +23,7 @@ import tempfile
 from glob import glob
 from math import log10
 
-from .config import config
+from .config import CFG
 from .execute import execute
 from .export import Export
 from .logger import logger
@@ -74,7 +74,7 @@ class RunAster:
         """Execution in a temporary directory."""
         previous = os.getcwd()
         with tempfile.TemporaryDirectory(prefix="run_aster_",
-                                         dir=config.get("tmpdir")) as workdir:
+                                         dir=CFG.get("tmpdir")) as workdir:
             self.workdir = workdir
             os.chdir(workdir)
             exit_code = self._run()
@@ -105,22 +105,26 @@ class RunAster:
 
         return 0
 
-    def command_line(self):
+    def command_line(self, commfile):
         """Build the command line.
 
         Returns:
             list[str]: List of command line arguments.
         """
-        cmd = [config.get("python")]
+        cmd = [CFG.get("python")]
         if self.export.has_param("interact"):
             cmd.append("-i")
-        # TODO add pid + mode to identify the process
+        cmd.append(commfile)
         cmd.extend(self.export.args)
-
+        # TODO add pid + mode to identify the process
+        logger.debug(f"command line: {cmd}")
         return cmd
 
     def execute_study(self):
         """Execute the study."""
+        commfiles = [i for i in self.export.datafiles if i.filetype == "comm"]
+        for comm in commfiles:
+            cmd = self.command_line(comm.path)
 
 
 

@@ -54,18 +54,18 @@ class PerLevelFormatter(logging.Formatter):
 
     """Formatter for messages"""
 
-    def _adjust_format(self, level):
-        """Adjust the format for the given level"""
-        if level != INFO:
-            self._fmt = "%(levelname)-7s %(message)s"
-        else:
-            self._fmt = "%(message)s"
+    formats = {
+        ERROR: "ERROR: %(msg)s",
+        WARNING: "WARNING: %(msg)s",
+        INFO: "%(msg)s",
+        DEBUG: "DEBUG: %(msg)s",
+    }
 
     def format(self, record):
         """Enhance error and warning messages"""
-        lvl = record.levelno
-        self._adjust_format(lvl)
-        return logging.Formatter.format(self, record)
+        log_fmt = self.formats.get(record.levelno, self.formats[INFO])
+        formatter = logging.Formatter(log_fmt)
+        return formatter.format(record)
 
 
 class PerLevelColorFormatter(PerLevelFormatter):

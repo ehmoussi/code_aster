@@ -30,6 +30,10 @@ from glob import glob
 
 from run_aster.export import (Export, File, Parameter, ParameterFloat,
                               ParameterInt, ParameterListStr, ParameterStr)
+from run_aster.logger import ERROR, logger
+
+# run silently
+logger.setLevel(ERROR + 1)
 
 
 class TestParameter(unittest.TestCase):
