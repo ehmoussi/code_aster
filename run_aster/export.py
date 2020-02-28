@@ -22,7 +22,9 @@ import os.path as osp
 import platform
 import re
 
+from .config import CFG
 from .logger import logger
+
 
 DEPRECATED = "__DEPRECATED__"
 
@@ -31,6 +33,7 @@ PARAMS_TYPE = {
     "debug": "str",
     "expected_diag": "list[str]",
     "facmtps": "float",
+    "hide-command": "bool",
     "memjob": "int",
     "memory_limit": "float",
     "mode": "str",
@@ -76,6 +79,8 @@ class Parameter:
             return None
         if typ is "str":
             klass = ParameterStr
+        elif typ is "bool":
+            klass = ParameterBool
         elif typ is "int":
             klass = ParameterInt
         elif typ is "float":
@@ -126,6 +131,19 @@ class ParameterStr(Parameter):
         if isinstance(value, (list, tuple)):
             value = " ".join([str(i) for i in value])
         return str(value)
+
+
+class ParameterBool(Parameter):
+    """A parameter defined in a Export object of type boolean."""
+
+    def _convert(self, value):
+        if isinstance(value, (list, tuple)):
+            value = " ".join([str(i) for i in value])
+        if value == "":
+            value = True
+        elif value == "False":
+            value = False
+        return bool(value)
 
 
 class ParameterInt(Parameter):
@@ -258,7 +276,7 @@ class Export:
         self._pargs = ParameterListStr("args")
         self._pargs.set([])
         self._files = []
-        self._read = False
+        self._done = False
         self.parse()
 
     @property
@@ -275,9 +293,11 @@ class Export:
         """Parse the export content.
 
         Arguments:
-            force (bool): Force reloading of the export file.
+            force (bool): Force reloading and checking the export file.
         """
-        if self._read and not force:
+        if force:
+            self._done = False
+        if self._done:
             return
 
         comment = re.compile("^ *#")
@@ -305,7 +325,7 @@ class Export:
                              "D" in drc, "R" in drc, "C" in drc)
                 self._files.append(entry)
         self.check()
-        self._read = True
+        self._done = True
 
     def set_parameter(self, name, value):
         """Add a parameter.
@@ -343,13 +363,18 @@ class Export:
         if "--memory" not in args:
             value = None
             if "--memjeveux" in args:
-                idx = args.index("--memjeveux") + 1
-                if idx < len(args):
+                idx = args.index("--memjeveux")
+                # should have a value
+                if idx + 1 < len(args):
+                    # remove this old option
+                    del self._pargs.value[idx:idx + 2]
                     factor = 8 if "64" in platform.architecture()[0] else 4
-                    value = float(args[idx]) * factor
+                    value = float(args[idx + 1]) * factor
             elif self.has_param("memory_limit"):
                 value = self.get("memory_limit")
             if value:
+                if not self._done:
+                    value += CFG.get("addmem", 0.)
                 self.set_argument(["--memory", value])
         # time_limit in s (required), tpsjob in min, --tpmax in s (required)
         if "--tpmax" not in args:

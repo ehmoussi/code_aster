@@ -28,8 +28,9 @@ import os.path as osp
 import unittest
 from glob import glob
 
-from run_aster.export import (Export, File, Parameter, ParameterFloat,
-                              ParameterInt, ParameterListStr, ParameterStr)
+from run_aster.export import (Export, File, Parameter, ParameterBool,
+                              ParameterFloat, ParameterInt, ParameterListStr,
+                              ParameterStr)
 from run_aster.logger import ERROR, logger
 
 # run silently
@@ -39,7 +40,7 @@ logger.setLevel(ERROR + 1)
 class TestParameter(unittest.TestCase):
     """Check Parameter objects"""
 
-    def test00_factory(self):
+    def test_factory(self):
         para = Parameter.factory("debug")
         self.assertIsInstance(para, ParameterStr)
         para = Parameter.factory("mpi_nbcpu")
@@ -55,7 +56,7 @@ class TestParameter(unittest.TestCase):
         para = Parameter.factory("service")
         self.assertIsNone(para)
 
-    def test01_str(self):
+    def test_str(self):
         para = ParameterStr("debug")
         self.assertIsNone(para.value)
         para.set("nodebug")
@@ -67,7 +68,26 @@ class TestParameter(unittest.TestCase):
         para.set([2, "debug"])
         self.assertEqual(para.value, "2 debug")
 
-    def test02_int(self):
+    def test_bool(self):
+        para = ParameterBool("hide-command")
+        para.set([])
+        self.assertTrue(para.value)
+        para.set(False)
+        self.assertFalse(para.value)
+        para.set(True)
+        self.assertTrue(para.value)
+        para.set(0)
+        self.assertFalse(para.value)
+        para.set("ok")
+        self.assertTrue(para.value)
+        para.set("False")
+        self.assertFalse(para.value)
+        para.set("True")
+        self.assertTrue(para.value)
+        para.set([16.0, 32.0])
+        self.assertTrue(para.value)
+
+    def test_int(self):
         para = ParameterInt("mpi_nbcpu")
         self.assertIsNone(para.value)
         para.set(2)
@@ -81,7 +101,7 @@ class TestParameter(unittest.TestCase):
         with self.assertRaises(ValueError):
             para.set([16.0, 32.0])
 
-    def test03_float(self):
+    def test_float(self):
         para = ParameterFloat("memory_limit")
         self.assertIsNone(para.value)
         para.set(2048)
@@ -95,7 +115,7 @@ class TestParameter(unittest.TestCase):
         with self.assertRaises(ValueError):
             para.set([16.0, 32.0])
 
-    def test01_liststr(self):
+    def test_liststr(self):
         para = ParameterListStr("testlist")
         self.assertIsNone(para.value)
         para.set([])
@@ -163,18 +183,20 @@ class TestExport(unittest.TestCase):
         self.assertTrue(comm.data)
 
     def test_args(self):
+        # memory is taken from memjeveux (that is removed) + addmem
         text = "\n".join([
             "A args --continue --memjeveux=512",
             "A max_base 1000",
             "A abort",
         ])
         export = Export(from_string=text)
+        memory = export.get_argument_value("memory", float) # with addmem
+        self.assertGreaterEqual(memory, 4096.0)
         self.assertSequenceEqual(export.args,
-            ["--continue", "--memjeveux", "512",
+            ["--continue",
              "--max_base", "1000", "--abort",
-             "--memory", "4096.0"])
-        self.assertEqual(export.get_argument_value("memjeveux", float), 512.0)
-        self.assertEqual(export.get_argument_value("memory", float), 4096.0)
+             "--memory", str(memory)])
+        self.assertIsNone(export.get_argument_value("memjeveux", float))
         self.assertEqual(export.get_argument_value("max_base", float), 1000.0)
         self.assertEqual(export.get_argument_value("continue", bool), True)
         self.assertEqual(export.get_argument_value("abort", bool), True)
@@ -184,8 +206,8 @@ class TestExport(unittest.TestCase):
     def test_memory(self):
         text = "P memory_limit 4096.0"
         export = Export(from_string=text)
-        self.assertEqual(export.get("memory_limit"), 4096.0)
-        self.assertEqual(export.get_argument_value("memory", float), 4096.0)
+        self.assertGreaterEqual(export.get("memory_limit"), 4096.0)
+        self.assertGreaterEqual(export.get_argument_value("memory", float), 4096.0)
 
     def test_time(self):
         text = "P tpsjob 60"
@@ -203,6 +225,17 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get("tpsjob"), 60)
         self.assertEqual(export.get("time_limit"), 1800.0)
         self.assertEqual(export.get_argument_value("tpmax", float), 1800.0)
+
+    def test_bool(self):
+        text = "P hide-command"
+        export = Export(from_string=text)
+        self.assertTrue(export.has_param("hide-command"))
+        param = export.get_param("hide-command")
+        self.assertIsInstance(param, ParameterBool)
+        self.assertTrue(export.get("hide-command"))
+        # how to disable a bool parameter
+        param.set(False)
+        self.assertFalse(export.get("hide-command"))
 
 
 if __name__ == "__main__":

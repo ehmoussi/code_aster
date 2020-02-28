@@ -24,10 +24,12 @@ import shutil
 import stat
 from glob import glob
 
+from run_aster.logger import logger
+
 ROOT = osp.dirname(osp.dirname(osp.dirname(osp.dirname(osp.abspath(__file__)))))
 
 
-def copy(src, dst):
+def copy(src, dst, verbose=False):
     """Copy the file or directory `src` to the file or directory `dst`.
     If `dst` specifies a directory, the files will be copied into `dst` using
     the base filenames from `src`.
@@ -35,7 +37,11 @@ def copy(src, dst):
     Arguments:
         src (str): File or directory to be copied.
         dst (str): Destination.
+        verbose (bool): Verbosity.
     """
+    if verbose:
+        tailsrc = src if len(src) < 60 else "[...]" + src[-60:]
+        logger.info(f"copying {tailsrc}...")
     if osp.isfile(src):
         shutil.copy2(src, dst)
     else:
