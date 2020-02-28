@@ -64,10 +64,13 @@ def parse_args(argv):
     parser.add_argument('-g', '--debug', action='store_true',
                         help="print debugging information (same as "
                              "DEBUG=1 in environment)")
-    parser.add_argument('--ptvsd', action='store', type=int,
-                        help="ptvsd port number")
+    parser.add_argument('-i', '--interactive', action='store_true',
+                        help="inspect interactively after running script"
+                             "instead of calling FIN command")
     parser.add_argument('-w', '--wrkdir', action='store',
                         help="use this existing directory as working directory")
+    parser.add_argument('--ptvsd', action='store', type=int,
+                        help="ptvsd port number")
     parser.add_argument('export', metavar='EXPORT',
                         help="Export file defining the calculation.")
 
@@ -93,6 +96,8 @@ def main(argv=None):
         ptvsd.break_into_debugger()
 
     calc = RunAster(args.export)
+    if args.interactive:
+        calc.use_interactive(True)
     if args.wrkdir:
         os.chdir(args.wrkdir)
         calc.execute()

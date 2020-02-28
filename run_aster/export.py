@@ -34,6 +34,7 @@ PARAMS_TYPE = {
     "expected_diag": "list[str]",
     "facmtps": "float",
     "hide-command": "bool",
+    "interact": "bool",
     "memjob": "int",
     "memory_limit": "float",
     "mode": "str",
@@ -366,8 +367,7 @@ class Export:
                 idx = args.index("--memjeveux")
                 # should have a value
                 if idx + 1 < len(args):
-                    # remove this old option
-                    del self._pargs.value[idx:idx + 2]
+                    self.remove_args("--memjeveux", 1)
                     factor = 8 if "64" in platform.architecture()[0] else 4
                     value = float(args[idx + 1]) * factor
             elif self.has_param("memory_limit"):
@@ -482,3 +482,26 @@ class Export:
         except argparse.ArgumentError:
             return None
         return getattr(args, key)
+
+    def remove_args(self, key, add):
+        """Remove a command line argument.
+
+        Arguments:
+            key (str): Argument name.
+            add (int): Number of additional argument to remove.
+        """
+        args = self._pargs.value
+        if key not in args:
+            return
+        idx = args.index(key)
+        del args[idx:idx + 1 + add]
+
+    def set_time_limit(self, value):
+        """Define the time limit value.
+
+        Arguments:
+            value (float): New time limit.
+        """
+        self.set_parameter("time_limit", 86400.)
+        self.remove_args("--tpmax", 1)
+        self.check()
