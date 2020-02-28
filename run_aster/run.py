@@ -17,9 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# imports are in a string
+# aslint: disable=C4009
+
 import os
 import os.path as osp
+import re
 import tempfile
+from contextlib import contextmanager
 from glob import glob
 from math import log10
 from subprocess import run
@@ -30,7 +35,6 @@ from .export import Export
 from .logger import logger
 from .utils import copy, gunzip, make_writable
 
-from contextlib import contextmanager
 
 @contextmanager
 def temporary_dir(delete=True):
@@ -86,6 +90,7 @@ class RunAster:
     def prepare_current_directory(self):
         """Execution.
         """
+        logger.info(f"TITLE Prepare environment in {os.getcwd()}")
         # add reptrav to LD_LIBRARY_PATH (to find dynamic libs provided by user)
         old = os.environ.get("LD_LIBRARY_PATH", "")
         new = (os.getcwd() + os.pathsep + old).strip(os.pathsep)
@@ -107,7 +112,6 @@ class RunAster:
         cmd.append(commfile)
         cmd.extend(self.export.args)
         # TODO add pid + mode to identify the process
-        logger.debug(f"command line: {cmd}")
         return cmd
 
     def execute_study(self):
@@ -116,13 +120,29 @@ class RunAster:
         Returns:
             int: 0 if the execution is successful, non null otherwise.
         """
-        logger.info(f"Content of {os.getcwd()} before execution:")
+        logger.info(f"TITLE Content of {os.getcwd()} before execution:")
         run(["ls", "-l"])
         commfiles = glob("fort.1.*")
-        for comm in commfiles:
-            cmd = self.command_line(comm)
+        if not commfiles:
+            logger.error("no .comm file found")
 
-        return 0
+        for idx, comm in enumerate(commfiles):
+            logger.info(f"TITLE Command file #{idx + 1} / {len(commfiles)}")
+            cmd = self.command_line(comm)
+            logger.info(f"    {' '.join(cmd)}")
+
+            text = add_import_commands(comm)
+            with open(comm, 'w') as fobj:
+                fobj.write(text)
+            if not self.export.get("hide-command"):
+                logger.info(f"\nContent of the file to execute:\n{text}\n")
+
+            proc = run(cmd)
+            iret = proc.returncode
+            if iret != 0:
+                logger.info(f"\n <I>_EXIT_CODE = {iret}\n\n")
+
+        return iret
 
 def copy_datafiles(files):
     """Copy data files into the working directory.
@@ -158,7 +178,7 @@ def copy_datafiles(files):
                 dest = 'REPE_IN'
 
         if dest is not None:
-            copy(obj.path, dest)
+            copy(obj.path, dest, verbose=True)
             if obj.compr:
                 dest = gunzip(dest)
             # move the bases in main directory
@@ -167,3 +187,42 @@ def copy_datafiles(files):
                     os.rename(fname, osp.basename(fname))
             # force the file to be writable
             make_writable(dest)
+
+
+AUTO_IMPORT = """
+# temporarly added for compatibility with code_aster legacy
+from math import *
+
+import code_aster
+from code_aster.Commands import *
+
+{starter}"""
+
+def add_import_commands(filename):
+    """Add import of code_aster commands if not present.
+
+    Arguments:
+        filename (str): Path of the comm file to check.
+
+    Returns:
+        str: New file content.
+    """
+    with open(filename, "rb") as fobj:
+        txt = fobj.read().decode(errors='replace')
+
+    re_done = re.compile(r"^from +code_aster\.Commands", re.M)
+    if re_done.search(txt):
+        return txt
+
+    re_init = re.compile("^(?P<init>(DEBUT|POURSUITE))", re.M)
+    if re_init.search(txt):
+        starter = r"\g<init>"
+    else:
+        starter = "code_aster.init()\n"
+    txt = re_init.sub(AUTO_IMPORT.format(starter=starter), txt)
+
+    re_coding = re.compile(r'^#( *(?:|\-\*\- *|en)coding.*)' + '\n', re.M)
+    if not re_coding.search(txt):
+        txt = "# coding=utf-8\n" + txt
+
+    return txt

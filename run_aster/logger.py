@@ -60,10 +60,14 @@ class PerLevelFormatter(logging.Formatter):
         INFO: "%(msg)s",
         DEBUG: "DEBUG: %(msg)s",
     }
+    title = "\n# " + "-" * 78 + "\n"
 
     def format(self, record):
         """Enhance error and warning messages"""
         log_fmt = self.formats.get(record.levelno, self.formats[INFO])
+        if str(record.msg).startswith("TITLE "):
+            log_fmt = self.title + log_fmt
+            record.msg = record.msg.lstrip("TITLE ")
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 

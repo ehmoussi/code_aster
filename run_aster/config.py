@@ -27,6 +27,7 @@ from .utils import ROOT
 DEFAULT_CONFIG = {
     "python": "python3",
     "tmpdir": "/tmp",
+    "addmem": 1024,
 }
 USERCFG = osp.join(os.getenv("HOME", ""), ".run_aster.js")
 

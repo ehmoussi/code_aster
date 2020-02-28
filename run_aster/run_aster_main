@@ -18,6 +18,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# This only to show debug informations as soon as possible
+# aslint: disable=C4008
+
 """
     %(prog)s [options]
 
@@ -42,7 +45,6 @@ except ImportError:
     lib = osp.join(root, "lib", "aster")
     sys.path.append(lib)
 
-from run_aster.run import RunAster, temporary_dir
 from run_aster.logger import DEBUG, logger
 
 
@@ -82,6 +84,8 @@ def main(argv=None):
         argv (list): List of command line arguments.
     """
     args = parse_args(argv or sys.argv[1:])
+    from run_aster.run import RunAster, temporary_dir
+
     if args.ptvsd:
         print('Waiting for debugger attach...'),
         ptvsd.enable_attach(address=('127.0.0.1', args.ptvsd))
