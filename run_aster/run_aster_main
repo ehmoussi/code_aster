@@ -51,6 +51,14 @@ from run_aster.logger import DEBUG, logger
 __DOC__ = __doc__
 
 
+FMT_DIAG = """
+------------------------------------------------------------
+--- DIAGNOSTIC JOB : {state}
+------------------------------------------------------------
+
+EXIT_CODE={exitcode}
+"""
+
 def parse_args(argv):
     """Parse command line arguments.
 
@@ -100,10 +108,11 @@ def main(argv=None):
         calc.use_interactive(True)
     if args.wrkdir:
         os.chdir(args.wrkdir)
-        calc.execute()
+        status = calc.execute()
     else:
         with temporary_dir():
-            calc.execute()
+            status = calc.execute()
+    logger.info(FMT_DIAG.format(state=status.diag, exitcode=status.exitcode))
 
 
 if __name__ == '__main__':

@@ -30,6 +30,7 @@ from .config import CFG
 from .execute import execute
 from .export import Export
 from .logger import logger
+from .status import get_status
 from .utils import copy, gunzip, make_writable, run_command
 
 
@@ -78,11 +79,15 @@ class RunAster:
         return osp.normpath(osp.join(self._orig, path))
 
     def execute(self):
-        """Execution in a temporary directory."""
+        """Execution in a temporary directory.
+
+        Returns:
+            Status: Status object.
+        """
         self.prepare_current_directory()
-        exit_code = self.execute_study()
+        status = self.execute_study()
         # Copying results
-        return exit_code
+        return status
 
     def prepare_current_directory(self):
         """Execution.
@@ -116,7 +121,7 @@ class RunAster:
         """Execute the study.
 
         Returns:
-            int: 0 if the execution is successful, non null otherwise.
+            Status: Status object.
         """
         logger.info(f"TITLE Content of {os.getcwd()} before execution:")
         run(["ls", "-l", ".", "REPE_IN"])
@@ -140,16 +145,17 @@ class RunAster:
                 logger.info(f"\nContent of the file to execute:\n{text}\n")
 
             with open("exec.output", "wb") as log:
-                iret = run_command(cmd, log)
-            logger.info(f"\n <I>_EXIT_CODE = {iret}\n\n")
+                # TODO add timeout
+                exitcode = run_command(cmd, log)
+            logger.info(f"\n <I>_EXIT_CODE = {exitcode}\n\n")
             # TODO diag
+            status = get_status(exitcode, "exec.output")
             # TODO backup bases
         # TODO coredump analysis
 
         logger.info(f"TITLE Content of {os.getcwd()} after execution:")
         run(["ls", "-l", ".", "REPE_OUT"])
-
-        return iret
+        return status
 
 
     def use_interactive(self, value):
