@@ -94,6 +94,7 @@ class RunAster:
         os.environ["LD_LIBRARY_PATH"] = new
 
         copy(self.export_file, self.jobnum + ".export")
+        os.makedirs("REPE_IN")
         os.makedirs("REPE_OUT")
         copy_datafiles(self.export.datafiles)
 
@@ -140,8 +141,7 @@ class RunAster:
 
             with open("exec.output", "wb") as log:
                 iret = run_command(cmd, log)
-            if iret != 0:
-                logger.info(f"\n <I>_EXIT_CODE = {iret}\n\n")
+            logger.info(f"\n <I>_EXIT_CODE = {iret}\n\n")
             # TODO diag
             # TODO backup bases
         # TODO coredump analysis
