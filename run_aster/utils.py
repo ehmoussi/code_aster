@@ -87,15 +87,16 @@ def run_command(cmd, logfile):
     Returns:
         int: exit code.
     """
-    with Popen(cmd, stdout=PIPE, stderr=STDOUT) as proc:
-        while True:
-            byte = proc.stdout.read(1)
-            if byte:
-                sys.stdout.buffer.write(byte)
-                sys.stdout.flush()
-                logfile.write(byte)
-                # logfile.flush()
-            else:
-                break
-        iret = proc.returncode
+    proc = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    while True:
+        byte = proc.stdout.read(1)
+        if byte:
+            sys.stdout.buffer.write(byte)
+            sys.stdout.flush()
+            logfile.write(byte)
+            # logfile.flush()
+        else:
+            break
+    iret = proc.wait()
+    proc.stdout.close()
     return iret
