@@ -78,14 +78,17 @@ class RunAster:
         """
         return osp.normpath(osp.join(self._orig, path))
 
-    def execute(self):
+    def execute(self, test=False):
         """Execution in a temporary directory.
+
+        Arguments:
+            test (bool, optional): *True* for a testcase, *False* for a study.
 
         Returns:
             Status: Status object.
         """
         self.prepare_current_directory()
-        status = self.execute_study()
+        status = self.execute_study(test)
         # Copying results
         return status
 
@@ -117,8 +120,11 @@ class RunAster:
         # TODO add pid + mode to identify the process
         return cmd
 
-    def execute_study(self):
+    def execute_study(self, test=False):
         """Execute the study.
+
+        Arguments:
+            test (bool, optional): *True* for a testcase, *False* for a study.
 
         Returns:
             Status: Status object.
@@ -149,7 +155,7 @@ class RunAster:
                 exitcode = run_command(cmd, log)
             logger.info(f"\n <I>_EXIT_CODE = {exitcode}\n\n")
             # TODO diag
-            status = get_status(exitcode, "exec.output")
+            status = get_status(exitcode, "exec.output", test)
             # TODO backup bases
         # TODO coredump analysis
 
