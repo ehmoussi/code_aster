@@ -28,11 +28,13 @@ import os.path as osp
 import unittest
 from glob import glob
 
+from run_aster.command_files import add_import_commands, stop_at_end
 from run_aster.export import (Export, File, Parameter, ParameterBool,
                               ParameterFloat, ParameterInt, ParameterListStr,
                               ParameterStr)
 from run_aster.logger import ERROR, logger
-from run_aster.command_files import add_import_commands, stop_at_end
+from run_aster.status import StateOptions as SO
+from run_aster.status import Status, get_status
 
 # run silently
 logger.setLevel(ERROR + 1)
@@ -267,6 +269,124 @@ class TestCommandFiles(unittest.TestCase):
         self.assertIn("DEBUT()", res)
         self.assertIn("raise EOFError", res)
         self.assertIn("FIN(PROC0='OUI')", res)
+
+
+class TestStatus(unittest.TestCase):
+    """Check helper for execution status"""
+
+    def test_state(self):
+        state = SO.Ok
+        self.assertEqual(SO.name(state), "OK")
+        state = SO.Warn
+        self.assertEqual(SO.name(state), "<A>_ALARM")
+        state = SO.Warn | SO.Nook
+        self.assertEqual(SO.name(state), "NOOK_TEST_RESU")
+        state = SO.Warn | SO.NoTest
+        self.assertEqual(SO.name(state), "NO_TEST_RESU")
+        state = SO.CpuLimit
+        self.assertEqual(SO.name(state), "<S>_CPU_LIMIT")
+        state = SO.NoConvergence
+        self.assertEqual(SO.name(state), "<S>_NO_CONVERGENCE")
+        state = SO.Warn | SO.Memory
+        self.assertEqual(SO.name(state), "<S>_MEMORY_ERROR")
+        state = SO.Warn | SO.Nook | SO.Except
+        self.assertEqual(SO.name(state), "<S>_ERROR")
+        state = SO.Fatal
+        self.assertEqual(SO.name(state), "<F>_ERROR")
+        state = SO.Syntax | SO.Fatal
+        self.assertEqual(SO.name(state), "<F>_SYNTAX_ERROR")
+        state = SO.Abort
+        self.assertEqual(SO.name(state), "<F>_ABNORMAL_ABORT")
+        state = SO.Warn | SO.Nook | SO.Except | SO.Abort
+        self.assertEqual(SO.name(state), "<F>_ABNORMAL_ABORT")
+
+    def test_status(self):
+        status = Status()
+        self.assertEqual(status.state, 0)
+        self.assertEqual(status.exitcode, -1)
+
+    def test_diag(self):
+        status = get_status(0, "")
+        self.assertEqual(status.exitcode, 0)
+        self.assertEqual(status.state, SO.Ok)
+        self.assertEqual(SO.name(status.state), "OK")
+        self.assertTrue(status.state & SO.Completed)
+        self.assertFalse(status.state & SO.Error)
+        self.assertSequenceEqual(status.times, [0.] * 4)
+
+        status = get_status(1, "")
+        self.assertEqual(status.state, SO.Abort)
+        self.assertEqual(status.exitcode, 1)
+        self.assertEqual(SO.name(status.state), "<F>_ABNORMAL_ABORT")
+        self.assertFalse(status.state & SO.Completed)
+        self.assertTrue(status.state & SO.Error)
+
+        status = get_status(0, "", test=True)
+        self.assertEqual(status.state, SO.NoTest)
+        self.assertEqual(SO.name(status.state), "NO_TEST_RESU")
+        self.assertFalse(status.state & SO.Ok)
+        self.assertTrue(status.state & SO.Completed)
+        self.assertFalse(status.state & SO.Error)
+
+        status = get_status(0, "! <A> SUPERVIS_1 !", test=True)
+        self.assertEqual(status.state, SO.NoTest | SO.Warn)
+        self.assertEqual(SO.name(status.state), "NO_TEST_RESU")
+        self.assertFalse(status.state & SO.Ok)
+        self.assertTrue(status.state & SO.Completed)
+        self.assertFalse(status.state & SO.Error)
+
+        output = "\n".join([
+            "! <A> SUPERVIS_1 !",
+            "NOOK 1. 0....",
+        ])
+        status = get_status(0, output)
+        self.assertEqual(status.state, SO.Nook | SO.Warn)
+        self.assertEqual(SO.name(status.state), "NOOK_TEST_RESU")
+        self.assertFalse(status.state & SO.Ok)
+        self.assertTrue(status.state & SO.Completed)
+        self.assertFalse(status.state & SO.Error)
+
+        status = get_status(1, "TimeLimitError")
+        self.assertEqual(status.state, SO.CpuLimit)
+        self.assertEqual(SO.name(status.state), "<S>_CPU_LIMIT")
+        self.assertFalse(status.state & SO.Ok)
+        self.assertFalse(status.state & SO.Completed)
+        self.assertTrue(status.state & SO.Error)
+
+        output = "\n".join([
+            "! <S> <MECANONLINE_12> ARRET PAR MANQUE DE TEMPS CPU !",
+            "SyntaxError: unexpected argument",
+        ])
+        status = get_status(1, output)
+        self.assertEqual(status.state,
+                         SO.CpuLimit | SO.Except | SO.Syntax)
+        self.assertEqual(SO.name(status.state), "<F>_SYNTAX_ERROR")
+        self.assertFalse(status.state & SO.Ok)
+        self.assertFalse(status.state & SO.Completed)
+        self.assertTrue(status.state & SO.Error)
+
+        output = "\n".join([
+            "! <NoConvergenceError> <MECANONLINE_44> bla bla !",
+            "TimeLimitError: xxxx",
+        ])
+        status = get_status(1, output)
+        self.assertEqual(status.state,
+                         SO.CpuLimit | SO.NoConvergence)
+        self.assertEqual(SO.name(status.state), "<S>_NO_CONVERGENCE")
+        self.assertFalse(status.state & SO.Ok)
+        self.assertFalse(status.state & SO.Completed)
+        self.assertTrue(status.state & SO.Error)
+
+        output = "\n".join([
+            "-- CODE_ASTER -- VERSION : DÉVELOPPEMENT (unstable) --",
+            " OK assert True passed",
+        ])
+        status = get_status(0, output)
+        self.assertEqual(status.state, SO.Abort)
+        self.assertEqual(SO.name(status.state), "<F>_ABNORMAL_ABORT")
+        self.assertFalse(status.state & SO.Ok)
+        self.assertFalse(status.state & SO.Completed)
+        self.assertTrue(status.state & SO.Error)
 
 
 if __name__ == "__main__":
