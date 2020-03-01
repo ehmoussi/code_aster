@@ -87,6 +87,7 @@ class RunAster:
         Returns:
             Status: Status object.
         """
+        logger.info("TITLE Execution of code_aster")
         self.prepare_current_directory()
         status = self.execute_study(test)
         # Copying results
@@ -136,6 +137,7 @@ class RunAster:
             logger.error("no .comm file found")
 
         timeout = self.export.get("time_limit") * 1.05
+        jobnum = self.jobnum
         for idx, comm in enumerate(commfiles):
             logger.info(f"TITLE Command file #{idx + 1} / {len(commfiles)}")
             cmd = self.command_line(comm)
@@ -152,10 +154,8 @@ class RunAster:
                 logger.info(f"\nContent of the file to execute:\n{text}\n")
 
             with open("exec.output", "wb") as log:
-                # TODO add timeout
                 exitcode = run_command(cmd, log, timeout)
-            logger.info(f"\n <I>_EXIT_CODE = {exitcode}\n\n")
-            # TODO diag
+            logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{jobnum}={exitcode}\n\n")
             status = get_status(exitcode, "exec.output", test)
             # TODO backup bases
         # TODO coredump analysis
