@@ -104,16 +104,14 @@ class TestCase(unittest.TestCase):
         print(("Ran {0} tests, {1} passed, {2} in failure".format(
             count, self._passed, self._failure)))
         if self._failure:
-            print("\nFAILED\n")
+            print("\nNOOK\n")
         else:
-            print("\nOK\n")
+            print("\n OK \n")
 
     def writeResult(self, ok, funcTest, msg, exc=None):
         """Write a message in the result file"""
-        # TODO ask ExecutionParameter for the working directory
         if self._silent:
             return
-        wrkdir = "."
         exc = exc or ""
         msg = msg or exc
         if ok:

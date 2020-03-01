@@ -192,7 +192,7 @@ def get_status(exitcode, output, test=False):
     else:
         if RE_MEM.search(text):
             state |= StateOptions.Memory
-        if RE_TIME.search(text):
+        if exitcode == -9 or RE_TIME.search(text):
             state |= StateOptions.CpuLimit
         if RE_CONV.search(text):
             state |= StateOptions.NoConvergence
@@ -207,7 +207,7 @@ def get_status(exitcode, output, test=False):
 
     ndeb = len(RE_DEBUT.findall(text))
     nfin = len(RE_FIN.findall(text))
-    if ndeb != nfin:
+    if state & StateOptions.Completed and ndeb != nfin:
         state = StateOptions.Abort
 
     status = Status(state, exitcode)
