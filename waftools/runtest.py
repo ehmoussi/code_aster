@@ -22,6 +22,7 @@ import os.path as osp
 import tempfile
 from configparser import ConfigParser
 from functools import partial
+from glob import glob
 from subprocess import PIPE, CalledProcessError, Popen, call, check_call
 
 from waflib import Errors, Logs, TaskGen
@@ -75,8 +76,9 @@ def configure(self):
 def runtest(self):
     """Run a testcase by calling as_run"""
     opts = self.options
-    if not _has_asrun():
-        Logs.error("'as_run' not found, please check your $PATH")
+    run_aster = osp.join(self.env["BINDIR"], "run_aster")
+    if not osp.isfile(run_aster):
+        Logs.error("'run_aster' not found, please check your $PATH")
         return
     args = []
     if opts.exectool == 'debugger':
@@ -99,11 +101,21 @@ def runtest(self):
     status = 0
     if not opts.testname:
         raise Errors.WafError('no testcase name provided, use the -n option')
+    ASRUN = False
     for test in opts.testname:
-        cmd = ['as_run', '--vers=%s' % self.env['ASTERDATADIR'], '--test', test]
+        export = test + ".export"
+        exp = glob("astest/" + export) + glob("../validation/astest/" + export)
+        if not exp:
+            raise FileNotFoundError(test + ".export")
+        if ASRUN:
+            cmd = ['as_run', '--vers=%s' % self.env['ASTERDATADIR'], '--test', test]
+        else:
+            cmd = [run_aster, "--test"]
         if self.variant == 'debug':
-            cmd.extend(['-g', '--nodebug_stderr'])
+            cmd.extend(['-g'])
         cmd.extend(args)
+        if not ASRUN:
+            cmd.append(exp[0])
         Logs.info("running %s in '%s'" % (test, self.variant))
         ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant
         out = osp.join(dtmp, osp.basename(test) + ext) + '.output'
