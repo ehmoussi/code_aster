@@ -18,7 +18,6 @@
 # --------------------------------------------------------------------
 
 import re
-from collections import namedtuple
 
 
 class Status:
@@ -170,7 +169,7 @@ def get_status(exitcode, output, test=False):
         test (bool, optional): *True* for a testcase, *False* for a study.
 
     Returns:
-        tuple: Tuple containing (diag, tcpu, tsys, ttotal, telapsed).
+        Status: Status object.
     """
     try:
         with open(output, "rb") as fobj:
@@ -189,6 +188,7 @@ def get_status(exitcode, output, test=False):
             state |= StateOptions.Warn
         if not state:
             state = StateOptions.Ok
+        exitcode = state & (StateOptions.Nook | StateOptions.NoTest)
     else:
         if RE_MEM.search(text):
             state |= StateOptions.Memory
