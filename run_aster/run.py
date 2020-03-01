@@ -135,6 +135,7 @@ class RunAster:
         if not commfiles:
             logger.error("no .comm file found")
 
+        timeout = self.export.get("time_limit") * 1.05
         for idx, comm in enumerate(commfiles):
             logger.info(f"TITLE Command file #{idx + 1} / {len(commfiles)}")
             cmd = self.command_line(comm)
@@ -152,7 +153,7 @@ class RunAster:
 
             with open("exec.output", "wb") as log:
                 # TODO add timeout
-                exitcode = run_command(cmd, log)
+                exitcode = run_command(cmd, log, timeout)
             logger.info(f"\n <I>_EXIT_CODE = {exitcode}\n\n")
             # TODO diag
             status = get_status(exitcode, "exec.output", test)

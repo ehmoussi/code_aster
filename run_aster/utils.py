@@ -23,8 +23,9 @@ import os.path as osp
 import shutil
 import stat
 import sys
+import time
 from glob import glob
-from subprocess import PIPE, STDOUT, Popen
+from subprocess import PIPE, STDOUT, Popen, TimeoutExpired
 
 from run_aster.logger import logger
 
@@ -78,25 +79,35 @@ def make_writable(filename):
     os.chmod(filename, os.stat(filename).st_mode | stat.S_IWUSR)
 
 
-def run_command(cmd, logfile):
+def run_command(cmd, logfile, timeout=None):
     """Execute a command and duplicate output to `logfile`.
 
     Arguments:
+        cmd (list): Command line arguments.
         logfile (file-object): File-object (opened with 'wb').
+        timeout (float, optional): Time out for the execution.
 
     Returns:
         int: exit code.
     """
-    proc = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-    while True:
-        byte = proc.stdout.read(1)
-        if byte:
-            sys.stdout.buffer.write(byte)
-            sys.stdout.flush()
-            logfile.write(byte)
-            # logfile.flush()
-        else:
-            break
-    iret = proc.wait()
-    proc.stdout.close()
+    start = time.time()
+    try:
+        proc = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+        while True:
+            byte = proc.stdout.read(1)
+            if byte:
+                sys.stdout.buffer.write(byte)
+                sys.stdout.flush()
+                logfile.write(byte)
+                # logfile.flush()
+            else:
+                break
+            if time.time() - start > timeout:
+                raise TimeoutExpired(cmd, timeout)
+    except TimeoutExpired as exc:
+        print(str(exc))
+        proc.kill()
+    finally:
+        iret = proc.wait()
+        proc.stdout.close()
     return iret
