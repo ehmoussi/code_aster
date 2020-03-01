@@ -115,7 +115,8 @@ def main(argv=None):
         with temporary_dir():
             status = calc.execute(args.test)
     logger.info(FMT_DIAG.format(state=status.diag, exitcode=status.exitcode))
+    return status.exitcode
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
