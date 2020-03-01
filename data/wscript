@@ -30,14 +30,14 @@ Build some data files (dest: share/aster)
 - 'reca_main.py': script to call MACR_RECAL from Python.
 """
 
-import pickle
 import json
 import os
 import os.path as osp
+import pickle
 import re
 import sys
+from glob import glob
 from itertools import chain
-from subprocess import PIPE, Popen
 
 from waflib import Configure, Errors, Logs, Utils
 
@@ -254,27 +254,34 @@ def env2dict(self, src):
     self.end_msg("yes")
 
     self.start_msg('Build list of testcases')
-    seq = 'testlist.*sequential'
-    mpi = 'testlist.*parallel'
     valid = osp.join(src, '..', 'validation')
-    dico['ASTER_TEST_FILES_SEQ'] = _build_testlist(src, seq)
-    dico['ASTER_TEST_FILES_PAR'] = _build_testlist(src, mpi)
-    dico['ASTER_TEST_FILES_VALID_SEQ'] = _build_testlist(valid, seq)
-    dico['ASTER_TEST_FILES_VALID_PAR'] = _build_testlist(valid, mpi)
-    self.end_msg("yes")
+    dico['ASTER_TEST_DEFINITION'] = (_build_def(env, src) +
+                                     _build_def(env, valid))
     return dico
 
+CTEST_DEF = """
+set(TEST_NAME ${{COMPONENT_NAME}}_{testname})
+add_test(${{TEST_NAME}} {BINDIR}/run_aster --test {ASTERDATADIR}/tests/{testname}.export)
+set_tests_properties(${{TEST_NAME}} PROPERTIES LABELS "${{COMPONENT_NAME}} {labels}")
+"""
 
-def _build_testlist(path, filter_expr):
-    if not osp.exists(osp.join(path, 'astest')):
-        return ''
-    cmd = ['grep', '-l', filter_expr,
-           osp.join(path, 'astest', '*.export')]
-    proc = Popen(' '.join(cmd), stdout=PIPE, stderr=PIPE, shell=True)
-    out = proc.communicate()[0].decode()
-    tests = [osp.splitext(osp.basename(i))[0] for i in out.split()]
-    return os.linesep.join(tests)
-
+@Configure.conf
+def _build_def(env, path):
+    if not osp.isdir(osp.join(path, 'astest')):
+        return ""
+    re_list = re.compile("P +testlist +(.*)$", re.M)
+    text = []
+    for exp in glob(osp.join(path, 'astest', '*.export')):
+        with open(exp, "r") as fobj:
+            mat = re_list.search(fobj.read())
+        if mat:
+            lst = sorted(mat.group(1).split())
+            testname = osp.splitext(osp.basename(exp))[0]
+            text.append(CTEST_DEF.format(testname=testname,
+                                         labels=" ".join(lst),
+                                         ASTERDATADIR=env.ASTERDATADIR,
+                                         BINDIR=env.BINDIR))
+    return "\n".join(text)
 
 def change_tests(dico, install_tests):
     """Because install_tests can be added at build stage"""

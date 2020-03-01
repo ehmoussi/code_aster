@@ -22,7 +22,7 @@
 # aslint: disable=C4008
 
 """
-    %(prog)s [options]
+    %(prog)s [options] EXPORT
 
 """
 
