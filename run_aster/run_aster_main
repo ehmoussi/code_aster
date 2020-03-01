@@ -55,8 +55,6 @@ FMT_DIAG = """
 ------------------------------------------------------------
 --- DIAGNOSTIC JOB : {state}
 ------------------------------------------------------------
-
-EXIT_CODE={exitcode}
 """
 
 def parse_args(argv):
@@ -114,7 +112,7 @@ def main(argv=None):
     else:
         with temporary_dir():
             status = calc.execute(args.test)
-    logger.info(FMT_DIAG.format(state=status.diag, exitcode=status.exitcode))
+    logger.info(FMT_DIAG.format(state=status.diag))
     return status.exitcode
 
 

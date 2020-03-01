@@ -35,6 +35,7 @@ global access (no C interface currently)...
 
 import logging
 import os
+import re
 import sys
 import tempfile
 from functools import partial
@@ -49,6 +50,7 @@ DEBUG = logging.DEBUG
 RETURNCODE = {OK: 0, DEBUG: 0, WARNING: 2, ERROR: 4}
 assert OK < WARNING < ERROR, (OK, WARNING, ERROR)
 
+RE_TITLE = re.compile("^TITLE ")
 
 class PerLevelFormatter(logging.Formatter):
 
@@ -67,7 +69,7 @@ class PerLevelFormatter(logging.Formatter):
         log_fmt = self.formats.get(record.levelno, self.formats[INFO])
         if str(record.msg).startswith("TITLE "):
             log_fmt = self.title + log_fmt
-            record.msg = record.msg.lstrip("TITLE ")
+            record.msg = RE_TITLE.sub("", record.msg)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
