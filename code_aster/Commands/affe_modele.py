@@ -36,8 +36,16 @@ class ModelAssignment(ExecuteCommand):
                 in place.
         """
 
-        if (keywords["MAILLAGE"].isParallel()):
+        mesh = keywords["MAILLAGE"]
+        if(isinstance(mesh, tuple)):
+            if(len(mesh) == 1):
+                mesh = mesh[0]
+            else:
+                raise ValueError("Mesh object is a tuple")
+
+        if (mesh.isParallel()):
             keywords["DISTRIBUTION"] = {'METHODE': 'CENTRALISE'}
+
     def create_result(self, keywords):
         """Initialize the result.
 
