@@ -67,6 +67,15 @@ class Status:
         assert len(values) == 4, values
         self._times = values
 
+    def is_completed(self):
+        """Tell if the calculation was completed (the result databases should
+        be available.
+
+        Returns:
+            bool: *True* if the calculation was completed, *False* otherwise.
+        """
+        return bool(self.state & StateOptions.Completed)
+
 
 class StateOptions:
     """

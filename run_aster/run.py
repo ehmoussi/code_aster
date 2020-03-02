@@ -31,7 +31,7 @@ from .execute import execute
 from .export import Export
 from .logger import logger
 from .status import get_status
-from .utils import copy, gunzip, make_writable, run_command
+from .utils import compress, copy, make_writable, run_command, uncompress
 
 
 @contextmanager
@@ -90,7 +90,10 @@ class RunAster:
         logger.info("TITLE Execution of code_aster")
         self.prepare_current_directory()
         status = self.execute_study(test)
-        # Copying results
+
+        if not test:
+            logger.info("TITLE Copying results")
+            copy_resultfiles(self.export.resultfiles, status.is_completed())
         return status
 
     def prepare_current_directory(self):
@@ -199,8 +202,7 @@ def copy_datafiles(files):
                 dest += '.' + fmt.format(idx)
             # warning if file already exists
             if osp.exists(dest):
-                logger.warning("'{0}' overwrites '{1}'"
-                                .format(obj.path, dest))
+                logger.warning(f"'{obj.path}' overwrites '{dest}'")
             if obj.compr:
                 dest += '.gz'
         # for directories
@@ -213,10 +215,46 @@ def copy_datafiles(files):
         if dest is not None:
             copy(obj.path, dest, verbose=True)
             if obj.compr:
-                dest = gunzip(dest)
+                dest = uncompress(dest)
             # move the bases in main directory
             if obj.filetype in ('base', 'bhdf'):
                 for fname in glob(osp.join(dest, '*')):
                     os.rename(fname, osp.basename(fname))
             # force the file to be writable
             make_writable(dest)
+
+
+def copy_resultfiles(files, copybase):
+    """Copy result files from the working directory.
+
+    Arguments:
+        files (list[File]): List of File objects.
+        copybase (bool): Tell if result databases will be copied.
+    """
+    for obj in files:
+        lsrc = []
+        # fort.*
+        if obj.unit != 0:
+            lsrc.append("fort." + str(obj.unit))
+        elif obj.filetype == "nom":
+            lsrc.append(osp.basename(obj.path))
+        # for directories
+        else:
+            if copybase and obj.filetype in ("base", "bhdf"):
+                lbase = glob("bhdf.*")
+                if not lbase or obj.filetype == "base":
+                    lbase = glob("glob.*")
+                lsrc.extend(lbase)
+                lsrc.extend(glob("pick.*"))
+            elif obj.filetype == "repe":
+                lsrc.extend(glob(osp.join("REPE_OUT", "*")))
+
+        for filename in lsrc:
+            if not osp.exists(filename):
+                logger.warning(f"file not found: {filename}")
+            else:
+                if obj.compr:
+                    filename = compress(filename)
+                if obj.isdir and not osp.exists(obj.path):
+                    os.makedirs(obj.path)
+                copy(filename, obj.path, verbose=True)
