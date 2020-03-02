@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,16 @@
 subroutine vtcreb(field_nodez , base      , type_scalz,&
                   nume_ddlz   ,&
                   meshz       , prof_chnoz, idx_gdz, nb_equa_inz,&
-                  nb_equa_outz)
+                  nb_equa_outz, nbz, vchamz)
 !
 implicit none
 !
+#include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeecra.h"
+#include "asterfort/jeveuo.h"
 #include "asterfort/sdchgd.h"
 !
 !
@@ -38,6 +41,8 @@ implicit none
     integer, optional, intent(in) :: nb_equa_inz
     integer, optional, intent(in) :: idx_gdz
     integer, optional, intent(out) :: nb_equa_outz
+    integer, optional, intent(in) :: nbz
+    character(len=24), optional, intent(in) :: vchamz
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,27 +62,39 @@ implicit none
 !   In  prof_chno   : name of PROF_CHNO
 !   In  idx_gd      : index of GRANDEUR
 !   In  nb_equa_in  : number of equations
+! Create simultaneously nbz NODE fields of name vchamz(1)...vchamz(nbz)
+!   In  nbz         : number of fields
+!   In  vchamz      : vector of names of fields
 !
 !   Out nb_equa_out : number of equations
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: prof_chno, field_node
-    character(len=8) :: mesh
-    character(len=24) :: obj_refe, obj_vale, obj_desc
-    integer :: idx_gd, nb_equa, j_vale
-    character(len=24), pointer :: p_refe(:) => null()
-    integer, pointer :: p_desc(:) => null()
     character(len=3) :: type_scal
+    character(len=8) :: mesh
+    character(len=19) :: prof_chno, field_node, chamno
+    character(len=24) :: obj_refe, obj_vale, obj_desc
+    character(len=24), pointer :: p_refe(:) => null()
+    integer :: idx_gd, nb_equa, j_vale, ideb, ifin, i, pdesc_save, jvcham
+    integer, pointer :: p_desc(:) => null()
+    aster_logical :: lchange
 !
 ! --------------------------------------------------------------------------------------------------
 !
     field_node = field_nodez
     type_scal  = type_scalz
-!
-    obj_refe = field_node(1:19)//'.REFE'
-    obj_vale = field_node(1:19)//'.VALE'
-    obj_desc = field_node(1:19)//'.DESC'
+    if (present(nbz).and.present(vchamz)) then
+      ideb=1
+      ifin=nbz
+      ASSERT(nbz.gt.1)
+    else if (present(nbz).and..not.present(vchamz)) then
+      ASSERT(.False.)
+    else if (.not.present(nbz).and.present(vchamz)) then
+      ASSERT(.False.)
+    else
+      ideb=1
+      ifin=1
+    endif
 !
 ! - Get parameters from NUME_DDL
 !
@@ -92,31 +109,69 @@ implicit none
         prof_chno = prof_chnoz
         mesh      = meshz
     endif
+ 
+    if (ideb.eq.ifin) then
+      obj_refe = field_node(1:19)//'.REFE'
+      obj_vale = field_node(1:19)//'.VALE'
+      obj_desc = field_node(1:19)//'.DESC'
 !
+! Create only one node FIELD
 ! - Object .REFE
-!
-    call wkvect(obj_refe, base//' V K24', 4, vk24 = p_refe)
-    p_refe(1) = mesh
-    p_refe(2) = prof_chno
-!
+      call wkvect(obj_refe, base//' V K24', 4, vk24 = p_refe)
+      p_refe(1) = mesh
+      p_refe(2) = prof_chno
 ! - Object .DESC
-!
-    call wkvect(obj_desc, base//' V I', 2, vi = p_desc)
-    call jeecra(obj_desc, 'DOCU', cval='CHNO')
-    p_desc(1) = idx_gd
-    p_desc(2) = 1
-!
+      call wkvect(obj_desc, base//' V I', 2, vi = p_desc)
+      call jeecra(obj_desc, 'DOCU', cval='CHNO')
+      p_desc(1) = idx_gd
+      p_desc(2) = 1
 ! - Object .VALE
-!
-    call wkvect(obj_vale, base//' V '//type_scal, nb_equa, j_vale)
-    if (present(nb_equa_outz)) then
+      call wkvect(obj_vale, base//' V '//type_scal, nb_equa, j_vale)
+      if (present(nb_equa_outz)) then
         nb_equa_outz = nb_equa
-    endif
-!
+      endif
 ! - Change GRANDEUR
-!
-    if (type_scal.eq.'R'.or.type_scal.eq.'C'.or.type_scal.eq.'F') then
+      if (type_scal.eq.'R'.or.type_scal.eq.'C'.or.type_scal.eq.'F') then
         call sdchgd(field_node, type_scal)
+      endif
+!
+    else
+!
+! ! Create at the same time the (ifin-ideb+1) node FIELDs of name chamno(i)
+      lchange=(type_scal.eq.'R'.or.type_scal.eq.'C'.or.type_scal.eq.'F')
+      call jeveuo(vchamz,'L',jvcham)
+      do i=ideb,ifin
+        chamno=zk24(jvcham+i-1)
+        obj_refe = chamno(1:19)//'.REFE'
+        obj_vale = chamno(1:19)//'.VALE'
+        obj_desc = chamno(1:19)//'.DESC'
+! - Object .REFE
+        call wkvect(obj_refe, base//' V K24', 4, vk24 = p_refe)
+        p_refe(1) = mesh
+        p_refe(2) = prof_chno
+! - Object .DESC
+        call wkvect(obj_desc, base//' V I', 2, vi = p_desc)
+        call jeecra(obj_desc, 'DOCU', cval='CHNO')
+        p_desc(1) = idx_gd
+        p_desc(2) = 1
+! - Object .VALE
+        call wkvect(obj_vale, base//' V '//type_scal, nb_equa, j_vale)
+! - Change GRANDEUR
+        if (lchange) then
+          if (i.eq.ideb) then
+! CETTE ROUTINE CHANGE EVENTUELLEMENT LA VALEUR DE PDESC(1). ON LA SAUVEGARDE POUR LA TRANSFERER
+! AUX AUTRES CHAMNO SANS SE POSER LES MEMES QUESTIONS QUI CONDUIRONT A LA MEME REPONSE: PDESC_SAVE
+            call sdchgd(chamno, type_scal)
+            pdesc_save=p_desc(1)
+          else
+            p_desc(1)=pdesc_save
+          endif
+        endif
+      enddo
+! DIVERS MUTUALISE
+      if (present(nb_equa_outz)) then
+        nb_equa_outz = nb_equa
+      endif            
     endif
 !
 end subroutine

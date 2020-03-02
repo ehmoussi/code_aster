@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
     subroutine vtcreb(field_nodez , base      , type_scalz,&
                       nume_ddlz   ,&
                       meshz       , prof_chnoz, idx_gdz, nb_equa_inz,&
-                      nb_equa_outz)
+                      nb_equa_outz, nbz, vchamz)
         character(len=*), intent(in) :: field_nodez
         character(len=1), intent(in) :: base
         character(len=*), intent(in) :: type_scalz
@@ -32,5 +32,7 @@ interface
         integer, optional, intent(in) :: nb_equa_inz
         integer, optional, intent(in) :: idx_gdz
         integer, optional, intent(out) :: nb_equa_outz
+        integer, optional, intent(in) :: nbz
+        character(len=24), optional, intent(in) :: vchamz
     end subroutine vtcreb
 end interface

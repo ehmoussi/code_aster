@@ -24,14 +24,23 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !     --- ARGUMENTS ---
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "blas/dcopy.h"
+#include "blas/zcopy.h"
+#include "asterc/asmpi_comm.h"
+#include "asterfort/asmpi_barrier.h"
+#include "asterfort/asmpi_info.h"
+#include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/asasve.h"
 #include "asterfort/ascova.h"
+#include "asterfort/assert.h"
 #include "asterfort/calcop.h"
 #include "asterfort/codent.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exlima.h"
+#include "asterfort/infniv.h"
+#include "asterfort/jeimpo.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -39,6 +48,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 #include "asterfort/jemarq.h"
 #include "asterfort/jerazo.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/jelibe.h"
 #include "asterfort/mcmult.h"
 #include "asterfort/memam2.h"
 #include "asterfort/mrmult.h"
@@ -51,6 +61,10 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 #include "asterfort/rsexch.h"
 #include "asterfort/rsnoch.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vecini.h"
+#include "asterfort/vecinc.h"
+#include "asterfort/vecint.h"
+#include "asterfort/vecink.h"
 #include "asterfort/vecgme.h"
 #include "asterfort/vechme.h"
 #include "asterfort/vefnme_cplx.h"
@@ -63,6 +77,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 #include "asterfort/ascomb.h"
 #include "asterfort/dylach.h"
 #include "asterfort/lislec.h"
+#include "asterfort/utimsd.h"
     integer :: nbordr
     character(len=4) :: chtype
     character(len=8) :: resuin, resuou
@@ -71,28 +86,28 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !  CALC_CHAMP - CALCUL DES FORCES NODALES ET DES REACTIONS NODALES
 !  -    -                  -      -              -         -
 ! ----------------------------------------------------------------------
-
-    integer :: jordr, iret, iordr, i, jinfc, nbchar, ic, jref
+    mpi_int :: mpicou, mpicow, mrang, mnbproc
+    integer :: jordr, iret, iordr, i, jinfc, nbchar, ic, jref, ifm, niv
     integer :: iachar, ichar, ii, nuord, nh, jnmo, nbddl, lmat, iad, ind
-    integer :: neq, jfo, lonch, jfr, jfi
-    integer :: lonc2, ltrav, j, inume, jddl, jddr, lacce
-    integer :: cret
-    real(kind=8) :: etan, time, partps(3), omega2, coef(3)
-    character(len=1) :: stop
+    integer :: neq, jfo, lonch, jfr, jfi, rang, nbproc, nbpas, jparti
+    integer :: lonc2, ltrav, j, inume, jddl, jddr, lacce, p, jval, irelat
+    integer :: cret, jldist, iaux1, k, jcnoch, ideb, ifin, ipas, jvcham
+    character(len=1) :: stop, ktyp
     character(len=2) :: codret
-    character(len=6) :: nompro
-    character(len=8) :: k8bid, kiord, ctyp, nomcmp(3), para
+    character(len=6) :: nompro,k6
+    character(len=8) :: k8bid, kiord, ctyp, nomcmp(3), para, sd_partition
     character(len=16) :: typmo, optio2, motfac
     character(len=19) :: ligrel, chdep2, infcha, list_load, vebid
     character(len=24) :: numref, fomult, charge, infoch, vechmp, vachmp, cnchmp
     character(len=24) :: vecgmp, vacgmp, cncgmp, vefpip, vafpip, cnfpip, vfono(2)
     character(len=24) :: carac, cnchmpc
     character(len=24) :: vafono, vreno, vareno, sigma, chdepl, valk(3), nume
-    character(len=24) :: mateco, vafonr, vafoni, mater
+    character(len=24) :: mateco, vafonr, vafoni, mater, k24b
     character(len=24) :: chvive, chacve, masse, chvarc, compor, k24bid, chamno
-    character(len=24) :: strx
+    character(len=24) :: strx, vldist, vcnoch, vcham
     character(len=24) :: bidon, chacce, modele, kstr
-    aster_logical :: exitim, lstr, lstr2
+    aster_logical :: exitim, lstr, lstr2, ldist, dbg_ob, dbgv_ob, ltest, lsdpar
+    real(kind=8) :: etan, time, partps(3), omega2, coef(3), rzero
     real(kind=8), pointer :: cgmp(:) => null()
     real(kind=8), pointer :: chmp(:) => null()
     real(kind=8), pointer :: fono(:) => null()
@@ -102,6 +117,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     real(kind=8), pointer :: noch(:) => null()
     real(kind=8), pointer :: reno(:) => null()
     real(kind=8), pointer :: nldepl(:) => null()
+    complex(kind=8) :: czero, ci
     complex(kind=8), pointer :: nochc(:) => null()
     complex(kind=8), pointer :: chmpc(:) => null()
     integer, pointer :: v_list_store(:) => null()
@@ -112,6 +128,70 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     data nomcmp/'DX','DY','DZ'/
 !
     call jemarq()
+!
+! PREPARATION POUR LDIST
+    call infniv(ifm, niv)
+! ACTIVATION DU PARALLELISME DISTRIBUE
+    ldist=.False.
+    ldist=.True.
+! ACTIVATION DU MODE DEBUG ASSOCIE
+    dbg_ob=.True.
+!    dbg_ob=.False.
+! ACTIVATION DU MODE DEBUG TRES VERBOSE: IMPRESSION CHAM_NOS GENERES.
+    dbgv_ob=.True.
+    dbgv_ob=.False.
+! ACTIVATION DU TEST CANONIQUE: CHAMNO.VALE = VECTEUR DE VALEUR IORDR OU (0,IORDR)
+! ON VERIFIE AINSI LA BONNE DISTRIBUTION MPI: LICITE QUE SI LDIST=.TRUE.
+    ltest=.True.
+    ltest=.False.
+! INITIALISATIONS DIVERSES
+    rzero=0.d0
+    czero=dcmplx(0.D0,0.D0)
+    ci=dcmplx(0.D0,1.D0)
+    call asmpi_comm('GET_WORLD', mpicow)
+    call asmpi_comm('GET', mpicou)
+    if (mpicow.ne.mpicou) ASSERT(.False.)
+    call asmpi_info(mpicow, mrang, mnbproc)
+    rang = to_aster_int(mrang)
+    nbproc = to_aster_int(mnbproc)
+! DETERMINATION DU NBRE DE PAS PARALLELES MPI: NBPAS
+    nbpas=nbordr/nbproc
+    if (dbg_ob) write(ifm,*)&
+      '< ',rang,'ccfnrn> ldist/nbordr/nbproc/nbpas= ',ldist,nbordr,nbproc,nbpas
+    if ((ldist).and.(nbpas.lt.1)) then
+      ldist=.False.
+      write(ifm,*)'!!!! < ',rang,&
+        'ccfnrn> WARNING: calcul non distribue car (nbordr/nbproc)<1, on force DISTRIBUTION=NON !!!!'
+    endif
+    if ((ldist).and.(nbproc.eq.1)) then
+      ldist=.False.
+      write(ifm,*)'!!!! < ',rang,&
+        'ccfnrn> WARNING: calcul avec un seul processus MPI: nbproc=1, on force DISTRIBUTION=NON !!!!'
+    endif
+! VECTEUR PILOTANT LA DISTRIBUTION DES IORDR SUIVANT LES PROCESSUS MPI
+! TOUS LES PROCESSUS MPI FONT: LE RELIQUAT AUX EXTREMES > NBPAS*NBPROC
+    vldist='&&CCFNRN.VLDIST'
+    call wkvect(vldist,'V V I',nbordr,jldist)
+    call vecint(nbordr,rang,zi(jldist))
+    if (ldist) then
+      iaux1=0
+      do k=1,nbpas*nbproc
+        if (iaux1.gt.(nbproc-1)) iaux1=0
+        zi(jldist+k-1)=iaux1
+        iaux1=iaux1+1          
+      enddo
+    endif
+    if (dbg_ob) call jeimpo(ifm,vldist,'vldist')
+! VECTEUR STOCKANT LES NOMSDES NBPROC CHAMNOS SIMULTANES POUR VTCREB SUIVANT
+    if (ldist) then
+      vcham='&&CCFNRN.VCHAM'
+      call wkvect(vcham,'V V K24',nbproc,jvcham)
+      call vecink(nbproc,k24bid,zk24(jvcham))
+    endif
+! NOM DU BUFFER MATRICIEL DE COMMUNICATION DES CHAMNO.VALE
+    vcnoch='&&CCFNRN.VCNOCH'
+! FIN PREPARATION POUR LDIST
+!
     bidon='&&'//nompro//'.BIDON'
     list_load = '&&CCFNRN.LIST_LOAD'
 !
@@ -165,6 +245,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
     carac=' '
     charge=' '
     mateco=' '
+    mater=' '
     modele=' '
     nuord=zi(jordr)
     if (typesd .eq. 'EVOL_THER') then
@@ -174,8 +255,23 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
         call nmdome(modele, mater, mateco, carac, infcha, resuou(1:8),&
                     nuord)
     endif
-    if (modele(1:2) .eq. '&&') then
-        call utmess('F', 'CALCULEL3_50')
+    if (modele(1:2) .eq. '&&') call utmess('F', 'CALCULEL3_50')
+!
+! SI PARALLELISME EN TEMPS: ON DEBRANCHE MOMENTANEMENT LE PARALLELISME DES CALCULS
+! ELEMENTAIRES ET ASSEMBLAGES (SI ILS SONT ACTIVES) AU CAS OU
+! ON LE REMET EN FIN DE ROUTINE
+    if (ldist) then
+      call jeexin(modele(1:8)//'.PARTIT',iret)
+      sd_partition=' '
+      lsdpar=.False.
+      if (iret.ne.0) then
+        call jeveuo(modele(1:8)//'.PARTIT', 'E', jparti)
+        sd_partition=zk8(jparti)
+        zk8(jparti)=' '
+        lsdpar=.True.
+      endif
+      if (dbg_ob) write(ifm,*)&
+        '< ',rang,'ccfnrn> lsdpar/sd_partition_init= ',lsdpar,sd_partition
     endif
 !
     fomult=infcha//'.FCHA'
@@ -200,18 +296,32 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
         ichar=1
     endif
     call exlima(' ', 0, 'V', modele, ligrel)
-!     ON REGARDE S'IL Y A DES ELEMENTS DE STRUCTURE UTILISANT LE CHAMP
-!     STRX_ELGA
+! ON REGARDE S'IL Y A DES ELEMENTS DE STRUCTURE UTILISANT LE CHAMP STRX_ELGA
     strx=' '
     call dismoi('EXI_STRX', modele, 'MODELE', repk=kstr)
     lstr=(kstr(1:3).eq.'OUI')
-!     Y A-T-IL DES ELEMENTS SACHANT CALCULER L'OPTION STRX_ELGA
+! Y A-T-IL DES ELEMENTS SACHANT CALCULER L'OPTION STRX_ELGA
     call dismoi('EXI_STR2', modele, 'MODELE', repk=kstr)
     lstr2=(kstr(1:3).eq.'OUI')
 !
     time=0.d0
+    ipas=1
     do i = 1, nbordr
+! FILTRE POUR LDIST
+      if (zi(jldist+i-1).eq.rang) then
         call jemarq()
+! INDICE DE DECALAGE POUR LDIST
+        ideb=i
+        ifin=i
+        irelat=1
+        if ((ldist).and.(ipas.le.nbpas)) then
+! TRAITEMENT SIMULTANNE DES INDICES ENTRE IDEB ET IFIN
+          ideb=(ipas-1)*nbproc+1
+          ifin=ideb+nbproc-1
+! INDICE RELATIF DANS CE PAQUET
+          irelat=i-ideb+1
+        endif
+!
         iordr=zi(jordr+i-1)
 !
         vechmp=' '
@@ -237,7 +347,6 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
             call rsadpa(resuin, 'L', 1, 'NUME_MODE', iordr, 0, sjv=jnmo)
             nh=zi(jnmo)
         endif
-! ICI
         call rsexch(' ', resuin, 'SIEF_ELGA', iordr, sigma, iret)
         if (iret .ne. 0) then
             optio2 = 'SIEF_ELGA'
@@ -294,7 +403,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
         endif
 !
         if (exitim) then
-            call rsadpa(resuin, 'L', 1, 'INST', iordr, 0, sjv=iad, styp=ctyp)
+            call rsadpa(resuin, 'L', 1, 'INST', iordr,0, sjv=iad, styp=ctyp)
             time=zr(iad)
         endif
 !
@@ -334,15 +443,37 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
             call utmess('A', 'PREPOST5_1', nk=2, valk=valk)
             call detrsd('CHAM_NO', chamno(1:19))
         endif
+!
+! REMPLISSAGE LISTE DES CHAM_NOS A CREER SIMULTANEMENT
+        if ((ldist).and.(ideb.ne.ifin)) then
+          p=1
+          do k=ideb,ifin
+            k24b=' '
+            k24b=chamno
+            k6=' '
+            call codent(k-1, 'D0', k6)
+            k24b(1:24)=chamno(1:13)//k6(1:6)
+            zk24(jvcham+p-1)=k24b
+            if (dbg_ob) write(ifm,*)'< ',rang,'ccfnrn> p/k/chamno=',p,k,k24b
+            p=p+1
+          enddo
+        endif
+! CREATION DES SDS CHAM_NOS SIMPLE OU SIMULTANES
         if (typesd.ne.'DYNA_HARMO') then
-            call vtcreb(chamno, 'G', 'R',&
-                    nume_ddlz = nume,&
-                    nb_equa_outz = neq)
+            ktyp='R'
+            if ((ldist).and.(ideb.ne.ifin)) then
+              call vtcreb(chamno,'G','R',nume_ddlz=nume,nb_equa_outz=neq,nbz=nbproc,vchamz=vcham)
+            else
+              call vtcreb(chamno, 'G', 'R', nume_ddlz = nume, nb_equa_outz = neq)
+            endif         
             call jeveuo(chamno(1:19)//'.VALE', 'E', vr=noch)
         else
-            call vtcreb(chamno, 'G', 'C',&
-                    nume_ddlz = nume,&
-                    nb_equa_outz = neq)
+            ktyp='C'
+            if ((ldist).and.(ideb.ne.ifin)) then
+              call vtcreb(chamno,'G','C',nume_ddlz=nume,nb_equa_outz=neq,nbz=nbproc,vchamz=vcham)
+            else
+              call vtcreb(chamno, 'G', 'C', nume_ddlz = nume, nb_equa_outz = neq)
+            endif
             call jeveuo(chamno(1:19)//'.VALE', 'E', vc=nochc)
         endif
 !
@@ -597,15 +728,127 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
         endif
 !
 270     continue
-        call rsnoch(resuou, option, iordr)
+        
 !
-        if (typesd .eq. 'EVOL_THER') then
-            call ntdoth(modele, mater, mateco, carac, infcha, &
-                        result = resuou, nume_store = iordr)
-        else
-            call nmdome(modele, mater, mateco, carac, infcha, resuou(1:8),&
-                        iordr)
+! ACTIVATION TEST CANONIQUE POUR VERIFIER CALCUL DISTRIBUE MPI EN TEMPS
+        if (ltest) then
+          if (ktyp.eq.'R') then
+            call vecini(lonch,(iordr)*1.d0,noch)
+          else if (ktyp.eq.'C') then
+            call vecinc(lonch,(iordr)*ci,nochc)
+          else
+            ASSERT(.False.)
+          endif
         endif
+!
+!
+! TRAITEMENTS POUR GERER LA DISTRIBUTION MPI
+        if ((ldist).and.(ideb.ne.ifin)) then
+! BUFFER MATRICIEL DE COMMUNICATION DES CHAMNO.VALE
+! ON LE CREE AU PREMIER PAS, ON L'INITIALISE A CHAQUE FOIS
+! POUR L'INSTANT, ON SUPPOSE TOUS LES CHAM_NOS DE LONGUEUR IDENTIQUE
+          if (ktyp.eq.'R') then
+            if (ipas.eq.1) then
+              call wkvect(vcnoch,'V V R',lonch*nbproc,jcnoch)
+            endif
+            call vecini(lonch*nbproc,rzero,zr(jcnoch))
+          else if (ktyp.eq.'C') then
+            if (ipas.eq.1) then
+              call wkvect(vcnoch,'V V C',lonch*nbproc,jcnoch)
+            endif
+            call vecinc(lonch*nbproc,czero,zc(jcnoch))
+          else
+            ASSERT(.False.)
+          endif
+! ON RECOPIE LE .VALE DU CHAM_NO CALCULE PAR LE PROCESSUS MPI COURANT DS LE BUFFER
+! ON COMMUNIQUE LE BUFFER ET ON REMPLI LES CHAM_NOS.VALE
+! ON LIBERE ENSUITE TOUS LES OBJETS JV LIES A CES CHAM_NOS
+! RQ: ASMPI_BARRIER AU CAS OU.
+          if (ktyp.eq.'R') then
+            call dcopy(lonch,noch,1,zr(jcnoch+(irelat-1)*lonch),1)
+            call asmpi_barrier(mpicou)
+            call asmpi_comm_vect('MPI_SUM','R',nbval=lonch*nbproc,vr=zr(jcnoch))
+            call asmpi_barrier(mpicou)
+            p=1
+            do k=ideb,ifin
+              k24b=zk24(jvcham+p-1)
+              call jeveuo(k24b(1:19)//'.VALE', 'E', jval)
+              call dcopy(lonch,zr(jcnoch+(p-1)*lonch),1,zr(jval),1)
+              call jelibe(k24b(1:19)//'.VALE')
+              call jelibe(k24b(1:19)//'.REFE')
+              call jelibe(k24b(1:19)//'.DESC')
+              p=p+1
+            enddo
+          else
+            call zcopy(lonch,nochc,1,zc(jcnoch+(irelat-1)*lonch),1)
+            call asmpi_barrier(mpicou)
+            call asmpi_comm_vect('MPI_SUM','C',nbval=lonch*nbproc,vc=zc(jcnoch))
+            call asmpi_barrier(mpicou)
+            p=1
+            do k=ideb,ifin
+              k24b=zk24(jvcham+p-1)
+              call jeveuo(k24b(1:19)//'.VALE', 'E', jval)
+              call zcopy(lonch,zc(jcnoch+(p-1)*lonch),1,zc(jval),1)
+              call jelibe(k24b(1:19)//'.VALE')
+              call jelibe(k24b(1:19)//'.REFE')
+              call jelibe(k24b(1:19)//'.DESC')
+              p=p+1
+            enddo
+          endif
+! NETTOYER BUFFER AU DERNIER PAS
+          if (ipas.eq.nbpas) then
+            call jedetr(vcnoch)
+          endif
+        endif
+!
+! POST-TRAITEMENTS
+        if ((ldist).and.(ideb.ne.ifin)) then
+! EN SIMULTANE
+          do k=ideb,ifin
+            iordr=zi(jordr+k-1)
+            call rsnoch(resuou, option, iordr)
+            if (typesd .eq. 'EVOL_THER') then
+              call ntdoth(modele,mater,mateco,carac,infcha,result=resuou,nume_store =iordr)
+            else
+              call nmdome(modele,mater,mateco,carac,infcha,resuou(1:8),iordr)
+            endif
+          enddo
+        else
+! EN SIMPLE
+          call rsnoch(resuou, option, iordr)
+          if (typesd .eq. 'EVOL_THER') then
+            call ntdoth(modele,mater,mateco,carac,infcha,result=resuou,nume_store=iordr)
+          else
+            call nmdome(modele,mater,mateco,carac,infcha,resuou(1:8),iordr)
+          endif
+        endif
+!
+! TEST DE VERIFICATION
+    if (dbg_ob) then
+! EN SIMULTANE
+      if ((ldist).and.(ideb.ne.ifin)) then
+        p=1
+        do k=ideb,ifin
+          k24b=zk24(jvcham+p-1)
+          if (dbgv_ob) then
+            call jeimpo(ifm,k24b(1:19)//'.DESC','ccfnrn fin')
+            call jeimpo(ifm,k24b(1:19)//'.REFE','ccfnrn fin')
+            call jeimpo(ifm,k24b(1:19)//'.VALE','ccfnrn fin')
+          endif
+          call utimsd(ifm, -1, .False._1, .False._1, k24b(1:19),1, 'G', perm='NON')
+          p=p+1
+        enddo
+      else
+! EN SIMPLE
+        if (dbgv_ob) then
+          call jeimpo(ifm,chamno(1:19)//'.DESC','ccfnrn fin')
+          call jeimpo(ifm,chamno(1:19)//'.REFE','ccfnrn fin')
+          call jeimpo(ifm,chamno(1:19)//'.VALE','ccfnrn fin')
+        endif
+        call utimsd(ifm, -1, .False._1, .False._1, chamno(1:19),1, 'G', perm='NON')
+      endif
+    endif
+!
         call detrsd('CHAMP_GD', '&&'//nompro//'.SIEF')
         call detrsd('VECT_ELEM', vfono(1)(1:8))
         call detrsd('VECT_ELEM', vfono(2)(1:8))
@@ -641,8 +884,29 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
         call jedetr(vacgmp(1:8)//'.ASCOVA')
         call jedetr(vafpip(1:8)//'.ASCOVA')
 280     continue
+        if (ldist) then
+! GESTION DE L'INDICE DE DECALAGE POUR LDIST
+          ipas=ipas+1
+        endif
         call jedema()
-    enddo
+      endif
+! FIN DU IF DISTRIBUTION
+!
+    end do
     call detrsd('CHAMP_GD', bidon)
+!
+! NETTOYAGE POUR LDIST
+    if (ldist) then
+      call jedetr(vcham)
+!
+! SI NECESSAIRE ON REMET LA SD_PARTITION (CF. DEBUT DE ROUTINE)
+      if (lsdpar) then
+        zk8(jparti)=sd_partition
+      endif
+      if (dbg_ob) write(ifm,*)&
+        '< ',rang,'ccfnrn> lsdpar/sd_partition_fin= ',lsdpar,sd_partition
+    endif
+    call jedetr(vldist)
+!
     call jedema()
 end subroutine
