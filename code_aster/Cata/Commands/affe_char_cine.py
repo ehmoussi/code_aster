@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,10 @@ AFFE_CHAR_CINE=OPER(nom="AFFE_CHAR_CINE",op= 101,sd_prod=affe_char_cine_prod
                                'VO6','WI6','WO6','WO','WI1','WO1','GONF',
                                'H1X','H1Y','H1Z','H1PRE1','K1','K2','K3','V11','V12','V13','V21','V22',
                                'V23','V31','V32','V33','PRES11','PRES12','PRES13','PRES21',
-                               'PRES22','PRES23','PRES31','PRES32','PRES33','LH1','GLIS'),),
+                               'PRES22','PRES23','PRES31','PRES32','PRES33','LH1','GLIS',
+                               'HHO_U1', 'HHO_U2', 'HHO_U3', 'HHO_U4', 'HHO_U5', 'HHO_U6',
+                               'HHO_V1', 'HHO_V2', 'HHO_V3', 'HHO_V4', 'HHO_V5', 'HHO_V6',
+                               'HHO_W1', 'HHO_W2', 'HHO_W3', 'HHO_W4', 'HHO_W5', 'HHO_W6'),),
              TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
              GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
              MAILLE          =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),
@@ -136,6 +139,24 @@ AFFE_CHAR_CINE=OPER(nom="AFFE_CHAR_CINE",op= 101,sd_prod=affe_char_cine_prod
              PRES33          =SIMP(statut='f',typ='R' ),
              LH1             =SIMP(statut='f',typ='R' ),
              GLIS            =SIMP(statut='f',typ='R' ),
+             HHO_U1          =SIMP(statut='f',typ='R' ),
+             HHO_U2          =SIMP(statut='f',typ='R' ),
+             HHO_U3          =SIMP(statut='f',typ='R' ),
+             HHO_U4          =SIMP(statut='f',typ='R' ),
+             HHO_U5          =SIMP(statut='f',typ='R' ),
+             HHO_U6          =SIMP(statut='f',typ='R' ),
+             HHO_V1          =SIMP(statut='f',typ='R' ),
+             HHO_V2          =SIMP(statut='f',typ='R' ),
+             HHO_V3          =SIMP(statut='f',typ='R' ),
+             HHO_V4          =SIMP(statut='f',typ='R' ),
+             HHO_V5          =SIMP(statut='f',typ='R' ),
+             HHO_V6          =SIMP(statut='f',typ='R' ),
+             HHO_W1          =SIMP(statut='f',typ='R' ),
+             HHO_W2          =SIMP(statut='f',typ='R' ),
+             HHO_W3          =SIMP(statut='f',typ='R' ),
+             HHO_W4          =SIMP(statut='f',typ='R' ),
+             HHO_W5          =SIMP(statut='f',typ='R' ),
+             HHO_W6          =SIMP(statut='f',typ='R' ),
          ),
 
          THER_IMPO       =FACT(statut='f',max='**',
