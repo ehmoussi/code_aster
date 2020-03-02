@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),
       MESURE_TEMPS=_F(MOYENNE='NON'))
 
-MA=LIRE_MAILLAGE(FORMAT='MED');
+MA=LIRE_MAILLAGE(FORMAT='MED')
 
 MA=DEFI_GROUP(reuse =MA,
               MAILLAGE=MA,
@@ -36,24 +36,24 @@ MA=DEFI_GROUP(reuse =MA,
                              _F(GROUP_MA='EF'),
                              _F(GROUP_MA='FG'),
                              _F(GROUP_MA='GH'),
-                             _F(GROUP_MA='HE')));
+                             _F(GROUP_MA='HE')))
 
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=(_F(TOUT='OUI',
                         PHENOMENE='MECANIQUE',
-                        MODELISATION='D_PLAN')));
+                        MODELISATION='D_PLAN')))
 
 MAT2=DEFI_MATERIAU(ELAS=_F(E=2000000.0,
-                           NU=0.0));
+                           NU=0.0))
 
 MAT1=DEFI_MATERIAU(ELAS=_F(E=2000000.0,
-                           NU=0.0));
+                           NU=0.0))
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=(_F(GROUP_MA='PLAQUE1',
                              MATER=MAT2),
                           _F(GROUP_MA='PLAQUE2',
-                             MATER=MAT1)));
+                             MATER=MAT1)))
 
 CHA1=AFFE_CHAR_MECA(MODELE=MO,
                     DDL_IMPO=(_F(GROUP_NO='CD',
@@ -61,7 +61,7 @@ CHA1=AFFE_CHAR_MECA(MODELE=MO,
                                  DY=-0.1),
                               _F(GROUP_NO='GH',
                                  DX=0.0,
-                                 DY=0.0)));
+                                 DY=0.0)))
 
 CHA2   = DEFI_CONTACT(MODELE      = MO,
                       FORMULATION = 'DISCRETE',
@@ -72,16 +72,16 @@ CHA2   = DEFI_CONTACT(MODELE      = MO,
                                GROUP_MA_MAIT = 'AB',
                                GROUP_MA_ESCL = 'EF',
                              ),
-                      );
+                      )
 
 
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=_F(JUSQU_A=1.0,
-                                    NOMBRE=1));
+                                    NOMBRE=1))
 
 FONC=DEFI_FONCTION(NOM_PARA='INST',
                    VALE=(0.0,  0.0,
-                         1.0,  1.0));
+                         1.0,  1.0))
 
 RESU=STAT_NON_LINE(SOLVEUR=_F(METHODE='MUMPS', MATR_DISTRIBUEE='OUI'),
                    MODELE=MO,
@@ -90,20 +90,17 @@ RESU=STAT_NON_LINE(SOLVEUR=_F(METHODE='MUMPS', MATR_DISTRIBUEE='OUI'),
                              FONC_MULT=FONC)),
                    CONTACT  = CHA2,
                    COMPORTEMENT=_F(RELATION='ELAS'),
-                   INCREMENT=_F(LIST_INST=L_INST));
-
-
-# STANLEY(RESU,MA,MO,CHMAT,None)
+                   INCREMENT=_F(LIST_INST=L_INST))
 
 
 RESU=CALC_CHAMP(reuse =RESU,
                 CONTRAINTE=('SIGM_ELNO'),
-               RESULTAT=RESU);
+               RESULTAT=RESU)
 
 RESU=CALC_CHAMP(reuse =RESU,
              RESULTAT=RESU,
              CONTRAINTE='SIGM_NOEU',
-             );
+             )
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   REFERENCE='ANALYTIQUE',
@@ -179,4 +176,4 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   PRECISION=0.0167,),
           )
 
-FIN();
+FIN()
