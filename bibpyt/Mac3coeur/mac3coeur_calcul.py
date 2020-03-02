@@ -157,7 +157,8 @@ class Mac3CoeurCalcul(object):
         # Note that times depends on niv_fluence and subdivis.
         self.times
         self.fluence_cycle = self.keyw['FLUENCE_CYCLE']
-        self._type_deformation = self.keyw['TYPE_DEFORMATION']
+        self._type_deformation = 'PETIT' if 'RIGI_GEOM' in self.keyw['TYPE_DEFORMATION'] else self.keyw['TYPE_DEFORMATION']
+        self._option_rigi_geom = 'OUI'   if 'RIGI_GEOM' in self.keyw['TYPE_DEFORMATION'] else 'DEFAUT'
 
     def _run(self):
         """Run the calculation itself"""
@@ -459,19 +460,19 @@ class Mac3CoeurCalcul(object):
     @cached_property
     def char_ini_comp(self):
         comp = [_F(RELATION='MULTIFIBRE',
-                                GROUP_MA=('CRAYON', 'T_GUIDE'),
-                                PARM_THETA=0.5,
-                                # DEFORMATION='GROT_GDEP',),
-                                DEFORMATION=self._type_deformation,),
-                             _F(RELATION='DIS_GRICRA',
-                                GROUP_MA='ELA',),
-                             _F(RELATION='DIS_CHOC',
-                                GROUP_MA=('RES_EXT','RES_CONT'),),
-                             _F(RELATION='ELAS',
-                                GROUP_MA=('EBOINF', 'EBOSUP', 'RIG', 'DIL')),
-                             _F(RELATION='VMIS_ISOT_TRAC',
-                                GROUP_MA='MAINTIEN',
-                                DEFORMATION='PETIT'),]
+                   GROUP_MA=('CRAYON', 'T_GUIDE'),
+                   PARM_THETA=0.5,
+                   DEFORMATION = self._type_deformation,
+                   RIGI_GEOM = self._option_rigi_geom, ),
+                _F(RELATION='DIS_GRICRA',
+                   GROUP_MA='ELA',),
+                _F(RELATION='DIS_CHOC',
+                   GROUP_MA=('RES_EXT','RES_CONT'),),
+                _F(RELATION='ELAS',
+                   GROUP_MA=('EBOINF', 'EBOSUP', 'RIG', 'DIL')),
+                _F(RELATION='VMIS_ISOT_TRAC',
+                   GROUP_MA='MAINTIEN',
+                   DEFORMATION='PETIT'),]
         return comp
 
 
@@ -486,7 +487,7 @@ class Mac3CoeurCalcul(object):
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
                                 DEFORMATION=self._type_deformation,
-                                ),
+                                RIGI_GEOM = self._option_rigi_geom, ),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
                              _F(RELATION='DIS_CHOC',
@@ -518,7 +519,7 @@ class Mac3CoeurCalcul(object):
                                 GROUP_MA=('CRAYON', 'T_GUIDE'),
                                 PARM_THETA=0.5,
                                 DEFORMATION=self._type_deformation,
-                                ),
+                                RIGI_GEOM = self._option_rigi_geom, ),
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
                              _F(RELATION='DIS_CHOC',
