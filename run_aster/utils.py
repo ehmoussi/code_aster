@@ -34,6 +34,12 @@ ROOT = osp.dirname(osp.dirname(osp.dirname(osp.dirname(osp.abspath(__file__)))))
 
 def copy(src, dst, verbose=False):
     """Copy the file or directory `src` to the file or directory `dst`.
+    If `src` is a file, `dst` can be an existing directory or the destination
+    file name.
+    If `src` is a directory and `dst` is an existing directory, the files
+    will be copied into `dst`.
+    Parent directory of `dst` is created if necessary.
+
     If `dst` specifies a directory, the files will be copied into `dst` using
     the base filenames from `src`.
 
@@ -43,27 +49,61 @@ def copy(src, dst, verbose=False):
         verbose (bool): Verbosity.
     """
     if verbose:
-        tailsrc = src if len(src) < 60 else "[...]" + src[-60:]
-        logger.info(f"copying {tailsrc}...")
+        tail = src if len(src) < 60 else "[...]" + src[-60:]
+        logger.info(f"copying {tail}...")
+    pardst = osp.dirname(osp.abspath(dst))
+    if not osp.exists(pardst):
+        os.makedirs(pardst)
     if osp.isfile(src):
         shutil.copy2(src, dst)
     else:
-        shutil.copytree(src, dst)
+        if not osp.isdir(dst):
+            shutil.copytree(src, dst)
+        else:
+            for fname in os.listdir(src):
+                copy(osp.join(src, fname), dst, verbose=verbose)
 
 
-def gunzip(path):
+def compress(path, verbose=False):
+    """Compress a file or the content of a directory.
+
+    Arguments:
+        path (str): File or directory path.
+        verbose (bool): Verbosity.
+    """
+    if osp.isfile(path):
+        dest = path + ".gz"
+        files = [path]
+    else:
+        dest = path
+        files = glob(osp.join(path, '*'))
+    for fname in files:
+        if verbose:
+            tail = fname if len(fname) < 60 else "[...]" + fname[-60:]
+            logger.info(f"compressing {tail}...")
+        with open(fname, 'rb') as f_in:
+            with gzip.open(fname + ".gz", 'wb', compresslevel=6) as f_out:
+                shutil.copyfileobj(f_in, f_out)
+    return dest
+
+
+def uncompress(path, verbose=False):
     """Decompress a file or the content of a directory.
 
     Arguments:
         path (str): File or directory path.
+        verbose (bool): Verbosity.
     """
     if osp.isfile(path):
         dest = path.rstrip(".gz")
         files = [path]
     else:
         dest = path
-        files = glob(osp.join(path, '*'))
+        files = glob(osp.join(path, '*.gz'))
     for fname in files:
+        if verbose:
+            tail = fname if len(fname) < 60 else "[...]" + fname[-60:]
+            logger.info(f"decompressing {tail}...")
         with gzip.open(fname, 'rb') as f_in:
             with open(fname.rstrip(".gz"), 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)

@@ -25,6 +25,7 @@ Unittests of run_aster package.
 
 import os
 import os.path as osp
+import tempfile
 import unittest
 from glob import glob
 
@@ -35,6 +36,7 @@ from run_aster.export import (Export, File, Parameter, ParameterBool,
 from run_aster.logger import ERROR, logger
 from run_aster.status import StateOptions as SO
 from run_aster.status import Status, get_status
+from run_aster.utils import copy
 
 # run silently
 logger.setLevel(ERROR + 1)
@@ -311,11 +313,13 @@ class TestStatus(unittest.TestCase):
         self.assertEqual(status.state, SO.Ok)
         self.assertEqual(SO.name(status.state), "OK")
         self.assertTrue(status.state & SO.Completed)
+        self.assertTrue(status.is_completed())
         self.assertFalse(status.state & SO.Error)
         self.assertSequenceEqual(status.times, [0.] * 4)
 
         status = get_status(1, "")
         self.assertEqual(status.state, SO.Abort)
+        self.assertFalse(status.is_completed())
         self.assertEqual(status.exitcode, 1)
         self.assertEqual(SO.name(status.state), "<F>_ABNORMAL_ABORT")
         self.assertFalse(status.state & SO.Completed)
@@ -387,6 +391,42 @@ class TestStatus(unittest.TestCase):
         self.assertFalse(status.state & SO.Ok)
         self.assertFalse(status.state & SO.Completed)
         self.assertTrue(status.state & SO.Error)
+
+
+class TestUtils(unittest.TestCase):
+    """Check utilities functions"""
+
+    def test_copy(self):
+        previous = os.getcwd()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            os.chdir(tmpdir)
+            os.system("echo data1 > data1")
+            os.system("mkdir datadir")
+            os.system("echo data2 > datadir/data2")
+            os.system("echo data3 > datadir/data3")
+            copy("data1", "resudir1/resu1", verbose=True)
+            self.assertTrue(osp.isfile(osp.join(tmpdir, "resudir1", "resu1")))
+            copy("data1", "resudir1/resu1.1", verbose=True)
+            self.assertTrue(osp.isfile(osp.join(tmpdir, "resudir1", "resu1.1")))
+            copy("data1", "resudir1", verbose=True)
+            self.assertTrue(osp.isfile(osp.join(tmpdir, "resudir1", "data1")))
+
+            copy("datadir", "resudir2")
+            self.assertTrue(osp.isdir(osp.join(tmpdir, "resudir2")))
+            self.assertTrue(osp.isfile(osp.join(tmpdir, "resudir2", "data2")))
+            self.assertTrue(osp.isfile(osp.join(tmpdir, "resudir2", "data3")))
+            with open(osp.join(tmpdir, "resudir2", "data3")) as fobj:
+                self.assertTrue("data3" in fobj.read())
+            os.system("echo change3 > datadir/data3")
+            copy("datadir", "resudir2")
+            self.assertTrue(osp.isdir(osp.join(tmpdir, "resudir2")))
+            self.assertTrue(osp.isfile(osp.join(tmpdir, "resudir2", "data2")))
+            self.assertTrue(osp.isfile(osp.join(tmpdir, "resudir2", "data3")))
+            self.assertFalse(osp.isdir(osp.join(tmpdir, "resudir2", "datadir")))
+            with open(osp.join(tmpdir, "resudir2", "data3")) as fobj:
+                self.assertTrue("change3" in fobj.read())
+            os.system("find")
+        os.chdir(previous)
 
 
 if __name__ == "__main__":
