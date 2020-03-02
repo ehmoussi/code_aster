@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -103,14 +103,19 @@ subroutine crnlgc(numddl)
     call jeveuo(numddl//'.NUME.PDDL', 'E', jposdd)
 
     call wkvect('&&CRNULG.GRAPH_COMM', 'V V I', nbproc*nbproc, jgraco)
-    call jeveuo(noma//'.DOMJOINTS', 'L', jdojoi)
-    call jelira(noma//'.DOMJOINTS', 'LONMAX', nbjoin, k8bid)
-
-!   CREATION DU GRAPH LOCAL
-    do iaux = 1, nbjoin
-        zi(jgraco + rang*nbproc + zi(jdojoi + iaux - 1)) = 1
-    end do
-    nbjoin = nbjoin/2
+!
+    nbjoin = 0
+    jdojoi = 0
+    call jeexin(noma//'.DOMJOINTS', iret)
+    if(iret > 0) then
+        call jeveuo(noma//'.DOMJOINTS', 'L', jdojoi)
+        call jelira(noma//'.DOMJOINTS', 'LONMAX', nbjoin, k8bid)
+    !   CREATION DU GRAPH LOCAL
+        do iaux = 1, nbjoin
+            zi(jgraco + rang*nbproc + zi(jdojoi + iaux - 1)) = 1
+        end do
+        nbjoin = nbjoin/2
+    endif
 
 !   NOMBRE DE DDL LOCAUX
     call jeveuo(numddl//'.NUME.NEQU', 'L', jnequ)
