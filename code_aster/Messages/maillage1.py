@@ -56,4 +56,11 @@ Il n'est donc pas possible de supprimer ces noeuds quadratiques sans compromettr
 l'intégrité du maillage.
 """),
 
+    5: _("""
+Le maillage parallèle %(k1)s ne contient pas de joints pour définir le raccord entre les différents sous-domaines. Ceci peut arriver si vos différents sous-domaines ne sont pas connectés les uns aux autres.
+
+ Conseils :
+  * Vérifiez votre maillage.
+"""),
+
 }
