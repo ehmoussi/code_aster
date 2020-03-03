@@ -90,9 +90,10 @@ class RunAster:
         self.prepare_current_directory()
         status = self.execute_study()
 
-        if not self.is_test:
+        results = self.export.resultfiles
+        if results:
             logger.info("TITLE Copying results")
-            copy_resultfiles(self.export.resultfiles, status.is_completed())
+            copy_resultfiles(results, status.is_completed())
         return status
 
     def prepare_current_directory(self):
@@ -152,10 +153,10 @@ class RunAster:
             if not self.export.get("hide-command"):
                 logger.info(f"\nContent of the file to execute:\n{text}\n")
 
-            with open("exec.output", "wb") as log:
+            with open("fort.6", "wb") as log:
                 exitcode = run_command(cmd, log, timeout)
             logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{jobnum}={exitcode}\n\n")
-            status = get_status(exitcode, "exec.output", self.is_test)
+            status = get_status(exitcode, "fort.6", self.is_test)
             # TODO backup bases
         # TODO coredump analysis
 

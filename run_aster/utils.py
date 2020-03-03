@@ -49,9 +49,7 @@ def copy(src, dst, verbose=False):
         verbose (bool): Verbosity.
     """
     if verbose:
-        tail = src if len(src) < 60 else "[...]" + src[-60:]
-        tail = os.sep.join(["[...]"] + src.split(os.sep)[-2:])
-        logger.info(f"copying {tail}...")
+        logger.info(f"copying '{src}' to '{dst}'...")
     pardst = osp.dirname(osp.abspath(dst))
     if not osp.exists(pardst):
         os.makedirs(pardst)
@@ -81,7 +79,7 @@ def compress(path, verbose=False):
     for fname in files:
         if verbose:
             tail = fname if len(fname) < 60 else "[...]" + fname[-60:]
-            logger.info(f"compressing {tail}...")
+            logger.info(f"compressing '{tail}'...")
         with open(fname, 'rb') as f_in:
             with gzip.open(fname + ".gz", 'wb', compresslevel=6) as f_out:
                 shutil.copyfileobj(f_in, f_out)
@@ -104,7 +102,7 @@ def uncompress(path, verbose=False):
     for fname in files:
         if verbose:
             tail = fname if len(fname) < 60 else "[...]" + fname[-60:]
-            logger.info(f"decompressing {tail}...")
+            logger.info(f"decompressing '{tail}'...")
         with gzip.open(fname, 'rb') as f_in:
             with open(fname.rstrip(".gz"), 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
