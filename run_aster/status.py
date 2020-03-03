@@ -76,6 +76,18 @@ class Status:
         """
         return bool(self.state & StateOptions.Completed)
 
+    def update(self, other):
+        """Update the status with a new one (from a following execution).
+        It keeps the effective state, the worst exit code and the sum of
+        elapsed times.
+
+        Arguments:
+            other (Status): Status of a following execution.
+        """
+        self.state = StateOptions.effective(self.state | other.state)
+        self.exitcode = max(self.exitcode, other.exitcode)
+        self.times = [i + j for i, j in zip(self.times, other.times)]
+
 
 class StateOptions:
     """
@@ -116,6 +128,31 @@ class StateOptions:
     Error = (CpuLimit | NoConvergence | Memory | Except
              | Syntax | Fatal | Abort)
     Completed = Ok | Warn | Nook | NoTest
+
+    @staticmethod
+    def effective(state):
+        """Return the effective and consistent state.
+
+        Returns:
+            StateOptions: The effective state.
+        """
+        error = state & (StateOptions.Error ^ StateOptions.Abort)
+        if error:
+            return error
+        if state & StateOptions.Abort:
+            return StateOptions.Abort
+
+        if state & StateOptions.NoTest:
+            return StateOptions.NoTest | (state & StateOptions.Warn)
+        if state & StateOptions.Nook:
+            return StateOptions.Nook | (state & StateOptions.Warn)
+        if state & StateOptions.Warn:
+            return StateOptions.Warn
+        if state & StateOptions.Ok:
+            return StateOptions.Ok
+
+        return 0
+
 
     @staticmethod
     def name(state):
