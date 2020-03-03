@@ -101,7 +101,7 @@ class HgStreamHandler(logging.StreamHandler):
     def _adjust_stream(self, level):
         """Adjust the stream according to the given level"""
         self.flush()
-        if level >= WARNING:
+        if level >= ERROR:
             self.stream = sys.stderr
         else:
             self.stream = sys.stdout
