@@ -199,6 +199,7 @@ class TestExport(unittest.TestCase):
             "F tests_data filename.py D 0",
         ])
         export = Export(from_string=text, is_test=True)
+        # tests_data type works as nom but with a different path initialization
         file0, file1 = export.datafiles
         self.assertEqual(file0.filetype, "nom")
         self.assertEqual(file1.filetype, "nom")
@@ -323,10 +324,43 @@ class TestStatus(unittest.TestCase):
         state = SO.Warn | SO.Nook | SO.Except | SO.Abort
         self.assertEqual(SO.name(state), "<F>_ABNORMAL_ABORT")
 
+    def test_effective(self):
+        state = SO.Ok
+        self.assertEqual(SO.effective(state), SO.Ok)
+        state = SO.Ok | SO.Warn | SO.Nook
+        self.assertEqual(SO.effective(state), SO.Warn | SO.Nook)
+        state = SO.Ok | SO.NoTest
+        self.assertEqual(SO.effective(state), SO.NoTest)
+        state = SO.Ok | SO.Warn | SO.Nook | SO.Syntax
+        self.assertEqual(SO.effective(state), SO.Syntax)
+        state = SO.Warn | SO.Nook | SO.CpuLimit | SO.Syntax
+        self.assertEqual(SO.effective(state), SO.CpuLimit | SO.Syntax)
+
     def test_status(self):
         status = Status()
         self.assertEqual(status.state, 0)
         self.assertEqual(status.exitcode, -1)
+        status.state = SO.NoTest | SO.Warn
+        self.assertEqual(SO.name(status.state), "NO_TEST_RESU")
+        self.assertTrue(status.state & SO.NoTest)
+        self.assertFalse(status.state & SO.Ok)
+        self.assertTrue(status.state & SO.Warn)
+        self.assertTrue(status.state & SO.Completed)
+
+    def test_status_update(self):
+        status = Status()
+        st1 = Status(SO.Warn | SO.NoTest, 0)
+        st1.times = (3., 1., 5., 10.)
+        status.update(st1)
+        self.assertEqual(status.state, SO.Warn | SO.NoTest)
+        self.assertEqual(status.exitcode, 0)
+        self.assertSequenceEqual(status.times, (3., 1., 5., 10.))
+        st2 = Status(SO.Except, 1)
+        st2.times = (100., 1., 101., 105.)
+        status.update(st2)
+        self.assertEqual(status.state, SO.Except)
+        self.assertEqual(status.exitcode, 1)
+        self.assertSequenceEqual(status.times, (103., 2., 106., 115.))
 
     def test_diag(self):
         status = get_status(0, "")

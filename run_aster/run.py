@@ -30,7 +30,7 @@ from .config import CFG
 from .execute import execute
 from .export import Export
 from .logger import logger
-from .status import get_status
+from .status import Status, get_status
 from .utils import compress, copy, make_writable, run_command, uncompress
 
 
@@ -133,13 +133,18 @@ class RunAster:
         logger.info(f"TITLE Content of {os.getcwd()} before execution:")
         run(["ls", "-l", ".", "REPE_IN"])
         commfiles = sorted(glob("fort.1.*"))
+        nbcomm = len(commfiles)
         if not commfiles:
             logger.error("no .comm file found")
+        elif nbcomm > 1:
+            os.makedirs("BASE_PREC")
 
         timeout = self.export.get("time_limit") * 1.05
         jobnum = self.jobnum
+        status = Status()
         for idx, comm in enumerate(commfiles):
-            logger.info(f"TITLE Command file #{idx + 1} / {len(commfiles)}")
+            last = idx + 1 == nbcomm
+            logger.info(f"TITLE Command file #{idx + 1} / {nbcomm}")
             cmd = self.command_line(comm)
             logger.info(f"    {' '.join(cmd)}")
 
@@ -153,17 +158,42 @@ class RunAster:
             if not self.export.get("hide-command"):
                 logger.info(f"\nContent of the file to execute:\n{text}\n")
 
-            with open("fort.6", "wb") as log:
+            with open("fort.6", "ab") as log:
                 exitcode = run_command(cmd, log, timeout)
             logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{jobnum}={exitcode}\n\n")
-            status = get_status(exitcode, "fort.6", self.is_test)
-            # TODO backup bases
+            status.update(get_status(exitcode, "fort.6", self.is_test and last))
+
+            self.post(status, last)
+            if nbcomm > 1 and not status.is_completed():
+                logger.warning(f"execution aborted (command file #{idx + 1}): "
+                               f"{status.diag}")
+                break
+            logger.info(f"execution ended (command file #{idx + 1}): "
+                        f"{status.diag}")
         # TODO coredump analysis
 
         logger.info(f"TITLE Content of {os.getcwd()} after execution:")
         run(["ls", "-l", ".", "REPE_OUT"])
         return status
 
+    def post(self, status, last):
+        """Post-actions between two executions of command files.
+
+        Arguments:
+            status (Status): Status of the execution.
+            last (bool): *True* for the last comm file to execute.
+        """
+        if status.is_completed():
+            if not last:
+                for vola in glob("vola.*"):
+                    os.remove(vola)
+                logger.info("saving result databases to 'BASE_PREC'...")
+                for base in glob("glob.*") + glob("bhdf.*") + glob("pick.*"):
+                    copy(base, "BASE_PREC")
+        else:
+            logger.info("restoring result databases from 'BASE_PREC'...")
+            for base in glob(osp.join("BASE_PREC", "*")):
+                copy(base, os.getcwd())
 
     def use_interactive(self, value):
         """Set the parameter for interactive execution to `value`.
