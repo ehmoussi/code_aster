@@ -36,7 +36,7 @@ from run_aster.export import (Export, File, Parameter, ParameterBool,
 from run_aster.logger import ERROR, logger
 from run_aster.status import StateOptions as SO
 from run_aster.status import Status, get_status
-from run_aster.utils import copy
+from run_aster.utils import ROOT, copy
 
 # run silently
 logger.setLevel(ERROR + 1)
@@ -142,6 +142,7 @@ class TestFile(unittest.TestCase):
         fobj = File("/a/filename", resu=True)
         self.assertEqual(fobj.path, "/a/filename")
         self.assertEqual(fobj.filetype, "libr")
+        self.assertFalse(fobj.is_tests_data)
         self.assertEqual(fobj.unit, 0)
         self.assertFalse(fobj.isdir)
         self.assertFalse(fobj.data)
@@ -160,6 +161,11 @@ class TestFile(unittest.TestCase):
         self.assertFalse(wrk.resu)
         self.assertFalse(wrk.compr)
         self.assertEqual(repr(wrk), f"R libr {tmpdir} D 0")
+
+    def test_special(self):
+        fobj = File("/a/filename", filetype="tests_data", data=True)
+        self.assertEqual(fobj.filetype, "nom")
+        self.assertTrue(fobj.is_tests_data)
 
 
 class TestExport(unittest.TestCase):
@@ -186,6 +192,21 @@ class TestExport(unittest.TestCase):
         self.assertEqual(osp.basename(comm.path), "asrun01b.comm")
         self.assertEqual(comm.unit, 1)
         self.assertTrue(comm.data)
+
+    def test_data(self):
+        text = "\n".join([
+            "F nom filename.py D 0",
+            "F tests_data filename.py D 0",
+        ])
+        export = Export(from_string=text, is_test=True)
+        file0, file1 = export.datafiles
+        self.assertEqual(file0.filetype, "nom")
+        self.assertEqual(file1.filetype, "nom")
+        self.assertFalse(file0.is_tests_data)
+        self.assertTrue(file1.is_tests_data)
+        self.assertEqual(file0.path, "filename.py")
+        self.assertEqual(file1.path, osp.join(ROOT, "share", "aster",
+                                              "tests_data", "filename.py"))
 
     def test_args(self):
         # memory is taken from memjeveux (that is removed) + addmem

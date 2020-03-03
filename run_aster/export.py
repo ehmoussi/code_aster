@@ -24,7 +24,7 @@ import re
 
 from .config import CFG
 from .logger import logger
-
+from .utils import ROOT
 
 DEPRECATED = "__DEPRECATED__"
 
@@ -192,12 +192,10 @@ class File:
 
     def __init__(self, path, filetype='libr', unit=0, isdir=False,
                  data=False, resu=False, compr=False):
-        self._path = path
+        self._dir = isdir
+        self.path = path
         self._typ = filetype
         self._unit = int(unit)
-        if osp.exists(path):
-            isdir = osp.isdir(path)
-        self._dir = isdir
         self._data = data or not resu
         self._resu = resu
         self._compr = compr
@@ -207,10 +205,25 @@ class File:
         """str: Attribute that holds the 'path' property."""
         return self._path
 
+    @path.setter
+    def path(self, path):
+        if osp.exists(path):
+            self._dir = osp.isdir(path)
+        self._path = path
+
     @property
     def filetype(self):
         """str: Attribute that holds the 'filetype' property."""
+        if self.is_tests_data:
+            return "nom"
         return self._typ
+
+    @property
+    def is_tests_data(self):
+        """bool: Attribute that tells if this is a data file for testcase.
+        It is taken from a specific directory.
+        """
+        return self._typ == "tests_data"
 
     @property
     def unit(self):
@@ -262,9 +275,10 @@ class Export:
     Arguments:
         export_file (str, optional): File name of the export file.
         from_string (str, optional): Export content as string.
+        is_test (bool, optional): *True* for a testcase, *False* for a study.
     """
 
-    def __init__(self, filename=None, from_string=None):
+    def __init__(self, filename=None, from_string=None, is_test=False):
         assert filename or from_string, "Export(): invalid arguments"
         if filename:
             self._root = osp.dirname(osp.abspath(filename))
@@ -273,6 +287,7 @@ class Export:
         else:
             self._content = from_string
             self._root = ""
+        self._test = is_test
         self._params = {}
         self._pargs = ParameterListStr("args")
         self._pargs.set([])
@@ -289,6 +304,18 @@ class Export:
     def resultfiles(self):
         """list[File]: List of output File objects."""
         return [i for i in self._files if i.resu]
+
+    def add_file(self, fileobj):
+        """Add a File object.
+
+        Arguments:
+            fileobj (File): File object to be added.
+        """
+        base = self._root
+        if self._test and fileobj.is_tests_data:
+            base = osp.join(ROOT, "share", "aster", "tests_data")
+        fileobj.path = osp.join(base, fileobj.path)
+        self._files.append(fileobj)
 
     def parse(self, force=False):
         """Parse the export content.
@@ -322,9 +349,9 @@ class Export:
                 unit = spl.pop()
                 drc = spl.pop()
                 path = " ".join(spl)
-                entry = File(osp.join(self._root, path), filetype, unit, isdir,
+                entry = File(path, filetype, unit, isdir,
                              "D" in drc, "R" in drc, "C" in drc)
-                self._files.append(entry)
+                self.add_file(entry)
         self.check()
         self._done = True
 

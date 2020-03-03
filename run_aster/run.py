@@ -56,12 +56,14 @@ class RunAster:
 
     Arguments:
         export_file (str): File name of the export file.
+        is_test (bool, optional): *True* for a testcase, *False* for a study.
     """
 
-    def __init__(self, export_file):
+    def __init__(self, export_file, is_test=False):
         self.export_file = osp.abspath(export_file)
+        self.is_test = is_test
         self._orig = osp.dirname(self.export_file)
-        self.export = Export(self.export_file)
+        self.export = Export(self.export_file, is_test=self.is_test)
         self.jobnum = str(os.getpid())
         logger.debug(f"Export file: {self.export_file}")
         logger.debug(self.export)
@@ -78,20 +80,17 @@ class RunAster:
         """
         return osp.normpath(osp.join(self._orig, path))
 
-    def execute(self, test=False):
+    def execute(self):
         """Execution in a temporary directory.
-
-        Arguments:
-            test (bool, optional): *True* for a testcase, *False* for a study.
 
         Returns:
             Status: Status object.
         """
         logger.info("TITLE Execution of code_aster")
         self.prepare_current_directory()
-        status = self.execute_study(test)
+        status = self.execute_study()
 
-        if not test:
+        if not self.is_test:
             logger.info("TITLE Copying results")
             copy_resultfiles(self.export.resultfiles, status.is_completed())
         return status
@@ -124,18 +123,15 @@ class RunAster:
         # TODO add pid + mode to identify the process
         return cmd
 
-    def execute_study(self, test=False):
+    def execute_study(self):
         """Execute the study.
-
-        Arguments:
-            test (bool, optional): *True* for a testcase, *False* for a study.
 
         Returns:
             Status: Status object.
         """
         logger.info(f"TITLE Content of {os.getcwd()} before execution:")
         run(["ls", "-l", ".", "REPE_IN"])
-        commfiles = glob("fort.1.*")
+        commfiles = sorted(glob("fort.1.*"))
         if not commfiles:
             logger.error("no .comm file found")
 
@@ -159,7 +155,7 @@ class RunAster:
             with open("exec.output", "wb") as log:
                 exitcode = run_command(cmd, log, timeout)
             logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{jobnum}={exitcode}\n\n")
-            status = get_status(exitcode, "exec.output", test)
+            status = get_status(exitcode, "exec.output", self.is_test)
             # TODO backup bases
         # TODO coredump analysis
 

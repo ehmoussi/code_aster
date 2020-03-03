@@ -50,6 +50,7 @@ def copy(src, dst, verbose=False):
     """
     if verbose:
         tail = src if len(src) < 60 else "[...]" + src[-60:]
+        tail = os.sep.join(["[...]"] + src.split(os.sep)[-2:])
         logger.info(f"copying {tail}...")
     pardst = osp.dirname(osp.abspath(dst))
     if not osp.exists(pardst):
