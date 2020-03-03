@@ -103,15 +103,15 @@ def main(argv=None):
         ptvsd.wait_for_attach()
         ptvsd.break_into_debugger()
 
-    calc = RunAster(args.export)
+    calc = RunAster(args.export, args.test)
     if args.interactive:
         calc.use_interactive(True)
     if args.wrkdir:
         os.chdir(args.wrkdir)
-        status = calc.execute(args.test)
+        status = calc.execute()
     else:
         with temporary_dir():
-            status = calc.execute(args.test)
+            status = calc.execute()
     logger.info(FMT_DIAG.format(state=status.diag))
     return status.exitcode
 
