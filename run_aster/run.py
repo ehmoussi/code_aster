@@ -140,32 +140,14 @@ class RunAster:
             os.makedirs("BASE_PREC")
 
         timeout = self.export.get("time_limit") * 1.05
-        jobnum = self.jobnum
         status = Status()
         for idx, comm in enumerate(commfiles):
             last = idx + 1 == nbcomm
             logger.info(f"TITLE Command file #{idx + 1} / {nbcomm}")
-            cmd = self.command_line(comm)
-            logger.info(f"    {' '.join(cmd)}")
-
-            with open(comm, "rb") as fobj:
-                text = fobj.read().decode(errors='replace')
-                text = add_import_commands(text)
-                if self.export.get("interact"):
-                    text = stop_at_end(text)
-            with open(comm, 'w') as fobj:
-                fobj.write(text)
-            if not self.export.get("hide-command"):
-                logger.info(f"\nContent of the file to execute:\n{text}\n")
-
-            with open("fort.6", "ab") as log:
-                exitcode = run_command(cmd, log, timeout)
-            logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{jobnum}={exitcode}\n\n")
-            status.update(get_status(exitcode, "fort.6", self.is_test and last))
-
-            self.post(status, last)
-            if nbcomm > 1 and not status.is_completed():
-                logger.warning(f"execution aborted (command file #{idx + 1}): "
+            status.update(self._exec_one(comm, last,
+                                         timeout - status.times[-1]))
+            if not status.is_completed():
+                logger.warning(f"execution failed (command file #{idx + 1}): "
                                f"{status.diag}")
                 break
             logger.info(f"execution ended (command file #{idx + 1}): "
@@ -176,13 +158,26 @@ class RunAster:
         run(["ls", "-l", ".", "REPE_OUT"])
         return status
 
-    def post(self, status, last):
-        """Post-actions between two executions of command files.
+    def _exec_one(self, comm, last, timeout):
+        """Execute a command file."""
+        cmd = self.command_line(comm)
+        logger.info(f"    {' '.join(cmd)}")
 
-        Arguments:
-            status (Status): Status of the execution.
-            last (bool): *True* for the last comm file to execute.
-        """
+        with open(comm, "rb") as fobj:
+            text = fobj.read().decode(errors='replace')
+            text = add_import_commands(text)
+            if self.export.get("interact"):
+                text = stop_at_end(text)
+        with open(comm, 'w') as fobj:
+            fobj.write(text)
+        if not self.export.get("hide-command"):
+            logger.info(f"\nContent of the file to execute:\n{text}\n")
+
+        with open("fort.6", "ab") as log:
+            exitcode = run_command(cmd, log, timeout)
+        logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{self.jobnum}={exitcode}\n\n")
+        status = get_status(exitcode, "fort.6", self.is_test and last)
+
         if status.is_completed():
             if not last:
                 for vola in glob("vola.*"):
@@ -194,6 +189,7 @@ class RunAster:
             logger.info("restoring result databases from 'BASE_PREC'...")
             for base in glob(osp.join("BASE_PREC", "*")):
                 copy(base, os.getcwd())
+        return status
 
     def use_interactive(self, value):
         """Set the parameter for interactive execution to `value`.
