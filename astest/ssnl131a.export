@@ -6,5 +6,5 @@ P mpi_nbnoeud 1
 P testlist asterxx ci verification sequential
 
 F comm ssnl131a.comm D 1
-F nom ssnl131a_mater.py D 0
+F tests_data ssnl131a_mater.py D 0
 F mail ssnl131a.mail D 20
