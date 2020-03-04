@@ -129,11 +129,11 @@ def run_command(cmd, logfile, timeout=None):
     Returns:
         int: exit code.
     """
-    newcmd = " ".join(cmd) + " | tee -a " + logfile
+    newcmd = " ".join(cmd) + " 2>&1 | tee -a " + logfile
     try:
         proc = run(newcmd, shell=True, timeout=timeout)
         iret = proc.returncode
     except TimeoutExpired as exc:
-        print(str(exc))
+        sys.stderr.write(str(exc))
         iret = -9
     return iret

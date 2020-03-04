@@ -312,6 +312,14 @@ class Export:
         """list[File]: List of output File objects."""
         return [i for i in self._files if i.resu]
 
+    def add_file(self, fileobj):
+        """Add a File object.
+
+        Arguments:
+            fileobj (File): File object to be added.
+        """
+        self._files.append(fileobj)
+
     def parse(self, check):
         """Parse the export content.
 
@@ -344,7 +352,7 @@ class Export:
                 path = " ".join(spl)
                 entry = File(path, filetype, unit, isdir,
                              "D" in drc, "R" in drc, "C" in drc)
-                self._files.append(entry)
+                self.add_file(entry)
         if check:
             self.check()
 
