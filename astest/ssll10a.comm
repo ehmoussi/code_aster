@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -53,21 +53,21 @@ CAREL2=AFFE_CARA_ELEM( MODELE=MO2,
                              VARI_SECT = 'HOMOTHETIQUE',
                              CARA = ( 'H1', 'H2',), VALE = ( 0.02, 0.02, ),),),   )
 
-CH111=AFFE_CHAR_MECA( MODELE=MO1,DDL_IMPO=(
+CH111=AFFE_CHAR_MECA( MODELE=MO1, DOUBLE_LAGRANGE='NON', DDL_IMPO=(
           _F( TOUT = 'OUI',    DZ = 0., DRX = 0., DRY = 0.),
                    _F( NOEUD = ('D','B','E',), DX = 0., DY = 0., DRZ = 0.),
                    _F( NOEUD = 'C',       DX = 0., DY = 0.)) )
 
-CH112=AFFE_CHAR_MECA( MODELE=MO2,DDL_IMPO=(
+CH112=AFFE_CHAR_MECA( MODELE=MO2, DOUBLE_LAGRANGE='NON', DDL_IMPO=(
           _F( TOUT = 'OUI',    DZ = 0., DRX = 0., DRY = 0.),
                    _F( NOEUD = ('D','B','E',), DX = 0., DY = 0., DRZ = 0.),
                    _F( NOEUD = 'C',       DX = 0., DY = 0.)) )
 
-CH121=AFFE_CHAR_MECA( MODELE=MO1,
+CH121=AFFE_CHAR_MECA( MODELE=MO1, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',  FY = -1.E5),
           FORCE_POUTRE=_F( MAILLE = 'AB', FY = -1.E3) )
 
-CH122=AFFE_CHAR_MECA( MODELE=MO2,
+CH122=AFFE_CHAR_MECA( MODELE=MO2,DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',  FY = -1.E5),
           FORCE_POUTRE=_F( MAILLE = 'AB', FY = -1.E3) )
 
@@ -201,7 +201,7 @@ C15=DEFI_CONSTANTE(VALE=-1.E5)
 # -- AFFE_CHAR_MECA_F FORCE_POUTRE MAILLE FY :
 # --------------------------------------------
 
-CH221=AFFE_CHAR_MECA_F(   MODELE=MO1,
+CH221=AFFE_CHAR_MECA_F(   MODELE=MO1, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',    FY = C15),
           FORCE_POUTRE=_F( MAILLE = 'AB',  FY = C13))
 
@@ -219,7 +219,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   PRECISION=2.E-3,),
           )
 
-CH222=AFFE_CHAR_MECA_F(   MODELE=MO2,
+CH222=AFFE_CHAR_MECA_F(   MODELE=MO2, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',    FY = C15),
           FORCE_POUTRE=_F( MAILLE = 'AB',  FY = C13))
 
@@ -241,7 +241,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 # -- AFFE_CHAR_MECA       FORCE_POUTRE VY        :
 # --------------------------------------------
 
-CH321=AFFE_CHAR_MECA(   MODELE=MO1,
+CH321=AFFE_CHAR_MECA(   MODELE=MO1, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',    FY = -1.E5),
           FORCE_POUTRE=_F( MAILLE = 'AB',  VY = -1.E3))
 
@@ -259,7 +259,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   PRECISION=2.E-3,),
           )
 
-CH322=AFFE_CHAR_MECA(   MODELE=MO2,
+CH322=AFFE_CHAR_MECA(   MODELE=MO2, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',    FY = -1.E5),
           FORCE_POUTRE=_F( MAILLE = 'AB',  VY = -1.E3))
 
@@ -281,7 +281,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 # -- AFFE_CHAR_MECA_F FORCE_POUTRE GROUP_MA VY :
 # --------------------------------------------
 
-CH421=AFFE_CHAR_MECA_F(   MODELE=MO1,
+CH421=AFFE_CHAR_MECA_F(   MODELE=MO1, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',      FY = C15),
           FORCE_POUTRE=_F( GROUP_MA = 'GROUP_MA_AB',  VY = C13))
 
@@ -299,7 +299,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   PRECISION=2.E-3,),
           )
 
-CH422=AFFE_CHAR_MECA_F(   MODELE=MO2,
+CH422=AFFE_CHAR_MECA_F(   MODELE=MO2, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',      FY = C15),
           FORCE_POUTRE=_F( GROUP_MA = 'GROUP_MA_AB',  VY = C13))
 
@@ -330,7 +330,7 @@ CARE21=AFFE_CARA_ELEM( MODELE=MO1,
                              _F( MAILLE = 'AE',
                                  SECTION = 'RECTANGLE',CARA = 'H', VALE = 0.02)) )
 
-CH521=AFFE_CHAR_MECA_F(   MODELE=MO1,
+CH521=AFFE_CHAR_MECA_F(   MODELE=MO1, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',      FY = C15),
           FORCE_POUTRE=_F( GROUP_MA = 'GROUP_MA_AB',  VZ = C13))
 
@@ -357,7 +357,7 @@ CARE22=AFFE_CARA_ELEM( MODELE=MO2,
                             _F( MAILLE = 'AE',
                                 SECTION = 'RECTANGLE',CARA = 'H', VALE = 0.02)) )
 
-CH522=AFFE_CHAR_MECA_F(   MODELE=MO2,
+CH522=AFFE_CHAR_MECA_F(   MODELE=MO2, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',      FY = C15),
           FORCE_POUTRE=_F( GROUP_MA = 'GROUP_MA_AB',  VZ = C13))
 
@@ -379,7 +379,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 # -- AFFE_CHAR_MECA   FORCE_POUTRE GROUP_MA VZ :
 # ------------------------------------------------
 
-CH621=AFFE_CHAR_MECA(     MODELE=MO1,
+CH621=AFFE_CHAR_MECA(     MODELE=MO1, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',      FY = -1.E5),
           FORCE_POUTRE=_F( GROUP_MA = 'GROUP_MA_AB',  VZ = -1.E3))
 
@@ -397,7 +397,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   PRECISION=2.E-3,),
           )
 
-CH622=AFFE_CHAR_MECA(     MODELE=MO2,
+CH622=AFFE_CHAR_MECA(     MODELE=MO2, DOUBLE_LAGRANGE='NON',
           FORCE_NODALE=_F( NOEUD = 'G',      FY = -1.E5),
           FORCE_POUTRE=_F( GROUP_MA = 'GROUP_MA_AB',  VZ = -1.E3))
 
