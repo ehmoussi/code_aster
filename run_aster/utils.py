@@ -25,9 +25,9 @@ import stat
 import sys
 import time
 from glob import glob
-from subprocess import PIPE, STDOUT, Popen, TimeoutExpired
+from subprocess import TimeoutExpired, run
 
-from run_aster.logger import logger
+from .logger import logger
 
 ROOT = osp.dirname(osp.dirname(osp.dirname(osp.dirname(osp.abspath(__file__)))))
 
@@ -123,30 +123,17 @@ def run_command(cmd, logfile, timeout=None):
 
     Arguments:
         cmd (list): Command line arguments.
-        logfile (file-object): File-object (opened with 'wb').
+        logfile (str): Log file name.
         timeout (float, optional): Time out for the execution.
 
     Returns:
         int: exit code.
     """
-    start = time.time()
+    newcmd = " ".join(cmd) + " | tee -a " + logfile
     try:
-        proc = Popen(cmd, stdout=PIPE, stderr=STDOUT)
-        while True:
-            byte = proc.stdout.read(1)
-            if byte:
-                sys.stdout.buffer.write(byte)
-                sys.stdout.flush()
-                logfile.write(byte)
-                # logfile.flush()
-            else:
-                break
-            if time.time() - start > timeout:
-                raise TimeoutExpired(cmd, timeout)
+        proc = run(newcmd, shell=True, timeout=timeout)
+        iret = proc.returncode
     except TimeoutExpired as exc:
         print(str(exc))
-        proc.kill()
-    finally:
-        iret = proc.wait()
-        proc.stdout.close()
+        iret = -9
     return iret

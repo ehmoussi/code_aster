@@ -158,8 +158,7 @@ class RunAster:
         logger.info(f"TITLE Command line #{idx + 1}:")
         logger.info(f"    {' '.join(cmd)}")
 
-        with open(TMPMESS, "ab") as log:
-            exitcode = run_command(cmd, log, timeout)
+        exitcode = run_command(cmd, TMPMESS, timeout)
         logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{self.jobnum}={exitcode}\n\n")
         status = self._get_status(exitcode, last)
 
