@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ subroutine numer2(nb_ligr , list_ligr, base, nume_ddlz,&
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterc/cheksd.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/idensd.h"
 #include "asterfort/jedema.h"
@@ -73,7 +74,9 @@ implicit none
     character(len=14) :: nume_ddl , nume_ddl_old, moloc
     character(len=24) :: sd_iden_rela
     character(len=3) :: matd
-    aster_logical :: l_matr_dist, verbose
+    aster_logical :: l_matr_dist
+    aster_logical, parameter :: verbose = ASTER_FALSE, debug = ASTER_FALSE
+    integer :: iret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -94,7 +97,6 @@ implicit none
         sd_iden_rela = sd_iden_relaz
     endif
 !
-    verbose=.false.
     call matdis(matd, verbose)
     ASSERT(matd.eq.'OUI' .or. matd.eq.'NON')
     if (matd.eq.'OUI') then
@@ -138,7 +140,7 @@ implicit none
 !
     nume_ddlz = nume_ddl
 !
-!     CALL CHEKSD('sd_nume_ddl',nume_ddlz,IRET)
+    if(debug) call cheksd(nume_ddlz, 'SD_NUME_DDL', iret)
 !
     call jedema()
 end subroutine

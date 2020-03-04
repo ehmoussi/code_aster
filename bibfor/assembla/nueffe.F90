@@ -22,6 +22,7 @@ subroutine nueffe(nb_ligr, list_ligr, base , nume_ddlz , renumz,&
 implicit none
 !
 #include "asterf_types.h"
+#include "asterc/cheksd.h"
 #include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nueffe_lag1.h"
@@ -76,9 +77,10 @@ implicit none
 !              .NUME.REFN
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iligr, jlgrf
+    integer :: iligr, jlgrf, iret
     character(len=8) :: lag12
     aster_logical :: first
+    aster_logical, parameter :: debug = ASTER_FALSE
 !
 ! Verification of number of Lagrange multipliers in load ligrel (single or double)
 !
@@ -107,5 +109,7 @@ implicit none
         call nueffe_lag2(nb_ligr, list_ligr, base, nume_ddlz, renumz,&
                          modelocz, sd_iden_relaz)
     endif
+!
+    if (debug) call cheksd(nume_ddlz, 'SD_NUME_DDL', iret)
 !
 end subroutine
