@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ implicit none
 !
 #include "jeveux.h"
 #include "asterc/indik8.h"
+#include "asterc/cheksd.h"
 #include "asterfort/assert.h"
 #include "asterfort/creprn.h"
 #include "asterfort/detrsd.h"
@@ -114,13 +115,13 @@ implicit none
     integer :: iconx1, iconx2, iddlag, iderli
     integer :: idnocm, idprn1, idprn2, idref
     integer :: iec, iel, iexi1, ifm, igr, ilag, ilag2, n0, n1, n2, nn
-    integer :: ili, inewn, ino, inum2, inum21
+    integer :: ili, inewn, ino, inum21
     integer :: inuno2, ioldn, iprnm, ire, iret
     integer :: j, jprno, k, l
     integer :: nbcmp, nbn, nb_node_subs
     integer :: nb_node, nbnonu, nbnore, nddl1, nddlb
-    integer :: nel, niv, nlag, nma
-    integer :: numa, nunoel, valmax, nunoel_save
+    integer :: nel, niv, nlag, nno, nblag
+    integer :: numa, nunoel, nume_late_node, nunoel_save
     integer :: vali(5)
     integer, pointer :: v_nnli(:) => null()
     integer, pointer :: adli(:) => null()
@@ -129,7 +130,7 @@ implicit none
     integer, pointer :: qrns(:) => null()
     integer, pointer :: p_nequ(:) => null()
     integer, pointer :: v_sdiden_info(:) => null()
-
+    aster_logical, parameter :: debug = ASTER_FALSE
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -213,6 +214,7 @@ implicit none
 
 !
     call infniv(ifm,niv)
+!
     nume_ddl = nume_ddlz
 !
 ! - Local mode
@@ -249,10 +251,13 @@ implicit none
     prno      = prof_chno(1:19)//'.PRNO'
     nueq      = prof_chno(1:19)//'.NUEQ'
     deeq      = prof_chno(1:19)//'.DEEQ'
+!
     nume_equa = nume_ddl//'.NUME'
     delg      = nume_equa(1:19)//'.DELG'
     nequ      = nume_equa(1:19)//'.NEQU'
     refn      = nume_equa(1:19)//'.REFN'
+!
+! --- Objets temporaires
     nnli      = nume_ddl//'.NNLI'
     nuno      = nume_ddl//'.NUNO'
     exi1      = nume_ddl//'.EXI1'
@@ -280,11 +285,11 @@ implicit none
     call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi=nb_node_mesh)
     call dismoi('NB_NL_MAILLA', mesh, 'MAILLAGE', repi=nb_node_subs)
     nb_node = nb_node_mesh + nb_node_subs
-
+!
 ! --- LILI(1)='&MAILLA'
 !     -----------------
     ilim = 1
-
+!
 ! --- ALLOCATION DE L'OBJET NU.NNLI NOMBRE DE NOEUDS DECLARES DANS
 ! --- LE LIGREL ILI DE LILI :
 !     ---------------------
@@ -307,12 +312,12 @@ implicit none
 
     call jeecra(jexnum(nuno, 1), 'LONMAX', nb_node)
     call jeecra(jexnum(prno, 1), 'LONMAX', nb_node*(nec+2))
-
-
+!
 ! --- N CONTIENDRA LE NOMBRE TOTAL (MAX) DE NOEUDS DE NUME_DDL
 ! --- TOUS LES NOEUDS DU MAILLAGE + TOUS LES NOEUDS SUPL. DES LIGRELS :
 !     ---------------------------------------------------------------
     n = nb_node
+    nblag = 0
     do ili = 2, nlili
         call jenuno(jexnum(lili, ili), nomli)
         call jeexin(nomli(1:19)//'.NBNO', iret)
@@ -329,10 +334,12 @@ implicit none
 ! ---    AFFECTATION DU CHAMP .NNLI DE NU :
 !        --------------------------------
         v_nnli(ili) = nbn
+!
         call jeecra(jexnum(nuno, ili), 'LONMAX', nbn)
-
+!
         call jeecra(jexnum(prno, ili), 'LONMAX', nbn* (nec+2))
         n = n + nbn
+        nblag = nblag + nbn
     end do
 
     call wkvect(derli, 'V V I', n+1, iderli)
@@ -346,7 +353,9 @@ implicit none
 !     ------------------------------------
     call jeveuo(jexatr(nuno, 'LONCUM'), 'L', inuno2)
     nlag = zi(inuno2+nlili) - zi(inuno2+1)
-
+    ASSERT(nlag==nblag)
+    ASSERT(n == (nb_node+nlag))
+!
 ! --- RENUMEROTATION , CREATION DES OBJETS NU.EXI1, NU.NEWN ET NU.OLDN :
 !     ----------------------------------------------------------------
 
@@ -380,14 +389,13 @@ implicit none
 ! ---    RELATION LINEAIRE :
 !        -----------------
                     n0 = zi(iderli+n2)
-
-                    zi(iddlag+2* (ilag2-1)+1) = -1
-                    zi(iddlag+2* (ilag2-1)+2) = 1
+!
                     if (n0 .gt. 0) then
                         zi(iddlag+2* (ilag2-1)) = 0
                         zi(iddlag+2* (ilag2-1)+1) = 0
                     else
                         zi(iddlag+2* (ilag2-1)) = n1
+                        zi(iddlag+2* (ilag2-1)+1) = -1
                         zi(iderli+n2) = n1
                     endif
                 endif
@@ -395,49 +403,46 @@ implicit none
         end do
     end do
 
-    nbnonu = 0
-
 ! ---  NBNORE EST LE NOMBRE DE NOEUDS DU MAILLAGE PARTICIPANTS A LA
 ! ---  NUMEROTATION:
 !      ------------
+!
     call jelira(oldn, 'LONUTI', nbnore)
-    call wkvect(num21, ' V V I', nbnore+nlag, inum21)
-    call wkvect(num2, ' V V I', nbnore+nlag, inum2)
-    valmax = 0
-    do ire = 1, nbnore
-        if(zi(ioldn+ire-1).gt.valmax) then
-            valmax=zi(ioldn+ire-1)
-        endif
-    enddo
-
-    valmax = valmax + 1
+    ASSERT(nbnore <= nb_node)
+!
+!
+! ---  ALLOCATION DE NUM21 ET NUM2
+! ---  NUM2(I) = NUMERO DANS LA NOUVELLE NUMEROTATION NUNO DU NOEUD I
+! ---  DANS LA NUMEROTATION GLOBALE DE 1ER NIVEAU
+! ---  SI NUM2(I)=J ALORS NUM21(J)=I :
+!      -----------------------------
+!
+    call wkvect(num21, ' V V I', n+1, inum21)
+!
+    nbnonu = 0
 ! ---  BOUCLE SUR LES NOEUDS PHYSIQUES :
 !      -------------------------------
     do ire = 1, nbnore
-        i = zi(ioldn-1+ire)
-
-! ---  SI LE NOEUD PHYSIQUE N'A PAS ETE RENUMEROTE, ON LE RENUMEROTE :
-!      -------------------------------------------------------------
-        if (zi(inum2+i) .eq. 0) then
-            nbnonu = nbnonu + 1
-            zi(inum2+i) = nbnonu
-            zi(inum21+nbnonu) = i
-        endif
+        nbnonu = nbnonu + 1
+        zi(inum21+nbnonu) = zi(ioldn-1+ire)
     end do
-
+!
+! --- Commencer la numérotation des noeuds tardifs après tous les noeuds physiques
+!
+    nume_late_node = nb_node
+!
 ! ---  BOUCLE SUR LES NOEUDS DE LAGRANGE :
 !      ---------------------------------
     do ire = 1, nlag
         nbnonu = nbnonu + 1
-        zi(inum2+i) = nbnonu
-        zi(inum21+nbnonu) = valmax
-        valmax = valmax + 1
+        nume_late_node = nume_late_node + 1
+        zi(inum21+nbnonu) = nume_late_node
     end do
-
+!
     if (nbnonu .ne. (nbnore+nlag)) then
         call utmess('F', 'ASSEMBLA_28')
     endif
-
+!
 ! --- CALCUL DES DESCRIPTEURS DES PRNO
 !     ================================
 
@@ -467,7 +472,7 @@ implicit none
         end do
 150     continue
     end do
-
+!
 ! --- 2EME ETAPE : NOEUDS SUPPLEMENTAIRES DES LIGRELS:
 ! --- SI NUNOEL NOEUD TARDIF DU LIGREL ILI NOMLI = LILI(ILI)
 ! --- PRNO(ILI,NUNOEL,L+2)= NOMLI.QRNS(NUNOEL)(L) :
@@ -541,19 +546,18 @@ implicit none
             end do
         end do
     end do
-
+!
 ! --- CALCUL DES ADRESSES DANS LES PRNO
 !     =================================
     iad = 1
-
     do i = 1, n
-        call nuno1(i, ili, nunoel, n, inum21,&
-                   inuno2, nlili)
+        call nuno1(i, ili, nunoel, n, inum21, inuno2, nlili)
         if (ili .gt. 0) then
             nddl1 = zzprno(ili,nunoel,2)
+
             if (nddl1 .eq. 0) then
                 nddl1 = nddl(ili,nunoel,nec,idprn1,idprn2)
-
+!
                 zi(izzprn(ili,nunoel,2)) = nddl1
             endif
             zi(izzprn(ili,nunoel,1)) = iad
@@ -585,16 +589,16 @@ implicit none
 !
     if (niv .ge. 1) then
 
-! ---   CALCUL DE NMA : NOMBRE DE NOEUDS DU MAILLAGE PORTEURS DE DDLS :
+! ---   CALCUL DE NNO : NOMBRE DE NOEUDS DU MAILLAGE PORTEURS DE DDLS :
 !       ----------------------------------------------------------------
-        nma = 0
+        nno = 0
         call jeveuo(jexnum(prno, 1), 'L', jprno)
         do ino = 1, nb_node
-            if (zi(jprno-1+ (ino-1)* (2+nec)+2) .gt. 0) nma = nma + 1
+            if (zi(jprno-1+ (ino-1)* (2+nec)+2) .gt. 0) nno = nno + 1
         end do
         vali(1) = nb_dof
         vali(2) = nb_dof - nlag
-        vali(3) = nma
+        vali(3) = nno
         vali(4) = nlag
         vali(5) = nlag
         call utmess('I', 'FACTOR_1', ni=5, vali=vali)
@@ -647,6 +651,6 @@ implicit none
     call jedetr(oldn)
 
 !   call jedema() FORBIDDEN !
-
+    if (debug) call cheksd(nume_ddl, 'SD_NUME_DDL', iret)
 !
 end subroutine

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,8 +71,9 @@ MATE=AFFE_MATERIAU(MAILLAGE = MAIL,
                                _F(GROUP_MA = 'BETON',
                                   MATER    = MA_B,)));
 
-CL_DEPL=AFFE_CHAR_CINE(MODELE   = MODE,
-                       MECA_IMPO =(_F(GROUP_MA = 'ENCAST',
+CL_DEPL=AFFE_CHAR_MECA(MODELE   = MODE,
+                        DOUBLE_LAGRANGE='NON',
+                       DDL_IMPO =(_F(GROUP_MA = 'ENCAST',
                                       DX = 0.,
                                       DY = 0.,
                                       DZ = 0.),
@@ -84,7 +85,7 @@ F_FORCE = FORMULE(VALE='((Z-0.08)/0.08)*937500.',
                   NOM_PARA='Z',)
 
 COUPLE=AFFE_CHAR_MECA_F(MODELE   = MODE,
-                      FORCE_FACE = _F(GROUP_MA = 'BOUT',
+                        FORCE_FACE = _F(GROUP_MA = 'BOUT',
                                       FX       = F_FORCE))
 
 ORI_MEMB=AFFE_CARA_ELEM(MODELE = MODE,
@@ -142,7 +143,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DZ',
                    VALE_CALC=-8.7312320000000002E-05,
-                   
+
                    ),
                 ),
           )
@@ -155,7 +156,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CHAM='EPSI_NOEU',
                    NOM_CMP='EXX',
                    VALE_CALC=6.2026639999999998E-06,
-                   
+
                    ),
                 _F(NUME_ORDRE=1,
                    GROUP_NO='POINT_2',
@@ -163,7 +164,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    NOM_CHAM='SIEF_NOEU',
                    NOM_CMP='NXX',
                    VALE_CALC=3374.971,
-                   
+
                    ),
                 ),
           )
