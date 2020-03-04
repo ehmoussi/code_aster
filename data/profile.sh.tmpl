@@ -34,8 +34,9 @@ export LD_LIBRARY_PATH
 PYTHONPATH=$(remove_path "${PYTHONPATH}" Subprocess python2.7)
 
 PYTHONPATH=\
-.:@ASTERLIBDIR@:\
+@ASTERLIBDIR@:\
 @CFG_PYTHONPATH@:\
+.:\
 $PYTHONPATH
 export PYTHONPATH
 
