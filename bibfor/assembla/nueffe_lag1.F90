@@ -367,45 +367,46 @@ implicit none
     call jeveuo(newn, 'L', inewn)
     call jeveuo(oldn, 'L', ioldn)
 
-    call wkvect(dsclag, ' V V I', 2*nlag, iddlag)
-
-    do ili = 2, nlili
-
-        do iel = 1, zznels(ili)
-            nn = zznsup(ili,iel)
-            if (nn .eq. 2) then
-                n1 = zznema(ili,iel,1)
-                n2 = zznema(ili,iel,2)
-                if ((n1.gt.0).and. (n2.lt.0)) then
+    if(nlag > 0) then
+        call wkvect(dsclag, ' V V I', 2*nlag, iddlag)
+!
+        do ili = 2, nlili
+            do iel = 1, zznels(ili)
+                nn = zznsup(ili,iel)
+                if (nn .eq. 2) then
+                    n1 = zznema(ili,iel,1)
+                    n2 = zznema(ili,iel,2)
+                    if ((n1.gt.0).and. (n2.lt.0)) then
 
 ! ---    TRANSFORMATION DE N2 , NUMERO DU PREMIER LAGRANGE DANS LA
 ! ---    NUMEROTATION LOCALE AU LIGREL EN SON NUMERO DANS LA
 ! ---    NUMEROTATION GLOBALE :
 !        --------------------
-                    n2 = -n2
-                    n2 = zi(inuno2+ili-1) + n2 - 1
-                    ilag2 = n2 - nb_node
+                        n2 = -n2
+                        n2 = zi(inuno2+ili-1) + n2 - 1
+                        ilag2 = n2 - nb_node
 
 ! ---    RECUPERATION DU NOEUD PHYSIQUE DE NUMERO LE PLUS GRAND
 ! ---    LIE AU SECOND LAGRANGE PAR LE TABLEAU DERLI, CETTE
 ! ---    VALEUR N'EST DIFFERENTE DE 0 QUE S'IL S'AGIT D'UNE
 ! ---    RELATION LINEAIRE :
 !        -----------------
-                    n0 = zi(iderli+n2)
+                        n0 = zi(iderli+n2)
 !
-                    if (n0 .gt. 0) then
-                        zi(iddlag+2* (ilag2-1)) = 0
-                        zi(iddlag+2* (ilag2-1)+1) = 0
-                    else
-                        zi(iddlag+2* (ilag2-1)) = n1
-                        zi(iddlag+2* (ilag2-1)+1) = -1
-                        zi(iderli+n2) = n1
+                        if (n0 .gt. 0) then
+                            zi(iddlag+2* (ilag2-1)) = 0
+                            zi(iddlag+2* (ilag2-1)+1) = 0
+                        else
+                            zi(iddlag+2* (ilag2-1)) = n1
+                            zi(iddlag+2* (ilag2-1)+1) = -1
+                            zi(iderli+n2) = n1
+                        endif
                     endif
                 endif
-            endif
+            end do
         end do
-    end do
-
+    end if
+!
 ! ---  NBNORE EST LE NOMBRE DE NOEUDS DU MAILLAGE PARTICIPANTS A LA
 ! ---  NUMEROTATION:
 !      ------------
