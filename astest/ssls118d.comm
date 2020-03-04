@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ P = FORMULE(VALE='PO*sin(pi*X)*sin(pi*Y)',
             PO=PO,
             NOM_PARA=['X', 'Y'],)
 
-CHA=AFFE_CHAR_MECA(MODELE=MO,
+CHA=AFFE_CHAR_MECA(MODELE=MO, DOUBLE_LAGRANGE='NON',
                    DDL_IMPO=(_F(GROUP_NO='O',
                                 DX=0.0,
                                 DY=0.0,
@@ -95,7 +95,7 @@ CHA=AFFE_CHAR_MECA(MODELE=MO,
                                 _F(GROUP_MA='DA',
                                    MX=0.0,),),);
 
-CHA_P=AFFE_CHAR_MECA_F(MODELE=MO,
+CHA_P=AFFE_CHAR_MECA_F(MODELE=MO, DOUBLE_LAGRANGE='NON',
                        FORCE_COQUE=_F(TOUT='OUI',
                                       PRES=P,),);
 

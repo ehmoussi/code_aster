@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'))
 
 MA=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='MED',)
 
-MO=AFFE_MODELE(  MAILLAGE=MA, 
+MO=AFFE_MODELE(  MAILLAGE=MA,
       AFFE=_F( TOUT = 'OUI',PHENOMENE = 'MECANIQUE',MODELISATION = 'AXIS'))
 
 MA=MODI_MAILLAGE( reuse=MA,  MAILLAGE=MA,
@@ -53,12 +53,12 @@ CHMAT3=AFFE_MATERIAU(  MAILLAGE=MA,AFFE=(
                             _F(  GROUP_MA = 'VMAT2', MATER = MAT2))
                           )
 
-MA=DEFI_GROUP( reuse=MA,   MAILLAGE=MA, 
-                     CREA_GROUP_NO=_F( 
+MA=DEFI_GROUP( reuse=MA,   MAILLAGE=MA,
+                     CREA_GROUP_NO=_F(
                         GROUP_MA = ( 'LPOP8',  'LPOP8S',  'LP8P9',  'LP8P9S', ))
                  )
 
-CH1=AFFE_CHAR_MECA(  MODELE=MO,
+CH1=AFFE_CHAR_MECA(  MODELE=MO, DOUBLE_LAGRANGE='NON',
                      DDL_IMPO=( _F(  GROUP_NO = 'LP8P9',  DX = 0.),
                                 _F(  GROUP_NO = 'LP8P9S', DX = 0.),
                                 _F(  GROUP_NO = 'PB',     DY = 0.)),
@@ -66,7 +66,7 @@ CH1=AFFE_CHAR_MECA(  MODELE=MO,
                                 _F(  GROUP_MA = 'LPOP8S', PRES = 1.))
                    )
 
-CH2=AFFE_CHAR_MECA(  MODELE=MO,
+CH2=AFFE_CHAR_MECA(  MODELE=MO, DOUBLE_LAGRANGE='NON',
                      DDL_IMPO=( _F(  GROUP_NO = 'LP8P9',  DX = 0.),
                                 _F(  GROUP_NO = 'LP8P9S', DX = 0.),
                                 _F(  GROUP_NO = 'PB',     DY = 0.)),
@@ -74,27 +74,27 @@ CH2=AFFE_CHAR_MECA(  MODELE=MO,
                                     _F( GROUP_NO = 'P8S', FY = -1.591549E-3))
                            )
 
-RES1=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT1, 
+RES1=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT1,
           EXCIT=_F( CHARGE = CH1)
                       )
 
-RES2=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT2, 
+RES2=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT2,
           EXCIT=_F( CHARGE = CH1)
                       )
 
-RES3=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT3, 
+RES3=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT3,
           EXCIT=_F( CHARGE = CH1)
                       )
 
-RES4=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT1, 
+RES4=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT1,
           EXCIT=_F( CHARGE = CH2)
                       )
 
-RES5=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT2, 
+RES5=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT2,
           EXCIT=_F( CHARGE = CH2)
                       )
 
-RES6=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT3, 
+RES6=MECA_STATIQUE(   MODELE=MO,   CHAM_MATER=CHMAT3,
           EXCIT=_F( CHARGE = CH2)
                       )
 
