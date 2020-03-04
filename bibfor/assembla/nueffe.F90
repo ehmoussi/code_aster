@@ -30,7 +30,6 @@ implicit none
 #include "asterfort/utmess.h"
 #include "jeveux.h"
 !
-! aslint: disable=W1501
 ! person_in_charge: jacques.pellet at edf.fr
 !
     integer, intent(in) :: nb_ligr

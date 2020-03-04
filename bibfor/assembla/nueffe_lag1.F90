@@ -52,7 +52,6 @@ implicit none
 #include "asterfort/wkvect.h"
 #include "asterfort/jelstc.h"
 !
-! aslint: disable=W1501
 ! person_in_charge: jacques.pellet at edf.fr
 !
     integer, intent(in) :: nb_ligr
