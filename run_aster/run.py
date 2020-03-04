@@ -32,7 +32,7 @@ from .export import Export
 from .logger import logger
 from .status import StateOptions, Status, get_status
 from .timer import Timer
-from .utils import compress, copy, make_writable, run_command, uncompress
+from .utils import ROOT, compress, copy, make_writable, run_command, uncompress
 
 TMPMESS = "fort.6"
 
@@ -112,24 +112,27 @@ class RunAster:
 
         if self.export.filename:
             copy(self.export.filename, self.jobnum + ".export")
-        os.makedirs("REPE_IN")
-        os.makedirs("REPE_OUT")
+        os.makedirs("REPE_IN", exist_ok=True)
+        os.makedirs("REPE_OUT", exist_ok=True)
         copy_datafiles(self.export.datafiles)
 
-    def execute_study(self):
+    def execute_study(self, show_content=True):
         """Execute the study.
 
+        Arguments:
+            show_content (bool): Show the working directory content or not.
         Returns:
             Status: Status object.
         """
-        logger.info(f"TITLE Content of {os.getcwd()} before execution:")
-        run(["ls", "-l", ".", "REPE_IN"])
+        if show_content:
+            logger.info(f"TITLE Content of {os.getcwd()} before execution:")
+            run(["ls", "-l", ".", "REPE_IN"])
         commfiles = sorted(glob("fort.1.*"))
         nbcomm = len(commfiles)
         if not commfiles:
             logger.error("no .comm file found")
         elif nbcomm > 1:
-            os.makedirs("BASE_PREC")
+            os.makedirs("BASE_PREC", exist_ok=True)
 
         timeout = self.export.get("time_limit") * 1.05
         status = Status()
@@ -258,6 +261,20 @@ class RunOnlyEnv(RunAster):
         export (Export): Export object defining the calculation.
     """
 
+    def execute_study(self):
+        """Execute the study.
+
+        Returns:
+            Status: Status object.
+        """
+        logger.info("TITLE Copy/paste these command lines:")
+        profile = osp.join(ROOT, "share", "aster", "profile.sh")
+        logger.info(f"    cd {os.getcwd()}")
+        logger.info(f"    . {profile}")
+        logger.info(f"    export LD_LIBRARY_PATH={os.getcwd()}"
+                    f":${{LD_LIBRARY_PATH}}")
+        return super().execute_study(show_content=False)
+
     def _exec_one(self, comm, idx, last, timeout):
         """Show instructions for a command file.
 
@@ -269,7 +286,7 @@ class RunOnlyEnv(RunAster):
         """
         cmd = self._get_cmdline(comm)
         logger.info(f"    {' '.join(cmd)}")
-        return StateOptions.Ok
+        return Status(StateOptions.Ok, exitcode=0)
 
     def _change_comm_file(self, comm, show):
         """Change a command file.

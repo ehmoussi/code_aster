@@ -261,7 +261,7 @@ def env2dict(self, src):
 
 CTEST_DEF = """
 set(TEST_NAME ${{COMPONENT_NAME}}_{testname})
-add_test(${{TEST_NAME}} {BINDIR}/run_aster --test {ASTERDATADIR}/tests/{testname}.export)
+add_test(${{TEST_NAME}} {BINDIR}/run_aster --ctest {ASTERDATADIR}/tests/{testname}.export)
 set_tests_properties(${{TEST_NAME}} PROPERTIES LABELS "${{COMPONENT_NAME}} {labels}")
 """
 
