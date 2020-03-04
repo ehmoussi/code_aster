@@ -275,25 +275,32 @@ class Export:
     Arguments:
         export_file (str, optional): File name of the export file.
         from_string (str, optional): Export content as string.
-        is_test (bool, optional): *True* for a testcase, *False* for a study.
+        check (bool, optional): *True* to automatically check the consistency.
+            *False* if it will be run manually.
     """
 
-    def __init__(self, filename=None, from_string=None, is_test=False):
+    def __init__(self, filename=None, from_string=None, check=True):
         assert filename or from_string, "Export(): invalid arguments"
         if filename:
-            self._root = osp.dirname(osp.abspath(filename))
+            self._filename = osp.abspath(filename)
+            self._root = osp.dirname(self._filename)
             with open(filename, "r") as fobj:
                 self._content = fobj.read()
         else:
             self._content = from_string
+            self._filename = None
             self._root = ""
-        self._test = is_test
         self._params = {}
         self._pargs = ParameterListStr("args")
         self._pargs.set([])
         self._files = []
-        self._done = False
-        self.parse()
+        self._checked = False
+        self.parse(check)
+
+    @property
+    def filename(self):
+        """str: Path to the export file or None if initialized from a text."""
+        return self._filename
 
     @property
     def datafiles(self):
@@ -305,27 +312,13 @@ class Export:
         """list[File]: List of output File objects."""
         return [i for i in self._files if i.resu]
 
-    def add_file(self, fileobj):
-        """Add a File object.
-
-        Arguments:
-            fileobj (File): File object to be added.
-        """
-        base = self._root
-        if self._test and fileobj.is_tests_data:
-            base = osp.join(ROOT, "share", "aster", "tests_data")
-        fileobj.path = osp.join(base, fileobj.path)
-        self._files.append(fileobj)
-
-    def parse(self, force=False):
+    def parse(self, check):
         """Parse the export content.
 
         Arguments:
-            force (bool): Force reloading and checking the export file.
+            check (bool): Check the consistency of the export file.
         """
-        if force:
-            self._done = False
-        if self._done:
+        if self._checked:
             return
 
         comment = re.compile("^ *#")
@@ -351,9 +344,9 @@ class Export:
                 path = " ".join(spl)
                 entry = File(path, filetype, unit, isdir,
                              "D" in drc, "R" in drc, "C" in drc)
-                self.add_file(entry)
-        self.check()
-        self._done = True
+                self._files.append(entry)
+        if check:
+            self.check()
 
     def set_parameter(self, name, value):
         """Add a parameter.
@@ -382,10 +375,20 @@ class Export:
             new.extend(str(i).split("="))
         self._pargs.set(self.args + new)
 
+    def _abspath(self):
+        """Absolutize path of *File* objects."""
+        is_test = "make_test" in self.get("actions", [])
+        for fileobj in self._files:
+            base = self._root
+            if is_test and fileobj.is_tests_data:
+                base = osp.join(ROOT, "share", "aster", "tests_data")
+            fileobj.path = osp.join(base, fileobj.path)
+
     def check(self):
         """Check consistency, fill arguments from parameter, add arguments
         that replace deprecated ones...
         """
+        self._abspath()
         args = self.args
         # memory_limit in MB, --memory in MB (required), --memjeveux in Mwords
         if "--memory" not in args:
@@ -400,7 +403,7 @@ class Export:
             elif self.has_param("memory_limit"):
                 value = self.get("memory_limit")
             if value:
-                if not self._done:
+                if not self._checked:
                     value += CFG.get("addmem", 0.)
                 self.set_argument(["--memory", value])
         # time_limit in s (required), tpsjob in min, --tpmax in s (required)
@@ -419,6 +422,7 @@ class Export:
             value = self.get("ncpus") # TODO or get limit from config
             if value:
                 self.set_argument(["--numthreads", value])
+        self._checked = True
         # TODO check resources limits here?
 
 
@@ -471,17 +475,19 @@ class Export:
         param = self._params.get(key)
         return param
 
-    def get(self, key):
+    def get(self, key, default=None):
         """Return a parameter value.
 
         Arguments:
             key (str): Parameter name.
+            default (misc, optional): Default value if the parameter does
+                not exist.
 
         Returns:
             misc: Parameter value.
         """
         param = self.get_param(key)
-        return param and param.value
+        return (param and param.value) or default
 
     @property
     def args(self):

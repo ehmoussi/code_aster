@@ -120,6 +120,7 @@ def runtest(self):
         ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant
         out = osp.join(dtmp, osp.basename(test) + ext) + '.output'
         err = osp.join(dtmp, osp.basename(test) + ext) + '.error'
+        Logs.info("`- command: %s" % (" ".join(cmd)))
         Logs.info("`- output in %s" % out)
         with open(out, 'w') as fobj, open(err, 'w') as ferr:
             proc = Popen(cmd, stdout=fobj, stderr=ferr, bufsize=1)

@@ -26,6 +26,7 @@ Unittests of run_aster package.
 import os
 import os.path as osp
 import tempfile
+import time
 import unittest
 from glob import glob
 
@@ -36,6 +37,7 @@ from run_aster.export import (Export, File, Parameter, ParameterBool,
 from run_aster.logger import ERROR, logger
 from run_aster.status import StateOptions as SO
 from run_aster.status import Status, get_status
+from run_aster.timer import Timer
 from run_aster.utils import ROOT, copy
 
 # run silently
@@ -179,6 +181,7 @@ class TestExport(unittest.TestCase):
             export = Export(fexp + "XX")
 
         export = Export(fexp)
+        self.assertIn(".export", export.filename)
         self.assertIn("/asrun01b.py", repr(export))
         self.assertTrue(export.has_param("time_limit"))
         self.assertFalse(export.has_param("consbtc"))
@@ -195,12 +198,14 @@ class TestExport(unittest.TestCase):
 
     def test_data(self):
         text = "\n".join([
+            "P actions make_test",
             "F nom filename.py D 0",
             "F tests_data filename.py D 0",
         ])
-        export = Export(from_string=text, is_test=True)
+        export = Export(from_string=text)
         # tests_data type works as nom but with a different path initialization
         file0, file1 = export.datafiles
+        self.assertIsNone(export.filename)
         self.assertEqual(file0.filetype, "nom")
         self.assertEqual(file1.filetype, "nom")
         self.assertFalse(file0.is_tests_data)
@@ -480,8 +485,22 @@ class TestUtils(unittest.TestCase):
             self.assertFalse(osp.isdir(osp.join(tmpdir, "resudir2", "datadir")))
             with open(osp.join(tmpdir, "resudir2", "data3")) as fobj:
                 self.assertTrue("change3" in fobj.read())
-            os.system("find")
+            # os.system("find")
         os.chdir(previous)
+
+    def test_timer(self):
+        timer = Timer("Global")
+        timer.start("key1")
+        timer.start("key2")
+        time.sleep(0.1)
+        timer.stop()
+        time.sleep(0.1)
+        report = timer.report()
+        self.assertEqual(len(timer._started), 3)
+        self.assertEqual(len(timer._measures), 3)
+        self.assertGreaterEqual(timer._measures["key1"].elapsed, 0.19)
+        self.assertGreaterEqual(timer._measures["key2"].elapsed, 0.09)
+        self.assertIn("Global", report)
 
 
 if __name__ == "__main__":
