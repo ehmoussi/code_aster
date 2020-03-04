@@ -153,7 +153,6 @@ class StateOptions:
 
         return 0
 
-
     @staticmethod
     def name(state):
         """

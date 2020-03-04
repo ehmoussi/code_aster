@@ -30,8 +30,11 @@ from .config import CFG
 from .execute import execute
 from .export import Export
 from .logger import logger
-from .status import Status, get_status
+from .status import StateOptions, Status, get_status
+from .timer import Timer
 from .utils import compress, copy, make_writable, run_command, uncompress
+
+TMPMESS = "fort.6"
 
 
 @contextmanager
@@ -55,30 +58,29 @@ class RunAster:
     """Execute code_aster from a `.export` file.
 
     Arguments:
-        export_file (str): File name of the export file.
-        is_test (bool, optional): *True* for a testcase, *False* for a study.
+        export (Export): Export object defining the calculation.
     """
 
-    def __init__(self, export_file, is_test=False):
-        self.export_file = osp.abspath(export_file)
-        self.is_test = is_test
-        self._orig = osp.dirname(self.export_file)
-        self.export = Export(self.export_file, is_test=self.is_test)
-        self.jobnum = str(os.getpid())
-        logger.debug(f"Export file: {self.export_file}")
-        logger.debug(self.export)
-
-    def exp(self, path):
-        """Return the absolute path of a pathname that may be relative to the
-        directory of the export file.
+    @classmethod
+    def factory(cls, export):
+        """Return a *RunAster* object from an *Export* object.
 
         Arguments:
-            path (str): Path, relative to the directory of the export file.
-
-        Returns:
-            str: Absolute path.
+            export (Export): Export object defining the calculation.
         """
-        return osp.normpath(osp.join(self._orig, path))
+        class_ = cls
+        if "make_test" in export.get("actions"):
+            class_ = RunTest
+        if "make_env" in export.get("actions"):
+            class_ = RunOnlyEnv
+        return class_(export)
+
+    def __init__(self, export):
+        self.timer = Timer()
+        self.export = export
+        self.jobnum = str(os.getpid())
+        logger.debug(f"Export content: {self.export.filename}")
+        logger.debug(self.export)
 
     def execute(self):
         """Execution in a temporary directory.
@@ -87,13 +89,16 @@ class RunAster:
             Status: Status object.
         """
         logger.info("TITLE Execution of code_aster")
+        self.timer.start("Preparation of environment")
         self.prepare_current_directory()
+        self.timer.stop()
+        self.timer.start("Execution of code_aster")
         status = self.execute_study()
-
-        results = self.export.resultfiles
-        if results:
-            logger.info("TITLE Copying results")
-            copy_resultfiles(results, status.is_completed())
+        self.timer.stop()
+        self.timer.start("Copying results")
+        self.ending_execution(status.is_completed())
+        logger.info("TITLE Execution summary")
+        logger.info(self.timer.report())
         return status
 
     def prepare_current_directory(self):
@@ -105,24 +110,11 @@ class RunAster:
         new = (os.getcwd() + os.pathsep + old).strip(os.pathsep)
         os.environ["LD_LIBRARY_PATH"] = new
 
-        copy(self.export_file, self.jobnum + ".export")
+        if self.export.filename:
+            copy(self.export.filename, self.jobnum + ".export")
         os.makedirs("REPE_IN")
         os.makedirs("REPE_OUT")
         copy_datafiles(self.export.datafiles)
-
-    def command_line(self, commfile):
-        """Build the command line.
-
-        Returns:
-            list[str]: List of command line arguments.
-        """
-        cmd = [CFG.get("python")]
-        if self.export.get("interact"):
-            cmd.append("-i")
-        cmd.append(commfile)
-        cmd.extend(self.export.args)
-        # TODO add pid + mode to identify the process
-        return cmd
 
     def execute_study(self):
         """Execute the study.
@@ -144,39 +136,32 @@ class RunAster:
         for idx, comm in enumerate(commfiles):
             last = idx + 1 == nbcomm
             logger.info(f"TITLE Command file #{idx + 1} / {nbcomm}")
-            status.update(self._exec_one(comm, last,
+            self._change_comm_file(comm, not self.export.get("hide-command"))
+            status.update(self._exec_one(comm, idx, last,
                                          timeout - status.times[-1]))
             if not status.is_completed():
-                logger.warning(f"execution failed (command file #{idx + 1}): "
-                               f"{status.diag}")
                 break
-            logger.info(f"execution ended (command file #{idx + 1}): "
-                        f"{status.diag}")
         # TODO coredump analysis
 
-        logger.info(f"TITLE Content of {os.getcwd()} after execution:")
-        run(["ls", "-l", ".", "REPE_OUT"])
         return status
 
-    def _exec_one(self, comm, last, timeout):
-        """Execute a command file."""
-        cmd = self.command_line(comm)
+    def _exec_one(self, comm, idx, last, timeout):
+        """Show instructions for a command file.
+
+        Arguments:
+            comm (str): Command file name.
+            idx (int): Index of execution.
+            last (bool): *True* for the last command file.
+            timeout (float): Remaining time.
+        """
+        cmd = self._get_cmdline(comm)
+        logger.info(f"TITLE Command line #{idx + 1}:")
         logger.info(f"    {' '.join(cmd)}")
 
-        with open(comm, "rb") as fobj:
-            text = fobj.read().decode(errors='replace')
-            text = add_import_commands(text)
-            if self.export.get("interact"):
-                text = stop_at_end(text)
-        with open(comm, 'w') as fobj:
-            fobj.write(text)
-        if not self.export.get("hide-command"):
-            logger.info(f"\nContent of the file to execute:\n{text}\n")
-
-        with open("fort.6", "ab") as log:
+        with open(TMPMESS, "ab") as log:
             exitcode = run_command(cmd, log, timeout)
         logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{self.jobnum}={exitcode}\n\n")
-        status = get_status(exitcode, "fort.6", self.is_test and last)
+        status = self._get_status(exitcode, last)
 
         if status.is_completed():
             if not last:
@@ -185,22 +170,119 @@ class RunAster:
                 logger.info("saving result databases to 'BASE_PREC'...")
                 for base in glob("glob.*") + glob("bhdf.*") + glob("pick.*"):
                     copy(base, "BASE_PREC")
+            logger.info(f"execution ended (command file #{idx + 1}): "
+                        f"{status.diag}")
         else:
             logger.info("restoring result databases from 'BASE_PREC'...")
             for base in glob(osp.join("BASE_PREC", "*")):
                 copy(base, os.getcwd())
+            logger.warning(f"execution failed (command file #{idx + 1}): "
+                            f"{status.diag}")
         return status
 
-    def use_interactive(self, value):
-        """Set the parameter for interactive execution to `value`.
-        It also increases the time limit to 24 hours.
+    def _change_comm_file(self, comm, show):
+        """Change a command file.
 
         Arguments:
-            value (bool): *True* to enable interactive execution,
+            comm (str): Command file name.
+            show (bool): *True* to print the content.
+        """
+        with open(comm, "rb") as fobj:
+            text = fobj.read().decode(errors='replace')
+            text = add_import_commands(text)
+            if self.export.get("interact"):
+                text = stop_at_end(text)
+        with open(comm, 'w') as fobj:
+            fobj.write(text)
+        if show:
+            logger.info(f"\nContent of the file to execute:\n{text}\n")
+
+    def _get_cmdline(self, commfile):
+        """Build the command line.
+
+        Returns:
+            list[str]: List of command line arguments.
+        """
+        cmd = [CFG.get("python")]
+        if self.export.get("interact"):
+            cmd.append("-i")
+        cmd.append(commfile)
+        cmd.extend(self.export.args)
+        # TODO add pid + mode to identify the process
+        return cmd
+
+    def _get_status(self, exitcode, last):
+        """Get the execution status.
+
+        Arguments:
+            exitcode (int): Return code.
+            last (bool): *True* for the last command file, *False* otherwise.
+        """
+        return get_status(exitcode, TMPMESS)
+
+    def ending_execution(self, is_completed):
+        """Post execution phase : copying results, cleanup...
+
+        Arguments:
+            is_completed (bool): *True* if execution succeeded,
                 *False* otherwise.
         """
-        self.export.set_parameter("interact", value)
-        self.export.set_time_limit(86400.)
+        logger.info(f"TITLE Content of {os.getcwd()} after execution:")
+        run(["ls", "-l", ".", "REPE_OUT"])
+        results = self.export.resultfiles
+        if results:
+            logger.info("TITLE Copying results")
+            copy_resultfiles(results, is_completed)
+
+
+class RunTest(RunAster):
+    """Execute code_aster from a `.export` file for a testcase.
+
+    Arguments:
+        export (Export): Export object defining the calculation.
+    """
+
+    def _get_status(self, exitcode, last):
+        """Get the execution status.
+
+        Arguments:
+            exitcode (int): Return code.
+            last (bool): *True* for the last command file, *False* otherwise.
+        """
+        return get_status(exitcode, TMPMESS, last)
+
+
+class RunOnlyEnv(RunAster):
+    """Prepare a working directory for a manual execution.
+
+    Arguments:
+        export (Export): Export object defining the calculation.
+    """
+
+    def _exec_one(self, comm, idx, last, timeout):
+        """Show instructions for a command file.
+
+        Arguments:
+            comm (str): Command file name.
+            idx (int): Index of execution.
+            last (bool): *True* for the last command file.
+            timeout (float): Remaining time.
+        """
+        cmd = self._get_cmdline(comm)
+        logger.info(f"    {' '.join(cmd)}")
+        return StateOptions.Ok
+
+    def _change_comm_file(self, comm, show):
+        """Change a command file.
+
+        Arguments:
+            comm (str): Command file name.
+            show (bool): Not use here..
+        """
+        super()._change_comm_file(comm, show=False)
+
+    def ending_execution(self, _):
+        """Nothing to do in this case."""
 
 
 def copy_datafiles(files):

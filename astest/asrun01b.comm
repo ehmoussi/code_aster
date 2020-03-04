@@ -20,6 +20,7 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 import unittest
+import sys
 
 import code_aster
 from code_aster.Commands import FIN
@@ -28,8 +29,13 @@ code_aster.init()
 test = code_aster.TestCase()
 
 result = unittest.main(argv=["comm"], module="asrun01b", exit=False).result
+isok = result.wasSuccessful()
 
-test.assertTrue( result.wasSuccessful() )
+# to flush printings from unittest
+sys.stdout.flush()
+sys.stderr.flush()
+
+test.assertTrue(isok)
 test.printSummary()
 
 FIN()

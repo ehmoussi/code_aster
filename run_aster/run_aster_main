@@ -72,9 +72,13 @@ def parse_args(argv):
                              "DEBUG=1 in environment)")
     parser.add_argument('-i', '--interactive', action='store_true',
                         help="inspect interactively after running script"
-                             "instead of calling FIN command")
+                             "instead of calling FIN command, time limit is "
+                             "increased to 24 hours")
     parser.add_argument('-t', '--test', action='store_true',
                         help="execution of a testcase")
+    parser.add_argument('--env', action='store_true',
+                        help="do not execute, only prepare the working "
+                             "directory")
     parser.add_argument('-w', '--wrkdir', action='store',
                         help="use this existing directory as working directory")
     parser.add_argument('--ptvsd', action='store', type=int,
@@ -95,6 +99,7 @@ def main(argv=None):
         argv (list): List of command line arguments.
     """
     args = parse_args(argv or sys.argv[1:])
+    from run_aster.export import Export
     from run_aster.run import RunAster, temporary_dir
 
     if args.ptvsd:
@@ -103,9 +108,20 @@ def main(argv=None):
         ptvsd.wait_for_attach()
         ptvsd.break_into_debugger()
 
-    calc = RunAster(args.export, args.test)
+    export = Export(args.export, check=False)
+    # args to parameters
+    if args.test:
+        export.set_parameter("actions",
+                             export.get("actions", []) + ["make_test"])
+    if args.env:
+        export.set_parameter("actions",
+                             export.get("actions", []) + ["make_env"])
     if args.interactive:
-        calc.use_interactive(True)
+        export.set_parameter("interact", True)
+        export.set_time_limit(86400.)
+    export.check()
+
+    calc = RunAster.factory(export)
     if args.wrkdir:
         os.chdir(args.wrkdir)
         status = calc.execute()
