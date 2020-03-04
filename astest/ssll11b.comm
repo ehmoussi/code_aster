@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ CHADEP=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_DEPL_R',
      AFFE=_F(   NOEUD = ('A1','B2',), NOM_CMP = ( 'DY',), VALE = ( 1.,))
                        )
 
-CH=AFFE_CHAR_MECA(    MODELE=MOD,
+CH=AFFE_CHAR_MECA(    MODELE=MOD, DOUBLE_LAGRANGE='NON',
            FORCE_NODALE=_F( NOEUD = 'D3',     FY = -9810.),DDL_IMPO=(
            _F( TOUT = 'OUI', DZ = 0., DRX = 0., DRY = 0.),
           _F( NOEUD = ('A1', 'B2',    ),  DX = 0.),
@@ -207,7 +207,7 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='C3',
 #======================================================================
 
 
-CHARGE1=AFFE_CHAR_MECA(    MODELE=MOD,DDL_IMPO=(
+CHARGE1=AFFE_CHAR_MECA(    MODELE=MOD, DDL_IMPO=(
 
             _F(  TOUT = 'OUI', DZ = 0.,  DRX = 0.,  DRY = 0.),
             _F(  NOEUD = ( 'A1', 'B2', 'B4', ),  DX = 0.,    DY = 0.)),LIAISON_DDL=(
@@ -232,7 +232,7 @@ CHARGE1=AFFE_CHAR_MECA(    MODELE=MOD,DDL_IMPO=(
                           COEF_IMPO = 0.))
                     )
 
-CHARGER=AFFE_CHAR_MECA(    MODELE=MOD,
+CHARGER=AFFE_CHAR_MECA(    MODELE=MOD, DOUBLE_LAGRANGE='NON',
                              FORCE_POUTRE=_F(  MAILLE = 'CD',   FY = -9810.)
                            )
 
