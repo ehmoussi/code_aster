@@ -45,8 +45,8 @@
 #endif
 #endif
 
-#include "Discretization/DOFNumbering.h"
-#include "Discretization/ParallelDOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Modeling/Model.h"
 

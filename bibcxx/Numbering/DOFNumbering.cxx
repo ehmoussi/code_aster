@@ -24,7 +24,7 @@
 #include <stdexcept>
 #include "astercxx.h"
 
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 

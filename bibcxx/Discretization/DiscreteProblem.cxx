@@ -25,7 +25,7 @@
 #include <string>
 
 #include "Discretization/DiscreteProblem.h"
-#include "Discretization/ParallelDOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/MechanicalLoad.h"
 #include "Materials/MaterialOnMesh.h"

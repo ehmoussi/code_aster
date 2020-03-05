@@ -29,7 +29,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Utilities/CapyConvertibleValue.h"
 

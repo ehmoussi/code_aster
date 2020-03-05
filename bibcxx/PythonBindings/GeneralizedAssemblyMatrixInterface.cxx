@@ -24,7 +24,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
-#include "Discretization/GeneralizedDOFNumbering.h"
+#include "Numbering/GeneralizedDOFNumbering.h"
 #include "PythonBindings/VariantModalBasisInterface.h"
 #include <PythonBindings/factory.h>
 #include <boost/python.hpp>

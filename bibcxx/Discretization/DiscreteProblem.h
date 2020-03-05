@@ -30,7 +30,7 @@
 
 #include <vector>
 
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/ElementaryVector.h"
 #include "Studies/StudyDescription.h"

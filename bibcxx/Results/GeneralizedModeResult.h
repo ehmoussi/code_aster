@@ -29,7 +29,7 @@
 #include "Results/FullResult.h"
 #include "Supervis/ResultNaming.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
-#include "Discretization/GeneralizedDOFNumbering.h"
+#include "Numbering/GeneralizedDOFNumbering.h"
 
 /**
  * @class GeneralizedModeResultClass

@@ -36,7 +36,7 @@
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/ConstantFieldOnCells.h"
 #include "DataStructures/DataStructure.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 
 /**
  * @class CalculationExternalVariableClass

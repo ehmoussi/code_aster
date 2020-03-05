@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Discretization/ParallelDOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 
 #ifdef _USE_MPI
 

@@ -35,7 +35,7 @@
 #include "DataFields/DataField.h"
 #include "DataFields/MeshCoordinatesField.h"
 #include "DataFields/SimpleFieldOnNodes.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Meshes/Mesh.h"

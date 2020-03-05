@@ -32,7 +32,7 @@
 #include "LinearAlgebra/LinearSolver.h"
 #include "LinearAlgebra/StructureInterface.h"
 #include "Results/ModeResult.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 
 typedef std::vector< ModeResultPtr > VectorOfMechaModePtr;

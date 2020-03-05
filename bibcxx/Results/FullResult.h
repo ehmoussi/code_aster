@@ -28,7 +28,7 @@
 
 #include "Results/DynamicResultsIndexing.h"
 #include "Results/Result.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "Supervis/ResultNaming.h"
 
 /**
