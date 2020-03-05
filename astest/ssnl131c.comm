@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -100,24 +100,6 @@ CHIRRA=CREA_RESU(
          _F(CHAM_GD=CHIRRA_2,INST=1.,),
          _F(CHAM_GD=CHIRRA_2,INST=2.,),
          ),);
-
-
-K1 = FORMULE(VALE='1000.',
-             NOM_PARA=['TEMP', 'IRRA'],)
-K2 = FORMULE(VALE='250.',
-             NOM_PARA=['TEMP', 'IRRA'],)
-K3 = FORMULE(VALE='71.5',
-             NOM_PARA=['TEMP', 'IRRA'],)
-K4 = FORMULE(VALE='10',
-             NOM_PARA=['TEMP', 'IRRA'],)
-A1 = FORMULE(VALE='0.001/(1.+IRRA)',
-             NOM_PARA=['TEMP', 'IRRA'],)
-A2 = FORMULE(VALE='0.003/(1.+IRRA)',
-             NOM_PARA=['TEMP', 'IRRA'],)
-A3 = FORMULE(VALE='0.005/(1.+IRRA)',
-             NOM_PARA=['TEMP', 'IRRA'],)
-FOR = FORMULE(VALE='20.*(1.-0.2*(TEMP-20)/300.)',
-              NOM_PARA=['TEMP', 'IRRA'],)
 
 
 CHART=AFFE_CHAR_MECA(MODELE=MO,

@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm ssnl131d.comm D 1
-F comm ssnl131d_mater.py D 1
+F tests_data ssnl131c_mater.py D 0
 F comm ssnl131d.com2 D 1
 F mail ssnl131a.mail D 20

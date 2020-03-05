@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,13 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 
 POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='OUI'))
+
+from ssnv190b_mater import define_material
+
+ACIERI, ACIERS, REFER = define_material()
+
+# Valeurs de references,  Pas : 0.1
+itps  = 0; icha  = 1; icmp  = 2; irefe = 3; icalc = 4; icrit = 5; iprec = 6
 
 materS=AFFE_MATERIAU(
    MAILLAGE=mail,
