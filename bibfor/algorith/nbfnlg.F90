@@ -172,17 +172,10 @@ subroutine nbfnlg(ndim, nno1, nno2, nno3, npg,&
         end do
 !
 ! - CALCUL DES FONCTIONS A,B,... QUI LIENT G ET J
-        print*, "g", g, npg, axi, r, ndim, iw,w, nno1
-        print*,"stress", sig(1:2*ndim, g), tau
-        print*,"depl", deplm
-        print*,"vf", vff1(1:nno1, g)
-        print*,'nonloc', nonloc
+!
         call nirela(2, jm, gm, gm, am,&
                     ap, bm, boa, aa, bb,&
                     daa, dbb, dboa, d2boa, iret)
-        print*,"fn",  2, jm, gm, gm, am,&
-                    ap, bm, boa, aa, bb,&
-                    daa, dbb, dboa, d2boa, iret
 !
         ASSERT(iret == 0)
 !
