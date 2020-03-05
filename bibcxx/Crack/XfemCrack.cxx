@@ -25,11 +25,11 @@
 
 #include "astercxx.h"
 
-#include "Modeling/XfemCrack.h"
+#include "Crack/XfemCrack.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 
-#include "Modeling/CrackShape.h"
+#include "Crack/CrackShape.h"
 
 XfemCrackClass::XfemCrackClass( const std::string name, MeshPtr mesh )
     : DataStructure( name, 8, "FISS_XFEM" ), _jeveuxName( ResultNaming::getCurrentName() ),

@@ -32,7 +32,7 @@
 #include "Meshes/Mesh.h"
 #include "Modeling/Model.h"
 #include "Functions/Function.h"
-#include "Modeling/CrackShape.h"
+#include "Crack/CrackShape.h"
 
 /**
  * @class XfemCrackClass

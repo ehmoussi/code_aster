@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Modeling/Crack.h"
+#include "Crack/Crack.h"
 
 void exportCrackToPython();
 

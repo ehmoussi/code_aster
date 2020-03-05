@@ -1,6 +1,6 @@
 /**
- * @file PrestressingCableDefinitionInterface.cxx
- * @brief Interface python de PrestressingCableDefinition
+ * @file PrestressingCableInterface.cxx
+ * @brief Interface python de PrestressingCable
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,33 +21,33 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/PrestressingCableDefinitionInterface.h"
+#include "PythonBindings/PrestressingCableInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 namespace py = boost::python;
 
-void exportPrestressingCableDefinitionToPython() {
+void exportPrestressingCableToPython() {
 
-    py::class_< PrestressingCableDefinitionClass,
-            PrestressingCableDefinitionClass::PrestressingCableDefinitionPtr,
-            py::bases< DataStructure > >( "PrestressingCableDefinition", py::no_init )
+    py::class_< PrestressingCableClass,
+            PrestressingCableClass::PrestressingCablePtr,
+            py::bases< DataStructure > >( "PrestressingCable", py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< PrestressingCableDefinitionClass,
+              py::make_constructor( &initFactoryPtr< PrestressingCableClass,
                                                  const ModelPtr &, const MaterialFieldPtr &,
                                                  const ElementaryCharacteristicsPtr & > ) )
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< PrestressingCableDefinitionClass, std::string,
+                  &initFactoryPtr< PrestressingCableClass, std::string,
                                    const ModelPtr &, const MaterialFieldPtr &,
                                    const ElementaryCharacteristicsPtr & > ) )
-        .def( "getModel", &PrestressingCableDefinitionClass::getModel, R"(
+        .def( "getModel", &PrestressingCableClass::getModel, R"(
 Return the Model.
 
 Returns:
     *Model*: Model object.
         )" )
-        .def( "getMaterialField", &PrestressingCableDefinitionClass::getMaterialField )
+        .def( "getMaterialField", &PrestressingCableClass::getMaterialField )
         .def( "getElementaryCharacteristics",
-              &PrestressingCableDefinitionClass::getElementaryCharacteristics );
+              &PrestressingCableClass::getElementaryCharacteristics );
 };

@@ -1,6 +1,6 @@
 /**
- * @file PrestressingCableDefinition.cxx
- * @brief Implementation de PrestressingCableDefinitionClass
+ * @file PrestressingCable.cxx
+ * @brief Implementation de PrestressingCableClass
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 22018 EDF R&D                www.code-aster.org
@@ -25,10 +25,10 @@
 
 #include "astercxx.h"
 
-#include "Modeling/PrestressingCableDefinition.h"
+#include "Modeling/PrestressingCable.h"
 #include "Supervis/ResultNaming.h"
 
-PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
+PrestressingCableClass::PrestressingCableClass(
     const std::string jeveuxName, const ModelPtr &model, const MaterialFieldPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
     : DataStructure( jeveuxName, 8, "CABL_PRECONT" ), _model( model ), _mater( mater ),
@@ -39,8 +39,8 @@ PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
       _cableGL( new TableClass( getName() + "CABLEGL    " ) ),
       _lirela( new ListOfLinearRelationsReal( getName() + ".LIRELA    " ) ), _isEmpty( true ) {}
 
-PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
+PrestressingCableClass::PrestressingCableClass(
     const ModelPtr &model, const MaterialFieldPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
-    : PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
+    : PrestressingCableClass::PrestressingCableClass(
           ResultNaming::getNewResultName(), model, mater, cara ) {}
