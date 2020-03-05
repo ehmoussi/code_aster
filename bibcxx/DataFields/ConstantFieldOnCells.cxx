@@ -1,6 +1,6 @@
 /**
- * @file PCFieldOnMesh.cxx
- * @brief Implementation de PCFieldOnMesh vide car PCFieldOnMesh est un template
+ * @file ConstantFieldOnCells.cxx
+ * @brief Implementation de ConstantFieldOnCells vide car ConstantFieldOnCells est un template
  * @author Natacha Bereux
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,6 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 
 /* person_in_charge: natacha.bereux at edf.fr */

@@ -34,7 +34,7 @@
 #include "Meshes/Mesh.h"
 #include "Meshes/Skeleton.h"
 #include "Materials/Material.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "Meshes/ParallelMesh.h"
 #include "Supervis/ResultNaming.h"
 #include "Materials/BehaviourDefinition.h"
@@ -120,11 +120,11 @@ class MaterialOnMeshClass: public DataStructure
         /** @brief Model */
         ModelPtr               _model;
         /** @brief Carte '.CHAMP_MAT' */
-        PCFieldOnMeshChar8Ptr  _listOfMaterials;
+        ConstantFieldOnCellsChar8Ptr  _listOfMaterials;
         /** @brief Carte '.TEMPE_REF' */
-        PCFieldOnMeshRealPtr _listOfTemperatures;
+        ConstantFieldOnCellsRealPtr _listOfTemperatures;
         /** @brief Carte '.COMPOR' */
-        PCFieldOnMeshRealPtr _behaviourField;
+        ConstantFieldOnCellsRealPtr _behaviourField;
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
         listOfMatsAndGrps      _materialsOnMeshEntity;
         /** @brief Link to a  */
@@ -318,9 +318,9 @@ class MaterialOnMeshClass: public DataStructure
         bool buildWithoutExternalVariable() ;
 
         /**
-         * @brief Return the PCFieldOnMesh of behaviour
+         * @brief Return the ConstantFieldOnCells of behaviour
          */
-        PCFieldOnMeshRealPtr getBehaviourField() const
+        ConstantFieldOnCellsRealPtr getBehaviourField() const
         {
             _behaviourField->updateValuePointers();
             return _behaviourField;

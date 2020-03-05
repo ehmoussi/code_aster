@@ -21,7 +21,7 @@
 
 from ...Cata.DataStructure import carte_sdaster, evol_noli
 from ...Cata.Syntax import OPER, SIMP
-from ...Objects import PCFieldOnMeshReal
+from ...Objects import ConstantFieldOnCellsReal
 from ...Supervis import ExecuteCommand
 
 POST_VOISIN_CZM_CATA = OPER(
@@ -46,6 +46,6 @@ class PostVoisinCzw(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = PCFieldOnMeshReal(keywords["RESULTAT"].getMesh())
+        self._result = ConstantFieldOnCellsReal(keywords["RESULTAT"].getMesh())
 
 POST_VOISIN_CZM = PostVoisinCzw.run

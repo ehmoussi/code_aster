@@ -42,7 +42,7 @@ from ..Objects import (AsFloat, AsInteger, ElementaryMatrixDisplacementReal,
                        FieldOnCellsReal, FieldOnNodesReal, Function,
                        FunctionComplex, GeneralizedAssemblyMatrixReal,
                        DataField, ModeResult,
-                       PCFieldOnMeshReal, Surface, Table)
+                       ConstantFieldOnCellsReal, Surface, Table)
 from ..Supervis import ExecuteCommand
 
 
@@ -79,7 +79,7 @@ class ExtrTable(ExecuteCommand):
         elif typeResu == 'MODE_MECA':
             self._result = ModeResult()
         elif typeResu == 'CARTE_SDASTER':
-            self._result = PCFieldOnMeshReal()
+            self._result = ConstantFieldOnCellsReal()
         elif typeResu == 'CHAM_ELEM':
             self._result = FieldOnCellsReal()
         elif typeResu == 'CHAM_NO_SDASTER':

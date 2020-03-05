@@ -30,7 +30,7 @@
 #include "astercxx.h"
 #include <stdexcept>
 
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "DataFields/Table.h"
 #include "Discretization/ElementaryCharacteristics.h"
 #include "Loads/ListOfLinearRelations.h"
@@ -52,7 +52,7 @@ class PrestressingCableDefinitionClass : public DataStructure {
     MaterialOnMeshPtr _mater;
     MeshPtr _mesh;
     /** @brief Carte '.CHME.SIGIN' */
-    PCFieldOnMeshRealPtr _sigin;
+    ConstantFieldOnCellsRealPtr _sigin;
     /** @brief Table 'CABLEBP' */
     TablePtr _cableBP;
     /** @brief Table 'CABLEGL' */

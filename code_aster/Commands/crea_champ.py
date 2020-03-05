@@ -21,14 +21,14 @@
 
 from ..Objects import (FieldOnCellsReal, FieldOnNodesComplex,
                        FieldOnNodesReal, FullResult,
-                       PCFieldOnMeshReal)
+                       ConstantFieldOnCellsReal)
 from ..Supervis import ExecuteCommand
 
 
 class FieldCreator(ExecuteCommand):
     """Command that creates fields that may be
     :class:`~code_aster.Objects.FieldOnNodesReal` or
-    :class:`~code_aster.Objects.PCFieldOnMeshReal`."""
+    :class:`~code_aster.Objects.ConstantFieldOnCellsReal`."""
     command_name = "CREA_CHAMP"
 
     def create_result(self, keywords):
@@ -58,7 +58,7 @@ class FieldCreator(ExecuteCommand):
         if location == "CART_":
             if mesh is None:
                 raise NotImplementedError("Must have Mesh, Model or ElementaryCharacteristics")
-            self._result = PCFieldOnMeshReal(mesh)
+            self._result = ConstantFieldOnCellsReal(mesh)
         elif location == "NOEU_":
             if typ == "C":
                 self._result = FieldOnNodesComplex()

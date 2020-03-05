@@ -1,9 +1,9 @@
-#ifndef PCFIELDONMESHINTERFACE_H_
-#define PCFIELDONMESHINTERFACE_H_
+#ifndef CONSTANTFIELDONCELLSINTERFACE_H_
+#define CONSTANTFIELDONCELLSINTERFACE_H_
 
 /**
- * @file PCFieldOnMeshInterface.h
- * @brief Fichier entete de la classe PCFieldOnMeshInterface
+ * @file ConstantFieldOnCellsInterface.h
+ * @brief Fichier entete de la classe ConstantFieldOnCellsInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -27,8 +27,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 
-void exportPCFieldOnMeshToPython();
+void exportConstantFieldOnCellsToPython();
 
-#endif /* PCFIELDONMESHINTERFACE_H_ */
+#endif /* CONSTANTFIELDONCELLSINTERFACE_H_ */

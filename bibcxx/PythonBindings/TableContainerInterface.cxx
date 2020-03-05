@@ -59,7 +59,7 @@ void exportTableContainerToPython() {
         &TableContainerClass::addObject;
     void ( TableContainerClass::*c11 )( const std::string &, ModeResultPtr ) =
         &TableContainerClass::addObject;
-    void ( TableContainerClass::*c12 )( const std::string &, PCFieldOnMeshRealPtr ) =
+    void ( TableContainerClass::*c12 )( const std::string &, ConstantFieldOnCellsRealPtr ) =
         &TableContainerClass::addObject;
     void ( TableContainerClass::*c13 )( const std::string &, SurfacePtr ) =
         &TableContainerClass::addObject;
@@ -101,7 +101,7 @@ void exportTableContainerToPython() {
               &TableContainerClass::getGeneralizedAssemblyMatrix )
         .def( "getDataField", &TableContainerClass::getDataField )
         .def( "getModeResult", &TableContainerClass::getModeResult )
-        .def( "getPCFieldOnMeshReal", &TableContainerClass::getPCFieldOnMeshReal )
+        .def( "getConstantFieldOnCellsReal", &TableContainerClass::getConstantFieldOnCellsReal )
         .def( "getSurface", &TableContainerClass::getSurface )
         .def( "getTable", &TableContainerClass::getTable );
 };

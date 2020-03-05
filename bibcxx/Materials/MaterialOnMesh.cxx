@@ -38,12 +38,12 @@ MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
     _mesh( mesh ),
     _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
-    _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
-    _listOfTemperatures( PCFieldOnMeshRealPtr(
-        new PCFieldOnMeshRealClass( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behaviourField( PCFieldOnMeshRealPtr(
-        new PCFieldOnMeshRealClass( getName() + ".COMPOR ", mesh ) ) ),
+    _listOfMaterials( ConstantFieldOnCellsChar8Ptr(
+        new ConstantFieldOnCellsChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
+    _listOfTemperatures( ConstantFieldOnCellsRealPtr(
+        new ConstantFieldOnCellsRealClass( getName() + ".TEMPE_REF ", mesh ) ) ),
+    _behaviourField( ConstantFieldOnCellsRealPtr(
+        new ConstantFieldOnCellsRealClass( getName() + ".COMPOR ", mesh ) ) ),
     _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
     _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
     _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
@@ -55,12 +55,12 @@ MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
     _mesh( mesh ),
     _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
-    _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
-    _listOfTemperatures( PCFieldOnMeshRealPtr(
-        new PCFieldOnMeshRealClass( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behaviourField( PCFieldOnMeshRealPtr(
-        new PCFieldOnMeshRealClass( getName() + ".COMPOR ", mesh ) ) ),
+    _listOfMaterials( ConstantFieldOnCellsChar8Ptr(
+        new ConstantFieldOnCellsChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
+    _listOfTemperatures( ConstantFieldOnCellsRealPtr(
+        new ConstantFieldOnCellsRealClass( getName() + ".TEMPE_REF ", mesh ) ) ),
+    _behaviourField( ConstantFieldOnCellsRealPtr(
+        new ConstantFieldOnCellsRealClass( getName() + ".COMPOR ", mesh ) ) ),
     _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
     _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
     _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),
@@ -73,12 +73,12 @@ MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
     _mesh( mesh ),
     _model( nullptr ),
     DataStructure( name, 8, "CHAM_MATER" ),
-    _listOfMaterials( PCFieldOnMeshChar8Ptr(
-        new PCFieldOnMeshChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
-    _listOfTemperatures( PCFieldOnMeshRealPtr(
-        new PCFieldOnMeshRealClass( getName() + ".TEMPE_REF ", mesh ) ) ),
-    _behaviourField( PCFieldOnMeshRealPtr(
-        new PCFieldOnMeshRealClass( getName() + ".COMPOR ", mesh ) ) ),
+    _listOfMaterials( ConstantFieldOnCellsChar8Ptr(
+        new ConstantFieldOnCellsChar8Class( getName() + ".CHAMP_MAT ", mesh ) ) ),
+    _listOfTemperatures( ConstantFieldOnCellsRealPtr(
+        new ConstantFieldOnCellsRealClass( getName() + ".TEMPE_REF ", mesh ) ) ),
+    _behaviourField( ConstantFieldOnCellsRealPtr(
+        new ConstantFieldOnCellsRealClass( getName() + ".COMPOR ", mesh ) ) ),
     _cvrcNom( JeveuxVectorChar8( getName() + ".CVRCNOM" ) ),
     _cvrcGd( JeveuxVectorChar8( getName() + ".CVRCGD" ) ),
     _cvrcVarc( JeveuxVectorChar8( getName() + ".CVRCVARC" ) ),

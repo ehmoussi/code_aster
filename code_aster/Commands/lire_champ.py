@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Objects import (FieldOnCellsReal, FieldOnNodesReal,
-                       PCFieldOnMeshReal)
+                       ConstantFieldOnCellsReal)
 from ..Supervis import ExecuteCommand
 
 
@@ -28,7 +28,7 @@ class FieldReader(ExecuteCommand):
     """Command that creates fields that may be
     :class:`~code_aster.Objects.FieldOnCellsReal` or
     :class:`~code_aster.Objects.FieldOnNodesReal` or
-    :class:`~code_aster.Objects.PCFieldOnMeshReal`."""
+    :class:`~code_aster.Objects.ConstantFieldOnCellsReal`."""
     command_name = "LIRE_CHAMP"
 
     def create_result(self, keywords):
@@ -45,7 +45,7 @@ class FieldReader(ExecuteCommand):
                 mesh = keywords["MAILLAGE"]
             else:
                 mesh = keywords["MODELE"].getMesh()
-            self._result = PCFieldOnMeshReal(mesh)
+            self._result = ConstantFieldOnCellsReal(mesh)
         elif location == "NOEU_":
             self._result = FieldOnNodesReal()
         else:
