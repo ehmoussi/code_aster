@@ -1,6 +1,6 @@
 /**
- * @file SurfaceInterface.cxx
- * @brief Interface python de Surface
+ * @file Function2DInterface.cxx
+ * @brief Interface python de Function2D
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -27,15 +27,15 @@
 
 namespace py = boost::python;
 #include <PythonBindings/factory.h>
-#include "PythonBindings/SurfaceInterface.h"
+#include "PythonBindings/Function2DInterface.h"
 
-void exportSurfaceToPython() {
+void exportFunction2DToPython() {
 
-    py::class_< SurfaceClass, SurfaceClass::SurfacePtr, py::bases< DataStructure > >(
-        "Surface", py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< SurfaceClass >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< SurfaceClass, std::string >))
-        .def( "exportExtensionToPython", &SurfaceClass::exportExtensionToPython )
-        .def( "exportValuesToPython", &SurfaceClass::exportValuesToPython )
-        .def( "exportParametersToPython", &SurfaceClass::exportParametersToPython );
+    py::class_< Function2DClass, Function2DClass::Function2DPtr, py::bases< DataStructure > >(
+        "Function2D", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< Function2DClass >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< Function2DClass, std::string >))
+        .def( "exportExtensionToPython", &Function2DClass::exportExtensionToPython )
+        .def( "exportValuesToPython", &Function2DClass::exportValuesToPython )
+        .def( "exportParametersToPython", &Function2DClass::exportParametersToPython );
 };

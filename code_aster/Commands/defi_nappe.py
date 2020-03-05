@@ -19,11 +19,11 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import Surface
+from ..Objects import Function2D
 from ..Supervis import ExecuteCommand
 
 
-class SurfaceDefinition(ExecuteCommand):
+class Function2DDefinition(ExecuteCommand):
     """Execute legacy operator DEFI_NAPPE."""
     command_name = "DEFI_NAPPE"
 
@@ -33,6 +33,6 @@ class SurfaceDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = Surface()
+        self._result = Function2D()
 
-DEFI_NAPPE = SurfaceDefinition.run
+DEFI_NAPPE = Function2DDefinition.run

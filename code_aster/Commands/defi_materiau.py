@@ -25,7 +25,7 @@ from .. import Objects as all_types
 from ..Cata.Language.SyntaxObjects import _F
 from ..Objects import (DataStructure, Formula, Function,
                        BaseMaterialProperty, Material, MaterialProperty,
-                       Surface, Table)
+                       Function2D, Table)
 from ..Supervis import ExecuteCommand
 
 
@@ -107,8 +107,8 @@ class MaterialDefinition(ExecuteCommand):
                     cRet = matBehav.setTableValue(iName, skw)
                 elif type(skw) is Function:
                     cRet = matBehav.setFunctionValue(iName, skw)
-                elif type(skw) is Surface:
-                    cRet = matBehav.setSurfaceValue(iName, skw)
+                elif type(skw) is Function2D:
+                    cRet = matBehav.setFunction2DValue(iName, skw)
                 elif type(skw) is Formula:
                     cRet = matBehav.setFormulaValue(iName, skw)
                 elif type(skw) is tuple and type(skw[0]) is str:
@@ -172,7 +172,7 @@ class MaterialDefinition(ExecuteCommand):
                     elif curType is str:
                         mater.addNewStringProperty(kwName, mandatory)
                     elif isinstance(kwValue, Function) or\
-                            isinstance(kwValue, Surface) or\
+                            isinstance(kwValue, Function2D) or\
                             isinstance(kwValue, Formula):
                         mater.addNewFunctionProperty(kwName, mandatory)
                     elif isinstance(kwValue, Table):

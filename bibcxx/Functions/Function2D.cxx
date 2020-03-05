@@ -1,6 +1,6 @@
 /**
- * @file Surface.cxx
- * @brief Implementation de Surface
+ * @file Function2D.cxx
+ * @brief Implementation de Function2D
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -23,12 +23,12 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Functions/Surface.h"
+#include "Functions/Function2D.h"
 #include <boost/python.hpp>
 
 namespace py = boost::python;
 
-PyObject *SurfaceClass::exportExtensionToPython() const {
+PyObject *Function2DClass::exportExtensionToPython() const {
     if ( !_property->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
@@ -42,7 +42,7 @@ PyObject *SurfaceClass::exportExtensionToPython() const {
     return py::incref( toReturn.ptr() );
 };
 
-PyObject *SurfaceClass::exportParametersToPython() const {
+PyObject *Function2DClass::exportParametersToPython() const {
     if ( !_parameters->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 
@@ -55,7 +55,7 @@ PyObject *SurfaceClass::exportParametersToPython() const {
     return py::incref( toReturn.ptr() );
 };
 
-PyObject *SurfaceClass::exportValuesToPython() const {
+PyObject *Function2DClass::exportValuesToPython() const {
     if ( !_value->exists() )
         throw std::runtime_error( getName() + " does not exist" );
 

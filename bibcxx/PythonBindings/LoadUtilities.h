@@ -42,7 +42,7 @@ void addKinematicsLoadToInterface( py::class_< firstClass, Args... > myInstance 
         &myClass::addLoad;
     void ( myClass::*c3 )( const KinematicsLoadPtr &currentLoad, const FormulaPtr &func ) =
         &myClass::addLoad;
-    void ( myClass::*c4 )( const KinematicsLoadPtr &currentLoad, const SurfacePtr &func ) =
+    void ( myClass::*c4 )( const KinematicsLoadPtr &currentLoad, const Function2DPtr &func ) =
         &myClass::addLoad;
 
     myInstance.def( "addKinematicsLoad", c1 );
@@ -60,8 +60,8 @@ void addMechanicalLoadToInterface( py::class_< firstClass, Args... > myInstance 
         &myClass::addLoad;
     void ( myClass::*c7 )( const GenericMechanicalLoadPtr &currentLoad, const FormulaPtr &func ) =
         &myClass::addLoad;
-    void ( myClass::*c8 )( const GenericMechanicalLoadPtr &currentLoad, const SurfacePtr &func ) =
-        &myClass::addLoad;
+    void ( myClass::*c8 )( const GenericMechanicalLoadPtr &currentLoad, const Function2DPtr &func )
+        = &myClass::addLoad;
 
     myInstance.def( "addMechanicalLoad", c5 );
     myInstance.def( "addMechanicalLoad", c6 );
@@ -80,8 +80,8 @@ addParallelMechanicalLoadToInterface( py::class_< firstClass, Args... > myInstan
         &myClass::addLoad;
     void ( myClass::*c7 )( const ParallelMechanicalLoadPtr &currentLoad, const FormulaPtr &func ) =
         &myClass::addLoad;
-    void ( myClass::*c8 )( const ParallelMechanicalLoadPtr &currentLoad, const SurfacePtr &func ) =
-        &myClass::addLoad;
+    void ( myClass::*c8 )( const ParallelMechanicalLoadPtr &currentLoad, const Function2DPtr &func )
+        = &myClass::addLoad;
 
     myInstance.def( "addParallelMechanicalLoad", c5 );
     myInstance.def( "addParallelMechanicalLoad", c6 );

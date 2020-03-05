@@ -1,9 +1,9 @@
-#ifndef SURFACE_H_
-#define SURFACE_H_
+#ifndef FUNCTION2D_H_
+#define FUNCTION2D_H_
 
 /**
- * @file Surface.h
- * @brief Fichier entete de la classe Surface
+ * @file Function2D.h
+ * @brief Fichier entete de la classe Function2D
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -34,11 +34,11 @@
 #include "Functions/GenericFunction.h"
 
 /**
- * @class SurfaceClass
+ * @class Function2DClass
  * @brief Cette classe correspond a une nappe
  * @author Nicolas Sellenet
  */
-class SurfaceClass : public GenericFunctionClass {
+class Function2DClass : public GenericFunctionClass {
   private:
     // Vecteur Jeveux '.PARA'
     JeveuxVectorReal _parameters;
@@ -47,20 +47,20 @@ class SurfaceClass : public GenericFunctionClass {
 
   public:
     /**
-     * @typedef SurfacePtr
-     * @brief Pointeur intelligent vers un Surface
+     * @typedef Function2DPtr
+     * @brief Pointeur intelligent vers un Function2D
      */
-    typedef boost::shared_ptr< SurfaceClass > SurfacePtr;
+    typedef boost::shared_ptr< Function2DClass > Function2DPtr;
 
     /**
      * @brief Constructeur
      */
-    SurfaceClass() : SurfaceClass( ResultNaming::getNewResultName() ){};
+    Function2DClass() : Function2DClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    SurfaceClass( const std::string name )
+    Function2DClass( const std::string name )
         : GenericFunctionClass( name, "NAPPE", "NAPPE" ),
           _parameters( JeveuxVectorReal( getName() + ".PARA" ) ),
           _value( JeveuxCollectionReal( getName() + ".VALE" ) ){};
@@ -121,9 +121,9 @@ class SurfaceClass : public GenericFunctionClass {
 };
 
 /**
- * @typedef SurfacePtr
- * @brief Pointeur intelligent vers un SurfaceClass
+ * @typedef Function2DPtr
+ * @brief Pointeur intelligent vers un Function2DClass
  */
-typedef boost::shared_ptr< SurfaceClass > SurfacePtr;
+typedef boost::shared_ptr< Function2DClass > Function2DPtr;
 
-#endif /* SURFACE_H_ */
+#endif /* FUNCTION2D_H_ */

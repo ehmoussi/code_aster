@@ -61,7 +61,7 @@ void exportTableContainerToPython() {
         &TableContainerClass::addObject;
     void ( TableContainerClass::*c12 )( const std::string &, ConstantFieldOnCellsRealPtr ) =
         &TableContainerClass::addObject;
-    void ( TableContainerClass::*c13 )( const std::string &, SurfacePtr ) =
+    void ( TableContainerClass::*c13 )( const std::string &, Function2DPtr ) =
         &TableContainerClass::addObject;
     void ( TableContainerClass::*c14 )( const std::string &, TablePtr ) =
         &TableContainerClass::addObject;
@@ -102,6 +102,6 @@ void exportTableContainerToPython() {
         .def( "getDataField", &TableContainerClass::getDataField )
         .def( "getModeResult", &TableContainerClass::getModeResult )
         .def( "getConstantFieldOnCellsReal", &TableContainerClass::getConstantFieldOnCellsReal )
-        .def( "getSurface", &TableContainerClass::getSurface )
+        .def( "getFunction2D", &TableContainerClass::getFunction2D )
         .def( "getTable", &TableContainerClass::getTable );
 };

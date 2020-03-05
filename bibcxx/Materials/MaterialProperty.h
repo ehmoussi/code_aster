@@ -35,7 +35,7 @@
 #include "DataFields/Table.h"
 #include "Functions/Formula.h"
 #include "Functions/Function.h"
-#include "Functions/Surface.h"
+#include "Functions/Function2D.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "aster_utils.h"
 #include "astercxx.h"
