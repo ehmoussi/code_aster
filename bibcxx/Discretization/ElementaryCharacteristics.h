@@ -29,7 +29,7 @@
 #include "astercxx.h"
 #include "definition.h"
 #include "DataStructures/DataStructure.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "Modeling/Model.h"
 #include "Supervis/ResultNaming.h"
 
@@ -45,31 +45,31 @@ class ElementaryCharacteristicsClass : public DataStructure {
     /** @brief Mesh */
     BaseMeshPtr _mesh;
     /** @brief Objet Jeveux '.CANBSP' */
-    PCFieldOnMeshLongPtr _numberOfSubpoints;
+    ConstantFieldOnCellsLongPtr _numberOfSubpoints;
     /** @brief Objet Jeveux '.CARARCPO' */
-    PCFieldOnMeshRealPtr _curveBeam;
+    ConstantFieldOnCellsRealPtr _curveBeam;
     /** @brief Objet Jeveux '.CARCABLE' */
-    PCFieldOnMeshRealPtr _cable;
+    ConstantFieldOnCellsRealPtr _cable;
     /** @brief Objet Jeveux '.CARCOQUE' */
-    PCFieldOnMeshRealPtr _shell;
+    ConstantFieldOnCellsRealPtr _shell;
     /** @brief Objet Jeveux '.CARDISCA' */
-    PCFieldOnMeshRealPtr _dumping;
+    ConstantFieldOnCellsRealPtr _dumping;
     /** @brief Objet Jeveux '.CARDISCK' */
-    PCFieldOnMeshRealPtr _rigidity;
+    ConstantFieldOnCellsRealPtr _rigidity;
     /** @brief Objet Jeveux '.CARDISCM' */
-    PCFieldOnMeshRealPtr _mass;
+    ConstantFieldOnCellsRealPtr _mass;
     /** @brief Objet Jeveux '.CARGENBA' */
-    PCFieldOnMeshRealPtr _bar;
+    ConstantFieldOnCellsRealPtr _bar;
     /** @brief Objet Jeveux '.CARGENPO' */
-    PCFieldOnMeshRealPtr _beamSection;
+    ConstantFieldOnCellsRealPtr _beamSection;
     /** @brief Objet Jeveux '.CARGEOPO' */
-    PCFieldOnMeshRealPtr _beamGeometry;
+    ConstantFieldOnCellsRealPtr _beamGeometry;
     /** @brief Objet Jeveux '.CARMASSI' */
-    PCFieldOnMeshRealPtr _orthotropicBasis;
+    ConstantFieldOnCellsRealPtr _orthotropicBasis;
     /** @brief Objet Jeveux '.CARORIEN' */
-    PCFieldOnMeshRealPtr _localBasis;
+    ConstantFieldOnCellsRealPtr _localBasis;
     /** @brief Objet Jeveux '.CARPOUFL' */
-    PCFieldOnMeshRealPtr _beamCharacteristics;
+    ConstantFieldOnCellsRealPtr _beamCharacteristics;
 
     /** @brief Booleen indiquant si le maillage est vide */
     bool _isEmpty;

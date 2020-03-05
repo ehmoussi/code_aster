@@ -34,7 +34,7 @@
 #include "Discretization/ElementaryCharacteristics.h"
 #include "DataFields/FieldOnCells.h"
 #include "DataFields/FieldOnNodes.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "DataStructures/DataStructure.h"
 #include "Discretization/DOFNumbering.h"
 
@@ -51,7 +51,7 @@ class CalculationExternalVariableClass : public DataStructure {
     ElementaryCharacteristicsPtr _elemCara;
     FieldOnCellsRealPtr _varRef;
     FieldOnCellsRealPtr _varInst;
-    PCFieldOnMeshRealPtr _timeValue;
+    ConstantFieldOnCellsRealPtr _timeValue;
     double _currentTime;
     bool _pTot;
     bool _hydr;

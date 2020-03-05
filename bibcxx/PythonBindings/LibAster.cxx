@@ -111,7 +111,7 @@ namespace py = boost::python;
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/PartialMeshInterface.h"
-#include "PythonBindings/PCFieldOnMeshInterface.h"
+#include "PythonBindings/ConstantFieldOnCellsInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include "PythonBindings/PrestressingCableDefinitionInterface.h"
@@ -205,7 +205,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportDataFieldToPython();
     exportFieldOnCellsToPython();
     exportFieldOnNodesToPython();
-    exportPCFieldOnMeshToPython();
+    exportConstantFieldOnCellsToPython();
     exportSimpleFieldOnCellsToPython();
     exportSimpleFieldOnNodesToPython();
     exportTableToPython();

@@ -32,7 +32,7 @@
 #include "Loads/UnitaryThermalLoad.h"
 #include "Utilities/CapyConvertibleValue.h"
 #include "Modeling/FiniteElementDescriptor.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 
 /**
  * @class ThermalLoadClass
@@ -53,38 +53,38 @@ class ThermalLoadClass : public DataStructure {
         /** @brief Vecteur Jeveux '.LIGRE' */
         FiniteElementDescriptorPtr _FEDesc;
         /** @brief Carte '.CIMPO' */
-        PCFieldOnMeshRealPtr _cimpo;
+        ConstantFieldOnCellsRealPtr _cimpo;
         /** @brief Carte '.CMULT' */
-        PCFieldOnMeshRealPtr _cmult;
+        ConstantFieldOnCellsRealPtr _cmult;
         /** @brief Carte '.COEFH' */
-        PCFieldOnMeshRealPtr _coefh;
+        ConstantFieldOnCellsRealPtr _coefh;
         /** @brief Carte '.FLUNL' */
-        PCFieldOnMeshRealPtr _flunl;
+        ConstantFieldOnCellsRealPtr _flunl;
         /** @brief Carte '.FLURE' */
-        PCFieldOnMeshRealPtr _flure;
+        ConstantFieldOnCellsRealPtr _flure;
         /** @brief Carte '.GRAIN' */
-        PCFieldOnMeshRealPtr _grain;
+        ConstantFieldOnCellsRealPtr _grain;
         /** @brief Carte '.HECHP' */
-        PCFieldOnMeshRealPtr _hechp;
+        ConstantFieldOnCellsRealPtr _hechp;
         /** @brief Carte '.SOURE' */
-        PCFieldOnMeshRealPtr _soure;
+        ConstantFieldOnCellsRealPtr _soure;
         /** @brief Carte '.T_EXT' */
-        PCFieldOnMeshRealPtr _tExt;
+        ConstantFieldOnCellsRealPtr _tExt;
 
         /** @brief Constructeur */
         TherLoad( const std::string &name, const ModelPtr &currentModel )
             : _model( currentModel ), _mesh( _model->getMesh() ),
               _modelName( name + ".MODEL.NOMO" ), _convection( name + ".CONVE.VALE" ),
               _FEDesc( new FiniteElementDescriptorClass( name + ".LIGRE", _mesh ) ),
-              _cimpo( new PCFieldOnMeshRealClass( name + ".CIMPO", _FEDesc ) ),
-              _cmult( new PCFieldOnMeshRealClass( name + ".CMULT", _FEDesc ) ),
-              _coefh( new PCFieldOnMeshRealClass( name + ".COEFH", _FEDesc ) ),
-              _flunl( new PCFieldOnMeshRealClass( name + ".FLUNL", _FEDesc ) ),
-              _flure( new PCFieldOnMeshRealClass( name + ".FLURE", _FEDesc ) ),
-              _grain( new PCFieldOnMeshRealClass( name + ".GRAIN", _FEDesc ) ),
-              _hechp( new PCFieldOnMeshRealClass( name + ".HECHP", _FEDesc ) ),
-              _soure( new PCFieldOnMeshRealClass( name + ".SOURE", _FEDesc ) ),
-              _tExt( new PCFieldOnMeshRealClass( name + ".T_EXT", _FEDesc ) ){};
+              _cimpo( new ConstantFieldOnCellsRealClass( name + ".CIMPO", _FEDesc ) ),
+              _cmult( new ConstantFieldOnCellsRealClass( name + ".CMULT", _FEDesc ) ),
+              _coefh( new ConstantFieldOnCellsRealClass( name + ".COEFH", _FEDesc ) ),
+              _flunl( new ConstantFieldOnCellsRealClass( name + ".FLUNL", _FEDesc ) ),
+              _flure( new ConstantFieldOnCellsRealClass( name + ".FLURE", _FEDesc ) ),
+              _grain( new ConstantFieldOnCellsRealClass( name + ".GRAIN", _FEDesc ) ),
+              _hechp( new ConstantFieldOnCellsRealClass( name + ".HECHP", _FEDesc ) ),
+              _soure( new ConstantFieldOnCellsRealClass( name + ".SOURE", _FEDesc ) ),
+              _tExt( new ConstantFieldOnCellsRealClass( name + ".T_EXT", _FEDesc ) ){};
     };
 
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */

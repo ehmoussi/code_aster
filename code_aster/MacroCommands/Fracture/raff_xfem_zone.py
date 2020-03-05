@@ -24,7 +24,7 @@
 from ...Cata.Commons import *
 from ...Cata.DataStructure import *
 from ...Cata.Syntax import *
-from ...Objects import PCFieldOnMeshReal
+from ...Objects import ConstantFieldOnCellsReal
 from ...Supervis import ExecuteCommand
 
 RAFF_XFEM_ZONE_CATA=OPER(nom="RAFF_XFEM_ZONE",
@@ -51,7 +51,7 @@ class RaffXfemZone(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = PCFieldOnMeshReal(keywords["FISSURE"].getMesh())
+        self._result = ConstantFieldOnCellsReal(keywords["FISSURE"].getMesh())
 
 
 RAFF_XFEM_ZONE = RaffXfemZone.run

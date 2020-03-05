@@ -19,22 +19,22 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`PCFieldOnMeshReal` --- Results container
+:py:class:`ConstantFieldOnCellsReal` --- Results container
 **************************************************
 """
 
 import aster
-from libaster import PCFieldOnMeshReal
+from libaster import ConstantFieldOnCellsReal
 
 from ..Utilities import injector
 
 
-@injector(PCFieldOnMeshReal)
-class ExtendedPCFieldOnMeshReal(object):
+@injector(ConstantFieldOnCellsReal)
+class ExtendedConstantFieldOnCellsReal(object):
     cata_sdj = "SD.sd_carte.sd_carte"
 
     def __getinitargs__(self):
-        """Returns the argument required to reinitialize a PCFieldOnMeshReal
+        """Returns the argument required to reinitialize a ConstantFieldOnCellsReal
         object during unpickling.
         """
         return (self.getName(), self.getMesh())

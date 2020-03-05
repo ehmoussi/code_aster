@@ -24,7 +24,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "DataStructures/DataStructure.h"
 #include "Loads/PhysicalQuantity.h"
 #include "MemoryManager/JeveuxVector.h"
@@ -124,10 +124,10 @@ class AcousticLoadClass : public DataStructure {
 
     JeveuxVectorChar8 _modelName;
     JeveuxVectorChar8 _type;
-    PCFieldOnMeshComplexPtr _imposedValues;
-    PCFieldOnMeshComplexPtr _multiplier;
-    PCFieldOnMeshComplexPtr _impedanceValues;
-    PCFieldOnMeshComplexPtr _speedValues;
+    ConstantFieldOnCellsComplexPtr _imposedValues;
+    ConstantFieldOnCellsComplexPtr _multiplier;
+    ConstantFieldOnCellsComplexPtr _impedanceValues;
+    ConstantFieldOnCellsComplexPtr _speedValues;
     /** @brief FiniteElementDescriptor of load */
     FiniteElementDescriptorPtr _FEDesc;
 
@@ -152,14 +152,14 @@ class AcousticLoadClass : public DataStructure {
           _mesh( model->getMesh() ),
           _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),
           _type( JeveuxVectorChar8( getName() + ".TYPE" ) ),
-          _imposedValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexClass( getName() + ".CHAC.CIMPO", _mesh ) ) ),
-          _multiplier( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexClass( getName() + ".CHAC.CMULT", _mesh ) ) ),
-          _impedanceValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexClass( getName() + ".CHAC.IMPED", _mesh ) ) ),
-          _speedValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexClass( getName() + ".CHAC.VITFA", _mesh ) ) ),
+          _imposedValues( ConstantFieldOnCellsComplexPtr(
+              new ConstantFieldOnCellsComplexClass( getName() + ".CHAC.CIMPO", _mesh ) ) ),
+          _multiplier( ConstantFieldOnCellsComplexPtr(
+              new ConstantFieldOnCellsComplexClass( getName() + ".CHAC.CMULT", _mesh ) ) ),
+          _impedanceValues( ConstantFieldOnCellsComplexPtr(
+              new ConstantFieldOnCellsComplexClass( getName() + ".CHAC.IMPED", _mesh ) ) ),
+          _speedValues( ConstantFieldOnCellsComplexPtr(
+              new ConstantFieldOnCellsComplexClass( getName() + ".CHAC.VITFA", _mesh ) ) ),
           _FEDesc( new FiniteElementDescriptorClass( name + "CHAC.LIGRE", _mesh ) ) {
         _toCapyConverter.add(
             new CapyConvertibleValue< ModelPtr >( true, "MODELE", _model, true ) );

@@ -1,6 +1,6 @@
 /**
- * @file PCFieldOnMeshInterface.cxx
- * @brief Interface python de PCFieldOnMesh
+ * @file ConstantFieldOnCellsInterface.cxx
+ * @brief Interface python de ConstantFieldOnCells
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -29,15 +29,15 @@ namespace py = boost::python;
 #include <PythonBindings/factory.h>
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DataFieldInterface.h"
-#include "PythonBindings/PCFieldOnMeshInterface.h"
+#include "PythonBindings/ConstantFieldOnCellsInterface.h"
 
-void exportPCFieldOnMeshToPython() {
-    py::class_< PCFieldOnMeshRealClass, PCFieldOnMeshRealPtr,
-            py::bases< DataFieldClass > >( "PCFieldOnMeshReal", py::no_init )
+void exportConstantFieldOnCellsToPython() {
+    py::class_< ConstantFieldOnCellsRealClass, ConstantFieldOnCellsRealPtr,
+            py::bases< DataFieldClass > >( "ConstantFieldOnCellsReal", py::no_init )
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< PCFieldOnMeshRealClass, BaseMeshPtr >))
+              py::make_constructor(&initFactoryPtr< ConstantFieldOnCellsRealClass, BaseMeshPtr >))
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< PCFieldOnMeshRealClass, std::string, BaseMeshPtr >))
-        .def( "getMesh", &PCFieldOnMeshRealClass::getMesh );
+                  &initFactoryPtr< ConstantFieldOnCellsRealClass, std::string, BaseMeshPtr >))
+        .def( "getMesh", &ConstantFieldOnCellsRealClass::getMesh );
 };

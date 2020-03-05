@@ -33,7 +33,7 @@ CalculationExternalVariableClass::CalculationExternalVariableClass(
         _varRef( new FieldOnCellsRealClass( _model->getName() + ".CHVCREF" ) ),
         _varInst( new FieldOnCellsRealClass( getName() + ".TOUT" ) ),
         _timeValue(
-          new PCFieldOnMeshRealClass( getName() + ".INST", _model->getMesh() ) ),
+          new ConstantFieldOnCellsRealClass( getName() + ".INST", _model->getMesh() ) ),
         _currentTime( -1.0 ), _pTot( _mater->existsCalculationExternalVariable( "PTOT" ) ),
         _hydr( _mater->existsCalculationExternalVariable( "HYDR" ) ),
         _sech( _mater->existsCalculationExternalVariable( "SECH" ) ),
@@ -61,8 +61,8 @@ void CalculationExternalVariableClass::compute( const double &time )
 
     std::string comp( "INST_R" );
     _timeValue->allocate( Permanent, comp );
-    PCFieldZone a( _model->getMesh() );
-    PCFieldValues< double > b( {"INST"}, {time} );
+    ConstantFieldOnZone a( _model->getMesh() );
+    ConstantFieldValues< double > b( {"INST"}, {time} );
     _timeValue->setValueOnZone( a, b );
 };
 

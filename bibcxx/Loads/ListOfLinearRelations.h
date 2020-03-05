@@ -82,7 +82,7 @@ template < class ValueType > class ListOfLinearRelationsClass : public DataStruc
     };
 };
 
-/** @typedef PCFieldOnMeshClassReal Class d'une carte de double */
+/** @typedef ConstantFieldOnCellsClassReal Class d'une carte de double */
 typedef ListOfLinearRelationsClass< double > ListOfLinearRelationsReal;
 
 /**

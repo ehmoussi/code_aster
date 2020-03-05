@@ -1,9 +1,9 @@
-#ifndef PCFIELDONMESH_H_
-#define PCFIELDONMESH_H_
+#ifndef CONSTANTFIELDONCELLS_H_
+#define CONSTANTFIELDONCELLS_H_
 
 /**
- * @file PCFieldOnMesh.h
- * @brief Fichier entete de la classe PCFieldOnMesh
+ * @file ConstantFieldOnCells.h
+ * @brief Fichier entete de la classe ConstantFieldOnCells
  * @author Natacha Bereux
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -41,10 +41,10 @@
 #include "astercxx.h"
 
 /**
- * @class PCFieldZone Piecewise Constant (PC) Field Zone
+ * @class ConstantFieldOnZone Piecewise Constant (PC) Field Zone
  * @author Natacha Bereux
  */
-class PCFieldZone {
+class ConstantFieldOnZone {
   public:
     enum LocalizationType {
         AllMesh,
@@ -62,21 +62,21 @@ class PCFieldZone {
     VectorLong _indexes;
 
   public:
-    PCFieldZone( BaseMeshPtr mesh )
+    ConstantFieldOnZone( BaseMeshPtr mesh )
         : _mesh( mesh ), _localisation( AllMesh ), _grp( new GroupOfElements( "" ) ){};
 
-    PCFieldZone( FiniteElementDescriptorPtr ligrel )
+    ConstantFieldOnZone( FiniteElementDescriptorPtr ligrel )
         : _ligrel( ligrel ), _localisation( AllDelayedElements ),
           _grp( new GroupOfElements( "" ) ){};
 
-    PCFieldZone( BaseMeshPtr mesh, GroupOfElementsPtr grp )
+    ConstantFieldOnZone( BaseMeshPtr mesh, GroupOfElementsPtr grp )
         : _mesh( mesh ), _localisation( OnGroupOfElements ), _grp( grp ){};
 
-    PCFieldZone( BaseMeshPtr mesh, const VectorLong &indexes )
+    ConstantFieldOnZone( BaseMeshPtr mesh, const VectorLong &indexes )
         : _mesh( mesh ), _localisation( ListOfElements ), _grp( new GroupOfElements( "" ) ),
           _indexes( indexes ){};
 
-    PCFieldZone( FiniteElementDescriptorPtr ligrel, const VectorLong &indexes )
+    ConstantFieldOnZone( FiniteElementDescriptorPtr ligrel, const VectorLong &indexes )
         : _ligrel( ligrel ), _localisation( ListOfDelayedElements ), _indexes( indexes ){};
 
     BaseMeshPtr getMesh() const {
@@ -101,16 +101,16 @@ class PCFieldZone {
 };
 
 /**
- * @class PCFieldValues Piecewise Constant (PC) Field values
+ * @class ConstantFieldValues Piecewise Constant (PC) Field values
  * @author Natacha Bereux
  */
-template < class ValueType > class PCFieldValues {
+template < class ValueType > class ConstantFieldValues {
   private:
     VectorString _components;
     std::vector< ValueType > _values;
 
   public:
-    PCFieldValues( const VectorString &comp, const std::vector< ValueType > &val )
+    ConstantFieldValues( const VectorString &comp, const std::vector< ValueType > &val )
         : _components( comp ), _values( val ){};
 
     const VectorString &getComponents() const { return _components; };
@@ -119,11 +119,11 @@ template < class ValueType > class PCFieldValues {
 };
 
 /**
- * @class PCFieldOnMeshClass Piecewise Constant (PC) Field on Mesh template
+ * @class ConstantFieldOnCellsClass Piecewise Constant (PC) Field on Mesh template
  * @brief Cette classe permet de definir une carte (champ défini sur les mailles)
  * @author Natacha Bereux
  */
-template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
+template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldClass {
   private:
     /** @brief Vecteur Jeveux '.NOMA' */
     JeveuxVectorChar8 _meshName;
@@ -153,11 +153,11 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
                            JeveuxVector< ValueType > &values ) {
         if ( ( code == -1 || code == -3 ) && !_FEDesc )
             throw std::runtime_error(
-                "Build of PCFieldOnMesh impossible, FiniteElementDescriptor is missing" );
+                "Build of ConstantFieldOnCells impossible, FiniteElementDescriptor is missing" );
         bool test = _componentNames->updateValuePointer();
         test = test && _valuesListTmp->updateValuePointer();
         if ( !test )
-            throw std::runtime_error( "PCFieldOnMeshClass not allocate" );
+            throw std::runtime_error( "ConstantFieldOnCellsClass not allocate" );
         const ASTERINTEGER taille = _componentNames->size();
 
         const ASTERINTEGER tVerif1 = component->size();
@@ -185,11 +185,11 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
                            const std::vector< ValueType > &values ) {
         if ( ( code == -1 || code == -3 ) && !_FEDesc )
             throw std::runtime_error(
-                "Build of PCFieldOnMesh impossible, FiniteElementDescriptor is missing" );
+                "Build of ConstantFieldOnCells impossible, FiniteElementDescriptor is missing" );
         bool test = _componentNames->updateValuePointer();
         test = test && _valuesListTmp->updateValuePointer();
         if ( !test )
-            throw std::runtime_error( "PCFieldOnMeshClass not allocate" );
+            throw std::runtime_error( "ConstantFieldOnCellsClass not allocate" );
         const ASTERINTEGER taille = _componentNames->size();
 
         const ASTERINTEGER tVerif1 = component.size();
@@ -225,17 +225,17 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
 
   public:
     /**
-     * @typedef PCFieldOnBaseMeshPtr
-     * @brief Pointeur intelligent vers un PCFieldOnMesh
+     * @typedef ConstantFieldOnBaseMeshPtr
+     * @brief Pointeur intelligent vers un ConstantFieldOnCells
      */
-    typedef boost::shared_ptr< PCFieldOnMeshClass > PCFieldOnBaseMeshPtr;
+    typedef boost::shared_ptr< ConstantFieldOnCellsClass > ConstantFieldOnBaseMeshPtr;
 
     /**
      * @brief Constructeur
      * @param name Nom Jeveux de la carte
      * @param mesh Maillage
      */
-    PCFieldOnMeshClass( const std::string &name, const BaseMeshPtr &mesh,
+    ConstantFieldOnCellsClass( const std::string &name, const BaseMeshPtr &mesh,
                            const JeveuxMemory memType = Permanent )
         : DataFieldClass( name, "CARTE", memType ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
@@ -251,7 +251,7 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
      * @param name Nom Jeveux de la carte
      * @param ligrel Ligrel support
      */
-    PCFieldOnMeshClass( std::string name, const FiniteElementDescriptorPtr &ligrel,
+    ConstantFieldOnCellsClass( std::string name, const FiniteElementDescriptorPtr &ligrel,
                            const JeveuxMemory memType = Permanent )
         : DataFieldClass( name, "CARTE", memType ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
@@ -267,7 +267,7 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
      * @param mesh Maillage
      * @param name Nom Jeveux de la carte
      */
-    PCFieldOnMeshClass( const BaseMeshPtr &mesh, const JeveuxMemory memType = Permanent )
+    ConstantFieldOnCellsClass( const BaseMeshPtr &mesh, const JeveuxMemory memType = Permanent )
         : DataFieldClass( memType, "CARTE" ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
@@ -282,7 +282,7 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
      * @param ligrel Ligrel support
      * @param name Nom Jeveux de la carte
      */
-    PCFieldOnMeshClass( const FiniteElementDescriptorPtr &ligrel,
+    ConstantFieldOnCellsClass( const FiniteElementDescriptorPtr &ligrel,
                            const JeveuxMemory memType = Permanent )
         : DataFieldClass( memType, "CARTE" ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
@@ -293,12 +293,13 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
           _mesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
-    typedef boost::shared_ptr< PCFieldOnMeshClass< ValueType > > PCFieldOnMeshValueTypePtr;
+    typedef boost::shared_ptr< ConstantFieldOnCellsClass< ValueType > >
+                                                                ConstantFieldOnCellsValueTypePtr;
 
     /**
      * @brief Destructeur
      */
-    ~PCFieldOnMeshClass(){};
+    ~ConstantFieldOnCellsClass(){};
 
     /**
      * @brief Allocation de la carte
@@ -321,7 +322,7 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
      * @return true si l'allocation s'est bien deroulee, false sinon
      */
     void allocate( const JeveuxMemory jeveuxBase,
-                   const PCFieldOnMeshValueTypePtr &model ) {
+                   const ConstantFieldOnCellsValueTypePtr &model ) {
         auto componant = model->getPhysicalQuantityName();
         std::string strJeveuxBase( "V" );
         if ( jeveuxBase == Permanent )
@@ -331,7 +332,7 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
     };
 
     /**
-     * @brief Deallocate the PCField
+     * @brief Deallocate the ConstantField
      */
     void deallocate() {
         _meshName->deallocate();
@@ -370,11 +371,11 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
     /**
      * @brief Get values of a zone
      */
-    PCFieldValues< ValueType > getValues( const int &position ) const {
+    ConstantFieldValues< ValueType > getValues( const int &position ) const {
         _valuesList->updateValuePointer();
         _descriptor->updateValuePointer();
         if ( position >= ( *_descriptor )[2] )
-            throw std::runtime_error( "Out of PCFieldOnMesh bound" );
+            throw std::runtime_error( "Out of ConstantFieldOnCells bound" );
 
         ASTERINTEGER nbZoneMax = ( *_descriptor )[1];
         ASTERINTEGER gdeur = ( *_descriptor )[0];
@@ -398,39 +399,39 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
                 ++pos;
             }
         }
-        return PCFieldValues< ValueType >( cmpToReturn, valToReturn );
+        return ConstantFieldValues< ValueType >( cmpToReturn, valToReturn );
     };
 
     /**
      * @brief Get zone description
      */
-    PCFieldZone getZoneDescription( const int &position ) const {
+    ConstantFieldOnZone getZoneDescription( const int &position ) const {
         _descriptor->updateValuePointer();
         if ( position >= ( *_descriptor )[2] )
-            throw std::runtime_error( "Out of PCFieldOnMesh bound" );
+            throw std::runtime_error( "Out of ConstantFieldOnCells bound" );
 
         ASTERINTEGER code = ( *_descriptor )[3 + 2 * position];
         if ( code == 1 )
-            return PCFieldZone( _mesh );
+            return ConstantFieldOnZone( _mesh );
         else if ( code == -1 )
-            return PCFieldZone( _FEDesc );
+            return ConstantFieldOnZone( _FEDesc );
         else if ( code == 2 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
             const auto &map = _mesh->getGroupOfNodesNames();
             const auto name = map->findStringOfElement( numGrp );
-            return PCFieldZone( _mesh, GroupOfElementsPtr( new GroupOfElements( name ) ) );
+            return ConstantFieldOnZone( _mesh, GroupOfElementsPtr( new GroupOfElements( name ) ) );
         } else if ( code == 3 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
             _listOfMeshElements->buildFromJeveux();
             const auto &object = _listOfMeshElements->getObject( numGrp );
-            return PCFieldZone( _mesh, object.toVector() );
+            return ConstantFieldOnZone( _mesh, object.toVector() );
         } else if ( code == -3 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
             _listOfMeshElements->buildFromJeveux();
             const auto &object = _listOfMeshElements->getObject( numGrp );
-            return PCFieldZone( _FEDesc, object.toVector() );
+            return ConstantFieldOnZone( _FEDesc, object.toVector() );
         } else
-            throw std::runtime_error( "Error in PCFieldOnMesh" );
+            throw std::runtime_error( "Error in ConstantFieldOnCells" );
     };
 
     /**
@@ -509,8 +510,8 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
      * @param values Valeur a allouer
      * @return renvoit true si l'ajout s'est bien deroulee, false sinon
      */
-    bool setValueOnZone( const PCFieldZone &zone,
-                         const PCFieldValues< ValueType > &values ) {
+    bool setValueOnZone( const ConstantFieldOnZone &zone,
+                         const ConstantFieldValues< ValueType > &values ) {
         if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
@@ -519,17 +520,17 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
         std::string mode( " " );
         ASTERINTEGER nbMa = 0;
         JeveuxVectorLong limanu( "&&TEMPORARY" );
-        if ( zone.getLocalizationType() == PCFieldZone::AllMesh ) {
+        if ( zone.getLocalizationType() == ConstantFieldOnZone::AllMesh ) {
             code = 1;
             limanu->allocate( Temporary, 1 );
-        } else if ( zone.getLocalizationType() == PCFieldZone::AllDelayedElements ) {
+        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::AllDelayedElements ) {
             code = -1;
             limanu->allocate( Temporary, 1 );
-        } else if ( zone.getLocalizationType() == PCFieldZone::OnGroupOfElements ) {
+        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::OnGroupOfElements ) {
             code = 2;
             grp = zone.getGroup()->getName();
             limanu->allocate( Temporary, 1 );
-        } else if ( zone.getLocalizationType() == PCFieldZone::ListOfElements ) {
+        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::ListOfElements ) {
             code = 3;
             mode = "NUM";
             const auto &vecTmp = zone.getListOfElements();
@@ -537,7 +538,7 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
             limanu->allocate( Temporary, nbMa );
             for ( ASTERINTEGER pos = 0; pos < nbMa; ++pos )
                 ( *limanu )[pos] = vecTmp[pos];
-        } else if ( zone.getLocalizationType() == PCFieldZone::ListOfDelayedElements ) {
+        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::ListOfDelayedElements ) {
             code = -3;
             mode = "NUM";
             const auto &vecTmp = zone.getListOfElements();
@@ -552,7 +553,7 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
     };
 
     /**
-     * @brief Get number of zone in PCFieldOnMesh
+     * @brief Get number of zone in ConstantFieldOnCells
      */
     int size() const {
         _descriptor->updateValuePointer();
@@ -574,44 +575,44 @@ template < class ValueType > class PCFieldOnMeshClass : public DataFieldClass {
     };
 };
 
-/** @typedef PCFieldOnMeshRealClass Class d'une carte de double */
-typedef PCFieldOnMeshClass< double > PCFieldOnMeshRealClass;
-/** @typedef PCFieldOnMeshLongClass Class d'une carte de long */
-typedef PCFieldOnMeshClass< ASTERINTEGER > PCFieldOnMeshLongClass;
-/** @typedef PCFieldOnMeshComplexClass Class d'une carte de complexe */
-typedef PCFieldOnMeshClass< RealComplex > PCFieldOnMeshComplexClass;
-/** @typedef PCFieldOnMeshChar8Class Class d'une carte de char*8 */
-typedef PCFieldOnMeshClass< JeveuxChar8 > PCFieldOnMeshChar8Class;
-/** @typedef PCFieldOnMeshChar16Class Class d'une carte de char*16 */
-typedef PCFieldOnMeshClass< JeveuxChar8 > PCFieldOnMeshChar16Class;
+/** @typedef ConstantFieldOnCellsRealClass Class d'une carte de double */
+typedef ConstantFieldOnCellsClass< double > ConstantFieldOnCellsRealClass;
+/** @typedef ConstantFieldOnCellsLongClass Class d'une carte de long */
+typedef ConstantFieldOnCellsClass< ASTERINTEGER > ConstantFieldOnCellsLongClass;
+/** @typedef ConstantFieldOnCellsComplexClass Class d'une carte de complexe */
+typedef ConstantFieldOnCellsClass< RealComplex > ConstantFieldOnCellsComplexClass;
+/** @typedef ConstantFieldOnCellsChar8Class Class d'une carte de char*8 */
+typedef ConstantFieldOnCellsClass< JeveuxChar8 > ConstantFieldOnCellsChar8Class;
+/** @typedef ConstantFieldOnCellsChar16Class Class d'une carte de char*16 */
+typedef ConstantFieldOnCellsClass< JeveuxChar8 > ConstantFieldOnCellsChar16Class;
 
 /**
- * @typedef PCFieldOnBaseMeshPtrReal
+ * @typedef ConstantFieldOnBaseMeshPtrReal
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshRealClass > PCFieldOnMeshRealPtr;
+typedef boost::shared_ptr< ConstantFieldOnCellsRealClass > ConstantFieldOnCellsRealPtr;
 
 /**
- * @typedef PCFieldOnMeshLongPtr
+ * @typedef ConstantFieldOnCellsLongPtr
  * @brief   Definition d'une carte de double
  */
-typedef boost::shared_ptr< PCFieldOnMeshLongClass > PCFieldOnMeshLongPtr;
+typedef boost::shared_ptr< ConstantFieldOnCellsLongClass > ConstantFieldOnCellsLongPtr;
 
 /**
- * @typedef PCFieldOnBaseMeshPtrComplex
+ * @typedef ConstantFieldOnBaseMeshPtrComplex
  * @brief   Definition d'une carte de complexe
  */
-typedef boost::shared_ptr< PCFieldOnMeshComplexClass > PCFieldOnMeshComplexPtr;
+typedef boost::shared_ptr< ConstantFieldOnCellsComplexClass > ConstantFieldOnCellsComplexPtr;
 
 /**
- * @typedef PCFieldOnBaseMeshPtrChar8 Definition d'une carte de char[8]
- * @brief Pointeur intelligent vers un PCFieldOnMeshClass
+ * @typedef ConstantFieldOnBaseMeshPtrChar8 Definition d'une carte de char[8]
+ * @brief Pointeur intelligent vers un ConstantFieldOnCellsClass
  */
-typedef boost::shared_ptr< PCFieldOnMeshChar8Class > PCFieldOnMeshChar8Ptr;
+typedef boost::shared_ptr< ConstantFieldOnCellsChar8Class > ConstantFieldOnCellsChar8Ptr;
 
 /**
- * @typedef PCFieldOnBaseMeshPtrChar16 Definition d'une carte de char[16]
- * @brief Pointeur intelligent vers un PCFieldOnMeshClass
+ * @typedef ConstantFieldOnBaseMeshPtrChar16 Definition d'une carte de char[16]
+ * @brief Pointeur intelligent vers un ConstantFieldOnCellsClass
  */
-typedef boost::shared_ptr< PCFieldOnMeshChar16Class > PCFieldOnMeshChar16Ptr;
-#endif /* PCFIELDONMESH_H_ */
+typedef boost::shared_ptr< ConstantFieldOnCellsChar16Class > ConstantFieldOnCellsChar16Ptr;
+#endif /* CONSTANTFIELDONCELLS_H_ */

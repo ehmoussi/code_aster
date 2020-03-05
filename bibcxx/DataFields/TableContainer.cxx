@@ -93,7 +93,7 @@ void TableContainerClass::addObject( const std::string& a,
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        PCFieldOnMeshRealPtr b )
+                                        ConstantFieldOnCellsRealPtr b )
 {
     _mapPCFOMD[a] = b;
 };
@@ -217,12 +217,13 @@ TableContainerClass::getModeResult( const std::string& a ) const
     return curIter->second;
 };
 
-PCFieldOnMeshRealPtr TableContainerClass::getPCFieldOnMeshReal( const std::string& a ) const
+ConstantFieldOnCellsRealPtr
+TableContainerClass::getConstantFieldOnCellsReal( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapPCFOMD.find(aa);
     if( curIter == _mapPCFOMD.end() )
-        return PCFieldOnMeshRealPtr( nullptr );
+        return ConstantFieldOnCellsRealPtr( nullptr );
     return curIter->second;
 };
 
@@ -357,8 +358,8 @@ bool TableContainerClass::update()
                                     ( new FieldOnNodesRealClass( sdName ) );
                 }
 //             else if( type == "CARTE_SDASTER" )
-//                 _mapPCFOMD[name] = PCFieldOnMeshRealPtr
-//                                     ( new PCFieldOnMeshRealClass( sdName ) );
+//                 _mapPCFOMD[name] = ConstantFieldOnCellsRealPtr
+//                                     ( new ConstantFieldOnCellsRealClass( sdName ) );
             else if( type == "CHAM_ELEM" )
                 {
                 if ( _mapFOED[name] == nullptr )
