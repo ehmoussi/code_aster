@@ -19,7 +19,7 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-from ..Objects import Formula, Function, FunctionComplex, Surface
+from ..Objects import Formula, Function, FunctionComplex, Function2D
 from ..Supervis import ExecuteCommand
 from ..Utilities import compat_listr8
 
@@ -51,10 +51,10 @@ class FunctionInterpolation(ExecuteCommand):
         elif intype == "FONCTION_SDASTER":
             self._result = Function()
         elif intype == "NAPPE_SDASTER":
-            self._result = Surface()
+            self._result = Function2D()
         elif intype == "FORMULE":
             if keywords.get("NOM_PARA_FONC") != None:
-                self._result = Surface()
+                self._result = Function2D()
             else:
                 self._result = Function()
         elif intype == "FORMULE_C":

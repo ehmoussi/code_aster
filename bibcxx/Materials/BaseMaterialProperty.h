@@ -34,7 +34,7 @@
 #include "DataFields/Table.h"
 #include "Functions/Formula.h"
 #include "Functions/Function.h"
-#include "Functions/Surface.h"
+#include "Functions/Function2D.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "aster_utils.h"
 #include "astercxx.h"
@@ -122,7 +122,7 @@ template <> struct AllowedMaterialPropertyType< FunctionPtr > {};
 
 template <> struct AllowedMaterialPropertyType< TablePtr > {};
 
-template <> struct AllowedMaterialPropertyType< SurfacePtr > {};
+template <> struct AllowedMaterialPropertyType< Function2DPtr > {};
 
 template <> struct AllowedMaterialPropertyType< FormulaPtr > {};
 
@@ -276,8 +276,8 @@ typedef ElementaryMaterialPropertyClass< std::string > ElementaryMaterialPropert
 typedef ElementaryMaterialPropertyClass< FunctionPtr > ElementaryMaterialPropertyFunction;
 /** @typedef Definition d'une propriete materiau de type Table */
 typedef ElementaryMaterialPropertyClass< TablePtr > ElementaryMaterialPropertyTable;
-/** @typedef Definition d'une propriete materiau de type Surface */
-typedef ElementaryMaterialPropertyClass< SurfacePtr > ElementaryMaterialPropertySurface;
+/** @typedef Definition d'une propriete materiau de type Function2D */
+typedef ElementaryMaterialPropertyClass< Function2DPtr > ElementaryMaterialPropertyFunction2D;
 /** @typedef Definition d'une propriete materiau de type Formula */
 typedef ElementaryMaterialPropertyClass< FormulaPtr > ElementaryMaterialPropertyFormula;
 /** @typedef Definition d'une propriete materiau de type DataStructure */
@@ -611,10 +611,10 @@ class BaseMaterialPropertyClass {
     /**
      * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
-     * @param value Surface correspondant a la valeur donnee par l'utilisateur
+     * @param value Function2D correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
      */
-    bool setSurfaceValue( std::string nameOfProperty, SurfacePtr value ) {
+    bool setFunction2DValue( std::string nameOfProperty, Function2DPtr value ) {
         // Recherche de la propriete materielle
         mapStrEMPFIterator curIter = _mapOfFunctionMaterialProperties.find( nameOfProperty );
         if ( curIter == _mapOfFunctionMaterialProperties.end() )

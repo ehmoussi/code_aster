@@ -42,7 +42,7 @@ from ..Objects import (AsFloat, AsInteger, ElementaryMatrixDisplacementReal,
                        FieldOnCellsReal, FieldOnNodesReal, Function,
                        FunctionComplex, GeneralizedAssemblyMatrixReal,
                        DataField, ModeResult,
-                       ConstantFieldOnCellsReal, Surface, Table)
+                       ConstantFieldOnCellsReal, Function2D, Table)
 from ..Supervis import ExecuteCommand
 
 
@@ -75,7 +75,7 @@ class ExtrTable(ExecuteCommand):
         elif typeResu == 'MATR_ELEM_TEMP_R':
             self._result = ElementaryMatrixTemperatureReal()
         elif typeResu == 'NAPPE_SDASTER':
-            self._result = Surface()
+            self._result = Function2D()
         elif typeResu == 'MODE_MECA':
             self._result = ModeResult()
         elif typeResu == 'CARTE_SDASTER':

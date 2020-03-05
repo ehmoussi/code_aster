@@ -19,19 +19,19 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 """
-:py:class:`Surface` --- Representation of Surface
+:py:class:`Function2D` --- Representation of Function2D
 **********************************************
 """
 
 import aster
 from .function_py import t_fonction, t_nappe
-from libaster import DataStructure, Surface
+from libaster import DataStructure, Function2D
 
 from ..Utilities import injector
 
 
-@injector(Surface)
-class ExtendedSurface(object):
+@injector(Function2D)
+class ExtendedFunction2D(object):
     cata_sdj = "SD.sd_fonction.sd_fonction_aster"
 
     def convert(self):

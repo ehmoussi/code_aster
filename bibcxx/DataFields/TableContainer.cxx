@@ -99,7 +99,7 @@ void TableContainerClass::addObject( const std::string& a,
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        SurfacePtr b )
+                                        Function2DPtr b )
 {
     _mapS[a] = b;
 };
@@ -227,12 +227,12 @@ TableContainerClass::getConstantFieldOnCellsReal( const std::string& a ) const
     return curIter->second;
 };
 
-SurfacePtr TableContainerClass::getSurface( const std::string& a ) const
+Function2DPtr TableContainerClass::getFunction2D( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapS.find(aa);
     if( curIter == _mapS.end() )
-        return SurfacePtr( nullptr );
+        return Function2DPtr( nullptr );
     return curIter->second;
 };
 
@@ -393,8 +393,8 @@ bool TableContainerClass::update()
             else if( type == "NAPPE_SDASTER" )
                 {
                 if ( _mapS[name] == nullptr )
-                _mapS[name] = SurfacePtr
-                                    ( new SurfaceClass( sdName ) );
+                _mapS[name] = Function2DPtr
+                                    ( new Function2DClass( sdName ) );
                 }
             else
                 throw std::runtime_error( "Type not implemented " + type );

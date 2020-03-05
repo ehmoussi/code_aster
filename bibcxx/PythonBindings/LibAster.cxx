@@ -125,7 +125,7 @@ namespace py = boost::python;
 #include "PythonBindings/StaticMacroElementInterface.h"
 #include "PythonBindings/StructureInterfaceInterface.h"
 #include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/SurfaceInterface.h"
+#include "PythonBindings/Function2DInterface.h"
 #include "PythonBindings/TableContainerInterface.h"
 #include "PythonBindings/TableInterface.h"
 #include "PythonBindings/ThermalFourierResultInterface.h"
@@ -219,7 +219,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportFunctionToPython();
     exportFormulaToPython();
     exportFortranToPython();
-    exportSurfaceToPython();
+    exportFunction2DToPython();
     exportContactToPython();
     exportAssemblyMatrixToPython();
     exportElementaryMatrixToPython();

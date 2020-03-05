@@ -1,9 +1,9 @@
-#ifndef SURFACEINTERFACE_H_
-#define SURFACEINTERFACE_H_
+#ifndef FUNCTION2DINTERFACE_H_
+#define FUNCTION2DINTERFACE_H_
 
 /**
- * @file SurfaceInterface.h
- * @brief Fichier entete de la classe SurfaceInterface
+ * @file Function2DInterface.h
+ * @brief Fichier entete de la classe Function2DInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -25,8 +25,8 @@
  */
 
 #include "astercxx.h"
-#include "Functions/Surface.h"
+#include "Functions/Function2D.h"
 
-void exportSurfaceToPython();
+void exportFunction2DToPython();
 
-#endif /* SURFACEINTERFACE_H_ */
+#endif /* FUNCTION2DINTERFACE_H_ */

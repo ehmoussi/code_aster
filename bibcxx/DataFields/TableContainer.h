@@ -43,7 +43,7 @@
 #include "DataFields/FieldOnCells.h"
 #include "Results/ModeResult.h"
 #include "Functions/Function.h"
-#include "Functions/Surface.h"
+#include "Functions/Function2D.h"
 #include <map>
 
 /**
@@ -74,7 +74,7 @@ class TableContainerClass : public TableClass
     std::map< std::string, TablePtr > _mapT;
     std::map< std::string, FunctionPtr > _mapF;
     std::map< std::string, FunctionComplexPtr > _mapFC;
-    std::map< std::string, SurfacePtr > _mapS;
+    std::map< std::string, Function2DPtr > _mapS;
 
   public:
     /**
@@ -172,10 +172,10 @@ class TableContainerClass : public TableClass
     void addObject( const std::string&, ConstantFieldOnCellsRealPtr );
 
     /**
-     * @brief Add Surface to TableContainer
+     * @brief Add Function2D to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, SurfacePtr );
+    void addObject( const std::string&, Function2DPtr );
 
     /**
      * @brief Add Table to TableContainer
@@ -260,10 +260,10 @@ class TableContainerClass : public TableClass
     ConstantFieldOnCellsRealPtr getConstantFieldOnCellsReal( const std::string& ) const;
 
     /**
-     * @brief Get Surface stored in TableContainer
+     * @brief Get Function2D stored in TableContainer
      * @param name key used to find object
      */
-    SurfacePtr getSurface( const std::string& ) const;
+    Function2DPtr getFunction2D( const std::string& ) const;
 
     /**
      * @brief Get Table stored in TableContainer

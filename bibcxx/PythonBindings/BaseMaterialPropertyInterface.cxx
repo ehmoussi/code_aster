@@ -21,8 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Not DataStructures
-// aslint: disable=C3006
 #include "PythonBindings/BaseMaterialPropertyInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
@@ -59,7 +57,7 @@ void exportBaseMaterialPropertyToPython() {
         .def( "setStringValue", &BaseMaterialPropertyClass::setStringValue )
         .def( "setFunctionValue", &BaseMaterialPropertyClass::setFunctionValue )
         .def( "setTableValue", &BaseMaterialPropertyClass::setTableValue )
-        .def( "setSurfaceValue", &BaseMaterialPropertyClass::setSurfaceValue )
+        .def( "setFunction2DValue", &BaseMaterialPropertyClass::setFunction2DValue )
         .def( "setFormulaValue", &BaseMaterialPropertyClass::setFormulaValue )
         .def( "setVectorOfRealValue", &BaseMaterialPropertyClass::setVectorOfRealValue )
         .def( "setVectorOfFunctionValue",
