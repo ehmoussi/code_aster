@@ -69,9 +69,10 @@ class RunAster:
             export (Export): Export object defining the calculation.
         """
         class_ = cls
-        if "make_test" in export.get("actions"):
+        actions = export.get("actions", [])
+        if "make_test" in actions:
             class_ = RunTest
-        if "make_env" in export.get("actions"):
+        if "make_env" in actions:
             class_ = RunOnlyEnv
         return class_(export)
 
