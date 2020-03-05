@@ -131,7 +131,7 @@ def run_command(cmd, logfile, timeout=None):
     """
     newcmd = " ".join(cmd) + " 2>&1 | tee -a " + logfile
     try:
-        proc = run(newcmd, shell=True, timeout=timeout)
+        proc = run(newcmd, shell=True, timeout=timeout or None)
         iret = proc.returncode
     except TimeoutExpired as exc:
         sys.stderr.write(str(exc))
