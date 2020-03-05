@@ -87,6 +87,11 @@ def parse_args(argv):
     return args, others
 
 
+def _run(cmd):
+    print("execute:", " ".join(cmd))
+    return run(cmd)
+
+
 def main(argv=None):
     """Entry point for testcases runner.
 
@@ -99,19 +104,18 @@ def main(argv=None):
     if use_tmp:
         resutest = tempfile.mkdtemp(prefix='resutest_')
     else:
-        resutest = osp.join(ROOT, args.resutest)
+        resutest = osp.join(os.getcwd(), args.resutest)
 
-    if args.clean and not args.rerun_failed: # clean = True or 'auto'
-        if args.clean == "auto" and osp.exists(args.resutest) and not use_tmp:
-            print(f"{args.resutest} will be removed.")
+    if not use_tmp and args.clean and not args.rerun_failed: # clean = True or 'auto'
+        if args.clean == "auto" and osp.exists(resutest):
+            print(f"{resutest} will be removed.")
             answ = input("do you want to continue (y/n) ?")
             if answ.lower() not in ('y', 'o'):
                 print("interrupt by user")
                 sys.exit(1)
-        run(["rm", "-rf", osp.join(args.resutest, '*')])
+        _run(["rm", "-rf", resutest])
 
-    if not osp.exists(args.resutest):
-        resutest = osp.join(os.getcwd(), args.resutest)
+    if not osp.exists(resutest):
         os.makedirs(resutest, exist_ok=True)
 
     # create CTestTestfile.cmake
@@ -125,11 +129,9 @@ def main(argv=None):
 
     # execute ctest
     os.chdir(resutest)
-    cmd = ["ctest"] + ctest_args
-    print("execute:", " ".join(cmd))
-    proc = run(cmd)
+    proc = _run(["ctest"] + ctest_args)
     if use_tmp:
-        run("rm", "-rf", resutest)
+        _run(["rm", "-rf", resutest])
     return proc.returncode
 
 
