@@ -1,9 +1,9 @@
-#ifndef CONTACTDEFINITION_H_
-#define CONTACTDEFINITION_H_
+#ifndef CONTACT_H_
+#define CONTACT_H_
 
 /**
- * @file ContactDefinition.h
- * @brief Fichier entete de la class ContactDefinition
+ * @file Contact.h
+ * @brief Fichier entete de la class Contact
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -35,7 +35,7 @@
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 
-class ContactDefinitionClass : public DataStructure {
+class ContactClass : public DataStructure {
   private:
     /** @brief La SD est-elle vide ? */
     bool _isEmpty;
@@ -44,26 +44,26 @@ class ContactDefinitionClass : public DataStructure {
 
   public:
     /**
-    * @typedef ContactDefinitionPt
-    * @brief Pointeur intelligent vers un ContactDefinition
+    * @typedef ContactPt
+    * @brief Pointeur intelligent vers un Contact
     */
-    typedef boost::shared_ptr< ContactDefinitionClass > ContactDefinitionPtr;
+    typedef boost::shared_ptr< ContactClass > ContactPtr;
     /**
      * @brief Constructeur
      */
-    ContactDefinitionClass() : ContactDefinitionClass( ResultNaming::getNewResultName() ){};
+    ContactClass() : ContactClass( ResultNaming::getNewResultName() ){};
 
     /**
      * @brief Constructeur
      */
-    ContactDefinitionClass( const std::string name )
+    ContactClass( const std::string name )
         : DataStructure( name, 8, "CHAR_CONTACT" ), _model( ModelPtr() ), _isEmpty( true ){};
 };
 
 /**
-* @typedef ContactDefinitionPt
-* @brief Pointeur intelligent vers un ContactDefinition
+* @typedef ContactPt
+* @brief Pointeur intelligent vers un Contact
 */
-typedef boost::shared_ptr< ContactDefinitionClass > ContactDefinitionPtr;
+typedef boost::shared_ptr< ContactClass > ContactPtr;
 
-#endif /* CONTACTDEFINITION_H_ */
+#endif /* CONTACT_H_ */
