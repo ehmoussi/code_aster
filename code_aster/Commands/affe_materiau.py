@@ -38,10 +38,10 @@
 from ..Objects import (ConcreteDryingExternalVariable,
                        ConcreteHydratationExternalVariable,
                        CorrosionExternalVariable, EvolutionParameter,
-                       GeometryExternalVariable, ExternalVariableConverter,
-                       ExternalVariableOnMesh, IrradiationExternalVariable,
-                       IrreversibleDeformationExternalVariable, MaterialOnMesh,
-                       MaterialOnMeshBuilder, Neutral1ExternalVariable,
+                       GeometryExternalVariable, ExternalVariablesConverter,
+                       ExternalVariablesField, IrradiationExternalVariable,
+                       IrreversibleDeformationExternalVariable, MaterialField,
+                       MaterialFieldBuilder, Neutral1ExternalVariable,
                        Neutral2ExternalVariable, Neutral3ExternalVariable,
                        SteelPhasesExternalVariable, TemperatureExternalVariable,
                        TotalFluidPressureExternalVariable,
@@ -54,7 +54,7 @@ from ..Utilities import force_list
 class MaterialAssignment(ExecuteCommand):
     """Assign the :class:`~code_aster.Objects.Material` properties on the
     :class:`~code_aster.Objects.Mesh` that creates a
-    :class:`~code_aster.Objects.MaterialOnMesh` object.
+    :class:`~code_aster.Objects.MaterialField` object.
     """
     command_name = "AFFE_MATERIAU"
 
@@ -70,7 +70,7 @@ class MaterialAssignment(ExecuteCommand):
             mesh = keywords["MAILLAGE"]
         else:
             mesh = model.getMesh()
-        self._result = MaterialOnMesh(mesh)
+        self._result = MaterialField(mesh)
         if model is not None:
             self._result.setModel(model)
 
@@ -105,7 +105,7 @@ class MaterialAssignment(ExecuteCommand):
         else:
             mesh = keywords["MODELE"].getMesh()
 
-        externalVarOnMesh = ExternalVariableOnMesh(mesh)
+        externalVarOnMesh = ExternalVariablesField(mesh)
         fkw = keywords.get("AFFE_VARC")
         if fkw is not None:
             if isinstance(fkw, dict):
@@ -119,7 +119,7 @@ class MaterialAssignment(ExecuteCommand):
         varc = ["VARC_NEUT1", "VARC_NEUT2", "VARC_TEMP", "VARC_GEOM", "VARC_PTOT", "VARC_SECH",
                 "VARC_HYDR", "VARC_CORR", "VARC_IRRA", "VARC_DIVU", "VARC_EPSA", "VARC_M_ACIER",
                 "VARC_M_ZIRC"]
-        externalVariableConverter = ExternalVariableConverter()
+        externalVariableConverter = ExternalVariablesConverter()
         for varcName in varc:
             fkw = keywords[varcName]
             name1 = fkw["NOM_VARC"]
@@ -136,7 +136,7 @@ class MaterialAssignment(ExecuteCommand):
                 comp2 = list(comp2)
             externalVariableConverter.addConverter(name1, comp1, name2, comp2)
 
-        self._result = MaterialOnMeshBuilder.build(self._result, externalVarOnMesh,
+        self._result = MaterialFieldBuilder.build(self._result, externalVarOnMesh,
                                                    externalVariableConverter)
 
     def _addBehaviour(self, fkw):
@@ -149,7 +149,7 @@ class MaterialAssignment(ExecuteCommand):
         elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
-                self._result.addBehaviourOnGroupOfElements(mater, grp)
+                self._result.addBehaviourOnGroupOfCells(mater, grp)
         else:
             raise TypeError("At least {0} or {1} is required"
                             .format("TOUT", "GROUP_MA"))
@@ -238,7 +238,7 @@ class MaterialAssignment(ExecuteCommand):
         elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
-                externalVarOnMesh.addExternalVariableOnGroupOfElements(externalVar, grp)
+                externalVarOnMesh.addExternalVariableOnGroupOfCells(externalVar, grp)
         else:
             externalVarOnMesh.addExternalVariableOnAllMesh(externalVar)
 
@@ -254,7 +254,7 @@ class MaterialAssignment(ExecuteCommand):
             self._result.addMaterialsOnAllMesh(mater)
         elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
-            self._result.addMaterialsOnGroupOfElements(mater, kwGrMa)
+            self._result.addMaterialsOnGroupOfCells(mater, kwGrMa)
         elif kwMail is not None:
             kwMail = force_list(kwMail)
             self._result.addMaterialsOnElement(mater, kwMail)

@@ -1,6 +1,6 @@
 /**
- * @file MaterialOnMeshBuilder.cxx
- * @brief Implementation de MaterialOnMeshBuilderClass::build
+ * @file MaterialFieldBuilder.cxx
+ * @brief Implementation de MaterialFieldBuilderClass::build
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -27,13 +27,13 @@
 #include <stdexcept>
 #include <typeinfo>
 
-#include "Materials/MaterialOnMeshBuilder.h"
+#include "Materials/MaterialFieldBuilder.h"
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/SyntaxDictionary.h"
 
-void MaterialOnMeshBuilderClass::buildClass( MaterialOnMeshClass &curMater,
-                                             const ExternalVariableOnMeshPtr &curExternalVariable,
-                                             const ExternalVariableConverterPtr &converter )
+void MaterialFieldBuilderClass::buildClass( MaterialFieldClass &curMater,
+                                             const ExternalVariablesFieldPtr &curExternalVariable,
+                                             const ExternalVariablesConverterPtr &converter )
 {
     SyntaxMapContainer dict;
 
@@ -44,7 +44,7 @@ void MaterialOnMeshBuilderClass::buildClass( MaterialOnMeshClass &curMater,
         dict.container["MODELE"] = curMater._model->getName();
 
     ListSyntaxMapContainer listeAFFE;
-    for ( auto &curIter : curMater._materialsOnMeshEntity ) {
+    for ( auto &curIter : curMater._materialsFieldEntity ) {
         SyntaxMapContainer dict2;
         VectorString listOfMater;
         for ( const auto &curIter2 : curIter.first )
@@ -53,7 +53,7 @@ void MaterialOnMeshBuilderClass::buildClass( MaterialOnMeshClass &curMater,
         const MeshEntityPtr &tmp = curIter.second;
         if ( tmp->getType() == AllMeshEntitiesType )
             dict2.container["TOUT"] = "OUI";
-        else if ( tmp->getType() == GroupOfElementsType )
+        else if ( tmp->getType() == GroupOfCellsType )
             dict2.container["GROUP_MA"] = ( curIter.second )->getNames();
         else if ( tmp->getType() == GroupOfNodesType )
             dict2.container["GROUP_NO"] = ( curIter.second )->getNames();
@@ -72,7 +72,7 @@ void MaterialOnMeshBuilderClass::buildClass( MaterialOnMeshClass &curMater,
         const MeshEntityPtr &tmp = curIter.second;
         if ( tmp->getType() == AllMeshEntitiesType )
             dict2.container["TOUT"] = "OUI";
-        else if ( tmp->getType() == GroupOfElementsType )
+        else if ( tmp->getType() == GroupOfCellsType )
             dict2.container["GROUP_MA"] = ( curIter.second )->getName();
         else if ( tmp->getType() == ElementType )
             dict2.container["MAILLE"] = ( curIter.second )->getName();
@@ -111,7 +111,7 @@ void MaterialOnMeshBuilderClass::buildClass( MaterialOnMeshClass &curMater,
             const MeshEntityPtr &tmp = curIter.second;
             if ( tmp->getType() == AllMeshEntitiesType )
                 dict2.container["TOUT"] = "OUI";
-            else if ( tmp->getType() == GroupOfElementsType )
+            else if ( tmp->getType() == GroupOfCellsType )
                 dict2.container["GROUP_MA"] = ( curIter.second )->getName();
             else if ( tmp->getType() == ElementType )
                 dict2.container["MAILLE"] = ( curIter.second )->getName();
@@ -156,12 +156,12 @@ void MaterialOnMeshBuilderClass::buildClass( MaterialOnMeshClass &curMater,
     }
 };
 
-MaterialOnMeshPtr
-MaterialOnMeshBuilderClass::build( MaterialOnMeshPtr &curMater,
-                                      const ExternalVariableOnMeshPtr &curExternalVariable,
-                                      const ExternalVariableConverterPtr &converter )
+MaterialFieldPtr
+MaterialFieldBuilderClass::build( MaterialFieldPtr &curMater,
+                                      const ExternalVariablesFieldPtr &curExternalVariable,
+                                      const ExternalVariablesConverterPtr &converter )
 
 {
-    MaterialOnMeshBuilderClass::buildClass( *curMater, curExternalVariable, converter );
+    MaterialFieldBuilderClass::buildClass( *curMater, curExternalVariable, converter );
     return curMater;
 };

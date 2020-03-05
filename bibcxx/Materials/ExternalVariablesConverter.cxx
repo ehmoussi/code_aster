@@ -1,9 +1,6 @@
-#ifndef EXTERNALVARIABLEDEFINITIONINTERFACE_H_
-#define EXTERNALVARIABLEDEFINITIONINTERFACE_H_
-
 /**
- * @file ExternalVariableDefinitionInterface.h
- * @brief Fichier entete de la classe ExternalVariableDefinitionInterface
+ * @file ExternalVariablesConverter.cxx
+ * @brief Implementation de ExternalVariablesConverter
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -24,9 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "astercxx.h"
-#include "Materials/ExternalVariableDefinition.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-void exportExternalVariableDefinitionToPython();
-
-#endif /* EXTERNALVARIABLEDEFINITIONINTERFACE_H_ */
+#include "Materials/ExternalVariablesConverter.h"

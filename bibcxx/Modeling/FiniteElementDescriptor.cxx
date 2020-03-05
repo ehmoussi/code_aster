@@ -33,8 +33,8 @@ FiniteElementDescriptorClass::FiniteElementDescriptorClass( const std::string &n
     : DataStructure( name, 19, "LIGREL", memType ),
       _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
       _parameters( getName() + ".LGRF" ), _dofDescriptor( getName() + ".PRNM" ),
-      _listOfGroupOfElements( getName() + ".LIEL" ),
-      _groupOfElementsNumberByElement( getName() + ".REPE" ),
+      _listOfGroupOfCells( getName() + ".LIEL" ),
+      _groupOfCellsNumberByElement( getName() + ".REPE" ),
       _delayedNumberedConstraintElementsDescriptor( getName() + ".NEMA" ),
       _dofOfDelayedNumberedConstraintNodes( getName() + ".PRNS" ),
       _delayedNodesNumbering( getName() + ".LGNS" ),
@@ -42,7 +42,7 @@ FiniteElementDescriptorClass::FiniteElementDescriptorClass( const std::string &n
       _nameOfNeighborhoodStructure( getName() + ".NVGE" ), _mesh( mesh ),
       _explorer(
           ConnectivityDelayedElementsExplorer( _delayedNumberedConstraintElementsDescriptor ) ),
-      _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfElements ) ){};
+      _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfCells ) ){};
 
 #ifdef _USE_MPI
 void

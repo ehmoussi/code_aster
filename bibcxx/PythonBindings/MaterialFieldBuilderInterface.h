@@ -1,9 +1,9 @@
-#ifndef EXTERNALVARIABLECONVERTERINTERFACE_H_
-#define EXTERNALVARIABLECONVERTERINTERFACE_H_
+#ifndef MATERIALONMESHBUILDERINTERFACE_H_
+#define MATERIALONMESHBUILDERINTERFACE_H_
 
 /**
- * @file ExternalVariableConverterInterface.h
- * @brief Fichier entete de la classe ExternalVariableConverterInterface
+ * @file MaterialFieldBuilderInterface.h
+ * @brief Fichier entete de la classe MaterialFieldBuilderInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -25,8 +25,8 @@
  */
 
 #include "astercxx.h"
-#include "Materials/ExternalVariableConverter.h"
+#include "Materials/MaterialFieldBuilder.h"
 
-void exportExternalVariableConverterToPython();
+void exportMaterialFieldBuilderToPython();
 
-#endif /* EXTERNALVARIABLECONVERTERINTERFACE_H_ */
+#endif /* MATERIALONMESHBUILDERINTERFACE_H_ */

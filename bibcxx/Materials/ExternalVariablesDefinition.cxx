@@ -1,6 +1,6 @@
 /**
- * @file MaterialOnMeshBuilderInterface.cxx
- * @brief Interface python de MaterialOnMeshBuilder
+ * @file ExternalVariables.cxx
+ * @brief Implementation de ExternalVariables
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,23 +21,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/MaterialOnMeshBuilderInterface.h"
-#include "PythonBindings/factory.h"
-#include <boost/python.hpp>
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-namespace py = boost::python;
-
-BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialOnMeshBuilderbuild, MaterialOnMeshBuilderClass::build,
-                                 1, 3 )
-
-void exportMaterialOnMeshBuilderToPython() {
-
-    py::class_< MaterialOnMeshBuilderClass,
-                MaterialOnMeshBuilderClass::MaterialOnMeshBuilderPtr >
-        c1( "MaterialOnMeshBuilder", py::no_init );
-    // fake initFactoryPtr: no constructor
-    // fake initFactoryPtr: no constructor
-
-    c1.def( "build", &MaterialOnMeshBuilderClass::build, MaterialOnMeshBuilderbuild() );
-    c1.staticmethod( "build" );
-};
+#include "Materials/ExternalVariablesDefinition.h"

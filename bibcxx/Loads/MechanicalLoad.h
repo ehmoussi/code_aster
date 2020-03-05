@@ -79,7 +79,7 @@ template <> struct LoadTraits< NodalForce > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = false;
+    static bool const isAllowedOnGroupOfCells = false;
     static bool const isAllowedOnGroupOfNodes = true;
 };
 
@@ -92,7 +92,7 @@ template <> struct LoadTraits< ForceOnFace > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -105,7 +105,7 @@ template <> struct LoadTraits< ForceOnEdge > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -118,7 +118,7 @@ template <> struct LoadTraits< LineicForce > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -131,7 +131,7 @@ template <> struct LoadTraits< InternalForce > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -144,7 +144,7 @@ template <> struct LoadTraits< ForceOnBeam > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
     /** @todo mot clé supplémentaire TYPE_CHARGE=FORCE */
 };
@@ -158,7 +158,7 @@ template <> struct LoadTraits< ForceOnShell > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -171,7 +171,7 @@ template <> struct LoadTraits< PressureOnPipe > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -184,7 +184,7 @@ template <> struct LoadTraits< ImposedDoF > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = true;
 };
 
@@ -197,7 +197,7 @@ template <> struct LoadTraits< DistributedPressure > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -210,7 +210,7 @@ template <> struct LoadTraits< ImpedanceOnFace > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -223,7 +223,7 @@ template <> struct LoadTraits< NormalSpeedOnFace > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -236,7 +236,7 @@ template <> struct LoadTraits< WavePressureOnFace > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -249,7 +249,7 @@ template <> struct LoadTraits< THMFlux > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -486,9 +486,9 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
         }
         // nameOfGroup is the name of a group of elements and
         // LoadTraits authorizes to base the current load on such a group
-        else if ( currentMesh->hasGroupOfElements( nameOfGroup ) &&
-                  Traits::isAllowedOnGroupOfElements ) {
-            _meshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+        else if ( currentMesh->hasGroupOfCells( nameOfGroup ) &&
+                  Traits::isAllowedOnGroupOfCells ) {
+            _meshEntity = MeshEntityPtr( new GroupOfCells( nameOfGroup ) );
         }
         // nameOfGroup is the name of a group of nodes and LoadTraits authorizes
         // to base the current load on such a group
@@ -532,7 +532,7 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
             if ( _meshEntity->getType() == GroupOfNodesType ) {
                 dict2.container["GROUP_NO"] = _meshEntity->getName();
                 //        std::cout << "GROUP_NO " <<  _meshEntity->getName() << std::endl;
-            } else if ( _meshEntity->getType() == GroupOfElementsType )
+            } else if ( _meshEntity->getType() == GroupOfCellsType )
                 dict2.container["GROUP_MA"] = _meshEntity->getName();
         }
         listeLoad.push_back( dict2 );

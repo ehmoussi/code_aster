@@ -1,9 +1,6 @@
-#ifndef BEHAVIOURMATERIALINTERFACE_H_
-#define BEHAVIOURMATERIALINTERFACE_H_
-
 /**
- * @file MaterialInterface.h
- * @brief Fichier entete de la classe MaterialInterface
+ * @file MaterialFieldBuilderInterface.cxx
+ * @brief Interface python de MaterialFieldBuilder
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -24,9 +21,23 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "astercxx.h"
-#include "Materials/MaterialBehaviour.h"
+#include "PythonBindings/MaterialFieldBuilderInterface.h"
+#include "PythonBindings/factory.h"
+#include <boost/python.hpp>
 
-void exportMaterialBehaviourToPython();
+namespace py = boost::python;
 
-#endif /* BEHAVIOURMATERIALINTERFACE_H_ */
+BOOST_PYTHON_FUNCTION_OVERLOADS( MaterialFieldBuilderbuild, MaterialFieldBuilderClass::build,
+                                 1, 3 )
+
+void exportMaterialFieldBuilderToPython() {
+
+    py::class_< MaterialFieldBuilderClass,
+                MaterialFieldBuilderClass::MaterialFieldBuilderPtr >
+        c1( "MaterialFieldBuilder", py::no_init );
+    // fake initFactoryPtr: no constructor
+    // fake initFactoryPtr: no constructor
+
+    c1.def( "build", &MaterialFieldBuilderClass::build, MaterialFieldBuilderbuild() );
+    c1.staticmethod( "build" );
+};

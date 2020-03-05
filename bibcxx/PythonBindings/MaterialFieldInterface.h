@@ -2,8 +2,8 @@
 #define MATERIALONMESHINTERFACE_H_
 
 /**
- * @file MaterialOnMeshInterface.h
- * @brief Fichier entete de la classe MaterialOnMeshInterface
+ * @file MaterialFieldInterface.h
+ * @brief Fichier entete de la classe MaterialFieldInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -25,8 +25,8 @@
  */
 
 #include "astercxx.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 
-void exportMaterialOnMeshToPython();
+void exportMaterialFieldToPython();
 
 #endif /* MATERIALONMESHINTERFACE_H_ */

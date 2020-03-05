@@ -1,6 +1,6 @@
 /**
- * @file ExternalVariableDefinitionInterface.cxx
- * @brief Interface python de GenericExternalVariable
+ * @file ExternalVariablesInterface.cxx
+ * @brief Interface python de BaseExternalVariables
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -23,13 +23,13 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "PythonBindings/ExternalVariableDefinitionInterface.h"
+#include "PythonBindings/ExternalVariablesDefinitionInterface.h"
 #include <PythonBindings/factory.h>
 #include <boost/python.hpp>
 
 namespace py = boost::python;
 
-void exportExternalVariableDefinitionToPython() {
+void exportExternalVariablesToPython() {
 
     void ( EvolutionParameterClass::*c1 )( const FormulaPtr & ) =
         &EvolutionParameterClass::setTimeFunction;
@@ -51,22 +51,22 @@ void exportExternalVariableDefinitionToPython() {
         .def( "setConstantLeftExtension", &EvolutionParameterClass::setConstantLeftExtension )
         .def( "setLinearLeftExtension", &EvolutionParameterClass::setLinearLeftExtension );
 
-    py::class_< GenericExternalVariableClass,
-                GenericExternalVariableClass::GenericExternalVariablePtr>("GenericExternalVariable",
+    py::class_< BaseExternalVariablesClass,
+                BaseExternalVariablesClass::BaseExternalVariablesPtr>("BaseExternalVariables",
                                                                          py::no_init )
         .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< GenericExternalVariableClass, const BaseMeshPtr & >))
+                              &initFactoryPtr< BaseExternalVariablesClass, const BaseMeshPtr & >))
         .def( "__init__",
-              py::make_constructor(&initFactoryPtr< GenericExternalVariableClass,
+              py::make_constructor(&initFactoryPtr< BaseExternalVariablesClass,
                                                     const BaseMeshPtr &, const std::string & >))
-        .def( "existsReferenceValue", &GenericExternalVariableClass::existsReferenceValue )
-        .def( "getReferenceValue", &GenericExternalVariableClass::getReferenceValue )
-        .def( "setEvolutionParameter", &GenericExternalVariableClass::setEvolutionParameter )
-        .def( "setInputValuesField", &GenericExternalVariableClass::setInputValuesField )
-        .def( "setReferenceValue", &GenericExternalVariableClass::setReferenceValue );
+        .def( "existsReferenceValue", &BaseExternalVariablesClass::existsReferenceValue )
+        .def( "getReferenceValue", &BaseExternalVariablesClass::getReferenceValue )
+        .def( "setEvolutionParameter", &BaseExternalVariablesClass::setEvolutionParameter )
+        .def( "setInputValuesField", &BaseExternalVariablesClass::setInputValuesField )
+        .def( "setReferenceValue", &BaseExternalVariablesClass::setReferenceValue );
 
     py::class_< TemperatureExternalVariableClass, TemperatureExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "TemperatureExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "TemperatureExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -76,7 +76,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< GeometryExternalVariableClass, GeometryExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "GeometryExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "GeometryExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -86,7 +86,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< CorrosionExternalVariableClass, CorrosionExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "CorrosionExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "CorrosionExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -97,7 +97,7 @@ void exportExternalVariableDefinitionToPython() {
 
     py::class_< IrreversibleDeformationExternalVariableClass,
                 IrreversibleDeformationExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >(
+                py::bases< BaseExternalVariablesClass > >(
                                                         "IrreversibleDeformationExternalVariable",
                                                         py::no_init )
         .def( "__init__",
@@ -108,7 +108,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< ConcreteHydratationExternalVariableClass, ConcreteHydratationExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "ConcreteHydratationExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "ConcreteHydratationExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -118,7 +118,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< IrradiationExternalVariableClass, IrradiationExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "IrradiationExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "IrradiationExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -128,7 +128,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< SteelPhasesExternalVariableClass, SteelPhasesExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "SteelPhasesExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "SteelPhasesExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -138,7 +138,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< ZircaloyPhasesExternalVariableClass, ZircaloyPhasesExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "ZircaloyPhasesExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "ZircaloyPhasesExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -148,7 +148,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< Neutral1ExternalVariableClass, Neutral1ExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "Neutral1ExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "Neutral1ExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -158,7 +158,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< Neutral2ExternalVariableClass, Neutral2ExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "Neutral2ExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "Neutral2ExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -168,7 +168,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< Neutral3ExternalVariableClass, Neutral3ExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "Neutral3ExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "Neutral3ExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -178,7 +178,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< ConcreteDryingExternalVariableClass, ConcreteDryingExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "ConcreteDryingExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "ConcreteDryingExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -188,7 +188,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_< TotalFluidPressureExternalVariableClass, TotalFluidPressureExternalVariablePtr,
-                py::bases< GenericExternalVariableClass > >( "TotalFluidPressureExternalVariable",
+                py::bases< BaseExternalVariablesClass > >( "TotalFluidPressureExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(
@@ -198,7 +198,7 @@ void exportExternalVariableDefinitionToPython() {
                                                     const BaseMeshPtr &, const std::string & >));
 
     py::class_<VolumetricDeformationExternalVariableClass, VolumetricDeformationExternalVariablePtr,
-               py::bases< GenericExternalVariableClass > >( "VolumetricDeformationExternalVariable",
+               py::bases< BaseExternalVariablesClass > >( "VolumetricDeformationExternalVariable",
                                                              py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< VolumetricDeformationExternalVariableClass,
@@ -207,150 +207,150 @@ void exportExternalVariableDefinitionToPython() {
               py::make_constructor(&initFactoryPtr< VolumetricDeformationExternalVariableClass,
                                                     const BaseMeshPtr &, const std::string & >));
 
-    py::class_<ExternalVariableOnMeshClass, ExternalVariableOnMeshPtr > c3("ExternalVariableOnMesh",
+    py::class_<ExternalVariablesFieldClass, ExternalVariablesFieldPtr > c3("ExternalVariablesField",
                                                                             py::no_init );
     c3.def( "__init__",
-            py::make_constructor(&initFactoryPtr< ExternalVariableOnMeshClass, const MeshPtr & >));
+            py::make_constructor(&initFactoryPtr< ExternalVariablesFieldClass, const MeshPtr & >));
     c3.def( "__init__", py::make_constructor(
-                            &initFactoryPtr< ExternalVariableOnMeshClass, const SkeletonPtr & >));
+                            &initFactoryPtr< ExternalVariablesFieldClass, const SkeletonPtr & >));
 #ifdef _USE_MPI
     c3.def( "__init__",
             py::make_constructor(
-                &initFactoryPtr< ExternalVariableOnMeshClass, const ParallelMeshPtr & >));
+                &initFactoryPtr< ExternalVariablesFieldClass, const ParallelMeshPtr & >));
 #endif /* _USE_MPI */
     c3.def(
         "addExternalVariableOnAllMesh",
-        &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
         TemperatureExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 TemperatureExternalVariablePtr > );
     c3.def(
         "addExternalVariableOnElement",
-        &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+        &ExternalVariablesFieldClass::addExternalVariableOnElement<
         TemperatureExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
             GeometryExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 GeometryExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-            &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+            &ExternalVariablesFieldClass::addExternalVariableOnElement<
             GeometryExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
             CorrosionExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 CorrosionExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-            &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+            &ExternalVariablesFieldClass::addExternalVariableOnElement<
             CorrosionExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-    &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+    &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
                                              IrreversibleDeformationExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 IrreversibleDeformationExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-    &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+    &ExternalVariablesFieldClass::addExternalVariableOnElement<
                                              IrreversibleDeformationExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-    &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+    &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
                                              ConcreteHydratationExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 ConcreteHydratationExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-           &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+           &ExternalVariablesFieldClass::addExternalVariableOnElement<
                                              ConcreteHydratationExternalVariablePtr > );
     c3.def(
         "addExternalVariableOnAllMesh",
-        &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
         IrradiationExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 IrradiationExternalVariablePtr > );
     c3.def(
         "addExternalVariableOnElement",
-        &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+        &ExternalVariablesFieldClass::addExternalVariableOnElement<
         IrradiationExternalVariablePtr > );
     c3.def(
         "addExternalVariableOnAllMesh",
-        &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
         SteelPhasesExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 SteelPhasesExternalVariablePtr > );
     c3.def(
         "addExternalVariableOnElement",
-        &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+        &ExternalVariablesFieldClass::addExternalVariableOnElement<
         SteelPhasesExternalVariablePtr > );
     c3.def(
         "addExternalVariableOnAllMesh",
-        &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
         ZircaloyPhasesExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 ZircaloyPhasesExternalVariablePtr > );
     c3.def(
         "addExternalVariableOnElement",
-        &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+        &ExternalVariablesFieldClass::addExternalVariableOnElement<
         ZircaloyPhasesExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
             Neutral1ExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 Neutral1ExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-            &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+            &ExternalVariablesFieldClass::addExternalVariableOnElement<
             Neutral1ExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
             Neutral2ExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 Neutral2ExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-            &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+            &ExternalVariablesFieldClass::addExternalVariableOnElement<
             Neutral2ExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
             Neutral3ExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 Neutral3ExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-            &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+            &ExternalVariablesFieldClass::addExternalVariableOnElement<
             Neutral3ExternalVariablePtr > );
     c3.def(
         "addExternalVariableOnAllMesh",
-        &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
                ConcreteDryingExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 ConcreteDryingExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-            &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+            &ExternalVariablesFieldClass::addExternalVariableOnElement<
                                              ConcreteDryingExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
                                              TotalFluidPressureExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 TotalFluidPressureExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-            &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+            &ExternalVariablesFieldClass::addExternalVariableOnElement<
                                              TotalFluidPressureExternalVariablePtr > );
     c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariableOnMeshClass::addExternalVariableOnAllMesh<
+            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
                                              VolumetricDeformationExternalVariablePtr > );
-    c3.def( "addExternalVariableOnGroupOfElements",
-            &ExternalVariableOnMeshClass::addExternalVariableOnGroupOfElements<
+    c3.def( "addExternalVariableOnGroupOfCells",
+            &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
                 VolumetricDeformationExternalVariablePtr > );
     c3.def( "addExternalVariableOnElement",
-            &ExternalVariableOnMeshClass::addExternalVariableOnElement<
+            &ExternalVariablesFieldClass::addExternalVariableOnElement<
                                              VolumetricDeformationExternalVariablePtr > );
 };

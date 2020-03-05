@@ -48,56 +48,56 @@ class ConstantFieldOnZone {
   public:
     enum LocalizationType {
         AllMesh,
-        AllDelayedElements,
-        OnGroupOfElements,
-        ListOfElements,
-        ListOfDelayedElements
+        AllDelayedCells,
+        OnGroupOfCells,
+        ListOfCells,
+        ListOfDelayedCells
     };
 
   private:
     BaseMeshPtr _mesh;
     FiniteElementDescriptorPtr _ligrel;
     const LocalizationType _localisation;
-    GroupOfElementsPtr _grp;
+    GroupOfCellsPtr _grp;
     VectorLong _indexes;
 
   public:
     ConstantFieldOnZone( BaseMeshPtr mesh )
-        : _mesh( mesh ), _localisation( AllMesh ), _grp( new GroupOfElements( "" ) ){};
+        : _mesh( mesh ), _localisation( AllMesh ), _grp( new GroupOfCells( "" ) ){};
 
     ConstantFieldOnZone( FiniteElementDescriptorPtr ligrel )
-        : _ligrel( ligrel ), _localisation( AllDelayedElements ),
-          _grp( new GroupOfElements( "" ) ){};
+        : _ligrel( ligrel ), _localisation( AllDelayedCells ),
+          _grp( new GroupOfCells( "" ) ){};
 
-    ConstantFieldOnZone( BaseMeshPtr mesh, GroupOfElementsPtr grp )
-        : _mesh( mesh ), _localisation( OnGroupOfElements ), _grp( grp ){};
+    ConstantFieldOnZone( BaseMeshPtr mesh, GroupOfCellsPtr grp )
+        : _mesh( mesh ), _localisation( OnGroupOfCells ), _grp( grp ){};
 
     ConstantFieldOnZone( BaseMeshPtr mesh, const VectorLong &indexes )
-        : _mesh( mesh ), _localisation( ListOfElements ), _grp( new GroupOfElements( "" ) ),
+        : _mesh( mesh ), _localisation( ListOfCells ), _grp( new GroupOfCells( "" ) ),
           _indexes( indexes ){};
 
     ConstantFieldOnZone( FiniteElementDescriptorPtr ligrel, const VectorLong &indexes )
-        : _ligrel( ligrel ), _localisation( ListOfDelayedElements ), _indexes( indexes ){};
+        : _ligrel( ligrel ), _localisation( ListOfDelayedCells ), _indexes( indexes ){};
 
     BaseMeshPtr getMesh() const {
-        if ( _localisation != AllMesh and _localisation != OnGroupOfElements and
-             _localisation != ListOfElements )
+        if ( _localisation != AllMesh and _localisation != OnGroupOfCells and
+             _localisation != ListOfCells )
             throw std::runtime_error( "Zone not on a mesh" );
         return _mesh;
     };
 
     const FiniteElementDescriptorPtr &getFiniteElementDescriptor() const
         {
-        if ( _localisation != AllDelayedElements and _localisation != ListOfDelayedElements )
+        if ( _localisation != AllDelayedCells and _localisation != ListOfDelayedCells )
             throw std::runtime_error( "Zone not on a FiniteElementDescriptor" );
         return _ligrel;
     };
 
     LocalizationType getLocalizationType() const { return _localisation; };
 
-    GroupOfElementsPtr getGroup() const { return _grp; };
+    GroupOfCellsPtr getGroup() const { return _grp; };
 
-    const VectorLong &getListOfElements() const { return _indexes; };
+    const VectorLong &getListOfCells() const { return _indexes; };
 };
 
 /**
@@ -132,7 +132,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
     /** @brief Vecteur Jeveux '.NOLI' */
     JeveuxVectorChar24 _nameOfLigrels;
     /** @brief Collection  '.LIMA' */
-    JeveuxCollectionLong _listOfMeshElements;
+    JeveuxCollectionLong _listOfMeshCells;
     /** @brief Vecteur Jeveux '.VALE' */
     JeveuxVector< ValueType > _valuesList;
     /** @brief Maillage sous-jacent */
@@ -241,7 +241,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
-          _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+          _listOfMeshCells( JeveuxCollectionLong( getName() + ".LIMA" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _mesh( mesh ),
           _FEDesc( FiniteElementDescriptorPtr() ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
@@ -257,7 +257,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
-          _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+          _listOfMeshCells( JeveuxCollectionLong( getName() + ".LIMA" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ),
           _mesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
@@ -272,7 +272,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
-          _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+          _listOfMeshCells( JeveuxCollectionLong( getName() + ".LIMA" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _mesh( mesh ),
           _FEDesc( FiniteElementDescriptorPtr() ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
@@ -288,7 +288,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
-          _listOfMeshElements( JeveuxCollectionLong( getName() + ".LIMA" ) ),
+          _listOfMeshCells( JeveuxCollectionLong( getName() + ".LIMA" ) ),
           _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ),
           _mesh( ligrel->getMesh() ), _FEDesc( ligrel ), _isAllocated( false ),
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
@@ -338,7 +338,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
         _meshName->deallocate();
         _descriptor->deallocate();
         _nameOfLigrels->deallocate();
-        _listOfMeshElements->deallocate();
+        _listOfMeshCells->deallocate();
         _valuesList->deallocate();
         _isAllocated = false;
         _componentNames->deallocate();
@@ -419,16 +419,16 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
             const auto &map = _mesh->getGroupOfNodesNames();
             const auto name = map->findStringOfElement( numGrp );
-            return ConstantFieldOnZone( _mesh, GroupOfElementsPtr( new GroupOfElements( name ) ) );
+            return ConstantFieldOnZone( _mesh, GroupOfCellsPtr( new GroupOfCells( name ) ) );
         } else if ( code == 3 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
-            _listOfMeshElements->buildFromJeveux();
-            const auto &object = _listOfMeshElements->getObject( numGrp );
+            _listOfMeshCells->buildFromJeveux();
+            const auto &object = _listOfMeshCells->getObject( numGrp );
             return ConstantFieldOnZone( _mesh, object.toVector() );
         } else if ( code == -3 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
-            _listOfMeshElements->buildFromJeveux();
-            const auto &object = _listOfMeshElements->getObject( numGrp );
+            _listOfMeshCells->buildFromJeveux();
+            const auto &object = _listOfMeshCells->getObject( numGrp );
             return ConstantFieldOnZone( _FEDesc, object.toVector() );
         } else
             throw std::runtime_error( "Error in ConstantFieldOnCells" );
@@ -462,7 +462,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @param grp Groupe de mailles
      * @return renvoit true si l'ajout s'est bien deroulee, false sinon
      */
-    bool setValueOnListOfDelayedElements( const JeveuxVectorChar8 &component,
+    bool setValueOnListOfDelayedCells( const JeveuxVectorChar8 &component,
                                           const JeveuxVector< ValueType > &values,
                                           const VectorLong &grp ) {
         if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
@@ -487,12 +487,12 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @param grp Groupe de mailles
      * @return renvoit true si l'ajout s'est bien deroulee, false sinon
      */
-    bool setValueOnGroupOfElements( const JeveuxVectorChar8 &component,
+    bool setValueOnGroupOfCells( const JeveuxVectorChar8 &component,
                                     const JeveuxVector< ValueType > &values,
-                                    const GroupOfElements &grp ) {
+                                    const GroupOfCells &grp ) {
         if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        if ( !_mesh->hasGroupOfElements( grp.getName() ) )
+        if ( !_mesh->hasGroupOfCells( grp.getName() ) )
             throw std::runtime_error( "Group " + grp.getName() + " not in mesh" );
 
         const ASTERINTEGER code = 2;
@@ -523,25 +523,25 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
         if ( zone.getLocalizationType() == ConstantFieldOnZone::AllMesh ) {
             code = 1;
             limanu->allocate( Temporary, 1 );
-        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::AllDelayedElements ) {
+        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::AllDelayedCells ) {
             code = -1;
             limanu->allocate( Temporary, 1 );
-        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::OnGroupOfElements ) {
+        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::OnGroupOfCells ) {
             code = 2;
             grp = zone.getGroup()->getName();
             limanu->allocate( Temporary, 1 );
-        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::ListOfElements ) {
+        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::ListOfCells ) {
             code = 3;
             mode = "NUM";
-            const auto &vecTmp = zone.getListOfElements();
+            const auto &vecTmp = zone.getListOfCells();
             nbMa = vecTmp.size();
             limanu->allocate( Temporary, nbMa );
             for ( ASTERINTEGER pos = 0; pos < nbMa; ++pos )
                 ( *limanu )[pos] = vecTmp[pos];
-        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::ListOfDelayedElements ) {
+        } else if ( zone.getLocalizationType() == ConstantFieldOnZone::ListOfDelayedCells ) {
             code = -3;
             mode = "NUM";
-            const auto &vecTmp = zone.getListOfElements();
+            const auto &vecTmp = zone.getListOfCells();
             nbMa = vecTmp.size();
             limanu->allocate( Temporary, nbMa );
             for ( ASTERINTEGER pos = 0; pos < nbMa; ++pos )
@@ -569,7 +569,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
         retour = ( retour && _descriptor->updateValuePointer() );
         retour = ( retour && _valuesList->updateValuePointer() );
         // Les deux elements suivants sont facultatifs
-        _listOfMeshElements->buildFromJeveux();
+        _listOfMeshCells->buildFromJeveux();
         _nameOfLigrels->updateValuePointer();
         return retour;
     };

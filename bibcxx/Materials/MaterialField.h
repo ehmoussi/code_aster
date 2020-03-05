@@ -2,8 +2,8 @@
 #define MATERIALONMESH_H_
 
 /**
- * @file MaterialOnMesh.h
- * @brief Fichier entete de la classe MaterialOnMesh
+ * @file MaterialField.h
+ * @brief Fichier entete de la classe MaterialField
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -39,31 +39,31 @@
 #include "Supervis/ResultNaming.h"
 #include "Materials/BehaviourDefinition.h"
 
-class MaterialOnMeshBuilderClass;
+class MaterialFieldBuilderClass;
 
 /**
- * @class PartOfMaterialOnMeshClass
+ * @class PartOfMaterialFieldClass
  * @brief It contains a BehaviourDefinitionPtr and a MeshEntityPtr
  * @author Nicolas Sellenet
  */
-class PartOfMaterialOnMeshClass
+class PartOfMaterialFieldClass
 {
 private:
     std::vector< MaterialPtr > _vecOfMater;
     MeshEntityPtr              _entity;
 
 public:
-    PartOfMaterialOnMeshClass(): _entity( nullptr )
+    PartOfMaterialFieldClass(): _entity( nullptr )
     {};
 
-    PartOfMaterialOnMeshClass( const std::vector< MaterialPtr >& vecOfMater,
+    PartOfMaterialFieldClass( const std::vector< MaterialPtr >& vecOfMater,
                                   const MeshEntityPtr& entity ):
         _vecOfMater( vecOfMater ),
         _entity( entity )
     {};
 
     /**
-     * @brief Get the VectorOfMaterial of PartOfMaterialOnMesh
+     * @brief Get the VectorOfMaterial of PartOfMaterialField
      */
     std::vector< MaterialPtr > getVectorOfMaterial() const
     {
@@ -71,7 +71,7 @@ public:
     };
 
     /**
-     * @brief Get the MeshEntity of PartOfMaterialOnMesh
+     * @brief Get the MeshEntity of PartOfMaterialField
      */
     MeshEntityPtr getMeshEntity() const
     {
@@ -80,19 +80,19 @@ public:
 };
 
 /**
- * @typedef PartOfMaterialOnMeshPtr
- * @brief Smart pointer on PartOfMaterialOnMeshClass
+ * @typedef PartOfMaterialFieldPtr
+ * @brief Smart pointer on PartOfMaterialFieldClass
  */
-typedef boost::shared_ptr< PartOfMaterialOnMeshClass > PartOfMaterialOnMeshPtr;
+typedef boost::shared_ptr< PartOfMaterialFieldClass > PartOfMaterialFieldPtr;
 
 /**
- * @class MaterialOnMeshClass
+ * @class MaterialFieldClass
  * @brief produit une sd identique a celle produite par AFFE_MATERIAU
  * @author Nicolas Sellenet
  */
-class MaterialOnMeshClass: public DataStructure
+class MaterialFieldClass: public DataStructure
 {
-    friend class MaterialOnMeshBuilderClass;
+    friend class MaterialFieldBuilderClass;
 
     private:
         // On redefinit le type MeshEntityPtr afin de pouvoir stocker les MeshEntity
@@ -126,7 +126,7 @@ class MaterialOnMeshClass: public DataStructure
         /** @brief Carte '.COMPOR' */
         ConstantFieldOnCellsRealPtr _behaviourField;
         /** @brief Liste contenant les materiaux ajoutes par l'utilisateur */
-        listOfMatsAndGrps      _materialsOnMeshEntity;
+        listOfMatsAndGrps      _materialsFieldEntity;
         /** @brief Link to a  */
         listOfBehavAndGrps     _behaviours;
         /** @brief Jeveux vector '.CVRCNOM' */
@@ -140,53 +140,53 @@ class MaterialOnMeshClass: public DataStructure
 
     public:
         /**
-         * @typedef MaterialOnMeshPtr
-         * @brief Pointeur intelligent vers un MaterialOnMeshClass
+         * @typedef MaterialFieldPtr
+         * @brief Pointeur intelligent vers un MaterialFieldClass
          */
-        typedef boost::shared_ptr< MaterialOnMeshClass > MaterialOnMeshPtr;
+        typedef boost::shared_ptr< MaterialFieldClass > MaterialFieldPtr;
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshClass( const MeshPtr& mesh ):
-            MaterialOnMeshClass( ResultNaming::getNewResultName(), mesh )
+        MaterialFieldClass( const MeshPtr& mesh ):
+            MaterialFieldClass( ResultNaming::getNewResultName(), mesh )
         {};
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshClass( const SkeletonPtr& mesh ):
-            MaterialOnMeshClass( ResultNaming::getNewResultName(), mesh )
+        MaterialFieldClass( const SkeletonPtr& mesh ):
+            MaterialFieldClass( ResultNaming::getNewResultName(), mesh )
         {};
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshClass( const std::string &, const MeshPtr& );
+        MaterialFieldClass( const std::string &, const MeshPtr& );
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshClass( const std::string &, const SkeletonPtr& );
+        MaterialFieldClass( const std::string &, const SkeletonPtr& );
 
 #ifdef _USE_MPI
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshClass( const ParallelMeshPtr& mesh ):
-            MaterialOnMeshClass( ResultNaming::getNewResultName(), mesh )
+        MaterialFieldClass( const ParallelMeshPtr& mesh ):
+            MaterialFieldClass( ResultNaming::getNewResultName(), mesh )
         {};
 
         /**
          * @brief Constructeur
          */
-        MaterialOnMeshClass( const std::string &, const ParallelMeshPtr& );
+        MaterialFieldClass( const std::string &, const ParallelMeshPtr& );
 #endif /* _USE_MPI */
 
         /**
          * @brief Destructor
          */
-        ~MaterialOnMeshClass()
+        ~MaterialFieldClass()
         {};
 
         /**
@@ -204,15 +204,15 @@ class MaterialOnMeshClass: public DataStructure
          * @param curMater behaviour to add
          * @param nameOfGroup Name of group
          */
-        void addBehaviourOnGroupOfElements( BehaviourDefinitionPtr& curBehav,
+        void addBehaviourOnGroupOfCells( BehaviourDefinitionPtr& curBehav,
                                             std::string nameOfGroup )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
-            if ( ! _mesh->hasGroupOfElements( nameOfGroup ) )
+            if ( ! _mesh->hasGroupOfCells( nameOfGroup ) )
                 throw std::runtime_error( nameOfGroup + "not in mesh" );
 
             _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
-                                            MeshEntityPtr( new GroupOfElements(nameOfGroup) ) ) );
+                                            MeshEntityPtr( new GroupOfCells(nameOfGroup) ) ) );
         };
 
         /**
@@ -235,7 +235,7 @@ class MaterialOnMeshClass: public DataStructure
          */
         void addMaterialsOnAllMesh( std::vector< MaterialPtr > curMaters )
         {
-            _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMaters,
+            _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( curMaters,
                                               MeshEntityPtr( new AllMeshEntities() ) ) );
         };
 
@@ -244,16 +244,16 @@ class MaterialOnMeshClass: public DataStructure
          * @param curMaters Materiau a ajouter
          * @param nameOfGroup Nom du groupe de mailles
          */
-        void addMaterialsOnGroupOfElements( std::vector< MaterialPtr > curMaters,
+        void addMaterialsOnGroupOfCells( std::vector< MaterialPtr > curMaters,
                                             VectorString namesOfGroup )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
             for( const auto& nameOfGroup : namesOfGroup )
-                if ( ! _mesh->hasGroupOfElements( nameOfGroup ) )
+                if ( ! _mesh->hasGroupOfCells( nameOfGroup ) )
                     throw std::runtime_error( nameOfGroup + "not in mesh" );
 
-            _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMaters,
-                                           MeshEntityPtr( new GroupOfElements(namesOfGroup) ) ) );
+            _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( curMaters,
+                                           MeshEntityPtr( new GroupOfCells(namesOfGroup) ) ) );
         };
 
         /**
@@ -266,7 +266,7 @@ class MaterialOnMeshClass: public DataStructure
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
-            _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( curMaters,
+            _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( curMaters,
                                             MeshEntityPtr( new Element(namesOfElement) ) ) );
         };
 
@@ -276,7 +276,7 @@ class MaterialOnMeshClass: public DataStructure
          */
         void addMaterialOnAllMesh( MaterialPtr& curMater )
         {
-            _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( { curMater },
+            _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( { curMater },
                                               MeshEntityPtr( new AllMeshEntities() ) ) );
         };
 
@@ -285,16 +285,16 @@ class MaterialOnMeshClass: public DataStructure
          * @param curMater Materiau a ajouter
          * @param nameOfGroup Nom du groupe de mailles
          */
-        void addMaterialOnGroupOfElements( MaterialPtr& curMater,
+        void addMaterialOnGroupOfCells( MaterialPtr& curMater,
                                            VectorString namesOfGroup )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
             for( const auto& nameOfGroup : namesOfGroup )
-                if ( ! _mesh->hasGroupOfElements( nameOfGroup ) )
+                if ( ! _mesh->hasGroupOfCells( nameOfGroup ) )
                     throw std::runtime_error( nameOfGroup + "not in mesh" );
 
-            _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( { curMater },
-                                           MeshEntityPtr( new GroupOfElements(namesOfGroup) ) ) );
+            _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( { curMater },
+                                           MeshEntityPtr( new GroupOfCells(namesOfGroup) ) ) );
         };
 
         /**
@@ -307,12 +307,12 @@ class MaterialOnMeshClass: public DataStructure
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
-            _materialsOnMeshEntity.push_back( listOfMatsAndGrpsValue( { curMater },
+            _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( { curMater },
                                             MeshEntityPtr( new Element(namesOfElement) ) ) );
         };
 
         /**
-         * @brief Build MaterialOnMeshPtr without ExternalVariable
+         * @brief Build MaterialFieldPtr without ExternalVariable
          * @return true
          */
         bool buildWithoutExternalVariable() ;
@@ -334,13 +334,13 @@ class MaterialOnMeshClass: public DataStructure
         /**
          * @brief Return a vector of MaterialPtr
          */
-        std::vector< PartOfMaterialOnMeshPtr > getVectorOfPartOfMaterialOnMesh() const;
+        std::vector< PartOfMaterialFieldPtr > getVectorOfPartOfMaterialField() const;
 
         /**
          * @brief Function to know if a given Calculation Input Variables exists
          * @return true if exists
          */
-        bool existsCalculationExternalVariable( const std::string& );
+        bool existsExternalVariablesComputation( const std::string& );
 
         /**
          * @brief Obtenir le maillage
@@ -363,9 +363,9 @@ class MaterialOnMeshClass: public DataStructure
 };
 
 /**
- * @typedef MaterialOnMeshPtr
- * @brief Pointeur intelligent vers un MaterialOnMeshClass
+ * @typedef MaterialFieldPtr
+ * @brief Pointeur intelligent vers un MaterialFieldClass
  */
-typedef boost::shared_ptr< MaterialOnMeshClass > MaterialOnMeshPtr;
+typedef boost::shared_ptr< MaterialFieldClass > MaterialFieldPtr;
 
 #endif /* MATERIALONMESH_H_ */

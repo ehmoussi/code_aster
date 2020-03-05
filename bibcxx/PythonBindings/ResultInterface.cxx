@@ -29,10 +29,10 @@ namespace py = boost::python;
 
 void exportResultToPython() {
 
-    MaterialOnMeshPtr ( ResultClass::*c1 )() =
-        &ResultClass::getMaterialOnMesh;
-    MaterialOnMeshPtr ( ResultClass::*c2 )( int ) =
-        &ResultClass::getMaterialOnMesh;
+    MaterialFieldPtr ( ResultClass::*c1 )() =
+        &ResultClass::getMaterialField;
+    MaterialFieldPtr ( ResultClass::*c2 )( int ) =
+        &ResultClass::getMaterialField;
 
     ModelPtr ( ResultClass::*c3 )() =
         &ResultClass::getModel;
@@ -52,18 +52,18 @@ void exportResultToPython() {
               py::make_constructor(
                   &initFactoryPtr< ResultClass, std::string, std::string >))
         .def( "addFieldOnNodesDescription", &ResultClass::addFieldOnNodesDescription )
-        .def( "addMaterialOnMesh", &ResultClass::addMaterialOnMesh )
+        .def( "addMaterialField", &ResultClass::addMaterialField )
         .def( "addModel", &ResultClass::addModel )
         .def( "appendElementaryCharacteristicsOnAllRanks",
               &ResultClass::appendElementaryCharacteristicsOnAllRanks )
-        .def( "appendMaterialOnMeshOnAllRanks",
-              &ResultClass::appendMaterialOnMeshOnAllRanks )
+        .def( "appendMaterialFieldOnAllRanks",
+              &ResultClass::appendMaterialFieldOnAllRanks )
         .def( "appendModelOnAllRanks", &ResultClass::appendModelOnAllRanks )
         .def( "listFields", &ResultClass::listFields )
         .def( "getElementaryCharacteristics", c5 )
         .def( "getElementaryCharacteristics", c6 )
-        .def( "getMaterialOnMesh", c1 )
-        .def( "getMaterialOnMesh", c2 )
+        .def( "getMaterialField", c1 )
+        .def( "getMaterialField", c2 )
         .def( "getMesh", &ResultClass::getMesh )
         .def( "getModel", c3 )
         .def( "getModel", c4 )

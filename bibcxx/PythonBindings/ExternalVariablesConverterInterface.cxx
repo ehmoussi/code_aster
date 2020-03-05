@@ -1,7 +1,7 @@
 /**
- * @file ExternalVariableResultInterface.cxx
- * @brief Interface python de ExternalVariableResult
- * @author Natacha Béreux
+ * @file ExternalVariablesConverterInterface.cxx
+ * @brief Interface python de ExternalVariablesConverter
+ * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
@@ -21,20 +21,20 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/ExternalVariableResultInterface.h"
-#include "PythonBindings/factory.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include "PythonBindings/ExternalVariablesConverterInterface.h"
+#include <PythonBindings/factory.h>
 #include <boost/python.hpp>
 
 namespace py = boost::python;
 
-void exportExternalVariableResultToPython() {
+void exportExternalVariablesConverterToPython() {
 
-    py::class_< ExternalVariableResultClass, ExternalVariableResultPtr,
-            py::bases< TransientResultClass > >( "ExternalVariableResult",
-                                                              py::no_init )
+    py::class_< ExternalVariablesConverterClass,
+            ExternalVariablesConverterPtr >( "ExternalVariablesConverter", py::no_init )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< ExternalVariableResultClass > ) )
-        .def( "__init__",
-              py::make_constructor(
-                  &initFactoryPtr< ExternalVariableResultClass, std::string > ) );
+              py::make_constructor(&initFactoryPtr< ExternalVariablesConverterClass >))
+        // fake initFactoryPtr: created by subclasses
+        .def( "addConverter", &ExternalVariablesConverterClass::addConverter );
 };

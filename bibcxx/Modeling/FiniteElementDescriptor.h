@@ -58,9 +58,9 @@ protected:
     /** @brief Vecteur Jeveux '.PRNM' */
     JeveuxVectorLong                          _dofDescriptor;
     /** @brief Collection '.LIEL' */
-    JeveuxCollectionLong                      _listOfGroupOfElements;
+    JeveuxCollectionLong                      _listOfGroupOfCells;
     /** @brief Vecteur Jeveux '.REPE' */
-    JeveuxVectorLong                          _groupOfElementsNumberByElement;
+    JeveuxVectorLong                          _groupOfCellsNumberByElement;
     /** @brief Collection '.NEMA' */
     JeveuxCollectionLong                      _delayedNumberedConstraintElementsDescriptor;
     /** @brief Vecteur Jeveux '.PRNS' */
@@ -116,9 +116,9 @@ public:
         return _delayedNodesNumbering;
     };
 
-    const ConnectivityDelayedElementsExplorer& getListOfGroupOfElements() const
+    const ConnectivityDelayedElementsExplorer& getListOfGroupOfCells() const
     {
-        _listOfGroupOfElements->buildFromJeveux();
+        _listOfGroupOfCells->buildFromJeveux();
         return _explorer2;
     };
 

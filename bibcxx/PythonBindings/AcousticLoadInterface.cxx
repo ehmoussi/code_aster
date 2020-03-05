@@ -36,20 +36,20 @@ void exportAcousticLoadToPython() {
               py::make_constructor(&initFactoryPtr< AcousticLoadClass, std::string, ModelPtr >))
         .def( "addImposedNormalSpeedOnAllMesh",
               &AcousticLoadClass::addImposedNormalSpeedOnAllMesh )
-        .def( "addImposedNormalSpeedOnGroupsOfElements",
-              &AcousticLoadClass::addImposedNormalSpeedOnGroupsOfElements )
+        .def( "addImposedNormalSpeedOnGroupOfCells",
+              &AcousticLoadClass::addImposedNormalSpeedOnGroupOfCells )
         .def( "addImpedanceOnAllMesh", &AcousticLoadClass::addImpedanceOnAllMesh )
-        .def( "addImpedanceOnGroupsOfElements",
-              &AcousticLoadClass::addImpedanceOnGroupsOfElements )
+        .def( "addImpedanceOnGroupOfCells",
+              &AcousticLoadClass::addImpedanceOnGroupOfCells )
         .def( "addImposedPressureOnAllMesh", &AcousticLoadClass::addImposedPressureOnAllMesh )
-        .def( "addImposedPressureOnGroupsOfElements",
-              &AcousticLoadClass::addImposedPressureOnGroupsOfElements )
-        .def( "addImposedPressureOnGroupsOfNodes",
-              &AcousticLoadClass::addImposedPressureOnGroupsOfNodes )
-        .def( "addUniformConnectionOnGroupsOfElements",
-              &AcousticLoadClass::addUniformConnectionOnGroupsOfElements )
-        .def( "addUniformConnectionOnGroupsOfNodes",
-              &AcousticLoadClass::addUniformConnectionOnGroupsOfNodes )
+        .def( "addImposedPressureOnGroupOfCells",
+              &AcousticLoadClass::addImposedPressureOnGroupOfCells )
+        .def( "addImposedPressureOnGroupOfNodes",
+              &AcousticLoadClass::addImposedPressureOnGroupOfNodes )
+        .def( "addUniformConnectionOnGroupOfCells",
+              &AcousticLoadClass::addUniformConnectionOnGroupOfCells )
+        .def( "addUniformConnectionOnGroupOfNodes",
+              &AcousticLoadClass::addUniformConnectionOnGroupOfNodes )
         .def( "build", &AcousticLoadClass::build )
         .def( "getFiniteElementDescriptor", &AcousticLoadClass::getFiniteElementDescriptor )
         .def( "getModel", &AcousticLoadClass::getModel );

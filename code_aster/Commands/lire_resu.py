@@ -22,7 +22,7 @@
 from ..Objects import (LoadResult, ThermalResult,
                        FullHarmonicResult,
                        FullTransientResult,
-                       ExternalVariableResult,
+                       ExternalVariablesResult,
                        ElasticResult,
                        ModeResultComplex, ModeResult,
                        EmpiricalModeResult, NonLinearResult)
@@ -60,7 +60,7 @@ class ResultsReader(ExecuteCommand):
         elif typ == "MODE_MECA_C":
             self._result = ModeResultComplex()
         elif typ == "EVOL_VARC":
-            self._result = ExternalVariableResult()
+            self._result = ExternalVariablesResult()
         else:
             raise NotImplementedError("Type of result {0!r} not yet "
                                       "implemented".format(typ))

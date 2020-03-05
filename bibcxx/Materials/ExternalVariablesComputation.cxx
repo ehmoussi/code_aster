@@ -1,6 +1,6 @@
 /**
- * @file CalculationExternalVariable.cxx
- * @brief Implementation de CalculationExternalVariableClass
+ * @file ExternalVariablesComputation.cxx
+ * @brief Implementation de ExternalVariablesComputationClass
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -23,10 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Materials/CalculationExternalVariable.h"
+#include "Materials/ExternalVariablesComputation.h"
 
-CalculationExternalVariableClass::CalculationExternalVariableClass(
-    const ModelPtr &model, const MaterialOnMeshPtr &mater,
+ExternalVariablesComputationClass::ExternalVariablesComputationClass(
+    const ModelPtr &model, const MaterialFieldPtr &mater,
     const ElementaryCharacteristicsPtr &cara, const CodedMaterialPtr &codMater ):
         DataStructure( "VARI_COM", Permanent, 14 ), _model( model ), _mater( mater ),
         _codMater( codMater ), _elemCara( cara ),
@@ -34,10 +34,10 @@ CalculationExternalVariableClass::CalculationExternalVariableClass(
         _varInst( new FieldOnCellsRealClass( getName() + ".TOUT" ) ),
         _timeValue(
           new ConstantFieldOnCellsRealClass( getName() + ".INST", _model->getMesh() ) ),
-        _currentTime( -1.0 ), _pTot( _mater->existsCalculationExternalVariable( "PTOT" ) ),
-        _hydr( _mater->existsCalculationExternalVariable( "HYDR" ) ),
-        _sech( _mater->existsCalculationExternalVariable( "SECH" ) ),
-        _temp( _mater->existsCalculationExternalVariable( "TEMP" ) )
+        _currentTime( -1.0 ), _pTot( _mater->existsExternalVariablesComputation( "PTOT" ) ),
+        _hydr( _mater->existsExternalVariablesComputation( "HYDR" ) ),
+        _sech( _mater->existsExternalVariablesComputation( "SECH" ) ),
+        _temp( _mater->existsExternalVariablesComputation( "TEMP" ) )
 {
     std::string modName( _model->getName(), 0, 8 ), matName( _mater->getName(), 0, 8 );
     std::string carName( ' ', 8 );
@@ -46,7 +46,7 @@ CalculationExternalVariableClass::CalculationExternalVariableClass(
     CALLO_VRCREF( modName, matName, carName, _varRef->getName() );
 };
 
-void CalculationExternalVariableClass::compute( const double &time )
+void ExternalVariablesComputationClass::compute( const double &time )
 {
     _currentTime = time;
     _varInst->deallocate();
@@ -67,7 +67,7 @@ void CalculationExternalVariableClass::compute( const double &time )
 };
 
 FieldOnNodesRealPtr
-CalculationExternalVariableClass::computeMechanicalLoads( const BaseDOFNumberingPtr &dofNUM )
+ExternalVariablesComputationClass::computeMechanicalLoads( const BaseDOFNumberingPtr &dofNUM )
 {
     const auto &codedMater = _codMater->getCodedMaterialField();
     std::string modName( _model->getName(), 0, 8 );

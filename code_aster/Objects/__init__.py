@@ -54,7 +54,7 @@ from .generalizedmodel_ext import GeneralizedModel
 from .listoffloats import ListOfFloats
 from .listofintegers_ext import ListOfIntegers
 from .material_ext import Material
-from .materialonmesh_ext import MaterialOnMesh
+from .materialfield_ext import MaterialField
 from .mechanicalload_ext import GenericMechanicalLoad
 from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField

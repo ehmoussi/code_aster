@@ -101,7 +101,7 @@ class ParallelMeshClass : public BaseMeshClass {
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
-    bool hasGroupOfElements( const std::string &name ) const {
+    bool hasGroupOfCells( const std::string &name ) const {
         SetOfStringCIter curIter = _setOfAllGOE.find( name );
         if ( curIter != _setOfAllGOE.end() )
             return true;
@@ -123,8 +123,8 @@ class ParallelMeshClass : public BaseMeshClass {
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */
-    bool hasLocalGroupOfElements( const std::string &name ) const {
-        return _groupsOfElements->existsObject( name );
+    bool hasLocalGroupOfCells( const std::string &name ) const {
+        return _groupOfCells->existsObject( name );
     };
 
     /**
@@ -132,7 +132,7 @@ class ParallelMeshClass : public BaseMeshClass {
      * @return true si le groupe existe
      */
     bool hasLocalGroupOfNodes( const std::string &name ) const {
-        return _groupsOfNodes->existsObject( name );
+        return _groupOfNodes->existsObject( name );
     };
 
     /**

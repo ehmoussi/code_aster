@@ -36,7 +36,7 @@ void exportMeshToPython() {
 
     py::enum_< EntityType >( "EntityType" )
         .value( "GroupOfNodesType", GroupOfNodesType )
-        .value( "GroupOfElementsType", GroupOfElementsType )
+        .value( "GroupOfCellsType", GroupOfCellsType )
         .value( "AllMeshEntitiesType", AllMeshEntitiesType )
         .value( "ElementType", ElementType )
         .value( "NodeType", NodeType )
@@ -49,8 +49,8 @@ void exportMeshToPython() {
         .def( "getType", &VirtualMeshEntity::getType )
         .def( "getNames", &VirtualMeshEntity::getNames );
 
-    py::class_< GroupOfElements, GroupOfElementsPtr, py::bases< VirtualMeshEntity > >(
-        "GroupOfElements", py::no_init )
+    py::class_< GroupOfCells, GroupOfCellsPtr, py::bases< VirtualMeshEntity > >(
+        "GroupOfCells", py::no_init )
         // fake initFactoryPtr: created by subclass
         // fake initFactoryPtr: created by subclass
         ;
@@ -83,7 +83,7 @@ void exportMeshToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< MeshClass >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< MeshClass, std::string >))
         .def( "addGroupOfNodesFromNodes", &MeshClass::addGroupOfNodesFromNodes )
-        .def( "hasGroupOfElements", &MeshClass::hasGroupOfElements )
+        .def( "hasGroupOfCells", &MeshClass::hasGroupOfCells )
         .def( "hasGroupOfNodes", &MeshClass::hasGroupOfNodes )
         .def( "readAsterMeshFile", &MeshClass::readAsterMeshFile )
         .def( "readGibiFile", &MeshClass::readGibiFile )

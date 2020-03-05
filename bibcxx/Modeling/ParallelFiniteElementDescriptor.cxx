@@ -212,7 +212,7 @@ ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
             ++posInCollection;
         }
 
-        const auto& liel = FEDesc->getListOfGroupOfElements();
+        const auto& liel = FEDesc->getListOfGroupOfCells();
         int nbCollObj = 0, totalCollSize = 0;
         std::vector< VectorLong > toLiel( liel.size(), VectorLong() );
         ASTERINTEGER type = 0;
@@ -238,21 +238,21 @@ ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
             }
         }
 
-        _listOfGroupOfElements->allocateContiguous( memType, nbCollObj,
+        _listOfGroupOfCells->allocateContiguous( memType, nbCollObj,
                                                     totalCollSize+nbCollObj, Numbered );
         posInCollection = 1;
         for( const auto& vec : toLiel )
         {
             if( vec.size() != 0 )
             {
-                _listOfGroupOfElements->allocateObject( vec.size() );
-                _listOfGroupOfElements->getObject( posInCollection ).setValues( vec );
+                _listOfGroupOfCells->allocateObject( vec.size() );
+                _listOfGroupOfCells->getObject( posInCollection ).setValues( vec );
                 ++posInCollection;
             }
         }
     }
     else
-        _listOfGroupOfElements->allocateContiguous( memType, 1, 1, Numbered );
+        _listOfGroupOfCells->allocateContiguous( memType, 1, 1, Numbered );
 
     // Remplissage du .NBNO avec le nouveau nombre de noeuds tardifs
     _numberOfDelayedNumberedConstraintNodes->allocate( memType, 1 );

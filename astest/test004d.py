@@ -20,7 +20,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
                                 NU = POISSON,),)
 #acier.debugPrint(6)
 
-affectMat = code_aster.MaterialOnMesh(monMaillage)
+affectMat = code_aster.MaterialField(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.buildWithoutExternalVariable()
 
@@ -48,7 +48,7 @@ statNonLine1.addStandardExcitation( kine1 )
 statNonLine1.addStandardExcitation( kine2 )
 
 statNonLine1.setModel( monModel )
-statNonLine1.setMaterialOnMesh( affectMat )
+statNonLine1.setMaterialField( affectMat )
 statNonLine1.setLinearSolver( monSolver )
 elas = code_aster.Behaviour(code_aster.ConstitutiveLaw.Elas,
                                    code_aster.StrainType.SmallStrain )

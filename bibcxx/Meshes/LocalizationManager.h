@@ -60,19 +60,19 @@ class GenericLocalizationManager {
 };
 
 template < const char *tmp = GROUP_MA >
-class GroupOfElementsManager : public GenericLocalizationManager {
+class GroupOfCellsManager : public GenericLocalizationManager {
   private:
     VectorOfMeshEntityPtr _vecOfGrp;
 
   public:
-    GroupOfElementsManager( const bool &mandatory = false )
+    GroupOfCellsManager( const bool &mandatory = false )
         : GenericLocalizationManager( tmp, mandatory ) {
         _skw = CapyValuePtr( new LocalizationCapyConvertibleValue( mandatory, std::string( tmp ),
                                                                    _vecOfGrp, false ) );
     };
 
-    void addGroupOfElements( const std::string &name ) {
-        _vecOfGrp.push_back( GroupOfElementsPtr( new GroupOfElements( name ) ) );
+    void addGroupOfCells( const std::string &name ) {
+        _vecOfGrp.push_back( GroupOfCellsPtr( new GroupOfCells( name ) ) );
         _skw->enable();
     };
 };
@@ -136,13 +136,13 @@ class CapyLocalizationManager : public EntityLocalization... {
     };
 };
 
-typedef CapyLocalizationManager< GroupOfElementsManager<>, GroupOfNodesManager<>,
-                                 AllMeshEntitiesManager > AllNodesElementsLocalization;
+typedef CapyLocalizationManager< GroupOfCellsManager<>, GroupOfNodesManager<>,
+                                 AllMeshEntitiesManager > AllNodesCellsLocalization;
 
-typedef CapyLocalizationManager< GroupOfElementsManager<>, AllMeshEntitiesManager >
-    AllElementsLocalization;
+typedef CapyLocalizationManager< GroupOfCellsManager<>, AllMeshEntitiesManager >
+    AllCellsLocalization;
 
-typedef CapyLocalizationManager< GroupOfElementsManager<>, GroupOfNodesManager<> >
-    NodesElementsLocalization;
+typedef CapyLocalizationManager< GroupOfCellsManager<>, GroupOfNodesManager<> >
+    NodesCellsLocalization;
 
 #endif /* LOCALIZATIONMANEGER_H_ */

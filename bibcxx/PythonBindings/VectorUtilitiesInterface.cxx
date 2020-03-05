@@ -28,8 +28,8 @@
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Functions/Function.h"
 #include "Materials/Material.h"
-#include "Materials/MaterialOnMesh.h"
-#include "Materials/MaterialBehaviour.h"
+#include "Materials/MaterialField.h"
+#include "Materials/MaterialProperty.h"
 
 void exportVectorUtilitiesToPython() {
 
@@ -42,7 +42,7 @@ void exportVectorUtilitiesToPython() {
     exportVectorUtilities< FiniteElementDescriptorPtr >();
     exportVectorUtilities< BaseFunctionPtr >();
     exportVectorUtilities< FunctionPtr >();
-    exportVectorUtilities< PartOfMaterialOnMeshPtr >();
-    exportVectorUtilities< GeneralMaterialBehaviourPtr >();
+    exportVectorUtilities< PartOfMaterialFieldPtr >();
+    exportVectorUtilities< BaseMaterialPropertyPtr >();
     exportVectorUtilities< DataStructurePtr >();
 };

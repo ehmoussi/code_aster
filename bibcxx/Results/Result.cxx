@@ -49,10 +49,10 @@ void ResultClass::addListOfLoads( const ListOfLoadsPtr &load,
     CALLO_RSADPA_ZK24_WRAP( getName(), &rang, load->getName(), type );
 };
 
-void ResultClass::addMaterialOnMesh( const MaterialOnMeshPtr &mater,
+void ResultClass::addMaterialField( const MaterialFieldPtr &mater,
                                                   int rank ) {
     if( !mater )
-        throw std::runtime_error( "MaterialOnMesh is empty" );
+        throw std::runtime_error( "MaterialField is empty" );
     _mapMaterial[rank] = mater;
     ASTERINTEGER rang = rank;
     std::string type( "CHAMPMAT" );
@@ -97,13 +97,13 @@ void ResultClass::appendElementaryCharacteristicsOnAllRanks
     }
 };
 
-void ResultClass::appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr &mater ) {
+void ResultClass::appendMaterialFieldOnAllRanks( const MaterialFieldPtr &mater ) {
     _serialNumber->updateValuePointer();
     ASTERINTEGER nbRanks = _serialNumber->usedSize();
     for ( int rank = 0; rank < nbRanks; ++rank ) {
         const ASTERINTEGER iordr = ( *_serialNumber )[rank];
         if ( _mapMaterial.find( iordr ) == _mapMaterial.end() )
-            addMaterialOnMesh( mater, iordr );
+            addMaterialField( mater, iordr );
     }
 };
 
@@ -191,9 +191,9 @@ ListOfLoadsPtr ResultClass::getListOfLoads( int rank ) {
     return ( *curIter ).second;
 };
 
-MaterialOnMeshPtr ResultClass::getMaterialOnMesh() {
+MaterialFieldPtr ResultClass::getMaterialField() {
     std::string name( "" );
-    MaterialOnMeshPtr toReturn( nullptr );
+    MaterialFieldPtr toReturn( nullptr );
     for ( const auto &curIter : _mapMaterial ) {
         if ( name == "" ) {
             toReturn = curIter.second;
@@ -205,8 +205,8 @@ MaterialOnMeshPtr ResultClass::getMaterialOnMesh() {
     return toReturn;
 };
 
-MaterialOnMeshPtr
-ResultClass::getMaterialOnMesh( int rank ) {
+MaterialFieldPtr
+ResultClass::getMaterialField( int rank ) {
     auto curIter = _mapMaterial.find( rank );
     if ( curIter == _mapMaterial.end() )
         throw std::runtime_error( "Rank not found" );
@@ -266,8 +266,8 @@ FieldOnCellsRealPtr ResultClass::getRealFieldOnCells( const std::string name,
     if ( rank > _nbRanks || rank <= 0 )
         throw std::runtime_error( "Order number out of range" );
 
-    auto curIter = _dictOfVectorOfFieldsElements.find( trim( name ) );
-    if ( curIter == _dictOfVectorOfFieldsElements.end() )
+    auto curIter = _dictOfVectorOfFieldsCells.find( trim( name ) );
+    if ( curIter == _dictOfVectorOfFieldsCells.end() )
         throw std::runtime_error( "Field " + name + " unknown in the results container" );
 
     FieldOnCellsRealPtr toReturn = curIter->second[rank - 1];
@@ -294,7 +294,7 @@ void ResultClass::listFields() const
     for ( auto curIter : _dictOfVectorOfFieldsNodes ) {
         std::cout << curIter.first << " - ";
     }
-    for ( auto curIter : _dictOfVectorOfFieldsElements ) {
+    for ( auto curIter : _dictOfVectorOfFieldsCells ) {
         std::cout << curIter.first << " - ";
     }
     std::cout << std::endl;
@@ -377,16 +377,16 @@ bool ResultClass::update()
                         _dictOfVectorOfFieldsNodes[nomSymb][rank] = result;
                     }
                 } else if ( resu == "ELEM" || resu == "ELNO" || resu == "ELGA" ) {
-                    const auto &curIter2 = _dictOfVectorOfFieldsElements.find( nomSymb );
-                    if ( curIter2 == _dictOfVectorOfFieldsElements.end() )
-                        _dictOfVectorOfFieldsElements[nomSymb] = VectorOfFieldsElements(
+                    const auto &curIter2 = _dictOfVectorOfFieldsCells.find( nomSymb );
+                    if ( curIter2 == _dictOfVectorOfFieldsCells.end() )
+                        _dictOfVectorOfFieldsCells[nomSymb] = VectorOfFieldsCells(
                             numberOfSerialNum, FieldOnCellsRealPtr( nullptr ) );
                     else if ( curIter2->second.size() != numberOfSerialNum ) {
                         curIter2->second.resize( numberOfSerialNum,
                                                  FieldOnCellsRealPtr( nullptr ) );
                     }
 
-                    ASTERINTEGER test2 = _dictOfVectorOfFieldsElements[nomSymb][rank].use_count();
+                    ASTERINTEGER test2 = _dictOfVectorOfFieldsCells[nomSymb][rank].use_count();
                     if ( test2 == 0 ) {
                         if ( curMesh == nullptr )
                             throw std::runtime_error(
@@ -394,7 +394,7 @@ bool ResultClass::update()
                         FieldOnCellsRealPtr result =
                             _fieldBuidler.buildFieldOnCells< double >( name, curMesh );
                         ( new FieldOnCellsRealClass( name ) );
-                        _dictOfVectorOfFieldsElements[nomSymb][rank] = result;
+                        _dictOfVectorOfFieldsCells[nomSymb][rank] = result;
                     }
                 }
             }

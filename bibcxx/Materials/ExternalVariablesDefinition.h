@@ -2,8 +2,8 @@
 #define EXTERNALVARIABLEDEFINITION_H_
 
 /**
- * @file ExternalVariableDefinitionClass.h
- * @brief Fichier entete de la classe ExternalVariableDefinitionClass
+ * @file ExternalVariablesClass.h
+ * @brief Fichier entete de la classe ExternalVariablesClass
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -35,7 +35,7 @@
 #include "Functions/Function.h"
 #include "Functions/Formula.h"
 
-class MaterialOnMeshBuilderClass;
+class MaterialFieldBuilderClass;
 
 /**
  * @class EvolutionParameterClass
@@ -95,69 +95,69 @@ class EvolutionParameterClass {
 
 typedef boost::shared_ptr< EvolutionParameterClass > EvolutionParameterPtr;
 
-struct TemperatureExternalVariableTraits {
+struct TemperatureExternalVariablesTraits {
     constexpr static const char *name = "TEMP";
 };
 
-struct GeometryExternalVariableTraits {
+struct GeometryExternalVariablesTraits {
     constexpr static const char *name = "GEOM";
 };
 
-struct CorrosionExternalVariableTraits {
+struct CorrosionExternalVariablesTraits {
     constexpr static const char *name = "CORR";
 };
 
-struct IrreversibleDeformationExternalVariableTraits {
+struct IrreversibleDeformationExternalVariablesTraits {
     constexpr static const char *name = "EPSA";
 };
 
-struct ConcreteHydratationExternalVariableTraits {
+struct ConcreteHydratationExternalVariablesTraits {
     constexpr static const char *name = "HYDR";
 };
 
-struct IrradiationExternalVariableTraits {
+struct IrradiationExternalVariablesTraits {
     constexpr static const char *name = "IRRA";
 };
 
-struct SteelPhasesExternalVariableTraits {
+struct SteelPhasesExternalVariablesTraits {
     constexpr static const char *name = "M_ACIER";
 };
 
-struct ZircaloyPhasesExternalVariableTraits {
+struct ZircaloyPhasesExternalVariablesTraits {
     constexpr static const char *name = "M_ZIRC";
 };
 
-struct Neutral1ExternalVariableTraits {
+struct Neutral1ExternalVariablesTraits {
     constexpr static const char *name = "NEUT1";
 };
 
-struct Neutral2ExternalVariableTraits {
+struct Neutral2ExternalVariablesTraits {
     constexpr static const char *name = "NEUT2";
 };
 
-struct Neutral3ExternalVariableTraits
+struct Neutral3ExternalVariablesTraits
 {
    constexpr static const char* name = "NEUT3";
 };
 
-struct ConcreteDryingExternalVariableTraits {
+struct ConcreteDryingExternalVariablesTraits {
     constexpr static const char *name = "SECH";
 };
 
-struct TotalFluidPressureExternalVariableTraits {
+struct TotalFluidPressureExternalVariablesTraits {
     constexpr static const char *name = "PTOT";
 };
 
-struct VolumetricDeformationExternalVariableTraits {
+struct VolumetricDeformationExternalVariablesTraits {
     constexpr static const char *name = "DIVU";
 };
 
 /**
- * @class GenericExternalVariableClass
+ * @class BaseExternalVariablesClass
  * @brief Input Variable Definition
  * @author Nicolas Sellenet
  */
-class GenericExternalVariableClass {
+class BaseExternalVariablesClass {
   private:
     BaseMeshPtr _mesh;
     MeshEntityPtr _localization;
@@ -167,29 +167,29 @@ class GenericExternalVariableClass {
     EvolutionParameterPtr _evolParam;
 
   public:
-    typedef boost::shared_ptr< GenericExternalVariableClass > GenericExternalVariablePtr;
+    typedef boost::shared_ptr< BaseExternalVariablesClass > BaseExternalVariablesPtr;
 
     /**
      * @brief Constructeur
      */
-    GenericExternalVariableClass( const BaseMeshPtr &mesh )
+    BaseExternalVariablesClass( const BaseMeshPtr &mesh )
         : _mesh( mesh ), _localization( new AllMeshEntities() ), _refValue( 0. ),
           _refValueSet( false ){};
 
     /**
      * @brief Constructeur
      */
-    GenericExternalVariableClass( const BaseMeshPtr &mesh, const std::string &nameOfGroup )
-        : _mesh( mesh ), _localization( new GroupOfElements( nameOfGroup ) ), _refValue( 0. ),
+    BaseExternalVariablesClass( const BaseMeshPtr &mesh, const std::string &nameOfGroup )
+        : _mesh( mesh ), _localization( new GroupOfCells( nameOfGroup ) ), _refValue( 0. ),
           _refValueSet( false ) {
-        if ( !_mesh->hasGroupOfElements( nameOfGroup ) )
+        if ( !_mesh->hasGroupOfCells( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in mesh" );
     };
 
     /**
      * @brief Destructeur
      */
-    ~GenericExternalVariableClass(){};
+    ~BaseExternalVariablesClass(){};
 
     /**
      * @brief Function to know if a reference value exists in input variable
@@ -249,12 +249,12 @@ class GenericExternalVariableClass {
 };
 
 /**
- * @class ExternalVariableDefinitionClass
+ * @class ExternalVariablesClass
  * @brief Input Variable Definition
  * @author Nicolas Sellenet
  */
 template < typename ParameterClass >
-class ExternalVariableDefinitionClass : public GenericExternalVariableClass {
+class ExternalVariablesClass : public BaseExternalVariablesClass {
   private:
     constexpr static const char *_varcName = ParameterClass::name;
 
@@ -262,19 +262,19 @@ class ExternalVariableDefinitionClass : public GenericExternalVariableClass {
     /**
      * @brief Constructeur
      */
-    ExternalVariableDefinitionClass( const BaseMeshPtr &mesh )
-        : GenericExternalVariableClass( mesh ){};
+    ExternalVariablesClass( const BaseMeshPtr &mesh )
+        : BaseExternalVariablesClass( mesh ){};
 
     /**
      * @brief Constructeur
      */
-    ExternalVariableDefinitionClass( const BaseMeshPtr &mesh, const std::string &nameOfGroup )
-        : GenericExternalVariableClass( mesh, nameOfGroup ){};
+    ExternalVariablesClass( const BaseMeshPtr &mesh, const std::string &nameOfGroup )
+        : BaseExternalVariablesClass( mesh, nameOfGroup ){};
 
     /**
      * @brief Destructeur
      */
-    ~ExternalVariableDefinitionClass(){};
+    ~ExternalVariablesClass(){};
 
     /**
      * @brief Get the name of the variable
@@ -284,36 +284,36 @@ class ExternalVariableDefinitionClass : public GenericExternalVariableClass {
     };
 };
 
-typedef ExternalVariableDefinitionClass< TemperatureExternalVariableTraits >
+typedef ExternalVariablesClass< TemperatureExternalVariablesTraits >
     TemperatureExternalVariableClass;
-typedef ExternalVariableDefinitionClass< GeometryExternalVariableTraits >
+typedef ExternalVariablesClass< GeometryExternalVariablesTraits >
     GeometryExternalVariableClass;
-typedef ExternalVariableDefinitionClass< CorrosionExternalVariableTraits >
+typedef ExternalVariablesClass< CorrosionExternalVariablesTraits >
     CorrosionExternalVariableClass;
-typedef ExternalVariableDefinitionClass< IrreversibleDeformationExternalVariableTraits >
+typedef ExternalVariablesClass< IrreversibleDeformationExternalVariablesTraits >
     IrreversibleDeformationExternalVariableClass;
-typedef ExternalVariableDefinitionClass< ConcreteHydratationExternalVariableTraits >
+typedef ExternalVariablesClass< ConcreteHydratationExternalVariablesTraits >
     ConcreteHydratationExternalVariableClass;
-typedef ExternalVariableDefinitionClass< IrradiationExternalVariableTraits >
+typedef ExternalVariablesClass< IrradiationExternalVariablesTraits >
     IrradiationExternalVariableClass;
-typedef ExternalVariableDefinitionClass< SteelPhasesExternalVariableTraits >
+typedef ExternalVariablesClass< SteelPhasesExternalVariablesTraits >
     SteelPhasesExternalVariableClass;
-typedef ExternalVariableDefinitionClass< ZircaloyPhasesExternalVariableTraits >
+typedef ExternalVariablesClass< ZircaloyPhasesExternalVariablesTraits >
     ZircaloyPhasesExternalVariableClass;
-typedef ExternalVariableDefinitionClass< Neutral1ExternalVariableTraits >
+typedef ExternalVariablesClass< Neutral1ExternalVariablesTraits >
     Neutral1ExternalVariableClass;
-typedef ExternalVariableDefinitionClass< Neutral2ExternalVariableTraits >
+typedef ExternalVariablesClass< Neutral2ExternalVariablesTraits >
     Neutral2ExternalVariableClass;
-typedef ExternalVariableDefinitionClass< Neutral3ExternalVariableTraits >
+typedef ExternalVariablesClass< Neutral3ExternalVariablesTraits >
     Neutral3ExternalVariableClass;
-typedef ExternalVariableDefinitionClass< ConcreteDryingExternalVariableTraits >
+typedef ExternalVariablesClass< ConcreteDryingExternalVariablesTraits >
     ConcreteDryingExternalVariableClass;
-typedef ExternalVariableDefinitionClass< TotalFluidPressureExternalVariableTraits >
+typedef ExternalVariablesClass< TotalFluidPressureExternalVariablesTraits >
     TotalFluidPressureExternalVariableClass;
-typedef ExternalVariableDefinitionClass< VolumetricDeformationExternalVariableTraits >
+typedef ExternalVariablesClass< VolumetricDeformationExternalVariablesTraits >
     VolumetricDeformationExternalVariableClass;
 
-typedef boost::shared_ptr< GenericExternalVariableClass > GenericExternalVariablePtr;
+typedef boost::shared_ptr< BaseExternalVariablesClass > BaseExternalVariablesPtr;
 typedef boost::shared_ptr< TemperatureExternalVariableClass > TemperatureExternalVariablePtr;
 typedef boost::shared_ptr< GeometryExternalVariableClass > GeometryExternalVariablePtr;
 typedef boost::shared_ptr< CorrosionExternalVariableClass > CorrosionExternalVariablePtr;
@@ -335,34 +335,34 @@ typedef boost::shared_ptr< VolumetricDeformationExternalVariableClass >
     VolumetricDeformationExternalVariablePtr;
 
 /**
- * @class ExternalVariableOnMeshClass
+ * @class ExternalVariablesFieldClass
  * @brief Input variable on mesh
  * @author Nicolas Sellenet
  */
-class ExternalVariableOnMeshClass {
-    friend class MaterialOnMeshBuilderClass;
+class ExternalVariablesFieldClass {
+    friend class MaterialFieldBuilderClass;
 
   private:
     /** @typedef std::list d'une std::pair de MeshEntityPtr */
-    typedef std::vector< std::pair< GenericExternalVariablePtr, MeshEntityPtr > >
+    typedef std::vector< std::pair< BaseExternalVariablesPtr, MeshEntityPtr > >
         VectorOfexternalVarAndGrps;
     /** @typedef Definition de la valeur contenue dans un VectorOfexternalVarAndGrps */
     typedef VectorOfexternalVarAndGrps::value_type VectorOfexternalVarAndGrpsValue;
     /** @typedef Definition d'un iterateur sur VectorOfexternalVarAndGrps */
     typedef VectorOfexternalVarAndGrps::iterator VectorOfexternalVarAndGrpsIter;
 
-    /** @brief Vector of GenericExternalVariableClass */
+    /** @brief Vector of BaseExternalVariablesClass */
     VectorOfexternalVarAndGrps _externalVars;
     /** @brief Maillage sur lequel repose la sd_cham_mater */
     BaseMeshPtr _mesh;
 
   public:
-    ExternalVariableOnMeshClass( const MeshPtr &mesh ) : _mesh( mesh ){};
+    ExternalVariablesFieldClass( const MeshPtr &mesh ) : _mesh( mesh ){};
 
-    ExternalVariableOnMeshClass( const SkeletonPtr &mesh ) : _mesh( mesh ){};
+    ExternalVariablesFieldClass( const SkeletonPtr &mesh ) : _mesh( mesh ){};
 
 #ifdef _USE_MPI
-    ExternalVariableOnMeshClass( const ParallelMeshPtr &mesh ) : _mesh( mesh ){};
+    ExternalVariablesFieldClass( const ParallelMeshPtr &mesh ) : _mesh( mesh ){};
 #endif /* _USE_MPI */
 
     /**
@@ -378,16 +378,16 @@ class ExternalVariableOnMeshClass {
      * @brief Add an input variable on a group of mesh
      */
     template < class ExternalVariablePtr >
-    void addExternalVariableOnGroupOfElements(
+    void addExternalVariableOnGroupOfCells(
         const ExternalVariablePtr &curBehav,
         const std::string &nameOfGroup ) {
         if ( !_mesh )
             throw std::runtime_error( "Mesh is not defined" );
-        if ( !_mesh->hasGroupOfElements( nameOfGroup ) )
+        if ( !_mesh->hasGroupOfCells( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + "not in mesh" );
 
         _externalVars.push_back( VectorOfexternalVarAndGrpsValue(
-            curBehav, MeshEntityPtr( new GroupOfElements( nameOfGroup ) ) ) );
+            curBehav, MeshEntityPtr( new GroupOfCells( nameOfGroup ) ) ) );
     };
 
     /**
@@ -405,9 +405,9 @@ class ExternalVariableOnMeshClass {
 };
 
 /**
- * @typedef ExternalVariableOnMeshPtr
- * @brief Pointeur intelligent vers un ExternalVariableOnMeshClass
+ * @typedef ExternalVariablesFieldPtr
+ * @brief Pointeur intelligent vers un ExternalVariablesFieldClass
  */
-typedef boost::shared_ptr< ExternalVariableOnMeshClass > ExternalVariableOnMeshPtr;
+typedef boost::shared_ptr< ExternalVariablesFieldClass > ExternalVariablesFieldPtr;
 
 #endif /* EXTERNALVARIABLEDEFINITION_H_ */

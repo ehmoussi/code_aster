@@ -31,7 +31,7 @@
 #include "Supervis/CommandSyntax.h"
 
 NonLinearStaticAnalysisClass::NonLinearStaticAnalysisClass()
-    : _model( ModelPtr() ), _materialOnMesh( MaterialOnMeshPtr() ),
+    : _model( ModelPtr() ), _materialField( MaterialFieldPtr() ),
       _loadStepManager( TimeStepManagerPtr() ),
       _nonLinearMethod( NonLinearMethodPtr( new NonLinearMethodClass() ) ),
       _control( NonLinearControlPtr( new NonLinearControlClass() ) ),
@@ -54,9 +54,9 @@ NonLinearStaticAnalysisClass::execute() {
         throw std::runtime_error( "Model is undefined" );
     dict.container["MODELE"] = _model->getName();
 
-    if ( !_materialOnMesh )
-        throw std::runtime_error( "MaterialOnMesh is undefined" );
-    dict.container["CHAM_MATER"] = _materialOnMesh->getName();
+    if ( !_materialField )
+        throw std::runtime_error( "MaterialField is undefined" );
+    dict.container["CHAM_MATER"] = _materialField->getName();
 
     if ( _listOfExcitations.size() == 0 )
         throw std::runtime_error( "Excitation is undefined" );

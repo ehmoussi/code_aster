@@ -30,7 +30,7 @@
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "Loads/MechanicalLoad.h"
 #include "DataFields/ElementaryTerm.h"
 #include "Modeling/FiniteElementDescriptor.h"
@@ -52,8 +52,8 @@ protected:
     bool _isEmpty;
     /** @brief Modele */
     ModelPtr _model;
-    /** @brief MaterialOnMesh */
-    MaterialOnMeshPtr _materOnMesh;
+    /** @brief MaterialField */
+    MaterialFieldPtr _materialField;
     /** @brief Vectors of FiniteElementDescriptor */
     std::vector< FiniteElementDescriptorPtr > _FEDVector;
     std::set< std::string > _FEDNames;
@@ -68,7 +68,7 @@ protected:
         _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
         _listOfElementaryTerms( JeveuxVectorChar24( getName() + ".RELR" ) ),
         _isEmpty( true ),
-        _model( nullptr ), _materOnMesh( nullptr )
+        _model( nullptr ), _materialField( nullptr )
     {};
 
     /**
@@ -102,12 +102,12 @@ public:
     std::vector< FiniteElementDescriptorPtr > getFiniteElementDescriptors() { return _FEDVector; };
 
     /**
-     * @brief Get the MaterialOnMesh
+     * @brief Get the MaterialField
      */
-    MaterialOnMeshPtr getMaterialOnMesh() const {
-        if ( _materOnMesh == nullptr )
-            throw std::runtime_error( "MaterialOnMesh is not set" );
-        return _materOnMesh;
+    MaterialFieldPtr getMaterialField() const {
+        if ( _materialField == nullptr )
+            throw std::runtime_error( "MaterialField is not set" );
+        return _materialField;
     };
 
     /**
@@ -128,11 +128,11 @@ public:
     void setEmpty( bool bEmpty ) { _isEmpty = bEmpty; };
 
     /**
-     * @brief Set the MaterialOnMesh
-     * @param currentMater MaterialOnMesh
+     * @brief Set the MaterialField
+     * @param currentMater MaterialField
      */
-    void setMaterialOnMesh( const MaterialOnMeshPtr &currentMater ) {
-        _materOnMesh = currentMater;
+    void setMaterialField( const MaterialFieldPtr &currentMater ) {
+        _materialField = currentMater;
     };
 
     /**

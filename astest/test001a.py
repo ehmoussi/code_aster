@@ -31,9 +31,9 @@ test.assertEqual(model.getType(), "MODELE_SDASTER")
 model.addModelingOnAllMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
-model.setSplittingMethod(code_aster.ModelSplitingMethod.GroupOfElements)
+model.setSplittingMethod(code_aster.ModelSplitingMethod.GroupOfCells)
 test.assertEqual(model.getSplittingMethod(),
-                 code_aster.ModelSplitingMethod.GroupOfElements)
+                 code_aster.ModelSplitingMethod.GroupOfCells)
 
 model.setSplittingMethod(code_aster.ModelSplitingMethod.Centralized)
 test.assertEqual(model.getSplittingMethod(),
@@ -55,7 +55,7 @@ with test.assertRaises(NameError):
     mesh
 
 mesh2 = model.getMesh()
-test.assertTrue(mesh2.hasGroupOfElements('Tout'))
+test.assertTrue(mesh2.hasGroupOfCells('Tout'))
 
 # Vérification du debug
 mesh2.debugPrint(66)

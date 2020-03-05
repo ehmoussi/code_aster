@@ -29,7 +29,7 @@
 #include "Supervis/ResultNaming.h"
 
 PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
-    const std::string jeveuxName, const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    const std::string jeveuxName, const ModelPtr &model, const MaterialFieldPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
     : DataStructure( jeveuxName, 8, "CABL_PRECONT" ), _model( model ), _mater( mater ),
       _cara( cara ),
@@ -40,7 +40,7 @@ PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
       _lirela( new ListOfLinearRelationsReal( getName() + ".LIRELA    " ) ), _isEmpty( true ) {}
 
 PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
-    const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    const ModelPtr &model, const MaterialFieldPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
     : PrestressingCableDefinitionClass::PrestressingCableDefinitionClass(
           ResultNaming::getNewResultName(), model, mater, cara ) {}
