@@ -248,7 +248,7 @@ EVOL = STAT_NON_LINE(INFO=1,
      RESI_GLOB_RELA = 1.E-6,
      ITER_GLOB_MAXI = 12,
      ),
-  SOLVEUR    = _F(METHODE = 'MUMPS',),
+  SOLVEUR    = _F(METHODE = 'MUMPS',NPREC=-1,),
   ARCHIVAGE = _F(
     LIST_INST      = INS_ARCH
     )
