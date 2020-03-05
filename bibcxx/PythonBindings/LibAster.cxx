@@ -115,7 +115,7 @@ namespace py = boost::python;
 #include "PythonBindings/ConstantFieldOnCellsInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
-#include "PythonBindings/PrestressingCableDefinitionInterface.h"
+#include "PythonBindings/PrestressingCableInterface.h"
 #include "PythonBindings/ResultInterface.h"
 #include "PythonBindings/ResultNamingInterface.h"
 #include "PythonBindings/SimpleFieldOnCellsInterface.h"
@@ -252,7 +252,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportGeneralizedModelToPython();
     exportModelToPython();
     exportPhysicsAndModelingsToPython();
-    exportPrestressingCableDefinitionToPython();
+    exportPrestressingCableToPython();
     exportXfemCrackToPython();
     exportBehaviourToPython();
     exportDrivingToPython();

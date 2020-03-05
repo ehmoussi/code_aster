@@ -19,14 +19,14 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ...Objects import PrestressingCableDefinition
+from ...Objects import PrestressingCable
 from ...Supervis import ExecuteCommand
 from .defi_cable_op_cata import DEFI_CABLE_OP_CATA
 
 
 class DefiCableOp(ExecuteCommand):
     """Command that defines the
-    :class:`~code_aster.Objects.PrestressingCableDefinition` on a
+    :class:`~code_aster.Objects.PrestressingCable` on a
     :class:`~code_aster.Objects.Mesh`."""
     command_name = "DEFI_CABLE_OP"
     command_cata = DEFI_CABLE_OP_CATA
@@ -37,7 +37,7 @@ class DefiCableOp(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = PrestressingCableDefinition(keywords["MODELE"],
+        self._result = PrestressingCable(keywords["MODELE"],
                                                    keywords["CHAM_MATER"],
                                                    keywords["CARA_ELEM"])
 

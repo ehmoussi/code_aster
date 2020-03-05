@@ -28,7 +28,7 @@
 #include "Functions/Function.h"
 #include "Geometry/Geometry.h"
 #include "Loads/PhysicalQuantity.h"
-#include "Modeling/XfemCrack.h"
+#include "Crack/XfemCrack.h"
 #include "Utilities/CapyConvertibleValue.h"
 
 /**

@@ -1,9 +1,9 @@
-#ifndef PRESTRESSINGCABLEDEFINITIONINTERFACE_H_
-#define PRESTRESSINGCABLEDEFINITIONINTERFACE_H_
+#ifndef PRESTRESSINGCABLEINTERFACE_H_
+#define PRESTRESSINGCABLEINTERFACE_H_
 
 /**
- * @file PrestressingCableDefinitionInterface.h
- * @brief Fichier entete de la classe PrestressingCableDefinitionInterface
+ * @file PrestressingCableInterface.h
+ * @brief Fichier entete de la classe PrestressingCableInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -25,8 +25,8 @@
  */
 
 #include "astercxx.h"
-#include "Modeling/PrestressingCableDefinition.h"
+#include "Modeling/PrestressingCable.h"
 
-void exportPrestressingCableDefinitionToPython();
+void exportPrestressingCableToPython();
 
-#endif /* PRESTRESSINGCABLEDEFINITIONINTERFACE_H_ */
+#endif /* PRESTRESSINGCABLEINTERFACE_H_ */

@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Modeling/XfemCrack.h"
+#include "Crack/XfemCrack.h"
 
 void exportXfemCrackToPython();
 

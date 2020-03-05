@@ -1,9 +1,9 @@
-#ifndef PRESTRESSINGCABLEDEFINITION_H_
-#define PRESTRESSINGCABLEDEFINITION_H_
+#ifndef PRESTRESSINGCABLE_H_
+#define PRESTRESSINGCABLE_H_
 
 /**
- * @file PrestressingCableDefinition.h
- * @brief Fichier entete de la classe PrestressingCableDefinition
+ * @file PrestressingCable.h
+ * @brief Fichier entete de la classe PrestressingCable
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -40,12 +40,12 @@
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class PrestressingCableDefinitionClass
+ * @class PrestressingCableClass
  * @brief Produit une sd identique a celle produite par DEFI_CABLE_BP
  * @author Nicolas Sellenet
  * @todo ajouter un test pour valider des qu'on aura les macros
  */
-class PrestressingCableDefinitionClass : public DataStructure {
+class PrestressingCableClass : public DataStructure {
   private:
     ModelPtr _model;
     ElementaryCharacteristicsPtr _cara;
@@ -64,18 +64,18 @@ class PrestressingCableDefinitionClass : public DataStructure {
 
   public:
     /**
-     * @typedef PrestressingCableDefinition
-     * @brief Pointeur intelligent vers un PrestressingCableDefinitionClass
+     * @typedef PrestressingCable
+     * @brief Pointeur intelligent vers un PrestressingCableClass
      */
-    typedef boost::shared_ptr< PrestressingCableDefinitionClass > PrestressingCableDefinitionPtr;
+    typedef boost::shared_ptr< PrestressingCableClass > PrestressingCablePtr;
 
     /**
      * @brief Constructeur
      */
-    PrestressingCableDefinitionClass( const ModelPtr &, const MaterialFieldPtr &,
+    PrestressingCableClass( const ModelPtr &, const MaterialFieldPtr &,
                                          const ElementaryCharacteristicsPtr & );
 
-    PrestressingCableDefinitionClass( const std::string jeveuxName, const ModelPtr &,
+    PrestressingCableClass( const std::string jeveuxName, const ModelPtr &,
                                          const MaterialFieldPtr &,
                                          const ElementaryCharacteristicsPtr & );
 
@@ -95,9 +95,9 @@ class PrestressingCableDefinitionClass : public DataStructure {
 };
 
 /**
- * @typedef PrestressingCableDefinition
- * @brief Pointeur intelligent vers un PrestressingCableDefinitionClass
+ * @typedef PrestressingCable
+ * @brief Pointeur intelligent vers un PrestressingCableClass
  */
-typedef boost::shared_ptr< PrestressingCableDefinitionClass > PrestressingCableDefinitionPtr;
+typedef boost::shared_ptr< PrestressingCableClass > PrestressingCablePtr;
 
-#endif /* PRESTRESSINGCABLEDEFINITION_H_ */
+#endif /* PRESTRESSINGCABLE_H_ */

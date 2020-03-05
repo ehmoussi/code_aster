@@ -1,7 +1,7 @@
 /**
- * @file CrackTip.cxx
- * @brief Implementation de CrackTipClass
- * @author Nicolas Sellenet
+ * @file Crack.cxx
+ * @brief Implementation de CrackClass
+ * @author Nicolas Pignet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
@@ -21,12 +21,12 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+/* person_in_charge: nicolas.pignet at edf.fr */
 
-#include "Modeling/CrackTip.h"
+#include "Crack/Crack.h"
 
-CrackTipClass::CrackTipClass( const std::string name )
-    : DataStructure( name, 8, "FOND_FISS", Permanent ),
+CrackClass::CrackClass( const std::string name )
+    : DataStructure( name, 8, "FOND_FISSURE", Permanent ),
       _info( JeveuxVectorChar8( getName() + ".INFO" ) ),
       _fondFiss( JeveuxVectorReal( getName() + ".FONDFISS" ) ),
       _fondType( JeveuxVectorChar8( getName() + ".FOND.TYPE" ) ),
