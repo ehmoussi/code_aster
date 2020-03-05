@@ -135,7 +135,7 @@ class RunAster:
         elif nbcomm > 1:
             os.makedirs("BASE_PREC", exist_ok=True)
 
-        timeout = self.export.get("time_limit") * 1.05
+        timeout = self.export.get("time_limit", 0) * 1.25
         status = Status()
         for idx, comm in enumerate(commfiles):
             last = idx + 1 == nbcomm
