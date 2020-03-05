@@ -19,11 +19,11 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import ContactDefinition
+from ..Objects import Contact
 from ..Supervis import ExecuteCommand
 
 
-class ContactDefinitionAssignment(ExecuteCommand):
+class ContactAssignment(ExecuteCommand):
     """Command that creates the :class:`~code_aster.Objects.XXXXContact` by assigning
     finite elements"""
     command_name = "DEFI_CONTACT"
@@ -34,7 +34,7 @@ class ContactDefinitionAssignment(ExecuteCommand):
         Arguments:
             keywords (dict): Keywords arguments of user's keywords.
         """
-        self._result = ContactDefinition()
+        self._result = Contact()
 
     # def post_exec(self, keywords):
     #     """Execute the command.
@@ -45,4 +45,4 @@ class ContactDefinitionAssignment(ExecuteCommand):
     #     self._result.setMesh(keywords["MAILLAGE"])
 
 
-DEFI_CONTACT = ContactDefinitionAssignment.run
+DEFI_CONTACT = ContactAssignment.run

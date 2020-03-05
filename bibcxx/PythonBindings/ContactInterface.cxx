@@ -1,6 +1,6 @@
 /**
- * @file ContactDefinition.cxx
- * @brief Implementation de ContactDefinition
+ * @file ContactInterface.cxx
+ * @brief Interface python de Contact
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,4 +21,19 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Interactions/ContactDefinition.h"
+/* person_in_charge: nicolas.sellenet at edf.fr */
+
+#include <boost/python.hpp>
+
+namespace py = boost::python;
+#include <PythonBindings/factory.h>
+#include "PythonBindings/ContactInterface.h"
+
+void exportContactToPython() {
+
+    py::class_< ContactClass, ContactClass::ContactPtr,
+            py::bases< DataStructure > >( "Contact", py::no_init )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ContactClass >))
+        .def( "__init__",
+              py::make_constructor(&initFactoryPtr< ContactClass, std::string >));
+};

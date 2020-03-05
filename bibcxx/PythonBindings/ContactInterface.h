@@ -1,9 +1,9 @@
-#ifndef CONTACTDEFINITIONINTERFACE_H_
-#define CONTACTDEFINITIONINTERFACE_H_
+#ifndef CONTACTINTERFACE_H_
+#define CONTACTINTERFACE_H_
 
 /**
- * @file ContactDefinitionInterface.h
- * @brief Fichier entete de la classe ContactDefinitionInterface
+ * @file ContactInterface.h
+ * @brief Fichier entete de la classe ContactInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -25,8 +25,8 @@
  */
 
 #include "astercxx.h"
-#include "Interactions/ContactDefinition.h"
+#include "Contact/Contact.h"
 
-void exportContactDefinitionToPython();
+void exportContactToPython();
 
-#endif /* CONTACTDEFINITIONINTERFACE_H_ */
+#endif /* CONTACTINTERFACE_H_ */

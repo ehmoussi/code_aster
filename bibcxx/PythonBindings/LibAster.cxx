@@ -39,7 +39,7 @@ namespace py = boost::python;
 #include "PythonBindings/BehaviourInterface.h"
 #include "PythonBindings/BucklingModeResultInterface.h"
 #include "PythonBindings/CombinedFourierResultInterface.h"
-#include "PythonBindings/ContactDefinitionInterface.h"
+#include "PythonBindings/ContactInterface.h"
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
 #include "PythonBindings/CrackInterface.h"
 #include "PythonBindings/CrackShapeInterface.h"
@@ -219,7 +219,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportFormulaToPython();
     exportFortranToPython();
     exportSurfaceToPython();
-    exportContactDefinitionToPython();
+    exportContactToPython();
     exportAssemblyMatrixToPython();
     exportElementaryMatrixToPython();
     exportElementaryVectorToPython();
