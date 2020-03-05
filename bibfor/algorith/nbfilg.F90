@@ -224,16 +224,10 @@ character(len=16) :: compor(*), option
         pp = pm+pd
 !
 ! - CALCUL DES FONCTIONS A, B,... DETERMINANT LA RELATION LIANT G ET J
-        print*, "g", g, npg, axi, r, ndim, iw,w, nno1
-
-        print*,"depl", deplm, deplp
-        print*,"vf", vff1(1:nno1, g)
+!
         call nirela(2, jp, gm, gp, am,&
                     ap, bp, boa, aa, bb,&
                     daa, dbb, dboa, d2boa, iret)
-        print*,"fi",  2, jp, gm, gm, am,&
-                    ap, bp, boa, aa, bb,&
-                    daa, dbb, dboa, d2boa, iret
 !
         if(iret .ne. 0) then
             codret = 1
@@ -273,7 +267,6 @@ character(len=16) :: compor(*), option
                     dtde, sigm(1, g), .false._1, 'RIGI', mate,&
                     instp, angmas, gn, lamb, logl,&
                     sigp(1, g), dsidep, pk2m, pk2, cod(g))
-        print*,"stress", sigp(1:2*ndim, g)
 !
         if (cod(g) .eq. 1) then
             codret = 1
