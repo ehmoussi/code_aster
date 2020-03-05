@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set_prefix() {
+    local this=$(readlink -n -f "$1")
+    prefix=$(dirname $(dirname "${this}"))
+}
+
+set_prefix "$0"
+
+source "${prefix}/share/aster/profile.sh"
+python3 "${prefix}/bin/run_ctest_main" "${@}"
+exit ${?}
