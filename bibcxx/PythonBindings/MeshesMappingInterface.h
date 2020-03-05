@@ -2,7 +2,7 @@
 #define MATCHINGMESHESINTERFACE_H_
 
 /**
- * @file MatchingMeshesInterface.h
+ * @file MeshesMappingInterface.h
  * @brief Fichier entete de la classe MatchingMeshInterface
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -25,8 +25,8 @@
  */
 
 #include "astercxx.h"
-#include "Meshes/MatchingMeshes.h"
+#include "Meshes/MeshesMapping.h"
 
-void exportMatchingMeshesToPython();
+void exportMeshesMappingToPython();
 
 #endif /* MATCHINGMESHESINTERFACE_H_ */

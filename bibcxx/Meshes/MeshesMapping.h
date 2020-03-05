@@ -2,8 +2,8 @@
 #define MATCHINGMESHES_H_
 
 /**
- * @file MatchingMeshes.h
- * @brief Fichier entete de la classe MatchingMeshes
+ * @file MeshesMapping.h
+ * @brief Fichier entete de la classe MeshesMapping
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -33,11 +33,11 @@
 #include "Meshes/Mesh.h"
 
 /**
- * @class MatchingMeshesClass
+ * @class MeshesMappingClass
  * @brief Cette classe decrit un corresp_2_mailla
  * @author Nicolas Sellenet
  */
-class MatchingMeshesClass : public DataStructure {
+class MeshesMappingClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.PJXX_K1' */
     JeveuxVectorChar24 _pjxxK1;
@@ -66,15 +66,15 @@ class MatchingMeshesClass : public DataStructure {
 
   public:
     /**
-     * @typedef MatchingMeshesPtr
-     * @brief Pointeur intelligent vers un MatchingMeshesClass
+     * @typedef MeshesMappingPtr
+     * @brief Pointeur intelligent vers un MeshesMappingClass
      */
-    typedef boost::shared_ptr< MatchingMeshesClass > MatchingMeshesPtr;
+    typedef boost::shared_ptr< MeshesMappingClass > MeshesMappingPtr;
 
     /**
      * @brief Constructeur
      */
-    MatchingMeshesClass( const std::string name = ResultNaming::getNewResultName() );
+    MeshesMappingClass( const std::string name = ResultNaming::getNewResultName() );
 
     bool setFirstMesh( MeshPtr &currentMesh ) {
         if ( currentMesh->isEmpty() )
@@ -85,9 +85,9 @@ class MatchingMeshesClass : public DataStructure {
 };
 
 /**
- * @typedef MatchingMeshesPtr
- * @brief Pointeur intelligent vers un MatchingMeshesClass
+ * @typedef MeshesMappingPtr
+ * @brief Pointeur intelligent vers un MeshesMappingClass
  */
-typedef boost::shared_ptr< MatchingMeshesClass > MatchingMeshesPtr;
+typedef boost::shared_ptr< MeshesMappingClass > MeshesMappingPtr;
 
 #endif /* MATCHINGMESHES_H_ */

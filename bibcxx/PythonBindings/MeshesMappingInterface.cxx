@@ -1,6 +1,6 @@
 /**
- * @file MatchingMeshesInterface.cxx
- * @brief Interface python de MatchingMeshes
+ * @file MeshesMappingInterface.cxx
+ * @brief Interface python de MeshesMapping
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,18 +21,18 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/MatchingMeshesInterface.h"
+#include "PythonBindings/MeshesMappingInterface.h"
 #include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 namespace py = boost::python;
 
-void exportMatchingMeshesToPython() {
+void exportMeshesMappingToPython() {
 
-    py::class_< MatchingMeshesClass, MatchingMeshesClass::MatchingMeshesPtr,
-            py::bases< DataStructure > >( "MatchingMeshes", py::no_init )
-        .def( "__init__", py::make_constructor( &initFactoryPtr< MatchingMeshesClass > ) )
+    py::class_< MeshesMappingClass, MeshesMappingClass::MeshesMappingPtr,
+            py::bases< DataStructure > >( "MeshesMapping", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< MeshesMappingClass > ) )
         .def( "__init__",
-              py::make_constructor( &initFactoryPtr< MatchingMeshesClass, std::string > ) )
-        .def( "setFirstMesh", &MatchingMeshesClass::setFirstMesh );
+              py::make_constructor( &initFactoryPtr< MeshesMappingClass, std::string > ) )
+        .def( "setFirstMesh", &MeshesMappingClass::setFirstMesh );
 };
