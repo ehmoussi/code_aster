@@ -27,7 +27,7 @@
 #include "astercxx.h"
 
 #include "Results/ModeResult.h"
-#include "LinearAlgebra/StructureInterface.h"
+#include "Interfaces/StructureInterface.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 

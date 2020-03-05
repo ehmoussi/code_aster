@@ -27,7 +27,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "Discretization/DiscreteProblem.h"
-#include "LinearAlgebra/LinearSolver.h"
+#include "Solvers/LinearSolver.h"
 #include "Results/Result.h"
 #include "Loads/ListOfLoads.h"
 #include "Materials/CalculationExternalVariable.h"

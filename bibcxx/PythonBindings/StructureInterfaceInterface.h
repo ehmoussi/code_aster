@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "LinearAlgebra/StructureInterface.h"
+#include "Interfaces/StructureInterface.h"
 
 void exportStructureInterfaceToPython();
 

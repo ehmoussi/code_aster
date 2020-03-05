@@ -1,7 +1,7 @@
 /**
- * @file SolverControl.cxx
- * @brief Control class to eval the convergence status of an iterative solver
- * @author Natacha Béreux
+ * @file ModalBasis.cxx
+ * @brief
+ * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
@@ -21,22 +21,29 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge:  natacha.bereux at edf.fr */
+/* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
+#include "Modal/ModalBasis.h"
 
-#include "LinearAlgebra/SolverControl.h"
+bool GenericModalBasisClass::build() {
+    CommandSyntax cmdSt( "DEFI_BASE_MODALE" );
+    cmdSt.setResult( getName(), "MODE_MECA" );
 
-SolverControlClass::SolverControlClass( double rTol, ASTERINTEGER nIterMax )
-    : _relativeTol( rTol ), _nIterMax( nIterMax ) {}
+    CapyConvertibleSyntax syntax;
+    CapyConvertibleContainer solverSyntaxContainer( "SOLVEUR", _solver->getListOfParameters() );
+    syntax.addCapyConvertibleContainer( solverSyntaxContainer );
+    for ( const auto &iter : _vectorOfModalBasis )
+        syntax.addCapyConvertibleContainer( iter._container );
 
-ConvergenceState SolverControlClass::check( const double relativeResNorm,
-                                               const ASTERINTEGER iter ) const {
-    if ( abs( relativeResNorm ) <= _relativeTol ) {
-        return success;
+    cmdSt.define( syntax );
+
+    try {
+        ASTERINTEGER op = 99;
+        CALL_EXECOP( &op );
+    } catch ( ... ) {
+        throw;
     }
-    if ( iter >= _nIterMax ) {
-        return failure;
-    }
-    return iterate;
-}
+    _isEmpty = false;
+
+    return true;
+};

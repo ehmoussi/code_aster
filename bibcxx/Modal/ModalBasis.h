@@ -2,8 +2,8 @@
 #define MODALBASISDEFINITION_H_
 
 /**
- * @file ModalBasisDefinition.h
- * @brief Fichier entete de la classe ModalBasisDefinition
+ * @file ModalBasis.h
+ * @brief Fichier entete de la classe ModalBasis
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -27,10 +27,10 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "LinearAlgebra/StructureInterface.h"
+#include "Interfaces/StructureInterface.h"
 #include "Utilities/CapyConvertibleValue.h"
-#include "LinearAlgebra/LinearSolver.h"
-#include "LinearAlgebra/StructureInterface.h"
+#include "Solvers/LinearSolver.h"
+#include "Interfaces/StructureInterface.h"
 #include "Results/ModeResult.h"
 #include "Numbering/DOFNumbering.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
@@ -169,7 +169,7 @@ class GenericModalBasisClass : public DataStructure {
 };
 
 /**
- * @typedef ModalBasisDefinitionPtr
+ * @typedef ModalBasisPtr
  * @brief Enveloppe d'un pointeur intelligent vers un GenericModalBasisClass
  */
 typedef boost::shared_ptr< GenericModalBasisClass > GenericModalBasisPtr;

@@ -99,7 +99,7 @@ namespace py = boost::python;
 #include "PythonBindings/MechanicalLoadInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 #include "PythonBindings/MeshInterface.h"
-#include "PythonBindings/ModalBasisDefinitionInterface.h"
+#include "PythonBindings/ModalBasisInterface.h"
 #include "PythonBindings/ModelInterface.h"
 #include "PythonBindings/ModeResultInterface.h"
 #include "PythonBindings/MPIInfosInterface.h"
@@ -227,7 +227,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportGeneralizedAssemblyVectorToPython();
     exportInterspectralMatrixToPython();
     exportLinearSolverToPython();
-    exportModalBasisDefinitionToPython();
+    exportModalBasisToPython();
     exportStructureInterfaceToPython();
     exportAcousticLoadToPython();
     exportKinematicsLoadToPython();

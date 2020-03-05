@@ -28,7 +28,7 @@
 #include "astercxx.h"
 
 #include "Algorithms/TimeStepper.h"
-#include "LinearAlgebra/LinearSolver.h"
+#include "Solvers/LinearSolver.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
 #include "Loads/MechanicalLoad.h"

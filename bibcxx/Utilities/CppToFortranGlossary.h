@@ -29,7 +29,7 @@
 
 #include "Modeling/PhysicsAndModelings.h"
 #include "Loads/PhysicalQuantity.h"
-#include "LinearAlgebra/AllowedLinearSolver.h"
+#include "Solvers/AllowedLinearSolver.h"
 
 /**
  * @class Glossary

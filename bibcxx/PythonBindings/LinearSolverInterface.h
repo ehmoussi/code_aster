@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "LinearAlgebra/LinearSolver.h"
+#include "Solvers/LinearSolver.h"
 
 void exportLinearSolverToPython();
 

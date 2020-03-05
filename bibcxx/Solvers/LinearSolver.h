@@ -31,7 +31,7 @@
 
 #include "DataFields/FieldOnNodes.h"
 #include "DataStructures/DataStructure.h"
-#include "LinearAlgebra/AllowedLinearSolver.h"
+#include "Solvers/AllowedLinearSolver.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Supervis/ResultNaming.h"

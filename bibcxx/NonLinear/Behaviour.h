@@ -27,7 +27,7 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 #include "astercxx.h"
 
-#include "LinearAlgebra/SolverControl.h"
+#include "Solvers/SolverControl.h"
 #include "Materials/MaterialOnMesh.h"
 #include "Meshes/MeshEntities.h"
 #include "NonLinear/AllowedBehaviour.h"
