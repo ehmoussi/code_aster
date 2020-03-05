@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+"""
+    %(prog)s [options]
+
+Execute testcases using 'ctest'.
+All options that are not listed below are passed to 'ctest'.
+Use 'ctest --help' for details.
+
+"""
+
+import argparse
+import os
+import os.path as osp
+import re
+import sys
+import tempfile
+from glob import glob
+from subprocess import PIPE, run
+
+__DOC__ = __doc__
+ROOT = osp.dirname(osp.dirname(osp.abspath(__file__)))
+
+
+def parse_args(argv):
+    """Parse command line arguments.
+
+    Arguments:
+        argv (list): List of command line arguments.
+    """
+    # command arguments parser
+    parser = argparse.ArgumentParser(
+        usage=__DOC__,
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-j', '--jobs', action='store',
+                        type=int, default=get_nbprocs(),
+                        help="Run the tests in parallel using the given "
+                             "number of jobs")
+    parser.add_argument('--testlist', action='store',
+                        metavar="FILE|verification|verification_intra|"
+                                "verification_all|validation|interact|submit",
+                        help="List of testcases to run")
+    parser.add_argument('--resutest', action='store',
+                        help="Directory to write the results of the testcases "
+                             "(relative to the current directory).")
+    parser.add_argument('--clean', action='store_true', default='auto',
+                        help="Remove the content of 'resutest' directory "
+                             "before starting (default: auto)")
+    parser.add_argument('--no-clean', action='store_false', dest="clean",
+                        help="do not remove the content of 'resutest' "
+                             "directory")
+    parser.add_argument('--rerun-failed', action='store_true',
+                        help="Run only the tests that failed previously")
+    parser.add_argument('-L', '--label-regex', action='store',
+                        nargs="*", default=[],
+                        help="Run tests with labels matching regular "
+                             "expression")
+    # parser.add_argument('--repeat', action='store', default="until-pass:2",
+    #                     help="todo: check required ctest version")
+
+    args, others = parser.parse_known_args(argv)
+    if not args.resutest:
+        parser.error("'--resutest' argument is required")
+
+    # args to be re-inject for ctest
+    if args.rerun_failed:
+        others.append("--rerun-failed")
+    others.extend(["-j", str(args.jobs)])
+    return args, others
+
+
+def main(argv=None):
+    """Entry point for testcases runner.
+
+    Arguments:
+        argv (list): List of command line arguments.
+    """
+    args, ctest_args = parse_args(argv or sys.argv[1:])
+
+    use_tmp = args.resutest == 'NONE'
+    if use_tmp:
+        resutest = tempfile.mkdtemp(prefix='resutest_')
+    else:
+        resutest = osp.join(ROOT, args.resutest)
+
+    if args.clean and not args.rerun_failed: # clean = True or 'auto'
+        if args.clean == "auto" and osp.exists(args.resutest) and not use_tmp:
+            print(f"{args.resutest} will be removed.")
+            answ = input("do you want to continue (y/n) ?")
+            if answ.lower() not in ('y', 'o'):
+                print("interrupt by user")
+                sys.exit(1)
+        run(["rm", "-rf", osp.join(args.resutest, '*')])
+
+    if not osp.exists(args.resutest):
+        resutest = osp.join(os.getcwd(), args.resutest)
+        os.makedirs(resutest, exist_ok=True)
+
+    # create CTestTestfile.cmake
+    labels = create_ctest_file(args.testlist or "",
+                               osp.join(resutest, "CTestTestfile.cmake"))
+    if True:
+        labels.add("sequential")
+    if labels or args.label_regex:
+        labels.update(args.label_regex)
+        ctest_args.extend(["-L", ".*".join(sorted(labels))])
+
+    # execute ctest
+    os.chdir(resutest)
+    cmd = ["ctest"] + ctest_args
+    print("execute:", " ".join(cmd))
+    proc = run(cmd)
+    if use_tmp:
+        run("rm", "-rf", resutest)
+    return proc.returncode
+
+
+def create_ctest_file(testlist, filename):
+    """Create the CTestTestfile.cmake file.
+
+    Arguments:
+        testlist (str): Labels of testlists (comma separated) or a file
+            containing a list of testcases.
+        filename (str): Destination for the 'ctest' file.
+
+    Returns:
+        set[str]: List of labels.
+    """
+    datadir = osp.normpath(osp.join(ROOT, "share", "aster"))
+    bindir = osp.normpath(osp.join(ROOT, "bin"))
+    testdir = osp.join(datadir, "tests")
+    assert osp.isdir(testdir), f"no such directory {testdir}"
+    labels = set()
+    if osp.isfile(testlist):
+        with open(testlist, "r") as fobj:
+            ltests = fobj.read().split()
+    else:
+        ltests = [osp.splitext(osp.basename(i))[0]
+                  for i in glob(osp.join(testdir, "*.export"))]
+        if testlist:
+            labels.update([i.strip() for i in testlist.split(",")])
+
+    re_list = re.compile("P +testlist +(.*)$", re.M)
+    text = []
+    for testname in ltests:
+        exp = osp.join(testdir, testname + ".export")
+        with open(exp, "r") as fexp:
+            mat = re_list.search(fexp.read())
+        if mat:
+            lst = sorted(mat.group(1).split())
+            testname = osp.splitext(osp.basename(exp))[0]
+            text.append(CTEST_DEF.format(testname=testname,
+                                         labels=" ".join(lst),
+                                         ASTERDATADIR=datadir,
+                                         BINDIR=bindir))
+    with open(filename, "w") as fobj:
+        fobj.write("\n".join(text))
+    return labels
+
+
+CTEST_DEF = """
+set(TEST_NAME ASTER_{testname})
+add_test(${{TEST_NAME}} {BINDIR}/run_aster --ctest {ASTERDATADIR}/tests/{testname}.export)
+set_tests_properties(${{TEST_NAME}} PROPERTIES LABELS "ASTER {labels}")
+"""
+
+def _build_def(env, path):
+    if not osp.isdir(osp.join(path, 'astest')):
+        return ""
+    re_list = re.compile("P +testlist +(.*)$", re.M)
+    text = []
+    for exp in glob(osp.join(path, 'astest', '*.export')):
+        with open(exp, "r") as fobj:
+            mat = re_list.search(fobj.read())
+        if mat:
+            lst = sorted(mat.group(1).split())
+            testname = osp.splitext(osp.basename(exp))[0]
+            text.append(CTEST_DEF.format(testname=testname,
+                                         labels=" ".join(lst),
+                                         ASTERDATADIR=env.ASTERDATADIR,
+                                         BINDIR=env.BINDIR))
+    return "\n".join(text)
+
+
+def get_nbprocs():
+    """Return the number of available processors.
+
+    Return:
+        int: Number of processors.
+    """
+    proc = run(['nproc'], stdout=PIPE, universal_newlines=True)
+    try:
+        value = int(proc.stdout.strip())
+    except ValueError:
+        value = 1
+    return value
+
+if __name__ == '__main__':
+    sys.exit(main())
