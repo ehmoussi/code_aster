@@ -2,8 +2,8 @@
 #define EXTERNALVARIABLECONVERTER_H_
 
 /**
- * @file ExternalVariableConverterClass.h
- * @brief Fichier entete de la classe ExternalVariableConverterClass
+ * @file ExternalVariablesConverterClass.h
+ * @brief Fichier entete de la classe ExternalVariablesConverterClass
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -29,11 +29,11 @@
 #include "astercxx.h"
 
 /**
- * @class ExternalVariableConverterClass
+ * @class ExternalVariablesConverterClass
  * @brief Input variable converter
  * @author Nicolas Sellenet
  */
-class ExternalVariableConverterClass
+class ExternalVariablesConverterClass
 {
   private:
     class Container
@@ -129,9 +129,9 @@ class ExternalVariableConverterClass
 };
 
 /**
- * @typedef ExternalVariableConverterPtr
- * @brief Pointeur intelligent vers un ExternalVariableConverterClass
+ * @typedef ExternalVariablesConverterPtr
+ * @brief Pointeur intelligent vers un ExternalVariablesConverterClass
  */
-typedef boost::shared_ptr< ExternalVariableConverterClass > ExternalVariableConverterPtr;
+typedef boost::shared_ptr< ExternalVariablesConverterClass > ExternalVariablesConverterPtr;
 
 #endif /* EXTERNALVARIABLECONVERTER_H_ */

@@ -56,7 +56,7 @@ ParallelMechanicalLoadClass::transferConstantFieldOnCells( const ConstantFieldOn
                                                             ConstantFieldOnCellsRealPtr& fieldOut )
 
 {
-    const auto& toKeep = _FEDesc->getDelayedElementsToKeep();
+    const auto& toKeep = _FEDesc->getDelayedCellsToKeep();
 
     std::string savedName( "" );
     fieldOut->allocate( Permanent, fieldIn );
@@ -73,7 +73,7 @@ ParallelMechanicalLoadClass::transferConstantFieldOnCells( const ConstantFieldOn
         savedName = curFEDesc->getName();
 
         VectorLong toCopy;
-        for( const auto& num : zone.getListOfElements() )
+        for( const auto& num : zone.getListOfCells() )
         {
             if( toKeep[ -num - 1 ] != 1 )
                 toCopy.push_back( toKeep[ -num - 1 ] );

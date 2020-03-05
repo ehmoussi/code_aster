@@ -132,7 +132,7 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
     }
     VectorReal completeCoords;
     VectorLong completeMatchingNumbering;
-    VectorLong completeElementsType;
+    VectorLong completeCellsType;
     std::vector<VectorLong> completeConnectivity;
     int completeConnectivitySize = 0;
     int offset = 0;
@@ -196,14 +196,14 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
         if( proc == rank )
         {
             aster_mpi_bcast( elementsType.data(), taille, MPI_LONG, proc, commWorld );
-            completeElementsType.insert( completeElementsType.end(),
+            completeCellsType.insert( completeCellsType.end(),
                                               elementsType.begin(), elementsType.end() );
         }
         else
         {
             VectorLong buffer( taille, 0. );
             aster_mpi_bcast( buffer.data(), taille, MPI_LONG, proc, commWorld );
-            completeElementsType.insert( completeElementsType.end(),
+            completeCellsType.insert( completeCellsType.end(),
                                               buffer.begin(), buffer.end() );
         }
         taille = connectivity.size();
@@ -262,22 +262,22 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
     for( int position = 1; position <= nbNodes; ++position )
         _nameOfNodes->add( position, std::string( "N" + std::to_string( position ) ) );
 
-    _groupsOfNodes->allocate( Permanent, toFind2.size() );
+    _groupOfNodes->allocate( Permanent, toFind2.size() );
     for( const auto& nameOfGrp : toFind2 )
     {
         const auto& toCopy = gatheredMap[ nameOfGrp ];
-        _groupsOfNodes->allocateObjectByName( nameOfGrp, toCopy.size() );
-        _groupsOfNodes->getObjectFromName( nameOfGrp ).setValues( toCopy );
+        _groupOfNodes->allocateObjectByName( nameOfGrp, toCopy.size() );
+        _groupOfNodes->getObjectFromName( nameOfGrp ).setValues( toCopy );
     }
-    _nameOfElements->allocate( Permanent, nbElems );
+    _nameOfCells->allocate( Permanent, nbElems );
     _elementsType->allocate( Permanent, nbElems );
     _connectivity->allocateContiguous( Permanent, nbElems, completeConnectivitySize, Numbered );
     for( int position = 1; position <= nbElems; ++position )
     {
-        _nameOfElements->add( position, std::string( "M" + std::to_string( position ) ) );
+        _nameOfCells->add( position, std::string( "M" + std::to_string( position ) ) );
         _connectivity->allocateObject( completeConnectivity[position-1].size() );
         _connectivity->getObject( position ).setValues( completeConnectivity[position-1] );
-        (*_elementsType)[ position-1 ] = completeElementsType[position-1];
+        (*_elementsType)[ position-1 ] = completeCellsType[position-1];
     }
     CALLO_CARGEO( getName() );
 };

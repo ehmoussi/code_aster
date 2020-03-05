@@ -28,7 +28,7 @@ acier=DEFI_MATERIAU(ELAS=_F(E=200000.,
                     ECRO_LINE=_F(D_SIGM_EPSI=2000.,
                                  SY=200.,),);
 
-affectMat = code_aster.MaterialOnMesh(monMaillage)
+affectMat = code_aster.MaterialField(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.buildWithoutExternalVariable()
 

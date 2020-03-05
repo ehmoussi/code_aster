@@ -42,7 +42,7 @@ void exportDrivingToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< DrivingClass, DrivingTypeEnum >))
         // fake initFactoryPtr: not a DataStructure
         .def( "addObservationGroupOfNodes", &DrivingClass::addObservationGroupOfNodes )
-        .def( "addObservationGroupOfElements", &DrivingClass::addObservationGroupOfElements )
+        .def( "addObservationGroupOfCells", &DrivingClass::addObservationGroupOfCells )
         .def( "setDrivingDirectionOnCrack", &DrivingClass::setDrivingDirectionOnCrack )
         .def( "setMaximumValueOfDrivingParameter",
               &DrivingClass::setMaximumValueOfDrivingParameter )

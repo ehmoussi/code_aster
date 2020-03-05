@@ -16,9 +16,9 @@ monMaillage.readMedFile("xxParallelNonlinearMechanics003a")
 monModel = code_aster.Model(monMaillage)
 #monModel.addModelingOnAllMesh(
 #    code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
-monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
+monModel.addModelingOnGroupOfCells(code_aster.Physics.Mechanics,
                                     code_aster.Modelings.Tridimensional,"Vol")
-monModel.addModelingOnGroupOfElements(code_aster.Physics.Mechanics,
+monModel.addModelingOnGroupOfCells(code_aster.Physics.Mechanics,
                                     code_aster.Modelings.Tridimensional,"Surf5")
 
 monModel.build()
@@ -28,7 +28,7 @@ acier = DEFI_MATERIAU(ELAS=_F(E=200000.,
                       ECRO_LINE=_F(D_SIGM_EPSI=2000.,
                                    SY=200.,),)
 
-affectMat = code_aster.MaterialOnMesh(monMaillage)
+affectMat = code_aster.MaterialField(monMaillage)
 affectMat.addMaterialOnAllMesh(acier)
 affectMat.buildWithoutExternalVariable()
 

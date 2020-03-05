@@ -85,7 +85,7 @@ def post_newmark_ops(self, **args):
 
   ## possiblement à gérer par la suite le cas de plusieurs champs matériaux dans
   ## le RESULTAT
-  __ch_mat = RESULTAT.getMaterialOnMesh()
+  __ch_mat = RESULTAT.getMaterialField()
 
   __mail = DEFI_GROUP(reuse = __mail,
                 MAILLAGE = __mail,

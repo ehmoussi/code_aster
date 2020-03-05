@@ -33,7 +33,7 @@
 #include "Loads/ListOfLoads.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/ParallelMechanicalLoad.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "Modeling/Model.h"
 #include "Results/ElasticResult.h"
 #include "Supervis/Exceptions.h"
@@ -60,7 +60,7 @@ class LinearStaticAnalysisClass : public GenericAnalysis {
     /** @brief Modele */
     ModelPtr _model;
     /** @brief Champ de materiau a utiliser */
-    MaterialOnMeshPtr _materialOnMesh;
+    MaterialFieldPtr _materialField;
     /** @brief Solveur lineaire */
     BaseLinearSolverPtr _linearSolver;
     /** @brief Liste de pas de temps */
@@ -72,7 +72,7 @@ class LinearStaticAnalysisClass : public GenericAnalysis {
     /**
      * @brief Constructeur
      */
-    LinearStaticAnalysisClass( const ModelPtr &, const MaterialOnMeshPtr &,
+    LinearStaticAnalysisClass( const ModelPtr &, const MaterialFieldPtr &,
                                     const ElementaryCharacteristicsPtr &cara = nullptr );
 
     /**

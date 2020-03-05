@@ -2,8 +2,8 @@
 #define CALCULATIONEXTERNALVARIABLE_H_
 
 /**
- * @file CalculationExternalVariable.h
- * @brief Fichier entete de la classe CalculationExternalVariable
+ * @file ExternalVariablesComputation.h
+ * @brief Fichier entete de la classe ExternalVariablesComputation
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 #include "aster_fort.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "Materials/CodedMaterial.h"
 #include "Modeling/Model.h"
 #include "Discretization/ElementaryCharacteristics.h"
@@ -39,14 +39,14 @@
 #include "Numbering/DOFNumbering.h"
 
 /**
- * @class CalculationExternalVariableClass
+ * @class ExternalVariablesComputationClass
  * @brief Calculation Input Variables
  * @author Nicolas Sellenet
  */
-class CalculationExternalVariableClass : public DataStructure {
+class ExternalVariablesComputationClass : public DataStructure {
   private:
     ModelPtr _model;
-    MaterialOnMeshPtr _mater;
+    MaterialFieldPtr _mater;
     CodedMaterialPtr _codMater;
     ElementaryCharacteristicsPtr _elemCara;
     FieldOnCellsRealPtr _varRef;
@@ -60,22 +60,22 @@ class CalculationExternalVariableClass : public DataStructure {
 
   public:
     /**
-     * @typedef CalculationExternalVariablePtr
-     * @brief Pointeur intelligent vers un CalculationExternalVariable
+     * @typedef ExternalVariablesComputationPtr
+     * @brief Pointeur intelligent vers un ExternalVariablesComputation
      */
-    typedef boost::shared_ptr< CalculationExternalVariableClass > CalculationExternalVariablePtr;
+    typedef boost::shared_ptr< ExternalVariablesComputationClass > ExternalVariablesComputationPtr;
 
     /**
      * @brief Constructeur
      */
-    CalculationExternalVariableClass( const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    ExternalVariablesComputationClass( const ModelPtr &model, const MaterialFieldPtr &mater,
                                        const ElementaryCharacteristicsPtr &cara,
                                        const CodedMaterialPtr &codMater );
 
     /**
      * @brief Destructeur
      */
-    ~CalculationExternalVariableClass() { return; };
+    ~ExternalVariablesComputationClass() { return; };
 
     /**
      * @brief Compute Input Variables at a given time
@@ -91,9 +91,9 @@ class CalculationExternalVariableClass : public DataStructure {
 };
 
 /**
- * @typedef CalculationExternalVariablePtr
- * @brief Pointeur intelligent vers un CalculationExternalVariableClass
+ * @typedef ExternalVariablesComputationPtr
+ * @brief Pointeur intelligent vers un ExternalVariablesComputationClass
  */
-typedef boost::shared_ptr< CalculationExternalVariableClass > CalculationExternalVariablePtr;
+typedef boost::shared_ptr< ExternalVariablesComputationClass > ExternalVariablesComputationPtr;
 
 #endif /* CALCULATIONEXTERNALVARIABLE_H_ */

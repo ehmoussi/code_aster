@@ -1,6 +1,6 @@
 /**
- * @file MaterialBehaviour.cxx
- * @brief Implementation de GeneralMaterialBehaviourClass
+ * @file MaterialProperty.cxx
+ * @brief Implementation de BaseMaterialPropertyClass
  * @author Nicolas Sellenet
  * @todo autoriser le type Function pour les paramètres matériau
  * @section LICENCE
@@ -25,9 +25,9 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <stdexcept>
-#include "Materials/MaterialBehaviour.h"
+#include "Materials/BaseMaterialProperty.h"
 
-bool GeneralMaterialBehaviourClass::buildJeveuxVectors(
+bool BaseMaterialPropertyClass::buildJeveuxVectors(
     JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
     std::vector< JeveuxVectorReal > &userReals,
@@ -205,54 +205,13 @@ bool GeneralMaterialBehaviourClass::buildJeveuxVectors(
     return true;
 };
 
-bool GeneralMaterialBehaviourClass::buildTractionFunction( FunctionPtr &doubleValues ) const
+bool BaseMaterialPropertyClass::buildTractionFunction( FunctionPtr &doubleValues ) const
     {
     return true;
 };
 
-bool TractionMaterialBehaviourClass::buildTractionFunction( FunctionPtr &doubleValues ) const
-    {
-    ASTERINTEGER maxSize = 0, maxSize2 = 0;
-    std::string resName;
-    for ( auto curIter : _mapOfFunctionMaterialProperties ) {
-        std::string nameOfProperty = curIter.second.getName();
-        if ( curIter.second.hasValue() ) {
-            const auto func = curIter.second.getValue();
-            CALLO_RCSTOC_VERIF( func->getName(), nameOfProperty, _asterName, &maxSize2 );
-            const auto size = func->maximumSize();
-            if ( size > maxSize )
-                maxSize = size;
-            resName = curIter.second.getValue()->getResultName();
-        }
-    }
-    doubleValues->allocate( Permanent, maxSize );
-    doubleValues->setParameterName( "EPSI" );
-    doubleValues->setResultName( resName );
-    return true;
-};
 
-bool MetaTractionMaterialBehaviourClass::buildTractionFunction( FunctionPtr &doubleValues ) const
-    {
-    ASTERINTEGER maxSize = 0, maxSize2 = 0;
-    std::string resName;
-    for ( auto curIter : _mapOfFunctionMaterialProperties ) {
-        std::string nameOfProperty = curIter.second.getName();
-        if ( curIter.second.hasValue() ) {
-            const auto func = curIter.second.getValue();
-            CALLO_RCSTOC_VERIF( func->getName(), nameOfProperty, _asterName, &maxSize2 );
-            const auto size = func->maximumSize();
-            if ( size > maxSize )
-                maxSize = size;
-            resName = curIter.second.getValue()->getResultName();
-        }
-    }
-    doubleValues->allocate( Permanent, maxSize );
-    doubleValues->setParameterName( "EPSI" );
-    doubleValues->setResultName( resName );
-    return true;
-};
-
-int GeneralMaterialBehaviourClass::getNumberOfPropertiesWithValue() const {
+int BaseMaterialPropertyClass::getNumberOfPropertiesWithValue() const {
     int toReturn = 0;
     for ( auto curIter : _mapOfRealMaterialProperties )
         if ( curIter.second.hasValue() )
@@ -287,33 +246,4 @@ int GeneralMaterialBehaviourClass::getNumberOfPropertiesWithValue() const {
             ++toReturn;
 
     return toReturn;
-};
-
-
-bool ThermalNlMaterialBehaviourClass::buildJeveuxVectors(
-    JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
-    JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
-    std::vector< JeveuxVectorReal > &userReals,
-    std::vector< JeveuxVectorChar8 > &userFunctions )
-{
-    const auto curIter = _mapOfFunctionMaterialProperties.find( "Beta" )->second;
-
-    if( ! curIter.hasValue() )
-    {
-        const auto curIter2 = _mapOfFunctionMaterialProperties.find( "Rho_cp" );
-        const auto name = std::string( complexValues->getName(), 0, 8 );
-        auto func = curIter2->second.getValue();
-        const std::string nameIn = func->getName();
-        const std::string nameOut = _enthalpyFunction->getName();
-        CALLO_CREATE_ENTHALPY( nameIn, nameOut );
-
-        setFunctionValue( "Beta", _enthalpyFunction );
-    }
-    return GeneralMaterialBehaviourClass::buildJeveuxVectors(complexValues,
-                                                                doubleValues,
-                                                                char16Values,
-                                                                ordr,
-                                                                kOrd,
-                                                                userReals,
-                                                                userFunctions);
 };

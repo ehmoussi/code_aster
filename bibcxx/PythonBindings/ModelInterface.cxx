@@ -32,7 +32,7 @@ void exportModelToPython() {
     py::enum_< ModelSplitingMethod >( "ModelSplitingMethod" )
         .value( "Centralized", Centralized )
         .value( "SubDomain", SubDomain )
-        .value( "GroupOfElements", GroupOfElementsSplit );
+        .value( "GroupOfCells", GroupOfCellsSplit );
 
     py::enum_< GraphPartitioner >( "GraphPartitioner" ).value( "Scotch", ScotchPartitioner ).value(
         "Metis", MetisPartitioner );
@@ -54,7 +54,7 @@ void exportModelToPython() {
                                                                             PartialMeshPtr>))
 #endif /* _USE_MPI */
         .def( "addModelingOnAllMesh", &ModelClass::addModelingOnAllMesh )
-        .def( "addModelingOnGroupOfElements", &ModelClass::addModelingOnGroupOfElements )
+        .def( "addModelingOnGroupOfCells", &ModelClass::addModelingOnGroupOfCells )
         .def( "addModelingOnGroupOfNodes", &ModelClass::addModelingOnGroupOfNodes )
         .def( "build", &ModelClass::build )
         .def( "existsThm", &ModelClass::existsThm )

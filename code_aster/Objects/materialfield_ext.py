@@ -19,23 +19,23 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 """
-:py:class:`MaterialOnMesh` --- Assignment of material properties on mesh
+:py:class:`MaterialField` --- Assignment of material properties on mesh
 ************************************************************************
 """
 
 import aster
-from libaster import EntityType, MaterialOnMesh
+from libaster import EntityType, MaterialField
 
 from ..Utilities import injector
 from .datastructure_ext import get_depends, set_depends
 
 
-@injector(MaterialOnMesh)
-class ExtendedMaterialOnMesh(object):
+@injector(MaterialField)
+class ExtendedMaterialField(object):
     cata_sdj = "SD.sd_cham_mater.sd_cham_mater"
 
     def __getinitargs__(self):
-        """Returns the argument required to reinitialize a MaterialOnMesh
+        """Returns the argument required to reinitialize a MaterialField
         object during unpickling.
         """
         return (self.getName(), self.getMesh())
@@ -47,7 +47,7 @@ class ExtendedMaterialOnMesh(object):
             list: Internal state.
         """
         state = get_depends(self)
-        for part in self.getVectorOfPartOfMaterialOnMesh():
+        for part in self.getVectorOfPartOfMaterialField():
             vecOfMater = part.getVectorOfMaterial()
             partState = [len(vecOfMater)]
             partState.extend(vecOfMater)
@@ -55,7 +55,7 @@ class ExtendedMaterialOnMesh(object):
             type = part.getMeshEntity().getType()
             if type is EntityType.AllMeshEntitiesType:
                 partState.extend([0, names])
-            elif type is EntityType.GroupOfElementsType:
+            elif type is EntityType.GroupOfCellsType:
                 partState.extend([1, names])
             elif type is EntityType.ElementType:
                 partState.extend([2, names])
@@ -88,7 +88,7 @@ class ExtendedMaterialOnMesh(object):
                     if state[i] == 0:
                         type = EntityType.AllMeshEntitiesType
                     elif state[i] == 1:
-                        type = EntityType.GroupOfElementsType
+                        type = EntityType.GroupOfCellsType
                     elif state[i] == 2:
                         type = EntityType.ElementType
                     else:
@@ -97,8 +97,8 @@ class ExtendedMaterialOnMesh(object):
                     names =  state[i]
                     if type is EntityType.AllMeshEntitiesType:
                         self.addMaterialsOnAllMesh(listOfMater)
-                    elif type is EntityType.GroupOfElementsType:
-                        self.addMaterialsOnGroupOfElements(listOfMater, names)
+                    elif type is EntityType.GroupOfCellsType:
+                        self.addMaterialsOnGroupOfCells(listOfMater, names)
                     elif type is EntityType.ElementType:
                         self.addMaterialsOnElement(listOfMater, names)
                     searchForSize = True

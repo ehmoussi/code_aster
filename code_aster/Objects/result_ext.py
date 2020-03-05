@@ -24,7 +24,7 @@
 """
 
 import aster
-from libaster import MaterialOnMesh, Model, Result
+from libaster import MaterialField, Model, Result
 
 from ..Utilities import injector
 from .datastructure_ext import get_depends, set_depends
@@ -49,7 +49,7 @@ class ExtendedResult(object):
             except:
                 pass
             try:
-                materials.append(self.getMaterialOnMesh(i))
+                materials.append(self.getMaterialField(i))
             except:
                 pass
         if len(ranks) != len(models):
@@ -81,7 +81,7 @@ class ExtendedResult(object):
             self.addModel(state.pop(0), ranks[i])
         nbmat = state.pop(0)
         for i in range(nbmat):
-            self.addMaterialOnMesh(state.pop(0), ranks[i])
+            self.addMaterialField(state.pop(0), ranks[i])
 
     def LIST_CHAMPS (self) :
         return aster.GetResu(self.getName(), "CHAMPS")

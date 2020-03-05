@@ -7,11 +7,11 @@ code_aster.init("--continue")
 
 test = code_aster.TestCase()
 
-test.assertTrue(MAIL.hasGroupOfElements("BLOK"))
-test.assertTrue(MAIL.hasGroupOfElements("VOL"))
+test.assertTrue(MAIL.hasGroupOfCells("BLOK"))
+test.assertTrue(MAIL.hasGroupOfCells("VOL"))
 
 support = MODELE.getMesh()
-test.assertTrue(support.hasGroupOfElements("VOL"))
+test.assertTrue(support.hasGroupOfCells("VOL"))
 del support
 
 asse = ASSEMBLAGE(MODELE=MODELE,

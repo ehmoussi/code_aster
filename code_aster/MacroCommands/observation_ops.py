@@ -89,7 +89,7 @@ def observation_ops(self,
         cham_maters = []
         for j in RESULTAT.getRanks():
             try:
-                cham_maters += [RESULTAT.getMaterialOnMesh(j)]
+                cham_maters += [RESULTAT.getMaterialField(j)]
             except RuntimeError:
                 pass
         assert len(cham_maters) <= 1

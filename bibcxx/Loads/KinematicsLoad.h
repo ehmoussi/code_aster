@@ -131,17 +131,17 @@ class KinematicsMechanicalLoadClass : public KinematicsLoadClass {
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedMechanicalDOFOnElements(
+    bool addImposedMechanicalDOFOnCells(
         const PhysicalQuantityComponent &coordinate, const double &value,
         const std::string &nameOfGroup ) {
         // On verifie que le pointeur vers le modele ET que le modele lui-meme
         // ne sont pas vides
         if ( ( !_model ) || _model->isEmpty() )
             throw std::runtime_error( "The model is empty" );
-        if ( !_model->getMesh()->hasGroupOfElements( nameOfGroup ) )
+        if ( !_model->getMesh()->hasGroupOfCells( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
-        MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
+        MeshEntityPtr meshEnt( new GroupOfCells( nameOfGroup ) );
         RealLoadDisplacement resu( meshEnt, coordinate, value );
         _listOfRealImposedDisplacement.push_back( resu );
         return true;
@@ -153,11 +153,11 @@ class KinematicsMechanicalLoadClass : public KinematicsLoadClass {
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedMechanicalDOFOnElements(
+    bool addImposedMechanicalDOFOnCells(
         const PhysicalQuantityComponent &coordinate, const double &value,
         const std::vector< std::string > &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
-            addImposedMechanicalDOFOnElements( coordinate, value, nameOfGroup );
+            addImposedMechanicalDOFOnCells( coordinate, value, nameOfGroup );
         return true;
     };
 
@@ -230,17 +230,17 @@ class KinematicsThermalLoadClass : public KinematicsLoadClass {
      * @return Booleen indiquant que tout s'est bien passe
      */
     bool
-    addImposedThermalDOFOnElements( const PhysicalQuantityComponent &coordinate,
+    addImposedThermalDOFOnCells( const PhysicalQuantityComponent &coordinate,
                                     const double &value,
                                     const std::string &nameOfGroup ) {
         // On verifie que le pointeur vers le modele ET que le modele lui-meme
         // ne sont pas vides
         if ( ( !_model ) || _model->isEmpty() )
             throw std::runtime_error( "The model is empty" );
-        if ( !_model->getMesh()->hasGroupOfElements( nameOfGroup ) )
+        if ( !_model->getMesh()->hasGroupOfCells( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
-        MeshEntityPtr meshEnt( new GroupOfElements( nameOfGroup ) );
+        MeshEntityPtr meshEnt( new GroupOfCells( nameOfGroup ) );
         RealLoadTemperature resu( meshEnt, coordinate, value );
         _listOfRealImposedTemperature.push_back( resu );
         return true;
@@ -252,11 +252,11 @@ class KinematicsThermalLoadClass : public KinematicsLoadClass {
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedThermalDOFOnElements(
+    bool addImposedThermalDOFOnCells(
         const PhysicalQuantityComponent &coordinate, const double &value,
         const std::vector< std::string > &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
-            addImposedThermalDOFOnElements( coordinate, value, nameOfGroup );
+            addImposedThermalDOFOnCells( coordinate, value, nameOfGroup );
         return true;
     };
 
@@ -363,7 +363,7 @@ class KinematicsAcousticLoadClass : public KinematicsLoadClass {
      * @param value Valeur imposee
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool addImposedAcousticDOFOnElements( const std::string &nameOfGroup,
+    bool addImposedAcousticDOFOnCells( const std::string &nameOfGroup,
                                           const double &value ) {
         throw std::runtime_error( "Not yet implemented" );
     };

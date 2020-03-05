@@ -34,12 +34,12 @@ void exportPrestressingCableDefinitionToPython() {
             py::bases< DataStructure > >( "PrestressingCableDefinition", py::no_init )
         .def( "__init__",
               py::make_constructor( &initFactoryPtr< PrestressingCableDefinitionClass,
-                                                 const ModelPtr &, const MaterialOnMeshPtr &,
+                                                 const ModelPtr &, const MaterialFieldPtr &,
                                                  const ElementaryCharacteristicsPtr & > ) )
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< PrestressingCableDefinitionClass, std::string,
-                                   const ModelPtr &, const MaterialOnMeshPtr &,
+                                   const ModelPtr &, const MaterialFieldPtr &,
                                    const ElementaryCharacteristicsPtr & > ) )
         .def( "getModel", &PrestressingCableDefinitionClass::getModel, R"(
 Return the Model.
@@ -47,7 +47,7 @@ Return the Model.
 Returns:
     *Model*: Model object.
         )" )
-        .def( "getMaterialOnMesh", &PrestressingCableDefinitionClass::getMaterialOnMesh )
+        .def( "getMaterialField", &PrestressingCableDefinitionClass::getMaterialField )
         .def( "getElementaryCharacteristics",
               &PrestressingCableDefinitionClass::getElementaryCharacteristics );
 };

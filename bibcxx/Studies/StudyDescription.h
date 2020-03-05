@@ -30,14 +30,14 @@
 
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "Materials/CodedMaterial.h"
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
 #include "Numbering/DOFNumbering.h"
 #include "Discretization/ElementaryCharacteristics.h"
-#include "Materials/CalculationExternalVariable.h"
+#include "Materials/ExternalVariablesComputation.h"
 
 /**
  * @class StudyDescriptionClass
@@ -49,7 +49,7 @@ class StudyDescriptionClass {
     /** @brief Modele */
     ModelPtr _model;
     /** @brief Materiau affecté */
-    MaterialOnMeshPtr _materialOnMesh;
+    MaterialFieldPtr _materialField;
     /** @brief Liste des chargements */
     ListOfLoadsPtr _listOfLoads;
     /** @brief Liste des chargements */
@@ -57,20 +57,20 @@ class StudyDescriptionClass {
     /** @brief coded material */
     CodedMaterialPtr _codedMater;
     /** @brief Input variables */
-    CalculationExternalVariablePtr _varCom;
+    ExternalVariablesComputationPtr _varCom;
 
   public:
     /**
      * @brief Constructeur
      * @param ModelPtr Modèle de l'étude
-     * @param MaterialOnMeshPtr Matériau de l'étude
+     * @param MaterialFieldPtr Matériau de l'étude
      */
-    StudyDescriptionClass( const ModelPtr &curModel, const MaterialOnMeshPtr &curMat,
+    StudyDescriptionClass( const ModelPtr &curModel, const MaterialFieldPtr &curMat,
                               const ElementaryCharacteristicsPtr &cara = nullptr )
-        : _model( curModel ), _materialOnMesh( curMat ),
+        : _model( curModel ), _materialField( curMat ),
           _listOfLoads( ListOfLoadsPtr( new ListOfLoadsClass() ) ), _elemChara( cara ),
-          _codedMater( new CodedMaterialClass( _materialOnMesh, _model ) ),
-          _varCom( new CalculationExternalVariableClass( _model, _materialOnMesh,
+          _codedMater( new CodedMaterialClass( _materialField, _model ) ),
+          _varCom( new ExternalVariablesComputationClass( _model, _materialField,
                                                           _elemChara, _codedMater ) ){};
 
     ~StudyDescriptionClass(){};
@@ -121,7 +121,7 @@ class StudyDescriptionClass {
     /**
      * @brief Obtenir le matériau affecté
      */
-    const MaterialOnMeshPtr &getMaterialOnMesh() const { return _materialOnMesh; };
+    const MaterialFieldPtr &getMaterialField() const { return _materialField; };
 
     /**
      * @brief Obtenir le modèle de l'étude

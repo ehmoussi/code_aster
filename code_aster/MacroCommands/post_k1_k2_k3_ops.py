@@ -1739,7 +1739,7 @@ def is_present_varc(RESULTAT):
     contenue dans la sd_resultat RESULTAT, retourne false sinon.
     """
 
-    nom_chamat = RESULTAT.getMaterialOnMesh().getName()
+    nom_chamat = RESULTAT.getMaterialField().getName()
     assert not ( nom_chamat in ['#AUCUN', '#PLUSIEURS'] )
     nom_jvx = nom_chamat.ljust(8)+'.CVRCVARC'
 
@@ -1785,7 +1785,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
             cham_maters = []
             for j in RESULTAT.getRanks():
                 try:
-                    cham_maters += [RESULTAT.getMaterialOnMesh(j)]
+                    cham_maters += [RESULTAT.getMaterialField(j)]
                 except RuntimeError:
                     pass
             if(len(cham_maters)):
@@ -1900,7 +1900,7 @@ def post_k1_k2_k3_ops(self, RESULTAT, FOND_FISS =None, FISSURE=None, MATER=None,
 
         nom_fonc_e = None
         nom_fonc_nu = None
-        for matBehav in MATER.getVectorOfMaterialBehaviours():
+        for matBehav in MATER.getVectorOfMaterialPropertys():
             if matBehav.hasGenericFunctionValue( "E" ):
                 nom_fonc_e = matBehav.getGenericFunctionValue( "E" )
             if matBehav.hasGenericFunctionValue( "Nu" ):

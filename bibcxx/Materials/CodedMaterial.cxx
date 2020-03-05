@@ -26,7 +26,7 @@
 #include "Materials/CodedMaterial.h"
 #include "aster_fort.h"
 
-CodedMaterialClass::CodedMaterialClass( const MaterialOnMeshPtr &mater,
+CodedMaterialClass::CodedMaterialClass( const MaterialFieldPtr &mater,
                                               const ModelPtr &model )
     : _name( mater->getName() ), _type( "MATER_CODE" ), _mater( mater ), _model( model ),
       _field( new ConstantFieldOnCellsLongClass( getName() + ".MATE_CODE", _model->getMesh(),

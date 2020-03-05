@@ -46,7 +46,7 @@
  * @brief Methodes de partitionnement du modèle
  * @author Nicolas Sellenet
  */
-enum ModelSplitingMethod { Centralized, SubDomain, GroupOfElementsSplit };
+enum ModelSplitingMethod { Centralized, SubDomain, GroupOfCellsSplit };
 const int nbModelSplitingMethod = 3;
 /**
  * @var ModelSplitingMethodNames
@@ -94,7 +94,7 @@ class ModelClass : public DataStructure {
     typedef listOfModsAndGrps::const_iterator listOfModsAndGrpsCIter;
 
     /** @brief Vecteur Jeveux '.MAILLE' */
-    JeveuxVectorLong _typeOfElements;
+    JeveuxVectorLong _typeOfCells;
     /** @brief Vecteur Jeveux '.NOEUD' */
     JeveuxVectorLong _typeOfNodes;
     /** @brief Vecteur Jeveux '.PARTIT' */
@@ -139,7 +139,7 @@ class ModelClass : public DataStructure {
 
     ModelClass(const std::string name, const BaseMeshPtr mesh):
         DataStructure( name, 8, "MODELE" ),
-        _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+        _typeOfCells( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
         _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
         _saneModel( nullptr ), _baseMesh( mesh ),
@@ -156,7 +156,7 @@ class ModelClass : public DataStructure {
 #ifdef _USE_MPI
     ModelClass(const std::string name, const PartialMeshPtr mesh):
         DataStructure( name, 8, "MODELE" ),
-        _typeOfElements( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+        _typeOfCells( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
         _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
         _saneModel( nullptr ), _baseMesh( mesh ), _partialMesh(mesh),
@@ -189,16 +189,16 @@ class ModelClass : public DataStructure {
      * @param mod Modelisation a ajouter
      * @param nameOfGroup Nom du groupe de mailles
      */
-    void addModelingOnGroupOfElements( Physics phys, Modelings mod,
+    void addModelingOnGroupOfCells( Physics phys, Modelings mod,
                                        std::string nameOfGroup ) {
         if ( !_baseMesh )
             throw std::runtime_error( "Mesh is not defined" );
-        if ( !_baseMesh->hasGroupOfElements( nameOfGroup ) )
+        if ( !_baseMesh->hasGroupOfCells( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
         _modelisations.push_back(
             listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
-                                    MeshEntityPtr( new GroupOfElements( nameOfGroup ) ) ) );
+                                    MeshEntityPtr( new GroupOfCells( nameOfGroup ) ) ) );
     };
 
     /**
@@ -283,7 +283,7 @@ class ModelClass : public DataStructure {
      * @brief Methode permettant de savoir si le modele est vide
      * @return true si le modele est vide
      */
-    bool isEmpty() const { return !_typeOfElements->exists(); };
+    bool isEmpty() const { return !_typeOfCells->exists(); };
 
     /**
      * @brief Set the sane base model

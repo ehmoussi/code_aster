@@ -31,10 +31,10 @@ void exportKinematicsLoadToPython() {
 
     bool ( KinematicsMechanicalLoadClass::*c1 )( const PhysicalQuantityComponent &,
                                                     const double &, const std::string & ) =
-        &KinematicsMechanicalLoadClass::addImposedMechanicalDOFOnElements;
+        &KinematicsMechanicalLoadClass::addImposedMechanicalDOFOnCells;
     bool ( KinematicsMechanicalLoadClass::*c2 )(
         const PhysicalQuantityComponent &, const double &, const std::vector< std::string > & ) =
-        &KinematicsMechanicalLoadClass::addImposedMechanicalDOFOnElements;
+        &KinematicsMechanicalLoadClass::addImposedMechanicalDOFOnCells;
 
     bool ( KinematicsMechanicalLoadClass::*c3 )( const PhysicalQuantityComponent &,
                                                     const double &, const std::string & ) =
@@ -45,10 +45,10 @@ void exportKinematicsLoadToPython() {
 
     bool ( KinematicsThermalLoadClass::*c5 )( const PhysicalQuantityComponent &, const double &,
                                                  const std::string & ) =
-        &KinematicsThermalLoadClass::addImposedThermalDOFOnElements;
+        &KinematicsThermalLoadClass::addImposedThermalDOFOnCells;
     bool ( KinematicsThermalLoadClass::*c6 )( const PhysicalQuantityComponent &, const double &,
                                                  const std::vector< std::string > & ) =
-        &KinematicsThermalLoadClass::addImposedThermalDOFOnElements;
+        &KinematicsThermalLoadClass::addImposedThermalDOFOnCells;
 
     bool ( KinematicsThermalLoadClass::*c7 )( const PhysicalQuantityComponent &, const double &,
                                                  const std::string & ) =
@@ -74,8 +74,8 @@ void exportKinematicsLoadToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< KinematicsMechanicalLoadClass >))
         .def( "__init__", py::make_constructor(
                               &initFactoryPtr< KinematicsMechanicalLoadClass, std::string >))
-        .def( "addImposedMechanicalDOFOnElements", c1 )
-        .def( "addImposedMechanicalDOFOnElements", c2 )
+        .def( "addImposedMechanicalDOFOnCells", c1 )
+        .def( "addImposedMechanicalDOFOnCells", c2 )
         .def( "addImposedMechanicalDOFOnNodes", c3 )
         .def( "addImposedMechanicalDOFOnNodes", c4 );
 
@@ -85,8 +85,8 @@ void exportKinematicsLoadToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< KinematicsThermalLoadClass >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< KinematicsThermalLoadClass, std::string >))
-        .def( "addImposedThermalDOFOnElements", c5 )
-        .def( "addImposedThermalDOFOnElements", c6 )
+        .def( "addImposedThermalDOFOnCells", c5 )
+        .def( "addImposedThermalDOFOnCells", c6 )
         .def( "addImposedThermalDOFOnNodes", c7 )
         .def( "addImposedThermalDOFOnNodes", c8 )
         .def( "addImposedThermalDOFOnNodes", c9 );

@@ -78,7 +78,7 @@ class XfemCrackClass : public DataStructure {
     /** @brief Field defining the tangential level set */
     FieldOnNodesRealPtr _tangentialLevelSetField;
     /** @brief MeshEntity defining the enriched elements */
-    std::vector< std::string > _enrichedElements;
+    std::vector< std::string > _enrichedCells;
     /** @brief Name of the discontinuous field */
     std::string _discontinuousField;
     /** @brief Type of the enrichment */
@@ -111,11 +111,11 @@ class XfemCrackClass : public DataStructure {
     /** @brief JeveuxVectorLong  named '.GROUP_NO_ENRI' */
     JeveuxVectorLong _enrichedNodes;
     /** @brief JeveuxVectorLong  named '.MAILFISS.CTIP' */
-    JeveuxVectorLong _crackTipElements;
+    JeveuxVectorLong _crackTipCells;
     /** @brief JeveuxVectorLong  named '.MAILFISS.HEAV' */
-    JeveuxVectorLong _heavisideElements;
+    JeveuxVectorLong _heavisideCells;
     /** @brief JeveuxVectorLong  named '.MAILFISS.HECT' */
-    JeveuxVectorLong _crackTipAndHeavisideElements;
+    JeveuxVectorLong _crackTipAndHeavisideCells;
 
   public:
     /**
@@ -255,10 +255,10 @@ class XfemCrackClass : public DataStructure {
         _tangentialLevelSetField = tangentialLevelSet;
     }
 
-    std::vector< std::string > getEnrichedElements() const { return _enrichedElements; }
+    std::vector< std::string > getEnrichedCells() const { return _enrichedCells; }
 
-    void setEnrichedElements( const std::vector< std::string > &enrichedElements ) {
-        _enrichedElements = enrichedElements;
+    void setEnrichedCells( const std::vector< std::string > &enrichedCells ) {
+        _enrichedCells = enrichedCells;
     }
 
     std::string getDiscontinuousField() const { return _discontinuousField; }

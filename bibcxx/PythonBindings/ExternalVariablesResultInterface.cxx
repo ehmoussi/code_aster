@@ -1,7 +1,7 @@
 /**
- * @file StudyDescriptionInterface.cxx
- * @brief Interface python de StudyDescription
- * @author Nicolas Sellenet
+ * @file ExternalVariablesResultInterface.cxx
+ * @brief Interface python de ExternalVariablesResult
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
@@ -21,21 +21,20 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "PythonBindings/ExternalVariablesResultInterface.h"
+#include "PythonBindings/factory.h"
 #include <boost/python.hpp>
 
 namespace py = boost::python;
-#include "PythonBindings/factory.h"
-#include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/LoadUtilities.h"
 
-void exportStudyDescriptionToPython() {
+void exportExternalVariablesResultToPython() {
 
-    py::class_< StudyDescriptionClass, StudyDescriptionPtr > c1( "StudyDescription",
-                                                                    py::no_init );
-    // fake initFactoryPtr: not a DataStructure
-    c1.def( "__init__",
-            py::make_constructor(
-                &initFactoryPtr< StudyDescriptionClass, ModelPtr, MaterialFieldPtr >));
-    addKinematicsLoadToInterface( c1 );
-    addMechanicalLoadToInterface( c1 );
+    py::class_< ExternalVariablesResultClass, ExternalVariablesResultPtr,
+            py::bases< TransientResultClass > >( "ExternalVariablesResult",
+                                                              py::no_init )
+        .def( "__init__",
+              py::make_constructor( &initFactoryPtr< ExternalVariablesResultClass > ) )
+        .def( "__init__",
+              py::make_constructor(
+                  &initFactoryPtr< ExternalVariablesResultClass, std::string > ) );
 };

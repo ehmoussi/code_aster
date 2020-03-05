@@ -3,7 +3,7 @@
 
 /**
  * @file JeveuxAllowedTypes.h
- * @brief Fichier entete de la classe MaterialBehaviour
+ * @brief Fichier entete de la classe MaterialProperty
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org

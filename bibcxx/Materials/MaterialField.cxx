@@ -1,6 +1,6 @@
 /**
- * @file MaterialOnMesh.cxx
- * @brief Implementation de MaterialOnMesh
+ * @file MaterialField.cxx
+ * @brief Implementation de MaterialField
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -27,13 +27,13 @@
 #include <typeinfo>
 #include "astercxx.h"
 
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "Utilities/SyntaxDictionary.h"
 #include "Supervis/CommandSyntax.h"
 
-#include "Materials/MaterialOnMeshBuilder.h"
+#include "Materials/MaterialFieldBuilder.h"
 
-MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
+MaterialFieldClass::MaterialFieldClass( const std::string &name,
                                                 const MeshPtr& mesh ):
     _mesh( mesh ),
     _model( nullptr ),
@@ -50,7 +50,7 @@ MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
     _cvrcCmp( JeveuxVectorChar8( getName() + ".CVRCCMP" ) )
 {};
 
-MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
+MaterialFieldClass::MaterialFieldClass( const std::string &name,
                                                 const SkeletonPtr& mesh ):
     _mesh( mesh ),
     _model( nullptr ),
@@ -68,7 +68,7 @@ MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
 {};
 
 #ifdef _USE_MPI
-MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
+MaterialFieldClass::MaterialFieldClass( const std::string &name,
                                                 const ParallelMeshPtr& mesh ):
     _mesh( mesh ),
     _model( nullptr ),
@@ -86,36 +86,36 @@ MaterialOnMeshClass::MaterialOnMeshClass( const std::string &name,
 {};
 #endif /* _USE_MPI */
 
-bool MaterialOnMeshClass::buildWithoutExternalVariable()
+bool MaterialFieldClass::buildWithoutExternalVariable()
 {
-    MaterialOnMeshBuilderClass::buildClass(*this);
+    MaterialFieldBuilderClass::buildClass(*this);
 
     return true;
 };
 
-std::vector< MaterialPtr > MaterialOnMeshClass::getVectorOfMaterial() const
+std::vector< MaterialPtr > MaterialFieldClass::getVectorOfMaterial() const
 {
     std::vector< MaterialPtr > toReturn;
-    for( const auto& curIter : _materialsOnMeshEntity )
+    for( const auto& curIter : _materialsFieldEntity )
         for( const auto& curIter2 : curIter.first )
             toReturn.push_back( curIter2 );
     return toReturn;
 };
 
-std::vector< PartOfMaterialOnMeshPtr >
-MaterialOnMeshClass::getVectorOfPartOfMaterialOnMesh() const
+std::vector< PartOfMaterialFieldPtr >
+MaterialFieldClass::getVectorOfPartOfMaterialField() const
 {
-    std::vector< PartOfMaterialOnMeshPtr > toReturn;
-    for( const auto& curIter : _materialsOnMeshEntity )
+    std::vector< PartOfMaterialFieldPtr > toReturn;
+    for( const auto& curIter : _materialsFieldEntity )
     {
-        PartOfMaterialOnMeshPtr toPush( new PartOfMaterialOnMeshClass( curIter.first,
+        PartOfMaterialFieldPtr toPush( new PartOfMaterialFieldClass( curIter.first,
                                                                           curIter.second ) );
         toReturn.push_back( toPush );
     }
     return toReturn;
 };
 
-bool MaterialOnMeshClass::existsCalculationExternalVariable( const std::string& name )
+bool MaterialFieldClass::existsExternalVariablesComputation( const std::string& name )
 {
     if( _cvrcVarc->exists() )
     {

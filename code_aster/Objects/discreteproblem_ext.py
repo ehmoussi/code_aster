@@ -32,7 +32,7 @@ from ..Utilities import injector
 class ExtendedDiscreteProblem(object):
 
     def __getinitargs__(self):
-        """Returns the argument required to reinitialize a MaterialOnMesh
+        """Returns the argument required to reinitialize a MaterialField
         object during unpickling.
         """
         return (self.getStudyDescription(), )

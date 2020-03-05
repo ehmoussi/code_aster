@@ -36,11 +36,11 @@
 #include "Supervis/CommandSyntax.h"
 
 LinearStaticAnalysisClass::LinearStaticAnalysisClass(
-    const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    const ModelPtr &model, const MaterialFieldPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
-    : _model( model ), _materialOnMesh( mater ), _linearSolver( BaseLinearSolverPtr() ),
+    : _model( model ), _materialField( mater ), _linearSolver( BaseLinearSolverPtr() ),
       _timeStep( TimeStepperPtr( new TimeStepperClass() ) ),
-      _study( new StudyDescriptionClass( _model, _materialOnMesh, cara ) ) {
+      _study( new StudyDescriptionClass( _model, _materialField, cara ) ) {
     _timeStep->setValues( VectorReal( 1, 0. ) );
 };
 

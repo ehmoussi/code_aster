@@ -103,7 +103,7 @@ class DiscreteProblemClass {
      */
     ElementaryVectorPtr
     buildElementaryNeumannVector( const VectorReal time,
-                                  CalculationExternalVariablePtr ) ;
+                                  ExternalVariablesComputationPtr ) ;
 
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires de rigidité

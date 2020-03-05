@@ -203,7 +203,7 @@ if ok_poursuite == 1:
 
 # the initialization is partial because of exception raised
 U1MAZAR.appendModelOnAllRanks(MOPOU)
-U1MAZAR.appendMaterialOnMeshOnAllRanks(MATMAZAR)
+U1MAZAR.appendMaterialFieldOnAllRanks(MATMAZAR)
 U1MAZAR.appendElementaryCharacteristicsOnAllRanks(POUCA)
 U1MAZAR.update()
 

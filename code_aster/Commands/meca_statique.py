@@ -65,14 +65,14 @@ class MechanicalSolver(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         model = keywords["MODELE"]
-        matOnMesh = keywords["CHAM_MATER"]
+        materialField = keywords["CHAM_MATER"]
         caraElem = keywords.get("CARA_ELEM")
 
         mechaSolv = None
         if caraElem != None:
-            mechaSolv = LinearStaticAnalysis(model, matOnMesh, caraElem)
+            mechaSolv = LinearStaticAnalysis(model, materialField, caraElem)
         else:
-            mechaSolv = LinearStaticAnalysis(model, matOnMesh)
+            mechaSolv = LinearStaticAnalysis(model, materialField)
 
         inst = keywords.get("INST")
         if inst != None:

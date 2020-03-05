@@ -34,7 +34,7 @@
 #include "DataFields/Table.h"
 #include "Discretization/ElementaryCharacteristics.h"
 #include "Loads/ListOfLinearRelations.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "Meshes/Mesh.h"
 #include "Modeling/Model.h"
 #include "Supervis/ResultNaming.h"
@@ -49,7 +49,7 @@ class PrestressingCableDefinitionClass : public DataStructure {
   private:
     ModelPtr _model;
     ElementaryCharacteristicsPtr _cara;
-    MaterialOnMeshPtr _mater;
+    MaterialFieldPtr _mater;
     MeshPtr _mesh;
     /** @brief Carte '.CHME.SIGIN' */
     ConstantFieldOnCellsRealPtr _sigin;
@@ -72,18 +72,18 @@ class PrestressingCableDefinitionClass : public DataStructure {
     /**
      * @brief Constructeur
      */
-    PrestressingCableDefinitionClass( const ModelPtr &, const MaterialOnMeshPtr &,
+    PrestressingCableDefinitionClass( const ModelPtr &, const MaterialFieldPtr &,
                                          const ElementaryCharacteristicsPtr & );
 
     PrestressingCableDefinitionClass( const std::string jeveuxName, const ModelPtr &,
-                                         const MaterialOnMeshPtr &,
+                                         const MaterialFieldPtr &,
                                          const ElementaryCharacteristicsPtr & );
 
     // Since no constructor allows to have null or empty objects,
     // it is not necessary to check if they exist.
     ModelPtr getModel() const { return _model; };
 
-    MaterialOnMeshPtr getMaterialOnMesh() const { return _mater; };
+    MaterialFieldPtr getMaterialField() const { return _mater; };
 
     ElementaryCharacteristicsPtr getElementaryCharacteristics() const { return _cara; };
 

@@ -37,7 +37,7 @@ XfemCrackClass::XfemCrackClass( const std::string name, MeshPtr mesh )
       _existingCrackWithGrid( XfemCrackPtr() ), _discontinuityType( "Crack" ), _crackLipsEntity(),
       _crackTipEntity(), _normalLevelSetFunction( FunctionPtr() ),
       _tangentialLevelSetFunction( FunctionPtr() ), _crackShape( CrackShapePtr() ),
-      _enrichedElements(), _discontinuousField( "DEPL" ), _enrichmentType( std::string() ),
+      _enrichedCells(), _discontinuousField( "DEPL" ), _enrichmentType( std::string() ),
       _enrichmentRadiusZone( 0 ), _enrichedLayersNumber( 0 ),
 
       _tangentialLevelSetField( new FieldOnNodesRealClass( _jeveuxName + ".LTNO      " ) ),
@@ -51,9 +51,9 @@ XfemCrackClass::XfemCrackClass( const std::string name, MeshPtr mesh )
       _crackTipCharacteristics( JeveuxVectorReal( _jeveuxName + ".CARAFOND" ) ),
       _elementSize( JeveuxVectorReal( _jeveuxName + ".FOND.TAILLE_R" ) ),
       _enrichedNodes( JeveuxVectorLong( _jeveuxName + ".GROUP_NO_ENRI" ) ),
-      _crackTipElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.CTIP" ) ),
-      _heavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
-      _crackTipAndHeavisideElements( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) ){};
+      _crackTipCells( JeveuxVectorLong( _jeveuxName + ".MAILFISS.CTIP" ) ),
+      _heavisideCells( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HEAV" ) ),
+      _crackTipAndHeavisideCells( JeveuxVectorLong( _jeveuxName + ".MAILFISS.HECT" ) ){};
 
 XfemCrackClass::XfemCrackClass( MeshPtr mesh )
     : XfemCrackClass( ResultNaming::getNewResultName(), mesh ){};
@@ -153,8 +153,8 @@ bool XfemCrackClass::build() {
     crackDefinition.push_back( dict2 );
     dict.container["DEFI_FISS"] = crackDefinition;
 
-    if ( _enrichedElements.size() != 0 )
-        dict.container["GROUP_MA_ENRI"] = _enrichedElements;
+    if ( _enrichedCells.size() != 0 )
+        dict.container["GROUP_MA_ENRI"] = _enrichedCells;
 
     if ( _enrichmentType == "GEOMETRIQUE" ) {
         dict.container["TYPE_FOND_ENRI"] = "GEOMETRIQUE";

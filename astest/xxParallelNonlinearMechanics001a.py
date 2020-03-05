@@ -28,7 +28,7 @@ POISSON = 0.3
 acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
                                 NU = POISSON,),)
 
-affectMat = code_aster.MaterialOnMesh(monMaillage)
+affectMat = code_aster.MaterialField(monMaillage)
 affectMat.addMaterialOnAllMesh(acier)
 affectMat.buildWithoutExternalVariable()
 
@@ -59,7 +59,7 @@ statNonLine = code_aster.NonLinearStaticAnalysis()
 statNonLine.addStandardExcitation(charMeca1)
 statNonLine.addStandardExcitation(charMeca2)
 statNonLine.setModel(monModel)
-statNonLine.setMaterialOnMesh(affectMat)
+statNonLine.setMaterialField(affectMat)
 statNonLine.setLinearSolver(monSolver)
 
 temps = [0., 0.5, 1.]

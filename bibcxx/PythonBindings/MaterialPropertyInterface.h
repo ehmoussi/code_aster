@@ -1,6 +1,9 @@
+#ifndef BEHAVIOURMATERIALINTERFACE_H_
+#define BEHAVIOURMATERIALINTERFACE_H_
+
 /**
- * @file ExternalVariableConverter.cxx
- * @brief Implementation de ExternalVariableConverter
+ * @file MaterialInterface.h
+ * @brief Fichier entete de la classe MaterialInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,6 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
+#include "Materials/MaterialProperty.h"
 
-#include "Materials/ExternalVariableConverter.h"
+void exportMaterialPropertyToPython();
+
+#endif /* BEHAVIOURMATERIALINTERFACE_H_ */

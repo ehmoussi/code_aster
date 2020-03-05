@@ -1,6 +1,9 @@
+#ifndef EXTERNALVARIABLEDEFINITIONINTERFACE_H_
+#define EXTERNALVARIABLEDEFINITIONINTERFACE_H_
+
 /**
- * @file ExternalVariableConverterInterface.cxx
- * @brief Interface python de ExternalVariableConverter
+ * @file ExternalVariablesInterface.h
+ * @brief Fichier entete de la classe ExternalVariablesInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,20 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
+#include "Materials/ExternalVariablesDefinition.h"
 
-#include "PythonBindings/ExternalVariableConverterInterface.h"
-#include <PythonBindings/factory.h>
-#include <boost/python.hpp>
+void exportExternalVariablesToPython();
 
-namespace py = boost::python;
-
-void exportExternalVariableConverterToPython() {
-
-    py::class_< ExternalVariableConverterClass,
-            ExternalVariableConverterPtr >( "ExternalVariableConverter", py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< ExternalVariableConverterClass >))
-        // fake initFactoryPtr: created by subclasses
-        .def( "addConverter", &ExternalVariableConverterClass::addConverter );
-};
+#endif /* EXTERNALVARIABLEDEFINITIONINTERFACE_H_ */

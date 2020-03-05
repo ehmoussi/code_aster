@@ -39,9 +39,9 @@ void exportElementaryMatrixToPython() {
               &ElementaryMatrixDisplacementRealClass::addFiniteElementDescriptor )
         .def( "getFiniteElementDescriptors",
               &ElementaryMatrixDisplacementRealClass::getFiniteElementDescriptors )
-        .def( "getMaterialOnMesh", &ElementaryMatrixDisplacementRealClass::getMaterialOnMesh )
+        .def( "getMaterialField", &ElementaryMatrixDisplacementRealClass::getMaterialField )
         .def( "getModel", &ElementaryMatrixDisplacementRealClass::getModel )
-        .def( "setMaterialOnMesh", &ElementaryMatrixDisplacementRealClass::setMaterialOnMesh )
+        .def( "setMaterialField", &ElementaryMatrixDisplacementRealClass::setMaterialField )
         .def( "setModel", &ElementaryMatrixDisplacementRealClass::setModel );
 
     py::class_< ElementaryMatrixDisplacementRealClass,

@@ -251,7 +251,7 @@ def caract_mater(self, mater):
 
             nom_fonc_e = None
             nom_fonc_nu = None
-            for matBehav in mater.getVectorOfMaterialBehaviours():
+            for matBehav in mater.getVectorOfMaterialPropertys():
                 if matBehav.hasGenericFunctionValue( "E" ):
                     nom_fonc_e = matBehav.getGenericFunctionValue( "E" )
                 if matBehav.hasGenericFunctionValue( "Nu" ):

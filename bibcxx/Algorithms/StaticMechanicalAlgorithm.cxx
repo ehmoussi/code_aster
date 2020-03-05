@@ -91,11 +91,11 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) {
 
     const auto &study = ctx._discreteProblem->getStudyDescription();
     const auto &model = study->getModel();
-    const auto &mater = study->getMaterialOnMesh();
+    const auto &mater = study->getMaterialField();
     const auto &load = study->getListOfLoads();
     const auto &cara = study->getElementaryCharacteristics();
     ctx._results->addModel( model, ctx._rank );
-    ctx._results->addMaterialOnMesh( mater, ctx._rank );
+    ctx._results->addMaterialField( mater, ctx._rank );
     ctx._results->addTimeValue( ctx._time, ctx._rank );
     ctx._results->addListOfLoads( load, ctx._rank );
     if ( cara != nullptr ) {

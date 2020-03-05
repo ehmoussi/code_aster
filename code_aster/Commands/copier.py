@@ -38,7 +38,7 @@ class Copier(ExecuteCommand):
         if isinstance(other, PrestressingCableDefinition):
             self._result = PrestressingCableDefinition(
                 other.getModel(),
-                other.getMaterialOnMesh(),
+                other.getMaterialField(),
                 other.getElementaryCharacteristics())
         elif isinstance(other, Result):
             # do not support several models

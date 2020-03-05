@@ -85,7 +85,7 @@ void exportUnitaryThermalLoadToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< RealDistributedFlowClass >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< RealDistributedFlowClass, double >))
-        .def( "addGroupOfElements", &RealDistributedFlowClass::addGroupOfElements )
+        .def( "addGroupOfCells", &RealDistributedFlowClass::addGroupOfCells )
         .def( "setNormalFlow", &RealDistributedFlowClass::setNormalFlow,
               DistributedFlowsetNormalFlow() )
         .def( "setLowerNormalFlow", &RealDistributedFlowClass::setLowerNormalFlow,
@@ -100,14 +100,14 @@ void exportUnitaryThermalLoadToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< RealNonLinearFlowClass >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< RealNonLinearFlowClass, double >))
-        .def( "addGroupOfElements", &RealNonLinearFlowClass::addGroupOfElements )
+        .def( "addGroupOfCells", &RealNonLinearFlowClass::addGroupOfCells )
         .def( "setFlow", &RealNonLinearFlowClass::setFlow, RealNonLinearFlowsetFlow() );
 
     py::class_< RealExchangeClass, RealExchangePtr,
                 py::bases< UnitaryThermalLoadClass > >( "RealExchange", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< RealExchangeClass >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< RealExchangeClass, double >))
-        .def( "addGroupOfElements", &RealExchangeClass::addGroupOfElements )
+        .def( "addGroupOfCells", &RealExchangeClass::addGroupOfCells )
         .def( "setExchangeCoefficient", &RealExchangeClass::setExchangeCoefficient,
               RealExchangesetExchangeCoefficient() )
         .def( "setExternalTemperature", &RealExchangeClass::setExternalTemperature,
@@ -122,7 +122,7 @@ void exportUnitaryThermalLoadToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< RealExchangeWallClass >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< RealExchangeWallClass, double >))
-        .def( "addGroupOfElements", &RealExchangeWallClass::addGroupOfElements )
+        .def( "addGroupOfCells", &RealExchangeWallClass::addGroupOfCells )
         .def( "setExchangeCoefficient", &RealExchangeWallClass::setExchangeCoefficient,
               RealExchangeWallsetExchangeCoefficient() )
         .def( "setTranslation", &RealExchangeWallClass::setTranslation );
@@ -131,7 +131,7 @@ void exportUnitaryThermalLoadToPython() {
         "RealSource", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< RealSourceClass >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< RealSourceClass, double >))
-        .def( "addGroupOfElements", &RealSourceClass::addGroupOfElements )
+        .def( "addGroupOfCells", &RealSourceClass::addGroupOfCells )
         .def( "setSource", &RealSourceClass::setSource, RealSourcesetSource() );
 
     py::class_< RealNonLinearSourceClass, RealNonLinearSourcePtr,
@@ -139,7 +139,7 @@ void exportUnitaryThermalLoadToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< RealNonLinearSourceClass >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< RealNonLinearSourceClass, double >))
-        .def( "addGroupOfElements", &RealNonLinearSourceClass::addGroupOfElements )
+        .def( "addGroupOfCells", &RealNonLinearSourceClass::addGroupOfCells )
         .def( "setSource", &RealNonLinearSourceClass::setSource,
               RealNonLinearSourcesetSource() );
 
@@ -153,7 +153,7 @@ void exportUnitaryThermalLoadToPython() {
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< RealThermalRadiationClass, double, double, double >))
-        .def( "addGroupOfElements", &RealThermalRadiationClass::addGroupOfElements )
+        .def( "addGroupOfCells", &RealThermalRadiationClass::addGroupOfCells )
         .def( "setExternalTemperature", &RealThermalRadiationClass::setExternalTemperature,
               RealThermalRadiationsetExternalTemperature() )
         .def( "setEpsilon", &RealThermalRadiationClass::setEpsilon,
@@ -171,7 +171,7 @@ void exportUnitaryThermalLoadToPython() {
         .def( "__init__",
               py::make_constructor(
                   &initFactoryPtr< RealThermalGradientClass, double, double, double >))
-        .def( "addGroupOfElements", &RealThermalGradientClass::addGroupOfElements )
+        .def( "addGroupOfCells", &RealThermalGradientClass::addGroupOfCells )
         .def( "setFlowXYZ", &RealThermalGradientClass::setFlowXYZ,
               RealThermalGradientsetFlowXYZ() );
 };

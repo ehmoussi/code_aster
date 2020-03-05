@@ -59,9 +59,9 @@ namespace py = boost::python;
 #include "PythonBindings/ElementaryVectorInterface.h"
 #include "PythonBindings/EmpiricalModeResultInterface.h"
 #include "PythonBindings/EventManagerInterface.h"
-#include "PythonBindings/ExternalVariableConverterInterface.h"
-#include "PythonBindings/ExternalVariableDefinitionInterface.h"
-#include "PythonBindings/ExternalVariableResultInterface.h"
+#include "PythonBindings/ExternalVariablesConverterInterface.h"
+#include "PythonBindings/ExternalVariablesDefinitionInterface.h"
+#include "PythonBindings/ExternalVariablesResultInterface.h"
 #include "PythonBindings/FiberGeometryInterface.h"
 #include "PythonBindings/FieldOnCellsInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
@@ -92,10 +92,11 @@ namespace py = boost::python;
 #include "PythonBindings/ListOfIntegersInterface.h"
 #include "PythonBindings/LoadResultInterface.h"
 #include "PythonBindings/MatchingMeshesInterface.h"
-#include "PythonBindings/MaterialBehaviourInterface.h"
+#include "PythonBindings/BaseMaterialPropertyInterface.h"
+#include "PythonBindings/MaterialPropertyInterface.h"
 #include "PythonBindings/MaterialInterface.h"
-#include "PythonBindings/MaterialOnMeshBuilderInterface.h"
-#include "PythonBindings/MaterialOnMeshInterface.h"
+#include "PythonBindings/MaterialFieldBuilderInterface.h"
+#include "PythonBindings/MaterialFieldInterface.h"
 #include "PythonBindings/MechanicalLoadInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 #include "PythonBindings/MeshInterface.h"
@@ -237,8 +238,9 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportUnitaryThermalLoadToPython();
     exportBehaviourDefinitionToPython();
     exportMaterialToPython();
-    exportMaterialBehaviourToPython();
-    exportMaterialOnMeshToPython();
+    exportBaseMaterialPropertyToPython();
+    exportMaterialPropertyToPython();
+    exportMaterialFieldToPython();
     exportGridToPython();
     exportMatchingMeshesToPython();
     exportSkeletonToPython();
@@ -300,9 +302,9 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportResultNamingToPython();
     exportListOfFloatsToPython();
     exportListOfIntegersToPython();
-    exportExternalVariableDefinitionToPython();
-    exportExternalVariableConverterToPython();
+    exportExternalVariablesToPython();
+    exportExternalVariablesConverterToPython();
     exportEmpiricalModeResultToPython();
-    exportExternalVariableResultToPython();
-    exportMaterialOnMeshBuilderToPython();
+    exportExternalVariablesResultToPython();
+    exportMaterialFieldBuilderToPython();
 };
