@@ -21,7 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "LinearAlgebra/AllowedLinearSolver.h"
+#include "Solvers/AllowedLinearSolver.h"
 
 const char *LinearSolverNames[nbSolvers] = {"MULT_FRONT", "LDLT", "MUMPS", "PETSC", "GCPC"};
 const char *RenumberingNames[nbRenumberings] = {"MD",       "MDA",      "METIS", "RCMK",   "AMD",

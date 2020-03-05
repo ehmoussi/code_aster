@@ -25,7 +25,7 @@
 
 #include "astercxx.h"
 
-#include "LinearAlgebra/LinearSolver.h"
+#include "Solvers/LinearSolver.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 

@@ -27,9 +27,9 @@
 
 namespace py = boost::python;
 #include <PythonBindings/factory.h>
-#include "PythonBindings/ModalBasisDefinitionInterface.h"
+#include "PythonBindings/ModalBasisInterface.h"
 
-void exportModalBasisDefinitionToPython() {
+void exportModalBasisToPython() {
 
     py::class_< GenericModalBasisClass, GenericModalBasisClass::GenericModalBasisPtr,
             py::bases< DataStructure > >( "GenericModalBasis", py::no_init );

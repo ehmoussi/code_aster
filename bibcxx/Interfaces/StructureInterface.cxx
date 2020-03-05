@@ -23,7 +23,7 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "LinearAlgebra/StructureInterface.h"
+#include "Interfaces/StructureInterface.h"
 
 const std::vector< InterfaceTypeEnum > allInterfaceType = {MacNeal, CraigBampton,
                                                            HarmonicCraigBampton, NoInterfaceType};

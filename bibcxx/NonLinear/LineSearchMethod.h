@@ -27,7 +27,7 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 #include "astercxx.h"
 
-#include "LinearAlgebra/SolverControl.h"
+#include "Solvers/SolverControl.h"
 #include "Utilities/GenericParameter.h"
 
 enum LineSearchEnum { Corde, Mixte, Pilotage };

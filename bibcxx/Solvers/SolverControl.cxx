@@ -1,10 +1,7 @@
-#ifndef MODALBASISDEFINITIONINTERFACE_H_
-#define MODALBASISDEFINITIONINTERFACE_H_
-
 /**
- * @file ModalBasisDefinitionInterface.h
- * @brief Fichier entete de la classe ModalBasisDefinitionInterface
- * @author Nicolas Sellenet
+ * @file SolverControl.cxx
+ * @brief Control class to eval the convergence status of an iterative solver
+ * @author Natacha Béreux
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
@@ -24,9 +21,22 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* person_in_charge:  natacha.bereux at edf.fr */
+
 #include "astercxx.h"
-#include "LinearAlgebra/ModalBasisDefinition.h"
 
-void exportModalBasisDefinitionToPython();
+#include "Solvers/SolverControl.h"
 
-#endif /* MODALBASISDEFINITIONINTERFACE_H_ */
+SolverControlClass::SolverControlClass( double rTol, ASTERINTEGER nIterMax )
+    : _relativeTol( rTol ), _nIterMax( nIterMax ) {}
+
+ConvergenceState SolverControlClass::check( const double relativeResNorm,
+                                               const ASTERINTEGER iter ) const {
+    if ( abs( relativeResNorm ) <= _relativeTol ) {
+        return success;
+    }
+    if ( iter >= _nIterMax ) {
+        return failure;
+    }
+    return iterate;
+}

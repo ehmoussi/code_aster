@@ -1,6 +1,9 @@
+#ifndef MODALBASISDEFINITIONINTERFACE_H_
+#define MODALBASISDEFINITIONINTERFACE_H_
+
 /**
- * @file ModalBasisDefinition.cxx
- * @brief
+ * @file ModalBasisInterface.h
+ * @brief Fichier entete de la classe ModalBasisInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,29 +24,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
+#include "Modal/ModalBasis.h"
 
-#include "LinearAlgebra/ModalBasisDefinition.h"
+void exportModalBasisToPython();
 
-bool GenericModalBasisClass::build() {
-    CommandSyntax cmdSt( "DEFI_BASE_MODALE" );
-    cmdSt.setResult( getName(), "MODE_MECA" );
-
-    CapyConvertibleSyntax syntax;
-    CapyConvertibleContainer solverSyntaxContainer( "SOLVEUR", _solver->getListOfParameters() );
-    syntax.addCapyConvertibleContainer( solverSyntaxContainer );
-    for ( const auto &iter : _vectorOfModalBasis )
-        syntax.addCapyConvertibleContainer( iter._container );
-
-    cmdSt.define( syntax );
-
-    try {
-        ASTERINTEGER op = 99;
-        CALL_EXECOP( &op );
-    } catch ( ... ) {
-        throw;
-    }
-    _isEmpty = false;
-
-    return true;
-};
+#endif /* MODALBASISDEFINITIONINTERFACE_H_ */

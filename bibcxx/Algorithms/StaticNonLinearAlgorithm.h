@@ -28,7 +28,7 @@
 
 #include "Algorithms/GenericUnitaryAlgorithm.h"
 #include "Discretization/DiscreteProblem.h"
-#include "LinearAlgebra/LinearSolver.h"
+#include "Solvers/LinearSolver.h"
 #include "Loads/ListOfLoads.h"
 #include "NonLinear/NonLinearMethod.h"
 #include "NonLinear/State.h"

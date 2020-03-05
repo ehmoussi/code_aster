@@ -29,7 +29,7 @@
 
 #include "Algorithms/StaticNonLinearAlgorithm.h"
 #include "Algorithms/TimeStepper.h"
-#include "LinearAlgebra/LinearSolver.h"
+#include "Solvers/LinearSolver.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/Excitation.h"
 #include "Loads/MechanicalLoad.h"
