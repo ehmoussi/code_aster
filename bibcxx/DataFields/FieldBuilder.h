@@ -30,7 +30,7 @@
 
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/FieldOnCells.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "Modeling/FiniteElementDescriptor.h"
 
 /**

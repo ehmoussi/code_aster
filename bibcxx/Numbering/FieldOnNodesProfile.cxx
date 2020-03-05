@@ -1,6 +1,6 @@
 /**
- * @file GeneralizedDOFNumbering.cxx
- * @brief Implementation de GeneralizedDOFNumbering
+ * @file FieldOnNodesProfile.cxx
+ * @brief Implementation de DOFNumbering
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,6 +21,4 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "Discretization/GeneralizedDOFNumbering.h"
+#include "Numbering/FieldOnNodesProfile.h"

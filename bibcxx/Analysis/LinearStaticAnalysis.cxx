@@ -29,7 +29,7 @@
 #include "Algorithms/StaticMechanicalAlgorithm.h"
 #include "Algorithms/StaticMechanicalContext.h"
 #include "DataStructures/TemporaryDataStructureName.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "Discretization/DiscreteProblem.h"
 #include "Supervis/Exceptions.h"
 #include "Analysis/LinearStaticAnalysis.h"

@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Discretization/GeneralizedDOFNumbering.h"
+#include "Numbering/GeneralizedDOFNumbering.h"
 
 void exportGeneralizedDOFNumberingToPython();
 

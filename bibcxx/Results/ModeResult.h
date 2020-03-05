@@ -30,7 +30,7 @@
 #include "LinearAlgebra/StructureInterface.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 
 /**
  * @class ModeResultClass

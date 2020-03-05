@@ -35,7 +35,7 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/ListOfLoads.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "Discretization/ElementaryCharacteristics.h"
 #include "Materials/CalculationExternalVariable.h"
 

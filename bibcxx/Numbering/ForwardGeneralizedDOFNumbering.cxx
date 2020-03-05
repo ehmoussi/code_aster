@@ -23,8 +23,8 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Discretization/ForwardGeneralizedDOFNumbering.h"
-#include "Discretization/GeneralizedDOFNumbering.h"
+#include "Numbering/ForwardGeneralizedDOFNumbering.h"
+#include "Numbering/GeneralizedDOFNumbering.h"
 
 ForwardGeneralizedDOFNumberingPtr::ForwardGeneralizedDOFNumberingPtr() : _isSet( false ){};
 

@@ -30,7 +30,7 @@ namespace py = boost::python;
 
 #include "Meshes/Mesh.h"
 #include "Modeling/Model.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 
