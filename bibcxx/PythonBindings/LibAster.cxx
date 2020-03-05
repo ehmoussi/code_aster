@@ -91,7 +91,7 @@ namespace py = boost::python;
 #include "PythonBindings/ListOfFloatsInterface.h"
 #include "PythonBindings/ListOfIntegersInterface.h"
 #include "PythonBindings/LoadResultInterface.h"
-#include "PythonBindings/MatchingMeshesInterface.h"
+#include "PythonBindings/MeshesMappingInterface.h"
 #include "PythonBindings/BaseMaterialPropertyInterface.h"
 #include "PythonBindings/MaterialPropertyInterface.h"
 #include "PythonBindings/MaterialInterface.h"
@@ -242,7 +242,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportMaterialPropertyToPython();
     exportMaterialFieldToPython();
     exportGridToPython();
-    exportMatchingMeshesToPython();
+    exportMeshesMappingToPython();
     exportSkeletonToPython();
     exportDynamicMacroElementToPython();
     exportStaticMacroElementToPython();

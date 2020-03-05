@@ -1,6 +1,6 @@
 /**
- * @file MatchingMeshes.cxx
- * @brief Implementation de MatchingMeshesClass
+ * @file MeshesMapping.cxx
+ * @brief Implementation de MeshesMappingClass
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -23,9 +23,9 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "Meshes/MatchingMeshes.h"
+#include "Meshes/MeshesMapping.h"
 
-MatchingMeshesClass::MatchingMeshesClass( const std::string name )
+MeshesMappingClass::MeshesMappingClass( const std::string name )
     : DataStructure( name, 16, "CORRESP_2_MAILLA", Permanent ),
       _pjxxK1( JeveuxVectorChar24( getName() + ".PJXX_K1" ) ),
       _pjefNb( JeveuxVectorLong( getName() + ".PJEF_NB" ) ),
