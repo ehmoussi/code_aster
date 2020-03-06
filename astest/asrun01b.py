@@ -198,7 +198,6 @@ class TestExport(unittest.TestCase):
 
     def test_data(self):
         text = "\n".join([
-            "P actions make_test",
             "F nom filename.py D 0",
             "F tests_data filename.py D 0",
         ])
