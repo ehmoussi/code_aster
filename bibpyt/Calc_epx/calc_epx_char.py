@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -338,7 +338,7 @@ def tabRelaToEpx(nomchar, concept_charge, mot_cle_epx, MAILLAGE):
     nomnoe = aster.getvectjev(MAILLAGE.nom.ljust(8) + ".NOMNOE")
     dic_nomnoe = {}
     for i, noeu in enumerate(nomnoe):
-        dic_nomnoe[noeu] = i + 1
+        dic_nomnoe[noeu.strip()] = i + 1
 
     __table = RECU_TABLE(CO=concept_charge, NOM_TABLE=nomchar)
     donnees_liaisons = __table.EXTR_TABLE()
@@ -348,7 +348,7 @@ def tabRelaToEpx(nomchar, concept_charge, mot_cle_epx, MAILLAGE):
     noeuds    = donnees_liaisons.NOEUD.values()
     comps     = donnees_liaisons.COMP.values()
     coefs     = donnees_liaisons.COEF.values()
-
+    
     nb_rela = 0
     list_bloc = []
     
