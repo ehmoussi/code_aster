@@ -385,10 +385,9 @@ class Export:
 
     def _abspath(self):
         """Absolutize path of *File* objects."""
-        is_test = "make_test" in self.get("actions", [])
         for fileobj in self._files:
             base = self._root
-            if is_test and fileobj.is_tests_data:
+            if fileobj.is_tests_data:
                 base = osp.join(ROOT, "share", "aster", "tests_data")
             fileobj.path = osp.join(base, fileobj.path)
 

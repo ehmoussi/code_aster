@@ -22,7 +22,7 @@
 # aslint: disable=C4008
 
 """
-    %(prog)s [options] EXPORT
+    run_aster [options] EXPORT
 
 """
 

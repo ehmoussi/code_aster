@@ -19,10 +19,10 @@
 # --------------------------------------------------------------------
 
 """
-    %(prog)s [options]
+    run_ctest [options] [ctest-options] [other arguments...]
 
 Execute testcases using 'ctest'.
-All options that are not listed below are passed to 'ctest'.
+'ctest-options' and other arguments are passed to 'ctest'.
 Use 'ctest --help' for details.
 
 """
@@ -67,12 +67,13 @@ def parse_args(argv):
     parser.add_argument('--no-clean', action='store_false', dest="clean",
                         help="do not remove the content of 'resutest' "
                              "directory")
-    parser.add_argument('--rerun-failed', action='store_true',
-                        help="Run only the tests that failed previously")
-    parser.add_argument('-L', '--label-regex', action='store',
-                        nargs="*", default=[],
-                        help="Run tests with labels matching regular "
-                             "expression")
+    group = parser.add_argument_group('ctest options')
+    group.add_argument('--rerun-failed', action='store_true',
+                       help="Run only the tests that failed previously")
+    group.add_argument('-L', '--label-regex', action='store', metavar="regex",
+                       nargs="*", default=[],
+                       help="Run tests with labels matching regular "
+                            "expression")
     # parser.add_argument('--repeat', action='store', default="until-pass:2",
     #                     help="todo: check required ctest version")
 
