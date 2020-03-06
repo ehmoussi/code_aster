@@ -90,6 +90,11 @@ class StaticMechanicalContext {
         _rank = rank;
     };
 
+    AssemblyMatrixDisplacementRealPtr getStiffnessMatrix(void)
+    {
+        return _aMatrix;
+    }
+
     friend class StaticMechanicalAlgorithm;
 };
 
