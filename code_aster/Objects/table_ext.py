@@ -85,7 +85,7 @@ class ExtendedTable(object):
         return l_name
 
     def EXTR_TABLE(self, para=None) :
-        """Produit un objet Table à partir du contenu d'une table Aster.
+        """Produit un objet TablePy à partir du contenu d'une table Aster.
         On peut limiter aux paramètres listés dans 'para'.
         """
         def Nonefy(l1,l2) :
