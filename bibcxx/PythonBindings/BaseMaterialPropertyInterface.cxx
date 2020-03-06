@@ -29,40 +29,40 @@ namespace py = boost::python;
 
 void exportBaseMaterialPropertyToPython() {
 
-    py::class_< BaseMaterialPropertyClass, BaseMaterialPropertyPtr >(
+    py::class_< GenericMaterialPropertyClass, BaseMaterialPropertyPtr >(
         "BaseMaterialProperty", py::no_init )
         // fake initFactoryPtr: created by subclasses
-        .def( "__init__", py::make_constructor(&initFactoryPtr< BaseMaterialPropertyClass >))
-        .def( "getAsterName", &BaseMaterialPropertyClass::getAsterName )
-        .def( "hasTractionFunction", &BaseMaterialPropertyClass::hasTractionFunction )
-        .def( "hasEnthalpyFunction", &BaseMaterialPropertyClass::hasEnthalpyFunction )
-        .def( "getComplexValue", &BaseMaterialPropertyClass::getComplexValue )
-        .def( "getRealValue", &BaseMaterialPropertyClass::getRealValue )
-        .def( "getStringValue", &BaseMaterialPropertyClass::getStringValue )
+        .def( "__init__", py::make_constructor(&initFactoryPtr< GenericMaterialPropertyClass >))
+        .def( "getAsterName", &GenericMaterialPropertyClass::getAsterName )
+        .def( "hasTractionFunction", &GenericMaterialPropertyClass::hasTractionFunction )
+        .def( "hasEnthalpyFunction", &GenericMaterialPropertyClass::hasEnthalpyFunction )
+        .def( "getComplexValue", &GenericMaterialPropertyClass::getComplexValue )
+        .def( "getRealValue", &GenericMaterialPropertyClass::getRealValue )
+        .def( "getStringValue", &GenericMaterialPropertyClass::getStringValue )
         .def( "getGenericFunctionValue",
-              &BaseMaterialPropertyClass::getGenericFunctionValue )
+              &GenericMaterialPropertyClass::getGenericFunctionValue )
         .def( "getNumberOfListOfRealProperties",
-              &BaseMaterialPropertyClass::getNumberOfListOfRealProperties )
+              &GenericMaterialPropertyClass::getNumberOfListOfRealProperties )
         .def( "getNumberOfListOfFunctionProperties",
-              &BaseMaterialPropertyClass::getNumberOfListOfFunctionProperties )
-        .def( "getTableValue", &BaseMaterialPropertyClass::getTableValue )
-        .def( "hasComplexValue", &BaseMaterialPropertyClass::hasComplexValue )
-        .def( "hasRealValue", &BaseMaterialPropertyClass::hasRealValue )
-        .def( "hasStringValue", &BaseMaterialPropertyClass::hasStringValue )
+              &GenericMaterialPropertyClass::getNumberOfListOfFunctionProperties )
+        .def( "getTableValue", &GenericMaterialPropertyClass::getTableValue )
+        .def( "hasComplexValue", &GenericMaterialPropertyClass::hasComplexValue )
+        .def( "hasRealValue", &GenericMaterialPropertyClass::hasRealValue )
+        .def( "hasStringValue", &GenericMaterialPropertyClass::hasStringValue )
         .def( "hasGenericFunctionValue",
-              &BaseMaterialPropertyClass::hasGenericFunctionValue )
-        .def( "hasTableValue", &BaseMaterialPropertyClass::hasTableValue )
-        .def( "setComplexValue", &BaseMaterialPropertyClass::setComplexValue )
-        .def( "setRealValue", &BaseMaterialPropertyClass::setRealValue )
-        .def( "setStringValue", &BaseMaterialPropertyClass::setStringValue )
-        .def( "setFunctionValue", &BaseMaterialPropertyClass::setFunctionValue )
-        .def( "setTableValue", &BaseMaterialPropertyClass::setTableValue )
-        .def( "setFunction2DValue", &BaseMaterialPropertyClass::setFunction2DValue )
-        .def( "setFormulaValue", &BaseMaterialPropertyClass::setFormulaValue )
-        .def( "setVectorOfRealValue", &BaseMaterialPropertyClass::setVectorOfRealValue )
+              &GenericMaterialPropertyClass::hasGenericFunctionValue )
+        .def( "hasTableValue", &GenericMaterialPropertyClass::hasTableValue )
+        .def( "setComplexValue", &GenericMaterialPropertyClass::setComplexValue )
+        .def( "setRealValue", &GenericMaterialPropertyClass::setRealValue )
+        .def( "setStringValue", &GenericMaterialPropertyClass::setStringValue )
+        .def( "setFunctionValue", &GenericMaterialPropertyClass::setFunctionValue )
+        .def( "setTableValue", &GenericMaterialPropertyClass::setTableValue )
+        .def( "setFunction2DValue", &GenericMaterialPropertyClass::setFunction2DValue )
+        .def( "setFormulaValue", &GenericMaterialPropertyClass::setFormulaValue )
+        .def( "setVectorOfRealValue", &GenericMaterialPropertyClass::setVectorOfRealValue )
         .def( "setVectorOfFunctionValue",
-              &BaseMaterialPropertyClass::setVectorOfFunctionValue )
+              &GenericMaterialPropertyClass::setVectorOfFunctionValue )
         .def( "setSortedListParameters",
-              &BaseMaterialPropertyClass::setSortedListParameters );
+              &GenericMaterialPropertyClass::setSortedListParameters );
 
 };

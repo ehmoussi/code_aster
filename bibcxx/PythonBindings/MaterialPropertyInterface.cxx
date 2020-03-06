@@ -42,7 +42,7 @@ void exportMaterialPropertyToPython() {
         &MaterialPropertyClass::addNewStringProperty;
 
     py::class_< MaterialPropertyClass, MaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "MaterialProperty", py::no_init )
+                py::bases< GenericMaterialPropertyClass > >( "MaterialProperty", py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< MaterialPropertyClass, std::string >))
         .def( "__init__",
@@ -62,7 +62,7 @@ void exportMaterialPropertyToPython() {
         .def( "getName", &MaterialPropertyClass::getName );
 
     py::class_< BetonRealDpMaterialPropertyClass, BetonRealDpMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "BetonRealDpMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "BetonRealDpMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< BetonRealDpMaterialPropertyClass >))
@@ -73,7 +73,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< BetonRagMaterialPropertyClass, BetonRagMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "BetonRagMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "BetonRagMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< BetonRagMaterialPropertyClass >))
@@ -83,7 +83,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< DisEcroTracMaterialPropertyClass, DisEcroTracMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "DisEcroTracMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "DisEcroTracMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< DisEcroTracMaterialPropertyClass >))
@@ -93,7 +93,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< ElasMetaMaterialPropertyClass, ElasMetaMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "ElasMetaMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "ElasMetaMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ElasMetaMaterialPropertyClass >))
@@ -103,7 +103,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< CableGaineFrotMaterialPropertyClass, CableGaineFrotMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "CableGaineFrotMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "CableGaineFrotMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< CableGaineFrotMaterialPropertyClass >))
@@ -114,7 +114,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< ElasMetaFoMaterialPropertyClass, ElasMetaFoMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "ElasMetaFoMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "ElasMetaFoMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< ElasMetaFoMaterialPropertyClass >))
@@ -124,7 +124,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< MetaTractionMaterialPropertyClass, MetaTractionMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "MetaTractionMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "MetaTractionMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< MetaTractionMaterialPropertyClass >))
@@ -135,7 +135,7 @@ void exportMaterialPropertyToPython() {
         .def( "hasTractionFunction", &MetaTractionMaterialPropertyClass::hasTractionFunction );
 
     py::class_< RuptFragMaterialPropertyClass, RuptFragMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "RuptFragMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "RuptFragMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< RuptFragMaterialPropertyClass >))
@@ -145,7 +145,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< RuptFragFoMaterialPropertyClass, RuptFragFoMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "RuptFragFoMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "RuptFragFoMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< RuptFragFoMaterialPropertyClass >))
@@ -155,7 +155,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< CzmLabMixMaterialPropertyClass, CzmLabMixMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "CzmLabMixMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "CzmLabMixMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< CzmLabMixMaterialPropertyClass >))
@@ -165,7 +165,7 @@ void exportMaterialPropertyToPython() {
         .staticmethod( "hasConvertibleValues" );
 
     py::class_< TractionMaterialPropertyClass, TractionMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "TractionMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "TractionMaterialProperty",
                                                                  py::no_init )
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< TractionMaterialPropertyClass >))
@@ -176,7 +176,7 @@ void exportMaterialPropertyToPython() {
         .def( "hasTractionFunction", &TractionMaterialPropertyClass::hasTractionFunction );
 
     py::class_< ThermalNlMaterialPropertyClass, ThermalNlMaterialPropertyPtr,
-                py::bases< BaseMaterialPropertyClass > >( "ThermalNlMaterialProperty",
+                py::bases< GenericMaterialPropertyClass > >( "ThermalNlMaterialProperty",
                                                                  py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< ThermalNlMaterialPropertyClass >))
         .def( "getName", &ThermalNlMaterialPropertyClass::getName )

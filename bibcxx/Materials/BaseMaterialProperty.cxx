@@ -1,6 +1,6 @@
 /**
  * @file MaterialProperty.cxx
- * @brief Implementation de BaseMaterialPropertyClass
+ * @brief Implementation de GenericMaterialPropertyClass
  * @author Nicolas Sellenet
  * @todo autoriser le type Function pour les paramètres matériau
  * @section LICENCE
@@ -27,7 +27,7 @@
 #include <stdexcept>
 #include "Materials/BaseMaterialProperty.h"
 
-bool BaseMaterialPropertyClass::buildJeveuxVectors(
+bool GenericMaterialPropertyClass::buildJeveuxVectors(
     JeveuxVectorComplex &complexValues, JeveuxVectorReal &doubleValues,
     JeveuxVectorChar16 &char16Values, JeveuxVectorChar16 &ordr, JeveuxVectorLong &kOrd,
     std::vector< JeveuxVectorReal > &userReals,
@@ -205,13 +205,13 @@ bool BaseMaterialPropertyClass::buildJeveuxVectors(
     return true;
 };
 
-bool BaseMaterialPropertyClass::buildTractionFunction( FunctionPtr &doubleValues ) const
+bool GenericMaterialPropertyClass::buildTractionFunction( FunctionPtr &doubleValues ) const
     {
     return true;
 };
 
 
-int BaseMaterialPropertyClass::getNumberOfPropertiesWithValue() const {
+int GenericMaterialPropertyClass::getNumberOfPropertiesWithValue() const {
     int toReturn = 0;
     for ( auto curIter : _mapOfRealMaterialProperties )
         if ( curIter.second.hasValue() )
