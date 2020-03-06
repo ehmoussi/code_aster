@@ -18,7 +18,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# This only to show debug informations as soon as possible
+# Imports are differed to show debug informations as soon as possible
 # aslint: disable=C4008
 
 """
