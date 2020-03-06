@@ -349,6 +349,8 @@ def check_external_programs(self):
 
     _check_prog(self, 'xmgrace', ['xmgrace', 'gracebat'])
 
+    _check_prog(self, 'mdump', ['mdump'])
+
     dict_ext = self._extract_keys("PROG_")
     # remove mfront_<version-number>
     for key in dict_ext:
