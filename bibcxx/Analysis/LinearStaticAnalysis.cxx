@@ -84,5 +84,9 @@ ElasticResultPtr LinearStaticAnalysisClass::execute() {
         MSAlgo;
     MSAlgo::runAllStepsOverAlgorithm( *_timeStep, currentContext );
 
+    // Destruct matrix
+    const std::string matass_name = currentContext.getStiffnessMatrix()->getName();
+    CALLO_DETMATRIX(matass_name);
+
     return resultC;
 };
