@@ -56,7 +56,7 @@ ParallelMechanicalLoadClass::transferConstantFieldOnCells( const ConstantFieldOn
                                                             ConstantFieldOnCellsRealPtr& fieldOut )
 
 {
-    const auto& toKeep = _FEDesc->getDelayedCellsToKeep();
+    const auto& toKeep = _FEDesc->getDelayedElementsToKeep();
 
     std::string savedName( "" );
     fieldOut->allocate( Permanent, fieldIn );
@@ -66,8 +66,8 @@ ParallelMechanicalLoadClass::transferConstantFieldOnCells( const ConstantFieldOn
         const auto& curFEDesc = zone.getFiniteElementDescriptor();
         if( curFEDesc->getName() != savedName && savedName != "" )
         {
-            std::string a("Different FiniteElementDescriptor in one
-                                                    ConstantFieldOnCells is not allowed");
+            std::string a(
+                "Different FiniteElementDescriptor in one ConstantFieldOnCells is not allowed");
             throw std::runtime_error( a );
         }
         savedName = curFEDesc->getName();
