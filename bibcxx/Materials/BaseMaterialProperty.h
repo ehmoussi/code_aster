@@ -36,72 +36,13 @@
 #include "Functions/Function.h"
 #include "Functions/Function2D.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Utilities/ConvertibleValue.h"
 #include "aster_utils.h"
 #include "astercxx.h"
 
 typedef std::vector< FunctionPtr > VectorFunction;
 
-/**
- * @class ConvertibleValue
- * @brief Cette classe template permet de definir une variable convertible
- * @author Nicolas Sellenet
- */
-template < class ValueType1, class ValueType2 > class ConvertibleValue {
-  public:
-    typedef ValueType2 ReturnValue;
-    typedef ValueType1 BaseValue;
 
-  private:
-    typedef std::map< ValueType1, ValueType2 > mapVal1Val2;
-    /** @brief map allowing conversion of ValueType1 into ValueType2 */
-    mapVal1Val2 _matchMap;
-    /** @brief value to convert */
-    ValueType1 _valToConvert;
-    /** @brief To know if value is set */
-    bool _existsValue;
-
-  public:
-    ConvertibleValue() : _existsValue( false ){};
-
-    ConvertibleValue( const mapVal1Val2 &matchMap )
-        : _matchMap( matchMap ), _existsValue( false ){};
-
-    ConvertibleValue( const mapVal1Val2 &matchMap, const ValueType1 &val )
-        : _matchMap( matchMap ), _valToConvert( val ), _existsValue( true ){};
-
-    void operator=( const ValueType1 &toSet ) {
-        _existsValue = true;
-        _valToConvert = toSet;
-    };
-
-    /**
-     * @brief Recuperation de la valeur du parametre
-     * @return la valeur du parametre
-     */
-    const ReturnValue &getValue() const {
-        const auto &curIter = _matchMap.find( _valToConvert );
-        if ( curIter == _matchMap.end() )
-            throw std::runtime_error( "Impossible to convert " + _valToConvert );
-        return curIter->second; //_matchMap[ _valToConvert ];
-    };
-
-    /**
-     * @brief Is value already set ?
-     */
-    bool hasValue() const { return _existsValue; };
-
-    /**
-     * @brief Is value convertible (regarding the map of conversion) ?
-     */
-    bool isConvertible() const {
-        if ( !_existsValue )
-            return false;
-        const auto &curIter = _matchMap.find( _valToConvert );
-        if ( curIter == _matchMap.end() )
-            return false;
-        return true;
-    };
-};
 
 typedef ConvertibleValue< std::string, double > StringToRealValue;
 
@@ -134,7 +75,7 @@ template <> struct AllowedMaterialPropertyType< VectorFunction > {};
 
 template <> struct AllowedMaterialPropertyType< StringToRealValue > {};
 
-class BaseMaterialPropertyClass;
+class GenericMaterialPropertyClass;
 
 template < typename T1 > struct is_convertible;
 
@@ -263,7 +204,7 @@ class ElementaryMaterialPropertyClass : private AllowedMaterialPropertyType< Val
         _value = currentValue;
     };
 
-    friend class BaseMaterialPropertyClass;
+    friend class GenericMaterialPropertyClass;
 };
 
 /** @typedef Definition d'une propriete materiau de type double */
@@ -292,11 +233,11 @@ typedef ElementaryMaterialPropertyClass< std::vector< FunctionPtr > >
 typedef ElementaryMaterialPropertyClass< StringToRealValue > ElementaryMaterialPropertyConvertible;
 
 /**
- * @class BaseMaterialPropertyClass
+ * @class GenericMaterialPropertyClass
  * @brief Cette classe permet de definir un ensemble de type elementaire de propriete materielle
  * @author Nicolas Sellenet
  */
-class BaseMaterialPropertyClass {
+class GenericMaterialPropertyClass {
   protected:
     /** @typedef std::map d'une chaine et d'un ElementaryMaterialPropertyReal */
     typedef std::map< std::string, ElementaryMaterialPropertyReal > mapStrEMPD;
@@ -404,17 +345,17 @@ class BaseMaterialPropertyClass {
     /**
      * @brief Constructeur
      */
-    BaseMaterialPropertyClass() : _asterNewName( "" ){};
+    GenericMaterialPropertyClass() : _asterNewName( "" ){};
 
     /**
      * @brief Constructeur
      */
-    BaseMaterialPropertyClass( const std::string asterName,
+    GenericMaterialPropertyClass( const std::string asterName,
                                       const std::string asterNewName = "" )
         : _asterName( asterName ), _asterNewName( asterNewName ){};
 
     /**
-     * @brief Recuperation du nom Aster du BaseMaterialPropertyClass
+     * @brief Recuperation du nom Aster du GenericMaterialPropertyClass
      *        ex : 'ELAS', 'ELASFo', ...
      * @return Chaine contenant le nom Aster
      */
@@ -522,7 +463,7 @@ class BaseMaterialPropertyClass {
     int getNumberOfPropertiesWithValue() const;
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value Real correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -538,7 +479,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value Real correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -554,7 +495,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value string correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -577,7 +518,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value Function correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -593,7 +534,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value Table correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -609,7 +550,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value Function2D correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -625,7 +566,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value Formula correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -641,7 +582,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value VectorReal correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -658,7 +599,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Fonction servant a fixer un parametre materiau au BaseMaterialPropertyClass
+     * @brief Fonction servant a fixer un parametre materiau au GenericMaterialPropertyClass
      * @param nameOfProperty Nom de la propriete
      * @param value VectorFunction correspondant a la valeur donnee par l'utilisateur
      * @return Booleen valant true si la tache s'est bien deroulee
@@ -685,7 +626,7 @@ class BaseMaterialPropertyClass {
     };
 
     /**
-     * @brief Construction du BaseMaterialPropertyClass
+     * @brief Construction du GenericMaterialPropertyClass
      * @return Booleen valant true si la tache s'est bien deroulee
      * @todo vérifier les valeurs réelles par défaut du .VALR
      */
@@ -791,6 +732,6 @@ class BaseMaterialPropertyClass {
 };
 
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
-typedef boost::shared_ptr< BaseMaterialPropertyClass > BaseMaterialPropertyPtr;
+typedef boost::shared_ptr< GenericMaterialPropertyClass > BaseMaterialPropertyPtr;
 
 #endif

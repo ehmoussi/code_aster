@@ -1,6 +1,6 @@
 /**
  * @file MaterialProperty.cxx
- * @brief Implementation de BaseMaterialPropertyClass
+ * @brief Implementation de GenericMaterialPropertyClass
  * @author Nicolas Sellenet
  * @todo autoriser le type Function pour les paramètres matériau
  * @section LICENCE
@@ -92,7 +92,7 @@ bool ThermalNlMaterialPropertyClass::buildJeveuxVectors(
 
         setFunctionValue( "Beta", _enthalpyFunction );
     }
-    return BaseMaterialPropertyClass::buildJeveuxVectors(complexValues,
+    return GenericMaterialPropertyClass::buildJeveuxVectors(complexValues,
                                                                 doubleValues,
                                                                 char16Values,
                                                                 ordr,

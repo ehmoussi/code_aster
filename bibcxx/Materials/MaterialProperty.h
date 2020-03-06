@@ -46,10 +46,10 @@ typedef std::vector< FunctionPtr > VectorFunction;
 
 /**
  * @class MaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass
+ * @brief Classe fille de GenericMaterialPropertyClass
  * @author Jean-Pierre Lefebvre
  */
-class MaterialPropertyClass : public BaseMaterialPropertyClass {
+class MaterialPropertyClass : public GenericMaterialPropertyClass {
     std::string capitalizeName( const std::string &nameInit ) {
         std::string name( nameInit );
         if ( !name.empty() ) {
@@ -66,7 +66,7 @@ class MaterialPropertyClass : public BaseMaterialPropertyClass {
      * @brief Constructeur
      */
     MaterialPropertyClass( const std::string asterName, const std::string asterNewName = "" )
-        : BaseMaterialPropertyClass( asterName, asterNewName ){};
+        : GenericMaterialPropertyClass( asterName, asterNewName ){};
 
     bool addNewRealProperty( std::string name, const bool mandatory ) {
         return addRealProperty( capitalizeName( name ),
@@ -125,10 +125,10 @@ typedef boost::shared_ptr< MaterialPropertyClass > MaterialPropertyPtr;
 
 /**
  * @class BetonRealDpMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau BetonRealDp
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau BetonRealDp
  * @author Jean-Pierre Lefebvre
  */
-class BetonRealDpMaterialPropertyClass : public BaseMaterialPropertyClass {
+class BetonRealDpMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -180,10 +180,10 @@ typedef boost::shared_ptr< BetonRealDpMaterialPropertyClass >
 
 /**
  * @class BetonRagMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau BetonRag
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau BetonRag
  * @author Jean-Pierre Lefebvre
  */
-class BetonRagMaterialPropertyClass : public BaseMaterialPropertyClass {
+class BetonRagMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -256,10 +256,10 @@ typedef boost::shared_ptr< BetonRagMaterialPropertyClass > BetonRagMaterialPrope
 
 /**
  * @class DisEcroTracMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau DisEcroTrac
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau DisEcroTrac
  * @author Jean-Pierre Lefebvre
  */
-class DisEcroTracMaterialPropertyClass : public BaseMaterialPropertyClass {
+class DisEcroTracMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -295,9 +295,9 @@ typedef boost::shared_ptr< DisEcroTracMaterialPropertyClass > DisEcroTracMateria
 
 /**
  * @class CableGaineFrotMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau CableGaineFrot
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau CableGaineFrot
  */
-class CableGaineFrotMaterialPropertyClass : public BaseMaterialPropertyClass {
+class CableGaineFrotMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -339,10 +339,10 @@ typedef boost::shared_ptr< CableGaineFrotMaterialPropertyClass >
 
 /**
  * @class ElasMetaMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau ElasMeta
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau ElasMeta
  * @author Jean-Pierre Lefebvre
  */
-class ElasMetaMaterialPropertyClass : public BaseMaterialPropertyClass {
+class ElasMetaMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -397,10 +397,10 @@ typedef boost::shared_ptr< ElasMetaMaterialPropertyClass > ElasMetaMaterialPrope
 
 /**
  * @class ElasMetaFoMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau ElasMetaFo
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau ElasMetaFo
  * @author Jean-Pierre Lefebvre
  */
-class ElasMetaFoMaterialPropertyClass : public BaseMaterialPropertyClass {
+class ElasMetaFoMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -470,10 +470,10 @@ typedef boost::shared_ptr< ElasMetaFoMaterialPropertyClass > ElasMetaFoMaterialP
 
 /**
  * @class MetaTractionMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau MetaTraction
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau MetaTraction
  * @author Jean-Pierre Lefebvre
  */
-class MetaTractionMaterialPropertyClass : public BaseMaterialPropertyClass {
+class MetaTractionMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -524,10 +524,10 @@ typedef boost::shared_ptr< MetaTractionMaterialPropertyClass > MetaTractionMater
 
 /**
  * @class RuptFragMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau RuptFrag
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau RuptFrag
  * @author Jean-Pierre Lefebvre
  */
-class RuptFragMaterialPropertyClass : public BaseMaterialPropertyClass {
+class RuptFragMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -573,10 +573,10 @@ typedef boost::shared_ptr< RuptFragMaterialPropertyClass > RuptFragMaterialPrope
 
 /**
  * @class RuptFragFoMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau RuptFragFo
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau RuptFragFo
  * @author Jean-Pierre Lefebvre
  */
-class RuptFragFoMaterialPropertyClass : public BaseMaterialPropertyClass {
+class RuptFragFoMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -624,10 +624,10 @@ typedef boost::shared_ptr< RuptFragFoMaterialPropertyClass > RuptFragFoMaterialP
 
 /**
  * @class CzmLabMixMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau CzmLabMix
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau CzmLabMix
  * @author Nicolas Pignet
  */
-class CzmLabMixMaterialPropertyClass : public BaseMaterialPropertyClass {
+class CzmLabMixMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -672,10 +672,10 @@ typedef boost::shared_ptr< CzmLabMixMaterialPropertyClass > CzmLabMixMaterialPro
 
 /**
  * @class TractionMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau Traction
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau Traction
  * @author Jean-Pierre Lefebvre
  */
-class TractionMaterialPropertyClass : public BaseMaterialPropertyClass {
+class TractionMaterialPropertyClass : public GenericMaterialPropertyClass {
   public:
     /**
      * @brief Constructeur
@@ -718,10 +718,10 @@ typedef boost::shared_ptr< TractionMaterialPropertyClass > TractionMaterialPrope
 
 /**
  * @class ThermalNlMaterialPropertyClass
- * @brief Classe fille de BaseMaterialPropertyClass definissant un materiau TherNl
+ * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau TherNl
  * @author Jean-Pierre Lefebvre
  */
-class ThermalNlMaterialPropertyClass : public BaseMaterialPropertyClass {
+class ThermalNlMaterialPropertyClass : public GenericMaterialPropertyClass {
   private:
     FunctionPtr _enthalpyFunction;
 
@@ -759,7 +759,7 @@ class ThermalNlMaterialPropertyClass : public BaseMaterialPropertyClass {
     bool hasEnthalpyFunction() { return true; };
 
     /**
-     * @brief Construction du BaseMaterialPropertyClass
+     * @brief Construction du GenericMaterialPropertyClass
      * @return Booleen valant true si la tache s'est bien deroulee
      * @todo vérifier les valeurs réelles par défaut du .VALR
      */
