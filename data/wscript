@@ -324,10 +324,51 @@ def check_config(self):
     cfg["python"] = list(self.env.PYTHON)[0]
     cfg["parallel"] = int(self.get_define('HAVE_MPI') or 0)
     if cfg["parallel"]:
-        _check_prog(self, "mpirun", ["mpirun"], var_prefix="CFGJS_")
+        self.check_mpirun()
     cfg.update(self._extract_keys("CFGJS_"))
     self.env["CONFIG_PARAMETERS"] = cfg
 
+
+@Configure.conf
+def check_mpirun(self):
+    _check_prog(self, "mpirun", ["mpirun"], var_prefix="CFGJS_")
+    mpirun = self.env["CFGJS_mpirun"][0]
+    mpicmd = [mpirun]
+    if self._call_cmd("Check for mpirun flag '-n N'",
+                      [mpirun, "-n", "1", "echo"]) == 0:
+        mpicmd.extend(["-n", "{mpi_nbcpu}"])
+    elif self._call_cmd("Check for mpirun flag '-np N'",
+                        [mpirun, "-np", "1", "echo"]) == 0:
+        mpicmd.extend(["-np", "{mpi_nbcpu}"])
+
+    # default to openmpi
+    out = self.cmd_and_log(mpicmd + ["env"])
+    get_procid = "echo ${OMPI_COMM_WORLD_RANK}"
+    if "PMI_RANK" in out:
+        get_procid = "echo ${PMI_RANK}"
+    self.env["CFGJS_mpirun_get_procid_cmd"] = [get_procid]
+
+    for opt in ("--tag-output", "-print-rank-map", "-prepend-rank",
+                "-ordered-output"):
+        if self._call_cmd("Check for mpirun flag '{0}'".format(opt),
+                        [mpirun, opt, "echo"]) == 0:
+            mpicmd.append(opt)
+    mpicmd.append("{program}")
+    self.env["CFGJS_mpirun"] = [" ".join(mpicmd)]
+
+
+@Configure.conf
+def _call_cmd(self, msg, cmd):
+    self.start_msg(msg)
+    try:
+        ret = self.exec_command(cmd)
+    except Errors.WafError:
+        ret = 1
+    if ret == 0:
+        self.end_msg("yes")
+    else:
+        self.end_msg("no", "yellow")
+    return ret
 
 @Configure.conf
 def check_external_programs(self):
