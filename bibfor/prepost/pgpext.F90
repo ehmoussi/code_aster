@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ subroutine pgpext(sd_pgp)
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/normev.h"
 #include "asterfort/pgpget.h"
 #include "asterfort/posddl.h"
 #include "asterfort/utmess.h"
@@ -48,10 +49,10 @@ subroutine pgpext(sd_pgp)
     integer           :: nbobs, iobs, physlen, nbexcit, i
     integer           :: iinst, iex, nbinst, jvecr, iddl
     integer           :: jtblp, lc, nbord, ier, dec
-    integer           :: inoeud, nbeq, icorrst
-    real(kind=8)      :: coef, cumul, dir(3), magn, acce
+    integer           :: inoeud, nbeq, icorrst, ifonct, nfonct
+    real(kind=8)      :: coef, cumul, dir(9), magn, acce
     character(len=4)  :: typres
-    character(len=8)  :: base, result, nume, acce_mo
+    character(len=8)  :: base, result, nume, acce_mo(3)
     character(len=16) :: champ
     character(len=19) :: resin19
     character(len=24) :: nomjv
@@ -100,7 +101,13 @@ subroutine pgpext(sd_pgp)
         call pgpget(sd_pgp,'DISC',iobs=iobs, lonvec=nbord)
 
         call pgpget(sd_pgp,'ADD_CORR',iobs=iobs, iscal=icorrst)
-        call pgpget(sd_pgp,'ACC_MO_A',iobs=iobs, kscal=acce_mo)
+        call pgpget(sd_pgp,'ACC_MO_A',iobs=iobs, kvect=acce_mo)
+        nfonct=0
+        do i=1,3
+            if (acce_mo(i).ne.' ') then
+                nfonct = nfonct+1
+            endif
+        enddo
 
 !       CORR_STAT and MULT_APPUI extra, available for DEPL, VITE, and ACCE requests
         if ( ((champ(1:4).eq.'DEPL').or.(champ(1:4).eq.'VITE').or.(champ(1:4).eq.'ACCE'))&
@@ -176,25 +183,27 @@ subroutine pgpext(sd_pgp)
 
 !       ACCE_MONO_APPUI extra, available for ACCE_ABSOLU request only
         if ((champ.eq.'ACCE_ABSOLU').and.(icorrst.eq.0).and.&
-            (acce_mo.ne.' ')) then
+            nfonct.ne.0) then
 
 !           Decompose the entraining acceleration direction on the requested components
 !           DX, DY, and/or DZ. Calculate the coeffients COEF
 !           size = [nbcomp]
             AS_ALLOCATE(vk8=lcmp   , size=physlen)
-            AS_ALLOCATE(vr=coef_dir, size=physlen)
+            AS_ALLOCATE(vr=coef_dir, size=nfonct*physlen)
             call pgpget(sd_pgp,'REF_COMP',iobs=iobs, kvect=lcmp)
             call pgpget(sd_pgp,'ACC_DIR ',iobs=iobs, rvect=dir)
-            magn = sqrt(dir(1)**2+dir(2)**2+dir(3)**2)
-            do i = 1, physlen
-                if (lcmp(i).eq.'DX') then
-                    coef_dir(i) = dir(1)/magn
-                else if (lcmp(i).eq.'DY') then
-                    coef_dir(i) = dir(2)/magn
-                else if (lcmp(i).eq.'DZ') then
-                    coef_dir(i) = dir(3)/magn
-                end if
-            end do
+            do ifonct=1, nfonct
+                call normev(dir(3*(ifonct-1)+1:3*ifonct), magn)
+                do i = 1, physlen
+                    if (lcmp(i).eq.'DX') then
+                        coef_dir(physlen*(ifonct-1)+i) = dir(3*(ifonct-1)+1)
+                    else if (lcmp(i).eq.'DY') then
+                        coef_dir(physlen*(ifonct-1)+i) = dir(3*(ifonct-1)+2)
+                    else if (lcmp(i).eq.'DZ') then
+                        coef_dir(physlen*(ifonct-1)+i) = dir(3*(ifonct-1)+3)
+                    end if
+                end do
+            enddo
             AS_DEALLOCATE(vk8=lcmp)
 
 !           Evaluate (by interpolation or no), the function giving the MONO_APPUI
@@ -204,19 +213,21 @@ subroutine pgpext(sd_pgp)
             AS_ALLOCATE(vr=facce , size=nbinst)
             AS_ALLOCATE(vr=linst , size=nbinst)
             call pgpget(sd_pgp, 'DISC', iobs=iobs, rvect = linst)
-            do iinst = 1, nbinst
-                call fointe('F ', acce_mo, 1, ['INST'], [linst(iinst)],&
-                            acce, ier)
-                facce(iinst) = acce
-            end do
-
-!           Add up, in the result table for the accelerations of the requested nodes,
-!           the value of coef_dir(icomp)*facce(iinst) for component icomp and instant iinst
-            do iinst = 1, nbinst
-                do i = 1, physlen
-                    vale(iinst,i) = vale(iinst,i) + coef_dir(i)*facce(iinst)
+            do ifonct=1, nfonct
+                do iinst = 1, nbinst
+                    call fointe('F ', acce_mo(ifonct), 1, ['INST'], [linst(iinst)],&
+                                acce, ier)
+                    facce(iinst) = acce
                 end do
-            end do
+    
+!               Add up, in the result table for the accelerations of the requested nodes,
+!               the value of coef_dir(icomp)*facce(iinst) for component icomp and instant iinst
+                do iinst = 1, nbinst
+                    do i = 1, physlen
+                        vale(iinst,i) = vale(iinst,i) + coef_dir(physlen*(ifonct-1)+i)*facce(iinst)
+                    end do
+                end do
+            enddo
             AS_DEALLOCATE(vr=coef_dir)
             AS_DEALLOCATE(vr=facce)
             AS_DEALLOCATE(vr=linst)
