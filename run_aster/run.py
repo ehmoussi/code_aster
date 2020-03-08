@@ -19,6 +19,7 @@
 
 import os
 import os.path as osp
+import stat
 import tempfile
 from contextlib import contextmanager
 from glob import glob
@@ -32,8 +33,10 @@ from .export import Export
 from .logger import logger
 from .status import StateOptions, Status, get_status
 from .timer import Timer
-from .utils import ROOT, compress, copy, make_writable, run_command, uncompress
+from .utils import (ROOT, compress, copy, get_mpirun_script, make_writable,
+                    run_command, uncompress)
 
+MPI_SCRIPT = "mpi_script.sh"
 TMPMESS = "fort.6"
 
 
@@ -68,13 +71,21 @@ class RunAster:
         Arguments:
             export (Export): Export object defining the calculation.
         """
-        class_ = cls
+        features = []
+        if CFG.get("parallel", 0):
+            base = RunMpi
+        else:
+            base = cls
+        features.append(base)
         actions = export.get("actions", [])
         if "make_test" in actions:
-            class_ = RunTest
+            features.append(RunTest)
         if "make_env" in actions:
-            class_ = RunOnlyEnv
-        return class_(export)
+            features.append(RunOnlyEnv)
+
+        class Runner(*features):
+            pass
+        return Runner(export)
 
     def __init__(self, export):
         self.timer = Timer()
@@ -103,8 +114,7 @@ class RunAster:
         return status
 
     def prepare_current_directory(self):
-        """Execution.
-        """
+        """Prepare the working directory."""
         logger.info(f"TITLE Prepare environment in {os.getcwd()}")
         # add reptrav to LD_LIBRARY_PATH (to find dynamic libs provided by user)
         old = os.environ.get("LD_LIBRARY_PATH", "")
@@ -158,8 +168,8 @@ class RunAster:
             last (bool): *True* for the last command file.
             timeout (float): Remaining time.
         """
-        cmd = self._get_cmdline(comm)
         logger.info(f"TITLE Command line #{idx + 1}:")
+        cmd = self._get_cmdline(comm)
         logger.info(f"    {' '.join(cmd)}")
 
         exitcode = run_command(cmd, TMPMESS, timeout)
@@ -236,6 +246,54 @@ class RunAster:
         if results:
             logger.info("TITLE Copying results")
             copy_resultfiles(results, is_completed)
+
+
+class RunMpi(RunAster):
+    """Execute an MPI version of code_aster from a `.export` file.
+
+    Arguments:
+        export (Export): Export object defining the calculation.
+    """
+
+    def __init__(self, export):
+        self._basetmp = None
+        self._globtmp = None
+        super().__init__(export)
+
+    def prepare_current_directory(self):
+        """Prepare the working directory.
+
+        Prepare a 'global' directory that will be copied by each processor.
+        """
+        self._basetmp = os.getcwd()
+        self._globtmp = osp.join(self._basetmp, "global")
+        os.makedirs(self._globtmp)
+        os.chdir(self._globtmp)
+        super().prepare_current_directory()
+
+    def _get_cmdline(self, commfile):
+        """Build the command line.
+
+        Returns:
+            list[str]: List of command line arguments.
+        """
+        cmdline = super()._get_cmdline(commfile)
+        logger.info(f"    {' '.join(cmdline)}")
+        logger.info(">>> executed by:")
+        args = dict(cmdline=" ".join(cmdline),
+                    cp_cmd="scp -r",
+                    jobnum=self.jobnum,
+                    global_wrkdir=self._globtmp,
+                    local_wrkdir=self._basetmp,
+                    mpi_get_procid_cmd="echo ${OMPI_COMM_WORLD_RANK}")
+        with open(MPI_SCRIPT, "w") as fobj:
+            fobj.write(get_mpirun_script(args))
+        os.chmod(MPI_SCRIPT, stat.S_IRWXU)
+        mpicmd = [CFG.get("mpirun"),
+                  "--tag-output",
+                  "-np", str(self.export.get("mpi_nbcpu")),
+                  MPI_SCRIPT]
+        return mpicmd
 
 
 class RunTest(RunAster):
