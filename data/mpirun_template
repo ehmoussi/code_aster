@@ -8,13 +8,13 @@
 #     cp_cmd: command to copy global directory to local directory
 #     global_wrkdir: global working directory
 #     local_wrkdir: base for the local working directory
-#     mpi_get_procid_cmd: command to retreive processor ID
+#     mpirun_rank: command to retreive processor ID
 #     jobnum: job identifier
 #
 # automatically generated for job number #%{jobnum}
 #
 
-RUN_PROCID=$(%{mpi_get_procid_cmd})
+RUN_PROCID=$(%{mpirun_rank})
 
 if [ -z "${RUN_PROCID}" ]; then
    echo "Processor ID is not defined !"

@@ -286,7 +286,7 @@ class RunMpi(RunAster):
                     jobnum=self.jobnum,
                     global_wrkdir=self._globtmp,
                     local_wrkdir=self._basetmp,
-                    mpi_get_procid_cmd=CFG.get("mpi_get_procid_cmd"))
+                    mpirun_rank=CFG.get("mpirun_rank"))
         with open(MPI_SCRIPT, "w") as fobj:
             fobj.write(get_mpirun_script(args))
         os.chmod(MPI_SCRIPT, stat.S_IRWXU)
