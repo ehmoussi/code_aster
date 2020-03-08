@@ -325,12 +325,18 @@ def check_config(self):
     cfg["parallel"] = int(self.get_define('HAVE_MPI') or 0)
     if cfg["parallel"]:
         self.check_mpirun()
+        self.check_mpirun_rank()
     cfg.update(self._extract_keys("CFGJS_"))
     self.env["CONFIG_PARAMETERS"] = cfg
 
 
 @Configure.conf
 def check_mpirun(self):
+    if self.env["mpirun"]:
+        self.start_msg("Check for mpirun command")
+        self.end_msg(self.env["mpirun"])
+        self.env["CFGJS_mpirun"] = [self.env["mpirun"]]
+        return
     _check_prog(self, "mpirun", ["mpirun"], var_prefix="CFGJS_")
     mpirun = self.env["CFGJS_mpirun"][0]
     mpicmd = [mpirun]
@@ -341,13 +347,6 @@ def check_mpirun(self):
                         [mpirun, "-np", "1", "echo"]) == 0:
         mpicmd.extend(["-np", "{mpi_nbcpu}"])
 
-    # default to openmpi
-    out = self.cmd_and_log(mpicmd + ["env"])
-    get_procid = "echo ${OMPI_COMM_WORLD_RANK}"
-    if "PMI_RANK" in out:
-        get_procid = "echo ${PMI_RANK}"
-    self.env["CFGJS_mpirun_get_procid_cmd"] = [get_procid]
-
     for opt in ("--tag-output", "-print-rank-map", "-prepend-rank",
                 "-ordered-output"):
         if self._call_cmd("Check for mpirun flag '{0}'".format(opt),
@@ -355,6 +354,22 @@ def check_mpirun(self):
             mpicmd.append(opt)
     mpicmd.append("{program}")
     self.env["CFGJS_mpirun"] = [" ".join(mpicmd)]
+
+@Configure.conf
+def check_mpirun_rank(self):
+    self.start_msg("Check for MPI rank variable")
+    if self.env["mpirun_rank"]:
+        self.end_msg(self.env["mpirun_rank"])
+        self.env["CFGJS_mpirun_rank"] = [self.env["mpirun_rank"]]
+        return
+    # default to openmpi
+    cmd = self.env["CFGJS_mpirun"][0].format(mpi_nbcpu=1, program="env")
+    out = self.cmd_and_log(cmd)
+    rank_id = "echo ${OMPI_COMM_WORLD_RANK}"
+    if "PMI_RANK" in out:
+        rank_id = "echo ${PMI_RANK}"
+    self.env["CFGJS_mpirun_rank"] = [rank_id]
+    self.end_msg(self.env["CFGJS_mpirun_rank"][0])
 
 
 @Configure.conf
