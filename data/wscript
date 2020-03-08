@@ -170,6 +170,9 @@ def build(self):
     self.install_files(self.env.BINDIR,
                        ["post_install", "run_aster", "run_ctest"],
                        chmod=Utils.O755)
+    self.install_files(self.env.ASTERDATADIR,
+                       ["mpirun_template"],
+                       chmod=Utils.O644)
     # install files from data repository
     if self.env.data_path:
         data_path = osp.relpath(self.env.data_path,

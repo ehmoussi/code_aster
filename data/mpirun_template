@@ -1,0 +1,64 @@
+#!/bin/bash
+#
+# script template to run code_aster using MPI
+#
+# This template uses 'percent' as delimiter and needs these fields:
+#
+#     cmdline: code_aster command line
+#     cp_cmd: command to copy global directory to local directory
+#     global_wrkdir: global working directory
+#     local_wrkdir: base for the local working directory
+#     mpi_get_procid_cmd: command to retreive processor ID
+#     jobnum: job identifier
+#
+# automatically generated for job number #%{jobnum}
+#
+
+RUN_PROCID=$(%{mpi_get_procid_cmd})
+
+if [ -z "${RUN_PROCID}" ]; then
+   echo "Processor ID is not defined !"
+   exit 4
+fi
+
+RUN_WRKDIR=%{local_wrkdir}/proc.${RUN_PROCID}
+
+if [ -e ${RUN_WRKDIR} ]; then
+   rm -rf ${RUN_WRKDIR}
+fi
+if [ ! -d %{local_wrkdir} ]; then
+   mkdir -p %{local_wrkdir}
+fi
+%{cp_cmd} %{global_wrkdir} ${RUN_WRKDIR}
+if [ $? -ne 0 ]; then
+    echo "non zero exit status for : %{cp_cmd} %{global_wrkdir} ${RUN_WRKDIR}"
+    exit 4
+fi
+chmod 0700 ${RUN_WRKDIR}
+
+cd ${RUN_WRKDIR}
+%{cmdline}
+iret=$?
+
+if [ -f info_cpu ]; then
+   infos=`cat info_cpu`
+   echo "PROC=${RUN_PROCID} INFO_CPU=${infos}"
+fi
+
+if [ ${RUN_PROCID} -eq 0 ]; then
+   echo "Content of ${RUN_WRKDIR} after execution:"
+   ls -la . REPE_OUT
+
+   rm -f %{global_wrkdir}/glob.* %{global_wrkdir}/bhdf.* %{global_wrkdir}/pick.*
+   rm -rf %{global_wrkdir}/REPE_OUT
+   # to save time during the following copy
+   rm -rf ${RUN_WRKDIR}/REPE_IN
+   cp -rf ${RUN_WRKDIR}/* %{global_wrkdir}/
+   kret=$?
+   if [ ${kret} -gt ${iret} ]; then
+      iret=${kret}
+   fi
+fi
+rm -rf ${RUN_WRKDIR}
+
+exit ${iret}
