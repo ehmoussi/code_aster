@@ -173,7 +173,8 @@ class RunAster:
         logger.info(f"    {' '.join(cmd)}")
 
         exitcode = run_command(cmd, TMPMESS, timeout)
-        logger.info(f"\nEXECUTION_CODE_ASTER_EXIT_{self.jobnum}={exitcode}\n\n")
+        logger.info(
+            f"\nEXECUTION_CODE_ASTER_EXIT_{self.jobnum}={exitcode}\n\n")
         status = self._get_status(exitcode, last)
 
         if status.is_completed():
@@ -190,7 +191,7 @@ class RunAster:
             for base in glob(osp.join("BASE_PREC", "*")):
                 copy(base, os.getcwd())
             logger.warning(f"execution failed (command file #{idx + 1}): "
-                            f"{status.diag}")
+                           f"{status.diag}")
         return status
 
     def _change_comm_file(self, comm, show):
@@ -285,15 +286,14 @@ class RunMpi(RunAster):
                     jobnum=self.jobnum,
                     global_wrkdir=self._globtmp,
                     local_wrkdir=self._basetmp,
-                    mpi_get_procid_cmd="echo ${OMPI_COMM_WORLD_RANK}")
+                    mpi_get_procid_cmd=CFG.get("mpi_get_procid_cmd"))
         with open(MPI_SCRIPT, "w") as fobj:
             fobj.write(get_mpirun_script(args))
         os.chmod(MPI_SCRIPT, stat.S_IRWXU)
-        mpicmd = [CFG.get("mpirun"),
-                  "--tag-output",
-                  "-np", str(self.export.get("mpi_nbcpu")),
-                  MPI_SCRIPT]
-        return mpicmd
+
+        args_cmd = dict(mpi_nbcpu=self.export.get("mpi_nbcpu"),
+                        program=MPI_SCRIPT)
+        return [CFG.get("mpirun").format(**args_cmd)]
 
 
 class RunTest(RunAster):
