@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -191,7 +191,7 @@ UTOT1=STAT_NON_LINE(MODELE      = MODELEK,
                                      ITER_GLOB_MAXI = 50,
                                     ),
                     SOLVEUR     = _F(METHODE='MUMPS',
-                                     NPREC=-1),
+                                     NPREC=20),
                     INCREMENT   = _F(LIST_INST = L_BINS, INST_FIN=1.0),
                     INFO=1,
                    )
@@ -222,7 +222,7 @@ UTOT1=STAT_NON_LINE(reuse=UTOT1,
                                      ITER_GLOB_MAXI = 50,
                                     ),
                     SOLVEUR     = _F(METHODE='MUMPS',
-                                     NPREC=-1),
+                                     NPREC=20),
                     INCREMENT   = _F(LIST_INST = L_BINS,),
                     INFO=1,
                    )

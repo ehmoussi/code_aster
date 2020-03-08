@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,7 @@ MECAC=MECA_STATIQUE(INFO=niv_info,
                                 GESTION_MEMOIRE='OUT_OF_CORE',
                                 PCENT_PIVOT=pcent_pivot,
                                 ACCELERATION ='FR',
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -148,7 +148,7 @@ MECACL0=MECA_STATIQUE(INFO=niv_info,
                                 POSTTRAITEMENTS='AUTO',RESI_RELA=1.E+6,
                                 ACCELERATION ='FR+',
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -186,7 +186,7 @@ MECACL1=MECA_STATIQUE(INFO=niv_info,
                                 ACCELERATION ='LR',
                                 LOW_RANK_SEUIL=1.E-12,
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -223,7 +223,7 @@ MECACL9=MECA_STATIQUE(INFO=niv_info,
                                 ACCELERATION ='LR+',
                                 LOW_RANK_SEUIL=1.E-9,
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -263,7 +263,7 @@ MECAC2=MECA_STATIQUE(INFO=niv_info,
                                 GESTION_MEMOIRE='OUT_OF_CORE',
                                 ACCELERATION ='FR',
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -300,7 +300,7 @@ MECAC2L0=MECA_STATIQUE(INFO=niv_info,
                                 POSTTRAITEMENTS='MINI',
                                 ACCELERATION ='FR+',
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -339,7 +339,7 @@ MECAC2L1=MECA_STATIQUE(INFO=niv_info,
                                 ACCELERATION ='LR',
                                 LOW_RANK_SEUIL=1.E-12,
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -377,7 +377,7 @@ MECAC2L2=MECA_STATIQUE(INFO=niv_info,
                                 ACCELERATION ='LR+',
                                 LOW_RANK_SEUIL=-1.E-12,
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -418,7 +418,7 @@ MECAD1=MECA_STATIQUE(INFO=niv_info,
                                 RESI_RELA=-1.0,
                                 GESTION_MEMOIRE='IN_CORE',
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -459,7 +459,7 @@ MECAD2=MECA_STATIQUE(INFO=niv_info,
                                 RESI_RELA=-1.0,
                                 GESTION_MEMOIRE='OUT_OF_CORE',
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -501,7 +501,7 @@ MECAD3=MECA_STATIQUE(INFO=niv_info,
                                 RESI_RELA=-1.0,
                                 PCENT_PIVOT=pcent_pivot,
                                 GESTION_MEMOIRE='IN_CORE',
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
@@ -542,7 +542,7 @@ MECAD4=MECA_STATIQUE(INFO=niv_info,
                                 RESI_RELA=-1.0,
                                 GESTION_MEMOIRE='OUT_OF_CORE',
                                 PCENT_PIVOT=pcent_pivot,
-                                NPREC=-1,
+                                #NPREC=-1,
                                 ));
 
 TEST_RESU(RESU=_F(NUME_ORDRE=1,
