@@ -371,7 +371,6 @@ def check_mpirun_rank(self):
     self.env["CFGJS_mpirun_rank"] = [rank_id]
     self.end_msg(self.env["CFGJS_mpirun_rank"][0])
 
-
 @Configure.conf
 def _call_cmd(self, msg, cmd):
     self.start_msg(msg)
@@ -393,7 +392,7 @@ def check_external_programs(self):
     _check_prog(self, 'salome', ['salome'],
                 add_paths=['${ABSOLUTE_APPLI_PATH}'])
 
-    _check_prog(self, 'miss3d', ['run_miss3d'],
+    _check_prog(self, 'run_miss3d', ['run_miss3d'],
                 add_paths=['${MISS3D_DIR}'])
 
     _check_prog(self, 'homard', ['homard'],
@@ -406,16 +405,12 @@ def check_external_programs(self):
     _check_prog(self, 'mfront', [mfront],
                 add_paths=['${MFRONT_ROOT_DIR}'])
 
-    _check_prog(self, 'xmgrace', ['xmgrace', 'gracebat'])
+    _check_prog(self, 'xmgrace', ['xmgrace'])
+    _check_prog(self, 'gracebat', ['gracebat'])
 
     _check_prog(self, 'mdump', ['mdump'])
 
     dict_ext = self._extract_keys("PROG_")
-    # remove mfront_<version-number>
-    for key in dict_ext:
-        if key.startswith('PROG_mfront'):
-            del dict_ext[key]
-            dict_ext['mfront'] = self.env[key][0]
     self.env['EXTERNAL_PROGRAMS'] = dict_ext
 
 
@@ -431,6 +426,7 @@ def _extract_keys(self, var_prefix):
 
 
 def _check_prog(self, name, programs, add_paths=None, var_prefix="PROG_"):
+    """Search for the first available program from 'programs'."""
     opts = self.options
     paths0 = self.environ.get('PATH', '').split(os.pathsep)
     paths1 = [i for i in paths0 if 'outils' not in i]
@@ -440,15 +436,16 @@ def _check_prog(self, name, programs, add_paths=None, var_prefix="PROG_"):
     with_prog = getattr(opts, 'with_prog_' + name, None)
 
     while to_check:
-        success = True
+        success = False
         paths = to_check.pop(0)
         for prog in programs:
             try:
-                self.find_program(prog, var=var_prefix + prog,
+                self.find_program(prog, var=var_prefix + name,
                                   path_list=add_paths + paths)
-            except Errors.ConfigurationError:
-                success = False
+                success = True
                 break
+            except Errors.ConfigurationError:
+                pass
         if success:
             break
     if not success and with_prog:
