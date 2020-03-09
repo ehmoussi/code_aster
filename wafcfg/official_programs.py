@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,10 +32,13 @@ def configure(self):
     opts.with_prog_gmsh = True
     # salome: only required by few testcases
     # europlexus: not available on all platforms
-    opts.with_prog_miss3d = True
+    opts.with_prog_run_miss3d = True
     opts.with_prog_homard = True
     opts.with_prog_ecrevisse = True
+    opts.with_prog_mfront = True
     opts.with_prog_xmgrace = True
+    opts.with_prog_gracebat = True
+    opts.with_prog_mdump = True
 
 
 def check_prerequisites_package(self, yammdir, minvers):
