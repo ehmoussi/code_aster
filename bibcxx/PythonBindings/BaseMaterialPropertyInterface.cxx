@@ -29,8 +29,8 @@ namespace py = boost::python;
 
 void exportBaseMaterialPropertyToPython() {
 
-    py::class_< GenericMaterialPropertyClass, BaseMaterialPropertyPtr >(
-        "BaseMaterialProperty", py::no_init )
+    py::class_< GenericMaterialPropertyClass, GenericMaterialPropertyPtr >(
+        "GenericMaterialProperty", py::no_init )
         // fake initFactoryPtr: created by subclasses
         .def( "__init__", py::make_constructor(&initFactoryPtr< GenericMaterialPropertyClass >))
         .def( "getAsterName", &GenericMaterialPropertyClass::getAsterName )

@@ -43,6 +43,6 @@ void exportVectorUtilitiesToPython() {
     exportVectorUtilities< BaseFunctionPtr >();
     exportVectorUtilities< FunctionPtr >();
     exportVectorUtilities< PartOfMaterialFieldPtr >();
-    exportVectorUtilities< BaseMaterialPropertyPtr >();
+    exportVectorUtilities< GenericMaterialPropertyPtr >();
     exportVectorUtilities< DataStructurePtr >();
 };

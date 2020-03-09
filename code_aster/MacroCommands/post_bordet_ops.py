@@ -24,7 +24,7 @@ from ..Cata.Syntax import _F
 from ..Commands import (CALC_CHAM_ELEM, CALC_CHAMP, CALC_TABLE,
                                  CREA_CHAMP, CREA_TABLE, FORMULE)
 from ..Objects import Function as fonction_sdaster
-from ..Objects import Surface as nappe_sdaster
+from ..Objects import Function2D as nappe_sdaster
 from ..Messages import UTMESS
 
 

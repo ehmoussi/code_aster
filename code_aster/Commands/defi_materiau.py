@@ -24,7 +24,7 @@ import numpy
 from .. import Objects as all_types
 from ..Cata.Language.SyntaxObjects import _F
 from ..Objects import (DataStructure, Formula, Function,
-                       BaseMaterialProperty, Material, MaterialProperty,
+                       GenericMaterialProperty, Material, MaterialProperty,
                        Function2D, Table)
 from ..Supervis import ExecuteCommand
 
@@ -210,7 +210,7 @@ class MaterialDefinition(ExecuteCommand):
         for _, obj in list(all_types.__dict__.items()):
             if not isinstance(obj, type):
                 continue
-            if not issubclass(obj, BaseMaterialProperty):
+            if not issubclass(obj, GenericMaterialProperty):
                 continue
             if issubclass(obj, MaterialProperty):
                 continue
