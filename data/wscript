@@ -327,6 +327,8 @@ def check_config(self):
         self.check_mpirun()
         self.check_mpirun_rank()
     cfg.update(self._extract_keys("CFGJS_"))
+    cfg["FC"] = self.env["FC"][0]
+    cfg["FCFLAGS"] = self.env["FCFLAGS"]
     self.env["CONFIG_PARAMETERS"] = cfg
 
 
