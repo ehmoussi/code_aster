@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,16 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
+
+
 POURSUITE(CODE='OUI', DEBUG=_F(SDVERI='OUI'))
 
+mdump = ExecutionParameter().get_option("prog:mdump")
+
 EXEC_LOGICIEL(
-    LOGICIEL="mdump fort.80 NODALE FULL_INTERLACE 1 | sed '1,20d'> dump.txt",
+    LOGICIEL=mdump + " fort.80 NODALE FULL_INTERLACE 1 | sed '1,20d'> dump.txt",
     SHELL='OUI')
 
 TEST_FICHIER(
@@ -41,7 +47,7 @@ LGroupe = [
 for grp, nbvale, valec in LGroupe:
     NomFicMed = './REPE_OUT/plancher_scs_%s.med' % grp
     EXEC_LOGICIEL(
-        LOGICIEL="mdump {0} NODALE FULL_INTERLACE 1 | sed '1,20d'> dump.txt"
+        LOGICIEL=mdump + " {0} NODALE FULL_INTERLACE 1 | sed '1,20d'> dump.txt"
                  .format(NomFicMed),
         SHELL='OUI')
 
