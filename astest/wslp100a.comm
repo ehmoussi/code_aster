@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -210,8 +210,6 @@ LI1=DEFI_LIST_REEL(DEBUT=-1.e4,
 
 CINIT=STAT_NON_LINE(MODELE=MODELE,
                      CHAM_MATER=CHMATO,
-
-                     #SOLVEUR=_F(METHODE='MUMPS',PCENT_PIVOT=100,NPREC=-1,),
                      SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA',),
 
                      EXCIT=(_F(CHARGE=CHAR0,),
@@ -254,8 +252,6 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST = _F(LIST_INST    = LI2,),
                                         SUBD_NIVEAU  =  2,),);
 MESTAT=STAT_NON_LINE(MODELE=MODELE,
                      CHAM_MATER=CHMATO,
-
-                     #SOLVEUR=_F(METHODE='MUMPS',PCENT_PIVOT=100,NPREC=8,),
                      SOLVEUR=_F(METHODE='MULT_FRONT',RENUM='MDA',),
 
                      EXCIT=(_F(CHARGE=CHAR0,),
