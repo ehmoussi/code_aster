@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,15 +59,15 @@ subroutine pgppre(sd_pgp)
     character(len=8), intent(in):: sd_pgp
 !   -0.2- Local variables
     aster_logical     :: found
-    real(kind=8)      :: dir(3)
+    real(kind=8)      :: dir(9)
     integer           :: nbobs, iobs, nbcmp, nbsupp, ivsup
     integer           :: icomp, icmp, nbmcl, iret, jcomp
-    integer           :: nbcmp1, nord, icorrst, multap
+    integer           :: nbcmp1, nord, icorrst, multap, nfonct, vali(2)
     character(len=3)  :: prsimp, corrst
     character(len=4)  :: typch, typsc
     character(len=8)  :: nomres, resin, base, base0
     character(len=8)  :: maillage, nume, ncmp, nomgd, modele
-    character(len=8)  :: acce_mo, limocl(4)
+    character(len=8)  :: acce_mo(3), limocl(4)
     character(len=16) :: typreso, nomcmd, typresi , champ, typem
     character(len=16) :: champ2
     character(len=19) :: nomcha, resin19
@@ -277,19 +277,28 @@ subroutine pgppre(sd_pgp)
 !       Single pinned entraining acceleration (ACCE_MONO_APPUI)
         acce_mo = ' '
         if (champ.eq.'ACCE_ABSOLU') then
-            call getvid('OBSERVATION', 'ACCE_MONO_APPUI', iocc=iobs, scal=acce_mo,&
-                        nbret=iret)
+            call getvid('OBSERVATION', 'ACCE_MONO_APPUI', iocc=iobs, nbret=iret)
             if (iret.ne.0) then
                 if (multap.eq.1) then
 !                   Care should be taken, is this system in MONO or MULTI_APPUI ?
                     call utmess('A', 'PREPOST_45', si=iobs, sk=resin)
-                else 
-                    call getvr8('OBSERVATION', 'DIRECTION', iocc=iobs, nbval=3, vect=dir)
-                    call pgpsav(sd_pgp, 'ACC_DIR ' , 3, iobs=iobs, rvect=dir)
+                else
+                    nfonct = abs(iret)
+                    call getvid('OBSERVATION', 'ACCE_MONO_APPUI', iocc=iobs, vect=acce_mo,&
+                        nbval=nfonct)
+                    dir = 0.d0
+                    call getvr8('OBSERVATION', 'DIRECTION', iocc=iobs, nbval=3*nfonct, vect=dir,&
+                                nbret=iret)
+                    if (iret.lt.3*nfonct) then
+                        vali(1) = nfonct
+                        vali(2) = 3*nfonct
+                        call utmess('F', 'ALGORITH9_85', ni=2, vali=vali)
+                    endif
+                    call pgpsav(sd_pgp, 'ACC_DIR ' , 9, iobs=iobs, rvect=dir)
                 end if
             end if
         end if
-        call pgpsav(sd_pgp, 'ACC_MO_A' , 1, iobs=iobs, kscal=acce_mo)
+        call pgpsav(sd_pgp, 'ACC_MO_A' , 3, iobs=iobs, kvect=acce_mo)
 
     end do
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,9 +66,6 @@ INSTANTS=DEFI_LIST_REEL(DEBUT=0.,
 RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.,0.,
                           1.,1.,
                           ));
-# LES SYSTEMES LINEAIRES SONT DIFFICILES A RESOUDRE.
-# ON DEVERROUILLE LA DETECTION DE SINGULARITE. LE PROCESSUS DE NEWTON
-# CORRIGE LES EVENTUELLES DERIVES.
 EVOL=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=CM,
                    EXCIT=_F(CHARGE=CH,
@@ -80,7 +77,7 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                    CONVERGENCE=_F(SIGM_REFE=60.0,
                                   EPSI_REFE=3.E-4,
                                   RESI_REFE_RELA=1.E-3),
-                   SOLVEUR=_F(METHODE='MUMPS',NPREC=-1,
+                   SOLVEUR=_F(METHODE='MUMPS',
    ));
 
 # REMARQUE : STRICTO SENSU, LE CALCUL DE ERME_ELEM EST FAUX CAR
@@ -361,7 +358,7 @@ EVOL_L=STAT_NON_LINE(MODELE=MO,
                    CONVERGENCE=_F(SIGM_REFE=60.0,
                                   EPSI_REFE=3.E-4,
                                   RESI_REFE_RELA=1.E-3),
-                   SOLVEUR=_F(METHODE='MUMPS',NPREC=-1,));
+                   SOLVEUR=_F(METHODE='MUMPS',));
 
 EVOL_L=CALC_CHAMP(reuse=EVOL_L,RESULTAT=EVOL_L,DEFORMATION=('EPSG_NOEU'))
 
