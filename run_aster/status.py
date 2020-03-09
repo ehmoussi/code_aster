@@ -170,14 +170,14 @@ class StateOptions:
             return "<F>_SYNTAX_ERROR"
         if state & StateOptions.Fatal:
             return "<F>_ERROR"
-        if state & StateOptions.Except:
-            return "<S>_ERROR"
         if state & StateOptions.Memory:
             return "<S>_MEMORY_ERROR"
         if state & StateOptions.NoConvergence:
             return "<S>_NO_CONVERGENCE"
         if state & StateOptions.CpuLimit:
             return "<S>_CPU_LIMIT"
+        if state & StateOptions.Except:
+            return "<S>_ERROR"
         if state & StateOptions.NoTest:
             return "NO_TEST_RESU"
         if state & StateOptions.Nook:
@@ -236,20 +236,21 @@ def get_status(exitcode, output, test=False):
             state = StateOptions.Ok
         exitcode = state & (StateOptions.Nook | StateOptions.NoTest)
     else:
-        if RE_MEM.search(text):
-            state |= StateOptions.Memory
-        if exitcode == -9 or RE_TIME.search(text):
-            state |= StateOptions.CpuLimit
-        if RE_CONV.search(text):
-            state |= StateOptions.NoConvergence
-        if RE_EXCEPT.search(text) or RE_ERRS.search(text):
-            state |= StateOptions.Except
         if RE_SYNTAX.search(text):
             state |= StateOptions.Syntax
         if RE_ERRF.search(text):
             state |= StateOptions.Fatal
-        if not state:
-            state = StateOptions.Abort
+    if RE_MEM.search(text):
+        state |= StateOptions.Memory
+    if exitcode == -9 or RE_TIME.search(text):
+        state |= StateOptions.CpuLimit
+    if RE_CONV.search(text):
+        state |= StateOptions.NoConvergence
+    if RE_EXCEPT.search(text) or RE_ERRS.search(text):
+        state |= StateOptions.Except
+    if not state:
+        state = StateOptions.Abort
+    state = StateOptions.effective(state)
 
     ndeb = len(RE_DEBUT.findall(text))
     nfin = len(RE_FIN.findall(text))

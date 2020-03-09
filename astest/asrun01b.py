@@ -339,6 +339,8 @@ class TestStatus(unittest.TestCase):
         self.assertEqual(SO.effective(state), SO.Syntax)
         state = SO.Warn | SO.Nook | SO.CpuLimit | SO.Syntax
         self.assertEqual(SO.effective(state), SO.CpuLimit | SO.Syntax)
+        state = SO.Warn | SO.Nook | SO.CpuLimit | SO.Except
+        self.assertEqual(SO.effective(state), SO.CpuLimit | SO.Except)
 
     def test_status(self):
         status = Status()
