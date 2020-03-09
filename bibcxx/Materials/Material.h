@@ -45,8 +45,8 @@ class MaterialClass: public DataStructure
          */
         typedef boost::shared_ptr< MaterialClass > MaterialPtr;
 
-        typedef std::vector< BaseMaterialPropertyPtr > VectorOfBaseMaterialProperty;
-        typedef VectorOfBaseMaterialProperty::iterator VectorOfGeneralMaterialIter;
+        typedef std::vector< GenericMaterialPropertyPtr > VectorOfGenericMaterialProperty;
+        typedef VectorOfGenericMaterialProperty::iterator VectorOfGeneralMaterialIter;
         typedef std::vector< JeveuxVectorReal > VectorOfJeveuxVectorReal;
         typedef std::vector< JeveuxVectorChar8 > VectorOfJeveuxVectorChar8;
 
@@ -56,8 +56,8 @@ class MaterialClass: public DataStructure
         /** @brief Nombre de MaterialProperty deja ajoutes */
         int                                _nbMaterialProperty;
         int                                _nbUserMaterialProperty;
-        /** @brief Vecteur contenant les BaseMaterialPropertyPtr ajoutes par l'utilisateur */
-        VectorOfBaseMaterialProperty   _vecMatBehaviour;
+        /** @brief Vecteur contenant les GenericMaterialPropertyPtr ajoutes par l'utilisateur */
+        VectorOfGenericMaterialProperty   _vecMatBehaviour;
 
         /** @brief Vector of JeveuxVectorComplex named 'CPT.XXXXXX.VALC' */
         std::vector< JeveuxVectorComplex > _vectorOfComplexValues;
@@ -106,15 +106,15 @@ class MaterialClass: public DataStructure
         };
 
         /**
-         * @brief Ajout d'un BaseMaterialPropertyPtr
-         * @param curMaterBehav BaseMaterialPropertyPtr a ajouter au MaterialClass
+         * @brief Ajout d'un GenericMaterialPropertyPtr
+         * @param curMaterBehav GenericMaterialPropertyPtr a ajouter au MaterialClass
          * @todo pouvoiur utiliser addMaterialProperty plusieurs fois après build
          */
-        void addMaterialProperty( const BaseMaterialPropertyPtr& curMaterBehav );
+        void addMaterialProperty( const GenericMaterialPropertyPtr& curMaterBehav );
 
         /**
          * @brief Construction du MaterialClass
-         *   A partir des BaseMaterialPropertyPtr ajoutes par l'utilisateur :
+         *   A partir des GenericMaterialPropertyPtr ajoutes par l'utilisateur :
          *   creation de objets Jeveux
          * @return Booleen indiquant que la construction s'est bien deroulee
          * @todo pouvoir compléter un matériau (ajout d'un comportement après build)
@@ -188,7 +188,7 @@ class MaterialClass: public DataStructure
         /**
          * @brief Get vector of material behaviours
          */
-        VectorOfBaseMaterialProperty getVectorOfMaterialPropertys()
+        VectorOfGenericMaterialProperty getVectorOfMaterialPropertys()
         {
             return _vecMatBehaviour;
         };

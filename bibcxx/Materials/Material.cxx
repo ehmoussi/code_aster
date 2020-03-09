@@ -29,7 +29,7 @@
 #include "Materials/Material.h"
 #include "Supervis/ResultNaming.h"
 
-void MaterialClass::addMaterialProperty( const BaseMaterialPropertyPtr& curMaterBehav )
+void MaterialClass::addMaterialProperty( const GenericMaterialPropertyPtr& curMaterBehav )
 {
     ++_nbMaterialProperty;
     _vecMatBehaviour.push_back( curMaterBehav );
@@ -106,7 +106,7 @@ bool MaterialClass::build() {
                 addMaterialProperty( curIter );
     }
 
-    // Recuperation du nombre de BaseMaterialPropertyPtr ajoutes par l'utilisateur
+    // Recuperation du nombre de GenericMaterialPropertyPtr ajoutes par l'utilisateur
     const int nbMCF = _vecMatBehaviour.size();
     if ( nbMCF != _vectorOfComplexValues.size() || nbMCF != _vectorOfRealValues.size() ||
          nbMCF != _vectorOfChar16Values.size() )
@@ -115,9 +115,9 @@ bool MaterialClass::build() {
     // Creation du vecteur Jeveux ".MATERIAU.NOMRC"
     _materialBehaviourNames->allocate( Permanent, nbMCF );
     int num = 0;
-    // Boucle sur les BaseMaterialPropertyPtr
+    // Boucle sur les GenericMaterialPropertyPtr
     for ( const auto &curIter : _vecMatBehaviour ) {
-        // Recuperation du nom Aster (ELAS, ELAS_FO, ...) du BaseMaterialPropertyPtr
+        // Recuperation du nom Aster (ELAS, ELAS_FO, ...) du GenericMaterialPropertyPtr
         // sur lequel on travaille
         std::string curStr;
         if ( curIter->getAsterNewName() == "" )

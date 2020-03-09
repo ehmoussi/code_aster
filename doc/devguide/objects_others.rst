@@ -66,19 +66,19 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.ExternalVariableConverter` object
+:py:class:`~code_aster.Objects.ExternalVariablesConverter` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.ExternalVariableConverter
+.. autoclass:: code_aster.Objects.ExternalVariablesConverter
    :show-inheritance:
    :members:
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.ExternalVariableOnMesh` object
+:py:class:`~code_aster.Objects.ExternalVariablesField` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.ExternalVariableOnMesh
+.. autoclass:: code_aster.Objects.ExternalVariablesField
    :show-inheritance:
    :members:
 
@@ -167,10 +167,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.GenericExternalVariable` subclasses
+:py:class:`~code_aster.Objects.BaseExternalVariables` subclasses
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.GenericExternalVariable
+.. autoclass:: code_aster.Objects.BaseExternalVariables
    :show-inheritance:
    :members:
 
@@ -313,10 +313,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.MaterialOnMeshBuilder` object
+:py:class:`~code_aster.Objects.MaterialFieldBuilder` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.MaterialOnMeshBuilder
+.. autoclass:: code_aster.Objects.MaterialFieldBuilder
    :show-inheritance:
    :members:
 
@@ -337,7 +337,7 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.GroupOfElements
+.. autoclass:: code_aster.Objects.GroupOfCells
    :show-inheritance:
    :members:
 
@@ -370,10 +370,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.PartOfMaterialOnMesh` object
+:py:class:`~code_aster.Objects.PartOfMaterialField` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.PartOfMaterialOnMesh
+.. autoclass:: code_aster.Objects.PartOfMaterialField
    :show-inheritance:
    :members:
 
@@ -588,4 +588,3 @@ Documentation of all other types.
 .. autoclass:: code_aster.Objects.TimeLimitError
    :show-inheritance:
    :members:
-

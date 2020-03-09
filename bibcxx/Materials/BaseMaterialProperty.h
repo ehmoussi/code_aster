@@ -732,6 +732,6 @@ class GenericMaterialPropertyClass {
 };
 
 /** @typedef Pointeur intellignet vers un comportement materiau quelconque */
-typedef boost::shared_ptr< GenericMaterialPropertyClass > BaseMaterialPropertyPtr;
+typedef boost::shared_ptr< GenericMaterialPropertyClass > GenericMaterialPropertyPtr;
 
 #endif
