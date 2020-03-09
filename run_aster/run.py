@@ -24,7 +24,7 @@ import tempfile
 from contextlib import contextmanager
 from glob import glob
 from math import log10
-from subprocess import run
+from subprocess import PIPE, run
 
 from .command_files import add_import_commands, stop_at_end
 from .config import CFG
@@ -84,6 +84,16 @@ class RunAster:
         self._globtmp = None
         self._parallel = CFG.get("parallel", 0)
         self._test = "make_test" in export.get("actions", [])
+        self._tee = True
+
+    @property
+    def tee(self):
+        """bool: Attribute that holds the 'tee' property."""
+        return self._tee
+
+    @tee.setter
+    def tee(self, value):
+        self._tee = value
 
     def execute(self):
         """Execution in a temporary directory.
@@ -135,7 +145,7 @@ class RunAster:
         """
         if show_content:
             logger.info(f"TITLE Content of {os.getcwd()} before execution:")
-            run(["ls", "-l", ".", "REPE_IN"])
+            logger.info(_ls(".", "REPE_IN"))
         commfiles = sorted(glob("fort.1.*"))
         nbcomm = len(commfiles)
         if not commfiles:
@@ -223,7 +233,10 @@ class RunAster:
             cmd.append("-i")
         cmd.append(commfile)
         cmd.extend(self.export.args)
-        cmd.extend(["2>&1", "|", "tee", "-a", TMPMESS])
+        if self._tee:
+            cmd.extend(["2>&1", "|", "tee", "-a", TMPMESS])
+        else:
+            cmd.extend(["2>&1", ">>", TMPMESS])
         # TODO add pid + mode to identify the process
 
         if self._parallel:
@@ -266,7 +279,7 @@ class RunAster:
                 *False* otherwise.
         """
         logger.info(f"TITLE Content of {os.getcwd()} after execution:")
-        run(["ls", "-l", ".", "REPE_OUT"])
+        logger.info(_ls(".", "REPE_OUT"))
         results = self.export.resultfiles
         if results:
             logger.info("TITLE Copying results")
@@ -399,6 +412,10 @@ def copy_resultfiles(files, copybase):
                     os.makedirs(obj.path)
                 copy(filename, obj.path, verbose=True)
 
+
+def _ls(*paths):
+    proc = run(["ls", "-l"] + list(paths), stdout=PIPE, universal_newlines=True)
+    return proc.stdout
 
 def _log_mess(msg):
     """Log a message into the *message* file."""

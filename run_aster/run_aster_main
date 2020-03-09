@@ -45,7 +45,7 @@ except ImportError:
     lib = osp.join(root, "lib", "aster")
     sys.path.append(lib)
 
-from run_aster.logger import DEBUG, logger
+from run_aster.logger import DEBUG, WARNING, logger
 
 
 __DOC__ = __doc__
@@ -81,8 +81,9 @@ def parse_args(argv):
                         help="execution of a testcase")
     parser.add_argument('--ctest', action='store_true',
                         help="testcase execution inside ctest (implies "
-                             "'--test'), the 'mess' file will be saved into "
-                             "the 'Testing' directory")
+                             "'--test'), the 'mess' file is saved into "
+                             "the current directory and is not duplicated "
+                             "on stdout.")
     parser.add_argument('-w', '--wrkdir', action='store',
                         help="use this existing directory as working directory")
     parser.add_argument('--ptvsd', action='store', type=int,
@@ -91,6 +92,8 @@ def parse_args(argv):
                         help="Export file defining the calculation.")
 
     args = parser.parse_args(argv)
+    if args.ctest:
+        logger.setLevel(WARNING)
     if args.debug:
         logger.setLevel(DEBUG)
     if args.env and not args.wrkdir:
@@ -121,7 +124,7 @@ def main(argv=None):
                              export.get("actions", []) + ["make_test"])
         if args.ctest:
             basename = osp.splitext(osp.basename(args.export))[0]
-            mess = File(osp.join(osp.abspath("Testing"), basename + ".mess"),
+            mess = File(osp.abspath(basename + ".mess"),
                         filetype="mess", unit=6, resu=True)
             export.add_file(mess)
     if args.env:
@@ -133,6 +136,7 @@ def main(argv=None):
     export.check()
 
     calc = RunAster.factory(export)
+    calc.tee = not args.ctest
     if args.wrkdir:
         os.chdir(args.wrkdir)
         status = calc.execute()
