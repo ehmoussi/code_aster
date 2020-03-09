@@ -120,20 +120,18 @@ def make_writable(filename):
     os.chmod(filename, os.stat(filename).st_mode | stat.S_IWUSR)
 
 
-def run_command(cmd, logfile, timeout=None):
+def run_command(cmd, timeout=None):
     """Execute a command and duplicate output to `logfile`.
 
     Arguments:
         cmd (list): Command line arguments.
-        logfile (str): Log file name.
         timeout (float, optional): Time out for the execution.
 
     Returns:
         int: exit code.
     """
-    newcmd = " ".join(cmd) + " 2>&1 | tee -a " + logfile
     try:
-        proc = run(newcmd, shell=True, timeout=timeout or None)
+        proc = run(" ".join(cmd), shell=True, timeout=timeout or None)
         iret = proc.returncode
     except TimeoutExpired as exc:
         sys.stderr.write(str(exc))
