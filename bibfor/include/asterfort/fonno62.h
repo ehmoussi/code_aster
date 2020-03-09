@@ -19,15 +19,20 @@
 !
 !
 interface
-    subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
-                      basloc, lnno, ltno)
-        character(len=8)  :: noma
-        character(len=19) :: basnof
-        character(len=8)  :: typm
-        character(len=24) :: fonoeu
-        integer           :: nbnoff
-        character(len=19) :: basloc
-        character(len=19) :: lnno
-        character(len=19) :: ltno
-    end subroutine fonbas2
+    subroutine fonno62(resu, noma, ndim, &
+                      iseg, noe, indr, nbnoel,&
+                      vnor, vdir, basseg, vect, sens)
+        integer          :: ndim
+        character(len=8) :: resu
+        character(len=8) :: noma
+        integer          :: iseg
+        integer          :: noe(4, 4)
+        integer          :: indr(2)
+        integer          :: nbnoel
+        real(kind=8)     :: vnor(2, 3)
+        real(kind=8)     :: vdir(2, 3)
+        character(len=19):: basseg
+        real(kind=8)     :: vect(3)
+        real(kind=8)     :: sens
+    end subroutine fonno62
 end interface
