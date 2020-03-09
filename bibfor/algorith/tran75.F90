@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,6 +55,7 @@ subroutine tran75(nomres, typres, nomin, basemo)
 #include "asterfort/jeveuo.h"
 #include "asterfort/mdgep3.h"
 #include "asterfort/mdgeph.h"
+#include "asterfort/normev.h"
 #include "asterfort/pteddl.h"
 #include "asterfort/rbph01.h"
 #include "asterfort/rbph02.h"
@@ -76,13 +77,13 @@ subroutine tran75(nomres, typres, nomin, basemo)
 ! ----------------------------------------------------------------------
     integer :: i, j, itresu(8)
     integer :: foci, focf, fomi, fomf, fomo
-    real(kind=8) :: r8b, epsi, alpha, xnorm, depl(6)
+    real(kind=8) :: r8b, epsi, alpha, xnorm, coef(3), direction(9)
     character(len=1) :: typ1
     character(len=8) :: k8b, blanc, basemo, crit, interp, basem2, mailla, nomres
     character(len=8) :: nomin, nomcmp(6), mode, monmot(2), matgen, nomgd
     character(len=14) :: numddl
     character(len=16) :: typres, type(8), typcha, typbas(8), concep
-    character(len=19) :: fonct, kinst, knume, prchno, prchn1, trange
+    character(len=19) :: fonct(3), kinst, knume, prchno, prchn1, trange
     character(len=19) :: typref(8), prof
     character(len=24) :: matric, chamno, crefe(2), nomcha, chamn2, objve1
     character(len=24) :: objve2, objve3, objve4, chmod
@@ -96,8 +97,8 @@ subroutine tran75(nomres, typres, nomin, basemo)
     integer :: irou, jc, jinst
     integer :: jnume, jpsdel, jvec, linst, llcha
     integer :: lpsdel, lval2, lvale, n1, n2, n3
-    integer :: n4, nbcham, nbd, nbdir, nbexci, nbinsg, nbinst
-    integer :: nbmode, nbnoeu, ncmp, neq, nfonct, neq0
+    integer :: n4, nbcham, nbd, nbexci, nbinsg, nbinst
+    integer :: nbmode, nbnoeu, ncmp, neq, nfonct, neq0, ifonct, vali(2)
     complex(kind=8) :: cbid
     real(kind=8), pointer :: base(:) => null()
     integer, pointer :: ddl(:) => null()
@@ -125,26 +126,23 @@ subroutine tran75(nomres, typres, nomin, basemo)
     prchno=' '
 !
 !     --- RECHERCHE SI UNE ACCELERATION D'ENTRAINEMENT EXISTE ---
-    fonct = ' '
     nfonct = 0
-    call getvid(' ', 'ACCE_MONO_APPUI', scal=fonct, nbret=nfonct)
+    call getvid(' ', 'ACCE_MONO_APPUI', nbret=nfonct)
     if (nfonct .ne. 0) then
-!
-        call getvr8(' ', 'DIRECTION', nbval=0, nbret=nbd)
-        nbdir = -nbd
-        call getvr8(' ', 'DIRECTION', nbval=nbdir, vect=depl, nbret=nbd)
-        xnorm = 0.d0
-        do id = 1, nbdir
-            xnorm = xnorm + depl(id) * depl(id)
-        end do
-        xnorm = sqrt(xnorm)
-        if (xnorm .lt. r8prem()) then
-            call utmess('F', 'ALGORITH9_81')
+        nfonct = abs(nfonct)
+        call getvid(' ', 'ACCE_MONO_APPUI', nbval=nfonct, vect=fonct)
+        call getvr8(' ', 'DIRECTION', nbval=3*nfonct, vect=direction, nbret=nbd)
+        if (nbd.lt.3*nfonct) then
+            vali(1) = nfonct
+            vali(2) = 3*nfonct
+            call utmess('F', 'ALGORITH9_85', ni=2, vali=vali)
         endif
-        do id = 1, nbdir
-            depl(id) = depl(id) / xnorm
-        end do
-!
+        do ifonct = 1, nfonct
+            call normev(direction(3*(ifonct-1)+1:3*ifonct), xnorm)
+            if (xnorm .lt. r8prem()) then
+                call utmess('F', 'ALGORITH9_81')
+            endif
+        enddo
     endif
 !
 !     --- RECUPERATION DES ENTITES DU MAILLAGE SUR LESQUELLES ---
@@ -462,25 +460,30 @@ subroutine tran75(nomres, typres, nomin, basemo)
                 end do
             endif
 !            --- PRISE EN COMPTE D'UNE ACCELERATION D'ENTRAINEMENT
-            if (type(ich) .eq. 'ACCE_ABSOLU' .and. nfonct .ne. 0) then
+!            --- PRISE EN COMPTE D'UNE ACCELERATION D'ENTRAINEMENT
+            if (type(ich) .eq. 'ACCE_ABSOLU' .and. nfonct .gt. 0) then
                 ir = 0
-                call fointe('F', fonct, 1, 'INST', zr(jinst+i),&
-                            alpha, ier)
+                coef = 0
+                do ifonct=1, nfonct
+                    call fointe('F', fonct(ifonct), 1, 'INST', zr(jinst+i),&
+                                alpha, ier)
+                    coef = coef + alpha*direction(3*(ifonct-1)+1:3*ifonct)
+                enddo
 !               --- ACCELERATION ABSOLUE = RELATIVE + ENTRAINEMENT
                 call wkvect('&&TRAN75.VECTEUR', 'V V R', neq, jvec)
                 if (i .eq. 0) then
-                    AS_ALLOCATE(vi=ddl, size=neq*nbdir)
+                    AS_ALLOCATE(vi=ddl, size=3*neq)
                     if (tousno) then
-                        call pteddl('NUME_DDL', numddl, nbdir, nomcmp, neq,&
+                        call pteddl('NUME_DDL', numddl, 3, nomcmp, neq,&
                             tabl_equa = ddl)
                     else
-                        call pteddl('CHAM_NO', chamno, nbdir, nomcmp, neq,&
+                        call pteddl('CHAM_NO', chamno, 3, nomcmp, neq,&
                             tabl_equa = ddl)
                     endif
                 endif
-                do id = 1, nbdir
+                do id = 1, 3
                     do ie = 0, neq-1
-                        zr(jvec+ie) = zr(jvec+ie) + ddl(1+neq*(id-1) +ie)*alpha*depl(id)
+                        zr(jvec+ie) = zr(jvec+ie) + ddl(1+neq*(id-1) +ie)*coef(id)
                     end do
                 end do
                 do ie = 0, neq-1

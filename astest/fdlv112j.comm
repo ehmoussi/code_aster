@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -139,7 +139,7 @@ MODEF=CALC_MODES(MATR_RIGI=RIGIF,
                                  ),
                     NORM_MODE=_F(INFO=1,
                                  NORME='TRAN_ROTA',),
-                    SOLVEUR=_F(NPREC=18,
+                    SOLVEUR=_F(
                                METHODE='MULT_FRONT',),
                     OPTION='BANDE',
                     CALC_FREQ=_F(FREQ=(0.1,10.),
@@ -161,6 +161,9 @@ TEST_RESU(RESU=(_F(RESULTAT=MODEF,
                    VALE_CALC=3.57270125634,),
                 ),
            );
+
+
+
 
 
 #definition du modele
@@ -222,7 +225,7 @@ MODEA=CALC_MODES(MATR_RIGI=RIGIA,
                                  ),
                     NORM_MODE=_F(INFO=1,
                                  NORME='TRAN_ROTA',),
-                    SOLVEUR=_F(NPREC=18,
+                    SOLVEUR=_F(
                                METHODE='MULT_FRONT',),
                     OPTION='BANDE',
                     CALC_FREQ=_F(FREQ=(0.1,10.,),

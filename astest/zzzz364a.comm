@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -346,7 +346,7 @@ for modeli in lmodeli :
                        NEWTON=_F(REAC_ITER=1),
                        CONVERGENCE=_F(ARRET='OUI', RESI_GLOB_MAXI=resi_glob_maxi,
                                       ITER_GLOB_MAXI=maxiter,),
-                       SOLVEUR=_F(METHODE='MUMPS', RESI_RELA=resi_rela, NPREC=-1, POSTTRAITEMENTS='FORCE', ),
+                       SOLVEUR=_F(METHODE='MUMPS', RESI_RELA=resi_rela, POSTTRAITEMENTS='FORCE', ),
 
                        );
     #IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=U1, NOM_CHAM='SIEF_ELGA', INST=(2.,), GROUP_MA=solide),UNITE=6)
