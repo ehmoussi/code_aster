@@ -80,7 +80,9 @@ def parse_args(argv):
     parser.add_argument('-t', '--test', action='store_true',
                         help="execution of a testcase")
     parser.add_argument('--ctest', action='store_true',
-                        help="testcase execution inside ctest (implies '--test')")
+                        help="testcase execution inside ctest (implies "
+                             "'--test'), the 'mess' file will be saved into "
+                             "the 'Testing' directory")
     parser.add_argument('-w', '--wrkdir', action='store',
                         help="use this existing directory as working directory")
     parser.add_argument('--ptvsd', action='store', type=int,
