@@ -206,9 +206,10 @@ Les matrices ne possèdent pas toutes la même numérotation.
 """),
 
 
-
-
-
+    85 : _("""
+ Vous avez défini %(i1)d accélérogrammes sous le mot clé ACCE_MONO_APPUI, 
+ il faut donc définir %(i1)d directions soit %(i2)d composantes sous le mot clé DIRECTION.
+"""),
 
 
 

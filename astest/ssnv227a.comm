@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -118,7 +118,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 # PRESSION APPLIQUEE = 6MPa
 
 res=STAT_NON_LINE(MODELE=Mod3d,
-                   CHAM_MATER=MatRub,SOLVEUR=_F(NPREC=-1),
+                   CHAM_MATER=MatRub,SOLVEUR=_F(NPREC=11),
                    EXCIT=(_F(CHARGE=FORCE,FONC_MULT=RAMPE,TYPE_CHARGE='SUIV'),
                           _F(CHARGE=DEPL,),),
                    NEWTON=(_F(REAC_INCR=1,

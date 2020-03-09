@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -235,8 +235,7 @@ UTOT1=STAT_NON_LINE(MODELE=MODELEK,
                    INCREMENT=_F(LIST_INST=INSTS,),
                    CONVERGENCE=(_F(ITER_GLOB_MAXI=5,
                                    RESI_GLOB_RELA=1E-6,),),
-                   SOLVEUR=_F(METHODE='MUMPS',
-                              NPREC=-6,),
+                   SOLVEUR=_F(METHODE='MUMPS',),
                          
                    INFO=1,);
 MA_G=POST_MAIL_XFEM(MODELE        = MODELEK,

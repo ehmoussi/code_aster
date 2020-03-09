@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -234,7 +234,7 @@ U_HM=STAT_NON_LINE(MODELE=MO,
                                    RESI_REFE_RELA = 1.E-6,
                                    SIGM_REFE      = sigma_refe,
                                    FLUX_HYD1_REFE = flux_min),
-                  SOLVEUR=_F(METHODE='MUMPS',NPREC=-1),
+                  SOLVEUR=_F(METHODE='MUMPS',),
                   AFFICHAGE =_F(INFO_RESIDU='OUI'),
                   #RECH_LINEAIRE=_F(METHODE='MIXTE',ITER_LINE_MAXI=3,),
                   ARCHIVAGE = _F(LIST_INST = LR)
