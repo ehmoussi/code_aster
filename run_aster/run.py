@@ -171,8 +171,9 @@ class RunAster:
         logger.info(f"    {' '.join(cmd)}")
 
         exitcode = run_command(cmd, timeout)
-        logger.info(
-            f"\nEXECUTION_CODE_ASTER_EXIT_{self.jobnum}={exitcode}\n\n")
+        msg = f"\nEXECUTION_CODE_ASTER_EXIT_{self.jobnum}={exitcode}\n\n"
+        logger.info(msg)
+        _log_mess(msg)
         status = self._get_status(exitcode, last)
 
         if status.is_completed():
@@ -182,14 +183,16 @@ class RunAster:
                 logger.info("saving result databases to 'BASE_PREC'...")
                 for base in glob("glob.*") + glob("bhdf.*") + glob("pick.*"):
                     copy(base, "BASE_PREC")
-            logger.info(f"execution ended (command file #{idx + 1}): "
-                        f"{status.diag}")
+            msg = f"execution ended (command file #{idx + 1}): {status.diag}"
+            logger.info(msg)
+            _log_mess(msg)
         else:
             logger.info("restoring result databases from 'BASE_PREC'...")
             for base in glob(osp.join("BASE_PREC", "*")):
                 copy(base, os.getcwd())
-            logger.warning(f"execution failed (command file #{idx + 1}): "
-                           f"{status.diag}")
+            msg = f"execution failed (command file #{idx + 1}): {status.diag}"
+            logger.warning(msg)
+            _log_mess(msg)
         return status
 
     def _change_comm_file(self, comm, show):
@@ -391,3 +394,9 @@ def copy_resultfiles(files, copybase):
                 if obj.isdir and not osp.exists(obj.path):
                     os.makedirs(obj.path)
                 copy(filename, obj.path, verbose=True)
+
+
+def _log_mess(msg):
+    """Log a message into the *message* file."""
+    with open(TMPMESS, "a") as fobj:
+        fobj.write(msg + "\n")
