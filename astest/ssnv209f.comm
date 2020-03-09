@@ -90,7 +90,7 @@ CHCINE=AFFE_CHAR_MECA(MODELE=MO,
                   DDL_IMPO=(_F(GROUP_MA=('VBATI'),
                                 DX=0.,
                                 DY=0.,
-                                DZ=0.),  
+                                DZ=0.),
                            ),);
 
 CHA1=AFFE_CHAR_MECA(MODELE=MO,
@@ -169,7 +169,7 @@ U2M=STAT_NON_LINE(MODELE    = MO,
                                  ITER_GLOB_MAXI = 30,
                                  RESI_GLOB_RELA = 1.0E-6,),
                   SOLVEUR=_F(METHODE='MUMPS',
-                             NPREC=11),
+                             NPREC=-1),
                   INFO=1,)
 
 #----------------------------------------------
