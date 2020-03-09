@@ -179,8 +179,10 @@ def create_ctest_file(testlist, filename):
     testdir = osp.join(datadir, "tests")
     assert osp.isdir(testdir), f"no such directory {testdir}"
     if osp.isfile(testlist):
+        re_comment = re.compile("^ *#.*$", re.M)
         with open(testlist, "r") as fobj:
-            ltests = fobj.read().split()
+            text = re_comment.sub("", fobj.read())
+            ltests = text.split()
     else:
         ltests = [osp.splitext(osp.basename(i))[0]
                   for i in glob(osp.join(testdir, "*.export"))]
