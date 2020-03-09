@@ -251,8 +251,12 @@ class RunAster:
             exitcode (int): Return code.
             last (bool): *True* for the last command file, *False* otherwise.
         """
-        return get_status(exitcode, TMPMESS,
-                          test=self._test and last)
+        status = get_status(exitcode, TMPMESS, test=self._test and last)
+        expected = self.export.get("expected_diag", [])
+        if status.diag in expected:
+            status.state = StateOptions.Ok
+            status.exitcode = 0
+        return status
 
     def ending_execution(self, is_completed):
         """Post execution phase : copying results, cleanup...
