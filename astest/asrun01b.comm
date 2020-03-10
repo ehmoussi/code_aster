@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-
+# unittest for run_aster package
 import unittest
 import sys
 

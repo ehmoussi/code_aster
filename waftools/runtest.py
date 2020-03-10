@@ -23,7 +23,7 @@ import tempfile
 from configparser import ConfigParser
 from functools import partial
 from glob import glob
-from subprocess import PIPE, CalledProcessError, Popen, call, check_call
+from subprocess import Popen
 
 from waflib import Errors, Logs, TaskGen
 
@@ -54,15 +54,6 @@ def options(self):
                      help='run a testcase by passing additional arguments '
                           '(possible values are "debugger", "env" + those '
                           'defined in the as_run configuration)')
-    group.add_option('--time_limit', dest='time_limit',
-                     action='store', default=None,
-                     help='override the time limit of the testcase')
-    group.add_option('--args', action='append', metavar='ARGS',
-                     help="arguments passed to the code_aster executable "
-                          "(example: --args=--syntax)")
-    group.add_option('--notify', dest='notify',
-                     action='store_true', default=False,
-                     help='send a desktop notification on completion')
 
 def configure(self):
     """Store developer preferences"""
@@ -84,13 +75,9 @@ def runtest(self):
     if opts.exectool == 'debugger':
         args.append('--debugger')
     elif opts.exectool == 'env':
-        args.append('--run_params=actions=make_env')
+        args.append('--env')
     elif opts.exectool is not None:
         args.append('--exectool=%s' % opts.exectool)
-    if opts.time_limit:
-        args.append('--run_params=time_limit={0}'.format(opts.time_limit))
-    if opts.args:
-        args.extend(['--run_params=args={0}'.format(arg) for arg in opts.args])
     dtmp = opts.outputdir or self.env['PREFS_OUTPUTDIR'] \
            or tempfile.mkdtemp(prefix='runtest_')
     try:
@@ -101,21 +88,16 @@ def runtest(self):
     status = 0
     if not opts.testname:
         raise Errors.WafError('no testcase name provided, use the -n option')
-    ASRUN = False
     for test in opts.testname:
         export = test + ".export"
         exp = glob("astest/" + export) + glob("../validation/astest/" + export)
         if not exp:
             raise FileNotFoundError(test + ".export")
-        if ASRUN:
-            cmd = ['as_run', '--vers=%s' % self.env['ASTERDATADIR'], '--test', test]
-        else:
-            cmd = [run_aster, "--test"]
+        cmd = [run_aster, "--test"]
         if self.variant == 'debug':
             cmd.extend(['-g'])
         cmd.extend(args)
-        if not ASRUN:
-            cmd.append(exp[0])
+        cmd.append(exp[0])
         Logs.info("running %s in '%s'" % (test, self.variant))
         ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant
         out = osp.join(dtmp, osp.basename(test) + ext) + '.output'
@@ -136,31 +118,5 @@ def runtest(self):
             func = Logs.error
             status += 1
         func('`- exit %s' % retcode)
-        if opts.notify:
-            notify('testcase %s ended - exit %s' % (test, retcode),
-                   errlevel=retcode)
     if status != 0:
         raise Errors.WafError('testcase failed')
-
-
-def _has_asrun():
-    """check that as_run is available"""
-    try:
-        check_call(['as_run', '--version'], stdout=PIPE, stderr=PIPE)
-    except CalledProcessError:
-        return False
-    return True
-
-def notify(message, errlevel=0):
-    """Send a message as a notification bubble"""
-    title = 'codeaster waf'
-    d_icon = {
-        0 : 'weather-clear',
-        'nook' : 'weather-overcast',
-        1 : 'weather-storm',
-    }
-    icon = d_icon.get(errlevel, d_icon[1])
-    try:
-        call(['notify-send', '-i', icon, title, message])
-    except OSError:
-        pass
