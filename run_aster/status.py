@@ -216,7 +216,6 @@ def get_status(exitcode, output, test=False):
     Returns:
         Status: Status object.
     """
-    # TODO remove mpi prefix
     try:
         with open(output, "rb") as fobj:
             text = fobj.read().decode(errors="replace")
