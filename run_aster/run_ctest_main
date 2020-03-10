@@ -77,7 +77,7 @@ def parse_args(argv):
         usage=__DOC__,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-j', '--jobs', action='store',
-                        type=int, default=get_nbprocs(),
+                        type=int, default=max(1, get_nbprocs() - 2),
                         help="Run the tests in parallel using the given "
                              "number of jobs")
     parser.add_argument('--testlist', action='store',
