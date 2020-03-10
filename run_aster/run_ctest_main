@@ -187,8 +187,11 @@ def create_ctest_file(testlist, filename):
     else:
         lexport = glob(osp.join(testdir, "*.export"))
 
+    tag = CFG.get("version_tag", "")
+    text = [f"set(COMPONENT_NAME ASTER_{tag})",
+            _build_def(bindir, datadir, lexport)]
     with open(filename, "w") as fobj:
-        fobj.write(_build_def(bindir, datadir, lexport))
+        fobj.write("\n".join(text))
 
 
 CTEST_DEF = """
