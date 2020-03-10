@@ -124,6 +124,10 @@ class Parameter:
         """
         self._value = self.convert(value)
 
+    def __repr__(self):
+        """Simple representation"""
+        return "P {0.name} {0.value}".format(self)
+
 
 class ParameterStr(Parameter):
     """A parameter defined in a Export object of type string."""
@@ -145,6 +149,10 @@ class ParameterBool(Parameter):
         elif value == "False":
             value = False
         return bool(value)
+
+    def __repr__(self):
+        """Simple representation"""
+        return "" if not self._value else "P {0.name}".format(self)
 
 
 class ParameterInt(Parameter):
@@ -173,6 +181,10 @@ class ParameterListStr(Parameter):
             value = [value]
         value = [str(i) for i in value]
         return value
+
+    def __repr__(self):
+        """Simple representation"""
+        return "P {0.name} {1}".format(self, " ".join(self.value))
 
 
 class File:
@@ -257,7 +269,7 @@ class File:
             txt += 'R '
         else:
             txt += 'F '
-        txt += self.filetype + ' ' + self.path + ' '
+        txt += self._typ + ' ' + self.path + ' '
         if self.data:
             txt += 'D'
         if self.resu:
@@ -441,23 +453,29 @@ class Export:
         """
         txt = []
         if self._params:
-            txt.append("Parameters:")
             for param in self._params.values():
-                txt.append("    {0.name}: {0.value}".format(param))
+                txt.append(repr(param))
         if self.args:
-            txt.append("Command line arguments:")
-            txt.append("    {0}".format(self.args))
+            txt.append("A" + repr(self._pargs)[1:])
         data = self.datafiles
         if data:
-            txt.append("Data files/directories:")
             for entry in data:
-                txt.append("    " + repr(entry))
+                txt.append(repr(entry))
         result = self.resultfiles
         if result:
-            txt.append("Result files/directories:")
             for entry in result:
-                txt.append("    " + repr(entry))
+                txt.append(repr(entry))
+        txt.append("")
         return "\n".join(txt)
+
+    def write_to(self, filename):
+        """Write the content to a file.
+
+        Arguments:
+            filename (str): Destination file.
+        """
+        with open(filename, "w") as fobj:
+            fobj.write(repr(self))
 
     def has_param(self, key):
         """Tell if `key` is a known parameter.
