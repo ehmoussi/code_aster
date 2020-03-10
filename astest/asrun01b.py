@@ -191,7 +191,8 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get("time_limit"), 60.0)
         self.assertIsNone(export.get("consbtc"))
         self.assertEqual(len(export.datafiles), 2)
-        self.assertEqual(len(export.resultfiles), 0)
+        # 0 in asrun01b.export, but 1 with '--ctest': .mess file
+        self.assertIn(len(export.resultfiles), (0, 1))
         comm = [i for i in export.datafiles if i.filetype == "comm"][0]
         self.assertEqual(osp.basename(comm.path), "asrun01b.comm")
         self.assertEqual(comm.unit, 1)
