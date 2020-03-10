@@ -147,9 +147,10 @@ def main(argv=None):
     if not osp.exists(resutest):
         os.makedirs(resutest, exist_ok=True)
 
-    # create CTestTestfile.cmake
-    create_ctest_file(args.testlist or "",
-                      osp.join(resutest, "CTestTestfile.cmake"))
+    if not args.rerun_failed:
+        # create CTestTestfile.cmake
+        create_ctest_file(args.testlist or "",
+                        osp.join(resutest, "CTestTestfile.cmake"))
     parallel = CFG.get("parallel", 0)
     labels = set()
     if not parallel:
