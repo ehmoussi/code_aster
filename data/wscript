@@ -20,14 +20,18 @@
 """
 Build some data files (dest: share/aster)
 
-- 'config.txt': needed by as_run.
+- 'config.js': needed by run_aster.
+- 'config.txt': needed by as_run (for compatibility).
 - 'create_install_script': script to use a containerized version.
-- 'CTestTestfile.cmake': used to run testcases with 'salome test'.
+- 'CTestTestfile.cmake': used to run testcases with 'ctest'.
 - 'execute_codeaster': used as executable for a containerized version.
 - 'external_programs.js': definition of external programs called from code_aster.
+- 'mpirun_template': template for MPI execution.
 - 'post_install': update some paths after moving the installed files.
 - 'profile.sh': environment script.
 - 'reca_main.py': script to call MACR_RECAL from Python.
+- 'run_aster': script that executes code_aster.
+- 'un_ctest': script that executes a list of testcases using 'ctest'.
 """
 
 import json
@@ -260,8 +264,11 @@ def env2dict(self, src):
 
     self.start_msg('Build list of testcases')
     valid = osp.join(src, '..', 'validation')
-    dico['ASTER_TEST_DEFINITION'] = (_build_def(env, src) +
-                                     _build_def(env, valid))
+    testdef = _build_def(env.BINDIR, env.ASTERDATADIR,
+                         glob(osp.join(src, "astest", "*.export")))
+    testdef += _build_def(env.BINDIR, env.ASTERDATADIR,
+                          glob(osp.join(valid, "astest", "*.export")))
+    dico['ASTER_TEST_DEFINITION'] = testdef
     self.end_msg("done")
     return dico
 
@@ -274,25 +281,47 @@ def dict_to_json(dict_values):
 CTEST_DEF = """
 set(TEST_NAME ${{COMPONENT_NAME}}_{testname})
 add_test(${{TEST_NAME}} {BINDIR}/run_aster --ctest {ASTERDATADIR}/tests/{testname}.export)
-set_tests_properties(${{TEST_NAME}} PROPERTIES LABELS "${{COMPONENT_NAME}} {labels}")
+set_tests_properties(${{TEST_NAME}} PROPERTIES
+                     LABELS "${{COMPONENT_NAME}} {labels}"
+                     PROCESSORS {processors})
 """
 
 @Configure.conf
-def _build_def(env, path):
-    if not osp.isdir(osp.join(path, 'astest')):
-        return ""
+def _build_def(bindir, datadir, lexport):
     re_list = re.compile("P +testlist +(.*)$", re.M)
+    re_nod = re.compile("P +mpi_nbnoeud +([0-9]+)", re.M)
+    re_mpi = re.compile("P +mpi_nbcpu +([0-9]+)", re.M)
+    re_thr = re.compile("P +ncpus +([0-9]+)", re.M)
     text = []
-    for exp in glob(osp.join(path, 'astest', '*.export')):
+    for exp in lexport:
+        if not osp.isfile(exp):
+            print(f"no such file: {exp}")
+            continue
+        testname = osp.splitext(osp.basename(exp))[0]
+        lab = []
+        nod = 1
+        mpi = 1
+        thr = 1
         with open(exp, "r") as fobj:
-            mat = re_list.search(fobj.read())
+            export = fobj.read()
+        mat = re_list.search(export)
         if mat:
-            lst = sorted(mat.group(1).split())
-            testname = osp.splitext(osp.basename(exp))[0]
-            text.append(CTEST_DEF.format(testname=testname,
-                                         labels=" ".join(lst),
-                                         ASTERDATADIR=env.ASTERDATADIR,
-                                         BINDIR=env.BINDIR))
+            lab = mat.group(1).split()
+        mat = re_nod.search(export)
+        if mat:
+            nod = int(mat.group(1))
+        mat = re_mpi.search(export)
+        if mat:
+            mpi = int(mat.group(1))
+        mat = re_thr.search(export)
+        if mat:
+            thr = int(mat.group(1))
+        lab.append(f"nodes={nod:02d}")
+        text.append(CTEST_DEF.format(testname=testname,
+                                     labels=" ".join(sorted(lab)),
+                                     processors=mpi * thr,
+                                     ASTERDATADIR=datadir,
+                                     BINDIR=bindir))
     return "\n".join(text)
 
 def change_tests(dico, install_tests):
