@@ -31,6 +31,7 @@ import unittest
 from glob import glob
 
 from run_aster.command_files import add_import_commands, stop_at_end
+from run_aster.config import CFG
 from run_aster.export import (Export, File, Parameter, ParameterBool,
                               ParameterFloat, ParameterInt, ParameterListStr,
                               ParameterStr)
@@ -212,6 +213,10 @@ class TestExport(unittest.TestCase):
         self.assertEqual(file0.path, "filename.py")
         self.assertEqual(file1.path, osp.join(ROOT, "share", "aster",
                                               "tests_data", "filename.py"))
+        self.assertEqual(repr(export), "\n".join([
+            "F nom filename.py D 0",
+            "F tests_data {} D 0".format(file1.path),
+            ""]))
 
     def test_args(self):
         # memory is taken from memjeveux (that is removed) + addmem
@@ -220,9 +225,10 @@ class TestExport(unittest.TestCase):
             "A max_base 1000",
             "A abort",
         ])
+        addmem = CFG.get("addmem", 0.)
         export = Export(from_string=text)
         memory = export.get_argument_value("memory", float) # with addmem
-        self.assertGreaterEqual(memory, 4096.0)
+        self.assertEqual(memory, 4096.0 + addmem)
         self.assertSequenceEqual(export.args,
             ["--continue",
              "--max_base", "1000", "--abort",
@@ -233,12 +239,21 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get_argument_value("abort", bool), True)
         self.assertEqual(export.get_argument_value("tpmax", float), None)
         self.assertEqual(export.get_argument_value("dbgjeveux", bool), False)
+        self.assertEqual(repr(export), "\n".join([
+            "A args --continue --max_base 1000 --abort --memory {}"
+            .format(4096.0 + addmem),
+            ""]))
 
     def test_memory(self):
         text = "P memory_limit 4096.0"
+        addmem = CFG.get("addmem", 0.)
         export = Export(from_string=text)
         self.assertGreaterEqual(export.get("memory_limit"), 4096.0)
         self.assertGreaterEqual(export.get_argument_value("memory", float), 4096.0)
+        self.assertEqual(repr(export), "\n".join([
+            "P memory_limit 4096.0",
+            "A args --memory {}".format(4096.0 + addmem),
+            ""]))
 
     def test_time(self):
         text = "P tpsjob 60"
@@ -246,6 +261,11 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get("tpsjob"), 60)
         self.assertEqual(export.get("time_limit"), 3600.0)
         self.assertEqual(export.get_argument_value("tpmax", float), 3600.0)
+        self.assertEqual(repr(export), "\n".join([
+            "P tpsjob 60",
+            "P time_limit 3600.0",
+            "A args --tpmax 3600",
+            ""]))
 
     def test_time2(self):
         text = "\n".join([
@@ -256,6 +276,11 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get("tpsjob"), 60)
         self.assertEqual(export.get("time_limit"), 1800.0)
         self.assertEqual(export.get_argument_value("tpmax", float), 1800.0)
+        self.assertEqual(repr(export), "\n".join([
+            "P tpsjob 60",
+            "P time_limit 1800.0",
+            "A args --tpmax 1800.0",
+            ""]))
 
     def test_bool(self):
         text = "P hide-command"
@@ -264,9 +289,13 @@ class TestExport(unittest.TestCase):
         param = export.get_param("hide-command")
         self.assertIsInstance(param, ParameterBool)
         self.assertTrue(export.get("hide-command"))
+        self.assertEqual(repr(export), "\n".join([
+            "P hide-command",
+            ""]))
         # how to disable a bool parameter
         param.set(False)
         self.assertFalse(export.get("hide-command"))
+        self.assertEqual(repr(export), "\n")
 
 
 class TestCommandFiles(unittest.TestCase):

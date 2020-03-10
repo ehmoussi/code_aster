@@ -21,7 +21,7 @@
 Build some data files (dest: share/aster)
 
 - 'config.js': needed by run_aster.
-- 'config.txt': needed by as_run (for compatibility).
+- 'config.txt': needed by as_run (for MACR_RECAL).
 - 'create_install_script': script to use a containerized version.
 - 'CTestTestfile.cmake': used to run testcases with 'ctest'.
 - 'execute_codeaster': used as executable for a containerized version.

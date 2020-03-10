@@ -79,7 +79,7 @@ class RunAster:
         self.export = export
         self.jobnum = str(os.getpid())
         logger.debug(f"Export content: {self.export.filename}")
-        logger.debug(self.export)
+        logger.debug("\n" + repr(self.export))
         self._basetmp = None
         self._globtmp = None
         self._parallel = CFG.get("parallel", 0)
@@ -129,8 +129,7 @@ class RunAster:
         new = (os.getcwd() + os.pathsep + old).strip(os.pathsep)
         os.environ["LD_LIBRARY_PATH"] = new
 
-        if self.export.filename:
-            copy(self.export.filename, self.jobnum + ".export")
+        self.export.write_to(self.jobnum + ".export")
         os.makedirs("REPE_IN", exist_ok=True)
         os.makedirs("REPE_OUT", exist_ok=True)
         copy_datafiles(self.export.datafiles)
