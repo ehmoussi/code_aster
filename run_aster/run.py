@@ -17,6 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+"""
+:py:mod:`run` --- Main classes for execution
+--------------------------------------------
+
+This module defines the objects that prepare the working directory, copy the
+data files, execute code_aster and copy the result files.
+"""
+
 import os
 import os.path as osp
 import stat

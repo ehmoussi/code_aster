@@ -19,7 +19,7 @@
 
 """
 :py:mod:`logger` --- Logging and messages output
-************************************************
+------------------------------------------------
 
 This module defines a logger object and error functions.
 All message outputs should pass by this object.
@@ -28,9 +28,6 @@ debug messages that may be interesting for the user (equivalent to
 ``INFO=2``)...
 It might be necessary to refactor it in C++ for better performance and a
 global access (no C interface currently)...
-
-.. todo:: Not used anymore, remove ?
-    A :file:`trace.log` file is also opened for detailed traceback.
 """
 
 import logging
