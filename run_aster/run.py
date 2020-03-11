@@ -37,7 +37,11 @@ from .utils import (ROOT, compress, copy, get_mpirun_script, make_writable,
 
 MPI_SCRIPT = "mpi_script.sh"
 TMPMESS = "fort.6"
-
+FMT_DIAG = """
+------------------------------------------------------------
+--- DIAGNOSTIC JOB : {state}
+------------------------------------------------------------
+"""
 
 @contextmanager
 def temporary_dir(delete=True):
@@ -194,14 +198,13 @@ class RunAster:
                     copy(base, "BASE_PREC")
             msg = f"execution ended (command file #{idx + 1}): {status.diag}"
             logger.info(msg)
-            _log_mess(msg)
         else:
             logger.info("restoring result databases from 'BASE_PREC'...")
             for base in glob(osp.join("BASE_PREC", "*")):
                 copy(base, os.getcwd())
             msg = f"execution failed (command file #{idx + 1}): {status.diag}"
             logger.warning(msg)
-            _log_mess(msg)
+        _log_mess(FMT_DIAG.format(state=status.diag))
         return status
 
     def _change_comm_file(self, comm, show):

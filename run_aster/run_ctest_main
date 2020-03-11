@@ -57,10 +57,9 @@ import tempfile
 from glob import glob
 from subprocess import PIPE, run
 
-try:
-    from run_aster.config import CFG
-except ImportError:
-    CFG = {}
+from run_aster.config import CFG
+from run_aster.ctest2junit import XUnitReport
+
 
 __DOC__ = __doc__
 ROOT = osp.dirname(osp.dirname(osp.abspath(__file__)))
@@ -162,7 +161,11 @@ def main(argv=None):
     # execute ctest
     os.chdir(resutest)
     proc = _run(["ctest"] + ctest_args)
-    if use_tmp:
+    if not use_tmp:
+        report = XUnitReport(".")
+        report.read_ctest()
+        report.write_xml("run_testcases.xml")
+    else:
         _run(["rm", "-rf", resutest])
     return proc.returncode
 
