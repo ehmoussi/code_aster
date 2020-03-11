@@ -18,5 +18,16 @@
 # --------------------------------------------------------------------
 
 """
-Execution of code_aster from a ``.export`` file.
+code_aster can be used as a standard Python module, see
+:ref:`devguide-codeaster`.
+
+For convenience and when code_aster is executed from a graphical interface,
+a study is usually defined by a ``.export`` file.
+The installation provides a script ``bin/run_aster`` to execute a study
+from a such file.
+
+The ``run_aster`` package contains the source used by ``bin/run_aster``.
+
+Use ``bin/run_aster --help`` for the available options.
+
 """

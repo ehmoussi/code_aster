@@ -20,6 +20,13 @@
 # imports are in a string
 # aslint: disable=C4009
 
+"""
+:py:mod:`command_files` --- Changing commands files
+---------------------------------------------------
+
+This modules provides some functions that change commands files.
+"""
+
 import re
 
 

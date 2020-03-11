@@ -65,6 +65,8 @@ Some Python objects are created during the initialization and are callable
 by C/C++ functions (see :py:mod:`code_aster.Supervis` for details).
 
 
+.. _devguide-codeaster:
+
 ******************
 code_aster package
 ******************
@@ -94,3 +96,5 @@ Contents
     devguide/recommendations
 
     devguide/todolist
+
+    devguide/run_aster

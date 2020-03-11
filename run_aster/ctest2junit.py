@@ -18,7 +18,13 @@
 # --------------------------------------------------------------------
 
 """
-This module converts a report from CTest to xUnit format.
+:py:mod:`ctest2junit` --- Convert a CTest execution report to JUnit
+-------------------------------------------------------------------
+
+This module converts a report from CTest to JUnit format.
+
+This creates a XML file that can be presented by *Continous Integration*
+tools.
 """
 
 import os
@@ -41,7 +47,12 @@ class XUnitReport:
         self.junit_test = []
 
     def read_ctest(self):
-        """Read the CTest report."""
+        """Read the CTest report.
+
+        It reads the list of testcases that passed and that failed from the
+        ``CTestCostData.txt`` file and extracts detailed informations (error
+        messages, OK/NOOK results) from ``.mess`` files.
+        """
         cost = osp.join(osp.join(self.base, "Testing", "Temporary"),
                                  "CTestCostData.txt")
         if not osp.isfile(cost):
