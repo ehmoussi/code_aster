@@ -162,7 +162,7 @@ def main(argv=None):
     os.chdir(resutest)
     proc = _run(["ctest"] + ctest_args)
     if not use_tmp:
-        report = XUnitReport(".")
+        report = XUnitReport(resutest)
         report.read_ctest()
         report.write_xml("run_testcases.xml")
     else:
