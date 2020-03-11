@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -108,7 +108,7 @@ subroutine op0176()
 !     --- CHAMPS ---
 !
     call jelira(resuin//'.DESC', 'NOMMAX', nbnosy)
-    if (nbnosy .eq. 0) goto 9997
+    if (nbnosy .eq. 0) goto 999
 !
 !     --- NOMBRE DE NUMERO D'ORDRE ---
 !
@@ -143,7 +143,7 @@ subroutine op0176()
         call getvid('RESTREINT', 'CHAM_MATER', iocc=1, scal=nochmat, nbret=nchmat)
     endif
     if ((nbarch.eq.0) .and. (nbrest.eq.0)) then
-        goto 9997
+        goto 999
     else if ((nbarch.eq.0)) then
         jarch = jordr
         nbarch = nbordr
@@ -189,15 +189,15 @@ subroutine op0176()
     cecr = 'T'
     izero = 0
     tabid(1) = ' '
-    call irecri(resuou, form, iul, k8b, lbid,&
-                izero, tabid, ' ', nbpara, zk16(jpa),&
+    call irecri(resuou, form, iul, k8b, &
+                izero, tabid, nbpara, zk16(jpa),&
                 nbordr, zi(jordr), true, 'RESU', 1,&
-                cecr, k8b, fals, 0, [0],&
+                cecr, fals, 0, [0],&
                 0, [0], izero, k8b, fals,&
                 r8b, fals, r8b, fals, fals,&
-                formar, versio, niv)
+                formar, niv)
 !
-9997 continue
+999 continue
 !
 !
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -543,13 +543,13 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
         ibid = 0
         k8b = ' '
         iul = iunifi( 'MESSAGE' )
-        call irecri(resu, 'RESULTAT', iul, k8b, lbid,&
-                    ibid, k8b, ' ', nbpar, zk16(jpara),&
+        call irecri(resu, 'RESULTAT', iul, k8b,&
+                    ibid, k8b, nbpar, zk16(jpara),&
                     nbmode, zi(lres), .true._1, k8b, ibid,&
-                    'T', k8b, .false._1, ibid, [0],&
+                    'T', .false._1, ibid, [0],&
                     ibid, [0], ibid, k8b, .false._1,&
                     r8b, .false._1, r8b, .false._1, .false._1,&
-                    formar, versio, 2)
+                    formar,  2)
     endif
 !
 !

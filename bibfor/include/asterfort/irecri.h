@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,26 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine irecri(nomcon, form, ifi, titre, lgmsh,&
-                      nbcham, cham, partie, nbpara, para,&
+    subroutine irecri(nomcon, form, ifi, titre,&
+                      nbcham, cham, nbpara, para,&
                       nbordr, ordr, lresu, motfac, iocc,&
-                      cecr, tycha, lcor, nbnot, numnoe,&
+                      cecr, lcor, nbnot, numnoe,&
                       nbmat, nummai, nbcmp, nomcmp, lsup,&
                       borsup, linf, borinf, lmax, lmin,&
-                      formr, versio, niv)
+                      formr,  niv)
         character(len=*) :: nomcon
         character(len=*) :: form
         integer :: ifi
         character(len=*) :: titre
-        aster_logical :: lgmsh
         integer :: nbcham
         character(len=*) :: cham(*)
-        character(len=*) :: partie
         integer :: nbpara
         character(len=*) :: para(*)
         integer :: nbordr
@@ -43,7 +39,6 @@ interface
         character(len=*) :: motfac
         integer :: iocc
         character(len=*) :: cecr
-        character(len=8) :: tycha
         aster_logical :: lcor
         integer :: nbnot
         integer :: numnoe(*)
@@ -58,7 +53,6 @@ interface
         aster_logical :: lmax
         aster_logical :: lmin
         character(len=*) :: formr
-        integer :: versio
         integer :: niv
     end subroutine irecri
 end interface

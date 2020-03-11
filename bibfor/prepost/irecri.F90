@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,23 +15,23 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irecri(nomcon, form, ifi, titre, lgmsh,&
-                  nbcham, cham, partie, nbpara, para,&
+! aslint: disable=W1504
+!
+subroutine irecri(nomcon, form, ifi, titre, &
+                  nbcham, cham,  nbpara, para,&
                   nbordr, ordr, lresu, motfac, iocc,&
-                  cecr, tycha, lcor, nbnot, numnoe,&
+                  cecr, lcor, nbnot, numnoe,&
                   nbmat, nummai, nbcmp, nomcmp, lsup,&
                   borsup, linf, borinf, lmax, lmin,&
-                  formr, versio,niv)
-! aslint: disable=W1504
-    implicit none
+                  formr, niv)
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/codent.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/irch19.h"
-#include "asterfort/irgmsh.h"
 #include "asterfort/irpara.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -45,20 +45,23 @@ subroutine irecri(nomcon, form, ifi, titre, lgmsh,&
 #include "asterfort/titre2.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    character(len=*) :: nomcon
-    character(len=*) :: form, titre, cham(*), para(*)
-    character(len=*) :: motfac, cecr
-    character(len=*) :: nomcmp(*), formr, partie
-    character(len=8) :: tycha
-    real(kind=8) :: borsup, borinf
-    integer :: versio, nbcham, nbpara, niv
-    integer :: nbordr, ordr(*), nbcmp, iocc
-    integer :: nbnot, numnoe(*), nbmat, nummai(*)
-    aster_logical :: lresu, lcor
-    aster_logical :: lsup, linf, lmax, lmin, lgmsh
 !
-!-----------------------------------------------------------------------
+character(len=*) :: nomcon
+character(len=*) :: form, titre, cham(*), para(*)
+character(len=*) :: motfac, cecr
+character(len=*) :: nomcmp(*), formr
+real(kind=8) :: borsup, borinf
+integer :: nbcham, nbpara, niv
+integer :: nbordr, ordr(*), nbcmp, iocc
+integer :: nbnot, numnoe(*), nbmat, nummai(*)
+aster_logical :: lresu, lcor
+aster_logical :: lsup, linf, lmax, lmin
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ECRITURE D'UN CONCEPT SUR FICHIER RESULTAT
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  NOMCON : K8  : NOM DU CONCEPT A IMPRIMER
 ! IN  FORM   : K8  : FORMAT D'ECRITURE
@@ -96,119 +99,102 @@ subroutine irecri(nomcon, form, ifi, titre, lgmsh,&
 ! IN  FORMR  : K   : FORMAT D'ECRITURE DES REELS SUR "RESULTAT"
 ! IN  VERSIO : I   : NIVEAU VERSION GMSH 1 OU 2
 ! IN  NIV    : I   : NIVEAU IMPRESSION MOT CLE INFO
-!     ------------------------------------------------------------------
 !
-!     ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     character(len=6) :: chnumo
-    character(len=8) :: nomco
     character(len=19) :: noch19
     character(len=24) :: nomst
     aster_logical :: lordr
-    integer :: nbrk16, ibid
+    integer :: ibid
     integer :: i, ifi, isy
     integer :: iordr
     integer :: iret
     integer :: jtitr
     integer :: nbtitr
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     ------------------------------------------------------------------
 !     --- IMPRESSION D'UN TABLEAU SYNTHETIQUE DES PARAMETRES-----
 !         (UNIQUEMENT FORMAT 'RESULTAT')
 !-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
-    call jemarq()
+
     if (niv .gt. 1) then
-      call irpara(nomcon, form, ifi, nbordr, ordr,nbpara, para, cecr)
+        call irpara(nomcon, form, ifi, nbordr, ordr,nbpara, para, cecr)
     endif  
 !
     nomst = '&&IRECRI.SOUS_TITRE.TITR'
-    nomco = nomcon
-!
-!
-!     --------------------------
-!     TRAITEMENT DU FORMAT GMSH
-!     -------------------------
-!
-    if (form .eq. 'GMSH') then
-!
-        call irgmsh(nomcon, partie, ifi, nbcham, cham,&
-                    lresu, nbordr, ordr, nbcmp, nomcmp,&
-                    nbmat, nummai, versio, lgmsh, tycha)
-!
-!     -----------------------------
-!     TRAITEMENT DES AUTRES FORMATS
-!     -----------------------------
-!
-    else
 !
 !     *******************************************
 !     --- BOUCLE SUR LA LISTE DES NUMEROS D'ORDRE
 !     *******************************************
-        nbrk16 = 0
 !
-        do iordr = 1, nbordr
-            call jemarq()
-            call jerecu('V')
+    do iordr = 1, nbordr
+        call jemarq()
+        call jerecu('V')
 !
 !       --- SI VARIABLE DE TYPE RESULTAT = RESULTAT COMPOSE :
 !           VERIFICATION CORRESPONDANCE ENTRE NUMERO D'ORDRE
 !           UTILISATEUR ORDR(IORDR) ET NUMERO DE RANGEMENT IRET
 ! AU CAS OU ON NE PASSE PAS EN DESSOUS ON INITIALISE LORDR A FALSE
-            lordr=.false.
-            if (lresu) then
-                call rsutrg(nomcon, ordr(iordr), iret, ibid)
-                if (iret .eq. 0) then
+        lordr=.false.
+        if (lresu) then
+            call rsutrg(nomcon, ordr(iordr), iret, ibid)
+            if (iret .eq. 0) then
 !           - MESSAGE NUMERO D'ORDRE NON LICITE
-                    call codent(ordr(iordr), 'G', chnumo)
-                    call utmess('A', 'PREPOST2_46', sk=chnumo)
-                    goto 22
-                endif
-                lordr=.true.
+                call codent(ordr(iordr), 'G', chnumo)
+                call utmess('A', 'PREPOST2_46', sk=chnumo)
+                goto 22
             endif
+            lordr=.true.
+        endif
 !
 !       --- BOUCLE SUR LE NOMBRE DE CHAMPS A IMPRIMER
-            if (nbcham .ne. 0) then
-                do isy = 1, nbcham
-                    if (lresu) then
+        if (nbcham .ne. 0) then
+            do isy = 1, nbcham
+                if (lresu) then
 !           * RESULTAT COMPOSE
 !             - VERIFICATION EXISTENCE DANS LA SD RESULTAT NOMCON
 !               DU CHAMP CHAM(ISY) POUR LE NO. D'ORDRE ORDR(IORDR)
 !               ET RECUPERATION DANS NOCH19 DU NOM SE LE CHAM_GD EXISTE
-                        call rsexch(' ', nomcon, cham(isy), ordr(iordr), noch19,&
-                                    iret)
-                        if (iret .ne. 0) goto 20
-                    else
+                    call rsexch(' ', nomcon, cham(isy), ordr(iordr), noch19,&
+                                iret)
+                    if (iret .ne. 0) goto 20
+                else
 !           * CHAM_GD
-                        noch19 = nomcon
-                    endif
+                    noch19 = nomcon
+                endif
 !
 !           * IMPRESSION DES PARAMETRES (FORMAT 'RESULTAT')
-                    if (lordr .and. form .eq. 'RESULTAT') then
+                if (lordr .and. form .eq. 'RESULTAT') then
 !             - SEPARATION DES DIVERS NUMEROS D'ORDRE PUIS IMPRESSION
-                        write(ifi,'(/,1X,A)') '======>'
-                        call irpara(nomcon, form, ifi, 1, ordr(iordr),&
-                                    nbpara, para, cecr)
-                        lordr=.false.
-                    endif
+                    write(ifi,'(/,1X,A)') '======>'
+                    call irpara(nomcon, form, ifi, 1, ordr(iordr),&
+                                nbpara, para, cecr)
+                    lordr=.false.
+                endif
 !           * CREATION D'UN SOUS-TITRE
-                    if (form .eq. 'RESULTAT' .or. form .eq. 'IDEAS') then
-                        if (lresu) then
-                            call titre2(nomcon, noch19, nomst, motfac, iocc,&
-                                        formr, cham(isy), ordr(iordr))
-                        else
-                            call titre2(nomcon, noch19, nomst, motfac, iocc,&
-                                        formr)
-                        endif
+                if (form .eq. 'RESULTAT' .or. form .eq. 'IDEAS') then
+                    if (lresu) then
+                        call titre2(nomcon, noch19, nomst, motfac, iocc,&
+                                    formr, cham(isy), ordr(iordr))
+                    else
+                        call titre2(nomcon, noch19, nomst, motfac, iocc,&
+                                    formr)
                     endif
+                endif
 !
 !           * IMPRESSION DU SOUS-TITRE SI FORMAT 'RESULTAT'
-                    if (form .eq. 'RESULTAT') then
+                if (form .eq. 'RESULTAT') then
 !              ---- SEPARATION DES DIVERS CHAMPS -----
-                        write(ifi,'(/,1X,A)') '------>'
-                        call jeveuo(nomst, 'L', jtitr)
-                        call jelira(nomst, 'LONMAX', nbtitr)
-                        write(ifi,'(1X,A)') (zk80(jtitr+i-1),i=1,&
-                        nbtitr)
-                    endif
+                    write(ifi,'(/,1X,A)') '------>'
+                    call jeveuo(nomst, 'L', jtitr)
+                    call jelira(nomst, 'LONMAX', nbtitr)
+                    write(ifi,'(1X,A)') (zk80(jtitr+i-1),i=1,&
+                    nbtitr)
+                endif
 !
 !           ********************************************************
 !           * IMPRESSION DU CHAMP (CHAM_NO OU CHAM_ELEM) AU FORMAT
@@ -216,28 +202,25 @@ subroutine irecri(nomcon, form, ifi, titre, lgmsh,&
 !                LE CHAMP EST UN CHAM_GD SIMPLE SI LRESU=.FALSE. OU
 !                LE CHAMP EST LE CHAM_GD CHAM(ISY) DE NUMERO D'ORDRE
 !                ORDR(IORDR) ISSU DE LA SD_RESULTAT NOMCON
-                    call irch19(noch19, form, ifi, titre,&
-                                nomcon, cham(isy), ordr(iordr), lcor, nbnot,&
-                                numnoe, nbmat, nummai, nbcmp, nomcmp,&
-                                lsup, borsup, linf, borinf, lmax,&
-                                lmin, lresu, formr)
- 20                 continue
-                end do
-            endif
- 22         continue
-            call jedema()
-        end do
+                call irch19(noch19, form, ifi, titre,&
+                            nomcon, cham(isy), ordr(iordr), lcor, nbnot,&
+                            numnoe, nbmat, nummai, nbcmp, nomcmp,&
+                            lsup, borsup, linf, borinf, lmax,&
+                            lmin, lresu, formr)
+20                 continue
+            end do
+        endif
+22      continue
+        call jedema()
+    end do
 !
-    endif
+! - Clean
 !
-!     --- DESTRUCTION OBJETS DE TRAVAIL
     call jedetr('&&IRECRI.CHPRES')
     call jedetr('&&IRECRI.FVIDAV')
     call jedetr('&&IRECRI.FVIDAP')
     call jedetr('&&IRECRI.NOM_ACC')
     call jedetr('&&IRECRI.TABLE.TOT')
-    call jeexin(nomst, iret)
-    if (iret .ne. 0) call jedetr(nomst)
+    call jedetr(nomst)
 !
-    call jedema()
 end subroutine

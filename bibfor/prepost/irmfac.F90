@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine irmfac(ioccur, formaf, ifichi, versio, modele, nomail, lgmsh)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/gettco.h"
@@ -38,10 +40,12 @@ subroutine irmfac(ioccur, formaf, ifichi, versio, modele, nomail, lgmsh)
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    integer :: ioccur, ifichi, versio
-    character(len=8) :: formaf, modele, nomail
-    aster_logical :: lgmsh
-! person_in_charge: nicolas.sellenet at edf.fr
+#include "asterfort/irgmsh.h"
+!
+integer :: ioccur, ifichi, versio
+character(len=8) :: formaf, modele, nomail
+aster_logical :: lgmsh
+!
 ! ----------------------------------------------------------------------
 !  IMPR_RESU - TRAITEMENT DU MOT CLE FACTEUR IOCCUR
 !  -    -                    -       ---
@@ -299,18 +303,22 @@ subroutine irmfac(ioccur, formaf, ifichi, versio, modele, nomail, lgmsh)
     if (ncham .ne. 0 .or. nresu .ne. 0) then
 !
 !       - ECRITURE DU CONCEPT LERESU SUR FICHIER FICH AU FORMAT FORM
-        if (formaf(1:4) .eq. 'MED') then
+        if (formaf .eq. 'MED') then
             call iremed(leresu, ifichi, nchsym, novcmp, partie,&
                         nnuord, lresu, nbnot, zi(jnunot), nbmat,&
                         zi(jnumat), nlicmp, lvarie, carael, linopa)
+        elseif (formaf .eq. 'GMSH') then
+            call irgmsh(leresu, partie, ifichi, nbnosy, zk16(jnosy),&
+                        lresu, nbordr, zi(jordr), nbcmp, zk8(jcmp),&
+                        nbmat, zi(jnumat), versio, lgmsh, tycha)
         else
-            call irecri(leresu, formaf, ifichi, titre, lgmsh,&
-                        nbnosy, zk16(jnosy), partie, nbpara, zk16(jpara),&
+            call irecri(leresu, formaf, ifichi, titre, &
+                        nbnosy, zk16(jnosy), nbpara, zk16(jpara),&
                         nbordr, zi(jordr), lresu, 'RESU', ioccur,&
-                        cecr, tycha, lcor, nbnot, zi(jnunot),&
+                        cecr, lcor, nbnot, zi(jnunot),&
                         nbmat, zi(jnumat), nbcmp, zk8(jcmp), lsup,&
                         borsup, linf, borinf, lmax, lmin,&
-                        formr, versio, 2)
+                        formr, 2)
         endif
     endif
 !     **********************

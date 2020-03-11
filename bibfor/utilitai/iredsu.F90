@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -108,7 +108,7 @@ subroutine iredsu(macr, form, ifc, versio)
     formar = '1PE12.5'
 !
     call jeveuo(macrel//'.MAEL_REFE', 'L', vk24=mael_refe)
-    basemo = mael_refe(1)
+    basemo = mael_refe(1)(1:19)
     noma = mael_refe(2)(1:8)
     manono = noma//'.NOMNOE'
     call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbnoeu)
@@ -211,13 +211,13 @@ subroutine iredsu(macr, form, ifc, versio)
             write (ifc,'(40A2)') 'Ph', 'i_', 'a '
             write (ifc,'(A)') '    -1'
             titre = 'MODE DYNAMIQUE'
-            call irecri(basemo, form, ifc, titre, lbid,&
-                        1, 'DEPL', ' ', iero, k8b,&
+            call irecri(basemo, form, ifc, titre,&
+                        1, 'DEPL', iero, k8b,&
                         1, [iord], .true._1, b, iero,&
-                        cecr, k8b, f, 0, [0],&
+                        cecr, f, 0, [0],&
                         0, [0], iero, k8b, f,&
                         zero, f, zero, f, f,&
-                        formar, versio, 2)
+                        formar,  2)
         endif
     end do
     if (nstat .ne. 0) then
