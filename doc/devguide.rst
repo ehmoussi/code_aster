@@ -38,13 +38,13 @@ Development rules
 
       .. code-block:: sh
 
-        run_testcases --root=.. --testlist=asterxx --resutest=../resutest
+        ../install/std/bin/run_ctest --resutest=../resutest --clean -L asterxx
 
       and the parallel ones:
 
       .. code-block:: sh
 
-        run_testcases --root=.. --builddir=build/mpi --testlist=asterxx --resutest=../resutest_mpi
+        ../install/mpi/bin/run_ctest --resutest=../resutest_mpi --clean -L asterxx
 
 
 ****************
