@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm ssnl128b.comm D 1
-F tests_data ssnl128b_mater.py D 0
+F nom ssnl128b_mater.py D 0
 F comm ssnl128b.com2 D 1
 F mmed ssnl121b.mmed D 20

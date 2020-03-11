@@ -5,6 +5,6 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist asterxx ci verification sequential
 F comm ssna117a.comm D 1
-F tests_data ssna117a_mater.py D 0
+F nom ssna117a_mater.py D 0
 F comm ssna117a.com2 D 1
 F mail ssna117a.mail D 20
