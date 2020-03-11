@@ -399,7 +399,12 @@ class Export:
         """Absolutize path of *File* objects."""
         for fileobj in self._files:
             base = self._root
-            if fileobj.is_tests_data:
+            # TODO to be removed as soon as run_testcases can be replaced!
+            # if fileobj.is_tests_data:
+            if (fileobj.is_tests_data or
+                    (fileobj.filetype == "nom" and
+                     not osp.exists(osp.join(base, fileobj.path)) and
+                     "make_test" in self.get("actions", []))):
                 base = osp.join(ROOT, "share", "aster", "tests_data")
             fileobj.path = osp.join(base, fileobj.path)
 

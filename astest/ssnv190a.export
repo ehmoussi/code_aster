@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm ssnv190a.comm D 1
-F tests_data ssnv190a_mater.py D 0
+F nom ssnv190a_mater.py D 0
 F comm ssnv190a.com2 D 1
 F mail ssnv230a.mail D 20
