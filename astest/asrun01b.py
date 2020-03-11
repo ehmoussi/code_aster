@@ -188,7 +188,8 @@ class TestExport(unittest.TestCase):
         self.assertFalse(export.has_param("consbtc"))
         self.assertIsInstance(export.get_param("time_limit"), ParameterFloat)
         self.assertIsNone(export.get_param("consbtc"))
-        self.assertEqual(export.get("time_limit"), 60.0)
+        # because of facmtps
+        self.assertGreaterEqual(export.get("time_limit"), 60.0)
         self.assertIsNone(export.get("consbtc"))
         self.assertEqual(len(export.datafiles), 2)
         # 0 in asrun01b.export, but 1 with '--ctest': .mess file
