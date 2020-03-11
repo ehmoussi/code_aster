@@ -42,18 +42,17 @@ class XUnitReport:
 
     def read_ctest(self):
         """Read the CTest report."""
-        ctestdir = osp.join(self.base, "Testing", "Temporary")
-        logfailed = osp.join(ctestdir, "LastTestsFailed.log")
-        cost = osp.join(ctestdir, "CTestCostData.txt")
-        if not (osp.isfile(logfailed) and osp.isfile(cost)):
+        cost = osp.join(osp.join(self.base, "Testing", "Temporary"),
+                                 "CTestCostData.txt")
+        if not osp.isfile(cost):
             return
-
-        with open(logfailed, "r") as fobj:
-            failed = [line.split(":")[1] for line in fobj.read().split()]
 
         re_test = re.compile("^(.+?) ", re.M)
         with open(cost, "r") as fcost:
-            names = re_test.findall(fcost.read())
+            text = fcost.read()
+        passed, failed = text.split("---")
+        names = re_test.findall(passed)
+        failures = re_test.findall(failed)
 
         re_name = re.compile(r"ASTER_[0-9\.]+_(.*)")
         self.junit_test = []
@@ -62,7 +61,7 @@ class XUnitReport:
             mat = re_name.search(name)
             if mat:
                 testname = mat.group(1)
-            jstate = "failure" if name in failed else ""
+            jstate = "failure" if name in failures else ""
             output = osp.join(self.base, testname + ".mess")
             details = [get_state(output)]
             if jstate and osp.isfile(output):
