@@ -134,3 +134,4 @@
 .. autoclass:: code_aster.Objects.TractionMaterialProperty
    :show-inheritance:
    :members:
+

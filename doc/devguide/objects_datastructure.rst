@@ -155,6 +155,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.ConstantFieldOnCellsReal` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.ConstantFieldOnCellsReal
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.Contact` object
 ================================================================================
 
@@ -506,6 +515,15 @@
 
 
 ================================================================================
+:py:class:`~code_aster.Objects.Function2D` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.Function2D
+   :show-inheritance:
+   :members:
+
+
+================================================================================
 :py:class:`~code_aster.Objects.FunctionComplex` object
 ================================================================================
 
@@ -812,15 +830,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.MeshesMapping` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.MeshesMapping
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.Material` object
 ================================================================================
 
@@ -852,6 +861,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.MeshCoordinatesField
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.MeshesMapping` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MeshesMapping
    :show-inheritance:
    :members:
 
@@ -942,15 +960,6 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.NormalSpeedOnFaceReal
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.ConstantFieldOnCellsReal` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ConstantFieldOnCellsReal
    :show-inheritance:
    :members:
 
@@ -1100,15 +1109,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.Function2D` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.Function2D
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.Table` object
 ================================================================================
 
@@ -1223,3 +1223,4 @@
 .. autoclass:: code_aster.Objects.XfemCrack
    :show-inheritance:
    :members:
+

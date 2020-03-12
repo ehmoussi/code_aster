@@ -12,6 +12,71 @@ Documentation of all other types.
 
 
 ********************************************************************************
+:py:class:`~code_aster.Objects.BaseExternalVariables` subclasses
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.BaseExternalVariables
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ConcreteDryingExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ConcreteHydratationExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.CorrosionExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.GeometryExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.IrradiationExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.IrreversibleDeformationExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Neutral1ExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Neutral2ExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Neutral3ExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.SteelPhasesExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.TemperatureExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.TotalFluidPressureExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.VolumetricDeformationExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ZircaloyPhasesExternalVariable
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
 :py:class:`~code_aster.Objects.Behaviour` object
 ********************************************************************************
 
@@ -162,71 +227,6 @@ Documentation of all other types.
    :members:
 
 .. autoclass:: code_aster.Objects.ResidualDivergenceError
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
-:py:class:`~code_aster.Objects.BaseExternalVariables` subclasses
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.BaseExternalVariables
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ConcreteDryingExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ConcreteHydratationExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.CorrosionExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.GeometryExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.IrradiationExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.IrreversibleDeformationExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.Neutral1ExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.Neutral2ExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.Neutral3ExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.SteelPhasesExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.TemperatureExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.TotalFluidPressureExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.VolumetricDeformationExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ZircaloyPhasesExternalVariable
    :show-inheritance:
    :members:
 
@@ -588,3 +588,4 @@ Documentation of all other types.
 .. autoclass:: code_aster.Objects.TimeLimitError
    :show-inheritance:
    :members:
+
