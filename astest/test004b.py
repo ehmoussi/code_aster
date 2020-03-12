@@ -53,7 +53,7 @@ statNonLine1.setLinearSolver( monSolver )
 # elas = code_aster.Behaviour()
 elas = code_aster.Behaviour(code_aster.ConstitutiveLaw.Elas,
                                    code_aster.StrainType.SmallStrain)
-statNonLine1.addBehaviourOnElements( elas )
+statNonLine1.addBehaviourOnCells( elas )
 
 
 temps = [0., 0.5 ]
@@ -83,7 +83,7 @@ statNonLine2.addStandardExcitation( charMeca1 )
 statNonLine2.addStandardExcitation( charMeca2 )
 statNonLine2.setModel( monModel )
 statNonLine2.setMaterialField( affectMat )
-statNonLine2.addBehaviourOnElements( elas )
+statNonLine2.addBehaviourOnCells( elas )
 # Define the initial state of the current analysis
 start = code_aster.State(0)
 # from the last computed step of the previous analysis

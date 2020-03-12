@@ -54,7 +54,7 @@ statNonLine.setLinearSolver( monSolver )
 #statNonLine.setLineSearchMethod( lineSearch )
 #Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallStrain )
 #Elas = code_aster.Behaviour();
-#statNonLine.addBehaviourOnElements( Elas );
+#statNonLine.addBehaviourOnCells( Elas );
 
 temps = [0., 0.5, 1.]
 timeList = code_aster.TimeStepManager()

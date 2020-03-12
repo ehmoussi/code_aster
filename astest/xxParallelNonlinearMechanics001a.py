@@ -34,19 +34,19 @@ affectMat.buildWithoutExternalVariable()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()
 charMeca1.setModel(monModel)
-charMeca1.addImposedMechanicalDOFOnElements(
+charMeca1.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
-charMeca1.addImposedMechanicalDOFOnElements(
+charMeca1.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dy, 0., "COTE_B")
-charMeca1.addImposedMechanicalDOFOnElements(
+charMeca1.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
 charMeca1.build()
 
 charMeca2 = code_aster.KinematicsMechanicalLoad()
 charMeca2.setModel(monModel)
-charMeca2.addImposedMechanicalDOFOnElements(
+charMeca2.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dy, 0.1, "COTE_H")
-charMeca2.addImposedMechanicalDOFOnElements(
+charMeca2.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dz, 0.1, "COTE_H")
 charMeca2.build()
 
