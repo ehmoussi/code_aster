@@ -3,7 +3,7 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist ci verification sequential
+P testlist verification sequential
 
 F comm ssnl131c.comm D 1
 F comm ssnl131c_mater.py D 1
