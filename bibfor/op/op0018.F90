@@ -83,7 +83,7 @@ subroutine op0018()
     character(len=8) :: mesh, model, sd_partit1
     character(len=8) :: name_elem, z_quasi_zero, methode
     character(len=16) :: k16dummy, name_type_geom, repk, valk(2)
-    character(len=16) :: phenom, modeli, list_modelisa(10), keywordfact
+    character(len=16) :: phenom, phenomRead, modeli, list_modelisa(10), keywordfact
     character(len=19) :: ligrel
     character(len=24) :: mesh_name_elem, kdis
     character(len=32) :: phemod
@@ -211,10 +211,12 @@ subroutine op0018()
             dim_topo_init=-99
             p_wk_mail2(1:nb_mesh_elem) = 0
             p_wk_mail3(1:nb_mesh_elem) = 0
-!
-! --------- Get phenomene/modelisation
-!
-            call getvtx(keywordfact, 'PHENOMENE', iocc=iaffe, scal=phenom)
+! --------- Get Only ONE phénomene !
+            call getvtx(keywordfact, 'PHENOMENE', iocc=iaffe, scal=phenomRead)
+            if (phenomRead .ne. phenom) then
+                call utmess('F', 'MODELE1_11')
+            endif
+! --------- Get modelisation
             call getvtx(keywordfact, 'MODELISATION', iocc=iaffe, nbval=10, vect=list_modelisa,&
                         nbret=nb_modelisa)
             ASSERT(nb_modelisa.gt.0)
