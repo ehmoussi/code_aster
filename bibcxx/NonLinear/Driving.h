@@ -28,7 +28,7 @@
 #include "Functions/Function.h"
 #include "Geometry/Geometry.h"
 #include "Loads/PhysicalQuantity.h"
-#include "Modeling/XfemCrack.h"
+#include "Crack/XfemCrack.h"
 #include "Utilities/CapyConvertibleValue.h"
 
 /**
@@ -159,12 +159,12 @@ class DrivingClass {
      * @brief Restriction de la zone de pilotage à une groupe de mailles
      * par défaut la zone de pilotage inclut tout le modèle
      */
-    void addObservationGroupOfElements( const std::string &name ) {
+    void addObservationGroupOfCells( const std::string &name ) {
         if ( ( _type == DisplacementValue ) || ( _type == DisplacementNorm ) ||
              ( _type == JumpOnCrackValue ) || ( _type == JumpOnCrackNorm ) )
             throw std::runtime_error(
-                "Group of Elements are not allowed with this type of driving" );
-        _zone = MeshEntityPtr( new GroupOfElements( name ) );
+                "Group of Cells are not allowed with this type of driving" );
+        _zone = MeshEntityPtr( new GroupOfCells( name ) );
         _toCapyConverter["GROUP_MA"]->enable();
         // et on n'a pas le droit de définir un group_no
         _toCapyConverter["GROUP_NO"]->disable();

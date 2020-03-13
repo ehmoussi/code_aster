@@ -15,9 +15,9 @@ with test.assertRaises(NameError):
 with test.assertRaises(NameError):
     coord
 
-test.assertTrue(mesh2.hasGroupOfElements("Tout"))
+test.assertTrue(mesh2.hasGroupOfCells("Tout"))
 test.assertFalse(mesh2.hasGroupOfNodes("Tout"))
-test.assertFalse(mesh2.hasGroupOfElements("POINT"))
+test.assertFalse(mesh2.hasGroupOfCells("POINT"))
 test.assertTrue(mesh2.hasGroupOfNodes("POINT"))
 
 support = model.getMesh()

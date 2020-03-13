@@ -64,7 +64,7 @@ Returns:
     MeshPtr: a pointer to the mesh
         )",
               ( py::arg( "self" ) ) )
-        .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementRealClass::getMaterialOnMesh )
+        .def( "getMaterialField", &AssemblyMatrixDisplacementRealClass::getMaterialField )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixDisplacementRealClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementRealClass::setDOFNumbering )
@@ -90,7 +90,7 @@ Returns:
               &AssemblyMatrixDisplacementComplexClass::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixDisplacementComplexClass::build )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementComplexClass::getDOFNumbering )
-        .def( "getMaterialOnMesh", &AssemblyMatrixDisplacementComplexClass::getMaterialOnMesh )
+        .def( "getMaterialField", &AssemblyMatrixDisplacementComplexClass::getMaterialField )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixDisplacementComplexClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementComplexClass::setDOFNumbering )
@@ -115,7 +115,7 @@ Returns:
               &AssemblyMatrixTemperatureRealClass::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixTemperatureRealClass::build )
         .def( "getDOFNumbering", &AssemblyMatrixTemperatureRealClass::getDOFNumbering )
-        .def( "getMaterialOnMesh", &AssemblyMatrixTemperatureRealClass::getMaterialOnMesh )
+        .def( "getMaterialField", &AssemblyMatrixTemperatureRealClass::getMaterialField )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixTemperatureRealClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureRealClass::setDOFNumbering )
@@ -140,7 +140,7 @@ Returns:
               &AssemblyMatrixTemperatureComplexClass::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixTemperatureComplexClass::build )
         .def( "getDOFNumbering", &AssemblyMatrixTemperatureComplexClass::getDOFNumbering )
-        .def( "getMaterialOnMesh", &AssemblyMatrixTemperatureComplexClass::getMaterialOnMesh )
+        .def( "getMaterialField", &AssemblyMatrixTemperatureComplexClass::getMaterialField )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixTemperatureComplexClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixTemperatureComplexClass::setDOFNumbering )
@@ -164,7 +164,7 @@ Returns:
               &AssemblyMatrixPressureRealClass::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixPressureRealClass::build )
         .def( "getDOFNumbering", &AssemblyMatrixPressureRealClass::getDOFNumbering )
-        .def( "getMaterialOnMesh", &AssemblyMatrixPressureRealClass::getMaterialOnMesh )
+        .def( "getMaterialField", &AssemblyMatrixPressureRealClass::getMaterialField )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixPressureRealClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixPressureRealClass::setDOFNumbering )
@@ -189,7 +189,7 @@ Returns:
               &AssemblyMatrixPressureComplexClass::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixPressureComplexClass::build )
         .def( "getDOFNumbering", &AssemblyMatrixPressureComplexClass::getDOFNumbering )
-        .def( "getMaterialOnMesh", &AssemblyMatrixPressureComplexClass::getMaterialOnMesh )
+        .def( "getMaterialField", &AssemblyMatrixPressureComplexClass::getMaterialField )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixPressureComplexClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixPressureComplexClass::setDOFNumbering )

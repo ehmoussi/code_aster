@@ -65,7 +65,7 @@ class ComputeElementaryMatrix(ExecuteCommand):
                 self._result.addFiniteElementDescriptor(curFED)
         chamMater = keywords.get("CHAM_MATER")
         if chamMater is not None:
-            self._result.setMaterialOnMesh(chamMater)
+            self._result.setMaterialField(chamMater)
         self._result.update()
 
 CALC_MATR_ELEM = ComputeElementaryMatrix.run

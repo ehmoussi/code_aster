@@ -31,14 +31,14 @@
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
 #include "Modeling/Model.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxBidirectionalMap.h"
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/FieldOnCells.h"
-#include "Discretization/DOFNumbering.h"
-#include "Discretization/ParallelDOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 #include "Supervis/ResultNaming.h"
 #include "Discretization/ElementaryCharacteristics.h"
 #include "Loads/ListOfLoads.h"
@@ -52,7 +52,7 @@
 class ResultClass : public DataStructure {
   private:
     typedef std::vector< FieldOnNodesRealPtr > VectorOfFieldsNodes;
-    typedef std::vector< FieldOnCellsRealPtr > VectorOfFieldsElements;
+    typedef std::vector< FieldOnCellsRealPtr > VectorOfFieldsCells;
 
     /** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
     typedef std::map< std::string, VectorOfFieldsNodes > mapStrVOFN;
@@ -65,13 +65,13 @@ class ResultClass : public DataStructure {
     typedef std::map< int, ElementaryCharacteristicsPtr > mapRankCaraElem;
     /** @typedef std::map du rang et des pointers vers ListOfLoadsPtr */
     typedef std::map< int, ListOfLoadsPtr > mapRankLoads;
-    /** @typedef std::map du rang et des pointers vers MaterialOnMeshPtr */
-    typedef std::map< int, MaterialOnMeshPtr > mapRankMaterial;
+    /** @typedef std::map du rang et des pointers vers MaterialFieldPtr */
+    typedef std::map< int, MaterialFieldPtr > mapRankMaterial;
     /** @typedef std::map du rang et des pointers vers ModelPtr */
     typedef std::map< int, ModelPtr > mapRankModel;
 
     /** @typedef std::map d'une chaine et des pointers vers toutes les DataStructure */
-    typedef std::map< std::string, VectorOfFieldsElements > mapStrVOFE;
+    typedef std::map< std::string, VectorOfFieldsCells > mapStrVOFE;
     /** @typedef Iterateur sur le std::map */
     typedef mapStrVOFE::iterator mapStrVOFEIterator;
     /** @typedef Valeur contenue dans mapStrVOFE */
@@ -104,14 +104,14 @@ class ResultClass : public DataStructure {
     /** @brief Liste des champs aux noeuds */
     mapStrVOFN _dictOfVectorOfFieldsNodes;
     /** @brief Liste des champs aux éléments */
-    mapStrVOFE _dictOfVectorOfFieldsElements;
+    mapStrVOFE _dictOfVectorOfFieldsCells;
     /** @brief Liste des NUME_DDL */
     std::vector< BaseDOFNumberingPtr > _listOfDOFNum;
     /** @brief List of ElementaryCharacteristicsPtr */
     mapRankCaraElem _mapElemCara;
     /** @brief List of ListOfLoadsPtr */
     mapRankLoads _mapLoads;
-    /** @brief List of MaterialOnMeshPtr */
+    /** @brief List of MaterialFieldPtr */
     mapRankMaterial _mapMaterial;
     /** @brief List of ModelPtr */
     mapRankModel _mapModel;
@@ -185,7 +185,7 @@ class ResultClass : public DataStructure {
      * @brief Add material definition
      * @param rank
      */
-    void addMaterialOnMesh( const MaterialOnMeshPtr &, int rank ) ;
+    void addMaterialField( const MaterialFieldPtr &, int rank ) ;
 
     /**
      * @brief Add model
@@ -212,9 +212,9 @@ class ResultClass : public DataStructure {
 
     /**
      * @brief Append a material on all rank of Result
-     * @param MaterialOnMeshPtr
+     * @param MaterialFieldPtr
      */
-    void appendMaterialOnMeshOnAllRanks( const MaterialOnMeshPtr & );
+    void appendMaterialFieldOnAllRanks( const MaterialFieldPtr & );
 
     /**
      * @brief Append a model on all rank of Result
@@ -275,13 +275,13 @@ class ResultClass : public DataStructure {
     /**
      * @brief Get material
      */
-    MaterialOnMeshPtr getMaterialOnMesh() ;
+    MaterialFieldPtr getMaterialField() ;
 
     /**
      * @brief Get material
      * @param rank
      */
-    MaterialOnMeshPtr getMaterialOnMesh( int rank ) ;
+    MaterialFieldPtr getMaterialField( int rank ) ;
 
     /**
      * @brief Get mesh
@@ -347,7 +347,7 @@ class ResultClass : public DataStructure {
     /**
      * @brief Construire une sd_resultat à partir d'objet produit dans le Fortran
      * @return true si l'allocation s'est bien passée
-     * @todo revoir l'agrandissement de dictOfVectorOfFieldsNodes et dictOfVectorOfFieldsElements
+     * @todo revoir l'agrandissement de dictOfVectorOfFieldsNodes et dictOfVectorOfFieldsCells
      */
     bool update() ;
 };

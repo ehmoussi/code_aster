@@ -48,8 +48,8 @@ class ExtrResu(ExecuteCommand):
         if resultat != None:
             if resultat.getModel() is not None:
                 self._result.appendModelOnAllRanks(resultat.getModel())
-            if resultat.getMaterialOnMesh() is not None:
-                self._result.appendMaterialOnMeshOnAllRanks(resultat.getMaterialOnMesh())
+            if resultat.getMaterialField() is not None:
+                self._result.appendMaterialFieldOnAllRanks(resultat.getMaterialField())
             self._result.update()
 
 EXTR_RESU = ExtrResu.run

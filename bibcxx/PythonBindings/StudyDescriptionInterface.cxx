@@ -35,7 +35,7 @@ void exportStudyDescriptionToPython() {
     // fake initFactoryPtr: not a DataStructure
     c1.def( "__init__",
             py::make_constructor(
-                &initFactoryPtr< StudyDescriptionClass, ModelPtr, MaterialOnMeshPtr >));
+                &initFactoryPtr< StudyDescriptionClass, ModelPtr, MaterialFieldPtr >));
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 };

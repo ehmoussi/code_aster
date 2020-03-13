@@ -610,7 +610,7 @@ class StatDyna(object):
         elif what == "caraele":
             return resu.getElementaryCharacteristics()
         elif what == "mater":
-            return resu.getMaterialOnMesh()
+            return resu.getMaterialField()
 
     def etapeStatique(self):
         """Execute static calculation"""

@@ -27,7 +27,7 @@
 
 namespace py = boost::python;
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( addBehaviourOnElements_overloads, addBehaviourOnElements, 1,
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS( addBehaviourOnCells_overloads, addBehaviourOnCells, 1,
                                         2 )
 
 void exportNonLinearStaticAnalysisToPython() {
@@ -51,13 +51,13 @@ void exportNonLinearStaticAnalysisToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< NonLinearStaticAnalysisClass >))
         // fake initFactoryPtr: not a DataStructure
         .def( "execute", &NonLinearStaticAnalysisClass::execute )
-        .def( "addBehaviourOnElements", &NonLinearStaticAnalysisClass::addBehaviourOnElements,
-              addBehaviourOnElements_overloads() )
+        .def( "addBehaviourOnCells", &NonLinearStaticAnalysisClass::addBehaviourOnCells,
+              addBehaviourOnCells_overloads() )
         .def( "setNonLinearMethod", &NonLinearStaticAnalysisClass::setNonLinearMethod )
         .def( "setLinearSolver", &NonLinearStaticAnalysisClass::setLinearSolver )
         .def( "setInitialState", &NonLinearStaticAnalysisClass::setInitialState )
         .def( "setLineSearchMethod", &NonLinearStaticAnalysisClass::setLineSearchMethod )
-        .def( "setMaterialOnMesh", &NonLinearStaticAnalysisClass::setMaterialOnMesh )
+        .def( "setMaterialField", &NonLinearStaticAnalysisClass::setMaterialField )
         .def( "setLoadStepManager", &NonLinearStaticAnalysisClass::setLoadStepManager )
         .def( "setModel", &NonLinearStaticAnalysisClass::setModel )
         .def( "setDriving", &NonLinearStaticAnalysisClass::setDriving )

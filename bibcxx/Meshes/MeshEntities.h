@@ -28,7 +28,7 @@
 
 #include "MemoryManager/JeveuxCollection.h"
 
-enum EntityType { GroupOfNodesType, GroupOfElementsType, AllMeshEntitiesType,
+enum EntityType { GroupOfNodesType, GroupOfCellsType, AllMeshEntitiesType,
                   ElementType, NodeType, NoType };
 
 /**
@@ -121,25 +121,25 @@ public:
 };
 
 /**
- * @class GroupOfElements
+ * @class GroupOfCells
  * @brief Cette classe permet de definir des groupes de mailles
  * @author Nicolas Sellenet
  */
-class GroupOfElements: public VirtualMeshEntity
+class GroupOfCells: public VirtualMeshEntity
 {
 public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    GroupOfElements( std::string name ): VirtualMeshEntity( name, GroupOfElementsType )
+    GroupOfCells( std::string name ): VirtualMeshEntity( name, GroupOfCellsType )
     {};
 
     /**
      * @brief Constructor
      * @param names names in entity
      */
-    GroupOfElements( const VectorString& names ): VirtualMeshEntity( names, GroupOfElementsType )
+    GroupOfCells( const VectorString& names ): VirtualMeshEntity( names, GroupOfCellsType )
     {};
 };
 
@@ -212,8 +212,8 @@ typedef std::vector< MeshEntityPtr > VectorOfMeshEntityPtr;
 typedef boost::shared_ptr< GroupOfNodes > GroupOfNodesPtr;
 typedef std::vector< GroupOfNodesPtr > VectorOfGroupOfNodesPtr;
 
-typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-typedef std::vector< GroupOfElementsPtr > VectorOfGroupOfElementsPtr;
+typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+typedef std::vector< GroupOfCellsPtr > VectorOfGroupOfCellsPtr;
 
 typedef boost::shared_ptr< AllMeshEntities > AllMeshEntitiesPtr;
 typedef std::vector< AllMeshEntitiesPtr > VectorOfAllMeshEntitiesPtr;

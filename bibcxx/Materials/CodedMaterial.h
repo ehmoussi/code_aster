@@ -27,9 +27,9 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "Modeling/Model.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 
 /**
  * @class CodedMaterialClass
@@ -41,9 +41,9 @@ class CodedMaterialClass
 private:
     std::string                       _name;
     std::string                       _type;
-    MaterialOnMeshPtr                 _mater;
+    MaterialFieldPtr                 _mater;
     ModelPtr                          _model;
-    PCFieldOnMeshLongPtr              _field;
+    ConstantFieldOnCellsLongPtr              _field;
     JeveuxVectorChar8                 _grp;
     JeveuxVectorLong                  _nGrp;
     std::vector< JeveuxVectorLong >   _vecOfCodiVectors;
@@ -60,7 +60,7 @@ public:
     /**
      * @brief Constructeur
      */
-    CodedMaterialClass( const MaterialOnMeshPtr& mater, const ModelPtr& model );
+    CodedMaterialClass( const MaterialFieldPtr& mater, const ModelPtr& model );
 
     /**
      * @brief Destructeur
@@ -84,7 +84,7 @@ public:
     /**
      * @brief Get the .MATE_CODE
      */
-    PCFieldOnMeshLongPtr getCodedMaterialField() const
+    ConstantFieldOnCellsLongPtr getCodedMaterialField() const
     {
         _field->updateValuePointers();
         return _field;

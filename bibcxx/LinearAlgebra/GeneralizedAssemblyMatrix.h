@@ -29,7 +29,7 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "Discretization/ForwardGeneralizedDOFNumbering.h"
+#include "Numbering/ForwardGeneralizedDOFNumbering.h"
 #include "Results/ForwardModeResult.h"
 #include "Results/ForwardGeneralizedModeResult.h"
 #include "MemoryManager/JeveuxCollection.h"

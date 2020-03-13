@@ -28,7 +28,7 @@
 
 #include "astercxx.h"
 #include "DataStructures/DataStructure.h"
-#include "Materials/MaterialBehaviour.h"
+#include "Materials/MaterialProperty.h"
 #include "Functions/Function.h"
 
 /**
@@ -45,19 +45,19 @@ class MaterialClass: public DataStructure
          */
         typedef boost::shared_ptr< MaterialClass > MaterialPtr;
 
-        typedef std::vector< GeneralMaterialBehaviourPtr > VectorOfGeneralMaterialBehaviour;
-        typedef VectorOfGeneralMaterialBehaviour::iterator VectorOfGeneralMaterialIter;
+        typedef std::vector< GenericMaterialPropertyPtr > VectorOfGenericMaterialProperty;
+        typedef VectorOfGenericMaterialProperty::iterator VectorOfGeneralMaterialIter;
         typedef std::vector< JeveuxVectorReal > VectorOfJeveuxVectorReal;
         typedef std::vector< JeveuxVectorChar8 > VectorOfJeveuxVectorChar8;
 
     private:
         /** @brief Vecteur Jeveux '.MATERIAU.NOMRC' */
         JeveuxVectorChar32                 _materialBehaviourNames;
-        /** @brief Nombre de MaterialBehaviour deja ajoutes */
-        int                                _nbMaterialBehaviour;
-        int                                _nbUserMaterialBehaviour;
-        /** @brief Vecteur contenant les GeneralMaterialBehaviourPtr ajoutes par l'utilisateur */
-        VectorOfGeneralMaterialBehaviour   _vecMatBehaviour;
+        /** @brief Nombre de MaterialProperty deja ajoutes */
+        int                                _nbMaterialProperty;
+        int                                _nbUserMaterialProperty;
+        /** @brief Vecteur contenant les GenericMaterialPropertyPtr ajoutes par l'utilisateur */
+        VectorOfGenericMaterialProperty   _vecMatBehaviour;
 
         /** @brief Vector of JeveuxVectorComplex named 'CPT.XXXXXX.VALC' */
         std::vector< JeveuxVectorComplex > _vectorOfComplexValues;
@@ -93,8 +93,8 @@ class MaterialClass: public DataStructure
         MaterialClass( const std::string& name ):
             DataStructure( name, 8, "MATER" ),
             _materialBehaviourNames( JeveuxVectorChar32( name + ".MATERIAU.NOMRC " ) ),
-            _nbMaterialBehaviour( 0 ),
-            _nbUserMaterialBehaviour( 0 ),
+            _nbMaterialProperty( 0 ),
+            _nbUserMaterialProperty( 0 ),
             _doubleValues( new FunctionClass( name + ".&&RDEP" ) ),
             _mater( nullptr )
         {};
@@ -106,15 +106,15 @@ class MaterialClass: public DataStructure
         };
 
         /**
-         * @brief Ajout d'un GeneralMaterialBehaviourPtr
-         * @param curMaterBehav GeneralMaterialBehaviourPtr a ajouter au MaterialClass
-         * @todo pouvoiur utiliser addMaterialBehaviour plusieurs fois après build
+         * @brief Ajout d'un GenericMaterialPropertyPtr
+         * @param curMaterBehav GenericMaterialPropertyPtr a ajouter au MaterialClass
+         * @todo pouvoiur utiliser addMaterialProperty plusieurs fois après build
          */
-        void addMaterialBehaviour( const GeneralMaterialBehaviourPtr& curMaterBehav );
+        void addMaterialProperty( const GenericMaterialPropertyPtr& curMaterBehav );
 
         /**
          * @brief Construction du MaterialClass
-         *   A partir des GeneralMaterialBehaviourPtr ajoutes par l'utilisateur :
+         *   A partir des GenericMaterialPropertyPtr ajoutes par l'utilisateur :
          *   creation de objets Jeveux
          * @return Booleen indiquant que la construction s'est bien deroulee
          * @todo pouvoir compléter un matériau (ajout d'un comportement après build)
@@ -122,7 +122,7 @@ class MaterialClass: public DataStructure
         bool build();
 
         /**
-         * @brief Get the number of list of double properties for one MaterialBehaviour
+         * @brief Get the number of list of double properties for one MaterialProperty
          * @return number of list of double properties
          */
         int getNumberOfListOfRealProperties( int position )
@@ -133,7 +133,7 @@ class MaterialClass: public DataStructure
         };
 
         /**
-         * @brief Get the number of list of function properties for one MaterialBehaviour
+         * @brief Get the number of list of function properties for one MaterialProperty
          * @return number of list of function properties
          */
         int getNumberOfListOfFunctionProperties( int position )
@@ -149,7 +149,7 @@ class MaterialClass: public DataStructure
          */
         int getNumberOfMaterialBehviour()
         {
-            return _nbMaterialBehaviour;
+            return _nbMaterialProperty;
         };
 
         /**
@@ -158,7 +158,7 @@ class MaterialClass: public DataStructure
          */
         int getNumberOfUserMaterialBehviour()
         {
-            return _nbUserMaterialBehaviour;
+            return _nbUserMaterialProperty;
         };
 
         /**
@@ -188,7 +188,7 @@ class MaterialClass: public DataStructure
         /**
          * @brief Get vector of material behaviours
          */
-        VectorOfGeneralMaterialBehaviour getVectorOfMaterialBehaviours()
+        VectorOfGenericMaterialProperty getVectorOfMaterialPropertys()
         {
             return _vecMatBehaviour;
         };

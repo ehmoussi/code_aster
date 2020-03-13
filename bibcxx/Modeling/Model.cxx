@@ -55,7 +55,7 @@ SyntaxMapContainer ModelClass::buildModelingsSyntaxMapContainer() const {
         } else {
             if ( ( *( curIter->second ) ).getType() == GroupOfNodesType )
                 dict2.container["GROUP_NO"] = ( curIter->second )->getName();
-            else if ( ( *( curIter->second ) ).getType() == GroupOfElementsType )
+            else if ( ( *( curIter->second ) ).getType() == GroupOfCellsType )
                 dict2.container["GROUP_MA"] = ( curIter->second )->getName();
         }
         listeAFFE.push_back( dict2 );
@@ -77,7 +77,7 @@ bool ModelClass::buildWithSyntax( SyntaxMapContainer &dict ) {
         throw;
     }
     // Attention, la connection des objets a leur image JEVEUX n'est pas necessaire
-    _typeOfElements->updateValuePointer();
+    _typeOfCells->updateValuePointer();
 
     return true;
 };

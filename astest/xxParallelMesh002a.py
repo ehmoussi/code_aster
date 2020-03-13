@@ -17,7 +17,7 @@ MATER=DEFI_MATERIAU(ELAS=_F(E=10000.0,
                             RHO=1.0,),
                             );
 
-affectMat = code_aster.MaterialOnMesh(MAIL)
+affectMat = code_aster.MaterialField(MAIL)
 affectMat.addMaterialOnAllMesh(MATER)
 affectMat.buildWithoutExternalVariable()
 

@@ -81,7 +81,7 @@ def all_objects(destdir):
     boost_enum = OBJ.Physics.mro()[1]
 
     # sections: directly derivated from Boost.Python.instance
-    sections = [OBJ.DataStructure, OBJ.GeneralMaterialBehaviour]
+    sections = [OBJ.DataStructure, OBJ.GenericMaterialProperty]
     addsect = []
     for name, obj in list(OBJ.__dict__.items()):
         if not isinstance(obj, type):
@@ -131,7 +131,7 @@ def all_objects(destdir):
         else:
             lines.append(title_ds_alone(typename))
         for name in objs:
-            if typename in ('DataStructure', 'GeneralMaterialBehaviour'):
+            if typename in ('DataStructure', 'GenericMaterialProperty'):
                 lines.append(subtitle(name))
             lines.append(autoclass_block(name))
 
@@ -146,7 +146,7 @@ def all_objects(destdir):
 
     with open(osp.join(destdir, "objects_materialbehaviour.rst"), "w") as fobj:
         params = dict(link="objects_materialbehaviour",
-                      content=dicttext["GeneralMaterialBehaviour"],
+                      content=dicttext["GenericMaterialProperty"],
                       intro="")
         fobj.write(auto_documentation(**params))
 

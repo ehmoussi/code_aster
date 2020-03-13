@@ -25,10 +25,10 @@
 #include <string>
 
 #include "Discretization/DiscreteProblem.h"
-#include "Discretization/ParallelDOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/MechanicalLoad.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
 
@@ -93,7 +93,7 @@ ElementaryVectorPtr DiscreteProblemClass::buildElementaryLaplaceVector() {
 };
 
 ElementaryVectorPtr DiscreteProblemClass::buildElementaryNeumannVector(
-    const VectorReal time, CalculationExternalVariablePtr varCom ) {
+    const VectorReal time, ExternalVariablesComputationPtr varCom ) {
     if ( time.size() != 3 )
         throw std::runtime_error( "Invalid number of parameter" );
 
@@ -142,7 +142,7 @@ ElementaryMatrixDisplacementRealPtr
         retour( new ElementaryMatrixDisplacementRealClass( Permanent ) );
     ModelPtr curModel = _study->getModel();
     retour->setModel( curModel );
-    MaterialOnMeshPtr curMater = _study->getMaterialOnMesh();
+    MaterialFieldPtr curMater = _study->getMaterialField();
     auto compor = curMater->getBehaviourField();
 
     _study->buildListOfLoads();
@@ -250,8 +250,8 @@ DiscreteProblemClass::buildElementaryMechanicalLoadsVector() {
     dict.container["OPTION"] = "CHAR_MECA";
     dict.container["MODELE"] = _study->getModel()->getName();
 
-    if ( _study->getMaterialOnMesh() )
-        dict.container["CHAM_MATER"] = _study->getMaterialOnMesh()->getName();
+    if ( _study->getMaterialField() )
+        dict.container["CHAM_MATER"] = _study->getMaterialField()->getName();
 
     const ListMecaLoad listOfMechanicalLoad = _study->getListOfMechanicalLoads();
     if ( listOfMechanicalLoad.size() != 0 ) {
@@ -284,9 +284,9 @@ SyntaxMapContainer DiscreteProblemClass::computeMatrixSyntax( const std::string 
     dict.container["MODELE"] = _study->getModel()->getName();
 
     // Definition du mot cle simple CHAM_MATER
-    if ( !_study->getMaterialOnMesh() )
+    if ( !_study->getMaterialField() )
         throw std::runtime_error( "Material is empty" );
-    dict.container["CHAM_MATER"] = _study->getMaterialOnMesh()->getName();
+    dict.container["CHAM_MATER"] = _study->getMaterialField()->getName();
 
     ListMecaLoad listMecaLoad = _study->getListOfMechanicalLoads();
     if ( listMecaLoad.size() != 0 ) {

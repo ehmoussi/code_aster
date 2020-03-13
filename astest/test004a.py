@@ -21,7 +21,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
                                 NU = POISSON,),)
 acier.debugPrint(6)
 
-affectMat = code_aster.MaterialOnMesh(monMaillage)
+affectMat = code_aster.MaterialField(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
 affectMat.buildWithoutExternalVariable()
 
@@ -49,12 +49,12 @@ statNonLine = code_aster.NonLinearStaticAnalysis()
 statNonLine.addStandardExcitation( charMeca1 )
 statNonLine.addStandardExcitation( charMeca2 )
 statNonLine.setModel( monModel )
-statNonLine.setMaterialOnMesh( affectMat )
+statNonLine.setMaterialField( affectMat )
 statNonLine.setLinearSolver( monSolver )
 #statNonLine.setLineSearchMethod( lineSearch )
 #Elas = code_aster.Behaviour( code_aster.Elas, code_aster.SmallStrain )
 #Elas = code_aster.Behaviour();
-#statNonLine.addBehaviourOnElements( Elas );
+#statNonLine.addBehaviourOnCells( Elas );
 
 temps = [0., 0.5, 1.]
 timeList = code_aster.TimeStepManager()
