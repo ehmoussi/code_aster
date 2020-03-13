@@ -66,7 +66,7 @@ bool KinematicsLoadClass::build() {
             } else {
                 if ( tmp->getType() == GroupOfNodesType )
                     dict2.container["GROUP_NO"] = tmp->getName();
-                else if ( tmp->getType() == GroupOfElementsType )
+                else if ( tmp->getType() == GroupOfCellsType )
                     dict2.container["GROUP_MA"] = tmp->getName();
             }
 
@@ -89,7 +89,7 @@ bool KinematicsLoadClass::build() {
             } else {
                 if ( tmp->getType() == GroupOfNodesType )
                     dict2.container["GROUP_NO"] = tmp->getName();
-                else if ( tmp->getType() == GroupOfElementsType )
+                else if ( tmp->getType() == GroupOfCellsType )
                     dict2.container["GROUP_MA"] = tmp->getName();
             }
             const std::string nomComp = curIter->getAsterCoordinateName();

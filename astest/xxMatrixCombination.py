@@ -24,7 +24,7 @@ poisson = 0.3
 acier = DEFI_MATERIAU(ELAS = _F(E = young,
                                 NU = poisson,),)
 
-affe_mat = code_aster.MaterialOnMesh(mesh)
+affe_mat = code_aster.MaterialField(mesh)
 affe_mat.addMaterialOnAllMesh(acier)
 affe_mat.buildWithoutExternalVariable()
 

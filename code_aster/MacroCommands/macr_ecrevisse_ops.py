@@ -307,13 +307,13 @@ def macr_ecrevisse_ops(self, **args):
                 # note : on doit le faire a chaque fois car le nom de concept _RTHMPJ
                 #        est different a chaque passage
                 motclefmater = {}
-                vecTmp = CHAM_MATER.getVectorOfPartOfMaterialOnMesh()
+                vecTmp = CHAM_MATER.getVectorOfPartOfMaterialField()
                 motclefmater['AFFE'] = []
                 for item in vecTmp:
                     dictToAdd = {}
                     meshEntity = item.getMeshEntity()
                     entityType = meshEntity.getType()
-                    if entityType is EntityType.GroupOfElementsType:
+                    if entityType is EntityType.GroupOfCellsType:
                         dictToAdd["GROUP_MA"] = meshEntity.getNames()
                     elif entityType is EntityType.ElementType:
                         dictToAdd["MAILLE"] = meshEntity.getNames()

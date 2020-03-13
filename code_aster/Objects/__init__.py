@@ -54,14 +54,14 @@ from .generalizedmodel_ext import GeneralizedModel
 from .listoffloats import ListOfFloats
 from .listofintegers_ext import ListOfIntegers
 from .material_ext import Material
-from .materialonmesh_ext import MaterialOnMesh
+from .materialfield_ext import MaterialField
 from .mechanicalload_ext import GenericMechanicalLoad
 from .mesh_ext import Mesh
 from .meshcoordinatesfield_ext import MeshCoordinatesField
 from .model_ext import Model
-from .pcfieldonmesh_ext import PCFieldOnMeshReal
+from .constantfieldoncells_ext import ConstantFieldOnCellsReal
 from .result_ext import Result
-from .surface_ext import Surface
+from .function2d_ext import Function2D
 from .table_ext import Table
 from .tablecontainer_ext import TableContainer
 from .thermalload_ext import ThermalLoad

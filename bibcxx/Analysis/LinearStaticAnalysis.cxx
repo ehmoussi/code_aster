@@ -29,18 +29,18 @@
 #include "Algorithms/StaticMechanicalAlgorithm.h"
 #include "Algorithms/StaticMechanicalContext.h"
 #include "DataStructures/TemporaryDataStructureName.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "Discretization/DiscreteProblem.h"
 #include "Supervis/Exceptions.h"
 #include "Analysis/LinearStaticAnalysis.h"
 #include "Supervis/CommandSyntax.h"
 
 LinearStaticAnalysisClass::LinearStaticAnalysisClass(
-    const ModelPtr &model, const MaterialOnMeshPtr &mater,
+    const ModelPtr &model, const MaterialFieldPtr &mater,
     const ElementaryCharacteristicsPtr &cara )
-    : _model( model ), _materialOnMesh( mater ), _linearSolver( BaseLinearSolverPtr() ),
+    : _model( model ), _materialField( mater ), _linearSolver( BaseLinearSolverPtr() ),
       _timeStep( TimeStepperPtr( new TimeStepperClass() ) ),
-      _study( new StudyDescriptionClass( _model, _materialOnMesh, cara ) ) {
+      _study( new StudyDescriptionClass( _model, _materialField, cara ) ) {
     _timeStep->setValues( VectorReal( 1, 0. ) );
 };
 
@@ -83,6 +83,10 @@ ElasticResultPtr LinearStaticAnalysisClass::execute() {
     typedef Algorithm< TimeStepperClass, StaticMechanicalContext, StaticMechanicalAlgorithm >
         MSAlgo;
     MSAlgo::runAllStepsOverAlgorithm( *_timeStep, currentContext );
+
+    // Destruct matrix
+    const std::string matass_name = currentContext.getStiffnessMatrix()->getName();
+    CALLO_DETMATRIX(matass_name);
 
     return resultC;
 };

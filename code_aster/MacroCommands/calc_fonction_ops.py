@@ -33,7 +33,7 @@ from ..Messages import ASSERT, UTMESS
 
 from ..Cata.Syntax import _F
 from ..Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION
-from ..Objects import Function, FunctionComplex, Surface
+from ..Objects import Function, FunctionComplex, Function2D
 from ..Objects.function_py import (FonctionError, InterpolationError,
                                    ParametreError, ProlongementError,
                                    enveloppe, fractile, homo_support_nappe,
@@ -68,14 +68,14 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
     if (COMB_C      != None):
         vale=COMB_C[0]['FONCTION']
         if type(vale) is list: vale = vale[0]
-        if(type(vale) == Surface):
+        if(type(vale) == Function2D):
             for mcfact in COMB_C[1:] :
-                if(type(mcfact['FONCTION'])!=Surface):
+                if(type(mcfact['FONCTION'])!=Function2D):
                     raise AsException("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
-            return Surface
+            return Function2D
         else:
             for mcfact in COMB_C :
-                if(type(mcfact['FONCTION'])==Surface):
+                if(type(mcfact['FONCTION'])==Function2D):
                     raise AsException("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
             return FunctionComplex
     if (ENVELOPPE   != None):
@@ -99,15 +99,15 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
         return Function
     if (SPEC_OSCI   != None):
         if (SPEC_OSCI[0]['TYPE_RESU'] == "NAPPE"):
-            return Surface
+            return Function2D
         else:
             if (SPEC_OSCI[0]['AMOR_REDUIT'] != None):
                 if len(SPEC_OSCI[0]['AMOR_REDUIT']) == 1:
                     return Function
                 else:
-                    return Surface
+                    return Function2D
             else:
-                return Surface
+                return Function2D
     if (DSP         != None): return Function
     if (COMPOSE     != None): return Function
     if (ASSE        != None): return Function
@@ -132,7 +132,7 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
     if (INTERPOL_FFT   != None): return Function
     if (CORR_ACCE   != None): return Function
     if (COHERENCE   != None): return Function
-    if (LISS_ENVELOP!= None): return Surface
+    if (LISS_ENVELOP!= None): return Function2D
     if (REGR_POLYNOMIALE != None): return Function
     if (PUISSANCE   != None):
         if type(PUISSANCE[0]['FONCTION']) not in (list, tuple):
@@ -228,7 +228,7 @@ class CalcFonctionOper(object):
             if self.args[p] is not None:
                 para[p] = self.args[p]
 
-        if self.typres is not Surface:
+        if self.typres is not Function2D:
             if self.typres is FunctionComplex:
                 mcval = 'VALE_C'
             else:
@@ -448,7 +448,7 @@ class CalcFonction_ENVELOPPE(CalcFonctionOper):
     def _run(self):
         """ENVELOPPE"""
         crit = self.kw['CRITERE']
-        if self.typres is Surface:
+        if self.typres is Function2D:
             nap0 = self._lf[0]
             vale_para = nap0.vale_para
             para = nap0.para
@@ -562,7 +562,7 @@ class CalcFonction_FRACTILE(CalcFonctionOper):
     def _run(self):
         """FRACTILE"""
         fract = self.kw['FRACT']
-        if self.typres is Surface:
+        if self.typres is Function2D:
             nap0 = self._lf[0]
             vale_para = nap0.vale_para
             para = nap0.para
@@ -580,7 +580,7 @@ class CalcFonction_MOYENNE(CalcFonctionOper):
     """Compute the mean of functions"""
     def _run(self):
         """MOYENNE"""
-        if self.typres is Surface:
+        if self.typres is Function2D:
             nap0 = self._lf[0]
             vale_para = nap0.vale_para
             para = nap0.para
@@ -797,7 +797,7 @@ class CalcFonction_SPEC_OSCI(CalcFonctionOper):
                 spectr = ACCE2SRO(f_in, iamor, l_freq, ideb)
                 vale_y = spectr.vale_y / kw['NORME']
                 l_fonc_f.append(t_fonction(l_freq, vale_y, para_fonc))
-        if self.typres == Surface:
+        if self.typres == Function2D:
             self.resu = t_nappe(vale_para, l_fonc_f, para)
         else:
             self.resu = l_fonc_f[0]

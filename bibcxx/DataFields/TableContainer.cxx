@@ -93,13 +93,13 @@ void TableContainerClass::addObject( const std::string& a,
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        PCFieldOnMeshRealPtr b )
+                                        ConstantFieldOnCellsRealPtr b )
 {
     _mapPCFOMD[a] = b;
 };
 
 void TableContainerClass::addObject( const std::string& a,
-                                        SurfacePtr b )
+                                        Function2DPtr b )
 {
     _mapS[a] = b;
 };
@@ -217,21 +217,22 @@ TableContainerClass::getModeResult( const std::string& a ) const
     return curIter->second;
 };
 
-PCFieldOnMeshRealPtr TableContainerClass::getPCFieldOnMeshReal( const std::string& a ) const
+ConstantFieldOnCellsRealPtr
+TableContainerClass::getConstantFieldOnCellsReal( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapPCFOMD.find(aa);
     if( curIter == _mapPCFOMD.end() )
-        return PCFieldOnMeshRealPtr( nullptr );
+        return ConstantFieldOnCellsRealPtr( nullptr );
     return curIter->second;
 };
 
-SurfacePtr TableContainerClass::getSurface( const std::string& a ) const
+Function2DPtr TableContainerClass::getFunction2D( const std::string& a ) const
 {
     const auto aa = trim(a);
     const auto curIter = _mapS.find(aa);
     if( curIter == _mapS.end() )
-        return SurfacePtr( nullptr );
+        return Function2DPtr( nullptr );
     return curIter->second;
 };
 
@@ -357,8 +358,8 @@ bool TableContainerClass::update()
                                     ( new FieldOnNodesRealClass( sdName ) );
                 }
 //             else if( type == "CARTE_SDASTER" )
-//                 _mapPCFOMD[name] = PCFieldOnMeshRealPtr
-//                                     ( new PCFieldOnMeshRealClass( sdName ) );
+//                 _mapPCFOMD[name] = ConstantFieldOnCellsRealPtr
+//                                     ( new ConstantFieldOnCellsRealClass( sdName ) );
             else if( type == "CHAM_ELEM" )
                 {
                 if ( _mapFOED[name] == nullptr )
@@ -392,8 +393,8 @@ bool TableContainerClass::update()
             else if( type == "NAPPE_SDASTER" )
                 {
                 if ( _mapS[name] == nullptr )
-                _mapS[name] = SurfacePtr
-                                    ( new SurfaceClass( sdName ) );
+                _mapS[name] = Function2DPtr
+                                    ( new Function2DClass( sdName ) );
                 }
             else
                 throw std::runtime_error( "Type not implemented " + type );

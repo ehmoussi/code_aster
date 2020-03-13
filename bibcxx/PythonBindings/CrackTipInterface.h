@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Modeling/CrackTip.h"
+#include "Crack/CrackTip.h"
 
 void exportCrackTipToPython();
 

@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import Model, PrestressingCableDefinition, Result
+from ..Objects import Model, PrestressingCable, Result
 from ..Supervis import ExecuteCommand
 
 
@@ -35,10 +35,10 @@ class Copier(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         other = keywords['CONCEPT']
-        if isinstance(other, PrestressingCableDefinition):
-            self._result = PrestressingCableDefinition(
+        if isinstance(other, PrestressingCable):
+            self._result = PrestressingCable(
                 other.getModel(),
-                other.getMaterialOnMesh(),
+                other.getMaterialField(),
                 other.getElementaryCharacteristics())
         elif isinstance(other, Result):
             # do not support several models

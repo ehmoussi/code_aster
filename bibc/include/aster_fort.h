@@ -114,6 +114,13 @@ extern void DEFPSS(JEIMPR, jeimpr, _IN ASTERINTEGER*, const char*, STRING_SIZE,
 #define CALL_ASABRT(a) CALLP(ASABRT,asabrt,a)
 extern void DEFP(ASABRT, asabrt, _IN ASTERINTEGER *);
 
+#define CALL_DETMAT() CALL0(DETMAT, detmat)
+extern void DEF0(DETMAT, detmat);
+
+#define CALL_DETMATRIX(a) CALLS(DETMATRIX, detmatrix, a)
+#define CALLO_DETMATRIX(a) CALLO(DETMATRIX, detmatrix, a)
+extern void DEFS(DETMATRIX, detmatrix, const char *, STRING_SIZE);
+
 /* routines JEVEUX */
 #define CALL_JEMARQ() CALL0(JEMARQ, jemarq)
 extern void DEF0(JEMARQ,jemarq);

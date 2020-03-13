@@ -155,10 +155,19 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ContactDefinition` object
+:py:class:`~code_aster.Objects.ConstantFieldOnCellsReal` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ContactDefinition
+.. autoclass:: code_aster.Objects.ConstantFieldOnCellsReal
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.Contact` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.Contact
    :show-inheritance:
    :members:
 
@@ -353,10 +362,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ExternalVariableResult` object
+:py:class:`~code_aster.Objects.ExternalVariablesResult` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.ExternalVariableResult
+.. autoclass:: code_aster.Objects.ExternalVariablesResult
    :show-inheritance:
    :members:
 
@@ -501,6 +510,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.Function
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.Function2D` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.Function2D
    :show-inheritance:
    :members:
 
@@ -812,15 +830,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.MatchingMeshes` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.MatchingMeshes
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.Material` object
 ================================================================================
 
@@ -830,10 +839,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.MaterialOnMesh` object
+:py:class:`~code_aster.Objects.MaterialField` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.MaterialOnMesh
+.. autoclass:: code_aster.Objects.MaterialField
    :show-inheritance:
    :members:
 
@@ -852,6 +861,15 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.MeshCoordinatesField
+   :show-inheritance:
+   :members:
+
+
+================================================================================
+:py:class:`~code_aster.Objects.MeshesMapping` object
+================================================================================
+
+.. autoclass:: code_aster.Objects.MeshesMapping
    :show-inheritance:
    :members:
 
@@ -947,15 +965,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.PCFieldOnMeshReal` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.PCFieldOnMeshReal
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.PetscSolver` object
 ================================================================================
 
@@ -983,10 +992,10 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.PrestressingCableDefinition` object
+:py:class:`~code_aster.Objects.PrestressingCable` object
 ================================================================================
 
-.. autoclass:: code_aster.Objects.PrestressingCableDefinition
+.. autoclass:: code_aster.Objects.PrestressingCable
    :show-inheritance:
    :members:
 
@@ -1095,15 +1104,6 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.StructureInterface
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.Surface` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.Surface
    :show-inheritance:
    :members:
 

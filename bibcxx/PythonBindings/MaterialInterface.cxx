@@ -35,7 +35,7 @@ void exportMaterialToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< MaterialClass, std::string >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< MaterialClass, std::string, VectorInt >))
-        .def( "addMaterialBehaviour", &MaterialClass::addMaterialBehaviour )
+        .def( "addMaterialProperty", &MaterialClass::addMaterialProperty )
         .def( "build", &MaterialClass::build )
         .def( "getNumberOfListOfRealProperties",
               &MaterialClass::getNumberOfListOfRealProperties )
@@ -44,6 +44,6 @@ void exportMaterialToPython() {
         .def( "getNumberOfMaterialBehviour", &MaterialClass::getNumberOfMaterialBehviour )
         .def( "getNumberOfUserMaterialBehviour",
               &MaterialClass::getNumberOfUserMaterialBehviour )
-        .def( "getVectorOfMaterialBehaviours", &MaterialClass::getVectorOfMaterialBehaviours )
+        .def( "getVectorOfMaterialPropertys", &MaterialClass::getVectorOfMaterialPropertys )
         .def( "setReferenceMaterial", &MaterialClass::setReferenceMaterial );
 };

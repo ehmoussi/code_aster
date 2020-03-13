@@ -37,8 +37,8 @@ bool ParallelMeshClass::readMedFile( const std::string &fileName ) {
     CALLO_LRMJOI_WRAP( getName(), completeFileName );
 
     MPIContainerUtilities util;
-    _groupsOfNodes->buildFromJeveux();
-    auto gONNames = _groupsOfNodes->getObjectNames();
+    _groupOfNodes->buildFromJeveux();
+    auto gONNames = _groupOfNodes->getObjectNames();
     auto allgONNames = util.gatheringVectorsOnAllProcs( gONNames );
 
     for ( auto &nameOfGrp : allgONNames )
@@ -50,8 +50,8 @@ bool ParallelMeshClass::readMedFile( const std::string &fileName ) {
         ++num;
     }
 
-    _groupsOfElements->buildFromJeveux();
-    auto gOENames = _groupsOfElements->getObjectNames();
+    _groupOfCells->buildFromJeveux();
+    auto gOENames = _groupOfCells->getObjectNames();
     auto allgOENames = util.gatheringVectorsOnAllProcs( gOENames );
 
     for ( auto &nameOfGrp : allgOENames )

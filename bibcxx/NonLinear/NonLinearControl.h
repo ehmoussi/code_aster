@@ -29,7 +29,7 @@
 #include <vector>
 
 #include "Discretization/DiscreteProblem.h"
-#include "LinearAlgebra/SolverControl.h"
+#include "Solvers/SolverControl.h"
 
 /**
  * @class NonLinearControl

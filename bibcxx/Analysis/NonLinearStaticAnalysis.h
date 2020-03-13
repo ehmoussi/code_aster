@@ -29,11 +29,11 @@
 
 #include "Algorithms/StaticNonLinearAlgorithm.h"
 #include "Algorithms/TimeStepper.h"
-#include "LinearAlgebra/LinearSolver.h"
+#include "Solvers/LinearSolver.h"
 #include "Loads/KinematicsLoad.h"
 #include "Loads/Excitation.h"
 #include "Loads/MechanicalLoad.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Materials/MaterialField.h"
 #include "Modeling/Model.h"
 #include "NonLinear/Behaviour.h"
 #include "NonLinear/Driving.h"
@@ -66,7 +66,7 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
     /** @brief Model */
     ModelPtr _model;
     /** @brief Material field  */
-    MaterialOnMeshPtr _materialOnMesh;
+    MaterialFieldPtr _materialField;
     /** @brief List of excitations */
     ListExcitation _listOfExcitations;
     /** @brief List of load steps  */
@@ -110,7 +110,7 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
      * @param nameOfGroup is the name of the group defining the MeshEntity.
      * Default value corresponds to set the bahaviour on the whole mesh.
     */
-    void addBehaviourOnElements( const BehaviourPtr &behaviour,
+    void addBehaviourOnCells( const BehaviourPtr &behaviour,
                                  std::string nameOfGroup = "" ) {
         // Check that the pointer to the model is not empty
         if ( ( !_model ) || _model->isEmpty() )
@@ -123,8 +123,8 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
             meshEntity = MeshEntityPtr( new AllMeshEntities() );
         }
         // otherwise, if nameOfGroup is the name of a group of elements in the mesh
-        else if ( currentMesh->hasGroupOfElements( nameOfGroup ) ) {
-            meshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+        else if ( currentMesh->hasGroupOfCells( nameOfGroup ) ) {
+            meshEntity = MeshEntityPtr( new GroupOfCells( nameOfGroup ) );
         } else
             //  otherwise, throw an exception
             throw std::runtime_error( nameOfGroup + " does not exist in the mesh "
@@ -150,10 +150,10 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
 
     /**
      * @brief method to define the material set on mesh
-     * @param currentMaterial objet MaterialOnMeshPtr
+     * @param currentMaterial objet MaterialFieldPtr
      */
-    void setMaterialOnMesh( const MaterialOnMeshPtr &currentMaterial ) {
-        _materialOnMesh = currentMaterial;
+    void setMaterialField( const MaterialFieldPtr &currentMaterial ) {
+        _materialField = currentMaterial;
     };
 
     /**

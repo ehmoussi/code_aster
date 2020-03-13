@@ -32,8 +32,8 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "Modal/StaticMacroElement.h"
 #include "Results/DynamicResultsIndexing.h"
-#include "Discretization/DOFNumbering.h"
-#include "Discretization/GeneralizedDOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
+#include "Numbering/GeneralizedDOFNumbering.h"
 
 /**
  * @class GeneralizedResultClass

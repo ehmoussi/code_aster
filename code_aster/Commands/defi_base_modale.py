@@ -24,7 +24,7 @@ from ..Supervis import ExecuteCommand
 
 
 class ModalBasisDef(ExecuteCommand):
-    """Command that creates the :class:`~code_aster.Objects.ModalBasisDefinition`"""
+    """Command that creates the :class:`~code_aster.Objects.ModalBasis`"""
     command_name = "DEFI_BASE_MODALE"
 
     def create_result(self, keywords):

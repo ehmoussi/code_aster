@@ -34,28 +34,28 @@
 #include "Loads/KinematicsLoad.h"
 #include "Functions/Function.h"
 #include "Functions/Formula.h"
-#include "Functions/Surface.h"
+#include "Functions/Function2D.h"
 #include "boost/variant.hpp"
 #include "MemoryManager/JeveuxVector.h"
 
 class GenericLoadFunction {
   private:
-    boost::variant< FunctionPtr, FormulaPtr, SurfacePtr > _generic;
+    boost::variant< FunctionPtr, FormulaPtr, Function2DPtr > _generic;
 
   public:
     GenericLoadFunction( const FunctionPtr &func ) : _generic( func ){};
 
     GenericLoadFunction( const FormulaPtr &func ) : _generic( func ){};
 
-    GenericLoadFunction( const SurfacePtr &func ) : _generic( func ){};
+    GenericLoadFunction( const Function2DPtr &func ) : _generic( func ){};
 
     std::string getName() const {
         if ( _generic.type() == typeid( FunctionPtr ) )
             return boost::get< FunctionPtr >( _generic )->getName();
         if ( _generic.type() == typeid( FormulaPtr ) )
             return boost::get< FormulaPtr >( _generic )->getName();
-        if ( _generic.type() == typeid( SurfacePtr ) )
-            return boost::get< SurfacePtr >( _generic )->getName();
+        if ( _generic.type() == typeid( Function2DPtr ) )
+            return boost::get< Function2DPtr >( _generic )->getName();
     };
 };
 
@@ -123,9 +123,9 @@ class ListOfLoadsClass : public DataStructure {
     /**
      * @brief Function d'ajout d'une charge cinematique
      * @param currentLoad charge a ajouter a la sd
-     * @param func multiplier surface
+     * @param func multiplier function2d
      */
-    void addLoad( const KinematicsLoadPtr &currentLoad, const SurfacePtr &func ) {
+    void addLoad( const KinematicsLoadPtr &currentLoad, const Function2DPtr &func ) {
         _isEmpty = true;
         _listOfKinematicsLoads.push_back( currentLoad );
         _listOfKineFun.push_back( func );
@@ -157,9 +157,9 @@ class ListOfLoadsClass : public DataStructure {
     /**
      * @brief Function d'ajout d'une charge mécanique
      * @param currentLoad charge a ajouter a la sd
-     * @param func multiplier surface
+     * @param func multiplier function2d
      */
-    void addLoad( const GenericMechanicalLoadPtr &currentLoad, const SurfacePtr &func ) {
+    void addLoad( const GenericMechanicalLoadPtr &currentLoad, const Function2DPtr &func ) {
         _isEmpty = true;
         _listOfMechanicalLoads.push_back( currentLoad );
         _listOfMechaFun.push_back( func );
@@ -192,9 +192,9 @@ class ListOfLoadsClass : public DataStructure {
     /**
      * @brief Function d'ajout d'une charge mécanique
      * @param currentLoad charge a ajouter a la sd
-     * @param func multiplier surface
+     * @param func multiplier function2d
      */
-    void addLoad( const ParallelMechanicalLoadPtr &currentLoad, const SurfacePtr &func ) {
+    void addLoad( const ParallelMechanicalLoadPtr &currentLoad, const Function2DPtr &func ) {
         _isEmpty = true;
         _listOfParallelMechanicalLoads.push_back( currentLoad );
         _listOfParaMechaFun.push_back( func );

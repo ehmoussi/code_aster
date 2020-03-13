@@ -24,7 +24,7 @@ from ..Objects import (LoadResult, ThermalResult,
                        ElasticFourierResult, ThermalFourierResult,
                        FullHarmonicResult,
                        FullTransientResult,
-                       ExternalVariableResult,
+                       ExternalVariablesResult,
                        ElasticResult,
                        ModeResultComplex, ModeResult,
                        MultipleElasticResult, NonLinearResult)
@@ -54,7 +54,7 @@ class ResultCreator(ExecuteCommand):
             elif typ == "EVOL_ELAS":
                 self._result = ElasticResult()
             elif typ == "EVOL_VARC":
-                self._result = ExternalVariableResult()
+                self._result = ExternalVariablesResult()
             elif typ == "FOURIER_ELAS":
                 self._result = ElasticFourierResult()
             elif typ == "FOURIER_THER":
@@ -101,7 +101,7 @@ class ResultCreator(ExecuteCommand):
         if fkw is not None:
             chamMater = fkw[0].get("CHAM_MATER")
             if chamMater is not None:
-                self._result.appendMaterialOnMeshOnAllRanks(chamMater)
+                self._result.appendMaterialFieldOnAllRanks(chamMater)
 
             modele = fkw[0].get("MODELE")
             chamGd = fkw[0].get("CHAM_GD")

@@ -12,6 +12,71 @@ Documentation of all other types.
 
 
 ********************************************************************************
+:py:class:`~code_aster.Objects.BaseExternalVariables` subclasses
+********************************************************************************
+
+.. autoclass:: code_aster.Objects.BaseExternalVariables
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ConcreteDryingExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ConcreteHydratationExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.CorrosionExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.GeometryExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.IrradiationExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.IrreversibleDeformationExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Neutral1ExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Neutral2ExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.Neutral3ExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.SteelPhasesExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.TemperatureExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.TotalFluidPressureExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.VolumetricDeformationExternalVariable
+   :show-inheritance:
+   :members:
+
+.. autoclass:: code_aster.Objects.ZircaloyPhasesExternalVariable
+   :show-inheritance:
+   :members:
+
+
+********************************************************************************
 :py:class:`~code_aster.Objects.Behaviour` object
 ********************************************************************************
 
@@ -66,19 +131,19 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.ExternalVariableConverter` object
+:py:class:`~code_aster.Objects.ExternalVariablesConverter` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.ExternalVariableConverter
+.. autoclass:: code_aster.Objects.ExternalVariablesConverter
    :show-inheritance:
    :members:
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.ExternalVariableOnMesh` object
+:py:class:`~code_aster.Objects.ExternalVariablesField` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.ExternalVariableOnMesh
+.. autoclass:: code_aster.Objects.ExternalVariablesField
    :show-inheritance:
    :members:
 
@@ -167,71 +232,6 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.GenericExternalVariable` subclasses
-********************************************************************************
-
-.. autoclass:: code_aster.Objects.GenericExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ConcreteDryingExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ConcreteHydratationExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.CorrosionExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.GeometryExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.IrradiationExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.IrreversibleDeformationExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.Neutral1ExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.Neutral2ExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.Neutral3ExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.SteelPhasesExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.TemperatureExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.TotalFluidPressureExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.VolumetricDeformationExternalVariable
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.ZircaloyPhasesExternalVariable
-   :show-inheritance:
-   :members:
-
-
-********************************************************************************
 :py:class:`~code_aster.Objects.Glossary` object
 ********************************************************************************
 
@@ -313,10 +313,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.MaterialOnMeshBuilder` object
+:py:class:`~code_aster.Objects.MaterialFieldBuilder` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.MaterialOnMeshBuilder
+.. autoclass:: code_aster.Objects.MaterialFieldBuilder
    :show-inheritance:
    :members:
 
@@ -337,7 +337,7 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.GroupOfElements
+.. autoclass:: code_aster.Objects.GroupOfCells
    :show-inheritance:
    :members:
 
@@ -370,10 +370,10 @@ Documentation of all other types.
 
 
 ********************************************************************************
-:py:class:`~code_aster.Objects.PartOfMaterialOnMesh` object
+:py:class:`~code_aster.Objects.PartOfMaterialField` object
 ********************************************************************************
 
-.. autoclass:: code_aster.Objects.PartOfMaterialOnMesh
+.. autoclass:: code_aster.Objects.PartOfMaterialField
    :show-inheritance:
    :members:
 

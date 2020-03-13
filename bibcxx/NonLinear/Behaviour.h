@@ -27,8 +27,8 @@
 /* person_in_charge: natacha.bereux at edf.fr */
 #include "astercxx.h"
 
-#include "LinearAlgebra/SolverControl.h"
-#include "Materials/MaterialOnMesh.h"
+#include "Solvers/SolverControl.h"
+#include "Materials/MaterialField.h"
 #include "Meshes/MeshEntities.h"
 #include "NonLinear/AllowedBehaviour.h"
 #include "Modeling/Model.h"
@@ -168,7 +168,7 @@ class LocatedBehaviourClass {
         std::string entityName;
         if ( _entity->getType() == AllMeshEntitiesType ) {
             entityName = "TOUT";
-        } else if ( _entity->getType() == GroupOfElementsType ) {
+        } else if ( _entity->getType() == GroupOfCellsType ) {
             entityName = "GROUP_MA";
         }
         _toCapyConverter.add(
