@@ -131,7 +131,7 @@ def build_libaster(self, shenv):
     install_path = shenv.ASTERLIBDIR,
     )
     for submodule in ("aster", "aster_core", "aster_fonctions", "med_aster"):
-        self.symlink_as("${PREFIX}/lib/aster/%s.so" % submodule, "libaster.so")
+        self.symlink_as("${ASTERLIBDIR}/%s.so" % submodule, "libaster.so")
 
 @Configure.conf
 def check_cflags(self):
