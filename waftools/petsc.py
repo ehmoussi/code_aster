@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -121,8 +121,9 @@ int main(void){
         vers = mat and mat.group('vers')
         major, minor, sub, patch = [int(i) for i in vers.split('.')]
         vers = '%d.%d.%dp%d' % (major, minor, sub, patch)
-        if major < 3 or (major == 3 and minor < 2):
-            self.end_msg('unsupported petsc version: %s (expected 3.2.* or newer)' % vers, 'RED')
+        if major < 3 or (major == 3 and minor < 9):
+            self.end_msg("unsupported petsc version: {0} "
+                         "(expected 3.9.* or newer)".format(vers), 'RED')
             raise Errors.ConfigurationError
         self.define('ASTER_PETSC_VERSION', vers)
     except:
