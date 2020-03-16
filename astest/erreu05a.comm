@@ -105,7 +105,7 @@ except AsterError as err:
 
 # the initialization is partial because of exception raised
 resu.appendModelOnAllRanks(model)
-resu.appendMaterialOnMeshOnAllRanks(chmat)
+resu.appendMaterialFieldOnAllRanks(chmat)
 resu.update()
 
 resu = EXTR_RESU(RESULTAT=resu,ARCHIVAGE=_F(NUME_ORDRE=1))

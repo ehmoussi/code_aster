@@ -48,9 +48,9 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
 # acier.debugPrint(6)
 test.assertEqual( acier.getType(), "MATER_SDASTER" )
 
-affectMat = code_aster.MaterialOnMesh(monMaillage)
+affectMat = code_aster.MaterialField(monMaillage)
 affectMat.addMaterialOnAllMesh( acier )
-affectMat.addMaterialOnGroupOfElements( acier, ['Haut', 'Bas'] )
+affectMat.addMaterialOnGroupOfCells( acier, ['Haut', 'Bas'] )
 affectMat.buildWithoutExternalVariable()
 test.assertEqual( affectMat.getType(), "CHAM_MATER" )
 

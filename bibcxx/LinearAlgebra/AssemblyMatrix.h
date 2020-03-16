@@ -45,8 +45,8 @@
 #endif
 #endif
 
-#include "Discretization/DOFNumbering.h"
-#include "Discretization/ParallelDOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Modeling/Model.h"
 
@@ -205,13 +205,13 @@ class AssemblyMatrixClass : public DataStructure {
     };
 
     /**
-     * @brief Get MaterialOnMesh
-     * @return MaterialOnMesh of the first ElementaryMatrix (all others must be the same)
+     * @brief Get MaterialField
+     * @return MaterialField of the first ElementaryMatrix (all others must be the same)
      */
-    MaterialOnMeshPtr getMaterialOnMesh() const
+    MaterialFieldPtr getMaterialField() const
     {
         if ( _elemMatrix.size() != 0 )
-            return _elemMatrix[0]->getMaterialOnMesh();
+            return _elemMatrix[0]->getMaterialField();
         throw std::runtime_error( "No ElementaryMatrix in AssemblyMatrix" );
     };
 

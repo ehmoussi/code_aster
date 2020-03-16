@@ -29,7 +29,7 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
 #include "MemoryManager/JeveuxCollection.h"

@@ -34,10 +34,10 @@ void exportLinearStaticAnalysisToPython() {
         "LinearStaticAnalysis", py::no_init );
     c1.def( "__init__",
             py::make_constructor(
-                &initFactoryPtr< LinearStaticAnalysisClass, ModelPtr, MaterialOnMeshPtr >));
+                &initFactoryPtr< LinearStaticAnalysisClass, ModelPtr, MaterialFieldPtr >));
     c1.def( "__init__",
             py::make_constructor(&initFactoryPtr< LinearStaticAnalysisClass, ModelPtr,
-                                              MaterialOnMeshPtr, ElementaryCharacteristicsPtr >));
+                                              MaterialFieldPtr, ElementaryCharacteristicsPtr >));
     addKinematicsLoadToInterface( c1 );
     addMechanicalLoadToInterface( c1 );
 #ifdef _USE_MPI

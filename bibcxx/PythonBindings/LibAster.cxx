@@ -39,7 +39,7 @@ namespace py = boost::python;
 #include "PythonBindings/BehaviourInterface.h"
 #include "PythonBindings/BucklingModeResultInterface.h"
 #include "PythonBindings/CombinedFourierResultInterface.h"
-#include "PythonBindings/ContactDefinitionInterface.h"
+#include "PythonBindings/ContactInterface.h"
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
 #include "PythonBindings/CrackInterface.h"
 #include "PythonBindings/CrackShapeInterface.h"
@@ -59,9 +59,9 @@ namespace py = boost::python;
 #include "PythonBindings/ElementaryVectorInterface.h"
 #include "PythonBindings/EmpiricalModeResultInterface.h"
 #include "PythonBindings/EventManagerInterface.h"
-#include "PythonBindings/ExternalVariableConverterInterface.h"
-#include "PythonBindings/ExternalVariableDefinitionInterface.h"
-#include "PythonBindings/ExternalVariableResultInterface.h"
+#include "PythonBindings/ExternalVariablesConverterInterface.h"
+#include "PythonBindings/ExternalVariablesDefinitionInterface.h"
+#include "PythonBindings/ExternalVariablesResultInterface.h"
 #include "PythonBindings/FiberGeometryInterface.h"
 #include "PythonBindings/FieldOnCellsInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
@@ -91,15 +91,16 @@ namespace py = boost::python;
 #include "PythonBindings/ListOfFloatsInterface.h"
 #include "PythonBindings/ListOfIntegersInterface.h"
 #include "PythonBindings/LoadResultInterface.h"
-#include "PythonBindings/MatchingMeshesInterface.h"
-#include "PythonBindings/MaterialBehaviourInterface.h"
+#include "PythonBindings/MeshesMappingInterface.h"
+#include "PythonBindings/BaseMaterialPropertyInterface.h"
+#include "PythonBindings/MaterialPropertyInterface.h"
 #include "PythonBindings/MaterialInterface.h"
-#include "PythonBindings/MaterialOnMeshBuilderInterface.h"
-#include "PythonBindings/MaterialOnMeshInterface.h"
+#include "PythonBindings/MaterialFieldBuilderInterface.h"
+#include "PythonBindings/MaterialFieldInterface.h"
 #include "PythonBindings/MechanicalLoadInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
 #include "PythonBindings/MeshInterface.h"
-#include "PythonBindings/ModalBasisDefinitionInterface.h"
+#include "PythonBindings/ModalBasisInterface.h"
 #include "PythonBindings/ModelInterface.h"
 #include "PythonBindings/ModeResultInterface.h"
 #include "PythonBindings/MPIInfosInterface.h"
@@ -111,10 +112,10 @@ namespace py = boost::python;
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
 #include "PythonBindings/PartialMeshInterface.h"
-#include "PythonBindings/PCFieldOnMeshInterface.h"
+#include "PythonBindings/ConstantFieldOnCellsInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
-#include "PythonBindings/PrestressingCableDefinitionInterface.h"
+#include "PythonBindings/PrestressingCableInterface.h"
 #include "PythonBindings/ResultInterface.h"
 #include "PythonBindings/ResultNamingInterface.h"
 #include "PythonBindings/SimpleFieldOnCellsInterface.h"
@@ -124,7 +125,7 @@ namespace py = boost::python;
 #include "PythonBindings/StaticMacroElementInterface.h"
 #include "PythonBindings/StructureInterfaceInterface.h"
 #include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/SurfaceInterface.h"
+#include "PythonBindings/Function2DInterface.h"
 #include "PythonBindings/TableContainerInterface.h"
 #include "PythonBindings/TableInterface.h"
 #include "PythonBindings/ThermalFourierResultInterface.h"
@@ -205,7 +206,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportDataFieldToPython();
     exportFieldOnCellsToPython();
     exportFieldOnNodesToPython();
-    exportPCFieldOnMeshToPython();
+    exportConstantFieldOnCellsToPython();
     exportSimpleFieldOnCellsToPython();
     exportSimpleFieldOnNodesToPython();
     exportTableToPython();
@@ -218,8 +219,8 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportFunctionToPython();
     exportFormulaToPython();
     exportFortranToPython();
-    exportSurfaceToPython();
-    exportContactDefinitionToPython();
+    exportFunction2DToPython();
+    exportContactToPython();
     exportAssemblyMatrixToPython();
     exportElementaryMatrixToPython();
     exportElementaryVectorToPython();
@@ -227,7 +228,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportGeneralizedAssemblyVectorToPython();
     exportInterspectralMatrixToPython();
     exportLinearSolverToPython();
-    exportModalBasisDefinitionToPython();
+    exportModalBasisToPython();
     exportStructureInterfaceToPython();
     exportAcousticLoadToPython();
     exportKinematicsLoadToPython();
@@ -237,10 +238,11 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportUnitaryThermalLoadToPython();
     exportBehaviourDefinitionToPython();
     exportMaterialToPython();
-    exportMaterialBehaviourToPython();
-    exportMaterialOnMeshToPython();
+    exportBaseMaterialPropertyToPython();
+    exportMaterialPropertyToPython();
+    exportMaterialFieldToPython();
     exportGridToPython();
-    exportMatchingMeshesToPython();
+    exportMeshesMappingToPython();
     exportSkeletonToPython();
     exportDynamicMacroElementToPython();
     exportStaticMacroElementToPython();
@@ -250,7 +252,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportGeneralizedModelToPython();
     exportModelToPython();
     exportPhysicsAndModelingsToPython();
-    exportPrestressingCableDefinitionToPython();
+    exportPrestressingCableToPython();
     exportXfemCrackToPython();
     exportBehaviourToPython();
     exportDrivingToPython();
@@ -300,9 +302,9 @@ BOOST_PYTHON_MODULE( libaster ) {
     exportResultNamingToPython();
     exportListOfFloatsToPython();
     exportListOfIntegersToPython();
-    exportExternalVariableDefinitionToPython();
-    exportExternalVariableConverterToPython();
+    exportExternalVariablesToPython();
+    exportExternalVariablesConverterToPython();
     exportEmpiricalModeResultToPython();
-    exportExternalVariableResultToPython();
-    exportMaterialOnMeshBuilderToPython();
+    exportExternalVariablesResultToPython();
+    exportMaterialFieldBuilderToPython();
 };

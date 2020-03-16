@@ -85,8 +85,8 @@ template < class ValueType > class ImposedTemperatureClass : public UnitaryTherm
 template < class ValueType > class DistributedFlowClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+    typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+    typedef std::vector< GroupOfCellsPtr > VectorGroupOfCells;
 
     VectorOfMeshEntityPtr _entity;
     ValueType _fluxn, _fluxnInf, _fluxnSup;
@@ -108,8 +108,8 @@ template < class ValueType > class DistributedFlowClass : public UnitaryThermalL
             new CapyConvertibleValue< double >( true, "FLUX_REP", _fluxn, false ) );
     };
 
-    void addGroupOfElements( const std::string &nameOfGroup ) {
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+    void addGroupOfCells( const std::string &nameOfGroup ) {
+        _entity.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >( false, "GROUP_MA",
                                                                                  _entity, false ) );
     };
@@ -146,8 +146,8 @@ template < class ValueType > class DistributedFlowClass : public UnitaryThermalL
 template < class ValueType > class NonLinearFlowClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+    typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+    typedef std::vector< GroupOfCellsPtr > VectorGroupOfCells;
 
     VectorOfMeshEntityPtr _entity;
     ValueType _fluxn;
@@ -165,8 +165,8 @@ template < class ValueType > class NonLinearFlowClass : public UnitaryThermalLoa
      */
     NonLinearFlowClass( ValueType val = 200. ) : _fluxn( val ){};
 
-    void addGroupOfElements( const std::string &nameOfGroup ) {
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+    void addGroupOfCells( const std::string &nameOfGroup ) {
+        _entity.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >( false, "GROUP_MA",
                                                                                  _entity, false ) );
     };
@@ -181,8 +181,8 @@ template < class ValueType > class NonLinearFlowClass : public UnitaryThermalLoa
 template < class ValueType > class ExchangeClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+    typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+    typedef std::vector< GroupOfCellsPtr > VectorGroupOfCells;
 
     VectorOfMeshEntityPtr _entity;
     ValueType _coef_h, _temp_ext, _coef_h_inf, _temp_ext_inf, _coef_h_sup, _temp_ext_sup;
@@ -201,8 +201,8 @@ template < class ValueType > class ExchangeClass : public UnitaryThermalLoadClas
     ExchangeClass( ValueType val1 = 20.0, ValueType val2 = 15.0 )
         : _coef_h( val1 ), _temp_ext( val2 ){};
 
-    void addGroupOfElements( const std::string &nameOfGroup ) {
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+    void addGroupOfCells( const std::string &nameOfGroup ) {
+        _entity.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >( false, "GROUP_MA",
                                                                                  _entity, false ) );
     };
@@ -243,8 +243,8 @@ template < class ValueType > class ExchangeClass : public UnitaryThermalLoadClas
 template < class ValueType > class ExchangeWallClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+    typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+    typedef std::vector< GroupOfCellsPtr > VectorGroupOfCells;
 
     VectorOfMeshEntityPtr _entity1, _entity2;
     ValueType _coef_h;
@@ -275,11 +275,11 @@ template < class ValueType > class ExchangeWallClass : public UnitaryThermalLoad
             new CapyConvertibleValue< VectorReal >( false, "TRAN", _tran, false ) );
     };
 
-    void addGroupOfElements( const std::string &nameOfGroup ) {
-        _entity1.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+    void addGroupOfCells( const std::string &nameOfGroup ) {
+        _entity1.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >(
             false, "GROUP_MA_1", _entity1, false ) );
-        _entity2.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+        _entity2.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >(
             false, "GROUP_MA_2", _entity2, false ) );
     };
@@ -288,8 +288,8 @@ template < class ValueType > class ExchangeWallClass : public UnitaryThermalLoad
 template < class ValueType > class SourceClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+    typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+    typedef std::vector< GroupOfCellsPtr > VectorGroupOfCells;
 
     VectorOfMeshEntityPtr _entity;
     ValueType _source;
@@ -312,8 +312,8 @@ template < class ValueType > class SourceClass : public UnitaryThermalLoadClass 
         _toCapyConverter.add( new CapyConvertibleValue< double >( true, "SOUR", _source, false ) );
     };
 
-    void addGroupOfElements( const std::string &nameOfGroup ) {
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+    void addGroupOfCells( const std::string &nameOfGroup ) {
+        _entity.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >( false, "GROUP_MA",
                                                                                  _entity, false ) );
     };
@@ -322,8 +322,8 @@ template < class ValueType > class SourceClass : public UnitaryThermalLoadClass 
 template < class ValueType > class NonLinearSourceClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+    typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+    typedef std::vector< GroupOfCellsPtr > VectorGroupOfCells;
 
     VectorOfMeshEntityPtr _entity;
     ValueType _source;
@@ -346,8 +346,8 @@ template < class ValueType > class NonLinearSourceClass : public UnitaryThermalL
         _toCapyConverter.add( new CapyConvertibleValue< double >( true, "SOUR", _source, false ) );
     };
 
-    void addGroupOfElements( const std::string &nameOfGroup ) {
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+    void addGroupOfCells( const std::string &nameOfGroup ) {
+        _entity.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >( false, "GROUP_MA",
                                                                                  _entity, false ) );
     };
@@ -356,8 +356,8 @@ template < class ValueType > class NonLinearSourceClass : public UnitaryThermalL
 template < class ValueType > class ThermalRadiationClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+    typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+    typedef std::vector< GroupOfCellsPtr > VectorGroupOfCells;
 
     VectorOfMeshEntityPtr _entity;
     ValueType _sigma, _epsilon, _temp_ext;
@@ -393,8 +393,8 @@ template < class ValueType > class ThermalRadiationClass : public UnitaryThermal
         _toCapyConverter.add( new CapyConvertibleValue< double >( true, "SIGMA", _sigma, false ) );
     };
 
-    void addGroupOfElements( const std::string &nameOfGroup ) {
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+    void addGroupOfCells( const std::string &nameOfGroup ) {
+        _entity.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
         _toCapyConverter.add( new CapyConvertibleValue< VectorOfMeshEntityPtr >( false, "GROUP_MA",
                                                                                  _entity, false ) );
     };
@@ -403,8 +403,8 @@ template < class ValueType > class ThermalRadiationClass : public UnitaryThermal
 template < class ValueType > class ThermalGradientClass : public UnitaryThermalLoadClass {
   private:
     /** @typedef Pointeur intelligent sur un VirtualMeshEntity */
-    typedef boost::shared_ptr< GroupOfElements > GroupOfElementsPtr;
-    typedef std::vector< GroupOfElementsPtr > VectorGroupOfElements;
+    typedef boost::shared_ptr< GroupOfCells > GroupOfCellsPtr;
+    typedef std::vector< GroupOfCellsPtr > VectorGroupOfCells;
 
     VectorOfMeshEntityPtr _entity;
     ValueType _fluxx, _fluxy, _fluxz;
@@ -430,8 +430,8 @@ template < class ValueType > class ThermalGradientClass : public UnitaryThermalL
         _fluxz = valz;
     };
 
-    void addGroupOfElements( const std::string &nameOfGroup ) {
-        _entity.push_back( GroupOfElementsPtr( new GroupOfElements( nameOfGroup ) ) );
+    void addGroupOfCells( const std::string &nameOfGroup ) {
+        _entity.push_back( GroupOfCellsPtr( new GroupOfCells( nameOfGroup ) ) );
     };
 };
 

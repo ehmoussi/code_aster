@@ -39,11 +39,11 @@
 #include "LinearAlgebra/ElementaryVector.h"
 #include "DataFields/DataField.h"
 #include "DataFields/FieldOnNodes.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "DataFields/FieldOnCells.h"
 #include "Results/ModeResult.h"
 #include "Functions/Function.h"
-#include "Functions/Surface.h"
+#include "Functions/Function2D.h"
 #include <map>
 
 /**
@@ -68,13 +68,13 @@ class TableContainerClass : public TableClass
     std::map< std::string, ElementaryVectorTemperatureRealPtr > _mapEVTD;
     std::map< std::string, DataFieldPtr > _mapGDF;
     std::map< std::string, FieldOnNodesRealPtr > _mapFOND;
-    std::map< std::string, PCFieldOnMeshRealPtr > _mapPCFOMD;
+    std::map< std::string, ConstantFieldOnCellsRealPtr > _mapPCFOMD;
     std::map< std::string, FieldOnCellsRealPtr > _mapFOED;
     std::map< std::string, ModeResultPtr > _mapMMC;
     std::map< std::string, TablePtr > _mapT;
     std::map< std::string, FunctionPtr > _mapF;
     std::map< std::string, FunctionComplexPtr > _mapFC;
-    std::map< std::string, SurfacePtr > _mapS;
+    std::map< std::string, Function2DPtr > _mapS;
 
   public:
     /**
@@ -166,16 +166,16 @@ class TableContainerClass : public TableClass
     void addObject( const std::string&, ModeResultPtr );
 
     /**
-     * @brief Add PCFieldOnMeshReal to TableContainer
+     * @brief Add ConstantFieldOnCellsReal to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, PCFieldOnMeshRealPtr );
+    void addObject( const std::string&, ConstantFieldOnCellsRealPtr );
 
     /**
-     * @brief Add Surface to TableContainer
+     * @brief Add Function2D to TableContainer
      * @param name key used to find object
      */
-    void addObject( const std::string&, SurfacePtr );
+    void addObject( const std::string&, Function2DPtr );
 
     /**
      * @brief Add Table to TableContainer
@@ -254,16 +254,16 @@ class TableContainerClass : public TableClass
     ModeResultPtr getModeResult( const std::string& ) const;
 
     /**
-     * @brief Get PCFieldOnMeshReal stored in TableContainer
+     * @brief Get ConstantFieldOnCellsReal stored in TableContainer
      * @param name key used to find object
      */
-    PCFieldOnMeshRealPtr getPCFieldOnMeshReal( const std::string& ) const;
+    ConstantFieldOnCellsRealPtr getConstantFieldOnCellsReal( const std::string& ) const;
 
     /**
-     * @brief Get Surface stored in TableContainer
+     * @brief Get Function2D stored in TableContainer
      * @param name key used to find object
      */
-    SurfacePtr getSurface( const std::string& ) const;
+    Function2DPtr getFunction2D( const std::string& ) const;
 
     /**
      * @brief Get Table stored in TableContainer
@@ -273,7 +273,7 @@ class TableContainerClass : public TableClass
 
     /**
      * @brief Update the table
-     * @todo add the case of PCFieldOnMesh
+     * @todo add the case of ConstantFieldOnCells
      */
     bool update();
 };

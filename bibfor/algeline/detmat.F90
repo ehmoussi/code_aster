@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine detmat()
-use elg_data_module
+!
     implicit none
 ! ----------------------------------------------------------------------
 !
@@ -28,19 +28,15 @@ use elg_data_module
 ! person_in_charge: jacques.pellet at edf.fr
 !
 #include "asterfort/assert.h"
-#include "asterfort/detlsp.h"
-#include "asterfort/detrsd.h"
-#include "asterfort/dismoi.h"
+#include "asterfort/detmatrix.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelstc.h"
-#include "asterfort/xfem_precond.h"
     integer :: nbmat, i, ier
-    character(len=19) :: matass, solveu
-    character(len=24) :: lirefa(100), kxfem
+    character(len=19) :: matass
+    character(len=24) :: lirefa(100)
 !-----------------------------------------------------------------------
 !
-    call jelstc('V', '.REFA', 20, 100, lirefa,&
-                nbmat)
+    call jelstc('V', '.REFA', 20, 100, lirefa, nbmat)
     ASSERT(nbmat.ge.0)
 !
     do i = 1, nbmat
@@ -48,24 +44,8 @@ use elg_data_module
         if (ier .eq. 0) goto 10
         matass = lirefa(i)(1:19)
 !
-!       -- on detruit l'eventuelle instance mumps associee a ldlt_sp
-        call dismoi('SOLVEUR', matass, 'MATR_ASSE', repk=solveu, arret='C',&
-                    ier=ier)
-        if (ier .eq. 0 .and. solveu(1:4) .ne. 'XXXX' .and. solveu(1:4) .ne. ' ') then
-            call detlsp(matass, solveu)
-        endif
-!
-!       -- on detruit les eventuels pré-conditinneurs xfem stockés sous forme de matr_asse
-        call dismoi('XFEM', matass, 'MATR_ASSE', repk=kxfem)
-        if ( kxfem .eq. 'XFEM_PRECOND') call xfem_precond('FIN', matass)
-!
-!       --  on detruit les matr_asse ainsi que les
-!           eventuelles instances mumps et petsc
-        call detrsd('MATR_ASSE', matass)
-!
-!       -- on detruit les eventuelles structures creees pour eliminer les multiplicateurs
-!          de Lagrange  
-        call elg_gest_data('EFFACE', ' ', matass, ' ')
+! -- Detruire matrice
+        call detmatrix(matass)
 !
  10     continue
     end do

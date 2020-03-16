@@ -36,8 +36,8 @@ ParallelMechanicalLoadClass::ParallelMechanicalLoadClass(
     _FEDesc( new ParallelFiniteElementDescriptorClass
                     ( getName() + ".CHME.LIGRE", load->getMechanicalLoadDescription()._FEDesc,
                       load->getModel()->getPartialMesh(), model ) ),
-    _cimpo( new PCFieldOnMeshRealClass( getName() + ".CHME.CIMPO", _FEDesc ) ),
-    _cmult( new PCFieldOnMeshRealClass( getName() + ".CHME.CMULT", _FEDesc ) ),
+    _cimpo( new ConstantFieldOnCellsRealClass( getName() + ".CHME.CIMPO", _FEDesc ) ),
+    _cmult( new ConstantFieldOnCellsRealClass( getName() + ".CHME.CMULT", _FEDesc ) ),
     _type( getName() + ".TYPE" ),
     _modelName( getName() + ".CHME.MODEL.NOMO" )
 {
@@ -46,12 +46,14 @@ ParallelMechanicalLoadClass::ParallelMechanicalLoadClass(
     _modelName->allocate( Permanent, 1 );
     (*_modelName)[0] = model->getName();
 
-    transferPCFieldOnMesh( load->getMechanicalLoadDescription()._cimpo, _cimpo );
-    transferPCFieldOnMesh( load->getMechanicalLoadDescription()._cmult, _cmult );
+    transferConstantFieldOnCells( load->getMechanicalLoadDescription()._cimpo, _cimpo );
+    transferConstantFieldOnCells( load->getMechanicalLoadDescription()._cmult, _cmult );
 };
 
-void ParallelMechanicalLoadClass::transferPCFieldOnMesh( const PCFieldOnMeshRealPtr& fieldIn,
-                                                            PCFieldOnMeshRealPtr& fieldOut )
+void
+ParallelMechanicalLoadClass::transferConstantFieldOnCells( const ConstantFieldOnCellsRealPtr&
+                                                                                        fieldIn,
+                                                            ConstantFieldOnCellsRealPtr& fieldOut )
 
 {
     const auto& toKeep = _FEDesc->getDelayedElementsToKeep();
@@ -64,20 +66,21 @@ void ParallelMechanicalLoadClass::transferPCFieldOnMesh( const PCFieldOnMeshReal
         const auto& curFEDesc = zone.getFiniteElementDescriptor();
         if( curFEDesc->getName() != savedName && savedName != "" )
         {
-            std::string a("Different FiniteElementDescriptor in one PCFieldOnMesh is not allowed");
+            std::string a(
+                "Different FiniteElementDescriptor in one ConstantFieldOnCells is not allowed");
             throw std::runtime_error( a );
         }
         savedName = curFEDesc->getName();
 
         VectorLong toCopy;
-        for( const auto& num : zone.getListOfElements() )
+        for( const auto& num : zone.getListOfCells() )
         {
             if( toKeep[ -num - 1 ] != 1 )
                 toCopy.push_back( toKeep[ -num - 1 ] );
         }
         if( toCopy.size() != 0 )
         {
-            const auto newZone = PCFieldZone( zone.getFiniteElementDescriptor(), toCopy );
+            const auto newZone = ConstantFieldOnZone( zone.getFiniteElementDescriptor(), toCopy );
             const auto resu = fieldIn->getValues( pos );
             fieldOut->setValueOnZone( newZone, resu );
         }

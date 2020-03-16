@@ -28,25 +28,25 @@ POISSON = 0.3
 acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
                                 NU = POISSON,),)
 
-affectMat = code_aster.MaterialOnMesh(monMaillage)
+affectMat = code_aster.MaterialField(monMaillage)
 affectMat.addMaterialOnAllMesh(acier)
 affectMat.buildWithoutExternalVariable()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()
 charMeca1.setModel(monModel)
-charMeca1.addImposedMechanicalDOFOnElements(
+charMeca1.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dx, 0., "COTE_B")
-charMeca1.addImposedMechanicalDOFOnElements(
+charMeca1.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dy, 0., "COTE_B")
-charMeca1.addImposedMechanicalDOFOnElements(
+charMeca1.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
 charMeca1.build()
 
 charMeca2 = code_aster.KinematicsMechanicalLoad()
 charMeca2.setModel(monModel)
-charMeca2.addImposedMechanicalDOFOnElements(
+charMeca2.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dy, 0.1, "COTE_H")
-charMeca2.addImposedMechanicalDOFOnElements(
+charMeca2.addImposedMechanicalDOFOnCells(
     code_aster.PhysicalQuantityComponent.Dz, 0.1, "COTE_H")
 charMeca2.build()
 
@@ -59,7 +59,7 @@ statNonLine = code_aster.NonLinearStaticAnalysis()
 statNonLine.addStandardExcitation(charMeca1)
 statNonLine.addStandardExcitation(charMeca2)
 statNonLine.setModel(monModel)
-statNonLine.setMaterialOnMesh(affectMat)
+statNonLine.setMaterialField(affectMat)
 statNonLine.setLinearSolver(monSolver)
 
 temps = [0., 0.5, 1.]

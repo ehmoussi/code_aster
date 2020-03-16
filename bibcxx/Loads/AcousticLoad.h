@@ -24,7 +24,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "DataStructures/DataStructure.h"
 #include "Loads/PhysicalQuantity.h"
 #include "MemoryManager/JeveuxVector.h"
@@ -63,26 +63,26 @@ class UnitaryAcousticLoadClass : public Phys, public Loc {
     };
 };
 
-typedef CapyLocalizationManager< GroupOfElementsManager<>, GroupOfNodesManager<>,
-                                 AllMeshEntitiesManager, GroupOfElementsManager< SANS_GROUP_MA >,
+typedef CapyLocalizationManager< GroupOfCellsManager<>, GroupOfNodesManager<>,
+                                 AllMeshEntitiesManager, GroupOfCellsManager< SANS_GROUP_MA >,
                                  GroupOfNodesManager< SANS_GROUP_NO > >
-    AllNodesElementsWithoutLocalization;
+    AllNodesCellsWithoutLocalization;
 
 typedef boost::shared_ptr< GenericUnitaryAcousticLoadClass > GenericAcousticLoadPtr;
 
 template class UnitaryAcousticLoadClass< PressureComplexClass,
-                                             AllNodesElementsWithoutLocalization >;
-typedef UnitaryAcousticLoadClass< PressureComplexClass, AllNodesElementsWithoutLocalization >
+                                             AllNodesCellsWithoutLocalization >;
+typedef UnitaryAcousticLoadClass< PressureComplexClass, AllNodesCellsWithoutLocalization >
     ImposedComplexPressureClass;
 typedef boost::shared_ptr< ImposedComplexPressureClass > ImposedComplexPressurePtr;
 
-template class UnitaryAcousticLoadClass< NormalSpeedComplexClass, AllElementsLocalization >;
-typedef UnitaryAcousticLoadClass< NormalSpeedComplexClass, AllElementsLocalization >
+template class UnitaryAcousticLoadClass< NormalSpeedComplexClass, AllCellsLocalization >;
+typedef UnitaryAcousticLoadClass< NormalSpeedComplexClass, AllCellsLocalization >
     ImposedComplexNormalSpeedClass;
 typedef boost::shared_ptr< ImposedComplexNormalSpeedClass > ImposedComplexNormalSpeedPtr;
 
-template class UnitaryAcousticLoadClass< ImpedanceComplexClass, AllElementsLocalization >;
-typedef UnitaryAcousticLoadClass< ImpedanceComplexClass, AllElementsLocalization >
+template class UnitaryAcousticLoadClass< ImpedanceComplexClass, AllCellsLocalization >;
+typedef UnitaryAcousticLoadClass< ImpedanceComplexClass, AllCellsLocalization >
     ComplexImpedanceClass;
 typedef boost::shared_ptr< ComplexImpedanceClass > ComplexImpedancePtr;
 
@@ -105,8 +105,8 @@ class UniformConnectionClass {
     CapyConvertibleContainer getCapyConvertibleContainer() { return _toCapyConverter; };
 };
 
-template class UnitaryAcousticLoadClass< UniformConnectionClass, AllElementsLocalization >;
-typedef UnitaryAcousticLoadClass< UniformConnectionClass, NodesElementsLocalization >
+template class UnitaryAcousticLoadClass< UniformConnectionClass, AllCellsLocalization >;
+typedef UnitaryAcousticLoadClass< UniformConnectionClass, NodesCellsLocalization >
     UniformConnection;
 typedef boost::shared_ptr< UniformConnection > UniformConnectionPtr;
 
@@ -124,10 +124,10 @@ class AcousticLoadClass : public DataStructure {
 
     JeveuxVectorChar8 _modelName;
     JeveuxVectorChar8 _type;
-    PCFieldOnMeshComplexPtr _imposedValues;
-    PCFieldOnMeshComplexPtr _multiplier;
-    PCFieldOnMeshComplexPtr _impedanceValues;
-    PCFieldOnMeshComplexPtr _speedValues;
+    ConstantFieldOnCellsComplexPtr _imposedValues;
+    ConstantFieldOnCellsComplexPtr _multiplier;
+    ConstantFieldOnCellsComplexPtr _impedanceValues;
+    ConstantFieldOnCellsComplexPtr _speedValues;
     /** @brief FiniteElementDescriptor of load */
     FiniteElementDescriptorPtr _FEDesc;
 
@@ -152,14 +152,14 @@ class AcousticLoadClass : public DataStructure {
           _mesh( model->getMesh() ),
           _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),
           _type( JeveuxVectorChar8( getName() + ".TYPE" ) ),
-          _imposedValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexClass( getName() + ".CHAC.CIMPO", _mesh ) ) ),
-          _multiplier( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexClass( getName() + ".CHAC.CMULT", _mesh ) ) ),
-          _impedanceValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexClass( getName() + ".CHAC.IMPED", _mesh ) ) ),
-          _speedValues( PCFieldOnMeshComplexPtr(
-              new PCFieldOnMeshComplexClass( getName() + ".CHAC.VITFA", _mesh ) ) ),
+          _imposedValues( ConstantFieldOnCellsComplexPtr(
+              new ConstantFieldOnCellsComplexClass( getName() + ".CHAC.CIMPO", _mesh ) ) ),
+          _multiplier( ConstantFieldOnCellsComplexPtr(
+              new ConstantFieldOnCellsComplexClass( getName() + ".CHAC.CMULT", _mesh ) ) ),
+          _impedanceValues( ConstantFieldOnCellsComplexPtr(
+              new ConstantFieldOnCellsComplexClass( getName() + ".CHAC.IMPED", _mesh ) ) ),
+          _speedValues( ConstantFieldOnCellsComplexPtr(
+              new ConstantFieldOnCellsComplexClass( getName() + ".CHAC.VITFA", _mesh ) ) ),
           _FEDesc( new FiniteElementDescriptorClass( name + "CHAC.LIGRE", _mesh ) ) {
         _toCapyConverter.add(
             new CapyConvertibleValue< ModelPtr >( true, "MODELE", _model, true ) );
@@ -172,12 +172,12 @@ class AcousticLoadClass : public DataStructure {
         _speed.push_back( toAdd );
     };
 
-    void addImposedNormalSpeedOnGroupsOfElements( const VectorString &names,
+    void addImposedNormalSpeedOnGroupOfCells( const VectorString &names,
                                                   const RealComplex &speed ) {
         ImposedComplexNormalSpeedPtr toAdd( new ImposedComplexNormalSpeedClass() );
         toAdd->setValue( Vnor, speed );
         for ( auto name : names )
-            toAdd->GroupOfElementsManager<>::addGroupOfElements( name );
+            toAdd->GroupOfCellsManager<>::addGroupOfCells( name );
         _speed.push_back( toAdd );
     };
 
@@ -188,11 +188,11 @@ class AcousticLoadClass : public DataStructure {
         _impedance.push_back( toAdd );
     };
 
-    void addImpedanceOnGroupsOfElements( const VectorString &names, const RealComplex &impe ) {
+    void addImpedanceOnGroupOfCells( const VectorString &names, const RealComplex &impe ) {
         ComplexImpedancePtr toAdd( new ComplexImpedanceClass() );
         toAdd->setValue( Impe, impe );
         for ( auto name : names )
-            toAdd->GroupOfElementsManager<>::addGroupOfElements( name );
+            toAdd->GroupOfCellsManager<>::addGroupOfCells( name );
         _impedance.push_back( toAdd );
     };
 
@@ -203,16 +203,16 @@ class AcousticLoadClass : public DataStructure {
         _pressure.push_back( toAdd );
     };
 
-    void addImposedPressureOnGroupsOfElements( const VectorString &names,
+    void addImposedPressureOnGroupOfCells( const VectorString &names,
                                                const RealComplex &pres ) {
         ImposedComplexPressurePtr toAdd( new ImposedComplexPressureClass() );
         toAdd->setValue( Pres, pres );
         for ( auto name : names )
-            toAdd->GroupOfElementsManager<>::addGroupOfElements( name );
+            toAdd->GroupOfCellsManager<>::addGroupOfCells( name );
         _pressure.push_back( toAdd );
     };
 
-    void addImposedPressureOnGroupsOfNodes( const VectorString &names, const RealComplex &pres ) {
+    void addImposedPressureOnGroupOfNodes( const VectorString &names, const RealComplex &pres ) {
         ImposedComplexPressurePtr toAdd( new ImposedComplexPressureClass() );
         toAdd->setValue( Pres, pres );
         for ( auto name : names )
@@ -220,16 +220,16 @@ class AcousticLoadClass : public DataStructure {
         _pressure.push_back( toAdd );
     };
 
-    void addUniformConnectionOnGroupsOfElements( const VectorString &names,
+    void addUniformConnectionOnGroupOfCells( const VectorString &names,
                                                  const VectorComponent &val ) {
         UniformConnectionPtr toAdd( new UniformConnection() );
         toAdd->setValue( val );
         for ( auto name : names )
-            toAdd->GroupOfElementsManager<>::addGroupOfElements( name );
+            toAdd->GroupOfCellsManager<>::addGroupOfCells( name );
         _connection.push_back( toAdd );
     };
 
-    void addUniformConnectionOnGroupsOfNodes( const VectorString &names,
+    void addUniformConnectionOnGroupOfNodes( const VectorString &names,
                                               const VectorComponent &val ) {
         UniformConnectionPtr toAdd( new UniformConnection() );
         toAdd->setValue( val );

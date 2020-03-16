@@ -23,7 +23,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "DataStructures/DataStructure.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Meshes/MeshEntities.h"
@@ -79,7 +79,7 @@ template <> struct LoadTraits< NodalForce > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = false;
+    static bool const isAllowedOnGroupOfCells = false;
     static bool const isAllowedOnGroupOfNodes = true;
 };
 
@@ -92,7 +92,7 @@ template <> struct LoadTraits< ForceOnFace > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -105,7 +105,7 @@ template <> struct LoadTraits< ForceOnEdge > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -118,7 +118,7 @@ template <> struct LoadTraits< LineicForce > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -131,7 +131,7 @@ template <> struct LoadTraits< InternalForce > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -144,7 +144,7 @@ template <> struct LoadTraits< ForceOnBeam > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
     /** @todo mot clé supplémentaire TYPE_CHARGE=FORCE */
 };
@@ -158,7 +158,7 @@ template <> struct LoadTraits< ForceOnShell > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -171,7 +171,7 @@ template <> struct LoadTraits< PressureOnPipe > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -184,7 +184,7 @@ template <> struct LoadTraits< ImposedDoF > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = true;
 };
 
@@ -197,7 +197,7 @@ template <> struct LoadTraits< DistributedPressure > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -210,7 +210,7 @@ template <> struct LoadTraits< ImpedanceOnFace > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -223,7 +223,7 @@ template <> struct LoadTraits< NormalSpeedOnFace > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -236,7 +236,7 @@ template <> struct LoadTraits< WavePressureOnFace > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = false;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -249,7 +249,7 @@ template <> struct LoadTraits< THMFlux > {
     static const std::string factorKeyword;
     // Authorized MeshEntity
     static bool const isAllowedOnWholeMesh = true;
-    static bool const isAllowedOnGroupOfElements = true;
+    static bool const isAllowedOnGroupOfCells = true;
     static bool const isAllowedOnGroupOfNodes = false;
 };
 
@@ -278,49 +278,49 @@ class GenericMechanicalLoadClass : public DataStructure {
         /** @brief Vecteur Jeveux '.LIGRE' */
         FiniteElementDescriptorPtr _FEDesc;
         /** @brief Carte '.CIMPO' */
-        PCFieldOnMeshRealPtr _cimpo;
+        ConstantFieldOnCellsRealPtr _cimpo;
         /** @brief Carte '.CMULT' */
-        PCFieldOnMeshRealPtr _cmult;
+        ConstantFieldOnCellsRealPtr _cmult;
         /** @brief Carte '.DPGEN' */
-        PCFieldOnMeshRealPtr _dpgen;
+        ConstantFieldOnCellsRealPtr _dpgen;
         /** @brief Carte '.EPSIN' */
-        PCFieldOnMeshRealPtr _epsin;
+        ConstantFieldOnCellsRealPtr _epsin;
         /** @brief Carte '.F1D2D' */
-        PCFieldOnMeshRealPtr _f1d2d;
+        ConstantFieldOnCellsRealPtr _f1d2d;
         /** @brief Carte '.F1D3D' */
-        PCFieldOnMeshRealPtr _f1d3d;
+        ConstantFieldOnCellsRealPtr _f1d3d;
         /** @brief Carte '.F2D3D' */
-        PCFieldOnMeshRealPtr _f2d3d;
+        ConstantFieldOnCellsRealPtr _f2d3d;
         /** @brief Carte '.FCO2D' */
-        PCFieldOnMeshRealPtr _fco2d;
+        ConstantFieldOnCellsRealPtr _fco2d;
         /** @brief Carte '.FCO3D' */
-        PCFieldOnMeshRealPtr _fco3d;
+        ConstantFieldOnCellsRealPtr _fco3d;
         /** @brief Carte '.FELEC' */
-        PCFieldOnMeshRealPtr _felec;
+        ConstantFieldOnCellsRealPtr _felec;
         /** @brief Carte '.FL101' */
-        PCFieldOnMeshRealPtr _fl101;
+        ConstantFieldOnCellsRealPtr _fl101;
         /** @brief Carte '.FL102' */
-        PCFieldOnMeshRealPtr _fl102;
+        ConstantFieldOnCellsRealPtr _fl102;
         /** @brief Carte '.FORNO' */
-        PCFieldOnMeshRealPtr _forno;
+        ConstantFieldOnCellsRealPtr _forno;
         /** @brief Carte '.IMPE' */
-        PCFieldOnMeshRealPtr _impe;
+        ConstantFieldOnCellsRealPtr _impe;
         /** @brief Carte '.PESAN' */
-        PCFieldOnMeshRealPtr _pesan;
+        ConstantFieldOnCellsRealPtr _pesan;
         /** @brief Carte '.PRESS' */
-        PCFieldOnMeshRealPtr _press;
+        ConstantFieldOnCellsRealPtr _press;
         /** @brief Carte '.ROTAT' */
-        PCFieldOnMeshRealPtr _rotat;
+        ConstantFieldOnCellsRealPtr _rotat;
         /** @brief Carte '.SIGIN' */
-        PCFieldOnMeshRealPtr _sigin;
+        ConstantFieldOnCellsRealPtr _sigin;
         /** @brief Carte '.SIINT' */
-        PCFieldOnMeshRealPtr _siint;
+        ConstantFieldOnCellsRealPtr _siint;
         /** @brief Carte '.VNOR' */
-        PCFieldOnMeshRealPtr _vnor;
+        ConstantFieldOnCellsRealPtr _vnor;
         /** @brief Carte '.ONDPL' */
-        PCFieldOnMeshRealPtr _ondpl;
+        ConstantFieldOnCellsRealPtr _ondpl;
         /** @brief Carte '.ONDPR' */
-        PCFieldOnMeshRealPtr _ondpr;
+        ConstantFieldOnCellsRealPtr _ondpr;
 
         /** @brief Constructeur */
         MecaLoad( const std::string &name, const ModelPtr &currentModel )
@@ -329,28 +329,28 @@ class GenericMechanicalLoadClass : public DataStructure {
               _nameOfAssemblyVector( name + ".VEASS" ), _veiss( name + ".VEISS" ),
               _evolChar( name + ".EVOL.CHAR" ),
               _FEDesc( new FiniteElementDescriptorClass( name + ".LIGRE", _mesh ) ),
-              _cimpo( new PCFieldOnMeshRealClass( name + ".CIMPO", _FEDesc ) ),
-              _cmult( new PCFieldOnMeshRealClass( name + ".CMULT", _FEDesc ) ),
-              _dpgen( new PCFieldOnMeshRealClass( name + ".DPGEN", _FEDesc ) ),
-              _epsin( new PCFieldOnMeshRealClass( name + ".EPSIN", _FEDesc ) ),
-              _f1d2d( new PCFieldOnMeshRealClass( name + ".F1D2D", _FEDesc ) ),
-              _f1d3d( new PCFieldOnMeshRealClass( name + ".F1D3D", _FEDesc ) ),
-              _f2d3d( new PCFieldOnMeshRealClass( name + ".F2D3D", _FEDesc ) ),
-              _fco2d( new PCFieldOnMeshRealClass( name + ".FCO2D", _FEDesc ) ),
-              _fco3d( new PCFieldOnMeshRealClass( name + ".FCO3D", _FEDesc ) ),
-              _felec( new PCFieldOnMeshRealClass( name + ".FELEC", _FEDesc ) ),
-              _fl101( new PCFieldOnMeshRealClass( name + ".FL101", _FEDesc ) ),
-              _fl102( new PCFieldOnMeshRealClass( name + ".FL102", _FEDesc ) ),
-              _forno( new PCFieldOnMeshRealClass( name + ".FORNO", _FEDesc ) ),
-              _impe( new PCFieldOnMeshRealClass( name + ".IMPE", _FEDesc ) ),
-              _pesan( new PCFieldOnMeshRealClass( name + ".PESAN", _FEDesc ) ),
-              _press( new PCFieldOnMeshRealClass( name + ".PRESS", _FEDesc ) ),
-              _rotat( new PCFieldOnMeshRealClass( name + ".ROTAT", _FEDesc ) ),
-              _sigin( new PCFieldOnMeshRealClass( name + ".SIGIN", _FEDesc ) ),
-              _siint( new PCFieldOnMeshRealClass( name + ".SIINT", _FEDesc ) ),
-              _vnor( new PCFieldOnMeshRealClass( name + ".VNOR", _FEDesc ) ),
-              _ondpl( new PCFieldOnMeshRealClass( name + ".ONDPL", _FEDesc ) ),
-              _ondpr( new PCFieldOnMeshRealClass( name + ".ONDPR", _FEDesc ) ){};
+              _cimpo( new ConstantFieldOnCellsRealClass( name + ".CIMPO", _FEDesc ) ),
+              _cmult( new ConstantFieldOnCellsRealClass( name + ".CMULT", _FEDesc ) ),
+              _dpgen( new ConstantFieldOnCellsRealClass( name + ".DPGEN", _FEDesc ) ),
+              _epsin( new ConstantFieldOnCellsRealClass( name + ".EPSIN", _FEDesc ) ),
+              _f1d2d( new ConstantFieldOnCellsRealClass( name + ".F1D2D", _FEDesc ) ),
+              _f1d3d( new ConstantFieldOnCellsRealClass( name + ".F1D3D", _FEDesc ) ),
+              _f2d3d( new ConstantFieldOnCellsRealClass( name + ".F2D3D", _FEDesc ) ),
+              _fco2d( new ConstantFieldOnCellsRealClass( name + ".FCO2D", _FEDesc ) ),
+              _fco3d( new ConstantFieldOnCellsRealClass( name + ".FCO3D", _FEDesc ) ),
+              _felec( new ConstantFieldOnCellsRealClass( name + ".FELEC", _FEDesc ) ),
+              _fl101( new ConstantFieldOnCellsRealClass( name + ".FL101", _FEDesc ) ),
+              _fl102( new ConstantFieldOnCellsRealClass( name + ".FL102", _FEDesc ) ),
+              _forno( new ConstantFieldOnCellsRealClass( name + ".FORNO", _FEDesc ) ),
+              _impe( new ConstantFieldOnCellsRealClass( name + ".IMPE", _FEDesc ) ),
+              _pesan( new ConstantFieldOnCellsRealClass( name + ".PESAN", _FEDesc ) ),
+              _press( new ConstantFieldOnCellsRealClass( name + ".PRESS", _FEDesc ) ),
+              _rotat( new ConstantFieldOnCellsRealClass( name + ".ROTAT", _FEDesc ) ),
+              _sigin( new ConstantFieldOnCellsRealClass( name + ".SIGIN", _FEDesc ) ),
+              _siint( new ConstantFieldOnCellsRealClass( name + ".SIINT", _FEDesc ) ),
+              _vnor( new ConstantFieldOnCellsRealClass( name + ".VNOR", _FEDesc ) ),
+              _ondpl( new ConstantFieldOnCellsRealClass( name + ".ONDPL", _FEDesc ) ),
+              _ondpr( new ConstantFieldOnCellsRealClass( name + ".ONDPR", _FEDesc ) ){};
     };
 
   protected:
@@ -486,9 +486,9 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
         }
         // nameOfGroup is the name of a group of elements and
         // LoadTraits authorizes to base the current load on such a group
-        else if ( currentMesh->hasGroupOfElements( nameOfGroup ) &&
-                  Traits::isAllowedOnGroupOfElements ) {
-            _meshEntity = MeshEntityPtr( new GroupOfElements( nameOfGroup ) );
+        else if ( currentMesh->hasGroupOfCells( nameOfGroup ) &&
+                  Traits::isAllowedOnGroupOfCells ) {
+            _meshEntity = MeshEntityPtr( new GroupOfCells( nameOfGroup ) );
         }
         // nameOfGroup is the name of a group of nodes and LoadTraits authorizes
         // to base the current load on such a group
@@ -532,7 +532,7 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
             if ( _meshEntity->getType() == GroupOfNodesType ) {
                 dict2.container["GROUP_NO"] = _meshEntity->getName();
                 //        std::cout << "GROUP_NO " <<  _meshEntity->getName() << std::endl;
-            } else if ( _meshEntity->getType() == GroupOfElementsType )
+            } else if ( _meshEntity->getType() == GroupOfCellsType )
                 dict2.container["GROUP_MA"] = _meshEntity->getName();
         }
         listeLoad.push_back( dict2 );
