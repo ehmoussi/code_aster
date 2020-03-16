@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -151,11 +151,14 @@ def check_asrun(self):
         self.fatal('load python tool first')
     # getting python module
     self.start_msg('Checking for asrun')
-    self.check_python_module('asrun')
-    import asrun
-    self.env.append_unique('CFG_PYTHONPATH',
-        [osp.normpath(osp.dirname(osp.dirname(asrun.__file__)))])
-    self.end_msg(asrun.__file__)
+    try:
+        self.check_python_module('asrun')
+        import asrun
+        self.env.append_unique('CFG_PYTHONPATH',
+            [osp.normpath(osp.dirname(osp.dirname(asrun.__file__)))])
+        self.end_msg(asrun.__file__)
+    except Errors.WafError:
+        self.end_msg("no", "YELLOW")
 
 @Configure.conf
 def check_optimization_python(self):
