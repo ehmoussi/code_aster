@@ -109,8 +109,6 @@ def check_mumps_headers(self):
 
 @Configure.conf
 def check_mumps_version(self):
-    # translate special tags, not yet used
-    dict_vers = { '5.1.1consortium' : '5.1.1' ,'5.1.2consortium' : '5.1.2' }
     fragment = r'''
 #include <stdio.h>
 #include "smumps_c.h"
@@ -124,9 +122,10 @@ int main(void){
         ret = self.check_cc(fragment=fragment, use='MUMPS',
                             mandatory=True, execute=True, define_ret=True)
         self.env['MUMPS_VERSION'] = ret
-        if dict_vers.get(ret, ret) != '5.2.1' and dict_vers.get(ret, ret) != '5.2.1consortium' and dict_vers.get(ret, ret) != '5.1.2' and dict_vers.get(ret, ret) != '5.1.2consortium':
-            raise Errors.ConfigurationError("expected versions: {0}".
-                                             format('5.2.1/5.1.2(consortium)'))
+        vers = ret.replace("consortium", "")
+        if vers not in ("5.2.1", "5.1.2"):
+            raise Errors.ConfigurationError("expected versions: {0}"
+                                            .format('5.2.1/5.1.2(consortium)'))
     except:
         self.end_msg('no', 'YELLOW')
         raise
