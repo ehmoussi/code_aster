@@ -19,7 +19,7 @@
 
 # person_in_charge: nicolas.sellenet@edf.fr
 
-from ..Objects import FieldOnCellsReal, MatchingMeshes
+from ..Objects import FieldOnCellsReal, MeshesMapping
 from ..Supervis import ExecuteCommand
 
 
@@ -37,7 +37,7 @@ class FieldProjector(ExecuteCommand):
         resultat = keywords.get("RESULTAT")
         chamGd = keywords.get("CHAM_GD")
         if resultat is None and chamGd is None:
-            self._result = MatchingMeshes()
+            self._result = MeshesMapping()
             return
         if resultat is not None:
             self._result = type(keywords["RESULTAT"])()

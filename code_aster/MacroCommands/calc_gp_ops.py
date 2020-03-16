@@ -221,7 +221,7 @@ def calc_gp_ops(self, **args):
 #  maillage
     __maillage = __model.getMesh()
 #
-    __cham_mater = __RESU.getMaterialOnMesh()
+    __cham_mater = __RESU.getMaterialField()
 
 #
 # RECUPERATION DES DONNEES DE SYMETRIE ET DU FOND DE FISSURE

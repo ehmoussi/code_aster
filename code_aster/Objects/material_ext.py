@@ -35,7 +35,7 @@ class ExtendedMaterial(object):
     cata_sdj = "SD.sd_mater.sd_mater"
 
     def __getinitargs__(self):
-        """Returns the argument required to reinitialize a MaterialOnMesh
+        """Returns the argument required to reinitialize a MaterialField
         object during unpickling.
         """
         toReturn = (self.getName(), )

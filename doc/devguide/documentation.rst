@@ -46,7 +46,7 @@ Except the page :ref:`devguide-objects_ext`, all source pages under
 :ref:`devguide-datastructures` are automatically generated.
 These pages group objects from :py:mod:`code_aster.Objects` by
 subclasses of :py:class:`~code_aster.Objects.DataStructure`, of
-:py:class:`~code_aster.Objects.GeneralMaterialBehaviour` and objects of other
+:py:class:`~code_aster.Objects.GenericMaterialProperty` and objects of other
 types.
 
 The source tree contains a script that can generate these pages:

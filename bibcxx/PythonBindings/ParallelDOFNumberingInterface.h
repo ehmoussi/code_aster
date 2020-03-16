@@ -30,7 +30,7 @@
  */
 
 #include "astercxx.h"
-#include "Discretization/ParallelDOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 
 void exportParallelDOFNumberingToPython();
 

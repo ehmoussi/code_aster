@@ -30,7 +30,7 @@
  */
 
 #include "DataStructures/DataStructure.h"
-#include "DataFields/PCFieldOnMesh.h"
+#include "DataFields/ConstantFieldOnCells.h"
 #include "Modeling/Model.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Modeling/ParallelFiniteElementDescriptor.h"
@@ -44,8 +44,8 @@
 class ParallelMechanicalLoadClass: public DataStructure
 {
 private:
-    void transferPCFieldOnMesh( const PCFieldOnMeshRealPtr& fieldIn,
-                                PCFieldOnMeshRealPtr& fieldOut )
+    void transferConstantFieldOnCells( const ConstantFieldOnCellsRealPtr& fieldIn,
+                                ConstantFieldOnCellsRealPtr& fieldOut )
         ;
 
 protected:
@@ -54,9 +54,9 @@ protected:
     /** @brief Vecteur Jeveux '.LIGRE' */
     ParallelFiniteElementDescriptorPtr _FEDesc;
     /** @brief Carte '.CIMPO' */
-    PCFieldOnMeshRealPtr             _cimpo;
+    ConstantFieldOnCellsRealPtr             _cimpo;
     /** @brief Carte '.CMULT' */
-    PCFieldOnMeshRealPtr             _cmult;
+    ConstantFieldOnCellsRealPtr             _cmult;
     /** @brief Vecteur Jeveux '.TYPE' */
     JeveuxVectorChar8                  _type;
     /** @brief Vecteur Jeveux '.MODEL.NOMO' */

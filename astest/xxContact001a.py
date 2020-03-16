@@ -14,7 +14,7 @@ MO = code_aster.Model(MA)
 MO.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 MO.build()
 
-z1 = code_aster.ContactDefinition()
+z1 = code_aster.Contact()
 test.assertEqual(z1.getType(), "CHAR_CONTACT")
 #cDef.setModel( MO )
 #cDef.build()

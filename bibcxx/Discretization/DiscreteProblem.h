@@ -30,7 +30,7 @@
 
 #include <vector>
 
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 #include "LinearAlgebra/ElementaryMatrix.h"
 #include "LinearAlgebra/ElementaryVector.h"
 #include "Studies/StudyDescription.h"
@@ -103,7 +103,7 @@ class DiscreteProblemClass {
      */
     ElementaryVectorPtr
     buildElementaryNeumannVector( const VectorReal time,
-                                  CalculationExternalVariablePtr ) ;
+                                  ExternalVariablesComputationPtr ) ;
 
     /**
      * @brief Fonction permettant de calculer les matrices élémentaires de rigidité

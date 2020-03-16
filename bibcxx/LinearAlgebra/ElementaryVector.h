@@ -32,8 +32,8 @@
 #include "Loads/MechanicalLoad.h"
 #include "Loads/ListOfLoads.h"
 #include "DataFields/FieldOnNodes.h"
-#include "Discretization/DOFNumbering.h"
-#include "Discretization/ParallelDOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 #include "DataFields/ElementaryTerm.h"
 #include "Loads/PhysicalQuantity.h"
 

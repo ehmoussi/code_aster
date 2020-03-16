@@ -24,8 +24,8 @@ import numpy
 from .. import Objects as all_types
 from ..Cata.Language.SyntaxObjects import _F
 from ..Objects import (DataStructure, Formula, Function,
-                       GeneralMaterialBehaviour, Material, MaterialBehaviour,
-                       Surface, Table)
+                       GenericMaterialProperty, Material, MaterialProperty,
+                       Function2D, Table)
 from ..Supervis import ExecuteCommand
 
 
@@ -107,8 +107,8 @@ class MaterialDefinition(ExecuteCommand):
                     cRet = matBehav.setTableValue(iName, skw)
                 elif type(skw) is Function:
                     cRet = matBehav.setFunctionValue(iName, skw)
-                elif type(skw) is Surface:
-                    cRet = matBehav.setSurfaceValue(iName, skw)
+                elif type(skw) is Function2D:
+                    cRet = matBehav.setFunction2DValue(iName, skw)
                 elif type(skw) is Formula:
                     cRet = matBehav.setFormulaValue(iName, skw)
                 elif type(skw) is tuple and type(skw[0]) is str:
@@ -129,12 +129,12 @@ class MaterialDefinition(ExecuteCommand):
                     raise NotImplementedError("Unsupported keyword: "
                                               "{0}"
                                               .format(iName))
-            self._result.addMaterialBehaviour(matBehav)
+            self._result.addMaterialProperty(matBehav)
 
         self._result.build()
 
     def _buildInstance(self, keywords, dictClasses):
-        """Build a dict with MaterialBehaviour
+        """Build a dict with MaterialProperty
 
         Returns:
             dict: Behaviour instances from keywords of command.
@@ -155,7 +155,7 @@ class MaterialDefinition(ExecuteCommand):
             asterNewName = ""
             if materName[-2:] == "FO":
                 asterNewName = materName[:-3]
-            mater = MaterialBehaviour(materName, asterNewName)
+            mater = MaterialProperty(materName, asterNewName)
             if type(skws) in (list, tuple):
                 assert len(skws) == 1
                 skws = skws[0]
@@ -172,7 +172,7 @@ class MaterialDefinition(ExecuteCommand):
                     elif curType is str:
                         mater.addNewStringProperty(kwName, mandatory)
                     elif isinstance(kwValue, Function) or\
-                            isinstance(kwValue, Surface) or\
+                            isinstance(kwValue, Function2D) or\
                             isinstance(kwValue, Formula):
                         mater.addNewFunctionProperty(kwName, mandatory)
                     elif isinstance(kwValue, Table):
@@ -210,9 +210,9 @@ class MaterialDefinition(ExecuteCommand):
         for _, obj in list(all_types.__dict__.items()):
             if not isinstance(obj, type):
                 continue
-            if not issubclass(obj, GeneralMaterialBehaviour):
+            if not issubclass(obj, GenericMaterialProperty):
                 continue
-            if issubclass(obj, MaterialBehaviour):
+            if issubclass(obj, MaterialProperty):
                 continue
             key = ""
             try:

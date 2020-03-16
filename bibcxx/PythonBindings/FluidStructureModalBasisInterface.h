@@ -2,8 +2,8 @@
 #define FLUIDSTRUCTUREMODALBASISINTERFACE_H_
 
 /**
- * @file ModalBasisDefinitionInterface.h
- * @brief Fichier entete de la classe ModalBasisDefinitionInterface
+ * @file ModalBasisInterface.h
+ * @brief Fichier entete de la classe ModalBasisInterface
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org

@@ -27,10 +27,10 @@
 #include "astercxx.h"
 
 #include "Results/FullResult.h"
-#include "LinearAlgebra/StructureInterface.h"
+#include "Interfaces/StructureInterface.h"
 #include "LinearAlgebra/AssemblyMatrix.h"
 #include "LinearAlgebra/GeneralizedAssemblyMatrix.h"
-#include "Discretization/DOFNumbering.h"
+#include "Numbering/DOFNumbering.h"
 
 /**
  * @class ModeResultClass

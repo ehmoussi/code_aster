@@ -25,7 +25,7 @@
  */
 
 #include "astercxx.h"
-#include "Modeling/CrackShape.h"
+#include "Crack/CrackShape.h"
 
 void exportCrackShapeToPython();
 

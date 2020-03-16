@@ -29,8 +29,8 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "LinearAlgebra/ModalBasisDefinition.h"
-#include "LinearAlgebra/StructureInterface.h"
+#include "Modal/ModalBasis.h"
+#include "Interfaces/StructureInterface.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Meshes/Mesh.h"
 #include "Supervis/ResultNaming.h"

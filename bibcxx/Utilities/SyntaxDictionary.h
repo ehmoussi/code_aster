@@ -114,7 +114,7 @@ class SyntaxMapContainer {
 
   private:
     friend class CommandSyntax;
-    friend class MaterialOnMeshClass;
+    friend class MaterialFieldClass;
     friend SyntaxMapContainer operator+( const SyntaxMapContainer &, const SyntaxMapContainer & );
 };
 
