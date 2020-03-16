@@ -335,7 +335,7 @@ def check_config(self):
     # Check for configuration parameters of the version
     cfg = {}
     self.start_msg('Set tmp directory for execution')
-    tmpdir = "${ASTER_TMPDIR}"
+    tmpdir = "/tmp"
     # cmake syntax
     tmpdir_cmake = "$ENV{ASTER_TMPDIR}"
     if os.environ.get('ASTER_TMPDIR'):
