@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,8 @@ subroutine irchml(chamel, ifi, form, titre,&
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/celcel.h"
 #include "asterfort/celces.h"
 #include "asterfort/celver.h"
@@ -99,10 +101,10 @@ subroutine irchml(chamel, ifi, form, titre,&
     character(len=24) :: nolili, nconec, ncncin, valk(2)
     character(len=80) :: titmai
     aster_logical :: lmasu
-    integer :: iad, iadr, iel
+    integer :: iadr, iel
     integer :: im, in, ino, iret, itype
     integer :: jcncin, jcnx, jcoor, jdrvlc, jliste
-    integer :: jlongr, jnbnm, jncmp, jnmn, jnoel
+    integer :: jlongr, jnbnm, jnmn, jnoel
     integer :: jpnt, jtypm, kk, libre, lon1
     integer :: maxnod, n, n2, nbcmpt, nbel, nbgrel, nbm
     integer :: nbmac, nbn, nbno, nbtitr, nbtma, ncmpmx
@@ -113,6 +115,10 @@ subroutine irchml(chamel, ifi, form, titre,&
     integer, pointer :: liel(:) => null()
     character(len=80), pointer :: titr(:) => null()
     character(len=24), pointer :: celk(:) => null()
+    integer :: iCmp
+    character(len=8), pointer :: cmpUserName(:) => null()
+    character(len=8), pointer :: cmpCataName(:) => null()
+    integer, pointer :: cmpIndx(:) => null()
 !-----------------------------------------------------------------------
     data iprem /0/
 !
@@ -179,11 +185,18 @@ subroutine irchml(chamel, ifi, form, titre,&
     ngr = celd(2)
     call jenuno(jexnum('&CATA.GD.NOMGD', gd), nomgd)
     call jelira(jexnum('&CATA.GD.NOMCMP', gd), 'LONMAX', ncmpmx)
-    call jeveuo(jexnum('&CATA.GD.NOMCMP', gd), 'L', iad)
-    call wkvect('&&IRCHML.NUM_CMP', 'V V I', ncmpmx, jncmp)
+    call jeveuo(jexnum('&CATA.GD.NOMCMP', gd), 'L', vk8 = cmpCataName)
+    AS_ALLOCATE(vi = cmpIndx, size = ncmpmx)
     if (nbcmp .ne. 0 .and. nomgd .ne. 'VARI_R') then
-        call irccmp(' ', nomgd, ncmpmx, zk8(iad), nbcmp,&
-                    nomcmp, nbcmpt, jncmp)
+        AS_ALLOCATE(vk8 = cmpUserName, size = ncmpmx)
+        do iCmp = 1, ncmpmx
+            cmpUserName(iCmp) = nomcmp(iCmp)
+        end do
+        call irccmp(' '   , nomgd      ,&
+                    ncmpmx, cmpCataName,&
+                    nbcmp , cmpUserName,&
+                    nbcmpt, cmpIndx)
+        AS_DEALLOCATE(vk8 = cmpUserName)
     endif
     call jeveuo(chame//'.CELK', 'L', vk24=celk)
     nolili = celk(1)
@@ -268,17 +281,17 @@ subroutine irchml(chamel, ifi, form, titre,&
 !
         if (itype .eq. 1) then
             call ircerl(ifi, nbel, liel, nbgrel, zi(jlongr),&
-                        ncmpmx, zr(jcelv), zk8(iad), zk8(jnoel), loc,&
+                        ncmpmx, zr(jcelv), cmpCataName, zk8(jnoel), loc,&
                         celd, zi(jcnx), zi( jpnt), zk8(jnmn), nbcmpt,&
-                        zi(jncmp), nbnot, numnoe, nbmac, zi( jliste),&
+                        cmpIndx, nbnot, numnoe, nbmac, zi( jliste),&
                         lsup, borsup, linf, borinf, lmax,&
                         lmin, lcor, ndim, zr( jcoor), nolili(1:19),&
                         formr, ncmp, nucmp)
         else if (itype.eq.2) then
             call ircecl(ifi, nbel, liel, nbgrel, zi(jlongr),&
-                        ncmpmx, zc(jcelv), zk8(iad), zk8(jnoel), loc,&
+                        ncmpmx, zc(jcelv), cmpCataName, zk8(jnoel), loc,&
                         celd, zi(jcnx), zi( jpnt), zk8(jnmn), nbcmpt,&
-                        zi(jncmp), nbnot, numnoe, nbmac, zi( jliste),&
+                        cmpIndx, nbnot, numnoe, nbmac, zi( jliste),&
                         lsup, borsup, linf, borinf, lmax,&
                         lmin, lcor, ndim, zr( jcoor), nolili(1:19),&
                         formr, ncmp, nucmp)
@@ -311,14 +324,14 @@ subroutine irchml(chamel, ifi, form, titre,&
         maxnod=permuta(lon1)
         if (itype .eq. 1) then
             call ircers(ifi, liel, nbgrel, zi(jlongr), ncmpmx,&
-                        zr(jcelv), nomgd, zk8(iad), titre, zk8(jnoel),&
+                        zr(jcelv), nomgd, cmpCataName, titre, zk8(jnoel),&
                         loc, celd, zi(jnbnm), permuta, maxnod,&
                         zi(jtypm), nomsd, nomsym, numord, nbmat,&
                         nummai, lmasu, ncmp, nucmp, nbcmp,&
-                        zi(jncmp), nomcmp)
+                        cmpIndx, nomcmp)
         else if (itype.eq.2) then
             call ircecs(ifi, liel, nbgrel, zi(jlongr), ncmpmx,&
-                        zc(jcelv), zk8(iad), titre, zk8(jnoel), loc,&
+                        zc(jcelv), cmpCataName, titre, zk8(jnoel), loc,&
                         celd, zi( jnbnm), permuta, maxnod, zi(jtypm),&
                         nomsd, nomsym, numord, nbmat, nummai,&
                         lmasu, ncmp, nucmp)
@@ -337,6 +350,7 @@ subroutine irchml(chamel, ifi, form, titre,&
     call jedetr('&&IRCHML.VALE')
     call detrsd('CHAM_ELEM', '&&IRCHML.CHAMEL1')
     call detrsd('CHAM_ELEM', '&&IRCHML.CHAMEL2')
+    AS_DEALLOCATE(vi = cmpIndx)
 999 continue
     call jedema()
 end subroutine

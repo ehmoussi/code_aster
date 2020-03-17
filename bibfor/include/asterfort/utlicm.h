@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine utlicm(nbcmpv, nomcmp, nomgd, ncmprf, nomcmr,&
-                      ncmpve, numcmp, ntncmp, ntucmp)
-        integer :: nbcmpv
-        character(len=*) :: nomcmp(*)
-        character(len=8) :: nomgd
-        integer :: ncmprf
-        character(len=*) :: nomcmr(*)
-        integer :: ncmpve
-        character(len=*) :: numcmp
-        character(len=*) :: ntncmp
-        character(len=*) :: ntucmp
+    subroutine utlicm(quantityName,&
+                      cmpUserNb   , cmpUserName,&
+                      cmpCataNb   , cmpCataName,&
+                      cmpValidNb  , numcmp     ,&
+                      ntncmp      , ntucmp)
+        character(len=8), intent(in):: quantityName
+        integer, intent(in) :: cmpUserNb
+        character(len=8), pointer :: cmpUserName(:)
+        integer, intent(in) :: cmpCataNb
+        character(len=8), pointer :: cmpCataName(:)
+        integer, intent(out) :: cmpValidNb
+        character(len=*), intent(in) :: numcmp, ntncmp, ntucmp
     end subroutine utlicm
 end interface
