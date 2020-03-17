@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine medomm(model, mate, cara_elem)
+subroutine medomm(model, mater, mateco, cara_elem)
 !
 implicit none
 !
@@ -28,7 +28,8 @@ implicit none
 #include "asterfort/utmess.h"
 !
 character(len=*), intent(out) :: model
-character(len=*), intent(out) :: mate
+character(len=*), intent(out) :: mater
+character(len=*), intent(out) :: mateco
 character(len=*), intent(out) :: cara_elem
 !
 ! --------------------------------------------------------------------------------------------------
@@ -40,7 +41,8 @@ character(len=*), intent(out) :: cara_elem
 ! --------------------------------------------------------------------------------------------------
 !
 ! Out model            : name of model
-! Out mate             : name of material characteristics (field)
+! Out mater            : name of material
+! Out mateco           : name of material characteristics (field)
 ! Out cara_elem        : name of elementary characteristics (field)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -52,8 +54,9 @@ character(len=*), intent(out) :: cara_elem
 ! --------------------------------------------------------------------------------------------------
 !
     model     = ' '
-    mate      = ' '
+    mateco    = ' '
     cara_elem = ' '
+    mater     = ' '
 !
 ! - Get model
 !
@@ -73,9 +76,11 @@ character(len=*), intent(out) :: cara_elem
         call utmess('A', 'MECHANICS1_40')
     endif
     if (nocc .ne. 0) then
-        call rcmfmc(concept, mate, l_thm_ = l_thm, l_ther_ = ASTER_FALSE)
+        mater = concept
+        call rcmfmc(mater, mateco, l_thm_ = l_thm, l_ther_ = ASTER_FALSE)
     else
-        mate = ' '
+        mater  = ' '
+        mateco = ' '
     endif
 !
 ! - Get elementary characteristics

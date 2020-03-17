@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine calcGetDataMeca(list_load      , model         , mate     , cara_elem,&
+subroutine calcGetDataMeca(list_load      , model         , mateco     , cara_elem,&
                            disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                            ds_constitutive, l_elem_nonl, nume_harm)
 !
@@ -38,7 +38,7 @@ implicit none
 !
 character(len=19), intent(out) :: list_load
 character(len=24), intent(out) :: model
-character(len=24), intent(out) :: mate
+character(len=24), intent(out) :: mateco
 character(len=24), intent(out) :: cara_elem
 character(len=19), intent(out) :: disp_prev
 character(len=19), intent(out) :: disp_cumu_inst
@@ -58,7 +58,7 @@ integer, intent(out) :: nume_harm
 !
 ! Out list_load        : name of datastructure for list of loads
 ! Out model            : name of model
-! Out mate             : name of material characteristics (field)
+! Out mateco           : name of material characteristics (field)
 ! Out cara_elem        : name of elementary characteristics (field)
 ! Out disp_prev        : displacement at beginning of step
 ! Out disp_cumu_inst   : displacement increment from beginning of step
@@ -66,7 +66,7 @@ integer, intent(out) :: nume_harm
 ! Out sigm_prev        : stress at beginning of step
 ! Out ds_constitutive  : datastructure for constitutive laws management
 ! Out l_elem_nonl      : .true. if all elements can compute non-linear options
-! Out nume_harm        : Fourier harmonic number 
+! Out nume_harm        : Fourier harmonic number
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,13 +74,14 @@ integer, intent(out) :: nume_harm
     aster_logical :: l_etat_init
     integer :: nocc
     character(len=19) :: ligrmo
+    character(len=24) :: mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
     list_load      = '&&OP0026.LISCHA'
     cara_elem      = '&&OP0026.CARELE'
     model          = ' '
-    mate           = ' '
+    mateco         = ' '
     vari_prev      = ' '
     sigm_prev      = ' '
     disp_prev      = ' '
@@ -89,7 +90,7 @@ integer, intent(out) :: nume_harm
 !
 ! - Get parameters from command file
 !
-    call nmlect(result, model, mate, cara_elem, list_load)
+    call nmlect(result, model, mater, mateco, cara_elem, list_load)
 !
 ! - Can have internal variables ?
 !
@@ -140,7 +141,7 @@ integer, intent(out) :: nume_harm
 !
     call nonlinDSConstitutiveCreate(ds_constitutive)
     if (l_elem_nonl) then
-        call nmdorc(model, mate, l_etat_init,&
+        call nmdorc(model, mateco, l_etat_init,&
                     ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
                     l_implex_ = .false._1)
         call nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)

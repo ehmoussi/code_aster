@@ -26,9 +26,10 @@
 #include "Materials/CodedMaterial.h"
 #include "aster_fort.h"
 
-CodedMaterialClass::CodedMaterialClass( const MaterialFieldPtr &mater,
-                                              const ModelPtr &model )
-    : _name( mater->getName() ), _type( "MATER_CODE" ), _mater( mater ), _model( model ),
+CodedMaterialClass::CodedMaterialClass( const std::string& name,
+                                        const MaterialFieldPtr &mater,
+                                        const ModelPtr &model )
+    : _name( name ), _type( "MATER_CODE" ), _mater( mater ), _model( model ),
       _field( new ConstantFieldOnCellsLongClass( getName() + ".MATE_CODE", _model->getMesh(),
                                              Permanent ) ),
       _grp( JeveuxVectorChar8( getName() + ".MATE_CODE.GRP" ) ),

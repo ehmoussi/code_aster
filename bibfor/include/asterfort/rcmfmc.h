@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rcmfmc(chmatz, chmacz, l_thm_, l_ther_, basename, base)
+    subroutine rcmfmc(chmatz, chmacz, l_thm_, l_ther_, basename_, base)
         character(len=*), intent(in) :: chmatz
         character(len=*), intent(out) :: chmacz
         aster_logical, intent(in), optional :: l_thm_, l_ther_
-        character(len=*), intent(inout), optional :: basename
+        character(len=*), intent(inout), optional :: basename_
         character(len=1), intent(in), optional :: base
     end subroutine rcmfmc
 end interface

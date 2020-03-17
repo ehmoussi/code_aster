@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,8 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nminit(mesh       , model         , mate         , cara_elem      , list_load ,&
+subroutine nminit(mesh       , model         , mater        ,mateco          , cara_elem , &
+                  list_load                                                              ,&
                   numedd     , numfix        , ds_algopara  , ds_constitutive, maprec    ,&
                   solver     , numins        , sddisc       , sdnume         , sdcrit    ,&
                   ds_material, list_func_acti, sdpilo       , sddyna         , ds_print  ,&
@@ -93,7 +94,8 @@ implicit none
 !
 character(len=8), intent(in) :: mesh
 character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mater
+character(len=24), intent(in) :: mateco
 character(len=24), intent(in) :: cara_elem
 character(len=19), intent(in) :: list_load
 character(len=24) :: numedd
@@ -141,7 +143,8 @@ type(HHO_Field), intent(inout) :: hhoField
 !
 ! In  mesh             : name of mesh
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
+! In  mater            : name of material
+! In  mateco           : name of material characteristics (field)
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  list_load        : name of datastructure for list of loads
 ! IO  ds_material      : datastructure for material parameters
@@ -217,14 +220,14 @@ type(HHO_Field), intent(inout) :: hhoField
 ! - Prepare active functionnalities information
 !
     call nmfonc(ds_conv       , ds_algopara    , solver   , model        , ds_contact     ,&
-                list_load     , sdnume         , sddyna   , ds_errorindic, mate           ,&
+                list_load     , sdnume         , sddyna   , ds_errorindic, mater          ,&
                 ds_inout      , ds_constitutive, ds_energy, ds_algorom   , ds_posttimestep,&
                 list_func_acti)
 !
 ! - Check compatibility of some functionnalities
 !
     call exfonc(list_func_acti, ds_algopara, solver, ds_contact, sddyna,&
-                mate          , model)
+                mater         , model)
     lpilo      = isfonc(list_func_acti,'PILOTAGE' )
     lmpas      = ndynlo(sddyna,'MULTI_PAS' )
     lsstf      = isfonc(list_func_acti,'SOUS_STRUC')
@@ -319,7 +322,7 @@ type(HHO_Field), intent(inout) :: hhoField
 !
 ! - Create time discretization and storing datastructures
 !
-    call diinit(mesh          , model , ds_inout, mate       , cara_elem,&
+    call diinit(mesh          , model , ds_inout, mateco       , cara_elem,&
                 list_func_acti, sddyna, ds_conv , ds_algopara, solver,&
                 ds_contact    , sddisc)
 !
@@ -330,7 +333,7 @@ type(HHO_Field), intent(inout) :: hhoField
 !
 ! - Initializations for material parameters management
 !
-    call nonlinDSMaterialInit(model      , mate     , cara_elem,&
+    call nonlinDSMaterialInit(model      , mateco     , cara_elem,&
                               ds_constitutive%compor, valinc,&
                               numedd     , instin   , &
                               ds_material)
@@ -349,7 +352,7 @@ type(HHO_Field), intent(inout) :: hhoField
 ! - Compute reference vector for RESI_REFE_RELA
 !
     if (lrefe) then
-        call nmrefe(model  , ds_constitutive%compor, mate  , cara_elem, numedd,&
+        call nmrefe(model  , ds_constitutive%compor, mateco  , cara_elem, numedd,&
                     ds_conv, valinc                , veelem, veasse)
     endif
 !

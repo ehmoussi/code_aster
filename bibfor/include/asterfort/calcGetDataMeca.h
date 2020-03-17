@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine calcGetDataMeca(list_load      , model         , mate     , cara_elem,&
+    subroutine calcGetDataMeca(list_load      , model         , mateco     , cara_elem,&
                                disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                                ds_constitutive, l_elem_nonl, nume_harm)
         use NonLin_Datastructure_type
         character(len=19), intent(out) :: list_load
         character(len=24), intent(out) :: model
-        character(len=24), intent(out) :: mate
+        character(len=24), intent(out) :: mateco
         character(len=24), intent(out) :: cara_elem
         character(len=19), intent(out) :: disp_prev
         character(len=19), intent(out) :: disp_cumu_inst
