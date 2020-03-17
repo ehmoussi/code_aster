@@ -41,7 +41,7 @@ void exportMaterialToPython() {
               &MaterialClass::getNumberOfListOfRealProperties )
         .def( "getNumberOfListOfFunctionProperties",
               &MaterialClass::getNumberOfListOfFunctionProperties )
-        .def( "getNumberOfMaterialBehviour", &MaterialClass::getNumberOfMaterialBehviour )
+        .def( "getNumberOfMaterialBehaviour", &MaterialClass::getNumberOfMaterialBehaviour )
         .def( "getNumberOfUserMaterialBehviour",
               &MaterialClass::getNumberOfUserMaterialBehviour )
         .def( "getVectorOfMaterialPropertys", &MaterialClass::getVectorOfMaterialPropertys )

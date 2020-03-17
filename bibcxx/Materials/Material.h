@@ -147,7 +147,7 @@ class MaterialClass: public DataStructure
          * @brief Get the number of behaviours
          * @return number of added behaviours
          */
-        int getNumberOfMaterialBehviour()
+        int getNumberOfMaterialBehaviour()
         {
             return _nbMaterialProperty;
         };

@@ -82,7 +82,7 @@ bool CodedMaterialClass::allocate(bool force) {
             }
         }
 
-        const int nbMB = curIter->getNumberOfMaterialBehviour();
+        const int nbMB = curIter->getNumberOfMaterialBehaviour();
         for( int i = 0; i < nbMB; ++i )
         {
             auto vecVec1 = curIter->getBehaviourVectorOfRealValues( i );
