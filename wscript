@@ -123,6 +123,7 @@ def options(self):
         "[Default: '']")
     self.recurse('bibfor')
     self.recurse('code_aster')
+    self.recurse('run_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('mfront')
@@ -205,6 +206,7 @@ def configure(self):
 
     self.recurse('bibfor')
     self.recurse('code_aster')
+    self.recurse('run_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('mfront')
@@ -239,6 +241,7 @@ def build(self):
     self.load('ext_aster', tooldir='waftools')
     self.recurse('bibfor')
     self.recurse('code_aster')
+    self.recurse('run_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
     self.recurse('mfront')

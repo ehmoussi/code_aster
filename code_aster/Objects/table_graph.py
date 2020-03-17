@@ -38,6 +38,7 @@ from ..Utilities import ExecutionParameter, value_is_sequence
 
 try:
     import matplotlib
+    matplotlib.use('Agg')
     import matplotlib.pyplot as plt
     HAS_MATPLOTLIB = True
 except ImportError:
@@ -1164,9 +1165,6 @@ class TraceMatplotlib(TraceGraph):
 
     def Trace(self):
         fichier = self.NomFich
-        matplotlib.use('Agg')
-
-        l_color=['b','r','k','g']
         g = self.Graph
 
         figsize, dpi = [160./2.54/2*1.35, 100./2.54*1.35], 160
