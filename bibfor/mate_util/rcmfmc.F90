@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine rcmfmc(chmatz, chmacz, l_thm_, l_ther_, basename, base)
+subroutine rcmfmc(chmatz, chmacz, l_thm_, l_ther_, basename_, base)
 !
 implicit none
 !
@@ -44,7 +44,7 @@ implicit none
 character(len=*), intent(in) :: chmatz
 character(len=*), intent(out) :: chmacz
 aster_logical, intent(in), optional :: l_thm_, l_ther_
-character(len=*), intent(inout), optional :: basename
+character(len=*), intent(inout), optional :: basename_
 character(len=1), intent(in), optional :: base
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ character(len=1), intent(in), optional :: base
     integer :: inbmat
     character(len=1) :: bas
     character(len=4) :: knumat
-    character(len=8) :: chmat, nomgd
+    character(len=8) :: chmat, nomgd, basename
     character(len=19) :: codi
     character(len=19) :: chemat, chmace
     character(len=24) :: chmatgrp, chmatngrp
@@ -80,16 +80,20 @@ character(len=1), intent(in), optional :: base
     call jemarq()
 !
     chmat  = chmatz
-    chemat = chmat//'.CHAMP_MAT'
-    if( present(basename) ) then
-        chmace = basename//'.MATE_CODE'
-        chmatgrp = basename//'.MATE_CODE.GRP'
-        chmatngrp = basename//'.MATE_CODE.NGRP'
+!
+    if( present(basename_) ) then
+        basename = basename_
     else
-        chmace = chmat//'.MATE_CODE'
-        chmatgrp = chmat//'.MATE_CODE.GRP'
-        chmatngrp = chmat//'.MATE_CODE.NGRP'
+        basename = "&&MATECO"
     endif
+!
+    chemat = chmat//'.CHAMP_MAT'
+    chmace = basename//'.MATE_CODE'
+    chmatgrp = chmace//'.GRP'
+    chmatngrp = chmace//'.NGRP'
+    print*, "CHMATER : ", chemat
+    print*, "CHMATECO: ", chmace
+!
     if( present(base) ) then
         bas = base
     else
@@ -169,6 +173,7 @@ character(len=1), intent(in), optional :: base
 !       -- le nom du codi est celui du premier materiau du groupe kk
             codi(1:8)=zk8(igrp+icompt)
             codi(9:13)='.'//knumat
+            print*, "CODI: ", kk, codi
             call jeveuo(codi//'.CODI', 'L', zi(jvale+kk-1))
             icompt=icompt+nbmat
             endif

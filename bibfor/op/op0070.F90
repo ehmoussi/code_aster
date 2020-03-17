@@ -93,7 +93,7 @@ implicit none
     character(len=19) :: list_load
     character(len=19) :: maprec
     character(len=19) :: matass, solver
-    character(len=24) :: model, mate, cara_elem
+    character(len=24) :: model, mateco, cara_elem, mater
     character(len=24) :: numedd, numfix
 !
 ! --- FONCTIONNALITES ACTIVEES
@@ -167,14 +167,14 @@ implicit none
 !
 ! - Read parameters
 !
-    call nmdata(model    , mesh         , mate      , cara_elem  , ds_constitutive,&
+    call nmdata(model    , mesh         , mater     , mateco     , cara_elem  , ds_constitutive,&
                 list_load, solver       , ds_conv   , sddyna     , ds_posttimestep,&
                 ds_energy, ds_errorindic, ds_print  , ds_algopara,&
                 ds_inout , ds_contact   , ds_measure, ds_algorom)
 !
 ! - Initializations of datastructures
 !
-    call nminit(mesh       , model     , mate         , cara_elem      , list_load ,&
+    call nminit(mesh       , model     , mater        , mateco         , cara_elem , list_load ,&
                 numedd     , numfix    , ds_algopara  , ds_constitutive, maprec    ,&
                 solver     , numins    , sddisc       , sdnume         , sdcrit    ,&
                 ds_material, fonact    , sdpilo       , sddyna         , ds_print  ,&
@@ -388,7 +388,7 @@ implicit none
 ! - Cleaning datastructures
 !
     call nmmeng(fonact,&
-                ds_algorom, ds_print, ds_measure     ,&
+                ds_algorom, ds_print, ds_measure     , ds_material, &
                 ds_energy , ds_inout, ds_posttimestep, hhoField)
 !
 end subroutine

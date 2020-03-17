@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmmeng(list_func_acti,&
-                  ds_algorom    , ds_print, ds_measure,&
+                  ds_algorom    , ds_print, ds_measure , ds_material,&
                   ds_energy     , ds_inout, ds_posttimestep, hhoField)
 !
 use NonLin_Datastructure_type
@@ -30,6 +30,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/detmat.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/isfonc.h"
 #include "asterfort/romAlgoNLClean.h"
 #include "asterfort/nonlinDSPrintClean.h"
@@ -43,6 +44,7 @@ type(ROM_DS_AlgoPara), intent(inout) :: ds_algorom
 type(NL_DS_Print), intent(inout) :: ds_print
 type(NL_DS_Energy), intent(inout) :: ds_energy
 type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_Material), intent(inout) :: ds_material
 type(NL_DS_InOut), intent(inout) :: ds_inout
 type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 type(HHO_Field), intent(in) :: hhoField
@@ -88,6 +90,10 @@ type(HHO_Field), intent(in) :: hhoField
     call nonlinDSEnergyClean(ds_energy)
     call nonlinDSInOutClean(ds_inout)
     call nonlinDSPostTimeStepClean(ds_posttimestep)
+!
+! - Destruct MATECO
+!
+    call detrsd('CHAMP_GD', ds_material%field_mate)
 !
 ! - DESTRUCTION DE TOUTES LES MATRICES CREEES
 !

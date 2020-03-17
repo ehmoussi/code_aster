@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nminit(mesh       , model         , mate         , cara_elem      , list_load ,&
+    subroutine nminit(mesh       , model         , mater        , mateco         , cara_elem ,&
+                      list_load  ,                                                            &
                       numedd     , numfix        , ds_algopara  , ds_constitutive, maprec    ,&
                       solver     , numins        , sddisc       , sdnume         , sdcrit    ,&
                       ds_material, list_func_acti, sdpilo       , sddyna         , ds_print  ,&
@@ -30,7 +31,8 @@ interface
         use HHO_type
         character(len=8), intent(in) :: mesh
         character(len=24), intent(in) :: model
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mater
+        character(len=24), intent(in) :: mateco
         character(len=24), intent(in) :: cara_elem
         character(len=19), intent(in) :: list_load
         character(len=24) :: numedd
