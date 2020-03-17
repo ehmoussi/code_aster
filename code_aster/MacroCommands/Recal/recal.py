@@ -48,6 +48,7 @@ from asrun.utils import search_enclosed
 
 from ...Messages import UTMESS
 
+from ...Utilities.ExecutionParameter import ExecutionParameter
 from ...Cata.Syntax import _F
 from ...Commands import DETRUIRE
 from ...Utilities.misc import get_shared_tmpdir
@@ -678,9 +679,11 @@ class CALCULS_ASTER:
             print(prof)
 
         # Si batch n'est pas possible, on bascule en interactif
-        if prof.param['mode'][0] == 'batch' and run.get('batch') == 'non':
+        if not prof['mode'][0] or (prof['mode'][0] == 'batch'
+                                   and run.get('batch') == 'non'):
             UTMESS('I', 'RECAL0_28', valk=noeud)
-            prof.param['mode'][0] = 'interactif'
+            prof['mode'] = 'interactif'
+        prof['version'] = ExecutionParameter().get_option("rcdir")
 
         # result directories
         if resudir:

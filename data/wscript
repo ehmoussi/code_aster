@@ -20,24 +20,28 @@
 """
 Build some data files (dest: share/aster)
 
-- 'config.txt': needed by as_run.
+- 'config.js': needed by run_aster.
+- 'config.txt': needed by as_run (for MACR_RECAL).
 - 'create_install_script': script to use a containerized version.
-- 'CTestTestfile.cmake': used to run testcases with 'salome test'.
+- 'CTestTestfile.cmake': used to run testcases with 'ctest'.
 - 'execute_codeaster': used as executable for a containerized version.
 - 'external_programs.js': definition of external programs called from code_aster.
+- 'mpirun_template': template for MPI execution.
 - 'post_install': update some paths after moving the installed files.
 - 'profile.sh': environment script.
 - 'reca_main.py': script to call MACR_RECAL from Python.
+- 'run_aster': script that executes code_aster.
+- 'un_ctest': script that executes a list of testcases using 'ctest'.
 """
 
-import pickle
 import json
 import os
 import os.path as osp
+import pickle
 import re
 import sys
+from glob import glob
 from itertools import chain
-from subprocess import PIPE, Popen
 
 from waflib import Configure, Errors, Logs, Utils
 
@@ -98,7 +102,7 @@ def configure(self):
     dict_conv = self.env2dict(osp.dirname(self.path.abspath()))
     self.env['ASTER_ENVIRON'] = pickle.dumps(dict_conv)
 
-    self.getAsrunTmp()
+    self.check_config()
     self.check_external_programs()
     self.configure_data()
 
@@ -122,19 +126,24 @@ def configure_data(self):
 
 def build(self):
     # src/srcbin distinction exists for exec mode (644 vs 755)
-    src = ['CTestTestfile.cmake.tmpl', 'external_programs.js.tmpl']
-    tgt = ['CTestTestfile.cmake', 'external_programs.js']
+    src = ['CTestTestfile.cmake.tmpl', 'external_programs.js.tmpl',
+           'config.js.tmpl']
+    tgt = ['CTestTestfile.cmake', 'external_programs.js',
+            'config.js']
     if self.env.legacy:
         src.extend(['config.txt.tmpl', 'profile.sh.tmpl'])
         tgt.extend(['config.txt', 'profile.sh'])
-    srcbin = ['execute_codeaster.tmpl',
-              'create_install_script', 'reca_main.py']
-    tgtbin = ['execute_codeaster', 'create_install_script', 'reca_main.py']
+    srcbin = ['execute_codeaster.tmpl', 'create_install_script',
+              'reca_main.py']
+    tgtbin = ['execute_codeaster', 'create_install_script',
+              'reca_main.py']
     try:
         dict_conv = pickle.loads(self.env['ASTER_ENVIRON'])
     except:
         Logs.error("ASTER_ENVIRON not found. Please run 'waf configure...'")
         raise Errors.BuildError
+    dict_conv['PROGRAMS_JSON'] = dict_to_json(self.env['EXTERNAL_PROGRAMS'])
+    dict_conv['CONFIG_JSON'] = dict_to_json(self.env['CONFIG_PARAMETERS'])
     change_tests(dict_conv, self.env.install_tests)
     self(
         features='subst',
@@ -142,32 +151,32 @@ def build(self):
         source=src,
         target=tgt,
         install_path=self.env.ASTERDATADIR,
-        vars=['ASTER_ENVIRON', 'EXTERNAL_PROGRAMS', 'install_tests'],
-        PROGRAMS_JSON=json.dumps(self.env['EXTERNAL_PROGRAMS'], sort_keys=True,
-                                 indent=4, separators=(',', ': ')),
+        vars=['ASTER_ENVIRON', 'CONFIG_PARAMETERS', 'EXTERNAL_PROGRAMS',
+              'install_tests'],
         **dict_conv
     )
-    if srcbin:
-        self(
-            features='subst',
-            name='data_files',
-            source=srcbin,
-            target=tgtbin,
-            install_path=self.env.ASTERDATADIR,
-            vars=['ASTER_ENVIRON', 'EXTERNAL_PROGRAMS', 'install_tests'],
-            PROGRAMS_JSON=json.dumps(self.env['EXTERNAL_PROGRAMS'],
-                                     sort_keys=True, indent=4,
-                                     separators=(',', ': ')),
-            chmod=Utils.O755,
-            **dict_conv
-        )
+    self(
+        features='subst',
+        name='data_files',
+        source=srcbin,
+        target=tgtbin,
+        install_path=self.env.ASTERDATADIR,
+        vars=['ASTER_ENVIRON', 'CONFIG_PARAMETERS', 'EXTERNAL_PROGRAMS',
+              'install_tests'],
+        chmod=Utils.O755,
+        **dict_conv
+    )
     if self.env.singularityimage:
         self.symlink_as("${PREFIX}/share/aster/image",
                         self.env.singularityimage)
 
     # without substitution
-    self.install_files(self.env.ASTERDATADIR, ["post_install"],
+    self.install_files(self.env.BINDIR,
+                       ["post_install", "run_aster", "run_ctest"],
                        chmod=Utils.O755)
+    self.install_files(self.env.ASTERDATADIR,
+                       ["mpirun_template"],
+                       chmod=Utils.O644)
     # install files from data repository
     if self.env.data_path:
         data_path = osp.relpath(self.env.data_path,
@@ -240,7 +249,7 @@ def env2dict(self, src):
             "export PATH=${TFELHOME}/bin:$PATH"
         ])
     dico['MFRONT_SPECIFIC'] = text
-    dico['ASRUN_TMPDIR'] = env.ASRUN_TMPDIR
+    dico['ASRUN_TMPDIR_CMAKE'] = env.ASRUN_TMPDIR_CMAKE
     dico['ASTERDATADIR'] = env['ASTERDATADIR']
     dico['ASTER_TAG'] = '.'.join([str(i) for i in env['ASTER_VERSION'][0]])
     dico['BIN_NODBG'] = '{PREFIX}/bin/aster{astervers}'.format(**env)
@@ -254,27 +263,66 @@ def env2dict(self, src):
     self.end_msg("yes")
 
     self.start_msg('Build list of testcases')
-    seq = 'testlist.*sequential'
-    mpi = 'testlist.*parallel'
     valid = osp.join(src, '..', 'validation')
-    dico['ASTER_TEST_FILES_SEQ'] = _build_testlist(src, seq)
-    dico['ASTER_TEST_FILES_PAR'] = _build_testlist(src, mpi)
-    dico['ASTER_TEST_FILES_VALID_SEQ'] = _build_testlist(valid, seq)
-    dico['ASTER_TEST_FILES_VALID_PAR'] = _build_testlist(valid, mpi)
-    self.end_msg("yes")
+    testdef = _build_def(env.BINDIR, env.ASTERDATADIR,
+                         glob(osp.join(src, "astest", "*.export")))
+    testdef += _build_def(env.BINDIR, env.ASTERDATADIR,
+                          glob(osp.join(valid, "astest", "*.export")))
+    dico['ASTER_TEST_DEFINITION'] = testdef
+    self.end_msg("done")
     return dico
 
 
-def _build_testlist(path, filter_expr):
-    if not osp.exists(osp.join(path, 'astest')):
-        return ''
-    cmd = ['grep', '-l', filter_expr,
-           osp.join(path, 'astest', '*.export')]
-    proc = Popen(' '.join(cmd), stdout=PIPE, stderr=PIPE, shell=True)
-    out = proc.communicate()[0].decode()
-    tests = [osp.splitext(osp.basename(i))[0] for i in out.split()]
-    return os.linesep.join(tests)
+def dict_to_json(dict_values):
+    """Format a dict of values to JSON."""
+    return json.dumps(dict_values, sort_keys=True, indent=4,
+                      separators=(',', ': '))
 
+CTEST_DEF = """
+set(TEST_NAME ${{COMPONENT_NAME}}_{testname})
+add_test(${{TEST_NAME}} {BINDIR}/run_aster --ctest {ASTERDATADIR}/tests/{testname}.export)
+set_tests_properties(${{TEST_NAME}} PROPERTIES
+                     LABELS "${{COMPONENT_NAME}} {labels}"
+                     PROCESSORS {processors})
+"""
+
+@Configure.conf
+def _build_def(bindir, datadir, lexport):
+    re_list = re.compile("P +testlist +(.*)$", re.M)
+    re_nod = re.compile("P +mpi_nbnoeud +([0-9]+)", re.M)
+    re_mpi = re.compile("P +mpi_nbcpu +([0-9]+)", re.M)
+    re_thr = re.compile("P +ncpus +([0-9]+)", re.M)
+    text = []
+    for exp in lexport:
+        if not osp.isfile(exp):
+            print(f"no such file: {exp}")
+            continue
+        testname = osp.splitext(osp.basename(exp))[0]
+        lab = []
+        nod = 1
+        mpi = 1
+        thr = 1
+        with open(exp, "r") as fobj:
+            export = fobj.read()
+        mat = re_list.search(export)
+        if mat:
+            lab = mat.group(1).split()
+        mat = re_nod.search(export)
+        if mat:
+            nod = int(mat.group(1))
+        mat = re_mpi.search(export)
+        if mat:
+            mpi = int(mat.group(1))
+        mat = re_thr.search(export)
+        if mat:
+            thr = int(mat.group(1))
+        lab.append(f"nodes={nod:02d}")
+        text.append(CTEST_DEF.format(testname=testname,
+                                     labels=" ".join(sorted(lab)),
+                                     processors=mpi * thr,
+                                     ASTERDATADIR=datadir,
+                                     BINDIR=bindir))
+    return "\n".join(text)
 
 def change_tests(dico, install_tests):
     """Because install_tests can be added at build stage"""
@@ -283,17 +331,89 @@ def change_tests(dico, install_tests):
 
 
 @Configure.conf
-def getAsrunTmp(self):
-    """Ask as_run for tmpdir"""
-    self.start_msg('Set tmp directory for `salome test`')
+def check_config(self):
+    # Check for configuration parameters of the version
+    cfg = {}
+    self.start_msg('Set tmp directory for execution')
+    tmpdir = "/tmp"
     # cmake syntax
-    tmpdir = "$ENV{ASTER_TMPDIR}"
+    tmpdir_cmake = "$ENV{ASTER_TMPDIR}"
     if os.environ.get('ASTER_TMPDIR'):
         tmpdir = os.environ['ASTER_TMPDIR']
-    self.end_msg(tmpdir)
-    self.env.ASRUN_TMPDIR = tmpdir
-    return tmpdir
+    self.env.ASRUN_TMPDIR_CMAKE = tmpdir or tmpdir_cmake
+    cfg["tmpdir"] = tmpdir
 
+    self.end_msg(cfg["tmpdir"])
+    self.start_msg('Set tmp directory for `salome test`')
+    self.end_msg(self.env.ASRUN_TMPDIR_CMAKE)
+
+    cfg["addmem"] = self.env.ADDMEM
+    cfg["version_tag"] = ".".join([str(i) for i in self.env.ASTER_VERSION[0]])
+    cfg["version_sha1"] = self.env.ASTER_VERSION[1]
+    cfg["python"] = list(self.env.PYTHON)[0]
+    cfg["parallel"] = int(self.get_define('HAVE_MPI') or 0)
+    if cfg["parallel"]:
+        self.check_mpirun()
+        self.check_mpirun_rank()
+    cfg.update(self._extract_keys("CFGJS_"))
+    cfg["FC"] = self.env["FC"][0]
+    cfg["FCFLAGS"] = self.env["FCFLAGS"]
+    self.env["CONFIG_PARAMETERS"] = cfg
+
+
+@Configure.conf
+def check_mpirun(self):
+    if self.env["mpirun"]:
+        self.start_msg("Check for mpirun command")
+        self.end_msg(self.env["mpirun"])
+        self.env["CFGJS_mpirun"] = [self.env["mpirun"]]
+        return
+    _check_prog(self, "mpirun", ["mpirun"], var_prefix="CFGJS_")
+    mpirun = self.env["CFGJS_mpirun"][0]
+    mpicmd = [mpirun]
+    if self._call_cmd("Check for mpirun flag '-n N'",
+                      [mpirun, "-n", "1", "echo"]) == 0:
+        mpicmd.extend(["-n", "{mpi_nbcpu}"])
+    elif self._call_cmd("Check for mpirun flag '-np N'",
+                        [mpirun, "-np", "1", "echo"]) == 0:
+        mpicmd.extend(["-np", "{mpi_nbcpu}"])
+
+    for opt in ("--tag-output", "-print-rank-map", "-prepend-rank",
+                "-ordered-output"):
+        if self._call_cmd("Check for mpirun flag '{0}'".format(opt),
+                        [mpirun, opt, "echo"]) == 0:
+            mpicmd.append(opt)
+    mpicmd.append("{program}")
+    self.env["CFGJS_mpirun"] = [" ".join(mpicmd)]
+
+@Configure.conf
+def check_mpirun_rank(self):
+    self.start_msg("Check for MPI rank variable")
+    if self.env["mpirun_rank"]:
+        self.end_msg(self.env["mpirun_rank"])
+        self.env["CFGJS_mpirun_rank"] = [self.env["mpirun_rank"]]
+        return
+    # default to openmpi
+    cmd = self.env["CFGJS_mpirun"][0].format(mpi_nbcpu=1, program="env")
+    out = self.cmd_and_log(cmd)
+    rank_id = "echo ${OMPI_COMM_WORLD_RANK}"
+    if "PMI_RANK" in out:
+        rank_id = "echo ${PMI_RANK}"
+    self.env["CFGJS_mpirun_rank"] = [rank_id]
+    self.end_msg(self.env["CFGJS_mpirun_rank"][0])
+
+@Configure.conf
+def _call_cmd(self, msg, cmd):
+    self.start_msg(msg)
+    try:
+        ret = self.exec_command(cmd)
+    except Errors.WafError:
+        ret = 1
+    if ret == 0:
+        self.end_msg("yes")
+    else:
+        self.end_msg("no", "yellow")
+    return ret
 
 @Configure.conf
 def check_external_programs(self):
@@ -303,7 +423,7 @@ def check_external_programs(self):
     _check_prog(self, 'salome', ['salome'],
                 add_paths=['${ABSOLUTE_APPLI_PATH}'])
 
-    _check_prog(self, 'miss3d', ['run_miss3d'],
+    _check_prog(self, 'run_miss3d', ['run_miss3d'],
                 add_paths=['${MISS3D_DIR}'])
 
     _check_prog(self, 'homard', ['homard'],
@@ -316,20 +436,28 @@ def check_external_programs(self):
     _check_prog(self, 'mfront', [mfront],
                 add_paths=['${MFRONT_ROOT_DIR}'])
 
-    _check_prog(self, 'xmgrace', ['xmgrace', 'gracebat'])
+    _check_prog(self, 'xmgrace', ['xmgrace'])
+    _check_prog(self, 'gracebat', ['gracebat'])
 
-    dict_ext = {}
-    for key in list(self.env.keys()):
-        if not key.startswith('PROG_'):
-            continue
-        prog = re.sub('^PROG_', '', key)
-        if key.startswith('PROG_mfront'):
-            prog = 'mfront'
-        dict_ext[prog] = self.env[key][0]
+    _check_prog(self, 'mdump', ['mdump'])
+
+    dict_ext = self._extract_keys("PROG_")
     self.env['EXTERNAL_PROGRAMS'] = dict_ext
 
 
-def _check_prog(self, name, programs, add_paths=None):
+@Configure.conf
+def _extract_keys(self, var_prefix):
+    extr = {}
+    for key in list(self.env.keys()):
+        if not key.startswith(var_prefix):
+            continue
+        prog = re.sub('^' + var_prefix, '', key)
+        extr[prog] = self.env[key][0]
+    return extr
+
+
+def _check_prog(self, name, programs, add_paths=None, var_prefix="PROG_"):
+    """Search for the first available program from 'programs'."""
     opts = self.options
     paths0 = self.environ.get('PATH', '').split(os.pathsep)
     paths1 = [i for i in paths0 if 'outils' not in i]
@@ -339,15 +467,16 @@ def _check_prog(self, name, programs, add_paths=None):
     with_prog = getattr(opts, 'with_prog_' + name, None)
 
     while to_check:
-        success = True
+        success = False
         paths = to_check.pop(0)
         for prog in programs:
             try:
-                self.find_program(prog, var='PROG_' + prog,
+                self.find_program(prog, var=var_prefix + name,
                                   path_list=add_paths + paths)
-            except Errors.ConfigurationError:
-                success = False
+                success = True
                 break
+            except Errors.ConfigurationError:
+                pass
         if success:
             break
     if not success and with_prog:

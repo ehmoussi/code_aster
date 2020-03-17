@@ -34,7 +34,6 @@ import sys
 import tempfile
 
 import numpy as NP
-from asrun.common.sysutils import on_64bits
 from asrun.profil import AsterProfil
 
 from ...Messages import UTMESS
