@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine irccmp(typ, gd, ncmpmx, nomcgd, nbcmp,&
-                      nomcmp, nbcmpt, jcmp)
-        character(len=*) :: typ
-        character(len=*) :: gd
-        integer :: ncmpmx
-        character(len=*) :: nomcgd(*)
-        integer :: nbcmp
-        character(len=*) :: nomcmp(*)
-        integer :: nbcmpt
-        integer :: jcmp
+    subroutine irccmp(errorType, quantityName,&
+                      cmpCataNb, cmpCataName ,&
+                      cmpUserNb, cmpUserName ,&
+                      cmpNb    , cmpIndx)
+        character(len=1), intent(in) :: errorType
+        character(len=8), intent(in):: quantityName
+        integer, intent(in) :: cmpCataNb
+        character(len=8), pointer :: cmpCataName(:)
+        integer, intent(in) :: cmpUserNb
+        character(len=8), pointer :: cmpUserName(:)
+        integer, intent(out) :: cmpNb
+        integer, pointer :: cmpIndx(:)
     end subroutine irccmp
 end interface

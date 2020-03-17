@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,6 +31,8 @@ subroutine lrcame(nrofic, nochmd, nomamd, nomaas, ligrel,&
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
 #include "jeveux.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/as_mficlo.h"
 #include "asterfort/as_mficom.h"
 #include "asterfort/as_mfinvr.h"
@@ -155,6 +157,9 @@ real(kind=8) :: inst, prec
     integer, pointer :: nume(:) => null()
     integer, pointer :: typmail(:) => null()
     real(kind=8), pointer :: vinst(:) => null()
+    integer :: iCmp
+    character(len=8), pointer :: cmpUserName(:) => null()
+    character(len=8), pointer :: cmpCataName(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -290,8 +295,21 @@ real(kind=8) :: inst, prec
         iaux = 1
     endif
 !
-    call utlicm(nbcmpv, zk8(iaux), nomgd, ncmprf, zk8(jnocmp),&
-                ncmput, numcmp, ntncmp, ntucmp)
+    AS_ALLOCATE(vk8 = cmpUserName, size = nbcmpv)
+    do iCmp = 1, nbcmpv
+        cmpUserName(iCmp) = zk8(iaux-1+iCmp)
+    end do
+    AS_ALLOCATE(vk8 = cmpCataName, size = ncmprf)
+    do iCmp = 1, ncmprf
+        cmpCataName(iCmp) = zk8(jnocmp-1+iCmp)
+    end do
+    call utlicm(nomgd ,&
+                nbcmpv, cmpUserName,&
+                ncmprf, cmpCataName,&
+                ncmput, numcmp,&
+                ntncmp, ntucmp)
+    AS_DEALLOCATE(vk8 = cmpUserName)
+    AS_DEALLOCATE(vk8 = cmpCataName)
 !
 !====
 ! 2. OUVERTURE DU FICHIER EN LECTURE

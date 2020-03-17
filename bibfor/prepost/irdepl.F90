@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ subroutine irdepl(chamno, ifi, form, titre,&
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterc/getres.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/imprsd.h"
@@ -50,8 +52,6 @@ subroutine irdepl(chamno, ifi, form, titre,&
 #include "asterfort/nbec.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
 !
     character(len=*) :: chamno, form, titre, nomsd, nomsym
     character(len=*) :: nomcmp(*), formr
@@ -99,9 +99,9 @@ subroutine irdepl(chamno, ifi, form, titre,&
 !     ------------------------------------------------------------------
 !
 !-----------------------------------------------------------------------
-    integer :: iad, iaec, iaprno
+    integer :: iaec, iaprno
     integer :: iavale, ibid, ino, iret, itype
-    integer :: jncmp, nbcmpt
+    integer :: nbcmpt
     integer :: nbno, nbnot2, nbtitr, ncmpmx, ndim, nec, num
     character(len=8), pointer :: nomnoe(:) => null()
     integer, pointer :: vnumnoe(:) => null()
@@ -111,6 +111,10 @@ subroutine irdepl(chamno, ifi, form, titre,&
     integer, pointer :: desc(:) => null()
     character(len=80), pointer :: titr(:) => null()
     integer, pointer :: nueq(:) => null()
+    integer :: iCmp
+    character(len=8), pointer :: cmpUserName(:) => null()
+    character(len=8), pointer :: cmpCataName(:) => null()
+    integer, pointer :: cmpIndx(:) => null()
 !
 !-----------------------------------------------------------------------
     call jemarq()
@@ -155,14 +159,18 @@ subroutine irdepl(chamno, ifi, form, titre,&
     if (iret .ne. 0) call jedetr('&&IRDEPL.ENT_COD')
     call wkvect('&&IRDEPL.ENT_COD', 'V V I', nec, iaec)
     call jelira(jexnum('&CATA.GD.NOMCMP', gd), 'LONMAX', ncmpmx)
-    call jeveuo(jexnum('&CATA.GD.NOMCMP', gd), 'L', iad)
-    call wkvect('&&IRDEPL.NUM_CMP', 'V V I', ncmpmx, jncmp)
-!
+    call jeveuo(jexnum('&CATA.GD.NOMCMP', gd), 'L', vk8 = cmpCataName)
+    AS_ALLOCATE(vi = cmpIndx, size = ncmpmx)
     if (nbcmp .ne. 0) then
-!       - NOMBRE ET NOMS DES COMPOSANTES DE LA LISTE DES COMPOSANTES
-!         DONT ON DEMANDE L'IMPRESSION PRESENTES DANS LA GRANDEUR NOMGD
-        call irccmp(' ', nomgd, ncmpmx, zk8(iad), nbcmp,&
-                    nomcmp, nbcmpt, jncmp)
+        AS_ALLOCATE(vk8 = cmpUserName, size = ncmpmx)
+        do iCmp = 1, ncmpmx
+            cmpUserName(iCmp) = nomcmp(iCmp)
+        end do
+        call irccmp(' '   , nomgd      ,&
+                    ncmpmx, cmpCataName,&
+                    nbcmp , cmpUserName,&
+                    nbcmpt, cmpIndx)
+        AS_DEALLOCATE(vk8 = cmpUserName)
 !       - SI SELECTION SUR LES COMPOSANTES ET AUCUNE PRESENTE DANS LE
 !       - CHAMP A IMPRIMER ALORS IL N'Y A RIEN A FAIRE
         if (nbcmpt .eq. 0) goto 9997
@@ -209,21 +217,21 @@ subroutine irdepl(chamno, ifi, form, titre,&
     if (form .eq. 'RESULTAT') then
         if (itype .eq. 1 .and. num .ge. 0) then
             call ircnrl(ifi, nbnot2, zi(iaprno), nueq, nec,&
-                        zi(iaec), ncmpmx, zr(iavale), zk8(iad), nomnoe,&
+                        zi(iaec), ncmpmx, zr(iavale), cmpCataName, nomnoe,&
                         lcor, ndim, coor, vnumnoe, nbcmpt,&
-                        zi(jncmp), lsup, borsup, linf, borinf,&
+                        cmpIndx, lsup, borsup, linf, borinf,&
                         lmax, lmin, formr)
         else if (itype.eq.1.and.num.lt.0) then
             call ircrrl(ifi, nbnot2, desc, nec, zi(iaec),&
-                        ncmpmx, zr( iavale), zk8(iad), nomnoe, lcor,&
-                        ndim, coor, vnumnoe, nbcmpt, zi(jncmp),&
+                        ncmpmx, zr( iavale), cmpCataName, nomnoe, lcor,&
+                        ndim, coor, vnumnoe, nbcmpt, cmpIndx,&
                         lsup, borsup, linf, borinf, lmax,&
                         lmin, formr)
         else if (itype.eq.2.and.num.ge.0) then
             call ircnc8(ifi, nbnot2, zi(iaprno), nueq, nec,&
-                        zi(iaec), ncmpmx, zc(iavale), zk8(iad), nomnoe,&
+                        zi(iaec), ncmpmx, zc(iavale), cmpCataName, nomnoe,&
                         lcor, ndim, coor, vnumnoe, nbcmpt,&
-                        zi(jncmp), lsup, borsup, linf, borinf,&
+                        cmpIndx, lsup, borsup, linf, borinf,&
                         lmax, lmin, formr)
         else if (itype.eq.2.and.num.lt.0) then
             call utmess('E', 'PREPOST2_35', sk=forma)
@@ -248,17 +256,17 @@ subroutine irdepl(chamno, ifi, form, titre,&
 !
         if (itype .eq. 1 .and. num .ge. 0) then
             call irdesr(ifi, nbnot2, zi(iaprno), nueq, nec,&
-                        zi(iaec), ncmpmx, zr(iavale), zk8(iad), titre,&
+                        zi(iaec), ncmpmx, zr(iavale), cmpCataName, titre,&
                         nomnoe, nomsd, nomsym, numord, vnumnoe,&
-                        lmasu, nbcmp, zi(jncmp), nomcmp)
+                        lmasu, nbcmp, cmpIndx, nomcmp)
         else if (itype.eq.1.and.num.lt.0) then
             call irdrsr(ifi, nbnot2, desc, nec, zi(iaec),&
-                        ncmpmx, zr( iavale), zk8(iad), titre, nomnoe,&
+                        ncmpmx, zr( iavale), cmpCataName, titre, nomnoe,&
                         nomsd, nomsym, numord, vnumnoe, lmasu,&
-                        nbcmp, zi(jncmp), nomcmp)
+                        nbcmp, cmpIndx, nomcmp)
         else if (itype.eq.2.and.num.ge.0) then
             call irdesc(ifi, nbnot2, zi(iaprno), nueq, nec,&
-                        zi(iaec), ncmpmx, zc(iavale), zk8(iad), titre,&
+                        zi(iaec), ncmpmx, zc(iavale), cmpCataName, titre,&
                         nomnoe, nomsd, nomsym, numord, vnumnoe,&
                         lmasu)
         else if (itype.eq.2.and.num.lt.0) then
@@ -287,6 +295,7 @@ subroutine irdepl(chamno, ifi, form, titre,&
     AS_DEALLOCATE(vk8=nomnoe)
     AS_DEALLOCATE(vi=vnumnoe)
     AS_DEALLOCATE(vr=vale)
+    AS_DEALLOCATE(vi = cmpIndx)
 999 continue
     call jedema()
 end subroutine
