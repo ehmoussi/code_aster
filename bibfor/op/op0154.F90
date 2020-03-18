@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,6 @@ subroutine op0154()
 #include "asterfort/infmaj.h"
 #include "asterfort/momaba.h"
 #include "asterfort/orilgm.h"
-#include "asterfort/orishb.h"
 #include "asterfort/rotama.h"
 #include "asterfort/symema.h"
 #include "asterfort/tranma.h"
@@ -276,14 +275,6 @@ subroutine op0154()
 !                                   "ORIE_LIGNE" ET  "ORIE_NORM_COQUE" :
 !     ---------------------------------------------------------------
     call orilgm(ma)
-!
-!     --- TRAITEMENT DU MOT CLEF  "ORIE_SHB" :
-!     ------------------------------------------
-    call getfac('ORIE_SHB', nbocc)
-    if (nbocc .ne. 0) then
-        l_check_lac = ASTER_TRUE
-        call orishb(ma)
-    endif
 !
 !
 !     --- TRAITEMENT DU MOT CLEF  "ABSC_CURV" :

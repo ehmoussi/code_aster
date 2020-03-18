@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ MODI_MAILLAGE=OPER(nom="MODI_MAILLAGE",op= 154,sd_prod=maillage_sdaster,
       regles=(AU_MOINS_UN('ORIE_FISSURE','DEFORME','ORIE_PEAU_2D',
                        'ORIE_PEAU_3D','ORIE_NORM_COQUE','MODI_MAILLE',
                        'TRANSLATION','ROTATION','MODI_BASE','ECHELLE',
-                       'ORIE_SHB','SYMETRIE','ORIE_LIGNE','ABSC_CURV'),
+                       'SYMETRIE','ORIE_LIGNE','ABSC_CURV'),
               PRESENT_ABSENT('ORIE_FISSURE','DEFORME','ORIE_PEAU_2D',
                        'ORIE_PEAU_3D','ORIE_NORM_COQUE','MODI_MAILLE',
                        'ORIE_LIGNE'),
@@ -75,9 +75,6 @@ MODI_MAILLAGE=OPER(nom="MODI_MAILLAGE",op= 154,sd_prod=maillage_sdaster,
          ORIE_PEAU_3D    =FACT(statut='f',max='**',
            GROUP_MA        =SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),
            GROUP_MA_VOLU   =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
-         ),
-         ORIE_SHB       =FACT(statut='f',max=1,
-           GROUP_MA        =SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),
          ),
          ORIE_NORM_COQUE =FACT(statut='f',max='**',
            GROUP_MA        =SIMP(statut='o',typ=grma,validators=NoRepeat(),max='**'),
