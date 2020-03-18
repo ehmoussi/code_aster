@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ integer, intent(in) :: list_func_acti(*)
 ! In  hval_incr        : hat-variable for incremental values fields
 ! IO  ds_contact       : datastructure for contact management
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! In  list_func_acti   : list of active functionnalities 
+! In  list_func_acti   : list of active functionnalities
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -201,7 +201,7 @@ integer, intent(in) :: list_func_acti(*)
     lpain(14) = 'PBASECO'
     lchin(14) = baseco
     lpain(15) = 'PMATERC'
-    lchin(15) = ds_material%field_mate(1:19)
+    lchin(15) = ds_material%mateco(1:19)
     lpain(16) = 'PFISNO'
     lchin(16) = fissno
     lpain(17) = 'PHEAVNO'

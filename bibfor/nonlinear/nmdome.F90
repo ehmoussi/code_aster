@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdome(modele, mate, carele, lischa, result,&
+subroutine nmdome(modele, mater, mateco, carele, lischa, result,&
                   nuord)
 !
 implicit none
@@ -37,7 +37,7 @@ implicit none
 integer :: nuord
 character(len=8) :: result
 character(len=19) :: lischa
-character(len=24) :: modele, mate, carele
+character(len=24) :: modele, mateco, carele, mater
 !
 ! ----------------------------------------------------------------------
 !
@@ -49,7 +49,7 @@ character(len=24) :: modele, mate, carele
 !
 !
 ! VAR MODELE  : NOM DU MODELE
-! OUT MATE    : NOM DU CHAMP DE MATERIAU CODE
+! OUT mateco    : NOM DU CHAMP DE MATERIAU CODE
 ! OUT CARELE  : CARACTERISTIQUES DES POUTRES ET COQUES
 ! I/O LISCHA  : SD L_CHARGES
 ! IN  RESULT  : NOM DE LA SD RESULTAT
@@ -74,6 +74,7 @@ character(len=24) :: modele, mate, carele
     iexcit = 1
     excit = ' '
     k8bla = ' '
+    materi = ' '
     l_load_user = .true.
 !
 ! --- LECTURES
@@ -90,9 +91,9 @@ character(len=24) :: modele, mate, carele
         l_load_user = iexcit.eq.1
 !
         if (materi .ne. k8bla) then
-            call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
+            call rcmfmc(materi, mateco, l_ther_ = ASTER_FALSE)
         else
-            mate = ' '
+            mateco = ' '
         endif
         cara = carele(1:8)
     else
@@ -116,9 +117,9 @@ character(len=24) :: modele, mate, carele
             call utmess('A', 'CALCULEL3_40')
         endif
         if (n1 .ne. 0) then
-            call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
+            call rcmfmc(materi, mateco, l_ther_ = ASTER_FALSE)
         else
-            mate = ' '
+            mateco = ' '
         endif
 !
 ! ------ LES CARACTERISTIQUES ELEMENTAIRES
@@ -135,6 +136,8 @@ character(len=24) :: modele, mate, carele
     endif
 !
 500 continue
+!
+    mater = materi
 !
 ! --- TRAITEMENT DES CHARGES
 !

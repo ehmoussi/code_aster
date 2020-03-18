@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,13 +82,13 @@ integer, intent(in) :: nume_inst
 ! - Create external state variables for current time
 !
     call nmchex(hval_incr, 'VALINC', 'COMPLU', varc_curr)
-    call nmvcle(model, ds_material%field_mate, cara_elem, time_curr, varc_curr)
+    call nmvcle(model, ds_material%mateco, cara_elem, time_curr, varc_curr)
 !
 ! - Compute CHAR_MECA_*_R for convergence criteria
 !
     vect_elem = '&&VARCINIT_ELEM'
     vect_asse = ds_material%fvarc_curr(1:19)
-    call nmvcfo('+'   , model    , ds_material%field_mate     , cara_elem, ds_constitutive%compor,&
+    call nmvcfo('+'   , model    , ds_material%mateco     , cara_elem, ds_constitutive%compor,&
                 ds_material%varc_refe, hval_incr, vect_elem)
     call assvec('V', vect_asse, 1, vect_elem, [1.d0],&
                 nume_dof, ' ', 'ZERO', 1)
@@ -97,7 +97,7 @@ integer, intent(in) :: nume_inst
 ! - Compute CHAR_MECA_*_R for PREDICTOR
 !
 !    vect_elem = '&&VARCINIT_ELEM'
-!    call nmvcpr(model    , ds_material%field_mate,&
+!    call nmvcpr(model    , ds_material%mateco,&
 !                cara_elem, ds_material%varc_refe , ds_constitutive%compor, &
 !                hval_incr, nume_dof_ = nume_dof, base_ = 'V',&
 !                vect_elem_prev_ = '&&VEVCOM',&

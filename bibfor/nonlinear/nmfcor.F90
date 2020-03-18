@@ -125,7 +125,7 @@ aster_logical :: lerrit
 !
 ! --- INITIALISATIONS CODES RETOURS
 !
-    mate      = ds_material%field_mate
+    mate      = ds_material%mateco
     varc_refe = ds_material%varc_refe
     ldccvg    = -1
     condcvg   = -1

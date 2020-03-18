@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,6 +53,8 @@ real(kind=8), intent(out) :: theta
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=24) :: mater
+!
     list_load = '&&OP0026.LISCHA'
     cara_elem = '&&OP0026.CARELE'
     model     = ' '
@@ -61,7 +63,7 @@ real(kind=8), intent(out) :: theta
 !
 ! - Get parameters from command file
 !
-    call ntdoth(model, mate, cara_elem, list_load)
+    call ntdoth(model, mater, mate, cara_elem, list_load)
 !
 ! - Get displacements
 !

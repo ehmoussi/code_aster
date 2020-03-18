@@ -70,7 +70,7 @@ character(len=1), intent(in), optional :: base
     character(len=8) :: chmat, nomgd, basename
     character(len=19) :: codi
     character(len=19) :: chemat, chmace
-    character(len=24) :: chmatgrp, chmatngrp
+    character(len=24) :: chmacegrp, chmacengrp
     character(len=8), pointer :: v_vale(:) => null()
     integer, pointer :: v_desc(:) => null()
     aster_logical :: l_thm, l_ther
@@ -89,8 +89,8 @@ character(len=1), intent(in), optional :: base
 !
     chemat = chmat//'.CHAMP_MAT'
     chmace = basename//'.MATE_CODE'
-    chmatgrp = chmace//'.GRP'
-    chmatngrp = chmace//'.NGRP'
+    chmacegrp = chmace//'.GRP'
+    chmacengrp = chmace//'.NGRP'
     print*, "CHMATER : ", chemat
     print*, "CHMATECO: ", chmace
 !
@@ -139,10 +139,10 @@ character(len=1), intent(in), optional :: base
         end do
         ASSERT(icompt .gt. 0)
 
-        call jedetr(chmatgrp)
-        call jedetr(chmatngrp)
-        call wkvect(chmatgrp, bas//' V K8', icompt, igrp)
-        call wkvect(chmatngrp, bas//' V I', nbgrp, ingrp)
+        call jedetr(chmacegrp)
+        call jedetr(chmacengrp)
+        call wkvect(chmacegrp, bas//' V K8', icompt, igrp)
+        call wkvect(chmacengrp, bas//' V I', nbgrp, ingrp)
 
         icompt=0
         inbmat=0
@@ -161,21 +161,20 @@ character(len=1), intent(in), optional :: base
         end do
 
         codi=' '
-        call jeveuo(chmatgrp, 'L', igrp)
-        call jeveuo(chmatngrp, 'L', ingrp)
+        call jeveuo(chmacegrp, 'L', igrp)
+        call jeveuo(chmacengrp, 'L', ingrp)
         icompt=0
         do kk = 1, nbgrp
             nbmat=zi(ingrp-1+kk)
             if (nbmat .ne. 0) then
-            call rcmaco(chmat(1:8), chmatgrp, icompt, nbmat, kk, l_ther)
-            call codent(kk, 'D0', knumat)
-
+                call rcmaco(chmat(1:8), chmacegrp, icompt, nbmat, kk, l_ther)
+                call codent(kk, 'D0', knumat)
 !       -- le nom du codi est celui du premier materiau du groupe kk
-            codi(1:8)=zk8(igrp+icompt)
-            codi(9:13)='.'//knumat
-            print*, "CODI: ", kk, codi
-            call jeveuo(codi//'.CODI', 'L', zi(jvale+kk-1))
-            icompt=icompt+nbmat
+                codi(1:8)=zk8(igrp+icompt)
+                codi(9:13)='.'//knumat
+                print*, "CODI: ", kk, codi
+                call jeveuo(codi//'.CODI', 'L', zi(jvale+kk-1))
+                icompt=icompt+nbmat
             endif
         end do
 

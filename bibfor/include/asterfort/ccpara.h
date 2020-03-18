@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 !
 interface
     subroutine ccpara(option, modele, resuin, resuou, numord,&
-                      nordm1, exitim, mateco, carael)
+                      nordm1, exitim, mater , carael)
         character(len=16) :: option
         character(len=8) :: modele
         character(len=8) :: resuin
@@ -30,7 +30,7 @@ interface
         integer :: numord
         integer :: nordm1
         aster_logical :: exitim
-        character(len=8) :: mateco
+        character(len=8) :: mater
         character(len=8) :: carael
     end subroutine ccpara
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ implicit none
     character(len=8) :: k8bid
     character(len=16) :: k16bid, nomcvg
     character(len=19) :: list_load, solver, maprec, list_load_save
-    character(len=24) :: model, mate, cara_elem
+    character(len=24) :: model, mate, cara_elem, mater
     character(len=24) :: nomch, vtemp, vtempm, vtempp, vec2nd
     character(len=24) :: result, ligrmo, tempev, tempin
     character(len=24) :: time, matass, noojb, nume_dof
@@ -120,7 +120,7 @@ implicit none
 !
 ! - Read parameters
 !
-    call ntdoth(model, mate, cara_elem, list_load,&
+    call ntdoth(model, mater, mate, cara_elem, list_load,&
                 matcst_ = matcst, coecst_ = coecst )
 !
 ! - EVOL_CHAR is prohibden

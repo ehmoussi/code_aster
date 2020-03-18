@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -122,13 +122,13 @@ character(len=19), intent(in) :: cnfnod
 ! - Compute
 !
     if (l_implex) then
-        call vefnme(option                , model         , ds_material%field_mate, cara_elem,&
+        call vefnme(option                , model         , ds_material%mateco, cara_elem,&
                     ds_constitutive%compor, time_list     , 0                     , ' '      ,&
                     vrcmoi                , sigm_extr     , ' ',&
                     disp_prev             , disp_cumu_inst,&
                     'V'                   , vefnod)
     else
-        call vefnme(option                , model         , ds_material%field_mate, cara_elem,&
+        call vefnme(option                , model         , ds_material%mateco, cara_elem,&
                     ds_constitutive%compor, time_list     , 0                     , ' '      ,&
                     vrcmoi                , sigm_prev     , strx_prev,&
                     disp_prev             , disp_cumu_inst,&
