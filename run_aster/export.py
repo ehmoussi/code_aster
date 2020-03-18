@@ -17,6 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+"""
+:py:mod:`export` --- Export file object
+---------------------------------------
+
+The :py:class:`Export` object parses ``.export`` files and provides
+getters and setters onto the parameters.
+
+This object contains :py:class:`File` and :py:class:`Parameter` objects.
+The arguments of the code_aster command line are stored in a special
+:py:class:`Parameter` object.
+"""
+
 import argparse
 import os.path as osp
 import platform

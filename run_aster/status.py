@@ -17,6 +17,19 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+"""
+:py:mod:`status` --- Extract the state of a code_aster execution
+----------------------------------------------------------------
+
+The execution state is computed from the exit code of the execution
+(null if the execution ends normally or !=0 otherwise) and the content of
+the output of the execution (from `.mess` file).
+
+For testcases, the execution may end normally but with a state not *Ok*
+if there is no TEST_RESU or if it is NOOK.
+"""
+
+
 import re
 
 

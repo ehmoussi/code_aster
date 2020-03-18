@@ -183,16 +183,20 @@ def check_aster_version(self):
     # just use the file if it is already in the source tree
     pkginfo = get_srcs('**/pkginfo.py')
     if pkginfo:
-        d = {}
-        exec(compile(open(pkginfo[0].abspath()).read(), pkginfo[0].abspath(), 'exec'), d)
-        return d['pkginfo']
+        ctxt = {}
+        exec(compile(open(pkginfo[0].abspath()).read(),
+                     pkginfo[0].abspath(), 'exec'),
+             ctxt)
+        return ctxt['pkginfo']
     # get revision informations
-    return get_revision_info(self.options)
+    return get_revision_info(self)
 
 
 MAXLEVEL = 25
+DEFAULT_PKGINFO = [(0, 0, 1), "n/a", "n/a", strftime("%d/%m/%Y"), "n/a", 1,
+                   ["no source repository"]]
 
-def get_revision_info_cmd(from_rev=None, rev="."):
+def get_revision_info_cmd(self, from_rev=None, rev="."):
     """Return details about changes on `rev` or the current revision
     between last official tagged revision"""
     def exec_cmd(cmd):
@@ -201,6 +205,18 @@ def get_revision_info_cmd(from_rev=None, rev="."):
                     if not k.startswith('PYTHON')])
         out = Popen(cmd, stdout=PIPE, env=env).communicate()[0]
         return out.decode().strip()
+
+    error_msg = ("Use --without-hg option if you didn't download the "
+                 "hg repository or create manually a file named "
+                 "`code_aster/pkginfo.py` with the necessary informations "
+                 "about the version. Example:\n"
+                 f"pkginfo = {DEFAULT_PKGINFO}")
+    # mercurial needed
+    try:
+        self.find_program("hg")
+    except Errors.WafError:
+        raise Errors.ConfigurationError("'hg' not found\n" + error_msg)
+
 
     if not from_rev:
         from_rev = "({0})~{1}".format(rev, MAXLEVEL)
@@ -211,11 +227,8 @@ def get_revision_info_cmd(from_rev=None, rev="."):
                      "--template", "{rev}:{node}:{tags}:{branch}:"
                                    "{date|shortdate}:{files}\n"]).splitlines()
     if not logs:
-        raise ValueError("empty revs range: {0}\n"
-                         "Use --without-hg option if you didn't download the "
-                         "hg repository or create manually a file named "
-                         "`code_aster/pkginfo.py` with the necessary informations "
-                         "about the version.".format(ancestors))
+        raise ValueError("empty revs range: {0}\n".format(ancestors)
+                         + error_msg)
     last = logs[-1].split(":")
     # print "\n".join(logs)
     _revn, revid, _tag, branch, date, _files = last
@@ -243,20 +256,19 @@ def get_revision_info_cmd(from_rev=None, rev="."):
         chg += 1
     return [vers, revid, branch, date, frbr, chg, loc]
 
-def get_revision_info(options, from_rev=None, rev="."):
+def get_revision_info(self, from_rev=None, rev="."):
     """Return details about changes on `rev` or the current revision
     between last official tagged revision"""
-    date = strftime("%d/%m/%Y")
-    if options.without_hg:
-        return [(0, 0, 1), "?", "?", date, "?", 1, ["no source repository"]]
+    if self.options.without_hg:
+        return DEFAULT_PKGINFO
     # quick search on last revisions
-    infos = get_revision_info_cmd(from_rev, rev)
+    infos = get_revision_info_cmd(self, from_rev, rev)
     if infos[0] == "?":
         try:
-            infos = get_revision_info_cmd("testing or stable", rev)
+            infos = get_revision_info_cmd(self, "testing or stable", rev)
         except ValueError:
             Logs.pprint("YELLOW", "'testing/stable' not found, search in all ancestors...", sep="")
-            infos = get_revision_info_cmd("0", rev)
+            infos = get_revision_info_cmd(self, "0", rev)
     return infos
 
 def version2tuple(vers_string):

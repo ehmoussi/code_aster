@@ -38,13 +38,13 @@ Development rules
 
       .. code-block:: sh
 
-        run_testcases --root=.. --testlist=asterxx --resutest=../resutest
+        ../install/std/bin/run_ctest --resutest=../resutest --clean -L asterxx
 
       and the parallel ones:
 
       .. code-block:: sh
 
-        run_testcases --root=.. --builddir=build/mpi --testlist=asterxx --resutest=../resutest_mpi
+        ../install/mpi/bin/run_ctest --resutest=../resutest_mpi --clean -L asterxx
 
 
 ****************
@@ -64,6 +64,8 @@ reference to ``libaster``.
 Some Python objects are created during the initialization and are callable
 by C/C++ functions (see :py:mod:`code_aster.Supervis` for details).
 
+
+.. _devguide-codeaster:
 
 ******************
 code_aster package
@@ -94,3 +96,5 @@ Contents
     devguide/recommendations
 
     devguide/todolist
+
+    devguide/run_aster

@@ -53,7 +53,7 @@ def options(self):
                      action='store', default=None,
                      help='run a testcase by passing additional arguments '
                           '(possible values are "debugger", "env" + those '
-                          'defined in the as_run configuration)')
+                          'defined in the configuration)')
 
 def configure(self):
     """Store developer preferences"""
@@ -72,10 +72,15 @@ def runtest(self):
         Logs.error("'run_aster' not found, please check your $PATH")
         return
     args = []
+    if opts.exectool and opts.exectool != 'env':
+        raise Errors.WafError(f"'{opts.exectool}' is not yet supported, "
+                              "use 'env' and start you favorite tool")
     if opts.exectool == 'debugger':
         args.append('--debugger')
     elif opts.exectool == 'env':
         args.append('--env')
+        wrkdir = tempfile.mkdtemp(prefix='runtest_')
+        args.extend(['--wrkdir', wrkdir])
     elif opts.exectool is not None:
         args.append('--exectool=%s' % opts.exectool)
     dtmp = opts.outputdir or self.env['PREFS_OUTPUTDIR'] \

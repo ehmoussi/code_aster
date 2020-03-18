@@ -31,7 +31,11 @@ import time
 from functools import partial
 from subprocess import Popen
 
-from asrun.run import AsRunFactory
+try:
+    from asrun.run import AsRunFactory
+    HAS_ASRUN = True
+except ImportError:
+    HAS_ASRUN = False
 
 import aster
 from .version import get_version
@@ -144,6 +148,9 @@ def get_shared_tmpdir(prefix, default_dir=None):
 
     If asrun shared tmpdir is not known, use *default_dir*.
     """
+    if not HAS_ASRUN:
+        return default_dir
+
     if getattr(get_shared_tmpdir, 'cache_run', None) is None:
         get_shared_tmpdir.cache_run = AsRunFactory()
     run = get_shared_tmpdir.cache_run

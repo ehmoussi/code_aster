@@ -25,6 +25,7 @@ Unittests of run_aster package.
 
 import os
 import os.path as osp
+import tarfile
 import tempfile
 import time
 import unittest
@@ -32,6 +33,7 @@ from glob import glob
 
 from run_aster.command_files import add_import_commands, stop_at_end
 from run_aster.config import CFG
+from run_aster.ctest2junit import XUnitReport
 from run_aster.export import (Export, File, Parameter, ParameterBool,
                               ParameterFloat, ParameterInt, ParameterListStr,
                               ParameterStr)
@@ -191,7 +193,7 @@ class TestExport(unittest.TestCase):
         # because of facmtps
         self.assertGreaterEqual(export.get("time_limit"), 60.0)
         self.assertIsNone(export.get("consbtc"))
-        self.assertEqual(len(export.datafiles), 2)
+        self.assertEqual(len(export.datafiles), 3)
         # 0 in asrun01b.export, but
         # + 'mess' with '--ctest',
         # + 'resu' + 'code' with as_run
@@ -200,6 +202,10 @@ class TestExport(unittest.TestCase):
         self.assertEqual(osp.basename(comm.path), "asrun01b.comm")
         self.assertEqual(comm.unit, 1)
         self.assertTrue(comm.data)
+        tar = [i for i in export.datafiles if i.filetype == "libr"][0]
+        self.assertEqual(osp.basename(tar.path), "asrun01b.11")
+        self.assertEqual(tar.unit, 11)
+        self.assertTrue(tar.data)
 
     def test_data(self):
         text = "\n".join([
@@ -535,6 +541,21 @@ class TestUtils(unittest.TestCase):
         self.assertGreaterEqual(timer._measures["key1"].elapsed, 0.19)
         self.assertGreaterEqual(timer._measures["key2"].elapsed, 0.09)
         self.assertIn("Global", report)
+
+
+class TestCTest2Junit(unittest.TestCase):
+    """Check ctest2junit module"""
+
+    def test_convert(self):
+        previous = os.getcwd()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            os.chdir(tmpdir)
+            with tarfile.open(osp.join(previous, "fort.11")) as tar:
+                tar.extractall()
+            report = XUnitReport(tmpdir)
+            report.read_ctest()
+            report.write_xml("run_testcases.xml")
+        os.chdir(previous)
 
 
 if __name__ == "__main__":

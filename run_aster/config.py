@@ -17,6 +17,21 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+"""
+:py:mod:`config` --- Configuration of the version
+-------------------------------------------------
+
+The :py:class:`Config` object gives access to the configuration parameters
+of the installed version.
+These parameters are usually set during the ``waf configure`` step and are
+stored in a JSON file.
+
+The configuration file is installed in
+``<installation-prefix>/share/aster/config.js``.
+
+This file can be completed by user file : ``$HOME/.run_aster.js``.
+"""
+
 import json
 import os
 import os.path as osp
