@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 
 interface
-    subroutine merime_wrap(modelz, nchar, lchar, mate, carelz,&
+    subroutine merime_wrap(modelz, nchar, lchar, mater, mateco, carelz,&
                            time, compoz, matelz, nh, basz)
         integer :: nchar, nh
         real(kind=8) :: time
         character(len=*) :: modelz, carelz, matelz
         character(len=24) :: lchar(nchar)
-        character(len=*) :: mate, basz, compoz
+        character(len=*) :: mateco, mater, basz, compoz
     end subroutine merime_wrap
 end interface

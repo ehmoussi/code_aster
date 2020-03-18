@@ -170,7 +170,8 @@ ElementaryMatrixDisplacementRealPtr
 
     ASTERINTEGER nh = 0;
 
-    CALLO_MERIME_WRAP( modelName, &nbLoad, *( jvListOfLoads->getDataPtr() ), codedMater->getName(),
+    CALLO_MERIME_WRAP( modelName, &nbLoad, *( jvListOfLoads->getDataPtr() ), curMater->getName(),
+                       codedMater->getName(),
                        caraName, &time, compor->getName(), retour->getName(), &nh,
                        JeveuxMemoryTypesNames[0] );
 
