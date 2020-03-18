@@ -17,6 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+"""
+:py:mod:`toolbox` --- Toolbox for the developers
+------------------------------------------------
+"""
+
+
 from .config import CFG
 from .utils import run_command
 

@@ -17,6 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+"""
+:py:mod:`timer` --- Simple timer
+--------------------------------
+
+This module defines the simple timer object to store elapsed times during
+different steps of an execution.
+"""
+
+
 import os
 from collections import OrderedDict, namedtuple
 
