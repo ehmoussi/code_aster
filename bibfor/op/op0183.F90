@@ -80,7 +80,7 @@ implicit none
     character(len=16) :: option, type, oper, k16bid
     character(len=16) :: compex
     character(len=19) :: resuco, knum, ligrel, resuc1, chdep2, list_load
-    character(len=24) :: modele, mater, carac, chamno
+    character(len=24) :: modele, mateco, carac, chamno, mater
     character(len=24) :: nume, vfono, vafono, sigma, chdepl, k24bid
     character(len=24) :: vreno, compor, chvive, chacve, raide
     character(len=24) :: bidon, chvarc
@@ -153,16 +153,16 @@ implicit none
     l_implex = .false.
     exitim=.true.
     carac=' '
-    mater=' '
+    mateco=' '
     call rscrsd('G', resuc1, type, nbordr)
     call getvid(' ', 'MODELE', scal=modele, nbret=n0)
     ligrel=modele(1:8)//'.MODELE'
     ASSERT(n0.eq.1)
     call getvid(' ', 'CHAM_MATER', scal=materi, nbret=n0)
     if (n0 .gt. 0) then
-        call rcmfmc(materi, mater, l_ther_ = ASTER_FALSE)
+        call rcmfmc(materi, mateco, l_ther_ = ASTER_FALSE)
     else
-        mater=' '
+        mateco=' '
     endif
     carac=' '
     call getvid(' ', 'CARA_ELEM', scal=carac, nbret=n0)
@@ -277,7 +277,7 @@ implicit none
             time=zr(iad)
         endif
 !
-        call vrcins(modele, mater, carac, time, chvarc(1:19),&
+        call vrcins(modele, materi, carac, time, chvarc(1:19),&
                     codret)
 !
 !       --- CALCUL DES VECTEURS ELEMENTAIRES ---
@@ -289,7 +289,7 @@ implicit none
             endif
         endif
 !
-        call vefnme(option, modele, mater, carac,&
+        call vefnme(option, modele, mateco, carac,&
                     compor, partps, nh, ligrel, chvarc,&
                     sigma, ' ', chdepl, chdep2, 'V',  vfono)
 !
@@ -326,7 +326,7 @@ implicit none
         end do
 !
         call rsnoch(resuc1, 'DEPL', iordr)
-        call nmdome(modele, mater, carac, list_load, resuc1(1:8),&
+        call nmdome(modele, mater, mateco, carac, list_load, resuc1(1:8),&
                     iordr)
 !
         call detrsd('CHAMP_GD', '&&'//nompro//'.SIEF')

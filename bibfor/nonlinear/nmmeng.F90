@@ -93,7 +93,7 @@ type(HHO_Field), intent(in) :: hhoField
 !
 ! - Destruct MATECO
 !
-    call detrsd('CHAMP_GD', ds_material%field_mate)
+    call detrsd('CHAMP_GD', ds_material%mateco)
 !
 ! - DESTRUCTION DE TOUTES LES MATRICES CREEES
 !

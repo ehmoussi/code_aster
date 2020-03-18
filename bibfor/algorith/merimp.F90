@@ -199,7 +199,7 @@ integer, intent(out) :: nbin
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = ds_material%field_mate(1:19)
+    lchin(2) = ds_material%mateco(1:19)
     lpain(3) = 'PCONTMR'
     lchin(3) = sigm_prev(1:19)
     lpain(4) = 'PVARIMR'

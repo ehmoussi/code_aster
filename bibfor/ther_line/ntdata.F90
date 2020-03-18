@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ real(kind=8), intent(out) :: theta
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    character(len=24) :: mater
     character(len=16) :: k16bid
     character(len=8) :: k8bid
 !
@@ -74,7 +75,7 @@ real(kind=8), intent(out) :: theta
 !
 ! - Read parameters
 !
-    call ntdoth(model, mate, cara_elem, list_load,&
+    call ntdoth(model, mater, mate, cara_elem, list_load,&
                 matcst_ = matcst, coecst_ = coecst )
 !
 ! - Get parameters for linear solver

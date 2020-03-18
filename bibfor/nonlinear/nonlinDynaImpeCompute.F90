@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -95,10 +95,10 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! - Compute
 !
     if (phase .eq. 'Prediction') then
-        call veimpd(model, ds_material%field_mate, vite_prev, sddyna,&
+        call veimpd(model, ds_material%mateco, vite_prev, sddyna,&
                     vect_elem)
     elseif (phase .eq. 'Correction') then
-        call veimpd(model, ds_material%field_mate, vite_curr, sddyna,&
+        call veimpd(model, ds_material%mateco, vite_curr, sddyna,&
                     vect_elem)
     else
         ASSERT(ASTER_FALSE)

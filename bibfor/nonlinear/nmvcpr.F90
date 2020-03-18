@@ -77,7 +77,7 @@ character(len=24), intent(in) :: nume_dof
 ! - Initializations
 !
     nume_harm = 0
-    mate      = ds_material%field_mate
+    mate      = ds_material%mateco
     varc_refe = ds_material%varc_refe(1:19)
     compor    = ds_constitutive%compor(1:19)
     cnvcpr    = ds_material%fvarc_pred(1:19)

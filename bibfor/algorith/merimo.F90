@@ -190,7 +190,7 @@ character(len=*), optional, intent(in) :: sddynz_
         if (iret .eq. 0) then
             call jeexin(merigi//'.RERR', ires)
             if (ires .eq. 0) then
-                call memare(base, merigi, model, ds_material%field_mate, cara_elem, 'RIGI_MECA')
+                call memare(base, merigi, model, ds_material%mateco, cara_elem, 'RIGI_MECA')
             endif
             if (l_macr_elem) then
                 call jeveuo(merigi//'.RERR', 'E', vk24=v_rerr)
@@ -204,7 +204,7 @@ character(len=*), optional, intent(in) :: sddynz_
     if (l_vefint) then
         call jeexin(vefint//'.RELR', iret)
         if (iret .eq. 0) then
-            call memare(base, vefint, model, ds_material%field_mate, cara_elem, 'CHAR_MECA')
+            call memare(base, vefint, model, ds_material%mateco, cara_elem, 'CHAR_MECA')
         endif
         call jedetr(vefint//'.RELR')
         call reajre(vefint, ' ', base)

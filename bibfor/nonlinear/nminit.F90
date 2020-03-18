@@ -333,7 +333,7 @@ type(HHO_Field), intent(inout) :: hhoField
 !
 ! - Initializations for material parameters management
 !
-    call nonlinDSMaterialInit(model      , mateco     , cara_elem,&
+    call nonlinDSMaterialInit(model      , mater, mateco     , cara_elem,&
                               ds_constitutive%compor, valinc,&
                               numedd     , instin   , &
                               ds_material)

@@ -173,7 +173,7 @@ character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
 !
 ! - Prepare datastructures
 !
-    ds_material%field_mate = mate
+    ds_material%mateco = mate
     ds_material%varc_refe  = varc_refe
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  mode             : 'FIXE'-> dead loads 
+! In  mode             : 'FIXE'-> dead loads
 !                        'VARI'-> undead loads
 !                        'ACCI'-> initial acceleration (dynamic)
 ! In  sddyna           : datastructure for dynamic
@@ -101,7 +101,7 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
         if (mode .eq. 'FIXE') then
             call nmchex(hval_veelem, 'VEELEM', 'CNONDP', vect_elem)
             call nmchex(hval_veasse, 'VEASSE', 'CNONDP', vect_asse)
-            call veondp(model, ds_material%field_mate, sddyna, time_curr,&
+            call veondp(model, ds_material%mateco, sddyna, time_curr,&
                         vect_elem)
             call asasve(vect_elem, nume_dof, 'R', vect_alem)
             call ascova('D', vect_alem, ' ', 'INST', time_curr,&
