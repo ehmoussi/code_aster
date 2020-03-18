@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -78,7 +78,6 @@ def load_compilers(self):
             self.check_mpi()
         if not self.get_define('HAVE_MPI'):
             self.fatal("Unable to configure the parallel environment")
-        self.env.BUILD_PARALLEL = 1
 
 @Configure.conf
 def check_mpi(self):
