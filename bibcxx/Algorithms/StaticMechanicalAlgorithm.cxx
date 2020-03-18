@@ -34,6 +34,8 @@ void updateContextFromStepper< TimeStepperClass::const_iterator, StaticMechanica
 void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) {
     BaseDOFNumberingPtr dofNum1 = ctx._results->getLastDOFNumbering();
 
+    ctx._varCom->compute( ctx._time );
+
     if ( ctx._rank == 1 || !ctx._isConst ) {
         auto matrElem = ctx._discreteProblem->buildElementaryStiffnessMatrix( ctx._time );
 
@@ -56,8 +58,6 @@ void StaticMechanicalAlgorithm::oneStep( const CurrentContext &ctx ) {
     // Build Laplace forces
     ElementaryVectorPtr vectElem2 = ctx._discreteProblem->buildElementaryLaplaceVector();
     FieldOnNodesRealPtr chNoLap = vectElem2->assembleVector( dofNum1, ctx._time, Temporary );
-
-    ctx._varCom->compute( ctx._time );
 
     // Build Neumann loads
     VectorReal times;

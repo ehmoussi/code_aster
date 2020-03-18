@@ -224,10 +224,11 @@ void DEFPPPPSPSS(UTIMSD,utimsd, ASTERINTEGER*, ASTERINTEGER*, ASTERINTEGER*, AST
                                 const char*, STRING_SIZE, ASTERINTEGER*, const char*,
                                 STRING_SIZE, const char*, STRING_SIZE );
 
-#define CALLO_MERIME_WRAP(a, b, c, d, e, f, g, h, i, j) \
-    CALLOPOOOPOOPO(MERIME_WRAP, merime_wrap, a, b, c, d, e, f, g, h, i, j)
-void DEFSPSSSPSSPS(MERIME_WRAP,merime_wrap, const char*, STRING_SIZE, ASTERINTEGER*,
+#define CALLO_MERIME_WRAP(a, b, c, d, e, f, g, h, i, j, k) \
+    CALLOPOOOOPOOPO(MERIME_WRAP, merime_wrap, a, b, c, d, e, f, g, h, i, j, k)
+void DEFSPSSSSPSSPS(MERIME_WRAP,merime_wrap, const char*, STRING_SIZE, ASTERINTEGER*,
                    const char*, STRING_SIZE, const char*, STRING_SIZE, const char*, STRING_SIZE,
+                   const char*, STRING_SIZE,
                    ASTERDOUBLE *, const char*, STRING_SIZE, const char*, STRING_SIZE,
                    ASTERINTEGER*, const char*, STRING_SIZE );
 
