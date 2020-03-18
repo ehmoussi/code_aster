@@ -34,6 +34,7 @@ Build some data files (dest: share/aster)
 - 'un_ctest': script that executes a list of testcases using 'ctest'.
 """
 
+import getpass
 import json
 import os
 import os.path as osp
@@ -371,17 +372,24 @@ def check_mpirun(self):
     _check_prog(self, "mpirun", ["mpirun"], var_prefix="CFGJS_")
     mpirun = self.env["CFGJS_mpirun"][0]
     mpicmd = [mpirun]
+    root_option = []
+    if getpass.getuser() == "root":
+        if self._call_cmd("Check for mpirun flag '--allow-run-as-root'",
+                        [mpirun, "--allow-run-as-root", "echo"]) == 0:
+            root_option.append("--allow-run-as-root")
+    # store for future checkings
+    self.env["base_mpirun"] = [mpirun] + root_option
     if self._call_cmd("Check for mpirun flag '-n N'",
-                      [mpirun, "-n", "1", "echo"]) == 0:
+                      self.env["base_mpirun"] + ["-n", "1", "echo"]) == 0:
         mpicmd.extend(["-n", "{mpi_nbcpu}"])
     elif self._call_cmd("Check for mpirun flag '-np N'",
-                        [mpirun, "-np", "1", "echo"]) == 0:
+                        self.env["base_mpirun"] + ["-np", "1", "echo"]) == 0:
         mpicmd.extend(["-np", "{mpi_nbcpu}"])
 
     for opt in ("--tag-output", "-print-rank-map", "-prepend-rank",
                 "-ordered-output"):
         if self._call_cmd("Check for mpirun flag '{0}'".format(opt),
-                        [mpirun, opt, "echo"]) == 0:
+                          self.env["base_mpirun"] + [opt, "echo"]) == 0:
             mpicmd.append(opt)
     mpicmd.append("{program}")
     self.env["CFGJS_mpirun"] = [" ".join(mpicmd)]
@@ -394,8 +402,7 @@ def check_mpirun_rank(self):
         self.env["CFGJS_mpirun_rank"] = [self.env["mpirun_rank"]]
         return
     # default to openmpi
-    cmd = self.env["CFGJS_mpirun"][0].format(mpi_nbcpu=1, program="env")
-    out = self.cmd_and_log(cmd)
+    out = self.cmd_and_log(self.env["base_mpirun"] + ["env"])
     rank_id = "echo ${OMPI_COMM_WORLD_RANK}"
     if "PMI_RANK" in out:
         rank_id = "echo ${PMI_RANK}"

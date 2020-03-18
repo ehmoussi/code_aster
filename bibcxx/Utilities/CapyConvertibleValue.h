@@ -548,7 +548,7 @@ class CapyConvertibleContainer {
         return true;
     };
 
-    std::string setName( const std::string &name ) {
+    void setName( const std::string &name ) {
         _nameOfFKW = name;
         _isFKW = true;
     };
