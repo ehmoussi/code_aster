@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 !
 interface
     subroutine cakg3d(option, result, modele, depla, thetai,&
-                      mate, compor, lischa, symech,&
+                      mate, mateco, compor, lischa, symech,&
                       chfond, nnoff, basloc, courb, iord,&
                       ndeg, liss, ndimte, extim,&
                       time, nbprup, noprup,&
@@ -33,7 +33,7 @@ interface
         character(len=8)  :: modele
         character(len=24) :: depla
         character(len=8)  :: thetai
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         character(len=24) :: compor
         character(len=19) :: lischa
         character(len=8)  :: symech
@@ -55,7 +55,7 @@ interface
         aster_logical     :: milieu
         aster_logical     :: connex
         integer :: coor
-        integer :: iadnoe        
+        integer :: iadnoe
         character(len=16), intent(in), optional :: typdis
     end subroutine cakg3d
 end interface

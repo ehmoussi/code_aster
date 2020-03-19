@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine memare(base  , matr_vect_elemz, modelz, mate, cara_elem,&
+    subroutine memare(base  , matr_vect_elemz, modelz, mateco, cara_elem,&
                       suropt)
         character(len=1), intent(in) :: base
         character(len=*), intent(in) :: matr_vect_elemz
         character(len=*), intent(in) :: modelz
-        character(len=*), intent(in) :: mate
+        character(len=*), intent(in) :: mateco
         character(len=*), intent(in) :: cara_elem
         character(len=*), intent(in) :: suropt
     end subroutine memare
