@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,23 +61,8 @@ implicit none
     if (elrefa .eq. 'HE8') then
         vol = 8.d0
 !
-        nbfpg = 8
-        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 5, 16, 64]
-!
-        fapg(1) = 'NOEU'
-        fapg(2) = 'NOEU_S'
-        fapg(3) = 'FPG1'
-        fapg(4) = 'FPG8'
-        fapg(5) = 'FPG27'
-        fapg(6) = 'SHB5'
-        fapg(7) = 'FPG8NOS'
-        fapg(8) = 'FPG64'
-!
-    else if (elrefa.eq.'H20') then
-        vol = 8.d0
-!
-        nbfpg = 8
-        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 16, 20, 64]
+        nbfpg = 7
+        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 16, 64]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
@@ -85,8 +70,21 @@ implicit none
         fapg(4) = 'FPG8'
         fapg(5) = 'FPG27'
         fapg(6) = 'FPG8NOS'
-        fapg(7) = 'SHB20'
-        fapg(8) = 'FPG64'
+        fapg(7) = 'FPG64'
+!
+    else if (elrefa.eq.'H20') then
+        vol = 8.d0
+!
+        nbfpg = 7
+        nbpg(1:nbfpg) = [nno, nnos, 1, 8, 27, 16, 64]
+!
+        fapg(1) = 'NOEU'
+        fapg(2) = 'NOEU_S'
+        fapg(3) = 'FPG1'
+        fapg(4) = 'FPG8'
+        fapg(5) = 'FPG27'
+        fapg(6) = 'FPG8NOS'
+        fapg(7) = 'FPG64'
 !
     else if (elrefa.eq.'H27') then
         vol = 8.d0
@@ -150,8 +148,8 @@ implicit none
     else if (elrefa.eq.'PE6' .or. elrefa .eq. 'SH6') then
         vol = 1.d0
 !
-        nbfpg = 9
-        nbpg(1:nbfpg) = [nno, nnos, 1, 6, 6, 8, 21, 12, 5]
+        nbfpg = 8
+        nbpg(1:nbfpg) = [nno, nnos, 1, 6, 6, 8, 21, 12]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
@@ -161,7 +159,6 @@ implicit none
         fapg(6) = 'FPG8'
         fapg(7) = 'FPG21'
         fapg(8) = 'FPG6NOS'
-        fapg(9) = 'SHB6'
 !
     else if (elrefa.eq.'P13') then
         vol = 2.d0/3.d0
@@ -180,8 +177,8 @@ implicit none
     else if (elrefa.eq.'P15' .or. elrefa .eq. 'S15') then
         vol = 1.d0
 !
-        nbfpg = 8
-        nbpg(1:nbfpg) = [nno, nnos, 1, 6, 8, 21, 12, 15]
+        nbfpg = 7
+        nbpg(1:nbfpg) = [nno, nnos, 1, 6, 8, 21, 12]
 !
         fapg(1) = 'NOEU'
         fapg(2) = 'NOEU_S'
@@ -190,7 +187,6 @@ implicit none
         fapg(5) = 'FPG8'
         fapg(6) = 'FPG21'
         fapg(7) = 'FPG6NOS'
-        fapg(8) = 'SHB15'
 !
     else if (elrefa.eq.'P18') then
         vol = 1.d0

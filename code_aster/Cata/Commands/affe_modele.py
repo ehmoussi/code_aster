@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -147,7 +147,6 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "Q4GG",            # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
                                   "TUYAU_3M",        # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
                                   "TUYAU_6M",        # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
-                                  "SHB",             # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
                                   "D_PLAN_HHM",      # person_in_charge: sylvie.granet at edf.fr
                                   "D_PLAN_HH2M_SI",  # person_in_charge: sylvie.granet at edf.fr
                                   "D_PLAN_HM",       # person_in_charge: sylvie.granet at edf.fr

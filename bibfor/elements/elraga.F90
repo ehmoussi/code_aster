@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,8 +52,8 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
     real(kind=8) :: atx(7), aty(7), ht(7), atz(7)
     real(kind=8) :: aa, bb, cc, hh, h1, h2, h3, rac5, rac15, a1, b1, b6, c1, c8
     real(kind=8) :: d1, d12
-    real(kind=8) :: p1, p2, p3, p4, p5, xxg5(20), xyg5(20), xzg5(20)
-    real(kind=8) :: pxg5(20), xa, xb
+    real(kind=8) :: p1, p2, p3, p4, p5
+    real(kind=8) :: xa, xb
     real(kind=8) :: zero, unquar, undemi, un, deux, xno(3*27), vol, a2, b2
     real(kind=8) :: untiers
 ! -----  FONCTIONS FORMULES
@@ -195,78 +195,13 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             if (ndim .eq. 3) zpg(ino+8) = xno(ndim* (ino-1)+3)
 300          continue
 !
-        else if (fapg.eq.'SHB5') then
-! --------- FORMULE DE QUADRATURE DE GAUSS A 5 POINTS DANS
-!           L EPAISSEUR POUR LE SHB8, AU CENTRE DE L'ELEMENT
-            xxg5(1) = -0.906179845938664d0
-            xxg5(2) = -0.538469310105683d0
-            xxg5(3) = 0.d0
-            xxg5(4) = 0.538469310105683d0
-            xxg5(5) = 0.906179845938664d0
-!
-            pxg5(1) = 0.236926885056189d0
-            pxg5(2) = 0.478628670499366d0
-            pxg5(3) = 0.568888888888889d0
-            pxg5(4) = 0.478628670499366d0
-            pxg5(5) = 0.236926885056189d0
-!         IL FAUT MULTIPLIER LES POIDS PAR 4 POUR OBTENIR VOL=8
-            do 70 iz = 1, 5
-                xpg(iz) = 0.d0
-                ypg(iz) = 0.d0
-                zpg(iz) = xxg5(iz)
-                hpg(iz) = pxg5(iz)*4.d0
-70          continue
-            goto 170
-!
-        else if (fapg.eq.'SHB20') then
-! --------- FORMULE DE QUADRATURE DE GAUSS A 20 POINTS DANS
-!           L EPAISSEUR POUR LE SHB20
-!           DES POINTS DE GAUSS SUR LA FACETTE 1-2-3:
-!
-            xzg5(1) = -0.906179845938664d0
-            xzg5(2) = -0.538469310105683d0
-            xzg5(3) = 0.d0
-            xzg5(4) = 0.538469310105683d0
-            xzg5(5) = 0.906179845938664d0
-!
-            pxg5(1) = 0.236926885056189d0
-            pxg5(2) = 0.478628670499366d0
-            pxg5(3) = 0.568888888888889d0
-            pxg5(4) = 0.478628670499366d0
-            pxg5(5) = 0.236926885056189d0
-!
-            do 71 iz = 1, 5
-                xxg5(iz) = -0.577350269189625d0
-                xxg5(iz+5) = 0.577350269189625d0
-                xxg5(iz+10) = 0.577350269189625d0
-                xxg5(iz+15) = -0.577350269189625d0
-                xyg5(iz) = -0.577350269189625d0
-                xyg5(iz+5) = -0.577350269189625d0
-                xyg5(iz+10) = 0.577350269189625d0
-                xyg5(iz+15) = 0.577350269189625d0
-                xzg5(iz+5) = xzg5(iz)
-                pxg5(iz+5) = pxg5(iz)
-                xzg5(iz+10) = xzg5(iz)
-                pxg5(iz+10) = pxg5(iz)
-                xzg5(iz+15) = xzg5(iz)
-                pxg5(iz+15) = pxg5(iz)
-71          continue
-!
-            do 72 iz = 1, 20
-                xpg(iz) = xxg5(iz)
-                ypg(iz) = xyg5(iz)
-                zpg(iz) = xzg5(iz)
-                hpg(iz) = pxg5(iz)
-72          continue
-            goto 170
-!
         else
             valk (1) = elrefa
             valk (2) = fapg
             call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
         endif
 !
-!       TRAITEMENT POUR FAPG NON SHB
+!       TRAITEMENT POUR FAPG
         npi = 0
         do 60 ix = 1, npar
             do 50 iy = 1, npar
@@ -416,69 +351,13 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             if (ndim .eq. 3) zpg(ino+6) = xno(ndim* (ino-1)+3)
             enddo
 !
-        else if (fapg.eq.'SHB6') then
-! --------- FORMULE DE QUADRATURE DE GAUSS A 5 POINTS DANS
-!           L EPAISSEUR POUR LE SHB6, AU CENTRE DE L'ELEMENT
-            xxg5(1) = -0.906179845938664d0
-            xxg5(2) = -0.538469310105683d0
-            xxg5(3) = 0.d0
-            xxg5(4) = 0.538469310105683d0
-            xxg5(5) = 0.906179845938664d0
-!
-            pxg5(1) = 0.236926885056189d0
-            pxg5(2) = 0.478628670499366d0
-            pxg5(3) = 0.568888888888889d0
-            pxg5(4) = 0.478628670499366d0
-            pxg5(5) = 0.236926885056189d0
-!         IL FAUT MULTIPLIER LES POIDS PAR 0.5 POUR OBTENIR VOL=1
-            do  iz = 1, 5
-                xpg(iz) = untiers
-                ypg(iz) = untiers
-                zpg(iz) = xxg5(iz)
-                hpg(iz) = pxg5(iz)*0.5d0
-            enddo
-            goto 170
-!
-        else if (fapg.eq.'SHB15') then
-! --------- FORMULE DE QUADRATURE DE GAUSS A 15 POINTS DANS
-!           L EPAISSEUR POUR LE SHB15
-            do  iz = 1, 5
-                xyg5(iz) = 0.5d0
-                xxg5(iz) = 0.5d0
-                xyg5(iz+5) = 0.d0
-                xxg5(iz+5) = 0.5d0
-                xyg5(iz+10) = 0.5d0
-                xxg5(iz+10) = 0.d0
-            enddo
-!
-            do  iz = 1, 3
-                xzg5(5*(iz-1)+1) = -0.906179845938664d0
-                xzg5(5*(iz-1)+2) = -0.538469310105683d0
-                xzg5(5*(iz-1)+3) = 0.d0
-                xzg5(5*(iz-1)+4) = 0.538469310105683d0
-                xzg5(5*(iz-1)+5) = 0.906179845938664d0
-!
-                pxg5(5*(iz-1)+1) = 0.236926885056189d0/6.d0
-                pxg5(5*(iz-1)+2) = 0.478628670499366d0/6.d0
-                pxg5(5*(iz-1)+3) = 0.568888888888889d0/6.d0
-                pxg5(5*(iz-1)+4) = 0.478628670499366d0/6.d0
-                pxg5(5*(iz-1)+5) = 0.236926885056189d0/6.d0
-            enddo
-            do iz = 1, 15
-                xpg(iz) = xxg5(iz)
-                ypg(iz) = xyg5(iz)
-                zpg(iz) = xzg5(iz)
-                hpg(iz) = pxg5(iz)
-            enddo
-            goto 170
-!
         else
             valk (1) = elrefa
             valk (2) = fapg
             call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
         endif
 !
-!       TRAITEMENT POUR LES FAPG NON SHB
+!       TRAITEMENT POUR LES FAPG
         npi = 0
         do  iz = 1, npz
             do  ix = 1, npxy
@@ -626,69 +505,13 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             if (ndim .eq. 3) zpg(ino+6) = xno(ndim* (ino-1)+3)
 280          continue
 !
-        else if (fapg.eq.'SHB6') then
-! --------- FORMULE DE QUADRATURE DE GAUSS A 5 POINTS DANS
-!           L EPAISSEUR POUR LE SHB6, AU CENTRE DE L'ELEMENT
-            xxg5(1) = -0.906179845938664d0
-            xxg5(2) = -0.538469310105683d0
-            xxg5(3) = 0.d0
-            xxg5(4) = 0.538469310105683d0
-            xxg5(5) = 0.906179845938664d0
-!
-            pxg5(1) = 0.236926885056189d0
-            pxg5(2) = 0.478628670499366d0
-            pxg5(3) = 0.568888888888889d0
-            pxg5(4) = 0.478628670499366d0
-            pxg5(5) = 0.236926885056189d0
-!         IL FAUT MULTIPLIER LES POIDS PAR 0.5 POUR OBTENIR VOL=1
-            do 73 iz = 1, 5
-                xpg(iz) = xxg5(iz)
-                ypg(iz) = untiers
-                zpg(iz) = untiers
-                hpg(iz) = pxg5(iz)*0.5d0
-73          continue
-            goto 170
-!
-        else if (fapg.eq.'SHB15') then
-! --------- FORMULE DE QUADRATURE DE GAUSS A 15 POINTS DANS
-!           L EPAISSEUR POUR LE SHB15
-            do 74 iz = 1, 5
-                xzg5(iz) = 0.5d0
-                xyg5(iz) = 0.5d0
-                xzg5(iz+5) = 0.5d0
-                xyg5(iz+5) = 0.d0
-                xzg5(iz+10) = 0.d0
-                xyg5(iz+10) = 0.5d0
-74          continue
-!
-            do 75 iz = 1, 3
-                xxg5(5*(iz-1)+1) = -0.906179845938664d0
-                xxg5(5*(iz-1)+2) = -0.538469310105683d0
-                xxg5(5*(iz-1)+3) = 0.d0
-                xxg5(5*(iz-1)+4) = 0.538469310105683d0
-                xxg5(5*(iz-1)+5) = 0.906179845938664d0
-!
-                pxg5(5*(iz-1)+1) = 0.236926885056189d0/6.d0
-                pxg5(5*(iz-1)+2) = 0.478628670499366d0/6.d0
-                pxg5(5*(iz-1)+3) = 0.568888888888889d0/6.d0
-                pxg5(5*(iz-1)+4) = 0.478628670499366d0/6.d0
-                pxg5(5*(iz-1)+5) = 0.236926885056189d0/6.d0
-75          continue
-            do 76 iz = 1, 15
-                xpg(iz) = xxg5(iz)
-                ypg(iz) = xyg5(iz)
-                zpg(iz) = xzg5(iz)
-                hpg(iz) = pxg5(iz)
-76          continue
-            goto 170
-!
         else
             valk (1) = elrefa
             valk (2) = fapg
             call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
         endif
 !
-!       TRAITEMENT POUR LES FAPG NON SHB
+!       TRAITEMENT POUR LES FAPG
         npi = 0
         do ix = 1, npx
             do iy = 1, npyz
