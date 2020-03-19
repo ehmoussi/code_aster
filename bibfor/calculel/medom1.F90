@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine medom1(modele, mate, cara, kcha, ncha,&
+subroutine medom1(modele, mater, mateco, cara, kcha, ncha,&
                   ctyp, result, nuord)
     implicit none
 #include "asterf_types.h"
@@ -38,14 +38,15 @@ subroutine medom1(modele, mate, cara, kcha, ncha,&
     integer :: ncha, nuord
     character(len=4) :: ctyp
     character(len=8) :: modele, cara, result
-    character(len=24) :: mate
+    character(len=24) :: mater, mateco
     character(len=19) :: kcha
 !     SAISIE ET VERIFICATION DE LA COHERENCE DES DONNEES MECANIQUES
 !     DU PROBLEME
 !
 ! ----------------------------------------------------------------------
 ! OUT : MODELE : NOM DU MODELE
-! OUT : MATE   : CHAMP MATERIAU
+! OUT : MATER  : CHAMP MATERIAU
+! OUT : MATECO : MATERIAU CODE
 ! OUT : CARA   : NOM DU CHAMP DE CARACTERISTIQUES
 ! IN  : KCHA   : NOM JEVEUX POUR STOCKER LES CHARGES
 ! OUT : NCHA   : NOMBRE DE CHARGES
@@ -96,9 +97,9 @@ subroutine medom1(modele, mate, cara, kcha, ncha,&
         endif
 
         if (materi .ne. blan8) then
-            call rcmfmc(materi, mate, l_ther_ = l_ther)
+            call rcmfmc(materi, mateco, l_ther_ = l_ther)
         else
-            mate = ' '
+            mateco = ' '
         endif
     else
 !
@@ -121,11 +122,13 @@ subroutine medom1(modele, mate, cara, kcha, ncha,&
         endif
 !
         if (n3 .ne. 0) then
-            call rcmfmc(materi, mate, l_ther_ = l_ther)
+            call rcmfmc(materi, mateco, l_ther_ = l_ther)
         else
-            mate = ' '
+            mateco = ' '
         endif
     endif
+!
+    mater = materi
 !
 !     TRAITEMENT DU CHARGEMENT
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ subroutine ccbcop(resuin, resuou, lisord, nbordr, lisopt,&
     character(len=8) :: k8b
     character(len=16) :: option, typesd
     character(len=19) :: lischa
-    character(len=24) :: nompar, chmate
+    character(len=24) :: nompar, mater, mateco
 !
     aster_logical :: exipla, newcal, lforc_noda
 !
@@ -98,7 +98,7 @@ subroutine ccbcop(resuin, resuou, lisord, nbordr, lisopt,&
     call jeveuo(lisord, 'L', jordr)
     nuord = zi(jordr)
 !
-    call medom1(modele, chmate, carael, lischa, nbchar,&
+    call medom1(modele, mater , mateco, carael, lischa, nbchar,&
                 typcha, resuin, nuord)
     if (modele .eq. ' ') then
         call utmess('F', 'CALCULEL2_44')

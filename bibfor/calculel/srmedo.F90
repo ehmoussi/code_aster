@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine srmedo(modele, mate, cara, kcha, ncha,&
+subroutine srmedo(modele, mate, mateco,  cara, kcha, ncha,&
                   ctyp, result, nuord, nbordr, base,&
                   npass, ligrel)
     implicit none
@@ -37,7 +37,7 @@ subroutine srmedo(modele, mate, cara, kcha, ncha,&
     character(len=4) :: ctyp
     character(len=8) :: modele, cara, result
     character(len=19) :: kcha
-    character(len=24) :: mate, ligrel
+    character(len=24) :: mate, ligrel, mateco
 !
 !     BUT: APPEL DE MEDOM1 AVEC CONSTRUCTION DU BON LIGREL
 !          POUR LE CALCUL DE L'OPTION SIRO_ELEM
@@ -45,6 +45,7 @@ subroutine srmedo(modele, mate, cara, kcha, ncha,&
 !
 ! OUT    : MODELE : NOM DU MODELE
 ! OUT    : MATE   : CHAMP MATERIAU
+! OUT    : MATECO : MATERIAU CODE
 ! OUT    : CARA   : NOM DU CHAMP DE CARACTERISTIQUES
 ! IN     : KCHA   : NOM JEVEUX POUR STOCKER LES CHARGES
 ! OUT    : NCHA   : NOMBRE DE CHARGES
@@ -76,7 +77,7 @@ subroutine srmedo(modele, mate, cara, kcha, ncha,&
 !
 !   -- recuperation du modele, cara, charges a partir du resultat et du
 !      numero ordre
-    call medom1(modele, mate, cara, kcha, ncha,&
+    call medom1(modele, mate, mateco, cara, kcha, ncha,&
                 ctyp, result, nuord)
 !
 !
