@@ -17,60 +17,39 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rs_getlast(result_, nume_last, inst_last, freq_last)
+subroutine rsGetSize(resultName, resultSize)
 !
 implicit none
 !
-#include "jeveux.h"
-#include "asterfort/rsadpa.h"
 #include "asterfort/rsorac.h"
 !
-
-character(len=*), intent(in) :: result_
-integer, intent(out) :: nume_last
-real(kind=8), optional, intent(out) :: inst_last
-real(kind=8), optional, intent(out) :: freq_last
+character(len=8), intent(in) :: resultName
+integer, intent(out) :: resultSize
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Results datastructure - Utility
 !
-! Get last index stored in results datastructure
+! Get size results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  result           : name of results datastructure
-! Out nume_last        : last index stored in results datastructure
-! Out inst_last        : last time stored in results datastructure
-! Out freq_last        : last frequence stored in results datastructure
+! In  resultName       : name of results datastructure
+! Out resultSize       : size of results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: result
     character(len=8) :: k8bid
     complex(kind=8) :: c16bid
-    integer :: list(1), iret, jinst
+    integer :: list(1), iret
     real(kind=8) :: r8bid
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    result    = result_
-    nume_last = 0
-    call rsorac(result, 'DERNIER', 0  , r8bid, k8bid,&
-                c16bid, 0.d0     , ' ', list , 1    ,&
+    resultSize = 0
+    call rsorac(resultName, 'LONMAX', 0  , r8bid, k8bid,&
+                c16bid    , 0.d0     , ' ', list , 1    ,&
                 iret)
-    if (iret .eq. 1) then
-        nume_last = list(1)
-    endif
-    if (present(inst_last)) then
-        call rsadpa(result, 'L', 1, 'INST', nume_last,&
-                    0, sjv=jinst)
-        inst_last = zr(jinst)
-    endif
-    if (present(freq_last)) then
-        call rsadpa(result, 'L', 1, 'FREQ', nume_last,&
-                    0, sjv=jinst)
-        freq_last = zr(jinst)
-    endif
-
+    resultSize = list(1)
+!
 end subroutine

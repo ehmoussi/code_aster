@@ -41,14 +41,22 @@ def lire_resu_prod(TYPE_RESU,**args):
   if TYPE_RESU == "EVOL_VARC" :  return evol_varc
   raise AsException("type de concept resultat non prevu")
 
+def lire_resu_type(RESULTAT,**args):
+    if args.get('__all__'):
+        return (evol_char, evol_ther, evol_elas, evol_noli, dyna_trans,
+                dyna_harmo, mode_meca, mode_empi, mode_meca_c, evol_varc)
+
+    return AsType(RESULTAT)
+
 # pour éviter d'écrire 3 fois cette liste :
 def l_nom_cham_pas_elga() :
      return list(set(C_NOM_CHAM_INTO())-set(C_NOM_CHAM_INTO('ELGA',)))
 
-LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
+LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,
+               reentrant='f:RESULTAT',
                fr=tr("Lire dans un fichier, soit format IDEAS, soit au format MED,"
                   " des champs et les stocker dans une SD résultat"),
-        regles=(UN_PARMI('MAILLAGE','MODELE'),UN_PARMI('TOUT_ORDRE','NUME_ORDRE','LIST_ORDRE','INST','LIST_INST','FREQ','LIST_FREQ'),),
+         regles=(UN_PARMI('MAILLAGE','MODELE'),UN_PARMI('TOUT_ORDRE','NUME_ORDRE','LIST_ORDRE','INST','LIST_INST','FREQ','LIST_FREQ'),),
 
 # 0) mots cles generaux :
 #----------------------
@@ -58,6 +66,11 @@ LIRE_RESU=OPER(nom="LIRE_RESU",op=150,sd_prod=lire_resu_prod,reentrant='n',
         FORMAT          = SIMP(statut='o',typ='TXM',into=("IDEAS","IDEAS_DS58","MED") ),
         INFO            = SIMP(statut='f',typ='I',into=(1,2) ),
         TITRE           = SIMP(statut='f',typ='TXM'),
+
+        # Re-use
+        reuse           = SIMP(statut='c',typ=CO),
+        RESULTAT        = SIMP(statut='f',typ=(evol_ther,evol_elas,evol_noli,mode_meca,
+                                                   mode_meca_c,dyna_trans,dyna_harmo,evol_char, mode_empi),),
 
         # General parameters
         MAILLAGE        = SIMP(statut='f',typ=maillage_sdaster),

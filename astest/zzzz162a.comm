@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ T0=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
                       NOM_CMP='TEMP',
                       VALE=0.0,),);
 
-L_INST=DEFI_LIST_REEL(DEBUT=0.0,
+L_INST=DEFI_LIST_REEL(DEBUT=0.0,INFO=2,
                       INTERVALLE=(_F(JUSQU_A=66.666,
                                      NOMBRE=1,),
                                   _F(JUSQU_A=80.0,
@@ -1058,5 +1058,50 @@ IMPR_RESU(UNITE=30,
                    NUME_ORDRE= 1,),),
                    INFO=2);
 
+#-----------------------------------------------------------------------
+# TESTS DE VALIDATION DE LIRE_RESU re-entrant avec MODELE variable
+#-----------------------------------------------------------------------
+
+MODEL1 = AFFE_MODELE(MAILLAGE=MAIL,
+                      AFFE=_F(TOUT='OUI',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='AXIS',),);
+
+MODEL2 = AFFE_MODELE(MAILLAGE=MAIL,
+                      AFFE=_F(TOUT='OUI',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='AXIS',),);
+
+MONU1=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
+               FORMAT='MED',
+               MODELE=MODEL1,
+               FORMAT_MED=(_F( NOM_RESU='U',
+                               NOM_CHAM    ='VARI_ELGA'),) ,
+               UNITE=71,
+               INST=(0.,66.666,73.333,80.,),);
+
+MONU1=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
+               FORMAT='MED',
+               RESULTAT=MONU1,
+               reuse=MONU1,
+               MODELE=MODEL2,
+               FORMAT_MED=(_F( NOM_RESU='U',
+                               NOM_CHAM    ='VARI_ELGA'),) ,
+               UNITE=71,
+               INST=(85.,90.,),);
+
+IMPR_RESU(FORMAT="RESULTAT",UNITE=75,RESU=_F(RESULTAT=MONU1),);
+
+
+TEST_RESU(RESU=(
+                _F(INST=90.0,
+                   POINT=1,
+                   RESULTAT=MONU1,
+                   NOM_CHAM='VARI_ELGA',
+                   NOM_CMP='V1',
+                   VALE_CALC=5.25E-4,
+                   MAILLE='M1',),
+                ),
+          )
 
 FIN();

@@ -23,6 +23,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
+#include "asterc/getexm.h"
 #include "asterfort/assert.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
@@ -34,8 +35,6 @@ implicit none
 #include "asterfort/lect58.h"
 #include "asterfort/lrcomm.h"
 #include "asterfort/lridea.h"
-#include "asterfort/rscrsd.h"
-#include "asterfort/rsexpa.h"
 #include "asterfort/rsmode.h"
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
@@ -48,6 +47,7 @@ implicit none
 #include "asterfort/resuSaveParameters.h"
 #include "asterfort/resuGetLoads.h"
 #include "asterfort/resuGetEmpiricParameters.h"
+#include "asterfort/resuReadPrepareDatastructure.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -66,8 +66,9 @@ implicit none
     character(len=24) :: empiFieldType
     integer :: fieldStoreNb(100)
     character(len=16) :: fieldList(100)
-    integer :: nbOcc, iret, iField, fieldNb
-    character(len=8) :: resultName, meshAst, model, caraElem, fieldMate
+    integer :: nbOcc, iField, fieldNb
+    character(len=8) :: resultName, resultNameReuse
+    character(len=8) :: meshAst, model, caraElem, fieldMate
     character(len=8) :: matrRigi, matrMass
     character(len=16) :: nomcmd, resultType2, resultType
     integer :: fileUnit
@@ -83,7 +84,6 @@ implicit none
 !
 ! - Initializations
 !
-    lReuse    = ASTER_FALSE
     lLireResu = ASTER_TRUE
 !
 ! - Get results datastructure
@@ -91,6 +91,19 @@ implicit none
     call getres(resultName, resultType2, nomcmd)
     call getvtx(' ', 'TYPE_RESU', scal=resultType, nbret=nbOcc)
     ASSERT(resultType .eq. resultType2)
+!
+! - Reuse mode
+!
+    lReuse = ASTER_FALSE
+    if (getexm(' ','RESULTAT') .eq. 1) then
+        call getvid(' ', 'RESULTAT', scal = resultNameReuse, nbret = nbOcc)
+        if (nbOcc .ne. 0) then
+            lReuse = ASTER_TRUE
+            if (resultName .ne. resultNameReuse) then
+                call utmess('F', 'SUPERVIS2_79', sk='RESULTAT')
+            endif
+        endif
+    endif
 !
 ! - Output format
 !
@@ -135,22 +148,17 @@ implicit none
 !
 ! - Get storage access from command file
 !
-    call resuReadStorageAccess(storeAccess, storeCreaNb,&
+    call resuReadStorageAccess(storeAccess,&
                                storeIndxNb, storeIndx  ,&
                                storeTimeNb, storeTime  ,&
                                storeEpsi  , storeCrit)
 !
-! - Create results datastructures
+! - Prepare datastructure
 !
-    call rscrsd('G', resultName, resultType, storeCreaNb)
-!
-! - Name of parameter for storage
-!
-    storePara = 'INST'
-    call rsexpa(resultName, 0, 'FREQ', iret)
-    if (iret .gt. 0) then
-        storePara = 'FREQ'
-    endif
+    call resuReadPrepareDatastructure(resultName , resultType , lReuse,&
+                                      storeIndxNb, storeTimeNb,&
+                                      storeIndx  , storeTime  ,&
+                                      storeCreaNb, storePara)
 !
 ! - Create .REFD object and save matrices (dynamic results)
 !

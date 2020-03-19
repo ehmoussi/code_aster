@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine lrfmed(fileUnit    , resultName   , meshAst     ,&
+    subroutine lrfmed(fileUnit    , resultName   , meshAst     , storeLast    ,&
                       fieldType   , fieldQuantity, fieldSupport, fieldNameMed_,&
                       option      , param        , prolz,&
                       storeAccess , storeCreaNb  ,&
@@ -26,7 +26,7 @@ interface
                       storeCrit   , storeEpsi    , storePara   ,&
                       cmpNb       , cmpAstName   , cmpMedName  ,&
                       fieldStoreNb)
-        integer, intent(in) :: fileUnit
+        integer, intent(in) :: fileUnit, storeLast
         character(len=8), intent(in) :: resultName
         character(len=8), intent(in) :: meshAst
         character(len=16), intent(in) :: fieldType
