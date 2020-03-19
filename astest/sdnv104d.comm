@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -164,7 +164,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='A',
                    RESULTAT=UCM,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=14.836107487615,
+                   VALE_CALC=14.877595629495682,
                    VALE_REFE=14.91,
                    PRECISION=0.05, ),
                 _F(GROUP_NO='A',
@@ -173,7 +173,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='A',
                    RESULTAT=UCM,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=3.6247095190207,
+                   VALE_CALC=3.5502195575075897,
                    VALE_REFE=3.5,
                    PRECISION=0.05, ),
                 ),
@@ -207,7 +207,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='A',
                    RESULTAT=UCL,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=14.8361094395,
+                   VALE_CALC=14.877595629495685,
                    VALE_REFE=14.91,
                    PRECISION=0.05, ),
                 _F(GROUP_NO='A',
@@ -216,7 +216,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='A',
                    RESULTAT=UCL,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DX',
-                   VALE_CALC=3.62471011817,
+                   VALE_CALC=3.5502195575074786,
                    VALE_REFE=3.5,
                    PRECISION=0.05, ),
                 ),
