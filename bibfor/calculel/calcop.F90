@@ -309,7 +309,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
 !
             if (optio2(6:9) .eq. 'NOEU') then
 !
-                call medom2(modele, mateco, carael, lischa, ncharg,&
+                call medom2(modele, mater , mateco, carael, lischa, ncharg,&
                             chtype, resuin, numord, nbordr, 'V',&
                             npass, ligrel)
 !
@@ -322,11 +322,11 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
             else if (optio2(6:7).eq.'EL') then
 !
                 if (option .eq. 'SIRO_ELEM') then
-                    call srmedo(modele, mateco, carael, lischa, ncharg,&
+                    call srmedo(modele, mater , mateco, carael, lischa, ncharg,&
                                 chtype, resuin, numord, nbordr, basopt,&
                                 npass, ligrel)
                 else
-                    call medom2(modele, mateco, carael, lischa, ncharg,&
+                    call medom2(modele, mater , mateco, carael, lischa, ncharg,&
                                 chtype, resuin, numord, nbordr, basopt,&
                                 npass, ligrel)
                 endif

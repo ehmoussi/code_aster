@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ subroutine op0038()
     character(len=8) :: lpain(8), lpaout(1)
     character(len=16) :: type, oper, option
     character(len=19) :: kcha, chelem, press, ligrel
-    character(len=24) :: chgeom, chcara(18), chharm, mate, k24b
+    character(len=24) :: chgeom, chcara(18), chharm, mate, k24b, mateco
     character(len=24) :: chtemp, chtime, chflug, chpres
     character(len=24) :: lchin(8), lchout(1)
 !
@@ -89,7 +89,7 @@ subroutine op0038()
     endif
 !
     call utalrm('OFF', 'CALCULEL3_40')
-    call medom1(modele, mate, cara, kcha, nchar,&
+    call medom1(modele, mate, mateco, cara, kcha, nchar,&
                 ctyp, blan8, 1)
     call utalrm('ON', 'CALCULEL3_40')
     call jeveuo(kcha//'.LCHA', 'E', jcha)
@@ -125,7 +125,7 @@ subroutine op0038()
         chflug='&&OP0038.FLUXGAUSS'
         lchin(1)=chgeom
         lpain(1)='PGEOMER'
-        lchin(2)=mate
+        lchin(2)=mateco
         lpain(2)='PMATERC'
         lchin(3)=chcara(7)
         lpain(3)='PCACOQU'

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ subroutine ccvepo(modele, resuin, typesd, lisord, nbordr,&
     character(len=4) :: typcha
 !
     character(len=8) :: k8b, model, cara_elem
-    character(len=24) :: chmate
+    character(len=24) :: mater, mateco
     character(len=16) :: typemo
     character(len=19) :: refe, masse, chdynr, chdepl
     character(len=24) :: noojb
@@ -141,7 +141,7 @@ subroutine ccvepo(modele, resuin, typesd, lisord, nbordr,&
                              list_load_ = lischa)
             call lisnch(lischa, nbchar)
         else
-            call medom1(model, chmate, cara_elem, lischa, nbchar,&
+            call medom1(model , mater , mateco, cara_elem, lischa, nbchar,&
                         typcha, resuin, v_list_store(1))
         endif
 !       VERIFIE L'UNICITE DE LA CHARGE REPARTIE
