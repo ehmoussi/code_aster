@@ -50,7 +50,7 @@ subroutine merime_wrap(modelz, nchar, lchar, mater, mateco, carelz,&
 !
 ! ----------------------------------------------------------------------
 !
-    call merime(modelz, nchar, lchar, mateco, carelz,&
+    call merime(modelz, nchar, lchar, mater, mateco, carelz,&
                 time, compoz, matelz, nh,&
-                basz, mater)
+                basz)
 end subroutine

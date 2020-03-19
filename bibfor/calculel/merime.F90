@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine merime(modelz, nchar, lchar, mateco, carelz,&
+subroutine merime(modelz, nchar, lchar, mater, mateco, carelz,&
                   time, compoz, matelz, nh,&
-                  basz, materz)
+                  basz)
 !
 !                          DE MERIME...  PROSPER YOUP-LA-BOUM!
 !
@@ -48,7 +48,7 @@ subroutine merime(modelz, nchar, lchar, mateco, carelz,&
     character(len=*) :: modelz, carelz, matelz
     character(len=*) :: lchar(*), mateco, basz, compoz
     real(kind=8), intent(in) :: time
-    character(len=*), optional, intent(in) :: materz
+    character(len=*), intent(in) :: mater
 !
 ! ----------------------------------------------------------------------
 !
@@ -77,7 +77,7 @@ subroutine merime(modelz, nchar, lchar, mateco, carelz,&
 !
     character(len=3) :: tout
     character(len=2) :: codret
-    character(len=8) :: k8bid, mater
+    character(len=8) :: k8bid
     character(len=16) :: option, k16bid, nomcmd
     character(len=19) :: chvarc, compor
     character(len=19) :: pintto, cnseto, heavto, loncha, basloc, lsn, lst, stano
@@ -110,12 +110,6 @@ subroutine merime(modelz, nchar, lchar, mateco, carelz,&
     option = 'RIGI_MECA'
     call exixfe(modele, iret)
     lxfem = iret.ne.0
-!
-    if(present(materz)) then
-        mater = materz
-    else
-        mater = mateco
-    end if
 !
 ! --- INITIALISATION DES CHAMPS POUR CALCUL
 !

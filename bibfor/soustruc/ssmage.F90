@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ subroutine ssmage(nomu, option)
     character(len=8) :: nomo, cara, materi, matel, promes
     character(len=14) :: nu
     character(len=19) :: matas
-    character(len=24) :: mate, compor
+    character(len=24) :: mateco, compor, mater
 !-----------------------------------------------------------------------
     integer :: iarefm
     real(kind=8), pointer :: varm(:) => null()
@@ -71,11 +71,12 @@ subroutine ssmage(nomu, option)
     nomo = zk8(iarefm-1+1)
     cara = zk8(iarefm-1+4)
     materi = zk8(iarefm-1+3)
+    mater  = materi
 !
     if (materi .eq. '        ') then
-        mate = ' '
+        mateco = ' '
     else
-        call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
+        call rcmfmc(materi, mateco, l_ther_ = ASTER_FALSE)
     endif
     nu= zk8(iarefm-1+5)
     if (nu(1:8) .ne. nomu) then
@@ -98,7 +99,7 @@ subroutine ssmage(nomu, option)
 !     -- CALCULS MATRICES ELEMENTAIRES DE MASSE (OU AMORTISSEMENT):
     if (option .eq. 'MASS_MECA') then
         compor = ' '
-        call memame('MASS_MECA', nomo, mate,&
+        call memame('MASS_MECA', nomo, mater, mateco,&
                     cara, time, compor, matel,&
                     base)
     else if (option.eq.'AMOR_MECA') then

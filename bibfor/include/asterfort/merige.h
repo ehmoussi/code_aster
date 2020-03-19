@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine merige(model_, cara_elem_, sigg, strx, matel,&
-                      base, nh, deplr, mater)
+                      base, nh, deplr, mateco)
         character(len=*) , intent(in) :: model_
         character(len=*) , intent(in) :: cara_elem_
         character(len=*) :: sigg
@@ -29,6 +29,6 @@ interface
         character(len=1) :: base
         integer :: nh
         character(len=*), optional, intent(in) :: deplr
-        character(len=*), optional, intent(in) :: mater
+        character(len=*), optional, intent(in) :: mateco
     end subroutine merige
 end interface

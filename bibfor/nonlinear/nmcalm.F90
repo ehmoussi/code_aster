@@ -167,7 +167,7 @@ character(len=19) :: matele
             call utmess('I', 'MECANONLINE13_81')
         endif
         call merige(model(1:8), carele(1:8), sigplu, strplu, matele,&
-                    'V', 0, mater=ds_material%mater)
+                    'V', 0, mateco=ds_material%mateco)
 !
 ! --- MATR_ELEM MASSES
 !
@@ -175,7 +175,7 @@ character(len=19) :: matele
         if (niv .ge. 2) then
             call utmess('I', 'MECANONLINE13_82')
         endif
-        call memame(optmat, model, ds_material%mateco,&
+        call memame(optmat, model, ds_material%mater, ds_material%mateco,&
                     carele, instam, ds_constitutive%compor, matele,&
                     base)
 !
@@ -185,7 +185,7 @@ character(len=19) :: matele
         if (niv .ge. 2) then
             call utmess('I', 'MECANONLINE13_83')
         endif
-        call meamme(optmat, model, nbchar, zk8(jchar2), ds_material%mateco,&
+        call meamme(optmat, model, nbchar, zk8(jchar2), ds_material%mater, ds_material%mateco, &
                     carele, instam, 'V', merigi,&
                     memass, matele, varplu, ds_constitutive%compor)
 !
@@ -204,7 +204,7 @@ character(len=19) :: matele
         if (niv .ge. 2) then
             call utmess('I', 'MECANONLINE13_85')
         endif
-        call messtr(base  , optmat, model, carele, ds_material%mater,&
+        call messtr(base  , optmat, model, carele, ds_material%mateco,&
                     matele)
     else
         ASSERT(.false.)
