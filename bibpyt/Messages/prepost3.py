@@ -88,10 +88,7 @@ cata_msg = {
 """),
 
 
-    69 : _("""
- L'impression d'un champ complexe nécessite l'utilisation du mot-clé PARTIE.
- Ce mot-clé permet de choisir la partie du champ à imprimer (réelle ou imaginaire).
-"""),
+
 
 
     75 : _("""

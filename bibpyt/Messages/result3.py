@@ -66,13 +66,13 @@ Pour supprimer l'émission de ce message d'alarme, il faut donner la valeur BINA
 
     68 : _("""Le format GMSH ne permet pas d'imprimer simultanément un maillage et un champ (ou un résultat)."""),
 
-    69 : _(""" L'impression d'un champ complexe nécessite l'utilisation du mot-clé PARTIE. Ce mot-clé permet de choisir la partie du champ à imprimer (réelle ou imaginaire)."""),
+    69 : _(""" L'impression d'un champ complexe nécessite l'utilisation du mot-clé PARTIE. Ce mot-clé permet de choisir la partie du champ à imprimer (réelle, imaginaire, module ou phase)."""),
 
     70 : _(""" Vous avez demandé une impression au format ASTER sans préciser de MAILLAGE. Aucune impression ne sera réalisée car IMPR_RESU au format ASTER n'imprime qu'un MAILLAGE."""),
 
     74 : _("""Le maillage fourni n'est pas cohérent avec le maillage qui porte le résultat."""),
 
-    97: _("""Le champ %(k1)s a des éléments ayant des sous-points. Ils seront supprimés à l'impression."""),
+    97 : _("""Le champ %(k1)s a des éléments ayant des sous-points. Ils seront supprimés à l'impression."""),
 
     98 : _("""Le champ %(k1)s a des éléments ayant des sous-points. Il est écrit avec un format différent du format RESULTAT."""),
 
