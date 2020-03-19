@@ -47,7 +47,8 @@ aster_logical, optional, intent(out) :: coecst_
 !
 ! Out model            : name of model
 ! Out list_load        : list of loads
-! Out mateco           : name of material characteristics (field)
+! Out mater            : name of material characteristics (field)
+! Out mateco           : name of coded material
 ! Out cara_elem        : name of datastructure for elementary parameters (CARTE)
 ! In  result           : name of datastructure for results
 ! In  nume_store       : index to store in results
@@ -119,7 +120,7 @@ aster_logical, optional, intent(out) :: coecst_
 !
 ! - Detect non-constant material parameters
 !
-    call dismoi('THER_F_INST', mateco, 'CHAM_MATER', repk=repk)
+    call dismoi('THER_F_INST', mater, 'CHAM_MATER', repk=repk)
     matcst = repk.eq.'NON'
 !
     if (present(coecst_)) then
