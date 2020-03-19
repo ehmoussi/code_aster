@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine lrfmed(fileUnit    , resultName   , meshAst     ,&
+subroutine lrfmed(fileUnit    , resultName   , meshAst     , storeLast    ,&
                   fieldType   , fieldQuantity, fieldSupport, fieldNameMed_,&
                   option      , param        , prolz,&
                   storeAccess , storeCreaNb  ,&
@@ -60,7 +60,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-integer, intent(in) :: fileUnit
+integer, intent(in) :: fileUnit, storeLast
 character(len=8), intent(in) :: resultName, meshAst
 character(len=16), intent(in) :: fieldType
 character(len=8), intent(in) :: fieldQuantity
@@ -89,6 +89,7 @@ integer, intent(out) :: fieldStoreNb
 !
 ! In  fileUnit         : index of file (logical unit)
 ! In  resultName       : name of results datastructure
+! In  storeLast        : last storing index in results datastructure
 ! In  meshAst          : name of (aster) mesh
 ! In  fieldType        : type of field (DEPL, SIEF, EPSI, ...)
 ! In  fieldQuantity    : physical components of field (DEPL_R, SIEF_R, ...)
@@ -122,8 +123,7 @@ integer, intent(out) :: fieldStoreNb
     integer :: sequenceNb, major, minor, rel
     med_idt :: fid, ifimed
     integer :: iret
-    integer :: iSequence, iStore
-    integer :: ipas, iaux2
+    integer :: iSequence, iStore, ipas
     integer :: jvPara
     integer :: ifm, niv, jnuom
     integer :: nbma, jnbpgm, jnbpmm, ordins, jnbsmm
@@ -139,12 +139,12 @@ integer, intent(out) :: fieldStoreNb
     integer, parameter :: edlect=0,ednoeu=3,edmail=0,ednoma=4,ednono=-1,typnoe=0
     character(len=1) :: saux01
     character(len=8) :: saux08
-    integer :: numpt, numord, inum
+    integer :: numeStep, numeStore, inum
     integer :: iaux, itps0
     integer :: iinst
-    real(kind=8) :: inst
+    real(kind=8) :: timeCurr
     character(len=64) :: k64b
-    aster_logical :: existm, logaux
+    aster_logical :: existm, timeExist
     character(len=24), pointer :: refe(:) => null()
     integer, pointer :: vStoreIndx(:) => null()
     real(kind=8), pointer :: vStoreTime(:) => null()
@@ -287,39 +287,39 @@ integer, intent(out) :: fieldStoreNb
 !         ---------------------------
 !     CET ENTIER SERT A AVOIR LA CERTITUDE QUE LE .ORDR PRODUIT
 !     EN SORTIE DE LIRE_RESU SERA STRICTEMENT CROISSANT
-    ordins = 1
+    ordins = storeLast
     do iStore = 1, fieldStoreNb
         fieldNameAst = '&&LRFMED.TEMPOR'
         k64b = ' '
 !
         if (storeIndxNb .ne. 0) then
-            numord = vStoreIndx(iStore)
-            itps0=indiis(zi(jnuom),numord,1,sequenceNb)
+            numeStore = vStoreIndx(iStore)
+            itps0     = indiis(zi(jnuom),numeStore,1,sequenceNb)
             if (itps0 .eq. 0) then
-                call utmess('A', 'MED_87', sk=resultName, si=numord)
+                call utmess('A', 'MED_87', sk=resultName, si=numeStore)
                 cycle
             endif
-            numpt=zi(inum+2*itps0-2)
+            numeStep  = zi(inum+2*itps0-2)
         else if (storeAccess .eq. 'TOUT_ORDRE') then
-            numord = zi(inum+2*iStore-1)
-            numpt = zi(inum+2*iStore-2)
-        else if (storeTimeNb.ne.0) then
-            inst = vStoreTime(iStore)
-            logaux = .false.
-            do iaux2 = 1 , fieldStoreNb
+            numeStore = zi(inum+2*iStore-1)
+            numeStep  = zi(inum+2*iStore-2)
+        else if (storeTimeNb .ne. 0) then
+            timeCurr  = vStoreTime(iStore)
+            timeExist = .false.
+            do iSequence = 1 , sequenceNb
                 if (storeCrit .eq. 'RELATIF') then
-                    if (abs(zr(ipas-1+iaux2)-inst) .le. abs(storeEpsi*inst)) then
-                        logaux = .true.
+                    if (abs(zr(ipas-1+iSequence)-timeCurr) .le. abs(storeEpsi*timeCurr)) then
+                        timeExist = .true.
                     endif
                 else if (storeCrit .eq. 'ABSOLU') then
-                    if (abs(zr(ipas-1+iaux2)-inst) .le. abs(storeEpsi)) then
-                        logaux = .true.
+                    if (abs(zr(ipas-1+iSequence)-timeCurr) .le. abs(storeEpsi)) then
+                        timeExist = .true.
                     endif
                 endif
-                if (logaux) then
-                    numpt = zi(inum+2*iaux2-2)
-                    numord = zi(inum+2*iaux2-1)
-                    iinst = 0
+                if (timeExist) then
+                    numeStep  = zi(inum+2*iSequence-2)
+                    numeStore = zi(inum+2*iSequence-1)
+                    iinst     = 0
                     exit
                 endif
             end do
@@ -327,7 +327,7 @@ integer, intent(out) :: fieldStoreNb
 !
         call lrchme(fieldNameAst, fieldNameMed, k64b, meshAst, fieldSupport,&
                     fieldQuantity, typent, cmpNb, cmpAstName, cmpMedName,&
-                    prolz, iinst, numpt, numord, inst,&
+                    prolz, iinst, numeStep, numeStore, timeCurr,&
                     storeCrit, storeEpsi, fileUnit, option, param,&
                     zi(jnbpgm), zi(jnbpmm), zi(jnbsmm), iret)
 !
@@ -344,19 +344,19 @@ integer, intent(out) :: fieldStoreNb
             refe(2) = nomprn(1:19)
             call detrsd('PROF_CHNO', pchn1)
         endif
-        if (numord .eq. ednono) then
-            numord = numpt
+        if (numeStore .eq. ednono) then
+            numeStore = numeStep
         endif
         if (storeTimeNb .ne. 0) then
-            numord = ordins
             ordins = ordins + 1
+            numeStore = ordins
         endif
 !
-        call rsexch(' ', resultName, fieldType, numord, nomch, iret)
+        call rsexch(' ', resultName, fieldType, numeStore, nomch, iret)
         if (iret .eq. 100) then
         else if (iret.eq.110) then
             call rsagsd(resultName, 0)
-            call rsexch(' ', resultName, fieldType, numord, nomch, iret)
+            call rsexch(' ', resultName, fieldType, numeStore, nomch, iret)
         else
             valk (1) = resultName
             valk (2) = fieldNameAst
@@ -365,11 +365,11 @@ integer, intent(out) :: fieldStoreNb
             call utmess('F', 'UTILITAI8_27', nk=2, valk=valk, ni=2,vali=vali)
         endif
         call copisd('CHAMP_GD', 'G', fieldNameAst, nomch)
-        call rsnoch(resultName, fieldType, numord)
-        call rsadpa(resultName, 'E', 1, storePara, numord, 0, sjv=jvPara)
+        call rsnoch(resultName, fieldType, numeStore)
+        call rsadpa(resultName, 'E', 1, storePara, numeStore, 0, sjv=jvPara)
 !
         if (storeTimeNb .ne. 0) then
-            zr(jvPara) = inst
+            zr(jvPara) = timeCurr
         else if (storeIndxNb.ne.0) then
             zr(jvPara) = zr(ipas-1+itps0)
         else if (storeAccess .eq. 'TOUT_ORDRE') then

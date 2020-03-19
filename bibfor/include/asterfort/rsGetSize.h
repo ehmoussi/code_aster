@@ -17,10 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rs_getlast(result_, nume_last, inst_last, freq_last)
-        character(len=*), intent(in) :: result_
-        integer, intent(out) :: nume_last
-        real(kind=8), optional, intent(out) :: inst_last
-        real(kind=8), optional, intent(out) :: freq_last
-    end subroutine rs_getlast
+    subroutine rsGetSize(resultName, resultSize)
+        character(len=8), intent(in) :: resultName
+        integer, intent(out) :: resultSize
+    end subroutine rsGetSize
 end interface

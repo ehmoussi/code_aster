@@ -37,6 +37,14 @@ cata_msg = {
 
     18 : _("""Il n'est pas possible d'avoir plusieurs types de champ simultanément dans LIRE_RESU pour la structure de données des modes empiriques."""),
 
+    19 : _("""Il n'est pas possible d'utiliser TOUT_ORDRE lorsqu'on enrichit un résultat dans LIRE_RESU. Il faut sélectionner les champs à lire."""),
+
+    20 : _("""Le dernier instant lu était %(r1)g, il n'est donc pas possible de commencer à enrichir le résultat avec un champ à l'instant %(r2)g (car les instants doivent être strictement croissants)."""),
+
+    21 : _("""La dernière fréquence lue était %(r1)g, il n'est donc pas possible de commencer à enrichir le résultat avec un champ à la fréquence %(r2)g (car les fréquences doivent être strictement croissantes)."""),
+
+    22 : _("""Le dernier indice de rangement lu était %(i1)d, il n'est donc pas possible de commencer à enrichir le résultat avec un champ à l'indice de rangement %(i2)d (car ils doivent doivent être strictement croissants)."""),
+
     24 : _("""Le champ %(k2)s est incompatible avec le type de résultat %(k1)s."""),
 
     94 : _("""Le champ %(k1)s n'est pas prévu dans LIRE_RESU. Vous pouvez demander l'évolution."""),

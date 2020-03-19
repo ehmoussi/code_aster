@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine resuReadStorageAccess(storeAccess, storeCreaNb,&
+subroutine resuReadStorageAccess(storeAccess,&
                                  storeIndxNb, storeIndx  ,&
                                  storeTimeNb, storeTime  ,&
                                  storeEpsi  , storeCrit)
@@ -36,7 +36,6 @@ implicit none
 !
 integer, intent(out) :: storeIndxNb, storeTimeNb
 character(len=10), intent(out) :: storeAccess
-integer, intent(out) :: storeCreaNb
 character(len=19), intent(out) :: storeIndx, storeTime
 real(kind=8), intent(out) :: storeEpsi
 character(len=8), intent(out) :: storeCrit
@@ -50,7 +49,6 @@ character(len=8), intent(out) :: storeCrit
 ! --------------------------------------------------------------------------------------------------
 !
 ! Out storeAccess      : how to access to the storage
-! Out storeCreaNb      : number of storage slots to create
 ! Out storeIndxNb      : number of storage slots given by index (integer)
 ! Out storeIndx        : name of JEVEUX object to access storage slots given by index (integer)
 ! Out storeTimeNb      : number of storage slots given by time/freq (real)
@@ -68,7 +66,6 @@ character(len=8), intent(out) :: storeCrit
 ! --------------------------------------------------------------------------------------------------
 !
     storeAccess = ' '
-    storeCreaNb = 0
     storeIndxNb = 0
     storeTimeNb = 0
     storeIndx   = ' '
@@ -78,7 +75,6 @@ character(len=8), intent(out) :: storeCrit
     call getvtx(' ', 'TOUT_ORDRE', scal=answer, nbret=nbOcc)
     if (nbOcc .ne. 0) then
         storeAccess = 'TOUT_ORDRE'
-        storeCreaNb = 100
         goto 99
     endif
 !
@@ -137,17 +133,6 @@ character(len=8), intent(out) :: storeCrit
     endif
 !
  99 continue
-!
-! - Total number of storing index to crate
-!
-    if (storeTimeNb .ne. 0) then
-        ASSERT(storeIndxNb .eq. 0)
-        storeCreaNb = storeTimeNb
-    endif
-    if (storeIndxNb .ne. 0) then
-        ASSERT(storeTimeNb .eq. 0)
-        storeCreaNb = storeIndxNb
-    endif
 !
 ! - To select real
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,23 @@ MODEXP=LIRE_RESU(TYPE_RESU='MODE_MECA_C',
                                  POSI_ORDRE=(7,4,),
                                  POSI_FREQ=(8,1,),
                                  NOM_CMP=('DX','DY','DZ',),),
-                 NUME_ORDRE=(1,2,3),);
+                 NUME_ORDRE=(1,2,),);
+
+
+MODEXP=LIRE_RESU(TYPE_RESU='MODE_MECA_C',
+                 FORMAT='IDEAS',
+                 MODELE=MODELE,
+                 RESULTAT=MODEXP,
+                 reuse=MODEXP,
+                 UNITE=19,
+                 NOM_CHAM='DEPL',
+                 FORMAT_IDEAS=_F(NOM_CHAM='DEPL',
+                                 NUME_DATASET=55,
+                                 RECORD_6=(1,2,2,8,5,3,),
+                                 POSI_ORDRE=(7,4,),
+                                 POSI_FREQ=(8,1,),
+                                 NOM_CMP=('DX','DY','DZ',),),
+                 NUME_ORDRE=(3,),);
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=MODEXP,NUME_ORDRE=2),)
 IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=MODEXP,PARTIE='REEL',NUME_ORDRE=2),)

@@ -38,6 +38,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/lrfmed.h"
+#include "asterfort/rs_getlast.h"
 !
 integer, intent(in) :: fileUnit
 character(len=8), intent(in) :: resultName
@@ -82,7 +83,7 @@ integer, intent(out) :: fieldStoreNb(100)
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=3) :: prolz
-    integer :: iField, nchar, nbOcc, n1, cmpNb
+    integer :: iField, nchar, nbOcc, n1, cmpNb, storeLast
     character(len=16) :: fieldType
     character(len=16), parameter :: keywfact = 'FORMAT_MED'
     character(len=64) :: fieldNameMed
@@ -107,6 +108,10 @@ integer, intent(out) :: fieldStoreNb(100)
 !
     call getvtx(' ', 'PROL_ZERO', scal=prolz, nbret=nbOcc)
     ASSERT(nbOcc .eq. 1)
+!
+! - Last save
+!
+    call rs_getlast(resultName, storeLast)
 !
 ! - Loop on fields to read
 !
@@ -152,7 +157,7 @@ integer, intent(out) :: fieldStoreNb(100)
                         vect=vCmpMedName, nbret=nbOcc)
         endif
 ! ----- Read field
-        call lrfmed(fileUnit            , resultName   , meshAst, &
+        call lrfmed(fileUnit            , resultName   , meshAst     , storeLast   ,&
                     fieldType           , fieldQuantity, fieldSupport, fieldNameMed,&
                     option              , param        , prolz       ,&
                     storeAccess         , storeCreaNb  ,&
