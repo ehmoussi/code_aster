@@ -167,7 +167,7 @@ character(len=19) :: matele
             call utmess('I', 'MECANONLINE13_81')
         endif
         call merige(model(1:8), carele(1:8), sigplu, strplu, matele,&
-                    'V', 0, mater=ds_material%mateco)
+                    'V', 0, mater=ds_material%mater)
 !
 ! --- MATR_ELEM MASSES
 !
@@ -195,7 +195,7 @@ character(len=19) :: matele
         if (niv .ge. 2) then
             call utmess('I', 'MECANONLINE13_84')
         endif
-        call mecgme(model, carele, ds_material%mateco  , lischa, instap,&
+        call mecgme(model, carele, ds_material%mater, ds_material%mateco  , lischa, instap,&
                     disp_prev, disp_cumu_inst, instam, ds_constitutive%compor, matele)
 !
 ! --- MATR_ELEM DES SOUS-STRUCTURES
@@ -204,7 +204,7 @@ character(len=19) :: matele
         if (niv .ge. 2) then
             call utmess('I', 'MECANONLINE13_85')
         endif
-        call messtr(base  , optmat, model, carele, ds_material%mateco,&
+        call messtr(base  , optmat, model, carele, ds_material%mater,&
                     matele)
     else
         ASSERT(.false.)

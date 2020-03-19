@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine vechme(stop     , modelz, lload_namez, lload_infoz, inst        ,&
-                  cara_elem, mate  , vect_elemz , varc_currz , ligrel_calcz,&
+                  cara_elem, mate  , mateco     , vect_elemz , varc_currz , ligrel_calcz,&
                   nharm)
 !
 implicit none
@@ -46,7 +46,7 @@ implicit none
     character(len=*), intent(in) :: lload_infoz
     real(kind=8), intent(in) :: inst(3)
     character(len=*), intent(in) :: cara_elem
-    character(len=*), intent(in) :: mate
+    character(len=*), intent(in) :: mate, mateco
     character(len=*), intent(inout) :: vect_elemz
     character(len=*), optional, intent(in) :: varc_currz
     character(len=*), optional, intent(in) :: ligrel_calcz
@@ -55,7 +55,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! Compute Neumann loads
-! 
+!
 ! Dead and fixed loads
 !
 ! --------------------------------------------------------------------------------------------------
@@ -63,11 +63,12 @@ implicit none
 ! In  stop           : continue or stop computation if no loads on elements
 ! In  model          : name of model
 ! In  mate           : name of material characteristics (field)
+! In  mateco         : mane of coded material
 ! In  cara_elem      : name of elementary characteristics (field)
 ! In  lload_name     : name of object for list of loads name
 ! In  lload_info     : name of object for list of loads info
 ! In  inst           : times informations
-! In  ligrel_calc    : LIGREL to compute 
+! In  ligrel_calc    : LIGREL to compute
 ! In  varc_curr      : command variable for current time
 ! IO  vect_elem      : name of vect_elem result
 ! In  nharm          : Fourier mode
@@ -86,7 +87,7 @@ implicit none
     integer :: nb_load, i_load
     integer :: load_nume
     integer :: nb_in_prep
-    real(kind=8) :: inst_prev, inst_curr, inst_theta 
+    real(kind=8) :: inst_prev, inst_curr, inst_theta
     character(len=8) :: load_name
     character(len=24) :: ligrel_calc, model
     character(len=19) :: vect_elem, varc_curr, resu_elem
@@ -150,11 +151,11 @@ implicit none
 ! - Preparing input fields
 !
     if (present(nharm)) then
-        call load_neum_prep(model    , cara_elem , mate      , 'Dead'      , inst_prev,&
+        call load_neum_prep(model    , cara_elem , mate      , mateco , 'Dead'      , inst_prev,&
                             inst_curr, inst_theta, nb_in_maxi, nb_in_prep  , lchin    ,&
                             lpain    , varc_curr = varc_curr, nharm = nharm)
     else
-        call load_neum_prep(model    , cara_elem , mate      , 'Dead'      , inst_prev,&
+        call load_neum_prep(model    , cara_elem , mate      , mateco, 'Dead'      , inst_prev,&
                             inst_curr, inst_theta, nb_in_maxi, nb_in_prep  , lchin    ,&
                             lpain    , varc_curr = varc_curr)
     endif
@@ -163,13 +164,13 @@ implicit none
 !
     do i_load = 1, nb_load
         load_name = v_load_name(i_load)(1:8)
-        load_nume = v_load_info(nb_load+i_load+1)  
+        load_nume = v_load_info(nb_load+i_load+1)
 !
 ! ----- Standard dead Neumann loads
 !
         if ((load_nume .gt. 0 .and. load_nume .lt. 4).or.(load_nume.eq.55)) then
             call load_neum_comp(stop       , i_load    , load_name , load_nume, 'Dead'   ,&
-                                ligrel_calc, nb_in_maxi, nb_in_prep, lpain    , lchin    ,& 
+                                ligrel_calc, nb_in_maxi, nb_in_prep, lpain    , lchin    ,&
                                 base       , resu_elem , vect_elem  )
         endif
 !

@@ -18,7 +18,7 @@
 
 subroutine dlfext(nveca, nchar, temps, neq, liad,&
                   lifo, charge, infoch, fomult, modele,&
-                  mate, carele, numedd, f)
+                  mate, mateco, carele, numedd, f)
 !
 implicit none
 !
@@ -44,7 +44,7 @@ implicit none
 integer :: nveca, nchar, neq, liad(*)
 real(kind=8) :: temps, f(*)
 character(len=24) :: lifo(*), infoch, fomult
-character(len=24) :: modele, carele, charge, mate, numedd
+character(len=24) :: modele, carele, charge, mate, mateco, numedd
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -120,7 +120,7 @@ character(len=24) :: modele, carele, charge, mate, numedd
         call jeveuo(infoch, 'L', jinf)
         nchar = zi(jinf)
         call vechme('S', modele, charge, infoch, partps,&
-                    carele, mate, vechmp)
+                    carele, mate, mateco, vechmp)
         call asasve(vechmp, numedd, typmat, vachmp)
         call ascova('D', vachmp, fomult, 'INST', temps,&
                     typmat, cnchmp)

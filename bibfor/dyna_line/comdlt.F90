@@ -96,11 +96,11 @@ implicit none
     character(len=1) :: base, typcoe
     character(len=2) :: codret
     character(len=8) :: k8b, masse, rigid, amort, result
-    character(len=8) :: materi, carael, kstr, nomfon, charep
+    character(len=8) :: carael, kstr, nomfon, charep
     character(len=9) :: nomsym(6)
     character(len=19) :: solveu, infcha, ligrel, linst
     character(len=12) :: allschemes(4), schema, schtyp
-    character(len=24) :: modele, carele, charge, fomult, mate
+    character(len=24) :: modele, carele, charge, fomult, mateco, materi
     character(len=24) :: numedd, chamgd
     character(len=24) :: infoch, criter
     character(len=24) :: chgeom, chcara(18), chharm, chtime
@@ -167,7 +167,7 @@ implicit none
 !
 !---CREATION et lecture DATA_STRUCTURE ds_inout pour observation
 
-    call dltlec(result, modele, numedd, materi, mate,&
+    call dltlec(result, modele, numedd, materi, mateco,&
                 carael, carele, imat, masse, rigid,&
                 amort, lamort, nchar, nveca, infcha,&
                 charge, infoch, fomult, iaadve, ialifo,&
@@ -296,7 +296,7 @@ implicit none
     force1 = '&&COMDLT.FORCE1'
     call dltali(neq, result, imat, masse, rigid,&
                 zi(iaadve), zk24(ialifo), nchar, nveca, lcrea,&
-                lprem, lamort, t0, mate, carele,&
+                lprem, lamort, t0, materi, mateco, carele,&
                 charge, infoch, fomult, modele, numedd,&
                 nume, solveu, criter, zr(idepl0), zr(ivite0),&
                 zr(iacce0), zr(ifexte+neq), zr(ifamor+neq), zr(ifliai+neq), &
@@ -396,7 +396,7 @@ implicit none
                     iinteg, neq, imat, masse, rigid,&
                     amort, zr(idepl0), zr(ivite0), zr(iacce0), zr( ifexte),&
                     zr(ifamor), zr(ifliai), t0, nchar, nveca,&
-                    zi(iaadve), zk24(ialifo), modele, mate, carele,&
+                    zi(iaadve), zk24(ialifo), modele, materi, mateco, carele,&
                     charge, infoch, fomult, numedd, nume,&
                     solveu, criter, zk8(iondp), nondp, numrep, ds_energy,&
                     sd_obsv, mesh)
@@ -407,7 +407,7 @@ implicit none
                     iinteg, neq, imat, masse, rigid,&
                     amort, zr(idepl0), zr(ivite0), zr(iacce0), zr( ifexte),&
                     zr(ifamor), zr(ifliai), t0, nchar, nveca,&
-                    zi(iaadve), zk24(ialifo), modele, mate, carele,&
+                    zi(iaadve), zk24(ialifo), modele, materi, mateco, carele,&
                     charge, infoch, fomult, numedd, nume,&
                     solveu, criter, zk8(iondp), nondp, numrep, ds_energy,&
                     sd_obsv, mesh)
@@ -418,7 +418,7 @@ implicit none
                     imat, masse, rigid, amort, zr(idepl0),&
                     zr(ivite0), zr(iacce0), zr(ifexte), zr(ifamor), zr(ifliai),&
                     t0, nchar, nveca, zi(iaadve), zk24(ialifo),&
-                    modele, mate, carele, charge, infoch,&
+                    modele, materi, mateco, carele, charge, infoch,&
                     fomult, numedd, nume, numrep, ds_energy,&
                     sd_obsv, mesh)
 !
@@ -428,7 +428,7 @@ implicit none
                     imat, masse, rigid, amort, zr(idepl0),&
                     zr(ivite0), zr(iacce0), zr(ifexte), zr(ifamor), zr(ifliai),&
                     nchar, nveca, zi(iaadve), zk24(ialifo), modele,&
-                    mate, carele, charge, infoch, fomult,&
+                    materi, mateco, carele, charge, infoch, fomult,&
                     numedd, nume, numrep, ds_energy,&
                     sd_obsv, mesh)
 !
@@ -494,9 +494,9 @@ implicit none
                         0, sjv=ladpa)
             time = zr(ladpa)
             call mechti(chgeom(1:8), time, rundf, rundf, chtime)
-            call vrcins(modele, mate, carael, time, chvarc(1:19),&
+            call vrcins(modele, materi, carael, time, chvarc(1:19),&
                         codret)
-            call vrcref(modele(1:8), mate(1:8), carael(1:8), chvref(1: 19))
+            call vrcref(modele(1:8), materi(1:8), carael(1:8), chvref(1: 19))
             if (exipou .and. nfon .ne. 0) then
                 call fointe('F ', nomfon, 1, ['INST'], [time],&
                             alpha, iret)
@@ -505,7 +505,7 @@ implicit none
                         iret)
             if (iret .ne. 0) cycle
             call compStrx(modele, ligrel, compor,&
-                          chamgd, chgeom, mate  , chcara ,&
+                          chamgd, chgeom, mateco  , chcara ,&
                           chvarc, chvref, &
                           base  , chstru, iret  ,&
                           exipou, charep, typcoe, alpha, calpha)

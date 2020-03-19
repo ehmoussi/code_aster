@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 !
 !
 interface
-    subroutine mecgme(modelz   , cara_elemz    , matez    , list_load, inst_curr,&
+    subroutine mecgme(modelz   , cara_elemz    , matez    , matecoz  , list_load, inst_curr,&
                       disp_prev, disp_cumu_inst, inst_prev, compor   , matr_elem)
         character(len=*), intent(in) :: modelz
         character(len=*), intent(in) :: cara_elemz
-        character(len=*), intent(in) :: matez
+        character(len=*), intent(in) :: matez, matecoz
         character(len=19), intent(in) :: list_load
         real(kind=8), intent(in) :: inst_prev
         real(kind=8), intent(in) :: inst_curr

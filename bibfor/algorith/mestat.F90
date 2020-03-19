@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mestat(modelz, fomulz, lischz, mate, caraz,&
+subroutine mestat(modelz, fomulz, lischz, mate, mateco, caraz,&
                   ltpsz, solvez, compor, matasz)
 !
 ! ---------------------------------------------------------------------
@@ -25,6 +25,7 @@ subroutine mestat(modelz, fomulz, lischz, mate, caraz,&
 !     IN: MODELZ : NOM D'1 MODELE
 !         FOMULZ : LISTE DES FONCTIONS MULTIPLICATRICES
 !         LISCHZ : INFORMATION SUR LES CHARGEMENTS
+!         MATECO : NOM DU MATERIAU CODE
 !         MATE   : NOM DU MATERIAU
 !         CARAZ  : NOM D'1 CARAC_ELEM
 !         LTPSZ  : LISTE DES INSTANTS DE CALCUL
@@ -67,7 +68,7 @@ implicit none
 #include "asterfort/uttcpr.h"
 #include "asterfort/uttcpu.h"
 #include "asterfort/vtcreb.h"
-    character(len=*) :: modelz, fomulz, lischz, mate, caraz, ltpsz, solvez
+    character(len=*) :: modelz, fomulz, lischz, mate, mateco, caraz, ltpsz, solvez
     character(len=*) :: matasz
     character(len=8) :: ltps
     character(len=19) :: lischa, solveu
@@ -211,7 +212,7 @@ implicit none
         endif
 ! 2.2.2. ==> RESOLUTION
 !
-        call mereso(result, modele, mate, carele, fomult,&
+        call mereso(result, modele, mate, mateco, carele, fomult,&
                     lischa, itps0, partps, numedd, vecass,&
                     assmat, solveu, matass, maprec, base,&
                     compor)

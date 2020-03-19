@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmvcpr_elem(modelz    , matez     , cara_elemz,&
+    subroutine nmvcpr_elem(modelz    , matez     , matecoz   , cara_elemz,&
                            nume_harm , time_comp , hval_incr ,&
                            varc_refez, comporz   ,&
                            base      , vect_elemz)
-        character(len=*), intent(in) :: modelz, cara_elemz, matez
+        character(len=*), intent(in) :: modelz, cara_elemz, matez, matecoz
         integer, intent(in) :: nume_harm
         character(len=1), intent(in) :: time_comp
         character(len=19), intent(in) :: hval_incr(*)

@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine me2mme_2(modelz, nb_load, lchar, mate, caraz,&
+subroutine me2mme_2(modelz, nb_load, lchar, mate, mateco, caraz,&
                   time, vect_elem_, nharm, basez)
 ! aslint: disable=W1501
     implicit none
@@ -49,7 +49,7 @@ subroutine me2mme_2(modelz, nb_load, lchar, mate, caraz,&
 #include "asterfort/me2mme_evol.h"
 !
     character(len=8) :: model, cara_elem, kbid, lcmp(5)
-    character(len=*) :: modelz, caraz, vect_elem_, lchar(*), mate, basez
+    character(len=*) :: modelz, caraz, vect_elem_, lchar(*), mate, basez, mateco
     character(len=19) :: vect_elem
     real(kind=8) :: time
     aster_logical :: lfonc
@@ -244,7 +244,7 @@ subroutine me2mme_2(modelz, nb_load, lchar, mate, caraz,&
     lpain(1)='PGEOMER'
     lchin(1)=chgeom
     lpain(2)='PMATERC'
-    lchin(2)=mate
+    lchin(2)=mateco
 !
     ifla=0
 !
@@ -627,7 +627,7 @@ subroutine me2mme_2(modelz, nb_load, lchar, mate, caraz,&
 
         call jeexin(lchar(i_load)//'.CHME.EVOL.CHAR', ier)
         if (ier.ne.0) then
-            call me2mme_evol(model     , cara_elem, ''       , nharm    , base    ,&
+            call me2mme_evol(model     , cara_elem, mate, ''       , nharm    , base    ,&
                             i_load    , load_name, ligrmo, inst_prev, inst_curr,&
                             inst_theta, lchout(1), vect_elem)
         endif

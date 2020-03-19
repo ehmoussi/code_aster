@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,18 +17,17 @@
 ! --------------------------------------------------------------------
 
 !
-!
-          interface 
-            subroutine mestat(modelz,fomulz,lischz,mate,caraz,ltpsz,    &
+          interface
+            subroutine mestat(modelz,fomulz,lischz,mate, mateco, caraz,ltpsz,    &
      &solvez,compor,matasz)
               character(len=*) :: modelz
               character(len=*) :: fomulz
               character(len=*) :: lischz
-              character(len=*) :: mate
+              character(len=*) :: mate, mateco
               character(len=*) :: caraz
               character(len=*) :: ltpsz
               character(len=*) :: solvez
               character(len=24) :: compor
               character(len=*) :: matasz
             end subroutine mestat
-          end interface 
+          end interface

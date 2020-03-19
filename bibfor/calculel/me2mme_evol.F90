@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine me2mme_evol(model_    , cara_elem_, mate_      , nharm    , base_    ,&
+subroutine me2mme_evol(model_    , cara_elem_, mate_      , mateco_  , nharm    , base_    ,&
                        i_load    , load_name , ligrel_calc, inst_prev, inst_curr,&
                        inst_theta, resu_elem , vect_elem)
 !
@@ -32,21 +32,22 @@ implicit none
     character(len=*), intent(in) :: model_
     character(len=*), intent(in) :: cara_elem_
     character(len=*), intent(in) :: mate_
+    character(len=*), intent(in) :: mateco_
     integer, intent(in) :: nharm
     character(len=*), intent(in) :: base_
     integer, intent(in) :: i_load
     character(len=8), intent(in) :: load_name
     character(len=19), intent(in) :: ligrel_calc
-    real(kind=8), intent(in) :: inst_prev 
+    real(kind=8), intent(in) :: inst_prev
     real(kind=8), intent(in) :: inst_curr
-    real(kind=8), intent(in) :: inst_theta 
+    real(kind=8), intent(in) :: inst_theta
     character(len=19), intent(inout) :: resu_elem
     character(len=19), intent(in) :: vect_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! CALC_VECT_ELEM
-! 
+!
 ! EVOL_CHAR loads
 !
 ! --------------------------------------------------------------------------------------------------
@@ -58,7 +59,7 @@ implicit none
 !
     integer :: nb_in_prep
     character(len=1) :: stop, base
-    character(len=24) :: model, cara_elem, mate
+    character(len=24) :: model, cara_elem, mate, mateco
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,6 +68,7 @@ implicit none
     model     = model_
     cara_elem = cara_elem_
     mate      = mate_
+    mateco    = mateco_
 !
 ! - Init fields
 !
@@ -75,7 +77,7 @@ implicit none
 !
 ! - Preparing input fields
 !
-    call load_neum_prep(model    , cara_elem , mate      , 'Dead'      , inst_prev,&
+    call load_neum_prep(model    , cara_elem , mate      , mateco      , 'Dead'   , inst_prev,&
                         inst_curr, inst_theta, nb_in_maxi, nb_in_prep  , lchin    ,&
                         lpain    , nharm = nharm)
 !

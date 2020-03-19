@@ -116,6 +116,15 @@ public:
     {
         return _type;
     };
+
+    /**
+     * @brief Function membre
+     * @return material field
+     */
+    MaterialFieldPtr getMaterialField() const
+    {
+        return _mater;
+    };
 };
 
 /**
