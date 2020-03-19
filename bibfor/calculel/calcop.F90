@@ -262,6 +262,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
     do iop = 1, nopout
         if (zi(jacalc-1+iop) .eq. 0) goto 20
         optio2 = zk24(jlisop+iop-1)(1:16)
+        print*, "OP: ", iop, option, optio2
 !
         optdem = .false.
         if (option .eq. optio2) optdem = .true.
