@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine ntdata(list_load, solver, matcst   , coecst  , result,&
-                  model    , mate  , cara_elem, ds_inout, theta )
+                  model    , mater  , mateco, cara_elem, ds_inout, theta )
 !
 use NonLin_Datastructure_type
 !
@@ -37,7 +37,7 @@ aster_logical, intent(out) :: matcst
 aster_logical, intent(out) :: coecst
 character(len=8), intent(out) :: result
 character(len=24), intent(out) :: model
-character(len=24), intent(out) :: mate
+character(len=24), intent(out) :: mater, mateco
 character(len=24), intent(out) :: cara_elem
 type(NL_DS_InOut), intent(inout) :: ds_inout
 real(kind=8), intent(out) :: theta
@@ -61,7 +61,6 @@ real(kind=8), intent(out) :: theta
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: mater
     character(len=16) :: k16bid
     character(len=8) :: k8bid
 !
@@ -75,7 +74,7 @@ real(kind=8), intent(out) :: theta
 !
 ! - Read parameters
 !
-    call ntdoth(model, mater, mate, cara_elem, list_load,&
+    call ntdoth(model, mater, mateco, cara_elem, list_load,&
                 matcst_ = matcst, coecst_ = coecst )
 !
 ! - Get parameters for linear solver

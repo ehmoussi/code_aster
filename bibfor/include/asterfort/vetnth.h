@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine vetnth(model    , cara_elem, mate     , time ,&
+    subroutine vetnth(model    , cara_elem, mateco     , time ,&
                       temp_iter, varc_curr, vect_elem, base)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: cara_elem
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mateco
         character(len=24), intent(in) :: time
         character(len=24), intent(in) :: temp_iter
         character(len=19), intent(in) :: varc_curr

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ subroutine op0107()
     character(len=8) :: k8b, modele, carele, deform, resuco, crit
     character(len=16) :: concep, nomcmd
     character(len=19) :: resu, knum, tabtyp(3)
-    character(len=24) :: mate, chdef
+    character(len=24) :: mate, mateco, chdef
 !
 !     ------------------------------------------------------------------
 !
@@ -90,7 +90,7 @@ subroutine op0107()
 !
     call getfac('MASS_INER', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
+        call medomp(resuco, modele, mate, mateco, carele, nh)
         chdef = ' '
         call getvtx(' ', 'GEOMETRIE', scal=deform, nbret=n1)
         if (deform .eq. 'DEFORMEE') then
@@ -115,23 +115,23 @@ subroutine op0107()
                 call chpve2(chdef, 3, tabtyp, ier)
             endif
         endif
-        call pemain(resu, modele, mate, carele, nh,&
+        call pemain(resu, modele, mate, mateco, carele, nh,&
                     nbocc, chdef)
 !
     endif
 !
     call getfac('ENER_POT', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peepot(resu, modele, mate, carele, nh,&
+        call medomp(resuco, modele, mate, mateco, carele, nh)
+        call peepot(resu, modele, mate, mateco,  carele, nh,&
                     nbocc)
 !
     endif
 !
     call getfac('ENER_CIN', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peecin(resu, modele, mate, carele, nh,&
+        call medomp(resuco, modele, mate, mateco,  carele, nh)
+        call peecin(resu, modele, mate, mateco,  carele, nh,&
                     nbocc)
 !
     endif
@@ -175,8 +175,8 @@ subroutine op0107()
 !
     call getfac('WEIBULL', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peweib(resu, modele, mate, carele, k8b,&
+        call medomp(resuco, modele, mate, mateco, carele, nh)
+        call peweib(resu, modele, mate, mateco, carele, k8b,&
                     nh, nbocc, 0, nomcmd)
     endif
 !
@@ -200,44 +200,44 @@ subroutine op0107()
 !
     call getfac('INDIC_ENER', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peingl(resu, modele, mate, carele, nh,&
+        call medomp(resuco, modele, mate, mateco, carele, nh)
+        call peingl(resu, modele, mate, mateco, carele, nh,&
                     nbocc, 'INDIC_ENER')
     endif
 !
     call getfac('INDIC_SEUIL', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peingl(resu, modele, mate, carele, nh,&
+        call medomp(resuco, modele, mate, mateco, carele, nh)
+        call peingl(resu, modele, mate, mateco, carele, nh,&
                     nbocc, 'INDIC_SEUIL')
     endif
 !
     call getfac('ENER_ELAS', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peingl(resu, modele, mate, carele, nh,&
+        call medomp(resuco, modele, mate, mateco, carele, nh)
+        call peingl(resu, modele, mate, mateco, carele, nh,&
                     nbocc, 'ENER_ELAS')
     endif
 !
     call getfac('ENER_ELTR', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peingl(resu, modele, mate, carele, nh,&
+        call medomp(resuco, modele, mate, mateco, carele, nh)
+        call peingl(resu, modele, mate, mateco, carele, nh,&
                     nbocc, 'ENER_ELTR')
     endif
 
 !
     call getfac('ENER_TOTALE', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peingl(resu, modele, mate, carele, nh,&
+        call medomp(resuco, modele, mate, mateco, carele, nh)
+        call peingl(resu, modele, mate, mateco, carele, nh,&
                     nbocc, 'ENER_TOTALE')
     endif
 !
     call getfac('ENER_DISS', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate, carele, nh)
-        call peingl(resu, modele, mate, carele, nh,&
+        call medomp(resuco, modele, mate, mateco, carele, nh)
+        call peingl(resu, modele, mate, mateco, carele, nh,&
                     nbocc, 'ENER_DISS')
     endif
 !
