@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine memare(base  , matr_vect_elemz, modelz, mate, cara_elem,&
+subroutine memare(base  , matr_vect_elemz, modelz, mateco, cara_elem,&
                   suropt)
 !
 implicit none
@@ -29,7 +29,7 @@ implicit none
     character(len=1), intent(in) :: base
     character(len=*), intent(in) :: matr_vect_elemz
     character(len=*), intent(in) :: modelz
-    character(len=*), intent(in) :: mate
+    character(len=*), intent(in) :: mateco
     character(len=*), intent(in) :: cara_elem
     character(len=*), intent(in) :: suropt
 !
@@ -44,7 +44,7 @@ implicit none
 ! In  base           : JEVEUX basis
 ! In  matr_vect_elem : name of matr_elem or vect_elem
 ! In  modelz         : name of model
-! In  mate           : name of material characteristics (field)         
+! In  mateco         : name of coded material
 ! In  cara_elem      : name of elementary characteristics (field)
 ! In  suropt         : name of "SUR_OPTION"
 !
@@ -65,7 +65,7 @@ implicit none
     p_rerr(1) = model
     p_rerr(2) = suropt
     p_rerr(3) = 'NON_SOUS_STRUC'
-    p_rerr(4) = mate
+    p_rerr(4) = mateco
     p_rerr(5) = cara_elem
 !
 end subroutine

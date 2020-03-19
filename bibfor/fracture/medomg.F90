@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine medomg(result, numord, modele, mate, lischa)
+subroutine medomg(result, numord, modele, mate, mateco, lischa)
 !
     implicit none
 !
@@ -36,7 +36,7 @@ subroutine medomg(result, numord, modele, mate, lischa)
 !
     integer :: numord
     character(len=8) :: modele, result
-    character(len=24) :: mate
+    character(len=24) :: mate, mateco
     character(len=19) :: lischa
 !
 ! ----------------------------------------------------------------------
@@ -70,7 +70,7 @@ subroutine medomg(result, numord, modele, mate, lischa)
 !
     materi = ' '
     modele = ' '
-    mate = ' '
+    mateco = ' '
     nomcmd = 'CALC_G'
     phenom = 'MECANIQUE'
     motfac = 'EXCIT'
@@ -89,7 +89,8 @@ subroutine medomg(result, numord, modele, mate, lischa)
 !
 ! - CODAGE DU MATERIAU
 !
-    if (materi .ne. ' ') call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
+    if (materi .ne. ' ') call rcmfmc(materi, mateco, l_ther_ = ASTER_FALSE)
+    mate = materi
 !
 ! - ON PREND LE CHARGEMENT DANS LA SD
 !
