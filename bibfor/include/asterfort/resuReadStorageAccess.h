@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lrrefd(resu, prchnd)
-        character(len=8) :: resu
-        character(len=19) :: prchnd
-    end subroutine lrrefd
+    subroutine resuReadStorageAccess(storeAccess, storeCreaNb,&
+                                     storeIndxNb, storeIndx  ,&
+                                     storeTimeNb, storeTime  ,&
+                                     storeEpsi  , storeCrit)
+        integer, intent(out) :: storeIndxNb, storeTimeNb
+        character(len=10), intent(out) :: storeAccess
+        integer, intent(out) :: storeCreaNb
+        character(len=19), intent(out) :: storeIndx, storeTime
+        real(kind=8), intent(out) :: storeEpsi
+        character(len=8), intent(out) :: storeCrit
+    end subroutine resuReadStorageAccess
 end interface

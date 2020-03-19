@@ -15,42 +15,59 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdoco(model, caraElem, compor)
+subroutine resuGetEmpiricParameters(resultType  , fieldNb   , fieldList    ,&
+                                    empiNumePlan, empiSnapNb, empiFieldType)
 !
 implicit none
 !
-#include "asterfort/cesvar.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/exisd.h"
+#include "asterf_types.h"
+#include "asterfort/getvis.h"
+#include "asterfort/utmess.h"
 !
-character(len=*), intent(in) :: model, caraElem, compor
-!
-! --------------------------------------------------------------------------------------------------
-!
-! MECA_NON_LINE
-!
-! EXTENSION DE LA CARTE COMPORTEMENT
-!   TRANSFO. EN CHAM_ELEM_S
+character(len=16), intent(in) :: resultType
+integer, intent(in) :: fieldNb
+character(len=16), intent(in) :: fieldList(100)
+integer, intent(out) :: empiNumePlan, empiSnapNb
+character(len=24), intent(out) :: empiFieldType
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! I/O COMPOR : CARTE COMPORTEMENT ETENDUE EN CHAM_ELEM_S
+! LIRE_RESU and CREA_RESU
+!
+! Get empiric parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret
-    character(len=24) :: ligrmo
+! In  resultType       : type of results datastructure (EVOL_NOLI, EVOL_THER, )
+! In  fieldNb          : number of fields to read
+! In  fieldList        : list of fields to read
+! Out empiNumeplan     : index of plane for empiric modes
+! Out empiSnapNb       : number of snapshots for empiric modes
+! Out empiFieldType    : type of field for empiric modes
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call dismoi('NOM_LIGREL', model, 'MODELE', repk=ligrmo)
-    call exisd('CHAM_ELEM_S', compor, iret)
-    if (iret .eq. 0) then
-        call cesvar(caraElem, compor, ligrmo, compor)
+    integer :: nbOcc
+!
+! --------------------------------------------------------------------------------------------------
+!
+    empiNumePlan  = 0
+    empiSnapNb    = 0
+    empiFieldType = ' '
+!
+! - Get
+!
+    if (resultType .eq. 'MODE_EMPI') then
+        if (fieldNb .ne. 1) then
+            call utmess('F', 'RESULT2_18')
+        endif
+        empiFieldType = fieldList(1)
+        call getvis(' ', 'NUME_PLAN', scal=empiNumePlan, nbret=nbOcc)
+        if (nbOcc .eq. 0) then
+            empiNumePlan = 0
+        endif
+        empiSnapNb = 0
     endif
 !
 end subroutine

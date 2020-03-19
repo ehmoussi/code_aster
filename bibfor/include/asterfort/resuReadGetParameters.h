@@ -17,11 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine carcha(fieldType, fieldQuantity, fieldSupport, option, param)
-        character(len=16), intent(in) :: fieldType
-        character(len=8), intent(out) :: fieldQuantity
-        character(len=4), intent(out) :: fieldSupport
-        character(len=24), intent(out) :: option
-        character(len=8), intent(out) :: param
-    end subroutine carcha
+    subroutine resuReadGetParameters(mesh, model, caraElem, fieldMate)
+        character(len=8), intent(out) :: mesh, model, caraElem, fieldMate
+    end subroutine resuReadGetParameters
 end interface

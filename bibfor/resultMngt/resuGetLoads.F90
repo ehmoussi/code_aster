@@ -15,42 +15,59 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdoco(model, caraElem, compor)
+subroutine resuGetLoads(resultType, listLoad)
 !
 implicit none
 !
-#include "asterfort/cesvar.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/exisd.h"
+#include "asterf_types.h"
+#include "asterc/getfac.h"
+#include "asterfort/gnomsd.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmdoch.h"
+#include "asterfort/ntdoch.h"
+#include "asterfort/copisd.h"
 !
-character(len=*), intent(in) :: model, caraElem, compor
-!
-! --------------------------------------------------------------------------------------------------
-!
-! MECA_NON_LINE
-!
-! EXTENSION DE LA CARTE COMPORTEMENT
-!   TRANSFO. EN CHAM_ELEM_S
+character(len=16), intent(in) :: resultType
+character(len=19), intent(out) :: listLoad
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! I/O COMPOR : CARTE COMPORTEMENT ETENDUE EN CHAM_ELEM_S
+! LIRE_RESU and CREA_RESU
+!
+! Get loads
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret
-    character(len=24) :: ligrmo
+! In  resultType       : type of results datastructure (EVOL_NOLI, EVOL_THER, )
+! Out listLoad         : name of datastructure for loads
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call dismoi('NOM_LIGREL', model, 'MODELE', repk=ligrmo)
-    call exisd('CHAM_ELEM_S', compor, iret)
-    if (iret .eq. 0) then
-        call cesvar(caraElem, compor, ligrmo, compor)
+    aster_logical :: loadFromUser
+    character(len=24) :: noobj
+    integer :: nbOcc
+    character(len=19), parameter :: listLoadIn = '&&LRCOMM.LISTLOAD'
+!
+! --------------------------------------------------------------------------------------------------
+!
+    listLoad     = ' '
+    loadFromUser = ASTER_TRUE
+    call getfac('EXCIT', nbOcc)
+    if (nbOcc .gt. 0) then
+! ----- Generate name of datastructure
+        noobj ='12345678.1234.EXCIT.INFC'
+        call gnomsd(' ', noobj, 10, 13)
+        listLoad = noobj(1:19)
+! ----- Read from command file
+        if (resultType .eq. 'EVOL_ELAS' .or. resultType .eq. 'EVOL_NOLI') then
+            call nmdoch(listLoadIn, loadFromUser)
+        else if (resultType .eq. 'EVOL_THER') then
+            call ntdoch(listLoadIn)
+        else
+            call utmess('A', 'RESULT2_16', sk=resultType)
+        endif
+        call copisd(' ', 'G', listLoadIn, listLoad)
     endif
 !
 end subroutine

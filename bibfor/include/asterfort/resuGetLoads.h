@@ -17,11 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine carcha(fieldType, fieldQuantity, fieldSupport, option, param)
-        character(len=16), intent(in) :: fieldType
-        character(len=8), intent(out) :: fieldQuantity
-        character(len=4), intent(out) :: fieldSupport
-        character(len=24), intent(out) :: option
-        character(len=8), intent(out) :: param
-    end subroutine carcha
+    subroutine resuGetLoads(resultType, listLoad)
+        character(len=16), intent(in) :: resultType
+        character(len=19), intent(out) :: listLoad
+    end subroutine resuGetLoads
 end interface

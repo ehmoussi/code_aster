@@ -15,42 +15,49 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdoco(model, caraElem, compor)
+subroutine resuReadCheckFields(resultName, resultType, fieldNb, fieldList)
 !
 implicit none
 !
-#include "asterfort/cesvar.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/exisd.h"
+#include "asterf_types.h"
+#include "asterfort/jexnom.h"
+#include "asterfort/utmess.h"
+#include "asterfort/jenonu.h"
 !
-character(len=*), intent(in) :: model, caraElem, compor
-!
-! --------------------------------------------------------------------------------------------------
-!
-! MECA_NON_LINE
-!
-! EXTENSION DE LA CARTE COMPORTEMENT
-!   TRANSFO. EN CHAM_ELEM_S
+character(len=8), intent(in) :: resultName
+character(len=16), intent(in) :: resultType
+integer, intent(in) :: fieldNb
+character(len=16), intent(in) :: fieldList(100)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  MODELE : NOM DU MODELE
-! IN  CARELE : CARACTERISTIQUES DES ELEMENTS DE STRUCTURE
-! I/O COMPOR : CARTE COMPORTEMENT ETENDUE EN CHAM_ELEM_S
+! LIRE_RESU
+!
+! Check if fields are allowed for the result
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iret
-    character(len=24) :: ligrmo
+! In  resultName       : name of results datastructure
+! In  resultType       : type of results datastructure (EVOL_NOLI, EVOL_THER, )
+! In  fieldNb          : number of fields to read
+! In  fieldList        : list of fields to read
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call dismoi('NOM_LIGREL', model, 'MODELE', repk=ligrmo)
-    call exisd('CHAM_ELEM_S', compor, iret)
-    if (iret .eq. 0) then
-        call cesvar(caraElem, compor, ligrmo, compor)
-    endif
+    integer :: iField, iexi
+    character(len=16) :: fieldType
+    character(len=19) :: resu19
+!
+! --------------------------------------------------------------------------------------------------
+!
+    resu19 = resultName
+    do iField = 1, fieldNb
+        fieldType = fieldList(iField)
+        call jenonu(jexnom(resu19//'.DESC', fieldType), iexi)
+        if (iexi .eq. 0) then
+            call utmess('F', 'RESULT2_24', nk=2, valk=[resultType, fieldType])
+        endif
+    end do
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
-                  listrz, listiz, precis, crit, epsi,&
-                  acces, mfich, noma, ligrez, nbvari)
-    implicit none
+!
+subroutine lridea(fileUnit   ,&
+                  resultName , resultType ,&
+                  model      , meshAst    ,&
+                  fieldNb    , fieldList  ,&
+                  storeAccess,&
+                  storeIndxNb, storeTimeNb,&
+                  storeIndx  , storeTime  ,&
+                  storeCrit  , storeEpsi  ,&
+                  storePara)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterc/getres.h"
+#include "asterfort/getvis.h"
 #include "asterfort/assert.h"
 #include "asterfort/cescre.h"
 #include "asterfort/cesexi.h"
@@ -45,64 +53,73 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
-#include "asterfort/lrrefd.h"
 #include "asterfort/numeok.h"
-#include "asterfort/rsexpa.h"
 #include "asterfort/rsutc2.h"
 #include "asterfort/stock.h"
 #include "asterfort/utmess.h"
+#include "asterfort/ulisop.h"
+#include "asterfort/ulopen.h"
 !
-    character(len=*) :: typres, linoch(*), nomcmd
-    character(len=8) :: resu
-    character(len=*) :: listrz, listiz, crit, acces
-    character(len=*) :: ligrez
-    real(kind=8) :: epsi
-    integer :: precis, nbnoch, mfich, nbvari
+integer, intent(in) :: fileUnit
+character(len=8), intent(in) :: resultName
+character(len=16), intent(in) :: resultType
+character(len=8), intent(in) :: model, meshAst
+integer, intent(in) :: fieldNb
+character(len=16), intent(in) :: fieldList(100)
+character(len=10), intent(in) :: storeAccess
+integer, intent(in) :: storeIndxNb, storeTimeNb
+character(len=19), intent(in) :: storeIndx, storeTime
+real(kind=8), intent(in) :: storeEpsi
+character(len=8), intent(in) :: storeCrit
+character(len=4), intent(in) :: storePara
 !
+! --------------------------------------------------------------------------------------------------
 !
-!----------------------------------------------------------------------
-!  LECTURE DES RESULTATS PRESENTS DANS LE FICHIER UNIVERSEL ET STOCKAGE
-!  DANS LA SD RESULTAT
+! IDEAS reader
 !
-! IN  : RESU   : K8    : NOM DE LA SD_RESULTAT
-! IN  : TYPRES : K16   : TYPE DE RESULTAT ('EVOL_ELAS','DYNA_TRANS')
-! IN  : LINOCH : L_K16 : LISTE DES NOMS DE CHAMP ('DEPL',SIEF_ELNO')
-! IN  : NBNOCH : I     : NOMBRE DE CHAMPS A LIRE
-! IN  : NOMCMD : K16   : NOM DE LA COMMANDE
-! IN  : LISTRZ : K19   : NOM DE L'OBJET CONTENANT LA LISTE DES INSTANTS
-!                        OU DES FREQUENCES A LIRE
-! IN  : LISTIZ : K19   : NOM DE L'OBJET CONTENANT LA LISTE DES
-!                        NUMEROS D'ORDRE A LIRE
-! IN  : PRECIS : I     : INDICATEUR DE VERIFICATION DE LA PRECISION
-! IN  : CRIT   : K8    : PRECISION : CRITERE RELATIF OU ABSOLU
-! IN  : EPSI   : R     : PRECISION DEMANDEE
-! IN  : ACCES  : K10   : TYPE D'ACCES ('TOUT_ORDRE','NUME_ORDRE','INST'
-!                                      'LIST_INST',...)
-! IN  : MFICH  : I     : NUMERO UNITE LOGIQUE DU FICHIER UNIVERSEL
-! IN  : NOMA   : K8    : NOM DU MAILLAGE
-! IN  : LIGREZ : K19   : NOM DU LIGREL
-! IN  : NBVARI : I     : NOMBRE DE VARIABLES INTERNES A LIRE POUR LE
-!                        CHAMP DE VARIABLES INTERNES (VARI_R)
-!     -----------------------------------------------------------------
+! Read field
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  fileUnit         : index of file (logical unit)
+! In  resultName       : name of results datastructure
+! In  resultType       : type of results datastructure (EVOL_NOLI, EVOL_THER, )
+! In  model            : name of model
+! In  meshAst          : name of (aster) mesh
+! In  fieldNb          : number of fields to read
+! In  fieldList        : list of fields to read
+! In  storeAccess      : how to access to the storage
+! In  storeIndxNb      : number of storage slots given by index (integer)
+! In  storeIndx        : name of JEVEUX object to access storage slots given by index (integer)
+! In  storeTimeNb      : number of storage slots given by time/freq (real)
+! In  storeTime        : name of JEVEUX object to access storage slots given by time/freq (real)
+! In  storeEpsi        : tolerance to find time/freq (real)
+! In  storeCrit        : type of tolerance to find time/freq (real)
+! In  storePara        : name of paremeter to access results (INST or FREQ)
+!
+! --------------------------------------------------------------------------------------------------
+!
     real(kind=8) :: zero
     character(len=24) :: noojb
-    real(kind=8) :: rbid, val(1000), iouf, masgen, amrge
+    real(kind=8) :: rbid, val(1000), fileTime, masgen, amrge
     integer :: vali, nbval, iaux, ichamp
     integer :: jcnsv, jcnsl, jcesd, jcesl
     integer :: nbrec, numdat, numch, iast, isup, itype
-    integer :: inoide, inoast, ielast, ielide, knoide, knoast
+    integer :: inoide, inoast, cellNume, ielide, knoide, knoast
     integer :: nbcmp, nbcmid, ich, icmp, nbcmp1, maxnod, lon1, versio
-    integer :: irec, valatt, ifield, iord, ibid, ilu1
+    integer :: irec, valatt, ifield, fileIndx, ibid, ilu1
     integer :: i, iexp, nbnoe, nbfiel, nbnoeu, nbelem
     integer :: iret, idecal, icmp1, icmp2, inatur, kk, numode
+    integer :: nbvari, nvar
     aster_logical :: trouve, astock, chamok, zcmplx, ldepl
-    character(len=4) :: tychas, tychid, acce2
+    character(len=4) :: tychas, tychid
     character(len=6) :: kar
-    character(len=8) :: nomgd, licmp(1000), nomno, nomma, noma
+    character(len=8) :: nomgd, licmp(1000), nomno, cellName
     character(len=8) :: nomnoa, nomnob, prolo
     character(len=13) :: a13bid
-    character(len=16) :: nomch, noidea, concep, nomc2, nomcha
-    character(len=19) :: chs, listr8, listis, ligrel, prchnd, prchn2, prchn3
+    character(len=14) :: numeDof
+    character(len=16) :: fieldType, noidea, fieldTypeSave, datasetType, fileName
+    character(len=19) :: chs, prchnd, prchn2, prchn3, ligrel
     character(len=80) :: rec(20)
     character(len=16), pointer :: fid_nom(:) => null()
     character(len=8), pointer :: fid_cmp(:) => null()
@@ -116,25 +133,33 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
     integer, pointer :: fid_num(:) => null()
 !
     parameter (nbfiel=40,versio=5)
-! ---------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
 !
     zero = 0.d0
-    nomc2=' '
+    fieldTypeSave=' '
 !
-    listr8 = listrz
-    listis = listiz
-    ligrel = ligrez
     zcmplx = .false.
+    ligrel = model//'.MODELE'
 !
-    acce2 = 'INST'
-    call rsexpa(resu, 0, 'FREQ', iret)
-    if (iret .gt. 0) acce2 = 'FREQ'
+! - Open file
 !
-    call dismoi('NB_MA_MAILLA', noma, 'MAILLAGE', repi=nbelem)
-    call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbnoeu)
+    fileName = ' '
+    if (ulisop(fileUnit, fileName) .eq. 0) then
+        call ulopen(fileUnit, ' ', ' ', 'NEW', 'O')
+    endif
 !
-    call jeveuo(noma//'.TYPMAIL', 'L', vi=typmail)
+! - Number of internal state variable
+!
+    call getvis(' ', 'NB_VARI', scal=nbvari, nbret=nvar)
+!
+! - Access to mesh
+!
+    call dismoi('NB_MA_MAILLA', meshAst, 'MAILLAGE', repi=nbelem)
+    call dismoi('NB_NO_MAILLA', meshAst, 'MAILLAGE', repi=nbnoeu)
+    call jeveuo(meshAst//'.TYPMAIL', 'L', vi=typmail)
 !
 !- TABLEAU DE PERMUTATION POUR LES CONNECTIVITES DES MAILLES :
     call iradhs(versio)
@@ -145,7 +170,7 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !- CREATION DE LA STRUCTURE DE DONNEES FORMAT_IDEAS ---
 !
     noidea = '&&LIRE_RESU_IDEA'
-    call crsdfi(linoch, nbnoch, noidea)
+    call crsdfi(fieldList, fieldNb, noidea)
 !
 !- OUVERTURE EN LECTURE DES OBJETS COMPOSANTS LA SD FORMAT_IDEAS
 !
@@ -156,21 +181,21 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
     call jeveuo(noidea//'.FID_CMP', 'L', vk8=fid_cmp)
     call jeveuo(noidea//'.FID_NBC', 'L', vi=fid_nbc)
 !
-!- CREATION DE L'OBJET .REFD DANS LES MODE_MECA
-!- S'IL N'Y PAS DE PROFIL DE STOCKAGE PREDEFINI IL FAUT EN CREER UN
-!- C'EST FAIT DANS CNSCNO EN LUI INDIQUANT UN NOM DE PROFIL MIS A BLANC
-!- SINON ON RECHERCHE LE PROFIL DE LA MATRICE DE RIGIDITE (MATR_RIGI)
+! - Get profile for numbering nodal fields
+!
     prchnd = ' '
-    if ((typres.eq.'MODE_MECA') .or. (typres.eq.'MODE_MECA_C')) then
-        call lrrefd(resu, prchnd)
-!       -- PRCHND NE DOIT SERVIR QUE POUR DEPL,VITE,ACCE
+    if (resultType(1:9) .eq. 'MODE_MECA') then
+        call dismoi('NUME_DDL', resultName, 'RESU_DYNA', repk=numeDof)
+        if (numeDof .ne. ' ') then
+            prchnd = numeDof(1:14)//'.NUME'
+        endif
     endif
-    rewind mfich
+    rewind fileUnit
 !
 !- LECTURE DU NUMERO DU DATASET
 !
  10 continue
-    read (mfich,'(A6)',end=170,err=160) kar
+    read (fileUnit,'(A6)',end=170,err=160) kar
 !
 !- ON NE LIT QUE LES DATASETS 55, 57 ET 2414
 !
@@ -190,13 +215,13 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !-LECTURE DE L'ENTETE DU DATASET
 !
     do irec = 1, nbrec
-        read (mfich,'(A80)',end=160) rec(irec)
+        read (fileUnit,'(A80)',end=160) rec(irec)
     end do
 !
 !-TRAITEMENT DE L'ENTETE : ON RECHERCHE SI LE CONTENU EST
 ! CONFORME A CELUI PRESENT DANS LA SD FORMAT_IDEAS
 !
-    do ich = 1, nbnoch
+    do ich = 1, fieldNb
         if (fid_num(ich) .eq. numdat) goto 40
     end do
     goto 10
@@ -216,23 +241,23 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
     call decod2(rec, irec, ifield, 0, ichamp,&
                 rbid, trouve)
 !
-    chamok = .false.
-    do ich = 1, nbnoch
+    chamok = ASTER_FALSE
+    do ich = 1, fieldNb
         if (.not.chamok) then
             valatt = fid_par((ich-1)*800+(irec-1)*40+4)
             if (valatt .eq. 9999) then
-                if (ichamp .eq. 0) nomcha='VARI_ELNO'
-                if (ichamp .eq. 2) nomcha='SIEF_ELNO'
-                if (ichamp .eq. 3) nomcha='EPSA_ELNO'
-                if (ichamp .eq. 5) nomcha='TEMP'
-                if (ichamp .eq. 8) nomcha='DEPL'
-                if (ichamp .eq. 11) nomcha='VITE'
-                if (ichamp .eq. 12) nomcha='ACCE'
-                if (ichamp .eq. 15) nomcha='PRES'
-                if (nomcha(1:3) .eq. fid_nom(ich)(1:3)) then
-                    nomch = fid_nom(ich)
+                if (ichamp .eq. 0) datasetType='VARI_ELNO'
+                if (ichamp .eq. 2) datasetType='SIEF_ELNO'
+                if (ichamp .eq. 3) datasetType='EPSA_ELNO'
+                if (ichamp .eq. 5) datasetType='TEMP'
+                if (ichamp .eq. 8) datasetType='DEPL'
+                if (ichamp .eq. 11) datasetType='VITE'
+                if (ichamp .eq. 12) datasetType='ACCE'
+                if (ichamp .eq. 15) datasetType='PRES'
+                if (datasetType(1:3) .eq. fid_nom(ich)(1:3)) then
+                    fieldType = fid_nom(ich)
                     numch = ich
-                    chamok = .true.
+                    chamok = ASTER_TRUE
                 endif
             else
                 do irec = 1, nbrec
@@ -244,8 +269,8 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
                         endif
                     end do
                 end do
-                chamok = .true.
-                nomch = linoch(ich)
+                chamok = ASTER_TRUE
+                fieldType = fieldList(ich)
                 numch = ich
             endif
         endif
@@ -256,27 +281,27 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !- TRAITEMENT DU NUMERO D'ORDRE, DE L'INSTANT OU DE LA FREQUENCE
     irec = fid_loc((numch-1)*12+1)
     ifield = fid_loc((numch-1)*12+2)
-    call decod2(rec, irec, ifield, 0, iord,&
+    call decod2(rec, irec, ifield, 0, fileIndx,&
                 rbid, trouve)
     if (.not.trouve) then
         call utmess('F', 'PREPOST3_31')
     endif
 !
-    if (acces .eq. 'INST' .or. acces .eq. 'LIST_INST' .or. acce2 .eq. 'INST') then
+    if (storeAccess .eq. 'INST' .or. storeAccess .eq. 'LIST_INST' .or. storePara .eq. 'INST') then
         irec = fid_loc((numch-1)*12+3)
         ifield = fid_loc((numch-1)*12+4)
         call decod2(rec, irec, ifield, 1, ibid,&
-                    iouf, trouve)
+                    fileTime, trouve)
         if (.not.trouve) then
             call utmess('F', 'PREPOST3_32')
         endif
     endif
 !
-    if (acces .eq. 'FREQ' .or. acces .eq. 'LIST_FREQ' .or. acce2 .eq. 'FREQ') then
+    if (storeAccess .eq. 'FREQ' .or. storeAccess .eq. 'LIST_FREQ' .or. storePara .eq. 'FREQ') then
         irec = fid_loc((numch-1)*12+5)
         ifield = fid_loc((numch-1)*12+6)
         call decod2(rec, irec, ifield, 1, ibid,&
-                    iouf, trouve)
+                    fileTime, trouve)
         if (.not.trouve) then
             call utmess('F', 'PREPOST3_33')
         endif
@@ -301,11 +326,14 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
     call decod2(rec, irec, ifield, 2, ibid,&
                 amrge, trouve)
 !
-!---  ON VERIFIE SI LE NUMERO D'ORDRE OU L'INSTANT OU LA FREQUENCE LU
-!     CORRESPOND A CELUI OU CELLE RECHERCHEE.
+! - Check if field from file is in the selection list
 !
-    call numeok(acces, iord, iouf, listr8, listis,&
-                precis, crit, epsi, astock)
+    call numeok(storeAccess,&
+                storeIndxNb, storeTimeNb,&
+                storeIndx  , storeTime  ,&
+                storeCrit  , storeEpsi  ,&
+                fileIndx   , fileTime   ,&
+                astock)
 !
 !- ON RECHERCHE LE TYPE DE CHAMP
 !
@@ -361,7 +389,7 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !- ON RECHERCHE LE TYPE DE CHAMP DEMANDE PAR L'UTILISATEUR
 !  ET LA GRANDEUR ASSOCIEE
 !
-    call rsutc2(typres, nomch, nomgd, tychas)
+    call rsutc2(resultType, fieldType, nomgd, tychas)
 !
 !- VERIFICATION DE LA COMPATIBILITE DU CHAMP DEMANDE
 !  AVEC LE CHAMP IDEAS
@@ -373,7 +401,7 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !  REEL OU COMPLEXE
 !
     if (.not.zcmplx) then
-        if (typres .eq. 'DYNA_HARM' .or. typres .eq. 'HARM_GENE' .or. typres .eq.&
+        if (resultType .eq. 'DYNA_HARM' .or. resultType .eq. 'HARM_GENE' .or. resultType .eq.&
             'MODE_MECA_C') then
             call utmess('F', 'PREPOST3_38')
         endif
@@ -396,7 +424,7 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
         if (tychid .eq. 'NOEU') then
 !
             chs = '&&LRIDEA.CHNS'
-            call cnscre(noma, nomgd, nbcmp1, licmp, 'V',&
+            call cnscre(meshAst, nomgd, nbcmp1, licmp, 'V',&
                         chs)
         else
 !
@@ -406,9 +434,9 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
             endif
             chs = '&&LRIDEA.CHES'
 !
-            if (nomch(1:4) .eq. 'VARI') nbcmp1 = nbvari
+            if (fieldType(1:4) .eq. 'VARI') nbcmp1 = nbvari
 !
-            call cescre('V', chs, tychas, noma, nomgd,&
+            call cescre('V', chs, tychas, meshAst, nomgd,&
                         nbcmp1, licmp, [ibid], [-1], [-nbcmp1])
         endif
 !
@@ -421,7 +449,7 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !
             call getvtx(' ', 'PROL_ZERO', scal=prolo, nbret=iret)
             if (prolo(1:3) .eq. 'OUI') then
-                call utmess('I', 'PREPOST_13', sk=nomch)
+                call utmess('I', 'PREPOST_13', sk=fieldType)
                 call jelira(chs//'.CNSV', 'LONMAX', nbval)
                 if (zcmplx) then
                     do iaux = 1, nbval
@@ -438,16 +466,16 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !
  90         continue
 !
-            read (mfich,'(I10,A13,A8)',end=160) inoide,a13bid,nomnoa
+            read (fileUnit,'(I10,A13,A8)',end=160) inoide,a13bid,nomnoa
             if (inoide .eq. -1) goto 150
 !
             nomno='NXXXXXXX'
             call codent(inoide, 'G', nomno(2:8))
-            call jenonu(jexnom(noma//'.NOMNOE', nomno), inoast)
+            call jenonu(jexnom(meshAst//'.NOMNOE', nomno), inoast)
 !  ON ESSAIE DE RECUPERER LE NUMERO DU NOEUD DIRECTEMENT
 !  SI ON NE LE TROUVE PAS VIA NXXXX
             if (inoast .eq. 0) then
-                call jenuno(jexnum(noma//'.NOMNOE', inoide), nomnob)
+                call jenuno(jexnum(meshAst//'.NOMNOE', inoide), nomnob)
                 if (nomnob .ne. nomnoa) then
                     call utmess('F', 'PREPOST3_40')
                 endif
@@ -463,7 +491,7 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !
             idecal = (inoast-1)*cnsd(2)
             if (zcmplx) then
-                read (mfich,'(6E13.5)',end=160) (val(i),i=1,2*nbcmid)
+                read (fileUnit,'(6E13.5)',end=160) (val(i),i=1,2*nbcmid)
                 icmp1 = 0
                 do icmp = 1, nbcmp
                     icmp2 = icmp*2
@@ -474,7 +502,7 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
                     endif
                 end do
             else
-                read (mfich,'(6E13.5)',end=160) (val(i),i=1,nbcmid)
+                read (fileUnit,'(6E13.5)',end=160) (val(i),i=1,nbcmid)
                 icmp1 = 0
                 do icmp = 1, nbcmp
                     if (fid_cmp((numch-1)*1000+icmp) .ne. 'XXX') then
@@ -493,22 +521,22 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
             call jeveuo(chs//'.CESL', 'E', jcesl)
 !
 120         continue
-            read (mfich,'(4I10)',end=160) ielide,iexp,nbnoe,nbcmid
-            if (nomch(1:4) .eq. 'VARI') nbcmp = nbvari
+            read (fileUnit,'(4I10)',end=160) ielide,iexp,nbnoe,nbcmid
+            if (fieldType(1:4) .eq. 'VARI') nbcmp = nbvari
             if (ielide .eq. -1) goto 150
-            nomma='MXXXXXXX'
-            call codent(ielide, 'G', nomma(2:8))
-            call jenonu(jexnom(noma//'.NOMMAI', nomma), ielast)
+            cellName='MXXXXXXX'
+            call codent(ielide, 'G', cellName(2:8))
+            call jenonu(jexnom(meshAst//'.NOMMAI', cellName), cellNume)
 !  ON ESSAIE DE RECUPERER LE NUMERO DE LA MAILLE DIRECTEMENT
 !  SI ON NE LE TROUVE PAS VIA MXXXX
-            if (ielast .eq. 0) ielast = ielide
-            ASSERT(ielast.gt.0)
+            if (cellNume .eq. 0) cellNume = ielide
+            ASSERT(cellNume.gt.0)
 !
-            if (ielast .gt. nbelem) then
-                vali = ielast
+            if (cellNume .gt. nbelem) then
+                vali = cellNume
                 call utmess('F', 'PREPOST5_46', si=vali)
             endif
-            itype=typmail(ielast)
+            itype=typmail(cellNume)
 !
             do knoide = 1, nbnoe
 !
@@ -521,12 +549,12 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 142             continue
                 knoast=iast
 !
-                read (mfich,'(6E13.5)',end=160) (val(i),i=1,nbcmid)
+                read (fileUnit,'(6E13.5)',end=160) (val(i),i=1,nbcmid)
                 icmp1 = 0
                 do icmp = 1, nbcmp
                     if (fid_cmp((numch-1)*1000+icmp) .ne. 'XXX') then
                         icmp1 = icmp1 + 1
-                        call cesexi('S', jcesd, jcesl, ielast, knoast,&
+                        call cesexi('S', jcesd, jcesl, cellNume, knoast,&
                                     1, icmp1, kk)
                         cesv(abs(kk)) = val(icmp)
                         zl(jcesl-1+abs(kk)) = .true.
@@ -540,26 +568,24 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
         endif
 !
 150     continue
-!       -- STOCKAGE DU CHAMP SIMPLE DANS LA SD_RESULTAT :
-!
-!       -- ON CHERCHE A ECONOMISER LES PROF_CHNO :
-        ldepl=(nomch.eq.'DEPL'.or.nomch.eq.'VITE'.or.nomch.eq.'ACCE')
-!
+! ----- Get profile of numbering
+        ldepl=(fieldType.eq.'DEPL'.or.fieldType.eq.'VITE'.or.fieldType.eq.'ACCE')
         if (prchnd .eq. ' ' .or. (.not.ldepl)) then
-            if (nomch .eq. nomc2) then
+            if (fieldType .eq. fieldTypeSave) then
                 prchn3=prchn2
             else
                 noojb='12345678.00000.NUME.PRNO'
                 call gnomsd(' ', noojb, 10, 14)
                 prchn3=noojb(1:19)
             endif
-            nomc2=nomch
+            fieldTypeSave = fieldType
             prchn2=prchn3
         else
             prchn3=prchnd
         endif
-        call stock(resu, chs, nomch, ligrel, tychas,&
-                   iord, iouf, numode, masgen, amrge,&
+! ----- Get current
+        call stock(resultName, chs, fieldType, ligrel, tychas,&
+                   fileIndx, fileTime, numode, masgen, amrge,&
                    prchn3)
         goto 10
     else
@@ -568,7 +594,6 @@ subroutine lridea(resu, typres, linoch, nbnoch, nomcmd,&
 !
     goto 180
 160 continue
-    call getres(resu, concep, nomcmd)
     call utmess('F', 'ALGORITH5_5')
 !
 170 continue
