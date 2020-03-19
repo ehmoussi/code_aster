@@ -174,8 +174,8 @@ integer, intent(out) ::  nb_obje
     endif
 !
     if (l_varc_prev .or. l_varc_curr) then
-        call nmvcd2('M_ZIRC' , ds_material%mateco, l_meta_zirc)
-        call nmvcd2('M_ACIER', ds_material%mateco, l_meta_acier)
+        call nmvcd2('M_ZIRC' , ds_material%mater, l_meta_zirc)
+        call nmvcd2('M_ACIER', ds_material%mater, l_meta_acier)
         if ((l_meta_zirc .or. l_meta_acier) .and. (.not.l_elem_nonl)) then
             call utmess('F', 'CALCUL1_9')
         endif
@@ -230,13 +230,15 @@ integer, intent(out) ::  nb_obje
 ! - State variables
 !
     if (l_varc_prev) then
-        call nmvcpr_elem(model                , ds_material%mateco, cara_elem,&
+        call nmvcpr_elem(model                , ds_material%mater     ,ds_material%mateco, &
+                         cara_elem,&
                          nume_harm            , '-'                   , hval_incr,&
                          ds_material%varc_refe, ds_constitutive%compor,&
                          base                 , vevarc_prev)
     endif
     if (l_varc_curr) then
-        call nmvcpr_elem(model                , ds_material%mateco, cara_elem,&
+        call nmvcpr_elem(model                , ds_material%mater     ,ds_material%mateco, &
+                         cara_elem,&
                          nume_harm            , '+'                   , hval_incr,&
                          ds_material%varc_refe, ds_constitutive%compor,&
                          base                 , vevarc_curr)

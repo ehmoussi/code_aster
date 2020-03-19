@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine dlnew0(result, force0, force1, iinteg, neq,&
                   istoc, iarchi, nbexci, nondp, nmodam,&
                   lamort, limped, lmodst, imat, masse,&
                   rigid, amort, nchar, nveca, liad,&
-                  lifo, modele, mate, carele, charge,&
+                  lifo, modele, mate, mateco, carele, charge,&
                   infoch, fomult, numedd, depla, vitea,&
                   accea, dep0, vit0, acc0, fexte,&
                   famor, fliai, depl1, vite1, acce1,&
@@ -140,7 +140,7 @@ implicit none
     character(len=19) :: solveu
     character(len=19) :: maprec
     character(len=24) :: criter
-    character(len=24) :: modele, mate, carele, charge, infoch, fomult, numedd
+    character(len=24) :: modele, mate, mateco, carele, charge, infoch, fomult, numedd
     character(len=24) :: vitini, vitent, valmod, basmod
     character(len=24) :: lifo(*)
     character(len=24) :: veanec, vaanec, vaonde, veonde
@@ -262,7 +262,7 @@ implicit none
 !
     call dlfext(nveca, nchar, temps, neq, liad,&
                 lifo, charge, infoch, fomult, modele,&
-                mate, carele, numedd, zr(iforc1))
+                mate, mateco, carele, numedd, zr(iforc1))
 !
     if (nondp .ne. 0) then
         do 43 , ieq = 1,neq

@@ -300,11 +300,11 @@ void DEFSSSSS(VELAME,velame, const char*, STRING_SIZE, const char*, STRING_SIZE,
                              const char*, STRING_SIZE, const char*, STRING_SIZE,
                              const char*, STRING_SIZE);
 
-#define CALLO_VECHME_WRAP(a, b, c, d, e, f, g, h, i) \
-    CALLOOOOPOOOO(VECHME_WRAP, vechme_wrap, a, b, c, d, e, f, g, h, i)
-void DEFSSSSPSSSS(VECHME_WRAP,vechme_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
+#define CALLO_VECHME_WRAP(a, b, c, d, e, f, g, h, i,l) \
+    CALLOOOOPOOOOO(VECHME_WRAP, vechme_wrap, a, b, c, d, e, f, g, h, i,l)
+void DEFSSSSPSSSSS(VECHME_WRAP,vechme_wrap, const char*, STRING_SIZE, const char*, STRING_SIZE,
                                             const char*, STRING_SIZE, const char*, STRING_SIZE,
-                                            const ASTERDOUBLE*,
+                                            const ASTERDOUBLE*, const char*, STRING_SIZE,
                                             const char*, STRING_SIZE, const char*, STRING_SIZE,
                                             const char*, STRING_SIZE, const char*, STRING_SIZE);
 
@@ -360,10 +360,11 @@ void DEFSSSPSS(VRCINS_WRAP,vrcins_wrap, const char*, STRING_SIZE, const char*, S
                                         const char*, STRING_SIZE, const ASTERDOUBLE*,
                                         const char*, STRING_SIZE, const char*, STRING_SIZE);
 
-#define CALLO_CACHVC(a, b, c, d, e, f, g, h, i, j, k) CALLOOOOOOOPPPP(CACHVC, cachvc, a, b, c,\
-                                                                      d, e, f, g, h, i, j, k)
-void DEFSSSSSSSPPPP(CACHVC,cachvc, const char*, STRING_SIZE, const char*, STRING_SIZE,
+#define CALLO_CACHVC(a, b, c, d, e, f, g, h, i, j, k, l) CALLOOOOOOOOPPPP(CACHVC, cachvc, a, b, c,\
+                                                                      d, e, f, g, h, i, j, k,l)
+void DEFSSSSSSSSPPPP(CACHVC,cachvc, const char*, STRING_SIZE, const char*, STRING_SIZE,
                                    const char*, STRING_SIZE, const char*, STRING_SIZE,
+                                   const char*, STRING_SIZE,
                                    const char*, STRING_SIZE, const char*, STRING_SIZE,
                                    const char*, STRING_SIZE, ASTERINTEGER *, ASTERINTEGER *,
                                    ASTERINTEGER *, ASTERINTEGER *);

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine vecvme(optio2, modelz, carelz, mate, compor,&
+    subroutine vecvme(optio2, modelz, carelz, mate, mateco, compor,&
                       complz, numedd, cnchtp)
         character(len=16) :: optio2
         character(len=*) :: modelz
         character(len=*) :: carelz
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=24) :: compor
         character(len=*) :: complz
         character(len=24) :: numedd

@@ -98,7 +98,8 @@ ElementaryVectorPtr DiscreteProblemClass::buildElementaryNeumannVector(
         throw std::runtime_error( "Invalid number of parameter" );
 
     ElementaryVectorPtr retour( new ElementaryVectorClass( Permanent ) );
-    const auto &curMater = _study->getCodedMaterial()->getCodedMaterialField();
+    const auto &curCodedMater = _study->getCodedMaterial()->getCodedMaterialField();
+    const auto &curMater = _study->getCodedMaterial()->getMaterialField();
 
     ModelPtr curModel = _study->getModel();
     std::string modelName = curModel->getName();
@@ -117,6 +118,7 @@ ElementaryVectorPtr DiscreteProblemClass::buildElementaryNeumannVector(
         varCName = varCom->getName() + ".TOUT";
     std::string resultName( retour->getName() );
     std::string materName( curMater->getName() + "                " );
+    std::string codmaName( curCodedMater->getName() + "                " );
 
     std::string caraName( blanc );
     const auto &caraElem = _study->getElementaryCharacteristics();
@@ -127,7 +129,7 @@ ElementaryVectorPtr DiscreteProblemClass::buildElementaryNeumannVector(
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( resultName, "AUCUN" );
 
-    CALLO_VECHME_WRAP( stop, modelName, nameLcha, nameInfc, &inst, caraName, materName,
+    CALLO_VECHME_WRAP( stop, modelName, nameLcha, nameInfc, &inst, caraName, materName, codmaName,
                        retour->getName(), varCName );
     retour->setEmpty( false );
 

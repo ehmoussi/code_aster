@@ -403,7 +403,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 !
             if (typesd.ne.'DYNA_HARMO') then
                 call vechme(stop, modele, charge, infoch, partps,&
-                        carac, mateco, vechmp, varc_currz = chvarc, ligrel_calcz = ligrel)
+                        carac, mater, mateco, vechmp, varc_currz = chvarc, ligrel_calcz = ligrel)
                 call asasve(vechmp, nume, 'R', vachmp)
                 call ascova('D', vachmp, fomult, 'INST', time,&
                         'R', cnchmp)
@@ -413,7 +413,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                 call vtcreb(bidon, 'G', 'R',&
                         nume_ddlz = nume,&
                         nb_equa_outz = neq)
-                call vecgme(modele, carac, mateco, charge, infoch,&
+                call vecgme(modele, carac, mater , mateco, charge, infoch,&
                         partps(1), chdepl, bidon, vecgmp, partps(1),&
                         compor, ligrel, chvive, strx)
                 call asasve(vecgmp, nume, 'R', vacgmp)
@@ -449,7 +449,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
 ! --- POUR UN EVOL_NOLI, PRISE EN COMPTE DES FORCES PILOTEES
             if (typesd .eq. 'EVOL_NOLI') then
 ! - CHARGES PILOTEES (TYPE_CHARGE: 'FIXE_PILO')
-                call vefpme(modele, carac, mateco, charge, infoch,&
+                call vefpme(modele, carac, mater, mateco, charge, infoch,&
                             partps, k24bid, vefpip, ligrel, chdepl, bidon)
                 call asasve(vefpip, nume, 'R', vafpip)
                 call ascova('D', vafpip, fomult, 'INST', time,&

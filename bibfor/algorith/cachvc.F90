@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cachvc(modelz, matez, carelz, numedz, compoz,&
+subroutine cachvc(modelz, matez, matecoz, carelz, numedz, compoz,&
                   comz, chthz, ihydr, isech, itemp,&
                   iptot)
 !
@@ -27,7 +27,7 @@ subroutine cachvc(modelz, matez, carelz, numedz, compoz,&
 #include "asterfort/nmvcd2.h"
 #include "asterfort/vectme.h"
 #include "asterfort/vecvme.h"
-    character(len=*) :: modelz, carelz, matez
+    character(len=*) :: modelz, carelz, matez, matecoz
     character(len=*) :: numedz, compoz, chthz
     character(len=*) :: comz
     integer          :: ihydr, isech, itemp, iptot
@@ -36,7 +36,7 @@ subroutine cachvc(modelz, matez, carelz, numedz, compoz,&
     character(len=16) :: option
     character(len=24) :: blan24, vecths
 !
-    character(len=24) :: modele, carele, mate
+    character(len=24) :: modele, carele, mate, mateco
     character(len=24) :: numedd, compor, chths
     character(len=14) :: com
 !
@@ -46,6 +46,7 @@ subroutine cachvc(modelz, matez, carelz, numedz, compoz,&
     compor = compoz
     com = comz
     mate = matez
+    mateco = matecoz
 !
     typres = 'R'
     blan24 = ' '
@@ -55,23 +56,23 @@ subroutine cachvc(modelz, matez, carelz, numedz, compoz,&
 !
     vecths = blan24
     if (itemp.eq.1) then
-        call vectme(modele, carele, mate, compor, com,&
+        call vectme(modele, carele, mate, mateco, compor, com,&
                     vecths)
         call asasve(vecths, numedd, typres, chths)
     endif
     if (ihydr.eq.1) then
         option = 'CHAR_MECA_HYDR_R'
-        call vecvme(option, modele, carele, mate, compor,&
+        call vecvme(option, modele, carele, mate, mateco, compor,&
                     com, numedd, chths)
     endif
     if (iptot.eq.1) then
         option = 'CHAR_MECA_PTOT_R'
-        call vecvme(option, modele, carele, mate, compor,&
+        call vecvme(option, modele, carele, mate, mateco, compor,&
                     com, numedd, chths)
     endif
     if (isech.eq.1) then
         option = 'CHAR_MECA_SECH_R'
-        call vecvme(option, modele, carele, mate, compor,&
+        call vecvme(option, modele, carele, mate, mateco, compor,&
                     com, numedd, chths)
     endif
     chthz = chths

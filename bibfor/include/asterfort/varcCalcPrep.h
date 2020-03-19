@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine varcCalcPrep(modelz    , cara_elemz, matez     ,&
+    subroutine varcCalcPrep(modelz    , cara_elemz, matecoz    ,&
                             nume_harm , time_comp ,&
                             l_temp    , l_meta    ,&
                             varc_refez, varc_prevz, varc_currz,&
@@ -27,7 +27,7 @@ interface
                             nbin      , nbout     ,&
                             lpain     , lchin     ,&
                             lpaout    , lchout)
-        character(len=*), intent(in) :: modelz, cara_elemz, matez
+        character(len=*), intent(in) :: modelz, cara_elemz, matecoz
         aster_logical, intent(in) :: l_temp, l_meta
         integer, intent(in) :: nume_harm
         character(len=1), intent(in) :: time_comp

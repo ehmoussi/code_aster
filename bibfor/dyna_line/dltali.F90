@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 subroutine dltali(neq, result, imat, masse, rigid,&
                   liad, lifo, nchar, nveca, lcrea,&
-                  lprem, lamort, t0, mate, carele,&
+                  lprem, lamort, t0, mate, mateco, carele,&
                   charge, infoch, fomult, modele, numedd,&
                   nume, solveu, criter, dep0, vit0,&
                   acc0, fexte0, famor0, fliai0, &
@@ -90,7 +90,7 @@ implicit none
     character(len=8) :: result
     character(len=8) :: masse, rigid
     character(len=19) :: solveu
-    character(len=24) :: charge, infoch, fomult, mate, carele
+    character(len=24) :: charge, infoch, fomult, mate, mateco, carele
     character(len=24) :: modele, numedd
     character(len=24) :: lifo(*)
     character(len=24) :: criter
@@ -141,7 +141,7 @@ implicit none
 !
     call dlfext(nveca, nchar, t0, neq, liad,&
                 lifo, charge, infoch, fomult, modele,&
-                mate, carele, numedd, zr(iforc0))
+                mate, mateco, carele, numedd, zr(iforc0))
 !
 !====
 ! 5. --- CALCUL DU CHAMP D'ACCELERATION INITIAL ---
