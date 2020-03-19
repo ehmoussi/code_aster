@@ -82,13 +82,14 @@ integer, intent(in) :: nume_inst
 ! - Create external state variables for current time
 !
     call nmchex(hval_incr, 'VALINC', 'COMPLU', varc_curr)
-    call nmvcle(model, ds_material%mateco, cara_elem, time_curr, varc_curr)
+    call nmvcle(model, ds_material%mater, cara_elem, time_curr, varc_curr)
 !
 ! - Compute CHAR_MECA_*_R for convergence criteria
 !
     vect_elem = '&&VARCINIT_ELEM'
     vect_asse = ds_material%fvarc_curr(1:19)
-    call nmvcfo('+'   , model    , ds_material%mateco     , cara_elem, ds_constitutive%compor,&
+    call nmvcfo('+'   , model    , ds_material%mater, ds_material%mateco,&
+                cara_elem, ds_constitutive%compor,&
                 ds_material%varc_refe, hval_incr, vect_elem)
     call assvec('V', vect_asse, 1, vect_elem, [1.d0],&
                 nume_dof, ' ', 'ZERO', 1)

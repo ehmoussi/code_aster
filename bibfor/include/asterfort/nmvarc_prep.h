@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,13 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmvarc_prep(type_comp, model    , cara_elem, mate     , varc_refe,&
+    subroutine nmvarc_prep(type_comp, model    , cara_elem, mateco   , varc_refe,&
                            compor   , exis_temp, mxchin   , nbin     , lpain    ,&
                            lchin    , mxchout  , nbout    , lpaout   , lchout   ,&
                            sigm_prev, vari_prev, varc_prev, varc_curr, nume_harm)
         character(len=1), intent(in) :: type_comp
         character(len=24), intent(in) :: model
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mateco
         character(len=24), intent(in) :: varc_refe
         character(len=24), intent(in) :: cara_elem
         character(len=24), intent(in) :: compor

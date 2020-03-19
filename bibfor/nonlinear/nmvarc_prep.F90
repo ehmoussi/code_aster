@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmvarc_prep(type_comp, model    , cara_elem, mate     , varc_refe,&
+subroutine nmvarc_prep(type_comp, model    , cara_elem, mateco   , varc_refe,&
                        compor   , exis_temp, mxchin   , nbin     , lpain    ,&
                        lchin    , mxchout  , nbout    , lpaout   , lchout   ,&
                        sigm_prev, vari_prev, varc_prev, varc_curr, nume_harm)
@@ -40,7 +40,7 @@ implicit none
 !
     character(len=1), intent(in) :: type_comp
     character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: mateco
     character(len=24), intent(in) :: varc_refe
     character(len=24), intent(in) :: cara_elem
     character(len=24), intent(in) :: compor
@@ -71,7 +71,7 @@ implicit none
 !                      '-' - Previous step
 !                      '+' - Current step
 ! In  model          : name of model
-! In  mate           : name of material characteristics (field)
+! In  mateco         : name of coded material
 ! In  cara_elem      : name of elementary characteristics (field)
 ! In  varc_refe      : name of reference command variables vector
 ! In  compor         : name of comportment definition (field)
@@ -138,7 +138,7 @@ implicit none
     lpain(2)  = 'PGEOMER'
     lchin(2)  = chgeom(1:19)
     lpain(3)  = 'PMATERC'
-    lchin(3)  = mate(1:19)
+    lchin(3)  = mateco(1:19)
     lpain(4)  = 'PCACOQU'
     lchin(4)  = chcara(7)(1:19)
     lpain(5)  = 'PCAGNPO'
@@ -167,7 +167,7 @@ implicit none
     lchin(16) = chcara(1) (1:8)//'.CAFIBR'
     call meharm(model, nume_harm, chharm)
     lpain(17)='PHARMON'
-    lchin(17)=chharm
+    lchin(17)= chharm(1:19)
 !
 ! - Computation of elementary vectors - Previous
 !
@@ -194,8 +194,7 @@ implicit none
 ! - XFEM input fields
 !
     if (lxfem .and. exis_temp) then
-        call xajcin(model, 'CHAR_MECA_TEMP_R', mxchin, lchin, lpain,&
-                    nbin) 
+        call xajcin(model, 'CHAR_MECA_TEMP_R', mxchin, lchin, lpain, nbin)
     endif
 !
 ! - Output fields
