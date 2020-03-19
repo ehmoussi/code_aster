@@ -41,7 +41,6 @@ def configure(self):
     official_programs.configure(self)
     official_programs.check_prerequisites_package(self, YAMMROOT, '20191105')
     opts.with_prog_salome = True
-    opts.with_prog_europlexus = True
 
     # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
     # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".

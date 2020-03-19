@@ -136,10 +136,6 @@ class RunAster:
             os.chdir(self._globtmp)
 
         logger.info(f"TITLE Prepare environment in {os.getcwd()}")
-        # add reptrav to LD_LIBRARY_PATH (to find dynamic libs provided by user)
-        old = os.environ.get("LD_LIBRARY_PATH", "")
-        new = (os.getcwd() + os.pathsep + old).strip(os.pathsep)
-        os.environ["LD_LIBRARY_PATH"] = new
 
         self.export.write_to(self.jobnum + ".export")
         os.makedirs("REPE_IN", exist_ok=True)
@@ -313,8 +309,6 @@ class RunOnlyEnv(RunAster):
         profile = osp.join(ROOT, "share", "aster", "profile.sh")
         logger.info(f"    cd {os.getcwd()}")
         logger.info(f"    . {profile}")
-        logger.info(f"    export LD_LIBRARY_PATH={os.getcwd()}"
-                    f":${{LD_LIBRARY_PATH}}")
         return super().execute_study(show_content=False)
 
     def _exec_one(self, comm, idx, last, timeout):

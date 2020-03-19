@@ -31,7 +31,6 @@ def configure(self):
     # force to fail if a program is not found
     opts.with_prog_gmsh = True
     # salome: only required by few testcases
-    # europlexus: not available on all platforms
     opts.with_prog_run_miss3d = True
     opts.with_prog_homard = True
     opts.with_prog_ecrevisse = True
