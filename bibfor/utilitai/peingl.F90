@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine peingl(resu, modele, mate, cara, nh,&
+subroutine peingl(resu, modele, mate, mateco, cara, nh,&
                   nbocc, motfaz)
     implicit none
 #include "asterf_types.h"
@@ -60,7 +60,7 @@ subroutine peingl(resu, modele, mate, cara, nh,&
 #include "asterfort/wkvect.h"
 !
     integer :: nh, nbocc
-    character(len=*) :: resu, modele, mate, cara, motfaz
+    character(len=*) :: resu, modele, mate, mateco, cara, motfaz
 !
 !      PEINGL  --  OPERATEUR POST_ELEM
 !                  TRAITEMENT DU MOT-FACTEUR "INDIC_ENER"
@@ -476,7 +476,7 @@ subroutine peingl(resu, modele, mate, cara, nh,&
         lpain(1) = 'PGEOMER'
         lchin(1) = chgeom
         lpain(2) = 'PMATERC'
-        lchin(2) = mate
+        lchin(2) = mateco
         lpain(3) = 'PVARIPR'
         if (ivari .eq. 1) then
             lchin(3) = chvari

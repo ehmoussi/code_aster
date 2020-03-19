@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine peweib(resu, modele, mate, cara, chmat,&
+subroutine peweib(resu, modele, mate, mateco, cara, chmat,&
                   nh, nbocc, iresu, nomcmd)
     implicit none
 #include "asterf_types.h"
@@ -59,7 +59,7 @@ subroutine peweib(resu, modele, mate, cara, chmat,&
 #include "asterfort/as_allocate.h"
 !
     integer :: iresu, nh, nbocc
-    character(len=*) :: resu, modele, mate, cara, nomcmd
+    character(len=*) :: resu, modele, mate, mateco, cara, nomcmd
 !     OPERATEUR   POST_ELEM
 !     ( TRAITEMENT DU MOT CLE-FACTEUR "WEIBULL" )
 !     OPERATEUR   RECA_WEIBULL
@@ -229,21 +229,21 @@ subroutine peweib(resu, modele, mate, cara, chmat,&
     call jelira(chmat//'.CHAMP_MAT .VALE', 'LONMAX', nbmtcm)
     AS_ALLOCATE(vk8=l_nom_mat, size=nbmtcm)
     nomrc = 'WEIBULL         '
-    call chmrck(chmat, nomrc, l_nom_mat, nbmtrc) 
+    call chmrck(chmat, nomrc, l_nom_mat, nbmtrc)
     if (nbmtrc .gt. 1) then
         vali = nbmtrc
         valk (1) = k8b
         valk (2) = k8b
         call utmess('A', 'UTILITAI6_60', nk=2, valk=valk, si=vali)
-    else if (nbmtrc .eq. 0) then 
-        valk (1) = nomrc 
-        valk (2) = chmat 
+    else if (nbmtrc .eq. 0) then
+        valk (1) = nomrc
+        valk (2) = chmat
         call utmess('F', 'UTILITAI6_59', nk=2, valk=valk)
     endif
 !
 !     --- RECUPERATION DES PARAMETRES DE LA RC WEIBULL ---
     kvalrc(1:8) = l_nom_mat(1)
-    call rccome(kvalrc(1:8), 'WEIBULL', iret, k11_ind_nomrc=k11)    
+    call rccome(kvalrc(1:8), 'WEIBULL', iret, k11_ind_nomrc=k11)
     kvalrc = l_nom_mat(1)//k11//'.VALR'
     kvalrk = l_nom_mat(1)//k11//'.VALK'
     call jeveuo(kvalrc, 'L', ibid)
@@ -324,7 +324,7 @@ subroutine peweib(resu, modele, mate, cara, chmat,&
         lpain(3) = 'PVARIPG'
         lchin(4) = defog
         lpain(4) = 'PDEFORR'
-        lchin(5) = mate
+        lchin(5) = mateco
         lpain(5) = 'PMATERC'
         lchin(6) = '&&PEWEIB.CH.SOUSOP'
         lpain(6) = 'PSOUSOP'
@@ -402,7 +402,7 @@ subroutine peweib(resu, modele, mate, cara, chmat,&
                         goto 50
                     endif
                     call jeveuo(jexnom(mlggma, nomgrm), 'L', jad)
-                    call mesomm(chelem, mxvale, vr=trav1, nbma=nbma, linuma=zi(jad))      
+                    call mesomm(chelem, mxvale, vr=trav1, nbma=nbma, linuma=zi(jad))
                     sigmaw = coesym*trav1(1)* (sref**mref)
                     probaw = sigmaw/ (sref**mref)
                     probaw = 1.0d0 - exp(-probaw)

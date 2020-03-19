@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine medomp(result, modele, mate, carele, nh)
+subroutine medomp(result, modele, mater, mateco, carele, nh)
 !
 implicit none
 !
@@ -42,7 +42,7 @@ implicit none
 !
     character(len=8), intent(in) :: result
     character(len=8), intent(out) :: modele
-    character(len=24), optional, intent(out) :: mate
+    character(len=24), optional, intent(out) :: mateco, mater
     character(len=8), optional, intent(out) :: carele
     integer, optional, intent(out) ::  nh
 !
@@ -117,7 +117,7 @@ implicit none
 !
 ! ----- RECUPERATION DU CHAM_MATER DANS LA COMMANDE
 !
-        if (present(mate)) then
+        if (present(mateco)) then
             call getvid(' ', 'CHAM_MATER', scal=materi, nbret=n3)
             if ((n3.eq.0) .and. lmater) then
                 call utmess('A', 'CALCULEL3_40')
@@ -160,10 +160,11 @@ implicit none
 !
 ! --- CODAGE DU MATERIAU
 !
-    if (present(mate)) then
-        mate = ' '
-        if (materi .ne. ' ') call rcmfmc(materi, mate, l_ther_ = l_ther)
+    if (present(mateco)) then
+        mateco = ' '
+        if (materi .ne. ' ') call rcmfmc(materi, mateco, l_ther_ = l_ther)
     endif
+    mater = materi
 !
 ! --- CARA_ELEM SI NECESSAIRE
 !

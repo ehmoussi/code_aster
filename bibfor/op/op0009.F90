@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ implicit none
     character(len=8) :: model, cara_elem, sigm, strx, disp
     character(len=16) :: k8dummy, option
     character(len=19) :: matr_elem, rigi_meca, mass_meca, resuel, list_load
-    character(len=24) :: chtime, mate, compor_mult, matr_elem24
+    character(len=24) :: chtime, mate, compor_mult, matr_elem24, mateco
     character(len=8), pointer :: v_list_load8(:) => null()
     character(len=24), pointer :: relr(:) => null()
     real(kind=8) :: time_curr, time_incr
@@ -92,7 +92,7 @@ implicit none
 ! - Get parameters
 !
     call cme_getpara(option      ,&
-                     model       , cara_elem, mate, compor_mult,&
+                     model       , cara_elem, mate, mateco, compor_mult,&
                      v_list_load8, nb_load  ,&
                      rigi_meca   , mass_meca,&
                      time_curr   , time_incr, nh       ,&
@@ -172,14 +172,14 @@ implicit none
     else if (option.eq.'RIGI_THER') then
         call ntdoch(list_load, l_load_user_ = .true._1)
         matr_elem24 = matr_elem
-        call mergth(model      , list_load, cara_elem, mate, chtime,&
+        call mergth(model      , list_load, cara_elem, mate, mateco, chtime,&
                     matr_elem24, base,&
                     time_curr  , nh_ = nh)
         call medith(base, 'CUMU', model, list_load, matr_elem24)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_THER') then
-        call memsth(model, cara_elem, mate, chtime, matr_elem, base, time_curr_ = time_curr)
+        call memsth(model, cara_elem, mate, mateco, chtime, matr_elem, base, time_curr_ = time_curr)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ACOU') then

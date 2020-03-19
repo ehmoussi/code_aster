@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine vetnth(model    , cara_elem, mate     , time ,&
+subroutine vetnth(model    , cara_elem, mateco     , time ,&
                   temp_iter, varc_curr, vect_elem, base)
 !
 implicit none
@@ -42,7 +42,7 @@ implicit none
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: cara_elem
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mateco
 character(len=24), intent(in) :: time
 character(len=24), intent(in) :: temp_iter
 character(len=19), intent(in) :: varc_curr
@@ -52,14 +52,14 @@ character(len=1), intent(in) :: base
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic - Residuals
-! 
+!
 ! Evolution for non-linear (CHAR_THER_EVOL)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of the model
 ! In  cara_elem        : name of elementary characteristics (field)
-! In  mate             : name of material characteristics (field)
+! In  mateco             : name of matecorial characteristics (field)
 ! In  time             : time (<CARTE>)
 ! In  temp_iter        : temperature field at current Newton iteration
 ! In  varc_curr        : command variable for current time
@@ -68,7 +68,7 @@ character(len=1), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer , parameter :: nb_in_maxi = 24 
+    integer , parameter :: nb_in_maxi = 24
     integer , parameter :: nbout = 1
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
@@ -97,7 +97,7 @@ character(len=1), intent(in) :: base
 !
     call jeexin(vect_elem(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-        call memare(base, vect_elem, model, mate, cara_elem, 'MASS_THER')
+        call memare(base, vect_elem, model, mateco, cara_elem, 'MASS_THER')
     else
         call jedetr(vect_elem(1:19)//'.RELR')
     endif
@@ -123,7 +123,7 @@ character(len=1), intent(in) :: base
     lpain(2)  = 'PTEMPER'
     lchin(2)  = temp_iter(1:19)
     lpain(3)  = 'PMATERC'
-    lchin(3)  = mate(1:19)
+    lchin(3)  = mateco(1:19)
     lpain(4)  = 'PTEMPSR'
     lchin(4)  = time(1:19)
     lpain(5)  = 'PCACOQU'

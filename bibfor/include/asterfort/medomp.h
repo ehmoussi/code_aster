@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 !
 !
 interface
-    subroutine medomp(result, modele, mate, carele, nh)
+    subroutine medomp(result, modele, mater, mateco, carele, nh)
         character(len=8), intent(in) :: result
         character(len=8), intent(out) :: modele
-        character(len=24), optional, intent(out) :: mate
+        character(len=24), optional, intent(out) :: mater, mateco
         character(len=8), optional, intent(out) :: carele
         integer, optional, intent(out) ::  nh
     end subroutine medomp

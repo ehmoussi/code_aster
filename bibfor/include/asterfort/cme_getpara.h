@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 !
 interface
     subroutine cme_getpara(option      ,&
-                           model       , cara_elem, mate, compor_mult,&
+                           model       , cara_elem, mate, mateco, compor_mult,&
                            v_list_load8, nb_load  ,&
                            rigi_meca   , mass_meca,&
                            time_curr   , time_incr, nh       ,&
@@ -26,7 +26,7 @@ interface
         character(len=16), intent(out) :: option
         character(len=8), intent(out) :: model
         character(len=8), intent(out) :: cara_elem
-        character(len=24), intent(out) :: mate
+        character(len=24), intent(out) :: mate, mateco
         character(len=24), intent(out) :: compor_mult
         character(len=8), pointer :: v_list_load8(:)
         integer, intent(out) :: nb_load
