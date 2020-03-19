@@ -81,18 +81,18 @@ type(NL_DS_Material), intent(inout) :: ds_material
 !
 ! - Create external state variables for reference state
 !
-    call nmvcre(model, mateco, cara_elem, ds_material%varc_refe)
+    call nmvcre(model, mater, cara_elem, ds_material%varc_refe)
 !
 ! - Create external state variables for initial time
 !
     call nmchex(hval_incr, 'VALINC', 'COMMOI', varc_prev)
-    call nmvcle(model, mateco, cara_elem, time_init, varc_prev)
+    call nmvcle(model, mater, cara_elem, time_init, varc_prev)
 !
 ! - Compute CHAR_MECA_*_R at initial time
 !
     vect_elem = '&&VARCINIT_ELEM'
     vect_asse = ds_material%fvarc_init(1:19)
-    call nmvcfo('-'   , model    , mateco     , cara_elem, compor,&
+    call nmvcfo('-'   , model    , mater, mateco     , cara_elem, compor,&
                 ds_material%varc_refe, hval_incr, vect_elem)
     call assvec('V', vect_asse, 1, vect_elem, [1.d0],&
                 nume_dof, ' ', 'ZERO', 1)
