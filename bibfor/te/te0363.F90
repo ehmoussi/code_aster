@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -91,6 +91,8 @@ subroutine te0363(option, nomte)
 ! --- INITIALISATIONS
 !
     dlagrc = 0.d0
+    fk_escl(:,:,:) = 0.d0
+    fk_mait(:,:,:) = 0.d0
 ! --- INITIALISATION DE LA VARIABLE DE TRAVAIL
     incoca = 0
     ASSERT(option.eq.'XCVBCA')
