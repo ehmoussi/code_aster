@@ -44,7 +44,7 @@ real(kind=8), intent(out) :: theta
 !
 ! Out list_load        : name of datastructure for list of loads
 ! Out model            : name of model
-! Out mate             : name of material characteristics (field)
+! Out mate             : name of coded material
 ! Out cara_elem        : name of elementary characteristics (field)
 ! Out temp_prev        : temperature at beginning of step
 ! Out incr_temp        : increment of temperature

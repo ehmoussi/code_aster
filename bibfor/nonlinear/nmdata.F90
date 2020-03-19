@@ -82,8 +82,8 @@ type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 !
 ! Out mesh             : name of mesh
 ! Out model            : name of model
-! Out mater            : name of material
-! Out mateco             : name of material characteristics (field)
+! Out mater            : name of material characteristics (field)
+! Out mateco           : name of coded material
 ! Out cara_elem        : name of elementary characteristics (field)
 ! IO  ds_constitutive  : datastructure for constitutive laws management
 ! Out list_load        : name of datastructure for list of loads
@@ -154,7 +154,7 @@ type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 ! - Read objects for constitutive laws
 !
     l_implex = ds_algopara%method.eq.'IMPLEX'
-    call nmdorc(model, mateco, l_etat_init,&
+    call nmdorc(model, mater, l_etat_init,&
                 ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
                 l_implex)
 !
@@ -168,7 +168,7 @@ type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 !
 ! --- LECTURE DES OPERANDES DYNAMIQUES
 !
-    call ndlect(model, mateco, cara_elem, list_load, sddyna)
+    call ndlect(model, mater, cara_elem, list_load, sddyna)
 !
 ! - Read parameters for post-treatment management (CRIT_STAB and MODE_VIBR)
 !

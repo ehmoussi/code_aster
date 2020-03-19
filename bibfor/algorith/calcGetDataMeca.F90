@@ -58,7 +58,7 @@ integer, intent(out) :: nume_harm
 !
 ! Out list_load        : name of datastructure for list of loads
 ! Out model            : name of model
-! Out mateco           : name of material characteristics (field)
+! Out mateco           : name of coded material
 ! Out cara_elem        : name of elementary characteristics (field)
 ! Out disp_prev        : displacement at beginning of step
 ! Out disp_cumu_inst   : displacement increment from beginning of step
@@ -141,7 +141,7 @@ integer, intent(out) :: nume_harm
 !
     call nonlinDSConstitutiveCreate(ds_constitutive)
     if (l_elem_nonl) then
-        call nmdorc(model, mateco, l_etat_init,&
+        call nmdorc(model, mater, l_etat_init,&
                     ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
                     l_implex_ = .false._1)
         call nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)
