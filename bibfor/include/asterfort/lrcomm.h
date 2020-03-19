@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lrcomm(resu, typres, nbordr, chmat, carael, modele, noch, from_lire_resu)
-        character(len=8) :: resu
-        character(len=16) :: typres
-        integer :: nbordr
-        character(len=8) :: chmat
-        character(len=8) :: carael
-        character(len=8) :: modele
-        character(len=*) :: noch
-        aster_logical, intent(in), optional :: from_lire_resu
+    subroutine lrcomm(lReuse, resultName, model, caraElem, fieldMate, lLireResu_)
+        aster_logical, intent(in) :: lReuse
+        character(len=8), intent(in) :: resultName
+        character(len=8), intent(in):: model, fieldMate, caraElem
+        aster_logical, intent(in), optional :: lLireResu_
     end subroutine lrcomm
 end interface

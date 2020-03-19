@@ -17,11 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine carcha(fieldType, fieldQuantity, fieldSupport, option, param)
-        character(len=16), intent(in) :: fieldType
-        character(len=8), intent(out) :: fieldQuantity
-        character(len=4), intent(out) :: fieldSupport
-        character(len=24), intent(out) :: option
-        character(len=8), intent(out) :: param
-    end subroutine carcha
+    subroutine resuReadDebug(resultName,&
+                             fieldNb   , fieldList, fieldStoreNb,&
+                             storePara , storeEpsi, storeCrit)
+        character(len=8), intent(in) :: resultName
+        integer, intent(in) :: fieldNb
+        character(len=16), intent(in) :: fieldList(100)
+        integer, intent(in) :: fieldStoreNb(100)
+        character(len=4), intent(in) :: storePara
+        real(kind=8), intent(in) :: storeEpsi
+        character(len=8), intent(in) :: storeCrit
+    end subroutine resuReadDebug
 end interface

@@ -17,11 +17,14 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine carcha(fieldType, fieldQuantity, fieldSupport, option, param)
-        character(len=16), intent(in) :: fieldType
-        character(len=8), intent(out) :: fieldQuantity
-        character(len=4), intent(out) :: fieldSupport
-        character(len=24), intent(out) :: option
-        character(len=8), intent(out) :: param
-    end subroutine carcha
+    subroutine resuSaveParameters(resultName   , resultType ,&
+                                  model        , caraElem   , fieldMate     , listLoad,&
+                                  empiNumePlan_, empiSnapNb_, empiFieldType_)
+        character(len=8), intent(in) :: resultName
+        character(len=16), intent(in) :: resultType
+        character(len=8), intent(in) :: model, caraElem, fieldMate
+        character(len=19), intent(in) :: listLoad
+        integer, optional, intent(in) :: empiNumePlan_, empiSnapNb_
+        character(len=24), optional, intent(in) :: empiFieldType_
+    end subroutine resuSaveParameters
 end interface

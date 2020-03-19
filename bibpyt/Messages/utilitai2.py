@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -223,11 +221,6 @@ Les noms de paramètres doivent être différents, or %(k1)s a été utilisé pl
 
     86 : _("""
  le nombre de champs à lire est supérieur a 100
-"""),
-
-    94 : _("""
-  Le champ %(k1)s n'est pas prévu.
-  Vous pouvez demander l'évolution.
 """),
 
     95 : _("""

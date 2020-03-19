@@ -15,22 +15,29 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "asterf_types.h"
 !
 interface
-    subroutine numeok(storeAccess,&
-                      storeIndxNb, storeTimeNb,&
-                      storeIndx  , storeTime  ,&
-                      storeCrit  , storeEpsi  ,&
-                      fileIndx   , fileTime   ,&
-                      astock)
-        character(len=10), intent(in) :: storeAccess
+    subroutine resuReadMed(fileUnit    ,&
+                           resultName  ,&
+                           model       , meshAst     ,&
+                           fieldNb     , fieldList   ,&
+                           storeAccess , storeCreaNb ,&
+                           storeIndxNb , storeIndx   ,&
+                           storeTimeNb , storeTime   ,&
+                           storeEpsi   , storeCrit   ,&
+                           storePara   , fieldStoreNb)
+        integer, intent(in) :: fileUnit
+        character(len=8), intent(in) :: resultName
+        character(len=8), intent(in) :: model, meshAst
+        integer, intent(in) :: fieldNb
+        character(len=16), intent(in) :: fieldList(100)
         integer, intent(in) :: storeIndxNb, storeTimeNb
+        character(len=10), intent(in) :: storeAccess
+        integer, intent(in) :: storeCreaNb
         character(len=19), intent(in) :: storeIndx, storeTime
         real(kind=8), intent(in) :: storeEpsi
         character(len=8), intent(in) :: storeCrit
-        integer, intent(in) :: fileIndx
-        real(kind=8), intent(in) :: fileTime
-        aster_logical, intent(out) :: astock
-    end subroutine numeok
+        character(len=4), intent(in) :: storePara
+        integer, intent(out) :: fieldStoreNb(100)
+    end subroutine resuReadMed
 end interface

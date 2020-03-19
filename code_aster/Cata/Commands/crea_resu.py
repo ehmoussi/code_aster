@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -135,12 +135,11 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,
              NOM_CHAM     =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=("PRES","FORC_NODA",
                                     "FSUR_2D","FSUR_3D","FVOL_2D","FVOL_3D","VITE_VENT","T_EXT","COEF_H",
                                     "FLUN")),
-             COMPORTEMENT     =C_COMPORTEMENT(),
          ), # fin bloc b_evol_char
 
          b_cham_no    =BLOC(condition = """equal_to("OPERATION", 'AFFE') and not equal_to("TYPE_RESU", 'EVOL_CHAR')""",
              NOM_CHAM     =SIMP(statut='o',typ='TXM',validators=NoRepeat(),into=C_NOM_CHAM_INTO()),
-             COMPORTEMENT     =C_COMPORTEMENT(),
+
          ),  # fin bloc b_cham_no
 
          b_mode_meca =BLOC(condition = """equal_to("OPERATION", 'AFFE') and is_in('TYPE_RESU', ('MODE_MECA', 'MODE_MECA_C', 'DYNA_HARMO', 'DYNA_TRANS'))""",
@@ -162,6 +161,7 @@ CREA_RESU=OPER(nom="CREA_RESU",op=124,sd_prod=crea_resu_prod,
          ), # fin bloc b_evol_ther
 
          b_evol_noli  = BLOC(condition="""equal_to("OPERATION", 'AFFE') and equal_to("TYPE_RESU", 'EVOL_NOLI')""",
+             COMPORTEMENT    =C_COMPORTEMENT(),
              EXCIT           =FACT(statut='f',max='**',
                 CHARGE          =SIMP(statut='o',typ=(char_meca,char_cine_meca)),
                 FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),

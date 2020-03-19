@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -296,12 +294,6 @@ Contactez le support technique.
 """),
 
 
-
-    94 : _("""
- Vous essayez de stocker la SD charge dans la SD résultat.
- Ce n'est pas possible pour une SD résultat de type %(k1)s,
- on ne stocke pas la charge.
-"""),
 
     97 : _("""
  le type de champ  %(k1)s n'est pas accepté
