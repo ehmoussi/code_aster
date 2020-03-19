@@ -21,9 +21,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine merime(modelz, nchar, lchar, mateco, carelz,&
+    subroutine merime(modelz, nchar, lchar, mater, mateco, carelz,&
                       time, compoz, matelz, nh,&
-                      basz, materz)
+                      basz)
         character(len=*) :: modelz
         integer :: nchar
         character(len=*) :: lchar(*)
@@ -35,6 +35,6 @@ interface
         integer :: nh
         character(len=*) :: basz
         real(kind=8), intent(in) :: time
-        character(len=*), optional, intent(in) :: materz
+        character(len=*), intent(in) :: mater
     end subroutine merime
 end interface

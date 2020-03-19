@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine meamme(optioz, modele, nchar, lchar, mate,&
+subroutine meamme(optioz, modele, nchar, lchar, mate, mateco, &
                   cara, time, base, merigi,&
                   memass, meamor, varplu, compor_)
 !
@@ -46,7 +46,7 @@ subroutine meamme(optioz, modele, nchar, lchar, mate,&
 !
     integer :: nchar
     real(kind=8) :: time
-    character(len=*) :: modele, optioz, cara, mate
+    character(len=*) :: modele, optioz, cara, mate, mateco
     character(len=*) :: merigi, memass, meamor, varplu
     character(len=8) :: lchar(*)
     character(len=1) :: base
@@ -176,7 +176,7 @@ subroutine meamme(optioz, modele, nchar, lchar, mate,&
         call jedetr(meamor(1:19)//'.RERR')
         call jedetr(meamor(1:19)//'.RELR')
     endif
-    call memare(base, meamor(1:19), modele(1:8), mate, cara(1:8),&
+    call memare(base, meamor(1:19), modele(1:8), mateco, cara(1:8),&
                 'AMOR_MECA')
 !     SI LA MATRICE EST CALCULEE SUR LE MODELE, ON ACTIVE LES S_STRUC:
     call jeveuo(meamor(1:19)//'.RERR', 'E', vk24=rerr)
@@ -187,7 +187,7 @@ subroutine meamme(optioz, modele, nchar, lchar, mate,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = mate(1:19)
+    lchin(2) = mateco(1:19)
     lpain(3) = 'PCAORIE'
     lchin(3) = chcara(1)(1:19)
     lpain(4) = 'PCADISA'

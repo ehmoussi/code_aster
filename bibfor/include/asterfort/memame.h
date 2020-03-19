@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine memame(option , model_    , mate_, cara_elem_, time,&
+    subroutine memame(option , model_    , mate_, mateco_, cara_elem_, time,&
                       compor_, matr_elem_, base)
         character(len=*), intent(in) :: option
         character(len=*), intent(in) :: model_
-        character(len=*), intent(in) :: mate_
+        character(len=*), intent(in) :: mate_, mateco_
         character(len=*), intent(in) :: cara_elem_
         real(kind=8), intent(in) :: time
         character(len=*), intent(in) :: compor_

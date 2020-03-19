@@ -163,7 +163,7 @@ subroutine meacmv(modele, mate, mateco  , carele, fomult, lischa,&
     if (assmat) then
 !
         call uttcpu('CPU.OP0046.1', 'DEBUT', ' ')
-        call merime(modele(1:8), nchar, zk24(jchar), mate, carele(1:8),&
+        call merime(modele(1:8), nchar, zk24(jchar), mate, mateco, carele(1:8),&
                     time, compor, matele, nh,&
                     base)
         ass1er = .true.

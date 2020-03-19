@@ -105,66 +105,66 @@ implicit none
 ! - Compute
 !
     if (option .eq. 'RIGI_MECA') then
-        call merime(model, nb_load     , v_list_load8, mate, cara_elem,&
+        call merime(model, nb_load     , v_list_load8, mate, mateco, cara_elem,&
                     time_curr , compor_mult , matr_elem   , nh  , base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_FLUI_STRU') then
-        call merifs(model, nb_load  , v_list_load8, mate, cara_elem,&
+        call merifs(model, nb_load  , v_list_load8, mate, mateco, cara_elem,&
                     time_curr , matr_elem, nh)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_GEOM') then
         call merige(model, cara_elem, sigm      , strx      , matr_elem,&
-                    base , nh       , deplr=disp, mater=mate)
+                    base , nh       , deplr=disp, mateco=mateco)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ROTA') then
-        call meriro(model, cara_elem  , nb_load  , v_list_load8, mate,&
+        call meriro(model, cara_elem  , nb_load  , v_list_load8, mate, mateco, &
                     time_curr , compor_mult, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MECA_GYRO') then
-        call meamgy(model  , mate        , cara_elem, compor_mult, matr_elem,&
+        call meamgy(model  , mateco      , cara_elem, compor_mult, matr_elem,&
                     nb_load, v_list_load8)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_GYRO') then
-        call merigy(model  , mate        , cara_elem, compor_mult, matr_elem,&
+        call merigy(model  , mateco      , cara_elem, compor_mult, matr_elem,&
                     nb_load, v_list_load8)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_MECA') then
-        call memame(option     , model    , mate, cara_elem, time_curr,&
+        call memame(option     , model    , mate, mateco, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_FLUI_STRU') then
-        call memame(option     , model    , mate, cara_elem, time_curr,&
+        call memame(option     , model    , mate, mateco, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_MECA_DIAG') then
-        call memame(option     , model    , mate, cara_elem, time_curr,&
+        call memame(option     , model    , mate, mateco, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'AMOR_MECA') then
-        call meamme(option   , model, nb_load, v_list_load8, mate     ,&
+        call meamme(option   , model, nb_load, v_list_load8, mate     , mateco, &
                     cara_elem, time_curr , base   , rigi_meca   , mass_meca,&
                     matr_elem, ' ')
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'IMPE_MECA') then
-        call meimme(model, nb_load, v_list_load8, mate, matr_elem)
+        call meimme(model, nb_load, v_list_load8, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'ONDE_FLUI') then
-        call meonme(model, nb_load, v_list_load8, mate, matr_elem)
+        call meonme(model, nb_load, v_list_load8, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_MECA_HYST') then
-        call meamme(option   , model, nb_load, v_list_load8, mate     ,&
+        call meamme(option   , model, nb_load, v_list_load8, mate     , mateco, &
                     cara_elem, time_curr , base   , rigi_meca   , mass_meca,&
                     matr_elem, ' ')
 !
@@ -183,15 +183,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ACOU') then
-        call meriac(model, nb_load, v_list_load8, mate, matr_elem, base)
+        call meriac(model, nb_load, v_list_load8, mateco, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_ACOU') then
-        call memaac(model, mate, matr_elem)
+        call memaac(model, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'AMOR_ACOU') then
-        call meamac(model, nb_load, v_list_load8, mate, matr_elem, base)
+        call meamac(model, nb_load, v_list_load8, mateco, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else
