@@ -73,7 +73,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               INFO_MAILLAGE   =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
 
               b_partie        =BLOC(condition="""(is_type("RESULTAT") in (dyna_harmo, acou_harmo) or is_type("CHAM_GD") != carte_sdaster)""",
-                PARTIE          =SIMP(statut='f',typ='TXM',into=('REEL','IMAG',) ),
+                PARTIE          =SIMP(statut='f',typ='TXM',into=('REEL','IMAG','MODULE','PHASE') ),
               ),
               IMPR_NOM_VARI=SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="OUI",),
 

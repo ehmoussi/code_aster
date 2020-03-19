@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
 !
 subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
                   nbsp, adsv, adsd, adsl, adsk,&
-                  partie, tymast, modnum, nuanom, typech,&
+                  cplxFormatZ, tymast, modnum, nuanom, fieldSupport,&
                   val, profas, ideb, ifin, codret)
 implicit none
 !
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
 #include "jeveux.h"
+#include "asterc/r8pi.h"
 #include "asterfort/cesexi.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
@@ -39,8 +39,8 @@ integer :: modnum(MT_NTYMAX), nuanom(MT_NTYMAX, *)
 integer :: profas(*)
 integer :: ideb, ifin
 real(kind=8) :: val(ncmpve, nbsp, nbpg, nvalec)
-character(len=8) :: typech
-character(len=*) :: partie
+character(len=8), intent(in) :: fieldSupport
+character(len=*), intent(in) :: cplxFormatZ
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,8 +56,7 @@ character(len=*) :: partie
 !       NBSP   : NOMBRE DE SOUS-POINTS (1 POUR DES CHAMNO)
 !       TYPECH : TYPE DE CHAMP (ELEM,ELNO,ELGA,NOEU)
 !       ADSV,D,L,K : ADRESSES DES TABLEAUX DES CHAMPS SIMPLIFIES
-!       PARTIE: IMPRESSION DE LA PARTIE IMAGINAIRE OU REELLE POUR
-!               UN CHAMP COMPLEXE
+! In  cplxFormat       : format of complex numbers (IMAG, REAL, PHASE, MODULE or ' ')
 !       TYMAST : TYPE ASTER DE MAILLE QUE L'ON VEUT (0 POUR LES NOEUDS)
 !       MODNUM : INDICATEUR SI LA SPECIFICATION DE NUMEROTATION DES
 !                NOEUDS DES MAILLES EST DIFFERENTES ENTRE ASTER ET MED:
@@ -78,8 +77,8 @@ character(len=*) :: partie
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: part, gd, valk(2), typcha
-    integer :: iaux, jaux, kaux, itype
+    character(len=8) :: gd, valk(2), typcha, cplxFormat
+    integer :: iaux, jaux, kaux, fieldScalar
     integer :: adsvxx, adslxx
     integer :: ino, ima, nrcmp, nrcmpr, nrpg, nrsp
     integer :: ifm, niv
@@ -88,21 +87,25 @@ character(len=*) :: partie
 ! --------------------------------------------------------------------------------------------------
 !
     lprolz=.false.
-    part=partie
     gd=zk8(adsk-1+2)
     codret=0
+    cplxFormat = cplxFormatZ
 !
     call dismoi('TYPE_SCA', gd, 'GRANDEUR', repk=typcha)
 !
     if (typcha .eq. 'R') then
-        itype=1
+        fieldScalar = 1
     else if (typcha.eq.'C') then
-        if (part(1:4) .eq. 'REEL') then
-            itype=2
-        else if (part(1:4).eq.'IMAG') then
-            itype=3
+        if (cplxFormat .eq. 'REEL') then
+            fieldScalar = 2
+        else if (cplxFormat .eq. 'IMAG') then
+            fieldScalar = 3
+        else if (cplxFormat .eq. 'PHASE') then
+            fieldScalar = 4
+        else if (cplxFormat .eq. 'MODULE') then
+            fieldScalar = 5
         else
-            call utmess('F','PREPOST3_69')
+            call utmess('F','RESULT3_69')
         endif
     else
         valk(1) = gd
@@ -118,7 +121,7 @@ character(len=*) :: partie
 !
     if (niv .gt. 1) then
         call utmess('I', 'MED_47')
-        write (ifm,130) nvalec, ncmpve, nbpg, nbsp, typech
+        write (ifm,130) nvalec, ncmpve, nbpg, nbsp, fieldSupport
     endif
 130 format('  NVALEC =',i8,', NCMPVE =',i8,', NBPG   =',i8,', NBSP   =',i8,/,'  TYPECH =',a8)
 !
@@ -153,12 +156,17 @@ character(len=*) :: partie
                 jaux = jaux + 1
                 kaux = ino*ncmprf
                 if (zl(adslxx+kaux)) then
-                    if (itype .eq. 1) then
+                    if (fieldScalar .eq. 1) then
                         val(nrcmp,1,1,jaux) = zr(adsvxx+kaux)
-                    else if (itype.eq.2) then
+                    else if (fieldScalar .eq. 2) then
                         val(nrcmp,1,1,jaux) = dble(zc(adsvxx+kaux))
-                    else if (itype.eq.3) then
+                    else if (fieldScalar .eq. 3) then
                         val(nrcmp,1,1,jaux) = dimag(zc(adsvxx+kaux))
+                    else if (fieldScalar .eq. 4) then
+                        val(nrcmp,1,1,jaux) = abs(zc(adsvxx+kaux))
+                    else if (fieldScalar .eq. 5) then
+                        val(nrcmp,1,1,jaux) = atan2(dble(zc(adsvxx+kaux)),dimag(zc(adsvxx+kaux)))*&
+                                              180.d0/r8pi()
                     endif
                 else
                     lprolz=.true.
@@ -190,7 +198,7 @@ character(len=*) :: partie
 !            QUE POUR LES CHAMPS AVEC 1 SEUL SOUS-POINT.
 !
         logaux = .false.
-        if (typech(1:4) .eq. 'ELNO') then
+        if (fieldSupport(1:4) .eq. 'ELNO') then
             if (modnum(tymast) .eq. 1) then
                 logaux = .true.
             endif
@@ -219,12 +227,17 @@ character(len=*) :: partie
                     do nrpg = 1 , nbpg
                         call cesexi('C', adsd, adsl, ima, nrpg, nrsp, nrcmpr, kaux)
                         if ((kaux.gt.0)) then
-                            if (itype .eq. 1) then
+                            if (fieldScalar .eq. 1) then
                                 val(nrcmp,nrsp,nuanom(tymast,nrpg),jaux)= zr(adsv-1+kaux)
-                            else if (itype.eq.2) then
+                            else if (fieldScalar .eq. 2) then
                                 val(nrcmp,nrsp,nuanom(tymast,nrpg),jaux)= dble(zc(adsv-1+kaux))
-                            else if (itype.eq.3) then
+                            else if (fieldScalar .eq. 3) then
                                 val(nrcmp,nrsp,nuanom(tymast,nrpg),jaux)= dimag(zc(adsv-1+kaux))
+                            else if (fieldScalar .eq. 4) then
+                                val(nrcmp,nrsp,nuanom(tymast,nrpg),jaux)= abs(zc(adsv-1+kaux))
+                            else if (fieldScalar .eq. 5) then
+                                val(nrcmp,nrsp,nuanom(tymast,nrpg),jaux)= atan2(&
+                                    dble(zc(adsv-1+kaux)),dimag(zc(adsv-1+kaux)))*180.d0/r8pi()
                             endif
                         endif
                     end do
@@ -237,12 +250,17 @@ character(len=*) :: partie
                         do  nrsp = 1 , nbsp
                             call cesexi('C', adsd, adsl, ima, nrpg, nrsp, nrcmpr, kaux)
                             if ((kaux.gt.0)) then
-                                if (itype .eq. 1) then
+                                if (fieldScalar .eq. 1) then
                                     val(nrcmp,nrsp,nrpg,jaux)=zr(adsv-1+kaux)
-                                else if (itype.eq.2) then
+                                else if (fieldScalar .eq. 2) then
                                     val(nrcmp,nrsp,nrpg,jaux)=dble(zc(adsv-1+kaux))
-                                else if (itype.eq.3) then
+                                else if (fieldScalar .eq. 3) then
                                     val(nrcmp,nrsp,nrpg,jaux)=dimag(zc(adsv-1+kaux))
+                                else if (fieldScalar .eq. 4) then
+                                    val(nrcmp,nrsp,nrpg,jaux)=abs(zc(adsv-1+kaux))
+                                else if (fieldScalar .eq. 5) then
+                                    val(nrcmp,nrsp,nrpg,jaux)=atan2(&
+                                        dble(zc(adsv-1+kaux)),dimag(zc(adsv-1+kaux)))*180.d0/r8pi()
                                 endif
                             endif
                         end do
