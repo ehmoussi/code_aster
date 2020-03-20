@@ -24,8 +24,7 @@ test.assertEqual(tab['NUMERO', 1], 0)
 test.assertEqual(tab.TITRE().strip(), 'Table title')
 
 pytab = tab.EXTR_TABLE()
-test.assertSequenceEqual(list(pytab.NOM_NUM.values()),
-                         ['{0:<24}'.format(i) for i in table2])
+test.assertSequenceEqual(list(pytab.NOM_NUM.values()), table2)
 
 tab2 = CALC_TABLE(TABLE=tab,
                   ACTION=_F(OPERATION='FILTRE',

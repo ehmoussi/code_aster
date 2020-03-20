@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonbas2(noma, basfon, typm, fonoeu, nbnoff,&
+subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
                   basloc, lnno, ltno)
 !
     implicit none
@@ -33,9 +33,9 @@ subroutine fonbas2(noma, basfon, typm, fonoeu, nbnoff,&
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
-    integer :: nbnoff
-    character(len=8) :: noma, typm
-    character(len=19) :: basfon, basloc, lnno, ltno
+    integer           :: nbnoff
+    character(len=8)  :: noma, typm
+    character(len=19) :: basnof, basloc, lnno, ltno
     character(len=24) :: fonoeu
 !
 ! FONCTION REALISEE:
@@ -47,7 +47,7 @@ subroutine fonbas2(noma, basfon, typm, fonoeu, nbnoff,&
 !
 !     ENTREES:
 !        NOMA   : NOM DU MAILLAGE
-!        BASFON : BASE AUX NOEUDS DU FOND DE FISSURE
+!        BASNOF : BASE AUX NOEUDS DU FOND DE FISSURE
 !        FONOEU : NOM DES NOEUDS DU FOND DE FISSURE
 !        NBNOFF : NOMBRE DE NOEUDS AU FOND DE FISSURE
 !        TYPM   : TYPE DE FOND DE FISSURE : LIN OU QUAD
@@ -125,10 +125,7 @@ subroutine fonbas2(noma, basfon, typm, fonoeu, nbnoff,&
     call jeveuo(cnsbas//'.CNSV', 'E', vr=gsv)
     call jeveuo(cnsbas//'.CNSL', 'E', jgsl)
 !
-    call jeveuo(basfon, 'L', jbas)
-!
-!   ADRESSES DES COORDONNEES DES NOEUDS DU MAILLAGE
-    call jeveuo(noma//'.COORDO    .VALE', 'L', vr=vale)
+    call jeveuo(basnof, 'L', jbas)
 !
 !   RECUPERATION DES NOMS DES NOEUDS DU FOND DE FISSURE
     call jeveuo(fonoeu, 'L', jnoe)

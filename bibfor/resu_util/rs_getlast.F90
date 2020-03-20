@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,9 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine rs_getlast(result_, nume_last, inst_last)
+! person_in_charge: mickael.abbas at edf.fr
+!
+subroutine rs_getlast(result_, nume_last, inst_last, freq_last)
 !
 implicit none
 !
@@ -24,11 +25,11 @@ implicit none
 #include "asterfort/rsadpa.h"
 #include "asterfort/rsorac.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: result_
-    integer, intent(out) :: nume_last
-    real(kind=8), optional, intent(out) :: inst_last
+
+character(len=*), intent(in) :: result_
+integer, intent(out) :: nume_last
+real(kind=8), optional, intent(out) :: inst_last
+real(kind=8), optional, intent(out) :: freq_last
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -41,6 +42,7 @@ implicit none
 ! In  result           : name of results datastructure
 ! Out nume_last        : last index stored in results datastructure
 ! Out inst_last        : last time stored in results datastructure
+! Out freq_last        : last frequence stored in results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,6 +66,11 @@ implicit none
         call rsadpa(result, 'L', 1, 'INST', nume_last,&
                     0, sjv=jinst)
         inst_last = zr(jinst)
+    endif
+    if (present(freq_last)) then
+        call rsadpa(result, 'L', 1, 'FREQ', nume_last,&
+                    0, sjv=jinst)
+        freq_last = zr(jinst)
     endif
 
 end subroutine

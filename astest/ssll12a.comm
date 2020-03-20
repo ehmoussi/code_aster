@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ MAILLAGE=MAILLAGE,
 ###             CHARGEMENT : DILATATION THERMIQUE                    ###
 ###------------------------------------------------------------------###
 
-CHARGE_1=AFFE_CHAR_MECA(  MODELE=MODELE,DDL_IMPO=(
+CHARGE_1=AFFE_CHAR_MECA(  MODELE=MODELE, DOUBLE_LAGRANGE='NON',DDL_IMPO=(
                         _F(  TOUT = 'OUI', DZ = 0.),
                                  _F(  NOEUD = 'A',  DX = 0.,  DY = 0.),
                                  _F(  NOEUD = 'B',           DY = 0.)),
@@ -90,7 +90,7 @@ STATIQU1=CALC_CHAMP(reuse=STATIQU1,CONTRAINTE=('EFGE_ELNO'),RESULTAT=STATIQU1)
 ###             CHARGEMENT : FORCES PONCTUELLES                      ###
 ###------------------------------------------------------------------###
 
-CHARGE_2=AFFE_CHAR_MECA(  MODELE=MODELE,DDL_IMPO=(
+CHARGE_2=AFFE_CHAR_MECA(  MODELE=MODELE, DOUBLE_LAGRANGE='NON',DDL_IMPO=(
                         _F(  TOUT = 'OUI', DZ = 0.),
                                  _F(  NOEUD = 'A',  DX = 0.,  DY = 0.),
                                  _F(  NOEUD = 'B',           DY = 0.)),
@@ -114,7 +114,7 @@ STATIQU2=CALC_CHAMP(reuse=STATIQU2,  FORCE='FORC_NODA',
 ###             CHARGEMENT : DEPLACEMENTS IMPOSES                    ###
 ###------------------------------------------------------------------###
 
-CHARGE_3=AFFE_CHAR_MECA(  MODELE=MODELE,DDL_IMPO=(
+CHARGE_3=AFFE_CHAR_MECA(  MODELE=MODELE, DOUBLE_LAGRANGE='NON', DDL_IMPO=(
                         _F(  TOUT = 'OUI', DZ = 0.),
                                  _F(  NOEUD = 'A',  DX = 0., DY = -0.020),
                                  _F(  NOEUD = 'B',          DY = -0.030)),
@@ -133,7 +133,7 @@ STATIQU3=CALC_CHAMP(reuse=STATIQU3,CONTRAINTE=('EFGE_ELNO'),RESULTAT=STATIQU3)
 ###             CHARGEMENT : DILATATION, FORCES, DEPLACEMENTS        ###
 ###------------------------------------------------------------------###
 
-CHARGE_4=AFFE_CHAR_MECA(  MODELE=MODELE,DDL_IMPO=(
+CHARGE_4=AFFE_CHAR_MECA(  MODELE=MODELE, DOUBLE_LAGRANGE='NON',DDL_IMPO=(
                         _F(  TOUT = 'OUI', DZ = 0.),
                                  _F(  NOEUD = 'A',  DX = 0.,  DY = -0.020),
                                  _F(  NOEUD = 'B',           DY = -0.030)),

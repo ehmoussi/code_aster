@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ implicit none
 ! ----- Type of FE: element where dof PRE1 and PRE2 exist
         aster_logical :: l_dof_hydr = ASTER_FALSE
 ! ----- Type of FE: number of phasis for each fluid
-        integer :: nb_phase(2)
+        integer :: nb_phase(2) = 0
 ! ----- Flag for weak coupling
         aster_logical :: l_weak_coupling = ASTER_FALSE
 ! ----- Flag for *JHMS elements

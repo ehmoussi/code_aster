@@ -225,11 +225,6 @@ Les noms de paramètres doivent être différents, or %(k1)s a été utilisé pl
  le nombre de champs à lire est supérieur a 100
 """),
 
-    94 : _("""
-  Le champ %(k1)s n'est pas prévu.
-  Vous pouvez demander l'évolution.
-"""),
-
     95 : _("""
   %(k1)s  et  %(k2)s  : nombre de composantes incompatible.
 """),
