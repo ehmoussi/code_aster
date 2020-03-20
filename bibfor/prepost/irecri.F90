@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine irecri(nomcon, form, ifi, titre, &
-                  nbcham, cham,  nbpara, para,&
-                  nbordr, ordr, lresu, motfac, iocc,&
-                  cecr, lcor, nbnot, numnoe,&
+subroutine irecri(resultName, form, fileUnit, titre, &
+                  nbcham, cham,  paraNb, paraName,&
+                  storeNb, storeIndx, lresu, motfac, iocc,&
+                  tablFormat, lcor, nbnot, numnoe,&
                   nbmat, nummai, nbcmp, nomcmp, lsup,&
                   borsup, linf, borinf, lmax, lmin,&
                   formr, niv)
@@ -46,40 +46,49 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-character(len=*) :: nomcon
-character(len=*) :: form, titre, cham(*), para(*)
-character(len=*) :: motfac, cecr
+character(len=*), intent(in) :: resultName
+integer, intent(in) :: fileUnit
+integer, intent(in) :: storeNb, storeIndx(*)
+integer, intent(in) :: paraNb
+character(len=*), intent(in) :: paraName(*)
+character(len=1), intent(in) :: tablFormat
+character(len=*) :: form, titre, cham(*)
+character(len=*) :: motfac
 character(len=*) :: nomcmp(*), formr
 real(kind=8) :: borsup, borinf
-integer :: nbcham, nbpara, niv
-integer :: nbordr, ordr(*), nbcmp, iocc
+integer :: nbcham, niv
+integer :: nbcmp, iocc
 integer :: nbnot, numnoe(*), nbmat, nummai(*)
 aster_logical :: lresu, lcor
 aster_logical :: lsup, linf, lmax, lmin
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!     ECRITURE D'UN CONCEPT SUR FICHIER RESULTAT
+! Results management
+!
+! Print results datastructure in a file - Format IDEAS / RESULTAT
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IN  NOMCON : K8  : NOM DU CONCEPT A IMPRIMER
+! In  resultName       : name of results datastructure
+! In  fileUnit         : index of file (logical unit)
+! In  storeNb          : number of storage slots in result
+! In  storeIndx        : list of storage slots in result
+! In  paraNb           : number of parameters
+! In  paraName         : name of parameters
+! In  tablFormat       : format of file (FORM_TABL keyord)
+!                         'L' => list
+!                         'T' => table
+!                         'E' => excel
 ! IN  FORM   : K8  : FORMAT D'ECRITURE
-! IN  IFI    : IS  : UNITE LOGIQUE D'ECRITURE
 ! IN  TITRE  : K80 : TITRE POUR ALI_BABA ET SUPERTAB
 ! IN  NBCHAM : I   : NOMBRE DE CHAMP DANS LE TABLEAU CHAM
 ! IN  CHAM   : K16 : NOM DES CHAMPS A IMPRIMER ( EX 'DEPL', ....
 ! IN  PARTIE : K4  : IMPRESSION DE LA PARTIE COMPLEXE OU REELLE DU CHAMP
-! IN  NBPARA : I   : NOMBRE DE PARAMETRES LE TABLEAU PARA
-! IN  PARA   : K16 : NOM DES PARAMETRES A IMPRIMER ( EX 'OMEGA2', ...
-! IN  NBORDR : I   : NOMBRE DE NUMEROS D'ORDRE DANS LE TABLEAU ORDR
-! IN  ORDR   : I   : LISTE DES NUMEROS D'ORDRE A IMPRIMER
 ! IN  LRESU  : L   : INDIQUE SI NOMCON EST UN CHAMP OU UN RESULTAT
 ! IN  MOTFAC : K   : NOM DU MOT CLE FACTEUR
 ! IN  IOCC   : I   : NUMERO D'OCCURENCE DU MOT CLE FACTEUR
 ! IN  MODELE : K   : NOM DU MODELE
-! IN  CECR   : K1  : CODE D'ECRITURE DES PARAMETRES
-!                    'T' TABLEAU 'L' LISTE
 ! IN  LCOR   : L   : INDIQUE SI IMPRESSION DES COORDONNEES DES NOEUDS
 !                    .TRUE.  IMPRESSION
 ! IN  TYCHA  : K8  : TYPE DE CHAMP (SCALAIRE,VECT_2D,VECT_3D,TENS_2D,
@@ -106,32 +115,31 @@ aster_logical :: lsup, linf, lmax, lmin
     character(len=19) :: noch19
     character(len=24) :: nomst
     aster_logical :: lordr
-    integer :: ibid
-    integer :: i, ifi, isy
-    integer :: iordr
+    integer :: ibid, i, isy, iStore
     integer :: iret
     integer :: jtitr
     integer :: nbtitr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!     ------------------------------------------------------------------
-!     --- IMPRESSION D'UN TABLEAU SYNTHETIQUE DES PARAMETRES-----
-!         (UNIQUEMENT FORMAT 'RESULTAT')
-!-----------------------------------------------------------------------
-!-----------------------------------------------------------------------
-
-    if (niv .gt. 1) then
-        call irpara(nomcon, form, ifi, nbordr, ordr,nbpara, para, cecr)
-    endif  
-!
     nomst = '&&IRECRI.SOUS_TITRE.TITR'
+!
+! - Print list of parameters in a file
+!
+    if (niv .gt. 1) then
+        if (form .eq. 'RESULTAT') then
+            call irpara(resultName, fileUnit ,&
+                        storeNb   , storeIndx,&
+                        paraNb    , paraName ,&
+                        tablFormat)
+        endif
+    endif
 !
 !     *******************************************
 !     --- BOUCLE SUR LA LISTE DES NUMEROS D'ORDRE
 !     *******************************************
 !
-    do iordr = 1, nbordr
+    do iStore = 1, storeNb
         call jemarq()
         call jerecu('V')
 !
@@ -141,10 +149,10 @@ aster_logical :: lsup, linf, lmax, lmin
 ! AU CAS OU ON NE PASSE PAS EN DESSOUS ON INITIALISE LORDR A FALSE
         lordr=.false.
         if (lresu) then
-            call rsutrg(nomcon, ordr(iordr), iret, ibid)
+            call rsutrg(resultName, storeIndx(iStore), iret, ibid)
             if (iret .eq. 0) then
 !           - MESSAGE NUMERO D'ORDRE NON LICITE
-                call codent(ordr(iordr), 'G', chnumo)
+                call codent(storeIndx(iStore), 'G', chnumo)
                 call utmess('A', 'PREPOST2_46', sk=chnumo)
                 goto 22
             endif
@@ -159,29 +167,31 @@ aster_logical :: lsup, linf, lmax, lmin
 !             - VERIFICATION EXISTENCE DANS LA SD RESULTAT NOMCON
 !               DU CHAMP CHAM(ISY) POUR LE NO. D'ORDRE ORDR(IORDR)
 !               ET RECUPERATION DANS NOCH19 DU NOM SE LE CHAM_GD EXISTE
-                    call rsexch(' ', nomcon, cham(isy), ordr(iordr), noch19,&
+                    call rsexch(' ', resultName, cham(isy), storeIndx(iStore), noch19,&
                                 iret)
                     if (iret .ne. 0) goto 20
                 else
 !           * CHAM_GD
-                    noch19 = nomcon
+                    noch19 = resultName
                 endif
 !
 !           * IMPRESSION DES PARAMETRES (FORMAT 'RESULTAT')
                 if (lordr .and. form .eq. 'RESULTAT') then
 !             - SEPARATION DES DIVERS NUMEROS D'ORDRE PUIS IMPRESSION
-                    write(ifi,'(/,1X,A)') '======>'
-                    call irpara(nomcon, form, ifi, 1, ordr(iordr),&
-                                nbpara, para, cecr)
+                    write(fileUnit,'(/,1X,A)') '======>'
+                    call irpara(resultName, fileUnit,&
+                                1, storeIndx(iStore),&
+                                paraNb, paraName,&
+                                tablFormat)
                     lordr=.false.
                 endif
 !           * CREATION D'UN SOUS-TITRE
                 if (form .eq. 'RESULTAT' .or. form .eq. 'IDEAS') then
                     if (lresu) then
-                        call titre2(nomcon, noch19, nomst, motfac, iocc,&
-                                    formr, cham(isy), ordr(iordr))
+                        call titre2(resultName, noch19, nomst, motfac, iocc,&
+                                    formr, cham(isy), storeIndx(iStore))
                     else
-                        call titre2(nomcon, noch19, nomst, motfac, iocc,&
+                        call titre2(resultName, noch19, nomst, motfac, iocc,&
                                     formr)
                     endif
                 endif
@@ -189,10 +199,10 @@ aster_logical :: lsup, linf, lmax, lmin
 !           * IMPRESSION DU SOUS-TITRE SI FORMAT 'RESULTAT'
                 if (form .eq. 'RESULTAT') then
 !              ---- SEPARATION DES DIVERS CHAMPS -----
-                    write(ifi,'(/,1X,A)') '------>'
+                    write(fileUnit,'(/,1X,A)') '------>'
                     call jeveuo(nomst, 'L', jtitr)
                     call jelira(nomst, 'LONMAX', nbtitr)
-                    write(ifi,'(1X,A)') (zk80(jtitr+i-1),i=1,&
+                    write(fileUnit,'(1X,A)') (zk80(jtitr+i-1),i=1,&
                     nbtitr)
                 endif
 !
@@ -202,8 +212,8 @@ aster_logical :: lsup, linf, lmax, lmin
 !                LE CHAMP EST UN CHAM_GD SIMPLE SI LRESU=.FALSE. OU
 !                LE CHAMP EST LE CHAM_GD CHAM(ISY) DE NUMERO D'ORDRE
 !                ORDR(IORDR) ISSU DE LA SD_RESULTAT NOMCON
-                call irch19(noch19, form, ifi, titre,&
-                            nomcon, cham(isy), ordr(iordr), lcor, nbnot,&
+                call irch19(noch19, form, fileUnit, titre,&
+                            resultName, cham(isy), storeIndx(iStore), lcor, nbnot,&
                             numnoe, nbmat, nummai, nbcmp, nomcmp,&
                             lsup, borsup, linf, borinf, lmax,&
                             lmin, lresu, formr)

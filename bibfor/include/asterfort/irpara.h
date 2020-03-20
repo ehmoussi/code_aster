@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine irpara(resu, form, ifi, nbordr, ordr,&
-                      nbpa, nompar, cecr)
-        character(len=*) :: resu
-        character(len=*) :: form
-        integer :: ifi
-        integer :: nbordr
-        integer :: ordr(*)
-        integer :: nbpa
-        character(len=*) :: nompar(*)
-        character(len=*) :: cecr
+    subroutine irpara(resultName, fileUnit ,&
+                      storeNb   , storeIndx,&
+                      paraNb    , paraName ,&
+                      tablFormat)
+        character(len=*), intent(in) :: resultName
+        integer, intent(in) :: fileUnit
+        integer, intent(in) :: storeNb, storeIndx(*)
+        integer, intent(in) :: paraNb
+        character(len=*), intent(in) :: paraName(*)
+        character(len=1), intent(in) :: tablFormat
     end subroutine irpara
 end interface

@@ -18,41 +18,27 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine irecri(nomcon, form, ifi, titre,&
-                      nbcham, cham, nbpara, para,&
-                      nbordr, ordr, lresu, motfac, iocc,&
-                      cecr, lcor, nbnot, numnoe,&
+    subroutine irecri(resultName, form, fileUnit, titre, &
+                      nbcham, cham,  paraNb, paraName,&
+                      storeNb, storeIndx, lresu, motfac, iocc,&
+                      tablFormat, lcor, nbnot, numnoe,&
                       nbmat, nummai, nbcmp, nomcmp, lsup,&
                       borsup, linf, borinf, lmax, lmin,&
-                      formr,  niv)
-        character(len=*) :: nomcon
-        character(len=*) :: form
-        integer :: ifi
-        character(len=*) :: titre
-        integer :: nbcham
-        character(len=*) :: cham(*)
-        integer :: nbpara
-        character(len=*) :: para(*)
-        integer :: nbordr
-        integer :: ordr(*)
-        aster_logical :: lresu
+                      formr, niv)
+        character(len=*), intent(in) :: resultName
+        integer, intent(in) :: fileUnit
+        integer, intent(in) :: storeNb, storeIndx(*)
+        integer, intent(in) :: paraNb
+        character(len=*), intent(in) :: paraName(*)
+        character(len=1), intent(in) :: tablFormat
+        character(len=*) :: form, titre, cham(*)
         character(len=*) :: motfac
-        integer :: iocc
-        character(len=*) :: cecr
-        aster_logical :: lcor
-        integer :: nbnot
-        integer :: numnoe(*)
-        integer :: nbmat
-        integer :: nummai(*)
-        integer :: nbcmp
-        character(len=*) :: nomcmp(*)
-        aster_logical :: lsup
-        real(kind=8) :: borsup
-        aster_logical :: linf
-        real(kind=8) :: borinf
-        aster_logical :: lmax
-        aster_logical :: lmin
-        character(len=*) :: formr
-        integer :: niv
+        character(len=*) :: nomcmp(*), formr
+        real(kind=8) :: borsup, borinf
+        integer :: nbcham, niv
+        integer :: nbcmp, iocc
+        integer :: nbnot, numnoe(*), nbmat, nummai(*)
+        aster_logical :: lresu, lcor
+        aster_logical :: lsup, linf, lmax, lmin
     end subroutine irecri
 end interface
