@@ -25,4 +25,6 @@ cata_msg = {
 
     40 : _("""Aucune des composantes demandées sous le mot-clé NOM_CMP pour l'impression du champ %(k1)s n'est présente."""),
 
+    97: _("""Le champ %(k1)s a des éléments ayant des sous-points. Ils seront supprimés à l'impression."""),
+
 }
