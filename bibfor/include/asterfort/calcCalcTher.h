@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 !
 interface
     subroutine calcCalcTher(nb_option    , list_option   , &
-                            list_load    , model         , mate        , cara_elem,&
+                            list_load    , model         , mate        , mateco, cara_elem,&
                             time_curr    , time,&
                             temp_prev    , incr_temp     , compor_ther , temp_curr,&
                             ve_charther  , me_mtanther   , ve_dirichlet,&
@@ -27,7 +27,7 @@ interface
         integer, intent(in) :: nb_option
         character(len=16), intent(in) :: list_option(:)
         character(len=19), intent(in) :: list_load
-        character(len=24), intent(in) :: model, mate, cara_elem
+        character(len=24), intent(in) :: model, mate, mateco, cara_elem
         real(kind=8), intent(in) :: time_curr
         character(len=24), intent(in) :: time
         character(len=*), intent(in) :: temp_prev, incr_temp, temp_curr

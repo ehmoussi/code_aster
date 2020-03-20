@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,8 @@
 
 !
 !
-          interface 
-            subroutine rigflu(modele,time,nomcmp,tps,nbchar,char,mate,  &
+          interface
+            subroutine rigflu(modele,time,nomcmp,tps,nbchar,char,mate, mateco,  &
      &solvez,ma,nu)
               character(len=8) :: modele
               character(len=24) :: time
@@ -27,9 +27,9 @@
               real(kind=8) :: tps(6)
               integer :: nbchar
               character(len=8) :: char
-              character(len=*) :: mate
+              character(len=*) :: mate, mateco
               character(len=*) :: solvez
               character(len=8) :: ma
               character(len=14) :: nu
             end subroutine rigflu
-          end interface 
+          end interface

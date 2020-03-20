@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine memare(base  , matr_vect_elemz, modelz, mateco, cara_elem,&
+    subroutine memare(base  , matr_vect_elemz, modelz, mater, cara_elem,&
                       suropt)
         character(len=1), intent(in) :: base
         character(len=*), intent(in) :: matr_vect_elemz
         character(len=*), intent(in) :: modelz
-        character(len=*), intent(in) :: mateco
+        character(len=*), intent(in) :: mater
         character(len=*), intent(in) :: cara_elem
         character(len=*), intent(in) :: suropt
     end subroutine memare

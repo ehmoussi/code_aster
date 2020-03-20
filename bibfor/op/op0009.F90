@@ -125,12 +125,12 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MECA_GYRO') then
-        call meamgy(model  , mateco      , cara_elem, compor_mult, matr_elem,&
+        call meamgy(model  , mate, mateco      , cara_elem, compor_mult, matr_elem,&
                     nb_load, v_list_load8)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_GYRO') then
-        call merigy(model  , mateco      , cara_elem, compor_mult, matr_elem,&
+        call merigy(model  ,mate,  mateco      , cara_elem, compor_mult, matr_elem,&
                     nb_load, v_list_load8)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -156,11 +156,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'IMPE_MECA') then
-        call meimme(model, nb_load, v_list_load8, mateco, matr_elem)
+        call meimme(model, nb_load, v_list_load8, mate, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'ONDE_FLUI') then
-        call meonme(model, nb_load, v_list_load8, mateco, matr_elem)
+        call meonme(model, nb_load, v_list_load8, mate, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_MECA_HYST') then
@@ -183,15 +183,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ACOU') then
-        call meriac(model, nb_load, v_list_load8, mateco, matr_elem, base)
+        call meriac(model, nb_load, v_list_load8, mate, mateco, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_ACOU') then
-        call memaac(model, mateco, matr_elem)
+        call memaac(model, mate, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'AMOR_ACOU') then
-        call meamac(model, nb_load, v_list_load8, mateco, matr_elem, base)
+        call meamac(model, nb_load, v_list_load8, mate, mateco, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else

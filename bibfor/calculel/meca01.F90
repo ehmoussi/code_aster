@@ -388,7 +388,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 ! 2.2.8. ==> CALCULE L'ESTIMATEUR D'ERREUR EN RESIDU LOCAL
 !
             call resloc(modele, ligrmo, yaxfem, yathm, tbgrca,&
-                        perman, chtime, mate, chsigm, chsigp,&
+                        perman, chtime, mateco, chsigm, chsigp,&
                         chsigx, chdepm, chdepp, cherrm, zk8(jcha),&
                         nchar, tabido, chvois, cvoisx, chelem)
 !
@@ -555,7 +555,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 !
         call qires1(modele, ligrmo, chtime, chsigp, chsigd,&
                     zk8(jchap), zk8(jchad), ncharp, nchard, chs,&
-                    mate, chvois, tabido, chelem)
+                    mateco, chvois, tabido, chelem)
 !
 ! 4.2.11. ==> VERIFIE L'EXISTENCE DU CHAMP CHELEM
         call exisd('CHAMP_GD', chelem, iret)
@@ -656,7 +656,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 ! 6.2.6 ==> CALCUL
         call rsexc1(resuc1, option, iordr, chelem)
 !
-        call qintzz(modele, ligrmo, mate, chsigp, chsigd,&
+        call qintzz(modele, ligrmo, mateco, chsigp, chsigd,&
                     chsgpn, chsgdn, chelem)
 !
 ! 6.2.7.0. ==> RECUPERE L'ADRESSE JEVEUX DE L'INSTANT DE CALCUL
@@ -675,7 +675,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 !
 ! 6.2.7.2. ==> CALCUL DE L'ESTIMATEUR GLOBAL A PARTIR DES ESTIMATEURS
 !             LOCAUX
-        call ernozz(modele, chsigp, mate, chsgpn, chvarc,&
+        call ernozz(modele, chsigp, mateco, chsgpn, chvarc,&
                     option, ligrmo, iordr, resuco, leres1,&
                     chelem)
 !
@@ -727,7 +727,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
             call vrcins(modele, mate, cara, time, chvarc,&
                         cret)
             call rsexc1(leres1, option, iordr, chelem)
-            call ernozz(modele, chsig, mate, chsign, chvarc,&
+            call ernozz(modele, chsig, mateco, chsign, chvarc,&
                         option, ligrmo, iordr, resuco, leres1,&
                         chelem)
             call rsnoch(leres1, option, iordr)

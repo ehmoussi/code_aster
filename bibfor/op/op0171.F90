@@ -82,7 +82,7 @@ implicit none
     character(len=8) :: k8bid
     character(len=16) :: k16bid, nomcvg
     character(len=19) :: list_load, solver, maprec, list_load_save
-    character(len=24) :: model, mate, cara_elem, mater
+    character(len=24) :: model, mateco, cara_elem, mater
     character(len=24) :: nomch, vtemp, vtempm, vtempp, vec2nd
     character(len=24) :: result, ligrmo, tempev, tempin
     character(len=24) :: time, matass, noojb, nume_dof
@@ -120,7 +120,7 @@ implicit none
 !
 ! - Read parameters
 !
-    call ntdoth(model, mater, mate, cara_elem, list_load,&
+    call ntdoth(model, mater, mateco, cara_elem, list_load,&
                 matcst_ = matcst, coecst_ = coecst )
 !
 ! - EVOL_CHAR is prohibden
@@ -247,7 +247,7 @@ implicit none
 !
 ! --- ACTUALISATION EVENTUELLE DES VECTEURS ET DES MATRICES
 !
-    call nttcmv(model , mate  , cara_elem, list_load, nume_dof,&
+    call nttcmv(model , mater , mateco   , cara_elem, list_load, nume_dof,&
                 solver, time  , tpsthe   , tpsnp1   , reasvt  ,&
                 reasmt, creas , vtemp    , vtempm   , vec2nd  ,&
                 matass, maprec, cndirp   , cnchci   , cnchtp)
@@ -264,7 +264,7 @@ implicit none
 !
 ! - ITERATIONS INTERNES
 !
-        call nttain(model , mate  , cara_elem, list_load, nume_dof,&
+        call nttain(model , mateco, cara_elem, list_load, nume_dof,&
                     solver, time  , epsr     , lonch    , matass  ,&
                     maprec, cnchci, cnresi   , vtemp    , vtempm  ,&
                     vtempp, vec2nd, chlapm   , chlapp   , ci1     ,&
@@ -358,7 +358,7 @@ implicit none
 !
 !      ARCHIVAGE DU MODELE, MATERIAU, CARA_ELEM ET DE LA SD CHARGE
 !
-    call rssepa(result(1:8), 0, model(1:8), mate(1:8), cara_elem(1:8),&
+    call rssepa(result(1:8), 0, model(1:8), mater(1:8), cara_elem(1:8),&
                 list_load_save)
 !
     call titre()

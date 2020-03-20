@@ -152,7 +152,7 @@ character(len=24), intent(in) :: mediri
 ! - Compute CHAR_THER_EVOL
 !
     if (.not.l_stat) then
-        call vetnth(model    , cara_elem, mateco  , time,&
+        call vetnth(model    , cara_elem, mate, mateco  , time,&
                     vtemp    , varc_curr, vetntp, 'V')
         call asasve(vetntp, nume_dof, 'R', vatntp)
         call jeveuo(vatntp, 'L', jtn)
@@ -161,7 +161,7 @@ character(len=24), intent(in) :: mediri
 !
 ! - Compute Neumann loads (second member)
 !
-    call vechth('STAT', model    , lload_name, lload_info, cara_elem,&
+    call vechth('STAT', model    , lload_name, lload_info, cara_elem, mate, &
                 mateco  , time_curr, time      , vtemp     , vechtp,&
                 varc_curr_ = varc_curr)
     call asasve(vechtp, nume_dof, 'R', vachtp)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ subroutine op0199()
     character(len=14) :: nu, num, nugene
     character(len=16) :: typres, nomcom
     character(len=19) :: max, may, maz, chamno, solveu
-    character(len=24) :: blanc, time, nocham, mate
+    character(len=24) :: blanc, time, nocham, mateco
 !
 ! -----------------------------------------------------------------
     data nomcmp / 'INST    ', 'DELTAT  ', 'THETA   ',&
@@ -82,7 +82,7 @@ subroutine op0199()
     time = '&TIME'
     nugene = ' '
     materi = ' '
-    mate = ' '
+    mateco = ' '
 !
 ! --- RECUPERATION DES ARGUMENTS DE LA COMMANDE
 !
@@ -100,7 +100,7 @@ subroutine op0199()
 !
     call cresol(solveu)
 !
-    if (n4 .ne. 0) call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
+    if (n4 .ne. 0) call rcmfmc(materi, mateco, l_ther_ = ASTER_FALSE)
 !
     if (n6 .ne. 0) nugene = numgen
 !
@@ -124,7 +124,7 @@ subroutine op0199()
 !--------------------------------------------------------------
 !
     call rigflu(moflui, time, nomcmp, tps, n2,&
-                char, mate, solveu, ma, nu)
+                char, materi, mateco, solveu, ma, nu)
 !
 !--------------------------------------------------------------
 ! CALCUL DES MATR_ELEM AX ET AY DANS L'OPTION FLUX_FLUI_X ET _Y
@@ -145,7 +145,7 @@ subroutine op0199()
 ! SUR LA STRUCTURE
 !================================================================
 !
-    call phi199(model, mate, ma, nu, num,&
+    call phi199(model, materi, mateco, ma, nu, num,&
                 nbmo, solveu, indice, tabad)
 !
 !--------------------------------------------------------------
@@ -168,7 +168,7 @@ subroutine op0199()
 !
     if (n7 .gt. 0) then
         call calmdg(model, modgen, nugene, num, nu,&
-                    ma, mate, moint, moflui, ndble,&
+                    ma, materi, mateco, moint, ndble,&
                     itxsto, itysto, itzsto, iprsto, nbmo,&
                     iadirg)
     endif

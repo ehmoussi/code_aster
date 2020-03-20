@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 !
 !
 interface
-    subroutine meonme(modele, nchar, lchar, mate, matel)
+    subroutine meonme(modele, nchar, lchar, mate, mateco, matel)
         character(len=8) :: modele
         integer :: nchar
         character(len=8) :: lchar(*)
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=19) :: matel
     end subroutine meonme
 end interface

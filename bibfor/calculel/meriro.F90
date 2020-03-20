@@ -110,7 +110,7 @@ subroutine meriro(modele, cara, nchar, lchar, mate, mateco, &
         call jedetr(matel//'.RERR')
         call jedetr(matel//'.RELR')
     endif
-    call memare('G', matel, modele, mateco, ' ',&
+    call memare('G', matel, modele, mate, ' ',&
                 'RIGI_ROTA')
     call reajre(matel, ' ', 'G')
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 subroutine trprot(model, bamo, tgeom, imodg, iadx,&
                   iady, iadz, isst, iadrp, norm1,&
                   norm2, ndble, num, nu, ma,&
-                  mate, moint, ilires, k, icor)
+                  mate, mateco, moint, ilires, k, icor)
     implicit none
 !     AUTEUR : G.ROUSSEAU
 !     ROUTINE REALISANT ,
@@ -88,7 +88,7 @@ subroutine trprot(model, bamo, tgeom, imodg, iadx,&
     aster_logical :: test1, test2, test3
     integer :: nbvale, nbrefe, nbdesc, isst, iadrp, i_ligr_mesh
     integer :: i, iad(2), iad3d(3), icor(2), ndble
-    real(kind=8) :: tgeom(6), tmin, epsi, const(2)
+    real(kind=8) :: tgeom(6), const(2)
     real(kind=8) :: tailmi, norm1, norm2, ca(3), sa(3)
     real(kind=8) :: val(2), val3d(3), tol
     character(len=1) :: typech(2), typcst(2), base
@@ -99,10 +99,12 @@ subroutine trprot(model, bamo, tgeom, imodg, iadx,&
     character(len=14) :: nu, num
     character(len=19) :: chtmpx, chtmpy, chtmpz, chcomb, vestoc
     character(len=19) :: vesolx, vesoly, vepr, vesolz, tampon, chcmb2
-    character(len=19) :: chflu, chamnx, chamny, chamnz, newcha, pchno
-    character(len=19) :: maprec, chsol, solveu, nomch(2)
-    character(len=24) :: nomcha, criter
-    character(len=*) :: mate
+    character(len=19) :: chflu, chamnx, chamny, chamnz, newcha, pchno, nomch(2)
+    character(len=19), parameter :: maprec='&&OP0152.MAPREC', chsol='&&OP0152.SOLUTION'
+    character(len=19), parameter :: solveu = '&&OP0152.SOLVEUR'
+    character(len=24), parameter :: criter = '&&RESGRA_GCPC'
+    character(len=24) :: nomcha
+    character(len=*) :: mate, mateco
     complex(kind=8) :: cbid
     integer :: iadg, iadx, iady, iadz, iaut, ichad, ichar
     integer :: ichav, idsc, ilires, imodg, inoe
@@ -113,16 +115,9 @@ subroutine trprot(model, bamo, tgeom, imodg, iadx,&
     integer, pointer :: nueq(:) => null()
     real(kind=8), pointer :: vale(:) => null()
     integer, pointer :: desc(:) => null()
+    real(kind=8), parameter :: tmin = 1.d-15, epsi=1.d-2
     cbid = dcmplx(0.d0, 0.d0)
 !-----------------------------------------------------------------------
-    data maprec   /'&&OP0152.MAPREC'/
-    data chsol    /'&&OP0152.SOLUTION'/
-    data solveu   /'&&OP0152.SOLVEUR'/
-    data criter   /'&&RESGRA_GCPC'/
-! -----------------------------------------------------------------
-    data tmin    /1.d-15/
-    data epsi    /1.d-2/
-!---------------------------------------------------------------------
 ! VERIFICATION SUPPLEMENTAIRE
 !
 !
@@ -335,14 +330,14 @@ subroutine trprot(model, bamo, tgeom, imodg, iadx,&
     if (maflui .ne. mailla) then
         base='V'
 !          WRITE(8,*)'JE PASSE DANS ALIMRS 1 FOIS'
-        call alimrs(mate, mailla, maflui, moint, ndble,&
+        call alimrs(mate, mateco, mailla, maflui, moint, ndble,&
                     num, newcha, chamnx, 'DX', icor)
 !
-        call alimrs(mate, mailla, maflui, moint, ndble,&
+        call alimrs(mate, mateco, mailla, maflui, moint, ndble,&
                     num, newcha, chamny, 'DY', icor)
         if (model .eq. '3D') then
 !
-            call alimrs(mate, mailla, maflui, moint, ndble,&
+            call alimrs(mate, mateco, mailla, maflui, moint, ndble,&
                         num, newcha, chamnz, 'DZ', icor)
         endif
         call detrsd('CHAM_NO', newcha)
@@ -423,13 +418,13 @@ subroutine trprot(model, bamo, tgeom, imodg, iadx,&
         call chtpcn(chamnx, tgeom, tailmi, tmin, epsi,&
                     base, chtmpx)
 !
-        call calflu(chtmpx, moint, mate, num, vesolx,&
+        call calflu(chtmpx, moint, mate, mateco, num, vesolx,&
                     nbdesc, nbrefe, nbvale, 'X')
 !
         call chtpcn(chamny, tgeom, tailmi, tmin, epsi,&
                     base, chtmpy)
 !
-        call calflu(chtmpy, moint, mate, num, vesoly,&
+        call calflu(chtmpy, moint, mate, mateco, num, vesoly,&
                     nbdesc, nbrefe, nbvale, 'Y')
 !
         ilires=ilires+1
@@ -448,7 +443,7 @@ subroutine trprot(model, bamo, tgeom, imodg, iadx,&
             call chtpcn(chamnz, tgeom, tailmi, tmin, epsi,&
                         base, chtmpz)
 !
-            call calflu(chtmpz, moint, mate, num, vesolz,&
+            call calflu(chtmpz, moint, mate, mateco, num, vesolz,&
                         nbdesc, nbrefe, nbvale, 'Z')
             vestoc='&&TRPROT.TPZSTO'
             call prstoc(chtmpz, vestoc, ilires, k, iadz,&
@@ -459,9 +454,9 @@ subroutine trprot(model, bamo, tgeom, imodg, iadx,&
 !
 !        'CAS OU T=0 ET R=0'
 !
-        call calflu(chamnx, moint, mate, num, vesolx,&
+        call calflu(chamnx, moint, mate, mateco, num, vesolx,&
                     nbdesc, nbrefe, nbvale, 'X')
-        call calflu(chamny, moint, mate, num, vesoly,&
+        call calflu(chamny, moint, mate, mateco, num, vesoly,&
                     nbdesc, nbrefe, nbvale, 'Y')
 !
         ilires=ilires+1
@@ -485,7 +480,7 @@ subroutine trprot(model, bamo, tgeom, imodg, iadx,&
 !
         if (model .eq. '3D') then
 !
-            call calflu(chamnz, moint, mate, num, vesolz,&
+            call calflu(chamnz, moint, mate, mateco, num, vesolz,&
                         nbdesc, nbrefe, nbvale, 'Z')
             vestoc='&&TRPROT.TPZSTO'
             call prstoc(chamnz, vestoc, ilires, k, iadz,&

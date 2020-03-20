@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine phi199(model, mate, ma, nu, num,&
+subroutine phi199(model, mate, mateco, ma, nu, num,&
                   nbmode, solvez, indice, tabad)
     implicit none
 #include "jeveux.h"
@@ -50,7 +50,7 @@ subroutine phi199(model, mate, ma, nu, num,&
     integer :: nbmode, indice, tabad(*)
     character(len=8) :: ma
     character(len=14) :: nu, num
-    character(len=*) :: mate, solvez
+    character(len=*) :: mate, mateco, solvez
 !
 !
 ! CALCULS DES CONDITIONS AUX LIMITES POUR LA DETERMINATION
@@ -112,10 +112,10 @@ subroutine phi199(model, mate, ma, nu, num,&
         call dismoi('NOM_MAILLA', nomcha, 'CHAM_NO', repk=mailla)
         call dismoi('NOM_MAILLA', moint, 'MODELE', repk=maflui)
         if (maflui .ne. mailla) then
-            call tabcor(model, mate, mailla, maflui, moint,&
+            call tabcor(model, mate, mateco, mailla, maflui, moint,&
                         num, ndble, icor)
             call majou(model, modmec, solveu, num, nu,&
-                       ma, mate, moint, ndble, icor,&
+                       ma, mate, mateco, moint, ndble, icor,&
                        tabad)
             indice=1
         endif
@@ -257,7 +257,7 @@ subroutine phi199(model, mate, ma, nu, num,&
         nomcha = nomcha(1:19)
         vecso1 = '&&OP0199.VECSOL1'
 !
-        call calflu(nomcha, moflui, mate, nu, vecso1,&
+        call calflu(nomcha, moflui, mate, mateco, nu, vecso1,&
                     nbdesc, nbrefe, nbvale, 'R')
 !
         ilires = ilires + 1

@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine calcGetDataMeca(list_load      , model         , mateco     , cara_elem,&
+subroutine calcGetDataMeca(list_load      , model         , mate , mateco     , cara_elem,&
                            disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                            ds_constitutive, l_elem_nonl, nume_harm)
 !
@@ -38,7 +38,7 @@ implicit none
 !
 character(len=19), intent(out) :: list_load
 character(len=24), intent(out) :: model
-character(len=24), intent(out) :: mateco
+character(len=24), intent(out) :: mateco, mate
 character(len=24), intent(out) :: cara_elem
 character(len=19), intent(out) :: disp_prev
 character(len=19), intent(out) :: disp_cumu_inst
@@ -74,7 +74,6 @@ integer, intent(out) :: nume_harm
     aster_logical :: l_etat_init
     integer :: nocc
     character(len=19) :: ligrmo
-    character(len=24) :: mater
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -90,7 +89,7 @@ integer, intent(out) :: nume_harm
 !
 ! - Get parameters from command file
 !
-    call nmlect(result, model, mater, mateco, cara_elem, list_load)
+    call nmlect(result, model, mate, mateco, cara_elem, list_load)
 !
 ! - Can have internal variables ?
 !
@@ -141,7 +140,7 @@ integer, intent(out) :: nume_harm
 !
     call nonlinDSConstitutiveCreate(ds_constitutive)
     if (l_elem_nonl) then
-        call nmdorc(model, mater, l_etat_init,&
+        call nmdorc(model, mate, l_etat_init,&
                     ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
                     l_implex_ = .false._1)
         call nonlinDSConstitutiveInit(model, cara_elem, ds_constitutive)

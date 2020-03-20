@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine vetnth(model    , cara_elem, mateco     , time ,&
+subroutine vetnth(model    , cara_elem, mate     , mateco     , time ,&
                   temp_iter, varc_curr, vect_elem, base)
 !
 implicit none
@@ -42,7 +42,7 @@ implicit none
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: cara_elem
-character(len=24), intent(in) :: mateco
+character(len=24), intent(in) :: mateco, mate
 character(len=24), intent(in) :: time
 character(len=24), intent(in) :: temp_iter
 character(len=19), intent(in) :: varc_curr
@@ -59,7 +59,7 @@ character(len=1), intent(in) :: base
 !
 ! In  model            : name of the model
 ! In  cara_elem        : name of elementary characteristics (field)
-! In  mateco             : name of matecorial characteristics (field)
+! In  mate             : name of matecorial characteristics (field)
 ! In  time             : time (<CARTE>)
 ! In  temp_iter        : temperature field at current Newton iteration
 ! In  varc_curr        : command variable for current time
@@ -97,7 +97,7 @@ character(len=1), intent(in) :: base
 !
     call jeexin(vect_elem(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-        call memare(base, vect_elem, model, mateco, cara_elem, 'MASS_THER')
+        call memare(base, vect_elem, model, mate, cara_elem, 'MASS_THER')
     else
         call jedetr(vect_elem(1:19)//'.RELR')
     endif

@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine vetnth(model    , cara_elem, mateco     , time ,&
+    subroutine vetnth(model    , cara_elem, mate, mateco     , time ,&
                       temp_iter, varc_curr, vect_elem, base)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: cara_elem
-        character(len=24), intent(in) :: mateco
+        character(len=24), intent(in) :: mateco, mate
         character(len=24), intent(in) :: time
         character(len=24), intent(in) :: temp_iter
         character(len=19), intent(in) :: varc_curr

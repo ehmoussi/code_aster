@@ -108,7 +108,7 @@ aster_logical :: lerrit
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: mate, varc_refe
+    character(len=24) :: mate, mateco, varc_refe
     aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
     character(len=19) :: disp_curr, vite_curr, acce_curr, vect_lagr, rigid
     character(len=16) :: option
@@ -125,7 +125,8 @@ aster_logical :: lerrit
 !
 ! --- INITIALISATIONS CODES RETOURS
 !
-    mate      = ds_material%mateco
+    mate      = ds_material%mater
+    mateco    = ds_material%mateco
     varc_refe = ds_material%varc_refe
     ldccvg    = -1
     condcvg   = -1
@@ -188,7 +189,8 @@ aster_logical :: lerrit
 !
         if(l_hho) then
             call nmchex(hval_measse, 'MEASSE', 'MERIGI', rigid)
-            call hhoPrepMatrix(model, mate, ds_system%merigi, ds_system%vefint, rigid, hhoField,&
+            call hhoPrepMatrix(model, mate, mateco, ds_system%merigi, ds_system%vefint, rigid, &
+                               hhoField,&
                                list_func_acti, hval_meelem, nume_dof, list_load, ds_algopara,&
                                ds_system, ds_measure, condcvg, &
                                l_cond = ASTER_TRUE, l_asse = ASTER_FALSE)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
     subroutine trprot(model, bamo, tgeom, imodg, iadx,&
                       iady, iadz, isst, iadrp, norm1,&
                       norm2, ndble, num, nu, ma,&
-                      mate, moint, ilires, k, icor)
+                      mate, mateco, moint, ilires, k, icor)
         character(len=2) :: model
         character(len=8) :: bamo
         real(kind=8) :: tgeom(6)
@@ -38,7 +38,7 @@ interface
         character(len=14) :: num
         character(len=14) :: nu
         character(len=8) :: ma
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=8) :: moint
         integer :: ilires
         integer :: k

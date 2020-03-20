@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vectfl(opt, modele, carele, mate, templu,&
+subroutine vectfl(opt, modele, carele, mate, mateco, templu,&
                   instap, ve)
     implicit none
 !
@@ -31,7 +31,7 @@ subroutine vectfl(opt, modele, carele, mate, templu,&
 #include "asterfort/megeom.h"
 #include "asterfort/memare.h"
 #include "asterfort/wkvect.h"
-    character(len=*) :: modele, carele, mate, templu, ve, opt
+    character(len=*) :: modele, carele, mate, mateco, templu, ve, opt
     real(kind=8) :: instap
 ! ---------------------------------------------------------------------
 !     CALCUL DES VECTEURS ELEMENTAIRES DES FLUX FLUIDES
@@ -86,7 +86,7 @@ subroutine vectfl(opt, modele, carele, mate, templu,&
     lchin(2) = chtime
     lchin(3) = templu
     lpain(4) = 'PMATERC'
-    lchin(4) = mate
+    lchin(4) = mateco
     if (opt .eq. 'R') then
         option = 'CHAR_THER_ACCE_R'
         lpain(3) = 'PACCELR'

@@ -204,7 +204,7 @@ character(len=19) :: matele
         if (niv .ge. 2) then
             call utmess('I', 'MECANONLINE13_85')
         endif
-        call messtr(base  , optmat, model, carele, ds_material%mateco,&
+        call messtr(base  , optmat, model, carele, ds_material%mater,&
                     matele)
     else
         ASSERT(.false.)

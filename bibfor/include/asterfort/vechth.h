@@ -19,7 +19,7 @@
 !
 !
 interface
-    subroutine vechth(type_ther , model_   , lload_name_, lload_info_, cara_elem_,&
+    subroutine vechth(type_ther , model_   , lload_name_, lload_info_, cara_elem_, mate_, &
                       mateco_     , time_curr, time_      , temp_prev_ , vect_elem_,&
                       varc_curr_, time_move_)
         character(len=4), intent(in) :: type_ther
@@ -31,7 +31,7 @@ interface
         character(len=*), intent(in) :: time_
         character(len=*), intent(in) :: temp_prev_
         character(len=*), intent(inout) :: vect_elem_
-        character(len=*), intent(in) :: mateco_
+        character(len=*), intent(in) :: mateco_, mate_
         character(len=*), optional, intent(in) :: varc_curr_
         character(len=*), optional, intent(in) :: time_move_
     end subroutine vechth

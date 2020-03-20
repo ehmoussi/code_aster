@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,14 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine qintzz(modele, ligrel, matez, sigmap, sigmad,&
+subroutine qintzz(modele, ligrel, matecoz, sigmap, sigmad,&
                   signop, signod, resu)
     implicit none
 #include "asterfort/calcul.h"
 #include "asterfort/mecact.h"
 #include "asterfort/megeom.h"
 #include "asterfort/utmess.h"
-    character(len=*) :: modele, ligrel, matez, sigmap, sigmad
+    character(len=*) :: modele, ligrel, matecoz, sigmap, sigmad
     character(len=*) :: signop, signod, resu
     character(len=6) :: chtemp
 !
@@ -57,7 +57,7 @@ subroutine qintzz(modele, ligrel, matez, sigmap, sigmad,&
 !
     character(len=8) :: lpain(7), lpaout(1)
     character(len=16) :: option
-    character(len=24) :: lchin(7), lchout(1), chgeom, mate
+    character(len=24) :: lchin(7), lchout(1), chgeom, mateco
 !
 ! DEB-------------------------------------------------------------------
 !
@@ -65,17 +65,17 @@ subroutine qintzz(modele, ligrel, matez, sigmap, sigmad,&
     call mecact('V', chtemp, 'LIGREL', ligrel, 'TEMP_R',&
                 ncmp=1, nomcmp='TEMP', sr=0.0d0)
 !
-    mate = matez
+    mateco = matecoz
     call megeom(modele, chgeom)
 !
-    if (mate .eq. ' ') then
+    if (mateco .eq. ' ') then
         call utmess('F', 'CALCULEL4_66')
     endif
 !
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = mateco
     lpain(3) = 'PSIEFP_R'
     lchin(3) = sigmap
     lpain(4) = 'PSIEFD_R'

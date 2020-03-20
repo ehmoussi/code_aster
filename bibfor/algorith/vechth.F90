@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vechth(type_ther , model_   , lload_name_, lload_info_, cara_elem_,&
+subroutine vechth(type_ther , model_   , lload_name_, lload_info_, cara_elem_, mate_, &
                   mateco_     , time_curr, time_      , temp_prev_ , vect_elem_,&
                   varc_curr_, time_move_)
 !
@@ -42,7 +42,7 @@ implicit none
     character(len=*), intent(in) :: time_
     character(len=*), intent(in) :: temp_prev_
     character(len=*), intent(inout) :: vect_elem_
-    character(len=*), intent(in) :: mateco_
+    character(len=*), intent(in) :: mateco_, mate_
     character(len=*), optional, intent(in) :: varc_curr_
     character(len=*), optional, intent(in) :: time_move_
 !
@@ -81,7 +81,7 @@ implicit none
     integer :: nb_load, i_load, load_nume
     character(len=1) :: base, stop_calc
     character(len=8) :: load_name
-    character(len=24) :: model, cara_elem, time, temp_prev, mateco, time_move
+    character(len=24) :: model, cara_elem, time, temp_prev, mateco, time_move, mate
     aster_logical :: load_empty
     character(len=24) :: lload_name
     character(len=24), pointer :: v_load_name(:) => null()
@@ -99,6 +99,7 @@ implicit none
     lload_info  = lload_info_
     cara_elem   = cara_elem_
     mateco      = mateco_
+    mate        = mate_
     time        = time_
     temp_prev   = temp_prev_
     vect_elem   = vect_elem_
@@ -133,7 +134,7 @@ implicit none
 ! - Allocate result
 !
     call detrsd('VECT_ELEM', vect_elem)
-    call memare(base, vect_elem, model, mateco, cara_elem,&
+    call memare(base, vect_elem, model, mate, cara_elem,&
                 'CHAR_THER')
     call reajre(vect_elem, ' ', base)
     if (load_empty) then

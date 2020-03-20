@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine calcGetDataTher(list_load, model    , mate       , cara_elem,&
+subroutine calcGetDataTher(list_load, model    , mate , mateco       , cara_elem,&
                            temp_prev, incr_temp, compor_ther, theta)
 !
 implicit none
@@ -29,7 +29,7 @@ implicit none
 #include "asterfort/getvr8.h"
 !
 character(len=19), intent(out) :: list_load
-character(len=24), intent(out) :: model, mate, cara_elem
+character(len=24), intent(out) :: model, mateco, cara_elem, mate
 character(len=19), intent(out) :: temp_prev, incr_temp
 character(len=24), intent(out) :: compor_ther
 real(kind=8), intent(out) :: theta
@@ -53,17 +53,16 @@ real(kind=8), intent(out) :: theta
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: mater
 !
     list_load = '&&OP0026.LISCHA'
     cara_elem = '&&OP0026.CARELE'
     model     = ' '
-    mate      = ' '
+    mateco      = ' '
     theta     = 0.d0
 !
 ! - Get parameters from command file
 !
-    call ntdoth(model, mater, mate, cara_elem, list_load)
+    call ntdoth(model, mate, mateco, cara_elem, list_load)
 !
 ! - Get displacements
 !
