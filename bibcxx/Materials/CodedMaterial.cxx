@@ -56,12 +56,13 @@ bool CodedMaterialClass::allocate(bool force) {
         thm = 1;
     // TODO existsTher ?
     ASTERINTEGER ther = 0;
-    std::string strJeveuxBase( "G" );
+    std::string strJeveuxBase( "V" );
     CALLO_RCMFMC_WRAP( materName, mate, &thm, &ther, getName(), strJeveuxBase );
 
     auto vecOfMater = _mater->getVectorOfMaterial();
     for ( auto curIter : vecOfMater ) {
-        std::string nameWithoutBlanks = trim( curIter->getName() ) + ".0";
+        // Fill codivectors (can be optimized)
+        std::string nameWithoutBlanks = trim( getName() ) + ".0";
         std::string base( " " );
         ASTERINTEGER pos = 1;
         ASTERINTEGER nbval2 = 0;
@@ -76,6 +77,7 @@ bool CodedMaterialClass::allocate(bool force) {
             for ( int i = 0; i < retour; ++i ) {
                 std::string name = ( *test )[i].toString();
                 std::string name2( name, 19, 5 );
+                std::cout << name << std::endl;
                 if ( name2 == ".CODI" )
                     _vecOfCodiVectors.push_back( JeveuxVectorLong( name ) );
             }

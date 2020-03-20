@@ -145,6 +145,7 @@ ElementaryMatrixDisplacementRealPtr
     ModelPtr curModel = _study->getModel();
     retour->setModel( curModel );
     MaterialFieldPtr curMater = _study->getMaterialField();
+    retour->setMaterialField( curMater );
     auto compor = curMater->getBehaviourField();
 
     _study->buildListOfLoads();
@@ -163,6 +164,11 @@ ElementaryMatrixDisplacementRealPtr
     if ( caraElem != nullptr )
         caraName = caraElem->getName();
 
+    std::string materName = curMater->getName();
+    materName.resize( 24, ' ' );
+    std::string coMatName = codedMater->getName();
+    coMatName.resize( 24, ' ' );
+
     // MERIME appel getres
     CommandSyntax cmdSt( "MECA_STATIQUE" );
     cmdSt.setResult( "AUCUN", "AUCUN" );
@@ -172,8 +178,8 @@ ElementaryMatrixDisplacementRealPtr
 
     ASTERINTEGER nh = 0;
 
-    CALLO_MERIME_WRAP( modelName, &nbLoad, *( jvListOfLoads->getDataPtr() ), curMater->getName(),
-                       codedMater->getName(),
+    CALLO_MERIME_WRAP( modelName, &nbLoad, *( jvListOfLoads->getDataPtr() ), materName,
+                       coMatName,
                        caraName, &time, compor->getName(), retour->getName(), &nh,
                        JeveuxMemoryTypesNames[0] );
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: j-pierre.lefebvre at edf.fr
 !
 subroutine matcod(chmat, indmat, nbmat, imate, igrp,&
-                  materi, codi, l_ther)
+                  basename, codi, l_ther)
 !
 implicit none
 !
@@ -42,7 +42,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-character(len=8) :: chmat, materi
+character(len=8) :: chmat, basename
 character(len=19) :: codi
 integer :: indmat, nbmat, imate, igrp
 aster_logical, intent(in) :: l_ther
@@ -51,15 +51,15 @@ aster_logical, intent(in) :: l_ther
 !     MATERIAU CODE APPELE PAR RCMACO ET PMMACO
 !-----------------------------------------------------------------------
 !
-!     BUT: CREER L'OBJET NOMMAT//'      .CODI' ,LE REMPLIR ET RENVOYER
+!     BUT: CREER L'OBJET BASENAME//'      .CODI' ,LE REMPLIR ET RENVOYER
 !          SON ADRESSE PAR RAPPORT A ZI
 !
 ! IN  CHMAT  : NOM DU CHAM_MATER POUR ALFINT
 ! IN  INDMAT : INDICE DU PREMIER MATERIAU DANS LA LISTE
+! IN  BASENAME : NOM SUR LEQUEL CONSTRUIRE LE CODI
 ! IN  NBMAT  : NOMBRE DE MATERIAUX DU NUMERO D'OCCURRENCE DE AFFE
 ! IN  IMATE  : NUMERO DU GROUPE
 ! IN  IGRP   : ADRESSE DU VECTEUR K8 CONTENANT LES NOMS DES MATERIAUX
-! IN  NOMMAT : NOM DU MATERIAU
 ! OUT  CODI   : OBJET MATERIAU CODE
 !    CODI(1)   : ADRESSE ZK32  DE '.MATERIAU.NOMRC'
 !    CODI(2)   : NOMBRE DE TYPES DE COMPORTEMENT
@@ -128,7 +128,7 @@ aster_logical, intent(in) :: l_ther
 !
     call codent(imate, 'D0', knuma1)
     codi = ' '
-    codi(1:8) = materi
+    codi(1:8) = basename
     codi(9:13) = '.'//knuma1
     call jeexin(codi//'.CODI', iretc)
     if (iretc .ne. 0) then
