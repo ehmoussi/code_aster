@@ -24,7 +24,7 @@ subroutine irchml(fileUnit  ,&
                   lMeshCoor_ , lmax_       , lmin_,&
                   lsup_      , borsup_     ,&
                   linf_      , borinf_     ,&
-                  realFormat_)
+                  realFormat_, cplxFormat_)
 !
 implicit none
 !
@@ -68,7 +68,7 @@ integer, pointer :: cellUserNume(:)
 aster_logical, optional, intent(in) :: lMeshCoor_
 aster_logical, optional, intent(in) :: lsup_, linf_, lmax_, lmin_
 real(kind=8),  optional, intent(in) :: borsup_, borinf_
-character(len=*),  optional, intent(in) :: realFormat_
+character(len=*),  optional, intent(in) :: realFormat_, cplxFormat_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -96,6 +96,7 @@ character(len=*),  optional, intent(in) :: realFormat_
 ! In  linf             : flag if infinum exists
 ! In  borinf           : value of infinum
 ! In  realFormat       : format of real numbers
+! In  cplxFormat       : format of complex numbers (IMAG, REAL, PHASE, MODULE or ' ')
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -130,7 +131,7 @@ character(len=*),  optional, intent(in) :: realFormat_
     aster_logical :: lMeshCoor
     aster_logical :: lsup, linf, lmax, lmin
     real(kind=8) :: borsup, borinf
-    character(len=8) :: realFormat
+    character(len=8) :: realFormat, cplxFormat
     complex(kind=8), pointer  :: valeC(:) => null()
     real(kind=8), pointer  :: valeR(:) => null()
 !
@@ -173,6 +174,10 @@ character(len=*),  optional, intent(in) :: realFormat_
     realFormat = '1PE12.5'
     if (present(realFormat_)) then
         realFormat = realFormat_
+    endif
+    cplxFormat = ' '
+    if (present(cplxFormat_)) then
+        cplxFormat = cplxFormat_
     endif
 !
 ! - Check field "not too dynamic"
@@ -319,13 +324,22 @@ character(len=*),  optional, intent(in) :: realFormat_
                     realFormat, cmpVariNb, cmpVariIndx)
     else if (fieldScalar .eq. 2) then
         call jeveuo(fieldName//'.CELV', 'L', vc = valeC)
-        call ircecl(fileUnit, meshCellNb, liel, grelNb, lielLen,&
-                    cmpCataNb, valeC, cmpCataName, meshCellName, fieldSupport,&
-                    celd, connex, connexLen, meshNodeName, cmpListNb,&
-                    cmpListIndx, nodeUserNb, nodeUserNume, cellSelectNb, cellSelectNume,&
-                    lsup, borsup, linf, borinf, lmax,&
-                    lmin, lMeshCoor, meshDime, meshCoor, liliName,&
-                    realFormat, cmpVariNb, cmpVariIndx)
+        call ircecl(fileUnit    ,&
+                    fieldSupport, celd          , realFormat  , cplxFormat,&
+                    nodeUserNb  , nodeUserNume  ,&
+                    cellSelectNb, cellSelectNume,&
+                    meshCellNb  , meshCellName  , meshNodeName,&
+                    lMeshCoor   , meshDime      , meshCoor    ,&
+                    connex      , connexLen     ,&
+                    cmpCataNb   , cmpCataName   ,&
+                    cmpListNb   , cmpListIndx   ,&
+                    cmpVariNb   , cmpVariIndx   ,&
+                    grelNb      , liel          ,&
+                    lielLen     , liliName      ,&
+                    lmax        , lmin          ,&
+                    lsup        , borsup        ,&
+                    linf        , borinf        ,&
+                    valeC)
     else if ((fieldScalar.eq.3) .or. (fieldScalar.eq.4)) then
         call utmess('I', 'RESULT3_99', sk=fieldType)
         call celces(fieldName, 'V', fieldNameS)

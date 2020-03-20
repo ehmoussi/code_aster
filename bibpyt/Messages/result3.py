@@ -46,6 +46,8 @@ cata_msg = {
 Cela peut engendrer l'affichage de messages intempestifs provenant de la bibliothèque MED. Il n'y a toutefois aucun risque de résultats faux.
 Pour supprimer l'émission de ce message d'alarme, il faut donner la valeur BINARY au  mot-clé TYPE de DEFI_FICHIER."""),
 
+    13 : _("""La variable interne %(k1)s n'existe pas sur l'élément. On ne l'imprime pas."""),
+
     25 : _("""On ne trouve pas la composante %(k1)s dans la grandeur %(k2)s."""),
 
     34 : _("""On ne sait pas écrire les champs aux noeuds de représentation constante et à valeurs complexes au format RESULTAT."""),

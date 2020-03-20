@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: nicolas.sellenet at edf.fr
 from code_aster.Cata.Syntax import *
 from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
@@ -74,7 +73,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               INFO_MAILLAGE   =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON") ),
 
               b_partie        =BLOC(condition="""(is_type("RESULTAT") in (dyna_harmo, acou_harmo) or is_type("CHAM_GD") != carte_sdaster)""",
-                PARTIE          =SIMP(statut='f',typ='TXM',into=("REEL","IMAG") ),
+                PARTIE          =SIMP(statut='f',typ='TXM',into=('REEL','IMAG',) ),
               ),
               IMPR_NOM_VARI=SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="OUI",),
 
@@ -143,6 +142,7 @@ IMPR_RESU=PROC(nom="IMPR_RESU",op=39,
               CARA_ELEM       =SIMP(statut='f',typ=cara_elem),
               CHAM_GD         =SIMP(statut='f',typ=cham_gd_sdaster),
               RESULTAT        =SIMP(statut='f',typ=resultat_sdaster),
+              PARTIE          =SIMP(statut='f',typ='TXM',into=('REEL','IMAG','MODULE','PHASE') ),
               b_extrac        =BLOC(condition="""exists("RESULTAT")""",
                                     fr=tr("extraction d un champ de grandeur"),
                 regles=(EXCLUS('TOUT_CHAM','NOM_CHAM'),

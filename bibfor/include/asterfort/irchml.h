@@ -26,7 +26,7 @@ interface
                       lMeshCoor_ , lmax_       , lmin_,&
                       lsup_      , borsup_     ,&
                       linf_      , borinf_     ,&
-                      realFormat_)
+                      realFormat_, cplxFormat_)
         integer, intent(in) :: fileUnit
         character(len=*), intent(in) :: fieldNameZ, fieldTypeZ
         character(len=4), intent(in) :: fieldSupport
@@ -39,6 +39,6 @@ interface
         aster_logical, optional, intent(in) :: lMeshCoor_
         aster_logical, optional, intent(in) :: lsup_, linf_, lmax_, lmin_
         real(kind=8),  optional, intent(in) :: borsup_, borinf_
-        character(len=*),  optional, intent(in) :: realFormat_
+        character(len=*),  optional, intent(in) :: realFormat_, cplxFormat_
     end subroutine irchml
 end interface

@@ -21,14 +21,15 @@ interface
     subroutine irecri(fileUnit   , dsName        , lResu     ,&
                       titleKeywf , titleKeywfIocc,&
                       storeNb    , storeListIndx ,&
-                      fieldListNb, fieldListType , realFormat,&
+                      fieldListNb, fieldListType , &
                       paraNb     , paraName      , paraFormat,&
                       cmpUserNb  , cmpUserName   ,&
                       cellUserNb , cellUserNume  ,&
                       nodeUserNb , nodeUserNume  ,&
                       lMeshCoor  , lmax          , lmin,&
                       lsup       , borsup        ,&
-                      linf       , borinf)
+                      linf       , borinf        ,&
+                      realFormat , cplxFormat)
         integer, intent(in) :: fileUnit
         character(len=*), intent(in) :: dsName, titleKeywf
         integer, intent(in) :: titleKeywfIocc
@@ -37,7 +38,6 @@ interface
         integer , pointer :: storeListIndx(:)
         integer, intent(in) :: fieldListNb
         character(len=*), pointer :: fieldListType(:)
-        character(len=*), intent(in) :: realFormat
         integer, intent(in) :: paraNb
         character(len=*), pointer :: paraName(:)
         character(len=1), intent(in) :: paraFormat
@@ -50,5 +50,6 @@ interface
         aster_logical, intent(in) :: lMeshCoor
         aster_logical, intent(in) :: lsup, linf, lmax, lmin
         real(kind=8), intent(in) :: borsup, borinf
+        character(len=*), intent(in) :: realFormat, cplxFormat
     end subroutine irecri
 end interface

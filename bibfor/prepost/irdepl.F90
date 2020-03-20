@@ -23,7 +23,7 @@ subroutine irdepl(fileUnit   ,&
                   lMeshCoor_ , lmax_       , lmin_,&
                   lsup_      , borsup_     ,&
                   linf_      , borinf_     ,&
-                  realFormat_)
+                  realFormat_, cplxFormat_)
 !
 implicit none
 !
@@ -59,7 +59,7 @@ integer, pointer :: nodeUserNume(:)
 aster_logical, optional, intent(in) :: lMeshCoor_
 aster_logical, optional, intent(in) :: lsup_, linf_, lmax_, lmin_
 real(kind=8),  optional, intent(in) :: borsup_, borinf_
-character(len=*),  optional, intent(in) :: realFormat_
+character(len=*),  optional, intent(in) :: realFormat_, cplxFormat_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -84,6 +84,7 @@ character(len=*),  optional, intent(in) :: realFormat_
 ! In  linf             : flag if infinum exists
 ! In  borinf           : value of infinum
 ! In  realFormat       : format of real numbers
+! In  cplxFormat       : format of complex numbers (IMAG, REAL, PHASE, MODULE or ' ')
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -110,7 +111,7 @@ character(len=*),  optional, intent(in) :: realFormat_
     aster_logical :: lMeshCoor
     aster_logical :: lsup, linf, lmax, lmin
     real(kind=8) :: borsup, borinf
-    character(len=8) :: realFormat
+    character(len=8) :: realFormat, cplxFormat
     complex(kind=8), pointer  :: valeC(:) => null()
     real(kind=8), pointer  :: valeR(:) => null()
 !
@@ -153,6 +154,10 @@ character(len=*),  optional, intent(in) :: realFormat_
     realFormat = '1PE12.5'
     if (present(realFormat_)) then
         realFormat = realFormat_
+    endif
+    cplxFormat = ' '
+    if (present(cplxFormat_)) then
+        cplxFormat = cplxFormat_
     endif
 !
 ! - Get properties of field
@@ -232,11 +237,17 @@ character(len=*),  optional, intent(in) :: realFormat_
                     lmin, realFormat)
     else if (fieldScalar .eq. 2 .and. fieldRepr .ge. 0) then
         call jeveuo(fieldName//'.VALE', 'L', vc = valeC)
-        call ircnc8(fileUnit, nodeNb, prno, nueq, nec,&
-                    codeInte, cmpCataNb, valeC, cmpCataName, nodeListName,&
-                    lMeshCoor, meshDime, meshCoor, nodeListNume, cmpListNb,&
-                    cmpListIndx, lsup, borsup, linf, borinf,&
-                    lmax, lmin, realFormat)
+        call ircnc8(fileUnit , realFormat  , cplxFormat  ,&
+                    nodeNb   , nodeListNume, nodeListName,&
+                    lMeshCoor, meshDime    , meshCoor    ,&
+                    cmpCataNb, cmpCataName ,&
+                    cmpListNb, cmpListIndx ,&
+                    nec      , nueq        ,&
+                    prno     , codeInte    ,&
+                    lmax     , lmin        ,&
+                    lsup     , borsup      ,&
+                    linf     , borinf      ,&
+                    valeC)
     else if (fieldScalar .eq. 2 .and. fieldRepr .lt. 0) then
         call utmess('F', 'RESULT3_34')
     else if (fieldScalar .eq. 3 .or. fieldScalar .eq. 4) then

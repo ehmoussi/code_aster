@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -275,6 +275,28 @@ DYNHARM=CALC_CHAMP(reuse =DYNHARM,
               RESULTAT=DYNHARM,
               CONTRAINTE='EFGE_NOEU',);
 
+
+# Test PARTIE 
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=12,
+          RESU=_F(RESULTAT=DYNHARM,PARTIE='REEL'))
+
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=13,
+          RESU=_F(RESULTAT=DYNHARM,PARTIE='IMAG'))
+
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=14,
+          RESU=_F(RESULTAT=DYNHARM,PARTIE='MODULE'))
+
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=15,
+          RESU=_F(RESULTAT=DYNHARM,PARTIE='PHASE'))
+
+# FOr ELNO fields
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=16,
+          RESU=_F(RESULTAT=DHPOS,PARTIE='REEL'))
 
 #X2=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_C', OPERATION='EXTR', RESULTAT=DYNHARM, INFO=2, FREQ=50., NOM_CHAM='DEPL')
 #X1=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_C', OPERATION='EXTR', RESULTAT=DYNHARM, INFO=2, FREQ=50., NOM_CHAM='SIEF_ELGA')
