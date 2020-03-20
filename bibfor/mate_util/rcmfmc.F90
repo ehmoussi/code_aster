@@ -165,10 +165,10 @@ character(len=1), intent(in), optional :: base
         do kk = 1, nbgrp
             nbmat=zi(ingrp-1+kk)
             if (nbmat .ne. 0) then
-                call rcmaco(chmat(1:8), chmacegrp, icompt, nbmat, kk, l_ther)
+                call rcmaco(chmat(1:8), chmacegrp, icompt, nbmat, kk, l_ther, basename)
                 call codent(kk, 'D0', knumat)
 !       -- le nom du codi est celui du premier materiau du groupe kk
-                codi(1:8)=zk8(igrp+icompt)
+                codi(1:8)= basename
                 codi(9:13)='.'//knumat
 !
                 call jeveuo(codi//'.CODI', 'L', zi(jvale+kk-1))
