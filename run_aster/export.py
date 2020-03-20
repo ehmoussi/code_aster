@@ -577,6 +577,6 @@ class Export:
         Arguments:
             value (float): New time limit.
         """
-        self.set_parameter("time_limit", 86400.)
+        self.set_parameter("time_limit", value)
         self.remove_args("--tpmax", 1)
         self.check()
