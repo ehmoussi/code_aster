@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine pechli(resu, modele, mate)
+subroutine pechli(resu, modele, mateco)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -44,7 +44,7 @@ subroutine pechli(resu, modele, mate)
 #include "asterfort/tbcrsd.h"
 #include "asterfort/utmess.h"
     character(len=8) :: modele
-    character(len=24) :: mate
+    character(len=24) :: mateco
     character(len=*) :: resu
 !
 !     OPERATEUR   POST_ELEM
@@ -159,7 +159,7 @@ subroutine pechli(resu, modele, mate)
         lpain(2) = 'PDEPLAR'
         lchin(2) = depla
         lpain(3) = 'PMATERC'
-        lchin(3) = mate
+        lchin(3) = mateco
         lpain(4) = 'PTEMPSR'
         lchin(4) = chtime
         option = 'CHAR_LIMITE'
