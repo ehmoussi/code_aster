@@ -77,7 +77,6 @@ bool CodedMaterialClass::allocate(bool force) {
             for ( int i = 0; i < retour; ++i ) {
                 std::string name = ( *test )[i].toString();
                 std::string name2( name, 19, 5 );
-                std::cout << name << std::endl;
                 if ( name2 == ".CODI" )
                     _vecOfCodiVectors.push_back( JeveuxVectorLong( name ) );
             }
