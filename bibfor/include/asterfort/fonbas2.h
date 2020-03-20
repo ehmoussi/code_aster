@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 !
 !
 interface
-    subroutine fonbas2(noma, basfon, typm, fonoeu, nbnoff,&
+    subroutine fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
                       basloc, lnno, ltno)
         character(len=8)  :: noma
-        character(len=19) :: basfon
+        character(len=19) :: basnof
         character(len=8)  :: typm
         character(len=24) :: fonoeu
         integer           :: nbnoff

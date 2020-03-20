@@ -409,11 +409,6 @@ Contactez le support technique.
  "INTERP_NUME" et ("FREQ" ou "LIST_FREQ") non compatibles
 """),
 
-    97 : _("""
- Modèle absent.
- Il faut renseigner le mot-clé MODELE.
-"""),
-
     99 : _("""
  objet %(k1)s inexistant
 """),

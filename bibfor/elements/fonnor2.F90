@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fonnor2(resu, noma, cnxinv, typm)
+subroutine fonnor2(resu, noma, cnxinv, typm, basnof)
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -27,7 +27,7 @@ subroutine fonnor2(resu, noma, cnxinv, typm)
 #include "asterfort/fonno3.h"
 #include "asterfort/fonno4.h"
 #include "asterfort/fonno5.h"
-#include "asterfort/fonno6.h"
+#include "asterfort/fonno62.h"
 #include "asterfort/fonno7.h"
 #include "asterfort/fonno8.h"
 #include "asterfort/getvid.h"
@@ -45,17 +45,18 @@ subroutine fonnor2(resu, noma, cnxinv, typm)
 #include "asterfort/wkvect.h"
 !
     character(len=8) :: resu, noma, typm
-    character(len=19) :: cnxinv
+    character(len=19) :: cnxinv, basnof
 ! FONCTION REALISEE:
 !
 !     CALCUL DE LA NORMALE AU FOND DE FISSURE POUR DEFI_FOND_FISS
 !     EN 2D ET 3D DE LA BASE LOCALE
 !
 !     ENTREES:
-!        RESU   : NOM DU CONCEPT RESULTAT DE L'OPERATEUR
-!        NOMA   : NOM DU MAILLAGE
-!        CNXINV : CONNECTIVITE INVERSE
-!        TYPM   : TYPE DE FOND : LIN OU QUAD
+!        RESU       : NOM DU CONCEPT RESULTAT DE L'OPERATEUR
+!        NOMA       : NOM DU MAILLAGE
+!        CNXINV     : CONNECTIVITE INVERSE
+!        TYPM       : TYPE DE FOND : LIN OU QUAD
+!        BASNOF     : BASE LOCALE EN FOND DE FISSURE
 !-----------------------------------------------------------------------
 !
     integer :: j, jnoe1, jbasno,  jbasse, jtail, k
@@ -65,11 +66,11 @@ subroutine fonnor2(resu, noma, cnxinv, typm)
     integer :: indic(4), noe(4, 4), indr(2), tablev(2), inoseg
     real(kind=8) :: vdir(2, 3), vnor(2, 3), norme, vecdir(3), hmax, hmaxpr
     real(kind=8) :: vect(3), sens
-    character(len=6) :: nompro, tyfond
-    character(len=8) :: noeua
+    character(len=6) :: tyfond
+    character(len=8) :: noeua, nompro
     character(len=16) :: casfon
-    character(len=19) :: basnof, basseg, macofo
-    parameter    (nompro='FONNOR')
+    character(len=19) :: basseg, macofo
+    parameter    (nompro='FONNOR2')
 !     -----------------------------------------------------------------
 !
     call jemarq()
@@ -137,8 +138,7 @@ subroutine fonnor2(resu, noma, cnxinv, typm)
 !     ALLOCATION DU VECTEUR DES BASES LOCALES PAR NOEUD DU FOND  :
 !           - VECTEUR DIRECTION DE PROPA
 !           - VECTEUR NORMAL (A LA SURFACE)
-    basnof = resu//'.BASEFOND'
-    call wkvect(basnof, 'G V R', 2*ndim*nbnoff, jbasno)
+    call wkvect(basnof, 'V V R', 2*ndim*nbnoff, jbasno)
 !
 !     ALLOCATION DU VECTEUR DES TAILLES DE MAILLES MAX PAR NOEUD DU FOND
     call wkvect(resu//'.FOND.TAILLE_R', 'G V R', nbnoff, jtail)
@@ -163,17 +163,17 @@ subroutine fonnor2(resu, noma, cnxinv, typm)
 !     VECTEUR PERMETTANT DE SAVOIR SI LE VECTEUR DE DIRECTION DE
 !     PROPAGATION (VDIR) A ETE RECALCULE OU NON AUX POINTS
 !     EXTREMITES DE FONFIS
-    call wkvect('&&FONNOR.LBORD', 'V V L', nbnoff, jborl)
+    call wkvect('&&FONNOR2.LBORD', 'V V L', nbnoff, jborl)
 !
 !     VECTEUR CONTENANT LES VDIR INITIAUX (CAD SANS MODIFICATION
 !     DES VECTEURS AUX POINTS EXTREMITES DE FONFIS)
-    call wkvect('&&FONNOR.VDIROL', 'V V R', 3*nbnoff, jdirol)
+    call wkvect('&&FONNOR2.VDIROL', 'V V R', 3*nbnoff, jdirol)
 !
 !     VECTEUR CONTENANT 0 OU 1 AUX POINTS EXTREMITES DE FONFIS:
 !     0: LE PRODUIT SCALAIRE ENTRE LA NORMALE A LA FACE DE BORD ET
 !        LE VDIR INITIAL ESI INFERIEUR A 0
 !     1: LE PRODUIT SCALAIRE EST SUPERIEUR OU EGAL A 0
-    call wkvect('&&FONNOR.NVDIR', 'V V I', nbnoff, jnvdir)
+    call wkvect('&&FONNOR2.NVDIR', 'V V I', nbnoff, jnvdir)
 !
     do i = 1, nbnoff
         zl(jborl-1+i)=.false.
@@ -272,8 +272,8 @@ subroutine fonnor2(resu, noma, cnxinv, typm)
             call fonno8(resu, noma, tablev, vect)
         endif
 !
-        call fonno6(resu, noma, ndim, &
-                    iseg, nseg, noe, indr, nbnoel,&
+        call fonno62(resu, noma, ndim, &
+                    iseg, noe, indr, nbnoel,&
                     vnor, vdir, basseg, vect, sens)
 !
 !
@@ -384,9 +384,9 @@ subroutine fonnor2(resu, noma, cnxinv, typm)
 !
 !     MENAGE
     call jedetr(basseg)
-    call jedetr('&&FONNOR.LBORD')
-    call jedetr('&&FONNOR.VDIROL')
-    call jedetr('&&FONNOR.NVDIR')
+    call jedetr('&&FONNOR2.LBORD')
+    call jedetr('&&FONNOR2.VDIROL')
+    call jedetr('&&FONNOR2.NVDIR')
 !
     call jedema()
 end subroutine

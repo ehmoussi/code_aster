@@ -77,11 +77,13 @@ for i in range(nb_calcul):
                          MECA_IMPO=(_F(GROUP_MA=('LCD', 'LBC',),
                                        DY=0.0,),
                                     _F(GROUP_MA=('LDE', 'LEF',),
-                                       DX=0.0,),),)
+                                    # Equivalent to DX=0.0
+                                       HHO_U1=0.0, HHO_U2=0.0, HHO_U3=0.0),),)
 
     TRAC = AFFE_CHAR_CINE(MODELE=MO,
                           MECA_IMPO=_F(GROUP_MA='LFG',
-                                       DY=0.1,), INFO=1,)
+                                    # Equivalent to DY=0.1
+                                       HHO_V1=0.1, HHO_V2=0.0), INFO=1,)
 
 # CALCUL
 # ========

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdoco(modele, carele, compor)
+subroutine nmdoco(model, caraElem, compor)
 !
 implicit none
 !
@@ -25,12 +25,11 @@ implicit none
 #include "asterfort/dismoi.h"
 #include "asterfort/exisd.h"
 !
-character(len=24) :: modele, carele
-character(len=24) :: compor
+character(len=*), intent(in) :: model, caraElem, compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (INITIALISATION)
+! MECA_NON_LINE
 !
 ! EXTENSION DE LA CARTE COMPORTEMENT
 !   TRANSFO. EN CHAM_ELEM_S
@@ -48,13 +47,10 @@ character(len=24) :: compor
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call dismoi('NOM_LIGREL', modele, 'MODELE', repk=ligrmo)
-!
-! --- EXTENSION DU COMPORTEMENT : NOMBRE DE VARIABLES INTERNES
-!
+    call dismoi('NOM_LIGREL', model, 'MODELE', repk=ligrmo)
     call exisd('CHAM_ELEM_S', compor, iret)
     if (iret .eq. 0) then
-        call cesvar(carele, compor, ligrmo, compor)
+        call cesvar(caraElem, compor, ligrmo, compor)
     endif
 !
 end subroutine

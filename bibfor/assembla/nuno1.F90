@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,21 +57,19 @@ subroutine nuno1(i, iligr, nunoel, n, inum21,&
     ili = 1
     i1 = zi(inuno2+ili-1)
 10  continue
-    do 20 jli = ili + 1, nlili + 1
+    do jli = ili + 1, nlili + 1
         i2 = zi(inuno2+jli-1)
         ili1 = jli
-        if (i2 .gt. i1) goto 30
-20  end do
-30  continue
+        if (i2 .gt. i1) exit
+    end do
+!
     if ((j.ge.i1) .and. (j.lt.i2)) then
         iligr = ili1 - 1
-        goto 40
     else
         ili = ili1
         i1 = i2
         goto 10
     endif
-40  continue
 !
 !---- CALCUL DE NUNOEL
 !

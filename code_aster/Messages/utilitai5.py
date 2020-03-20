@@ -297,12 +297,6 @@ Contactez le support technique.
 
 
 
-    94 : _("""
- Vous essayez de stocker la SD charge dans la SD résultat.
- Ce n'est pas possible pour une SD résultat de type %(k1)s,
- on ne stocke pas la charge.
-"""),
-
     97 : _("""
  le type de champ  %(k1)s n'est pas accepté
  veuillez consulter la documentation U correspondante
