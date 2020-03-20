@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine calcPrepDataMeca(model          , mate          , cara_elem,&
+subroutine calcPrepDataMeca(model          , mate          , mateco   , cara_elem,&
                             disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                             time_prev      , time_curr     ,&
                             ds_constitutive, ds_material   ,&
@@ -46,7 +46,7 @@ implicit none
 #include "asterfort/nmvcre.h"
 #include "asterfort/sgcomp.h"
 !
-character(len=24), intent(in) :: model, mate, cara_elem
+character(len=24), intent(in) :: model, mate, mateco, cara_elem
 character(len=19), intent(in) :: disp_prev, disp_cumu_inst
 character(len=19), intent(in) :: vari_prev, sigm_prev
 real(kind=8), intent(in) :: time_prev, time_curr
@@ -173,7 +173,8 @@ character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
 !
 ! - Prepare datastructures
 !
-    ds_material%mateco = mate
+    ds_material%mater  = mate
+    ds_material%mateco = mateco
     ds_material%varc_refe  = varc_refe
 !
 end subroutine

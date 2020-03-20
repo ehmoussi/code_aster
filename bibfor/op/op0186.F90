@@ -156,7 +156,7 @@ implicit none
 !
 ! - Initializations
 !
-    call nxinit(mesh         , model   , mateco       ,&
+    call nxinit(mesh         , model   , mater      ,&
                 cara_elem    , compor  , list_load  ,&
                 para         , nume_dof,&
                 sddisc       , ds_inout, sdobse     ,&
@@ -237,7 +237,7 @@ implicit none
 !
 ! - Compute second members and tangent matrix
 !
-    call nxacmv(model      , mateco     , cara_elem , list_load, nume_dof   ,&
+    call nxacmv(model      , mater    , mateco    , cara_elem, list_load  , nume_dof   ,&
                 solver     , l_stat   , time      , tpsthe   , vtemp      ,&
                 vhydr      , varc_curr, dry_prev  , dry_curr , cn2mbr_stat,&
                 cn2mbr_tran, matass   , maprec    , cndiri   , cncine     ,&
@@ -252,7 +252,7 @@ implicit none
 ! EN TRANSITOIRE : |            VEC2NI                |
 !                  |           DIRICHLET              |
 !
-    call nxpred(model     , mateco  , cara_elem, list_load  , nume_dof   ,&
+    call nxpred(model     , mater , mateco   , cara_elem  , list_load  , nume_dof   ,&
                 solver    , l_stat, tpsthe   , time       , matass     ,&
                 neq       , maprec, varc_curr, vtemp      , vtempm     ,&
                 cn2mbr    , vhydr , vhydrp   , dry_prev   , dry_curr   ,&
@@ -293,7 +293,7 @@ implicit none
 ! SYSTEME LINEAIRE RESOLU:  A * (T+,I+1 - T+,I) = B
 ! SOLUTION: VTEMPP = T+,I+1 - T+,I
 !
-    call nxnewt(model   , mateco       , cara_elem  , list_load, nume_dof  ,&
+    call nxnewt(model   , mater      , mateco     , cara_elem  , list_load, nume_dof  ,&
                 solver  , tpsthe     , time       , matass   , cn2mbr    ,&
                 maprec  , cncine     , varc_curr  , vtemp    , vtempm    ,&
                 vtempp  , cn2mbr_stat, mediri     , conver   , vhydr     ,&
@@ -310,7 +310,7 @@ implicit none
     call nmimr0(ds_print, 'RELI')
     if (.not.conver) then
         if (l_line_search) then
-            call nxrech(model , mateco    , cara_elem, list_load  , nume_dof ,&
+            call nxrech(model , mater   , mateco   , cara_elem  , list_load  , nume_dof ,&
                         tpsthe, time    , neq      , compor     , varc_curr,&
                         vtempm, vtempp  , vtempr   , vtemp      , vhydr    ,&
                         vhydrp, dry_prev, dry_curr , cn2mbr_stat, vabtla   ,&
@@ -423,7 +423,7 @@ implicit none
     else
         force = .false.
     endif
-    call ntarch(nume_inst, model   , mateco , cara_elem, para,&
+    call ntarch(nume_inst, model   , mater , cara_elem, para,&
                 sddisc   , ds_inout, force, sdcrit   , ds_algorom)
 !
 ! - Make observation

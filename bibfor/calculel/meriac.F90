@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine meriac(model_, nb_load, v_list_load8, mate, matr_elem_, base)
+subroutine meriac(model_, nb_load, v_list_load8, mate, mateco, matr_elem_, base)
 !
 implicit none
 !
@@ -40,7 +40,7 @@ implicit none
     character(len=*), intent(in) :: model_
     integer, intent(in) :: nb_load
     character(len=8), pointer :: v_list_load8(:)
-    character(len=*), intent(in) :: mate
+    character(len=*), intent(in) :: mate, mateco
     character(len=*), intent(in) :: matr_elem_
     character(len=1), intent(in) :: base
 !
@@ -102,7 +102,7 @@ implicit none
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = mate(1:19)
+    lchin(2) = mateco(1:19)
     lpain(3) = 'PDDLMUC'
 !
 ! - Output field

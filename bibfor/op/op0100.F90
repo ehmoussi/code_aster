@@ -171,7 +171,7 @@ subroutine op0100()
     iord0 = zi(ivec)
 !
 !     RECUPERATION MODELE, MATE ET LISCHA
-    call medomg(resu, iord0, modele, mate, lischa)
+    call medomg(resu, iord0, modele, mate, mateco, lischa)
 !
 !     RECUPERATION DE LA CARTE DE COMPORTEMENT UTILISEE DANS LE CALCUL
 !     -> COMPOR, INCR

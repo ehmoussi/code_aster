@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine vechmp(nomo, mate, carele, varplu, lxfem,&
+    subroutine vechmp(nomo, mate, mateco, carele, varplu, lxfem,&
                       partps, nbin_maxi, lpain, lchin, lastin)
         integer :: nbin_maxi
         character(len=8) :: nomo
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         character(len=24) :: carele
         character(len=19) :: varplu
         aster_logical :: lxfem

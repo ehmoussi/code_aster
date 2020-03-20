@@ -135,7 +135,7 @@ subroutine merime(modelz, nchar, lchar, mater, mateco, carelz,&
 !
 ! --- PREPARATION DES MATRICES ELEMENTAIRES
 !
-    call memare(base, matele, modele, mateco, carele,&
+    call memare(base, matele, modele, mater, carele,&
                 option)
 !     SI LA RIGIDITE EST CALCULEE SUR LE MODELE, ON ACTIVE LES S_STRUC:
     call jeveuo(matele//'.RERR', 'E', vk24=rerr)

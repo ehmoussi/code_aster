@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 !
 !
 interface
-    subroutine alimrs(mate, ma1, ma2, moint, ndble,&
+    subroutine alimrs(mate, mateco, ma1, ma2, moint, ndble,&
                       nume_ddl, cn1, chno, cmp, icor)
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=8) :: ma1
         character(len=8) :: ma2
         character(len=*) :: moint

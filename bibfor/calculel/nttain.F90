@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nttain(model , mate  , cara_elem, list_load, nume_dof,&
+subroutine nttain(model , mateco  , cara_elem, list_load, nume_dof,&
                   solver, time  , epsr     , lonch    , matass  ,&
                   maprec, cnchci, cnresi   , vtemp    , vtempm  ,&
                   vtempp, vec2nd, chlapm   , chlapp   , ci1     ,&
@@ -39,7 +39,7 @@ implicit none
 ! aslint: disable=W1504
 !
     character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: mateco
     character(len=24), intent(in) :: cara_elem
     character(len=19), intent(in) :: list_load
     character(len=24), intent(in) :: nume_dof
@@ -100,7 +100,7 @@ implicit none
 !
 ! --- VECTEURS ELEMENTAIRES DU SEGOND MEMBRE
 !
-    call vetrth(model, lload_name, lload_info, cara_elem, mate,&
+    call vetrth(model, lload_name, lload_info, cara_elem, mateco,&
                 time, vtemp, vtempm, chlapm, chlapp,&
                 veresi)
 !

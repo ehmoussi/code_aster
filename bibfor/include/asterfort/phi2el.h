@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 !
 !
 interface
-    subroutine phi2el(modele, carele, mate, accel, phibar,&
+    subroutine phi2el(modele, carele, mate, mateco, accel, phibar,&
                       instap, ve)
         character(len=*) :: modele
         character(len=*) :: carele
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=*) :: accel
         character(len=*) :: phibar
         real(kind=8) :: instap

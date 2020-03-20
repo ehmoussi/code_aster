@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine memare(base  , matr_vect_elemz, modelz, mateco, cara_elem,&
+subroutine memare(base  , matr_vect_elemz, modelz, mater, cara_elem,&
                   suropt)
 !
 implicit none
@@ -29,7 +29,7 @@ implicit none
     character(len=1), intent(in) :: base
     character(len=*), intent(in) :: matr_vect_elemz
     character(len=*), intent(in) :: modelz
-    character(len=*), intent(in) :: mateco
+    character(len=*), intent(in) :: mater
     character(len=*), intent(in) :: cara_elem
     character(len=*), intent(in) :: suropt
 !
@@ -44,7 +44,7 @@ implicit none
 ! In  base           : JEVEUX basis
 ! In  matr_vect_elem : name of matr_elem or vect_elem
 ! In  modelz         : name of model
-! In  mateco         : name of coded material
+! In  mater          : name of material field (and not the coded material)
 ! In  cara_elem      : name of elementary characteristics (field)
 ! In  suropt         : name of "SUR_OPTION"
 !
@@ -59,13 +59,14 @@ implicit none
     matr_vect_elem = matr_vect_elemz
     model          = modelz
     ASSERT(model.ne.' ')
+    ASSERT(mater(1:8).ne.'&&MATECO')
 !
     call jedetr(matr_vect_elem//'.RERR')
     call wkvect(matr_vect_elem//'.RERR', base//' V K24', 5, vk24 = p_rerr)
     p_rerr(1) = model
     p_rerr(2) = suropt
     p_rerr(3) = 'NON_SOUS_STRUC'
-    p_rerr(4) = mateco
+    p_rerr(4) = mater
     p_rerr(5) = cara_elem
 !
 end subroutine

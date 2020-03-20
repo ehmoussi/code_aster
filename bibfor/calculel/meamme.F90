@@ -176,7 +176,7 @@ subroutine meamme(optioz, modele, nchar, lchar, mate, mateco, &
         call jedetr(meamor(1:19)//'.RERR')
         call jedetr(meamor(1:19)//'.RELR')
     endif
-    call memare(base, meamor(1:19), modele(1:8), mateco, cara(1:8),&
+    call memare(base, meamor(1:19), modele(1:8), mate, cara(1:8),&
                 'AMOR_MECA')
 !     SI LA MATRICE EST CALCULEE SUR LE MODELE, ON ACTIVE LES S_STRUC:
     call jeveuo(meamor(1:19)//'.RERR', 'E', vk24=rerr)

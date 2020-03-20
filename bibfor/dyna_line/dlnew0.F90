@@ -233,12 +233,12 @@ implicit none
  32     continue
     endif
     if (limped) then
-        call fimped(modele, mate, numedd, neq, vitini,&
+        call fimped(modele, mateco, numedd, neq, vitini,&
                     vitent, veccor, veanec, vaanec, tempm,&
                     fimpe)
     endif
     if (nondp .ne. 0) then
-        call fondpl(modele, mate, numedd, neq, chondp,&
+        call fondpl(modele, mateco, numedd, neq, chondp,&
                     nondp, vecond, veonde, vaonde, temps,&
                     fonde)
     endif

@@ -92,7 +92,7 @@ character(len=19), optional, intent(in) :: cndiri_
 !
 ! - Elementary vectors
 !
-    call vebtla('V'      , model, ds_material%mateco, cara_elem, vect_lagr,&
+    call vebtla('V'      , model, ds_material%mater, cara_elem, vect_lagr,&
                 list_load, vediri)
 !
 ! - Assembling

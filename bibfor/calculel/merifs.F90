@@ -73,7 +73,7 @@ subroutine merifs(modele, nchar, lchar, mate, mateco, cara,&
     call vrcins(modele, mate, cara, time, chvarc,&
                 codret)
 !
-    call memare('G', matel, modele, mateco, cara,&
+    call memare('G', matel, modele, mate, cara,&
                 option)
 !     SI LA RIGIDITE EST CALCULEE SUR LE MODELE, ON ACTIVE LES S_STRUC:
     call jeveuo(matel//'.RERR', 'E', vk24=rerr)

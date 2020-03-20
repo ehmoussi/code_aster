@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine phi152(model, option, mate, phibar, ma,&
+subroutine phi152(model, option, mate, mateco, phibar, ma,&
                   nu, num, nbmode, solvez, indice,&
                   tabad)
     implicit none
@@ -59,7 +59,7 @@ subroutine phi152(model, option, mate, phibar, ma,&
     integer :: ilires, j, nbid, ivalk, indice, tabad(5), tmod(1)
     integer :: iphi1, iphi2, n5, n6, n7, n1, icor(2), n2, ndble
     real(kind=8) :: bid, ebid
-    character(len=*) :: option, mate, phibar, solvez
+    character(len=*) :: option, mate, mateco, phibar, solvez
     character(len=2) :: model
     character(len=8) :: k8bid, modmec, mailla, maflui, ma
     character(len=8) :: moflui, moint
@@ -95,10 +95,10 @@ subroutine phi152(model, option, mate, phibar, ma,&
         call dismoi('NOM_MAILLA', nomcha(1:19), 'CHAM_NO', repk=mailla)
         call dismoi('NOM_MAILLA', moint, 'MODELE', repk=maflui)
         if (maflui .ne. mailla) then
-            call tabcor(model, mate, mailla, maflui, moint,&
+            call tabcor(model, mate, mateco, mailla, maflui, moint,&
                         num, ndble, icor)
             call majou(model, modmec, solveu, num, nu,&
-                       ma, mate, moint, ndble, icor,&
+                       ma, mate, mateco, moint, ndble, icor,&
                        tabad)
             indice=1
         endif
@@ -147,7 +147,7 @@ subroutine phi152(model, option, mate, phibar, ma,&
             vecso1 = '&&OP0152.VECSOL1'
             vecso2 = '&&OP0152.VECSOL2'
 !
-            call calflu(nomcha, moflui, mate, nu, vecso1,&
+            call calflu(nomcha, moflui, mate, mateco, nu, vecso1,&
                         nbdesc, nbrefe, nbvale, 'R')
 !
             ilires = ilires + 1
@@ -172,7 +172,7 @@ subroutine phi152(model, option, mate, phibar, ma,&
 !
             if (option .eq. 'AMOR_AJOU' .or. option .eq. 'RIGI_AJOU') then
 !
-                call cal2m(nomcha(1:19), phib24, moflui, mate, nu,&
+                call cal2m(nomcha(1:19), phib24, moflui, mate, mateco, nu,&
                            vecso2, nbdesc, nbrefe, nbvale)
 !
                 call resoud(ma, maprec, solveu, ' ', 0,&
@@ -211,7 +211,7 @@ subroutine phi152(model, option, mate, phibar, ma,&
                 vecso1 = '&&OP0152.VESL1'
                 vecso2 = '&&OP0152.VESL2'
 !
-                call calflu(chamno, moflui, mate, nu, vecso1,&
+                call calflu(chamno, moflui, mate, mateco, nu, vecso1,&
                             nbdesc, nbrefe, nbvale, 'R')
 !
                 ilires = ilires + 1
@@ -236,7 +236,7 @@ subroutine phi152(model, option, mate, phibar, ma,&
                             nbvale, nbrefe, nbdesc)
 !
                 if (option .eq. 'AMOR_AJOU' .or. option .eq. 'RIGI_AJOU') then
-                    call cal2m(chamno, phib24, moflui, mate, nu,&
+                    call cal2m(chamno, phib24, moflui, mate, mateco, nu,&
                                vecso2, nbdesc, nbrefe, nbvale)
                     call resoud(ma, maprec, solveu, ' ', 0,&
                                 vecso2, chsol, 'V', [0.d0], [cbid],&

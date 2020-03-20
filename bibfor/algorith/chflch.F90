@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -196,7 +196,7 @@ subroutine chflch(rigthe, vec2nd)
     call ascavc(charge, infoch, fomult, numedd, tpsthe(1),&
                 cnchci, ASTER_FALSE)
 !   --- Other
-    call vechth('STAT',modele, charge, infoch, carele, mate,&
+    call vechth('STAT',modele, charge, infoch, carele, mate, ' ', &
                 tpsthe(1), ' ', ' ', vechtp)
     call asasve(vechtp, numedd, 'R', vachtp)
     call ascova('D', vachtp, fomult, 'INST', tpsthe(1),&

@@ -436,7 +436,7 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                 endif
                 vebid = '&&VEBIDON'
                 vechmp = '&&VECHMP'
-                call dylach(modele, mateco, carac, infcha, nume,&
+                call dylach(modele, mater, mateco, carac, infcha, nume,&
                         vebid, vechmp, vebid, vebid)
                 para = 'FREQ'
                 cnchmpc='&&'//nompro//'.CHARGE'
@@ -603,8 +603,8 @@ subroutine ccfnrn(option, resuin, resuou, lisord, nbordr,&
                 optio2='M_GAMMA'
 !
 !           --- CALCUL DES MATRICES ELEMENTAIRES DE MASSE
-                call memam2(optio2, modele, nbchar, zk8(ichar), mateco,&
-                            carac, compor, exitim, time, chacce,&
+                call memam2(optio2, modele, mater, mateco,&
+                            carac, compor, time, chacce,&
                             vreno, 'V', ligrel)
 !
 !           --- ASSEMBLAGE DES VECTEURS ELEMENTAIRES ---

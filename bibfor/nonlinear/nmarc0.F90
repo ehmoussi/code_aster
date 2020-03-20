@@ -118,7 +118,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 !
 ! --- ARCHIVAGE DU MODELE, MATERIAU, CARA_ELEM ET DE LA SD CHARGE
 !
-    call rssepa(result, numarc, modele(1:8), ds_material%mateco(1:8), carele(1:8),&
+    call rssepa(result, numarc, modele(1:8), ds_material%mater(1:8), carele(1:8),&
                 list_load_resu)
 !
 ! --- ARCHIVAGE DES CRITERES DE CONVERGENCE

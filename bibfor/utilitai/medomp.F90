@@ -57,7 +57,7 @@ implicit none
 !
 ! IN  RESULT : NOM DE LA SD RESULTAT
 ! OUT MODELE : NOM DU MODELE
-! OUT MATE   : MATERIAU CODE
+! OUT MATECO : MATERIAU CODE
 ! OUT CARELE : CARACTERISTIQUES ELEMENTAIRES
 ! OUT NH     : MODE DE FOURIER
 !
@@ -164,7 +164,10 @@ implicit none
         mateco = ' '
         if (materi .ne. ' ') call rcmfmc(materi, mateco, l_ther_ = l_ther)
     endif
-    mater = materi
+!
+    if(present(mater)) then
+        mater = materi
+    end if
 !
 ! --- CARA_ELEM SI NECESSAIRE
 !

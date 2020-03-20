@@ -120,7 +120,7 @@ implicit none
 !
     call jeexin(matr_elem(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-        call memare(base, matr_elem, model, mateco, cara_elem, option)
+        call memare(base, matr_elem, model, mate, cara_elem, option)
     else
         call jedetr(matr_elem(1:19)//'.RELR')
     endif

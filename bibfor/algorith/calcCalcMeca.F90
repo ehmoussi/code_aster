@@ -209,7 +209,7 @@ integer, intent(out) ::  nb_obje
 !
     if (l_lagr) then
         call medime(base, 'CUMU', model, list_load, merigi)
-        call vebtla(base, model, ds_material%mateco, cara_elem, disp_curr,&
+        call vebtla(base, model, ds_material%mater, cara_elem, disp_curr,&
                     list_load, vediri)
     endif
 !
