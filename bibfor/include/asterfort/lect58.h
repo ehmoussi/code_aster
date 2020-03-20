@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,24 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lect58(ideas, nomres, mail, typres, acces,&
-                      listr8, listis, precis, crit, epsi,&
-                      linoch, nbnoch)
-        integer :: ideas
-        character(len=*) :: nomres
-        character(len=*) :: mail
-        character(len=*) :: typres
-        character(len=*) :: acces
-        character(len=*) :: listr8
-        character(len=*) :: listis
-        integer :: precis
-        character(len=*) :: crit
-        real(kind=8) :: epsi
-        character(len=*) :: linoch(*)
-        integer :: nbnoch
+    subroutine lect58(fileUnit   ,&
+                      resultName , resultType , meshAst,&
+                      fieldNb    , fieldList  ,&
+                      storeAccess,&
+                      storeIndxNb, storeTimeNb,&
+                      storeIndx  , storeTime  ,&
+                      storeCrit  , storeEpsi)
+        integer, intent(in) :: fileUnit
+        character(len=8), intent(in) :: resultName
+        character(len=16), intent(in) :: resultType
+        character(len=8), intent(in) :: meshAst
+        integer, intent(in) :: fieldNb
+        character(len=16), intent(in) :: fieldList(100)
+        character(len=10), intent(in) :: storeAccess
+        integer, intent(in) :: storeIndxNb, storeTimeNb
+        character(len=19), intent(in) :: storeIndx, storeTime
+        real(kind=8), intent(in) :: storeEpsi
+        character(len=8), intent(in) :: storeCrit
     end subroutine lect58
 end interface

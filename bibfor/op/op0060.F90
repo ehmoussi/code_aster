@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -36,8 +36,8 @@ subroutine op0060()
 #include "asterfort/fonlev.h"
 #include "asterfort/fonmai2.h"
 #include "asterfort/fonnoe2.h"
-#include "asterfort/fonnof.h"
-#include "asterfort/fonvec2.h"
+#include "asterfort/fonnof2.h"
+#include "asterfort/fonnor2.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
@@ -54,14 +54,14 @@ subroutine op0060()
     integer :: iadr1, ifm, niv
     integer :: nbocc, nbnoff
     integer :: ibas, ibid, iocc, idon, idonn, ifonoe, ndonn
-    integer :: iret1, iret, irets
+    integer :: iret1, iret, irets, inor
     integer :: n1, n2
     character(len=6) :: nompro
     character(len=8) :: resu, noma, typfon, confin, typmp, typm
     character(len=9) :: entit(8)
     character(len=13) :: motcl(8)
     character(len=16) :: typres, oper
-    character(len=19) :: basfon, basloc, cnxinv, lnno, ltno
+    character(len=19) :: basnof, basloc, cnxinv, lnno, ltno
     character(len=24) :: valk(2), entnom, abscur, fonoeu
 ! DEB-------------------------------------------------------------------
 !
@@ -209,12 +209,16 @@ subroutine op0060()
 !
     call fonlev(resu, noma, nbnoff)
 !
-!     TRAITEMENT DE LA NORMALE ET DES
-!     MOTS CLES FACTEUR : DTAN_EXTR, DTAN_ORIG
-!                         VECT_GRNO_ORIG, VECT_GRNO_EXTR
-!     ----------------------------------------
+!   OBJET CONTENANT LA BASE LOCALE EN CHAQUE NOEUD DU FOND DE FISSURE
+!   OBJET QUI N'EXISTE QUE DANS DEFI_FISSURE    
+    basnof = '&&OP0060.BASNOF'
 !
-    call fonvec2(resu, noma, cnxinv, typm)
+!   ON TEST L'EXISTENCE DU MOT CLE NORMALE DANS LE CAS DECOLLEE
+!
+    call jeexin(resu//'.NORMALE', inor)
+    if (inor .eq. 0) then
+        call fonnor2(resu, noma, cnxinv, typm, basnof)
+    endif
 !
     call jedetr(cnxinv)
 !
@@ -245,14 +249,13 @@ subroutine op0060()
 !     ---------------------------------------------------------------
 !
 !     LA BASE LOCALE ET DES LEVEL SETS SONT CALCULEES EN CHAQUE NOEUD
-!     QUE SI L'OBJET .BASEFOND EXISTE DEJA
-    call jeexin(resu//'.BASEFOND', ibas)
+!     QUE SI L'OBJET BASENOF EXISTE DEJA
+    call jeexin(basnof, ibas)
     if (ibas .ne. 0) then
-        basfon = resu//'.BASEFOND'
         basloc = resu//'.BASLOC'
         lnno = resu//'.LNNO'
         ltno = resu//'.LTNO'
-        call fonbas2(noma, basfon, typm, fonoeu, nbnoff,&
+        call fonbas2(noma, basnof, typm, fonoeu, nbnoff,&
                     basloc, lnno, ltno)
     endif
 !
@@ -265,7 +268,7 @@ subroutine op0060()
     if (confin .eq. 'COLLEE') then
         call jeexin(resu//'.LEVRESUP.MAIL', irets)
         if (irets .ne. 0) then
-            call fonnof(resu, noma, typfon, nbnoff)
+            call fonnof2(resu, noma, typfon, nbnoff, basnof)
         endif
     endif
 !

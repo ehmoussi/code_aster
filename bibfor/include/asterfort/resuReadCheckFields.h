@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine fonvec2(resu, noma, cnxinv, typm)
-        character(len=8)  :: resu
-        character(len=8)  :: noma
-        character(len=19) :: cnxinv
-        character(len=8)  :: typm
-    end subroutine fonvec2
+    subroutine resuReadCheckFields(resultName, resultType, fieldNb, fieldList)
+        character(len=8), intent(in) :: resultName
+        character(len=16), intent(in) :: resultType
+        integer, intent(in) :: fieldNb
+        character(len=16), intent(in) :: fieldList(100)
+    end subroutine resuReadCheckFields
 end interface

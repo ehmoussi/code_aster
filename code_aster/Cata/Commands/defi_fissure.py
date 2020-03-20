@@ -65,21 +65,9 @@ DEFI_FISSURE=OPER(nom="DEFI_FISSURE",
                                                             regles=(UN_PARMI('MAILLE_ORIG','GROUP_MA_ORIG'),),
                                                            ),
                                        ),
-                    # definition des directions des tangentes aux bords (uniquement pour les fonds non fermes)
-                    b_dtan = BLOC(condition = """not equal_to("TYPE_FOND", 'FERME')""",
-                                  DTAN_ORIG       =SIMP(statut='f',typ='R',max='**'),
-                                  DTAN_EXTR       =SIMP(statut='f',typ='R',max='**'),
-                                  VECT_GRNO_ORIG  =SIMP(statut='f',typ=grno,validators=NoRepeat(),max=2),
-                                  VECT_GRNO_EXTR  =SIMP(statut='f',typ=grno,validators=NoRepeat(),max=2),
-                                  regles=(EXCLUS('DTAN_ORIG','VECT_GRNO_ORIG'),
-                                             EXCLUS('DTAN_EXTR','VECT_GRNO_EXTR'),),
-                                 ),
                     ),
 
     CONFIG_INIT  = SIMP(statut='f',typ='TXM',into=("COLLEE","DECOLLEE"), defaut="COLLEE"),
-
-#   remarque : dans le cas symetrique, il faut soit LEVRE_SUP, soit DTAN_ORIG
-#   mais impossible de faire une regle.
 
     # dans le cas collé
     b_colle = BLOC(condition = """equal_to("CONFIG_INIT", 'COLLEE')""",

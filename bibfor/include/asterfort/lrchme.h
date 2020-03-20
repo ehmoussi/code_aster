@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,38 +15,30 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine lrchme(chanom, nochmd, nomamd, nomaas, typech,&
-                      nomgd, typent, nbcmpv, ncmpva, ncmpvm,&
+    subroutine lrchme(fieldNameAst, fieldNameMed ,&
+                      meshMed     , meshAst      ,&
+                      fieldSupport, fieldQuantity, entityType,&
+                      cmpNb       , cmpAstName   , cmpMedName,&
                       prolz, iinst, numpt, numord, inst,&
-                      crit, prec, nrofic, option, param,&
+                      storeCrit, storeEpsi, fileUnit, option, param,&
                       nbpgma, nbpgmm, nbspmm, codret)
-        character(len=19) :: chanom
-        character(len=64) :: nochmd
-        character(len=64) :: nomamd
-        character(len=8) :: nomaas
-        character(len=8) :: typech
-        character(len=8) :: nomgd
-        integer :: typent
-        integer :: nbcmpv
-        character(len=*) :: ncmpva
-        character(len=*) :: ncmpvm
+        character(len=19) :: fieldNameAst
+        character(len=*) :: cmpAstName, cmpMedName
+        character(len=8) :: meshAst
+        character(len=8) :: fieldQuantity
+        character(len=4) :: fieldSupport
         character(len=3) :: prolz
-        integer :: iinst
-        integer :: numpt
-        integer :: numord
-        real(kind=8) :: inst
-        character(len=8) :: crit
-        real(kind=8) :: prec
-        integer :: nrofic
+        character(len=8) :: storeCrit, param
         character(len=24) :: option
-        character(len=8) :: param
-        integer :: nbpgma(*)
-        integer :: nbpgmm(*)
-        integer :: nbspmm(*)
+        character(len=64) :: fieldNameMed, meshMed
+        integer :: fileUnit, entityType
         integer :: codret
+        integer :: cmpNb
+        integer :: iinst, numpt, numord
+        integer :: nbpgma(*), nbpgmm(*), nbspmm(*)
+        real(kind=8) :: inst
+        real(kind=8) :: storeEpsi
     end subroutine lrchme
 end interface
