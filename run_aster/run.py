@@ -44,6 +44,7 @@ from .utils import (ROOT, compress, copy, get_mpirun_script, make_writable,
                     run_command, uncompress)
 
 MPI_SCRIPT = "mpi_script.sh"
+EXITCODE_FILE = "_exit_code_"
 TMPMESS = "fort.6"
 FMT_DIAG = """
 ------------------------------------------------------------
@@ -187,7 +188,7 @@ class RunAster:
         cmd = self._get_cmdline(comm)
         logger.info(f"    {' '.join(cmd)}")
 
-        exitcode = run_command(cmd, timeout)
+        exitcode = run_command(cmd, timeout, exitcode_file=EXITCODE_FILE)
         msg = f"\nEXECUTION_CODE_ASTER_EXIT_{self.jobnum}={exitcode}\n\n"
         logger.info(msg)
         _log_mess(msg)
@@ -240,10 +241,14 @@ class RunAster:
         cmd.append(commfile)
         cmd.extend(self.export.args)
         if self._tee:
-            cmd.extend(["2>&1", "|", "tee", "-a", TMPMESS])
+            orig = " ".join(cmd)
+            cmd = [
+                f"( {orig} ; echo $? > {EXITCODE_FILE} )",
+                "2>&1", "|", "tee", "-a", TMPMESS
+            ]
         else:
             cmd.extend(["2>&1", ">>", TMPMESS])
-        # TODO add pid + mode to identify the process
+        # TODO add pid + mode to identify the process by asrun
 
         if self._parallel:
             logger.info(f"    {' '.join(cmd)}")
