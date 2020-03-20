@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -212,16 +212,6 @@ Conseil :
  -> Risque & Conseils :
     Des problèmes de convergence peuvent survenir.
     L'utilisation du pilotage peut permettre de passer cette instabilité.
-"""),
-
-
-    40 : _("""
-  -> L'axe de référence pour le calcul du repère local est normal à un
-     au moins un élément de plaque.
-  -> Risque & Conseil :
-     Il faut modifier l'axe de référence (axe X par défaut) en utilisant
-     ANGL_REP ou VECTEUR.
-
 """),
 
     41 : _("""

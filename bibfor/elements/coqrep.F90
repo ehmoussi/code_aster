@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ subroutine coqrep(pgl, alpha, beta, t2iu, t2ui,&
 #include "asterfort/utmess.h"
 
     real(kind=8) :: pgl(3, 3), t2iu(*), t2ui(*), alpha, beta, c, s
-! person_in_charge: nicolas.sellenet at edf.fr
+!
 !     ------------------------------------------------------------------
 !
 !         CALCUL DE LA MATRICE DE PASSAGE DU REPERE INTRINSEQUE (ELEMENT) A CELUI
@@ -53,7 +53,7 @@ subroutine coqrep(pgl, alpha, beta, t2iu, t2ui,&
     pjdz = dz - ps*pgl(3,3)
     norm = sqrt (pjdx*pjdx + pjdy*pjdy + pjdz*pjdz)
     if (norm .le. r8prem()) then
-        call utmess('F', 'ELEMENTS_40')
+        call utmess('F', 'PLATE1_40')
     endif
 !
     pjdx = pjdx/norm

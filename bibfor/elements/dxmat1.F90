@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -84,14 +84,14 @@ subroutine dxmat1(fami, epais, df, dm, dmf, pgl, indith, npg)
 !
     if (phenom .eq. 'ELAS') then
         if (norm .le. r8prem()) then
-            call utmess('A', 'ELEMENTS_40')
+            call utmess('F', 'PLATE1_40')
         endif
         nomres(1) = 'E'
         nomres(2) = 'NU'
         nomres(3) = 'ALPHA'
     else if (phenom .eq. 'ELAS_GLRC') then
         if (norm .le. r8prem()) then
-            call utmess('A', 'ELEMENTS_40')
+            call utmess('F', 'PLATE1_40')
         endif
         nomres(1) = 'E_M'
         nomres(2) = 'NU_M'
