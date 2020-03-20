@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irgene(iocc, resu, form, ifi, nbnosy,&
-                  nosy, nbcmpg, cmpg, nbpara, para,&
+!
+subroutine irgene(iocc, resultName, fileFormat, fileUnit, nbnosy,&
+                  nosy, nbcmpg, cmpg, paraInNb, paraInName,&
                   nbordr, ordr, nbdisc, disc, nume,&
                   lhist)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/gettco.h"
@@ -38,69 +40,80 @@ subroutine irgene(iocc, resu, form, ifi, nbnosy,&
 #include "asterfort/titre2.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    integer :: cmpg(*), ordr(*), nume(*)
-    real(kind=8) :: disc(*)
-    character(len=*) :: resu, nosy(*), para(*), form
-    aster_logical :: lhist
+!
+integer :: iocc, nbcmpg, nbnosy, cmpg(*), nbordr, nbdisc, ordr(*), nume(*)
+integer, intent(in) :: paraInNb, fileUnit
+character(len=*), intent(out) :: resultName
+character(len=*), intent(in) :: paraInName(*), fileFormat
+real(kind=8) :: disc(*)
+character(len=*) :: nosy(*)
+aster_logical :: lhist
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     IMPRESSION D'UN CONCEPT GENERALISE
-!     ------------------------------------------------------------------
-    character(len=1) :: cecr
-    character(len=16) :: typcon
-    character(len=19) :: gene, noch19
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=16) :: resultType
+    character(len=19) :: noch19
     character(len=24) :: nomst, nuddl, basemo
     aster_logical :: lordr
-    integer :: iocc, ifi, nbnosy, nbcmpg, nbpara, nbordr, i, im, iord, ibid
-    integer :: iret, isy, itresu, jordr, jpara, jtitr, kdesc
-    integer :: krefe, kvale, nbmode, nbtitr, npara, itcal, nbdisc
+    integer :: i, im, iord, ibid
+    integer :: iret, isy, itresu, jordr, jtitr, kdesc
+    integer :: krefe, kvale, nbmode, nbtitr, paraNb, itcal
     integer, pointer :: desc(:) => null()
-!     ------------------------------------------------------------------
+    character(len=16), pointer :: paraName(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
+!    
     call jemarq()
     nomst = '&&IRGENE.SOUS_TITRE.TITR'
 !
-!     --- QUEL TYPE DE CONCEPT  ---
-!
-    call gettco(resu, typcon)
+    call gettco(resultName, resultType)
 !
 !=======================================================================
 !
 !               --- IMPRESSION D'UNE SD VECT_ASSE_GENE ---
 !
 !=======================================================================
-    if (typcon .eq. 'VECT_ASSE_GENE') then
+    if (resultType .eq. 'VECT_ASSE_GENE') then
 !
-        call irvgen(resu, ifi, nbcmpg, cmpg, lhist)
+        call irvgen(resultName, fileUnit, nbcmpg, cmpg, lhist)
 !
 !=======================================================================
 !
 !         --- IMPRESSION D'UNE SD MODE_GENE ---
 !
 !=======================================================================
-    else if (typcon .eq. 'MODE_GENE') then
-        call irparb(resu, nbpara, para, '&&IRGENE.PARAMETRE', npara)
+    else if (resultType .eq. 'MODE_GENE') then
+! ----- Get list of parameters
+        call irparb(resultName, paraInNb, paraInName, '&&IRGENE.PARAMETRE', paraNb)
         call jeexin('&&IRGENE.PARAMETRE', iret)
         if (iret .gt. 0) then
-            call jeveuo('&&IRGENE.PARAMETRE', 'E', jpara)
+            call jeveuo('&&IRGENE.PARAMETRE', 'L', vk16 = paraName)
         else
-            jpara=1
+            paraNb = 0
         endif
-!
-        cecr = 'L'
         do iord = 1, nbordr
-            write(ifi,2000)
-            call irpara(resu, form, ifi, 1, ordr(iord),&
-                        npara, zk16( jpara), cecr)
+            write(fileUnit,200)
+            if (fileFormat .eq. 'RESULTAT') then
+            call irpara(resultName, fileUnit  ,&
+                        1         , ordr(iord),&
+                        paraNb    , paraName  ,&
+                        'L')
+            endif
             do isy = 1, nbnosy
-                call rsexch(' ', resu, nosy(isy), ordr(iord), noch19,&
+                call rsexch(' ', resultName, nosy(isy), ordr(iord), noch19,&
                             iret)
                 if (iret .eq. 0) then
-                    call titre2(resu, noch19, nomst, 'GENE', iocc,&
+                    call titre2(resultName, noch19, nomst, 'GENE', iocc,&
                                 '(1PE12.5)', nosy(isy), ordr(iord))
-                    write(ifi,2010)
+                    write(fileUnit,201)
                     call jeveuo(nomst, 'L', jtitr)
                     call jelira(nomst, 'LONMAX', nbtitr)
-                    write(ifi,'(1X,A)') (zk80(jtitr+i-1),i=1,nbtitr)
-                    call irvgen(noch19, ifi, nbcmpg, cmpg, lhist)
+                    write(fileUnit,'(1X,A)') (zk80(jtitr+i-1),i=1,nbtitr)
+                    call irvgen(noch19, fileUnit, nbcmpg, cmpg, lhist)
                 endif
             end do
         end do
@@ -113,16 +126,15 @@ subroutine irgene(iocc, resu, form, ifi, nbnosy,&
 !             --- IMPRESSION D'UNE SD DYNA_GENE ---
 !
 !=======================================================================
-        elseif ( ( typcon .eq. 'TRAN_GENE' ) .or. (typcon .eq.&
-    'HARM_GENE') ) then
-        gene = resu
+        elseif ((resultType .eq. 'TRAN_GENE' ) .or.&
+                 (resultType .eq.'HARM_GENE')) then
         lordr = .false.
-        call jeexin(gene//'.ORDR', iret)
+        call jeexin(resultName(1:19)//'.ORDR', iret)
         if (iret .ne. 0) then
-            call jeveuo(gene//'.ORDR', 'L', jordr)
+            call jeveuo(resultName(1:19)//'.ORDR', 'L', jordr)
             lordr = .true.
         endif
-        call jeveuo(gene//'.DESC', 'L', vi=desc)
+        call jeveuo(resultName(1:19)//'.DESC', 'L', vi=desc)
         nbmode = desc(2)
         noch19 = '&&IRGENE_VECTEUR'
         call wkvect(noch19//'.DESC', 'V V I', 2, kdesc)
@@ -143,9 +155,9 @@ subroutine irgene(iocc, resu, form, ifi, nbnosy,&
 !
         zi(kdesc+1) = nbmode
 !
-        call dismoi('NUME_DDL', gene(1:8), 'RESU_DYNA', repk=nuddl)
+        call dismoi('NUME_DDL', resultName, 'RESU_DYNA', repk=nuddl)
         call jeexin(nuddl(1:14)//'.NUME.DESC', iret)
-        call dismoi('BASE_MODALE', gene(1:8), 'RESU_DYNA', repk=basemo, arret='C',&
+        call dismoi('BASE_MODALE', resultName, 'RESU_DYNA', repk=basemo, arret='C',&
                     ier=ibid)
 !
 !       -- TEST POUR LE CAS DE LA SOUS-STRUCTURATION : EXISTENCE DE NUME_DDL_GENE  --
@@ -155,35 +167,35 @@ subroutine irgene(iocc, resu, form, ifi, nbnosy,&
 !
         do i = 1, nbdisc
             iord = nume(i)
-            write(ifi,2000)
+            write(fileUnit,200)
             do isy = 1, nbnosy
-                call jeexin(gene//'.'//nosy(isy)(1:4), iret)
-                if (iret .eq. 0) goto 210
-                write(ifi,2010)
-                write(ifi,3010) nosy(isy)
-                if (lordr) then
-                    if (itcal .eq. 1) then
-                        write(ifi,3021) zi(jordr+iord-1), disc(i)
+                call jeexin(resultName(1:19)//'.'//nosy(isy)(1:4), iret)
+                if (iret .ne. 0) then
+                    write(fileUnit,201)
+                    write(fileUnit,301) nosy(isy)
+                    if (lordr) then
+                        if (itcal .eq. 1) then
+                            write(fileUnit,321) zi(jordr+iord-1), disc(i)
+                        else
+                            write(fileUnit,302) zi(jordr+iord-1), disc(i)
+                        endif
                     else
-                        write(ifi,3020) zi(jordr+iord-1), disc(i)
+                        if (itcal .eq. 1) then
+                            write(fileUnit,321) iord, disc(i)
+                        else
+                            write(fileUnit,302) iord, disc(i)
+                        endif
                     endif
-                else
-                    if (itcal .eq. 1) then
-                        write(ifi,3021) iord, disc(i)
-                    else
-                        write(ifi,3020) iord, disc(i)
-                    endif
+                    call jeveuo(resultName(1:19)//'.'//nosy(isy)(1:4), 'L', itresu)
+                    do im = 0, nbmode-1
+                        if (itcal .eq. 1) then
+                            zc(kvale+im) = zc(itresu+(iord-1)*nbmode+im)
+                        else
+                            zr(kvale+im) = zr(itresu+(iord-1)*nbmode+im)
+                        endif
+                    end do
+                    call irvgen(noch19, fileUnit, nbcmpg, cmpg, lhist)
                 endif
-                call jeveuo(gene//'.'//nosy(isy)(1:4), 'L', itresu)
-                do im = 0, nbmode-1
-                    if (itcal .eq. 1) then
-                        zc(kvale+im) = zc(itresu+(iord-1)*nbmode+im)
-                    else
-                        zr(kvale+im) = zr(itresu+(iord-1)*nbmode+im)
-                    endif
-                end do
-                call irvgen(noch19, ifi, nbcmpg, cmpg, lhist)
-210             continue
             end do
         end do
         call jedetr(noch19//'.DESC')
@@ -191,15 +203,15 @@ subroutine irgene(iocc, resu, form, ifi, nbnosy,&
         call jedetr(noch19//'.VALE')
 !
     else
-        call utmess('F', 'PREPOST2_51', sk=typcon)
+        call utmess('F', 'PREPOST2_51', sk=resultType)
     endif
 !
 !
-    2000 format(/,1x,'======>')
-    2010 format(/,1x,'------>')
-    3010 format(' VECTEUR GENERALISE DE NOM SYMBOLIQUE  ',a)
-    3020 format(1p,' NUMERO D''ORDRE: ',i8,' INSTANT: ',d12.5)
-    3021 format(1p,' NUMERO D''ORDRE: ',i8,' FREQUENCE: ',d12.5)
+200 format(/,1x,'======>')
+201 format(/,1x,'------>')
+301 format(' VECTEUR GENERALISE DE NOM SYMBOLIQUE  ',a)
+302 format(1p,' NUMERO D''ORDRE: ',i8,' INSTANT: ',d12.5)
+321 format(1p,' NUMERO D''ORDRE: ',i8,' FREQUENCE: ',d12.5)
 !
     call jedema()
 end subroutine
