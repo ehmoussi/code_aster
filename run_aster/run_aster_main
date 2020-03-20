@@ -79,6 +79,9 @@ def parse_args(argv):
                              "directory")
     parser.add_argument('-t', '--test', action='store_true',
                         help="execution of a testcase")
+    parser.add_argument('--time_limit', dest='time_limit', type=float,
+                        action='store', default=None,
+                        help='override the time limit')
     parser.add_argument('--ctest', action='store_true',
                         help="testcase execution inside ctest (implies "
                              "'--test'), the 'mess' file is saved into "
@@ -133,6 +136,8 @@ def main(argv=None):
     if args.interactive:
         export.set_parameter("interact", True)
         export.set_time_limit(86400.)
+    if args.time_limit:
+        export.set_time_limit(args.time_limit)
     export.check()
 
     calc = RunAster.factory(export)

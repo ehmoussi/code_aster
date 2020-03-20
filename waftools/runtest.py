@@ -54,6 +54,9 @@ def options(self):
                      help='run a testcase by passing additional arguments '
                           '(possible values are "debugger", "env" + those '
                           'defined in the configuration)')
+    group.add_option('--time_limit', dest='time_limit',
+                     action='store', default=None,
+                     help='override the time limit of the testcase')
 
 def configure(self):
     """Store developer preferences"""
@@ -83,6 +86,8 @@ def runtest(self):
         args.extend(['--wrkdir', wrkdir])
     elif opts.exectool is not None:
         args.append('--exectool=%s' % opts.exectool)
+    if opts.time_limit:
+        args.append('--time_limit={0}'.format(opts.time_limit))
     dtmp = opts.outputdir or self.env['PREFS_OUTPUTDIR'] \
            or tempfile.mkdtemp(prefix='runtest_')
     try:

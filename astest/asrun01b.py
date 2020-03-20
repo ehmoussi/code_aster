@@ -192,6 +192,8 @@ class TestExport(unittest.TestCase):
         self.assertIsNone(export.get_param("consbtc"))
         # because of facmtps
         self.assertGreaterEqual(export.get("time_limit"), 60.0)
+        export.set_time_limit(123.456)
+        self.assertEqual(export.get("time_limit"), 123.456)
         self.assertIsNone(export.get("consbtc"))
         self.assertEqual(len(export.datafiles), 3)
         # 0 in asrun01b.export, but
