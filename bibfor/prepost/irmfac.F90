@@ -350,19 +350,21 @@ character(len=8), intent(in) :: fileFormat, modelIn
             call irecri(fileUnit   , dsName       , lResu     ,&
                         keywf      , keywfIocc    ,&
                         storeListNb, storeListIndx,&
-                        fieldListNb, fieldListType, realFormat,&
+                        fieldListNb, fieldListType,&
                         paraListNb , paraListName , paraFormat,&
                         cmpListNb  , cmpListName  ,&
                         cellListNb , cellListNume ,&
                         nodeListNb , nodeListNume ,&
                         lMeshCoor  , lmax         , lmin,&
                         lsup       , borsup       ,&
-                        linf       , borinf)
+                        linf       , borinf       ,&
+                        realFormat, cplxFormat)
         elseif (fileFormat .eq. 'IDEAS') then
             call resuPrintIdeas(fileUnit   , dsName       , lResu     ,&
                                 storeListNb, storeListIndx,&
                                 fieldListNb, fieldListType,&
-                                title      , keywf        , keywfIocc , realFormat ,&
+                                title      , keywf        ,&
+                                keywfIocc  , realFormat   ,&
                                 cmpListNb  , cmpListName  ,&
                                 nodeListNb , nodeListNume ,&
                                 cellListNb , cellListNume)

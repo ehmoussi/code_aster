@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,26 +15,38 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine ircecl(ifi, nbel, ligrel, nbgrel, longr,&
-                  ncmpmx, vale, nomcmp, nomel, loc,&
-                  celd, connex, point, nomnos, nbcmpt,&
-                  nucmpu, nbnot, numnoe, nbmat, nummai,&
-                  lsup, borsup, linf, borinf, lmax,&
-                  lmin, lcor, ndim, coor, nolili,&
-                  formr, ncmpv, nucmp)
-! aslint: disable=W1501,W1504,W0007
-    implicit none
+! aslint: disable=W1501,W1504,W0413
+!
+subroutine ircecl(fileUnit    ,&
+                  fieldSupport, celd        , realFormat  , cplxFormat,&
+                  nodeListNb  , nodeListNume,&
+                  cellListNb  , cellListNume,&
+                  meshCellNb  , meshCellName, meshNodeName,&
+                  lMeshCoor   , meshDimeIn  , meshCoor    ,&
+                  connex      , connexLen   ,&
+                  cmpCataNb   , cmpCataName ,&
+                  cmpListNb   , cmpListIndx ,&
+                  cmpVariNb   , cmpVariIndx ,&
+                  grelNb      , liel        ,&
+                  lielLen     , liliName    ,&
+                  lmax        , lmin        ,&
+                  lsup        , borsup      ,&
+                  linf        , borinf      ,&
+                  vale)
+!
+implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
+#include "asterc/r8pi.h"
 #include "asterc/r8vide.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/assert.h"
 #include "asterfort/codent.h"
 #include "asterfort/dgmode.h"
 #include "asterfort/digdel.h"
 #include "asterfort/exisdg.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexatr.h"
@@ -42,853 +54,1041 @@ subroutine ircecl(ifi, nbel, ligrel, nbgrel, longr,&
 #include "asterfort/lxlgut.h"
 #include "asterfort/nbec.h"
 #include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
 !
-    integer :: ifi, nbel, ligrel(*), nbgrel, longr(*), ncmpmx, nbnot, nbcmpt
-    integer :: nucmpu(*), celd(*), connex(*), point(*), numnoe(*), nbmat, ndim
-    integer :: nummai(*), ncmpv, nucmp(*)
-    real(kind=8) :: borsup, borinf, coor(*)
-    complex(kind=8) :: vale(*)
-    character(len=*) :: nomcmp(*), nomel(*), loc, nomnos(*), formr
-    character(len=19) :: nolili
-    aster_logical :: lsup, linf, lmax, lmin, lcor
-!        ECRITURE D'UN CHAMELEM SUR LISTING
-!        A VALEURS COMPLEXES
-!  ENTREE:
-!     IFI   : UNITE LOGIQUE DU FICHIER
-!     NBEL  : NOMBRE D'ELEMENTS DU LIGREL ( DU MAILLAGE)
-!     LIGREL: LIGREL COMPLET
-!     NBGREL: NOMBRE DE GRELS
-!     LONGR : POINTEUR DE LONGUEUR DE LIGREL
-!     NCMPMX: NOMBRE MAXI DE CMP DE LA GRANDEUR NOMGD
-!     VALE  : VALEURS DU CHAM_NO
-!     NOMCMP: NOMS DES CMP
-!     NOMEL : NOMS DES MAILLES SUPPORTS DES ELEMENTS
-!     LOC   : LOCALISATION DES VALEURS (ELNO OU ELGA OU ELEM)
-!     CELD  : DESCRIPTEUR DU CHAM_ELEM (MODES LOCAUX,ADRESSES->.CELV)
-!     CONNEX: CONNECTIVITES DES MAILLES
-!     POINT : POINTEUR DANS LES CONNECTIVITES
-!     NOMNOS: NOMS DES NOEUDS
-!     NBCMPT: NOMBRE DE COMPOSANTES A IMPRIMER
-!     NUCMPU: NUMEROS DES COMPOSANTES A IMPRIMER
-!     NBMAT : NOMBRE DE MAILLES OU ON DESIRE IMPRIMER LE CHAMELEM
-!     NUMMAI: NUMEROS DES MAILLES OU ON DESIRE IMPRIMER LE CHAMELEM
-!     LSUP  : =.TRUE.  INDIQUE PRESENCE D'UNE BORNE SUPERIEURE
-!     BORSUP: VALEUR DE LA BORNE SUPERIEURE
-!     LINF  : =.TRUE.  INDIQUE PRESENCE D'UNE BORNE INFERIEURE
-!     BORINF: VALEUR DE LA BORNE INFERIEURE
-!     LMAX  : =.TRUE.  INDIQUE IMPRESSION VALEUR MAXIMALE
-!     LMIN  : =.TRUE.  INDIQUE IMPRESSION VALEUR MINIMALE
-!     LCOR  : =.TRUE.  IMPRESSION DES COORDONNEES DE NOEUDS DEMANDEE
-!     NDIM  : DIMENSION DU PROBLEME
-!     COOR  : TABLEAU DES COORDONNEES DE NOEUDS
-!     NOLILI: NOM DU LIGREL
-!     FORMR : FORMAT D'ECRITURE DES REELS SUR "RESULTAT"
-!     ------------------------------------------------------------------
-    integer :: ilong, imodel
-    real(kind=8) :: rundf, value, valmax, valmin
-    character(len=3) :: cbid
-    character(len=8) :: nomno, nomcp, kbid, forcmp, nomcor(3)
-    character(len=10) :: format
-    character(len=24) :: nrepe
-    character(len=50) :: fmt, fmv, fmt1, fmt2, fmt3, fmv2, form1
+integer, intent(in) :: fileUnit
+character(len=4), intent(in) :: fieldSupport
+integer, pointer :: celd(:)
+character(len=8), intent(in) :: realFormat, cplxFormat
+integer, intent(in) :: nodeListNb
+integer, pointer :: nodeListNume(:)
+integer, intent(in) :: cellListNb
+integer, pointer :: cellListNume(:)
+integer, intent(in) :: meshCellNb
+character(len=8), pointer :: meshCellName(:), meshNodeName(:)
+aster_logical, intent(in) :: lMeshCoor
+integer, intent(in) :: meshDimeIn
+real(kind=8), pointer :: meshCoor(:)
+integer, intent(in) :: cmpCataNb
+character(len=8), pointer :: cmpCataName(:)
+integer, intent(in) :: cmpListNb
+integer, pointer :: cmpListIndx(:)
+integer, intent(in) :: cmpVariNb
+integer, pointer :: cmpVariIndx(:)
+integer, intent(in) :: grelNb
+integer, pointer :: liel(:), lielLen(:)
+character(len=19), intent(in) :: liliName
+integer, pointer :: connex(:), connexLen(:) 
+aster_logical, intent(in) :: lsup, linf, lmax, lmin
+real(kind=8),  intent(in) :: borsup, borinf
+complex(kind=8), pointer  :: vale(:)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Print results - RESULTAT
+!
+! Field on cells - Complex
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  fileUnit         : index of file (logical unit)
+! In  realFormat       : format of real numbers
+! In  cplxFormat       : format of complex numbers (IMAG, REAL, PHASE, MODULE or ' ')
+! In  fieldSupport     : cell support of field (NOEU, ELNO, ELEM, ...)
+! In  cmpUserNb        : number of components to select
+! Ptr cmpUserName      : list of name of components to select
+! In  nodeUserNb       : number of nodes require by user
+! Ptr nodeUserNume     : list of index of nodes require by user
+! In  cellUserNb       : number of cells require by user
+! In  cellUserNume     : list of index of cells require by user
+! In  nodeListNb       : number of nodes
+! Ptr nodeListNume     : pointer to the list of index of nodes
+! Ptr nodeListNume     : pointer to the list of name of nodes
+! In  lMeshCoor        : flag to print coordinates of nodes
+! In  meshDime         : dimension of mesh (2 or 3)
+! In  meshCoor         : coordinates of nodes of mesh
+! In  cmpCataNb        : maximum number of components in catalog
+! Ptr cmpCataName      : pointer to the list of components in catalog
+! In  cmpListNb        : number of components
+! Ptr cmpUserName      : pointer to the list of name of components
+! Ptr cmpUserName      : pointer to the list of index of components
+! In  lmax             : flag to print maximum value on nodes
+! In  lmin             : flag to print minimum value on nodes
+! In  lsup             : flag if supremum exists
+! In  borsup           : value of supremum
+! In  linf             : flag if infinum exists
+! In  borinf           : value of infinum
+! Ptr vale             : pointer to the (complex) values
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=1), parameter :: meshCmpName(3) = (/'X', 'Y', 'Z'/)
+    integer :: ilong, imodel, meshDime
+    real(kind=8) :: rundf, value, valmax, valmin, c1
+    character(len=3) :: text3
+    character(len=8) :: nodeName, variName, blank
+    character(len=8) :: fmtText
+    character(len=50) :: fmtHead, fmtVal1, fmt1, fmt2, fmt3, fmtVal2, form1
     aster_logical :: limpr
-!     ------------------------------------------------------------------
+    integer :: iGrel, iVari, iCell, iForm, iNode, iLayer, iNodeList
+    integer :: iCmpList, iCmpVari, iCmpCata, iCmpActi, iCmp
+    integer :: i2, iachml, iad, iadr
+    integer :: icomp2, iBegin, iel, grelElem, iEnd
+    integer :: ilign, irest
+    integer :: cmpNume, cellNume, grelNume, cmpListNume, nodeNume, cmpCataNume
+    integer :: ipca, ipoin, ipoin1
+    integer :: j, fmtLen, mode, modsau
+    integer :: nbcpt, nbNode, nbCmpActi, nbCmpVale, nbLayer, nec, nbCmp
+    integer :: npcalc, nbScal, modeNbScal
+    integer :: nbVariMaxi, nbCell, nbVariActi, nbVariCell
+    integer, pointer :: inec(:) => null()
+    integer, pointer :: repe(:) => null()
+    integer, pointer :: locatedCmp(:) => null()
+    real(kind=8), pointer :: valeReal(:) => null()
+    real(kind=8), pointer :: valeImag(:) => null()
+    real(kind=8), pointer :: valeComp(:) => null()
+    integer, pointer :: valeIndx(:) => null()
+    real(kind=8), pointer :: valeMaxReal(:) => null()
+    real(kind=8), pointer :: valeMaxImag(:) => null()
+    character(len=8), pointer :: valeMaxElem(:) => null()
+    integer, pointer :: valeMaxNb(:) => null()
+    real(kind=8), pointer :: valeMinReal(:) => null()
+    real(kind=8), pointer :: valeMinImag(:) => null()
+    character(len=8), pointer :: valeMinElem(:) => null()
+    integer, pointer :: valeMinNb(:) => null()
+    character(len=16), pointer :: cmpNameMinMax(:) => null()
+    character(len=16), pointer :: cmpName(:) => null()
+    integer, pointer :: cmpInPhys(:) => null()
+    integer, pointer :: cmpInVale(:) => null()
+    integer, pointer :: valeSupIndx(:) => null()
+    character(len=16), pointer :: valeSupName(:) => null()
 !
-!-----------------------------------------------------------------------
-    integer :: i, i2, iachml, iad, iadr, iaec, icm
-    integer :: icmax, icmin, icmp, icmp2, icoe, icoef, icoef2
-    integer :: icomax, icomp2, icou, icval, id, iel, ielg
-    integer :: if, igre, igrel, iino, ilig, imai, imail
-    integer :: in, inmax, inmin, inom, inop, inot, inu
-    integer :: ipca, ipo2, ipoin, ipoin1, iposg, iposv, irepe
-    integer :: ires, irmax, irmin, irval, iva, ivmax, ivmin
-    integer :: j, jco, jmod, lgr, mode, modsau
-    integer :: nbcpt, nbno, ncmp, ncmp2, ncmpp, ncou, nec
-    integer :: npcalc, nsca, nscal, nuno
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
-    kbid='        '
-    rundf = r8vide()
-    nomcor(1) = 'X'
-    nomcor(2) = 'Y'
-    nomcor(3) = 'Z'
-    format = formr
-    lgr = lxlgut( format )
-    id = 0
-    if = 0
-    call jeveuo('&CATA.TE.MODELOC', 'L', imodel)
-    call jeveuo(jexatr('&CATA.TE.MODELOC', 'LONCUM'), 'L', ilong)
-    do 2 i = 1, lgr-1
-        if (format(i:i) .eq. 'D' .or. format(i:i) .eq. 'E' .or. format(i:i) .eq. 'F' .or.&
-            format(i:i) .eq. 'G') then
-            id = i+1
-            goto 2
+!
+! - Initializations
+!
+    c1     = 180.d0/r8pi()
+    blank  = '        '
+    rundf  = r8vide()
+    fmtLen = lxlgut(realFormat)
+!
+! - Get length of text format from description of real format (to align !)
+! - Ex realFormat = '1PE12.3' => fmtText = 'A12'. By default => 'A12'
+!
+    iBegin = 0
+    iEnd   = 0
+    do iForm = 1, fmtLen - 1
+        if (realFormat(iForm:iForm) .eq. 'D' .or. realFormat(iForm:iForm) .eq. 'E' .or.&
+            realFormat(iForm:iForm) .eq. 'F' .or. realFormat(iForm:iForm) .eq. 'G') then
+            iBegin = iForm + 1
+            cycle
         endif
-        if (format(i:i) .eq. '.') then
-            if = i-1
-            goto 2
+        if (realFormat(iForm:iForm) .eq. '.') then
+            iEnd = iForm - 1
+            cycle
         endif
-  2 end do
-    if (id .ne. 0 .and. if .ge. id) then
-        forcmp = 'A'//format(id:if)
+    end do
+    if (iBegin .ne. 0 .and. iEnd .ge. iBegin) then
+        fmtText = 'A'//realFormat(iBegin:iEnd)
     else
-        forcmp = 'A12'
+        fmtText = 'A12'
+    endif
+
+    meshDime = meshDimeIn
+    if (fieldSupport .eq. 'ELGA' .or. fieldSupport .eq. 'ELEM' .or. .not.lMeshCoor) then
+        meshDime = 0
+    endif
+    nbCell = meshCellNb
+    if (cellListNb .ne. 0) then
+        nbCell = cellListNb
     endif
 !
-!  -- DETERMINATION DU NOMBRE MAXIMUM DE SOUS_POINTS ---
-    icomax = 0
-    do 4 igre = 1, nbgrel
-        icoef=max(1,celd(4))
-        if (icoef .gt. icomax) icomax = icoef
-  4 end do
-    ncmp = ncmpv
-    if (ncmp .gt. 0) then
-        ncmp = 0
-        do 141 i = 1, ncmpv
-            if (nucmp(i) .le. icomax) then
-                ncmp = ncmp + 1
-            else
-                call codent(nucmp(i), 'G', cbid)
-                nomcp = 'V'//cbid
-                call utmess('A', 'PREPOST_74', sk=nomcp)
-            endif
-141     continue
-        if (ncmp .eq. 0) then
-            call utmess('A', 'PREPOST_75')
-            goto 9999
+! - Maximum of components for internal state variable (dynamic)
+!
+    nbVariMaxi = 0
+    do iGrel = 1, grelNb
+        nbVariCell = max(1, celd(4))
+        if (nbVariCell .gt. nbVariMaxi) then
+            nbVariMaxi = nbVariCell
         endif
-        icomax = ncmp
+    end do
+    ASSERT(nbVariMaxi .gt. 0)
+!
+! - Effective number of components for internal state variable (dynamic)
+!
+    nbVariActi = cmpVariNb
+    if (cmpVariNb .gt. 0) then
+        nbVariActi = 0
+        do iCmpVari = 1, cmpVariNb
+            if (cmpVariIndx(iCmpVari) .le. nbVariMaxi) then
+                nbVariActi = nbVariActi + 1
+            else
+                call codent(cmpVariIndx(iCmpVari), 'G', text3)
+                variName = 'V'//text3
+                call utmess('A', 'RESULT3_13', sk=variName)
+            endif
+        end do
+        if (nbVariActi .eq. 0) then
+            call utmess('A', 'PREPOST_75')
+            goto 999
+        endif
+        nbVariMaxi = nbVariActi
     endif
+!
+! - Name of components for MAX and MIN
 !
     if (lmax .or. lmin) then
-        call jedetr('&&IRCECL.NCMT')
-        call wkvect('&&IRCECL.NCMT', 'V V K16', ncmpmx*icomax, inot)
-        do 6 i = 1, ncmpmx
-            if (icomax .gt. 1 .or. ncmp .ge. 1) then
-                do 7 jco = 1, icomax
-                    if (ncmp .gt. 0) then
-                        call codent(nucmp(jco), 'G', cbid)
+        AS_ALLOCATE(vk16 = cmpNameMinMax, size = cmpCataNb*nbVariMaxi)
+        do iCmpCata = 1, cmpCataNb
+            if (nbVariMaxi .gt. 1 .or. nbVariActi .ge. 1) then
+                do iVari = 1, nbVariMaxi
+                    if (nbVariActi .gt. 0) then
+                        call codent(cmpVariIndx(iVari), 'G', text3)
                     else
-                        call codent(jco, 'G', cbid)
+                        call codent(iVari, 'G', text3)
                     endif
-                    nomcp = nomcmp(i)
-                    zk16(inot-1+(i-1)*icomax+jco) = 'V'//cbid
-  7             continue
+                    cmpNameMinMax((iCmpCata-1)*nbVariMaxi+iVari) = 'V'//text3
+                end do
             else
-                zk16(inot-1+i)=nomcmp(i)
+                cmpNameMinMax(iCmpCata) = cmpCataName(iCmpCata)
             endif
-  6     continue
+        end do
     endif
+!
+! - Allocate objects for MINMAX
+!
     if (lmax) then
-        call jedetr('&&IRCECL.MAXR')
-        call wkvect('&&IRCECL.MAXR', 'V V R', ncmpmx*icomax, irmax)
-        call jedetr('&&IRCECL.MAXC')
-        call wkvect('&&IRCECL.MAXC', 'V V R', ncmpmx*icomax, icmax)
-        call jedetr('&&IRCECL.MAIMAX')
-        call wkvect('&&IRCECL.MAIMAX', 'V V K8', ncmpmx*icomax, inmax)
-        call jedetr('&&IRCECL.NBVMAX')
-        call wkvect('&&IRCECL.NBVMAX', 'V V I', ncmpmx*icomax, ivmax)
-        do 90 i = 1, ncmpmx*icomax
-            zr(irmax-1+i)=rundf
- 90     continue
+        AS_ALLOCATE(vr = valeMaxReal, size = cmpCataNb*nbVariMaxi)
+        AS_ALLOCATE(vr = valeMaxImag, size = cmpCataNb*nbVariMaxi)
+        AS_ALLOCATE(vk8 = valeMaxElem, size = cmpCataNb*nbVariMaxi)
+        AS_ALLOCATE(vi = valeMaxNb, size = cmpCataNb*nbVariMaxi)
+        valeMaxReal = rundf
     endif
     if (lmin) then
-        call jedetr('&&IRCECL.MINR')
-        call wkvect('&&IRCECL.MINR', 'V V R', ncmpmx*icomax, irmin)
-        call jedetr('&&IRCECL.MINC')
-        call wkvect('&&IRCECL.MINC', 'V V R', ncmpmx*icomax, icmin)
-        call jedetr('&&IRCECL.MAIMIN')
-        call wkvect('&&IRCECL.MAIMIN', 'V V K8', ncmpmx*icomax, inmin)
-        call jedetr('&&IRCECL.NBVMIN')
-        call wkvect('&&IRCECL.NBVMIN', 'V V I', ncmpmx*icomax, ivmin)
-        do 91 i = 1, ncmpmx*icomax
-            zr(irmin-1+i)=rundf
- 91     continue
+        AS_ALLOCATE(vr = valeMinReal, size = cmpCataNb*nbVariMaxi)
+        AS_ALLOCATE(vr = valeMinImag, size = cmpCataNb*nbVariMaxi)
+        AS_ALLOCATE(vk8 = valeMinElem, size = cmpCataNb*nbVariMaxi)
+        AS_ALLOCATE(vi = valeMinNb, size = cmpCataNb*nbVariMaxi)
+        valeMinReal = rundf
     endif
-    if (loc .eq. 'ELGA' .or. loc .eq. 'ELEM' .or. .not.lcor) ndim = 0
-    nrepe = nolili//'.REPE'
-    call jeveuo(nrepe, 'L', irepe)
-    if (nbmat .ne. 0) nbel=nbmat
+!
+! - Access to physical quantity
+!
+    call jeveuo('&CATA.TE.MODELOC', 'L', imodel)
+    call jeveuo(jexatr('&CATA.TE.MODELOC', 'LONCUM'), 'L', ilong)
+    call jeveuo(liliName//'.REPE', 'L', vi = repe)
+!
+! - Main loop on elements
+!
     modsau = 0
-    do 12 imai = 1, nbel
-        if (nbmat .ne. 0) then
-            imail = nummai(imai)
+    do iCell = 1, nbCell
+! ----- Current cell
+        if (cellListNb .eq. 0) then
+            cellNume = iCell
         else
-            imail = imai
+            cellNume = cellListNume(iCell)
         endif
-        igrel = zi(irepe+2*(imail-1)+1-1)
-        if (igrel .eq. 0) goto 12
-        ielg = zi(irepe+2*(imail-1)+2-1)
-        mode=celd(celd(4+igrel)+2)
-        if (mode .eq. 0) goto 12
+! ----- Get position in the GREL
+        grelNume = repe(2*(cellNume-1)+1)
+        if (grelNume .eq. 0) cycle
+        grelElem = repe(2*(cellNume-1)+2)
+! ----- Get located components scheme
+        mode = celd(celd(4+grelNume)+2)
+        if (mode .eq. 0) cycle
         if (mode .ne. modsau) then
-            ipoin1=longr(igrel)
-            call jeveuo(jexnum('&CATA.TE.MODELOC', mode), 'L', jmod)
-            nec = nbec(zi(jmod-1+2))
-            call jedetr('&&IRCECL.ENT_COD')
-            call wkvect('&&IRCECL.ENT_COD', 'V V I', nec, iaec)
-            call dgmode(mode, imodel, ilong, nec, zi(iaec))
-            iad=celd(celd(4+igrel)+8)
-            nscal = digdel(mode)
-            icoef=max(1,celd(4))
-            nsca = nscal*icoef
-            icoef2 = icoef
-            if (ncmp .gt. 0) icoef2 = ncmp
-            ncmpp = 0
-            ncmp2 = 0
-!
-! -- IPOSG : POSITION DE LA COMPOSANTE DANS LA GRANDEUR
-! -- IPOSV : POSITION DE LA COMPOSANTE DANS LE .VALE
-!
-            call jedetr('&&IRCECL.POSG')
-            call wkvect('&&IRCECL.POSG', 'V V I', ncmpmx*icoef2, iposg)
-            call jedetr('&&IRCECL.POSV')
-            call wkvect('&&IRCECL.POSV', 'V V I', ncmpmx, iposv)
-            call jedetr('&&IRCECL.COEF')
-            call wkvect('&&IRCECL.COEF', 'V V I', ncmpmx*icoef2, icoe)
-            call jedetr('&&IRCECL.NCMP')
-            call wkvect('&&IRCECL.NCMP', 'V V K16', ncmpmx*icoef2, inom)
+! --------- Access to properties of physical quantity
+            call jeveuo(jexnum('&CATA.TE.MODELOC', mode), 'L', vi = locatedCmp)
+            nec = nbec(locatedCmp(2))
+            AS_ALLOCATE(vi = inec, size = nec)
+            call dgmode(mode, imodel, ilong, nec, inec)
+            modeNbScal = digdel(mode)
+! --------- Access to properties of cell
+            iad        = celd(celd(4+grelNume)+8)
+            nbVariCell = max(1,celd(4))
+            nbScal     = modeNbScal*nbVariCell
+            nbCmp      = nbVariCell
+            if (nbVariActi .gt. 0) then
+                nbCmp = nbVariActi
+            endif
+            nbCmpActi = 0
+            ipoin1 = lielLen(grelNume)
+! --------- Allocate working objects
+            AS_ALLOCATE(vi = cmpInPhys, size = cmpCataNb*nbCmp)
+            AS_ALLOCATE(vi = cmpInVale, size = cmpCataNb*nbCmp)
+            AS_ALLOCATE(vk16 = cmpName, size = cmpCataNb*nbCmp)
+            AS_ALLOCATE(vr = valeComp, size = cmpCataNb*nbCmp)
+            AS_ALLOCATE(vr = valeReal, size = cmpCataNb*nbCmp)
+            AS_ALLOCATE(vr = valeImag, size = cmpCataNb*nbCmp)
+            AS_ALLOCATE(vi = valeIndx, size = cmpCataNb*nbCmp)
             if (lsup .or. linf) then
-                call jedetr('&&IRCECL.NCPP')
-                call wkvect('&&IRCECL.NCPP', 'V V K16', ncmpmx*icoef2, inop)
-                call jedetr('&&IRCECL.PO2')
-                call wkvect('&&IRCECL.PO2', 'V V I', ncmpmx*icoef2, ipo2)
+                AS_ALLOCATE(vk16 = valeSupName, size = cmpCataNb*nbCmp)
+                AS_ALLOCATE(vi = valeSupIndx, size = cmpCataNb*nbCmp)
             endif
-            call jedetr('&&IRCECL.VALR')
-            call wkvect('&&IRCECL.VALR', 'V V R', ncmpmx*icoef2, irval)
-            call jedetr('&&IRCECL.VALC')
-            call wkvect('&&IRCECL.VALC', 'V V R', ncmpmx*icoef2, icval)
-            do 5 i = 1, ncmpmx*icoef2
-                zi(iposg-1+i)=0
-  5         continue
-            do 26 i = 1, ncmpmx
-                zi(iposv-1+i)=0
- 26         continue
-            do 23 i = 1, ncmpmx
-                if (exisdg(zi(iaec),i)) then
-                    ncmpp=ncmpp+1
-                    if (nbcmpt .ne. 0) then
-                        do 8 icm = 1, nbcmpt
-                            icmp2=nucmpu(icm)
-                            if (i .eq. icmp2) then
-                                ncmp2=ncmp2+1
-                                do 92 jco = 1, icoef2
-                                    zi(iposg-1+(icm-1)*icoef2+jco)=i
- 92                             continue
-                                zi(iposv-1+icm) = ncmpp
+! --------- Select components
+            nbCmpVale = 0
+            do iCmpCata = 1, cmpCataNb
+                cmpCataNume = iCmpCata
+                if (exisdg(inec, cmpCataNume)) then
+                    nbCmpVale = nbCmpVale + 1
+                    if (cmpListNb .ne. 0) then
+! --------------------- Select components from user
+                        do iCmpList = 1, cmpListNb
+                            cmpListNume = cmpListIndx(iCmpList)
+                            if (cmpCataNume .eq. cmpListNume) then
+                                nbCmpActi = nbCmpActi+1
+                                do iCmp = 1, nbCmp
+                                    cmpInPhys((iCmpList-1)*nbCmp+iCmp) = cmpCataNume
+                                end do
+                                cmpInVale(iCmpList) = nbCmpVale
                             endif
-  8                     continue
+                        end do
                     else
-                        do 93 jco = 1, icoef2
-                            zi(iposg-1+(ncmpp-1)*icoef2+jco)=i
- 93                     continue
+! --------------------- Select all components
+                        do iCmp = 1, nbCmp
+                            cmpInPhys((nbCmpVale-1)*nbCmp+iCmp) = cmpCataNume
+                        end do
                     endif
                 endif
- 23         continue
-            if (nbcmpt .eq. 0) ncmp2=ncmpp
-            npcalc = nscal/ncmpp
-!
-! --- RETASSAGE DU TABLEAU DES POSITIONS DES COMPOSANTES DANS GRANDEUR-
-!
-            if (nbcmpt .ne. 0) then
-                i2=0
-                do 9 i = 1, nbcmpt*icoef2
-                    if (zi(iposg-1+i) .ne. 0) then
+            end do
+            if (cmpListNb .eq. 0) then
+                nbCmpActi = nbCmpVale
+            endif
+            npcalc = modeNbScal/nbCmpVale
+! --------- Retassage
+            if (cmpListNb .ne. 0) then
+                i2 = 0
+                do iCmp = 1, cmpListNb*nbCmp
+                    if (cmpInPhys(iCmp) .ne. 0) then
                         i2=i2+1
-                        zi(iposg-1+i2)= zi(iposg-1+i)
+                        cmpInPhys(i2)= cmpInPhys(iCmp)
                     endif
-  9             continue
+                end do
             endif
-!
-! --- STOCKAGE DES NOMS DE COMPOSANTES ---
-            do 42 i = 1, ncmp2
-                if (icoef2 .gt. 1 .or. ncmp .ge. 1) then
-                    do 43 jco = 1, icoef2
-                        if (ncmp .gt. 0) then
-                            call codent(nucmp(jco), 'G', cbid)
+! --------- Save names of components
+            do iCmpActi = 1, nbCmpActi
+                if (nbCmp .gt. 1 .or. nbVariActi .ge. 1) then
+                    do iCmp = 1, nbCmp
+                        if (nbVariActi .gt. 0) then
+                            call codent(cmpVariIndx(iCmp), 'G', text3)
                         else
-                            call codent(jco, 'G', cbid)
+                            call codent(iCmp, 'G', text3)
                         endif
-                        nomcp = nomcmp(zi(iposg-1+i))
-                        zk16(inom-1+(i-1)*icoef2+jco) = 'V'//cbid
- 43                 continue
+                        cmpName((iCmpActi-1)*nbCmp+iCmp) = 'V'//text3
+                    end do
                 else
-                    zk16(inom-1+i)=nomcmp(zi(iposg-1+i))
+                    cmpName(iCmpActi) = cmpCataName(cmpInPhys(iCmpActi))
                 endif
- 42         continue
-!
-! --- CREATION DES FORMATS D'ECRITURE ---
-!
+            end do
+! --------- Prepare Fortran FORMAT
             if (.not.lmax .and. .not.lmin) then
-                ilig=(ncmp2*icoef2+ndim)/6
-                ires=(ncmp2*icoef2+ndim)-ilig*6
-                fmt = ' '
-                fmv = ' '
-                fmv2 = ' '
-                if (ires .ne. 0) then
-                    fmt = '( 1X, A8, 6(1X, '//forcmp//'), 30(/, 9X, 6(1X, '// forcmp//')) )'
-                    if (loc .eq. 'ELNO') then
-                        fmv = '( 1X, A8, 6(1X, '//format//'), 30(/, 9X, 6(1X, '// format//')) )'
-                    else if (loc.eq.'ELGA') then
-                        fmv = '( 2X, I7, 6(1X, '//format//'), 30(/, 9X, 6(1X, '// format//')) )'
-                        fmv2 = '( 9X, 6(1X, '//format//'), 30(/, 9X, 6(1X, '// format//')) )'
-                    else if (loc.eq.'ELEM') then
-                        fmv = '( 9X, 6(1X, '//format//'), 30(/, 9X, 6(1X, '// format//')) )'
-                        fmv2 = '( 9X, 6(1X, '//format//'), 30(/, 9X, 6(1X, '// format//')) )'
+                ilign = (nbCmpActi*nbCmp+meshDime)/6
+                irest = (nbCmpActi*nbCmp+meshDime)-ilign*6
+                fmtHead = ' '
+                fmtVal1 = ' '
+                fmtVal2 = ' '
+                if (irest .ne. 0) then
+! ----------------- Incomplete line
+                    fmtHead = '(1X,A8,6(1X,'//fmtText//'),30(/,9X,6(1X,'//fmtText//')))'
+                    if (fieldSupport .eq. 'ELNO') then
+                        fmtVal1 = '(1X,A8,6(1X, '//realFormat//&
+                                  '),30(/, 9X, 6(1X,'//realFormat//')))'
+                    else if (fieldSupport.eq.'ELGA') then
+                        fmtVal1 = '(2X,I7,6(1X, '//realFormat//&
+                                  '), 30(/, 9X, 6(1X,'//realFormat//')))'
+                        fmtVal2 = '(9X,6(1X, '//realFormat//&
+                                  '), 30(/, 9X, 6(1X,'//realFormat//')))'
+                    else if (fieldSupport.eq.'ELEM') then
+                        fmtVal1 = '(9X,6(1X,'//realFormat//&
+                                  '), 30(/, 9X, 6(1X,'//realFormat//')))'
+                        fmtVal2 = '(9X,6(1X, '//realFormat//&
+                                  '), 30(/, 9X, 6(1X,'//realFormat//')))'
                     endif
-                else if (ires.eq.0.and.ilig.eq.1) then
-                    fmt = '(1X,A8,6(1X,'//forcmp//'))'
-                    if (loc .eq. 'ELNO') then
-                        fmv = '(1X,A8,6(1X,'//format//'))'
-                    else if (loc.eq.'ELGA') then
-                        fmv = '(2X,I7,6(1X,'//format//'))'
-                        fmv2 = '(9X,6(1X,'//format//'))'
-                    else if (loc.eq.'ELEM') then
-                        fmv = '(9X,6(1X,'//format//'))'
-                        fmv2 = '(9X,6(1X,'//format//'))'
+                else if (irest .eq. 0 .and. ilign .eq. 1) then
+! ----------------- Complete first line
+                    fmtHead = '(1X,A8,6(1X,'//fmtText//'))'
+                    if (fieldSupport .eq. 'ELNO') then
+                        fmtVal1 = '(1X,A8,6(1X,'//realFormat//'))'
+                    else if (fieldSupport .eq. 'ELGA') then
+                        fmtVal1 = '(2X,I7,6(1X,'//realFormat//'))'
+                        fmtVal2 = '(9X,6(1X,'//realFormat//'))'
+                    else if (fieldSupport .eq. 'ELEM') then
+                        fmtVal1 = '(9X,6(1X,'//realFormat//'))'
+                        fmtVal2 = '(9X,6(1X,'//realFormat//'))'
                     endif
                 else
-                    write(fmt,'(A,A8,A,I2,A,A8,A)') '(1X,A8,6(1X,',&
-                    forcmp, '),',(ilig-1),'(/,9X,6(1X,',forcmp,')))'
-                    if (loc .eq. 'ELNO') then
-                        write(fmv,'(A,A10,A,I2,A,A10,A)') '(1X,A8,6(1X,',format,&
-     &                   '),',(ilig-1),'(/,9X,6(1X,',format,')))'
-                    else if (loc.eq.'ELGA') then
-                        write(fmv,'(A,A10,A,I2,A,A10,A)') '(2X,I7,6(1X,',format,&
-     &                   '),',(ilig-1),'(/,9X,6(1X,',format,')))'
-                        write(fmv2,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',format,&
-     &                    '),',(ilig-1),'(/,9X,6(1X,',format,')))'
-                    else if (loc.eq.'ELEM') then
-                        write(fmv ,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',format,&
-     &                    '),',(ilig-1),'(/,9X,6(1X,',format,')))'
-                        write(fmv2,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',format,&
-     &                    '),',(ilig-1),'(/,9X,6(1X,',format,')))'
+                    write(fmtHead,'(A,A8,A,I2,A,A8,A)') '(1X,A8,6(1X,',fmtText, '),',&
+                                                        (ilign-1),'(/,9X,6(1X,',fmtText,')))'
+                    if (fieldSupport .eq. 'ELNO') then
+                        write(fmtVal1,'(A,A10,A,I2,A,A10,A)') '(1X,A8,6(1X,',realFormat,'),',&
+                                                              (ilign-1),&
+                                                              '(/,9X,6(1X,',realFormat,')))'
+                    else if (fieldSupport .eq. 'ELGA') then
+                        write(fmtVal1,'(A,A10,A,I2,A,A10,A)') '(2X,I7,6(1X,',realFormat,'),',&
+                                                              (ilign-1),&
+                                                              '(/,9X,6(1X,',realFormat,')))'
+                        write(fmtVal2,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',realFormat,'),',&
+                                                              (ilign-1),&
+                                                              '(/,9X,6(1X,',realFormat,')))'
+                    else if (fieldSupport .eq. 'ELEM') then
+                        write(fmtVal1,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',realFormat,'),',&
+                                                               (ilign-1),&
+                                                               '(/,9X,6(1X,',realFormat,')))'
+                        write(fmtVal2,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',realFormat,'),',&
+                                                               (ilign-1),&
+                                                              '(/,9X,6(1X,',realFormat,')))'
                     endif
                 endif
             endif
         endif
-!
-! --- BOUCLE SUR LES ELEMENTS ---
-!
-        iel=ligrel(ipoin1+ielg-1)
+! ----- Loop on elements
+        iel   = liel(ipoin1+grelElem-1)
         limpr = .true.
+! ----- Print head
         if (.not.lsup .and. .not.linf .and. .not.lmax .and. .not.lmin) then
-            if (ndim .eq. 0) then
-                write(ifi,fmt) nomel(iel),(zk16(inom-1+i)(1:11),&
-                i=1,icoef2*ncmp2)
+            if (meshDime .eq. 0) then
+                write(fileUnit,fmtHead) meshCellName(iel),&
+                                        (cmpName(iCmp)(1:11), iCmp=1,nbCmp*nbCmpActi)
             else
-                write(ifi,fmt) nomel(iel),(nomcor(i),i=1,ndim),&
-                (zk16(inom-1+i)(1:11),i=1,icoef2*ncmp2)
+                write(fileUnit,fmtHead) meshCellName(iel),&
+                                        (meshCmpName(iCmp),iCmp=1,meshDime),&
+                                        (cmpName(iCmp)(1:11),iCmp=1,nbCmp*nbCmpActi)
             endif
         endif
-        iachml = iad + nsca * (ielg-1)
-        if (loc .eq. 'ELGA' .or. loc .eq. 'ELEM') then
-            do 16 ipca = 1, npcalc
-                j=iachml-1+ncmpp*icoef*(ipca-1)
-                if (nbcmpt .eq. 0) then
-                    do 10 i = 1, ncmp2
-                        if (ncmp .gt. 0) then
-                            do 551 jco = 1, icoef2
-                                zr(irval-1+(i-1)*icoef2+jco)= dble(&
-                                vale(j+i+(nucmp(jco)-1)*ncmpp))
-                                zr(icval-1+(i-1)*icoef2+jco)= dimag(&
-                                vale(j+i+(nucmp(jco)-1)*ncmpp))
-                                zi(icoe-1+(i-1)*icoef2+jco)=jco
-551                         continue
+        iachml = iad + nbScal * (grelElem-1)
+! ----- Field support: ELGA/ELEM
+        if (fieldSupport .eq. 'ELGA' .or. fieldSupport .eq. 'ELEM') then
+            do ipca = 1, npcalc
+                j = iachml-1+nbCmpVale*nbVariCell*(ipca-1)
+                if (cmpListNb .eq. 0) then
+                    do iCmpActi = 1, nbCmpActi
+                        if (nbVariActi .gt. 0) then
+                            do iCmp = 1, nbCmp
+                                valeReal((iCmpActi-1)*nbCmp+iCmp) = &
+                                    dble(vale(j+iCmpActi+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                valeImag((iCmpActi-1)*nbCmp+iCmp) = &
+                                    dimag(vale(j+iCmpActi+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                valeIndx((iCmpActi-1)*nbCmp+iCmp) = &
+                                    iCmp
+                                if (cplxFormat .eq. 'MODULE') then
+                                    valeComp((iCmpActi-1)*nbCmp+iCmp) = &
+                                        abs(vale(j+iCmpActi+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                elseif (cplxFormat .eq. 'PHASE') then
+                                    valeComp((iCmpActi-1)*nbCmp+iCmp) = atan2(&
+                                        dble(vale(j+iCmpActi+(cmpVariIndx(iCmp)-1)*nbCmpVale)),&
+                                        dimag(vale(j+iCmpActi+(cmpVariIndx(iCmp)-1)*nbCmpVale)))*c1
+                                endif
+                            end do
                         else
-                            do 55 jco = 1, icoef2
-                                zr(irval-1+(i-1)*icoef2+jco)= dble(&
-                                vale(j+i+(jco-1)*ncmpp))
-                                zr(icval-1+(i-1)*icoef2+jco)= dimag(&
-                                vale(j+i+(jco-1)*ncmpp))
-                                zi(icoe-1+(i-1)*icoef2+jco)=jco
- 55                         continue
+                            do iCmp = 1, nbCmp
+                                valeReal((iCmpActi-1)*nbCmp+iCmp) = &
+                                    dble(vale(j+iCmpActi+(iCmp-1)*nbCmpVale))
+                                valeImag((iCmpActi-1)*nbCmp+iCmp) = &
+                                    dimag(vale(j+iCmpActi+(iCmp-1)*nbCmpVale))
+                                valeIndx((iCmpActi-1)*nbCmp+iCmp) = &
+                                    iCmp
+                                if (cplxFormat .eq. 'MODULE') then
+                                    valeComp((iCmpActi-1)*nbCmp+iCmp) = &
+                                        abs(vale(j+iCmpActi+(iCmp-1)*nbCmpVale))
+                                elseif (cplxFormat .eq. 'PHASE') then
+                                    valeComp((iCmpActi-1)*nbCmp+iCmp) = atan2(&
+                                        dble(vale(j+iCmpActi+(iCmp-1)*nbCmpVale)),&
+                                        dimag(vale(j+iCmpActi+(iCmp-1)*nbCmpVale)))*c1
+                                endif
+                            end do
                         endif
- 10                 continue
+                    end do
                 else
-                    do 20 i = 1, ncmp2
-                        inu=zi(iposv-1+i)
-                        if (ncmp .gt. 0) then
-                            do 301 jco = 1, icoef2
-                                zr(irval-1+(i-1)*icoef2+jco)= dble(&
-                                vale(j+inu+(nucmp(jco)-1)*ncmpp))
-                                zr(icval-1+(i-1)*icoef2+jco)= dimag(&
-                                vale(j+inu+(nucmp(jco)-1)*ncmpp))
-                                zi(icoe-1+(i-1)*icoef2+jco)=jco
-301                         continue
+                    do iCmpActi = 1, nbCmpActi
+                        cmpNume=cmpInVale(iCmp)
+                        if (nbVariActi .gt. 0) then
+                            do iCmp = 1, nbCmp
+                                valeReal((iCmpActi-1)*nbCmp+iCmp) = &
+                                    dble(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                valeImag((iCmpActi-1)*nbCmp+iCmp) = &
+                                    dimag(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                valeIndx((iCmpActi-1)*nbCmp+iCmp) = &
+                                    iCmp
+                                if (cplxFormat .eq. 'MODULE') then
+                                    valeComp((iCmpActi-1)*nbCmp+iCmp) = &
+                                        abs(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                elseif (cplxFormat .eq. 'PHASE') then
+                                    valeComp((iCmpActi-1)*nbCmp+iCmp) = atan2(&
+                                        dble(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale)),&
+                                        dimag(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale)))*c1
+                                endif
+                            end do
                         else
-                            do 30 jco = 1, icoef2
-                                zr(irval-1+(i-1)*icoef2+jco)= dble(&
-                                vale(j+inu+(jco-1)*ncmpp))
-                                zr(icval-1+(i-1)*icoef2+jco)= dimag(&
-                                vale(j+inu+(jco-1)*ncmpp))
-                                zi(icoe-1+(i-1)*icoef2+jco)=jco
- 30                         continue
+                            do iCmp = 1, nbCmp
+                                valeReal((iCmpActi-1)*nbCmp+iCmp) = &
+                                    dble(vale(j+cmpNume+(iCmp-1)*nbCmpVale))
+                                valeImag((iCmpActi-1)*nbCmp+iCmp) = &
+                                    dimag(vale(j+cmpNume+(iCmp-1)*nbCmpVale))
+                                valeIndx((iCmpActi-1)*nbCmp+iCmp) = &
+                                    iCmp
+                                if (cplxFormat .eq. 'MODULE') then
+                                    valeComp((iCmpActi-1)*nbCmp+iCmp) = &
+                                        abs(vale(j+cmpNume+(iCmp-1)*nbCmpVale))
+                                elseif (cplxFormat .eq. 'PHASE') then
+                                    valeComp((iCmpActi-1)*nbCmp+iCmp) = atan2(&
+                                        dble(vale(j+cmpNume+(iCmp-1)*nbCmpVale)),&
+                                        dimag(vale(j+cmpNume+(iCmp-1)*nbCmpVale)))*c1
+                                endif
+                            end do
                         endif
- 20                 continue
+                    end do
                 endif
-!
-! --  TRI DES COMPOSANTES DANS L'INTERVALLE BORINF,BORSUP
-!
+! ------------- Select values between given boundaries
                 if (lsup .or. linf) then
-                    do 35 iva = 1, icoef2*ncmp2
-                        value = sqrt(zr(irval-1+iva)**2+zr(icval-1+ iva)**2)
+! ----------------- Désactivation des composantes en dehors des bornes
+                    do iCmpActi = 1, nbCmp*nbCmpActi
+                        value = sqrt(valeReal(iCmpActi)**2+valeImag(iCmpActi)**2)
                         if (lsup) then
-                            if ((value-borsup) .gt. 0.d0) zi(icoe-1+iva)= 0
+                            if ((value-borsup) .gt. 0.d0) valeIndx(iCmpActi)= 0
                         endif
                         if (linf) then
-                            if ((value-borinf) .lt. 0.d0) zi(icoe-1+iva)= 0
+                            if ((value-borinf) .lt. 0.d0) valeIndx(iCmpActi)= 0
                         endif
- 35                 continue
-!
-! --- RETASSAGE POUR IMPRIMER COMPOSANTES PRESENTES DANS L'INTERVALLE --
-!
-                    icomp2=0
-                    do 36 i = 1, icoef2*ncmp2
-                        if (zi(icoe-1+i) .ne. 0) then
+                    end do
+! ----------------- Tassage
+                    icomp2 = 0
+                    do iCmpActi = 1, nbCmp*nbCmpActi
+                        if (valeIndx(iCmpActi) .ne. 0) then
                             icomp2=icomp2+1
-                            zi(icoe-1+icomp2)=zi(icoe-1+i)
-                            zi(ipo2-1+icomp2)=zi(iposg-1+i)
-                            zr(irval-1+icomp2)=zr(irval-1+i)
-                            zr(icval-1+icomp2)=zr(icval-1+i)
-                            zk16(inop-1+icomp2)=zk16(inom-1+i)
+                            valeIndx(icomp2)    = valeIndx(iCmpActi)
+                            valeSupIndx(icomp2) = cmpInPhys(iCmpActi)
+                            valeReal(icomp2)    = valeReal(iCmpActi)
+                            valeImag(icomp2)    = valeImag(iCmpActi)
+                            valeSupName(icomp2) = cmpName(iCmpActi)
+                            valeComp(icomp2)    = valeComp(iCmpActi)
                         endif
- 36                 continue
+                    end do
                     if (icomp2 .eq. 0) goto 16
-!
-! -- IMPRESSION ----
-!
+! ----------------- Print in file
                     if (.not.lmax .and. .not.lmin) then
-                        ilig=(icomp2)/6
-                        ires=(icomp2)-ilig*6
-                        fmt1 = ' '
-                        fmt2 = ' '
-                        fmt3 = ' '
-                        if (loc .eq. 'ELGA') then
-                            if (ires .ne. 0) then
-                                fmt1 = '(9X, 6(1X, '//forcmp//'), 30(/, 9X, 6(1X, '//forcmp//'))&
-                                       )'
-                                fmt2 = '(&
-                                       2X, I7, 6(1X, '//format//'),&
-                                       30(/, 9X, 6(1X, ' //format//'))&
-                                       )'
-                                fmt3 = '(9X, 6(1X, '//format//'), 30(/, 9X, 6(1X, ' //format//'))&
-                                       )'
-                            else if (ires.eq.0.and.ilig.eq.1) then
-                                fmt1 = '(9X,6(1X,'//forcmp//'))'
-                                fmt2 = '(2X,I7,6(1X,'//format//'))'
-                                fmt3 = '(9X,6(1X,'//format//'))'
+                        ilign = (icomp2)/6
+                        irest = (icomp2)-ilign*6
+                        fmt1  = ' '
+                        fmt2  = ' '
+                        fmt3  = ' '
+                        if (fieldSupport .eq. 'ELGA') then
+                            if (irest .ne. 0) then
+                                fmt1 = '(9X,6(1X,'//fmtText//'),30(/,9X,6(1X,'//fmtText//')))'
+                                fmt2 = '(2X,I7,6(1X,'//realFormat&
+                                        //'),30(/,9X,6(1X,'//realFormat//')))'
+                                fmt3 = '(9X,6(1X,'//realFormat//'),30(/,9X,6(1X,'//realFormat//')))'
+                            else if (irest.eq.0.and.ilign.eq.1) then
+                                fmt1 = '(9X,6(1X,'//fmtText//'))'
+                                fmt2 = '(2X,I7,6(1X,'//realFormat//'))'
+                                fmt3 = '(9X,6(1X,'//realFormat//'))'
                             else
-                                write(fmt1,'(A,A8,A,I2,A,A8,A)') '(1X,A8,6(1X,',&
-     &                   forcmp,'),',(ilig-1),'(/,9X,6(1X,',forcmp,')))'
-                                write(fmt2,'(A,A10,A,I2,A,A10,A)')'(2X,I7,6(1X,',&
-     &                   format,'),',(ilig-1),'(/,9X,6(1X,',format,')))'
-                                write(fmt3,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',&
-     &                   format,'),',(ilig-1),'(/,9X,6(1X,',format,')))'
+                                write(fmt1,'(A,A8,A,I2,A,A8,A)')   '(1X,A8,6(1X,',fmtText,'),',&
+                                                                   (ilign-1),&
+                                                                   '(/,9X,6(1X,',fmtText,')))'
+                                write(fmt2,'(A,A10,A,I2,A,A10,A)') '(2X,I7,6(1X,',realFormat,'),',&
+                                                                   (ilign-1),&
+                                                                   '(/,9X,6(1X,',realFormat,')))'
+                                write(fmt3,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',realFormat,'),',&
+                                                                   (ilign-1),&
+                                                                   '(/,9X,6(1X,',realFormat,')))'
                             endif
                         else
-                            if (ires .ne. 0) then
-                                fmt1 = '(9X, 6(1X, '//forcmp//'), 30(/, 9X, 6(1X, ' //forcmp//'))&
-                                       )'
-                                fmt2 = '(9X, 6(1X, '//format//'), 30(/, 9X, 6(1X, ' //format//'))&
-                                       )'
-                                fmt3 = '(9X, 6(1X, '//format//'), 30(/, 9X, 6(1X, ' //format//'))&
-                                       )'
-                            else if (ires.eq.0.and.ilig.eq.1) then
-                                fmt1 = '(9X,6(1X,'//forcmp//'))'
-                                fmt2 = '(9X,6(1X,'//format//'))'
-                                fmt3 = '(9X,6(1X,'//format//'))'
+                            if (irest .ne. 0) then
+                                fmt1 = '(9X,6(1X,'//fmtText//'),30(/,9X,6(1X,'//fmtText//')))'
+                                fmt2 = '(9X,6(1X,'//realFormat//'),30(/,9X,6(1X,'//realFormat//')))'
+                                fmt3 = '(9X,6(1X,'//realFormat//'),30(/,9X,6(1X,'//realFormat//')))'
+                            else if (irest.eq.0.and.ilign.eq.1) then
+                                fmt1 = '(9X,6(1X,'//fmtText//'))'
+                                fmt2 = '(9X,6(1X,'//realFormat//'))'
+                                fmt3 = '(9X,6(1X,'//realFormat//'))'
                             else
-                                write(fmt1,'(A,A8,A,I2,A,A8,A)') '(1X,A8,6(1X,',&
-     &                   forcmp,'),',(ilig-1),'(/,9X,6(1X,',forcmp,')))'
-                                write(fmt2,'(A,A10,A,I2,A,A10,A)')'(9X,6(1X,',&
-     &                   format,'),',(ilig-1),'(/,9X,6(1X,',format,')))'
-                                write(fmt3,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',&
-     &                   format,'),',(ilig-1),'(/,9X,6(1X,',format,')))'
+                                write(fmt1,'(A,A8,A,I2,A,A8,A)')   '(1X,A8,6(1X,',fmtText,'),',&
+                                                                   (ilign-1),&
+                                                                   '(/,9X,6(1X,',fmtText,')))'
+                                write(fmt2,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',realFormat,'),',&
+                                                                   (ilign-1),&
+                                                                   '(/,9X,6(1X,',realFormat,')))'
+                                write(fmt3,'(A,A10,A,I2,A,A10,A)') '(9X,6(1X,',realFormat,'),',&
+                                                                   (ilign-1),&
+                                                                   '(/,9X,6(1X,',realFormat,')))'
                             endif
                         endif
-                        if (lsup .or. linf) then
-                            if (limpr) then
-                                write(ifi,'(A,I2,A)') nomel(iel)
-                                limpr=.false.
-                            endif
+                        if (limpr) then
+                            write(fileUnit,'(A,I2,A)') meshCellName(iel)
+                            limpr = ASTER_FALSE
                         endif
-                        write(ifi,fmt1) (zk16(inop-1+i)(1:11),i=1,&
-                        icomp2)
-                        write(ifi,fmt2) ipca,(zr(irval-1+icmp),&
-                        icmp=1,icomp2)
-                        write(ifi,fmt3) (zr(icval-1+icmp), icmp=1,&
-                        icomp2)
+                        write(fileUnit,fmt1) (valeSupName(iCmp)(1:11),iCmp=1,icomp2)
+                        if (cplxFormat .eq. ' ' .or. cplxFormat .eq. 'REEL') then
+                            write(fileUnit,fmt2) ipca,(valeReal(icmp),icmp=1,icomp2)
+                        endif
+                        if (cplxFormat .eq. ' ') then
+                            write(fileUnit,fmt3) (valeImag(icmp),icmp=1,icomp2)
+                        endif
+                        if (cplxFormat .eq. 'IMAG') then
+                            write(fileUnit,fmt2) ipca,(valeImag(icmp),icmp=1,icomp2)
+                        endif
+                        if (cplxFormat .eq. 'MODULE' .or. cplxFormat .eq. 'PHASE') then
+                            write(fileUnit,fmt2) ipca,(valeComp(icmp),icmp=1,icomp2)
+                        endif
                     endif
-                    nbcpt=icomp2
+                    nbcpt = icomp2
                 else
                     if (.not.lmax .and. .not.lmin) then
-                        if (loc .eq. 'ELGA') then
-                            write(ifi,fmv) ipca,(zr(irval-1+icmp),&
-                            icmp=1,icoef2*ncmp2)
-                            write(ifi,fmv2) (zr(icval-1+icmp),&
-                            icmp=1,icoef2*ncmp2)
+                        if (fieldSupport .eq. 'ELGA') then
+                            if (cplxFormat .eq. ' ' .or. cplxFormat .eq. 'REEL') then
+                                write(fileUnit,fmtVal1) ipca,(valeReal(icmp),icmp=1,nbCmp*nbCmpActi)
+                            endif
+                            if (cplxFormat .eq. ' ') then
+                                write(fileUnit,fmtVal2) (valeImag(icmp),icmp=1,nbCmp*nbCmpActi)
+                            endif
+                            if (cplxFormat .eq. 'IMAG') then
+                                write(fileUnit,fmtVal1) ipca,(valeImag(icmp),icmp=1,nbCmp*nbCmpActi)
+                            endif
+                            if (cplxFormat .eq. 'MODULE' .or. cplxFormat .eq. 'PHASE') then
+                                write(fileUnit,fmtVal1) ipca,(valeComp(icmp),icmp=1,nbCmp*nbCmpActi)
+                            endif
                         else
-                            write(ifi,fmv) (zr(irval-1+icmp), icmp=1,&
-                            icoef2*ncmp2)
-                            write(ifi,fmv2) (zr(icval-1+icmp),&
-                            icmp=1,icoef2*ncmp2)
+                            if (cplxFormat .eq. ' ' .or. cplxFormat .eq. 'REEL') then
+                                write(fileUnit,fmtVal1) (valeReal(icmp),icmp=1,nbCmp*nbCmpActi)
+                            endif
+                            if (cplxFormat .eq. ' ') then
+                                write(fileUnit,fmtVal1) (valeImag(icmp),icmp=1,nbCmp*nbCmpActi)
+                            endif
+                            if (cplxFormat .eq. 'IMAG') then
+                                write(fileUnit,fmtVal1) (valeImag(icmp),icmp=1,nbCmp*nbCmpActi)
+                            endif
+                            if (cplxFormat .eq. 'MODULE' .or. cplxFormat .eq. 'PHASE') then
+                                write(fileUnit,fmtVal1) (valeComp(icmp),icmp=1,nbCmp*nbCmpActi)
+                            endif
                         endif
                     endif
-                    nbcpt=icoef2*ncmp2
+                    nbcpt = nbCmp*nbCmpActi
                 endif
-!
-! -- RECHERCHE DE LA VALEUR MAXIMALE ---
-!
+! ------------- Look for maximal value
                 if (lmax) then
-                    do 101 i = 1, nbcpt
+                    do iCmpList = 1, nbcpt
                         if (lsup .or. linf) then
-                            iadr=(zi(ipo2-1+i)-1)*icoef2+zi(icoe-1+i)
+                            iadr=(valeSupIndx(iCmpList)-1)*nbCmp+valeIndx(iCmpList)
                         else
-                            iadr=(zi(iposg-1+i)-1)*icoef2+zi(icoe-1+i)
+                            iadr=(cmpInPhys(iCmpList)-1)*nbCmp+valeIndx(iCmpList)
                         endif
-                        if (zr(irmax-1+iadr) .eq. rundf) then
-                            zr(irmax-1+iadr) = zr(irval-1+i)
-                            zr(icmax-1+iadr) = zr(icval-1+i)
-                            zk8(inmax-1+iadr) = nomel(iel)
-                            zi(ivmax-1+iadr) = 1
+                        if (valeMaxReal(iadr) .eq. rundf) then
+                            valeMaxReal(iadr) = valeReal(iCmpList)
+                            valeMaxImag(iadr) = valeImag(iCmpList)
+                            valeMaxElem(iadr) = meshCellName(iel)
+                            valeMaxNb(iadr)   = 1
                         else
-                            valmax = sqrt( zr(irmax-1+iadr)**2 + zr(icmax-1+iadr)**2)
-                            value = sqrt(zr(irval-1+i)**2 + zr(icval- 1+i)**2)
+                            valmax = sqrt( valeMaxReal(iadr)**2 + valeMaxImag(iadr)**2)
+                            value  = sqrt(valeReal(iCmpList)**2 + valeImag(iCmpList)**2)
                             if (value .gt. valmax) then
-                                zr(irmax-1+iadr)= zr(irval-1+i)
-                                zr(icmax-1+iadr)= zr(icval-1+i)
-                                zk8(inmax-1+iadr) = nomel(iel)
-                                zi(ivmax-1+iadr) = 1
-                            else if (value.eq.valmax) then
-                                zi(ivmax-1+iadr)=zi(ivmax-1+iadr)+1
+                                valeMaxReal(iadr) = valeReal(iCmpList)
+                                valeMaxImag(iadr) = valeImag(iCmpList)
+                                valeMaxElem(iadr) = meshCellName(iel)
+                                valeMaxNb(iadr)   = 1
+                            else if (value .eq. valmax) then
+                                valeMaxNb(iadr)   = valeMaxNb(iadr)+1
                             endif
                         endif
-101                 continue
+                    end do
                 endif
-!
-! -- RECHERCHE DE LA VALEURE MINIMALE ---
-!
+! ------------- Look for minimal value
                 if (lmin) then
-                    do 102 i = 1, nbcpt
+                    do iCmpList = 1, nbcpt
                         if (lsup .or. linf) then
-                            iadr=(zi(ipo2-1+i)-1)*icoef2+zi(icoe-1+i)
+                            iadr=(valeSupIndx(iCmpList)-1)*nbCmp+valeIndx(iCmpList)
                         else
-                            iadr=(zi(iposg-1+i)-1)*icoef2+zi(icoe-1+i)
+                            iadr=(cmpInPhys(iCmpList)-1)*nbCmp+valeIndx(iCmpList)
                         endif
-                        if (zr(irmin-1+iadr) .eq. rundf) then
-                            zr(irmin-1+iadr) = zr(irval-1+i)
-                            zr(icmin-1+iadr) = zr(icval-1+i)
-                            zk8(inmin-1+iadr) = nomel(iel)
-                            zi(ivmin-1+iadr) = 1
+                        if (valeMaxReal(iadr) .eq. rundf) then
+                            valeMaxReal(iadr) = valeReal(iCmpList)
+                            valeMaxImag(iadr) = valeImag(iCmpList)
+                            valeMinElem(iadr) = meshCellName(iel)
+                            valeMinNb(iadr)   = 1
                         else
-                            valmin = sqrt( zr(irmin-1+iadr)**2 + zr(icmin-1+iadr)**2)
-                            value = sqrt(zr(irval-1+i)**2 + zr(icval- 1+i)**2)
+                            valmin = sqrt( valeMaxReal(iadr)**2 + valeMaxImag(iadr)**2)
+                            value = sqrt(valeReal(iCmpList)**2 + valeImag(iCmpList)**2)
                             if (value .lt. valmin) then
-                                zr(irmin-1+iadr)= zr(irval-1+i)
-                                zr(icmin-1+iadr)= zr(icval-1+i)
-                                zk8(inmin-1+iadr) = nomel(iel)
-                                zi(ivmin-1+iadr) = 1
-                            else if (value.eq.valmin) then
-                                zi(ivmin-1+iadr)=zi(ivmin-1+iadr)+1
+                                valeMaxReal(iadr) = valeReal(iCmpList)
+                                valeMaxImag(iadr) = valeImag(iCmpList)
+                                valeMinElem(iadr) = meshCellName(iel)
+                                valeMinNb(iadr)   = 1
+                            else if (value .eq. valmin) then
+                                valeMinNb(iadr)   = valeMinNb(iadr)+1
                             endif
                         endif
-102                 continue
+                    end do
                 endif
- 16         continue
-!CCCCC
-        else if (loc.eq.'ELNO') then
-            ipoin=point(iel)
-            nbno=point(iel+1)-ipoin
-            ncou=npcalc/nbno
-            do 17 icou = 1, ncou
-                if (ncou .gt. 1) then
+ 16             continue
+            end do
+! ----- Field support: ELNO
+        else if (fieldSupport.eq.'ELNO') then
+            ipoin   = connexLen(iel)
+            nbNode  = connexLen(iel+1)-ipoin
+            nbLayer = npcalc/nbNode
+            do iLayer = 1, nbLayer
+                if (nbLayer .gt. 1) then
                     if (.not.lmax .and. .not.lmin) then
-                        if (ncou .eq. 2) then
-                            if (icou .eq. 1) write(ifi,'(A)') ' PEAU INTERNE'
-                            if (icou .eq. 2) write(ifi,'(A)') ' PEAU EXTERNE'
+                        if (nbLayer .eq. 2) then
+                            if (iLayer .eq. 1) write(fileUnit,'(A)') ' PEAU INTERNE'
+                            if (iLayer .eq. 2) write(fileUnit,'(A)') ' PEAU EXTERNE'
                         else
-                            write(ifi,'(A,I3)') ' COUCHE NUMERO:',&
-                            icou
+                            write(fileUnit,'(A,I3)') ' COUCHE NUMERO:',iLayer
                         endif
                     endif
                 endif
-                do 18 in = 1, nbno
-                    nuno = connex(ipoin-1+in)
-                    if (nbnot .ne. 0) then
-                        do 187 iino = 1, nbnot
-                            if (nuno .eq. numnoe(iino)) goto 189
-187                     continue
-                        goto 18
-189                     continue
+                do iNode = 1, nbNode
+                    nodeNume = connex(ipoin-1+iNode)
+                    if (nodeListNb .ne. 0) then
+                        do iNodeList = 1, nodeListNb
+                            if (nodeNume .eq. nodeListNume(iNodeList)) exit
+                        end do
+                        cycle
                     endif
-                    nomno= nomnos(nuno)
-                    j=iachml-1+ncmpp*icoef*(in-1) +(icou-1)*ncmpp*&
-                    icoef*nbno
-                    if (nbcmpt .eq. 0) then
-                        do 50 i = 1, ncmp2
-                            if (ncmp .gt. 0) then
-                                do 511 jco = 1, icoef2
-                                    zr(irval-1+(i-1)*icoef2+jco)=&
-                                    dble(vale(j+i+(nucmp(jco)-1)*&
-                                    ncmpp))
-                                    zr(icval-1+(i-1)*icoef2+jco)=&
-                                    dimag(vale(j+i+(nucmp(jco)-1)*&
-                                    ncmpp))
-                                    zi(icoe-1+(i-1)*icoef2+jco)=jco
-511                             continue
+                    nodeName = meshNodeName(nodeNume)
+                    j        = iachml-1+nbCmpVale*nbVariCell*(iNode-1)+&
+                               (iLayer-1)*nbCmpVale*nbVariCell*nbNode
+                    if (cmpListNb .eq. 0) then
+                        do iCmpList = 1, nbCmpActi
+                            if (nbVariActi .gt. 0) then
+                                do iCmp = 1, nbCmp
+                                    valeReal((iCmpList-1)*nbCmp+iCmp) = &
+                                        dble(vale(j+iCmpList+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                    valeImag((iCmpList-1)*nbCmp+iCmp) = &
+                                        dimag(vale(j+iCmpList+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                    valeIndx((iCmpList-1)*nbCmp+iCmp) = &
+                                        iCmp
+                                    if (cplxFormat .eq. 'MODULE') then
+                                        valeComp((iCmpList-1)*nbCmp+iCmp) = &
+                                            abs(vale(j+iCmpList+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                    elseif (cplxFormat .eq. 'PHASE') then
+                                        valeComp((iCmpList-1)*nbCmp+iCmp) = atan2(&
+                                            dble(vale(j+iCmpList+(cmpVariIndx(iCmp)-1)*nbCmpVale)),&
+                                        dimag(vale(j+iCmpList+(cmpVariIndx(iCmp)-1)*nbCmpVale)))*c1
+                                    endif
+                                end do
                             else
-                                do 51 jco = 1, icoef2
-                                    zr(irval-1+(i-1)*icoef2+jco)=&
-                                    dble(vale(j+i+(jco-1)*ncmpp))
-                                    zr(icval-1+(i-1)*icoef2+jco)=&
-                                    dimag(vale(j+i+(jco-1)*ncmpp))
-                                    zi(icoe-1+(i-1)*icoef2+jco)=jco
- 51                             continue
+                                do iCmp = 1, nbCmp
+                                    valeReal((iCmpList-1)*nbCmp+iCmp) = &
+                                        dble(vale(j+iCmpList+(iCmp-1)*nbCmpVale))
+                                    valeImag((iCmpList-1)*nbCmp+iCmp) = &
+                                        dimag(vale(j+iCmpList+(iCmp-1)*nbCmpVale))
+                                    valeIndx((iCmpList-1)*nbCmp+iCmp) = &
+                                        iCmp
+                                    if (cplxFormat .eq. 'MODULE') then
+                                        valeComp((iCmpList-1)*nbCmp+iCmp) = &
+                                            abs(vale(j+iCmpList+(iCmp-1)*nbCmpVale))
+                                    elseif (cplxFormat .eq. 'PHASE') then
+                                        valeComp((iCmpList-1)*nbCmp+iCmp) = atan2(&
+                                            dble(vale(j+iCmpList+(iCmp-1)*nbCmpVale)),&
+                                            dimag(vale(j+iCmpList+(iCmp-1)*nbCmpVale)))*c1
+                                    endif
+                                end do
                             endif
- 50                     continue
+                        end do
                     else
-                        do 60 i = 1, ncmp2
-                            inu=zi(iposv-1+i)
-                            if (ncmp .gt. 0) then
-                                do 701 jco = 1, icoef2
-                                    zr(irval-1+(i-1)*icoef2+jco)=&
-                                    dble(vale(j+inu+(nucmp(jco)-1)*&
-                                    ncmpp))
-                                    zr(icval-1+(i-1)*icoef2+jco)=&
-                                    dimag(vale(j+inu+(nucmp(jco)-1)*&
-                                    ncmpp))
-                                    zi(icoe-1+(i-1)*icoef2+jco)=jco
-701                             continue
+                        do iCmpList = 1, nbCmpActi
+                            cmpNume = cmpInVale(iCmpList)
+                            if (nbVariActi .gt. 0) then
+                                do iCmp = 1, nbCmp
+                                    valeReal((iCmpList-1)*nbCmp+iCmp) = &
+                                        dble(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                    valeImag((iCmpList-1)*nbCmp+iCmp) = &
+                                        dimag(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                    valeIndx((iCmpList-1)*nbCmp+iCmp) = &
+                                        iCmp
+                                    if (cplxFormat .eq. 'MODULE') then
+                                        valeComp((iCmpList-1)*nbCmp+iCmp) = &
+                                            abs(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale))
+                                    elseif (cplxFormat .eq. 'PHASE') then
+                                        valeComp((iCmpList-1)*nbCmp+iCmp) = atan2(&
+                                            dble(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale)),&
+                                        dimag(vale(j+cmpNume+(cmpVariIndx(iCmp)-1)*nbCmpVale)))*c1
+                                    endif
+                                end do
                             else
-                                do 70 jco = 1, icoef2
-                                    zr(irval-1+(i-1)*icoef2+jco)=&
-                                    dble(vale(j+inu+(jco-1)*ncmpp))
-                                    zr(icval-1+(i-1)*icoef2+jco)=&
-                                    dimag(vale(j+inu+(jco-1)*ncmpp))
-                                    zi(icoe-1+(i-1)*icoef2+jco)=jco
- 70                             continue
+                                do iCmp = 1, nbCmp
+                                    valeReal((iCmpList-1)*nbCmp+iCmp) = &
+                                        dble(vale(j+cmpNume+(iCmp-1)*nbCmpVale))
+                                    valeImag((iCmpList-1)*nbCmp+iCmp) = &
+                                        dimag(vale(j+cmpNume+(iCmp-1)*nbCmpVale))
+                                    valeIndx((iCmpList-1)*nbCmp+iCmp) = &
+                                        iCmp
+                                    if (cplxFormat .eq. 'MODULE') then
+                                        valeComp((iCmpList-1)*nbCmp+iCmp) = &
+                                            abs(vale(j+cmpNume+(iCmp-1)*nbCmpVale))
+                                    elseif (cplxFormat .eq. 'PHASE') then
+                                        valeComp((iCmpList-1)*nbCmp+iCmp) = atan2(&
+                                            dble(vale(j+cmpNume+(iCmp-1)*nbCmpVale)),&
+                                            dimag(vale(j+cmpNume+(iCmp-1)*nbCmpVale)))*c1
+                                    endif
+                                end do
                             endif
- 60                     continue
+                        end do
                     endif
-!
-! --  TRI DES COMPOSANTES DANS L'INTERVALLE BORINF,BORSUP
-!
+! ----------------- Print values between given boundaries
                     if (lsup .or. linf) then
-                        do 65 iva = 1, icoef2*ncmp2
-                            value= sqrt(zr(irval-1+iva)**2+ zr(icval-&
-                            1+iva)**2)
+! --------------------- Désactivation des composantes en dehors des bornes
+                        do iCmpActi = 1, nbCmp*nbCmpActi
+                            value= sqrt(valeReal(iCmpActi)**2+valeImag(iCmpActi)**2)
                             if (lsup) then
-                                if ((value-borsup) .gt. 0.d0) zi(icoe-1+ iva)=0
+                                if ((value-borsup) .gt. 0.d0) valeIndx(iCmpActi)=0
                             endif
                             if (linf) then
-                                if ((value-borinf) .lt. 0.d0) zi(icoe-1+ iva)=0
+                                if ((value-borinf) .lt. 0.d0) valeIndx(iCmpActi)=0
                             endif
- 65                     continue
-!
-! --- RETASSAGE POUR IMPRIMER COMPOSANTES PRESENTES DANS L'INTERVALLE --
-!
-                        icomp2=0
-                        do 66 i = 1, icoef2*ncmp2
-                            if (zi(icoe-1+i) .ne. 0) then
-                                icomp2=icomp2+1
-                                zi(icoe-1+icomp2)=zi(icoe-1+i)
-                                zi(ipo2-1+icomp2)=zi(iposg-1+i)
-                                zr(irval-1+icomp2)=zr(irval-1+i)
-                                zr(icval-1+icomp2)=zr(icval-1+i)
-                                zk16(inop-1+icomp2)=zk16(inom-1+i)
+                        end do
+! --------------------- Tassage
+                        icomp2 = 0
+                        do iCmpList = 1, nbCmp*nbCmpActi
+                            if (valeIndx(iCmpList) .ne. 0) then
+                                icomp2 = icomp2+1
+                                valeIndx(icomp2)    = valeIndx(iCmpList)
+                                valeSupIndx(icomp2) = cmpInPhys(iCmpList)
+                                valeReal(icomp2)    = valeReal(iCmpList)
+                                valeImag(icomp2)    = valeImag(iCmpList)
+                                valeSupName(icomp2) = cmpName(iCmpList)
+                                valeComp(icomp2)    = valeComp(iCmpList)
                             endif
- 66                     continue
+                        end do
                         if (icomp2 .eq. 0) goto 18
-!
-! -- IMPRESSION  --
-!
+! --------------------- ELNO field - Print in file
                         if (.not.lmax .and. .not.lmin) then
-                            ilig=(icomp2+ndim)/6
-                            ires=(icomp2+ndim)-ilig*6
+                            ilign=(icomp2+meshDime)/6
+                            irest=(icomp2+meshDime)-ilign*6
                             fmt1 = ' '
                             fmt2 = ' '
-                            if (ires .ne. 0) then
-                                fmt1 = '(9X, 6(1X, '//forcmp// '), 30(/, 9X, 6(1X, '//forcmp//'))&
-                                       )'
-                                fmt2 = '(&
-                                       1X, A8, 6(1X, '//format// '),&
-                                       30(/, 9X, 6(1X, ' //format//'))&
-                                       )'
-                            else if (ires.eq.0.and.ilig.eq.1) then
-                                fmt1 = '(9X,6(1X,'//forcmp//'))'
-                                fmt2 = '(1X,A8,6(1X,'//format//'))'
+                            if (irest .ne. 0) then
+                                fmt1 = '(9X,6(1X,'//fmtText//'),30(/,9X,6(1X,'//fmtText//')))'
+                                fmt2 = '(1X,A8,6(1X,'//realFormat// '),30(/, 9X, 6(1X,'//&
+                                       realFormat//')))'
+                            else if (irest .eq. 0 .and. ilign .eq. 1) then
+                                fmt1 = '(9X,6(1X,'//fmtText//'))'
+                                fmt2 = '(1X,A8,6(1X,'//realFormat//'))'
                             else
-                                write(fmt1,'(A,A8,A,I2,A,A8,A)')&
-     &                               '(9X,6(1X,',forcmp,'),',&
-     &                               (ilig-1),'(/,9X,6(1X,',forcmp,')))'
-                                write(fmt2,'(A,A10,A,I2,A,A10,A)')&
-                                '(1X,A8,6(1X,',format,'),', (ilig-1),&
-                                '(/,9X,6(1X,',format,')))'
+                                write(fmt1,'(A,A8,A,I2,A,A8,A)')   '(9X,6(1X,',fmtText,'),',&
+                                                                   (ilign-1),&
+                                                                   '(/,9X,6(1X,',fmtText,')))'
+                                write(fmt2,'(A,A10,A,I2,A,A10,A)') '(1X,A8,6(1X,',realFormat,'),',&
+                                                                   (ilign-1),&
+                                                                  '(/,9X,6(1X,',realFormat,')))'
                             endif
                             if (lsup .or. linf) then
                                 if (limpr) then
-                                    write(ifi,'(A,I2,A)') nomel(iel)
-                                    limpr=.false.
+                                    write(fileUnit,'(A,I2,A)') meshCellName(iel)
+                                    limpr = ASTER_FALSE
                                 endif
                             endif
-                            if (ndim .eq. 0) then
-                                write(ifi,fmt1) (zk16(inop-1+i)(1:11),&
-                                i=1,icomp2)
-                                write(ifi,fmt2) nomno,(zr(irval-1+&
-                                icmp), icmp=1,icomp2)
-                                write(ifi,fmt2) kbid,(zr(icval-1+icmp)&
-                                , icmp=1,icomp2)
+                            if (meshDime .eq. 0) then
+                                write(fileUnit,fmt1) &
+                                    (valeSupName(iCmpList)(1:11),iCmpList=1,icomp2)
+                                if (cplxFormat .eq. ' ' .or. cplxFormat .eq. 'REEL') then
+                                    write(fileUnit,fmt2) &
+                                        nodeName,(valeReal(icmp),icmp=1,icomp2)
+                                endif
+                                if (cplxFormat .eq. ' ') then
+                                    write(fileUnit,fmt2) &
+                                        blank,(valeImag(icmp),icmp=1,icomp2)
+                                endif
+                                if (cplxFormat .eq. 'IMAG') then
+                                    write(fileUnit,fmt2) &
+                                        nodeName,(valeImag(icmp),icmp=1,icomp2)
+                                endif
+                                if (cplxFormat .eq. 'MODULE' .or. cplxFormat .eq. 'PHASE') then
+                                    write(fileUnit,fmt2) &
+                                        nodeName,(valeComp(icmp),icmp=1,icomp2)
+                                endif
                             else
-                                write(ifi,fmt1) (nomcor(i),i=1,ndim),&
-                                (zk16(inop-1+i)(1:11),i=1,icomp2)
-                                write(ifi,fmt2) nomno,(coor((nuno-1)*&
-                                3+i), i=1,ndim),(zr(irval-1+icmp),&
-                                icmp=1,icomp2)
-                                write(ifi,fmt2) kbid,(coor((nuno-1)*3+&
-                                i), i=1,ndim),(zr(icval-1+icmp),icmp=&
-                                1,icomp2)
+                                write(fileUnit,fmt1) &
+                                    (meshCmpName(iCmpList),iCmpList=1,meshDime),&
+                                    (valeSupName(iCmpList)(1:11),iCmpList=1,icomp2)
+                                if (cplxFormat .eq. ' ' .or. cplxFormat .eq. 'REEL') then
+                                    write(fileUnit,fmt2) &
+                                        nodeName,&
+                                        (meshCoor((nodeNume-1)*3+iCmpList),iCmpList=1,meshDime),&
+                                        (valeReal(icmp),icmp=1,icomp2)
+                                endif
+                                if (cplxFormat .eq. ' ') then
+                                    write(fileUnit,fmt2) &
+                                        blank,&
+                                        (meshCoor((nodeNume-1)*3+iCmpList),iCmpList=1,meshDime),&
+                                        (valeImag(icmp),icmp=1,icomp2)
+                                endif
+                                if (cplxFormat .eq. 'IMAG') then
+                                    write(fileUnit,fmt2) &
+                                        nodeName,&
+                                        (meshCoor((nodeNume-1)*3+iCmpList),iCmpList=1,meshDime),&
+                                        (valeImag(icmp),icmp=1,icomp2)
+                                endif
+                                if (cplxFormat .eq. 'MODULE' .or. cplxFormat .eq. 'PHASE') then
+                                    write(fileUnit,fmt2) &
+                                        nodeName,&
+                                        (meshCoor((nodeNume-1)*3+iCmpList),iCmpList=1,meshDime),&
+                                        (valeComp(icmp),icmp=1,icomp2)
+                                endif
                             endif
                         endif
-                        nbcpt=icomp2
+                        nbcpt = icomp2
                     else
+! --------------------- Print all values
                         if (.not.lmax .and. .not.lmin) then
-                            if (ndim .eq. 0) then
-                                write(ifi,fmv) nomno,(zr(irval-1+icmp)&
-                                , icmp=1,icoef2*ncmp2)
-                                write(ifi,fmv) kbid,(zr(icval-1+icmp),&
-                                icmp=1,icoef2*ncmp2)
+                            if (meshDime .eq. 0) then
+                                if (cplxFormat .eq. ' ' .or. cplxFormat .eq. 'REEL') then
+                                    write(fileUnit,fmtVal1) &
+                                        nodeName,&
+                                        (valeReal(icmp), icmp=1,nbCmp*nbCmpActi)
+                                endif
+                                if (cplxFormat .eq. ' ') then
+                                    write(fileUnit,fmtVal1) &
+                                        blank,&
+                                        (valeImag(icmp), icmp=1,nbCmp*nbCmpActi)
+                                endif
+                                if (cplxFormat .eq. 'IMAG') then
+                                    write(fileUnit,fmtVal1) &
+                                        nodeName,&
+                                        (valeImag(icmp), icmp=1,nbCmp*nbCmpActi)
+                                endif
+                                if (cplxFormat .eq. 'MODULE' .or. cplxFormat .eq. 'PHASE') then
+                                    write(fileUnit,fmtVal1) &
+                                        nodeName,&
+                                        (valeComp(icmp), icmp=1,nbCmp*nbCmpActi)
+                                endif
                             else
-                                write(ifi,fmv) nomno,(coor((nuno-1)*3+&
-                                i), i=1,ndim),(zr(irval-1+icmp),&
-                                icmp=1,icoef2*ncmp2)
-                                write(ifi,fmv) kbid,(coor((nuno-1)*3+&
-                                i), i=1,ndim),(zr(icval-1+icmp),&
-                                icmp=1,icoef2*ncmp2)
+                                if (cplxFormat .eq. ' ' .or. cplxFormat .eq. 'REEL') then
+                                    write(fileUnit,fmtVal1) &
+                                        nodeName,&
+                                        (meshCoor((nodeNume-1)*3+iCmpList), iCmpList=1,meshDime),&
+                                        (valeReal(icmp),icmp=1,nbCmp*nbCmpActi)
+                                endif
+                                if (cplxFormat .eq. ' ') then
+                                    write(fileUnit,fmtVal1) &
+                                        blank,&
+                                        (meshCoor((nodeNume-1)*3+iCmpList), iCmpList=1,meshDime),&
+                                        (valeImag(icmp),icmp=1,nbCmp*nbCmpActi)
+                                endif
+                                if (cplxFormat .eq. 'IMAG') then
+                                    write(fileUnit,fmtVal1) &
+                                        nodeName,&
+                                        (meshCoor((nodeNume-1)*3+iCmpList), iCmpList=1,meshDime),&
+                                        (valeImag(icmp),icmp=1,nbCmp*nbCmpActi)
+                                endif
+                                if (cplxFormat .eq. 'MODULE' .or. cplxFormat .eq. 'PHASE') then
+                                    write(fileUnit,fmtVal1) &
+                                        nodeName,&
+                                        (meshCoor((nodeNume-1)*3+iCmpList), iCmpList=1,meshDime),&
+                                        (valeComp(icmp),icmp=1,nbCmp*nbCmpActi)
+                                endif
                             endif
                         endif
-                        nbcpt=icoef2*ncmp2
+                        nbcpt=nbCmp*nbCmpActi
                     endif
-!
-! -- RECHERCHE DE LA VALEUR MAXIMALE ---
-!
+! ----------------- Look for maximal value
                     if (lmax) then
-                        do 103 i = 1, nbcpt
+                        do iCmpList = 1, nbcpt
                             if (lsup .or. linf) then
-                                iadr=(zi(ipo2-1+i)-1)*icoef2+zi(&
-                                icoe-1+i)
+                                iadr = (valeSupIndx(iCmpList)-1)*nbCmp+valeIndx(iCmpList)
                             else
-                                iadr=(zi(iposg-1+i)-1)*icoef2+zi(&
-                                icoe-1+i)
+                                iadr = (cmpInPhys(iCmpList)-1)*nbCmp+valeIndx(iCmpList)
                             endif
-                            if (zr(irmax-1+iadr) .eq. rundf) then
-                                zr(irmax-1+iadr) = zr(irval-1+i)
-                                zr(icmax-1+iadr) = zr(icval-1+i)
-                                zk8(inmax-1+iadr) = nomel(iel)
-                                zi(ivmax-1+iadr) = 1
+                            if (valeMaxReal(iadr) .eq. rundf) then
+                                valeMaxReal(iadr) = valeReal(iCmpList)
+                                valeMaxImag(iadr) = valeImag(iCmpList)
+                                valeMaxElem(iadr) = meshCellName(iel)
+                                valeMaxNb(iadr)   = 1
                             else
-                                valmax=sqrt(zr(irmax-1+iadr)**2 +&
-                                zr(icmax-1+iadr)**2)
-                                value=sqrt(zr(irval-1+i)**2 + zr(&
-                                icval-1+i)**2)
+                                valmax = sqrt(valeMaxReal(iadr)**2+valeMaxImag(iadr)**2)
+                                value  = sqrt(valeReal(iCmpList)**2+valeImag(iCmpList)**2)
                                 if (value .gt. valmax) then
-                                    zr(irmax-1+iadr)= zr(irval-1+i)
-                                    zr(icmax-1+iadr)= zr(icval-1+i)
-                                    zk8(inmax-1+iadr) = nomel(iel)
-                                    zi(ivmax-1+iadr) = 1
-                                else if (value.eq.valmax) then
-                                    zi(ivmax-1+iadr)=zi(ivmax-1+iadr)+&
-                                    1
+                                    valeMaxReal(iadr) = valeReal(iCmpList)
+                                    valeMaxImag(iadr) = valeImag(iCmpList)
+                                    valeMaxElem(iadr) = meshCellName(iel)
+                                    valeMaxNb(iadr)   = 1
+                                else if (value .eq. valmax) then
+                                    valeMaxNb(iadr)   = valeMaxNb(iadr)+1
                                 endif
                             endif
-103                     continue
+                        end do
                     endif
-!
-! -- RECHERCHE DE LA VALEURE MINIMALE ---
-!
+! ----------------- Look for minimal value
                     if (lmin) then
-                        do 104 i = 1, nbcpt
+                        do iCmpList = 1, nbcpt
                             if (lsup .or. linf) then
-                                iadr=(zi(ipo2-1+i)-1)*icoef2+zi(&
-                                icoe-1+i)
+                                iadr = (valeSupIndx(iCmpList)-1)*nbCmp+valeIndx(iCmpList)
                             else
-                                iadr=(zi(iposg-1+i)-1)*icoef2+zi(&
-                                icoe-1+i)
+                                iadr = (cmpInPhys(iCmpList)-1)*nbCmp+valeIndx(iCmpList)
                             endif
-                            if (zr(irmin-1+iadr) .eq. rundf) then
-                                zr(irmin-1+iadr) = zr(irval-1+i)
-                                zr(icmin-1+iadr) = zr(icval-1+i)
-                                zk8(inmin-1+iadr) = nomel(iel)
-                                zi(ivmin-1+iadr) = 1
+                            if (valeMaxReal(iadr) .eq. rundf) then
+                                valeMaxReal(iadr) = valeReal(iCmpList)
+                                valeMaxImag(iadr) = valeImag(iCmpList)
+                                valeMinElem(iadr) = meshCellName(iel)
+                                valeMinNb(iadr)   = 1
                             else
-                                valmin=sqrt(zr(irmin-1+iadr)**2 +&
-                                zr(icmin-1+iadr)**2)
-                                value=sqrt(zr(irval-1+i)**2 + zr(&
-                                icval-1+i)**2)
+                                valmin = sqrt(valeMaxReal(iadr)**2+valeMaxImag(iadr)**2)
+                                value  = sqrt(valeReal(iCmpList)**2+valeImag(iCmpList)**2)
                                 if (value .lt. valmin) then
-                                    zr(irmin-1+iadr)= zr(irval-1+i)
-                                    zr(icmin-1+iadr)= zr(icval-1+i)
-                                    zk8(inmin-1+iadr) = nomel(iel)
-                                    zi(ivmin-1+iadr) = 1
+                                    valeMaxReal(iadr) = valeReal(iCmpList)
+                                    valeMaxImag(iadr) = valeImag(iCmpList)
+                                    valeMinElem(iadr) = meshCellName(iel)
+                                    valeMinNb(iadr)   = 1
                                 else if (value.eq.valmin) then
-                                    zi(ivmin-1+iadr)=zi(ivmin-1+iadr)+&
-                                    1
+                                    valeMinNb(iadr)   = valeMinNb(iadr)+1
                                 endif
                             endif
-104                     continue
+                        end do
                     endif
- 18             continue
- 17         continue
+18                  continue
+                end do
+            end do
+            AS_DEALLOCATE(vi = inec)
         endif
- 12 end do
-    write (ifi,*) ' '
+        AS_DEALLOCATE(vi = cmpInPhys)
+        AS_DEALLOCATE(vi = cmpInVale)
+        AS_DEALLOCATE(vk16 = cmpName)
+        AS_DEALLOCATE(vr = valeReal)
+        AS_DEALLOCATE(vr = valeImag)
+        AS_DEALLOCATE(vr = valeComp)
+        AS_DEALLOCATE(vi = valeIndx)
+        AS_DEALLOCATE(vk16 = valeSupName)
+        AS_DEALLOCATE(vi = valeSupIndx)
+    end do
+    write (fileUnit,*) ' '
 !
-! --- IMPRESSION DE LA VALEUR MAXIMALE ---
+! - Print maximum value
 !
     if (lmax) then
-        do 95 i = 1, ncmpmx*icoef2
-            if (zr(irmax-1+i) .ne. rundf) then
-                form1 = '(1X,3A,'//format//',1X,'//format//',A,I4,2A)'
-                write(ifi,form1)'LA VALEUR MAXIMALE DE ',zk16(inot-1+&
-                i), ' EST ',zr(irmax-1+i),zr(icmax-1+i), ' EN ',zi(&
-                ivmax-1+i),' MAILLE(S) : ',zk8(inmax-1+i)
+        do iCmpList = 1, cmpCataNb*nbCmp
+            if (valeMaxReal(iCmpList) .ne. rundf) then
+                form1 = '(1X,3A,'//realFormat//',1X,'//realFormat//',A,I4,2A)'
+                write(fileUnit,form1)'LA VALEUR MAXIMALE DE ',cmpNameMinMax(iCmpList),&
+               ' EST ',valeMaxReal(iCmpList),valeMaxImag(iCmpList), ' EN ',&
+                valeMaxNb(iCmpList),' MAILLE(S) : ',valeMaxElem(iCmpList)
             endif
- 95     continue
+        end do
     endif
 !
-! --- IMPRESSION DE LA VALEUR MINIMALE ---
+! - Print minimum value
 !
     if (lmin) then
-        do 96 i = 1, ncmpmx*icoef2
-            if (zr(irmin-1+i) .ne. rundf) then
-                form1 = '(1X,3A,'//format//',1X,'//format//',A,I4,2A)'
-                write(ifi,form1)'LA VALEUR MINIMALE DE ',zk16(inot-1+&
-                i), ' EST ',zr(irmin-1+i),zr(icmin-1+i), ' EN ',zi(&
-                ivmin-1+i),' MAILLE(S) : ',zk8(inmin-1+i)
+        do iCmpList = 1, cmpCataNb*nbCmp
+            if (valeMaxReal(iCmpList) .ne. rundf) then
+                form1 = '(1X,3A,'//realFormat//',1X,'//realFormat//',A,I4,2A)'
+                write(fileUnit,form1)'LA VALEUR MINIMALE DE ',cmpNameMinMax(iCmpList),&
+                ' EST ',valeMinReal(iCmpList),valeMinImag(iCmpList), ' EN ',&
+                valeMinNb(iCmpList),' MAILLE(S) : ',valeMinElem(iCmpList)
             endif
- 96     continue
+        end do
     endif
 !
-    call jedetr('&&IRCECL.NCMT')
-    call jedetr('&&IRCECL.MAXR')
-    call jedetr('&&IRCECL.MAXC')
-    call jedetr('&&IRCECL.MAIMAX')
-    call jedetr('&&IRCECL.NBVMAX')
-    call jedetr('&&IRCECL.MINR')
-    call jedetr('&&IRCECL.MINC')
-    call jedetr('&&IRCECL.MAIMIN')
-    call jedetr('&&IRCECL.NBVMIN')
-    call jedetr('&&IRCECL.ENT_COD')
-    call jedetr('&&IRCECL.POSG')
-    call jedetr('&&IRCECL.POSV')
-    call jedetr('&&IRCECL.COEF')
-    call jedetr('&&IRCECL.NCMP')
-    call jedetr('&&IRCECL.NCPP')
-    call jedetr('&&IRCECL.PO2')
-    call jedetr('&&IRCECL.VALR')
-    call jedetr('&&IRCECL.VALC')
+    AS_DEALLOCATE(vk16 = cmpNameMinMax)
+    AS_DEALLOCATE(vr = valeMaxReal)
+    AS_DEALLOCATE(vr = valeMaxImag)
+    AS_DEALLOCATE(vk8 = valeMaxElem)
+    AS_DEALLOCATE(vi = valeMaxNb)
+    AS_DEALLOCATE(vr = valeMinReal)
+    AS_DEALLOCATE(vr = valeMinImag)
+    AS_DEALLOCATE(vk8 = valeMinElem)
+    AS_DEALLOCATE(vi = valeMinNb)
+    AS_DEALLOCATE(vi = inec)
 !
-9999 continue
+999 continue
     call jedema()
 end subroutine

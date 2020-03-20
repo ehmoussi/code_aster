@@ -23,7 +23,7 @@ subroutine iremed(fileUnit   , dsNameZ      , lResu           ,&
                   cmpListNb  , cmpListName  ,&
                   cellUserNb , cellUserNume ,&
                   nodeUserNb , nodeUserNume ,&
-                  cplxPrint  , lVariName    , caraElem)
+                  cplxFormat , lVariName    , caraElem)
 !
 implicit none
 !
@@ -66,7 +66,7 @@ integer, intent(in) :: cellUserNb
 integer, pointer :: cellUserNume(:)
 integer, intent(in) :: nodeUserNb
 integer, pointer :: nodeUserNume(:)
-character(len=*), intent(in) ::  cplxPrint
+character(len=*), intent(in) ::  cplxFormat
 aster_logical, intent(in) :: lVariName
 character(len=8), intent(in) :: caraElem
 !
@@ -258,7 +258,7 @@ character(len=8), intent(in) :: caraElem
 !         -------------------------
 !
             if (.not.lResu) dsName = ' '
-            call irchme(fileUnit, fieldName, cplxPrint, fieldNameMed, dsName,&
+            call irchme(fileUnit, fieldName, cplxFormat, fieldNameMed, dsName,&
                         fieldType, typech, storeIndx, cmpListNb, cmpListName,&
                         nodeUserNb, nodeUserNume,&
                         cellUserNb, cellUserNume, lVariName,&

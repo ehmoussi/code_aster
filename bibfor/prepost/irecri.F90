@@ -20,14 +20,15 @@
 subroutine irecri(fileUnit   , dsName        , lResu         ,&
                   titleKeywf , titleKeywfIocc,&
                   storeNb    , storeListIndx ,&
-                  fieldListNb, fieldListType , realFormat,&
+                  fieldListNb, fieldListType ,&
                   paraNb     , paraName      , paraFormat,&
                   cmpUserNb  , cmpUserName   ,&
                   cellUserNb , cellUserNume  ,&
                   nodeUserNb , nodeUserNume  ,&
                   lMeshCoor  , lmax          , lmin,&
                   lsup       , borsup        ,&
-                  linf       , borinf)
+                  linf       , borinf        ,&
+                  realFormat , cplxFormat)
 !
 implicit none
 !
@@ -57,7 +58,6 @@ integer, intent(in) :: storeNb
 integer , pointer :: storeListIndx(:)
 integer, intent(in) :: fieldListNb
 character(len=*), pointer :: fieldListType(:)
-character(len=*), intent(in) :: realFormat
 integer, intent(in) :: paraNb
 character(len=*), pointer :: paraName(:)
 character(len=1), intent(in) :: paraFormat
@@ -70,6 +70,7 @@ integer , pointer :: cellUserNume(:)
 aster_logical, intent(in) :: lMeshCoor
 aster_logical, intent(in) :: lsup, linf, lmax, lmin
 real(kind=8), intent(in) :: borsup, borinf
+character(len=*), intent(in) :: realFormat, cplxFormat
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,7 +89,6 @@ real(kind=8), intent(in) :: borsup, borinf
 ! Ptr storeListIndx    : index of storing slots
 ! In  fieldListNb      : length of list of fields to save
 ! Ptr fieldListType    : list of fields type to save
-! In  realFormat       : format of real numbers
 ! In  paraNb           : number of parameters
 ! Ptr paraName         : name of parameters
 ! In  paraFormat       : format to print parameters (FORM_TABL keyword)
@@ -108,6 +108,8 @@ real(kind=8), intent(in) :: borsup, borinf
 ! In  borsup           : value of supremum
 ! In  linf             : flag if infinum exists
 ! In  borinf           : value of infinum
+! In  realFormat       : format of real numbers
+! In  cplxFormat       : format of complex numbers (IMAG, REAL, PHASE, MODULE or ' ')
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -219,7 +221,7 @@ real(kind=8), intent(in) :: borsup, borinf
                                 lMeshCoor , lmax        , lmin,&
                                 lsup      , borsup      ,&
                                 linf      , borinf      ,&
-                                realFormat)
+                                realFormat, cplxFormat)
                 else if (fieldSupport(1:2) .eq. 'EL' .and. cellUserNb .ge. 0) then
                     call irchml(fileUnit  ,&
                                 fieldType , fieldName   , fieldSupport,&
@@ -229,7 +231,7 @@ real(kind=8), intent(in) :: borsup, borinf
                                 lMeshCoor , lmax        , lmin,&
                                 lsup      , borsup      ,&
                                 linf      , borinf      ,&
-                                realFormat)
+                                realFormat, cplxFormat)
                 endif
             end do
         endif

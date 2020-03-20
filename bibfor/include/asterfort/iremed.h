@@ -25,7 +25,7 @@ interface
                       cmpListNb  , cmpListName  ,&
                       cellUserNb , cellUserNume ,&
                       nodeUserNb , nodeUserNume ,&
-                      cplxPrint  , lVariName    , caraElem)
+                      cplxFormat , lVariName    , caraElem)
         integer, intent(in) :: fileUnit
         character(len=8), intent(in) :: dsNameZ
         aster_logical, intent(in) :: lResu
@@ -42,7 +42,7 @@ interface
         integer, pointer :: cellUserNume(:)
         integer, intent(in) :: nodeUserNb
         integer, pointer :: nodeUserNume(:)
-        character(len=*), intent(in) ::  cplxPrint
+        character(len=*), intent(in) ::  cplxFormat
         aster_logical, intent(in) :: lVariName
         character(len=8), intent(in) :: caraElem
     end subroutine iremed

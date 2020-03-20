@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -455,4 +455,20 @@ TEST_RESU(RESU=(_F(VALE_CALC_C=-1.64396617939E-05-9.09481837359E-06j,
                 ),
           )
 
+# Test PARTIE 
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=12,
+          RESU=_F(RESULTAT=DYNHAC0,PARTIE='REEL'))
+
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=13,
+          RESU=_F(RESULTAT=DYNHAC0,PARTIE='IMAG'))
+
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=14,
+          RESU=_F(RESULTAT=DYNHAC0,PARTIE='MODULE'))
+
+IMPR_RESU(FORMAT='RESULTAT',
+          UNITE=15,
+          RESU=_F(RESULTAT=DYNHAC0,PARTIE='PHASE'))
 FIN()
