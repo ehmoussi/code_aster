@@ -41,7 +41,9 @@ class ResultsReader(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         typ = keywords["TYPE_RESU"]
-        if typ == "EVOL_THER":
+        if "reuse" in keywords:
+            self._result = keywords["reuse"]
+        elif typ == "EVOL_THER":
             self._result = ThermalResult()
         elif typ == "EVOL_ELAS":
             self._result = ElasticResult()

@@ -101,7 +101,7 @@ DYNA_NON_LINE=OPER(nom="DYNA_NON_LINE",op= 70,sd_prod=evol_noli,
                GAMMA        =SIMP(statut='f',typ='R',defaut= 0.5),),
 
             b_hht     = BLOC(condition="""equal_to("SCHEMA", 'HHT')""",
-               ALPHA        =SIMP(statut='f',typ='R',defaut= -0.3 ),
+               ALPHA        =SIMP(statut='f',typ='R',defaut= -0.1 ),
                MODI_EQUI    =SIMP(statut='f',typ='TXM',defaut="NON",into=("OUI","NON"),),),
 
             b_explicit= BLOC(condition="""equal_to("SCHEMA", 'TCHAMWA') or equal_to("SCHEMA", 'DIFF_CENT')""",

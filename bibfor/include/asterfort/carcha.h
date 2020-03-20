@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine carcha(noch, nomgd, typcha, option, param)
-        character(len=16) :: noch
-        character(len=8) :: nomgd
-        character(len=8) :: typcha
-        character(len=24) :: option
-        character(len=8) :: param
+    subroutine carcha(fieldType, fieldQuantity, fieldSupport, option, param)
+        character(len=16), intent(in) :: fieldType
+        character(len=8), intent(out) :: fieldQuantity
+        character(len=4), intent(out) :: fieldSupport
+        character(len=24), intent(out) :: option
+        character(len=8), intent(out) :: param
     end subroutine carcha
 end interface

@@ -584,6 +584,14 @@ contains
                 ASSERT(ASTER_FALSE)
             end if
 !
+            if (currentDOF(1:3) == "HHO") then
+                ASSERT(valeType .eq. 'R')
+                nbddl = nbddl + 1
+                zk8(idnddl+nbddl-1) = currentDOF(1:8)
+                zr(idvddl+nbddl-1)  = valeDOF
+                go to 110
+            end if
+!
             if (hhoData%face_degree() .ge. 0) then
                 nbddl = nbddl + 1
                 if (currentDOF .eq. 'DX') then
@@ -604,6 +612,7 @@ contains
                 if (valeType .eq. 'R') then
                     zr(idvddl+nbddl-1)  = valeDOF
                 elseif (valeType .eq. 'F') then
+                    ASSERT(currentDOF(1:3) .ne. 'HHO')
                     zk8(idvddl+nbddl-1) = nomFunc
                 else
                     ASSERT(ASTER_FALSE)

@@ -120,6 +120,8 @@ class ExtendedTable(object):
         ltyp=[]
         for i in lparam :
             value=list(aster.getvectjev(i[2]))
+            if i[1].strip().startswith("K"):
+                value = [j.strip() for j in value]
             exist=aster.getvectjev(i[3])
             dval[i[0].strip()] = list(map(Nonefy, value, exist))
             lpar.append(i[0].strip())

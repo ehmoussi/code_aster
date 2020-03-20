@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine rs_getlast(result_, nume_last, inst_last)
+    subroutine rs_getlast(result_, nume_last, inst_last, freq_last)
         character(len=*), intent(in) :: result_
         integer, intent(out) :: nume_last
         real(kind=8), optional, intent(out) :: inst_last
+        real(kind=8), optional, intent(out) :: freq_last
     end subroutine rs_getlast
 end interface

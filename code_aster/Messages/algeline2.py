@@ -380,10 +380,6 @@ Erreur utilisateur dans COMB_MATR_ASSE:
  la direction est nulle.
 """),
 
-    79 : _("""
- Les NUME_DDL associés aux matrices MATR_RIGI et MATR_MASS sont différents.
-"""),
-
     80 : _("""
  bases modales BASE_1 et BASE_2 avec numérotations incompatibles
 """),

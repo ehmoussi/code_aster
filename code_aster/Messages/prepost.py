@@ -82,10 +82,6 @@ Attention :
  sont considérées nulles.
 """),
 
-    14 : _("""
- Le NUME_DDL a été déterminé à partir de la matrice de rigidité %(k1)s.
-"""),
-
     21 : _("""
  Intersection Droite / Cercle
  pas d'intersection trouvée
