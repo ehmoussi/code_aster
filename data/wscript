@@ -207,6 +207,7 @@ SRCTEST_TMPL = """SRCTEST        | src     | -     | %s"""
 @Configure.conf
 def env2dict(self, src):
     """build dict informations"""
+    # should not set any value to "env"
     self.start_msg('Store execution environment')
     env = self.env.derive()
     env['LD_LIBRARY_PATH'] = os.environ.get(
@@ -235,13 +236,6 @@ def env2dict(self, src):
     dico['OPT_ENV'] = env['OPT_ENV'] and os.linesep.join(env['OPT_ENV']) or ''
     dico['OPT_ENV_FOOTER'] = env['OPT_ENV_FOOTER'] \
         and os.linesep.join(env['OPT_ENV_FOOTER']) or ''
-    try:
-        addmem = env['ADDMEM']
-        if addmem and type(addmem) in (list, tuple):
-            addmem = addmem[0]
-        env['ADDMEM'] = int(addmem)
-    except TypeError:
-        env['ADDMEM'] = 250
     dico['ADDMEM'] = env['ADDMEM']
     dico['srctest'] = os.linesep.join([
         SRCTEST_TMPL % '%(SRC)s/astest' % dico,
@@ -353,6 +347,13 @@ def check_config(self):
     self.start_msg('Set tmp directory for `salome test`')
     self.end_msg(self.env.ASRUN_TMPDIR_CMAKE)
 
+    try:
+        addmem = self.env['ADDMEM']
+        if addmem and type(addmem) in (list, tuple):
+            addmem = addmem[0]
+        self.env['ADDMEM'] = int(addmem)
+    except TypeError:
+        self.env['ADDMEM'] = 1024
     cfg["addmem"] = self.env.ADDMEM
     cfg["version_tag"] = ".".join([str(i) for i in self.env.ASTER_VERSION[0]])
     cfg["version_sha1"] = self.env.ASTER_VERSION[1]
