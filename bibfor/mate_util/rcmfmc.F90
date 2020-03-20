@@ -91,8 +91,6 @@ character(len=1), intent(in), optional :: base
     chmace = basename//'.MATE_CODE'
     chmacegrp = chmace//'.GRP'
     chmacengrp = chmace//'.NGRP'
-    print*, "CHMATER : ", chemat
-    print*, "CHMATECO: ", chmace
 !
     if( present(base) ) then
         bas = base
@@ -172,7 +170,7 @@ character(len=1), intent(in), optional :: base
 !       -- le nom du codi est celui du premier materiau du groupe kk
                 codi(1:8)=zk8(igrp+icompt)
                 codi(9:13)='.'//knumat
-                print*, "CODI: ", kk, codi
+!
                 call jeveuo(codi//'.CODI', 'L', zi(jvale+kk-1))
                 icompt=icompt+nbmat
             endif

@@ -78,8 +78,8 @@ subroutine op0107()
 !
     call getfac('CHAR_LIMITE', nbocc)
     if (nbocc .ne. 0) then
-        call medomp(resuco, modele, mate)
-        call pechli(resu, modele, mate)
+        call medomp(resuco, modele, mateco=mateco)
+        call pechli(resu, modele, mateco)
     endif
 !
     call getfac('AIRE_INTERNE', nbocc)
