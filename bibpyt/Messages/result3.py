@@ -19,6 +19,13 @@
 
 cata_msg = {
 
+    1  : _("""On ne sait pas imprimer le champ de type %(k1)s dans ce format."""),
+
+    2  : _("""On ne sait pas imprimer le champ de type %(k1)s dans ce format. Veuillez utiliser IMPR_GENE pour l'impression
+ de résultats en variables généralisées."""),
+
+    3  : _("""On ne sait pas imprimer les champs de type carte dans ce format."""),
+
     25 : _("""On ne trouve pas la composante %(k1)s dans la grandeur %(k2)s."""),
 
     35 : _("""On ne sait pas écrire les champs aux noeuds de représentation constante et à valeurs complexes dans ce format."""),

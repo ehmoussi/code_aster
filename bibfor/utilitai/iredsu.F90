@@ -15,13 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine iredsu(macr, form, ifc, versio)
-    implicit none
+!
+subroutine iredsu(macr, fileUnit, versio)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/irecri.h"
+#include "asterfort/resuPrintIdeas.h"
 #include "asterfort/irmad0.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -37,8 +39,8 @@ subroutine iredsu(macr, form, ifc, versio)
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-    integer :: ifc, versio
-    character(len=*) :: macr, form
+integer, intent(in) :: fileUnit, versio
+character(len=*), intent(in) :: macr
 !
 !     BUT:
 !       IMPRESSION D'UN CONCEPT MACR_ELEM_DYNA AU FORMAT "IDEAS"
@@ -51,7 +53,6 @@ subroutine iredsu(macr, form, ifc, versio)
 !      ENTREE :
 !-------------
 ! IN   MACR      : NOM DU CONCEPT MACR_ELEM_DYNA
-! IN   FORM      : FORMAT D'ECRITURE
 ! IN   IFC       : UNITE LOGIQUE D'ECRITURE
 ! IN   VERSIO    : VERSION D'IMPRESSION
 !
@@ -60,26 +61,17 @@ subroutine iredsu(macr, form, ifc, versio)
 !
 ! ......................................................................
 !
-!
-!
-!
     integer :: i, icol, idrx, idry, idrz, idx, idy, idz
-    integer :: iero, ifor, im, imat
+    integer :: ifor, im, imat
     integer :: in, ind, inoe, inoeu, iord, iret, is, is2, ityp, i2
     integer :: j, k, m2, nbordr, nstat
     integer :: jnoeu
     integer :: nbnoeu, nbmodt, nbmode, nbmods, ntriar, ntriam
-!
-    real(kind=8) :: zero
-!
-    character(len=1) :: b, cecr
-    character(len=8) :: k8b, macrel, noma, noeu, cmp, formar
-    character(len=16) :: nomsym
+    character(len=8) :: macrel, noma, noeu, cmp
+    character(len=16) :: fieldType
     character(len=19) :: basemo, noch19
     character(len=24) :: manono
-    character(len=80) :: titre
-!
-    aster_logical :: f, lbid
+    character(len=80) :: title
     real(kind=8), pointer :: mass_gene(:) => null()
     real(kind=8), pointer :: mass_jonc(:) => null()
     character(len=24), pointer :: mode_stat(:) => null()
@@ -99,13 +91,7 @@ subroutine iredsu(macr, form, ifc, versio)
 !
     call jemarq()
 !
-    zero = 0.d0
-    iero = 0
-    cecr = 'L'
-    b = ' '
-    f = .false.
     macrel = macr
-    formar = '1PE12.5'
 !
     call jeveuo(macrel//'.MAEL_REFE', 'L', vk24=mael_refe)
     basemo = mael_refe(1)(1:19)
@@ -115,9 +101,8 @@ subroutine iredsu(macr, form, ifc, versio)
     call rslipa(basemo, 'NOEUD_CMP', '&&IREDSU.LINOEU', jnoeu, nbmodt)
 !
     do im = 1, nbmodt
-        if (zk16(jnoeu+im-1) .ne. ' ') goto 12
+        if (zk16(jnoeu+im-1) .ne. ' ') exit
     end do
- 12 continue
     nbmode = im - 1
     nbmods = nbmodt - nbmode
 !
@@ -133,24 +118,23 @@ subroutine iredsu(macr, form, ifc, versio)
         do im = 2, nbmods
             noeu = zk16(jnoeu+nbmode+im-1)(1:8)
             do j = 1, inoeu
-                if (noeu .eq. noeuds(j)) goto 20
+                if (noeu .eq. noeuds(j)) exit
             end do
             inoeu = inoeu + 1
             noeuds(inoeu) = noeu
- 20         continue
         end do
         if (versio .eq. 5) then
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   481'
-            write (ifc,'(I10)') 1
-            write (ifc,'(40A2)') 'Ju', 'nc'
-            write (ifc,'(A)') '    -1'
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   481'
+            write (fileUnit,'(I10)') 1
+            write (fileUnit,'(40A2)') 'Ju', 'nc'
+            write (fileUnit,'(A)') '    -1'
             ind = 1
             icol = 7
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   757'
-            write (ifc,'(2I10)') ind
-            write (ifc,'(A)') 'DDL JONCTION'
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   757'
+            write (fileUnit,'(2I10)') ind
+            write (fileUnit,'(A)') 'DDL JONCTION'
             do in = 1, inoeu
                 noeu = noeuds(in)
                 call jenonu(jexnom(manono, noeu), inoe)
@@ -178,10 +162,10 @@ subroutine iredsu(macr, form, ifc, versio)
                         endif
                     endif
                 end do
-                write (ifc,'(2I10,6I2)') inoe, icol, idx, idy, idz,&
+                write (fileUnit,'(2I10,6I2)') inoe, icol, idx, idy, idz,&
                 idrx, idry, idrz
             end do
-            write (ifc,'(A)') '    -1'
+            write (fileUnit,'(A)') '    -1'
         endif
     endif
 !     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -190,7 +174,7 @@ subroutine iredsu(macr, form, ifc, versio)
 !                 --- IMPRESSION DES MODES STATIQUES ---
 !
 !     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    nomsym = 'DEPL'
+    fieldType = 'DEPL'
     call jeveuo(basemo//'.ORDR', 'L', vi=ordr)
     call jelira(basemo//'.ORDR', 'LONMAX', nbordr)
     AS_ALLOCATE(vk24=mode_stat, size=nbordr)
@@ -205,28 +189,25 @@ subroutine iredsu(macr, form, ifc, versio)
                 mode_stat(nstat) = noch19
             endif
         else
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   481'
-            write (ifc,'(I10)') 1
-            write (ifc,'(40A2)') 'Ph', 'i_', 'a '
-            write (ifc,'(A)') '    -1'
-            titre = 'MODE DYNAMIQUE'
-            call irecri(basemo, form, ifc, titre,&
-                        1, 'DEPL', iero, k8b,&
-                        1, [iord], .true._1, b, iero,&
-                        cecr, f, 0, [0],&
-                        0, [0], iero, k8b, f,&
-                        zero, f, zero, f, f,&
-                        formar,  2)
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   481'
+            write (fileUnit,'(I10)') 1
+            write (fileUnit,'(40A2)') 'Ph', 'i_', 'a '
+            write (fileUnit,'(A)') '    -1'
+            title = 'MODE DYNAMIQUE'
+            call resuPrintIdeas(fileUnit, basemo, ASTER_TRUE    ,&
+                                1       , [iord],&
+                                1       , 'DEPL',&
+                                title_ = title)
         endif
     end do
     if (nstat .ne. 0) then
-        write (ifc,'(A)') '    -1'
-        write (ifc,'(A)') '   481'
-        write (ifc,'(I10)') 1
-        write (ifc,'(40A2)') 'Ps', 'i_', 'a '
-        write (ifc,'(A)') '    -1'
-        call irmad0(ifc, versio, nstat, mode_stat, nomsym)
+        write (fileUnit,'(A)') '    -1'
+        write (fileUnit,'(A)') '   481'
+        write (fileUnit,'(I10)') 1
+        write (fileUnit,'(40A2)') 'Ps', 'i_', 'a '
+        write (fileUnit,'(A)') '    -1'
+        call irmad0(fileUnit, versio, nstat, mode_stat, fieldType)
     endif
     AS_DEALLOCATE(vk24=mode_stat)
 !     ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -250,8 +231,6 @@ subroutine iredsu(macr, form, ifc, versio)
     else
      call jeveuo(jexnum(macrel//'.MAEL_MASS_VALE', 1), 'L', vr=mael_mass_vali)
     end if
-!   call jeveuo(macrel//'.MAEL_MASS_VALE', 'L', vr=mael_mass_vale)
-!
     call jelira(macrel//'.MAEL_RAID_VALE','NMAXOC',ntriar)
     call jeveuo(jexnum(macrel//'.MAEL_RAID_VALE', 1), 'L', vr=mael_raid_vale) 
     if (ntriar.gt.1) then 
@@ -259,8 +238,6 @@ subroutine iredsu(macr, form, ifc, versio)
     else
      call jeveuo(jexnum(macrel//'.MAEL_RAID_VALE', 1), 'L', vr=mael_raid_vali)
     end if
-!   call jeveuo(macrel//'.MAEL_RAID_VALE', 'L', vr=mael_raid_vale)
-!
     do im = 1, nbmode
         do i = 1, im
             k =im*(im-1)/2 + i
@@ -295,84 +272,84 @@ subroutine iredsu(macr, form, ifc, versio)
         icol = 2
 !
 !        --- MASSE GENERALISEE ---
-        write (ifc,'(A)') '    -1'
-        write (ifc,'(A)') '   481'
-        write (ifc,'(I10)') 1
-        write (ifc,'(40A2)') 'Mg', 'en', '_a'
-        write (ifc,'(A)') '    -1'
+        write (fileUnit,'(A)') '    -1'
+        write (fileUnit,'(A)') '   481'
+        write (fileUnit,'(I10)') 1
+        write (fileUnit,'(40A2)') 'Mg', 'en', '_a'
+        write (fileUnit,'(A)') '    -1'
         imat = 131
-        write (ifc,'(A)') '    -1'
-        write (ifc,'(A)') '   252'
-        write (ifc,'(I10)') imat
-        write (ifc,'(5I10)') ityp, ifor, nbmode, nbmode, icol
-        write (ifc,111) (mass_gene(1+i) , i= 0, m2-1 )
-        write (ifc,'(A)') '    -1'
+        write (fileUnit,'(A)') '    -1'
+        write (fileUnit,'(A)') '   252'
+        write (fileUnit,'(I10)') imat
+        write (fileUnit,'(5I10)') ityp, ifor, nbmode, nbmode, icol
+        write (fileUnit,111) (mass_gene(1+i) , i= 0, m2-1 )
+        write (fileUnit,'(A)') '    -1'
 !
 !        --- RAIDEUR GENERALISEE ---
-        write (ifc,'(A)') '    -1'
-        write (ifc,'(A)') '   481'
-        write (ifc,'(I10)') 1
-        write (ifc,'(40A2)') 'Kg', 'en', '_a'
-        write (ifc,'(A)') '    -1'
+        write (fileUnit,'(A)') '    -1'
+        write (fileUnit,'(A)') '   481'
+        write (fileUnit,'(I10)') 1
+        write (fileUnit,'(40A2)') 'Kg', 'en', '_a'
+        write (fileUnit,'(A)') '    -1'
         imat = 139
-        write (ifc,'(A)') '    -1'
-        write (ifc,'(A)') '   252'
-        write (ifc,'(I10)') imat
-        write (ifc,'(5I10)') ityp, ifor, nbmode, nbmode, icol
-        write (ifc,111) (rigi_gene(1+i) , i= 0, m2-1 )
-        write (ifc,'(A)') '    -1'
+        write (fileUnit,'(A)') '    -1'
+        write (fileUnit,'(A)') '   252'
+        write (fileUnit,'(I10)') imat
+        write (fileUnit,'(5I10)') ityp, ifor, nbmode, nbmode, icol
+        write (fileUnit,111) (rigi_gene(1+i) , i= 0, m2-1 )
+        write (fileUnit,'(A)') '    -1'
 !
         if (nbmods .ne. 0) then
             m2 = nbmods * nbmods
 !
 !          --- MASSE CONDENSEE A LA JONCTION ---
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   481'
-            write (ifc,'(I10)') 1
-            write (ifc,'(40A2)') 'Mb', 'ar', '_a'
-            write (ifc,'(A)') '    -1'
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   481'
+            write (fileUnit,'(I10)') 1
+            write (fileUnit,'(40A2)') 'Mb', 'ar', '_a'
+            write (fileUnit,'(A)') '    -1'
             imat = 134
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   252'
-            write (ifc,'(I10)') imat
-            write (ifc,'(5I10)') ityp, ifor, nbmods, nbmods, icol
-            write (ifc,111) (mass_jonc(1+i) , i= 0, m2-1 )
-            write (ifc,'(A)') '    -1'
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   252'
+            write (fileUnit,'(I10)') imat
+            write (fileUnit,'(5I10)') ityp, ifor, nbmods, nbmods, icol
+            write (fileUnit,111) (mass_jonc(1+i) , i= 0, m2-1 )
+            write (fileUnit,'(A)') '    -1'
 !
 !          --- RIGIDITE CONDENSEE A LA JONCTION ---
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   481'
-            write (ifc,'(I10)') 1
-            write (ifc,'(40A2)') 'Kb', 'ar', '_a'
-            write (ifc,'(A)') '    -1'
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   481'
+            write (fileUnit,'(I10)') 1
+            write (fileUnit,'(40A2)') 'Kb', 'ar', '_a'
+            write (fileUnit,'(A)') '    -1'
             imat = 142
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   252'
-            write (ifc,'(I10)') imat
-            write (ifc,'(5I10)') ityp, ifor, nbmods, nbmods, icol
-            write (ifc,111) (rigi_jonc(1+i) , i= 0, m2-1 )
-            write (ifc,'(A)') '    -1'
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   252'
+            write (fileUnit,'(I10)') imat
+            write (fileUnit,'(5I10)') ityp, ifor, nbmods, nbmods, icol
+            write (fileUnit,111) (rigi_jonc(1+i) , i= 0, m2-1 )
+            write (fileUnit,'(A)') '    -1'
 !
             m2 = nbmode * nbmods
 !
 !          --- FACTEUR DE PARTICIPATION INFERIEUR ---
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   481'
-            write (ifc,'(I10)') 1
-            write (ifc,'(40A2)') 'Lm', 'at', '_a'
-            write (ifc,'(A)') '    -1'
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   481'
+            write (fileUnit,'(I10)') 1
+            write (fileUnit,'(40A2)') 'Lm', 'at', '_a'
+            write (fileUnit,'(A)') '    -1'
             imat = 132
-            write (ifc,'(A)') '    -1'
-            write (ifc,'(A)') '   252'
-            write (ifc,'(I10)') imat
-            write (ifc,'(5I10)') ityp, ifor, nbmode, nbmods, icol
-            write (ifc,111) (part_infe(1+i) , i= 0, m2-1 )
-            write (ifc,'(A)') '    -1'
+            write (fileUnit,'(A)') '    -1'
+            write (fileUnit,'(A)') '   252'
+            write (fileUnit,'(I10)') imat
+            write (fileUnit,'(5I10)') ityp, ifor, nbmode, nbmods, icol
+            write (fileUnit,111) (part_infe(1+i) , i= 0, m2-1 )
+            write (fileUnit,'(A)') '    -1'
 !
         endif
     endif
 !
-    111 format( 1p, 4d20.12 )
+111 format( 1p, 4d20.12 )
 !
 ! --- MENAGE
 !
