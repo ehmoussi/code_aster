@@ -62,7 +62,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                  into=("MECANIQUE","THERMIQUE","ACOUSTIQUE") ),
                 b_mecanique     =BLOC( condition = """equal_to("PHENOMENE", 'MECANIQUE')""",
                                         fr=tr("modélisations mécaniques"),
-                    MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=10,into=(
+                    MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,into=(
                                   "2D_DIS_T",        # person_in_charge: jean-luc.flejou at edf.fr
                                   "2D_DIS_TR",       # person_in_charge: jean-luc.flejou at edf.fr
                                   "2D_FLUI_ABSO",    # person_in_charge: georges-cc.devesa at edf.fr
@@ -245,7 +245,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
 
                 b_thermique     =BLOC( condition = """equal_to("PHENOMENE", 'THERMIQUE')""",
                                         fr=tr("modélisations thermiques"),
-                    MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=10,into=(
+                    MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,into=(
                                   "3D",              # person_in_charge: mickael.abbas at edf.fr
                                   "3D_DIAG",         # person_in_charge: mickael.abbas at edf.fr
                                   "AXIS",            # person_in_charge: mickael.abbas at edf.fr
@@ -260,7 +260,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
 
                 b_acoustique    =BLOC( condition = """equal_to("PHENOMENE", 'ACOUSTIQUE')""",
                                         fr=tr("modélisations acoustiques"),
-                     MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=10,into=(
+                     MODELISATION    =SIMP(statut='o',typ='TXM',validators=NoRepeat(),max=1,into=(
                                   "3D",              # person_in_charge: mickael.abbas at edf.fr
                                   "PLAN"             # person_in_charge: mickael.abbas at edf.fr
                                                                        ), ),),

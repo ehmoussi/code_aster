@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine model_print(model)
 !
-    implicit none
+subroutine modelPrint(model)
+!
+implicit none
 !
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
@@ -34,11 +34,11 @@ subroutine model_print(model)
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 !
-! person_in_charge: jacques.pellet at edf.fr
-!
-    character(len=8), intent(in) :: model
+character(len=8), intent(in) :: model
 !
 ! --------------------------------------------------------------------------------------------------
+!
+! AFFE_MODELE
 !
 ! Print model informations
 !
@@ -178,11 +178,7 @@ subroutine model_print(model)
                 nume_type_elem = p_model_liel(numvec+nb_elem_grel)
                 call jenuno(jexnum('&CATA.TM.NOMTM', nume_type_geom), type_geom)
                 call jenuno(jexnum('&CATA.TE.NOMTE', nume_type_elem), type_elem)
-                call dismoi('PHEN_MODE', type_elem, 'TYPE_ELEM', repk=phemod)
-                modelisa = phemod(17:32)
-                if (phemod(1:10) .eq. '#PLUSIEURS') then
-                    modelisa = ' '
-                endif
+                call dismoi('MODELISATION', type_elem, 'TYPE_ELEM', repk = modelisa)
                 valk(1) = modelisa
                 valk(2) = type_geom
                 valk(3) = type_elem
