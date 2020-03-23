@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine model_check(model, l_veri_elem)
 !
-    implicit none
+subroutine modelCheck(model, l_veri_elem)
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/calcul.h"
@@ -28,13 +28,14 @@ subroutine model_check(model, l_veri_elem)
 #include "asterfort/utmess.h"
 #include "asterfort/taxis.h"
 !
-!
-    character(len=8), intent(in) :: model
-    aster_logical, optional, intent(in) :: l_veri_elem
+character(len=8), intent(in) :: model
+aster_logical, optional, intent(in) :: l_veri_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Checking model
+! AFFE_MODELE
+!
+! Check model
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -85,16 +86,12 @@ subroutine model_check(model, l_veri_elem)
 ! --------- Correct: shells elements with Z=Constant
 !
         else if ((nb_dim_geom.eq.2) .and. (nb_dim_geom2.eq.3)) then
-!
 ! --------- Warning: 2D model with 3D mesh
-!
             call utmess('A', 'MODELE1_53')
-            elseif ((nb_dim_geom.eq.2) .and. &
+        elseif ((nb_dim_geom.eq.2) .and. &
                 (nb_dim_geom2.eq.2).and. &
                 (nb_dim_geom3.eq.3)) then
-!
 ! --------- Something strange: 2D with Z=Constant but Z<>0
-!
             call utmess('A', 'MODELE1_58')
         endif
     endif
