@@ -65,6 +65,9 @@ def parse_args(argv):
                              "directory ('--wrkdir' is required)")
     parser.add_argument('-w', '--wrkdir', action='store',
                         help="use this existing directory as working directory")
+    parser.add_argument('--only-proc0', dest='proc0',
+                        action='store_true',
+                        help="only processor #0 is writing on stdout")
     parser.add_argument('--no-mpi', dest='auto_mpirun',
                         action='store_false',
                         help="if '%(prog)s' is executed with a parallel "
@@ -77,7 +80,8 @@ def parse_args(argv):
     parser.add_argument('--ctest', action='store_true',
                         help="testcase execution inside ctest (implies "
                              "'--test'), the 'mess' file is saved into "
-                             "the current directory and is not duplicated "
+                             "the current directory (which is '--resutest' "
+                             "directory for 'run_ctest') and is not duplicated "
                              "on stdout.")
     parser.add_argument('--time_limit', dest='time_limit', type=float,
                         action='store', default=None,
@@ -139,8 +143,12 @@ def main(argv=None):
         export.set_memory_limit(args.memory_limit)
     export.check()
 
+    procid = 0
     if CFG.get("parallel", 0):
-        if get_procid() < 0 and args.auto_mpirun:
+        procid = get_procid()
+        if args.proc0 and procid > 0:
+            logger.setLevel(WARNING)
+        if procid < 0 and args.auto_mpirun:
             run_aster = osp.join(ROOT, "bin", "run_aster")
             args_cmd = dict(mpi_nbcpu=export.get("mpi_nbcpu", 1),
                             program=f"{run_aster} {' '.join(argv)}")
@@ -151,7 +159,7 @@ def main(argv=None):
     opts = {}
     opts["test"] = args.test
     opts["env"] = args.env
-    opts["tee"] = not args.ctest
+    opts["tee"] = not args.ctest and (not args.proc0 or procid == 0)
     opts["interactive"] = args.interactive
     calc = RunAster.factory(export, **opts)
     status = calc.execute(args.wrkdir)
