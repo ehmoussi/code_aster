@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,7 +41,8 @@ type(NL_DS_Material), intent(out) :: ds_material
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_material%field_mate = ' '
+    ds_material%mater      = ' '
+    ds_material%mateco = ' '
     ds_material%varc_refe  = '&&OP0070.VARC_REFE'
     ds_material%fvarc_init = '&&OP0070.FVARC_INIT'
     ds_material%fvarc_pred = '&&OP0070.FVARC_PRED'

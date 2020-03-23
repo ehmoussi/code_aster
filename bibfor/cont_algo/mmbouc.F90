@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -67,8 +67,8 @@ implicit none
 !                        'Get_Vale'        - Get value of residual
 ! Out loop_counter     : value of loop (counter)
 ! Out loop_state       : value of flag (convergence/error)
-! IO  loop_locus       : value of locus 
-! IO  loop_vale        : value of residual 
+! IO  loop_locus       : value of locus
+! IO  loop_vale        : value of residual
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -91,7 +91,7 @@ implicit none
             loop_indx = i_loop
         endif
     end do
-    ASSERT(loop_indx .ne. 0)
+    ASSERT(loop_indx .ge. 1 .and. loop_indx .le. ds_contact%nb_loop_maxi)
 !
 ! - Operation
 !
@@ -140,7 +140,7 @@ implicit none
     else if (operation.eq.'Set_Vale') then
         ds_contact%loop(loop_indx)%vale_calc = loop_vale_
     else if (operation.eq.'Get_Vale') then
-        loop_vale_ = ds_contact%loop(loop_indx)%vale_calc        
+        loop_vale_ = ds_contact%loop(loop_indx)%vale_calc
     else
         ASSERT(.false.)
     endif

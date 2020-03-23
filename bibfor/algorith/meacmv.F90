@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine meacmv(modele, mate, carele, fomult, lischa,&
+subroutine meacmv(modele, mate, mateco  , carele, fomult, lischa,&
                   partps, numedd, assmat, solveu, vecass,&
                   matass, maprec, cnchci, base, compor)
 !
@@ -49,7 +49,7 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
     character(len=1) :: base
     character(len=19) :: lischa, solveu, vecass, matass, maprec
     character(len=24) :: cnchci, modele, carele, fomult, numedd, compor
-    character(len=*) :: mate
+    character(len=*) :: mate, mateco
     real(kind=8) :: partps(3)
 !
 ! ----------------------------------------------------------------------
@@ -163,7 +163,7 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
     if (assmat) then
 !
         call uttcpu('CPU.OP0046.1', 'DEBUT', ' ')
-        call merime(modele(1:8), nchar, zk24(jchar), mate, carele(1:8),&
+        call merime(modele(1:8), nchar, zk24(jchar), mate, mateco, carele(1:8),&
                     time, compor, matele, nh,&
                     base)
         ass1er = .true.
@@ -214,23 +214,23 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
     if (ltemp .or. lhydr .or. lsech .or. lptot) then
         vecths = blan24
         if (ltemp) then
-            call vectme(modele, carele, mate, compor, com,&
+            call vectme(modele, carele, mate, mateco, compor, com,&
                         vecths)
             call asasve(vecths, numedd, typres, chths)
         endif
         if (lhydr) then
             option = 'CHAR_MECA_HYDR_R'
-            call vecvme(option, modele, carele, mate, compor,&
+            call vecvme(option, modele, carele, mate, mateco, compor,&
                         com, numedd, chths)
         endif
         if (lptot) then
             option = 'CHAR_MECA_PTOT_R'
-            call vecvme(option, modele, carele, mate, compor,&
+            call vecvme(option, modele, carele, mate, mateco, compor,&
                         com, numedd, chths)
         endif
         if (lsech) then
             option = 'CHAR_MECA_SECH_R'
-            call vecvme(option, modele, carele, mate, compor,&
+            call vecvme(option, modele, carele, mate, mateco, compor,&
                         com, numedd, chths)
         endif
 !
@@ -257,7 +257,7 @@ subroutine meacmv(modele, mate, carele, fomult, lischa,&
     k24bid = blan24
 !
     call vechme('S', modele, charge, infoch, partps,&
-                carele, mate, vecham, varc_currz = chvarc)
+                carele, mate, mateco, vecham, varc_currz = chvarc)
     call asasve(vecham, numedd, typres, vacham)
     call ascova('D', vacham, fomult, 'INST', time,&
                 typres, chcham)

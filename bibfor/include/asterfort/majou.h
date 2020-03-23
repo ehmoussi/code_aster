@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine majou(model, modmec, solveu, num, nu,&
-                     ma, mate, moint, ndble, icor,&
+                     ma, mate, mateco, moint, ndble, icor,&
                      tabad)
         character(len=2) :: model
         character(len=8) :: modmec
@@ -28,7 +28,7 @@ interface
         character(len=14) :: num
         character(len=14) :: nu
         character(len=8) :: ma
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=8) :: moint
         integer :: ndble
         integer :: icor(2)

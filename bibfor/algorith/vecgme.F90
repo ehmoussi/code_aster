@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine vecgme(model    , cara_elem   , matez          , lload_namez, lload_infoz,&
+subroutine vecgme(model    , cara_elem   , matez          , matecoz, lload_namez, lload_infoz,&
                   inst_curr, disp_prevz  , disp_cumu_instz, vect_elemz , inst_prev  ,&
                   compor   , ligrel_calcz, vite_currz     , strx_prevz)
 !
@@ -42,7 +42,7 @@ implicit none
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: cara_elem
-character(len=*), intent(in) :: matez
+character(len=*), intent(in) :: matez, matecoz
 real(kind=8), intent(in) :: inst_curr
 character(len=*), intent(in) :: disp_prevz
 character(len=*), intent(in) :: disp_cumu_instz
@@ -58,7 +58,7 @@ character(len=*), intent(in) :: strx_prevz
 ! --------------------------------------------------------------------------------------------------
 !
 ! Compute Neumann loads
-! 
+!
 ! Undead loads - Depending on geometry or speed - Vector
 !
 ! --------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ character(len=*), intent(in) :: strx_prevz
 ! In  lload_info     : name of object for list of loads info
 ! In  inst_prev      : previous time
 ! In  inst_curr      : current time
-! In  ligrel_calc    : LIGREL to compute 
+! In  ligrel_calc    : LIGREL to compute
 ! In  vite_curr      : speed at current of current time
 ! In  disp_prev      : displacement at beginning of current time
 ! In  strx_prev      : fibers information at beginning of current time
@@ -90,8 +90,8 @@ character(len=*), intent(in) :: strx_prevz
     integer :: nb_load, i_load
     integer :: load_nume
     integer :: nb_in_prep
-    real(kind=8) :: inst_theta 
-    character(len=24) :: ligrel_calc, mate
+    real(kind=8) :: inst_theta
+    character(len=24) :: ligrel_calc, mate, mateco
     character(len=19) :: vect_elem, resu_elem
     character(len=19) :: disp_prev, disp_cumu_inst, vite_curr, strx_prev
     character(len=24) :: lload_name
@@ -111,6 +111,7 @@ character(len=*), intent(in) :: strx_prevz
     newnom         = '.0000000'
     resu_elem      = '&&VECGME.0000000'
     mate           = matez
+    mateco         = matecoz
     lload_name     = lload_namez
     lload_info     = lload_infoz
     disp_prev      = disp_prevz
@@ -153,7 +154,7 @@ character(len=*), intent(in) :: strx_prevz
 !
 ! - Preparing input fields
 !
-    call load_neum_prep(model    , cara_elem , mate      , 'Suiv'      , inst_prev,&
+    call load_neum_prep(model    , cara_elem , mate      , mateco, 'Suiv'      , inst_prev,&
                         inst_curr, inst_theta, nb_in_maxi, nb_in_prep  , lchin    ,&
                         lpain    , disp_prev = disp_prev, disp_cumu_inst = disp_cumu_inst,&
                         compor = compor, strx_prev_=strx_prev, vite_curr_=vite_curr)
@@ -164,7 +165,7 @@ character(len=*), intent(in) :: strx_prevz
         load_name = v_load_name(i_load)(1:8)
         load_nume = v_load_info(nb_load+i_load+1)
 !
-! ----- Standard undead Neumann loads 
+! ----- Standard undead Neumann loads
 !
         if (load_nume .eq. 4) then
             call load_neum_comp(stop       , i_load    , load_name , load_nume, 'Suiv',&

@@ -111,12 +111,12 @@ contains
 !
 !===================================================================================================
 !
-    subroutine hhoCombMeca(model, mate, matr_elem, vect_elem, hhoField)
+    subroutine hhoCombMeca(model, mate, mateco, matr_elem, vect_elem, hhoField)
 !
     implicit none
 !
         character(len=24), intent(in) :: model
-        character(len=*), intent(in)  :: mate
+        character(len=*), intent(in)  :: mate, mateco
         character(len=19), intent(in) :: matr_elem(2), vect_elem(4)
         type(HHO_Field), intent(in) :: hhoField
 !
@@ -161,7 +161,7 @@ contains
 ! ----- Input fields
 !
         lpain(1)  = 'PMATERC'
-        lchin(1)  = mate
+        lchin(1)  = mateco
         lpain(2)  = 'PCMBHHO'
         lchin(2)  = cart_comb(1:19)
         lpain(3)  = 'PMAELS1'
@@ -218,14 +218,15 @@ contains
 !
 !===================================================================================================
 !
-    subroutine hhoPrepMatrix(model         , mate       , merigi  , vefint   , rigid, hhoField,&
+    subroutine hhoPrepMatrix(model         , mate       , mateco, merigi  , vefint   , rigid, &
+                             hhoField,&
                              list_func_acti, hval_meelem, nume_dof, list_load, ds_algopara,&
                              ds_system, ds_measure, index_success , l_cond        , l_asse)
 !
     implicit none
 !
         character(len=24), intent(in) :: model
-        character(len=*), intent(in)  :: mate
+        character(len=*), intent(in)  :: mate, mateco
         character(len=19), intent(in) :: merigi, vefint, rigid
         type(HHO_Field), intent(in) :: hhoField
         integer, intent(in) :: list_func_acti(*)
@@ -278,7 +279,7 @@ contains
 !
             call nmtime(ds_measure, 'Init', 'HHO_Comb')
             call nmtime(ds_measure, 'Launch', 'HHO_Comb')
-            call hhoCombMeca(model, mate, matr_elem, vect_elem, hhoField)
+            call hhoCombMeca(model, mate, mateco, matr_elem, vect_elem, hhoField)
             call nmtime(ds_measure, 'Stop', 'HHO_Comb')
 !
 ! --------- Condensation

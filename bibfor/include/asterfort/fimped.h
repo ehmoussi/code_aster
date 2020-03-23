@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine fimped(modele, mate, numedd, neq, vitini,&
+    subroutine fimped(modele, mateco, numedd, neq, vitini,&
                       vitent, veccor, veanec, vaanec, temps,&
                       foimpe)
         integer :: neq
         character(len=24) :: modele
-        character(len=24) :: mate
+        character(len=24) :: mateco
         character(len=24) :: numedd
         character(len=24) :: vitini
         character(len=24) :: vitent

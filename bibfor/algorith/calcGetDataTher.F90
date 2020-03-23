@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine calcGetDataTher(list_load, model    , mate       , cara_elem,&
+subroutine calcGetDataTher(list_load, model    , mate , mateco       , cara_elem,&
                            temp_prev, incr_temp, compor_ther, theta)
 !
 implicit none
@@ -29,7 +29,7 @@ implicit none
 #include "asterfort/getvr8.h"
 !
 character(len=19), intent(out) :: list_load
-character(len=24), intent(out) :: model, mate, cara_elem
+character(len=24), intent(out) :: model, mateco, cara_elem, mate
 character(len=19), intent(out) :: temp_prev, incr_temp
 character(len=24), intent(out) :: compor_ther
 real(kind=8), intent(out) :: theta
@@ -44,7 +44,7 @@ real(kind=8), intent(out) :: theta
 !
 ! Out list_load        : name of datastructure for list of loads
 ! Out model            : name of model
-! Out mate             : name of material characteristics (field)
+! Out mate             : name of coded material
 ! Out cara_elem        : name of elementary characteristics (field)
 ! Out temp_prev        : temperature at beginning of step
 ! Out incr_temp        : increment of temperature
@@ -53,15 +53,16 @@ real(kind=8), intent(out) :: theta
 !
 ! --------------------------------------------------------------------------------------------------
 !
+!
     list_load = '&&OP0026.LISCHA'
     cara_elem = '&&OP0026.CARELE'
     model     = ' '
-    mate      = ' '
+    mateco      = ' '
     theta     = 0.d0
 !
 ! - Get parameters from command file
 !
-    call ntdoth(model, mate, cara_elem, list_load)
+    call ntdoth(model, mate, mateco, cara_elem, list_load)
 !
 ! - Get displacements
 !

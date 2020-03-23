@@ -18,7 +18,7 @@
 ! aslint: disable=W1504
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine varcCalcPrep(modelz    , cara_elemz, matez     ,&
+subroutine varcCalcPrep(modelz    , cara_elemz, matecoz     ,&
                         nume_harm , time_comp ,&
                         l_temp    , l_meta    ,&
                         varc_refez, varc_prevz, varc_currz,&
@@ -42,7 +42,7 @@ implicit none
 #include "asterfort/detrsd.h"
 #include "asterfort/alchml.h"
 !
-character(len=*), intent(in) :: modelz, cara_elemz, matez
+character(len=*), intent(in) :: modelz, cara_elemz, matecoz
 aster_logical, intent(in) :: l_temp, l_meta
 integer, intent(in) :: nume_harm
 character(len=1), intent(in) :: time_comp
@@ -64,7 +64,7 @@ character(len=19), intent(out)  :: lchout(mxchout), lchin(mxchin)
 !
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
-! In  mate             : name of material characteristics (field)
+! In  matecoz          : name of coded material
 ! In  nume_harm        : Fourier harmonic number
 ! In  time_comp        :  '-' or '+' for command variables evaluation
 ! In  l_temp           : for temperature
@@ -93,7 +93,7 @@ character(len=19), intent(out)  :: lchout(mxchout), lchin(mxchin)
     integer :: iret
     aster_logical :: l_xfem
     character(len=8) :: model
-    character(len=24) :: cara_elem, mate
+    character(len=24) :: cara_elem, mateco
     character(len=19) :: ligrmo
     character(len=24) :: chgeom, chcara(18), chharm
     character(len=24) :: vrcref, vrcmoi, vrcplu, time_curr, time_prev
@@ -102,7 +102,7 @@ character(len=19), intent(out)  :: lchout(mxchout), lchin(mxchin)
 !
     model     = modelz
     cara_elem = cara_elemz
-    mate      = matez
+    mateco    = matecoz
     nbin      = 0
     nbout     = 0
     lpaout(:) = ' '
@@ -158,7 +158,7 @@ character(len=19), intent(out)  :: lchout(mxchout), lchin(mxchin)
     lpain(2)  = 'PGEOMER'
     lchin(2)  = chgeom(1:19)
     lpain(3)  = 'PMATERC'
-    lchin(3)  = mate(1:19)
+    lchin(3)  = mateco(1:19)
     lpain(4)  = 'PCACOQU'
     lchin(4)  = chcara(7)(1:19)
     lpain(5)  = 'PCAGNPO'
@@ -223,7 +223,7 @@ character(len=19), intent(out)  :: lchout(mxchout), lchin(mxchin)
 ! - XFEM input fields
 !
     if (l_xfem .and. l_temp) then
-        call xajcin(model, 'CHAR_MECA_TEMP_R', mxchin, lchin, lpain, nbin) 
+        call xajcin(model, 'CHAR_MECA_TEMP_R', mxchin, lchin, lpain, nbin)
     endif
 !
 ! - Output fields

@@ -738,7 +738,7 @@ PVEELE4 = InputParameter(phys=PHY.VDEP_R,
 PCMBHHO = InputParameter(phys=PHY.NEUT_R,
                          comment="""Information for combine matrix/vector (for HHO)""")
 
-PMATERC = InputParameter(phys=PHY.ADRSJEVE, container='CHMA!.MATE_CODE',
+PMATERC = InputParameter(phys=PHY.ADRSJEVE, container='MACO!.MATE_CODE',
                          comment=""" Parameters for material (AFFE_MATERIAU)""")
 
 PMEMCON = InputParameter(phys=PHY.NEUT_I,

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdata(model    , mesh         , mate      , cara_elem  , ds_constitutive,&
+subroutine nmdata(model    , mesh         , mater     , mateco     , cara_elem  , ds_constitutive,&
                   list_load, solver       , ds_conv   , sddyna     , ds_posttimestep,&
                   ds_energy, ds_errorindic, ds_print  , ds_algopara,&
                   ds_inout , ds_contact   , ds_measure, ds_algorom)
@@ -54,7 +54,8 @@ implicit none
 !
 character(len=*), intent(out) :: model
 character(len=*), intent(out) :: mesh
-character(len=*), intent(out) :: mate
+character(len=*), intent(out) :: mater
+character(len=*), intent(out) :: mateco
 character(len=*), intent(out) :: cara_elem
 type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 character(len=*), intent(out) :: list_load
@@ -81,7 +82,8 @@ type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 !
 ! Out mesh             : name of mesh
 ! Out model            : name of model
-! Out mate             : name of material characteristics (field)
+! Out mater            : name of material characteristics (field)
+! Out mateco           : name of coded material
 ! Out cara_elem        : name of elementary characteristics (field)
 ! IO  ds_constitutive  : datastructure for constitutive laws management
 ! Out list_load        : name of datastructure for list of loads
@@ -129,7 +131,7 @@ type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 !
 ! --- LECTURE DONNEES GENERALES
 !
-    call nmlect(result, model, mate, cara_elem, list_load, solver)
+    call nmlect(result, model, mater, mateco, cara_elem, list_load, solver)
     call dismoi('NOM_MAILLA', model, 'MODELE', repk=mesh)
 !
 ! --- VERIFICATION DE CARA_ELEM : COEF_RIGI_DRZ INTERDIT EN NON-LINEAIRE
@@ -152,7 +154,7 @@ type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 ! - Read objects for constitutive laws
 !
     l_implex = ds_algopara%method.eq.'IMPLEX'
-    call nmdorc(model, mate, l_etat_init,&
+    call nmdorc(model, mater, l_etat_init,&
                 ds_constitutive%compor, ds_constitutive%carcri, ds_constitutive%mult_comp,&
                 l_implex)
 !
@@ -166,7 +168,7 @@ type(NL_DS_ErrorIndic), intent(inout) :: ds_errorindic
 !
 ! --- LECTURE DES OPERANDES DYNAMIQUES
 !
-    call ndlect(model, mate, cara_elem, list_load, sddyna)
+    call ndlect(model, mater, cara_elem, list_load, sddyna)
 !
 ! - Read parameters for post-treatment management (CRIT_STAB and MODE_VIBR)
 !

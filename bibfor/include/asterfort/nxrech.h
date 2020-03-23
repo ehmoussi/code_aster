@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,14 +20,14 @@
 !
 !
 interface
-    subroutine nxrech(model    , mate    , cara_elem, list_load  , nume_dof   ,&
+    subroutine nxrech(model    , mate    , mateco   , cara_elem, list_load  , nume_dof   ,&
                       tpsthe   , time    , lonch    , compor     , varc_curr  ,&
                       temp_iter, vtempp  , vtempr   , temp_prev  , hydr_prev  ,&
                       hydr_curr, dry_prev, dry_curr , vec2nd     , cnvabt     ,&
                       cnresi   , rho     , iterho   , ds_algopara)
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mate, mateco
         character(len=24), intent(in) :: cara_elem
         character(len=19), intent(in) :: list_load
         character(len=24), intent(in) :: nume_dof

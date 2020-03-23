@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -81,7 +81,7 @@ subroutine op0197()
     character(len=16) :: noparr(nbparr), nopark(nbpark), nopars(nbpars)
     character(len=16) :: nopart(nbpart)
     character(len=19) :: nomres
-    character(len=24) :: collec, mate, noobj
+    character(len=24) :: collec, mateco, noobj
     integer :: nbresu, ifm, n1, niv, itemp, ichmat, iresu, imod, nbins, iinst
     integer :: itabw, nbite, nitmax, isig, i, ibid, nbmtcm, nbmtrc, nbcal, nbval
     integer :: it, iseg, nchar, jcha, itabr, vali(nbparr), ix, iy
@@ -414,8 +414,8 @@ subroutine op0197()
 !
         call jedetc('V', '.MATE_CODE', 9)
         call jedetc('V', '.CODI', 20)
-        mate = ' '
-        call rcmfmc(chcop1, mate, l_ther_ = ASTER_FALSE)
+        mateco = ' '
+        call rcmfmc(chcop1, mateco, l_ther_ = ASTER_FALSE)
 !
 !
 !       DETERMINATION DU NOM DES 2 TABLES A CREER:
@@ -441,7 +441,7 @@ subroutine op0197()
 !        --- CALCUL DES SIGMA_WEIBULL
 !
         cara = '        '
-        call peweib(zk16(itabw-1+iresu), zk8(imod-1+iresu), mate, cara, chcop1,&
+        call peweib(zk16(itabw-1+iresu), zk8(imod-1+iresu), chcop1, mateco, cara, chcop1,&
                     0, 1, iresu, nomcmd)
         call jedetr('&&TE0331')
         call jedetr('&&OP0197.CHARGES')

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmvcfo(type_comp, model    , mate     , cara_elem, compor,&
+subroutine nmvcfo(type_comp, model    , mater     , mateco, cara_elem, compor,&
                   varc_refe, hval_incr, vect_elem)
 !
 implicit none
@@ -36,7 +36,8 @@ implicit none
 !
     character(len=1), intent(in) :: type_comp
     character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: mater
+    character(len=24), intent(in) :: mateco
     character(len=24), intent(in) :: varc_refe
     character(len=24), intent(in) :: cara_elem
     character(len=24), intent(in) :: compor
@@ -55,7 +56,8 @@ implicit none
 !                      '-' - Previous step
 !                      '+' - Current step
 ! In  model          : name of model
-! In  mate           : name of material characteristics (field)
+! In  mater          : name of material characteristics (field)
+! In  mateco         : name of coded material
 ! In  cara_elem      : name of elementary characteristics (field)
 ! In  varc_refe      : name of reference command variables vector
 ! In  compor         : name of comportment definition (field)
@@ -86,13 +88,13 @@ implicit none
 !
 ! - Command variables affected
 !
-    call nmvcd2('HYDR'   , mate, exis_hydr)
-    call nmvcd2('PTOT'   , mate, exis_ptot)
-    call nmvcd2('SECH'   , mate, exis_sech)
-    call nmvcd2('EPSA'   , mate, exis_epsa)
-    call nmvcd2('M_ZIRC' , mate, exis_meta_zirc)
-    call nmvcd2('M_ACIER', mate, exis_meta_acier)
-    call nmvcd2('TEMP'   , mate, exis_temp)
+    call nmvcd2('HYDR'   , mater, exis_hydr)
+    call nmvcd2('PTOT'   , mater, exis_ptot)
+    call nmvcd2('SECH'   , mater, exis_sech)
+    call nmvcd2('EPSA'   , mater, exis_epsa)
+    call nmvcd2('M_ZIRC' , mater, exis_meta_zirc)
+    call nmvcd2('M_ACIER', mater, exis_meta_acier)
+    call nmvcd2('TEMP'   , mater, exis_temp)
     exis_meta = exis_temp .and. (exis_meta_zirc.or.exis_meta_acier)
     calc_meta = .false.
     if (exis_meta.and.type_comp.eq.'+') then
@@ -103,8 +105,7 @@ implicit none
 !
     call jeexin(vect_elem(1:19)//'.RELR', iret)
     if (iret .eq. 0) then
-        call memare('V', vect_elem, model, mate, cara_elem,&
-                    'CHAR_MECA')
+        call memare('V', vect_elem, model, mater, cara_elem, 'CHAR_MECA')
     endif
     call jedetr(vect_elem(1:19)// '.RELR')
     call reajre(vect_elem, ' ', 'V')
@@ -112,7 +113,7 @@ implicit none
 ! - Fields preparation of elementary vectors
 !
     nume_harm = 0
-    call nmvarc_prep(type_comp, model    , cara_elem, mate     , varc_refe,&
+    call nmvarc_prep(type_comp, model    , cara_elem, mateco   , varc_refe,&
                      compor   , exis_temp, mxchin   , nbin     , lpain    ,&
                      lchin    , mxchout  , nbout    , lpaout   , lchout   ,&
                      sigm_prev, vari_prev, varc_prev, varc_curr, nume_harm)

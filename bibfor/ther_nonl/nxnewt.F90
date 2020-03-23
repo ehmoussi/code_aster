@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nxnewt(model    , mate       , cara_elem  , list_load, nume_dof  ,&
+subroutine nxnewt(model    , mate       , mateco     , cara_elem  , list_load, nume_dof  ,&
                   solver   , tpsthe     , time       , matass   , cn2mbr    ,&
                   maprec   , cnchci     , varc_curr  , temp_prev, temp_iter ,&
                   vtempp   , vec2nd     , mediri     , conver   , hydr_prev ,&
@@ -62,7 +62,7 @@ implicit none
 #include "asterfort/impcmp.h"
 !
 character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 character(len=24), intent(in) :: cara_elem
 character(len=19), intent(in) :: list_load
 character(len=24), intent(in) :: nume_dof
@@ -128,7 +128,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
 ! - Neumann loads elementary vectors (residuals)
 !
-    call verstp(model    , lload_name, lload_info, mate     , time_curr,&
+    call verstp(model    , lload_name, lload_info, mateco   , time_curr,&
                 time     , compor    , temp_prev , temp_iter, varc_curr,&
                 veresi   , 'V'       ,&
                 hydr_prev, hydr_curr , dry_prev  , dry_curr )
@@ -200,7 +200,7 @@ type(NL_DS_Print), intent(inout) :: ds_print
 !
     if (reasma) then
 ! ----- Compute tangent matrix (non-linear) - Volumic and surfacic terms
-        call merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
+        call merxth(model    , lload_name, lload_info, cara_elem, mate     , mateco, &
                     time_curr, time      , temp_iter , compor   , varc_curr,&
                     merigi   , 'V',&
                     dry_prev , dry_curr)

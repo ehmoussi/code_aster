@@ -65,7 +65,7 @@ character(len=24), intent(in) :: nume_dof
     character(len=8) :: vect_curr, vect_prev
     character(len=19) :: varc_refe, cnvcpr
     character(len=19) :: mult_comp, chsith, compor
-    character(len=24) :: mate
+    character(len=24) :: mate, mateco
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,7 +77,8 @@ character(len=24), intent(in) :: nume_dof
 ! - Initializations
 !
     nume_harm = 0
-    mate      = ds_material%field_mate
+    mate      = ds_material%mater
+    mateco    = ds_material%mateco
     varc_refe = ds_material%varc_refe(1:19)
     compor    = ds_constitutive%compor(1:19)
     cnvcpr    = ds_material%fvarc_pred(1:19)
@@ -88,14 +89,14 @@ character(len=24), intent(in) :: nume_dof
 !
 ! - Compute elementary vectors - Previous
 !
-    call nmvcpr_elem(modelz    , mate      , cara_elemz,&
+    call nmvcpr_elem(modelz    , mate      , mateco    , cara_elemz,&
                      nume_harm , '-'       , hval_incr ,&
                      varc_refe , compor    ,&
                      base      , vect_prev)
 !
 ! - Compute elementary vectors - Current
 !
-    call nmvcpr_elem(modelz    , mate      , cara_elemz,&
+    call nmvcpr_elem(modelz    , mate      , mateco    , cara_elemz,&
                      nume_harm , '+'       , hval_incr ,&
                      varc_refe , compor    ,&
                      base      , vect_curr)

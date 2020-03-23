@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine tabcor(model, mate, ma1, ma2, moint,&
+subroutine tabcor(model, mate, mateco, ma1, ma2, moint,&
                   num, ndble, icor)
     implicit none
 #include "jeveux.h"
@@ -33,7 +33,7 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
 !
-    character(len=*) :: moint, mate
+    character(len=*) :: moint, mate, mateco
 !     AUTEUR : G. ROUSSEAU
 !     BUT : CREER UNE TABLE DE CORRESPONDANCE ENTRE NOEUDS FLUIDES
 !           D'INTERFACE ET NOEUDS DE STRUCTURES POUR DES MAILLAGES
@@ -54,7 +54,7 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
     integer :: ino1, ino2, icor(2), itb1, itb2, ncmp2, nbno2, ichnul
     integer :: nec2, iprn2
     integer :: ndble, nbptr
-    real(kind=8) :: epsi, x1, y1, z1, x2, y2, z2
+    real(kind=8) :: x1, y1, z1, x2, y2, z2
     real(kind=8) :: tailmi, dista2, tailm2
     character(len=2) :: model
     character(len=8) :: gd2, ma1, ma2
@@ -62,9 +62,8 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
     character(len=19) :: chnul, cn2, pchno2
     real(kind=8), pointer :: geom1(:) => null()
     real(kind=8), pointer :: geom2(:) => null()
+    real(kind=8), parameter :: epsi = 1.d-2
 ! -----------------------------------------------------------------
-    data epsi    /1.d-2/
-!---------------------------------------------------------------------
 !
 ! RECUPERATION DE LA TAILLE DE REFERENCE
 !
@@ -80,7 +79,7 @@ subroutine tabcor(model, mate, ma1, ma2, moint,&
 !
 !
     cn2='&&TABCOR.BIDON'
-    call calflu(chnul, moint, mate, num, cn2,&
+    call calflu(chnul, moint, mate, mateco, num, cn2,&
                 nbdesc, nbrefe, nbvale, 'X')
 !
 !

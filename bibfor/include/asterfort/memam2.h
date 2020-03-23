@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,17 +21,14 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine memam2(option, modele, nchar, lchar, mate,&
-                      cara, compor, exitim, time, chacce,&
+    subroutine memam2(option, modele,  mate, mateco,&
+                      cara, compor,  time, chacce,&
                       vecel, basez, ligrez)
         character(len=*) :: option
         character(len=*) :: modele
-        integer :: nchar
-        character(len=8) :: lchar(*)
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=*) :: cara
         character(len=24) :: compor
-        aster_logical :: exitim
         real(kind=8) :: time
         character(len=*) :: chacce
         character(len=*) :: vecel

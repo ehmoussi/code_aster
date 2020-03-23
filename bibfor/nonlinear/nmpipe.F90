@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -198,7 +198,7 @@ type(NL_DS_Contact), intent(in) :: ds_contact
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = ds_material%field_mate(1:19)
+    lchin(2) = ds_material%mateco(1:19)
     lpain(3) = 'PCOMPOR'
     lchin(3) = ds_constitutive%compor(1:19)
     lpain(4) = 'PDEPLMR'

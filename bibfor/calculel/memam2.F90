@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine memam2(option, modele, nchar, lchar, mate,&
-                  cara, compor, exitim, time, chacce,&
+subroutine memam2(option, modele, mate, mateco,&
+                  cara, compor,  time, chacce,&
                   vecel, basez, ligrez)
     implicit none
 #include "asterf_types.h"
@@ -37,21 +37,15 @@ subroutine memam2(option, modele, nchar, lchar, mate,&
 #include "asterfort/utmess.h"
 #include "asterfort/vrcins.h"
 !
-    integer :: nchar
     real(kind=8) :: time
-    character(len=8) :: lchar(*)
-    character(len=*) :: option, modele, chacce, mate, cara, vecel, basez, ligrez
-    aster_logical :: exitim
+    character(len=*) :: option, modele, chacce, mate, mateco, cara, vecel, basez, ligrez
 !     CALCULE LES VECTEURS ELEMENTAIRES ( MASSE_MECA * CHACCE )
 !
 ! ----------------------------------------------------------------------
 ! IN  : OPTION : OPTION DE CALCUL
 ! IN  : MODELE : NOM DU MODELE (OBLIGATOIRE)
-! IN  : NCHAR  : NOMBRE DE CHARGES
-! IN  : LCHAR  : LISTE DES CHARGES
 ! IN  : MATE   : CARTE DE MATERIAUX
 ! IN  : CARA   : CHAMP DE CARAC_ELEM
-! IN  : EXITIM : VRAI SI L'INSTANT EST DONNE
 ! IN  : TIME   : INSTANT DE CALCUL
 ! IN  : CHACCE : CHAMP D'ACCELERATION
 ! IN  : VECEL  : NOM DU VECT_ELEM RESULTAT
@@ -102,7 +96,7 @@ subroutine memam2(option, modele, nchar, lchar, mate,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = mateco
     lpain(3) = 'PVARCPR'
     lchin(3) = chvarc
     lpain(4) = 'PCAGNPO'

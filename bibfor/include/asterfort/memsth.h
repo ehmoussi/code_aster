@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine memsth(model_    , cara_elem_, mate_, chtime_, matr_elem, base,&
+    subroutine memsth(model_    , cara_elem_, mate_, mateco_, chtime_, matr_elem, base,&
                       varc_curr_, time_curr_)
         character(len=*), intent(in) :: model_
         character(len=*), intent(in) :: cara_elem_
-        character(len=*), intent(in) :: mate_
+        character(len=*), intent(in) :: mate_, mateco_
         character(len=*), intent(in) :: chtime_
         character(len=19), intent(in) :: matr_elem
         character(len=1), intent(in) :: base

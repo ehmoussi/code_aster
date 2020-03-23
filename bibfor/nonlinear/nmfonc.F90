@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine nmfonc(ds_conv       , ds_algopara    , solver   , model        , ds_contact     ,&
-                  list_load     , sdnume         , sddyna   , ds_errorindic, mate           ,&
+                  list_load     , sdnume         , sddyna   , ds_errorindic, mater           ,&
                   ds_inout      , ds_constitutive, ds_energy, ds_algorom   , ds_posttimestep,&
                   list_func_acti)
 !
@@ -56,7 +56,7 @@ character(len=19), intent(in) :: list_load
 character(len=19), intent(in) :: sdnume
 character(len=19), intent(in) :: sddyna
 type(NL_DS_ErrorIndic), intent(in) :: ds_errorindic
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mater
 type(NL_DS_InOut), intent(in) :: ds_inout
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Energy), intent(in) :: ds_energy
@@ -83,7 +83,7 @@ integer, intent(inout) :: list_func_acti(*)
 ! In  sdnume           : datastructure for dof positions
 ! In  sddyna           : dynamic parameters datastructure
 ! In  ds_errorindic    : datastructure for error indicator
-! In  mate             : name of material characteristics (field)
+! In  mater            : name of material
 ! In  ds_inout         : datastructure for input/output management
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_energy        : datastructure for energy management
@@ -360,7 +360,7 @@ integer, intent(inout) :: list_func_acti(*)
 ! - THM time error
 !
     if (l_stat) then
-        if (ds_errorindic%l_erre_thm) then 
+        if (ds_errorindic%l_erre_thm) then
             list_func_acti(21) = 1
         endif
     endif
@@ -400,7 +400,7 @@ integer, intent(inout) :: list_func_acti(*)
 !
 ! - Command variables
 !
-    call dismoi('EXI_VARC', mate, 'CHAM_MATER', repk=repk)
+    call dismoi('EXI_VARC', mater, 'CHAM_MATER', repk=repk)
     if (repk .eq. 'OUI') list_func_acti(30) = 1
 !
 ! - THM ?
@@ -414,7 +414,7 @@ integer, intent(inout) :: list_func_acti(*)
 !
     if (l_cont .and. (repk .eq. 'OUI')) then
         list_func_acti(65) = 1
-    endif 
+    endif
 !
 ! - Elemesnt with STRX field (multifibers for instantce)
 !
@@ -453,7 +453,7 @@ integer, intent(inout) :: list_func_acti(*)
 !
 ! - Do elastic properties are functions ?
 !
-    call dismoi('ELAS_FO', mate, 'CHAM_MATER', repk=repk)
+    call dismoi('ELAS_FO', mater, 'CHAM_MATER', repk=repk)
     if (repk .eq. 'OUI') list_func_acti(57) = 1
 !
 ! - Post-treatment on comportment laws ?

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 interface
     subroutine qires1(modele, ligrel, chtime, sigmap, sigmad,&
                       lcharp, lchard, ncharp, nchard, chs,&
-                      mate, chvois, tabido, chelem)
+                      mateco, chvois, tabido, chelem)
         character(len=8) :: modele
         character(len=*) :: ligrel
         character(len=24) :: chtime
@@ -32,7 +32,7 @@ interface
         integer :: ncharp
         integer :: nchard
         character(len=24) :: chs
-        character(len=*) :: mate
+        character(len=*) :: mateco
         character(len=24) :: chvois
         integer :: tabido(5)
         character(len=24) :: chelem

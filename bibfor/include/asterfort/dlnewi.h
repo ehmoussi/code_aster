@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ interface
                       iinteg, neq, imat, masse, rigid,&
                       amort, dep0, vit0, acc0, fexte,&
                       famor, fliai, t0, nchar, nveca,&
-                      liad, lifo, modele, mate, carele,&
+                      liad, lifo, modele, mate, mateco, carele,&
                       charge, infoch, fomult, numedd, nume,&
                       solveu, criter, chondp, nondp, numrep, ds_energy,&
                       sd_obsv, mesh)
@@ -54,7 +54,7 @@ interface
         integer :: liad(*)
         character(len=24) :: lifo(*)
         character(len=24) :: modele
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         character(len=24) :: carele
         character(len=24) :: charge
         character(len=24) :: infoch

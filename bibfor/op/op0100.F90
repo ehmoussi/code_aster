@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ subroutine op0100()
     character(len=16) :: option, typsd, linopa(nxpara)
     character(len=16) :: k16bid, typdis
     character(len=19) :: lischa, lisopt, vecord, grlt
-    character(len=24) :: depla, mate, compor, chvite, chacce
+    character(len=24) :: depla, mate, compor, chvite, chacce, mateco
     character(len=24) :: basfon, fonoeu, liss, taillr
     character(len=24) :: chfond, basloc, theta
     character(len=24) :: nomno, coorn
@@ -171,7 +171,7 @@ subroutine op0100()
     iord0 = zi(ivec)
 !
 !     RECUPERATION MODELE, MATE ET LISCHA
-    call medomg(resu, iord0, modele, mate, lischa)
+    call medomg(resu, iord0, modele, mate, mateco, lischa)
 !
 !     RECUPERATION DE LA CARTE DE COMPORTEMENT UTILISEE DANS LE CALCUL
 !     -> COMPOR, INCR
@@ -291,7 +291,7 @@ subroutine op0100()
 !
         do i = 1, nbord
             iord = zi(ivec-1+i)
-            call medomg(resu, iord, modele, mate, lischa)
+            call medomg(resu, iord, modele, mate, mateco, lischa)
             call rsexch('F', resu, 'DEPL', iord, depla,&
                         iret)
 !
@@ -310,7 +310,7 @@ subroutine op0100()
 !
 !
             call cakg3d(option, table, modele, depla, thetai,&
-                        mate, compor, lischa, symech, chfond,&
+                        mate, mateco, compor, lischa, symech, chfond,&
                         lnoff, basloc, courb, iord, ndeg,&
                         liss, ndimte,&
                         exitim, time, nbpara, linopa, nomfis,&
@@ -341,7 +341,7 @@ subroutine op0100()
             call jemarq()
             call jerecu('V')
             iord = zi(ivec-1+i)
-            call medomg(resu, iord, modele, mate, lischa)
+            call medomg(resu, iord, modele, mate, mateco, lischa)
 !
             call rsexch('F', resu, 'DEPL', iord, depla,&
                         iret)
@@ -370,14 +370,14 @@ subroutine op0100()
             if (option(1:6).eq.'CALC_G'.and. ndim.eq. 2) then
 !
                 call mecalg(option, table, modele, depla, theta,&
-                            mate, lischa, symech, compor, incr,&
+                            mate, mateco, lischa, symech, compor, incr,&
                             time, iord, nbpara, linopa, chvite,&
                             chacce, calsig, iadfis, iadnoe)
 !
             else if (option(1:6).eq.'CALC_G'.and. ndim .eq.3) then
 !
                 call mecagl(option, table, modele, depla, thetai,&
-                            mate, compor, lischa, symech, chfond,&
+                            mate, mateco, compor, lischa, symech, chfond,&
                             lnoff, iord, ndeg, liss,&
                             milieu, ndimte, exitim,&
                             time, nbpara, linopa, chvite, chacce,&
@@ -387,7 +387,7 @@ subroutine op0100()
             else if (option(1:6).eq.'CALC_K'.and. ndim .eq. 2) then
 !
                 call cakg2d(option, table, modele, depla, theta,&
-                            mate, lischa, symech, nomfis, noeud,&
+                            mate, mateco, lischa, symech, nomfis, noeud,&
                             time, iord, nbpara, linopa,&
                             lmoda, puls, compor)
 !

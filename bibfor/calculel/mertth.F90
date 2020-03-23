@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mertth(model, lload_name, lload_info, cara_elem, mate     ,&
+subroutine mertth(model, lload_name, lload_info, cara_elem, mate     , mateco,&
                   time , time_move , temp_prev , temp_iter, matr_elem)
 !
 implicit none
@@ -39,7 +39,7 @@ implicit none
     character(len=24), intent(in) :: lload_name
     character(len=24), intent(in) :: lload_info
     character(len=24), intent(in) :: cara_elem
-    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: mate, mateco
     character(len=24), intent(in) :: time
     character(len=24), intent(in) :: time_move
     character(len=24), intent(in) :: temp_prev
@@ -49,7 +49,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic - Matrix
-! 
+!
 ! Elementary matrix for transport (volumic and surfacic terms)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ implicit none
     integer :: iret, nb_load, i_load, ilires, k, load_nume
     aster_logical :: load_empty
     character(len=24), pointer :: v_load_name(:) => null()
-    integer, pointer :: v_load_info(:) => null()    
+    integer, pointer :: v_load_info(:) => null()
     data nomchp/'.COEFH','.FLUNL','.HECHP','.COEFH'/
     data nomopr/'COEH_R','      ','PARO_R','COET_R'/
     data nomopf/'COEH_F','FLUTNL','PARO_F','COET_F'/
@@ -91,7 +91,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    
+
 !
 ! - Loads
 !
@@ -120,7 +120,7 @@ implicit none
         lpain(1) = 'PGEOMER'
         lchin(1) = chgeom
         lpain(2) = 'PMATERC'
-        lchin(2) = mate
+        lchin(2) = mateco
         lpain(3) = 'PCACOQU'
         lchin(3) = chcara(7)
         lpain(4) = 'PTEMPSR'

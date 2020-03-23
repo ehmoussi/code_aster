@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -626,8 +626,10 @@ implicit none
 ! - Type: material properties
 !
     type NL_DS_Material
-! ----- Field of material parameters
-        character(len=24) :: field_mate = ' '
+! ----- Material
+        character(len=24) :: mater = ' '
+! ----- Field of material parameters (coded material)
+        character(len=24) :: mateco = ' '
 ! ----- Field for reference of external state variables
         character(len=24) :: varc_refe = ' '
 ! ----- Field for initial value of external state variables

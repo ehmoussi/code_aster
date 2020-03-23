@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine medom2(modele, mate, cara, kcha, ncha,&
+subroutine medom2(modele, mate, mateco, cara, kcha, ncha,&
                   ctyp, result, nuord, nbordr, base,&
                   npass, ligrel)
     implicit none
@@ -38,7 +38,7 @@ subroutine medom2(modele, mate, cara, kcha, ncha,&
     character(len=1) :: base
     character(len=4) :: ctyp
     character(len=8) :: modele, cara, result
-    character(len=24) :: mate
+    character(len=24) :: mate, mateco
     character(len=19) :: kcha
 !
 !     CHAPEAU DE LA ROUTINE MEDOM1
@@ -49,6 +49,7 @@ subroutine medom2(modele, mate, cara, kcha, ncha,&
 !
 ! OUT    : MODELE : NOM DU MODELE
 ! OUT    : MATE   : CHAMP MATERIAU
+! OUT    : MATECO : MATERIAU CODE
 ! OUT    : CARA   : NOM DU CHAMP DE CARACTERISTIQUES
 ! IN     : KCHA   : NOM JEVEUX POUR STOCKER LES CHARGES
 ! OUT    : NCHA   : NOMBRE DE CHARGES
@@ -82,7 +83,7 @@ subroutine medom2(modele, mate, cara, kcha, ncha,&
 !
 !     RECUPERATION DU MODELE, CARA, CHARGES A PARTIR DU RESULTAT ET DU
 !     NUMERO ORDRE
-    call medom1(modele, mate, cara, kcha, ncha,&
+    call medom1(modele, mate, mateco, cara, kcha, ncha,&
                 ctyp, result, nuord)
 !
 !     RECUPERATION DU LIGREL DU MODELE

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ntreso(model , mate  , cara_elem, list_load, nume_dof,&
+subroutine ntreso(model , mate  , mateco, cara_elem, list_load, nume_dof,&
                   solver, l_stat, time     , tpsthe   , reasrg  ,&
                   reasms, cn2mbr, matass   , maprec   , cndiri  ,&
                   cncine, mediri)
@@ -33,7 +33,7 @@ implicit none
 ! person_in_charge: mickael.abbas at edf.fr
 !
     character(len=24), intent(in) :: model
-    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: mate, mateco
     character(len=24), intent(in) :: cara_elem
     character(len=19), intent(in) :: list_load
     character(len=24), intent(in) :: nume_dof
@@ -77,7 +77,7 @@ implicit none
 !
 ! - Construct second member
 !
-    call ntacmv(model , mate  , cara_elem, list_load, nume_dof,&
+    call ntacmv(model , mate  , mateco, cara_elem, list_load, nume_dof,&
                 l_stat, time  , tpsthe   , reasrg   , reasms  ,&
                 vtemp , varc_curr, &
                 cn2mbr, matass, cndiri   , cncine   , mediri  )

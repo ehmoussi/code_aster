@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine mecalg(optioz, result, modele, depla, theta,&
-                  mate, lischa, symech, compor, incr,&
+                  mate, mateco, lischa, symech, compor, incr,&
                   time, iord, nbprup, noprup, chvite,&
                   chacce, kcalc, coor, iadnoe)
 !
@@ -78,7 +78,7 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
     character(len=8) :: kcalc
     character(len=19) :: lischa
     character(len=16) :: optioz, noprup(*)
-    character(len=24) :: depla, mate, compor, theta
+    character(len=24) :: depla, mate, mateco, compor, theta
     character(len=24) :: chvite, chacce
     real(kind=8) :: time
     integer :: iord, nbprup, iadnoe
@@ -139,7 +139,7 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
 !   cas FEM ou X-FEM
     call getvid('THETA', 'FISSURE', iocc=1, scal=fiss, nbret=ibid)
     lxfem = .false.
-    if (ibid .ne. 0) lxfem = .true.   
+    if (ibid .ne. 0) lxfem = .true.
 !
 !   RECUPERATION DU CHAMP GEOMETRIQUE
     call megeom(modele, chgeom)
@@ -183,9 +183,9 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
             elseif (lxfem) then
 !             cas X-FEM : verif que le champ est ELGA (seul cas autorise)
               if (inga.eq.1) pbtype=1
-            endif            
+            endif
             if (pbtype.eq.1) call utmess('F', 'RUPTURE1_12')
-            
+
 !           transformation si champ ELGA
             if (inga.eq.0) then
 
@@ -285,7 +285,7 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
     lpain(3) = 'PTHETAR'
     lchin(3) = theta
     lpain(4) = 'PMATERC'
-    lchin(4) = mate
+    lchin(4) = mateco
     lpain(5) = 'PVARCPR'
     lchin(5) = chvarc
     lpain(6) = 'PVARCRR'
@@ -421,7 +421,7 @@ subroutine mecalg(optioz, result, modele, depla, theta,&
 !
     call getvis('THETA', 'NUME_FOND', iocc=1, scal=numfon, nbret=ibid)
     call tbajvi(result, nbprup, 'NUME_FOND', numfon, livi)
-    
+
 ! NOM DES NOEUDS DU FOND
     if (.not.lxfem) then
         call tbajvk(result, nbprup, 'NOEUD', zk8(iadnoe), livk)

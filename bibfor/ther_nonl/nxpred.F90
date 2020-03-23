@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nxpred(model     , mate     , cara_elem, list_load, nume_dof ,&
+subroutine nxpred(model     , mate     , mateco   , cara_elem, list_load, nume_dof ,&
                   solver    , lostat   , tpsthe   , time     , matass   ,&
                   lonch     , maprec   , varc_curr, temp_prev, temp_iter,&
                   cn2mbr    , hydr_prev, hydr_curr, dry_prev , dry_curr ,&
@@ -46,7 +46,7 @@ implicit none
 #include "asterfort/vethbu.h"
 !
 character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 character(len=24), intent(in) :: cara_elem
 character(len=19), intent(in) :: list_load
 character(len=24), intent(in) :: nume_dof
@@ -126,7 +126,7 @@ type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
 !
 ! ----- Neumann loads elementary vectors (residuals)
 !
-        call verstp(model    , lload_name, lload_info, mate     , time_curr,&
+        call verstp(model    , lload_name, lload_info, mateco   , time_curr,&
                     time     , compor    , temp_prev , temp_iter, varc_curr,&
                     veresi   , 'V'       ,&
                     hydr_prev, hydr_curr , dry_prev  , dry_curr )

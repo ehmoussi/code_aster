@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 !
 !
 interface
-    subroutine merigy(modele, mate, cara, compor, matel,&
+    subroutine merigy(modele, mate, mateco, cara, compor, matel,&
                       nchar, lchar)
         character(len=8) :: modele
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         character(len=8) :: cara
         character(len=*) :: compor
         character(len=19) :: matel

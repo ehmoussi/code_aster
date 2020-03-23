@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nxacmv(model      , mate     , cara_elem, list_load, nume_dof   ,&
+subroutine nxacmv(model      , mate     , mateco   , cara_elem, list_load, nume_dof   ,&
                   solver     , l_stat   , time     , tpsthe   , temp_iter  ,&
                   vhydr      , varc_curr, dry_prev , dry_curr , cn2mbr_stat,&
                   cn2mbr_tran, matass   , maprec   , cndiri   , cncine     ,&
@@ -57,7 +57,7 @@ implicit none
 #include "asterfort/vrcins.h"
 !
 character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 character(len=24), intent(in) :: cara_elem
 character(len=19), intent(in) :: list_load
 character(len=24), intent(in) :: nume_dof
@@ -175,7 +175,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 ! - Compute CHAR_THER_EVOLNI
 !
     if (.not.l_stat) then
-        call vetnth_nonl(model    , cara_elem, mate    , time , compor,&
+        call vetnth_nonl(model    , cara_elem, mate, mateco, time , compor,&
                          temp_iter, varc_curr,&
                          vetntp   , vetnti   , 'V',&
                          dry_prev , dry_curr , vhydr)
@@ -190,7 +190,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 ! - Compute Neumann loads (second member) - Linear part
 !
     call vechth('STAT', model    , lload_name, lload_info, cara_elem,&
-                mate  , time_curr, time      , temp_iter , vechtp   ,&
+                mate, mateco     , time_curr, time      , temp_iter , vechtp   ,&
                 varc_curr_ = varc_curr)
     call asasve(vechtp, nume_dof, 'R', vachtp)
     call ascova('D', vachtp, lload_func, 'INST', tpsthe(1),&
@@ -244,7 +244,7 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
 ! - Tangent matrix (non-linear) - Volumic and surfacic terms
 !
-    call merxth(model    , lload_name, lload_info, cara_elem, mate     ,&
+    call merxth(model    , lload_name, lload_info, cara_elem, mate     , mateco, &
                 time_curr, time      , temp_iter , compor   , varc_curr,&
                 merigi   , 'V',&
                 dry_prev , dry_curr)

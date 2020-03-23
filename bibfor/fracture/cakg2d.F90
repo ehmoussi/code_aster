@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine cakg2d(optioz, result, modele, depla, theta,&
-                  mate, lischa, symech, fondf, noeud,&
+                  mate, mateco, lischa, symech, fondf, noeud,&
                   time, iord, nbprup, noprup,&
                   lmoda, puls, compor)
     implicit none
@@ -63,7 +63,7 @@ subroutine cakg2d(optioz, result, modele, depla, theta,&
     character(len=8) :: modele, fondf, result, symech
     character(len=8) :: noeud
     character(len=16) :: optioz, noprup(*)
-    character(len=24) :: depla, mate, theta, compor
+    character(len=24) :: depla, mate, mateco, theta, compor
     character(len=19) :: lischa
     real(kind=8) :: time, puls
     integer :: iord, nbprup
@@ -147,7 +147,7 @@ subroutine cakg2d(optioz, result, modele, depla, theta,&
 !   cas FEM ou X-FEM
     call getvid('THETA', 'FISSURE', iocc=1, scal=fiss, nbret=ibid)
     lxfem = .false.
-    if (ibid .ne. 0) lxfem = .true.   
+    if (ibid .ne. 0) lxfem = .true.
 
 !   RECUPERATION DU CHAMP GEOMETRIQUE
     call megeom(modele, chgeom)
@@ -183,7 +183,7 @@ subroutine cakg2d(optioz, result, modele, depla, theta,&
         elseif (lxfem) then
 !         cas X-FEM : verif que le champ est ELGA (seul cas autorise)
           if (inga.eq.1) pbtype=1
-        endif            
+        endif
         if (pbtype.eq.1) call utmess('F', 'RUPTURE1_12')
 
 !       transformation si champ ELGA
@@ -309,13 +309,13 @@ subroutine cakg2d(optioz, result, modele, depla, theta,&
 
 !Recuperation du numero du fond de fissure pour FEM et XFEM
     call getvis('THETA', 'NUME_FOND', iocc=1, scal=numfon, nbret=ibid)
-    
+
     if (.not.lxfem) then
-!       cas FEM    
+!       cas FEM
         rcmp(1) = zr(iadrco+ndim* (nunoff-1))
         rcmp(2) = zr(iadrco+ndim* (nunoff-1)+1)
     else
-!       cas X-FEM    
+!       cas X-FEM
         call jeveuo(fiss//'.FONDFISS', 'L', jfond)
         rcmp(1) = zr(jfond-1+4*(numfon-1)+1)
         rcmp(2) = zr(jfond-1+4*(numfon-1)+2)
@@ -380,7 +380,7 @@ subroutine cakg2d(optioz, result, modele, depla, theta,&
     lpain(3) = 'PTHETAR'
     lchin(3) = theta
     lpain(4) = 'PMATERC'
-    lchin(4) = mate
+    lchin(4) = mateco
     lpain(5) = 'PVARCPR'
     lchin(5) = chvarc
     lpain(6) = 'PVARCRR'

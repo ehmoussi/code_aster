@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine nttcmv(model , mate  , cara_elem, list_load, nume_dof,&
+subroutine nttcmv(model , mate  , mateco   , cara_elem, list_load, nume_dof,&
                   solver, time  , tpsthe   , tpsnp1   , reasvt  ,&
                   reasmt, creas , vtemp    , vtempm   , vec2nd  ,&
                   matass, maprec, cndirp   , cnchci   , cnchtp)
@@ -43,7 +43,7 @@ implicit none
 #include "asterfort/vedith.h"
 !
 character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 character(len=24), intent(in) :: cara_elem
 character(len=19), intent(in) :: list_load
 character(len=24), intent(in) :: nume_dof
@@ -141,7 +141,7 @@ character(len=24) :: matass, cndirp, cnchci, cnchtp
 !                 VTEMPD ET THETA SONT INUTILISES.
 !
         call vechth('MOVE' , model    , lload_name, lload_info, cara_elem,&
-                    mate   , time_curr, time      , vtemp     , vechtp   ,&
+                    mate, mateco   , time_curr, time      , vtemp     , vechtp   ,&
                     time_move_ = time_move)
         call asasve(vechtp, nume_dof, typres, vachtp)
         call ascova('D', vachtp, lload_func, 'INST', tpsthe(1),&
@@ -171,12 +171,12 @@ character(len=24) :: matass, cndirp, cnchci, cnchtp
 ! ----- Elementary matrix for transport (volumic and surfacic terms)
 !
         creas = 'M'
-        call mertth(model, lload_name, lload_info, cara_elem, mate,&
+        call mertth(model, lload_name, lload_info, cara_elem, mate, mateco,&
                     time, time_move, vtemp, vtempm, merigi)
 !
 ! ----- Elementary matrix for boundary conditions
 !
-        call metnth(model, lload_name, cara_elem, mate, time,&
+        call metnth(model, lload_name, cara_elem, mate, mateco, time,&
                     vtempm, metrnl)
 !
         nbmat = 0

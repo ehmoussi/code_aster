@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -125,7 +125,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
     l_post_incr = isfonc(list_func_acti,'POST_INCR')
 !
 ! - Extract variables
-!    
+!
     call nmchex(hval_incr, 'VALINC', 'DEPPLU', disp_curr)
     call nmchex(hval_incr, 'VALINC', 'STRPLU', strx_curr)
     call nmchex(hval_incr, 'VALINC', 'COMPLU', varc_curr)
@@ -148,7 +148,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         call nmtime(ds_measure, 'Launch', 'Post')
 ! ----- Evaluate THM error (SM)
         if (lerrt) then
-            call nmetca(model , mesh     , ds_material%field_mate, hval_incr,&
+            call nmetca(model , mesh     , ds_material%mateco, hval_incr,&
                         sddisc, nume_inst, ds_errorindic)
         endif
 ! ----- Post-treatment for contact
@@ -159,7 +159,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
 ! ----- Spectral analysis (MODE_VIBR/CRIT_STAB)
         if (l_mode_vibr .or. l_crit_stab) then
             call nmspec(model          , ds_material   , cara_elem  ,&
-                        list_load      , list_func_acti,& 
+                        list_load      , list_func_acti,&
                         numedof        , numfix        , ds_system  ,&
                         ds_constitutive, &
                         sddisc         , nume_inst     ,&
@@ -179,7 +179,7 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
         endif
 ! ----- Post-treatment for behavior laws.
         if (l_post_incr) then
-            call nmrest_ecro(model, ds_material%field_mate, ds_constitutive, hval_incr)
+            call nmrest_ecro(model, ds_material%mateco, ds_constitutive, hval_incr)
         endif
 ! ----- Make observation
         if (l_obsv) then

@@ -273,7 +273,8 @@ integer :: faccvg, ldccvg, condcvg
 ! - For HHO: assembly rigidity and condensation
 !
     if (l_hho) then
-        call hhoPrepMatrix(modelz, ds_material%field_mate, ds_system%merigi, ds_system%vefint, &
+        call hhoPrepMatrix(modelz, ds_material%mater, ds_material%mateco, ds_system%merigi, &
+                           ds_system%vefint, &
                            rigid, hhoField, fonact, meelem, numedd, lischa, ds_algopara, ds_system,&
                            ds_measure, condcvg, l_cond = ASTER_TRUE, l_asse = ASTER_TRUE)
     endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 interface
     subroutine dltali(neq, result, imat, masse, rigid,&
                       liad, lifo, nchar, nveca, lcrea,&
-                      lprem, lamort, t0, mate, carele,&
+                      lprem, lamort, t0, mate, mateco, carele,&
                       charge, infoch, fomult, modele, numedd,&
                       nume, solveu, criter, dep0, vit0,&
                       acc0, fexte0, famor0, fliai0, &
@@ -40,7 +40,7 @@ interface
         aster_logical :: lprem
         aster_logical :: lamort
         real(kind=8) :: t0
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         character(len=24) :: carele
         character(len=24) :: charge
         character(len=24) :: infoch

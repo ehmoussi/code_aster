@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,15 +21,15 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine cachvc(modele, mate, carele, numedd, compor,&
-                      com, chths, ihydr, isech, itemp, iptot)
-        character(len=*) :: modele
-        character(len=*) :: mate
-        character(len=*) :: carele
-        character(len=*) :: numedd
-        character(len=*) :: compor
-        character(len=*) :: com
-        character(len=*) :: chths
+    subroutine cachvc(modelz, matez, matecoz, carelz, numedz, compoz,&
+                      comz, chthz, ihydr, isech, itemp, iptot)
+        character(len=*) :: modelz
+        character(len=*) :: matecoz, matez
+        character(len=*) :: carelz
+        character(len=*) :: numedz
+        character(len=*) :: compoz
+        character(len=*) :: comz
+        character(len=*) :: chthz
         integer          :: ihydr, isech, itemp, iptot
     end subroutine cachvc
 end interface

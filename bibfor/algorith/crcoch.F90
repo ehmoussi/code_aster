@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -296,7 +296,7 @@ subroutine crcoch()
                 zr(jchou2+ie-1) = 0.d0
             end do
             call vechme('S', modele, lload_name, lload_info, partps,&
-                        carele, mate, vechmp)
+                        carele, materi, mate, vechmp)
             call asasve(vechmp, numedd, 'R', vachmp)
             call ascova('D', vachmp, lload_func, 'INST', tps, 'R', nomch2)
             call jeveuo(nomch2//'.VALE', 'L', jchou2)
@@ -315,12 +315,12 @@ subroutine crcoch()
 ! ----- Special copy of list of loads for save in results datastructure
         call liscpy(list_load, list_load_resu, 'G')
 ! ----- Save parameters in results datastructure
-        call rssepa(resu,icompt,modele(1:8),materi,carele,list_load_resu) 
+        call rssepa(resu,icompt,modele(1:8),materi,carele,list_load_resu)
         if (j .ge. 2) call jedema()
 !
     end do
     call jedetr(linst)
-    call jedetr(lcpt)   
+    call jedetr(lcpt)
 !
 !     REMPLISSAGE DE .REFD POUR DYNA_*:
     call jelira(resu//'           .ORDR', 'LONUTI', nbordr2)
@@ -330,7 +330,7 @@ subroutine crcoch()
             matric(2) = ' '
             matric(3) = ' '
             call refdaj('F', resu19, (nbordr2-nbordr1), numedd, 'DYNAMIQUE',&
-                            matric, ier)                  
+                            matric, ier)
         endif
     endif
 !

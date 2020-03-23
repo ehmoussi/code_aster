@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mereso(result, modele, mate, carele, fomult,&
+subroutine mereso(result, modele, mate, mateco, carele, fomult,&
                   lischa, itps, partps, numedd, vecass,&
                   assmat, solveu, matass, maprec, base,&
                   compor)
@@ -70,7 +70,7 @@ subroutine mereso(result, modele, mate, carele, fomult,&
     character(len=19) :: matass, maprec
     character(len=24) :: modele, carele, fomult
     character(len=24) :: numedd, compor
-    character(len=*) :: mate
+    character(len=*) :: mate, mateco
     character(len=8) :: result
 !
     real(kind=8) :: partps(3)
@@ -119,7 +119,7 @@ subroutine mereso(result, modele, mate, carele, fomult,&
 ! 3. MATRICE ET SECOND MEMBRE
 !====
 !
-    call meacmv(modele, mate, carele, fomult, lischa,&
+    call meacmv(modele, mate, mateco, carele, fomult, lischa,&
                 partps, numedd, assmat, solveu, vecass,&
                 matass, maprec, cnchci, base, compor)
 !

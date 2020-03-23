@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ subroutine dltlec(result, modele, numedd, materi, mate,&
                   charge, infoch, fomult, iaadve, ialifo,&
                   nondp, iondp, solveu, iinteg, t0,&
                   nume, numrep, ds_inout)
-use NonLin_Datastructure_type                  
+use NonLin_Datastructure_type
 !
 implicit none
 !
@@ -100,7 +100,7 @@ implicit none
     character(len=8) :: masse, rigid, amort
     character(len=8) :: materi, carael
     character(len=19) :: lischa, solveu
-    character(len=24) :: modele, numedd, mate, carele
+    character(len=24) :: modele, numedd, mate, carele, mater
     character(len=24) :: charge, infoch, fomult
     integer :: niv, ifm
     integer :: nr, nm, na, nvect, ivec, n1
@@ -121,7 +121,7 @@ implicit none
     lamort = .true.
     amort = ' '
 !
-    call infniv(ifm, niv)  
+    call infniv(ifm, niv)
 !
 !====
 ! 2. LES DONNEES DU CALCUL
@@ -133,7 +133,7 @@ implicit none
 !
 ! 2.3. ==> CALCUL DES ENERGIES
 !
-    call wkvect('&&COMDLT.ENER      .VALE', 'V V R', 6, iener) 
+    call wkvect('&&COMDLT.ENER      .VALE', 'V V R', 6, iener)
 !
 ! 2.4. ==> --- LES MATRICES ---
     call getvid(' ', 'MATR_RIGI', scal=rigid, nbret=nr)
@@ -219,7 +219,7 @@ implicit none
             if (iaux .eq. 0) then
                 call utmess('F', 'DYNALINE1_24')
             endif
-            call nmdome(modele, mate, carele, lischa, blan8,&
+            call nmdome(modele, mater, mate, carele, lischa, blan8,&
                         ibid)
             fomult = lischa//'.FCHA'
         endif
@@ -320,9 +320,9 @@ implicit none
     call nmarnr(result, 'PARA_CALC', numrep)
 !
 ! 4.5. ==> pour OBSERVATION
-!   
+!
 ! - Create input/output management datastructure
 !
     call nonlinDSInOutCreate('VIBR', ds_inout)
- 
+
 end subroutine
