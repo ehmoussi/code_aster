@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -208,20 +208,20 @@ os.system("ls -ltr fort.17")
 os.system("cat fort.17")
 
 TEST_FICHIER(FICHIER="./fort.17",
-             NB_VALE_I=51,
-             VALE_CALC_I=939,
-             NB_VALE=29,
-             VALE_CALC=240.000012,
-             VALE_CALC_K="4812212608d0afedbc5895f15f493b35",
+             NB_VALE_I=18,
+             VALE_CALC_I=2753,
+             NB_VALE=62,
+             VALE_CALC=6282.24,
+             VALE_CALC_K="11db4c9176961e1ef1d0c7974e270018",
 )
 
 IMPR_CO(UNITE=18,NIVEAU=0, CONCEPT=_F(NOM=U2),)
 
 TEST_FICHIER(FICHIER="./fort.18",
              NB_VALE_I=18,
-             VALE_CALC_I=2753,
+             VALE_CALC_I=2767,
              NB_VALE=62,
-             VALE_CALC=6282.24,
+             VALE_CALC=6315.24,
              VALE_CALC_K="11db4c9176961e1ef1d0c7974e270018"
 )
 FIN()
