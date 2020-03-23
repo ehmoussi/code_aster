@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine diinit(mesh_         , model_     , ds_inout, mate       , cara_elem,&
+subroutine diinit(mesh_         , model_     , ds_inout, mate       , mateco   , cara_elem,&
                   list_func_acti, sddyna     , ds_conv , ds_algopara, solver   ,&
                   ds_contact    , sddisc)
 !
@@ -41,7 +41,7 @@ character(len=*), intent(in) :: model_
 character(len=19), intent(in) :: sddisc
 character(len=19), intent(in) :: sddyna
 character(len=24), intent(in) :: cara_elem
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 type(NL_DS_Conv), intent(in) :: ds_conv
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_InOut), intent(in) :: ds_inout
@@ -100,7 +100,7 @@ integer, intent(in) :: list_func_acti(*)
 ! - Courant condition
 !
     if (l_expl) then
-        call ndxcfl(mate, cara_elem, sddyna, sddisc)
+        call ndxcfl(mate, mateco, cara_elem, sddyna, sddisc)
     endif
 !
 ! - Create storing datastructure

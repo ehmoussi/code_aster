@@ -322,7 +322,7 @@ type(HHO_Field), intent(inout) :: hhoField
 !
 ! - Create time discretization and storing datastructures
 !
-    call diinit(mesh          , model , ds_inout, mateco       , cara_elem,&
+    call diinit(mesh          , model , ds_inout, mater      , mateco, cara_elem,&
                 list_func_acti, sddyna, ds_conv , ds_algopara, solver,&
                 ds_contact    , sddisc)
 !
