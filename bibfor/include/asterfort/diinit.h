@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 !
 interface
-    subroutine diinit(mesh_         , model_     , ds_inout, mate       , cara_elem,&
+    subroutine diinit(mesh_         , model_     , ds_inout, mate       , mateco   , cara_elem,&
                       list_func_acti, sddyna     , ds_conv , ds_algopara, solver   ,&
                       ds_contact    , sddisc)
         use NonLin_Datastructure_type
@@ -28,7 +28,7 @@ interface
         character(len=19), intent(in) :: sddisc
         character(len=19), intent(in) :: sddyna
         character(len=24), intent(in) :: cara_elem
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mate, mateco
         type(NL_DS_Conv), intent(in) :: ds_conv
         type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_InOut), intent(in) :: ds_inout

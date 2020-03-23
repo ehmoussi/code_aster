@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ndxcfl(mate, cara_elem, sddyna, sddisc)
+subroutine ndxcfl(mate, mateco, cara_elem, sddyna, sddisc)
 !
 implicit none
 !
@@ -32,7 +32,7 @@ implicit none
     character(len=19), intent(in) :: sddisc
     character(len=19), intent(in) :: sddyna
     character(len=24), intent(in) :: cara_elem
-    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: mate, mateco
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -65,7 +65,7 @@ implicit none
         call getvid('PROJ_MODAL', 'MODE_MECA', iocc=1, scal=mode_meca)
         call pascom(mode_meca, sddyna, sddisc)
     else
-        call pascou(mate, cara_elem, sddyna, sddisc)
+        call pascou(mate, mateco, cara_elem, sddyna, sddisc)
     endif
 !
 end subroutine
