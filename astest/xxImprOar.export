@@ -1,9 +1,0 @@
-P time_limit 70
-P memory_limit 512
-P ncpus 1
-P mpi_nbcpu 1
-P mpi_nbnoeud 1
-P testlist verification sequential asterxx ci
-
-F comm xxImprOar.py D 1
-F nom zzzz186a.msh D 19
