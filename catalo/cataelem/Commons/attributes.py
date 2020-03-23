@@ -283,6 +283,14 @@ FLUIDE = Attribute(value=(
   FLUIDE =  'OUI' : l'element est destine a une etude d'un fluide
 """)
 
+FORMULATION = Attribute(value=(
+    'HHO_LINE',
+    'HHO_QUAD',
+),
+    comment="""
+  FORMULATION =  'HHO_LINE' : formulation linear for HHO (1/2/1)
+  FORMULATION =  'HHO_QUAD' : formulation quadratic for HHO (2/2/2)
+""")
 
 FROTTEMENT = Attribute(value=(
                        'OUI',
@@ -506,10 +514,7 @@ TYPMOD2 = Attribute(value=(
                     'INTERFAC',
                     'PMF',
                     'THM',
-                    'HHO111',
-                    'HHO121',
-                    'HHO222',
-                    'HHO232',
+                    'HHO',
                     ),
                     comment="""
   TYPMOD2 : Complement au type de  modelisation utilise pour integrer les lois de comportement TYPMOD
@@ -519,8 +524,8 @@ TYPMOD2 = Attribute(value=(
            ELEMJOIN l'element utilise des comportements d'elements de joints (CZM sur des modelisations *_JOINT)
            INTERFAC l'element utilise des comportements d'elements d'interface (CZM sur des modelisations *_INTERFACE)
            ELEMDISC l'element utilise des comportements d'elements a discontinuite interne
-           PMF      l'element fait appel a des comportements 1D PMF (GROT_GDEP PERMIS)
-           THM      themo-hydro-mechanic
+           PMF      l'element fait appel a des comportements 1D PMF
+           THM      thermo-hydro-mechanic
            HHO      Hybrid High-Order elements
 """)
 

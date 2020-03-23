@@ -5300,7 +5300,8 @@ phen.add('XFEM_GG_T_T_C', Modelisation(dim=(2,2), code='Y51',
 
 phen.add('3D_HHO_222', Modelisation(dim=(3,3), code='3D_',
     attrs=(
-        (AT.TYPMOD2, 'HHO222'),
+        (AT.FORMULATION, 'HHO_QUAD'),
+        (AT.TYPMOD2, 'HHO'),
         (AT.NBSIGM,'6'),
         (AT.TYPMOD,'3D'),
     ),
@@ -5314,7 +5315,8 @@ phen.add('3D_HHO_222', Modelisation(dim=(3,3), code='3D_',
 
 phen.add('3D_HHO_121', Modelisation(dim=(3,3), code='3D_',
     attrs=(
-        (AT.TYPMOD2, 'HHO121'),
+        (AT.FORMULATION, 'HHO_LINE'),
+        (AT.TYPMOD2, 'HHO'),
         (AT.NBSIGM,'6'),
         (AT.TYPMOD,'3D'),
     ),
@@ -5328,7 +5330,8 @@ phen.add('3D_HHO_121', Modelisation(dim=(3,3), code='3D_',
 
 phen.add('D_PLAN_HHO_222', Modelisation(dim=(2,2), code='DPL',
     attrs=(
-        (AT.TYPMOD2,'HHO222'),
+        (AT.FORMULATION, 'HHO_QUAD'),
+        (AT.TYPMOD2,'HHO'),
         (AT.D_PLAN,'OUI'),
         (AT.TYPMOD, 'D_PLAN'),
         (AT.NBSIGM,'4'),
@@ -5341,7 +5344,8 @@ phen.add('D_PLAN_HHO_222', Modelisation(dim=(2,2), code='DPL',
 
 phen.add('D_PLAN_HHO_121', Modelisation(dim=(2,2), code='DPL',
     attrs=(
-        (AT.TYPMOD2,'HHO121'),
+        (AT.FORMULATION, 'HHO_LINE'),
+        (AT.TYPMOD2,'HHO'),
         (AT.D_PLAN,'OUI'),
         (AT.TYPMOD, 'D_PLAN'),
         (AT.NBSIGM,'4'),
