@@ -33,49 +33,48 @@
 
 /**
  * @class CrackClass
- * @brief Cette classe decrit un fond_fissure
+ * @brief Cette classe decrit une sd fond_fissure
  * @author Nicolas Pignet
  */
 class CrackClass : public DataStructure {
   private:
-    /** @brief Objet Jeveux '.INFO' */
-    JeveuxVectorChar8 _info;
-    /** @brief Objet Jeveux '.FONDFISS' */
-    JeveuxVectorReal _fondFiss;
-    /** @brief Objet Jeveux '.FOND.TYPE' */
-    JeveuxVectorChar8 _fondType;
-    /** @brief Objet Jeveux '.FOND.NOEUD' */
-    JeveuxVectorChar8 _fondNoeu;
-    /** @brief Objet Jeveux '.FONDINF.NOEU' */
-    JeveuxVectorChar8 _fondInfNoeu;
-    /** @brief Objet Jeveux '.FONDSUP.NOEU' */
-    JeveuxVectorChar8 _fondSupNoeu;
-    /** @brief Objet Jeveux '.FONDFISG' */
-    JeveuxVectorReal _fondFisG;
-    /** @brief Objet Jeveux '.NORMALE' */
-    JeveuxVectorReal _normale;
-    /** @brief Objet Jeveux '.BASEFOND' */
-    JeveuxVectorReal _baseFond;
-    /** @brief Objet Jeveux '.LTNO' */
-    FieldOnNodesRealPtr _ltno;
-    /** @brief Objet Jeveux '.LNNO' */
-    FieldOnNodesRealPtr _lnno;
-    /** @brief Objet Jeveux '.BASLOC' */
-    FieldOnNodesRealPtr _basLoc;
-    /** @brief Objet Jeveux '.FOND.TAILLE_R' */
-    JeveuxVectorReal _fondTailleR;
-    /** @brief Objet Jeveux '.DTAN_ORIGINE' */
-    JeveuxVectorReal _dtanOrigine;
-    /** @brief Objet Jeveux '.DTAN_EXTREMITE' */
-    JeveuxVectorReal _dtanExtremite;
-    /** @brief Objet Jeveux '.LEVRESUP.MAIL' */
-    JeveuxVectorChar8 _levreSupMail;
-    /** @brief Objet Jeveux '.SUPNORM.NOEU' */
-    JeveuxVectorChar8 _supNormNoeu;
-    /** @brief Objet Jeveux '.LEVREINF.MAIL' */
+    /** @brief Objet Jeveux '.LEVREINF.MAIL' : Vecteur (K8) contenant la liste
+    des mailles de la lèvre inférieure de la fissure. */
     JeveuxVectorChar8 _levreInfMail;
-    /** @brief Objet Jeveux '.INFNORM.NOEU' */
+    /** @brief Objet Jeveux '.NORMALE' : Vecteur de trois rééls contenant
+     les composantes de la normale au plan des lèvres d'une fissure plane. */
+    JeveuxVectorReal _normale;
+    /** @brief Objet Jeveux '.FOND.NOEUD' :  Vecteur (K8) contenant la liste
+     des N noeuds ordonnés du fond de fissure. */
+    JeveuxVectorChar8 _fondNoeu;
+    /** @brief Objet Jeveux '.INFNORM.NOEU' : Vecteur (K8) contenant la liste
+     des noeuds de la lèvre inférieure sur la direction normale au fond de fissure. */
     JeveuxVectorChar8 _infNormNoeud;
+    /** @brief Objet Jeveux '.SUPNORM.NOEU' : Vecteur (K8) contenant la liste
+     des noeuds de la lèvre supérieure sur la direction normale au fond de fissure. */
+    JeveuxVectorChar8 _supNormNoeu;
+    /** @brief Objet Jeveux '.LEVRESUP.MAIL' : Vecteur (K8) contenant la liste
+     des mailles de la lèvre supérieure de la fissure. */
+    JeveuxVectorChar8 _levreSupMail;
+    /** @brief Objet Jeveux '.INFO' : Vecteur (K8) contenant les informations sur la fissure. */
+    JeveuxVectorChar8 _info;
+    /** @brief Objet Jeveux '.FOND.TAILLE_R' :  Vecteur de réels contenant pour chacun
+     des noeuds du fond, une estimation de la taille suivant la direction radiale,
+     des mailles qui leur sont connectées. */
+    JeveuxVectorReal _fondTailleR;
+    /** @brief Objet Jeveux '.ABSCUR' : Vecteur de réels contenant
+     les abscisses curvilignes des noeuds du fond. */
+    JeveuxVectorReal _abscur;
+    /** @brief Objet Jeveux '.LTNO' : Champ aux noeuds scalaire qui contient pour
+     chaque noeud du maillage la valeur réelle de la level set normale à la fissure. */
+    FieldOnNodesRealPtr _ltno;
+    /** @brief Objet Jeveux '.LNNO' : Champ aux noeuds scalaire qui contient pour
+     chaque noeud du maillage la valeur réelle de la level set tangente à la fissure. */
+    FieldOnNodesRealPtr _lnno;
+    /** @brief Objet Jeveux '.BASLOC' : Champ aux noeuds contenant les coordonnées
+     des noeuds projetés sur le fond de fissure ainsi que les bases locales
+      pour tous les noeuds du maillage.*/
+    FieldOnNodesRealPtr _basLoc;
 
   public:
     /**
