@@ -159,9 +159,11 @@ TABL_MAS=POST_ELEM(MASS_INER= _F(GROUP_MA=('FLUID1','FLUID2','FACELATE','IFLUSTR
 #
 #-----------------------------------------------------------------------------------
 #
-CONDLIM=AFFE_CHAR_MECA(MODELE=MODELE,
+
+vnorFunc = DEFI_CONSTANTE(VALE=0.0)
+CONDLIM=AFFE_CHAR_MECA_F(MODELE=MODELE,
                        VITE_FACE=_F(GROUP_MA=('FACELATE','IFLUSTRU'),
-                                    VNOR=0.0,),);
+                                    VNOR=vnorFunc,),);
 #
 CONDLC=AFFE_CHAR_CINE(MODELE=MODELE,
                       MECA_IMPO=(_F(GROUP_NO=('FONDS','FONDP',),

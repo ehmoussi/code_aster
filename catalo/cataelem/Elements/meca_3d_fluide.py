@@ -110,10 +110,6 @@ class MEFL_HEXA20(Element):
             para_out = ((SP.PCODRET, LC.ECODRET), (SP.PVECTUR, MVECTUR),),
         ),
 
-        OP.RIGI_GEOM(te=99,
-            para_out = ((SP.PMATUUR, MMATUUR),),
-        ),
-
         OP.RIGI_MECA(te=170,
             para_in  = ((SP.PGEOMER, LC.EGEOM3D), (SP.PMATERC, LC.CMATERC),),
             para_out = ((SP.PMATUUR, MMATUUR),),
