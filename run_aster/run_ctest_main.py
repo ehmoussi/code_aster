@@ -57,12 +57,11 @@ import tempfile
 from glob import glob
 from subprocess import PIPE, run
 
-from run_aster.config import CFG
-from run_aster.ctest2junit import XUnitReport
-
+from .config import CFG
+from .ctest2junit import XUnitReport
+from .utils import ROOT
 
 __DOC__ = __doc__
-ROOT = osp.dirname(osp.dirname(osp.abspath(__file__)))
 
 
 def parse_args(argv):

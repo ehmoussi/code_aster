@@ -35,6 +35,7 @@ passed during the initialization to the
 
 import aster_core
 import libaster
+from run_aster.run import copy_datafiles
 
 from ..Behaviours import catalc
 from ..Cata.Syntax import tr
@@ -81,6 +82,7 @@ class ExecutionStarter(object):
         cls.params.print_header = print_header
         cls.params.checksd = checksd
         cls.params.testresu_print = testresu_print
+        copy_datafiles(cls.params.export.datafiles)
         aster_core.register(cls.params, MessageLog)
         libaster.jeveux_init()
         cls._is_initialized = True

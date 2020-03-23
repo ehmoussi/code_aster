@@ -29,8 +29,9 @@ For testcases, the execution may end normally but with a state not *Ok*
 if there is no TEST_RESU or if it is NOOK.
 """
 
-
+import argparse
 import re
+import sys
 
 
 class Status:
@@ -274,3 +275,22 @@ def get_status(exitcode, output, test=False):
     if measure:
         status.times = [float(value) for value in measure.groups()]
     return status
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog="get_status",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--exitcode', action='store', type=int, required=True,
+                        help="exit code")
+    parser.add_argument('--test', action='store_true',
+                        help="check status for a testcase")
+    parser.add_argument('output',
+                        help="output filename")
+    args = parser.parse_args()
+
+    status = get_status(args.exitcode, args.output, args.test)
+    print('DIAG="{0}"'.format(status.diag))
+    print('EXITCODE={0}'.format(status.exitcode))
+    print('COMPLETED={0}'.format(int(status.is_completed())))
+    sys.exit(0)

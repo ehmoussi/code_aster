@@ -44,6 +44,7 @@ import warnings
 from argparse import SUPPRESS, Action, ArgumentParser
 
 import libaster
+from run_aster.export import Export
 
 from .as_timer import ASTER_TIMER
 from .base_utils import Singleton, no_new_attributes
@@ -82,7 +83,7 @@ class ExecutionParameter(metaclass=Singleton):
     """
     _singleton_id = 'Utilities.ExecutionParameter'
     _args = _bool = None
-    _timer = _command_counter = None
+    _timer = _export = _command_counter = None
     _catalc = _unit = _syntax = None
     _print_header = _checksd = _testresu_print = None
 
@@ -108,6 +109,9 @@ class ExecutionParameter(metaclass=Singleton):
 
         # boolean (on/off) options
         self._bool = Options.Null
+        # Export object and input/output files
+        self._export = None
+        self._args['link'] = []
 
         self._args['rcdir'] = RCDIR
         # TODO probably to be removed?
@@ -239,6 +243,11 @@ class ExecutionParameter(metaclass=Singleton):
         """
         return self._timer
 
+    @property
+    def export(self):
+        """Export: Attribute that holds the 'export' property."""
+        return self._export
+
     def parse_args(self, argv=None):
         """Parse the command line arguments to set the execution parameters"""
         # command arguments parser
@@ -324,6 +333,10 @@ class ExecutionParameter(metaclass=Singleton):
             help="maximum number of keywords or values printed in "
                  "commands echo")
 
+        parser.add_argument('--link',
+            action='append', default=[],
+            help="define a new link to an input or output file")
+
         args, ignored = parser.parse_known_args(argv or sys.argv)
 
         logger.debug("Ignored arguments: %r", ignored)
@@ -334,6 +347,12 @@ class ExecutionParameter(metaclass=Singleton):
             self.set_option(opt, value)
 
         self._timer = ASTER_TIMER(format="aster", limit=self._args['max_print'])
+
+        # store Export object
+        # TODO may be passed directly as argument
+        self._export = Export(from_string=" ", check=False)
+        for link in self._args["link"]:
+            self._export.import_file_argument(link)
 
         # For convenience DEBUG can be set from environment
         if int(os.getenv("DEBUG", 0)) >= 1:
