@@ -152,24 +152,3 @@ def run_command(cmd, timeout=None, exitcode_file=None):
         sys.stderr.write(str(exc))
         iret = -9
     return iret
-
-
-class PercentTemplate(string.Template):
-    """Template with '%' as delimiter."""
-    delimiter = '%'
-
-
-def get_mpirun_script(args):
-    """Return the content of the script to execute with *mpirun*.
-
-    Arguments:
-        args: dict of arguments.
-
-    Returns:
-        str: Content of the script.
-    """
-    template_file = osp.join(ROOT, "share", "aster", "mpirun_template")
-    with open(template_file) as fobj:
-        text = fobj.read()
-    template = PercentTemplate(text)
-    return template.substitute(args)

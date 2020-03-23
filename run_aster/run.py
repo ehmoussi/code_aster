@@ -40,10 +40,8 @@ from .export import Export
 from .logger import logger
 from .status import StateOptions, Status, get_status
 from .timer import Timer
-from .utils import (ROOT, compress, copy, get_mpirun_script, make_writable,
-                    run_command, uncompress)
+from .utils import ROOT, compress, copy, make_writable, run_command, uncompress
 
-MPI_SCRIPT = "mpi_script.sh"
 EXITCODE_FILE = "_exit_code_"
 TMPMESS = "fort.6"
 FMT_DIAG = """
@@ -53,17 +51,18 @@ FMT_DIAG = """
 """
 
 @contextmanager
-def temporary_dir(delete=True):
+def temporary_dir(suffix="", delete=True):
     """"""
     previous = os.getcwd()
     if delete:
-        with tempfile.TemporaryDirectory(prefix="run_aster_",
+        with tempfile.TemporaryDirectory(prefix="run_aster_", suffix=suffix,
                                          dir=CFG.get("tmpdir")) as wrkdir:
             os.chdir(wrkdir)
             yield wrkdir
             os.chdir(previous)
     else:
-        wrkdir = tempfile.mkdtemp(prefix="run_aster_", dir=CFG.get("tmpdir"))
+        wrkdir = tempfile.mkdtemp(prefix="run_aster_", suffix=suffix,
+                                  dir=CFG.get("tmpdir"))
         os.chdir(wrkdir)
         yield wrkdir
         os.chdir(previous)
@@ -75,41 +74,65 @@ class RunAster:
     Arguments:
         export (Export): Export object defining the calculation.
     """
+    _show_comm = True
 
     @classmethod
-    def factory(cls, export):
+    def factory(cls, export, test=False, env=False, tee=False,
+                interactive=False):
         """Return a *RunAster* object from an *Export* object.
 
         Arguments:
             export (Export): Export object defining the calculation.
+            test (bool): for a testcase,
+            env (bool): to only prepare the working directory and show
+                command lines to be run,
+            tee (bool): to follow execution output,
+            interactive (bool): to keep Python interpreter active.
         """
         class_ = RunAster
-        if "make_env" in export.get("actions", []):
+        if env:
             class_ = RunOnlyEnv
-        return class_(export)
+        return class_(export, test, tee, interactive)
 
-    def __init__(self, export):
+    def __init__(self, export, test=False, tee=False, interactive=False):
         self.export = export
         self.jobnum = str(os.getpid())
         logger.debug(f"Export content: {self.export.filename}")
         logger.debug("\n" + repr(self.export))
-        self._basetmp = None
-        self._globtmp = None
         self._parallel = CFG.get("parallel", 0)
-        self._test = "make_test" in export.get("actions", [])
-        self._tee = True
+        self._test = test
+        self._tee = tee
+        self._interact = interactive
+        if self.export.get("hide-command"):
+            self._show_comm = False
+        procid = 0
+        if self._parallel:
+            procid = get_procid()
+        procid = max(procid, 0)
+        self._procid = procid
 
-    @property
-    def tee(self):
-        """bool: Attribute that holds the 'tee' property."""
-        return self._tee
-
-    @tee.setter
-    def tee(self, value):
-        self._tee = value
-
-    def execute(self):
+    def execute(self, wrkdir=None):
         """Execution in a temporary directory.
+
+        Arguments:
+            wrkdir (str, optional): Working directory.
+
+        Returns:
+            Status: Status object.
+        """
+        if wrkdir:
+            if self._parallel:
+                wrkdir = osp.join(wrkdir, f"proc.{self._procid}")
+            os.makedirs(wrkdir, exist_ok=True)
+            os.chdir(wrkdir)
+            status = self._execute()
+        else:
+            with temporary_dir(suffix=f".proc.{self._procid}"):
+                status = self._execute()
+        return status
+
+    def _execute(self):
+        """Execution in the current working directory.
 
         Returns:
             Status: Status object.
@@ -126,35 +149,29 @@ class RunAster:
         self.ending_execution(status.is_completed())
         logger.info("TITLE Execution summary")
         logger.info(timer.report())
+        if self._procid == 0:
+            logger.info(FMT_DIAG.format(state=status.diag))
         return status
 
     def prepare_current_directory(self):
         """Prepare the working directory."""
-        self._basetmp = os.getcwd()
-        self._globtmp = osp.join(self._basetmp, "global")
-        if self._parallel:
-            os.makedirs(self._globtmp)
-            os.chdir(self._globtmp)
-
         logger.info(f"TITLE Prepare environment in {os.getcwd()}")
-
         self.export.write_to(self.jobnum + ".export")
         os.makedirs("REPE_IN", exist_ok=True)
         os.makedirs("REPE_OUT", exist_ok=True)
-        copy_datafiles(self.export.datafiles)
 
     def execute_study(self, show_content=True):
         """Execute the study.
 
         Arguments:
-            show_content (bool): Show the working directory content or not.
+            show_content (bool): List the working directory content or not.
         Returns:
             Status: Status object.
         """
         if show_content:
             logger.info(f"TITLE Content of {os.getcwd()} before execution:")
             logger.info(_ls(".", "REPE_IN"))
-        commfiles = sorted(glob("fort.1.*"))
+        commfiles = [obj.path for obj in self.export.commfiles]
         nbcomm = len(commfiles)
         if not commfiles:
             logger.error("no .comm file found")
@@ -166,13 +183,13 @@ class RunAster:
         for idx, comm in enumerate(commfiles):
             last = idx + 1 == nbcomm
             logger.info(f"TITLE Command file #{idx + 1} / {nbcomm}")
-            self._change_comm_file(comm, not self.export.get("hide-command"))
+            comm = change_comm_file(comm, interact=self._interact,
+                                    show=self._show_comm)
             status.update(self._exec_one(comm, idx, last,
                                          timeout - status.times[-1]))
             if not status.is_completed():
                 break
         # TODO coredump analysis
-
         return status
 
     def _exec_one(self, comm, idx, last, timeout):
@@ -209,25 +226,9 @@ class RunAster:
                 copy(base, os.getcwd())
             msg = f"execution failed (command file #{idx + 1}): {status.diag}"
             logger.warning(msg)
-        _log_mess(FMT_DIAG.format(state=status.diag))
+        if self._procid == 0:
+            _log_mess(FMT_DIAG.format(state=status.diag))
         return status
-
-    def _change_comm_file(self, comm, show):
-        """Change a command file.
-
-        Arguments:
-            comm (str): Command file name.
-            show (bool): *True* to print the content.
-        """
-        with open(comm, "rb") as fobj:
-            text = fobj.read().decode(errors='replace')
-            text = add_import_commands(text)
-            if self.export.get("interact"):
-                text = stop_at_end(text)
-        with open(comm, 'w') as fobj:
-            fobj.write(text)
-        if show:
-            logger.info(f"\nContent of the file to execute:\n{text}\n")
 
     def _get_cmdline(self, commfile):
         """Build the command line.
@@ -236,10 +237,15 @@ class RunAster:
             list[str]: List of command line arguments.
         """
         cmd = [CFG.get("python")]
-        if self.export.get("interact"):
+        if self._interact:
             cmd.append("-i")
         cmd.append(commfile)
+        if self._test:
+            cmd.append("--test")
+        for obj in self.export.datafiles:
+            cmd.append(f'--link="{obj.as_argument}"')
         cmd.extend(self.export.args)
+
         if self._tee:
             orig = " ".join(cmd)
             cmd = [
@@ -249,23 +255,6 @@ class RunAster:
         else:
             cmd.extend(["2>&1", ">>", TMPMESS])
         # TODO add pid + mode to identify the process by asrun
-
-        if self._parallel:
-            logger.info(f"    {' '.join(cmd)}")
-            logger.info(">>> executed by:")
-            args = dict(cmdline=" ".join(cmd),
-                        cp_cmd="scp -r",
-                        jobnum=self.jobnum,
-                        global_wrkdir=self._globtmp,
-                        local_wrkdir=self._basetmp,
-                        mpirun_rank=CFG.get("mpirun_rank"))
-            with open(MPI_SCRIPT, "w") as fobj:
-                fobj.write(get_mpirun_script(args))
-            os.chmod(MPI_SCRIPT, stat.S_IRWXU)
-
-            args_cmd = dict(mpi_nbcpu=self.export.get("mpi_nbcpu"),
-                            program=MPI_SCRIPT)
-            cmd = [CFG.get("mpirun").format(**args_cmd)]
         return cmd
 
     def _get_status(self, exitcode, last):
@@ -291,6 +280,9 @@ class RunAster:
         """
         logger.info(f"TITLE Content of {os.getcwd()} after execution:")
         logger.info(_ls(".", "REPE_OUT"))
+        if self._procid != 0:
+            return
+
         results = self.export.resultfiles
         if results:
             logger.info("TITLE Copying results")
@@ -303,6 +295,7 @@ class RunOnlyEnv(RunAster):
     Arguments:
         export (Export): Export object defining the calculation.
     """
+    _show_comm = False
 
     def execute_study(self):
         """Execute the study.
@@ -329,17 +322,52 @@ class RunOnlyEnv(RunAster):
         logger.info(f"    {' '.join(cmd)}")
         return Status(StateOptions.Ok, exitcode=0)
 
-    def _change_comm_file(self, comm, show):
-        """Change a command file.
-
-        Arguments:
-            comm (str): Command file name.
-            show (bool): Not use here..
-        """
-        super()._change_comm_file(comm, show=False)
-
     def ending_execution(self, _):
         """Nothing to do in this case."""
+
+
+def get_procid():
+    """Return the identifier of the current process.
+
+    Returns:
+        int: Process ID, -1 if a parallel version is not run under *mpirun*.
+    """
+    proc = run(CFG.get("mpirun_rank"), shell=True, stdout=PIPE,
+                universal_newlines=True)
+    try:
+        procid = int(proc.stdout.strip())
+    except ValueError:
+        procid = -1
+    return procid
+
+
+def change_comm_file(comm, interact=False, wrkdir=None, show=False):
+    """Change a command file.
+
+    Arguments:
+        comm (str): Command file name.
+        wrkdir (str, optional): Working directory to write the changed file
+            if necessary (defaults: current working directory).
+        show (bool): Show file content if *True*.
+
+    Returns:
+        str: Name of the file to be executed (== *comm* if nothing changed)
+    """
+    with open(comm, "rb") as fobj:
+        text_init = fobj.read().decode(errors='replace')
+    text = add_import_commands(text_init)
+    if interact:
+        text = stop_at_end(text)
+    if text.strip() == text_init.strip():
+        return comm
+
+    filename = osp.join(wrkdir or ".",
+                        osp.splitext(osp.basename(comm))[0] + ".changed.py")
+    with open(filename, 'w') as fobj:
+        fobj.write(text)
+    if show:
+        logger.info(f"\nContent of the file to execute:\n{text}\n")
+    return filename
 
 
 def copy_datafiles(files):
@@ -348,9 +376,6 @@ def copy_datafiles(files):
     Arguments:
         files (list[File]): List of File objects.
     """
-    idx = 0
-    nbcomm = len([i for i in files if i.filetype == "comm"])
-    fmt = "{{:0{}d}}".format(int(log10(max(1, nbcomm))) + 1)
     for obj in files:
         dest = None
         # fort.*
@@ -358,10 +383,6 @@ def copy_datafiles(files):
             dest = "fort." + str(obj.unit)
             if obj.filetype == "nom":
                 dest = osp.basename(obj.path)
-            # exception for multiple command files (adding _N)
-            if obj.unit == 1:
-                idx += 1
-                dest += '.' + fmt.format(idx)
             # warning if file already exists
             if osp.exists(dest):
                 logger.warning(f"'{obj.path}' overwrites '{dest}'")

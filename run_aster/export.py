@@ -274,22 +274,45 @@ class File:
         """bool: Attribute that holds the 'resu' property."""
         return self._resu
 
+    def _astext(self):
+        fields = []
+        if self._dir:
+            fields.append('R')
+        else:
+            fields.append('F')
+        fields.append(self._typ)
+        fields.append(self._path)
+        drc = ""
+        if self.data:
+            drc += 'D'
+        if self.resu:
+            drc += 'R'
+        if self.compr:
+            drc += 'C'
+        fields.append(drc)
+        fields.append(str(self.unit))
+        return fields
+
+    @property
+    def as_argument(self):
+        """str: String to be passed on command_line"""
+        return ":".join(self._astext())
+
+    @classmethod
+    def from_argument(cls, line):
+        """Create a File object by decoding a line as formatted
+        by `File.as_argument`.
+
+        Arguments:
+            line (str): Line as formatted by `File.as_argument`
+        """
+        typ, filetype, path, drc, unit = line.split(":")
+        return cls(path, filetype, unit, typ == "R",
+                   "D" in drc, "R" in drc, "C" in drc)
+
     def __repr__(self):
         """Simple representation"""
-        txt = ""
-        if self._dir:
-            txt += 'R '
-        else:
-            txt += 'F '
-        txt += self._typ + ' ' + self.path + ' '
-        if self.data:
-            txt += 'D'
-        if self.resu:
-            txt += 'R'
-        if self.compr:
-            txt += 'C'
-        txt += ' ' +  str(self.unit)
-        return txt
+        return " ".join(self._astext())
 
 
 class Export:
@@ -327,9 +350,14 @@ class Export:
         return self._filename
 
     @property
+    def commfiles(self):
+        """list[File]: List of input 'comm' File objects."""
+        return [i for i in self._files if i.data if i.filetype == "comm"]
+
+    @property
     def datafiles(self):
-        """list[File]: List of input File objects."""
-        return [i for i in self._files if i.data]
+        """list[File]: List of input File objects (except 'comm' files)."""
+        return [i for i in self._files if i.data if i.filetype != "comm"]
 
     @property
     def resultfiles(self):
@@ -343,6 +371,15 @@ class Export:
             fileobj (File): File object to be added.
         """
         self._files.append(fileobj)
+
+    def import_file_argument(self, line):
+        """Add a File object by decoding a line as formatted
+        by `File.as_argument`.
+
+        Arguments:
+            line (str): Line as formatted by `File.as_argument`
+        """
+        self.add_file(File.from_argument(line))
 
     def parse(self, check):
         """Parse the export content.
@@ -474,14 +511,10 @@ class Export:
                 txt.append(repr(param))
         if self.args:
             txt.append("A" + repr(self._pargs)[1:])
-        data = self.datafiles
-        if data:
-            for entry in data:
-                txt.append(repr(entry))
-        result = self.resultfiles
-        if result:
-            for entry in result:
-                txt.append(repr(entry))
+        for files in (self.commfiles, self.datafiles, self.resultfiles):
+            if files:
+                for entry in files:
+                    txt.append(repr(entry))
         txt.append("")
         return "\n".join(txt)
 
@@ -579,4 +612,14 @@ class Export:
         """
         self.set_parameter("time_limit", value)
         self.remove_args("--tpmax", 1)
+        self.check()
+
+    def set_memory_limit(self, value):
+        """Define the memory limit value.
+
+        Arguments:
+            value (float): New memory limit.
+        """
+        self.remove_args("--memory", 1)
+        self.set_argument(["--memory", str(value)])
         self.check()
