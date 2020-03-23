@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine merith(model_, nb_load, list_name_, mate, cara_elem_,&
+subroutine merith(model_, nb_load, list_name_, mate, mateco, cara_elem_,&
                   time_, matr_elem_, nh, base_)
     implicit none
 !
@@ -37,7 +37,7 @@ subroutine merith(model_, nb_load, list_name_, mate, cara_elem_,&
 #include "asterfort/merit2.h"
 #include "asterfort/merit3.h"
 #include "asterfort/reajre.h"
-    character(len=*) :: list_name_(*), mate
+    character(len=*) :: list_name_(*), mate, mateco
     character(len=*) :: model_, cara_elem_, matr_elem_, base_, time_
     integer :: nb_load
 ! ----------------------------------------------------------------------
@@ -101,7 +101,7 @@ subroutine merith(model_, nb_load, list_name_, mate, cara_elem_,&
     call load_neut_excl(command, list_nbload_ = nb_load, list_name_ = list_name_)
 !
 !     -- RIGIDITE CORRESPONDANT AUX ELEMENTS ISO ET AUX ELEMENTS CAL_TI:
-    call merit1(model, nb_load, list_name_, mate, cara_elem,&
+    call merit1(model, nb_load, list_name_, mate, mateco, cara_elem,&
                 time, '&MERITH1           ', nh, matr_elem, 0,&
                 base)
     call jeexin('&MERITH1           .RELR', iret)
@@ -123,7 +123,7 @@ subroutine merith(model_, nb_load, list_name_, mate, cara_elem_,&
 !
 !     -- OPERATEUR ELEMENTAIRE DE CONVECTION NATURELLE:
     numor3 = long1 + long2
-    call merit3(model, nb_load, list_name_, mate, cara_elem,&
+    call merit3(model, nb_load, list_name_, mate, mateco, cara_elem,&
                 time, '&MERITH3           ', matr_elem, numor3, base)
     call jeexin('&MERITH3           .RELR', iret)
     long3=0

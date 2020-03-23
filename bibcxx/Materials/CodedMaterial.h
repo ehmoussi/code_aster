@@ -41,13 +41,13 @@ class CodedMaterialClass
 private:
     std::string                       _name;
     std::string                       _type;
-    MaterialFieldPtr                 _mater;
+    MaterialFieldPtr                  _mater;
     ModelPtr                          _model;
-    ConstantFieldOnCellsLongPtr              _field;
+    ConstantFieldOnCellsLongPtr       _field;
     JeveuxVectorChar8                 _grp;
     JeveuxVectorLong                  _nGrp;
     std::vector< JeveuxVectorLong >   _vecOfCodiVectors;
-    std::vector< JeveuxVectorReal > _vecOfR8;
+    std::vector< JeveuxVectorReal >   _vecOfR8;
     std::vector< JeveuxVectorLong >   _vecOfIa;
 
 public:
@@ -60,7 +60,16 @@ public:
     /**
      * @brief Constructeur
      */
-    CodedMaterialClass( const MaterialFieldPtr& mater, const ModelPtr& model );
+    CodedMaterialClass(void) = delete;
+
+
+    CodedMaterialClass( const std::string& name,
+                        const MaterialFieldPtr& mater,
+                        const ModelPtr& model );
+
+
+    CodedMaterialClass( const MaterialFieldPtr& mater, const ModelPtr& model ):
+                    CodedMaterialClass(ResultNaming::getNewResultName(), mater, model){};
 
     /**
      * @brief Destructeur
@@ -106,6 +115,15 @@ public:
     const std::string getType() const
     {
         return _type;
+    };
+
+    /**
+     * @brief Function membre
+     * @return material field
+     */
+    MaterialFieldPtr getMaterialField() const
+    {
+        return _mater;
     };
 };
 

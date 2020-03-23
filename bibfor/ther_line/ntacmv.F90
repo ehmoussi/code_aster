@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine ntacmv(model , mate  , cara_elem, list_load, nume_dof,&
+subroutine ntacmv(model , mate  , mateco, cara_elem, list_load, nume_dof,&
                   l_stat, time  , tpsthe   , reasrg   , reasms  ,&
                   vtemp , varc_curr, &
                   cn2mbr, matass, cndiri   , cncine   , mediri)
@@ -50,7 +50,7 @@ implicit none
 #include "asterfort/vrcins.h"
 !
 character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 character(len=24), intent(in) :: cara_elem
 character(len=19), intent(in) :: list_load
 character(len=24), intent(in) :: nume_dof
@@ -152,7 +152,7 @@ character(len=24), intent(in) :: mediri
 ! - Compute CHAR_THER_EVOL
 !
     if (.not.l_stat) then
-        call vetnth(model    , cara_elem, mate  , time,&
+        call vetnth(model    , cara_elem, mate, mateco  , time,&
                     vtemp    , varc_curr, vetntp, 'V')
         call asasve(vetntp, nume_dof, 'R', vatntp)
         call jeveuo(vatntp, 'L', jtn)
@@ -161,8 +161,8 @@ character(len=24), intent(in) :: mediri
 !
 ! - Compute Neumann loads (second member)
 !
-    call vechth('STAT', model    , lload_name, lload_info, cara_elem,&
-                mate  , time_curr, time      , vtemp     , vechtp,&
+    call vechth('STAT', model    , lload_name, lload_info, cara_elem, mate, &
+                mateco  , time_curr, time      , vtemp     , vechtp,&
                 varc_curr_ = varc_curr)
     call asasve(vechtp, nume_dof, 'R', vachtp)
     call ascova('D', vachtp, lload_func, 'INST', tpsthe(1),&
@@ -197,12 +197,12 @@ character(len=24), intent(in) :: mediri
 !
     if (reasrg .or. reasms) then
         if (reasms) then
-            call memsth(model    , cara_elem, mate, time, memass, 'V',&
+            call memsth(model    , cara_elem, mate, mateco, time, memass, 'V',&
                         varc_curr)
         endif
 
         if (reasrg) then
-            call mergth(model    , list_load, cara_elem, mate, time,&
+            call mergth(model    , list_load, cara_elem, mate, mateco, time,&
                         merigi   , 'V',&
                         time_curr, varc_curr)
         endif

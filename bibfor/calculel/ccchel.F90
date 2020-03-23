@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
 subroutine ccchel(option, modele, resuin, resuou, numord,&
-                  nordm1, mateco, carael, typesd, ligrel,&
+                  nordm1, mater , mateco, carael, typesd, ligrel,&
                   l_poux, exitim, lischa, nbchre, ioccur,&
                   suropt, basopt, resout)
 !
@@ -40,7 +40,7 @@ character(len=1) :: basopt
 character(len=8) :: modele, resuin, resuou, carael
 character(len=16) :: option, typesd
 character(len=19) :: lischa
-character(len=24) :: mateco, ligrel, resout, suropt
+character(len=24) :: mater, ligrel, resout, suropt, mateco
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -57,6 +57,7 @@ character(len=24) :: mateco, ligrel, resout, suropt
 !   RESUOU  K8   NOM DE LA STRUCUTRE DE DONNEES RESULTAT OUT
 !   NUMORD  I    NUMERO D'ORDRE COURANT
 !   NORDM1  I    NUMERO D'ORDRE PRECEDENT
+!   MATER   K8   NOM DU MATERIAU
 !   MATECO  K8   NOM DU MATERIAU CODE
 !   CARAEL  K8   NOM DU CARAELE
 !   TYPESD  K16  TYPE DE LA STRUCTURE DE DONNEES RESULTAT
@@ -85,11 +86,11 @@ character(len=24) :: mateco, ligrel, resout, suropt
 ! - Create generic input fields
 !
     call ccpara(option, modele, resuin, resuou, numord,&
-                nordm1, exitim, mateco(1:8), carael)
+                nordm1, exitim, mater(1:8), carael)
 !
 ! - Construct list of input fields
 !
-    call cclpci(option, modele, resuin, resuou, mateco(1:8),&
+    call cclpci(option, modele, resuin, resuou, mater(1:8), mateco(1:8),&
                 carael, ligrel, numord, nbpain, lipain,&
                 lichin, iret)
     if (iret .ne. 0) then
@@ -114,7 +115,7 @@ character(len=24) :: mateco, ligrel, resout, suropt
 !
 ! - Special
 !
-    call ccaccl(option, modele, mateco(1:8), carael, ligrel,&
+    call ccaccl(option, modele, mater(1:8), carael, ligrel,&
                 typesd, nbpain, lipain, lichin, lichou,&
                 iret)
     if (iret .ne. 0) then

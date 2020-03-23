@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine calmdg(model, modgen, nugene, num, nu,&
-                  ma, mate, moint, moflui, ndble,&
+                  ma, mate, mateco, moint, ndble,&
                   itxsto, itysto, itzsto, iprsto, nbmo,&
                   iadirg)
 ! aslint: disable=
@@ -45,7 +45,7 @@ subroutine calmdg(model, modgen, nugene, num, nu,&
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-    character(len=*) :: mate
+    character(len=*) :: mate, mateco
 !
 ! AUTEUR : G. ROUSSEAU
 ! ROUTINE CALCULANT :
@@ -59,7 +59,7 @@ subroutine calmdg(model, modgen, nugene, num, nu,&
 !     IN : K14 : NUM :NUMEROTATION ASSOCIEE AU MODELE D INTERFACE
 !     IN : K14 : NU :NUMEROTATION ASSOCIEE AU MODELE FLUIDE
 !     IN : K8 : MA : MATRICE DE RAIDEUR DU FLUIDE
-!     IN : K8 : MOINT,MOFLUI : MODELE INTERFACE, MODELE FLUIDE
+!     IN : K8 : MOINT : MODELE INTERFACE
 !     IN : I : NDBLE :INDICATEUR DE RECHERCHE DE NOEUDS DOUBLES
 !     OUT : INTEGER : ITXSTO,ITYSTO,ITZSTO,IPRSTO :
 !           ADRESSE DU CHAMP DE TEMP
@@ -79,7 +79,7 @@ subroutine calmdg(model, modgen, nugene, num, nu,&
     real(kind=8) :: norm1, norm2, reste(3), deuxpi
     character(len=2) :: model
     character(len=6) :: chaine
-    character(len=8) :: repon, moflui, moint, ma, k8bid
+    character(len=8) :: repon, moint, ma, k8bid
     character(len=8) :: modgen, bamo, macel, mailla, maflui
     character(len=14) :: nu, num
     character(len=14) :: nugene
@@ -145,7 +145,7 @@ subroutine calmdg(model, modgen, nugene, num, nu,&
         call dismoi('NOM_MAILLA', nomcha(1:19), 'CHAM_NO', repk=mailla)
         call dismoi('NOM_MAILLA', moint, 'MODELE', repk=maflui)
         if (maflui .ne. mailla) then
-            call tabcor(model, mate, mailla, maflui, moint,&
+            call tabcor(model, mate, mateco, mailla, maflui, moint,&
                         num, ndble, icor)
         endif
 !
@@ -241,7 +241,7 @@ subroutine calmdg(model, modgen, nugene, num, nu,&
             call trprot(model, bamo, tgeom, imodg, iadx,&
                         iady, iadz, isst, iadrp, norm1,&
                         norm2, ndble, num, nu, ma,&
-                        mate, moint, ilires, k, icor)
+                        mate, mateco, moint, ilires, k, icor)
 !
 !
   2         continue

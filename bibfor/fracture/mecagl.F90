@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine mecagl(option, result, modele, depla, thetai,&
-                  mate, compor, lischa, symech, chfond,&
+                  mate, mateco, compor, lischa, symech, chfond,&
                   nnoff, iord, ndeg, liss,&
                   milieu, ndimte, extim,&
                   time, nbprup, noprup, chvite, chacce,&
@@ -72,7 +72,7 @@ subroutine mecagl(option, result, modele, depla, thetai,&
     character(len=8) :: modele, thetai
     character(len=8) :: result, symech, kcalc
     character(len=16) :: option, noprup(*)
-    character(len=24) :: depla, chfond, mate, compor
+    character(len=24) :: depla, chfond, mate, compor, mateco
     character(len=24) :: chvite, chacce, fonoeu, liss, norfon
 !
     aster_logical :: extim, milieu, lincr, connex
@@ -153,7 +153,7 @@ subroutine mecagl(option, result, modele, depla, thetai,&
 
     call getvid('THETA', 'FISSURE', iocc=1, scal=fiss, nbret=ibid)
     lxfem = .false.
-    if (ibid .ne. 0) lxfem = .true.  
+    if (ibid .ne. 0) lxfem = .true.
 !
 !- RECUPERATION DU COMPORTEMENT
 !
@@ -308,7 +308,7 @@ subroutine mecagl(option, result, modele, depla, thetai,&
         lpain(3) = 'PTHETAR'
         lchin(3) = chthet
         lpain(4) = 'PMATERC'
-        lchin(4) = mate
+        lchin(4) = mateco
         lpain(5) = 'PVARCPR'
         lchin(5) = chvarc
         lpain(6) = 'PVARCRR'

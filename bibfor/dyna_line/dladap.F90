@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine dladap(result, tinit, lcrea, lamort, neq,&
                   imat, masse, rigid, amort, dep0,&
                   vit0, acc0, fexte, famor, fliai,&
                   nchar, nveca, liad, lifo, modele,&
-                  mate, carele, charge, infoch, fomult,&
+                  mate, mateco, carele, charge, infoch, fomult,&
                   numedd, nume, numrep, ds_energy,&
                   sd_obsv, mesh)
 !
@@ -103,7 +103,7 @@ implicit none
 !
     integer :: neq, imat(*), liad(*), nchar, nveca, nume, numrep
     character(len=8) :: masse, rigid, amort, result
-    character(len=24) :: modele, carele, charge, fomult, mate, numedd
+    character(len=24) :: modele, carele, charge, fomult, mate, mateco, numedd
     character(len=24) :: infoch, lifo(*)
     real(kind=8) :: dep0(*), vit0(*), acc0(*), tinit
     real(kind=8) :: fexte(*), famor(*), fliai(*)
@@ -193,7 +193,7 @@ implicit none
     call jeveuo('&&NMCH1P.DEPMOI    .VALE', 'E', idepmoi)
     call jeveuo('&&NMCH1P.VITMOI    .VALE', 'E', ivitmoi)
     call jeveuo('&&NMCH1P.ACCMOI    .VALE', 'E', iaccmoi)
-    
+
 !
     epsi = r8prem()
     npas = 0
@@ -387,7 +387,7 @@ implicit none
             r8val = temps+dt2
             call dlfext(nveca, nchar, r8val, neq, liad,&
                         lifo, charge, infoch, fomult, modele,&
-                        mate, carele, numedd, zr(iforc1))
+                        mate, mateco, carele, numedd, zr(iforc1))
 !
             if (ener) then
                 do ieq = 1, neq
@@ -527,7 +527,7 @@ implicit none
 
         if (l_obsv) then
             ! stock depl/vite/acce dans le champ pour Observation
-            
+
             call dcopy(neq, vale, 1, zr(idepmoi), 1)
             call dcopy(neq, zr(jvit2), 1, zr(ivitmoi), 1)
             call dcopy(neq, zr(jacc2), 1, zr(iaccmoi), 1)

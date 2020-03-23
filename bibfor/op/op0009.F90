@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ implicit none
     character(len=8) :: model, cara_elem, sigm, strx, disp
     character(len=16) :: k8dummy, option
     character(len=19) :: matr_elem, rigi_meca, mass_meca, resuel, list_load
-    character(len=24) :: chtime, mate, compor_mult, matr_elem24
+    character(len=24) :: chtime, mate, compor_mult, matr_elem24, mateco
     character(len=8), pointer :: v_list_load8(:) => null()
     character(len=24), pointer :: relr(:) => null()
     real(kind=8) :: time_curr, time_incr
@@ -92,7 +92,7 @@ implicit none
 ! - Get parameters
 !
     call cme_getpara(option      ,&
-                     model       , cara_elem, mate, compor_mult,&
+                     model       , cara_elem, mate, mateco, compor_mult,&
                      v_list_load8, nb_load  ,&
                      rigi_meca   , mass_meca,&
                      time_curr   , time_incr, nh       ,&
@@ -105,66 +105,66 @@ implicit none
 ! - Compute
 !
     if (option .eq. 'RIGI_MECA') then
-        call merime(model, nb_load     , v_list_load8, mate, cara_elem,&
+        call merime(model, nb_load     , v_list_load8, mate, mateco, cara_elem,&
                     time_curr , compor_mult , matr_elem   , nh  , base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_FLUI_STRU') then
-        call merifs(model, nb_load  , v_list_load8, mate, cara_elem,&
+        call merifs(model, nb_load  , v_list_load8, mate, mateco, cara_elem,&
                     time_curr , matr_elem, nh)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_GEOM') then
         call merige(model, cara_elem, sigm      , strx      , matr_elem,&
-                    base , nh       , deplr=disp, mater=mate)
+                    base , nh       , deplr=disp, mateco=mateco)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ROTA') then
-        call meriro(model, cara_elem  , nb_load  , v_list_load8, mate,&
+        call meriro(model, cara_elem  , nb_load  , v_list_load8, mate, mateco, &
                     time_curr , compor_mult, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MECA_GYRO') then
-        call meamgy(model  , mate        , cara_elem, compor_mult, matr_elem,&
+        call meamgy(model  , mate, mateco      , cara_elem, compor_mult, matr_elem,&
                     nb_load, v_list_load8)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_GYRO') then
-        call merigy(model  , mate        , cara_elem, compor_mult, matr_elem,&
+        call merigy(model  ,mate,  mateco      , cara_elem, compor_mult, matr_elem,&
                     nb_load, v_list_load8)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_MECA') then
-        call memame(option     , model    , mate, cara_elem, time_curr,&
+        call memame(option     , model    , mate, mateco, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_FLUI_STRU') then
-        call memame(option     , model    , mate, cara_elem, time_curr,&
+        call memame(option     , model    , mate, mateco, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_MECA_DIAG') then
-        call memame(option     , model    , mate, cara_elem, time_curr,&
+        call memame(option     , model    , mate, mateco, cara_elem, time_curr,&
                     compor_mult, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'AMOR_MECA') then
-        call meamme(option   , model, nb_load, v_list_load8, mate     ,&
+        call meamme(option   , model, nb_load, v_list_load8, mate     , mateco, &
                     cara_elem, time_curr , base   , rigi_meca   , mass_meca,&
                     matr_elem, ' ')
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'IMPE_MECA') then
-        call meimme(model, nb_load, v_list_load8, mate, matr_elem)
+        call meimme(model, nb_load, v_list_load8, mate, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'ONDE_FLUI') then
-        call meonme(model, nb_load, v_list_load8, mate, matr_elem)
+        call meonme(model, nb_load, v_list_load8, mate, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_MECA_HYST') then
-        call meamme(option   , model, nb_load, v_list_load8, mate     ,&
+        call meamme(option   , model, nb_load, v_list_load8, mate     , mateco, &
                     cara_elem, time_curr , base   , rigi_meca   , mass_meca,&
                     matr_elem, ' ')
 !
@@ -172,26 +172,26 @@ implicit none
     else if (option.eq.'RIGI_THER') then
         call ntdoch(list_load, l_load_user_ = .true._1)
         matr_elem24 = matr_elem
-        call mergth(model      , list_load, cara_elem, mate, chtime,&
+        call mergth(model      , list_load, cara_elem, mate, mateco, chtime,&
                     matr_elem24, base,&
                     time_curr  , nh_ = nh)
         call medith(base, 'CUMU', model, list_load, matr_elem24)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_THER') then
-        call memsth(model, cara_elem, mate, chtime, matr_elem, base, time_curr_ = time_curr)
+        call memsth(model, cara_elem, mate, mateco, chtime, matr_elem, base, time_curr_ = time_curr)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'RIGI_ACOU') then
-        call meriac(model, nb_load, v_list_load8, mate, matr_elem, base)
+        call meriac(model, nb_load, v_list_load8, mate, mateco, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'MASS_ACOU') then
-        call memaac(model, mate, matr_elem)
+        call memaac(model, mate, mateco, matr_elem)
 !
 ! --------------------------------------------------------------------------------------------------
     else if (option.eq.'AMOR_ACOU') then
-        call meamac(model, nb_load, v_list_load8, mate, matr_elem, base)
+        call meamac(model, nb_load, v_list_load8, mate, mateco, matr_elem, base)
 !
 ! --------------------------------------------------------------------------------------------------
     else

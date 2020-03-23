@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fondpl(modele, mate, numedd, neq, chondp,&
+subroutine fondpl(modele, mateco, numedd, neq, chondp,&
                   nchond, vecond, veonde, vaonde, temps,&
                   foonde)
     implicit none
@@ -36,7 +36,7 @@ subroutine fondpl(modele, mate, numedd, neq, chondp,&
     integer :: i, ibid, iret, j,  jvaond
     integer :: nchond, neq, npain
     character(len=8) :: lpain(5), lpaout(1), chondp(nchond)
-    character(len=24) :: modele, mate, numedd, vecond
+    character(len=24) :: modele, mateco, numedd, vecond
     character(len=24) :: chinst
     character(len=24) :: veonde, vaonde, lchin(5), lchout(1)
     character(len=24) :: chgeom, ligrel
@@ -60,7 +60,7 @@ subroutine fondpl(modele, mate, numedd, neq, chondp,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = mateco
 !
     lpain(3) = 'PTEMPSR'
     lchin(3) = chinst

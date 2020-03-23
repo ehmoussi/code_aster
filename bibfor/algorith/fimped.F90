@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine fimped(modele, mate, numedd, neq, vitini,&
+subroutine fimped(modele, mateco, numedd, neq, vitini,&
                   vitent, veccor, veanec, vaanec, temps,&
                   foimpe)
     implicit none
@@ -33,7 +33,7 @@ subroutine fimped(modele, mate, numedd, neq, vitini,&
 #include "asterfort/reajre.h"
     integer :: i, ibid,   jvaanc, neq, npain
     character(len=8) :: lpain(5), lpaout(1)
-    character(len=24) :: modele, mate, numedd, vitini, veccor
+    character(len=24) :: modele, mateco, numedd, vitini, veccor
     character(len=24) :: vitent, chinst
     character(len=24) :: veanec, vaanec, lchin(5), lchout(1)
     character(len=24) :: chgeom, ligrel
@@ -55,7 +55,7 @@ subroutine fimped(modele, mate, numedd, neq, vitini,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = mateco
 !
     lpain(3) = 'PVITPLU'
     lchin(3) = vitini
@@ -81,9 +81,9 @@ subroutine fimped(modele, mate, numedd, neq, vitini,&
     call jeveuo(vaanec, 'L', jvaanc)
     call jeveuo(zk24(jvaanc) (1:19)//'.VALE', 'L', vr=vale)
 !
-    do 10 i = 1, neq
+    do i = 1, neq
         foimpe(i) = vale(i)
-10  end do
+    end do
     call detrsd('CHAMP_GD', zk24(jvaanc) (1:19))
 !
 !

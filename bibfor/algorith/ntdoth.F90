@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ntdoth(model     , mate   , cara_elem, list_load, result, &
+subroutine ntdoth(model     , mater  , mateco   , cara_elem, list_load, result, &
                   nume_store, matcst_, coecst_  )
 !
 implicit none
@@ -32,7 +32,7 @@ implicit none
 !
 character(len=24), intent(out) :: model
 character(len=24), intent(out) :: cara_elem
-character(len=24), intent(out) :: mate
+character(len=24), intent(out) :: mateco, mater
 character(len=19), intent(inout) :: list_load
 character(len=8), optional, intent(in) :: result
 integer, optional, intent(in) :: nume_store
@@ -47,7 +47,8 @@ aster_logical, optional, intent(out) :: coecst_
 !
 ! Out model            : name of model
 ! Out list_load        : list of loads
-! Out mate             : name of material characteristics (field)
+! Out mater            : name of material characteristics (field)
+! Out mateco           : name of coded material
 ! Out cara_elem        : name of datastructure for elementary parameters (CARTE)
 ! In  result           : name of datastructure for results
 ! In  nume_store       : index to store in results
@@ -68,7 +69,7 @@ aster_logical, optional, intent(out) :: coecst_
 ! --------------------------------------------------------------------------------------------------
 !
     materi      = ' '
-    mate        = ' '
+    mateco      = ' '
     cara_elem   = ' '
     if (list_load.eq.' ') then
         list_load   = '&&NTDOTH.LISCHA'
@@ -97,8 +98,9 @@ aster_logical, optional, intent(out) :: coecst_
 ! - Coding material parameters
 !
     if (materi .ne. ' ') then
-        call rcmfmc(materi, mate, l_ther_ = ASTER_TRUE)
+        call rcmfmc(materi, mateco, l_ther_ = ASTER_TRUE)
     endif
+    mater = materi
 !
 ! - Get loads information and create datastructure
 !
@@ -118,7 +120,7 @@ aster_logical, optional, intent(out) :: coecst_
 !
 ! - Detect non-constant material parameters
 !
-    call dismoi('THER_F_INST', mate, 'CHAM_MATER', repk=repk)
+    call dismoi('THER_F_INST', mater, 'CHAM_MATER', repk=repk)
     matcst = repk.eq.'NON'
 !
     if (present(coecst_)) then

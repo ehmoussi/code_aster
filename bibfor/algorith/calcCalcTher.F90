@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine calcCalcTher(nb_option    , list_option   ,&
-                        list_load    , model         , mate        , cara_elem,&
+                        list_load    , model         , mate        , mateco, cara_elem,&
                         time_curr    , time,&
                         temp_prev    , incr_temp     , compor_ther , temp_curr,&
                         ve_charther  , me_mtanther   , ve_dirichlet,&
@@ -42,7 +42,7 @@ implicit none
 integer, intent(in) :: nb_option
 character(len=16), intent(in) :: list_option(:)
 character(len=19), intent(in) :: list_load
-character(len=24), intent(in) :: model, mate, cara_elem
+character(len=24), intent(in) :: model, mate, mateco, cara_elem
 real(kind=8), intent(in) :: time_curr
 character(len=24), intent(in) :: time
 character(len=*), intent(in) :: temp_prev, incr_temp, temp_curr
@@ -56,7 +56,7 @@ integer, intent(in) :: nb_obje_maxi
 character(len=16), intent(inout) :: obje_name(nb_obje_maxi)
 character(len=24), intent(inout) :: obje_sdname(nb_obje_maxi)
 integer, intent(out) ::  nb_obje
-! 
+!
 ! --------------------------------------------------------------------------------------------------
 !
 ! Command CALCUL
@@ -71,7 +71,7 @@ integer, intent(out) ::  nb_obje
 ! In  model            : name of model
 ! In  mate             : name of material characteristics (field)
 ! In  cara_elem        : name of elementary characteristics (field)
-! In  time_curr        : current time  
+! In  time_curr        : current time
 ! In  time             : name of field for time parameters
 ! In  temp_prev        : temperature at beginning of step
 ! In  incr_temp        : increment of temperature
@@ -121,7 +121,7 @@ integer, intent(out) ::  nb_obje
 ! - Physical dof computation
 !
     if (l_mtan_ther) then
-        call merxth(model      , lload_name, lload_info , cara_elem  , mate     ,&
+        call merxth(model      , lload_name, lload_info , cara_elem  , mate     , mateco, &
                     time_curr  , time      , temp_curr  , compor_ther, varc_curr,&
                     me_mtanther, 'G')
     endif
@@ -137,7 +137,7 @@ integer, intent(out) ::  nb_obje
 ! - Loads
 !
     if (l_char_evol) then
-        call vetnth_nonl(model        , cara_elem     , mate, time  , compor_ther,&
+        call vetnth_nonl(model        , cara_elem     , mate, mateco, time  , compor_ther,&
                          temp_prev    , varc_curr     , &
                          ve_evolther_l, ve_evolther_nl, 'G')
     endif
@@ -145,7 +145,7 @@ integer, intent(out) ::  nb_obje
 ! - Residuals
 !
     if (l_resi_ther) then
-        call verstp(model      , lload_name , lload_info, mate     , time_curr,&
+        call verstp(model      , lload_name , lload_info, mateco   , time_curr,&
                     time       , compor_ther, temp_prev , incr_temp, varc_curr,&
                     ve_resither, 'G')
     endif

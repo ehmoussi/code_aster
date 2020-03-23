@@ -116,7 +116,7 @@ implicit none
     character(len=1) :: typres, coef_type(4)
     character(len=4) :: typcal, nomsym(4)
     character(len=8) :: nomo, matass, modgen
-    character(len=24) :: carele, mate
+    character(len=24) :: carele, mate, mateco
     character(len=14) :: numddl, nddlphys
     character(len=16) :: typcon, nomcmd, tysd, champs
     character(len=19) :: lifreq, masse, raide, amor, dynam, impe, chamno
@@ -242,7 +242,7 @@ implicit none
 !
 ! --- LECTURE INFORMATIONS MECANIQUES
 !
-    call dydome(nomo, mate, carele)
+    call dydome(nomo, mate, mateco, carele)
 !
 ! --- LECTURE DU CHARGEMENT
 !
@@ -250,7 +250,7 @@ implicit none
 !
 ! --- CALCUL ET PRE-ASSEMBLAGE DU CHARGEMENT
 !
-    call dylach(nomo, mate, carele, lischa, numddl,&
+    call dylach(nomo, mate, mateco, carele, lischa, numddl,&
                 vediri, veneum, vevoch, vassec)
 !
 !============================================

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine merifs(modele, nchar, lchar, mate, cara,&
+subroutine merifs(modele, nchar, lchar, mate, mateco, cara,&
                   time, matel, nh)
     implicit none
 #include "asterf_types.h"
@@ -39,7 +39,7 @@ subroutine merifs(modele, nchar, lchar, mate, cara,&
     real(kind=8) :: time
     character(len=8) :: modele, cara
     character(len=19) :: matel
-    character(len=*) :: lchar(*), mate
+    character(len=*) :: lchar(*), mate, mateco
 !     CALCUL DES MATRICES ELEMENTAIRES DE RIGIDITE MECA
 !      OPTION 'RIGI_FLUI_STRU'.
 ! ----------------------------------------------------------------------
@@ -91,7 +91,7 @@ subroutine merifs(modele, nchar, lchar, mate, cara,&
         lpain(1) = 'PGEOMER'
         lchin(1) = chgeom
         lpain(2) = 'PMATERC'
-        lchin(2) = mate
+        lchin(2) = mateco
         lpain(3) = 'PCAORIE'
         lchin(3) = chcara(1)
         lpain(4) = 'PCADISK'

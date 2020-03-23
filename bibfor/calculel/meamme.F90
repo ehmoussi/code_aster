@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine meamme(optioz, modele, nchar, lchar, mate,&
+subroutine meamme(optioz, modele, nchar, lchar, mate, mateco, &
                   cara, time, base, merigi,&
                   memass, meamor, varplu, compor_)
 !
@@ -46,7 +46,7 @@ subroutine meamme(optioz, modele, nchar, lchar, mate,&
 !
     integer :: nchar
     real(kind=8) :: time
-    character(len=*) :: modele, optioz, cara, mate
+    character(len=*) :: modele, optioz, cara, mate, mateco
     character(len=*) :: merigi, memass, meamor, varplu
     character(len=8) :: lchar(*)
     character(len=1) :: base
@@ -187,7 +187,7 @@ subroutine meamme(optioz, modele, nchar, lchar, mate,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = mate(1:19)
+    lchin(2) = mateco(1:19)
     lpain(3) = 'PCAORIE'
     lchin(3) = chcara(1)(1:19)
     lpain(4) = 'PCADISA'

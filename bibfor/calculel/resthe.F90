@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine resthe(ligrel, evol, chtemm, chtemp, chflum,&
-                  chflup, mate, valthe, insold, inst,&
+                  chflup, mateco, valthe, insold, inst,&
                   resu, niveau, ifm, niv, ma,&
                   cartef, nomgdf, carteh, nomgdh, cartet,&
                   nomgdt, cartes, nomgds, chgeom, chsour,&
@@ -35,7 +35,7 @@ subroutine resthe(ligrel, evol, chtemm, chtemp, chflum,&
 ! IN CHTEMP : NOM DU CHAMP DE TEMPERATURE A T+
 ! IN CHFLUM : NOM DU CHAMP DU FLUX DE TEMPERATURE A T-
 ! IN CHFLUP : NOM DU CHAMP DU FLUX DE TEMPERATURE A T+
-! IN MATE   : NOM DU CONCEPT CHAMP_MATERIAU
+! IN MATECO : NOM DU CONCEPT MATERIAU CODE
 ! IN VALTHE : VALEUR DU PARAMETRE THETA
 ! IN INSOLD : INSTANT CORRESPONDANT AU CALCUL PRECEDENT
 ! IN INST   : INSTANT CORRESPONDANT AU CALCUL ACTUEL
@@ -93,7 +93,7 @@ subroutine resthe(ligrel, evol, chtemm, chtemp, chflum,&
     character(len=8) :: ma, psourc
     character(len=19) :: cartef, carteh, cartet, cartes, nomgdf, nomgdh, nomgdt
     character(len=19) :: nomgds
-    character(len=24) :: chtemm, chtemp, chflum, chflup, resu, ligrel, mate
+    character(len=24) :: chtemm, chtemp, chflum, chflup, resu, ligrel, mateco
     character(len=24) :: chgeom, chsour
 !
 !
@@ -234,7 +234,7 @@ subroutine resthe(ligrel, evol, chtemm, chtemp, chflum,&
     lpain(4) = psourc
     lchin(4) = chsour
     lpain(5) = 'PMATERC'
-    lchin(5) = mate
+    lchin(5) = mateco
     lpain(6) = 'PCHARG'
     lchin(6) = '&&RESTHER.CHARGE'
     lpain(7) = 'PVOISIN'

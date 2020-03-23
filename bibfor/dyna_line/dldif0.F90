@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine dldif0(result, force1, neq, istoc, iarchi,&
                   dep0, vit0, acc0, depl1, vite1,&
                   acce1, vite2, fexte, famor, fliai,&
                   nchar, nveca, liad, lifo, modele,&
-                  ener, mate, carele, charge,&
+                  ener, mate, mateco, carele, charge,&
                   infoch, fomult, numedd, dt, temps,&
                   tabwk0, tabwk1, archiv, nbtyar, typear,&
                   numrep, ds_energy)
@@ -87,7 +87,7 @@ implicit none
 !
     character(len=8) :: masse, rigid, amort
     character(len=16) :: typear(nbtyar)
-    character(len=24) :: modele, mate, carele, charge, infoch, fomult, numedd
+    character(len=24) :: modele, mate, mateco, carele, charge, infoch, fomult, numedd
     character(len=24) :: lifo(*)
     type(NL_DS_Energy), intent(inout) :: ds_energy
     character(len=8) :: result
@@ -119,7 +119,7 @@ implicit none
 !
     call dlfext(nveca, nchar, temps, neq, liad,&
                 lifo, charge, infoch, fomult, modele,&
-                mate, carele, numedd, zr(iforc1))
+                mate, mateco, carele, numedd, zr(iforc1))
 !
     if (ener) then
         do 433 ieq = 1, neq

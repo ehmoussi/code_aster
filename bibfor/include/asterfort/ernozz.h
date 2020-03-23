@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine ernozz(modele, sigma, chmat, signo, chvarc,&
+    subroutine ernozz(modele, sigma, mateco, signo, chvarc,&
                       option, ligrel, iordr, resuco, resuc1,&
                       champ)
         character(len=*) :: modele
         character(len=*) :: sigma
-        character(len=*) :: chmat
+        character(len=*) :: mateco
         character(len=*) :: signo
         character(len=19) :: chvarc
         character(len=*) :: option

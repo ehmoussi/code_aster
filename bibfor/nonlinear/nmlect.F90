@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmlect(result, model, mate, cara_elem, list_load, solver_)
+subroutine nmlect(result, model, mater, mateco, cara_elem, list_load, solver_)
 !
 implicit none
 !
@@ -29,7 +29,8 @@ implicit none
 !
     character(len=*), intent(out) :: result
     character(len=*), intent(out) :: model
-    character(len=*), intent(out) :: mate
+    character(len=*), intent(out) :: mater
+    character(len=*), intent(out) :: mateco
     character(len=*), intent(out) :: cara_elem
     character(len=*), intent(out) :: list_load
     character(len=*), optional, intent(out) :: solver_
@@ -44,7 +45,8 @@ implicit none
 !
 ! Out result           : name of results datastructure
 ! Out model            : name of model
-! Out mate             : name of material characteristics (field)
+! Out mater            : name of material
+! Out mateco           : name of material characteristics (field)
 ! Out cara_elem        : name of elementary characteristics (field)
 ! Out list_load        : name of datastructure for list of loads
 ! Out solver           : name of datastructure for solver
@@ -63,7 +65,7 @@ implicit none
 !
 ! - Get parameters from command file
 !
-    call medomm(model, mate, cara_elem)
+    call medomm(model, mater, mateco, cara_elem)
 !
 ! - Get loads information and create datastructure
 !

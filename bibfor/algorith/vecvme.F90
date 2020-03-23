@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vecvme(optio2, modelz, carelz, mate, compor,&
+subroutine vecvme(optio2, modelz, carelz, mate, mateco, compor,&
                   complz, numedd, cnchtp)
     implicit none
 #include "jeveux.h"
@@ -37,7 +37,7 @@ subroutine vecvme(optio2, modelz, carelz, mate, compor,&
 #include "asterfort/nmvcex.h"
 #include "asterfort/vrcref.h"
 #include "asterfort/wkvect.h"
-    character(len=*) :: modelz, carelz, complz, mate, cnchtp
+    character(len=*) :: modelz, carelz, complz, mate, mateco, cnchtp
     character(len=16) :: optio2
     character(len=24) :: numedd, compor
 !
@@ -107,7 +107,7 @@ subroutine vecvme(optio2, modelz, carelz, mate, compor,&
     lpain(2) = 'PTEMPSR'
     lchin(2) = chtime
     lpain(3) = 'PMATERC'
-    lchin(3) = mate
+    lchin(3) = mateco
     lpain(4) = 'PCACOQU'
     lchin(4) = chcara(7)
     lpain(5) = 'PCAGNPO'

@@ -26,9 +26,10 @@
 #include "Materials/CodedMaterial.h"
 #include "aster_fort.h"
 
-CodedMaterialClass::CodedMaterialClass( const MaterialFieldPtr &mater,
-                                              const ModelPtr &model )
-    : _name( mater->getName() ), _type( "MATER_CODE" ), _mater( mater ), _model( model ),
+CodedMaterialClass::CodedMaterialClass( const std::string& name,
+                                        const MaterialFieldPtr &mater,
+                                        const ModelPtr &model )
+    : _name( name ), _type( "MATER_CODE" ), _mater( mater ), _model( model ),
       _field( new ConstantFieldOnCellsLongClass( getName() + ".MATE_CODE", _model->getMesh(),
                                              Permanent ) ),
       _grp( JeveuxVectorChar8( getName() + ".MATE_CODE.GRP" ) ),
@@ -55,12 +56,13 @@ bool CodedMaterialClass::allocate(bool force) {
         thm = 1;
     // TODO existsTher ?
     ASTERINTEGER ther = 0;
-    std::string strJeveuxBase( "G" );
+    std::string strJeveuxBase( "V" );
     CALLO_RCMFMC_WRAP( materName, mate, &thm, &ther, getName(), strJeveuxBase );
 
     auto vecOfMater = _mater->getVectorOfMaterial();
     for ( auto curIter : vecOfMater ) {
-        std::string nameWithoutBlanks = trim( curIter->getName() ) + ".0";
+        // Fill codivectors (can be optimized)
+        std::string nameWithoutBlanks = trim( getName() ) + ".0";
         std::string base( " " );
         ASTERINTEGER pos = 1;
         ASTERINTEGER nbval2 = 0;
@@ -80,7 +82,7 @@ bool CodedMaterialClass::allocate(bool force) {
             }
         }
 
-        const int nbMB = curIter->getNumberOfMaterialBehviour();
+        const int nbMB = curIter->getNumberOfMaterialBehaviour();
         for( int i = 0; i < nbMB; ++i )
         {
             auto vecVec1 = curIter->getBehaviourVectorOfRealValues( i );

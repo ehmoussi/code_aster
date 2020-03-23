@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine load_neum_prep(model    , cara_elem , mate      , load_type     , inst_prev,&
+subroutine load_neum_prep(model    , cara_elem , mate      , mateco, load_type     , inst_prev,&
                           inst_curr, inst_theta, nb_in_maxi, nb_in_prep    , lchin    ,&
                           lpain    , varc_curr , disp_prev , disp_cumu_inst, compor   ,&
                           nharm    , strx_prev_, vite_curr_)
@@ -36,11 +36,11 @@ implicit none
 !
     character(len=24), intent(in) :: model
     character(len=24), intent(in) :: cara_elem
-    character(len=24), intent(in) :: mate
+    character(len=24), intent(in) :: mate, mateco
     character(len=4), intent(in) :: load_type
-    real(kind=8), intent(in) :: inst_prev 
+    real(kind=8), intent(in) :: inst_prev
     real(kind=8), intent(in) :: inst_curr
-    real(kind=8), intent(in) :: inst_theta 
+    real(kind=8), intent(in) :: inst_theta
     integer, intent(in) :: nb_in_maxi
     character(len=8), intent(inout) :: lpain(nb_in_maxi)
     character(len=19), intent(inout) :: lchin(nb_in_maxi)
@@ -62,6 +62,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model          : name of model
+! In  mateco         : mane of coded material
 ! In  mate           : name of material characteristics (field)
 ! In  cara_elem      : name of elementary characteristics (field)
 ! In  load_type      : load type to compute
@@ -110,7 +111,7 @@ implicit none
     call mecara(cara_elem, chcara)
 !
 ! - Times field
-! 
+!
     if (load_type.ne.'Dead') then
         nomcmp(1) = 'INST'
         chinst_curr = '&&VECHME.CH_INST_R'
@@ -151,7 +152,7 @@ implicit none
     lpain(2)  = 'PTEMPSR'
     lchin(2)  = chtime(1:19)
     lpain(3)  = 'PMATERC'
-    lchin(3)  = mate(1:19)
+    lchin(3)  = mateco(1:19)
     lpain(4)  = 'PCACOQU'
     lchin(4)  = chcara(7)(1:19)
     lpain(5)  = 'PCAGNPO'

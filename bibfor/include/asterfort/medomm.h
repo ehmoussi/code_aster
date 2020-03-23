@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,10 @@
 !
 !
 interface
-    subroutine medomm(model, mate, cara_elem)
+    subroutine medomm(model, mater, mateco, cara_elem)
         character(len=*), intent(out) :: model
-        character(len=*), intent(out) :: mate
+        character(len=*), intent(out) :: mater
+        character(len=*), intent(out) :: mateco
         character(len=*), intent(out) :: cara_elem
     end subroutine medomm
 end interface

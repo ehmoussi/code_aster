@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine rigflu(modele, time, nomcmp, tps, nbchar,&
-                  char, mate, solvez, ma, nu)
+                  char, mate, mateco, solvez, ma, nu)
     implicit none
 #include "jeveux.h"
 #include "asterfort/asmatr.h"
@@ -28,7 +28,7 @@ subroutine rigflu(modele, time, nomcmp, tps, nbchar,&
 #include "asterfort/preres.h"
 #include "asterfort/wkvect.h"
     integer :: nbchar
-    character(len=*) :: mate, solvez
+    character(len=*) :: mate, mateco, solvez
 !
 !
 !
@@ -64,7 +64,7 @@ subroutine rigflu(modele, time, nomcmp, tps, nbchar,&
     call mecact('V', time, 'MODELE', modele//'.MODELE', 'INST_R',&
                 ncmp=6, lnomcmp=nomcmp, vr=tps)
 !
-    call merith(modele, nbchar, char, mate, ' ',&
+    call merith(modele, nbchar, char, mate, mateco, ' ',&
                 time, mel, nh, 'V')
 !
     call getvid(' ', 'CHARGE', scal=char, nbret=nchar)

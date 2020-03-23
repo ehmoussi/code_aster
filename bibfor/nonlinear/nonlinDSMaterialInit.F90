@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSMaterialInit(model      , mate     , cara_elem,&
+subroutine nonlinDSMaterialInit(model      , mater    , mateco , cara_elem,&
                                 compor     , hval_incr,&
                                 nume_dof   , time_init,&
                                 ds_material)
@@ -37,7 +37,7 @@ implicit none
 #include "asterfort/nmchex.h"
 #include "asterfort/nmvcle.h"
 !
-character(len=24), intent(in) :: model, mate, cara_elem
+character(len=24), intent(in) :: model, mateco, cara_elem, mater
 character(len=24), intent(in) :: compor
 character(len=19), intent(in) :: hval_incr(*)
 character(len=24), intent(in) :: nume_dof
@@ -53,7 +53,8 @@ type(NL_DS_Material), intent(inout) :: ds_material
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of model
-! In  mate             : name of material characteristics (field)
+! In  mater            : name of material characteristics (field)
+! In  mateco           : name of coded material
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  compor           : name of comportment definition (field)
 ! In  hval_incr        : hat-variable for incremental values
@@ -74,22 +75,24 @@ type(NL_DS_Material), intent(inout) :: ds_material
 !
 ! - Save material field
 !
-    ds_material%field_mate = mate
+    ds_material%mateco = mateco
+    ds_material%mater  = mater
+
 !
 ! - Create external state variables for reference state
 !
-    call nmvcre(model, mate, cara_elem, ds_material%varc_refe)
+    call nmvcre(model, mater, cara_elem, ds_material%varc_refe)
 !
 ! - Create external state variables for initial time
 !
     call nmchex(hval_incr, 'VALINC', 'COMMOI', varc_prev)
-    call nmvcle(model, mate, cara_elem, time_init, varc_prev)
+    call nmvcle(model, mater, cara_elem, time_init, varc_prev)
 !
 ! - Compute CHAR_MECA_*_R at initial time
 !
     vect_elem = '&&VARCINIT_ELEM'
     vect_asse = ds_material%fvarc_init(1:19)
-    call nmvcfo('-'   , model    , mate     , cara_elem, compor,&
+    call nmvcfo('-'   , model    , mater, mateco     , cara_elem, compor,&
                 ds_material%varc_refe, hval_incr, vect_elem)
     call assvec('V', vect_asse, 1, vect_elem, [1.d0],&
                 nume_dof, ' ', 'ZERO', 1)

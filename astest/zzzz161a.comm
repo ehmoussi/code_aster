@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -93,7 +93,7 @@ RESUTRQ2=LIRE_RESU(
               CHAM_MATER=MATETEST,
               TYPE_RESU='EVOL_ELAS',
               FORMAT='MED',
-              FORMAT_MED=_F( NOM_CHAM_MED='0000000dDEPL',
+              FORMAT_MED=_F( NOM_CHAM_MED=RESUTRQU.getName() + 'DEPL',
                              NOM_CHAM  ='DEPL' ),
               UNITE=70,
               TOUT_ORDRE ='OUI',);
@@ -123,25 +123,25 @@ REQT_GD=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
 #
 # 4. Impressions
 #
-IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( MAILLAGE=MAILTRQU, IMPR_COOR = 'OUI', ) ) ;
-IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( RESULTAT=RESUTRQ2, ) ) ;
-IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( CHAM_GD =REQT_GD, ) ) ;
+IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( MAILLAGE=MAILTRQU, IMPR_COOR = 'OUI', ) )
+IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( RESULTAT=RESUTRQ2, ) )
+IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( CHAM_GD =REQT_GD, ) )
 IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( RESULTAT=RESUTRQ2,
                      NOM_CHAM = ('ERME_ELEM',),
                      GROUP_MA = 'MILIEU' ),
-            INFO=2 ) ;
+            INFO=2 )
 #
 IMPR_RESU ( PROC0='NON',FORMAT='MED', RESU=_F( RESULTAT=RESUTRQ2,
                                    NOM_CHAM = ('DEPL',) ),
-            INFO=2 ) ;
+            INFO=2 )
 IMPR_RESU ( PROC0='NON',FORMAT='MED', RESU=_F( CHAM_GD=REQT_GD,),
-            INFO=2 ) ;
+            INFO=2 )
 IMPR_RESU ( PROC0='NON',FORMAT='MED', RESU=_F( RESULTAT=RESUTRQ2,
                                    NOM_CHAM = ('SIGM_ELNO',),),
-            INFO=2 ) ;
+            INFO=2 )
 IMPR_RESU ( PROC0='NON',FORMAT='MED', RESU=_F( RESULTAT=RESUTRQ2,
                                    NOM_CHAM = 'ERME_ELEM',),
-            INFO=2 ) ;
+            INFO=2 )
 #
 # 5. Relecture
 #
@@ -150,13 +150,13 @@ IMPR_RESU ( PROC0='NON',FORMAT='MED', RESU=_F( RESULTAT=RESUTRQ2,
 DEPLRELU=LIRE_CHAMP(MAILLAGE=MAILTRQU,
                 FORMAT='MED',
                 UNITE=80,
-                NOM_MED='0000001aDEPL',
+                NOM_MED=RESUTRQ2.getName()+'DEPL',
                 NUME_ORDRE=1,NUME_PT=1,
                 TYPE_CHAM='NOEU_DEPL_R',
                 NOM_CMP_IDEM='OUI',
                 INFO=2
-               ) ;
-IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( CHAM_GD=DEPLRELU, ) ) ;
+               )
+IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( CHAM_GD=DEPLRELU, ) )
 #
 ################## CHAM_ELEM ELNO ##################
 #
@@ -164,26 +164,26 @@ SIGMRELU=LIRE_CHAMP(MAILLAGE=MAILTRQU,
                 MODELE=MODETRQU,
                 FORMAT='MED',
                 UNITE=80,
-                NOM_MED='0000001aSIGM_ELNO',
+                NOM_MED=RESUTRQ2.getName()+'SIGM_ELNO',
                 NUME_ORDRE=1,NUME_PT=1,
                 TYPE_CHAM='ELNO_SIEF_R',
                 NOM_CMP_IDEM='OUI',
                 INFO=2
-               ) ;
-IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( CHAM_GD=SIGMRELU, ) ) ;
+               )
+IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( CHAM_GD=SIGMRELU, ) )
 #
 ################## CHAM_ELEM ELEM ##################
 #
 ERRERELU=LIRE_CHAMP(MAILLAGE=MAILTRQU,
                 FORMAT='MED',
                 UNITE=80,
-                NOM_MED='0000001aERME_ELEM',
+                NOM_MED=RESUTRQ2.getName()+'ERME_ELEM',
                 NUME_ORDRE=1,NUME_PT=1,
                 TYPE_CHAM='CART_ERRE_R',
                 NOM_CMP_IDEM='OUI',
                 PROL_ZERO='OUI',
                 INFO=2
-               ) ;
+               )
 ERRERELB=CREA_CHAMP(
    OPERATION='ASSE',
    TYPE_CHAM='ELEM_ERRE_R',
@@ -191,8 +191,8 @@ ERRERELB=CREA_CHAMP(
    PROL_ZERO='OUI',
    ASSE=(_F( CHAM_GD = ERRERELU,
              COEF_R= 1.0,
-             TOUT='OUI',),),) ;
-IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( CHAM_GD=ERRERELB, ) ) ;
+             TOUT='OUI',),),)
+IMPR_RESU ( FORMAT='RESULTAT',PROC0='NON',RESU=_F( CHAM_GD=ERRERELB, ) )
 #
 # 6. Validation des mots cles GROUP_NO,GROUP_MA,NOEUD,MAILLE de
 # l'operateur IMPR_RESU au FORMAT 'MED'
@@ -209,9 +209,9 @@ UUU=LIRE_RESU(TYPE_RESU='EVOL_ELAS',
                FORMAT='MED',
                MODELE=MODETRQU,
                FORMAT_MED=(
-                          _F( NOM_CHAM_MED='0000001aDEPL',
+                          _F( NOM_CHAM_MED=RESUTRQ2.getName()+'DEPL',
                               NOM_CHAM    ='DEPL' ),
-                          _F( NOM_CHAM_MED='0000001aEPSI_ELNO',
+                          _F( NOM_CHAM_MED=RESUTRQ2.getName()+'EPSI_ELNO',
                               NOM_CHAM    ='EPSI_ELNO'),
                          ) ,
                PROL_ZERO='OUI',
@@ -230,7 +230,7 @@ DEFI_FICHIER(UNITE=82, ACTION='LIBERER')
 
 TEST_FICHIER(FICHIER="./fort.82",
              NB_VALE_I=152,
-             VALE_CALC_I=202,
+             VALE_CALC_I=207,
              NB_VALE=998,
              VALE_CALC=4.3251124143e+03,
              VALE_CALC_K="e0ad81052757bf3a90e0c246ba5ed8e7",

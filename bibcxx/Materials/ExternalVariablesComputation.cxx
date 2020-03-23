@@ -86,8 +86,8 @@ ExternalVariablesComputationClass::computeMechanicalLoads( const BaseDOFNumberin
         c = 1;
     if ( _pTot )
         d = 1;
-    CALLO_CACHVC( modName, codedMater->getName(), carName, numName, compor->getName(), getName(),
-                  out, &a, &b, &c, &d );
+    CALLO_CACHVC( modName, _mater->getName(), codedMater->getName(), carName, numName,
+                  compor->getName(), getName(), out, &a, &b, &c, &d );
     JeveuxVectorChar24 vectOut( out );
     vectOut->updateValuePointer();
     FieldOnNodesRealPtr toReturn( new FieldOnNodesRealClass( ( *vectOut )[0].toString() ) );

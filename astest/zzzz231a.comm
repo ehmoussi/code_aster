@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,41 +24,41 @@ IGNORE_ALARM=('CONTACT_93'),DEBUG=_F(SDVERI='OUI'))
 
 # Test de la methode RESOLUTION='NON'. Interpenetration donc alarme CONTACT_93 ignoree
 
-MA=LIRE_MAILLAGE(FORMAT='MED',);
+MA=LIRE_MAILLAGE(FORMAT='MED',)
 
 MA=MODI_MAILLAGE(reuse =MA,
                  MAILLAGE=MA,
-                 ORIE_PEAU_3D=_F(GROUP_MA=('ContVis','ContTrou',),),);
+                 ORIE_PEAU_3D=_F(GROUP_MA=('ContVis','ContTrou',),),)
 
 MA=DEFI_GROUP(reuse =MA,
               MAILLAGE=MA,
-              CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),);
+              CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI',),)
 
 ACIER=DEFI_MATERIAU(ELAS=_F(E=2.0E+11,
-                            NU=0.3,),);
+                            NU=0.3,),)
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MA,
                     AFFE=_F(TOUT='OUI',
-                            MATER=ACIER,),);
+                            MATER=ACIER,),)
 
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
-                       MODELISATION='3D',),);
+                       MODELISATION='3D',),)
 
 ENCAST=AFFE_CHAR_MECA(MODELE=MO,
                       DDL_IMPO=_F(GROUP_MA=('Base','Dimpo'),
 # Validation de SANS_* dans DDL_IMPO (issue20374), ne pas supprimer !
                                   SANS_GROUP_MA='Dimpo',
-                                  LIAISON='ENCASTRE',),);
+                                  LIAISON='ENCASTRE',),)
 
 ENCAST2=AFFE_CHAR_MECA(MODELE=MO,
                        DDL_IMPO=_F(GROUP_MA='Dimpo',
-                                   LIAISON='ENCASTRE',),);
+                                   LIAISON='ENCASTRE',),)
 
 Dimpo=AFFE_CHAR_MECA(MODELE=MO,
                      DDL_IMPO=_F(GROUP_MA='ContVis',
-                                 DZ=-1,),);
+                                 DZ=-1,),)
 
 
 CONT = DEFI_CONTACT(MODELE      = MO,
@@ -104,13 +104,13 @@ CONT3 = DEFI_CONTACT(MODELE      = MO,
 RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0,0,
                           1,1,
                           2,2,
-                          ),PROL_DROITE='LINEAIRE',);
+                          ),PROL_DROITE='LINEAIRE',)
 
 TPS=DEFI_LIST_REEL(DEBUT=0,
                    INTERVALLE=(_F(JUSQU_A=1,
                                   NOMBRE=1,),
                                _F(JUSQU_A=3,
-                                  NOMBRE=10,),),);
+                                  NOMBRE=10,),),)
 
 RESU=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=CHMAT,
@@ -129,16 +129,16 @@ RESU=STAT_NON_LINE(MODELE=MO,
                    SOLVEUR=_F(
                               METHODE='MUMPS',),
                    CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-6,
-                                  ITER_GLOB_MAXI=10,),);
+                                  ITER_GLOB_MAXI=10,),)
 
 TAB_RESU=POST_RELEVE_T(ACTION=_F(OPERATION='MOYENNE',
                                  INTITULE='DEPLACEMENT CYLINDRE',
                                  RESULTAT=RESU,
                                  NOM_CHAM='DEPL',
                                  GROUP_NO='ContTrou',
-                                 NOM_CMP='DZ',),);
+                                 NOM_CMP='DZ',),)
 
-IMPR_TABLE(TABLE=TAB_RESU,);
+IMPR_TABLE(TABLE=TAB_RESU,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=-2.000000000,
@@ -167,7 +167,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 IMPR_RESU(FORMAT='MED',
           RESU=_F(MAILLAGE=MA,
                   RESULTAT=RESU,
-                  TOUT_CHAM='OUI',),);
+                  TOUT_CHAM='OUI',),)
 
 RESU2=STAT_NON_LINE(MODELE=MO,
                     CHAM_MATER=CHMAT,
@@ -186,7 +186,7 @@ RESU2=STAT_NON_LINE(MODELE=MO,
                     SOLVEUR=_F(
                                METHODE='MUMPS',),
                     CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-6,
-                                   ITER_GLOB_MAXI=10,),);
+                                   ITER_GLOB_MAXI=10,),)
 
 
 TAB_VC=POST_RELEVE_T(ACTION=_F(OPERATION='MOYENNE',
@@ -194,9 +194,9 @@ TAB_VC=POST_RELEVE_T(ACTION=_F(OPERATION='MOYENNE',
                                RESULTAT=RESU2,
                                NOM_CHAM='CONT_NOEU',
                                GROUP_NO='ContTrou',
-                               NOM_CMP=('CONT','JEU',),),);
+                               NOM_CMP=('CONT','JEU',),),)
 
-IMPR_TABLE(TABLE=TAB_VC);
+IMPR_TABLE(TABLE=TAB_VC)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=-2.000000000,
@@ -239,7 +239,7 @@ RESU3=STAT_NON_LINE(MODELE=MO,
                     SOLVEUR=_F(
                                METHODE='MUMPS',),
                     CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-6,
-                                   ITER_GLOB_MAXI=10,),);
+                                   ITER_GLOB_MAXI=10,),)
 
 
 TAB_VC3=POST_RELEVE_T(ACTION=_F(OPERATION='MOYENNE',
@@ -247,9 +247,9 @@ TAB_VC3=POST_RELEVE_T(ACTION=_F(OPERATION='MOYENNE',
                                RESULTAT=RESU3,
                                NOM_CHAM='CONT_NOEU',
                                GROUP_NO='ContTrou',
-                               NOM_CMP=('CONT','JEU',),),);
+                               NOM_CMP=('CONT','JEU',),),)
 
-IMPR_TABLE(TABLE=TAB_VC3);
+IMPR_TABLE(TABLE=TAB_VC3)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=-2.000000000,
@@ -275,4 +275,4 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                    ),
            )
 
-FIN();
+FIN()

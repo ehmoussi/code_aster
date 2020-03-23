@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 !
 !
 interface
-    subroutine vetnth_nonl(model      , cara_elem   , mate    , time , compor   ,&
+    subroutine vetnth_nonl(model      , cara_elem   , mate    , mateco, time , compor   ,&
                            temp_iter  , varc_curr,&
                            vect_elem_l, vect_elem_nl, base,&
                            dry_prev_  , dry_curr_   , hydr_prev_)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: cara_elem
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mate, mateco
         character(len=24), intent(in) :: time
         character(len=24), intent(in) :: compor
         character(len=24), intent(in) :: temp_iter

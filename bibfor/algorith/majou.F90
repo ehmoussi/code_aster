@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine majou(model, modmec, solveu, num, nu,&
-                 ma, mate, moint, ndble, icor,&
+                 ma, mate, mateco, moint, ndble, icor,&
                  tabad)
     implicit none
 !
@@ -81,7 +81,7 @@ subroutine majou(model, modmec, solveu, num, nu,&
     character(len=19) :: vesolx, vesoly, vepr, vesolz, tampon, chcmb2
     character(len=19) :: chflu, chamnx, chamny, chamnz, solveu
     character(len=24) :: nomcha
-    character(len=*) :: mate
+    character(len=*) :: mate, mateco
     complex(kind=8) :: cbid
     integer :: nbsel, idsel, n15, n16, ii, vali, tmod(1)
     character(len=20) :: tempor
@@ -212,12 +212,12 @@ subroutine majou(model, modmec, solveu, num, nu,&
 !
         call rsexch('F', modmec, 'DEPL', ilires, nomcha,&
                     iret)
-        call alimrs(mate, mailla, maflui, moint, ndble,&
+        call alimrs(mate, mateco, mailla, maflui, moint, ndble,&
                     num, nomcha(1:19), chamnx, 'DX', icor)
-        call alimrs(mate, mailla, maflui, moint, ndble,&
+        call alimrs(mate, mateco, mailla, maflui, moint, ndble,&
                     num, nomcha(1:19), chamny, 'DY', icor)
         if (model .eq. '3D') then
-            call alimrs(mate, mailla, maflui, moint, ndble,&
+            call alimrs(mate, mateco, mailla, maflui, moint, ndble,&
                         num, nomcha(1: 19), chamnz, 'DZ', icor)
         endif
 !
@@ -239,9 +239,9 @@ subroutine majou(model, modmec, solveu, num, nu,&
         nomch(2) = vesoly(1:8)
 !
 !
-        call calflu(chamnx, moint, mate, num, vesolx,&
+        call calflu(chamnx, moint, mate, mateco, num, vesolx,&
                     nbdesc, nbrefe, nbvale, 'X')
-        call calflu(chamny, moint, mate, num, vesoly,&
+        call calflu(chamny, moint, mate, mateco, num, vesoly,&
                     nbdesc, nbrefe, nbvale, 'Y')
 !
         vestoc='&&MAJOU.TPXSTO'
@@ -253,7 +253,7 @@ subroutine majou(model, modmec, solveu, num, nu,&
                     nbvale, nbrefe, nbdesc)
 !
         if (model .eq. '3D') then
-            call calflu(chamnz, moint, mate, num, vesolz,&
+            call calflu(chamnz, moint, mate, mateco, num, vesolz,&
                         nbdesc, nbrefe, nbvale, 'Z')
             vestoc='&&MAJOU.TPZSTO'
             call prstoc(chamnz, vestoc, ilires, ilires, iadz,&

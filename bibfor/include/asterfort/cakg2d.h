@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 !
 interface
     subroutine cakg2d(optioz, result, modele, depla, theta,&
-                      mate, lischa, symech, fondf, noeud, &
+                      mate, mateco, lischa, symech, fondf, noeud, &
                       time, iord, nbprup, noprup, &
                       lmoda, puls, compor)
         character(len=16) :: optioz
@@ -30,7 +30,7 @@ interface
         character(len=8) :: modele
         character(len=24) :: depla
         character(len=24) :: theta
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         character(len=19) :: lischa
         character(len=8) :: symech
         character(len=8) :: fondf

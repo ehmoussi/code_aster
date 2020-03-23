@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine smevol(temper, modelz, mate, compor, option,&
+subroutine smevol(temper, modelz, chmat, mateco, compor, option,&
                   phasin, numpha)
     implicit none
 #include "jeveux.h"
@@ -50,7 +50,7 @@ subroutine smevol(temper, modelz, mate, compor, option,&
     character(len=8) :: temper
     character(len=16) :: option
     character(len=19) :: compor
-    character(len=24) :: mate, phasin
+    character(len=24) :: chmat, mateco, phasin
     character(len=*) :: modelz
 ! ......................................................................
 !     OPTION: META_ELGA_TEMP    DES COMMANDES:   THER_LINEAIRE
@@ -90,8 +90,8 @@ subroutine smevol(temper, modelz, mate, compor, option,&
 !
 ! --- RECUPERATION DE LA STRUCTURE DE DONNEES MATERIAU
 !
-    ch24 = mate(1:8)//'.CHAMP_MAT'
-    chmate = mate(1:8)//'.MATE_CODE'
+    ch24 = chmat(1:8)//'.CHAMP_MAT'
+    chmate = mateco(1:8)//'.MATE_CODE'
     call jeveuo(ch24(1:19)//'.VALE', 'E', vk8=vale)
     call jelira(ch24(1:19)//'.VALE', 'LONMAX', long)
     call exlima(' ', 0, 'V', modele, ligrmo)

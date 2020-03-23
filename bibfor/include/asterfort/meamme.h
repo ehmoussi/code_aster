@@ -21,14 +21,14 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine meamme(optioz, modele, nchar, lchar, mate,&
+    subroutine meamme(optioz, modele, nchar, lchar, mate, mateco, &
                       cara, time, base, merigi,&
                       memass, meamor, varplu, compor_)
         character(len=*) :: optioz
         character(len=*) :: modele
         integer :: nchar
         character(len=8) :: lchar(*)
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=*) :: cara
         real(kind=8) :: time
         character(len=1) :: base

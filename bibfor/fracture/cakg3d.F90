@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine cakg3d(option, result, modele, depla, thetai,&
-                  mate, compor, lischa, symech, chfond,&
+                  mate, mateco, compor, lischa, symech, chfond,&
                   nnoff, basloc, courb, iord, ndeg,&
                   liss, ndimte,&
                   extim, time, nbprup, noprup, fiss,&
@@ -70,7 +70,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
     character(len=16) :: option, noprup(*)
     character(len=16), intent(in), optional :: typdis
     character(len=19) :: lischa
-    character(len=24) :: depla, chfond, mate, compor, basloc, courb, chpuls, liss
+    character(len=24) :: depla, chfond, mate, compor, basloc, courb, chpuls, liss, mateco
     aster_logical :: extim, lmoda, milieu, connex
 !
 !
@@ -101,7 +101,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
 !  IN    COOR   --> COORDONNEES ET ABSCISSES CURVILIGNES DES NOEUDS
 !                   DU FOND DE FISSURE (IADFIS DANS OP0100)
 !  IN    IADNOE --> NOM DES NOEUDS DE FOND DE FISSURE
-!  IN    TYPDIS --> TYPE DE DISCONTINUITE SI FISSURE XFEM 
+!  IN    TYPDIS --> TYPE DE DISCONTINUITE SI FISSURE XFEM
 !                   'FISSURE' OU 'COHESIF'
 ! ======================================================================
     integer :: nbmxpa
@@ -158,10 +158,10 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
 !
 !   RECUPERATION DU CHAMP GEOMETRIQUE
     call megeom(modele, chgeom)
-    
+
 
 !   Recuperation du LIGREL
-    ligrmo = modele//'.MODELE'    
+    ligrmo = modele//'.MODELE'
 !
     chvarc='&&CAKG3D.VARC'
     chvref='&&CAKG3D.VARC.REF'
@@ -222,7 +222,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
         elseif (lxfem) then
 !         cas X-FEM : verif que le champ est ELGA (seul cas autorise)
           if (inga.eq.1) pbtype=1
-        endif            
+        endif
         if (pbtype.eq.1) call utmess('F', 'RUPTURE1_12')
 
 !       transformation si champ ELGA
@@ -266,7 +266,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
 !       pour porter l'info du type de discontinuite
 !       Evite egalement l'ajout d'un test de sortie pour éléments XH
         opti='CALC_K_G_COHE'
-    else   
+    else
         chvolu = '&&CAKG3D.VOLU'
         ch1d2d = '&&CAKG3D.1D2D'
         ch2d3d = '&&CAKG3D.2D3D'
@@ -342,7 +342,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
         lpain(3) = 'PTHETAR'
         lchin(3) = chthet
         lpain(4) = 'PMATERC'
-        lchin(4) = mate
+        lchin(4) = mateco
         lpain(5) = 'PVARCPR'
         lchin(5) = chvarc
         lpain(6) = 'PVARCRR'
@@ -516,7 +516,7 @@ subroutine cakg3d(option, result, modele, depla, thetai,&
     call getvis('THETA', 'NUME_FOND', iocc=1, scal=numfon, nbret=ibid)
 !
     call tbajvi(result, nbprup, 'NUME_FOND', numfon, livi)
-    
+
     if (lmoda) then
         call tbajvi(result, nbprup, 'NUME_MODE', iord, livi)
     else

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ subroutine op0194()
     character(len=8) :: k8b, crit, temper, temper2, modele, cara
     character(len=16) :: tysd, option
     character(len=19) :: kordre, kcha, compor
-    character(len=24) :: chmeta, phasin, mate
+    character(len=24) :: chmeta, phasin, mateco, mater
     character(len=24) :: valk
     character(len=24) :: lesopt
     character(len=16) :: keywordfact
@@ -85,18 +85,18 @@ subroutine op0194()
     call rsorac(temper, 'LONUTI', 0, r8b, k8b,&
                 c16b, r8b, k8b, tord, 1,&
                 ibid)
-    nbordr=tord(1)     
+    nbordr=tord(1)
 
     if (nbordr .lt. 2) then
         call utmess('F', 'META1_1')
-    endif       
+    endif
     call wkvect(kordre, 'V V I', nbordr, jordr)
     call rsorac(temper, 'TOUT_ORDRE', 0, r8b, k8b,&
                 c16b, r8b, k8b, zi(jordr), nbordr,&
                 ibid)
     nuord = zi(jordr)
 !
-    call medom1(modele, mate, cara, kcha, nchar,&
+    call medom1(modele, mater, mateco, cara, kcha, nchar,&
                 ctyp, temper, nuord)
 !
     call getvtx(' ', 'OPTION', nbval=0, nbret=nb)
@@ -134,7 +134,7 @@ subroutine op0194()
                     call rsorac(temper, 'INST', ibid, inst, k8b,&
                                 c16b, prec, crit, tord, nbordt,&
                                 nbtrou)
-                    num=tord(1)            
+                    num=tord(1)
                     if (nbtrou .eq. 0) then
                         valk = temper
                         valr = inst
@@ -151,7 +151,7 @@ subroutine op0194()
                 numpha = num
             endif
 !
-            call smevol(temper(1:8), modele, mate, compor, option,&
+            call smevol(temper(1:8), modele, mater, mateco, compor, option,&
                         phasin, numpha)
 !
             call detrsd('CARTE', '&&NMDORC.COMPOR')

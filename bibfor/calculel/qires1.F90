@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine qires1(modele, ligrel, chtime, sigmap, sigmad,&
                   lcharp, lchard, ncharp, nchard, chs,&
-                  mate, chvois, tabido, chelem)
+                  mateco, chvois, tabido, chelem)
 !
 !     BUT:
 !         CALCUL DE L'ESTIMATEUR D'ERREUR EN QUANTITE D'INTERET
@@ -41,7 +41,7 @@ subroutine qires1(modele, ligrel, chtime, sigmap, sigmad,&
 !     NCHARP : NOMBRE DE CHARGEMENTS DU PROBLEME PRIMAL
 !     NCHARD : NOMBRE DE CHARGEMENTS DU PROBLEME DUAL
 !     CHS    : CARTE CONSTANTE DU COEFFICIENT DE PONDERATION S
-!     MATE   : NOM DU CHAMP MATERIAU
+!     mateco   : NOM MATERIAU CODE
 !     CHVOIS : NOM DU CHAMP DES VOISINS
 !     TABIDO : TABLEAU D'ENTIERS CONTENANT DES ADRESSES
 !          1 : IATYMA : ADRESSE DU VECTEUR TYPE MAILLE (NUMERO <-> NOM)
@@ -82,7 +82,7 @@ subroutine qires1(modele, ligrel, chtime, sigmap, sigmad,&
     character(len=8) :: modele, lcharp(1), lchard(1)
     character(len=24) :: sigmap, sigmad
     character(len=24) :: chtime, chs, chvois, chelem
-    character(len=*) :: ligrel, mate
+    character(len=*) :: ligrel, mateco
 !
 ! DECLARATION VARIABLES LOCALES
 !
@@ -475,7 +475,7 @@ subroutine qires1(modele, ligrel, chtime, sigmap, sigmad,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = mateco
     lpain(3) = 'PVOISIN'
     lchin(3) = chvois
     lpain(4) = 'PTEMPSR'

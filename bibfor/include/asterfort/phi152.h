@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine phi152(model, option, mate, phibar, ma,&
+    subroutine phi152(model, option, mate, mateco, phibar, ma,&
                       nu, num, nbmode, solvez, indice,&
                       tabad)
         character(len=2) :: model
         character(len=*) :: option
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=*) :: phibar
         character(len=8) :: ma
         character(len=14) :: nu

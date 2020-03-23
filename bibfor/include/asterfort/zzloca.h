@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 !
 !
 interface
-    subroutine zzloca(modele, ligrel, matez, sigma, signo,&
+    subroutine zzloca(modele, ligrel, matecoz, sigma, signo,&
                       chvarc, resu)
         character(len=*) :: modele
         character(len=*) :: ligrel
-        character(len=*) :: matez
+        character(len=*) :: matecoz
         character(len=*) :: sigma
         character(len=*) :: signo
         character(len=*) :: chvarc

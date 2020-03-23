@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -106,7 +106,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
     character(len=11) :: nobaop
     character(len=16) :: optio2, typmcl(4), motcle(4),valk(2)
     character(len=19) :: nonbor, compor, lischa
-    character(len=24) :: chaout, ligrel, mateco, ligres
+    character(len=24) :: chaout, ligrel, mater, ligres, mateco
     character(len=24) :: noliop, lisins, mesmai, lacalc, suropt
 !
     aster_logical :: ligmod
@@ -132,7 +132,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
 !
     call ccliop('OPTION', option, nobase, noliop, nopout)
     if (nopout .eq. 0) goto 999
-    
+
 
 !
 !
@@ -184,7 +184,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
     minord = zi(lres)
     maxord = zi(lres+nbord2-1)
 !
-    call rslesd(resuin, minord, modele, mateco(1:8), carael)
+    call rslesd(resuin, minord, modele, mater(1:8), carael)
     call rsadpa(resuin, 'L', 1, 'MODELE', minord,&
                 0, sjv=jpara)
     if (zk8(jpara) .ne. modele .and. zk8(jpara) .ne. ' ') then
@@ -262,6 +262,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
     do iop = 1, nopout
         if (zi(jacalc-1+iop) .eq. 0) goto 20
         optio2 = zk24(jlisop+iop-1)(1:16)
+        print*, "OP: ", iop, option, optio2
 !
         optdem = .false.
         if (option .eq. optio2) optdem = .true.
@@ -308,7 +309,7 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
 !
             if (optio2(6:9) .eq. 'NOEU') then
 !
-                call medom2(modele, mateco, carael, lischa, ncharg,&
+                call medom2(modele, mater , mateco, carael, lischa, ncharg,&
                             chtype, resuin, numord, nbordr, 'V',&
                             npass, ligrel)
 !
@@ -321,17 +322,17 @@ subroutine calcop(option, lisopt, resuin, resuou, lisord,&
             else if (optio2(6:7).eq.'EL') then
 !
                 if (option .eq. 'SIRO_ELEM') then
-                    call srmedo(modele, mateco, carael, lischa, ncharg,&
+                    call srmedo(modele, mater , mateco, carael, lischa, ncharg,&
                                 chtype, resuin, numord, nbordr, basopt,&
                                 npass, ligrel)
                 else
-                    call medom2(modele, mateco, carael, lischa, ncharg,&
+                    call medom2(modele, mater , mateco, carael, lischa, ncharg,&
                                 chtype, resuin, numord, nbordr, basopt,&
                                 npass, ligrel)
                 endif
 !
                 call ccchel(optio2, modele, resuin, resuou, numord,&
-                            nordm1, mateco, carael, typesd, ligrel,&
+                            nordm1, mater , mateco, carael, typesd, ligrel,&
                             exipou, exitim, lischa, nbchre, ioccur,&
                             suropt, basopt, chaout)
                 if (chaout .eq. ' ') goto 20

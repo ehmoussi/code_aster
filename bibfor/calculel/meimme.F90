@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine meimme(modele, nchar, lchar, mate, matel)
+subroutine meimme(modele, nchar, lchar, mate, mateco, matel)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -35,7 +35,7 @@ subroutine meimme(modele, nchar, lchar, mate, matel)
     integer :: nchar
     character(len=8) :: modele, lchar(*)
     character(len=19) :: matel
-    character(len=*) :: mate
+    character(len=*) :: mate, mateco
 !     CALCUL DES MATRICES ELEMENTAIRES D 'IMPEDANCE ACOUSTIQUE DANS LE
 !     PHENOMENE MECANIQUE
 !
@@ -86,7 +86,7 @@ subroutine meimme(modele, nchar, lchar, mate, matel)
         lchin(1) = chgeom
 !
         lpain(3) = 'PMATERC'
-        lchin(3) = mate
+        lchin(3) = mateco
 !
         do icha = 1, nchar
             call dismoi('TYPE_CHARGE', lchar(icha), 'CHARGE', repk=k8b)

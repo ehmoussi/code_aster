@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmvcpr_elem(modelz    , matez     , cara_elemz,&
+subroutine nmvcpr_elem(modelz    , matez     , matecoz   , cara_elemz,&
                        nume_harm , time_comp , hval_incr ,&
                        varc_refez, comporz   ,&
                        base      , vect_elemz)
@@ -34,7 +34,7 @@ implicit none
 #include "asterfort/varcCalcPrep.h"
 #include "asterfort/varcDetect.h"
 !
-character(len=*), intent(in) :: modelz, cara_elemz, matez
+character(len=*), intent(in) :: modelz, cara_elemz, matez, matecoz
 integer, intent(in) :: nume_harm
 character(len=1), intent(in) :: time_comp
 character(len=*), intent(in) :: varc_refez, comporz
@@ -52,6 +52,7 @@ character(len=*), intent(in) :: vect_elemz
 !
 ! In  model          : name of model
 ! In  mate           : name of material characteristics (field)
+! In  mateco         : name of coded material
 ! In  cara_elem      : name of elementary characteristics (field)
 ! In  nume_harm      : Fourier harmonic number
 ! In  time_comp        :  '-' or '+' for command variables evaluation
@@ -95,7 +96,7 @@ character(len=*), intent(in) :: vect_elemz
 !
 ! - Preparation
 !
-    call varcCalcPrep(modelz    , cara_elemz, matez    ,&
+    call varcCalcPrep(modelz    , cara_elemz, matecoz  ,&
                       nume_harm , time_comp ,&
                       l_temp    , l_meta    ,&
                       varc_refez, varc_prev , varc_curr,&

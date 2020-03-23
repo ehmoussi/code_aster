@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine me2mac(modele, nchar, lchar, mate, vecel)
+subroutine me2mac(modele, nchar, lchar, mate, mateco, vecel)
     implicit none
 !
 !
@@ -39,7 +39,7 @@ subroutine me2mac(modele, nchar, lchar, mate, vecel)
 !
     character(len=8) :: modele, lchar(*)
     character(len=19) :: vecel
-    character(len=24) :: mate
+    character(len=24) :: mate, mateco
     integer :: nchar
 ! ----------------------------------------------------------------------
 !     BUT:
@@ -102,7 +102,7 @@ subroutine me2mac(modele, nchar, lchar, mate, vecel)
         lpain(1) = 'PGEOMER'
         lchin(1) = chgeom
         lpain(2) = 'PMATERC'
-        lchin(2) = mate
+        lchin(2) = mateco
         if (modele .ne. '        ') then
             ligrmo = modele//'.MODELE'
         else

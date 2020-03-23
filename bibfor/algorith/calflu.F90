@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine calflu(chamno, modele, mate, nu, vectas,&
+subroutine calflu(chamno, modele, mate, mateco, nu, vectas,&
                   nd, nr, nv, opt)
     implicit none
 #include "asterfort/assvec.h"
@@ -24,7 +24,7 @@ subroutine calflu(chamno, modele, mate, nu, vectas,&
 #include "asterfort/jelira.h"
 #include "asterfort/vectfl.h"
     integer :: nr, nd, nv
-    character(len=*) :: chamno, modele, mate, nu, vectas, opt
+    character(len=*) :: chamno, modele, mate, mateco, nu, vectas, opt
 !
 !------- CALCUL DES VECTEURS ASSEMBLES DE FLUX FLUIDES
 !
@@ -32,7 +32,7 @@ subroutine calflu(chamno, modele, mate, nu, vectas,&
 !  IN  : K19 : CHAMNO : CHAMP AUX NOEUDS DE DEPL_R
 !  IN  : K1  : OPT    : CARACTERE RELATIF A L OPTION CHOISIE
 !  IN  : K8  : MODELE : MODELE FLUIDE
-!  IN  : K24 : MATE   : MATERIAU THERMIQUE (PRIS POUR LE FLUIDE)
+!  IN  : K24 : mateco   : MATERIAU THERMIQUE (PRIS POUR LE FLUIDE)
 !  IN  : K14 : NU     : NUMEROTATION DES DDLS FLUIDES
 !  OUT : K19 : VECTAS : CHAMNO DE FLUX FLUIDE
 !  OUT : I   : ND,NR,NV : LONGUEURS DES .DESC, .REFE, .VALE
@@ -46,7 +46,7 @@ subroutine calflu(chamno, modele, mate, nu, vectas,&
 !-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
     ve ='&&CALFLU.VE'
-    call vectfl(opt, modele, ' ', mate, chamno(1:19),&
+    call vectfl(opt, modele, ' ', mate, mateco, chamno(1:19),&
                 r8bid, ve)
 !
 !     --- ASSEMBLAGE DU VECTEUR ELEMENTAIRE DE FLUX SUR LA

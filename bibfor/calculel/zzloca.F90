@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine zzloca(modele, ligrel, matez, sigma, signo,&
+subroutine zzloca(modele, ligrel, matecoz, sigma, signo,&
                   chvarc, resu)
     implicit none
 #include "asterfort/calcul.h"
 #include "asterfort/megeom.h"
 #include "asterfort/utmess.h"
-    character(len=*) :: modele, ligrel, matez, sigma, signo, chvarc, resu
+    character(len=*) :: modele, ligrel, matecoz, sigma, signo, chvarc, resu
 !
 !     BUT:
 !         CALCUL DE L'ESTIMATEUR D'ERREUR SUR LES CONTRAINTES
@@ -46,23 +46,23 @@ subroutine zzloca(modele, ligrel, matez, sigma, signo,&
 !
     character(len=8) :: lpain(5), lpaout(1)
     character(len=16) :: option
-    character(len=24) :: lchin(5), lchout(1), chgeom, mate
+    character(len=24) :: lchin(5), lchout(1), chgeom, mateco
 !
 ! DEB-------------------------------------------------------------------
 !
 !-----------------------------------------------------------------------
 !-----------------------------------------------------------------------
-    mate = matez
+    mateco = matecoz
     call megeom(modele, chgeom)
 !
-    if (mate .eq. ' ') then
+    if (mateco .eq. ' ') then
         call utmess('F', 'CALCULEL4_66')
     endif
 !
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = mateco
     lpain(3) = 'PSIEF_R'
     lchin(3) = sigma
     lpain(4) = 'PVARCPR'

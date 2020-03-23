@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 !
 !
 interface
-    subroutine meriro(modele, cara, nchar, lchar, mate,&
+    subroutine meriro(modele, cara, nchar, lchar, mate, mateco, &
                       time, compor, matel)
         character(len=8) :: modele
         character(len=8) :: cara
         integer :: nchar
         character(len=8) :: lchar(*)
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         real(kind=8) :: time
         character(len=24) :: compor
         character(len=19) :: matel

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ccaccl(option, modele, mateco, carael, ligrel,&
+subroutine ccaccl(option, modele, mater, carael, ligrel,&
                   typesd, nbpain, lipain, lichin, lichou,&
                   codret)
     implicit none
@@ -39,7 +39,7 @@ subroutine ccaccl(option, modele, mateco, carael, ligrel,&
 #include "asterfort/utmess.h"
 !
     integer :: nbpain, codret
-    character(len=8) :: modele, mateco, carael
+    character(len=8) :: modele, mater, carael
     character(len=8) :: lipain(*)
     character(len=16) :: option, typesd
     character(len=24) :: lichin(*), ligrel, lichou(2)
@@ -55,7 +55,7 @@ subroutine ccaccl(option, modele, mateco, carael, ligrel,&
 !   OPTION  K16  NOM DE L'OPTION
 !   MODELE  K8   NOM DU MODELE
 !   RESUIN  K8   NOM DE LA STRUCUTRE DE DONNEES RESULTAT IN
-!   MATECO  K8   NOM DU MATERIAU CODE
+!   MATER   K8   NOM DU MATERIAU
 !   CARAEL  K8   NOM DU CARAELE
 !   LIGREL  K24  NOM DU LIGREL
 !   NUMORD  I    NUMERO D'ORDRE COURANT
@@ -114,7 +114,7 @@ subroutine ccaccl(option, modele, mateco, carael, ligrel,&
         if (inume .eq. 0) then
             kparin=indik8(lipain,'PCOMPOR',1,nbpain)
             ASSERT(kparin.ge.1)
-            lichin(kparin)=mateco(1:8)//'.COMPOR'
+            lichin(kparin)=mater(1:8)//'.COMPOR'
         endif
 !
     else if (option.eq.'VARI_ELNO') then

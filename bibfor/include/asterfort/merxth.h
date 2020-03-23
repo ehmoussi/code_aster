@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine merxth(model    , lload_name, lload_info, cara_elem  , mate     ,&
+    subroutine merxth(model    , lload_name, lload_info, cara_elem  , mate     , mateco, &
                       time_curr, time      , temp_iter , compor_ther, varc_curr,&
                       matr_elem, base      ,&
                       dry_prev_, dry_curr_)
@@ -25,7 +25,7 @@ interface
         character(len=24), intent(in) :: lload_name
         character(len=24), intent(in) :: lload_info
         character(len=24), intent(in) :: cara_elem
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mate, mateco
         real(kind=8), intent(in) :: time_curr
         character(len=24), intent(in) :: time
         character(len=24), intent(in) :: temp_iter

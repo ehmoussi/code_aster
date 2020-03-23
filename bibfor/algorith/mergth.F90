@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine mergth(model_    , list_load_, cara_elem_, mate_, chtime_,&
+subroutine mergth(model_    , list_load_, cara_elem_, mate_, mateco_, chtime_,&
                   matr_elem , base,&
                   time_curr , varc_curr_, nh_)
 !
@@ -40,7 +40,7 @@ implicit none
     character(len=*), intent(in) :: model_
     character(len=*), intent(in) :: list_load_
     character(len=*), intent(in) :: cara_elem_
-    character(len=*), intent(in) :: mate_
+    character(len=*), intent(in) :: mate_, mateco_
     character(len=*), intent(in) :: chtime_
     character(len=24), intent(in) :: matr_elem
     character(len=1), intent(in) :: base
@@ -51,7 +51,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic
-! 
+!
 ! Rigidity matrix - Volumic and surfacic terms
 !
 ! --------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ implicit none
     integer, parameter :: nbout = 1
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
-    character(len=24) :: cara_elem, mate, chtime, model
+    character(len=24) :: cara_elem, mate, chtime, model, mateco
     character(len=1) :: stop_calc
     character(len=8) :: load_name, newnom
     integer :: iret, nh
@@ -96,6 +96,7 @@ implicit none
     model     = model_
     cara_elem = cara_elem_
     mate      = mate_
+    mateco    = mateco_
     chtime    = chtime_
     resu_elem = matr_elem(1:8)//'.0000000'
     stop_calc = 'S'
@@ -130,7 +131,7 @@ implicit none
 !
 ! - Rigidity matrix - Volumic terms
 !
-    call ther_mrig(model, mate     , chtime   , cara_elem, varc_curr, nh,&
+    call ther_mrig(model, mateco     , chtime   , cara_elem, varc_curr, nh,&
                    base , resu_elem, matr_elem)
 !
 ! - Init fields

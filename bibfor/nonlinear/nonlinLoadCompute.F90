@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -193,7 +193,8 @@ type(HHO_Field), optional, intent(in) :: hhoField_
         call nmchex(hval_veelem, 'VEELEM', 'CNFEDO', vect_elem)
         call nmchex(hval_veasse, 'VEASSE', 'CNFEDO', vect_asse)
         call vechme('S', model, lload_name, lload_info, time_list,&
-                    cara_elem, ds_material%field_mate, vect_elem, varc_currz = vrcplu)
+                    cara_elem, ds_material%mater , ds_material%mateco, &
+                    vect_elem, varc_currz = vrcplu)
         call asasve(vect_elem, nume_dof, 'R', vect_alem)
         call ascova('D', vect_alem, lload_func, 'INST', time_curr,&
                     'R', vect_asse)
@@ -241,7 +242,7 @@ type(HHO_Field), optional, intent(in) :: hhoField_
         if (mode .eq. 'FIXE' .or. mode .eq. 'VARI') then
             call nmchex(hval_veelem, 'VEELEM', 'CNFEPI', vect_elem)
             call nmchex(hval_veasse, 'VEASSE', 'CNFEPI', vect_asse)
-            call vefpme(model     , cara_elem , ds_material%field_mate,&
+            call vefpme(model     , cara_elem , ds_material%mater, ds_material%mateco,&
                         lload_name, lload_info,&
                         time_list , vrcplu    , vect_elem, ' ',&
                         disp_prev, disp_cumu_inst)
@@ -259,7 +260,7 @@ type(HHO_Field), optional, intent(in) :: hhoField_
     if (mode .eq. 'VARI' .or. mode .eq. 'ACCI') then
         call nmchex(hval_veelem, 'VEELEM', 'CNFSDO', vect_elem)
         call nmchex(hval_veasse, 'VEASSE', 'CNFSDO', vect_asse)
-        call vecgme(model, cara_elem, ds_material%field_mate,&
+        call vecgme(model, cara_elem, ds_material%mater, ds_material%mateco,&
                     lload_name, lload_info,&
                     time_curr, disp_prev, disp_cumu_inst, vect_elem, time_prev,&
                     ds_constitutive%compor, ' '   , vite_curr, strx_prev)
@@ -277,7 +278,7 @@ type(HHO_Field), optional, intent(in) :: hhoField_
         if (mode .eq. 'FIXE' .or. mode .eq. 'ACCI') then
             call nmchex(hval_veelem, 'VEELEM', 'CNSSTF', vect_elem)
             call nmchex(hval_veasse, 'VEASSE', 'CNSSTF', vect_asse)
-            call nmsssv(model, ds_material%field_mate, cara_elem, list_load,&
+            call nmsssv(model, ds_material%mater, cara_elem, list_load,&
                         vect_elem)
             call assvss('V', vect_asse, vect_elem, nume_dof, ' ',&
                         'ZERO', 1, lload_fcss, time_curr)

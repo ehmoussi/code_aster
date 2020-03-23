@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -93,7 +93,7 @@ implicit none
     character(len=8) :: result, result_dry, mesh
     character(len=19) :: sdobse
     character(len=19) :: solver, maprec, sddisc, sdcrit, varc_curr, list_load
-    character(len=24) :: model, mate, cara_elem
+    character(len=24) :: model, mateco, mater, cara_elem
     character(len=24) :: time, dry_prev, dry_curr, compor, vtemp, vtempm, vtempp
     character(len=24) :: vtempr, cn2mbr_stat, cn2mbr_tran, nume_dof, mediri, matass, cndiri, cn2mbr
     character(len=24) :: cncine, cnresi, vabtla, vhydr, vhydrp
@@ -141,7 +141,7 @@ implicit none
 ! - Read parameters (linear)
 !
     call ntdata(list_load, solver, matcst   , coecst  , result    ,&
-                model    , mate  , cara_elem, ds_inout, theta_read)
+                model    , mater, mateco  , cara_elem, ds_inout, theta_read)
     para(1)    = theta_read
 !
 ! - Read parameters (non-linear)
@@ -156,7 +156,7 @@ implicit none
 !
 ! - Initializations
 !
-    call nxinit(mesh         , model   , mate       ,&
+    call nxinit(mesh         , model   , mater      ,&
                 cara_elem    , compor  , list_load  ,&
                 para         , nume_dof,&
                 sddisc       , ds_inout, sdobse     ,&
@@ -237,7 +237,7 @@ implicit none
 !
 ! - Compute second members and tangent matrix
 !
-    call nxacmv(model      , mate     , cara_elem , list_load, nume_dof   ,&
+    call nxacmv(model      , mater    , mateco    , cara_elem, list_load  , nume_dof   ,&
                 solver     , l_stat   , time      , tpsthe   , vtemp      ,&
                 vhydr      , varc_curr, dry_prev  , dry_curr , cn2mbr_stat,&
                 cn2mbr_tran, matass   , maprec    , cndiri   , cncine     ,&
@@ -252,7 +252,7 @@ implicit none
 ! EN TRANSITOIRE : |            VEC2NI                |
 !                  |           DIRICHLET              |
 !
-    call nxpred(model     , mate  , cara_elem, list_load  , nume_dof   ,&
+    call nxpred(model     , mater , mateco   , cara_elem  , list_load  , nume_dof   ,&
                 solver    , l_stat, tpsthe   , time       , matass     ,&
                 neq       , maprec, varc_curr, vtemp      , vtempm     ,&
                 cn2mbr    , vhydr , vhydrp   , dry_prev   , dry_curr   ,&
@@ -293,7 +293,7 @@ implicit none
 ! SYSTEME LINEAIRE RESOLU:  A * (T+,I+1 - T+,I) = B
 ! SOLUTION: VTEMPP = T+,I+1 - T+,I
 !
-    call nxnewt(model   , mate       , cara_elem  , list_load, nume_dof  ,&
+    call nxnewt(model   , mater      , mateco     , cara_elem  , list_load, nume_dof  ,&
                 solver  , tpsthe     , time       , matass   , cn2mbr    ,&
                 maprec  , cncine     , varc_curr  , vtemp    , vtempm    ,&
                 vtempp  , cn2mbr_stat, mediri     , conver   , vhydr     ,&
@@ -310,7 +310,7 @@ implicit none
     call nmimr0(ds_print, 'RELI')
     if (.not.conver) then
         if (l_line_search) then
-            call nxrech(model , mate    , cara_elem, list_load  , nume_dof ,&
+            call nxrech(model , mater   , mateco   , cara_elem  , list_load  , nume_dof ,&
                         tpsthe, time    , neq      , compor     , varc_curr,&
                         vtempm, vtempp  , vtempr   , vtemp      , vhydr    ,&
                         vhydrp, dry_prev, dry_curr , cn2mbr_stat, vabtla   ,&
@@ -342,7 +342,7 @@ implicit none
 ! - Print separator line in convergence table
 !
     if (conver) then
-        if (ds_print%l_print) then 
+        if (ds_print%l_print) then
             call nmimpx(ds_print)
         endif
     endif
@@ -423,7 +423,7 @@ implicit none
     else
         force = .false.
     endif
-    call ntarch(nume_inst, model   , mate , cara_elem, para,&
+    call ntarch(nume_inst, model   , mater , cara_elem, para,&
                 sddisc   , ds_inout, force, sdcrit   , ds_algorom)
 !
 ! - Make observation

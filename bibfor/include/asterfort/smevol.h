@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 !
 !
 interface
-    subroutine smevol(temper, modelz, mate, compor, option,&
+    subroutine smevol(temper, modelz, chmat, mateco, compor, option,&
                       phasin, numpha)
         character(len=8) :: temper
         character(len=*) :: modelz
-        character(len=24) :: mate
+        character(len=24) :: chmat, mateco
         character(len=19) :: compor
         character(len=16) :: option
         character(len=24) :: phasin

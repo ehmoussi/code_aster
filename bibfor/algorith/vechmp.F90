@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vechmp(nomo, mate, carele, varplu, lxfem,&
+subroutine vechmp(nomo, mate, mateco, carele, varplu, lxfem,&
                   partps, nbin_maxi, lpain, lchin, lastin)
 !
 !
@@ -36,7 +36,7 @@ subroutine vechmp(nomo, mate, carele, varplu, lxfem,&
     aster_logical :: lxfem
     real(kind=8) :: partps(3)
     character(len=19) :: varplu
-    character(len=24) :: mate, carele
+    character(len=24) :: mate, carele, mateco
 !
 ! ----------------------------------------------------------------------
 !
@@ -97,7 +97,7 @@ subroutine vechmp(nomo, mate, carele, varplu, lxfem,&
     lpain(2) = 'PTEMPSR'
     lchin(2) = chtime
     lpain(3) = 'PMATERC'
-    lchin(3) = mate(1:19)
+    lchin(3) = mateco(1:19)
     lpain(4) = 'PCACOQU'
     lchin(4) = chcara(7)
     lpain(5) = 'PCAGNPO'

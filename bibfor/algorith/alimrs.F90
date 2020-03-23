@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine alimrs(mate, ma1, ma2, moint, ndble,&
+subroutine alimrs(mate, mateco, ma1, ma2, moint, ndble,&
                   nume_ddl, cn1, chno, cmp, icor)
     implicit none
 #include "asterf_types.h"
@@ -35,7 +35,7 @@ subroutine alimrs(mate, ma1, ma2, moint, ndble,&
 #include "asterfort/jexnum.h"
 #include "asterfort/nueq_chck.h"
 !
-    character(len=*) :: moint, cmp, chno, mate
+    character(len=*) :: moint, cmp, chno, mate, mateco
 !     AUTEUR : G. ROUSSEAU
 !     BUT : IMMERGER UN CHAMP AUX NOEUDS DE DEPLACEMENT
 !           D UNE STRUCTURE APPARTENANT A UN MAILLAGE
@@ -97,7 +97,7 @@ subroutine alimrs(mate, ma1, ma2, moint, ndble,&
     call jeveuo(chnul//'.VALE', 'E', ichnul)
 !
     cn2=chno
-    call calflu(chnul, moint, mate, nume_ddl, cn2,&
+    call calflu(chnul, moint, mate, mateco, nume_ddl, cn2,&
                 nbdesc, nbrefe, nbvale, 'X')
 !
 !
