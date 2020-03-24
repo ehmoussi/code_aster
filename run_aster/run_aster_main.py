@@ -116,7 +116,7 @@ def main(argv=None):
     args = parse_args(argv)
 
     from run_aster.export import Export, File
-    from run_aster.run import RunAster, get_procid, temporary_dir
+    from run_aster.run import RunAster, get_procid
     from run_aster.config import CFG
     from run_aster.utils import ROOT
 
@@ -135,7 +135,7 @@ def main(argv=None):
                     filetype="mess", unit=6, resu=True)
         export.add_file(mess)
     if args.interactive:
-        export.set_parameter("interact", True)
+        export.set("interact", True)
         export.set_time_limit(86400.)
     if args.time_limit:
         export.set_time_limit(args.time_limit)
