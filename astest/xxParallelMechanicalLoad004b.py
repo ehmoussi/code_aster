@@ -121,42 +121,35 @@ MESTAT = CALC_CHAMP(reuse=MESTAT,RESULTAT=MESTAT,CONTRAINTE=('SIEF_NOEU'))
 # else:
 #     MESTAT.printMedFile('/tmp/seq.resu.med')
 
-
 if MAIL.hasLocalGroupOfNodes('A') : 
-    tabA = POST_RELEVE_T( ACTION =_F( 
-                    INTITULE  = 'dz',
-                        RESULTAT=MESTAT, 
-                        NUME_ORDRE=1,
-                        GROUP_NO='A',
-                        NOM_CHAM   = 'DEPL',
-                        NOM_CMP   = 'DZ',
-                        OPERATION = 'EXTRACTION' ,) , 
-                      )
-  
-    TEST_TABLE(TABLE=tabA,
-           NOM_PARA='DZ',
-           VALE_CALC=-1.09e-5, 
-           VALE_REFE=-1.09e-5,
-           PRECISION=1.E-6,
-           REFERENCE='AUTRE_ASTER',)
+    TEST_RESU(
+       RESU=_F(
+       CRITERE='ABSOLU',
+       GROUP_NO='A',
+       NOM_CHAM='DEPL',
+       NOM_CMP='DZ',
+       NUME_ORDRE=1,
+       PRECISION=1.e-6,
+       REFERENCE='AUTRE_ASTER',
+        RESULTAT=MESTAT,
+        VALE_CALC=-1.09e-5, 
+        VALE_REFE=-1.09e-5, 
+    ))
 
-elif MAIL.hasLocalGroupOfNodes('B') :
-    tabB = POST_RELEVE_T( ACTION =_F( 
-                    INTITULE  = 'sizz',
-                        RESULTAT=MESTAT, 
-                        NUME_ORDRE=1,
-                        GROUP_NO='B',
-                        NOM_CHAM   = 'SIEF_NOEU',
-                        NOM_CMP   = 'SIZZ',
-                        OPERATION = 'EXTRACTION' ,) , 
-                      )
-  
-    TEST_TABLE(TABLE=tabB,
-           NOM_PARA='SIZZ',
-           VALE_CALC=-9809.9999999, 
-           VALE_REFE=-9809.9999999,
-           PRECISION=1.E-6,
-           REFERENCE='AUTRE_ASTER',)
+elif MAIL.hasLocalGroupOfNodes('B') : 
+    TEST_RESU(
+       RESU=_F(
+       CRITERE='ABSOLU',
+       GROUP_NO='B',
+       NOM_CHAM='SIEF_NOEU',
+       NOM_CMP='SIZZ',
+       NUME_ORDRE=1,
+       PRECISION=1.e-6,
+       REFERENCE='AUTRE_ASTER',
+        RESULTAT=MESTAT,
+        VALE_CALC=-9809.9999999, 
+        VALE_REFE=-9809.9999999, 
+    )) 
 
 
 test.printSummary()
