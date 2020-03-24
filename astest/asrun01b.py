@@ -34,10 +34,12 @@ from glob import glob
 from run_aster.command_files import add_import_commands, stop_at_end
 from run_aster.config import CFG
 from run_aster.ctest2junit import XUnitReport
-from run_aster.export import (Export, File, Parameter, ParameterBool,
-                              ParameterFloat, ParameterInt, ParameterListStr,
-                              ParameterStr)
+from run_aster.export import (Export, ExportParameter, ExportParameterBool,
+                              ExportParameterFloat, ExportParameterInt,
+                              ExportParameterListStr, ExportParameterStr, File)
 from run_aster.logger import ERROR, logger
+from run_aster.settings import (ParameterBool, ParameterFloat, ParameterInt,
+                                ParameterListStr, ParameterStr, Store)
 from run_aster.status import StateOptions as SO
 from run_aster.status import Status, get_status
 from run_aster.timer import Timer
@@ -47,24 +49,8 @@ from run_aster.utils import ROOT, copy
 logger.setLevel(ERROR + 1)
 
 
-class TestParameter(unittest.TestCase):
-    """Check Parameter objects"""
-
-    def test_factory(self):
-        para = Parameter.factory("debug")
-        self.assertIsInstance(para, ParameterStr)
-        para = Parameter.factory("mpi_nbcpu")
-        self.assertIsInstance(para, ParameterInt)
-        para = Parameter.factory("memory_limit")
-        self.assertIsInstance(para, ParameterFloat)
-        para = Parameter.factory("testlist")
-        self.assertIsInstance(para, ParameterListStr)
-        # unknown as list[str]
-        para = Parameter.factory("xxxx")
-        self.assertIsInstance(para, ParameterListStr)
-        # deprecated as None: ignored
-        para = Parameter.factory("service")
-        self.assertIsNone(para)
+class TestSettings(unittest.TestCase):
+    """Check Parameter-derivated objects"""
 
     def test_str(self):
         para = ParameterStr("debug")
@@ -80,6 +66,9 @@ class TestParameter(unittest.TestCase):
 
     def test_bool(self):
         para = ParameterBool("interact")
+        self.assertFalse(para.value)
+        para.set(None)
+        self.assertFalse(para.value)
         para.set([])
         self.assertTrue(para.value)
         para.set(False)
@@ -126,18 +115,62 @@ class TestParameter(unittest.TestCase):
             para.set([16.0, 32.0])
 
     def test_liststr(self):
-        para = ParameterListStr("testlist")
+        para = ParameterListStr("actions")
         self.assertIsNone(para.value)
         para.set([])
         self.assertSequenceEqual(para.value, [])
-        para.set("ci")
-        self.assertSequenceEqual(para.value, ["ci"])
+        para.set("make_env")
+        self.assertSequenceEqual(para.value, ["make_env"])
         para.set(123.456)
         self.assertSequenceEqual(para.value, ["123.456"])
-        para.set(["ci", "verification"])
-        self.assertSequenceEqual(para.value, ["ci", "verification"])
+        para.set(["make_env", "make_etude"])
+        self.assertSequenceEqual(para.value, ["make_env", "make_etude"])
         para.set([2, "debug"])
         self.assertSequenceEqual(para.value, ["2", "debug"])
+
+
+class TestStore(unittest.TestCase):
+    """Check Store object"""
+
+    def test_store(self):
+        store = Store()
+        self.assertFalse(store.has_param("x"))
+        self.assertIsNone(store.get_param("x"))
+        self.assertIsNone(store.get("x"))
+
+        para = ParameterBool("test")
+        store.add(para)
+        self.assertTrue(store.has_param("test"))
+        self.assertEqual(store.get_param("test"), para)
+        self.assertIsNone(para.value)
+        self.assertIsNone(store.get("test"))
+        self.assertTrue(store.get("test", True))
+        para.set(True)
+        self.assertTrue(para.value)
+        self.assertTrue(store.get("test"))
+
+        store.set("y", 1)
+        self.assertFalse(store.has_param("y"))
+
+
+class TestExportParameter(unittest.TestCase):
+    """Check ExportParameter object"""
+
+    def test_factory(self):
+        para = ExportParameter.factory("debug")
+        self.assertIsInstance(para, ParameterStr)
+        para = ExportParameter.factory("mpi_nbcpu")
+        self.assertIsInstance(para, ParameterInt)
+        para = ExportParameter.factory("memory_limit")
+        self.assertIsInstance(para, ParameterFloat)
+        para = ExportParameter.factory("actions")
+        self.assertIsInstance(para, ParameterListStr)
+        # unknown as list[str]
+        para = ExportParameter.factory("xxxx")
+        self.assertIsInstance(para, ParameterListStr)
+        # deprecated as None: ignored
+        para = ExportParameter.factory("service")
+        self.assertIsNone(para)
 
 
 class TestFile(unittest.TestCase):
@@ -154,6 +187,19 @@ class TestFile(unittest.TestCase):
         self.assertTrue(fobj.resu)
         self.assertFalse(fobj.compr)
         self.assertEqual(repr(fobj), "F libr /a/filename R 0")
+        self.assertEqual(fobj.as_argument, "F:libr:/a/filename:R:0")
+
+        fobj = File.from_argument("F:libr:/a/filename:R:0")
+        self.assertEqual(fobj.path, "/a/filename")
+        self.assertEqual(fobj.filetype, "libr")
+        self.assertFalse(fobj.is_tests_data)
+        self.assertEqual(fobj.unit, 0)
+        self.assertFalse(fobj.isdir)
+        self.assertFalse(fobj.data)
+        self.assertTrue(fobj.resu)
+        self.assertFalse(fobj.compr)
+        self.assertEqual(repr(fobj), "F libr /a/filename R 0")
+        self.assertEqual(fobj.as_argument, "F:libr:/a/filename:R:0")
 
     def test_directory(self):
         tmpdir = os.getcwd()
@@ -166,6 +212,7 @@ class TestFile(unittest.TestCase):
         self.assertFalse(wrk.resu)
         self.assertFalse(wrk.compr)
         self.assertEqual(repr(wrk), f"R libr {tmpdir} D 0")
+        self.assertEqual(wrk.as_argument, f"R:libr:{tmpdir}:D:0")
 
     def test_special(self):
         fobj = File("/a/filename", filetype="tests_data", data=True)

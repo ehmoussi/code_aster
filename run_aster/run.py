@@ -51,18 +51,11 @@ FMT_DIAG = """
 """
 
 @contextmanager
-def temporary_dir(suffix="", delete=True):
+def temporary_dir(suffix=""):
     """"""
     previous = os.getcwd()
-    if delete:
-        with tempfile.TemporaryDirectory(prefix="run_aster_", suffix=suffix,
-                                         dir=CFG.get("tmpdir")) as wrkdir:
-            os.chdir(wrkdir)
-            yield wrkdir
-            os.chdir(previous)
-    else:
-        wrkdir = tempfile.mkdtemp(prefix="run_aster_", suffix=suffix,
-                                  dir=CFG.get("tmpdir"))
+    with tempfile.TemporaryDirectory(prefix="run_aster_", suffix=suffix,
+                                        dir=CFG.get("tmpdir")) as wrkdir:
         os.chdir(wrkdir)
         yield wrkdir
         os.chdir(previous)
@@ -284,7 +277,7 @@ class RunAster:
             return
 
         results = self.export.resultfiles
-        if results:
+        if not self._test and results:
             logger.info("TITLE Copying results")
             copy_resultfiles(results, is_completed)
 
