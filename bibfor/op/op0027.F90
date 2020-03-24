@@ -106,7 +106,7 @@ subroutine op0027()
     call dismoi('NOM_MAILLA',nomfis,'FOND_FISS', repk=mesh2)
     ASSERT(mesh1 .eq. mesh2)
 !
-!     CREATION DE LA TABLE
+!     CREATION DE LA TABLE // TEMPORAIRE
 !
     call cgcrtb(table, option, ndim, typfis, nxpara, lmoda, nbpara, linopa, litypa)
 !
@@ -120,7 +120,11 @@ subroutine op0027()
         iadfis=0
     endif
     k8bid = 'K8_BIDON'
-    call tbajvk(table, nbpara, 'NOEUD', k8bid, livk)
+   ! call tbajvk(table, nbpara, 'ABSC_CURV_NORM', 0.0, livr)
+   ! call tbajvk(table, nbpara, 'TEMP', 0.0, livr)
+   ! call tbajvk(table, nbpara, 'COMPORTEMENT', k8bid, livk)
+
+
 !
     iord = 1
     call tbajvi(table, nbpara, 'NUME_ORDRE', iord, livi)
@@ -134,7 +138,7 @@ subroutine op0027()
     call tbajvr(table, nbpara, 'G', g(1), livr)
     call tbajli(table, nbpara, linopa, livi, livr, livc, livk, 0)
 !
-    call utimsd(6, 2, .true._1, .true._1,table, 1, ' ')
+    !call utimsd(6, 2, .true._1, .true._1,table, 1, ' ')
 
 !
     call titre()

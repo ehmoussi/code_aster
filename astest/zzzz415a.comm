@@ -183,7 +183,7 @@ UTOT4=MECA_STATIQUE(MODELE=MODELEIN,
                    EXCIT=(_F(CHARGE=CHARBL1,),
                           _F(CHARGE=CHPRESF,),),
                    INST=1.0,
-                   INFO=1,)
+                   INFO=1,);
 
 IMPR_RESU(FORMAT='GMSH',UNITE=37,RESU=_F(RESULTAT=UTOT4,NOM_CHAM='DEPL'))
 
@@ -211,74 +211,67 @@ SIF4 = [None]*(nbc+1)
 for i in range(0,nbc) :
 
    SIF1[i]=CALC_H(RESULTAT=UTOT1,
-                  OPTION='CALC_K_G',
-                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
-                               LISSAGE_G='LAGRANGE',),
+                  OPTION=("G", "K"),
                   THETA=_F(R_INF=RI[i],
                            R_SUP=RS[i],
-                           FOND_FISS=FISS,),)
+                           FISSURE=FISS,),)
 
-   IMPR_TABLE(TABLE=SIF1[i],)
+   #IMPR_TABLE(TABLE=SIF1[i],)
 
    SIF2[i]=CALC_H(RESULTAT=UTOT2,
-                  OPTION='CALC_K_G',
-                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
-                               LISSAGE_G='LAGRANGE',),
+                  OPTION=("G", "K"),
                   THETA=_F(R_INF=RI[i],
                            R_SUP=RS[i],
-                  FOND_FISS=FISS,),)
+                           DISCRETISATION="LINEAIRE",
+                           NOMBRE=10,
+                           FISSURE=FISS,),)
 
-   IMPR_TABLE(TABLE=SIF2[i],)
+   #IMPR_TABLE(TABLE=SIF2[i],)
 
    SIF3[i]=CALC_H(RESULTAT=UTOT3,
-                  OPTION='CALC_K_G',
-                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
-                               LISSAGE_G='LAGRANGE',),
+                  OPTION=("G", ),
+
                   THETA=_F(R_INF=RI[i],
                            R_SUP=RS[i],
-                  FOND_FISS=FISS,),)
+                           DISCRETISATION="LINEAIRE", NOMBRE=4,
+                           FISSURE=FISS,),)
 
-   IMPR_TABLE(TABLE=SIF3[i],)
+   #IMPR_TABLE(TABLE=SIF3[i],)
 
    SIF4[i]=CALC_H(RESULTAT=UTOT4,
-                  OPTION='CALC_K_G',
-                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
-                               LISSAGE_G='LAGRANGE',),
+                  OPTION=("G", "K"),
                   THETA=_F(R_INF=RI[i],
                            R_SUP=RS[i],
-                  FOND_FISS=FISS,),)
+                           DISCRETISATION="LEGENDRE",
+                           FISSURE=FISS,),)
 
-   IMPR_TABLE(TABLE=SIF4[i],)
+   #IMPR_TABLE(TABLE=SIF4[i],)
 
 SIF1[nbc]=CALC_H(RESULTAT=UTOT1,
-                  OPTION='CALC_K_G',
-                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
-                               LISSAGE_G='LAGRANGE',),
-                  THETA=_F(FOND_FISS=FISS,),)
+                  OPTION=("G", "K"),
+                  THETA=_F(R_INF=RI[i],
+                           R_SUP=RS[i], FISSURE=FISS,),)
 
-IMPR_TABLE(TABLE=SIF1[nbc],)
+#IMPR_TABLE(TABLE=SIF1[nbc],)
 
 SIF2[nbc]=CALC_H(RESULTAT=UTOT2,
-                  OPTION='CALC_K_G',
-                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
-                               LISSAGE_G='LAGRANGE',),
-                  THETA=_F(FOND_FISS=FISS,),)
+                  OPTION=("G", "K"),
+                  THETA=_F(NB_COUCHE_INF=1,
+                           NB_COUCHE_SUP=3,FISSURE=FISS,),)
 
-IMPR_TABLE(TABLE=SIF2[nbc],)
+#IMPR_TABLE(TABLE=SIF2[nbc],)
 
 SIF3[nbc]=CALC_H(RESULTAT=UTOT3,
-                  OPTION='CALC_K_G',
-                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
-                               LISSAGE_G='LAGRANGE',),
-                  THETA=_F(FOND_FISS=FISS,),)
+                  OPTION=("G", "K"),
+                  THETA=_F(FISSURE=FISS, DISCRETISATION="LINEAIRE", NOMBRE=3, NB_COUCHE_INF=1,
+                           NB_COUCHE_SUP=3,),)
 
-IMPR_TABLE(TABLE=SIF3[nbc],)
+#IMPR_TABLE(TABLE=SIF3[nbc],)
 
 SIF4[nbc]=CALC_H(RESULTAT=UTOT4,
-                  OPTION='CALC_K_G',
-                  LISSAGE = _F(LISSAGE_THETA='LAGRANGE',
-                               LISSAGE_G='LAGRANGE',),
-                  THETA=_F(FOND_FISS=FISS,),)
+                  OPTION=("G", "K", "KJ", "G_EPSI"),
+                  THETA=_F(FISSURE=FISS, DISCRETISATION="LEGENDRE", NOMBRE=4, NB_COUCHE_INF=1,
+                           NB_COUCHE_SUP=3,),)
 
 IMPR_TABLE(TABLE=SIF4[nbc],)
 
