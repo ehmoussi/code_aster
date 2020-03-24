@@ -28,8 +28,9 @@ stored in a JSON file.
 
 The configuration file is installed in
 ``<installation-prefix>/share/aster/config.js``.
+It contains *version parameters*.
 
-This file can be completed by user file : ``$HOME/.run_aster.js``.
+This file can be overridden by a user file : ``$HOME/.run_aster.js``.
 """
 
 import json
@@ -37,14 +38,32 @@ import os
 import os.path as osp
 
 from .logger import logger
+from .settings import AbstractParameter, Store
 from .utils import ROOT
 
-DEFAULT_CONFIG = {
-    "python": "python3",
-    "tmpdir": "/tmp",
-    "addmem": 1024,
-}
 USERCFG = osp.join(os.getenv("HOME", ""), ".run_aster.js")
+
+VERSION_PARAMS = {
+    "version_tag": "str",
+    "version_sha1": "str",
+    "tmpdir": "str",
+    "addmem": "int",
+    "parallel": "bool",
+    "python": "str",
+    "mpirun": "str",
+    "mpirun_rank": "str",
+    "FC": "str",
+    "FCFLAGS": "list[str]",
+}
+
+
+class ConfigurationStore(Store):
+    """Object that stores the version settings."""
+
+    @staticmethod
+    def _new_param(name):
+        """Create a Parameter of the right type."""
+        return AbstractParameter.factory(VERSION_PARAMS, name)
 
 
 class Config:
@@ -55,14 +74,32 @@ class Config:
     """
 
     def __init__(self, configjs):
-        self._cfg = DEFAULT_CONFIG.copy()
-        for cfg in (configjs, USERCFG):
-            logger.debug(f"reading configuration file {cfg}")
-            try:
-                with open(cfg, "rb") as jsfile:
-                    self._cfg.update(json.load(jsfile))
-            except FileNotFoundError:
-                logger.debug("file not found")
+        self._mainjs = configjs
+        self._storage = ConfigurationStore()
+
+    @property
+    def storage(self):
+        """dict: Attribute that holds the 'storage' property."""
+        # while it is empty, try to load the config files
+        if not self._storage:
+            self.load()
+        return self._storage
+
+    def load(self):
+        """Load the configuration file."""
+        self.load_one(self._mainjs)
+
+    def load_one(self, jsfile):
+        """Load `jsfile`."""
+        logger.debug(f"reading configuration file {jsfile}")
+        try:
+            with open(jsfile, "rb") as jsfile:
+                content = json.load(jsfile)
+        except FileNotFoundError:
+            logger.debug("file not found")
+            return
+        for key, value in content.items():
+            self._storage.set(key, value)
 
     def get(self, key, default=None):
         """Return the value of `key` parameter or `default` if it is not
@@ -75,7 +112,6 @@ class Config:
         Returns:
             misc: Value or default value.
         """
-        return self._cfg.get(key, default)
-
+        return self.storage.get(key, default)
 
 CFG = Config(osp.join(ROOT, "share", "aster", "config.js"))

@@ -32,6 +32,8 @@ list of *str*.
 
 from .logger import logger
 
+DEPRECATED = "__DEPRECATED__"
+
 
 class AbstractParameter:
     """An abstract parameter that must be subclassed to hold a typed value.
@@ -72,6 +74,38 @@ class AbstractParameter:
             value (misc): New value.
         """
         self._value = self.convert(value)
+
+    @classmethod
+    def factory(cls, store_typed_params, name):
+        """Create a Parameter of the right type.
+
+        Arguments:
+            store_typed_params (dict): Dict of parameters supported by the
+                :py:class:`Store` giving the excpected type.
+            name (str): Parameter name.
+        """
+        typ = store_typed_params.get(name)
+        if typ is None:
+            logger.warning(f"unknown parameter: '{name}'")
+            typ = "list[str]"
+        if typ == DEPRECATED:
+            typ = "str"
+            return None
+        klass = cls._typed_subclasses(typ)
+        if not klass:
+            raise TypeError(typ)
+        return klass(name)
+
+    @staticmethod
+    def _typed_subclasses(typ):
+        """Return the subclass for the expected type or *None* if not found."""
+        return {
+            "str": ParameterStr,
+            "bool": ParameterBool,
+            "int": ParameterInt,
+            "float": ParameterFloat,
+            "list[str]": ParameterListStr,
+        }.get(typ)
 
 
 class ParameterStr(AbstractParameter):
@@ -134,6 +168,14 @@ class Store:
     def __init__(self):
         self._params = {}
 
+    def __len__(self):
+        """Return the storage size.
+
+        Returns:
+            int: Number of stored parameters.
+        """
+        return len(self._params)
+
     def add(self, param):
         """Add a parameter.
 
@@ -191,7 +233,7 @@ class Store:
             return
         param.set(value)
 
-    @classmethod
-    def _new_param(cls, name):
+    @staticmethod
+    def _new_param(name):
         """Create a Parameter of the right type."""
         return None

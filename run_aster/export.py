@@ -36,11 +36,10 @@ import re
 
 from .config import CFG
 from .logger import logger
-from .settings import (AbstractParameter, ParameterBool, ParameterFloat,
-                       ParameterInt, ParameterListStr, ParameterStr, Store)
+from .settings import (DEPRECATED, AbstractParameter, ParameterBool,
+                       ParameterFloat, ParameterInt, ParameterListStr,
+                       ParameterStr, Store)
 from .utils import ROOT
-
-DEPRECATED = "__DEPRECATED__"
 
 PARAMS_TYPE = {
     "actions": "list[str]",
@@ -80,28 +79,15 @@ class ExportParameter(AbstractParameter):
     """
 
     @staticmethod
-    def factory(name):
-        """Create a Parameter of the right type."""
-        typ = PARAMS_TYPE.get(name)
-        if typ is None:
-            logger.warning(f"unknown parameter: '{name}'")
-            typ = "list[str]"
-        if typ == DEPRECATED:
-            typ = "str"
-            return None
-        if typ is "str":
-            klass = ExportParameterStr
-        elif typ is "bool":
-            klass = ExportParameterBool
-        elif typ is "int":
-            klass = ExportParameterInt
-        elif typ is "float":
-            klass = ExportParameterFloat
-        elif typ == "list[str]":
-            klass = ExportParameterListStr
-        else:
-            raise TypeError(typ)
-        return klass(name)
+    def _typed_subclasses(typ):
+        """Return the subclass for the expected type or *None* if not found."""
+        return {
+            "str": ExportParameterStr,
+            "bool": ExportParameterBool,
+            "int": ExportParameterInt,
+            "float": ExportParameterFloat,
+            "list[str]": ExportParameterListStr,
+        }.get(typ)
 
     def __repr__(self):
         """Simple representation"""
@@ -281,10 +267,10 @@ class Export(Store):
         self._checked = False
         self.parse(check)
 
-    @classmethod
-    def _new_param(cls, name):
+    @staticmethod
+    def _new_param(name):
         """Create a Parameter of the right type."""
-        return ExportParameter.factory(name)
+        return ExportParameter.factory(PARAMS_TYPE, name)
 
     @property
     def filename(self):
