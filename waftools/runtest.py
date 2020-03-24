@@ -107,16 +107,20 @@ def runtest(self):
         if self.variant == 'debug':
             cmd.extend(['-g'])
         cmd.extend(args)
-        cmd.append(exp[0])
+        cmd.append(osp.abspath(exp[0]))
         Logs.info("running %s in '%s'" % (test, self.variant))
         ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant
         out = osp.join(dtmp, osp.basename(test) + ext) + '.output'
         err = osp.join(dtmp, osp.basename(test) + ext) + '.error'
         Logs.info("`- command: %s" % (" ".join(cmd)))
         Logs.info("`- output in %s" % out)
+        # do not run from source directory to import installed files
+        current = os.getcwd()
+        os.chdir(dtmp)
         with open(out, 'w') as fobj, open(err, 'w') as ferr:
             proc = Popen(cmd, stdout=fobj, stderr=ferr, bufsize=1)
         retcode = proc.wait()
+        os.chdir(current)
         with open(out, 'rb') as fobj:
             btext = fobj.read()
         text = btext.decode("utf8", "replace")
