@@ -34,6 +34,7 @@ subroutine dismte(questi, nomobz, repi, repkz, ierd)
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/teattr.h"
     integer :: repi, ierd
     character(len=*) :: questi
     character(len=*) :: nomobz, repkz
@@ -96,6 +97,15 @@ subroutine dismte(questi, nomobz, repi, repkz, ierd)
         ierd=1
 30      continue
 !
+    else if (questi.eq.'FORMULATION') then
+
+        call teattr('C', 'FORMULATION', repk, ierd, typel = nomob)
+        if (ierd .eq. 1) then
+            repk = ' '
+            ierd = 0
+        endif
+
+
 !
     else if (questi.eq.'MODELISATION') then
 !     --------------------------------------
