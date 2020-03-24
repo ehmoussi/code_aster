@@ -32,11 +32,12 @@ import unittest
 from glob import glob
 
 from run_aster.command_files import add_import_commands, stop_at_end
-from run_aster.config import CFG
+from run_aster.config import CFG, VERSION_PARAMS
 from run_aster.ctest2junit import XUnitReport
-from run_aster.export import (Export, ExportParameter, ExportParameterBool,
-                              ExportParameterFloat, ExportParameterInt,
-                              ExportParameterListStr, ExportParameterStr, File)
+from run_aster.export import (PARAMS_TYPE, Export, ExportParameter,
+                              ExportParameterBool, ExportParameterFloat,
+                              ExportParameterInt, ExportParameterListStr,
+                              ExportParameterStr, File)
 from run_aster.logger import ERROR, logger
 from run_aster.settings import (ParameterBool, ParameterFloat, ParameterInt,
                                 ParameterListStr, ParameterStr, Store)
@@ -48,6 +49,13 @@ from run_aster.utils import ROOT, copy
 # run silently
 logger.setLevel(ERROR + 1)
 
+
+class TestConfig(unittest.TestCase):
+    """Check Config objects"""
+
+    def test_config(self):
+        for name in VERSION_PARAMS:
+            self.assertTrue(CFG.storage.has_param(name))
 
 class TestSettings(unittest.TestCase):
     """Check Parameter-derivated objects"""
@@ -134,12 +142,16 @@ class TestStore(unittest.TestCase):
 
     def test_store(self):
         store = Store()
+        self.assertEqual(len(store), 0)
+        self.assertFalse(bool(store))
         self.assertFalse(store.has_param("x"))
         self.assertIsNone(store.get_param("x"))
         self.assertIsNone(store.get("x"))
 
         para = ParameterBool("test")
         store.add(para)
+        self.assertEqual(len(store), 1)
+        self.assertTrue(bool(store))
         self.assertTrue(store.has_param("test"))
         self.assertEqual(store.get_param("test"), para)
         self.assertIsNone(para.value)
@@ -157,19 +169,19 @@ class TestExportParameter(unittest.TestCase):
     """Check ExportParameter object"""
 
     def test_factory(self):
-        para = ExportParameter.factory("debug")
+        para = ExportParameter.factory(PARAMS_TYPE, "debug")
         self.assertIsInstance(para, ParameterStr)
-        para = ExportParameter.factory("mpi_nbcpu")
+        para = ExportParameter.factory(PARAMS_TYPE, "mpi_nbcpu")
         self.assertIsInstance(para, ParameterInt)
-        para = ExportParameter.factory("memory_limit")
+        para = ExportParameter.factory(PARAMS_TYPE, "memory_limit")
         self.assertIsInstance(para, ParameterFloat)
-        para = ExportParameter.factory("actions")
+        para = ExportParameter.factory(PARAMS_TYPE, "actions")
         self.assertIsInstance(para, ParameterListStr)
         # unknown as list[str]
-        para = ExportParameter.factory("xxxx")
+        para = ExportParameter.factory(PARAMS_TYPE, "xxxx")
         self.assertIsInstance(para, ParameterListStr)
         # deprecated as None: ignored
-        para = ExportParameter.factory("service")
+        para = ExportParameter.factory(PARAMS_TYPE, "service")
         self.assertIsNone(para)
 
 
