@@ -18,27 +18,37 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine irecri(resultName, form, fileUnit, titre, &
-                      nbcham, cham,  paraNb, paraName,&
-                      storeNb, storeIndx, lresu, motfac, iocc,&
-                      tablFormat, lcor, nbnot, numnoe,&
-                      nbmat, nummai, nbcmp, nomcmp, lsup,&
-                      borsup, linf, borinf, lmax, lmin,&
-                      formr, niv)
-        character(len=*), intent(in) :: resultName
+    subroutine irecri(fileUnit   , dsName        , lResu     ,&
+                      titleKeywf , titleKeywfIocc,&
+                      storeNb    , storeListIndx ,&
+                      fieldListNb, fieldListType , realFormat,&
+                      paraNb     , paraName      , paraFormat,&
+                      cmpUserNb  , cmpUserName   ,&
+                      cellUserNb , cellUserNume  ,&
+                      nodeUserNb , nodeUserNume  ,&
+                      lMeshCoor  , lmax          , lmin,&
+                      lsup       , borsup        ,&
+                      linf       , borinf)
         integer, intent(in) :: fileUnit
-        integer, intent(in) :: storeNb, storeIndx(*)
+        character(len=*), intent(in) :: dsName, titleKeywf
+        integer, intent(in) :: titleKeywfIocc
+        aster_logical, intent(in) :: lResu
+        integer, intent(in) :: storeNb
+        integer , pointer :: storeListIndx(:)
+        integer, intent(in) :: fieldListNb
+        character(len=*), pointer :: fieldListType(:)
+        character(len=*), intent(in) :: realFormat
         integer, intent(in) :: paraNb
-        character(len=*), intent(in) :: paraName(*)
-        character(len=1), intent(in) :: tablFormat
-        character(len=*) :: form, titre, cham(*)
-        character(len=*) :: motfac
-        character(len=*) :: nomcmp(*), formr
-        real(kind=8) :: borsup, borinf
-        integer :: nbcham, niv
-        integer :: nbcmp, iocc
-        integer :: nbnot, numnoe(*), nbmat, nummai(*)
-        aster_logical :: lresu, lcor
-        aster_logical :: lsup, linf, lmax, lmin
+        character(len=*), pointer :: paraName(:)
+        character(len=1), intent(in) :: paraFormat
+        integer, intent(in) :: cmpUserNb
+        character(len=8), pointer :: cmpUserName(:)
+        integer, intent(in) :: nodeUserNb
+        integer , pointer :: nodeUserNume(:)
+        integer, intent(in) :: cellUserNb
+        integer , pointer :: cellUserNume(:)
+        aster_logical, intent(in) :: lMeshCoor
+        aster_logical, intent(in) :: lsup, linf, lmax, lmin
+        real(kind=8), intent(in) :: borsup, borinf
     end subroutine irecri
 end interface

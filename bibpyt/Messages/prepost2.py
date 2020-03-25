@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -43,18 +41,6 @@ Le filtre TYPE_MAILLE a éliminée %(i1)d mailles .
     8 : _("""
   Aucune maille n'a été trouvée avec le critère donné dans la commande TYPE_MAILLE.
   Vérifiez la dimension du groupe de mailles utilisé.
-"""),
-
-    35 : _("""
-   désolé on ne sait pas écrire les champs aux noeuds de représentation constante et a valeurs complexes au format  %(k1)s
-"""),
-
-    40 : _("""
- aucune des composantes demandées sous le mot-clé NOM_CMP pour l'impression du CHAM_GD  %(k1)s  n'est présente dans la grandeur  %(k2)s
-"""),
-
-    41 : _("""
- aucune des composantes demandées sous le mot-clé NOM_CMP pour l'impression du champ  %(k1)s  du concept  %(k2)s  n'est présente dans la grandeur  %(k3)s
 """),
 
     46 : _("""

@@ -28,10 +28,17 @@ cata_msg = {
 
     25 : _("""On ne trouve pas la composante %(k1)s dans la grandeur %(k2)s."""),
 
+    34 : _("""On ne sait pas écrire les champs aux noeuds de représentation constante et à valeurs complexes au format RESULTAT."""),
+
     35 : _("""On ne sait pas écrire les champs aux noeuds de représentation constante et à valeurs complexes dans ce format."""),
 
     40 : _("""Aucune des composantes demandées sous le mot-clé NOM_CMP pour l'impression du champ %(k1)s n'est présente."""),
 
+    46 : _("""Le numéro d'ordre %(i1)d n'est pas licite. On n'imprime pas le champ."""),
+
     97: _("""Le champ %(k1)s a des éléments ayant des sous-points. Ils seront supprimés à l'impression."""),
 
+    98 : _("""Le champ %(k1)s a des éléments ayant des sous-points. Il est écrit avec un format différent du format RESULTAT."""),
+
+    99 : _("""Le champ %(k1)s utilise une grandeur physique qui n'est ni un réel, ni un complexe. Il est écrit avec un format différent du format RESULTAT."""),
 }
