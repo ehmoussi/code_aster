@@ -32,12 +32,6 @@ Champ inexistant SIEF_ELGA ou SIEF_ELGA numéro d'ordre %(k1)s pour le calcul de
 Champ inexistant DEPL numéro d'ordre %(k1)s pour le calcul de l'option %(k2)s
 """),
 
-    4 : _("""
- Il n'existe aucun noeud lié à la liste de de mailles ou au groupe de mailles fournit à IMPR_RESU.
-
- Conseil : Vérifiez les mots-clés MAILLE ou GROUP_MA fournit à IMPR_RESU.
-"""),
-
     8 : _("""
 
  la taille mémoire   nécessaire au vecteur de travail dans   lequel nous stockons les composantes   u et v du vecteur TAU est trop importante   par rapport a la place disponible.
@@ -70,25 +64,10 @@ Séchage moins %(r2)f  Séchage plus %(r3)f
   le numéro du groupe doit être inférieur a  %(i2)d
 """),
 
-    30 : _("""
-  on ne trouve pas la maille  %(k1)s
-"""),
-
     31 : _("""
   On ne trouve pas le groupe %(k1)s.
 """),
 
-    32 : _("""
-  le groupe  %(k1)s  ne contient aucune maille  %(k2)s
-"""),
-
-    38 : _("""
-  on ne trouve pas le noeud : %(k1)s
-"""),
-
-    40 : _("""
-  le groupe  %(k1)s ne contient aucun noeud  %(k2)s
-"""),
 
     41 : _("""
   le paramètre  %(k1)s n'existe pas %(k2)s
@@ -146,10 +125,6 @@ Contactez le support technique.
   récupération pour le secteur  %(i1)d
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
-"""),
-
-    61 : _("""
- la composante  %(k1)s  n'existe dans aucun des champs %(k2)s
 """),
 
     64 : _("""

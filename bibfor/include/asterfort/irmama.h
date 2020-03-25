@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine irmama(noma, nbma, nomai, nbgr, nogrm,&
-                      nummai, nbmat, noltop)
-        character(len=*) :: noma
-        integer :: nbma
-        character(len=*) :: nomai(*)
-        integer :: nbgr
-        character(len=*) :: nogrm(*)
-        character(len=*) :: nummai
-        integer :: nbmat
-        character(len=*) :: noltop
+    subroutine irmama(meshNameZ , meshNbCell  ,&
+                      nbCell    , cellName    ,&
+                      nbGrCell  , grCellName  ,&
+                      cellSelect, nbCellSelect,&
+                      cellFlag)
+        character(len=*), intent(in) :: meshNameZ
+        integer, intent(in) :: meshNbCell
+        integer, intent(in) :: nbCell
+        character(len=8), pointer :: cellName(:)
+        integer, intent(in) :: nbGrCell
+        character(len=24), pointer :: grCellName(:)
+        integer, pointer :: cellSelect(:)
+        integer, intent(out) :: nbCellSelect
+        integer, pointer :: cellFlag(:)
     end subroutine irmama
 end interface

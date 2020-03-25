@@ -17,19 +17,17 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine irnono(meshNameZ , meshNbNode  ,&
-                      nbNode    , nodeName    ,&
-                      nbGrNode  , grNodeName  ,&
-                      nodeSelect, nbNodeSelect,&
-                      nodeFlag)
-        character(len=*), intent(in) :: meshNameZ
-        integer, intent(in) :: meshNbNode
-        integer, intent(in) :: nbNode
-        character(len=8), pointer :: nodeName(:)
-        integer, intent(in) :: nbGrNode
-        character(len=24), pointer :: grNodeName(:)
-        integer, pointer :: nodeSelect(:)
-        integer, intent(out) :: nbNodeSelect
-        integer, pointer :: nodeFlag(:)
-    end subroutine irnono
+    subroutine irextv(fileFormat,&
+                      keywf     , keywfIocc,&
+                      lResu     , lField   ,&
+                      lmax      , lmin     ,&
+                      lsup      , borsup   ,&
+                      linf      , borinf)
+        character(len=16), intent(in) :: keywf
+        integer, intent(in) :: keywfIocc
+        aster_logical, intent(in) :: lField, lResu
+        character(len=8), intent(in) :: fileFormat
+        aster_logical, intent(out) :: lsup, linf, lmax, lmin
+        real(kind=8), intent(out) :: borsup, borinf
+    end subroutine irextv
 end interface

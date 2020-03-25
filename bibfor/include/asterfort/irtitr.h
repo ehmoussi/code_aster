@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine irtitr(cham, noma, form, ifi, titre)
-        character(len=*) :: cham
-        character(len=*) :: noma
-        character(len=*) :: form
-        integer :: ifi
-        character(len=80) :: titre
+    subroutine irtitr(lResu     , lField   ,&
+                      dsNameZ   , meshNameZ,&
+                      fileFormat, fileUnit ,&
+                      title)
+        aster_logical, intent(in) :: lResu, lField
+        character(len=*), intent(in) :: dsNameZ, meshNameZ
+        character(len=8), intent(in) :: fileFormat
+        integer, intent(in) :: fileUnit
+        character(len=80), intent(out) :: title
     end subroutine irtitr
 end interface
