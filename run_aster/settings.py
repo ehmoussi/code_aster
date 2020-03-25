@@ -87,9 +87,8 @@ class AbstractParameter:
         typ = store_typed_params.get(name)
         if typ is None:
             logger.warning(f"unknown parameter: '{name}'")
-            typ = "list[str]"
+            return None
         if typ == DEPRECATED:
-            typ = "str"
             return None
         klass = cls._typed_subclasses(typ)
         if not klass:
