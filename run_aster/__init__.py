@@ -26,8 +26,7 @@ a study is usually defined by a ``.export`` file.
 The installation provides a script ``bin/run_aster`` to execute a study
 from a such file.
 
-The ``run_aster`` package contains the source used by ``bin/run_aster``.
-
-Use ``bin/run_aster --help`` for the available options.
+The ``run_aster`` package contains the Python source files used by
+``bin/run_aster`` and ``bin/run_ctest``.
 
 """

@@ -24,7 +24,7 @@
 :py:class:`Store` is a general storage object that holds various kinds
 of settings as typed parameters.
 
-This base object is the :py:class:`AbstractParameter` object from which are
+The base object is the :py:class:`AbstractParameter` object from which are
 derivated objects to store values of type *str*, *int*, *float*, *bool* and
 list of *str*.
 """
@@ -160,7 +160,7 @@ class ParameterListStr(AbstractParameter):
 class Store:
     """A base object to store some settings.
 
-    This class must be subclassed and a `_new_param` class method must be added
+    This class must be subclassed and a ``_new_param`` class method must be added
     to make `set()` method usable.
     """
 

@@ -27,6 +27,52 @@ getters and setters onto the parameters.
 This object contains :py:class:`File` and :py:class:`ExportParameter` objects.
 The arguments of the code_aster command line are stored in a special
 :py:class:`ExportParameter` object.
+
+The syntax of a ``.export`` file is very simple:
+
+.. code-block:: none
+
+    P parameter-name parameter-value
+    A arg1 arg2
+    F-or-R type path-to-compressed-input-output-file DRC unit
+
+``P`` for parameters, supported parameters are (with their type):
+
+.. code-block:: none
+
+    actions: list[str]
+    expected_diag: list[str]
+    hide-command: bool
+    interact: bool
+    memjob: int
+    memory_limit: float
+    mpi_nbcpu: int
+    ncpus: int
+    time_limit: float
+    tpmax: float
+    tpsjob: int
+
+``A`` is a special parameter that stores command line arguments passed to the
+code_aster command file.
+
+``F-or-R``: ``F`` for files, ``R`` for directories.
+
+``DRC``: one or more characters meaning ``D`` data file, ``R`` result file,
+``C`` for compressed (using ``gzip``).
+Example (from ``sslv139a`` testcase):
+
+.. code-block:: none
+
+    P time_limit 60
+    P memory_limit 512
+    P testlist asterxx ci verification sequential
+    F comm sslv139a.comm D 1
+    F datg sslv139a.datg D 16
+    F mmed sslv139a.mmed D 20
+
+Paths are relative to the parent directory of the ``.export`` file
+(``sslv139a.comm`` is in the same directory as ``sslv139a.export``).
+
 """
 
 import argparse
@@ -43,9 +89,7 @@ from .utils import ROOT
 
 PARAMS_TYPE = {
     "actions": "list[str]",
-    "debug": "str",
     "expected_diag": "list[str]",
-    "facmtps": "float",
     "hide-command": "bool",
     "interact": "bool",
     "memjob": "int",
@@ -62,11 +106,11 @@ PARAMS_TYPE = {
 # deprecated for simple execution
 PARAMS_TYPE.update({}.fromkeys(
     ["MASTER_memory_limit", "MASTER_time_limit", "aster_root", "consbtc",
-     "cpresok", "diag_pickled", "mclient", "mem_aster", "mode", "mpi_nbnoeud",
-     "nbmaxnook", "noeud", "nomjob", "parent", "platform", "protocol_copyfrom",
-     "protocol_copyto", "protocol_exec", "proxy_dir", "rep_trav", "origine",
-     "server", "serveur", "service", "soumbtc", "studyid", "testlist",
-     "username", "uclient", "version"],
+     "cpresok", "debug", "diag_pickled", "facmtps", "mclient", "mem_aster",
+     "mode", "mpi_nbnoeud", "nbmaxnook", "noeud", "nomjob", "parent",
+     "platform", "protocol_copyfrom", "protocol_copyto", "protocol_exec",
+     "proxy_dir", "rep_trav", "origine", "server", "serveur", "service",
+     "soumbtc", "studyid", "testlist", "username", "uclient", "version"],
     DEPRECATED))
 
 
