@@ -90,6 +90,13 @@ aster_logical :: lgmsh
 !
     aster_logical :: lresu, lcor, lmax, lmin, linf, lsup, lvarie, lmodel
 !
+    integer , pointer :: storeListIndx(:) => null()
+    character(len=16), pointer :: fieldListType(:) => null()
+    character(len=16), pointer :: paraName(:) => null()
+    character(len=8), pointer :: cmpUserName(:) => null()
+    integer , pointer :: nodeUserNume(:) => null()
+    integer , pointer :: cellUserNume(:) => null()
+!
     call jemarq()
 !
     nbcmdu = 0
@@ -312,13 +319,30 @@ aster_logical :: lgmsh
                         lresu, nbordr, zi(jordr), nbcmp, zk8(jcmp),&
                         nbmat, zi(jnumat), versio, lgmsh, tycha)
         else
-            call irecri(leresu, formaf, ifichi, titre, &
-                        nbnosy, zk16(jnosy), nbpara, zk16(jpara),&
-                        nbordr, zi(jordr), lresu, 'RESU', ioccur,&
-                        cecr, lcor, nbnot, zi(jnunot),&
-                        nbmat, zi(jnumat), nbcmp, zk8(jcmp), lsup,&
-                        borsup, linf, borinf, lmax, lmin,&
-                        formr, 2)
+            if (nbnosy .gt. 0) call jeveuo(nchsym, 'L', vk16 = fieldListType)
+            if (nbordr .gt. 0) call jeveuo(nnuord, 'L', vi = storeListIndx)
+            if (nbcmp .gt. 0) call jeveuo(nlicmp, 'L', vk8 = cmpUserName)
+            if (nbpara .gt. 0) call jeveuo(nnopar, 'L', vk16 = paraName)
+            if (nbmat .ne. 0) call jeveuo(nonuma, 'L', vi = cellUserNume)
+            if (nbnot .ne. 0) call jeveuo(nonuno, 'L', vi = nodeUserNume)
+            call irecri(ifichi   , leresu        , lResu         ,&
+                        'RESU', ioccur,&
+                        nbordr, storeListIndx,&
+                        nbnosy, fieldListType, formr,&
+                        nbpara, paraName, cecr,&
+                        nbcmp, cmpUserName,&
+                        nbmat, cellUserNume,&
+                        nbnot, nodeUserNume,&
+                        lcor  , lmax          , lmin,&
+                        lsup       , borsup        ,&
+                        linf       , borinf)
+            !call irecri(leresu, formaf, ifichi, titre, &
+            !            nbnosy, zk16(jnosy), nbpara, zk16(jpara),&
+            !            nbordr, zi(jordr), lresu, 'RESU', ioccur,&
+            !            cecr, lcor, nbnot, zi(jnunot),&
+            !            nbmat, zi(jnumat), nbcmp, zk8(jcmp), lsup,&
+            !            borsup, linf, borinf, lmax, lmin,&
+            !            formr, 2)
         endif
     endif
 !     **********************

@@ -17,21 +17,24 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine irecri(resultName, form, fileUnit, titre, &
-                  nbcham, cham,  paraNb, paraName,&
-                  storeNb, storeIndx, lresu, motfac, iocc,&
-                  tablFormat, lcor, nbnot, numnoe,&
-                  nbmat, nummai, nbcmp, nomcmp, lsup,&
-                  borsup, linf, borinf, lmax, lmin,&
-                  formr, niv)
+subroutine irecri(fileUnit   , dsName        , lResu         ,&
+                  titleKeywf , titleKeywfIocc,&
+                  storeNb    , storeListIndx ,&
+                  fieldListNb, fieldListType , realFormat,&
+                  paraNb     , paraName      , paraFormat,&
+                  cmpUserNb  , cmpUserName   ,&
+                  cellUserNb , cellUserNume  ,&
+                  nodeUserNb , nodeUserNume  ,&
+                  lMeshCoor  , lmax          , lmin,&
+                  lsup       , borsup        ,&
+                  linf       , borinf)
 !
 implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/codent.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/irch19.h"
+#include "asterfort/irdepl.h"
+#include "asterfort/irchml.h"
 #include "asterfort/irpara.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -46,191 +49,195 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-character(len=*), intent(in) :: resultName
 integer, intent(in) :: fileUnit
-integer, intent(in) :: storeNb, storeIndx(*)
+character(len=*), intent(in) :: dsName, titleKeywf
+integer, intent(in) :: titleKeywfIocc
+aster_logical, intent(in) :: lResu
+integer, intent(in) :: storeNb
+integer , pointer :: storeListIndx(:)
+integer, intent(in) :: fieldListNb
+character(len=*), pointer :: fieldListType(:)
+character(len=*), intent(in) :: realFormat
 integer, intent(in) :: paraNb
-character(len=*), intent(in) :: paraName(*)
-character(len=1), intent(in) :: tablFormat
-character(len=*) :: form, titre, cham(*)
-character(len=*) :: motfac
-character(len=*) :: nomcmp(*), formr
-real(kind=8) :: borsup, borinf
-integer :: nbcham, niv
-integer :: nbcmp, iocc
-integer :: nbnot, numnoe(*), nbmat, nummai(*)
-aster_logical :: lresu, lcor
-aster_logical :: lsup, linf, lmax, lmin
+character(len=*), pointer :: paraName(:)
+character(len=1), intent(in) :: paraFormat
+integer, intent(in) :: cmpUserNb
+character(len=8), pointer :: cmpUserName(:)
+integer, intent(in) :: nodeUserNb
+integer , pointer :: nodeUserNume(:)
+integer, intent(in) :: cellUserNb
+integer , pointer :: cellUserNume(:)
+aster_logical, intent(in) :: lMeshCoor
+aster_logical, intent(in) :: lsup, linf, lmax, lmin
+real(kind=8), intent(in) :: borsup, borinf
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! Results management
+! Print result or field in a file (IMPR_RESU)
 !
-! Print results datastructure in a file - Format IDEAS / RESULTAT
+! Print field or result for 'RESULTAT'
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  resultName       : name of results datastructure
 ! In  fileUnit         : index of file (logical unit)
-! In  storeNb          : number of storage slots in result
-! In  storeIndx        : list of storage slots in result
+! In  dsName           : name of datastructure (result or field)
+! In  lResu            : flag if datastructure is a result
+! In  titleKeywf       : keyword for sub-title
+! In  titleKeywfIocc   : index of keyword for sub-title
+! In  storeNb          : number of storing slots
+! Ptr storeListIndx    : index of storing slots
+! In  fieldListNb      : length of list of fields to save
+! Ptr fieldListType    : list of fields type to save
+! In  realFormat       : format of real numbers
 ! In  paraNb           : number of parameters
-! In  paraName         : name of parameters
-! In  tablFormat       : format of file (FORM_TABL keyord)
+! Ptr paraName         : name of parameters
+! In  paraFormat       : format to print parameters (FORM_TABL keyword)
 !                         'L' => list
 !                         'T' => table
 !                         'E' => excel
-! IN  FORM   : K8  : FORMAT D'ECRITURE
-! IN  TITRE  : K80 : TITRE POUR ALI_BABA ET SUPERTAB
-! IN  NBCHAM : I   : NOMBRE DE CHAMP DANS LE TABLEAU CHAM
-! IN  CHAM   : K16 : NOM DES CHAMPS A IMPRIMER ( EX 'DEPL', ....
-! IN  PARTIE : K4  : IMPRESSION DE LA PARTIE COMPLEXE OU REELLE DU CHAMP
-! IN  LRESU  : L   : INDIQUE SI NOMCON EST UN CHAMP OU UN RESULTAT
-! IN  MOTFAC : K   : NOM DU MOT CLE FACTEUR
-! IN  IOCC   : I   : NUMERO D'OCCURENCE DU MOT CLE FACTEUR
-! IN  MODELE : K   : NOM DU MODELE
-! IN  LCOR   : L   : INDIQUE SI IMPRESSION DES COORDONNEES DES NOEUDS
-!                    .TRUE.  IMPRESSION
-! IN  TYCHA  : K8  : TYPE DE CHAMP (SCALAIRE,VECT_2D,VECT_3D,TENS_2D,
-!                    TENS_3D) POUR LE FORMAT GMSH (VERSION >= 1.2)
-! IN  NBNOT  : I   : NOMBRE DE NOEUDS A IMPRIMER
-! IN  NUMNOE : I   : NUMEROS DES NOEUDS A IMPRIMER
-! IN  NBMAT  : I   : NOMBRE DE MAILLES A IMPRIMER
-! IN  NUMMAI : I   : NUMEROS DES MAILLES A IMPRIMER
-! IN  NBCMP  : I   : NOMBRE DE COMPOSANTES A IMPRIMER
-! IN  NOMCMP : K8  : NOMS DES COMPOSANTES A IMPRIMER
-! IN  LSUP   : L   : =.TRUE. INDIQUE PRESENCE D'UNE BORNE SUPERIEURE
-! IN  BORSUP : R   : VALEUR DE LA BORNE SUPERIEURE
-! IN  LINF   : L   : =.TRUE. INDIQUE PRESENCE D'UNE BORNE INFERIEURE
-! IN  BORINF : R   : VALEUR DE LA BORNE INFERIEURE
-! IN  LMAX   : L   : =.TRUE. INDIQUE IMPRESSION VALEUR MAXIMALE
-! IN  LMIN   : L   : =.TRUE. INDIQUE IMPRESSION VALEUR MINIMALE
-! IN  FORMR  : K   : FORMAT D'ECRITURE DES REELS SUR "RESULTAT"
-! IN  VERSIO : I   : NIVEAU VERSION GMSH 1 OU 2
-! IN  NIV    : I   : NIVEAU IMPRESSION MOT CLE INFO
+! In  cmpUserNb        : number of components to select
+! Ptr cmpUserName      : list of name of components to select
+! In  cellUserNb       : number of cells require by user
+! Ptr cellUserNume     : list of index of cells require by user
+! In  nodeUserNb       : number of nodes require by user
+! Ptr nodeUserNume     : list of index of nodes require by user
+! In  lMeshCoor        : flag to print coordinates of nodes
+! In  lmax             : flag to print maximum value on nodes
+! In  lmin             : flag to print minimum value on nodes
+! In  lsup             : flag if supremum exists
+! In  borsup           : value of supremum
+! In  linf             : flag if infinum exists
+! In  borinf           : value of infinum
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=6) :: chnumo
-    character(len=19) :: noch19
-    character(len=24) :: nomst
+    character(len=16) :: fieldType
+    character(len=19) :: fieldName
+    character(len=16) :: resultType
+    character(len=4) :: fieldSupport
+    character(len=24) :: subtitleJvName
+    character(len=8) :: resultName
+    integer :: storeIndx, iret, ibid
+    integer :: iStore, iField, iLine
     aster_logical :: lordr
-    integer :: ibid, i, isy, iStore
-    integer :: iret
-    integer :: jtitr
-    integer :: nbtitr
+    character(len=80), pointer :: titleLine(:) => null()
+    integer :: titleLineNb
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nomst = '&&IRECRI.SOUS_TITRE.TITR'
+    subtitleJvName = '&&IRECRI.SOUS_TITRE.TITR'
 !
-! - Print list of parameters in a file
+! - If result is a result and not a field name
 !
-    if (niv .gt. 1) then
-        if (form .eq. 'RESULTAT') then
-            call irpara(resultName, fileUnit ,&
-                        storeNb   , storeIndx,&
-                        paraNb    , paraName ,&
-                        tablFormat)
-        endif
+    if (lResu) then
+        resultName = dsName
+    else
+        resultName = ' '
     endif
 !
-!     *******************************************
-!     --- BOUCLE SUR LA LISTE DES NUMEROS D'ORDRE
-!     *******************************************
+! - Print list of parameters for all storing index
+!
+    call irpara(resultName, fileUnit     ,&
+                storeNb   , storeListIndx,&
+                paraNb    , paraName     ,&
+                paraFormat)
+!
+! - Loop on storing slots
 !
     do iStore = 1, storeNb
         call jemarq()
         call jerecu('V')
-!
-!       --- SI VARIABLE DE TYPE RESULTAT = RESULTAT COMPOSE :
-!           VERIFICATION CORRESPONDANCE ENTRE NUMERO D'ORDRE
-!           UTILISATEUR ORDR(IORDR) ET NUMERO DE RANGEMENT IRET
-! AU CAS OU ON NE PASSE PAS EN DESSOUS ON INITIALISE LORDR A FALSE
-        lordr=.false.
-        if (lresu) then
-            call rsutrg(resultName, storeIndx(iStore), iret, ibid)
+        storeIndx = storeListIndx(iStore)
+! ----- Order of storing index
+        lordr = ASTER_FALSE
+        if (lResu) then
+            call rsutrg(dsName, storeIndx, iret, ibid)
             if (iret .eq. 0) then
-!           - MESSAGE NUMERO D'ORDRE NON LICITE
-                call codent(storeIndx(iStore), 'G', chnumo)
-                call utmess('A', 'PREPOST2_46', sk=chnumo)
-                goto 22
+                call utmess('A', 'RESULT3_46', si = storeIndx)
+                cycle
             endif
-            lordr=.true.
+            lordr = ASTER_TRUE
         endif
-!
-!       --- BOUCLE SUR LE NOMBRE DE CHAMPS A IMPRIMER
-        if (nbcham .ne. 0) then
-            do isy = 1, nbcham
-                if (lresu) then
-!           * RESULTAT COMPOSE
-!             - VERIFICATION EXISTENCE DANS LA SD RESULTAT NOMCON
-!               DU CHAMP CHAM(ISY) POUR LE NO. D'ORDRE ORDR(IORDR)
-!               ET RECUPERATION DANS NOCH19 DU NOM SE LE CHAM_GD EXISTE
-                    call rsexch(' ', resultName, cham(isy), storeIndx(iStore), noch19,&
-                                iret)
-                    if (iret .ne. 0) goto 20
+! ----- Loop on fields
+        if (fieldListNb .ne. 0) then
+            do iField = 1, fieldListNb
+                fieldType = fieldListType(iField)
+! ------------- Extract field from results if necessary
+                fieldName = ' '
+                if (lResu) then
+                    call rsexch(' ', resultName, fieldType, storeIndx, fieldName, iret)
+                    if (iret .ne. 0) then
+                        cycle
+                    endif
+                    call dismoi('TYPE_RESU', resultName, 'RESULTAT', repk=resultType)
                 else
-!           * CHAM_GD
-                    noch19 = resultName
+                    fieldName  = dsName
                 endif
-!
-!           * IMPRESSION DES PARAMETRES (FORMAT 'RESULTAT')
-                if (lordr .and. form .eq. 'RESULTAT') then
-!             - SEPARATION DES DIVERS NUMEROS D'ORDRE PUIS IMPRESSION
-                    write(fileUnit,'(/,1X,A)') '======>'
-                    call irpara(resultName, fileUnit,&
-                                1, storeIndx(iStore),&
-                                paraNb, paraName,&
-                                tablFormat)
-                    lordr=.false.
-                endif
-!           * CREATION D'UN SOUS-TITRE
-                if (form .eq. 'RESULTAT' .or. form .eq. 'IDEAS') then
-                    if (lresu) then
-                        call titre2(resultName, noch19, nomst, motfac, iocc,&
-                                    formr, cham(isy), storeIndx(iStore))
+! ------------- Check support
+                call dismoi('TYPE_CHAMP', fieldName, 'CHAMP', repk=fieldSupport)
+                if ((fieldSupport .eq. 'NOEU') .or. (fieldSupport(1:2) .eq. 'EL')) then
+                else if (fieldSupport .eq. 'CART') then
+                    if (.not. lResu) then
+                        call utmess('A', 'RESULT3_3')
+                        cycle
+                    endif
+                else
+                    if (resultType .eq. 'MODE_GENE' .or. resultType .eq. 'HARM_GENE') then
+                        call utmess('A', 'RESULT3_2', sk = fieldType)
                     else
-                        call titre2(resultName, noch19, nomst, motfac, iocc,&
-                                    formr)
+                        call utmess('A', 'RESULT3_1', sk = fieldType)
                     endif
                 endif
-!
-!           * IMPRESSION DU SOUS-TITRE SI FORMAT 'RESULTAT'
-                if (form .eq. 'RESULTAT') then
-!              ---- SEPARATION DES DIVERS CHAMPS -----
-                    write(fileUnit,'(/,1X,A)') '------>'
-                    call jeveuo(nomst, 'L', jtitr)
-                    call jelira(nomst, 'LONMAX', nbtitr)
-                    write(fileUnit,'(1X,A)') (zk80(jtitr+i-1),i=1,&
-                    nbtitr)
+! ------------- Print list of parameters for this storing index
+                if (lordr) then
+                    write(fileUnit,'(/,1X,A)') '======>'
+                    call irpara(resultName, fileUnit   ,&
+                                1         , [storeIndx],&
+                                paraNb    , paraName   ,&
+                                paraFormat)
+                    lordr = ASTER_FALSE
                 endif
-!
-!           ********************************************************
-!           * IMPRESSION DU CHAMP (CHAM_NO OU CHAM_ELEM) AU FORMAT
-!             'RESULTAT' OU 'SUPERTAB'
-!                LE CHAMP EST UN CHAM_GD SIMPLE SI LRESU=.FALSE. OU
-!                LE CHAMP EST LE CHAM_GD CHAM(ISY) DE NUMERO D'ORDRE
-!                ORDR(IORDR) ISSU DE LA SD_RESULTAT NOMCON
-                call irch19(noch19, form, fileUnit, titre,&
-                            resultName, cham(isy), storeIndx(iStore), lcor, nbnot,&
-                            numnoe, nbmat, nummai, nbcmp, nomcmp,&
-                            lsup, borsup, linf, borinf, lmax,&
-                            lmin, lresu, formr)
-20                 continue
+! ------------- Create subtitle
+                if (lResu) then
+                    call titre2(dsName    , fieldName, subtitleJvName, titleKeywf, titleKeywfIocc,&
+                                realFormat, fieldType, storeIndx)
+                else
+                    call titre2(dsName    , fieldName, subtitleJvName, titleKeywf, titleKeywfIocc,&
+                                realFormat)
+                endif
+! ------------- Print subtitle
+                write(fileUnit,'(/,1X,A)') '------>'
+                call jeveuo(subtitleJvName, 'L', vk80 = titleLine)
+                call jelira(subtitleJvName, 'LONMAX', titleLineNb)
+                write(fileUnit,'(1X,A)') (titleLine(iLine),iLine=1,titleLineNb)
+! ------------- Print field
+                if (fieldSupport .eq. 'NOEU' .and. nodeUserNb .ge. 0) then
+                    call irdepl(fileUnit  ,&
+                                fieldType , fieldName   ,&
+                                cmpUserNb , cmpUserName ,&
+                                nodeUserNb, nodeUserNume,&
+                                lMeshCoor , lmax        , lmin,&
+                                lsup      , borsup      ,&
+                                linf      , borinf      ,&
+                                realFormat)
+                else if (fieldSupport(1:2) .eq. 'EL' .and. cellUserNb .ge. 0) then
+                    call irchml(fileUnit  ,&
+                                fieldType , fieldName   , fieldSupport,&
+                                cmpUserNb , cmpUserName ,&
+                                cellUserNb, cellUserNume,&
+                                nodeUserNb, nodeUserNume,&
+                                lMeshCoor , lmax        , lmin,&
+                                lsup      , borsup      ,&
+                                linf      , borinf      ,&
+                                realFormat)
+                endif
             end do
         endif
-22      continue
         call jedema()
     end do
 !
 ! - Clean
 !
-    call jedetr('&&IRECRI.CHPRES')
-    call jedetr('&&IRECRI.FVIDAV')
-    call jedetr('&&IRECRI.FVIDAP')
-    call jedetr('&&IRECRI.NOM_ACC')
-    call jedetr('&&IRECRI.TABLE.TOT')
-    call jedetr(nomst)
+    call jedetr(subtitleJvName)
 !
 end subroutine
