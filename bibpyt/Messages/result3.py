@@ -21,4 +21,8 @@ cata_msg = {
 
     25 : _("""On ne trouve pas la composante %(k1)s dans la grandeur %(k2)s."""),
 
+    35 : _("""On ne sait pas écrire les champs aux noeuds de représentation constante et à valeurs complexes dans ce format."""),
+
+    40 : _("""Aucune des composantes demandées sous le mot-clé NOM_CMP pour l'impression du champ %(k1)s n'est présente."""),
+
 }
