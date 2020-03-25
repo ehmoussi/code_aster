@@ -210,7 +210,7 @@ SIF4 = [None]*(nbc+1)
 
 for i in range(0,nbc) :
 
-   SIF1[i]=CALC_H(RESULTAT=UTOT1,
+   SIF1[i]=CALC_H(RESULTAT=UTOT1, INFO=2,
                   OPTION=("G", "K"),
                   THETA=_F(R_INF=RI[i],
                            R_SUP=RS[i],
