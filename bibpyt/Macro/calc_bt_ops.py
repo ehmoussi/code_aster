@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1078,7 +1078,7 @@ def calc_bt_ops(self,
                           [0, 0, C, -S],
                           [0, 0, S, C]])
 
-            k_ = np.Mat_prpmul(np.matrix.transpose(R), np.Mat_prpmul(k, R))    #global ESM
+            k_ = np.Mat_prpmul(np.ndarray.transpose(R), np.Mat_prpmul(k, R))    #global ESM
             ADoF = np.zeros((4), dtype = int)
             ADoF[0:2] = [(Con_Mat[i_, 0]*2), Con_Mat[i_, 0]*2 + 1]
             ADoF[2:4] = [(Con_Mat[i_, 1]*2), Con_Mat[i_, 1]*2 + 1]
@@ -1140,7 +1140,7 @@ def calc_bt_ops(self,
                           [0, 0, C, -S],
                           [0, 0, S, C]])
 
-            k_ = matmult(np.matrix.transpose(R), matmult(k, R))    # global ESM
+            k_ = matmult(np.ndarray.transpose(R), matmult(k, R))    # global ESM
             ADoF = np.zeros((4), dtype = int)
             ADoF[0:2] = [(Con_Mat[i_, 0]*2), Con_Mat[i_, 0]*2 + 1]
             ADoF[2:4] = [(Con_Mat[i_, 1]*2), Con_Mat[i_, 1]*2 + 1]
@@ -1175,7 +1175,7 @@ def calc_bt_ops(self,
                               [0, 0, C, -S],
                               [0, 0, S, C]])
 
-                k_ = matmult(np.matrix.transpose(R), matmult(k, R))    #global ESM
+                k_ = matmult(np.ndarray.transpose(R), matmult(k, R))    #global ESM
                 ADoF = np.zeros((4), dtype = int)
                 ADoF[0:2] = [(Con_Mat[i_, 0]*2), Con_Mat[i_, 0]*2 + 1]
                 ADoF[2:4] = [(Con_Mat[i_, 1]*2), Con_Mat[i_, 1]*2 + 1]
