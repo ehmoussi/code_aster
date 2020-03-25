@@ -153,17 +153,12 @@ class RunAster:
         os.makedirs("REPE_IN", exist_ok=True)
         os.makedirs("REPE_OUT", exist_ok=True)
 
-    def execute_study(self, show_content=True):
+    def execute_study(self):
         """Execute the study.
 
-        Arguments:
-            show_content (bool): List the working directory content or not.
         Returns:
             Status: Status object.
         """
-        if show_content:
-            logger.info(f"TITLE Content of {os.getcwd()} before execution:")
-            logger.info(_ls(".", "REPE_IN"))
         commfiles = [obj.path for obj in self.export.commfiles]
         nbcomm = len(commfiles)
         if not commfiles:
@@ -300,7 +295,7 @@ class RunOnlyEnv(RunAster):
         profile = osp.join(ROOT, "share", "aster", "profile.sh")
         logger.info(f"    cd {os.getcwd()}")
         logger.info(f"    . {profile}")
-        return super().execute_study(show_content=False)
+        return super().execute_study()
 
     def _exec_one(self, comm, idx, last, timeout):
         """Show instructions for a command file.
