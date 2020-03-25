@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -115,10 +115,10 @@ subroutine irmgms(ifc, ndim, nno, noma, nbgrm,&
     nommai = nomaou//'.NOMMAI'
 !
 ! --- INIT
-    do 101 i = 1, ntyele
+    do i = 1, ntyele
         nbel(i) = 0
         nobj(i) = ' '
-101 end do
+    end do
     call jenonu(jexnom('&CATA.TM.NOMTM', 'POI1' ), typpoi)
     call jenonu(jexnom('&CATA.TM.NOMTM', 'SEG2' ), typseg)
     call jenonu(jexnom('&CATA.TM.NOMTM', 'TRIA3' ), typtri)
@@ -152,26 +152,26 @@ subroutine irmgms(ifc, ndim, nno, noma, nbgrm,&
     write(ifc,'(A8)') k8nno
 !
 !
-    do 10 ino = 1, nno
+    do ino = 1, nno
         if (lgmsh) then
             k7no=nonoe(ino)(idn:8)
         else
             call codent(ino, 'D', k7no)
         endif
         if (ndim .eq. 3) then
-            write(ifc,1001) k7no, (vale(1+3*(ino-1)+j-1),j=1,ndim)
+            write(ifc,101) k7no, (vale(1+3*(ino-1)+j-1),j=1,ndim)
         else if (ndim.eq.2) then
-            write(ifc,1001) k7no, (vale(1+3*(ino-1)+j-1),j=1,ndim),&
+            write(ifc,101) k7no, (vale(1+3*(ino-1)+j-1),j=1,ndim),&
             zero
         endif
- 10 end do
+    end do
 !
     write(ifc,'(A7)') '$ENDNOD'
 !
     nbma2 = 0
-    do 102 i = 1, ntyele
+    do i = 1, ntyele
         nbma2 = nbma2 + nbel(i)
-102 end do
+    end do
 !
 ! --- NUMERO DES GROUP_MA (POUR L'ECRITURE DES MAILLES) :
 !     =================================================
@@ -182,19 +182,19 @@ subroutine irmgms(ifc, ndim, nno, noma, nbgrm,&
 !     LES NOMS DE GROUPE DE MAILLES SONT AU FORMAT : GM123456
 !
     numgrx = 10000
-    do 20 igm = 1, nbgrm
+    do igm = 1, nbgrm
         call jenuno(jexnum(noma//'.GROUPEMA', igm), nomgrm)
         call lxliis(nomgrm(idgm:24), numgrm, ier)
         if (ier .eq. 0) then
             numgrx = max(numgrx,numgrm)
         endif
- 20 end do
+    end do
 !
     if (nbgrm .gt. 0) then
         call utmess('I', 'PREPOST6_31')
     endif
 !
-    do 30 igm = 1, nbgrm
+    do igm = 1, nbgrm
         call jenuno(jexnum(noma//'.GROUPEMA', igm), nomgrm)
         call jeveuo(jexnom(noma//'.GROUPEMA', nomgrm), 'L', idgrma)
         call lxliis(nomgrm(idgm:24), numgrm, ier)
@@ -202,15 +202,15 @@ subroutine irmgms(ifc, ndim, nno, noma, nbgrm,&
             numgrm = igm + numgrx
         endif
         call jelira(jexnum(noma//'.GROUPEMA', igm), 'LONUTI', nbm)
-        do 40 i = 1, nbm
+        do i = 1, nbm
             nbmli = nbnune(1+zi(idgrma+i-1)-1)
             call jeveuo(jexnum( '&&IRMGMS.LISMA', zi(idgrma+i-1) ), 'L', idlima)
-            do 50 j = 1, nbmli
+            do j = 1, nbmli
                 numgrma(1+zi(idlima+j-1)-1) = numgrm
- 50         continue
- 40     continue
-        write(6,1002) nomgrm,numgrm
- 30 end do
+            end do
+        end do
+        write(6,102) nomgrm,numgrm
+    end do
 !
 ! --- ECRITURE DES MAILLES DU MAILLAGE SUR LE FICHIER GMSH :
 !     ====================================================
@@ -218,12 +218,12 @@ subroutine irmgms(ifc, ndim, nno, noma, nbgrm,&
     call codent(nbma2, 'G', k8nbma)
     write(ifc,'(A8)') k8nbma
 !
-    do 70 i = 1, ntyele
+    do i = 1, ntyele
         nmtyp(i) = blanc8
         nbtyp(i) = 0
- 70 end do
+    end do
     nbelgm =0
-    do 60 ima = 1, nbma2
+    do ima = 1, nbma2
         ipoin = zi(jpoin+ima-1)
         nnoe = zi(jpoin+ima) - ipoin
 !
@@ -236,17 +236,16 @@ subroutine irmgms(ifc, ndim, nno, noma, nbgrm,&
             nbelgm=nbelgm+1
             numgrma(ima) = 10000
 !
-            do 80 i = 1, ntyele
+            do i = 1, ntyele
                 if (nmtyp(i) .eq. nomtyp) then
                     nbtyp(i)=nbtyp(i)+1
-                    goto 90
+                    exit
                 else if (nmtyp(i).eq.blanc8) then
                     nbtyp(i)=nbtyp(i)+1
                     nmtyp(i)=nomtyp
-                    goto 90
+                    exit
                 endif
- 80         continue
- 90         continue
+            end do
         endif
         call jenuno(jexnum(nommai, ima), nomail)
         if (lgmsh) then
@@ -254,26 +253,26 @@ subroutine irmgms(ifc, ndim, nno, noma, nbgrm,&
         else
             call codent(ima, 'D', k7ma)
         endif
-        do 61 ino = 1, nnoe
+        do ino = 1, nnoe
             if (lgmsh) then
                 tk7no(ino)=nonoe(connex(1+ipoin-1+ino-1))(idn:8)
             else
                 call codent(connex(1+ipoin-1+ino-1), 'D', tk7no(ino))
             endif
- 61     continue
-        write(ifc,1003) k7ma,itypgm,numgrma(ima),numgrma(ima),&
+        end do
+        write(ifc,103) k7ma,itypgm,numgrma(ima),numgrma(ima),&
         nnoe, (tk7no(ino),ino=1,nnoe)
- 60 end do
+    end do
 !
     if (nbtyp(1) .ne. 0 .and. niv .ge. 1) then
         call utmess('I', 'PREPOST6_32', si=nbelgm)
-        do 95 i = 1, ntyele
+        do i = 1, ntyele
             if (nmtyp(i) .ne. blanc8) then
                 valk = nmtyp(i)
                 vali = nbtyp(i)
                 call utmess('I', 'PREPOST6_33', sk=valk, si=vali)
             endif
- 95     continue
+        end do
     endif
 !
     write(ifc,'(A7)') '$ENDELM'
@@ -289,12 +288,13 @@ subroutine irmgms(ifc, ndim, nno, noma, nbgrm,&
     call jedetr(nomaou//'_PRI')
     call jedetr(nomaou//'_HEX')
     call jedetr(nomaou//'.NBNUNE')
+    call jedetr(nomaou//'.NUMOLD')
     AS_DEALLOCATE(vi=numgrma)
     call jedetr('&&IRMGMS.LISMA')
 !
-    1001 format (1x,a7,1x,1pe23.16,1x,1pe23.16,1x,1pe23.16,1x,1pe23.16)
-    1002 format (11x,a24,9x,i8)
-    1003 format (1x,a7,1x,i2,1x,i8,1x,i8,1x,i8,27(1x,a7))
+101 format (1x,a7,1x,1pe23.16,1x,1pe23.16,1x,1pe23.16,1x,1pe23.16)
+102 format (11x,a24,9x,i8)
+103 format (1x,a7,1x,i2,1x,i8,1x,i8,1x,i8,27(1x,a7))
 !
     call jedema()
 end subroutine

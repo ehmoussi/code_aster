@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,29 +15,35 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
-                      liordr, lresu, nbnoec, linoec, nbmaec,&
-                      limaec, nomcmp, lvarie, carael, linopa)
-        character(len=*) :: nomcon
-        integer :: ifichi
-        character(len=*) :: nocham
-        character(len=*) :: novcmp
-        character(len=*) :: partie
-        character(len=*) :: liordr
-        aster_logical :: lresu
-        integer :: nbnoec
-        integer :: linoec(*)
-        integer :: nbmaec
-        integer :: limaec(*)
-        character(len=*) :: nomcmp
-        aster_logical :: lvarie
-        character(len=8) :: carael
-        character(len=19) :: linopa
+    subroutine iremed(fileUnit   , dsNameZ      , lResu           ,&
+                      fieldListNb, fieldListType, fieldMedListType,&
+                      storeListNb, storeListIndx,&
+                      paraListNb , paraListName ,&
+                      cmpListNb  , cmpListName  ,&
+                      cellUserNb , cellUserNume ,&
+                      nodeUserNb , nodeUserNume ,&
+                      cplxPrint  , lVariName    , caraElem)
+        integer, intent(in) :: fileUnit
+        character(len=8), intent(in) :: dsNameZ
+        aster_logical, intent(in) :: lResu
+        integer, intent(in) :: fieldListNb
+        character(len=16), pointer :: fieldListType(:)
+        character(len=80), pointer :: fieldMedListType(:)
+        integer, intent(in) :: storeListNb
+        integer, pointer :: storeListIndx(:)
+        integer, intent(in) :: paraListNb
+        character(len=16), pointer :: paraListName(:)
+        integer, intent(in) :: cmpListNb
+        character(len=8), pointer :: cmpListName(:)
+        integer, intent(in) :: cellUserNb
+        integer, pointer :: cellUserNume(:)
+        integer, intent(in) :: nodeUserNb
+        integer, pointer :: nodeUserNume(:)
+        character(len=*), intent(in) ::  cplxPrint
+        aster_logical, intent(in) :: lVariName
+        character(len=8), intent(in) :: caraElem
     end subroutine iremed
 end interface

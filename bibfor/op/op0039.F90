@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine op0039()
-    implicit none
-! ----------------------------------------------------------------------
-! person_in_charge: nicolas.sellenet at edf.fr
 !
-!     BUT:
-!       IMPRIMER DES RESULTATS ET DES MAILLAGE
-!       PROCEDURE IMPR_RESU
+subroutine op0039()
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -43,147 +38,128 @@ subroutine op0039()
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
 #include "asterfort/asmpi_info.h"
+!
+! --------------------------------------------------------------------------------------------------
+!
+! IMPR_RESU
+!
+! --------------------------------------------------------------------------------------------------
+!
     mpi_int :: mrank, msize
-    integer :: nocc, iocc, ifc, ifi, versio, nbrank
-    integer :: nmail, nresu, ncham, nres, n11
-    integer :: nmo, nn, nmod, nforma, ngibi, nproc
+    character(len=16), parameter :: keywf = 'RESU'
+    integer :: keywfNb, keywfIocc
+    integer :: fileUnit, fileVersion
+    character(len=1) :: fileType
+    character(len=8) :: fileFormat
+    character(len=16) :: fileName
+    integer :: nbMesh, nbResu, nbField, nbRet, nbNodeCmp
+    integer :: nn, nbrank
+    real(kind=8) :: fileVersionR
+    real(kind=8), parameter :: eps = 1.0d-6
+    character(len=8) :: model, mesh, resultMesh, proc, result
+    aster_logical :: lResu, lMesh
 !
-    real(kind=8) :: versi2, eps
-!
-    character(len=1) :: typf
-    character(len=8) :: modele, noma, form, nomsq, proc
-    character(len=8) :: resu
-    character(len=16) :: fich
-    character(len=24) :: valk(6)
-!
-    aster_logical :: lresu
-    aster_logical :: lmail, lgmsh
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call asmpi_info(rank=mrank, size=msize)
     nbrank = to_aster_int(mrank)
     call jemarq()
     call infmaj()
 !
-!   --- PROC0 = 'OUI' pour effectuer les impressions uniquement sur le processeur de rang 0 ---
-    call getvtx(' ', 'PROC0', scal=proc, nbret=nproc)
-    if ( proc .eq. 'NON' ) then
-      nbrank = 0
+! - Get rank of processor
+!
+    call getvtx(' ', 'PROC0', scal=proc, nbret=nbRet)
+    if (proc .eq. 'NON') then
+        nbrank = 0
     endif
 !
-    if ( nbrank .eq. 0 ) then
-!     --- RECUPERATION DU NOMBRE DE MISES EN FACTEUR DU MOT-CLE RESU ---
-       call getfac('RESU', nocc)
+! - Print only on the CPU #0
 !
-       do iocc = 1, nocc
-           call getvtx('RESU', 'NOEUD_CMP', iocc=iocc, nbval=0, nbret=nmo)
-           if (nmo .ne. 0) then
-               nn = nmo / 2
-               if (2*nn .ne. nmo) then
-                   call utmess('F', 'PREPOST3_65')
-               endif
-           endif
-       end do
-!
-!     -----------------
-!     --- LE MODELE ---
-!     -----------------
-       modele = ' '
-       call getvid(' ', 'MODELE', scal=modele, nbret=nmod)
-!
-!     ---------------------------------------------
-!     --- FORMAT, FICHIER ET UNITE D'IMPRESSION ---
-!     ---------------------------------------------
-!
-!     --- FORMAT ---
-      call getvtx(' ', 'FORMAT', scal=form, nbret=nforma)
-!
-!     --- VERIFICATION DE LA COHERENCE ENTRE LE MAILLAGE ---
-!     --- PORTANT LE RESULTAT ET LE MAILLAGE DONNE PAR   ---
-!     --- L'UTILISATEUR DANS IMPR_RESU(FORMAT='IDEAS')   ---
-!
-       if (form(1:5) .eq. 'IDEAS') then
-           call getvid('RESU', 'RESULTAT', iocc=1, scal=resu, nbret=nres)
-           call getvid('RESU', 'MAILLAGE', iocc=1, scal=noma, nbret=nmail)
-           if (nres*nmail .gt. 0) then
-               call dismoi('NOM_MAILLA', resu, 'RESULTAT', repk=nomsq)
-               if (nomsq .ne. noma) then
-                   valk(1)=noma
-                   valk(2)=nomsq
-                   valk(3)=resu
-                   call utmess('A', 'PREPOST3_74', nk=3, valk=valk)
-               endif
-           endif
-       endif
-!
-!
-!     --- VERSION D'ECRITURE  ----
-       versio = 0
-       if (form(1:5) .eq. 'IDEAS') then
-           versio = 5
-           call getvis(' ', 'VERSION', scal=versio, nbret=ngibi)
-       else if (form(1:4) .eq. 'GMSH') then
-           versio = 1
-           versi2 = 1.0d0
-           eps = 1.0d-6
-           call getvr8(' ', 'VERSION', scal=versi2, nbret=ngibi)
-           if (versi2 .gt. 1.0d0-eps .and. versi2 .lt. 1.0d0+eps) then
-               versio = 1
-           else if (versi2.gt.1.2d0-eps.and.versi2.lt.1.2d0+eps) then
-               versio = 2
-           endif
-       endif
-!
-!     --- FICHIER ---
-       ifi = 0
-       fich = 'F_'//form
-       call getvis(' ', 'UNITE', scal=ifi, nbret=n11)
-       ifc = ifi
-       if (.not. ulexis( ifi )) then
-           if (form .eq.'MED')then
-               call ulaffe(ifi, ' ', fich, 'NEW', 'O')
-           else
-               call ulopen(ifi, ' ', fich, 'NEW', 'O')
-           endif
-       elseif (form .eq.'MED') then
-           call ultype(ifi, typf)
-           if (typf .ne. 'B' .and. typf .ne. 'L') then
-            call utmess('A','PREPOST3_7')
-           endif
-       endif
-!
-!     -- VERIFICATIONS POUR GMSH :
-      if (form(1:4) .eq. 'GMSH') then
-        lmail=.false.
-        lresu=.false.
-        do iocc = 1, nocc
-            call getvid('RESU', 'MAILLAGE', iocc=iocc, scal=noma, nbret=nmail)
-            call getvid('RESU', 'RESULTAT', iocc=iocc, scal=resu, nbret=nresu)
-            call getvid('RESU', 'CHAM_GD', iocc=iocc, scal=resu, nbret=ncham)
-            if (nresu .ne. 0 .or. ncham .ne. 0) then
-                lresu=.true.
-                goto 220
+    if (nbrank .eq. 0) then
+        call getfac(keywf, keywfNb)
+! ----- Check keyword NOEUD_CMP
+        do keywfIocc = 1, keywfNb
+            call getvtx(keywf, 'NOEUD_CMP', iocc=keywfIocc, nbval=0, nbret=nbNodeCmp)
+            if (nbNodeCmp .ne. 0) then
+                nn = nbNodeCmp / 2
+                if (2*nn .ne. nbNodeCmp) then
+                    call utmess('F', 'RESULT3_65')
+                endif
             endif
-            if (nmail .ne. 0) lmail=.true.
-220         continue
         end do
-        if (lmail .and. lresu) then
-            call utmess('A', 'PREPOST3_68')
-            goto 999
+! ----- Get model
+        model = ' '
+        call getvid(' ', 'MODELE', scal=model, nbret=nbRet)
+! ----- Get format of file
+        call getvtx(' ', 'FORMAT', scal=fileFormat, nbret=nbRet)
+! ----- Check consistency of mesh for IDEAS
+        if (fileFormat .eq. 'IDEAS') then
+            call getvid(keywf, 'RESULTAT', iocc=1, scal=result, nbret=nbResu)
+            call getvid(keywf, 'MAILLAGE', iocc=1, scal=mesh, nbret=nbMesh)
+            if (nbResu*nbMesh .gt. 0) then
+                call dismoi('NOM_MAILLA', result, 'RESULTAT', repk=resultMesh)
+                if (resultMesh .ne. mesh) then
+                    call utmess('A', 'RESULT3_74')
+                endif
+            endif
         endif
-      endif
-      lgmsh = ASTER_FALSE
-!
-!     --- BOUCLE SUR LE NOMBRE DE MISES EN FACTEUR ---
-!     -----------------------------------------------------------------
-      do iocc = 1, nocc
-!
-        call irmfac(iocc, form, ifi, versio, modele, noma, lgmsh)
-!
-      end do
-!
-999   continue
+! ----- Get version of file
+        fileVersion = 0
+        if (fileFormat .eq. 'IDEAS') then
+            fileVersion = 5
+            call getvis(' ', 'VERSION', scal=fileVersion, nbret=nbRet)
+        else if (fileFormat .eq. 'GMSH') then
+            fileVersion  = 1
+            fileVersionR = 1.d0
+            call getvr8(' ', 'VERSION', scal=fileVersionR, nbret=nbRet)
+            if (fileVersionR .gt. 1.0d0-eps .and. fileVersionR .lt. 1.0d0+eps) then
+                fileVersion = 1
+            else if (fileVersionR .gt. 1.2d0-eps .and. fileVersionR .lt. 1.2d0+eps) then
+                fileVersion = 2
+            endif
+        endif
+! ----- Get logical unit of file
+        fileUnit = 0
+        call getvis(' ', 'UNITE', scal=fileUnit, nbret=nbRet)
+! ----- Open file
+        fileName = 'F_'//fileFormat
+        if (.not. ulexis( fileUnit )) then
+            if (fileFormat .eq. 'MED')then
+                call ulaffe(fileUnit, ' ', fileName, 'NEW', 'O')
+            else
+                call ulopen(fileUnit, ' ', fileName, 'NEW', 'O')
+            endif
+        elseif (fileFormat .eq.'MED') then
+            call ultype(fileUnit, fileType)
+            if (fileType .ne. 'B' .and. fileType .ne. 'L') then
+                call utmess('A','RESULT3_12')
+            endif
+        endif
+! ----- Check consistency for GMSH
+        if (fileFormat .eq. 'GMSH') then
+            lMesh = ASTER_FALSE
+            lResu = ASTER_FALSE
+            do keywfIocc = 1, keywfNb
+                call getvid(keywf, 'MAILLAGE', iocc=keywfIocc, scal=mesh, nbret=nbMesh)
+                call getvid(keywf, 'RESULTAT', iocc=keywfIocc, scal=result, nbret=nbResu)
+                call getvid(keywf, 'CHAM_GD', iocc=keywfIocc, scal=result, nbret=nbField)
+                if (nbResu .ne. 0 .or. nbField .ne. 0) then
+                    lResu = ASTER_TRUE
+                    goto 220
+                endif
+                if (nbMesh .ne. 0) then
+                    lMesh = ASTER_TRUE
+                endif
+    220         continue
+            end do
+            if (lMesh .and. lResu) then
+                call utmess('F', 'RESULT3_68')
+            endif
+        endif
+! ----- Loop on factor keywords
+        do keywfIocc = 1, keywfNb
+            call irmfac(keywfIocc, fileFormat, fileUnit, fileVersion, model)
+        end do
     endif
     call jedema()
 end subroutine

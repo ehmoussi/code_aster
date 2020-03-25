@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,28 +15,29 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine irchor(ioccur, leresu, lresul, nchsym, nnuord,&
-                      nlicmp, novcmp, nnopar, nbnosy, nbordr,&
-                      nbrcmp, nbcmdu, nbpara, codret)
-        integer :: ioccur
-        character(len=8) :: leresu
-        aster_logical :: lresul
-        character(len=*) :: nchsym
-        character(len=*) :: nnuord
-        character(len=*) :: nlicmp
-        character(len=*) :: novcmp
-        character(len=*) :: nnopar
-        integer :: nbnosy
-        integer :: nbordr
-        integer :: nbrcmp
-        integer :: nbcmdu
-        integer :: nbpara
-        integer :: codret
+    subroutine irchor(keywf      , keywfIocc    ,&
+                      dsName     , lResu        , lField,&
+                      fieldListNb, fieldListType, fieldMedListType,&
+                      storeListNb, storeListIndx,&
+                      paraListNb , paraListName ,&
+                      cmpListNb  , cmpListName  ,&
+                      codret)
+        character(len=16), intent(in) :: keywf
+        integer, intent(in) :: keywfIocc
+        aster_logical, intent(in) :: lField, lResu
+        character(len=8), intent(in) :: dsName
+        integer, intent(out) :: fieldListNb
+        character(len=16), pointer :: fieldListType(:)
+        character(len=80), pointer :: fieldMedListType(:)
+        integer, intent(out) :: storeListNb
+        integer, pointer :: storeListIndx(:)
+        integer, intent(out) :: paraListNb
+        character(len=16), pointer :: paraListName(:)
+        integer, intent(out) :: cmpListNb
+        character(len=8), pointer :: cmpListName(:)
+        integer, intent(out) :: codret
     end subroutine irchor
 end interface

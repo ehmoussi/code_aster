@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ subroutine irchmd(ifichi, chanom, partie, nochmd, codret)
     character(len=*) :: partie, nochmd
 !
     integer :: ifichi, codret
-! person_in_charge: nicolas.sellenet at edf.fr
 !        UTILITAIRE D'IMPRESSION DU CHAMP CHANOM NOEUD/ELEMENT
 !        ENTIER/REEL AU FORMAT MED
 !     ENTREES:
@@ -44,6 +43,7 @@ subroutine irchmd(ifichi, chanom, partie, nochmd, codret)
 !
     character(len=8) :: typech, noresu, sdcarm
     character(len=16) :: nomsym
+    character(len=16), pointer :: paraListName(:) => null()
     character(len=19) :: chan19, nopara
     character(len=64) :: noch64
     parameter (sdcarm = ' ')
@@ -59,6 +59,6 @@ subroutine irchmd(ifichi, chanom, partie, nochmd, codret)
     call irchme(ifichi, chan19, partie, noch64, noresu,&
                 nomsym, typech, numord, 0, [' '],&
                 0, [0], 0, [0], .false._1,&
-                sdcarm, sdcarm, nopara, codret)
+                sdcarm, sdcarm, 0, paraListName , codret)
 !
 end subroutine

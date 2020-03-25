@@ -19,10 +19,6 @@
 
 cata_msg = {
 
-    1 : _("""
-  Il faut autant de nom pour NOM_CHAM_MED que pour NOM_CHAM.
-"""),
-
     5 : _("""
  Le mot-clé RESTREINT n'est pas autorisé dans EXTR_RESU en reuse.
 """),
