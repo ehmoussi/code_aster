@@ -48,6 +48,7 @@ The syntax of a ``.export`` file is very simple:
     memory_limit: float
     mpi_nbcpu: int
     ncpus: int
+    no-mpi: bool
     time_limit: float
     tpmax: float
     tpsjob: int
@@ -96,6 +97,7 @@ PARAMS_TYPE = {
     "memory_limit": "float",
     "mpi_nbcpu": "int",
     "ncpus": "int",
+    "no-mpi": "bool",
     "time_limit": "float",
     "tpmax": "float",
     "tpsjob": "int",

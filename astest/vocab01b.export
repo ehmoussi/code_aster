@@ -4,6 +4,7 @@ P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist asterxx ci verification sequential
+P no-mpi
 
 F comm vocab01b.comm D 1
 F libr vocab01b.33 D 33

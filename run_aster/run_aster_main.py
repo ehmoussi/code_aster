@@ -181,9 +181,10 @@ def main(argv=None):
     if args.interactive:
         export.set("interact", True)
         export.set_time_limit(86400.)
-
     if args.memory_limit:
         export.set_memory_limit(args.memory_limit)
+    if export.get("no-mpi"):
+        args.auto_mpirun = False
     export.check()
 
     procid = 0
