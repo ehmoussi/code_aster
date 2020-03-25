@@ -313,7 +313,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
             ivari = nbvalc* (i-1) + 1
             if (istemp) then
                 ksp=debsp-1+i
-                call paeldt(kpg, ksp, fami, 'T', icdmat, materi, em, ep, nu, depsth)
+                call paeldt(kpg, ksp, fami, '+', icdmat, materi, em, ep, nu, depsth)
             endif
             depsm = ddefp(i)-depsth
             call nm1dco('RIGI', kpg, i, option, icdmat,&
