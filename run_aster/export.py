@@ -289,11 +289,12 @@ class Export(Store):
     Arguments:
         export_file (str, optional): File name of the export file.
         from_string (str, optional): Export content as string.
+        test (bool, optional): *True* for a testcase, *False* for a study.
         check (bool, optional): *True* to automatically check the consistency.
             *False* if it will be run manually.
     """
 
-    def __init__(self, filename=None, from_string=None, check=True):
+    def __init__(self, filename=None, from_string=None, test=False, check=True):
         super().__init__()
         assert filename or from_string, "Export(): invalid arguments"
         if filename:
@@ -305,6 +306,7 @@ class Export(Store):
             self._content = from_string
             self._filename = None
             self._root = ""
+        self._test = test
         self._pargs = ExportParameterListStr("args")
         self._pargs.set([])
         self._files = []
@@ -411,8 +413,8 @@ class Export(Store):
             # if fileobj.is_tests_data:
             if (fileobj.is_tests_data or
                     (fileobj.filetype == "nom" and
-                     not osp.exists(osp.join(base, fileobj.path)) and
-                     "make_test" in self.get("actions", []))):
+                     not osp.exists(osp.join(base, fileobj.path))
+                     and self._test)):
                 base = osp.join(ROOT, "share", "aster", "tests_data")
             fileobj.path = osp.join(base, fileobj.path)
 
