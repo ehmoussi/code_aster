@@ -246,7 +246,7 @@ class RunAster:
                 "2>&1", "|", "tee", "-a", TMPMESS
             ]
         else:
-            cmd.extend(["2>&1", ">>", TMPMESS])
+            cmd.extend([">>", TMPMESS, "2>&1"])
         # TODO add pid + mode to identify the process by asrun
         return cmd
 
@@ -277,9 +277,9 @@ class RunAster:
             return
 
         results = self.export.resultfiles
-        if not self._test and results:
+        if results:
             logger.info("TITLE Copying results")
-            copy_resultfiles(results, is_completed)
+            copy_resultfiles(results, is_completed, test=self._test)
 
 
 class RunOnlyEnv(RunAster):
@@ -400,14 +400,17 @@ def copy_datafiles(files):
             make_writable(dest)
 
 
-def copy_resultfiles(files, copybase):
+def copy_resultfiles(files, copybase, test=False):
     """Copy result files from the working directory.
 
     Arguments:
         files (list[File]): List of File objects.
         copybase (bool): Tell if result databases will be copied.
+        test (bool, optional): *True* for a testcase, *False* for a study.
     """
     for obj in files:
+        if test and obj.unit not in (6, 15):
+            continue
         lsrc = []
         # fort.*
         if obj.unit != 0:
