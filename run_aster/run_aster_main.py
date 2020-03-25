@@ -18,11 +18,43 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# Imports are differed to show debug informations as soon as possible
-# aslint: disable=C4008
-
 """
-    run_aster [options] EXPORT
+``bin/run_aster`` --- Script to execute code_aster from a ``.export`` file
+--------------------------------------------------------------------------
+
+``bin/run_aster`` executes a code_aster study from the command line.
+The parameters and files used by the study are defined in a ``.export`` file
+(see :py:mod:`~run_aster.export` for description of the syntax of the
+``.export``).
+
+For parallel executions, these two forms are equivalent:
+
+.. code-block:: sh
+
+    bin/run_aster path/to/file.export
+
+or:
+
+.. code-block:: sh
+
+    mpirun -n 4 bin/run_aster path/to/file.export
+
+Using the first syntax, ``bin/run_aster`` re-runs with ``mpirun`` itself using
+the second syntax (``mpirun`` syntax is provided by the configuration, see
+:py:mod:`~run_aster.config`).
+
+``bin/run_aster`` only runs each own version, those installed at the level of
+the ``bin`` directory; unlike ``as_run`` where the same instance of ``as_run``
+executes several versions of code_aster.
+This makes ``bin/run_aster`` simpler and allows per version settings
+(see :py:mod:`~run_aster.config` for more informations about the configuration
+of a version).
+
+More options are available to execute code_aster with an interactive Python
+interpreter, to prepare a working directory and to start manually (through
+a debugger for example)...
+
+See ``bin/run_aster --help`` for the available options.
 
 """
 
@@ -32,7 +64,11 @@ import os.path as osp
 import sys
 from subprocess import PIPE, run
 
+from .config import CFG
+from .export import Export, File
 from .logger import DEBUG, WARNING, logger
+from .run import RunAster, get_procid
+from .utils import ROOT
 
 try:
     import ptvsd
@@ -40,7 +76,10 @@ try:
 except ImportError:
     HAS_PTVSD = False
 
-__DOC__ = __doc__
+USAGE = """
+    run_aster [options] EXPORT
+
+"""
 
 
 def parse_args(argv):
@@ -51,7 +90,7 @@ def parse_args(argv):
     """
     # command arguments parser
     parser = argparse.ArgumentParser(
-        usage=__DOC__,
+        usage=USAGE,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-g', '--debug', action='store_true',
                         help="print debugging information (same as "
@@ -64,7 +103,7 @@ def parse_args(argv):
                         help="do not execute, only prepare the working "
                              "directory ('--wrkdir' is required)")
     parser.add_argument('-w', '--wrkdir', action='store',
-                        help="use this existing directory as working directory")
+                        help="use this directory as working directory")
     parser.add_argument('--only-proc0', dest='proc0',
                         action='store_true',
                         help="only processor #0 is writing on stdout")
@@ -85,12 +124,13 @@ def parse_args(argv):
                              "on stdout.")
     parser.add_argument('--time_limit', dest='time_limit', type=float,
                         action='store', default=None,
-                        help='override the time limit')
+                        help='override the time limit (may also be changed by '
+                             'FACMTPS environment variable)')
     parser.add_argument('--memory_limit', dest='memory_limit', type=float,
                         action='store',
                         help="override the memory limit in MB")
-    parser.add_argument('--ptvsd', action='store', type=int,
-                        help="ptvsd port number")
+    parser.add_argument('--ptvsd-runner', action='store', type=int,
+                        help=argparse.SUPPRESS)
     parser.add_argument('export', metavar='EXPORT',
                         help="Export file defining the calculation.")
 
@@ -101,7 +141,7 @@ def parse_args(argv):
         logger.setLevel(DEBUG)
     if args.env and not args.wrkdir:
         parser.error("Argument '--wrkdir' is required if '--env' is enabled")
-    if args.ptvsd and not HAS_PTVSD:
+    if args.ptvsd_runner and not HAS_PTVSD:
         parser.error("can not import 'ptvsd'")
     return args
 
@@ -115,14 +155,9 @@ def main(argv=None):
     argv = argv or sys.argv[1:]
     args = parse_args(argv)
 
-    from run_aster.export import Export, File
-    from run_aster.run import RunAster, get_procid
-    from run_aster.config import CFG
-    from run_aster.utils import ROOT
-
-    if args.ptvsd:
+    if args.ptvsd_runner:
         print('Waiting for debugger attach...'),
-        ptvsd.enable_attach(address=('127.0.0.1', args.ptvsd))
+        ptvsd.enable_attach(address=('127.0.0.1', args.ptvsd_runner))
         ptvsd.wait_for_attach()
         ptvsd.break_into_debugger()
 
@@ -134,11 +169,22 @@ def main(argv=None):
         mess = File(osp.abspath(basename + ".mess"),
                     filetype="mess", unit=6, resu=True)
         export.add_file(mess)
+    if args.test:
+        # add make_test, must be set before calling check for tests_data type
+        pass
+    if args.time_limit:
+        export.set_time_limit(args.time_limit)
+    # use FACMTPS from environment
+    try:
+        mult = float(os.environ.get("FACMTPS", 1))
+        limit = export.get("time_limit", 0) * mult
+        export.set_time_limit(limit)
+    except ValueError:
+        pass
     if args.interactive:
         export.set("interact", True)
         export.set_time_limit(86400.)
-    if args.time_limit:
-        export.set_time_limit(args.time_limit)
+
     if args.memory_limit:
         export.set_memory_limit(args.memory_limit)
     export.check()

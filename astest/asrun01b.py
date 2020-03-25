@@ -25,6 +25,7 @@ Unittests of run_aster package.
 
 import os
 import os.path as osp
+import platform
 import tarfile
 import tempfile
 import time
@@ -32,7 +33,7 @@ import unittest
 from glob import glob
 
 from run_aster.command_files import add_import_commands, stop_at_end
-from run_aster.config import CFG, VERSION_PARAMS
+from run_aster.config import CFG, VERSION_PARAMS, Config
 from run_aster.ctest2junit import XUnitReport
 from run_aster.export import (PARAMS_TYPE, Export, ExportParameter,
                               ExportParameterBool, ExportParameterFloat,
@@ -54,8 +55,67 @@ class TestConfig(unittest.TestCase):
     """Check Config objects"""
 
     def test_config(self):
-        for name in VERSION_PARAMS:
-            self.assertTrue(CFG.storage.has_param(name))
+        self.assertTrue(CFG.storage.has_param("version_tag"))
+        self.assertTrue(CFG.storage.has_param("version_sha1"))
+        self.assertTrue(CFG.storage.has_param("tmpdir"))
+        self.assertTrue(CFG.storage.has_param("addmem"))
+        self.assertTrue(CFG.storage.has_param("parallel"))
+        self.assertTrue(CFG.storage.has_param("python"))
+        self.assertTrue(CFG.storage.has_param("FC"))
+        self.assertTrue(CFG.storage.has_param("FCFLAGS"))
+        size = 8
+        if CFG.get("parallel"):
+            self.assertTrue(CFG.storage.has_param("mpirun"))
+            self.assertTrue(CFG.storage.has_param("mpirun_rank"))
+            size += 2
+        self.assertEqual(len(CFG.storage), size)
+
+    def test_filter(self):
+        cfg = Config("nofile")
+        # add a value to avoid automatic loading of 'config.js' and user file
+        cfg._storage.set("mpirun", "empty")
+        self.assertEqual(cfg.get("mpirun"), "empty")
+        # simulating 'config.js'
+        version_cfg = {"mpirun": "mpirun_version"}
+        cfg.import_dict(version_cfg, with_sections=False)
+        self.assertEqual(cfg.get("mpirun"), "mpirun_version")
+        # add user file with server
+        user_cfg = {
+            "server": [
+                {
+                    "name": "*",
+                    "config": {"mpirun": "mpirun_all_servers"}
+                },
+                {
+                    "name": "myhost",
+                    "config": {"mpirun": "mpirun_myhost"}
+                },
+            ]
+        }
+        cfg.import_dict(user_cfg, with_sections=True)
+        self.assertEqual(cfg.get("mpirun"), "mpirun_all_servers")
+        # example: does 'myhost' matches 'myho*'?
+        user_cfg["server"][1]["name"] = platform.node()[:4] + "*"
+        cfg.import_dict(user_cfg, with_sections=True)
+        self.assertEqual(cfg.get("mpirun"), "mpirun_myhost")
+        # + 2 versions
+        user_cfg.update({
+            "version": [
+                {
+                    "name": "VERS1",
+                    "path": ROOT,
+                    "config": {"mpirun": "mpirun_for_VERS1"}
+                },
+                {
+                    "name": "VERS2",
+                    "path": "/another/installation/directory",
+                    "config": {"mpirun": "mpirun_for_VERS2"}
+                }
+            ]
+        })
+        cfg.import_dict(user_cfg, with_sections=True)
+        self.assertEqual(cfg.get("mpirun"), "mpirun_for_VERS1")
+
 
 class TestSettings(unittest.TestCase):
     """Check Parameter-derivated objects"""
@@ -169,17 +229,17 @@ class TestExportParameter(unittest.TestCase):
     """Check ExportParameter object"""
 
     def test_factory(self):
-        para = ExportParameter.factory(PARAMS_TYPE, "debug")
-        self.assertIsInstance(para, ParameterStr)
+        para = ExportParameter.factory(PARAMS_TYPE, "interact")
+        self.assertIsInstance(para, ParameterBool)
         para = ExportParameter.factory(PARAMS_TYPE, "mpi_nbcpu")
         self.assertIsInstance(para, ParameterInt)
         para = ExportParameter.factory(PARAMS_TYPE, "memory_limit")
         self.assertIsInstance(para, ParameterFloat)
         para = ExportParameter.factory(PARAMS_TYPE, "actions")
         self.assertIsInstance(para, ParameterListStr)
-        # unknown as list[str]
+        # unknown as None: ignored with a warning
         para = ExportParameter.factory(PARAMS_TYPE, "xxxx")
-        self.assertIsInstance(para, ParameterListStr)
+        self.assertIsNone(para)
         # deprecated as None: ignored
         para = ExportParameter.factory(PARAMS_TYPE, "service")
         self.assertIsNone(para)
