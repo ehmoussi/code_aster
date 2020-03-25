@@ -161,7 +161,7 @@ def main(argv=None):
         ptvsd.wait_for_attach()
         ptvsd.break_into_debugger()
 
-    export = Export(args.export, check=False)
+    export = Export(args.export, test=args.test or args.ctest, check=False)
     # args to parameters
     if args.ctest:
         args.test = True
@@ -169,9 +169,6 @@ def main(argv=None):
         mess = File(osp.abspath(basename + ".mess"),
                     filetype="mess", unit=6, resu=True)
         export.add_file(mess)
-    if args.test:
-        # add make_test, must be set before calling check for tests_data type
-        pass
     if args.time_limit:
         export.set_time_limit(args.time_limit)
     # use FACMTPS from environment
@@ -204,7 +201,7 @@ def main(argv=None):
 
     opts = {}
     opts["test"] = args.test
-    opts["env"] = args.env
+    opts["env"] = args.env or "make_env" in export.get("actions", [])
     opts["tee"] = not args.ctest and (not args.proc0 or procid == 0)
     opts["interactive"] = args.interactive
     calc = RunAster.factory(export, **opts)
