@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm wtnp116c.comm D 1
-F libr wtnp116c.com1 D 1
-F libr wtnp116c.com2 D 23
+F comm wtnp116c.com1 D 1
+F comm wtnp116c.com2 D 23
 F mail wtnp116c.mail D 20

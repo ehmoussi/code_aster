@@ -6,6 +6,5 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm ssnp150a.comm D 1
-F com1 ssnp150b.com1 D 1
+F comm ssnp150b.com1 D 1
 F mail ssnp150b.mail D 20
-
