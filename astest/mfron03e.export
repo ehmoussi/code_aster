@@ -8,4 +8,4 @@ P testlist ci verification sequential
 F comm mfron03e.comm D 1
 F libr MonoCrystalDDCFC.mfront   D 38
 F nom  MonoCrystal_DD_CFC_InteractionMatrix.mfront   D 0
-F libr mfron03e.30   D 30
+F nom mfron03e.py D 0
