@@ -360,6 +360,7 @@ def check_config(self):
     cfg["version_sha1"] = self.env.ASTER_VERSION[1]
     cfg["python"] = list(self.env.PYTHON)[0]
     cfg["parallel"] = int(self.get_define('HAVE_MPI') or 0)
+    cfg["only-proc0"] = 0
     self.env["base_mpirun"] = ["mpirun"]
     if cfg["parallel"]:
         self.check_mpirun()

@@ -321,12 +321,26 @@ def get_procid():
         int: Process ID, -1 if a parallel version is not run under *mpirun*.
     """
     proc = run(CFG.get("mpirun_rank"), shell=True, stdout=PIPE,
-                universal_newlines=True)
+               universal_newlines=True)
     try:
         procid = int(proc.stdout.strip())
     except ValueError:
         procid = -1
     return procid
+
+
+def get_nbcores():
+    """Return the number of available cores.
+
+    Return:
+        int: Number of cores.
+    """
+    proc = run(['nproc'], stdout=PIPE, universal_newlines=True)
+    try:
+        value = int(proc.stdout.strip())
+    except ValueError:
+        value = 1
+    return value
 
 
 def change_comm_file(comm, interact=False, wrkdir=None, show=False):

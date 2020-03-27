@@ -60,10 +60,11 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(CFG.storage.has_param("tmpdir"))
         self.assertTrue(CFG.storage.has_param("addmem"))
         self.assertTrue(CFG.storage.has_param("parallel"))
+        self.assertTrue(CFG.storage.has_param("only-proc0"))
         self.assertTrue(CFG.storage.has_param("python"))
         self.assertTrue(CFG.storage.has_param("FC"))
         self.assertTrue(CFG.storage.has_param("FCFLAGS"))
-        size = 8
+        size = 9
         if CFG.get("parallel"):
             self.assertTrue(CFG.storage.has_param("mpirun"))
             self.assertTrue(CFG.storage.has_param("mpirun_rank"))
@@ -324,6 +325,8 @@ class TestExport(unittest.TestCase):
         self.assertEqual(osp.basename(comm.path), "asrun01b.comm")
         self.assertEqual(comm.unit, 1)
         self.assertTrue(comm.data)
+        export.remove_file(comm)
+        self.assertEqual(len(export.commfiles), 0)
         tar = [i for i in export.datafiles if i.filetype == "libr"][0]
         self.assertEqual(osp.basename(tar.path), "asrun01b.11")
         self.assertEqual(tar.unit, 11)
@@ -386,6 +389,7 @@ class TestExport(unittest.TestCase):
             "P memory_limit 4096.0",
             "A args --memory {}".format(4096.0 + addmem),
             ""]))
+        # read memory limit, write export, read => not added twice?
 
     def test_time(self):
         text = "P tpsjob 60"

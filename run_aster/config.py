@@ -112,6 +112,8 @@ The list of the supported *version parameters* are (with their type):
     FC: str                 - fortran compiler
     FCFLAGS: list[str]      - flags for fortran compiler
 
+All these parameters are set during the *configure* step of the installation.
+
 """
 
 import json
@@ -126,6 +128,7 @@ from .utils import ROOT
 
 USERCFG = osp.join(os.getenv("HOME", ""), ".run_aster.js")
 
+# all parameters must be set by `data/wscript`
 VERSION_PARAMS = {
     "version_tag": "str",
     "version_sha1": "str",

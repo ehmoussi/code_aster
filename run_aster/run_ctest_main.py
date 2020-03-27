@@ -77,6 +77,7 @@ from subprocess import PIPE, run
 
 from .config import CFG
 from .ctest2junit import XUnitReport
+from .run import get_nbcores
 from .utils import ROOT
 
 USAGE = """
@@ -121,7 +122,7 @@ def parse_args(argv):
         usage=USAGE,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-j', '--jobs', action='store',
-                        type=int, default=max(1, get_nbprocs() - 2),
+                        type=int, default=max(1, get_nbcores() - 2),
                         help="Run the tests in parallel using the given "
                              "number of jobs")
     parser.add_argument('--testlist', action='store',
@@ -293,19 +294,6 @@ def _build_def(bindir, datadir, lexport):
                                      BINDIR=bindir))
     return "\n".join(text)
 
-
-def get_nbprocs():
-    """Return the number of available processors.
-
-    Return:
-        int: Number of processors.
-    """
-    proc = run(['nproc'], stdout=PIPE, universal_newlines=True)
-    try:
-        value = int(proc.stdout.strip())
-    except ValueError:
-        value = 1
-    return value
 
 if __name__ == '__main__':
     sys.exit(main())

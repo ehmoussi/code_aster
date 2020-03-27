@@ -348,6 +348,14 @@ class Export(Store):
         """
         self._files.append(fileobj)
 
+    def remove_file(self, fileobj):
+        """Remove a File object.
+
+        Arguments:
+            fileobj (File): File object to be removed.
+        """
+        self._files = [i for i in self._files if i is not fileobj]
+
     def import_file_argument(self, line):
         """Add a File object by decoding a line as formatted
         by `File.as_argument`.

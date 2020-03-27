@@ -53,6 +53,8 @@ of a version).
 More options are available to execute code_aster with an interactive Python
 interpreter, to prepare a working directory and to start manually (through
 a debugger for example)...
+For example, executing ``bin/run_aster`` with no ``.export`` file starts an
+interactive Python interpreter.
 
 See ``bin/run_aster --help`` for the available options.
 
@@ -62,8 +64,10 @@ import argparse
 import os
 import os.path as osp
 import sys
+import tempfile
 from subprocess import PIPE, run
 
+from .command_files import AUTO_IMPORT
 from .config import CFG
 from .export import Export, File
 from .logger import DEBUG, WARNING, logger
@@ -77,7 +81,7 @@ except ImportError:
     HAS_PTVSD = False
 
 USAGE = """
-    run_aster [options] EXPORT
+    run_aster [options] [EXPORT]
 
 """
 
@@ -134,8 +138,14 @@ def parse_args(argv):
                         help="override the memory limit in MB")
     parser.add_argument('--ptvsd-runner', action='store', type=int,
                         help=argparse.SUPPRESS)
-    parser.add_argument('export', metavar='EXPORT',
-                        help="Export file defining the calculation.")
+    parser.add_argument('--no-comm', action='store_true',
+                        help="do not executes the `.comm` files but starts an "
+                             "interactive Python session. Execute "
+                             "`code_aster.init()` to copy data files.")
+    parser.add_argument('export', metavar='EXPORT', nargs="?",
+                        help="Export file defining the calculation. "
+                             "Without file, it starts an interactive Python "
+                             "session.")
 
     args = parser.parse_args(argv)
     if args.ctest:
@@ -164,8 +174,18 @@ def main(argv=None):
         ptvsd.wait_for_attach()
         ptvsd.break_into_debugger()
 
-    export = Export(args.export, test=args.test or args.ctest, check=False)
+    export = Export(args.export, " ", test=args.test or args.ctest, check=False)
     # args to parameters
+    tmpf = None
+    if args.no_comm:
+        for comm in export.commfiles:
+            export.remove_file(comm)
+    if not args.export or args.no_comm:
+        args.interactive = True
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as fobj:
+            fobj.write(AUTO_IMPORT.format(starter=""))
+            export.add_file(File(fobj.name, filetype="comm", unit=1))
+            tmpf = fobj.name
     if args.ctest:
         args.test = True
         basename = osp.splitext(osp.basename(args.export))[0]
@@ -198,6 +218,8 @@ def main(argv=None):
         if args.only_proc0 and procid > 0:
             logger.setLevel(WARNING)
         if procid < 0 and args.auto_mpirun:
+            if tmpf:
+                os.remove(tmpf)
             run_aster = osp.join(ROOT, "bin", "run_aster")
             args_cmd = dict(mpi_nbcpu=export.get("mpi_nbcpu", 1),
                             program=f"{run_aster} {' '.join(argv)}")
@@ -212,6 +234,8 @@ def main(argv=None):
     opts["interactive"] = args.interactive
     calc = RunAster.factory(export, **opts)
     status = calc.execute(args.wrkdir)
+    if tmpf:
+        os.remove(tmpf)
     return status.exitcode
 
 
