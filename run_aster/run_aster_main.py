@@ -104,8 +104,11 @@ def parse_args(argv):
                              "directory ('--wrkdir' is required)")
     parser.add_argument('-w', '--wrkdir', action='store',
                         help="use this directory as working directory")
-    parser.add_argument('--only-proc0', dest='proc0',
-                        action='store_true',
+    parser.add_argument('--all-procs', dest='only_proc0',
+                        action='store_false', default=None,
+                        help="show all processors output")
+    parser.add_argument('--only-proc0', dest='only_proc0',
+                        action='store_true', default=None,
                         help="only processor #0 is writing on stdout")
     parser.add_argument('--no-mpi', dest='auto_mpirun',
                         action='store_false',
@@ -187,10 +190,12 @@ def main(argv=None):
         args.auto_mpirun = False
     export.check()
 
+    if args.only_proc0 is None:
+        args.only_proc0 = CFG.get("only-proc0", False)
     procid = 0
     if CFG.get("parallel", 0):
         procid = get_procid()
-        if args.proc0 and procid > 0:
+        if args.only_proc0 and procid > 0:
             logger.setLevel(WARNING)
         if procid < 0 and args.auto_mpirun:
             run_aster = osp.join(ROOT, "bin", "run_aster")
@@ -203,7 +208,7 @@ def main(argv=None):
     opts = {}
     opts["test"] = args.test
     opts["env"] = args.env or "make_env" in export.get("actions", [])
-    opts["tee"] = not args.ctest and (not args.proc0 or procid == 0)
+    opts["tee"] = not args.ctest and (not args.only_proc0 or procid == 0)
     opts["interactive"] = args.interactive
     calc = RunAster.factory(export, **opts)
     status = calc.execute(args.wrkdir)
