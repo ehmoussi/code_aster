@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -137,13 +137,15 @@ for i in range(nbcalc) :
                                 _F(CHARGE=CH[i],),),
                          INFO=1,);
 
-   SIF[i]=CALC_G        (RESULTAT=RESU[i],
+   SIF[i]=CALC_G(RESULTAT=RESU[i],
                          OPTION='CALC_K_G',
+                         CHAM_THETA=CO('cham_theta_no'),
                          THETA=_F( FISSURE=FISS[i],
                                    R_INF=RI,
                                    R_SUP=RS,),
                          LISSAGE=_F( DEGRE=0,),);
 
+   DETRUIRE(CONCEPT=_F(NOM=cham_theta_no,))
 #  ON MODIFIE LA TABLE DES SIF POUR IMPOSER L'ANGLE VOULU
    SIF1[i] = CALC_TABLE(TABLE=SIF[i],
                    ACTION=(_F(OPERATION='EXTR',
