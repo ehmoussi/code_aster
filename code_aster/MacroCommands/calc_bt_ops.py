@@ -812,7 +812,7 @@ def calc_bt_ops(self,
                           [0, 0, C, -S],
                           [0, 0, S, C]])
 
-            k_ = matmult(np.matrix.transpose(R), matmult(k, R))    # global ESM
+            k_ = matmult(np.ndarray.transpose(R), matmult(k, R))    # global ESM
             ADoF = np.zeros((4), dtype = int)
             ADoF[0:2] = [(Con_Mat[i_, 0]*2), Con_Mat[i_, 0]*2 + 1]
             ADoF[2:4] = [(Con_Mat[i_, 1]*2), Con_Mat[i_, 1]*2 + 1]
@@ -847,7 +847,7 @@ def calc_bt_ops(self,
                               [0, 0, C, -S],
                               [0, 0, S, C]])
 
-                k_ = matmult(np.matrix.transpose(R), matmult(k, R))    #global ESM
+                k_ = matmult(np.ndarray.transpose(R), matmult(k, R))    #global ESM
                 ADoF = np.zeros((4), dtype = int)
                 ADoF[0:2] = [(Con_Mat[i_, 0]*2), Con_Mat[i_, 0]*2 + 1]
                 ADoF[2:4] = [(Con_Mat[i_, 1]*2), Con_Mat[i_, 1]*2 + 1]

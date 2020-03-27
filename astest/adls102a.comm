@@ -111,9 +111,7 @@ CARA_ELE=AFFE_CARA_ELEM( MODELE=MODELE,
 # ----------------------------------------------------------------------
 # CHARGEMENT ET LIAISONS
 
-CHARGS=AFFE_CHAR_MECA( MODELE=MODELE,
-            PRES_REP=_F( GROUP_MA='EFS_P_IN',
-                         PRES=-17.0E+06),
+BC =AFFE_CHAR_MECA( MODELE=MODELE,
            DDL_IMPO=(_F( GROUP_NO='MASSPONC',
                          DX=0.,),
                      _F( GROUP_MA='AMORPONC',
@@ -123,25 +121,30 @@ CHARGS=AFFE_CHAR_MECA( MODELE=MODELE,
                            _F( GROUP_MA=('E_P_OU',),),),
                     )
 
+pressure =AFFE_CHAR_MECA( MODELE=MODELE,
+            PRES_REP=_F( GROUP_MA='EFS_P_IN',
+                         PRES=-17.0E+06),)
+
+
 #
 # ----------------------------------------------------------------------
 #
 KE1=CALC_MATR_ELEM(  MODELE=MODELE,
                     OPTION='RIGI_MECA',
-                    CHARGE=CHARGS,
+                    CHARGE=BC,
                     CHAM_MATER=CHAMPMAT,
                     CARA_ELEM=CARA_ELE,
                  )
 KE2=CALC_MATR_ELEM(  MODELE=MODELE,
                     OPTION='RIGI_MECA',
-                    CHARGE=CHARGS,
+                    CHARGE=BC,
                     CHAM_MATER=CHAMPMA2,
                     CARA_ELEM=CARA_ELE,
                  )
 
 ME=CALC_MATR_ELEM( MODELE=MODELE,
                    OPTION='MASS_MECA',
-                   CHARGE=CHARGS,
+                   CHARGE=BC,
                    CHAM_MATER=CHAMPMAT,
                    CARA_ELEM=CARA_ELE,
                  )
@@ -152,12 +155,12 @@ AE=CALC_MATR_ELEM( MODELE=MODELE,
                    MASS_MECA=ME,
                    CHAM_MATER=CHAMPMAT,
                    CARA_ELEM=CARA_ELE,
-                   CHARGE=CHARGS,
+                   CHARGE=BC,
                  )
 
 VE=CALC_VECT_ELEM(
                    OPTION='CHAR_MECA',
-                   CHARGE=CHARGS,
+                   CHARGE=pressure,
                    CHAM_MATER=CHAMPMAT,
                    CARA_ELEM=CARA_ELE,
                  )
@@ -222,6 +225,57 @@ TEST_RESU(RESU=(_F(GROUP_NO='MASSPONC',
                 _F(GROUP_NO='MASSPONC',
                    INST=0.02605,
                    RESULTAT=DYNA,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=-4.210E-4,
+                   VALE_CALC=-0.000420710523995,
+                   PRECISION=1.E-3,
+                   ),
+                ),
+          )
+
+# For function in pressure
+pres = DEFI_CONSTANTE(VALE = -17.0E+06)
+presfunc =AFFE_CHAR_MECA_F( MODELE=MODELE,
+            PRES_REP=_F( GROUP_MA='EFS_P_IN',
+                         PRES=pres),)
+
+VEfunc=CALC_VECT_ELEM(
+                   OPTION='CHAR_MECA',
+                   CHARGE=presfunc,
+                   CHAM_MATER=CHAMPMAT,
+                   CARA_ELEM=CARA_ELE,
+                 )
+
+VAfunc=ASSE_VECTEUR(  VECT_ELEM=VEfunc,  NUME_DDL=NUM ,)
+
+# CALCUL DE LA REPONSE TRANSITOIRE
+
+DYNAfunc=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
+                   EXCIT=_F(VECT_ASSE=VAfunc,
+                            COEF_MULT=1.,),
+                   MATR_MASS=MASS,
+                   MATR_RIGI=STIFF,
+                   MATR_AMOR=AMOR,
+                   SCHEMA_TEMPS=_F(SCHEMA='NEWMARK'),
+                   INCREMENT=_F(LIST_INST=TEMPCAL,),
+                   ARCHIVAGE=_F(CHAM_EXCLU=('ACCE',),),
+                  )
+
+TEST_RESU(RESU=(_F(GROUP_NO='MASSPONC',
+                   INST=0.02015,
+                   RESULTAT=DYNAfunc,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=-1.3530E-3,
+                   VALE_CALC=-0.00135361195721,
+                   PRECISION=1.E-3,
+                   ),
+                _F(GROUP_NO='MASSPONC',
+                   INST=0.02605,
+                   RESULTAT=DYNAfunc,
                    NOM_CHAM='DEPL',
                    NOM_CMP='DY',
                    REFERENCE='ANALYTIQUE',

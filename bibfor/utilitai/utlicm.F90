@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,126 +15,94 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine utlicm(nbcmpv, nomcmp, nomgd, ncmprf, nomcmr,&
-                  ncmpve, numcmp, ntncmp, ntucmp)
-!     UTILITAIRE - CREATION D'UNE LISTE DE COMPOSANTES
-!     --                          --       - -
-!-----------------------------------------------------------------------
-!     ENTREES :
-!       NBCMPV : NOMBRE DE COMPOSANTES VOULUES.
-!                . S'IL EST NUL, ON PREND TOUTES LES COMPOSANTES
-!                . SI NON NUL, ON PREND CELLES DONNEES PAR LE TABLEAU
-!                  NOMCP. ON VERIFIE QUE LES NOMS DES COMPOSANTES
-!                  SONT VALIDES
-!       NOMCMP : NOMS DES COMPOSANTES VOULUES, SI NBCMPV > 0
-!       NOMGD  : NOM DE LA GRANDEUR ASSOCIEE AU CHAMP
-!       NCMPRF : NOMBRE DE COMPOSANTES DU CHAMP DE REFERENCE
-!       NOMCMR : NOMS DES COMPOSANTES DE REFERENCE
-!     SORTIES :
-!       NCMPVE : NOMBRE DE COMPOSANTES VALIDES.
-!       NUMCMP : SD DES NUMEROS DES COMPOSANTES VALIDES
-!       NTNCMP : SD DES NOMS DES COMPOSANTES VALIDES (K8)
-!       NTUCMP : SD DES UNITES DES COMPOSANTES VALIDES (K16)
-!-----------------------------------------------------------------------
 !
-    implicit none
+subroutine utlicm(quantityName,&
+                  cmpUserNb   , cmpUserName,&
+                  cmpCataNb   , cmpCataName,&
+                  cmpValidNb  , numcmp     ,&
+                  ntncmp      , ntucmp)
 !
-! 0.1. ==> ARGUMENTS
+implicit none
 !
-#include "jeveux.h"
 #include "asterfort/infniv.h"
+#include "asterfort/assert.h"
 #include "asterfort/irccmp.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-    integer :: ncmprf, nbcmpv, ncmpve
 !
-    character(len=8) :: nomgd
-    character(len=*) :: nomcmp(*), nomcmr(*)
-    character(len=*) :: numcmp, ntncmp, ntucmp
+character(len=8), intent(in):: quantityName
+integer, intent(in) :: cmpUserNb
+character(len=8), pointer :: cmpUserName(:)
+integer, intent(in) :: cmpCataNb
+character(len=8), pointer :: cmpCataName(:)
+integer, intent(out) :: cmpValidNb
+character(len=*), intent(in) :: numcmp, ntncmp, ntucmp
 !
-! 0.2. ==> COMMUNS
+! --------------------------------------------------------------------------------------------------
 !
+!     UTILITAIRE - CREATION D'UNE LISTE DE COMPOSANTES
 !
-! 0.3. ==> VARIABLES LOCALES
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=6) :: nompro
-    parameter ( nompro = 'UTLICM' )
+! In  quantityName     : name of physical quantity
+! In  cmpUserNb        : number of components to select
+!                         0 => all components
+! Ptr cmpUserName      : pointer to list of names of components to select
+! In  cmpCataNb        : maximum number of components in catalog
+! Ptr cmpCataName      : pointer to the list of components in catalog
+! Out cmpValidNb       : number of components selected
+! In  numcmp           : name of JEVEUX object for index of components in physical quantity
+! In  ntncmp           : name of JEVEUX object for name of components in physical quantity
+! In  ntucmp           : name of JEVEUX object for unit of components in physical quantity
 !
-    integer :: adnucm, adncmp, aducmp
-    integer :: ifm, nivinf
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: iaux, jaux
+    integer :: ifm, nivinf, iCmp
+    integer, pointer :: cmpIndx(:) => null()
+    character(len=16), pointer :: cmpValidName(:) => null()
+    character(len=16), pointer :: cmpValidUnit(:) => null()
 !
-!     RECUPERATION DU NIVEAU D'IMPRESSION
-!     -----------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, nivinf)
 !
-!====
-! 1. LISTE DES NUMEROS DES COMPOSANTES VALIDES
-!====
+! - Allocate objects
 !
-! 1.1. ==> ALLOCATION DE LA STRUCTURE QUI CONTIENDRA LES
-!          NUMEROS DES COMPOSANTES VALIDES
-!
-    if (nbcmpv .eq. 0) then
-        ncmpve = ncmprf
-    else if (nbcmpv.gt.0) then
-        ncmpve = nbcmpv
+    if (cmpUserNb .eq. 0) then
+        cmpValidNb = cmpCataNb
+    else if (cmpUserNb .gt. 0) then
+        cmpValidNb = cmpUserNb
     else
-        call utmess('F', 'UTILITAI5_45', sk=nomgd)
+        ASSERT(ASTER_FALSE)
     endif
-!
     if (nivinf .gt. 1) then
-        write (ifm,*) nompro, ' : NOMBRE DE COMPOSANTES DEMANDEES : ',&
-        ncmpve
+        write (ifm,*) 'NOMBRE DE COMPOSANTES DEMANDEES : ', cmpValidNb
     endif
+    call wkvect(numcmp, 'V V I', cmpValidNb, vi = cmpIndx)
 !
-    call wkvect(numcmp, 'V V I', ncmpve, adnucm)
+! - Get index of user components in physical quantity
 !
-! 1.2. ==> RIEN N'EST PRECISE : ON PREND TOUTES LES COMPOSANTES DANS
-!          L'ORDRE DE REFERENCE
-!
-    if (nbcmpv .eq. 0) then
-!
-        do 12 , iaux = 1 , ncmpve
-        zi(adnucm+iaux-1) = iaux
-12      continue
-!
-! 1.3. ==> UN EXTRAIT EST DEMANDE : ON CONTROLE LEUR EXISTENCE
-!          ON RECUPERE LE NOMBRE DE COMPOSANTES ACCEPTEES ET LEURS
-!          NUMEROS DANS LA LISTE OFFICIELLE
-!
+    if (cmpUserNb .eq. 0) then
+        do iCmp = 1 , cmpValidNb
+            cmpIndx(iCmp) = iCmp
+        end do
     else
-!
-        call irccmp('A', nomgd, ncmprf, nomcmr, nbcmpv,&
-                    nomcmp, iaux, adnucm)
-        if (iaux .ne. nbcmpv) then
-            call utmess('F', 'UTILITAI5_46', sk=nomgd)
+        call irccmp('A'       , quantityName,&
+                    cmpCataNb , cmpCataName ,&
+                    cmpUserNb , cmpUserName ,&
+                    cmpValidNb, cmpIndx)
+        if (cmpValidNb .ne. cmpUserNb) then
+            call utmess('F', 'UTILITAI5_46', sk=quantityName)
         endif
-!
     endif
 !
-!====
-! 2. NOMS ET UNITES DES COMPOSANTES RETENUES
-!====
+! - Get names of physical components
 !
-    call wkvect(ntncmp, 'V V K16', ncmpve, adncmp)
-    call wkvect(ntucmp, 'V V K16', ncmpve, aducmp)
-!
-    do 21 , iaux = 1 , ncmpve
-    jaux = zi(adnucm+iaux-1)
-!       CONVERSION DES NOMS DE COMPOSANTES DE K8 EN K16
-    zk16(adncmp-1+iaux) = nomcmr(jaux)
-!        ZK16(ADUCMP-1+IAUX) = '        '
-!                              1234567890123456
-    zk16(aducmp-1+iaux) = '                '
-    21 end do
-!      IF ( NIVINF.GT.1 ) THEN
-!       DO 2100 , IAUX = 1 , NCMPVE
-!        WRITE(IFM,*) '.. COMPOSANTE ', IAUX, ' : ', ZK16(ADNCMP-1+IAUX)
-! 2100  CONTINUE
-!      ENDIF
+    call wkvect(ntncmp, 'V V K16', cmpValidNb, vk16 = cmpValidName)
+    call wkvect(ntucmp, 'V V K16', cmpValidNb, vk16 = cmpValidUnit)
+    do iCmp = 1 , cmpValidNb
+        cmpValidName(iCmp) = cmpCataName(cmpIndx(iCmp))
+        cmpValidUnit(iCmp) = ' '
+    end do
 !
 end subroutine

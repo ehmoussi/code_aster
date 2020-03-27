@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irmpav(nomcon, ifichi, linopa, numdt, numit,&
-                  dt)
-    use as_med_module, only: as_med_open
-    implicit none
+!
+subroutine irmpav(nomcon, ifichi, paraListNb, paraListName, numdt, numit, dt)
+!
+use as_med_module, only: as_med_open
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -36,37 +36,42 @@ subroutine irmpav(nomcon, ifichi, linopa, numdt, numit,&
 #include "asterfort/ulisog.h"
 #include "asterfort/utmess.h"
 !
-    character(len=19) :: linopa
-    character(len=*) :: nomcon
-    integer :: ifichi, numdt, numit
-    real(kind=8) :: dt
-! person_in_charge: nicolas.sellenet at edf.fr
+integer, intent(in) :: paraListNb
+character(len=16), pointer :: paraListName(:)
+character(len=*) :: nomcon
+integer :: ifichi, numdt, numit
+real(kind=8) :: dt
 !
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
 !     CREATION D'UN PARAMETRE DANS UN FICHIER MED
 !
+! --------------------------------------------------------------------------------------------------
+!
+! In  paraListNb       : length of list of parameter names
+! Ptr paraListName     : pointer to the list of parameter names
 ! IN  NOMCON : K8  : NOM DU CONCEPT A IMPRIMER
 ! IN  IFICHI : IS  : UNITE LOGIQUE D'ECRITURE
-! IN  NOPARA : K16 : NOM D'UN PARAMATRE A AJOUTER
 ! IN  NUMDT  : I   : NUMERO D'ORDRE
 ! IN  NUMIT  : I   : NUMERO D'ITERATION
 ! IN  DT     : R   : VALEUR DU PAS DE TEMPS
 ! IN  VAL    : R   : VALEUR DU PARAMETRE
-!     ------------------------------------------------------------------
 !
-!     ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     med_idt :: idfimd
-    integer :: edleaj, codret, hdfok, medok, jlnopa
-    integer :: nbpara, inopar, iaux
+    integer :: edleaj, codret, hdfok, medok
+    integer :: iPara, iaux
     character(len=1) :: saux01
     character(len=8) :: saux08
-    character(len=16) :: nopara
+    character(len=16) :: paraName
     character(len=64) :: saux64
     character(len=200) :: nofimd
     character(len=255) :: kfic
-!
     aster_logical :: ficexi
-!     ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
 !
     call ulisog(ifichi, kfic, saux01)
@@ -95,14 +100,12 @@ subroutine irmpav(nomcon, ifichi, linopa, numdt, numit,&
         call utmess('F', 'DVP_97', sk=saux08, si=codret)
     endif
 !
-    call jeveuo(linopa, 'L', jlnopa)
-    call jelira(linopa, 'LONMAX', nbpara)
-    do inopar = 0, nbpara-1
-        nopara = zk16(jlnopa+inopar)
-        call rsadpa(nomcon, 'L', 1, nopara, numdt,&
+    do iPara = 1, paraListNb
+        paraName = paraListName(iPara)
+        call rsadpa(nomcon, 'L', 1, paraName, numdt,&
                     0, sjv=iaux, styp=saux08, istop=1)
 !
-        saux64 = nomcon//nopara
+        saux64 = nomcon//paraName
         call as_mprrvw(idfimd, saux64, numdt, numit, dt,&
                        zr(iaux), codret)
         if (codret .ne. 0) then

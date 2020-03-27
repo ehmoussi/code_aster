@@ -336,10 +336,6 @@ Cet état initial ne sera pas pris en compte.
 Dans la définition du matériau RUPT_DUCT les coefficients de forme de la loi CZM_TRA_MIX doivent vérifier : COEF_EXTR <= COEF_PLAS
 """),
 
-    69 : _("""
-Le type de déformations %(k1)s n'est pas compatible avec les modélisations SHB. Utilisez PETIT ou GROT_GDEP.
-"""),
-
     71 : _("""
 Erreur dans le calcul du tenseur équivalent au sens de HILL.
 """),

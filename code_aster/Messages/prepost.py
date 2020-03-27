@@ -21,15 +21,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    2 : _("""
-
-Attention :
-  Vous avez demandé l'impression d'un CHAM_ELEM de VARI_R :
-  on complète le nombre de composantes V1, V2, ... avec des zéros
-  pour que toutes les mailles aient le même nombre de composantes.
-
-"""),
-
     3 : _("""
  Dans le cas d'un défaut SEMI_ELLIPSE, les mots-clés suivants doivent être présents :
 
@@ -285,22 +276,8 @@ Contactez le support technique.
  On ne sait pas imprimer au format 'MED' les cartes de type %(k1)s
 """),
 
-    92 : _("""
- On ne sait pas imprimer au format 'RESULTAT' les champs de type "carte".
-"""),
-
     97 : _("""
  On ne sait pas imprimer les champs de type " %(k1)s "
-"""),
-
-    98 : _("""
- Le champ:  %(k1)s  a des éléments ayant des sous-points.
- Il est écrit avec un format différent.
-"""),
-
-    99 : _("""
- Le champ:  %(k1)s  a des éléments ayant des sous-points.
- Ces éléments ne seront pas écrits.
 """),
 
 }

@@ -21,10 +21,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    4 : _("""
-  le nombre de noeuds sélectionnés est supérieur au nombre de noeuds du maillage. on va tronquer la liste.
-"""),
-
     6 : _("""
  type inconnu" %(k1)s "
 """),
@@ -96,32 +92,6 @@ cata_msg = {
 
 
 
-    65 : _("""
- pour la variable d'accès "NOEUD_CMP", il faut un nombre pair de valeurs.
-"""),
-
-    66 : _("""
- le modèle et le maillage introduits ne sont pas cohérents
-"""),
-
-    68 : _("""
- vous voulez imprimer sur un même fichier le maillage et un champ
- ce qui est incompatible avec le format GMSH
-"""),
-
-    69 : _("""
- L'impression d'un champ complexe nécessite l'utilisation du mot-clé PARTIE.
- Ce mot-clé permet de choisir la partie du champ à imprimer (réelle ou imaginaire).
-"""),
-
-    70 : _("""
- Vous avez demandé une impression au format ASTER sans préciser de MAILLAGE.
- Aucune impression ne sera réalisée car IMPR_RESU au format ASTER n'imprime qu'un MAILLAGE.
-"""),
-
-    74 : _("""
- Le maillage %(k1)s n'est pas cohérent avec le maillage %(k2)s portant le résultat %(k3)s
-"""),
 
     75 : _("""
  fichier GIBI créé par SORT FORMAT non supporté dans cette version

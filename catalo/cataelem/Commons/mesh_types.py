@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -302,7 +302,6 @@ PE6.addLocation('XFEM240', 240)
 PE6.addLocation('XFEM480', 480)
 PE6.addLocation('XFEM720', 720)
 PE6.addLocation('XFEM960', 960)
-PE6.addLocation('SHB6', 5)
 PENTA6.addElrefe(PE6)
 
 SH6 = Elrefe()
@@ -318,7 +317,6 @@ SH6.addLocation('XFEM240', 240)
 SH6.addLocation('XFEM480', 480)
 SH6.addLocation('XFEM720', 720)
 SH6.addLocation('XFEM960', 960)
-SH6.addLocation('SHB6', 5)
 PENTA6.addElrefe(SH6)
 
 #------------------------------------------------------------
@@ -336,7 +334,6 @@ P15.addLocation('XFEM240', 240)
 P15.addLocation('XFEM720', 720)
 P15.addLocation('XFEM1440', 1440)
 P15.addLocation('XFEM2160', 2160)
-P15.addLocation('SHB15', 15)
 PENTA15.addElrefe(P15)
 
 S15 = Elrefe()
@@ -351,7 +348,6 @@ S15.addLocation('XFEM240', 240)
 S15.addLocation('XFEM720', 720)
 S15.addLocation('XFEM1440', 1440)
 S15.addLocation('XFEM2160', 2160)
-S15.addLocation('SHB15', 15)
 PENTA15.addElrefe(S15)
 
 #------------------------------------------------------------
@@ -412,7 +408,6 @@ HE8.addLocation('FPG8', 8)
 HE8.addLocation('FPG8NOS', 16)
 HE8.addLocation('FPG27', 27)
 HE8.addLocation('FPG64', 64)
-HE8.addLocation('SHB5', 5)
 HE8.addLocation('XFEM480', 480)
 HE8.addLocation('XFEM960', 960)
 HE8.addLocation('XFEM1440', 1440)
@@ -439,7 +434,6 @@ H20.addLocation('XFEM480', 480)
 H20.addLocation('XFEM1440', 1440)
 H20.addLocation('XFEM2880', 2880)
 H20.addLocation('XFEM4320', 4320)
-H20.addLocation('SHB20', 20)
 HEXA20.addElrefe(H20)
 
 POHOH20 = Elrefe()

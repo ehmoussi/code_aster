@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine te0485(option, nomte)
-        character(len=16) :: option
-        character(len=16) :: nomte
+        character(len=16), intent(in) :: option
+        character(len=16), intent(in) :: nomte
     end subroutine te0485
 end interface

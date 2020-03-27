@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,21 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine irnono(noma, nbnoe, nbno, nonoe, nbgr,&
-                      nogrn, numno, nbnot, indno, noltop)
-        integer :: nbnoe
-        character(len=*) :: noma
-        integer :: nbno
-        character(len=*) :: nonoe(*)
-        integer :: nbgr
-        character(len=*) :: nogrn(*)
-        character(len=*) :: numno
-        integer :: nbnot
-        integer :: indno(nbnoe)
-        character(len=*) :: noltop
+    subroutine irnono(meshNameZ , meshNbNode  ,&
+                      nbNode    , nodeName    ,&
+                      nbGrNode  , grNodeName  ,&
+                      nodeSelect, nbNodeSelect,&
+                      nodeFlag)
+        character(len=*), intent(in) :: meshNameZ
+        integer, intent(in) :: meshNbNode
+        integer, intent(in) :: nbNode
+        character(len=8), pointer :: nodeName(:)
+        integer, intent(in) :: nbGrNode
+        character(len=24), pointer :: grNodeName(:)
+        integer, pointer :: nodeSelect(:)
+        integer, intent(out) :: nbNodeSelect
+        integer, pointer :: nodeFlag(:)
     end subroutine irnono
 end interface

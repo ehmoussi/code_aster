@@ -35,62 +35,55 @@ def calc_mac3coeur_prod(self,RESU_DEF,**args):
 CALC_MAC3COEUR = MACRO(nom="CALC_MAC3COEUR",
                        op=OPS("code_aster.MacroCommands.Mac3Coeur.mac3coeur_calcul.calc_mac3coeur_ops"),
                        sd_prod=calc_mac3coeur_prod,
-
-         TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4") ),
-         #b_type_ligne = BLOC(condition = """is_in("TYPE_COEUR", ("LIGNE900","LIGNE1300","LIGNEN4")""",
-         b_type_ligne = BLOC(condition = """is_in("TYPE_COEUR", ("LIGNE900","LIGNE1300","LIGNEN4"))""",
-                   NB_ASSEMBLAGE = SIMP(statut='o',typ='I',max=1 ),
-                    ),
-         # TYPE DE COEUR A CONSIDERER
-         TABLE_N      = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N
-         MAILLAGE_N   = SIMP(statut='f',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
-         RESU_DEF     = SIMP(statut='f',typ=CO),
-         FLUENCE_CYCLE = SIMP(statut='f',typ='R',max=1,defaut=0.),
-         TYPE_DEFORMATION =SIMP(statut='f',typ='TXM',defaut="PETIT",
-                                  into=("PETIT","GROT_GDEP")),
-         ETAT_INITIAL = FACT(statut='f',max=1,
-                          fr=tr("Estimation d'un etat initial a partir d un DAMAC"),
-               UNITE_THYC   = SIMP(statut='f',typ=UnitType(), max=1, inout='in' ),            # Unite Logique du fichier THYC
-               NIVE_FLUENCE =  SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
-               TYPE_MAINTIEN = SIMP(statut='f',typ='TXM',into=("DEPL_PSC",),defaut="DEPL_PSC" ),
-               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
-               ARCHIMEDE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="OUI" ),
-            ),
-
-         LAME = FACT(statut='f',max=1, fr=tr("Estimation des lames d'eau entre AC"),
-                     UNITE_THYC   = SIMP(statut='o',typ=UnitType(), max=1, inout='in'),            # Unite Logique du fichier THYC
-                     ),
-
-         # choix du maintien dans le cas mono-assemblage
-         b_maintien_mono = BLOC(condition = """exists("TYPE_COEUR") and TYPE_COEUR.startswith('MONO')""",
-
-         DEFORMATION  = FACT(statut='f',max=1, fr=tr("Estimation des deformations des AC"),
-
-               RESU_INIT    = SIMP(statut='f',typ=resultat_sdaster),
-               NIVE_FLUENCE = SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
-               UNITE_THYC      = SIMP(statut='o',typ=UnitType(), max=1, inout='in'),                   # Unite Logique du fichier THYC
-               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
-
-               TYPE_MAINTIEN = SIMP(statut='o',typ='TXM',into=("FORCE","DEPL_PSC"), ),
-
-               b_maintien_mono_force = BLOC(condition = """equal_to("TYPE_MAINTIEN", 'FORCE')""",
-                                 fr=tr("valeur de l'effort de maintien imposée"),
-                                 FORCE_MAINTIEN           =SIMP(statut='o',typ='R', max=1),),
-               ARCHIMEDE = SIMP(statut='o',typ='TXM',into=("OUI","NON"), ),
-          ),),
-
-          # choix du maintien dans le cas d'un coeur à plusieurs assemblages
-          b_maintien_coeur = BLOC(condition = """exists("TYPE_COEUR") and not TYPE_COEUR.startswith('MONO')""",
-          DEFORMATION  = FACT(statut='f',max=1,
-                      fr=tr("Estimation des deformations des AC"),
-               RESU_INIT    = SIMP(statut='f',typ=resultat_sdaster),
-               NIVE_FLUENCE = SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
-               UNITE_THYC      = SIMP(statut='o',typ=UnitType(), max=1, inout='in'),                   # Unite Logique du fichier THYC
-               MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
-               TYPE_MAINTIEN = SIMP(statut='f',typ='TXM',into=("DEPL_PSC",),defaut="DEPL_PSC" ),
-               ARCHIMEDE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="OUI" ),
-
-
-          ),),
-
+                       
+                       TYPE_COEUR   = SIMP(statut='o',typ='TXM',into=("MONO","MONO_FROID","TEST","900","1300","N4","LIGNE900","LIGNE1300","LIGNEN4") ),
+                       b_type_ligne = BLOC(condition = """is_in("TYPE_COEUR", ("LIGNE900","LIGNE1300","LIGNEN4"))""",
+                                           NB_ASSEMBLAGE = SIMP(statut='o',typ='I',max=1 ),
+                       ),
+                       # TYPE DE COEUR A CONSIDERER
+                       TABLE_N      = SIMP(statut='o',typ=table_sdaster),         # TABLE INITIALE DES DAMAC A L INSTANT N
+                       MAILLAGE_N   = SIMP(statut='f',typ=maillage_sdaster),      # MAILLAGE EN ATTENDANT MIEUX ???
+                       RESU_DEF     = SIMP(statut='f',typ=CO),
+                       FLUENCE_CYCLE = SIMP(statut='f',typ='R',max=1,defaut=0.),
+                       TYPE_DEFORMATION =SIMP(statut='f',typ='TXM',defaut="PETIT",
+                                              into=("PETIT","RIGI_GEOM","GROT_GDEP")),
+                       ETAT_INITIAL = FACT(statut='f',max=1,
+                                           fr=tr("Estimation d'un etat initial a partir d un DAMAC"),
+                                           UNITE_THYC   = SIMP(statut='f',typ=UnitType(), max=1, inout='in' ),            # Unite Logique du fichier THYC
+                                           NIVE_FLUENCE =  SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
+                                           TYPE_MAINTIEN = SIMP(statut='f',typ='TXM',into=("DEPL_PSC",),defaut="DEPL_PSC" ),
+                                           MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
+                                           ARCHIMEDE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="OUI" ),
+                       ),
+                       
+                       LAME = FACT(statut='f',max=1, fr=tr("Estimation des lames d'eau entre AC"),
+                                   UNITE_THYC   = SIMP(statut='o',typ=UnitType(), max=1, inout='in'),            # Unite Logique du fichier THYC
+                       ),
+                       
+                       # choix du maintien dans le cas mono-assemblage
+                       b_maintien_mono = BLOC(condition = """exists("TYPE_COEUR") and TYPE_COEUR.startswith('MONO')""",
+                                              DEFORMATION  = FACT(statut='f',max=1, fr=tr("Estimation des deformations des AC"),
+                                                                  RESU_INIT    = SIMP(statut='f',typ=resultat_sdaster),
+                                                                  NIVE_FLUENCE = SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
+                                                                  UNITE_THYC      = SIMP(statut='o',typ=UnitType(), max=1, inout='in'), # Unite Logique du fichier THYC
+                                                                  MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
+                                                                  TYPE_MAINTIEN = SIMP(statut='o',typ='TXM',into=("FORCE","DEPL_PSC"), ),
+                                                                  
+                                                                  b_maintien_mono_force = BLOC(condition = """equal_to("TYPE_MAINTIEN", 'FORCE')""",
+                                                                                               fr=tr("valeur de l'effort de maintien imposée"),
+                                                                                               FORCE_MAINTIEN           =SIMP(statut='o',typ='R', max=1),),
+                                                                  ARCHIMEDE = SIMP(statut='o',typ='TXM',into=("OUI","NON"), ),
+                                              ),),
+                       
+                       # choix du maintien dans le cas d'un coeur à plusieurs assemblages
+                       b_maintien_coeur = BLOC(condition = """exists("TYPE_COEUR") and not TYPE_COEUR.startswith('MONO')""",
+                                               DEFORMATION  = FACT(statut='f',max=1,
+                                                                   fr=tr("Estimation des deformations des AC"),
+                                                                   RESU_INIT    = SIMP(statut='f',typ=resultat_sdaster),
+                                                                   NIVE_FLUENCE = SIMP(statut='o',typ='R',max=1), # FLUENCE MAXIMALE DANS LE COEUR
+                                                                   UNITE_THYC      = SIMP(statut='o',typ=UnitType(), max=1, inout='in'),                   # Unite Logique du fichier THYC
+                                                                   MAINTIEN_GRILLE = SIMP(statut='f',typ='TXM',into=("OUI", "NON"),defaut="NON" ),
+                                                                   TYPE_MAINTIEN = SIMP(statut='f',typ='TXM',into=("DEPL_PSC",),defaut="DEPL_PSC" ),
+                                                                   ARCHIMEDE = SIMP(statut='f',typ='TXM',into=("OUI", ),defaut="OUI" ),
+                                               ),),
 );

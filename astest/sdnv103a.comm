@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,10 +34,14 @@ MA=DEFI_GROUP(reuse =MA,
                                 NOM='SYY1',),),);
 
 MODE=AFFE_MODELE(MAILLAGE=MA,
-                 
-                 AFFE=_F(TOUT='OUI',
-                         PHENOMENE='MECANIQUE',
-                         MODELISATION=('3D','3D_SI',),),);
+                 AFFE=(_F(TOUT='OUI',
+                          PHENOMENE='MECANIQUE',
+                          MODELISATION=('3D_SI',),),
+                       _F(TOUT='OUI',
+                          PHENOMENE='MECANIQUE',
+                          MODELISATION=('3D',),),
+                      ),
+);
 
 MA=MODI_MAILLAGE(reuse =MA,
                  MAILLAGE=MA,
