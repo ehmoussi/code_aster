@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
 #include "asterfort/jexnum.h"
 #include "asterfort/reliem.h"
 #include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utnono.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
@@ -94,7 +95,7 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
 !
     integer :: jmail, jtypm, iatyma
     integer :: ier, im, n1, n2, n3, nid, nig, nbnot
-    integer :: nunori, trouv, ibid, in, nd
+    integer :: nunori, trouv, ibid, in, nd, ifm, niv
     integer :: existe, iret, ima
     integer :: jcour2
     character(len=8) :: k8b, nomma, typmp
@@ -108,6 +109,7 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
 ! DEB-------------------------------------------------------------------
     call jemarq()
 !
+    call infniv(ifm, niv)
     call getres(k8b, k16bid, nomcmd)
 !
 !     ------------------------------------------------------------------
@@ -390,8 +392,10 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
         if (erreur) call utmess('F', 'ELEMENTS_71')
 
 100     continue
-        call jenuno(jexnum(nomnoe, nunori), ndorig)
-        call utmess('I', 'ELEMENTS_72', sk=ndorig)
+        if(niv >1) then
+            call jenuno(jexnum(nomnoe, nunori), ndorig)
+            call utmess('I', 'ELEMENTS_72', sk=ndorig)
+        end if
         AS_DEALLOCATE(vi=noeud_apparies)
     endif
 
