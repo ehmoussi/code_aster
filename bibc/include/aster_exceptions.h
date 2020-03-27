@@ -29,7 +29,7 @@
 
 #define FatalError 18   /* kept for backward compatibility only */
 #define EOFError   19
-#define AsterError 21
+#define AsterError 1
 
 #define NIVMAX     10
 
