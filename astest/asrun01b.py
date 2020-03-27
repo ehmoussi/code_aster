@@ -40,8 +40,9 @@ from run_aster.export import (PARAMS_TYPE, Export, ExportParameter,
                               ExportParameterInt, ExportParameterListStr,
                               ExportParameterStr, File)
 from run_aster.logger import ERROR, logger
-from run_aster.settings import (ParameterBool, ParameterFloat, ParameterInt,
-                                ParameterListStr, ParameterStr, Store)
+from run_aster.settings import (ParameterBool, ParameterDictStr,
+                                ParameterFloat, ParameterInt, ParameterListStr,
+                                ParameterStr, Store)
 from run_aster.status import StateOptions as SO
 from run_aster.status import Status, get_status
 from run_aster.timer import Timer
@@ -64,7 +65,8 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(CFG.storage.has_param("python"))
         self.assertTrue(CFG.storage.has_param("FC"))
         self.assertTrue(CFG.storage.has_param("FCFLAGS"))
-        size = 9
+        self.assertTrue(CFG.storage.has_param("exectool"))
+        size = 10
         if CFG.get("parallel"):
             self.assertTrue(CFG.storage.has_param("mpirun"))
             self.assertTrue(CFG.storage.has_param("mpirun_rank"))
@@ -116,6 +118,27 @@ class TestConfig(unittest.TestCase):
         })
         cfg.import_dict(user_cfg, with_sections=True)
         self.assertEqual(cfg.get("mpirun"), "mpirun_for_VERS1")
+
+    def test_exectool(self):
+        cfg = Config("nofile")
+        # add a value to avoid automatic loading of 'config.js' and user file
+        cfg._storage.set("mpirun", "empty")
+        # add user file with server
+        user_cfg = {
+            "server": [
+                {
+                    "name": "*",
+                    "config": {
+                        "exectool": {
+                            "mywrapper": "echo -n"
+                        }
+                    }
+                }
+            ]
+        }
+        cfg.import_dict(user_cfg, with_sections=True)
+        self.assertIsInstance(cfg.get("exectool"), dict)
+        self.assertEqual(cfg.get("exectool")["mywrapper"], "echo -n")
 
 
 class TestSettings(unittest.TestCase):
@@ -196,6 +219,19 @@ class TestSettings(unittest.TestCase):
         self.assertSequenceEqual(para.value, ["make_env", "make_etude"])
         para.set([2, "debug"])
         self.assertSequenceEqual(para.value, ["2", "debug"])
+
+    def test_dictstr(self):
+        para = ParameterDictStr("exectool")
+        self.assertIsNone(para.value)
+        para.set({})
+        self.assertIsInstance(para.value, dict)
+        self.assertEqual(len(para.value), 0)
+        para.set({"mycmd": "run_cmd"})
+        self.assertEqual(para.value["mycmd"], "run_cmd")
+        with self.assertRaises(TypeError):
+            para.set("not a dict")
+        with self.assertRaises(TypeError):
+            para.set({1: "only str for keys"})
 
 
 class TestStore(unittest.TestCase):
@@ -392,30 +428,13 @@ class TestExport(unittest.TestCase):
         # read memory limit, write export, read => not added twice?
 
     def test_time(self):
-        text = "P tpsjob 60"
+        text = "P time_limit 3600"
         export = Export(from_string=text)
-        self.assertEqual(export.get("tpsjob"), 60)
         self.assertEqual(export.get("time_limit"), 3600.0)
         self.assertEqual(export.get_argument_value("tpmax", float), 3600.0)
         self.assertEqual(repr(export), "\n".join([
-            "P tpsjob 60",
             "P time_limit 3600.0",
             "A args --tpmax 3600",
-            ""]))
-
-    def test_time2(self):
-        text = "\n".join([
-            "P tpsjob 60",
-            "P time_limit 1800",
-        ])
-        export = Export(from_string=text)
-        self.assertEqual(export.get("tpsjob"), 60)
-        self.assertEqual(export.get("time_limit"), 1800.0)
-        self.assertEqual(export.get_argument_value("tpmax", float), 1800.0)
-        self.assertEqual(repr(export), "\n".join([
-            "P tpsjob 60",
-            "P time_limit 1800.0",
-            "A args --tpmax 1800.0",
             ""]))
 
     def test_bool(self):

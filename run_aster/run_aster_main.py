@@ -234,7 +234,7 @@ def main(argv=None):
     opts["interactive"] = args.interactive
     calc = RunAster.factory(export, **opts)
     status = calc.execute(args.wrkdir)
-    if tmpf:
+    if tmpf and not opts["env"]:
         os.remove(tmpf)
     return status.exitcode
 

@@ -368,6 +368,7 @@ def check_config(self):
     cfg.update(self._extract_keys("CFGJS_"))
     cfg["FC"] = self.env["FC"][0]
     cfg["FCFLAGS"] = self.env["FCFLAGS"]
+    cfg["exectool"] = {}
     self.env["CONFIG_PARAMETERS"] = cfg
 
 
