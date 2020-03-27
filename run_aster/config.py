@@ -30,6 +30,25 @@ The configuration file is installed in
 ``<installation-prefix>/share/aster/config.js``.
 It contains *version parameters*.
 
+The list of the supported *version parameters* are (with their type):
+
+.. code-block:: none
+
+    version_tag: str        - version number
+    version_sha1: str       - sha1 of the revision
+    tmpdir: str             - temporary directory used for execution
+    addmem: int             - memory added to the memory limit found from export
+    parallel: bool          - true for a parallel version
+    python: str             - Python interpreter
+    mpirun: str             - mpirun command line with arguments
+    mpirun_rank: str        - command line to get the mpi rank
+    only-proc0: bool        - true to limit output to proc #0, false to show all
+    FC: str                 - fortran compiler
+    FCFLAGS: list[str]      - flags for fortran compiler
+    exectool: dict[str]     - command lines for execution wrappers
+
+All these parameters are set during the *configure* step of the installation.
+
 These *version parameters* can be overridden by a user file:
 ``$HOME/.run_aster.js``.
 
@@ -96,28 +115,8 @@ the version installed in the ``/projets/aster/install/14.4/mpi``?
 Each block ``config`` can override one or more parameter already defined in
 ``config.js``.
 
-The list of the supported *version parameters* are (with their type):
-
-.. code-block:: none
-
-    version_tag: str        - version number
-    version_sha1: str       - sha1 of the revision
-    tmpdir: str             - temporary directory used for execution
-    addmem: int             - memory added to the memory limit found from export
-    parallel: bool          - true for a parallel version
-    python: str             - Python interpreter
-    mpirun: str             - mpirun command line with arguments
-    mpirun_rank: str        - command line to get the mpi rank
-    only-proc0: bool        - true to limit output to proc #0, false to show all
-    FC: str                 - fortran compiler
-    FCFLAGS: list[str]      - flags for fortran compiler
-    exectool: dict[str]     - command lines for execution wrappers
-
-All these parameters are set during the *configure* step of the installation.
-
 An *execution wrapper* is a tool, for example a debugger or *valgrind*, that
-can preceed the executed command line. Its own command line if provided in
-format ``"name=executable args1 args2"``.
+can preceed the executed command line.
 Example of ``$HOME/.run_aster.js``:
 
 .. code-block:: json

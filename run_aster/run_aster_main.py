@@ -142,6 +142,9 @@ def parse_args(argv):
                         help="do not executes the `.comm` files but starts an "
                              "interactive Python session. Execute "
                              "`code_aster.init()` to copy data files.")
+    parser.add_argument('--exectool', action='store',
+                        help="wrap code_aster execution using this tool "
+                             "(debugger, valgrind, custom command...)")
     parser.add_argument('export', metavar='EXPORT', nargs="?",
                         help="Export file defining the calculation. "
                              "Without file, it starts an interactive Python "
@@ -232,6 +235,8 @@ def main(argv=None):
     opts["env"] = args.env or "make_env" in export.get("actions", [])
     opts["tee"] = not args.ctest and (not args.only_proc0 or procid == 0)
     opts["interactive"] = args.interactive
+    if args.exectool:
+        opts["exectool"] = CFG.get("exectool", {}).get(args.exectool)
     calc = RunAster.factory(export, **opts)
     status = calc.execute(args.wrkdir)
     if tmpf and not opts["env"]:
