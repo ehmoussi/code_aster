@@ -104,13 +104,15 @@ class AbstractParameter:
             "int": ParameterInt,
             "float": ParameterFloat,
             "list[str]": ParameterListStr,
+            "dict[str]": ParameterDictStr,
         }.get(typ)
 
 
 class ParameterStr(AbstractParameter):
     """A parameter defined in a Export object of type string."""
 
-    def _convert(self, value):
+    @staticmethod
+    def _convert(value):
         if isinstance(value, (list, tuple)):
             value = " ".join([str(i) for i in value])
         return str(value)
@@ -119,7 +121,8 @@ class ParameterStr(AbstractParameter):
 class ParameterBool(AbstractParameter):
     """A parameter defined in a Export object of type boolean."""
 
-    def _convert(self, value):
+    @staticmethod
+    def _convert(value):
         if isinstance(value, (list, tuple)):
             value = " ".join([str(i) for i in value])
         if value == "":
@@ -132,7 +135,8 @@ class ParameterBool(AbstractParameter):
 class ParameterInt(AbstractParameter):
     """A parameter defined in a Export object of type integer."""
 
-    def _convert(self, value):
+    @staticmethod
+    def _convert(value):
         if isinstance(value, (list, tuple)):
             value = " ".join([str(i) for i in value])
         return int(float(value))
@@ -141,7 +145,8 @@ class ParameterInt(AbstractParameter):
 class ParameterFloat(AbstractParameter):
     """A parameter defined in a Export object of type float."""
 
-    def _convert(self, value):
+    @staticmethod
+    def _convert(value):
         if isinstance(value, (list, tuple)):
             value = " ".join([str(i) for i in value])
         return float(value)
@@ -150,10 +155,25 @@ class ParameterFloat(AbstractParameter):
 class ParameterListStr(AbstractParameter):
     """A parameter defined in a Export object of type list of strings."""
 
-    def _convert(self, value):
+    @staticmethod
+    def _convert(value):
         if not isinstance(value, (list, tuple)):
             value = [value]
         value = [str(i) for i in value]
+
+        return value
+
+class ParameterDictStr(AbstractParameter):
+    """A parameter defined in a Export object of type dict of strings."""
+
+    @staticmethod
+    def _convert(value):
+        if not isinstance(value, dict):
+            raise TypeError(f"dict expected, not {value}")
+        for key, string in value.items():
+            if not isinstance(key, str):
+                raise TypeError(f"str expected, not {string}")
+            string = ParameterStr._convert(string)
         return value
 
 

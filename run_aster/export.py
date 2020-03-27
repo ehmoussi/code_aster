@@ -40,18 +40,15 @@ The syntax of a ``.export`` file is very simple:
 
 .. code-block:: none
 
-    actions: list[str]
-    expected_diag: list[str]
-    hide-command: bool
-    interact: bool
-    memjob: int
-    memory_limit: float
-    mpi_nbcpu: int
-    ncpus: int
-    no-mpi: bool
-    time_limit: float
-    tpmax: float
-    tpsjob: int
+    actions: list[str]          - for GUI, "make_env" for "--env"
+    expected_diag: list[str]    - for testcases that should fail
+    hide-command: bool          - do not show the command file before execution
+    interact: bool              - for GUI, same as "--interactive"
+    memory_limit: float         - memory limit in MB
+    mpi_nbcpu: int              - number of MPI processes
+    ncpus: int                  - number of threads (per MPI process)
+    no-mpi: bool                - start without mpirun (for some testcases)
+    time_limit: float           - time limit is seconds
 
 ``A`` is a special parameter that stores command line arguments passed to the
 code_aster command file.
@@ -99,8 +96,6 @@ PARAMS_TYPE = {
     "ncpus": "int",
     "no-mpi": "bool",
     "time_limit": "float",
-    "tpmax": "float",
-    "tpsjob": "int",
     # command line arguments
     "args": "list[str]",
 }
@@ -109,10 +104,11 @@ PARAMS_TYPE = {
 PARAMS_TYPE.update({}.fromkeys(
     ["MASTER_memory_limit", "MASTER_time_limit", "aster_root", "consbtc",
      "cpresok", "debug", "diag_pickled", "facmtps", "mclient", "mem_aster",
-     "mode", "mpi_nbnoeud", "nbmaxnook", "noeud", "nomjob", "parent",
+     "memjob", "mode", "mpi_nbnoeud", "nbmaxnook", "noeud", "nomjob", "parent",
      "platform", "protocol_copyfrom", "protocol_copyto", "protocol_exec",
      "proxy_dir", "rep_trav", "origine", "server", "serveur", "service",
-     "soumbtc", "studyid", "testlist", "username", "uclient", "version"],
+     "soumbtc", "studyid", "testlist", "tpsjob", "username", "uclient",
+     "version"],
     DEPRECATED))
 
 
@@ -450,13 +446,11 @@ class Export(Store):
                 if not self._checked:
                     value += CFG.get("addmem", 0.)
                 self.set_argument(["--memory", value])
-        # time_limit in s (required), tpsjob in min, --tpmax in s (required)
+        # time_limit in s (required), --tpmax in s (required)
         if "--tpmax" not in args:
             value = None
-            if self.has_param("tpsjob"):
-                value = self.get("tpsjob") * 60
             if self.has_param("time_limit"):
-                value = self.get("time_limit")
+                value = int(self.get("time_limit", 0))
             if value:
                 self.set_argument(["--tpmax", value])
                 if not self.has_param("time_limit"):

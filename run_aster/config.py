@@ -111,8 +111,28 @@ The list of the supported *version parameters* are (with their type):
     only-proc0: bool        - true to limit output to proc #0, false to show all
     FC: str                 - fortran compiler
     FCFLAGS: list[str]      - flags for fortran compiler
+    exectool: dict[str]     - command lines for execution wrappers
 
 All these parameters are set during the *configure* step of the installation.
+
+An *execution wrapper* is a tool, for example a debugger or *valgrind*, that
+can preceed the executed command line. Its own command line if provided in
+format ``"name=executable args1 args2"``.
+Example of ``$HOME/.run_aster.js``:
+
+.. code-block:: json
+
+    {
+        "server" : [
+            {
+                "name": "*",
+                "exectool": {
+                    "valgrind": "valgrind --tool=memcheck --leak-check=full --error-limit=no --track-origins=yes"
+                }
+            }
+        ]
+    }
+
 
 """
 
@@ -141,6 +161,7 @@ VERSION_PARAMS = {
     "only-proc0": "bool",
     "FC": "str",
     "FCFLAGS": "list[str]",
+    "exectool": "dict[str]",
 }
 
 
