@@ -100,19 +100,3 @@ AsterError.__str__ = format_exception
 AsterError.id_message = property(get_idmess)
 AsterError.message = property(format_exception)
 
-
-aster.error = AsterError                            # 21
-aster.NonConvergenceError = ConvergenceError        # 22
-aster.EchecComportementError = IntegrationError     # 23
-aster.BandeFrequenceVideError = SolverError         # 24
-aster.MatriceSinguliereError = SolverError          # 25
-aster.TraitementContactError = ContactError         # 26
-aster.MatriceContactSinguliereError = SolverError   # 27
-aster.ArretCPUError = TimeLimitError                # 28
-aster.PilotageError = ConvergenceError              # 29
-aster.BoucleGeometrieError = ContactError           # 30
-aster.BoucleFrottementError = ContactError          # 31
-aster.BoucleContactError = ContactError             # 32
-aster.EventError = ConvergenceError                 # 33
-aster.ActionError = ConvergenceError                # 34
-aster.ResolutionError = SolverError                 # 35

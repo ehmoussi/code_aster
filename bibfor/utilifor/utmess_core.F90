@@ -115,7 +115,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     if (numex .eq. 0 .or. (lerror .and. idf .ne. 7)) then
 !     SI EXCEPTION, NEXCEP EST FIXE PAR COMMON VIA UTEXCP
 !     SINON ON LEVE L'EXCEPTION DE BASE ASTER.ERROR
-        numex = 21
+        numex = 1
     endif
 !
     suite = .false.
@@ -182,7 +182,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
 !           DES APPELS SONT IMBRIQUES
             if (idf .ne. 7) then
 !           SINON ON LEVE L'EXCEPTION DE BASE ASTER.ERROR
-                numex = 21
+                numex = 1
             endif
 !
             if (isjvup() .eq. 1) then
