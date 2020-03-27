@@ -71,7 +71,7 @@ class RunAster:
 
     @classmethod
     def factory(cls, export, test=False, env=False, tee=False,
-                interactive=False):
+                interactive=False, exectool=None):
         """Return a *RunAster* object from an *Export* object.
 
         Arguments:
@@ -81,13 +81,15 @@ class RunAster:
                 command lines to be run,
             tee (bool): to follow execution output,
             interactive (bool): to keep Python interpreter active.
+            exectool (str): command that preceeds code_aster command line.
         """
         class_ = RunAster
         if env:
             class_ = RunOnlyEnv
-        return class_(export, test, tee, interactive)
+        return class_(export, test, tee, interactive, exectool)
 
-    def __init__(self, export, test=False, tee=False, interactive=False):
+    def __init__(self, export, test=False, tee=False, interactive=False,
+                 exectool=None):
         self.export = export
         self.jobnum = str(os.getpid())
         logger.debug(f"Export content: {self.export.filename}")
@@ -96,6 +98,7 @@ class RunAster:
         self._test = test
         self._tee = tee
         self._interact = interactive
+        self._exectool = exectool
         if self.export.get("hide-command"):
             self._show_comm = False
         procid = 0
@@ -224,7 +227,10 @@ class RunAster:
         Returns:
             list[str]: List of command line arguments.
         """
-        cmd = [CFG.get("python")]
+        cmd = []
+        if self._exectool:
+            cmd.append(self._exectool)
+        cmd.append(CFG.get("python"))
         if self._interact:
             cmd.append("-i")
         cmd.append(commfile)

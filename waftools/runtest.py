@@ -52,7 +52,7 @@ def options(self):
     group.add_option('--exectool', dest='exectool',
                      action='store', default=None,
                      help='run a testcase by passing additional arguments '
-                          '(possible values are "debugger", "env" + those '
+                          '(possible values are "env" + those '
                           'defined in the configuration)')
     group.add_option('--time_limit', dest='time_limit',
                      action='store', default=None,
@@ -75,12 +75,7 @@ def runtest(self):
         Logs.error("'run_aster' not found, please check your $PATH")
         return
     args = []
-    if opts.exectool and opts.exectool != 'env':
-        raise Errors.WafError(f"'{opts.exectool}' is not yet supported, "
-                              "use 'env' and start you favorite tool")
-    if opts.exectool == 'debugger':
-        args.append('--debugger')
-    elif opts.exectool == 'env':
+    if opts.exectool == 'env':
         args.append('--env')
         wrkdir = tempfile.mkdtemp(prefix='runtest_')
         args.extend(['--wrkdir', wrkdir])
