@@ -216,16 +216,6 @@ Conseil :
     L'utilisation du pilotage peut permettre de passer cette instabilité.
 """),
 
-
-    40 : _("""
-  -> L'axe de référence pour le calcul du repère local est normal à un
-     au moins un élément de plaque.
-  -> Risque & Conseil :
-     Il faut modifier l'axe de référence (axe X par défaut) en utilisant
-     ANGL_REP ou VECTEUR.
-
-"""),
-
     41 : _("""
  impossibilité :
  vous avez un matériau de type "ELAS_COQUE" et vous n'avez pas défini la raideur de membrane,

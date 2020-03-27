@@ -47,10 +47,6 @@ format MED.
      la famille de point de Gauss incriminée.
 """),
 
-    6 : _("""
-    Les mots-clés %(k1)s et %(k2)s sont incompatibles.
-"""),
-
     7 : _("""
   Il n'a pas été possible d'imprimer le champ des variables internes en utilisant IMPR_NOM_VARI='OUI'.
   Cela est dû au fait que certains comportements  dans votre modèle ne sont pas imprimables avec cette option:

@@ -64,7 +64,7 @@ aster_logical, intent(in), optional :: lLireResu_
     integer :: ifm, niv
     character(len=19) :: ligrmo
     character(len=19) :: fieldToSave, fieldPrevious
-    character(len=19) :: compor, carcri, variElga
+    character(len=24) :: compor, carcri, variElga
     aster_logical :: lInitialState, lKeywfactCompor, lLireResu
     integer :: storeNb, iStore, storeNume
     integer, pointer :: storeList(:) => null()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,6 +70,7 @@ subroutine te0535(option, nomte)
 #include "asterfort/utpvgl.h"
 #include "asterfort/utpvlg.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -227,6 +228,13 @@ subroutine te0535(option, nomte)
         valk(2) = nomte
         call utmess('F', 'ELEMENTS3_40', nk=2, valk=valk)
     endif
+!
+    if (zk16(icompo-1+RIGI_GEOM).eq.'OUI') then
+       valk(1) = nomte
+       valk(2) = zk16(icompo+2)
+       call utmess('F', 'ELEMENTS4_15', nk=2, valk=valk)
+    endif
+!    
     reactu = zk16(icompo+2) .eq. 'GROT_GDEP'
 !
 !   Calcul des matrices de changement de repère

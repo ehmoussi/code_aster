@@ -205,10 +205,6 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    45 : _("""
- on demande un nombre de composantes négatif pour  %(k1)s
-"""),
-
     46 : _("""
  on demande des composantes inconnues pour  %(k1)s
 """),

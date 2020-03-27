@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irtitr(cham, noma, form, ifi, titre)
-    implicit none
-#include "jeveux.h"
+!
+subroutine irtitr(lResu     , lField   ,&
+                  dsNameZ   , meshNameZ,&
+                  fileFormat, fileUnit ,&
+                  title)
+!
+implicit none
+!
 #include "asterfort/gettco.h"
 #include "asterc/gtoptk.h"
 #include "asterfort/enlird.h"
@@ -27,88 +31,122 @@ subroutine irtitr(cham, noma, form, ifi, titre)
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-    integer :: ifi
-    character(len=*) :: cham, noma, form
-    character(len=80) :: titre
-!     IMPRESSION D'UN TITRE
-!     ------------------------------------------------------------------
-! IN  CHAM   : K8  : NOM DU CONCEPT
-! IN  NOMMA  : K8  : NOM DU MAILLAGE
-! IN  FORM   : K8  : FORMAT D'ECRITURE
-! IN  IFI    : IS  : UNITE LOGIQUE D'ECRITURE
-! OUT TITRE  : K80 : TITRE
-!     ------------------------------------------------------------------
-!     ------------------------------------------------------------------
-    integer :: nbtitr, jtitr
-    integer :: i, ier, iret
 !
-    character(len=8) :: nomma
-    character(len=16) :: date, typres
-    character(len=19) :: cham19
+aster_logical, intent(in) :: lResu, lField
+character(len=*), intent(in) :: dsNameZ, meshNameZ
+character(len=8), intent(in) :: fileFormat
+integer, intent(in) :: fileUnit
+character(len=80), intent(out) :: title
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Print result or field in a file (IMPR_RESU)
+!
+! Generate title and print it for RESULTAT and IDEAS
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  lResu            : flag if datastructure is a result
+! In  lField           : flag if datastructure is a field
+! In  dsName           : name of datastructure (result or field)
+! In  meshName         : name of mesh
+! In  fileFormat       : format of file to print (MED, RESULTAT, etc.)
+! In  fileUnit         : index of file (logical unit)
+! Out title            : title
+!
+! --------------------------------------------------------------------------------------------------
+!
+    aster_logical :: lTitleFromResult
+    integer :: iTitle, iret
+    character(len=8) :: meshName
+    character(len=16) :: date, resultType
+    character(len=19) :: dsName
     character(len=24) :: dateur
-    character(len=80) :: titsup(7)
+    character(len=80) :: titleIdeas(7)
+    integer :: resultTitleLineNb
+    character(len=80), pointer :: resultTitleLine(:) => null()
+    integer :: meshTitleLineNb
+    character(len=80), pointer :: meshTitleLine(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    nomma=noma
-    cham19 = cham
-    titre = ' '
 !
+! - Initializations
 !
-!     --- SI CHAM19 != ' ', ALORS IL S'AGIT DE L'IMPRESSION D'UN CHAMP
-!         (RESULTAT OU CHAM_GD) ET NON D'UN MAILLAGE.
-!         LE TITRE EST ALORS ECRIT DANS LE K80 TITRE
-    if (cham19 .ne. ' ') then
-        call jeexin(cham19//'.TITR', ier)
-        if (ier .ne. 0) then
-            call jeveuo(cham19//'.TITR', 'L', jtitr)
-            call jelira(cham19//'.TITR', 'LONMAX', nbtitr)
-            titre=zk80(jtitr)
-            if (form .eq. 'RESULTAT') then
-                write(ifi,'(1X,A)') (zk80(jtitr+i-1),i=1,nbtitr)
-            endif
+    dsName   = dsNameZ
+    meshName = meshNamez
+!
+! - Get title from datastructure ?
+!
+    lTitleFromResult = ASTER_FALSE
+    if (lField .or. lResu) then
+        call jeexin(dsName//'.TITR', iret)
+        if (iret .ne. 0) then
+            call jeveuo(dsName//'.TITR', 'L', vk80 = resultTitleLine)
+            call jelira(dsName//'.TITR', 'LONMAX', resultTitleLineNb)
+            lTitleFromResult = ASTER_TRUE
         else
-            call gettco(cham, typres)
-            write (titre,'(1X,A,2X,A,2X,A,1X,A)')&
-     &                         'CONCEPT ',cham,'DE TYPE ',typres
-            if (form .eq. 'RESULTAT') then
-                write (ifi,'(A)') titre
+            lTitleFromResult = ASTER_FALSE
+        endif
+    endif
+!
+! - Generate title
+!
+    title     = ' '
+    if (lField .or. lResu) then
+        if (lTitleFromResult) then
+            title = resultTitleLine(1)
+        else
+            call gettco(dsName, resultType)
+            write (title,'(1X,A,2X,A,2X,A,1X,A)') 'CONCEPT ', dsName, 'DE TYPE ', resultType
+        endif
+    endif
+!
+! - Write title in file for RESULTAT
+!
+    if (fileFormat .eq. 'RESULTAT') then
+        if (lField .or. lResu) then
+            if (lTitleFromResult) then
+                write(fileUnit,'(1X,A)') (resultTitleLine(iTitle), iTitle = 1, resultTitleLineNb)
+            else
+                write (fileUnit,'(A)') title
             endif
         endif
     endif
 !
-!     --- IMPRESSION AU FORMAT 'IDEAS': ECRITURE D'UN TITRE
-    if (form(1:5) .eq. 'IDEAS') then
+! - Write title in file for IDEAS
 !
-!        --- ECRITURE DU TITRE ---
-        do 1 i = 1, 7
-            titsup(i) = ' '
- 1      continue
-        if (nomma .ne. ' ') then
-!          - L'IMPRESSION DU MAILLAGE A ETE DEMANDEE
-            call jeexin(nomma//'           .TITR', iret)
+    if (fileFormat .eq. 'IDEAS') then
+        titleIdeas = ' '
+! ----- Get title from mesh datastructure
+        if (meshName .ne. ' ') then
+            call jeexin(meshName//'           .TITR', iret)
             if (iret .ne. 0) then
-                call jeveuo(nomma//'           .TITR', 'L', jtitr)
-                call jelira(nomma//'           .TITR', 'LONMAX', nbtitr)
-                do 2 i = 1, min(6, nbtitr)
-                    titsup(i+1) = zk80(jtitr-1+i)
- 2              continue
+                call jeveuo(meshName//'           .TITR', 'L', vk80 = meshTitleLine)
+                call jelira(meshName//'           .TITR', 'LONMAX', meshTitleLineNb)
+! ------------- Shift lines of title
+                do iTitle = 1, min(6, meshTitleLineNb)
+                    titleIdeas(iTitle+1) = meshTitleLine(iTitle)
+                end do
             endif
         endif
+! ----- Generate hour
         call enlird(dateur)
-!                     12345678901234567890
-        titsup(1) = ' ASTER V00.00.00 DU '
-        call gtoptk('versionD0', titsup(1)(9:16), iret)
+! ----- Get version of IDEAS
+        titleIdeas(1) = ' ASTER V00.00.00 DU '
+        call gtoptk('versionD0', titleIdeas(1)(9:16), iret)
         call gtoptk('date', date, iret)
-        titsup(1) = titsup(1) (1:20)//date(1:10)//'  RESULTAT DU '
-        titsup(1) (45:69) = dateur
-        titsup(4) = ' '
-!
-        write (ifi,'(A)') '    -1'
-        write (ifi,'(A)') '   151   %TITRE '
-        do 11 i = 1, 7
-            write (ifi,'(A)') titsup(i)
-11      continue
-        write (ifi,'(A)') '    -1'
+        titleIdeas(1) = titleIdeas(1) (1:20)//date(1:10)//'  RESULTAT DU '
+        titleIdeas(1) (45:69) = dateur
+        titleIdeas(4) = ' '
+! ----- Write title
+        write (fileUnit,'(A)') '    -1'
+        write (fileUnit,'(A)') '   151   %TITRE '
+        do iTitle = 1, 7
+            write (fileUnit,'(A)') titleIdeas(iTitle)
+        end do
+        write (fileUnit,'(A)') '    -1'
     endif
 !
     call jedema()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ subroutine te0517(option, nomte)
 #include "asterfort/pmfitg.h"
 #include "asterfort/pmfmats.h"
 #include "asterfort/porea2.h"
+#include "asterfort/porea4.h"
 #include "asterfort/poutre_modloc.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/tecach.h"
@@ -48,6 +49,7 @@ subroutine te0517(option, nomte)
 #include "asterfort/utmess.h"
 #include "asterfort/utpvlg.h"
 #include "blas/ddot.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,7 +61,7 @@ subroutine te0517(option, nomte)
     real(kind=8) :: ey, ez, temp, xl, gamma
     real(kind=8) :: xls2, d1b(7, 14), co(3), aa, e, nu, g, alfay, alfaz, phiy
     real(kind=8) :: phiz, forref, momref, carsec(6)
-    aster_logical :: reactu
+    aster_logical :: reactu, rigige
     character(len=24) :: mator
 !
 ! --------------------------------------------------------------------------------------------------
@@ -108,14 +110,20 @@ subroutine te0517(option, nomte)
 !
         reactu = .false.
         call tecach('ONO', 'PCOMPOR', 'L', iretc, iad=icompo)
-        if (iretc .eq. 0) reactu = (zk16(icompo+2).eq.'GROT_GDEP')
-!
+        if (iretc .eq. 0) then
+           reactu = (zk16(icompo+2).eq.'GROT_GDEP')
+           rigige = (zk16(icompo-1+RIGI_GEOM).eq.'OUI')
+        endif
+           
         call jevech('PVECTUR', 'E', ivectu)
         call r8inir(2*nc, 0.d0, fl, 1)
 !       Calcul de la matrice de passage global/local
         if (reactu) then
             gamma = zr(istrxm+18-1)
             call porea2(nno, nc, zr(igeom), gamma, pgl, xl)
+        else if (rigige) then
+            gamma = zr(istrxm+18-1)
+            call porea4(nno, nc, zr(igeom), gamma, pgl, xl)
         else
             xl = lonele()
             call matrot(zr(iorien), pgl)

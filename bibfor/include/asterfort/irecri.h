@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,50 +15,41 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine irecri(nomcon, form, ifi, titre, lgmsh,&
-                      nbcham, cham, partie, nbpara, para,&
-                      nbordr, ordr, lresu, motfac, iocc,&
-                      cecr, tycha, lcor, nbnot, numnoe,&
-                      nbmat, nummai, nbcmp, nomcmp, lsup,&
-                      borsup, linf, borinf, lmax, lmin,&
-                      formr, versio, niv)
-        character(len=*) :: nomcon
-        character(len=*) :: form
-        integer :: ifi
-        character(len=*) :: titre
-        aster_logical :: lgmsh
-        integer :: nbcham
-        character(len=*) :: cham(*)
-        character(len=*) :: partie
-        integer :: nbpara
-        character(len=*) :: para(*)
-        integer :: nbordr
-        integer :: ordr(*)
-        aster_logical :: lresu
-        character(len=*) :: motfac
-        integer :: iocc
-        character(len=*) :: cecr
-        character(len=8) :: tycha
-        aster_logical :: lcor
-        integer :: nbnot
-        integer :: numnoe(*)
-        integer :: nbmat
-        integer :: nummai(*)
-        integer :: nbcmp
-        character(len=*) :: nomcmp(*)
-        aster_logical :: lsup
-        real(kind=8) :: borsup
-        aster_logical :: linf
-        real(kind=8) :: borinf
-        aster_logical :: lmax
-        aster_logical :: lmin
-        character(len=*) :: formr
-        integer :: versio
-        integer :: niv
+    subroutine irecri(fileUnit   , dsName        , lResu     ,&
+                      titleKeywf , titleKeywfIocc,&
+                      storeNb    , storeListIndx ,&
+                      fieldListNb, fieldListType , &
+                      paraNb     , paraName      , paraFormat,&
+                      cmpUserNb  , cmpUserName   ,&
+                      cellUserNb , cellUserNume  ,&
+                      nodeUserNb , nodeUserNume  ,&
+                      lMeshCoor  , lmax          , lmin,&
+                      lsup       , borsup        ,&
+                      linf       , borinf        ,&
+                      realFormat , cplxFormat)
+        integer, intent(in) :: fileUnit
+        character(len=*), intent(in) :: dsName, titleKeywf
+        integer, intent(in) :: titleKeywfIocc
+        aster_logical, intent(in) :: lResu
+        integer, intent(in) :: storeNb
+        integer , pointer :: storeListIndx(:)
+        integer, intent(in) :: fieldListNb
+        character(len=*), pointer :: fieldListType(:)
+        integer, intent(in) :: paraNb
+        character(len=*), pointer :: paraName(:)
+        character(len=1), intent(in) :: paraFormat
+        integer, intent(in) :: cmpUserNb
+        character(len=8), pointer :: cmpUserName(:)
+        integer, intent(in) :: nodeUserNb
+        integer , pointer :: nodeUserNume(:)
+        integer, intent(in) :: cellUserNb
+        integer , pointer :: cellUserNume(:)
+        aster_logical, intent(in) :: lMeshCoor
+        aster_logical, intent(in) :: lsup, linf, lmax, lmin
+        real(kind=8), intent(in) :: borsup, borinf
+        character(len=*), intent(in) :: realFormat, cplxFormat
     end subroutine irecri
 end interface

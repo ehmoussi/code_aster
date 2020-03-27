@@ -21,10 +21,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    1 : _("""
-  Il faut autant de nom pour NOM_CHAM_MED que pour NOM_CHAM.
-"""),
-
     5 : _("""
  Le mot-clé RESTREINT n'est pas autorisé dans EXTR_RESU en reuse.
 """),
@@ -43,18 +39,6 @@ Le filtre TYPE_MAILLE a éliminée %(i1)d mailles .
     8 : _("""
   Aucune maille n'a été trouvée avec le critère donné dans la commande TYPE_MAILLE.
   Vérifiez la dimension du groupe de mailles utilisé.
-"""),
-
-    35 : _("""
-   désolé on ne sait pas écrire les champs aux noeuds de représentation constante et a valeurs complexes au format  %(k1)s
-"""),
-
-    40 : _("""
- aucune des composantes demandées sous le mot-clé NOM_CMP pour l'impression du CHAM_GD  %(k1)s  n'est présente dans la grandeur  %(k2)s
-"""),
-
-    41 : _("""
- aucune des composantes demandées sous le mot-clé NOM_CMP pour l'impression du champ  %(k1)s  du concept  %(k2)s  n'est présente dans la grandeur  %(k3)s
 """),
 
     46 : _("""

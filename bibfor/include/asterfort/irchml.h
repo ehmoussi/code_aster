@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,41 +15,30 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine irchml(chamel, ifi, form, titre,&
-                      loc, nomsd, nomsym, numord, lcor,&
-                      nbnot, numnoe, nbmat, nummai, nbcmp,&
-                      nomcmp, lsup, borsup, linf, borinf,&
-                      lmax, lmin, formr, ncmp,&
-                      nucmp)
-        character(len=*) :: chamel
-        integer :: ifi
-        character(len=*) :: form
-        character(len=*) :: titre
-        character(len=*) :: loc
-        character(len=*) :: nomsd
-        character(len=*) :: nomsym
-        integer :: numord
-        aster_logical :: lcor
-        integer :: nbnot
-        integer :: numnoe(*)
-        integer :: nbmat
-        integer :: nummai(*)
-        integer :: nbcmp
-        character(len=*) :: nomcmp(*)
-        aster_logical :: lsup
-        real(kind=8) :: borsup
-        aster_logical :: linf
-        real(kind=8) :: borinf
-        aster_logical :: lmax
-        aster_logical :: lmin
-        character(len=*) :: formr
-        integer :: ncmp
-        integer :: nucmp(*)
+    subroutine irchml(fileUnit   ,&
+                      fieldTypeZ , fieldNameZ  , fieldSupport,&
+                      cmpUserNb  , cmpUserName ,&
+                      cellUserNb , cellUserNume,&
+                      nodeUserNb , nodeUserNume,&
+                      lMeshCoor_ , lmax_       , lmin_,&
+                      lsup_      , borsup_     ,&
+                      linf_      , borinf_     ,&
+                      realFormat_, cplxFormat_)
+        integer, intent(in) :: fileUnit
+        character(len=*), intent(in) :: fieldNameZ, fieldTypeZ
+        character(len=4), intent(in) :: fieldSupport
+        integer, intent(in) :: cmpUserNb
+        character(len=8), pointer :: cmpUserName(:)
+        integer, intent(in) :: nodeUserNb
+        integer, pointer :: nodeUserNume(:)
+        integer, intent(in) :: cellUserNb
+        integer, pointer :: cellUserNume(:)
+        aster_logical, optional, intent(in) :: lMeshCoor_
+        aster_logical, optional, intent(in) :: lsup_, linf_, lmax_, lmin_
+        real(kind=8),  optional, intent(in) :: borsup_, borinf_
+        character(len=*),  optional, intent(in) :: realFormat_, cplxFormat_
     end subroutine irchml
 end interface

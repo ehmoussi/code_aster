@@ -78,10 +78,6 @@ class MEAXFLQ4(Element):
             para_out = ((SP.PPRME_R, LC.EPRMENO),),
         ),
 
-        OP.RIGI_GEOM(te=99,
-            para_out = ((SP.PMATUUR, MMATUUR),),
-        ),
-
         OP.RIGI_MECA(te=253,
             para_in  = ((SP.PGEOMER, LC.EGEOM2D), (SP.PMATERC, LC.CMATERC),),
             para_out = ((SP.PMATUUR, MMATUUR),),

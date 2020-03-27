@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine op0157()
-    implicit none
-!     PROCEDURE IMPR_GENE
-!     ------------------------------------------------------------------
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
@@ -47,21 +47,27 @@ subroutine op0157()
 #include "asterfort/ulopen.h"
 #include "asterfort/wkvect.h"
 !
+! --------------------------------------------------------------------------------------------------
+!
+! IMPR_GENE
+!
+! --------------------------------------------------------------------------------------------------
+!
     character(len=3) :: toucha, toucmp, toupar, interp
     character(len=4) :: motfac
-    character(len=8) :: k8b, form
+    character(len=8) :: k8b, form, meshName
     character(len=16) :: nomcmd, typcon, crit, fich
     character(len=19) :: gene, knum, kdisc, krang
     character(len=80) :: titre
-    aster_logical :: lhist
-!     ------------------------------------------------------------------
-!-----------------------------------------------------------------------
+    aster_logical :: lhist, lResu, lField
     integer :: ifi, iocc, ire2, iret, isy, jcmpg
     integer :: jdisc, jnosy, jordr, jpara, jrang, n, n01
     integer :: n10, n11, n21, n22, nbcmpg, nbdisc, nbnosy
     integer :: nbordr, nbpara, nc, nocc, np, nr
     real(kind=8) :: prec
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
     call infmaj()
     call getres(k8b, k8b, nomcmd)
@@ -82,7 +88,7 @@ subroutine op0157()
     motfac = 'GENE'
     call getfac(motfac, nocc)
 !
-    do 10 iocc = 1, nocc
+    do iocc = 1, nocc
 !
 !        --- SEPARATION DES DIFFERENTES OCCURENCES---
 !
@@ -93,8 +99,10 @@ subroutine op0157()
 !
 !        --- ECRITURE DU TITRE ---
 !
-        k8b = '        '
-        call irtitr(gene, k8b, form, ifi, titre)
+        lResu    = ASTER_TRUE
+        lField   = ASTER_FALSE
+        meshName = ' '
+        call irtitr(lResu, lField, gene, meshName, form, ifi, titre)
 !
 !        --- IMPRESSION DE LA STRUCTURE DU RESU_GENE ---
 !
@@ -117,9 +125,9 @@ subroutine op0157()
             if (typcon .eq. 'MODE_GENE') then
                 call jelira(gene//'.DESC', 'NOMUTI', nbnosy)
                 call wkvect('&&OP0157.NOM_SYMB', 'V V K16', nbnosy, jnosy)
-                do 20 isy = 1, nbnosy
+                do isy = 1, nbnosy
                     call jenuno(jexnum(gene//'.DESC', isy), zk16(jnosy- 1+isy))
- 20             continue
+                end do
             else
                 nbnosy = 3
                 call wkvect('&&OP0157.NOM_SYMB', 'V V K16', nbnosy, jnosy)
@@ -211,7 +219,7 @@ subroutine op0157()
         call jedetr('&&OP0157.NOMUTI_PARA')
         call jedetr('&&OP0157.NUME_ORDRE')
         call jedetr('&&OP0157.DISCRET')
- 10 end do
+    end do
     call ulopen(-ifi, ' ', fich, ' ', 'O')
 !
     call jedema()

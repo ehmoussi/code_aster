@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine irgmsh(nomcon, partie, ifi, nbcham, cham,&
                   lresu, nbordr, ordr, nbcmp, nomcmp,&
-                  nbmat, nummai, versio, lgmsh, tycha)
+                  nbmat, nummai, versio, lFirstOcc, tycha)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -42,7 +42,7 @@ subroutine irgmsh(nomcon, partie, ifi, nbcham, cham,&
 #include "asterfort/wkvect.h"
 !
     integer :: ifi, nbcham, nbordr, nbcmp, ordr(*), nbmat, nummai(*), versio
-    aster_logical :: lresu, lgmsh
+    aster_logical :: lresu, lFirstOcc
     character(len=*) :: nomcon
     character(len=*) :: cham(*), nomcmp(*), partie
     character(len=8) :: tycha
@@ -108,9 +108,8 @@ subroutine irgmsh(nomcon, partie, ifi, nbcham, cham,&
 !
 ! --- ECRITURE DE L'ENTETE DU FICHIER AU FORMAT GMSH
 !
-    if (.not.lgmsh) then
+    if (lFirstOcc) then
         call irgmpf(ifi, versio)
-        lgmsh = .true.
     endif
 !
 ! --- RECUPERATION DES INSTANTS, FREQUENCES, ...

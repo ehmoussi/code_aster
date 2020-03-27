@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irchor(ioccur, leresu, lresul, nchsym, nnuord,&
-                  nlicmp, novcmp, nnopar, nbnosy, nbordr,&
-                  nbrcmp, nbcmdu, nbpara, codret)
-    implicit none
+!
+subroutine irchor(keywf      , keywfIocc    ,&
+                  dsName     , lResu        , lField,&
+                  fieldListNb, fieldListType, fieldMedListType,&
+                  storeListNb, storeListIndx,&
+                  paraListNb , paraListName ,&
+                  cmpListNb  , cmpListName  ,&
+                  codret)
+!
+implicit none
+!
 #include "asterf_types.h"
-#include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
@@ -38,249 +44,314 @@ subroutine irchor(ioccur, leresu, lresul, nchsym, nnuord,&
 #include "asterfort/rsexch.h"
 #include "asterfort/rsutnu.h"
 #include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
-    integer :: ioccur, nbnosy, nbordr, nbrcmp, nbcmdu, nbpara, codret
-    character(len=8) :: leresu
-    character(len=*) :: nchsym, nnuord, nlicmp, novcmp, nnopar
-    aster_logical :: lresul
-! person_in_charge: nicolas.sellenet at edf.fr
-! ----------------------------------------------------------------------
-!  IMPR_RESU - CHAMP, NUMEROS D'ORDRE, ...
-!  -    -      --               --
-! ----------------------------------------------------------------------
 !
-!  CETTE ROUTINE SCRUTE LES MOTS-CLES TOUT_CHAM, NOM_CMP, ...
+character(len=16), intent(in) :: keywf
+integer, intent(in) :: keywfIocc
+aster_logical, intent(in) :: lField, lResu
+character(len=8), intent(in) :: dsName
+integer, intent(out) :: fieldListNb
+character(len=16), pointer :: fieldListType(:)
+character(len=80), pointer :: fieldMedListType(:)
+integer, intent(out) :: storeListNb
+integer, pointer :: storeListIndx(:)
+integer, intent(out) :: paraListNb
+character(len=16), pointer :: paraListName(:)
+integer, intent(out) :: cmpListNb
+character(len=8), pointer :: cmpListName(:)
+integer, intent(out) :: codret
 !
-! IN  :
-!   IOCCUR  I    NUMERO D'OCCURENCE DU MOT CLE FACTEUR
-!   LERESU  K8   CHAINE CONTENANT SOIT LE NOM DE LA SD RESULTAT SOIT
-!                 LE NOM DU CHAMP A IMPRIMER
-!   LRESUL  L    BOOLEEN INDIQUANT SI L'UTILISATEUR IMPRIME UN CHAMP
-!                 (FALSE) OU UN RESU (TRUE)
+! --------------------------------------------------------------------------------------------------
 !
-! IN/OUT :
-!   NCHSYM  K*   NOM DE L'OBJET JEVEUX CONTENANT LE NOM DES CHAMPS
-!                 A IMPRIMER
-!   NNUORD  K*   NOM DE L'OBJET JEVEUX CONTENANT LES NUMEROS D'ORDRE
-!   NLICMP  K*   NOM DE L'OBJET JEVEUX CONTENANT LES COMPOSANTES
-!   NOVCMP  K*   NOM DE L'OBJET JEVEUX CONTENANT LES NOMS MED
-!   NNOPAR  K*   NOM DE L'OBJET JEVEUX CONTENANT LES PARAMETRES
+! Print result or field in a file (IMPR_RESU)
 !
-! OUT :
-!   NBNOSY  I    NOMBRE DE CHAMPS A IMPRIMER
-!   NBORDR  I    NOMBRE DE NUMEROS D'ORDRE A IMPRIMER
-!   NBRCMP  I    NOMBRE DE COMPOSANTES
-!   NBCMDU  I    NOMBRE DE NOMS MED
-!   NPARAM  I    NOMBRE DE PARAMETRES (FORMAT 'RESULTAT')
-!   CODRET  I    CODE RETOUR (0 SI OK, 1 SINON)
+! Get parameters from user: field types, components, parameters and storing index
 !
+! --------------------------------------------------------------------------------------------------
 !
+! In  keywf            : keyword to read
+! In  keywfIocc        : keyword index to read
+! In  dsName           : name of datastructure (result or field)
+! In  lResu            : flag if datastructure is a result
+! Out fieldListNb      : length of list of field types to read
+! Ptr fieldListType    : pointer to list of field types to read
+! Ptr fieldMedListType : pointer to list of MED field types to read
+! Out paraListNb       : length of list of parameter names to read
+! Ptr paraListName     : pointer to the list of parameter names to read
+! Out storeNb          : length of list of storing slots to read
+! Ptr storeListIndx    : pointer to the list of storing slots to read
+! Out cmpListNb        : length of the list of component names to read
+! Ptr cmpListName      : pointer to the list of component names to read
+! Out codret           : error return code (0: OK)
 !
-    integer :: jnosy, jncmed, jpa, jordr, n23, iret, n21, nvcmp
-    integer :: n22, nnrmed, isy, nnocha, nnocmp, nchar, ibid, npreci
-    integer :: vali, ncrit, innosy, jnordr, icmp, nbcmpt, gd, ncmpmx, iad
-    integer :: ntpara, nnpara, jcmp, nparam
+! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: prec
+    integer :: nbFieldMedName, nbAllField
+    integer :: nbFieldName, nbResuMedName
+    integer :: iField, iStore, iCmp, iPara
+    integer :: quantityIndx, cmpCataNb, storeIndx, iret, lenString
+    integer :: nbOcc, nbParaCheck, nbCmpOut, nbStore, nbCmp
+    integer :: nbAllPara, nbParaName
+    real(kind=8) :: storePrec
+    character(len=3) :: paraAll, fieldAll
+    character(len=8) :: resultMedName, storeCrit, quantityName
+    character(len=19) :: fieldName
+    character(len=19), parameter :: storeJvName = '&&IRCHOR.STORE_LIST'
+    character(len=19), parameter :: paraJvName = '&&IRCHOR.PARA_LIST'
+    character(len=16) :: fieldType
+    character(len=80) :: fieldMedType
+    aster_logical :: lCheckCmp
+    character(len=8), pointer :: cmpName(:) => null()
+    character(len=8), pointer :: cmpCataName(:) => null()
+    character(len=16), pointer :: paraCheckName(:) => null()
+    character(len=16), pointer :: paraName(:) => null()
+    integer, pointer :: storeList(:) => null()
 !
-    character(len=1) :: k1bid
-    character(len=3) :: toupar, toucha
-    character(len=8) :: resmed, crit, nomgd
-    character(len=19) :: noch19, knum
-    character(len=24) :: valk(6)
-!
-    aster_logical :: afaire
-    character(len=8), pointer :: veri_nom_cmp(:) => null()
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-    afaire = .false.
-    codret = 0
+! - Initializations
 !
-!     --- ECRITURE D'UN CHAM_GD ---
-    if (.not.lresul) then
-        nbnosy = 1
-        call wkvect(nchsym, 'V V K16', nbnosy, jnosy)
-        call wkvect(novcmp, 'V V K80', nbnosy, jncmed)
-!       --- NOM DU CHAM_GD ---
-        zk16(jnosy) = leresu
-        nparam = 0
-        jpa = 1
-        nbordr = 1
-        call wkvect(nnuord, 'V V I', nbordr, jordr)
-        zi(jordr) = 1
-        call getvtx('RESU', 'NOM_CHAM_MED', iocc=ioccur, nbval=0, nbret=n23)
-        nbcmdu = - n23
-        call getvtx('RESU', 'NOM_CHAM_MED', iocc=ioccur, nbval=nbcmdu, vect=zk80( jncmed),&
-                    nbret=iret)
+    fieldListNb = 0
+    storeListNb = 0
+    paraListNb  = 0
+    cmpListNb   = 0
+    codret      = 0
 !
-!     --- ECRITURE D'UN RESULTAT_COMPOSE ---
-    else
-!       --- ON REGARDE QUELS SONT LES NOM_CHAM A IMPRIMER:
-        toucha = 'OUI'
-        call getvtx('RESU', 'TOUT_CHAM', iocc=ioccur, scal=toucha, nbret=n21)
-        call getvtx('RESU', 'NOM_CHAM', iocc=ioccur, nbval=0, nbret=n22)
-        call getvtx('RESU', 'NOM_CHAM_MED', iocc=ioccur, nbval=0, nbret=n23)
-        call getvtx('RESU', 'NOM_RESU_MED', iocc=ioccur, nbval=0, nbret=nnrmed)
-!       *** N22 EST NEGATIF SI L'UTILISATEUR DONNE UNE LISTE DE NOMS
-!           (PAR DEFAUT TOUS LES CHAMPS CAR MOT-CLE FACULTATIF)
-        if (abs(n21)+abs(n22) .eq. 0) n21=1
-        if ((n22.eq.0) .and. (n23.lt.0)) call utmess('F', 'PREPOST2_1')
-        if (n21 .gt. 0 .and. toucha .eq. 'OUI' .and. nnrmed .eq. 0) then
-!         - ON RECUPERE LES NOMS (ON IMPRIME TOUS LES CHAMPS)
-            call jelira(leresu//'           .DESC', 'NOMUTI', nbnosy)
-            call wkvect(nchsym, 'V V K16', nbnosy, jnosy)
-            do isy = 1, nbnosy
-                call jenuno(jexnum(leresu//'           .DESC', isy), zk16(jnosy-1+isy))
+! - No parameters to read
+!
+    if (.not.lField .and. .not.lResu) then
+        goto 999
+    endif
+!
+! - Read parameters
+!
+    if (lField) then
+! ----- For a field
+        fieldType      = dsName
+! ----- Type of field
+        fieldListNb    = 1
+        AS_ALLOCATE(vk16 = fieldListType, size = fieldListNb)
+        fieldListType(1) = fieldType
+! ----- Type of MED field
+        call getvtx(keywf, 'NOM_CHAM_MED', iocc=keywfIocc, nbval=0, nbret=nbFieldMedName)
+        if (nbFieldMedName .ne. 0) then
+            nbFieldMedName = - nbFieldMedName
+            ASSERT(nbFieldMedName .eq. 1)
+            AS_ALLOCATE(vk80 = fieldMedListType, size = fieldListNb)
+            call getvtx(keywf, 'NOM_CHAM_MED', iocc=keywfIocc, nbval=fieldListNb,&
+                        vect=fieldMedListType, nbret=nbOcc)
+        endif
+! ----- List of parameters: void (only for results)
+        nbParaCheck = 0
+        paraListNb  = 0
+! ----- List of storing index
+        storeListNb = 1
+! ----- List of components
+        call getvtx(keywf, 'NOM_CMP', iocc=keywfIocc, nbval=0, nbret=nbCmp)
+        if (nbCmp .lt. 0) then
+            nbCmp = -nbCmp
+            AS_ALLOCATE(vk8=cmpName, size=nbCmp)
+            call getvtx(keywf, 'NOM_CMP', iocc=keywfIocc, nbval=nbCmp,&
+                        vect=cmpName, nbret=nbOcc)
+        endif
+        cmpListNb = nbCmp
+    elseif (lResu) then
+! ----- For a complete result
+        fieldAll = 'OUI'
+        call getvtx(keywf, 'TOUT_CHAM', iocc=keywfIocc, scal=fieldAll, nbret=nbAllField)
+        call getvtx(keywf, 'NOM_CHAM', iocc=keywfIocc, nbval=0, nbret=nbFieldName)
+        call getvtx(keywf, 'NOM_CHAM_MED', iocc=keywfIocc, nbval=0, nbret=nbFieldMedName)
+        call getvtx(keywf, 'NOM_RESU_MED', iocc=keywfIocc, nbval=0, nbret=nbResuMedName)
+! ----- Check consistency
+        if ((nbFieldName .eq. 0) .and. (nbFieldMedName .lt. 0)) then
+            call utmess('F', 'MED3_1')
+        endif
+! ----- Default: all fields
+        if (abs(nbAllField)+abs(nbFieldName) .eq. 0) then
+            nbAllField = 1
+        endif
+        if (nbAllField .gt. 0 .and. fieldAll .eq. 'OUI' .and. nbResuMedName .eq. 0) then
+! --------- Get all fields
+            call jelira(dsName//'           .DESC', 'NOMUTI', fieldListNb)
+            AS_ALLOCATE(vk16 = fieldListType, size = fieldListNb)
+            do iField = 1, fieldListNb
+                call jenuno(jexnum(dsName//'           .DESC', iField), fieldListType(iField))
             end do
-        else if (n21.gt.0 .and. toucha.eq.'NON') then
-            nbnosy=0
-            jnosy =1
-        else if (n22.lt.0) then
-            nbnosy = - n22
-            nbcmdu = - n23
-            call wkvect(nchsym, 'V V K16', nbnosy, jnosy)
-            call wkvect(novcmp, 'V V K80', nbnosy, jncmed)
-!
-!         - ON RECUPERE LA LISTE DES NOMS DONNEE PAR L'UTILISATEUR
-            call getvtx('RESU', 'NOM_CHAM', iocc=ioccur, nbval=nbnosy, vect=zk16( jnosy),&
-                        nbret=nnocha)
-            call getvtx('RESU', 'NOM_CHAM_MED', iocc=ioccur, nbval=nbcmdu, vect=zk80(jncmed),&
-                        nbret=iret)
-            if ((nbcmdu.ne.0) .and. (nbcmdu.ne.nbnosy)) then
-                call utmess('F', 'PREPOST2_1')
+        else if (nbAllField .gt. 0 .and. fieldAll.eq.'NON') then
+! --------- No fields
+            fieldListNb = 0
+        else if (nbFieldName .lt. 0) then
+! --------- Get type of fields from user
+            fieldListNb = - nbFieldName
+            AS_ALLOCATE(vk16 = fieldListType, size = fieldListNb)
+            call getvtx(keywf, 'NOM_CHAM', iocc=keywfIocc, nbval=fieldListNb,&
+                        vect=fieldListType, nbret=nbOcc)
+! --------- Get type of fields for MED from user
+            if (nbFieldMedName .ne. 0) then
+                nbFieldMedName = - nbFieldMedName
+                if (nbFieldMedName .ne. fieldListNb) then
+                    call utmess('F', 'MED3_1')
+                endif
+                AS_ALLOCATE(vk80 = fieldMedListType, size = fieldListNb)
+                call getvtx(keywf, 'NOM_CHAM_MED', iocc=keywfIocc,nbval=fieldListNb,&
+                            vect=fieldMedListType, nbret=nbOcc)
             endif
-        else if (nnrmed.lt.0) then
-            call getvtx('RESU', 'NOM_CMP', iocc=ioccur, nbval=0, nbret=nnocmp)
-            if (nnocmp .lt. 0) then
-                valk(1)='NOM_CMP'
-                valk(2)='NOM_RESU_MED'
-                call utmess('F', 'MED2_6', nk=2, valk=valk)
-            endif
-            call jelira(leresu//'           .DESC', 'NOMUTI', nbcmdu)
-            call getvtx('RESU', 'NOM_RESU_MED', iocc=ioccur, scal=resmed, nbret=nnrmed)
-            call wkvect(nchsym, 'V V K16', nbcmdu, jnosy)
-            call wkvect(novcmp, 'V V K80', nbcmdu, jncmed)
-            nbnosy=nbcmdu
-            do isy = 1, nbcmdu
-                call jenuno(jexnum(leresu//'           .DESC', isy), zk16(jnosy-1+isy))
-                zk80(jncmed+isy-1)='________'
-                nchar=lxlgut(resmed)
-                zk80(jncmed+isy-1)(1:nchar)=resmed(1:nchar)
-                nchar=lxlgut(zk16(jnosy-1+isy))
-                zk80(jncmed+isy-1)(9:8+nchar)=zk16(jnosy-1+isy)(1:&
-                nchar)
+        else if (nbResuMedName .lt. 0) then
+! --------- Get type of fields from MED result
+            call getvtx(keywf, 'NOM_RESU_MED', iocc=keywfIocc, scal=resultMedName, nbret=nbOcc)
+            call jelira(dsName//'           .DESC', 'NOMUTI', fieldListNb)
+            AS_ALLOCATE(vk16 = fieldListType, size = fieldListNb)
+            AS_ALLOCATE(vk80 = fieldMedListType, size = fieldListNb)
+            do iField = 1, fieldListNb
+                call jenuno(jexnum(dsName//'           .DESC', iField), fieldListType(iField))
+                fieldMedType = '________'
+                lenString        = lxlgut(resultMedName)
+                fieldMedType(1:lenString) = resultMedName(1:lenString)
+                lenString        = lxlgut(fieldListType(iField))
+                fieldMedType(9:8+lenString) = fieldListType(iField)(1:lenString)
+                fieldMedListType(iField) = fieldMedType
             end do
         endif
-!
-!       --- ON REGARDE QUELS SONT LES NOM_CMP A IMPRIMER:
-        call getvtx('RESU', 'NOM_CMP', iocc=ioccur, nbval=0, nbret=nnocmp)
-        if (nnocmp .lt. 0) then
-            nvcmp=-nnocmp
-            AS_ALLOCATE(vk8=veri_nom_cmp, size=nvcmp)
-            call getvtx('RESU', 'NOM_CMP', iocc=ioccur, nbval=nvcmp, vect=veri_nom_cmp,&
-                        nbret=ibid)
-            afaire = .true.
+! ----- Get name of components (to check with catalog)
+        call getvtx(keywf, 'NOM_CMP', iocc=keywfIocc, nbval=0, nbret=nbCmp)
+        lCheckCmp = ASTER_FALSE
+        if (nbCmp .lt. 0) then
+            if (nbResuMedName .lt. 0) then
+                call utmess('F', 'MED3_6')
+            endif
+            nbCmp = -nbCmp
+            AS_ALLOCATE(vk8=cmpName, size=nbCmp)
+            call getvtx(keywf, 'NOM_CMP', iocc=keywfIocc, nbval=nbCmp,&
+                        vect=cmpName, nbret=nbOcc)
+            lCheckCmp = ASTER_TRUE
         endif
-!
-!       *** NOMS DES CHAMPS DANS ZK16 A PARTIR DE ZK16(JNOSY)
-!
-!       --- NUMEROS D'ORDRE POUR IOCCUR DU MOT-CLE FACTEUR RESU
-        knum = nnuord
-!       *** TEST DE PRESENCE DES MOTS CLES PRECISION ET CRITERE
-        call getvr8('RESU', 'PRECISION', iocc=ioccur, scal=prec, nbret=npreci)
-        call getvtx('RESU', 'CRITERE', iocc=ioccur, scal=crit, nbret=ncrit)
-!       *** RECUPERATION DES NUMEROS D'ORDRE DE LA STRUCTURE DE
-!          DONNEES DE TYPE RESULTAT LERESU A PARTIR DES VARIABLES
-!          D'ACCES UTILISATEUR 'NUME_ORDRE','FREQ','INST','NOEUD_CMP'
-!           (VARIABLE D'ACCES 'TOUT_ORDRE' PAR DEFAUT)
-        call rsutnu(leresu, 'RESU', ioccur, knum, nbordr,&
-                    prec, crit, iret)
-!       *** SI PB ON PASSE AU FACTEUR SUIVANT DE IMPR_RESU
-        if (iret .ne. 0.and.nbordr.eq.0) then
+        cmpListNb = nbCmp
+! ----- Get parameters to select real (INST, FREQ, etc.)
+        call getvr8(keywf, 'PRECISION', iocc=keywfIocc, scal=storePrec, nbret=nbOcc)
+        call getvtx(keywf, 'CRITERE', iocc=keywfIocc, scal=storeCrit, nbret=nbOcc)
+! ----- Get list of storing index from user
+        call rsutnu(dsName      ,&
+                    keywf       , keywfIocc,&
+                    storeJvName , nbStore  ,&
+                    storePrec   , storeCrit,&
+                    iret)
+        storeListNb = nbStore
+        if (iret .ne. 0 .and. nbStore .eq. 0) then
             codret = 1
             goto 999
         endif
-        call jeveuo(knum, 'L', jordr)
-!
-        if (n22 .lt. 0) then
-            do innosy = 0, nbnosy-1
-                do jnordr = 0, nbordr-1
-                    call rsexch(' ', leresu, zk16(jnosy+innosy), zi(jordr+jnordr), noch19,&
-                                iret)
+        call jeveuo(storeJvName, 'L', vi=storeList)
+! ----- Some checks
+        if (nbFieldName .lt. 0) then
+! --------- Check if field exists
+            do iField = 1, fieldListNb
+                fieldType = fieldListType(iField)
+                do iStore = 1, nbStore
+                    storeIndx = storeList(iStore)
+                    call rsexch(' ', dsName, fieldType, storeIndx, fieldName, iret)
                     if (iret .ne. 0) then
-                        valk (1) = zk16(jnosy+innosy)
-                        vali = zi(jordr+jnordr)
-                        call utmess('A', 'POSTRELE_41', sk=valk(1), si=vali)
+                        call utmess('A', 'RESULT3_4', sk=fieldType, si=storeIndx)
                     endif
                 end do
             end do
-            if (afaire) then
-                do icmp = 0, nvcmp-1
-                    nbcmpt = 0
-                    do innosy = 0, nbnosy-1
-                        call rsexch(' ', leresu, zk16(jnosy+innosy), zi( jordr), noch19,&
-                                    iret)
+! --------- Check components (only on the first storing index)
+            if (lCheckCmp) then
+                storeIndx = storeList(1)
+                nbCmpOut  = 0
+                do iCmp = 1, nbCmp
+                    do iField = 1, fieldListNb
+                        fieldType = fieldListType(iField)
+                        call rsexch(' ', dsName, fieldType, storeIndx, fieldName, iret)
                         if (iret .eq. 0) then
-                            call dismoi('NUM_GD', noch19, 'CHAMP', repi=gd)
-                            call jenuno(jexnum('&CATA.GD.NOMGD', gd), nomgd)
-                            if (nomgd .eq. 'VARI_R') then
-!                   TRAITEMENT PARTICULIER POUR LA GRANDEUR VARI_R
-                                nbcmpt = nbcmpt + 1
+                            call dismoi('NUM_GD', fieldName, 'CHAMP', repi=quantityIndx)
+                            call jenuno(jexnum('&CATA.GD.NOMGD', quantityIndx), quantityName)
+                            if (quantityName .eq. 'VARI_R') then
                                 goto 17
                             endif
-                            call jelira(jexnum('&CATA.GD.NOMCMP', gd), 'LONMAX', ncmpmx)
-                            call jeveuo(jexnum('&CATA.GD.NOMCMP', gd), 'L', iad)
-                            call irvcmp(ncmpmx, zk8(iad), veri_nom_cmp(icmp+1), nbcmpt)
+                            call jelira(jexnum('&CATA.GD.NOMCMP', quantityIndx),&
+                                               'LONMAX', cmpCataNb)
+                            call jeveuo(jexnum('&CATA.GD.NOMCMP', quantityIndx),&
+                                               'L', vk8 = cmpCataName)
+                            call irvcmp(cmpCataNb, cmpCataName, cmpName(iCmp), nbCmpOut)
                         endif
  17                     continue
                     end do
-                    if (nbcmpt .eq. 0) then
-                        valk (1) = veri_nom_cmp(icmp+1)
-                        valk (2) = k1bid
-                        call utmess('A', 'PREPOST5_61', nk=2, valk=valk)
+                    if (nbCmpOut .eq. 0) then
+                        call utmess('A', 'RESULT3_5', sk=cmpName(iCmp))
                     endif
                 end do
             endif
         endif
+! ----- Get list of parameters to print
+        paraAll = 'NON'
+        call getvtx(keywf, 'TOUT_PARA', iocc=keywfIocc, scal=paraAll, nbret=nbAllPara)
+        call getvtx(keywf, 'NOM_PARA', iocc=keywfIocc, nbval=0, nbret=nbParaName)
+! ----- Default: all parameters
+        if (nbParaName .eq. 0) then
+            nbAllPara = 1
+        endif
+! ----- Get list of parameters (to check)
+        if (nbAllPara .ne. 0 .and. paraAll .eq. 'NON') then
+            nbParaCheck = 0
+        else if (nbAllPara .ne. 0 .and. paraAll .eq. 'OUI') then
+            nbParaCheck = -1
+        else if (nbParaName.ne.0) then
+            nbParaCheck = -nbParaName
+            AS_ALLOCATE(vk16=paraCheckName, size=nbParaCheck)
+            call getvtx(keywf, 'NOM_PARA', iocc=keywfIocc, nbval=nbParaCheck, vect=paraCheckName)
+        endif
+    else
+        ASSERT(ASTER_FALSE)
+    endif
 !
-!       --- ON RECHERCHE LES PARAMETRES A ECRIRE ---
-!           (UNIQUEMENT SI FORMAT FICHIER = 'RESULTAT')
-        toupar = 'NON'
-        call getvtx('RESU', 'TOUT_PARA', iocc=ioccur, scal=toupar, nbret=ntpara)
-        call getvtx('RESU', 'NOM_PARA', iocc=ioccur, nbval=0, nbret=nnpara)
-        if (nnpara .eq. 0) ntpara = 1
-        if (ntpara .ne. 0 .and. toupar .eq. 'NON') then
-            nparam = 0
-            jpa = 1
-        else if (ntpara.ne.0.and.toupar.eq.'OUI') then
-            nparam = -1
-            jpa = 1
-        else if (nnpara.ne.0) then
-            nparam = -nnpara
-            call wkvect('&&IRCHOR.NOMUTI_PARA', 'V V K16', nparam, jpa)
-            call getvtx('RESU', 'NOM_PARA', iocc=ioccur, nbval=nparam, vect=zk16(jpa))
+! - Check parameters
+!
+    call irparb(dsName, nbParaCheck, paraCheckName, paraJvName, paraListNb)
+!
+! - Copy storing index
+!
+    if (storeListNb .ne. 0) then
+        AS_ALLOCATE(vi = storeListIndx, size = storeListNb)
+        if (lField) then
+            storeListIndx(1) = 1
+        else
+            call jeveuo(storeJvName, 'L', vi=storeList)
+            do iStore = 1, storeListNb
+                storeListIndx(iStore) = storeList(iStore)
+            end do
         endif
     endif
+    call jedetr(storeJvName)
 !
-!     --- CHOIX DES COMPOSANTES AUX FORMATS ---
-!         RESULTAT, CASTEM, MED ET GMSH
-    call getvtx('RESU', 'NOM_CMP', iocc=ioccur, nbval=0, nbret=nnocmp)
-    if (nnocmp .lt. 0) then
-        nbrcmp=-nnocmp
-        call wkvect(nlicmp, 'V V K8', nbrcmp, jcmp)
-        call getvtx('RESU', 'NOM_CMP', iocc=ioccur, nbval=nbrcmp, vect=zk8(jcmp),&
-                    nbret=ibid)
+! - Copy list of parameters
+!
+    if (paraListNb .ne. 0) then
+        AS_ALLOCATE(vk16 = paraListName, size = paraListNb)
+        call jeveuo(paraJvName, 'L', vk16 = paraName)
+        do iPara = 1, paraListNb
+            paraListName(iPara) = paraName(iPara)
+        end do
+    endif
+    call jedetr(paraJvName)
+!
+! - Copy list of components
+!
+    if (cmpListNb .ne. 0) then
+        AS_ALLOCATE(vk8 = cmpListName, size = cmpListNb)
+        do iCmp = 1, cmpListNb
+            cmpListName(iCmp) = cmpName(iCmp)
+        end do
     endif
 !
-!     - VERIFICATION DES PARAMETRES (FORMAT 'RESULTAT')
-    call irparb(leresu, nparam, zk16(jpa), nnopar, nbpara)
-!
 999 continue
-    AS_DEALLOCATE(vk8=veri_nom_cmp)
-    call jedetr('&&IRCHOR.NOMUTI_PARA')
+!
+! - Clean
+!
+    AS_DEALLOCATE(vk8=cmpName)
+    AS_DEALLOCATE(vk16=paraCheckName)
 !
     call jedema()
 !

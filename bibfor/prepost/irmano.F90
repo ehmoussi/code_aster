@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,77 +15,72 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irmano(noma, nbma, numai, nbnos, numnos)
-    implicit none
 !
-#include "jeveux.h"
-#include "asterfort/dismoi.h"
+subroutine irmano(meshNameZ   , meshNbNode  ,&
+                  nbCellSelect, cellSelect  ,&
+                  nodeSelect  , nbNodeSelect,&
+                  nodeFlag)
+!
+implicit none
+!
+#include "asterfort/assert.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexatr.h"
-#include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
 !
-    character(len=*) :: noma
-    integer :: nbma, numai(*), nbnos, numnos(*)
-! ----------------------------------------------------------------------
-!     BUT :   TROUVER LA LISTE DES NUMEROS DE NOEUDS SOMMETS D'UNE LISTE
-!             DE MAILLES
-!     ENTREES:
-!        NOMA   : NOM DU MAILLAGE
-!        NBMA   : NOMBRE DE MAILLES DE LA LISTE
-!        NUMAI  : NUMEROS DES MAILLES DE LA LISTE
-!     SORTIES:
-!        NBNOS  : NOMBRE DE NOEUDS SOMMETS
-!        NUMNOS : NUMEROS DES NOEUDS SOMMETS (UN NOEUD APPARAIT UNE
-!                               SEULE FOIS )
-! ----------------------------------------------------------------------
-!     ------------------------------------------------------------------
-    integer :: nnoe
-    character(len=8) :: nomma
+character(len=*), intent(in) :: meshNameZ
+integer, intent(in) :: meshNbNode
+integer, intent(in) :: nbCellSelect
+integer, pointer :: cellSelect(:)
+integer, intent(inout) :: nbNodeSelect
+integer, pointer :: nodeSelect(:)
+integer, pointer :: nodeFlag(:)
 !
+! --------------------------------------------------------------------------------------------------
 !
-!-----------------------------------------------------------------------
-    integer :: ima, imai, ino, inoe, ipoin
-    integer ::  jpoin, nbnoe, num
-    integer, pointer :: vnumnos(:) => null()
+! Print results
+!
+! Select nodes from cells
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: cellNbNode
+    character(len=8) :: meshName 
+    integer :: iCell, cellNume, iNode, nodeFirst, nodeNume
+    integer, pointer :: conxLong(:) => null()
     integer, pointer :: connex(:) => null()
-!-----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
-    nomma=noma
-    nbnos= 0
-!  --- RECHERCHE DU NOMBRE DE NOEUDS DU MAILLAGE ---
-!-DEL CALL JELIRA(NOMMA//'.NOMNOE','NOMMAX',NBNOE,' ')
-    call dismoi('NB_NO_MAILLA', nomma, 'MAILLAGE', repi=nbnoe)
-    AS_ALLOCATE(vi=vnumnos, size=nbnoe)
-!     --- INITIALISATION DU TABLEAU DE TRAVAIL &&IRMANO.NUMNOS ----
-    do ino = 1, nbnoe
-        vnumnos(ino) = 0
-    end do
-!     --- RECHERCHE DES NOEUDS SOMMETS ----
-    call jeveuo(nomma//'.CONNEX', 'L', vi=connex)
-    call jeveuo(jexatr(nomma//'.CONNEX', 'LONCUM'), 'L', jpoin)
-    do ima = 1, nbma
-        imai=numai(ima)
-        ipoin= zi(jpoin-1+imai)
-        nnoe = zi(jpoin-1+imai+1)-ipoin
-        do inoe = 1, nnoe
-            num=connex(ipoin-1+inoe)
-            vnumnos(num) =1
+!
+! - Initializations
+!
+    meshName = meshNameZ
+!
+! - Access to connectivity
+!
+    call jeveuo(meshName //'.CONNEX', 'L', vi=connex)
+    call jeveuo(jexatr(meshName //'.CONNEX', 'LONCUM'), 'L', vi = conxLong)
+!
+! - Loop on cells
+!
+    do iCell = 1, nbCellSelect
+        cellNume   = cellSelect(iCell)
+        nodeFirst  = conxLong(cellNume)
+        cellNbNode = conxLong(cellNume+1)-nodeFirst
+        do iNode = 1, cellNbNode
+            nodeNume = connex(nodeFirst-1+iNode)
+            if (nodeFlag(nodeNume) .eq. 0) then
+                nbNodeSelect = nbNodeSelect + 1
+                ASSERT(nbNodeSelect .le. meshNbNode)
+                nodeSelect(nbNodeSelect) = nodeNume
+                nodeFlag(nodeNume) = 1
+            endif
         end do
     end do
-!  --- STOCKAGE DES NOEUDS PRESENTS SUR LA LISTE DES MAILLES---
-    do inoe = 1, nbnoe
-        if (vnumnos(inoe) .eq. 1) then
-            nbnos=nbnos+1
-            numnos(nbnos)=inoe
-        endif
-    end do
 !
-    AS_DEALLOCATE(vi=vnumnos)
     call jedema()
 end subroutine
