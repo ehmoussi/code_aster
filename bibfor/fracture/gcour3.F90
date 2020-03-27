@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -361,7 +361,7 @@ subroutine gcour3(resu, noma, coorn, lnoff, trav1,&
 500         continue
             end do
 ! on transforme le cham_no_s en cham_no
-          call cnscno(cnstet,' ','OUI','V',chamno,'F',iret)
+          call cnscno(cnstet,' ','OUI','G',chamno,'F',iret)
           call detrsd('CHAM_NO_S',cnstet)
         endif
 !

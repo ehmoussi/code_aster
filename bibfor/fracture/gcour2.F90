@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -121,7 +121,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     call jeveuo(trav3, 'E', iadrt3)
     call jeveuo(fonoeu, 'L', iadrno)
     call jeveuo(coorn, 'L', iadrco)
-    call jeveuo(chfond, 'L', ifon)    
+    call jeveuo(chfond, 'L', ifon)
 !
 ! VERIFICATION SI MAILLAGE QUADRATIQUE OU NON
 !
@@ -156,7 +156,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     numgam = '&&COURON.NUMGAMM0'
     call wkvect(numgam, 'V V I', nbnoeu, iadnum)
     do j = 1, nbnoeu
-        call jenonu(jexnom(nomno, zk8(iadrno+j-1)), zi(iadnum+j-1))      
+        call jenonu(jexnom(nomno, zk8(iadrno+j-1)), zi(iadnum+j-1))
     enddo
 !
 !  SI LEVRE_INF EST DEFINIE DANS LE CONCEPT FOND
@@ -172,7 +172,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     stok4 = '&&COURON.DIREC'
     call wkvect(stok4, 'V V R', 3*nbnoeu, in2)
     call jeexin(basfon, iebas)
-!    
+!
 !   DETERMINATION DE LA DIRECTION DE PROPAGATION
     if(iebas .ne. 0) then
 !       CAS D'UNE FISSURE : LA DIRECTION EST A PRENDRE DANS BASEFOND
@@ -197,7 +197,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     call jeexin(nomfiss//'.BASEFOND', iebas)
 !
     if (iebas .ne. 0) then
-!       * cas general : la base du fond de fissure est definie et on 
+!       * cas general : la base du fond de fissure est definie et on
 !                       copie la normale
         call jeveuo(basfon, 'L', jvect)
         do i = 1, nbnoeu
@@ -223,7 +223,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbel)
 
     indicg = '&&COURON.INDIC        '
-    
+
     call wkvect(indicg, 'V V I', nbel, indic)
 !
 ! ALLOCATION DES OBJETS POUR STOCKER LE CHAMP_NO THETA ET LA DIRECTION
@@ -252,7 +252,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
         endif
 !  .DESC
         chamno(20:24) = '.DESC'
-        call wkvect(chamno, 'V V I', 3, idesc)
+        call wkvect(chamno, 'G V I', 3, idesc)
         call jeecra(chamno, 'DOCU', cval='CHNO')
         call jenonu(jexnom('&CATA.GD.NOMGD', 'DEPL_R'), numa)
         zi(idesc+1-1) = numa
@@ -326,7 +326,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
                 else
                     do i = 1, nbnoeu
                         zr(iadrt3-1+(k-1)*nbnoeu+i) = 1.d0
-                    end do 
+                    end do
                 endif
             endif
         else
@@ -426,7 +426,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
                     zr(itheta+(i-1)*3+2-1) = 0.d0
                     zr(itheta+(i-1)*3+3-1) = 0.d0
                 endif
-            end do          
+            end do
         endif
     end do
 !
