@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
                   nomsym, typech, numord, nbrcmp, nomcmp,&
                   nbnoec, linoec, nbmaec, limaec, lvarie,&
-                  sdcarm, carael, linopa, codret)
+                  sdcarm, carael, paraListNb, paraListName,&
+                  codret)
 !_______________________________________________________________________
-! person_in_charge: nicolas.sellenet at edf.fr
 !        IMPRESSION DU CHAMP CHANOM NOEUD/ELEMENT ENTIER/REEL
 !        AU FORMAT MED
 !     ENTREES:
@@ -40,6 +40,8 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 !        NBMAEC : NOMBRE DE MAILLES A ECRIRE (0, SI TOUTES LES MAILLES)
 !        LIMAEC : LISTE DES MAILLES A ECRIRE SI EXTRAIT
 !        SDCARM : CARA_ELEM (UTILE POUR LES SOUS-POINTS)
+! In  paraListNb       : length of list of parameter names
+! Ptr paraListName     : pointer to the list of parameter names
 !     SORTIES:
 !        CODRET : CODE DE RETOUR (0 : PAS DE PB, NON NUL SI PB)
 !_______________________________________________________________________
@@ -84,10 +86,11 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
 !
     character(len=8) :: noresu, typech, sdcarm, carael
     character(len=16) :: nomsym
-    character(len=19) :: chanom, ligrel, linopa
+    character(len=19) :: chanom, ligrel
     character(len=24) :: nocelk
     character(len=*) :: nomcmp(*), partie
-!
+integer, intent(in) :: paraListNb
+character(len=16), pointer :: paraListName(:)
     integer :: numord, nbrcmp, ifichi, iret
     integer :: nbnoec, nbmaec, icelk
     integer :: linoec(*), limaec(*)
@@ -182,9 +185,8 @@ subroutine irchme(ifichi, chanom, partie, nochmd, noresu,&
                 endif
             endif
             numpt = numord
-            if ( linopa.ne.' ' ) then
-                call irmpav(noresu, ifichi, linopa, numpt, numord,&
-                            instan)
+            if (paraListNb .gt. 0) then
+                call irmpav(noresu, ifichi, paraListNb, paraListName, numpt, numord, instan)
             endif
 !
         else

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -49,11 +49,16 @@ DEFI_GROUP( reuse=MA, MAILLAGE=MA,
 
 
 #      TRIA3  QUAD4  TRIA6  QUAD8  QUAD9
-
-MO=AFFE_MODELE(    MAILLAGE=MA,
-                         AFFE=_F(  TOUT = 'OUI',
-                                PHENOMENE = 'MECANIQUE',
-                                MODELISATION = ('AXIS','AXIS_SI')) )
+MO=AFFE_MODELE(
+            MAILLAGE=MA,
+            
+            AFFE=(
+_F( TOUT='OUI',
+               PHENOMENE = 'MECANIQUE',
+               MODELISATION = ('AXIS')),
+           _F( TOUT='OUI',
+               PHENOMENE = 'MECANIQUE',
+               MODELISATION = ('AXIS_SI',)),),);
 
 MOTH=AFFE_MODELE(    MAILLAGE=MA,
                            AFFE=_F(  TOUT = 'OUI',

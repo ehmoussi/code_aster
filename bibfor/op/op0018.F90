@@ -55,8 +55,8 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/ssafmo.h"
 #include "asterfort/utmess.h"
-#include "asterfort/model_check.h"
-#include "asterfort/model_print.h"
+#include "asterfort/modelCheck.h"
+#include "asterfort/modelPrint.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/gcncon.h"
 #include "asterfort/fetcrf.h"
@@ -80,7 +80,7 @@ implicit none
     character(len=8) :: mesh, model, sd_partit1, kret
     character(len=8) :: name_elem, z_quasi_zero, methode
     character(len=16) :: k16dummy, name_type_geom, repk, valk(2)
-    character(len=16) :: phenom, modeli, list_modelisa(10), keywordfact
+    character(len=16) :: phenom, phenomRead, modeli, list_modelisa(10), keywordfact
     character(len=19) :: ligrel
     character(len=24) :: mesh_name_elem, kdis
     character(len=32) :: phemod
@@ -90,7 +90,7 @@ implicit none
     aster_logical :: l_elem, l_grandeur_cara, lparallel_mesh
     aster_logical :: l_calc_rigi, l_veri_elem, l_need_neigh, l_hho
     integer :: ielem, iaffe
-    integer :: vali(4), ico, imodel, idx_modelisa
+    integer :: vali(4), ico, idx_modelisa
     integer, pointer :: p_cata_dim(:) => null()
     integer, pointer :: p_cata_model(:) => null()
     character(len=24) :: mesh_type_geom
@@ -177,127 +177,95 @@ implicit none
     call jeecra(model//'.MODELE    .LGRF', 'DOCU', cval=phenom(1:4))
 !
     if (nb_affe .ne. 0) then
-!
         keywordfact = 'AFFE'
-!
 ! ----- Access to mesh objects
-!
         mesh_name_elem = mesh//'.NOMMAI'
         mesh_type_geom = mesh//'.TYPMAIL'
         call jelira(mesh_name_elem, 'NOMMAX', nb_mesh_elem)
         call jeveuo(mesh_type_geom, 'L', vi = p_mesh_type_geom)
-!
 ! ----- Name of objects for model
-!
         model_maille = model//'.MAILLE'
-        model_liel = model//'.MODELE    .LIEL'
-!
+        model_liel   = model//'.MODELE    .LIEL'
 ! ----- Create main objects for model
-!
         call wkvect(model_maille, 'G V I', nb_mesh_elem, vi = p_model_maille)
-!
 ! ----- Working objects
-!
         AS_ALLOCATE(vi = p_wk_mail1, size = nb_mesh_elem)
         AS_ALLOCATE(vi = p_wk_mail2, size = nb_mesh_elem)
         AS_ALLOCATE(vi = p_wk_mail3, size = nb_mesh_elem)
-!
 ! ----- Loop on AFFE keyword
-!
         do iaffe = 1, nb_affe
-!
             nb_elem = 0
             dim_topo_init=-99
             p_wk_mail2(1:nb_mesh_elem) = 0
             p_wk_mail3(1:nb_mesh_elem) = 0
-!
-! --------- Get phenomene/modelisation
-!
-            call getvtx(keywordfact, 'PHENOMENE', iocc=iaffe, scal=phenom)
+! --------- Get Only ONE phénomene !
+            call getvtx(keywordfact, 'PHENOMENE', iocc=iaffe, scal=phenomRead)
+            if (phenomRead .ne. phenom) then
+                call utmess('F', 'MODELE1_11')
+            endif
+! --------- Get modelisation
             call getvtx(keywordfact, 'MODELISATION', iocc=iaffe, nbval=10, vect=list_modelisa,&
                         nbret=nb_modelisa)
-            ASSERT(nb_modelisa.gt.0)
-            ASSERT(nb_modelisa.le.10)
-!
+            ASSERT(nb_modelisa .eq. 1)
+            modeli = list_modelisa(1)
+            call deprecated_model(modeli)
+            call jenonu(jexnom('&CATA.'//phenom(1:13)//'.MODL', modeli), idx_modelisa)
+            call jeveuo(jexnum('&CATA.'//phenom, idx_modelisa), 'L', vi = p_cata_model)
+            phemod = phenom//modeli
 ! --------- Get elements
-!
             call jedetr(list_elem)
-            call getelem(mesh, keywordfact, iaffe, ' ', list_elem,&
-                         nb_elem)
+            call getelem(mesh, keywordfact, iaffe, ' ', list_elem, nb_elem)
             ASSERT(lparallel_mesh .or. nb_elem.gt.0)
-!
-! --------- Loop on modelisations
-!
-            do imodel = 1, nb_modelisa
-!
-! ------------- Current modelisation
-!
-                modeli = list_modelisa(imodel)
-                call deprecated_model(modeli)
-                call jenonu(jexnom('&CATA.'//phenom(1:13)//'.MODL', modeli), idx_modelisa)
-                call jeveuo(jexnum('&CATA.'//phenom, idx_modelisa), 'L', vi = p_cata_model)
-                phemod = phenom//modeli
-!
-! ------------- Topoaster_logical dimensions
-!
-                call dismoi('DIM_TOPO', phemod, 'PHEN_MODE', repi=dim_topo_curr)
-                if (dim_topo_init .eq. -99) then
-                    dim_topo_init = dim_topo_curr
-                else
-                    if (dim_topo_init .ne. dim_topo_curr) then
-                        call utmess('F', 'MODELE1_1')
+! --------- Check dimensions
+            call dismoi('DIM_TOPO', phemod, 'PHEN_MODE', repi=dim_topo_curr)
+            if (dim_topo_init .eq. -99) then
+                dim_topo_init = dim_topo_curr
+            else
+                if (dim_topo_init .ne. dim_topo_curr) then
+                    call utmess('F', 'MODELE1_1')
+                endif
+            endif
+! --------- Check 2D modelisations
+            if (modeli(1:4).eq.'AXIS' .or. modeli(1:4).eq.'PLAN' &
+                .or. modeli(2:6).eq.'_PLAN') then
+                call dismoi('Z_QUASI_ZERO', mesh, 'MAILLAGE', repk=z_quasi_zero)
+                if (z_quasi_zero .ne. 'OUI') then
+                    call utmess('A', 'MODELE1_3')
+                endif
+            endif
+! --------- Affect on elements
+            if (nb_elem .ne. 0) then
+                l_elem = .true.
+                call jeveuo(list_elem, 'L', vi = p_list_elem)
+                do ielem = 1, nb_elem
+                    nume_elem = p_list_elem(ielem)
+                    nume_type_geom = p_mesh_type_geom(nume_elem)
+                    if (p_cata_model(nume_type_geom) .gt. 0) then
+                        p_model_maille(nume_elem) = p_cata_model(nume_type_geom)
+                        p_wk_mail3(nume_elem) = p_cata_model(nume_type_geom)
                     endif
-                endif
-!
-! ------------- 2D modelisations
-!
-                if (modeli(1:4).eq.'AXIS' .or. modeli(1:4).eq.'PLAN' &
-                    .or. modeli(2:6).eq.'_PLAN') then
-                    call dismoi('Z_QUASI_ZERO', mesh, 'MAILLAGE', repk=z_quasi_zero)
-                    if (z_quasi_zero .ne. 'OUI') then
-                        call utmess('A', 'MODELE1_3')
-                    endif
-                endif
-!
-! ------------- Loop on elements
-!
-                if (nb_elem .ne. 0) then
-                    l_elem = .true.
-                    call jeveuo(list_elem, 'L', vi = p_list_elem)
-                    do ielem = 1, nb_elem
-                        nume_elem = p_list_elem(ielem)
-                        nume_type_geom = p_mesh_type_geom(nume_elem)
-                        if (p_cata_model(nume_type_geom) .gt. 0) then
-                            p_model_maille(nume_elem) = p_cata_model(nume_type_geom)
-                            p_wk_mail3(nume_elem) = p_cata_model(nume_type_geom)
-                        endif
-                        p_wk_mail1(nume_elem) = 1
-                        if (p_cata_dim(nume_type_geom) .eq. dim_topo_init) then
-                            p_wk_mail2(nume_elem) = 1
-                        endif
-                    end do
-                endif
-!
-! ------------- ON VERIFIE QU'A CHAQUE OCCURENCE DE AFFE, LES MAILLES
-! ------------- "PRINCIPALES" ONT BIEN ETE AFFECTEES PAR DES ELEMENTS
-! ------------- (PB DES MODELISATIONS A "TROUS") :
-!
-                ico=0
-                do nume_elem = 1, nb_mesh_elem
-                    if ((p_wk_mail2(nume_elem).eq.1) .and. (p_wk_mail3(nume_elem).eq.0)) then
-                        ico=ico+1
+                    p_wk_mail1(nume_elem) = 1
+                    if (p_cata_dim(nume_type_geom) .eq. dim_topo_init) then
+                        p_wk_mail2(nume_elem) = 1
                     endif
                 end do
-                if (ico .gt. 0) then
-                    vali(1) = iaffe
-                    vali(2) = ico
-                    vali(3) = dim_topo_init
-                    call utmess('A', 'MODELE1_70', ni=3, vali=vali)
+            endif
+! --------- ON VERIFIE QU'A CHAQUE OCCURENCE DE AFFE, LES MAILLES
+! --------- "PRINCIPALES" ONT BIEN ETE AFFECTEES PAR DES ELEMENTS
+! --------- (PB DES MODELISATIONS A "TROUS") :
+            ico=0
+            do nume_elem = 1, nb_mesh_elem
+                if ((p_wk_mail2(nume_elem).eq.1) .and. (p_wk_mail3(nume_elem).eq.0)) then
+                    ico=ico+1
                 endif
             end do
-!
+            if (ico .gt. 0) then
+                vali(1) = iaffe
+                vali(2) = ico
+                vali(3) = dim_topo_init
+                call utmess('A', 'MODELE1_70', ni=3, vali=vali)
+            endif
 ! --------- Check if user elements have been affected
-!
             nb_elem_naffe = 0
             do ielem = 1, nb_mesh_elem
                 nume_elem = ielem
@@ -351,8 +319,7 @@ implicit none
 ! ----- Create LIEL
 !
         lont_liel = nb_grel+nb_elem_affe
-        call jecrec(model_liel, 'G V I', 'NU', 'CONTIG', 'VARIABLE',&
-                    nb_grel)
+        call jecrec(model_liel, 'G V I', 'NU', 'CONTIG', 'VARIABLE', nb_grel)
         call jeecra(model_liel, 'LONT', lont_liel)
         call jeveuo(model_liel, 'E', vi = p_model_liel)
 !
@@ -419,7 +386,7 @@ implicit none
 ! - Print model information
 !
     if (nb_affe .gt. 0) then
-        call model_print(model)
+        call modelPrint(model)
     endif
 !
 ! - Automatic GREL size adaptation
@@ -435,7 +402,7 @@ implicit none
     ASSERT(n1.eq.1)
     if (nbproc.eq.1) kdis='CENTRALISE'
     if ((lparallel_mesh) .and. (kdis.ne.'CENTRALISE')) then
-        call utmess('F','MODELE1_11', nk = 2, valk = [kdis, mesh])
+        call utmess('F','MODELE1_12', nk = 2, valk = [kdis, mesh])
     end if
     if (kdis.eq.'SOUS_DOM.OLD' .or. kdis.eq.'SOUS_DOMAINE') then
         call gcncon('_', sd_partit1)
@@ -462,7 +429,7 @@ implicit none
 !
 ! - Check model
 !
-    call model_check(model, l_veri_elem)
+    call modelCheck(model, l_veri_elem)
 !
 ! - Create grandeurs caracteristiques
 !

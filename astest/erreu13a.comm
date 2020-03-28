@@ -36,7 +36,7 @@ MA=LIRE_MAILLAGE(FORMAT="ASTER",);
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
-                       MODELISATION=('3D','3D_SI',),),);
+                       MODELISATION=('3D_SI',),),);
 #################################
 ##CARACTERISTIQUES MECANIQUES ##
 #################################

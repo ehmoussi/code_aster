@@ -337,10 +337,6 @@ Contactez le support technique.
   -> Impossible de déterminer un nom de maillage MED.
 """),
 
-    63 : _("""
-  -> Le mot clé "INFO_MAILLAGE" est réservé au format MED.
-"""),
-
     64 : _("""
   -> Le CARA_ELEM fournit à IMPR_RESU (%(k1)s) est différent de celui lu
      dans le résultat a imprimer (%(k2)s). Cela n'est pas autorisé.

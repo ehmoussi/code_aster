@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -29,10 +29,18 @@ MAIL=DEFI_GROUP(reuse =MAIL,
                 MAILLAGE=MAIL,
                 CREA_GROUP_NO=_F(GROUP_MA=('L14','L43','L32','L21'),),)
 
-MOD_MECA=AFFE_MODELE(AFFE=_F(TOUT='OUI',
+MOD_MECA=AFFE_MODELE(AFFE=(
+_F(TOUT='OUI',
                              PHENOMENE='MECANIQUE',
-                             MODELISATION=('D_PLAN','D_PLAN_SI'),),
+                             MODELISATION=('D_PLAN',),),
+_F(TOUT='OUI',
+                             PHENOMENE='MECANIQUE',
+                             MODELISATION=('D_PLAN_SI'),),
+),
                      MAILLAGE=MAIL,)
+
+
+
 
 ECR=DEFI_FONCTION(PROL_GAUCHE='LINEAIRE',
                   NOM_PARA='EPSI',

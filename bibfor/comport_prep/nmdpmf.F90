@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,17 +52,20 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ibid, iret
-    aster_logical :: lcumu(2), lcoc(2)
-    character(len=8) :: licmp
+    aster_logical :: lcumu(2)
+    aster_logical :: lcoc
+    character(len=8) :: licmp(3)
     character(len=19) :: chs(2), chs3, chsx
     real(kind=8) :: lcoer(2)
     complex(kind=8) :: lcoec(2)
-    data lcumu/.false._1,.false./
-    data lcoc/.false._1,.false./
-    data lcoer/1.d0,1.d0/
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    lcumu = ASTER_FALSE
+    lcoc = ASTER_FALSE
+    lcoer = 1.d0
+    lcoec = (0.d0, 0.d0)
+    licmp = (/'DEFORM  ', 'DEFO_LDC', 'RIGIGEOM'/)
     call jemarq()
 !
 !     EN PRESENCE DE MULTIFIBRE, ON FUSIONNE LES CARTES
@@ -88,15 +91,15 @@ implicit none
 !
     call carces(chmate//'.COMPOR', 'ELEM', ' ', 'V', chsx,&
                 'A', ibid)
-!     ON ENLEVE LA COMPOSANTE 'DEFORM' DE LA CARTE
-    licmp = 'DEFORM'
-    call cesred(chsx, 0, [ibid], -1, licmp,&
+
+!   ON ENLEVE LA CARTE LES COMPOSANTES DE COMPOR A CONSERVER
+    call cesred(chsx, 0, [ibid], -3, licmp,&
                 'V', chs(2))
 !
 !     FUSION DES CHAM_ELEM_S + COPIE DANS "COMPOR"
     call detrsd('CARTE', compor)
     call cesfus(2, chs, lcumu, lcoer, lcoec,&
-                lcoc(1), 'V', chs3)
+                lcoc, 'V', chs3)
     call cescar(chs3, compor, 'V')
 !
 !     MENAGE

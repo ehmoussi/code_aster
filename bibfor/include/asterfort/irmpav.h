@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine irmpav(nomcon, ifichi, linopa, numdt, numit,&
-                      dt)
-        character(len=19) :: linopa
+    subroutine irmpav(nomcon, ifichi, paraListNb, paraListName, numdt, numit, dt)
+        integer, intent(in) :: paraListNb
+        character(len=16), pointer :: paraListName(:)
         character(len=*) :: nomcon
         integer :: ifichi, numdt, numit
         real(kind=8) :: dt

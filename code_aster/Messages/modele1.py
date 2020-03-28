@@ -62,7 +62,9 @@ Sur les éléments quelconques on peut obtenir des résultats faux.
 
     10 : _("""Le modèle contient un mélange d'éléments HHO et non HHO. Ce n'est pas possible."""),
 
-    11 : _("""Le modèle est basé sur le maillage parallèle %(k2)s. La méthode de distribution des éléments doit être CENTRALISE (et non pas %(k1)s)"""),
+    11 : _("""On ne peut utiliser qu'un seul phénomène."""),
+
+    12 : _("""Le modèle est basé sur le maillage parallèle %(k2)s. La méthode de distribution des éléments doit être CENTRALISE (et non pas %(k1)s)"""),
 
     14 : _("""
 Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D

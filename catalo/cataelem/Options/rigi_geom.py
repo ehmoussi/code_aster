@@ -108,5 +108,6 @@ RIGI_GEOM = Option(
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.DISCRET,'OUI'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.FLUIDE,'OUI'),)),
     ),
 )

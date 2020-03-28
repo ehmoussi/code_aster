@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irmpar(nomcon, ifichi, linopa)
-    use as_med_module, only: as_med_open
-    implicit none
+!
+subroutine irmpar(nomcon, ifichi, paraListNb, paraListName)
+!
+use as_med_module, only: as_med_open
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -34,34 +35,39 @@ subroutine irmpar(nomcon, ifichi, linopa)
 #include "asterfort/ulisog.h"
 #include "asterfort/utmess.h"
 !
-    character(len=19) :: linopa
-    character(len=*) :: nomcon
-    integer :: ifichi
-! person_in_charge: nicolas.sellenet at edf.fr
+character(len=*) :: nomcon
+integer :: ifichi
+integer, intent(in) :: paraListNb
+character(len=16), pointer :: paraListName(:)
 !
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
 !     CREATION D'UN PARAMETRE DANS UN FICHIER MED
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  NOMCON : K8  : NOM DU CONCEPT A IMPRIMER
 ! IN  IFICHI : IS  : UNITE LOGIQUE D'ECRITURE
-! IN  NOPARA : K16 : NOM D'UN PARAMATRE A AJOUTER
-!     ------------------------------------------------------------------
+! In  paraListNb       : length of list of parameter names
+! Ptr paraListName     : pointer to the list of parameter names
 !
-!     ------------------------------------------------------------------
-    integer :: edleaj, codret, hdfok, medok, jlnopa
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: edleaj, codret, hdfok, medok
     med_idt :: idfimd
-    integer :: nbpara, inopar
+    integer :: iPara
     integer :: typflo
     parameter (typflo=6)
     character(len=1) :: saux01
     character(len=8) :: saux08
-    character(len=16) :: saux16, nopara
+    character(len=16) :: saux16, paraName
     character(len=64) :: saux64
     character(len=200) :: nofimd, nopar2
     character(len=255) :: kfic
-!
     aster_logical :: ficexi
-!     ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
 !
     call ulisog(ifichi, kfic, saux01)
@@ -90,12 +96,10 @@ subroutine irmpar(nomcon, ifichi, linopa)
         call utmess('F', 'DVP_97', sk=saux08, si=codret)
     endif
 !
-    call jeveuo(linopa, 'L', jlnopa)
-    call jelira(linopa, 'LONMAX', nbpara)
-    do inopar = 0, nbpara-1
-        nopara = zk16(jlnopa+inopar)
-        saux64 = nomcon//nopara
-        nopar2 = nopara
+    do iPara = 1, paraListNb
+        paraName = paraListName(iPara)
+        saux64 = nomcon//paraName
+        nopar2 = paraName
         saux16 = ' '
 !       TROISIEME ARGUMENT : 6 TYPE FLOTTANT DANS MED
         call as_mprcre(idfimd, saux64, typflo, nopar2, saux16, codret)

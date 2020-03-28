@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,38 +15,24 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine arch93(resu, concep, nume, raide, nbmodd,&
+!
+subroutine arch93(resultName, concep, nume, raide, nbmodd,&
                   nbmodf, nbmoda, nbmoad, nbmodi, nbpsmo)
-    implicit none
 !
-!     BUT:
-!       OPERATEUR MODE_STATIQUE
-!
-!
-!     ARGUMENTS:
-!     ----------
-!
-!      ENTREE :
-!-------------
-!
-!      SORTIE :
-!-------------
-!
-! ......................................................................
-!
-!
-!
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/rs_get_liststore.h"
 #include "asterfort/codent.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
-#include "asterfort/irecri.h"
+#include "asterfort/irpara.h"
 #include "asterfort/irparb.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
@@ -60,35 +46,39 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
 #include "asterfort/rscrsd.h"
 #include "asterfort/rsexch.h"
 #include "asterfort/rsnoch.h"
-#include "asterfort/rsorac.h"
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vtcrem.h"
 #include "asterfort/wkvect.h"
-    integer :: ibid, neq, ifm, niv, lmoad, lmoda, vali, iret, nbmodi, lddld
-    integer :: lmodd, lddlf, lmodf, lvale, versio, ind, ie, i, ia, id, ieq
-    integer :: ierd, ifin, im, imoad, imoda, imode, imodf, iul, jaxe, jpara
-    integer :: lcoef, lddad, lfreq, lnom, lnume, lres, ltype, na, nbmoad, nbmoda
-    integer :: ladpa, nbmodd, nbmode, nbmodf, nbpar, nbpsmo, nbtrou, nnaxe, nnd
-    integer :: lnumm, tmod(1)
 !
-    real(kind=8) :: r8b, zero, un, coef(3), xnorm
+character(len=8), intent(in) :: resultName
 !
+! --------------------------------------------------------------------------------------------------
+!
+!       OPERATEUR MODE_STATIQUE
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: neq, ifm, niv, lmoad, lmoda, vali, iret, nbmodi, lddld
+    integer :: lmodd, lddlf, lmodf, lvale, ind, ie, i, ia, id, ieq
+    integer :: ierd, ifin, im, imoad, imoda, imode, imodf, mesgUnit, jaxe
+    integer :: lcoef, lddad, lfreq, lnom, lnume, ltype, na, nbmoad, nbmoda
+    integer :: ladpa, nbmodd, modeNb, nbmodf, paraNb, nbpsmo, nnaxe, nnd
+    integer :: lnumm
+    real(kind=8) :: zero, un, coef(3), xnorm
     character(len=1) :: tyddl
-    character(len=8) :: k8b, resu, monaxe, formar, chmat, carael
+    character(len=8) :: k8b, monaxe, chmat, carael
     character(len=8) :: nomnoe, nomcmp, knum, nomdir
     character(len=14) :: nume
     character(len=16) :: concep, acces(3)
     character(len=19) :: chamno, raide
     character(len=24) :: vale, valk, mocb, moatta, moaimp, moauni, mointf, ddlcb
     character(len=24) :: ddlmn, vefreq, ddlac, modele
-!
-    complex(kind=8) :: c16b
-!
     aster_logical :: direct
-    aster_logical :: lbid
+    integer, pointer :: modeList(:) => null()
+    character(len=16), pointer :: paraName(:) => null()
 !
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -109,14 +99,14 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
 !--                       --C
 !---------------------------C
 !
-    nbmode = nbmodd + nbmodf + nbmoda + nbmoad + nbmodi
+    modeNb = nbmodd + nbmodf + nbmoda + nbmoad + nbmodi
 !
     call dismoi('NB_EQUA', raide, 'MATR_ASSE', repi=neq)
     call dismoi('NOM_MODELE', raide, 'MATR_ASSE', repk=modele)
     call dismoi('CHAM_MATER', raide, 'MATR_ASSE', repk=chmat)
     call dismoi('CARA_ELEM', raide, 'MATR_ASSE', repk=carael)
 !
-    call rscrsd('G', resu, concep, nbmode)
+    call rscrsd('G', resultName, concep, modeNb)
 !
     imode = 0
     un=1.d0
@@ -133,7 +123,7 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
             if (zi(lddld+ieq-1) .eq. 1) then
                 imode = imode + 1
 !              --- LE VECTEUR ---
-                call rsexch(' ', resu, 'DEPL', imode, chamno,&
+                call rsexch(' ', resultName, 'DEPL', imode, chamno,&
                             ierd)
                 if (ierd .eq. 100) then
                     call vtcrem(chamno, raide, 'G', 'R')
@@ -150,36 +140,36 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                     zr(lvale+ie) = zr(lmodd+ind+ie)
                 end do
                 call jelibe(vale)
-                call rsnoch(resu, 'DEPL', imode)
+                call rsnoch(resultName, 'DEPL', imode)
 !              --- LES PARAMETRES ---
                 call rgndas(nume, ieq, l_print = .false., type_equaz = tyddl, &
                             name_nodez  = nomnoe, name_cmpz = nomcmp)
                 ASSERT(tyddl.eq.'A')
-                call rsadpa(resu, 'E', 1, 'NOEUD_CMP', imode,&
+                call rsadpa(resultName, 'E', 1, 'NOEUD_CMP', imode,&
                             0, sjv=lnom, styp=k8b)
                 zk16(lnom) = nomnoe//nomcmp
-                call rsadpa(resu, 'E', 1, 'NUME_DDL', imode,&
+                call rsadpa(resultName, 'E', 1, 'NUME_DDL', imode,&
                             0, sjv=lnume, styp=k8b)
                 zi(lnume) = ieq
-                call rsadpa(resu, 'E', 1, 'NUME_MODE', imode,&
+                call rsadpa(resultName, 'E', 1, 'NUME_MODE', imode,&
                             0, sjv=lnumm, styp=k8b)
                 zi(lnumm) = imode
-                call rsadpa(resu, 'E', 1, 'TYPE_DEFO', imode,&
+                call rsadpa(resultName, 'E', 1, 'TYPE_DEFO', imode,&
                             0, sjv=ltype, styp=k8b)
                 zk16(ltype) = 'DEPL_IMPO'
-                call rsadpa(resu, 'E', 1, 'TYPE_MODE', imode,&
+                call rsadpa(resultName, 'E', 1, 'TYPE_MODE', imode,&
                             0, sjv=ltype, styp=k8b)
                 zk16(ltype) = 'MODE_STA'
-                call rsadpa(resu, 'E', 1, 'MODELE', imode,&
+                call rsadpa(resultName, 'E', 1, 'MODELE', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = modele(1:8)
-                call rsadpa(resu, 'E', 1, 'CHAMPMAT', imode,&
+                call rsadpa(resultName, 'E', 1, 'CHAMPMAT', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = chmat
-                call rsadpa(resu, 'E', 1, 'CARAELEM', imode,&
+                call rsadpa(resultName, 'E', 1, 'CARAELEM', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = carael
-                call rsadpa(resu, 'E', 1, 'FREQ', imode,&
+                call rsadpa(resultName, 'E', 1, 'FREQ', imode,&
                             0, sjv=ltype, styp=k8b)
                 zr(ltype) = zero
             endif
@@ -198,7 +188,7 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                 imodf = imodf + 1
 !
 !              --- LE VECTEUR ---
-                call rsexch(' ', resu, 'DEPL', imode, chamno,&
+                call rsexch(' ', resultName, 'DEPL', imode, chamno,&
                             ierd)
                 if (ierd .eq. 100) then
                     call vtcrem(chamno, raide, 'G', 'R')
@@ -215,37 +205,37 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                     zr(lvale+ie) = zr(lmodf+ind+ie)
                 end do
                 call jelibe(vale)
-                call rsnoch(resu, 'DEPL', imode)
+                call rsnoch(resultName, 'DEPL', imode)
 !
 !              --- LES PARAMETRES ---
 !
                 call rgndas(nume, ieq, l_print = .false.,&
                             name_nodez  = nomnoe, name_cmpz = nomcmp)
-                call rsadpa(resu, 'E', 1, 'NOEUD_CMP', imode,&
+                call rsadpa(resultName, 'E', 1, 'NOEUD_CMP', imode,&
                             0, sjv=lnom, styp=k8b)
                 zk16(lnom) = nomnoe//nomcmp
-                call rsadpa(resu, 'E', 1, 'NUME_DDL', imode,&
+                call rsadpa(resultName, 'E', 1, 'NUME_DDL', imode,&
                             0, sjv=lnume, styp=k8b)
                 zi(lnume) = ieq
-                call rsadpa(resu, 'E', 1, 'NUME_MODE', imode,&
+                call rsadpa(resultName, 'E', 1, 'NUME_MODE', imode,&
                             0, sjv=lnumm, styp=k8b)
                 zi(lnumm) = imode
-                call rsadpa(resu, 'E', 1, 'TYPE_DEFO', imode,&
+                call rsadpa(resultName, 'E', 1, 'TYPE_DEFO', imode,&
                             0, sjv=ltype, styp=k8b)
                 zk16(ltype) = 'FORC_IMPO'
-                call rsadpa(resu, 'E', 1, 'TYPE_MODE', imode,&
+                call rsadpa(resultName, 'E', 1, 'TYPE_MODE', imode,&
                             0, sjv=ltype, styp=k8b)
                 zk16(ltype) = 'MODE_STA'
-                call rsadpa(resu, 'E', 1, 'MODELE', imode,&
+                call rsadpa(resultName, 'E', 1, 'MODELE', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = modele(1:8)
-                call rsadpa(resu, 'E', 1, 'CHAMPMAT', imode,&
+                call rsadpa(resultName, 'E', 1, 'CHAMPMAT', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = chmat
-                call rsadpa(resu, 'E', 1, 'CARAELEM', imode,&
+                call rsadpa(resultName, 'E', 1, 'CARAELEM', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = carael
-                call rsadpa(resu, 'E', 1, 'FREQ', imode,&
+                call rsadpa(resultName, 'E', 1, 'FREQ', imode,&
                             0, sjv=ltype, styp=k8b)
                 zr(ltype) = zero
             endif
@@ -264,7 +254,7 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                 imoad = imoad + 1
 !
 !              --- LE VECTEUR ---
-                call rsexch(' ', resu, 'DEPL', imode, chamno,&
+                call rsexch(' ', resultName, 'DEPL', imode, chamno,&
                             ierd)
                 if (ierd .eq. 100) then
                     call vtcrem(chamno, raide, 'G', 'R')
@@ -281,36 +271,36 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                     zr(lvale+ie) = zr(lmoad+ind+ie)
                 end do
                 call jelibe(vale)
-                call rsnoch(resu, 'DEPL', imode)
+                call rsnoch(resultName, 'DEPL', imode)
 !
 !              --- LES PARAMETRES ---
                 call rgndas(nume, ieq, l_print = .false.,&
                             name_nodez  = nomnoe, name_cmpz = nomcmp)
-                call rsadpa(resu, 'E', 1, 'NOEUD_CMP', imode,&
+                call rsadpa(resultName, 'E', 1, 'NOEUD_CMP', imode,&
                             0, sjv=lnom, styp=k8b)
                 zk16(lnom) = nomnoe//nomcmp
-                call rsadpa(resu, 'E', 1, 'NUME_DDL', imode,&
+                call rsadpa(resultName, 'E', 1, 'NUME_DDL', imode,&
                             0, sjv=lnume, styp=k8b)
                 zi(lnume) = ieq
-                call rsadpa(resu, 'E', 1, 'NUME_MODE', imode,&
+                call rsadpa(resultName, 'E', 1, 'NUME_MODE', imode,&
                             0, sjv=lnumm, styp=k8b)
                 zi(lnumm) = imode
-                call rsadpa(resu, 'E', 1, 'TYPE_DEFO', imode,&
+                call rsadpa(resultName, 'E', 1, 'TYPE_DEFO', imode,&
                             0, sjv=ltype, styp=k8b)
                 zk16(ltype) = 'ACCE_DDL_IMPO'
-                call rsadpa(resu, 'E', 1, 'TYPE_MODE', imode,&
+                call rsadpa(resultName, 'E', 1, 'TYPE_MODE', imode,&
                             0, sjv=ltype, styp=k8b)
                 zk16(ltype) = 'MODE_STA'
-                call rsadpa(resu, 'E', 1, 'MODELE', imode,&
+                call rsadpa(resultName, 'E', 1, 'MODELE', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = modele(1:8)
-                call rsadpa(resu, 'E', 1, 'CHAMPMAT', imode,&
+                call rsadpa(resultName, 'E', 1, 'CHAMPMAT', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = chmat
-                call rsadpa(resu, 'E', 1, 'CARAELEM', imode,&
+                call rsadpa(resultName, 'E', 1, 'CARAELEM', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = carael
-                call rsadpa(resu, 'E', 1, 'FREQ', imode,&
+                call rsadpa(resultName, 'E', 1, 'FREQ', imode,&
                             0, sjv=ltype, styp=k8b)
                 zr(ltype) = zero
             endif
@@ -380,7 +370,7 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                 imoda = imoda + 1
 !
 !              --- LE VECTEUR ---
-                call rsexch(' ', resu, 'DEPL', imode, chamno,&
+                call rsexch(' ', resultName, 'DEPL', imode, chamno,&
                             ierd)
                 if (ierd .eq. 100) then
                     call vtcrem(chamno, raide, 'G', 'R')
@@ -397,10 +387,10 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                     zr(lvale+ie) = zr(lmoda+ind+ie)
                 end do
                 call jelibe(vale)
-                call rsnoch(resu, 'DEPL', imode)
+                call rsnoch(resultName, 'DEPL', imode)
 !
 !              --- LES PARAMETRES ---
-                call rsadpa(resu, 'E', 1, 'NOEUD_CMP', imode,&
+                call rsadpa(resultName, 'E', 1, 'NOEUD_CMP', imode,&
                             0, sjv=lnom, styp=k8b)
                 if (direct) then
                     if (nnd .eq. 0) then
@@ -424,31 +414,31 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                         coef(3) = un
                     endif
                 endif
-                call rsadpa(resu, 'E', 1, 'COEF_X', imode,&
+                call rsadpa(resultName, 'E', 1, 'COEF_X', imode,&
                             0, sjv=lcoef, styp=k8b)
                 zr(lcoef) = coef(1)
-                call rsadpa(resu, 'E', 1, 'COEF_Y', imode,&
+                call rsadpa(resultName, 'E', 1, 'COEF_Y', imode,&
                             0, sjv=lcoef, styp=k8b)
                 zr(lcoef) = coef(2)
-                call rsadpa(resu, 'E', 1, 'COEF_Z', imode,&
+                call rsadpa(resultName, 'E', 1, 'COEF_Z', imode,&
                             0, sjv=lcoef, styp=k8b)
                 zr(lcoef) = coef(3)
-                call rsadpa(resu, 'E', 1, 'NUME_MODE', imode,&
+                call rsadpa(resultName, 'E', 1, 'NUME_MODE', imode,&
                             0, sjv=lnumm, styp=k8b)
                 zi(lnumm) = imode
-                call rsadpa(resu, 'E', 1, 'TYPE_DEFO', imode,&
+                call rsadpa(resultName, 'E', 1, 'TYPE_DEFO', imode,&
                             0, sjv=ltype, styp=k8b)
                 zk16(ltype) = 'ACCE_IMPO'
-                call rsadpa(resu, 'E', 1, 'TYPE_MODE', imode,&
+                call rsadpa(resultName, 'E', 1, 'TYPE_MODE', imode,&
                             0, sjv=ltype, styp=k8b)
                 zk16(ltype) = 'MODE_STA'
-                call rsadpa(resu, 'E', 1, 'MODELE', imode,&
+                call rsadpa(resultName, 'E', 1, 'MODELE', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = modele(1:8)
-                call rsadpa(resu, 'E', 1, 'CHAMPMAT', imode,&
+                call rsadpa(resultName, 'E', 1, 'CHAMPMAT', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = chmat
-                call rsadpa(resu, 'E', 1, 'CARAELEM', imode,&
+                call rsadpa(resultName, 'E', 1, 'CARAELEM', imode,&
                             0, sjv=ladpa, styp=k8b)
                 zk8(ladpa) = carael
             end do
@@ -466,7 +456,7 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
             imode = imode + 1
 !
 !              --- LE VECTEUR ---
-            call rsexch(' ', resu, 'DEPL', imode, chamno,&
+            call rsexch(' ', resultName, 'DEPL', imode, chamno,&
                         ierd)
             if (ierd .eq. 100) then
                 call vtcrem(chamno, raide, 'G', 'R')
@@ -483,35 +473,35 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
                 zr(lvale+ie) = zr(lmodd+ind+ie)
             end do
             call jelibe(vale)
-            call rsnoch(resu, 'DEPL', imode)
+            call rsnoch(resultName, 'DEPL', imode)
 !
 !              --- LES PARAMETRES ---
 !
-            call rsadpa(resu, 'E', 1, 'NOEUD_CMP', imode,&
+            call rsadpa(resultName, 'E', 1, 'NOEUD_CMP', imode,&
                         0, sjv=lnom, styp=k8b)
             zk16(lnom) = '  '
-            call rsadpa(resu, 'E', 1, 'NUME_DDL', imode,&
+            call rsadpa(resultName, 'E', 1, 'NUME_DDL', imode,&
                         0, sjv=lnume, styp=k8b)
             zi(lnume) = ieq
-            call rsadpa(resu, 'E', 1, 'NUME_MODE', imode,&
+            call rsadpa(resultName, 'E', 1, 'NUME_MODE', imode,&
                         0, sjv=lnumm, styp=k8b)
             zi(lnumm) = imode
-            call rsadpa(resu, 'E', 1, 'TYPE_DEFO', imode,&
+            call rsadpa(resultName, 'E', 1, 'TYPE_DEFO', imode,&
                         0, sjv=ltype, styp=k8b)
             zk16(ltype) = 'DEPL_IMPO'
-            call rsadpa(resu, 'E', 1, 'TYPE_MODE', imode,&
+            call rsadpa(resultName, 'E', 1, 'TYPE_MODE', imode,&
                         0, sjv=ltype, styp=k8b)
             zk16(ltype) = 'MODE_INT'
-            call rsadpa(resu, 'E', 1, 'FREQ', imode,&
+            call rsadpa(resultName, 'E', 1, 'FREQ', imode,&
                         0, sjv=ltype, styp=k8b)
             zr(ltype) = zr(lfreq+ieq-1)
-            call rsadpa(resu, 'E', 1, 'MODELE', imode,&
+            call rsadpa(resultName, 'E', 1, 'MODELE', imode,&
                         0, sjv=ladpa, styp=k8b)
             zk8(ladpa) = modele(1:8)
-            call rsadpa(resu, 'E', 1, 'CHAMPMAT', imode,&
+            call rsadpa(resultName, 'E', 1, 'CHAMPMAT', imode,&
                         0, sjv=ladpa, styp=k8b)
             zk8(ladpa) = chmat
-            call rsadpa(resu, 'E', 1, 'CARAELEM', imode,&
+            call rsadpa(resultName, 'E', 1, 'CARAELEM', imode,&
                         0, sjv=ladpa, styp=k8b)
             zk8(ladpa) = carael
 !
@@ -519,42 +509,29 @@ subroutine arch93(resu, concep, nume, raide, nbmodd,&
     endif
 !
     call titre()
-!
-!     --- ECRITURE EVENTUELLE DES VALEURS ET DES VECTEURS PROPRES ---
-    formar = '1PE12.5'
+
     if (niv .gt. 1) then
-        call rsorac(resu, 'LONUTI', ibid, r8b, k8b,&
-                    c16b, r8b, k8b, tmod, 1,&
-                    nbtrou)
-        nbmode=tmod(1)
-        call wkvect('&&OP0093.ECRITURE.RES', 'V V I', nbmode, lres)
-        call rsorac(resu, 'TOUT_ORDRE', ibid, r8b, k8b,&
-                    c16b, r8b, k8b, zi(lres), nbmode,&
-                    nbtrou)
-        call irparb(resu, -1, ' ', '&&OP0093.NOM_PARA', nbpar)
+! ----- Get list of storing index (number of modes)
+        call rs_get_liststore(resultName, modeNb)
+        ASSERT(modeNb .gt. 0)
+        AS_ALLOCATE(vi = modeList, size = modeNb)
+        call rs_get_liststore(resultName, modeNb, modeList)
+! ----- Get list of parameters
+        call irparb(resultName, -1, ' ', '&&OP0093.NOM_PARA', paraNb)
         call jeexin('&&OP0093.NOM_PARA', iret)
         if (iret .gt. 0) then
-            call jeveuo('&&OP0093.NOM_PARA', 'L', jpara)
+            call jeveuo('&&OP0093.NOM_PARA', 'L', vk16 = paraName)
         else
-            jpara = 1
-            nbpar = 0
+            paraNb = 0
         endif
-        r8b = 0.d0
-        ibid = 0
-        k8b = ' '
-        iul = iunifi( 'MESSAGE' )
-        call irecri(resu, 'RESULTAT', iul, k8b, lbid,&
-                    ibid, k8b, ' ', nbpar, zk16(jpara),&
-                    nbmode, zi(lres), .true._1, k8b, ibid,&
-                    'T', k8b, .false._1, ibid, [0],&
-                    ibid, [0], ibid, k8b, .false._1,&
-                    r8b, .false._1, r8b, .false._1, .false._1,&
-                    formar, versio, 2)
+! ----- Print list of parameters on message file
+        mesgUnit = iunifi('MESSAGE')
+        call irpara(resultName, mesgUnit,&
+                    modeNb    , modeList,&
+                    paraNb    , paraName,&
+                    'T')
+        AS_DEALLOCATE(vi = modeList)
     endif
-!
-!
-!
-!     ------------------------------------------------------------------
 !
     call jedema()
 end subroutine

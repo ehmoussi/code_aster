@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,8 @@ implicit none
 #include "asterf_types.h"
 #include "MeshTypes_type.h"
 #include "jeveux.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/codent.h"
 #include "asterfort/infniv.h"
 #include "asterfort/ircam1.h"
@@ -109,6 +111,9 @@ integer :: codret
     integer :: iaux, jaux, nrimpr
     integer :: existc, nbcmfi, nbval
     aster_logical :: lgaux, existm
+    integer :: iCmp
+    character(len=8), pointer :: cmpUserName(:) => null()
+    character(len=8), pointer :: cmpCataName(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -169,8 +174,21 @@ integer :: codret
 !
 ! 3. PREPARATION DU CHAMP A ECRIRE
 !   3.1. ==> NUMEROS, NOMS ET UNITES DES COMPOSANTES A ECRIRE
-    call utlicm(nbcmp, nomcmp, zk8(adsk+1), ncmprf, zk8(adsc),&
-                ncmpve, ntlcmp, ntncmp, ntucmp)
+    AS_ALLOCATE(vk8 = cmpUserName, size = nbcmp)
+    do iCmp = 1, nbCmp
+        cmpUserName(iCmp) = nomcmp(iCmp)
+    end do
+    AS_ALLOCATE(vk8 = cmpCataName, size = ncmprf)
+    do iCmp = 1, ncmprf
+        cmpCataName(iCmp) = zk8(adsc-1+iCmp)
+    end do
+    call utlicm(zk8(adsk+1),&
+                nbcmp     , cmpUserName,&
+                ncmprf    , cmpCataName,&
+                ncmpve    , ntlcmp     ,&
+                ntncmp    , ntucmp)
+    AS_DEALLOCATE(vk8 = cmpUserName)
+    AS_DEALLOCATE(vk8 = cmpCataName)
     if (ncmpve .gt. 80) then
         call utmess('A', 'MED_99', sk=nochmd)
         goto 999
