@@ -96,6 +96,8 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(
         usage=USAGE,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--version', action='store_true',
+                        help="show code_aster version")
     parser.add_argument('-g', '--debug', action='store_true',
                         help="print debugging information (same as "
                              "DEBUG=1 in environment)")
@@ -155,6 +157,11 @@ def parse_args(argv):
         logger.setLevel(WARNING)
     if args.debug:
         logger.setLevel(DEBUG)
+    if args.version:
+        tag = CFG.get('version_tag')
+        sha1 = CFG.get('version_sha1')[:12]
+        logger.info(f"code_aster {tag} ({sha1})")
+        parser.exit(0)
     if args.env and not args.wrkdir:
         parser.error("Argument '--wrkdir' is required if '--env' is enabled")
     if args.ptvsd_runner and not HAS_PTVSD:
