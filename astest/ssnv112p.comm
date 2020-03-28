@@ -311,6 +311,7 @@ TEST_RESU(RESU=_F(INST=1.0,
                   VALE_CALC=0.14871401203218093,
                   CRITERE='RELATIF',
                   MAILLE='M1',
+                  TOLE_MACHINE = 2E-6, 
                   ),
           )
 
@@ -322,6 +323,7 @@ TEST_RESU(RESU=_F(GROUP_NO='A',
                   VALE_CALC=9.52297340788059E-05,
                   CRITERE='RELATIF',
                   MAILLE='M1',
+                  TOLE_MACHINE = 2E-6, 
                   ),
           )
 # Test EPSG_ELGA

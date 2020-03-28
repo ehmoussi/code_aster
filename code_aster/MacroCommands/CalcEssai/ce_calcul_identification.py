@@ -20,7 +20,7 @@
 # person_in_charge: albert.alarcon at edf.fr
 
 import numpy.linalg as linalg
-from numpy import arctan, array, conjugate, identity, log, matrix, pi, transpose, zeros
+from numpy import arctan, array, conjugate, dot, identity, log, pi, transpose, zeros
 
 import aster
 import aster_core
@@ -120,36 +120,36 @@ class CalcEssaiIdentification:
         resultat = CalculInverse(self, self.res_base, self.Syy, self.type_intsp,
                                  self.modes_red, transpose(self.modes_act), self.mess)
 
-        try:
-            # Pour tous les calculs inverses, on desactive les fpe
-            # NB : on ne devrait avoir a les desactiver que pour les
-            # operations "sensibles", type SVD, mais en calibre 5, on observe
-            # des plantages sur de simples multiplications.
-            aster_core.matfpe(-1)
-            self.SQQ, self.val_sing, self.regul = resultat.calc_SQQ()
-            self.SQQ.nume_gene = nume_ddl_gene(self.res_base)
-            self.is_SQQ = 1
-            self.Syy_R = resultat.verif_Syy()
-            self.is_Syy_R = 1
-            self.Syy_R.set_model(self.res_obs)
-            self.Syy_R.nume_phy = self.Syy.nume_phy
-            self.Sff = resultat.calc_Sff()
-            self.is_Sff = 1
-            self.Sff.set_model(self.res_com)
-            self.Sff.nume_phy = nume_ddl_phy(self.res_com)
-            self.SQQ_R = resultat.verif_SQQ()
-            self.is_SQQ_R = 1
-            self.SQQ_R.nume_gene = nume_ddl_gene(self.res_base)
-            self.Syy_S = resultat.synthes_Syy()
-            self.is_Syy_S = 1
-            self.Syy_S.set_model(self.res_obs)
-            self.Syy_S.nume_phy = self.Syy.nume_phy
-            aster_core.matfpe(1)
+        #try:
+        # Pour tous les calculs inverses, on desactive les fpe
+        # NB : on ne devrait avoir a les desactiver que pour les
+        # operations "sensibles", type SVD, mais en calibre 5, on observe
+        # des plantages sur de simples multiplications.
+        aster_core.matfpe(-1)
+        self.SQQ, self.val_sing, self.regul = resultat.calc_SQQ()
+        self.SQQ.nume_gene = nume_ddl_gene(self.res_base)
+        self.is_SQQ = 1
+        self.Syy_R = resultat.verif_Syy()
+        self.is_Syy_R = 1
+        self.Syy_R.set_model(self.res_obs)
+        self.Syy_R.nume_phy = self.Syy.nume_phy
+        self.Sff = resultat.calc_Sff()
+        self.is_Sff = 1
+        self.Sff.set_model(self.res_com)
+        self.Sff.nume_phy = nume_ddl_phy(self.res_com)
+        self.SQQ_R = resultat.verif_SQQ()
+        self.is_SQQ_R = 1
+        self.SQQ_R.nume_gene = nume_ddl_gene(self.res_base)
+        self.Syy_S = resultat.synthes_Syy()
+        self.is_Syy_S = 1
+        self.Syy_S.set_model(self.res_obs)
+        self.Syy_S.nume_phy = self.Syy.nume_phy
+        aster_core.matfpe(1)
 
-        except TypeError:
-            self.mess.disp_mess("Calcul inverse non complete")
-            UTMESS('A', 'CALCESSAI0_4')
-            return
+        #except TypeError:
+            #self.mess.disp_mess("Calcul inverse non complete")
+            #UTMESS('A', 'CALCESSAI0_4')
+            #return
 
 
 
@@ -236,20 +236,20 @@ class CalculInverse:
         """ Calcul de la matrice d'impedance, affichage des cara modales
         et  calcul des excitations modales : [SQQ(om)] = [Z].[Sqq].[Z]^H"""
 
-        CPhi = matrix(self.CPhi)
+        CPhi = array(self.CPhi)
         for ind_freq in range(self.nb_freq):
             omega = 2*pi*self.f[ind_freq]
-            Zm1 = matrix(self.Zm1[ind_freq,:,:])
+            Zm1 = array(self.Zm1[ind_freq,:,:])
             try:
-                CPhiZm1 = CPhi*Zm1
+                CPhiZm1 = dot(CPhi,Zm1)
             except ValueError:
                 # produits matriciels impossibles
                 self.mess_err("SQQ", {"CPhi": str(shape(CPhi)),"d'impedance mecanique":str(shape(Zm1))})
                 raise TypeError
             U, S, VH = linalg.svd(CPhiZm1, full_matrices=False)
             Smax = max(S)
-            U = matrix(U)
-            V = matrix(conjugate(transpose(VH)))
+            U = array(U)
+            V = array(conjugate(transpose(VH)))
             l = len(S)
             S = array(S)
             inv_S = zeros(S.shape, dtype=complex)
@@ -261,12 +261,16 @@ class CalculInverse:
                 else:
                     inv_S[ind] = 0
                 self.regul[ind, ind_freq] = alpha[ind, 0]
-            inv_S = matrix(array(inv_S)*identity(l))
-            inv_CPhiZm1 = V*inv_S*conjugate(transpose(U))
+            inv_S = array(array(inv_S)*identity(l))
+            
+            inv_CPhiZm1 = dot(inv_S,conjugate(transpose(U)))
+            inv_CPhiZm1 = dot(V,inv_CPhiZm1)
             inv_CPhiZm1_H = conjugate(transpose(inv_CPhiZm1))
 
-            Syy_f = matrix(self.Syy[ind_freq,:,:])
-            SQQ_f = inv_CPhiZm1*Syy_f*inv_CPhiZm1_H
+            Syy_f = array(self.Syy[ind_freq,:,:])
+            
+            SQQ_f = dot(Syy_f,inv_CPhiZm1_H)
+            SQQ_f = dot(inv_CPhiZm1,SQQ_f)
             self.SQQ[ind_freq,:,:] = SQQ_f
 
         SQQ = InterSpectre(nom        = 'SQQ',
@@ -284,13 +288,17 @@ class CalculInverse:
     def verif_Syy(self):
         """ Recalcule l'inter-spectre Syy a partir de SQQ pour verification"""
 
-        CPhi = matrix(self.CPhi)
-        CPhi_H = matrix(conjugate(transpose(CPhi)))
+        CPhi = array(self.CPhi)
+        CPhi_H = array(conjugate(transpose(CPhi)))
         for ind_freq in range(self.nb_freq):
-            Zm1 = matrix(self.Zm1[ind_freq,:,:])
-            Zm1_H = matrix(conjugate(transpose(Zm1)))
-            SQQ_f = matrix(self.SQQ[ind_freq,:,:])
-            Syy_R_f = CPhi*Zm1*SQQ_f*Zm1_H*CPhi_H
+            Zm1 = array(self.Zm1[ind_freq,:,:])
+            Zm1_H = array(conjugate(transpose(Zm1)))
+            SQQ_f = array(self.SQQ[ind_freq,:,:])
+            
+            Syy_R_f = dot(Zm1_H,CPhi_H)
+            Syy_R_f = dot(SQQ_f,Syy_R_f)
+            Syy_R_f = dot(Zm1,Syy_R_f)
+            Syy_R_f = dot(CPhi,Syy_R_f)
             self.Syy_R[ind_freq,:,:] = Syy_R_f
 
         Syy_R = InterSpectre(nom        = 'SQQ_R',
@@ -308,11 +316,11 @@ class CalculInverse:
         """ Calcul de l'inter-spectre des efforts physiques a partir des
         deplacements physiques : [Sqq(om)] = ([CPhi]+)[Syy(om)]([CPhi]+)^H"""
 
-        PhiT_B = matrix(self.PhiT_B)
+        PhiT_B = array(self.PhiT_B)
         U, S, VH = linalg.svd(PhiT_B, full_matrices=False)
         Smax = max(S)
-        U = matrix(U)
-        V = matrix(conjugate(transpose(VH)))
+        U = array(U)
+        V = array(conjugate(transpose(VH)))
         l = len(S)
         inv_S = zeros(S.shape, dtype=complex)
         self.mess.disp_mess("Valeurs singulieres de la matrice de commande")
@@ -325,13 +333,16 @@ class CalculInverse:
                 inv_S[ind] = S[ind]/(S[ind]**2+self.alpha)
             else:
                 inv_S[ind] = 0
-        inv_S = matrix(array(inv_S)*identity(l))
-        inv_PhiT_B = V*inv_S*conjugate(transpose(U))
+        inv_S = array(array(inv_S)*identity(l))
+        
+        inv_PhiT_B = dot(inv_S,conjugate(transpose(U)))
+        inv_PhiT_B = dot(V,inv_PhiT_B)
         inv_PhiT_B_H = conjugate(transpose(inv_PhiT_B))
         for ind_freq in range(self.nb_freq):
-            SQQ_f = matrix(self.SQQ[ind_freq,:,:])
+            SQQ_f = array(self.SQQ[ind_freq,:,:])
             try:
-                Sff_f = inv_PhiT_B*SQQ_f*inv_PhiT_B_H
+                Sff_f = dot(SQQ_f,inv_PhiT_B_H)
+                Sff_f = dot(inv_PhiT_B,Sff_f)
             except ValueError:
                 self.mess_err("Sff", {"PhiT_B":str(PhiT_B.shape),"SQQ":str(SQQ_f.shape)})
                 raise TypeError
@@ -352,11 +363,12 @@ class CalculInverse:
     def verif_SQQ(self):
         """ Recalcule l'inter-spectre SQQ a partir de Sff, calcule un coefficient d'erreur"""
 
-        PhiT_B = matrix(self.PhiT_B)
-        PhiT_B_H = conjugate(transpose(matrix(PhiT_B)))
+        PhiT_B = array(self.PhiT_B)
+        PhiT_B_H = conjugate(transpose(array(PhiT_B)))
         for ind_freq in range(self.nb_freq):
-            Sff_f = matrix(self.Sff[ind_freq,:,:])
-            SQQ_R_f = PhiT_B*Sff_f*PhiT_B_H
+            Sff_f = array(self.Sff[ind_freq,:,:])
+            SQQ_R_f = dot(Sff_f,PhiT_B_H)
+            SQQ_R_f = dot(PhiT_B,SQQ_R_f)
             self.SQQ_R[ind_freq,:,:] = SQQ_R_f
 
         SQQ_R = InterSpectre(nom        = 'SQQ_R',
@@ -374,13 +386,17 @@ class CalculInverse:
     def synthes_Syy(self):
         """! Synthese de l'inter-spectre a partir des efforts physiques identifies"""
 
-        CPhi = matrix(self.CPhi)
+        CPhi = array(self.CPhi)
         CPhi_H = conjugate(transpose(CPhi))
         for ind_freq in range(self.nb_freq):
-            Zm1_f = matrix(self.Zm1[ind_freq,:,:])
+            Zm1_f = array(self.Zm1[ind_freq,:,:])
             Zm1_f_H = conjugate(transpose(Zm1_f))
-            SQQ_R_f = matrix(self.SQQ_R[ind_freq,:,:])
-            Syy_S_f = CPhi*Zm1_f*SQQ_R_f*Zm1_f_H*CPhi_H
+            SQQ_R_f = array(self.SQQ_R[ind_freq,:,:])
+            
+            Syy_S_f = dot(Zm1_f_H,CPhi_H)
+            Syy_S_f = dot(SQQ_R_f,Syy_S_f)
+            Syy_S_f = dot(Zm1_f,Syy_S_f)
+            Syy_S_f = dot(CPhi,Syy_S_f)
             self.Syy_S[ind_freq,:,:] = Syy_S_f
 
         Syy_S = InterSpectre(nom        = 'Syy_S',
@@ -405,7 +421,7 @@ class CalculInverse:
         m = self.mcoeff
         vect = []
         omega_i = self.l_omega_i
-        V = matrix(conjugate(transpose(VH)))
+        V = array(conjugate(transpose(VH)))
         nb_mod = len(omega_i)
         one = array([[1]]*nb_mod)
         vect1 = V*one
@@ -417,7 +433,7 @@ class CalculInverse:
             else:
                 vect.append([vect1[ind, 0]*(omega-om)**m+1.])
             ind = ind+1
-        vect = alpha*matrix(vect)
+        vect = alpha*array(vect)
         regul = VH*vect
 
 

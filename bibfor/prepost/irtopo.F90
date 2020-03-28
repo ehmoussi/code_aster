@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,361 +15,291 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irtopo(ioccur, formaf, ifichi, leresu, lresul,&
-                  nbmato, nonuma, nbnoto, nonuno, codret)
-    implicit none
+!
+subroutine irtopo(keywf     , keywfIocc   ,&
+                  dsName    , lResu       , lField,&
+                  cellListNb, cellListNume,&
+                  nodeListNb, nodeListNume,&
+                  fileFormat, fileUnit    ,&
+                  codret)
+!
+implicit none
 !
 #include "asterf_types.h"
-#include "jeveux.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/irmama.h"
 #include "asterfort/irmano.h"
 #include "asterfort/irnono.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/lxlgut.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
-    integer :: ioccur, nbnoto, nbmato, ifichi, codret
-    character(len=8) :: formaf, leresu
-    character(len=24) :: nonuma, nonuno
-    aster_logical :: lresul
-! person_in_charge: nicolas.sellenet at edf.fr
-! ----------------------------------------------------------------------
-!  IMPR_RESU - TRAITEMENT DU MOT CLE FACTEUR IOCCUR
-!  -    -                    -       ---
-! ----------------------------------------------------------------------
 !
-!  CETTE ROUTINE SCRUTE LES MOTS-CLES NOEUD, GROUP_NO, ...
-!   ET REALISE DES IMPRESSIONS POUR LE FORMAT RESULTAT
+character(len=16), intent(in) :: keywf
+integer, intent(in) :: keywfIocc
+aster_logical, intent(in) :: lField, lResu
+character(len=8), intent(in) :: dsName
+integer, intent(out) :: cellListNb
+integer, pointer :: cellListNume(:)
+integer, intent(out) :: nodeListNb
+integer, pointer :: nodeListNume(:)
+integer, intent(in) :: fileUnit
+character(len=8), intent(in) :: fileFormat
+integer, intent(out) :: codret
 !
-! IN  :
-!   IOCCUR  I    NUMERO D'OCCURENCE DU MOT CLE FACTEUR
-!   FORMAF  K8   FORMAT DU FICHIER A IMPRIMER
-!   IFICHI  I    UNITE LOGIQUE DU FICHIER A IMPRIMER
-!   LERESU  K9   NOM DU CHAMP OU DU RESULTAT
-!   LRESUL  L    INDIQUE SI LERESU EST UN RESU OU UN CHAMP
+! --------------------------------------------------------------------------------------------------
 !
-! IN/OUT :
-!   NONUMA  K24  NOM DE L'OBJET A CREER POUR LES MAILLES
-!   NONUNO  K24  NOM DE L'OBJET A CREER POUR LES NOEUDS
+! Print result or field in a file (IMPR_RESU)
 !
-! OUT :
-!   NBMATO  I    NOMBRE TOTAL DE MAILLES TROUVEES (INDIQUE SI UN
-!                 JEVEUO SUR NONUMA EST FAISABLE)
-!   NBNOTO  I    NOMBRE TOTAL DE NOEUDS TROUVES (INDIQUE SI UN
-!                 JEVEUO SUR NONUNO EST FAISABLE)
-!   CODRET  I    CODE RETOUR (0 SI OK, 1 SINON)
+! Get parameters from user: topological entities (nodes and elements)
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbno, nbgrn, nbma, nbgrm, nbnofa, nbgnfa, nbmafa
-    integer :: nbgmfa, jtopo, jlgrn, ibid, jlno, jlgrm, jngrm
-    integer :: jlma, jmma, nbnoe, ino, jnunou, nbnou, nbele, jnuma
-    integer :: nbnos, ii, igrm, igrn, ima, nbnomx, nbgnmx
-    integer :: nbmamx, nbgmmx, imxno, imxgn, imxma, imxgm, idebu, jnunot
-    integer :: iutil
+! In  keywf            : keyword to read
+! In  keywfIocc        : keyword index to read
+! In  dsName           : name of datastructure (result or field)
+! In  lResu            : flag if datastructure is a result
+! Out cellListNb       : number of cells require by user
+! Ptr cellListNume     : list of index of cells require by user
+! Out nodeListNb       : number of nodes require by user
+! Ptr nodeListNume     : list of index of nodes require by user
+! In  fileFormat       : format of file to print (MED, RESULTAT, etc.)
+! In  fileUnit         : index of file (logical unit)
+! Out codret           : error return code (0: OK)
 !
-    character(len=8) :: nomma
-    character(len=24) :: texte
-    integer, pointer :: filtre_no(:) => null()
-    integer, pointer :: ind_noeu(:) => null()
-    character(len=80), pointer :: nom_grno(:) => null()
-    character(len=80), pointer :: nom_noe(:) => null()
-    integer, pointer :: numnos(:) => null()
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: meshNbNode, meshNbCell
+    integer :: nbNodePrev, nbCellSelect, nbNodeSelect
+    integer :: iGrCell, iGrNode, iCell, iNode
+    integer :: nbCell, nbGrCell, nbNode, nbGrNode
+    integer :: nbOcc
+    integer :: imxno, imxgn, imxma, imxgm, idebu, iutil
+    character(len=8) :: meshName
+    integer, pointer :: nodeFlag(:) => null()
+    integer, pointer :: cellFlag(:) => null()
+    character(len=24), pointer :: grNodeName(:) => null()
+    character(len=8), pointer :: nodeName(:) => null()
+    character(len=24), pointer :: grCellName(:) => null()
+    character(len=8), pointer :: cellName(:) => null()
+    character(len=80) :: texte
+    character(len=80), pointer :: nodeFile(:) => null()
+    character(len=80), pointer :: grNodeFile(:) => null()
+    character(len=80), pointer :: cellFile(:) => null()
+    character(len=80), pointer :: grCellFile(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-!     --- TRAITEMENT DES NOEUDS,MAILLES,GPES DE NOEUDS ET MAILLES
-!         (OPERANDE DE SELECTION SUR DES ENTITES TOPOLOGIQUES)
+! - Initializations
 !
-    jlno = 1
-    nbno = 0
-    nbgrn = 0
-    nbma = 0
-    nbgrm = 0
-    nbmato = 0
-    nbnos = 0
-    nbnoto = 0
-    nbnou = 0
+    cellListNb = 0
+    nodeListNb = 0
+    codret     = 0
 !
-    codret=0
-    call getvtx('RESU', 'NOEUD', iocc=ioccur, nbval=0, nbret=nbnofa)
-    call getvtx('RESU', 'GROUP_NO', iocc=ioccur, nbval=0, nbret=nbgnfa)
-    call getvtx('RESU', 'MAILLE', iocc=ioccur, nbval=0, nbret=nbmafa)
-    call getvtx('RESU', 'GROUP_MA', iocc=ioccur, nbval=0, nbret=nbgmfa)
+! - No parameters to read
 !
-!     *** ON S'ALLOUE UN TABLEAU DE 8 ENTIERS POUR LA TOPOLOGIE
-    call wkvect('&&IRTOPO.LIST_TOPO', 'V V I', 8, jtopo)
+    if (.not.lField .and. .not.lResu) then
+        goto 999
+    endif
 !
-!   *** CAS D'UNE LISTE DE GROUPES DE NOEUDS
-    if (nbgnfa .lt. 0) then
-        nbgrn = -nbgnfa
-!     - ON S'ALLOUE :
-!       UN TABLEAU DE K8, LISTE DES NOMS DE GPES DE NOEUDS
-!       UN TABLEAU DE K80 (POUR FORMAT 'RESULTAT')
-        call wkvect('&&IRTOPO.LIST_GRNO', 'V V K24', nbgrn, jlgrn)
-        AS_ALLOCATE(vk80=nom_grno, size=nbgrn)
-        call getvtx('RESU', 'GROUP_NO', iocc=ioccur, nbval=nbgrn, vect=zk24( jlgrn),&
-                    nbret=ibid)
-        zi(jtopo-1+3) = nbgrn
-    else
-        jlgrn=1
+! - Get entities from user
+!
+    call getvtx(keywf, 'NOEUD', iocc=keywfIocc, nbval=0, nbret=nbNode)
+    call getvtx(keywf, 'GROUP_NO', iocc=keywfIocc, nbval=0, nbret=nbGrNode)
+    call getvtx(keywf, 'MAILLE', iocc=keywfIocc, nbval=0, nbret=nbCell)
+    call getvtx(keywf, 'GROUP_MA', iocc=keywfIocc, nbval=0, nbret=nbGrCell)
+    if (nbGrNode .lt. 0) then
+        nbGrNode = -nbGrNode
+        AS_ALLOCATE(vk24=grNodeName, size=nbGrNode)
+        call getvtx(keywf, 'GROUP_NO', iocc=keywfIocc, nbval=nbGrNode,&
+                    vect=grNodeName, nbret=nbOcc)
     endif
-!   *** CAS D'UNE LISTE DE NOEUDS
-    if (nbnofa .lt. 0) then
-        nbno = -nbnofa
-!     - ON S'ALLOUE :
-!       UN TABLEAU DE K8, LISTE DES NOMS DE NOEUDS
-!       UN TABLEAU DE K80 (POUR FORMAT 'RESULTAT')
-        call wkvect('&&IRTOPO.LIST_NOE', 'V V K8', nbno, jlno)
-        AS_ALLOCATE(vk80=nom_noe, size=nbno)
-        call getvtx('RESU', 'NOEUD', iocc=ioccur, nbval=nbno, vect=zk8(jlno),&
-                    nbret=ibid)
-        zi(jtopo-1+1) = nbno
+    if (nbNode .lt. 0) then
+        nbNode = -nbNode
+        AS_ALLOCATE(vk8=nodeName, size=nbNode)
+        call getvtx(keywf, 'NOEUD', iocc=keywfIocc, nbval=nbNode,&
+                    vect=nodeName, nbret=nbOcc)
     endif
-!   *** CAS D'UNE LISTE DE GROUPES DE MAILLES
-    if (nbgmfa .lt. 0) then
-        nbgrm = -nbgmfa
-!     - ON S'ALLOUE :
-!       UN TABLEAU DE K8, LISTE DES NOMS DE GPES DE MAILLES
-!       UN TABLEAU DE K80 (POUR FORMAT 'RESULTAT')
-        call wkvect('&&IRTOPO.LIST_GRMA', 'V V K24', nbgrm, jlgrm)
-        call wkvect('&&IRTOPO.NOM_GRMA', 'V V K80', nbgrm, jngrm)
-        call getvtx('RESU', 'GROUP_MA', iocc=ioccur, nbval=nbgrm, vect=zk24( jlgrm),&
-                    nbret=ibid)
-        zi(jtopo-1+7) = nbgrm
-    else
-        jlgrm=1
-        jngrm=1
+    if (nbGrCell .lt. 0) then
+        nbGrCell = -nbGrCell
+        AS_ALLOCATE(vk24=grCellName, size=nbGrCell)
+        call getvtx(keywf, 'GROUP_MA', iocc=keywfIocc, nbval=nbGrCell,&
+                    vect=grCellName, nbret=nbOcc)
     endif
-!   ***  CAS D'UNE LISTE DE MAILLES
-    if (nbmafa .lt. 0) then
-        nbma = -nbmafa
-!     - ON S'ALLOUE :
-!       UN TABLEAU DE K8, LISTE DES NOMS DE MAILLES
-!       UN TABLEAU DE K80 (POUR FORMAT 'RESULTAT')
-        call wkvect('&&IRTOPO.LIST_MAI', 'V V K8', nbma, jlma)
-        call wkvect('&&IRTOPO.NOM_MAI', 'V V K80', nbma, jmma)
-        call getvtx('RESU', 'MAILLE', iocc=ioccur, nbval=nbma, vect=zk8(jlma),&
-                    nbret=ibid)
-        zi(jtopo-1+5) = nbma
-    else
-        jlma=1
-        jmma=1
+    if (nbCell .lt. 0) then
+        nbCell = -nbCell
+        AS_ALLOCATE(vk8=cellName, size=nbCell)
+        call getvtx(keywf, 'MAILLE', iocc=keywfIocc, nbval=nbCell,&
+                    vect=cellName, nbret=nbOcc)
     endif
-!   ***  IL Y A SELECTION EN OPERANDE SUR NOEUDS OU MAILLES
-!        OU DES GROUPES DE NOEUDS OU DES GROUPES DE MAILLES
-    if (nbno .ne. 0 .or. nbgrn .ne. 0 .or. nbma .ne. 0 .or. nbgrm .ne. 0) then
-        if (lresul) then
-!       - C'EST UN RESULTAT COMPOSE: NOM DU MAILLAGE DANS NOMMA
-            call dismoi('NOM_MAILLA', leresu, 'RESULTAT', repk=nomma)
+!
+! - Prepare selectors
+!
+    if (nbNode .ne. 0 .or. nbGrNode .ne. 0 .or. nbCell .ne. 0 .or. nbGrCell .ne. 0) then
+        if (lResu) then
+            call dismoi('NOM_MAILLA', dsName, 'RESULTAT', repk=meshName)
         else
-!       - C'EST UN CHAM_GD: NOM DU MAILLAGE DANS NOMMA
-            call dismoi('NOM_MAILLA', leresu, 'CHAMP', repk=nomma)
+            call dismoi('NOM_MAILLA', dsName, 'CHAMP', repk=meshName)
         endif
-!     - NOMBRE TOTAL DE NOEUDS DU MAILLAGE NOMMA = NBNOE
-        call dismoi('NB_NO_MAILLA', nomma, 'MAILLAGE', repi=nbnoe)
-        AS_ALLOCATE(vi=ind_noeu, size=nbnoe)
-        do ino = 1, nbnoe
-            ind_noeu(ino)=0
-        end do
+        call dismoi('NB_NO_MAILLA', meshName, 'MAILLAGE', repi=meshNbNode)
+        call dismoi('NB_MA_MAILLA', meshName, 'MAILLAGE', repi=meshNbCell)
+        AS_ALLOCATE(vi = nodeFlag, size=meshNbNode)
+        AS_ALLOCATE(vi = nodeListNume, size = meshNbNode)
+        AS_ALLOCATE(vi = cellListNume, size = meshNbCell)
+        AS_ALLOCATE(vi = cellFlag, size=meshNbCell)
     endif
-!   ***  SELECTION SUR DES NOEUDS OU GROUPES DE NOEUDS
-    if (nbno .ne. 0 .or. nbgrn .ne. 0) then
-!     - ON S'ALLOUE UN TABLEAU D'ENTIERS A PARTIR DE ZI(JNUNOU)
-!       POUR LA LISTE DES NUMEROS DES NOEUDS A IMPRIMER
-        call wkvect('&&IRTOPO.NUMNOE', 'V V I', nbnoe, jnunou)
-!     - ON RECUPERE A PARTIR DE ZI(JNUNOU) LES NUMEROS DES
-!       NOEUDS DE LA LISTE DE NOEUDS OU DE GROUPES DE NOEUDS
-!       (NBNOU EST LE NBRE TOTAL DE NOEUDS TROUVES A IMPRIMER)
-        call irnono(nomma, nbnoe, nbno, zk8(jlno), nbgrn,&
-                    zk24(jlgrn), '&&IRTOPO.NUMNOE', nbnou, ind_noeu, '&&IRTOPO.LIST_TOPO')
-!     - ON RECUPERE DE NOUVEAU L'ADRESSE DE .NUMNOE CAR IRNONO
-!       A PU AGRANDIR CET OBJET :
-        call jeveuo('&&IRTOPO.NUMNOE', 'L', jnunou)
-        nbnoto = nbnoto + nbnou
+!
+! - Select nodes
+!
+    nbNodeSelect = 0
+    if (nbNode .ne. 0 .or. nbGrNode .ne. 0) then
+        call irnono(meshName    , meshNbNode  ,&
+                    nbNode      , nodeName    ,&
+                    nbGrNode    , grNodeName  ,&
+                    nodeListNume, nbNodeSelect,&
+                    nodeFlag)
+        nodeListNb = nodeListNb + nbNodeSelect
     endif
-!   ***  SELECTION SUR DES MAILLES OU GROUPES DE MAILLES
-    if (nbma .ne. 0 .or. nbgrm .ne. 0) then
-!     - ON S'ALLOUE UN TABLEAU POUR LES NUMEROS DES MAILLES ET
-!       UN TABLEAU POUR LES NUMEROS DES NOEUDS DE CES MAILLES
-        call jelira(nomma//'.NOMMAI', 'NOMMAX', nbele)
-        call wkvect(nonuma, 'V V I', nbele, jnuma)
-        AS_ALLOCATE(vi=numnos, size=nbnoe)
-!     - ON RECUPERE A PARTIR DE ZI(JNUMA) LES NUMEROS DES
-!       MAILLES DE LA LISTE DE MAILLES OU DE GROUPES DE MAILLES
-!       (NBMATO = NBRE TOTAL DE MAILLES TROUVEES A IMPRIMER)
-        call irmama(nomma, nbma, zk8(jlma), nbgrm, zk24(jlgrm),&
-                    nonuma, nbmato, '&&IRTOPO.LIST_TOPO')
-!     - ON RECUPERE DE NOUVEAU L'ADRESSE DE .NUMMAI CAR IRMAMA
-!       A PU AGRANDIR CET OBJET :
-        call jeveuo(nonuma, 'L', jnuma)
-!     - ON RECUPERE A PARTIR DE ZI(JNUNOS) LA LISTE DES NUMEROS
-!       DES NOEUDS SOMMETS DE CES MAILLES
-!      (NBNOS = NOMBRE DE NOEUDS SOMMETS DE CETTE LISTE)
-        call irmano(nomma, nbmato, zi(jnuma), nbnos, numnos)
-        if (nbnos .eq. 0) then
-            call utmess('F', 'PREPOST5_4')
-        endif
-        AS_ALLOCATE(vi=filtre_no, size=nbnos)
-        ii=0
-        do ino = 1, nbnos
-            if (ind_noeu(1+numnos(ino)-1) .eq. 0) then
-                ii=ii+1
-                filtre_no(ii)=numnos(ino)
-            endif
-        end do
-        nbnos=ii
-        nbnoto = nbnoto + nbnos
+!
+! - Select cells and nodes from cells
+!
+    nbCellSelect = 0
+    if (nbCell .ne. 0 .or. nbGrCell .ne. 0) then
+! ----- Select cells
+        call irmama(meshName    , meshNbCell  ,&
+                    nbCell      , cellName    ,&
+                    nbGrCell    , grCellName  ,&
+                    cellListNume, nbCellSelect,&
+                    cellFlag)
+        cellListNb = cellListNb + nbCellSelect
+! ----- Nodes from cells
+        nbNodePrev = nbNodeSelect
+        call irmano(meshName    , meshNbNode  ,&
+                    nbCellSelect, cellListNume,&
+                    nodeListNume, nbNodeSelect,&
+                    nodeFlag)
+        nodeListNb = nodeListNb + (nbNodeSelect - nbNodePrev)
+        nbNodeSelect = nbNodePrev
     endif
-    if (nbno .ne. 0 .or. nbgrn .ne. 0 .or. nbma .ne. 0 .or. nbgrm .ne. 0) then
-        if (nbnou .eq. 0 .and. nbmato .eq. 0) then
-            codret=1
+    if (nbNode .ne. 0 .or. nbGrNode .ne. 0 .or. nbCell .ne. 0 .or. nbGrCell .ne. 0) then
+        if (nbNodeSelect .eq. 0 .and. nbCellSelect .eq. 0) then
+            codret =1 
             goto 999
         endif
     endif
-!   ***  ON CREE UNE LISTE DE NUMEROS DE NOEUDS ISSUS
-!        DE GROUP_NO ET GROUP_MA
-    if (nbnoto .gt. 0) then
-!     - ON S'ALLOUE UN TABLEAU POUR LES NUMEROS DE CES NOEUDS
-        call wkvect(nonuno, 'V V I', nbnoto, jnunot)
-    endif
-    if (nbnou .gt. 0) then
-!     - LISTE DES NUMEROS DE NOEUDS
-        do ino = 1, nbnou
-            zi(jnunot-1+ino)=zi(jnunou-1+ino)
-        end do
-    endif
-    if (nbnos .gt. 0) then
-!     - SUIVIE DE LA LISTE DES NUMEROS DE NOEUDS SOMMETS
-        do ino = 1, nbnos
-            zi(jnunot-1+nbnou+ino)= filtre_no(ino)
-        end do
-    endif
 !
-!     ***************************************************************
-!     - CHAM_GD OU RESULTAT COMPOSE AU FORMAT 'RESULTAT':
-!       IMPRESSION LISTES DES NOMS DES NOEUDS ET MAILLES SELECTIONNES
-!     ***************************************************************
-    if (formaf .eq. 'RESULTAT') then
-        nbnomx = zi(jtopo-1+2)
-        nbgnmx = zi(jtopo-1+4)
-        nbmamx = zi(jtopo-1+6)
-        nbgmmx = zi(jtopo-1+8)
+! - Print for FORMAT='RESULTAT'
+!
+    if (fileFormat .eq. 'RESULTAT') then
         imxno = 0
         imxgn = 0
         imxma = 0
         imxgm = 0
-        if (nbnomx .ne. 0) then
+        if (nbNode .ne. 0) then
+            AS_ALLOCATE(vk80 = nodeFile, size = nbNode)
             idebu = 12
             imxno = imxno+1
-            do ino = 1, nbno
-                texte = zk8(jlno-1+ino)
+            do iNode = 1, nbNodeSelect
+                texte = nodeName(iNode)
                 iutil = lxlgut(texte)
                 if (iutil .ne. 0) then
                     if ((idebu+iutil) .gt. 80) then
                         imxno = imxno + 1
                         idebu = 1
                     endif
-                    nom_noe(imxno)(idebu:idebu+iutil)=texte(1:&
-                    iutil)
-                    idebu=idebu+iutil+1
+                    nodeFile(imxno)(idebu:idebu+iutil) = texte(1:iutil)
+                    idebu = idebu+iutil+1
                 endif
             end do
         endif
-        if (nbgnmx .ne. 0) then
+        if (nbGrNode .ne. 0) then
+            AS_ALLOCATE(vk80 = grNodeFile, size = nbGrNode)
             idebu = 12
             imxgn = imxgn + 1
-            do igrn = 1, nbgrn
-                texte = zk24(jlgrn-1+igrn)
+            do iGrNode = 1, nbGrNode
+                texte = grNodeName(iGrNode)
                 iutil = lxlgut(texte)
                 if (iutil .ne. 0) then
                     if ((idebu+iutil) .gt. 80) then
                         imxgn = imxgn + 1
                         idebu = 1
                     endif
-                    nom_grno(imxgn)(idebu:idebu+iutil)=texte(1:&
-                    iutil)
-                    idebu=idebu+iutil+1
+                    grNodeFile(imxgn)(idebu:idebu+iutil) = texte(1:iutil)
+                    idebu = idebu+iutil+1
                 endif
             end do
         endif
-        if (nbgmmx .ne. 0) then
+        if (nbGrCell .ne. 0) then
+            AS_ALLOCATE(vk80 = grCellFile, size = nbGrCell)
             idebu = 12
             imxgm = imxgm + 1
-            do igrm = 1, nbgrm
-                texte = zk24(jlgrm-1+igrm)
+            do iGrCell = 1, nbGrCell
+                texte = grCellName(iGrCell)
                 iutil = lxlgut(texte)
                 if (iutil .ne. 0) then
                     if ((idebu+iutil) .gt. 80) then
                         idebu = 1
                     endif
-                    zk80(jngrm-1+imxgm)(idebu:idebu+iutil)=texte(1:&
-                    iutil)
+                    grCellFile(imxgm)(idebu:idebu+iutil) = texte(1:iutil)
                     idebu=idebu+iutil+1
                 endif
             end do
         endif
-        if (nbmamx .ne. 0) then
+        if (nbCell .ne. 0) then
+            AS_ALLOCATE(vk80 = cellFile, size = nbCell)
             idebu = 12
             imxma = imxma + 1
-            do ima = 1, nbma
-                texte = zk8(jlma-1+ima)
+            do iCell = 1, nbCellSelect
+                texte = cellName(iCell)
                 iutil = lxlgut(texte)
                 if (iutil .ne. 0) then
                     if ((idebu+iutil) .gt. 80) then
                         imxma = imxma + 1
                         idebu = 1
                     endif
-                    zk80(jmma-1+imxma)(idebu:idebu+iutil)=texte(1:&
-                    iutil)
+                    cellFile(imxma)(idebu:idebu+iutil) = texte(1:iutil)
                     idebu=idebu+iutil+1
                 endif
             end do
         endif
-        call jeveuo('&&IRTOPO.LIST_TOPO', 'L', jtopo)
         if (imxno .ne. 0 .or. imxgn .ne. 0 .or. imxma .ne. 0 .or. imxgm .ne. 0) then
-            write(ifichi, '(/,20X,A)') 'ENTITES ' //'TOPOLOGIQUES SELECTIONNEES '
+            write(fileUnit, '(/,20X,A)') 'ENTITES TOPOLOGIQUES SELECTIONNEES '
         endif
         if (imxno .ne. 0) then
-            nom_noe(1)(1:11) = 'NOEUD    : '
-            write(ifichi,'(1X,A80)') (nom_noe(ino),ino=1,imxno)
+            nodeFile(1)(1:11) = 'NOEUD    : '
+            write(fileUnit,'(1X,A80)') (nodeFile(iNode),iNode=1,imxno)
         endif
         if (imxgn .ne. 0) then
-            nom_grno(1)(1:11) = 'GROUP_NO : '
-            write(ifichi,'(1X,A80)') (nom_grno(igrn),igrn=1,imxgn)
+            grNodeFile(1)(1:11) = 'GROUP_NO : '
+            write(fileUnit,'(1X,A80)') (grNodeFile(iGrNode),iGrNode=1,imxgn)
         endif
         if (imxma .ne. 0) then
-            zk80(jmma-1+1)(1:11) = 'MAILLE   : '
-            write(ifichi,'(1X,A80)') (zk80(jmma-1+ima),ima=1,imxma)
+            cellFile(1)(1:11) = 'MAILLE   : '
+            write(fileUnit,'(1X,A80)') (cellFile(iCell),iCell=1,imxma)
         endif
         if (imxgm .ne. 0) then
-            zk80(jngrm-1+1)(1:11) = 'GROUP_MA : '
-            write(ifichi,'(1X,A80)') (zk80(jngrm-1+igrm),igrm=1,imxgm)
+            grCellFile(1)(1:11) = 'GROUP_MA : '
+            write(fileUnit,'(1X,A80)') (grCellFile(iGrCell),iGrCell=1,imxgm)
         endif
-        write(ifichi,'(A)')
+        write(fileUnit,'(A)')
     endif
+!
 999 continue
-    call jedetr('&&IRTOPO.LIST_TOPO')
-    call jedetr('&&IRTOPO.LIST_GRNO')
-    call jedetr('&&IRTOPO.LIST_NOE')
-    call jedetr('&&IRTOPO.LIST_GRMA')
-    call jedetr('&&IRTOPO.NOM_GRMA')
-    call jedetr('&&IRTOPO.LIST_MAI')
-    call jedetr('&&IRTOPO.NOM_MAI')
-    call jedetr('&&IRTOPO.NUMNOE')
-    AS_DEALLOCATE(vk80=nom_noe)
-    AS_DEALLOCATE(vk80=nom_grno)
-    AS_DEALLOCATE(vi=ind_noeu)
-    AS_DEALLOCATE(vi=numnos)
-    AS_DEALLOCATE(vi=filtre_no)
+!
+    AS_DEALLOCATE(vk24 = grNodeName)
+    AS_DEALLOCATE(vk8  = nodeName)
+    AS_DEALLOCATE(vk24 = grCellName)
+    AS_DEALLOCATE(vk8  = cellName)
+    AS_DEALLOCATE(vk80 = nodeFile)
+    AS_DEALLOCATE(vk80 = grNodeFile)
+    AS_DEALLOCATE(vk80 = grCellFile)
+    AS_DEALLOCATE(vk80 = cellFile)
+    AS_DEALLOCATE(vi   = nodeFlag)
+    AS_DEALLOCATE(vi   = cellFlag)
 !
     call jedema()
 !

@@ -60,7 +60,7 @@ character(len=8), intent(in), optional :: model
     character(len=16) :: keywordfact
     integer :: i_comp, nb_comp, model_dim, iret
     character(len=16) :: defo_comp, rela_comp, type_cpla, mult_comp, type_comp
-    character(len=16) :: post_iter, model_mfront, defo_ldc
+    character(len=16) :: post_iter, model_mfront, defo_ldc, rigi_geom
     character(len=16) :: kit_comp(4)
     character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_umat
@@ -98,6 +98,7 @@ character(len=8), intent(in), optional :: model
         post_iter      = ' '
         defo_ldc       = ' '
         kit_comp(1:4)  = 'VIDE'
+        rigi_geom      = ' '
 ! ----- Get RELATION from command file
         call getvtx(keywordfact, 'RELATION', iocc = i_comp, scal = rela_comp)
         call deprecated_behavior(rela_comp)
@@ -106,6 +107,13 @@ character(len=8), intent(in), optional :: model
         call comp_meca_l(rela_comp, 'CRISTAL', l_cristal)
 ! ----- Get DEFORMATION from command file
         call getvtx(keywordfact, 'DEFORMATION', iocc = i_comp, scal = defo_comp)
+! ----- Get RIGI_GEOM from command file
+        if (getexm(keywordfact,'RIGI_GEOM') .eq. 1) then
+            call getvtx(keywordfact, 'RIGI_GEOM', iocc = i_comp, scal=rigi_geom, nbret=iret)
+            if (iret .eq. 0) then
+                rigi_geom = ' '
+            end if
+        end if
 ! ----- If SIMO_MIEHE, switch to a specific version of the behaviour catalog for some laws
         l_ldc_sm = ((rela_comp .eq. 'MFRONT')  .or. &
                     (rela_comp .eq. 'VISC_ISOT_TRAC') .or.&
@@ -148,6 +156,7 @@ character(len=8), intent(in), optional :: model
         ds_compor_prep%v_para(i_comp)%mult_comp   = mult_comp
         ds_compor_prep%v_para(i_comp)%post_iter   = post_iter
         ds_compor_prep%v_para(i_comp)%defo_ldc    = defo_ldc
+        ds_compor_prep%v_para(i_comp)%rigi_geom   = rigi_geom
     end do
 !
 end subroutine

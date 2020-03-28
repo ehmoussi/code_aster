@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ subroutine op0160()
             call ulopen(ific, ' ', fichie, 'NEW', 'O')
         endif
 !
-        call iredsu(macrel, format, ific, versio)
+        call iredsu(macrel, ific, versio)
 !
 !     ------------------------------------------------------------------
     else if (format .eq. 'MISS_3D') then

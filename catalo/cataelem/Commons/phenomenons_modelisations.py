@@ -4400,24 +4400,6 @@ phen.add('Q4GG', Modelisation(dim=(2,3), code='Q4S',
         (MT.SEG2      , EL.MEBOQ4G),
     )))
 
-phen.add('SHB', Modelisation(dim=(3,3), code='SHB',
-    attrs=(
-        (AT.NBSIGM,'6'),
-        (AT.TYPMOD,'C_PLAN'),
-    ),
-    elements=(
-        (MT.HEXA8     , EL.MECA_SHB8),
-        (MT.QUAD4     , EL.MECA_FACE4),
-        (MT.SEG2      , EL.MECA_ARETE2),
-        (MT.PENTA6    , EL.MECA_SHB6),
-        (MT.TRIA3     , EL.MECA_FACE3),
-        (MT.PENTA15   , EL.MECA_SHB15),
-        (MT.QUAD8     , EL.MECA_FACE8),
-        (MT.TRIA6     , EL.MECA_FACE6),
-        (MT.SEG3      , EL.MECA_ARETE3),
-        (MT.HEXA20    , EL.MECA_SHB20),
-    )))
-
 phen.add('TUYAU_3M', Modelisation(dim=(1,3), code='TU3',
     attrs=(
         (AT.POUTRE,'OUI'),

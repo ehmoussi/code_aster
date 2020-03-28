@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,39 +15,36 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine ircnc8(ifi, nbno, prno, nueq, nec,&
-                      dg, ncmpmx, vale, nomcmp, nomnoe,&
-                      lcor, ndim, coor, numnoe, nbcmpt,&
-                      nucmpu, lsup, borsup, linf, borinf,&
-                      lmax, lmin, formr)
-        integer :: ifi
-        integer :: nbno
-        integer :: prno(*)
-        integer :: nueq(*)
-        integer :: nec
-        integer :: dg(*)
-        integer :: ncmpmx
-        complex(kind=8) :: vale(*)
-        character(len=*) :: nomcmp(*)
-        character(len=*) :: nomnoe(*)
-        aster_logical :: lcor
-        integer :: ndim
-        real(kind=8) :: coor(*)
-        integer :: numnoe(*)
-        integer :: nbcmpt
-        integer :: nucmpu(*)
-        aster_logical :: lsup
-        real(kind=8) :: borsup
-        aster_logical :: linf
-        real(kind=8) :: borinf
-        aster_logical :: lmax
-        aster_logical :: lmin
-        character(len=*) :: formr
+    subroutine ircnc8(fileUnit , realFormat  , cplxFormat  ,&
+                      nodeListNb, nodeListNume, nodeListName,&
+                      lMeshCoor, meshDime    , meshCoor    ,&
+                      cmpCataNb, cmpCataName ,&
+                      cmpListNb, cmpListIndx ,&
+                      nec      , nueq        ,&
+                      prno     , codeInte    ,&
+                      lmax     , lmin        ,&
+                      lsup     , borsup      ,&
+                      linf     , borinf      ,&
+                      vale)
+        integer, intent(in) :: fileUnit
+        character(len=8), intent(in) :: realFormat, cplxFormat
+        integer, intent(in) :: nodeListNb
+        integer, pointer :: nodeListNume(:)
+        character(len=8), pointer :: nodeListName(:)
+        aster_logical, intent(in) :: lMeshCoor
+        integer, intent(in) :: meshDime
+        real(kind=8), pointer :: meshCoor(:)
+        integer, intent(in) :: cmpCataNb
+        character(len=8), pointer :: cmpCataName(:)
+        integer, intent(in) :: cmpListNb
+        integer, pointer :: cmpListIndx(:)
+        integer, intent(in) :: nec
+        integer, pointer :: nueq(:), prno(:), codeInte(:)
+        aster_logical, intent(in) :: lsup, linf, lmax, lmin
+        real(kind=8),  intent(in) :: borsup, borinf
+        complex(kind=8), pointer  :: vale(:)
     end subroutine ircnc8
 end interface

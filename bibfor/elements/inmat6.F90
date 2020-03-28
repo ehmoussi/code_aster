@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,19 +49,6 @@ subroutine inmat6(elrefa, fapg, mganos)
 !
     ASSERT(nno.le.nbnomx)
     ASSERT(npg.le.nbpgmx)
-!
-!     CAS DU SHB8 ET DU SHB6 NON INVERSIBLE
-    if (fapg .eq. 'SHB5' .or. fapg .eq. 'SHB6') then
-        call r8inir(nbnomx*nbnomx, 0.d0, mganos, 1)
-        do i = 1, nnos/2
-            mganos(1,i) = 1.d0
-        end do
-        do i = nnos/2+1, nnos
-            mganos(5,i) = 1.d0
-        end do
-        elref2 = elrefa
-        goto 100
-    endif
 !
 !     CAS DU QU4/FIS2 NON INVERSIBLE
     if (elrefa .eq. 'QU4' .and. fapg .eq. 'FIS2') then

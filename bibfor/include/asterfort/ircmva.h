@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 interface
     subroutine ircmva(numcmp, ncmpve, ncmprf, nvalec, nbpg,&
                       nbsp, adsv, adsd, adsl, adsk,&
-                      partie, tymast, modnum, nuanom, typech,&
+                      cplxFormatZ, tymast, modnum, nuanom, fieldSupport,&
                       val, profas, ideb, ifin, codret)
         integer :: nbsp
         integer :: nbpg
@@ -32,11 +32,11 @@ interface
         integer :: adsd
         integer :: adsl
         integer :: adsk
-        character(len=*) :: partie
         integer :: tymast
         integer :: modnum(MT_NTYMAX)
         integer :: nuanom(MT_NTYMAX, *)
-        character(len=8) :: typech
+        character(len=8), intent(in) :: fieldSupport
+        character(len=*), intent(in) :: cplxFormatZ
         real(kind=8) :: val(ncmpve, nbsp, nbpg, nvalec)
         integer :: profas(*)
         integer :: ideb

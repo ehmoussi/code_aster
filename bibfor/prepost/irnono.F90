@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine irnono(noma, nbnoe, nbno, nonoe, nbgr,&
-                  nogrn, numno, nbnot, indno, noltop)
-! person_in_charge: nicolas.sellenet at edf.fr
-    implicit none
 !
-#include "jeveux.h"
+subroutine irnono(meshNameZ , meshNbNode  ,&
+                  nbNode    , nodeName    ,&
+                  nbGrNode  , grNodeName  ,&
+                  nodeSelect, nbNodeSelect,&
+                  nodeFlag)
+!
+implicit none
+!
+#include "asterfort/assert.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
@@ -31,106 +34,86 @@ subroutine irnono(noma, nbnoe, nbno, nonoe, nbgr,&
 #include "asterfort/jexnom.h"
 #include "asterfort/utmess.h"
 !
-    integer :: nbno, nbgr, nbnot, nbnoe, indno(nbnoe)
-    character(len=*) :: noma, nonoe(*), nogrn(*), numno, noltop
-! ----------------------------------------------------------------------
-!     BUT :   TROUVER LES NUMEROS DES NOEUDS TROUVES DANS
-!             UNE LISTE DE NOEUDS ET DE GROUP_NO
-!     ENTREES:
-!        NOMA   : NOM DU MAILLAGE.
-!        NBNOE  : NOMBRE DE NOEUDS DU MAILLAGE
-!        NBNO   : NOMBRE DE NOEUDS
-!        NBGR   : NOMBRE DE GROUPES DE NOEUDS
-!        NONOE  : NOM DES  NOEUDS
-!        NOGRN  : NOM DES  GROUP_NO
-!     SORTIES:
-!        NBNOT  : NOMBRE TOTAL DE NOEUDS A IMPRIMER
-!        NUMNO  : NOM DE L'OBJET CONTENANT LES NUMEROS
-!                 DES NOEUDS TROUVES.
-!        INDNO  : TABLEAU DIMENSIONNE AU NOMBRE DE NOEUDS DU MAILLAGE,
-!                 NECESSAIRE POUR QUE NUMNO NE CONTIENNE PAS DE DOUBLONS
-!                 INDNO(I)==1 : LE NOEUD I FAIT PARTIE DU FILTRE
-!                 INDNO(I)==0 : SINON
-! ----------------------------------------------------------------------
-    character(len=24) :: valk(2)
-!     ------------------------------------------------------------------
-    character(len=8) :: nomma
-    integer :: jtopo, inoe, ino, igr, iret, nbn, iad, in, lnuno, jnuno
+character(len=*), intent(in) :: meshNameZ
+integer, intent(in) :: meshNbNode
+integer, intent(in) :: nbNode
+character(len=8), pointer :: nodeName(:)
+integer, intent(in) :: nbGrNode
+character(len=24), pointer :: grNodeName(:)
+integer, pointer :: nodeSelect(:)
+integer, intent(out) :: nbNodeSelect
+integer, pointer :: nodeFlag(:)
 !
+! --------------------------------------------------------------------------------------------------
+!
+! Print results
+!
+! Select nodes from user
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=8) :: meshName
+    integer :: iNode, nodeNume, iGrNode, iret, grNodeNbNode
+    integer, pointer :: listNode(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
-    nomma=noma
-    nbnot= 0
-    call jeveuo(noltop, 'E', jtopo)
-    call jeveuo(numno, 'E', jnuno)
-    call jelira(numno, 'LONMAX', lnuno)
 !
-!  --- TRAITEMENT DES LISTES DE NOEUDS ----
-    if (nbno .ne. 0) then
-!     --- RECUPERATION DU NUMERO DE NOEUD ----
-        do 12 inoe = 1, nbno
-            call jenonu(jexnom(nomma//'.NOMNOE', nonoe(inoe)), ino)
-            if (ino .eq. 0) then
-                valk (1) = nonoe(inoe)
-                call utmess('A', 'PREPOST5_38', sk=valk(1))
-                nonoe(inoe) = ' '
+! - Initializations
+!
+    meshName     = meshNameZ
+    nbNodeSelect = 0
+!
+! - Select nodes by name
+!
+    if (nbNode .ne. 0) then
+        do iNode = 1, nbNode
+            call jenonu(jexnom(meshName//'.NOMNOE', nodeName(iNode)), nodeNume)
+            if (nodeNume .eq. 0) then
+                call utmess('A', 'RESULT3_6', sk=nodeName(iNode))
+                nodeName(iNode) = ' '
             else
-                zi(jtopo-1+2) = zi(jtopo-1+2) + 1
-                nbnot = nbnot + 1
-                if (nbnot .gt. lnuno) then
-                    call utmess('A', 'PREPOST3_4')
-                    nbnot=nbnot-1
-                    goto 9999
-!             LNUNO=2*LNUNO
-!             CALL JUVECA(NUMNO,LNUNO)
-!             CALL JEVEUO(NUMNO,'E',JNUNO)
+                if (nodeFlag(nodeNume) .eq. 0) then
+                    nbNodeSelect = nbNodeSelect + 1
+                    ASSERT(nbNodeSelect .le. meshNbNode)
+                    nodeSelect(nbNodeSelect) = nodeNume
+                    nodeFlag(nodeNume) = 1
                 endif
-                zi(jnuno-1+nbnot)=ino
-                indno(ino)=1
             endif
-12      continue
+        end do
     endif
-!  --- TRAITEMENT DES LISTES DE GROUPES DE NOEUDS ---
-    if (nbgr .ne. 0) then
-!     --- RECUPERATION DU NUMERO DE NOEUD ----
-        do 13 igr = 1, nbgr
-            call jeexin(jexnom(nomma//'.GROUPENO', nogrn(igr)), iret)
+!
+! - Select nodes in groups of nodes
+!
+    if (nbGrNode .ne. 0) then
+        do iGrNode = 1, nbGrNode
+            call jeexin(jexnom(meshName//'.GROUPENO', grNodeName(iGrNode)), iret)
             if (iret .eq. 0) then
-                valk (1) = nogrn(igr)
-                call utmess('A', 'PREPOST5_31', sk=valk(1))
-                nogrn(igr) = ' '
+                call utmess('A', 'RESULT3_7', sk=grNodeName(iGrNode))
+                grNodeName(iGrNode) = ' '
             else
-                call jelira(jexnom(nomma//'.GROUPENO', nogrn(igr)), 'LONMAX', nbn)
-                if (nbn .eq. 0) then
-                    valk (1) = nogrn(igr)
-                    valk (2) = ' '
-                    call utmess('A', 'PREPOST5_40', nk=2, valk=valk)
-                    nogrn(igr) = ' '
+                call jelira(jexnom(meshName//'.GROUPENO', grNodeName(iGrNode)),&
+                            'LONMAX', grNodeNbNode)
+                if (grNodeNbNode .eq. 0) then
+                    call utmess('A', 'RESULT3_8', sk=grNodeName(iGrNode))
+                    grNodeName(iGrNode) = ' '
                 else
-                    zi(jtopo-1+4) = zi(jtopo-1+4) + 1
-                    call jeveuo(jexnom(nomma//'.GROUPENO', nogrn(igr)), 'L', iad)
-                    do 14 in = 1, nbn
-                        nbnot=nbnot+1
-                        if (nbnot .gt. lnuno) then
-                            call utmess('A', 'PREPOST3_4')
-                            nbnot=nbnot-1
-                            goto 9999
-!                 LNUNO=2*LNUNO
-!                 CALL JUVECA(NUMNO,LNUNO)
-!                 CALL JEVEUO(NUMNO,'E',JNUNO)
+                    call jeveuo(jexnom(meshName//'.GROUPENO', grNodeName(iGrNode)),&
+                                'L', vi = listNode)
+                    do iNode = 1, grNodeNbNode
+                        nodeNume = listNode(iNode)
+                        if (nodeFlag(nodeNume) .eq. 0) then
+                            nbNodeSelect = nbNodeSelect + 1
+                            ASSERT(nbNodeSelect .le. meshNbNode)
+                            nodeSelect(nbNodeSelect) = nodeNume
+                            nodeFlag(nodeNume) = 1
                         endif
-                        if (indno(zi(iad+in-1)) .eq. 0) then
-                            zi(jnuno-1+nbnot)= zi(iad+in-1)
-                            indno(zi(iad+in-1))=1
-                        else
-                            nbnot=nbnot-1
-                        endif
-14                  continue
+                    end do
                 endif
             endif
-13      continue
+        end do
     endif
 !
-9999  continue
     call jedema()
 end subroutine
