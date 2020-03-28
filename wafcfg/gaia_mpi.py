@@ -32,10 +32,12 @@ YAMMROOT = gaia_std.YAMMROOT
 
 def configure(self):
     opts = self.options
-
     opts.parallel = True
     gaia_std.configure(self)
-    self.env['ADDMEM'] = 1200
+
+    self.env["CONFIG_PARAMETERS"].update({
+        "addmem": 1200,
+    })
 
     self.env.append_value('OPT_ENV', [
         'export LD_PRELOAD='

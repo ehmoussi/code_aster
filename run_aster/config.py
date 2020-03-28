@@ -49,6 +49,20 @@ The list of the supported *version parameters* are (with their type):
 
 All these parameters are set during the *configure* step of the installation.
 
+They can be overridden in a configuration file (in ``wafcfg/``) by setting a
+Python dict named ``env["CONFIG_PARAMETERS"]``.
+
+.. note::
+
+    ``mpirun`` command line needs these variables ``mpinb_cpu`` and ``program``
+    following the `Python Format String Syntax`_. For example:
+
+    .. code-block:: sh
+
+        mpirun -n {mpi_nbcpu} --tag-output {program}
+
+.. _Python Format String Syntax: https://docs.python.org/3/library/string.html#formatstrings
+
 These *version parameters* can be overridden by a user file:
 ``$HOME/.run_aster.js``.
 

@@ -31,12 +31,12 @@ YAMMROOT = scibian9_std.YAMMROOT
 
 def configure(self):
     opts = self.options
-
     opts.parallel = True
     scibian9_std.configure(self)
-    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
-    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
-    self.env['ADDMEM'] = 1700
+
+    self.env["CONFIG_PARAMETERS"].update({
+        "addmem": 1700,
+    })
 
     self.env.prepend_value('LIBPATH', [
         YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib',

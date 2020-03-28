@@ -32,13 +32,13 @@ YAMMROOT = eole_std.YAMMROOT
 
 def configure(self):
     opts = self.options
-
     # parallel must be set before calling intel.configure() to use MPI wrappers
     opts.parallel = True
     eole_std.configure(self)
-    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
-    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
-    self.env['ADDMEM'] = 2500
+
+    self.env["CONFIG_PARAMETERS"].update({
+        "addmem": 2500,
+    })
 
     # suppress too aggressive optimization with Intel impi/2017.0.98 : I_MPI_DAPL_TRANSLATION_CACHE=0
     self.env.append_value('OPT_ENV_FOOTER', [
