@@ -335,7 +335,7 @@ def change_tests(dico, install_tests):
 def check_config(self):
     # Check for configuration parameters of the version
     cfg = {}
-    self.start_msg('Set tmp directory for execution')
+    self.start_msg("Set parameters for 'config.js'")
     tmpdir = "/tmp"
     # cmake syntax
     tmpdir_cmake = "$ENV{ASTER_TMPDIR}"
@@ -343,10 +343,6 @@ def check_config(self):
         tmpdir = os.environ['ASTER_TMPDIR']
     self.env.ASRUN_TMPDIR_CMAKE = tmpdir or tmpdir_cmake
     cfg["tmpdir"] = tmpdir
-
-    self.end_msg(cfg["tmpdir"])
-    self.start_msg('Set tmp directory for `salome test`')
-    self.end_msg(self.env.ASRUN_TMPDIR_CMAKE)
 
     try:
         addmem = self.env['ADDMEM']
@@ -369,6 +365,14 @@ def check_config(self):
     cfg["FC"] = self.env["FC"][0]
     cfg["FCFLAGS"] = self.env["FCFLAGS"]
     cfg["exectool"] = {}
+    self.end_msg("done")
+    from_wafcfg = self.env["CONFIG_PARAMETERS"] or {}
+    for param in ("tmpdir", "addmem", "python", "mpirun", "mpirun_rank",
+                  "only-proc0", "exectool"):
+        if cfg.get(param):
+            self.start_msg(f". use '{param}'")
+            cfg[param] = from_wafcfg.get(param, cfg[param])
+            self.end_msg(str(cfg[param]))
     self.env["CONFIG_PARAMETERS"] = cfg
 
 

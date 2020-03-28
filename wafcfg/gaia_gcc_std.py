@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ waf install -p
 
 import os
 ASTER_ROOT = os.environ['ASTER_ROOT']
-YAMMROOT = os.environ['ROOT_SALOME'] 
+YAMMROOT = os.environ['ROOT_SALOME']
 #YAMMROOT='/projets/simumeca/public_gcc'
 
 import official_programs
@@ -36,15 +36,15 @@ import official_programs
 
 def configure(self):
     opts = self.options
-
     official_programs.configure(self)
     official_programs.check_prerequisites_package(self, YAMMROOT, '20190402')
 
-    self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
-    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
-    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
-    self.env['ADDMEM'] = 1600
+    self.env["CONFIG_PARAMETERS"] = {
+        "tmpdir": "/local00/tmp",
+        "addmem": 1600,
+    }
 
+    self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env.append_value('OPT_ENV', [
         'export OPENBLAS_CORETYPE=SANDYBRIDGE',
     ])
