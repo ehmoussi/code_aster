@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -163,11 +163,12 @@ subroutine op9999(isave)
         nbext, ' FICHIER(S) UTILISE(S).'
       endif
 
-      ! the diagnosis of the execution is OK thanks to the message
-      call utmess('I', 'SUPERVIS2_99')
     endif
 
     call jedema()
+!
+!   the diagnosis of the execution is OK thanks to this message
+    call utmess('I', 'SUPERVIS2_99')
 !
 ! --- CLOTURE DE JEVEUX
 !
