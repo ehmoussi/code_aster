@@ -26,8 +26,10 @@ cata_msg = {
     2 : _("""%(i2)4d alarmes ont été émises sur le processeur #%(i1)d.
 """),
 
+    3 : _("""
+On ne fait rien sur le processeur #%(i1)d (car PROC0='OUI').
 
-
+"""),
 
 
     5: _("""
