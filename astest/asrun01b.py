@@ -497,7 +497,7 @@ class TestStatus(unittest.TestCase):
         self.assertEqual(SO.name(state), "NO_TEST_RESU")
         state = SO.CpuLimit
         self.assertEqual(SO.name(state), "<S>_CPU_LIMIT")
-        state = SO.NoConvergence
+        state = SO.Convergence
         self.assertEqual(SO.name(state), "<S>_NO_CONVERGENCE")
         state = SO.Warn | SO.Memory
         self.assertEqual(SO.name(state), "<S>_MEMORY_ERROR")
@@ -615,12 +615,12 @@ class TestStatus(unittest.TestCase):
         self.assertTrue(status.state & SO.Error)
 
         output = "\n".join([
-            "! <NoConvergenceError> <MECANONLINE_44> bla bla !",
+            "! <ConvergenceError> <MECANONLINE_44> bla bla !",
             "<TimeLimitError>: xxxx",
         ])
         status = get_status(1, output)
         self.assertEqual(status.state,
-                         SO.CpuLimit | SO.NoConvergence)
+                         SO.CpuLimit | SO.Convergence)
         self.assertEqual(SO.name(status.state), "<S>_NO_CONVERGENCE")
         self.assertFalse(status.state & SO.Ok)
         self.assertFalse(status.state & SO.Completed)
