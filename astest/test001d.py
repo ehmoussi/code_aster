@@ -2,7 +2,7 @@
 
 import code_aster
 from code_aster import AsterError
-code_aster.init()
+code_aster.init(ERREUR=_F(ERREUR_F='EXCEPTION'))
 
 test = code_aster.TestCase()
 
@@ -49,7 +49,7 @@ nameOfGroup = "B"
 CharMeca2.setValue( force_pour_structure, nameOfGroup )
 print("      sur le groupe : ", nameOfGroup)
 
-# Le Dl MX n'est pas autorisé
+# Le ddl MX n'est pas autorisé
 # fortran error
 with test.assertRaises( AsterError ):
     CharMeca2.build()
