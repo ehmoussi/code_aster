@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ EDEFONO = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
                             components=('EPXX', 'EPYY', 'EPZZ', 'EPXY',))
 
 
-CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
+CEPSINO = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
                             components=('EPXX', 'EPYY', 'EPZZ', 'EPXY',))
 
 
@@ -207,7 +207,7 @@ class MBAXQU8(Element):
                   para_in=((SP.PACCELE, NDEPLAR), (OP.CALC_G.PCOMPOR, LC.CCOMPOR),
                            (SP.PCONTGR, ECONTPG), (OP.CALC_G.PCONTRR, ECONTPG),
                            (SP.PDEFOPL, EDEFONO), (SP.PDEPINR, NDEPLAR),
-                           (SP.PDEPLAR, NDEPLAR), (SP.PEPSINR, CEPSINR),
+                           (SP.PDEPLAR, NDEPLAR), (SP.PEPSINR, CEPSINO),
                            (SP.PFRVOLU, NFORCER), (SP.PGEOMER, NGEOMER),
                            (SP.PMATERC, LC.CMATERC), (SP.PPESANR, LC.CPESANR),
                            (SP.PROTATR, LC.CROTATR), (SP.PSIGINR, ECONTNO),
@@ -320,7 +320,7 @@ class MBAXQU8(Element):
                      para_in=((OP.EPEQ_ELNO.PDEFORR, EDEFONO), ),
                      para_out=((OP.EPEQ_ELNO.PDEFOEQ, LC.EDFEQNO), ),
                      ),
-        
+
         OP.EPGQ_ELGA(te=335,
             para_in=((OP.EPGQ_ELGA.PDEFORR, EDEFOPG), ),
             para_out=((OP.EPGQ_ELGA.PDEFOEQ, EDFEQPG), ),

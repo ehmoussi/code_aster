@@ -23,6 +23,10 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/alchml.h"
+#include "asterfort/chpver.h"
+#include "asterfort/chpchd.h"
 #include "asterfort/gcchar.h"
 #include "asterfort/gcfonc.h"
 #include "asterfort/gcsele.h"
@@ -79,9 +83,9 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
     integer :: tabaut(znbenc)
 !
     character(len=24) :: k24bid
-    character(len=24) :: oldfon
+    character(len=24) :: oldfon, cepsi, epselno, ligrmo
     integer :: jfonci
-    integer :: ichar, nbchar, ig
+    integer :: ichar, nbchar, ig, iret, inga, occur
     character(len=8) :: charge, typech, nomfct, newfct, ng
     character(len=6) :: nomobj
     character(len=16) :: typfct, motcle, nomcmd, phenom
@@ -104,9 +108,12 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 !
 ! - INITIALISATIONS
 !
+    occur = 0
     lfonc = .false.
     nomcmd = 'CALC_G'
     phenom = 'MECANIQUE'
+    cepsi =  '&&GCHARG.CEPSI'
+    epselno= '&&GCHARG.EPSELNO'
     lvolu = .false.
     l1d2d = .false.
     l2d3d = .false.
@@ -125,6 +132,8 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
     lpchar = .false.
     lccomb = .false.
     call lisnnb(lischa, nbchar)
+!   Recuperation du LIGREL
+    ligrmo = modele//'.MODELE'
 !
 ! - STOCKAGE DES TYPES DE CHARGE (FONCTION OU PAS)
 !
@@ -206,6 +215,19 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
                             call jeveuo(prefob(1:13)//'.EPSIN.VALE', 'L', vk8=p_vale_epsi)
                             cartei = p_vale_epsi(1)
                         endif
+! ----------------- transformation si champ ELGA -> ELNO
+                        call chpver('C', cartei(1:19), 'ELGA', 'EPSI_R', inga)
+!
+                        if (inga == 0) then
+                            occur = occur + 1
+                            ASSERT(occur <= 1)
+!               traitement du champ pour les elements finis classiques
+                            call detrsd('CHAMP', cepsi)
+                            call alchml(ligrmo, 'CALC_G', 'PEPSINR', 'V', cepsi, iret, ' ')
+                            call chpchd(cartei(1:19), 'ELNO', cepsi, 'OUI', 'V', epselno)
+                            call chpver('F', epselno(1:19), 'ELNO', 'EPSI_R', iret)
+                            cartei(1:19) = epselno(1:19)
+                        end if
                     endif
 !
 ! ----------------- SELECTION SUIVANT TYPE
@@ -224,7 +246,6 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 !
 ! ----------------- CONSTRUIT LA CARTE A PARTIR DU CHARGEMENT
 !
-                    print*,"GC: ", carteo, lfchar, lfmult, newfct, lformu, lpchar
                     call gcchar(ichar, iprec, time, carteo, lfchar,&
                                 lpchar, lformu, lfmult, lccomb, cartei,&
                                 nomfct, newfct, oldfon)
