@@ -370,7 +370,7 @@ TEST_TABLE(
 
 #TEST DES G ISSUS DU CALCUL AVEC PRE-DEFORMATION
 TEST_TABLE(
-           VALE_CALC=2.747562803224388,
+           VALE_CALC=2.7476301853988376,
            VALE_REFE=Gther1,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
@@ -380,7 +380,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=2.746759720504067,
+           VALE_CALC=2.7468271194880987,
            VALE_REFE=Gther2,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
@@ -390,7 +390,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=2.7465564980418797,
+           VALE_CALC=2.7466239747521777,
            VALE_REFE=Gther3,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
@@ -400,7 +400,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=2.7466955553897083,
+           VALE_CALC=2.7467630196354578,
            VALE_REFE=Gther4,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
