@@ -146,7 +146,7 @@ class Starter(ExecuteCommand):
         erreur = keywords.get('ERREUR')
         if erreur:
             if erreur.get('ERREUR_F'):
-                stop_with = keywords['ERREUR']['ERREUR_F']
+                stop_with = erreur['ERREUR_F']
         libaster.onFatalError(stop_with)
 
         debug = keywords.get('DEBUG')

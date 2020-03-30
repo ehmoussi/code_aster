@@ -595,7 +595,7 @@ class TestStatus(unittest.TestCase):
         self.assertTrue(status.state & SO.Completed)
         self.assertFalse(status.state & SO.Error)
 
-        status = get_status(1, "TimeLimitError")
+        status = get_status(1, "<TimeLimitError>")
         self.assertEqual(status.state, SO.CpuLimit)
         self.assertEqual(SO.name(status.state), "<S>_CPU_LIMIT")
         self.assertFalse(status.state & SO.Ok)
@@ -616,7 +616,7 @@ class TestStatus(unittest.TestCase):
 
         output = "\n".join([
             "! <NoConvergenceError> <MECANONLINE_44> bla bla !",
-            "TimeLimitError: xxxx",
+            "<TimeLimitError>: xxxx",
         ])
         status = get_status(1, output)
         self.assertEqual(status.state,

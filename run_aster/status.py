@@ -205,17 +205,16 @@ class StateOptions:
 
 RE_OK = re.compile("^ * OK ", re.M)
 RE_NOOK = re.compile("^ *NOOK ", re.M)
-RE_WARN = re.compile("^ *. *" + re.escape("<A>"), re.M)
+RE_WARN = re.compile("^ *. *<A>", re.M)
 RE_DEBUT = re.compile(re.escape("-- CODE_ASTER -- VERSION"))
-RE_FIN = re.compile(re.escape("<I> <FIN> ARRET NORMAL"))
+RE_FIN = re.compile("<I> <FIN> ARRET NORMAL")
 RE_MEM = re.compile("MEMOIRE INSUFFISANTE POUR ALLOUER")
-RE_TIME = re.compile("|".join(["TimeLimitError", "ARRET PAR MANQUE DE TEMPS"]),
-                     re.I)
-RE_CONV = re.compile("|".join(["ConvergenceError", "IntegrationError",
-                               "SolverError", "ContactError"]), re.I)
-RE_EXCEPT = re.compile("AsterError")
-RE_ERRS = re.compile("^ *. *" + re.escape("<S>"), re.M)
-RE_ERRF = re.compile("^ *. *" + re.escape("<F>"), re.M)
+RE_TIME = re.compile("(<TimeLimitError>|ARRET PAR MANQUE DE TEMPS)", re.I)
+RE_CONV = re.compile("<(ConvergenceError|IntegrationError|SolverError"
+                     "|ContactError)>", re.I)
+RE_EXCEPT = re.compile("<AsterError>")
+RE_ERRS = re.compile("^ *. *<S>", re.M)
+RE_ERRF = re.compile("^ *. *<F>", re.M)
 RE_SYNTAX = re.compile("SyntaxError")
 RE_ELAPS = re.compile("TOTAL_JOB +" + r": +([0-9\.]+)" * 4)
 
