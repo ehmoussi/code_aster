@@ -59,11 +59,11 @@ cata_msg = {
 """),
 
     7 : _("""
-  -> Le nom de groupe "%(k1)s" est trop long. Il sera ignoré dans le maillage 
+  -> Le nom de groupe "%(k1)s" est trop long. Il sera ignoré dans le maillage
      utilisé par le calcul.
 
-  -> Conseil:    
-     Si vous voulez utiliser ce groupe dans le calcul, il faut le renommer en limitant 
+  -> Conseil:
+     Si vous voulez utiliser ce groupe dans le calcul, il faut le renommer en limitant
      à 24 caractères son nom.
 """),
 
