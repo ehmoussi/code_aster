@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,6 +29,9 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 #include "asterfort/isdeco.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/jenuno.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/lisccc.h"
 #include "asterfort/lisdef.h"
@@ -78,8 +81,8 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
     character(len=24) :: k24bid
     character(len=24) :: oldfon
     integer :: jfonci
-    integer :: ichar, nbchar
-    character(len=8) :: charge, typech, nomfct, newfct
+    integer :: ichar, nbchar, ig
+    character(len=8) :: charge, typech, nomfct, newfct, ng
     character(len=6) :: nomobj
     character(len=16) :: typfct, motcle, nomcmd, phenom
     character(len=13) :: prefob
@@ -92,6 +95,8 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
     aster_logical :: lepsi, lpesa, lrota
     aster_logical :: lfvolu, lf1d2d, lf2d3d, lfpres
     aster_logical :: lfepsi, lfpesa, lfrota
+    integer, pointer :: desc(:) => null()
+    character(len=8), pointer :: p_vale_epsi(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
@@ -189,6 +194,20 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
                     ASSERT(itypob(1).eq.1)
                     cartei = prefob(1:13)//nomobj(1:6)
 !
+! ----------------- Si le champ PRE_EPSI est de type CHAM_NO ou CARTE, il faut récupérer
+!                   le vrai nom du champ correspondant (voir load_neum_spec)
+!
+                    if (nomobj.eq.'.EPSIN')then
+                        call jeveuo(prefob(1:13)//'.EPSIN.DESC', 'L', vi=desc)
+                        ig = desc(1)
+                        call jenuno(jexnum('&CATA.GD.NOMGD', ig), ng)
+! ----------------- recuperation du nom du champ stocké dans la carte "bidon"
+                        if (ng.eq.'NEUT_K8')then
+                            call jeveuo(prefob(1:13)//'.EPSIN.VALE', 'L', vk8=p_vale_epsi)
+                            cartei = p_vale_epsi(1)
+                        endif
+                    endif
+!
 ! ----------------- SELECTION SUIVANT TYPE
 !
                     call gcsele(motcle, chvolu, ch1d2d, ch2d3d, chpres,&
@@ -205,6 +224,7 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 !
 ! ----------------- CONSTRUIT LA CARTE A PARTIR DU CHARGEMENT
 !
+                    print*,"GC: ", carteo, lfchar, lfmult, newfct, lformu, lpchar
                     call gcchar(ichar, iprec, time, carteo, lfchar,&
                                 lpchar, lformu, lfmult, lccomb, cartei,&
                                 nomfct, newfct, oldfon)
