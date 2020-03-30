@@ -58,7 +58,7 @@ class XUnitReport:
         if not osp.isfile(cost):
             return
 
-        re_test = re.compile("^(.+?) ", re.M)
+        re_test = re.compile(r"^(\S+)", re.M)
         with open(cost, "r") as fcost:
             text = fcost.read()
         passed, failed = text.split("---")
@@ -88,7 +88,8 @@ class XUnitReport:
         Arguments:
             filename (str): Output XML file (relative to the base directory).
         """
-        junit = JUNIT.JunitXml("code_aster " + CFG.get("version_tag", ""),
+        junit = JUNIT.JunitXml("code_aster " + CFG.get("version_tag", "?") +
+                               "-" + CFG.get("version_sha1", "?"),
                                self.junit_test)
         with open(osp.join(self.base, filename), "w") as fobj:
             fobj.write(junit.dump())
@@ -169,3 +170,10 @@ def _clean_msg(lmsg):
         msg = [line for line in msg.splitlines() if line.strip() != ""]
         out.append(os.linesep.join(msg))
     return out
+
+
+if __name__ == "__main__":
+    report = XUnitReport(".")
+    report.read_ctest()
+    junit = JUNIT.JunitXml("code_aster", report.junit_test)
+    print(junit.dump())
