@@ -7,4 +7,4 @@ P testlist ci verification sequential
 
 F comm umat001b.comm D 1
 F mmed umat001a.mmed D 20
-F libr umat001a.22 D 22
+F nom umat001a.f D 0

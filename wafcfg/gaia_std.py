@@ -36,17 +36,16 @@ import official_programs
 
 def configure(self):
     opts = self.options
-
     official_programs.configure(self)
     official_programs.check_prerequisites_package(self, YAMMROOT, '20191105')
 
-    self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
-    self.env['ADDMEM'] = 1100
-    self.env.append_value('OPT_ENV', [
-        'module load ifort/2019.0.045 icc/2019.0.045 mkl/2019.0.045'
-    ])
+    self.env["CONFIG_PARAMETERS"] = {
+        "addmem": 1100,
+    }
 
+    self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
     self.env.append_value('OPT_ENV', [
+        'module load ifort/2019.0.045 icc/2019.0.045 mkl/2019.0.045',
         'export LD_PRELOAD='
         '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_lp64.so:'
         '/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_thread.so:'

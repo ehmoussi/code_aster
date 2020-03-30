@@ -25,6 +25,7 @@ Unittests of run_aster package.
 
 import os
 import os.path as osp
+import platform
 import tarfile
 import tempfile
 import time
@@ -32,12 +33,16 @@ import unittest
 from glob import glob
 
 from run_aster.command_files import add_import_commands, stop_at_end
-from run_aster.config import CFG
+from run_aster.config import CFG, VERSION_PARAMS, Config
 from run_aster.ctest2junit import XUnitReport
-from run_aster.export import (Export, File, Parameter, ParameterBool,
-                              ParameterFloat, ParameterInt, ParameterListStr,
-                              ParameterStr)
+from run_aster.export import (PARAMS_TYPE, Export, ExportParameter,
+                              ExportParameterBool, ExportParameterFloat,
+                              ExportParameterInt, ExportParameterListStr,
+                              ExportParameterStr, File)
 from run_aster.logger import ERROR, logger
+from run_aster.settings import (ParameterBool, ParameterDictStr,
+                                ParameterFloat, ParameterInt, ParameterListStr,
+                                ParameterStr, Store)
 from run_aster.status import StateOptions as SO
 from run_aster.status import Status, get_status
 from run_aster.timer import Timer
@@ -47,24 +52,97 @@ from run_aster.utils import ROOT, copy
 logger.setLevel(ERROR + 1)
 
 
-class TestParameter(unittest.TestCase):
-    """Check Parameter objects"""
+class TestConfig(unittest.TestCase):
+    """Check Config objects"""
 
-    def test_factory(self):
-        para = Parameter.factory("debug")
-        self.assertIsInstance(para, ParameterStr)
-        para = Parameter.factory("mpi_nbcpu")
-        self.assertIsInstance(para, ParameterInt)
-        para = Parameter.factory("memory_limit")
-        self.assertIsInstance(para, ParameterFloat)
-        para = Parameter.factory("testlist")
-        self.assertIsInstance(para, ParameterListStr)
-        # unknown as list[str]
-        para = Parameter.factory("xxxx")
-        self.assertIsInstance(para, ParameterListStr)
-        # deprecated as None: ignored
-        para = Parameter.factory("service")
-        self.assertIsNone(para)
+    def test_config(self):
+        self.assertTrue(CFG.storage.has_param("version_tag"))
+        self.assertTrue(CFG.storage.has_param("version_sha1"))
+        self.assertTrue(CFG.storage.has_param("tmpdir"))
+        self.assertTrue(CFG.storage.has_param("addmem"))
+        self.assertTrue(CFG.storage.has_param("parallel"))
+        self.assertTrue(CFG.storage.has_param("only-proc0"))
+        self.assertTrue(CFG.storage.has_param("python"))
+        self.assertTrue(CFG.storage.has_param("FC"))
+        self.assertTrue(CFG.storage.has_param("FCFLAGS"))
+        self.assertTrue(CFG.storage.has_param("exectool"))
+        size = 10
+        if CFG.get("parallel"):
+            self.assertTrue(CFG.storage.has_param("mpirun"))
+            self.assertTrue(CFG.storage.has_param("mpirun_rank"))
+            size += 2
+        self.assertEqual(len(CFG.storage), size)
+
+    def test_filter(self):
+        cfg = Config("nofile")
+        # add a value to avoid automatic loading of 'config.js' and user file
+        cfg._storage.set("mpirun", "empty")
+        self.assertEqual(cfg.get("mpirun"), "empty")
+        # simulating 'config.js'
+        version_cfg = {"mpirun": "mpirun_version"}
+        cfg.import_dict(version_cfg, with_sections=False)
+        self.assertEqual(cfg.get("mpirun"), "mpirun_version")
+        # add user file with server
+        user_cfg = {
+            "server": [
+                {
+                    "name": "*",
+                    "config": {"mpirun": "mpirun_all_servers"}
+                },
+                {
+                    "name": "myhost",
+                    "config": {"mpirun": "mpirun_myhost"}
+                },
+            ]
+        }
+        cfg.import_dict(user_cfg, with_sections=True)
+        self.assertEqual(cfg.get("mpirun"), "mpirun_all_servers")
+        # example: does 'myhost' matches 'myho*'?
+        user_cfg["server"][1]["name"] = platform.node()[:4] + "*"
+        cfg.import_dict(user_cfg, with_sections=True)
+        self.assertEqual(cfg.get("mpirun"), "mpirun_myhost")
+        # + 2 versions
+        user_cfg.update({
+            "version": [
+                {
+                    "name": "VERS1",
+                    "path": ROOT,
+                    "config": {"mpirun": "mpirun_for_VERS1"}
+                },
+                {
+                    "name": "VERS2",
+                    "path": "/another/installation/directory",
+                    "config": {"mpirun": "mpirun_for_VERS2"}
+                }
+            ]
+        })
+        cfg.import_dict(user_cfg, with_sections=True)
+        self.assertEqual(cfg.get("mpirun"), "mpirun_for_VERS1")
+
+    def test_exectool(self):
+        cfg = Config("nofile")
+        # add a value to avoid automatic loading of 'config.js' and user file
+        cfg._storage.set("mpirun", "empty")
+        # add user file with server
+        user_cfg = {
+            "server": [
+                {
+                    "name": "*",
+                    "config": {
+                        "exectool": {
+                            "mywrapper": "echo -n"
+                        }
+                    }
+                }
+            ]
+        }
+        cfg.import_dict(user_cfg, with_sections=True)
+        self.assertIsInstance(cfg.get("exectool"), dict)
+        self.assertEqual(cfg.get("exectool")["mywrapper"], "echo -n")
+
+
+class TestSettings(unittest.TestCase):
+    """Check Parameter-derivated objects"""
 
     def test_str(self):
         para = ParameterStr("debug")
@@ -80,6 +158,9 @@ class TestParameter(unittest.TestCase):
 
     def test_bool(self):
         para = ParameterBool("interact")
+        self.assertFalse(para.value)
+        para.set(None)
+        self.assertFalse(para.value)
         para.set([])
         self.assertTrue(para.value)
         para.set(False)
@@ -126,18 +207,79 @@ class TestParameter(unittest.TestCase):
             para.set([16.0, 32.0])
 
     def test_liststr(self):
-        para = ParameterListStr("testlist")
+        para = ParameterListStr("actions")
         self.assertIsNone(para.value)
         para.set([])
         self.assertSequenceEqual(para.value, [])
-        para.set("ci")
-        self.assertSequenceEqual(para.value, ["ci"])
+        para.set("make_env")
+        self.assertSequenceEqual(para.value, ["make_env"])
         para.set(123.456)
         self.assertSequenceEqual(para.value, ["123.456"])
-        para.set(["ci", "verification"])
-        self.assertSequenceEqual(para.value, ["ci", "verification"])
+        para.set(["make_env", "make_etude"])
+        self.assertSequenceEqual(para.value, ["make_env", "make_etude"])
         para.set([2, "debug"])
         self.assertSequenceEqual(para.value, ["2", "debug"])
+
+    def test_dictstr(self):
+        para = ParameterDictStr("exectool")
+        self.assertIsNone(para.value)
+        para.set({})
+        self.assertIsInstance(para.value, dict)
+        self.assertEqual(len(para.value), 0)
+        para.set({"mycmd": "run_cmd"})
+        self.assertEqual(para.value["mycmd"], "run_cmd")
+        with self.assertRaises(TypeError):
+            para.set("not a dict")
+        with self.assertRaises(TypeError):
+            para.set({1: "only str for keys"})
+
+
+class TestStore(unittest.TestCase):
+    """Check Store object"""
+
+    def test_store(self):
+        store = Store()
+        self.assertEqual(len(store), 0)
+        self.assertFalse(bool(store))
+        self.assertFalse(store.has_param("x"))
+        self.assertIsNone(store.get_param("x"))
+        self.assertIsNone(store.get("x"))
+
+        para = ParameterBool("test")
+        store.add(para)
+        self.assertEqual(len(store), 1)
+        self.assertTrue(bool(store))
+        self.assertTrue(store.has_param("test"))
+        self.assertEqual(store.get_param("test"), para)
+        self.assertIsNone(para.value)
+        self.assertIsNone(store.get("test"))
+        self.assertTrue(store.get("test", True))
+        para.set(True)
+        self.assertTrue(para.value)
+        self.assertTrue(store.get("test"))
+
+        store.set("y", 1)
+        self.assertFalse(store.has_param("y"))
+
+
+class TestExportParameter(unittest.TestCase):
+    """Check ExportParameter object"""
+
+    def test_factory(self):
+        para = ExportParameter.factory(PARAMS_TYPE, "interact")
+        self.assertIsInstance(para, ParameterBool)
+        para = ExportParameter.factory(PARAMS_TYPE, "mpi_nbcpu")
+        self.assertIsInstance(para, ParameterInt)
+        para = ExportParameter.factory(PARAMS_TYPE, "memory_limit")
+        self.assertIsInstance(para, ParameterFloat)
+        para = ExportParameter.factory(PARAMS_TYPE, "actions")
+        self.assertIsInstance(para, ParameterListStr)
+        # unknown as None: ignored with a warning
+        para = ExportParameter.factory(PARAMS_TYPE, "xxxx")
+        self.assertIsNone(para)
+        # deprecated as None: ignored
+        para = ExportParameter.factory(PARAMS_TYPE, "service")
+        self.assertIsNone(para)
 
 
 class TestFile(unittest.TestCase):
@@ -154,6 +296,19 @@ class TestFile(unittest.TestCase):
         self.assertTrue(fobj.resu)
         self.assertFalse(fobj.compr)
         self.assertEqual(repr(fobj), "F libr /a/filename R 0")
+        self.assertEqual(fobj.as_argument, "F:libr:/a/filename:R:0")
+
+        fobj = File.from_argument("F:libr:/a/filename:R:0")
+        self.assertEqual(fobj.path, "/a/filename")
+        self.assertEqual(fobj.filetype, "libr")
+        self.assertFalse(fobj.is_tests_data)
+        self.assertEqual(fobj.unit, 0)
+        self.assertFalse(fobj.isdir)
+        self.assertFalse(fobj.data)
+        self.assertTrue(fobj.resu)
+        self.assertFalse(fobj.compr)
+        self.assertEqual(repr(fobj), "F libr /a/filename R 0")
+        self.assertEqual(fobj.as_argument, "F:libr:/a/filename:R:0")
 
     def test_directory(self):
         tmpdir = os.getcwd()
@@ -166,6 +321,7 @@ class TestFile(unittest.TestCase):
         self.assertFalse(wrk.resu)
         self.assertFalse(wrk.compr)
         self.assertEqual(repr(wrk), f"R libr {tmpdir} D 0")
+        self.assertEqual(wrk.as_argument, f"R:libr:{tmpdir}:D:0")
 
     def test_special(self):
         fobj = File("/a/filename", filetype="tests_data", data=True)
@@ -192,16 +348,21 @@ class TestExport(unittest.TestCase):
         self.assertIsNone(export.get_param("consbtc"))
         # because of facmtps
         self.assertGreaterEqual(export.get("time_limit"), 60.0)
+        export.set_time_limit(123.456)
+        self.assertEqual(export.get("time_limit"), 123.456)
         self.assertIsNone(export.get("consbtc"))
-        self.assertEqual(len(export.datafiles), 3)
+        self.assertEqual(len(export.commfiles), 1)
+        self.assertEqual(len(export.datafiles), 2)
         # 0 in asrun01b.export, but
         # + 'mess' with '--ctest',
         # + 'resu' + 'code' with as_run
         self.assertIn(len(export.resultfiles), (0, 1, 3))
-        comm = [i for i in export.datafiles if i.filetype == "comm"][0]
+        comm = export.commfiles[0]
         self.assertEqual(osp.basename(comm.path), "asrun01b.comm")
         self.assertEqual(comm.unit, 1)
         self.assertTrue(comm.data)
+        export.remove_file(comm)
+        self.assertEqual(len(export.commfiles), 0)
         tar = [i for i in export.datafiles if i.filetype == "libr"][0]
         self.assertEqual(osp.basename(tar.path), "asrun01b.11")
         self.assertEqual(tar.unit, 11)
@@ -264,32 +425,16 @@ class TestExport(unittest.TestCase):
             "P memory_limit 4096.0",
             "A args --memory {}".format(4096.0 + addmem),
             ""]))
+        # read memory limit, write export, read => not added twice?
 
     def test_time(self):
-        text = "P tpsjob 60"
+        text = "P time_limit 3600"
         export = Export(from_string=text)
-        self.assertEqual(export.get("tpsjob"), 60)
         self.assertEqual(export.get("time_limit"), 3600.0)
         self.assertEqual(export.get_argument_value("tpmax", float), 3600.0)
         self.assertEqual(repr(export), "\n".join([
-            "P tpsjob 60",
             "P time_limit 3600.0",
             "A args --tpmax 3600",
-            ""]))
-
-    def test_time2(self):
-        text = "\n".join([
-            "P tpsjob 60",
-            "P time_limit 1800",
-        ])
-        export = Export(from_string=text)
-        self.assertEqual(export.get("tpsjob"), 60)
-        self.assertEqual(export.get("time_limit"), 1800.0)
-        self.assertEqual(export.get_argument_value("tpmax", float), 1800.0)
-        self.assertEqual(repr(export), "\n".join([
-            "P tpsjob 60",
-            "P time_limit 1800.0",
-            "A args --tpmax 1800.0",
             ""]))
 
     def test_bool(self):
@@ -352,7 +497,7 @@ class TestStatus(unittest.TestCase):
         self.assertEqual(SO.name(state), "NO_TEST_RESU")
         state = SO.CpuLimit
         self.assertEqual(SO.name(state), "<S>_CPU_LIMIT")
-        state = SO.NoConvergence
+        state = SO.Convergence
         self.assertEqual(SO.name(state), "<S>_NO_CONVERGENCE")
         state = SO.Warn | SO.Memory
         self.assertEqual(SO.name(state), "<S>_MEMORY_ERROR")
@@ -450,7 +595,7 @@ class TestStatus(unittest.TestCase):
         self.assertTrue(status.state & SO.Completed)
         self.assertFalse(status.state & SO.Error)
 
-        status = get_status(1, "TimeLimitError")
+        status = get_status(1, "<TimeLimitError>")
         self.assertEqual(status.state, SO.CpuLimit)
         self.assertEqual(SO.name(status.state), "<S>_CPU_LIMIT")
         self.assertFalse(status.state & SO.Ok)
@@ -470,12 +615,12 @@ class TestStatus(unittest.TestCase):
         self.assertTrue(status.state & SO.Error)
 
         output = "\n".join([
-            "! <NoConvergenceError> <MECANONLINE_44> bla bla !",
-            "TimeLimitError: xxxx",
+            "! <ConvergenceError> <MECANONLINE_44> bla bla !",
+            "<TimeLimitError>: xxxx",
         ])
         status = get_status(1, output)
         self.assertEqual(status.state,
-                         SO.CpuLimit | SO.NoConvergence)
+                         SO.CpuLimit | SO.Convergence)
         self.assertEqual(SO.name(status.state), "<S>_NO_CONVERGENCE")
         self.assertFalse(status.state & SO.Ok)
         self.assertFalse(status.state & SO.Completed)

@@ -25,9 +25,9 @@
 #       from your package manager.
 #       Example: apt-get install aspell-fr
 
-from supv002a import SUPV002
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ))
+
+from supv002a import SUPV002
 
 # Que faire en cas d'erreur avec ce test ?
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

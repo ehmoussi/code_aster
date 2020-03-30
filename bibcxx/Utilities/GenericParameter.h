@@ -133,6 +133,7 @@ template < typename Type > class GenericParameter {
     GenericParameter &operator=( const Type &valeur ) {
         _valeur = valeur;
         _isSet = true;
+        return *this;
     };
 };
 

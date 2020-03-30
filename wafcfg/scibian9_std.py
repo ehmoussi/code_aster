@@ -35,17 +35,15 @@ import official_programs
 
 def configure(self):
     opts = self.options
-
     official_programs.configure(self)
     official_programs.check_prerequisites_package(self, YAMMROOT, '20200129')
 
-    # working directory for executions
-    os.environ['ASTER_TMPDIR'] = "/local00/tmp"
+    self.env["CONFIG_PARAMETERS"] = {
+        "tmpdir": "/local00/tmp",
+        "addmem": 1600,
+    }
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0'])
-    # ADDMEM value is evaluated with DEBUT()/FIN() execution and looking
-    # at value reported at "MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS".
-    self.env['ADDMEM'] = 1600
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321'
     TFELVERS = '3.2.1'

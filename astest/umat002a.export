@@ -6,8 +6,8 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm umat002a.comm D 1
-F libr umat001a.22 D 22
-F libr umat002a.23 D 23
-F libr comp002i.91 D 91
+F nom umat001a.f D 22
+F nom umat002a.f D 23
+F nom comp002i.py D 0
 F comm umat002a.com1 D 1
 F comm umat002a.com2 D 1

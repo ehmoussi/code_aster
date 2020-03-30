@@ -55,12 +55,14 @@ pipeline {
             steps {
                 sh '''#!/bin/bash -l
                 source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
-                \$(pwd)/build/install/std/bin/run_ctest --resutest=build/resutest --clean -L ci
+                cd build/install/std
+                ./bin/run_ctest --resutest=../../resutest --clean -L ci
                 exit 0
                 '''
                 sh '''#!/bin/bash -l
                 source $HOME/dev/codeaster/devtools/etc/env_unstable_mpi.sh
-                \$(pwd)/build/install/mpi/bin/run_ctest --resutest=build/resutest_mpi --clean -L ci
+                cd build/install/mpi
+                ./bin/run_ctest --resutest=../../resutest_mpi --clean -L ci
                 exit 0
                 '''
                 junit 'build/resutest*/run_testcases.xml'

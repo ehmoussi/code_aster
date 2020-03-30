@@ -19,6 +19,68 @@
 # --------------------------------------------------------------------
 
 """
+``bin/run_ctest`` --- Script to execute code_aster testcases using ``ctest``
+----------------------------------------------------------------------------
+
+``bin/run_ctest`` executes code_aster testcases using ``ctest``.
+
+Usage:
+
+.. code-block:: sh
+
+    bin/run_ctest [options] [ctest-options] [other arguments...]
+
+`ctest-options` and `other arguments` are passed to ``ctest``.
+
+The list of the testcases to be executed is built from ``--testlist`` argument
+and a filter on the labels (taken from the ``.export`` files).
+
+The *sequential* label is automatically added for a sequential version.
+
+To show the list of labels, use:
+
+.. code-block:: sh
+
+    bin/run_ctest --resutest=None --print-labels
+
+.. note::
+
+  Difference from ``ctest``: all values passed to ``-L`` option are sorted and
+  joined as a unique regular expression.
+
+  Example:
+
+    Using:
+
+    .. code-block:: sh
+
+        bin/run_ctest --resutest=None -L verification -L ci -N
+
+    the ctest command will be:
+
+    .. code-block:: sh
+
+        ctest -N -j 6 -L 'ci.*verification'
+
+See ``bin/run_ctest --help`` for the available options.
+
+"""
+
+import argparse
+import os
+import os.path as osp
+import re
+import sys
+import tempfile
+from glob import glob
+from subprocess import PIPE, run
+
+from .config import CFG
+from .ctest2junit import XUnitReport
+from .run import get_nbcores
+from .utils import ROOT
+
+USAGE = """
     run_ctest [options] [ctest-options] [other arguments...]
 
 Execute testcases using 'ctest'.
@@ -48,22 +110,6 @@ Note:
         ctest -N -j 8 -L 'ci.*verification'
 """
 
-import argparse
-import os
-import os.path as osp
-import re
-import sys
-import tempfile
-from glob import glob
-from subprocess import PIPE, run
-
-from run_aster.config import CFG
-from run_aster.ctest2junit import XUnitReport
-
-
-__DOC__ = __doc__
-ROOT = osp.dirname(osp.dirname(osp.abspath(__file__)))
-
 
 def parse_args(argv):
     """Parse command line arguments.
@@ -73,10 +119,10 @@ def parse_args(argv):
     """
     # command arguments parser
     parser = argparse.ArgumentParser(
-        usage=__DOC__,
+        usage=USAGE,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-j', '--jobs', action='store',
-                        type=int, default=max(1, get_nbprocs() - 2),
+                        type=int, default=max(1, get_nbcores() - 2),
                         help="Run the tests in parallel using the given "
                              "number of jobs")
     parser.add_argument('--testlist', action='store',
@@ -92,6 +138,9 @@ def parse_args(argv):
     parser.add_argument('--no-clean', action='store_false', dest="clean",
                         help="do not remove the content of 'resutest' "
                              "directory")
+    parser.add_argument('--facmtps', action='store', type=float, default=1.0,
+                        help="multiplicative factor applied to the time limit, "
+                             "passed through environment to run_aster")
     group = parser.add_argument_group('ctest options')
     group.add_argument('--rerun-failed', action='store_true',
                        help="Run only the tests that failed previously")
@@ -158,6 +207,8 @@ def main(argv=None):
         labels.update(args.label_regex)
         ctest_args.extend(["-L", ".*".join(sorted(labels))])
 
+    # options passed through environment
+    os.environ["FACMTPS"] = str(args.facmtps)
     # execute ctest
     os.chdir(resutest)
     proc = _run(["ctest"] + ctest_args)
@@ -243,19 +294,6 @@ def _build_def(bindir, datadir, lexport):
                                      BINDIR=bindir))
     return "\n".join(text)
 
-
-def get_nbprocs():
-    """Return the number of available processors.
-
-    Return:
-        int: Number of processors.
-    """
-    proc = run(['nproc'], stdout=PIPE, universal_newlines=True)
-    try:
-        value = int(proc.stdout.strip())
-    except ValueError:
-        value = 1
-    return value
 
 if __name__ == '__main__':
     sys.exit(main())

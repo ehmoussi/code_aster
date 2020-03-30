@@ -25,16 +25,21 @@
 The :py:class:`Starter` starts the execution by initializing the code_aster
 memory manager (*Jeveux*). For this task, it parses the arguments through the
 :py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter` object.
-By default, arguments are read from the command line. Otherwise, the arguments
-can be passed to :py:func:`.init`.
+By default, arguments are those read from the command line and those passed
+:py:func:`.init`.
+If the command line arguments are not set for code_aster, they can be ignored
+with ``code_aster.init(..., noargv=True)``.
 
 Some Python objects that have to be available from :py:mod:`libaster` are
 passed during the initialization to the
 :py:class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter`.
 """
 
+import sys
+
 import aster_core
 import libaster
+from run_aster.run import copy_datafiles
 
 from ..Behaviours import catalc
 from ..Cata.Syntax import tr
@@ -54,7 +59,7 @@ except ImportError:
     HAS_PTVSD = False
 
 
-class ExecutionStarter(object):
+class ExecutionStarter:
     """Initialize the
     :class:`~code_aster.Utilities.ExecutionParameter.ExecutionParameter` object
     for requests from the both sides Python/Fortran."""
@@ -73,15 +78,17 @@ class ExecutionStarter(object):
         """
         if cls._is_initialized:
             return False
-        cls.params = ExecutionParameter()
-        cls.params.parse_args(argv)
-        cls.params.catalc = catalc
-        cls.params.logical_unit = LogicalUnitFile
-        cls.params.syntax = CommandSyntax
-        cls.params.print_header = print_header
-        cls.params.checksd = checksd
-        cls.params.testresu_print = testresu_print
-        aster_core.register(cls.params, MessageLog)
+        params = cls.params = ExecutionParameter()
+        params.parse_args(argv)
+        params.catalc = catalc
+        params.logical_unit = LogicalUnitFile
+        params.syntax = CommandSyntax
+        params.print_header = print_header
+        params.checksd = checksd
+        params.testresu_print = testresu_print
+        if not params.option & Options.Continue:
+            copy_datafiles(params.export.datafiles)
+        aster_core.register(params, MessageLog)
         libaster.jeveux_init()
         cls._is_initialized = True
         return True
@@ -99,7 +106,7 @@ class Starter(ExecuteCommand):
         Arguments:
             keywords (dict): User keywords
         """
-        if not ExecutionStarter.init(None):
+        if not ExecutionStarter.init(sys.argv):
             return
 
         super(Starter, cls).run(**keywords)
@@ -130,7 +137,8 @@ class Starter(ExecuteCommand):
         """
         iwarn = False
         stop_with = "EXCEPTION"
-        if keywords.get('CODE'):
+        if (ExecutionParameter().option & Options.TestMode or
+                keywords.get('CODE')):
             ExecutionParameter().enable(Options.TestMode)
             stop_with = "ABORT"
             iwarn = True
@@ -138,7 +146,7 @@ class Starter(ExecuteCommand):
         erreur = keywords.get('ERREUR')
         if erreur:
             if erreur.get('ERREUR_F'):
-                stop_with = keywords['ERREUR']['ERREUR_F']
+                stop_with = erreur['ERREUR_F']
         libaster.onFatalError(stop_with)
 
         debug = keywords.get('DEBUG')
@@ -217,8 +225,12 @@ def init(*argv, **kwargs):
     Arguments:
         argv (list): List of command line arguments.
         kwargs (dict): Keywords arguments passed to 'DEBUT'/'POURSUITE'
-            + 'debug' to quickly enable debugging messages.
+            + 'debug' to quickly enable debugging messages
+            + 'noargv' to ignore ``sys.argv``.
     """
+    if not kwargs.get('noargv'):
+        argv = list(argv) + list(sys.argv)
+    kwargs.pop('noargv', None)
     if not ExecutionStarter.init(argv):
         return
 

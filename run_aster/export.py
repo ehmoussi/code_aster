@@ -24,9 +24,53 @@
 The :py:class:`Export` object parses ``.export`` files and provides
 getters and setters onto the parameters.
 
-This object contains :py:class:`File` and :py:class:`Parameter` objects.
+This object contains :py:class:`File` and :py:class:`ExportParameter` objects.
 The arguments of the code_aster command line are stored in a special
-:py:class:`Parameter` object.
+:py:class:`ExportParameter` object.
+
+The syntax of a ``.export`` file is very simple:
+
+.. code-block:: none
+
+    P parameter-name parameter-value
+    A arg1 arg2
+    F-or-R type path-to-compressed-input-output-file DRC unit
+
+``P`` for parameters, supported parameters are (with their type):
+
+.. code-block:: none
+
+    actions: list[str]          - for GUI, "make_env" for "--env"
+    expected_diag: list[str]    - for testcases that should fail
+    hide-command: bool          - do not show the command file before execution
+    interact: bool              - for GUI, same as "--interactive"
+    memory_limit: float         - memory limit in MB
+    mpi_nbcpu: int              - number of MPI processes
+    ncpus: int                  - number of threads (per MPI process)
+    no-mpi: bool                - start without mpirun (for some testcases)
+    time_limit: float           - time limit is seconds
+
+``A`` is a special parameter that stores command line arguments passed to the
+code_aster command file.
+
+``F-or-R``: ``F`` for files, ``R`` for directories.
+
+``DRC``: one or more characters meaning ``D`` data file, ``R`` result file,
+``C`` for compressed (using ``gzip``).
+Example (from ``sslv139a`` testcase):
+
+.. code-block:: none
+
+    P time_limit 60
+    P memory_limit 512
+    P testlist asterxx ci verification sequential
+    F comm sslv139a.comm D 1
+    F datg sslv139a.datg D 16
+    F mmed sslv139a.mmed D 20
+
+Paths are relative to the parent directory of the ``.export`` file
+(``sslv139a.comm`` is in the same directory as ``sslv139a.export``).
+
 """
 
 import argparse
@@ -36,28 +80,22 @@ import re
 
 from .config import CFG
 from .logger import logger
+from .settings import (DEPRECATED, AbstractParameter, ParameterBool,
+                       ParameterFloat, ParameterInt, ParameterListStr,
+                       ParameterStr, Store)
 from .utils import ROOT
-
-DEPRECATED = "__DEPRECATED__"
 
 PARAMS_TYPE = {
     "actions": "list[str]",
-    "debug": "str",
     "expected_diag": "list[str]",
-    "facmtps": "float",
     "hide-command": "bool",
     "interact": "bool",
     "memjob": "int",
     "memory_limit": "float",
-    "mode": "str",
     "mpi_nbcpu": "int",
-    "mpi_nbnoeud": "int",
-    "nbmaxnook": "int",
     "ncpus": "int",
-    "testlist": "list[str]",
+    "no-mpi": "bool",
     "time_limit": "float",
-    "tpmax": "float",
-    "tpsjob": "int",
     # command line arguments
     "args": "list[str]",
 }
@@ -65,14 +103,16 @@ PARAMS_TYPE = {
 # deprecated for simple execution
 PARAMS_TYPE.update({}.fromkeys(
     ["MASTER_memory_limit", "MASTER_time_limit", "aster_root", "consbtc",
-     "cpresok", "diag_pickled", "mclient", "mem_aster", "noeud", "nomjob",
-     "parent", "platform", "protocol_copyfrom", "protocol_copyto",
-     "protocol_exec", "proxy_dir", "rep_trav", "origine", "server", "serveur",
-     "service", "soumbtc", "studyid", "username", "uclient", "version"],
+     "cpresok", "debug", "diag_pickled", "facmtps", "mclient", "mem_aster",
+     "memjob", "mode", "mpi_nbnoeud", "nbmaxnook", "noeud", "nomjob", "parent",
+     "platform", "protocol_copyfrom", "protocol_copyto", "protocol_exec",
+     "proxy_dir", "rep_trav", "origine", "server", "serveur", "service",
+     "soumbtc", "studyid", "testlist", "tpsjob", "username", "uclient",
+     "version"],
     DEPRECATED))
 
 
-class Parameter:
+class ExportParameter(AbstractParameter):
     """A parameter defined in a Export object.
 
     Attributes:
@@ -81,118 +121,43 @@ class Parameter:
     """
 
     @staticmethod
-    def factory(name):
-        """Create a Parameter of the right type."""
-        typ = PARAMS_TYPE.get(name)
-        if typ is None:
-            logger.warning(f"unknown parameter: '{name}'")
-            typ = "list[str]"
-        if typ == DEPRECATED:
-            typ = "str"
-            return None
-        if typ is "str":
-            klass = ParameterStr
-        elif typ is "bool":
-            klass = ParameterBool
-        elif typ is "int":
-            klass = ParameterInt
-        elif typ is "float":
-            klass = ParameterFloat
-        elif typ == "list[str]":
-            klass = ParameterListStr
-        else:
-            raise TypeError(typ)
-        return klass(name)
-
-    def __init__(self, name):
-        self._name = name
-        self._value = None
-
-    @property
-    def name(self):
-        """str: Attribute that holds the 'name' property."""
-        return self._name
-
-    @property
-    def value(self):
-        """misc: Attribute that holds the 'value' property."""
-        return self._value
-
-    def convert(self, value):
-        """Convert a value for the parameter type."""
-        try:
-            return self._convert(value)
-        except (TypeError, ValueError) as exc:
-            logger.error(f"Parameter '{self.name}': {exc}", exception=exc)
-
-    def _convert(self, value):
-        raise NotImplementedError("must be subclassed!")
-
-    def set(self, value):
-        """Convert and set the value.
-
-        Arguments:
-            value (misc): New value.
-        """
-        self._value = self.convert(value)
+    def _typed_subclasses(typ):
+        """Return the subclass for the expected type or *None* if not found."""
+        return {
+            "str": ExportParameterStr,
+            "bool": ExportParameterBool,
+            "int": ExportParameterInt,
+            "float": ExportParameterFloat,
+            "list[str]": ExportParameterListStr,
+        }.get(typ)
 
     def __repr__(self):
         """Simple representation"""
         return "P {0.name} {0.value}".format(self)
 
 
-class ParameterStr(Parameter):
+class ExportParameterStr(ExportParameter, ParameterStr):
     """A parameter defined in a Export object of type string."""
 
-    def _convert(self, value):
-        if isinstance(value, (list, tuple)):
-            value = " ".join([str(i) for i in value])
-        return str(value)
 
-
-class ParameterBool(Parameter):
+class ExportParameterBool(ExportParameter, ParameterBool):
     """A parameter defined in a Export object of type boolean."""
-
-    def _convert(self, value):
-        if isinstance(value, (list, tuple)):
-            value = " ".join([str(i) for i in value])
-        if value == "":
-            value = True
-        elif value == "False":
-            value = False
-        return bool(value)
 
     def __repr__(self):
         """Simple representation"""
         return "" if not self._value else "P {0.name}".format(self)
 
 
-class ParameterInt(Parameter):
+class ExportParameterInt(ExportParameter, ParameterInt):
     """A parameter defined in a Export object of type integer."""
 
-    def _convert(self, value):
-        if isinstance(value, (list, tuple)):
-            value = " ".join([str(i) for i in value])
-        return int(float(value))
 
-
-class ParameterFloat(Parameter):
+class ExportParameterFloat(ExportParameter, ParameterFloat):
     """A parameter defined in a Export object of type float."""
 
-    def _convert(self, value):
-        if isinstance(value, (list, tuple)):
-            value = " ".join([str(i) for i in value])
-        return float(value)
 
-
-class ParameterListStr(Parameter):
+class ExportParameterListStr(ExportParameter, ParameterListStr):
     """A parameter defined in a Export object of type list of strings."""
-
-    def _convert(self, value):
-        if not isinstance(value, (list, tuple)):
-            value = [value]
-        value = [str(i) for i in value]
-        return value
 
     def __repr__(self):
         """Simple representation"""
@@ -274,36 +239,61 @@ class File:
         """bool: Attribute that holds the 'resu' property."""
         return self._resu
 
+    def _astext(self):
+        fields = []
+        if self._dir:
+            fields.append('R')
+        else:
+            fields.append('F')
+        fields.append(self._typ)
+        fields.append(self._path)
+        drc = ""
+        if self.data:
+            drc += 'D'
+        if self.resu:
+            drc += 'R'
+        if self.compr:
+            drc += 'C'
+        fields.append(drc)
+        fields.append(str(self.unit))
+        return fields
+
+    @property
+    def as_argument(self):
+        """str: String to be passed on command_line"""
+        return ":".join(self._astext())
+
+    @classmethod
+    def from_argument(cls, line):
+        """Create a File object by decoding a line as formatted
+        by `File.as_argument`.
+
+        Arguments:
+            line (str): Line as formatted by `File.as_argument`
+        """
+        typ, filetype, path, drc, unit = line.split(":")
+        return cls(path, filetype, unit, typ == "R",
+                   "D" in drc, "R" in drc, "C" in drc)
+
     def __repr__(self):
         """Simple representation"""
-        txt = ""
-        if self._dir:
-            txt += 'R '
-        else:
-            txt += 'F '
-        txt += self._typ + ' ' + self.path + ' '
-        if self.data:
-            txt += 'D'
-        if self.resu:
-            txt += 'R'
-        if self.compr:
-            txt += 'C'
-        txt += ' ' +  str(self.unit)
-        return txt
+        return " ".join(self._astext())
 
 
-class Export:
+class Export(Store):
     """This object represents a `.export` file.
 
 
     Arguments:
         export_file (str, optional): File name of the export file.
         from_string (str, optional): Export content as string.
+        test (bool, optional): *True* for a testcase, *False* for a study.
         check (bool, optional): *True* to automatically check the consistency.
             *False* if it will be run manually.
     """
 
-    def __init__(self, filename=None, from_string=None, check=True):
+    def __init__(self, filename=None, from_string=None, test=False, check=True):
+        super().__init__()
         assert filename or from_string, "Export(): invalid arguments"
         if filename:
             self._filename = osp.abspath(filename)
@@ -314,12 +304,17 @@ class Export:
             self._content = from_string
             self._filename = None
             self._root = ""
-        self._params = {}
-        self._pargs = ParameterListStr("args")
+        self._test = test
+        self._pargs = ExportParameterListStr("args")
         self._pargs.set([])
         self._files = []
         self._checked = False
         self.parse(check)
+
+    @staticmethod
+    def _new_param(name):
+        """Create a Parameter of the right type."""
+        return ExportParameter.factory(PARAMS_TYPE, name)
 
     @property
     def filename(self):
@@ -327,9 +322,14 @@ class Export:
         return self._filename
 
     @property
+    def commfiles(self):
+        """list[File]: List of input 'comm' File objects."""
+        return [i for i in self._files if i.data if i.filetype == "comm"]
+
+    @property
     def datafiles(self):
-        """list[File]: List of input File objects."""
-        return [i for i in self._files if i.data]
+        """list[File]: List of input File objects (except 'comm' files)."""
+        return [i for i in self._files if i.data if i.filetype != "comm"]
 
     @property
     def resultfiles(self):
@@ -343,6 +343,23 @@ class Export:
             fileobj (File): File object to be added.
         """
         self._files.append(fileobj)
+
+    def remove_file(self, fileobj):
+        """Remove a File object.
+
+        Arguments:
+            fileobj (File): File object to be removed.
+        """
+        self._files = [i for i in self._files if i is not fileobj]
+
+    def import_file_argument(self, line):
+        """Add a File object by decoding a line as formatted
+        by `File.as_argument`.
+
+        Arguments:
+            line (str): Line as formatted by `File.as_argument`
+        """
+        self.add_file(File.from_argument(line))
 
     def parse(self, check):
         """Parse the export content.
@@ -367,7 +384,7 @@ class Export:
                 self.set_argument(spl)
             elif typ == "P":
                 name = spl.pop(0)
-                self.set_parameter(name, spl)
+                self.set(name, spl)
             elif typ in ("F", "R"):
                 filetype = spl.pop(0)
                 isdir = typ == "R"
@@ -379,19 +396,6 @@ class Export:
                 self.add_file(entry)
         if check:
             self.check()
-
-    def set_parameter(self, name, value):
-        """Add a parameter.
-
-        Arguments:
-            name (str): Parameter name.
-            value (misc): Parameter value.
-        """
-        param = self._params.setdefault(name, Parameter.factory(name))
-        if not param:
-            del self._params[name]
-            return
-        param.set(value)
 
     def set_argument(self, opts):
         """Add command line arguments.
@@ -415,8 +419,8 @@ class Export:
             # if fileobj.is_tests_data:
             if (fileobj.is_tests_data or
                     (fileobj.filetype == "nom" and
-                     not osp.exists(osp.join(base, fileobj.path)) and
-                     "make_test" in self.get("actions", []))):
+                     not osp.exists(osp.join(base, fileobj.path))
+                     and self._test)):
                 base = osp.join(ROOT, "share", "aster", "tests_data")
             fileobj.path = osp.join(base, fileobj.path)
 
@@ -442,17 +446,15 @@ class Export:
                 if not self._checked:
                     value += CFG.get("addmem", 0.)
                 self.set_argument(["--memory", value])
-        # time_limit in s (required), tpsjob in min, --tpmax in s (required)
+        # time_limit in s (required), --tpmax in s (required)
         if "--tpmax" not in args:
             value = None
-            if self.has_param("tpsjob"):
-                value = self.get("tpsjob") * 60
             if self.has_param("time_limit"):
-                value = self.get("time_limit")
+                value = int(self.get("time_limit", 0))
             if value:
                 self.set_argument(["--tpmax", value])
                 if not self.has_param("time_limit"):
-                    self.set_parameter("time_limit", value)
+                    self.set("time_limit", value)
         # ncpus/numthreads
         if "--numthreads" not in args:
             value = self.get("ncpus") # TODO or get limit from config
@@ -460,7 +462,6 @@ class Export:
                 self.set_argument(["--numthreads", value])
         self._checked = True
         # TODO check resources limits here?
-
 
     def __repr__(self):
         """Return a representation of the Export object.
@@ -474,14 +475,10 @@ class Export:
                 txt.append(repr(param))
         if self.args:
             txt.append("A" + repr(self._pargs)[1:])
-        data = self.datafiles
-        if data:
-            for entry in data:
-                txt.append(repr(entry))
-        result = self.resultfiles
-        if result:
-            for entry in result:
-                txt.append(repr(entry))
+        for files in (self.commfiles, self.datafiles, self.resultfiles):
+            if files:
+                for entry in files:
+                    txt.append(repr(entry))
         txt.append("")
         return "\n".join(txt)
 
@@ -493,43 +490,6 @@ class Export:
         """
         with open(filename, "w") as fobj:
             fobj.write(repr(self))
-
-    def has_param(self, key):
-        """Tell if `key` is a known parameter.
-
-        Arguments:
-            key (str): Parameter name.
-
-        Returns:
-            bool: *True* it the parameter is defined, *False* otherwise.
-        """
-        return key in self._params
-
-    def get_param(self, key):
-        """Return a parameter.
-
-        Arguments:
-            key (str): Parameter name.
-
-        Returns:
-            misc: Parameter.
-        """
-        param = self._params.get(key)
-        return param
-
-    def get(self, key, default=None):
-        """Return a parameter value.
-
-        Arguments:
-            key (str): Parameter name.
-            default (misc, optional): Default value if the parameter does
-                not exist.
-
-        Returns:
-            misc: Parameter value.
-        """
-        param = self.get_param(key)
-        return (param and param.value) or default
 
     @property
     def args(self):
@@ -577,6 +537,16 @@ class Export:
         Arguments:
             value (float): New time limit.
         """
-        self.set_parameter("time_limit", 86400.)
+        self.set("time_limit", value)
         self.remove_args("--tpmax", 1)
+        self.check()
+
+    def set_memory_limit(self, value):
+        """Define the memory limit value.
+
+        Arguments:
+            value (float): New memory limit.
+        """
+        self.remove_args("--memory", 1)
+        self.set_argument(["--memory", str(value)])
         self.check()
