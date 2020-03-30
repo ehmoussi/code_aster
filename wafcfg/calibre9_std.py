@@ -40,7 +40,7 @@ def configure(self):
 
     self.env["CONFIG_PARAMETERS"] = {
         "tmpdir": "/local00/tmp",
-        "addmem": 600,
+        "addmem": 800,
     }
 
     self.env.append_value('CXXFLAGS', ['-D_GLIBCXX_USE_CXX11_ABI=0',

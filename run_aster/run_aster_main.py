@@ -85,6 +85,10 @@ USAGE = """
 
 """
 
+EPILOG = """
+The time limit is automatically increased to 24 hours for "interactive" usages
+as '--interactive', '--env', '--no-comm'.
+"""
 
 def parse_args(argv):
     """Parse command line arguments.
@@ -95,6 +99,7 @@ def parse_args(argv):
     # command arguments parser
     parser = argparse.ArgumentParser(
         usage=USAGE,
+        epilog=EPILOG,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--version', action='store_true',
                         help="show code_aster version")
@@ -103,8 +108,7 @@ def parse_args(argv):
                              "DEBUG=1 in environment)")
     parser.add_argument('-i', '--interactive', action='store_true',
                         help="inspect interactively after running script"
-                             "instead of calling FIN command, time limit is "
-                             "increased to 24 hours")
+                             "instead of calling FIN command")
     parser.add_argument('--env', action='store_true',
                         help="do not execute, only prepare the working "
                              "directory ('--wrkdir' is required)")
@@ -138,8 +142,6 @@ def parse_args(argv):
     parser.add_argument('--memory_limit', dest='memory_limit', type=float,
                         action='store',
                         help="override the memory limit in MB")
-    parser.add_argument('--ptvsd-runner', action='store', type=int,
-                        help=argparse.SUPPRESS)
     parser.add_argument('--no-comm', action='store_true',
                         help="do not executes the `.comm` files but starts an "
                              "interactive Python session. Execute "
@@ -147,6 +149,10 @@ def parse_args(argv):
     parser.add_argument('--exectool', action='store',
                         help="wrap code_aster execution using this tool "
                              "(debugger, valgrind, custom command...)")
+    parser.add_argument('--ptvsd-runner', action='store', type=int,
+                        help=argparse.SUPPRESS)
+    parser.add_argument('--ptvsd-rank', action='store', type=int, default=0,
+                        help=argparse.SUPPRESS)
     parser.add_argument('export', metavar='EXPORT', nargs="?",
                         help="Export file defining the calculation. "
                              "Without file, it starts an interactive Python "
@@ -178,14 +184,17 @@ def main(argv=None):
     argv = argv or sys.argv[1:]
     args = parse_args(argv)
 
-    if args.ptvsd_runner:
+    procid = 0
+    if CFG.get("parallel", 0):
+        procid = get_procid()
+    if args.ptvsd_runner and procid == args.ptvsd_rank:
         print('Waiting for debugger attach...'),
         ptvsd.enable_attach(address=('127.0.0.1', args.ptvsd_runner))
         ptvsd.wait_for_attach()
         ptvsd.break_into_debugger()
 
     export = Export(args.export, " ", test=args.test or args.ctest, check=False)
-    # args to parameters
+    make_env = args.env or "make_env" in export.get("actions", [])
     tmpf = None
     if args.no_comm:
         for comm in export.commfiles:
@@ -213,6 +222,7 @@ def main(argv=None):
         pass
     if args.interactive:
         export.set("interact", True)
+    if args.interactive or make_env:
         export.set_time_limit(86400.)
     if args.memory_limit:
         export.set_memory_limit(args.memory_limit)
@@ -222,9 +232,8 @@ def main(argv=None):
 
     if args.only_proc0 is None:
         args.only_proc0 = CFG.get("only-proc0", False)
-    procid = 0
+
     if CFG.get("parallel", 0):
-        procid = get_procid()
         if args.only_proc0 and procid > 0:
             logger.setLevel(WARNING)
         if procid < 0 and args.auto_mpirun:
@@ -239,11 +248,16 @@ def main(argv=None):
 
     opts = {}
     opts["test"] = args.test
-    opts["env"] = args.env or "make_env" in export.get("actions", [])
+    opts["env"] = make_env
     opts["tee"] = not args.ctest and (not args.only_proc0 or procid == 0)
     opts["interactive"] = args.interactive
     if args.exectool:
-        opts["exectool"] = CFG.get("exectool", {}).get(args.exectool)
+        wrapper = CFG.get("exectool", {}).get(args.exectool)
+        if not wrapper:
+            logger.warning(f"'{args.exectool}' is not defined in your "
+                           f"configuration, it is used it as a command line.")
+            wrapper = args.exectool
+        opts["exectool"] = wrapper
     calc = RunAster.factory(export, **opts)
     status = calc.execute(args.wrkdir)
     if tmpf and not opts["env"]:
