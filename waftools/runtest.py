@@ -52,8 +52,11 @@ def options(self):
     group.add_option('--exectool', dest='exectool',
                      action='store', default=None,
                      help='run a testcase by passing additional arguments '
-                          '(possible values are "debugger", "env" + those '
+                          '(possible values are "env" + those '
                           'defined in the configuration)')
+    group.add_option('--time_limit', dest='time_limit',
+                     action='store', default=None,
+                     help='override the time limit of the testcase')
 
 def configure(self):
     """Store developer preferences"""
@@ -72,17 +75,14 @@ def runtest(self):
         Logs.error("'run_aster' not found, please check your $PATH")
         return
     args = []
-    if opts.exectool and opts.exectool != 'env':
-        raise Errors.WafError(f"'{opts.exectool}' is not yet supported, "
-                              "use 'env' and start you favorite tool")
-    if opts.exectool == 'debugger':
-        args.append('--debugger')
-    elif opts.exectool == 'env':
+    if opts.exectool == 'env':
         args.append('--env')
         wrkdir = tempfile.mkdtemp(prefix='runtest_')
         args.extend(['--wrkdir', wrkdir])
     elif opts.exectool is not None:
         args.append('--exectool=%s' % opts.exectool)
+    if opts.time_limit:
+        args.append('--time_limit={0}'.format(opts.time_limit))
     dtmp = opts.outputdir or self.env['PREFS_OUTPUTDIR'] \
            or tempfile.mkdtemp(prefix='runtest_')
     try:
@@ -102,16 +102,20 @@ def runtest(self):
         if self.variant == 'debug':
             cmd.extend(['-g'])
         cmd.extend(args)
-        cmd.append(exp[0])
+        cmd.append(osp.abspath(exp[0]))
         Logs.info("running %s in '%s'" % (test, self.variant))
         ext = '.' + osp.basename(self.env['PREFIX']) + '.' + self.variant
         out = osp.join(dtmp, osp.basename(test) + ext) + '.output'
         err = osp.join(dtmp, osp.basename(test) + ext) + '.error'
         Logs.info("`- command: %s" % (" ".join(cmd)))
         Logs.info("`- output in %s" % out)
+        # do not run from source directory to import installed files
+        current = os.getcwd()
+        os.chdir(dtmp)
         with open(out, 'w') as fobj, open(err, 'w') as ferr:
             proc = Popen(cmd, stdout=fobj, stderr=ferr, bufsize=1)
         retcode = proc.wait()
+        os.chdir(current)
         with open(out, 'rb') as fobj:
             btext = fobj.read()
         text = btext.decode("utf8", "replace")

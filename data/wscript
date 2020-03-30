@@ -34,6 +34,7 @@ Build some data files (dest: share/aster)
 - 'un_ctest': script that executes a list of testcases using 'ctest'.
 """
 
+import getpass
 import json
 import os
 import os.path as osp
@@ -65,30 +66,35 @@ def options(self):
                      help='location of the data repository (default: ../data)')
 
     group = self.add_option_group('External programs options')
-    group.add_option('--with-prog-metis', action='store_true', default=None,
-                     dest='with_prog_metis',
-                     help='Force support of metis program')
     group.add_option('--with-prog-gmsh', action='store_true', default=None,
                      dest='with_prog_gmsh',
                      help='Force support of gmsh program')
     group.add_option('--with-prog-salome', action='store_true', default=None,
                      dest='with_prog_salome',
                      help='Force support of salome program')
-    group.add_option('--with-prog-miss3d', action='store_true', default=None,
-                     dest='with_prog_miss3d',
+    group.add_option('--with-prog-run_miss3d', action='store_true',
+                     default=None,
+                     dest='with_prog_run_miss3d',
                      help='Force support of miss3d program')
     group.add_option('--with-prog-homard', action='store_true', default=None,
                      dest='with_prog_homard',
                      help='Force support of homard program')
     group.add_option('--with-prog-ecrevisse', action='store_true',
-                     default=None, dest='with_prog_ecrevisse',
+                     default=None,
+                     dest='with_prog_ecrevisse',
                      help='Force support of ecrevisse program')
     group.add_option('--with-prog-xmgrace', action='store_true', default=None,
                      dest='with_prog_xmgrace',
                      help='Force support of xmgrace program')
+    group.add_option('--with-prog-gracebat', action='store_true', default=None,
+                     dest='with_prog_gracebat',
+                     help='Force support of gracebat program')
     group.add_option('--with-prog-mfront', action='store_true', default=None,
                      dest='with_prog_mfront',
                      help='Force support of mfront program')
+    group.add_option('--with-prog-mdump', action='store_true', default=None,
+                     dest='with_prog_mdump',
+                     help='Force support of mdump program')
 
 
 def configure(self):
@@ -99,13 +105,12 @@ def configure(self):
         self.start_msg('Singularity image')
         self.end_msg(self.env.singularityimage)
 
-    dict_conv = self.env2dict(osp.dirname(self.path.abspath()))
-    self.env['ASTER_ENVIRON'] = pickle.dumps(dict_conv)
-
     self.check_config()
     self.check_external_programs()
     self.configure_data()
 
+    dict_conv = self.env2dict(osp.dirname(self.path.abspath()))
+    self.env['ASTER_ENVIRON'] = pickle.dumps(dict_conv)
 
 @Configure.conf
 def configure_data(self):
@@ -172,10 +177,11 @@ def build(self):
 
     # without substitution
     self.install_files(self.env.BINDIR,
-                       ["post_install", "run_aster", "run_ctest"],
+                       [self.path.get_src().find_node(src)
+                        for src in ("post_install", "run_aster", "run_ctest")],
                        chmod=Utils.O755)
     self.install_files(self.env.ASTERDATADIR,
-                       ["mpirun_template"],
+                       self.path.get_src().find_node("mpirun_template"),
                        chmod=Utils.O644)
     # install files from data repository
     if self.env.data_path:
@@ -202,6 +208,7 @@ SRCTEST_TMPL = """SRCTEST        | src     | -     | %s"""
 @Configure.conf
 def env2dict(self, src):
     """build dict informations"""
+    # should not set any value to "env"
     self.start_msg('Store execution environment')
     env = self.env.derive()
     env['LD_LIBRARY_PATH'] = os.environ.get(
@@ -221,6 +228,7 @@ def env2dict(self, src):
         dico['DEFINES'] += ' _USE_MPI'
     dico['LD_LIBRARY_PATH'] = sep.join(ld_path)
     dico['CFG_PYTHONPATH'] = sep.join(py_path)
+    dico['CFG_MPIRUNPATH'] = env['CFG_MPIRUNPATH']
     dico['SRC'] = src
     dico['FC'] = env.FC[0]
     flags = [' '.join(env[i])
@@ -229,13 +237,6 @@ def env2dict(self, src):
     dico['OPT_ENV'] = env['OPT_ENV'] and os.linesep.join(env['OPT_ENV']) or ''
     dico['OPT_ENV_FOOTER'] = env['OPT_ENV_FOOTER'] \
         and os.linesep.join(env['OPT_ENV_FOOTER']) or ''
-    try:
-        addmem = env['ADDMEM']
-        if addmem and type(addmem) in (list, tuple):
-            addmem = addmem[0]
-        env['ADDMEM'] = int(addmem)
-    except TypeError:
-        env['ADDMEM'] = 250
     dico['ADDMEM'] = env['ADDMEM']
     dico['srctest'] = os.linesep.join([
         SRCTEST_TMPL % '%(SRC)s/astest' % dico,
@@ -334,7 +335,7 @@ def change_tests(dico, install_tests):
 def check_config(self):
     # Check for configuration parameters of the version
     cfg = {}
-    self.start_msg('Set tmp directory for execution')
+    self.start_msg("Set parameters for 'config.js'")
     tmpdir = "/tmp"
     # cmake syntax
     tmpdir_cmake = "$ENV{ASTER_TMPDIR}"
@@ -343,21 +344,35 @@ def check_config(self):
     self.env.ASRUN_TMPDIR_CMAKE = tmpdir or tmpdir_cmake
     cfg["tmpdir"] = tmpdir
 
-    self.end_msg(cfg["tmpdir"])
-    self.start_msg('Set tmp directory for `salome test`')
-    self.end_msg(self.env.ASRUN_TMPDIR_CMAKE)
-
+    try:
+        addmem = self.env['ADDMEM']
+        if addmem and type(addmem) in (list, tuple):
+            addmem = addmem[0]
+        self.env['ADDMEM'] = int(addmem)
+    except TypeError:
+        self.env['ADDMEM'] = 1024
     cfg["addmem"] = self.env.ADDMEM
     cfg["version_tag"] = ".".join([str(i) for i in self.env.ASTER_VERSION[0]])
     cfg["version_sha1"] = self.env.ASTER_VERSION[1]
     cfg["python"] = list(self.env.PYTHON)[0]
     cfg["parallel"] = int(self.get_define('HAVE_MPI') or 0)
+    cfg["only-proc0"] = 0
+    self.env["base_mpirun"] = ["mpirun"]
     if cfg["parallel"]:
         self.check_mpirun()
         self.check_mpirun_rank()
     cfg.update(self._extract_keys("CFGJS_"))
     cfg["FC"] = self.env["FC"][0]
     cfg["FCFLAGS"] = self.env["FCFLAGS"]
+    cfg["exectool"] = {}
+    self.end_msg("done")
+    from_wafcfg = self.env["CONFIG_PARAMETERS"] or {}
+    for param in ("tmpdir", "addmem", "python", "mpirun", "mpirun_rank",
+                  "only-proc0", "exectool"):
+        if cfg.get(param):
+            self.start_msg(f". use '{param}'")
+            cfg[param] = from_wafcfg.get(param, cfg[param])
+            self.end_msg(str(cfg[param]))
     self.env["CONFIG_PARAMETERS"] = cfg
 
 
@@ -369,19 +384,30 @@ def check_mpirun(self):
         self.env["CFGJS_mpirun"] = [self.env["mpirun"]]
         return
     _check_prog(self, "mpirun", ["mpirun"], var_prefix="CFGJS_")
-    mpirun = self.env["CFGJS_mpirun"][0]
+    # do not use absolute path returned by _check_prog because it is
+    # equivalent to "mpirun --prefix <path>" and change PATH and LD_LIBRARY_PATH
+    # but extend PATH
+    self.env["CFG_MPIRUNPATH"] = osp.dirname(self.env["CFGJS_mpirun"][0])
+    mpirun = "mpirun"
     mpicmd = [mpirun]
+    root_option = []
+    if getpass.getuser() == "root":
+        if self._call_cmd("Check for mpirun flag '--allow-run-as-root'",
+                        [mpirun, "--allow-run-as-root", "echo"]) == 0:
+            root_option.append("--allow-run-as-root")
+    # store for future checkings
+    self.env["base_mpirun"] = [mpirun] + root_option
     if self._call_cmd("Check for mpirun flag '-n N'",
-                      [mpirun, "-n", "1", "echo"]) == 0:
+                      self.env["base_mpirun"] + ["-n", "1", "echo"]) == 0:
         mpicmd.extend(["-n", "{mpi_nbcpu}"])
     elif self._call_cmd("Check for mpirun flag '-np N'",
-                        [mpirun, "-np", "1", "echo"]) == 0:
+                        self.env["base_mpirun"] + ["-np", "1", "echo"]) == 0:
         mpicmd.extend(["-np", "{mpi_nbcpu}"])
 
     for opt in ("--tag-output", "-print-rank-map", "-prepend-rank",
                 "-ordered-output"):
         if self._call_cmd("Check for mpirun flag '{0}'".format(opt),
-                        [mpirun, opt, "echo"]) == 0:
+                          self.env["base_mpirun"] + [opt, "echo"]) == 0:
             mpicmd.append(opt)
     mpicmd.append("{program}")
     self.env["CFGJS_mpirun"] = [" ".join(mpicmd)]
@@ -394,8 +420,7 @@ def check_mpirun_rank(self):
         self.env["CFGJS_mpirun_rank"] = [self.env["mpirun_rank"]]
         return
     # default to openmpi
-    cmd = self.env["CFGJS_mpirun"][0].format(mpi_nbcpu=1, program="env")
-    out = self.cmd_and_log(cmd)
+    out = self.cmd_and_log(self.env["base_mpirun"] + ["env"])
     rank_id = "echo ${OMPI_COMM_WORLD_RANK}"
     if "PMI_RANK" in out:
         rank_id = "echo ${PMI_RANK}"
@@ -418,28 +443,37 @@ def _call_cmd(self, msg, cmd):
 @Configure.conf
 def check_external_programs(self):
     _check_prog(self, 'gmsh', ['gmsh'],
+                mandatory=self.options.with_prog_gmsh,
                 add_paths=['${GMSH_BIN_DIR}'])
 
     _check_prog(self, 'salome', ['salome'],
+                mandatory=self.options.with_prog_salome,
                 add_paths=['${ABSOLUTE_APPLI_PATH}'])
 
     _check_prog(self, 'run_miss3d', ['run_miss3d'],
+                mandatory=self.options.with_prog_run_miss3d,
                 add_paths=['${MISS3D_DIR}'])
 
     _check_prog(self, 'homard', ['homard'],
+                mandatory=self.options.with_prog_homard,
                 add_paths=[osp.join('${HOMARD_ASTER_ROOT_DIR}', 'ASTER_HOMARD')])
 
     _check_prog(self, 'ecrevisse', ['ecrevisse'],
+                mandatory=self.options.with_prog_ecrevisse,
                 add_paths=['${ECREVISSE_ROOT_DIR}'])
 
     mfront = 'mfront' + self.env.TFELSUFFIX
     _check_prog(self, 'mfront', [mfront],
+                mandatory=self.options.with_prog_mfront,
                 add_paths=['${MFRONT_ROOT_DIR}'])
 
-    _check_prog(self, 'xmgrace', ['xmgrace'])
-    _check_prog(self, 'gracebat', ['gracebat'])
+    _check_prog(self, 'xmgrace', ['xmgrace'],
+                mandatory=self.options.with_prog_xmgrace)
+    _check_prog(self, 'gracebat', ['gracebat'],
+                mandatory=self.options.with_prog_gracebat)
 
-    _check_prog(self, 'mdump', ['mdump'])
+    _check_prog(self, 'mdump', ['mdump'],
+                mandatory=self.options.with_prog_mdump)
 
     dict_ext = self._extract_keys("PROG_")
     self.env['EXTERNAL_PROGRAMS'] = dict_ext
@@ -456,7 +490,8 @@ def _extract_keys(self, var_prefix):
     return extr
 
 
-def _check_prog(self, name, programs, add_paths=None, var_prefix="PROG_"):
+def _check_prog(self, name, programs, mandatory=True, add_paths=None,
+                var_prefix="PROG_"):
     """Search for the first available program from 'programs'."""
     opts = self.options
     paths0 = self.environ.get('PATH', '').split(os.pathsep)
@@ -464,7 +499,6 @@ def _check_prog(self, name, programs, add_paths=None, var_prefix="PROG_"):
     # try first without 'outils' in $PATH
     to_check = [paths1, paths0]
     add_paths = [osp.expandvars(i) for i in add_paths or []]
-    with_prog = getattr(opts, 'with_prog_' + name, None)
 
     while to_check:
         success = False
@@ -479,6 +513,6 @@ def _check_prog(self, name, programs, add_paths=None, var_prefix="PROG_"):
                 pass
         if success:
             break
-    if not success and with_prog:
+    if not success and mandatory:
         raise Errors.ConfigurationError("not found in $PATH: {0}"
                                         .format(programs))

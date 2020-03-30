@@ -11,6 +11,14 @@ run_aster package
    :members:
    :special-members: __init__
 
+.. automodule:: run_aster.run_aster_main
+   :show-inheritance:
+   :special-members: __init__
+
+.. automodule:: run_aster.run_ctest_main
+   :show-inheritance:
+   :special-members: __init__
+
 .. automodule:: run_aster.run
    :show-inheritance:
    :members:
@@ -26,7 +34,7 @@ run_aster package
    :members:
    :special-members: __init__
 
-.. automodule:: run_aster.ctest2junit
+.. automodule:: run_aster.settings
    :show-inheritance:
    :members:
    :special-members: __init__
@@ -51,12 +59,17 @@ run_aster package
    :members:
    :special-members: __init__
 
+.. automodule:: run_aster.logger
+   :show-inheritance:
+   :members:
+   :special-members: __init__
+
 .. automodule:: run_aster.timer
    :show-inheritance:
    :members:
    :special-members: __init__
 
-.. automodule:: run_aster.logger
+.. automodule:: run_aster.ctest2junit
    :show-inheritance:
    :members:
    :special-members: __init__

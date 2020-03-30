@@ -5,7 +5,7 @@ import numpy as np
 import code_aster
 from code_aster.Commands import *
 
-code_aster.init()
+code_aster.init(ERREUR=_F(ERREUR_F='EXCEPTION'))
 
 test = code_aster.TestCase()
 

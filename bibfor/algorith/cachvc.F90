@@ -50,6 +50,7 @@ subroutine cachvc(modelz, matez, matecoz, carelz, numedz, compoz,&
 !
     typres = 'R'
     blan24 = ' '
+    chths = ' '
 !
 !      ==> CAS DU CHARGEMENT TEMPERATURE, HYDRATATION, SECHAGE,
 !          PRESSION TOTALE (CHAINAGE HM)

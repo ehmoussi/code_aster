@@ -6,5 +6,5 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm zzzz100g.comm D 1
-F libr zzzz100g.2 D 2
+F nom zzzz100g.py D 0
 F mmed zzzz100g.med D 20

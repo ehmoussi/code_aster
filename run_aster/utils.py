@@ -129,12 +129,14 @@ def make_writable(filename):
     os.chmod(filename, os.stat(filename).st_mode | stat.S_IWUSR)
 
 
-def run_command(cmd, timeout=None):
+def run_command(cmd, timeout=None, exitcode_file=None):
     """Execute a command and duplicate output to `logfile`.
 
     Arguments:
         cmd (list): Command line arguments.
         timeout (float, optional): Time out for the execution.
+        exitcode_file (str, optional): Read exit code from this file if
+            it exists.
 
     Returns:
         int: exit code.
@@ -142,28 +144,11 @@ def run_command(cmd, timeout=None):
     try:
         proc = run(" ".join(cmd), shell=True, timeout=timeout or None)
         iret = proc.returncode
+        if exitcode_file and osp.isfile(exitcode_file):
+            with open(exitcode_file) as fexit:
+                iret = int(fexit.read())
+            os.remove(exitcode_file)
     except TimeoutExpired as exc:
         sys.stderr.write(str(exc))
         iret = -9
     return iret
-
-
-class PercentTemplate(string.Template):
-    """Template with '%' as delimiter."""
-    delimiter = '%'
-
-
-def get_mpirun_script(args):
-    """Return the content of the script to execute with *mpirun*.
-
-    Arguments:
-        args: dict of arguments.
-
-    Returns:
-        str: Content of the script.
-    """
-    template_file = osp.join(ROOT, "share", "aster", "mpirun_template")
-    with open(template_file) as fobj:
-        text = fobj.read()
-    template = PercentTemplate(text)
-    return template.substitute(args)

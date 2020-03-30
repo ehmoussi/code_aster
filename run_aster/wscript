@@ -39,7 +39,3 @@ def build(self):
     install_from = '.',
     install_path = osp.join(env.ASTERLIBDIR, "run_aster"),
     )
-
-    self.install_files(self.env.BINDIR,
-                       ["run_aster_main", "run_ctest_main"],
-                       chmod=Utils.O755)

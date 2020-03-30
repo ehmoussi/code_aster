@@ -29,8 +29,9 @@ For testcases, the execution may end normally but with a state not *Ok*
 if there is no TEST_RESU or if it is NOOK.
 """
 
-
+import argparse
 import re
+import sys
 
 
 class Status:
@@ -113,7 +114,7 @@ class StateOptions:
         Ok: Execution was finished successfully.
 
         CpuLimit: Execution ended with cpu time error.
-        NoConvergence: Execution ended with no convergence error.
+        Convergence: Execution ended with no convergence error.
         Memory: Execution ended with a memory error.
         Except: Execution ended with an exception.
 
@@ -130,7 +131,7 @@ class StateOptions:
     Nook = 0x002
     NoTest = 0x004
     CpuLimit = 0x008
-    NoConvergence = 0x010
+    Convergence = 0x010
     Memory = 0x020
     Except = 0x040
     Syntax = 0x080
@@ -138,7 +139,7 @@ class StateOptions:
     Abort = 0x200
     Ok = 0x400
 
-    Error = (CpuLimit | NoConvergence | Memory | Except
+    Error = (CpuLimit | Convergence | Memory | Except
              | Syntax | Fatal | Abort)
     Completed = Ok | Warn | Nook | NoTest
 
@@ -185,7 +186,7 @@ class StateOptions:
             return "<F>_ERROR"
         if state & StateOptions.Memory:
             return "<S>_MEMORY_ERROR"
-        if state & StateOptions.NoConvergence:
+        if state & StateOptions.Convergence:
             return "<S>_NO_CONVERGENCE"
         if state & StateOptions.CpuLimit:
             return "<S>_CPU_LIMIT"
@@ -204,17 +205,16 @@ class StateOptions:
 
 RE_OK = re.compile("^ * OK ", re.M)
 RE_NOOK = re.compile("^ *NOOK ", re.M)
-RE_WARN = re.compile("^ *. *" + re.escape("<A>"), re.M)
+RE_WARN = re.compile("^ *. *<A>", re.M)
 RE_DEBUT = re.compile(re.escape("-- CODE_ASTER -- VERSION"))
-RE_FIN = re.compile(re.escape("<I> <FIN> ARRET NORMAL"))
+RE_FIN = re.compile("<I> <FIN> ARRET NORMAL")
 RE_MEM = re.compile("MEMOIRE INSUFFISANTE POUR ALLOUER")
-RE_TIME = re.compile("|".join(["TimeLimitError", "ARRET PAR MANQUE DE TEMPS"]),
-                     re.I)
-RE_CONV = re.compile("|".join(["ConvergenceError", "IntegrationError",
-                               "SolverError", "ContactError"]), re.I)
-RE_EXCEPT = re.compile("AsterError")
-RE_ERRS = re.compile("^ *. *" + re.escape("<S>"), re.M)
-RE_ERRF = re.compile("^ *. *" + re.escape("<F>"), re.M)
+RE_TIME = re.compile("(<TimeLimitError>|ARRET PAR MANQUE DE TEMPS)", re.I)
+RE_CONV = re.compile("<(ConvergenceError|IntegrationError|SolverError"
+                     "|ContactError)>", re.I)
+RE_EXCEPT = re.compile("<AsterError>")
+RE_ERRS = re.compile("^ *. *<S>", re.M)
+RE_ERRF = re.compile("^ *. *<F>", re.M)
 RE_SYNTAX = re.compile("SyntaxError")
 RE_ELAPS = re.compile("TOTAL_JOB +" + r": +([0-9\.]+)" * 4)
 
@@ -257,7 +257,7 @@ def get_status(exitcode, output, test=False):
     if exitcode == -9 or RE_TIME.search(text):
         state |= StateOptions.CpuLimit
     if RE_CONV.search(text):
-        state |= StateOptions.NoConvergence
+        state |= StateOptions.Convergence
     if RE_EXCEPT.search(text) or RE_ERRS.search(text):
         state |= StateOptions.Except
     if not state:
@@ -274,3 +274,22 @@ def get_status(exitcode, output, test=False):
     if measure:
         status.times = [float(value) for value in measure.groups()]
     return status
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog="get_status",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--exitcode', action='store', type=int, required=True,
+                        help="exit code")
+    parser.add_argument('--test', action='store_true',
+                        help="check status for a testcase")
+    parser.add_argument('output',
+                        help="output filename")
+    args = parser.parse_args()
+
+    status = get_status(args.exitcode, args.output, args.test)
+    print('DIAG="{0}"'.format(status.diag))
+    print('EXITCODE={0}'.format(status.exitcode))
+    print('COMPLETED={0}'.format(int(status.is_completed())))
+    sys.exit(0)

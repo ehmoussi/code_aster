@@ -6,8 +6,7 @@ P mpi_nbnoeud 1
 P testlist ci verification sequential
 
 F comm ssnl116a.comm D 1
-F libr ssnl116a.com1 D 1
-F libr ssnl116a.com2 D 1
+F comm ssnl116a.com1 D 1
+F comm ssnl116a.com2 D 1
 F mmed ssnl116a.mmed D 20
 F libr ssnl116a.21   D 21
-
