@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine lrmjoi(fid, nomam2, nbnoeu, nomnoe)
+!
 ! person_in_charge: nicolas.sellenet at edf.fr
-!-----------------------------------------------------------------------
-!     LECTURE DU MAILLAGE -  FORMAT MED
-!-----------------------------------------------------------------------
+!
+subroutine lrmjoi(fid, nommail, nomam2, nbnoeu, nomnoe)
+!
     implicit none
 #include "asterf.h"
 #include "asterf_types.h"
@@ -44,11 +43,16 @@ subroutine lrmjoi(fid, nomam2, nbnoeu, nomnoe)
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-    med_idt :: fid
-    integer :: nbnoeu
+    med_idt, intent(in) :: fid
+    integer, intent(in) :: nbnoeu
+    character(len=24), intent(in) :: nomnoe
+    character(len=*), intent(in) :: nomam2, nommail
 !
-    character(len=24) :: nomnoe
-    character(len=*) :: nomam2
+! ---------------------------------------------------------------------------------------------
+!
+! LECTURE DU FORMAT MED : Lecture des joints pour le ParallelMesh
+!
+! ---------------------------------------------------------------------------------------------
 !
     character(len=4) :: chrang, chnbjo
     character(len=24) :: nonulg, nojoin
@@ -56,19 +60,22 @@ subroutine lrmjoi(fid, nomam2, nbnoeu, nomnoe)
     character(len=200) :: descri
     integer rang, nbproc, nbjoin, domdis, nstep, ncorre
     integer icor, entlcl, geolcl, entdst, geodst, ncorr2, jjoint, jdojoi
-    integer jnlogl, codret, iaux
-    integer :: ednoeu
-    parameter (ednoeu=3)
-    integer :: typnoe
-    parameter (typnoe=0)
+    integer jnlogl, codret, i_join, ino, numno, deca
+    integer, parameter :: ednoeu=3, typnoe=0
     mpi_int :: mrank, msize
+    integer, pointer :: v_noext(:) => null()
 !
     call jemarq()
 !
     call asmpi_info(rank = mrank, size = msize)
     rang = to_aster_int(mrank)
     nbproc = to_aster_int(msize)
+!
+! --- Uniquement pour les ParallelMesh
+!
     if ( nbproc.gt.1 ) then
+!
+! --- Récupération de la numérotation globale des noeuds
 !
         nonulg = nomnoe(1:8)//'.NULOGL'
         call wkvect(nonulg, 'G V I', nbnoeu, jnlogl)
@@ -77,19 +84,26 @@ subroutine lrmjoi(fid, nomam2, nbnoeu, nomnoe)
         call codent(rang, 'G', chrang)
         call as_msdnjn(fid, nomam2, nbjoin, codret)
 !
+! --- Par défaut, tout les noeuds d'un domaine appartient au moins à ce domaine
+!
+        call wkvect(nommail(1:8)//'.NOEX', 'G V I', nbnoeu, vi=v_noext)
+        v_noext(1:nbnoeu) = rang
+!
         if(nbjoin > 0) then
-!         call wkvect(nomnoe(1:8)//'.NO_JO_ENV', 'G V K24', &
-!                     nbproc, jnojoe)
-!         call wkvect(nomnoe(1:8)//'.NO_JO_REC', 'G V K24', &
-!                     nbproc, jnojor)
             call wkvect(nomnoe(1:8)//'.DOMJOINTS', 'G V I', &
                         nbjoin, jdojoi)
-            do iaux = 1, nbjoin
-                call as_msdjni(fid, nomam2, iaux, nomjoi, descri, domdis, &
+!
+! --- Boucle sur les joints entre les sous-domaines
+!
+            do i_join = 1, nbjoin
+                call as_msdjni(fid, nomam2, i_join, nomjoi, descri, domdis, &
                             nommad, nstep, ncorre, codret)
+                ASSERT(domdis.le.nbproc)
+!
                 do icor = 1, ncorre
                     call as_msdszi(fid, nomam2, nomjoi, -1, -1, icor, entlcl, &
                                 geolcl, entdst, geodst, ncorr2, codret)
+!
                     if ( entlcl.eq.ednoeu.and.geolcl.eq.typnoe ) then
                         call codent(domdis, 'G', chnbjo)
                         if ( nomjoi(1:4).eq.chrang ) then
@@ -97,19 +111,26 @@ subroutine lrmjoi(fid, nomam2, nbnoeu, nomnoe)
                         else
                             nojoin = nomnoe(1:8)//'.E'//chnbjo
                         endif
+!
+! --- Récupération de la table de correspondance pour les noeuds partagés par 2 sous-domaines
+!
                         call wkvect(nojoin, 'G V I', 2*ncorr2, jjoint)
                         call as_msdcrr(fid, nomam2, nomjoi, -1, -1, entlcl, &
                                     geolcl, entdst, geodst, 2*ncorr2, &
                                     zi(jjoint), codret)
-!                     if ( nomjoi(1:4).eq.chrang ) then
-!                         ASSERT(zk24(jnojor + domdis).eq.' ')
-!                         zk24(jnojor + domdis) = nojoin
-!                     else
-!                         ASSERT(zk24(jnojoe + domdis).eq.' ')
-!                         zk24(jnojoe + domdis) = nojoin
-!                     endif
-                        ASSERT(domdis.le.nbproc)
-                        zi(jdojoi + iaux - 1) = domdis
+!
+! --- On récupère le numéro du sous-domaine pour les noeuds partagés
+!
+                        if(nomjoi(1:4).eq.chrang) then
+                            deca = 1
+                            do ino = 1, ncorr2
+                                numno = zi(jjoint-1 + deca)
+                                v_noext(numno) = domdis
+                                deca = deca +2
+                            end do
+                        end if
+!
+                        zi(jdojoi + i_join - 1) = domdis
                     endif
                 enddo
             enddo

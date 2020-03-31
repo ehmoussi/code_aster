@@ -1,20 +1,22 @@
+! --------------------------------------------------------------------
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+! This file is part of code_aster.
+!
+! code_aster is free software: you can redistribute it and/or modify
+! it under the terms of the GNU General Public License as published by
+! the Free Software Foundation, either version 3 of the License, or
+! (at your option) any later version.
+!
+! code_aster is distributed in the hope that it will be useful,
+! but WITHOUT ANY WARRANTY; without even the implied warranty of
+! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+! GNU General Public License for more details.
+!
+! You should have received a copy of the GNU General Public License
+! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+! --------------------------------------------------------------------
+!
 subroutine lrmjoi_wrap(nomu, nofimd)
-! ======================================================================
-! COPYRIGHT (C) 1991 - 2019  EDF R&D                  WWW.CODE-ASTER.ORG
-! THIS PROGRAM IS FREE SOFTWARE; YOU CAN REDISTRIBUTE IT AND/OR MODIFY
-! IT UNDER THE TERMS OF THE GNU GENERAL PUBLIC LICENSE AS PUBLISHED BY
-! THE FREE SOFTWARE FOUNDATION; EITHER VERSION 2 OF THE LICENSE, OR
-! (AT YOUR OPTION) ANY LATER VERSION.
-!
-! THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT
-! WITHOUT ANY WARRANTY; WITHOUT EVEN THE IMPLIED WARRANTY OF
-! MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. SEE THE GNU
-! GENERAL PUBLIC LICENSE FOR MORE DETAILS.
-!
-! YOU SHOULD HAVE RECEIVED A COPY OF THE GNU GENERAL PUBLIC LICENSE
-! ALONG WITH THIS PROGRAM; IF NOT, WRITE TO EDF R&D CODE_ASTER,
-!    1 AVENUE DU GENERAL DE GAULLE, 92141 CLAMART CEDEX, FRANCE.
-! ======================================================================
 ! person_in_charge: nicolas.sellenet at edf.fr
 !-----------------------------------------------------------------------
 !     LECTURE DU MAILLAGE -  FORMAT MED
@@ -33,7 +35,6 @@ subroutine lrmjoi_wrap(nomu, nofimd)
 #include "asterfort/jexatr.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/lrmjoi.h"
-#include "asterfort/lrmnin.h"
 #include "asterfort/mdexpm.h"
 #include "asterfort/sdmail.h"
 #include "asterfort/utmess.h"
@@ -48,10 +49,8 @@ subroutine lrmjoi_wrap(nomu, nofimd)
     character(len=64) :: valk(2)
 !
     med_idt :: fid, ifimed
-    integer :: nbmail, nbnoeu, nbgrno, ndim, codret, vali(3)
-    integer :: iaux
-    integer :: edlect
-    parameter (edlect=0)
+    integer :: nbnoeu, ndim, codret, vali(3)
+    integer, parameter :: edlect=0
 !
     aster_logical :: existm
 !
@@ -61,13 +60,8 @@ subroutine lrmjoi_wrap(nomu, nofimd)
                 cooref, grpnoe, gpptnn, grpmai, gpptnm,&
                 connex, titre, typmai, adapma)
 !
-    call jelira(typmai, 'LONMAX', nbmail)
     call jelira(cooval, 'LONMAX', nbnoeu)
     nbnoeu = nbnoeu/3
-    call jelira(gpptnn, 'NOMMAX', nbgrno)
-!
-    call lrmnin(nommai, nbmail, nbnoeu, connex, grpnoe,&
-                nbgrno)
 !
     ifimed = 0
     nomamd = ' '
@@ -86,7 +80,7 @@ subroutine lrmjoi_wrap(nomu, nofimd)
         call utmess('F', 'PREPOST_69')
     endif
 !
-    call lrmjoi(fid, nomamd, nbnoeu, nomnoe)
+    call lrmjoi(fid, nommai, nomamd, nbnoeu, nomnoe)
 !
     call jedema()
 !
