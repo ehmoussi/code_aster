@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,8 +35,6 @@ cp waf_variant waf_cov
 
 def configure(self):
     """Add flags for code coverage"""
-    self.env['ADDMEM'] = 500
-
     self.env.append_value('FCFLAGS', ['-prof-gen=srcpos'])
     self.env.append_value('CFLAGS', ['-prof-gen=srcpos'])
     self.env.append_value('LINKFLAGS', ['-prof-gen=srcpos'])
