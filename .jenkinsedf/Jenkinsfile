@@ -56,28 +56,20 @@ pipeline {
                 sh '''#!/bin/bash -l
                 source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
                 cd build/install/std
-                ./bin/run_ctest --resutest=../../resutest --clean -L ci
+                ./bin/run_ctest --facmtps=3.0 --resutest=../../resutest --clean -L ci
+                ret=$?
+                [ $ret -ne 0 ] && ./bin/run_ctest --facmtps=3.0 --resutest=../../resutest --clean -L ci --rerun-failed
                 exit 0
                 '''
                 sh '''#!/bin/bash -l
                 source $HOME/dev/codeaster/devtools/etc/env_unstable_mpi.sh
                 cd build/install/mpi
-                ./bin/run_ctest --resutest=../../resutest_mpi --clean -L ci
+                ./bin/run_ctest --facmtps=3.0 --resutest=../../resutest_mpi --clean -L ci -L parallel
+                ret=$?
+                [ $ret -ne 0 ] && ./bin/run_ctest --facmtps=3.0 --resutest=../../resutest_mpi --clean -L ci -L parallel --rerun-failed
                 exit 0
                 '''
                 junit 'build/resutest*/run_testcases.xml'
-
-                script {
-                    try {
-                        sh '''#!/bin/bash -l
-                        $HOME/dev/codeaster/devtools/bin/check_known_errors.sh --branch asterxx build/resutest build/resutest_mpi
-                        '''
-                        currentBuild.result = 'SUCCESS'
-                    }
-                    catch(exc) {
-                        echo "new testcases in failure"
-                    }
-                }
             }
         }
         stage('Merge') {
