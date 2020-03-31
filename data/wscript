@@ -98,7 +98,6 @@ def options(self):
 
 
 def configure(self):
-    self.add_os_flags('ADDMEM')
     self.env.legacy = self.options.legacy
     self.env.singularityimage = self.options.singularityimage
     if self.env.singularityimage:
@@ -237,7 +236,7 @@ def env2dict(self, src):
     dico['OPT_ENV'] = env['OPT_ENV'] and os.linesep.join(env['OPT_ENV']) or ''
     dico['OPT_ENV_FOOTER'] = env['OPT_ENV_FOOTER'] \
         and os.linesep.join(env['OPT_ENV_FOOTER']) or ''
-    dico['ADDMEM'] = env['ADDMEM']
+    dico['addmem'] = env['addmem']
     dico['srctest'] = os.linesep.join([
         SRCTEST_TMPL % '%(SRC)s/astest' % dico,
         SRCTEST_TMPL % '%(SRC)s/../validation/astest' % dico])
@@ -250,7 +249,6 @@ def env2dict(self, src):
             "export PATH=${TFELHOME}/bin:$PATH"
         ])
     dico['MFRONT_SPECIFIC'] = text
-    dico['ASRUN_TMPDIR_CMAKE'] = env.ASRUN_TMPDIR_CMAKE
     dico['ASTERDATADIR'] = env['ASTERDATADIR']
     dico['ASTER_TAG'] = '.'.join([str(i) for i in env['ASTER_VERSION'][0]])
     dico['BIN_NODBG'] = '{PREFIX}/bin/aster{astervers}'.format(**env)
@@ -337,21 +335,17 @@ def check_config(self):
     cfg = {}
     self.start_msg("Set parameters for 'config.js'")
     tmpdir = "/tmp"
-    # cmake syntax
-    tmpdir_cmake = "$ENV{ASTER_TMPDIR}"
     if os.environ.get('ASTER_TMPDIR'):
         tmpdir = os.environ['ASTER_TMPDIR']
-    self.env.ASRUN_TMPDIR_CMAKE = tmpdir or tmpdir_cmake
     cfg["tmpdir"] = tmpdir
 
-    try:
-        addmem = self.env['ADDMEM']
-        if addmem and type(addmem) in (list, tuple):
-            addmem = addmem[0]
-        self.env['ADDMEM'] = int(addmem)
-    except TypeError:
-        self.env['ADDMEM'] = 1024
-    cfg["addmem"] = self.env.ADDMEM
+    addmem = 1024
+    if os.environ.get('ADDMEM'):
+        try:
+            addmem = int(os.environ['ADDMEM'])
+        except TypeError:
+            pass
+    cfg["addmem"] = addmem
     cfg["version_tag"] = ".".join([str(i) for i in self.env.ASTER_VERSION[0]])
     cfg["version_sha1"] = self.env.ASTER_VERSION[1]
     cfg["python"] = list(self.env.PYTHON)[0]
@@ -373,6 +367,8 @@ def check_config(self):
             self.start_msg(f". use '{param}'")
             cfg[param] = from_wafcfg.get(param, cfg[param])
             self.end_msg(str(cfg[param]))
+    # for config.txt
+    self.env['addmem'] = cfg['addmem']
     self.env["CONFIG_PARAMETERS"] = cfg
 
 
