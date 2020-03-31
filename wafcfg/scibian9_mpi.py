@@ -35,7 +35,7 @@ def configure(self):
     scibian9_std.configure(self)
 
     self.env["CONFIG_PARAMETERS"].update({
-        "addmem": 1700,
+        "addmem": 1900,
     })
 
     self.env.prepend_value('LIBPATH', [
