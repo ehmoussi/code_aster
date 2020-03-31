@@ -75,9 +75,8 @@ class XUnitReport:
             jstate = "failure" if name in failures else ""
             output = osp.join(self.base, testname + ".mess")
             details = [get_state(output)]
-            if jstate and osp.isfile(output):
+            if jstate:
                 details.append(get_nook(output))
-            else:
                 details.append(get_err_msg(output))
             content = "\n".join(details)
             self.junit_test.append(JUNIT.TestCase(name, content, jstate))
@@ -98,7 +97,7 @@ class XUnitReport:
 RE_ERRMSG = re.compile(r"(\<[ESF]\>.*?)!\-\-\-", re.M | re.DOTALL)
 RE_EXCEP = re.compile(r"(\<EXCEPTION\>.*?)!\-\-\-", re.M | re.DOTALL)
 RE_SUPERV = re.compile("DEBUT RAPPORT(.*?)FIN RAPPORT", re.M | re.DOTALL)
-RE_STATE = re.compile("DIAGNOSTIC JOB : (.*)", re.M | re.DOTALL)
+RE_STATE = re.compile("DIAGNOSTIC JOB : (.*)", re.M)
 
 def get_state(fname):
     """Extract the test state for a 'message' file.
