@@ -73,8 +73,12 @@ character(len=16), intent(out) :: modeli
 !
 ! - New modelisation
 !
-    if (formul .eq. 'TAGADA') then
+    if (formul .eq. 'LINEAIRE') then
         modeli = modeli_in(1:lxlgut(modeli_in))//'#1'
+    elseif (formul .eq. 'QUADRATIQUE') then
+        modeli = modeli_in(1:lxlgut(modeli_in))//'#2'
+    elseif (formul .ne. ' ') then
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Check deprecation warning

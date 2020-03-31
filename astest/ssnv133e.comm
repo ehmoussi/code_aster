@@ -61,81 +61,71 @@ L_INST = DEFI_LIST_REEL(DEBUT=0., INTERVALLE=(
 )
 
 
-# Nombre de calculs :
-nb_calcul = 1
-model = [ '3D_HHO_222']
+MOMECA = AFFE_MODELE(MAILLAGE=MAIL,
+                     AFFE=_F(TOUT='OUI', MODELISATION='3D_HHO', FORMULATION='QUADRATIQUE', PHENOMENE='MECANIQUE'))
 
+CHMECA = AFFE_CHAR_CINE(
+    MODELE=MOMECA, MECA_IMPO=(
+        _F(MAILLE='DEVANT',  DZ=0.),
+        _F(MAILLE='BAS',    DY=0.),
+        _F(MAILLE='HAUT',   DY=1.),
+        _F(MAILLE='GAUCHE', DX=0.))
+)
 
-for i in range(nb_calcul):
+U = STAT_NON_LINE(MODELE=MOMECA,
+                  CHAM_MATER=CM,
+                  EXCIT=_F(CHARGE=CHMECA,
+                           FONC_MULT=FDEPL),
+                  COMPORTEMENT=_F(RELATION='VMIS_ECMI_LINE'),
+                  INCREMENT=_F(LIST_INST=L_INST),
+                  SOLVEUR=_F(METHODE='MUMPS',),
+                  CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6)
+                  )
 
-    MOMECA = AFFE_MODELE(MAILLAGE=MAIL,
-                         AFFE=_F(TOUT='OUI', MODELISATION=model[i], PHENOMENE='MECANIQUE'))
+U = CALC_CHAMP(reuse=U, CONTRAINTE=('SIGM_ELNO'),
+               VARI_INTERNE=('VARI_ELNO'), RESULTAT=U)
 
-    CHMECA = AFFE_CHAR_CINE(
-        MODELE=MOMECA, MECA_IMPO=(
-            _F(MAILLE='DEVANT',  DZ=0.),
-            _F(MAILLE='BAS',    DY=0.),
-            _F(MAILLE='HAUT',   DY=1.),
-            _F(MAILLE='GAUCHE', DX=0.))
-    )
-
-    U = STAT_NON_LINE(MODELE=MOMECA,
-                      CHAM_MATER=CM,
-                      EXCIT=_F(CHARGE=CHMECA,
-                               FONC_MULT=FDEPL),
-                      COMPORTEMENT=_F(RELATION='VMIS_ECMI_LINE'),
-                      INCREMENT=_F(LIST_INST=L_INST),
-                      SOLVEUR=_F(METHODE='MUMPS',),
-                      CONVERGENCE=_F(RESI_GLOB_RELA=1.E-6)
-                      )
-
-    U = CALC_CHAMP(reuse=U, CONTRAINTE=('SIGM_ELNO'),
-                   VARI_INTERNE=('VARI_ELNO'), RESULTAT=U)
-
-    TEST_RESU(RESU=(_F(NUME_ORDRE=2,
-                       RESULTAT=U,
-                       NOM_CHAM='SIGM_ELNO',
-                       NOEUD='N1',
-                       NOM_CMP='SIYY',
-                       REFERENCE='ANALYTIQUE',
-                       VALE_REFE=400.0,
-                       VALE_CALC=400.0000000000007,
-                       PRECISION=1.E-3,
-                       MAILLE='M1',),
-                    _F(NUME_ORDRE=4,
-                       RESULTAT=U,
-                       NOM_CHAM='SIGM_ELNO',
-                       NOEUD='N1',
-                       NOM_CMP='SIYY',
-                       REFERENCE='ANALYTIQUE',
-                       VALE_REFE=500.0,
-                       VALE_CALC=499.9998720053985,
-                       PRECISION=1.E-3,
-                       MAILLE='M1',),
-                    _F(NUME_ORDRE=6,
-                       RESULTAT=U,
-                       NOM_CHAM='SIGM_ELNO',
-                       NOEUD='N1',
-                       NOM_CMP='SIYY',
-                       REFERENCE='ANALYTIQUE',
-                       VALE_REFE=-380.0,
-                       VALE_CALC=-380.0000000000965,
-                       PRECISION=1.E-3,
-                       MAILLE='M1',),
-                    _F(NUME_ORDRE=8,
-                       RESULTAT=U,
-                       NOM_CHAM='SIGM_ELNO',
-                       NOEUD='N1',
-                       NOM_CMP='SIYY',
-                       REFERENCE='ANALYTIQUE',
-                       VALE_REFE=-464.0,
-                       VALE_CALC=-463.9999999980259,
-                       PRECISION=1.E-3,
-                       MAILLE='M1',),
-                    ),
-              )
-
-    DETRUIRE(CONCEPT=_F(NOM=(U, MOMECA, CHMECA),),
-             INFO=1,)
+TEST_RESU(RESU=(_F(NUME_ORDRE=2,
+                   RESULTAT=U,
+                   NOM_CHAM='SIGM_ELNO',
+                   NOEUD='N1',
+                   NOM_CMP='SIYY',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=400.0,
+                   VALE_CALC=400.0000000000007,
+                   PRECISION=1.E-3,
+                   MAILLE='M1',),
+                _F(NUME_ORDRE=4,
+                   RESULTAT=U,
+                   NOM_CHAM='SIGM_ELNO',
+                   NOEUD='N1',
+                   NOM_CMP='SIYY',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=500.0,
+                   VALE_CALC=499.9998720053985,
+                   PRECISION=1.E-3,
+                   MAILLE='M1',),
+                _F(NUME_ORDRE=6,
+                   RESULTAT=U,
+                   NOM_CHAM='SIGM_ELNO',
+                   NOEUD='N1',
+                   NOM_CMP='SIYY',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=-380.0,
+                   VALE_CALC=-380.0000000000965,
+                   PRECISION=1.E-3,
+                   MAILLE='M1',),
+                _F(NUME_ORDRE=8,
+                   RESULTAT=U,
+                   NOM_CHAM='SIGM_ELNO',
+                   NOEUD='N1',
+                   NOM_CMP='SIYY',
+                   REFERENCE='ANALYTIQUE',
+                   VALE_REFE=-464.0,
+                   VALE_CALC=-463.9999999980259,
+                   PRECISION=1.E-3,
+                   MAILLE='M1',),
+                ),
+          )
 
 FIN()

@@ -18,9 +18,6 @@
 # --------------------------------------------------------------------
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
-# Nombre de calculs :
-nb_calcul = 1
-model = ['D_PLAN_HHO_222']
 
 MAIL0 = LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
 
@@ -89,154 +86,149 @@ LISTE = DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=1.0, NOMBRE=2))
 
 RAMPE = DEFI_FONCTION(NOM_PARA='INST', VALE=(0.0, 0.0, 1.0, 1.0))
 
-for i in range(nb_calcul):
+MODELE = AFFE_MODELE(
+    AFFE=_F(MODELISATION='D_PLAN_HHO', FORMULATION='QUADRATIQUE', PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=MAIL
+)
 
-    MODELE = AFFE_MODELE(
-        AFFE=_F(MODELISATION=model[i], PHENOMENE='MECANIQUE', TOUT='OUI'),
-        MAILLAGE=MAIL
+FORCE = AFFE_CHAR_MECA(
+    MODELE=MODELE, PRES_REP=_F(GROUP_MA='Sup', PRES=0.876))
+
+DEPL = AFFE_CHAR_CINE(
+    MECA_IMPO=(_F(DY=0.0, GROUP_MA='Inf'), _F(DX=0.0, GROUP_MA='Sym')),
+    MODELE=MODELE
+)
+
+RESU1 = STAT_NON_LINE(
+    CHAM_MATER=CHMAT1,
+    COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                    RELATION='ELAS_HYPER', TOUT='OUI'),
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
+    EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
+    INCREMENT=_F(LIST_INST=LISTE),
+    SOLVEUR=_F(METHODE='MULT_FRONT',),
+    MODELE=MODELE,
+    NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
+    HHO=_F(STABILISATION='MANUEL', COEF_STAB=10, OPTIMISATION='TEMPS',),
+)
+
+RESU1 = CALC_CHAMP(reuse=RESU1,
+                   RESULTAT=RESU1,
+                   CONTRAINTE=('SIGM_NOEU'),)
+
+RESU2 = STAT_NON_LINE(
+    CHAM_MATER=CHMAT2,
+    COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                    RELATION='ELAS_HYPER', TOUT='OUI'),
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
+    EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
+    INCREMENT=_F(LIST_INST=LISTE),
+    MODELE=MODELE,
+    SOLVEUR=_F(METHODE='MUMPS',),
+    NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
+    HHO=_F(STABILISATION='AUTO',),
+)
+
+RESU2 = CALC_CHAMP(reuse=RESU2,
+                   RESULTAT=RESU2,
+                   CONTRAINTE=('SIGM_NOEU'),)
+
+RESU3 = STAT_NON_LINE(
+    CHAM_MATER=CHMAT3,
+    COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                    RELATION='ELAS_HYPER', TOUT='OUI'),
+    CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
+    EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
+    INCREMENT=_F(LIST_INST=LISTE),
+    MODELE=MODELE,
+    SOLVEUR=_F(METHODE='MUMPS',),
+    NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
+    INFO=2,
+)
+
+RESU3 = CALC_CHAMP(reuse=RESU3,
+                   RESULTAT=RESU3,
+                   CONTRAINTE=('SIGM_NOEU'),)
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestDisp', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        NUME_ORDRE=2,
+        PRECISION=0.002,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=RESU1,
+        VALE_CALC=(-0.0340724877561, ),
+        VALE_REFE=(-0.034009, )
     )
+)
 
-    FORCE = AFFE_CHAR_MECA(
-        MODELE=MODELE, PRES_REP=_F(GROUP_MA='Sup', PRES=0.876))
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('MiddleNode', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=2,
+        RESULTAT=RESU1,
+        VALE_CALC=(-0.846268961317, ),
+    ),
+)
 
-    DEPL = AFFE_CHAR_CINE(
-        MECA_IMPO=(_F(DY=0.0, GROUP_MA='Inf'), _F(DX=0.0, GROUP_MA='Sym')),
-        MODELE=MODELE
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestDisp', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        NUME_ORDRE=2,
+        PRECISION=0.002,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=RESU2,
+        VALE_CALC=(-0.0783309313502, ),
+        VALE_REFE=(-0.07818, )
     )
+)
 
-    RESU1 = STAT_NON_LINE(
-        CHAM_MATER=CHMAT1,
-        COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
-                        RELATION='ELAS_HYPER', TOUT='OUI'),
-        CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
-        EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
-        INCREMENT=_F(LIST_INST=LISTE),
-        SOLVEUR=_F(METHODE='MULT_FRONT',),
-        MODELE=MODELE,
-        NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
-        HHO=_F(STABILISATION='MANUEL', COEF_STAB=10, OPTIMISATION='TEMPS',),
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('MiddleNode', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=2,
+        RESULTAT=RESU2,
+        VALE_CALC=(-0.807653804187, ),
+    ),
+)
+
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('TestDisp', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        NUME_ORDRE=2,
+        PRECISION=0.002,
+        REFERENCE='ANALYTIQUE',
+        RESULTAT=RESU3,
+        VALE_CALC=(-0.0710584259216, ),
+        VALE_REFE=(-0.070936, )
     )
+)
 
-    RESU1 = CALC_CHAMP(reuse=RESU1,
-                       RESULTAT=RESU1,
-                       CONTRAINTE=('SIGM_NOEU'),)
-
-    RESU2 = STAT_NON_LINE(
-        CHAM_MATER=CHMAT2,
-        COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
-                        RELATION='ELAS_HYPER', TOUT='OUI'),
-        CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
-        EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
-        INCREMENT=_F(LIST_INST=LISTE),
-        MODELE=MODELE,
-        SOLVEUR=_F(METHODE='MUMPS',),
-        NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
-        HHO=_F(STABILISATION='AUTO',),
-    )
-
-    RESU2 = CALC_CHAMP(reuse=RESU2,
-                       RESULTAT=RESU2,
-                       CONTRAINTE=('SIGM_NOEU'),)
-
-    RESU3 = STAT_NON_LINE(
-        CHAM_MATER=CHMAT3,
-        COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
-                        RELATION='ELAS_HYPER', TOUT='OUI'),
-        CONVERGENCE=_F(ARRET='OUI', ITER_GLOB_MAXI=20),
-        EXCIT=(_F(CHARGE=FORCE, FONC_MULT=RAMPE), _F(CHARGE=DEPL)),
-        INCREMENT=_F(LIST_INST=LISTE),
-        MODELE=MODELE,
-        SOLVEUR=_F(METHODE='MUMPS',),
-        NEWTON=_F(MATRICE='TANGENTE', REAC_INCR=1, REAC_ITER=1),
-        INFO=2,
-    )
-
-    RESU3 = CALC_CHAMP(reuse=RESU3,
-                       RESULTAT=RESU3,
-                       CONTRAINTE=('SIGM_NOEU'),)
-
-    TEST_RESU(
-        RESU=_F(
-            CRITERE=('RELATIF', ),
-            GROUP_NO=('TestDisp', ),
-            NOM_CHAM='DEPL',
-            NOM_CMP='DY',
-            NUME_ORDRE=2,
-            PRECISION=0.002,
-            REFERENCE='ANALYTIQUE',
-            RESULTAT=RESU1,
-            VALE_CALC=(-0.0340724877561, ),
-            VALE_REFE=(-0.034009, )
-        )
-    )
-
-    TEST_RESU(
-        RESU=_F(
-            CRITERE=('RELATIF', ),
-            GROUP_NO=('MiddleNode', ),
-            NOM_CHAM='SIGM_NOEU',
-            NOM_CMP='SIYY',
-            NUME_ORDRE=2,
-            RESULTAT=RESU1,
-            VALE_CALC=(-0.846268961317, ),
-        ),
-    )
-
-    TEST_RESU(
-        RESU=_F(
-            CRITERE=('RELATIF', ),
-            GROUP_NO=('TestDisp', ),
-            NOM_CHAM='DEPL',
-            NOM_CMP='DY',
-            NUME_ORDRE=2,
-            PRECISION=0.002,
-            REFERENCE='ANALYTIQUE',
-            RESULTAT=RESU2,
-            VALE_CALC=(-0.0783309313502, ),
-            VALE_REFE=(-0.07818, )
-        )
-    )
-
-    TEST_RESU(
-        RESU=_F(
-            CRITERE=('RELATIF', ),
-            GROUP_NO=('MiddleNode', ),
-            NOM_CHAM='SIGM_NOEU',
-            NOM_CMP='SIYY',
-            NUME_ORDRE=2,
-            RESULTAT=RESU2,
-            VALE_CALC=(-0.807653804187, ),
-        ),
-    )
-
-    TEST_RESU(
-        RESU=_F(
-            CRITERE=('RELATIF', ),
-            GROUP_NO=('TestDisp', ),
-            NOM_CHAM='DEPL',
-            NOM_CMP='DY',
-            NUME_ORDRE=2,
-            PRECISION=0.002,
-            REFERENCE='ANALYTIQUE',
-            RESULTAT=RESU3,
-            VALE_CALC=(-0.0710584259216, ),
-            VALE_REFE=(-0.070936, )
-        )
-    )
-
-    TEST_RESU(
-        RESU=_F(
-            CRITERE=('RELATIF', ),
-            GROUP_NO=('MiddleNode', ),
-            NOM_CHAM='SIGM_NOEU',
-            NOM_CMP='SIYY',
-            NUME_ORDRE=2,
-            RESULTAT=RESU3,
-            VALE_CALC=(-0.813992493333, ),
-        ),
-    )
-
-    DETRUIRE(CONCEPT=_F(NOM=(FORCE, DEPL, RESU1, RESU2, RESU3, MODELE),),
-             INFO=1,)
+TEST_RESU(
+    RESU=_F(
+        CRITERE=('RELATIF', ),
+        GROUP_NO=('MiddleNode', ),
+        NOM_CHAM='SIGM_NOEU',
+        NOM_CMP='SIYY',
+        NUME_ORDRE=2,
+        RESULTAT=RESU3,
+        VALE_CALC=(-0.813992493333, ),
+    ),
+)
 
 FIN()
