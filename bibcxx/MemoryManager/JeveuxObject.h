@@ -77,7 +77,7 @@ class JeveuxObjectClass {
         if ( _name == "" )
             return false;
 
-        ASTERINTEGER boolRetour;
+        ASTERINTEGER boolRetour = 0;
         // Appel a jeexin pour verifier que le vecteur existe
         CALLO_JEEXIN( _name, &boolRetour );
         if ( boolRetour == 0 )
