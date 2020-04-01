@@ -20,6 +20,7 @@
 import math
 
 import aster
+from libaster import (AsterError, ConvergenceError)
 
 from ...Cata.Syntax import _F
 from ...Commands import (CREA_CHAMP, DEFI_CONSTANTE, DEFI_FONCTION,
@@ -86,7 +87,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
         )
       initial = True
 
-    except aster.error as err:
+    except AsterError as err:
       errText = err.basic_format()
       if eval(errText)[0][0] == "MED_32":   # exception MED_32 (field does not exist in MED file)
         aster.affiche("MESSAGE","")
@@ -279,7 +280,7 @@ def calc_endo_ops(self,MODELE,CHAM_MATER,CARA_ELEM,EXCIT,
         # if no (significant ?) damage, formerTangent = True, else formerTangent = false
         formerTangent = True
 
-      except aster.ActionError:
+      except ConvergenceError:
         formerTangent = True
 
       tfin = __INIT.LIST_VARI_ACCES()['INST'][-1]

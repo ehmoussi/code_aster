@@ -22,6 +22,8 @@
 import os.path as osp
 
 import aster
+from libaster import AsterError
+
 from ..Messages import UTMESS, raise_UTMESS
 
 from ..Commands import CREA_TABLE
@@ -55,9 +57,10 @@ def lire_table_ops(self, UNITE, FORMAT, SEPARATEUR, NUME_TABLE, **args):
     try:
         tab = reader.read(NUME_TABLE, check_para=check_para)
     except TypeError as exc:
-        UTMESS('F', 'TABLE0_45', valk=str(exc))
-    except aster.error as exc:
-        raise_UTMESS(exc)
+        UTMESS('F', 'TABLE0_45', valk=str(exc)) 
+    except AsterError as err:
+        UTMESS('F', err.id_message, valk=err.valk,
+               vali=err.vali, valr=err.valr)
 
     UTMESS('I', 'TABLE0_44', valk=("", tab.titr),
            vali=(len(tab.rows), len(tab.para)))

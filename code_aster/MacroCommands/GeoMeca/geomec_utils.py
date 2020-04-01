@@ -24,6 +24,8 @@ import numpy as NP
 from numpy import array
 
 import aster
+from libaster import AsterError
+
 from ...Messages import UTMESS
 
 from ...Behaviours import catalc
@@ -2258,7 +2260,7 @@ def essai_TRIA_ND_C_D_mono(self, inst_init, sigm, epsi, vari, DicoEssai,
 
         VARI_INIT= _F(VALE=vari,),);
 
-    except aster.error as message:
+    except AsterError as message:
 
       print('\n   !!!(@_@)!!! Arret pour la raison suivante !!!(@_@)!!!\n%s'\
             %(message))

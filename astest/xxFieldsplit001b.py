@@ -60,43 +60,36 @@ resnonl = STAT_NON_LINE(
                     )
 
 
+# ajouter TEST_RESU comme petsc04c
 if MAIL.hasLocalGroupOfNodes('N_test') : 
-    tab = POST_RELEVE_T( ACTION =_F( 
-                    INTITULE  = 'dx',
-                        RESULTAT=resnonl, 
-                        NUME_ORDRE=1,
-                        GROUP_NO='N_test',
-                        NOM_CHAM   = 'DEPL',
-                        NOM_CMP   = 'DX',
-                        OPERATION = 'EXTRACTION' ,) , 
-                      )
-  
-    TEST_TABLE(TABLE=tab,
-           NOM_PARA='DX',
-           VALE_CALC=-0.121908649820, 
-           VALE_REFE=-0.121908649820,
-           PRECISION=1.E-6,
-           REFERENCE='AUTRE_ASTER',)
+    TEST_RESU(
+       RESU=_F(
+       CRITERE='ABSOLU',
+       GROUP_NO='N_test',
+       NOM_CHAM='DEPL',
+       NOM_CMP='DX',
+       NUME_ORDRE=1,
+       PRECISION=1.e-6,
+       REFERENCE='AUTRE_ASTER',
+        RESULTAT=resnonl,
+        VALE_CALC=-0.121908649820, 
+        VALE_REFE=-0.121908649820, 
+    ))
 
 elif MAIL.hasLocalGroupOfNodes('N_test2') : 
-    tab2 = POST_RELEVE_T( ACTION =_F( 
-                    INTITULE  = 'dx',
-                        RESULTAT=resnonl, 
-                        NUME_ORDRE=1,
-                        GROUP_NO='N_test2',
-                        NOM_CHAM   = 'DEPL',
-                        NOM_CMP   = 'DX',
-                        OPERATION = 'EXTRACTION' ,) , 
-                      )
-  
-    TEST_TABLE(TABLE=tab2,
-           NOM_PARA='DX',
-           VALE_CALC=0.09623615926, 
-           VALE_REFE=0.09623615926,
-           PRECISION=1.E-6,
-           REFERENCE='AUTRE_ASTER',)
-
-
+    TEST_RESU(
+       RESU=_F(
+       CRITERE='ABSOLU',
+       GROUP_NO='N_test2',
+       NOM_CHAM='DEPL',
+       NOM_CMP='DX',
+       NUME_ORDRE=1,
+       PRECISION=1.e-6,
+       REFERENCE='AUTRE_ASTER',
+        RESULTAT=resnonl,
+        VALE_CALC=0.09623615926, 
+        VALE_REFE=0.09623615926, 
+    )) 
 
 
 # at least it pass here!
