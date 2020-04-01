@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine verima(meshz, list_obj, list_size, typez_objet)
-        character(len=*), intent(in) :: meshz, typez_objet
-        integer, intent(inout) :: list_size
-        character(len=*), intent(inout) :: list_obj(list_size)
-    end subroutine verima
+    function isParallelMesh(mesh) result(l_parallel_mesh)
+        character(len=*), intent(in) :: mesh
+        aster_logical ::  l_parallel_mesh
+    end function isParallelMesh
 end interface
