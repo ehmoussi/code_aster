@@ -46,6 +46,7 @@ implicit none
 #include "asterfort/reajre.h"
 #include "asterfort/redetr.h"
 #include "asterfort/ndynlo.h"
+#include "asterfort/detrsd.h"
 !
 character(len=1), intent(in) :: base
 aster_logical, intent(in) :: l_xfem, l_macr_elem, l_hho
@@ -164,6 +165,7 @@ character(len=*), optional, intent(in) :: sddynz_
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_TRUE
         if (option .eq. 'RIGI_MECA_TANG') then
+            call detrsd('CHAM_ELEM', ds_constitutive%comp_error)
             l_codret = ASTER_TRUE
         endif
     else if (option(1:9) .eq. 'RAPH_MECA') then

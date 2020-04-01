@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmiret(codret, tabret)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmiret(codret, tabret)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -32,8 +32,10 @@ subroutine nmiret(codret, tabret)
 #include "asterfort/jeveuo.h"
 #include "asterfort/sdmpic.h"
 #include "asterfort/utmess.h"
-    aster_logical :: tabret(0:10)
-    character(len=19) :: codret
+#include "asterfort/exisd.h"
+!
+aster_logical :: tabret(0:10)
+character(len=19) :: codret
 !
 ! ----------------------------------------------------------------------
 !
@@ -64,13 +66,18 @@ subroutine nmiret(codret, tabret)
 !
     call jemarq()
 !
-    do 10 iret = 0, 10
+    do iret = 0, 10
         tabret(iret) = .false.
- 10 end do
+    end do
 !
 ! --- ON TRANSFORME LE "CHAM_ELEM" EN UN "CHAM_ELEM_S"
 !
     chamns = '&&NMIRET.CHAMNS'
+    call exisd('CHAM_ELEM', codret, iret)
+    if (iret .eq. 0) then 
+        goto 99
+    endif
+
 !
 !     -- EN ATTENDANT DE FAIRE MIEUX, POUR PERMETTRE MUMPS/DISTRIBUE :
     call sdmpic('CHAM_ELEM', codret)
@@ -100,12 +107,9 @@ subroutine nmiret(codret, tabret)
         ASSERT(.false.)
     endif
 !
-    do 20 ima = 1, nbmail
-!
-        call cesexi('C', jcesd, jcesl, ima, 1,&
-                    1, icmp, iad)
-        if (iad .le. 0) goto 20
-!
+    do ima = 1, nbmail
+        call cesexi('C', jcesd, jcesl, ima, 1, 1, icmp, iad)
+        if (iad .le. 0) cycle
         iret = cesv(iad)
         if (iret .eq. 0) then
         else if (iret .lt. 11 .and. iret .gt. 0) then
@@ -114,14 +118,15 @@ subroutine nmiret(codret, tabret)
             vali = iret
             call utmess('A', 'MECANONLINE2_67', si=vali)
         endif
+    end do
 !
- 20 end do
-!
-    do 30 iret = 1, 10
+    do iret = 1, 10
         if (tabret(iret)) tabret(0) = .true.
- 30 end do
+    end do
 !
     call detrsd('CHAM_ELEM_S', chamns)
+!
+ 99 continue
 !
     call jedema()
 end subroutine
