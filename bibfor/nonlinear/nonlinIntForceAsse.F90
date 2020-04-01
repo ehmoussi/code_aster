@@ -86,6 +86,10 @@ type(NL_DS_System), intent(in) :: ds_system
                     ds_system%nume_dof, ' '             , 'ZERO', 1)
 !       For external state variables
         call vtaxpy(-1.d0, ds_material%fvarc_pred, ds_system%cnfint)
+    elseif (typeAsse .eq. INTE_FORCE_NONE) then
+!       Nothing to do
+        ASSERT(.not. l_gdvarino)
+        ASSERT(.not. l_resi_comp)
     else
         ASSERT(ASTER_FALSE)
     endif

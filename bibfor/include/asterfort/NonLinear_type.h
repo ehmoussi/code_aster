@@ -25,6 +25,7 @@
 #define NONLINEAR_DEBUG     0
 !
 ! Indicator to combine nodal fields for internal forces
+#define INTE_FORCE_NONE     0
 #define INTE_FORCE_COMB     1
 #define INTE_FORCE_INTE     2
 #define INTE_FORCE_FNOD     3

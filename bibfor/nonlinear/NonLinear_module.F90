@@ -31,7 +31,8 @@ public  :: getMatrType, getOption,&
            isMatrUpdate,&
            isDampMatrCompute, isMassMatrCompute, isRigiMatrCompute, isInteVectCompute,&
            factorSystem,&
-           setNodalValuesGDVARINO
+           setNodalValuesGDVARINO, &
+           inteForceGetOption
 ! ==================================================================================================
 private
 #include "asterf_types.h"
@@ -823,6 +824,72 @@ subroutine setNodalValuesGDVARINO(nume_dof, sdnume, cnforc)
         endif
     end do
 !   -----------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! inteForceGetOption
+!
+! Get options to compute internal forces
+!
+! In  phaseType        : name of current phase (prediction/correction/internal forces)
+! In  list_func_acti   : list of active functionnalities
+! In  ds_algorom       : datastructure for ROM parameters
+! Out lNodeComp        : compute internal forces without integration (FORC_NODA)
+! Out lInteComp        : compute internal forces with integration (RAPH_NODA, RIGI_MECA_TANG)
+! Out typeAsse         : type of assembly for internal forces
+!
+! --------------------------------------------------------------------------------------------------
+subroutine inteForceGetOption(phaseType, list_func_acti, ds_algorom,&
+                              lNodeComp, lInteComp     , typeAsse)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    integer, intent(in) :: phaseType, list_func_acti(*)
+    aster_logical, intent(out) :: lNodeComp, lInteComp
+    integer, intent(out) :: typeAsse
+    type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
+! - Local
+    aster_logical :: lDyna, lHHO, lRomCorr
+!   ------------------------------------------------------------------------------------------------
+    lNodeComp = ASTER_FALSE
+    lInteComp = ASTER_FALSE
+    typeAsse  = INTE_FORCE_NONE
+! - Active functionnalites
+    lDyna    = isfonc(list_func_acti, 'DYNAMIQUE')
+    lHHO     = isfonc(list_func_acti, 'HHO')
+    lRomCorr = ASTER_FALSE
+    if (ds_algorom%l_rom) then
+        lRomCorr = ds_algorom%phase .eq. 'CORR_EF'
+    endif
+! - Options to compute internal forces
+    if (phaseType .eq. PRED_EULER) then
+        lNodeComp = .not. lHHO
+        lInteComp = (lDyna .or. lRomCorr)
+    elseif (phaseType .eq. CORR_NEWTON) then
+        lNodeComp = ASTER_FALSE
+        lInteComp = ASTER_TRUE
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+! - For HHO: internal forces are NOT independent from tangent matrix evaluation
+    if (lHHO) then
+        lInteComp = ASTER_FALSE
+    endif
+! - Which second member ?
+    if (phaseType .eq. PRED_EULER) then
+        typeAsse = INTE_FORCE_FNOD
+        if (lDyna .or. lRomCorr) then
+            typeAsse = INTE_FORCE_INTE
+        endif
+    elseif (phaseType .eq. CORR_NEWTON) then
+        typeAsse = INTE_FORCE_INTE
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+! - For HHO: internal forces are NOT independent from tangent matrix evaluation
+    if (lHHO) then
+        typeAsse = INTE_FORCE_NONE
+    endif
+!   ------------------------------------------------------------------------------------------------
 end subroutine
 !
 end module NonLinear_module

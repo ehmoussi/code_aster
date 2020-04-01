@@ -31,6 +31,7 @@ subroutine nonlinIntForce(phaseType     ,&
 use NonLin_Datastructure_type
 use Rom_Datastructure_type
 use HHO_type
+use NonLinear_module, only : inteForceGetOption
 !
 implicit none
 !
@@ -39,7 +40,6 @@ implicit none
 #include "asterfort/NonLinear_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/nmfint.h"
-#include "asterfort/isfonc.h"
 #include "asterfort/nonlinNForceCompute.h"
 #include "asterfort/nonlinIntForceAsse.h"
 !
@@ -94,8 +94,10 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
 !
     character(len=19) :: sddyna
     type(HHO_Field) :: hhoField
+    type(ROM_DS_AlgoPara) :: ds_algorom
     real(kind=8) :: time_prev, time_curr
-    aster_logical :: l_dyna, l_hho, l_fint
+    aster_logical :: lNodeComp, lInteComp
+    integer :: typeAsse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -112,65 +114,44 @@ type(ROM_DS_AlgoPara), optional, intent(in) :: ds_algorom_
     if (present(hhoField_)) then
         hhoField = hhoField_
     endif
-!
-! - Active functionnalites
-!
-    l_dyna = isfonc(list_func_acti, 'DYNAMIQUE')
-    l_hho  = isfonc(list_func_acti, 'HHO')
-    l_fint = l_dyna
     if (present(ds_algorom_)) then
-        l_fint = l_fint .or. ds_algorom_%phase.eq.'CORR_EF'
+        ds_algorom = ds_algorom_
     endif
-!
     if (phaseType .eq. PRED_EULER) then
         ASSERT(iter_newt .eq. 0)
-! ----- Direct computation (no integration of behaviour)
-        if (.not. l_hho) then
-            call nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
-                                     ds_material, ds_constitutive,&
-                                     ds_measure , ds_system      ,&
-                                     time_prev  , time_curr      ,&
-                                     hval_incr  , hval_algo)
-        endif
-! ----- Integration of behaviour
-        if (l_fint) then
-            call nmfint(model         , cara_elem      ,&
-                        ds_material   , ds_constitutive,&
-                        list_func_acti, iter_newt      , ds_measure, ds_system,&
-                        hval_incr     , hval_algo      , hhoField,&
-                        ldccvg        , sddyna)
-        endif
-! ----- Assembly
-        if (ldccvg .ne. 1) then
-            if (l_dyna) then
-                call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
-                                        ds_system)
-            elseif (.not. l_hho) then
-                if (ds_algorom_%phase.eq.'CORR_EF') then
-                    call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
-                                            ds_system)
-                else
-                    call nonlinIntForceAsse(INTE_FORCE_FNOD, list_func_acti, sdnume, ds_material,&
-                                            ds_system)
-                endif
-            endif
-        endif
-    elseif (phaseType .eq. CORR_NEWTON) then
-! ----- Integration of behaviour
+    endif
+!
+! - Get options to compute internal forces
+!
+    call inteForceGetOption(phaseType, list_func_acti, ds_algorom,&
+                            lNodeComp, lInteComp     , typeAsse)
+!
+! - Direct computation (no integration of behaviour)
+!
+    if (lNodeComp) then
+        call nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
+                                 ds_material, ds_constitutive,&
+                                 ds_measure , ds_system      ,&
+                                 time_prev  , time_curr      ,&
+                                 hval_incr  , hval_algo)
+        ldccvg = -1
+    endif
+!
+! - Integration of behaviour
+!
+    if (lInteComp) then
         call nmfint(model         , cara_elem      ,&
                     ds_material   , ds_constitutive,&
                     list_func_acti, iter_newt      , ds_measure, ds_system,&
                     hval_incr     , hval_algo      , hhoField,&
                     ldccvg        , sddyna)
-! ----- Assembly
-        if (ldccvg .ne. 1) then
-            if (.not. l_hho) then
-                call nonlinIntForceAsse(INTE_FORCE_INTE, list_func_acti, sdnume, ds_material,&
-                                        ds_system)
-            endif
-        endif
-    else
-        ASSERT(ASTER_FALSE)
+    endif
+!
+! - Assembly
+!
+    if (ldccvg .ne. 1) then
+        call nonlinIntForceAsse(typeAsse, list_func_acti, sdnume, ds_material,&
+                                ds_system)
     endif
 !
 end subroutine
