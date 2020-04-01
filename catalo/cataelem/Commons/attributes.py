@@ -515,6 +515,7 @@ TYPMOD2 = Attribute(value=(
                     'PMF',
                     'THM',
                     'HHO',
+                    'JHMS',
                     ),
                     comment="""
   TYPMOD2 : Complement au type de  modelisation utilise pour integrer les lois de comportement TYPMOD
@@ -527,6 +528,7 @@ TYPMOD2 = Attribute(value=(
            PMF      l'element fait appel a des comportements 1D PMF
            THM      thermo-hydro-mechanic
            HHO      Hybrid High-Order elements
+           JHMS     Hydraulic joints
 """)
 
 TYPMOD3 = Attribute(value=(
