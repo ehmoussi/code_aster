@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -46,8 +46,7 @@ loi = LoiComportement(
     nom_vari       = None,
     mc_mater       = None,
     modelisation   = ('D_PLAN_HM','D_PLAN_HMS','D_PLAN_HMD','AXIS_HM','AXIS_HMS',
-        'AXIS_HMD','3D_HM','3D_HMS','3D_HMD','PLAN_JHMS',
-        'AXIS_JHMS',),
+        'AXIS_HMD','3D_HM','3D_HMS','3D_HMD',),
     deformation    = ('PETIT',),
     algo_inte      = ('SANS_OBJET',),
     type_matr_tang = None,
