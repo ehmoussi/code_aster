@@ -703,6 +703,7 @@ ferrDatSlu = dict(
 )
 
 import aster
+from libaster import AsterError
 
 try:
     reslin = COMBINAISON_FERRAILLAGE (
@@ -717,7 +718,7 @@ try:
         ),
         AFFE = ( _F ( **ferrDatSlu ), ),
         )
-except aster.error as message:
+except AsterError as message:
     if message.id_message == 'COMBFERR_1':
         print("COMBFERR_1 intercepted")
 
