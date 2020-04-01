@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 ! --------------------------------------------------------------------------------------------------
-    integer ::  i3d, i2d, ndim1, ioc, nc, ng, nm, nsom, nbmail
+    integer ::  i3d, i2d, ndim1, ioc, nc, ng, nm, nsom, nbmail, un
     integer :: n1, ima, nbgrm,  ig, jmail, numa, nutyma, lmax2
     integer :: iarg
     character(len=4) :: type
@@ -86,6 +86,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
     nlg = 0
     nln = 0
     nlj = 0
+    un  = 1
     grmama = noma//'.GROUPEMA'
     mailma = noma//'.NOMMAI'
 !
@@ -123,7 +124,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
             call getvtx(mcf, 'MAILLE', iocc=ioc, nbval=nbmail, vect=zk8(jmail), nbret=n1)
             do ima = 1, nbmail
                 nomail = zk8(jmail+ima-1)
-                call verima(noma, nomail, 1, 'MAILLE')
+                call verima(noma, nomail, un, 'MAILLE')
                 call jenonu(jexnom(mailma, nomail), numa)
                 nutyma = typmail(numa)
                 call jenuno(jexnum('&CATA.TM.NOMTM', nutyma), typel)
@@ -144,7 +145,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
             call getvtx(mcf, 'GROUP_MA', iocc=ioc, nbval=nbgrm, vect=group_ma, nbret=n1)
             do ig = 1, nbgrm
                 nogrm = group_ma(ig)
-                call verima(noma, nogrm, 1, 'GROUP_MA')
+                call verima(noma, nogrm, un, 'GROUP_MA')
                 call jelira(jexnom(grmama, nogrm), 'LONUTI', nbmail)
                 call jeveuo(jexnom(grmama, nogrm), 'L', jmail)
                 do ima = 1, nbmail

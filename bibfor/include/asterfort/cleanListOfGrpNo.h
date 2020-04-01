@@ -15,11 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+#include "asterf_types.h"
 !
 interface
-    subroutine verima(meshz, list_obj, list_size, typez_objet)
-        character(len=*), intent(in) :: meshz, typez_objet
-        integer, intent(inout) :: list_size
-        character(len=*), intent(inout) :: list_obj(list_size)
-    end subroutine verima
+    subroutine cleanListOfGrpNo(mesh, listGrpNo, nbGrpNo, l_stop, iret)
+        character(len=*), intent(in)    :: mesh
+        character(len=*), intent(inout) :: listGrpNo(*)
+        integer, intent(inout)          :: nbGrpNo
+        aster_logical, intent(in)       :: l_stop
+        integer, intent(out)            :: iret
+    end subroutine cleanListOfGrpNo
 end interface
