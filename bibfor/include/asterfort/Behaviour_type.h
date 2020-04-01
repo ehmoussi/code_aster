@@ -15,6 +15,26 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=C1509
+!
+!
+! --------------------------------------------------------------------------------------------------
+!
+! What to compute from option ?
+!
+! L_VARI: we have internal state variables
+! L_SIGM: we have stress and return code error
+! L_VECT: compute internal forces vector
+! L_MATR: compute tangent matrix
+! L_PRED: set special indicator for prediction
+!
+! --------------------------------------------------------------------------------------------------
+!
+#define L_VARI(option) (option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA')
+#define L_SIGM(option) (option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG')
+#define L_VECT(option) (option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG')
+#define L_MATR(option) (option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA')
+#define L_PRED(option) (option .eq. 'RIGI_MECA_TANG')
 !
 ! --------------------------------------------------------------------------------------------------
 !

@@ -101,7 +101,7 @@ character(len=*), optional, intent(in) :: sddynz_
     character(len=24) :: caco3d, ligrmo
     character(len=19) :: sigm_extr, sigm_curr, vari_curr, strx_curr, sddyna
     character(len=16) :: option
-    integer :: ich_matrixs, ich_matrixn, ich_veinte, ich_codret
+    integer :: ich_matrixs, ich_matrixn, ich_veinte, ich_codret, ich_copred
     character(len=24), pointer :: v_rerr(:) => null()
     aster_logical :: tabret(0:10)
 !
@@ -159,10 +159,13 @@ character(len=*), optional, intent(in) :: sddynz_
         l_codpre = ASTER_FALSE
     else if (option(1:10) .eq. 'RIGI_MECA_') then
         l_merigi = ASTER_TRUE
-        l_veinte = ASTER_FALSE
+        l_veinte = ASTER_TRUE
         l_codret = ASTER_FALSE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_TRUE
+        if (option .eq. 'RIGI_MECA_TANG') then
+            l_codret = ASTER_TRUE
+        endif
     else if (option(1:9) .eq. 'RAPH_MECA') then
         l_merigi = ASTER_FALSE
         l_veinte = ASTER_TRUE
@@ -249,7 +252,7 @@ character(len=*), optional, intent(in) :: sddynz_
         nbout = nbout+1
         lpaout(nbout) = 'PCOPRED'
         lchout(nbout) = ds_constitutive%code_pred(1:19)
-        ich_codret = nbout
+        ich_copred = nbout
         nbout = nbout+1
         lpaout(nbout) = 'PCONTPR'
         lchout(nbout) = ds_constitutive%sigm_pred(1:19)

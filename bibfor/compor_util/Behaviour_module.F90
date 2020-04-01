@@ -32,7 +32,8 @@ private :: varcIsGEOM, relaIsExte,&
 public  :: behaviourInit, behaviourInitPoint,&
            behaviourPrepESVAElem, prepCoorGauss, behaviourPrepESVAGauss,&
            behaviourPrepStrain, behaviourRestoreStrain,&
-           behaviourPrepESVA, behaviourPrepESVAExte
+           behaviourPrepESVA, behaviourPrepESVAExte,&
+           behaviourOption
 ! ==================================================================================================
 private
 #include "jeveux.h"
@@ -50,6 +51,7 @@ private
 #include "asterfort/mgauss.h"
 #include "asterfort/pmat.h"
 #include "asterfort/utmess.h"
+#include "asterfort/jevech.h"
 #include "asterfort/dfdm3d.h"
 #include "asterfort/dfdm2d.h"
 #include "asterfort/rcvalb.h"
@@ -1463,6 +1465,50 @@ subroutine relaIsExte(carcri, l_mfront, l_umat)
         endif
     endif
 !   ------------------------------------------------------------------------------------------------
+end subroutine
+! --------------------------------------------------------------------------------------------------
+!
+! behaviourOption
+!
+! Select objects to construct from option name
+!
+! In  option           : name of option to compute
+! In  compor           : name of comportment definition (field)
+! Out lMatr            : flag when tangent matrix
+! Out lVect            : flag when internal forces vector
+! Out lVari            : flag when internal state variables
+! Out lSigm            : flag when stress and return code error
+! Out codret           : return code when integrate behaviour
+!
+! --------------------------------------------------------------------------------------------------
+subroutine behaviourOption(option, compor,&
+                           lMatr , lVect ,&
+                           lVari , lSigm ,&
+                           codret)
+!   ------------------------------------------------------------------------------------------------
+! - Parameters
+    character(len=16), intent(in) :: option, compor(*)
+    aster_logical, intent(out) :: lMatr, lVect, lVari, lSigm
+    integer, intent(out) :: codret
+! - Local
+!   ------------------------------------------------------------------------------------------------
+    aster_logical :: lPred
+    integer :: copred, jv_copred
+!   ------------------------------------------------------------------------------------------------
+    lVari = L_VARI(option)
+    lSigm = L_SIGM(option)
+    lVect = L_VECT(option)
+    lMatr = L_MATR(option)
+    lPred = L_PRED(option)
+    if (lPred) then
+        copred = 0
+        if (compor(DEFO_LDC) .eq. 'MECANIQUE') then
+            copred = 1
+        endif
+        call jevech('PCOPRED', 'E', jv_copred)
+        zi(jv_copred) = copred
+    endif
+    codret = 0
 end subroutine
 !
 end module Behaviour_module
