@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,8 +28,7 @@ loi = LoiComportement(
     nb_vari        = 0,
     nom_vari       = None,
     mc_mater       = None,
-    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN','PMF','1D',
-        ),
+    modelisation   = ('3D','AXIS','D_PLAN','C_PLAN','PMF','1D','MEMBRANE',),
     deformation    = ('GROT_GDEP',),
     algo_inte      = ('SANS_OBJET',),
     type_matr_tang = None,

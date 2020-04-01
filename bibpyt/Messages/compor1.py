@@ -223,7 +223,7 @@ Ne renseignez pas le mot-clé COMPORTEMENT/%(k2)s, afin de sélectionner l'algor
   il est recommandé d’utiliser la modélisation COQUE_3D, avec DEFORMATION='GROT_GDEP'.
 """),
 
-    49: _("""  La modélisation HHO n'est pas compatible ni avec DEFORMATION='SIMO_MIEHE' ni avec DEFORMATION='PETIT_REAC'."""),
+    49: _(""" La modélisation HHO n'est pas compatible ni avec DEFORMATION='SIMO_MIEHE' ni avec DEFORMATION='PETIT_REAC' ni avec DEFORMATION='GROT_GDEP'."""),
 
     53: _("""
  ECRO_LINE : la plasticité parfaite n'est pas autorisée !
