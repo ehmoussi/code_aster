@@ -17,8 +17,9 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504,W1306
 !
-subroutine coeime(ds_thm, j_mater, nomail, option, l_resi,&
-                  l_matr, ndim, dimdef, dimcon,&
+subroutine coeime(ds_thm, j_mater, nomail, option,&
+                  lSigm, lVari, lMatr,&
+                  ndim, dimdef, dimcon,&
                   addeme, addep1,&
                   nbvari, npg, npi,&
                   defgep, defgem, sigm, sigp, varim,&
@@ -39,7 +40,7 @@ type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: j_mater
 character(len=8), intent(in) :: nomail
 character(len=16), intent(in) :: option
-aster_logical, intent(in) :: l_resi, l_matr
+aster_logical, intent(in) :: lSigm, lVari, lMatr
 integer, intent(in) :: ndim, dimcon, dimdef
 integer, intent(in) :: addeme, addep1, npg, kpi, npi, nbvari
 real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)
@@ -113,20 +114,22 @@ integer, intent(out) :: retcom
 !
     if (meca .eq. 'JOINT_BANDIS') then
 !
-        call lcjohm(j_mater, l_resi, l_matr, kpi, npg,&
+        call lcjohm(j_mater, lSigm, lMatr, lVari, kpi, npg,&
                     nomail, addeme, advico, ndim, dimdef,&
                     dimcon, nbvari, defgem, defgep, varim,&
                     varip, sigm, sigp, drde, ouvh,&
                     retcom)
 !
         tlint = ouvh**2/12.d0
-        if (l_resi) then
+        if (lVari) then
             varip(advime)=tlint
+        endif
+        if (lSigm) then
             if (ds_thm%ds_elem%l_dof_pre1) then
                 sigp(1+ndim)=-defgep(addep1)
             endif
         endif
-        if ((l_matr) .and. (kpi .le. npg)) then
+        if ((lMatr) .and. (kpi .le. npg)) then
             if (ds_thm%ds_elem%l_dof_pre1) then
                 drde(addeme,addep1)=-1.d0
             endif
@@ -162,7 +165,7 @@ integer, intent(out) :: retcom
 !
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DE L'OPERATEUR TANGENT
 !
-        if (l_matr) then
+        if (lMatr) then
             if (kpi .le. npg) then
                 do i = 1, ndim
                     do j = 1, ndim
@@ -187,11 +190,13 @@ integer, intent(out) :: retcom
 !
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DU VECTEUR FORCES INTERNES
 !
-        if (l_resi) then
+        if (lSigm) then
             if ((ds_thm%ds_elem%l_dof_pre1) .and.&
                  ((nint(varip(advime+2)) .eq. 1) .or.( nint(varip(advime+2)).eq. 2))) then
                 sigp(1+ndim)=-defgep(addep1)
             endif
+        endif
+        if (lVari) then
 ! - CALCUL DE L'OUVERTURE HYDRO ET DE LA PERMEABILITE
             varip(advico+vicphi)=defgep(1)
             ouvh=varip(advico+vicphi)
@@ -229,7 +234,7 @@ integer, intent(out) :: retcom
 !
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DE L'OPERATEUR TANGENT
 !
-        if (l_matr) then
+        if (lMatr) then
             if (kpi .le. npg) then
                 do i = 1, ndim
                     do j = 1, ndim
@@ -253,10 +258,12 @@ integer, intent(out) :: retcom
 !
 ! - CALCUL DES TERMES MECA ET DE COUPLAGE DU VECTEUR FORCES INTERNES
 !
-        if (l_resi) then
+        if (lSigm) then
             if ((ds_thm%ds_elem%l_dof_pre1) .and. (nint(varip(advime+2)) .eq. 1)) then
                 sigp(1+ndim)=-defgep(addep1)
             endif
+        endif
+        if (lVari) then
 ! - CALCUL DE L'OUVERTURE HYDRO ET DE LA PERMEABILITE
             varip(advico+vicphi)=defgep(1)
             ouvh=varip(advico+vicphi)

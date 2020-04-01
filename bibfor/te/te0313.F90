@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 subroutine te0313(option, nomte)
 !
 use THM_type
+use Behaviour_module, only : behaviourOption
 !
 implicit none
 !
@@ -37,75 +38,50 @@ implicit none
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/Behaviour_type.h"
 !
-character(len=16) :: option, nomte
+character(len=16), intent(in) :: option, nomte
 !
+! --------------------------------------------------------------------------------------------------
 !
-! =====================================================================
-!    - FONCTION REALISEE: FULL_MECA, RIGI_MECA, RAPH_MECA, FORC_NODA
-!                         VARI_ELNO,SIEF_ELNO
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! =====================================================================
+! Elementary computation
+!
+! Elements: 3D_JOINT_HYME
+!           PLAN_JOINT_HYME
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!          FORC_NODA, VARI_ELNO, SIEF_ELNO
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: jgano, imatuu, ndim, imate, iinstm, jcret, nb_strain_meca
     integer :: iret, ichg, ichn, itabin(7), itabou(7)
     integer :: ivf2
     integer :: idf2, npi, npg
-    integer :: retloi, iretp, iretm
+    integer :: codret, iretp, iretm
     integer :: ipoids, ivf1, idf1, igeom
     integer :: iinstp, ideplm, ideplp, icompo, icamas
     integer :: icontm, ivarip, ivarim, ivectu, icontp
-!
-! =====================================================================
-! =====================================================================
-!
     integer :: mecani(8), press1(9), press2(9), tempe(5), dimuel
     integer :: dimdef, dimcon, nbvari, nb_vari_meca
     integer :: nno1, nno2
     integer :: iadzi, iazk24
+    aster_logical :: lVect, lMatr, lVari, lSigm
     integer :: iu(3, 18), ip(2, 9), ipf(2, 2, 9), iq(2, 2, 9)
     real(kind=8) :: r(22)
     real(kind=8) :: ang(24)
     character(len=3) :: modint
     character(len=8) :: nomail
     type(THM_DS) :: ds_thm
-!
-! =====================================================================
     integer :: li
     aster_logical :: axi, perman
-!
-! =====================================================================
-! AXI       AXISYMETRIQUE?
-! PERMAN    REGIME PERMANENT ?
-! NNO1      NB DE NOEUDS DES BORDS INF ET SUP DE L'ELEMENT
-! NNO2      NB DE NOEUDS DU SEGEMENT CENTRAL DE L'ELEMENT
-! NPI       NB DE POINTS D'INTEGRATION DE L'ELEMENT
-! NPG       NB DE POINTS DE GAUSS     POUR CLASSIQUE(=NPI)
-! NDIM      DIMENSION DE L'ESPACE
-! DIMUEL    NB DE DDL TOTAL DE L'ELEMENT
-! DIMCON    DIMENSION DES CONTRAINTES GENERALISEES ELEMENTAIRES
-! DIMDEF    DIMENSION DES DEFORMATIONS GENERALISEES ELEMENTAIRES
-! NBVARI    NB DE VARIABLES INTERNES
-! IU        DECALAGE D'INDICE POUR ACCEDER AUX DDL DE DEPLACEMENT
-! IP        DECALAGE D'INDICE POUR ACCEDER AUX DDL DE PRESSION MILIEU
-! IPF       DECALAGE D'INDICE POUR ACCEDER AUX DDL DE PRESSION FACES
-! IQ        DECALAGE D'INDICE POUR ACCEDER AUX DDL DE LAGRANGE HYDRO
-! ANG       ANGLES NAUTIQUES POUR ORIENTATION ELEMENT
-! MODINT    MODE D'INTEGRATION
-! NOMAIL    NUMERO DE MAILLE
-! IVF       FONCTIONS DE FORMES QUADRATIQUES
-! IVF2      FONCTIONS DE FORMES LINEAIRES
-! =====================================================================
     aster_logical :: fnoevo
     real(kind=8) :: dt
 !
-! =====================================================================
-! --- 1. INITIALISATIONS ----------------------------------------------
-! --- SUIVANT ELEMENT, DEFINITION DES CARACTERISTIQUES : --------------
-! --- CHOIX DU TYPE D'INTEGRATION -------------------------------------
-! --- RECUPERATION DE LA GEOMETRIE ET POIDS DES POINTS D'INTEGRATION --
-! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
-! =====================================================================
+! --------------------------------------------------------------------------------------------------
 !
 
 !
@@ -147,9 +123,7 @@ character(len=16) :: option, nomte
 ! =====================================================================
     if ((option(1:9).eq.'RIGI_MECA' ) .or. (option(1:9).eq.'RAPH_MECA' ) .or.&
         (option(1:9).eq.'FULL_MECA' )) then
-! =====================================================================
-! --- PARAMETRES EN ENTREE --------------------------------------------
-! =====================================================================
+! ----- Input fields
         call jevech('PGEOMER', 'L', igeom)
         call jevech('PMATERC', 'L', imate)
         call jevech('PINSTMR', 'L', iinstm)
@@ -160,32 +134,36 @@ character(len=16) :: option, nomte
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PCONTMR', 'L', icontm)
         read (zk16(icompo-1+NVAR),'(I16)') nbvari
-! =====================================================================
-! --- PARAMETRES EN SORTIE ISMAEM? ------------------------------------
-! =====================================================================
-        if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+! ----- Select objects to construct from option name
+        call behaviourOption(option, zk16(icompo),&
+                             lMatr , lVect ,&
+                             lVari , lSigm ,&
+                             codret)
+! ----- Output fields
+        imatuu = ismaem()
+        ivectu = ismaem()
+        icontp = ismaem()
+        ivarip = ismaem()
+        if (lMatr) then
             call jevech('PMATUNS', 'E', imatuu)
-        else
-            imatuu = ismaem()
         endif
-!
-        if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-            call jevech('PVECTUR', 'E', ivectu)
-            call jevech('PCONTPR', 'E', icontp)
+        if (lVari) then
             call jevech('PVARIPR', 'E', ivarip)
+        endif
+        if (lSigm) then
+            call jevech('PCONTPR', 'E', icontp)
             call jevech('PCODRET', 'E', jcret)
             zi(jcret) = 0
-        else
-            ivectu = ismaem()
-            icontp = ismaem()
-            ivarip = ismaem()
         endif
-!
-        retloi = 0
-!
-!
+        if (lVect) then
+            call jevech('PVECTUR', 'E', ivectu)
+        endif
+! ----- Integration
+        codret = 0
         if (option(1:9) .eq. 'RIGI_MECA') then
-            call aseihm(ds_thm, option, axi, ndim, nno1, nno2,&
+            call aseihm(ds_thm, option,&
+                        lSigm, lVari, lMatr, lVect,&
+                        axi, ndim, nno1, nno2,&
                         npi, npg, dimuel, dimdef, dimcon,&
                         nbvari, zi(imate), iu, ip, ipf,&
                         iq, mecani, press1, press2, tempe,&
@@ -193,12 +171,14 @@ character(len=16) :: option, nomte
                         zr(ideplm), zr(ideplm), zr(icontm), zr(icontm), zr(ivarim),&
                         zr(ivarim), nomail, zr(ipoids), zr(igeom), ang,&
                         zk16(icompo), perman, zr(ivectu), zr(imatuu),&
-                        retloi)
+                        codret)
         else
             do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
             end do
-            call aseihm(ds_thm, option, axi, ndim, nno1, nno2,&
+            call aseihm(ds_thm, option,&
+                        lSigm, lVari, lMatr, lVect,&
+                        axi, ndim, nno1, nno2,&
                         npi, npg, dimuel, dimdef, dimcon,&
                         nbvari, zi(imate), iu, ip, ipf,&
                         iq, mecani, press1, press2, tempe,&
@@ -206,11 +186,11 @@ character(len=16) :: option, nomte
                         zr(ideplm), zr(ideplp), zr(icontm), zr(icontp), zr(ivarim),&
                         zr(ivarip), nomail, zr(ipoids), zr(igeom), ang,&
                         zk16(icompo), perman, zr(ivectu), zr(imatuu),&
-                        retloi)
-!
-            zi(jcret) = retloi
+                        codret)
+            if (lSigm) then
+                zi(jcret) = codret
+            endif
         endif
-!
     endif
 !
 ! ======================================================================
@@ -267,10 +247,8 @@ character(len=16) :: option, nomte
 ! --- 5. OPTION : VARI_ELNO ---------------------------------------
 ! ======================================================================
     if (option .eq. 'VARI_ELNO') then
-        call tecach('OOO', 'PVARIGR', 'L', iret, nval=7,&
-                    itab=itabin)
-        call tecach('OOO', 'PVARINR', 'E', iret, nval=7,&
-                    itab=itabou)
+        call tecach('OOO', 'PVARIGR', 'L', iret, nval=7, itab=itabin)
+        call tecach('OOO', 'PVARINR', 'E', iret, nval=7, itab=itabou)
         ichg=itabin(1)
         ichn=itabou(1)
 !

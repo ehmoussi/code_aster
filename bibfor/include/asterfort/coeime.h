@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine coeime(ds_thm, j_mater, nomail, option, l_resi,&
-                      l_matr, ndim, dimdef, dimcon, &
+    subroutine coeime(ds_thm, j_mater, nomail, option,&
+                      lSigm, lVari, lMatr,&
+                      ndim, dimdef, dimcon, &
                       addeme, addep1,&
                       nbvari, npg, npi,&
                       defgep, defgem, sigm, sigp, varim,&
@@ -30,7 +31,7 @@ interface
         integer, intent(in) :: j_mater
         character(len=8), intent(in) :: nomail
         character(len=16), intent(in) :: option
-        aster_logical, intent(in) :: l_resi, l_matr
+        aster_logical, intent(in) :: lSigm, lVari, lMatr
         integer, intent(in) :: ndim, dimcon, dimdef
         integer, intent(in) :: addeme, addep1, npg, kpi, npi, nbvari
         real(kind=8), intent(in) :: defgem(dimdef), defgep(dimdef)

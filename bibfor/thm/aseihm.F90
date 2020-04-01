@@ -17,7 +17,9 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine aseihm(ds_thm, option, l_axi, ndim, nno1, nno2,&
+subroutine aseihm(ds_thm, option, &
+                  lSigm, lVari, lMatr, lVect,&
+                  l_axi, ndim, nno1, nno2,&
                   npi, npg, dimuel, dimdef, dimcon,&
                   nbvari, j_mater, iu, ip, ipf,&
                   iq, mecani, press1, press2, tempe,&
@@ -38,6 +40,8 @@ implicit none
 #include "asterfort/thmGetBehaviour.h"
 #include "asterfort/thmGetBehaviourVari.h"
 #include "asterfort/thmGetBehaviourChck.h"
+!
+aster_logical, intent(in) :: lSigm, lVari, lMatr, lVect
 !......................................................................
 !
 !     BUT:  CALCUL DU VECTEUR FORCES INTERNES ELEMENTAIRE, DES
@@ -122,7 +126,6 @@ implicit none
     integer :: i, j, m, k, km, kpi, addlh1
     real(kind=8) :: q(dimdef, dimuel), res(dimdef), drde(dimdef, dimdef), wi
     real(kind=8) :: defgem(dimdef), defgep(dimdef), matri
-    aster_logical :: l_resi, l_matr
 !
 
 !
@@ -158,17 +161,14 @@ implicit none
     addete = tempe(2)
     adcote = tempe(3)
 !
-    l_resi = option(1:4).eq.'FULL' .or. option(1:4).eq.'RAPH'
-    l_matr = option(1:4).eq.'FULL' .or. option(1:4).eq.'RIGI'
-!
 ! ======================================================================
 ! --- INITIALISATION DE VECTU, MATUU A 0 SUIVANT OPTION ----------------
 ! ======================================================================
-    if (l_resi) then
+    if (lVect) then
         vectu(:)=0.d0
     endif
 !
-    if (l_matr) then
+    if (lMatr) then
         matuu(:)=0.d0
     endif
 !
@@ -205,7 +205,9 @@ implicit none
 ! --- INTEGRATION DES LOIS DE COMPORTEMENT ----------------------------
 ! =====================================================================
 !
-        call coeihm(ds_thm, option, l_steady, l_resi, l_matr, j_mater,&
+        call coeihm(ds_thm, option, l_steady,&
+                    lSigm, lVari, lMatr, lVect,&
+                    j_mater,&
                     time_prev, time_curr, nomail,&
                     ndim, dimdef, dimcon, nbvari,&
                     addeme, adcome,&
@@ -219,7 +221,7 @@ implicit none
 ! --- CALCUL DES FORCES INTERIEURES ET DE L'OPERATEUR TANGENT ---------
 ! =====================================================================
 !
-        if (l_resi) then
+        if (lVect) then
             do k = 1, dimuel
                 do i = 1, dimdef
                     vectu(k)=vectu(k)+wi*q(i,k)*res(i)
@@ -227,7 +229,7 @@ implicit none
             end do
         endif
 !
-        if (l_matr) then
+        if (lMatr) then
             km = 1
             do k = 1, dimuel
                 do m = 1, dimuel

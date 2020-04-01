@@ -248,20 +248,18 @@ class HM_J_AXQ8S(Element):
                           ),
 
         OP.RIGI_MECA_TANG(te=313,
-                          para_in=(
-                              (SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
-                          OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
-                              (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                          (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
-                          (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
-                          (SP.PVARCMR, LC.ZVARCPG), (
-                          OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
-                          (SP.PVARCRR, LC.ZVARCPG), (
-                          OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
-                          ),
-                          para_out=((SP.PMATUNS, MMATUNS), ),
-                          ),
+            para_in  = ((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
+                        (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
+                        (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+                        (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                        (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
+                        (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
+                        (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
+                        (SP.PVARCRR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),),
+            para_out = ((SP.PMATUNS, MMATUNS),
+                        (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                        (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
+        ),
 
         OP.SIEF_ELNO(te=313,
                      para_in=(

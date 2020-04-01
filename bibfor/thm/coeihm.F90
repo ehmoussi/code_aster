@@ -17,7 +17,9 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine coeihm(ds_thm, option, l_steady, l_resi, l_matr, j_mater,&
+subroutine coeihm(ds_thm, option, l_steady,&
+                  lSigm, lVari, lMatr, lVect,&
+                  j_mater,&
                   time_prev, time_curr, nomail,&
                   ndim, dimdef, dimcon, nbvari, &
                   addeme, adcome,&
@@ -56,7 +58,8 @@ integer, intent(in) :: adcome, adcp11, adcp12, adcp21, adcp22, adcote
 real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
 real(kind=8), intent(in) :: varim(nbvari), time_prev, time_curr
 real(kind=8), intent(in) :: sigm(dimcon)
-aster_logical, intent(in) :: l_steady, l_resi, l_matr
+aster_logical, intent(in) :: l_steady
+aster_logical, intent(in) :: lSigm, lVari, lMatr, lVect
 integer, intent(out) :: retcom
 real(kind=8), intent(inout) :: sigp(dimcon), varip(nbvari)
 real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
@@ -76,8 +79,6 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 ! IO  ds_thm           : datastructure for THM
 ! IN OPTION : OPTION DE CALCUL
 ! IN l_steady : l_steadyENT ?
-! IN l_resi   : FULL_MECA OU RAPH_MECA ?
-! IN RIGI   : FULL_MECA OU RIGI_MECA ?
 ! IN IMATE  : MATERIAU CODE
 ! IN COMPOR : COMPORTEMENT
 ! IN CRIT   : CRITERES DE CONVERGENCE LOCAUX
@@ -145,12 +146,16 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
     deltat       = time_curr-time_prev
     tperm(:,:)   = 0.d0
     angl_naut(:) = 0.d0
-    if (l_resi) then
+    if (lVari) then
         varip(1:nbvari) = 0.d0
+    endif
+    if (lSigm) then
         sigp(1:dimcon)  = 0.d0
+    endif
+    if (lVect) then
         res(1:dimdef)   = 0.d0
     endif
-    if (l_matr) then
+    if (lMatr) then
         dsde(1:dimcon,1:dimdef) = 0.d0
         drde(1:dimdef,1:dimdef) = 0.d0
     endif
@@ -194,8 +199,9 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
         (meca.ne.'CZM_EXP_REG')) then
         call utmess('F', 'ALGORITH17_10', sk=meca)
     endif
-    call coeime(ds_thm, j_mater, nomail, option, l_resi,&
-                l_matr, ndim, dimdef, dimcon, &
+    call coeime(ds_thm, j_mater, nomail, option,&
+                lSigm, lVari, lMatr,&
+                ndim, dimdef, dimcon, &
                 addeme, addep1, &
                 nbvari, npg, npi,&
                 defgep, defgem, sigm, sigp, varim,&
@@ -281,7 +287,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Generalized stress and residual
 !
-    if (l_resi) then
+    if (lSigm) then
         if (ds_thm%ds_elem%l_dof_pre1) then
             sigp(adcp11+1) = ouvh*sigp(adcp11+1)
             do f = 1, 2
@@ -289,6 +295,8 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
                 sigp(adcop1+f+1)= defgep(addlh1-1+f)-defgep(addep1)
             end do
         endif
+    endif
+    if (lVect) then
         if (kpi .le. npg) then
             do i = 1, ndim
                 res(i) = sigp(i)
@@ -315,7 +323,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 !
 ! - Tangent matrix
 !
-    if (l_matr) then
+    if (lMatr) then
         if (kpi .le. npg) then
             if (ds_thm%ds_elem%l_dof_pre1) then
                 do f = 1, 2

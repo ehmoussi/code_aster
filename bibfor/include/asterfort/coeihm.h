@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,9 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine coeihm(ds_thm, option, l_steady, l_resi, l_matr, j_mater,&
+    subroutine coeihm(ds_thm, option, l_steady,&
+                      lSigm, lVari, lMatr, lVect,&
+                      j_mater,&
                       time_prev, time_curr, nomail,&
                       ndim, dimdef, dimcon, nbvari, &
                       addeme, adcome,&
@@ -39,7 +41,8 @@ interface
         real(kind=8), intent(in) :: defgem(1:dimdef), defgep(1:dimdef)
         real(kind=8), intent(in) :: varim(nbvari), time_prev, time_curr
         real(kind=8), intent(in) :: sigm(dimcon)
-        aster_logical, intent(in) :: l_steady, l_resi, l_matr
+        aster_logical, intent(in) :: l_steady
+        aster_logical, intent(in) :: lSigm, lVari, lMatr, lVect
         integer, intent(out) :: retcom
         real(kind=8), intent(inout) :: sigp(dimcon), varip(nbvari)
         real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)

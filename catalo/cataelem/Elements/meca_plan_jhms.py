@@ -152,43 +152,31 @@ class HM_J_DPQ8S(Element):
                      ),
 
         OP.FULL_MECA(te=313,
-                     para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
-                              (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (
-                              OP.FULL_MECA.PCONTMR, ECONTPG),
-                              (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                              (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
-                              (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
-                              (SP.PVARCMR, LC.ZVARCPG), (
-                              OP.FULL_MECA.PVARCPR, LC.ZVARCPG),
-                              (SP.PVARCRR, LC.ZVARCPG), (
-                              OP.FULL_MECA.PVARIMR, ZVARIPG),
-                              ),
-                     para_out=(
-                     (SP.PCODRET, LC.ECODRET), (OP.FULL_MECA.PCONTPR, ECONTPG),
-                     (SP.PMATUNS, MMATUNS), (OP.FULL_MECA.PVARIPR, ZVARIPG),
-                     (SP.PVECTUR, MVECTUR), ),
-                     ),
+            para_in  = ((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
+                        (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
+                        (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                        (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
+                        (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
+                        (SP.PVARCMR, LC.ZVARCPG), (OP.FULL_MECA.PVARCPR, LC.ZVARCPG),
+                        (SP.PVARCRR, LC.ZVARCPG), (OP.FULL_MECA.PVARIMR, ZVARIPG),),
+            para_out = ((SP.PCODRET, LC.ECODRET), (OP.FULL_MECA.PCONTPR, ECONTPG),
+                        (SP.PMATUNS, MMATUNS), (OP.FULL_MECA.PVARIPR, ZVARIPG),
+                        (SP.PVECTUR, MVECTUR),),
+        ),
 
         OP.FULL_MECA_ELAS(te=313,
-                          para_in=(
-                              (SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
-                          (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (
-                          OP.FULL_MECA_ELAS.PCONTMR, ECONTPG),
-                              (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                          (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
-                          (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
-                          (SP.PVARCMR, LC.ZVARCPG), (
-                          OP.FULL_MECA_ELAS.PVARCPR, LC.ZVARCPG),
-                          (SP.PVARCRR, LC.ZVARCPG), (
-                          OP.FULL_MECA_ELAS.PVARIMR, ZVARIPG),
-                          ),
-                          para_out=(
-                          (SP.PCODRET, LC.ECODRET), (
-                              OP.FULL_MECA_ELAS.PCONTPR, ECONTPG),
-                          (SP.PMATUNS, MMATUNS), (
-                          OP.FULL_MECA_ELAS.PVARIPR, ZVARIPG),
-                          (SP.PVECTUR, MVECTUR), ),
-                          ),
+            para_in  = ((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
+                        (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR), 
+                        (OP.FULL_MECA_ELAS.PCONTMR, ECONTPG),
+                        (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                        (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
+                        (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
+                        (SP.PVARCMR, LC.ZVARCPG), (OP.FULL_MECA_ELAS.PVARCPR, LC.ZVARCPG),
+                        (SP.PVARCRR, LC.ZVARCPG), (OP.FULL_MECA_ELAS.PVARIMR, ZVARIPG), ),
+            para_out = ((SP.PCODRET, LC.ECODRET), (OP.FULL_MECA_ELAS.PCONTPR, ECONTPG),
+                        (SP.PMATUNS, MMATUNS), (OP.FULL_MECA_ELAS.PVARIPR, ZVARIPG),
+                        (SP.PVECTUR, MVECTUR), ),
+        ),
 
         OP.INIT_VARC(te=99,
                      para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), ),
@@ -254,20 +242,18 @@ class HM_J_DPQ8S(Element):
                           ),
 
         OP.RIGI_MECA_TANG(te=313,
-                          para_in=(
-                              (SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
-                          OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
-                              (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                          (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
-                          (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
-                          (SP.PVARCMR, LC.ZVARCPG), (
-                          OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
-                          (SP.PVARCRR, LC.ZVARCPG), (
-                          OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
-                          ),
-                          para_out=((SP.PMATUNS, MMATUNS), ),
-                          ),
+            para_in  = ((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
+                        (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
+                        (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+                        (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                        (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
+                        (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
+                        (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
+                        (SP.PVARCRR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),),
+            para_out = ((SP.PMATUNS, MMATUNS), (SP.PVECTUR, MVECTUR),
+                        (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                        (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
+        ),
 
         OP.SIEF_ELNO(te=313,
                      para_in=(

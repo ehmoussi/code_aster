@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine aseihm(ds_thm, option, l_axi, ndim, nno1, nno2,&
+    subroutine aseihm(ds_thm, option,&
+                      lSigm, lVari, lMatr, lVect,&
+                      l_axi, ndim, nno1, nno2,&
                       npi, npg, dimuel, dimdef, dimcon,&
                       nbvari, j_mater, iu, ip, ipf,&
                       iq, mecani, press1, press2, tempe,&
@@ -29,6 +31,7 @@ interface
                       retcom)
         use THM_type
         type(THM_DS), intent(inout) :: ds_thm
+        aster_logical, intent(in) :: lSigm, lVari, lMatr, lVect
         integer :: nbvari
         integer :: dimcon
         integer :: dimdef
