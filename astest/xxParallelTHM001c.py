@@ -21,6 +21,18 @@ else:
     MAIL.readMedFile("petsc04a.mmed")
 
 
+DEFI_GROUP( reuse=MAIL, MAILLAGE=MAIL,
+                   CREA_GROUP_MA=(
+                        _F(  NOM = 'TOUT', TOUT = 'OUI'),
+                        _F(  NOM = 'Y_MA', UNION = ('Yinf', 'Ysup')),
+                   ),
+                   CREA_GROUP_NO=(
+                        _F(  NOM = 'Ysup_NO', GROUP_MA = 'Ysup'),
+                        _F(  NOM = 'Zsup_NO', GROUP_MA = 'Zsup'),
+                        #_F(  GROUP_MA = 'Zinf'),
+                        _F(  TOUT_GROUP_MA = 'OUI'),
+                   ))
+
 MODELE = AFFE_MODELE(
                     AFFE=_F(MODELISATION='3D_THM', PHENOMENE='MECANIQUE', TOUT='OUI'),
                     DISTRIBUTION=_F(METHODE='CENTRALISE'),
@@ -111,10 +123,10 @@ CHMAT0 = AFFE_MATERIAU(AFFE=_F(GROUP_MA='VOLUME', MATER=ARGILE0), MAILLAGE=MAIL)
 
 CHAR0 =  AFFE_CHAR_CINE(
     MECA_IMPO=(
-                _F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA=('Zinf', )),
-                _F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA=('Yinf', 'Ysup')),
+                _F(DX=0.0, DY=0.0, DZ=0.0, GROUP_NO=('Zinf', )),
+                _F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA=('Y_MA')),
                 _F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA=('Xsup', 'Xinf')),
-                _F(DX=0.0, DY=0.0, DZ=0.001, GROUP_MA=('Zsup', )),
+                _F(DX=0.0, DY=0.0, DZ=0.001, GROUP_NO=('Zsup_NO', )),
     ),
     MODELE=MODELE
 )
