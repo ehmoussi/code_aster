@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -50,6 +50,19 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
                                    ),
 
                  b_lame_table  = BLOC(condition = """equal_to("FORMAT", 'TABLE') """,fr=tr("Paramètres pour le format TABLE"),
+                                   ),
+
+
+           ),
+
+           FORCE_CONTACT    = FACT(statut='f',max='**',
+                          fr=tr("Post-traitement des efforts de contact, par grille"),
+
+                 FORMAT       = SIMP(statut='o',typ='TXM',into=("TABLE")),
+                 UNITE        = SIMP(statut='o',typ=UnitType(), inout='out',
+                                     fr=tr("Numéro de l'unité logique pour le post-traitement")),
+
+                 b_effort_table  = BLOC(condition = """equal_to("FORMAT", 'TABLE') """,fr=tr("Paramètres pour le format TABLE"),
                                    ),
 
 

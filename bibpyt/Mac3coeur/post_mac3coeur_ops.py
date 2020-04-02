@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -387,6 +387,7 @@ def post_mac3coeur_ops(self, **args):
     _RESU = self['RESULTAT']
     _typ_coeur = self['TYPE_COEUR']
     POST_LAME = self['LAME']
+    POST_EFFORT = self['FORCE_CONTACT']
     POST_DEF = self['DEFORMATION']
     _inst = self['INST']
     _TAB_N = self['TABLE']
@@ -581,6 +582,122 @@ def post_mac3coeur_ops(self, **args):
                     _coeur.get_contactAssLame() + _coeur.get_contactCuve()
 
                 IMPR_TABLE(UNITE=_unit, TABLE=_TAB3, NOM_PARA=l_para,FORMAT_R='E12.6',)
+
+    
+
+
+
+
+    # "
+    #                                          MOT-CLE FACTEUR FORCE_CONTACT
+    # "
+
+    if (POST_EFFORT is not None):
+
+        valeffortac = {}
+        valeffortcu = {}
+        post_table = 0
+        for attr in POST_EFFORT:
+            _typ_post = attr['FORMAT']
+            if (_typ_post == 'TABLE'):
+                post_table = 1
+
+        _formule = FORMULE(NOM_PARA='N', VALE='abs(1.*N)')
+
+# formule qui permet d'associer les COOR_X "presque" identiques (suite a
+# un calcul LAME)
+        _indicat = FORMULE(NOM_PARA='COOR_X', VALE='int(10*COOR_X)')
+
+        UTMESS('I', 'COEUR0_9')
+        k = 0
+        dim = len(_coeur.get_contactCuve())
+
+        for name in _coeur.get_contactCuve() :
+
+            _TAB2 = CREA_TABLE(
+                RESU=_F(RESULTAT=_RESU, NOM_CHAM='SIEF_ELGA', NOM_CMP='N', GROUP_MA=name, INST=_inst))
+
+            _TAB2 = CALC_TABLE(reuse=_TAB2, TABLE=_TAB2,
+                               ACTION=(
+                               _F(OPERATION='FILTRE', NOM_PARA='POINT',
+                                  CRIT_COMP='EQ', VALE_I=1),
+                               _F(OPERATION='TRI', NOM_PARA='COOR_X',
+                                  ORDRE='CROISSANT'),
+                               _F(OPERATION='OPER',
+                                  FORMULE=_formule, NOM_PARA=name),
+                               _F(OPERATION='OPER', FORMULE=_indicat,
+                                  NOM_PARA='INDICAT'),
+                               )
+                               )
+
+            if (post_table == 1):
+
+                # a la premiere occurence, on cree la table qui sera imprimee
+                # (_TAB3), sinon, on concatene les tables
+                if k == 0:
+                    _TAB3 = CALC_TABLE(TABLE=_TAB2,
+                                       ACTION=(_F(OPERATION='EXTR', NOM_PARA=('COOR_X', 'INDICAT', name))))
+                else:
+
+                    _TABTMP = CALC_TABLE(TABLE=_TAB2,
+                                         ACTION=(_F(OPERATION='EXTR', NOM_PARA=('INDICAT', name))))
+                    _TAB3 = CALC_TABLE(TABLE=_TAB3,
+                                       ACTION=(_F(OPERATION='COMB', TABLE=_TABTMP, NOM_PARA='INDICAT')))
+
+            tab2 = _TAB2.EXTR_TABLE()
+            tab2.Renomme(name, 'P_EFFORT')
+            valeffortcu[name] = tab2.P_EFFORT.values()
+            k = k + 1
+
+        UTMESS('I', 'COEUR0_8')
+        k = 0
+        dim = len(_coeur.get_contactAssLame())
+
+        if dim != 0:
+            for name in _coeur.get_contactAssLame():
+                _TAB1 = CREA_TABLE(
+                    RESU=_F(RESULTAT=_RESU, NOM_CHAM='SIEF_ELGA', NOM_CMP='N', GROUP_MA=name, INST=_inst))
+                _TAB1 = CALC_TABLE(reuse=_TAB1, TABLE=_TAB1,
+                                   ACTION=(
+                                   _F(OPERATION='FILTRE', NOM_PARA='POINT',
+                                      CRIT_COMP='EQ', VALE_I=1),
+                                   _F(OPERATION='TRI',
+                                      NOM_PARA='COOR_X', ORDRE='CROISSANT'),
+                                   _F(OPERATION='OPER',
+                                      FORMULE=_formule, NOM_PARA=name),
+                                   _F(OPERATION='OPER',
+                                      FORMULE=_indicat, NOM_PARA='INDICAT'),
+                                   )
+                                   )
+                if (post_table == 1):
+                    _TABTMP = CALC_TABLE(TABLE=_TAB1,
+                                         ACTION=(_F(OPERATION='EXTR', NOM_PARA=('INDICAT', name))))
+                    _TAB3 = CALC_TABLE(TABLE=_TAB3,
+                                       ACTION=(_F(OPERATION='COMB', TABLE=_TABTMP, NOM_PARA='INDICAT')))
+                tab1 = _TAB1.EXTR_TABLE()
+                tab1.Renomme(name, 'P_EFFORT')
+                valeffortac[name] = tab1.P_EFFORT.values()
+                k = k + 1
+
+
+
+        for attr in POST_EFFORT:
+            _unit = attr['UNITE']
+            _typ_post = attr['FORMAT']
+
+            if (_typ_post == 'TABLE'):
+
+                # liste des parametres a afficher (dans l'ordre)
+                # Rq : on affiche la premiere occurence de 'COOR_X'
+                l_para = ['COOR_X', ] + \
+                    _coeur.get_contactAssLame() + _coeur.get_contactCuve()
+
+                IMPR_TABLE(UNITE=_unit, TABLE=_TAB3, NOM_PARA=l_para,FORMAT_R='E12.6',)
+
+
+
+
+
 
     # "
     #                                          MOT-CLE FACTEUR DEFORMATION
