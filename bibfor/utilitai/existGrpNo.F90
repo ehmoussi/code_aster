@@ -79,20 +79,20 @@ subroutine existGrpNo(mesh, group_no, l_exi_in_grp, l_exi_in_grp_p)
 !
             if(iret .ne. 0) then
                 l_exi_in_grp   = ASTER_TRUE
-                l_exi_in_grp_p = ASTER_TRUE
-            else
-                call jeexin(grnomap, iret)
-                if(iret .ne. 0) then
-                    call jeveuo(grnomap, 'L' , vk32=v_grpp)
-                    nb_grpp = size(v_grpp)
-                    do iGr = 1, nb_grpp
-                        if(v_grpp(iGr) == group_no) then
-                            l_exi_in_grp_p = ASTER_TRUE
-                            exit
-                        end if
-                    end do
-                end if
             end if
+        end if
+        call jeexin(grnomap, iret)
+        if(iret .ne. 0) then
+            call jeveuo(grnomap, 'L' , vk32=v_grpp)
+            nb_grpp = size(v_grpp)
+            print*,"nbg:", nb_grpp
+            do iGr = 1, nb_grpp
+                print*, iGr, group_no, v_grpp(iGr)
+                if(v_grpp(iGr) == group_no) then
+                    l_exi_in_grp_p = ASTER_TRUE
+                    exit
+                end if
+            end do
         end if
     else
         call jeexin(grnoma, iret)

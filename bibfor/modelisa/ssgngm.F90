@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,6 +37,11 @@ subroutine ssgngm(noma, iocc, nbgnaj)
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/existGrpMa.h"
+#include "asterfort/existGrpNo.h"
+#include "asterfort/cleanListOfGrpMa.h"
+#include "asterfort/checkListOfGrpMa.h"
+#include "asterfort/isParallelMesh.h"
 !
     character(len=8) :: noma
 !     BUT: AJOUTER S'IL LE FAUT A UN MAILLAGE DES GROUP_NO DE MEME NOM
@@ -49,15 +54,17 @@ subroutine ssgngm(noma, iocc, nbgnaj)
     character(len=8) :: k8b, koui
     character(len=16) :: selec
     character(len=24) :: grpma, grpno, nomgno, nomgma
-    integer :: iarg
+    integer :: iarg,nbgnaj
+    character(len=24), pointer :: v_gno(:) => null(), v_gma(:) => null()
 !
 ! DEB-------------------------------------------------------------------
 !
 !-----------------------------------------------------------------------
     integer :: i, iad2, ialgma, ialima, ialino, ianbno, iangno
     integer :: ibid, ier, iocc, iret, j, jtrav
-    integer :: n1, nb, nbgma, nbgnaj, nbgno, nbma, nbnoto
+    integer :: n1, nb, nbgma, nbgno, nbma, nbnoto
     integer :: no
+    aster_logical :: l_exi_in_grp, l_exi_in_grp_p, l_parallel_mesh
 !-----------------------------------------------------------------------
     call jemarq()
     grpma = noma//'.GROUPEMA       '
@@ -65,6 +72,8 @@ subroutine ssgngm(noma, iocc, nbgnaj)
     nbgnaj = 0
     selec = 'TOUS'
     call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbnoto)
+    l_parallel_mesh = isParallelMesh(noma)
+!
     if (nbnoto .eq. 0) goto 60
 !
 !     ---  CAS : "TOUT_GROUP_MA"
@@ -76,6 +85,7 @@ subroutine ssgngm(noma, iocc, nbgnaj)
         do i = 1, nbgma
             call jenuno(jexnum(grpma, i), zk24(ialgma-1+i))
         end do
+        call cleanListOfGrpMa(noma, zk24(ialgma), nbgma, ASTER_TRUE, iret)
         iangno = ialgma
 !
 !     ---  CAS : "GROUP_MA"
@@ -96,17 +106,52 @@ subroutine ssgngm(noma, iocc, nbgnaj)
             if (nbgno .ne. nbgma) then
                 call utmess('F', 'MODELISA7_8')
             endif
+!
             call wkvect('&&SSGNGM.NOM_GNO', 'V V K24', nbgno, iangno)
             call getvtx('CREA_GROUP_NO', 'NOM', iocc=iocc, nbval=nbgno, vect=zk24(iangno),&
                         nbret=no)
+!
+            if(nb .ne. nbgma) then
+                ASSERT(l_parallel_mesh)
+                call wkvect('&&SSGNGM.NOM_TMP', 'V V K24', nbgno, vk24=v_gno)
+                call wkvect('&&SSGNGM.MA_TMP', 'V V K24', nbgma, vk24=v_gma)
+                call getvtx('CREA_GROUP_NO', 'GROUP_MA', iocc=iocc, nbval=nbgma, vect=zk24(ialgma),&
+                        nbret=nb)
+                nb = 0
+                do i = 1, nbgma
+                    nomgma = zk24(ialgma-1+i)
+                    call existGrpMa(noma(1:8), nomgma, l_exi_in_grp, l_exi_in_grp_p)
+                    if(l_exi_in_grp) then
+                        nb = nb + 1
+                        v_gno(nb) = zk24(iangno-1+i)
+                        v_gma(nb) = nomgma
+                    end if
+                end do
+!
+                nbgma = nb
+                do i = 1, nbgma
+                    zk24(iangno-1+i) = v_gno(i)
+                    zk24(ialgma-1+i) = v_gma(i)
+                end do
+!
+                do i = nbgma +1, nbgno
+                    zk24(iangno-1+i) = ' '
+                    zk24(ialgma-1+i) = ' '
+                end do
+                nbgno = nbgma
+!
+                call jedetr('&&SSGNGM.NOM_TMP')
+                call jedetr('&&SSGNGM.MA_TMP')
+            end if
         else
             iangno = ialgma
         endif
+        call checkListOfGrpMa(noma, zk24(ialgma), nbgma, ASTER_TRUE)
         ier = 0
         do i = 1, nbgma
             nomgma = zk24(ialgma-1+i)
-            call jeexin(jexnom(grpma, nomgma), iret)
-            if (iret .eq. 0) then
+            call existGrpMa(noma(1:8), nomgma, l_exi_in_grp, l_exi_in_grp_p)
+            if (.not.l_exi_in_grp) then
                 ier = ier + 1
                 call utmess('E', 'ELEMENTS_62', sk=nomgma)
             endif
@@ -124,27 +169,44 @@ subroutine ssgngm(noma, iocc, nbgnaj)
 !
     do i = 1, nbgma
         nomgma = zk24(ialgma-1+i)
-        call jelira(jexnom(grpma, nomgma), 'LONUTI', nbma)
-        call jeveuo(jexnom(grpma, nomgma), 'L', ialima)
-        call gmgnre(noma, nbnoto, zi(jtrav), zi(ialima), nbma,&
-                    zi(ialino), zi(ianbno-1+i), selec)
+        call existGrpMa(noma(1:8), nomgma, l_exi_in_grp, l_exi_in_grp_p)
+        if(l_exi_in_grp) then
+            call jelira(jexnom(grpma, nomgma), 'LONUTI', nbma)
+            call jeveuo(jexnom(grpma, nomgma), 'L', ialima)
+            call gmgnre(noma, nbnoto, zi(jtrav), zi(ialima), nbma,&
+                        zi(ialino), zi(ianbno-1+i), selec)
 !
-        nomgno = zk24(iangno-1+i)
-        n1 = zi(ianbno-1+i)
-        call jeexin(jexnom(grpno, nomgno), iret)
-        if (iret .gt. 0) then
-            call utmess('A', 'MODELISA7_9', sk=nomgno)
-        else
-            call jecroc(jexnom(grpno, nomgno))
-            call jeecra(jexnom(grpno, nomgno), 'LONMAX', max(n1, 1))
-            call jeecra(jexnom(grpno, nomgno), 'LONUTI', n1)
-            call jeveuo(jexnom(grpno, nomgno), 'E', iad2)
-            do j = 1, n1
-                zi(iad2-1+j) = zi(ialino-1+j)
-            end do
-            nbgnaj = nbgnaj + 1
-        endif
+            nomgno = zk24(iangno-1+i)
+            n1 = zi(ianbno-1+i)
+            call jeexin(jexnom(grpno, nomgno), iret)
+            if (iret .gt. 0) then
+                call utmess('A', 'MODELISA7_9', sk=nomgno)
+            else
+                call jecroc(jexnom(grpno, nomgno))
+                call jeecra(jexnom(grpno, nomgno), 'LONMAX', max(n1, 1))
+                call jeecra(jexnom(grpno, nomgno), 'LONUTI', n1)
+                call jeveuo(jexnom(grpno, nomgno), 'E', iad2)
+                do j = 1, n1
+                    zi(iad2-1+j) = zi(ialino-1+j)
+                end do
+                nbgnaj = nbgnaj + 1
+            endif
+        end if
     end do
+!
+! --- Pour un ParallelMesh il faut rajouter les noms des groupes dans les groupes globaux
+!
+    if(l_parallel_mesh) then
+        do i = 1, nbgma
+            nomgno = zk24(iangno-1+i)
+            call existGrpNo(noma(1:8), nomgno, l_exi_in_grp, l_exi_in_grp_p)
+            print*, "GrNO: ", i, nomgno, l_exi_in_grp, l_exi_in_grp_p
+            ASSERT(l_exi_in_grp)
+            if(.not.l_exi_in_grp_p) then
+                print*, "IL FAUT AJOUTER", nomgno
+            end if
+        end do
+    end if
 !
  60 continue
     call jedetr('&&SSGNGM.LISTE_GMA')
@@ -153,4 +215,6 @@ subroutine ssgngm(noma, iocc, nbgnaj)
     call jedetr('&&SSGNGM.TRAV')
     call jedetr('&&SSGNGM.NB_NO')
     call jedema()
+
+
 end subroutine
