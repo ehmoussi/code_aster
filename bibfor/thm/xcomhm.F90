@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -104,7 +104,7 @@ real(kind=8) :: angl_naut(3)
 !
     real(kind=8) :: p1, dp1, grap1(3), p2, dp2, grap2(3), t, dt, grat(3)
     real(kind=8) :: phi, rho11, epsv, deps(6), depsv
-    real(kind=8) :: satur
+    real(kind=8) :: satur, endo
     real(kind=8) :: tbiot(6)
     real(kind=8) :: tperm(ndim, ndim)
 !
@@ -178,7 +178,12 @@ real(kind=8) :: angl_naut(3)
 !
 ! - Get permeability tensor
 !
-    call thmGetPermeabilityTensor(ds_thm, ndim , angl_naut, j_mater, phi, vintp(1),&
+    if ((option(1:9).eq.'FULL_MECA') .or. (option(1:9).eq.'RAPH_MECA')) then
+        endo = vintp(1)
+    else
+        endo = vintm(1)
+    endif
+    call thmGetPermeabilityTensor(ds_thm, ndim , angl_naut, j_mater, phi, endo,&
                                   tperm)
 !
 ! - Compute gravity

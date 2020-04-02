@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,8 +60,7 @@ implicit none
 #include "asterfort/thmGetParaInit.h"
 #include "asterfort/thmGetBehaviourChck.h"
 #include "asterfort/Behaviour_type.h"
-
-
+!
 type(THM_DS), intent(inout) :: ds_thm
 integer :: dimmat, npg, dimuel
 integer :: npi, ipoids, ivf, idfde, j_mater, dimdef, dimcon, nnop
@@ -82,32 +81,13 @@ aster_logical :: axi
 character(len=3) :: modint
 character(len=16) :: option, compor(*)
 !
-! DECLARATION POUR XFEM
-    integer :: nnops, nnopm
-    integer :: nno, ncomp
-    integer :: heavt(*), enrmec(3), dimenr, enrhyd(3)
-    integer :: ise, yaenrm, adenme, nse
-    integer :: adenhy, yaenrh, ifiss, fisno(nnop, nfiss)
-    integer :: lonch(10), ino, cnset(*)
-    integer :: jpintt, jpmilt, igeom, iret , jtab(7)
-    integer :: heavn(nnop,5), ig, ncompn
-    real(kind=8) ::  coorse(81), xg(ndim), xe(ndim), bid3(ndim)
-    real(kind=8) :: dfdi(nnop, ndim), dfdi2(nnops, ndim)
-    real(kind=8) :: ff(nnop), ff2(nnops), he(nfiss), congem(dimcon)
-    real(kind=8) :: degem1(dimenr), degep1(dimenr), congep(dimcon)
-    real(kind=8) :: drds(dimenr, dimcon), drdsr(dimenr, dimcon)
-    real(kind=8) :: dsde(dimcon, dimenr), b(dimenr, dimuel)
-    real(kind=8) :: r(dimenr), sigbar(dimenr), c(dimenr)
-    real(kind=8) :: ck(dimenr), cs(dimenr)
-    real(kind=8) :: contm(*), contp(*), vintm(nbvari) , vintp(nbvari)
-    real(kind=8) :: varim(*), varip(*), temp
-    real(kind=8) :: work1(dimcon, dimuel), work2(dimenr, dimuel)
-    character(len=8) :: elrefp, elref2
+! --------------------------------------------------------------------------------------------------
 !
-! =====================================================================
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
 !           EN MECANIQUE DES MILIEUX POREUX (AVEC XFEM)
-! =====================================================================
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN AXI       AXISYMETRIQUE?
 ! IN TYPMOD    MODELISATION (D_PLAN, AXI, 3D ?)
 ! IN MODINT    METHODE D'INTEGRATION (CLASSIQUE,LUMPEE(D),REDUITE(R) ?)
@@ -144,10 +124,38 @@ character(len=16) :: option, compor(*)
 ! OUT VARIP   : VARIABLES INTERNES
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!......................................................................
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: nnops, nnopm
+    integer :: nno, ncomp
+    integer :: heavt(*), enrmec(3), dimenr, enrhyd(3)
+    integer :: ise, yaenrm, adenme, nse
+    integer :: adenhy, yaenrh, ifiss, fisno(nnop, nfiss)
+    integer :: lonch(10), ino, cnset(*)
+    integer :: jpintt, jpmilt, igeom, iret , jtab(7)
+    integer :: heavn(nnop,5), ig, ncompn
+    real(kind=8) ::  coorse(81), xg(ndim), xe(ndim), bid3(ndim)
+    real(kind=8) :: dfdi(nnop, ndim), dfdi2(nnops, ndim)
+    real(kind=8) :: ff(nnop), ff2(nnops), he(nfiss), congem(dimcon)
+    real(kind=8) :: degem1(dimenr), degep1(dimenr), congep(dimcon)
+    real(kind=8) :: drds(dimenr, dimcon), drdsr(dimenr, dimcon)
+    real(kind=8) :: dsde(dimcon, dimenr), b(dimenr, dimuel)
+    real(kind=8) :: r(dimenr), sigbar(dimenr), c(dimenr)
+    real(kind=8) :: ck(dimenr), cs(dimenr)
+    real(kind=8) :: contm(*), contp(*), vintm(nbvari) , vintp(nbvari)
+    real(kind=8) :: varim(*), varip(*), temp
+    real(kind=8) :: work1(dimcon, dimuel), work2(dimenr, dimuel)
+    character(len=8) :: elrefp, elref2
+!
+! --------------------------------------------------------------------------------------------------
 !
     ASSERT(nddls*nnop .le. dimmat)
     ASSERT(dimuel .le. dimmat)
+!
+    congep = 0.d0
+    vintp  = 0.d0
+    codret = 0
 
 !     ON RECUPERE A PARTIR DE L'ELEMENT QUADRATIQUE L'ELEMENT LINEAIRE
 !     ASSOCIE POUR L'HYDRAULIQUE (POUR XFEM)
@@ -263,14 +271,13 @@ character(len=16) :: option, compor(*)
 !     RÉCUPÉRATION DE LA SUBDIVISION DE L'ÉLÉMENT EN NSE SOUS ELEMEN
     nse=lonch(1)
 !     RECUPERATION DE LA DEFINITION DES DDLS HEAVISIDES
-    call tecach('OOO', 'PHEA_NO', 'L', iret, nval=7,&
-                itab=jtab)
+    call tecach('OOO', 'PHEA_NO', 'L', iret, nval=7, itab=jtab)
     ncompn = jtab(2)/jtab(3)
     ASSERT(ncompn.eq.5)
     do in = 1, nnop
-      do ig = 1 , ncompn
-        heavn(in,ig) = zi(jheavn-1+ncompn*(in-1)+ig)
-      enddo
+        do ig = 1 , ncompn
+            heavn(in,ig) = zi(jheavn-1+ncompn*(in-1)+ig)
+        enddo
     enddo
 !
 !     BOUCLE D'INTEGRATION SUR LES NSE SOUS-ELEMENTS
@@ -292,9 +299,8 @@ character(len=16) :: option, compor(*)
             end do
         end do
 !
-!     FONCTION HEAVYSIDE CSTE POUR CHAQUE FISSURE SUR LE SS-ELT
-        call tecach('OOO', 'PHEAVTO', 'L', iret, nval=7,&
-                    itab=jtab)
+!     FONCTION HEAVISIDE CSTE POUR CHAQUE FISSURE SUR LE SS-ELT
+        call tecach('OOO', 'PHEAVTO', 'L', iret, nval=7, itab=jtab)
         ncomp = jtab(2)
         do ifiss = 1, nfiss
             he(ifiss) = heavt(ncomp*(ifiss-1)+ise)
@@ -309,8 +315,7 @@ character(len=16) :: option, compor(*)
             call vecini(ndim, 0.d0, xg)
             do j = 1, ndim
                 do in = 1, nno
-                    xg(j)=xg(j)+zr(ivf-1+nno*(ipi-1)+in)* coorse(ndim*&
-                    (in-1)+j)
+                    xg(j)=xg(j)+zr(ivf-1+nno*(ipi-1)+in)* coorse(ndim*(in-1)+j)
                 end do
             end do
 !
@@ -362,12 +367,20 @@ character(len=16) :: option, compor(*)
 ! ======================================================================
             do i = 1, nbvari
                 vintm(i) = varim(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)
-                vintp(i) = varip(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)
             end do
+            if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+                do i = 1, nbvari
+                    vintp(i) = varip(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)
+                end do
+            endif
             do i = 1, dimcon
                 congem(i) = contm(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
-                congep(i) = contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
             end do
+            if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+                do i = 1, dimcon
+                    congep(i) = contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
+                end do
+            endif
             call xequhm(ds_thm, j_mater, option, parm_theta, ta1, ndim,&
                         kpi, npg, dimenr, enrmec,&
                         dimdef, dimcon, nbvari, defgem, congem,&
@@ -377,12 +390,20 @@ character(len=16) :: option, compor(*)
                         codret, angmas, enrhyd, nfh)
             do i = 1, nbvari
                 varim(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)=vintm(i)
-                varip(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)=vintp(i)
             end do
+            if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+                do i = 1, nbvari
+                    varip(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)=vintp(i)
+                end do
+            endif
             do i = 1, dimcon
                 contm(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)=congem(i)
-                contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)=congep(i)
             end do
+            if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+                do i = 1, dimcon
+                    contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)=congep(i)
+                end do
+            endif
 ! ======================================================================
 ! --- ATTENTION CI-DESSOUS IL N'Y A PAS D'IMPACT DE CALCUL -------------
 ! --- ON RECOPIE POUR LA METHODE D'INTEGRATION SELECTIVE LES CONTRAINTES
@@ -400,14 +421,17 @@ character(len=16) :: option, compor(*)
 ! ======================================================================
             if (mecani(1) .eq. 1) then
                 if (kpi .gt. npg) then
-                    do i = 1, 6
-                        contp((kpi-1)*dimcon+i)=contp((kpi-npg-1)*&
-                        dimcon+i)
-                    end do
+                    if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+                        do i = 1, 6
+                            contp((kpi-1)*dimcon+i)=contp((kpi-npg-1)*dimcon+i)
+                        end do
+                    endif
                     nb_vari_meca = ds_thm%ds_behaviour%nb_vari_meca
-                    do i = 1, nb_vari_meca
-                        varip((kpi-1)*nbvari+i) = varip((kpi-npg-1)* nbvari+i)
-                    end do
+                    if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+                        do i = 1, nb_vari_meca
+                            varip((kpi-1)*nbvari+i) = varip((kpi-npg-1)*nbvari+i)
+                        end do
+                    endif
                 endif
             endif
             if (codret .ne. 0) then
