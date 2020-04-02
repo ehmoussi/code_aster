@@ -59,7 +59,7 @@ subroutine existGrpMa(mesh, group_ma, l_exi_in_grp, l_exi_in_grp_p)
     integer :: iret, iGr, nb_grpp
     character(len=24) :: grmama, grmamap
     aster_logical :: l_parallel_mesh
-    character(len=32), pointer :: v_grpp(:) => null()
+    character(len=24), pointer :: v_grpp(:) => null()
 !-----------------------------------------------------------------------
 !
     l_exi_in_grp   = ASTER_FALSE
@@ -82,7 +82,7 @@ subroutine existGrpMa(mesh, group_ma, l_exi_in_grp, l_exi_in_grp_p)
         end if
         call jeexin(grmamap, iret)
         if(iret .ne. 0) then
-            call jeveuo(grmamap, 'L' , vk32=v_grpp)
+            call jeveuo(grmamap, 'L' , vk24=v_grpp)
             nb_grpp = size(v_grpp)
             do iGr = 1, nb_grpp
                 if(v_grpp(iGr) == group_ma) then

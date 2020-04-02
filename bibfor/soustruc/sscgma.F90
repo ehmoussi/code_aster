@@ -51,6 +51,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/isParallelMesh.h"
+#include "asterfort/addGrpMa.h"
 #include "jeveux.h"
 !
     character(len=8), intent(in) :: ma
@@ -75,13 +76,13 @@ implicit none
     integer :: i, iagm1, iagm2, ialii1, ialii2, iret
     integer :: idlima, ier, ierr, ifm, igm, igm1
     integer :: igm2, ii, iii, ili1, ili2, im1
-    integer :: ima, ind1, ind2, iocc, ireste, jgma, jjj
+    integer :: ima, ind1, ind2, iocc, ireste, jjj
     integer :: jlisma, jmail, kkk, maxcol, n, n1
     integer :: n2, n3, n4, n5, n6, n6a, n6b
     integer :: n7, n8, nalar, nb, nbcol
     integer :: nbgnaj, nbgrmn, nbid, nbis, nbk8, nbline, nbma
     integer :: nbmat, niv, ntrou, ntyp, num
-    aster_logical :: l_parallel_mesh
+    aster_logical :: l_parallel_mesh, l_added_grpma
     character(len=24), pointer :: lik8(:) => null()
     character(len=8), pointer :: l_maille(:) => null()
     integer, pointer :: maille2(:) => null()
@@ -470,25 +471,8 @@ implicit none
 !
 !       -- CREATION ET AFFECTATION DU GROUP_MA :
 !       ----------------------------------
-        if (nbma .eq. 0) then
-            if (alarm .eq. 'OUI') then
-                call utmess('A', 'SOUSTRUC_36', sk=nogma)
-            endif
-        else
-            call jeveuo(lisma, 'L', idlima)
-!
-            call jecroc(jexnom(ma//'.GROUPEMA', nogma))
-            call jeecra(jexnom(ma//'.GROUPEMA', nogma), 'LONMAX', max(1, nbma))
-            call jeecra(jexnom(ma//'.GROUPEMA', nogma), 'LONUTI', nbma)
-            call jeveuo(jexnom(ma//'.GROUPEMA', nogma), 'E', jgma)
-!
-            do ii = 1, nbma
-                zi(jgma-1+ii) = zi(idlima-1+ii)
-            end do
-!
-            nbgnaj = nbgnaj + 1
-!
-        endif
+        call jeveuo(lisma, 'L', idlima)
+        call addGrpMa(ma, nogma, zi(idlima), nbma, l_added_grpma)
 !
         call jedetr(lisma)
 !

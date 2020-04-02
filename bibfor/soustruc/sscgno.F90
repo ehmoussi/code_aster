@@ -177,7 +177,9 @@ subroutine sscgno(ma, nbgnin)
     if (n3 .gt. 0) then
         call getvem(ma, 'GROUP_NO', motfac, 'INTERSEC', iocc,&
                     iarg, n3, lik8, nbid)
-!
+        n3=nbid
+    end if
+    if (n3 .gt. 0) then
         call jenonu(jexnom(grpnoe,lik8(1)), ign1)
         call jelira(jexnum(grpnoe, ign1), 'LONUTI', ili1)
         call jeveuo(jexnum(grpnoe, ign1), 'L', iagm1)
@@ -228,7 +230,9 @@ subroutine sscgno(ma, nbgnin)
     if (n4 .gt. 0) then
         call getvem(ma, 'GROUP_NO', motfac, 'UNION', iocc,&
                     iarg, n4, lik8, nbid)
-!
+        n4 = nbid
+    end if
+    if (n4 .gt. 0) then
         call jenonu(jexnom(grpnoe,lik8(1)), ign1)
         call jelira(jexnum(grpnoe, ign1), 'LONUTI', ili1)
         call jeveuo(jexnum(grpnoe, ign1), 'L', iagm1)
@@ -289,7 +293,9 @@ subroutine sscgno(ma, nbgnin)
     if (n5 .gt. 0) then
         call getvem(ma, 'GROUP_NO', motfac, 'DIFFE', iocc,&
                     iarg, n5, lik8, nbid)
-!
+        n5=nbid
+    endif
+    if (n5 .gt. 0) then
         call jenonu(jexnom(grpnoe,lik8(1)), ign1)
         call jelira(jexnum(grpnoe, ign1), 'LONUTI', ili1)
         call jeveuo(jexnum(grpnoe, ign1), 'L', iagm1)
@@ -435,6 +441,9 @@ subroutine sscgno(ma, nbgnin)
         AS_ALLOCATE(vk8=l_noeud, size=n2)
         call getvem(ma, 'NOEUD', motfac, 'NOEUD', iocc,&
                     iarg, n2, l_noeud, nb)
+        n2=nb
+    end if
+    if (n2 .gt. 0) then
         call wkvect('&&SSCGNO.NOEUD', 'V V I', n2, jnoeu)
         call dismoi('NB_NO_MAILLA', ma, 'MAILLAGE', repi=nbnot)
         AS_ALLOCATE(vi=noeud2, size=nbnot)
@@ -467,11 +476,18 @@ subroutine sscgno(ma, nbgnin)
         AS_DEALLOCATE(vi=noeud2)
         AS_DEALLOCATE(vk8=l_noeud)
         goto 100
+    else
+        AS_DEALLOCATE(vk8=l_noeud)
     endif
 !
 ! ----------------------------------------------------------------------
 ! ----- MOT CLEF "GROUP_NO" :
 !       ---------------------
+    if (n8 .gt. 0) then
+        call getvem(ma, 'GROUP_NO', motfac, 'GROUP_NO', iocc,&
+                    iarg, 1, nogno2, nbid)
+        n8 = nbid
+    end if
     if (n8 .gt. 0) then
         call getvem(ma, 'GROUP_NO', motfac, 'GROUP_NO', iocc,&
                     iarg, 1, nogno2, nbid)

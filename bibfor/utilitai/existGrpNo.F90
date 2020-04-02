@@ -60,7 +60,7 @@ subroutine existGrpNo(mesh, group_no, l_exi_in_grp, l_exi_in_grp_p)
     integer :: iret, iGr, nb_grpp
     character(len=24) :: grnoma, grnomap
     aster_logical :: l_parallel_mesh
-    character(len=32), pointer :: v_grpp(:) => null()
+    character(len=24), pointer :: v_grpp(:) => null()
 !-----------------------------------------------------------------------
 !
     l_exi_in_grp   = ASTER_FALSE
@@ -83,11 +83,9 @@ subroutine existGrpNo(mesh, group_no, l_exi_in_grp, l_exi_in_grp_p)
         end if
         call jeexin(grnomap, iret)
         if(iret .ne. 0) then
-            call jeveuo(grnomap, 'L' , vk32=v_grpp)
+            call jeveuo(grnomap, 'L' , vk24=v_grpp)
             nb_grpp = size(v_grpp)
-            print*,"nbg:", nb_grpp
             do iGr = 1, nb_grpp
-                print*, iGr, group_no, v_grpp(iGr)
                 if(v_grpp(iGr) == group_no) then
                     l_exi_in_grp_p = ASTER_TRUE
                     exit

@@ -20,6 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Supervis import ExecuteCommand
+from libaster import ParallelMesh
 
 
 class GroupDefinition(ExecuteCommand):
@@ -37,6 +38,17 @@ class GroupDefinition(ExecuteCommand):
             self._result = keywords["MAILLAGE"]
         elif keywords.get("GRILLE"):
             self._result = keywords["GRILLE"]
+
+    def post_exec(self, keywords):
+        """Execute the command.
+
+        Arguments:
+            keywords (dict): User's keywords.
+        """
+        if isinstance(self._result, ParallelMesh):
+            self._result.updateGlobalGroupOfCells()
+            self._result.updateGlobalGroupOfNodes()
+
 
 
 DEFI_GROUP = GroupDefinition.run
