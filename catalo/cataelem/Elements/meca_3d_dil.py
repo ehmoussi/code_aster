@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: romeo.fernandes at edf.fr
+# person_in_charge: sylvie.granet at edf.fr
 
 
 from cataelem.Tools.base_objects import LocatedComponents, ArrayOfComponents, SetOfNodes, ElrefeLoc
@@ -33,46 +33,38 @@ from cataelem.Options.options import OP
 #----------------
 
 
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     components=(
-    ('EN1',('DX','DY','V1[2]','V2[2]',)),
-    ('EN2',('DX','DY',)),
-    ('EN3',('PRES1[2]','PRES2[2]',)),))
+    ('EN1',('DX','DY','DZ','PRES','GONF',)),
+    ('EN2',('DX','DY','DZ',)),))
 
 
 EDEFOPG  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
-    components=('DEPV1[2]','DEPV2[2]','DV11X[2]','DV12X[2]','DV21X[2]',
-          'DV22X[2]','PRES1[2]','PRES2[2]',))
+    components=('DEPV','DGONFX[3]','PRES',))
 
 
 EDEFONO  = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
-    components=('DEPV1[2]','DEPV2[2]','DV11X[2]','DV12X[2]','DV21X[2]',
-          'DV22X[2]','PRES1[2]','PRES2[2]',))
-
-
-EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','W',))
+    components=('DEPV','DGONFX[3]','PRES',))
 
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y',))
+    components=('X','Y','Z',))
 
 
 EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y',))
+    components=('X','Y','Z',))
+
+
+EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
+    components=('X','Y','Z','W',))
 
 
 ENGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y',))
+    components=('X','Y','Z',))
 
 
 EGNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELGA', location='RIGI',
     components=('X[30]',))
-
-
-E1NEUTK  = LocatedComponents(phys=PHY.NEUT_K24, type='ELEM',
-    components=('Z1',))
 
 
 EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
@@ -80,18 +72,15 @@ EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
 
 
 ECONTNC  = LocatedComponents(phys=PHY.SIEF_C, type='ELNO',
-    components=('PRES1[2]','PRES2[2]','SIG11[2]','SIG12[2]','SIG21[2]',
-          'SIG22[2]','DEPV1[2]','DEPV2[2]',))
+    components=('PRES','SIG[3]','DEPV',))
 
 
 ECONTPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
-    components=('PRES1[2]','PRES2[2]','SIG11[2]','SIG12[2]','SIG21[2]',
-          'SIG22[2]','DEPV1[2]','DEPV2[2]',))
+    components=('PRES','SIG[3]','DEPV',))
 
 
 ECONTNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
-    components=('PRES1[2]','PRES2[2]','SIG11[2]','SIG12[2]','SIG21[2]',
-          'SIG22[2]','DEPV1[2]','DEPV2[2]',))
+    components=('PRES','SIG[3]','DEPV',))
 
 
 ZVARIPG  = LocatedComponents(phys=PHY.VARI_R, type='ELGA', location='RIGI',
@@ -104,41 +93,26 @@ MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class TR7_DP_2G(Element):
+class T10_3D(Element):
     """Please document this element"""
-    meshType = MT.TRIA7
+    meshType = MT.TETRA10
     nodes = (
-            SetOfNodes('EN3', (7,)),
-            SetOfNodes('EN2', (4,5,6,)),
-            SetOfNodes('EN1', (1,2,3,)),
+            SetOfNodes('EN2', (5,6,7,8,9,10,)),
+            SetOfNodes('EN1', (1,2,3,4,)),
         )
     elrefe =(
-            ElrefeLoc(MT.TR7, gauss = ('RIGI=FPG3','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.T10, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.TE4, gauss = ('RIGI=FPG4',),),
             ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3',),),
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
         )
     calculs = (
 
-        OP.ADD_SIGM(te=581,
-            para_in=((SP.PEPCON1, ECONTPG), (SP.PEPCON2, ECONTPG),
-                     ),
-            para_out=((SP.PEPCON3, ECONTPG), ),
-        ),
-
-        OP.CHAR_MECA_PESA_R(te=6,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (SP.PPESANR, LC.CPESANR), (OP.CHAR_MECA_PESA_R.PVARCPR, LC.ZVARCPG),
-                     ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
-        ),
-
-        OP.COOR_ELGA(te=479,
+        OP.COOR_ELGA(te=488,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
         ),
 
-        OP.EPSI_ELGA(te=6,
+        OP.EPSI_ELGA(te=5,
             para_in=((SP.PDEPLAR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (OP.EPSI_ELGA.PVARCPR, LC.ZVARCPG), ),
             para_out=((OP.EPSI_ELGA.PDEFOPG, EDEFOPG), ),
@@ -149,7 +123,7 @@ class TR7_DP_2G(Element):
             para_out=((SP.PDEFONO, EDEFONO), ),
         ),
 
-        OP.FORC_NODA(te=6,
+        OP.FORC_NODA(te=5,
             para_in=((OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.FORC_NODA.PVARCPR, LC.ZVARCPG),
@@ -157,7 +131,7 @@ class TR7_DP_2G(Element):
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.FULL_MECA(te=6,
+        OP.FULL_MECA(te=5,
             para_in=((OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
@@ -177,7 +151,7 @@ class TR7_DP_2G(Element):
             para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
         ),
 
-        OP.RAPH_MECA(te=6,
+        OP.RAPH_MECA(te=5,
             para_in=((OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
@@ -188,13 +162,24 @@ class TR7_DP_2G(Element):
                      ),
         ),
 
-        OP.RIGI_MECA_TANG(te=6,
+        OP.RIGI_MECA_ELAS(te=5,
+            para_in=((OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
+                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_ELAS.PVARCPR, LC.ZVARCPG),
+                     (OP.RIGI_MECA_ELAS.PVARIMR, ZVARIPG), ),
+            para_out=((SP.PMATUNS, MMATUNS), ),
+        ),
+
+        OP.RIGI_MECA_TANG(te=5,
             para_in=((OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUNS, MMATUNS), ),
+                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),),
+            para_out=((SP.PMATUNS, MMATUNS),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
         ),
 
         OP.SIEF_ELNO(te=4,
@@ -212,7 +197,7 @@ class TR7_DP_2G(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
         ),
 
 
@@ -220,18 +205,6 @@ class TR7_DP_2G(Element):
             para_out=((OP.TOU_INI_ELNO.PGEOM_R, ENGEOM_R), (OP.TOU_INI_ELNO.PINST_R, LC.ENINST_R),
                      (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F), (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R),
                      ),
-        ),
-
-        OP.VAEX_ELGA(te=549,
-            para_in=((OP.VAEX_ELGA.PCOMPOR, LC.CCOMPOR), (SP.PNOVARI, E1NEUTK),
-                     (SP.PVARIGR, ZVARIPG), ),
-            para_out=((SP.PVARIGS, LC.E1GNEUT), ),
-        ),
-
-        OP.VAEX_ELNO(te=549,
-            para_in=((OP.VAEX_ELNO.PCOMPOR, LC.CCOMPOR), (SP.PNOVARI, E1NEUTK),
-                     (OP.VAEX_ELNO.PVARINR, LC.ZVARINO), ),
-            para_out=((SP.PVARINS, LC.E1NNEUT), ),
         ),
 
         OP.VARI_ELNO(te=4,
@@ -248,17 +221,31 @@ class TR7_DP_2G(Element):
 
 
 #------------------------------------------------------------
-class QU9_DP_2G(TR7_DP_2G):
+class P15_3D(T10_3D):
     """Please document this element"""
-    meshType = MT.QUAD9
+    meshType = MT.PENTA15
     nodes = (
-            SetOfNodes('EN3', (9,)),
-            SetOfNodes('EN2', (5,6,7,8,)),
-            SetOfNodes('EN1', (1,2,3,4,)),
+            SetOfNodes('EN2', (7,8,9,10,11,12,13,14,15,)),
+            SetOfNodes('EN1', (1,2,3,4,5,6,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.P15, gauss = ('RIGI=FPG6','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.PE6, gauss = ('RIGI=FPG6',),),
             ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4',),),
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3',),),
+        )
+
+
+#------------------------------------------------------------
+class H20_3D(T10_3D):
+    """Please document this element"""
+    meshType = MT.HEXA20
+    nodes = (
+            SetOfNodes('EN2', (9,10,11,12,13,14,15,16,17,18,19,20,)),
+            SetOfNodes('EN1', (1,2,3,4,5,6,7,8,)),
+        )
+    elrefe =(
+            ElrefeLoc(MT.H20, gauss = ('RIGI=FPG8','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.HE8, gauss = ('RIGI=FPG8',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4',),),
         )

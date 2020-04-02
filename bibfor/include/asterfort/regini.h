@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine regini(option, nomte, ivf, ivf2, idfde,&
+    subroutine regini(ivf, ivf2, idfde,&
                       idfde2, jgano, ndim, ipoids, ipoid2,&
                       npi, dimdef, nddls, nddlm, dimcon,&
-                      typmod, dimuel, nno, nnom, nnos,&
+                      dimuel, nno, nnom, nnos,&
                       regula, axi)
-        character(len=16) :: option
-        character(len=16) :: nomte
         integer :: ivf
         integer :: ivf2
         integer :: idfde
@@ -41,7 +36,6 @@ interface
         integer :: nddls
         integer :: nddlm
         integer :: dimcon
-        character(len=8) :: typmod(2)
         integer :: dimuel
         integer :: nno
         integer :: nnom

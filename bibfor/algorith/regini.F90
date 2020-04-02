@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,24 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine regini(option, nomte, ivf, ivf2, idfde,&
+!
+subroutine regini(ivf, ivf2, idfde,&
                   idfde2, jgano, ndim, ipoids, ipoid2,&
                   npi, dimdef, nddls, nddlm, dimcon,&
-                  typmod, dimuel, nno, nnom, nnos,&
+                  dimuel, nno, nnom, nnos,&
                   regula, axi)
-! aslint: disable=W1504
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/utmess.h"
-    aster_logical :: axi
-    integer :: ivf, ivf2, idfde, idfde2, jgano, ndim, ipoids, npi, nnom
-    integer :: ipoid2, dimdef, dimuel, dimcon, nno, nnos, nddls, nddlm
-    integer :: regula(6)
-    character(len=8) :: typmod(2)
-    character(len=16) :: option, nomte
+!
+aster_logical :: axi
+integer :: ivf, ivf2, idfde, idfde2, jgano, ndim, ipoids, npi, nnom
+integer :: ipoid2, dimdef, dimuel, dimcon, nno, nnos, nddls, nddlm
+integer :: regula(6)
+!
 ! ======================================================================
 ! --- BUT : INITIALISATION DES GRANDEURS NECESSAIRES POUR LA GESTION ---
 ! ---       DU CALCUL AVEC REGULARISATION A PARTIR DU MODELE SECOND ----
@@ -40,16 +41,15 @@ subroutine regini(option, nomte, ivf, ivf2, idfde,&
 ! ======================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: nno2, nnos2, npi2, def1, def2, def3, cont1, cont2, nnoc
+    integer :: def1, def2, def3, cont1, cont2, nnoc
     integer :: cont3, adder1, adder2, adder3, adcor1, adcor2, adcor3
     character(len=8) :: elrefe, elrf1, elrf2
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
 ! ======================================================================
-    typmod(2) = '        '
     elrf1 = '        '
     elrf2 = '        '
-    axi = .false.
+    axi = ASTER_FALSE
     def1 = 0
     def2 = 0
     def3 = 0
@@ -88,8 +88,8 @@ subroutine regini(option, nomte, ivf, ivf2, idfde,&
 ! ======================================================================
 ! --- FONCTIONS DE FORME P1 --------------------------------------------
 ! ======================================================================
-    call elrefe_info(elrefe=elrf2, fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos2,&
-                     npg=npi2, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2)
+    call elrefe_info(elrefe=elrf2, fami='RIGI',&
+                     jpoids=ipoid2, jvf=ivf2, jdfde=idfde2)
 ! ======================================================================
 ! --- NNOC DESIGNE LE NOMBRE DE NOEUD AU CENTRE DES ELEMENTS -----------
 ! ======================================================================
@@ -104,10 +104,6 @@ subroutine regini(option, nomte, ivf, ivf2, idfde,&
     cont2 = ndim*ndim*ndim
     cont3 = ndim*ndim
     dimcon = cont1+cont2+cont3
-! ======================================================================
-! --- RECUPERATION DU TYPE DE LA MODELISATION --------------------------
-! ======================================================================
-    typmod(1) = 'D_PLAN  '
 ! ======================================================================
 ! --- DIMENSION DES COMPOSANTES NODALES --------------------------------
 ! ======================================================================

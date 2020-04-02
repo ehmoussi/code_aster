@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: romeo.fernandes at edf.fr
+# person_in_charge: sylvie.granet at edf.fr
 
 
 from cataelem.Tools.base_objects import LocatedComponents, ArrayOfComponents, SetOfNodes, ElrefeLoc
@@ -35,36 +35,40 @@ from cataelem.Options.options import OP
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     components=(
-    ('EN1',('DX','DY','DZ','PRES','GONF',)),
-    ('EN2',('DX','DY','DZ',)),))
+    ('EN1',('DX','DY','GONF',)),
+    ('EN2',('DX','DY',)),))
 
 
 EDEFOPG  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
-    components=('DEPV','DGONFX[3]','PRES',))
+    components=('DEPV','DGONFX[2]',))
 
 
 EDEFONO  = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
-    components=('DEPV','DGONFX[3]','PRES',))
-
-
-NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y','Z',))
-
-
-EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','Z',))
+    components=('DEPV','DGONFX[2]',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','Z','W',))
+    components=('X','Y','W',))
+
+
+NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
+    components=('X','Y',))
+
+
+EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
+    components=('X','Y',))
 
 
 ENGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y','Z',))
+    components=('X','Y',))
 
 
 EGNEUT_F = LocatedComponents(phys=PHY.NEUT_F, type='ELGA', location='RIGI',
     components=('X[30]',))
+
+
+E1NEUTK  = LocatedComponents(phys=PHY.NEUT_K24, type='ELEM',
+    components=('Z1',))
 
 
 EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
@@ -72,15 +76,15 @@ EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
 
 
 ECONTNC  = LocatedComponents(phys=PHY.SIEF_C, type='ELNO',
-    components=('PRES','SIG[3]','DEPV',))
+    components=('PRES','SIG[2]',))
 
 
 ECONTPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
-    components=('PRES','SIG[3]','DEPV',))
+    components=('PRES','SIG[2]',))
 
 
 ECONTNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
-    components=('PRES','SIG[3]','DEPV',))
+    components=('PRES','SIG[2]',))
 
 
 ZVARIPG  = LocatedComponents(phys=PHY.VARI_R, type='ELGA', location='RIGI',
@@ -93,21 +97,27 @@ MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class T10_3D(Element):
+class TR6_DP_2D(Element):
     """Please document this element"""
-    meshType = MT.TETRA10
+    meshType = MT.TRIA6
     nodes = (
-            SetOfNodes('EN2', (5,6,7,8,9,10,)),
-            SetOfNodes('EN1', (1,2,3,4,)),
+            SetOfNodes('EN2', (4,5,6,)),
+            SetOfNodes('EN1', (1,2,3,)),
         )
     elrefe =(
-            ElrefeLoc(MT.T10, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.TE4, gauss = ('RIGI=FPG4',),),
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
         )
     calculs = (
 
-        OP.COOR_ELGA(te=488,
+        OP.ADD_SIGM(te=581,
+            para_in=((SP.PEPCON1, ECONTPG), (SP.PEPCON2, ECONTPG),
+                     ),
+            para_out=((SP.PEPCON3, ECONTPG), ),
+        ),
+
+        OP.COOR_ELGA(te=479,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
         ),
@@ -162,22 +172,15 @@ class T10_3D(Element):
                      ),
         ),
 
-        OP.RIGI_MECA_ELAS(te=5,
-            para_in=((OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
-                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_ELAS.PVARCPR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_ELAS.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUNS, MMATUNS), ),
-        ),
-
         OP.RIGI_MECA_TANG(te=5,
             para_in=((OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUNS, MMATUNS), ),
+                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),),
+            para_out=((SP.PMATUNS, MMATUNS),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
         ),
 
         OP.SIEF_ELNO(te=4,
@@ -195,7 +198,7 @@ class T10_3D(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
         ),
 
 
@@ -203,6 +206,18 @@ class T10_3D(Element):
             para_out=((OP.TOU_INI_ELNO.PGEOM_R, ENGEOM_R), (OP.TOU_INI_ELNO.PINST_R, LC.ENINST_R),
                      (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F), (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R),
                      ),
+        ),
+
+        OP.VAEX_ELGA(te=549,
+            para_in=((OP.VAEX_ELGA.PCOMPOR, LC.CCOMPOR), (SP.PNOVARI, E1NEUTK),
+                     (SP.PVARIGR, ZVARIPG), ),
+            para_out=((SP.PVARIGS, LC.E1GNEUT), ),
+        ),
+
+        OP.VAEX_ELNO(te=549,
+            para_in=((OP.VAEX_ELNO.PCOMPOR, LC.CCOMPOR), (SP.PNOVARI, E1NEUTK),
+                     (OP.VAEX_ELNO.PVARINR, LC.ZVARINO), ),
+            para_out=((SP.PVARINS, LC.E1NNEUT), ),
         ),
 
         OP.VARI_ELNO(te=4,
@@ -219,31 +234,15 @@ class T10_3D(Element):
 
 
 #------------------------------------------------------------
-class P15_3D(T10_3D):
+class QU8_DP_2D(TR6_DP_2D):
     """Please document this element"""
-    meshType = MT.PENTA15
+    meshType = MT.QUAD8
     nodes = (
-            SetOfNodes('EN2', (7,8,9,10,11,12,13,14,15,)),
-            SetOfNodes('EN1', (1,2,3,4,5,6,)),
+            SetOfNodes('EN2', (5,6,7,8,)),
+            SetOfNodes('EN1', (1,2,3,4,)),
         )
     elrefe =(
-            ElrefeLoc(MT.P15, gauss = ('RIGI=FPG6','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.PE6, gauss = ('RIGI=FPG6',),),
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4',),),
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3',),),
-        )
-
-
-#------------------------------------------------------------
-class H20_3D(T10_3D):
-    """Please document this element"""
-    meshType = MT.HEXA20
-    nodes = (
-            SetOfNodes('EN2', (9,10,11,12,13,14,15,16,17,18,19,20,)),
-            SetOfNodes('EN1', (1,2,3,4,5,6,7,8,)),
-        )
-    elrefe =(
-            ElrefeLoc(MT.H20, gauss = ('RIGI=FPG8','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.HE8, gauss = ('RIGI=FPG8',),),
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
         )

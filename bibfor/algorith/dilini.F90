@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dilini(option, nomte, ivf, ivf2, idfde,&
+! aslint: disable=W1504
+!
+subroutine dilini(ivf, ivf2, idfde,&
                   idfde2, jgano, ndim, ipoids, ipoid2,&
-                  icompo, npi, dimdef, nddls, nddlm,&
+                  npi, dimdef, nddls, nddlm,&
                   dimcon, typmod, dimuel, nno, nnom,&
                   nnos, regula, axi, interp)
-! ======================================================================
-! person_in_charge: romeo.fernandes at edf.fr
-! aslint: disable=W1504
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -36,13 +36,13 @@ subroutine dilini(option, nomte, ivf, ivf2, idfde,&
 #include "asterfort/utmess.h"
 #include "asterfort/lteatt.h"
 !
-    aster_logical :: axi
-    integer :: ivf, ivf2, idfde, idfde2, jgano, ndim, ipoids, npi, nnom
-    integer :: ipoid2, dimdef, dimuel, dimcon, nno, nnos, nddls, nddlm
-    integer :: regula(6), icompo, nddlc
-    character(len=2) :: interp
-    character(len=8) :: typmod(2)
-    character(len=16) :: option, nomte
+aster_logical :: axi
+integer :: ivf, ivf2, idfde, idfde2, jgano, ndim, ipoids, npi, nnom
+integer :: ipoid2, dimdef, dimuel, dimcon, nno, nnos, nddls, nddlm
+integer :: regula(6), nddlc
+character(len=2) :: interp
+character(len=8) :: typmod(2)
+!
 ! ======================================================================
 ! --- BUT : INITIALISATION DES GRANDEURS NECESSAIRES POUR LA GESTION ---
 ! ---       DU CALCUL AVEC REGULARISATION A PARTIR DU MODELE SECOND ----
@@ -51,7 +51,7 @@ subroutine dilini(option, nomte, ivf, ivf2, idfde,&
 ! =====================================================================
 ! --- VARIABLES LOCALES ------------------------------------------------
 ! ======================================================================
-    integer :: nno2, nnos2, npi2, nnoc
+    integer :: nnoc
     character(len=8) :: elrefe, elrf1, elrf2
 ! ======================================================================
 ! --- INITIALISATION ---------------------------------------------------
@@ -60,7 +60,7 @@ subroutine dilini(option, nomte, ivf, ivf2, idfde,&
     typmod(2) = '        '
     elrf1 = '        '
     elrf2 = '        '
-    axi = .false.
+    axi = ASTER_FALSE
     dimdef = 0
     dimcon = 0
 ! ======================================================================
@@ -106,8 +106,8 @@ subroutine dilini(option, nomte, ivf, ivf2, idfde,&
 ! ======================================================================
 ! --- FONCTIONS DE FORME P1 --------------------------------------------
 ! ======================================================================
-    call elrefe_info(elrefe=elrf2, fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos2,&
-                     npg=npi2, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2)
+    call elrefe_info(elrefe=elrf2, fami='RIGI', &
+                     jpoids=ipoid2, jvf=ivf2, jdfde=idfde2)
 ! ======================================================================
 ! --- RECUPERATION DU TYPE DE LA MODELISATION --------------------------
 ! ======================================================================
@@ -116,9 +116,9 @@ subroutine dilini(option, nomte, ivf, ivf2, idfde,&
     else if (lteatt('DIM_TOPO_MODELI','3')) then
         typmod(1) = '3D'
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
-! ======================================================================
+!
     if (interp .eq. 'P0') then
         call dimp0(ndim, nno, nnos, dimdef, dimcon,&
                    nnom, nnoc, nddls, nddlm, nddlc,&
@@ -131,6 +131,8 @@ subroutine dilini(option, nomte, ivf, ivf2, idfde,&
         call dimp1(ndim, nno, nnos, dimdef, dimcon,&
                    nnom, nnoc, nddls, nddlm, nddlc,&
                    dimuel, regula)
+    else
+        ASSERT(ASTER_FALSE)
     endif
-! ======================================================================
+!
 end subroutine

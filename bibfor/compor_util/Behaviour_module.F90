@@ -1481,19 +1481,19 @@ end subroutine
 ! Out codret           : return code when integrate behaviour
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine behaviourOption(option, compor,&
-                           lMatr , lVect ,&
-                           lVari , lSigm ,&
-                           codret)
+subroutine behaviourOption(option , compor,&
+                           lMatr  , lVect ,&
+                           lVari  , lSigm ,&
+                           codret_)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     character(len=16), intent(in) :: option, compor(*)
     aster_logical, intent(out) :: lMatr, lVect, lVari, lSigm
-    integer, intent(out) :: codret
+    integer, optional, intent(out) :: codret_
 ! - Local
 !   ------------------------------------------------------------------------------------------------
     aster_logical :: lPred
-    integer :: copred, jv_copred
+    integer :: copred, jv_copred, codret
 !   ------------------------------------------------------------------------------------------------
     lVari = L_VARI(option)
     lSigm = L_SIGM(option)
@@ -1509,6 +1509,9 @@ subroutine behaviourOption(option, compor,&
         zi(jv_copred) = copred
     endif
     codret = 0
+    if (present(codret_)) then
+        codret_ = codret
+    endif
 end subroutine
 !
 end module Behaviour_module

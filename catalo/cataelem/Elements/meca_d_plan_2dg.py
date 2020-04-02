@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: romeo.fernandes at edf.fr
+# person_in_charge: sylvie.granet at edf.fr
 
 
 from cataelem.Tools.base_objects import LocatedComponents, ArrayOfComponents, SetOfNodes, ElrefeLoc
@@ -33,20 +33,21 @@ from cataelem.Options.options import OP
 #----------------
 
 
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     components=(
-    ('EN1',('DX','DY','GONF',)),
+    ('EN1',('DX','DY','V1[2]','V2[2]',)),
     ('EN2',('DX','DY',)),
-    ('EN3',('PRES',)),))
+    ('EN3',('PRES1[2]','PRES2[2]',)),))
 
 
 EDEFOPG  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
-    components=('DEPV','DGONFX[2]','PRES',))
+    components=('DEPV1[2]','DEPV2[2]','DV11X[2]','DV12X[2]','DV21X[2]',
+          'DV22X[2]','PRES1[2]','PRES2[2]',))
 
 
 EDEFONO  = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
-    components=('DEPV','DGONFX[2]','PRES',))
+    components=('DEPV1[2]','DEPV2[2]','DV11X[2]','DV12X[2]','DV21X[2]',
+          'DV22X[2]','PRES1[2]','PRES2[2]',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
@@ -78,15 +79,18 @@ EGNEUT_R = LocatedComponents(phys=PHY.NEUT_R, type='ELGA', location='RIGI',
 
 
 ECONTNC  = LocatedComponents(phys=PHY.SIEF_C, type='ELNO',
-    components=('PRES','SIG[2]','DEPV',))
+    components=('PRES1[2]','PRES2[2]','SIG11[2]','SIG12[2]','SIG21[2]',
+          'SIG22[2]','DEPV1[2]','DEPV2[2]',))
 
 
 ECONTPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
-    components=('PRES','SIG[2]','DEPV',))
+    components=('PRES1[2]','PRES2[2]','SIG11[2]','SIG12[2]','SIG21[2]',
+          'SIG22[2]','DEPV1[2]','DEPV2[2]',))
 
 
 ECONTNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
-    components=('PRES','SIG[2]','DEPV',))
+    components=('PRES1[2]','PRES2[2]','SIG11[2]','SIG12[2]','SIG21[2]',
+          'SIG22[2]','DEPV1[2]','DEPV2[2]',))
 
 
 ZVARIPG  = LocatedComponents(phys=PHY.VARI_R, type='ELGA', location='RIGI',
@@ -99,7 +103,7 @@ MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class TR7_DP_2D(Element):
+class TR7_DP_2G(Element):
     """Please document this element"""
     meshType = MT.TRIA7
     nodes = (
@@ -121,12 +125,19 @@ class TR7_DP_2D(Element):
             para_out=((SP.PEPCON3, ECONTPG), ),
         ),
 
+        OP.CHAR_MECA_PESA_R(te=6,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PPESANR, LC.CPESANR), (OP.CHAR_MECA_PESA_R.PVARCPR, LC.ZVARCPG),
+                     ),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+
         OP.COOR_ELGA(te=479,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
         ),
 
-        OP.EPSI_ELGA(te=5,
+        OP.EPSI_ELGA(te=6,
             para_in=((SP.PDEPLAR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (OP.EPSI_ELGA.PVARCPR, LC.ZVARCPG), ),
             para_out=((OP.EPSI_ELGA.PDEFOPG, EDEFOPG), ),
@@ -137,7 +148,7 @@ class TR7_DP_2D(Element):
             para_out=((SP.PDEFONO, EDEFONO), ),
         ),
 
-        OP.FORC_NODA(te=5,
+        OP.FORC_NODA(te=6,
             para_in=((OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (OP.FORC_NODA.PVARCPR, LC.ZVARCPG),
@@ -145,7 +156,7 @@ class TR7_DP_2D(Element):
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.FULL_MECA(te=5,
+        OP.FULL_MECA(te=6,
             para_in=((OP.FULL_MECA.PCOMPOR, LC.CCOMPOR), (OP.FULL_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
@@ -165,7 +176,7 @@ class TR7_DP_2D(Element):
             para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
         ),
 
-        OP.RAPH_MECA(te=5,
+        OP.RAPH_MECA(te=6,
             para_in=((OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (OP.RAPH_MECA.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
@@ -176,22 +187,15 @@ class TR7_DP_2D(Element):
                      ),
         ),
 
-        OP.RIGI_MECA_ELAS(te=5,
-            para_in=((OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
-                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_ELAS.PVARCPR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_ELAS.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUNS, MMATUNS), ),
-        ),
-
-        OP.RIGI_MECA_TANG(te=5,
+        OP.RIGI_MECA_TANG(te=6,
             para_in=((OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUNS, MMATUNS), ),
+                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),),
+            para_out=((SP.PMATUNS, MMATUNS),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
         ),
 
         OP.SIEF_ELNO(te=4,
@@ -245,7 +249,7 @@ class TR7_DP_2D(Element):
 
 
 #------------------------------------------------------------
-class QU9_DP_2D(TR7_DP_2D):
+class QU9_DP_2G(TR7_DP_2G):
     """Please document this element"""
     meshType = MT.QUAD9
     nodes = (

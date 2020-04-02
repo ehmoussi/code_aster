@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,25 +15,21 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine regele(option, typmod, npi, ndim, dimuel,&
+    subroutine regele(npi, ndim, dimuel,&
                       nddls, nddlm, nno, nnos, nnom,&
                       axi, regula, dimcon, ipoids, ipoid2,&
                       ivf, ivf2, idfde, idfde2, compor,&
                       geom, deplp, contp, imate, dimdef,&
-                      matuu, vectu)
+                      matuu, vectu, lVect, lMatr, lSigm,&
+                      codret)
         integer :: dimdef
         integer :: dimcon
         integer :: dimuel
         integer :: ndim
         integer :: npi
-        character(len=16) :: option
-        character(len=8) :: typmod(2)
         integer :: nddls
         integer :: nddlm
         integer :: nno
@@ -54,5 +50,7 @@ interface
         integer :: imate
         real(kind=8) :: matuu(dimuel*dimuel)
         real(kind=8) :: vectu(dimuel)
+        aster_logical, intent(in) :: lVect, lMatr, lSigm
+        integer, intent(out) :: codret
     end subroutine regele
 end interface
