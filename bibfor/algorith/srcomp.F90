@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -227,9 +227,11 @@ subroutine srcomp(mod, imate, instam, instap, &
     do k=1,ndt
         devml(k)=depsth(k)-dvml*kron(k)/trois
     end do
-    
+
     !!! actualisation de eps_v^te --vin(9)
-    vinp(9)=vinm(9)-trois*coef
+    if (option .eq.'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+        vinp(9)=vinm(9)-trois*coef
+    endif
     
     !!! 
     !!! Verification d'un etat initial plastiquement admissible
@@ -508,9 +510,13 @@ subroutine srcomp(mod, imate, instam, instap, &
 !!!
 !!! retablissement des contraintes pour aster
 !!!
+    if (option .eq.'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+        do i=1,ndt
+            sigp(i)=mun*sigpl(i)
+        end do
+    endif
 
     do i=1,ndt
-        sigp(i)=mun*sigpl(i)
         deps(i)=mun*depsth(i)
     end do
     
