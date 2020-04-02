@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ subroutine sscgno(ma, nbgnin)
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/isParallelMesh.h"
 !
     real(kind=8) :: vecori(3)
 !
@@ -85,6 +86,7 @@ subroutine sscgno(ma, nbgnin)
     integer :: nbgnin, nbgrmn, nbid, nbis, nbk8, nbline, nbno
     integer :: nbnot, nbocc, niv, ntrou, num
     aster_logical :: l_write
+    aster_logical :: l_parallel_mesh
     character(len=24), pointer :: lik8(:) => null()
     character(len=8), pointer :: l_noeud(:) => null()
     integer, pointer :: noeud2(:) => null()
@@ -116,9 +118,11 @@ subroutine sscgno(ma, nbgnin)
     call getvtx(' ', 'ALARME', scal=alarm, nbret=nalar)
     nbgnaj = 0
 !
+    l_parallel_mesh = isParallelMesh(ma)
+!
 ! ----------------------------------------------------------------------
 !
-    do 100 , iocc = 1 , nbocc
+    do iocc = 1 , nbocc
 !
     call getvtx(motfac, 'NOEUD', iocc=iocc, nbval=0, nbret=n2)
     call getvtx(motfac, 'INTERSEC', iocc=iocc, nbval=0, nbret=n3)
@@ -128,6 +132,10 @@ subroutine sscgno(ma, nbgnin)
     call getvtx(motfac, 'TOUT_GROUP_MA', iocc=iocc, nbval=0, nbret=n7)
     call getvtx(motfac, 'GROUP_NO', iocc=iocc, nbval=0, nbret=n8)
     call getvtx(motfac, 'OPTION', iocc=iocc, nbval=0, nbret=n9)
+!
+    if(l_parallel_mesh .and. n2 < 0 ) then
+        call utmess('F', 'MODELISA7_86')
+    end if
 !
 ! ----------------------------------------------------------------------
 ! ----- MOT CLEF "TOUT_GROUP_MA" :
@@ -517,7 +525,8 @@ subroutine sscgno(ma, nbgnin)
 !
 ! ----------------------------------------------------------------------
 !
-    100 end do
+100 continue
+    end do
 !
 ! ----------------------------------------------------------------------
 ! --- IMPRESSIONS NIVEAUX 1 ET 2 :

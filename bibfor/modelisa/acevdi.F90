@@ -52,6 +52,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
 #include "asterfort/assert.h"
 #include "asterfort/getvem.h"
 #include "asterfort/getvtx.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jenonu.h"
@@ -74,6 +75,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
     character(len=16) :: concep, cmd
     character(len=24) :: grmama, mailma, cara, nogrm
     character(len=24) :: valk(4)
+    aster_logical :: l_parallel_mesh
 ! --------------------------------------------------------------------------------------------------
     integer, pointer :: typmail(:) => null()
     character(len=24), pointer :: group_ma(:) => null()
@@ -89,6 +91,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
     un  = 1
     grmama = noma//'.GROUPEMA'
     mailma = noma//'.NOMMAI'
+    l_parallel_mesh = isParallelMesh(noma)
 !
 !   Vecteur du type des mailles du maillage :
     call jeveuo(noma//'.TYPMAIL', 'L', vi=typmail)
@@ -119,6 +122,9 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
         endif
 !
         if (nm .ne. 0) then
+            if (l_parallel_mesh) then
+                call utmess('F', 'MODELISA7_86')
+            endif
             nbmail = -nm
             call wkvect('&&ACEVDI.MAILLE', 'V V K8', nbmail, jmail)
             call getvtx(mcf, 'MAILLE', iocc=ioc, nbval=nbmail, vect=zk8(jmail), nbret=n1)

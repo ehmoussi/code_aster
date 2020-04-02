@@ -427,7 +427,7 @@ subroutine trresu(ific, nocc)
                 if (n2 .eq. 0) nusp = 0
                 nupo=0
                 call getvis('RESU', 'POINT', iocc=iocc, scal=nupo, nbret=n2)
-                if (typch .eq. 'NOEU' .and. n1 > 0) then
+                if (typch .eq. 'NOEU') then
                     if (n2 .ne. 0) then
                         valk(1) = noresu
                         valk(2) = nomcha
