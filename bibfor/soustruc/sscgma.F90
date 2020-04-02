@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,6 +50,7 @@ implicit none
 #include "asterfort/utlisi.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/isParallelMesh.h"
 #include "jeveux.h"
 !
     character(len=8), intent(in) :: ma
@@ -80,6 +81,7 @@ implicit none
     integer :: n7, n8, nalar, nb, nbcol
     integer :: nbgnaj, nbgrmn, nbid, nbis, nbk8, nbline, nbma
     integer :: nbmat, niv, ntrou, ntyp, num
+    aster_logical :: l_parallel_mesh
     character(len=24), pointer :: lik8(:) => null()
     character(len=8), pointer :: l_maille(:) => null()
     integer, pointer :: maille2(:) => null()
@@ -101,6 +103,7 @@ implicit none
     call dismoi('NB_MA_MAILLA', ma, 'MAILLAGE', repi=nbmat)
 !
     call getvtx(' ', 'ALARME', scal=alarm, nbret=nalar)
+    l_parallel_mesh = isParallelMesh(ma)
 !
     nbgnaj = 0
     do iocc = 1, nbgmp
@@ -145,6 +148,9 @@ implicit none
 !       -- MOT CLEF MAILLE:
 !       -------------------
         if (n2 .gt. 0) then
+            if(l_parallel_mesh) then
+                call utmess('F', 'MODELISA7_86')
+            end if
             AS_ALLOCATE(vk8=l_maille, size=n2)
             call getvem(ma, 'MAILLE', 'CREA_GROUP_MA', 'MAILLE', iocc,&
                         iarg, n2, l_maille, n1)
