@@ -120,6 +120,7 @@ CHAR_MECA_TEMP_R = Option(
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'THM'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'XFEM_HM'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.ABSO,'OUI'),)),
 #     Les elements d'interface ne sont pas concernes (issue24099) :
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.INTERFACE,'OUI'),)),

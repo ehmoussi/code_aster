@@ -506,6 +506,7 @@ TYPMOD2 = Attribute(value=(
                     'INTERFAC',
                     'PMF',
                     'THM',
+                    'XFEM_HM',
                     ),
                     comment="""
   TYPMOD2 : Complement au type de  modelisation utilise pour integrer les lois de comportement TYPMOD
@@ -517,6 +518,7 @@ TYPMOD2 = Attribute(value=(
            ELEMDISC l'element utilise des comportements d'elements a discontinuite interne
            PMF      l'element fait appel a des comportements 1D PMF (GROT_GDEP PERMIS)
            THM      themo-hydro-mechanic
+           XFEM_HM  XFEM with HM (and contact, sometimes ! )
 """)
 
 TYPMOD3 = Attribute(value=(

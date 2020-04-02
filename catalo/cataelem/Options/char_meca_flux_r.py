@@ -80,6 +80,8 @@ CHAR_MECA_FLUX_R = Option(
     ),
     condition=(
         CondCalcul('+', ((AT.PHENO, 'ME'), (AT.TYPMOD2, 'THM'), (AT.BORD, '-1'),)),
+        CondCalcul('+', ((AT.PHENO, 'ME'),(AT.TYPMOD2, 'THM'),(AT.BORD, '-1'))),
+        CondCalcul('+', ((AT.PHENO, 'ME'),(AT.TYPMOD2, 'XFEM_HM'),(AT.BORD, '-1'))),
     ),
     comment=""" CHAR_MECA_FLUX_R (MOT-CLE FLUX_THM_REP) : CALCUL DU SECOND MEMBRE
            CORRESPONDANT A UN FLUX DE CHALEUR ET/OU UN APPORT DE MASSE FLUIDE
