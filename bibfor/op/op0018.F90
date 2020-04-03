@@ -32,7 +32,6 @@ implicit none
 #include "asterfort/cetucr.h"
 #include "asterfort/cormgi.h"
 #include "asterfort/crevge.h"
-#include "asterfort/deprecated_model.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
@@ -57,6 +56,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/modelCheck.h"
 #include "asterfort/modelPrint.h"
+#include "asterfort/modelGetFEType.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/gcncon.h"
 #include "asterfort/fetcrf.h"
@@ -80,7 +80,7 @@ implicit none
     character(len=8) :: mesh, model, sd_partit1, kret
     character(len=8) :: name_elem, z_quasi_zero, methode
     character(len=16) :: k16dummy, name_type_geom, repk, valk(2)
-    character(len=16) :: phenom, phenomRead, modeli, list_modelisa(10), keywordfact
+    character(len=16) :: phenom, phenomRead, modeli, list_modelisa(10), keywordfact, modeli_in
     character(len=19) :: ligrel
     character(len=24) :: mesh_name_elem, kdis
     character(len=32) :: phemod
@@ -207,11 +207,16 @@ implicit none
             call getvtx(keywordfact, 'MODELISATION', iocc=iaffe, nbval=10, vect=list_modelisa,&
                         nbret=nb_modelisa)
             ASSERT(nb_modelisa .eq. 1)
-            modeli = list_modelisa(1)
-            call deprecated_model(modeli)
-            call jenonu(jexnom('&CATA.'//phenom(1:13)//'.MODL', modeli), idx_modelisa)
+! --------- Get current finite element
+            modeli_in = list_modelisa(1)
+            call modelGetFEType(iaffe, phenom, modeli_in, idx_modelisa, modeli)
             call jeveuo(jexnum('&CATA.'//phenom, idx_modelisa), 'L', vi = p_cata_model)
             phemod = phenom//modeli
+            !modeli = list_modelisa(1)
+            !call deprecated_model(modeli)
+            !call jenonu(jexnom('&CATA.'//phenom(1:13)//'.MODL', modeli), idx_modelisa)
+            !call jeveuo(jexnum('&CATA.'//phenom, idx_modelisa), 'L', vi = p_cata_model)
+            !phemod = phenom//modeli
 ! --------- Get elements
             call jedetr(list_elem)
             call getelem(mesh, keywordfact, iaffe, ' ', list_elem, nb_elem)
@@ -402,7 +407,7 @@ implicit none
     ASSERT(n1.eq.1)
     if (nbproc.eq.1) kdis='CENTRALISE'
     if ((lparallel_mesh) .and. (kdis.ne.'CENTRALISE')) then
-        call utmess('F','MODELE1_12', nk = 2, valk = [kdis, mesh])
+        call utmess('F','MODELE1_71', nk = 2, valk = [kdis, mesh])
     end if
     if (kdis.eq.'SOUS_DOM.OLD' .or. kdis.eq.'SOUS_DOMAINE') then
         call gcncon('_', sd_partit1)

@@ -237,11 +237,13 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "D_PLAN_HH2SUDA",  # person_in_charge: sylvie.granet at edf.fr
                                   "PLAN_JHMS",       # person_in_charge: sylvie.granet at edf.fr
                                   "AXIS_JHMS",       # person_in_charge: sylvie.granet at edf.fr
-                                  "3D_HHO_121",      # person_in_charge: mickael.abbas at edf.fr
-                                  "3D_HHO_222",      # person_in_charge: mickael.abbas at edf.fr
-                                  "D_PLAN_HHO_121",  # person_in_charge: mickael.abbas at edf.fr
-                                  "D_PLAN_HHO_222",  # person_in_charge: mickael.abbas at edf.fr
-                                                                      )  )  ),
+                                  "3D_HHO",          # person_in_charge: mickael.abbas at edf.fr
+                                  "D_PLAN_HHO",      # person_in_charge: mickael.abbas at edf.fr
+                                                                      )  ),
+                b_formu_hho =BLOC( condition = """equal_to('MODELISATION', ('3D_HHO', 'D_PLAN_HHO', ))""",
+                                   fr=tr("HHO formulation"),
+                     FORMULATION    =SIMP(statut='f',typ='TXM',max=1,into=("LINEAIRE","QUADRATIQUE",), defaut="LINEAIRE"),),
+                ),
 
                 b_thermique     =BLOC( condition = """equal_to("PHENOMENE", 'THERMIQUE')""",
                                         fr=tr("modélisations thermiques"),

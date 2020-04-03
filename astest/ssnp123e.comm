@@ -55,64 +55,57 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=INSTANTS),
                                   SUBD_PAS=6,
                                   SUBD_PAS_MINI=0.00001),)
 
-# Nombre de calculs :
-nb_calcul = 1
-model = ['D_PLAN_HHO_121']
-
 Test1 = [233.72155936261046]
 Test2 = [243.48151675568482]
 Test3 = [298.1768218594375]
 Test4 = [424.441764539898]
 Test5 = [-0.26038606580598733]
 
+MO = AFFE_MODELE(MAILLAGE=MA,
+                 AFFE=_F(GROUP_MA='SURF',
+                         PHENOMENE='MECANIQUE',
+                         MODELISATION='D_PLAN_HHO', FORMULATION='LINEAIRE',),)
 
-for i in range(nb_calcul):
+SYM = AFFE_CHAR_CINE(MODELE=MO,
+                     MECA_IMPO=(_F(GROUP_MA=('LCD', 'LBC',),
+                                   DY=0.0,),
+                                _F(GROUP_MA=('LDE', 'LEF',),
+                                # Equivalent to DX=0.0
+                                   HHO_U1=0.0, HHO_U2=0.0, HHO_U3=0.0),),)
 
-    MO = AFFE_MODELE(MAILLAGE=MA,
-                     AFFE=_F(GROUP_MA='SURF',
-                             PHENOMENE='MECANIQUE',
-                             MODELISATION=model[i],),)
-
-    SYM = AFFE_CHAR_CINE(MODELE=MO,
-                         MECA_IMPO=(_F(GROUP_MA=('LCD', 'LBC',),
-                                       DY=0.0,),
-                                    _F(GROUP_MA=('LDE', 'LEF',),
-                                    # Equivalent to DX=0.0
-                                       HHO_U1=0.0, HHO_U2=0.0, HHO_U3=0.0),),)
-
-    TRAC = AFFE_CHAR_CINE(MODELE=MO,
-                          MECA_IMPO=_F(GROUP_MA='LFG',
-                                    # Equivalent to DY=0.1
-                                       HHO_V1=0.1, HHO_V2=0.0), INFO=1,)
+TRAC = AFFE_CHAR_CINE(MODELE=MO,
+                      MECA_IMPO=_F(GROUP_MA='LFG',
+                                # Equivalent to DY=0.1
+                                   HHO_V1=0.1, HHO_V2=0.0), INFO=1,)
 
 # CALCUL
 # ========
 
-    RESU = STAT_NON_LINE(MODELE=MO,
-                         CHAM_MATER=CH_MATER,
-                         EXCIT=(_F(CHARGE=TRAC,
-                                   FONC_MULT=RAMPE,),
-                                _F(CHARGE=SYM,),),
-                         COMPORTEMENT=_F(
-                             RELATION='VMIS_ISOT_LINE', DEFORMATION='PETIT'),
-                         INCREMENT=_F(LIST_INST=DEFLIST),
-                         SOLVEUR=_F(METHODE='MUMPS',),
-                         NEWTON=_F(REAC_ITER=1,),
-                         HHO=_F(STABILISATION='MANUEL', COEF_STAB=E,),
-                         ARCHIVAGE=_F(LIST_INST=INSTANTS,),)
+RESU = STAT_NON_LINE(MODELE=MO,
+                     CHAM_MATER=CH_MATER,
+                     EXCIT=(_F(CHARGE=TRAC,
+                               FONC_MULT=RAMPE,),
+                            _F(CHARGE=SYM,),),
+                     COMPORTEMENT=_F(
+                         RELATION='VMIS_ISOT_LINE', DEFORMATION='PETIT'),
+                     INCREMENT=_F(LIST_INST=DEFLIST),
+                     SOLVEUR=_F(METHODE='MUMPS',),
+                     NEWTON=_F(REAC_ITER=1,),
+                     HHO=_F(STABILISATION='MANUEL', COEF_STAB=E,),
+                     ARCHIVAGE=_F(LIST_INST=INSTANTS,),)
 
 # POST TRAITEMENT
 # =================
 
-    RESU = CALC_CHAMP(reuse=RESU, RESULTAT=RESU,
-                      CONTRAINTE=('SIGM_ELNO', 'SIGM_NOEU',),)
+RESU = CALC_CHAMP(reuse=RESU, RESULTAT=RESU,
+                  CONTRAINTE=('SIGM_ELNO', 'SIGM_NOEU',),)
 
-    S_T = MACR_LIGN_COUPE(RESULTAT=RESU,  NOM_CHAM='SIGM_NOEU', INST=1.0,
-                          LIGN_COUPE=(
-                              _F(TYPE='SEGMENT', NB_POINTS=11, INTITULE='S_EXT', NOM_CMP='SIYY',
-                                 COOR_ORIG=(0.0, 1.0,),
-                                 COOR_EXTR=(5.0, 1.0,),
-                                 )))
+S_T = MACR_LIGN_COUPE(RESULTAT=RESU,  NOM_CHAM='SIGM_NOEU', INST=1.0,
+                      LIGN_COUPE=(
+                          _F(TYPE='SEGMENT', NB_POINTS=11, INTITULE='S_EXT', NOM_CMP='SIYY',
+                             COOR_ORIG=(0.0, 1.0,),
+                             COOR_EXTR=(5.0, 1.0,),
+                             )))
 
 # IMPR_TABLE(TABLE=S_T,);
 
@@ -122,60 +115,58 @@ for i in range(nb_calcul):
 
 # ON TESTE PAR RAPPORT A LA MODELISATION B : ELEMENTS QUASI-INCOMPRESSIBLES
 
-    TEST_TABLE(REFERENCE='AUTRE_ASTER',
-               PRECISION=0.004,
-               VALE_CALC=Test1[i],
-               VALE_REFE=234.17369549492,
-               NOM_PARA='SIYY',
-               TABLE=S_T,
-               FILTRE=_F(NOM_PARA='COOR_X', VALE=0.0,),
-               )
+TEST_TABLE(REFERENCE='AUTRE_ASTER',
+           PRECISION=0.004,
+           VALE_CALC=Test1,
+           VALE_REFE=234.17369549492,
+           NOM_PARA='SIYY',
+           TABLE=S_T,
+           FILTRE=_F(NOM_PARA='COOR_X', VALE=0.0,),
+           )
 
-    TEST_TABLE(REFERENCE='AUTRE_ASTER',
-               PRECISION=0.007,
-               VALE_CALC=Test2[i],
-               VALE_REFE=241.963621081,
-               NOM_PARA='SIYY',
-               TABLE=S_T,
-               FILTRE=_F(NOM_PARA='COOR_X', VALE=1.0,),
-               )
+TEST_TABLE(REFERENCE='AUTRE_ASTER',
+           PRECISION=0.007,
+           VALE_CALC=Test2,
+           VALE_REFE=241.963621081,
+           NOM_PARA='SIYY',
+           TABLE=S_T,
+           FILTRE=_F(NOM_PARA='COOR_X', VALE=1.0,),
+           )
 
-    TEST_TABLE(REFERENCE='AUTRE_ASTER',
-               PRECISION=0.004,
-               VALE_CALC=Test3[i],
-               VALE_REFE=298.02665342,
-               NOM_PARA='SIYY',
-               TABLE=S_T,
-               FILTRE=_F(NOM_PARA='COOR_X', VALE=3.0,),
-               )
+TEST_TABLE(REFERENCE='AUTRE_ASTER',
+           PRECISION=0.004,
+           VALE_CALC=Test3,
+           VALE_REFE=298.02665342,
+           NOM_PARA='SIYY',
+           TABLE=S_T,
+           FILTRE=_F(NOM_PARA='COOR_X', VALE=3.0,),
+           )
 
 # --------------------------------------------------------------------------------
 #
 #  TEST SUR LES CONTRAINTES AU POINT B
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      RESULTAT=RESU,
-                      NOM_CHAM='SIGM_ELNO',
-                      NOEUD='N6',
-                      NOM_CMP='SIYY',
-                      VALE_CALC=Test4[i],
-                      CRITERE='RELATIF',
-                      MAILLE='M20',
-                      ),
-              )
+TEST_RESU(RESU=_F(INST=1.0,
+                  RESULTAT=RESU,
+                  NOM_CHAM='SIGM_ELNO',
+                  NOEUD='N6',
+                  NOM_CMP='SIYY',
+                  VALE_CALC=Test4,
+                  CRITERE='RELATIF',
+                  MAILLE='M20',
+                  ),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      RESULTAT=RESU,
-                      NOM_CHAM='SIGM_ELNO',
-                      NOEUD='N6',
-                      NOM_CMP='SIXX',
-                      VALE_CALC=Test5[i],
-                      CRITERE='RELATIF',
-                      MAILLE='M20',
-                      ),
-              )
+TEST_RESU(RESU=_F(INST=1.0,
+                  RESULTAT=RESU,
+                  NOM_CHAM='SIGM_ELNO',
+                  NOEUD='N6',
+                  NOM_CMP='SIXX',
+                  VALE_CALC=Test5,
+                  CRITERE='RELATIF',
+                  MAILLE='M20',
+                  ),
+          )
 
-    DETRUIRE(CONCEPT=_F(NOM=(SYM, MO, RESU, S_T, TRAC,),),
-             INFO=1,)
 
 FIN()

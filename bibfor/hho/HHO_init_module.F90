@@ -659,29 +659,18 @@ contains
 !
 ! --- Read Parameters
 !
-        if (lteatt('TYPMOD2','HHO010')) then
-            face_deg = 0
-            cell_deg = 1
-            grad_deg = 0
-        else if (lteatt('TYPMOD2','HHO111')) then
-            face_deg = 1
-            cell_deg = 1
-            grad_deg = 1
-        else if (lteatt('TYPMOD2','HHO222')) then
-            face_deg = 2
-            cell_deg = 2
-            grad_deg = 2
-        else if (lteatt('TYPMOD2','HHO121')) then
+        ASSERT(lteatt('TYPMOD2','HHO'))
+        if (lteatt('FORMULATION','HHO_LINE')) then
             face_deg = 1
             cell_deg = 2
             grad_deg = 1
-        else if (lteatt('TYPMOD2','HHO232')) then
+        elseif (lteatt('FORMULATION','HHO_QUAD')) then
             face_deg = 2
-            cell_deg = 3
+            cell_deg = 2
             grad_deg = 2
         else
             ASSERT(ASTER_FALSE)
-        end if
+        endif
 !
 ! --- Get coefficient (if possible)
 !
