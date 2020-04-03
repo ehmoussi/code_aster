@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine exresl(modatt, iparg, chin)
 
 use calcul_module, only : ca_iachii_, ca_iachlo_, ca_iawlo2_, ca_igr_,&
      ca_iichin_, ca_ilchlo_, ca_nbelgr_, ca_nbgr_, ca_typegd_,&
-     ca_lparal_, ca_paral_, ca_iel_
+     ca_lparal_, ca_paral_, ca_iel_, ca_iachid_
 
 implicit none
 
@@ -32,7 +32,6 @@ implicit none
 #include "asterfort/digde2.h"
 #include "asterfort/jacopo.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
@@ -49,13 +48,12 @@ implicit none
     integer :: jresl, debugr, lggrel
 !----------------------------------------------------------------------
 
-
     call jemarq()
 
     lggrel=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+4)
     debugr=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+5)
 
-    desc=zi(ca_iachii_-1+11*(ca_iichin_-1)+4)
+    desc=zi(ca_iachii_-1+ca_iachid_*(ca_iichin_-1)+4)
 
     ASSERT(modatt.gt.0)
     mode=zi(desc-1+2+ca_igr_)
@@ -83,8 +81,7 @@ implicit none
     else
         call jacopo(lggrel, ca_typegd_, jresl, ca_iachlo_+debugr-1)
     endif
-
-
+!
     if (ca_lparal_) then
         do ca_iel_ = 1, ca_nbelgr_
             if (ca_paral_(ca_iel_)) then

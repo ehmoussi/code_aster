@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 subroutine excar2(ngrmx, desc, dg, ncmp, debugr)
 
 use calcul_module, only : ca_iachii_, ca_ialiel_, ca_igr_, ca_iichin_, &
-    ca_illiel_, ca_nbelgr_, ca_ncmpmx_, ca_nec_, ca_iel_, ca_paral_, ca_lparal_
+    ca_illiel_, ca_nbelgr_, ca_ncmpmx_, ca_nec_, ca_iel_, ca_paral_, ca_lparal_, ca_iachid_
 
 implicit none
 
@@ -27,8 +27,6 @@ implicit none
 
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/trigd.h"
 
     integer :: ngrmx, desc, dg(*), ncmp
@@ -38,12 +36,11 @@ implicit none
 !-------------------------------------------------------------------------
     integer :: ptma, ptms, ient, ima, deb2
     integer :: debgd, indval, debugr
-!    -- fonctions formules :
-!    numail(igr,iel)=numero de la maille associee a l'element iel
+!   fonctions formules :
+!       numail(igr,iel)=numero de la maille associee a l'element iel
 #define numail(ca_igr_,ca_iel_) zi(ca_ialiel_-1+zi(ca_illiel_-1+ca_igr_)-1+ca_iel_)
-!--------------------------------------------------------------------------
-
-
+! --------------------------------------------------------------------------------------------------
+!
 !   Si la carte est constante:
 !   --------------------------
     if (ngrmx .eq. 1 .and. zi(desc-1+4) .eq. 1) then
@@ -60,13 +57,11 @@ implicit none
         enddo
         goto 999
     endif
-
-
+!
 !   Si la carte n'est pas constante :
 !   ---------------------------------
-    ptma = zi(ca_iachii_-1+11* (ca_iichin_-1)+6)
-    ptms = zi(ca_iachii_-1+11* (ca_iichin_-1)+7)
-
+    ptma = zi(ca_iachii_-1+ca_iachid_* (ca_iichin_-1)+6)
+    ptms = zi(ca_iachii_-1+ca_iachid_* (ca_iichin_-1)+7)
     deb2 = debugr
     do ca_iel_ = 1, ca_nbelgr_
         if (ca_lparal_) then
@@ -86,15 +81,11 @@ implicit none
             deb2=deb2+ncmp
             cycle
         endif
-
-!       recopie:
-!       -------
+!       recopie
         debgd = 3 + 2*ngrmx + (ient-1)*ca_nec_ + 1
         indval = (ient-1)*ca_ncmpmx_ + 1
-
         call trigd(zi(desc-1+debgd), indval, dg, deb2, .false._1, 0, 0)
     end do
 
 999 continue
-
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine excart(imodat, iparg)
 
 use calcul_module, only : ca_iachii_, ca_iachlo_, ca_iamloc_, ca_iawlo2_,&
     ca_iel_, ca_igr_, ca_iichin_, ca_ilchlo_,&
-    ca_ilmloc_, ca_nbelgr_, ca_nbgr_, ca_typegd_, ca_paral_, ca_lparal_
+    ca_ilmloc_, ca_nbelgr_, ca_nbgr_, ca_typegd_, ca_paral_, ca_lparal_, ca_iachid_
 
 implicit none
 
@@ -31,9 +31,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/excar2.h"
 #include "asterfort/jacopo.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jeveuo.h"
-
+!
     integer :: imodat, iparg
 !----------------------------------------------------------------------
 !     entrees:
@@ -46,7 +44,7 @@ implicit none
 
 !   recuperation de la carte:
 !   -------------------------
-    desc=zi(ca_iachii_-1+11*(ca_iichin_-1)+4)
+    desc=zi(ca_iachii_-1+ca_iachid_*(ca_iichin_-1)+4)
     ngrmx=zi(desc-1+2)
     modloc=ca_iamloc_-1+zi(ca_ilmloc_-1+imodat)
     ityplo=zi(modloc-1+1)
@@ -61,8 +59,7 @@ implicit none
         ASSERT((ityplo.ne.2) .or. (nbpoin.le.10000))
         ncmp=lgcata/nbpoin
         call excar2(ngrmx, desc, zi(modloc-1+5), ncmp, debugr)
-!       on dupplique les valeurs en commencant par la fin pour ne pas
-!       les ecraser :
+!       on dupplique les valeurs en commencant par la fin pour ne pas les écrasee
         do ca_iel_ = ca_nbelgr_, 1, -1
             if (ca_lparal_) then
                 if (.not.ca_paral_(ca_iel_)) cycle
@@ -74,8 +71,6 @@ implicit none
                 call jacopo(ncmp, 'L', ca_ilchlo_+dec1, ca_ilchlo_+dec2)
             enddo
         enddo
-
-
 !   2-  cas: cart -> elem :
 !   -----------------------
     else if (ityplo.eq.1) then

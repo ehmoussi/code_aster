@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ use calcul_module, only : ca_iachii_, ca_iachik_, ca_iachin_, ca_iachix_,&
      ca_iachlo_, ca_ianueq_, ca_iaoppa_, ca_iawlo2_,&
      ca_iawloc_, ca_igd_, ca_igr_, ca_iichin_, ca_ilchlo_, ca_itypgd_,&
      ca_lprno_, ca_nbgr_, ca_ncmpmx_, ca_nec_, ca_npario_, ca_typegd_,&
-     ca_nute_, ca_nuop_
+     ca_nute_, ca_nuop_, ca_iachid_
 
 implicit none
 
@@ -75,12 +75,12 @@ implicit none
 
 
         ca_iichin_=iparin
-        ca_igd_=zi(ca_iachii_-1+11*(iparin-1)+1)
-        ca_nec_=zi(ca_iachii_-1+11*(iparin-1)+2)
-        ca_ncmpmx_=zi(ca_iachii_-1+11*(iparin-1)+3)
-        ca_iachin_=zi(ca_iachii_-1+11*(iparin-1)+5)
-        ca_ianueq_=zi(ca_iachii_-1+11*(iparin-1)+10)
-        ca_lprno_=zi(ca_iachii_-1+11*(iparin-1)+11)
+        ca_igd_   =zi(ca_iachii_-1+ca_iachid_*(iparin-1)+1)
+        ca_nec_   =zi(ca_iachii_-1+ca_iachid_*(iparin-1)+2)
+        ca_ncmpmx_=zi(ca_iachii_-1+ca_iachid_*(iparin-1)+3)
+        ca_iachin_=zi(ca_iachii_-1+ca_iachid_*(iparin-1)+5)
+        ca_ianueq_=zi(ca_iachii_-1+ca_iachid_*(iparin-1)+10)
+        ca_lprno_ =zi(ca_iachii_-1+ca_iachid_*(iparin-1)+11)
         iparg=indik8(zk8(ca_iaoppa_),nompar,1,ca_npario_)
         ca_iachlo_=zi(ca_iawloc_-1+3*(iparg-1)+1)
         ca_ilchlo_=zi(ca_iawloc_-1+3*(iparg-1)+2)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,6 +86,7 @@ implicit none
 !     ca_illiel_  : adresse du pointeur de longueur de '.liel'.
 
 !======================================================================
+    integer,parameter :: ca_iachid_ = 12
     integer :: ca_iachii_, ca_iachik_, ca_iachix_
 !     ca_iachii_ : adresse de '&&CALCUL.LCHIN_I'
 !     ca_iachik_ : adresse de '&&CALCUL.LCHIN_K8'
@@ -98,10 +99,11 @@ implicit none
 !             v(1) :  type_champ : 'chno','cart','chml' ou 'resl'.
 !             v(2) :  type_gd    : 'c', 'r', 'i', 'k8', ...
 
-!     '&&CALCUL.LCHIN_I'  ::= v(i)     (dim = 11*nin)
+!     '&&CALCUL.LCHIN_I'  ::= v(i)     (dim = ca_iachid_*nin)
 !             v(1) :  ca_igd_   grandeur associee a lchin(i)
 !             v(2) :  ca_nec_   nombre d'entiers codes
 !             v(3) :  ca_ncmpmx_ nombre max de cmp pour ca_igd_
+!                           jelira(jexnum('&CATA.GD.NOMCMP', ca_igd_), 'LONMAX', ncmpmx)
 !             v(4) :  iadesc adresse de .desc  (ou .celd)
 !             v(5) :  iavale
 !                     si cham_no ou carte : adresse de .vale
@@ -112,6 +114,8 @@ implicit none
 !             v(9) :  iaprn2 adresse du prno(ligrel)  (pour 1 cham_no)
 !             v(10):  ca_ianueq_ adresse    .nueq         (pour 1 cham_no)
 !             v(11):  ca_lprno_  (dit si ca_ianueq_ est utilise pour 1 cham_no)
+!             v(12):  adresse des cmp pour ca_igd_
+!                           jeveuo(jexnum('&CATA.GD.NOMCMP', ca_igd_), 'L', v(12) )
 
 !======================================================================
     integer :: ca_ianoop_, ca_ianote_, ca_nbobtr_, ca_iaobtr_, ca_nbobmx_
@@ -261,7 +265,7 @@ implicit none
 !     ca_jvcval_ : adresse dans ZR  de '&&OP0033.TVCVAL' (CALC_POINT_MAT)
 !======================================================================
     integer :: ca_ctempl_
-    real(kind=8) :: ca_ctempr_, ca_ctempm_, ca_ctempp_ 
+    real(kind=8) :: ca_ctempr_, ca_ctempm_, ca_ctempp_
 !     ca_ctempl_ : 1 if temperature is coupled variable (non external state variable)
 !     ca_ctempr_ : for reference temperature when coupled variable (non external state variable)
 !     ca_ctempm_ : for previous temperature when coupled variable (non external state variable)
