@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine debcal(nin, lchin, lpain, nout, lchout)
 
 use calcul_module, only : ca_iachii_, ca_iachik_, ca_iachix_, &
     ca_iactif_, ca_iaobtr_, ca_iaopds_, ca_iaoppa_, ca_nbobtr_,&
-    ca_ligrel_, ca_option_
+    ca_ligrel_, ca_option_, ca_iachid_
 
 implicit none
 
@@ -74,7 +74,7 @@ implicit none
     integer :: i
     integer :: ibid, nbpara, iret, j
     integer :: jpar, igd, nec, ncmpmx, iii, num
-    integer ::   jproli, ianueq, iret1
+    integer :: jproli, ianueq, iret1, inomcp
     integer :: iret2
     character(len=8) :: k8bi, typsca
     character(len=4) :: knum, tych
@@ -154,7 +154,7 @@ implicit none
     end do
 
 
-    call wkvect('&&CALCUL.LCHIN_I', 'V V I', max(1, 11*nin), ca_iachii_)
+    call wkvect('&&CALCUL.LCHIN_I', 'V V I', max(1, ca_iachid_*nin), ca_iachii_)
     ca_nbobtr_=ca_nbobtr_+1
     zk24(ca_iaobtr_-1+ca_nbobtr_)='&&CALCUL.LCHIN_I'
     call wkvect('&&CALCUL.LCHIN_K8', 'V V K8', max(1, 2*nin), ca_iachik_)
@@ -204,24 +204,29 @@ implicit none
             endif
         endif
 
-
         igd=grdeur(nompar)
-        zi(ca_iachii_-1+11*(i-1)+1)=igd
+        zi(ca_iachii_-1+ca_iachid_*(i-1)+1)=igd
 
         nec=nbec(igd)
-        zi(ca_iachii_-1+11*(i-1)+2)=nec
+        zi(ca_iachii_-1+ca_iachid_*(i-1)+2)=nec
 
         typsca=scalai(igd)
         zk8(ca_iachik_-1+2*(i-1)+2)=typsca
 
         call jelira(jexnum('&CATA.GD.NOMCMP', igd), 'LONMAX', ncmpmx)
-        zi(ca_iachii_-1+11*(i-1)+3)=ncmpmx
+        zi(ca_iachii_-1+ca_iachid_*(i-1)+3)=ncmpmx
+        if ( ncmpmx.ne.0 ) then
+            call jeveuo(jexnum('&CATA.GD.NOMCMP', igd), 'L', inomcp)
+        else
+            inomcp = 0
+        endif
+        zi(ca_iachii_-1+ca_iachid_*(i-1)+12)=inomcp
 
         call jelira(objdes, 'DOCU', cval=k8bi)
         zk8(ca_iachik_-1+2*(i-1)+1)=k8bi
 
         call jeveuo(objdes, 'L', desc)
-        zi(ca_iachii_-1+11*(i-1)+4)=desc
+        zi(ca_iachii_-1+ca_iachid_*(i-1)+4)=desc
 
 !         -- si la grandeur associee au champ n'est pas celle associee
 !            au parametre, on arrete tout :
@@ -239,13 +244,13 @@ implicit none
         call jeexin(chin//'.VALE', iret)
         if (iret .gt. 0) then
             call jeveuo(chin//'.VALE', 'L', iii)
-            zi(ca_iachii_-1+11*(i-1)+5)=iii
+            zi(ca_iachii_-1+ca_iachid_*(i-1)+5)=iii
         endif
 
         call jeexin(chin//'.CELV', iret)
         if (iret .gt. 0) then
             call jeveuo(chin//'.CELV', 'L', iii)
-            zi(ca_iachii_-1+11*(i-1)+5)=iii
+            zi(ca_iachii_-1+ca_iachid_*(i-1)+5)=iii
         endif
 
 !        -- pour les cartes :
@@ -258,14 +263,14 @@ implicit none
                 call jeexin(chin//'.PTMA', iret)
                 if (iret .gt. 0) then
                     call jeveuo(chin//'.PTMA', 'L', iii)
-                    zi(ca_iachii_-1+11*(i-1)+6)=iii
+                    zi(ca_iachii_-1+ca_iachid_*(i-1)+6)=iii
                     ca_nbobtr_=ca_nbobtr_+1
                     zk24(ca_iaobtr_-1+ca_nbobtr_)=chin//'.PTMA'
                 endif
                 call jeexin(chin//'.PTMS', iret)
                 if (iret .gt. 0) then
                     call jeveuo(chin//'.PTMS', 'L', iii)
-                    zi(ca_iachii_-1+11*(i-1)+7)=iii
+                    zi(ca_iachii_-1+ca_iachid_*(i-1)+7)=iii
                     ca_nbobtr_=ca_nbobtr_+1
                     zk24(ca_iaobtr_-1+ca_nbobtr_)=chin//'.PTMS'
                 endif
@@ -279,20 +284,20 @@ implicit none
                 call jeveuo(chin//'.REFE', 'L', vk24=refe)
                 noprno=refe(2)(1:19)//'.PRNO'
                 call jeveuo(jexnum(noprno, 1), 'L', iii)
-                zi(ca_iachii_-1+11*(i-1)+8)=iii
+                zi(ca_iachii_-1+ca_iachid_*(i-1)+8)=iii
                 call jeveuo(ca_ligrel_//'.NBNO', 'L', vi=nbno)
                 if (nbno(1) .gt. 0) then
                     call jenonu(jexnom(noprno(1:19)//'.LILI', ca_ligrel_//'      '), jproli)
                     if (jproli .eq. 0) then
-                        zi(ca_iachii_-1+11*(i-1)+9)=isnnem()
+                        zi(ca_iachii_-1+ca_iachid_*(i-1)+9)=isnnem()
                     else
                         call jeveuo(jexnum(noprno, jproli), 'L', iii)
-                        zi(ca_iachii_-1+11*(i-1)+9)=iii
+                        zi(ca_iachii_-1+ca_iachid_*(i-1)+9)=iii
                     endif
                 endif
                 call jeveuo(noprno(1:19)//'.NUEQ', 'L', ianueq)
-                zi(ca_iachii_-1+11*(i-1)+10)=ianueq
-                zi(ca_iachii_-1+11*(i-1)+11)=1
+                zi(ca_iachii_-1+ca_iachid_*(i-1)+10)=ianueq
+                zi(ca_iachii_-1+ca_iachid_*(i-1)+11)=1
             endif
         endif
     enddo
