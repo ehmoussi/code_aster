@@ -212,6 +212,8 @@ class EJHYME_PLQU8(Element):
                      (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      ),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
                      ),
         ),
 
@@ -248,19 +250,3 @@ class EJHYME_PLQU8(Element):
 
     )
 
-
-#------------------------------------------------------------
-class MFPLQU8(EJHYME_PLQU8):
-    """Please document this element"""
-    meshType = MT.QUAD8
-    nodes = (
-            SetOfNodes('EN1', (1,2,5,)),
-            SetOfNodes('EN2', (4,3,)),
-            SetOfNodes('EN3', (6,8,)),
-            SetOfNodes('EN4', (7,)),
-        )
-    attrs = ((AT.TYPE_VOISIN,'A2'),)
-    elrefe =(
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG2',), mater=('RIGI',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
-        )

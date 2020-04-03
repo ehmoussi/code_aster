@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0322(option, nomte)
 !
-! person_in_charge: jerome.laverne at edf.fr
+use Behaviour_module, only : behaviourOption
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -31,32 +32,49 @@ subroutine te0322(option, nomte)
 #include "asterfort/lteatt.h"
 #include "asterfort/nmfihm.h"
 #include "asterfort/tecach.h"
-    character(len=16) :: nomte, option
 !
-!-----------------------------------------------------------------------
-!     BUT : CALCUL DES OPTIONS NON LINEAIRES DES ELEMENTS DE JOINT ET
-!           JOINT_HYME
-!     OPTION : RAPH_MECA, FULL_MECA, RIGI_MECA_TANG, RIGI_MECA_ELAS
-!-----------------------------------------------------------------------
+character(len=16), intent(in) :: option, nomte
 !
-    integer :: ndim, nno1, nno2, nnos, npg, nddl, ntrou
-    integer :: iw, ivf1, ivf2, idf1, idf2, jgn
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: 3D_JOINT_HYME
+!           PLAN_JOINT_HYME
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: ndim, nno1, nno2, npg, nddl, ntrou
+    integer :: iw, ivf1, ivf2, idf2
     integer :: igeom, imater, icarcr, icomp, iddlm, iddld
     integer :: icontm, icontp, ivect, imatr, iu(3, 16), ip(8)
     integer :: ivarim, ivarip, jtab(7), iret, iinstm, iinstp
-    integer :: lgpg1, lgpg
+    integer :: lgpg
     character(len=8) :: typmod(2), lielrf(10)
-    aster_logical :: resi, rigi
+    aster_logical :: lVect, lMatr, lVari, lSigm
+    integer :: codret
+    integer :: jv_codret
 !
-    resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
-    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+! --------------------------------------------------------------------------------------------------
 !
-! FONCTIONS DE FORMES ET POINTS DE GAUSS
+    ivarip = 1
+    icontp = 1
+    ivect  = 1
+!
+! - Get element parameters
+!
     call elref2(nomte, 2, lielrf, ntrou)
-    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno1, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf1, jdfde=idf1, jgano=jgn)
-    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf2, jdfde=idf2, jgano=jgn)
+    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno1,&
+                     jvf=ivf1)
+    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno2,&
+                     npg=npg, jpoids=iw, jvf=ivf2, jdfde=idf2)
 !
 ! LA DIMENSION DE L'ESPACE EST CELLE DE L'ELEM DE REF SURFACIQUE PLUS 1
     ndim = ndim + 1
@@ -67,24 +85,25 @@ subroutine te0322(option, nomte)
 ! DECALAGE D'INDICE POUR LES ELEMENTS DE JOINT
     call ejinit(nomte, iu, ip)
 !
-! TYPE DE MODELISATION
+! - Type of finite element
 !
     if (ndim .eq. 3) then
         typmod(1) = '3D'
-    else
+    elseif (ndim .eq. 2) then
         typmod(1) = 'PLAN'
-    endif
-!
-    if (lteatt('TYPMOD2','ELEMJOIN')) then
-        typmod(2) = 'ELEMJOIN'
-    else if (lteatt('TYPMOD2','EJ_HYME')) then
-        typmod(2) = 'EJ_HYME'
     else
-!       MODELISATION NON SUPORTEE
-        ASSERT(typmod(2).eq.'ELEMJOIN'.or. typmod(2) .eq.'EJ_HYME')
+        ASSERT(ndim .eq. 2 .or. ndim .eq. 3)
+    endif
+    if (lteatt('TYPMOD2','EJ_HYME')) then
+        typmod(2) = 'EJ_HYME'
+    elseif (lteatt('TYPMOD2','ELEMJOIN')) then
+        typmod(2) = 'ELEMJOIN'
+    else
+        ASSERT(ASTER_FALSE)
     endif
 !
-! DONNEES EN ENTREE
+! - Get input fields
+!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imater)
     call jevech('PCARCRI', 'L', icarcr)
@@ -95,34 +114,46 @@ subroutine te0322(option, nomte)
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PINSTPR', 'L', iinstp)
     call jevech('PCONTMR', 'L', icontm)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
+    lgpg = max(jtab(6),1)*jtab(7)
 !
-! RECUPERATION DU NOMBRE DE VARIABLES INTERNES PAR POINTS DE GAUSS
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
-    lgpg1 = max(jtab(6),1)*jtab(7)
-    lgpg = lgpg1
+! - Select objects to construct from option name
 !
-! DONNEES EN SORTIE
-    if (rigi) then
+    call behaviourOption(option, zk16(icomp),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Get output fields
+!
+    if (lMatr) then
         call jevech('PMATUNS', 'E', imatr)
     endif
-!
-    if (resi) then
-        call jevech('PVARIPR', 'E', ivarip)
-        call jevech('PCONTPR', 'E', icontp)
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivect)
-    else
-        ivarip=1
-        icontp=1
-        ivect=1
+    endif
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', icontp)
+    endif
+    if (lVari) then
+        call jevech('PVARIPR', 'E', ivarip)
     endif
 !
-! CALCUL DES CONTRAINTES, VIP, FORCES INTERNES ET MATR TANG ELEMENTAIRES
+! - Compute
+!
     call nmfihm(ndim, nddl, nno1, nno2, npg,&
                 lgpg, iw, zr(iw), zr(ivf1), zr(ivf2),&
                 idf2, zr(idf2), zi(imater), option, zr(igeom),&
                 zr(iddlm), zr(iddld), iu, ip, zr(icontm),&
                 zr(icontp), zr(ivect), zr(imatr), zr(ivarim), zr(ivarip),&
-                zr(iinstm), zr(iinstp), zr(icarcr), zk16(icomp), typmod)
+                zr(iinstm), zr(iinstp), zr(icarcr), zk16(icomp), typmod,&
+                lVect, lMatr, lSigm, codret)
+!
+! - Save return code
+!
+    if (lSigm) then
+        call jevech('PCODRET', 'E', jv_codret)
+        zi(jv_codret) = codret
+    endif
 !
 end subroutine

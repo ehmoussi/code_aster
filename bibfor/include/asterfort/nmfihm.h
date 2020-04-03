@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,6 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine nmfihm(ndim, nddl, nno1, nno2, npg,&
@@ -24,7 +22,8 @@ interface
                       idf2, dffr2, mate, option, geom,&
                       ddlm, ddld, iu, ip, sigm,&
                       sigp, vect, matr, vim, vip,&
-                      tm, tp, crit, compor, typmod)
+                      tm, tp, carcri, compor, typmod,&
+                      lVect, lMatr, lSigm, codret)
         integer :: lgpg
         integer :: npg
         integer :: nno2
@@ -38,7 +37,6 @@ interface
         integer :: idf2
         real(kind=8) :: dffr2(ndim-1, nno2, npg)
         integer :: mate
-        character(len=16) :: option
         real(kind=8) :: geom(ndim, nno2)
         real(kind=8) :: ddlm(nddl)
         real(kind=8) :: ddld(nddl)
@@ -52,8 +50,11 @@ interface
         real(kind=8) :: vip(lgpg, npg)
         real(kind=8) :: tm
         real(kind=8) :: tp
-        real(kind=8) :: crit(*)
-        character(len=16) :: compor(*)
-        character(len=8) :: typmod(*)
+        character(len=16), intent(in) :: option
+        aster_logical, intent(in) :: lSigm, lVect, lMatr
+        real(kind=8), intent(in) :: carcri(*)
+        character(len=16), intent(in) :: compor(*)
+        character(len=8), intent(in) :: typmod(*)
+        integer, intent(out) :: codret
     end subroutine nmfihm
 end interface
