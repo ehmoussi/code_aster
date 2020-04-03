@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
+#include "asterfort/lxl_find.h"
 !
 character(len=8), intent(in) :: model
 !
@@ -50,14 +51,14 @@ character(len=8), intent(in) :: model
 !
     integer ifm, niv
     integer :: numvec, nbgrel, igrel, long_grel, nume_elem
-    integer :: nume_type_poi1, jc, j,k, ibegin
+    integer :: nume_type_poi1, jc, j,k, ibegin, isharp
     integer :: nume_type_elem, nume_type_geom
     integer :: iexi, nb_type_elem
     integer :: nb_elem_grel
     character(len=8) :: type_geom, name_entity, tabmai(8)
     character(len=19) :: ligrel_model
     character(len=8) :: mesh
-    character(len=16) :: type_elem, modelisa, valk(8)
+    character(len=16) :: type_elem, modelisa, valk(8), formul
     character(len=32) :: phemod
     integer, pointer :: p_mesh_typmai(:) => null()
     integer, pointer :: p_nb_elem(:) => null()
@@ -65,6 +66,7 @@ character(len=8), intent(in) :: model
     integer, pointer :: p_model_liel(:) => null()
     character(len=8), pointer :: p_type_geom(:) => null()
     character(len=16), pointer :: p_modeli(:) => null()
+    character(len=16), pointer :: p_formul(:) => null()
     character(len=16), pointer :: p_type_elem(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -92,6 +94,7 @@ character(len=8), intent(in) :: model
 !
     AS_ALLOCATE(vi   = p_nb_elem  , size = nb_type_elem)
     AS_ALLOCATE(vk16 = p_modeli   , size = nb_type_elem)
+    AS_ALLOCATE(vk16 = p_formul   , size = nb_type_elem)
     AS_ALLOCATE(vk8  = p_type_geom, size = nb_type_elem)
     AS_ALLOCATE(vk16 = p_type_elem, size = nb_type_elem)
 !
@@ -139,8 +142,20 @@ character(len=8), intent(in) :: model
                 if (phemod(1:10) .eq. '#PLUSIEURS') then
                     modelisa = ' '
                 endif
+                call dismoi('FORMULATION', type_elem, 'TYPE_ELEM', repk = formul)
+                isharp = lxl_find(modelisa, '#')
+                if (modelisa(1:10) .eq. '#PLUSIEURS') then
+                    modelisa = ' '
+                else
+                    if (isharp .eq. 0) then
+                        formul = ' '
+                    else
+                        modelisa = modelisa(1:isharp-1)
+                    endif
+                endif
                 p_type_elem(nume_type_elem) = type_elem
                 p_modeli(nume_type_elem)    = modelisa
+                p_formul(nume_type_elem)    = formul
                 p_type_geom(nume_type_elem) = type_geom
             endif
         endif
@@ -154,9 +169,10 @@ character(len=8), intent(in) :: model
         nb_elem_grel = p_nb_elem(igrel)
         if (nb_elem_grel .ne. 0) then
             valk(1) = p_modeli(igrel)
-            valk(2) = p_type_geom(igrel)
-            valk(3) = p_type_elem(igrel)
-            call utmess('I', 'MODELE1_21', nk = 3, valk = valk, si = nb_elem_grel)
+            valk(2) = p_formul(igrel)
+            valk(3) = p_type_geom(igrel)
+            valk(4) = p_type_elem(igrel)
+            call utmess('I', 'MODELE1_21', nk = 4, valk = valk, si = nb_elem_grel)
         endif
     end do
 !
@@ -179,15 +195,27 @@ character(len=8), intent(in) :: model
                 call jenuno(jexnum('&CATA.TM.NOMTM', nume_type_geom), type_geom)
                 call jenuno(jexnum('&CATA.TE.NOMTE', nume_type_elem), type_elem)
                 call dismoi('MODELISATION', type_elem, 'TYPE_ELEM', repk = modelisa)
+                isharp = lxl_find(modelisa, '#')
+                if (modelisa(1:10) .eq. '#PLUSIEURS') then
+                    modelisa = ' '
+                else
+                    if (isharp .eq. 0) then
+                        formul = ' '
+                    else
+                        modelisa = modelisa(1:isharp-1)
+                        call dismoi('FORMULATION', type_elem, 'TYPE_ELEM', repk = formul)
+                    endif
+                endif
                 valk(1) = modelisa
-                valk(2) = type_geom
-                valk(3) = type_elem
+                valk(2) = formul
+                valk(3) = type_geom
+                valk(4) = type_elem
                 if (nume_elem .lt. 0) then
                     call utmess('I', 'MODELE1_8')
                 else
                     call utmess('I', 'MODELE1_9')
                 endif
-                call utmess('I', 'MODELE1_21', nk = 3, valk = valk, si = long_grel-1)
+                call utmess('I', 'MODELE1_21', nk = 4, valk = valk, si = long_grel-1)
                 jc = 0
                 ibegin = numvec
                 do k = 1,nb_elem_grel
@@ -222,6 +250,7 @@ character(len=8), intent(in) :: model
 !
     AS_DEALLOCATE(vi   = p_nb_elem  )
     AS_DEALLOCATE(vk16 = p_modeli   )
+    AS_DEALLOCATE(vk16 = p_formul   )
     AS_DEALLOCATE(vk8  = p_type_geom)
     AS_DEALLOCATE(vk16 = p_type_elem)
 !
