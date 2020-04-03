@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
 #include "asterfort/comp_info.h"
+#include "asterfort/cesvar.h"
 #include "asterfort/Behaviour_type.h"
 !
 character(len=24), intent(in) :: model
@@ -117,5 +118,10 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 ! - Print informations about COMPORTEMENT keyword
 !
     call comp_info(model, ds_constitutive%compor)
+!
+! - Preallocation of output stress field for prediction
+!
+    call cesvar(cara_elem, ds_constitutive%compor, model(1:8)//'.MODELE', ds_constitutive%sigm_pred)
+
 !
 end subroutine
