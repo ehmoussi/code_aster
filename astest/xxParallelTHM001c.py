@@ -28,6 +28,7 @@ test = code_aster.TestCase()
 
 code_aster.init()
 nProc = code_aster.getMPINumberOfProcs()
+rank = code_aster.getMPIRank()
 parallel= (nProc>1)
 
 if (parallel):
@@ -220,14 +221,24 @@ elif MAIL.hasLocalGroupOfNodes('N_test2') :
         VALE_REFE=3.46633156137E-05,
     ))
 
+unite=80
+if parallel:
+    DEFI_FICHIER(UNITE=unite, TYPE='BINARY',FICHIER='./resu_par%d.med'%rank)
+else:
+    DEFI_FICHIER(UNITE=unite, TYPE='BINARY',FICHIER='./resu_seq.med')
 
-# if parallel:
-#     rank = code_aster.getMPIRank()
-#     resnonl.printMedFile('/tmp/par_%d.resu.med'%rank)
-# else:
-#     resnonl.printMedFile('/tmp/seq.resu.med')
+IMPR_RESU(
+           FORMAT = 'MED',
+           UNITE = unite,
+           RESU = _F(
+                     RESULTAT=resnonl,
+                     NOM_CHAM='DEPL',
+                     GROUP_MA=('Zsup', 'Zinf'),
+                     ),
+           )
 
-# at least it pass here!
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
+
 test.printSummary()
 
 FIN()

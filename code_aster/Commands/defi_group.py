@@ -20,7 +20,7 @@
 # person_in_charge: nicolas.sellenet@edf.fr
 
 from ..Supervis import ExecuteCommand
-from libaster import ParallelMesh
+from ..Objects import ParallelMesh
 
 
 class GroupDefinition(ExecuteCommand):
