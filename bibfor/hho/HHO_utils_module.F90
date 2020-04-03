@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -81,35 +81,18 @@ contains
 !
         call dismoi('EXI_HHO', model, 'MODELE', repk=answer)
         if (answer .eq. 'OUI') then
-            call dismoi('EXI_HHO010', model, 'MODELE', repk=answer)
+            call dismoi('EXI_HHO_QUAD', model, 'MODELE', repk=answer)
             if (answer .eq. 'OUI') then
-                call hhoData%initialize(0,1,0,ASTER_FALSE,0.d0,ASTER_FALSE,ASTER_FALSE,ASTER_FALSE)
+                call hhoData%initialize(2,2,2,ASTER_FALSE,0.d0,ASTER_FALSE,ASTER_FALSE, &
+                                        ASTER_FALSE)
             else
-                call dismoi('EXI_HHO111', model, 'MODELE', repk=answer)
+                call dismoi('EXI_HHO_LINE', model, 'MODELE', repk=answer)
                 if (answer .eq. 'OUI') then
-                    call hhoData%initialize(1,1,1,ASTER_FALSE,0.d0,ASTER_FALSE,ASTER_FALSE, &
-                                           ASTER_FALSE)
+                    call hhoData%initialize(1,2,1,ASTER_FALSE,0.d0,ASTER_FALSE,ASTER_FALSE,&
+                                            ASTER_FALSE)
                 else
-                    call dismoi('EXI_HHO222', model, 'MODELE', repk=answer)
-                    if (answer .eq. 'OUI') then
-                        call hhoData%initialize(2,2,2,ASTER_FALSE,0.d0,ASTER_FALSE,ASTER_FALSE, &
-                                                ASTER_FALSE)
-                    else
-                        call dismoi('EXI_HHO121', model, 'MODELE', repk=answer)
-                        if (answer .eq. 'OUI') then
-                            call hhoData%initialize(1,2,1,ASTER_FALSE,0.d0,ASTER_FALSE,ASTER_FALSE,&
-                                                    ASTER_FALSE)
-                        else
-                            call dismoi('EXI_HHO232', model, 'MODELE', repk=answer)
-                            if (answer .eq. 'OUI') then
-                                call hhoData%initialize(2,3,2,ASTER_FALSE,0.d0,ASTER_FALSE,&
-                                                        ASTER_FALSE, ASTER_FALSE)
-                            else
-                                ASSERT(ASTER_FALSE)
-                            end if
-                        end if
-                    endif
-                endif
+                    ASSERT(ASTER_FALSE)
+                end if
             endif
         else
             ASSERT(ASTER_FALSE)

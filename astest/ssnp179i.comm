@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,121 +62,109 @@ times = DEFI_LIST_INST(
 )
 
 
-# Nombre de calculs :
-nb_calcul = 1
-model_ = ['3D_HHO_121']
+model = AFFE_MODELE(
+    AFFE=_F(MODELISATION=('3D_HHO', ), FORMULATION='LINEAIRE', PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
 
+depl = AFFE_CHAR_CINE(
+    MECA_IMPO=_F(DX=0.0, DY=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
+)
 
-for i in range(nb_calcul):
+plan = AFFE_CHAR_CINE(
+    MECA_IMPO=_F(DZ=0.0, TOUT='OUI'), MODELE=model, INFO=1,
+)
 
-    model = AFFE_MODELE(
-        AFFE=_F(MODELISATION=(model_[i], ), PHENOMENE='MECANIQUE', TOUT='OUI'),
-        MAILLAGE=mesh
-    )
+load = AFFE_CHAR_MECA(
+    FORCE_FACE=_F(FY=0.3125, GROUP_MA=('load', )), MODELE=model
+)
 
-    depl = AFFE_CHAR_CINE(
-        MECA_IMPO=_F(DX=0.0, DY=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
-    )
+resnonl = STAT_NON_LINE(
+    CHAM_MATER=fieldmat,
+    COMPORTEMENT=_F(DEFORMATION='GDEF_LOG',
+                    RELATION='VMIS_ISOT_TRAC', TOUT='OUI'),
+    CONVERGENCE=_F(ITER_GLOB_MAXI=12, RESI_GLOB_RELA=1e-6),
+    EXCIT=(
+        _F(CHARGE=depl, TYPE_CHARGE='FIXE_CSTE'),
+        _F(CHARGE=plan, TYPE_CHARGE='FIXE_CSTE'),
+        _F(CHARGE=load, FONC_MULT=rampe,
+           TYPE_CHARGE='FIXE_CSTE'),
+    ),
+    INCREMENT=_F(LIST_INST=times),
+    MODELE=model,
+    NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
+    SOLVEUR=_F(METHODE='MUMPS',),
+    HHO=_F(OPTIMISATION='TEMPS', STABILISATION='AUTO',),
+    INFO=1,
+)
 
-    plan = AFFE_CHAR_CINE(
-        MECA_IMPO=_F(DZ=0.0, TOUT='OUI'), MODELE=model, INFO=1,
-    )
+resnonl = CALC_CHAMP(
+    reuse=resnonl,
+    CHAM_MATER=fieldmat,
+    CRITERES=('SIEQ_NOEU',),
+    MODELE=model,
+    RESULTAT=resnonl,
+)
 
-    load = AFFE_CHAR_MECA(
-        FORCE_FACE=_F(FY=0.3125, GROUP_MA=('load', )), MODELE=model
-    )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('A', ),
+                  REFERENCE='AUTRE_ASTER',
+                  RESULTAT=resnonl,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  VALE_CALC=7.006630454983615,
+                  VALE_REFE=7.00031,
+                  CRITERE='RELATIF',
+                  PRECISION=2.E-3,),
+          )
 
-    resnonl = STAT_NON_LINE(
-        CHAM_MATER=fieldmat,
-        COMPORTEMENT=_F(DEFORMATION='GDEF_LOG',
-                        RELATION='VMIS_ISOT_TRAC', TOUT='OUI'),
-        CONVERGENCE=_F(ITER_GLOB_MAXI=12, RESI_GLOB_RELA=1e-6),
-        EXCIT=(
-            _F(CHARGE=depl, TYPE_CHARGE='FIXE_CSTE'),
-            _F(CHARGE=plan, TYPE_CHARGE='FIXE_CSTE'),
-            _F(CHARGE=load, FONC_MULT=rampe,
-               TYPE_CHARGE='FIXE_CSTE'),
-        ),
-        INCREMENT=_F(LIST_INST=times),
-        MODELE=model,
-        NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
-        SOLVEUR=_F(METHODE='MUMPS',),
-        HHO=_F(OPTIMISATION='TEMPS', STABILISATION='AUTO',),
-        INFO=1,
-    )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('A', ),
+                  REFERENCE='AUTRE_ASTER',
+                  RESULTAT=resnonl,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=-6.232083507370928,
+                  VALE_REFE=-6.23907,
+                  CRITERE='RELATIF',
+                  PRECISION=1.E-2,),
+          )
 
-    resnonl = CALC_CHAMP(
-        reuse=resnonl,
-        CHAM_MATER=fieldmat,
-        CRITERES=('SIEQ_NOEU',),
-        MODELE=model,
-        RESULTAT=resnonl,
-    )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('A',),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='SIEQ_NOEU',
+                  NOM_CMP='TRSIG',
+                  VALE_CALC=-0.01825686610404665,
+                  CRITERE='RELATIF',),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('A', ),
-                      REFERENCE='AUTRE_ASTER',
-                      RESULTAT=resnonl,
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DY',
-                      VALE_CALC=7.006630454983615,
-                      VALE_REFE=7.00031,
-                      CRITERE='RELATIF',
-                      PRECISION=2.E-3,),
-              )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('C', ),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  VALE_CALC=1.4827369121017604,
+                  CRITERE='RELATIF',),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('A', ),
-                      REFERENCE='AUTRE_ASTER',
-                      RESULTAT=resnonl,
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DX',
-                      VALE_CALC=-6.232083507370928,
-                      VALE_REFE=-6.23907,
-                      CRITERE='RELATIF',
-                      PRECISION=1.E-2,),
-              )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('C', ),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=-0.2116072966640925,
+                  CRITERE='RELATIF',),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('A',),
-                      RESULTAT=resnonl,
-                      NOM_CHAM='SIEQ_NOEU',
-                      NOM_CMP='TRSIG',
-                      VALE_CALC=-0.01825686610404665,
-                      CRITERE='RELATIF',),
-              )
-
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('C', ),
-                      RESULTAT=resnonl,
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DY',
-                      VALE_CALC=1.4827369121017604,
-                      CRITERE='RELATIF',),
-              )
-
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('C', ),
-                      RESULTAT=resnonl,
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DX',
-                      VALE_CALC=-0.2116072966640925,
-                      CRITERE='RELATIF',),
-              )
-
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('C', ),
-                      RESULTAT=resnonl,
-                      NOM_CHAM='SIEQ_NOEU',
-                      NOM_CMP='TRSIG',
-                      VALE_CALC=0.8192058115698024,
-                      CRITERE='RELATIF',),
-              )
-
-    DETRUIRE(CONCEPT=_F(NOM=(model, resnonl, depl, load, plan),),
-             INFO=1,)
-
-#IMPR_RESU(FORMAT='MED', RESU=_F( RESULTAT=resnonl), UNITE=80)
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('C', ),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='SIEQ_NOEU',
+                  NOM_CMP='TRSIG',
+                  VALE_CALC=0.8192058115698024,
+                  CRITERE='RELATIF',),
+          )
 
 
 FIN()

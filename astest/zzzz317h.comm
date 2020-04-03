@@ -1,0 +1,210 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: irmela.zentner at edf.fr
+
+# Validation de la prise en compte de l'option d'interpolation déclarée
+# dans les fonctions fournies à GENE_ACCE_SEISME
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),)
+
+graine = 1000                   # Graine
+t_pas = 0.01                    # Fréquence d'échantillonage du signal
+t_DPF = 10.                     # Durée de phase forte 5-95% de l'intensité d'Arias
+t_init = 2.                     # Instant du début de la durée de phase forte
+n_tir = 2                       # Nbr d'accélérogrammes
+n_point = t_DPF / t_pas * 8.    # Longueur de l'accélérogramme
+fc = 0.05                       # Fréquence de coupure (filtre passe-bas)
+fmin = 0.3                      # Fréquence minimale pour vérification du spectre cible
+fmax = 50.                      # Fréquence maximale pour vérification du spectre cible
+fpas = 0.01                     # Pas fréquentiel pour vérification du spectre cible
+amor = 0.05                     # Amortissement de l'accélérogramme cible
+
+#----------------------------------------------------------------------------------
+# Lecture du fichier de spectre grossier + INTERPOL LIN
+SPECTRE0=LIRE_FONCTION(UNITE=29,
+                   SEPAR=',',
+                   NOM_PARA='FREQ',
+                   PROL_DROITE='CONSTANT',
+                   PROL_GAUCHE='LINEAIRE',
+                   INTERPOL='LIN',
+                   INDIC_PARA=[1,1],
+                   INDIC_RESU=[1,2])
+
+# Lecture du fichier de spectre grossier + INTERPOL LOG
+SPECTRE1=LIRE_FONCTION(UNITE=29,
+                   SEPAR=',',
+                   NOM_PARA='FREQ',
+                   PROL_DROITE='CONSTANT',
+                   PROL_GAUCHE='LINEAIRE',
+                   INTERPOL='LOG',
+                   INDIC_PARA=[1,1],
+                   INDIC_RESU=[1,2])
+
+#----------------------------------------------------------------------------------
+# Lecture du fichier de spectre fin => référence
+SPECTRE2=LIRE_FONCTION(UNITE=30,
+                   SEPAR=',',
+                   NOM_PARA='FREQ',
+                   PROL_DROITE='CONSTANT',
+                   PROL_GAUCHE='LINEAIRE',
+                   INTERPOL='LIN',
+                   INDIC_PARA=[1,1],
+                   INDIC_RESU=[1,2])                   
+                   
+#----------------------------------------------------------------------------------
+#Definition de la liste de frequence en fonction des parametres
+L_FREQ = DEFI_LIST_REEL(DEBUT=fmin, INTERVALLE=(_F(JUSQU_A=1.0, PAS=fpas,),_F(JUSQU_A=10.0, PAS=10*fpas,),_F(JUSQU_A=fmax, PAS=50*fpas,),) );
+
+#----------------------------------------------------------------------------------
+#Generation des acceleros
+ACCE0=GENE_ACCE_SEISME( INIT_ALEA = graine,
+                        PAS_INST = t_pas,
+                        PESANTEUR = 9.81,
+                        DUREE_PHASE_FORTE =t_DPF,
+                        NB_POIN = n_point,
+                        FREQ_FILTRE = fc,
+                        SPEC_UNIQUE=_F(SPEC_OSCI = SPECTRE0,
+                                        AMOR_REDUIT = amor,
+                                        NB_ITER = 20,
+                                        METHODE = 'NIGAM',
+                                        LIST_FREQ = L_FREQ,),
+                        MODULATION = _F(TYPE = 'GAMMA',
+                                        INST_INI = t_init,
+                                        ),)
+
+ACCE1=GENE_ACCE_SEISME( INIT_ALEA = graine,
+                        PAS_INST = t_pas,
+                        PESANTEUR = 9.81,
+                        DUREE_PHASE_FORTE =t_DPF,
+                        NB_POIN = n_point,
+                        FREQ_FILTRE = fc,
+                        SPEC_UNIQUE=_F(SPEC_OSCI = SPECTRE1,
+                                        AMOR_REDUIT = amor,
+                                        NB_ITER = 20,
+                                        METHODE = 'NIGAM',
+                                        LIST_FREQ = L_FREQ,),
+                        MODULATION = _F(TYPE = 'GAMMA',
+                                        INST_INI = t_init,
+                                        ),)
+
+ACCE2=GENE_ACCE_SEISME( INIT_ALEA = graine,
+                        PAS_INST = t_pas,
+                        PESANTEUR = 9.81,
+                        DUREE_PHASE_FORTE =t_DPF,
+                        NB_POIN = n_point,
+                        FREQ_FILTRE = fc,
+                        SPEC_UNIQUE=_F(SPEC_OSCI = SPECTRE2,
+                                        AMOR_REDUIT = amor,
+                                        NB_ITER = 20,
+                                        METHODE = 'NIGAM',
+                                        LIST_FREQ = L_FREQ,),
+                        MODULATION = _F(TYPE = 'GAMMA',
+                                        INST_INI = t_init,
+                                        ),)
+#----------------------------------------------------------------------------------
+# Extraction des accélérogrammes de la table
+
+ACC0=RECU_FONCTION(TABLE=ACCE0,
+                   FILTRE=_F(NOM_PARA = 'NUME_ORDRE',VALE_I = 1),
+                   NOM_PARA_TABL='FONCTION',)
+
+ACC1=RECU_FONCTION(TABLE=ACCE1,
+                   FILTRE=_F(NOM_PARA = 'NUME_ORDRE',VALE_I = 1),
+                   NOM_PARA_TABL='FONCTION',)
+                   
+ACC2=RECU_FONCTION(TABLE=ACCE2,
+                   FILTRE=_F(NOM_PARA = 'NUME_ORDRE',VALE_I = 1),
+                   NOM_PARA_TABL='FONCTION',)
+
+# Reconstruction des spectres
+
+SPECOUT0 = CALC_FONCTION(SPEC_OSCI=_F(TYPE_RESU='FONCTION',
+                                      FONCTION = ACC0,
+                                      AMOR_REDUIT=0.05,
+                                      NORME= 9.81))
+
+SPECOUT1 = CALC_FONCTION(SPEC_OSCI=_F(TYPE_RESU='FONCTION',
+                                      FONCTION = ACC1,
+                                      AMOR_REDUIT=0.05,
+                                      NORME= 9.81))
+
+SPECOUT2 = CALC_FONCTION(SPEC_OSCI=_F(TYPE_RESU='FONCTION',
+                                      FONCTION = ACC2,
+                                      AMOR_REDUIT=0.05,
+                                      NORME= 9.81))
+
+# Comparaison des spectres issus du spectre grossier (cas LIN et LOG)
+# avec le spectre de référence issu du spectre fin.
+
+TABLIN = CREA_TABLE(FONCTION=_F(FONCTION=SPECOUT0))
+TABLOG = CREA_TABLE(FONCTION=_F(FONCTION=SPECOUT1))
+TABREF = CREA_TABLE(FONCTION=_F(FONCTION=SPECOUT2))
+
+DIFFLIN = FORMULE(VALE='abs(LIN-REF)',
+                 NOM_PARA=('LIN','REF'),)
+DIFFLOG = FORMULE(VALE='abs(LOG-REF)',
+                 NOM_PARA=('LOG','REF'),)
+
+
+TABLIN = CALC_TABLE(reuse=TABLIN, 
+                    TABLE=TABLIN,
+                    ACTION=(_F(OPERATION='RENOMME',
+                               NOM_PARA=('ACCE', 'LIN')),
+                            _F(OPERATION='COMB',
+                               TABLE=TABREF,
+                               NOM_PARA='FREQ'),
+                            _F(OPERATION='RENOMME',
+                               NOM_PARA=('ACCE', 'REF')),
+                            _F(OPERATION='OPER',
+                               NOM_PARA='DIFF_ABS',
+                               FORMULE=DIFFLIN),
+                           )
+                    )
+
+TABLOG = CALC_TABLE(reuse=TABLOG, 
+                    TABLE=TABLOG,
+                    ACTION=(_F(OPERATION='RENOMME',
+                               NOM_PARA=('ACCE', 'LOG')),
+                            _F(OPERATION='COMB',
+                               TABLE=TABREF,
+                               NOM_PARA='FREQ'),
+                            _F(OPERATION='RENOMME',
+                               NOM_PARA=('ACCE', 'REF')),
+                            _F(OPERATION='OPER',
+                               NOM_PARA='DIFF_ABS',
+                               FORMULE=DIFFLOG),
+                           )
+                    )
+
+TEST_TABLE(  TABLE=TABLIN,
+             NOM_PARA='DIFF_ABS',
+             TYPE_TEST = 'MAX',
+             VALE_CALC=0.16444855715661588, 
+             CRITERE='RELATIF',
+             )
+
+TEST_TABLE(  TABLE=TABLOG,
+             NOM_PARA='DIFF_ABS',
+             TYPE_TEST = 'MAX',
+             VALE_CALC=0.00042331295493511223, 
+             CRITERE='RELATIF',
+             )
+
+FIN()

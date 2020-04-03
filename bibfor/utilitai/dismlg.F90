@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,7 +55,7 @@ subroutine dismlg(questi, nomobz, repi, repkz, ierd)
     integer :: dimge(3)
     aster_logical :: melang
     character(len=8) :: calcri, mailla, nomacr, modele, typemail, k8bid, typmod2, typmod3
-    character(len=16) :: nomte, phenom, nomodl, tyvois
+    character(len=16) :: nomte, phenom, nomodl, tyvois, formul
     character(len=19) :: nomob
     character(len=32) :: repk
     integer :: jlgrf, iret, nbgrel, igrel, nel, itypel, jsssa, n1
@@ -231,10 +231,8 @@ subroutine dismlg(questi, nomobz, repi, repkz, ierd)
                     if (nomte .eq. 'MECA_POU_D_EM') then
                         repk='OUI'
                         exit
-!
                     endif
-!
-!
+
                 else if (questi.eq.'EXI_THM') then
                     call teattr('C', 'TYPMOD2', typmod2, iret, typel=nomte)
                     if (typmod2 .eq. 'THM') then
@@ -247,42 +245,42 @@ subroutine dismlg(questi, nomobz, repi, repkz, ierd)
 
                 else if (questi.eq.'EXI_HHO') then
                     call teattr('C', 'TYPMOD2', typmod2, iret, typel=nomte)
-                    if (typmod2(1:3) .eq. 'HHO') then
+                    if (typmod2 .eq. 'HHO') then
                         repk='OUI'
+                    else
+                        repk='NON'
                     endif
 
                 else if (questi.eq.'EXI_NO_HHO') then
                     call teattr('C', 'TYPMOD2', typmod2, iret, typel=nomte)
-                    if (typmod2(1:3) .ne. 'HHO') then
+                    if (typmod2 .eq. 'HHO') then
+                        repk='NON'
+                    else
                         repk='OUI'
                     endif
 
-                else if (questi.eq.'EXI_HHO010') then
-                    call teattr('C', 'TYPMOD2', typmod2, iret, typel=nomte)
-                    if (typmod2 .eq. 'HHO010') then
-                        repk='OUI'
+                else if (questi.eq.'EXI_HHO_LINE') then
+                    if (lteatt('TYPMOD2','HHO', typel=nomte)) then
+                        call teattr('C', 'FORMULATION', formul, iret, typel=nomte)
+                        if (formul .eq. 'HHO_LINE') then
+                            repk='OUI'
+                        else
+                            repk='NON'
+                        endif
+                    else
+                        repk='NON'
                     endif
 
-                else if (questi.eq.'EXI_HHO111') then
-                    call teattr('C', 'TYPMOD2', typmod2, iret, typel=nomte)
-                    if (typmod2 .eq. 'HHO111') then
-                        repk='OUI'
-                    endif
-
-                else if (questi.eq.'EXI_HHO222') then
-                    call teattr('C', 'TYPMOD2', typmod2, iret, typel=nomte)
-                    if (typmod2 .eq. 'HHO222') then
-                        repk='OUI'
-                    endif
-                else if (questi.eq.'EXI_HHO121') then
-                    call teattr('C', 'TYPMOD2', typmod2, iret, typel=nomte)
-                    if (typmod2 .eq. 'HHO121') then
-                        repk='OUI'
-                    endif
-                else if (questi.eq.'EXI_HHO232') then
-                    call teattr('C', 'TYPMOD2', typmod2, iret, typel=nomte)
-                    if (typmod2 .eq. 'HHO232') then
-                        repk='OUI'
+                else if (questi.eq.'EXI_HHO_QUAD') then
+                    if (lteatt('TYPMOD2','HHO', typel=nomte)) then
+                        call teattr('C', 'FORMULATION', formul, iret, typel=nomte)
+                        if (formul .eq. 'HHO_QUAD') then
+                            repk='OUI'
+                        else
+                            repk='NON'
+                        endif
+                    else
+                        repk='NON'
                     endif
 !
                 else

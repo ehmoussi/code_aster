@@ -21,40 +21,20 @@ from ..Utilities import _
 
 cata_msg = {
 
-    1 : _("""
-Pour affecter une liste de modélisations, il faut qu'elles soient de même dimension topologique.
-"""),
+    1 : _("""Pour affecter une liste de modélisations, il faut qu'elles soient de même dimension topologique."""),
 
-    2 : _("""
-La maille %(k1)s de type %(k2)s n'a pas pu être affectée.
-"""),
+    2 : _("""La maille %(k1)s de type %(k2)s n'a pas pu être affectée."""),
 
-    3 : _("""
-Probable erreur de l'utilisateur :
-  La modélisation choisie est axisymétrique ou plane.
-  Il faut que le maillage soit dans le plan z=0.
-  Ce n'est pas le cas.
-"""),
+    3 : _("""La modélisation choisie est axisymétrique ou plane. Il faut que le maillage soit dans le plan z=0 et ce n'est pas le cas."""),
 
-    4 : _("""
-Sur les %(i1)d mailles du maillage %(k1)s, on a demandé l'affectation de %(i2)d, on a pu en affecter %(i3)d
-"""),
+    4 : _("""Sur les %(i1)d mailles du maillage %(k1)s, on a demandé l'affectation de %(i2)d, on a pu en affecter %(i3)d."""),
 
 
-    5 : _("""
-Votre modèle doit contenir au moins un élément fini car il n'est pas possible de n'avoir que des macro-éléments si le maillage est lu par LIRE_MAILLAGE.
-  -> Risque & Conseil :
-Si vous voulez définir entièrement un modèle avec des macro-éléments, il faut définir ces derniers avec DEFI_MAILLAGE.
-"""),
+    5 : _("""Votre modèle doit contenir au moins un élément fini car il n'est pas possible de n'avoir que des macro-éléments si le maillage est lu par LIRE_MAILLAGE. Si vous voulez définir entièrement un modèle avec des macro-éléments, il faut définir ces derniers avec DEFI_MAILLAGE."""),
 
-    6 : _("""
-Aucune maille du maillage %(k1)s n'a été affectée par des éléments finis.
-"""),
+    6 : _("""Aucune maille du maillage %(k1)s n'a été affectée par des éléments finis."""),
 
-    7 : _("""
-Attention l'élément HEXA8 en 3D_SI ne fonctionne correctement que sur les parallélépipèdes.
-Sur les éléments quelconques on peut obtenir des résultats faux.
-"""),
+    7 : _("""Attention l'élément HEXA8 en 3D_SI ne fonctionne correctement que sur les parallélépipèdes. Sur les éléments quelconques on peut obtenir des résultats faux."""),
 
     8 : _("""Liste des noeuds affectés pour la modélisation:"""),
 
@@ -64,50 +44,32 @@ Sur les éléments quelconques on peut obtenir des résultats faux.
 
     11 : _("""On ne peut utiliser qu'un seul phénomène."""),
 
-    12 : _("""Le modèle est basé sur le maillage parallèle %(k2)s. La méthode de distribution des éléments doit être CENTRALISE (et non pas %(k1)s)"""),
+    12 : _("""La formulation %(k1)s n'est pas disponible pour les modélisations choisies."""),
 
-    14 : _("""
-Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D
 
-  -> Risque & Conseil :
-     Sur ce genre de modèle, on ne sait pas déterminer s'il est 2D ou 3D.
-     Parfois, cela empêche de faire le "bon choix".
+    14 : _("""Le modèle contient un mélange d'éléments finis 2D (plan Oxy) et 3D. Sur ce genre de modèle, on ne sait pas déterminer s'il est 2D ou 3D.
+Parfois, cela empêche de faire le "bon choix". Cette alarme risque de se transformer en erreur fatale dans la suite du calcul.
 """),
 
-    20 : _(""" Modélisation     Type maille  Élément fini     Nombre"""),
+    20 : _(""" Modélisation     Formulation      Type maille  Élément fini     Nombre"""),
 
-    21 : _(""" %(k1)-16s %(k2)-12s %(k3)-16s %(i1)d"""),
+    21 : _(""" %(k1)-16s %(k2)-16s %(k3)-12s %(k4)-16s %(i1)d"""),
 
     38 : _("""%(k1)-8s %(k2)-8s %(k3)-8s %(k4)-8s %(k5)-8s %(k6)-8s %(k7)-8s %(k8)-8s"""),
 
-    53 : _("""
-  -> Le maillage est 3D (tous les noeuds ne sont pas dans le même plan Z = constante),
-     mais les éléments du modèle sont de dimension 2.
-
-  -> Risque & Conseil :
-     Si les facettes supportant les éléments ne sont pas dans un plan Z = constante,
-     les résultats seront faux.
-     Assurez-vous de la cohérence entre les mailles à affecter et la
-     modélisation souhaitée dans la commande AFFE_MODELE.
+    53 : _("""Le maillage est 3D (tous les noeuds ne sont pas dans le même plan Z = constante), mais les éléments du modèle sont de dimension 2.
+Si les facettes supportant les éléments ne sont pas dans un plan Z = constante, les résultats seront faux.
+Assurez-vous de la cohérence entre les mailles à affecter et la modélisation souhaitée dans la commande AFFE_MODELE.
 """),
 
-    54 : _("""
-Il est interdit de mélanger des éléments discrets 2D et 3D dans le même modèle.
+    54 : _("""Il est interdit de mélanger des éléments discrets 2D et 3D dans le même modèle."""),
+
+
+    58 : _("""Les éléments du modèle sont de dimension 2. Mais les noeuds du maillage sont un même plan Z qui n'est pas à l'origine.
+Il est d'usage d'utiliser un maillage dans le plan Z passant par l'origine pour les modélisations planes ou axisymétriques
 """),
 
-
-    58 : _("""
- -> Bizarre :
-     Les éléments du modèle sont de dimension 2.
-     Mais les noeuds du maillage sont un même plan Z = a avec a != 0.,
-
- -> Risque & Conseil :
-     Il est d'usage d'utiliser un maillage Z=0. pour les modélisations planes ou Axis.
-"""),
-
-    63: _("""
-  -> La maille %(k1)s porte un élément fini de bord, mais elle ne borde
-     aucun élément ayant une "rigidité".
+    63: _("""La maille %(k1)s porte un élément fini de bord, mais elle ne borde aucun élément ayant une "rigidité".
 
   -> Risque & Conseil :
      Cela peut entraîner des problèmes de "pivot nul" lors de la résolution.
@@ -117,8 +79,7 @@ Il est interdit de mélanger des éléments discrets 2D et 3D dans le même mod�
      de l'opérande TOUT='OUI'.
 """),
 
-    64: _("""
-  -> Le modèle %(k1)s n'a pas d'éléments sachant calculer la rigidité.
+    64: _("""Le modèle n'a pas d'éléments sachant calculer la rigidité.
 
   -> Risque & Conseil :
      Ce modèle ne pourra donc pas (en général) être utilisé pour faire des calculs.
@@ -161,5 +122,6 @@ Il est interdit de mélanger des éléments discrets 2D et 3D dans le même mod�
 
 """),
 
+    71 : _("""Le modèle est basé sur le maillage parallèle %(k2)s. La méthode de distribution des éléments doit être CENTRALISE (et non pas %(k1)s)"""),
 
 }

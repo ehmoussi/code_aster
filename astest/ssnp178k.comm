@@ -54,9 +54,6 @@ times = DEFI_LIST_INST(
 
 FY = FORMULE(NOM_PARA=('X', 'Y', 'INST'), VALE='0.1125')
 
-# Nombre de calculs :
-nb_calcul = 1
-model_ = [ 'D_PLAN_HHO_222']
 
 AY = [ 2.13036294229]
 AX = [-1.61283391525]
@@ -65,111 +62,104 @@ CY = [0.350867874359]
 CX = [ -0.0257117599263]
 CT = [ 0.417452611243]
 
-for i in range(nb_calcul):
+model = AFFE_MODELE(
+    AFFE=_F(MODELISATION='D_PLAN_HHO', FORMULATION='QUADRATIQUE', PHENOMENE='MECANIQUE', TOUT='OUI'),
+    MAILLAGE=mesh
+)
 
-    model = AFFE_MODELE(
-        AFFE=_F(MODELISATION=(model_[i], ), PHENOMENE='MECANIQUE', TOUT='OUI'),
-        MAILLAGE=mesh
-    )
+depl = AFFE_CHAR_CINE(
+    MECA_IMPO=_F(DX=0.0, DY=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
+)
 
-    depl = AFFE_CHAR_CINE(
-        MECA_IMPO=_F(DX=0.0, DY=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
-    )
+load = AFFE_CHAR_MECA_F(
+    FORCE_CONTOUR=_F(FY=FY, GROUP_MA=('load', )), MODELE=model
+)
 
-    load = AFFE_CHAR_MECA_F(
-        FORCE_CONTOUR=_F(FY=FY, GROUP_MA=('load', )), MODELE=model
-    )
+resnonl = STAT_NON_LINE(
+    CHAM_MATER=fieldmat,
+    COMPORTEMENT=_F(DEFORMATION='PETIT',
+                    RELATION='VMIS_ISOT_LINE', TOUT='OUI'),
+    CONVERGENCE=_F(ITER_GLOB_MAXI=10, RESI_GLOB_RELA=1e-6),
+    EXCIT=(
+        _F(CHARGE=depl, TYPE_CHARGE='FIXE_CSTE'),
+        _F(CHARGE=load, FONC_MULT=rampe,
+           TYPE_CHARGE='FIXE_CSTE'),
+    ),
+    INCREMENT=_F(LIST_INST=times),
+    MODELE=model,
+    NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
+    SOLVEUR=_F(METHODE='MUMPS'),
+    HHO=_F(OPTIMISATION='TEMPS',),
+    INFO=1,
+)
 
-    resnonl = STAT_NON_LINE(
-        CHAM_MATER=fieldmat,
-        COMPORTEMENT=_F(DEFORMATION='PETIT',
-                        RELATION='VMIS_ISOT_LINE', TOUT='OUI'),
-        CONVERGENCE=_F(ITER_GLOB_MAXI=10, RESI_GLOB_RELA=1e-6),
-        EXCIT=(
-            _F(CHARGE=depl, TYPE_CHARGE='FIXE_CSTE'),
-            _F(CHARGE=load, FONC_MULT=rampe,
-               TYPE_CHARGE='FIXE_CSTE'),
-        ),
-        INCREMENT=_F(LIST_INST=times),
-        MODELE=model,
-        NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
-        SOLVEUR=_F(METHODE='MUMPS'),
-        HHO=_F(OPTIMISATION='TEMPS',),
-        INFO=1,
-    )
+resnonl = CALC_CHAMP(
+    reuse=resnonl,
+    CHAM_MATER=fieldmat,
+    CRITERES=('SIEQ_NOEU',),
+    MODELE=model,
+    RESULTAT=resnonl,
+)
 
-    resnonl = CALC_CHAMP(
-        reuse=resnonl,
-        CHAM_MATER=fieldmat,
-        CRITERES=('SIEQ_NOEU',),
-        MODELE=model,
-        RESULTAT=resnonl,
-    )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('A', ),
+                  REFERENCE='AUTRE_ASTER',
+                  RESULTAT=resnonl,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  VALE_CALC=AY,
+                  VALE_REFE=2.13651,
+                  CRITERE='RELATIF',
+                  PRECISION=1.E-2,),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('A', ),
-                      REFERENCE='AUTRE_ASTER',
-                      RESULTAT=resnonl,
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DY',
-                      VALE_CALC=AY[i],
-                      VALE_REFE=2.13651,
-                      CRITERE='RELATIF',
-                      PRECISION=1.E-2,),
-              )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('A', ),
+                  REFERENCE='AUTRE_ASTER',
+                  RESULTAT=resnonl,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=AX,
+                  VALE_REFE=-1.61818,
+                  CRITERE='RELATIF',
+                  PRECISION=1.E-2,),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('A', ),
-                      REFERENCE='AUTRE_ASTER',
-                      RESULTAT=resnonl,
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DX',
-                      VALE_CALC=AX[i],
-                      VALE_REFE=-1.61818,
-                      CRITERE='RELATIF',
-                      PRECISION=1.E-2,),
-              )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('A',),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='SIEQ_NOEU',
+                  NOM_CMP='TRSIG',
+                  VALE_CALC=AT,
+                  CRITERE='RELATIF',),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('A',),
-                      RESULTAT=resnonl,
-                      NOM_CHAM='SIEQ_NOEU',
-                      NOM_CMP='TRSIG',
-                      VALE_CALC=AT[i],
-                      CRITERE='RELATIF',),
-              )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('C', ),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DY',
+                  VALE_CALC=CY,
+                  CRITERE='RELATIF',),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('C', ),
-                      RESULTAT=resnonl,
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DY',
-                      VALE_CALC=CY[i],
-                      CRITERE='RELATIF',),
-              )
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('C', ),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=CX,
+                  CRITERE='RELATIF',),
+          )
 
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('C', ),
-                      RESULTAT=resnonl,
-                      NOM_CHAM='DEPL',
-                      NOM_CMP='DX',
-                      VALE_CALC=CX[i],
-                      CRITERE='RELATIF',),
-              )
-
-    TEST_RESU(RESU=_F(INST=1.0,
-                      GROUP_NO=('C', ),
-                      RESULTAT=resnonl,
-                      NOM_CHAM='SIEQ_NOEU',
-                      NOM_CMP='TRSIG',
-                      VALE_CALC=CT[i],
-                      CRITERE='RELATIF',),
-              )
-
-    DETRUIRE(CONCEPT=_F(NOM=(model, resnonl, depl, load,),),
-             INFO=1,)
-
-#IMPR_RESU(FORMAT='MED', RESU=_F( RESULTAT=resnonl), UNITE=80)
+TEST_RESU(RESU=_F(INST=1.0,
+                  GROUP_NO=('C', ),
+                  RESULTAT=resnonl,
+                  NOM_CHAM='SIEQ_NOEU',
+                  NOM_CMP='TRSIG',
+                  VALE_CALC=CT,
+                  CRITERE='RELATIF',),
+          )
 
 
 FIN()
