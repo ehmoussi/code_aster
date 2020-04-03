@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine digou2(option, nomte, ndim, nbt, nno,&
-                  nc, ulm, dul, pgl, iret)
-    implicit none
+! person_in_charge: jean-luc.flejou at edf.fr
+!
+subroutine digou2(option, nomte,&
+                  lMatr, lVect, lSigm, lVari,&
+                  rela_comp,&
+                  ndim, nbt, nno,&
+                  nc, dul, pgl)
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/digouj.h"
 #include "asterfort/infdis.h"
@@ -29,11 +35,12 @@ subroutine digou2(option, nomte, ndim, nbt, nno,&
 #include "asterfort/utpslg.h"
 #include "blas/dcopy.h"
 !
-    character(len=*) :: option, nomte
-    integer :: ndim, nbt, nno, nc, iret
-    real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+character(len=*) :: option, nomte
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari
+character(len=*), intent(in) :: rela_comp
+integer :: ndim, nbt, nno, nc
+real(kind=8) :: dul(12), pgl(3, 3)
 !
-! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 !  IN
@@ -43,18 +50,20 @@ subroutine digou2(option, nomte, ndim, nbt, nno,&
 !     nbt      : nombre de terme dans la matrice de raideur
 !     nno      : nombre de noeuds de l'élément
 !     nc       : nombre de composante par noeud
-!     ulm      : déplacement moins
 !     dul      : incrément de déplacement
 !     pgl      : matrice de passage de global a local
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jdc, irep, imat, ivarim, ifono, icontp, ivarip, icompo, icontm, neq
+    integer :: jdc, irep, imat, ivarim, ifono, icontp, ivarip, icontm, neq
     real(kind=8) :: r8bid, klv(78), klv2(78)
     character(len=8) :: k8bid
 !
 !   paramètres en entrée
     call jevech('PCADISK', 'L', jdc)
+    call jevech('PMATERC', 'L', imat)
+    call jevech('PCONTMR', 'L', icontm)
+    call jevech('PVARIMR', 'L', ivarim)
 !   matrice de rigidité en repère local
     call infdis('REPK', irep, r8bid, k8bid)
     if (irep .eq. 1) then
@@ -67,32 +76,27 @@ subroutine digou2(option, nomte, ndim, nbt, nno,&
         call dcopy(nbt, zr(jdc), 1, klv, 1)
     endif
 !
-    call jevech('PCOMPOR', 'L', icompo)
-!
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
-        call jevech('PMATERC', 'L', imat)
-        call jevech('PCONTMR', 'L', icontm)
-        call jevech('PVARIMR', 'L', ivarim)
+    ifono  = 1
+    icontp = 1
+    ivarip = 1
+    if (lVect) then
         call jevech('PVECTUR', 'E', ifono)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
-    elseif (option.eq.'RIGI_MECA_TANG') then
-        call jevech('PMATERC', 'L', imat)
-        call jevech('PCONTMR', 'L', icontm)
-        call jevech('PVARIMR', 'L', ivarim)
-        ifono = 1
-        icontp= 1
-        ivarip= 1
     endif
 !   relation de comportement : élastique partout
 !   sauf suivant Y local : élasto-plastique VMIS_ISOT_TRAC
     neq = nno*nc
-    call digouj(option, zk16(icompo), nno, nbt, neq,&
+    call digouj(option, rela_comp, nno, nbt, neq,&
                 nc, zi(imat), dul, zr(icontm), zr(ivarim),&
                 pgl, klv, klv2, zr(ivarip), zr(ifono),&
                 zr(icontp), nomte)
 !
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imat)
         if (ndim .eq. 3) then
             call utpslg(nno, nc, pgl, klv, zr(imat))

@@ -165,14 +165,14 @@ Pour information :
 """),
 
     23: _("""
-Pour l'élément discret %(k5)s.
+Pour l'élément discret %(k4)s.
 Pour ce comportement la modélisation doit être soit :
 -  DIS_T_L : élément SEG2 et modélisation DIS_T
 -  DIS_T_N : élément POI1 et modélisation DIS_T
 Pour information :
-- Modèle   : <%(k1)s>, Option   : <%(k2)s>
-- Comportement : <%(k3)s>, Relation : <%(k4)s>
-   Maille   : <%(k5)s>
+- Modèle   : <%(k1)s>, Option   : non-linéaire
+- Comportement : <%(k2)s>, Relation : <%(k3)s>
+   Maille   : <%(k4)s>
 """),
 
 

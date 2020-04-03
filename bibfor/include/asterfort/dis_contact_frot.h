@@ -15,10 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 interface
-    subroutine dis_contact_frot(option, nomte, ndim, nbt, nno, &
-                      nc, ulm, dul, pgl, iret)
+    subroutine dis_contact_frot(option, nomte,&
+                                lMatr, lVect, lSigm, lVari,&
+                                ndim, nbt, nno, &
+                                nc, ulm, dul, pgl, iret)
+        aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari
         character(len=*) :: option
         character(len=*) :: nomte
         integer :: ndim

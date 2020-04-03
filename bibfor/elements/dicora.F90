@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine dicora(option, nomte, ndim, nbt, nno,&
-                  nc, ulm, dul, pgl, iret)
-    implicit none
+subroutine dicora(lMatrPred, lMatr, lVect, lSigm, lVari,&
+                  nbt, nno,&
+                  nc, ulm, dul, pgl)
+implicit none
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/dicorn.h"
 #include "asterfort/jevech.h"
 #include "asterfort/pmavec.h"
@@ -28,17 +30,14 @@ subroutine dicora(option, nomte, ndim, nbt, nno,&
 #include "asterfort/utpvlg.h"
 #include "asterfort/vecma.h"
 !
-    character(len=*) :: option, nomte
-    integer :: ndim, nbt, nno, nc, iret
-    real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lMatrPred, lVari
+integer :: nbt, nno, nc
+real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 !  IN
-!     option   : option de calcul
-!     nomte    : nom terme élémentaire
-!     ndim     : dimension du problème
 !     nbt      : nombre de terme dans la matrice de raideur
 !     nno      : nombre de noeuds de l'élément
 !     nc       : nombre de composante par noeud
@@ -61,19 +60,21 @@ subroutine dicora(option, nomte, ndim, nbt, nno,&
     ulp(1:12) = ulm(1:12) + dul(1:12)
 !   relation de comportement de la cornière
     irmetg = 0
-    if (option .eq. 'RIGI_MECA_TANG') irmetg = 1
+    if (lMatrPred) irmetg = 1
     iterat = zi(iiter)
     call dicorn(irmetg, nbt, neq, iterat, zi(imat),&
                 ulm, dul, ulp, zr(icontm), zr(ivarim),&
                 klv, klv2, varipc)
 !   actualisation de la matrice tangente
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imat)
         call utpslg(nno, nc, pgl, klv2, zr(imat))
     endif
 !
-!   calcul des efforts généralisés, des forces nodales et des variables internes
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+!   calcul des efforts généralisés et des forces nodales
+    if (lVect) then
+!       Il faut séparer les deux => petit travail de réflexion
+        ASSERT(lSigm)
         call jevech('PVECTUR', 'E', ifono)
         call jevech('PCONTPR', 'E', icontp)
 !       demi-matrice klv transformée en matrice pleine klc
@@ -101,7 +102,9 @@ subroutine dicora(option, nomte, ndim, nbt, nno,&
         else
             call ut2vlg(nno, nc, pgl, fl, zr(ifono))
         endif
-!       mise a jour des variables internes
+    endif
+!   mise à jour des variables internes 
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
         do ii = 1, 7
             zr(ivarip+ii-1) = varipc(ii)

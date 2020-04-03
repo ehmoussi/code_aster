@@ -45,6 +45,7 @@ CCADISM  = LocatedComponents(phys=PHY.CADISM, type='ELEM',
 CCAORIE  = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
     components=('ALPHA','BETA','GAMMA',))
 
+
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('DX','DY','DRZ',))
 
@@ -128,7 +129,7 @@ class MECA_2D_DIS_TR_N(Element):
                      (SP.PCINFDI, LC.CCINFDI), (OP.AMOR_MECA.PVARCPR, LC.ZVARCPG),
                      (OP.AMOR_MECA.PCOMPOR, LC.CCOMPOR),
                      ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
+            para_out=((SP.PMATUUR, MMATUUR),),
         ),
 
 #       -- te0580 : ne resout que le cas trivial : EPXX=0.
@@ -334,15 +335,19 @@ class MECA_2D_DIS_TR_N(Element):
         OP.RIGI_MECA_TANG(te=47,
             para_in=((SP.PCADISK, CCADISK), (OP.RIGI_MECA_TANG.PCAORIE, CCAORIE),
                      (SP.PCARCRI, LC.CCARCRI), (SP.PITERAT, LC.CITERAT),
-                     (SP.PCINFDI, LC.CCINFDI), (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
-                     (OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA), (SP.PDEPENT, DDL_MECA),
+                     (SP.PCINFDI, LC.CCINFDI), 
+                     (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA),
+                     (SP.PDEPENT, DDL_MECA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PINSTMR, LC.CINSTPR),
                      (SP.PINSTPR, LC.CINSTPR), (SP.PMATERC, LC.CMATERC),
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
                      (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), (SP.PVITENT, DDL_MECA),
                      (SP.PVITPLU, DDL_MECA), ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
+            para_out=((SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, EEFGEGA),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
         ),
 
         OP.SIEF_ELGA(te=42,

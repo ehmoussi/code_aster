@@ -397,6 +397,8 @@ class MECA_DIS_TR_L(Element):
                      (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), (SP.PVITENT, DDL_MECA),
                      (SP.PVITPLU, DDL_MECA), ),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, EEFGEGA),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
                      ),
         ),
 

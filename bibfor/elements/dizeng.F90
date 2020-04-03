@@ -15,11 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dizeng(option, nomte, ndim, nbt, nno,&
+! person_in_charge: jean-luc.flejou at edf.fr
+!
+subroutine dizeng(lMatrPred, lMatr, lVect, lSigm, lVari,&
+                  type_comp, rela_comp,&
+                  nomte, ndim, nbt, nno,&
                   nc, ulm, dul, pgl, iret)
 !
-! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 !        MODÈLE DE D'AMORTISSEUR DE ZENZER GÉNÉRALISÉ
@@ -31,7 +33,6 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 !                      e3    n3,a3
 !
 !  IN
-!     option   : option de calcul
 !     nomte    : nom terme élémentaire
 !     ndim     : dimension du problème
 !     nbt      : nombre de terme dans la matrice de raideur
@@ -43,11 +44,9 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    implicit none
-    character(len=*) :: option, nomte
-    integer :: ndim, nbt, nno, nc, iret
-    real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+implicit none
 !
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8miem.h"
 #include "asterfort/assert.h"
@@ -68,9 +67,15 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 #include "asterfort/zengen.h"
 #include "blas/dcopy.h"
 !
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lMatrPred, lVari
+character(len=*), intent(in) :: type_comp, rela_comp
+character(len=*) :: nomte
+integer :: ndim, nbt, nno, nc, iret
+real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+!
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: imat, ivarim, jdc, irep, jtp, jtm, ifono, icontp, ivarip, iadzi, iazk24, icompo
+    integer :: imat, ivarim, jdc, irep, jtp, jtm, ifono, icontp, ivarip, iadzi, iazk24
     integer :: icarcr
     integer :: icontm, ii, neq
     real(kind=8) :: r8bid, raide(6), fl(12), klv(78), klc(144),raideurDeno
@@ -103,8 +108,6 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 ! --------------------------------------------------------------------------------------------------
 !
     neq = nno*nc
-!
-    call jevech('PCOMPOR', 'L', icompo)
 !   récupération du matériau
     call jevech('PMATERC', 'L', imat)
 !   variables a t-
@@ -116,9 +119,9 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 !   seulement en repère local : irep = 2
     if (irep .ne. 2) then
         messak(1) = nomte
-        messak(2) = option
-        messak(3) = zk16(icompo+3)
-        messak(4) = zk16(icompo)
+        messak(2) = 'NON_LINEAR'
+        messak(3) = type_comp
+        messak(4) = rela_comp
         call tecael(iadzi, iazk24)
         messak(5) = zk24(iazk24-1+3)
         call utmess('I', 'DISCRETS_5', nk=5, valk=messak)
@@ -130,7 +133,7 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 !   les incréments de déplacement sont nuls
 !       ==> récupération de la matrice tangente précédente, si possible
 !       ==> si pas possible, calcul d'une tangente pas trop mauvaise, après lecture des paramètres
-    if (option .eq. 'RIGI_MECA_TANG') then
+    if (lMatrPred) then
 !       tangente précédente
         if (abs(zr(ivarim+3)) .gt. r8miem()) then
             raide(1) = zr(ivarim+3)
@@ -175,9 +178,9 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
     raideurDeno = (ldcpar(1)+ldcpar(3)+ldcpar(2)*ldcpar(1)*ldcpar(3))
     if ( raideurDeno .le. r8miem() ) then
         messak(1) = nomte
-        messak(2) = option
-        messak(3) = zk16(icompo+3)
-        messak(4) = zk16(icompo)
+        messak(2) = 'NON_LINEAR'
+        messak(3) = type_comp
+        messak(4) = rela_comp
         call tecael(iadzi, iazk24)
         messak(5) = zk24(iazk24-1+3)
         call utmess('F', 'DISCRETS_4', nk=5, valk=messak)
@@ -189,7 +192,7 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 !   les incréments de déplacement sont nuls
 !       ==> la récupération de la matrice tangente précédente a échouée
 !       ==> calcul d'une tangente pas trop mauvaise
-    if (option .eq. 'RIGI_MECA_TANG') then
+    if (lMatrPred) then
         raide(1)=(1.0d0 + ldcpar(2)*ldcpar(3))/raideurDeno
         goto 800
     endif
@@ -241,7 +244,7 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
 800  continue
 !   Actualisation de la matrice tangente : klv(i,i) = raide(i)
     call diklvraid(nomte, klv, raide)
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imat)
         if (ndim .eq. 3) then
             call utpslg(nno, nc, pgl, klv, zr(imat))
@@ -250,7 +253,9 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
         endif
     endif
 !
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+    if (lVect) then
+!       Il faut séparer les deux => petit travail de réflexion
+        ASSERT(lSigm)
 !       calcul des efforts généralisés, des forces nodales
         call jevech('PVECTUR', 'E', ifono)
         call jevech('PCONTPR', 'E', icontp)
@@ -285,7 +290,9 @@ subroutine dizeng(option, nomte, ndim, nbt, nno,&
         else
             call ut2vlg(nno, nc, pgl, fl, zr(ifono))
         endif
-!       mise à jour des variables internes : sigma  epsivis  puiss tangente
+    endif
+!   mise à jour des variables internes : sigma  epsivis  puiss tangente
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
         zr(ivarip)   = resu(1)
         zr(ivarip+1) = resu(2)

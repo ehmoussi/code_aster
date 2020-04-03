@@ -15,21 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine didashpot(option, nomte, ndim, nbt, nno,&
-                      nc, ulm, dul, pgl, iret)
-        character(len=*) :: option
+    subroutine didashpot(lMatr, lVect, lSigm,&
+                         nomte, ndim, nbt, nno,&
+                         nc, dul, pgl)
+        aster_logical, intent(in) :: lMatr, lVect, lSigm
         character(len=*) :: nomte
         integer :: ndim
         integer :: nbt
         integer :: nno
         integer :: nc
-        real(kind=8) :: ulm(12)
         real(kind=8) :: dul(12)
         real(kind=8) :: pgl(3, 3)
-        integer :: iret
     end subroutine didashpot
 end interface

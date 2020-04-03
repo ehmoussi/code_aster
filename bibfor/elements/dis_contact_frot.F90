@@ -15,9 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
-                       nc, ulm, dul, pgl, iret)
+! aslint: disable=W1306
+!
+subroutine dis_contact_frot(option, nomte,&
+                            lMatr, lVect, lSigm, lVari,&
+                            ndim, nbt, nno,&
+                            nc, ulm, dul, pgl, iret)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,9 +43,6 @@ subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
 ! --------------------------------------------------------------------------------------------------
 !
     implicit none
-    character(len=*)    :: option, nomte
-    integer             :: ndim, nbt, nno, nc, iret
-    real(kind=8)        :: ulm(12), dul(12), pgl(3, 3)
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -69,6 +69,12 @@ subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
 #include "asterfort/vecma.h"
 #include "blas/dcopy.h"
 !
+    character(len=*)    :: option, nomte
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari
+    integer             :: ndim, nbt, nno, nc, iret
+    real(kind=8)        :: ulm(12), dul(12), pgl(3, 3)
+
+!
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: jdc, irep, imat, ivarim, ii, ivitp, idepen, iviten, neq, igeom, ivarip
@@ -79,7 +85,7 @@ subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
     real(kind=8)     :: klv(nbt), force(3), fl(nno*nc), raide(6)
     real(kind=8)     :: r8bid
     character(len=8) :: k8bid
-    aster_logical    :: rigi, resi, Prediction, Dynamique
+    aster_logical    :: Prediction, Dynamique
 ! --------------------------------------------------------------------------------------------------
     integer, parameter  :: nbre1=8
     real(kind=8)        :: valre1(nbre1)
@@ -119,8 +125,8 @@ subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
 !   RIGI_MECA_TANG ->        DSIDEP        -->  RIGI
 !   FULL_MECA      ->  SIGP  DSIDEP  VARP  -->  RIGI  RESI
 !   RAPH_MECA      ->  SIGP          VARP  -->        RESI
-    rigi = (option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL')
-    resi = (option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL')
+    !rigi = (option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL')
+    !resi = (option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL')
 !
     iret = 0
 !   Nombre de degré de liberté
@@ -407,7 +413,7 @@ subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
 ! --------------------------------------------------------------------------------------------------
 !   Actualisation de la matrice tangente : klv(i,i) = raide(i)
     call diklvraid(nomte, klv, raide)
-    if ( rigi ) then
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imatsym)
         if (ndim .eq. 3) then
             call utpslg(nno, nc, pgl, klv, zr(imatsym))
@@ -416,8 +422,10 @@ subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
         endif
     endif
 !
-!   Calcul des efforts généralisés, des forces nodales et des variables internes
-    if ( resi ) then
+!   calcul des efforts généralisés et des forces nodales
+    if (lVect) then
+!       Il faut séparer les deux => petit travail de réflexion
+        ASSERT(lSigm)
         call jevech('PVECTUR', 'E', ifono)
         call jevech('PCONTPR', 'E', icontp)
 !       Demi-matrice klv transformée en matrice pleine klc
@@ -470,7 +478,9 @@ subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
         else
             call ut2vlg(nno, nc, pgl, fl, zr(ifono))
         endif
-!       Mise à jour des variables internes
+    endif
+!   mise à jour des variables internes 
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
         if ( nno .eq. 1 ) then
             do ii = 1, nbvari

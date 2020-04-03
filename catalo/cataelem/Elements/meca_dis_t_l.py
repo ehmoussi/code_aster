@@ -50,7 +50,6 @@ CCAORIE  = LocatedComponents(phys=PHY.CAORIE, type='ELEM',
     components=('ALPHA','BETA','GAMMA',))
 
 
-
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
     components=('DX','DY','DZ',))
 
@@ -246,8 +245,7 @@ class MECA_DIS_T_L(Element):
                      ),
             para_out=((SP.PCODRET, LC.ECODRET), (OP.FULL_MECA.PCONTPR, EEFGEGA),
                      (SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
-                     (OP.FULL_MECA.PVARIPR, ZVARIPG), (SP.PVECTUR, MVECTUR),
-                     ),
+                     (OP.FULL_MECA.PVARIPR, ZVARIPG), (SP.PVECTUR, MVECTUR),),
         ),
 
         OP.FULL_MECA_ELAS(te=47,
@@ -402,6 +400,8 @@ class MECA_DIS_T_L(Element):
                      (SP.PVITENT, DDL_MECA), (SP.PVITPLU, DDL_MECA),
                      ),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, EEFGEGA),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
                      ),
         ),
 

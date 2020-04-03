@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine diisotrope(option, nomte, ndim, nbt, nno,&
-                      nc, ulm, dul, pgl, iret)
-        character(len=*) :: option
+    subroutine diisotrope(lMatrPred, lMatr, lVect, lSigm, lVari,&
+                          type_comp, rela_comp,&
+                          nomte, ndim, nbt, nno,&
+                          nc, ulm, dul, pgl, iret)
+        aster_logical, intent(in) :: lMatr, lVect, lSigm, lMatrPred, lVari
+        character(len=*), intent(in) :: type_comp, rela_comp
         character(len=*) :: nomte
         integer :: ndim
         integer :: nbt

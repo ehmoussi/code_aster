@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,21 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dicho0(option, nomte, ndim, nbt, nno,&
-                      nc, ulm, dul, pgl, iret)
-        character(len=*) :: option
-        character(len=*) :: nomte
-        integer :: ndim
-        integer :: nbt
-        integer :: nno
-        integer :: nc
-        real(kind=8) :: ulm(12)
-        real(kind=8) :: dul(12)
-        real(kind=8) :: pgl(3, 3)
-        integer :: iret
+    subroutine dicho0(lMatr, lVect, lSigm, lVari,&
+                      ndim, nbt, nno,&
+                      nc, ulm, dul, pgl)
+        aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari
+        integer :: ndim, nbt, nno, nc
+        real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
     end subroutine dicho0
 end interface

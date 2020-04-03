@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine diisotrope(option, nomte, ndim, nbt, nno,&
-                  nc, ulm, dul, pgl, iret)
+subroutine diisotrope(lMatrPred, lMatr, lVect, lSigm, lVari,&
+                      type_comp, rela_comp,&
+                      nomte, ndim, nbt, nno,&
+                      nc, ulm, dul, pgl, iret)
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
@@ -27,7 +29,6 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 ! --------------------------------------------------------------------------------------------------
 !
 !  IN
-!     option   : option de calcul
 !     nomte    : nom terme élémentaire
 !     ndim     : dimension du problème
 !     nbt      : nombre de terme dans la matrice de raideur
@@ -39,10 +40,7 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    implicit none
-    character(len=*) :: option, nomte
-    integer :: ndim, nbt, nno, nc, iret
-    real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+implicit none
 !
 #include "jeveux.h"
 #include "asterc/r8miem.h"
@@ -63,6 +61,12 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 #include "asterfort/vecma.h"
 #include "asterfort/disc_isotr.h"
 #include "blas/dcopy.h"
+!
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lMatrPred, lVari
+character(len=*), intent(in) :: type_comp, rela_comp
+character(len=*) :: nomte
+integer :: ndim, nbt, nno, nc, iret
+real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -113,9 +117,9 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 !   Seulement en 3D
     if (nomte(1:10) .ne. 'MECA_DIS_T' ) then
         messak(1) = nomte
-        messak(2) = option
-        messak(3) = zk16(icompo+3)
-        messak(4) = zk16(icompo)
+        messak(2) = 'NON_LINEAR'
+        messak(3) = type_comp
+        messak(4) = rela_comp
         call tecael(iadzi, iazk24)
         messak(5) = zk24(iazk24-1+3)
         call utmess('F', 'DISCRETS_22', nk=5, valk=messak)
@@ -123,9 +127,9 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 !   Seulement en repère local : irep = 2
     if (irep .ne. 2) then
         messak(1) = nomte
-        messak(2) = option
-        messak(3) = zk16(icompo+3)
-        messak(4) = zk16(icompo)
+        messak(2) = 'NON_LINEAR'
+        messak(3) = type_comp
+        messak(4) = rela_comp
         call tecael(iadzi, iazk24)
         messak(5) = zk24(iazk24-1+3)
         call utmess('F', 'DISCRETS_5', nk=5, valk=messak)
@@ -145,15 +149,15 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 !   Recherche du comportement dans la SD compor
     ipi = 0
     do kk = 1, zi(imate+1)
-        if ( zk32(zi(imate)+kk-1)(1:16) .eq. zk16(icompo) ) then
+        if ( zk32(zi(imate)+kk-1)(1:16) .eq. rela_comp ) then
             ipi = zi(imate+2+kk-1)
             goto 10
         endif
     enddo
     messak(1) = nomte
-    messak(2) = option
-    messak(3) = zk16(icompo+3)
-    messak(4) = zk16(icompo)
+    messak(2) = 'NON_LINEAR'
+    messak(3) = type_comp
+    messak(4) = rela_comp
     call tecael(iadzi, iazk24)
     messak(5) = zk24(iazk24-1+3)
     call utmess('F', 'DISCRETS_7', nk=5, valk=messak)
@@ -195,7 +199,7 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 !   les incréments de déplacement sont nuls
 !       ==> récupération de la matrice tangente précédente, si possible
 !       ==> si pas possible, pente initiale de la courbe
-    if (option .eq. 'RIGI_MECA_TANG') then
+    if (lMatrPred) then
         if   ( iloi == 1 ) then
 !           La tangente est donnée par la pente initiale
             raide(1)= zr(jvale+nbvale+1)/zr(jvale+1)
@@ -304,7 +308,7 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
 !   Actualisation des termes diagonaux
     call diklvraid(nomte, klv, raide)
 !   Actualisation de la matrice quasi-tangente
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+    if (lmatr) then
         call jevech('PMATUUR', 'E', imat)
         if (ndim .eq. 3) then
             call utpslg(nno, nc, pgl, klv, zr(imat))
@@ -313,7 +317,9 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
         endif
     endif
 !
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+    if (lVect) then
+!       Il faut séparer les deux => petit travail de réflexion
+        ASSERT(lSigm)
 !       calcul des efforts généralisés, des forces nodales
         call jevech('PVECTUR', 'E', ifono)
         call jevech('PCONTPR', 'E', icontp)
@@ -366,7 +372,10 @@ subroutine diisotrope(option, nomte, ndim, nbt, nno,&
         else
             call ut2vlg(nno, nc, pgl, fl, zr(ifono))
         endif
-!       mise à jour des variables internes
+    endif
+!   mise à jour des variables internes
+    if (lVari) then
+        call jevech('PVARIPR', 'E', ivarip)
         call jevech('PVARIPR', 'E', ivarip)
         zr(ivarip-1+1:ivarip-1+14) = resu(1:14)
         zr(ivarip-1+15)            = raide(1)

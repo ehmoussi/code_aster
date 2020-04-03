@@ -15,11 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine didashpot(option, nomte, ndim, nbt, nno,&
-                     nc, ulm, dul, pgl, iret)
-    implicit none
+! person_in_charge: jean-luc.flejou at edf.fr
+!
+subroutine didashpot(lMatr, lVect, lSigm,&
+                     nomte, ndim, nbt, nno,&
+                     nc, dul, pgl)
+!
+implicit none
+!
+#include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/infdis.h"
 #include "asterfort/jevech.h"
 #include "asterfort/pmavec.h"
@@ -34,21 +40,19 @@ subroutine didashpot(option, nomte, ndim, nbt, nno,&
 #include "asterfort/vecma.h"
 #include "blas/dcopy.h"
 !
-    character(len=*) :: option, nomte
-    integer :: ndim, nbt, nno, nc, iret
-    real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+aster_logical, intent(in) :: lMatr, lVect, lSigm
+character(len=*) :: nomte
+integer :: ndim, nbt, nno, nc
+real(kind=8) :: dul(12), pgl(3, 3)
 !
-! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 !  IN
-!     option   : option de calcul
 !     nomte    : nom terme élémentaire
 !     ndim     : dimension du problème
 !     nbt      : nombre de terme dans la matrice de raideur
 !     nno      : nombre de noeuds de l'élément
 !     nc       : nombre de composante par noeud
-!     ulm      : déplacement moins
 !     dul      : incrément de déplacement
 !     pgl      : matrice de passage de global a local
 !
@@ -67,12 +71,11 @@ subroutine didashpot(option, nomte, ndim, nbt, nno,&
     if (nomte(1:11).ne.'MECA_DIS_T_') then
         call jevech('PCOMPOR', 'L', icompo)
         messak(1) = nomte
-        messak(2) = option
-        messak(3) = zk16(icompo+3)
-        messak(4) = zk16(icompo)
+        messak(2) = zk16(icompo+3)
+        messak(3) = zk16(icompo)
         call tecael(iadzi, iazk24)
-        messak(5) = zk24(iazk24-1+3)
-        call utmess('F', 'DISCRETS_23', nk=5, valk=messak)
+        messak(4) = zk24(iazk24-1+3)
+        call utmess('F', 'DISCRETS_23', nk=4, valk=messak)
     endif
 !
 !   paramètres en entrée
@@ -85,24 +88,26 @@ subroutine didashpot(option, nomte, ndim, nbt, nno,&
     if (irep .eq. 1) then
         if (ndim .eq. 3) then
             call utpsgl(nno, nc, pgl, zr(jdc), klv)
-        else if (ndim.eq.2) then
+        elseif (ndim.eq.2) then
             call ut2mgl(nno, nc, pgl, zr(jdc), klv)
         endif
     else
         call dcopy(nbt, zr(jdc), 1, klv, 1)
     endif
 !   calcul de la matrice tangente
-    if (option(1: 9) .eq. 'FULL_MECA' .or. option(1:10) .eq. 'RIGI_MECA_') then
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imat)
         if (ndim .eq. 3) then
             call utpslg(nno, nc, pgl, klv, zr(imat))
-        else if (ndim.eq.2) then
+        elseif (ndim.eq.2) then
             call ut2mlg(nno, nc, pgl, klv, zr(imat))
         endif
     endif
     neq = nno*nc
 !   calcul des efforts généralisés et des forces nodales
-    if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+    if (lVect) then
+!       Il faut séparer les deux => petit travail de réflexion
+        ASSERT(lSigm)
         call jevech('PVECTUR', 'E', ifono)
         call jevech('PCONTPR', 'E', icontp)
 !       demi-matrice klv transformée en matrice pleine klc
@@ -115,7 +120,7 @@ subroutine didashpot(option, nomte, ndim, nbt, nno,&
             do ii = 1, neq
                 zr(icontp-1+ii) = fl(ii)
             enddo
-        else if (nno.eq.2) then
+        elseif (nno.eq.2) then
             do ii = 1, nc
                 zr(icontp-1+ii)    = -fl(ii)
                 zr(icontp-1+ii+nc) =  fl(ii+nc)

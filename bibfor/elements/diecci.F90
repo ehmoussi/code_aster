@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,15 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine diecci(option, nomte, ndim, nbt, nno,&
-                  nc, ulm, dul, pgl, iret)
+subroutine diecci(nomte, &
+                  lMatr, lVect, lSigm, lVari,&
+                  rela_comp, type_comp,&
+                  ndim, nbt, nno,&
+                  nc, ulm, dul, pgl)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/dinon3.h"
 #include "asterfort/diklvraid.h"
 #include "asterfort/dinonc.h"
@@ -37,15 +41,16 @@ subroutine diecci(option, nomte, ndim, nbt, nno,&
 #include "asterfort/vecma.h"
 #include "blas/dcopy.h"
 !
-    character(len=*) :: option, nomte
-    integer :: ndim, nbt, nno, nc, iret
-    real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+character(len=*) :: nomte
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari
+character(len=*), intent(in) :: rela_comp, type_comp
+integer :: ndim, nbt, nno, nc
+real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 !  IN
-!     option   : option de calcul
 !     nomte    : nom terme élémentaire
 !     ndim     : dimension du problème
 !     nbt      : nombre de terme dans la matrice de raideur
@@ -57,7 +62,7 @@ subroutine diecci(option, nomte, ndim, nbt, nno,&
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: imat, ivarim, jdc, irep, iadzi, iazk24, neq, ivarip, ii, ifono, icontp, icompo
+    integer :: imat, ivarim, jdc, irep, iadzi, iazk24, neq, ivarip, ii, ifono, icontp
     integer :: icontm
     real(kind=8) :: r8bid, klv(78), raide(6), ulp(12), klc(144), fl(12)
     character(len=8) :: k8bid
@@ -94,15 +99,14 @@ subroutine diecci(option, nomte, ndim, nbt, nno,&
     call jevech('PCONTMR', 'L', icontm)
 !   récupération des caractéristiques
     call jevech('PCADISK', 'L', jdc)
-    call jevech('PCOMPOR', 'L', icompo)
 !
     call infdis('REPK', irep, r8bid, k8bid)
 !   seulement en repere local : irep = 2
     if (irep .ne. 2) then
         messak(1) = nomte
-        messak(2) = option
-        messak(3) = zk16(icompo+3)
-        messak(4) = zk16(icompo)
+        messak(2) = 'NON_LINEAR'
+        messak(3) = type_comp
+        messak(4) = rela_comp
         call tecael(iadzi, iazk24)
         messak(5) = zk24(iazk24-1+3)
         call utmess('F', 'DISCRETS_5', nk=5, valk=messak)
@@ -131,7 +135,7 @@ subroutine diecci(option, nomte, ndim, nbt, nno,&
 !   actualisation de la matrice quasi-tangente
     call diklvraid(nomte, klv, raide)
 !   actualisation de la matrice quasi-tangente
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imat)
         if (ndim .eq. 3) then
             call utpslg(nno, nc, pgl, klv, zr(imat))
@@ -139,8 +143,10 @@ subroutine diecci(option, nomte, ndim, nbt, nno,&
             call ut2mlg(nno, nc, pgl, klv, zr(imat))
         endif
     endif
-!   calcul des efforts généralisés, des forces nodales et mise à jour des variables internes
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+!   calcul des efforts généralisés et des forces nodales
+    if (lVect) then
+!       Il faut séparer les deux => petit travail de réflexion
+        ASSERT(lSigm)
         call jevech('PVECTUR', 'E', ifono)
         call jevech('PCONTPR', 'E', icontp)
 !       demi-matrice klv transformée en matrice pleine klc
@@ -168,7 +174,9 @@ subroutine diecci(option, nomte, ndim, nbt, nno,&
         else
             call ut2vlg(nno, nc, pgl, fl, zr(ifono))
         endif
-!       mise à jour des variables internes
+    endif
+!   mise à jour des variables internes 
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
         do ii = 1, nbvint
             zr(ivarip+ii-1) = vardnl(ii)

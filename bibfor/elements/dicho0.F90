@@ -15,13 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine dicho0(option, nomte, ndim, nbt, nno,&
-                  nc, ulm, dul, pgl, iret)
-    implicit none
+!
+subroutine dicho0(lMatr, lVect, lSigm, lVari,&
+                  ndim, nbt, nno,&
+                  nc, ulm, dul, pgl)
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/dichoc.h"
 #include "asterfort/infdis.h"
 #include "asterfort/jevech.h"
@@ -38,16 +42,14 @@ subroutine dicho0(option, nomte, ndim, nbt, nno,&
 #include "asterfort/vecma.h"
 #include "blas/dcopy.h"
 !
-    character(len=*) :: option, nomte
-    integer :: ndim, nbt, nno, nc, iret
-    real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari
+integer :: ndim, nbt, nno, nc
+real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 !  IN
-!     option   : option de calcul
-!     nomte    : nom terme élémentaire
 !     ndim     : dimension du problème
 !     nbt      : nombre de terme dans la matrice de raideur
 !     nno      : nombre de noeuds de l'élément
@@ -138,7 +140,7 @@ subroutine dicho0(option, nomte, ndim, nbt, nno,&
                 duly, dvl, dpe, dve, force,&
                 varmo, varpl, ndim)
 !   actualisation de la matrice tangente
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imat)
         if (ndim .eq. 3) then
             call utpslg(nno, nc, pgl, klv, zr(imat))
@@ -147,8 +149,10 @@ subroutine dicho0(option, nomte, ndim, nbt, nno,&
         endif
     endif
 !
-!   calcul des efforts généralisés, des forces nodales et des variables internes
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+!   calcul des efforts généralisés et des forces nodales
+    if (lVect) then
+!       Il faut séparer les deux => petit travail de réflexion
+        ASSERT(lSigm)
         call jevech('PVECTUR', 'E', ifono)
         call jevech('PCONTPR', 'E', icontp)
 !       demi-matrice klv transformée en matrice pleine klc
@@ -207,7 +211,9 @@ subroutine dicho0(option, nomte, ndim, nbt, nno,&
         else
             call ut2vlg(nno, nc, pgl, fl, zr(ifono))
         endif
-!       mise a jour des variables internes
+    endif
+!   mise à jour des variables internes 
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
         do ii = 1, 8
             zr(ivarip+ii-1) = varpl(ii)

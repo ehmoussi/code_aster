@@ -409,7 +409,10 @@ class MECA_DIS_TR_N(Element):
                      (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      (SP.PVITENT, DDL_MECA), (SP.PVITPLU, DDL_MECA),
                      ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
+            para_out=((SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, EEFGEGA),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
         ),
 
         OP.SIEF_ELGA(te=42,

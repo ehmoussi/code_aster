@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine digouj(option, compor, nno, nbt, neq,&
+subroutine digouj(option, rela_comp, nno, nbt, neq,&
                   nc, icodma, dul, sim, varim,&
                   pgl, klv, klc, varip, fono,&
                   sip, nomte)
 ! ----------------------------------------------------------------------
     implicit none
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/mavec.h"
 #include "asterfort/pmavec.h"
 #include "asterfort/rcfonc.h"
@@ -36,7 +37,7 @@ subroutine digouj(option, compor, nno, nbt, neq,&
     integer :: nbt, neq, icodma, nc
     real(kind=8) :: dul(neq), sim(neq), sip(neq), varim(*)
     real(kind=8) :: pgl(3, 3), klv(nbt), varip(*), fono(neq), klc(neq, neq)
-    character(len=16) :: option, compor(*), nomte
+    character(len=16) :: option, rela_comp, nomte
 !
 !  COMPORTEMENT DIS_GOUJON : APPLICATION : GOUJ2ECH
 !           RELATION DE COMPORTEMENT : ELASTIQUE PARTOUT
@@ -80,7 +81,7 @@ subroutine digouj(option, compor, nno, nbt, neq,&
 !
     if (nc .ne. 2) then
         valk(1) = nomte
-        valk(2) = compor(1)
+        valk(2) = rela_comp
         call utmess('F', 'ELEMENTS_31', nk=2, valk=valk)
     endif
 !
@@ -95,21 +96,19 @@ subroutine digouj(option, compor, nno, nbt, neq,&
     call pmavec('ZERO', neq, klc, dul, dfl)
     dut = dul(2+nc)-dul(2)
 !
-    if ((compor(1)(1:10).ne.'DIS_GOUJ2E')) then
-        call utmess('F', 'ELEMENTS_32', sk=compor(1))
-    endif
+    ASSERT(rela_comp(1:10).eq.'DIS_GOUJ2E')
 !
     call rctype(icodma, 0, nompar, [valpap], para_vale,&
                 para_type)
     call rctrac(icodma, 1, 'SIGM', para_vale, jprolp,&
                 jvalep, nbvalp, e)
-    if (compor(1) .eq. 'DIS_GOUJ2E_PLAS') then
+    if (rela_comp .eq. 'DIS_GOUJ2E_PLAS') then
         call rcfonc('S', 1, jprolp, jvalep, nbvalp,&
                     sigy = sigy)
         call rcfonc('V', 1, jprolp, jvalep, nbvalp,&
                     p = varim(1), rp = rp, rprim = rprim, airerp = airerp)
         plasti=(varim(2).ge.0.5d0)
-    else if (compor(1).eq.'DIS_GOUJ2E_ELAS') then
+    else if (rela_comp.eq.'DIS_GOUJ2E_ELAS') then
         sigy=0.d0
         rp=0.d0
         plasti=.false.
@@ -131,10 +130,10 @@ subroutine digouj(option, compor, nno, nbt, neq,&
             fl(i+nc) = dfl(i+nc) + sim(i+nc)
 100     continue
 !
-        if (compor(1) .eq. 'DIS_GOUJ2E_ELAS') then
+        if (rela_comp .eq. 'DIS_GOUJ2E_ELAS') then
             sip(2 ) = sigel
 !
-        else if (compor(1).eq. 'DIS_GOUJ2E_PLAS') then
+        else if (rela_comp.eq. 'DIS_GOUJ2E_PLAS') then
             if (seuil .le. 0.d0) then
                 varip(2) = 0.d0
                 dp = 0.d0
@@ -181,7 +180,7 @@ subroutine digouj(option, compor, nno, nbt, neq,&
 !
         a=1.d0
         dsidep=0.d0
-        if (compor(1) .eq. 'DIS_GOUJ2E_PLAS') then
+        if (rela_comp .eq. 'DIS_GOUJ2E_PLAS') then
             sigeps = 0.d0
             sigeps = sigeps + sigdv*deps
             if (plasti .and. (sigeps.ge.0.d0)) then

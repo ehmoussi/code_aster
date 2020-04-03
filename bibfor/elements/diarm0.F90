@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine diarm0(option, nomte, ndim, nbt, nno,&
-                  nc, ulm, dul, pgl, iret)
-    implicit none
+! person_in_charge: jean-luc.flejou at edf.fr
+!
+subroutine diarm0(lMatr, lVect, lSigm, lVari,&
+                  nbt, nno,&
+                  nc, ulm, dul, pgl)
+!
+implicit none
+!
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/diarme.h"
 #include "asterfort/infdis.h"
 #include "asterfort/jevech.h"
@@ -31,17 +36,13 @@ subroutine diarm0(option, nomte, ndim, nbt, nno,&
 #include "asterfort/vecma.h"
 #include "blas/dcopy.h"
 !
-    character(len=*) :: option, nomte
-    integer :: ndim, nbt, nno, nc, iret
-    real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari
+integer :: nbt, nno, nc
+real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
 !
-! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
 !
 !  IN
-!     option   : option de calcul
-!     nomte    : nom terme élémentaire
-!     ndim     : dimension du problème
 !     nbt      : nombre de terme dans la matrice de raideur
 !     nno      : nombre de noeuds de l'élément
 !     nc       : nombre de composante par noeud
@@ -73,15 +74,16 @@ subroutine diarm0(option, nomte, ndim, nbt, nno,&
                 ulp, zr(icontm), zr(ivarim), klv, varip,&
                 force(1), duly)
 !   actualisation de la matrice tangente
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+    if (lmatr) then
         call jevech('PMATUUR', 'E', imat)
         call utpslg(nno, nc, pgl, klv, zr(imat))
     endif
 !   calcul des efforts généralisés, des forces nodales et des variables internes
-    if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+    if (lVect) then
+!       Il faut séparer les deux => petit travail de réflexion
+        ASSERT(lSigm)
         call jevech('PVECTUR', 'E', ifono)
         call jevech('PCONTPR', 'E', icontp)
-        !
         neq = nno*nc
 !       demi-matrice klv transformée en matrice pleine klc
         call vecma(klv, nbt, klc, neq)
@@ -113,7 +115,9 @@ subroutine diarm0(option, nomte, ndim, nbt, nno,&
         else
             call ut2vlg(nno, nc, pgl, fl, zr(ifono))
         endif
-!       mise à jour des variables internes
+    endif
+!   mise à jour des variables internes 
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
         zr(ivarip) = varip
         zr(ivarip+1) = varip
