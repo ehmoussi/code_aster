@@ -23,6 +23,7 @@ implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/getfac.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
@@ -53,31 +54,45 @@ implicit none
     character(len=8) :: fileFormat
     character(len=16) :: fileName
     integer :: nbMesh, nbResu, nbField, nbRet, nbNodeCmp
-    integer :: nn, nbrank
+    integer :: nn, rank
     real(kind=8) :: fileVersionR
     real(kind=8), parameter :: eps = 1.0d-6
-    character(len=8) :: model, mesh, resultMesh, proc, result
+    character(len=8) :: model, mesh, resultMesh, proc0, result, ispar
     aster_logical :: lResu, lMesh
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
-    call asmpi_info(rank=mrank, size=msize)
-    nbrank = to_aster_int(mrank)
     call jemarq()
     call infmaj()
 !
 ! - Get rank of processor
 !
-    call getvtx(' ', 'PROC0', scal=proc, nbret=nbRet)
-    if (proc .eq. 'NON') then
-        nbrank = 0
-    endif
+    call asmpi_info(rank=mrank, size=msize)
+    rank = to_aster_int(mrank)
 !
-! - Print only on the CPU #0
-!   Should not be skipped if a parallel mesh is in used
+    call getvtx(' ', 'PROC0', scal=proc0, nbret=nbRet)
 !
 !XX if (nbrank .eq. 0) then
         call getfac(keywf, keywfNb)
+! ----- Check for parallel mesh vs restriction on proc0
+        call getvid(keywf, 'MAILLAGE', iocc=1, scal=mesh, nbret=nbMesh)
+        if (nbMesh .eq. 0) then
+            call getvid(keywf, 'RESULTAT', iocc=1, scal=result, nbret=nbResu)
+            if (nbResu .ne. 0) then
+                call dismoi('NOM_MAILLA', result, 'RESULTAT', repk=mesh)
+            else
+                call getvid(keywf, 'CHAM_GD', iocc=1, scal=result, nbret=nbField)
+                ASSERT(nbField .eq. 1)
+                call dismoi('NOM_MAILLA', result, 'CHAMP', repk=mesh)
+            endif
+        endif
+        call dismoi('PARALLEL_MESH', mesh, 'MAILLAGE', repk=ispar)
+!       if parallel mesh, print on all processors
+        if (ispar .eq. 'NON' .and. proc0 .eq. 'OUI' .and. rank .ne. 0) then
+!           if only on 'proc0' enabled and rank != 0
+            call utmess('I', 'APPELMPI_3', si=rank)
+            goto 999
+        endif
 ! ----- Check keyword NOEUD_CMP
         do keywfIocc = 1, keywfNb
             call getvtx(keywf, 'NOEUD_CMP', iocc=keywfIocc, nbval=0, nbret=nbNodeCmp)
@@ -168,5 +183,6 @@ implicit none
             endif
         endif
 !XX endif
+999 continue
     call jedema()
 end subroutine
