@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,6 +48,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/hujddd.h"
 #include "asterfort/hujksi.h"
 #include "asterfort/hujpic.h"
@@ -144,7 +145,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 ! ====================================================================
     if ((i1e-piso) .ge. zero) then
         iret = 1
-        goto 9999
+        goto 998
     endif
 !
     call lcinma(zero, hooknl)
@@ -199,7 +200,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
             hooknl(6,6) = g3
 !
         else
-            call utmess('F', 'COMPOR1_39')
+            ASSERT(ASTER_FALSE)
         endif
 !
     else if (mod(1:6) .eq. 'C_PLAN' .or. mod(1:2) .eq. '1D') then
@@ -288,7 +289,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
             dy(i) = dsig(i)
         enddo
 !
-        goto 9999
+        goto 998
 !
     endif
 !
@@ -694,7 +695,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
 !
     call mgauss('NCVP', dfdl, f2, 7, nbmect,&
                 1, det, iret)
-    if (iret .eq. 1) goto 9999
+    if (iret .eq. 1) goto 998
 !
 ! --- MULTIPLICATEUR PLASTIQUE NEGATIF NON AUTORISE
     do k = 1, nbmect
@@ -881,7 +882,7 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
         enddo
     endif
 !
-    goto 9999
+    goto 998
 !
 999 continue
 !
@@ -897,6 +898,6 @@ subroutine hujiid(mod, mater, indi, deps, i1e,&
         dy(i) = zero
     enddo
 !
-9999 continue
+998 continue
 !
 end subroutine

@@ -171,39 +171,6 @@ Seules quelques lois de comportement qui ne nécessitent pas la méthode Deborst
  Si vous voulez seulement de l'élastoplasticité, il faut utiliser %(k2)s
 """),
 
-    33: _("""
- HUJEUX : ELAS/ELAS_ORTH : erreur de lecture des propriétés matériaux.
-"""),
-
-    34: _("""
- HUJEUX : ELAS/ELAS_ORTH : cas non prévu.
-"""),
-
-    35: _("""
- HUJEUX : ELAS/ELAS_ORTH : cas non prévu.
-"""),
-
-    36: _("""
- HUJEUX : ELAS/ELAS_ORTH : cas non prévu.
-"""),
-
-    37: _("""
- HUJEUX : ELAS/ELAS_ORTH : cas non prévu.
-"""),
-
-    38: _("""
- HUJEUX : ELAS/ELAS_ORTH : cas non prévu.
-"""),
-
-    39: _("""
- HUJEUX : ELAS/ELAS_ORTH : cas non prévu.
-"""),
-
-    40: _("""
- HUJEUX : ELAS/ELAS_ORTH : cas non prévu.
-"""),
-
-
     41: _("""
  CAM_CLAY :
  Pour la maille <%(k1)s> une des exponentielles pose un problème numérique.
