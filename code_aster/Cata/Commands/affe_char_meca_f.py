@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -180,7 +180,6 @@ AFFE_CHAR_MECA_F=OPER(nom="AFFE_CHAR_MECA_F",op=7,sd_prod=char_meca,
            DDL_2           =SIMP(statut='o',typ='TXM',max='**'),
            COEF_MULT_2     =SIMP(statut='o',typ='R',max='**'),
            COEF_IMPO       =SIMP(statut='o',typ=(fonction_sdaster,nappe_sdaster,formule) ),
-           SOMMET          =SIMP(statut='f',typ='TXM',into=("OUI",) ),
            TRAN            =SIMP(statut='f',typ='R',max=3),
            ANGL_NAUT       =SIMP(statut='f',typ='R',max=3),
            CENTRE          =SIMP(statut='f',typ='R',max=3),
