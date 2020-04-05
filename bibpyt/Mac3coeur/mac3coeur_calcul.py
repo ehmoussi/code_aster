@@ -439,7 +439,6 @@ class Mac3CoeurCalcul(object):
             """Return keyword to set ddl(grno1) = ddl(grno2)"""
             return _F(GROUP_NO_1=grno1,
                       GROUP_NO_2=grno2,
-                      SOMMET='OUI',
                       DDL_1=ddl,
                       DDL_2=ddl,
                       COEF_MULT_1=1.,
