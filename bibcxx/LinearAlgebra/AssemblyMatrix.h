@@ -137,9 +137,7 @@ class AssemblyMatrixClass : public DataStructure {
 #ifdef _DEBUG_CXX
         std::cout << "DEBUG: AssemblyMatrixClass.destr: " << this->getName() << std::endl;
 #endif
-        if ( _description->exists() && ( _solverName == "MUMPS" || _solverName == "PETSC" ) ) {
-            CALLO_DELETE_MATRIX( getName(), _solverName );
-        }
+        this->deleteFactorizedMatrix();
     };
 
     /**
@@ -238,7 +236,19 @@ class AssemblyMatrixClass : public DataStructure {
      * @brief Methode permettant de savoir si la matrice est vide
      * @return true si vide
      */
-    bool isEmpty() const { return ( !_description->exists() ); };
+    bool isEmpty() const
+    {
+        return _isEmpty;
+    };
+
+    /**
+     * @brief Methode permettant de savoir si la matrice est factorisée
+     * @return true si factorisée
+     */
+    bool isFactorized() const
+    {
+        return _isFactorized;
+    };
 
     /**
      * @brief Methode permettant de definir la numerotation
@@ -269,6 +279,23 @@ class AssemblyMatrixClass : public DataStructure {
      * @todo delete this function and the attribute _solverName
      */
     void setSolverName( const std::string &sName ) { _solverName = sName; };
+
+    /**
+     * @brief Delete the factorized matrix used by MUMPS or PETSc if it exist
+     * @param sName name of solver ("MUMPS" or "PETSC")
+     * @todo delete this function and the attribute _solverName
+     */
+    bool deleteFactorizedMatrix(void)
+    {
+        if ( _description->exists() && ( _solverName == "MUMPS" || _solverName == "PETSC" ) &&
+             get_sh_jeveux_status() == 1 ) {
+            CALLO_DELETE_MATRIX( getName(), _solverName );
+        }
+
+        _isFactorized = false;
+
+        return true;
+    };
 };
 
 /** @typedef Definition d'une matrice assemblee de double */
