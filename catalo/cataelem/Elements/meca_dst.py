@@ -609,28 +609,7 @@ class MEDSQU4(Element):
 
         OP.FULL_MECA(te=-1),
 
-        OP.FULL_MECA_ELAS(te=31,
-                          para_in=(
-                              (SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
-                          (OP.FULL_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (
-                          OP.FULL_MECA_ELAS.PCONTMR, ECONTPG),
-                              (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                          (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
-                          (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
-                          (OP.FULL_MECA_ELAS.PNBSP_I, ENBSP_I), (
-                          SP.PVARCMR, LC.ZVARCPG),
-                          (OP.FULL_MECA_ELAS.PVARCPR, LC.ZVARCPG), (
-                          SP.PVARCRR, LC.ZVARCPG),
-                          (SP.PVARIMP, ZVARIPG), (
-                          OP.FULL_MECA_ELAS.PVARIMR, ZVARIPG),
-                          ),
-                          para_out=(
-                          (SP.PCODRET, LC.ECODRET), (
-                              OP.FULL_MECA_ELAS.PCONTPR, ECONTPG),
-                          (SP.PMATUUR, MMATUUR), (
-                          OP.FULL_MECA_ELAS.PVARIPR, ZVARIPG),
-                          (SP.PVECTUR, MVECTUR), ),
-                          ),
+        OP.FULL_MECA_ELAS(te=-1),
 
         OP.INIT_VARC(te=99,
                      para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), ),
@@ -698,12 +677,7 @@ class MEDSQU4(Element):
 
         OP.RAPH_MECA(te=-1),
 
-
-        OP.REFE_FORC_NODA(te=31,
-                          para_in=((SP.PGEOMER, NGEOMER), (SP.PREFCO, EREFCO),
-                                   ),
-                          para_out=((SP.PVECTUR, MVECTUR), ),
-                          ),
+        OP.REFE_FORC_NODA(te=-1),
 
         OP.REPERE_LOCAL(te=134,
                         para_in=((SP.PCACOQU, CCACOQU), (SP.PGEOMER, NGEOMER),
@@ -754,26 +728,9 @@ class MEDSQU4(Element):
                      para_out=((SP.PMATUUR, MMATUUR), ),
                      ),
 
-        OP.RIGI_MECA_ELAS(te=31,
-                          para_in=(
-                              (SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
-                          (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (
-                          OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
-                              (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                          (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
-                          (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
-                          (OP.RIGI_MECA_ELAS.PNBSP_I, ENBSP_I), (
-                          SP.PVARCMR, LC.ZVARCPG),
-                          (OP.RIGI_MECA_ELAS.PVARCPR, LC.ZVARCPG), (
-                          SP.PVARCRR, LC.ZVARCPG),
-                          (SP.PVARIMP, ZVARIPG), (
-                          OP.RIGI_MECA_ELAS.PVARIMR, ZVARIPG),
-                          ),
-                          para_out=((SP.PMATUUR, MMATUUR), ),
-                          ),
+        OP.RIGI_MECA_ELAS(te=-1),
 
         OP.RIGI_GEOM(te=-1),
-
 
         OP.RIGI_MECA_HYST(te=50,
                           para_in=(

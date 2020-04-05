@@ -223,7 +223,12 @@ Ne renseignez pas le mot-clé COMPORTEMENT/%(k2)s, afin de sélectionner l'algor
   il est recommandé d’utiliser la modélisation COQUE_3D, avec DEFORMATION='GROT_GDEP'.
 """),
 
-    49: _(""" La modélisation HHO n'est pas compatible ni avec DEFORMATION='SIMO_MIEHE' ni avec DEFORMATION='PETIT_REAC' ni avec DEFORMATION='GROT_GDEP'."""),
+    49: _("""La modélisation HHO n'est pas compatible ni avec DEFORMATION='SIMO_MIEHE' ni avec DEFORMATION='PETIT_REAC'."""),
+
+    50: _("""La réactualisation de la géométrie (DEFORMATION='PETIT_REAC') est déconseillée pour les éléments de type DKT et DST.
+Les grandes rotations ne sont pas modélisées correctement.
+En présence de grands déplacements et grandes rotations, il est préférable d'utiliser pour les modélisations type COQUE_3D ou DKTG.
+"""),
 
     53: _("""
  ECRO_LINE : la plasticité parfaite n'est pas autorisée !

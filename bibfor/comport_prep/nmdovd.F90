@@ -156,7 +156,10 @@ character(len=16), intent(in) :: rela_comp, rela_comp_py
             l_dktg  = lteatt('MODELI','DTG', typel = elem_type_name)
             l_shell = lteatt('COQUE' ,'OUI', typel = elem_type_name)
 ! --------- Specific checks
-            if (l_coq3d .and. (defo_comp .eq. 'GROT_GDEP') ) then
+            if (l_dkt .and. defo_comp .eq. 'PETIT_REAC') then
+                call utmess('A', 'COMPOR1_50')
+            endif
+            if (l_coq3d .and. (defo_comp .eq. 'GROT_GDEP')) then
                 call utmess('A', 'COMPOR1_47')
             endif
             if (l_hho .and.&
