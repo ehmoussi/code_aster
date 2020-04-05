@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
 !           IRET   :  CODE RETOUR
 !       ---------------------------------------------------------------
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/hujddd.h"
 #include "asterfort/hujprc.h"
 #include "asterfort/hujprj.h"
@@ -115,7 +116,7 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
         di1d = d13*di1d
 !
     else
-        call utmess('F', 'COMPOR1_35')
+        ASSERT(ASTER_FALSE)
     endif
 !
     if ((i1d/pref) .gt. tol) then
@@ -194,7 +195,7 @@ subroutine hujdp(mod, deps, sigd, sigf, mater,&
             hooknl(6,6) = g3
 !
         else
-            call utmess('F', 'COMPOR1_35')
+            ASSERT(ASTER_FALSE)
         endif
 !
     else if (mod(1:6) .eq. 'C_PLAN' .or. mod(1:2) .eq. '1D') then
