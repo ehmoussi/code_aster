@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
 !   ------------------------------------------------------------------
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/hujcdc.h"
 #include "asterfort/hujcic.h"
 #include "asterfort/hujcrd.h"
@@ -188,7 +189,7 @@ subroutine hujpot(mod, mater, vind, depsh, sigd,&
             hooknl(6,6) = g3
 !
         else
-            call utmess('F', 'COMPOR1_37')
+            ASSERT(ASTER_FALSE)
         endif
 !
     else if (mod(1:6) .eq. 'C_PLAN' .or. mod(1:2) .eq. '1D') then

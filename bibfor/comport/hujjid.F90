@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,6 +53,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
 ! =====================================================================
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/hujddd.h"
 #include "asterfort/hujksi.h"
 #include "asterfort/hujpic.h"
@@ -305,7 +306,7 @@ subroutine hujjid(mod, mater, indi, deps, prox,&
             hook(6,6) = g3
 !
         else
-            call utmess('F', 'COMPOR1_38')
+            ASSERT(ASTER_FALSE)
         endif
 !
 ! =====================================================================
