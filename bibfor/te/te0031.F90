@@ -57,7 +57,7 @@ implicit none
 #include "asterfort/vecma.h"
 #include "asterc/r8prem.h"
 #include "asterfort/Behaviour_type.h"
-!#include "asterfort/plateChckHomo.h"
+#include "asterfort/plateChckHomo.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -123,7 +123,7 @@ character(len=16), intent(in) :: option, nomte
 ! - Check consistency between DEFI_COQU_MULT/AFFE_CARA_ELEM
 !
     lcqhom   = ASTER_FALSE
-    !call plateChckHomo(l_nonlin, lcqhom)
+    call plateChckHomo(l_nonlin, option, lcqhom)
 !
 ! - Compute matrix for local basis 
 !
