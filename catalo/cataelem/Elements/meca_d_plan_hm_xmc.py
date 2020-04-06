@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -395,23 +395,6 @@ class TemplateElement(Element):
                      ),
         ),
 
-        OP.RIGI_MECA_TANG(te=588,
-            para_in=((OP.RIGI_MECA_TANG.PBASLOR, LC.N6NEUT_R), (SP.PCAMASS, CCAMASS),
-                     (SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_TANG.PCNSETO, LC.E144NEUI),
-                     (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
-                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                     (OP.RIGI_MECA_TANG.PFISNO, LC.FISNO_I), (SP.PGEOMER, NGEOMER),
-                     (OP.RIGI_MECA_TANG.PHEAVTO, E24NEUI), (OP.RIGI_MECA_TANG.PHEA_NO, LC.N5NEUTI),
-                     (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
-                     (OP.RIGI_MECA_TANG.PLONCHA, LC.E10NEUTI), (OP.RIGI_MECA_TANG.PLSN, LC.N1NEUT_R),
-                     (OP.RIGI_MECA_TANG.PLST, LC.N1NEUT_R), (SP.PMATERC, LC.CMATERC),
-                     (OP.RIGI_MECA_TANG.PPINTTO, LC.E24NEUTR), (OP.RIGI_MECA_TANG.PPMILTO, LC.E88NEUTR),
-                     (OP.RIGI_MECA_TANG.PSTANO, STANO_I), (SP.PVARCMR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
-                     ),
-        ),
 
         OP.RIGI_CONT(te=556,
             para_in=((OP.RIGI_CONT.PAINTER, E65NEUTR), (OP.RIGI_CONT.PBASECO, E52NEUTR),
@@ -448,6 +431,27 @@ class TemplateElement(Element):
                      (SP.PFISCO, LC.FISCO_I),
                      ),
             para_out=((SP.PMATUNS, MMATUNS), (OP.RIGI_CONT_M.PCOHESO, LC.N5NEUTR),
+                     ),
+        ),
+
+        OP.RIGI_MECA_TANG(te=588,
+            para_in=((OP.RIGI_MECA_TANG.PBASLOR, LC.N6NEUT_R), (SP.PCAMASS, CCAMASS),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_TANG.PCNSETO, LC.E144NEUI),
+                     (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (SP.PGEOMER, NGEOMER), (OP.RIGI_MECA_TANG.PHEAVTO, E24NEUI),
+                     (OP.RIGI_MECA_TANG.PFISNO, LC.FISNO_I),
+                     (OP.RIGI_MECA_TANG.PHEA_NO, LC.N5NEUTI), (SP.PINSTMR, CTEMPSR),
+                     (SP.PINSTPR, CTEMPSR), (OP.RIGI_MECA_TANG.PLONCHA, LC.E10NEUTI),
+                     (OP.RIGI_MECA_TANG.PLSN, LC.N1NEUT_R), (OP.RIGI_MECA_TANG.PLST, LC.N1NEUT_R),
+                     (SP.PMATERC, LC.CMATERC), (OP.RIGI_MECA_TANG.PPINTTO, LC.E24NEUTR),
+                     (OP.RIGI_MECA_TANG.PPMILTO, LC.E88NEUTR),
+                     (OP.RIGI_MECA_TANG.PSTANO, STANO_I), (SP.PVARCMR, LC.ZVARCPG),
+                     (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
+                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),),
+            para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
                      ),
         ),
 

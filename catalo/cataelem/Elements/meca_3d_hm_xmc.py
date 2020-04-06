@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -394,16 +394,19 @@ class TemplateElement(Element):
                      (SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_TANG.PCNSETO, E1280NEI),
                      (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                     (OP.RIGI_MECA_TANG.PFISNO, LC.FISNO_I), (SP.PGEOMER, NGEOMER),
-                     (OP.RIGI_MECA_TANG.PHEAVTO, LC.E128NEUI), (OP.RIGI_MECA_TANG.PHEA_NO, LC.N5NEUTI),
-                     (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
-                     (OP.RIGI_MECA_TANG.PLONCHA, LC.E10NEUTI), (OP.RIGI_MECA_TANG.PLSN, LC.N1NEUT_R),
-                     (OP.RIGI_MECA_TANG.PLST, LC.N1NEUT_R), (SP.PMATERC, LC.CMATERC),
-                     (OP.RIGI_MECA_TANG.PPINTTO, E132NEUT), (OP.RIGI_MECA_TANG.PPMILTO, E792NEUT),
-                     (OP.RIGI_MECA_TANG.PSTANO, STANO_I), (SP.PVARCMR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
-                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUNS, MMATUNS), ),
+                     (SP.PGEOMER, NGEOMER), (OP.RIGI_MECA_TANG.PHEAVTO, LC.E128NEUI),
+                     (OP.RIGI_MECA_TANG.PFISNO, LC.FISNO_I),
+                     (OP.RIGI_MECA_TANG.PHEA_NO, LC.N5NEUTI), (SP.PINSTMR, CTEMPSR),
+                     (SP.PINSTPR, CTEMPSR), (OP.RIGI_MECA_TANG.PLONCHA, LC.E10NEUTI),
+                     (OP.RIGI_MECA_TANG.PLSN, LC.N1NEUT_R), (OP.RIGI_MECA_TANG.PLST, LC.N1NEUT_R),
+                     (SP.PMATERC, LC.CMATERC), (OP.RIGI_MECA_TANG.PPINTTO, E132NEUT),
+                     (OP.RIGI_MECA_TANG.PPMILTO, E792NEUT), (OP.RIGI_MECA_TANG.PSTANO, STANO_I),
+                     (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
+                     (SP.PVARCRR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),),
+            para_out=((SP.PMATUNS, MMATUNS),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
         ),
 
         OP.RIGI_CONT(te=556,

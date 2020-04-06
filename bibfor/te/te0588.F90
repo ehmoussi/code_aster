@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 !
 subroutine te0588(option, nomte)
 !
+use Behaviour_module, only : behaviourOption
 use THM_type
 !
 implicit none
@@ -37,7 +38,6 @@ implicit none
 #include "asterfort/rcvalb.h"
 #include "asterfort/teattr.h"
 #include "asterfort/tecach.h"
-#include "asterfort/vecini.h"
 #include "asterfort/xasshm.h"
 #include "asterfort/xcaehm.h"
 #include "asterfort/xfnohm.h"
@@ -48,19 +48,28 @@ implicit none
 #include "jeveux.h"
 #include "asterfort/thmGetElemModel.h"
 #include "asterfort/Behaviour_type.h"
-    character(len=16) :: option, nomte
-!     ------------------------------------------------------------------
-! =====================================================================
 !
-!    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
-!                          ELEMENTS THHM, HM ET HH
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! =====================================================================
+character(len=16), intent(in) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: 3D_HM_*, D_PLAN_HM_* for XFEM
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!          FORC_NODA, CHAR_MECA_PESA_R
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: nno, imatuu, ndim, imate, iinstm, jcret
     integer :: dimmat, npi, npg, li, ibid, yaenrm
-    integer :: retloi, iretp, iretm, icodre(1)
+    integer :: codret, iretp, iretm, icodre(1)
     integer :: ipoids, ivf, idfde, igeom, idim
     integer :: iinstp, ideplm, ideplp, icompo, icarcr, ipesa
     integer :: icontm, ivarip, ivarim, ivectu, icontp
@@ -140,14 +149,18 @@ implicit none
     integer :: jpintt, jcnset, jheavt, jpmilt, jheavn
     integer :: jlonch, jlst, jstno
     character(len=8) :: enr
-! =====================================================================
-! --- 1. INITIALISATIONS ----------------------------------------------
-! --- SUIVANT ELEMENT, DEFINITION DES CARACTERISTIQUES : --------------
-! --- CHOIX DU TYPE D'INTEGRATION -------------------------------------
-! --- RECUPERATION DE LA GEOMETRIE ET POIDS DES POINTS D'INTEGRATION --
-! --- RECUPERATION DES FONCTIONS DE FORME -----------------------------
-! =====================================================================
-
+    aster_logical :: lVect, lMatr, lVari, lSigm
+!
+! --------------------------------------------------------------------------------------------------
+!
+    angmas = 0.d0
+    coor   = 0.d0
+    angleu = 0.d0
+    angnau = 0.d0
+    imatuu = ismaem()
+    ivectu = ismaem()
+    icontp = ismaem()
+    ivarip = ismaem()
 !
 ! - Get model of finite element
 !
@@ -215,10 +228,6 @@ implicit none
 ! --- COORDONNEES DU BARYCENTRE ( POUR LE REPRE CYLINDRIQUE )
 ! --- CONVERSION DES ANGLES NAUTIQUES EN ANGLES D'EULER
 ! =====================================================================
-        call vecini(7, 0.d0, angmas)
-        call vecini(3, 0.d0, coor)
-        call vecini(3, 0.d0, angleu)
-        call vecini(3, 0.d0, angnau)
 !
         do i = 1, nno
             do idim = 1, ndim
@@ -248,26 +257,27 @@ implicit none
                 angnau(1) = angmas(1)
             endif
         endif
-! =====================================================================
-! --- PARAMETRES EN SORTIE ISMAEM? ------------------------------------
-! =====================================================================
-        if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+! ----- Select objects to construct from option name
+        call behaviourOption(option, zk16(icompo),&
+                             lMatr , lVect ,&
+                             lVari , lSigm ,&
+                             codret)
+! ----- Output fields
+        if (lMatr) then
             call jevech('PMATUNS', 'E', imatuu)
-        else
-            imatuu = ismaem()
         endif
-        if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+        if (lVect) then
             call jevech('PVECTUR', 'E', ivectu)
-            call jevech('PCONTPR', 'E', icontp)
-            call jevech('PVARIPR', 'E', ivarip)
-            call jevech('PCODRET', 'E', jcret)
-            zi(jcret) = 0
-        else
-            ivectu = ismaem()
-            icontp = ismaem()
-            ivarip = ismaem()
         endif
-        retloi = 0
+        if (lVari) then
+            call jevech('PVARIPR', 'E', ivarip)
+        endif
+        if (lSigm) then
+            call jevech('PCONTPR', 'E', icontp)
+            call jevech('PCODRET', 'E', jcret)
+        endif
+! ----- Compute
+        codret = 0
         dimmat = nddls*nnop
         if (option(1:9) .eq. 'RIGI_MECA') then
             call xasshm(ds_thm,&
@@ -281,10 +291,10 @@ implicit none
                         press1, press2, tempe, dimdef, dimcon,&
                         dimuel, nbvari, nddls, nddlm, nmec,&
                         np1, ndim, zk16(icompo), axi, modint,&
-                        retloi, nnop, nnops, nnopm, enrmec,&
+                        codret, nnop, nnops, nnopm, enrmec,&
                         dimenr, zi(jheavt), zi( jlonch), zi(jcnset), jpintt,&
                         jpmilt, jheavn, angnau,dimmat, enrhyd, nfiss, nfh, jfisno,&
-                        work1, work2)
+                        work1, work2, lVect, lMatr, lVari, lSigm)
         else
             do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
@@ -300,11 +310,13 @@ implicit none
                         press1, press2, tempe, dimdef, dimcon,&
                         dimuel, nbvari, nddls, nddlm, nmec,&
                         np1, ndim, zk16(icompo), axi, modint,&
-                        retloi, nnop, nnops, nnopm, enrmec,&
+                        codret, nnop, nnops, nnopm, enrmec,&
                         dimenr, zi(jheavt), zi( jlonch), zi(jcnset), jpintt,&
                         jpmilt, jheavn, angnau,dimmat, enrhyd, nfiss, nfh, jfisno,&
-                        work1, work2)
-            zi(jcret) = retloi
+                        work1, work2, lVect, lMatr, lVari, lSigm)
+        endif
+        if (lSigm) then
+            zi(jcret) = codret
         endif
 ! =====================================================================
 ! --- SUPRESSION DES DDLS HEAVISIDE SUPERFLUS -------------------------

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,8 @@ interface
                       nnop, nnops, nnopm, enrmec,&
                       dimenr, heavt, lonch, cnset, jpintt,&
                       jpmilt, jheavn, angmas,dimmat, enrhyd,&
-                      nfiss, nfh, jfisno, work1, work2)
+                      nfiss, nfh, jfisno, work1, work2,&
+                      lVect, lMatr, lVari, lSigm)
         use THM_type
         type(THM_DS), intent(inout) :: ds_thm
         integer :: dimmat
@@ -106,5 +107,6 @@ interface
         integer :: jfisno
         real(kind=8) :: work1(dimcon, dimuel)
         real(kind=8) :: work2(dimenr, dimuel)
+        aster_logical, intent(in) :: lVect, lMatr, lVari, lSigm
     end subroutine xasshm
 end interface

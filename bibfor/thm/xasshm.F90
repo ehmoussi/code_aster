@@ -32,7 +32,8 @@ subroutine xasshm(ds_thm,&
                   codret, nnop, nnops, nnopm, enrmec,&
                   dimenr, heavt, lonch, cnset, jpintt,&
                   jpmilt, jheavn, angmas,dimmat, enrhyd,&
-                  nfiss, nfh, jfisno, work1, work2)
+                  nfiss, nfh, jfisno, work1, work2,&
+                  lVect, lMatr, lVari, lSigm)
 !
 use THM_type
 !
@@ -80,6 +81,7 @@ real(kind=8) :: angmas(3)
 aster_logical :: axi
 character(len=3) :: modint
 character(len=16) :: option, compor(*)
+aster_logical, intent(in) :: lVect, lMatr, lVari, lSigm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -214,7 +216,7 @@ character(len=16) :: option, compor(*)
 ! ======================================================================
 ! --- INITIALISATION DE VECTU, MATUU A 0 SUIVANT OPTION ----------------
 ! ======================================================================
-    if (option(1:9) .ne. 'RIGI_MECA') then
+    if (lVect) then
         do i = 1, dimuel
             vectu(i)=0.d0
         end do
@@ -222,7 +224,7 @@ character(len=16) :: option, compor(*)
 ! ======================================================================
 ! --- INITIALISATION DF(MATUU) ET MATRI --------------------------------
 ! ======================================================================
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         do i = 1, dimuel*dimuel
             matuu(i)=0.d0
         end do
@@ -368,7 +370,7 @@ character(len=16) :: option, compor(*)
             do i = 1, nbvari
                 vintm(i) = varim(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)
             end do
-            if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+            if (lVari) then
                 do i = 1, nbvari
                     vintp(i) = varip(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)
                 end do
@@ -376,7 +378,7 @@ character(len=16) :: option, compor(*)
             do i = 1, dimcon
                 congem(i) = contm(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
             end do
-            if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+            if (lSigm) then
                 do i = 1, dimcon
                     congep(i) = contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)
                 end do
@@ -391,7 +393,7 @@ character(len=16) :: option, compor(*)
             do i = 1, nbvari
                 varim(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)=vintm(i)
             end do
-            if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+            if (lVari) then
                 do i = 1, nbvari
                     varip(npi*(ise-1)*nbvari+(kpi-1)*nbvari+i)=vintp(i)
                 end do
@@ -399,7 +401,7 @@ character(len=16) :: option, compor(*)
             do i = 1, dimcon
                 contm(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)=congem(i)
             end do
-            if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+            if (lSigm) then
                 do i = 1, dimcon
                     contp(npi*(ise-1)*dimcon+(kpi-1)*dimcon+i)=congep(i)
                 end do
@@ -421,15 +423,15 @@ character(len=16) :: option, compor(*)
 ! ======================================================================
             if (mecani(1) .eq. 1) then
                 if (kpi .gt. npg) then
-                    if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+                    if (lSigm) then
                         do i = 1, 6
                             contp((kpi-1)*dimcon+i)=contp((kpi-npg-1)*dimcon+i)
                         end do
                     endif
                     nb_vari_meca = ds_thm%ds_behaviour%nb_vari_meca
-                    if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+                    if (lVari) then
                         do i = 1, nb_vari_meca
-                            varip((kpi-1)*nbvari+i) = varip((kpi-npg-1)*nbvari+i)
+                            varip((kpi-1)*nbvari+i) = varip((kpi-npg-1)* nbvari+i)
                         end do
                     endif
                 endif
@@ -455,7 +457,7 @@ character(len=16) :: option, compor(*)
 ! ======================================================================
 ! --- CALCUL DE MATUU (MATRI) ------------------------------------------
 ! ======================================================================
-            if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+            if (lMatr) then
                 do i = 1, dimenr
                     do j = 1, dimcon
                         drdsr(i,j)=drds(i,j)
@@ -472,7 +474,7 @@ character(len=16) :: option, compor(*)
 ! ======================================================================
 ! --- ON SELECTIONNE LES COMPOSANTES UTILES DE R POUR CE PI ------------
 ! ======================================================================
-            if ((option(1:9).eq.'FULL_MECA' .or. option(1:9) .eq.'RAPH_MECA')) then
+            if (lVect) then
                 do i = 1, dimenr
                     sigbar(i) = ck(i)*r(i)
                 end do
@@ -489,7 +491,7 @@ character(len=16) :: option, compor(*)
 ! ======================================================================
 ! --- SORTIE DE BOUCLE SUR LES POINTS D'INTEGRATION --------------------
 ! ======================================================================
-        if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+        if (lMatr) then
             kji=1
             do ii = 1, dimuel
                 do jj = 1, dimuel

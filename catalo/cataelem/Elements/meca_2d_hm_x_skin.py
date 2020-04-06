@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: daniele.colombo at ifpen.fr
-# CATALOGUE DES ELEMNTS 3D HM-X-FEM DE BORD
+# CATALOGUE DES ELEMNTS 2D HM-X-FEM DE BORD
 
 
 from cataelem.Tools.base_objects import LocatedComponents, ArrayOfComponents, SetOfNodes, ElrefeLoc
@@ -36,18 +36,13 @@ from cataelem.Options.options import OP
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
                              components=(
-                             ('EN1', ('DX', 'DY', 'DZ', 'PRE1', 'H1X',
-                                      'H1Y', 'H1Z', 'H1PRE1',)),
-                             ('EN2', ('DX', 'DY', 'DZ', 'H1X', 'H1Y',
-                                      'H1Z',)),))
+                             ('EN1', ('DX', 'DY', 'PRE1', 'H1X', 'H1Y',
+                                      'H1PRE1',)),
+                             ('EN2', ('DX', 'DY', 'H1X', 'H1Y',)),))
 
 
 EFLHN = LocatedComponents(phys=PHY.FLHN_R, type='ELGA', location='RIGI',
                           components=('FH11',))
-
-
-EFORCNO = LocatedComponents(phys=PHY.FORC_R, type='ELNO',
-                            components=('FX', 'FY', 'FZ',))
 
 
 CFLUXF = LocatedComponents(phys=PHY.FTHM_F, type='ELEM',
@@ -59,11 +54,11 @@ EFLUXE = LocatedComponents(phys=PHY.FTHM_R, type='ELNO',
 
 
 NGEOMER = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-                            components=('X', 'Y', 'Z',))
+                            components=('X', 'Y',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-                             components=('X', 'Y', 'Z', 'W',))
+                             components=('X', 'Y', 'W',))
 
 
 CTEMPSR = LocatedComponents(phys=PHY.INST_R, type='ELEM',
@@ -74,69 +69,58 @@ STANO_I = LocatedComponents(phys=PHY.N120_I, type='ELNO',
                             components=('X1',))
 
 
-E6NEUTI = LocatedComponents(phys=PHY.N512_I, type='ELEM',
+E6NEUTI = LocatedComponents(phys=PHY.N1280I, type='ELEM',
                             components=('X[6]',))
 
 
-E33NEUTR = LocatedComponents(phys=PHY.N792_R, type='ELEM',
-                             components=('X[33]',))
-
-
 CPRESSF = LocatedComponents(phys=PHY.PRES_F, type='ELEM',
-                            components=('PRES',))
+                            components=('PRES', 'CISA',))
 
 
 EPRESNO = LocatedComponents(phys=PHY.PRES_R, type='ELNO',
-                            components=('PRES',))
+                            components=('PRES', 'CISA',))
 
 
 CPRES_R = LocatedComponents(phys=PHY.PRES_R, type='ELEM',
-                            components=('PRES',))
+                            components=('PRES', 'CISA',))
 
 
 NSIEF_R = LocatedComponents(phys=PHY.SIEF_R, type='ELNO', diff=True,
                             components=(
-                            ('EN1', ('FH11X', 'FH11Y', 'FH11Z',)),
+                            ('EN1', ('FH11X', 'FH11Y',)),
                             ('EN2', ()),))
-
-
-ECONTNO = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
-                            components=('SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIXZ',
-                                        'SIYZ',))
 
 
 MVECTUR = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class HM_FACE8_XH(Element):
+class HM_DPSE3_XH(Element):
 
     """Please document this element"""
-    meshType = MT.QUAD8
+    meshType = MT.SEG3
     nodes = (
-        SetOfNodes('EN2', (5, 6, 7, 8,)),
-        SetOfNodes('EN1', (1, 2, 3, 4,)),
+        SetOfNodes('EN2', (3,)),
+        SetOfNodes('EN1', (1, 2,)),
     )
     elrefe = (
-        ElrefeLoc(MT.QU8, gauss=('RIGI=FPG9',),),
-        ElrefeLoc(MT.QU4, gauss=('RIGI=FPG9',),),
-        ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6',),),
-        ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG6',),),
+        ElrefeLoc(MT.SE3, gauss=('RIGI=FPG4',),),
+        ElrefeLoc(MT.SE2, gauss=('RIGI=FPG2',),),
     )
     calculs = (
 
         OP.CHAR_MECA_FLUX_F(te=579,
                             para_in=(
-                            (OP.CHAR_MECA_FLUX_F.PCNSETO, LC.E36NEUI), (
+                            (OP.CHAR_MECA_FLUX_F.PCNSETO, E6NEUTI), (
                                 SP.PFLUXF, CFLUXF),
                             (SP.PGEOMER, NGEOMER), (
-                            OP.CHAR_MECA_FLUX_F.PHEAVTO, E6NEUTI),
+                            OP.CHAR_MECA_FLUX_F.PHEAVTO, LC.E2NEUTI),
                             (OP.CHAR_MECA_FLUX_F.PHEA_NO, LC.N5NEUTI), (
-                            OP.CHAR_MECA_FLUX_F.PHEA_SE, E6NEUTI),
+                            OP.CHAR_MECA_FLUX_F.PHEA_SE, LC.E2NEUTI),
                             (OP.CHAR_MECA_FLUX_F.PLONCHA, LC.E10NEUTI), (
                             OP.CHAR_MECA_FLUX_F.PLSN, LC.N1NEUT_R),
-                            (OP.CHAR_MECA_FLUX_F.PPINTTO, LC.E12NEUTR), (
-                            OP.CHAR_MECA_FLUX_F.PPMILTO, E33NEUTR),
+                            (OP.CHAR_MECA_FLUX_F.PPINTTO, LC.E6NEUTR), (
+                            OP.CHAR_MECA_FLUX_F.PPMILTO, LC.E4NEUTR),
                             (OP.CHAR_MECA_FLUX_F.PSTANO, STANO_I), (
                             SP.PTEMPSR, CTEMPSR),
                             ),
@@ -145,41 +129,34 @@ class HM_FACE8_XH(Element):
 
         OP.CHAR_MECA_FLUX_R(te=579,
                             para_in=(
-                            (OP.CHAR_MECA_FLUX_R.PCNSETO, LC.E36NEUI), (
+                            (OP.CHAR_MECA_FLUX_R.PCNSETO, E6NEUTI), (
                                 SP.PFLUXR, EFLUXE),
                             (SP.PGEOMER, NGEOMER), (
-                            OP.CHAR_MECA_FLUX_R.PHEAVTO, E6NEUTI),
+                            OP.CHAR_MECA_FLUX_R.PHEAVTO, LC.E2NEUTI),
                             (OP.CHAR_MECA_FLUX_R.PHEA_NO, LC.N5NEUTI), (
-                            OP.CHAR_MECA_FLUX_R.PHEA_SE, E6NEUTI),
+                            OP.CHAR_MECA_FLUX_R.PHEA_SE, LC.E2NEUTI),
                             (OP.CHAR_MECA_FLUX_R.PLONCHA, LC.E10NEUTI), (
                             OP.CHAR_MECA_FLUX_R.PLSN, LC.N1NEUT_R),
-                            (OP.CHAR_MECA_FLUX_R.PPINTTO, LC.E12NEUTR), (
-                            OP.CHAR_MECA_FLUX_R.PPMILTO, E33NEUTR),
+                            (OP.CHAR_MECA_FLUX_R.PPINTTO, LC.E6NEUTR), (
+                            OP.CHAR_MECA_FLUX_R.PPMILTO, LC.E4NEUTR),
                             (OP.CHAR_MECA_FLUX_R.PSTANO, STANO_I), (
                             SP.PTEMPSR, CTEMPSR),
                             ),
                             para_out=((SP.PVECTUR, MVECTUR), ),
                             ),
 
-        OP.CHAR_MECA_FR2D3D(te=466,
-                            para_in=(
-                                (SP.PFR2D3D, EFORCNO), (SP.PGEOMER, NGEOMER),
-                            ),
-                            para_out=((SP.PVECTUR, MVECTUR), ),
-                            ),
-
         OP.CHAR_MECA_PRES_F(te=36,
                             para_in=(
-                            (OP.CHAR_MECA_PRES_F.PCNSETO, LC.E36NEUI), (
-                            SP.PGEOMER, NGEOMER),
-                            (OP.CHAR_MECA_PRES_F.PHEAVTO, E6NEUTI), (
+                            (OP.CHAR_MECA_PRES_F.PCNSETO, E6NEUTI), (
+                                SP.PGEOMER, NGEOMER),
+                            (OP.CHAR_MECA_PRES_F.PHEAVTO, LC.E2NEUTI), (
                             OP.CHAR_MECA_PRES_F.PHEA_NO, LC.N5NEUTI),
-                            (OP.CHAR_MECA_PRES_F.PHEA_SE, E6NEUTI), (
+                            (OP.CHAR_MECA_PRES_F.PHEA_SE, LC.E2NEUTI), (
                             OP.CHAR_MECA_PRES_F.PLONCHA, LC.E10NEUTI),
                             (OP.CHAR_MECA_PRES_F.PLSN, LC.N1NEUT_R), (
                             OP.CHAR_MECA_PRES_F.PLST, LC.N1NEUT_R),
-                            (OP.CHAR_MECA_PRES_F.PPINTTO, LC.E12NEUTR), (
-                            OP.CHAR_MECA_PRES_F.PPMILTO, E33NEUTR),
+                            (OP.CHAR_MECA_PRES_F.PPINTTO, LC.E6NEUTR), (
+                            OP.CHAR_MECA_PRES_F.PPMILTO, LC.E4NEUTR),
                             (SP.PPRESSF, CPRESSF), (
                             OP.CHAR_MECA_PRES_F.PSTANO, STANO_I),
                             (SP.PTEMPSR, CTEMPSR), ),
@@ -188,23 +165,23 @@ class HM_FACE8_XH(Element):
 
         OP.CHAR_MECA_PRES_R(te=36,
                             para_in=(
-                            (OP.CHAR_MECA_PRES_R.PCNSETO, LC.E36NEUI), (
-                            SP.PGEOMER, NGEOMER),
-                            (OP.CHAR_MECA_PRES_R.PHEAVTO, E6NEUTI), (
+                            (OP.CHAR_MECA_PRES_R.PCNSETO, E6NEUTI), (
+                                SP.PGEOMER, NGEOMER),
+                            (OP.CHAR_MECA_PRES_R.PHEAVTO, LC.E2NEUTI), (
                             OP.CHAR_MECA_PRES_R.PHEA_NO, LC.N5NEUTI),
-                            (OP.CHAR_MECA_PRES_R.PHEA_SE, E6NEUTI), (
+                            (OP.CHAR_MECA_PRES_R.PHEA_SE, LC.E2NEUTI), (
                             OP.CHAR_MECA_PRES_R.PLONCHA, LC.E10NEUTI),
                             (OP.CHAR_MECA_PRES_R.PLSN, LC.N1NEUT_R), (
                             OP.CHAR_MECA_PRES_R.PLST, LC.N1NEUT_R),
-                            (OP.CHAR_MECA_PRES_R.PPINTTO, LC.E12NEUTR), (
-                            OP.CHAR_MECA_PRES_R.PPMILTO, E33NEUTR),
+                            (OP.CHAR_MECA_PRES_R.PPINTTO, LC.E6NEUTR), (
+                            OP.CHAR_MECA_PRES_R.PPMILTO, LC.E4NEUTR),
                             (SP.PPRESSR, EPRESNO), (
                             OP.CHAR_MECA_PRES_R.PSTANO, STANO_I),
                             (SP.PTEMPSR, CTEMPSR), ),
                             para_out=((SP.PVECTUR, MVECTUR), ),
                             ),
 
-        OP.FLHN_ELGA(te=493,
+        OP.FLHN_ELGA(te=468,
                      para_in=((SP.PCONTR, NSIEF_R), (SP.PGEOMER, NGEOMER),
                               ),
                      para_out=((SP.PFLHN, EFLHN), ),
@@ -217,22 +194,16 @@ class HM_FACE8_XH(Element):
                          (OP.INI_XFEM_ELNO.PSTANO, STANO_I), ),
                          ),
 
-        OP.SIRO_ELEM(te=411,
-                     para_in=((SP.PGEOMER, NGEOMER), (SP.PSIG3D, ECONTNO),
-                              ),
-                     para_out=((SP.PPJSIGM, LC.EPJSIGM), ),
-                     ),
-
         OP.TOPONO(te=120,
                   para_in=(
-                  (OP.TOPONO.PCNSETO, LC.E36NEUI), (
-                      OP.TOPONO.PHEAVTO, E6NEUTI),
+                  (OP.TOPONO.PCNSETO, E6NEUTI), (
+                      OP.TOPONO.PHEAVTO, LC.E2NEUTI),
                   (SP.PLEVSET, LC.N1NEUT_R), (
                   OP.TOPONO.PLONCHA, LC.E10NEUTI),
                   ),
                   para_out=(
                   (OP.TOPONO.PHEA_NO, LC.N5NEUTI), (
-                      OP.TOPONO.PHEA_SE, E6NEUTI),
+                  OP.TOPONO.PHEA_SE, LC.E2NEUTI),
                   ),
                   ),
 
@@ -240,11 +211,11 @@ class HM_FACE8_XH(Element):
                   para_in=((SP.PGEOMER, NGEOMER), (SP.PLEVSET, LC.N1NEUT_R),
                            ),
                   para_out=(
-                  (OP.TOPOSE.PCNSETO, LC.E36NEUI), (
-                      OP.TOPOSE.PHEAVTO, E6NEUTI),
+                  (OP.TOPOSE.PCNSETO, E6NEUTI), (
+                      OP.TOPOSE.PHEAVTO, LC.E2NEUTI),
                   (OP.TOPOSE.PLONCHA, LC.E10NEUTI), (
-                  OP.TOPOSE.PPINTTO, LC.E12NEUTR),
-                  (OP.TOPOSE.PPMILTO, E33NEUTR), ),
+                  OP.TOPOSE.PPINTTO, LC.E6NEUTR),
+                  (OP.TOPOSE.PPMILTO, LC.E4NEUTR), ),
                   ),
 
         OP.TOU_INI_ELEM(te=99,
@@ -257,24 +228,11 @@ class HM_FACE8_XH(Element):
 
         OP.TOU_INI_ELNO(te=99,
                         para_out=(
-                        (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F), (
-                        OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R),
-                        (OP.TOU_INI_ELNO.PPRES_R, EPRESNO), ),
+                        (OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), (
+                        OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F),
+                        (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R), (
+                        OP.TOU_INI_ELNO.PPRES_R, EPRESNO),
+                        ),
                         ),
 
-    )
-
-
-#------------------------------------------------------------
-class HM_FACE6_XH(HM_FACE8_XH):
-
-    """Please document this element"""
-    meshType = MT.TRIA6
-    nodes = (
-        SetOfNodes('EN2', (4, 5, 6,)),
-        SetOfNodes('EN1', (1, 2, 3,)),
-    )
-    elrefe = (
-        ElrefeLoc(MT.TR6, gauss=('RIGI=FPG6',),),
-        ElrefeLoc(MT.TR3, gauss=('RIGI=FPG6',),),
     )

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# person_in_charge: daniele.colombo at ifpen.fr
 # CATALOGUES DES ELEMENTS 2D_DP HM-XFEM MULTI HEAVISIDE SANS CONTACT
 
 
@@ -378,9 +379,7 @@ class HM_DPTR6_XH1(Element):
                      ),
 
         OP.RAPH_MECA(te=588,
-                     para_in=(
-                     (OP.RAPH_MECA.PBASLOR, LC.N6NEUT_R), (
-                         SP.PCAMASS, CCAMASS),
+            para_in=((OP.RAPH_MECA.PBASLOR, LC.N6NEUT_R), (SP.PCAMASS, CCAMASS),
                      (SP.PCARCRI, LC.CCARCRI), (
                      OP.RAPH_MECA.PCNSETO, LC.E144NEUI),
                      (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR), (
@@ -400,61 +399,44 @@ class HM_DPTR6_XH1(Element):
                      OP.RAPH_MECA.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), (SP.PVARIMP, ZVARIPG),
                      (OP.RAPH_MECA.PVARIMR, ZVARIPG), ),
-                     para_out=(
-                     (SP.PCODRET, LC.ECODRET), (OP.RAPH_MECA.PCONTPR, ECONTPG),
+            para_out=((SP.PCODRET, LC.ECODRET), (OP.RAPH_MECA.PCONTPR, ECONTPG),
                      (OP.RAPH_MECA.PVARIPR, ZVARIPG), (SP.PVECTUR, MVECTUR),
                      ),
-                     ),
+        ),
 
         OP.RIGI_MECA_TANG(te=588,
-                          para_in=(
-                          (OP.RIGI_MECA_TANG.PBASLOR, LC.N6NEUT_R), (
-                          SP.PCAMASS, CCAMASS),
-                          (SP.PCARCRI, LC.CCARCRI), (
-                          OP.RIGI_MECA_TANG.PCNSETO, LC.E144NEUI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
-                          OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
-                          (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                          (OP.RIGI_MECA_TANG.PFISNO, LC.FISNO_I), (
-                          SP.PGEOMER, NGEOMER),
-                          (OP.RIGI_MECA_TANG.PHEAVTO, E24NEUI), (
-                          OP.RIGI_MECA_TANG.PHEA_NO, LC.N5NEUTI),
-                          (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
-                          (OP.RIGI_MECA_TANG.PLONCHA, LC.E10NEUTI), (
-                          OP.RIGI_MECA_TANG.PLSN, LC.N1NEUT_R),
-                          (OP.RIGI_MECA_TANG.PLST, LC.N1NEUT_R), (
-                          SP.PMATERC, LC.CMATERC),
-                          (OP.RIGI_MECA_TANG.PPINTTO, LC.E24NEUTR), (
-                          OP.RIGI_MECA_TANG.PPMILTO, LC.E88NEUTR),
-                          (OP.RIGI_MECA_TANG.PSTANO, STANO_I), (
-                          SP.PVARCMR, LC.ZVARCPG),
-                          (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (
-                          SP.PVARCRR, LC.ZVARCPG),
-                          (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-                          para_out=(
-                              (SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
-                          ),
-                          ),
+            para_in=((OP.RIGI_MECA_TANG.PBASLOR, LC.N6NEUT_R), (SP.PCAMASS, CCAMASS),
+                     (SP.PCARCRI, LC.CCARCRI), (OP.RIGI_MECA_TANG.PCNSETO, LC.E144NEUI),
+                     (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (SP.PGEOMER, NGEOMER), (OP.RIGI_MECA_TANG.PHEAVTO, E24NEUI),
+                     (OP.RIGI_MECA_TANG.PFISNO, LC.FISNO_I),
+                     (OP.RIGI_MECA_TANG.PHEA_NO, LC.N5NEUTI), (SP.PINSTMR, CTEMPSR),
+                     (SP.PINSTPR, CTEMPSR), (OP.RIGI_MECA_TANG.PLONCHA, LC.E10NEUTI),
+                     (OP.RIGI_MECA_TANG.PLSN, LC.N1NEUT_R), (OP.RIGI_MECA_TANG.PLST, LC.N1NEUT_R),
+                     (SP.PMATERC, LC.CMATERC), (OP.RIGI_MECA_TANG.PPINTTO, LC.E24NEUTR),
+                     (OP.RIGI_MECA_TANG.PPMILTO, LC.E88NEUTR),
+                     (OP.RIGI_MECA_TANG.PSTANO, STANO_I), (SP.PVARCMR, LC.ZVARCPG),
+                     (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
+                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),),
+            para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
+        ),
 
         OP.SIEF_ELGA(te=261,
-                     para_in=(
-                     (OP.SIEF_ELGA.PBASLOR, LC.N6NEUT_R), (
-                         SP.PCAMASS, CCAMASS),
-                     (OP.SIEF_ELGA.PCNSETO, LC.E144NEUI), (
-                     OP.SIEF_ELGA.PCOMPOR, LC.CCOMPOR),
+            para_in=((OP.SIEF_ELGA.PBASLOR, LC.N6NEUT_R), (SP.PCAMASS, CCAMASS),
+                     (OP.SIEF_ELGA.PCNSETO, LC.E144NEUI), (OP.SIEF_ELGA.PCOMPOR, LC.CCOMPOR),
                      (SP.PDEPLAR, DDL_MECA), (OP.SIEF_ELGA.PFISNO, LC.FISNO_I),
                      (SP.PGEOMER, NGEOMER), (OP.SIEF_ELGA.PHEAVTO, E24NEUI),
-                     (OP.SIEF_ELGA.PLONCHA, LC.E10NEUTI), (
-                     OP.SIEF_ELGA.PLSN, LC.N1NEUT_R),
-                     (OP.SIEF_ELGA.PLST, LC.N1NEUT_R), (
-                     SP.PMATERC, LC.CMATERC),
-                     (OP.SIEF_ELGA.PPINTTO, LC.E24NEUTR), (
-                     OP.SIEF_ELGA.PPMILTO, LC.E88NEUTR),
-                     (OP.SIEF_ELGA.PSTANO, STANO_I), (
-                     OP.SIEF_ELGA.PVARCPR, LC.ZVARCPG),
+                     (OP.SIEF_ELGA.PLONCHA, LC.E10NEUTI), (OP.SIEF_ELGA.PLSN, LC.N1NEUT_R),
+                     (OP.SIEF_ELGA.PLST, LC.N1NEUT_R), (SP.PMATERC, LC.CMATERC),
+                     (OP.SIEF_ELGA.PPINTTO, LC.E24NEUTR), (OP.SIEF_ELGA.PPMILTO, LC.E88NEUTR),
+                     (OP.SIEF_ELGA.PSTANO, STANO_I), (OP.SIEF_ELGA.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), ),
-                     para_out=((OP.SIEF_ELGA.PCONTRR, ECONTPG), ),
-                     ),
+            para_out=((OP.SIEF_ELGA.PCONTRR, ECONTPG), ),
+        ),
 
         OP.SIEQ_ELGA(te=335,
                      para_in=((OP.SIEQ_ELGA.PCONTRR, ESIGMPG), ),
