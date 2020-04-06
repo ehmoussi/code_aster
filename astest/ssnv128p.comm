@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -230,10 +230,16 @@ TEST_RESU(RESU=(_F(GROUP_NO='PPA',
                 ),
           )
 
+
+IMPR_RESU(FORMAT="MED",UNITE=81,RESU=_F(RESULTAT=U2M, NOM_CHAM=('DEPL','CONT_NOEU'),))
+CONT_NO=LIRE_RESU(  TYPE_RESU='EVOL_NOLI', FORMAT='MED',  MODELE=MO, TOUT_ORDRE='OUI',UNITE=81,
+         FORMAT_MED=(_F( NOM_RESU    ='U2M',
+                         NOM_CHAM    ='CONT_NOEU',)),)
+
 # VERIF PROJECTION  (POINT LE PLUS A DROITE)
 TEST_RESU(RESU=_F(INST=1.0,
                   REFERENCE='ANALYTIQUE',
-                  RESULTAT=U2M,
+                  RESULTAT=CONT_NO,
                   NOM_CHAM='CONT_NOEU',
                   NOEUD='N321',
                   NOM_CMP='PROJ_X',
@@ -244,7 +250,7 @@ TEST_RESU(RESU=_F(INST=1.0,
 
 TEST_RESU(RESU=_F(INST=1.0,
                   REFERENCE='ANALYTIQUE',
-                  RESULTAT=U2M,
+                  RESULTAT=CONT_NO,
                   NOM_CHAM='CONT_NOEU',
                   NOEUD='N321',
                   NOM_CMP='PROJ_Y',
