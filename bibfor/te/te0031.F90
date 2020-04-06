@@ -18,6 +18,8 @@
 !
 subroutine te0031(option, nomte)
 !
+use Behaviour_module, only : behaviourOption
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -82,7 +84,7 @@ character(len=16), intent(in) :: option, nomte
 !
     integer, parameter :: npge = 3
     integer :: ndim, nno, ind
-    integer :: multic, codret(1), jdepm, jdepr
+    integer :: multic, codret, jdepm, jdepr
     integer :: icompo, i1, i2, j, jvect
     integer :: k, jcret, jfreq, iacce
     integer :: jgeom, jmatr, jener, i
@@ -101,6 +103,7 @@ character(len=16), intent(in) :: option, nomte
 !     --->   UML : DEPLACEMENT A L'INSTANT T- (REPERE LOCAL)
 !     --->   DUL : INCREMENT DE DEPLACEMENT   (REPERE LOCAL)
     real(kind=8) :: uml(6, 4), dul(6, 4)
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -231,9 +234,15 @@ character(len=16), intent(in) :: option, nomte
         call jevech('PDEPLMR', 'L', jdepm)
         call jevech('PDEPLPR', 'L', jdepr)
         call jevech('PCOMPOR', 'L', icompo)
+! ----- Select objects to construct from option name
+        call behaviourOption(option, zk16(icompo),&
+                             lMatr , lVect ,&
+                             lVari , lSigm ,&
+                             codret)
         if (lcqhom) then
             call utmess('F', 'PLATE1_75')
         endif
+! ----- Update configuration
         defo_comp = zk16(icompo-1+DEFO)
         if ((defo_comp(6:10).eq.'_REAC') .or. (defo_comp.eq.'GROT_GDEP')) then
             do i = 1, nno
@@ -243,42 +252,39 @@ character(len=16), intent(in) :: option, nomte
                 zr(jgeom+i1+1) = zr(jgeom+i1+1) + zr(jdepm+i2+1) + zr(jdepr+i2+1)
                 zr(jgeom+i1+2) = zr(jgeom+i1+2) + zr(jdepm+i2+2) + zr(jdepr+i2+2)
             enddo
-!
             if (nno .eq. 3) then
                 call dxtpgl(zr(jgeom), pgl)
-            else if (nno.eq.4) then
+            else if (nno .eq. 4) then
                 call dxqpgl(zr(jgeom), pgl, 'S', iret)
             endif
             call utpvgl(nno, 3, pgl, zr(jgeom), xyzl)
-!
         endif
-!
+! ----- Change frame
         call utpvgl(nno, 6, pgl, zr(jdepm), uml)
         call utpvgl(nno, 6, pgl, zr(jdepr), dul)
-!
+! ----- Compute non-linear options
         if (nomte .eq. 'MEDKTR3') then
-            call dktnli(nomte, option, xyzl,pgl, uml, dul,&
-                        vecloc, matloc, codret(1))
+            call dktnli(option, xyzl,pgl, uml, dul,&
+                        vecloc, matloc, codret)
         else if (nomte.eq.'MEDKQU4 ') then
-            call dktnli(nomte, option, xyzl,pgl, uml, dul,&
-                        vecloc, matloc, codret(1))
+            call dktnli(option, xyzl,pgl, uml, dul,&
+                        vecloc, matloc, codret)
         else
             ASSERT(ASTER_FALSE)
         endif
-!
-        if (option(1:9) .eq. 'FULL_MECA') then
-            call jevech('PMATUUR', 'E', jmatr)
-            call jevech('PVECTUR', 'E', jvect)
-            call utpslg(nno, 6, pgl, matloc, zr(jmatr))
-            call utpvlg(nno, 6, pgl, vecloc, zr(jvect))
-        else if (option .eq. 'RAPH_MECA') then
-            call jevech('PVECTUR', 'E', jvect)
-            call utpvlg(nno, 6, pgl, vecloc, zr(jvect))
-        else if (option(1:10) .eq. 'RIGI_MECA_') then
+! ----- Output fields
+        if (lMatr) then
             call jevech('PMATUUR', 'E', jmatr)
             call utpslg(nno, 6, pgl, matloc, zr(jmatr))
         endif
-!
+        if (lVect) then
+            call jevech('PVECTUR', 'E', jvect)
+            call utpvlg(nno, 6, pgl, vecloc, zr(jvect))
+        endif
+        if (lSigm) then
+            call jevech('PCODRET', 'E', jcret)
+            zi(jcret) = codret
+        endif
 !
     else if (option.eq.'FORC_NODA') then
 !     -------------------------------------
@@ -365,11 +371,6 @@ character(len=16), intent(in) :: option, nomte
         enddo
     else
         ASSERT(ASTER_FALSE)
-    endif
-!
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jcret)
-        zi(jcret)=codret(1)
     endif
 !
     if (option .ne. 'REFE_FORC_NODA') then

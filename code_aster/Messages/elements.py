@@ -180,14 +180,6 @@ Conseil :
  élément non traité  %(k1)s
 """),
 
-
-
-
-
-    36 : _("""
- nombre de couches négatif ou nul :  %(k1)s
-"""),
-
     37 : _("""
  le champ  %(k1)s n'a pas la bonne grandeur :
    grandeur autorisée  :%(k2)s

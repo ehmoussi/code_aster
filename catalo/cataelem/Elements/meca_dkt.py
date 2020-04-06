@@ -886,21 +886,20 @@ class MEDKQU4(Element):
                             ),
 
         OP.RIGI_MECA_TANG(te=31,
-                          para_in=(
-                              (SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
-                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
-                          OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
-                              (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                          (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
-                          (SP.PINSTPR, CTEMPSR), (SP.PITERAT, LC.CITERAT),
-                          (SP.PMATERC, LC.CMATERC), (
-                          OP.RIGI_MECA_TANG.PNBSP_I, ENBSP_I),
-                          (SP.PVARCMR, LC.ZVARCPG), (
-                          OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
-                          (SP.PVARCRR, LC.ZVARCPG), (SP.PVARIMP, ZVARIPG),
-                          (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-                          para_out=((SP.PMATUUR, MMATUUR), ),
-                          ),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PCARCRI, LC.CCARCRI),
+                     (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, ECONTPG),
+                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
+                     (SP.PINSTPR, CTEMPSR), (SP.PITERAT, LC.CITERAT),
+                     (SP.PMATERC, LC.CMATERC), (SP.PVARCMR, LC.ZVARCPG),
+                     (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
+                     (OP.RIGI_MECA_TANG.PNBSP_I, ENBSP_I),
+                     (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
+            para_out=((SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
+        ),
 
         OP.SIEF_ELGA(te=33,
                      para_in=((SP.PCACOQU, CCACOQU), (SP.PDEPLAR, DDL_MECA),

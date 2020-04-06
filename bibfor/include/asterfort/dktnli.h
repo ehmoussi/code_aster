@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine dktnli(nomte, opt, xyzl,pgl, ul, dul,&
-                      btsig, ktan, codret)
-        character(len=16) :: nomte
-        character(len=16) :: opt
-        real(kind=8) :: xyzl(3, *)
-        real(kind=8) :: pgl(3, 3)
-        real(kind=8) :: ul(6, *)
-        real(kind=8) :: dul(6, *)
-        real(kind=8) :: btsig(6, *)
-        real(kind=8) :: ktan(*)
-        integer :: codret
+    subroutine dktnli(option,&
+                      xyzl  , pgl   , uml   , dul,&
+                      btsig , ktan  , codret)
+        character(len=16), intent(in) :: option
+        real(kind=8), intent(in) :: xyzl(3, 4), uml(6, 4), dul(6, 4)
+        real(kind=8), intent(in) :: pgl(3, 3)
+        real(kind=8), intent(out) :: ktan(300), btsig(6,4)
+        integer , intent(out) :: codret
     end subroutine dktnli
 end interface
