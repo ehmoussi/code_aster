@@ -15,14 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
-    subroutine lrmjoi(fid, nommail, nomam2, nbnoeu, nomnoe)
-        med_idt, intent(in) :: fid
-        character(len=*), intent(in) :: nomam2, nommail
-        integer, intent(in) :: nbnoeu
-        character(len=24), intent(in) :: nomnoe
-    end subroutine lrmjoi
+    subroutine cleanListOfGrpNo(mesh, listGrpNo, nbGrpNo, l_stop, iret)
+        character(len=*), intent(in)    :: mesh
+        character(len=*), intent(inout) :: listGrpNo(*)
+        integer, intent(inout)          :: nbGrpNo
+        aster_logical, intent(in)       :: l_stop
+        integer, intent(out)            :: iret
+    end subroutine cleanListOfGrpNo
 end interface

@@ -48,11 +48,11 @@ class ParallelMeshClass : public BaseMeshClass {
     typedef SetOfString::const_iterator SetOfStringCIter;
 
     /** @brief All groups of nodes (parallel mesh) */
-    JeveuxVectorChar32 _allGroupOfNodes;
+    JeveuxVectorChar24 _globalGroupOfNodes;
     /** @brief Set of all groups of nodes (parallel mesh) */
     SetOfString _setOfAllGON;
     /** @brief All groups of elements (parallel mesh) */
-    JeveuxVectorChar32 _allGroupOfEements;
+    JeveuxVectorChar24 _globalGroupOfEements;
     /** @brief Set of all groups of elements (parallel mesh) */
     SetOfString _setOfAllGOE;
     /** @brief Identify outer nodes */
@@ -80,8 +80,8 @@ class ParallelMeshClass : public BaseMeshClass {
      * @brief Constructeur
      */
     ParallelMeshClass( const std::string &name )
-        : BaseMeshClass( name, "MAILLAGE_P" ), _allGroupOfNodes( getName() + ".PAR_GRPNOE" ),
-          _allGroupOfEements( getName() + ".PAR_GRPMAI" ), _outerNodes( getName() + ".NOEX" ),
+        : BaseMeshClass( name, "MAILLAGE_P" ), _globalGroupOfNodes( getName() + ".PAR_GRPNOE" ),
+          _globalGroupOfEements( getName() + ".PAR_GRPMAI" ), _outerNodes( getName() + ".NOEX" ),
           _globalNumbering( getName() + ".NULOGL" ),
           _listOfOppositeDomain( getName() + ".DOMJOINTS" ){};
 
@@ -146,6 +146,15 @@ class ParallelMeshClass : public BaseMeshClass {
      * @return retourne true si tout est ok
      */
     bool readMedFile( const std::string &fileName ) ;
+
+
+    /**
+     * @brief Read a MED ParallelMesh file
+     * @return retourne true si tout est ok
+     */
+    bool updateGlobalGroupOfNodes( void ) ;
+
+    bool updateGlobalGroupOfCells( void ) ;
 };
 
 /**

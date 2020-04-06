@@ -370,6 +370,12 @@ Contactez le support technique.
   %(k1)s  un nombre est attendu
 """),
 
+    86: _("""
+  -> Les mot-clés NOEUD et MAILLE ne sont pas autorisés pour un maillage parallèle
+
+     Conseil: Transformez NOEUD et MAILLE en GROUP_NO et GROUP_MA
+"""),
+
     97: _("""
   -> Le GROUP_MA %(k1)s du maillage %(k2)s se retrouve vide du fait
      de l'élimination des mailles servant au collage.

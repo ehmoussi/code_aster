@@ -427,7 +427,7 @@ extern void DEFSPPSPPPSP(RSACPA,rsacpa,char *, STRING_SIZE, ASTERINTEGER *, ASTE
 extern void DEFSSSP(RCSTOC_VERIF, rcstoc_verif, const char *, STRING_SIZE,
                     const char *,  STRING_SIZE, const char *,  STRING_SIZE, ASTERINTEGER *);
 
-#define CALLO_DETRSD(a,b,c,d) CALLOO(DETRSD,detrsd,a,b)
+#define CALLO_DETRSD(a,b) CALLOO(DETRSD,detrsd,a,b)
 extern void DEFSS(DETRSD, detrsd, const char *, STRING_SIZE,
                   const char *,  STRING_SIZE);
 

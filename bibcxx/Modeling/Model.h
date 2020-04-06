@@ -148,6 +148,10 @@ class ModelClass : public DataStructure {
     {
         if ( _baseMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
+
+#ifdef _USE_MPI
+        _partialMesh = nullptr ;
+#endif _USE_MPI
     };
 
     ModelClass(const BaseMeshPtr mesh):

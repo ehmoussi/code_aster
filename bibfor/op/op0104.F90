@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ subroutine op0104()
         call jeecra(gpptnm, 'NOMMAX', nbgrmn, ' ')
         call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE',&
                     nbgrmn)
-        do 100 i = 1, nbgma
+        do i = 1, nbgma
             call jenuno(jexnum(grpmav, i), nomg)
             call jecroc(jexnom(grpmai, nomg))
             call jeveuo(jexnum(grpmav, i), 'L', jvg)
@@ -121,10 +121,10 @@ subroutine op0104()
             call jeecra(jexnom(grpmai, nomg), 'LONMAX', max(nbma, 1))
             call jeecra(jexnom(grpmai, nomg), 'LONUTI', nbma)
             call jeveuo(jexnom(grpmai, nomg), 'E', jgg)
-            do 102 j = 0, nbma-1
+            do j = 0, nbma-1
                 zi(jgg+j) = zi(jvg+j)
-102          continue
-100      continue
+            end do
+        end do
     endif
 107  continue
 !
@@ -134,7 +134,7 @@ subroutine op0104()
 !     --- ON COMPTE LE NOMBRE DE NOUVEAUX GROUP_NO :
     call getfac('CREA_GROUP_NO', nbocc)
     nbgrno = 0
-    do 10 iocc = 1, nbocc
+    do iocc = 1, nbocc
         call getvtx('CREA_GROUP_NO', 'TOUT_GROUP_MA', iocc=iocc, nbval=0, nbret=n1)
         if (n1 .ne. 0) then
             call jelira(grpmai, 'NMAXOC', nbgma)
@@ -159,7 +159,8 @@ subroutine op0104()
         endif
 !        -- ON CREE UN GROUP_NO PAR MOT CLE FACTEUR --
         nbgrno = nbgrno + 1
-10  end do
+10 continue
+    end do
     if (nbgrno .eq. 0) goto 207
 !
 !
@@ -184,7 +185,7 @@ subroutine op0104()
         call jeecra(gpptnn, 'NOMMAX', nbgrnn, ' ')
         call jecrec(grpnoe, 'G V I', 'NO '//gpptnn, 'DISPERSE', 'VARIABLE',&
                     nbgrnn)
-        do 200 i = 1, nbgno
+        do i = 1, nbgno
             call jenuno(jexnum(grpnov, i), nomg)
             call jecroc(jexnom(grpnoe, nomg))
             call jeveuo(jexnum(grpnov, i), 'L', jvg)
@@ -192,10 +193,10 @@ subroutine op0104()
             call jeecra(jexnom(grpnoe, nomg), 'LONMAX', max(nbno, 1))
             call jeecra(jexnom(grpnoe, nomg), 'LONUTI', nbno)
             call jeveuo(jexnom(grpnoe, nomg), 'E', jgg)
-            do 202 j = 0, nbno-1
+            do j = 0, nbno-1
                 zi(jgg+j) = zi(jvg+j)
-202          continue
-200      continue
+            end do
+        end do
     endif
 207  continue
 !
@@ -204,6 +205,9 @@ subroutine op0104()
 !
 !     --- TRAITEMENT DU MOT CLEF CREA_GROUP_NO :
     if (nbgrno .gt. 0) call sscgno(ma, nbgnin)
+!
+! --- Pour un ParallelMesh, il faut partager les groupes entre les domaines.
+!     C'est fait dans le post_exec
 !
 !
     call jedema()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,165 +15,150 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine verima(nomz, limanz, lonlim, typz, nbval)
+!
+subroutine verima(meshz, list_obj, list_size, typez_objet)
+!
     implicit none
+!
 #include "jeveux.h"
 !
 #include "asterfort/assert.h"
-#include "asterfort/gettco.h"
+#include "asterfort/cleanListOfGrpMa.h"
+#include "asterfort/cleanListOfGrpNo.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/utmess.h"
 !
-    integer :: lonlim
-    integer, optional :: nbval
-    character(len=*) :: nomz, limanz(lonlim), typz
+    character(len=*), intent(in) :: meshz, typez_objet
+    integer, intent(inout) :: list_size
+    character(len=*), intent(inout) :: list_obj(list_size)
 !
 !     VERIFICATION DE L'APPARTENANCE DES OBJETS DE LA LISTE
-!     LIMANO AU MAILLAGE NOMA
+!     LIMANO AU MAILLAGE MESH
 !
-! IN       : NOMZ     : NOM DU MAILLAGE
-! IN       : LIMANZ   : LISTE DE MAILLES OU DE NOEUDS OU DE GROUP_NO
+! IN       : MESHZ    : NOM DU MAILLAGE
+! IO       : LIMANZ   : LISTE DE MAILLES OU DE NOEUDS OU DE GROUP_NO
 !                       OU DE GROUP_MA
-! IN       : LONLIM   : LONGUEUR DE LA LISTE LIMANO
+! IO       : LIST_SIZE: LONGUEUR DE LA LISTE LIMANO
 ! IN       : TYPZ     : TYPE DES OBJETS DE LA LISTE :
 !                       MAILLE OU NOEUD OU GROUP_NO OU GROUP_MA
 ! ----------------------------------------------------------------------
 !
-    integer :: igr, iret, ino, ima, igr2, diff
-    character(len=8) :: noma, type
-    character(len=16) :: sdtyp
-    character(len=24) :: noeuma, grnoma, mailma, grmama, limano
+    integer :: iret, ino, ima
+    character(len=8) :: mesh, type_obj
+    character(len=24) :: noeuma, grnoma, mailma, grmama, object
     character(len=24) :: valk(2)
+    aster_logical :: l_parallel_mesh
+    aster_logical, parameter :: l_stop = ASTER_TRUE
 ! ----------------------------------------------------------------------
 !
-    noma = nomz
-    type = typz
+    mesh     = meshz
+    type_obj = typez_objet
 !
+    noeuma = mesh//'.NOMNOE'
+    grnoma = mesh//'.GROUPENO'
+    mailma = mesh//'.NOMMAI'
+    grmama = mesh//'.GROUPEMA'
 !
-    noeuma = noma//'.NOMNOE'
-    grnoma = noma//'.GROUPENO'
-    mailma = noma//'.NOMMAI'
-    grmama = noma//'.GROUPEMA'
-    call gettco(noma, sdtyp)
+    l_parallel_mesh = isParallelMesh(mesh)
+
 !
-    if (type .eq. 'GROUP_NO') then
+    if (type_obj .eq. 'GROUP_NO') then
 !
 !      --VERIFICATION DE L'APPARTENANCE DES GROUP_NO
 !        AUX GROUP_NO DU MAILLAGE
 !        -------------------------------------------------------
-        call jeexin(grnoma, iret)
-        if ((lonlim.ne.0) .and. (iret.eq.0)) then
-            if (sdtyp .eq. 'MAILLAGE_P') then
-                nbval = 0
-                lonlim = 0
-            else
-                valk(1) = type
-                valk(2) = noma
-                call utmess('F', 'MODELISA7_12', nk=2, valk=valk)
-            endif
-        endif
-        diff = 0
-        do 10 igr = 1, lonlim
-            limano = limanz(igr - diff)
-            call jenonu(jexnom(grnoma, limano), iret)
-            if (iret .eq. 0) then
-                if (sdtyp .eq. 'MAILLAGE_P') then
-                    do igr2 = igr - diff + 1, lonlim
-                        limanz(igr2 - 1) = limanz(igr2)
-                    enddo
-                    nbval = nbval - 1
-                    diff = diff + 1
-                else
-                    valk(1) = limano
-                    valk(2) = noma
-                    call utmess('F', 'MODELISA7_75', nk=2, valk=valk)
-                endif
-            endif
-10      continue
 !
-    else if (type.eq.'NOEUD') then
+        if(.not.l_parallel_mesh) then
+            call jeexin(grnoma, iret)
+            if ((list_size.ne.0) .and. (iret.eq.0)) then
+                valk(1) = type_obj
+                valk(2) = mesh
+                call utmess('F', 'MODELISA7_12', nk=2, valk=valk)
+            end if
+        end if
+!
+        call cleanListOfGrpNo(mesh, list_obj, list_size, l_stop, iret)
+!
+        if(.not.l_parallel_mesh) then
+            ASSERT(iret == 1)
+        end if
+!
+    else if (type_obj.eq.'NOEUD') then
 !
 !      --VERIFICATION DE L'APPARTENANCE DES NOEUDS
 !        AUX NOEUDS DU MAILLAGE
 !        -------------------------------------------------------
-        if (sdtyp .eq. 'MAILLAGE_P') then
-            ASSERT(.false.)
+        if (l_parallel_mesh.and.list_size.ne.0) then
+            call utmess('F', 'MODELISA7_86')
         endif
+!
         call jeexin(noeuma, iret)
-        if ((lonlim.ne.0) .and. (iret.eq.0)) then
-            valk(1) = type
-            valk(2) = noma
+        if ((list_size.ne.0) .and. (iret.eq.0)) then
+            valk(1) = type_obj
+            valk(2) = mesh
             call utmess('F', 'MODELISA7_12', nk=2, valk=valk)
         endif
-        do 20 ino = 1, lonlim
-            limano = limanz(ino)
-            call jenonu(jexnom(noeuma, limano), iret)
+!
+        do ino = 1, list_size
+            object = list_obj(ino)
+            call jenonu(jexnom(noeuma, object), iret)
             if (iret .eq. 0) then
-                valk(1) = limano
-                valk(2) = noma
+                valk(1) = object
+                valk(2) = mesh
                 call utmess('F', 'MODELISA7_76', nk=2, valk=valk)
             endif
-20      continue
+        end do
 !
-    else if (type.eq.'GROUP_MA') then
+    else if (type_obj.eq.'GROUP_MA') then
 !
 !      --VERIFICATION DE L'APPARTENANCE DES GROUP_MA
 !        AUX GROUP_MA DU MAILLAGE
 !        -------------------------------------------------------
-        call jeexin(grmama, iret)
-        if ((lonlim.ne.0) .and. (iret.eq.0)) then
-            valk(1) = type
-            valk(2) = noma
-            call utmess('F', 'MODELISA7_12', nk=2, valk=valk)
-        endif
-        diff = 0
-        do 30 igr = 1, lonlim
-            limano = limanz(igr - diff)
-            call jenonu(jexnom(grmama, limano), iret)
-            if (iret .eq. 0) then
-                if (sdtyp .eq. 'MAILLAGE_P') then
-                    do  igr2 = igr - diff + 1, lonlim
-                        limanz(igr2 - 1) = limanz(igr2)
-                    enddo
-                    nbval = nbval - 1
-                    diff = diff + 1
-                else
-                    valk(1) = limano
-                    valk(2) = noma
-                    call utmess('F', 'MODELISA7_77', nk=2, valk=valk)
-                endif
-            endif
-30      continue
-31      continue
+        if(.not.l_parallel_mesh) then
+            call jeexin(grmama, iret)
+            if ((list_size.ne.0) .and. (iret.eq.0)) then
+                valk(1) = type_obj
+                valk(2) = mesh
+                call utmess('F', 'MODELISA7_12', nk=2, valk=valk)
+            end if
+        end if
 !
-    else if (type.eq.'MAILLE') then
+        call cleanListOfGrpMa(mesh, list_obj, list_size, l_stop, iret)
+!
+        if(.not.l_parallel_mesh) then
+            ASSERT(iret == 1)
+        end if
+!
+    else if (type_obj.eq.'MAILLE') then
 !
 !      --VERIFICATION DE L'APPARTENANCE DES MAILLES
 !        AUX MAILLES DU MAILLAGE
 !        -------------------------------------------------------
-        if (sdtyp .eq. 'MAILLAGE_P'.and.lonlim.ne.0) then
-            ASSERT(.false.)
+        if (l_parallel_mesh.and.list_size.ne.0) then
+            call utmess('F', 'MODELISA7_86')
         endif
+!
         call jeexin(mailma, iret)
-        if ((lonlim.ne.0) .and. (iret.eq.0)) then
-            valk(1) = type
-            valk(2) = noma
+        if ((list_size.ne.0) .and. (iret.eq.0)) then
+            valk(1) = type_obj
+            valk(2) = mesh
             call utmess('F', 'MODELISA7_12', nk=2, valk=valk)
         endif
-        do 40 ima = 1, lonlim
-            limano = limanz(ima)
-            call jenonu(jexnom(mailma, limano), iret)
+!
+        do ima = 1, list_size
+            object = list_obj(ima)
+            call jenonu(jexnom(mailma, object), iret)
             if (iret .eq. 0) then
-                valk(1) = limano
-                valk(2) = noma
+                valk(1) = object
+                valk(2) = mesh
                 call utmess('F', 'MODELISA6_10', nk=2, valk=valk)
             endif
-40      continue
+        end do
 !
     else
-        call utmess('F', 'MODELISA7_79', sk=type)
+        call utmess('F', 'MODELISA7_79', sk=type_obj)
     endif
 end subroutine
