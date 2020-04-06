@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 !
 subroutine te0595(option, nomte)
 !
+use Behaviour_module, only : behaviourOption
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -37,45 +39,64 @@ implicit none
 #include "asterfort/teattr.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
-    character(len=16) :: option, nomte
-! ----------------------------------------------------------------------
-! FONCTION REALISEE:  CALCUL DES FORCES INTERNES POUR LES ELEMENTS
-!                     INCOMPRESSIBLES A 2 CHAMPS UP
-!                     EN 3D/D_PLAN/AXI
+character(len=16), intent(in) :: option, nomte
 !
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: rigi, resi, mini, matsym
-    integer :: ndim, nno1, nno2, npg, nnos, jgn, ntrou
+! Elementary computation
+!
+! Elements: 3D_INCO_UP/3D_INCO_UPO
+!           AXIS_INCO_UP/AXIS_INCO_UPO
+!           D_PLAN_INCO_UP/D_PLAN_INCO_UPO
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    aster_logical :: mini, matsym
+    integer :: ndim, nnod, nnop, npg, ntrou
     integer :: icoret, codret, iret
-    integer :: iw, ivf1, ivf2, idf1, idf2
+    integer :: iw, ivfd, ivfp, idfd
     integer :: jtab(7), lgpg, i, idim
     integer :: vu(3, 27), vg(27), vp(27), vpi(3, 27)
     integer :: igeom, imate, icontm, ivarim
     integer :: iinstm, iinstp, iddlm, iddld, icompo, icarcr
     integer :: ivectu, icontp, ivarip, imatuu
-    integer :: idbg, nddl, ia, ja, ibid
+    integer :: nddl, ibid
     real(kind=8) :: angmas(7), bary(3)
     character(len=8) :: lielrf(10), typmod(2), alias8
-    character(len=24) :: valk
-! ----------------------------------------------------------------------
+    character(len=16) :: defo_comp
+    aster_logical :: lMatr, lVect, lVari, lSigm
 !
-    idbg = 0
+! --------------------------------------------------------------------------------------------------
 !
-! - FONCTIONS DE FORMES ET POINTS DE GAUSS
+    icontp = 1
+    ivarip = 1
+    imatuu = 1
+    ivectu = 1
+    codret = 0
+    matsym = ASTER_TRUE
+    mini   = ASTER_FALSE
+!
+! - Get element parameters
+!
     call elref2(nomte, 10, lielrf, ntrou)
-    ASSERT(ntrou.ge.2)
-    call elrefe_info(elrefe=lielrf(2), fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf2, jdfde=idf2, jgano=jgn)
-    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno1, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf1, jdfde=idf1, jgano=jgn)
-    matsym = .true.
+    ASSERT(ntrou .ge. 2)
+    call elrefe_info(elrefe=lielrf(2), fami='RIGI',&
+                     ndim=ndim, nno=nnop, npg=npg,&
+                     jpoids=iw, jvf=ivfp)
+    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nnod, npg=npg,&
+                     jpoids=iw, jvf=ivfd, jdfde=idfd)
 !
-! - TYPE DE MODELISATION
+! - Type of finite element
+!
     if (ndim .eq. 2 .and. lteatt('AXIS','OUI')) then
         typmod(1) = 'AXIS  '
     else if (ndim.eq.2 .and. lteatt('D_PLAN','OUI')) then
@@ -83,16 +104,20 @@ implicit none
     else if (ndim .eq. 3) then
         typmod(1) = '3D'
     else
-        call utmess('F', 'ELEMENTS_34', sk=nomte)
+        ASSERT(ASTER_FALSE)
     endif
     typmod(2) = '        '
-    codret = 0
 !
-! - OPTION
-    resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+! - MINI ELEMENT ?
 !
-! - PARAMETRES EN ENTREE
+    mini = ASTER_FALSE
+    call teattr('S', 'ALIAS8', alias8, ibid)
+    if (alias8(6:8) .eq. 'TR3' .or. alias8(6:8) .eq. 'TE4') then
+        mini = ASTER_TRUE
+    endif
+!
+! - Get input fields
+!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
     call jevech('PCONTMR', 'L', icontm)
@@ -101,139 +126,119 @@ implicit none
     call jevech('PDEPLPR', 'L', iddld)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
-!
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PINSTPR', 'L', iinstp)
-!
     call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
     lgpg = max(jtab(6),1)*jtab(7)
 !
-! - ORIENTATION DU MASSIF
-! - COORDONNEES DU BARYCENTRE ( POUR LE REPRE CYLINDRIQUE )
-    bary(1) = 0.d0
-    bary(2) = 0.d0
-    bary(3) = 0.d0
-    do i = 1, nno1
+! - Compute barycentric center
+!
+    bary = 0.d0
+    do i = 1, nnod
         do idim = 1, ndim
-            bary(idim) = bary(idim)+zr(igeom+idim+ndim*(i-1)-1)/nno1
+            bary(idim) = bary(idim)+zr(igeom+idim+ndim*(i-1)-1)/nnod
         end do
     end do
+!
+! - Get orientation
+!
     call rcangm(ndim, bary, angmas)
 !
-! - PARAMETRES EN SORTIE
-    if (resi) then
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    defo_comp = zk16(icompo-1+DEFO)
+!
+! - Get output fields
+!
+    if (lMatr) then
+        matsym = ASTER_TRUE
+        if (defo_comp .eq. 'PETIT') then
+            call jevech('PMATUUR', 'E', imatuu)
+        elseif (defo_comp .eq. 'GDEF_LOG') then
+            call nmtstm(zr(icarcr), imatuu, matsym)
+        else
+            ASSERT(ASTER_FALSE)
+        endif
+    endif
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
-    else
-        ivectu=1
-        icontp=1
-        ivarip=1
     endif
 !
-    if (zk16(icompo+2) (1:6) .eq. 'PETIT ') then
-! - PARAMETRES EN SORTIE
-        if (rigi) then
-            call jevech('PMATUUR', 'E', imatuu)
-        else
-            imatuu=1
-        endif
+! - Compute options
 !
+    if (defo_comp .eq. 'PETIT') then
         if (lteatt('INCO','C2 ')) then
-!
-! - MINI ELEMENT ?
-            call teattr('S', 'ALIAS8', alias8, ibid)
-            if (alias8(6:8) .eq. 'TR3' .or. alias8(6:8) .eq. 'TE4') then
-                mini = .true.
-            else
-                mini = .false.
-            endif
 ! --------- Get index of dof
-            call niinit(typmod, ndim, nno1, 0,&
-                        nno2, 0, vu, vg, vp,&
+            call niinit(typmod, ndim, nnod, 0,&
+                        nnop, 0, vu, vg, vp,&
                         vpi)
-            nddl = nno1*ndim + nno2
-!
-            call nufipd(ndim, nno1, nno2, npg, iw,&
-                        zr(ivf1), zr(ivf2), idf1, vu, vp,&
+            nddl = nnod*ndim + nnop
+            call nufipd(ndim, nnod, nnop, npg, iw,&
+                        zr(ivfd), zr(ivfp), idfd, vu, vp,&
                         zr(igeom), typmod, option, zi(imate), zk16(icompo),&
                         lgpg, zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm),&
                         zr(iddld), angmas, zr(icontm), zr(ivarim), zr(icontp),&
-                        zr(ivarip), resi, rigi, mini, zr(ivectu),&
-                        zr(imatuu), codret)
+                        zr(ivarip), mini, zr(ivectu),&
+                        zr(imatuu), codret,&
+                        lSigm, lVect, lMatr)
         else if (lteatt('INCO','C2O')) then
 ! --------- Get index of dof
-            call niinit(typmod, ndim, nno1, 0,&
-                        nno2, nno2, vu, vg, vp,&
+            call niinit(typmod, ndim, nnod, 0,&
+                        nnop, nnop, vu, vg, vp,&
                         vpi)
-            nddl = nno1*ndim + nno2 + nno2*ndim
-!
-            call nofipd(ndim, nno1, nno2, nno2, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf2), idf1,&
+            nddl = nnod*ndim + nnop + nnop*ndim
+            call nofipd(ndim, nnod, nnop, nnop, npg,&
+                        iw, zr(ivfd), zr(ivfp), zr(ivfp), idfd,&
                         vu, vp, vpi, zr(igeom), typmod,&
                         option, nomte, zi(imate), zk16(icompo), lgpg,&
                         zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld),&
                         angmas, zr(icontm), zr(ivarim), zr(icontp), zr(ivarip),&
-                        resi, rigi, zr(ivectu), zr(imatuu), codret)
+                        zr(ivectu), zr(imatuu), codret,&
+                        lSigm, lVect, lMatr)
         else
-            valk = zk16(icompo+2)
-            call utmess('F', 'MODELISA10_17', sk=valk)
+            ASSERT(ASTER_FALSE)
         endif
-    else if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
-! - PARAMETRES EN SORTIE
-        if (rigi) then
-            call nmtstm(zr(icarcr), imatuu, matsym)
-        else
-            imatuu=1
-        endif
-!
+    else if (defo_comp .eq. 'GDEF_LOG') then
         if (lteatt('INCO','C2 ')) then
-!
-! - MINI ELEMENT ?
-            call teattr('S', 'ALIAS8', alias8, ibid)
-            if (alias8(6:8) .eq. 'TR3' .or. alias8(6:8) .eq. 'TE4') then
-! - PAS ENCORE INTRODUIT
-                valk = zk16(icompo+2)
-                call utmess('F', 'MODELISA10_18', sk=valk)
-            endif
+            ASSERT(.not. mini)
 ! --------- Get index of dof
-            call niinit(typmod, ndim, nno1, 0,&
-                        nno2, 0, vu, vg, vp,&
+            call niinit(typmod, ndim, nnod, 0,&
+                        nnop, 0, vu, vg, vp,&
                         vpi)
-            nddl = nno1*ndim + nno2
-!
-            call nufilg(ndim, nno1, nno2, npg, iw,&
-                        zr(ivf1), zr(ivf2), idf1, vu, vp,&
+            nddl = nnod*ndim + nnop
+            call nufilg(ndim, nnod, nnop, npg, iw,&
+                        zr(ivfd), zr(ivfp), idfd, vu, vp,&
                         zr(igeom), typmod, option, zi(imate), zk16(icompo),&
                         lgpg, zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm),&
                         zr(iddld), angmas, zr(icontm), zr(ivarim), zr(icontp),&
-                        zr(ivarip), resi, rigi, zr(ivectu), zr(imatuu),&
-                        matsym, codret)
-!
+                        zr(ivarip), zr(ivectu), zr(imatuu),&
+                        matsym, codret,&
+                        lVect, lMatr)
         else
-            valk = zk16(icompo+2)
-            call utmess('F', 'MODELISA10_17', sk=valk)
+            ASSERT(ASTER_FALSE)
         endif
     else
-        call utmess('F', 'ELEMENTS3_16', sk=zk16(icompo+2))
+        ASSERT(ASTER_FALSE)
     endif
 !
-    if (resi) then
+! - Save return code
+!
+    if (lSigm) then
         call jevech('PCODRET', 'E', icoret)
         zi(icoret) = codret
-    endif
-!
-    if (idbg .eq. 1) then
-        if (rigi) then
-            write(6,*) 'MATRICE TANGENTE'
-            do ia = 1, nddl
-                write(6,'(108(1X,E11.4))') (zr(imatuu+(ia*(ia-1)/2)+ja-1),ja=1,ia)
-            enddo
-        endif
-        if (resi) then
-            write(6,*) 'FORCE INTERNE'
-            write(6,'(108(1X,E11.4))') (zr(ivectu+ja-1),ja=1,nddl)
-        endif
     endif
 !
 end subroutine

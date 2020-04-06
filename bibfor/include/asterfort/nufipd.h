@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
     subroutine nufipd(ndim, nno1, nno2, npg, iw,&
                       vff1, vff2, idff1, vu, vp,&
                       geomi, typmod, option, mate, compor,&
-                      lgpg, crit, instm, instp, ddlm,&
+                      lgpg, carcri, instm, instp, ddlm,&
                       ddld, angmas, sigm, vim, sigp,&
-                      vip, resi, rigi, mini, vect,&
-                      matr, codret)
+                      vip, mini, vect,&
+                      matr, codret,&
+                      lSigm, lVect, lMatr)
         integer :: lgpg
         integer :: npg
         integer :: nno2
@@ -44,7 +42,7 @@ interface
         character(len=16) :: option
         integer :: mate
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: instm
         real(kind=8) :: instp
         real(kind=8) :: ddlm(*)
@@ -54,11 +52,10 @@ interface
         real(kind=8) :: vim(lgpg, npg)
         real(kind=8) :: sigp(2*ndim+1, npg)
         real(kind=8) :: vip(lgpg, npg)
-        aster_logical :: resi
-        aster_logical :: rigi
         aster_logical :: mini
         real(kind=8) :: vect(*)
         real(kind=8) :: matr(*)
         integer :: codret
+        aster_logical, intent(in) :: lSigm, lVect, lMatr
     end subroutine nufipd
 end interface
