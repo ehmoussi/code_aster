@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,10 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0165(option, nomte)
 !
-    implicit none
+use Behaviour_module, only : behaviourOption
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/fpouli.h"
 #include "asterfort/jevech.h"
@@ -29,73 +32,106 @@ subroutine te0165(option, nomte)
 #include "blas/ddot.h"
 #include "asterfort/Behaviour_type.h"
 !
-    character(len=16) :: option, nomte
-! ......................................................................
-! INTRODUCTION DE LA TEMPERATURE
+character(len=16), intent(in) :: option, nomte
 !
-!    - FONCTION REALISEE:  CALCUL MATRICE DE RIGIDITE MEPOULI
-!                          OPTION : 'FULL_MECA        '
-!                          OPTION : 'RAPH_MECA        '
-!                          OPTION : 'RIGI_MECA_TANG   '
+! --------------------------------------------------------------------------------------------------
 !
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
+! Elementary computation
 !
+! Elements: CABLE_POULIE
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer ::          icodre(2)
+    real(kind=8) ::     valres(2)
     character(len=16) :: nomres(2)
-    integer :: icodre(2)
-    real(kind=8) :: a, w(9), nx, l1(3), l2(3), l10(3), l20(3)
-    real(kind=8) :: valres(2), e
+    real(kind=8) :: aire, w(9), nx, l1(3), l2(3), l10(3), l20(3)
+    real(kind=8) :: e
     real(kind=8) :: norml1, norml2, norl10, norl20, l0, allong
-    real(kind=8) :: preten, r8bid, epsthe
-    integer :: imatuu, jefint, lsigma
+    real(kind=8) :: preten, epsthe
+    integer :: imatuu, ivectu, icontp
     integer :: icompo, lsect, igeom, imate, idepla, ideplp
-    integer :: i, jcret, kc
+    integer :: i, icoret, kc
+    character(len=16) :: defo_comp, rela_comp
+    aster_logical :: lVect, lMatr, lVari, lSigm
+    integer :: codret
 !
+! --------------------------------------------------------------------------------------------------
 !
+    icontp = 1
+    imatuu = 1
+    ivectu = 1
+    codret = 0
 !
-!***  ESSAI DE PRETENSION
-!     PRETEN = 1000.D0
-!***  FIN DE L'ESSAI DE PRETENSION
+! - Get input fields
 !
-!
-    call jevech('PCOMPOR', 'L', icompo)
-    if (zk16(icompo-1+RELA_NAME)(1:4) .ne. 'ELAS') then
-        call utmess('F', 'CALCULEL4_92', sk=zk16(icompo-1+RELA_NAME))
-    endif
-    if (zk16(icompo-1+DEFO) .ne. 'GROT_GDEP') then
-        call utmess('F', 'CALCULEL4_93', sk=zk16(icompo-1+DEFO))
-    endif
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
-    nomres(1) = 'E'
-    r8bid = 0.0d0
-    call rcvalb('RIGI', 1, 1, '+', zi(imate),&
-                ' ', 'ELAS', 0, '  ', [r8bid],&
-                1, nomres, valres, icodre, 1)
-    call verift('RIGI', 1, 1, '+', zi(imate),&
-                epsth_=epsthe)
-    e = valres(1)
     call jevech('PCACABL', 'L', lsect)
-    a = zr(lsect)
-    preten = zr(lsect+1)
-!
     call jevech('PDEPLMR', 'L', idepla)
     call jevech('PDEPLPR', 'L', ideplp)
+    call jevech('PCOMPOR', 'L', icompo)
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:14) .eq. 'RIGI_MECA_TANG') then
+! - Properties of behaviour
+!
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+    if (rela_comp(1:4) .ne. 'ELAS') then
+        call utmess('F', 'CALCULEL4_92', sk = rela_comp)
+    endif
+    if (defo_comp .ne. 'GROT_GDEP') then
+        call utmess('F', 'CALCULEL4_93', sk = defo_comp)
+    endif
+!
+! - Get material properties
+!
+    nomres(1) = 'E'
+    call rcvalb('RIGI', 1, 1, '+', zi(imate),&
+                ' ', 'ELAS', 0, '  ', [0.d0],&
+                1, nomres, valres, icodre, 1)
+    e = valres(1)
+!
+! - Get section properties
+!
+    aire      = zr(lsect)
+    preten    = zr(lsect+1)
+!
+! - Thermal dilation
+!
+    call verift('RIGI', 1, 1, '+', zi(imate),&
+                epsth_=epsthe)
+!
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Get output fields
+!
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imatuu)
     endif
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PVECTUR', 'E', jefint)
-        call jevech('PCONTPR', 'E', lsigma)
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', icontp)
     endif
 !
+! - Update displacements
 !
     do i = 1, 9
-        w(i)=zr(idepla-1+i)+zr(ideplp-1+i)
-    end do
+        w(i) = zr(idepla-1+i) + zr(ideplp-1+i)
+    enddo
 !
     do kc = 1, 3
         l1(kc) = w(kc ) + zr(igeom-1+kc) - w(6+kc) - zr(igeom+5+kc)
@@ -115,27 +151,30 @@ subroutine te0165(option, nomte)
     norl20 = sqrt (norl20)
     l0 = norl10 + norl20
     allong = (norml1 + norml2 - l0) / l0
-    nx = e * a * allong
+    nx = e * aire * allong
 !
     if (abs(nx) .le. 1.d-6) then
         nx = preten
     else
-        nx = nx - e * a * epsthe
+        nx = nx - e * aire * epsthe
     endif
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:14) .eq. 'RIGI_MECA_TANG') then
-        call kpouli(e, a, nx, l0, l1,&
+    if (lMatr) then
+        call kpouli(e, aire, nx, l0, l1,&
                     l2, norml1, norml2, zr(imatuu))
     endif
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call fpouli(nx, l1, l2, norml1, norml2,&
-                    zr(jefint))
-        zr(lsigma) = nx
+    if (lVect) then
+        call fpouli(nx, l1, l2, norml1, norml2, zr(ivectu))
+    endif
+    if (lSigm) then
+        zr(icontp) = nx
     endif
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jcret)
-        zi(jcret) = 0
+! - Save return code
+!
+    if (lSigm) then
+        call jevech('PCODRET', 'E', icoret)
+        zi(icoret) = codret
     endif
 !
 end subroutine
