@@ -25,6 +25,7 @@ subroutine reliem(mo, ma, typem, motfaz, iocc,&
 #include "asterfort/getvem.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -86,6 +87,7 @@ subroutine reliem(mo, ma, typem, motfaz, iocc,&
     character(len=19) :: ligrel
     character(len=24) :: karg
     integer :: iarg
+    aster_logical :: l_parallel_mesh
     integer, pointer :: maille(:) => null()
     integer, pointer :: prnm(:) => null()
     integer(kind=4), pointer :: indic_noeud(:) => null()
@@ -95,6 +97,7 @@ subroutine reliem(mo, ma, typem, motfaz, iocc,&
     litrou = litroz
     motfac = motfaz
     modele = mo
+    l_parallel_mesh = isParallelMesh(ma)
     call infniv(ifm, niv)
 !
 !     --- VERIFICATIONS PRELIMINAIRES ---
@@ -197,6 +200,9 @@ subroutine reliem(mo, ma, typem, motfaz, iocc,&
             endif
 !
             if (typmcl .eq. 'MAILLE') then
+                if (l_parallel_mesh) then
+                    call utmess('F', 'MODELISA7_86')
+                endif
                 call jenonu(jexnom(ma//'.NOMMAI', karg), ima)
                 zi4(itrma-1+ima) = 1
 !
@@ -218,6 +224,9 @@ subroutine reliem(mo, ma, typem, motfaz, iocc,&
                 end do
 !
             else if (typmcl.eq.'NOEUD') then
+                if (l_parallel_mesh) then
+                    call utmess('F', 'MODELISA7_86')
+                endif
                 call jenonu(jexnom(ma//'.NOMNOE', karg), ino)
                 indic_noeud(ino) = 1
 !

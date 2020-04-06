@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,6 +61,7 @@ subroutine sscgno(ma, nbgnin)
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/isParallelMesh.h"
 !
     real(kind=8) :: vecori(3)
 !
@@ -85,6 +86,7 @@ subroutine sscgno(ma, nbgnin)
     integer :: nbgnin, nbgrmn, nbid, nbis, nbk8, nbline, nbno
     integer :: nbnot, nbocc, niv, ntrou, num
     aster_logical :: l_write
+    aster_logical :: l_parallel_mesh
     character(len=24), pointer :: lik8(:) => null()
     character(len=8), pointer :: l_noeud(:) => null()
     integer, pointer :: noeud2(:) => null()
@@ -116,9 +118,11 @@ subroutine sscgno(ma, nbgnin)
     call getvtx(' ', 'ALARME', scal=alarm, nbret=nalar)
     nbgnaj = 0
 !
+    l_parallel_mesh = isParallelMesh(ma)
+!
 ! ----------------------------------------------------------------------
 !
-    do 100 , iocc = 1 , nbocc
+    do iocc = 1 , nbocc
 !
     call getvtx(motfac, 'NOEUD', iocc=iocc, nbval=0, nbret=n2)
     call getvtx(motfac, 'INTERSEC', iocc=iocc, nbval=0, nbret=n3)
@@ -128,6 +132,10 @@ subroutine sscgno(ma, nbgnin)
     call getvtx(motfac, 'TOUT_GROUP_MA', iocc=iocc, nbval=0, nbret=n7)
     call getvtx(motfac, 'GROUP_NO', iocc=iocc, nbval=0, nbret=n8)
     call getvtx(motfac, 'OPTION', iocc=iocc, nbval=0, nbret=n9)
+!
+    if(l_parallel_mesh .and. n2 < 0 ) then
+        call utmess('F', 'MODELISA7_86')
+    end if
 !
 ! ----------------------------------------------------------------------
 ! ----- MOT CLEF "TOUT_GROUP_MA" :
@@ -169,7 +177,9 @@ subroutine sscgno(ma, nbgnin)
     if (n3 .gt. 0) then
         call getvem(ma, 'GROUP_NO', motfac, 'INTERSEC', iocc,&
                     iarg, n3, lik8, nbid)
-!
+        n3=nbid
+    end if
+    if (n3 .gt. 0) then
         call jenonu(jexnom(grpnoe,lik8(1)), ign1)
         call jelira(jexnum(grpnoe, ign1), 'LONUTI', ili1)
         call jeveuo(jexnum(grpnoe, ign1), 'L', iagm1)
@@ -220,7 +230,9 @@ subroutine sscgno(ma, nbgnin)
     if (n4 .gt. 0) then
         call getvem(ma, 'GROUP_NO', motfac, 'UNION', iocc,&
                     iarg, n4, lik8, nbid)
-!
+        n4 = nbid
+    end if
+    if (n4 .gt. 0) then
         call jenonu(jexnom(grpnoe,lik8(1)), ign1)
         call jelira(jexnum(grpnoe, ign1), 'LONUTI', ili1)
         call jeveuo(jexnum(grpnoe, ign1), 'L', iagm1)
@@ -281,7 +293,9 @@ subroutine sscgno(ma, nbgnin)
     if (n5 .gt. 0) then
         call getvem(ma, 'GROUP_NO', motfac, 'DIFFE', iocc,&
                     iarg, n5, lik8, nbid)
-!
+        n5=nbid
+    endif
+    if (n5 .gt. 0) then
         call jenonu(jexnom(grpnoe,lik8(1)), ign1)
         call jelira(jexnum(grpnoe, ign1), 'LONUTI', ili1)
         call jeveuo(jexnum(grpnoe, ign1), 'L', iagm1)
@@ -427,6 +441,9 @@ subroutine sscgno(ma, nbgnin)
         AS_ALLOCATE(vk8=l_noeud, size=n2)
         call getvem(ma, 'NOEUD', motfac, 'NOEUD', iocc,&
                     iarg, n2, l_noeud, nb)
+        n2=nb
+    end if
+    if (n2 .gt. 0) then
         call wkvect('&&SSCGNO.NOEUD', 'V V I', n2, jnoeu)
         call dismoi('NB_NO_MAILLA', ma, 'MAILLAGE', repi=nbnot)
         AS_ALLOCATE(vi=noeud2, size=nbnot)
@@ -459,11 +476,18 @@ subroutine sscgno(ma, nbgnin)
         AS_DEALLOCATE(vi=noeud2)
         AS_DEALLOCATE(vk8=l_noeud)
         goto 100
+    else
+        AS_DEALLOCATE(vk8=l_noeud)
     endif
 !
 ! ----------------------------------------------------------------------
 ! ----- MOT CLEF "GROUP_NO" :
 !       ---------------------
+    if (n8 .gt. 0) then
+        call getvem(ma, 'GROUP_NO', motfac, 'GROUP_NO', iocc,&
+                    iarg, 1, nogno2, nbid)
+        n8 = nbid
+    end if
     if (n8 .gt. 0) then
         call getvem(ma, 'GROUP_NO', motfac, 'GROUP_NO', iocc,&
                     iarg, 1, nogno2, nbid)
@@ -517,7 +541,8 @@ subroutine sscgno(ma, nbgnin)
 !
 ! ----------------------------------------------------------------------
 !
-    100 end do
+100 continue
+    end do
 !
 ! ----------------------------------------------------------------------
 ! --- IMPRESSIONS NIVEAUX 1 ET 2 :

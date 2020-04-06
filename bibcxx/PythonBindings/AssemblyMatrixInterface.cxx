@@ -65,6 +65,20 @@ Returns:
         )",
               ( py::arg( "self" ) ) )
         .def( "getMaterialField", &AssemblyMatrixDisplacementRealClass::getMaterialField )
+        .def( "isEmpty", &AssemblyMatrixDisplacementRealClass::isEmpty, R"(
+Test if the matrix is empty.
+
+Returns:
+    Bool: true if the matrix is empty
+        )",
+              ( py::arg( "self" )) )
+.def( "isFactorized", &AssemblyMatrixDisplacementRealClass::isFactorized, R"(
+Test if the matrix is factorized.
+
+Returns:
+    Bool: true if the matrix is factorized
+        )",
+              ( py::arg( "self" )) )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixDisplacementRealClass::getNumberOfElementaryMatrix )
         .def( "setDOFNumbering", &AssemblyMatrixDisplacementRealClass::setDOFNumbering )

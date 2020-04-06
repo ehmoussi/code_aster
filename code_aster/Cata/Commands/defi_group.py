@@ -26,10 +26,11 @@ from ..Language.Syntax import *
 
 def defi_group_prod(MAILLAGE,GRILLE,**args):
   if args.get('__all__'):
-      return (maillage_sdaster, squelette, grille_sdaster, maillage_p_sdaster)
+      return (maillage_sdaster, squelette, grille_sdaster, maillage_p)
 
   if MAILLAGE is not None:
      if AsType(MAILLAGE) == maillage_sdaster : return maillage_sdaster
+     if AsType(MAILLAGE) == maillage_p : return maillage_p
      if AsType(MAILLAGE) == squelette : return squelette
   if GRILLE is not None:
      return grille_sdaster

@@ -15,14 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
-    subroutine lrmjoi(fid, nommail, nomam2, nbnoeu, nomnoe)
-        med_idt, intent(in) :: fid
-        character(len=*), intent(in) :: nomam2, nommail
-        integer, intent(in) :: nbnoeu
-        character(len=24), intent(in) :: nomnoe
-    end subroutine lrmjoi
+    function isParallelMesh(mesh) result(l_parallel_mesh)
+        character(len=*), intent(in) :: mesh
+        aster_logical ::  l_parallel_mesh
+    end function isParallelMesh
 end interface

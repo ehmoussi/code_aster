@@ -36,6 +36,14 @@ bool ParallelMeshClass::readMedFile( const std::string &fileName ) {
 
     CALLO_LRMJOI_WRAP( getName(), completeFileName );
 
+    updateGlobalGroupOfNodes();
+    updateGlobalGroupOfCells();
+
+    return true;
+};
+
+bool ParallelMeshClass::updateGlobalGroupOfNodes( void ) {
+
     MPIContainerUtilities util;
     _groupOfNodes->buildFromJeveux();
     auto gONNames = _groupOfNodes->getObjectNames();
@@ -43,23 +51,37 @@ bool ParallelMeshClass::readMedFile( const std::string &fileName ) {
 
     for ( auto &nameOfGrp : allgONNames )
         _setOfAllGON.insert( trim( nameOfGrp.toString() ) );
-    _allGroupOfNodes->allocate( Permanent, _setOfAllGON.size() );
+
+    if(_globalGroupOfNodes->isAllocated())
+        _globalGroupOfNodes->deallocate();
+
+    _globalGroupOfNodes->allocate( Permanent, _setOfAllGON.size() );
     int num = 0;
     for ( auto &nameOfGrp : _setOfAllGON ) {
-        ( *_allGroupOfNodes )[num] = nameOfGrp;
+        ( *_globalGroupOfNodes )[num] = nameOfGrp;
         ++num;
     }
 
+    return true;
+};
+
+bool ParallelMeshClass::updateGlobalGroupOfCells( void ) {
+
+    MPIContainerUtilities util;
     _groupOfCells->buildFromJeveux();
     auto gOENames = _groupOfCells->getObjectNames();
     auto allgOENames = util.gatheringVectorsOnAllProcs( gOENames );
 
     for ( auto &nameOfGrp : allgOENames )
         _setOfAllGOE.insert( trim( nameOfGrp.toString() ) );
-    _allGroupOfEements->allocate( Permanent, _setOfAllGOE.size() );
-    num = 0;
+
+    if(_globalGroupOfEements->isAllocated())
+        _globalGroupOfEements->deallocate();
+
+    _globalGroupOfEements->allocate( Permanent, _setOfAllGOE.size() );
+    int num = 0;
     for ( auto &nameOfGrp : _setOfAllGOE ) {
-        ( *_allGroupOfEements )[num] = nameOfGrp;
+        ( *_globalGroupOfEements )[num] = nameOfGrp;
         ++num;
     }
 
