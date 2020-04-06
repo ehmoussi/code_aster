@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 # CALCUL DU TAUX DE RESTITUTION D'ENERGIE EN PRESENCE DE PRE-DEFORMATION
-# DEFORMATIONS PLANES
+# AXI-SYMMETRIQUE
 # CALCUL ELASTIQUE LINEAIRE
 # DEMIE-PLAQUE TRAITEE PAR SYMETRIE
 #
@@ -37,7 +37,7 @@ MA = MODI_MAILLAGE(reuse=MA,
 MO=AFFE_MODELE(     MAILLAGE=MA,
                          AFFE=_F(  TOUT = 'OUI',
                                 PHENOMENE = 'MECANIQUE',
-                                MODELISATION = 'D_PLAN'))
+                                MODELISATION = 'AXIS'))
 
 
 #CHAMP DE TEMPETATURE UNIFORME NULLE
@@ -220,10 +220,10 @@ GINI4=CALC_G(RESULTAT=RESUINI,
 #--------------------------------------------------------------------
 #                TESTS DES RESULTATS                                #
 #--------------------------------------------------------------------
-Gther1= 3.598971130694757
-Gther2= 3.5986984258506516
-Gther3= 3.598499960833592
-Gther4= 3.5984740577926827
+Gther1= 27.381509703796368
+Gther2= 27.379258419853578
+Gther3= 27.377058094665035
+Gther4= 27.377544538969396
 
 
 #NON REGRESSIONS DES G ISSUS DU CALCUL THERMOMECANIQUE
@@ -261,11 +261,11 @@ TEST_TABLE(
 
 #TEST DES G ISSUS DU CALCUL AVEC PRE-DEFORMATION
 TEST_TABLE(
-           VALE_CALC=3.5989711306947686,
+           VALE_CALC=27.38150970379639,
            VALE_REFE=Gther1,
+           REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-4,
            CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
            TABLE=GINI1,
            FILTRE=_F(NOM_PARA='NUME_ORDRE',
@@ -273,11 +273,11 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=3.598698425850649,
+           VALE_CALC=27.37925841985362,
            VALE_REFE=Gther2,
+           REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-4,
            CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
            TABLE=GINI2,
            FILTRE=_F(NOM_PARA='NUME_ORDRE',
@@ -285,11 +285,11 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=3.598499960833586,
+           VALE_CALC=27.377058094665045,
            VALE_REFE=Gther3,
+           REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-4,
            CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
            TABLE=GINI3,
            FILTRE=_F(NOM_PARA='NUME_ORDRE',
@@ -297,11 +297,11 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=3.598474057792679,
+           VALE_CALC=27.377544538969374,
            VALE_REFE=Gther4,
+           REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-4,
            CRITERE='RELATIF',
-           REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
            TABLE=GINI4,
            FILTRE=_F(NOM_PARA='NUME_ORDRE',
