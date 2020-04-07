@@ -148,10 +148,9 @@ class ModelClass : public DataStructure {
     {
         if ( _baseMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-
 #ifdef _USE_MPI
         _partialMesh = nullptr ;
-#endif _USE_MPI
+#endif
     };
 
     ModelClass(const BaseMeshPtr mesh):
@@ -302,12 +301,7 @@ class ModelClass : public DataStructure {
      */
     void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner )
     {
-#ifdef _USE_MPI
-        if ( !(_partialMesh->isEmpty()) && split != Centralized)
-            throw std::runtime_error( "For Parallel mesh, Centralized splitting is mandatory" );
-#endif /* _USE_MPI */
-
-        _splitMethod = split;
+        setSplittingMethod( split );
         _graphPartitioner = partitioner;
     };
 
@@ -317,7 +311,7 @@ class ModelClass : public DataStructure {
     void setSplittingMethod( ModelSplitingMethod split )
     {
 #ifdef _USE_MPI
-        if ( !(_partialMesh->isEmpty()) && split != Centralized)
+        if ( _partialMesh && ! _partialMesh->isEmpty() && split != Centralized )
             throw std::runtime_error( "For Parallel mesh, Centralized splitting is mandatory" );
 #endif /* _USE_MPI */
 
