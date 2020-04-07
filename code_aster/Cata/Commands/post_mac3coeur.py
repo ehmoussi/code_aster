@@ -58,7 +58,7 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
            FORCE_CONTACT    = FACT(statut='f',max='**',
                           fr=tr("Post-traitement des efforts de contact, par grille"),
 
-                 FORMAT       = SIMP(statut='o',typ='TXM',into=("TABLE")),
+                 FORMAT       = SIMP(statut='o',typ='TXM',into=("TABLE",)),
                  UNITE        = SIMP(statut='o',typ=UnitType(), inout='out',
                                      fr=tr("Numéro de l'unité logique pour le post-traitement")),
 
