@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,14 +20,14 @@
 # person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
-    
+
     1 : _("""
 
-      Vous avez indiqué une épaisseur nulle ou négative (inférieure à la précision des nombres réels). 
-      Renseignez une valeur positive non nulle. 
+      Vous avez indiqué une épaisseur nulle ou négative (inférieure à la précision des nombres réels).
+      Renseignez une valeur positive non nulle.
 
 """),
-   
+
     2 : _("""
 
       Vous utilisez un élément MEMBRANE avec STAT_NON_LINE.
@@ -36,7 +36,7 @@ cata_msg = {
                  COMPORTEMENT=PETIT. Si vous êtes en grandes déformations utilisez COMPORTEMENT=GROT_GDEP.
 
 """),
-    
+
         3 : _("""
 
       Vous utilisez un élément MEMBRANE en GROT_GDEP.
@@ -58,7 +58,7 @@ cata_msg = {
       Problème : Vous utilisez des mots clés incohérents.
       Solution : Plusieurs solutions peuvent être envisagées :
                  - Si vous utilisez des éléments MEMBRANE en petites déformations,il faut renseigner
-                   le mot clé 'ELAS_MEMBRANE' dans DEFI_MATERIAU. 
+                   le mot clé 'ELAS_MEMBRANE' dans DEFI_MATERIAU.
                  - Si vous utilisez des éléments MEMBRANE en grandes déformations avec STAT_NON_LINE, il faut
                    renseigner MATRICE='TANGENTE' et non 'ELASTIQUE' sous le mot clé NEWTON dans la commande
                    STAT_NON_LINE.
@@ -68,7 +68,7 @@ cata_msg = {
 
       Vous utilisez un élément MEMBRANE en GROT_GDEP avec ELAS_MEMBRANE_SV ou ELAS_MEMBRANE_NH.
       Problème : Vous avez spécifié des angles dans ANGLE_REP.
-      Avertissement : Ces angles ne servent pas à définir une anisotropie, leur seul 
+      Avertissement : Ces angles ne servent pas à définir une anisotropie, leur seul
                       rôle et de définir les directions d'affichage des contraintes
 
 """),
@@ -76,21 +76,21 @@ cata_msg = {
 
       Vous utilisez un élément MEMBRANE en GROT_GDEP avec ELAS_MEMBRANE_SV ou ELAS_MEMBRANE_NH.
       Problème : Vous avez spécifié une option de chargement non prise en compte.
-      Solution : Modifiez vos chargements. 
+      Solution : Modifiez vos chargements.
 
 """),
         8 : _("""
 
       Vous voulez post-traiter un élément MEMBRANE en GROT_GDEP avec %(k1)s.
       Problème : Vous avez spécifié une option de post-traitement non prise en compte.
-      Solution : Modifiez vos options de post-traitement. 
+      Solution : Modifiez vos options de post-traitement.
 
 """),
         9 : _("""
 
       Vous utilisez les membranes en GROT_GDEP en dynamique.
       Problème : La dynamique n'est pas implémentée pour les membranes en grandes déformations.
-      SOLUTION : Faites un calcul en statique ou changez d'élément. 
+      SOLUTION : Faites un calcul en statique ou changez d'élément.
 
 """),
         10 : _("""
@@ -102,9 +102,19 @@ cata_msg = {
                    et on utilise les options de calcul MECA_STATIQUE ,ou, STAT_NON_LINE avec
                    les mots clés COMPORTEMENT='PETIT' et RELATION='ELAS'.
                  - en grandes déformations, on utilise 'ELAS' sous DEFI_MATERIAU et on utilise
-                   l'option de calcul STAT_NON_LINE avec les mots clés COMPORTEMENT='GROT_GDEP' 
+                   l'option de calcul STAT_NON_LINE avec les mots clés COMPORTEMENT='GROT_GDEP'
                    et RELATION='ELAS_MEMBRANE_SV' ou 'ELAS_MEMBRANE_NH'.
 
+"""),
+
+  11 : _("""
+
+      Vous utilisez un élément de MEMBRANE.
+      Problème : La carte de comportement n'est pas présente et l'épaisseur de la membrane n'est
+      pas de 1. Vous êtes probalement dans CALC_MATR_ELEM.
+      Solution :
+                 - Utilisez 'ELAS_MEMBRANE' sous DEFI_MATERIAU
+                 - Mettez l'épaisseur de la membrane à EPAIS=1 sous AFFE_CARA_ELEM
 """),
 
 }
