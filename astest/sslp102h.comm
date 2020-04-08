@@ -28,7 +28,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 ########################################################################
 #                      PARAMETRES DU CAS-TEST                          #
 ########################################################################
-sigma_max=50
+sigma_max=10
 poisson =0.3
 EE =200000
 ratio = 15.
@@ -47,7 +47,7 @@ MA = MODI_MAILLAGE(reuse=MA,
 MO=AFFE_MODELE(     MAILLAGE=MA,
                          AFFE=_F(  TOUT = 'OUI',
                                 PHENOMENE = 'MECANIQUE',
-                                MODELISATION = 'D_PLAN'))
+                                MODELISATION = 'AXIS'))
 
 
 #CHAMP DE TEMPETATURE UNIFORME NULLE
@@ -61,12 +61,13 @@ CHP_T0=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_F',
 
 #CHAMP DE TEMPETATURE VARIANT LINERAIREMENT
 GRADT=DEFI_FONCTION(   NOM_PARA='X',
-                         VALE=(0, -50,
+                         VALE=(0., -50,
                                 100,  50,),
                             INTERPOL='LIN',
                           PROL_DROITE='LINEAIRE',
                          PROL_GAUCHE='LINEAIRE'
                          )
+
 
 CH_GRADT=CREA_CHAMP( OPERATION='AFFE', TYPE_CHAM='NOEU_TEMP_F',
                      MAILLAGE=MA,
@@ -123,7 +124,7 @@ CMTH=AFFE_MATERIAU(    MAILLAGE=MA,
 
 EPSINI=DEFI_FONCTION(   NOM_PARA='X',
                          VALE=(0, -0.0005,
-                                100.,  0.0005,),
+                                100,  0.0005,),
                             INTERPOL='LIN',
                           PROL_DROITE='LINEAIRE',
                          PROL_GAUCHE='LINEAIRE'
@@ -318,17 +319,17 @@ GINI4=CALC_G(RESULTAT=RESUINI,
 #                TESTS DES RESULTATS                                #
 #--------------------------------------------------------------------
 #RAPPEL DES VALEURS EN ELASTICITE LINEAIRE
-Gther1_elas= 3.598971130694757
-Gther2_elas= 3.5986984258506516
-Gther3_elas= 3.598499960833592
-Gther4_elas= 3.5984740577926827
+Gther1_elas= 27.381509703796368
+Gther2_elas= 27.379258419853578
+Gther3_elas= 27.377058094665035
+Gther4_elas= 27.377544538969396
 
 
 #VALEURS EN ELASTO PLASTICITE
-Gther1= 2.7475628032243553
-Gther2= 2.7467597205040875
-Gther3= 2.7465564980419166
-Gther4= 2.7466955553897012
+Gther1= 9.354876133731072
+Gther2= 9.35648819146884
+Gther3= 9.354629934490665
+Gther4= 9.35483394882616
 
 
 #NON REGRESSIONS DES G ISSUS DU CALCUL THERMOMECANIQUE
@@ -366,9 +367,9 @@ TEST_TABLE(
 
 #TEST DES G ISSUS DU CALCUL AVEC PRE-DEFORMATION
 TEST_TABLE(
-           VALE_CALC=2.7476301853988376,
+           VALE_CALC=9.35593620631552,
            VALE_REFE=Gther1,
-           PRECISION=1.E-4,
+           PRECISION=2.E-4,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
            TABLE=GINI1,
@@ -377,9 +378,9 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=2.7468271194880987,
+           VALE_CALC=9.357548614769485,
            VALE_REFE=Gther2,
-           PRECISION=1.E-4,
+           PRECISION=2.E-4,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
            TABLE=GINI2,
@@ -388,9 +389,9 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=2.7466239747521777,
+           VALE_CALC=9.355692265227184,
            VALE_REFE=Gther3,
-           PRECISION=1.E-4,
+           PRECISION=2.E-4,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
            TABLE=GINI3,
@@ -399,9 +400,9 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=2.7467630196354578,
+           VALE_CALC=9.355898824858727,
            VALE_REFE=Gther4,
-           PRECISION=1.E-4,
+           PRECISION=2.E-4,
            REFERENCE='AUTRE_ASTER',
            NOM_PARA='G',
            TABLE=GINI4,
