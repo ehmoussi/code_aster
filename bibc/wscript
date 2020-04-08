@@ -52,10 +52,8 @@ def configure(self):
     self.env.append_unique('LINKFLAGS', ['-Wl,--no-keep-memory'])
 
     incpath = osp.join(self.path.get_src().abspath(), 'include')
-    self.env.append_value('INCLUDES', incpath)
+    self.env.append_value('INCLUDES_BIBC', incpath)
 
-    if opts.embed_all or opts.embed_aster:
-        self.env.append_value('ASTER_EMBEDS', ['bibc'])
     if 'ifort' in self.env.FC_NAME.lower():
         self.env.append_value('LINKFLAGS_fcprogram', ['-nofor_main'])
         if opts.embed_all or opts.embed_aster:
@@ -63,7 +61,6 @@ def configure(self):
             if self.get_define('HAVE_MPI'):
                 self.env.append_value('LINKFLAGS_fcprogram', ['-static_mpi'])
     self.check_cflags()
-    self.check_bibc_depends()
 
 @Configure.conf
 def check_bibc_depends(self):
@@ -81,7 +78,7 @@ def build(self):
     env = self.all_envs[self.variant]
     excl = [] if env.BUILD_MED else ['**/med_aster_module.c']
 
-    build_c_source(self, env, excl)
+    build_libbibc(self, env, excl)
     build_libaster(self, env)
 
     self.add_group()
@@ -99,48 +96,44 @@ def build(self):
 def process_h(self, node):
     pass
 
-def build_c_source(self, env, excl):
+def build_libbibc(self, env, excl):
+    use = ['BIBCXX', 'PETSC', 'SCOTCH', 'PARMETIS', 'METIS', 'MED', 'HDF5',
+           'NUMPY', 'PYEXT']
     get_srcs = self.path.get_src().ant_glob
-    uses = env['all_dependencies']
     # compile *.c
     self(
-        features = 'c',
+        features = 'c cshlib',
             name = 'asterbibc',
           source = get_srcs('**/*.c', excl=excl + [PYMAIN]),
+          target = 'bibc',
          defines = '',
+             use = use,
              env = env.derive(),
-             use = ['PYEMBED', 'NUMPY'] + uses,
+    install_path = env.ASTERLIBDIR
     )
 
-def build_libaster(self, shenv):
-    uses = shenv['all_dependencies']
-    if shenv.BUILD_MFRONT:
-        uses.append('astermfront')
+def build_libaster(self, env):
+    use = ['asterbibfor', 'asterbibc', 'asterbibcxx']
+    if env.BUILD_MFRONT:
+        use.append('astermfront')
     # {bibfor, bibc, bibcxx}/*.o
-    nblib = max(1, shenv.NUM_BIBFOR)
-    libasterfor = ['asterbibfor%d' % i for i in range(nblib)]
     self(
         features = 'cxx cxxshlib',
             name = 'asterlib',
           target = 'aster',
           source = PYMAIN,
          defines = '_MAIN_=_unused_main_', #'_WITHOUT_PYMOD_',
-             env = shenv.derive(),
-             use = (['PYEMBED', 'NUMPY'] + libasterfor + ['asterbibc',
-                    'asterbibcxx'] + uses + ['CXX']),
-    install_path = shenv.ASTERLIBDIR,
+             env = env.derive(),
+             use = use,
+    install_path = env.ASTERLIBDIR
     )
     for submodule in ("aster", "aster_core", "aster_fonctions", "med_aster"):
-        self.symlink_as("${ASTERLIBDIR}/%s.so" % submodule, "libaster.so")
+        src = osp.join(env.ASTERLIBDIR, submodule + '.so')
+        self.symlink_as(src, "libaster.so")
 
 @Configure.conf
 def check_cflags(self):
     self.start_msg('Getting C compiler flags')
-    if 'icc' in self.env.CC_NAME:
-        self.safe_remove('CFLAGS_PYEXT', '-fwrapv')
-        self.safe_remove('CFLAGS_PYEMBED', '-fwrapv')
-        self.safe_remove('CXXFLAGS_PYEXT', '-fwrapv')
-        self.safe_remove('CXXFLAGS_PYEMBED', '-fwrapv')
     self.end_msg(self.env['CFLAGS'])
 
 @Configure.conf

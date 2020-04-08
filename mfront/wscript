@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,22 +54,12 @@ def configure(self):
         self.define('HAVE_MFRONT', 1)
         self.env.BUILD_MFRONT = True
 
-INCLUDES = (
-    'MonoCrystal_DD_CC_InteractionMatrix.mfront',
-    'MonoCrystal_DD_CFC_InteractionMatrix.mfront',
-    'MonoCrystal_DD_CC_SlidingSystems.mfront',
-    'PolyCrystal_DD_CC_SlidingSystems.mfront',
-    'PolyCrystal_Orientation.mfront',
-    'PolyCrystal_Orientation_100grains.mfront',
-    'Plasticity_Sy.mfront',
-)
-
 def build(self):
     env = self.all_envs[self.variant]
     c_mfront = self.path.find_or_declare('c_mfront_official.py')
     if env.BUILD_MFRONT:
         get_srcs = self.path.get_src().ant_glob
-        lmfront = get_srcs('**/*.mfront', excl=INCLUDES)
+        lmfront = get_srcs('**/*.mfront')
         lst = [i.name for i in lmfront]
 
         self(
@@ -80,7 +70,7 @@ def build(self):
               target = env['_ASTERBEHAVIOUR'],
         install_path = env.ASTERLIBDIR,
                  env = env.derive(),
-                 use = ('MFRONT', 'MFRONT_ONLY', 'SYS'),
+                 use = ['MFRONT', 'MFRONT_ONLY', 'CXX'],
         )
 
         self.add_group()
@@ -203,17 +193,7 @@ def check_mfront_libs(self):
 
 @Configure.conf
 def check_mfront_py(self):
-    import sys
-    from distutils.sysconfig import get_python_lib
-    mfr = get_python_lib(prefix=self.env.TFELHOME[0])
     suffix = self.env.TFELSUFFIX.replace(".", "_").replace("-", "_")
-    try:
-        sys.path.remove(mfr)
-    except ValueError:
-        pass
-    sys.path.append(mfr)
-    # for profile.sh
-    self.env.append_value('CFG_PYTHONPATH', mfr)
     self.check_python_module('tfel' + suffix + '.material')
 
 @Configure.conf
@@ -231,11 +211,8 @@ def check_cxx11_abi(self):
     exists = getattr(lib, symbol, None) is not None
     # if a such symbol exists, MFront was not compiled with cxx11 ABI.
     use_cxx11_abi = int(not exists)
-    reverse = int(exists)
-    self.safe_remove('CXXFLAGS',
-        '-D_GLIBCXX_USE_CXX11_ABI={0}'.format(reverse))
-    self.env.append_value('CXXFLAGS',
-        '-D_GLIBCXX_USE_CXX11_ABI={0}'.format(use_cxx11_abi))
+    if not use_cxx11_abi:
+        self.env.append_value('CXXFLAGS', '-D_GLIBCXX_USE_CXX11_ABI=0')
 
 def remove(path):
     """Remove a file or a directory"""

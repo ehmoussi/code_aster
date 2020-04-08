@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ def check_hdf5(self):
 @Configure.conf
 def check_hdf5_libs(self):
     opts = self.options
-    check_hdf5 = partial(self.check_cc, mandatory=True, uselib_store='HDF5', use='HDF5 MATH')
+    check_hdf5 = partial(self.check_cc, mandatory=True, uselib_store='HDF5', use='HDF5')
     if opts.embed_all or opts.embed_hdf5:
         check_lib = lambda lib: check_hdf5(stlib=lib)
     else:
@@ -108,7 +108,7 @@ def check_hdf5_libs(self):
 
 @Configure.conf
 def check_hdf5_headers(self):
-    check = partial(self.check_cc, header_name='hdf5.h', uselib_store='HDF5', use='HDF5 MATH')
+    check = partial(self.check_cc, header_name='hdf5.h', uselib_store='HDF5', use='HDF5')
     self.start_msg('Checking for header hdf5.h')
     try:
         if not check(mandatory=False):
@@ -134,7 +134,7 @@ int main(void){
 }'''
     self.start_msg('Checking hdf5 version')
     try:
-        ret = self.check_cc(fragment=fragment, use='HDF5 MATH', uselib_store='HDF5',
+        ret = self.check_cc(fragment=fragment, use='HDF5', uselib='HDF5',
                             mandatory=True, execute=True, define_ret=True)
     except:
         self.end_msg('no', 'YELLOW')
@@ -149,7 +149,7 @@ def check_hdf5_api(self):
     self.start_msg('Checking for API hdf5 v18')
     try:
         self.to_log('check the v18 api and set H5_NO_DEPRECATED_SYMBOLS if it fails')
-        check = partial(self.check_cc, execute=True, uselib_store='HDF5', use='HDF5 MATH')
+        check = partial(self.check_cc, execute=True, uselib_store='HDF5', use='HDF5')
         v18 = check(fragment=fragv18, mandatory=False)
         if not v18:
             self.define('H5_NO_DEPRECATED_SYMBOLS', 1)
@@ -195,7 +195,7 @@ def check_med(self):
 @Configure.conf
 def check_med_libs(self):
     opts = self.options
-    check_med = partial(self.check_cc, features='cxx cxxprogram',
+    check_med = partial(self.check_cc,
                         mandatory=True, uselib_store='MED', use='MED HDF5')
     if opts.embed_all or opts.embed_med:
         check_lib = lambda lib: check_med(stlib=lib)

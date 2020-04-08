@@ -44,8 +44,8 @@ def build(self):
           target = 'elem.1',
              env = env,
             vars = ['CATALO_CMD'],
-             use = ['code_aster_py'],
-    install_path = self.options.destdir + env.ASTERLIBDIR,
+             use = 'code_aster_py',
+    install_path = env.ASTERLIBDIR
     )
 
 @TaskGen.feature('catalo')
@@ -65,10 +65,10 @@ class printcata(Task.Task):
         """Execute the command"""
         environ = os.environ.copy()
         # add src/code_aster + catalo in PYTHONPATH
-        python_path = self.env["CODEASTERPATH"] + ":" + self.inputs[0].abspath()
-        add_to_env_paths(environ, "PYTHONPATH", python_path)
+        add_to_env_paths(environ, "PYTHONPATH", self.env["CODEASTERPATH"])
+        add_to_env_paths(environ, "PYTHONPATH", self.env["CATALOPATH"])
         exec_pyaster(self.generator.bld,
-                     osp.join(self.inputs[0].abspath(), "build_cata.py"),
+                     osp.join(self.env["CATALOPATH"], "build_cata.py"),
                      env=environ,
                      args=[self.env['OPTDEBUG'] or "",
                            "-o", self.outputs[0].abspath()])
@@ -139,28 +139,16 @@ def exec_pyaster(self, pyfile, args, **kwargs):
     cmdenv = []
     python = list(env.PYTHON)[0]
 
-    ld_paths = get_ld_paths(self)
-    if ld_paths:
-        add_to_env_paths(environ, 'LD_LIBRARY_PATH', ld_paths)
-        # add to cli as it could contain variable (``$LIBDIR`` for example)
-        cmdenv.append('LD_LIBRARY_PATH="%s"' % environ['LD_LIBRARY_PATH'])
-
-    destdir = self.options.destdir
-    python_path = destdir + env.ASTERLIBDIR
-    add_to_env_paths(environ, 'LIBDIR', destdir + env['LIBDIR'])
-    add_to_env_paths(environ, 'BINDIR', destdir + env['BINDIR'])
-    add_to_env_paths(environ, 'PYTHONARCHDIR', env['PYTHONARCHDIR'])
-    add_to_env_paths(environ, 'PYTHONDIR', env['PYTHONDIR'])
-    add_to_env_paths(environ, 'PYTHONPATH', python_path)
-    add_to_env_paths(environ, 'PYTHONHOME', env['CFG_PYTHONHOME'])
-    add_to_env_paths(environ, 'ASTER_ROOT', env['PREFIX'])
+    python_ld_path = env.ASTERLIBDIR
+    add_to_env_paths(environ, 'PYTHONPATH', python_ld_path)
+    add_to_env_paths(environ, 'LD_LIBRARY_PATH', python_ld_path)
 
     cmdexe = [python, pyfile] + args
     # this position allows CATALO_CMD to define an environment variable
     # or a prefix to wrap the executable
     cmdprefix = Utils.to_list(env['CATALO_CMD'])
-    if self.get_define('HAVE_MPI') and not cmdprefix:
-        cmdprefix = env["base_mpirun"]
+    if self.env.BUILD_MPI and not cmdprefix:
+        cmdprefix = env["base_mpiexec"] + ["-n", "1"]
     cmds = ' '.join(cmdenv + cmdprefix + cmdexe)
     Logs.debug('os environ: %r' % environ)
     # do not confuse with installed elementsdir
@@ -172,21 +160,10 @@ def exec_pyaster(self, pyfile, args, **kwargs):
         Logs.warn('stdout: %s' % err.stdout)
         Logs.warn('stderr: %s' % err.stderr)
         Logs.info('To run manually, use:')
-        # Logs.info('BINDIR="%s"' % environ['BINDIR'])
-        Logs.info('LIBDIR="%s"' % environ['LIBDIR'])
-        Logs.info('PYTHONDIR="%s"' % environ['PYTHONDIR'])
         Logs.info('export LD_LIBRARY_PATH="%s"' % environ['LD_LIBRARY_PATH'])
         Logs.info('export PYTHONPATH="%s"' % environ['PYTHONPATH'])
         Logs.info(' '.join(cmdprefix + cmdexe))
         raise
-
-def get_ld_paths(self):
-    # Add *LIBPATH paths to LD_LIBRARY_PATH
-    env = self.all_envs[self.variant]
-    ld_path = list(chain(*[Utils.to_list(env[name])
-                           for name in ('LIBPATH', 'LIBDIR', 'ASTERLIBDIR')
-                           if env[name]]))
-    return [self.options.destdir + p for p in ld_path]
 
 def add_to_env_paths(environ, name, path):
     if not path:

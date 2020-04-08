@@ -45,7 +45,7 @@ def options(self):
 def configure(self):
     opts = self.options
     self.env.BUILD_CYTHON = False
-    if not self.get_define('HAVE_MPI'):
+    if not self.env.BUILD_MPI:
         opts.enable_cython = False
     try:
         self.check_cython()
@@ -114,7 +114,7 @@ def build(self):
             name = "code_aster_py",
           source = get_srcs("**/*.py"),
     install_from = '.',
-    install_path = osp.join(env.ASTERLIBDIR, "code_aster"),
+    install_path = osp.join(env.ASTERLIBDIR, "code_aster")
     )
 
     self(
@@ -123,7 +123,7 @@ def build(self):
           source = 'aster_pkginfo.pytmpl',
           target = 'aster_pkginfo.py',
     install_path = osp.join(env.ASTERLIBDIR, "code_aster", "Utilities"),
-    VERSION_INFO = pformat(env['ASTER_VERSION']),
+    VERSION_INFO = pformat(env['ASTER_VERSION'])
     )
 
     self(
@@ -132,7 +132,7 @@ def build(self):
           source = 'aster_version.pytmpl',
           target = 'aster_version.py',
     install_path = osp.join(env.ASTERLIBDIR, "code_aster", "Cata"),
-    VERSION_INFO = pformat(env['ASTER_VERSION']),
+    VERSION_INFO = pformat(env['ASTER_VERSION'])
     )
 
     # cython
@@ -142,7 +142,6 @@ def build(self):
 def build_cython_ext(self):
     get_srcs = self.path.get_src().ant_glob
     env = self.all_envs[self.variant]
-    uses = env['all_dependencies']
 
     # Wrappers on C++ objects uses libaster
     wrapper = get_srcs('**/*.pyx')
@@ -155,8 +154,8 @@ def build_cython_ext(self):
             features = 'cxx cxxshlib pyext',
               source = cymodule,
               target = osp.join(dirname, modname),
-                 use = ['asterlib', 'CODE_ASTER_CORE'],
-        install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname),
+                 use = 'asterlib',
+        install_path = osp.join(env.ASTERLIBDIR, 'code_aster', dirname)
         )
 
 @Configure.conf

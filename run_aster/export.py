@@ -47,7 +47,7 @@ The syntax of a ``.export`` file is very simple:
     memory_limit: float         - memory limit in MB
     mpi_nbcpu: int              - number of MPI processes
     ncpus: int                  - number of threads (per MPI process)
-    no-mpi: bool                - start without mpirun (for some testcases)
+    no-mpi: bool                - start without mpiexec (for some testcases)
     time_limit: float           - time limit is seconds
 
 ``A`` is a special parameter that stores command line arguments passed to the

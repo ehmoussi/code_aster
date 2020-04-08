@@ -40,8 +40,8 @@ The list of the supported *version parameters* are (with their type):
     addmem: int             - memory added to the memory limit found from export
     parallel: bool          - true for a parallel version
     python: str             - Python interpreter
-    mpirun: str             - mpirun command line with arguments
-    mpirun_rank: str        - command line to get the mpi rank
+    mpiexec: str             - mpiexec command line with arguments
+    mpi_get_rank: str        - command line to get the mpi rank
     only-proc0: bool        - true to limit output to proc #0, false to show all
     FC: str                 - fortran compiler
     FCFLAGS: list[str]      - flags for fortran compiler
@@ -54,12 +54,12 @@ Python dict named ``env["CONFIG_PARAMETERS"]``.
 
 .. note::
 
-    ``mpirun`` command line needs these variables ``mpinb_cpu`` and ``program``
+    ``mpiexec`` command line needs these variables ``mpinb_cpu`` and ``program``
     following the `Python Format String Syntax`_. For example:
 
     .. code-block:: sh
 
-        mpirun -n {mpi_nbcpu} --tag-output {program}
+        mpiexec -n {mpi_nbcpu} --tag-output {program}
 
 .. _Python Format String Syntax: https://docs.python.org/3/library/string.html#formatstrings
 
@@ -169,8 +169,8 @@ VERSION_PARAMS = {
     "addmem": "int",
     "parallel": "bool",
     "python": "str",
-    "mpirun": "str",
-    "mpirun_rank": "str",
+    "mpiexec": "str",
+    "mpi_get_rank": "str",
     "only-proc0": "bool",
     "FC": "str",
     "FCFLAGS": "list[str]",

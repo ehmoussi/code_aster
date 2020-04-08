@@ -161,7 +161,7 @@ class ASTER_TIMER:
             })
 
     def Add(self, timer, cpu_dt=0., sys_dt=0., to_total=False):
-        """Add dt values (hidden to os.times, for example under mpirun) to a timer.
+        """Add dt values (hidden to os.times, for example under mpiexec) to a timer.
         """
         if len(self.timers) > self.MaxSize:
             return
