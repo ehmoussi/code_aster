@@ -59,7 +59,7 @@ def check_mumps(self):
     self.check_mumps_version()
     if opts.mumps_libs is None:
         opts.mumps_libs = 'dmumps zmumps smumps cmumps mumps_common pord'
-    if not opts.parallel:
+    if not self.env.BUILD_MPI:
         opts.mumps_libs += ' mpiseq'
     if opts.mumps_libs:
         self.check_mumps_libs()
@@ -71,7 +71,7 @@ def check_mumps(self):
 @Configure.conf
 def check_mumps_libs(self):
     opts = self.options
-    check_mumps = partial(self.check_cc, uselib_store='MUMPS', use='METIS MPI',
+    check_mumps = partial(self.check_cc, uselib_store='MUMPS', use='MUMPS MPI',
                           mandatory=True)
     if opts.embed_all or opts.embed_mumps:
         check = lambda lib: check_mumps(stlib=lib)

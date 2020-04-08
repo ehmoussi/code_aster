@@ -34,24 +34,19 @@ def configure(self):
     opts.parallel = True
 
     calibre9_std.configure(self)
-    self.env["CONFIG_PARAMETERS"].update({
-        "addmem": 800,
-    })
+    self.env["CONFIG_PARAMETERS"]["addmem"] = 1000
 
-    self.env.prepend_value('LIBPATH', [
-        YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib',
-        YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/lib',
-        YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/MPI/lib',
-        YAMMROOT + '/prerequisites/Petsc_mpi-3123_aster/lib',
-    ])
+    self.env.LIBPATH_PARMETIS = YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/lib'
+    self.env.INCLUDES_PARMETIS = YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/include'
 
-    self.env.prepend_value('INCLUDES', [
-        YAMMROOT + '/prerequisites/Parmetis_aster-403_aster3/include',
-        YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/include',
-        YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/MPI/include',
-        YAMMROOT + '/prerequisites/Petsc_mpi-3123_aster/include',
-    ])
+    self.env.LIBPATH_SCOTCH = YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/lib'
+    self.env.INCLUDES_SCOTCH = YAMMROOT + '/prerequisites/Scotch_aster-604_aster7/MPI/include'
 
+    self.env.LIBPATH_MUMPS = YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/MPI/lib'
+    self.env.INCLUDES_MUMPS = YAMMROOT + '/prerequisites/Mumps-521_consortium_aster/MPI/include'
+
+    self.env.LIBPATH_PETSC = YAMMROOT + '/prerequisites/Petsc_mpi-3123_aster/lib'
+    self.env.INCLUDES_PETSC = YAMMROOT + '/prerequisites/Petsc_mpi-3123_aster/include'
+
+    opts.enable_parmetis = True
     opts.enable_petsc = True
-    self.env.append_value('LIB_METIS', ('parmetis'))
-    self.env.append_value('LIB_SCOTCH', ('ptscotch','ptscotcherr','ptscotcherrexit'))

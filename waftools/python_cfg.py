@@ -28,62 +28,25 @@ from waflib import Options, Configure, Errors, Utils
 
 def options(self):
     self.load('python')    # --nopyc/--nopyo are enabled below
-    group = self.add_option_group('code_aster options')
-    group.add_option('--embed-python', dest='embed_python',
-                    default=False, action='store_true',
-                    help='Embed python as static libraries (experimental, '
-                         'not enabled by embed-all)')
 
 def configure(self):
-    self.check_system_libs()
-    self.configure_pythonpath()
-    # require to force static libs if --embed-python is present
-    embed_py = self.options.embed_python
-    if embed_py:
-        self.static_lib_pref()
     self.check_python()
     self.check_numpy()
     self.check_asrun()
-    if embed_py:
-        self.revert_lib_pref()
-        if self.env['LIB_PYEMBED']:
-            self.env['STLIB_PYEMBED'] = self.env['LIB_PYEMBED']
-            del self.env['LIB_PYEMBED']
 
 ###############################################################################
-@Configure.conf
-def check_system_libs(self):
-    """check for system libs"""
-    # may be required for non-system python installation (never in static)
-    self.check_cc(uselib_store='PYEMBED', lib='pthread', mandatory=False)
-    self.check_cc(uselib_store='PYEMBED', lib='dl', mandatory=False)
-    self.check_cc(uselib_store='PYEMBED', lib='util', mandatory=False)
-
-@Configure.conf
-def configure_pythonpath(self):
-    """Insert env.PYTHONPATH at the beginning of sys.path"""
-    path = Utils.to_list(self.env['PYTHONPATH'])
-    system_path = _get_default_pythonpath(self.environ.get("PYTHON",
-                                                           sys.executable))
-    for i in sys.path:
-        if i in system_path:
-            continue
-        if osp.basename(i).startswith('.waf'):
-            continue
-        if osp.abspath(i).startswith(osp.abspath(os.getcwd())):
-            continue
-        path.append(i)
-    sys.path = path + sys.path
-    self.env['CFG_PYTHONPATH'] = path
-    self.env['CFG_PYTHONHOME'] = sys.prefix + (
-        '' if sys.prefix == sys.exec_prefix else ':' + sys.exec_prefix)
-    os.environ['PYTHONPATH'] = os.pathsep.join(sys.path)
-
 @Configure.conf
 def check_python(self):
     self.load('python')
     self.check_python_version((3, 5, 0))
     self.check_python_headers()
+    if 'icc' in self.env.CC_NAME.lower():
+        pyflags=['-Wno-unused-result', '-Wsign-compare', '-march', '-mtune', '-ftree-vectorize',
+                 '-fstack-protector-strong', '-fno-plt', '-ffunction-sections', '-pipe', '-fuse-linker-plugin',
+                 '-ffat-lto-objects', '-flto-partition', '-flto', '-fdebug-prefix-map', '-fPIC', '-O']
+        self.env['LIB_PYEXT'] = list(set(self.env['LIB_PYEXT']))
+        for lang in ('CFLAGS', 'CXXFLAGS'):
+            self.remove_flags(lang + '_PYEXT', pyflags)
 
 @Configure.conf
 def check_numpy(self):
@@ -99,8 +62,6 @@ def check_numpy_module(self):
     self.start_msg('Checking for numpy')
     self.check_python_module('numpy')
     import numpy
-    self.env.append_unique('CFG_PYTHONPATH',
-        [osp.normpath(osp.dirname(osp.dirname(numpy.__file__)))])
     self.end_msg(numpy.__file__)
 
 @Configure.conf
@@ -118,7 +79,7 @@ def check_numpy_headers(self):
                  header_name = 'Python.h numpy/arrayobject.h',
                     includes = numpy_includes,
                      defines = 'NPY_NO_PREFIX',
-                         use = ['PYEMBED'],
+                         use = ['PYEXT'],
                 uselib_store = 'NUMPY',
         errmsg='Could not find the numpy development headers'
     )
@@ -154,8 +115,6 @@ def check_asrun(self):
     try:
         self.check_python_module('asrun')
         import asrun
-        self.env.append_unique('CFG_PYTHONPATH',
-            [osp.normpath(osp.dirname(osp.dirname(asrun.__file__)))])
         self.end_msg(asrun.__file__)
     except Errors.WafError:
         self.end_msg("no", "YELLOW")

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 """
 Configuration using Intel compilers
 
-Use automatically MPI wrappers if opt.parallel was previously set.
+Use automatically MPI wrappers for a parallel build.
 
 You may want to add the following line in your ``wafcfg/`` file to reduce
 the memory consumption during link::
@@ -34,7 +34,7 @@ or set the environment variable before running ``./waf configure``::
 
 def configure(self):
     opts = self.options
-    mpi = 'mpi' if opts.parallel else ''
+    mpi = 'mpi' if self.env.BUILD_MPI else ''
     # Configure.find_program uses first self.environ, then os.environ
     self.environ['FC'] = mpi + 'ifort'
     self.environ['CC'] = mpi + 'icc'

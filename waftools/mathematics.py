@@ -42,8 +42,8 @@ def options(self):
 
 def configure(self):
     # always check for libpthread, libm (never in static)
-    self.check_cc(uselib_store='MATH', lib='pthread')
-    self.check_cc(uselib_store='MATH', lib='m')
+    self.check_cc(uselib_store='M', lib='m')
+    self.check_cc(uselib_store='Z', lib='z')
     self.check_number_cores()
     if self.options.maths_libs in (None, 'auto'):
         # try MKL first, then automatic blas/lapack
@@ -52,7 +52,6 @@ def configure(self):
     elif self.options.maths_libs:
         self.check_opts_math_lib()
     self.check_libm_after_files()
-    self.check_math_libs_call()
 
 ###############################################################################
 @Configure.conf
@@ -93,54 +92,52 @@ def check_libm_after_files(self):
 
 @Configure.conf
 def detect_mkl(self):
-    """Try to use MKL if ifort was detected"""
-    var = 'OPTLIB_FLAGS_MATH'
+    """Try to detect MKL """
+    # MKL can be installed either as a standalone package
+    # or with Intel compiler. In both cases MKLROOT is/must be defined
+    if os.environ.get('MKLROOT') is None:
+        return False
     opts = self.options
     embed = opts.embed_math or opts.embed_all
-    if 'ifort' not in self.env.FC_NAME.lower():
-        return
     self.start_msg('Detecting MKL libraries')
     suffix = '_lp64' if self.env.DEST_CPU.endswith('64') else ''
-    # first: out of the box (OPTLIB_FLAGS as provided)
-    totest = ['']
+    scalapack  = []
+    blacs = []
+    thread = 'mkl_sequential'
+    core = 'mkl_core'
+    libs =[]
     # http://software.intel.com/en-us/articles/intel-mkl-link-line-advisor/
     if self.get_define('HAVE_MPI'):
-        totest.append('-mkl=parallel')
-        scalapack = ['-lmkl_scalapack' + suffix or '_core', '-lmkl_intel' + suffix]   # ia32: mkl_scalapack_core
-        blacs = ['-lmkl_intel_thread', '-lmkl_blacs_intelmpi' + suffix] + ['-lmkl_lapack95' + suffix]
+        scalapack  = 'mkl_scalapack' + suffix
+        blacs = 'mkl_blacs_intelmpi' + suffix
+    if ('ifort' in self.env.FC_NAME.lower()) or ('icc' in self.env.CC_NAME.lower()):
+        if self.get_define('HAVE_OPENMP'):
+            thread  = 'mkl_intel_thread'
+        interf = 'mkl_intel' + suffix
     else:
-        scalapack = []
-        blacs = []
-    interf = 'mkl_intel' + suffix
-    for typ in ('parallel', 'sequential'):
-        totest.append('-mkl=' + typ)
-        thread = 'mkl_sequential' if typ == 'sequential' else 'mkl_intel_thread'
-        core = 'mkl_core'
-        optional = []
-        if typ == 'parallel':
-            optional.append('iomp5')
-        libs = ['-l%s' % name for name in [interf, thread, core] + optional]
-        libs = ['-Wl,--start-group'] + scalapack + libs + blacs + ['-Wl,--end-group']
-        totest.append(libs)
-        libs = ['-mkl=' + typ ] +  libs
-        totest.append(libs)
-    Logs.debug("\ntest: %r" % totest)
-    while totest:
+        if self.get_define('HAVE_OPENMP'):
+            thread  = 'mkl_gnu_thread'
+        interf = 'mkl_gf' + suffix
+    if scalapack:
+        libs.append(scalapack)
+    libs.append(interf)
+    libs.append(thread)
+    libs.append(core)
+    if blacs:
+        libs.append(blacs)
+    try:
         self.env.stash()
-        opts = totest.pop(0)
-        if opts:
-            self.env.append_value(var, opts)
-        try:
-            self.check_math_libs_call(color='YELLOW')
-        except:
-            self.env.revert()
-            continue
-        else:
-            self.end_msg(self.env[var])
-            self.define('_USE_MKL', 1)
-            return True
-    self.end_msg('no', color='YELLOW')
-    return False
+        self.env.append_value('LIB_MATH', libs)
+        self.env.append_value('LIBPATH_MATH', os.environ['MKLROOT'] + '/lib/intel64')
+        self.check_math_libs_call(color='YELLOW')
+    except:
+        self.env.revert()
+        self.end_msg('no', color='YELLOW')
+        return False
+    else:
+        self.env.commit()
+        self.end_msg(self.env.LIBPATH_MATH + self.env.LIB_MATH)
+        return True
 
 @Configure.conf
 def detect_math_lib(self):
@@ -254,7 +251,9 @@ def get_mathlib_from_numpy(self):
     '''The idea is that numpy shall be linked to blas and lapack.
     So we will try to get then using ldd if available'''
     libblas = []
+    pathblas = []
     liblapack = []
+    pathlapack = []
 
     self.load('python')
 
@@ -289,9 +288,9 @@ def check_math_libs_call(self, color='RED'):
     """Compile and run a small blas/lapack program"""
     self.start_msg('Checking for a program using blas/lapack')
     try:
-        ret = self.check_fc(fragment=blas_lapack_fragment, use='MATH OPENMP MPI',
+        ret = self.check_fc(fragment=blas_lapack_fragment, use='MPI OPENMP MATH',
                             mandatory=False, execute=True, define_ret=True)
-        values = list(map(float, ret and ret.split() or []))
+        values = map(float, ret and ret.split() or [])
         ref = [10.0, 5.0]
         if list(values) != ref:
             raise Errors.ConfigurationError('invalid result: %r (expecting %r)' % (values, ref))
@@ -305,7 +304,7 @@ def check_math_libs_call(self, color='RED'):
     if self.get_define('HAVE_MPI'):
         self.start_msg('Checking for a program using blacs')
         try:
-            ret = self.check_fc(fragment=blacs_fragment, use='MATH OPENMP MPI',
+            ret = self.check_fc(fragment=blacs_fragment, use='MPI OPENMP MATH',
                                 mandatory=True)
         except Exception as exc:
             # the message must be closed

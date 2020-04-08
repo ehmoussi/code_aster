@@ -17,6 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
 import os.path as osp
 from distutils.version import LooseVersion
 
@@ -26,21 +27,36 @@ def options(self):
     self.load('compiler_cxx')
     self.load('boost')
 
+    group = self.get_option_group("code_aster options")
+    # boost tool failed for example with libboost_python3-mt.1.58.0
+    # truncated as boost_python3-mt.1.58 by boost_get_libs.format_lib_name...
+    group.add_option('--disable-boost-check', dest='disable_boost_check',
+                     action='store_true',
+                     default=os.environ.get('DISABLE_BOOST_CHECK'),
+                     help='do not check boost (INCLUDES_BOOST, LIBPATH_BOOST, '
+                          'LIB_BOOST must be defined in environment, same as '
+                          'DISABLE_BOOST_CHECK environment variable)')
+
 def configure(self):
     self.load('compiler_cxx')
     self.check_cxx_compiler_flags()
-    self.check_bibcxx_depends()
+    if 'icc' not in self.env.CC_NAME:
+        self.check_bibcxx_depends()
     self.check_boost_aster()
 
     cxxpath = self.path.get_src().abspath()
+    self.env.append_value('INCLUDES_BIBCXX', cxxpath)
+
     incpath = osp.join(cxxpath, 'include')
-    self.env.append_value('INCLUDES', cxxpath)
-    self.env.append_value('INCLUDES', incpath)
+    self.env.append_value('INCLUDES_BIBCXX', incpath)
+
+    cpath = self.path.find_node('../bibc').abspath()
+    incpath = osp.join(cpath, 'include')
+    self.env.append_value('INCLUDES_BIBCXX', incpath)
 
 def build(self):
     env = self.all_envs[self.variant]
     get_srcs = self.path.get_src().ant_glob
-    uses = env['all_dependencies']
 
     if env.BUILD_MFRONT:
         paths = get_srcs('mfront', src=True, dir=True)
@@ -51,15 +67,17 @@ def build(self):
                 name = 'astermfront',
               source = get_srcs('mfront/*.cxx'),
                  env = env.derive(),
-                 use = ['PYEMBED'] + uses,
+                 use = ['BIBCXX', 'MFRONT', 'BOOST', 'PYEXT', 'CXX'],
             )
 
     self(
-        features = 'cxx',
+        features = 'cxx cxxshlib',
             name = 'asterbibcxx',
           source = get_srcs('**/*.cxx', excl='mfront/*.cxx'),
+          target = 'bibcxx',
+             use = ['BIBCXX', 'PETSC', 'BOOST', 'PYEXT', 'CXX'],
              env = env.derive(),
-             use = ['PYEMBED'] + uses,
+    install_path = env.ASTERLIBDIR
     )
 
 ###############################################################################
@@ -72,8 +90,7 @@ def check_bibcxx_depends(self):
 def check_cxx_compiler_flags(self):
     """check C++ compiler flags"""
     # this option is compiler independent (ifort & g++)
-    self.check_cxx(cxxflags='-std=c++11', uselib_store='SYS',
-                   mandatory=False)
+    self.check_cxx(cxxflags='-std=c++11', uselib_store='CXX', mandatory=False)
 
 @Configure.conf
 def check_optimization_cxxflags(self):
@@ -94,21 +111,8 @@ def check_optimization_cxxflags(self):
 @Configure.conf
 def check_boost_aster(self):
     self.load('boost')
-
-    # manually defined since waf forces to use /usr/lib/x86-64...
-    for key in ('INCLUDES_BOOST', 'LIBPATH_BOOST', 'LIB_BOOST'):
-        if not self.env[key]:
-            raise Errors.ConfigurationError("Please define '{0}' in your "
-                                            "configuration file.".format(key))
-
-    # self.check_boost(lib="python") # lib='shared_ptr'... ?
-    # minver = "1.58.0"
-    # bvn = self.env.BOOST_VERSION_NUMBER
-    # # see waflib/extras/boost
-    # boost_version = "%d.%d.%d" % (bvn // 100000,
-	# 						      bvn // 100 % 1000,
-	# 						      bvn % 100)
-    # if LooseVersion(boost_version) < LooseVersion(minver):
-    #     print("Boost {1} or newer is required, "
-    #                                     "found: {0}"
-    #                                     .format(boost_version, minver))
+    if not self.options.disable_boost_check:
+        self.check_boost(lib="python", toolset='cxx')
+    else:
+        for part in ('INCLUDES', 'LIBPATH', 'LIB'):
+            self.add_os_flags(part + '_BOOST')
