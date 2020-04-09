@@ -94,11 +94,12 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     character(len=16) :: k16b, nomcmd
     character(len=8) :: nomfiss, resu, noma, k8b
     character(len=6) :: kiord
+    character(len=1), parameter :: base = 'G'
 !
     integer :: nbnoeu, iadrt1, iadrt2, iadrt3, itheta, ifon
     integer :: in2, iadrco, jmin, ielinf, iadnum, jvect
     integer :: iadrno, num, indic, iadrtt, nbre, nbptfd
-    integer :: iret, numa, ndimte, iebas, iftyp
+    integer :: iret, numa, ndimte, iebas, iftyp, nec
 !
     real(kind=8) :: xi1, yi1, zi1, xj1, yj1, zj1
     real(kind=8) :: xij, yij, zij, eps, d, tei, tej
@@ -235,7 +236,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
         ndimte = nbre + 1
     endif
 !
-    call wkvect(resu, 'V V K24', ndimte+1, jresu)
+    call wkvect(resu, base//' V K24', ndimte+1, jresu)
 !
 ! CREATION DES NDIMTE+1 CHAMPS_NO ET VALEUR SUR GAMMA0
 !
@@ -252,7 +253,9 @@ subroutine gcour2(resu, noma, nomno, coorn,&
         endif
 !  .DESC
         chamno(20:24) = '.DESC'
-        call wkvect(chamno, 'G V I', 3, idesc)
+        call dismoi('NB_EC', 'DEPL_R', 'GRANDEUR', repi=nec)
+        call wkvect(chamno, base//' V I', 2+nec, idesc)
+!
         call jeecra(chamno, 'DOCU', cval='CHNO')
         call jenonu(jexnom('&CATA.GD.NOMGD', 'DEPL_R'), numa)
         zi(idesc+1-1) = numa
@@ -260,11 +263,11 @@ subroutine gcour2(resu, noma, nomno, coorn,&
         zi(idesc+3-1) = 14
 !  .REFE
         chamno(20:24) = '.REFE'
-        call wkvect(chamno, 'V V K24', 4, irefe)
+        call wkvect(chamno, base//' V K24', 4, irefe)
         zk24(irefe+1-1) = noma//'                '
 !  .VALE
         chamno(20:24) = '.VALE'
-        call wkvect(chamno, 'V V R', 3*nbel, itheta)
+        call wkvect(chamno, base//' V R', 3*nbel, itheta)
 !
         if (k .ne. (ndimte+1)) then
             if ((liss.eq.'LAGRANGE').or.(liss.eq.'LAGRANGE_NO_NO')&
