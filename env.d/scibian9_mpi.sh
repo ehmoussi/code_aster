@@ -53,7 +53,6 @@ export LIBPATH_MFRONT="${TFELHOME}/lib"
 export INCLUDES_MFRONT="${TFELHOME}/include"
 export PYPATH_MFRONT="${TFELHOME}/lib/python3.6/site-packages"
 
-export DISABLE_BOOST_CHECK=1
 export INCLUDES_BOOST="/opt/boost/1.58.0/include"
 export LIBPATH_BOOST="/opt/boost/1.58.0/lib"
 export LIB_BOOST="boost_python3-mt"

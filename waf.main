@@ -38,12 +38,18 @@ waf_main()
                 . ${WAFBUILD_ENV}
                 echo "loading ${WAFBUILD_ENV}"
             else
+                unset WAFBUILD_ENV
                 echo "no found"
             fi
         fi
     else
         export WAFBUILD_ENV="${prefix}/env.d/${DEVTOOLS_COMPUTER_ID}_${WAF_SUFFIX}.sh"
-        echo "already set: ${WAFBUILD_ENV}"
+        if [ -e ${WAFBUILD_ENV} ]; then
+            echo "already set: ${WAFBUILD_ENV}"
+        else
+            unset WAFBUILD_ENV
+            echo "no found: ${WAFBUILD_ENV}"
+        fi
     fi
 
     # really execute waf
