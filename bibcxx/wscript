@@ -27,15 +27,6 @@ def options(self):
     self.load('compiler_cxx')
     self.load('boost')
 
-    group = self.get_option_group("code_aster options")
-    # boost tool failed for example with libboost_python3-mt.1.58.0
-    # truncated as boost_python3-mt.1.58 by boost_get_libs.format_lib_name...
-    group.add_option('--disable-boost-check', dest='disable_boost_check',
-                     action='store_true',
-                     default=os.environ.get('DISABLE_BOOST_CHECK'),
-                     help='do not check boost (INCLUDES_BOOST, LIBPATH_BOOST, '
-                          'LIB_BOOST must be defined in environment, same as '
-                          'DISABLE_BOOST_CHECK environment variable)')
 
 def configure(self):
     self.load('compiler_cxx')
@@ -111,8 +102,7 @@ def check_optimization_cxxflags(self):
 @Configure.conf
 def check_boost_aster(self):
     self.load('boost')
-    if not self.options.disable_boost_check:
-        self.check_boost(lib="python", toolset='cxx')
-    else:
-        for part in ('INCLUDES', 'LIBPATH', 'LIB'):
-            self.add_os_flags(part + '_BOOST')
+    self.check_boost(includes=self.env.INCLUDES_BOOST,
+                     libs=self.env.LIBPATH_BOOST,
+                     lib="python",
+                     toolset='cxx')

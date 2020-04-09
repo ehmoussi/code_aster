@@ -60,7 +60,6 @@ export LIBPATH_MFRONT="${TFELHOME}/lib"
 export INCLUDES_MFRONT="${TFELHOME}/include"
 export PYPATH_MFRONT="${TFELHOME}/lib/python3.6/site-packages"
 
-export DISABLE_BOOST_CHECK=1
 export INCLUDES_BOOST="${PREREQ_PATH}/prerequisites/Boost-1580/include"
 export LIBPATH_BOOST="${PREREQ_PATH}/prerequisites/Boost-1580/lib"
 export LIB_BOOST="boost_python3-mt"

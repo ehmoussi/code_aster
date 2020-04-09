@@ -60,7 +60,7 @@ def options(self):
         '  LINKFLAGS      : extra linker options',
         '  CFLAGS         : extra C compilation options',
         '  FCFLAGS        : extra Fortran compilation options',
-        '  LIBPATH_x, INCLUDES_x, PYPATH_x : paths for component "x" for libs, '
+        '  LIBPATH_x, LIB_x, INCLUDES_x, PYPATH_x : paths for component "x" for libs, '
         'incudes, python modules',
         '  CONFIG_PARAMETERS_name=value: extra configuration parameters '
         '(for config.js)',
@@ -156,6 +156,7 @@ def configure(self):
 
     for comp in self.all_components():
         self.add_os_flags('LIBPATH_' + comp)
+        self.add_os_flags('LIB_' + comp)
         self.add_os_flags('INCLUDES_' + comp)
         self.add_os_flags('PYPATH_' + comp)
         if not opts.enable_all:
