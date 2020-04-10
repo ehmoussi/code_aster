@@ -159,7 +159,6 @@ AFFE_CHAR_THER=OPER(nom="AFFE_CHAR_THER",op=34,sd_prod=char_ther
                                  into=("TEMP","TEMP_MIL","TEMP_INF","TEMP_SUP","H1") ),
            COEF_MULT_2     =SIMP(statut='o',typ='R',max='**'),
            COEF_IMPO       =SIMP(statut='o',typ='R' ),
-           SOMMET          =SIMP(statut='f',typ='TXM',into=("OUI",) ),
            TRAN            =SIMP(statut='f',typ='R',max='**'),
            ANGL_NAUT       =SIMP(statut='f',typ='R',max='**'),
            CENTRE          =SIMP(statut='f',typ='R',max='**'),

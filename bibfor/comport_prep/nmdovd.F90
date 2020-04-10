@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -148,18 +148,22 @@ character(len=16), intent(in) :: rela_comp, rela_comp_py
             elem_type_nume = v_liel(nb_elem_grel)
             call jenuno(jexnum('&CATA.TE.NOMTE', elem_type_nume), elem_type_name)
 ! --------- Get modelisation
-            call teattr('C', 'TYPMOD' , model_type , iret, typel = elem_type_name)
             call teattr('C', 'TYPMOD2', model_type2, iret, typel = elem_type_name)
+            l_hho   = model_type2(1:3) .eq. 'HHO'
+            call teattr('C', 'TYPMOD' , model_type , iret, typel = elem_type_name)
             l_coq3d = lteatt('MODELI','CQ3', typel = elem_type_name)
             l_dkt   = lteatt('MODELI','DKT', typel = elem_type_name)
             l_dktg  = lteatt('MODELI','DTG', typel = elem_type_name)
             l_shell = lteatt('COQUE' ,'OUI', typel = elem_type_name)
-            l_hho   = model_type2(1:3) .eq. 'HHO'
 ! --------- Specific checks
-            if (l_coq3d .and. (defo_comp .eq. 'GROT_GDEP') ) then
+            if (l_dkt .and. defo_comp .eq. 'PETIT_REAC') then
+                call utmess('A', 'COMPOR1_50')
+            endif
+            if (l_coq3d .and. (defo_comp .eq. 'GROT_GDEP')) then
                 call utmess('A', 'COMPOR1_47')
             endif
-            if (l_hho .and. (defo_comp .eq. 'SIMO_MIEHE' .or. defo_comp .eq. 'PETIT_REAC') ) then
+            if (l_hho .and.&
+                (defo_comp .eq. 'SIMO_MIEHE' .or. defo_comp .eq. 'PETIT_REAC')) then
                 call utmess('F', 'COMPOR1_49')
             endif
             if (l_dkt .and. .not. l_dktg ) then
@@ -194,6 +198,14 @@ character(len=16), intent(in) :: rela_comp, rela_comp_py
                     if (defo_comp .eq. 'GROT_GDEP' .and. rela_comp .eq. 'ELAS' .and.&
                         .not. l_shell) then
                         call utmess('F', 'COMPOR1_15')
+                    else
+                        call lctest(defo_comp_py, 'MODELISATION', 'C_PLAN', irett)
+                        if (irett .eq. 0) then
+                            texte(1) = elem_type_name
+                            texte(2) = name_elem
+                            texte(3) = defo_comp
+                            call utmess('F', 'COMPOR5_23', nk=3, valk=texte)
+                        endif
                     endif
                 elseif (model_type .eq. '3D') then
                     call lctest(defo_comp_py, 'MODELISATION', '3D', irett)

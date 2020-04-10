@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ subroutine hujela(mod, mater, deps, sigd, sigf, iret)
 !       ---------------------------------------------------------------
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/hujci1.h"
 #include "asterfort/lcinma.h"
 #include "asterfort/lcprmv.h"
@@ -93,7 +94,7 @@ subroutine hujela(mod, mater, deps, sigd, sigf, iret)
             i1 = i1e + d13*i1
 !
         else
-            call utmess('F', 'COMPOR1_40')
+            ASSERT(ASTER_FALSE)
         endif
 !
         if ((i1 -piso)/pref .lt. tole) then
@@ -109,7 +110,7 @@ subroutine hujela(mod, mater, deps, sigd, sigf, iret)
 !      OU EXPLICITEMENT SI NIVEAU HUJEUX
     call hujci1(mater, deps, sigd, i1, tract, iret)
 !
-    if (iret .eq. 1) goto 9999
+    if (iret .eq. 1) goto 999
 !
     if (mater(17,1) .eq. un) then
 !
@@ -140,7 +141,7 @@ subroutine hujela(mod, mater, deps, sigd, sigf, iret)
         i1e = i1e + d13*coef
 !
     else
-        call utmess('F', 'COMPOR1_40')
+            ASSERT(ASTER_FALSE)
     endif
 !
     if ((i1 -piso)/pref .lt. tole) tract=.true.
@@ -156,7 +157,7 @@ subroutine hujela(mod, mater, deps, sigd, sigf, iret)
         do i = ndi+1, ndt
             sigf(i) = zero
         enddo
-        goto 9999
+        goto 999
     endif
  30 continue
 !
@@ -216,7 +217,7 @@ subroutine hujela(mod, mater, deps, sigd, sigf, iret)
             hook(6,6) = g3
 !
         else
-            call utmess('F', 'COMPOR1_40')
+            ASSERT(ASTER_FALSE)
         endif
 !
     else if (mod(1:6) .eq. 'C_PLAN' .or. mod(1:2) .eq. '1D') then
@@ -230,5 +231,5 @@ subroutine hujela(mod, mater, deps, sigd, sigf, iret)
     call lcprmv(hook, deps, dsig)
     call lcsove(sigd, dsig, sigf)
 !
-9999 continue
+999 continue
 end subroutine

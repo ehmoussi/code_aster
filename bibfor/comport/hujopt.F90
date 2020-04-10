@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 subroutine hujopt(fami, kpg, ksp, mod, angmas,&
                   imat, nmat, mater, nvi, vinf,&
                   nr, drdy, sigf, dsde, iret)
-! person_in_charge: alexandre.foucault at edf.fr
+!
 !     ----------------------------------------------------------------
 !     CALCUL DU JACOBIEN DU SYSTEME NL A RESOUDRE = DRDY(DY)
 !     POUR LE MODELE HUJEUX
@@ -38,6 +38,7 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
 #include "asterf_types.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
 #include "asterfort/hujori.h"
 #include "asterfort/hujtel.h"
 #include "asterfort/hujtid.h"
@@ -251,7 +252,7 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
             hook(6,6) = g3
 !
         else
-            call utmess('F', 'COMPOR1_38')
+            ASSERT(ASTER_FALSE)
         endif
     else if (mod(1:6) .eq. 'C_PLAN' .or. mod(1:2) .eq. '1D') then
         call utmess('F', 'COMPOR1_4')
@@ -283,7 +284,7 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
                 ndt, det, iret)
     if (iret .gt. 1) then
         call lceqma(hook, dsde)
-        goto 9999
+        goto 998
     endif
 !
 ! --- PRODUIT DU TERME Y1 * (Y3)^-1 * Y2 = Y4
@@ -312,7 +313,7 @@ subroutine hujopt(fami, kpg, ksp, mod, angmas,&
         call lcprmm(dsdeb, hooknl, dsde)
     endif
 !
-9999 continue
+998 continue
     if (angmas(1) .eq. r8vide()) then
         call utmess('F', 'ALGORITH8_20')
     endif

@@ -81,6 +81,9 @@ EDEFONO  = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
 CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
     components=('EPXX','EPYY','EPZZ','EPXY',))
 
+CEPSINO  = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
+    components=('EPXX','EPYY','EPZZ','EPXY',))
+
 
 EDFEQPG  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
     components=('INVA_2','PRIN_[3]','INVA_2SG','VECT_1_X','VECT_1_Y',
@@ -246,7 +249,7 @@ class MEDPQS8(Element):
             para_in=((SP.PACCELE, DDL_MECA), (OP.CALC_G.PCOMPOR, LC.CCOMPOR),
                      (SP.PCONTGR, ECONTPG), (OP.CALC_G.PCONTRR, ECONTPG),
                      (SP.PDEFOPL, EDEFONO), (SP.PDEPLAR, DDL_MECA),
-                     (SP.PEPSINR, CEPSINR), (SP.PFRVOLU, NFORCER),
+                     (SP.PEPSINR, CEPSINO), (SP.PFRVOLU, NFORCER),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PPESANR, LC.CPESANR), (SP.PROTATR, LC.CROTATR),
                      (SP.PSIGINR, ECONTNO), (SP.PTHETAR, DDL_MECA),
@@ -469,7 +472,7 @@ class MEDPQS8(Element):
             para_in=((OP.EPEQ_ELNO.PDEFORR, EDEFONO), ),
             para_out=((OP.EPEQ_ELNO.PDEFOEQ, LC.EDFEQNO), ),
         ),
-        
+
         OP.EPGQ_ELGA(te=335,
             para_in=((OP.EPGQ_ELGA.PDEFORR, EDEFOPG), ),
             para_out=((OP.EPGQ_ELGA.PDEFOEQ, EDFEQPG), ),
@@ -750,13 +753,13 @@ class MEDPQS8(Element):
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((SP.PMATZZR, MMATZZR), ),
         ),
-        
+
         OP.MATE_ELGA(te=142,
             para_in=((SP.PMATERC, LC.CMATERC),
                      (OP.MATE_ELGA.PVARCPR, LC.ZVARCPG), ),
             para_out=((OP.MATE_ELGA.PMATERR, LC.EGMATE_R), ),
         ),
-        
+
         OP.MATE_ELEM(te=142,
             para_in=((SP.PMATERC, LC.CMATERC),
                      (OP.MATE_ELEM.PVARCPR, LC.ZVARCPG), ),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0160(option, nomte)
-!
 !
 ! --------------------------------------------------------------------------------------------------
 !    - ELEMENT:  MECABL2
@@ -39,33 +38,39 @@ subroutine te0160(option, nomte)
 #include "asterfort/jevete.h"
 #include "asterfort/matvec.h"
 #include "asterfort/rcvalb.h"
+#include "asterfort/get_value_mode_local.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "asterfort/Behaviour_type.h"
 !
-    integer ::          icodre(2)
-    real(kind=8) ::     valres(2)
-    character(len=16) :: nomres(2)
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: nno, kp, ii, jj, imatuu
+    integer             :: icodre(2)
+    real(kind=8)        :: valres(2)
+    character(len=16)   :: nomres(2)
+!
+    integer :: nno, kp, ii, jj, imatuu, iret
     integer :: ipoids, ivf, igeom, imate, jcret
     integer :: icompo, idepla, ideplp, idfdk, imat, iyty, jefint, ivarip
-    integer :: jgano, kk, lsect, lsigma, ndim, nelyty, nnos, nordre, npg
+    integer :: jgano, kk, lsigma, ndim, nelyty, nnos, nordre, npg
+!
     real(kind=8) :: aire, coef, coef1, coef2, demi
     real(kind=8) :: etraction, epsth, ecompress, ecable
     real(kind=8) :: green, jacobi, nx, ytywpq(9), w(9)
     real(kind=8) :: preten, r8bid
+!
+    real(kind=8)        :: valr(2)
+    character(len=8)    :: valp(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     demi = 0.5d0
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-        npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk,jgano=jgano)
+                     npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk,jgano=jgano)
     call jevete('&INEL.CABPOU.YTY', 'L', iyty)
 !   3 efforts par noeud
     nordre = 3*nno
-!
 ! --------------------------------------------------------------------------------------------------
 !   parametres en entree
     call jevech('PCOMPOR', 'L', icompo)
@@ -85,18 +90,20 @@ subroutine te0160(option, nomte)
     nomres(1) = 'E'
     nomres(2) = 'EC_SUR_E'
     r8bid = 0.0d0
-    call rcvalb('RIGI', 1, 1, '+', zi(imate),&
-                ' ', 'ELAS', 0, '  ', [r8bid],&
+    call rcvalb('RIGI', 1, 1, '+', zi(imate), ' ', 'ELAS', 0, '  ', [r8bid],&
                 1, nomres, valres, icodre, 1)
-    call rcvalb('RIGI', 1, 1, '+', zi(imate),&
-                ' ', 'CABLE', 0, '  ', [r8bid],&
+    call rcvalb('RIGI', 1, 1, '+', zi(imate), ' ', 'CABLE', 0, '  ', [r8bid],&
                 1, nomres(2), valres(2), icodre(2), 1)
     etraction = valres(1)
     ecompress = etraction*valres(2)
-    ecable = etraction
-    call jevech('PCACABL', 'L', lsect)
-    aire = zr(lsect)
-    preten = zr(lsect+1)
+    ecable    = etraction
+!
+    valp(1) = 'SECT'
+    valp(2) = 'TENS'
+    call get_value_mode_local('PCACABL', valp, valr, iret)
+    aire   = valr(1)
+    preten = valr(2)
+!
     call jevech('PDEPLMR', 'L', idepla)
     call jevech('PDEPLPR', 'L', ideplp)
 ! --------------------------------------------------------------------------------------------------

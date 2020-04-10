@@ -168,10 +168,6 @@ Problème d'interpolation pour RHO_CP
  Seule la loi de comportement ELAS est autorisée avec la déformation GROT_GDEP en modélisation DKT.
 """),
 
-    74 : _("""
-  %(k1)s  non implante.
-"""),
-
     75 : _("""
   Les matériaux de coque homogénéisées (ELAS_COQUE) sont interdits en non-linéaire.
 """),

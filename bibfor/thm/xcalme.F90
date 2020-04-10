@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,10 +72,12 @@ type(THM_DS), intent(in) :: ds_thm
 !
         depstr = deps
 !
-        do i = 4, 6
-            depstr(i) = deps(i)*rac2
-            congep(adcome+i-1)= congep(adcome+i-1)/rac2
-         end do
+        if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
+            do i = 4, 6
+                depstr(i) = deps(i)*rac2
+                congep(adcome+i-1)= congep(adcome+i-1)/rac2
+            end do
+        endif
 !
 ! ----- Compute thermic quantities
 !
@@ -104,8 +106,6 @@ type(THM_DS), intent(in) :: ds_thm
                  end do
              end do
         endif
-!
-!
         if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
             do i = 1, 6
                 do j = 1, 6
@@ -113,11 +113,10 @@ type(THM_DS), intent(in) :: ds_thm
                                          ds_thm%ds_material%elas%d(i,j)*depstr(j)
                  end do
             end do
+            do i = 4, 6
+                congep(adcome+i-1)= congep(adcome+i-1)*rac2
+            end do
         endif
-!
-        do i = 4, 6
-            congep(adcome+i-1)= congep(adcome+i-1)*rac2
-         end do
     else
         ASSERT(ASTER_FALSE)
     endif

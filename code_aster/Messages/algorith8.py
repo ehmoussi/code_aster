@@ -21,10 +21,6 @@ from ..Utilities import _
 
 cata_msg = {
 
-    1 : _("""
- contraintes planes en grandes déformations non implantées
-"""),
-
     2 : _("""
  caractéristique fluage incomplet
 """),

@@ -49,4 +49,12 @@ Post-traitement des déformations des assemblages combustibles
 Il faut renseigner au moins un des mots-clés MAILLAGE_N ou RESU_INIT.
 """),
 
+    8 : _("""
+Récupération des efforts de contact entre les assemblages
+"""),
+
+    9 : _("""
+Récupération des efforts de contact entre les assemblages de bord et le cloisonnement
+"""),
+
 }
