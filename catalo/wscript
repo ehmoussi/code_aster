@@ -27,7 +27,7 @@ from waflib import TaskGen, Logs, Utils, Errors, Task, Context
 
 
 def build(self):
-    env = self.all_envs[self.variant].derive()
+    env = self.all_envs[self.variant] #.derive()
     if self.variant == "debug":
         env.OPTDEBUG = '-g'
     if self.cmd.startswith('uninstall'):
@@ -38,13 +38,14 @@ def build(self):
             pass
         return
 
+    elem1 = self.path.find_or_declare('elem.1')
     self(
         features = 'catalo',
             name = 'cataelem',
-          target = 'elem.1',
+          target = elem1,
              env = env,
             vars = ['CATALO_CMD'],
-             use = 'code_aster_py',
+             use = 'asterlib',
     install_path = env.ASTERLIBDIR
     )
 
@@ -89,44 +90,45 @@ def buildcata(self, node):
     if not getattr(self.bld, 'is_install', None) \
         or not getattr(self, 'install_path', None):
         return
-    install_path = osp.join(self.install_path, self.target)
-    post = partial(build_cata_ele, ojb=node, install_path=install_path)
+    # install_path = osp.join(self.install_path, self.target
+    post = partial(build_cata_ele, ojb=node,
+                   elem1=self.target, install_path=self.install_path)
     self.bld.add_post_fun(post)
 
-def build_cata_ele(self, ojb, install_path):
+def build_cata_ele(self, ojb, elem1, install_path):
     """Build the catalog of elements"""
-    bldnode = self.path.get_bld()
-    Logs.info('+ build the elements catalog %s using installed aster (from %s)'
-              % ('elem.1', ojb))
+    builddir = elem1.parent.get_bld().abspath()
+    # I added this test on timestamps because I don't understand why it is rerun
+    # if 'asterlib' and *.py did not change
+    stime = os.stat(ojb.abspath()).st_mtime_ns
+    elem1path = elem1.abspath()
+    skipped = osp.isfile(elem1path) and os.stat(elem1path).st_mtime_ns > stime
+    if not skipped:
+        Logs.info(f"+ build the elements catalog {elem1.name} using installed "
+                  f"aster (from {ojb.name})")
+        # generate the command file
+        comm = osp.join(builddir, "fort.1")
+        with open(comm, "w") as fcomm:
+            content = os.linesep.join([
+                "from code_aster.Commands import DEBUT, MAJ_CATA, FIN",
+                "DEBUT(CATALOGUE=_F(FICHIER='CATAELEM', UNITE=4), ",
+                "      ERREUR=_F(ERREUR_F='ABORT'), PAR_LOT='NON')",
+                "MAJ_CATA(ELEMENT=_F())",
+                "FIN()", ""
+            ])
+            fcomm.write(content)
 
-    # generate the command file
-    comm = bldnode.make_node('fort.1')
-    content = os.linesep.join([
-        "from code_aster.Commands import DEBUT, MAJ_CATA, FIN",
-        "DEBUT(CATALOGUE=_F(FICHIER='CATAELEM', UNITE=4), ",
-        "      ERREUR=_F(ERREUR_F='ABORT'), PAR_LOT='NON')",
-        "MAJ_CATA(ELEMENT=_F())",
-        "FIN()", ""
-    ])
-    comm.write(content, 'w')
+        # .ojb -> fort.4
+        shutil.copy(ojb.abspath(), osp.join(builddir, "fort.4"))
 
-    # .ojb -> fort.4
-    before = ojb.abspath()
-    after= bldnode.make_node('fort.4').abspath()
-    os.rename(before, after)
-
-    # memory value
-    memlim = 2047 if "32" in platform.architecture()[0] else 4096
-    try:
-        #  generate the command line
-        exec_pyaster(self, comm.abspath(), cwd=bldnode.abspath(),
+        # memory value
+        memlim = 2047 if "32" in platform.architecture()[0] else 4096
+        exec_pyaster(self, comm, cwd=builddir,
                      args=['--memory={0}'.format(memlim)])
-    finally: # fort.4 -> .ojb
-        os.rename(after, before)
 
-    elem = bldnode.find_node('elem.1')
-    shutil.copy(elem.abspath(), install_path)
-    os.chmod(install_path, Utils.O644)
+    dest = osp.join(install_path, osp.basename(elem1.name))
+    shutil.copy(elem1path, dest)
+    os.chmod(dest, Utils.O644)
 
 def exec_pyaster(self, pyfile, args, **kwargs):
     """Execute aster depending on the configuration"""
