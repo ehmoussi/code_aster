@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -177,7 +177,7 @@ RESU = STAT_NON_LINE (MODELE       = MODE,
                     RESI_GLOB_MAXI=1.E-3,
                     ),
                       NEWTON       = _F(MATRICE='TANGENTE',REAC_ITER=1),
-                      SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=20, MATR_DISTRIBUEE='OUI',),
+                      SOLVEUR      = _F(METHODE='MUMPS', PCENT_PIVOT=40, MATR_DISTRIBUEE='OUI',),
                       ARCHIVAGE    = _F(LIST_INST=REEL_ARC),
               ) 
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 subroutine huresi(mod, nmat, mater, indi, deps,&
                   nr, yd, yf, nvi, vind,&
                   r, iret)
-! person_in_charge: alexandre.foucault at edf.fr
+
 ! aslint: disable=W1306
     implicit none
 !     ----------------------------------------------------------------
@@ -39,6 +39,7 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
 !          IRET   :  CODE RETOUR (>0 -> PB)
 !     ----------------------------------------------------------------
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/hujddd.h"
 #include "asterfort/hujksi.h"
 #include "asterfort/hujpic.h"
@@ -80,19 +81,19 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
     call lceqvn(nr, yd, ydt)
     call lceqvn(nr, yf, yft)
 !
-    do 5 i = 1, 22
+    do i = 1, 22
         matert(i,1) = mater(i,1)
         matert(i,2) = mater(i,2)
-  5 end do
+    end do
 !
-    do 10 i = 1, 6
+    do i = 1, 6
         ydt(i) = yd(i)*mater(1,1)
         yft(i) = yf(i)*mater(1,1)
- 10 end do
+    end do
 !
     nbmeca = 0
     nbmect = 0
-    do 20 k = 1, 7
+    do k = 1, 7
         if (indi(k) .gt. 0) then
             nbmect = nbmect + 1
             if (indi(k) .le. 8) nbmeca = nbmeca + 1
@@ -102,12 +103,12 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
         ksi(k) = zero
         q(k) = zero
         p(k) = zero
- 20 end do
+    end do
 !
-    do 30 i = 1, nbmeca
+    do i = 1, nbmeca
         ydt(ndt+1+i) = yd(ndt+1+i)*mater(1,1)/abs(mater(8,2))
         yft(ndt+1+i) = yf(ndt+1+i)*mater(1,1)/abs(mater(8,2))
- 30 end do
+    end do
 ! ====================================================================
 ! --- PROPRIETES HUJEUX MATERIAU -------------------------------------
 ! ====================================================================
@@ -144,14 +145,15 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
             demu = e /(un+nu)
             la = e*nu/(un+nu)/(un-deux*nu)
 !
-            do 40 i = 1, ndi
-                do 40 j = 1, ndi
+            do i = 1, ndi
+                do j = 1, ndi
                     if (i .eq. j) hook(i,j) = al
                     if (i .ne. j) hook(i,j) = la
- 40             continue
-            do 50 i = ndi+1, ndt
+                end do
+            end do
+            do i = ndi+1, ndt
                 hook(i,i) = demu
- 50         continue
+            end do
 !
         else if (mater(17,1).eq.deux) then
 !
@@ -183,7 +185,7 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
             hook(6,6) = g3
 !
         else
-            call utmess('F', 'COMPOR1_38')
+            ASSERT(ASTER_FALSE)
         endif
     else if (mod(1:6) .eq. 'C_PLAN' .or. mod(1:2) .eq. '1D') then
         call utmess('F', 'COMPOR1_4')
@@ -195,19 +197,20 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
     if ((i1f/pref) .lt. tole1) i1f = tole1*pref
 !
     coef0 = (i1f/pref) ** n
-    do 60 i = 1, ndt
-        do 60 j = 1, ndt
+    do i = 1, ndt
+        do j = 1, ndt
             hooknl(i,j) = coef0*hook(i,j)
- 60     continue
+        end do
+    end do
 ! ====================================================================
 ! --- AUTRES GRANDEURS UTILES ----------------------------------------
 ! ====================================================================
-    do 70 i = 1, 4
+    do i = 1, 4
         prox(i) = .false.
         proxc(i) = .false.
- 70 end do
+    end do
 !
-    do 80 i = 1, ndt
+    do i = 1, ndt
         sigf(i) = yft(i)
         psi(i) = zero
         psi(ndt+i) = zero
@@ -216,13 +219,13 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
         psi(4*ndt+i) = zero
         psi(5*ndt+i) = zero
         psi(6*ndt+i) = zero
- 80 end do
+    end do
 !
-    do 90 i = 1, 9
+    do i = 1, 9
         sigdc(i)=zero
- 90 end do
+    end do
 !
-    do 100 k = 1, nbmect
+    do k = 1, nbmect
         kk = indi(k)
 !
 !        IF(YFT(NDT+1+NBMECA+K).GT.ZERO)THEN
@@ -276,13 +279,13 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
                         yft, p(k))
 !
         else if ((indi(k).gt.8).and.(indi(k).lt.12)) then
-            goto 100
+            cycle
 !
         else
             call utmess('F', 'COMPOR1_8')
         endif
 !
-100 end do
+    end do
 !
     epsvp = yft(ndt+1)
     pc = pco*exp(-beta*epsvp)
@@ -294,28 +297,28 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
 ! ====================================================================
 ! ---- CALCUL DE CDE = C*DEPSE ---------------------------------------
 ! ====================================================================
-    do 110 i = 1, ndt
+    do i = 1, ndt
         depsp(i) = zero
-110 end do
+    end do
 !
-    do 120 k = 1, nbmect
+    do k = 1, nbmect
         kk = (k-1)*ndt
-        do 130 i = 1, ndt
+        do i = 1, ndt
             depsp(i) = depsp(i) + dlambd(k)*psi(kk+i)
-130     continue
-120 continue
+        end do
+    end do
 !
-    do 140 i = 1, ndt
+    do i = 1, ndt
         depse(i) = deps(i) - depsp(i)
-140 end do
+    end do
 !
     call lcprmv(hooknl, depse, cde)
 ! ====================================================================
 ! --- CALCUL DE LE (6) -----------------------------------------------
 ! ====================================================================
-    do 150 i = 1, ndt
+    do i = 1, ndt
         le(i) = yft(i) - ydt(i) - cde(i)
-150 continue
+    end do
 !
 !
 ! ====================================================================
@@ -325,7 +328,7 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
 !
     if (nbmeca .eq. 0) goto 190
 !
-    do 160 k = 1, nbmect
+    do k = 1, nbmect
 !
         kk = indi(k)
         pk =p(k) -ptrac
@@ -373,18 +376,17 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
             endif
 !
         endif
-!
-160 continue
+    end do
 !
 ! ====================================================================
 ! --- CALCUL DE LR (NBMECX1) -----------------------------------------
 ! ====================================================================
-    do 170 k = 1, 4
+    do k = 1, 4
         lr(k) = zero
-170 continue
+    end do
 !
     if (nbmeca .eq. 0) goto 190
-    do 180 k = 1, nbmeca
+    do k = 1, nbmeca
         kk = indi(k)
         if (kk .lt. 4) then
             lr(k) = yft(ndt+1+k) - ydt(ndt+1+k) - dlambd(k)/ad(k)*(un- rc(k))**deux
@@ -406,18 +408,18 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
             lr(k) = yft(ndt+1+k) - ydt(ndt+1+k) - dlambd(k)/ccyc*(un- rc(k))**deux
 !
         endif
-180 continue
+    end do
 !
 190 continue
 !
 ! ====================================================================
 ! --- CALCUL DE LF (NBMECX1) -----------------------------------------
 ! ====================================================================
-    do 200 k = 1, 7
+    do k = 1, 7
         lf(k) = zero
-200 continue
+    end do
 !
-    do 210 k = 1, nbmect
+    do k = 1, nbmect
         kk = indi(k)
         pk =p(k) -ptrac
         if (kk .lt. 4) then
@@ -432,37 +434,37 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
             call hujprj(kk-8, yft, sigd, pk, ps)
             lf(k) = pk + deux*rtrac - ptrac
         endif
-210 continue
+    end do
 !
 ! ====================================================================
 ! --- ASSEMBLAGE DE R ------------------------------------------------
 ! ====================================================================
-    do 220 i = 1, ndt
+    do i = 1, ndt
         r(i) = -le(i) /ccond
-220 continue
+    end do
 !
     r(ndt+1) = -levp
 !
     if (nbmeca .eq. 0) goto 240
 !
-    do 230 k = 1, nbmeca
+    do k = 1, nbmeca
         r(ndt+1+k) = -lr(k) /ccond*abs(pref)
         r(ndt+1+nbmeca+k) = -lf(k) /ccond
-230 end do
+    end do
 !
 240 continue
 !
     if (nbmeca .lt. nbmect) then
-        do 250 k = 1, nbmect
+        do k = 1, nbmect
             if (indi(k) .gt. 8) then
                 r(ndt+1+nbmeca+k) = -lf(k)/ccond
             endif
-250     continue
+        end do
     endif
 !
-    do 260 i = ndt+nbmeca+nbmect+2, 18
+    do i = ndt+nbmeca+nbmect+2, 18
         r(i) = zero
-260 end do
+    end do
 !
     goto 999
 ! ====================================================================
@@ -473,7 +475,7 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
 !
 998 continue
 !
-    do 270 i = 1, 3
+    do i = 1, 3
         if (prox(i)) then
             vind(i+4) = mater(18,2)
             vind(23+i) = un
@@ -492,7 +494,7 @@ subroutine huresi(mod, nmat, mater, indi, deps,&
             vind(27+i) = zero
             iret = 2
         endif
-270 end do
+    end do
 !
 999 continue
 !

@@ -35,7 +35,7 @@ loi = LoiComportement(
     nom_vari       = ('SEUILDEP','INDIDISS','INDIENDO','PCENERDI','DISSIP',
         'ENEL_RES','SAUT_N','SAUT_T1','SAUT_T2',),
     mc_mater       = ('RUPT_FRAG',),
-    modelisation   = ('3D','PLAN','AXIS','ELEMJOINT','PLAN_JHMS',
+    modelisation   = ('3D','PLAN','AXIS','ELEMJOINT','JHMS',
         'AXIS_JHMS',),
     deformation    = ('PETIT',),
     algo_inte      = ('ANALYTIQUE',),

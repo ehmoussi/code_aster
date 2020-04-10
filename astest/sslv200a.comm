@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -404,8 +404,8 @@ CHMEC=AFFE_CHAR_MECA(           MODELE=MO,
                                            COEF_MULT_1 = 1.8,
                                            DDL_2 = 'DY',
                                            COEF_MULT_2 = 0.7,
-                                           COEF_IMPO = -5.22,
-                                           SOMMET = 'OUI'),LIAISON_UNIF=(
+                                           COEF_IMPO = -5.22,),
+                          LIAISON_UNIF=(
                            _F(  GROUP_MA = 'GMA14',
                                           DDL = ('DX', 'DY',)),
                            _F(  NOEUD = ('N34', 'N128',),

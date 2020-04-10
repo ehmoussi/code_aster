@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,12 +23,19 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/alchml.h"
+#include "asterfort/chpver.h"
+#include "asterfort/chpchd.h"
 #include "asterfort/gcchar.h"
 #include "asterfort/gcfonc.h"
 #include "asterfort/gcsele.h"
 #include "asterfort/isdeco.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/jenuno.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/lisccc.h"
 #include "asterfort/lisdef.h"
@@ -76,10 +83,10 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
     integer :: tabaut(znbenc)
 !
     character(len=24) :: k24bid
-    character(len=24) :: oldfon
+    character(len=24) :: oldfon, cepsi, epselno, ligrmo
     integer :: jfonci
-    integer :: ichar, nbchar
-    character(len=8) :: charge, typech, nomfct, newfct
+    integer :: ichar, nbchar, ig, iret, inga, occur
+    character(len=8) :: charge, typech, nomfct, newfct, ng
     character(len=6) :: nomobj
     character(len=16) :: typfct, motcle, nomcmd, phenom
     character(len=13) :: prefob
@@ -92,6 +99,8 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
     aster_logical :: lepsi, lpesa, lrota
     aster_logical :: lfvolu, lf1d2d, lf2d3d, lfpres
     aster_logical :: lfepsi, lfpesa, lfrota
+    integer, pointer :: desc(:) => null()
+    character(len=8), pointer :: p_vale_epsi(:) => null()
 !
 ! ----------------------------------------------------------------------
 !
@@ -99,9 +108,12 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 !
 ! - INITIALISATIONS
 !
+    occur = 0
     lfonc = .false.
     nomcmd = 'CALC_G'
     phenom = 'MECANIQUE'
+    cepsi =  '&&GCHARG.CEPSI'
+    epselno= '&&GCHARG.EPSELNO'
     lvolu = .false.
     l1d2d = .false.
     l2d3d = .false.
@@ -120,6 +132,8 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
     lpchar = .false.
     lccomb = .false.
     call lisnnb(lischa, nbchar)
+!   Recuperation du LIGREL
+    ligrmo = modele//'.MODELE'
 !
 ! - STOCKAGE DES TYPES DE CHARGE (FONCTION OU PAS)
 !
@@ -188,6 +202,33 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
                     call lisdef('CART', motcle, ibid, nomobj, itypob)
                     ASSERT(itypob(1).eq.1)
                     cartei = prefob(1:13)//nomobj(1:6)
+!
+! ----------------- Si le champ PRE_EPSI est de type CHAM_NO ou CARTE, il faut récupérer
+!                   le vrai nom du champ correspondant (voir load_neum_spec)
+!
+                    if (nomobj.eq.'.EPSIN')then
+                        call jeveuo(prefob(1:13)//'.EPSIN.DESC', 'L', vi=desc)
+                        ig = desc(1)
+                        call jenuno(jexnum('&CATA.GD.NOMGD', ig), ng)
+! ----------------- recuperation du nom du champ stocké dans la carte "bidon"
+                        if (ng.eq.'NEUT_K8')then
+                            call jeveuo(prefob(1:13)//'.EPSIN.VALE', 'L', vk8=p_vale_epsi)
+                            cartei = p_vale_epsi(1)
+                        endif
+! ----------------- transformation si champ ELGA -> ELNO
+                        call chpver('C', cartei(1:19), 'ELGA', 'EPSI_R', inga)
+!
+                        if (inga == 0) then
+                            occur = occur + 1
+                            ASSERT(occur <= 1)
+!               traitement du champ pour les elements finis classiques
+                            call detrsd('CHAMP', cepsi)
+                            call alchml(ligrmo, 'CALC_G', 'PEPSINR', 'V', cepsi, iret, ' ')
+                            call chpchd(cartei(1:19), 'ELNO', cepsi, 'OUI', 'V', epselno)
+                            call chpver('F', epselno(1:19), 'ELNO', 'EPSI_R', iret)
+                            cartei(1:19) = epselno(1:19)
+                        end if
+                    endif
 !
 ! ----------------- SELECTION SUIVANT TYPE
 !

@@ -54,6 +54,19 @@ POST_MAC3COEUR = MACRO(nom="POST_MAC3COEUR",
 
            ),
 
+           FORCE_CONTACT    = FACT(statut='f',max='**',
+                          fr=tr("Post-traitement des efforts de contact, par grille"),
+
+                 FORMAT       = SIMP(statut='o',typ='TXM',into=("TABLE",)),
+                 UNITE        = SIMP(statut='o',typ=UnitType(), inout='out',
+                                     fr=tr("Numéro de l'unité logique pour le post-traitement")),
+
+                 b_effort_table  = BLOC(condition = """equal_to("FORMAT", 'TABLE') """,fr=tr("Paramètres pour le format TABLE"),
+                                   ),
+
+
+           ),
+
            DEFORMATION = FACT(statut='f',max='**',
                               fr=tr("Post-traitement des deformations, par grille ou valeurs min/max"),
 

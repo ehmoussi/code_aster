@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
 ! OUT  DSDE    :  MATRICE TANGENTE
 ! ======================================================================
 #include "asterfort/hujddd.h"
+#include "asterfort/assert.h"
 #include "asterfort/hujksi.h"
 #include "asterfort/hujmat.h"
 #include "asterfort/hujpic.h"
@@ -260,7 +261,7 @@ subroutine hujtid(fami, kpg, ksp, mod, imat,&
             hook(6,6) = g3
 !
         else
-            call utmess('F', 'COMPOR1_34')
+            ASSERT(ASTER_FALSE)
         endif
 !
     else if (mod(1:6) .eq. 'C_PLAN' .or. mod(1:2) .eq. '1D') then
