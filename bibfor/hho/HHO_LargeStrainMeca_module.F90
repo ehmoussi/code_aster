@@ -192,7 +192,7 @@ contains
         end if
 !
         if (cplan .and. (l_simo_miehe .or. l_grotgdepl)) then
-            call utmess('F', 'ALGORITH8_1')
+            ASSERT(ASTER_FALSE)
         endif
 !
 ! ----- init basis

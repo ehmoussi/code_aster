@@ -34,12 +34,13 @@ MA=DEFI_GROUP(reuse =MA,
                                 NOM='SYY1',),),);
 
 MODE=AFFE_MODELE(MAILLAGE=MA,
-                 AFFE=(_F(TOUT='OUI',
-                          PHENOMENE='MECANIQUE',
-                          MODELISATION=('3D_SI',),),
+                 AFFE=(
                        _F(TOUT='OUI',
                           PHENOMENE='MECANIQUE',
                           MODELISATION=('3D',),),
+                       _F(TOUT='OUI',
+                          PHENOMENE='MECANIQUE',
+                          MODELISATION=('3D_SI',),),
                       ),
 );
 

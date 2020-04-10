@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -72,6 +72,13 @@ TABP2 = POST_MAC3COEUR(RESULTAT    =  RES_LM,
                               _F( FORMAT = 'TABLE', UNITE = 46, NOM_SITE='BIDON'), 
                               _F( FORMAT = 'TABLE', UNITE = 47, NOM_SITE='BIDON', FORMAT_R='STANDARD'), 
                ))
+
+TABP3 = POST_MAC3COEUR(RESULTAT    =  RESU,
+               TYPE_COEUR  = 'TEST',
+               INST        =  post_i,
+               TABLE       = tabn,
+               FORCE_CONTACT  = ( _F( FORMAT = 'TABLE', UNITE = 48,),),
+               );
 
 # tests de la sortie de CALC_MAC3COEUR / LAME
 TAB1 = CREA_TABLE(RESU=_F(RESULTAT=RESU,NOM_CHAM='VARI_ELGA',
@@ -419,5 +426,21 @@ TEST_TABLE(VALE_CALC_K='B02',      TABLE=TABP2,NOM_PARA='locMaxDeplG2',)
 TEST_TABLE(VALE_CALC_K='B02',      TABLE=TABP2,NOM_PARA='locMaxDeplG5',)
 TEST_TABLE(VALE_CALC_K='B02',      TABLE=TABP2,NOM_PARA='locMaxDeplG9',)
 
+
+TAB48 = LIRE_TABLE(UNITE=48)
+
+TEST_TABLE(VALE_CALC=5.396640E+01,
+           NOM_PARA ='CU_BA_W',
+           TABLE=TAB48,
+           FILTRE=_F(NOM_PARA='COOR_X',
+                     VALE=2.18074),
+           )
+
+TEST_TABLE(VALE_CALC=1.248057E+02,
+           NOM_PARA ='RES_BCBB',
+           TABLE=TAB48,
+           FILTRE=_F(NOM_PARA='COOR_X',
+                     VALE=1.675500),
+           )
 
 FIN()

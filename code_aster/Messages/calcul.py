@@ -43,7 +43,7 @@ cata_msg = {
 
     5: _("""
  la grandeur associée au champ  %(k1)s : %(k2)s
- n'est pas celle associée au paramètre  %(k3)s : %(k4)s  (option: %(k5)s
+ n'est pas celle associée au paramètre  %(k3)s : %(k4)s  (option: %(k5)s)
 """),
 
     6: _("""

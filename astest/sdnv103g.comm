@@ -36,10 +36,10 @@ MA=DEFI_GROUP(reuse =MA,
 MODE=AFFE_MODELE(MAILLAGE=MA,
                  AFFE=(_F(TOUT='OUI',
                           PHENOMENE='MECANIQUE',
-                          MODELISATION=('3D_SI',),),
+                          MODELISATION=('3D',),),
                        _F(TOUT='OUI',
                           PHENOMENE='MECANIQUE',
-                          MODELISATION=('3D',),),
+                          MODELISATION=('3D_SI',),),
                       ),
 );
 

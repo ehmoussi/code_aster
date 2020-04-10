@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,16 +18,14 @@
 
 subroutine ef0154(nomte)
 !
-!
-    implicit none
-    character(len=16) :: nomte
-!
 ! --------------------------------------------------------------------------------------------------
 !
 !     Calcul  EFGE_ELNO pour MECA_BARRE MECA_2D_BARRE
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    implicit none
+    character(len=16) :: nomte
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -37,21 +35,30 @@ subroutine ef0154(nomte)
 #include "asterfort/matrot.h"
 #include "asterfort/pmavec.h"
 #include "asterfort/rcvalb.h"
+#include "asterfort/get_value_mode_local.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utpvgl.h"
 #include "asterfort/verift.h"
 !
+! --------------------------------------------------------------------------------------------------
 !
+    integer :: codres(1)
+    integer :: i, jdepl, jeffo
+    integer :: lmater, lorien, iret, nc, nno
+
     real(kind=8) :: pgl(3, 3), klc(6, 6)
     real(kind=8) :: ugr(6), ulr(6), flr(6)
-    integer :: codres(1)
-    character(len=4) :: fami
-    character(len=16) :: ch16
-    aster_logical :: lteimp
     real(kind=8) :: a, epsth, e, r8bid, xfl1, xfl4, xl, xrig, val(1)
-    integer :: i, jdepl, jeffo
-    integer :: lmater, lorien, lsect, nc, nno
-!     ------------------------------------------------------------------
+
+    character(len=4)    :: fami
+    character(len=16)   :: ch16
+!
+    aster_logical   :: lteimp
+!
+    real(kind=8)        :: valr(2)
+    character(len=8)    :: valp(2)
+!
+! --------------------------------------------------------------------------------------------------
 !
     lteimp= ASTER_FALSE
     nno=2
@@ -80,18 +87,21 @@ subroutine ef0154(nomte)
 !   Caracteristiques de la section
     if      (nomte.eq.'MECA_BARRE') then
         xl = lonele()
-        call jevech('PCAGNBA', 'L', lsect)
+        valp(1) = 'A1'
+        call get_value_mode_local('PCAGNBA', valp, valr, iret, nbpara_=1)
     else if (nomte.eq.'MECA_2D_BARRE') then
         xl = lonele(dime=2)
-        call jevech('PCAGNBA', 'L', lsect)
+        valp(1) = 'A1'
+        call get_value_mode_local('PCAGNBA', valp, valr, iret, nbpara_=1)
     else if (nomte.eq.'MECABL2') then
         xl = lonele()
-        call jevech('PCACABL', 'L', lsect)
+        valp(1) = 'A1'
+        call get_value_mode_local('PCACABL', valp, valr, iret, nbpara_=1)
     else
         xl = 0.0d0
         ASSERT( ASTER_FALSE )
     endif
-    a=zr(lsect)
+    a = valr(1)
 !
 !   RECUPERATION DES ORIENTATIONS ALPHA,BETA,GAMMA ---
     call jevech('PCAORIE', 'L', lorien)

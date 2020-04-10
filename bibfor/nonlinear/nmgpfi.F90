@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,11 +58,15 @@ real(kind=8) :: deplm(*), depld(*), sigm(2*ndim, npg)
 real(kind=8) :: vim(lgpg, npg), sigp(2*ndim, npg), vip(lgpg, npg)
 real(kind=8) :: matr(*), fint(*)
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-!     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
-!           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D
-! ----------------------------------------------------------------------
+! Elementary computation
+!
+! Elements: 3D, C_PLAN, D_PLAN, AXIS
+! Options: RIGI_MECA_TANG, RAPH_MECA and FULL_MECA - SIMO_MIEHE
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  OPTION  : OPTION DE CALCUL
 ! IN  TYPMOD  : TYPE DE MODELISATION
 ! IN  NDIM    : DIMENSION DE L'ESPACE
@@ -91,27 +95,27 @@ real(kind=8) :: matr(*), fint(*)
 ! OUT MATR    : MATR. DE RIGIDITE NON SYM. (RIGI_MECA_* ET FULL_MECA_*)
 ! OUT IRET    : CODE RETOUR DE L'INTEGRATION DE LA LDC
 !
+! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: grand, axi, resi, rigi
-    integer :: lij(3, 3), vij(3, 3), ia, ja, na, ib, jb, nb, g, kk, os, ija
+    integer :: lij(3, 3), ia, ja, na, ib, jb, nb, g, kk, os, ija
     integer :: nddl, ndu, vu(3, 27)
     integer :: cod(27)
     real(kind=8) :: geomm(3*27), geomp(3*27), r, w
     real(kind=8) :: jm, jd, jp, fm(3, 3), fd(3, 3), coef
     real(kind=8) :: sigmam(6), taup(6), dsidep(6, 3, 3)
-    real(kind=8) :: rac2, rbid, tbid(6), t1, t2
+    real(kind=8) :: rbid, tbid(6), t1, t2
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
     type(Behaviour_Integ) :: BEHinteg
+    integer, parameter :: vij(3,3) = reshape((/1, 4, 5, 4, 2, 6, 5, 6, 3 /),(/3,3/))
 !
-    parameter (grand = .true._1)
-    data    vij  / 1, 4, 5,&
-     &               4, 2, 6,&
-     &               5, 6, 3 /
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! - INITIALISATION ET VERIFICATIONS
-!
+    grand = ASTER_TRUE
+    axi  = typmod(1).eq.'AXIS'
+    resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
+    rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
     rbid = r8vide()
-    rac2 = sqrt(2.d0)
     call r8inir(6, rbid, tbid, 1)
 !
 ! - Initialisation of behaviour datastructure
@@ -119,13 +123,7 @@ real(kind=8) :: matr(*), fint(*)
     call behaviourInit(BEHinteg)
 !
     ASSERT(nno.le.27)
-    if (typmod(1) .eq. 'C_PLAN') then
-        call utmess('F', 'ALGORITH8_1')
-    endif
-!
-    axi = typmod(1).eq.'AXIS'
-    resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+    ASSERT(typmod(1) .ne. 'C_PLAN')
 !
     nddl = ndim*nno
     ndu = ndim

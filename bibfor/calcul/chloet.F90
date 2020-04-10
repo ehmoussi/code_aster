@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine chloet(iparg, etendu, jceld)
 use calcul_module, only : ca_iachii_, ca_iachik_, ca_iachoi_, ca_iachok_, &
-    ca_iawloc_, ca_nparin_
+    ca_iawloc_, ca_nparin_, ca_iachid_
 implicit none
 ! person_in_charge: jacques.pellet at edf.fr
 !------------------------------------------------------------------
@@ -57,7 +57,7 @@ implicit none
     if (iparg .le. ca_nparin_) then
         tych = zk8(ca_iachik_-1+2* (ich-1)+1)
         if (tych .ne. 'CHML') goto 20
-        jceld = zi(ca_iachii_-1+11* (ich-1)+4)
+        jceld = zi(ca_iachii_-1+ca_iachid_*(ich-1)+4)
     else
         tych = zk8(ca_iachok_-1+2* (ich-1)+1)
         if (tych .ne. 'CHML') goto 20
