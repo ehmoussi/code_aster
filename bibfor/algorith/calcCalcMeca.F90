@@ -33,19 +33,20 @@ use HHO_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/exixfe.h"
 #include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/knindi.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/merimo.h"
-#include "asterfort/medime.h"
-#include "asterfort/vebtla.h"
 #include "asterfort/copisd.h"
-#include "asterfort/vefnme.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/exixfe.h"
+#include "asterfort/knindi.h"
+#include "asterfort/medime.h"
+#include "asterfort/merimo.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmvcd2.h"
 #include "asterfort/nmvcpr_elem.h"
 #include "asterfort/utmess.h"
-#include "asterfort/nmvcd2.h"
+#include "asterfort/vebtla.h"
+#include "asterfort/vefnme.h"
 !
 integer, intent(in) :: nb_option
 character(len=16), intent(in) :: list_option(:)
@@ -104,7 +105,7 @@ integer, intent(out) ::  nb_obje
     aster_logical :: l_meta_zirc, l_meta_acier, l_xfem, l_macr_elem
     integer :: ldccvg
     real(kind=8) :: partps(3)
-    character(len=19) :: ligrmo
+    character(len=19) :: ligrmo, caco3d
     character(len=32) :: answer
     type(NL_DS_System) :: ds_system
     type(HHO_Field) :: hhoField
@@ -115,6 +116,7 @@ integer, intent(out) ::  nb_obje
     partps(:) = 0.d0
     nb_obje   = 0
     base      = 'G'
+    caco3d    = '&&MERIMO.CARA_ROTAF'
 !
 ! - Get LIGREL
 !
@@ -203,6 +205,7 @@ integer, intent(out) ::  nb_obje
                     hval_incr      , hval_algo  , hhoField ,&
                     option         , merigi     , vefint   ,&
                     ldccvg)
+        call detrsd('CHAMP', caco3d)
     endif
 !
 ! - Lagrange dof computation

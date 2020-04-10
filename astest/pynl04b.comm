@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,23 +17,23 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 #-----------------------------------------------------------------------
 # UNE SEULE MAILLE : ABCD
-#         
-# CE CAS TEST COMPARE CALCUL ET STAT_NON_LINE AVEC ELEMENTS COQUE_3D  
+#
+# CE CAS TEST COMPARE CALCUL ET STAT_NON_LINE AVEC ELEMENTS COQUE_3D
 #
 # ELASTIQUE EN PETITE DEFORMATION / GROT_GDEP
 #-----------------------------------------------------------------------
-T=0.05 
+T=0.05
 
-P=5000 
+P=5000
 
 MATER=DEFI_MATERIAU(  ELAS=_F( E=2.E11 ,
                               NU=0.2,
                               RHO=7800.) )
-                              
+
 MAILL=LIRE_MAILLAGE(FORMAT='MED'  )
 
 DEFI_GROUP( reuse=MAILL,   MAILLAGE=MAILL,
@@ -42,7 +42,7 @@ DEFI_GROUP( reuse=MAILL,   MAILLAGE=MAILL,
 CHMAT=AFFE_MATERIAU(  MAILLAGE=MAILL,
                       AFFE=_F(  TOUT = 'OUI',   MATER = MATER) )
 
-MODEL=AFFE_MODELE(  MAILLAGE=MAILL,    
+MODEL=AFFE_MODELE(  MAILLAGE=MAILL,
                     AFFE=_F(  TOUT = 'OUI',   MODELISATION = 'COQUE_3D',
                               PHENOMENE = 'MECANIQUE') )
 
@@ -51,12 +51,12 @@ CH_MODE = AFFE_CHAR_MECA(DDL_IMPO=_F(DX=0.0,
                                     DZ=0.0,
                                     GROUP_MA=('AB', 'BC', 'CD', 'AD')),
                         MODELE=MODEL)
-                        
+
 CHARGE=AFFE_CHAR_MECA(  MODELE=MODEL,
                         DDL_IMPO=(_F( GROUP_MA = ('AB',), DX = 0.,  DRY = 0., DZ = 0., ),
                                   _F(  GROUP_NO='A', DY = 0.,),),
-                        FORCE_NODALE=(_F(GROUP_NO=('C','D'), FZ= P), ),         
-                        )                            
+                        FORCE_NODALE=(_F(GROUP_NO=('C','D'), FZ= P), ),
+                        )
 
 CARELEM=AFFE_CARA_ELEM(  MODELE=MODEL,
                          COQUE=_F(  GROUP_MA = 'TOUT', COQUE_NCOU=3,
@@ -109,7 +109,7 @@ FOR_REF=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
                    NOM_CHAM='FORC_NODA', RESULTAT=UREF,
                    NUME_ORDRE=1,
                     )
-                    
+
 #
 #======================================================================
 #               CALCUL EN ELASTICITE
@@ -117,7 +117,7 @@ FOR_REF=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
 #
 
 # definir les champs initiaux : attention pour les sous-points
-  
+
 UP = CREA_CHAMP(AFFE=_F(NOM_CMP=('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ', ),
                        TOUT='OUI',
                        VALE=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
@@ -125,7 +125,7 @@ UP = CREA_CHAMP(AFFE=_F(NOM_CMP=('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ', ),
                MAILLAGE=MAILL,
                OPERATION='AFFE',
                TYPE_CHAM='NOEU_DEPL_R')
-               
+
 SIGP = CREA_CHAMP(AFFE=_F(NOM_CMP=('SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIYZ', 'SIXZ'),
                           TOUT='OUI',
                           VALE=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
@@ -141,7 +141,7 @@ VARIP = CREA_CHAMP(AFFE=_F(NOM_CMP=('V1',),
                    PROL_ZERO='OUI',
                    MODELE=MODEL,
                    OPERATION='AFFE',
-                   TYPE_CHAM='ELGA_VARI_R') 
+                   TYPE_CHAM='ELGA_VARI_R')
 
 # champ initial de l'incrément de deplacement : utiliser la prédiction élastique
 
@@ -151,14 +151,14 @@ M_EL = CALC_MATR_ELEM(CHAM_MATER=CHMAT,
                       MODELE=MODEL,
                       OPTION='RIGI_MECA')
 
-NU = NUME_DDL(MATR_RIGI=M_EL)   
+NU = NUME_DDL(MATR_RIGI=M_EL)
 
 CHAREL = CALC_VECT_ELEM( CHARGE=(CHARGE,),
                          CARA_ELEM=CARELEM,
-                         OPTION='CHAR_MECA') 
+                         OPTION='CHAR_MECA')
 
 CHAR = ASSE_VECTEUR(NUME_DDL=NU,
-                    VECT_ELEM=CHAREL)             
+                    VECT_ELEM=CHAREL)
 
 MATAS = ASSE_MATRICE(MATR_ELEM=M_EL,
                      NUME_DDL=NU)
@@ -182,7 +182,7 @@ CALC_TT=CALCUL(
                DEPL=UP,
                SIGM=SIGP,
                VARI=VARIP,
-               INCR_DEPL=DU,                     
+               INCR_DEPL=DU,
                EXCIT=_F( CHARGE = CHARGE),
                INCREMENT=_F(NUME_ORDRE=1,LIST_INST=LINST,),
                OPTION=('COMPORTEMENT', 'MATR_TANG_ELEM', 'FORC_INTE_ELEM', 'FORC_NODA_ELEM'),
@@ -194,7 +194,7 @@ FORC=EXTR_TABLE(TYPE_RESU='VECT_ELEM_DEPL_R',
                  NOM_PARA='NOM_SD',
                  FILTRE=_F(NOM_PARA='NOM_OBJET',
                            VALE_K='FORC_NODA_ELEM'),)
- 
+
 FORCAS=ASSE_VECTEUR(VECT_ELEM=FORC,
                     NUME_DDL=NU,);
 
@@ -254,7 +254,7 @@ TEST_RESU(CHAM_NO=(_F(CRITERE='ABSOLU',
                         VALE_REFE=1.E-8,
                         VALE_ABS='OUI',),
                      ),
-          ### --------- erreur pour non regression a l echelle de 1.0e-6           
+          ### --------- erreur pour non regression a l echelle de 1.0e-6
           #CHAM_ELEM=(_F(CRITERE='ABSOLU',
                         #REFERENCE='AUTRE_ASTER',
                         #TYPE_TEST='MIN',
@@ -271,6 +271,6 @@ TEST_RESU(CHAM_NO=(_F(CRITERE='ABSOLU',
                         #VALE_ABS='OUI',),
                      #),
           )
-          
+
 FIN()
 #
