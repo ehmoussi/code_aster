@@ -294,7 +294,7 @@ class GeneratorDSP(Generator):
         """calculate peak factor"""
         spec = calc_dsp_KT(self, self.DSP_args['FREQ_FOND'],
                            self.DSP_args['AMORT'])
-        m0, m1, m2, vop, delta = Rice2(self.sampler.liste_w2, spec)
+        _, _, _, vop, delta = Rice2(self.sampler.liste_w2, spec)
         nup = peak(0.5, self.sampler.DUREE_PHASE_FORTE, vop, delta)
         return nup
 
@@ -320,8 +320,6 @@ class GeneratorDSP(Generator):
 
     def build_result(self):
         """Create the result function"""
-       # Le concept sortant (de type table_fonction) est tab
-        macr = self.macro
         #--- construction des fonctions sortie
         self.build_output()
         #--- Creation du concept (table) en sortie
@@ -422,8 +420,6 @@ class GeneratorSpectrum(Generator):
 
     def build_result(self):
         """Create the result function"""
-       # Le concept sortant (de type table_fonction) est tab
-        macr = self.macro
         #--- construction des fonctions sortie
         self.build_output()
         #--- Creation du concept (table) en sortie
@@ -448,7 +444,7 @@ class Sampler(object):
         self.FREQ_FILTRE = method_params.get('FREQ_FILTRE')
         self.INFO = modul_params['INFO']
         self.DT = method_params.get('PAS_INST')
-        self.NB_POIN = method_params.get('NB_POIN')
+        self.NB_POIN = int(method_params.get('NB_POIN'))
         self.modulation_type = modul_params['TYPE']
         self.DUREE_PHASE_FORTE = modul_params['DUREE_PHASE_FORTE']
         self.INST_INI = 0.0
@@ -465,6 +461,7 @@ class Sampler(object):
         """ compute sampling"""
        # discretisation temps et freq
         OM = pi / self.DT
+
         if self.modulation_type == 'CONSTANT':
             # on simule uniquement la phase forte si CONSTANT
             TTS = self.DUREE_PHASE_FORTE
@@ -588,12 +585,12 @@ class ModulatorGamma(Modulator):
         N1 = NP.searchsorted(liste_t, T1)
         N2 = NP.searchsorted(liste_t, T2)
         fqt_ini = fonctm_gam(liste_t, 1.0, x0[0], x0[1])
-        aria, TSM, t1, t2 = f_ARIAS_TSM(liste_t, fqt_ini, self.norme)
+        _, TSM, _, _ = f_ARIAS_TSM(liste_t, fqt_ini, self.norme)
         x_opt = fmin(f_opta, x0, args=(liste_t, N1, N2))
         a2 = x_opt[0]
         a3 = x_opt[1]
         fqt = fonctm_gam(sample_time, 1.0, a2, a3)
-        aria, TSM, self.T1, self.T2 = f_ARIAS_TSM(sample_time, fqt, self.norme)
+        _, TSM, self.T1, self.T2 = f_ARIAS_TSM(sample_time, fqt, self.norme)
         self.calc_fonc_modul(sample_time, N1, N2, fqt)
         if self.modul_params['INFO'] == 2:
             UTMESS('I', 'SEISME_44', valk=('GAMMA', str(a2) + ' ' + str(a3)),
@@ -619,7 +616,7 @@ class ModulatorJH(Modulator):
         N1 = NP.searchsorted(liste_t, T1)
         N2 = NP.searchsorted(liste_t, T2)
         fqt = fonctm_JetH(sample_time, T1, T2, alpha, beta)
-        aria, TSM, self.T1, self.T2 = f_ARIAS_TSM(sample_time, fqt, self.norme)
+        _, TSM, self.T1, self.T2 = f_ARIAS_TSM(sample_time, fqt, self.norme)
         self.calc_fonc_modul(sample_time, N1, N2, fqt)
         if self.modul_params['INFO'] == 2:
             UTMESS('I', 'SEISME_44',
@@ -726,8 +723,7 @@ class SimulatorDSPScalar(Simulator):
 
     def run(self, generator):
         """Create the result table of functions"""
-        macr = generator.macro
-        for iii in range(self.nbtirage):
+        for _ in range(self.nbtirage):
             Xt = self.build_TimeHistory(generator)
             Xt = self.process_TimeHistory(generator, NP.array(Xt))
             _f_out = DEFI_FONCTION(ABSCISSE=tuple(generator.sampler.liste_temps),
@@ -764,13 +760,12 @@ class SimulatorDSPVector(Simulator):
 
     def run(self, generator):
         """build result for vector DSP class"""
-        macr = generator.macro
         if self.TYPE != 'COEF_CORR':
             liste_nom, l2 = get_group_nom_coord(
                              self.DEFI_COHE['GROUP_NO_INTERF'],
                              self.DEFI_COHE['MAILLAGE'])
             self.DEFI_COHE.update({ 'NOEUDS_INTERF' : l2})
-        for iii in range(self.nbtirage):
+        for _ in range(self.nbtirage):
             Xt = self.build_TimeHistory(generator)
             nba = 1
             for acce in Xt:
@@ -797,7 +792,6 @@ class SimulatorSPECVector(Simulator):
 
     def run(self, generator):
         """build result for vector SPEC class"""
-        macr = generator.macro
         if self.TYPE != 'COEF_CORR':
             self.liste_nom, l2 = get_group_nom_coord(
                            self.DEFI_COHE['GROUP_NO_INTERF'],
@@ -808,7 +802,7 @@ class SimulatorSPECVector(Simulator):
         if self.simu_params['SPEC_METHODE'] == 'SPEC_MEDIANE' and 'NB_ITER' in self.simu_params:
             self.build_TimeHistories(generator)
         else:
-            for iii in range(self.nbtirage):
+            for _ in range(self.nbtirage):
                 Xt = self.build_TimeHistory(generator)
                 nba = 1
                 for acce in Xt:
@@ -921,7 +915,7 @@ class SimulatorSPECVector(Simulator):
             DSP_args.update({'FREQ_FOND': vop, 'AMORT': amo,
                              'para_R0': R0, 'para_R2': R2,
                              'fonc_FIT': f_FIT})
-            for (ntir, rvtir) in enumerate(liste_rv):
+            for rvtir in liste_rv:
                 Xt = gene_traj_gauss_evol_ND(generator, Data_cohe,
                                              rv=rvtir, **DSP_args)
                 nba = 1
@@ -946,7 +940,7 @@ class SimulatorSPECVector(Simulator):
                                      DSP_args['FONC_DSP'], Data_cohe,
                                      self.nbtirage,
                                         **generator.SRO_args)
-            for (ntir, rvtir) in enumerate(liste_rv):
+            for rvtir in liste_rv:
                 Xt = DSP2ACCE_ND(fonc_dsp_opt, Data_cohe, rv=rvtir)
                 nba=1
                 for acce in Xt:
@@ -974,11 +968,10 @@ class SimulatorSPECScalar(Simulator):
 
     def run(self, generator):
         """Create the result table of functions"""
-        macr = generator.macro
         if self.simu_params['SPEC_METHODE'] == 'SPEC_MEDIANE' and 'NB_ITER' in self.simu_params:
             self.build_TimeHistories(generator)
         else:
-            for iii in range(self.nbtirage):
+            for _ in range(self.nbtirage):
                 Xt = self.build_TimeHistory(generator)
                 Xt = self.process_TimeHistory(generator, NP.array(Xt))
                 _f_out = DEFI_FONCTION(
@@ -1050,7 +1043,7 @@ class SimulatorSPECScalar(Simulator):
             DSP_args.update({'FREQ_FOND': vop, 'AMORT': amo,
                              'para_R0': R0, 'para_R2': R2,
                              'fonc_FIT': f_FIT})
-            for (ntir, rvtir) in enumerate(liste_rv):
+            for rvtir in liste_rv:
                 Xt = gene_traj_gauss_evol1D(generator, rv=rvtir, **DSP_args)
                 Xt = self.process_TimeHistory(generator, Xt)
                 _f_out = DEFI_FONCTION(
@@ -1065,7 +1058,7 @@ class SimulatorSPECScalar(Simulator):
                                      DSP_args['FONC_DSP'],
                                      NB_TIRAGE=self.nbtirage,
                                         **generator.SRO_args)
-            for (ntir, rvtir) in enumerate(liste_rv):
+            for rvtir in liste_rv:
                 Xt = DSP2ACCE1D(fonc_dsp_opt, rv=rvtir)
                 Xt = self.process_TimeHistory(generator, Xt)
                 _f_out = DEFI_FONCTION(
@@ -1078,19 +1071,12 @@ class SimulatorSPECScalar(Simulator):
 
 
 
-
-
-
-
-
-
 class SimulatorSPECPhase(Simulator):
 
     """Construct vector valued signal with phase delay for SPEC class"""
 
     def run(self, generator):
         """build result for phase SPEC class"""
-        macr = generator.macro
         self.liste_nom, l2 = get_group_nom_coord(
                            self.DEFI_COHE['GROUP_NO_INTERF'],
                            self.DEFI_COHE['MAILLAGE'])
@@ -1104,7 +1090,7 @@ class SimulatorSPECPhase(Simulator):
             self.build_TimeHistories(generator)
 #            raise NotImplementedError('must be implemented later on')
         else:
-            for iii in range(self.nbtirage):
+            for _ in range(self.nbtirage):
                 Xt = self.build_TimeHistory(generator)
                 nba = 1
                 for accef in Xt:
@@ -1184,7 +1170,7 @@ class SimulatorSPECPhase(Simulator):
             DSP_args.update({'FREQ_FOND': vop, 'AMORT': amo,
                              'para_R0': R0, 'para_R2': R2,
                              'fonc_FIT': f_FIT})
-            for (ntir, rvtir) in enumerate(liste_rv):
+            for rvtir in liste_rv:
                 Xt = gene_traj_gauss_evol1D(generator, rv=rvtir, **DSP_args)
                 Xt = self.process_TimeHistory(generator, Xt)
                 Xtl = calc_phase_delay(generator.sampler.liste_temps, Xt, Data_phase)
@@ -1204,7 +1190,7 @@ class SimulatorSPECPhase(Simulator):
                                      DSP_args['FONC_DSP'],
                                      NB_TIRAGE=self.nbtirage,
                                         **generator.SRO_args)
-            for (ntir, rvtir) in enumerate(liste_rv):
+            for rvtir in liste_rv:
                 Xt = DSP2ACCE1D(fonc_dsp_opt, rv=rvtir)
                 Xt = self.process_TimeHistory(generator, Xt)
                 Xtl = calc_phase_delay(generator.sampler.liste_temps, Xt, Data_phase)
@@ -1227,7 +1213,6 @@ class SimulatorDSPPhase(Simulator):
 
     def run(self, generator):
         """build result for vector DSP class"""
-        macr = generator.macro
         liste_nom, l2 = get_group_nom_coord(
                              self.DEFI_COHE['GROUP_NO_INTERF'],
                              self.DEFI_COHE['MAILLAGE'])
@@ -1236,7 +1221,7 @@ class SimulatorDSPPhase(Simulator):
             coord_ref = get_no_refe(self.DEFI_COHE)
             UTMESS('I', 'SEISME_77', valr=(coord_ref[0], coord_ref[1], coord_ref[2] ))
 
-        for iii in range(self.nbtirage):
+        for _ in range(self.nbtirage):
             Xt = self.build_TimeHistory(generator)
             nba = 1
             for accef in Xt:
