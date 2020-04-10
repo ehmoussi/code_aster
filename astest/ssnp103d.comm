@@ -1,0 +1,534 @@
+
+
+
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+# CALCUL DU TAUX DE RESTITUTION D'ENERGIE EN ELASTICITE NON LINEAIRE
+# MODE MIXTE
+# DEFORMATIONS PLANES
+# PLAQUE COMPLETE TRAITEE
+
+########################################################################
+#                      PARAMETRES DU CAS-TEST                          #
+########################################################################
+sigma_max=150.e6
+poisson =0.3
+EE =2.1e+11
+ratio = 4.
+# info sur le maillage
+r_min_mesh = 1.e-6
+LONG=0.400 # taille verticale de l'echantillon
+long_fiss = 0.050 # longueur de fissure
+depl_max = sigma_max/EE*LONG # deplacement max de plasti
+
+########################################################################
+#                          MISE EN DONNEES                             #
+########################################################################
+#LECTURE DU MAILLAGE LINEAIRE
+MESH0 = LIRE_MAILLAGE(UNITE=20)
+
+#CREATION DU MAILLAGE QUADRATQUE
+MESH = CREA_MAILLAGE(LINE_QUAD=_F(TOUT='OUI'),
+                      MAILLAGE=MESH0)
+
+MESH = MODI_MAILLAGE(reuse=MESH,
+                      MAILLAGE=MESH,
+                      ORIE_PEAU_2D=_F(GROUP_MA=('HAUT')))
+                      
+#BARSOUM
+MESH = MODI_MAILLAGE(reuse=MESH,
+                      MAILLAGE=MESH,
+                      MODI_MAILLE=_F(GROUP_NO_FOND=('FOND_FISS', ),
+                                     OPTION='NOEUD_QUART'))
+
+
+MODE = AFFE_MODELE(AFFE=_F(MODELISATION=('D_PLAN', ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=MESH)
+
+###### AJOUT TEMPERATURE ######
+TEMPCST=DEFI_FONCTION(NOM_PARA='X',VALE=(0,100,
+                                        0.1,100),);
+
+CH_TEMP0=CREA_CHAMP( OPERATION='AFFE', 
+                     TYPE_CHAM='NOEU_TEMP_F',
+                     MAILLAGE=MESH,
+                     AFFE=_F(TOUT = 'OUI',
+                     NOM_CMP = 'TEMP',
+                     VALE_F = TEMPCST))
+
+TEMPVARX=DEFI_FONCTION(NOM_PARA='X',VALE=(0,0,
+                                        0.1,200),);
+
+CH_TEMP=CREA_CHAMP( OPERATION='AFFE', 
+                     TYPE_CHAM='NOEU_TEMP_F',
+                     MAILLAGE=MESH,
+                     AFFE=_F(TOUT = 'OUI',
+                     NOM_CMP = 'TEMP',
+                     VALE_F = TEMPVARX))
+
+LIST = DEFI_LIST_REEL(DEBUT=0.0,
+                       INTERVALLE=(_F(JUSQU_A=1.0,
+                                      NOMBRE=1),
+                                   _F(JUSQU_A=2.0,
+                                      NOMBRE=1),
+                                   _F(JUSQU_A=3.0,
+                                      NOMBRE=1)))
+
+RESUTHER=CREA_RESU(OPERATION='AFFE',
+                   TYPE_RESU='EVOL_THER',
+                   NOM_CHAM='TEMP',
+                   AFFE=(
+                         _F(LIST_INST = LIST,
+                            CHAM_GD = CH_TEMP),
+                        _F(INST=0, CHAM_GD = CH_TEMP0),
+                            )
+                   )
+
+                    
+#MATERIAU ELASTIQUE BI-LINEAIRE
+MATER = DEFI_MATERIAU(ECRO_LINE=_F(D_SIGM_EPSI=EE/ratio,
+                                   SY=sigma_max),
+                      ELAS=_F(E=EE,
+                              NU=poisson,ALPHA=10e-6,))
+
+CHMAT = AFFE_MATERIAU(AFFE=_F(MATER=(MATER, ),
+                                 TOUT='OUI'),
+                     AFFE_VARC=_F(TOUT='OUI',
+                                  NOM_VARC='TEMP',
+                                  EVOL = RESUTHER,
+                                  VALE_REF=100,),
+                         MODELE=MODE)
+
+
+
+F_TRAC = DEFI_FONCTION(NOM_PARA='INST',
+                       VALE=(0.0, 0.0, 1.0, 0.7*depl_max , 2.0, depl_max, 3.0, 3.*depl_max))
+
+#CONDITIONS LIMITE
+BLOC = AFFE_CHAR_CINE(MECA_IMPO=_F(DX=0.0,DY=0.0,
+                                      GROUP_MA=('BAS',)),
+                         MODELE=MODE)
+
+#CHARGEMENT
+TRACTION = AFFE_CHAR_CINE(MECA_IMPO=(_F(DY=1.,DX=1,
+                                        GROUP_MA=('HAUT', )),
+                                        ),
+                          MODELE=MODE)
+
+########################################################################
+#                   RESOLUTION DU PROBLEME MECANIQUE                   #
+########################################################################
+
+RESU = STAT_NON_LINE(CHAM_MATER=CHMAT,
+                        COMPORTEMENT=_F(RELATION='ELAS_VMIS_LINE',
+                                        TOUT='OUI'),
+                        EXCIT=(_F(CHARGE=BLOC),
+                               _F(CHARGE=TRACTION,FONC_MULT=F_TRAC)
+                               ),
+                        INCREMENT=_F(LIST_INST=LIST),
+                        MODELE=MODE)
+
+########################################################################
+#                           POST-TRAITEMENT                            #
+########################################################################
+
+#DEFINITION DU FRONT DE FISSURE
+FISS = DEFI_FOND_FISS(CONFIG_INIT='COLLEE',
+                       FOND_FISS=_F(GROUP_NO=('FOND_FISS', )),
+                       LEVRE_SUP=_F(GROUP_MA=('LEVRE_SUP', )),
+                       LEVRE_INF=_F(GROUP_MA=('LEVRE_INF', )),
+                       MAILLAGE=MESH,
+                       SYME='NON')
+                       
+# A PROXIMITE DE LA FISSURE, LES CARACTERISTIQUES MATERIAUX A UTILISER  
+# PAR POST_K1_K2_K3 NE SONT PAS CELLES DE L'ELASTICITE LINEAIRE
+MATERINF = DEFI_MATERIAU(ELAS=_F(E=EE/ratio,
+                                 NU=0.5*(1.-1./ratio)+poisson/ratio))
+
+#CALCUL DE G PAR POST_K1_K2_K3
+T_FIC = POST_K1_K2_K3(ABSC_CURV_MAXI=4e-6,
+                      FOND_FISS=FISS,
+                      MATER=MATERINF,
+                      RESULTAT=RESU,
+                      TOUT_ORDRE='OUI',
+                      INFO=2,)
+                      
+#CALCUL DE G PAR CALC_G               
+# ON CALCULE G POUR TROIS COURONNES D'INTEGRATIONS
+T_G1 = CALC_G(OPTION='CALC_G',
+             RESULTAT=RESU,
+             COMPORTEMENT=_F(RELATION='ELAS_VMIS_LINE',),
+             THETA=_F(FOND_FISS=FISS,
+                      R_INF=20.0e-3,
+                      R_SUP=25.0e-3),
+             TOUT_ORDRE='OUI')
+
+T_G2 = CALC_G(OPTION='CALC_G',
+             RESULTAT=RESU,
+             COMPORTEMENT=_F(RELATION='ELAS_VMIS_LINE',),
+             THETA=_F(FOND_FISS=FISS,
+                      R_INF=15e-3,
+                      R_SUP=20.0e-3),
+             TOUT_ORDRE='OUI')
+
+T_G3 = CALC_G(OPTION='CALC_G',
+             RESULTAT=RESU,
+             COMPORTEMENT=_F(RELATION='ELAS_VMIS_LINE',),
+             THETA=_F(FOND_FISS=FISS,
+                      R_INF=10e-3,
+                      R_SUP=15.0e-3),
+             TOUT_ORDRE='OUI')
+
+#MISE EN FORME DES RESULTATS DANS UNE UNIQUE TABLE
+
+
+# CREATION D UNE TABLE AVEC LES G ISSUES DE POST_K1_K2_K3 UNIQUEMENT
+T_1=CALC_TABLE(TABLE=T_FIC,
+                 ACTION=(
+                         _F(OPERATION='EXTR',
+                            NOM_PARA=('INST','G'),
+                            ),
+                        ),
+                    );
+#CHANGEMENT DE NOM DE LA COLONNE POUR G EN G_K
+T_1=CALC_TABLE(TABLE=T_1,reuse=T_1,
+                    ACTION=_F(OPERATION='RENOMME',
+                            NOM_PARA=('G','G_K'),
+                           ),
+                );
+
+#  CREATION D UNE TABLE  AVEC LES G ISSUES DE CALC_G
+T_2=CALC_TABLE(TABLE=T_G1,
+                 ACTION=(
+                         _F(OPERATION='EXTR',
+                            NOM_PARA=('INST','G'),
+                            ),
+                        ),
+                    );
+#CHANGEMENT DE NOM DE COLONNE POUR LES G EN CALC_G1
+T_2=CALC_TABLE(TABLE=T_2,reuse=T_2,
+                    ACTION=_F(OPERATION='RENOMME',
+                            NOM_PARA=('G','CALC_G1'),
+                            ),
+               );
+
+# CREATION DE TABLE 3 COLONNES : INST - GK - CALC_G1
+T_2=CALC_TABLE(reuse =T_2,
+          TABLE=T_2,
+          ACTION=_F(OPERATION='COMB',
+                    TABLE=T_1,
+                    NOM_PARA='INST'));
+
+# CREATION DE LA COLONNE AVEC LES G ISSUES DE CALC_G2
+T_3=CALC_TABLE(TABLE=T_G2,
+                 ACTION=(
+                         _F(OPERATION='EXTR',
+                            NOM_PARA=('INST','G'),
+                            ),
+                        ),
+                    );
+#CHANGEMENT DE NOM DE COLONNE POUR LES G EN CALC_G2
+T_3=CALC_TABLE(TABLE=T_3,reuse=T_3,
+                    ACTION=_F(OPERATION='RENOMME',
+                            NOM_PARA=('G','CALC_G2'),
+                            ),
+               );
+
+# CREATION DE TABLE 3 COLONNES : INST - GK - CALC_G2
+T_3=CALC_TABLE(reuse =T_3,
+          TABLE=T_3,
+          ACTION=_F(OPERATION='COMB',
+                    TABLE=T_2,
+                    NOM_PARA='INST'));
+
+# CREATION DE LA COLONNE AVEC LES G ISSUES DE CALC_G3
+T_4=CALC_TABLE(TABLE=T_G3,
+                 ACTION=(
+                         _F(OPERATION='EXTR',
+                            NOM_PARA=('INST','G'),
+                            ),
+                        ),
+                    );
+#CHANGEMENT DE NOM DE COLONNE POUR LES G EN CALC_G3
+T_4=CALC_TABLE(TABLE=T_4,reuse=T_4,
+                    ACTION=_F(OPERATION='RENOMME',
+                            NOM_PARA=('G','CALC_G3'),
+                            ),
+               );
+
+# CREATION DE TABLE 3 COLONNES : INST - GK - CALC_G2
+T_4=CALC_TABLE(reuse =T_4,
+          TABLE=T_4,
+          ACTION=_F(OPERATION='COMB',TABLE=T_3,NOM_PARA='INST'),
+
+                    );
+
+# SUPPRESSION DE LA PREMIER LIGNE DE LA TABLE SUR LAQUELLE TOUTES 
+#LES VALEURS SONT NULLES
+T_FIN=CALC_TABLE(TABLE=T_4,
+                 ACTION=(
+                         _F(OPERATION='FILTRE',NOM_PARA=('INST'),CRIT_COMP = 'GT', VALE=0.0),
+                        ),
+                    );
+
+QUOT = FORMULE(VALE='A/B',
+               NOM_PARA=['A', 'B'],)
+
+# CALCULE DE COLONNES  G (ISSUS DE CALC_G) / G (ISSU DE POST_K1_K2_K3)
+T_FIN=CALC_TABLE(reuse =T_FIN,
+                 TABLE=T_FIN,
+                 ACTION=(_F(OPERATION='OPER',FORMULE=QUOT,NOM_COLONNE=('CALC_G1','G_K'),NOM_PARA=('G1/G_K',),),
+                         _F(OPERATION='OPER',FORMULE=QUOT,NOM_COLONNE=('CALC_G2','G_K'),NOM_PARA=('G2/G_K',),),
+                         _F(OPERATION='OPER',FORMULE=QUOT,NOM_COLONNE=('CALC_G3','G_K'),NOM_PARA=('G3/G_K',),),
+                         ),
+                );
+
+IMPR_TABLE(TABLE=T_FIN)
+
+# TEST DU RAPPORT G (ISSUS DE CALC_G) / G (ISSU DE POST_K1_K2_K3)
+# POUR DIFFERENTS INSTANTS ET DIFFERENTES COURONNES D'INTEGRATION
+
+# G1/GK
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G1/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=1.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=1.0013926206311006,
+             VALE_REFE=1.0, 
+             PRECISION=0.005,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G1/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=2.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=1.0009330360647948,
+             VALE_REFE=1.0, 
+             PRECISION=0.004,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+             
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G1/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=3.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=0.9998107249426889,
+             VALE_REFE=1.0, 
+             PRECISION=0.003,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+# G2/GK
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G2/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=1.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=1.0013922747017554,
+             VALE_REFE=1.0, 
+             PRECISION=0.005,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G2/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=2.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=1.0009327621468942,
+             VALE_REFE=1.0, 
+             PRECISION=0.004,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+             
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G2/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=3.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=0.9998104384855601,
+             VALE_REFE=1.0, 
+             PRECISION=0.003,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+# G3/GK
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G3/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=1.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=1.0013923347721179,
+             VALE_REFE=1.0, 
+             PRECISION=0.005,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G3/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=2.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=1.000932975812486,
+             VALE_REFE=1.0, 
+             PRECISION=0.004,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+             
+TEST_TABLE(  TABLE=T_FIN,
+             NOM_PARA='G3/G_K',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=3.0,
+                       ),
+             REFERENCE='ANALYTIQUE',
+             VALE_CALC=0.9998109319430226,
+             VALE_REFE=1.0, 
+             PRECISION=0.003,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+# TEST DE G (ISSUS DE CALC_G) VS VALEUR OBTENUE AVEC LA METHODE 3 DE
+# POST_K1_K2_K3 SUR UNE TAILLE DE MAILLE 100 FOIS PLUS FINE EN FOND DE FISSURE
+# POUR DIFFERENTS INSTANTS ET DIFFERENTES COURONNES D'INTEGRATION
+
+#G1
+TEST_TABLE(  TABLE=T_G1 ,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=1.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=50740.73221132007,
+             VALE_REFE=5.00690E+04, 
+             PRECISION=0.02,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+TEST_TABLE(  TABLE=T_G1,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=2.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=70816.93866841258,
+             VALE_REFE=7.00295E+04, 
+             PRECISION=0.02,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+TEST_TABLE(  TABLE=T_G1,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=3.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=245755.2513222844,
+             VALE_REFE=2.44290E+05, 
+             PRECISION=0.01,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+#G2
+TEST_TABLE(  TABLE=T_G2 ,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=1.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=50740.71468302207,
+             VALE_REFE=5.00690E+04, 
+             PRECISION=0.02,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+TEST_TABLE(  TABLE=T_G2,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=2.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=70816.9192884676,
+             VALE_REFE=7.00295E+04, 
+             PRECISION=0.02,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+TEST_TABLE(  TABLE=T_G2,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=3.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=245755.18091061353,
+             VALE_REFE=2.44290E+05, 
+             PRECISION=0.01,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+             
+             
+#G3
+TEST_TABLE(  TABLE=T_G3 ,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=1.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=50740.71772679743 ,
+             VALE_REFE=5.00690E+04, 
+             PRECISION=0.02,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+             
+TEST_TABLE(  TABLE=T_G3,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=2.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=70816.93440550598,
+             VALE_REFE=7.00295E+04, 
+             PRECISION=0.02,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+             
+TEST_TABLE(  TABLE=T_G3,
+             NOM_PARA='G',
+             FILTRE=_F(NOM_PARA='INST',
+                       VALE=3.0,
+                       ),
+             REFERENCE='AUTRE_ASTER',
+             VALE_CALC=245755.30220333397,
+             VALE_REFE=2.44290E+05, 
+             PRECISION=0.01,
+             CRITERE='RELATIF',
+             VALE_ABS='NON',)
+
+FIN()

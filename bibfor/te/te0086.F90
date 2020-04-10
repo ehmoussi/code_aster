@@ -18,10 +18,6 @@
 
 subroutine te0086(option, nomte)
 !
-!
-    implicit none
-    character(len=16) :: option, nomte
-!
 ! --------------------------------------------------------------------------------------------------
 !
 !    ELEMENT MECABL2
@@ -31,6 +27,9 @@ subroutine te0086(option, nomte)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    implicit none
+    character(len=16) :: option, nomte
+!
 #include "jeveux.h"
 #include "asterfort/biline.h"
 #include "asterfort/elrefe_info.h"
@@ -38,24 +37,31 @@ subroutine te0086(option, nomte)
 #include "asterfort/jevete.h"
 #include "asterfort/matvec.h"
 #include "asterfort/rcvalb.h"
+#include "asterfort/get_value_mode_local.h"
 #include "asterfort/tecach.h"
 !
-    integer ::          icodre(2)
-    real(kind=8) ::     valres(2)
-    character(len=16) :: nomres(2)
+! --------------------------------------------------------------------------------------------------
 !
-    integer ::      nno, kp, ii, jj, imatuu, ipoids, ivf, igeom, imate,iforce
-    integer ::      ideplp, idfdk, imat, iyty
-    integer ::      jgano, kk, lsect, ndim, nelyty, nnos, iret, nbval, nordre, npg
+    integer             :: icodre(2)
+    real(kind=8)        :: valres(2)
+    character(len=16)   :: nomres(2)
+!
+    integer :: nno, kp, ii, jj, imatuu, ipoids, ivf, igeom, imate,iforce
+    integer :: ideplp, idfdk, imat, iyty, iret
+    integer :: jgano, kk, ndim, nelyty, nnos, nbval, nordre, npg
+!
     real(kind=8) :: aire, coef1, coef2, demi, etraction, ecompress, ecable, nx, jacobi
     real(kind=8) :: ytywpq(9), w(9)
     real(kind=8) :: r8bid
+!
+    real(kind=8)        :: valr(2)
+    character(len=8)    :: valp(2)
 !
 ! --------------------------------------------------------------------------------------------------
     demi = 0.5d0
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-        npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk,jgano=jgano)
+                     npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk,jgano=jgano)
     call jevete('&INEL.CABPOU.YTY', 'L', iyty)
 !   3 efforts par noeud
     nordre = 3*nno
@@ -85,8 +91,10 @@ subroutine te0086(option, nomte)
     etraction = valres(1)
     ecompress = etraction*valres(2)
     ecable = etraction
-    call jevech('PCACABL', 'L', lsect)
-    aire = zr(lsect)
+!
+    valp(1) = 'SECT'
+    call get_value_mode_local('PCACABL', valp, valr, iret, nbpara_=1)
+    aire   = valr(1)
 !
     imat = imatuu - 1
     do ii = 1, 3*nno

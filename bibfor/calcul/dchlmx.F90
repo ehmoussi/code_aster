@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine dchlmx(iparg, nin, lpain,&
 
 use calcul_module, only : ca_calvoi_, ca_iachii_, ca_iachik_, &
      ca_iachoi_, ca_iachok_, ca_iaoppa_, ca_iawlo2_,&
-     ca_igr_, ca_nbelgr_, ca_nbgr_, ca_ligrel_, ca_nuop_
+     ca_igr_, ca_nbelgr_, ca_nbgr_, ca_ligrel_, ca_nuop_, ca_iachid_
 
 implicit none
 
@@ -55,7 +55,7 @@ implicit none
     taill1 = 0
     taille = 0
     debugr=1
-    do 30 ca_igr_ = 1, ca_nbgr_
+    do ca_igr_ = 1, ca_nbgr_
         te = typele(ca_ligrel_,ca_igr_,1)
         ca_nbelgr_ = nbelem(ca_ligrel_,ca_igr_,1)
         npin = nbpara(ca_nuop_,te,'IN ')
@@ -63,7 +63,7 @@ implicit none
 
 !       ---in:
 !       ------
-        do 10 ipar = 1, npin
+        do ipar = 1, npin
             nopare = nopara(ca_nuop_,te,'IN ',ipar)
             if (nopare .eq. nompar) then
                 iparin = indik8(lpain,nompar,1,nin)
@@ -73,18 +73,18 @@ implicit none
 
 !               -- cas des cham_elem potentiellement etendus :
                 if (tych(1:4) .eq. 'CHML') then
-                    jceld = zi(ca_iachii_-1+11* (iparin-1)+4)
+                    jceld = zi(ca_iachii_-1+ca_iachid_*(iparin-1)+4)
 
 !                   -- cas des cham_elem etendus :
                     if ((zi(jceld-1+3).gt.1) .or. (zi(jceld-1+4).gt.1)) then
                         taill1=0
-                        do 11, jel=1,ca_nbelgr_
-                        nbsp = zi(jceld-1+zi(jceld-1+4+ca_igr_)+4+4*( jel-1)+1)
-                        ncdyn = zi(jceld-1+zi(jceld-1+4+ca_igr_)+4+4*( jel-1)+2)
-                        nbsp =max(nbsp,1)
-                        ncdyn=max(ncdyn,1)
-                        taill1=taill1+nval*ncdyn*nbsp
-11                      continue
+                        do jel=1,ca_nbelgr_
+                            nbsp = zi(jceld-1+zi(jceld-1+4+ca_igr_)+4+4*( jel-1)+1)
+                            ncdyn = zi(jceld-1+zi(jceld-1+4+ca_igr_)+4+4*( jel-1)+2)
+                            nbsp =max(nbsp,1)
+                            ncdyn=max(ncdyn,1)
+                            taill1=taill1+nval*ncdyn*nbsp
+                        enddo
 
 !                   -- cas des cham_elem non etendus :
                     else
@@ -95,11 +95,11 @@ implicit none
                 endif
                 goto 29
             endif
-10      continue
+        enddo
 
 !       ---out:
 !       ------
-        do 20 ipar = 1, npou
+        do ipar = 1, npou
             nopare = nopara(ca_nuop_,te,'OUT',ipar)
             if (nopare .eq. nompar) then
                 iparou = indik8(lpaout,nompar,1,nout)
@@ -117,7 +117,7 @@ implicit none
                 endif
                 goto 29
             endif
-20      continue
+        enddo
 29      continue
 
 
@@ -131,7 +131,7 @@ implicit none
             debugr=debugr+taill1+1
         endif
 
-30  end do
+    enddo
 
 !     -- on ajoute quelques cases pour "undef" :
     if (taille .gt. 0) then
