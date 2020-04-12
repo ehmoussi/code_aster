@@ -17,12 +17,53 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
 import os.path as osp
 import re
 
 from waflib import Build, Configure, Logs, TaskGen, Utils
 from waflib.Task import CRASHED, MISSING, Task
 from waflib.Tools import c, ccroot, cxx, fc
+
+
+def sig_explicit_deps(self):
+    """Hash `inputs` and `dep_nodes` signatures."""
+    lst = []
+    for node in self.inputs + self.dep_nodes:
+        st = os.stat(node.abspath())
+        lst.append(st.st_mtime)
+        lst.append(st.st_size)
+    self.m.update(Utils.h_list(lst))
+# overload method for all tasks
+Task.sig_explicit_deps = sig_explicit_deps
+
+def _inputs_changed(self):
+    """Tell if inputs changed."""
+    for x in self.inputs + self.dep_nodes:
+        for y in self.outputs:
+            try:
+                if os.stat(x.abspath()).st_mtime > os.stat(y.abspath()).st_mtime:
+                    return True
+            except:
+                return True
+    return False
+
+fc_signature_native = fc.fc.signature
+def signature(self):
+    """By-pass signature computation if inputs haven't changed."""
+    try:
+        return self.cache_sig
+    except AttributeError:
+        pass
+
+    if getattr(fc.fc, "_use_custom_sig", None) and not _inputs_changed(self):
+        # do not compute sig_implicit_deps (and avoids scan)
+        self.cache_sig =  self.generator.bld.task_sigs[self.uid()]
+        return self.cache_sig
+
+    return fc_signature_native(self)
+
+fc.fc.signature = signature
 
 ###############################################################################
 # original run_str command line is store as hcode
