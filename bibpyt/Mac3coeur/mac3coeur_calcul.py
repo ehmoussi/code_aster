@@ -132,6 +132,7 @@ class Mac3CoeurCalcul(object):
         self._cham_mater_contact = NULL
         self._cham_mater_free = NULL
         self._times = NULL
+        self._times_arch = NULL
         self._times_woSubd = NULL
         self._evol_temp = NULL
         self._evol_fluence = NULL
@@ -156,6 +157,7 @@ class Mac3CoeurCalcul(object):
         # force the computation of the times to ensure it is done first
         # Note that times depends on niv_fluence and subdivis.
         self.times
+        self.times_arch
         self.fluence_cycle = self.keyw['FLUENCE_CYCLE']
         self._type_deformation = 'PETIT' if 'RIGI_GEOM' in self.keyw['TYPE_DEFORMATION'] else self.keyw['TYPE_DEFORMATION']
         self._option_rigi_geom = 'OUI'   if 'RIGI_GEOM' in self.keyw['TYPE_DEFORMATION'] else 'DEFAUT'
@@ -277,6 +279,12 @@ class Mac3CoeurCalcul(object):
     def times(self):
         """Return the list of the time steps"""
         return self.coeur.definition_time(self.niv_fluence, self.subdivis)
+
+    @property
+    @cached_property
+    def times_arch(self):
+        """Return the list of the archive time"""
+        return self.coeur.definition_time_arch(self.niv_fluence, self.subdivis)
 
     @property
     @cached_property
@@ -502,6 +510,7 @@ class Mac3CoeurCalcul(object):
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
             'SOLVEUR': _F(METHODE='MUMPS',),
+            'ARCHIVAGE':_F(LIST_INST=self.times_arch),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)
@@ -534,6 +543,7 @@ class Mac3CoeurCalcul(object):
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
             'SOLVEUR': _F(METHODE='MUMPS',),
+            'ARCHIVAGE':_F(INST=self.coeur.temps_simu['T1']),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)
@@ -566,7 +576,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
         self.use_archimede = self.mcf['ARCHIMEDE']
         self._maintien_grille = (self.mcf['MAINTIEN_GRILLE'] == 'OUI')
         super(Mac3CoeurDeformation, self)._prepare_data(noresu)
-
+    
     @property
     @cached_property
     def mesh(self):
@@ -982,7 +992,6 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                                                INST_INIT=0.,
                                                INST_FIN=coeur.temps_simu[
                                                    'T1']),
-                                  ARCHIVAGE=_F(INST=coeur.temps_simu['T1']),
                                   EXCIT=self.archimede_load + self.vessel_head_load +
                                   self.vessel_dilatation_load + self.gravity_load +
                                   self.layer_load + self.periodic_cond,
