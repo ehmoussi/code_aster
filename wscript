@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ from itertools import chain
 
 from waflib import Build, Configure, Logs, Utils
 from waflib.Tools.c_config import DEFKEYS
+from waflib.Tools.fc import fc
 
 if sys.version_info.major < 3:
     Logs.error("Python 2 is not supported anymore. "
@@ -100,6 +101,11 @@ def options(self):
         group.remove_option('--prefix')
     group.add_option('--prefix', dest='prefix', default=None,
                      help='installation prefix [default: %r]' % default_prefix)
+
+    group = self.get_option_group('Build and installation options')
+    group.add_option('--safe', dest='safe', default=None,
+                     help="use safe algorithm to check for implicit "
+                          "dependencies of fortran sources")
 
     group = self.add_option_group('code_aster options')
 
@@ -220,6 +226,9 @@ def configure(self):
     self.write_config_headers()
 
 def build(self):
+    fc._use_custom_sig = True
+    if self.options.safe:
+        fc._use_custom_sig = False
     # shared the list of dependencies between bibc/bibfor
     # the order may be important
     self.env['all_dependencies'] = [
