@@ -62,15 +62,15 @@ waf_main()
 # detect for supported host for automatic configuration
 detect_host()
 {
-    if [ -f /projets/simumeca/etc/codeaster/eole ]; then
+    if [ -f /projets/simumeca/eole ]; then
         printf eole
-    elif [ -f /projets/simumeca/etc/codeaster/gaia ]; then
+    elif [ -f /projets/simumeca/gaia ]; then
         printf gaia
     elif egrep -q "Calibre 9|Debian GNU/Linux 8" /etc/issue; then
         printf calibre9
     elif egrep -q "Scibian 9.0" /etc/issue; then
         printf scibian9
-    elif [ -f /home/aster/etc/codeaster/clap0f0q ]; then
+    elif [ -f /home/aster/clap0f0q ]; then
         printf clap0f0q
     fi
     printf ""
