@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -77,6 +77,7 @@ class Coeur(object):
         self._mateAC = {}
         self.nameAC = {}
         self.temps_simu = {}.fromkeys(self._time)
+        self.temps_archiv = None
         self.sub_temps_simu = {}.fromkeys(self._subtime)
         self._para = {}
         self._keys = {}.fromkeys(self.required_parameters)
@@ -716,12 +717,26 @@ class Coeur(object):
 
         return _MODELE
 
+  
+
     def definition_time(self, fluence, subdivis, nbSubdEchec=10):
         """Return the list of timesteps"""
         from code_aster.Cata.Syntax import _F
-        DEFI_LIST_REEL = self.macro.get_cmd('DEFI_LIST_REEL')
         DEFI_LIST_INST = self.macro.get_cmd('DEFI_LIST_INST')
+        _LI = self.definition_time_arch(fluence,subdivis)
 
+        if nbSubdEchec == 1 :
+            return _LI
+        else :
+            _TE = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=_LI,),
+                             ECHEC=_F(SUBD_PAS=4, SUBD_NIVEAU=nbSubdEchec,),)
+            return _TE
+
+
+    def definition_time_arch(self,fluence, subdivis):
+        """Return the list of timesteps"""
+        from code_aster.Cata.Syntax import _F
+        DEFI_LIST_REEL = self.macro.get_cmd('DEFI_LIST_REEL')
         def m_time(a):
             m_time = (
                 _F(JUSQU_A=self.temps_simu[self._time[a]], NOMBRE=self.sub_temps_simu[self._subtime[a]],),)
@@ -734,14 +749,8 @@ class Coeur(object):
             _list.extend(m_time(_time))
 
         _LI = DEFI_LIST_REEL(DEBUT=-1, INTERVALLE=_list,)
+        return _LI
 
-
-        if nbSubdEchec == 1 :
-            return _LI
-        else :
-            _TE = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=_LI,),
-                             ECHEC=_F(SUBD_PAS=4, SUBD_NIVEAU=nbSubdEchec,),)
-            return _TE
 
     def init_temps_simu(self, fluence, subdivis):
         """Initialise les temps caracteristiques"""

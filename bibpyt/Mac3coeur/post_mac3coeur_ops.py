@@ -903,7 +903,7 @@ def post_mac3coeur_ops(self, **args):
                 cosGrille.append(compute_cos_alpha(posGrille[i],posGrille[i+1],posGrille[i+2]))
             gravite = K_star*N.sum(1.-N.array(cosGrille))
             normeDepl = N.sqrt(N.array(XG)**2+N.array(YG)**2)
-            Milieu = AC.typeAC[:10]
+            Milieu = AC.typeAC
             MinX = min(valdirYac[name_AC_aster])
             MaxX = max(valdirYac[name_AC_aster])
             CCX = MaxX - MinX
