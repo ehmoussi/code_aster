@@ -77,6 +77,8 @@ character(len=16), intent(out) :: modeli
         modeli = modeli_in(1:lxlgut(modeli_in))//'#1'
     elseif (formul .eq. 'QUADRATIQUE') then
         modeli = modeli_in(1:lxlgut(modeli_in))//'#2'
+    elseif (formul .eq. 'U_P_PHI') then
+        modeli = modeli_in(1:lxlgut(modeli_in))//'#1'
     elseif (formul .ne. ' ') then
         ASSERT(ASTER_FALSE)
     endif
