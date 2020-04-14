@@ -46,12 +46,6 @@ MODEL=AFFE_MODELE(  MAILLAGE=MAILL,
                     AFFE=_F(  TOUT = 'OUI',   MODELISATION = 'COQUE_3D',
                               PHENOMENE = 'MECANIQUE') )
 
-CH_MODE = AFFE_CHAR_MECA(DDL_IMPO=_F(DX=0.0,
-                                    DY=0.0,
-                                    DZ=0.0,
-                                    GROUP_MA=('AB', 'BC', 'CD', 'AD')),
-                        MODELE=MODEL)
-
 CHARGE=AFFE_CHAR_MECA(  MODELE=MODEL,
                         DDL_IMPO=(_F( GROUP_MA = ('AB',), DX = 0.,  DRY = 0., DZ = 0., ),
                                   _F(  GROUP_NO='A', DY = 0.,),),
@@ -110,6 +104,42 @@ FOR_REF=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
                    NUME_ORDRE=1,
                     )
 
+# GROT_GDEP DEFORMATION
+#-----------------------------------------------------------------
+UREF2=STAT_NON_LINE(MODELE=MODEL,
+                   CHAM_MATER=CHMAT,
+                   CARA_ELEM=CARELEM,
+                   EXCIT=_F(CHARGE = CHARGE,
+                            FONC_MULT = RAMPE
+                            ),
+                   COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                                   RELATION = 'ELAS'),
+                   INCREMENT=_F(LIST_INST = LINST,
+                                NUME_INST_FIN = 1),
+                   NEWTON=_F(PREDICTION='ELASTIQUE',
+                             ),
+                   ####
+                   # NE PAS FAIRE D'ITERATIONS
+                   ####
+                   CONVERGENCE = _F(ITER_GLOB_MAXI = 0,
+                                    ARRET = 'NON'),
+              )
+
+UREF2=CALC_CHAMP(  reuse=UREF2,
+                   TOUT_ORDRE='OUI',
+                   TOUT='OUI',
+                   FORCE='FORC_NODA',
+                   RESULTAT=UREF2,);
+
+SIG_REF2=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='ELGA_SIEF_R',
+                   NOM_CHAM='SIEF_ELGA', RESULTAT=UREF2,
+                   INST=1.
+                    )
+
+FOR_REF2=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
+                   NOM_CHAM='FORC_NODA', RESULTAT=UREF2,
+                   NUME_ORDRE=1,
+                    )
 #
 #======================================================================
 #               CALCUL EN ELASTICITE
@@ -117,14 +147,6 @@ FOR_REF=CREA_CHAMP(OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
 #
 
 # definir les champs initiaux : attention pour les sous-points
-
-UP = CREA_CHAMP(AFFE=_F(NOM_CMP=('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ', ),
-                       TOUT='OUI',
-                       VALE=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
-               AFFE_SP=_F(CARA_ELEM = CARELEM,),
-               MAILLAGE=MAILL,
-               OPERATION='AFFE',
-               TYPE_CHAM='NOEU_DEPL_R')
 
 SIGP = CREA_CHAMP(AFFE=_F(NOM_CMP=('SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIYZ', 'SIXZ'),
                           TOUT='OUI',
@@ -152,6 +174,16 @@ M_EL = CALC_MATR_ELEM(CHAM_MATER=CHMAT,
                       OPTION='RIGI_MECA')
 
 NU = NUME_DDL(MATR_RIGI=M_EL)
+
+# nume_ddl => pour ddl lagrange
+UP = CREA_CHAMP(AFFE=_F(NOM_CMP=('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ', ),
+                       TOUT='OUI',
+                       VALE=(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)),
+               NUME_DDL = NU,
+               AFFE_SP=_F(CARA_ELEM = CARELEM,),
+               MAILLAGE=MAILL,
+               OPERATION='AFFE',
+               TYPE_CHAM='NOEU_DEPL_R')
 
 CHAREL = CALC_VECT_ELEM( CHARGE=(CHARGE,),
                          CARA_ELEM=CARELEM,
@@ -204,6 +236,41 @@ SIGM=EXTR_TABLE(TYPE_RESU='CHAM_GD_SDASTER',
                  FILTRE=_F(NOM_PARA='NOM_OBJET',
                            VALE_K='SIEF_ELGA'),)
 
+# GROT_GDEP
+#--------------------------------
+
+CALC_TT2=CALCUL(
+               MODELE=MODEL,
+               CHAM_MATER=CHMAT,
+               CARA_ELEM=CARELEM,
+               COMPORTEMENT=_F(DEFORMATION='GROT_GDEP',
+                               RELATION='ELAS',
+                               TOUT='OUI'),
+               DEPL=UP,
+               SIGM=SIGP,
+               VARI=VARIP,
+               INCR_DEPL=DU,
+               EXCIT=_F( CHARGE = CHARGE),
+               INCREMENT=_F(NUME_ORDRE=1,LIST_INST=LINST,),
+               OPTION=('COMPORTEMENT', 'MATR_TANG_ELEM', 'FORC_INTE_ELEM', 'FORC_NODA_ELEM'),
+                         )
+
+
+FORC2=EXTR_TABLE(TYPE_RESU='VECT_ELEM_DEPL_R',
+                 TABLE=CALC_TT2,
+                 NOM_PARA='NOM_SD',
+                 FILTRE=_F(NOM_PARA='NOM_OBJET',
+                           VALE_K='FORC_NODA_ELEM'),)
+
+FORCAS2=ASSE_VECTEUR(VECT_ELEM=FORC2,
+                    NUME_DDL=NU,);
+
+SIGM2=EXTR_TABLE(TYPE_RESU='CHAM_GD_SDASTER',
+                 TABLE=CALC_TT2,
+                 NOM_PARA='NOM_SD',
+                 FILTRE=_F(NOM_PARA='NOM_OBJET',
+                           VALE_K='SIEF_ELGA'),)
+
 #
 #======================================================================
 #               COMPARAISON ENTRE CALCUL ET STAT_NON_LINE
@@ -239,37 +306,102 @@ DIF_SIG=CREA_CHAMP(OPERATION='ASSE',
                             COEF_R=-1.),
                         ))
 
+# GROT_GDEP
+#-----------------------------------------
+DIF_FOR2=CREA_CHAMP(OPERATION='ASSE',
+                   MODELE=MODEL,
+                   TYPE_CHAM='NOEU_DEPL_R',
+                   ASSE=(_F(CHAM_GD=FORCAS2,
+                            TOUT='OUI',
+                            CUMUL='OUI',
+                            COEF_R=1.),
+                         _F(CHAM_GD=FOR_REF2,
+                            TOUT='OUI',
+                            CUMUL='OUI',
+                            COEF_R=-1.),
+                        ))
+
+# DIF_SIG = SIG_REF - SIGM : CONTRAINTE
+DIF_SIG2=CREA_CHAMP(OPERATION='ASSE',
+                   MODELE=MODEL,
+                   TYPE_CHAM='ELGA_SIEF_R',
+                   ASSE=(_F(CHAM_GD=SIG_REF2,
+                            TOUT='OUI',
+                            CUMUL='OUI',
+                            COEF_R=1.),
+                         _F(CHAM_GD=SIGM2,
+                            TOUT='OUI',
+                            CUMUL='OUI',
+                            COEF_R=-1.),
+                        ))
+
+
 TEST_RESU(CHAM_NO=(_F(CRITERE='ABSOLU',
                         REFERENCE='AUTRE_ASTER',
                         TYPE_TEST='MIN',
                         CHAM_GD=DIF_FOR,
-                        VALE_CALC= 2.36E-09,
+                        VALE_CALC=0.,
                         VALE_REFE=1.E-8,
+                        ORDRE_GRANDEUR=P,
                         VALE_ABS='OUI',),
                      _F(CRITERE='ABSOLU',
                         REFERENCE='AUTRE_ASTER',
                         TYPE_TEST='MAX',
                         CHAM_GD=DIF_FOR,
-                        VALE_CALC= 5.47E-09,
+                        VALE_CALC=0.,
                         VALE_REFE=1.E-8,
+                        ORDRE_GRANDEUR=P,
+                        VALE_ABS='OUI',),
+                     _F(CRITERE='ABSOLU',
+                        REFERENCE='AUTRE_ASTER',
+                        TYPE_TEST='MIN',
+                        CHAM_GD=DIF_FOR2,
+                        VALE_CALC=0.,
+                        VALE_REFE=1.E-8,
+                        ORDRE_GRANDEUR=P,
+                        VALE_ABS='OUI',),
+                     _F(CRITERE='ABSOLU',
+                        REFERENCE='AUTRE_ASTER',
+                        TYPE_TEST='MAX',
+                        CHAM_GD=DIF_FOR2,
+                        VALE_CALC=0.,
+                        VALE_REFE=1.E-8,
+                        ORDRE_GRANDEUR=P,
                         VALE_ABS='OUI',),
                      ),
-          ### --------- erreur pour non regression a l echelle de 1.0e-6
-          #CHAM_ELEM=(_F(CRITERE='ABSOLU',
-                        #REFERENCE='AUTRE_ASTER',
-                        #TYPE_TEST='MIN',
-                        #CHAM_GD=DIF_SIG,
-                        #VALE_CALC= 2.57E-06,
-                        #VALE_REFE= 1.E-8,
-                        #VALE_ABS='OUI',),
-                     #_F(CRITERE='ABSOLU',
-                        #REFERENCE='AUTRE_ASTER',
-                        #TYPE_TEST='MAX',
-                        #CHAM_GD=DIF_SIG,
-                        #VALE_CALC= 2.57E-06,
-                        #VALE_REFE= 1.E-8,
-                        #VALE_ABS='OUI',),
-                     #),
+          CHAM_ELEM=(_F(CRITERE='ABSOLU',
+                        REFERENCE='AUTRE_ASTER',
+                        TYPE_TEST='MIN',
+                        CHAM_GD=DIF_SIG,
+                        VALE_CALC=0.,
+                        VALE_REFE= 1.E-8,
+                        ORDRE_GRANDEUR=1.e6,
+                        VALE_ABS='OUI',),
+                     _F(CRITERE='ABSOLU',
+                        REFERENCE='AUTRE_ASTER',
+                        TYPE_TEST='MAX',
+                        CHAM_GD=DIF_SIG,
+                        VALE_CALC=0.,
+                        VALE_REFE= 1.E-8,
+                        ORDRE_GRANDEUR=1.e6,
+                        VALE_ABS='OUI',),
+                     _F(CRITERE='ABSOLU',
+                        REFERENCE='AUTRE_ASTER',
+                        TYPE_TEST='MIN',
+                        CHAM_GD=DIF_SIG2,
+                        VALE_CALC=0.,
+                        VALE_REFE= 1.E-8,
+                        ORDRE_GRANDEUR=1.e6,
+                        VALE_ABS='OUI',),
+                     _F(CRITERE='ABSOLU',
+                        REFERENCE='AUTRE_ASTER',
+                        TYPE_TEST='MAX',
+                        CHAM_GD=DIF_SIG2,
+                        VALE_CALC=0.,
+                        VALE_REFE= 1.E-8,
+                        ORDRE_GRANDEUR=1.e6,
+                        VALE_ABS='OUI',),
+                     ),
           )
 
 FIN()
