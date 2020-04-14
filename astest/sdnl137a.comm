@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ jeu = 2.9E-4
 Ko = 4.E+6 #/ 5
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
-      DEBUG=_F( SDVERI     = 'OUI',),
+      DEBUG=_F(SDVERI='OUI'),
      )
 
 maill=LIRE_MAILLAGE(UNITE=20, FORMAT='MED',
@@ -108,7 +108,7 @@ MNL=MODE_NON_LINE(ETAT_INIT=_F(MODE_LINE = MODES,NUME_ORDRE = 1,
                                 NB_HARM_NONL=hf,
                                 NB_PAS_MAN=ndiscr,
                                 NB_BRANCHE=nbranch,
-                                CRIT_ORDR_BIFURCATION=5, 
+                                CRIT_ORDR_BIFURCATION=5,
                                 RESI_RELA_BIFURCATION=1.E-10,
                                 ),
                   CHOC=(
@@ -129,7 +129,7 @@ MNL=MODE_NON_LINE(ETAT_INIT=_F(MODE_LINE = MODES,NUME_ORDRE = 1,
                          ORIG_OBST=(0.,decal,0.),
                          ),
                       ),
-         ) 
+         )
 
 
 #IMPR_TABLE(TABLE = MNL)
@@ -146,7 +146,7 @@ FREQC=RECU_FONCTION(TABLE=MNL,
                     )
 
 ##valeurs calculees sur machine locale
-fi=5.25698E+00  
+fi=5.25698E+00
 ei=7.83624E-05
 
 TEST_FONCTION(VALEUR=_F(VALE_PARA=fi,
