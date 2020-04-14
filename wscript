@@ -101,9 +101,13 @@ def options(self):
                      help='installation prefix [default: %r]' % default_prefix)
 
     group = self.get_option_group('Build and installation options')
-    group.add_option('--safe', dest='safe', default=None,
-                     help="use safe algorithm to check for implicit "
-                          "dependencies of fortran sources")
+    group.add_option('--fast', dest='custom_fc_sig', action='store_true',
+                     default=True,
+                     help="use fast algorithm based on modification time to "
+                          "check for dependencies of fortran sources")
+    group.add_option('--safe', dest='custom_fc_sig', action='store_false',
+                     help="use safe algorithm based on content to check for "
+                          "implicit dependencies of fortran sources")
 
     group = self.add_option_group('code_aster options')
 
@@ -231,9 +235,7 @@ def configure(self):
     self.write_config_headers()
 
 def build(self):
-    fc._use_custom_sig = True
-    if self.options.safe:
-        fc._use_custom_sig = False
+    fc._use_custom_sig = self.options.custom_fc_sig
     # shared the list of dependencies between bibc/bibfor
     # the order may be important
     if not self.variant:
