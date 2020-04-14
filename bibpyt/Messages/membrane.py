@@ -111,7 +111,7 @@ cata_msg = {
 
       Vous utilisez un élément de MEMBRANE.
       Problème : La carte de comportement n'est pas présente et l'épaisseur de la membrane n'est
-      pas de 1. Vous êtes probalement dans CALC_MATR_ELEM.
+      pas de 1. Vous êtes probablement dans CALC_MATR_ELEM.
       Solution :
                  - Utilisez 'ELAS_MEMBRANE' sous DEFI_MATERIAU
                  - Mettez l'épaisseur de la membrane à EPAIS=1 sous AFFE_CARA_ELEM
