@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,115 +15,128 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0550(option, nomte)
-!.......................................................................
-    implicit none
 !
-!     BUT: CALCUL DES MATRICES ELEMENTAIRES EN MECANIQUE
-!          CORRESPONDANT A UNE IMPEDANCE IMPOSEE
-!          SUR DES FACES D'ELEMENTS ISOPARAMETRIQUES 2D
-!
-!          OPTION : 'IMPE_ABSO'
-!
-!     ENTREES  ---> OPTION : OPTION DE CALCUL
-!          ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
+#include "asterfort/teattr.h"
+#include "asterfort/assert.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
-#include "asterfort/matini.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/vff2dn.h"
+#include "asterfort/utmess.h"
+#include "asterfort/getFluidPara.h"
 !
-    integer :: icodre(1)
-    character(len=8) :: fami, poum
-    character(len=16) :: nomte, option
-    real(kind=8) :: nx, ny, poids, a(6, 6)
-    real(kind=8) :: vites(6)
-    integer :: ipoids, ivf, idfde, igeom, imate
-    integer :: ndi, nno, kp, npg
-    integer :: ldec, kpg, spt
-    aster_logical :: laxi
+character(len=16), intent(in) :: option, nomte
 !
+! --------------------------------------------------------------------------------------------------
 !
-!-----------------------------------------------------------------------
-    integer :: i, ii, ivectu, ivien, ivite, j, jgano
-    integer :: jj, ndim, nnos
-    real(kind=8) :: celer(1), r
-!-----------------------------------------------------------------------
-    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
-                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
-    ndi = 2*nno
-    laxi = .false.
-    if (lteatt('AXIS','OUI')) laxi = .true.
+! Elementary computation
 !
-    call jevech('PGEOMER', 'L', igeom)
-    call jevech('PMATERC', 'L', imate)
-    call jevech('PVITPLU', 'L', ivite)
-    call jevech('PVITENT', 'L', ivien)
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
-    call rcvalb(fami, kpg, spt, poum, zi(imate),&
-                ' ', 'FLUIDE', 0, ' ', [0.d0],&
-                1, 'CELE_R', celer, icodre, 1)
-    if (celer(1) .lt. 1.d-1) goto 110
+! Elements: 2D_FLUI_ABSO
 !
-    call jevech('PVECTUR', 'E', ivectu)
+! Options: IMPE_ABSO
 !
-! --- INITIALISATION DU VECTEUR DE CORRECTION
-    do 10 i = 1, ndi
-        zr(ivectu+i-1) = 0.d0
- 10 end do
+! --------------------------------------------------------------------------------------------------
 !
-! --- INITIALISATION DE LA MATRICE D'IMPEDANCE
-    call matini(6, 6, 0.d0, a)
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
 !
-!     BOUCLE SUR LES POINTS DE GAUSS
+! --------------------------------------------------------------------------------------------------
 !
-    do 100 kp = 1, npg
-        ldec = (kp-1)*nno
-        nx = 0.0d0
-        ny = 0.0d0
-        call vff2dn(ndim, nno, kp, ipoids, idfde,&
-                    zr(igeom), nx, ny, poids)
-!%
-        if (laxi) then
-            r = 0.d0
-            do 40 i = 1, nno
-                r = r + zr(igeom+2* (i-1))*zr(ivf+ldec+i-1)
- 40         continue
-            poids = poids*r
-        endif
-!%
-        do 60 i = 1, nno
+    real(kind=8) :: nx, ny
+    real(kind=8) :: celer, poids
+    real(kind=8) :: a(6, 6), vites(6)
+    integer :: ipoids, ivf, idfde
+    integer :: jv_geom, jv_mate, jv_vitplu, jv_vitent, jv_vect
+    integer :: ndim, nno, ndi, ipg, npg
+    integer :: ldec
+    integer :: i, ii, j, jj
+    integer :: j_mater, iret
+    character(len=16) :: fsi_form
+    aster_logical :: l_axis
+    real(kind=8) :: r
 !
-            do 50 j = 1, nno
-                ii = 2*i
-                jj = 2*j - 1
+! --------------------------------------------------------------------------------------------------
 !
-                a(ii,jj) = a(ii,jj) - poids/celer(1)*zr(ivf+ldec+i-1)* zr(ivf+ldec+j-1)
+    a = 0.d0
 !
- 50         continue
- 60     continue
+! - Get parameters of element
 !
-!     CALCUL DE LA VITESSE ABSOLUE
-        do 70 i = 1, ndi
-            vites(i) = zr(ivite+i-1) + zr(ivien+i-1)
- 70     continue
+    call teattr('S', 'FORMULATION', fsi_form, iret)
+    l_axis = (lteatt('AXIS','OUI'))
+    call elrefe_info(fami='RIGI',&
+                     ndim=ndim, nno=nno, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde)
+    ndi   = 2*nno
 !
-        do 90 i = 1, ndi
-            do 80 j = 1, ndi
-                zr(ivectu+i-1) = zr(ivectu+i-1) - a(i,j)*vites(j)
- 80         continue
- 90     continue
+! - Input fields
 !
-100 end do
-110 continue
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PMATERC', 'L', jv_mate)
+    call jevech('PVITPLU', 'L', jv_vitplu)
+    call jevech('PVITENT', 'L', jv_vitent)
+!
+! - Get material properties for fluid
+!
+    j_mater = zi(jv_mate)
+    call getFluidPara(j_mater, cele_r_ = celer)
+!
+! - Output field
+!
+    call jevech('PVECTUR', 'E', jv_vect)
+    do i = 1, ndi
+        zr(jv_vect+i-1) = 0.d0
+    end do
+!
+! - Compute
+!
+    if (celer .ge. 1.d-1) then
+! ----- Loop on Gauss points
+        do ipg = 1, npg
+            ldec = (ipg-1)*nno
+! --------- Compute normal and geometric quantities
+            nx = 0.d0
+            ny = 0.d0
+            call vff2dn(ndim, nno, ipg, ipoids, idfde,&
+                        zr(jv_geom), nx, ny, poids)
+            if (l_axis) then
+                r = 0.d0
+                do i = 1, nno
+                    r = r + zr(jv_geom+2*(i-1))*zr(ivf+ldec+i-1)
+                end do
+                poids = poids*r
+            endif
+! --------- Compute matrix
+            if (fsi_form .eq. 'FSI_UPPHI') then
+                do i = 1, nno
+                    do j = 1, nno
+                        ii = 2*i
+                        jj = 2*j-1
+                        a(ii,jj) = a(ii,jj) -&
+                                   poids / celer *&
+                                   zr(ivf+ldec+i-1)*zr(ivf+ldec+j-1)
+                    end do
+                end do
+! ------------- Compute speed
+                do i = 1, ndi
+                    vites(i) = zr(jv_vitplu+i-1) + zr(jv_vitent+i-1)
+                end do
+! ------------- Save vector
+                do i = 1, ndi
+                    do j = 1, ndi
+                        zr(jv_vect+i-1) = zr(jv_vect+i-1) - a(i,j)*vites(j)
+                    end do
+                end do
+            else
+                call utmess('F', 'FLUID1_2', sk = fsi_form)
+            endif
+        end do
+    endif
 !
 end subroutine
