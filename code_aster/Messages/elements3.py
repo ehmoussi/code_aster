@@ -92,10 +92,6 @@ cata_msg = {
  Un champ de vitesse de vent est imposé sans donner un Cx dépendant de la vitesse sur une des barres
 """),
 
-    36 : _("""
- COMPORTEMENT non valide
-"""),
-
     37 : _("""
   Relation :  %(k1)s  non implantée sur les câbles
 """),

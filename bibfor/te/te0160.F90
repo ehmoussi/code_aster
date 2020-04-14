@@ -15,111 +15,147 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0160(option, nomte)
 !
-! --------------------------------------------------------------------------------------------------
-!    - ELEMENT:  MECABL2
-!      OPTION : 'FULL_MECA'   'RAPH_MECA'   'RIGI_MECA_TANG'
+use Behaviour_module, only : behaviourOption
 !
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-!
-! --------------------------------------------------------------------------------------------------
-!
-    implicit none
-    character(len=16) :: option, nomte
+implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/biline.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/jevete.h"
 #include "asterfort/matvec.h"
 #include "asterfort/rcvalb.h"
-#include "asterfort/get_value_mode_local.h"
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "asterfort/Behaviour_type.h"
+#include "asterfort/get_value_mode_local.h"
+!
+character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer             :: icodre(2)
-    real(kind=8)        :: valres(2)
-    character(len=16)   :: nomres(2)
+! Elementary computation
 !
-    integer :: nno, kp, ii, jj, imatuu, iret
-    integer :: ipoids, ivf, igeom, imate, jcret
-    integer :: icompo, idepla, ideplp, idfdk, imat, iyty, jefint, ivarip
-    integer :: jgano, kk, lsigma, ndim, nelyty, nnos, nordre, npg
+! Elements: CABLE
 !
-    real(kind=8) :: aire, coef, coef1, coef2, demi
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer ::          icodre(2)
+    real(kind=8) ::     valres(2)
+    character(len=16) :: nomres(2)
+    integer :: nno, kp, ii, jj, imatuu
+    integer :: ipoids, ivf, igeom, imate, icoret
+    integer :: icompo, idepla, ideplp, idfdk, imat, iyty, ivectu, ivarip
+    integer :: jgano, kk, icontp, ndim, nelyty, nnos, nordre, npg
+    real(kind=8) :: aire, coef, coef1, coef2
+    real(kind=8), parameter :: demi = 0.5d0
     real(kind=8) :: etraction, epsth, ecompress, ecable
     real(kind=8) :: green, jacobi, nx, ytywpq(9), w(9)
-    real(kind=8) :: preten, r8bid
-!
-    real(kind=8)        :: valr(2)
-    character(len=8)    :: valp(2)
+    real(kind=8) :: preten
+    character(len=16) :: defo_comp, rela_comp
+    aster_logical :: lVect, lMatr, lVari, lSigm
+    integer :: codret, iret
+    real(kind=8) :: valr(2)
+    character(len=8), parameter :: valp(2) = (/'SECT', 'TENS'/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    demi = 0.5d0
+    icontp = 1
+    ivarip = 1
+    imatuu = 1
+    ivectu = 1
+    codret = 0
+!
+! - Get element parameters
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-                     npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk,jgano=jgano)
+        npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk,jgano=jgano)
     call jevete('&INEL.CABPOU.YTY', 'L', iyty)
 !   3 efforts par noeud
     nordre = 3*nno
-! --------------------------------------------------------------------------------------------------
-!   parametres en entree
-    call jevech('PCOMPOR', 'L', icompo)
-    !if (zk16(icompo+3) (1:9) .eq. 'COMP_INCR') then
-    !    call utmess('F', 'ELEMENTS3_36')
-    !endif
-    if (zk16(icompo-1+RELA_NAME) (1:5) .ne. 'CABLE') then
-        call utmess('F', 'ELEMENTS3_37', sk = zk16(icompo-1+RELA_NAME))
-    endif
-    if (zk16(icompo-1+DEFO) .ne. 'GROT_GDEP') then
-        call utmess('F', 'ELEMENTS3_38', sk = zk16(icompo-1+DEFO))
-    endif
+!
+! - Get input fields
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
+    call jevech('PDEPLMR', 'L', idepla)
+    call jevech('PDEPLPR', 'L', ideplp)
+    call jevech('PCOMPOR', 'L', icompo)
+!
+! - Properties of behaviour
+!
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+    if (rela_comp(1:5) .ne. 'CABLE') then
+        call utmess('F', 'ELEMENTS3_37', sk = rela_comp)
+    endif
+    if (defo_comp .ne. 'GROT_GDEP') then
+        call utmess('F', 'ELEMENTS3_38', sk = defo_comp)
+    endif
+!
+! - Get material properties
 !
     nomres(1) = 'E'
     nomres(2) = 'EC_SUR_E'
-    r8bid = 0.0d0
-    call rcvalb('RIGI', 1, 1, '+', zi(imate), ' ', 'ELAS', 0, '  ', [r8bid],&
+    call rcvalb('RIGI', 1, 1, '+', zi(imate),&
+                ' ', 'ELAS', 0, '  ', [0.d0],&
                 1, nomres, valres, icodre, 1)
-    call rcvalb('RIGI', 1, 1, '+', zi(imate), ' ', 'CABLE', 0, '  ', [r8bid],&
+    call rcvalb('RIGI', 1, 1, '+', zi(imate),&
+                ' ', 'CABLE', 0, '  ', [0.d0],&
                 1, nomres(2), valres(2), icodre(2), 1)
     etraction = valres(1)
     ecompress = etraction*valres(2)
     ecable    = etraction
 !
-    valp(1) = 'SECT'
-    valp(2) = 'TENS'
-    call get_value_mode_local('PCACABL', valp, valr, iret)
-    aire   = valr(1)
-    preten = valr(2)
+! - Get section properties
 !
-    call jevech('PDEPLMR', 'L', idepla)
-    call jevech('PDEPLPR', 'L', ideplp)
-! --------------------------------------------------------------------------------------------------
-!   parametres en sortie
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:14) .eq. 'RIGI_MECA_TANG') then
+    call get_value_mode_local('PCACABL', valp, valr, iret)
+    ASSERT(iret .eq. 0)
+    aire    = valr(1)
+    preten  = valr(2)
+!
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Get output fields
+!
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imatuu)
     endif
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PVECTUR', 'E', jefint)
-        call jevech('PCONTPR', 'E', lsigma)
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', icontp)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
     endif
+!
+! - Update displacements
 !
     do ii = 1, 3*nno
         w(ii) = zr(idepla-1+ii) + zr(ideplp-1+ii)
     enddo
+!
+! - Loop on Gauss points
+!
     do kp = 1, npg
         call verift('RIGI', kp, 1, '+', zi(imate),epsth_=epsth)
         kk = (kp-1)*nordre*nordre
@@ -140,7 +176,7 @@ subroutine te0160(option, nomte)
         coef1 = ecable*aire*zr(ipoids-1+kp)/jacobi**3
         coef2 = nx*zr(ipoids-1+kp)/jacobi
         call matvec(nordre, zr(iyty+kk), 2, zr(igeom), w, ytywpq)
-        if (option(1:9).eq.'FULL_MECA' .or. option(1:14).eq.'RIGI_MECA_TANG') then
+        if (lMatr) then
             nelyty = iyty - 1 - nordre + kk
             imat = imatuu - 1
             do ii = 1, nordre
@@ -151,18 +187,24 @@ subroutine te0160(option, nomte)
                 enddo
             enddo
         endif
-        if (option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA') then
+        if (lVect) then
             coef = nx*zr(ipoids-1+kp)/jacobi
             do ii = 1, nordre
-                zr(jefint-1+ii) = zr(jefint-1+ii) + coef*ytywpq(ii)
+                zr(ivectu-1+ii) = zr(ivectu-1+ii) + coef*ytywpq(ii)
             enddo
-            zr(lsigma-1+kp) = nx
-            zr(ivarip+kp-1) = 0.0d0
+        endif
+        if (lSigm) then
+            zr(icontp-1+kp) = nx
+        endif
+        if (lVari) then
+            zr(ivarip+kp-1) = 0.d0
         endif
     enddo
 !
-    if (option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jcret)
-        zi(jcret) = 0
+! - Save return code
+!
+    if (lSigm) then
+        call jevech('PCODRET', 'E', icoret)
+        zi(icoret) = codret
     endif
 end subroutine
