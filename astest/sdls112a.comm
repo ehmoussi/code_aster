@@ -20,7 +20,7 @@
 #       TEST DU GARTEUR : BASE D'EXPANSION = MODES DYNAMIQUES
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
-      DEBUG=_F(SDVERI='NON'),
+      DEBUG=_F(SDVERI='OUI'),
      )
 
 
@@ -136,7 +136,7 @@ MASSE=POST_ELEM(MASS_INER=_F(TOUT='OUI',),
 MODES=CALC_MODES(MATR_RIGI=KASS,
                   SOLVEUR=_F(METHODE='MUMPS',
                              NPREC=9,
-                             ),                 
+                             ),
                  VERI_MODE=_F(STOP_ERREUR='NON',
                               SEUIL=1.0E-4,
                               ),
