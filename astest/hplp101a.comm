@@ -193,7 +193,7 @@ GK00=CALC_G(RESULTAT=RESU,
                      R_INF = 3.75E-5,
                      R_SUP = 7.50E-5,),
             EXCIT=_F(CHARGE=CH,),
-            OPTION='CALC_K_G'
+            OPTION='CALC_K_G',
             CHAM_THETA=CO('cham_theta_no1'),
            )
 

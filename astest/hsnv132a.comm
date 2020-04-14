@@ -147,7 +147,7 @@ TABSIF=CALC_G(RESULTAT=UTOT,
               THETA=_F( R_INF = 0.01,
                         R_SUP = 0.05,
                         FOND_FISS=FOND1),
-              OPTION='CALC_K_G'
+              OPTION='CALC_K_G',
               CHAM_THETA=CO('cham_theta_no0'),
               )
 
@@ -157,7 +157,7 @@ TABG=CALC_G(RESULTAT=UTOT,
               THETA=_F( R_INF = 0.01,
                         R_SUP = 0.05,
                         FOND_FISS=FOND1),
-              OPTION='CALC_G'
+              OPTION='CALC_G',
               CHAM_THETA=CO('cham_theta_no1'),
               )
 

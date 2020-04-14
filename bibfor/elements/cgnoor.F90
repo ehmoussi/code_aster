@@ -95,7 +95,7 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
 !
     integer :: jmail, jtypm, iatyma
     integer :: ier, im, n1, n2, n3, nid, nig, nbnot
-    integer :: nunori, trouv, ibid, in, nd, ifm, niv
+    integer :: nunori, trouv, ibid, in, nd
     integer :: existe, iret, ima
     integer :: jcour2
     character(len=8) :: k8b, nomma, typmp
@@ -109,7 +109,6 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
 ! DEB-------------------------------------------------------------------
     call jemarq()
 !
-    call infniv(ifm, niv)
     call getres(k8b, k16bid, nomcmd)
 !
 !     ------------------------------------------------------------------
@@ -392,10 +391,10 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
         if (erreur) call utmess('F', 'ELEMENTS_71')
 
 100     continue
-        if(niv >1) then
-            call jenuno(jexnum(nomnoe, nunori), ndorig)
-            call utmess('I', 'ELEMENTS_72', sk=ndorig)
-        end if
+!
+        call jenuno(jexnum(nomnoe, nunori), ndorig)
+        call utmess('I', 'ELEMENTS_72', sk=ndorig)
+!
         AS_DEALLOCATE(vi=noeud_apparies)
     endif
 
