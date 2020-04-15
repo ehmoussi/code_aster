@@ -286,10 +286,16 @@ FLUIDE = Attribute(value=(
 FORMULATION = Attribute(value=(
     'HHO_LINE',
     'HHO_QUAD',
+    'FSI_UPPHI',
+    'FSI_UP',
+    'FSI_UPSI',
 ),
     comment="""
-  FORMULATION =  'HHO_LINE' : formulation linear for HHO (1/2/1)
-  FORMULATION =  'HHO_QUAD' : formulation quadratic for HHO (2/2/2)
+  FORMULATION =  'HHO_LINE'  : formulation linear for HHO (1/2/1)
+  FORMULATION =  'HHO_QUAD'  : formulation quadratic for HHO (2/2/2)
+  FORMULATION =  'FSI_UPPHI' : formulation displacement/pressure/speed potential
+  FORMULATION =  'FSI_UP'    : formulation displacement/pressure
+  FORMULATION =  'FSI_UPSI'  : formulation displacement/disp potential
 """)
 
 FROTTEMENT = Attribute(value=(

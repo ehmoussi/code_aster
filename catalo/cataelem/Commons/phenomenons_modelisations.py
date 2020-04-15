@@ -66,10 +66,11 @@ phen.add('2D_DIS_TR', Modelisation(dim=(-1,2), code='2TR',
         (MT.POI1      , EL.MECA_2D_DIS_TR_N),
     )))
 
-phen.add('2D_FLUIDE', Modelisation(dim=(2,2), code='2FL',
+phen.add('2D_FLUIDE#1', Modelisation(dim=(2,2), code='2FL',
     attrs=(
         (AT.TYPMOD,'PLAN'),
         (AT.FLUIDE,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.TRIA3     , EL.MEFLTR3),
@@ -81,22 +82,24 @@ phen.add('2D_FLUIDE', Modelisation(dim=(2,2), code='2FL',
         (MT.SEG3      , EL.MEFLSE3),
     )))
 
-phen.add('2D_FLUI_ABSO', Modelisation(dim=(1,2), code='2FA',
+phen.add('2D_FLUI_ABSO#1', Modelisation(dim=(1,2), code='2FA',
     attrs=(
         (AT.TYPMOD,'PLAN'),
         (AT.FLUIDE,'OUI'),
         (AT.ABSO,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.SEG2      , EL.MEFASE2),
         (MT.SEG3      , EL.MEFASE3),
     )))
 
-phen.add('2D_FLUI_PESA', Modelisation(dim=(2,2), code='2FP',
+phen.add('2D_FLUI_PESA#1', Modelisation(dim=(2,2), code='2FP',
     attrs=(
         (AT.TYPMOD,'PLAN'),
         (AT.FLUIDE,'OUI'),
         (AT.PESA,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.TRIA3     , EL.MEFP_FACE3),
@@ -106,11 +109,12 @@ phen.add('2D_FLUI_PESA', Modelisation(dim=(2,2), code='2FP',
         (MT.QUAD9     , EL.MEFP_FACE9),
     )))
 
-phen.add('2D_FLUI_STRU', Modelisation(dim=(1,2), code='FS2',
+phen.add('2D_FLUI_STRU#1', Modelisation(dim=(1,2), code='FS2',
     attrs=(
         (AT.TYPMOD,'PLAN'),
         (AT.FLUIDE,'OUI'),
         (AT.FSI,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.SEG2      , EL.MEFSSE2),
@@ -449,10 +453,11 @@ phen.add('3D_FAISCEAU', Modelisation(dim=(3,3), code='3DF',
         (MT.HEXA20    , EL.MECA_POHO_HEXA20),
     )))
 
-phen.add('3D_FLUIDE', Modelisation(dim=(3,3), code='3FL',
+phen.add('3D_FLUIDE#1', Modelisation(dim=(3,3), code='3FL',
     attrs=(
         (AT.TYPMOD,'3D'),
         (AT.FLUIDE,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.HEXA8     , EL.MEFL_HEXA8),
@@ -471,10 +476,11 @@ phen.add('3D_FLUIDE', Modelisation(dim=(3,3), code='3FL',
         (MT.QUAD9     , EL.MEFL_FACE9),
     )))
 
-phen.add('3D_FLUI_ABSO', Modelisation(dim=(2,3), code='3FA',
+phen.add('3D_FLUI_ABSO#1', Modelisation(dim=(2,3), code='3FA',
     attrs=(
         (AT.FLUIDE,'OUI'),
         (AT.ABSO,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.TRIA3     , EL.MEFA_FACE3),
@@ -1477,11 +1483,12 @@ phen.add('AXIS_ELDI', Modelisation(dim=(2,2), code='ADI',
         (MT.SEG2      , EL.MEAXSE2),
     )))
 
-phen.add('AXIS_FLUIDE', Modelisation(dim=(2,2), code='AXF',
+phen.add('AXIS_FLUIDE#1', Modelisation(dim=(2,2), code='AXF',
     attrs=(
         (AT.TYPMOD,'AXIS'),
         (AT.FLUIDE,'OUI'),
         (AT.AXIS,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.TRIA3     , EL.MEAXFLT3),
@@ -1493,12 +1500,13 @@ phen.add('AXIS_FLUIDE', Modelisation(dim=(2,2), code='AXF',
         (MT.SEG3      , EL.MEAXFLS3),
     )))
 
-phen.add('AXIS_FLUI_STRU', Modelisation(dim=(1,2), code='FSA',
+phen.add('AXIS_FLUI_STRU#1', Modelisation(dim=(1,2), code='FSA',
     attrs=(
         (AT.TYPMOD,'AXIS'),
         (AT.FLUIDE,'OUI'),
         (AT.AXIS,'OUI'),
         (AT.FSI,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.SEG2      , EL.MEAXFSS2),
@@ -4174,11 +4182,12 @@ phen.add('D_PLAN_XT', Modelisation(dim=(2,2), code='DX2',
         (MT.SEG3      , EL.MEPLSE2_XT),
     )))
 
-phen.add('FLUI_STRU', Modelisation(dim=(3,3), code='FLS',
+phen.add('FLUI_STRU#1', Modelisation(dim=(3,3), code='FLS',
     attrs=(
         (AT.TYPMOD,'3D'),
         (AT.FLUIDE,'OUI'),
         (AT.FSI,'OUI'),
+        (AT.FORMULATION,'FSI_UPPHI'),
     ),
     elements=(
         (MT.TRIA3     , EL.MEFS_FACE3),
