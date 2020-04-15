@@ -1,0 +1,146 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: nicolas.pignet at edf.fr
+
+# Modelisation A : FEM - 2D
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='OUI',DEBUG=_F(SDVERI='OUI'), IMPR_MACRO='OUI',)
+
+mesh = LIRE_MAILLAGE(UNITE=20)
+
+model = AFFE_MODELE(AFFE=_F(MODELISATION=('D_PLAN', ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+ACIER = DEFI_MATERIAU(ELAS=_F(E=210000000000.0,
+                              NU=0.3))
+
+fieldmat = AFFE_MATERIAU(AFFE=_F(MATER=(ACIER, ),
+                                 TOUT='OUI'),
+                         MAILLAGE=mesh)
+
+CHAM0 = CREA_CHAMP(AFFE=(_F(NOM_CMP=('DX', ),
+                            TOUT='OUI',
+                            VALE=(0.0, )),
+                         _F(NOM_CMP=('DY', ),
+                            TOUT='OUI',
+                            VALE=(0.0, ))),
+                   MAILLAGE=mesh,
+                   OPERATION='AFFE',
+                   TYPE_CHAM='NOEU_DEPL_R')
+
+FISS = DEFI_FOND_FISS(FOND_FISS=_F(GROUP_NO=('FOND_FISS', )),
+                      LEVRE_SUP=_F(GROUP_MA=('LEVRE_SUP', )),
+                      MAILLAGE=mesh,
+                      SYME='OUI')
+
+RES0 = CREA_RESU(AFFE=_F(CHAM_GD=CHAM0,
+                         CHAM_MATER=fieldmat,
+                         INST=(1.0, ),
+                         MODELE=model),
+                 NOM_CHAM='DEPL',
+                 OPERATION='AFFE',
+                 TYPE_RESU='EVOL_ELAS')
+
+G0 = CALC_G(RESULTAT=RES0,
+            CHAM_THETA=CO('cham_theta_no'),
+            THETA=_F(FOND_FISS=FISS,
+                     R_INF=0.0203282,
+                     R_SUP=0.025))
+
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NO_TEST', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=4.2484695E-01,
+        VALE_CALC=0.424857,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NO_TEST', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=0,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NO_ZERO', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NO_ZERO', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=0,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NO_UN', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=1.0,
+        VALE_CALC=1.0,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NO_UN', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=0,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        )
+)
+
+IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=cham_theta_no))
+
+FIN()

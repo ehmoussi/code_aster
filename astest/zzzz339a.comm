@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,19 +23,19 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),PAR_LOT='OUI',DEBUG=_F(SDVERI='OUI'))
 
-MA=LIRE_MAILLAGE(FORMAT='MED');
+MA=LIRE_MAILLAGE(FORMAT='MED')
 
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
-                       MODELISATION='3D',),);
+                       MODELISATION='3D',),)
 
 MAT_TEST=DEFI_MATERIAU(ELAS=_F(E=1,
-                               NU=0,),);
+                               NU=0,),)
 
 CH_MAT=AFFE_MATERIAU(MAILLAGE=MA,
                      AFFE=_F(TOUT='OUI',
-                             MATER=MAT_TEST,),);
+                             MATER=MAT_TEST,),)
 
 f_sig = FORMULE(VALE='X-Y',
                 NOM_PARA=['X', 'Y', 'Z'],)
@@ -43,12 +43,12 @@ f_sig = FORMULE(VALE='X-Y',
 CHXN=CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
                 OPERATION='EXTR',
                 MAILLAGE=MA,
-                NOM_CHAM='GEOMETRIE');
+                NOM_CHAM='GEOMETRIE')
 
 CHXG=CREA_CHAMP(TYPE_CHAM='ELGA_GEOM_R',
                 OPERATION='DISC',
                 MODELE=MO,
-                CHAM_GD=CHXN);
+                CHAM_GD=CHXN)
 
 SIEFINI1=CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
                     OPERATION='AFFE',
@@ -56,12 +56,12 @@ SIEFINI1=CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_F',
                     PROL_ZERO='OUI',
                     AFFE=_F(TOUT='OUI',
                             NOM_CMP=('X1',),
-                            VALE_F=(f_sig,)));
+                            VALE_F=(f_sig,)))
 
 SIEFINI2=CREA_CHAMP(TYPE_CHAM='ELGA_NEUT_R',
                     OPERATION='EVAL',
                     CHAM_F=SIEFINI1,
-                    CHAM_PARA=CHXG);
+                    CHAM_PARA=CHXG)
 
 S_INIT=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                     OPERATION='ASSE',
@@ -70,20 +70,20 @@ S_INIT=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                     ASSE=_F(TOUT='OUI',
                             CHAM_GD=SIEFINI2,
                             NOM_CMP=('X1',),
-                            NOM_CMP_RESU=('SIYY')));
+                            NOM_CMP_RESU=('SIYY')))
 
 LIMIT=AFFE_CHAR_MECA(MODELE=MO,
                      DDL_IMPO=_F(GROUP_MA='LEVR_INF',
                                  DX=0,
                                  DY=0,
-                                 DZ=0,),);
+                                 DZ=0,),)
 
 LIST_R=DEFI_LIST_REEL(DEBUT=0,
                       INTERVALLE=_F(JUSQU_A=1,
-                                    NOMBRE=1,),);
+                                    NOMBRE=1,),)
 
 L_INST=DEFI_LIST_INST(METHODE='MANUEL',
-                      DEFI_LIST=_F(LIST_INST=LIST_R,),);
+                      DEFI_LIST=_F(LIST_INST=LIST_R,),)
 
 RESU=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=CH_MAT,
@@ -92,7 +92,7 @@ RESU=STAT_NON_LINE(MODELE=MO,
                             TYPE_CHARGE='FIXE_CSTE',),
                    COMPORTEMENT=_F(RELATION='ELAS',
                                 TOUT='OUI',),
-                   INCREMENT=_F(LIST_INST=L_INST,),);
+                   INCREMENT=_F(LIST_INST=L_INST,),)
 
 FOND=DEFI_FOND_FISS(MAILLAGE=MA, SYME='NON',
                     FOND_FISS=_F(GROUP_MA='FOND_FISS',),
@@ -103,7 +103,7 @@ RESU=CALC_CHAMP(reuse=RESU,
                     RESULTAT=RESU,
                     DEFORMATION=('EPSI_ELGA','EPSP_ELNO',),
                    VARI_INTERNE=('VARI_ELNO',)
-               );
+               )
 #CALCUL DE G DIRECT
 G_INIT=CALC_G(THETA=_F(FOND_FISS=FOND,
                        R_INF=0.1,
@@ -112,7 +112,8 @@ G_INIT=CALC_G(THETA=_F(FOND_FISS=FOND,
               INST=1,
               LISSAGE=_F(DEGRE=0),
               ETAT_INIT=_F(SIGM=S_INIT,),
-              OPTION='CALC_G',);
+              CHAM_THETA=CO('cham_theta_no'),
+              OPTION='CALC_G',)
 
 #CALCUL DE K PAR POST_K1_K2_K3
 KMECA=POST_K1_K2_K3(FOND_FISS=FOND,
@@ -126,7 +127,8 @@ G_INIT2=CALC_G(THETA=_F(FOND_FISS=FOND,
               INST=1,
               LISSAGE=_F(DEGRE=0),
               ETAT_INIT=_F(SIGM=S_INIT,),
-              OPTION='CALC_K_G',);
+              CHAM_THETA=CO('cham_theta_no'),
+              OPTION='CALC_K_G',)
 
 
 TEST_TABLE(CRITERE='RELATIF',
@@ -144,4 +146,4 @@ IMPR_TABLE(TABLE=KMECA,UNITE=8)
 
 IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=RESU))
 
-FIN(FORMAT_HDF='NON',);
+FIN(FORMAT_HDF='NON',)

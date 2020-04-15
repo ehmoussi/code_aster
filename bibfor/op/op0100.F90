@@ -31,8 +31,9 @@ subroutine op0100()
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
-#include "asterfort/gettco.h"
 #include "asterfort/assert.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/cakg2d.h"
 #include "asterfort/cakg3d.h"
 #include "asterfort/ccbcop.h"
@@ -41,11 +42,14 @@ subroutine op0100()
 #include "asterfort/cglecc.h"
 #include "asterfort/cgleco.h"
 #include "asterfort/cglect.h"
+#include "asterfort/cgtabl.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/gcncon.h"
 #include "asterfort/gcou2d.h"
 #include "asterfort/gcour2.h"
 #include "asterfort/gcour3.h"
+#include "asterfort/gettco.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
@@ -72,18 +76,17 @@ subroutine op0100()
 #include "asterfort/wkvect.h"
 #include "asterfort/xcourb.h"
     integer :: nbord, iord, i, ivec, iret, nbpara
-    integer :: lnoff, jinst, ndeg, nbropt, iadrco, ipuls, iord0
+    integer :: lnoff, jinst, ndeg, nbropt, iadrco, ipuls, iord0, icham
     integer :: iadfis, iadnoe
-    integer :: ndimte, ndim, jopt
-    integer :: nxpara
-    parameter (nxpara = 15)
+    integer :: ndimte, ndim, jopt, nb_objet, nb_cham_theta
+    integer, parameter :: nxpara = 15
 !
     real(kind=8) :: time, dir(3), rinf, rsup, puls
     character(len=6) :: nompro
     parameter  ( nompro = 'OP0100' )
     character(len=8) :: modele, resu, k8bid, calsig, resuc2
     character(len=8) :: nomfis, litypa(nxpara), symech, config
-    character(len=8) :: table, noma, thetai, noeud, typfis, typfon
+    character(len=8) :: table_g, noma, thetai, noeud, typfis, typfon, table_container
     character(len=16) :: option, typsd, linopa(nxpara)
     character(len=16) :: k16bid, typdis
     character(len=19) :: lischa, lisopt, vecord, grlt
@@ -94,6 +97,10 @@ subroutine op0100()
     character(len=24) :: trav1, trav2, trav3, stok4
     character(len=24) :: trav4, courb
     character(len=24) :: norfon
+    character(len=16), pointer :: obje_name(:) => null()
+    character(len=24), pointer :: obje_sdname(:) => null()
+    character(len=24), pointer :: v_chtheta(:) => null()
+
     parameter  ( resuc2 = '&&MECALG' )
 !
     aster_logical :: exitim, connex, milieu
@@ -147,8 +154,11 @@ subroutine op0100()
         call jeveuo(fonoeu, 'L', iadnoe)
     endif
 !
-!     RECUPERATION DU CONCEPT DE SORTIE : TABLE
-    call getres(table, k16bid, k16bid)
+!     RECUPERATION DU CONCEPT DE SORTIE : table_container
+    call getres(table_container, k16bid, k16bid)
+    call gcncon("_", table_g)
+    call gcncon("_", thetai)
+    call gcncon("_", theta)
 !
 !     CREATION DU VECTEUR DES NUME_ORDRE
     vecord = '&&OP0100.VECTORDR'
@@ -194,10 +204,9 @@ subroutine op0100()
 !     CALCUL DU CHAMP THETA (2D)
     if (ndim .eq. 2) then
 !
-        theta = table//'_CHAM_THETA'
 !
         call gver2d(1, noeud,rinf, rsup)
-        call gcou2d('V', theta, noma, nomno, noeud,zr(iadrco),&
+        call gcou2d('G', theta, noma, nomno, noeud,zr(iadrco),&
                          rinf, rsup,  dir)
     endif
 !
@@ -216,7 +225,6 @@ subroutine op0100()
             if (connex) call utmess('F', 'RUPTURE0_90')
         endif
 !
-        thetai = '&&THETA '
         grlt = nomfis//'.GRLTNO'
 !
         call gveri3(chfond, taillr, config, lnoff,&
@@ -241,8 +249,6 @@ subroutine op0100()
                 call utmess('F', 'RUPTURE0_90')
             endif
         endif
-!
-        thetai = '&&THETA '
 !
         call gveri3(chfond, taillr, config, lnoff, liss,&
                     ndeg, trav1, trav2, trav3, option)
@@ -271,9 +277,9 @@ subroutine op0100()
 !     3. CALCUL DE L'OPTION
 !     =======================
 !
-!     CREATION DE LA TABLE
+!     CREATION DE LA table_g
 !
-    call cgcrtb(table, option, ndim, typfis, nxpara,&
+    call cgcrtb(table_g, option, ndim, typfis, nxpara,&
                 lmoda, nbpara, linopa, litypa)
 !
 !!    ARRET POUR CONTROLE DEVELOPPEMENT DANS CGCRTB
@@ -309,7 +315,7 @@ subroutine op0100()
             endif
 !
 !
-            call cakg3d(option, table, modele, depla, thetai,&
+            call cakg3d(option, table_g, modele, depla, thetai,&
                         mate, mateco, compor, lischa, symech, chfond,&
                         lnoff, basloc, courb, iord, ndeg,&
                         liss, ndimte,&
@@ -369,14 +375,14 @@ subroutine op0100()
 !
             if (option(1:6).eq.'CALC_G'.and. ndim.eq. 2) then
 !
-                call mecalg(option, table, modele, depla, theta,&
+                call mecalg(option, table_g, modele, depla, theta,&
                             mate, mateco, lischa, symech, compor, incr,&
                             time, iord, nbpara, linopa, chvite,&
                             chacce, calsig, iadfis, iadnoe)
 !
             else if (option(1:6).eq.'CALC_G'.and. ndim .eq.3) then
 !
-                call mecagl(option, table, modele, depla, thetai,&
+                call mecagl(option, table_g, modele, depla, thetai,&
                             mate, mateco, compor, lischa, symech, chfond,&
                             lnoff, iord, ndeg, liss,&
                             milieu, ndimte, exitim,&
@@ -386,7 +392,7 @@ subroutine op0100()
 !
             else if (option(1:6).eq.'CALC_K'.and. ndim .eq. 2) then
 !
-                call cakg2d(option, table, modele, depla, theta,&
+                call cakg2d(option, table_g, modele, depla, theta,&
                             mate, mateco, lischa, symech, nomfis, noeud,&
                             time, iord, nbpara, linopa,&
                             lmoda, puls, compor)
@@ -412,6 +418,48 @@ subroutine op0100()
         endif
 !
     endif
+!
+! --- Create table_container to store (calc_g and cham_theta)
+!
+    if (ndim .eq. 2) then
+        nb_cham_theta = 1
+    else if (ndim .eq. 3) then
+        nb_cham_theta = ndimte
+    else
+        ASSERT(ASTER_FALSE)
+    end if
+!
+    AS_ALLOCATE(vk16=obje_name, size=nb_cham_theta+2)
+    AS_ALLOCATE(vk24=obje_sdname, size=nb_cham_theta+2)
+!
+    obje_name(1)   = "TABLE_G"
+    obje_sdname(1) = table_g
+    nb_objet       = 1
+!
+    if (ndim .eq. 2) then
+        nb_objet              = nb_objet + 1
+        obje_name(nb_objet)   = "NB_CHAM_THETA"
+        obje_sdname(nb_objet) = " "
+        nb_objet              = nb_objet + 1
+        obje_name(nb_objet)   = "CHAM_THETA"
+        obje_sdname(nb_objet) = theta
+    else if (ndim .eq. 3) then
+        call jeveuo(thetai, 'L', vk24=v_chtheta)
+        nb_objet              = nb_objet + 1
+        obje_name(nb_objet)   = "NB_CHAM_THETA"
+        obje_sdname(nb_objet) = " "
+        do icham = 1, nb_cham_theta
+            nb_objet              = nb_objet + 1
+            obje_name(nb_objet)   = "CHAM_THETA"
+            obje_sdname(nb_objet) = v_chtheta(icham)
+        end do
+    else
+        ASSERT(ASTER_FALSE)
+    end if
+!
+    call cgtabl(table_container, nb_objet, obje_name, obje_sdname, nb_cham_theta)
+    AS_DEALLOCATE(vk16=obje_name)
+    AS_DEALLOCATE(vk24=obje_sdname)
 !
     call titre()
 !
