@@ -53,14 +53,14 @@ subroutine te0143(option, nomte)
 #include "asterfort/poutre_modloc.h"
 #include "asterfort/ptkg00.h"
 #include "asterfort/ptkg20.h"
-#include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utpslg.h"
+#include "asterfort/get_value_mode_local.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: lorien, nno, nc, i, lmat, ncomp, itype
-    integer :: lrcou, ldep, kp, adr, npg, istrxr, jacf, iret
+    integer :: ldep, kp, adr, npg, istrxr, jacf
     real(kind=8) :: a, xiy, xiz, ez, ey, a2, xiy2, xiz2, xl
     real(kind=8) :: xfly, xflz
     real(kind=8) :: pgl(3, 3), mat(105)
@@ -83,6 +83,10 @@ subroutine te0143(option, nomte)
     real(kind=8) :: vale_cara2(nb_cara2)
     character(len=8) :: noms_cara2(nb_cara2)
     data noms_cara2 /'A1','IY1','IZ1','EY1','EZ1','IYR21','IZR21'/
+!
+    integer             :: retp(2), iret
+    real(kind=8)        :: valr(2)
+    character(len=8)    :: valp(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -131,15 +135,15 @@ subroutine te0143(option, nomte)
     call matrot(zr(lorien), pgl)
 !
     if (nomte .eq. 'MECA_POU_D_T') then
-        call tecach('NNN', 'PCAARPO', 'L', iret, iad=lrcou)
-        if ( iret .eq. 0 ) then
-            xfly = zr(lrcou)
-            xflz = zr(lrcou+2)
-            xiy  = xiy/xfly
-            xiz  = xiz/xflz
-            xiy2 = xiy2/xfly
-            xiz2 = xiz2/xflz
-        endif
+        valp(1:2)=['C_FLEX_Y', 'C_FLEX_Z']
+        call get_value_mode_local('PCAARPO', valp, valr, iret, retpara_=retp)
+        xfly = 1.0; xflz = 1.0
+        if ( retp(1).eq.0) xfly = valr(1)
+        if ( retp(2).eq.0) xflz = valr(2)
+        xiy  = xiy/xfly
+        xiz  = xiz/xflz
+        xiy2 = xiy2/xfly
+        xiz2 = xiz2/xflz
     endif
 !
 ! --------------------------------------------------------------------------------------------------

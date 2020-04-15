@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,6 +37,7 @@ subroutine te0247(option, nomte)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/r8miem.h"
 #include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
@@ -55,6 +56,7 @@ subroutine te0247(option, nomte)
 #include "asterfort/utpslg.h"
 #include "asterfort/utpvlg.h"
 #include "asterfort/verifm.h"
+#include "asterfort/get_value_mode_local.h"
 !
     character(len=*) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
@@ -62,12 +64,12 @@ subroutine te0247(option, nomte)
     integer :: igeom, icompo, imate, iorien, nd, nk
     integer :: iinstm, iinstp, icarcr, icontm, ideplm, ideplp, imatuu
     integer :: ivectu, icontp, itype, nno, nc, ivarim, ivarip, itemp, i
-    integer :: jcret, iret, iretm, iretp
+    integer :: jcret, iretm, iretp
     integer :: npg, ndimel, nnoel, nnosel
     integer :: istrxm, istrxp, ldep
     parameter    (nno=2,nc=6,nd=nc*nno,nk=nd*(nd+1)/2)
     real(kind=8) :: e, nu, em, num
-    real(kind=8) :: a, xiy, xiz, alfay, alfaz, xjx, ez, ey
+    real(kind=8) :: a, xiy, xiz, alfay, alfaz, xjx, ez, ey, xfly, xflz
     real(kind=8) :: a2, xiy2, xiz2, alfay2, alfaz2, xjx2, xl
 !
     character(len=24) :: valk(2)
@@ -77,6 +79,10 @@ subroutine te0247(option, nomte)
     real(kind=8) :: epsthe
     real(kind=8) :: sigma(nd), rgeom(nk), gamma, angp(3)
     aster_logical :: reactu, matric, vecteu
+!
+    integer             :: retp(2), iret
+    real(kind=8)        :: valr(2)
+    character(len=8)    :: valp(2)
 ! --------------------------------------------------------------------------------------------------
     integer, parameter :: nb_cara = 17
     real(kind=8) :: vale_cara(nb_cara)
@@ -188,6 +194,16 @@ subroutine te0247(option, nomte)
     if (matric) then
 !       calcul de la matrice de rigidite geometrique
         if (reactu .and. (zk16(icompo).eq.'ELAS')) then
+            ! Avec GROT_GDEP pas possible
+            valp(1:2)=['C_FLEX_Y', 'C_FLEX_Z']
+            call get_value_mode_local('PCAARPO', valp, valr, iret, retpara_=retp)
+            xfly = 1.0; xflz = 1.0
+            if ( retp(1).eq.0) xfly = valr(1)
+            if ( retp(2).eq.0) xflz = valr(2)
+            if ( (abs(xfly-1.0).gt.r8miem()).or. &
+                 (abs(xflz-1.0).gt.r8miem()) ) then
+                call utmess('F', 'ELEMENTS3_64', nr=2, valr=[xfly,xflz])
+            endif
             if (option .eq. 'FULL_MECA') then
                 ldep = icontp
             else

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,11 +47,11 @@ subroutine porigi(nomte, e, xnu, xl, klv)
 #include "asterfort/ptka02.h"
 #include "asterfort/ptka21.h"
 #include "asterfort/lteatt.h"
-#include "asterfort/tecach.h"
+#include "asterfort/get_value_mode_local.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: istruc, itype, lrcou, iret
+    integer :: istruc, itype
     real(kind=8) :: a, a2, alfay, alfay2, alfaz, alfaz2
     real(kind=8) :: ey, ez, g
     real(kind=8) :: xfly, xflz, xiy, xiy2, xiz, xiz2
@@ -66,6 +66,10 @@ subroutine porigi(nomte, e, xnu, xl, klv)
     character(len=8) :: noms_cara(nb_cara)
     data noms_cara /'A1','IY1','IZ1','AY1','AZ1','EY1','EZ1','JX1','JG1',&
                     'A2','IY2','IZ2','AY2','AZ2','EY2','EZ2','JX2','TVAR'/
+!
+    integer             :: retp(2), iret
+    real(kind=8)        :: valr(2)
+    character(len=8)    :: valp(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -107,15 +111,15 @@ subroutine porigi(nomte, e, xnu, xl, klv)
         alfay2 = 0.0d0
         alfaz2 = 0.0d0
     else if (nomte.eq.'MECA_POU_D_T') then
-        call tecach('NNN', 'PCAARPO', 'L', iret, iad=lrcou)
-        if ( iret .eq. 0 ) then
-            xfly = zr(lrcou)
-            xflz = zr(lrcou+2)
-            xiy  = xiy/xfly
-            xiz  = xiz/xflz
-            xiy2 = xiy2/xfly
-            xiz2 = xiz2/xflz
-        endif
+        valp(1:2)=['C_FLEX_Y', 'C_FLEX_Z']
+        call get_value_mode_local('PCAARPO', valp, valr, iret, retpara_=retp)
+        xfly = 1.0; xflz = 1.0
+        if ( retp(1).eq.0) xfly = valr(1)
+        if ( retp(2).eq.0) xflz = valr(2)
+        xiy  = xiy/xfly
+        xiz  = xiz/xflz
+        xiy2 = xiy2/xfly
+        xiz2 = xiz2/xflz
         istruc = 1
     else if (nomte.eq.'MECA_POU_D_TG') then
         itype = 30

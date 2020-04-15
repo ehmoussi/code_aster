@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,8 +34,6 @@ subroutine te0150(option, nomte)
 !       'CHAR_MECA_PESA_R'  : CHARGES DE PESANTEUR
 !       'CHAR_MECA_ROTA_R'  : CHARGES DE ROTATION
 !       'CHAR_MECA_TEMP_R'  : DEFORMATIONS THERMIQUES
-!       'CHAR_MECA_SECH_R'  : DEFORMATIONS DUES AU SECHAGE
-!       'CHAR_MECA_HYDR_R'  : DEFORMATIONS HYDRIQUES
 ! IN  NOMTE  : K16 : NOM DU TYPE ELEMENT
 !       'MECA_POU_D_E'  : POUTRE DROITE D'EULER       (SECTION VARIABLE)
 !       'MECA_POU_D_T'  : POUTRE DROITE DE TIMOSHENKO (SECTION VARIABLE)
@@ -182,12 +180,12 @@ subroutine te0150(option, nomte)
                 zc(lvect+i-1) = dcmplx(fgr(i),fgi(i))
             enddo
         endif
-        else if( option.eq.'CHAR_MECA_FR1D1D' .or.&
-                 option.eq.'CHAR_MECA_FF1D1D' .or.&
-                 option.eq.'CHAR_MECA_SR1D1D' .or.&
-                 option.eq.'CHAR_MECA_SF1D1D' .or.&
-                 option.eq.'CHAR_MECA_ROTA_R' .or.&
-                 option.eq.'CHAR_MECA_PESA_R' ) then
+    else if( option.eq.'CHAR_MECA_FR1D1D' .or.&
+             option.eq.'CHAR_MECA_FF1D1D' .or.&
+             option.eq.'CHAR_MECA_SR1D1D' .or.&
+             option.eq.'CHAR_MECA_SF1D1D' .or.&
+             option.eq.'CHAR_MECA_ROTA_R' .or.&
+             option.eq.'CHAR_MECA_PESA_R' ) then
         if (nomte .eq. 'MECA_POU_D_TG' .or. nomte .eq. 'MECA_POU_D_TGM') then
             call ptforp(0, option, nomte, a, a2, xl, 1, nno, 6, pgl, fer, fei)
         else

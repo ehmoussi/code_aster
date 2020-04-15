@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,13 +31,13 @@ subroutine posigr(nomte, efge, sigm)
     real(kind=8) :: sigm(*), efge(12)
 !
 #include "jeveux.h"
-#include "asterfort/tecach.h"
 #include "asterfort/poutre_modloc.h"
 #include "asterfort/utmess.h"
+#include "asterfort/get_value_mode_local.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: itsec, lrcou, iret
+    integer      :: itsec
     real(kind=8) :: a, a2, hy1, hy2, hz1, hz2,r1, r2
     real(kind=8) :: zero, deux
     real(kind=8) :: smf1, smf2, smfy1, smfy2, smfz1, smfz2, sn1, sn2
@@ -58,12 +58,16 @@ subroutine posigr(nomte, efge, sigm)
     character(len=8) :: noms_cara1(nb_cara1)
     data noms_cara1 /'HY1','HZ1','HY2','HZ2','R1','R2','TSEC'/
 !
+    integer             :: retp(4), iret
+    real(kind=8)        :: valr(4)
+    character(len=8)    :: valp(4)
+!
 ! --------------------------------------------------------------------------------------------------
 !
     zero = 0.d0
     deux = 2.d0
 !
-!   Récuperation des caractéristiques générales des sections
+!   Récupération des caractéristiques générales des sections
     call poutre_modloc('CAGNPO', noms_cara, nb_cara, lvaleur=vale_cara)
 !   Section initiale
     a      = vale_cara(1)
@@ -77,25 +81,25 @@ subroutine posigr(nomte, efge, sigm)
     if (nomte .eq. 'MECA_POU_D_TG') then
         a2=a
     else if (nomte .eq. 'MECA_POU_D_T') then
-        call tecach('ONN', 'PCAARPO', 'L', iret, iad=lrcou)
-        if ( iret .eq. 0 ) then
-            xfly = zr(lrcou)
-            xsiy = zr(lrcou+1)
-            xflz = zr(lrcou+2)
-            xsiz = zr(lrcou+3)
-!           prise en compte de l'indice de flexibilité
-            xiy  = xiy/xfly
-            xiz  = xiz/xflz
-            xiy2 = xiy2/xfly
-            xiz2 = xiz2/xflz
-!           prise en compte de l'indice de contraintes
-            xxy  = xsiy/xfly
-            xxz  = xsiz/xflz
-            xiy  = xiy/xxy
-            xiz  = xiz/xxz
-            xiy2 = xiy2/xxy
-            xiz2 = xiz2/xxz
-        endif
+        valp(1:4)=['C_FLEX_Y', 'C_FLEX_Z', 'I_SIGM_Y', 'I_SIGM_Z']
+        call get_value_mode_local('PCAARPO', valp, valr, iret, retpara_=retp)
+        xfly = 1.0; xflz = 1.0; xsiy = 1.0; xsiz = 1.0
+        if ( retp(1).eq.0) xfly = valr(1)
+        if ( retp(2).eq.0) xflz = valr(2)
+        if ( retp(3).eq.0) xsiy = valr(3)
+        if ( retp(4).eq.0) xsiz = valr(4)
+!       prise en compte de l'indice de flexibilité
+        xiy  = xiy/xfly
+        xiz  = xiz/xflz
+        xiy2 = xiy2/xfly
+        xiz2 = xiz2/xflz
+!       prise en compte de l'indice de contraintes
+        xxy  = xsiy/xfly
+        xxz  = xsiz/xflz
+        xiy  = xiy/xxy
+        xiz  = xiz/xxz
+        xiy2 = xiy2/xxy
+        xiz2 = xiz2/xxz
     endif
 !
 !   caractéristiques des sections cercle et rectangle
