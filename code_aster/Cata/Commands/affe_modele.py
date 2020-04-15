@@ -247,7 +247,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
 
                 b_formu_fsi =BLOC( condition = """equal_to('MODELISATION', ('2D_FLUIDE', '2D_FLUI_ABSO', '2D_FLUI_PESA', '2D_FLUI_STRU','3D_FLUIDE','3D_FLUI_ABSO', 'AXIS_FLUIDE', 'AXIS_FLUI_STRU', 'FLUI_STRU'))""",
                                    fr=tr("FSI formulation"),
-                     FORMULATION    =SIMP(statut='f',typ='TXM',max=1,into=("U_P_PHI",), defaut="U_P_PHI"),),
+                     FORMULATION    =SIMP(statut='f',typ='TXM',max=1,into=("U_P_PHI","U_P"), defaut="U_P_PHI"),),
                 ),
 
 
