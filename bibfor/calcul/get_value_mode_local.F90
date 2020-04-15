@@ -75,7 +75,6 @@ implicit none
     integer :: iposimloc, iposicarte
 !
     real(kind=8)        :: rundf
-    character(len=1)    :: loue
     character(len=8)    :: nompar
     character(len=24)   :: valk(5)
 !
@@ -87,7 +86,6 @@ implicit none
 !
 !   Le code ci-dessous est une copie des 1ères lignes de : "jevech"
     nompar  = nmparz
-    loue    = 'L'
 !   Recherche de la chaîne nompar avec mémoire sur tout 'calcul'
     ca_capoiz_ = ca_capoiz_ + 1
     if (ca_capoiz_ .gt. 512) then
@@ -107,13 +105,10 @@ implicit none
         call utmess('E', 'CALCUL_15', nk=2, valk=valk)
         call contex_param(ca_option_, ' ')
     endif
-!   Les paramètres in  sont en lecture
-!   Les paramètres out sont en écriture
-    if      ((iparg.gt.ca_nparin_).and.(loue.eq.'L')) then
-        write(6,*)'PARAMETRE OUT EN LECTURE : ',nompar
-        ASSERT(.false.)
-    else if ((iparg.le.ca_nparin_).and.(loue.eq.'E')) then
-        write(6,*)'PARAMETRE IN EN ECRITURE : ',nompar
+!   Les paramètres "in"
+!       donc si iparg > nombre de paramètre "in" ==> c'est pas bon
+    if (iparg.gt.ca_nparin_) then
+        write(6,*) nompar,' est un paramètre "out" et pas "in".'
         ASSERT(.false.)
     endif
     iachlo=zi(ca_iawloc_-1+3*(iparg-1)+1)
@@ -124,7 +119,32 @@ implicit none
     lgcata=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+2)
 !   Adresse des valeurs dans le mode local
     debugr=zi(ca_iawlo2_-1+5*(ca_nbgr_*(iparg-1)+ca_igr_-1)+5)
+!
+!   Code issue de "tecach"
+!   le champ n'existe pas (globalement)
+!       cela peut être normal si pas d'affectation
+!       on retourne Nan pour tous les paramètres
+    if (iachlo .eq. -1) then
+        rundf    = r8nnem()
+        lretpara = present(retpara_)
+        iret = 0
+        if ( present(nbpara_) ) then
+            ii1=1; ii2=nbpara_
+        else
+            ii1=lbound(listepara,1); ii2=ubound(listepara,1)
+        endif
+        do ii = ii1, ii2
+            valepara(ii) = rundf
+            if ( lretpara ) retpara_(ii) = 1
+            iret = iret + 1
+        enddo
+        goto 999
+    endif
+    ASSERT(iachlo.ne.-2)
+!
 !   Si un problème dans le catalogue du paramètre
+!       le parametre n'existe pas pour l'élément
+!       C'est une erreur développeur dans les catalogues
     if (lgcata .eq. -1) then
         valk(1) = nompar
         valk(2) = ca_option_
@@ -132,41 +152,6 @@ implicit none
         call utmess('E', 'CALCUL_16', nk=3, valk=valk)
         call contex_param(ca_option_, nompar)
     endif
-!
-    if (iachlo .eq. -1) then
-!       Ajout pour émettre un message plus clair dans
-!       le cas ou il manque un champ lié a un paramètre
-        call jenonu(jexnom('&CATA.OP.NOMOPT', ca_option_), iopt)
-        call jeveuo(jexnum('&CATA.OP.DESCOPT', iopt), 'L', iaopd2)
-        call jeveuo(jexnum('&CATA.OP.LOCALIS', iopt), 'L', iaoplo)
-        call jeveuo(jexnum('&CATA.OP.OPTPARA', iopt), 'L', iapara)
-        npari2 = zi(iaopd2-1+2)
-        oknompar = ASTER_FALSE
-        do ii = 1, npari2
-            if (zk8(iapara+ii-1) .eq. nompar) then
-                oknompar = ASTER_TRUE
-                jj = ii
-                exit
-            endif
-        enddo
-        if ( oknompar ) then
-            valk(1) = ca_option_
-!           on peut trouver d'où vient le problème dans 3 cas
-            if      (zk24(iaoplo+3*jj-3) .eq. 'CARA') then
-                call utmess('E', 'CALCUL_10', sk=valk(1))
-            else if (zk24(iaoplo+3*jj-3) .eq. 'CHMA') then
-                call utmess('E', 'CALCUL_11', sk=valk(1))
-            else if (zk24(iaoplo+3*jj-3) .eq. 'MODL') then
-                call utmess('E', 'CALCUL_12', sk=valk(1))
-            endif
-        endif
-        valk(1) = nompar
-        valk(2) = ca_option_
-        valk(3) = ca_nomte_
-        call utmess('E', 'CALCUL_17', nk=3, valk=valk)
-        call contex_param(ca_option_, nompar)
-    endif
-    ASSERT(iachlo.ne.-2)
 !
 !   Calcul de itab, lonchl, decael
     call chloet(iparg, etendu, jceld)
@@ -261,4 +246,5 @@ implicit none
 !             ASSERT( .false. )
         endif
     enddo
+999 continue
 end subroutine
