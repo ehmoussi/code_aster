@@ -444,7 +444,6 @@ class Sampler(object):
         self.FREQ_FILTRE = method_params.get('FREQ_FILTRE')
         self.INFO = modul_params['INFO']
         self.DT = method_params.get('PAS_INST')
-        self.NB_POIN = int(method_params.get('NB_POIN'))
         self.modulation_type = modul_params['TYPE']
         self.DUREE_PHASE_FORTE = modul_params['DUREE_PHASE_FORTE']
         self.INST_INI = 0.0
@@ -456,6 +455,10 @@ class Sampler(object):
         self.liste_w = None
         self.liste_w2 = None
         self.DW = None
+        if method_params.get('NB_POIN') is None:
+            self.NB_POIN = None
+        else:
+            self.NB_POIN = int(method_params.get('NB_POIN'))
 
     def run(self):
         """ compute sampling"""
