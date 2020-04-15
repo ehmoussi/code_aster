@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,6 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/mtcmbl.h"
-#include "asterfort/sdmpic.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -82,7 +81,7 @@ implicit none
     matrcu = ds_contact%sdunil_solv(1:14)//'.MATR'
 !
 ! - Get numbering object
-! 
+!
     numedu = ds_contact%nume_dof_unil
 !
     call add_ineq_conditions_matrix(matass, matrcu, numedu)

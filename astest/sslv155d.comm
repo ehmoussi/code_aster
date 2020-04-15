@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ a = R * sin(alpha)
 # taille des mailles initiales
 h0 = 1.
 
-# taille cible des mailles apres raffinement 
+# taille cible des mailles apres raffinement
 # on prend des mailles 2 fois plus petites que celles
 # de la modelisation A (car ici mailles lineaires)
 hc = 0.025/2
@@ -57,7 +57,7 @@ h = h0/(2.**nb_raff)
 # rayon du disque de raffinement
 r_raff = 5*h
 
-# couronnes d'integration 
+# couronnes d'integration
 Rsup = 5*h
 Rinf = 2*h
 
@@ -77,9 +77,9 @@ nb_iter = nb_raff+1
 MA    = [None]*(nb_iter+1)
 MO    = [None]*nb_iter
 CHERR = [None]*nb_iter
-FISS  = [None]*nb_iter 
+FISS  = [None]*nb_iter
 
-i_raff=0   
+i_raff=0
 
 MA[i_raff]=LIRE_MAILLAGE(FORMAT='MED')
 
@@ -95,22 +95,22 @@ for i_raff in range(nb_iter) :
                                DEFI_FISS=_F(FONC_LT=LT,
                                             FONC_LN=LN,),
                                )
-      
-   # evaluation de l'erreur       
+
+   # evaluation de l'erreur
    CHERR[i_raff]=RAFF_XFEM(FISSURE=FISS[i_raff],
                            TYPE='ZONE',
                            RAYON=r_raff)
-   
+
    # definition du type du maillage n+1
    MA[i_raff+1]=CO('MA_%d' % (i_raff+1))
-      
+
    MACR_ADAP_MAIL(ADAPTATION         = 'RAFFINEMENT',
                   CHAM_GD            = CHERR[i_raff],
                   CRIT_RAFF_ABS      = 0.5,
                   DIAM_MIN           = hc,
                   MAILLAGE_N         = MA[i_raff],
                   MAILLAGE_NP1       = MA[i_raff+1])
-                     
+
 assert(nb_iter == i_raff+1)
 
 # impression du dernier maillage
@@ -165,6 +165,7 @@ RE_VISU=POST_CHAM_XFEM(MODELE_VISU=MO_VISU,
 CGX=CALC_G(THETA=_F(FISSURE=FISSX,
                     R_INF=Rinf,
                     R_SUP=Rsup,),
+          CHAM_THETA=CO('cham_theta_no'),
           RESULTAT=RESU,
           OPTION='CALC_K_G')
 
@@ -193,7 +194,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=3.1534098547374451E5,
            NOM_PARA='K2',
            TABLE=CGX,)
-           
+
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.05,
            VALE_CALC=1125933.5253538364,
@@ -206,6 +207,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=325175.53717721294,
            VALE_REFE=3.1534098547374451E5,
            NOM_PARA='K2',
-           TABLE=PK,)           
+           TABLE=PK,)
 
 FIN()

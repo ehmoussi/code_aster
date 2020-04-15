@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -266,6 +266,7 @@ UTOT=MECA_STATIQUE(MODELE=MODELK,
 
 CH_G=CALC_G(RESULTAT=UTOT,
             OPTION='CALC_K_G',
+            CHAM_THETA=CO('cham_theta_no1'),
             THETA=_F(FISSURE=FISS,
                      R_INF=0.1*A,
                      R_SUP=0.3*A,),
@@ -273,6 +274,7 @@ CH_G=CALC_G(RESULTAT=UTOT,
 
 CH_G2=CALC_G(RESULTAT=UTOT,
             OPTION='CALC_K_G',
+            CHAM_THETA=CO('cham_theta_no2'),
             THETA=_F(FISSURE=FISS,),
             INFO=2);
 
@@ -399,7 +401,7 @@ tabL2=POST_ERREUR(OPTION='DEPL_RELA',
 
 IMPR_TABLE(TABLE=tabL2)
 
-# 
+#
 
 TEST_TABLE(CRITERE='RELATIF',
            REFERENCE='ANALYTIQUE',

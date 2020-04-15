@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -154,6 +154,7 @@ FF1=DEFI_FOND_FISS(MAILLAGE=M, SYME='NON',
 
 GLMO1=CALC_G(OPTION='CALC_K_G',
              RESULTAT=MODE,
+             CHAM_THETA=CO('cham_theta_no1'),
              TOUT_MODE = 'OUI',
              THETA=_F(FOND_FISS=FF1,
                       R_INF=5.E-6,
@@ -313,6 +314,7 @@ GLMO3=CALC_G(OPTION='CALC_K_G',
              RESULTAT=MODE,
              FREQ = 3.46915E+03,
              PRECISION=1.E-3,
+             CHAM_THETA=CO('cham_theta_no3'),
              THETA=_F(FOND_FISS=FF1,
                       R_INF=5.E-6,
                       R_SUP=5.E-5,

@@ -59,7 +59,6 @@ implicit none
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
-#include "asterfort/sdmpic.h"
 #include "asterfort/utmess.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
