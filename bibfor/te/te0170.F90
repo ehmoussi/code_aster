@@ -46,13 +46,14 @@ character(len=16), intent(in) :: option, nomte
     integer :: i, j, k, l
     integer :: n1, n2
     integer :: nn, nno2, nt2
-    integer :: ipg, ik, ijkl
+    integer :: ipg, ij, ik, ijkl
     integer :: jv_compo, jv_deplm, jv_deplp
     integer :: jv_geom, jv_mate
     integer :: jv_vect, jv_codret, jv_matr
     character(len=16) :: rela_comp
-    real(kind=8) :: a(2, 2, 27, 27)
+    real(kind=8) :: a(2, 2, 27, 27), mmat(27, 27)
     real(kind=8) :: b(54, 54), ul(54), c(1485)
+    real(kind=8) :: dfdx(27), dfdy(27), dfdz(27)
     real(kind=8) :: poids, rho, celer
     integer :: ipoids, ivf, idfde
     integer :: nno, npg
@@ -62,6 +63,7 @@ character(len=16), intent(in) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
 !
     a    = 0.d0
+    mmat = 0.d0
 !
 ! - Check behaviour
 !
@@ -100,7 +102,7 @@ character(len=16), intent(in) :: option, nomte
     do ipg = 1, npg
         k = (ipg-1)*nno
         call dfdm3d(nno  , ipg , ipoids, idfde, zr(jv_geom),&
-                    poids)
+                    poids, dfdx, dfdy  , dfdz)
         if (fsi_form .eq. 'FSI_UPPHI') then
             do i = 1, nno
                 do j = 1, i
@@ -109,6 +111,17 @@ character(len=16), intent(in) :: option, nomte
                     else
                         a(1,1,i,j) = a(1,1,i,j) +&
                                      poids*zr(ivf+k+i-1)*zr(ivf+k+j-1)/rho/celer/celer
+                    endif
+                end do
+            end do
+        elseif (fsi_form .eq. 'FSI_UP') then
+            do j = 1, nno
+                do i = 1, j
+                    if (celer .eq. 0.d0 .or. rho .eq. 0.d0) then
+                        mmat(i,j) = 0.d0
+                    else
+                        mmat(i,j) = mmat(i,j) +&
+                                    poids*(dfdx(i)*dfdx(j)+dfdy(i)*dfdy(j)+dfdz(i)*dfdz(j))
                     endif
                 end do
             end do
@@ -141,6 +154,13 @@ character(len=16), intent(in) :: option, nomte
             do i = 1, nt2
                 zc(jv_matr+i-1) = dcmplx(c(i),0.d0)
             end do
+        elseif (fsi_form .eq. 'FSI_UP') then
+            do j = 1, nno
+                do i = 1, j
+                    ij = (j-1)*j/2 + i 
+                    zc(jv_matr+ij-1) = dcmplx(mmat(i,j),0.d0) 
+                end do
+            end do
         else
             call utmess('F', 'FLUID1_2', sk = fsi_form)
         endif
@@ -158,6 +178,13 @@ character(len=16), intent(in) :: option, nomte
         if (fsi_form .eq. 'FSI_UPPHI') then
             do i = 1, nt2
                 zr(jv_matr+i-1) = c(i)
+            end do
+        elseif (fsi_form .eq. 'FSI_UP') then
+            do j = 1, nno
+               do i = 1, j
+                  ij = (j-1)*j/2 + i 
+                  zr(jv_matr+ij-1) = mmat(i,j) 
+               end do
             end do
         else
             call utmess('F', 'FLUID1_2', sk = fsi_form)
