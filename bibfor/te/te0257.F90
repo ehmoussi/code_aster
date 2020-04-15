@@ -43,14 +43,14 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: a(3, 3, 3, 3)
+    real(kind=8) :: a(3, 3, 3, 3), mmat(9, 9)
     real(kind=8) :: nx, ny, norm(2)
     real(kind=8) :: poids, rho
     integer :: jv_geom, jv_mate, jv_matr
     integer :: ipoids, ivf, idfde
     integer :: nno, npg, ndim
-    integer :: ik, ijkl
-    integer :: ino1, ino2, k, l, ipg, idim
+    integer :: ij, ik, ijkl
+    integer :: ino1, ino2, k, l, ipg, ind1, ind2, idim
     integer :: ldec
     integer :: j_mater, iret
     character(len=16) :: fsi_form
@@ -60,6 +60,7 @@ character(len=16), intent(in) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
 !
     a    = 0.d0
+    mmat = 0.d0
 !
 ! - Input fields
 !
@@ -105,6 +106,18 @@ character(len=16), intent(in) :: option, nomte
                     end do
                 end do
             end do
+        elseif (fsi_form .eq. 'FSI_UP') then
+            do ino1 = 1, nno
+               do ino2 = 1, nno
+                   do idim = 1, 2
+                        ind1 = 3*(ino1-1)+idim
+                        ind2 = 3*(ino2-1)+3
+                        mmat(ind2,ind1) = mmat(ind2,ind1) +&
+                                          poids * norm(idim)* rho *&
+                                          zr(ivf+ldec+ino1-1) * zr(ivf+ldec+ino2-1)
+                   end do
+               end do
+            end do
         else
             call utmess('F', 'FLUID1_2', sk = fsi_form)
         endif
@@ -130,6 +143,14 @@ character(len=16), intent(in) :: option, nomte
                         zr(jv_matr+ijkl-1) = a(k,l,ino1,ino2)
                     end do
                 end do
+            end do
+        end do
+    elseif (fsi_form .eq. 'FSI_UP') then
+        call jevech('PMATUNS', 'E', jv_matr)
+        do ino2 = 1, 3*nno
+            do ino1 = 1, 3*nno
+                ij = ino2+3*nno*(ino1-1)
+                zr(jv_matr+ij-1) = mmat(ino1,ino2)
             end do
         end do
     else

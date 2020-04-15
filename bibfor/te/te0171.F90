@@ -43,13 +43,13 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: a(2, 2, 27, 27)
+    real(kind=8) :: a(2, 2, 27, 27), mmat(27, 27)
     real(kind=8) :: dfdx(27), dfdy(27), dfdz(27)
     real(kind=8) :: poids, rho, celer
     integer :: jv_geom, jv_mate, jv_matr
     integer :: ipoids, ivf, idfde
     integer :: nno, npg
-    integer :: ik, ijkl
+    integer :: ij, ik, ijkl
     integer :: ipg, ino1, ino2, k, l
     integer :: ldec
     integer :: j_mater, iret
@@ -58,6 +58,7 @@ character(len=16), intent(in) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
 !
     a    = 0.d0
+    mmat = 0.d0
 !
 ! - Input fields
 !
@@ -101,6 +102,17 @@ character(len=16), intent(in) :: option, nomte
                     endif
                 end do
             end do
+        elseif (fsi_form .eq. 'FSI_UP') then
+            do ino2 = 1, nno
+                do ino1 = 1, ino2
+                    if (celer .eq. 0.d0) then
+                        mmat(ino1,ino2) = 0.d0
+                    else
+                        mmat(ino1,ino2) = mmat(ino1,ino2) + &
+                                          poids*zr(ivf+ldec+ino1-1)*zr(ivf+ldec+ino2-1)/celer/celer
+                    endif
+                end do
+            end do
         else
             call utmess('F', 'FLUID1_2', sk = fsi_form)
         endif
@@ -124,6 +136,13 @@ character(len=16), intent(in) :: option, nomte
                         zr(jv_matr+ijkl-1) = a(k,l,ino1,ino2)
                     end do
                 end do
+            end do
+        end do
+    elseif (fsi_form .eq. 'FSI_UP') then
+        do ino2 = 1, nno
+            do ino1 = 1, ino2
+                ij = (ino2-1)*ino2/2 + ino1
+                zr(jv_matr+ij-1) = mmat(ino1,ino2)
             end do
         end do
     else
