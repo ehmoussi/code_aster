@@ -1,0 +1,1273 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: francesco.bettonte at edf.fr
+
+# --------------------------------------------------------------------
+# MODELISATION POU_D_SQUE AVEC PMFS ET ASSEMBLAGE_FIBRE
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      PAR_LOT='NON')
+
+nbpmf = 10
+
+#Positions of the beams in the mesh in the Y-Z plane
+pos_pout = [
+  [0.0, 0.0],
+  [0.0, -2.0],
+  [0.0, 3.0],
+  [4.0, 0.0],
+  [-1.0, 0.0],
+  [-3.0, -1.0],
+  [-2.0, -3.0],
+  [5.0, -3.0],
+  [-3.0, 3.0],
+  [1.0, -3.0],
+]
+
+MA = LIRE_MAILLAGE(UNITE=20,
+                   FORMAT='ASTER',
+                   INFO=1)
+
+MA = DEFI_GROUP(reuse=MA,
+                MAILLAGE=MA,
+                CREA_GROUP_MA=_F(
+                  NOM='P',
+                  UNION=('P1', 'P2', 'P3', 'P4', 'P5',
+                         'P6', 'P7', 'P8', 'P9', 'P10',)
+                ),
+                CREA_GROUP_NO=(
+                  _F(
+                    NOM='PN',
+                    UNION=('P1N', 'P2N', 'P3N', 'P4N',
+                           'P5N', 'P6N', 'P7N', 'P8N', 'P9N', 'P10N',)
+                  ),
+                )
+                )
+
+MA2 = LIRE_MAILLAGE(UNITE=21,
+                    FORMAT='ASTER',
+                    INFO=1,)
+
+FONCGR = FORMULE(VALE='(1.e-32)*(IRRA*1.0E24)**1.2',
+                 NOM_PARA=('IRRA', 'TEMP'),)
+
+PASI = DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=_F(PAS=1.0,
+                                    JUSQU_A=100.0,),
+                      INFO=1,)
+
+PAST = DEFI_LIST_REEL(DEBUT=0.0,
+                      INTERVALLE=(_F(PAS=20.0,
+                                     JUSQU_A=280.0,),
+                                  _F(PAS=1.0,
+                                     JUSQU_A=370.0,),
+                                  ),
+                      INFO=1,)
+
+INTERGR = CALC_FONC_INTERP(LIST_PARA=PASI,
+                           PROL_DROITE='LINEAIRE',
+                           NOM_PARA='IRRA',
+                           PROL_GAUCHE='EXCLU',
+                           NOM_RESU='_N_GRAN',
+                           FONCTION=FONCGR,
+                           NOM_PARA_FONC='TEMP',
+                           PROL_DROITE_FONC='LINEAIRE',
+                           PROL_GAUCHE_FONC='EXCLU',
+                           LIST_PARA_FONC=PAST,
+                           INFO=1,)
+
+ACIER = DEFI_MATERIAU(GRAN_IRRA_LOG=_F(A=1.e-11,
+                                       B=10e-10,
+                                       C=0.,
+                                       CSTE_TPS=100.,
+                                       ENER_ACT=10000.0,
+                                       GRAN_FO=INTERGR,),
+                      ELAS=_F(E=2e+11,
+                              NU=0.3,
+                              ALPHA=1.e-7,
+                              RHO=7850.0,),)
+
+GF = DEFI_GEOM_FIBRE(FIBRE=[_F(GROUP_FIBRE='FP%d'%(i+1),
+                               CARA='DIAMETRE',
+                               VALE=(0.1, 0.0, 0.02, 0.0, 0.1,
+                                     0.02, -0.1, 0.0, 0.02, 0.0, -0.1, 0.02,),
+                               COOR_AXE_POUTRE=(0.0, 0.0,))
+                            for i in range(nbpmf)])
+
+COMPF = DEFI_COMPOR(GEOM_FIBRE=GF,
+                    MATER_SECT=ACIER,
+                    MULTIFIBRE=[_F(GROUP_FIBRE='FP%d'%(i+1),
+                                   MATER=ACIER,
+                                   RELATION='GRAN_IRRA_LOG')
+                                for i in range(nbpmf)])
+
+GF2 = DEFI_GEOM_FIBRE(FIBRE=(_F(GROUP_FIBRE='FPM1',
+                                CARA='DIAMETRE',
+                                VALE=(0.1, 0.0, 0.02, 0.0, 0.1,
+                                      0.02, -0.1, 0.0, 0.02, 0.0, -0.1, 0.02,),
+                                COOR_AXE_POUTRE=(0.0, 0.0,),),
+                             ),
+                      ASSEMBLAGE_FIBRE=_F(GROUP_ASSE_FIBRE='ASSE',
+                                          GROUP_FIBRE=['FPM1']*nbpmf,
+                                          COOR_GROUP_FIBRE=[i for coords in pos_pout for i in coords],
+                                          GX_GROUP_FIBRE=[76923076923.076920]*nbpmf))
+
+COMPF2 = DEFI_COMPOR(GEOM_FIBRE=GF2,
+                     MATER_SECT=ACIER,
+                     MULTIFIBRE=(_F(GROUP_FIBRE='ASSE',
+                                 MATER=ACIER,
+                                 RELATION='GRAN_IRRA_LOG',),
+                                 ),)
+
+MODELE = AFFE_MODELE(MAILLAGE=MA,
+                     AFFE=(
+                     _F(GROUP_MA=('P',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='POU_D_EM',),
+                     _F(GROUP_MA=('PN3D_T',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='DIS_T',),
+                     _F(GROUP_MA=('PN3D_TR',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='DIS_TR',),
+                     _F(GROUP_MA=('SPIRE',),
+                        PHENOMENE='MECANIQUE',
+                        MODELISATION='DIS_TR',),
+                     ),
+                     )
+
+MODELE2 = AFFE_MODELE(MAILLAGE=MA2,
+                      AFFE=(_F(GROUP_MA=('P1',),
+                               PHENOMENE='MECANIQUE',
+                               MODELISATION='POU_D_SQUE',),
+                            _F(GROUP_MA=('PN_TR',),
+                               PHENOMENE='MECANIQUE',
+                               MODELISATION='DIS_TR',),)
+                      )
+
+CAREL = AFFE_CARA_ELEM(MODELE=MODELE,
+                       INFO=2,
+                       DISCRET=(
+                       _F(
+                         GROUP_MA='PN3D_T',
+                         CARA='K_T_D_N',
+                         VALE=(0, 0, 0),
+                       ),
+                       _F(
+                         GROUP_MA='PN3D_T',
+                         CARA='M_T_D_N',
+                         VALE=(0,),
+                       ),
+                       _F(
+                         GROUP_MA='PN3D_TR',
+                         CARA='K_TR_D_N',
+                         VALE=(0, 0, 0, 0, 0, 0),
+                       ),
+                       _F(
+                         GROUP_MA='PN3D_TR',
+                         CARA='M_TR_D_N',
+                         VALE=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                       ),
+                       _F(
+                         GROUP_MA='SPIRE',
+                         CARA='K_TR_D_L',
+                         VALE=(0, 0, 0, 1e6, 1e6, 1e6),
+                       ),
+                       _F(
+                         GROUP_MA='SPIRE',
+                         CARA='M_TR_D_L',
+                         VALE=(0, 0, 0, 0),
+                       ),
+                       ),
+                       POUTRE=[_F(GROUP_MA='P%d'%(i+1),
+                                  SECTION='GENERALE',
+                                  CARA=('A', 'IY', 'IZ', 'JX',),
+                                  VALE=(0.00125664, 6.28319e-06, 6.28319E-06, 1.0,))
+                               for i in range(nbpmf)],
+
+                       GEOM_FIBRE=GF,
+                       MULTIFIBRE=[_F(GROUP_MA='P%d'%(i+1),
+                                      GROUP_FIBRE='FP%d'%(i+1),
+                                      PREC_AIRE=0.01,
+                                      PREC_INERTIE=0.01,)
+                                   for i in range(nbpmf)])
+
+
+CAREL2 = AFFE_CARA_ELEM(MODELE=MODELE2,
+                        INFO=2,
+                        DISCRET=(
+                        _F(
+                          GROUP_MA='PN_TR',
+                          CARA='K_TR_D_N',
+                          VALE=(0, 0, 0, 1e6, 1e6, 1e6),
+                        ),
+                        _F(
+                          GROUP_MA='PN_TR',
+                          CARA='M_TR_D_N',
+                          VALE=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                        ),
+                        ),
+
+                        POUTRE=(_F(GROUP_MA='P1',
+                                SECTION='GENERALE',
+                                CARA=('A', 'IY', 'IZ', 'JX',),
+                                VALE=(
+                                    10.0*0.00125664, 1.0e-06, 1.0e-06, 1.0,),),
+                                ),
+                        GEOM_FIBRE=GF2,
+                        MULTIFIBRE=(_F(GROUP_MA='P1',
+                                       GROUP_FIBRE='ASSE',
+                                       PREC_AIRE=0.01,
+                                       PREC_INERTIE=0.01,),
+                                    ),)
+
+
+# CONDITIONS AUX LIMITES
+ENCAST = AFFE_CHAR_MECA(MODELE=MODELE,
+                        DDL_IMPO=(_F(GROUP_NO='Nfixes',
+                                     DX=0.0,
+                                     DY=0.0,
+                                     DZ=0.0,
+                                     DRX=0.0,
+                                     DRY=0.0,
+                                     DRZ=0.0,),
+                                  ),
+                        LIAISON_SOLIDE=_F(
+                        GROUP_NO='PN3D',
+                        ),
+                        LIAISON_UNIF=_F(
+                        GROUP_NO='PN',
+                        DDL=('DRX', 'DRY', 'DRZ'),
+                        ),
+                        LIAISON_GROUP=(
+                        _F(
+                          GROUP_NO_1='PN',
+                          GROUP_NO_2='PN3D',
+                          DDL_1='DX',
+                          DDL_2='DX',
+                          COEF_MULT_1=1,
+                          COEF_MULT_2=-1,
+                          COEF_IMPO=0,
+                        ),
+                        _F(
+                          GROUP_NO_1='PN',
+                          GROUP_NO_2='PN3D',
+                          DDL_1='DY',
+                          DDL_2='DY',
+                          COEF_MULT_1=1,
+                          COEF_MULT_2=-1,
+                          COEF_IMPO=0,
+                        ),
+                        _F(
+                          GROUP_NO_1='PN',
+                          GROUP_NO_2='PN3D',
+                          DDL_1='DZ',
+                          DDL_2='DZ',
+                          COEF_MULT_1=1,
+                          COEF_MULT_2=-1,
+                          COEF_IMPO=0,
+                        ),
+                        ),
+
+                        )
+
+ENCAST2 = AFFE_CHAR_MECA(MODELE=MODELE2,
+                         DDL_IMPO=(_F(GROUP_NO='Nfixes',
+                                      DX=0.0,
+                                      DY=0.0,
+                                      DZ=0.0,
+                                      DRX=0.0,
+                                      DRY=0.0,
+                                      DRZ=0.0,
+                                      DRGX=0.0,
+                                      DRGY=0.0,
+                                      DRGZ=0.0,
+                                      ),
+                                   _F(GROUP_NO='PN_TR',
+                                      DX=0.0,
+                                      DY=0.0,
+                                      DZ=0.0,
+                                      ),
+                                   ),
+                         LIAISON_DDL=(
+                         _F(
+                           GROUP_NO=('PN_TR', 'P1N', 'P1N'),
+                           DDL=('DRX', 'DRX', 'DRGX'),
+                           COEF_MULT=(1., -1., +1.),
+                           COEF_IMPO=0.,
+                         ),
+                         _F(
+                           GROUP_NO=('PN_TR', 'P1N', 'P1N'),
+                           DDL=('DRY', 'DRY', 'DRGY'),
+                           COEF_MULT=(1., -1., +1.),
+                           COEF_IMPO=0.,
+                         ),
+                         _F(
+                           GROUP_NO=('PN_TR', 'P1N', 'P1N'),
+                           DDL=('DRZ', 'DRZ', 'DRGZ'),
+                           COEF_MULT=(1., -1., +1.),
+                           COEF_IMPO=0.,
+                         ),
+                         ),
+                         )
+
+
+# chargement fonction du temps
+# on met les charges les unes apres les autres
+# 1. pesanteur
+# 2. temp (20->300)
+# 3. irra (0.->33)
+# 4. fx reel (0->1)
+# 5. fy reel (0->1)
+# 6. fz reel (0->1)
+# 7. fx fonction (1->-1)
+# 8. fy fonction (1->-1)
+# 9. fz fonction (1->-1)
+#
+fmult = 1e6
+
+FONCFX = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                       VALE=(0., -fmult, 1., -fmult),
+                       NOM_PARA='X',
+                       PROL_GAUCHE='CONSTANT',
+                       INFO=1,
+                       INTERPOL=('LIN', ),
+                       NOM_RESU='TOUTRESU',
+                       VERIF='CROISSANT',)
+
+FONCFY = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                       VALE=(0., -fmult, 1., -fmult),
+                       NOM_PARA='X',
+                       PROL_GAUCHE='CONSTANT',
+                       INFO=1,
+                       INTERPOL=('LIN', ),
+                       NOM_RESU='TOUTRESU',
+                       VERIF='CROISSANT',)
+
+FONCFZ = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                       VALE=(0., -fmult, 1., -fmult),
+                       NOM_PARA='X',
+                       PROL_GAUCHE='CONSTANT',
+                       INFO=1,
+                       INTERPOL=('LIN', ),
+                       NOM_RESU='TOUTRESU',
+                       VERIF='CROISSANT',)
+
+FPOUTRX = AFFE_CHAR_MECA(MODELE=MODELE,
+                         FORCE_POUTRE=(
+                             _F(GROUP_MA=('P'),
+                                FX=fmult
+                             )
+                         )
+)
+
+FPOUTFX = AFFE_CHAR_MECA_F(MODELE=MODELE,
+                           FORCE_POUTRE=(
+                               _F(GROUP_MA=('P'),
+                                  FX=FONCFX
+                               )
+                           )
+)
+
+FPOUTRY = AFFE_CHAR_MECA(MODELE=MODELE,
+                         FORCE_POUTRE=(
+                             _F(GROUP_MA=('P'),
+                                FY=fmult
+                             )
+                         )
+)
+
+FPOUTFY = AFFE_CHAR_MECA_F(MODELE=MODELE,
+                           FORCE_POUTRE=(
+                               _F(GROUP_MA=('P'),
+                                  FY=FONCFY
+                               )
+                           )
+)
+
+FPOUTRZ = AFFE_CHAR_MECA(MODELE=MODELE,
+                         FORCE_POUTRE=(
+                             _F(GROUP_MA=('P'),
+                                FZ=fmult
+                             )
+                         )
+)
+
+FPOUTFZ = AFFE_CHAR_MECA_F(MODELE=MODELE,
+                           FORCE_POUTRE=(
+                               _F(GROUP_MA=('P'),
+                                  FZ=FONCFZ
+                               )
+                           )
+)
+
+PESANT = AFFE_CHAR_MECA(MODELE=MODELE,
+                        PESANTEUR=_F(GRAVITE=9.81,
+                                     DIRECTION=(-1.0, 0.0, 0.0),),
+                        INFO=1,
+                        VERI_NORM='OUI',)
+
+TEMPGD0 = CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R',
+    OPERATION='AFFE',
+    MAILLAGE=MA,
+    AFFE=_F(NOM_CMP=('TEMP', ),
+            TOUT='OUI',
+            VALE=20.
+    ),
+)
+
+TEMPGD1 = CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R',
+    OPERATION='AFFE',
+    MAILLAGE=MA,
+    AFFE=_F(NOM_CMP=('TEMP', ),
+            TOUT='OUI',
+            VALE=300.
+    ),
+)
+
+TEMPVC = CREA_RESU(
+    TYPE_RESU='EVOL_VARC',
+    OPERATION='AFFE',
+    NOM_CHAM='TEMP',
+    AFFE=(
+        _F(CHAM_GD=TEMPGD0,
+           INST=0.
+        ),
+        _F(CHAM_GD=TEMPGD0,
+           INST=1.
+        ),
+        _F(CHAM_GD=TEMPGD1,
+           INST=2.
+        ),
+        _F(CHAM_GD=TEMPGD1,
+           INST=10.
+        )
+    )
+)
+
+IRRAGD0 = CREA_CHAMP(
+    TYPE_CHAM='NOEU_IRRA_R',
+    OPERATION='AFFE',
+    MAILLAGE=MA,
+    AFFE=_F(NOM_CMP=('IRRA', ),
+            TOUT='OUI',
+            VALE=20.
+    ),
+)
+
+IRRAGD1 = CREA_CHAMP(
+    TYPE_CHAM='NOEU_IRRA_R',
+    OPERATION='AFFE',
+    MAILLAGE=MA,
+    AFFE=_F(NOM_CMP=('IRRA', ),
+            TOUT='OUI',
+            VALE=33.
+    ),
+)
+
+IRRAVC = CREA_RESU(
+    TYPE_RESU='EVOL_VARC',
+    OPERATION='AFFE',
+    NOM_CHAM='IRRA',
+    AFFE=(
+        _F(CHAM_GD=IRRAGD0,
+           INST=0.
+        ),
+        _F(CHAM_GD=IRRAGD0,
+           INST=2.
+        ),
+        _F(CHAM_GD=IRRAGD1,
+           INST=3.
+        ),
+        _F(CHAM_GD=IRRAGD1,
+           INST=10.
+        )
+    )
+)
+
+fmult2 = 1e7
+
+FONCFX2 = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                        VALE=(0., -fmult2, 1., -fmult2),
+                        NOM_PARA='X',
+                        PROL_GAUCHE='CONSTANT',
+                        INFO=1,
+                        INTERPOL=('LIN', ),
+                        NOM_RESU='TOUTRESU',
+                        VERIF='CROISSANT',)
+
+FONCFY2 = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                        VALE=(0., -fmult2, 1., -fmult2),
+                        NOM_PARA='X',
+                        PROL_GAUCHE='CONSTANT',
+                        INFO=1,
+                        INTERPOL=('LIN', ),
+                        NOM_RESU='TOUTRESU',
+                        VERIF='CROISSANT',)
+
+FONCFZ2 = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                        VALE=(0., -fmult2, 1., -fmult2),
+                        NOM_PARA='X',
+                        PROL_GAUCHE='CONSTANT',
+                        INFO=1,
+                        INTERPOL=('LIN', ),
+                        NOM_RESU='TOUTRESU',
+                        VERIF='CROISSANT',)
+
+FPOUTRX2 = AFFE_CHAR_MECA(MODELE=MODELE2,
+                          FORCE_POUTRE=(
+                              _F(GROUP_MA=('P1'),
+                                 FX=fmult2,
+                                 MGY=-6*fmult2/10.,
+                                 MGZ=-1*fmult2/10.,
+                              )
+                          )
+)
+
+FONCMGY2 = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                         VALE=(0., 6*fmult2/10., 1., 6*fmult2/10.),
+                         NOM_PARA='X',
+                         PROL_GAUCHE='CONSTANT',
+                         INFO=1,
+                         INTERPOL=('LIN', ),
+                         NOM_RESU='TOUTRESU',
+                         VERIF='CROISSANT',)
+
+FONCMGZ2 = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                         VALE=(0., fmult2/10., 1., fmult2/10.),
+                         NOM_PARA='X',
+                         PROL_GAUCHE='CONSTANT',
+                         INFO=1,
+                         INTERPOL=('LIN', ),
+                         NOM_RESU='TOUTRESU',
+                         VERIF='CROISSANT',)
+
+
+FPOUTFX2 = AFFE_CHAR_MECA_F(MODELE=MODELE2,
+                            FORCE_POUTRE=(
+                                _F(GROUP_MA=('P1'),
+                                   FX=FONCFX2,
+                                   MGY=FONCMGY2,
+                                   MGZ=FONCMGZ2,
+                                )
+                            )
+)
+
+FPOUTRY2 = AFFE_CHAR_MECA(MODELE=MODELE2,
+                          FORCE_POUTRE=(
+                              _F(GROUP_MA=('P1'),
+                                 FY=fmult2,
+                                 MGX=6.*fmult2/10.,
+                              )
+                          )
+)
+
+FONCMGX2 = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                         VALE=(0., -6*fmult2/10., 1., -6*fmult2/10.),
+                         NOM_PARA='X',
+                         PROL_GAUCHE='CONSTANT',
+                         INFO=1,
+                         INTERPOL=('LIN', ),
+                         NOM_RESU='TOUTRESU',
+                         VERIF='CROISSANT',)
+
+FPOUTFY2 = AFFE_CHAR_MECA_F(MODELE=MODELE2,
+                            FORCE_POUTRE=(
+                                _F(GROUP_MA=('P1'),
+                                   FY=FONCFY2,
+                                   MGX=FONCMGX2
+                                )
+                            )
+)
+
+FONCMGX3 = DEFI_FONCTION(PROL_DROITE='CONSTANT',
+                         VALE=(0., -fmult2/10., 1., -fmult2/10.),
+                         NOM_PARA='X',
+                         PROL_GAUCHE='CONSTANT',
+                         INFO=1,
+                         INTERPOL=('LIN', ),
+                         NOM_RESU='TOUTRESU',
+                         VERIF='CROISSANT',)
+
+FPOUTRZ2 = AFFE_CHAR_MECA(MODELE=MODELE2,
+                          FORCE_POUTRE=(
+                              _F(GROUP_MA=('P1'),
+                                 FZ=fmult2,
+                                 MGX=fmult2/10.,
+                              )
+                          )
+)
+
+FPOUTFZ2 = AFFE_CHAR_MECA_F(MODELE=MODELE2,
+                            FORCE_POUTRE=(
+                                _F(GROUP_MA=('P1'),
+                                   FZ=FONCFZ2,
+                                   MGX=FONCMGX3
+                                )
+                            )
+)
+
+PESANT2 = AFFE_CHAR_MECA(MODELE=MODELE2,
+                         PESANTEUR=_F(GRAVITE=9.81,
+                                      DIRECTION=(-1.0, 0.0, 0.0),),
+                         INFO=1,
+                         VERI_NORM='OUI',)
+
+
+from math import pi
+PES = 7850.*9.81*(pi*0.01*0.01*4)
+
+PESANT3 = AFFE_CHAR_MECA(MODELE=MODELE2,
+                         FORCE_POUTRE=(
+                             _F(GROUP_MA=('P1'),
+                                MGY=6.*PES,
+                                MGZ=1.*PES,
+                             )
+                         )
+)
+
+TEMPGD02 = CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R',
+    OPERATION='AFFE',
+    MAILLAGE=MA2,
+    AFFE=_F(NOM_CMP=('TEMP', ),
+            TOUT='OUI',
+            VALE=20.
+    ),
+)
+
+TEMPGD12 = CREA_CHAMP(
+    TYPE_CHAM='NOEU_TEMP_R',
+    OPERATION='AFFE',
+    MAILLAGE=MA2,
+    AFFE=_F(NOM_CMP=('TEMP', ),
+            TOUT='OUI',
+            VALE=300.
+    ),
+)
+
+TEMPVC2 = CREA_RESU(
+    TYPE_RESU='EVOL_VARC',
+    OPERATION='AFFE',
+    NOM_CHAM='TEMP',
+    AFFE=(
+        _F(CHAM_GD=TEMPGD02,
+           INST=0.
+        ),
+        _F(CHAM_GD=TEMPGD02,
+           INST=1.
+        ),
+        _F(CHAM_GD=TEMPGD12,
+           INST=2.
+        ),
+        _F(CHAM_GD=TEMPGD12,
+           INST=10.
+        )
+    )
+)
+
+IRRAGD02 = CREA_CHAMP(
+    TYPE_CHAM='NOEU_IRRA_R',
+    OPERATION='AFFE',
+    MAILLAGE=MA2,
+    AFFE=_F(NOM_CMP=('IRRA', ),
+            TOUT='OUI',
+            VALE=20.
+    ),
+)
+
+IRRAGD12 = CREA_CHAMP(
+    TYPE_CHAM='NOEU_IRRA_R',
+    OPERATION='AFFE',
+    MAILLAGE=MA2,
+    AFFE=_F(NOM_CMP=('IRRA', ),
+            TOUT='OUI',
+            VALE=33.
+    ),
+)
+
+IRRAVC2 = CREA_RESU(
+    TYPE_RESU='EVOL_VARC',
+    OPERATION='AFFE',
+    NOM_CHAM='IRRA',
+    AFFE=(
+        _F(CHAM_GD=IRRAGD02,
+           INST=0.
+           ),
+        _F(CHAM_GD=IRRAGD02,
+           INST=2.
+           ),
+        _F(CHAM_GD=IRRAGD12,
+           INST=3.
+           ),
+        _F(CHAM_GD=IRRAGD12,
+           INST=10.
+           )
+        )
+    )
+
+CHMAT = AFFE_MATERIAU(MAILLAGE=MA,
+                      AFFE=_F(GROUP_MA=('P',),
+                              MATER=ACIER,),
+                      AFFE_COMPOR=_F(GROUP_MA=('P',),
+                                     COMPOR=COMPF,),
+                      AFFE_VARC=(
+                          _F(
+                              NOM_VARC='IRRA',
+                              EVOL=IRRAVC,
+                              TOUT='OUI',
+                              PROL_DROITE='EXCLU',
+                              PROL_GAUCHE='EXCLU',
+                          ),
+                          _F(
+                              NOM_VARC='TEMP',
+                              VALE_REF=20.,
+                              EVOL=TEMPVC,
+                              TOUT='OUI',
+                              PROL_DROITE='EXCLU',
+                              PROL_GAUCHE='EXCLU',
+                          ),
+                      ),
+)
+
+CHMAT2 = AFFE_MATERIAU(MAILLAGE=MA2,
+                       AFFE=_F(GROUP_MA=('P1',),
+                               MATER=ACIER,),
+                       AFFE_COMPOR=_F(GROUP_MA=('P1',),
+                                      COMPOR=COMPF2,),
+                       AFFE_VARC=(
+                           _F(
+                               NOM_VARC='IRRA',
+                               EVOL=IRRAVC2,
+                               TOUT='OUI',
+                               PROL_DROITE='EXCLU',
+                               PROL_GAUCHE='EXCLU',
+                           ),
+                           _F(
+                               NOM_VARC='TEMP',
+                               VALE_REF=20.,
+                               EVOL=TEMPVC2,
+                               TOUT='OUI',
+                               PROL_DROITE='EXCLU',
+                               PROL_GAUCHE='EXCLU',
+                           ),
+                       ),
+)
+
+LINE = DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE=(0.0, 0.0,
+          1.0, 1.0,
+          2.0, 2.0,),
+    PROL_DROITE='EXCLU',
+    PROL_GAUCHE='EXCLU',)
+
+LINST = DEFI_LIST_REEL(DEBUT=0.0,
+                       INTERVALLE=_F(JUSQU_A=10.0,
+                                     NOMBRE=10,),)
+
+U = STAT_NON_LINE(MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  CARA_ELEM=CAREL,
+                  EXCIT=(_F(CHARGE=ENCAST,),
+                         _F(CHARGE=PESANT,),),
+                  COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                _F(RELATION='MULTIFIBRE', GROUP_MA='P',),),
+                  INCREMENT=_F(LIST_INST=LINST, INST_FIN=3.),
+                  NEWTON=_F(PREDICTION='TANGENTE',
+                            MATRICE='TANGENTE',
+                            REAC_ITER=1,),
+                  SOLVEUR=_F(METHODE='MUMPS',),)
+
+U = STAT_NON_LINE(reuse=U,
+                  ETAT_INIT=_F(EVOL_NOLI=U),
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  CARA_ELEM=CAREL,
+                  EXCIT=(_F(CHARGE=ENCAST,),
+                         _F(CHARGE=FPOUTRX,),
+                         _F(CHARGE=PESANT,),),
+                  COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                _F(RELATION='MULTIFIBRE', GROUP_MA='P',),),
+                  INCREMENT=_F(LIST_INST=LINST, INST_FIN=4.),
+                  NEWTON=_F(PREDICTION='TANGENTE',
+                            MATRICE='TANGENTE',
+                            REAC_ITER=1,),
+                  SOLVEUR=_F(METHODE='MUMPS',),)
+
+U = STAT_NON_LINE(reuse=U,
+                  ETAT_INIT=_F(EVOL_NOLI=U),
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  CARA_ELEM=CAREL,
+                  EXCIT=(_F(CHARGE=ENCAST,),
+                         _F(CHARGE=FPOUTRX),
+                         _F(CHARGE=FPOUTRY),
+                         _F(CHARGE=PESANT,),),
+                  COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                _F(RELATION='MULTIFIBRE', GROUP_MA='P',),),
+                  INCREMENT=_F(LIST_INST=LINST, INST_FIN=5.),
+                  NEWTON=_F(PREDICTION='TANGENTE',
+                            MATRICE='TANGENTE',
+                            REAC_ITER=1,),
+                  SOLVEUR=_F(METHODE='MUMPS',),)
+
+U = STAT_NON_LINE(reuse=U,
+                  ETAT_INIT=_F(EVOL_NOLI=U),
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  CARA_ELEM=CAREL,
+                  EXCIT=(_F(CHARGE=ENCAST,),
+                         _F(CHARGE=FPOUTRX),
+                         _F(CHARGE=FPOUTRY),
+                         _F(CHARGE=FPOUTRZ),
+                         _F(CHARGE=PESANT,),),
+                  COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                _F(RELATION='MULTIFIBRE', GROUP_MA='P',),),
+                  INCREMENT=_F(LIST_INST=LINST, INST_FIN=6.),
+                  NEWTON=_F(PREDICTION='TANGENTE',
+                            MATRICE='TANGENTE',
+                            REAC_ITER=1,),
+                  SOLVEUR=_F(METHODE='MUMPS',),)
+
+U = STAT_NON_LINE(reuse=U,
+                  ETAT_INIT=_F(EVOL_NOLI=U),
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  CARA_ELEM=CAREL,
+                  EXCIT=(_F(CHARGE=ENCAST,),
+                         _F(CHARGE=FPOUTFX),
+                         _F(CHARGE=FPOUTRY),
+                         _F(CHARGE=FPOUTRZ),
+                         _F(CHARGE=PESANT,),),
+                  COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                _F(RELATION='MULTIFIBRE', GROUP_MA='P',),),
+                  INCREMENT=_F(LIST_INST=LINST, INST_FIN=7.),
+                  NEWTON=_F(PREDICTION='TANGENTE',
+                            MATRICE='TANGENTE',
+                            REAC_ITER=1,),
+                  SOLVEUR=_F(METHODE='MUMPS',),)
+
+U = STAT_NON_LINE(reuse=U,
+                  ETAT_INIT=_F(EVOL_NOLI=U),
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  CARA_ELEM=CAREL,
+                  EXCIT=(_F(CHARGE=ENCAST,),
+                         _F(CHARGE=FPOUTFX),
+                         _F(CHARGE=FPOUTFY),
+                         _F(CHARGE=FPOUTRZ),
+                         _F(CHARGE=PESANT,),),
+                  COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                _F(RELATION='MULTIFIBRE', GROUP_MA='P',),),
+                  INCREMENT=_F(LIST_INST=LINST, INST_FIN=8.),
+                  NEWTON=_F(PREDICTION='TANGENTE',
+                            MATRICE='TANGENTE',
+                            REAC_ITER=1,),
+                  SOLVEUR=_F(METHODE='MUMPS',),)
+
+U = STAT_NON_LINE(reuse=U,
+                  ETAT_INIT=_F(EVOL_NOLI=U),
+                  MODELE=MODELE,
+                  CHAM_MATER=CHMAT,
+                  CARA_ELEM=CAREL,
+                  EXCIT=(_F(CHARGE=ENCAST,),
+                         _F(CHARGE=FPOUTFX),
+                         _F(CHARGE=FPOUTFY),
+                         _F(CHARGE=FPOUTFZ),
+                         _F(CHARGE=PESANT,),),
+                  COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                _F(RELATION='MULTIFIBRE', GROUP_MA='P',),),
+                  INCREMENT=_F(LIST_INST=LINST, INST_FIN=9.),
+                  NEWTON=_F(PREDICTION='TANGENTE',
+                            MATRICE='TANGENTE',
+                            REAC_ITER=1,),
+                  SOLVEUR=_F(METHODE='MUMPS',),)
+
+
+
+U2 = STAT_NON_LINE(MODELE=MODELE2,
+                   CHAM_MATER=CHMAT2,
+                   CARA_ELEM=CAREL2,
+                   EXCIT=(_F(CHARGE=ENCAST2,),
+                          _F(CHARGE=PESANT2,),
+                          _F(CHARGE=PESANT3,),),
+                   COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                 _F(RELATION='MULTIFIBRE', GROUP_MA='P1',),),
+                   INCREMENT=_F(LIST_INST=LINST, INST_FIN=3.),
+                   NEWTON=_F(PREDICTION='TANGENTE',
+                          MATRICE='TANGENTE',
+                          REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MUMPS',),)
+
+U2 = STAT_NON_LINE(reuse=U2,
+                   ETAT_INIT=_F(EVOL_NOLI=U2),
+                   MODELE=MODELE2,
+                   CHAM_MATER=CHMAT2,
+                   CARA_ELEM=CAREL2,
+                   EXCIT=(_F(CHARGE=ENCAST2,),
+                          _F(CHARGE=FPOUTRX2,),
+                          _F(CHARGE=PESANT2,),
+                          _F(CHARGE=PESANT3,),),
+                   COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                 _F(RELATION='MULTIFIBRE', GROUP_MA='P1',),),
+                   INCREMENT=_F(LIST_INST=LINST, INST_FIN=4.),
+                   NEWTON=_F(PREDICTION='TANGENTE',
+                             MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MUMPS',),)
+
+U2 = STAT_NON_LINE(reuse=U2,
+                   ETAT_INIT=_F(EVOL_NOLI=U2),
+                   MODELE=MODELE2,
+                   CHAM_MATER=CHMAT2,
+                   CARA_ELEM=CAREL2,
+                   EXCIT=(_F(CHARGE=ENCAST2,),
+                          _F(CHARGE=FPOUTRX2),
+                          _F(CHARGE=FPOUTRY2),
+                          _F(CHARGE=PESANT2,),
+                          _F(CHARGE=PESANT3,),),
+                   COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                 _F(RELATION='MULTIFIBRE', GROUP_MA='P1',),),
+                   INCREMENT=_F(LIST_INST=LINST, INST_FIN=5.),
+                   NEWTON=_F(PREDICTION='TANGENTE',
+                             MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MUMPS',),)
+
+U2 = STAT_NON_LINE(reuse=U2,
+                   ETAT_INIT=_F(EVOL_NOLI=U2),
+                   MODELE=MODELE2,
+                   CHAM_MATER=CHMAT2,
+                   CARA_ELEM=CAREL2,
+                   EXCIT=(_F(CHARGE=ENCAST2,),
+                          _F(CHARGE=FPOUTRX2),
+                          _F(CHARGE=FPOUTRY2),
+                          _F(CHARGE=FPOUTRZ2),
+                          _F(CHARGE=PESANT2,),
+                          _F(CHARGE=PESANT3,),),
+                   COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                 _F(RELATION='MULTIFIBRE', GROUP_MA='P1',),),
+                   INCREMENT=_F(LIST_INST=LINST, INST_FIN=6.),
+                   NEWTON=_F(PREDICTION='TANGENTE',
+                             MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MUMPS',),)
+
+U2 = STAT_NON_LINE(reuse=U2,
+                   ETAT_INIT=_F(EVOL_NOLI=U2),
+                   MODELE=MODELE2,
+                   CHAM_MATER=CHMAT2,
+                   CARA_ELEM=CAREL2,
+                   EXCIT=(_F(CHARGE=ENCAST2,),
+                          _F(CHARGE=FPOUTFX2),
+                          _F(CHARGE=FPOUTRY2),
+                          _F(CHARGE=FPOUTRZ2),
+                          _F(CHARGE=PESANT2,),
+                          _F(CHARGE=PESANT3,),),
+                   COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                 _F(RELATION='MULTIFIBRE', GROUP_MA='P1',),),
+                   INCREMENT=_F(LIST_INST=LINST, INST_FIN=7.),
+                   NEWTON=_F(PREDICTION='TANGENTE',
+                             MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MUMPS',),)
+
+U2 = STAT_NON_LINE(reuse=U2,
+                   ETAT_INIT=_F(EVOL_NOLI=U2),
+                   MODELE=MODELE2,
+                   CHAM_MATER=CHMAT2,
+                   CARA_ELEM=CAREL2,
+                   EXCIT=(_F(CHARGE=ENCAST2,),
+                          _F(CHARGE=FPOUTFX2),
+                          _F(CHARGE=FPOUTFY2),
+                          _F(CHARGE=FPOUTRZ2),
+                          _F(CHARGE=PESANT2,),
+                          _F(CHARGE=PESANT3,),),
+                   COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                 _F(RELATION='MULTIFIBRE', GROUP_MA='P1',),),
+                   INCREMENT=_F(LIST_INST=LINST, INST_FIN=8.),
+                   NEWTON=_F(PREDICTION='TANGENTE',
+                          MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MUMPS',),)
+
+U2 = STAT_NON_LINE(reuse=U2,
+                   ETAT_INIT=_F(EVOL_NOLI=U2),
+                   MODELE=MODELE2,
+                   CHAM_MATER=CHMAT2,
+                   CARA_ELEM=CAREL2,
+                   EXCIT=(_F(CHARGE=ENCAST2,),
+                          _F(CHARGE=FPOUTFX2),
+                          _F(CHARGE=FPOUTFY2),
+                          _F(CHARGE=FPOUTFZ2),
+                          _F(CHARGE=PESANT2,),
+                          _F(CHARGE=PESANT3,),),
+                   COMPORTEMENT=(_F(RELATION='ELAS', TOUT='OUI',),
+                                 _F(RELATION='MULTIFIBRE', GROUP_MA='P1',),),
+                   INCREMENT=_F(LIST_INST=LINST, INST_FIN=9.),
+                   NEWTON=_F(PREDICTION='TANGENTE',
+                             MATRICE='TANGENTE',
+                             REAC_ITER=1,),
+                   SOLVEUR=_F(METHODE='MUMPS',),)
+
+U = CALC_CHAMP(reuse=U,
+               RESULTAT=U,
+               INST=(1, 2, 3, 4, 5, 6, 7, 8, 9),
+               GROUP_MA=('P',),
+               FORCE='FORC_NODA',)
+
+U2 = CALC_CHAMP(reuse=U2,
+                RESULTAT=U2,
+                INST=(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                GROUP_MA=('P1',),
+                FORCE='FORC_NODA',)
+
+IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=U,IMPR_NOM_VARI='NON'),)
+IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=U2,IMPR_NOM_VARI='NON'),)
+
+TABLF = CREA_TABLE(RESU=_F(RESULTAT=U,
+                           NOM_CHAM='FORC_NODA',
+                           TOUT_CMP='OUI',
+                           GROUP_MA='P',),)
+
+TABLUT = CREA_TABLE(RESU=_F(RESULTAT=U,
+                            NOM_CHAM='DEPL',
+                            TOUT_CMP='OUI',
+                            NOEUD='N30',),)
+
+TABLU = CREA_TABLE(RESU=_F(RESULTAT=U,
+                           NOM_CHAM='DEPL',
+                           TOUT_CMP='OUI',
+                           GROUP_MA='P',),)
+
+TABLF2 = CREA_TABLE(RESU=_F(RESULTAT=U2,
+                            NOM_CHAM='FORC_NODA',
+                            TOUT_CMP='OUI',
+                            GROUP_MA='P1',),)
+
+TABLUT2 = CREA_TABLE(RESU=_F(RESULTAT=U2,
+                             NOM_CHAM='DEPL',
+                             TOUT_CMP='OUI',
+                             NOEUD='N2',),)
+
+TABLU2 = CREA_TABLE(RESU=_F(RESULTAT=U2,
+                            NOM_CHAM='DEPL',
+                            TOUT_CMP='OUI',
+                            GROUP_MA='P1',),)
+
+
+IMPR_TABLE(TABLE=TABLUT)
+IMPR_TABLE(TABLE=TABLU)
+IMPR_TABLE(TABLE=TABLF)
+IMPR_TABLE(TABLE=TABLUT2)
+IMPR_TABLE(TABLE=TABLU2)
+IMPR_TABLE(TABLE=TABLF2)
+
+tmpf = TABLF.EXTR_TABLE().values()
+tmpu = TABLU.EXTR_TABLE().values()
+
+tmpf2 = TABLF2.EXTR_TABLE().values()
+tmpu2 = TABLU2.EXTR_TABLE().values()
+
+FX = tmpf['DX']
+FY = tmpf['DY']
+FZ = tmpf['DZ']
+MX = tmpf['DRX']
+MY = tmpf['DRY']
+MZ = tmpf['DRZ']
+
+EF0 = [0, 0, 0, 0, 0, 0, 0, 0, 0]*9
+U0 = [0, 0, 0]*9
+
+for npas in range(1, 10):
+    
+    ipas = 20*(npas-1)
+    
+    print('resus faisceau --pas=', npas)
+    for i in range(10):
+        
+        EF0[9*(npas-1)] = EF0[9*(npas-1)]+FX[ipas+i*2]
+        EF0[9*(npas-1)+1] = EF0[9*(npas-1)+1]+FY[ipas+i*2]
+        EF0[9*(npas-1)+2] = EF0[9*(npas-1)+2]+FZ[ipas+i*2]
+        EF0[9*(npas-1)+3] = EF0[9*(npas-1)+3]+MX[ipas+i*2]
+        EF0[9*(npas-1)+4] = EF0[9*(npas-1)+4]+MY[ipas+i*2]
+        EF0[9*(npas-1)+5] = EF0[9*(npas-1)+5]+MZ[ipas+i*2]
+        EF0[9*(npas-1)+6] = EF0[9*(
+            npas-1)+6]+pos_pout[i][0]*FZ[ipas+i*2]-pos_pout[i][1]*FY[ipas+i*2]
+        EF0[9*(npas-1)+7] = EF0[9*(npas-1)+7]+pos_pout[i][1]*FX[ipas+i*2]
+        EF0[9*(npas-1)+8] = EF0[9*(npas-1)+8]-pos_pout[i][0]*FX[ipas+i*2]
+    print('     forces :  FX =', EF0[9*(npas-1)], 'FY = ', EF0[9*(npas - 1)+1], 'FZ = ', EF0[9*(npas-1)+2])
+    print('  moments p :  MX =', EF0[9*(npas-1)+3], 'MY = ', EF0[9*(npas-1)+4], 'MZ = ', EF0[9*(npas-1)+5])
+    print('  moments g :  MGX =', EF0[9*(npas-1)+6], 'MGY = ', EF0[9*(npas-1)+7], 'MGZ = ', EF0[9*(npas-1)+8])
+    
+
+DX = tmpu2['DX']
+DY = tmpu2['DY']
+DZ = tmpu2['DZ']
+DRX = tmpu2['DRX']
+DRY = tmpu2['DRY']
+DRZ = tmpu2['DRZ']
+DRGX = tmpu2['DRGX']
+DRGY = tmpu2['DRGY']
+DRGZ = tmpu2['DRGZ']
+
+FX = tmpf2['DX']
+FY = tmpf2['DY']
+FZ = tmpf2['DZ']
+MX = tmpf2['DRX']
+MY = tmpf2['DRY']
+MZ = tmpf2['DRZ']
+MGX = tmpf2['DRGX']
+MGY = tmpf2['DRGY']
+MGZ = tmpf2['DRGZ']
+
+EF02 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+U02 = [0, 0, 0]*9*10
+
+for npas in range(1, 10):
+
+    ipas = 2*npas-2
+    EF02[0] = FX[ipas]
+    EF02[1] = FY[ipas]
+    EF02[2] = FZ[ipas]
+    EF02[3] = MX[ipas]
+    EF02[4] = MY[ipas]
+    EF02[5] = MZ[ipas]
+    EF02[6] = MGX[ipas]
+    EF02[7] = MGY[ipas]
+    EF02[8] = MGZ[ipas]
+    print('resus squelette - pas =', npas)
+    print('     forces :   FX =', EF02[0], 'FY = ', EF02[1], 'FZ = ', EF02[2])
+    print('  moments p :   MX =', EF02[3], 'MY = ', EF02[4], 'MZ = ', EF02[5])
+    print('  moments g :  MGX =', EF02[6], 'MGY = ', EF02[7], 'MGZ = ', EF02[8])
+    
+    for npou in range(0, 10):
+        
+        U02[3*10*(npas-1)+3*(npou)] = DX[ipas+3]-pos_pout[npou][0] * DRGZ[ipas+3]+pos_pout[npou][1]*DRGY[ipas+3]
+        U02[3*10*(npas-1)+3*(npou)+1] = DY[ipas+3]-pos_pout[npou][1]*DRGX[ipas+3]
+        U02[3*10*(npas-1)+3*(npou)+2] = DZ[ipas+3]+pos_pout[npou][0]*DRGX[ipas+3]
+        print(' -- deplacement poutre DX =', npou+1, U02[3*10*(npas-1)+3*(npou)], ' DY=', U02[3*10*(npas-1)+3*(npou)+1], ' DZ=', U02[3*10*(npas-1)+3*(npou)+2])
+        
+
+ipas = 9
+ipou = 1
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=ipas,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   RESULTAT=U,
+                   NOEUD='N2',
+                   VALE_CALC=-0.00181686642565,
+                   VALE_REFE=U02[3*10*(ipas-1)+3*(ipou-1)],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+              ),)
+
+ipou = 10
+TEST_RESU(RESU=(_F(NUME_ORDRE=ipas,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   RESULTAT=U,
+                   NOEUD='N20',
+                   VALE_CALC=-0.00184990645292,
+                   VALE_REFE=U02[3*10*(ipas-1)+3*(ipou-1)],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+              ),)
+
+TEST_RESU(RESU=(_F(NUME_ORDRE=ipas,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DX',
+                   RESULTAT=U2,
+                   NOEUD='N1',
+                   VALE_CALC=5000483.858675728,
+                   VALE_REFE=EF0[9*(ipas-1)],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+                _F(NUME_ORDRE=ipas,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DY',
+                   RESULTAT=U2,
+                   NOEUD='N1',
+                   VALE_CALC=5000000.0,
+                   VALE_REFE=EF0[9*(ipas-1)+1],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+                _F(NUME_ORDRE=ipas,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DZ',
+                   RESULTAT=U2,
+                   NOEUD='N1',
+                   VALE_CALC=5000000.00,
+                   VALE_REFE=EF0[9*(ipas-1)+2],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+               _F(NUME_ORDRE=ipas,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DRY',
+                   RESULTAT=U2,
+                   NOEUD='N1',
+                   VALE_CALC=-4043827.6191674336,
+                   VALE_REFE=EF0[9*(ipas-1)+4],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+               _F(NUME_ORDRE=ipas,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DRZ',
+                   RESULTAT=U2,
+                   NOEUD='N1',
+                   VALE_CALC=4043824.527074873,
+                   VALE_REFE=EF0[9*(ipas-1)+5],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+               _F(NUME_ORDRE=9,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DRGX',
+                   RESULTAT=U2,
+                   NOEUD='N1',
+                   VALE_CALC=3500000.00,
+                   VALE_REFE=EF0[9*(ipas-1)+6],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+               _F(NUME_ORDRE=ipas,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DRGY',
+                   RESULTAT=U2,
+                   NOEUD='N1',
+                   VALE_CALC=-3123129.362704681,
+                   VALE_REFE=EF0[9*(ipas-1)+7],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+               _F(NUME_ORDRE=ipas,
+                   NOM_CHAM='FORC_NODA',
+                   NOM_CMP='DRGZ',
+                   RESULTAT=U2,
+                   NOEUD='N1',
+                   VALE_CALC=-377206.2462757819,
+                   VALE_REFE=EF0[9*(ipas-1)+8],
+                   REFERENCE='AUTRE_ASTER',
+                   CRITERE='RELATIF',),
+              ),)
+
+FIN()
