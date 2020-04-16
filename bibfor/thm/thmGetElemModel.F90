@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,6 +70,8 @@ character(len=8), optional, intent(out) :: type_elem_(2)
     ds_thm%ds_elem%l_dof_meca  = lteatt('MECA','OUI')
     ds_thm%ds_elem%l_dof_pre1  = .not. lteatt('HYDR1','0')
     ds_thm%ds_elem%l_dof_pre2  = .not. lteatt('HYDR2','0')
+    ds_thm%ds_elem%nb_phase(1) = 0
+    ds_thm%ds_elem%nb_phase(2) = 0
     if (lteatt('HYDR1','1')) then
        ds_thm%ds_elem%nb_phase(1) = 1
     endif
