@@ -695,6 +695,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                     INTERPOL=('LOG','LIN'), PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
                                     INDIC_PARA=[2, 1], INDIC_RESU=[2, j + 1],
                                     )
+            for val in __DG[j].Ordo():
+                if val > 2.: UTMESS('F','MISS0_44', valk='TABLE_AMOR_EQUI')
         UL.EtatInit()
     else:
     # 1. dictionnaires des MATERIAUX
@@ -800,6 +802,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
 
         Y = 0.
         for couche in l_couche:
+            if couche["AMOR_HYST"] >2.:
+                UTMESS('F','MISS0_44',valk='COUCHE/AMOR_HYST')
             Y = Y + couche["EPAIS"]
             id_mate = couche["NUME_MATE"]
             if not Byrne:
