@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! person_in_charge: mickael.abbas at edf.fr
+! person_in_charge: nicolas.pignet@edf.fr
 !
 subroutine cgtabl(table_container, nb_obje, obje_name, obje_sdname, nb_cham_theta)
 !
@@ -128,7 +128,7 @@ character(len=24), intent(in) :: obje_sdname(nb_obje)
         end if
 !
         call tbajli(table_container, nbpara, nompar, &
-                    [nume_store], [0.d0], [cmplx(0.d0, 0.d0)], vk, 0)
+                    [nume_store], [0.d0], [dcmplx(0., 0.)], vk, 0)
     end do
 !
     call jedema()
