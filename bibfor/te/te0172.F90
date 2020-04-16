@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,136 +15,134 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0172(option, nomte)
-!.......................................................................
-    implicit none
 !
-!     BUT: CALCUL DES MATRICES DE RIGIDITE  ELEMENTAIRES EN MECANIQUE
-!          ELEMENTS 2D DE COUPLAGE ACOUSTICO-MECANIQUE
-!
-!          OPTION : 'MASS_MECA '
-!
-!     ENTREES  ---> OPTION : OPTION DE CALCUL
-!          ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
+implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/teattr.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
-#include "asterfort/rcvalb.h"
+#include "asterfort/utmess.h"
+#include "asterfort/getFluidPara.h"
 !
-    integer :: icodre(1), kpg, spt
-    character(len=8) :: fami, poum
-    character(len=16) :: nomte, option
-    real(kind=8) :: a(4, 4, 27, 27), sx(27, 27), sy(27, 27)
-    real(kind=8) :: sz(27, 27), norm(3), rho(1)
-    integer :: igeom, imate
-    integer :: i, j, k, l, ik, ijkl, idec, jdec, ldec, kdec, kco, ino, jno
-    integer :: ndim, nno, ipg, nnos, npg2
-    integer :: ipoids, ivf, idfdx, idfdy, imatuu, jgano
+character(len=16), intent(in) :: option, nomte
 !
+! --------------------------------------------------------------------------------------------------
 !
-!-----------------------------------------------------------------------
-!-----------------------------------------------------------------------
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg2,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
+! Elementary computation
+!
+! Elements: FLUI_STRU
+!
+! Option: MASS_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: a(4, 4, 27, 27)
+    real(kind=8) :: sx(27, 27), sy(27, 27), sz(27, 27), norm(3)
+    real(kind=8) :: rho
+    integer :: jv_geom, jv_mate, jv_matr
+    integer :: ipoids, ivf, idfdx, idfdy
+    integer :: ndim, nno, npg
+    integer :: ik, ijkl
+    integer :: ino1, ino2, k, l, ipg, ino, jno, idim
+    integer :: idec, jdec, ldec, kdec
+    integer :: j_mater, iret
+    character(len=16) :: fsi_form
+!
+! --------------------------------------------------------------------------------------------------
+!
+    a    = 0.d0
+!
+! - Input fields
+!
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PMATERC', 'L', jv_mate)
+!
+! - Get element parameters
+!
+    call teattr('S', 'FORMULATION', fsi_form, iret)
+    call elrefe_info(fami='RIGI',&
+                     ndim=ndim, nno=nno, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfdx)
     idfdy = idfdx + 1
+    ASSERT(nno .le. 9)
 !
-    call jevech('PGEOMER', 'L', igeom)
+! - CALCUL DES PRODUITS VECTORIELS OMI X OMJ POUR LE CALCUL
+! - DE L'ELEMENT DE SURFACE AU POINT DE GAUSS
 !
-    call jevech('PMATERC', 'L', imate)
-    call jevech('PMATUUR', 'E', imatuu)
+    do ino = 1, nno
+        ino1 = jv_geom + 3*(ino-1) -1
+        do jno = 1, nno
+            ino2 = jv_geom + 3*(jno-1) -1
+            sx(ino,jno) = zr(ino1+2)*zr(ino2+3) - zr(ino1+3)*zr(ino2+2)
+            sy(ino,jno) = zr(ino1+3)*zr(ino2+1) - zr(ino1+1)*zr(ino2+3)
+            sz(ino,jno) = zr(ino1+1)*zr(ino2+2) - zr(ino1+2)*zr(ino2+1)
+        end do
+    end do
 !
-!    CALCUL DES PRODUITS VECTORIELS OMI X OMJ POUR LE CALCUL
-!    DE L'ELEMENT DE SURFACE AU POINT DE GAUSS
+! - Get material properties for fluid
 !
-    do 1 ino = 1, nno
-        i = igeom + 3*(ino-1) -1
-        do 2 jno = 1, nno
-            j = igeom + 3*(jno-1) -1
-            sx(ino,jno) = zr(i+2)*zr(j+3) - zr(i+3)*zr(j+2)
-            sy(ino,jno) = zr(i+3)*zr(j+1) - zr(i+1)*zr(j+3)
-            sz(ino,jno) = zr(i+1)*zr(j+2) - zr(i+2)*zr(j+1)
- 2      continue
- 1  end do
+    j_mater = zi(jv_mate)
+    call getFluidPara(j_mater, rho)
 !
-!     INITIALISATION DE LA MATRICE
+! - Loop on Gauss points
 !
-    do 112 k = 1, 4
-        do 112 l = 1, 4
-            do 112 i = 1, nno
-                do 112 j = 1, i
-                    a(k,l,i,j) = 0.d0
-112              continue
-!
-!    BOUCLE SUR LES POINTS DE GAUSS
-!
-    do 113 ipg = 1, npg2
-!
+    do ipg = 1, npg
         kdec = (ipg-1)*nno*ndim
         ldec = (ipg-1)*nno
+! ----- Compute normals
+        norm = 0.d0
+        do ino1 = 1, nno
+            idec = (ino1-1)*ndim
+            do ino2 = 1, nno
+                jdec =(ino2-1)*ndim
+                norm(1) = norm(1) + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sx(ino1,ino2)
+                norm(2) = norm(2) + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sy(ino1,ino2)
+                norm(3) = norm(3) + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sz(ino1,ino2)
+            end do
+        end do
+        if (fsi_form .eq. 'FSI_UPPHI') then
+            do ino1 = 1, nno
+                do ino2 = 1, ino1
+                    do idim = 1, 3
+                        a(idim,4,ino1,ino2) = a(idim,4,ino1,ino2) +&
+                                              zr(ipoids+ipg-1) * norm(idim) * rho *&
+                                              zr(ivf+ldec+ino1-1) * zr(ivf+ldec+ino2-1)
+                    end do
+                end do
+            end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
+    end do
 !
-!    CALCUL DE LA NORMALE DE LA SURFACE AU POINT DE GAUSS
+! - Output field
 !
-        do 114 kco = 1, 3
-            norm(kco) = 0.d0
-114      end do
-!
-        do 120 i = 1, nno
-            idec = (i-1)*ndim
-            do 120 j = 1, nno
-                jdec =(j-1)*ndim
-!
-                norm(1) = norm(1) + zr(idfdx+kdec+idec) * zr(idfdy+ kdec+jdec) * sx(i,j)
-                norm(2) = norm(2) + zr(idfdx+kdec+idec) * zr(idfdy+ kdec+jdec) * sy(i,j)
-                norm(3) = norm(3) + zr(idfdx+kdec+idec) * zr(idfdy+ kdec+jdec) * sz(i,j)
-!
-120          continue
-!
-        call rcvalb(fami, kpg, spt, poum, zi(imate),&
-                    ' ', 'FLUIDE', 0, ' ', [0.d0],&
-                    1, 'RHO', rho, icodre, 1)
-!
-!CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-!       CALCUL DU TERME PHI*(U.N DS)       C
-!CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-!
-        do 130 ino = 1, nno
-            do 140 jno = 1, ino
-                do 150 kco = 1, 3
-!
-                    a(kco,4,ino,jno) = a(kco,4,ino,jno) + zr(ipoids+ ipg-1) * norm(kco) * rho(1) *&
-                                       zr(ivf+ldec+ino-1) * zr(ivf+ldec+jno-1)
-!
-150              continue
-140          continue
-130      continue
-113  continue
-!
-    do 151 ino = 1, nno
-        do 152 jno = 1, ino
-            do 153 kco = 1, 3
-                a(4,kco,ino,jno) = a(kco,4,ino,jno)
-153          continue
-152      continue
-151  end do
-!
-! PASSAGE DU STOCKAGE RECTANGULAIRE (A) AU STOCKAGE TRIANGULAIRE (ZR)
-!
-    ijkl = 0
-    ik = 0
-    do 160 k = 1, 4
-        do 160 l = 1, 4
-            do 160 i = 1, nno
-                ik = ((4*i+k-5) * (4*i+k-4)) / 2
-                do 160 j = 1, i
-                    ijkl = ik + 4 * (j-1) + l
-                    zr(imatuu+ijkl-1) = a(k,l,i,j)
-160              continue
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        call jevech('PMATUUR', 'E', jv_matr)
+        do ino1 = 1, nno
+            do ino2 = 1, ino1
+                do idim = 1, 3
+                    a(4,idim,ino1,ino2) = a(idim,4,ino1,ino2)
+                end do
+            end do
+        end do
+        do k = 1, 4
+            do l = 1, 4
+                do ino1 = 1, nno
+                    ik = ((4*ino1+k-5)*(4*ino1+k-4))/2
+                    do ino2 = 1, ino1
+                        ijkl = ik + 4*(ino2-1) + l
+                        zr(jv_matr+ijkl-1) = a(k,l,ino1,ino2)
+                    end do
+                end do
+            end do
+        end do 
+    else
+        call utmess('F', 'FLUID1_2', sk = fsi_form)
+    endif
 !
 end subroutine

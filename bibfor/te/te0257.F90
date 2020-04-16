@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,136 +15,125 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0257(option, nomte)
-!.......................................................................
-    implicit none
 !
-!     BUT: CALCUL DES MATRICES DE MASSE  ELEMENTAIRES EN MECANIQUE
-!          ELEMENTS 1D DE COUPLAGE ACOUSTICO-MECANIQUE
+implicit none
 !
-!          OPTION : 'MASS_MECA '
-!
-!     ENTREES  ---> OPTION : OPTION DE CALCUL
-!          ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
-!
-#include "asterf_types.h"
 #include "jeveux.h"
+#include "asterf_types.h"
+#include "asterfort/vff2dn.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
-#include "asterfort/rcvalb.h"
-#include "asterfort/vff2dn.h"
+#include "asterfort/teattr.h"
+#include "asterfort/assert.h"
+#include "asterfort/utmess.h"
+#include "asterfort/getFluidPara.h"
 !
-    integer :: icodre(1)
-    character(len=8) :: fami, poum
-    character(len=16) :: nomte, option
-    real(kind=8) :: a(3, 3, 3, 3), nx, ny, rho(1), norm(2), poids
-    integer :: igeom, imate, i, j, k, l, ik, ijkl, ldec, kco, ino, jno
-    integer :: nno, npg, kp, ndim, nnos, jgano
-    integer :: ipoids, ivf, idfde, imatuu, kpg, spt
-    aster_logical :: laxi
+character(len=16), intent(in) :: option, nomte
 !
+! --------------------------------------------------------------------------------------------------
 !
-!-----------------------------------------------------------------------
+! Elementary computation
+!
+! Elements: AXIS_FLUI_STRU, 2D_FLUI_STRU
+!
+! Option: MASS_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8) :: a(3, 3, 3, 3)
+    real(kind=8) :: nx, ny, norm(2)
+    real(kind=8) :: poids, rho
+    integer :: jv_geom, jv_mate, jv_matr
+    integer :: ipoids, ivf, idfde
+    integer :: nno, npg, ndim
+    integer :: ik, ijkl
+    integer :: ino1, ino2, k, l, ipg, idim
+    integer :: ldec
+    integer :: j_mater, iret
+    character(len=16) :: fsi_form
+    aster_logical :: l_axis
     real(kind=8) :: r
-!-----------------------------------------------------------------------
-    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
-                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
 !
-    laxi = .false.
-    if (lteatt('AXIS','OUI')) laxi = .true.
+! --------------------------------------------------------------------------------------------------
 !
-    call jevech('PGEOMER', 'L', igeom)
-    call jevech('PMATERC', 'L', imate)
-    call jevech('PMATUUR', 'E', imatuu)
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
-    call rcvalb(fami, kpg, spt, poum, zi(imate),&
-                ' ', 'FLUIDE', 0, ' ', [0.d0],&
-                1, 'RHO', rho, icodre, 1)
+    a    = 0.d0
 !
-!     INITIALISATION DE LA MATRICE
+! - Input fields
 !
-    do 40 k = 1, 3
-        do 30 l = 1, 3
-            do 20 i = 1, nno
-                do 10 j = 1, i
-                    a(k,l,i,j) = 0.d0
- 10             continue
- 20         continue
- 30     continue
- 40 end do
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PMATERC', 'L', jv_mate)
 !
-!    BOUCLE SUR LES POINTS DE GAUSS
+! - Get element parameters
 !
-    do 90 kp = 1, npg
-        ldec = (kp-1)*nno
+    call teattr('S', 'FORMULATION', fsi_form, iret)
+    l_axis = (lteatt('AXIS','OUI'))
+    call elrefe_info(fami='RIGI',&
+                     nno=nno, npg=npg, ndim=ndim,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde)
+    ASSERT(nno .le. 3)
 !
-        call vff2dn(ndim, nno, kp, ipoids, idfde,&
-                    zr(igeom), nx, ny, poids)
+! - Get material properties for fluid
 !
+    j_mater = zi(jv_mate)
+    call getFluidPara(j_mater, rho)
+!
+! - Loop on Gauss points
+!
+    do ipg = 1, npg
+        ldec = (ipg-1)*nno
+        call vff2dn(ndim, nno, ipg, ipoids, idfde,&
+                    zr(jv_geom), nx, ny, poids)
         norm(1) = nx
         norm(2) = ny
-!
-        if (laxi) then
+        if (l_axis) then
             r = 0.d0
-            do 50 i = 1, nno
-                r = r + zr(igeom+2* (i-1))*zr(ivf+ldec+i-1)
- 50         continue
+            do ino1 = 1, nno
+                r = r + zr(jv_geom+2*(ino1-1))*zr(ivf+ldec+ino1-1)
+            end do
             poids = poids*r
         endif
+        if (fsi_form .eq. 'FSI_UPPHI') then
+            do ino1 = 1, nno
+                do ino2 = 1, ino1
+                    do idim = 1, 2
+                        a(idim,3,ino1,ino2) = a(idim,3,ino1,ino2) +&
+                                              poids*norm(idim)*rho*&
+                                              zr(ivf+ldec+ino1-1)*zr(ivf+ldec+ino2-1)
+                    end do
+                end do
+            end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
+    end do
 !
-!CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-!       CALCUL DU TERME PHI*(U.N DS)       C
-!CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+! - Output field
 !
-        do 80 ino = 1, nno
-            do 70 jno = 1, ino
-                do 60 kco = 1, 2
-!
-                    a(kco,3,ino,jno) = a(kco,3,ino,jno) + poids*norm( kco)*rho(1)* zr(ivf+ldec+in&
-                                       &o-1)* zr(ivf+ldec+jno-1)
-!
-!
-!
-!
- 60             continue
- 70         continue
- 80     continue
-!
- 90 end do
-!
-    do 120 ino = 1, nno
-        do 110 jno = 1, ino
-            do 100 kco = 1, 2
-                a(3,kco,ino,jno) = a(kco,3,ino,jno)
-100         continue
-110     continue
-120 end do
-!
-!
-! PASSAGE DU STOCKAGE RECTANGULAIRE (A) AU STOCKAGE TRIANGULAIRE (ZR)
-!
-    ijkl = 0
-    ik = 0
-    do 160 k = 1, 3
-        do 150 l = 1, 3
-            do 140 i = 1, nno
-                ik = ((3*i+k-4)* (3*i+k-3))/2
-                do 130 j = 1, i
-                    ijkl = ik + 3* (j-1) + l
-                    zr(imatuu+ijkl-1) = a(k,l,i,j)
-!
-!
-!
-!
-130             continue
-140         continue
-150     continue
-160 end do
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        call jevech('PMATUUR', 'E', jv_matr)
+        do ino1 = 1, nno
+            do ino2 = 1, ino1
+                do idim = 1, 2
+                    a(3,idim,ino1,ino2) = a(idim,3,ino1,ino2)
+                end do
+            end do
+        end do
+        do k = 1, 3
+            do l = 1, 3
+                do ino1 = 1, nno
+                    ik = ((3*ino1+k-4)*(3*ino1+k-3))/2
+                    do ino2 = 1, ino1
+                        ijkl = ik + 3*(ino2-1) + l
+                        zr(jv_matr+ijkl-1) = a(k,l,ino1,ino2)
+                    end do
+                end do
+            end do
+        end do
+    else
+        call utmess('F', 'FLUID1_2', sk = fsi_form)
+    endif
 !
 end subroutine
