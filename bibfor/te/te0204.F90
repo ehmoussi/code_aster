@@ -95,6 +95,8 @@ character(len=16), intent(in) :: option, nomte
     ASSERT(ndim .eq. 1)
     if (fsi_form .eq. 'FSI_UPPHI') then
         ndofbynode = 3
+    elseif (fsi_form .eq. 'FSI_UP') then
+        ndofbynode = 3
     else
         call utmess('F', 'FLUID1_2', sk = fsi_form)
     endif

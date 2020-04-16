@@ -70,6 +70,8 @@ character(len=16), intent(in) :: option, nomte
     idfdy = idfdx + 1
     if (fsi_form .eq. 'FSI_UPPHI') then
         ndofbynode = 2
+    elseif (fsi_form .eq. 'FSI_UP') then
+        ndofbynode = 1
     else
         call utmess('F', 'FLUID1_2', sk = fsi_form)
     endif
@@ -118,16 +120,13 @@ character(len=16), intent(in) :: option, nomte
         end do
 ! ----- Compute jacobian
         jac = sqrt (nx*nx + ny*ny + nz*nz)
-        if (fsi_form .eq. 'FSI_UPPHI') then
-            do i = 1, nno
-                ii = ndofbynode*i
-                zr(jv_vect+ii-1) = zr(jv_vect+ii-1) +&
-                                   jac*zr(ipoids+ipg-1) *&
-                                   zr(ivf+ldec+i-1) * zr(jv_onde+ipg-1) / celer
-            end do
-        else
-            call utmess('F', 'FLUID1_2', sk = fsi_form)
-        endif
+! ----- Compute vector
+        do i = 1, nno
+            ii = ndofbynode*i
+            zr(jv_vect+ii-1) = zr(jv_vect+ii-1) +&
+                               jac*zr(ipoids+ipg-1) *&
+                               zr(ivf+ldec+i-1) * zr(jv_onde+ipg-1) / celer
+        end do
     end do
 !
 end subroutine
