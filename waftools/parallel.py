@@ -119,8 +119,10 @@ def check_openmp(self):
     if ifort and icc:
         self.env['FCFLAGS_OPENMP'] = '-qopenmp'
         self.env['FCLINKFLAGS_OPENMP'] = '-qopenmp'
-        self.env['CCFLAGS_OPENMP'] = '-qopenmp'
-        self.env['CCLINKFLAGS_OPENMP'] = '-qopenmp'
+        self.env['CCFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
+        self.env['CCLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
+        self.env['CXXFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
+        self.env['CXXLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
         self.env.HAVE_OPENMP = 1
         self.msg('Checking for OpenMP flag -qopenmp for Intel compilers', 'Yes', color='GREEN')
     elif not (ifort or icc):
@@ -138,6 +140,8 @@ def check_openmp(self):
             else:
                 self.env['CCFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
                 self.env['CCLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
+                self.env['CXXFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
+                self.env['CXXLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
                 break
         else:
             self.fatal('Could not set OpenMP')
