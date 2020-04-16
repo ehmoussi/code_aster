@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -98,14 +98,14 @@ subroutine pmfdgedef(typfib, b, gg, depl, alicom, nbfibr, nbcarm, &
            !Construction champ des DDLs sur poutres
            if ( typfib .eq. 2 ) then
                depl2(1)=depl(1) + depl(5) * zj(i) -depl(6)*yj(i)
-               depl2(2)=depl(2) - depl(4) * zj(i) +depl(6)*yj(i)
-               depl2(3)=depl(3) + depl(4) * yj(i) -depl(5)*zj(i)           
+               depl2(2)=depl(2) - depl(4) * zj(i)
+               depl2(3)=depl(3) + depl(4) * yj(i)
                depl2(4)=depl(4)
                depl2(5)=depl(5)
                depl2(6)=depl(6)
                depl2(7)=depl(7) + depl(11) * zj(i) -depl(12)*yj(i)
-               depl2(8)=depl(8) - depl(10) * zj(i) +depl(12)*yj(i)
-               depl2(9)=depl(9) + depl(10) * yj(i) -depl(11)*zj(i)
+               depl2(8)=depl(8) - depl(10) * zj(i)
+               depl2(9)=depl(9) + depl(10) * yj(i)
                depl2(10)=depl(10)
                depl2(11)=depl(11)
                depl2(12)=depl(12)
