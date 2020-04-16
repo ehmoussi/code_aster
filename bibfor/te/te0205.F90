@@ -30,6 +30,8 @@ implicit none
 #include "asterfort/tecach.h"
 #include "asterfort/evalPressure.h"
 #include "asterfort/nmpr3d_vect.h"
+#include "asterfort/teattr.h"
+#include "asterfort/utmess.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -53,6 +55,7 @@ character(len=16), intent(in) :: option, nomte
     integer :: nno, npg, ndim, ndofbynode
     integer :: ldec, iret
     integer :: i, ipg
+    character(len=16) :: fsi_form
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,6 +82,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get element parameters
 !
+    call teattr('S', 'FORMULATION', fsi_form, iret)
     call elrefe_info(fami='RIGI',&
                      nno=nno, npg=npg, ndim = ndim,&
                      jpoids=ipoids, jvf=ivf, jdfde=idfde)
@@ -87,7 +91,11 @@ character(len=16), intent(in) :: option, nomte
 ! - Pressure are on skin elements but DOF are volumic + FSI
 !
     ASSERT(ndim .eq. 2)
-    ndofbynode = 4
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        ndofbynode = 4
+    else
+        call utmess('F', 'FLUID1_2', sk = fsi_form)
+    endif
 !
 ! - Output field
 !

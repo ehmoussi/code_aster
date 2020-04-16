@@ -21,6 +21,7 @@ subroutine te0384(option, nomte)
 implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
@@ -28,6 +29,7 @@ implicit none
 #include "asterfort/vff2dn.h"
 #include "asterfort/utmess.h"
 #include "asterfort/tecach.h"
+#include "asterfort/teattr.h"
 #include "asterfort/evalNormalSpeed.h"
 !
 character(len=16), intent(in) :: option, nomte
@@ -36,7 +38,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! Elementary computation
 !
-! Elements: 2D_FLUI_STRU, AXIS_FLUI_STRU (boundary)
+! Elements: 2D_FLUI_STRU, AXIS_FLUI_STRU
 !
 ! Options: CHAR_MECA_VNOR
 !
@@ -48,7 +50,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: rho, poids
     real(kind=8) :: time, vnor
     integer :: ipoids, ivf, idfde
-    integer :: nno, npg, ndim
+    integer :: nno, npg, ndim, ndofbynode
     integer :: ldec
     integer :: i, ii, ipg
     aster_logical :: l_axis
@@ -83,10 +85,16 @@ character(len=16), intent(in) :: option, nomte
 ! - Get element parameters
 !
     l_axis = (lteatt('AXIS','OUI'))
-    fsi_form = 'U_P_PHI'
+    call teattr('S', 'FORMULATION', fsi_form, iret)
     call elrefe_info(fami='RIGI',&
                      nno=nno, npg=npg, ndim = ndim,&
                      jpoids=ipoids, jvf=ivf, jdfde=idfde)
+    ASSERT(nno .le. 3)
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        ndofbynode = 3
+    else
+        call utmess('F', 'FLUID1_2', sk = fsi_form)
+    endif
 !
 ! - Get material properties for fluid
 !
@@ -96,7 +104,7 @@ character(len=16), intent(in) :: option, nomte
 ! - Output field
 !
     call jevech('PVECTUR', 'E', jv_vect)
-    do i = 1, 3*nno
+    do i = 1, ndofbynode
         zr(jv_vect+i-1) = 0.d0
     end do
 !
@@ -121,9 +129,9 @@ character(len=16), intent(in) :: option, nomte
                              nno   , ndim   , ipg     ,&
                              ivf   , jv_geom, jv_speed,&
                              vnor)
-        if (fsi_form .eq. 'U_P_PHI') then
+        if (fsi_form .eq. 'FSI_UPPHI') then
             do i = 1, nno
-                ii = 3*i
+                ii = ndofbynode*i
                 zr(jv_vect+ii-1) = zr(jv_vect+ii-1) -&
                                    poids *&
                                    zr(ivf+ldec+i-1) * vnor * rho

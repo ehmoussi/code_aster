@@ -31,6 +31,8 @@ implicit none
 #include "asterfort/evalPressure.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/vff2dn.h"
+#include "asterfort/teattr.h"
+#include "asterfort/utmess.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -50,11 +52,12 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: poids, time
     real(kind=8) :: pres, cisa
     integer :: ipoids, ivf, idfde
-    integer :: nno, npg, ndim
+    integer :: nno, npg, ndim, ndofbynode
     integer :: ldec, iret
     integer :: i, ipg
     aster_logical :: l_axis
     real(kind=8) :: r
+    character(len=16) :: fsi_form
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -82,13 +85,26 @@ character(len=16), intent(in) :: option, nomte
 ! - Get element parameters
 !
     l_axis = (lteatt('AXIS','OUI'))
+    call teattr('S', 'FORMULATION', fsi_form, iret)
     call elrefe_info(fami='RIGI',&
                      nno=nno, npg=npg, ndim = ndim,&
                      jpoids=ipoids, jvf=ivf, jdfde=idfde)
 !
+! - Pressure are on skin elements but DOF are surfacic + FSI
+!
+    ASSERT(ndim .eq. 1)
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        ndofbynode = 3
+    else
+        call utmess('F', 'FLUID1_2', sk = fsi_form)
+    endif
+!
 ! - Output field
 !
     call jevech('PVECTUR', 'E', jv_vect)
+    do i = 1, ndofbynode*nno
+        zr(jv_vect+i-1) = 0.d0
+    end do
 !
 ! - Loop on Gauss points
 !
@@ -116,8 +132,10 @@ character(len=16), intent(in) :: option, nomte
         tx = -nx*pres - ny*cisa
         ty = -ny*pres + nx*cisa
         do i = 1, nno
-            zr(jv_vect+3*i-3) = zr(jv_vect+3*i-3) - tx*zr(ivf+ldec+i-1)*poids
-            zr(jv_vect+3*i-2) = zr(jv_vect+3*i-2) - ty*zr(ivf+ldec+i-1)*poids
+            zr(jv_vect+ndofbynode*(i-1)-1+1) = &
+                zr(jv_vect+ndofbynode*(i-1)-1+1) - tx*zr(ivf+ldec+i-1)*poids
+            zr(jv_vect+ndofbynode*(i-1)-1+2) = &
+                zr(jv_vect+ndofbynode*(i-1)-1+2) - ty*zr(ivf+ldec+i-1)*poids
         end do
     end do
 end subroutine

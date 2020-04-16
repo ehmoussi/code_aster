@@ -26,6 +26,8 @@ implicit none
 #include "asterfort/getFluidPara.h"
 #include "asterfort/utmess.h"
 #include "asterfort/tecach.h"
+#include "asterfort/teattr.h"
+#include "asterfort/assert.h"
 #include "asterfort/evalNormalSpeed.h"
 !
 character(len=16), intent(in) :: option, nomte
@@ -46,7 +48,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: jac, rho
     real(kind=8) :: time, vnor
     integer :: ipoids, ivf, idfdx, idfdy
-    integer :: nno, npg, ndim
+    integer :: nno, npg, ndim, ndofbynode
     integer :: idec, jdec, kdec, ldec
     integer :: i, ii, ino, j, jno, ipg
     integer :: j_mater, iret
@@ -78,11 +80,17 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Get element parameters
 !
-    fsi_form = 'U_P_PHI'
+    call teattr('S', 'FORMULATION', fsi_form, iret)
     call elrefe_info(fami='RIGI',&
-                     nno=nno, npg=npg, ndim = ndim,&
+                     nno=nno, npg=npg, ndim=ndim,&
                      jpoids=ipoids, jvf=ivf, jdfde=idfdx)
+    ASSERT(nno .le. 9)
     idfdy = idfdx + 1
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        ndofbynode = 2
+    else
+        call utmess('F', 'FLUID1_2', sk = fsi_form)
+    endif
 !
 ! - Get material properties for fluid
 !
@@ -92,7 +100,7 @@ character(len=16), intent(in) :: option, nomte
 ! - Output field
 !
     call jevech('PVECTUR', 'E', jv_vect)
-    do i = 1, 2*nno
+    do i = 1, ndofbynode*nno
         zr(jv_vect+i-1) = 0.d0
     end do
 !
@@ -133,9 +141,9 @@ character(len=16), intent(in) :: option, nomte
                              nno   , ndim   , ipg     ,&
                              ivf   , jv_geom, jv_speed,&
                              vnor)
-        if (fsi_form .eq. 'U_P_PHI') then
+        if (fsi_form .eq. 'FSI_UPPHI') then
             do i = 1, nno
-                ii = 2*i
+                ii = ndofbynode*i
                 zr(jv_vect+ii-1) = zr(jv_vect+ii-1) -&
                                    jac*zr(ipoids+ipg-1) *&
                                    zr(ivf+ldec+i-1) * vnor * rho

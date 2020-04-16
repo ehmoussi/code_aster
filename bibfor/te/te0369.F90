@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,105 +15,119 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0369(option, nomte)
-!.......................................................................
-    implicit none
 !
-!     BUT: CALCUL DES VECTEURS ELEMENTAIRES EN MECANIQUE
-!          ELEMENTS ISOPARAMETRIQUES 3D
-!
-!          OPTION : 'CHAR_MECA_ONDE '
-!
-!     ENTREES  ---> OPTION : OPTION DE CALCUL
-!          ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
+implicit none
 !
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
-#include "asterfort/rcvalb.h"
+#include "asterfort/getFluidPara.h"
+#include "asterfort/teattr.h"
+#include "asterfort/assert.h"
+#include "asterfort/utmess.h"
 !
-    integer :: icodre(1)
-    character(len=8) :: fami, poum
-    character(len=16) :: nomte, option
-    real(kind=8) :: jac, nx, ny, nz, sx(9, 9), sy(9, 9), sz(9, 9)
-    integer :: ipoids, ivf, idfdx, idfdy, igeom, kpg, spt
-    integer :: ndim, nno, ipg, npg1, ivectu, imate
-    integer :: idec, jdec, kdec, ldec, nnos, jgano
+character(len=16), intent(in) :: option, nomte
 !
+! --------------------------------------------------------------------------------------------------
 !
-!-----------------------------------------------------------------------
-    integer :: i, ii, ino, ionde, j, jno
-    real(kind=8) :: celer(1)
-!-----------------------------------------------------------------------
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
+! Elementary computation
+!
+! Elements: 3D_FLUIDE (boundary)
+!
+! Options: ONDE_FLUI
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: jv_geom, jv_mate, jv_onde, jv_vect
+    real(kind=8) :: nx, ny, nz, sx(9, 9), sy(9, 9), sz(9, 9)
+    real(kind=8) :: jac, celer
+    integer :: ipoids, ivf, idfdx, idfdy
+    integer :: nno, npg, ndim, ndofbynode
+    integer :: idec, jdec, kdec, ldec
+    integer :: i, ii, ino, j, jno, ipg
+    integer :: j_mater, iret
+    character(len=16) :: fsi_form
+!
+! --------------------------------------------------------------------------------------------------
+!
+
+!
+! - Input fields
+!
+    call jevech('PGEOMER', 'L', jv_geom)
+    call jevech('PMATERC', 'L', jv_mate)
+    call jevech('PONDECR', 'L', jv_onde)
+!
+! - Get element parameters
+!
+    call teattr('S', 'FORMULATION', fsi_form, iret)
+    call elrefe_info(fami='RIGI',&
+                     nno=nno, npg=npg, ndim=ndim,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfdx)
+    ASSERT(nno .le. 9)
     idfdy = idfdx + 1
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        ndofbynode = 2
+    else
+        call utmess('F', 'FLUID1_2', sk = fsi_form)
+    endif
 !
-    call jevech('PGEOMER', 'L', igeom)
-    call jevech('PMATERC', 'L', imate)
-    call jevech('PVECTUR', 'E', ivectu)
-    call jevech('PONDECR', 'L', ionde)
+! - Get material properties for fluid
 !
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
+    j_mater = zi(jv_mate)
+    call getFluidPara(j_mater, cele_r_ = celer)
 !
-    call rcvalb(fami, kpg, spt, poum, zi(imate),&
-                ' ', 'FLUIDE', 0, ' ', [0.d0],&
-                1, 'CELE_R', celer, icodre, 1)
+! - Output field
 !
-    do 11 i = 1, 2*nno
-        zr(ivectu+i-1) = 0.0d0
-11  end do
+    call jevech('PVECTUR', 'E', jv_vect)
+    do i = 1, ndofbynode*nno
+        zr(jv_vect+i-1) = 0.d0
+    end do
 !
-!     CALCUL DES PRODUITS VECTORIELS OMI X OMJ
+! - CALCUL DES PRODUITS VECTORIELS OMI X OMJ
 !
-    do 21 ino = 1, nno
-        i = igeom + 3*(ino-1) -1
-        do 22 jno = 1, nno
-            j = igeom + 3*(jno-1) -1
+    do ino = 1, nno
+        i = jv_geom + 3*(ino-1) -1
+        do jno = 1, nno
+            j = jv_geom + 3*(jno-1) -1
             sx(ino,jno) = zr(i+2) * zr(j+3) - zr(i+3) * zr(j+2)
             sy(ino,jno) = zr(i+3) * zr(j+1) - zr(i+1) * zr(j+3)
             sz(ino,jno) = zr(i+1) * zr(j+2) - zr(i+2) * zr(j+1)
-22      continue
-21  end do
+        end do
+    end do
 !
-!     BOUCLE SUR LES POINTS DE GAUSS
+! - Loop on Gauss points
 !
-    do 101 ipg = 1, npg1
-        kdec=(ipg-1)*nno*ndim
-        ldec=(ipg-1)*nno
-!
-        nx = 0.0d0
-        ny = 0.0d0
-        nz = 0.0d0
-!
-!        CALCUL DE LA NORMALE AU POINT DE GAUSS IPG
-!
-        do 102 i = 1, nno
+    do ipg = 1, npg
+        kdec = (ipg-1)*nno*ndim
+        ldec = (ipg-1)*nno
+! ----- Compute normal
+        nx = 0.d0
+        ny = 0.d0
+        nz = 0.d0
+        do i = 1, nno
             idec = (i-1)*ndim
-            do 102 j = 1, nno
+            do j = 1, nno
                 jdec = (j-1)*ndim
-!
                 nx = nx + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sx(i,j)
                 ny = ny + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sy(i,j)
                 nz = nz + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sz(i,j)
-!
-102          continue
-!
-!        CALCUL DU JACOBIEN AU POINT DE GAUSS IPG
-!
+            end do
+        end do
+! ----- Compute jacobian
         jac = sqrt (nx*nx + ny*ny + nz*nz)
-!
-        do 103 i = 1, nno
-            ii = 2*i
-            zr(ivectu+ii-1) = zr(ivectu+ii-1) + jac*zr(ipoids+ipg-1) * zr(ionde+ipg-1) * zr(ivf+l&
-                              &dec+i-1)/ celer(1)
-103      continue
-!
-101  end do
+        if (fsi_form .eq. 'FSI_UPPHI') then
+            do i = 1, nno
+                ii = ndofbynode*i
+                zr(jv_vect+ii-1) = zr(jv_vect+ii-1) +&
+                                   jac*zr(ipoids+ipg-1) *&
+                                   zr(ivf+ldec+i-1) * zr(jv_onde+ipg-1) / celer
+            end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
+    end do
 !
 end subroutine
