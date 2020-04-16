@@ -358,6 +358,7 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 ! -------------------------------------------------------------
 ! OPTIONS 'FULL_MECA' ET 'RAPH_MECA' = CALCUL DE SIG(T+DT)
 ! -------------------------------------------------------------
+    conv =.true.
     if (opt(1:9) .eq. 'RAPH_MECA' .or. opt(1:9) .eq. 'FULL_MECA') then
 !
         if (debug) write(6,*) ' * DEPS =',(depsth(i),i=1,3)
