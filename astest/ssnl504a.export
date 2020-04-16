@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm ssnl504a.comm D 1
 F mmed ssnl504a.mmed D 20
-F mmed ssnl504b.mmed D 21
+F mmed ssnl504a.21   D 21
