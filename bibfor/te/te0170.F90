@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,54 +15,55 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W0413
+! => celer/rho are real zero from DEFI_MATERIAU
+!
 subroutine te0170(option, nomte)
 !
 implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/dfdm3d.h"
+#include "asterfort/teattr.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
-#include "asterfort/rcvalb.h"
+#include "asterfort/getFluidPara.h"
 #include "asterfort/utmess.h"
 !
-!
-    character(len=16), intent(in) :: option
-    character(len=16), intent(in) :: nomte
+character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Elementary computation
 !
 ! Elements: 3D_FLUIDE
+!
 ! Options: RIGI_MECA/FORC_NODA/FULL_MECA/RAPH_MECA/RIGI_MECA_HYST/RIGI_MECA_TANG
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nbres=2
-    character(len=16), parameter :: nomres(nbres) = (/'RHO   ', 'CELE_R'/)
-    real(kind=8) :: valres(nbres)
-    integer :: icodre(nbres)
-    integer :: jv_compo, jv_deplm, jv_deplp, jv_vect, k, l, n1
-    integer :: n2, nn, nno2, nt2
-    character(len=8) :: fami, poum
+    integer :: i, j, k, l
+    integer :: n1, n2
+    integer :: nn, nno2, nt2
+    integer :: ipg, ik, ijkl
+    integer :: jv_compo, jv_deplm, jv_deplp
+    integer :: jv_geom, jv_mate
+    integer :: jv_vect, jv_codret, jv_matr
     character(len=16) :: rela_comp
-    real(kind=8) ::  a(2, 2, 27, 27)
+    real(kind=8) :: a(2, 2, 27, 27)
     real(kind=8) :: b(54, 54), ul(54), c(1485)
     real(kind=8) :: poids, rho, celer
-    integer :: ipoids, ivf, idfde, jv_geom, jv_mate, kpg, spt
-    integer :: nno, kp, npg, ik, ijkl, i, j, jv_matr, jv_codret
+    integer :: ipoids, ivf, idfde
+    integer :: nno, npg
+    integer :: j_mater, iret
+    character(len=16) :: fsi_form
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    fami       = 'FPG1'
-    kpg        = 1
-    spt        = 1
-    poum       = '+'
-    a(:,:,:,:) = 0.d0
+    a    = 0.d0
 !
-! - Get input fields
+! - Check behaviour
 !
     if (option(1:9) .eq. 'FULL_MECA' .or.&
         option .eq. 'RAPH_MECA' .or.&
@@ -73,67 +74,93 @@ implicit none
             call utmess('F', 'FLUID1_1')
         endif
     endif
+!
+! - Input fields
+!
     call jevech('PGEOMER', 'L', jv_geom)
     call jevech('PMATERC', 'L', jv_mate)
 !
 ! - Get element parameters
 !
-    call elrefe_info(fami='RIGI', nno=nno, npg=npg, jpoids=ipoids, jvf=ivf, jdfde=idfde)
+    call teattr('S', 'FORMULATION', fsi_form, iret)
+    call elrefe_info(fami='RIGI',&
+                     nno=nno, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde)
+    ASSERT(nno .le. 27)
+    nno2 = nno*2
+    nt2  = nno*(nno2+1)
 !
-! - Get material properties
+! - Get material properties for fluid
 !
-    call rcvalb(fami , kpg     , spt   , poum  , zi(jv_mate),&
-                ' '  , 'FLUIDE', 0     , ' '   , [0.d0]     ,&
-                nbres, nomres  , valres, icodre, 1)
-    rho   = valres(1)
-    celer = valres(2)
+    j_mater = zi(jv_mate)
+    call getFluidPara(j_mater, rho, celer)
 !
-! - Loop on Gauss points (compute (P**2)/ (RHO*(CEL**2)) )
+! - Loop on Gauss points
 !
-    do kp = 1, npg
-        l = (kp-1)*nno
-        call dfdm3d(nno, kp, ipoids, idfde, zr(jv_geom),&
+    do ipg = 1, npg
+        k = (ipg-1)*nno
+        call dfdm3d(nno  , ipg , ipoids, idfde, zr(jv_geom),&
                     poids)
-        do i = 1, nno
-            do j = 1, i
-                if (celer .eq. 0.d0 .or. rho .eq. 0.d0) then
-                    a(1,1,i,j) = 0.d0
-                else
-                    a(1,1,i,j) = a(1,1,i,j) + poids*zr(ivf+l+i-1)*zr(ivf+ l+j-1)/ rho/celer/celer
-                endif
+        if (fsi_form .eq. 'FSI_UPPHI') then
+            do i = 1, nno
+                do j = 1, i
+                    if (celer .eq. 0.d0 .or. rho .eq. 0.d0) then
+                        a(1,1,i,j) = 0.d0
+                    else
+                        a(1,1,i,j) = a(1,1,i,j) +&
+                                     poids*zr(ivf+k+i-1)*zr(ivf+k+j-1)/rho/celer/celer
+                    endif
+                end do
             end do
-        end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
     end do
 !
 ! - Compute result
 !
-    do k = 1, 2
-        do l = 1, 2
-            do i = 1, nno
-                ik = ((2*i+k-3)* (2*i+k-2))/2
-                do j = 1, i
-                    ijkl = ik + 2* (j-1) + l
-                    c(ijkl) = a(k,l,i,j)
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        do k = 1, 2
+            do l = 1, 2
+                do i = 1, nno
+                    ik = ((2*i+k-3)*(2*i+k-2))/2
+                    do j = 1, i
+                        ijkl = ik + 2*(j-1) + l
+                        c(ijkl) = a(k,l,i,j)
+                    end do
                 end do
             end do
         end do
-    end do
-    nno2 = nno*2
-    nt2  = nno*(nno2+1)
+    endif
 !
 ! - Save matrix
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RIGI_MECA') then
-        if (option .eq. 'RIGI_MECA_HYST') then
-            call jevech('PMATUUC', 'E', jv_matr)
+    if (option .eq. 'RIGI_MECA_HYST') then
+        call jevech('PMATUUC', 'E', jv_matr)
+        if (fsi_form .eq. 'FSI_UPPHI') then
             do i = 1, nt2
                 zc(jv_matr+i-1) = dcmplx(c(i),0.d0)
             end do
         else
-            call jevech('PMATUUR', 'E', jv_matr)
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
+    elseif (option(1:9) .eq. 'FULL_MECA' ) then
+        call jevech('PMATUUR', 'E', jv_matr)
+        if (fsi_form .eq. 'FSI_UPPHI') then
             do i = 1, nt2
                 zr(jv_matr+i-1) = c(i)
             end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
+    elseif (option(1:9) .eq. 'RIGI_MECA') then
+        call jevech('PMATUUR', 'E', jv_matr)
+        if (fsi_form .eq. 'FSI_UPPHI') then
+            do i = 1, nt2
+                zr(jv_matr+i-1) = c(i)
+            end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
         endif
     endif
 !
@@ -142,33 +169,41 @@ implicit none
     if (option(1:9) .eq. 'FULL_MECA' .or.&
         option .eq. 'RAPH_MECA' .or.&
         option .eq. 'FORC_NODA') then
-        call jevech('PVECTUR', 'E', jv_vect)
-        call jevech('PDEPLMR', 'L', jv_deplm)
-        call jevech('PDEPLPR', 'L', jv_deplp)
-        do i = 1, nno2
-            zr(jv_vect+i-1) = 0.d0
-            ul(i) = zr(jv_deplm+i-1) + zr(jv_deplp+i-1)
-        end do
-        nn = 0
-        do n1 = 1, nno2
-            do n2 = 1, n1
-                nn = nn + 1
-                b(n1,n2) = c(nn)
-                b(n2,n1) = c(nn)
+        if (fsi_form .eq. 'FSI_UPPHI') then
+            call jevech('PVECTUR', 'E', jv_vect)
+            call jevech('PDEPLMR', 'L', jv_deplm)
+            call jevech('PDEPLPR', 'L', jv_deplp)
+            do i = 1, nno2
+                zr(jv_vect+i-1) = 0.d0
+                ul(i) = zr(jv_deplm+i-1) + zr(jv_deplp+i-1)
             end do
-        end do
-        do n1 = 1, nno2
-            do n2 = 1, nno2
-                zr(jv_vect+n1-1) = zr(jv_vect+n1-1) + b(n1,n2)*ul(n2)
+            nn = 0
+            do n1 = 1, nno2
+                do n2 = 1, n1
+                    nn = nn + 1
+                    b(n1,n2) = c(nn)
+                    b(n2,n1) = c(nn)
+                end do
             end do
-        end do
+            do n1 = 1, nno2
+                do n2 = 1, nno2
+                    zr(jv_vect+n1-1) = zr(jv_vect+n1-1) + b(n1,n2)*ul(n2)
+                end do
+            end do
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
     endif
 !
 ! - Save return code
 !
     if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jv_codret)
-        zi(jv_codret) = 0
+        if (fsi_form .eq. 'FSI_UPPHI') then
+            call jevech('PCODRET', 'E', jv_codret)
+            zi(jv_codret) = 0
+        else
+            call utmess('F', 'FLUID1_2', sk = fsi_form)
+        endif
     endif
 !
 end subroutine
