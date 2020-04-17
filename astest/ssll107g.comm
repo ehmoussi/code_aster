@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,9 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'), IMPR_MACRO='NON')
 
 MATER=DEFI_MATERIAU(ELAS=_F(E = 1234567.890,  NU = 0.3))
 
+nom='SECT1'
 # =======================================================================
-TCARS=MACR_CARA_POUTRE(GROUP_MA_BORD='LR1',FORMAT='MED',GROUP_NO='GN_N64',)
+TCARS=MACR_CARA_POUTRE(GROUP_MA_BORD='LR1',FORMAT='MED',GROUP_NO='GN_N64',NOM=nom)
 IMPR_TABLE(TABLE=TCARS)
 
 TEST_TABLE(REFERENCE = 'ANALYTIQUE',
@@ -247,7 +248,7 @@ TCAR2=MACR_CARA_POUTRE(
    GROUP_MA_BORD=('LGR1', 'LGR2',),
    GROUP_MA=('GR1','GR2',),
    UNITE=38,FORMAT='ASTER', GROUP_NO=('GN_N64', 'GN_N64',),
-   LONGUEUR=0.0002, MATERIAU=MATER, LIAISON='ENCASTREMENT',
+   LONGUEUR=0.0002, MATERIAU=MATER, LIAISON='ENCASTREMENT',NOM=nom
 )
 IMPR_TABLE(TABLE=TCAR2)
 

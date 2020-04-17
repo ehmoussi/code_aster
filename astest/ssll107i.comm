@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,12 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
+nom='SECT1'
 TCARA=MACR_CARA_POUTRE(   FORMAT='ASTER',GROUP_MA_BORD='GXXXXXX_LEXT',
                                 GROUP_MA_INTE='GXXXXXX_LINT',
    # UNIQUEMENT POUR NE PAS AVOIR DE MATRICE SINGULIERE:
-                               NOEUD='N1' )
+                               NOEUD='N1',
+                               NOM=nom )
 IMPR_TABLE(TABLE=TCARA)
 
 TEST_TABLE(PRECISION=3.0000000000000001E-3,
@@ -32,7 +34,7 @@ TEST_TABLE(PRECISION=3.0000000000000001E-3,
            NOM_PARA='JX',
            TABLE=TCARA,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
+                     VALE_K=nom,),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -41,7 +43,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='RT',
            TABLE=TCARA,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='.9000000',),
+                     VALE_K=nom,),
            )
 
 FIN( )

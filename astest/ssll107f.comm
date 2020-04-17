@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,9 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
-TCARS =MACR_CARA_POUTRE(FORMAT='ASTER',GROUP_MA_BORD='LCERC', NOEUD='N1',)
+nom='SECT1'
+
+TCARS =MACR_CARA_POUTRE(FORMAT='ASTER',GROUP_MA_BORD='LCERC', NOEUD='N1',NOM=nom,)
 IMPR_TABLE( TABLE=TCARS )
 
 # ON CREE TCARS2 POUR TESTER LA LECTURE DE LA TABLE PAR AFFE_CARA_ELEM
@@ -207,7 +209,7 @@ CAREL=AFFE_CARA_ELEM(MODELE=MO,
                                #VALE=rext,
                                 SECTION='GENERALE',
                                 TABLE_CARA=TCARS,
-                                NOM_SEC='.9000000')
+                                NOM_SEC=nom)
                                ,)
 CAREL2=AFFE_CARA_ELEM(MODELE=MO,
                      INFO=2,

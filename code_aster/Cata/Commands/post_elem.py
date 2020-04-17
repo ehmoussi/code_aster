@@ -24,7 +24,19 @@ from code_aster.Cata.DataStructure import *
 from code_aster.Cata.Commons import *
 
 
-POST_ELEM=OPER(nom="POST_ELEM",op=107,sd_prod=table_sdaster,reentrant='n',
+def post_elem_prod(CARA_POUTRE,CARA_GEOM,**args):
+    if args.get('__all__'):
+       return (table_container, table_sdaster)
+
+    if CARA_POUTRE is not None:
+        return table_container
+    elif CARA_GEOM is not None:
+        return table_container
+    else:
+        return table_sdaster
+
+
+POST_ELEM=OPER(nom="POST_ELEM",op=107,sd_prod=post_elem_prod,reentrant='n',
                fr=tr("Calcul de quantités globales (masse, inerties, énergie, ...) sur tout ou partie du modèle"),
 
          regles=(UN_PARMI('MASS_INER', 'ENER_POT', 'ENER_CIN','TRAV_EXT','MINMAX',

@@ -27,6 +27,7 @@ from SD.sd_cham_no import sd_cham_no
 # from SD.sd_mode_meca import sd_mode_meca
 from SD.sd_dyna_phys import sd_dyna_phys
 from SD.sd_fonction import sd_fonction
+from SD.sd_maillage import sd_maillage
 # --------------------------------------------------------------------
 # sd_table contenant les colonnes nommée "NOM_OBJET","TYPE_OBJET",
 # et "NOM_SD"
@@ -103,5 +104,13 @@ class sd_table_container(sd_table):
             elif lnom1[k].startswith("TABLE"):
                 sd5 = sd_table(lnom2[k])
                 sd5.check(checker)
+            elif lnom1[k][:8] == 'MAILLAGE':
+                sd5 = sd_maillage(lnom2[k])
+                sd5.check(checker)
+            elif lnom1[k] == '':
+                if lnom2[k] != '':
+                    checker.err(self, "Ligne %d : TYPE_OBJET est vide, "
+                    "NOM_SD doit être vide mais il vaut %s" %
+                                (k+1, lnom2[k]))
             else:
                 assert 0, lnom1[k]
