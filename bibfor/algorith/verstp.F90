@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,20 +26,20 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/calcul.h"
 #include "asterfort/corich.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/gcnco2.h"
+#include "asterfort/inical.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/load_list_info.h"
+#include "asterfort/load_neut_comp.h"
+#include "asterfort/load_neut_prep.h"
 #include "asterfort/mecara.h"
 #include "asterfort/megeom.h"
-#include "asterfort/reajre.h"
-#include "asterfort/load_neut_prep.h"
-#include "asterfort/load_neut_comp.h"
-#include "asterfort/resi_ther.h"
-#include "asterfort/inical.h"
-#include "asterfort/load_list_info.h"
-#include "asterfort/detrsd.h"
 #include "asterfort/memare.h"
+#include "asterfort/reajre.h"
+#include "asterfort/resi_ther.h"
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: lload_name
@@ -55,13 +55,13 @@ character(len=24), intent(in) :: vect_elem
 character(len=1), intent(in) :: base
 character(len=24), optional, intent(in) :: hydr_prev_
 character(len=24), optional, intent(in) :: hydr_curr_
-character(len=24), optional, intent(in) :: dry_prev_  
+character(len=24), optional, intent(in) :: dry_prev_
 character(len=24), optional, intent(in) :: dry_curr_
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic - Residuals
-! 
+!
 ! Neumann loads elementary vectors
 !
 ! --------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ character(len=24), optional, intent(in) :: dry_curr_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer , parameter :: nb_in_maxi = 5 
+    integer , parameter :: nb_in_maxi = 5
     integer , parameter :: nbout = 2
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
@@ -125,7 +125,7 @@ character(len=24), optional, intent(in) :: dry_curr_
 !
 ! - Init fields
 !
-    call inical(nb_in_maxi, lpain, lchin, nbout, lpaout, lchout)    
+    call inical(nb_in_maxi, lpain, lchin, nbout, lpaout, lchout)
 !
 ! - Loads
 !
@@ -145,7 +145,7 @@ character(len=24), optional, intent(in) :: dry_curr_
     call gcnco2(newnom)
     lchout(1) (10:16) = newnom(2:8)
 !
-! - Residuals from non-linear laws 
+! - Residuals from non-linear laws
 !
     call resi_ther(model    , mate     , time     , compor_ther, temp_prev,&
                    temp_iter, hydr_prev, hydr_curr, dry_prev   , dry_curr ,&
@@ -168,4 +168,9 @@ character(len=24), optional, intent(in) :: dry_curr_
         endif
     end do
 !
-end subroutine
+!   delete temporary object
+    if (.not. present(hydr_curr_)) then
+        call detrsd('CHAMP', hydr_curr)
+    endif
+!
+    end subroutine
