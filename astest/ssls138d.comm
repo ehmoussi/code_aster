@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,14 +32,14 @@ MEMBRANE=DEFI_MATERIAU(ELAS_MEMBRANE=_F(M_LLLL = 3.,
                                         M_TTTT = 3.,
                                         M_LTLT = 2.,
                                         M_LLLT = 0.,
-                                        M_TTLT = 0.),)
+                                        M_TTLT = 0., RHO=1.0),)
 
 MATE=AFFE_MATERIAU(MAILLAGE=MAIL,
                    AFFE=(_F(GROUP_MA = ('FACE'),
                             MATER    = MEMBRANE,)))
 
 MODE=AFFE_MODELE(MAILLAGE = MAIL,
-                 
+
                  AFFE=(_F(GROUP_MA     = ('FACE'),
                           PHENOMENE    = 'MECANIQUE',
                           MODELISATION = 'MEMBRANE'),
@@ -51,6 +51,12 @@ CARA=AFFE_CARA_ELEM(MODELE = MODE,
                     MEMBRANE =(_F(GROUP_MA     = 'FACE',
                                   ANGL_REP_1   = (90., 0.,),
                                   EPAIS = 1.0)))
+
+ME = CALC_MATR_ELEM (MODELE=MODE,
+                     CHAM_MATER=MATE,
+                     CARA_ELEM=CARA,
+                     OPTION='MASS_MECA',
+                    )
 
 CL_TRAC=AFFE_CHAR_MECA(MODELE   = MODE,
                        DDL_IMPO =(_F(GROUP_MA = 'FACE',

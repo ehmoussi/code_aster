@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ subroutine assma3(lmasym, lmesym, tt, igr, iel,&
                   jnulo1, jposd1, admodl,&
                   lcmodl, mode, nec, nmxcmp, ncmp,&
                   jsmhc, jsmdi, iconx1, iconx2, jtmp2,&
-                  lgtmp2, jvalm, ilinu, ellagr)
+                  lgtmp2, jvalm, ilinu, ellagr, nbeltb, ti1, ti2)
 ! person_in_charge: jacques.pellet at edf.fr
 ! aslint: disable=W1504
     implicit none
@@ -50,12 +50,10 @@ subroutine assma3(lmasym, lmesym, tt, igr, iel,&
     integer :: lcmodl, k1, k2, n2, n3
     integer :: mode, n1, nbvel, ncmp, nddl1, nddl2
     integer :: nec, nmxcmp, nnoe, numa, nk2, decael
+    integer :: ti1(*), ti2(*), nbeltb
     aster_logical :: ldist, ldgrel
 !
-    integer :: nbi1mx, nbi1
-    parameter (nbi1mx=560*560)
-    integer :: ti1(nbi1mx)
-    integer :: ti2(nbi1mx)
+    integer :: nbi1
 !-----------------------------------------------------------------------
 !     FONCTIONS FORMULES :
 !-----------------------------------------------------------------------
@@ -225,7 +223,7 @@ subroutine assma3(lmasym, lmesym, tt, igr, iel,&
             end do
         end do
     end do
-    ASSERT(nbi1.le.nbi1mx)
+    ASSERT(nbi1.le.nbeltb)
     call asret2(lmasym, jtmp2, lgtmp2, nbterm, jsmhc,&
                 jsmdi, nbi1, ti1, ti2)
 !

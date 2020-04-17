@@ -40,6 +40,7 @@ from itertools import chain
 
 from waflib import Build, Configure, Logs, Utils
 from waflib.Tools.c_config import DEFKEYS
+from waflib.Tools.fc import fc
 
 if sys.version_info.major < 3:
     Logs.error("Python 2 is not supported anymore. "
@@ -100,6 +101,15 @@ def options(self):
         group.remove_option('--prefix')
     group.add_option('--prefix', dest='prefix', default=None,
                      help='installation prefix [default: %r]' % default_prefix)
+
+    group = self.get_option_group('Build and installation options')
+    group.add_option('--fast', dest='custom_fc_sig', action='store_true',
+                     default=True,
+                     help="use fast algorithm based on modification time to "
+                          "check for dependencies of fortran sources")
+    group.add_option('--safe', dest='custom_fc_sig', action='store_false',
+                     help="use safe algorithm based on content to check for "
+                          "implicit dependencies of fortran sources")
 
     group = self.add_option_group('code_aster options')
 
@@ -223,6 +233,7 @@ def configure(self):
     self.write_config_headers()
 
 def build(self):
+    fc._use_custom_sig = self.options.custom_fc_sig
     # shared the list of dependencies between bibc/bibfor
     # the order may be important
     self.env['all_dependencies'] = [
