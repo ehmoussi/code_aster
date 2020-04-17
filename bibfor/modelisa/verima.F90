@@ -57,13 +57,16 @@ subroutine verima(meshz, list_obj, list_size, typez_objet)
     mesh     = meshz
     type_obj = typez_objet
 !
+    if ( list_size .lt. 1 ) then
+        goto 999
+    endif
+!
     noeuma = mesh//'.NOMNOE'
     grnoma = mesh//'.GROUPENO'
     mailma = mesh//'.NOMMAI'
     grmama = mesh//'.GROUPEMA'
 !
     l_parallel_mesh = isParallelMesh(mesh)
-
 !
     if (type_obj .eq. 'GROUP_NO') then
 !
@@ -161,4 +164,5 @@ subroutine verima(meshz, list_obj, list_size, typez_objet)
     else
         call utmess('F', 'MODELISA7_79', sk=type_obj)
     endif
+999 continue
 end subroutine
