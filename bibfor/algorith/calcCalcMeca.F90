@@ -33,19 +33,21 @@ use HHO_type
 implicit none
 !
 #include "asterf_types.h"
-#include "asterfort/exixfe.h"
 #include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/knindi.h"
-#include "asterfort/nmchex.h"
-#include "asterfort/merimo.h"
-#include "asterfort/medime.h"
-#include "asterfort/vebtla.h"
 #include "asterfort/copisd.h"
-#include "asterfort/vefnme.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/exixfe.h"
+#include "asterfort/knindi.h"
+#include "asterfort/medime.h"
+#include "asterfort/merimo.h"
+#include "asterfort/nmchex.h"
+#include "asterfort/nmvcd2.h"
 #include "asterfort/nmvcpr_elem.h"
 #include "asterfort/utmess.h"
-#include "asterfort/nmvcd2.h"
+#include "asterfort/vebtla.h"
+#include "asterfort/vefnme.h"
+#include "asterfort/vtzero.h"
 !
 integer, intent(in) :: nb_option
 character(len=16), intent(in) :: list_option(:)
@@ -104,17 +106,19 @@ integer, intent(out) ::  nb_obje
     aster_logical :: l_meta_zirc, l_meta_acier, l_xfem, l_macr_elem
     integer :: ldccvg
     real(kind=8) :: partps(3)
-    character(len=19) :: ligrmo
+    character(len=19) :: ligrmo, caco3d
     character(len=32) :: answer
     type(NL_DS_System) :: ds_system
     type(HHO_Field) :: hhoField
     character(len=1) :: base
+    character(len=24) :: depnul
 !
 ! --------------------------------------------------------------------------------------------------
 !
     partps(:) = 0.d0
     nb_obje   = 0
     base      = 'G'
+    caco3d    = '&&MERIMO.CARA_ROTAF'
 !
 ! - Get LIGREL
 !
@@ -138,6 +142,7 @@ integer, intent(out) ::  nb_obje
     call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
     call nmchex(hval_incr, 'VALINC', 'SIGMOI', sigm_prev)
     call nmchex(hval_incr, 'VALINC', 'VARMOI', vari_prev)
+    call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst )
 !
 ! - What we are computing
 !
@@ -203,6 +208,7 @@ integer, intent(out) ::  nb_obje
                     hval_incr      , hval_algo  , hhoField ,&
                     option         , merigi     , vefint   ,&
                     ldccvg)
+        call detrsd('CHAMP', caco3d)
     endif
 !
 ! - Lagrange dof computation
@@ -218,13 +224,22 @@ integer, intent(out) ::  nb_obje
     if (l_forc_noda) then
         option    = 'FORC_NODA'
         if (.not. l_nonl) then
+            ! calcul avec sigma init (sans integration de comportement)
             call copisd('CHAMP_GD', 'V', sigm_prev, sigm_curr)
-        endif
-        call nmchex(hval_algo, 'SOLALG', 'DEPDEL', disp_cumu_inst )
-        call vefnme(option                , model    , ds_material%mateco, cara_elem,&
+            call vefnme(option                , model    , ds_material%mateco, cara_elem,&
                     ds_constitutive%compor, partps   , 0                     , ligrmo   ,&
                     varc_curr             , sigm_curr, ' '                   , disp_prev,&
                     disp_cumu_inst        , base     , veforc)
+        else
+            ! t(i) => t(i+1) : depplu => depmoi, depdel = 0
+            depnul='&&calcul.depl_nul'
+            call copisd('CHAMP_GD', 'V', disp_cumu_inst, depnul)
+            call vtzero(depnul)
+            call vefnme(option                , model    , ds_material%mateco, cara_elem,&
+                    ds_constitutive%compor, partps   , 0                     , ligrmo   ,&
+                    varc_curr             , sigm_curr, ' '                   , disp_curr,&
+                    depnul       , base     , veforc)
+        endif
     endif
 !
 ! - State variables

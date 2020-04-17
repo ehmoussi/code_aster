@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ subroutine te0439(option, nomte)
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8dgrd.h"
+#include "asterc/r8prem.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/mbcine.h"
@@ -42,7 +43,7 @@ subroutine te0439(option, nomte)
 !
     integer :: codres(2)
     character(len=4) :: fami
-    integer :: nno, npg, i, imatuu, ndim, nnos, jgano
+    integer :: nno, npg, i, imatuu, ndim, nnos, jgano,iret_cmp
     integer :: ipoids, ivf, idfde, igeom, imate, icacoq, icompo
     integer :: kpg, n, j, kkd, k
     integer :: kk, nddl, l
@@ -54,10 +55,14 @@ subroutine te0439(option, nomte)
     aster_logical :: ldiag, grdef
 !
 !
-    call jevech('PCOMPOR', 'L', icompo)
-
-    grdef = (zk16 ( icompo + 2 )(1:9) .eq. 'GROT_GDEP')
-
+    call tecach('ONO', 'PCOMPOR', 'L', iret_cmp, iad=icompo)
+!
+    grdef = ASTER_FALSE
+!
+    if(iret_cmp == 0) then
+        grdef = (zk16 ( icompo + 2 )(1:9) .eq. 'GROT_GDEP')
+    end if
+!
     ldiag = (option(1:10).eq.'MASS_MECA_')
 !
 !
@@ -83,22 +88,27 @@ subroutine te0439(option, nomte)
 !
     alpha = zr(icacoq+1) * r8dgrd()
     beta = zr(icacoq+2) * r8dgrd()
-
+!
 ! - EPAISSEUR (VALABLE UNIQUEMENT POUR GROT_GDEP)
 !
-
-
     if (grdef) then
 ! - LES MEMBRANES EN GROT_GDEP EN DYNAMIQUE SONT CODEES MAIS PAS TESTEES
 ! - ON INTERDIT MASS_MECA POUR LE MOMENT
         call utmess('F', 'MEMBRANE_9')
 ! - il suffit d'enlever ce message d'erreur pour rendre l'option fonctionnelle
-
+!
         h = zr(icacoq)
     else
+        if(iret_cmp .ne. 0) then
+! - La carte COMPOR n'est pas présente, c'est probablement que l'on est dans CALC_MATR_ELEM
+!  On vérifie que l'épaisseur soit bien de 1
+            if ( abs(zr(icacoq) - 1.d0).gt.r8prem() ) then
+                call utmess('F', 'MEMBRANE_11')
+            endif
+        end if
+!
         h = 1.d0
     endif
-
 !
 ! - CALCUL POUR CHAQUE POINT DE GAUSS : ON CALCULE D'ABORD LA
 !      CONTRAINTE ET/OU LA RIGIDITE SI NECESSAIRE PUIS
@@ -118,7 +128,6 @@ subroutine te0439(option, nomte)
 !
 ! - MASS_MECA
 !
-
     if (grdef) then
         call rcvalb(fami, kpg, 1, '+', zi(imate),&
                ' ', 'ELAS', 0, ' ', [0.d0],&
@@ -128,12 +137,10 @@ subroutine te0439(option, nomte)
                ' ', 'ELAS_MEMBRANE', 0, ' ', [0.d0],&
                1, 'RHO', rho, codres, 1)
     endif
-
 !
 ! - CALCUL DE LA MATRICE "B" : DEPL NODAL -> EPS11 ET DU JACOBIEN
 !
-        call mbcine(nno, zr(igeom), dff, alpha, beta,&
-                    b, jac)
+        call mbcine(nno, zr(igeom), dff, alpha, beta, b, jac)
 !
         wgt = wgt + rho(1)*zr(ipoids+kpg-1)*jac*h
 !
