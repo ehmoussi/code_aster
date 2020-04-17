@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ subroutine chcoma(tablez, nomaou)
     integer :: ngm, ibid, iret, idcode, dimcoo, nbno, jcoor, idcoor, ino
     real(kind=8) :: r8b, p(2, 2), alpha, yg, zg, yabs, zabs
     complex(kind=8) :: c16b
-    character(len=8) :: k8b
+    character(len=8) :: k8b, typobj
     character(len=19) :: table
     character(len=24) :: cooval, coodes, nogrma, noma
 !.========================= DEBUT DU CODE EXECUTABLE ==================
@@ -95,9 +95,16 @@ subroutine chcoma(tablez, nomaou)
         noma=nogrma
         iret=0
     else
-        call tbexp2(table, 'MAILLAGE')
+        call tbexp2(table, 'TYPE_OBJET')
         call tbliva(table, 0, k8b, [ibid], [r8b],&
-                    [c16b], k8b, k8b, [r8b], 'MAILLAGE',&
+                    [c16b], k8b, k8b, [r8b], 'TYPE_OBJET',&
+                    k8b, ibid, r8b, c16b, typobj,&
+                    iret)
+        if (typobj.ne.'MAILLAGE') call utmess('F', 'MODELISA2_89')
+        
+        call tbexp2(table, 'NOM_SD')
+        call tbliva(table, 0, k8b, [ibid], [r8b],&
+                    [c16b], k8b, k8b, [r8b], 'NOM_SD',&
                     k8b, ibid, r8b, c16b, noma,&
                     iret)
     endif

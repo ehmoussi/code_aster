@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ subroutine pecapo(resu, modele, cara, nh)
     real(kind=8) :: valpar(nbcisa), ay, az, ey, ez, pcty, pctz, r8b, rt, jx, s, yg, zg, iy, iz
     real(kind=8) :: alpha, iomega
     character(len=8) :: k8b, temper, tempe1, tempe2, ptors(nbtors), pgauc(nbgauc), pcisa(nbcisa)
-    character(len=8) :: prt(nbrt)
+    character(len=8) :: prt(nbrt), typobj
     character(len=16) :: option
     character(len=19) :: nomtab
     character(len=24) :: chgeom, chcara(18), chharm, nogrma, noma, nomail
@@ -91,9 +91,16 @@ subroutine pecapo(resu, modele, cara, nh)
 !
 ! --- RECUPERATION DU MAILLAGE INITIAL :
 !     --------------------------------
-    call tbexp2(resu, 'MAILLAGE')
+    call tbexp2(resu, 'TYPE_OBJET')
     call tbliva(resu, 0, k8b, [ibid], [r8b],&
-                [c16b], 'TOUT', k8b, [r8b], 'MAILLAGE',&
+                [c16b], k8b, k8b, [r8b], 'TYPE_OBJET',&
+                k8b, ibid, r8b, c16b, typobj,&
+                iret)
+    if (typobj.ne.'MAILLAGE') call utmess('F', 'MODELISA2_89')
+    
+    call tbexp2(resu, 'NOM_SD')
+    call tbliva(resu, 0, k8b, [ibid], [r8b],&
+                [c16b], k8b, k8b, [r8b], 'NOM_SD',&
                 k8b, ibid, r8b, c16b, noma,&
                 iret)
     nomail=noma
