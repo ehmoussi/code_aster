@@ -386,7 +386,7 @@ def post_mac3coeur_ops(self, **args):
     _table = _TAB_N.EXTR_TABLE()
     nameCoeur = _table.para[0]
 
-# et on renomme la colonne qui identifie les assemblages
+    # et on renomme la colonne qui identifie les assemblages
     _table.Renomme(nameCoeur, 'idAC')
     _coeur = coeur_factory.get(_typ_coeur)(nameCoeur, _typ_coeur, self, datg,_longueur)
     _coeur.init_from_table(_table,mater=False)
@@ -408,8 +408,8 @@ def post_mac3coeur_ops(self, **args):
 
         _formule = FORMULE(NOM_PARA='V8', VALE='1000.*V8')
 
-# formule qui permet d'associer les COOR_X "presque" identiques (suite a
-# un calcul LAME)
+        # formule qui permet d'associer les COOR_X "presque" identiques (suite a
+        # un calcul LAME)
         _indicat = FORMULE(NOM_PARA='COOR_X', VALE='int(10*COOR_X)')
 
         UTMESS('I', 'COEUR0_5')
@@ -530,15 +530,11 @@ def post_mac3coeur_ops(self, **args):
                 })
 
 
-
-        print('liste_out : ',liste_out)
-
         __TAB_OUT = CREA_TABLE(TITRE='RESU_GLOB_'+nameCoeur,
                              LISTE=liste_out
                              )
 
         tableCreated = True
-
 
         for attr in POST_LAME:
             _unit = attr['UNITE']
@@ -567,16 +563,13 @@ def post_mac3coeur_ops(self, **args):
 
                 IMPR_TABLE(UNITE=_unit, TABLE=_TAB3, NOM_PARA=l_para,FORMAT_R='E12.6',)
 
-    
-
-
-
-
     # "
     #                                          MOT-CLE FACTEUR FORCE_CONTACT
     # "
 
     if (POST_EFFORT is not None):
+        # FIXME to be fixed by issue29787
+        __TAB_OUT = None
 
         valeffortac = {}
         valeffortcu = {}
@@ -588,8 +581,8 @@ def post_mac3coeur_ops(self, **args):
 
         _formule = FORMULE(NOM_PARA='N', VALE='abs(1.*N)')
 
-# formule qui permet d'associer les COOR_X "presque" identiques (suite a
-# un calcul LAME)
+        # formule qui permet d'associer les COOR_X "presque" identiques (suite a
+        # un calcul LAME)
         _indicat = FORMULE(NOM_PARA='COOR_X', VALE='int(10*COOR_X)')
 
         UTMESS('I', 'COEUR0_9')
@@ -677,11 +670,6 @@ def post_mac3coeur_ops(self, **args):
                     _coeur.get_contactAssLame() + _coeur.get_contactCuve()
 
                 IMPR_TABLE(UNITE=_unit, TABLE=_TAB3, NOM_PARA=l_para,FORMAT_R='E12.6',)
-
-
-
-
-
 
     # "
     #                                          MOT-CLE FACTEUR DEFORMATION
