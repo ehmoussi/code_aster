@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,56 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
 import os.path as osp
-from waflib import Configure, Logs
+
+from waflib import Build, Configure, Logs, TaskGen, Utils
+from waflib.Context import Context
+from waflib.Task import CRASHED, MISSING, Task
+from waflib.Tools import c, ccroot, cxx, fc
+
+
+def sig_explicit_deps(self):
+    """Hash `inputs` and `dep_nodes` signatures."""
+    lst = []
+    for node in self.inputs + self.dep_nodes:
+        st = os.stat(node.abspath())
+        lst.append(st.st_mtime)
+        lst.append(st.st_size)
+    self.m.update(Utils.h_list(lst))
+# overload method for all tasks
+Task.sig_explicit_deps = sig_explicit_deps
+
+def _inputs_changed(self):
+    """Tell if inputs changed."""
+    for x in self.inputs + self.dep_nodes:
+        for y in self.outputs:
+            try:
+                if os.stat(x.abspath()).st_mtime > os.stat(y.abspath()).st_mtime:
+                    return True
+            except:
+                return True
+    return False
+
+fc_signature_native = fc.fc.signature
+def signature(self):
+    """By-pass signature computation if inputs haven't changed."""
+    try:
+        return self.cache_sig
+    except AttributeError:
+        pass
+
+    if getattr(fc.fc, "_use_custom_sig", None) and not _inputs_changed(self):
+        # do not compute sig_implicit_deps (and avoids scan)
+        self.cache_sig =  self.generator.bld.task_sigs[self.uid()]
+        return self.cache_sig
+
+    return fc_signature_native(self)
+
+fc.fc.signature = signature
 
 ###############################################################################
 # Add OPTLIB_FLAGS support
-from waflib.Tools import fc, c, cxx, ccroot
 # original run_str command line is store as hcode
 for lang in ('c', 'cxx', 'fc'):
     for feature in ('', 'program', 'shlib'):
@@ -47,7 +91,6 @@ class cxxshlib(cxxprogram):
 ###############################################################################
 def customize_configure_output():
     """Customize the output of configure"""
-    from waflib.Context import Context
     def start_msg40(self, *k, **kw):
         """Force output on 40 columns. See :py:meth:`waflib.Context.Context.msg`"""
         if kw.get('quiet', None):
@@ -70,7 +113,6 @@ def customize_configure_output():
 
 customize_configure_output()
 ###############################################################################
-from waflib.Task import Task, CRASHED, MISSING
 
 SRCWIDTH = 120
 def format_error(self):
@@ -101,7 +143,6 @@ fcprogram.format_error = format_error
 
 ###############################################################################
 # support for the "dynamic_source" attribute
-from waflib import Build, Utils, TaskGen
 
 @TaskGen.feature('c', 'cxx')
 @TaskGen.before('process_source', 'process_rule')
