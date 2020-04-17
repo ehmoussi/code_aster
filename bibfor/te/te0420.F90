@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,42 +15,59 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0420(option, nomte)
-!.......................................................................
 !
-!     BUT: CALCUL DES NIVEAUX DE PRESSION EN DB
-!          ELEMENTS ISOPARAMETRIQUES 3D ET 3D_MIXTE
+implicit none
 !
-!          OPTION : 'PRME_ELNO'
-!
-!     ENTREES  ---> OPTION : OPTION DE CALCUL
-!          ---> NOMTE  : NOM DU TYPE ELEMENT
-!.......................................................................
-!
-    implicit none
 #include "jeveux.h"
-!
+#include "asterfort/teattr.h"
 #include "asterfort/jevech.h"
-#include "asterfort/tecael.h"
-    character(len=16) :: nomte, option
+#include "asterfort/utmess.h"
+#include "asterfort/elrefe_info.h"
 !
+character(len=16), intent(in) :: option, nomte
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: iadzi, iazk24
-    integer :: nno, ino, ipdeb, ipres, idino, ipino
+! Elementary computation
 !
+! Elements: 3D_FLUIDE, AXIS_FLUIDE, 2D_FLUIDE
 !
-    call jevech('PPRME_R', 'E', ipdeb)
-    call jevech('PDEPLAC', 'L', ipres)
+! Options: PRME_ELNO
 !
-    call tecael(iadzi, iazk24, noms=0)
-    nno = zi(iadzi+1)
+! --------------------------------------------------------------------------------------------------
 !
-    do 10 ino = 1, nno
-        idino = ipdeb + ino - 1
-        ipino = ipres + 2* (ino-1)
-        zr(idino) = 20.d0*log10(abs(zc(ipino))/2.d-5)
-10  end do
+    integer :: iret
+    character(len=16) :: fsi_form
+    integer :: nno, ino, ndofbynode
+    integer :: jv_prme, jv_pres
+!
+! --------------------------------------------------------------------------------------------------
+!
+    nno = 0
+!
+! - Get element parameters
+!
+    call teattr('S', 'FORMULATION', fsi_form, iret)
+    call elrefe_info(fami='RIGI', nno=nno)
+    if (fsi_form .eq. 'FSI_UPPHI') then
+        ndofbynode = 2
+    elseif (fsi_form .eq. 'FSI_UP') then
+        ndofbynode = 1
+    else
+        call utmess('F', 'FLUID1_2', sk = fsi_form)
+    endif
+!
+! - Input field
+!
+    call jevech('PDEPLAC', 'L', jv_pres)
+!
+! - Output field
+!
+    call jevech('PPRME_R', 'E', jv_prme)
+    do ino = 1, nno
+        zr(jv_prme + ino - 1) = 20.d0*log10(abs(zc(jv_pres + ndofbynode*(ino-1)))/2.d-5)
+    end do
 !
 end subroutine
