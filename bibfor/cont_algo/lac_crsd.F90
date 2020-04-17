@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,8 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     integer :: ifm, niv
     integer :: nt_patch, jv_dummy, nt_elem_slav, vali(2)
-    character(len=24) :: sdcont_stat, sdcont_lagc, sdcont_zeta
+    character(len=24) :: sdcont_stat, sdcont_lagc, sdcont_zeta, sdcont_zgpi
+    character(len=24) :: sdcont_znmc, sdcont_zpoi, sdcont_zcoe
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -71,14 +72,22 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     vali(2) = nt_elem_slav
     call utmess('I', 'CONTACT5_7', ni = 2, vali = vali)
 !
-! - Create objects 
+! - Create objects
 !
     sdcont_stat = ds_contact%sdcont_solv(1:14)//'.STAT'
     sdcont_zeta = ds_contact%sdcont_solv(1:14)//'.ZETA'
+    sdcont_zgpi = ds_contact%sdcont_solv(1:14)//'.ZGPI'
+    sdcont_zcoe = ds_contact%sdcont_solv(1:14)//'.ZCOE'
+    sdcont_znmc = ds_contact%sdcont_solv(1:14)//'.ZNMC'
+    sdcont_zpoi = ds_contact%sdcont_solv(1:14)//'.ZPOI'
     sdcont_lagc = ds_contact%sdcont_solv(1:14)//'.LAGC'
     call wkvect(sdcont_stat, 'V V I', nt_patch, jv_dummy)
     call wkvect(sdcont_zeta, 'V V I', nt_patch, jv_dummy)
     call wkvect(sdcont_lagc, 'V V R', nt_patch, jv_dummy)
+    call wkvect(sdcont_zgpi, 'V V R', nt_patch, jv_dummy)
+    call wkvect(sdcont_zpoi, 'V V R', nt_patch, jv_dummy)
+    call wkvect(sdcont_znmc, 'V V I', nt_patch, jv_dummy)
+    call wkvect(sdcont_zcoe, 'V V R', nt_patch, jv_dummy)
 !
 ! - Forces to solve
 !

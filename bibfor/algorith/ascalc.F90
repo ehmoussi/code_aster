@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -173,7 +173,7 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
                         do is = 1, nbsup
                             do id = 1, 3
                                 if (nomsup((id-1)*nbsup+is) .eq. noeu) then
-                                    if (nbdis(is) .ne. 0) then
+                                    if (nbdis(is) .ne. 0 .and. nbdis(is) .ne. ioc) then
                                         call utmess('F', 'SEISME_29')
                                     endif
                                     nbdis(is) = ioc
@@ -208,7 +208,7 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
                                 do is = 1, nbsup
                                     do id = 1, 3
                                         if (nomsup((id-1)*nbsup+is) .eq. noeu) then
-                                            if (nbdis(is) .ne. 0) then
+                                            if (nbdis(is) .ne. 0 .and. nbdis(is) .ne. ioc) then
                                                 call utmess('F', 'SEISME_29')
                                             endif
                                             nbdis(is) = ioc

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,6 +70,7 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
 #include "asterfort/uttcpu.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/zerobj.h"
+#include "asterfort/nbddlMaxMa.h"
 !
     character(len=*) :: base, matas, tlimat(*), nu
     integer :: nbmat, itysca
@@ -81,7 +82,7 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
 ! "Lagrange".
 !-----------------------------------------------------------------------
 ! int k* base   : base sur laquelle on veut creer la matr_asse
-! out k* matas  :l'objet matas de type matr_asse est cree et rempli
+! out k* matas  : l'objet matas de type matr_asse est cree et rempli
 ! in  k* matas  : nom de l'objet de type matr_asse a creer
 ! in  i  nbmat  : nombre de matr_elem  de la liste tlimat
 ! in  k* tlimat : liste des matr_elem
@@ -107,16 +108,16 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     character(len=1) :: matsym
     character(len=3) :: matd,kret
     real(kind=8) :: c1, temps(7)
-
+!
     aster_logical :: acreer, cumul, dbg, ldistme, lmatd, lmhpc
     aster_logical :: lmasym, lmesym, ldgrel,lparallel_mesh
-
-    integer :: admodl, i
+!
+    integer :: admodl, i, nbi1mx
     integer :: jdesc
     integer :: jadli, jadne, jnueq, jnulo1
     integer :: jposd1, jtmp2, lgtmp2
     integer :: ibid, iconx1, iconx2, idbgav
-    integer :: jprn1, jprn2, jresl
+    integer :: jprn1, jprn2, jresl, maxDDLMa
     integer :: iel, ier, ifm, igr
     integer :: ilima, ilimat, ilimo, ilinu
     integer :: imat, jnumsd, iresu
@@ -132,6 +133,7 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     character(len=24), pointer :: noli(:) => null()
     integer, pointer :: prti(:) => null()
     character(len=24), pointer :: relr(:) => null()
+    integer, pointer :: assma3_tab1(:) => null(), assma3_tab2(:) => null()
 
 !-----------------------------------------------------------------------
 !     FONCTIONS FORMULES :
@@ -327,7 +329,7 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     nbnomx=max(nbnoss,50)
     call wkvect('&&ASSMAM.NUMLO1', 'V V I', 2*nbnomx, jnulo1)
     call wkvect('&&ASSMAM.POSDD1', 'V V I', nbnomx*nmxcmp, jposd1)
-
+!
 !   -- allocation d'un objet de travail utilise dans asretm :
 !      ce vecteur est agrandi si necessaire dans asretm
     lgtmp2=400
@@ -366,8 +368,16 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
         call uttcpu('CPU.ASSMAM', 'INIT ', ' ')
         call uttcpu('CPU.ASSMAM', 'DEBUT', ' ')
     endif
-
-
+!
+! --- On alloue ici les tableaux de travail pour assma3
+!     l'augmentation du temps d'assemblage est négligeable
+!
+    maxDDLMa = nbddlMaxMa(nudev, matdev, nbmat)
+! Le x2 est par sécurité
+    nbi1mx = 2 * maxDDLMa * maxDDLMa
+    call wkvect('&&ASSMAM.TAB1', 'V V I', nbi1mx, vi=assma3_tab1)
+    call wkvect('&&ASSMAM.TAB2', 'V V I', nbi1mx, vi=assma3_tab2)
+!
 !   -- calcul de mat19, nu14, jsmhc, jsmdi, ... :
 !   ----------------------------------------------
     mat19=matdev
@@ -532,7 +542,8 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
                                     jnulo1, jposd1, admodl,&
                                     lcmodl, mode, nec, nmxcmp, ncmp,&
                                     jsmhc, jsmdi, iconx1, iconx2, jtmp2,&
-                                    lgtmp2, jvalm, ilinu, ellagr)
+                                    lgtmp2, jvalm, ilinu, ellagr, &
+                                    nbi1mx, assma3_tab1, assma3_tab2)
                     end do
                     call jelibe(jexnum(resu//'.RESL', igr))
                 endif
@@ -591,8 +602,9 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
             zk24(jrefa-1+11)='MPI_INCOMPLET'
         endif
     endif
-
-
+!
+    call jedetr('&&ASSMAM.TAB1')
+    call jedetr('&&ASSMAM.TAB2')
     call jedetr(matdev//'.ADNE')
     call jedetr(matdev//'.ADLI')
     call jedetr('&&ASSMAM.NUMLO1')
