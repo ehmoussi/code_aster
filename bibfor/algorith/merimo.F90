@@ -119,7 +119,7 @@ character(len=*), optional, intent(in) :: sddynz_
         sddyna = sddynz_
     endif
     ligrmo    = model(1:8)//'.MODELE'
-    caco3d    = '&&MERIMO.CARA_ROTA_FICTI'
+    caco3d    = '&&MERIMO.CARA_ROTAF'
     tabret(:) = ASTER_FALSE
     ldccvg    = 0
     l_dyna    = ndynlo(sddyna,'DYNAMIQUE')

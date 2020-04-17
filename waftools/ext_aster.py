@@ -22,6 +22,7 @@ import os.path as osp
 import re
 
 from waflib import Build, Configure, Logs, TaskGen, Utils
+from waflib.Context import Context
 from waflib.Task import CRASHED, MISSING, Task
 from waflib.Tools import c, ccroot, cxx, fc
 
@@ -99,7 +100,6 @@ class cxxshlib(cxxprogram):
 ###############################################################################
 def customize_configure_output():
     """Customize the output of configure"""
-    from waflib.Context import Context
     def start_msg40(self, *k, **kw):
         """Force output on 40 columns. See :py:meth:`waflib.Context.Context.msg`"""
         if kw.get('quiet', None):

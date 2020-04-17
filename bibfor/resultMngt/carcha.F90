@@ -62,6 +62,9 @@ character(len=8), intent(out) :: param
     else if (fieldType.eq.'DEPL') then
         fieldQuantity = 'DEPL_R  '
         fieldSupport = 'NOEU'
+    else if (fieldType.eq.'CONT_NOEU') then
+        fieldQuantity = 'INFC_R '
+        fieldSupport = 'NOEU'
     else if (fieldType.eq.'PTOT') then
         fieldQuantity = 'DEPL_R  '
         fieldSupport = 'NOEU'
