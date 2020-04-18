@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,8 @@ def check_scotch(self):
 
     # code_aster v11.0.1: FICHE 016627
     if 'scotchmetis' in opts.scotch_libs:
-        raise Errors.ConfigurationError('scotchmetis variant library is not compatible with code_aster')
+        raise Errors.ConfigurationError('scotchmetis variant library is not '
+                                        'compatible with code_aster')
 
     if opts.scotch_libs:
         self.check_scotch_libs()
@@ -77,12 +78,12 @@ def check_scotch(self):
 @Configure.conf
 def check_scotch_libs(self):
     opts = self.options
-    check_scotch = partial(self.check_cc, mandatory=True, uselib_store='SCOTCH', use='MPI')
+    check_scotch = partial(self.check_cc, mandatory=True, uselib_store='SCOTCH', use='MPI', uselib='SCOTCH Z')
     if opts.embed_all or opts.embed_scotch:
         check_lib = lambda lib: check_scotch(stlib=lib)
     else:
         check_lib = lambda lib: check_scotch(lib=lib)
-    list(map(check_lib, Utils.to_list(opts.scotch_libs)))
+    check_lib(Utils.to_list(opts.scotch_libs))
 
 @Configure.conf
 def check_scotch_headers(self):

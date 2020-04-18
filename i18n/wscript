@@ -176,7 +176,7 @@ def update_gettext(self):
             name = 'i18n_update',
              pot = pot,
            podir = 'i18n_updated',
-             use = ['i18n_pot'],
+             use = 'i18n_pot',
     )
 
 class xgettext(CaptureTask):

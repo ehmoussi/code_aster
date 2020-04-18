@@ -1,6 +1,6 @@
 #!/bin/bash
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,65 +18,64 @@
 # --------------------------------------------------------------------
 
 # script alias to the waf engine script
-# It also allows to run any other program in the build environment
 
-# source the environment only if DEVTOOLS_COMPUTER_ID is not already defined
-printf "checking environment... "
-if [ -z "$DEVTOOLS_COMPUTER_ID" ]; then
-    env='unstable'
-    [ `hg branch 2> /dev/null | egrep -c 'v[0-9]+'` -eq 1 ] && env='stable-updates'
-    [ "${WAF_SUFFIX}" = "mpi" ] && env=${env}_${WAF_SUFFIX}
-    fenv=$HOME/dev/codeaster/devtools/etc/env_${env}.sh
-    if [ -e ${fenv} ]; then
-        . ${fenv}
-        echo "loading ${fenv}"
-    else
-        echo "no found"
-    fi
-else
-    echo "already set"
-fi
+set_prefix() {
+    local this=$(readlink -n -f "$1")
+    prefix=$(dirname "${this}")
+}
 
-# call waf.engine or another program?
-if [ $# -lt 1 ]; then
-    # no argument: use waf
-    true
-elif [[ "$1" =~ ^\- ]]; then
-    # start with hiphen: suppose to be a waf option
-    true
-elif [ "$1" = "reconfigure" ]; then
-    wafscript=./waf
-    [ "${WAF_SUFFIX}" = "mpi" ] && wafscript=${wafscript}_${WAF_SUFFIX}
-    if [ -f build/${WAF_SUFFIX}/c4che/release_cache.py ]; then
-        WAFCMDLINE=$(grep WAFCMDLINE build/${WAF_SUFFIX}/c4che/release_cache.py)
-    else
-        WAFCMDLINE="WAFCMDLINE = []"
-    fi
-    python -c "from subprocess import call; ${WAFCMDLINE}; call(['${wafscript}'] + WAFCMDLINE)"
-    exit $?
-else
-    # is the first argument a waf command ?
-    wafcmd=(build buildelem clean configure dist distcheck distclean \
-            doc i18n install list step test uninstall)
-    found=0
-    # remove '_debug' suffix
-    called=${1//_debug/}
-    for cmd in ${wafcmd[@]}
-    do
-        if [ "$called" = "$cmd" ]; then
-            found=1
-            break
+set_prefix "${0}"
+
+waf_main()
+{
+    # source the environment only if DEVTOOLS_COMPUTER_ID is not already defined
+    printf "checking environment... "
+    if [ -z "${DEVTOOLS_COMPUTER_ID}" ]; then
+        host=$(detect_host)
+        if [ ! -z "${host}" ]; then
+            export WAFBUILD_ENV="${prefix}/env.d/${host}_${WAF_SUFFIX}.sh"
+            if [ -e ${WAFBUILD_ENV} ]; then
+                . ${WAFBUILD_ENV}
+                echo "loading ${WAFBUILD_ENV}"
+            else
+                unset WAFBUILD_ENV
+                echo "no found"
+            fi
         fi
-    done
-    if [ ${found} -eq 0 ]; then
-        # not a waf command, call passed command line
-        "${@}"
-        exit $?
+    else
+        export WAFBUILD_ENV="${prefix}/env.d/${DEVTOOLS_COMPUTER_ID}_${WAF_SUFFIX}.sh"
+        if [ -e ${WAFBUILD_ENV} ]; then
+            echo "already set: ${WAFBUILD_ENV}"
+        else
+            unset WAFBUILD_ENV
+            echo "no found: ${WAFBUILD_ENV}"
+        fi
     fi
-fi
 
-# really execute waf
-engine=$(echo ${0} | sed -e 's/\main$/engine/g')
-echo "executing: ${engine} ${@}"
-${engine} "${@}"
+    # really execute waf
+    engine=$(echo ${0} | sed -e 's/\main$/engine/g')
+    echo "executing: ${engine} ${@}"
+    ${engine} "${@}"
+    return $?
+}
+
+# detect for supported host for automatic configuration
+detect_host()
+{
+    if [ -f /projets/simumeca/eole ]; then
+        printf eole
+    elif [ -f /projets/simumeca/gaia ]; then
+        printf gaia
+    elif egrep -q "Calibre 9|Debian GNU/Linux 8" /etc/issue; then
+        printf calibre9
+    elif egrep -q "Scibian 9.0" /etc/issue; then
+        printf scibian9
+    elif [ -f /home/aster/clap0f0q ]; then
+        printf clap0f0q
+    fi
+    printf ""
+}
+
+
+waf_main "${@}"
 exit $?

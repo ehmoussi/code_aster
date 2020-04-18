@@ -18,28 +18,34 @@
 # --------------------------------------------------------------------
 
 """
-Common to all official platforms: force support of essential external programs.
+Additional checkings on official platforms
 """
 
+import os
 import os.path as osp
 
-from waflib import Errors
+from waflib import Configure, Errors
 
 
 def configure(self):
     opts = self.options
-    # force to fail if a program is not found
-    opts.with_prog_gmsh = True
-    # salome: only required by few testcases
-    opts.with_prog_run_miss3d = True
-    opts.with_prog_homard = True
-    opts.with_prog_ecrevisse = True
-    opts.with_prog_mfront = True
-    opts.with_prog_xmgrace = True
-    opts.with_prog_gracebat = True
-    opts.with_prog_mdump = True
+    if os.environ.get('OFFICIAL_PLATFORM'):
+        # force to fail if a prerequisite is not found
+        opts.enable_all = True
+        # force to fail if a program is not found
+        opts.with_prog_gmsh = True
+        # opts.with_prog_salome: only required by few testcases
+        opts.with_prog_run_miss3d = True
+        opts.with_prog_homard = True
+        opts.with_prog_ecrevisse = True
+        opts.with_prog_mfront = True
+        opts.with_prog_xmgrace = True
+        opts.with_prog_gracebat = True
+        opts.with_prog_mdump = True
+        self.check_prerequisites_package(os.environ['PREREQ_PATH'],
+                                         os.environ['PREREQ_VERSION'])
 
-
+@Configure.conf
 def check_prerequisites_package(self, yammdir, minvers):
     """Check for version of the prerequisites package.
 
@@ -47,7 +53,7 @@ def check_prerequisites_package(self, yammdir, minvers):
 
     Arguments:
         self (Configure): Configure object.
-        yammdir (str): Directory path of prerequisites installation.
+        yammdir (str): Directory path of prerequisites/tools installation.
         minvers (str): Minimal required version of the prerequisites package.
     """
     self.start_msg("Checking prerequisites version >= {0}".format(minvers))

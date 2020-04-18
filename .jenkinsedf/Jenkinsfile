@@ -34,27 +34,24 @@ pipeline {
                 sh "( cd $HOME/dev/jenkins/data && hg pull && hg update asterxx )"
                 sh "[ -e waf_std ] || ln -s waf_variant waf_std"
                 sh '''#!/bin/bash -l
-                source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
                 ./waf_std distclean
                 ./waf_std configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/std
-                ./waf_std -j 4 install
+                ./waf_std -j 8 install
                 '''
                 sh '''#!/bin/bash -l
                 ./check_docs.sh --waf=./waf_std --builddir=build/std
                 '''
                 sh "[ -e waf_mpi ] || ln -s waf_variant waf_mpi"
                 sh '''#!/bin/bash -l
-                source $HOME/dev/codeaster/devtools/etc/env_unstable_mpi.sh
                 ./waf_mpi distclean
                 ./waf_mpi configure --with-data=$HOME/dev/jenkins/data --prefix=build/install/mpi
-                ./waf_mpi -j 4 install
+                ./waf_mpi -j 8 install
                 '''
             }
         }
         stage('Test') {
             steps {
                 sh '''#!/bin/bash -l
-                source $HOME/dev/codeaster/devtools/etc/env_unstable.sh
                 cd build/install/std
                 ./bin/run_ctest --facmtps=3.0 --resutest=../../resutest --clean -L ci
                 ret=$?
@@ -62,7 +59,6 @@ pipeline {
                 exit 0
                 '''
                 sh '''#!/bin/bash -l
-                source $HOME/dev/codeaster/devtools/etc/env_unstable_mpi.sh
                 cd build/install/mpi
                 ./bin/run_ctest --facmtps=3.0 --resutest=../../resutest_mpi --clean -L ci -L parallel
                 ret=$?

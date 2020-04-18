@@ -37,10 +37,10 @@ or:
 
 .. code-block:: sh
 
-    mpirun -n 4 bin/run_aster path/to/file.export
+    mpiexec -n 4 bin/run_aster path/to/file.export
 
-Using the first syntax, ``bin/run_aster`` re-runs with ``mpirun`` itself using
-the second syntax (``mpirun`` syntax is provided by the configuration, see
+Using the first syntax, ``bin/run_aster`` re-runs with ``mpiexec`` itself using
+the second syntax (``mpiexec`` syntax is provided by the configuration, see
 :py:mod:`~run_aster.config`).
 
 ``bin/run_aster`` only runs each own version, those installed at the level of
@@ -120,12 +120,12 @@ def parse_args(argv):
     parser.add_argument('--only-proc0', dest='only_proc0',
                         action='store_true', default=None,
                         help="only processor #0 is writing on stdout")
-    parser.add_argument('--no-mpi', dest='auto_mpirun',
+    parser.add_argument('--no-mpi', dest='auto_mpiexec',
                         action='store_false',
                         help="if '%(prog)s' is executed with a parallel "
-                             "version but not under 'mpirun', it is "
+                             "version but not under 'mpiexec', it is "
                              "automatically restart with "
-                             "'mpirun -n N %(prog)s ...'; use '--no-mpi' "
+                             "'mpiexec -n N %(prog)s ...'; use '--no-mpi' "
                              "to not do it")
     parser.add_argument('-t', '--test', action='store_true',
                         help="execution of a testcase")
@@ -227,7 +227,7 @@ def main(argv=None):
     if args.memory_limit:
         export.set_memory_limit(args.memory_limit)
     if export.get("no-mpi"):
-        args.auto_mpirun = False
+        args.auto_mpiexec = False
     export.check()
 
     if args.only_proc0 is None:
@@ -236,13 +236,13 @@ def main(argv=None):
     if CFG.get("parallel", 0):
         if args.only_proc0 and procid > 0:
             logger.setLevel(WARNING)
-        if procid < 0 and args.auto_mpirun:
+        if procid < 0 and args.auto_mpiexec:
             if tmpf:
                 os.remove(tmpf)
             run_aster = osp.join(ROOT, "bin", "run_aster")
             args_cmd = dict(mpi_nbcpu=export.get("mpi_nbcpu", 1),
                             program=f"{run_aster} {' '.join(argv)}")
-            cmd = CFG.get("mpirun").format(**args_cmd)
+            cmd = CFG.get("mpiexec").format(**args_cmd)
             proc = run(cmd, shell=True)
             return proc.returncode
 

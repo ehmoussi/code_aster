@@ -81,9 +81,9 @@ class TableClass : public DataStructure {
           _parameterDescription( JeveuxVectorChar24( getName() + ".TBLP" ) ) {};
 
     ~TableClass() {
-#ifdef _DEBUG_CXX
-        std::cout << "DEBUG: Table.destr: " << this->getName() << std::endl;
-#endif
+// #ifdef _DEBUG_CXX
+//         std::cout << "DEBUG: Table.destr: " << this->getName() << std::endl;
+// #endif
         if ( _parameterDescription->exists() && _description->exists() ) {
             _parameterDescription->updateValuePointer();
             _description->updateValuePointer();
