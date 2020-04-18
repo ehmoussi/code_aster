@@ -40,7 +40,8 @@ def post_install(share_aster):
         share_aster (str): Path to the installation directory containing
             ``config.txt`` and ``profile.sh`` files.
     """
-    paths = ("profile.sh", "config.txt")
+    paths = ["profile.sh"] + ["config.txt", "CTestTestfile.cmake",
+                              "execute_codeaster"]
     files = [osp.join(share_aster, path) for path in paths]
 
     newdir = osp.normpath(osp.abspath(osp.dirname(osp.dirname(share_aster))))

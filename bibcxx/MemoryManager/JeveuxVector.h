@@ -62,9 +62,9 @@ class JeveuxVectorClass : public JeveuxObjectClass, private AllowedJeveuxType< V
      * @brief Destructeur
      */
     ~JeveuxVectorClass() {
-#ifdef _DEBUG_CXX
-        std::cout << "DEBUG: JeveuxVector.destr: " << _name << std::endl;
-#endif
+// #ifdef _DEBUG_CXX
+//         std::cout << "DEBUG: JeveuxVector.destr: " << _name << std::endl;
+// #endif
         _valuePtr = nullptr;
     };
 

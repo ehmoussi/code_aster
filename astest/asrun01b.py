@@ -68,61 +68,61 @@ class TestConfig(unittest.TestCase):
         self.assertTrue(CFG.storage.has_param("exectool"))
         size = 10
         if CFG.get("parallel"):
-            self.assertTrue(CFG.storage.has_param("mpirun"))
-            self.assertTrue(CFG.storage.has_param("mpirun_rank"))
+            self.assertTrue(CFG.storage.has_param("mpiexec"))
+            self.assertTrue(CFG.storage.has_param("mpi_get_rank"))
             size += 2
         self.assertEqual(len(CFG.storage), size)
 
     def test_filter(self):
         cfg = Config("nofile")
         # add a value to avoid automatic loading of 'config.js' and user file
-        cfg._storage.set("mpirun", "empty")
-        self.assertEqual(cfg.get("mpirun"), "empty")
+        cfg._storage.set("mpiexec", "empty")
+        self.assertEqual(cfg.get("mpiexec"), "empty")
         # simulating 'config.js'
-        version_cfg = {"mpirun": "mpirun_version"}
+        version_cfg = {"mpiexec": "mpiexec_version"}
         cfg.import_dict(version_cfg, with_sections=False)
-        self.assertEqual(cfg.get("mpirun"), "mpirun_version")
+        self.assertEqual(cfg.get("mpiexec"), "mpiexec_version")
         # add user file with server
         user_cfg = {
             "server": [
                 {
                     "name": "*",
-                    "config": {"mpirun": "mpirun_all_servers"}
+                    "config": {"mpiexec": "mpiexec_all_servers"}
                 },
                 {
                     "name": "myhost",
-                    "config": {"mpirun": "mpirun_myhost"}
+                    "config": {"mpiexec": "mpiexec_myhost"}
                 },
             ]
         }
         cfg.import_dict(user_cfg, with_sections=True)
-        self.assertEqual(cfg.get("mpirun"), "mpirun_all_servers")
+        self.assertEqual(cfg.get("mpiexec"), "mpiexec_all_servers")
         # example: does 'myhost' matches 'myho*'?
         user_cfg["server"][1]["name"] = platform.node()[:4] + "*"
         cfg.import_dict(user_cfg, with_sections=True)
-        self.assertEqual(cfg.get("mpirun"), "mpirun_myhost")
+        self.assertEqual(cfg.get("mpiexec"), "mpiexec_myhost")
         # + 2 versions
         user_cfg.update({
             "version": [
                 {
                     "name": "VERS1",
                     "path": ROOT,
-                    "config": {"mpirun": "mpirun_for_VERS1"}
+                    "config": {"mpiexec": "mpiexec_for_VERS1"}
                 },
                 {
                     "name": "VERS2",
                     "path": "/another/installation/directory",
-                    "config": {"mpirun": "mpirun_for_VERS2"}
+                    "config": {"mpiexec": "mpiexec_for_VERS2"}
                 }
             ]
         })
         cfg.import_dict(user_cfg, with_sections=True)
-        self.assertEqual(cfg.get("mpirun"), "mpirun_for_VERS1")
+        self.assertEqual(cfg.get("mpiexec"), "mpiexec_for_VERS1")
 
     def test_exectool(self):
         cfg = Config("nofile")
         # add a value to avoid automatic loading of 'config.js' and user file
-        cfg._storage.set("mpirun", "empty")
+        cfg._storage.set("mpiexec", "empty")
         # add user file with server
         user_cfg = {
             "server": [
