@@ -20,7 +20,7 @@
 """
 Build some data files (dest: share/aster)
 
-- 'config.js': needed by run_aster.
+- 'config.json': needed by run_aster.
 - 'config.txt': needed by as_run (for MACR_RECAL).
 - 'create_install_script': script to use a containerized version.
 - 'CTestTestfile.cmake': used to run testcases with 'ctest'.
@@ -130,9 +130,9 @@ def configure_data(self):
 def build(self):
     # src/srcbin distinction exists for exec mode (644 vs 755)
     src = ['CTestTestfile.cmake.tmpl', 'external_programs.js.tmpl',
-           'config.js.tmpl']
+           'config.json.tmpl']
     tgt = ['CTestTestfile.cmake', 'external_programs.js',
-            'config.js']
+            'config.json']
     if self.env.legacy:
         src.extend(['config.txt.tmpl', 'profile.sh.tmpl'])
         tgt.extend(['config.txt', 'profile.sh'])
@@ -327,7 +327,7 @@ def change_tests(dico, install_tests):
 def check_config(self):
     # Check for configuration parameters of the version
     cfg = {}
-    self.start_msg("Set parameters for 'config.js'")
+    self.start_msg("Set parameters for 'config.json'")
     tmpdir = "/tmp"
     if os.environ.get('ASTER_TMPDIR'):
         tmpdir = os.environ['ASTER_TMPDIR']
