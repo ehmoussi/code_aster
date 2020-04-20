@@ -63,7 +63,7 @@ def options(self):
         '  LIBPATH_x, LIB_x, INCLUDES_x, PYPATH_x : paths for component "x" for libs, '
         'incudes, python modules',
         '  CONFIG_PARAMETERS_name=value: extra configuration parameters '
-        '(for config.js)',
+        '(for config.json)',
         '  WAFBUILD_ENV   : environment file to be included in runtime '
         'environment file',
         '  PREFIX         : default installation prefix to be used, '

@@ -27,7 +27,7 @@ These parameters are usually set during the ``waf configure`` step and are
 stored in a JSON file.
 
 The configuration file is installed in
-``<installation-prefix>/share/aster/config.js``.
+``<installation-prefix>/share/aster/config.json``.
 It contains *version parameters*.
 
 The list of the supported *version parameters* are (with their type):
@@ -64,18 +64,19 @@ Python dict named ``env["CONFIG_PARAMETERS"]``.
 .. _Python Format String Syntax: https://docs.python.org/3/library/string.html#formatstrings
 
 These *version parameters* can be overridden by a user file:
-``$HOME/.run_aster.js``.
+``$HOME/.config/aster/config.json``.
 
 The user can override these parameters depending on the *server name* and/or the
 *version* using filters. A *server* is defined by its *name*, a *version* by
 its *path*.
 
-Parameters are read from the installation directory (``config.js``), then
-per-server configuration are read in the order in the list and finally,
-the per-version configurations are evaluated.
+Parameters are read from the installation directory
+(``share/aster/config.json``), then, from the user file (from ``.config/aster``
+directory), per-server configurations are read in the order they are listed
+and finally, the per-version configurations are evaluated.
 
-Example of ``$HOME/.run_aster.js`` (for this example only ``tmpdir`` is set
-in different cases):
+Example of ``$HOME/.config/aster/config.json`` (for this example only ``tmpdir``
+is set in different cases):
 
 .. code-block:: json
 
@@ -112,7 +113,7 @@ What is the value for ``tmpdir`` on a cluster node named ``eocn123`` running
 the version installed in the ``/projets/aster/install/14.4/mpi``?
 
 - First, ``tmpdir`` is read from
-  ``/projets/aster/install/14.4/mpi/share/aster/config.js``.
+  ``/projets/aster/install/14.4/mpi/share/aster/config.json``.
 
 - Does ``eocn123`` match ``"*"``? Yes, so use ``/tmp_for_all_servers``.
 
@@ -127,11 +128,11 @@ the version installed in the ``/projets/aster/install/14.4/mpi``?
 - Finally, the working directory will be created in ``/tmp_for_v14``.
 
 Each block ``config`` can override one or more parameter already defined in
-``config.js``.
+``config.json``.
 
 An *execution wrapper* is a tool, for example a debugger or *valgrind*, that
 can preceed the executed command line.
-Example of ``$HOME/.run_aster.js``:
+Example of ``$HOME/.config/aster/config.json``:
 
 .. code-block:: json
 
@@ -159,7 +160,7 @@ from .logger import logger
 from .settings import AbstractParameter, Store
 from .utils import ROOT
 
-USERCFG = osp.join(os.getenv("HOME", ""), ".run_aster.js")
+USERCFG = osp.join(os.getenv("HOME", ""), ".config", "aster", "config.json")
 
 # all parameters must be set by `data/wscript`
 VERSION_PARAMS = {
@@ -209,6 +210,7 @@ class Config:
     def load(self):
         """Load the configuration file."""
         self.load_one(self._mainjs, main=True)
+        os.makedirs(osp.dirname(USERCFG), exist_ok=True)
         self.load_one(USERCFG)
 
     def load_one(self, jsfile, main=False):
@@ -289,4 +291,4 @@ class Config:
         return self.storage.get(key, default)
 
 
-CFG = Config(osp.join(ROOT, "share", "aster", "config.js"))
+CFG = Config(osp.join(ROOT, "share", "aster", "config.json"))
