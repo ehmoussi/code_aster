@@ -263,7 +263,7 @@ subroutine dis_contact_frot(option, nomte, ndim, nbt, nno,&
     jadre1 = 0; nbout = 0; jcodre1 = 0
     call rcadlv(' ', 1, 1, '+',zi(imat),' ','DIS_CONTACT', 'INST_COMP_INIT', &
                 0, [' '], [0.d0], jadre1, nbout, jcodre1, 0)
-    if (nbout.eq.2) then
+    if (jcodre1 .eq. 0 .and. nbout .eq. 2) then
         inst0 = zr(jadre1); inst1 = zr(jadre1+1)
         ASSERT( inst0 < inst1 )
         evoljeu0 = min( max(0.0, (temps0-inst0)/(inst1-inst0)), 1.0)

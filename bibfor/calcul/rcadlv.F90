@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,11 +18,10 @@
 
 subroutine rcadlv(fami, kpg, ksp, poum, jmat, nomat, mfact, msimp, &
                   nbpar, nompar, valpar, jadr, nbres, icodre, iarret)
-                  
+
 use calcul_module, only : ca_jvcnom_, ca_nbcvrc_
 
 implicit none
-! person_in_charge: jacques.pellet at edf.fr
 
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -45,7 +44,6 @@ implicit none
     integer, intent(out)         :: jadr
     integer, intent(out)         :: nbres
     integer, intent(in)          :: iarret
-
 
 ! -----------------------------------------------------------------
 !  Recuperation de l'adresse jeveux (dans zr) des coefficients materiau
@@ -87,8 +85,8 @@ implicit none
 !   --------------------------------------------------------------------------
 
     icodre = 1
+    nbres = 0
     nomphe = mfact
-
 
 !   -- Calcul de imat
 !      Si nomat est fourni , on explore l'entete de la sd mater_code pour
@@ -150,14 +148,12 @@ implicit none
             ipif = ipi + lmat + (ik-1)*lfct -1
             ASSERT(zi(ipif+9).eq.3 .or. zi(ipif+9).eq.4)
             code = zi(zi(ipif))
-            ASSERT ((code.eq.-1).or.(code.eq.-2))
-
+            ASSERT(code.eq.-1 .or. code.eq.-2)
 
 !           -- 1. Cas d'une liste de reels  :
 !           ----------------------------------
             if (code.eq.-1) then
                 jadr=zi(zi(ipif)+1)
-
 
 !           -- 2. Cas d'une liste de fonctions
 !           ----------------------------------
@@ -203,6 +199,9 @@ implicit none
     call rcvals(iarret, [icodre], 1, msimp)
 
 999 continue
-    nbres=nint(zr(jadr))
-    jadr=jadr+1
+    if (icodre .eq. 0) then
+        nbres=nint(zr(jadr))
+        jadr=jadr+1
+    endif
+!
 end subroutine
