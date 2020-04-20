@@ -366,8 +366,8 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
 !     l'augmentation du temps d'assemblage est négligeable
 !
     maxDDLMa = nbddlMaxMa(nudev, matdev, nbmat)
-! Le x2 est par sécurité
-    nbi1mx = 2 * maxDDLMa * maxDDLMa
+! Le x2 est par sécurité - certains processeur peuvent ne pas avoir de ddls à assembler
+    nbi1mx = max(1, 2 * maxDDLMa * maxDDLMa)
     call wkvect('&&ASSMAM.TAB1', 'V V I', nbi1mx, vi=assma3_tab1)
     call wkvect('&&ASSMAM.TAB2', 'V V I', nbi1mx, vi=assma3_tab2)
 !
