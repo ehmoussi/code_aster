@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine sdmpic(typesd, nomsd)
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infniv.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
@@ -37,7 +38,8 @@ subroutine sdmpic(typesd, nomsd)
 !        CALCULEE  DU FAIT DE L'UTILISATION DE CALCULS PARALLELES (MPI)
 !
 !  LA ROUTINE ECHANGE LES MORCEAUX CALCULES PARTIELLEMENT SUR LES
-!  DIFFERENTS PROCESSEURS (MPI_ALLREDUCE)
+!  DIFFERENTS PROCESSEURS (MPI_ALLREDUCE) SAUF SI LE MAILLAGE SUPPORT
+!  EST UN PARALLEL_MESH
 !
 ! ----------------------------------------------------------------------
 ! IN TYPESD (K*) :  TYPE DE LA SD A COMPLETER
@@ -46,7 +48,7 @@ subroutine sdmpic(typesd, nomsd)
     character(len=24) :: noms2, types2
     character(len=19) :: k19
     character(len=24) :: k24
-    character(len=8) :: kmpic, kbid
+    character(len=8) :: kmpic, kbid, mesh
     integer :: ifm, niv, iexi, nbrel, i
     character(len=24), pointer :: noli(:) => null()
     character(len=24), pointer :: refa(:) => null()
@@ -68,6 +70,8 @@ subroutine sdmpic(typesd, nomsd)
 !     ----------------------------------
         call dismoi('MPI_COMPLET', k19, 'CHAM_ELEM', repk=kmpic)
         if (kmpic .eq. 'OUI') goto 999
+        call dismoi('NOM_MAILLA', k19, 'CHAM_ELEM', repk=mesh)
+        ASSERT(.not. isParallelMesh(mesh))
         call asmpi_comm_jev('MPI_SUM', k19//'.CELV')
         call jeveuo(k19//'.CELK', 'E', vk24=celk)
         celk(7)='MPI_COMPLET'
@@ -76,18 +80,21 @@ subroutine sdmpic(typesd, nomsd)
 !     ----------------------------------
         call dismoi('MPI_COMPLET', k19, 'RESUELEM', repk=kmpic)
         if (kmpic .eq. 'OUI') goto 999
+        call dismoi('NOM_MAILLA', k19, 'CHAM_ELEM', repk=mesh)
+        ASSERT(.not. isParallelMesh(mesh))
         call asmpi_comm_jev('MPI_SUM', k19//'.RESL')
         call jeveuo(k19//'.NOLI', 'E', vk24=noli)
         noli(3)='MPI_COMPLET'
 !
     else if (types2.eq.'MATR_ELEM') then
 !     ----------------------------------
-        k19 = noms2
+        call dismoi('NOM_MAILLA', k19, 'MATR_ELEM', repk=mesh)
+        ASSERT(.not. isParallelMesh(mesh))
         call jeveuo(k19//'.RELR', 'L', vk24=relr)
         call jelira(k19//'.RELR', 'LONMAX', nbrel, kbid)
         do i = 1, nbrel
             if( relr(i).ne.' ' ) then
-                k19=relr(i)
+                k19=relr(i)(1:19)
                 call dismoi('MPI_COMPLET', k19, 'RESUELEM', repk=kmpic)
                 if (kmpic .eq. 'OUI') cycle
                 call asmpi_comm_jev('MPI_SUM', k19//'.RESL')
@@ -100,6 +107,8 @@ subroutine sdmpic(typesd, nomsd)
 !     ----------------------------------
         call dismoi('MPI_COMPLET', k19, 'MATR_ASSE', repk=kmpic)
         if (kmpic .eq. 'OUI') goto 999
+        call dismoi('NOM_MAILLA', k19, 'MATR_ASSE', repk=mesh)
+        ASSERT(.not. isParallelMesh(mesh))
         call asmpi_comm_jev('MPI_SUM', k19//'.VALM')
 !
         call jeexin(k19//'.CCVA', iexi)

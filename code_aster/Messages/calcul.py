@@ -313,7 +313,9 @@ Erreur utilisateur :
 
     38 : _("""
  le calcul de l'option :  %(k1)s
- n'est possible pour aucun des types d'éléments du LIGREL.
+ n'est possible pour aucun des types d'éléments du LIGREL. Si le LIGREL repose sur
+ un PARALLEL_MESH, ceci est tout à fait possible localement donc on ne s'arrête plus en erreur
+ fatale (la vérification globale a été désactivée, pensez à vérifiez si cela est attendu)
 """),
 
     39 : _("""
