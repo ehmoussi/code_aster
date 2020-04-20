@@ -3,7 +3,7 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P time_limit 30
 P memory_limit 512.0
-P testlist verification sequential
+P testlist asterxx ci verification sequential
 
 F comm ssnp178d.comm D 1
 F mmed ssnp178b.mmed D 20
