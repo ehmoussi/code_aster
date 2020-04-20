@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 
 #           PLAQUE APPUYEE SUR SES BORDS DECOUPEE EN 2 PARTIES
 
-#           AVEC INTERFACES DE TYPE CRAIG-BAMPTON 
+#           AVEC INTERFACES DE TYPE CRAIG-BAMPTON
 
 #           MAILLAGES INCOMPATIBLES ET MODES DE COUPLAGE
 
@@ -59,8 +59,8 @@ MODELE2=AFFE_MODELE(MAILLAGE=MAILLA2,
                     AFFE=_F( GROUP_MA = 'CALCUL',
                              PHENOMENE = 'MECANIQUE',
                              MODELISATION = 'DKT'),);
-                             
-                             
+
+
 #
 MATER=DEFI_MATERIAU(  ELAS=_F( E = 2.1E11,  NU = 0.30,  RHO = 7800.0))
 
@@ -70,7 +70,7 @@ CHAMAT1=AFFE_MATERIAU(  MAILLAGE=MAILLA1,
                                     MATER = MATER))
 CHAMAT2=AFFE_MATERIAU(  MAILLAGE=MAILLA2,
                        AFFE=_F( GROUP_MA = 'CALCUL',
-                                    MATER = MATER))                                    
+                                    MATER = MATER))
 #
 PARAM1=AFFE_CARA_ELEM(  MODELE=MODELE1,
                             COQUE=_F( EPAIS = 0.01,
@@ -213,8 +213,8 @@ MODCOT2=REST_SOUS_STRUC(RESU_GENE=RESGEN,
 
 
 # VERIFICATION NULLITE DU TRAVAIL DES FORCES DE LIAISON
-# SDVERI:NON EXISTENCE D'OBJETS NON CONFORMES POUR LES table_container
-DEBUG(SDVERI='NON');
+# les mode_meca créés par CALC_CORR_SSD ont un solveur invalide
+DEBUG(SDVERI='NON')
 
 CALC_ENR=CALC_CORR_SSD(MODELE_GENE=MODEGE,
                      RESU_GENE=RESGEN,
@@ -222,7 +222,7 @@ CALC_ENR=CALC_CORR_SSD(MODELE_GENE=MODEGE,
                      SOLVEUR=_F(ELIM_LAGR='NON'),
                      UNITE=6)
 
-DEBUG(SDVERI='OUI');
+DEBUG(SDVERI='OUI')
 
 TEST_RESU(RESU=(_F(PARA='FREQ',
                    NUME_MODE=1,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ class sd_table_container(sd_table):
         # vérification de l'existence de la table
         if not self.exists():
             checker.err(self, "La sd_table_container %s ne semble"
-                              + "pas exister" % (nomj))
+                        "pas exister" % (self.nomj()))
 
         # on vérifie la présence des paramètres
         # 'NOM_OBJET','TYPE_OBJET','NOM_SD'
@@ -59,7 +59,7 @@ class sd_table_container(sd_table):
             if data is not None:
                 if col.data.lonuti != shape[1]:
                     checker.err(self, "Taille inconsistante %d!=%d" %
-                               (col.data.lonuti, shape[1]))
+                                (col.data.lonuti, shape[1]))
 
         # on vérifie le contenu de la colonne NOM_SD
         col1, dummy = self.get_column_name('TYPE_OBJET')
@@ -72,35 +72,35 @@ class sd_table_container(sd_table):
         if col3 is not None:
             lnom3 = col3.data.get_stripped()
         for k in range(nbli):
-            if lnom1[k][:9] == 'VECT_ELEM':
+            if lnom1[k].startswith("VECT_ELEM"):
                 sd5 = sd_vect_elem(lnom2[k])
                 sd5.check(checker)
-            elif lnom1[k][:9] == 'MATR_ELEM':
+            elif lnom1[k].startswith("MATR_ELEM"):
                 sd5 = sd_matr_elem(lnom2[k])
                 sd5.check(checker)
-            elif lnom1[k][:9] == 'CHAM_ELEM':
+            elif lnom1[k].startswith("CHAM_ELEM"):
                 sd5 = sd_cham_elem(lnom2[k])
                 sd5.check(checker)
-            elif lnom1[k][:11] == 'MODE_MECA':
+            elif lnom1[k].startswith("MODE_MECA"):
                 sd5 = sd_dyna_phys(lnom2[k])
                 sd5.check(checker)
                 if col3 is not None:
                 # si CARA_CHOC existe, on vérifie que son contenu est une table
                     sdc = sd_table(lnom3[k])
                     sdc.check(checker)
-            elif lnom1[k][:8] == 'FONCTION':
+            elif lnom1[k].startswith("FONCTION"):
                 sd5 = sd_fonction(lnom2[k])
                 sd5.check(checker)
-            elif lnom1[k][:10] == 'FONCTION_C':
+            elif lnom1[k].startswith("FONCTION_C"):
                 sd5 = sd_fonction(lnom2[k])
                 sd5.check(checker)
-            elif lnom1[k][:5] == 'NAPPE':
+            elif lnom1[k].startswith("NAPPE"):
                 sd5 = sd_fonction(lnom2[k])
                 sd5.check(checker)
-            elif lnom1[k][:7] == 'CHAM_NO':
+            elif lnom1[k].startswith("CHAM_NO"):
                 sd5 = sd_cham_no(lnom2[k])
                 sd5.check(checker)
-            elif lnom1[k][:5] == 'TABLE':
+            elif lnom1[k].startswith("TABLE"):
                 sd5 = sd_table(lnom2[k])
                 sd5.check(checker)
             else:
