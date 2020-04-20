@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -131,10 +131,13 @@ subroutine te0143(option, nomte)
     call matrot(zr(lorien), pgl)
 !
     if (nomte .eq. 'MECA_POU_D_T') then
-        call tecach('NNN', 'PCAARPO', 'L', iret, iad=lrcou)
+        call tecach('ONN', 'PCAARPO', 'L', iret, iad=lrcou)
         if ( iret .eq. 0 ) then
             xfly = zr(lrcou)
             xflz = zr(lrcou+2)
+!             if ( abs(xfly-1.0)+abs(xflz-1.0) .gt. 1.0E-8 ) then
+!                 call utmess('F', 'ELEMENTS3_65', nr=2, valr=[xfly,xflz])
+!             endif
             xiy  = xiy/xfly
             xiz  = xiz/xflz
             xiy2 = xiy2/xfly

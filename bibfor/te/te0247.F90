@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,6 +51,7 @@ subroutine te0247(option, nomte)
 #include "asterfort/poutre_modloc.h"
 #include "asterfort/ptkg00.h"
 #include "asterfort/r8inir.h"
+#include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utpslg.h"
 #include "asterfort/utpvlg.h"
@@ -63,12 +64,12 @@ subroutine te0247(option, nomte)
     integer :: iinstm, iinstp, icarcr, icontm, ideplm, ideplp, imatuu
     integer :: ivectu, icontp, itype, nno, nc, ivarim, ivarip, itemp, i
     integer :: jcret, iret, iretm, iretp
-    integer :: npg, ndimel, nnoel, nnosel
+    integer :: npg, ndimel, nnoel, nnosel, lrcou
     integer :: istrxm, istrxp, ldep
     parameter    (nno=2,nc=6,nd=nc*nno,nk=nd*(nd+1)/2)
     real(kind=8) :: e, nu, em, num
     real(kind=8) :: a, xiy, xiz, alfay, alfaz, xjx, ez, ey
-    real(kind=8) :: a2, xiy2, xiz2, alfay2, alfaz2, xjx2, xl
+    real(kind=8) :: a2, xiy2, xiz2, alfay2, alfaz2, xjx2, xl, xfly, xflz
 !
     character(len=24) :: valk(2)
 !
@@ -188,6 +189,18 @@ subroutine te0247(option, nomte)
     if (matric) then
 !       calcul de la matrice de rigidite geometrique
         if (reactu .and. (zk16(icompo).eq.'ELAS')) then
+            if ( nomte.eq.'MECA_POU_D_E' ) then
+                xfly = 1.0 ; xflz = 1.0
+            else
+                call tecach('ONN', 'PCAARPO', 'L', iret, iad=lrcou)
+                if ( iret .eq. 0 ) then
+                    xfly = zr(lrcou)
+                    xflz = zr(lrcou+2)
+                    if ( abs(xfly-1.0)+abs(xflz-1.0) .gt. 1.0E-8 ) then
+                        call utmess('F', 'ELEMENTS3_64', nr=2, valr=[xfly,xflz])
+                    endif
+                endif
+            endif
             if (option .eq. 'FULL_MECA') then
                 ldep = icontp
             else

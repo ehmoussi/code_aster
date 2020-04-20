@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -84,11 +84,11 @@ EENERR = LocatedComponents(phys=PHY.ENER_R, type='ELEM',
 
 CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
                             components=('EPX', 'KY', 'KZ',))
-                            
-                            
+
+
 CEPSINF  = LocatedComponents(phys=PHY.EPSI_F, type='ELEM',
                              components=('EPX', 'KY', 'KZ',))
-                             
+
 
 EDEFGNO = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
                             components=('EPXX', 'GAXY', 'GAXZ', 'GAT', 'KY',
@@ -234,7 +234,7 @@ class MECA_POU_D_T(Element):
                             ),
                             para_out=((SP.PVECTUR, MVECTUR), ),
                             ),
-                            
+
         OP.CHAR_MECA_EPSI_F(te=20,
                             para_in=(
                             (SP.PCAGNPO, CCAGNPO), (
@@ -246,7 +246,7 @@ class MECA_POU_D_T(Element):
                             ),
                             para_out=((SP.PVECTUR, MVECTUR), ),
                             ),
-                            
+
         OP.CHAR_MECA_FC1D1D(te=150,
                             para_in=(
                             (SP.PCAGNPO, CCAGNPO), (
@@ -416,7 +416,7 @@ class MECA_POU_D_T(Element):
                      ),
 
         OP.EPOT_ELEM(te=151,
-                     para_in=(
+                     para_in=( (SP.PCAARPO, CCAARPO),
                          (SP.PCAGNPO, CCAGNPO), (
                              OP.EPOT_ELEM.PCAORIE, CCAORIE),
                      (SP.PDEPLAR, DDL_MECA), (SP.PGEOMER, NGEOMER),
@@ -440,7 +440,7 @@ class MECA_POU_D_T(Element):
                      ),
 
         OP.FULL_MECA(te=247,
-                     para_in=(
+                     para_in=( (SP.PCAARPO, CCAARPO),
                          (SP.PCAGNPO, CCAGNPO), (
                              OP.FULL_MECA.PCAORIE, CCAORIE),
                      (SP.PCARCRI, LC.CCARCRI), (OP.FULL_MECA.PCOMPOR, LC.CCOMPOR),
@@ -577,7 +577,7 @@ class MECA_POU_D_T(Element):
                         ),
 
         OP.RIGI_FLUI_STRU(te=140,
-                          para_in=(
+                          para_in=( (SP.PCAARPO, CCAARPO),
                           (SP.PCAGNPO, CCAGNPO), (
                               OP.RIGI_FLUI_STRU.PCAORIE, CCAORIE),
                           (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
@@ -605,7 +605,7 @@ class MECA_POU_D_T(Element):
                      ),
 
         OP.RIGI_MECA_GE(te=143,
-                        para_in=(
+                        para_in=( (SP.PCAARPO, CCAARPO),
                         (SP.PCAGNPO, CCAGNPO), (
                             OP.RIGI_MECA_GE.PCAORIE, CCAORIE),
                         (OP.RIGI_MECA_GE.PEFFORR, EEFGEGA), (
