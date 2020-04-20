@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,13 +28,15 @@ implicit none
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/cargeo.h"
 #include "asterfort/chckma.h"
 #include "asterfort/chcoma.h"
 #include "asterfort/chcomb.h"
-#include "asterfort/cm1518.h"
 #include "asterfort/cm0408.h"
+#include "asterfort/cm1518.h"
 #include "asterfort/cm2027.h"
 #include "asterfort/cmcovo.h"
 #include "asterfort/cmcrea.h"
@@ -42,26 +44,33 @@ implicit none
 #include "asterfort/cmmoma.h"
 #include "asterfort/cmqlql.h"
 #include "asterfort/cmqutr.h"
+#include "asterfort/cnmpmc.h"
 #include "asterfort/cocali.h"
 #include "asterfort/codent.h"
 #include "asterfort/copisd.h"
 #include "asterfort/cpclma.h"
+#include "asterfort/cpifpa.h"
+#include "asterfort/cppagn.h"
+#include "asterfort/def_list_test.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/eclpgm.h"
 #include "asterfort/exlima.h"
+#include "asterfort/getelem.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
+#include "asterfort/gtgrma.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/infniv.h"
 #include "asterfort/infoma.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/jecreo.h"
 #include "asterfort/jecroc.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
-#include "asterfort/detrsd.h"
 #include "asterfort/jedupo.h"
 #include "asterfort/jeecra.h"
 #include "asterfort/jeexin.h"
@@ -80,14 +89,6 @@ implicit none
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
-#include "asterfort/getelem.h"
-#include "asterfort/cpifpa.h"
-#include "asterfort/gtgrma.h"
-#include "asterfort/cppagn.h"
-#include "asterfort/cnmpmc.h"
-#include "asterfort/def_list_test.h"
 !
     integer :: i, lgno, lgnu, nbecla, nbmc, iret, iad, nbma, iqtr, nbvolu, nbma_izone
     integer :: n1, numma, nbjoin, nbrest, n1a, n1b, izone, jlgrma, jnompat, jcninv
@@ -175,6 +176,9 @@ implicit none
     if (nn1 .eq. 0) then
         call utmess('F', 'CALCULEL5_10')
     endif
+    if (isParallelMesh(nomain)) then
+        call utmess('F', 'CALCULEL5_11')
+    end if
 !
 ! ----------------------------------------------------------------------
 !          TRAITEMENT DU MOT CLE "CREA_FISS"
