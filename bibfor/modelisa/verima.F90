@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,6 +46,10 @@ subroutine verima(nomz, limanz, lonlim, typz)
 !
     noma = nomz
     type = typz
+!
+    if ( lonlim .lt. 1 ) then
+        goto 999
+    endif
 !
 !
     noeuma = noma//'.NOMNOE'
@@ -140,4 +144,5 @@ subroutine verima(nomz, limanz, lonlim, typz)
     else
         call utmess('F', 'MODELISA7_79', sk=type)
     endif
+999 continue
 end subroutine

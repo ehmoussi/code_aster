@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,6 +82,7 @@ subroutine mat_proto(fami, kpg, ksp, poum, imate, itface, nprops, props)
         call rcadlv(fami, kpg, ksp, poum, imate, ' ', itface,  &
                     'LISTE_COEF',0, [' '], [0.d0], jadr, ncoef, icodre, 1)       
     endif
+    ASSERT(icodre .eq. 0)
 !
     if (ncoef.le.nprops) then
         do i=1,ncoef

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -613,7 +613,7 @@ subroutine dxmate(fami, df, dm, dmf, dc,&
 !        ------ MATERIAU ELAS_DHRC -----------------------------------
         call rcadlv(fami, 1, 1, '+', zi(jmate), ' ',&
                     'ELAS_DHRC', 'A0', nbpar, nompar, [temp], jadr, n1, icodre1, 1)
-        ASSERT(n1.eq.21)
+        ASSERT(icodre1.eq.0 .and. n1.eq.21)
 
 
         dm(1,1) = zr(jadr-1+1)

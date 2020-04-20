@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !     -----------------------------------------------------------------
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'ELAS_DHRC', 'A0', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.21)
+    ASSERT(icodre1.eq.0 .and. n1.eq.21)
 !
     l=0
     do i = 1, 6
@@ -92,7 +92,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'AA_C', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.42)
+    ASSERT(icodre1.eq.0 .and. n1.eq.42)
 !
     l=0
     do i = 1, 6
@@ -121,7 +121,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'AA_T', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.42)
+    ASSERT(icodre1.eq.0 .and. n1.eq.42)
 !
     l=0
     do i = 1, 6
@@ -150,7 +150,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'GA_C', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.42)
+    ASSERT(icodre1.eq.0 .and. n1.eq.42)
 !
     l=0
     do i = 1, 6
@@ -179,7 +179,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'GA_T', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.42)
+    ASSERT(icodre1.eq.0 .and. n1.eq.42)
 !
     l=0
     do i = 1, 6
@@ -208,7 +208,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'AB', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.24)
+    ASSERT(icodre1.eq.0 .and. n1.eq.24)
     ab=reshape(source=zr(jadr:jadr+24), shape=(/6,2,2/))
 !
 !     -----------------------------------------------------------------
@@ -217,7 +217,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'GB', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.24)
+    ASSERT(icodre1.eq.0 .and. n1.eq.24)
     gb=reshape(source=zr(jadr:jadr+24), shape=(/6,2,2/))
 !
 !     -----------------------------------------------------------------
@@ -226,7 +226,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'C0', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.8)
+    ASSERT(icodre1.eq.0 .and. n1.eq.8)
     c0=reshape(source=zr(jadr:jadr+8), shape=(/2,2,2/))
 !
 !     -----------------------------------------------------------------
@@ -235,7 +235,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'AC', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.8)
+    ASSERT(icodre1.eq.0 .and. n1.eq.8)
     ac=reshape(source=zr(jadr:jadr+8), shape=(/2,2,2/))
 !
 !     -----------------------------------------------------------------
@@ -244,7 +244,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'GC', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.8)
+    ASSERT(icodre1.eq.0 .and. n1.eq.8)
     gc=reshape(source=zr(jadr:jadr+8), shape=(/2,2,2/))
 !
 !     -----------------------------------------------------------------
@@ -253,7 +253,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'NYD', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.2)
+    ASSERT(icodre1.eq.0 .and. n1.eq.2)
     cstseu(1:2)=zr(jadr:jadr+1)
 !
 !     -----------------------------------------------------------------
@@ -262,7 +262,7 @@ subroutine dhrc_recup_mate(imate, compor, a0, c0, aa_t, ga_t, ab, gb,&
 !
     call rcadlv(' ', 1, 1, '+',imate, ' ', 'DHRC', 'SCRIT', &
                 0, [' '], [0.d0], jadr, n1, icodre1, 1)
-    ASSERT(n1.eq.4)
+    ASSERT(icodre1.eq.0 .and. n1.eq.4)
     cstseu(3:6)=zr(jadr:jadr+3)
 !
 end subroutine
