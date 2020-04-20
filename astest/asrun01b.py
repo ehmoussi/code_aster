@@ -75,10 +75,10 @@ class TestConfig(unittest.TestCase):
 
     def test_filter(self):
         cfg = Config("nofile")
-        # add a value to avoid automatic loading of 'config.js' and user file
+        # add a value to avoid automatic loading of 'config.json' and user file
         cfg._storage.set("mpiexec", "empty")
         self.assertEqual(cfg.get("mpiexec"), "empty")
-        # simulating 'config.js'
+        # simulating 'config.json'
         version_cfg = {"mpiexec": "mpiexec_version"}
         cfg.import_dict(version_cfg, with_sections=False)
         self.assertEqual(cfg.get("mpiexec"), "mpiexec_version")
@@ -121,7 +121,7 @@ class TestConfig(unittest.TestCase):
 
     def test_exectool(self):
         cfg = Config("nofile")
-        # add a value to avoid automatic loading of 'config.js' and user file
+        # add a value to avoid automatic loading of 'config.json' and user file
         cfg._storage.set("mpiexec", "empty")
         # add user file with server
         user_cfg = {
