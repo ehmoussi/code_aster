@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ aster_logical, optional, intent(out) :: coecst_
         call getvid(' ', 'MODELE'    , scal=model)
         call getvid(' ', 'CHAM_MATER', scal=materi)
         call getvid(' ', 'CARA_ELEM' , scal=cara_elem, nbret=iret)
-!       CARA_ELEM is optional in THER_LINEAIRE
+!       CARA_ELEM is optional in THER_LINEAIRE and THER_NON_LINE
         if (iret .eq. 0) then
             cara_elem = ' '
         endif

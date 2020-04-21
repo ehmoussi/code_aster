@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -123,9 +123,9 @@ character(len=24), optional, intent(in) :: dry_curr_
 !
 ! - Tangent matrix - Volumic terms
 !
-    call ther_mtan(model    , mate    , time    , varc_curr, compor_ther,&
-                   temp_iter, dry_prev, dry_curr, resu_elem, matr_elem  ,&
-                   base)
+    call ther_mtan(model      , cara_elem,     mate,     time, varc_curr,&
+                   compor_ther, temp_iter, dry_prev, dry_curr, resu_elem,&
+                   matr_elem  ,      base)
 !
 ! - Init fields
 !

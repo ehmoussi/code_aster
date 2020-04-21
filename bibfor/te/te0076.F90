@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ subroutine te0076(option, nomte)
     integer :: icamas, ij, nbres, nuno
     real(kind=8) :: alpha, xnorm, xu, yu
 !-----------------------------------------------------------------------
-    parameter         (       nbres=2 )
+    parameter ( nbres=2 )
     integer :: icodre(nbres)
     character(len=8) :: elrefe, alias8
     character(len=16) :: nomres(nbres)
@@ -107,11 +107,11 @@ subroutine te0076(option, nomte)
         call jevech('PCAMASS', 'L', icamas)
         if (zr(icamas) .gt. 0.d0) then
             global = .true.
-            alpha = zr(icamas+1)*r8dgrd()
-            p(1,1) = cos(alpha)
-            p(2,1) = sin(alpha)
+            alpha  = zr(icamas+1)*r8dgrd()
+            p(1,1) =  cos(alpha)
+            p(2,1) =  sin(alpha)
             p(1,2) = -sin(alpha)
-            p(2,2) = cos(alpha)
+            p(2,2) =  cos(alpha)
         else
             orig(1) = zr(icamas+4)
             orig(2) = zr(icamas+5)
@@ -121,53 +121,53 @@ subroutine te0076(option, nomte)
     call connec(nomte, nse, nnop2, c)
 !
     do 11 i = 1, nnop2
-        do 11 j = 1, nnop2
-            mrigt(i,j)=0.d0
- 11     continue
+        do 12 j = 1, nnop2
+            mrigt(i,j) = 0.d0
+ 12     continue
+ 11 continue
 !
 ! --- CALCUL ISO-P2 : BOUCLE SUR LES SOUS-ELEMENTS -------
 !
     do 100 ise = 1, nse
 !
-        do 105 i = 1, nno
-            do 105 j = 1, 2
+        do 101 i = 1, nno
+            do 102 j = 1, 2
                 coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-105         continue
+102         continue
+101     continue
 !
-        do 101 kp = 1, npg
+        do 103 kp = 1, npg
             k=(kp-1)*nno
             call dfdm2d(nno, kp, ipoids, idfde, coorse,&
                         poids, dfdx, dfdy)
             if (lteatt('AXIS','OUI')) then
                 r = 0.d0
-                do 102 i = 1, nno
+                do 104 i = 1, nno
                     r = r + coorse(2*(i-1)+1)*zr(ivf+k+i-1)
-102             continue
+104             continue
                 poids = poids*r
             endif
 !
             if (.not.global .and. aniso) then
-                point(1)=0.d0
-                point(2)=0.d0
-                do 104 nuno = 1, nno
-                    point(1)= point(1) + zr(ivf+k+nuno-1)*coorse(2*(&
-                    nuno-1)+1)
-                    point(2)= point(2) + zr(ivf+k+nuno-1)*coorse(2*(&
-                    nuno-1)+2)
-104             continue
+                point(1) = 0.d0
+                point(2) = 0.d0
+                do 105 nuno = 1, nno
+                    point(1)= point(1) + zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+1)
+                    point(2)= point(2) + zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+2)
+105             continue
 !
                 xu = orig(1) - point(1)
                 yu = orig(2) - point(2)
                 xnorm = sqrt( xu**2 + yu**2 )
                 xu = xu / xnorm
                 yu = yu / xnorm
-                p(1,1) = xu
-                p(2,1) = yu
+                p(1,1) =  xu
+                p(2,1) =  yu
                 p(1,2) = -yu
-                p(2,2) = xu
+                p(2,2) =  xu
             endif
 !
-            do 103 i = 1, nno
+            do 106 i = 1, nno
                 if (.not.aniso) then
                     fluglo(1) = lambda*dfdx(i)
                     fluglo(2) = lambda*dfdy(i)
@@ -180,24 +180,23 @@ subroutine te0076(option, nomte)
                     fluglo(2) = p(2,1)*fluloc(1) + p(2,2)*fluloc(2)
                 endif
 !
-                do 103 j = 1, nno
-                    mrigt(c(ise,i),c(ise,j)) = mrigt(&
-                                               c(ise, i),&
-                                               c(ise, j) ) + poids*theta* ( fluglo(1)*dfdx(j) + f&
-                                               &luglo(2)* dfdy(j)&
-                                               )
+                do 107 j = 1, nno
+                    mrigt(c(ise,i),c(ise,j)) = mrigt(c(ise,i),c(ise,j)) +&
+                    & poids*theta* ( fluglo(1)*dfdx(j) + fluglo(2)*dfdy(j) )
 !
-103             continue
-101     continue
+107             continue
+106         continue
+103     continue
 !
 100 end do
 !
 ! MISE SOUS FORME DE VECTEUR
 !
     ij = imattt-1
-    do 106 i = 1, nnop2
-        do 106 j = 1, i
-            ij = ij + 1
-            zr(ij)=mrigt(i,j)
-106     continue
+    do 110 i = 1, nnop2
+        do 111 j = 1, i
+            ij     = ij + 1
+            zr(ij) = mrigt(i,j)
+111     continue
+110 continue
 end subroutine

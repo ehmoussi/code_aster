@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,14 +43,15 @@ subroutine te0505(option, nomte)
     real(kind=8) :: xkpt, xkptt(9), dtpgdx(9), dtpgdy(9)
     real(kind=8) :: vect(50), res(50), dbpgdx(9), dbpgdy(9)
     real(kind=8) :: xr, xrr, xaux, rr, tpg0, xk1, xk0, pn, pnp1
-    integer :: kp, i, k, itemps, ivectt, ifon(3), igeom, imate
+    integer :: kp, i, k, itemps, ivectt, ifon(6), igeom, imate
     integer :: ivite, itemp, itempi, ilagrm, ilagrp, iveres
     integer :: nbvf, jvalf, idim
     integer :: ndim, nno, nnos, npg, ipoids, ivf, idfde, jgano
+    aster_logical :: aniso
 ! DEB ------------------------------------------------------------------
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+                     npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
@@ -63,9 +64,10 @@ subroutine te0505(option, nomte)
     call jevech('PVECTTR', 'E', ivectt)
     call jevech('PRESIDU', 'E', iveres)
 !
-    call ntfcma(' ',zi(imate), ifon)
-    nbvf = zi(ifon(1))
-    jvalf = zi(ifon(1) + 2)
+    aniso = .false.
+    call ntfcma(' ',zi(imate), aniso, ifon)
+    nbvf  = zi(ifon(1))
+    jvalf = zi(ifon(1)+2)
     xr = 0.d0
     do 22 i = 1, nbvf
         xaux = zr(jvalf + i - 1)
@@ -90,20 +92,20 @@ subroutine te0505(option, nomte)
         k=(kp-1)*nno
         call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
                     poids, dfdx, dfdy)
-        r = 0.d0
-        tpg = 0.d0
-        tpg0 = 0.d0
+        r          = 0.d0
+        tpg        = 0.d0
+        tpg0       = 0.d0
         dtpgdx(kp) = 0.d0
         dtpgdy(kp) = 0.d0
 !
         do 102 i = 1, nno
-            r = r + zr(igeom+2*(i-1)) *zr(ivf+k+i-1)
-            tpg = tpg + zr(itempi+i-1) *zr(ivf+k+i-1)
-            tpg0 = tpg0 + zr(itemp +i-1) *zr(ivf+k+i-1)
-            ul(1,kp) = ul(1,kp) + uloc(1,i) *zr(ivf+k+i-1)
-            ul(2,kp) = ul(2,kp) + uloc(2,i) *zr(ivf+k+i-1)
-            dtpgdx(kp)= dtpgdx(kp) + zr(itempi+i-1) *dfdx(i)
-            dtpgdy(kp)= dtpgdy(kp) + zr(itempi+i-1) *dfdy(i)
+            r         = r    + zr(igeom+2*(i-1)) *zr(ivf+k+i-1)
+            tpg       = tpg  + zr(itempi+i-1)    *zr(ivf+k+i-1)
+            tpg0      = tpg0 + zr(itemp +i-1)    *zr(ivf+k+i-1)
+            ul(1,kp)  = ul(1,kp) + uloc(1,i)     *zr(ivf+k+i-1)
+            ul(2,kp)  = ul(2,kp) + uloc(2,i)     *zr(ivf+k+i-1)
+            dtpgdx(kp)= dtpgdx(kp)+zr(itempi+i-1)*dfdx(i)
+            dtpgdy(kp)= dtpgdy(kp)+zr(itempi+i-1)*dfdy(i)
 102      continue
 !
         if (lteatt('AXIS','OUI')) poids = poids*r
@@ -113,7 +115,7 @@ subroutine te0505(option, nomte)
         call rcfodi(ifon(1), pn, betaa, dbeta)
         pnp1 = pn + ((tpg - betaa)*rr)
         zr(ilagrp + kp - 1) = pnp1
-        vect(kp) = pnp1
+        vect(kp)  = pnp1
         jacob(kp) = poids
         xkptt(kp) = xk1 - xk0
 !
@@ -146,10 +148,10 @@ subroutine te0505(option, nomte)
                     poids, dfdx, dfdy)
 !
         do 104 i = 1, nno
-            zr(iveres+i-1) = zr(iveres+i-1) + jacob(kp)*zr(ivf+k+i-1)* ( rr * (ul(1,kp)*dbpgdx(kp&
-                             &) + ul(2,kp)*dbpgdy(kp) ) - (ul(1,kp)*dupgdx(kp) + ul(2,kp)*dupgdy(&
-                             &kp) ) ) + jacob( kp)*xkptt(kp)* (dfdx(i)*dtpgdx(kp)+dfdy(i)*dtpgdy(&
-                             &kp))
+            zr(iveres+i-1) = zr(iveres+i-1) + jacob(kp)*zr(ivf+k+i-1)*(&
+                             &rr*(ul(1,kp)*dbpgdx(kp)+ul(2,kp)*dbpgdy(kp))-&
+                             &   (ul(1,kp)*dupgdx(kp)+ul(2,kp)*dupgdy(kp)) )+&
+                             &jacob(kp)*xkptt(kp)*(dfdx(i)*dtpgdx(kp)+dfdy(i)*dtpgdy(kp))
 !
 104      continue
 !

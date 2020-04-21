@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -73,13 +73,13 @@ Une incohérence a été détectée entre les déclarations de noms de noeuds ou
 """),
 
     40 : _("""
- absence de convergence 
+ absence de convergence
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
     41 : _("""
- absence de convergence 
+ absence de convergence
 Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
@@ -91,20 +91,20 @@ Contactez le support technique.
 """),
 
     44 : _("""
- paramètre bêta non trouvé
+ paramètre matériau BETA non trouvé
 """),
 
     45 : _("""
- paramètre lambda non trouvé
+ paramètre matériau LAMBDA non trouvé
+"""),
+
+   46 : _("""
+ paramètre matériau %(k1)s (conductivité orthotrope) non trouvé
 """),
 
     47 : _("""
- paramètre AFFINITE non trouvé
+ paramètre matériau AFFINITE non trouvé
 """),
-
-
-
-
 
     49 : _("""
   -> La phase de vérification du maillage a été volontairement désactivée.
@@ -113,8 +113,6 @@ Contactez le support technique.
      Soyez sur de votre maillage. Si des mailles dégénérées sont présentes elles
      ne seront pas détectées. Cela pourra nuire à la qualité des résultats.
 """),
-
-
 
     51 : _("""
 DEFI_CABLE_BP : Échec de projection du noeud de câble %(k1)s.
@@ -171,7 +169,7 @@ La présence de la caractéristique %(k1)s est obligatoire.
 """),
 
     62 : _("""
- des câbles ne sont pas affectes
+ des câbles ne sont pas affectés
 """),
 
     63 : _("""
@@ -297,7 +295,7 @@ Contactez le support technique.
     92 : _("""
  Erreur de mise en données :
  Le mot clé ORIE_LIGNE ne traite que les mailles linéiques.
- Or, des mailles surfaciques ont été fournies. 
+ Or, des mailles surfaciques ont été fournies.
 """),
 
     93 : _("""

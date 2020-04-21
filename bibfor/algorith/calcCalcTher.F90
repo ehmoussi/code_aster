@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -145,9 +145,9 @@ integer, intent(out) ::  nb_obje
 ! - Residuals
 !
     if (l_resi_ther) then
-        call verstp(model      , lload_name , lload_info, mate     , time_curr,&
-                    time       , compor_ther, temp_prev , incr_temp, varc_curr,&
-                    ve_resither, 'G')
+        call verstp(model    , lload_name,  lload_info, cara_elem, mate     ,&
+                    time_curr, time      , compor_ther, temp_prev, incr_temp,&
+                    varc_curr, ve_resither, 'G')
     endif
 !
 ! - New objects in table

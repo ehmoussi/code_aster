@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,20 +22,16 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-PHI1=DEFI_CONSTANTE(    NOM_RESU='FLUN',  VALE=-1200.0       )
+PHI1=DEFI_CONSTANTE(NOM_RESU='FLUN',  VALE=-1200.0 )
 
-PHIP=DEFI_CONSTANTE(    NOM_RESU='FLUN',  VALE=400.0       )
+PHIP=DEFI_CONSTANTE(NOM_RESU='FLUN',  VALE=400.0 )
 
-PHIN=DEFI_CONSTANTE(    NOM_RESU='FLUN',  VALE=-400.0       )
+PHIN=DEFI_CONSTANTE(NOM_RESU='FLUN',  VALE=-400.0 )
 
-T_IM=DEFI_CONSTANTE(    NOM_RESU='FLUN',  VALE=100.0         )
+T_IM=DEFI_CONSTANTE(NOM_RESU='FLUN',  VALE=100.0 )
 
 MATERI=DEFI_MATERIAU( THER_ORTH=_F(  LAMBDA_L = 1.,
           LAMBDA_T = 0.5, LAMBDA_N = 0.75, RHO_CP = 2.0))
-
-#  MATERI =DEFI_MATERIAU(THER_ORTH: ( LAMBDA_L: 0.75
-#          LAMBDA_T: 0.5 LAMBDA_N: 1. RHO_CP:2.0 ));
-
 
 MAIL=LIRE_MAILLAGE(FORMAT="ASTER", )
 
@@ -58,38 +54,35 @@ CHTH=AFFE_CHAR_THER_F(  MODELE=MOTH,
          )
 
 CHTH2=AFFE_CHAR_THER_F(  MODELE=MOTH,
-
                    FLUX_REP=_F( GROUP_MA = 'FPOS',  FLUN = PHIN)
                            )
 
 CHTH3=AFFE_CHAR_THER_F(  MODELE=MOTH,
-
                    FLUX_REP=_F( GROUP_MA = 'FNEG',  FLUN = PHIP)
                            )
 
-CHTH4=AFFE_CHAR_THER_F(  MODELE=MOTH,
-
-                   TEMP_IMPO=_F( NOEUD = ('N6','N7','N8','N9','N10','N14',),  TEMP = T_IM)
+CHTH4=AFFE_CHAR_THER_F(MODELE=MOTH,
+                       TEMP_IMPO=_F( NOEUD = ('N6','N7','N8','N9','N10','N14',),  TEMP = T_IM)
                            )
 
-LR8=DEFI_LIST_REEL(        DEBUT=0.,
-       INTERVALLE=_F(    JUSQU_A = 10.0,   NOMBRE = 2)
+LR8=DEFI_LIST_REEL(DEBUT=0.,
+       INTERVALLE=_F(JUSQU_A = 10.0,   NOMBRE = 2)
                        )
 
-TEMPE=THER_LINEAIRE(       MODELE=MOTH,
-                            ETAT_INIT=_F(  STATIONNAIRE = 'OUI'),
-                            INCREMENT=_F(  LIST_INST = LR8),
-                           PARM_THETA=1.,
-                           CHAM_MATER=CHMAT,    CARA_ELEM=ESSAI,EXCIT=(
-                          _F(  CHARGE = CHTH),
-                                _F(  CHARGE = CHTH2),
-                                _F(  CHARGE = CHTH3),
-                                _F(  CHARGE = CHTH4)),
+TEMPE=THER_LINEAIRE( MODELE=MOTH,
+                     ETAT_INIT=_F(  STATIONNAIRE = 'OUI'),
+                     INCREMENT=_F(  LIST_INST = LR8),
+                     PARM_THETA=1.,
+                     CHAM_MATER=CHMAT,
+                     CARA_ELEM=ESSAI,
+                     EXCIT=(
+                          _F(CHARGE = CHTH),
+                          _F(  CHARGE = CHTH2),
+                          _F(  CHARGE = CHTH3),
+                          _F(  CHARGE = CHTH4)),
                          )
 
 TEMPE=CALC_CHAMP(reuse=TEMPE,THERMIQUE=('FLUX_ELNO','FLUX_ELGA'),RESULTAT=TEMPE)
-
-
 
 TEMPE=CALC_CHAMP(reuse=TEMPE,  THERMIQUE='FLUX_NOEU',
                     RESULTAT=TEMPE               )
