@@ -17,7 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSDynamicInit(hval_incr, sddyna)
+subroutine nonlinDSDynamicInit(hval_incr, sddyna, ds_constitutive)
+!
+use NonLin_Datastructure_type
 !
 implicit none
 !
@@ -39,6 +41,7 @@ implicit none
 !
 character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: sddyna
+type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,6 +53,7 @@ character(len=19), intent(in) :: sddyna
 !
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  sddyna           : datastructure for dynamic
+! in  ds_constitutive  : datastructure for constitutive laws management
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -93,10 +97,8 @@ character(len=19), intent(in) :: sddyna
     if (lMultiSupport) then
 ! ----- Get parameters about modes for multi support
         call ndynkk(sddyna, 'multSuppMode', multSuppMode)
-        WRITE(6,*) 'Init: ',multSUppMode
         call dismoi('REF_RIGI_PREM', multSuppMode, 'RESU_DYNA', repk=matrix)
         call dismoi('NB_EQUA', matrix, 'MATR_ASSE', repi=nbEqua)
-        WRITE(6,*) 'Init: ',multSUppMode,matrix,nbEqua
         call dismoi('NOM_MAILLA', matrix, 'MATR_ASSE', repk=mesh)
         call dismoi('NOM_NUME_DDL', matrix, 'MATR_ASSE', repk=numeDof)
         numeDofDEEQ = numeDof//'.NUME.DEEQ'
@@ -110,6 +112,10 @@ character(len=19), intent(in) :: sddyna
                         zr(jvMultSuppProj+(iExci-1)*nbEqua), numeDof)
             call zerlag(nbEqua, zi(jvNumeDofDEEQ), vectr = zr(jvMultSuppProj+(iExci-1)*nbEqua))
         end do
+! ----- Check linear/DIS_* only !
+        if (.not. ds_constitutive%lLinear .and. .not. ds_constitutive%lDisCtc) then
+            call utmess('F', 'DYNAMIQUE1_1')
+        endif
     endif
 !
 end subroutine
