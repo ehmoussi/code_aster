@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine resi_ther(model    , mate     , time     , compor    , temp_prev,&
-                         temp_iter, hydr_prev, hydr_curr, dry_prev  , dry_curr ,&
-                         varc_curr, resu_elem, vect_elem, base)
+    subroutine resi_ther(model    , cara_elem, mate     , time     , compor    ,&
+                         temp_prev, temp_iter, hydr_prev, hydr_curr, dry_prev  ,&
+                         dry_curr , varc_curr, resu_elem, vect_elem, base)
         character(len=24), intent(in) :: model
+        character(len=24), intent(in) :: cara_elem
         character(len=24), intent(in) :: time
         character(len=24), intent(in) :: mate
         character(len=24), intent(in) :: temp_prev

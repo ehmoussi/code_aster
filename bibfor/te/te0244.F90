@@ -1,5 +1,6 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 2019 Christophe Durand - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,6 +34,7 @@ subroutine te0244(option, nomte)
 ! PARAMETRES D'APPEL
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterc/r8dgrd.h"
 #include "asterfort/connec.h"
 #include "asterfort/dfdm2d.h"
 #include "asterfort/elref1.h"
@@ -44,20 +46,26 @@ subroutine te0244(option, nomte)
 #include "asterfort/rcfode.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/teattr.h"
+#include "asterfort/rccoma.h"
 !
     character(len=16) :: nomte, option
 !
-!
+    integer :: icamas, nbres, nuno
+    parameter (nbres=3)
+    integer :: icodre(nbres)
     character(len=8) :: elrefe, alias8
-    integer :: icodre(1)
+    character(len=32) :: phenom
     real(kind=8) :: beta, dbeta, lambda, dfdx(9), dfdy(9), poids, r, tpg
-    real(kind=8) :: theta, deltat, dtpgdx, dtpgdy, coorse(18), tpgbuf, vectt(9)
-    real(kind=8) :: vecti(9), dlambd, diff, tpsec, chal(1), hydrpg(9)
+    real(kind=8) :: theta, deltat, dtpgdx, dtpgdy, coorse(18), vectt(9)
+    real(kind=8) :: vecti(9), diff, tpsec, chal(1), hydrpg(9)
+    real(kind=8) :: fluloc(2), fluglo(2), lambor(2), orig(2), p(2, 2), point(2)
+    real(kind=8) :: alpha, xnorm, xu, yu, r8bid
     integer :: ndim, nno, nnos, kp, npg, i, j, k, itemps, jgano, ipoids, ivf
-    integer :: idfde, igeom, imate, icomp, ifon(3), itemp, ivectt, ivecti
+    integer :: idfde, igeom, imate, icomp, ifon(6), itemp, ivectt, ivecti
     integer :: c(6, 9), ise, nse, nnop2, npg2, ipoid2, ivf2, idfde2, isechf
     integer :: isechi, ibid, ihydr
     aster_logical :: laxi, lhyd
+    aster_logical :: aniso, global
 !
 !====
 ! 1.1 PREALABLES: RECUPERATION ADRESSES FONCTIONS DE FORMES...
@@ -68,15 +76,21 @@ subroutine te0244(option, nomte)
         call teattr('S', 'ALIAS8', alias8, ibid)
         if (alias8(6:8) .eq. 'QU9') elrefe='QU4'
         if (alias8(6:8) .eq. 'TR6') elrefe='TR3'
-        call elrefe_info(elrefe=elrefe, fami='NOEU', ndim=ndim, nno=nno, nnos=nnos,&
-                         npg=npg2, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2, jgano=jgano)
+        call elrefe_info( elrefe=elrefe, fami='NOEU',&
+                          ndim=ndim    , nno=nno       , nnos=nnos,&
+                          npg=npg2     , jpoids=ipoid2 , jvf=ivf2 ,&
+                          jdfde=idfde2 , jgano=jgano )
     else
-        call elrefe_info(elrefe=elrefe, fami='MASS', ndim=ndim, nno=nno, nnos=nnos,&
-                         npg=npg2, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2, jgano=jgano)
+        call elrefe_info( elrefe=elrefe, fami='MASS',&
+                          ndim=ndim    , nno=nno      , nnos=nnos,&
+                          npg=npg2     , jpoids=ipoid2, jvf=ivf2 ,&
+                          jdfde=idfde2 , jgano=jgano )
     endif
 !
-    call elrefe_info(elrefe=elrefe, fami='RIGI', ndim=ndim, nno=nno, nnos=nnos,&
-                     npg=npg, jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
+    call elrefe_info( elrefe=elrefe , fami='RIGI' ,&
+                      ndim=ndim     , nno=nno       , nnos=nnos,&
+                      npg=npg       , jpoids=ipoids , jvf=ivf  ,&
+                      jdfde=idfde   , jgano=jgano )
 !
     if (lteatt('AXIS','OUI')) then
         laxi = .true.
@@ -96,8 +110,11 @@ subroutine te0244(option, nomte)
     call jevech('PVECTTR', 'E', ivectt)
     call jevech('PVECTTI', 'E', ivecti)
 !
+    deltat = zr(itemps+1)
+    theta  = zr(itemps+2)
+!
 !====
-! 1.3 PREALABLES LIES A L'HYDRATATION ET AU SECHAGE
+! 1.3 PREALABLES LIES AU SECHAGE
 !====
     if (zk16(icomp)(1:5) .eq. 'SECH_') then
         if (zk16(icomp)(1:12) .eq. 'SECH_GRANGER' .or. zk16(icomp)(1:10) .eq. 'SECH_NAPPE') then
@@ -109,41 +126,62 @@ subroutine te0244(option, nomte)
             isechi = itemp
             isechf = itemp
         endif
-    endif
 !
-    deltat = zr(itemps+1)
-    theta = zr(itemps+2)
-    if (zk16(icomp)(1:5) .ne. 'SECH_') then
-        call ntfcma(zk16(icomp), zi(imate), ifon)
+!====
+! 1.4 PREALABLES LIES A L ANISOTROPIE EN THERMIQUE ET RECUPERATION PARAMETRES MATERIAU
+!====
+    else if (zk16(icomp)(1:5) .eq. 'THER_') then
+        call rccoma(zi(imate), 'THER', 1, phenom, icodre(1))
+        aniso = .false.
+        if (phenom(1:12) .eq. 'THER_NL_ORTH') then
+            aniso  = .true.
+        endif
+        call ntfcma(zk16(icomp), zi(imate), aniso, ifon)
+!
+        global = .false.
+        if (aniso) then
+            call jevech('PCAMASS', 'L', icamas)
+            if (zr(icamas) .gt. 0.d0) then
+                global = .true.
+                alpha  = zr(icamas+1)*r8dgrd()
+                p(1,1) =  cos(alpha)
+                p(2,1) =  sin(alpha)
+                p(1,2) = -sin(alpha)
+                p(2,2) =  cos(alpha)
+            else
+                orig(1) = zr(icamas+4)
+                orig(2) = zr(icamas+5)
+            endif
+        endif
     endif
 !====
-! 1.4 PREALABLES LIES A L'HYDRATATION
+! 1.5 PREALABLES LIES A L'HYDRATATION
 !====
     if (zk16(icomp)(1:9) .eq. 'THER_HYDR') then
         lhyd = .true.
         call jevech('PHYDRPM', 'L', ihydr)
         call rcvalb('FPG1', 1, 1, '+', zi(imate),&
                     ' ', 'THER_HYDR', 0, ' ', [0.d0],&
-                    1, 'CHALHYDR', chal, icodre, 1)
+                    1, 'CHALHYDR', chal, icodre(1), 1)
         do 150 kp = 1, npg2
             k = nno*(kp-1)
             hydrpg(kp)=0.d0
             do 160 i = 1, nno
-                hydrpg(kp)=hydrpg(kp)+zr(ihydr)*zr(ivf2+k+i-1)
+                hydrpg(kp) = hydrpg(kp) + zr(ihydr)*zr(ivf2+k+i-1)
 160         continue
 150     continue
     else
         lhyd = .false.
     endif
 !====
-! 1.5 PREALABLES LIES AUX ELEMENTS LUMPES
+! 1.6 PREALABLES LIES AUX ELEMENTS LUMPES
 !====
 !  CALCUL ISO-P2 : ELTS P2 DECOMPOSES EN SOUS-ELTS LINEAIRES
 !
     call connec(nomte, nse, nnop2, c)
     do 10 i = 1, nnop2
-        vectt(i)=0.d0
-        vecti(i)=0.d0
+        vectt(i) = 0.d0
+        vecti(i) = 0.d0
  10 end do
 !
 !====
@@ -155,62 +193,102 @@ subroutine te0244(option, nomte)
 !
         if (zk16(icomp)(1:5) .eq. 'THER_') then
 !
-            do 305 i = 1, nno
-                do 305 j = 1, 2
+            do 301 i = 1, nno
+                do 302 j = 1, 2
                     coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-305             continue
+302             continue
+301         continue
 !
-            do 301 kp = 1, npg
+            do 305 kp = 1, npg
                 k=(kp-1)*nno
                 call dfdm2d(nno, kp, ipoids, idfde, coorse,&
                             poids, dfdx, dfdy)
-                r = 0.d0
-                tpg = 0.d0
+!
+! -------       TRAITEMENT DE L AXISYMETRIE
+! -------       EVALUATION DE LA CONDUCTIVITE LAMBDA
+!
+                r      = 0.d0
+                tpg    = 0.d0
                 dtpgdx = 0.d0
                 dtpgdy = 0.d0
-                do 302 i = 1, nno
-! CALCUL DE T- ET DE SON GRADIENT
-                    tpg = tpg + zr(itemp-1+c(ise,i)) * zr(ivf+k+i-1)
+                do 306 i = 1, nno
+                    tpg    = tpg    + zr(itemp-1+c(ise,i)) * zr(ivf+k+i-1)
                     dtpgdx = dtpgdx + zr(itemp-1+c(ise,i)) * dfdx(i)
                     dtpgdy = dtpgdy + zr(itemp-1+c(ise,i)) * dfdy(i)
-302             continue
+306             continue
                 if (laxi) then
-                    do 303 i = 1, nno
-! CALCUL DE R POUR JACOBIEN
+                    do 307 i = 1, nno
                         r = r + coorse(2*(i-1)+1) * zr(ivf+k+i-1)
-303                 continue
+307                 continue
                     poids = poids*r
                 endif
 !
-! CALCUL DES CARACTERISTIQUES MATERIAUX
-! ON LES EVALUE AVEC TPG=T-
-                tpgbuf = tpg
-                call rcfode(ifon(2), tpgbuf, lambda, dlambd)
+                if (aniso) then
+                    call rcfode(ifon(4), tpg, lambor(1), r8bid)
+                    call rcfode(ifon(5), tpg, lambor(2), r8bid)
+                else
+                    call rcfode(ifon(2), tpg, lambda, r8bid)
+                endif
+!
+! -------       CALCUL DE LA PREMIERE COMPOSANTE DU TERME ELEMENTAIRE
+!
+                if (.not.aniso) then
+                    fluglo(1) = lambda*dtpgdx
+                    fluglo(2) = lambda*dtpgdy
+                else
+!
+! -------           TRAITEMENT DE L ANISOTROPIE
+!
+                    if (.not.global) then
+                        point(1)=0.d0
+                        point(2)=0.d0
+                        do 308 nuno = 1, nno
+                            point(1)= point(1)+ zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+1)
+                            point(2)= point(2)+ zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+2)
+308                     continue
+                        xu = orig(1) - point(1)
+                        yu = orig(2) - point(2)
+                        xnorm = sqrt( xu**2 + yu**2 )
+                        xu = xu / xnorm
+                        yu = yu / xnorm
+                        p(1,1) =  xu
+                        p(2,1) =  yu
+                        p(1,2) = -yu
+                        p(2,2) =  xu
+                    endif
+                    fluglo(1) = dtpgdx
+                    fluglo(2) = dtpgdy
+                    fluloc(1) = p(1,1)*dtpgdx + p(2,1)*dtpgdy
+                    fluloc(2) = p(1,2)*dtpgdx + p(2,2)*dtpgdy
+                    fluloc(1) = lambor(1)*fluloc(1)
+                    fluloc(2) = lambor(2)*fluloc(2)
+                    fluglo(1) = p(1,1)*fluloc(1) + p(1,2)*fluloc(2)
+                    fluglo(2) = p(2,1)*fluloc(1) + p(2,2)*fluloc(2)
+                endif
 !
 ! CALCUL STD A 2 OUTPUTS (LE DEUXIEME NE SERT QUE POUR LA PREDICTION)
 !
                 do 320 i = 1, nno
-                    vectt(c(ise,i)) = vectt(&
-                                      c(ise,i))- poids * (1.0d0-theta)*lambda*(dfdx(i)*dtpgdx+dfd&
-                                      &y(i)* dtpgdy&
-                                      )
-                    vecti(c(ise,i)) = vecti(&
-                                      c(ise,i))- poids * (1.0d0-theta)*lambda*(dfdx(i)*dtpgdx+dfd&
-                                      &y(i)* dtpgdy&
-                                      )
+                    vectt(c(ise,i)) = vectt(c(ise,i))-&
+                                      & poids * (1.0d0-theta) *&
+                                      & (fluglo(1)*dfdx(i) + fluglo(2)*dfdy(i))
+                    vecti(c(ise,i)) = vecti(c(ise,i))-&
+                                      & poids * (1.0d0-theta) *&
+                                      & (fluglo(1)*dfdx(i) + fluglo(2)*dfdy(i))
 320             continue
 ! FIN DE LA BOUCLE SUR LES PT DE GAUSS
-301         continue
+305         continue
 !
 !====
-! 3. CALCULS DU TERME DE RIGIDITE DE L'OPTION
+! 3. CALCULS DU TERME DE MASSE DE L'OPTION
 !====
 ! ------- 3EME FAMILLE DE PTS DE GAUSS -----------
 !
             do 405 i = 1, nno
-                do 405 j = 1, 2
+                do 406 j = 1, 2
                     coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-405             continue
+406             continue
+405         continue
 !
             do 401 kp = 1, npg2
                 k=(kp-1)*nno
@@ -232,28 +310,26 @@ subroutine te0244(option, nomte)
 !
 ! CALCUL DES CARACTERISTIQUES MATERIAUX
 ! ON LES EVALUE AVEC TPG=T-
-                tpgbuf = tpg
-                call rcfode(ifon(1), tpgbuf, beta, dbeta)
+                call rcfode(ifon(1), tpg, beta, dbeta)
                 if (lhyd) then
 ! THER_HYDR
                     do 420 i = 1, nno
-                        vectt(c(ise,i)) = vectt(&
-                                          c(ise,i)) + poids * ((beta-chal(1)*hydrpg(kp))* zr(ivf2&
-                                          &+k+i-1)/deltat&
-                                          )
-                        vecti(c(ise,i)) = vecti(&
-                                          c(ise,i)) + poids * ((dbeta*tpg-chal(1)*hydrpg(kp))* zr&
-                                          &(ivf2+k+i-1)/ deltat&
-                                          )
+                        vectt(c(ise,i)) = vectt(c(ise,i)) + poids*&
+                                          &((beta     -chal(1)*hydrpg(kp))*&
+                                                               &zr(ivf2+k+i-1)/deltat)
+                        vecti(c(ise,i)) = vecti(c(ise,i)) + poids*&
+                                          &((dbeta*tpg-chal(1)*hydrpg(kp))*&
+                                                               &zr(ivf2+k+i-1)/deltat)
 420                 continue
                 else
 ! THER_NL
 ! CALCUL A 2 OUTPUTS (LE DEUXIEME NE SERT QUE POUR LA PREDICTION)
 !
                     do 421 i = 1, nno
-                        vectt(c(ise,i)) = vectt(c(ise, i) ) + poids * beta/deltat*zr(ivf2+k+i-1)
-                        vecti(c(ise,i)) = vecti(&
-                                          c(ise, i) ) + poids * dbeta*tpg/deltat*zr(ivf2+k+i-1)
+                        vectt(c(ise,i)) = vectt(c(ise,i)) + poids * beta        /&
+                                                          & deltat * zr(ivf2+k+i-1)
+                        vecti(c(ise,i)) = vecti(c(ise,i)) + poids * dbeta * tpg /&
+                                                          & deltat * zr(ivf2+k+i-1)
 421                 continue
 ! FIN BOUCLE LHYD
                 endif
@@ -264,12 +340,13 @@ subroutine te0244(option, nomte)
 !
 !        CALCULS DU TERME DE RIGIDITE DE L'OPTION
 !
-            do 307 i = 1, nno
-                do 307 j = 1, 2
+            do 501 i = 1, nno
+                do 502 j = 1, 2
                     coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-307             continue
+502             continue
+501         continue
 !
-            do 310 kp = 1, npg
+            do 503 kp = 1, npg
                 k=(kp-1)*nno
                 call dfdm2d(nno, kp, ipoids, idfde, coorse,&
                             poids, dfdx, dfdy)
@@ -278,58 +355,59 @@ subroutine te0244(option, nomte)
                 dtpgdx = 0.d0
                 dtpgdy = 0.d0
                 tpsec = 0.d0
-                do 308 i = 1, nno
-                    r = r + coorse(2*(i-1)+1) *zr(ivf+k+i-1)
-                    tpg = tpg + zr(itemp-1+c(ise,i)) *zr(ivf+k+i-1)
-                    dtpgdx = dtpgdx + zr(itemp-1+c(ise,i)) *dfdx(i)
-                    dtpgdy = dtpgdy + zr(itemp-1+c(ise,i)) *dfdy(i)
-                    tpsec = tpsec + zr(isechi-1+c(ise,i)) *zr(ivf+k+i- 1)
-308             continue
+                do 504 i = 1, nno
+                    r      = r      + coorse(2*(i-1)+1)     *zr(ivf+k+i-1)
+                    tpg    = tpg    + zr(itemp -1+c(ise,i)) *zr(ivf+k+i-1)
+                    dtpgdx = dtpgdx + zr(itemp -1+c(ise,i)) *dfdx(i)
+                    dtpgdy = dtpgdy + zr(itemp -1+c(ise,i)) *dfdy(i)
+                    tpsec  = tpsec  + zr(isechi-1+c(ise,i)) *zr(ivf+k+i-1)
+504             continue
                 call rcdiff(zi(imate), zk16(icomp), tpsec, tpg, diff)
                 if (laxi) poids = poids*r
 !
-                do 309 i = 1, nno
-                    vectt(c(ise,i)) = vectt(&
-                                      c(ise,i)) + poids *( -(1.0d0-theta)*diff*(dfdx(i)*dtpgdx+df&
-                                      &dy(i)* dtpgdy)&
-                                      )
+                do 505 i = 1, nno
+                    vectt(c(ise,i)) = vectt(c(ise,i)) +&
+                                      & poids * ( -(1.0d0-theta)*diff*&
+                                                  &( dfdx(i)*dtpgdx + dfdy(i)*dtpgdy ) )
                     vecti(c(ise,i)) = vectt(c(ise,i))
-309             continue
-310         continue
+505             continue
+503         continue
 !
 !  CALCULS DU TERME DE MASSE DE L'OPTION
 !
-            do 311 i = 1, nno
-                do 311 j = 1, 2
+            do 511 i = 1, nno
+                do 512 j = 1, 2
                     coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-311             continue
+512             continue
+511         continue
 !
-            do 314 kp = 1, npg2
+            do 513 kp = 1, npg2
                 k=(kp-1)*nno
                 call dfdm2d(nno, kp, ipoid2, idfde2, coorse,&
                             poids, dfdx, dfdy)
-                r = 0.d0
+                r   = 0.d0
                 tpg = 0.d0
-                do 312 i = 1, nno
-                    r = r + coorse(2*(i-1)+1) *zr(ivf2+k+i-1)
+                do 514 i = 1, nno
+                    r   = r   + coorse(2*(i-1)+1)    *zr(ivf2+k+i-1)
                     tpg = tpg + zr(itemp-1+c(ise,i)) *zr(ivf2+k+i-1)
-312             continue
+514             continue
                 if (laxi) poids = poids*r
 !
-                do 313 i = 1, nno
-                    vectt(c(ise,i)) = vectt( c(ise,i)) + poids * ( tpg/deltat*zr(ivf2+k+i-1) )
+                do 515 i = 1, nno
+                    vectt(c(ise,i)) = vectt(c(ise,i)) + poids *&
+                                      &( tpg / deltat * zr(ivf2+k+i-1) )
                     vecti(c(ise,i)) = vectt(c(ise,i))
-313             continue
-314         continue
+515             continue
+513         continue
 !
         endif
 ! FIN DE BOUCLE SUR LES SOUS-ELEMENTS
 200 end do
 !
 ! MISE SOUS FORME DE VECTEUR
-    do 500 i = 1, nnop2
+    do 600 i = 1, nnop2
         zr(ivectt-1+i)=vectt(i)
         zr(ivecti-1+i)=vecti(i)
-500 end do
+600 end do
 ! FIN ------------------------------------------------------------------
 end subroutine

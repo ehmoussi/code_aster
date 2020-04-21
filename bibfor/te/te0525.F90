@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,9 +50,10 @@ subroutine te0525(option, nomte)
     real(kind=8) :: betaa, tpn, betai, dupgdx(50), dupgdy(50), res(50)
     real(kind=8) :: xr, xrr, xaux, tpg0, xk0, pn, pnp1, xk1
     integer :: ipoids, ivf, idfde, igeom, imate
-    integer :: jgano, nno, kp, npg1, i, ivectt, itemps, ifon(3)
+    integer :: jgano, nno, kp, npg1, i, ivectt, itemps, ifon(6)
     integer :: itemp, itempi, ilagrm, ivite, ilagrp, iveres
     integer :: nbvf, jvalf, k, l, idim, ndim, nnos
+    aster_logical :: aniso
 !
 ! DEB ------------------------------------------------------------------
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
@@ -69,8 +70,9 @@ subroutine te0525(option, nomte)
     call jevech('PVECTTR', 'E', ivectt)
     call jevech('PRESIDU', 'E', iveres)
 !
-    call ntfcma(' ',zi(imate), ifon)
-    nbvf = zi(ifon(1))
+    aniso = .false.
+    call ntfcma(' ',zi(imate), aniso, ifon)
+    nbvf  = zi(ifon(1))
     jvalf = zi(ifon(1)+2)
     xr = 0.d0
     do 10 i = 1, nbvf
@@ -104,17 +106,17 @@ subroutine te0525(option, nomte)
         dtpgdz(kp) = 0.d0
 !
         do 40 i = 1, nno
-            tpg = tpg + zr(itempi+i-1)*zr(ivf+l+i-1)
-            tpg0 = tpg0 + zr(itemp+i-1)*zr(ivf+l+i-1)
-            ul(1,kp) = ul(1,kp) + uloc(1,i)*zr(ivf+l+i-1)
-            ul(2,kp) = ul(2,kp) + uloc(2,i)*zr(ivf+l+i-1)
-            ul(3,kp) = ul(3,kp) + uloc(3,i)*zr(ivf+l+i-1)
+            tpg        = tpg  + zr(itempi+i-1)*zr(ivf+l+i-1)
+            tpg0       = tpg0 + zr(itemp+i-1) *zr(ivf+l+i-1)
+            ul(1,kp)   = ul(1,kp) + uloc(1,i)*zr(ivf+l+i-1)
+            ul(2,kp)   = ul(2,kp) + uloc(2,i)*zr(ivf+l+i-1)
+            ul(3,kp)   = ul(3,kp) + uloc(3,i)*zr(ivf+l+i-1)
             dtpgdx(kp) = dtpgdx(kp) + zr(itempi+i-1)*dfdx(i)
             dtpgdy(kp) = dtpgdy(kp) + zr(itempi+i-1)*dfdy(i)
             dtpgdz(kp) = dtpgdz(kp) + zr(itempi+i-1)*dfdz(i)
 40      continue
 !
-        call rcfode(ifon(2), tpg, xk1, xkpt)
+        call rcfode(ifon(2), tpg,  xk1, xkpt)
         call rcfode(ifon(2), tpg0, xk0, xkpt)
         pn = zr(ilagrm+kp-1)
         call rcfodi(ifon(1), pn, betaa, rbid)
@@ -156,10 +158,14 @@ subroutine te0525(option, nomte)
                     poids, dfdx, dfdy, dfdz)
 !
         do 80 i = 1, nno
-            zr(iveres+i-1) = zr(iveres+i-1) + jacob(kp)*zr(ivf+l+i-1)* (rr* (ul(1,kp)*dbpgdx(kp)+&
-                             &ul(2, kp)*dbpgdy(kp)+ul(3,kp)* dbpgdz(kp))- (ul(1,kp)*dupgdx(kp)+ul&
-                             &(2, kp)*dupgdy(kp)+ul( 3,kp)*dupgdz(kp))) + jacob(kp)*xkptt(kp)* (d&
-                             &fdx(i)*dtpgdx( kp)+ dfdy(i)*dtpgdy(kp)+dfdz(i)*dtpgdz(kp))
+            zr(iveres+i-1) = zr(iveres+i-1) +&
+            &jacob(kp)*zr(ivf+l+i-1)*(rr*(ul(1,kp)*dbpgdx(kp)+&
+                                         &ul(2,kp)*dbpgdy(kp)+&
+                                         &ul(3,kp)*dbpgdz(kp))-&
+                                        &(ul(1,kp)*dupgdx(kp)+&
+                                         &ul(2,kp)*dupgdy(kp)+&
+                                         &ul(3,kp)*dupgdz(kp)))+&
+            &jacob(kp)*xkptt(kp)*(dfdx(i)*dtpgdx(kp)+dfdy(i)*dtpgdy(kp)+dfdz(i)*dtpgdz(kp))
 !
 80      continue
 !

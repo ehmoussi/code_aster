@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,8 +42,9 @@ subroutine te0521(option, nomte)
     real(kind=8) :: xkpt, alpha, tpg
     real(kind=8) :: dfdx(27), dfdy(27), dfdz(27), poids
     integer :: ipoids, ivf, idfde, igeom, imate
-    integer :: jgano, nno, kp, npg, i, j, l, ij, imattt, itemps, ifon(3)
+    integer :: jgano, nno, kp, npg, i, j, l, ij, imattt, itemps, ifon(6)
     integer :: ndim, itemp, itempi, nnos
+    aster_logical :: aniso
 !
 ! DEB ------------------------------------------------------------------
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
@@ -56,7 +57,8 @@ subroutine te0521(option, nomte)
     call jevech('PTEMPEI', 'L', itempi)
     call jevech('PMATTTR', 'E', imattt)
 !
-    call ntfcma(' ', zi(imate), ifon)
+    aniso = .false.
+    call ntfcma(' ', zi(imate), aniso, ifon)
 !
     do 40 kp = 1, npg
         l = (kp-1)*nno
@@ -73,8 +75,8 @@ subroutine te0521(option, nomte)
 !
             do 20 j = 1, i
                 ij = (i-1)*i/2 + j
-                zr(imattt+ij-1) = zr(imattt+ij-1) + poids* (alpha* ( dfdx(i)*dfdx(j)+ dfdy(i)*dfd&
-                                  &y(j)+dfdz(i)*dfdz(j)))
+                zr(imattt+ij-1) = zr(imattt+ij-1) + poids* (alpha*&
+                                  &(dfdx(i)*dfdx(j)+dfdy(i)*dfdy(j)+dfdz(i)*dfdz(j)))
 20          continue
 30      continue
 40  end do

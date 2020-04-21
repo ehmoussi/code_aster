@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,38 +39,34 @@ MAIL=DEFI_GROUP( reuse=MAIL,   MAILLAGE=MAIL,
 TIMP_0=DEFI_CONSTANTE(   VALE=-17.778)
 
 MATE=DEFI_MATERIAU( THER_ORTH=_F(  LAMBDA_L = 1.319E0,
-                                       LAMBDA_T = 0.659E0,
-                                       LAMBDA_N = 0.528E0,
-                                             RHO_CP = 1899.10E0))
+                                   LAMBDA_T = 0.659E0,
+                                   LAMBDA_N = 0.528E0,
+                                   RHO_CP   = 1899.10E0))
 
 #
 # AFFECTATIONS: MATERIAU  MODELE  CHARGEMENT ----------------------
 #
 
-MODEL=AFFE_MODELE( 
-                  MAILLAGE=MAIL,
-                     AFFE=_F( TOUT = 'OUI',  PHENOMENE = 'THERMIQUE',
-                                       MODELISATION = 'PLAN'))
+MODEL=AFFE_MODELE( MAILLAGE=MAIL,
+                   AFFE=_F( TOUT = 'OUI',  PHENOMENE = 'THERMIQUE',
+                            MODELISATION = 'PLAN'))
 
-CHMATE=AFFE_MATERIAU(   MAILLAGE=MAIL,
-                    AFFE=_F( TOUT = 'OUI',  MATER = MATE))
+CHMATE=AFFE_MATERIAU(  MAILLAGE=MAIL,
+                       AFFE=_F( TOUT = 'OUI',  MATER = MATE))
 
-CHARGE=AFFE_CHAR_THER_F(
-                      MODELE=MODEL,
-                  TEMP_IMPO=_F( GROUP_NO = 'NOE_IMP',  TEMP = TIMP_0)
+CHARGE=AFFE_CHAR_THER_F( MODELE=MODEL,
+                         TEMP_IMPO=_F( GROUP_NO = 'NOE_IMP',  TEMP = TIMP_0)
                   )
 
 ESSAI=AFFE_CARA_ELEM(MODELE=MODEL,
-                  MASSIF=_F( 
-                   GROUP_MA = 'TOUT',
-                ANGL_REP = (-15.,  0., ))
-                )
+                     MASSIF=_F(  GROUP_MA = 'TOUT',
+                     ANGL_REP = (-15.,  0., ))  )
 
 #
 # DEFINITION DE LA STATEGIE DE CALCUL -----------------------------
 #
 
-LR8=DEFI_LIST_REEL(        DEBUT=0.,
+LR8=DEFI_LIST_REEL(DEBUT=0.,
                    INTERVALLE=_F(    JUSQU_A = 4320.E0,  NOMBRE = 240)
                   )
 
@@ -79,13 +75,12 @@ LR8=DEFI_LIST_REEL(        DEBUT=0.,
 #
 
 
-TEMP=THER_LINEAIRE( 
-                      MODELE=MODEL,
+TEMP=THER_LINEAIRE(MODELE=MODEL,
                    ETAT_INIT=_F( VALE = -1.111E0),
-                  CHAM_MATER=CHMATE,
-                     CARA_ELEM=ESSAI,
+                   CHAM_MATER=CHMATE,
+                   CARA_ELEM=ESSAI,
                    INCREMENT=_F( LIST_INST = LR8),
-                      EXCIT=_F(  CHARGE = CHARGE) )
+                   EXCIT=_F(  CHARGE = CHARGE) )
 
 #
 # ANALYSE DES RESULTATS -------------------------------------------
@@ -219,18 +214,3 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='N49',
           )
 
 FIN()
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#

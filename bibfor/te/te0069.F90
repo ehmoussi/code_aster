@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -105,10 +105,10 @@ subroutine te0069(option, nomte)
         lambor(1) = valres(1)
         lambor(2) = valres(2)
         aniso = .true.
-!
     else if (phenom .eq. 'THER_NL') then
         aniso = .false.
-!
+    else if (phenom .eq. 'THER_NL_ORTH') then
+        aniso = .true.
     else
         call utmess('F', 'ELEMENTS2_63')
     endif
@@ -123,11 +123,11 @@ subroutine te0069(option, nomte)
         call jevech('PCAMASS', 'L', icamas)
         if (zr(icamas) .gt. 0.d0) then
             global = .true.
-            alpha = zr(icamas+1)*r8dgrd()
-            p(1,1) = cos(alpha)
-            p(2,1) = sin(alpha)
+            alpha  = zr(icamas+1)*r8dgrd()
+            p(1,1) =  cos(alpha)
+            p(2,1) =  sin(alpha)
             p(1,2) = -sin(alpha)
-            p(2,2) = cos(alpha)
+            p(2,2) =  cos(alpha)
         else
             orig(1) = zr(icamas+4)
             orig(2) = zr(icamas+5)
@@ -142,7 +142,7 @@ subroutine te0069(option, nomte)
         ifpg=(kp-1)*2
         call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
                     poids, dfdx, dfdy)
-        tpg = 0.0d0
+        tpg   = 0.0d0
         fluxx = 0.0d0
         fluxy = 0.0d0
         if (.not.global .and. aniso) then
@@ -157,10 +157,10 @@ subroutine te0069(option, nomte)
             xnorm = sqrt( xu**2 + yu**2 )
             xu = xu / xnorm
             yu = yu / xnorm
-            p(1,1) = xu
-            p(2,1) = yu
+            p(1,1) =  xu
+            p(2,1) =  yu
             p(1,2) = -yu
-            p(2,2) = xu
+            p(2,2) =  xu
         endif
 !
 !     CALCUL DE T ET DE GRAD(T) AUX POINTS DE GAUSS
@@ -175,6 +175,16 @@ subroutine te0069(option, nomte)
                         ' ', phenom, 1, 'TEMP', [tpg],&
                         1, 'LAMBDA', lambda, icodre, 1)
         endif
+!
+        if (phenom .eq. 'THER_NL_ORTH') then
+            call rcvalb('FPG1', 1, 1, '+', zi(imate),&
+                        ' ', phenom, 1, 'TEMP', [tpg],&
+                        1, 'LAMBDA_L', lambor(1), icodre, 1)
+            call rcvalb('FPG1', 1, 1, '+', zi(imate),&
+                        ' ', phenom, 1, 'TEMP', [tpg],&
+                        1, 'LAMBDA_T', lambor(2), icodre, 1)
+        endif
+!
         if (.not.aniso) then
             fluglo(1) = lambda(1)*fluxx
             fluglo(2) = lambda(1)*fluxy

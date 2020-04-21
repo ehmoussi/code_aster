@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,9 +49,9 @@ subroutine te0522(option, nomte)
     real(kind=8) :: xr, xrr, xaux, rbid, s, xma, xm, coef, cmin, alfa, aksi
     integer :: jgano, nno, kp, npg1, i, j, k, ij, itemps, imattt
     integer :: ipoids, ivf, idfde, igeom, imate
-    integer :: ifon(3), ivite, itempi
+    integer :: ifon(6), ivite, itempi
     integer :: ndim, iad, nbvf, jvalf, idim, jdim, nnos
-!
+    aster_logical :: aniso
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
   npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
@@ -65,8 +65,9 @@ subroutine te0522(option, nomte)
     call jevech('PTEMPEI', 'L', itempi)
     call jevech('PMATTTR', 'E', imattt)
 !
-    call ntfcma(' ',zi(imate), ifon)
-    nbvf = zi(ifon(1))
+    aniso = .false.
+    call ntfcma(' ',zi(imate), aniso, ifon)
+    nbvf  = zi(ifon(1))
     jvalf = zi(ifon(1)+2)
     xr = 0.d0
     do 20 i = 1, nbvf
@@ -129,8 +130,9 @@ subroutine te0522(option, nomte)
             s = 0.d0
             do 80 kp = 1, npg1
                 k = (kp-1)*nno
-                s = s + zr(ivf+k+i-1)*dni(1,j,kp)*ul(1,kp)*jacob(kp)* rr + zr(ivf+k+i-1)*dni(2,j,&
-                    &kp)*ul(2,kp)*jacob(kp)*rr + zr(ivf+k+i-1)*dni(3,j,kp)*ul(3,kp)*jacob(kp)*rr
+                s = s + zr(ivf+k+i-1)*dni(1,j,kp)*ul(1,kp)*jacob(kp)*rr +&
+                    &   zr(ivf+k+i-1)*dni(2,j,kp)*ul(2,kp)*jacob(kp)*rr +&
+                    &   zr(ivf+k+i-1)*dni(3,j,kp)*ul(3,kp)*jacob(kp)*rr
 80          continue
             ij = ij + 1
             zr(ij) = zr(ij) + s
@@ -149,15 +151,14 @@ subroutine te0522(option, nomte)
         umi(2) = umi(2)/um
         umi(3) = umi(3)/um
 !
-        xma = aire** (1.d0/3)
+        xma = aire**(1.d0/3)
 !
         do 110 i = 2, nno
             xm = 0.d0
-            xm = xm + (&
-                 zr(igeom)-zr(igeom+3*i-3))* (zr(igeom)-zr( igeom+3*i-3)) + (zr(igeom+1)-zr(igeom&
-                 &+3*i-2))* (zr(igeom+ 1)-zr(igeom+3*i-2)) + (zr(igeom+2)-zr(igeom+3*i-1))* (zr(i&
-                 &geom+2)-zr(igeom+3*i-1)&
-                 )
+            xm = xm +&
+                 &(zr(igeom)  -zr(igeom+3*i-3))*(zr(igeom)  -zr(igeom+3*i-3))+&
+                 &(zr(igeom+1)-zr(igeom+3*i-2))*(zr(igeom+1)-zr(igeom+3*i-2))+&
+                 &(zr(igeom+2)-zr(igeom+3*i-1))*(zr(igeom+2)-zr(igeom+3*i-1))
             xm = sqrt(xm)
             if (xm .gt. xma) xma = xm
 110      continue
@@ -178,10 +179,10 @@ subroutine te0522(option, nomte)
                             if (alfa .gt. 3.d0) aksi = 1.d0
                             cc = aksi*um*xma
 !
-                            s = s + (&
-                                dni(idim,i,kp)*dni(jdim,j,kp)*ul( idim,kp)* ul(jdim,kp)*jacob(kp)&
-                                &/ (um*um)&
-                                )* coef*cc
+                            s = s +&
+                                &(dni(idim,i,kp)*dni(jdim,j,kp)*ul(idim,kp)*ul(jdim,kp)*&
+                                & jacob(kp)/(um*um))*&
+                                &coef*cc
 !
 120                      continue
 130                  continue

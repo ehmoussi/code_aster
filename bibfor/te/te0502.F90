@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,9 +47,10 @@ subroutine te0502(option, nomte)
     real(kind=8) :: xr, xrr, xaux, rbid
     real(kind=8) :: s, um, xma, xm, coef, cmin, alfa, aksi, cc
     integer :: kp, i, j, k, ij, itemps, imattt
-    integer :: itempi, ifon(3), ivite, igeom, imate
+    integer :: itempi, ifon(6), ivite, igeom, imate
     integer :: iad, nbvf, jvalf, idim, jdim
     integer :: ndim, nno, nnos, npg, ipoids, ivf, idfde, jgano
+    aster_logical :: aniso
 ! DEB ------------------------------------------------------------------
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
@@ -64,7 +65,8 @@ subroutine te0502(option, nomte)
     call jevech('PTEMPEI', 'L', itempi)
     call jevech('PMATTTR', 'E', imattt)
 !
-    call ntfcma(' ',zi(imate), ifon)
+    aniso = .false.
+    call ntfcma(' ',zi(imate), aniso, ifon)
     nbvf = zi(ifon(1))
     jvalf = zi(ifon(1) + 2)
     xr = 0.d0
@@ -130,8 +132,8 @@ subroutine te0502(option, nomte)
             s = 0.d0
             do 90 kp = 1, npg
                 k = (kp-1)*nno
-                s = s +zr(ivf+k+i-1)*dni(1,j,kp)*ul(1,kp)*jacob(kp)* rr +zr(ivf+k+i-1)*dni(2,j,kp&
-                    &)*ul(2,kp)*jacob(kp)*rr
+                s = s +zr(ivf+k+i-1)*dni(1,j,kp)*ul(1,kp)*jacob(kp)*rr+&
+                      &zr(ivf+k+i-1)*dni(2,j,kp)*ul(2,kp)*jacob(kp)*rr
 90          continue
             ij = ij+1
             zr(ij) = zr(ij)+s
@@ -153,7 +155,7 @@ subroutine te0502(option, nomte)
 !
         do i = 2, nno
             xm = 0.d0
-            xm =xm+(zr(igeom)-zr(igeom+2*i-2))*(zr(igeom)-zr(igeom+2*i-2))&
+            xm =xm+(zr(igeom  )-zr(igeom+2*i-2))*(zr(igeom  )-zr(igeom+2*i-2))&
                   +(zr(igeom+1)-zr(igeom+2*i-1))*(zr(igeom+1)-zr(igeom+2*i-1))
             xm = sqrt(xm)
             if (xm .gt. xma) xma = xm

@@ -1,5 +1,6 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 2019 Christophe Durand - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,6 +36,7 @@ subroutine te0281(option, nomte)
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/dfdm3d.h"
+#include "asterfort/matrot.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
@@ -43,21 +45,33 @@ subroutine te0281(option, nomte)
 #include "asterfort/rcfode.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/uttgel.h"
+#include "asterfort/rccoma.h"
+#include "asterfort/utpvgl.h"
+#include "asterfort/utpvlg.h"
+#include "asterfort/utrcyl.h"
+#include "asterc/r8dgrd.h"
 !
     character(len=16) :: nomte, option
 !
-!
-    integer :: icodre(1)
+    integer :: nbres
+    parameter (nbres=3)
+    integer :: icodre(nbres)
     character(len=2) :: typgeo
-    real(kind=8) :: beta, dbeta, lambda, theta, deltat, tpg, dfdx(27)
-    real(kind=8) :: dfdy(27), dfdz(27), poids, dtpgdx, dtpgdy, dtpgdz, dlambd
+    character(len=32) :: phenom
+    real(kind=8) :: beta, dbeta, lambda, theta, deltat, tpg
+    real(kind=8) :: dfdx(27), dfdy(27), dfdz(27), poids, dtpgdx, dtpgdy, dtpgdz
     real(kind=8) :: tpgbuf, tpsec, diff, chal(1), hydrpg(27)
-    integer :: jgano, ipoids, ivf, idfde, igeom, imate, itemp, nno, kp, nnos
-    integer :: npg, i, l, ifon(3), ndim, icomp, ivectt, ivecti
+    real(kind=8) :: p(3,3), lambor(3), orig(3), dire(3), r8bid
+    real(kind=8) :: point(3), angl(3), fluloc(3), fluglo(3)
+    real(kind=8) :: aalpha, abeta
+    integer :: jgano, ipoids, ivf, idfde, igeom, imate, itemp, icamas
+    integer :: nno, kp, nnos
+    integer :: npg, i, l, ifon(6), ndim, icomp, ivectt, ivecti
     integer :: itemps
     integer :: isechi, isechf, ihydr
-    integer :: npg2, ipoid2, ivf2, idfde2
+    integer :: npg2, ipoid2, ivf2, idfde2, nuno, n1, n2
     aster_logical :: lhyd
+    aster_logical :: aniso, global
 !
 !====
 ! 1.1 PREALABLES: RECUPERATION ADRESSES FONCTIONS DE FORMES...
@@ -73,10 +87,9 @@ subroutine te0281(option, nomte)
     call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
                      jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
 !
-!C====
+!====
 ! 1.2 PREALABLES LIES AUX RECHERCHES DE DONNEES GENERALES
 !====
-!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
     call jevech('PTEMPSR', 'L', itemps)
@@ -85,17 +98,11 @@ subroutine te0281(option, nomte)
     call jevech('PVECTTR', 'E', ivectt)
     call jevech('PVECTTI', 'E', ivecti)
 !
+    deltat = zr(itemps+1)
+    theta  = zr(itemps+2)
+!
 !====
 ! 1.3 PREALABLES LIES A L'HYDRATATION
-!====
-    deltat = zr(itemps+1)
-    theta = zr(itemps+2)
-!
-    if (zk16(icomp)(1:5) .ne. 'SECH_') then
-        call ntfcma(zk16(icomp), zi(imate), ifon)
-    endif
-!====
-! 1.4 PREALABLES LIES A L'HYDRATATION
 !====
     if (zk16(icomp) (1:9) .eq. 'THER_HYDR') then
         lhyd = .true.
@@ -115,6 +122,40 @@ subroutine te0281(option, nomte)
         lhyd = .false.
     endif
     if (zk16(icomp)(1:5) .eq. 'THER_') then
+!
+!====
+! --- THERMIQUE
+!====
+!
+        call rccoma(zi(imate), 'THER', 1, phenom, icodre(1))
+        aniso = .false.
+        if (phenom(1:12) .eq. 'THER_NL_ORTH') then
+            aniso  = .true.
+        endif
+        call ntfcma(zk16(icomp), zi(imate), aniso, ifon)
+!
+! ---   TRAITEMENT DE L ANISOTROPIE
+!
+        global = .false.
+        if (aniso) then
+            call jevech('PCAMASS', 'L', icamas)
+            if (zr(icamas) .gt. 0.d0) then
+                global = .true.
+                angl(1) = zr(icamas+1)*r8dgrd()
+                angl(2) = zr(icamas+2)*r8dgrd()
+                angl(3) = zr(icamas+3)*r8dgrd()
+                call matrot(angl, p)
+            else
+                aalpha = zr(icamas+1)*r8dgrd()
+                abeta  = zr(icamas+2)*r8dgrd()
+                dire(1) =  cos(aalpha)*cos(abeta)
+                dire(2) =  sin(aalpha)*cos(abeta)
+                dire(3) = -sin(abeta)
+                orig(1) = zr(icamas+4)
+                orig(2) = zr(icamas+5)
+                orig(3) = zr(icamas+6)
+            endif
+        endif
 !====
 ! 2. CALCULS DU TERME DE RIGIDITE DE L'OPTION
 !====
@@ -123,28 +164,61 @@ subroutine te0281(option, nomte)
             l = (kp-1)*nno
             call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
                         poids, dfdx, dfdy, dfdz)
-            tpg = 0.d0
+            tpg    = 0.d0
             dtpgdx = 0.d0
             dtpgdy = 0.d0
             dtpgdz = 0.d0
             do 10 i = 1, nno
 ! CALCUL DE T- ET DE SON GRADIENT
-                tpg = tpg + zr(itemp+i-1)*zr(ivf+l+i-1)
+                tpg    = tpg    + zr(itemp+i-1)*zr(ivf+l+i-1)
                 dtpgdx = dtpgdx + zr(itemp+i-1)*dfdx(i)
                 dtpgdy = dtpgdy + zr(itemp+i-1)*dfdy(i)
                 dtpgdz = dtpgdz + zr(itemp+i-1)*dfdz(i)
  10         continue
 !
-! CALCUL DES CARACTERISTIQUES MATERIAUX STD EN TRANSITOIRE UNIQUEMENT
-! ON LES EVALUE AVEC TPG=T-
-            tpgbuf = tpg
-            call rcfode(ifon(2), tpgbuf, lambda, dlambd)
+            if (.not.aniso) then
+                tpgbuf = tpg
+                call rcfode(ifon(2), tpgbuf, lambda, r8bid)
+                fluglo(1) = lambda*dtpgdx
+                fluglo(2) = lambda*dtpgdy
+                fluglo(3) = lambda*dtpgdz
+            else
+! ---       TRAITEMENT DE L ANISOTROPIE
+!
+                tpgbuf = tpg
+                call rcfode(ifon(4), tpgbuf, lambor(1), r8bid)
+                call rcfode(ifon(5), tpgbuf, lambor(2), r8bid)
+                call rcfode(ifon(6), tpgbuf, lambor(3), r8bid)
+                if (.not.global) then
+                    point(1) = 0.d0
+                    point(2) = 0.d0
+                    point(3) = 0.d0
+                    do 130 nuno = 1, nno
+                        point(1) = point(1) + zr(ivf+l+nuno-1)* zr(igeom+ 3*nuno-3)
+                        point(2) = point(2) + zr(ivf+l+nuno-1)* zr(igeom+ 3*nuno-2)
+                        point(3) = point(3) + zr(ivf+l+nuno-1)* zr(igeom+ 3*nuno-1)
+130                 continue
+                    call utrcyl(point, dire, orig, p)
+                endif
+                fluglo(1) = dtpgdx
+                fluglo(2) = dtpgdy
+                fluglo(3) = dtpgdz
+                n1 = 1
+                n2 = 3
+                call utpvgl(n1, n2, p, fluglo, fluloc)
+                fluloc(1) = lambor(1)*fluloc(1)
+                fluloc(2) = lambor(2)*fluloc(2)
+                fluloc(3) = lambor(3)*fluloc(3)
+                n1 = 1
+                n2 = 3
+                call utpvlg(n1, n2, p, fluloc, fluglo)
+            endif
 !
             do 40 i = 1, nno
-                zr(ivectt+i-1) = zr(ivectt+i-1) - poids* (1.0d0-theta) *lambda* (dfdx(i)*dtpgdx+d&
-                                 &fdy(i)*dtpgdy+ dfdz(i)* dtpgdz)
-                zr(ivecti+i-1) = zr(ivecti+i-1) - poids* (1.0d0-theta) *lambda* (dfdx(i)*dtpgdx+d&
-                                 &fdy(i)*dtpgdy+ dfdz(i)* dtpgdz)
+                zr(ivectt+i-1) = zr(ivectt+i-1) - poids* (1.0d0-theta) *&
+                                 & (dfdx(i)*fluglo(1)+dfdy(i)*fluglo(2)+dfdz(i)*fluglo(3))
+                zr(ivecti+i-1) = zr(ivecti+i-1) - poids* (1.0d0-theta) *&
+                                 & (dfdx(i)*fluglo(1)+dfdy(i)*fluglo(2)+dfdz(i)*fluglo(3))
  40         continue
 ! FIN BOUCLE SUR LES PTS DE GAUSS
  70     end do
@@ -171,10 +245,10 @@ subroutine te0281(option, nomte)
             if (lhyd) then
 ! THER_HYDR
                 do 81 i = 1, nno
-                    zr(ivectt+i-1) = zr(ivectt+i-1) + poids* ((beta- chal(1)*hydrpg(kp))* zr(ivf2&
-                                     &+l+i-1)/deltat)
-                    zr(ivecti+i-1) = zr(ivecti+i-1) + poids* ((dbeta* tpg-chal(1)*hydrpg(kp))* zr&
-                                     &(ivf2+l+i-1)/deltat)
+                    zr(ivectt+i-1) = zr(ivectt+i-1) + poids*&
+                                     & ((beta     -chal(1)*hydrpg(kp))*zr(ivf2+l+i-1)/deltat)
+                    zr(ivecti+i-1) = zr(ivecti+i-1) + poids*&
+                                     & ((dbeta*tpg-chal(1)*hydrpg(kp))*zr(ivf2+l+i-1)/deltat)
  81             continue
             else
 ! THER_NL
@@ -182,8 +256,8 @@ subroutine te0281(option, nomte)
 ! CALCUL STD A 2 OUTPUTS (LE DEUXIEME NE SERT QUE POUR LA PREDICTION)
 !
                 do 110 i = 1, nno
-                    zr(ivectt+i-1) = zr(ivectt+i-1) + poids*beta/ deltat*zr(ivf2+l+i-1)
-                    zr(ivecti+i-1) = zr(ivecti+i-1) + poids*dbeta*tpg/ deltat*zr(ivf2+l+i-1)
+                    zr(ivectt+i-1) = zr(ivectt+i-1) + poids*beta     /deltat*zr(ivf2+l+i-1)
+                    zr(ivecti+i-1) = zr(ivecti+i-1) + poids*dbeta*tpg/deltat*zr(ivf2+l+i-1)
 110             continue
 !
 ! ENDIF THER_HYDR
@@ -208,14 +282,14 @@ subroutine te0281(option, nomte)
             l = nno*(kp-1)
             call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
                         poids, dfdx, dfdy, dfdz)
-            tpg = 0.d0
+            tpg    = 0.d0
             dtpgdx = 0.d0
             dtpgdy = 0.d0
             dtpgdz = 0.d0
-            tpsec = 0.d0
+            tpsec  = 0.d0
             do 160 i = 1, nno
-                tpg = tpg + zr( itemp+i-1)*zr(ivf+l+i-1)
-                tpsec = tpsec + zr(isechi+i-1)*zr(ivf+l+i-1)
+                tpg    = tpg    + zr( itemp+i-1)*zr(ivf+l+i-1)
+                tpsec  = tpsec  + zr(isechi+i-1)*zr(ivf+l+i-1)
                 dtpgdx = dtpgdx + zr(itemp+i-1)*dfdx(i)
                 dtpgdy = dtpgdy + zr(itemp+i-1)*dfdy(i)
                 dtpgdz = dtpgdz + zr(itemp+i-1)*dfdz(i)
@@ -223,8 +297,8 @@ subroutine te0281(option, nomte)
             call rcdiff(zi(imate), zk16(icomp), tpsec, tpg, diff)
 !
             do 170 i = 1, nno
-                zr(ivectt+i-1) = zr(ivectt+i-1) - poids* ( (1.0d0- theta)*diff* (dfdx(i)*dtpgdx+ &
-                                 &dfdy(i)*dtpgdy+dfdz(i)* dtpgdz))
+                zr(ivectt+i-1) = zr(ivectt+i-1) - poids* ( (1.0d0- theta)*diff*&
+                                 & (dfdx(i)*dtpgdx+dfdy(i)*dtpgdy+dfdz(i)* dtpgdz) )
                 zr(ivecti+i-1) = zr(ivectt+i-1)
 170         continue
 150     continue
@@ -232,21 +306,21 @@ subroutine te0281(option, nomte)
             l = nno*(kp-1)
             call dfdm3d(nno, kp, ipoid2, idfde2, zr(igeom),&
                         poids, dfdx, dfdy, dfdz)
-            tpg = 0.d0
+            tpg    = 0.d0
             dtpgdx = 0.d0
             dtpgdy = 0.d0
             dtpgdz = 0.d0
-            tpsec = 0.d0
+            tpsec  = 0.d0
             do 161 i = 1, nno
-                tpg = tpg + zr( itemp+i-1)*zr(ivf2+l+i-1)
-                tpsec = tpsec + zr(isechi+i-1)*zr(ivf2+l+i-1)
+                tpg    = tpg    + zr( itemp+i-1)*zr(ivf2+l+i-1)
+                tpsec  = tpsec  + zr(isechi+i-1)*zr(ivf2+l+i-1)
                 dtpgdx = dtpgdx + zr(itemp+i-1)*dfdx(i)
                 dtpgdy = dtpgdy + zr(itemp+i-1)*dfdy(i)
                 dtpgdz = dtpgdz + zr(itemp+i-1)*dfdz(i)
 161         continue
             call rcdiff(zi(imate), zk16(icomp), tpsec, tpg, diff)
             do 171 i = 1, nno
-                zr(ivectt+i-1) = zr(ivectt+i-1) + poids* (tpg/deltat* zr(ivf2+l+i-1))
+                zr(ivectt+i-1) = zr(ivectt+i-1) + poids* (tpg/deltat*zr(ivf2+l+i-1))
                 zr(ivecti+i-1) = zr(ivectt+i-1)
 171         continue
 151     continue

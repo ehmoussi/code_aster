@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,8 @@ THER_NON_LINE=OPER(nom="THER_NON_LINE",op= 186,sd_prod=evol_ther,
                                fr=tr("Objet qui sera enrichi des nouveaux instants calculés")),
          MODELE          =SIMP(statut='o',typ=(modele_sdaster),),
          CHAM_MATER      =SIMP(statut='o',typ=(cham_mater) ),
-         CARA_ELEM       =SIMP(statut='c',typ=(cara_elem) ),
+#         CARA_ELEM       =SIMP(statut='c',typ=(cara_elem) ),
+         CARA_ELEM       =SIMP(statut='f',typ=(cara_elem) ),
          COMPORTEMENT    =FACT(statut='d',max='**',
            RELATION        =SIMP(statut='f',typ='TXM',defaut="THER_NL",
                                  into=("THER_NL",

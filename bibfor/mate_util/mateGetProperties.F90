@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -97,9 +97,9 @@ aster_logical, pointer :: v_mate_func(:)
     nb_prop = - nb_prop
     ASSERT(nb_prop .ne. 0)
 !
-! - Add automatic BETA property for THER_NL or ECRO for DIS_ECRO_TRAC
+! - Add automatic BETA property for THER_NL / THER_NL_ORTH or ECRO for DIS_ECRO_TRAC
 !
-    if (nomrc .eq. 'THER_NL'.or. nomrc .eq. 'DIS_ECRO_TRAC') then
+    if (nomrc .eq. 'THER_NL'.or. nomrc .eq. 'THER_NL_ORTH'.or. nomrc .eq. 'DIS_ECRO_TRAC') then
         nb_prop = nb_prop + 1
     endif
 !

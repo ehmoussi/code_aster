@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -101,6 +101,8 @@ subroutine te0062(option, nomte)
         aniso = .true.
     else if (phenom.eq.'THER_NL') then
         aniso = .false.
+    else if (phenom.eq.'THER_NL_ORTH') then
+        aniso = .true.
     else
         call utmess('F', 'ELEMENTS2_63')
     endif
@@ -118,10 +120,10 @@ subroutine te0062(option, nomte)
             angl(3) = zr(icamas+3)*r8dgrd()
             call matrot(angl, p)
         else
-            alpha = zr(icamas+1)*r8dgrd()
-            beta = zr(icamas+2)*r8dgrd()
-            dire(1) = cos(alpha)*cos(beta)
-            dire(2) = sin(alpha)*cos(beta)
+            alpha   = zr(icamas+1)*r8dgrd()
+            beta    = zr(icamas+2)*r8dgrd()
+            dire(1) =  cos(alpha)*cos(beta)
+            dire(2) =  sin(alpha)*cos(beta)
             dire(3) = -sin(beta)
             orig(1) = zr(icamas+4)
             orig(2) = zr(icamas+5)
@@ -138,7 +140,7 @@ subroutine te0062(option, nomte)
                     poids, dfdx, dfdy, dfdz)
 !
 !     CALCUL DE T ET DE GRAD(T) AUX POINTS DE GAUSS
-        tpg = 0.0d0
+        tpg   = 0.0d0
         fluxx = 0.0d0
         fluxy = 0.0d0
         fluxz = 0.0d0
@@ -155,7 +157,7 @@ subroutine te0062(option, nomte)
         endif
 !
         do 20 i = 1, nno
-            tpg = tpg + zr(itempe-1+i)*zr(ivf+l+i-1)
+            tpg   = tpg   + zr(itempe-1+i)*zr(ivf+l+i-1)
             fluxx = fluxx + zr(itempe-1+i)*dfdx(i)
             fluxy = fluxy + zr(itempe-1+i)*dfdy(i)
             fluxz = fluxz + zr(itempe-1+i)*dfdz(i)
@@ -165,6 +167,18 @@ subroutine te0062(option, nomte)
             call rcvalb('FPG1', 1, 1, '+', zi(imate),&
                         ' ', phenom, 1, 'TEMP', [tpg],&
                         1, 'LAMBDA', lambda, icodre, 1)
+        endif
+!
+        if (phenom .eq. 'THER_NL_ORTH') then
+            call rcvalb('FPG1', 1, 1, '+', zi(imate),&
+                        ' ', phenom, 1, 'TEMP', [tpg],&
+                        1, 'LAMBDA_L', lambor(1), icodre, 1)
+            call rcvalb('FPG1', 1, 1, '+', zi(imate),&
+                        ' ', phenom, 1, 'TEMP', [tpg],&
+                        1, 'LAMBDA_T', lambor(2), icodre, 1)
+            call rcvalb('FPG1', 1, 1, '+', zi(imate),&
+                        ' ', phenom, 1, 'TEMP', [tpg],&
+                        1, 'LAMBDA_N', lambor(3), icodre, 1)
         endif
 !
         if (.not.aniso) then
