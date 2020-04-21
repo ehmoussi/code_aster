@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,11 +45,10 @@ subroutine pmffftsq(fv, sv)
     real(kind=8) :: fv(18), sv(171)
     data ip/0,1,3,6,10,15,21,28,36,45,55,66,78,91,105,120,136,153/
 !
-!
-    do 10 i = 1, 18
-        do 20 j = 1, i
-            sv(ip(i)+j)=fv(i)*fv(j)
-20      continue
-10  end do
+    do i = 1, 18
+        do j = 1, i
+            sv(ip(i) + j) = fv(i) * fv(j)
+        end do
+    end do
 !
 end subroutine
