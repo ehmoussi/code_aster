@@ -155,13 +155,13 @@ Problème d'interpolation pour RHO_CP
 """),
 
     67 : _("""
- Le calcul de l'option SOUR_ELGA n'est pas implÃ©mentÃ© pour les matÃ©riaux orthotropes :
+ Le calcul de l'option SOUR_ELGA n'est pas implémenté pour les matériaux orthotropes :
  - THER_ORTH
  - THER_NL_ORTH
 """),
 
     68 : _("""
- Le calcul de l'option ETHE_ELEM n'est pas implÃ©mentÃ© en thermique non linÃ©aire :
+ Le calcul de l'option ETHE_ELEM n'est pas implémenté en thermique non linéaire :
  - THER_NL
  - THER_NL_ORTH
 """),
