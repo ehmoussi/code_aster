@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmmoam(sdammz, nbmoda)
 !
+subroutine nmmoam(sdammz, nbmoda, dampMode_)
 !
-    implicit none
+implicit none
+!
 #include "jeveux.h"
 #include "asterc/getexm.h"
 #include "asterc/r8pi.h"
@@ -43,17 +43,18 @@ subroutine nmmoam(sdammz, nbmoda)
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 #include "blas/dcopy.h"
-    character(len=*) :: sdammz
-    integer :: nbmoda
 !
-! ----------------------------------------------------------------------
+character(len=*) :: sdammz
+integer :: nbmoda
+character(len=8), optional, intent(out) :: dampMode_
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! ROUTINE MECA_NON_LINE (ALGORITHME)
 !
 ! CREATION SD AMORTISSEMENT MODAL
 !
-! ----------------------------------------------------------------------
-!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  SDAMMO : SD DEDIEE A L'AMORTISSEMENT MODAL
 !               OUT - VALMOD - VALEURS MODALES
@@ -63,13 +64,9 @@ subroutine nmmoam(sdammz, nbmoda)
 !               OUT - BASMOD - BASE MODALE
 ! OUT NBMODA : NOMBRE DE MODES PRIS POUR l'AMORTISSEMENT
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-!
-!
-!
-    character(len=8) :: k8bid, modmec, listam
+    character(len=8) :: k8bid, dampMode, listam
     character(len=14) :: numddl
     character(len=24) :: deeq
     character(len=24) :: matric, nomcha
@@ -85,7 +82,7 @@ subroutine nmmoam(sdammz, nbmoda)
     real(kind=8), pointer :: mor(:) => null()
     real(kind=8), pointer :: val(:) => null()
 !
-! ---------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -98,20 +95,20 @@ subroutine nmmoam(sdammz, nbmoda)
 !
 ! --- MATRICE DES MODES MECA
 !
-    call getvid('AMOR_MODAL', 'MODE_MECA', iocc=1, scal=modmec, nbret=nbmd)
+    call getvid('AMOR_MODAL', 'MODE_MECA', iocc=1, scal=dampMode, nbret=nbmd)
     if (nbmd .eq. 0) then
         call utmess('F', 'ALGORITH17_20')
     endif
 !
 ! --- INFORMATIONS SUR MATRICE DES MODES MECANIQUES
 !
-    call mginfo(modmec, numddl, nbmoda, neq)
+    call mginfo(dampMode, numddl, nbmoda, neq)
     deeq = numddl//'.NUME.DEEQ'
     call jeveuo(deeq, 'L', iddeeq)
 !
 ! --- ALLOCATION DESCRIPTEUR DE LA MATRICE
 !
-    call dismoi('REF_RIGI_PREM', modmec, 'RESU_DYNA', repk=matric)
+    call dismoi('REF_RIGI_PREM', dampMode, 'RESU_DYNA', repk=matric)
     call mtdscr(matric(1:8))
     call jeveuo(matric(1:19)//'.&INT', 'E', lmat)
 !
@@ -185,10 +182,10 @@ subroutine nmmoam(sdammz, nbmoda)
 !
     call wkvect(sdammo(1:19)//'.VALM', 'V V R', 3*nbmoda, jvalmo)
     do imode = 1, nbmoda
-        call rsadpa(modmec, 'L', 1, 'MASS_GENE', imode,&
+        call rsadpa(dampMode, 'L', 1, 'MASS_GENE', imode,&
                     0, sjv=jmasg, styp=k8bid)
         zr(jvalmo+3*(imode-1)+1-1) = zr(jmasg)
-        call rsadpa(modmec, 'L', 1, 'FREQ', imode,&
+        call rsadpa(dampMode, 'L', 1, 'FREQ', imode,&
                     0, sjv=jfreq, styp=k8bid)
         zr(jvalmo+3*(imode-1)+2-1) = zr(jfreq)*2.d0*pi
         zr(jvalmo+3*(imode-1)+3-1) = zr(jamor+imode-1)
@@ -199,7 +196,7 @@ subroutine nmmoam(sdammz, nbmoda)
     call wkvect(sdammo(1:19)//'.BASM', 'V V R', nbmoda*neq, jbasmo)
     AS_ALLOCATE(vr=vect1, size=neq)
     do imode = 1, nbmoda
-        call rsexch('F', modmec, 'DEPL', imode, nomcha,&
+        call rsexch('F', dampMode, 'DEPL', imode, nomcha,&
                     iret)
         call jeveuo(nomcha(1:19)//'.VALE', 'L', vr=val)
         call dcopy(neq, val, 1, vect1, 1)
@@ -214,6 +211,10 @@ subroutine nmmoam(sdammz, nbmoda)
     call jedetr('&&NMMOAM.AMORTISSEMENT')
     call jedetr('&&NMMOAM.AMORTISSEMEN2')
     AS_DEALLOCATE(vr=vect1)
+!
+    if (present(dampMode_)) then
+        dampMode_ = dampMode
+    endif
 !
     call jedema()
 end subroutine
