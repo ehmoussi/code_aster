@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0501(option, nomte)
 !
 !
@@ -47,8 +47,8 @@ subroutine te0501(option, nomte)
 !-----------------------------------------------------------------------
     integer :: ij, itemp, itempi
 !-----------------------------------------------------------------------
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-                     npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
@@ -58,31 +58,31 @@ subroutine te0501(option, nomte)
     call jevech('PMATTTR', 'E', imattt)
 !
     aniso = .false.
-    call ntfcma(' ',zi(imate), aniso, ifon)
-    do 101 kp = 1, npg
+    call ntfcma(' ', zi(imate), aniso, ifon)
+    do kp = 1, npg
         k=(kp-1)*nno
         call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
                     poids, dfdx, dfdy)
         r = 0.d0
         tpg = 0.d0
-        do 102 i = 1, nno
+        do i = 1, nno
             r = r + zr(igeom+2*(i-1))*zr(ivf+k+i-1)
             tpg =tpg + zr(itempi+i-1)*zr(ivf+k+i-1)
-102      continue
+        end do
         if (lteatt('AXIS','OUI')) poids = poids*r
 !
         call rcfode(ifon(2), tpg, alpha, xkpt)
 !
         ij = imattt - 1
-        do 103 i = 1, nno
+        do i = 1, nno
 !
-            do 104 j = 1, i
+            do j = 1, i
                 ij = ij + 1
                 zr(ij) = zr(ij) + poids*(alpha*(dfdx(i)*dfdx(j)+dfdy(i)*dfdy(j)))
 !
-104          continue
-103     continue
-101  end do
+            end do
+        end do
+    end do
 !
 ! FIN ------------------------------------------------------------------
 end subroutine

@@ -16,7 +16,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0242(option, nomte)
     implicit none
 #include "jeveux.h"
@@ -28,10 +28,10 @@ subroutine te0242(option, nomte)
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/ntfcma.h"
+#include "asterfort/rccoma.h"
 #include "asterfort/rcdiff.h"
 #include "asterfort/rcfode.h"
 #include "asterfort/teattr.h"
-#include "asterfort/rccoma.h"
 #include "asterfort/utpvgl.h"
 #include "asterfort/utpvlg.h"
 #include "asterfort/utrcyl.h"
@@ -74,21 +74,15 @@ subroutine te0242(option, nomte)
         call teattr('S', 'ALIAS8', alias8, ibid)
         if (alias8(6:8) .eq. 'QU9') elrefe='QU4'
         if (alias8(6:8) .eq. 'TR6') elrefe='TR3'
-        call elrefe_info( elrefe=elrefe, fami='NOEU',&
-                          ndim=ndim    , nno=nno       , nnos=nnos,&
-                          npg=npg2     , jpoids=ipoid2 , jvf=ivf2 ,&
-                          jdfde=idfde2 , jgano=jgano )
+        call elrefe_info(elrefe=elrefe, fami='NOEU', ndim=ndim, nno=nno, nnos=nnos,&
+                         npg=npg2, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2, jgano=jgano)
     else
-        call elrefe_info( elrefe=elrefe, fami='MASS',&
-                          ndim=ndim    , nno=nno      , nnos=nnos,&
-                          npg=npg2     , jpoids=ipoid2, jvf=ivf2 ,&
-                          jdfde=idfde2 , jgano=jgano )
+        call elrefe_info(elrefe=elrefe, fami='MASS', ndim=ndim, nno=nno, nnos=nnos,&
+                         npg=npg2, jpoids=ipoid2, jvf=ivf2, jdfde=idfde2, jgano=jgano)
     endif
 !
-    call elrefe_info( elrefe=elrefe , fami='RIGI' ,&
-                      ndim=ndim     , nno=nno       , nnos=nnos,&
-                      npg=npg       , jpoids=ipoids , jvf=ivf  ,&
-                      jdfde=idfde   , jgano=jgano )
+    call elrefe_info(elrefe=elrefe, fami='RIGI', ndim=ndim, nno=nno, nnos=nnos,&
+                     npg=npg, jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
 !
 !====
 ! 1.2 PREALABLES LIES AUX RECHERCHES DE DONNEES GENERALES
@@ -102,7 +96,7 @@ subroutine te0242(option, nomte)
 !
     deltat= zr(itemps+1)
     theta = zr(itemps+2)
-    khi   = zr(itemps+3)
+    khi = zr(itemps+3)
 !====
 ! 1.3 PREALABLES LIES AU SECHAGE
 !====
@@ -123,7 +117,7 @@ subroutine te0242(option, nomte)
         call rccoma(zi(imate), 'THER', 1, phenom, icodre(1))
         aniso = .false.
         if (phenom(1:12) .eq. 'THER_NL_ORTH') then
-            aniso  = .true.
+            aniso = .true.
         endif
         call ntfcma(zk16(icomp), zi(imate), aniso, ifon)
 !
@@ -132,11 +126,11 @@ subroutine te0242(option, nomte)
             call jevech('PCAMASS', 'L', icamas)
             if (zr(icamas) .gt. 0.d0) then
                 global = .true.
-                alpha  = zr(icamas+1)*r8dgrd()
-                p(1,1) =  cos(alpha)
-                p(2,1) =  sin(alpha)
+                alpha = zr(icamas+1)*r8dgrd()
+                p(1,1) = cos(alpha)
+                p(2,1) = sin(alpha)
                 p(1,2) = -sin(alpha)
-                p(2,2) =  cos(alpha)
+                p(2,2) = cos(alpha)
             else
                 orig(1) = zr(icamas+4)
                 orig(2) = zr(icamas+5)
@@ -150,31 +144,31 @@ subroutine te0242(option, nomte)
 !
     call connec(nomte, nse, nnop2, c)
 !
-    do 11 i = 1, nnop2
-        do 12 j = 1, nnop2
+    do i = 1, nnop2
+        do j = 1, nnop2
             mt(i,j)=0.d0
- 12     continue
- 11 continue
+        end do
+    end do
 !
 !====
 ! 2. CALCULS DU TERME DE L'OPTION
 !====
 ! ----- 2EME FAMILLE DE PTS DE GAUSS/BOUCLE SUR LES SOUS-ELEMENTS
 !
-    do 200 ise = 1, nse
+    do ise = 1, nse
 !
-        do 50 i = 1, nno
-            do 51 j = 1, 2
+        do i = 1, nno
+            do j = 1, 2
                 coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-51          continue
-50      continue
+            end do
+        end do
 !
         if (zk16(icomp)(1:5) .eq. 'THER_') then
 !
 ! ------- CALCUL DU PREMIER TERME
 ! ------- TERME DE RIGIDITE : 2EME FAMILLE DE PTS DE GAUSS ---------
 !
-            do 101 kp = 1, npg
+            do kp = 1, npg
                 k=(kp-1)*nno
                 call dfdm2d(nno, kp, ipoids, idfde, coorse,&
                             poids, dfdx, dfdy)
@@ -182,12 +176,12 @@ subroutine te0242(option, nomte)
 ! -------       TRAITEMENT DE L AXISYMETRTIE
 ! -------       EVALUATION DE LA CONDUCTIVITE LAMBDA
 !
-                r    = 0.d0
+                r = 0.d0
                 tpgi = 0.d0
-                do 102 i = 1, nno
-                    r    = r    + coorse(2*(i-1)+1)     * zr(ivf+k+i-1)
+                do i = 1, nno
+                    r = r + coorse(2*(i-1)+1) * zr(ivf+k+i-1)
                     tpgi = tpgi + zr(itempi-1+c(ise,i)) * zr(ivf+k+i-1)
-102              continue
+                end do
                 if (lteatt('AXIS','OUI')) poids = poids*r
 !
                 if (aniso) then
@@ -202,20 +196,20 @@ subroutine te0242(option, nomte)
                 if (.not.global .and. aniso) then
                     point(1) = 0.d0
                     point(2) = 0.d0
-                    do 104 nuno = 1, nno
+                    do nuno = 1, nno
                         point(1)= point(1) + zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+1)
                         point(2)= point(2) + zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+2)
-104                 continue
+                    end do
 !
                     xu = orig(1) - point(1)
                     yu = orig(2) - point(2)
                     xnorm = sqrt( xu**2 + yu**2 )
                     xu = xu / xnorm
                     yu = yu / xnorm
-                    p(1,1) =  xu
-                    p(2,1) =  yu
+                    p(1,1) = xu
+                    p(2,1) = yu
                     p(1,2) = -yu
-                    p(2,2) =  xu
+                    p(2,2) = xu
                 endif
 !
 ! -------       CALCUL DE LA PREMIERE COMPOSANTE DU TERME ELEMENTAIRE
@@ -240,7 +234,7 @@ subroutine te0242(option, nomte)
                                                 & ( fluglo(1)*dfdx(j) + fluglo(2)*dfdy(j) )
                     enddo
                 enddo
-101          continue
+            end do
 !
 ! ------- CALCUL DU DEUXIEME TERME
 ! ------- TERME DE MASSE : 3EME FAMILLE DE PTS DE GAUSS -----------
@@ -249,18 +243,18 @@ subroutine te0242(option, nomte)
                 do j = 1, 2
                     coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
                 enddo
-             enddo
+            enddo
 !
-            do 401 kp = 1, npg2
+            do kp = 1, npg2
                 k=(kp-1)*nno
                 call dfdm2d(nno, kp, ipoid2, idfde2, coorse,&
                             poids, dfdx, dfdy)
                 r = 0.d0
                 tpgi = 0.d0
-                do 402 i = 1, nno
-                    r    = r    + coorse(2*(i-1)+1)     * zr(ivf2+k+i-1)
+                do i = 1, nno
+                    r = r + coorse(2*(i-1)+1) * zr(ivf2+k+i-1)
                     tpgi = tpgi + zr(itempi-1+c(ise,i)) * zr(ivf2+k+i-1)
-402              continue
+                end do
                 if (lteatt('AXIS','OUI')) poids = poids*r
                 call rcfode(ifon(1), tpgi, r8bid, rhocp)
 !
@@ -273,7 +267,7 @@ subroutine te0242(option, nomte)
                                                 & zr(ivf2+k+i-1) * zr(ivf2+k+j-1) /deltat
                     enddo
                 enddo
-401          continue
+            end do
 !
 ! --- SECHAGE
 !
@@ -281,18 +275,18 @@ subroutine te0242(option, nomte)
 !
 ! ----- TERME DE RIGIDITE : 2EME FAMILLE DE PTS DE GAUSS ---------
 !
-            do 203 kp = 1, npg
+            do kp = 1, npg
                 k=(kp-1)*nno
                 call dfdm2d(nno, kp, ipoids, idfde, coorse,&
                             poids, dfdx, dfdy)
-                r     = 0.d0
-                tpg   = 0.d0
+                r = 0.d0
+                tpg = 0.d0
                 tpsec = 0.d0
-                do 201 i = 1, nno
-                    r     = r     + coorse(2*(i-1)+1)     *zr(ivf+k+i-1)
-                    tpg   = tpg   + zr(itempi-1+c(ise,i)) *zr(ivf+k+i-1)
+                do i = 1, nno
+                    r = r + coorse(2*(i-1)+1) *zr(ivf+k+i-1)
+                    tpg = tpg + zr(itempi-1+c(ise,i)) *zr(ivf+k+i-1)
                     tpsec = tpsec + zr(isechf-1+c(ise,i)) *zr(ivf+k+i-1)
-201              continue
+                end do
                 if (lteatt('AXIS','OUI')) poids = poids*r
                 call rcdiff(zi(imate), zk16(icomp), tpsec, tpg, diff)
 !
@@ -306,7 +300,7 @@ subroutine te0242(option, nomte)
                                                 &  ( dfdx(i)*dfdx(j) + dfdy(i)*dfdy(j) ) )
                     enddo
                 enddo
-203          continue
+            end do
 !
 ! ------- TERME DE MASSE : 3EME FAMILLE DE PTS DE GAUSS -----------
 !
@@ -316,7 +310,7 @@ subroutine te0242(option, nomte)
                 enddo
             enddo
 !
-            do 304 kp = 1, npg2
+            do kp = 1, npg2
                 k=(kp-1)*nno
                 call dfdm2d(nno, kp, ipoid2, idfde2, coorse,&
                             poids, dfdx, dfdy)
@@ -335,12 +329,12 @@ subroutine te0242(option, nomte)
                                                 &( khi * zr(ivf2+k+i-1) * zr(ivf2+k+j-1) / deltat )
                     enddo
                 enddo
-304          continue
+            end do
         endif
 !
 ! FIN DE LA BOUCLE SUR LES SOUS-ELEMENTS
 !
-200  end do
+    end do
 !
 ! MISE SOUS FORME DE VECTEUR
     ij = imattt-1

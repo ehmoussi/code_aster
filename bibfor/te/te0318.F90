@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0318(option, nomte)
     implicit none
 #include "asterf_types.h"
@@ -81,31 +81,31 @@ subroutine te0318(option, nomte)
     a = 0.d0
     b = 0.d0
 !
-    do 101 kp = 1, npg
+    do kp = 1, npg
         k=(kp-1)*nno
         call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
                     poids, dfdx, dfdy)
-        tpg   = 0.0d0
+        tpg = 0.0d0
         fluxx = 0.0d0
         fluxy = 0.0d0
 !
-        do 110 j = 1, nno
+        do j = 1, nno
             tpg = tpg + zr(itempe+j-1)*zr(ivf+k+j-1)
             fluxx = fluxx + zr(itempe+j-1)*dfdx(j)
             fluxy = fluxy + zr(itempe+j-1)*dfdy(j)
-110     continue
+        end do
 !
         if (phenom .eq. 'THER_NL') then
             call rcvalb(fami, kpg, spt, poum, zi(imate),&
                         ' ', phenom, 1, 'TEMP', [tpg],&
                         1, 'LAMBDA', valres, icodre, 1)
-        lambda = valres(1)
+            lambda = valres(1)
         endif
 !
         a = a - lambda*fluxx / npg
         b = b - lambda*fluxy / npg
-101 end do
-    do 102 kp = 1, npg
+    end do
+    do kp = 1, npg
         zr(iflux+(kp-1)) = ( a**2 + b**2 ) / lambda
-102 end do
+    end do
 end subroutine
