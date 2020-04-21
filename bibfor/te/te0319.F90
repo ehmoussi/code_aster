@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0319(option, nomte)
     implicit none
 #include "asterf_types.h"
@@ -78,24 +78,24 @@ subroutine te0319(option, nomte)
     a = 0.d0
     b = 0.d0
     c = 0.d0
-    do 30 kp = 1, npg1
+    do kp = 1, npg1
         l = (kp-1)*nno
         call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
                     poids, dfdx, dfdy, dfdz)
 !
 !     CALCUL DU GRADIENT DE TEMPERATURE AUX POINTS DE GAUSS
 !
-        tpg   = 0.0d0
+        tpg = 0.0d0
         fluxx = 0.0d0
         fluxy = 0.0d0
         fluxz = 0.0d0
 !
-        do 20 i = 1, nno
+        do i = 1, nno
             tpg = tpg + zr(itempe-1+i)*zr(ivf+l+i-1)
             fluxx = fluxx + zr(itempe-1+i)*dfdx(i)
             fluxy = fluxy + zr(itempe-1+i)*dfdy(i)
             fluxz = fluxz + zr(itempe-1+i)*dfdz(i)
- 20     continue
+        end do
 !
         if (phenom .eq. 'THER_NL') then
             call rcvalb(fami, kpg, spt, poum, zi(imate),&
@@ -107,9 +107,9 @@ subroutine te0319(option, nomte)
         a = a - lambda*fluxx/npg1
         b = b - lambda*fluxy/npg1
         c = c - lambda*fluxz/npg1
- 30 end do
-    do 40 kp = 1, npg1
+    end do
+    do kp = 1, npg1
         zr(iflux+ (kp-1)) = (a**2+b**2+c**2)/lambda
- 40 end do
+    end do
 ! FIN ------------------------------------------------------------------
 end subroutine

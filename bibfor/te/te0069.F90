@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0069(option, nomte)
     implicit none
 #include "asterf_types.h"
@@ -123,11 +123,11 @@ subroutine te0069(option, nomte)
         call jevech('PCAMASS', 'L', icamas)
         if (zr(icamas) .gt. 0.d0) then
             global = .true.
-            alpha  = zr(icamas+1)*r8dgrd()
-            p(1,1) =  cos(alpha)
-            p(2,1) =  sin(alpha)
+            alpha = zr(icamas+1)*r8dgrd()
+            p(1,1) = cos(alpha)
+            p(2,1) = sin(alpha)
             p(1,2) = -sin(alpha)
-            p(2,2) =  cos(alpha)
+            p(2,2) = cos(alpha)
         else
             orig(1) = zr(icamas+4)
             orig(2) = zr(icamas+5)
@@ -137,38 +137,38 @@ subroutine te0069(option, nomte)
 !====
 ! 2. CALCULS TERMES DE FLUX
 !====
-    do 101 kp = 1, npg
+    do kp = 1, npg
         k=(kp-1)*nno
         ifpg=(kp-1)*2
         call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
                     poids, dfdx, dfdy)
-        tpg   = 0.0d0
+        tpg = 0.0d0
         fluxx = 0.0d0
         fluxy = 0.0d0
         if (.not.global .and. aniso) then
             point(1)=0.d0
             point(2)=0.d0
-            do 103 nuno = 1, nno
+            do nuno = 1, nno
                 point(1) = point(1) + zr(ivf+k+nuno-1)*zr(igeom+2* nuno-2)
                 point(2) = point(2) + zr(ivf+k+nuno-1)*zr(igeom+2* nuno-1)
-103         continue
+            end do
             xu = orig(1) - point(1)
             yu = orig(2) - point(2)
             xnorm = sqrt( xu**2 + yu**2 )
             xu = xu / xnorm
             yu = yu / xnorm
-            p(1,1) =  xu
-            p(2,1) =  yu
+            p(1,1) = xu
+            p(2,1) = yu
             p(1,2) = -yu
-            p(2,2) =  xu
+            p(2,2) = xu
         endif
 !
 !     CALCUL DE T ET DE GRAD(T) AUX POINTS DE GAUSS
-        do 110 j = 1, nno
+        do j = 1, nno
             tpg = tpg + zr(itempe+j-1)*zr(ivf+k+j-1)
             fluxx = fluxx + zr(itempe+j-1)*dfdx(j)
             fluxy = fluxy + zr(itempe+j-1)*dfdy(j)
-110     continue
+        end do
 !
         if (phenom .eq. 'THER_NL') then
             call rcvalb(fami, kpg, spt, poum, zi(imate),&
@@ -200,11 +200,11 @@ subroutine te0069(option, nomte)
         fpg(ifpg+1) = -fluglo(1)
         fpg(ifpg+2) = -fluglo(2)
 !
-101 end do
+    end do
 !
-    do 90 kp = 1, npg
+    do kp = 1, npg
         zr(iflux+(kp-1)*nbcmp-1+1) = fpg(2*(kp-1)+1)
         zr(iflux+(kp-1)*nbcmp-1+2) = fpg(2*(kp-1)+2)
- 90 end do
+    end do
 !
 end subroutine

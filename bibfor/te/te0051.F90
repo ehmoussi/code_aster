@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0051(option, nomte)
 !.......................................................................
     implicit none
@@ -115,9 +115,9 @@ subroutine te0051(option, nomte)
             call matrot(angl, p)
         else
             alpha = zr(icamas+1)*r8dgrd()
-            beta  = zr(icamas+2)*r8dgrd()
-            dire(1) =  cos(alpha)*cos(beta)
-            dire(2) =  sin(alpha)*cos(beta)
+            beta = zr(icamas+2)*r8dgrd()
+            dire(1) = cos(alpha)*cos(beta)
+            dire(2) = sin(alpha)*cos(beta)
             dire(3) = -sin(beta)
             orig(1) = zr(icamas+4)
             orig(2) = zr(icamas+5)
@@ -127,7 +127,7 @@ subroutine te0051(option, nomte)
 !====
 ! --- BOUCLE SUR LES POINTS DE GAUSS
 !====
-    do 50 kp = 1, npg1
+    do kp = 1, npg1
 !
         l = (kp-1)*nno
         call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
@@ -137,15 +137,15 @@ subroutine te0051(option, nomte)
             point(1) = 0.d0
             point(2) = 0.d0
             point(3) = 0.d0
-            do 20 nuno = 1, nno
+            do nuno = 1, nno
                 point(1) = point(1) + zr(ivf+l+nuno-1)*zr(igeom+3* nuno-3)
                 point(2) = point(2) + zr(ivf+l+nuno-1)*zr(igeom+3* nuno-2)
                 point(3) = point(3) + zr(ivf+l+nuno-1)*zr(igeom+3* nuno-1)
- 20         continue
+            end do
             call utrcyl(point, dire, orig, p)
         endif
 !
-        do 40 i = 1, nno
+        do i = 1, nno
             if (.not.aniso) then
                 fluglo(1) = lambda*dfdx(i)
                 fluglo(2) = lambda*dfdy(i)
@@ -165,13 +165,13 @@ subroutine te0051(option, nomte)
                 call utpvlg(n1, n2, p, fluloc, fluglo)
             endif
 !
-            do 30 j = 1, i
+            do j = 1, i
                 ij = (i-1)*i/2 + j
                 zr(imattt+ij-1) = zr(imattt+ij-1) + theta*poids*&
                                   &( fluglo(1)*dfdx(j)+ fluglo(2)*dfdy(j)+fluglo(3)*dfdz(j) )
- 30         continue
- 40     continue
+            end do
+        end do
 !
- 50 end do
+    end do
 !
 end subroutine

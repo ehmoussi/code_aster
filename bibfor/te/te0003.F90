@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0003(option, nomte)
 ! person_in_charge: olivier.boiteau at edf.fr
 !-----------------------------------------------------------------------
@@ -63,8 +63,8 @@ subroutine te0003(option, nomte)
 #include "asterfort/dfdm2d.h"
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elref1.h"
-#include "asterfort/elrefe_info.h"
 #include "asterfort/elref7.h"
+#include "asterfort/elrefe_info.h"
 #include "asterfort/fointe.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
@@ -507,7 +507,7 @@ subroutine te0003(option, nomte)
         endif
     else if (phenom.eq.'THER_NL') then
         lnonli = .true.
-        aniso  = .false.
+        aniso = .false.
         call ntfcma(phenom, zi(imate), aniso, ifon)
         call utmess('A', 'ELEMENTS4_91')
     else
