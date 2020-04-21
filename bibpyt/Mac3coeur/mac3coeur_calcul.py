@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: pierre.badel at edf.fr
+# person_in_charge: francesco.bettonte at edf.fr
 
 """
 This module defines the different types of calculations
@@ -168,6 +168,7 @@ class Mac3CoeurCalcul(object):
 
     def _build_result(self):
         """Build the results"""
+        pass
 
     def run(self,noresu=False):
         """Run all the calculation steps"""
@@ -510,7 +511,7 @@ class Mac3CoeurCalcul(object):
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
             'SOLVEUR': _F(METHODE='MUMPS',),
-            'ARCHIVAGE':_F(LIST_INST=self.times_arch),
+            'ARCHIVAGE': _F(LIST_INST=self.times_arch),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)
@@ -543,7 +544,7 @@ class Mac3CoeurCalcul(object):
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
             'SOLVEUR': _F(METHODE='MUMPS',),
-            'ARCHIVAGE':_F(INST=self.coeur.temps_simu['T1']),
+            'ARCHIVAGE': _F(INST=self.coeur.temps_simu['T1']),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
         }
         keywords.update(kwds)
@@ -687,6 +688,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                 self.symetric_cond + self.periodic_cond + self.rigid_load
             __RESULT = STAT_NON_LINE(**self.snl(
                                reuse=__RESULT,
+                               RESULTAT=__RESULT,
                                CHAM_MATER=self.cham_mater_free,
                                INCREMENT=_F(LIST_INST=self.times,
                                             INST_FIN=coeur.temps_simu['T8']),
@@ -701,6 +703,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             # T8 - Tf
             __RESULT = STAT_NON_LINE(**self.snl(
                                   reuse=__RESULT,
+                                  RESULTAT=__RESULT,
                                   CHAM_MATER=self.cham_mater_free,
                                   ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                                   EXCIT=constant_load+[_F(CHARGE=F_EMB2,FONC_MULT=LI2),],
@@ -764,6 +767,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                 raise 'no convergence'
             keywords = self.snl(
                                 reuse=__RESULT,
+                                RESULTAT=__RESULT,
                                 NEWTON= _F(MATRICE='TANGENTE',
                                     PREDICTION='DEPL_CALCULE',
                                     EVOL_NOLI = __res_int[-1],
@@ -778,6 +782,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
 
             __RESULT = STAT_NON_LINE(**self.snl(
                                   reuse=__RESULT,
+                                  RESULTAT=__RESULT,
                                   CHAM_MATER=chmat_contact,
                                   INCREMENT=_F(LIST_INST=self.times,
                                                 INST_FIN=coeur.temps_simu['T8']),
@@ -789,6 +794,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             # T8 - Tf
             __RESULT = STAT_NON_LINE(**self.snl(
                                   reuse=__RESULT,
+                                  RESULTAT=__RESULT,
                                   CHAM_MATER=chmat_contact,
                                   ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                                   EXCIT=constant_load+[_F(CHARGE=F_EMB2,FONC_MULT=LI2),],
@@ -833,6 +839,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             else :
                 raise 'no convergence'
             keywords = self.snl(reuse = __RESULT,
+                                RESULTAT=__RESULT,
                                 NEWTON= _F(MATRICE='TANGENTE',
                                     PREDICTION='DEPL_CALCULE',
                                     EVOL_NOLI = __res_int[-1],
@@ -1081,6 +1088,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
         keywords = self.snl_lame(
                             reuse = __RESULT,
+                            RESULTAT=__RESULT,
                             ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                             NEWTON= _F(MATRICE='TANGENTE',
                                 PREDICTION='DEPL_CALCULE',
@@ -1099,6 +1107,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         __RESULT = STAT_NON_LINE(**keywords)
         keywords = self.snl_lame(
                             reuse = __RESULT,
+                            RESULTAT=__RESULT,
                             ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                             CHAM_MATER=self.cham_mater_contact,
                             INCREMENT=_F(LIST_INST=self.times,
