@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,15 +22,20 @@ subroutine nonlinDSDynamicInit(hval_incr, sddyna)
 implicit none
 !
 #include "asterf_types.h"
+#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/getvid.h"
 #include "asterfort/mginfo.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/iden_nume.h" 
+#include "asterfort/iden_nume.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/ndynkk.h"
+#include "asterfort/ndynin.h"
+#include "asterfort/trmult.h"
+#include "asterfort/zerlag.h"
 !
 character(len=19), intent(in) :: hval_incr(*)
 character(len=19), intent(in) :: sddyna
@@ -49,11 +54,14 @@ character(len=19), intent(in) :: sddyna
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nbmd, nb_mode, nb_equa
-    aster_logical :: l_damp_moda
-    character(len=19) :: pfcn1, pfcn2, disp_prev
-    character(len=8) :: mode_meca
-    character(len=14) :: nume_ddl
+    integer :: nbMode, nbEqua
+    integer :: iExci, nbExci
+    integer :: jvMultSuppProj, jvNumeDofDEEQ
+    aster_logical :: lDampMode, lMultiSupport
+    character(len=19) :: pfcn1, pfcn2, disp_prev, multSuppProj
+    character(len=8) :: mesh
+    character(len=14) :: numeDof
+    character(len=24) :: numeDofDEEQ, matrix, multSuppMode, dampMode
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,19 +72,44 @@ character(len=19), intent(in) :: sddyna
 !
 ! - Active functionnalities
 !
-    l_damp_moda = ndynlo(sddyna,'AMOR_MODAL')
+    lDampMode     = ndynlo(sddyna,'AMOR_MODAL')
+    lMultiSupport = ndynlo(sddyna,'MULTI_APPUI')
 !
-! - Modal damping
+! - Modal damping: check numbering of equation
 !
-    if (l_damp_moda) then
-        call getvid('AMOR_MODAL', 'MODE_MECA', iocc=1, scal=mode_meca, nbret=nbmd)
-        call mginfo(mode_meca, nume_ddl, nb_mode, nb_equa)
+    if (lDampMode) then
+        call ndynkk(sddyna, 'dampMode', dampMode)
+        call mginfo(dampMode, numeDof, nbMode, nbEqua)
         call nmchex(hval_incr, 'VALINC', 'DEPMOI', disp_prev)
         call dismoi('PROF_CHNO', disp_prev, 'CHAM_NO', repk=pfcn1)
-        call dismoi('PROF_CHNO', nume_ddl, 'NUME_DDL', repk=pfcn2)
+        call dismoi('PROF_CHNO', numeDof, 'NUME_DDL', repk=pfcn2)
         if (.not.iden_nume(pfcn1, pfcn2)) then
             call utmess('F', 'DYNAMIQUE_54')
         endif
+    endif
+!
+! - Multi-support analysis
+!
+    if (lMultiSupport) then
+! ----- Get parameters about modes for multi support
+        call ndynkk(sddyna, 'multSuppMode', multSuppMode)
+        WRITE(6,*) 'Init: ',multSUppMode
+        call dismoi('REF_RIGI_PREM', multSuppMode, 'RESU_DYNA', repk=matrix)
+        call dismoi('NB_EQUA', matrix, 'MATR_ASSE', repi=nbEqua)
+        WRITE(6,*) 'Init: ',multSUppMode,matrix,nbEqua
+        call dismoi('NOM_MAILLA', matrix, 'MATR_ASSE', repk=mesh)
+        call dismoi('NOM_NUME_DDL', matrix, 'MATR_ASSE', repk=numeDof)
+        numeDofDEEQ = numeDof//'.NUME.DEEQ'
+        call jeveuo(numeDofDEEQ, 'L', jvNumeDofDEEQ)
+! ----- Prepare loads for multi-support by projection
+        nbExci = ndynin(sddyna,'NBRE_EXCIT')
+        call ndynkk(sddyna, 'MUAP_MAPSID', multSuppProj)
+        call jeveuo(multSuppProj, 'E', jvMultSuppProj)
+        do iExci = 1, nbExci
+            call trmult(multSuppMode, iExci, mesh, nbEqua, jvNumeDofDEEQ,&
+                        zr(jvMultSuppProj+(iExci-1)*nbEqua), numeDof)
+            call zerlag(nbEqua, zi(jvNumeDofDEEQ), vectr = zr(jvMultSuppProj+(iExci-1)*nbEqua))
+        end do
     endif
 !
 end subroutine
