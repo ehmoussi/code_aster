@@ -18,7 +18,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0243(option, nomte)
-! aslint: disable=C1513
     implicit none
 #include "jeveux.h"
 #include "asterc/r8dgrd.h"
@@ -222,7 +221,7 @@ subroutine te0243(option, nomte)
                     dtpgdy = dtpgdy + zr(itempi-1+c(ise,i)) * dfdy(i)
 102              continue
 !
-                if (lteatt('AXIS','OUI')) then 
+                if (lteatt('AXIS','OUI')) then
                     do 111 i = 1, nno
                         r = r + coorse(2*(i-1)+1) * zr(ivf+k+i-1)
 111                 continue

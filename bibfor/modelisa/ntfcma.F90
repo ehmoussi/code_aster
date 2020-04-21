@@ -54,7 +54,7 @@ subroutine ntfcma(compo, jmat, aniso, ifon)
     nbmat=zi(jmat)
     ASSERT(nbmat.eq.1)
     imate = jmat+zi(jmat+nbmat+1)
-!    
+!
     ASSERT( compo(1:7).eq. 'THER_NL' .or. compo(1:9).eq. 'THER_HYDR' .or. compo.eq. ' ' )
 !
     if (compo .eq. ' ') then
@@ -83,7 +83,7 @@ subroutine ntfcma(compo, jmat, aniso, ifon)
     endif
     do k = 1, zi(imate+1)
         if ('THER_' .eq. zk32(zi(imate)+k-1)(1:5)) then
-            valk(1) = zk32(zi(imate)+k-1)
+            valk(1) = zk32(zi(imate)+k-1)(1:16)
             valk(2) = compo
             if (compo .eq. ' ') then
                 call utmess('F', 'ELEMENTS2_65', sk=valk(1))
