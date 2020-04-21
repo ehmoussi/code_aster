@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -97,6 +97,7 @@ character(len=19) :: lischa
     aster_logical :: lmuap, lammo, lshima, lviss, lamra
     aster_logical :: lamor, lktan, londe, limped, ldyna, lexpl
 !
+    character(len=8) :: dampMode
     character(len=19) :: vefsdo, vefint, vedido, vesstf
     character(len=19) :: vefedo, veondp, vedidi, velapl
 !
@@ -296,7 +297,7 @@ character(len=19) :: lischa
 !
     if ((ndynlo(sddyna,'NEWMARK')) .or. (ndynlo(sddyna,'HHT_COMPLET')) .or.&
         (ndynlo(sddyna,'HHT'))) then
-        if (beta .eq. 0.d0) then
+        if (beta .le. r8prem()) then
             call utmess('F', 'MECANONLINE5_9')
         endif
         if (iform .eq. 2) then
@@ -421,7 +422,7 @@ character(len=19) :: lischa
     call getfac('AMOR_MODAL', nmodam)
     lammo = nmodam.gt.0
     if (lammo) then
-        call nmmoam(sdammo, nbmoda)
+        call nmmoam(sdammo, nbmoda, dampMode)
         nreavi = 0
 !
 ! --- REACTUALISATION DE L'AMORT A CHAQUE ITERATION ?
@@ -431,10 +432,12 @@ character(len=19) :: lischa
     else
         nreavi = 0
         nbmoda = 0
+        dampMode = ' '
     endif
-    zl(jlosd+3-1) = lammo
-    zl(jlosd+12-1) = nreavi.gt.0
-    zi(jncha+4-1) = nbmoda
+    zl(jlosd+3-1)   = lammo
+    zl(jlosd+12-1)  = nreavi.gt.0
+    zi(jncha+4-1)   = nbmoda
+    zk24(jnosd-1+7) = dampMode
 !
 ! --- VECT ISS
 !

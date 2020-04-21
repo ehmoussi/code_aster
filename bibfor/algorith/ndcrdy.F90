@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,22 +29,21 @@ implicit none
 #include "asterfort/jemarq.h"
 #include "asterfort/wkvect.h"
 !
-character(len=8) :: result
-character(len=19) :: sddyna
+character(len=8), intent(in) :: result
+character(len=19), intent(out) :: sddyna
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (STRUCTURES DE DONNEES)
+! MECA_NON_LINE - Dynamic management
 !
-! CREATION SDDYNA (DYNAMIQUE)
+! Create datastructure for dynamic
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  result           : name of result datastructure (EVOL_NOLI)
+! Out sddyna           : datastructure for dynamic
 !
-! IN  RESULT : NOM DU CONCEPT RESULTAT
-! IN  SDSYNA : SD DYNAMIQUE
-!
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     character(len=24) :: tsch, psch, losd, nosd, tfor, cfsc
@@ -56,7 +55,7 @@ character(len=19) :: sddyna
     character(len=16) :: k16bid, nomcmd
     character(len=8) :: k8bid
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
     call infdbg('MECANONLINE', ifm, niv)
@@ -65,7 +64,7 @@ character(len=19) :: sddyna
 !
     call getres(k8bid, k16bid, nomcmd)
 !
-! --- INITIALISATIONS
+! - INITIALISATIONS
 !
     sddyna = result(1:8)//'.SDDYNA'
 !
@@ -91,7 +90,7 @@ character(len=19) :: sddyna
         vecabs = sddyna(1:15)//'.VECABS'
         call wkvect(psch, 'V V R', 7, jpsch)
         call wkvect(losd, 'V V L', 16, jlosd)
-        call wkvect(nosd, 'V V K24', 5, jnosd)
+        call wkvect(nosd, 'V V K24', 7, jnosd)
         call wkvect(tfor, 'V V I', 2, jtfor)
         call wkvect(cfsc, 'V V R', 24, jcfsc)
         call wkvect(tcha, 'V V K24', 4, jtcha)
