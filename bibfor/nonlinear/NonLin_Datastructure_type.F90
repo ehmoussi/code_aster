@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1303, W1501
 !
 module NonLin_Datastructure_type
 !
@@ -545,6 +546,10 @@ implicit none
         aster_logical         :: l_post_incr = ASTER_FALSE
 ! ----- Flag for if large strains are in tangent matrix
         aster_logical         :: l_matr_geom = ASTER_FALSE
+! ----- Flag for if everything is linear in behaviour
+        aster_logical         :: lLinear     = ASTER_FALSE
+! ----- Flag for if everything is only DIS_CHOC/DIS_CONTACT in behaviour
+        aster_logical         :: lDisCtc     = ASTER_FALSE
     end type NL_DS_Constitutive
 !
 ! - Type: selection list

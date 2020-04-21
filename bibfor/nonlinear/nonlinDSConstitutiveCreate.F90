@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,5 +50,7 @@ type(NL_DS_Constitutive), intent(out) :: ds_constitutive
     ds_constitutive%l_dis_choc    = ASTER_FALSE
     ds_constitutive%l_post_incr   = ASTER_FALSE
     ds_constitutive%l_matr_geom   = ASTER_FALSE
+    ds_constitutive%lLinear       = ASTER_FALSE
+    ds_constitutive%lDisCtc       = ASTER_FALSE
 !
 end subroutine
