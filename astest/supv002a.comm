@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,11 +32,12 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ))
 # Que faire en cas d'erreur avec ce test ?
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# Le fichier contenant les mots-clés du catalogue de commandes doit être
-# installé dans <INSTALL_PREFIX>/share/aster/code_aster_cata.aspell.per
-#
-# Le dictionnaire des mots autorisés (en plus du dictionnaire français de aspell)
-# est cherché dans le dépôt 'devtools' qui doit donc être présent et à jour.
+# Les dictionnaires des mots autorisés (en plus du dictionnaire français de aspell)
+# sont cherchés dans le dépôt 'devtools' qui doit donc être présent et à jour.
+# - $HOME/dev/codeaster/devtools/share/spell/code_aster_cata.aspell.per pour les
+# mots-clés du catalogue de commandes,
+# - $HOME/dev/codeaster/devtools/share/spell/code_aster_dict.aspell.per pour le
+# dictionnaire des termes spécifiques.
 #
 # Dans l'output de l'exécution, on trouvera des lignes d'impression lors de la vérification
 # de chaque catalogue de messages :

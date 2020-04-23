@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 subroutine ptfocp(itype, option, xl, nno, nc, pgl, fer, fei)
 !
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     implicit none
 !
@@ -42,7 +42,7 @@ subroutine ptfocp(itype, option, xl, nno, nc, pgl, fer, fei)
 #include "asterfort/utpvgl.h"
 #include "blas/ddot.h"
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     integer :: i, icoec, icoer, iret, lforc, lx, ncc, nnoc
     real(kind=8) :: coef1, coef2, s, s2, xxx, s3, s4, s5
@@ -51,7 +51,7 @@ subroutine ptfocp(itype, option, xl, nno, nc, pgl, fer, fei)
     character(len=16) :: ch16
     aster_logical :: global, normal
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     qr(:) = 0.0d0
     qqr(:) = 0.0d0
@@ -150,7 +150,7 @@ subroutine ptfocp(itype, option, xl, nno, nc, pgl, fer, fei)
         call utmess('F', 'ELEMENTS2_47', sk=ch16)
     endif
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !   recuperation du coef_mult
     call tecach('NNO', 'PCOEFFR', 'L', iret, iad=icoer)
     call tecach('NNO', 'PCOEFFC', 'L', iret, iad=icoec)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ subroutine ptfop1(itype, nc, coef1, coef2, xl, qq, fe)
     implicit none
 !
     integer :: itype, nc
-    real(kind=8) :: coef1, coef2, xl, fe(18), qq(18)
+    real(kind=8) :: coef1, coef2, xl, fe(12), qq(12)
 !
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
@@ -69,8 +69,8 @@ subroutine ptfop1(itype, nc, coef1, coef2, xl, qq, fe)
         fe(3)  = (7.d0*qq(3) + 3.d0* qq(3+nc))*coef/20.d0 + (qq(5)+ qq(5+nc))/2.d0
         fe(3+nc)  = (3.d0*qq(3) + 7.d0* qq(3+nc))*coef/20.d0 - (qq(5)+ qq(5+nc))/2.d0
         fe(4)  = (qq(4)/3.d0 + qq(4+nc)/6.d0)*xl
-        fe(4+nc) = (qq(4)/6.d0 + qq(4+nc)/3.d0)*xl        
-      
+        fe(4+nc) = (qq(4)/6.d0 + qq(4+nc)/3.d0)*xl
+
         if (nc.gt.6) then
            fe(7) = (qq(7)/3.d0 +  qq(7+nc)/6.d0)*coef
            fe(7+nc) = (qq(7)/6.d0 +  qq(7+nc)/3.d0)*coef

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -83,13 +83,13 @@ subroutine te0540(option, nomte)
     integer :: icarcr, ideplm, ideplp, iinstm, ivectu, icontp, ivarip, imat
     integer :: jacf, jtab(7), ivarmp, codret, ivf
     integer :: ncomp, nbvalc, isdcom, nbasspou, maxfipoutre
-    integer :: kp, j, k, istrxm, istrxp, istrmp, icomax, ico
+    integer :: kp, istrxm, istrxp, istrmp, icomax, ico
     real(kind=8) :: ey, ez, gamma, xl, gg, xjx
     real(kind=8) :: e, g, nu, temp, temm, gxjx
     real(kind=8) :: defam(6), defap(6), angp(3)
     real(kind=8) :: pgl(3, 3), matsct(6)
     real(kind=8) :: xi, wi, b(4),vv(18),ve(18),fv(18)
-    real(kind=8) :: ang1(3), epsm, sigfib
+    real(kind=8) :: ang1(3), epsm
     real(kind=8) :: alicom, dalico, ss1, hv, he, vs(3), sv(dimklv)
 !
     aster_logical :: vecteu, matric, reactu
@@ -136,9 +136,9 @@ subroutine te0540(option, nomte)
     call pmfasseinfo(tygrfi,nbfibr,nbcarm,zr(jacf),maxfipoutre, nbfipoutre, gxjxpou)
     AS_ALLOCATE(vr=yj, size=nbasspou)
     AS_ALLOCATE(vr=zj, size=nbasspou)
-    AS_ALLOCATE(vr=deffibasse, size=maxfipoutre)    
+    AS_ALLOCATE(vr=deffibasse, size=maxfipoutre)
     AS_ALLOCATE(vr=vsigv, size=maxfipoutre)
-    AS_ALLOCATE(vr=vev, size=maxfipoutre) 
+    AS_ALLOCATE(vr=vev, size=maxfipoutre)
 
     allocate(vfv(7,maxfipoutre))
     allocate(vvp(12,nbasspou))
@@ -303,7 +303,7 @@ subroutine te0540(option, nomte)
         hv=0.0d+0
 
         do kp = 1, npg
-!    
+!
             call pmfpti(kp, zr(ipoids), zr(ivf), xl, xi, wi, b, gg)
             call pmfdgedef(3, b, gg, u, alicom, nbfibr, nbcarm, &
                            zr(jacf), nbasspou, maxfipoutre, nbfipoutre, yj, zj, &
@@ -312,7 +312,7 @@ subroutine te0540(option, nomte)
             call pmfdgedef(3, b, gg, du, dalico, nbfibr, nbcarm, &
                            zr(jacf), nbasspou, maxfipoutre, nbfipoutre, yj, zj, &
                            deffibasse, vfv, defpfib)
-!       
+!
             iposig=jsigfb + nbfibr*(kp-1)
             ipomod=jmodfb + nbfibr*(kp-1)
             call pmfmcf(kp, nbgrfi, nbfibr, nug, zk24(isdcom), &
@@ -332,7 +332,7 @@ subroutine te0540(option, nomte)
 !           Calculs mode incompatible hv=int(gt ks g), he=int(gt fs)
             hv = hv+wi*gg*gg*matsct(1)
             he = he+wi*gg*vs(1)
-! 
+!
         end do
 !
         if (abs(hv) .le. r8prem()) then
@@ -353,10 +353,10 @@ subroutine te0540(option, nomte)
     enddo cico
 !   Fin boucle calcul alico
     do kp = 1, npg
-!    
+!
         call pmfpti(kp, zr(ipoids), zr(ivf), xl, xi, wi, b, gg)
         if (matric) then
-            ipomod=jmodfb + nbfibr*(kp-1) 
+            ipomod=jmodfb + nbfibr*(kp-1)
 !           calcul matrice de rigidité
 !           Calcul des caracteristiques de section par integration sur les fibres
             call pmfitebkbbts(3, nbfibr, nbcarm, zr(jacf), zr(ipomod), b, wi, gxjx, gxjxpou, &
@@ -382,7 +382,7 @@ subroutine te0540(option, nomte)
             enddo
 !
         endif
-!                  
+!
     enddo
 !
 !   On modifie la matrice de raideur par condensation statique
@@ -404,7 +404,7 @@ subroutine te0540(option, nomte)
             iposig=jsigfb + nbfibr*(kp-1)
             do i = 0, nbfibr-1
                 zr(iposcp+i) = zr(iposig+i)
-            enddo            
+            enddo
             ifgp=ncomp*(kp-1)-1
 !           Stockage des forces intégrées
             zr(istrxp+ifgp+1) = fl(9*(kp-1)+1)
@@ -433,15 +433,15 @@ subroutine te0540(option, nomte)
         zi(jcret) = codret
     endif
 !   Deallocation memoire pour tableaux temporaires
-    deallocate(vfv)    
-    deallocate(skp) 
-    deallocate(vvp) 
+    deallocate(vfv)
+    deallocate(skp)
+    deallocate(vvp)
     AS_DEALLOCATE(vi=nbfipoutre)
     AS_DEALLOCATE(vr=gxjxpou)
     AS_DEALLOCATE(vr=yj)
     AS_DEALLOCATE(vr=zj)
     AS_DEALLOCATE(vr=deffibasse)
-    AS_DEALLOCATE(vr=vsigv) 
+    AS_DEALLOCATE(vr=vsigv)
     AS_DEALLOCATE(vr=vev)
     AS_DEALLOCATE(vr=defmfib)
     AS_DEALLOCATE(vr=defpfib)
