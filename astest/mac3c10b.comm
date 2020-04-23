@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,10 +44,9 @@ TAB=POST_MAC3COEUR(RESULTAT   = RESUL,
                LAME = _F(FORMAT = 'TABLE', UNITE = 30,)
               )
 
-TEST_TABLE(VALE_CALC=2.627965864151234,   TABLE=TAB,NOM_PARA='QuanLE_CU_G4_70')
-TEST_TABLE(VALE_CALC=5.735670812072124  , TABLE=TAB,NOM_PARA='QuanLE_CU_G4_90',)
-TEST_TABLE(VALE_CALC=2.548754117634432,   TABLE=TAB,NOM_PARA='QuanLE_AC_G4_70',)
-TEST_TABLE(VALE_CALC=2.8745287839298195,   TABLE=TAB,NOM_PARA='QuanLE_AC_G4_90',)
-
+TEST_TABLE(TABLE=TAB, NOM_PARA='QuanLE_CU_G4_70', VALE_CALC=2.628)
+TEST_TABLE(TABLE=TAB, NOM_PARA='QuanLE_CU_G4_90', VALE_CALC=5.7357)
+TEST_TABLE(TABLE=TAB, NOM_PARA='QuanLE_AC_G4_70', VALE_CALC=2.5488)
+TEST_TABLE(TABLE=TAB, NOM_PARA='QuanLE_AC_G4_90', VALE_CALC=2.8745)
 
 FIN()

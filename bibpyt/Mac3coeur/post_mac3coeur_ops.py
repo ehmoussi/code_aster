@@ -20,7 +20,7 @@
 # person_in_charge: francesco.bettonte at edf.fr
 import os.path as osp
 
-import numpy as N
+import numpy as np
 import numpy.linalg as LA
 
 import aster_core
@@ -31,6 +31,8 @@ UL=UniteAster()
 
 K_star = 100000.
 
+round_post = lambda s : round(s,4)
+
 def NodePos(coeur,k):
 
     return coeur.get_XYOut('%s_%s'%(k[0],k[1]))
@@ -38,7 +40,7 @@ def NodePos(coeur,k):
 def compute_cos_alpha(G_0,G_1,G_2):
     a=G_1-G_0
     b=G_2-G_1
-    cos_alpha_ = N.dot(a,b)/LA.norm(a)/LA.norm(b)
+    cos_alpha_ = np.dot(a,b)/LA.norm(a)/LA.norm(b)
     # cos_alpha_ = dotProduct(coorVect(G_0,G_1),coorVect(G_1,G_2))/(norm(G_0,G_1)*norm(G_1,G_2))
     return cos_alpha_
 
@@ -348,20 +350,26 @@ def makeXMGRACEdeforme(unit, name, typeAC, coeur, valdefac):
     xmgrfile.close()
 
 
-def PostForme(l_f, meth):
+def PostForme(dx, dy, unite='mm'):
     """ post-traite la forme suivant une methode (Damac pour le moment) d'apres une liste de fleches en mm"""
+    assert unite in ('mm','m')
+    
+    crit = 0.5 if unite == 'm' else 500.0
+    
+    A1x = abs(min(dx))
+    A2x = abs(max(dx))
+    CCx = max(dx) - min(dx)
+    shape_x = 'S' if (A1x > crit and A2x > crit) else 'C'
+    
+    A1y = abs(min(dy))
+    A2y = abs(max(dy))
+    CCy = max(dy) - min(dy)
+    shape_y = 'S' if (A1y > crit and A2y > crit) else 'C'
+    
+    letters = ''.join(sorted(set((shape_x, shape_y))))
+    shape_global = '2%s'%letters if len(letters) == 1 else letters
 
-    if meth == 'DAMAC':
-        A1 = abs(min(l_f))
-        A2 = abs(max(l_f))
-        if (A1 <= 0.5) or (A2 <= 0.5):
-            forme = 'C'
-        else:
-            forme = 'S'
-
-    assert(meth == 'DAMAC')
-
-    return forme
+    return shape_x, shape_y, shape_global
 
 
 def post_mac3coeur_ops(self, **args):
@@ -515,11 +523,13 @@ def post_mac3coeur_ops(self, **args):
             valContactCuve.append(valjeucu[name])
         for name in _coeur.get_contactAssLame() :
             valContactAssLame.append(valjeuac[name])
-        valContactCuve=N.array(valContactCuve)
-        valContactAssLame=N.array(valContactAssLame)
+        valContactCuve=np.array(valContactCuve)
+        valContactAssLame=np.array(valContactAssLame)
         nb_grilles = valContactCuve.shape[1]
         valQuantile=[70,80,90,95,99]
+
         liste_out=[]
+
         for i in range(nb_grilles) :
             valContactCuveGrille    = valContactCuve[:,i]
             valContactAssLameGrille = valContactAssLame[:,i]
@@ -527,30 +537,30 @@ def post_mac3coeur_ops(self, **args):
             valContactGrille.extend(valContactAssLameGrille)
             for quant in valQuantile :
                 liste_out.append({
-                    'LISTE_R' : N.percentile(valContactCuveGrille,quant),
+                    'LISTE_R' : round_post(np.percentile(valContactCuveGrille,quant)),
                     'PARA'    : 'QuanLE_CU_G%d_%d'%(i+1,quant)
                     })
                 liste_out.append({
-                    'LISTE_R' : N.percentile(valContactAssLameGrille,quant),
+                    'LISTE_R' : round_post(np.percentile(valContactAssLameGrille,quant)),
                     'PARA'    : 'QuanLE_AC_G%d_%d'%(i+1,quant)
                     })
                 liste_out.append({
-                    'LISTE_R' : N.percentile(valContactGrille,quant),
+                    'LISTE_R' : round_post(np.percentile(valContactGrille,quant)),
                     'PARA'    : 'QuanLE_G%d_%d'%(i+1,quant)
                     })
         valContact = valContactCuve.ravel().tolist()
         valContact.extend(valContactAssLame.ravel())
         for quant in valQuantile :
             liste_out.append({
-                'LISTE_R' : N.percentile(valContactCuve.ravel(),quant),
+                'LISTE_R' : round_post(np.percentile(valContactCuve.ravel(),quant)),
                 'PARA'    : 'QuanLE_CU_%d'%(quant,)
                 })
             liste_out.append({
-                'LISTE_R' : N.percentile(valContactAssLame.ravel(),quant),
+                'LISTE_R' : round_post(np.percentile(valContactAssLame.ravel(),quant)),
                 'PARA'    : 'QuanLE_AC_%d'%(quant,)
                 })
             liste_out.append({
-                'LISTE_R' : N.percentile(valContact,quant),
+                'LISTE_R' : round_post(np.percentile(valContact,quant)),
                 'PARA'    : 'QuanLE_%d'%(quant,)
                 })
 
@@ -750,35 +760,23 @@ def post_mac3coeur_ops(self, **args):
                                        INST=_inst,
                                        PRECISION=1.E-08))
 
-            _TAB1 = CALC_TABLE(reuse=_TAB1, TABLE=_TAB1,
-                               ACTION=(
-                                   _F(OPERATION='TRI', NOM_PARA='COOR_X',
-                                      ORDRE='CROISSANT'),
-                               ))
+            # Extraction des valeurs
+            vals = np.stack((_TAB1.EXTR_TABLE().values()[i] for i in ('COOR_X', 'DY', 'DZ')))
+            
+            # Moyenne sur les 4 discrets de la grille (qui portent tous la meme valeur)
+            vals = np.mean(vals.reshape(vals.shape[0], vals.shape[1]//4, 4),axis=2)
 
-            tab1 = _TAB1.EXTR_TABLE()
-
-            l_x_tmp = tab1.COOR_X.values()
-            l_dy_tmp = tab1.DY.values()
-            l_dz_tmp = tab1.DZ.values()
-
-            # on reduit les listes en supprimant les doublons
-            nb_grilles = len(l_x_tmp) / 4.
-            assert (nb_grilles == int(nb_grilles))
-            nb_grilles = int(nb_grilles)
-            l_x = [l_x_tmp[4 * i] for i in range(nb_grilles)]
-            l_dy = [l_dy_tmp[4 * i] for i in range(nb_grilles)]
-            l_dz = [l_dz_tmp[4 * i] for i in range(nb_grilles)]
+            # Passage en mm et arrondi
+            l_x, l_dy, l_dz = np.around(1000.0*vals[:, vals[0].argsort()],8)
+            nb_grilles = len(l_x)
 
             # on applique la formule des fleches
             l_fy = []
             l_fz = []
             for i in range(nb_grilles):
-                fy = l_dy[i] - l_dy[0] - (l_dy[-1] - l_dy[0]) / (
-                    l_x[-1] - l_x[0]) * (l_x[i] - l_x[0])
+                fy = l_dy[i] - l_dy[0] - (l_dy[-1] - l_dy[0]) / (l_x[-1] - l_x[0]) * (l_x[i] - l_x[0])
                 l_fy.append(fy)
-                fz = l_dz[i] - l_dz[0] - (l_dz[-1] - l_dz[0]) / (
-                    l_x[-1] - l_x[0]) * (l_x[i] - l_x[0])
+                fz = l_dz[i] - l_dz[0] - (l_dz[-1] - l_dz[0]) / (l_x[-1] - l_x[0]) * (l_x[i] - l_x[0])
                 l_fz.append(fz)
 
             # on applique la formule de Rho
@@ -792,28 +790,17 @@ def post_mac3coeur_ops(self, **args):
             l_fnor = [sqrt(l_fy[i] ** 2 + l_fz[i] ** 2)
                       for i in range(nb_grilles)]
 
-            # on passe en mm
-            l_fy_mm = [1000. * fy for fy in l_fy]
-            l_fz_mm = [1000. * fz for fz in l_fz]
-            l_fnor_mm = [1000. * fnor for fnor in l_fnor]
-            rho_mm = 1000. * rho
-
-            # calcul des formes (important : a partir des fleches en mm )
-            formeY = PostForme(l_fy_mm, 'DAMAC')
-            formeZ = PostForme(l_fz_mm, 'DAMAC')
-            if formeY == formeZ:
-                forme = '2' + formeY
-            else:
-                forme = 'CS'
-
+            # calcul des formes 
+            formeY, formeZ, forme = PostForme(l_fy, l_fz, 'mm')
+            
             # creation des dictionnaires
-            valdefac[name_AC_aster] = l_fnor_mm
-            valdirYac[name_AC_aster] = l_fy_mm
-            valdirZac[name_AC_aster] = l_fz_mm
-            valrho[name_AC_aster] = rho_mm
+            valdefac[name_AC_aster] = l_fnor
+            valdirYac[name_AC_aster] = l_fy
+            valdirZac[name_AC_aster] = l_fz
+            valrho[name_AC_aster] = rho
             valforme[name_AC_aster] = [formeY, formeZ, forme]
-            val_deport_y[name_AC_aster] = (-l_dy[-1] + l_dy[0])*1000.
-            val_deport_z[name_AC_aster] = (-l_dz[-1] + l_dz[0])*1000.
+            val_deport_y[name_AC_aster] = (-l_dy[-1] + l_dy[0])
+            val_deport_z[name_AC_aster] = (-l_dz[-1] + l_dz[0])
 
             k = k + 1
 
@@ -861,9 +848,8 @@ def post_mac3coeur_ops(self, **args):
         nbGrille = 0
         for idAC in list(_coeur.collAC.keys()) :
             AC = _coeur.collAC[idAC]
-            altitudeGrilles = AC.altitude
-            if len(altitudeGrilles) > nbGrille :
-                nbGrille=len(altitudeGrilles)
+            if len(AC.altitude) > nbGrille :
+                nbGrille=len(AC.altitude)
 
         moyenneRhoParType = {}
         moyenneGraviteParType = {}
@@ -879,7 +865,7 @@ def post_mac3coeur_ops(self, **args):
         #for name in POSITION:
         for idAC in list(_coeur.collAC.keys()) :
             AC = _coeur.collAC[idAC]
-            altitudeGrilles = AC.altitude
+            altitudeGrilles = [v*1000. for v in AC.altitude]
             name_AC_aster = AC.idAST
             #name_AC_aster = name[0] + '_' + name[1]
             name_AC_damac = _coeur.position_todamac(name_AC_aster)
@@ -922,11 +908,11 @@ def post_mac3coeur_ops(self, **args):
             posGrille = []
             cosGrille = []
             for i in range(nbGrille) :
-                posGrille.append(N.array((XG[i],YG[i],altitudeGrilles[i]*1000)))
+                posGrille.append(np.array((XG[i],YG[i],altitudeGrilles[i])))
             for i in range(nbGrille-2) :
                 cosGrille.append(compute_cos_alpha(posGrille[i],posGrille[i+1],posGrille[i+2]))
-            gravite = K_star*N.sum(1.-N.array(cosGrille))
-            normeDepl = N.sqrt(N.array(XG)**2+N.array(YG)**2)
+            gravite = K_star*np.sum(1.-np.array(cosGrille))
+            normeDepl = np.sqrt(np.array(XG)**2+np.array(YG)**2)
             Milieu = AC.typeAC
             MinX = min(valdirYac[name_AC_aster])
             MaxX = max(valdirYac[name_AC_aster])
@@ -1008,46 +994,48 @@ def post_mac3coeur_ops(self, **args):
             l_valdy.append(valdy)
             l_T5.append(0.)
             l_T6.append(0.)
-        moyenneRhoCoeur = N.mean(N.array(l_def_max))
+        moyenneRhoCoeur = np.mean(np.array(l_def_max))
         for typ in list(moyenneRhoParType.keys()) :
-            moyenneRhoParType[typ] = N.mean(N.array(moyenneRhoParType[typ]))
-        moyenneGravite = N.mean(N.array(listeGravite))
-        sigmaGravite = N.sqrt(N.mean((N.array(listeGravite)-moyenneGravite)**2))
+            moyenneRhoParType[typ] = np.mean(np.array(moyenneRhoParType[typ]))
+        moyenneGravite = np.mean(np.array(listeGravite))
+        sigmaGravite = np.sqrt(np.mean((np.array(listeGravite)-moyenneGravite)**2))
         for typ in list(moyenneGraviteParType.keys()) :
-            moyenneGraviteParType[typ] = N.mean(N.array(moyenneGraviteParType[typ]))
-
+            moyenneGraviteParType[typ] = np.mean(np.array(moyenneGraviteParType[typ]))
 
 
 
         liste_out = []
-        liste_out.append({'LISTE_R' : moyenneRhoCoeur, 'PARA' : 'moyRhoCoeur' })
-        for typ in list(moyenneRhoParType.keys()) :
-            liste_out.append({'LISTE_R' : moyenneRhoParType[typ],
-                              'PARA'    : 'moR'+typ })
-        liste_out.append({'LISTE_R' : maxRho, 'PARA' : 'maxRhoCoeur' })
-        for typ in list(maxRhoParType.keys()) :
-            liste_out.append({'LISTE_R' : maxRhoParType[typ],
-                              'PARA'    : 'maR'+typ })
-        liste_out.append({'LISTE_R' : moyenneGravite, 'PARA' : 'moyGravCoeur' })
-        liste_out.append({'LISTE_R' : maxGravite,     'PARA' : 'maxGravCoeur' })
-        liste_out.append({'LISTE_R' : sigmaGravite,   'PARA' : 'sigGravCoeur' })
-        for typ in list(maxGraviteParType.keys()) :
-            liste_out.append({'LISTE_R' : maxGraviteParType[typ],
-                              'PARA'    : 'maG'+typ })
-        for typ in list(moyenneGraviteParType.keys()) :
-            liste_out.append({'LISTE_R' : moyenneGraviteParType[typ],
-                              'PARA'    : 'moG'+typ })
-        for i in range(2,len(maxDeplGrille)) :
-            liste_out.append({'LISTE_R' : maxDeplGrille[i-1],
-                              'PARA'    : 'maxDeplGrille%i'%i })
+
+        # Valeurs
+        liste_out.append({'LISTE_R' : round_post(moyenneRhoCoeur), 'PARA' : 'moyRhoCoeur'})
+        liste_out.append({'LISTE_R' : round_post(maxRho), 'PARA' : 'maxRhoCoeur'})
+        liste_out.append({'LISTE_R' : round_post(moyenneGravite), 'PARA' : 'moyGravCoeur'})
+        liste_out.append({'LISTE_R' : round_post(maxGravite), 'PARA' : 'maxGravCoeur'})
+        liste_out.append({'LISTE_R' : round_post(sigmaGravite), 'PARA' : 'sigGravCoeur'})
+     
+        for typ, value in moyenneRhoParType.items():
+            liste_out.append({'LISTE_R' : round_post(value), 'PARA' : 'moR%s'%typ})
+            
+        for typ, value in maxRhoParType.items():
+            liste_out.append({'LISTE_R' : round_post(value), 'PARA' : 'maR%s'%typ})
+            
+        for typ, value in maxGraviteParType.items():
+            liste_out.append({'LISTE_R' : round_post(value), 'PARA' : 'maG%s'%typ})
+            
+        for typ, value in moyenneGraviteParType.items():
+            liste_out.append({'LISTE_R' : round_post(value), 'PARA' : 'moG%s'%typ})
+            
+        for i in range(2,len(maxDeplGrille)):
+            liste_out.append({'LISTE_R' : round_post(maxDeplGrille[i-1]), 'PARA' : 'maxDeplGrille%i'%i})
+            
+        # Positions
         liste_out.append({'LISTE_K' : locMaxRho, 'PARA' : 'locMaxRho', 'TYPE_K' : 'K8' })
         liste_out.append({'LISTE_K' : locMaxGravite, 'PARA' : 'locMaxGrav', 'TYPE_K' : 'K8' })
-        for i in range(2,len(maxDeplGrille)) :
-            liste_out.append({'LISTE_K' : locMaxDeplGrille[i-1],
-                              'PARA'    : 'locMaxDeplG%i'%i,
-                              'TYPE_K'  : 'K8' })
 
-        print('liste_out : ',liste_out)
+        for i, value in enumerate(locMaxDeplGrille[1:-1]):
+            liste_out.append({'LISTE_K' : value, 'PARA' : 'locMaxDeplG%i'%(i+2), 'TYPE_K' : 'K8'})
+            
+        print('liste_out : ', liste_out)
 
         if tableCreated :
             tmp_vale = []
