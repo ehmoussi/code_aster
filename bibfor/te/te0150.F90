@@ -19,11 +19,11 @@
 subroutine te0150(option, nomte)
 !
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !     CALCULE LE CHARGEMENT INDUIT PAR UNE ELEVATION UNIFORME DE
 !     TEMPERATURE DANS LES POUTRES D'EULER ET DE TIMOSHENKO
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
 ! IN  OPTION : K16 : NOM DE L'OPTION A CALCULER
 !       'FC1D1D_MECA'       : FORCES LINEIQUES (COMP)
@@ -42,7 +42,7 @@ subroutine te0150(option, nomte)
 !       'MECA_POU_D_TGM': POUTRE DROITE DE TIMOSHENKO (GAUCHISSEMENT)
 !                         MULTI-FIBRES SECTION CONSTANTE
 !       'MECA_POU_D_SQUE' : SQUELETTE D'ASSEMBLAGE COMBUSTIBLE
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     implicit none
 #include "asterf_types.h"
@@ -65,15 +65,13 @@ subroutine te0150(option, nomte)
 !
     character(len=*) :: option, nomte
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     integer :: nbpar, lmater, iret
     integer :: istruc, lorien, lvect
     integer :: itype, nc, ind, i, j, ncf
     integer :: ndim, nno, nnos, npg, ipoids
     integer :: ivf, idfdx, jgano
-    integer :: nbfibr, nbgrfi, tygrfi, nbcarm, nug(10), jacf
-    integer :: nbasspou, maxfipoutre
     real(kind=8) :: valpar(3)
     real(kind=8) :: e, nu, g
     real(kind=8) :: a, a2, xl
@@ -87,17 +85,17 @@ subroutine te0150(option, nomte)
     character(len=8) :: nompar(3), materi
     character(len=16) :: ch16
     aster_logical :: lrho
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
     integer, parameter :: nbres=2
     integer :: codres(nbres)
     real(kind=8) :: valres(nbres)
     character(len=16) :: nomres(nbres)
     data nomres / 'E', 'NU' /
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
     integer, parameter :: nb_cara = 3
     real(kind=8) :: vale_cara(nb_cara)
     character(len=8), parameter :: noms_cara(nb_cara) = (/'A1  ','A2  ','TVAR'/)
-! -------------------------------------------------------------------------------------------------- 
+! ------------------------------------------------------------------------------
 !
     fami = 'RIGI'
     nno = 2

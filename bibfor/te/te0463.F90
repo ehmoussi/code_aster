@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 subroutine te0463(option, nomte)
 !
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
 !     Calcul des coordonnées des sous points de GAUSS sur les familles de la liste MATER
 !     pour les éléments POU_D_EM , POU_D_TGM et POU_D_SQUE
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     implicit none
     character(len=16) :: option, nomte
@@ -39,7 +39,7 @@ subroutine te0463(option, nomte)
 #include "asterfort/ppga1d.h"
 #include "asterfort/utpvlg.h"
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !   nombre max de famille dans MATER, de points de GAUSS
     integer :: nfpgmx, nbpgmx
     parameter (nfpgmx=10,nbpgmx=3)
@@ -53,17 +53,14 @@ subroutine te0463(option, nomte)
 !
     integer :: nbfibr, nbgrfi, tygrfi, nbcarm, nug(10)
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
-    if ((nomte.ne.'MECA_POU_D_EM') .and. (nomte.ne.'MECA_POU_D_TGM') .and. (nomte.ne.'MECA_POU_D_SQUE')) then
-        ASSERT(.false.)
-    endif
     call jevech('PGEOMER', 'L', igeom)
     ndim = 3
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !   Coordonnées de sous-points de gauss
     call jevech('PCOOPGM', 'E', icopg)
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !   Récupération des caractéristiques des fibres
     call pmfinfo(nbfibr,nbgrfi,tygrfi,nbcarm,nug,jacf=jacf)
 !
