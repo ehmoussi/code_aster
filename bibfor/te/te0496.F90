@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -90,6 +90,11 @@ subroutine te0496(option, nomte)
     else if (nomte.eq.'MECA_POU_D_TGM') then
         nbfibr = zi(jnbsp-1+1)
         zi(jdcel-1+1) = nbfibr
+!
+    else if (nomte.eq.'MECA_POU_D_SQUE') then
+        nbfibr = zi(jnbsp-1+1)
+        zi(jdcel-1+1) = nbfibr
+
     endif
 !
 9999  continue

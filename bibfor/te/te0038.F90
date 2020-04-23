@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,12 +55,12 @@ subroutine te0038(option, nomte)
 #include "asterfort/provec.h"
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvalb.h"
-#include "asterfort/tecach.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utpslg.h"
 #include "asterfort/utpvlg.h"
 #include "asterfort/vdiff.h"
+#include "asterfort/get_value_mode_local.h"
 !
     character(len=*) :: option, nomte
 !
@@ -81,7 +81,7 @@ subroutine te0038(option, nomte)
     real(kind=8) :: casect(6), yg, zg, p1gl(3),p1gg (3), rbid
 !
     integer :: lmater, igeom, lorien, nno, nc, lcastr, itype, icoude
-    integer :: i, n1, n2, lrcou, iadzi, iazk24, nn2, iret
+    integer :: i, n1, n2, iadzi, iazk24, nn2
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -96,6 +96,11 @@ subroutine te0038(option, nomte)
     real(kind=8) :: vale_cara1(nb_cara1)
     character(len=8) :: noms_cara1(nb_cara1)
     data noms_cara1 /'R1','EP1'/
+!
+!
+    integer             :: retp(2), iret
+    real(kind=8)        :: valr(2)
+    character(len=8)    :: valp(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -234,13 +239,11 @@ subroutine te0038(option, nomte)
 !
 !       caracteristique de coude pour les poutres
         if (nomte .eq. 'MECA_POU_D_T') then
-            call tecach('ONN', 'PCAARPO', 'L', iret, iad=lrcou)
-            if ( iret .eq. 0 ) then
-                xfly = zr(lrcou)
-                xflz = zr(lrcou+2)
-                iy1  = iy1/xfly
-                iz1  = iz1/xflz
-            endif
+            valp(1:2)=['C_FLEX_Y', 'C_FLEX_Z']
+            call get_value_mode_local('PCAARPO', valp, valr, iret, retpara_=retp)
+            xfly = 1.0; xflz = 1.0
+            if ( retp(1).eq.0) xfly = valr(1)
+            if ( retp(2).eq.0) xflz = valr(2)
         endif
 !
 !       calcul des caracteristiques elementaires 'MASS_INER'

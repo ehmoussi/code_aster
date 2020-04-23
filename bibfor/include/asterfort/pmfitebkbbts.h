@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,8 +43,8 @@ interface
         real(kind=8) :: zj(*)
         real(kind=8) :: vfv(7,*)
         real(kind=8) :: skp(78,*)
-        real(kind=8) :: sk(78)
-        real(kind=8) :: vv(12)
+        real(kind=8) :: sk(*)
+        real(kind=8) :: vv(*)
         real(kind=8) :: vvp(12,*)
     end subroutine pmfitebkbbts
 end interface

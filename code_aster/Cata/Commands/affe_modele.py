@@ -143,6 +143,7 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "POU_D_T_GD",      # person_in_charge: jean-luc.flejou at edf.fr
                                   "POU_D_TG",        # person_in_charge: jean-luc.flejou at edf.fr
                                   "POU_D_TGM",       # person_in_charge: jean-luc.flejou at edf.fr
+                                  "POU_D_SQUE",      # person_in_charge: jean-luc.flejou at edf.fr
                                   "Q4G",             # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
                                   "Q4GG",            # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
                                   "TUYAU_3M",        # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
