@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ subroutine xcalfev_wrap(ndim, nnop, basloc, stano, he,&
 ! IN  FF      : FONCTIONS DE FORMES DE L ELEMENT PARENT
 ! IN  DFDI    : DERIVEES DES FONCTIONS DE FORMES DE L ELEMENT PARENT
 ! IN  FACE    : LE COTE DE LA FACETTE TRAITEE "MAIT" <MAITRE> OU "ESCL" <ESCLAVE>
-! IN  ELREF   : CET ARGUMENT N EST PAS UTILE A L INTERIEUR DES TE 
+! IN  ELREF   : CET ARGUMENT N EST PAS UTILE A L INTERIEUR DES TE
 ! IN  NNOP2   : NOMBRE NOEUDS SOMMETS
 ! IN  FF2     : FONCTIONS DE FORMES LINEAIRES /
 !                 CET ARGUMENT DOIT ETRE RENSEIGNE POUR LES ELEMENTS QUADRATIQUES
@@ -88,7 +88,7 @@ subroutine xcalfev_wrap(ndim, nnop, basloc, stano, he,&
     lstop=.true.
     if (present(kstop)) then
       if (kstop.eq.'C') lstop=.false.
-    endif    
+    endif
 !
     if (.not.present(dkdgl)) then
       lderiv=.false.
@@ -103,8 +103,8 @@ subroutine xcalfev_wrap(ndim, nnop, basloc, stano, he,&
     elrefp=' '
     if (present(elref)) then
       elrefp=elref
-      if (iselli(elrefp)) goto 10 
-      if (.not. lstop) goto 5    
+      if (iselli(elrefp)) goto 10
+      if (.not. lstop) goto 5
       if (.not.present(nnop2)) then
           call utmess('F', 'ELEMENTS6_6', sk='nnop2')
       endif
@@ -135,7 +135,7 @@ subroutine xcalfev_wrap(ndim, nnop, basloc, stano, he,&
     else
         call reeref(elrefp_lin, nnop_lin, geom, xg, ndim, xe_lin,&
                           ff_lin(1:nnop_lin), dfdi=dfdi_lin(1:nnop_lin,1:ndim))
-    endif  
+    endif
 !
 10  continue
 !
@@ -143,15 +143,15 @@ subroutine xcalfev_wrap(ndim, nnop, basloc, stano, he,&
 !    APPEL A XCALFEV
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     if (.not.iselli(elrefp).and.is_enr_line()) then
-!      
+!
        if (lderiv) then
           call xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
-                    lsn, lst, geom, kappa, mu, ff, fk,&
+                    geom, kappa, mu, ff, fk,&
                     dfdi, dkdgl, face=fac2, nnop_lin=nnop_lin,&
                     ff_lin=ff_lin, dfdi_lin=dfdi_lin)
-       else     
+       else
           call xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
-                    lsn, lst, geom, kappa, mu, ff, fk,&
+                    geom, kappa, mu, ff, fk,&
                     face=fac2, nnop_lin=nnop_lin,&
                     ff_lin=ff_lin)
         endif
@@ -160,11 +160,11 @@ subroutine xcalfev_wrap(ndim, nnop, basloc, stano, he,&
 !
        if (lderiv) then
           call xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
-                    lsn, lst, geom, kappa, mu, ff, fk,&
+                    geom, kappa, mu, ff, fk,&
                     dfdi, dkdgl, face=fac2)
        else
           call xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
-                    lsn, lst, geom, kappa, mu, ff, fk,&
+                    geom, kappa, mu, ff, fk,&
                     face=fac2)
        endif
 !
