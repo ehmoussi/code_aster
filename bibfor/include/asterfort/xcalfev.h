@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 !
 interface
     subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
-                       lsn, lst, geom, kappa, mu, ff, fk,&
+                       geom, kappa, mu, ff, fk,&
                        dfdi, dkdgl, face,&
                        nnop_lin, ff_lin, dfdi_lin)
         character(len=8), intent(in) :: elrefp
@@ -30,8 +30,6 @@ interface
         integer :: stano(*)
         real(kind=8) :: he
         real(kind=8) :: ff(*)
-        real(kind=8) :: lsn(*)
-        real(kind=8) :: lst(*)
         real(kind=8) :: basloc(*)
         real(kind=8) :: kappa
         real(kind=8) :: mu
