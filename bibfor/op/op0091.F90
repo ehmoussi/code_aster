@@ -109,7 +109,7 @@ subroutine op0091()
     call detrsd('TABLE_CONTAINER', nomres)
     call tbcrsd(nomres, 'G')
     nompar(1)='NOM_OBJET'
-    typpar(1)='K8'
+    typpar(1)='K16'
     nompar(2)='INTERF'
     typpar(2)='K8'
     nompar(3)='NOM_SD'
@@ -504,7 +504,7 @@ subroutine op0091()
     nompar(1)='TRAV_SST'
     typpar(1)='R'
     nompar(2)='NOM_OBJET'
-    typpar(2)='K8'
+    typpar(2)='K16'
     nompar(3)='NUM_MODE'
     typpar(3)='I'
     call tbajpa(nomres, 3, nompar, typpar)
