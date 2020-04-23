@@ -18,7 +18,7 @@ export PATH=${PREREQ_PATH}/prerequisites/Python-365/bin:${PATH}
 export LD_LIBRARY_PATH=${PREREQ_PATH}/prerequisites/Python-365/lib:${LD_LIBRARY_PATH}
 
 # custom configuration
-export CONFIG_PARAMETERS_addmem=1100
+export CONFIG_PARAMETERS_addmem=2000
 
 # prerequisites paths
 export PYPATH_NUMPY="${PREREQ_PATH}/prerequisites/Numpy-1151/lib/python3.6/site-packages"
