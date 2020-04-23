@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,11 +45,10 @@ TAB=POST_MAC3COEUR(RESULTAT   = RESUL,
                DEFORMATION = _F(FORMAT = 'TABLE', UNITE = 31, NOM_SITE = 'BIDON')
               )
 
-TEST_TABLE(VALE_CALC=2.173392402832336,   TABLE=TAB, TOLE_MACHINE=0.0001,NOM_PARA='moyRhoCoeur')
-TEST_TABLE(VALE_CALC=3.702897489013114,    TABLE=TAB, TOLE_MACHINE=0.0001,NOM_PARA='maxRhoCoeur',)
-TEST_TABLE(VALE_CALC=0.3585323050439357,   TABLE=TAB,TOLE_MACHINE=0.0001,NOM_PARA='moyGravCoeur',)
-TEST_TABLE(VALE_CALC=0.747969122083525,   TABLE=TAB,TOLE_MACHINE=0.0001,NOM_PARA='maxGravCoeur',)
-TEST_TABLE(VALE_CALC=0.2620506917961454,   TABLE=TAB,TOLE_MACHINE=0.0001,NOM_PARA='sigGravCoeur',)
-
+TEST_TABLE(TABLE=TAB, NOM_PARA='moyRhoCoeur', VALE_CALC=2.1734)
+TEST_TABLE(TABLE=TAB, NOM_PARA='maxRhoCoeur', VALE_CALC=3.7029)
+TEST_TABLE(TABLE=TAB, NOM_PARA='moyGravCoeur', VALE_CALC=0.3585)
+TEST_TABLE(TABLE=TAB, NOM_PARA='maxGravCoeur', VALE_CALC=0.748)
+TEST_TABLE(TABLE=TAB, NOM_PARA='sigGravCoeur', VALE_CALC=0.262)
 
 FIN()
