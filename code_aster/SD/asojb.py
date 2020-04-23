@@ -74,13 +74,11 @@ class AsBase(Type):
                     try:
                         v(checker)
                     except:
-                        mess = 60 * '-' + '\n'
-                        mess = mess + \
-                            'Erreur SDVERI (Attention : vérification incomplète)' + \
-                            '\n'
-                        mess = mess.join(
-                            traceback.format_tb(sys.exc_info()[2]))
-                        checker.err(self, mess)
+                        mess = [60 * '-',
+                                'Erreur SDVERI (Attention : vérification '
+                                'incomplète)',
+                                traceback.format_exc()]
+                        checker.err(self, '\n'.join(mess))
 
         checker.optional = optional
         return checker

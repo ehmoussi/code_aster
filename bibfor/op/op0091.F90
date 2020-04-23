@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,8 +80,8 @@ subroutine op0091()
 !
     character(len=4) :: k4bid, num4l
     character(len=8) :: nomres, modgen, resgen, sst1, sst2, intf1, intf2, kb
-    character(len=8) :: rest1, mraid, mmass, vk(3)
-    character(len=16) :: nomcmd, typres
+    character(len=8) :: rest1, mraid, mmass, valk
+    character(len=16) :: nomcmd, typres, vk(4)
     character(len=14) :: nume14
     character(len=19) :: imped, nume91, solveu, nompar(4), typpar(4)
     character(len=24) :: indin1, indin2, lino1, lino2, tramo1, tramo2
@@ -108,13 +108,15 @@ subroutine op0091()
 !-- INITIALISATION DE LA TABLE_CONTAINER
     call detrsd('TABLE_CONTAINER', nomres)
     call tbcrsd(nomres, 'G')
-    nompar(1)='NOM_SST'
+    nompar(1)='NOM_OBJET'
     typpar(1)='K8'
     nompar(2)='INTERF'
     typpar(2)='K8'
     nompar(3)='NOM_SD'
     typpar(3)='K8'
-    call tbajpa(nomres, 3, nompar, typpar)
+    nompar(4)='TYPE_OBJET'
+    typpar(4)='K16'
+    call tbajpa(nomres, 4, nompar, typpar)
 !
 !-- RECUPERATION DES INFOS
     call jelira(modgen//'      .MODG.LIDF', 'NMAXOC', nblia)
@@ -416,6 +418,7 @@ subroutine op0091()
         vk(1)=sst1
         vk(2)='ENCAS'
         call gcncon('_', vk(3))
+        vk(4) = 'MODE_MECA'
         call vpcrea(0, vk(3), mmass, ' ', mraid,&
                     nume91, ibid)
         nume14=nume91(1:14)
@@ -424,7 +427,7 @@ subroutine op0091()
         call jedetr('&&MOIN93.MODE_INTF_DEPL')
         call jedetr('&&MOIN93.FREQ_INTF_DEPL')
 !
-        call tbajli(nomres, 3, nompar, [ibid], [rbid],&
+        call tbajli(nomres, 4, nompar, [ibid], [rbid],&
                     [cbid], vk, 0)
 !--
 !-- VECTEURS A INTERFACE LIBRE
@@ -445,11 +448,12 @@ subroutine op0091()
         vk(1)=sst1
         vk(2)='LIBRE'
         call gcncon('_', vk(3))
+        vk(4) = 'MODE_MECA'
         call vpcrea(0, vk(3), mmass, ' ', mraid,&
                     nume91, ibid)
         call arch93(vk(3), 'MODE_MECA       ', nume14, mraid//'           ', 0,&
                     0, 0, 0, nindep, 0)
-        call tbajli(nomres, 3, nompar, [ibid], [rbid],&
+        call tbajli(nomres, 4, nompar, [ibid], [rbid],&
                     [cbid], vk, 0)
 !-- PETIT MENAGE
         call jedetr('&&MOIN93.MODE_INTF_DEPL')
@@ -499,17 +503,17 @@ subroutine op0091()
 !-- ARCHIVAGE DES TRAVAUX SOUS STRUCTURES
     nompar(1)='TRAV_SST'
     typpar(1)='R'
-    nompar(2)='NOM_SST'
+    nompar(2)='NOM_OBJET'
     typpar(2)='K8'
     nompar(3)='NUM_MODE'
     typpar(3)='I'
     call tbajpa(nomres, 3, nompar, typpar)
     do j1 = 1, nbmod
         do i1 = 1, nbsst
-            vk(1)=zk8(lnosst+i1-1)
+            valk=zk8(lnosst+i1-1)
             vr(1)=zr(ltrsst+nbmod*(i1-1)+j1-1)
             call tbajli(nomres, 3, nompar, [j1], vr,&
-                        [cbid], vk, 0)
+                        [cbid], valk, 0)
         end do
     end do
 !-- MENAGE DANS LES CONCEPTS TEMPORAIRES

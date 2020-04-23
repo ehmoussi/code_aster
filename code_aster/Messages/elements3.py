@@ -171,6 +171,16 @@ cata_msg = {
  ne pas utiliser THER_LINEAIRE avec des éléments de Fourier mais les commandes développées
 """),
 
+
+    64 : _("""
+Avec l'option GROT_GDEP, les coefficients de flexibilité ne sont pas pris en compte dans la
+matrice de raideur géométrique.
+   Coefficient de flexibilité suivant y : %(r1)f
+   Coefficient de flexibilité suivant z : %(r2)f
+"""),
+
+
+
     67 : _("""
  Élément dégénéré :
  revoir le maillage

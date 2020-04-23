@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 !
 !
 interface
-    subroutine pmpitp(flp, nbpout, yj, zj, fl)
-        integer :: nbpout
+    subroutine pmpitp(typfib, flp, nbpout, yj, zj, fl)
+        integer :: nbpout, typfib
         real(kind=8) :: flp(12,*)
         real(kind=8) :: yj(*)
         real(kind=8) :: zj(*)
-        real(kind=8) :: fl(12)
+        real(kind=8) :: fl(*)
     end subroutine pmpitp
 end interface

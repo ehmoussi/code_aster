@@ -4354,6 +4354,18 @@ phen.add('POU_D_TGM', Modelisation(dim=(1,3), code='PGM',
         (MT.SEG2      , EL.MECA_POU_D_TGM),
     )))
 
+phen.add('POU_D_SQUE', Modelisation(dim=(1,3), code='PGS',
+    attrs=(
+        (AT.POUTRE,'OUI'),
+        (AT.TYPMOD,'1D'),
+        (AT.TYPMOD2,'PMF'),
+        (AT.EFGE,'OUI'),
+        (AT.SOUS_POINT,'OUI'),
+    ),
+    elements=(
+        (MT.SEG2      , EL.MECA_POU_D_SQUE),
+    )))
+
 phen.add('POU_D_T_GD', Modelisation(dim=(1,3), code='PGD',
     attrs=(
         (AT.POUTRE,'OUI'),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,6 +53,7 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    aster_logical :: lLinear, lDisCtc
     character(len=8) :: answer
     integer :: nb_affe, i_affe
     character(len=16), pointer :: v_compor_vale(:) => null()
@@ -89,7 +90,31 @@ type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
         endif
     enddo
 !
-! - Print informations about COMPORTEMENT keyword*
+! - Check if linear
+!
+    lLinear = ASTER_TRUE
+    do i_affe = 1, nb_affe
+        if ((v_compor_vale(RELA_NAME+COMPOR_SIZE*(i_affe-1)).ne.'ELAS')) then
+            lLinear = ASTER_FALSE
+        endif
+        if ((v_compor_vale(DEFO+COMPOR_SIZE*(i_affe-1)).ne.'PETIT')) then
+            lLinear = ASTER_FALSE
+        endif
+    enddo
+    ds_constitutive%lLinear = lLinear
+!
+! - Check if DIS_*
+!
+    lDisCtc = ASTER_FALSE
+    do i_affe = 1, nb_affe
+        if ((v_compor_vale(RELA_NAME+COMPOR_SIZE*(i_affe-1)).eq.'DIS_CHOC') .or.&
+            (v_compor_vale(RELA_NAME+COMPOR_SIZE*(i_affe-1)).eq.'DIS_CONTACT')) then
+            lDisCtc = ASTER_TRUE
+        endif
+    enddo
+    ds_constitutive%lDisCtc = lDisCtc
+!
+! - Print informations about COMPORTEMENT keyword
 !
     call comp_info(model, ds_constitutive%compor)
 !

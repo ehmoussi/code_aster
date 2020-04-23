@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ for cmp in ( 'DH', 'DRX', 'DRY', 'DRZ', 'DX', 'DY', 'DZ', 'K1', 'K2', 'K3',
              'UI2', 'UI3', 'UI4', 'UI5', 'UI6', 'UO2', 'UO3', 'UO4', 'UO5', 'UO6', 'V11', 'V12', 'V13',
              'V21', 'V22', 'V23', 'V31', 'V32', 'V33', 'VI2', 'VI3', 'VI4', 'VI5', 'VI6', 'VO2', 'VO3',
              'VO4', 'VO5', 'VO6', 'WI1', 'WI2', 'WI3', 'WI4', 'WI5', 'WI6',
-             'WO', 'WO1', 'WO2', 'WO3', 'WO4', 'WO5', 'WO6',):
+             'WO', 'WO1', 'WO2', 'WO3', 'WO4', 'WO5', 'WO6','DRGX','DRGY','DRGZ',):
 
     #----------------
     # Modes locaux :

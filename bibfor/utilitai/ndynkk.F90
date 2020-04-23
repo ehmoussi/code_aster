@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,23 +33,17 @@ character(len=19) :: sddyna
 character(len=*) :: chaine
 character(len=19) :: nomsd
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! ROUTINE MECA_NON_LINE (UTILITAIRE)
+! MECA_NON_LINE - Dynamic management
 !
-! INTERROGE SDDYNA POUR RENVOYER UNE CHAINE
+! Get parameters (string) for dynamic datastructure
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
+! In  sddyna           : datastructure for dynamic
 !
-! OUT NOMSD  : NOM DE LA SD
-! IN  SDDYNA : NOM DE LA SD DEDIEE A LA DYNAMIQUE
-! IN  CHAINE :  = / 'MULTI_APPUI'
-!                 / 'AMOR_MODAL'
-!
-!
-!
-!
+! --------------------------------------------------------------------------------------------------
 !
     character(len=24) :: nosd, tcha
     integer :: jnosd, jtcha
@@ -62,7 +56,7 @@ character(len=19) :: nomsd
     character(len=19) :: sdammo
     character(len=15) :: sdmuap, sdprmo, sdexso
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -104,7 +98,7 @@ character(len=19) :: nomsd
         cham24 = zk24(jvecab+3-1)
 !
     else if (chaine(1:6).eq.'STADYN') then
-        cham24 = zk24(jnosd+4-1)
+        cham24 = zk24(jnosd-1+4)
 !
     else if (chaine(1:11).eq.'OLDP_VEFEDO') then
         cham24 = zk24(jveol+1-1)
@@ -156,79 +150,85 @@ character(len=19) :: nomsd
 ! --- SD AMORTISSEMENT MODAL
 !
     else if (chaine(1:6).eq.'SDAMMO') then
-        sdammo = zk24(jnosd+2-1)(1:19)
+        sdammo = zk24(jnosd-1+2)(1:19)
         cham24 = sdammo
 !
 ! --- SD EXCIT_SOL
 !
     else if (chaine(1:6).eq.'SDEXSO') then
-        sdexso = zk24(jnosd+5-1)(1:15)
+        sdexso = zk24(jnosd-1+5)(1:15)
         cham24 = sdexso
+! - Static modes for multi-support
+    else if (chaine .eq. 'multSuppMode') then
+        cham24 = zk24(jnosd-1+6)
+! - Modes for damping
+    else if (chaine .eq. 'dampMode') then
+        cham24 = zk24(jnosd-1+7)
 !
 ! --- SD PROJECTION MODALE
 !
     else if (chaine(1:11).eq.'PRMO_DEPGEM') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.DGM'
     else if (chaine(1:11).eq.'PRMO_DEPGEP') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.DGP'
     else if (chaine(1:11).eq.'PRMO_VITGEM') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.VGM'
     else if (chaine(1:11).eq.'PRMO_VITGEP') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.VGP'
     else if (chaine(1:11).eq.'PRMO_ACCGEM') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.AGM'
     else if (chaine(1:11).eq.'PRMO_ACCGEP') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.AGP'
     else if (chaine(1:11).eq.'PRMO_BASMOD') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.BAM'
     else if (chaine(1:11).eq.'PRMO_MASGEN') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.MAG'
     else if (chaine(1:11).eq.'PRMO_RIGGEN') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.RIG'
     else if (chaine(1:11).eq.'PRMO_AMOGEN') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.AMOG'
     else if (chaine(1:11).eq.'PRMO_FONGEN') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.FOG'
     else if (chaine(1:11).eq.'PRMO_FORGEN') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.FRG'
     else if (chaine(1:11).eq.'PRMO_ACCGCN') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.AGN'
     else if (chaine(1:11).eq.'PRMO_VALFON') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.VAF'
     else if (chaine(1:11).eq.'PRMO_FMODAL') then
-        sdprmo = zk24(jnosd+3-1)(1:15)
+        sdprmo = zk24(jnosd-1+3)(1:15)
         cham24 = sdprmo(1:15)//'.FMD'
 !
 ! --- SD MULTI_APPUi
 !
     else if (chaine(1:11).eq.'MUAP_MAFDEP') then
-        sdmuap = zk24(jnosd+1-1)(1:15)
+        sdmuap = zk24(jnosd-1+1)(1:15)
         cham24 = sdmuap(1:15)//'.FDP'
     else if (chaine(1:11).eq.'MUAP_MAFVIT') then
-        sdmuap = zk24(jnosd+1-1)(1:15)
+        sdmuap = zk24(jnosd-1+1)(1:15)
         cham24 = sdmuap(1:15)//'.FVT'
     else if (chaine(1:11).eq.'MUAP_MAFACC') then
-        sdmuap = zk24(jnosd+1-1)(1:15)
+        sdmuap = zk24(jnosd-1+1)(1:15)
         cham24 = sdmuap(1:15)//'.FAC'
     else if (chaine(1:11).eq.'MUAP_MAMULA') then
-        sdmuap = zk24(jnosd+1-1)(1:15)
+        sdmuap = zk24(jnosd-1+1)(1:15)
         cham24 = sdmuap(1:15)//'.MUA'
     else if (chaine(1:11).eq.'MUAP_MAPSID') then
-        sdmuap = zk24(jnosd+1-1)(1:15)
+        sdmuap = zk24(jnosd-1+1)(1:15)
         cham24 = sdmuap(1:15)//'.PSD'
     else
         ASSERT(.false.)
