@@ -1,0 +1,54 @@
+ TITRE
+LU-18-SEPT-2017 18:17:24                                                        
+ FINSF
+ %
+ COOR_2D
+ N1        0.00000000000000E+00  0.00000000000000E+00
+ N2        1.00000000000000E+00  0.00000000000000E+00
+ N3        1.00000000000000E+00  0.00000000000000E+00 
+FINSF
+ %
+ SEG2    
+ M1       N1       N2  
+ FINSF 
+ %
+ POI1
+ M2       N3 
+ FINSF
+ %    
+ GROUP_NO
+ Group_Of_All_Nodes      
+ N1       N2      
+ FINSF
+ %
+ GROUP_NO
+ Nfixes                  
+ N1 
+ FINSF 
+ %
+ GROUP_NO
+ PN_TR
+ N3
+ FINSF
+ %
+ GROUP_NO
+ P1N                     
+ N2      
+ FINSF
+ %
+ GROUP_MA
+ Group_Of_All_Edges      
+ M1      
+ FINSF
+ %
+ GROUP_MA
+ P1                      
+ M1
+ FINSF 
+ %
+ GROUP_MA
+ PN_TR
+ M2    
+ FINSF
+ %
+ FIN

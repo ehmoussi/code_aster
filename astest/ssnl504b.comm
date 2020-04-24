@@ -1,0 +1,310 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: francesco.bettonte at edf.fr
+
+# --------------------------------------------------------------------
+# MODELISATION POU_D_SQUE AVEC PMFS ET ASSEMBLAGE_FIBRE
+# --------------------------------------------------------------------
+
+DEBUT(CODE = _F(NIV_PUB_WEB = 'INTERNET',),
+      PAR_LOT = 'NON')
+
+#DOFs (master-like) applied for the test
+DOFm = [1.0,1.0,1.0, # Ux, Uy Uz
+        0.1,0.1,0.1, #Beam rotations theta_x, theta_y, theta_z
+        0.01,0.01,0.01]  #Grid rotations w_x, w_y, w_z
+
+nbpmf = 10
+
+#Positions of the beams in the mesh in the Y-Z plane
+pos_pout = [
+  [ 0.0, 0.0],
+  [ 0.0,-2.0],
+  [ 0.0, 3.0],
+  [ 4.0, 0.0],
+  [-1.0, 0.0],
+  [-3.0,-1.0],
+  [-3.0, 3.0],
+  [-2.0,-3.0],
+  [ 5.0,-3.0],
+  [ 1.0,-3.0],
+]
+
+#Computing DOFs on all beams considering beam kinematics
+# u = u0 - Y*omega_z + Z*omega_y
+# v = v0 - Z*omega_x 
+# w = w0 + Y*omega_x 
+
+dX = []
+dY = []
+dZ = []
+for (y,z) in pos_pout :
+  dX.append(DOFm[0] - y*DOFm[8] + z*DOFm[7])
+  dY.append(DOFm[1] - z*DOFm[6])
+  dZ.append(DOFm[2] + y*DOFm[6])
+
+MA = LIRE_MAILLAGE(UNITE = 20,
+                   FORMAT = 'MED',
+                   INFO = 1,)
+
+MA2 = LIRE_MAILLAGE(UNITE = 21,
+                    FORMAT = 'MED',
+                    INFO = 1,)
+
+ACIER = DEFI_MATERIAU(ELAS = _F(E = 2e+11,
+                                NU = 0.3,
+                                RHO = 7850.0,),)
+
+GF = DEFI_GEOM_FIBRE(FIBRE = [_F(GROUP_FIBRE = 'FP%d'%(i+1),
+                                 CARA = 'DIAMETRE',
+                                 VALE = (0.1,0.0,0.02,0.0,0.1,0.02,-0.1,0.0,0.02,0.0,-0.1,0.02,),
+                                 COOR_AXE_POUTRE = (0.0,0.0,))
+                              for i in range(nbpmf)])
+
+COMPF = DEFI_COMPOR(GEOM_FIBRE = GF,
+                    MATER_SECT = ACIER,
+                    MULTIFIBRE = [_F(GROUP_FIBRE = 'FP%d'%(i+1),
+                                     MATER = ACIER,
+                                     RELATION = 'ELAS')
+                                  for i in range(nbpmf)])
+
+GF2 = DEFI_GEOM_FIBRE(FIBRE = (_F(GROUP_FIBRE = 'FPM1',
+                                  CARA = 'DIAMETRE',
+                                  VALE = (0.1,0.0,0.02,0.0,0.1,0.02,-0.1,0.0,0.02,0.0,-0.1,0.02,),
+                                  COOR_AXE_POUTRE = (0.0,0.0,))),                 
+
+                      ASSEMBLAGE_FIBRE = _F(GROUP_ASSE_FIBRE = 'ASSE',
+                                            GROUP_FIBRE =  ['FPM1']*nbpmf,
+                                            COOR_GROUP_FIBRE =  [i for coords in pos_pout for i in coords],
+                                            GX_GROUP_FIBRE = [76923076923.076920]*nbpmf))
+
+COMPF2 = DEFI_COMPOR(GEOM_FIBRE = GF2,
+                     MATER_SECT = ACIER,
+                     MULTIFIBRE = (_F(GROUP_FIBRE = 'ASSE',
+                                      MATER = ACIER,
+                                      RELATION = 'ELAS',),
+                     ))
+
+
+MODELE = AFFE_MODELE(MAILLAGE = MA,
+                     AFFE = _F(GROUP_MA = ['P%d'%(i+1) for i in range(nbpmf)],
+                               PHENOMENE = 'MECANIQUE',
+                               MODELISATION = 'POU_D_EM',),)
+
+MODELE2 = AFFE_MODELE(MAILLAGE = MA2,
+                      AFFE = _F(GROUP_MA = ('P1',),
+                                PHENOMENE = 'MECANIQUE',
+                                MODELISATION = 'POU_D_SQUE',),)
+
+CAREL = AFFE_CARA_ELEM(MODELE = MODELE,
+                       INFO = 2,
+                       GEOM_FIBRE = GF,
+                       POUTRE = [_F(GROUP_MA = 'P%d'%(i+1),
+                                    SECTION = 'GENERALE',
+                                    CARA = ('A','IY','IZ','JX',),
+                                    VALE = (0.00125664,6.28319e-06,6.28319E-06,1.0,))
+                                 for i in range(nbpmf)],
+                       
+                       MULTIFIBRE = [_F(GROUP_MA = 'P%d'%(i+1),
+                                        GROUP_FIBRE = 'FP%d'%(i+1),
+                                        PREC_AIRE = 0.01,
+                                        PREC_INERTIE = 0.01,)
+                                     for i in range(nbpmf)])
+
+CAREL2 = AFFE_CARA_ELEM(MODELE = MODELE2,
+                        INFO = 2,
+                        POUTRE = (_F(GROUP_MA = 'P1',
+                                     SECTION = 'GENERALE',
+                                     CARA = ('A','IY','IZ','JX',),
+                                     VALE = (nbpmf*0.00125664,1.0e-06,1.0e-06,1.0,),),
+                        ),
+                        GEOM_FIBRE = GF2,
+                        MULTIFIBRE = (_F(GROUP_MA = 'P1',
+                                         GROUP_FIBRE = 'ASSE',
+                                         PREC_AIRE = 0.01,
+                                         PREC_INERTIE = 0.01,),
+                        ),)
+
+CHMAT = AFFE_MATERIAU(MAILLAGE = MA,
+                      AFFE = _F(GROUP_MA = ['P%d'%(i+1) for i in range(nbpmf)],
+                                MATER = ACIER,),
+                      AFFE_COMPOR = _F(GROUP_MA = ['P%d'%(i+1) for i in range(nbpmf)],
+                                       COMPOR = COMPF,),)
+
+CHMAT2 = AFFE_MATERIAU(MAILLAGE = MA2,
+                       AFFE = _F(GROUP_MA = ('P1',),
+                                 MATER = ACIER,),
+                       AFFE_COMPOR = _F(GROUP_MA = ('P1',),
+                                        COMPOR = COMPF2,),)
+
+# CONDITIONS AUX LIMITES
+ENCAST = AFFE_CHAR_MECA(MODELE = MODELE,
+                        DDL_IMPO = _F(GROUP_NO = 'Nfixes',
+                                      DX = 0.0,
+                                      DY = 0.0,
+                                      DZ = 0.0,
+                                      DRX = 0.0,
+                                      DRY = 0.0,
+                                      DRZ = 0.0,))
+
+DPT = AFFE_CHAR_MECA(MODELE = MODELE,
+                     DDL_IMPO = [_F(GROUP_NO = 'P%dN'%(i+1),
+                                    DX = dX[i],
+                                    DY = dY[i],
+                                    DZ = dZ[i],
+                                    DRX = DOFm[3],
+                                    DRY = DOFm[4],
+                                    DRZ = DOFm[5],)
+                                 for i in range(nbpmf)])
+
+
+ENCAST2 = AFFE_CHAR_MECA(MODELE = MODELE2,
+                         DDL_IMPO = (_F(GROUP_NO = 'Nfixes',
+                                        DX = 0.0,
+                                        DY = 0.0,
+                                        DZ = 0.0,
+                                        DRX = 0.0,
+                                        DRY = 0.0,
+                                        DRZ = 0.0,
+                                        DRGX = 0.0,
+                                        DRGY = 0.0,
+                                        DRGZ = 0.0)
+                         ))
+
+DPT2 = AFFE_CHAR_MECA(MODELE = MODELE2,
+                      DDL_IMPO = (_F(GROUP_NO = 'P1N',
+                                     DX = DOFm[0],
+                                     DY = DOFm[1],
+                                     DZ = DOFm[2],
+                                     DRX = DOFm[3],
+                                     DRY = DOFm[4],
+                                     DRZ = DOFm[5],
+                                     DRGX = DOFm[6],
+                                     DRGY = DOFm[7],
+                                     DRGZ = DOFm[8],
+                      )))
+
+
+LINST = DEFI_LIST_REEL(DEBUT = 0.0,
+                       INTERVALLE = _F(JUSQU_A = 1.0,
+                                       NOMBRE = 1,),)
+
+U = STAT_NON_LINE(MODELE = MODELE,
+                  CHAM_MATER = CHMAT,
+                  CARA_ELEM = CAREL,
+                  EXCIT = (_F(CHARGE = ENCAST,),
+                           _F(CHARGE = DPT,),),
+                  COMPORTEMENT = _F(RELATION = 'MULTIFIBRE',TOUT = 'OUI',),
+                  INCREMENT = _F(LIST_INST = LINST,),
+                  NEWTON = _F(PREDICTION = 'TANGENTE',
+                              MATRICE = 'TANGENTE',
+                              REAC_ITER = 1,),
+                  CONVERGENCE = _F(ITER_GLOB_MAXI = 150,),
+                  SOLVEUR = _F(METHODE = 'MUMPS',),)
+
+U2 = STAT_NON_LINE(MODELE = MODELE2,
+                   CHAM_MATER = CHMAT2,
+                   CARA_ELEM = CAREL2,
+                   EXCIT = (_F(CHARGE = ENCAST2,),
+                            _F(CHARGE = DPT2,),),
+                   COMPORTEMENT = _F(RELATION = 'MULTIFIBRE',TOUT = 'OUI',),
+                   INCREMENT = _F(LIST_INST = LINST,),
+                   NEWTON = _F(PREDICTION = 'TANGENTE',
+                               MATRICE = 'TANGENTE',
+                               REAC_ITER = 1,),
+                   CONVERGENCE = _F(ITER_GLOB_MAXI = 150,),
+                   SOLVEUR = _F(METHODE = 'MUMPS',),)
+
+U = CALC_CHAMP(reuse  = U,
+               RESULTAT = U,
+               INST = 1.0,
+               GROUP_MA = ['P%d'%(i+1) for i in range(nbpmf)],
+               FORCE = 'FORC_NODA',)
+
+U2 = CALC_CHAMP(reuse  = U2,
+                RESULTAT = U2,
+                INST = 1.0,
+                GROUP_MA = ('P1',),
+                FORCE = 'FORC_NODA',)
+
+
+IMPR_RESU(FORMAT = 'MED',
+          RESU = _F(RESULTAT = U,
+                    IMPR_NOM_VARI = 'NON'),)
+
+IMPR_RESU(FORMAT = 'MED',
+          RESU = _F(RESULTAT = U2,
+                    IMPR_NOM_VARI = 'NON'),)
+
+TABL = CREA_TABLE(RESU = _F(RESULTAT = U,
+                            NOM_CHAM = 'FORC_NODA',
+                            TOUT_CMP = 'OUI',
+                            TOUT = 'OUI',),)
+
+TABL2 = CREA_TABLE(RESU = _F(RESULTAT = U2,
+                             NOM_CHAM = 'FORC_NODA',
+                             TOUT_CMP = 'OUI',
+                             TOUT = 'OUI',),)
+                
+tmp = TABL.EXTR_TABLE().values()
+tmp2 = TABL2.EXTR_TABLE().values()
+
+NOMS_CMP = 'DX DY DZ DRX DRY DRZ DRGX DRGY DRGZ'.split()
+
+# Faisceau de poutres
+FX = tmp[NOMS_CMP[0]]
+FY = tmp[NOMS_CMP[1]]
+FZ = tmp[NOMS_CMP[2]]
+MX = tmp[NOMS_CMP[3]]
+MY = tmp[NOMS_CMP[4]]
+MZ = tmp[NOMS_CMP[5]]
+
+EF1_0 = [0, 0, 0, 0, 0, 0, 0, 0, 0] #Noeud 1
+for i in range(nbpmf) :
+  EF1_0[0] = EF1_0[0]+FX[i*2]
+  EF1_0[1] = EF1_0[1]+FY[i*2]
+  EF1_0[2] = EF1_0[2]+FZ[i*2]
+  EF1_0[3] = EF1_0[3]+MX[i*2]
+  EF1_0[4] = EF1_0[4]+MY[i*2]
+  EF1_0[5] = EF1_0[5]+MZ[i*2]
+  EF1_0[6] = EF1_0[6]+pos_pout[i][0]*FZ[i*2]-pos_pout[i][1]*FY[i*2]
+  EF1_0[7] = EF1_0[7]+pos_pout[i][1]*FX[i*2]
+  EF1_0[8] = EF1_0[8]-pos_pout[i][0]*FX[i*2]
+
+EF1_0 = [round(i,2) for i in EF1_0]
+print("Efforts faisceau de poutres :",EF1_0)
+
+# Squelette
+EF2_0 = [round(tmp2[i][0],2) for i in NOMS_CMP]
+print("Effort élément squelette :",EF2_0)
+
+TEST_RESU(RESU = [_F(NOEUD = 'N1',
+                     NOM_CMP = ncmp,
+                     VALE_CALC = EF2_0[i],
+                     VALE_REFE = EF1_0[i],
+                     PRECISION = 1.0 if 'DRX' in ncmp else 1.E-3,
+                     RESULTAT = U2,
+                     NUME_ORDRE = 1,
+                     NOM_CHAM = 'FORC_NODA',
+                     REFERENCE = 'AUTRE_ASTER',
+                     CRITERE = 'RELATIF',)
+                  for i, ncmp in enumerate(NOMS_CMP)])
+
+FIN()

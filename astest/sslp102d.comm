@@ -20,7 +20,7 @@
 # CALCUL DU TAUX DE RESTITUTION D'ENERGIE EN PRESENCE DE PRE-DEFORMATION
 # AXI-SYMMETRIQUE
 # CALCUL ELASTIQUE LINEAIRE
-# DEMIE-PLAQUE TRAITEE PAR SYMETRIE
+# DEMI-CYLINDRE TRAITE PAR SYMETRIE
 #
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
@@ -110,7 +110,8 @@ EPSINI=DEFI_FONCTION(   NOM_PARA='X',
 CH=AFFE_CHAR_CINE(MODELE=MO,MECA_IMPO=(
                            _F(  GROUP_NO = 'GRNM2',      DY = 0.0),
                            _F(  GROUP_NO = 'GRNM4',      DY = 0.0),
-                           _F(  GROUP_NO = 'BLOC_CR',      DX = 0.0)),
+                           #~ _F(  GROUP_NO = 'BLOC_CR',      DX = 0.0)
+                           ),
                         )
 
 CH_EPS=AFFE_CHAR_MECA_F(MODELE=MO,PRE_EPSI=_F(  TOUT = 'OUI',
@@ -220,11 +221,10 @@ GINI4=CALC_G(RESULTAT=RESUINI,
 #--------------------------------------------------------------------
 #                TESTS DES RESULTATS                                #
 #--------------------------------------------------------------------
-Gther1= 27.381509703796368
-Gther2= 27.379258419853578
-Gther3= 27.377058094665035
-Gther4= 27.377544538969396
-
+Gther1= 31.50584388612264
+Gther2= 31.503165974359877
+Gther3= 31.500724485013823
+Gther4= 31.501299959584696
 
 #NON REGRESSIONS DES G ISSUS DU CALCUL THERMOMECANIQUE
 TEST_TABLE(
@@ -261,7 +261,7 @@ TEST_TABLE(
 
 #TEST DES G ISSUS DU CALCUL AVEC PRE-DEFORMATION
 TEST_TABLE(
-           VALE_CALC=27.38150970379639,
+           VALE_CALC=31.50584388612272,
            VALE_REFE=Gther1,
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-4,
@@ -273,7 +273,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=27.37925841985362,
+           VALE_CALC=31.503165974359916,
            VALE_REFE=Gther2,
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-4,
@@ -285,7 +285,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=27.377058094665045,
+           VALE_CALC=31.5007244850139,
            VALE_REFE=Gther3,
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-4,
@@ -297,7 +297,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=27.377544538969374,
+           VALE_CALC=31.501299959584692,
            VALE_REFE=Gther4,
            REFERENCE='AUTRE_ASTER',
            PRECISION=1.E-4,
