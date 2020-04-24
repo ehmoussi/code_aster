@@ -88,7 +88,8 @@ CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
           'EPYZ',))
 
 CEPSINO  = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
-    components=('EPXX','EPYY','EPZZ','EPXY',))
+    components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
+          'EPYZ',))
 
 EDFEQPG  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
     components=('INVA_2','PRIN_[3]','INVA_2SG','VECT_1_X','VECT_1_Y',

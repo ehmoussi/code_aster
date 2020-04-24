@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,19 +31,18 @@ subroutine posipr(nomte, efge, sipo)
     character(len=*) :: nomte
 !
 #include "jeveux.h"
-#include "asterfort/tecach.h"
 #include "asterfort/poutre_modloc.h"
+#include "asterfort/get_value_mode_local.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: itsec, lrcou, iret
+    integer      :: itsec
     real(kind=8) :: a, a2, alfay, alfay2, alfaz, alfaz2, aredy
     real(kind=8) :: aredy2, aredz, aredz2, deux, hy1, hy2, hz1
     real(kind=8) :: hz2, r1, r2, rt, rt2, ry, ry2
     real(kind=8) :: rz, rz2, xfly, xflz, xiy, xiy2
     real(kind=8) :: xiz, xiz2, xjx, xjx2, xsiy, xsiz
     real(kind=8) :: xxy, xxz, zero
-    aster_logical :: lcoude
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,11 +59,14 @@ subroutine posipr(nomte, efge, sipo)
     character(len=8) :: noms_cara1(nb_cara1)
     data noms_cara1 /'HY1','HZ1','HY2','HZ2','R1','R2','TSEC'/
 !
+    integer             :: retp(4), iret
+    real(kind=8)        :: valr(4)
+    character(len=8)    :: valp(4)
+!
 ! --------------------------------------------------------------------------------------------------
 !
     zero = 0.d0
     deux = 2.d0
-    lcoude = .false.
 !
 !   recuperation des caracteristiques generales des sections
     call poutre_modloc('CAGNPO', noms_cara, nb_cara, lvaleur=vale_cara)
@@ -101,26 +103,24 @@ subroutine posipr(nomte, efge, sipo)
         alfay2 = zero
         alfaz2 = zero
     else if (nomte .eq. 'MECA_POU_D_T') then
-        call tecach('ONN', 'PCAARPO', 'L', iret, iad=lrcou)
-        if ( iret .eq. 0 ) then
-            lcoude = .true.
-            xfly = zr(lrcou)
-            xsiy = zr(lrcou+1)
-            xflz = zr(lrcou+2)
-            xsiz = zr(lrcou+3)
-!           prise en compte de l'indice de flexibilité
-            xiy  = xiy/xfly
-            xiz  = xiz/xflz
-            xiy2 = xiy2/xfly
-            xiz2 = xiz2/xflz
-!           prise en compte de l'indice de contraintes
-            xxy  = xsiy/xfly
-            xxz  = xsiz/xflz
-            xiy  = xiy/xxy
-            xiz  = xiz/xxz
-            xiy2 = xiy2/xxy
-            xiz2 = xiz2/xxz
-        endif
+        valp(1:4)=['C_FLEX_Y', 'C_FLEX_Z', 'I_SIGM_Y', 'I_SIGM_Z']
+        call get_value_mode_local('PCAARPO', valp, valr, iret, retpara_=retp)
+        if ( retp(1).eq.0) xfly = valr(1)
+        if ( retp(2).eq.0) xflz = valr(2)
+        if ( retp(3).eq.0) xsiy = valr(3)
+        if ( retp(4).eq.0) xsiz = valr(4)
+!       prise en compte de l'indice de flexibilité
+        xiy  = xiy/xfly
+        xiz  = xiz/xflz
+        xiy2 = xiy2/xfly
+        xiz2 = xiz2/xflz
+!       prise en compte de l'indice de contraintes
+        xxy  = xsiy/xfly
+        xxz  = xsiz/xflz
+        xiy  = xiy/xxy
+        xiz  = xiz/xxz
+        xiy2 = xiy2/xxy
+        xiz2 = xiz2/xxz
     endif
 !
 !   caracteristiques des sections cercle et rectangle
@@ -185,13 +185,12 @@ subroutine posipr(nomte, efge, sipo)
         sipo(12) = -efge(12)/xiz2*ry2
     endif
 !
-    if (lcoude) then
-        xxy = xsiy/xfly
-        xxz = xsiz/xflz
-        sipo(5)  = sipo(5)*xxy
-        sipo(6)  = sipo(6)*xxz
-        sipo(11) = sipo(11)*xxy
-        sipo(12) = sipo(12)*xxz
-    endif
+!   On doit corriger dans le cas du coude, si pas de coude les coeffs sont =1
+    xxy = xsiy/xfly
+    xxz = xsiz/xflz
+    sipo(5)  = sipo(5)*xxy
+    sipo(6)  = sipo(6)*xxz
+    sipo(11) = sipo(11)*xxy
+    sipo(12) = sipo(12)*xxz
 !
 end subroutine

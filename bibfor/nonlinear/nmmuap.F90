@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmmuap(sddyna)
-!
 ! person_in_charge: mickael.abbas at edf.fr
 !
-    implicit none
+subroutine nmmuap(sddyna)
+!
+implicit none
+!
 #include "jeveux.h"
+#include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
@@ -30,49 +32,50 @@ subroutine nmmuap(sddyna)
 #include "asterfort/jeveuo.h"
 #include "asterfort/ndynin.h"
 #include "asterfort/ndynkk.h"
-#include "asterfort/trmult.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/zerlag.h"
-    character(len=19) :: sddyna
+#include "asterfort/utmess.h"
 !
-! ----------------------------------------------------------------------
+character(len=19), intent(in) :: sddyna
 !
-! ROUTINE MECA_NON_LINE (DYNAMIQUE - INITIALISATIONS)
+! --------------------------------------------------------------------------------------------------
 !
-! LECTURE DONNEES MULTI-APPUIS
+! MECA_NON_LINE - Initializations
 !
-! ----------------------------------------------------------------------
+! Read parameters for dynamic: seismic method
 !
+! --------------------------------------------------------------------------------------------------
 !
-! IN  SDDYNA : SD DYNAMIQUE
+! In  sddyna           : datastructure for dynamic
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-    character(len=8) :: k8bid, rep, modsta, mailla
-    character(len=14) :: numddl
-    character(len=24) :: deeq, matric
-    integer :: nbmd, neq, na, nd, nbexci, nf, nv
-    integer :: i
-    integer :: iddeeq
+    character(len=8) :: k8bid, rep, multSuppMode
+    character(len=24) :: matrix
+    integer :: nbmd, nbEqua, na, nd, nbexci, nf, nv, iExci
     character(len=19) :: mafdep, mafvit, mafacc, mamula, mapsid
     integer :: jnodep, jnovit, jnoacc, jmltap, jpsdel
+    aster_logical :: lMultAppui
+    character(len=24) :: dynaNOSD
+    character(len=24), pointer :: vDynaNOSD(:) => null()
 !
-! ---------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-! --- LECTURE INFO. MATRICE MODES STATIQUES
+! - Access to dynamic datastructure
 !
-    call getvid(' ', 'MODE_STAT', scal=modsta, nbret=nbmd)
-    call dismoi('REF_RIGI_PREM', modsta, 'RESU_DYNA', repk=matric)
-    call dismoi('NOM_MAILLA', matric, 'MATR_ASSE', repk=mailla)
-    call dismoi('NOM_NUME_DDL', matric, 'MATR_ASSE', repk=numddl)
-    deeq = numddl//'.NUME.DEEQ'
-    call jeveuo(deeq, 'L', iddeeq)
-    call dismoi('NB_EQUA', matric, 'MATR_ASSE', repi=neq)
+    dynaNOSD = sddyna(1:15)//'.NOM_SD'
+    call jeveuo(dynaNOSD, 'E', vk24 = vDynaNOSD)
 !
-! --- LECTURE EFFORTS MULTI-APPUIS
+! - Get modes
+!
+    call getvid(' ', 'MODE_STAT', scal=multSuppMode, nbret=nbmd)
+    ASSERT(nbmd .eq. 1)
+    vDynaNOSD(6) = multSuppMode
+    call dismoi('REF_RIGI_PREM', multSuppMode, 'RESU_DYNA', repk=matrix)
+    call dismoi('NB_EQUA', matrix, 'MATR_ASSE', repi=nbEqua)
+!
+! - LECTURE EFFORTS MULTI-APPUIS
 !
     nbexci = ndynin(sddyna,'NBRE_EXCIT')
     call ndynkk(sddyna, 'MUAP_MAFDEP', mafdep)
@@ -80,48 +83,31 @@ subroutine nmmuap(sddyna)
     call ndynkk(sddyna, 'MUAP_MAFACC', mafacc)
     call ndynkk(sddyna, 'MUAP_MAMULA', mamula)
     call ndynkk(sddyna, 'MUAP_MAPSID', mapsid)
-!
     call wkvect(mafdep, 'V V K8', nbexci, jnodep)
     call wkvect(mafvit, 'V V K8', nbexci, jnovit)
     call wkvect(mafacc, 'V V K8', nbexci, jnoacc)
     call wkvect(mamula, 'V V I', nbexci, jmltap)
-    call wkvect(mapsid, 'V V R8', nbexci*neq, jpsdel)
+    call wkvect(mapsid, 'V V R8', nbexci*nbEqua, jpsdel)
+    lMultAppui = ASTER_FALSE
 !
-    do i = 1, nbexci
-        call getvtx('EXCIT', 'MULT_APPUI', iocc=i, scal=rep, nbret=nd)
+    do iExci = 1, nbexci
+        call getvtx('EXCIT', 'MULT_APPUI', iocc=iExci, scal=rep, nbret=nd)
         if (rep(1:3) .eq. 'OUI') then
-            zi(jmltap+i-1) = 1
-!
-! --- ACCELERATIONS AUX APPUIS
-!
-            call getvid('EXCIT', 'ACCE', iocc=i, scal=k8bid, nbret=na)
+            lMultAppui = ASTER_TRUE
+            zi(jmltap+iExci-1) = 1
+! --------- Get accelerations
+            call getvid('EXCIT', 'ACCE', iocc=iExci, scal=k8bid, nbret=na)
             if (na .ne. 0) then
-                call getvid('EXCIT', 'ACCE', iocc=i, scal=zk8(jnoacc+i-1), nbret=na)
+                call getvid('EXCIT', 'ACCE', iocc=iExci, scal=zk8(jnoacc+iExci-1), nbret=na)
             endif
-!
-! --- FONCTIONS MULTIPLICATRICES DES ACCE. AUX APPUIS
-!
-            call getvid('EXCIT', 'FONC_MULT', iocc=i, scal=k8bid, nbret=nf)
+            call getvid('EXCIT', 'FONC_MULT', iocc=iExci, scal=k8bid, nbret=nf)
             if (nf .ne. 0) then
-                call getvid('EXCIT', 'FONC_MULT', iocc=i, scal=zk8(jnoacc+i- 1), nbret=nf)
+                call getvid('EXCIT', 'FONC_MULT', iocc=iExci, scal=zk8(jnoacc+iExci- 1), nbret=nf)
             endif
-!
-! --- VITESSES AUX APPUIS
-!
-            call getvid('EXCIT', 'VITE', iocc=i, scal=zk8(jnovit+i-1), nbret=nv)
-!
-! --- DEPLACEMENTS AUX APPUIS
-!
-            call getvid('EXCIT', 'DEPL', iocc=i, scal=zk8(jnodep+i-1), nbret=nd)
-!
-! --- CREE ET CALCULE LE VECTEUR PSI*DIRECTION
-!
-            call trmult(modsta, i, mailla, neq, iddeeq,&
-                        zr(jpsdel+(i-1)* neq), numddl)
-!
-! --- MISE A ZERO DES DDL DE LAGRANGE
-!
-            call zerlag(neq, zi(iddeeq), vectr=zr(jpsdel+(i-1)*neq))
+! --------- Get speeds
+            call getvid('EXCIT', 'VITE', iocc=iExci, scal=zk8(jnovit+iExci-1), nbret=nv)
+! --------- Get displacements
+            call getvid('EXCIT', 'DEPL', iocc=iExci, scal=zk8(jnodep+iExci-1), nbret=nd)
         endif
     end do
 !

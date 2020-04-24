@@ -762,6 +762,7 @@ list_cmp_depl=(
   'V3[3]',      'PRES1[3]',   'PRES2[3]',   'PRES3[3]',   'SIGN',       'SITX',
   'SITY',       'LH1',        'SIXX',       'SIYY',       'SIZZ',       'SIXY',
   'DAMG',       'PTOT',       'PIX',        'PIY',        'PIZ',
+  'DRGX',       'DRGY',       'DRGZ',
   'HHO[60]',    'HHO_U[6]',   'HHO_V[6]',   'HHO_W[6]',
 )
 comment_depl= """  DEPL_R/_C/_F  Deplacement reel, complexe ou fonction
@@ -828,6 +829,9 @@ comment_depl= """  DEPL_R/_C/_F  Deplacement reel, complexe ou fonction
        PIX     : projete du gradient de pression suivantx (methode OSGS)
        PIY     : projete du gradient de pression suivanty (methode OSGS)
        PIZ     : projete du gradient de pression suivantz (methode OSGS)
+       DRGX    : rotation des grilles (élément poutre assemblage combustible)
+       DRGY    : rotation des grilles (élément poutre assemblage combustible)
+       DRGZ    : rotation des grilles (élément poutre assemblage combustible)
        HHO_U : degres de liberté HHO: 1, X, Y, X2, Y2, XY (X, Y plan face) dir1
        HHO_V : degres de liberté HHO: 1, X, Y, X2, Y2, XY (X, Y plan face) dir2
        HHO_W : degres de liberté HHO: 1, X, Y, X2, Y2, XY (X, Y plan face) dir3
@@ -1594,6 +1598,9 @@ FORC_C   = PhysicalQuantity(type='C',
        'BETA',
        'GAMMA',
        'PLAN',
+       'MGX',
+       'MGY',
+       'MGZ',
     ),
     comment="""  FORC_C Type:C Force complexe (ponctuelle, lineique, surfacique ou
     volumique) appliquee sur un modele mecanique
@@ -1610,6 +1617,9 @@ FORC_C   = PhysicalQuantity(type='C',
        BETA : angles nautiques
        GAMMA : angles nautiques
        PLAN :
+       MGX : moment grille suivant OX
+       MGY : moment grille suivant OY
+       MGZ : moment grille suivant OZ
 """)
 
 
@@ -1627,6 +1637,9 @@ FORC_F   = PhysicalQuantity(type='K8',
        'BETA',
        'GAMMA',
        'PLAN',
+       'MGX',
+       'MGY',
+       'MGZ',
     ),
     comment="""  FORC_F Type:K8 Force (ponctuelle, lineique, surfacique ou volumique)
     appliquee sur un modele mecanique
@@ -1643,6 +1656,9 @@ FORC_F   = PhysicalQuantity(type='K8',
        BETA angles nautiques
        GAMMA angles nautiques
        PLAN :
+       MGX : moment grille suivant OX
+       MGY : moment grille suivant OY
+       MGZ : moment grille suivant OZ
 """)
 
 
@@ -1660,6 +1676,9 @@ FORC_R   = PhysicalQuantity(type='R',
        'BETA',
        'GAMMA',
        'PLAN',
+       'MGX',
+       'MGY',
+       'MGZ',
     ),
     comment="""  FORC_R Type:R Force (ponctuelle, lineique, surfacique ou volumique)
     appliquee sur un modele mecanique
@@ -1676,6 +1695,9 @@ FORC_R   = PhysicalQuantity(type='R',
        BETA : angles nautiques
        GAMMA : angles nautiques
        PLAN :
+       MGX : moment grille suivant OX
+       MGY : moment grille suivant OY
+       MGZ : moment grille suivant OZ
 """)
 
 REAC_R   = PhysicalQuantity(type='R',
@@ -2920,6 +2942,9 @@ SIEF_C   = PhysicalQuantity(type='C',
        'SIGV_GX',
        'SIGV_GY',
        'SIGV_GZ',
+       'MGX',
+       'MGY',
+       'MGZ',
     ),
     comment="""  SIEF_C Type:C Etat de contrainte (ou d'effort interne)
        SIXX : sigma_xx contraintes dans un milieu continu
@@ -3255,6 +3280,9 @@ SIEF_R   = PhysicalQuantity(type='R',
        'SIGV_GX',
        'SIGV_GY',
        'SIGV_GZ',
+       'MGX',
+       'MGY',
+       'MGZ',
     ),
     comment="""  SIEF_R Type:R Etat de contrainte (ou d'effort interne) (cf. (U2.01.04))
        SIXX : sigma_xx contraintes dans un milieu continu
@@ -3484,6 +3512,9 @@ STRX_R   = PhysicalQuantity(type='R',
        'ALPHA',
        'BETA',
        'GAMMA',
+       'MGX',
+       'MGY',
+       'MGZ',
     ),
     comment="""  STRX_R  Type:R Champs special pour les elements de structure
        N : effort normal

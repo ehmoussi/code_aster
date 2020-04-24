@@ -298,7 +298,7 @@ type(HHO_Field), intent(inout) :: hhoField
 !
 ! - Initializations for dynamic
 !
-    call nonlinDSDynamicInit(valinc, sddyna)
+    call nonlinDSDynamicInit(valinc, sddyna, ds_constitutive)
 !
 ! --- CONSTRUCTION DU CHAM_NO ASSOCIE AU PILOTAGE
 !

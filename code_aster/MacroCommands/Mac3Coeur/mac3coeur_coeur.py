@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: samuel.geniaut at edf.fr
+# person_in_charge: francesco.bettonte at edf.fr
 
 """
 Module dédié à la macro MAC3COEUR.
@@ -85,6 +85,7 @@ class Coeur(object):
         self._mateAC = {}
         self.nameAC = {}
         self.temps_simu = {}.fromkeys(self._time)
+        self.temps_archiv = None
         self.sub_temps_simu = {}.fromkeys(self._subtime)
         self._para = {}
         self._keys = {}.fromkeys(self.required_parameters)
@@ -696,7 +697,17 @@ class Coeur(object):
 
     def definition_time(self, fluence, subdivis, nbSubdEchec=10):
         """Return the list of timesteps"""
+        _LI = self.definition_time_arch(fluence,subdivis)
 
+        if nbSubdEchec == 1 :
+            return _LI
+        else :
+            _TE = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=_LI,),
+                                 ECHEC=_F(SUBD_PAS=4, SUBD_NIVEAU=nbSubdEchec,),)
+            return _TE
+
+    def definition_time_arch(self,fluence, subdivis):
+        """Return the list of timesteps"""
         def m_time(a):
             # for debugging use NOMBRE=1
             m_time = (
@@ -712,14 +723,8 @@ class Coeur(object):
             _list.extend(m_time(_time))
 
         _LI = DEFI_LIST_REEL(DEBUT=-1, INTERVALLE=_list,)
+        return _LI
 
-
-        if nbSubdEchec == 1 :
-            return _LI
-        else :
-            _TE = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=_LI,),
-                             ECHEC=_F(SUBD_PAS=4, SUBD_NIVEAU=nbSubdEchec,),)
-            return _TE
 
     def init_temps_simu(self, fluence, subdivis):
         """Initialise les temps caracteristiques"""

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,8 @@ subroutine affgen(tmp, nom, nel, ntel, napcis, foncis)
 !
     if (.not.(nel.eq.ntel(1) .or. nel.eq.ntel(2) .or. nel.eq.ntel(3) .or. nel.eq.ntel(4) .or. &
               nel.eq.ntel(5) .or. nel.eq.ntel(11) .or. nel.eq.ntel(12) .or. nel.eq.ntel(8) .or. &
-              nel.eq.ntel(9) .or. nel.eq.ntel(10) .or. nel.eq.ntel(6) .or. nel.eq.ntel(7))) then
+              nel.eq.ntel(9) .or. nel.eq.ntel(10) .or. nel.eq.ntel(6) .or. nel.eq.ntel(7) .or. &
+              nel.eq.ntel(13) )) then
         call utmess('F', 'MODELISA_86')
     endif
 !

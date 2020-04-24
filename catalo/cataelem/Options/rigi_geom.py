@@ -79,6 +79,7 @@ comment="""  PSTRXRR : CHAMPS SPECIAL ELEMENTS DE STRUCTURE """)
 RIGI_GEOM = Option(
     para_in=(
            PBASLOR,
+        SP.PCAARPO,
         SP.PCACABL,
         SP.PCACOQU,
         SP.PCAGNPO,
