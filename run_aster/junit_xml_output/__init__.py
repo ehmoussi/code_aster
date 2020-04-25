@@ -54,12 +54,13 @@ class JunitXml(object):
     """
 
     def __init__(self, testsuit_name, test_cases, total_tests=None,
-                 total_failures=None):
+                 total_failures=None, total_time=None):
         self.testsuit_name = testsuit_name
         self.test_cases = test_cases
         self.failing_test_cases = self._get_failing_test_cases()
         self.total_tests = total_tests
         self.total_failures = total_failures
+        self.total_time = total_time
         if total_tests is None:
             self.total_tests = len(self.test_cases)
         if total_failures is None:
@@ -70,6 +71,8 @@ class JunitXml(object):
                                 "tests": str(self.total_tests)
                                })
         self.build_junit_xml()
+        if self.total_time:
+            self.root.set("time", "{:.2f}".format(self.total_time))
 
     def _get_failing_test_cases(self):
         return set([case for case in self.test_cases if
@@ -79,14 +82,20 @@ class JunitXml(object):
         """ create the xml tree from the given testsuite name and
             testcase
         """
+        total = 0.
         for case in self.test_cases:
             test_case_element = ET.SubElement(self.root,
                                               "testcase",
-                                              {"name": str(case.name)})
-            if case.is_failure():
-                failure_element = ET.Element("failure")
-                failure_element.text = case.contents
-                test_case_element.append(failure_element)
+                                              {"name": str(case.name),
+                                               "time": str(case.time)})
+            if case.test_type:
+                elt = ET.Element(case.test_type)
+                elt.text = case.contents
+                if case.message:
+                    elt.set("message", case.message)
+                test_case_element.append(elt)
+            total += float(case.time)
+        self.total_time = self.total_time or total
 
     def dump(self, pretty=True):
         """ returns a string representation of the junit xml tree. """
@@ -104,10 +113,14 @@ class TestCase(object):
         the junit test xml tree
     """
 
-    def __init__(self, name, contents, test_type=""):
+    def __init__(self, name, contents, message=None, test_type="", time=0):
         self.name = name
         self.contents = contents
+        self.message = message
+        if test_type not in ("", "skipped", "failure"):
+            test_type = "failure"
         self.test_type = test_type
+        self.time = time
 
     def is_failure(self):
         """ returns True if this test case is a 'failure' type """
