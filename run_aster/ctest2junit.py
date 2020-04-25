@@ -52,34 +52,61 @@ class XUnitReport:
         It reads the list of testcases that passed and that failed from the
         ``CTestCostData.txt`` file and extracts detailed informations (error
         messages, OK/NOOK results) from ``.mess`` files.
+        ``LastTest.log`` is also parsed to get the elapsed time of testcases
+        in failure.
         """
-        cost = osp.join(osp.join(self.base, "Testing", "Temporary"),
-                                 "CTestCostData.txt")
+        cost = osp.join(self.base, "Testing", "Temporary", "CTestCostData.txt")
+        lastlog = osp.join(self.base, "Testing", "Temporary", "LastTest.log")
         if not osp.isfile(cost):
             return
 
+        re_test_time = re.compile(
+            r"^(?P<ctname>ASTER_[0-9\.]+_(?P<name>\S+)) +"
+            r"(?P<ok>[0-9]+) +"
+            r"(?P<time>[0-9\.,]+)", re.M)
         re_test = re.compile(r"^(\S+)", re.M)
         with open(cost, "r") as fcost:
             text = fcost.read()
         passed, failed = text.split("---")
-        names = re_test.findall(passed)
+        iternames = re_test_time.finditer(passed)
         failures = re_test.findall(failed)
 
-        re_name = re.compile(r"ASTER_[0-9\.]+_(.*)")
+        with open(lastlog, "r") as flog:
+            log = flog.read()
+        re_elaps = re.compile(
+            r".(?P<ctname>ASTER_[0-9\.]+_(?P<name>\S+)). +"
+            r"time elapsed: +(?P<time>[0-9]+:[0-9]+:[0-9]+)")
+        timedict = {}
+        for mat in re_elaps.finditer(log):
+            hours, mins, secs = mat.group("time").split(':')
+            secs = int(hours) * 3600 + int(mins) * 60 + int(secs)
+            timedict[mat.group("name")] = secs
+
         self.junit_test = []
-        for name in names:
-            testname = name
-            mat = re_name.search(name)
-            if mat:
-                testname = mat.group(1)
-            jstate = "failure" if name in failures else ""
-            output = osp.join(self.base, testname + ".mess")
-            details = [get_state(output)]
-            if jstate:
-                details.append(get_nook(output))
-                details.append(get_err_msg(output))
-            content = "\n".join(details)
-            self.junit_test.append(JUNIT.TestCase(name, content, jstate))
+        for mat in iternames:
+            ctname = mat.group("ctname")
+            testname = mat.group("name")
+            jstate = "failure" if ctname in failures else ""
+            mess = osp.join(self.base, testname + ".mess")
+            if osp.isfile(mess):
+                with open(mess, "rb") as fmess:
+                    output = fmess.read().decode(errors="replace")
+                state = get_state(output)
+                if "NOT_RUN" in state:
+                    jstate = "skipped"
+                details = []
+                if jstate:
+                    details.append(get_nook(output))
+                    details.append(get_err_msg(output))
+                content = "\n".join(details)
+            else:
+                output = ""
+                state = f"not found: {mess}"
+                content = ""
+            time = float(mat.group("time").replace(",", "."))
+            self.junit_test.append(
+                JUNIT.TestCase(ctname, content, state, jstate,
+                               time or timedict[testname]))
 
     def write_xml(self, filename):
         """Export the report in XML.
@@ -99,57 +126,44 @@ RE_EXCEP = re.compile(r"(\<EXCEPTION\>.*?)!\-\-\-", re.M | re.DOTALL)
 RE_SUPERV = re.compile("DEBUT RAPPORT(.*?)FIN RAPPORT", re.M | re.DOTALL)
 RE_STATE = re.compile("DIAGNOSTIC JOB : (.*)", re.M)
 
-def get_state(fname):
-    """Extract the test state for a 'message' file.
+def get_state(txt):
+    """Extract the test state for a 'message' file content.
 
     Arguments:
-        fname (str): '.mess' file.
+        txt (str): '.mess' file content.
 
     Returns:
         str: Error messages.
     """
-    if not osp.isfile(fname):
-        return f"not found: {fname}"
-    with open(fname, "rb") as fobj:
-        txt = fobj.read().decode(errors="replace")
     state = RE_STATE.findall(txt)
     if not state:
         return "?"
     return state[-1]
 
-def get_err_msg(fname):
-    """Extract the error message for a 'message' file.
+def get_err_msg(txt):
+    """Extract the error message for a 'message' file content.
 
     Arguments:
-        fname (str): '.mess' file.
+        txt (str): '.mess' file content.
 
     Returns:
         str: Error messages.
     """
-    if not osp.isfile(fname):
-        return f"not found: {fname}"
-    msg = []
-    with open(fname, "rb") as fobj:
-        txt = fobj.read().decode(errors="replace")
     found = (RE_ERRMSG.findall(txt)
              or RE_EXCEP.findall(txt)
              or RE_SUPERV.findall(txt))
-    msg.extend(_clean_msg(found))
+    msg = _clean_msg(found)
     return os.linesep.join(msg)
 
-def get_nook(fname):
-    """Extract NOOK values from a 'message' file.
+def get_nook(txt):
+    """Extract NOOK values from a 'message' file content.
 
     Arguments:
-        fname (str): '.mess' file.
+        txt (str): '.mess' file content.
 
     Returns:
         str: Text of OK/NOOK values.
     """
-    if not osp.isfile(fname):
-        return "not found: {fname}"
-    with open(fname, "rb") as fobj:
-        txt = fobj.read().decode(errors="replace")
     reg_resu = re.compile("^( *(?:REFERENCE|OK|NOOK) .*$)", re.M)
     lines = reg_resu.findall(txt)
     return os.linesep.join(lines)
