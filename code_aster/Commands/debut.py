@@ -89,6 +89,7 @@ class ExecutionStarter:
         if not params.option & Options.Continue:
             copy_datafiles(params.export.datafiles)
         aster_core.register(params, MessageLog)
+        libaster.onFatalError("ABORT")
         libaster.jeveux_init()
         cls._is_initialized = True
         return True
