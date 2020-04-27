@@ -47,11 +47,12 @@ subroutine op0008()
 #include "asterfort/sdmpic.h"
 #include "asterfort/ss2mme.h"
 #include "asterfort/utmess.h"
+#include "asterfort/isParallelMesh.h"
 !
     integer :: ibid, ich, icha, ncha, nh
     integer :: n1, n3, n4, n5, n7, n9, iresu,  iexi, nbresu
     real(kind=8) :: time, tps(6), vcmpth(4)
-    character(len=8) :: matez, modele, cara, k8bid, kmpic
+    character(len=8) :: matez, modele, cara, k8bid, kmpic, mesh
     character(len=8) :: nomcmp(6), mo1, ncmpth(4)
     character(len=16) :: type, oper, suropt
     character(len=19) :: matel, resuel
@@ -180,17 +181,21 @@ subroutine op0008()
 !
 !     -- SI MATEL N'EST PAS MPI_COMPLET, ON LE COMPLETE :
 !     ----------------------------------------------------
-    call jelira(matel//'.RELR', 'LONMAX', nbresu)
-    call jeveuo(matel//'.RELR', 'L', vk24=relr)
-    do iresu = 1, nbresu
-        resuel=relr(iresu)(1:19)
-        call jeexin(resuel//'.RESL', iexi)
-        if (iexi .eq. 0) goto 101
-        call dismoi('MPI_COMPLET', resuel, 'RESUELEM', repk=kmpic)
-        ASSERT((kmpic.eq.'OUI').or.(kmpic.eq.'NON'))
-        if (kmpic .eq. 'NON') call sdmpic('RESUELEM', resuel)
-101     continue
-    end do
+
+    call dismoi('NOM_MAILLA', matel, 'MATR_ELEM', repk=mesh)
+    if(.not. isParallelMesh(mesh)) then
+        call jelira(matel//'.RELR', 'LONMAX', nbresu)
+        call jeveuo(matel//'.RELR', 'L', vk24=relr)
+        do iresu = 1, nbresu
+            resuel=relr(iresu)(1:19)
+            call jeexin(resuel//'.RESL', iexi)
+            if (iexi .eq. 0) goto 101
+            call dismoi('MPI_COMPLET', resuel, 'RESUELEM', repk=kmpic)
+            ASSERT((kmpic.eq.'OUI').or.(kmpic.eq.'NON'))
+            if (kmpic .eq. 'NON') call sdmpic('RESUELEM', resuel)
+101         continue
+        end do
+    end if
 !
 !
 !
