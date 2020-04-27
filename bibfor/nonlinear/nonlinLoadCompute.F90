@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ subroutine nonlinLoadCompute(mode       , list_load      ,&
                              time_prev  , time_curr      ,&
                              hval_incr  , hval_algo      ,&
                              hval_veelem, hval_veasse    ,&
-                             hhoField_)
+                             hhoField_  , prediction_)
 !
 use NonLin_Datastructure_type
 use HHO_type
@@ -64,6 +64,7 @@ real(kind=8), intent(in) :: time_prev, time_curr
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
 character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 type(HHO_Field), optional, intent(in) :: hhoField_
+aster_logical, optional, intent(in) :: prediction_
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -101,7 +102,7 @@ type(HHO_Field), optional, intent(in) :: hhoField_
     aster_logical :: l_pilo, l_lapl, l_diri_undead, l_sstf, l_hho, l_load_cine
     real(kind=8) :: time_list(3)
     character(len=19) :: disp_prev, strx_prev
-    character(len=19) :: vite_curr, varc_curr, disp_curr
+    character(len=19) :: vite_curr, varc_curr, disp_curr, acce_curr
     character(len=19) :: disp_cumu_inst
     character(len=24) :: vrcplu
     type(HHO_Field) :: hhoField
@@ -145,6 +146,13 @@ type(HHO_Field), optional, intent(in) :: hhoField_
     call nmchex(hval_incr, 'VALINC', 'STRMOI', strx_prev)
     call nmchex(hval_incr, 'VALINC', 'DEPPLU', disp_curr)
     call nmchex(hval_incr, 'VALINC', 'VITPLU', vite_curr)
+!
+    if ( present(prediction_) ) then
+        call nmchex(hval_incr, 'VALINC', 'ACCMOI', acce_curr)
+    else
+        call nmchex(hval_incr, 'VALINC', 'ACCPLU', acce_curr)
+    endif
+!
     call nmchex(hval_incr, 'VALINC', 'COMPLU', varc_curr)
     call nmvcex('TOUT', varc_curr, vrcplu)
 !
@@ -259,10 +267,10 @@ type(HHO_Field), optional, intent(in) :: hhoField_
     if (mode .eq. 'VARI' .or. mode .eq. 'ACCI') then
         call nmchex(hval_veelem, 'VEELEM', 'CNFSDO', vect_elem)
         call nmchex(hval_veasse, 'VEASSE', 'CNFSDO', vect_asse)
-        call vecgme(model, cara_elem, ds_material%field_mate,&
-                    lload_name, lload_info,&
-                    time_curr, disp_prev, disp_cumu_inst, vect_elem, time_prev,&
-                    ds_constitutive%compor, ' '   , vite_curr, strx_prev)
+        call vecgme(model, cara_elem, ds_material%field_mate, lload_name, &
+                    lload_info, time_curr, disp_prev, disp_cumu_inst, &
+                    vect_elem, time_prev, ds_constitutive%compor, ' '  , &
+                    vite_curr, acce_curr, strx_prev)
         call asasve(vect_elem, nume_dof, 'R', vect_alem)
         call ascova('D', vect_alem, lload_func, 'INST', time_curr,&
                     'R', vect_asse)

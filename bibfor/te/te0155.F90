@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,43 @@
 ! --------------------------------------------------------------------
 
 subroutine te0155(option, nomte)
+!
+! --------------------------------------------------------------------------------------------------
+!
+!     CALCUL DES FORCES ELEMENTAIRES LINEIQUES
+!
+!     CALCUL DU CHARGEMENT INDUIT PAR UNE ELEVATION UNIFORME DE  TEMPERATURE
+!
+! --------------------------------------------------------------------------------------------------
+!
+! option : nom de l'option à calculer
+!       CHAR_MECA_PESA_R    : charges de pesanteur
+!       CHAR_MECA_FR1D1D    : forces linéiques (réelles)
+!       CHAR_MECA_FF1D1D    : forces linéiques (fonctions)
+!       CHAR_MECA_SR1D1D    : forces linéiques suiveuses (réelles)
+!       CHAR_MECA_SF1D1D    : forces linéiques suiveuses (fonctions)
+!       CHAR_MECA_TEMP_R    : élévation de température
+!       CHAR_MECA_SECH_R    : séchage
+!       CHAR_MECA_HYDR_R    : hydratation
+!       CHAR_MECA_EPSI_R    : déformation initiale
+!       CHAR_MECA_EPSI_F    : déformation initiale
+!
+! nomte  :
+!       MECA_BARRE      : BARRE
+!       MECA_2D_BARRE   : BARRE en 2D
+!
+! --------------------------------------------------------------------------------------------------
+!
     implicit none
+    character(len=*) :: option, nomte
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8miem.h"
 #include "asterfort/angvx.h"
 #include "asterfort/assert.h"
 #include "asterfort/fointe.h"
+#include "asterfort/get_value_mode_local.h"
 #include "asterfort/jevech.h"
 #include "asterfort/matrot.h"
 #include "asterfort/provec.h"
@@ -37,637 +67,441 @@ subroutine te0155(option, nomte)
 #include "asterfort/utpvlg.h"
 #include "asterfort/verift.h"
 #include "blas/ddot.h"
-    character(len=*) :: option, nomte
-!     1- CALCUL FORCES ELEMENTAIRES LINEIQUES
-!     2- CALCULE LE CHARGEMENT INDUIT PAR UNE ELEVATION UNIFORME DE
-!        TEMPERATURE
-!     ------------------------------------------------------------------
-! IN  OPTION : K16 : NOM DE L'OPTION A CALCULER
-!        'CHAR_MECA_PESA_R' : CHARGES DE PESANTEUR
-!        'CHAR_MECA_FR1D1D' : FORCES LINEIQUES (REEL)
-!        'CHAR_MECA_FF1D1D' : FORCES LINEIQUES (FONCTION)
-!        'CHAR_MECA_SR1D1D' : FORCES LINEIQUES SUIVEUSES (FONCTION)
-!        'CHAR_MECA_TEMP_R' : ELEVATION DE TEMPERATURE
-!        'CHAR_MECA_EPSI_R' : DEFORMATION INITIALE
-!        'CHAR_MECA_EPSI_F' : DEFORMATION INITIALE
-! IN  NOMTE  : K16 : NOM DU TYPE ELEMENT
-!        'MECA_BARRE'       : BARRE
-!        'MECA_2D_BARRE'       : BARRE
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: codres(1)
-    character(len=4) :: fami
-    character(len=8) :: nompar(4), poum
-    real(kind=8) :: a, e(1), rho(1), xl, temp, xdep, xrig, w(6), w2(3)
-    real(kind=8) :: pgl(3, 3), fl(6), qg(6), ql(6), valpa1(4), valpa2(4)
-    real(kind=8) :: r8min, s, s2, s3, s4, s5, r1, vect(6), epsini
-    integer :: nno, nc, lx, lorien, idepla, ideplp, i, lvect, lsect
-    integer :: lmater, lpesa, lforc, itemps, nbpar, iret, iepsini
-    integer :: ifcx, iadzi, iazk24, kpg, spt
-    character(len=8) :: nompav(1), nomail
-    real(kind=8) :: valpav(1), fcx, vite2, vp(3), ang1(3), u(3), v(3), instan
-    aster_logical :: normal, global, okvent
+    integer :: codres(1), dimens, iret
+    integer :: nno, nc, lx, lorien, idepla, ideplp, i, lvect
+    integer :: lmater, lpesa, lforc, itemps, nbpar, iepsini
+    integer :: ifcx, iadzi, iazk24, kpg, spt, ichamp
 !
+    real(kind=8) :: aire, e(1), rho(1), xl, temper, xdep, xrig, w2(3)
+    real(kind=8) :: pgl(3, 3), force_rep_local(6), force(6), ql(6)
+    real(kind=8) :: r8min, xss, xs2, xs4, r1, vect(6), epsini
+    real(kind=8) :: fcx, vite2, xvp(3), ang1(3), xuu(3), xvv(3),viterela(6)
     real(kind=8) :: kendog(1), kdessi(1), sech, hydr
-!     ------------------------------------------------------------------
-!-----------------------------------------------------------------------
-    integer :: iret1
     real(kind=8) :: epsth, sref
-!-----------------------------------------------------------------------
-    data         nompar / 'X' , 'Y' , 'Z' , 'INST' /
-    data         nompav /'VITE'/
-!     ------------------------------------------------------------------
+!
+    character(len=4)    :: fami
+    character(len=8)    :: poum, nomail
+!
+    logical :: normal, global, okvent
+! --------------------------------------------------------------------------------------------------
+!
+    real(kind=8)                :: valpav(1)
+    character(len=8), parameter :: nompav(1) = ['VITE']
+!
+    real(kind=8)        :: valr(2), valpar(13)
+    character(len=8)    :: valp(2), nompar(13)
+!
+    real(kind=8)        :: wx(6), wv(6), wa(6), temps
+!
+! --------------------------------------------------------------------------------------------------
+!
     r8min = r8miem()
 !
-    nno = 2
-    nc = 3
-    fami = 'RIGI'
+    nompar(1:3)   = ['X','Y','Z']
+    nompar(4:6)   = ['DX','DY','DZ']
+    nompar(7:9)   = ['VITE_X','VITE_Y','VITE_Z']
+    nompar(10:12) = ['ACCE_X','ACCE_Y','ACCE_Z']
+    nompar(13)    = 'INST'
 !
-!     --- RECUPERATION DES COORDONNEES DES NOEUDS ---
+    force(:) = 0.0; wx(:) = 0.0; w2(:) = 0.0; wv(:) = 0.0; wa(:) = 0.0
+    temps = 0.0; nbpar = 3
+    force_rep_local(:) = 0.0
+!
+    okvent = .false.; normal = .false.; global = .false.
+! --------------------------------------------------------------------------------------------------
+    nno  = 2; nc   = 3; fami = 'RIGI'; dimens = 0
+    if      (nomte.eq.'MECA_BARRE') then
+        dimens = 3
+    else if (nomte.eq.'MECA_2D_BARRE') then
+        dimens = 2
+    else
+        ASSERT( .false. )
+    endif
+!   Récupération des coordonnées des noeuds
     call jevech('PGEOMER', 'L', lx)
-    lx = lx - 1
-!
-!     --- RECUPERATION DES ORIENTATIONS ALPHA,BETA,GAMMA ---
+!   Récupération des orientations alpha,beta,gamma
     call jevech('PCAORIE', 'L', lorien)
-!     --- MATRICE DE PASSAGE DU REPERE GLOBAL AU REPERE LOCAL: PGL ---
 !
-    if (option .eq. 'CHAR_MECA_SR1D1D' .or. option .eq. 'CHAR_MECA_SF1D1D') then
-!          ------------------------------
+    if ( (option.eq.'CHAR_MECA_SR1D1D').or.(option.eq.'CHAR_MECA_SF1D1D')) then
         call jevech('PDEPLMR', 'L', idepla)
         call jevech('PDEPLPR', 'L', ideplp)
-        if (nomte .eq. 'MECA_BARRE') then
+!       wx(1 2 3 4 5 6)  => position
+!       w2(1 2 3)        => vecteur directeur
+        do i = 1, dimens
+            wx(i)        = zr(lx-1+i)        + zr(idepla-1+i)        + zr(ideplp-1+i)
+            wx(i+dimens) = zr(lx-1+i+dimens) + zr(idepla-1+dimens+i) + zr(ideplp-1+dimens+i)
+            w2(i)        = wx(dimens+i) - wx(i)
+        enddo
+!       wv(1 2 3 4 5 6) => Vitesses
+        call tecach('NNO', 'PVITPLU', 'L', iret, iad=ichamp)
+        if (iret.eq.0) then
+            ASSERT(nomte.ne.'MECA_2D_BARRE')
             do i = 1, 3
-                w(i) = zr(lx+i) + zr(idepla-1+i) + zr(ideplp-1+i)
-                w(i+3) = zr(lx+i+3) + zr(idepla+2+i) + zr(ideplp+2+i)
-                w2(i) = w(i+3) - w(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            do i = 1, 2
-                w(i) = zr(lx+i) + zr(idepla-1+i) + zr(ideplp-1+i)
-                w(i+2) = zr(lx+i+2) + zr(idepla+1+i) + zr(ideplp+1+i)
-                w2(i) = w(i+2) - w(i)
-            end do
+                wv(i)        = zr(ichamp-1+i)
+                wv(i+dimens) = zr(ichamp-1+i+dimens)
+            enddo
+        endif
+!       wa(1 2 3 4 5 6) => Accélérations
+        call tecach('NNN', 'PACCPLU', 'L', iret, iad=ichamp)
+        if ( iret.eq.0 ) then
+            ASSERT(nomte.ne.'MECA_2D_BARRE')
+            do i = 1, 3
+                wa(i)        = zr(ichamp+i-1)
+                wa(i+dimens) = zr(ichamp+i+dimens-1)
+            enddo
         endif
         call angvx(w2, ang1(1), ang1(2))
         ang1(3) = zr(lorien+2)
         call matrot(ang1, pgl)
     else
-        if (nomte .eq. 'MECA_BARRE') then
-            do i = 1, 3
-                w(i) = zr(lx+i)
-                w(i+3) = zr(lx+i+3)
-                w2(i) = w(i+3) - w(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            do i = 1, 2
-                w(i) = zr(lx+i)
-                w(i+2) = zr(lx+i+2)
-                w2(i) = w(i+2) - w(i)
-            end do
-        endif
+        do i = 1, dimens
+            wx(i)        = zr(lx-1+i)
+            wx(i+dimens) = zr(lx-1+dimens+i)
+            w2(i)        = wx(i+dimens) - wx(i)
+        enddo
         call matrot(zr(lorien), pgl)
     endif
-    if (nomte .eq. 'MECA_BARRE') then
-        s=ddot(3,w2,1,w2,1)
-    else if (nomte.eq.'MECA_2D_BARRE') then
-        s=ddot(2,w2,1,w2,1)
-    endif
-    xl = sqrt(s)
-    if (xl .eq. 0.d0) then
+!
+!   Si l'élément est de taille nulle
+    xss = ddot(dimens,w2,1,w2,1)
+    xl = sqrt(xss)
+    if (xl.le.r8min) then
         call tecael(iadzi, iazk24)
         nomail = zk24(iazk24-1+3)(1:8)
         call utmess('F', 'ELEMENTS2_43', sk=nomail)
     endif
 !
-!     --- INITIALISATION DE FL ---
-    do i = 1, 6
-        fl(i) = 0.d0
-    end do
-!
-    call jevech('PVECTUR', 'E', lvect)
-!
-    if (option .eq. 'CHAR_MECA_PESA_R') then
-!
-!     --- CAS DE CHARGE DE PESANTEUR ---
-!
-!     --- RECUPERATION DES CARACTERISTIQUES GENERALES DES SECTIONS ---
-        call jevech('PCAGNBA', 'L', lsect)
-        a = zr(lsect)
-!        --- RECUPERATION DES CARACTERISTIQUES MATERIAUX ---
+! --------------------------------------------------------------------------------------------------
+!   cas de charge de pesanteur
+    if (option.eq.'CHAR_MECA_PESA_R') then
+!       Récupération des caractéristiques générales des sections
+        valp(1) = 'A1'
+        call get_value_mode_local('PCAGNBA', valp, valr, iret, nbpara_=1)
+        aire    = valr(1)
+!       recuperation des caracteristiques materiaux ---
         call jevech('PMATERC', 'L', lmater)
-        kpg=1
-        spt=1
-        poum='+'
-        call rcvalb('FPG1', kpg, spt, poum, zi(lmater),&
-                    ' ', 'ELAS', 0, ' ', [0.d0],&
+        kpg=1; spt=1; poum='+'
+        call rcvalb('FPG1', kpg, spt, poum, zi(lmater), ' ', 'ELAS', 0, ' ', [0.d0],&
                     1, 'RHO', rho, codres, 1)
 !
         call jevech('PPESANR', 'L', lpesa)
         do i = 1, 3
-            qg(i) = rho(1) * zr(lpesa) * zr(lpesa+i)
-            qg(i+3) = qg(i)
-        end do
-!
-!        --- PASSAGE REPERE LOCAL DU VECTEUR FORCE ---
-        call utpvgl(nno, nc, pgl, qg(1), ql(1))
-!
-!        --- CALCUL DES FORCES NODALES EQUIVALENTES EN REPERE LOCAL ---
-!         FL(1) = QL(1) * A * XL / 2.D0
-!         FL(4) = QL(4) * A * XL / 2.D0
-        do i = 1, 6
-            fl(i)= ql(i) * a * xl / 2.d0
-        end do
-        call utpvlg(nno, nc, pgl, fl(1), vect)
-    endif
-!
-! ECRITURE DANS LE VECTEUR PVECTUR SUIVANT L'ELEMENT
-!
-    if (nomte .eq. 'MECA_BARRE') then
-        do i = 1, 6
-            zr(lvect+i-1) = vect(i)
-        end do
-    else if (nomte.eq.'MECA_2D_BARRE') then
-        zr(lvect) = vect(1)
-        zr(lvect+1) = vect(2)
-        zr(lvect+2) = vect(4)
-        zr(lvect+3) = vect(5)
-    endif
-!
-    okvent = .false.
-    if (option .eq. 'CHAR_MECA_FR1D1D' .or. option .eq. 'CHAR_MECA_SR1D1D') then
-!          ------------------------------
-!        POUR LE CAS DU VENT
+            force(i)   = rho(1)*zr(lpesa)*zr(lpesa+i)
+            force(i+3) = force(i)
+        enddo
+!       passage repère local du vecteur force
+        call utpvgl(nno, nc, pgl, force(1), ql(1))
+!       calcul des forces nodales équivalentes en repère local
+!           FL(1) = QL(1) * A * XL / 2.D0
+!           FL(4) = QL(4) * A * XL / 2.D0
+        force_rep_local(1:6) = ql(1:6) * aire *xl /2.d0
+! --------------------------------------------------------------------------------------------------
+!   Forces Fixes réparties par valeurs réelles
+    else if (option.eq.'CHAR_MECA_FR1D1D') then
+        call jevech('PFR1D1D', 'L', lforc)
+        r1 = abs(zr(lforc+3))
+        global = r1 .lt. 0.001
+        normal = r1 .gt. 1.001
+
+        do i = 1, 3
+            force(i)   = zr(lforc+i-1)
+            force(i+3) = force(i)
+        enddo
+        if (normal) then
+            call ForceNormale(w2,force(1))
+            call ForceNormale(w2,force(4))
+        endif
+        if (global .or. normal) then
+            call utpvgl(nno, nc, pgl, force(1), ql(1))
+        else
+            ql(1:6) = force(1:6)
+        endif
+!       calcul des forces nodales equivalentes en repere local
+!           FL(1) = QL(1) * XL / 2.D0
+!           FL(4) = QL(4) * XL / 2.D0
+        force_rep_local(1:6)= ql(1:6) * xl / 2.d0
+! --------------------------------------------------------------------------------------------------
+!   Forces Suiveuses réparties par valeurs réelles
+    else if (option.eq.'CHAR_MECA_SR1D1D') then
+!       Pour le cas du vent
         call tecach('NNO', 'PVITER', 'L', iret, iad=lforc)
         if (lforc .ne. 0) then
-            if (nomte .eq. 'MECA_2D_BARRE') then
-! OPTION NON PROGRAMMEE
-                ASSERT(.false.)
-            endif
+            ASSERT(nomte.ne.'MECA_2D_BARRE')
             normal = .true.
             okvent = .true.
             global = .true.
-        else
-            call jevech('PFR1D1D', 'L', lforc)
-            r1 = abs(zr(lforc+3))
-            global = r1 .lt. 1.d-3
-            normal = r1 .gt. 1.001d0
         endif
-        elseif ( option .eq. 'CHAR_MECA_FF1D1D' .or. option .eq.&
-    'CHAR_MECA_SF1D1D' ) then
-!              ------------------------------
+!       Seul le cas du vent donné par 'PVITER' est accepté
+        if (.not. okvent) call utmess('F', 'ELEMENTS3_34')
+!       Récupération de la fonction : effort en fonction de la vitesse
+        call tecach('ONO', 'PVENTCX', 'L', iret, iad=ifcx)
+        if ((iret.ne.0).or.(zk8(ifcx)(1:1).eq.'.')) then
+            call utmess('F', 'ELEMENTS3_35')
+        endif
+!       Récupération de la vitesse de vent relative aux noeuds
+        do i = 1, 6
+            viterela(i)=zr(lforc-1+i)
+        enddo
+!
+        xss  = ddot(3,w2,1,w2,1)
+        xs2  = 1.d0/xss
+!       Calcul du vecteur vitesse perpendiculaire : noeud 1
+        fcx = 0.0; xvp(:) = 0.0
+        xss  = ddot(3,viterela(1),1,viterela(1),1)
+        xs4  = sqrt(xss)
+        if (xs4 .gt. r8min) then
+            call provec(w2, viterela(1), xuu)
+            call provec(xuu, w2, xvv)
+            call pscvec(3, xs2, xvv, xvp)
+!           Norme de la vitesse perpendiculaire
+            vite2 = ddot(3,xvp,1,xvp,1)
+            valpav(1) = sqrt( vite2 )
+            if (valpav(1) .gt. r8min) then
+                call fointe('FM', zk8(ifcx), 1, nompav, valpav, fcx, iret)
+                fcx = fcx / valpav(1)
+            endif
+        endif
+        call pscvec(3, fcx, xvp, force(1))
+!
+!       Calcul du vecteur vitesse perpendiculaire : noeud 2
+        fcx = 0.0; xvp(:) = 0.0
+        xss  = ddot(3,viterela(4),1,viterela(4),1)
+        xs4  = sqrt(xss)
+        if (xs4 .gt. r8min) then
+            call provec(w2, viterela(4), xuu)
+            call provec(xuu, w2, xvv)
+            call pscvec(3, xs2, xvv, xvp)
+!           Norme de la vitesse perpendiculaire
+            vite2 = ddot(3,xvp,1,xvp,1)
+            valpav(1) = sqrt( vite2 )
+            if (valpav(1) .gt. r8min) then
+                call fointe('FM', zk8(ifcx), 1, nompav, valpav, fcx, iret)
+                fcx = fcx / valpav(1)
+            endif
+        endif
+        call pscvec(3, fcx, xvp, force(4))
+!
+        call utpvgl(nno, nc, pgl, force(1), ql(1))
+!       Calcul des forces nodales équivalentes en repère local
+        force_rep_local(1:6)= ql(1:6) * xl / 2.d0
+!
+! --------------------------------------------------------------------------------------------------
+!   Forces Fixes et Suiveuses réparties par Fonctions
+    else if ( (option.eq.'CHAR_MECA_FF1D1D').or.(option.eq.'CHAR_MECA_SF1D1D') ) then
         call jevech('PFF1D1D', 'L', lforc)
         normal = zk8(lforc+3) .eq. 'VENT'
         global = zk8(lforc+3) .eq. 'GLOBAL'
         call tecach('NNO', 'PTEMPSR', 'L', iret, iad=itemps)
         if (itemps .ne. 0) then
-            valpa1(4) = zr(itemps)
-            valpa2(4) = zr(itemps)
-            nbpar = 4
-        else
-            nbpar = 3
+            temps = zr(itemps)
+            nbpar = 13
         endif
-    endif
 !
-    if (option .eq. 'CHAR_MECA_FR1D1D') then
-!     --- FORCES REPARTIES PAR VALEURS REELLES---
+        valpar(1:3) = wx(1:3); valpar(4:6)   = w2(1:3)
+        valpar(7:9) = wv(1:3); valpar(10:12) = wa(1:3)
+        valpar(13)  = temps
         do i = 1, 3
-            qg(i) = zr(lforc+i-1)
-            qg(i+3) = qg(i)
-        end do
-        if (normal) then
-            s=ddot(3,w2,1,w2,1)
-            s2=1.d0/s
-            s=ddot(3,qg(1),1,qg(1),1)
-            s4 = sqrt(s)
-            if (s4 .gt. r8min) then
-                call provec(w2, qg(1), u)
-                s=ddot(3,u,1,u,1)
-                s3 = sqrt(s)
-                s5 = s3*sqrt(s2)/s4
-                call provec(u, w2, v)
-                call pscvec(3, s2, v, u)
-                call pscvec(3, s5, u, qg(1))
-            endif
-            s=ddot(3,qg(4),1,qg(4),1)
-            s4 = sqrt(s)
-            if (s4 .gt. r8min) then
-                call provec(w2, qg(4), u)
-                s=ddot(3,u,1,u,1)
-                s3 = sqrt(s)
-                s5 = s3*sqrt(s2)/s4
-                call provec(u, w2, v)
-                call pscvec(3, s2, v, u)
-                call pscvec(3, s5, u, qg(4))
-            endif
-        endif
-        if (global .or. normal) then
-            call utpvgl(nno, nc, pgl, qg(1), ql(1))
-        else
-            do i = 1, 6
-                ql(i) = qg(i)
-            end do
-        endif
+            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpar, force(i),   iret)
+        enddo
 !
-!        --- CALCUL DES FORCES NODALES EQUIVALENTES EN REPERE LOCAL ---
-!         FL(1) = QL(1) * XL / 2.D0
-!         FL(4) = QL(4) * XL / 2.D0
-        do i = 1, 6
-            fl(i)= ql(i) * xl / 2.d0
-        end do
-        call utpvlg(nno, nc, pgl, fl(1), vect)
-!
-! ECRITURE DANS LE VECTEUR PVECTUR SUIVANT L'ELEMENT
-!
-        if (nomte .eq. 'MECA_BARRE') then
-            do i = 1, 6
-                zr(lvect+i-1) = vect(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            zr(lvect) = vect(1)
-            zr(lvect+1) = vect(2)
-            zr(lvect+2) = vect(4)
-            zr(lvect+3) = vect(5)
-        endif
-!
-        elseif ( option .eq.'CHAR_MECA_FF1D1D' .or. option&
-    .eq.'CHAR_MECA_SF1D1D' ) then
-!     --- FORCES REPARTIES PAR FONCTIONS ---
+        valpar(1:3) = wx(4:6); valpar(4:6)   = w2(1:3)
+        valpar(7:9) = wv(4:6); valpar(10:12) = wa(4:6)
+        valpar(13)  = temps
         do i = 1, 3
-            valpa1(i) = w(i)
-            valpa2(i) = w(i+3)
-        end do
-        do i = 1, 3
-            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpa1,&
-                        qg(i), iret)
-            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpa2,&
-                        qg(i+ 3), iret)
-        end do
+            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpar, force(i+3), iret)
+        enddo
 !
         if (normal) then
-            s=ddot(3,w2,1,w2,1)
-            s2=1.d0/s
-            s=ddot(3,qg(1),1,qg(1),1)
-            s4 = sqrt(s)
-            if (s4 .gt. r8min) then
-                call provec(w2, qg(1), u)
-                s=ddot(3,u,1,u,1)
-                s3 = sqrt(s)
-                s5 = s3*sqrt(s2)/s4
-                call provec(u, w2, v)
-                call pscvec(3, s2, v, u)
-                call pscvec(3, s5, u, qg(1))
-            endif
-!
-            s=ddot(3,qg(4),1,qg(4),1)
-            s4 = sqrt(s)
-            if (s4 .gt. r8min) then
-                call provec(w2, qg(4), u)
-                s=ddot(3,u,1,u,1)
-                s3 = sqrt(s)
-                s5 = s3*sqrt(s2)/s4
-                call provec(u, w2, v)
-                call pscvec(3, s2, v, u)
-                call pscvec(3, s5, u, qg(4))
-            endif
+            call ForceNormale(w2,force(1))
+            call ForceNormale(w2,force(4))
         endif
         if (global .or. normal) then
-            call utpvgl(nno, nc, pgl, qg(1), ql(1))
+            call utpvgl(nno, nc, pgl, force(1), ql(1))
         else
-            do i = 1, 6
-                ql(i) = qg(i)
-            end do
+            ql(1:6) = force(1:6)
         endif
 !
-!        --- CALCUL DES FORCES NODALES EQUIVALENTES EN REPERE LOCAL ---
-!         FL(1) = QL(1) * XL / 2.D0
-!         FL(4) = QL(4) * XL / 2.D0
-        do i = 1, 6
-            fl(i)= ql(i) * xl / 2.d0
-        end do
-        call utpvlg(nno, nc, pgl, fl(1), vect)
+!       Calcul des forces nodales equivalentes en repere local ---
+!           FL(1) = QL(1) * XL / 2.D0
+!           FL(4) = QL(4) * XL / 2.D0
+        force_rep_local(1:6)= ql(1:6) * xl / 2.d0
 !
-! ECRITURE DANS LE VECTEUR PVECTUR SUIVANT L'ELEMENT
-!
-        if (nomte .eq. 'MECA_BARRE') then
-            do i = 1, 6
-                zr(lvect+i-1) = vect(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            zr(lvect) = vect(1)
-            zr(lvect+1) = vect(2)
-            zr(lvect+2) = vect(4)
-            zr(lvect+3) = vect(5)
-        endif
-!
-!
-    else if (option.eq.'CHAR_MECA_SR1D1D') then
-!     --- FORCES SUIVEUSES REPARTIES PAR VALEURS REELLES---
-!
-!        SEUL LE CAS DU VENT DONNE PAR 'PVITER' EST ACCEPTE
-        if (.not. okvent) goto 998
-!        RECUPERATION DE LA VITESSE DE VENT RELATIVE AUX NOEUDS
-        do i = 1, 6
-            qg(i)=zr(lforc-1+i)
-        end do
-        do i = 1, 3
-            vp(i)=0.d0
-        end do
-!
-!        CALCUL DU VECTEUR VITESSE PERPENDICULAIRE
-        s=ddot(3,w2,1,w2,1)
-        s2=1.d0/s
-!
-        s=ddot(3,qg(1),1,qg(1),1)
-        s4 = sqrt(s)
-        fcx = 0.0d0
-        if (s4 .gt. r8min) then
-            call provec(w2, qg(1), u)
-            call provec(u, w2, v)
-            call pscvec(3, s2, v, vp)
-!          NORME DE LA VITESSE PERPENDICULAIRE
-            vite2=ddot(3,vp,1,vp,1)
-            valpav(1) = sqrt( vite2 )
-            if (valpav(1) .gt. r8min) then
-!            RECUPERATION DE L'EFFORT EN FONCTION DE LA VITESSE
-                call tecach('ONO', 'PVENTCX', 'L', iret, iad=ifcx)
-                if (iret .ne. 0) goto 999
-                if (zk8(ifcx)(1:1) .eq. '.') goto 999
-                call fointe('FM', zk8(ifcx), 1, nompav, valpav,&
-                            fcx, iret)
-                fcx = fcx / valpav(1)
-            endif
-        endif
-        call pscvec(3, fcx, vp, qg(1))
-!
-        s=ddot(3,qg(4),1,qg(4),1)
-        s4 = sqrt(s)
-        fcx = 0.0d0
-        if (s4 .gt. r8min) then
-            call provec(w2, qg(4), u)
-            call provec(u, w2, v)
-            call pscvec(3, s2, v, vp)
-!          NORME DE LA VITESSE PERPENDICULAIRE
-            vite2=ddot(3,vp,1,vp,1)
-            valpav(1) = sqrt( vite2 )
-            if (valpav(1) .gt. r8min) then
-!            RECUPERATION DE L'EFFORT EN FONCTION DE LA VITESSE
-                call tecach('ONO', 'PVENTCX', 'L', iret, iad=ifcx)
-                if (iret .ne. 0) goto 999
-                if (zk8(ifcx)(1:1) .eq. '.') goto 999
-                call fointe('FM', zk8(ifcx), 1, nompav, valpav,&
-                            fcx, iret)
-                fcx = fcx / valpav(1)
-            endif
-        endif
-        call pscvec(3, fcx, vp, qg(4))
-!
-        call utpvgl(nno, nc, pgl, qg(1), ql(1))
-!        --- CALCUL DES FORCES NODALES EQUIVALENTES EN REPERE LOCAL ---
-        do i = 1, 6
-            fl(i)= ql(i) * xl / 2.d0
-        end do
-        call utpvlg(nno, nc, pgl, fl(1), vect)
-!
-! ECRITURE DANS LE VECTEUR PVECTUR SUIVANT L'ELEMENT
-!
-        if (nomte .eq. 'MECA_BARRE') then
-            do i = 1, 6
-                zr(lvect+i-1) = vect(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            zr(lvect) = vect(1)
-            zr(lvect+1) = vect(2)
-            zr(lvect+2) = vect(4)
-            zr(lvect+3) = vect(5)
-        endif
-!
-!
+! --------------------------------------------------------------------------------------------------
+!   Températute
     else if (option.eq.'CHAR_MECA_TEMP_R') then
-!     --- RECUPERATION DES CARACTERISTIQUES GENERALES DES SECTIONS ---
-        call jevech('PCAGNBA', 'L', lsect)
-        a = zr(lsect)
-!        --- RECUPERATION DES CARACTERISTIQUES MATERIAUX ---
+!       Recuperation des caracteristiques generales des sections
+        valp(1) = 'A1'
+        call get_value_mode_local('PCAGNBA', valp, valr, iret, nbpara_=1)
+        aire    = valr(1)
+!       Recuperation des caracteristiques materiaux ---
         call jevech('PMATERC', 'L', lmater)
-        call rcvalb(fami, 1, 1, '+', zi(lmater),&
-                    ' ', 'ELAS', 0, ' ', [0.d0],&
+        call rcvalb(fami, 1, 1, '+', zi(lmater), ' ', 'ELAS', 0, ' ', [0.d0],&
                     1, 'E', e, codres, 1)
-!
-!        TEMPERATURE DE REFERENCE
-        call verift(fami, 1, 1, '+', zi(lmater),&
-                    epsth_=epsth)
-!
-!        TERME DE LA MATRICE ELEMENTAIRE
-        xrig = e(1) * a / xl
-!
-!        DEPLACEMENT INDUIT PAR LA TEMPERATURE
+!       Temperature de reference
+        call verift(fami, 1, 1, '+', zi(lmater), epsth_=epsth)
+!       Terme de la matrice elementaire
+        xrig = e(1) * aire / xl
+!       Deplacement induit par la temperature
         xdep = epsth * xl
+!       Calcul des forces induites
+        force_rep_local(1) = -xrig * xdep
+        force_rep_local(4) =  xrig * xdep
 !
-!        --- CALCUL DES FORCES INDUITES ---
-        fl(1) = -xrig * xdep
-        fl(4) = xrig * xdep
-        call utpvlg(nno, nc, pgl, fl(1), vect)
-!
-! ECRITURE DANS LE VECTEUR PVECTUR SUIVANT L'ELEMENT
-!
-        if (nomte .eq. 'MECA_BARRE') then
-            do i = 1, 6
-                zr(lvect+i-1) = vect(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            zr(lvect) = vect(1)
-            zr(lvect+1) = vect(2)
-            zr(lvect+2) = vect(4)
-            zr(lvect+3) = vect(5)
-        endif
-!
-!
+! --------------------------------------------------------------------------------------------------
+!   Séchage
     else if (option.eq.'CHAR_MECA_SECH_R') then
-!     --- RECUPERATION DES CARACTERISTIQUES GENERALES DES SECTIONS ---
-        call jevech('PCAGNBA', 'L', lsect)
-        a = zr(lsect)
-!        --- RECUPERATION DES CARACTERISTIQUES MATERIAUX ---
+!       Recuperation des caracteristiques generales des sections
+        valp(1) = 'A1'
+        call get_value_mode_local('PCAGNBA', valp, valr, iret, nbpara_=1)
+        aire    = valr(1)
+!       Recuperation des caracteristiques materiaux
         call jevech('PMATERC', 'L', lmater)
-        call rcvalb(fami, 1, 1, '+', zi(lmater),&
-                    ' ', 'ELAS', 0, ' ', [0.d0],&
+        call rcvalb(fami, 1, 1, '+', zi(lmater), ' ', 'ELAS', 0, ' ', [0.d0],&
                     1, 'E', e, codres, 1)
-!
+!       Recuperation de l'instant
         call tecach('ONO', 'PTEMPSR', 'L', iret, iad=itemps)
         if (itemps .ne. 0) then
-            instan = zr(itemps)
-        else
-            instan = 0.d0
+            temps = zr(itemps)
         endif
-!
-!        TEMPERATURE EFFECTIVE
-        call rcvarc(' ', 'TEMP', '+', fami, 1,&
-                    1, temp, iret)
-!
-        call rcvarc(' ', 'SECH', '+', 'RIGI', 1,&
-                    1, sech, iret)
+!       Temperature effective
+        call rcvarc(' ', 'TEMP', '+', fami, 1, 1, temper, iret)
+        call rcvarc(' ', 'SECH', '+', 'RIGI', 1, 1, sech, iret)
         if (iret .ne. 0) sech=0.d0
-        call rcvarc(' ', 'SECH', 'REF', 'RIGI', 1,&
-                    1, sref, iret)
+        call rcvarc(' ', 'SECH', 'REF', 'RIGI', 1, 1, sref, iret)
         if (iret .ne. 0) sref=0.d0
 !
-        nompar(1) = 'TEMP'
-        valpa2(1) = temp
-        nompar(2) = 'INST'
-        valpa2(2) = instan
-        nompar(3) = 'SECH'
-        valpa2(3) = sech
-!
-!        TERME DE LA MATRICE ELEMENTAIRE
-        xrig = e(1) * a / xl
-!
-! ----      INTERPOLATION DE K_DESSICCA EN FONCTION DE LA TEMPERATURE
-!           DU SECHAGE
-!           ----------------------------------------------------------
-        call rcvalb('RIGI', 1, 1, '+', zi(lmater),&
-                    ' ', 'ELAS', 3, nompar, valpa2,&
+        nompar(1) = 'TEMP'; nompar(2) = 'INST'; nompar(3) = 'SECH'
+        valpar(1) = temper; valpar(2) = temps;  valpar(3) = sech
+!       Terme de la matrice elementaire
+        xrig = e(1) * aire / xl
+!       Interpolation de k_dessicca en fonction de la temperature du sechage
+        call rcvalb('RIGI', 1, 1, '+', zi(lmater), ' ', 'ELAS', 3, nompar, valpar,&
                     1, 'K_DESSIC', kdessi, codres, 0)
-!
         if (codres(1) .ne. 0) kdessi(1)=0.d0
 !
-!C        DEPLACEMENT INDUIT PAR LE SECHAGE
+!       Deplacement induit par le sechage
         xdep = -kdessi(1)*(sref-sech) * xl
+!       Calcul des forces induites ---
+        force_rep_local(1) = -xrig * xdep
+        force_rep_local(4) =  xrig * xdep
 !
-!        --- CALCUL DES FORCES INDUITES ---
-        fl(1) = -xrig * xdep
-        fl(4) = xrig * xdep
-        call utpvlg(nno, nc, pgl, fl(1), vect)
-!
-! ECRITURE DANS LE VECTEUR PVECTUR SUIVANT L'ELEMENT
-!
-        if (nomte .eq. 'MECA_BARRE') then
-            do i = 1, 6
-                zr(lvect+i-1) = vect(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            zr(lvect) = vect(1)
-            zr(lvect+1) = vect(2)
-            zr(lvect+2) = vect(4)
-            zr(lvect+3) = vect(5)
-        endif
-!
-!
+! --------------------------------------------------------------------------------------------------
+!   Hydratation
     else if (option.eq.'CHAR_MECA_HYDR_R') then
-!     --- RECUPERATION DES CARACTERISTIQUES GENERALES DES SECTIONS ---
-        call jevech('PCAGNBA', 'L', lsect)
-        a = zr(lsect)
-!        --- RECUPERATION DES CARACTERISTIQUES MATERIAUX ---
+!       Recuperation des caracteristiques generales des sections
+        valp(1) = 'A1'
+        call get_value_mode_local('PCAGNBA', valp, valr, iret, nbpara_=1)
+        aire    = valr(1)
+!       Recuperation des caracteristiques materiaux ---
         call jevech('PMATERC', 'L', lmater)
-        call rcvalb('RIGI', 1, 1, '+', zi(lmater),&
-                    ' ', 'ELAS', 0, ' ', [0.d0],&
+        call rcvalb('RIGI', 1, 1, '+', zi(lmater), ' ', 'ELAS', 0, ' ', [0.d0],&
                     1, 'E', e, codres, 1)
-!
-! ---- RECUPERATION DE L'INSTANT
-!      -------------------------
+!       Recuperation de l'instant
         call tecach('ONO', 'PTEMPSR', 'L', iret, iad=itemps)
         if (itemps .ne. 0) then
-            instan = zr(itemps)
-        else
-            instan = 0.d0
+            temps = zr(itemps)
         endif
-!
-!        TEMPERATURE EFFECTIVE
-        call rcvarc(' ', 'TEMP', '+', fami, 1,&
-                    1, temp, iret1)
-!
-!        HYDRATATION EFFECTIVE
-        call rcvarc(' ', 'HYDR', '+', 'RIGI', 1,&
-                    1, hydr, iret)
+!       Temperature effective
+        call rcvarc(' ', 'TEMP', '+', fami, 1, 1, temper, iret)
+!       Hydratation effective
+        call rcvarc(' ', 'HYDR', '+', 'RIGI', 1, 1, hydr, iret)
         if (iret .ne. 0) hydr=0.d0
 !
-        nompar(1) = 'TEMP'
-        valpa2(1) = temp
-        nompar(2) = 'INST'
-        valpa2(2) = instan
-        nompar(3) = 'HYDR'
-        valpa2(3) = hydr
-!
-!        TERME DE LA MATRICE ELEMENTAIRE
-        xrig = e(1) * a / xl
-!
-! ----      INTERPOLATION DE K_DESSICCA EN FONCTION DE LA TEMPERATURE
-!           OU DE L HYDRATATION
-!           ----------------------------------------------------------
-        call rcvalb('RIGI', 1, 1, '+', zi(lmater),&
-                    ' ', 'ELAS', 3, nompar, valpa2,&
+        nompar(1) = 'TEMP'; nompar(2) = 'INST'; nompar(3) = 'HYDR'
+        valpar(1) = temper; valpar(2) = temps;  valpar(3) = hydr
+!       Terme de la matrice elementaire
+        xrig = e(1) * aire / xl
+!       Interpolation de k_dessicca en fonction de la temperature ou de l hydratation
+        call rcvalb('RIGI', 1, 1, '+', zi(lmater), ' ', 'ELAS', 3, nompar, valpar,&
                     1, 'B_ENDOGE', kendog, codres, 0)
-!
         if (codres(1) .ne. 0) kendog(1)=0.d0
 !
-!C        DEPLACEMENT INDUIT PAR LE SECHAGE
+!       Deplacement induit par le sechage
         xdep = -kendog(1)*hydr * xl
+!       CALCUL DES FORCES INDUITES
+        force_rep_local(1) = -xrig * xdep
+        force_rep_local(4) =  xrig * xdep
 !
-!        --- CALCUL DES FORCES INDUITES ---
-        fl(1) = -xrig * xdep
-        fl(4) = xrig * xdep
-        call utpvlg(nno, nc, pgl, fl(1), vect)
-!
-! ECRITURE DANS LE VECTEUR PVECTUR SUIVANT L'ELEMENT
-!
-        if (nomte .eq. 'MECA_BARRE') then
-            do i = 1, 6
-                zr(lvect+i-1) = vect(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            zr(lvect) = vect(1)
-            zr(lvect+1) = vect(2)
-            zr(lvect+2) = vect(4)
-            zr(lvect+3) = vect(5)
-        endif
-!
+! --------------------------------------------------------------------------------------------------
+!   Déformation
     else if (option(1:15).eq.'CHAR_MECA_EPSI_') then
-!     --- RECUPERATION DES CARACTERISTIQUES GENERALES DES SECTIONS ---
-        call jevech('PCAGNBA', 'L', lsect)
-        a = zr(lsect)
-!        --- RECUPERATION DES CARACTERISTIQUES MATERIAUX ---
+!       Recuperation des caracteristiques generales des sections
+        valp(1) = 'A1'
+        call get_value_mode_local('PCAGNBA', valp, valr, iret, nbpara_=1)
+        aire    = valr(1)
+!       Recuperation des caracteristiques materiaux
         call jevech('PMATERC', 'L', lmater)
-        call rcvalb(fami, 1, 1, '+', zi(lmater),&
-                    ' ', 'ELAS', 0, ' ', [0.d0],&
+        call rcvalb(fami, 1, 1, '+', zi(lmater), ' ', 'ELAS', 0, ' ', [0.d0],&
                     1, 'E', e, codres, 1)
-!        --- RECUPERATION DE LA DEFORMATION
+!       Recuperation de la deformation
         if (option(15:16).eq.'_R')then
             call jevech('PEPSINR', 'L', iepsini)
             epsini = zr(iepsini)
         else
             call jevech('PEPSINF', 'L', iepsini)
             call jevech('PTEMPSR', 'L', itemps)
-            valpa1(1) = (w(1)+w(4))/2.d0
-            valpa1(2) = (w(2)+w(5))/2.d0
-            valpa1(3) = (w(3)+w(6))/2.d0
-            valpa1(4) = zr(itemps)
-            call fointe('FM', zk8(iepsini), 4, nompar, valpa1,&
-                        epsini, iret)
+            nompar(1:3)   = ['X','Y','Z']
+            nompar(4)     = 'INST'
+            valpar(1) = (wx(1)+wx(4))/2.d0
+            valpar(2) = (wx(2)+wx(5))/2.d0
+            valpar(3) = (wx(3)+wx(6))/2.d0
+            valpar(4) = zr(itemps)
+            call fointe('FM', zk8(iepsini), 4, nompar, valpar, epsini, iret)
         endif
-!        --- CALCUL DES FORCES INDUITES ---
-        fl(1) = - e(1) * a * epsini
-        fl(4) = e(1) * a * epsini
-        call utpvlg(nno, nc, pgl, fl(1), vect)
-!
-! ECRITURE DANS LE VECTEUR PVECTUR SUIVANT L'ELEMENT
-!
-        if (nomte .eq. 'MECA_BARRE') then
-            do i = 1, 6
-                zr(lvect+i-1) = vect(i)
-            end do
-        else if (nomte.eq.'MECA_2D_BARRE') then
-            zr(lvect) = vect(1)
-            zr(lvect+1) = vect(2)
-            zr(lvect+2) = vect(4)
-            zr(lvect+3) = vect(5)
-        endif
-!
-!
+!       Calcul des forces induites
+        force_rep_local(1) = -e(1) * aire * epsini
+        force_rep_local(4) =  e(1) * aire * epsini
     endif
 !
-    goto 100
-998 continue
-    call utmess('F', 'ELEMENTS3_34')
+!   Force dans le repère global
+    call utpvlg(nno, nc, pgl, force_rep_local(1), vect)
+!   Ecriture dans le vecteur PVECTUR
+    call jevech('PVECTUR', 'E', lvect)
+    if (nomte .eq. 'MECA_BARRE') then
+        do i = 1, 6
+            zr(lvect+i-1) = vect(i)
+        enddo
+    else if (nomte.eq.'MECA_2D_BARRE') then
+        zr(lvect)   = vect(1)
+        zr(lvect+1) = vect(2)
+        zr(lvect+2) = vect(4)
+        zr(lvect+3) = vect(5)
+    endif
 !
-999 continue
-    call utmess('F', 'ELEMENTS3_35')
+! ==================================================================================================
 !
-100 continue
-end subroutine
+contains
+!
+subroutine ForceNormale(w2,force)
+!
+#include "asterfort/provec.h"
+#include "asterfort/pscvec.h"
+#include "blas/ddot.h"
+#include "asterc/r8miem.h"
+!
+    real(kind=8), intent(in)    :: w2(3)
+    real(kind=8), intent(inout) :: force(3)
+!
+    real(kind=8) :: xuu(3), xvv(3), xsu(3)
+    real(kind=8) :: xss, xs2, xs3, xs4, xs5, r8min
+!
+    r8min = r8miem()
+    xss   = ddot(3,force,1,force,1)
+    xs4 = sqrt(xss)
+    if (xs4.gt.r8min) then
+        xss = ddot(3,w2,1,w2,1)
+        xs2 = 1.0/xss
+        call provec(w2, force, xuu)
+        call provec(xuu, w2, xvv)
+        call pscvec(3, xs2, xvv, xsu)
+        xss = ddot(3,xuu,1,xuu,1)
+        xs3 = sqrt(xss)
+        xs5 = xs3*sqrt(xs2)/xs4
+        call pscvec(3, xs5, xsu, force)
+    endif
+end subroutine ForceNormale
+
+end subroutine te0155

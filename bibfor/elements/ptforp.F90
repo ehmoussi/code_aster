@@ -16,9 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
-!
-!
+subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, ncf, pgl, fer, fei)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -27,7 +25,7 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
 !
     implicit none
 !
-    integer :: itype, ist, nno, nc
+    integer :: itype, ist, nno, ncf
     real(kind=8) :: a, a2, xl
     real(kind=8) :: pgl(3, 3), fer(*), fei(*)
     character(len=*) :: option, nomte
@@ -53,9 +51,9 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: icodre(1)
-    integer :: ifcx, i, j, nnoc, ncc, lx, iorien, idepla, ideplp, lmate, lpesa
-    integer :: lforc, itemps, nbpar, ier, iret, icoer, icoec, iretr, iretc, ivite
+    integer :: icodre(1), ichamp
+    integer :: ifcx, i, ncc, lx, iorien, idepla, ideplp, lmate, lpesa
+    integer :: lforc, itemps, nbpar, ier, iret, icoer, icoec, iretr, iretc
     integer :: lrota, istrxm, k
 !
 ! --------------------------------------------------------------------------------------------------
@@ -64,29 +62,33 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    real(kind=8) :: rho(1), coef1, coef2, s, s2, s4, s3, s5
+    real(kind=8) :: rho(1), coef1, coef2, xs, s2, s4, s3, s5
     real(kind=8) :: xxx, r8min, r8bid, pesan
-    real(kind=8) :: u(3), v(3), w(8), w2(3), dw(12)
+    real(kind=8) :: xu(3), xv(3), wx(6), w2(3), dwx(6)
     real(kind=8) :: q(18), qq(18), qqr(18), qqi(18), pta(3), dir(3)
     real(kind=8) :: dir1(3), dir2(3), d1, d2, omeg2, x1(3), x2(3), v1(3), v2(3)
-    real(kind=8) :: valpav(1), fcx, vite2, vp(3), casect(6), gamma
+    real(kind=8) :: fcx, vite2, vp(3), casect(6), gamma
+    real(kind=8) :: temps, wv(6), wa(6)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: nompav(1)
-    character(len=8) :: nompar(10)
-    character(len=16) :: ch16, messk(2)
-    real(kind=8) :: valpar(10)
+    character(len=8)    :: nompar(13)
+    real(kind=8)        :: valpar(13)
 !
-! --------------------------------------------------------------------------------------------------
+    character(len=8), parameter :: nompav(1) = ['VITE']
+    real(kind=8)                :: valpav(1)
 !
-    data nompar /'X','Y','Z','DX','DY','DZ',&
-     &                  'VITE_X','VITE_Y','VITE_Z','INST'/
-    data nompav /'VITE'/
+    character(len=16)   :: ch16, messk(2)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     r8min = r8miem()
+!
+    nompar(1:3)   = ['X','Y','Z']
+    nompar(4:6)   = ['DX','DY','DZ']
+    nompar(7:9)   = ['VITE_X','VITE_Y','VITE_Z']
+    nompar(10:12) = ['ACCE_X','ACCE_Y','ACCE_Z']
+    nompar(13)    = 'INST'
 !
     fer(1:12) = 0.0d0
     fei(1:12) = 0.0d0
@@ -95,20 +97,23 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
     qq(:) = 0.0d0
     vp(:) = 0.0d0
 !
-    nnoc = 1
-    ncc  = 6
+    ncc = 6
+!   poutre droite de timoskenko a 7 ddl (gauchissement , multi-fibres)
+    if (nomte(1:13).eq.'MECA_POU_D_TG') then
+        ncc = 7
+    endif
     global = .false.
 !
+    wx(:) = 0.0d0; wv(:) = 0.0d0; wa(:) = 0.0d0
+    w2(:) = 0.0d0
 ! --------------------------------------------------------------------------------------------------
     call jevech('PGEOMER', 'L', lx)
-    lx = lx-1
     call jevech('PCAORIE', 'L', iorien)
 !
     if (option.eq.'CHAR_MECA_SR1D1D' .or. option.eq.'CHAR_MECA_SF1D1D') then
         call jevech('PDEPLMR', 'L', idepla)
         call jevech('PDEPLPR', 'L', ideplp)
 !
-        call tecach('NNO', 'PVITPLU', 'L', iret, iad=ivite)
         call tecach('NNO', 'PSTRXMR', 'L', iret, iad=istrxm)
         if (iret .ne. 0) then
             messk(1) = option
@@ -120,20 +125,21 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
         else
             gamma = zr(istrxm+3-1)
         endif
-        call porea2(nno, nc, zr(lx+1), gamma, pgl, xl)
-        do i = 1, 12
-            dw(i) = zr(idepla-1+i) + zr(ideplp-1+i)
+        call porea2(nno, ncf, zr(lx), gamma, pgl, xl)
+        do i = 1, 3
+            dwx(i)   = zr(idepla-1+i)     + zr(ideplp-1+i)
+            dwx(i+3) = zr(idepla-1+i+ncc) + zr(ideplp-1+i+ncc)
         enddo
         do i = 1, 3
-            w(i) = zr(lx+i) + dw(i)
-            w(i+4) = zr(lx+i+3) + dw(i+6)
-            w2(i) = w(i+4) - w(i)
+            wx(i)   = zr(lx-1+i)   + dwx(i)
+            wx(i+3) = zr(lx-1+i+3) + dwx(i+3)
+            w2(i)   = wx(i+3) - wx(i)
         enddo
     else
         do i = 1, 3
-            w(i) = zr(lx+i)
-            w(i+4) = zr(lx+i+3)
-            w2(i) = w(i+4) - w(i)
+            wx(i)   = zr(lx-1+i)
+            wx(i+3) = zr(lx-1+i+3)
+            w2(i)   = wx(i+3) - wx(i)
         enddo
     endif
 !
@@ -152,8 +158,8 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
             do k = 1, 3
                 dir(k)=zr(lrota-1+1+k)
                 pta(k)=zr(lrota-1+4+k)
-                x1(k)=zr(lx+k) - pta(k)
-                x2(k)=zr(lx+3+k) - pta(k)
+                x1(k)=zr(lx-1+k) - pta(k)
+                x2(k)=zr(lx-1+3+k) - pta(k)
             enddo
             call provec(dir, x1, v1)
             call provec(dir, x2, v2)
@@ -164,8 +170,8 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
         endif
 !
         call jevech('PMATERC', 'L', lmate)
-        if (nomte.eq.'MECA_POU_D_EM' .or. nomte.eq.'MECA_POU_D_TGM'.or. &
-            nomte.eq.'MECA_POU_D_SQUE') then
+        if ((nomte.eq.'MECA_POU_D_EM').or.(nomte.eq.'MECA_POU_D_TGM').or. &
+            (nomte.eq.'MECA_POU_D_SQUE'))then
             if (ist.eq.1) then
                 call pmfitx(zi(lmate), 2, casect, r8bid)
             else
@@ -185,18 +191,19 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
             coef1 = a
             coef2 = a2
         endif
+!
         do i = 1, 3
             if (option.eq.'CHAR_MECA_PESA_R') then
-                q(i)   = rho(1) * pesan * dir(i)
-                q(i+nc) = rho(1) * pesan * dir(i)
+                q(i)     = rho(1) * pesan * dir(i)
+                q(i+ncf) = rho(1) * pesan * dir(i)
             else if (option.eq.'CHAR_MECA_ROTA_R') then
-                q(i)   = rho(1) * omeg2 * d1 * dir1(i)
-                q(i+6) = rho(1) * omeg2 * d2 * dir2(i)
+                q(i)     = rho(1) * omeg2 * d1 * dir1(i)
+                q(i+ncf) = rho(1) * omeg2 * d2 * dir2(i)
             endif
         enddo
 !
 !       Charge de pesanteuren repere global : passage repere local du vecteur force
-        call utpvgl(nno, nc, pgl, q(1), qq(1))
+        call utpvgl(nno, ncf, pgl, q(1), qq(1))
         global = .true.
         goto 777
     endif
@@ -204,7 +211,7 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
     okvent = .false.
     normal = .false.
     global = .false.
-    if (option.eq.'CHAR_MECA_FR1D1D' .or. option.eq.'CHAR_MECA_SR1D1D') then
+    if ((option.eq.'CHAR_MECA_FR1D1D').or.(option.eq.'CHAR_MECA_SR1D1D')) then
 !       forces reparties par valeurs reelles pour le cas du vent
         call tecach('NNO', 'PVITER', 'L', iret, iad=lforc)
         if (iret.eq.0) then
@@ -212,84 +219,69 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
             normal = .false.
             global = .false.
             do i = 1, 3
-                q(i)   = zr(lforc-1+i)
-                q(i+6) = zr(lforc+2+i)
+                q(i)   = zr(lforc-1  +i)
+                q(i+6) = zr(lforc-1+3+i)
             enddo
         else
             call jevech('PFR1D1D', 'L', lforc)
-            xxx = abs(zr(lforc+6))
+            xxx = abs(zr(lforc-1+7))
             global = xxx .lt. 1.d-3
             normal = xxx .gt. 1.001d0
             do i = 1, 6
-                q(i)   = zr(lforc-1+i)
-                q(i+nc) = q(i)
+                q(i)     = zr(lforc-1+i)
+                q(i+ncf) = q(i)
             enddo
-            do i = 7, nc
-                q(i)   = zr(lforc+i)
-                q(i+nc) = q(i)
-            enddo        
+            do i = 7, ncf
+                q(i)     = zr(lforc+i)
+                q(i+ncf) = q(i)
+            enddo
         endif
 !
     else if ( (option.eq.'CHAR_MECA_FF1D1D') .or. (option.eq.'CHAR_MECA_SF1D1D') ) then
+        nbpar = 12; temps = 0.0d0
 !       forces reparties par fonctions
         call tecach('NNO', 'PTEMPSR', 'L', iret, iad=itemps)
         if (iret.eq.0) then
-            w(4) = zr(itemps)
-            w(8) = zr(itemps)
-            nbpar = 10
-        else
-            nbpar = 9
+            temps = zr(itemps)
+            nbpar = 13
         endif
         call jevech('PFF1D1D', 'L', lforc)
         normal = zk8(lforc+6).eq.'VENT'
         global = zk8(lforc+6).eq.'GLOBAL'
-!CCP    Deplacements
-        call tecach('NNO', 'PDEPLPR', 'L', iret, iad=ideplp)
-        if (iret .eq. 2) then
-            call jevech('PDEPLAR', 'L', ideplp)
+!       Vitesses
+        call tecach('NNO', 'PVITPLU', 'L', iret, iad=ichamp)
+        do i = 1, 3
+            wv(i)   = zr(ichamp-1+i)
+            wv(i+3) = zr(ichamp-1+i+ncc)
+        enddo
+!       Accélérations
+        call tecach('NNN', 'PACCPLU', 'L', iret, iad=ichamp)
+        if ( iret.eq.0 ) then
+            do i = 1, 3
+                wa(i)   = zr(ichamp-1+i)
+                wa(i+3) = zr(ichamp-1+i+ncc)
+            enddo
         endif
+!       Noeud 1
+        valpar(1:3) = wx(1:3); valpar(4:6)   = w2(1:3)
+        valpar(7:9) = wv(1:3); valpar(10:12) = wa(1:3)
+        valpar(13)  = temps
+        do i = 1, 6
+            call fointe('FM', zk8(lforc-1+i), nbpar, nompar, valpar, q(i), ier)
+        enddo
+        do i = 7, ncf
+            call fointe('FM', zk8(lforc  +i), nbpar, nompar, valpar, q(i), ier)
+        enddo
 
-!CCP    Vitesses
-        call tecach('NNO', 'PVITPLU', 'L', iret, iad=ivite)
-! Noeud 1
-        valpar(1)  = w(1)
-        valpar(2)  = w(2)
-        valpar(3)  = w(3)
-        valpar(4)  = w2(1)
-        valpar(5)  = w2(2)
-        valpar(6)  = w2(3)
-        valpar(7)  = zr(ivite-1+1)
-        valpar(8)  = zr(ivite-1+2)
-        valpar(9)  = zr(ivite-1+3) 
-        valpar(10) = w(4)  
+!       Noeud 2
+        valpar(1:3) = wx(4:6); valpar(4:6)   = w2(1:3)
+        valpar(7:9) = wv(4:6); valpar(10:12) = wa(4:6)
+        valpar(13)  = temps
         do i = 1, 6
-            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpar,&
-                        q(i), ier)
+            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpar, q(i+ncf), ier)
         enddo
-        do i = 7, nc
-            call fointe('FM', zk8(lforc+i), nbpar, nompar, valpar,&
-                        q(i), ier)
-        enddo
-! Noeud 2
-        valpar(1)  = w(5)
-        valpar(2)  = w(6)
-        valpar(3)  = w(7)
-        valpar(4)  = w2(1)
-        valpar(5)  = w2(2)
-        valpar(6)  = w2(3)
-        valpar(7)  = zr(ivite-1+7)
-        valpar(8)  = zr(ivite-1+8)
-        valpar(9)  = zr(ivite-1+9)
-        valpar(10) = w(8)     
-        do i = 1, 6
-            j = i + nc
-            call fointe('FM', zk8(lforc+i-1), nbpar, nompar, valpar,&
-                        q(j), ier)
-        enddo
-        do i = 7, nc
-            j = i + nc
-            call fointe('FM', zk8(lforc+i), nbpar, nompar, valpar,&
-                        q(j), ier)
+        do i = 7, ncf
+            call fointe('FM', zk8(lforc+i), nbpar, nompar, valpar, q(i+ncf), ier)
         enddo
     else
         ch16 = option
@@ -298,64 +290,57 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
 !
 !   controle de validite de forces variant lineairement
     if (itype .ne. 0) then
-        do i = 1, nc
-            if (qq(i) .ne. qq(i+nc)) then
+        do i = 1, ncf
+            if ( abs(qq(i) - qq(i+ncf)).gt.r8min ) then
                 call utmess('F', 'ELEMENTS2_50')
             endif
         enddo
     endif
 !
     if (okvent) then
-        s=ddot(3,w2,1,w2,1)
-        s2=1.d0/s
-!       calcul de la norme du vecteur a projetter
-        s=ddot(3,q(1),1,q(1),1)
-        s4 = sqrt(s)
+!       Récupération de la fonction d'effort en fonction de la vitesse
+        call tecach('ONO', 'PVENTCX', 'L', iret, iad=ifcx)
+        if (iret .ne. 0) then
+            call utmess('F', 'ELEMENTS2_53')
+        endif
+        if (zk8(ifcx)(1:1).eq.'.') then
+            call utmess('F', 'ELEMENTS2_53')
+        endif
+!
+        xs = ddot(3,w2,1,w2,1)
+        s2 = 1.0/xs
+!       calcul de la norme du vecteur a projeter
+        xs=ddot(3,q(1),1,q(1),1)
+        s4 = sqrt(xs)
 !       calcul du vecteur vitesse perpendiculaire
-        fcx = 0.0d0
+        fcx = 0.0; vp(:) = 0.0
         if (s4 .gt. r8min) then
-            call provec(w2, q(1), u)
-            call provec(u, w2, v)
-            call pscvec(3, s2, v, vp)
+            call provec(w2, q(1), xu)
+            call provec(xu, w2, xv)
+            call pscvec(3, s2, xv, vp)
 !           norme de la vitesse perpendiculaire
-            vite2=ddot(3,vp,1,vp,1)
+            vite2     = ddot(3,vp,1,vp,1)
             valpav(1) = sqrt( vite2 )
             if (valpav(1) .gt. r8min) then
-!               recuperation de l'effort en fonction de la vitesse
-                call tecach('ONO', 'PVENTCX', 'L', iret, iad=ifcx)
-                if (iret .ne. 0) then
-                    call utmess('F', 'ELEMENTS2_53')
-                endif
-                if (zk8(ifcx)(1:1).eq.'.') then
-                    call utmess('F', 'ELEMENTS2_53')
-                endif
                 call fointe('FM', zk8(ifcx), 1, nompav, valpav, fcx, iret)
                 fcx = fcx / valpav(1)
             endif
         endif
         call pscvec(3, fcx, vp, q(1))
 !
-!       calcul de la norme du vecteur a projetter
-        s=ddot(3,q(7),1,q(7),1)
-        s4 = sqrt(s)
+!       calcul de la norme du vecteur a projeter
+        xs = ddot(3,q(7),1,q(7),1)
+        s4 = sqrt(xs)
 !       calcul du vecteur vitesse perpendiculaire
-        fcx = 0.0d0
+        fcx = 0.0; vp(:) = 0.0
         if (s4 .gt. r8min) then
-            call provec(w2, q(7), u)
-            call provec(u, w2, v)
-            call pscvec(3, s2, v, vp)
+            call provec(w2, q(7), xu)
+            call provec(xu, w2, xv)
+            call pscvec(3, s2, xv, vp)
 !           norme de la vitesse perpendiculaire
-            vite2=ddot(3,vp,1,vp,1)
+            vite2     = ddot(3,vp,1,vp,1)
             valpav(1) = sqrt( vite2 )
             if (valpav(1) .gt. r8min) then
-!               recuperation de l'effort en fonction de la vitesse
-                call tecach('ONO', 'PVENTCX', 'L', iret, iad=ifcx)
-                if (iret .ne. 0) then
-                    call utmess('F', 'ELEMENTS2_53')
-                endif
-                if (zk8(ifcx)(1:1).eq.'.') then
-                    call utmess('F', 'ELEMENTS2_53')
-                endif
                 call fointe('FM', zk8(ifcx), 1, nompav, valpav, fcx, iret)
                 fcx = fcx / valpav(1)
             endif
@@ -363,37 +348,37 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
         call pscvec(3, fcx, vp, q(7))
 !
     else if (normal) then
-        s=ddot(3,w2,1,w2,1)
-        s2=1.d0/s
-        s=ddot(3,q(1),1,q(1),1)
-        s4 = sqrt(s)
+        xs=ddot(3,w2,1,w2,1)
+        s2=1.d0/xs
+        xs=ddot(3,q(1),1,q(1),1)
+        s4 = sqrt(xs)
         if (s4 .gt. r8min) then
-            call provec(w2, q(1), u)
-            s=ddot(3,u,1,u,1)
-            s3 = sqrt(s)
+            call provec(w2, q(1), xu)
+            xs=ddot(3,xu,1,xu,1)
+            s3 = sqrt(xs)
             s5 = s3*sqrt(s2)/s4
-            call provec(u, w2, v)
-            call pscvec(3, s2, v, u)
-            call pscvec(3, s5, u, q(1))
+            call provec(xu, w2, xv)
+            call pscvec(3, s2, xv, xu)
+            call pscvec(3, s5, xu, q(1))
         endif
 !
-        s=ddot(3,q(7),1,q(7),1)
-        s4 = sqrt(s)
+        xs=ddot(3,q(7),1,q(7),1)
+        s4 = sqrt(xs)
         if (s4 .gt. r8min) then
-            call provec(w2, q(7), u)
-            s=ddot(3,u,1,u,1)
-            s3 = sqrt(s)
+            call provec(w2, q(7), xu)
+            xs = ddot(3,xu,1,xu,1)
+            s3 = sqrt(xs)
             s5 = s3*sqrt(s2)/s4
-            call provec(u, w2, v)
-            call pscvec(3, s2, v, u)
-            call pscvec(3, s5, u, q(7))
+            call provec(xu, w2, xv)
+            call pscvec(3, s2, xv, xu)
+            call pscvec(3, s5, xu, q(7))
         endif
     endif
 !   Passage repère local du vecteur force
     if (global .or. normal .or. okvent) then
-        call utpvgl(nno, nc, pgl, q(1), qq(1))
+        call utpvgl(nno, ncf, pgl, q(1), qq(1))
     else
-        qq(1:2*nc) = q(1:2*nc)
+        qq(1:2*ncf) = q(1:2*ncf)
     endif
 !   a cause des chargements variables
     coef1 = 1.0d0
@@ -406,21 +391,21 @@ subroutine ptforp(itype, option, nomte, a, a2, xl, ist, nno, nc, pgl, fer, fei)
     call tecach('NNO', 'PCOEFFC', 'L', iretc, iad=icoec)
 !
     if (iretr.eq.0) then
-        do i = 1, 2*nc
+        do i = 1, 2*ncf
             qq(i) = qq(i) * zr(icoer)
         enddo
-        call ptfop1(itype, nc, coef1, coef2, xl, qq, fer)
+        call ptfop1(itype, ncf, coef1, coef2, xl, qq, fer)
 !
     else if (iretc.eq.0) then
-        do i = 1, 2*nc
+        do i = 1, 2*ncf
             qqr(i) = qq(i) * dble( zc(icoec) )
             qqi(i) = qq(i) * dimag( zc(icoec) )
         enddo
-        call ptfop1(itype, nc, coef1, coef2, xl, qqr, fer)
-        call ptfop1(itype, nc, coef1, coef2, xl, qqi, fei)
+        call ptfop1(itype, ncf, coef1, coef2, xl, qqr, fer)
+        call ptfop1(itype, ncf, coef1, coef2, xl, qqi, fei)
 !
     else
-        call ptfop1(itype, nc, coef1, coef2, xl, qq, fer)
+        call ptfop1(itype, ncf, coef1, coef2, xl, qq, fer)
     endif
 !
 end subroutine
