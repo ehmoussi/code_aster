@@ -18,25 +18,40 @@
 
 subroutine cbchei(char, noma, ligrmo, fonree)
     implicit   none
+#include "jeveux.h"
+#include "asterf_types.h"
 #include "asterc/getfac.h"
+#include "asterfort/assert.h"
 #include "asterfort/cachei.h"
+#include "asterfort/carces.h"
+#include "asterfort/celces.h"
 #include "asterfort/alcart.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jedetr.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nocart.h"
 #include "asterfort/utmess.h"
     character(len=4) :: fonree
     character(len=8) :: char, noma
     character(len=*) :: ligrmo
-    integer :: nbfac, iepsi, ncmp
+!
+    integer :: nbfac, iepsi, ncmp, cret, jcesd, jcesc, nbcmpch, i, j
+    character(len=4) :: typch
     character(len=5) :: para
     character(len=16) :: motfac
-    character(len=19) :: carte
+    character(len=19) :: carte, chames
     character(len=24) :: chepsi
+    aster_logical :: compok
     character(len=8), pointer :: valv(:) => null()
     character(len=8), pointer :: vncmp(:) => null()
+    integer, parameter :: nbcmpdisp = 17
+    character(len=8), parameter :: nomcmpdisp(nbcmpdisp) = (/ &
+    'EPXX', 'EPYY', 'EPZZ' ,'EPXY', 'EPXZ', 'EPYZ',&
+    'EPX ', 'KY  ', 'KZ  ', 'EXX ', 'EYY ', 'EXY ', 'KXX ', 'KYY ', 'KXY ',&
+    'GAX ', 'GAY '/)
 !     ------------------------------------------------------------------
 !
     motfac = 'PRE_EPSI'
@@ -55,6 +70,41 @@ subroutine cbchei(char, noma, ligrmo, fonree)
                         motfac)
         else
             if (nbfac.gt.1) call utmess('F', 'CHARGES_5')
+            
+!
+! ---       verification des composantes
+!
+            chames = '&&CHCHEI.CES'
+            
+            call dismoi('TYPE_CHAMP', chepsi, 'CHAMP', repk=typch)
+            
+            if (typch .eq. 'CART') then
+                call carces(chepsi, 'ELEM', ' ', 'V', chames,&
+                            ' ', cret)
+            elseif (typch(1:2) .eq. 'EL') then
+                call celces(chepsi, 'V', chames)
+            else
+                ASSERT(ASTER_FALSE)
+            endif
+
+            call jeveuo(chames//'.CESD', 'L', jcesd)
+            call jeveuo(chames//'.CESC', 'L', jcesc)
+            
+            nbcmpch = zi(jcesd+1)
+            do i=1, nbcmpch
+                compok = ASTER_FALSE
+                do j=1, nbcmpdisp 
+                    if(zk8(jcesc-1+i).eq.nomcmpdisp(j))then
+                        compok = ASTER_TRUE
+                        exit
+                    endif
+                enddo
+                if (.not. compok) then
+                    call utmess('F', 'CHARGES_6', sk=zk8(jcesc-1+i))
+                endif
+            enddo
+            
+            call jedetr(chames)
 !
             carte = char//'.CHME.'//para
 !
