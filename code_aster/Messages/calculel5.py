@@ -70,7 +70,7 @@ Erreur d'utilisation dans la commande CREA_MAILLAGE :
 """),
 
     11: _("""
-Le maillage utilisé dans la commande CREA_MAILLAGE est de type PARALLEL_MESH:
+Le maillage utilisé dans la commande CREA_MAILLAGE est de type MAILLAGE_P:
   Ceci est interdit pour le moment.
 """),
 

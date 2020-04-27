@@ -202,16 +202,7 @@ implicit none
 !   si MATEL n'est pas MPI_COMPLET, on le complete :
     call jeexin(matr_elem//'.RELR', iexi)
     if (iexi .gt. 0) then
-        call jelira(matr_elem//'.RELR', 'LONMAX', nbresu)
-        call jeveuo(matr_elem//'.RELR', 'L', vk24=relr)
-        do iresu = 1, nbresu
-            resuel=relr(iresu)(1:19)
-            call jeexin(resuel//'.RESL', iexi)
-            if (iexi .eq. 0) cycle
-            call dismoi('MPI_COMPLET', resuel, 'RESUELEM', repk=kmpic)
-            ASSERT((kmpic.eq.'OUI').or.(kmpic.eq.'NON'))
-            if (kmpic .eq. 'NON') call sdmpic('RESUELEM', resuel)
-        end do
+        call sdmpic('MATR_ELEM', matr_elem)
     endif
 !
 ! - DESTRUCTION DES RESUELEM NULS
