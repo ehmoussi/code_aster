@@ -101,7 +101,8 @@ La charge %(k1)s est un chargement de type force ou flux et ne peut donc pas uti
 """),
 
     32 : _("""
-La charge %(k1)s contient une condition de type ECHANGE et elle n'est pas compatible avec FONC_MULT. Pour appliquer une fonction (y compris en fonction du temps), il faut utiliser AFFE_CHAR_THER_F.
+La charge %(k1)s contient une condition de type ECHANGE et elle n'est pas compatible avec FONC_MULT.
+Pour appliquer une fonction (y compris en fonction du temps), il faut utiliser AFFE_CHAR_THER_F.
 """),
 
     33 : _("""
@@ -136,7 +137,7 @@ On ne peut pas piloter en l'absence de forces de type FIXE_PILO.
 """),
 
     40 : _("""
-On ne peut piloter plus d'une charge.
+On ne peut pas piloter plus d'une charge.
 """),
 
     50 : _("""
@@ -156,11 +157,11 @@ Le chargement FORCE_SOL ne peut pas être une fonction.
 """),
 
     55 : _("""
-La charge %(k1)s dépend de la vitesse: elle doit être suiveuse.
+La charge %(k1)s dépend de la vitesse et/ou de l'accélération ==> elle doit être suiveuse.
 """),
 
     56 : _("""
-La charge %(k1)s dépend de la vitesse: elle ne peut être utilisable qu'en dynamique.
+La charge %(k1)s dépend de la vitesse et/ou de l'accélération ==> elle ne peut être utilisée qu'en dynamique.
 """),
 
     57: _("""

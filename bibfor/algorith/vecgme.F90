@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 subroutine vecgme(model    , cara_elem   , matez          , lload_namez, lload_infoz,&
                   inst_curr, disp_prevz  , disp_cumu_instz, vect_elemz , inst_prev  ,&
-                  compor   , ligrel_calcz, vite_currz     , strx_prevz)
+                  compor   , ligrel_calcz, vite_currz     , acce_currz , strx_prevz)
 !
 implicit none
 !
@@ -29,14 +29,9 @@ implicit none
 #include "asterfort/load_neum_prep.h"
 #include "asterfort/load_neum_comp.h"
 #include "asterfort/load_neum_evcu.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/inical.h"
-#include "asterfort/gcnco2.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/memare.h"
 #include "asterfort/reajre.h"
 !
@@ -53,12 +48,13 @@ real(kind=8), intent(in) :: inst_prev
 character(len=24), intent(in) :: compor
 character(len=*), intent(in) :: ligrel_calcz
 character(len=*), intent(in) :: vite_currz
+character(len=*), intent(in) :: acce_currz
 character(len=*), intent(in) :: strx_prevz
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Compute Neumann loads
-! 
+!
 ! Undead loads - Depending on geometry or speed - Vector
 !
 ! --------------------------------------------------------------------------------------------------
@@ -70,8 +66,9 @@ character(len=*), intent(in) :: strx_prevz
 ! In  lload_info     : name of object for list of loads info
 ! In  inst_prev      : previous time
 ! In  inst_curr      : current time
-! In  ligrel_calc    : LIGREL to compute 
-! In  vite_curr      : speed at current of current time
+! In  ligrel_calc    : LIGREL to compute
+! In  vite_curr      : speed at current time
+! In  acce_curr      : acceleration at current time
 ! In  disp_prev      : displacement at beginning of current time
 ! In  strx_prev      : fibers information at beginning of current time
 ! In  disp_cumu_inst : displacement increment from beginning of current time
@@ -90,10 +87,10 @@ character(len=*), intent(in) :: strx_prevz
     integer :: nb_load, i_load
     integer :: load_nume
     integer :: nb_in_prep
-    real(kind=8) :: inst_theta 
+    real(kind=8) :: inst_theta
     character(len=24) :: ligrel_calc, mate
     character(len=19) :: vect_elem, resu_elem
-    character(len=19) :: disp_prev, disp_cumu_inst, vite_curr, strx_prev
+    character(len=19) :: disp_prev, disp_cumu_inst, vite_curr, acce_curr, strx_prev
     character(len=24) :: lload_name
     character(len=24), pointer :: v_load_name(:) => null()
     character(len=24) :: lload_info
@@ -117,6 +114,7 @@ character(len=*), intent(in) :: strx_prevz
     strx_prev      = strx_prevz
     disp_cumu_inst = disp_cumu_instz
     vite_curr      = vite_currz
+    acce_curr      = acce_currz
     ligrel_calc    = ligrel_calcz
     inst_theta     = 0.d0
     if (ligrel_calc .eq. ' ') then
@@ -156,7 +154,8 @@ character(len=*), intent(in) :: strx_prevz
     call load_neum_prep(model    , cara_elem , mate      , 'Suiv'      , inst_prev,&
                         inst_curr, inst_theta, nb_in_maxi, nb_in_prep  , lchin    ,&
                         lpain    , disp_prev = disp_prev, disp_cumu_inst = disp_cumu_inst,&
-                        compor = compor, strx_prev_=strx_prev, vite_curr_=vite_curr)
+                        compor = compor, strx_prev_=strx_prev, vite_curr_=vite_curr, &
+                        acce_curr_=acce_curr)
 !
 ! - Computation
 !
@@ -164,7 +163,7 @@ character(len=*), intent(in) :: strx_prevz
         load_name = v_load_name(i_load)(1:8)
         load_nume = v_load_info(nb_load+i_load+1)
 !
-! ----- Standard undead Neumann loads 
+! ----- Standard undead Neumann loads
 !
         if (load_nume .eq. 4) then
             call load_neum_comp(stop       , i_load    , load_name , load_nume, 'Suiv',&

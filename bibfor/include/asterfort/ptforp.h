@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,21 +19,19 @@
 !
 !
 interface
-    subroutine ptforp(itype, option, nomte, a, a2,&
-                      xl, ist, nno,&
-                      nc, pgl, fer,&
-                      fei)
-        integer :: itype
-        character(len=*) :: option
-        character(len=*) :: nomte
-        real(kind=8) :: a
-        real(kind=8) :: a2
-        real(kind=8) :: xl
-        integer :: ist
-        integer :: nno
-        integer :: nc
-        real(kind=8) :: pgl(3, 3)
-        real(kind=8) :: fer(*)
-        real(kind=8) :: fei(*)
+    subroutine ptforp(itype, option, nomte, a, a2, &
+                      xl, ist, nno, ncf, pgl, fer,  fei)
+        integer             :: itype
+        character(len=*)    :: option
+        character(len=*)    :: nomte
+        real(kind=8)        :: a
+        real(kind=8)        :: a2
+        real(kind=8)        :: xl
+        integer             :: ist
+        integer             :: nno
+        integer             :: ncf
+        real(kind=8)        :: pgl(3, 3)
+        real(kind=8)        :: fer(*)
+        real(kind=8)        :: fei(*)
     end subroutine ptforp
 end interface
