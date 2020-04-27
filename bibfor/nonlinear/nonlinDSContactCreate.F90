@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -96,10 +96,11 @@ type(NL_DS_Contact), intent(out) :: ds_contact
     ds_contact%nb_loop = nb_loop_defi
     ASSERT(ds_contact%nb_loop.le.ds_contact%nb_loop_maxi)
     do i_loop = 1, nb_loop_defi
-        ds_contact%loop(i_loop)%type    = loop_type(i_loop)
-        ds_contact%loop(i_loop)%conv    = ASTER_FALSE
-        ds_contact%loop(i_loop)%error   = ASTER_FALSE
-        ds_contact%loop(i_loop)%counter = 0
+        ds_contact%loop(i_loop)%type        = loop_type(i_loop)
+        ds_contact%loop(i_loop)%conv        = ASTER_FALSE
+        ds_contact%loop(i_loop)%error       = ASTER_FALSE
+        ds_contact%loop(i_loop)%counter     = 0
+        ds_contact%loop(i_loop)%vale_calc   = 0
     end do
 !
 ! - Field for CONT_NODE
