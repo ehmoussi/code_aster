@@ -52,6 +52,7 @@ implicit none
 #include "asterfort/redetr.h"
 #include "asterfort/ntdoch.h"
 #include "asterfort/sdmpic.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/cme_getpara.h"
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,7 +68,7 @@ implicit none
     integer :: nb_load, nbresu, iresu, iexi, nh
     character(len=1) :: base
     character(len=4) :: kmpic
-    character(len=8) :: model, cara_elem, sigm, strx, disp
+    character(len=8) :: model, cara_elem, sigm, strx, disp, mesh
     character(len=16) :: k8dummy, option
     character(len=19) :: matr_elem, rigi_meca, mass_meca, resuel, list_load
     character(len=24) :: chtime, mate, compor_mult, matr_elem24, mateco
@@ -201,8 +202,18 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !   si MATEL n'est pas MPI_COMPLET, on le complete :
     call jeexin(matr_elem//'.RELR', iexi)
-    if (iexi .gt. 0) then
-        call sdmpic('MATR_ELEM', matr_elem)
+    call dismoi('NOM_MAILLA', matr_elem, 'MATR_ELEM', repk=mesh)
+    if (iexi .gt. 0 .and. .not. isParallelMesh(mesh)) then
+        call jelira(matr_elem//'.RELR', 'LONMAX', nbresu)
+        call jeveuo(matr_elem//'.RELR', 'L', vk24=relr)
+        do iresu = 1, nbresu
+            resuel=relr(iresu)(1:19)
+            call jeexin(resuel//'.RESL', iexi)
+            if (iexi .eq. 0) cycle
+            call dismoi('MPI_COMPLET', resuel, 'RESUELEM', repk=kmpic)
+            ASSERT((kmpic.eq.'OUI').or.(kmpic.eq.'NON'))
+            if (kmpic .eq. 'NON') call sdmpic('RESUELEM', resuel)
+        end do
     endif
 !
 ! - DESTRUCTION DES RESUELEM NULS
