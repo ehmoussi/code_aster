@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,9 +54,13 @@ CHA=AFFE_CHAR_MECA(DDL_IMPO=_F(GROUP_MA='ENCASTR',
                    FORCE_ARETE=_F(GROUP_MA='LIBRE',
                                   FZ=8.7594,),);
 
+
+# 29746: RESI_RELA = 1.E-5 parce que le système est un peu mal conditéonné (vérif. verrouillage en cisaillement)
+
 RESU=MECA_STATIQUE(CHAM_MATER=CHAM_MAT,
                    MODELE=MO,
                    CARA_ELEM=CAR_ELE,
+                   SOLVEUR=_F(RESI_RELA=1.E-5),
                    EXCIT=_F(CHARGE=CHA,),);
 
 RESU=CALC_CHAMP(reuse=RESU,RESULTAT=RESU,CONTRAINTE=('SIGM_ELNO'))
