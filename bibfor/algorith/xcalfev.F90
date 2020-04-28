@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
-                   lsn, lst, geom, kappa, mu, ff, fk,&
+                   geom, kappa, mu, ff, fk,&
                    dfdi, dkdgl, face,&
                    nnop_lin, ff_lin, dfdi_lin)
 !
@@ -40,7 +40,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
 !
     character(len=8), intent(in) :: elrefp
     integer :: ndim, nnop, stano(*)
-    real(kind=8) :: he, lsn(*), basloc(*), fk(27,3,3), lst(*)
+    real(kind=8) :: he, basloc(*), fk(27,3,3)
     real(kind=8) :: kappa, ff(*), geom(*), mu
     real(kind=8), optional :: dkdgl(27,3,3,3)
     real(kind=8), optional :: dfdi(nnop,ndim)
@@ -55,7 +55,6 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
 !            DANS LA BASE <GLOBALE>
 !
 ! IN  HE      : VALEUR DE LA FONCTION HEAVYSIDE CSTE LE SS-ELT
-! IN  LSN     : VALEUR DE LA LEVEL SET NORMALE
 ! IN  BASLOC  : BASE LOCALE AU FOND DE FISSURE
 ! IN  KA, MU  : PARAMETRES MATERIAU / LES FONCTIONS ASYMPTIQUE POUR UN MATERIAU ELASTIQUE
 ! IN  FF      : FONCTIONS DE FORMES DE L ELEMENT PARENT
@@ -84,6 +83,19 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
     lshift=.not.(count(stano(1:nnop).eq.-2).eq.nnop)
     method='DEFAULT'
     lcourb=.false.
+    lbid=ASTER_FALSE
+!
+    xref(:)= 0.d0
+    ff_n(:)=0.d0
+    p(:,:,:) = 0.d0
+    invp(:,:,:) = 0.d0
+    r_n(:) = 0.d0
+    t_n(:) = 0.d0
+    p_g(:,:) = 0.d0
+    invp_g(:,:) = 0.d0
+    ff1(:) = 0.d0
+    dfdi1(:,:)=0.d0
+    th = 0.d0
     fk(:,:,:)=0.d0
     if (.not.present(dkdgl)) then
       lderiv=.false.
@@ -115,7 +127,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  PREPARATION DES COORDONNEES CYLINDRIQUES
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     lcourb=lcourb.and.lderiv
     if (lderiv) then
       call coor_cyl(ndim, nnop, basloc, geom, ff,&
@@ -130,8 +142,8 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  CORRECTION POUR LE CONTACT
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-    if (present(face)) then 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if (present(face)) then
        if (.not.(face.eq.'MAIT'.or.face.eq.'ESCL'.or.face.eq.' ')) then
           call utmess('F', 'ELEMENTS6_6', sk='face')
        endif
@@ -144,7 +156,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  CALCUL DU SIGNE POUR L INTERPOLATION FANTOME
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     signe=sign(1.d0,th)
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -154,7 +166,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
     fkpo_n(:,:,:)=0.d0
     if (lshift) then
     call xelrex(elrefp, nno, xref, ndime=ndime)
-    do ino=1, nnop      
+    do ino=1, nnop
       call elrfvf(elrefp, xref((ndime*(ino-1)+1):(ndime*(ino-1)+ndime)),&
                   nnop, ff_n, nno)
       call coor_cyl(ndim, nnop, basloc, geom, ff_n,&
@@ -184,7 +196,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
 5   continue
     endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!     FONCTIONS D'ENRICHISSEMENT 
+!     FONCTIONS D'ENRICHISSEMENT
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  * AU POINT DE GAUSS
     call xdeffk_wrap(kappa, mu, rr, th, ndim, fkpo, method, 0)
@@ -199,7 +211,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
     enddo
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  PREPARATION DE LA DERIVATION
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     lderiv=lderiv.and.l_not_zero
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -217,7 +229,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
                 dkdgl_g(alp,i,j)=dkdgl_g(alp,i,j)+p_g(i,k)*fkpo_n(ino,alp,k)*dfdi(ino,j)
 !                if (lcourb) dkdgl_g(alp,i,j)=dkdgl_g(alp,i,j)+&
 !                                                 courb(i,k,j)*fkpo_n(ino,alp,k)*ff(ino)
-              enddo           
+              enddo
             enddo
           enddo
         enddo
@@ -241,11 +253,11 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
     do 10 ino = 1, nnop
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !  POUR LE QUADRATIQUE => BASCULEMENT EN LINEAIRE
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       if (ino.gt.nnops) goto 10
 !
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!     DERIVEES DES FONCTIONS D'ENRICHISSEMENT 
+!     DERIVEES DES FONCTIONS D'ENRICHISSEMENT
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       if (.not.lderiv) goto 11
 !  *  CONVERSION DANS LA BASE GLOBALE
@@ -272,7 +284,7 @@ subroutine xcalfev(elrefp, ndim, nnop, basloc, stano, he,&
 !  *  MULTIPLICATION DE FK PAR FF
      do alp = 1, ndim
        do i =1, ndim
-         fk(ino,alp,i)=fk_gl(alp,i)*ff1(ino)      
+         fk(ino,alp,i)=fk_gl(alp,i)*ff1(ino)
        enddo
      enddo
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,6 +59,7 @@ subroutine fetskp(mod,meth,nbpart)
 #include "asterfort/uttcpr.h"
 #include "asterfort/uttcpu.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
@@ -93,6 +94,7 @@ subroutine fetskp(mod,meth,nbpart)
 ! ------- ON RECUPERE LES DONNEES DU MAILLAGE OU DU MODELE
 !
     call dismoi('NOM_MAILLA', mod, 'MODELE', repk=ma)
+    ASSERT(.not.isParallelMesh(ma))
 
     call dismoi('NB_MA_MAILLA', ma, 'MAILLAGE', repi=nbmato)
     AS_ALLOCATE(vi=vrenum1, size=nbmato)

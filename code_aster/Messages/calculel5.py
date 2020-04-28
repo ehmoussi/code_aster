@@ -69,6 +69,11 @@ Erreur d'utilisation dans la commande CREA_MAILLAGE :
   Le mot clé MAILLAGE est ici obligatoire.
 """),
 
+    11: _("""
+Le maillage utilisé dans la commande CREA_MAILLAGE est de type MAILLAGE_P:
+  Ceci est interdit pour le moment.
+"""),
+
     20 : _("""
  le GROUP_NO  %(k1)s  contient  %(k2)s  noeuds
 """),
