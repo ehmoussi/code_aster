@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: josselin.delmas at edf.fr
-
 cata_msg = {
 
     1 : _("""
@@ -225,17 +223,6 @@ ajoutez un état initial nul au calcul.
 
     82 : _("""
   Distance au plan :  %(r1)f
-"""),
-
-    84 : _("""
- famille non disponible élément de référence  %(k1)s
- famille  %(k2)s
-"""),
-
-    88 : _("""
-élément de référence  %(k1)s non disponible
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
 """),
 
     90 : _("""

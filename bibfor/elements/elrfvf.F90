@@ -163,48 +163,6 @@ implicit none
             ff(26) = al32(x0)*al32(y0)*al33(z0)
             ff(27) = al32(x0)*al32(y0)*al32(z0)
 !
-!         ------------------------------------------------------------------
-        case('SH6')
-!
-            x0 = x(1)
-            y0 = x(2)
-            z0 = x(3)
-            al = un - x0 - y0
-!
-            ff(1) = undemi*x0*(un-z0)
-            ff(2) = undemi*y0*(un-z0)
-            ff(3) = undemi*al*(un-z0)
-            ff(4) = undemi*x0*(un+z0)
-            ff(5) = undemi*y0*(un+z0)
-            ff(6) = undemi*al*(un+z0)
-!         ------------------------------------------------------------------
-        case('S15')
-!
-            x0 = x(1)
-            y0 = x(2)
-            z0 = x(3)
-            al = un - x0 - y0
-!
-            ff(1)  = x0* (un-z0)* ((deux*x0)-deux-z0)/deux
-            ff(2)  = y0* (un-z0)* ((deux*y0)-deux-z0)/deux
-            ff(3)  = al* (z0-un)* (z0+ (deux*x0)+ (deux*y0))/deux
-            ff(4)  = x0* (un+z0)* ((deux*x0)-deux+z0)/deux
-            ff(5)  = y0* (un+z0)* ((deux*y0)-deux+z0)/deux
-            ff(6)  = al* (-z0-un)* (-z0+ (deux*x0)+(deux*y0))/deux
-!
-            ff(7)  = deux*x0*y0* (un-z0)
-            ff(8)  = deux*y0*al* (un-z0)
-            ff(9)  = deux*x0*al* (un-z0)
-!
-            ff(10) = x0* (un-z0*z0)
-            ff(11) = y0* (un-z0*z0)
-            ff(12) = al* (un-z0*z0)
-!
-            ff(13) = deux*x0*y0* (un+z0)
-            ff(14) = deux*y0*al* (un+z0)
-            ff(15) = deux*x0*al* (un+z0)
-!
-!         ------------------------------------------------------------------
         case('PE6')
 !
             x0 = x(1)

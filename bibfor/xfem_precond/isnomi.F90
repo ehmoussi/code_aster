@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,8 +47,7 @@ function isnomi(elrefa, ino)
     else if (elrefa.eq.'TE4'.or.elrefa.eq.'T10') then
       nnos=4
       goto 100
-    else if (elrefa.eq.'PE6'.or.elrefa.eq.'P15'.or.elrefa.eq.'P18'&
-             .or. elrefa.eq.'SH6'.or.elrefa.eq.'S15') then
+    else if (elrefa.eq.'PE6'.or.elrefa.eq.'P15'.or.elrefa.eq.'P18') then
       nnos=6
       goto 100
     else if (elrefa.eq.'PY5'.or.elrefa.eq.'P13') then

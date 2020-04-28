@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -1540,9 +1540,7 @@ subroutine ecla3d(nomte, elrefa, fapg, npg, npoini,&
 !     -----------------------------------------------------------------
 !     PENTAEDRES
 !     -----------------------------------------------------------------
-        elseif ( elrefa .eq. 'PE6' .or. elrefa .eq. 'SH6' &
-                .or. elrefa .eq. 'P15' .or. elrefa .eq. 'S15' &
-                .or. elrefa .eq. 'P18') then
+        elseif ( elrefa .eq. 'PE6' .or. elrefa .eq. 'P15' .or. elrefa .eq. 'P18') then
 !
         if (fapg .eq. 'FPG1') then
 !           -----------------

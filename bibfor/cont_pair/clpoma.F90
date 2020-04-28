@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine clpoma(elem_dime, elem_code, elem_coor, elem_nbnode, elem_weight)
 !
 implicit none
@@ -26,12 +26,11 @@ implicit none
 #include "asterfort/sumetr.h"
 #include "asterfort/assert.h" 
 !
-!
-    integer, intent(in) :: elem_dime
-    character(len=8), intent(in) :: elem_code
-    real(kind=8), intent(in) :: elem_coor(3,9)
-    integer, intent(in) :: elem_nbnode
-    real(kind=8), intent(out) :: elem_weight
+integer, intent(in) :: elem_dime
+character(len=8), intent(in) :: elem_code
+real(kind=8), intent(in) :: elem_coor(3,9)
+integer, intent(in) :: elem_nbnode
+real(kind=8), intent(out) :: elem_weight
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,7 +48,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_gauss, nb_gauss, ino
+    integer :: i_gauss, nb_gauss, ino, ndim
     character(len=8) :: gauss_family
     real(kind=8) :: gauss_weight(12), gauss_coor(12*2) 
     real(kind=8) :: dff(2, 9), dxdk, dydk, dzdk
@@ -82,7 +81,8 @@ implicit none
 !
 ! - Get integration scheme
 !
-    call elraga(elem_code   , gauss_family, elem_dime-1, nb_gauss, gauss_coor,&
+    ndim = elem_dime-1
+    call elraga(elem_code   , gauss_family, ndim, nb_gauss, gauss_coor,&
                 gauss_weight)
 !
 ! - Loop on integration points
