@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
 subroutine mminit(mesh  , ds_contact, sddyna  , hat_valinc, ds_measure,&
-                  sdnume, nume_inst)
+                  sdnume, nume_inst, list_func_acti)
 !
 use NonLin_Datastructure_type
 !
@@ -47,6 +47,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 character(len=19), intent(in) :: sddyna
 character(len=19), intent(in) :: sdnume
 integer, intent(in) :: nume_inst
+integer, intent(in) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -127,6 +128,7 @@ integer, intent(in) :: nume_inst
     sdcont_etatct = ds_contact%sdcont_solv(1:14)//'.ETATCT'
     call jeveuo(sdcont_tabfin, 'E', vr = v_sdcont_tabfin)
     call jeveuo(sdcont_etatct, 'L', vr = v_sdcont_etatct)
+    
     do ipc = 1, nb_inte_poin
         v_sdcont_tabfin(ztabf*(ipc-1)+23) = v_sdcont_etatct(zetat*(ipc-1)+1)
         v_sdcont_tabfin(ztabf*(ipc-1)+17) = v_sdcont_etatct(zetat*(ipc-1)+2)
@@ -165,7 +167,7 @@ integer, intent(in) :: nume_inst
 ! - Initial options
 !
     if (.not.l_cont_allv.and.l_step_first) then
-        call mmopti(mesh, ds_contact)
+        call mmopti(mesh, ds_contact, list_func_acti)
     endif
 !
 ! - Cycling initialization
