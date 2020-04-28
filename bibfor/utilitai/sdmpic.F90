@@ -80,7 +80,7 @@ subroutine sdmpic(typesd, nomsd)
 !     ----------------------------------
         call dismoi('MPI_COMPLET', k19, 'RESUELEM', repk=kmpic)
         if (kmpic .eq. 'OUI') goto 999
-        call dismoi('NOM_MAILLA', k19, 'CHAM_ELEM', repk=mesh)
+        call dismoi('NOM_MAILLA', k19, 'RESUELEM', repk=mesh)
         ASSERT(.not. isParallelMesh(mesh))
         call asmpi_comm_jev('MPI_SUM', k19//'.RESL')
         call jeveuo(k19//'.NOLI', 'E', vk24=noli)
