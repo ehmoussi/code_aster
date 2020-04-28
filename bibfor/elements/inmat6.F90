@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine inmat6(elrefa, fapg, mganos)
-! person_in_charge: jacques.pellet at edf.fr
-!----------------------------------------------------------------------
-! BUT : CALCUL DE LA MATRICE MGANOS : GAUSS -> SOMMETS
-!----------------------------------------------------------------------
-    implicit none
+!
+implicit none
 !
 #include "asterfort/assert.h"
 #include "asterfort/elraca.h"
@@ -29,18 +26,34 @@ subroutine inmat6(elrefa, fapg, mganos)
 #include "asterfort/elrfvf.h"
 #include "asterfort/mgauss.h"
 #include "asterfort/r8inir.h"
-    integer :: nbpgmx, nbnomx, nbfamx
-    parameter (nbpgmx=1000, nbnomx=27, nbfamx=20)
+!
+character(len=8), intent(in) :: elrefa, fapg
+integer, parameter :: nbpgmx=1000, nbnomx=27
+real(kind=8), intent(out) :: mganos(nbpgmx, nbnomx)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Finite elements management
+!
+! Compute the Gauss passage matrix at vertex nodes
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  elrefa           : name of geometric support for finite element
+! In  fapg             : name of Gauss integration scheme
+! Out mganos           : Gauss passage matrix at vertex nodes
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer, parameter :: nbfamx=20
     integer :: ndim, nno, nnos, nbfpg, nbpg(nbfamx)
     integer :: i, kp, kdim, ln, j, lm, npg, iret
     real(kind=8) :: xno(3*nbnomx), vol, ff(nbnomx), m(nbpgmx*nbnomx)
-    real(kind=8) :: p(nbpgmx*nbnomx), mganos(nbpgmx, nbnomx)
+    real(kind=8) :: p(nbpgmx*nbnomx)
     real(kind=8) :: xpg(3*nbpgmx), poipg(nbpgmx), xg(3), det
-    character(len=8) :: nofpg(nbfamx), elrefa, elref2, fapg
+    character(len=8) :: nofpg(nbfamx), elref2
 !
-!     NBPGMX, NBNOMX, NBFAMX SE REFERER A ELRACA
-!
-! DEB ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
     call elraca(elrefa, ndim, nno, nnos, nbfpg,&
                 nofpg, nbpg, xno, vol)
@@ -50,7 +63,8 @@ subroutine inmat6(elrefa, fapg, mganos)
     ASSERT(nno.le.nbnomx)
     ASSERT(npg.le.nbpgmx)
 !
-!     CAS DU QU4/FIS2 NON INVERSIBLE
+! - QU4/FIS2 NON INVERSIBLE => not inversible !
+!
     if (elrefa .eq. 'QU4' .and. fapg .eq. 'FIS2') then
         call r8inir(nbnomx*nbnomx, 0.d0, mganos, 1)
         mganos(1,1) = 1.d0
@@ -60,13 +74,12 @@ subroutine inmat6(elrefa, fapg, mganos)
         goto 100
     endif
 !
+! - Get linear support
 !
     if ((elrefa.eq.'H20') .or. (elrefa.eq.'H27')) then
         elref2 = 'HE8'
     else if ((elrefa.eq.'P15').or.(elrefa.eq.'P18')) then
         elref2 = 'PE6'
-    else if ((elrefa.eq.'S15')) then
-        elref2 = 'SH6'
     else if (elrefa.eq.'P13') then
         elref2 = 'PY5'
     else if ((elrefa.eq.'T10') .or. (elrefa.eq.'TE8')) then
@@ -114,6 +127,6 @@ subroutine inmat6(elrefa, fapg, mganos)
         end do
     end do
 !
-100  continue
+100 continue
 !
 end subroutine

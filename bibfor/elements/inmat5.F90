@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,32 +15,47 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine inmat5(elrefa, nno, nnos, npg, mganos,&
                   mgano2)
-    implicit   none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/assert.h"
-    integer :: nnos, npg, nno, nbpgmx, nbnomx
-    parameter (nbpgmx=1000,nbnomx=27)
-    real(kind=8) :: mganos(nbpgmx, nbnomx), mgano2(nbpgmx, nbnomx)
-    character(len=8) :: elrefa
-!     BUT :
-!     POUR LES ELEMENTS QUADRATIQUES (NNOS /= NNO),
-!     CALCULER LA MATRICE DE PASSAGE GAUSS -> NOEUDS (MGANO2)
-!     A PARTIR DE LA MATRICE DE PASSAGE GAUSS -> NOEUDS_SOMMETS (MGANOS)
-! ----------------------------------------------------------------------
+!
+character(len=8), intent(in) :: elrefa
+integer, intent(in) :: nnos, npg, nno
+integer, parameter :: nbpgmx=1000, nbnomx=27
+real(kind=8), intent(in) :: mganos(nbpgmx, nbnomx)
+real(kind=8), intent(out) :: mgano2(nbpgmx, nbnomx)
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Finite elements management
+!
+! Compute the Gauss passage matrix at all nodes
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  elrefa           : name of geometric support for finite element
+! In  nno              : number of nodes
+! In  nnos             : number of middle nodes
+! In  npg              : number of Gauss points
+! In  mganos           : Gauss passage matrix at vertex nodes
+! Out mgano2           : Gauss passage matrix at all nodes
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: kpg, kno, knos, k
     real(kind=8) :: nosom(nbnomx, nbnomx)
     real(kind=8), parameter :: demi = 0.5d0, quart = 0.25d0
 !
-!     NBPGMX, NBNOMX SE REFERER A ELRACA
-!
-! DEB ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
 !
 !     -- SI NNO=NNOS, IL N'Y A QU'A COPIER :
-!     --------------------------------------
+!
     if (nnos .eq. nno) then
         do kpg = 1,npg
             do kno = 1,nno
@@ -130,8 +145,7 @@ subroutine inmat5(elrefa, nno, nnos, npg, mganos,&
         endif
 !
 !
-    else if ((elrefa.eq.'P15').or.(elrefa.eq.'P18') .or. &
-             (elrefa.eq.'S15')) then
+    else if ((elrefa.eq.'P15').or.(elrefa.eq.'P18')) then
         ASSERT(nnos.eq.6)
         nosom(7,1) = demi
         nosom(7,2) = demi
@@ -296,7 +310,7 @@ subroutine inmat5(elrefa, nno, nnos, npg, mganos,&
         nosom(4,2) = 2.d0/3.d0
 !
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 !
@@ -306,12 +320,10 @@ subroutine inmat5(elrefa, nno, nnos, npg, mganos,&
         do kpg = 1,npg
             do knos = 1,nnos
                 mgano2(kpg,kno) = mgano2(kpg,kno) + mganos(kpg,knos)* nosom(kno,knos)
-!
             end do
         end do
     end do
 !
+100 continue
 !
-!
-100  continue
 end subroutine

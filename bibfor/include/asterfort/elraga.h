@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
                       poipg)
-        character(len=*) :: elrefz
-        character(len=*) :: fapz
-        integer :: ndim
-        integer :: nbpg
-        real(kind=8) :: coopg(*)
-        real(kind=8) :: poipg(*)
+        character(len=*), intent(in) :: elrefz, fapz
+        integer, intent(out) :: nbpg, ndim
+        real(kind=8), intent(out) :: coopg(*), poipg(*)
     end subroutine elraga
 end interface

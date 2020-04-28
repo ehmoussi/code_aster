@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -60,10 +60,6 @@ subroutine elelin(nconta, elref1, elref2, nnop, nnops)
             nnops= 8
         else if (elref1.eq.'P15') then
             elref2='PE6'
-            nnop = 15
-            nnops= 6
-        else if (elref1.eq.'S15') then
-            elref2='SH6'
             nnop = 15
             nnops= 6
         else if (elref1.eq.'P13') then

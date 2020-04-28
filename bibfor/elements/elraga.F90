@@ -15,50 +15,55 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1501
+!
 subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
                   poipg)
-    implicit none
+!
+implicit none
+!
 #include "asterc/indik8.h"
 #include "asterfort/assert.h"
 #include "asterfort/elraca.h"
-#include "asterfort/utmess.h"
-    integer :: nbpg, ndim
-    real(kind=8) :: coopg(*), poipg(*)
-    character(len=*) :: elrefz, fapz
-! person_in_charge: jacques.pellet at edf.fr
-! ----------------------------------------------------------------------
-! BUT: CALCUL DES POIDS ET POINTS DE GAUSS
-! ----------------------------------------------------------------------
-!   IN   ELREFZ : NOM DE L'ELREFA (K8)
-!        FAPG   : NOM DE LA FAMILLE DE POINTS DE GAUSS
-!   OUT  NDIM   : DIMENSION DE L'ESPACE (=NB COORDONNEES)
-!        NBPG   : NOMBRE DE POINTS DE GAUSS
-!        COOPG  : COORDONNEES DES POINTS DE GAUSS
-!        POIPG  : POIDS DES POINTS DE GAUSS
-!   -------------------------------------------------------------------
 !
-!  NBPGMX, NBFAMX : SE REFERER A ELRACA
+character(len=*), intent(in) :: elrefz, fapz
+integer, intent(out) :: nbpg, ndim
+real(kind=8), intent(out) :: coopg(*), poipg(*)
 !
-    integer :: nbpgmx, nbfamx
-    parameter (nbpgmx=1000,nbfamx=20)
+! --------------------------------------------------------------------------------------------------
 !
+! Finite elements management
+!
+! Get parameters of geometric support for finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  elrefe           : name of geometric support for finite element
+! In  fapg             : name of Gauss integration scheme
+! Out ndim             : topological dimension (0/1/2/3)
+! Out nbpg             : number of points of integration schemes
+! Out coopg            : coordinataes of Gauss points
+! Out poipg            : weight of Gauss points
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer, parameter :: nbpgmx = 1000
+    integer, parameter :: nbfamx = 20
     character(len=8) :: elrefa, fapg, nofpg(nbfamx)
-    character(len=24) :: valk(2)
-    integer :: i, npar, npi, ix, iy, iz, npx, npyz, npz, npxy
+    integer :: i, npar, npi, ix, iy, iz, npx, npyz
     integer :: nno, nnos, nbfpg, nbpg1(nbfamx), ino, ifam
     real(kind=8) :: xpg(nbpgmx), ypg(nbpgmx), zpg(nbpgmx), hpg(nbpgmx), a(4)
     real(kind=8) :: h(4)
-    real(kind=8) :: atx(7), aty(7), ht(7), atz(7)
+    real(kind=8) :: aty(7), ht(7), atz(7)
     real(kind=8) :: aa, bb, cc, hh, h1, h2, h3, rac5, rac15, a1, b1, b6, c1, c8
     real(kind=8) :: d1, d12
     real(kind=8) :: p1, p2, p3, p4, p5
     real(kind=8) :: xa, xb
     real(kind=8) :: zero, unquar, undemi, un, deux, xno(3*27), vol, a2, b2
     real(kind=8) :: untiers
-! -----  FONCTIONS FORMULES
 #define t(u) 2.0d0*(u) - 1.0d0
-! DEB ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     elrefa = elrefz
     fapg = fapz
@@ -75,11 +80,7 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
     call elraca(elrefa, ndim, nno, nnos, nbfpg,&
                 nofpg, nbpg1, xno, vol)
     ifam = indik8(nofpg,fapg,1,nbfpg)
-    if (ifam .le. 0) then
-        valk (1) = elrefa
-        valk (2) = fapg
-        call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
-    endif
+    ASSERT(ifam .gt. 0)
     nbpg = nbpg1(ifam)
     ASSERT((ndim.ge.0).and.(ndim.le.3))
 !
@@ -102,14 +103,12 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
 !     -----------------------------------------
     if (fapg .eq. 'NOEU_S') then
         ASSERT(nbpg.eq.nnos)
-        do 20,ino = 1,nnos
-        hpg(ino) = vol/nnos
-!         -- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS
-!            NUMEROTES EN PREMIER :
-        if (ndim .ge. 1) xpg(ino) = xno(ndim* (ino-1)+1)
-        if (ndim .ge. 2) ypg(ino) = xno(ndim* (ino-1)+2)
-        if (ndim .eq. 3) zpg(ino) = xno(ndim* (ino-1)+3)
-20      continue
+        do ino = 1,nnos
+            hpg(ino) = vol/nnos
+            if (ndim .ge. 1) xpg(ino) = xno(ndim* (ino-1)+1)
+            if (ndim .ge. 2) ypg(ino) = xno(ndim* (ino-1)+2)
+            if (ndim .eq. 3) zpg(ino) = xno(ndim* (ino-1)+3)
+        end do
         goto 170
     endif
 !
@@ -186,191 +185,33 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             h(1) = un
             h(2) = un
 ! ------- POUR LES SOMMETS ---------------------------------------------
-            do 300,ino = 1,nnos
-            hpg(ino+8) = vol/nnos
-! ---------- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS ----------
-! ---------- NUMEROTES EN PREMIER --------------------------------------
-            xpg(ino+8) = xno(ndim* (ino-1)+1)
-            if (ndim .ge. 2) ypg(ino+8) = xno(ndim* (ino-1)+2)
-            if (ndim .eq. 3) zpg(ino+8) = xno(ndim* (ino-1)+3)
-300          continue
+            do ino = 1,nnos
+                hpg(ino+8) = vol/nnos
+                xpg(ino+8) = xno(ndim* (ino-1)+1)
+                if (ndim .ge. 2) ypg(ino+8) = xno(ndim* (ino-1)+2)
+                if (ndim .eq. 3) zpg(ino+8) = xno(ndim* (ino-1)+3)
+            end do
 !
         else
-            valk (1) = elrefa
-            valk (2) = fapg
-            call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
+            ASSERT(ASTER_FALSE)
         endif
 !
 !       TRAITEMENT POUR FAPG
         npi = 0
-        do 60 ix = 1, npar
-            do 50 iy = 1, npar
-                do 40 iz = 1, npar
+        do ix = 1, npar
+            do iy = 1, npar
+                do iz = 1, npar
                     npi = npi + 1
                     xpg(npi) = a(ix)
                     ypg(npi) = a(iy)
                     zpg(npi) = a(iz)
                     hpg(npi) = h(ix)*h(iy)*h(iz)
-40              continue
-50          continue
-60      continue
+                end do
+            end do
+        end do
 
 !     ------------------------------------------------------------------
-        else if (elrefa.eq.'SH6' .or. elrefa.eq.'S15') then
-!
-        if (fapg .eq. 'FPG6') then
-            npz = 2
-            npxy = 3
-            a(1) = -0.577350269189626d0
-            a(2) = -a(1)
-            atx(1) = undemi
-            atx(2) = zero
-            atx(3) = undemi
-            aty(1) = undemi
-            aty(2) = undemi
-            aty(3) = zero
-            h(1) = un
-            h(2) = un
-            ht(1) = un/6.d0
-            ht(2) = ht(1)
-            ht(3) = ht(1)
-!
-        else if (fapg.eq.'FPG6B') then
-            npz = 2
-            npxy = 3
-            a(1) = -0.577350269189626d0
-            a(2) = -a(1)
-            atx(1) = 1.d0/6.d0
-            atx(2) = 2.d0/3.d0
-            atx(3) = 1.d0/6.d0
-            aty(1) = 1.d0/6.d0
-            aty(2) = 1.d0/6.d0
-            aty(3) = 2.d0/3.d0
-            h(1) = un
-            h(2) = un
-            ht(1) = 1.d0/6.d0
-            ht(2) = ht(1)
-            ht(3) = ht(1)
-!
-        else if (fapg.eq.'FPG8') then
-!
-! --------- FORMULE A 4 * 2 POINTS :  (CF TOUZOT PAGE 297)
-!                   2 POINTS DE GAUSS  EN X   (ORDRE 3)
-!                   4 POINTS DE HAMMER EN Y Z (ORDRE 3 EN Y Z)
-!
-! --------- FORMULE DE GAUSS
-!
-            npz = 2
-            a(1) = -0.577350269189626d0
-            a(2) = -a(1)
-            h(1) = un
-            h(2) = un
-!
-! --------- FORMULE DE HAMMER
-!
-            npxy = 4
-            atx(1) = 0.333333333333333d0
-            atx(2) = 0.6d0
-            atx(3) = 0.2d0
-            atx(4) = 0.2d0
-            aty(1) = 0.333333333333333d0
-            aty(2) = 0.2d0
-            aty(3) = 0.6d0
-            aty(4) = 0.2d0
-            ht(1) = -27.d0/96.d0
-            ht(2) = 25.d0/96.d0
-            ht(3) = ht(2)
-            ht(4) = ht(2)
-!
-        else if (fapg.eq.'FPG21') then
-!
-! --------- FORMULE A 7 * 3 POINTS :   (CF TOUZOT PAGE 298)
-!                   3 POINTS DE GAUSS EN X (ORDRE 5)
-!                   7 POINTS DE HAMMER EN Y Z (ORDRE 5 EN Y Z)
-!
-! --------- FORMULE DE GAUSS
-!
-            npz = 3
-            a(1) = -0.774596669241483d0
-            a(2) = zero
-            a(3) = -a(1)
-            h(1) = 0.555555555555556d0
-            h(2) = 0.888888888888889d0
-            h(3) = h(1)
-!
-! --------- FORMULE DE HAMMER
-!
-            npxy = 7
-            atx(1) = 0.333333333333333d0
-            aty(1) = 0.333333333333333d0
-            atx(2) = 0.470142064105115d0
-            aty(2) = 0.470142064105115d0
-            atx(3) = un - deux*atx(2)
-            aty(3) = 0.470142064105115d0
-            atx(4) = 0.470142064105115d0
-            aty(4) = un - deux*atx(2)
-            atx(5) = 0.101286507323456d0
-            aty(5) = 0.101286507323456d0
-            atx(6) = un - deux*atx(5)
-            aty(6) = 0.101286507323456d0
-            atx(7) = 0.101286507323456d0
-            aty(7) = un - deux*atx(5)
-            ht(1) = 9.d0/80.d0
-            ht(2) = 0.0661970763942530d0
-            ht(3) = ht(2)
-            ht(4) = ht(2)
-            ht(5) = 0.0629695902724135d0
-            ht(6) = ht(5)
-            ht(7) = ht(5)
-!
-        else if (fapg.eq.'FPG6NOS') then
-! ------- POUR LES POINTS DE GAUSS -------------------------------------
-            npz = 2
-            npxy = 3
-            a(1) = -0.577350269189626d0
-            a(2) = 0.577350269189626d0
-            atx(1) = undemi
-            atx(2) = zero
-            atx(3) = undemi
-            aty(1) = undemi
-            aty(2) = undemi
-            aty(3) = zero
-            h(1) = un
-            h(2) = un
-            ht(1) = 0.166666666666667d0
-            ht(2) = ht(1)
-            ht(3) = ht(1)
-!
-! ------- POUR LES SOMMETS ---------------------------------------------
-            do ino = 1,nnos
-            hpg(ino+6) = vol/nnos
-! ---------- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS ----------
-! ---------- NUMEROTES EN PREMIER --------------------------------------
-            xpg(ino+6) = xno(ndim* (ino-1)+1)
-            if (ndim .ge. 2) ypg(ino+6) = xno(ndim* (ino-1)+2)
-            if (ndim .eq. 3) zpg(ino+6) = xno(ndim* (ino-1)+3)
-            enddo
-!
-        else
-            valk (1) = elrefa
-            valk (2) = fapg
-            call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
-        endif
-!
-!       TRAITEMENT POUR LES FAPG
-        npi = 0
-        do  iz = 1, npz
-            do  ix = 1, npxy
-                npi = npi + 1
-                xpg(npi) = atx(ix)
-                ypg(npi) = aty(ix)
-                zpg(npi) = a(iz)
-                hpg(npi) = h(iz)*ht(ix)
-             enddo
-        enddo
-!     ------------------------------------------------------------------
-        else if (elrefa.eq.'PE6' .or. elrefa.eq.'P15' .or.&
-    elrefa.eq.'P18') then
+    else if (elrefa.eq.'PE6' .or. elrefa.eq.'P15' .or. elrefa.eq.'P18') then
 !
         if (fapg .eq. 'FPG6') then
             npx = 2
@@ -496,19 +337,15 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             ht(3) = ht(1)
 !
 ! ------- POUR LES SOMMETS ---------------------------------------------
-            do 280,ino = 1,nnos
-            hpg(ino+6) = vol/nnos
-! ---------- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS ----------
-! ---------- NUMEROTES EN PREMIER --------------------------------------
-            xpg(ino+6) = xno(ndim* (ino-1)+1)
-            if (ndim .ge. 2) ypg(ino+6) = xno(ndim* (ino-1)+2)
-            if (ndim .eq. 3) zpg(ino+6) = xno(ndim* (ino-1)+3)
-280          continue
+            do ino = 1,nnos
+                hpg(ino+6) = vol/nnos
+                xpg(ino+6) = xno(ndim* (ino-1)+1)
+                if (ndim .ge. 2) ypg(ino+6) = xno(ndim* (ino-1)+2)
+                if (ndim .eq. 3) zpg(ino+6) = xno(ndim* (ino-1)+3)
+            end do
 !
         else
-            valk (1) = elrefa
-            valk (2) = fapg
-            call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
+            ASSERT(ASTER_FALSE)
         endif
 !
 !       TRAITEMENT POUR LES FAPG
@@ -838,8 +675,6 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
 ! ------- POUR LES SOMMETS ---------------------------------------------
             do ino = 1,nnos
                 hpg(ino+4) = vol/nnos
-! ---------- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS ----------
-! ---------- NUMEROTES EN PREMIER --------------------------------------
                 xpg(ino+4) = xno(ndim* (ino-1)+1)
                 if (ndim .ge. 2) ypg(ino+4) = xno(ndim* (ino-1)+2)
                 if (ndim .eq. 3) zpg(ino+4) = xno(ndim* (ino-1)+3)
@@ -1042,9 +877,9 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             hpg(26) = d12
             hpg(27) = d12
 !
-            do 120 i = 1, 27
+            do i = 1, 27
                 hpg(i) = hpg(i)*unquar* (un-zpg(i))* (un-zpg(i))
-120          continue
+            end do
 !
         else if (fapg.eq.'FPG5NOS') then
 ! ------- POUR LES POINTS DE GAUSS -------------------------------------
@@ -1076,23 +911,18 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             hpg(4) = p1
             hpg(5) = p1
 ! --- POUR LES SOMMETS -------------------------------------------------
-            do 240,ino = 1,nnos
-            hpg(ino+5) = vol/nnos
-! ---------- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS ----------
-! ---------- NUMEROTES EN PREMIER --------------------------------------
-            xpg(ino+5) = xno(ndim* (ino-1)+1)
-            if (ndim .ge. 2) ypg(ino+5) = xno(ndim* (ino-1)+2)
-            if (ndim .eq. 3) zpg(ino+5) = xno(ndim* (ino-1)+3)
-240          continue
+            do ino = 1,nnos
+                hpg(ino+5) = vol/nnos
+                xpg(ino+5) = xno(ndim* (ino-1)+1)
+                if (ndim .ge. 2) ypg(ino+5) = xno(ndim* (ino-1)+2)
+                if (ndim .eq. 3) zpg(ino+5) = xno(ndim* (ino-1)+3)
+            end do
         else
-            valk (1) = elrefa
-            valk (2) = fapg
-            call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
+            ASSERT(ASTER_FALSE)
         endif
 !
 !     ------------------------------------------------------------------
-        else if (elrefa.eq.'TR3' .or. elrefa.eq.'TR4' .or. elrefa.eq.'TR6' .or. elrefa.eq.'TR7'&
-    ) then
+    else if (elrefa.eq.'TR3' .or. elrefa.eq.'TR4' .or. elrefa.eq.'TR6' .or. elrefa.eq.'TR7') then
 !
         if (fapg .eq. 'FPG1') then
             xpg(1) = un/3.d0
@@ -1360,23 +1190,18 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             hpg(2) = un/6.d0
             hpg(3) = un/6.d0
 ! ------- POUR LES SOMMETS ---------------------------------------------
-            do 220,ino = 1,nnos
-            hpg(ino+3) = vol/nnos
-! ---------- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS ----------
-! ---------- NUMEROTES EN PREMIER --------------------------------------
-            xpg(ino+3) = xno(ndim* (ino-1)+1)
-            if (ndim .ge. 2) ypg(ino+3) = xno(ndim* (ino-1)+2)
-            if (ndim .eq. 3) zpg(ino+3) = xno(ndim* (ino-1)+3)
-220          continue
+            do ino = 1,nnos
+                hpg(ino+3) = vol/nnos
+                xpg(ino+3) = xno(ndim* (ino-1)+1)
+                if (ndim .ge. 2) ypg(ino+3) = xno(ndim* (ino-1)+2)
+                if (ndim .eq. 3) zpg(ino+3) = xno(ndim* (ino-1)+3)
+            end do
         else
-            valk (1) = elrefa
-            valk (2) = fapg
-            call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
+            ASSERT(ASTER_FALSE)
         endif
 !
 !     ------------------------------------------------------------------
-        else if ( elrefa.eq.'QU4' .or. elrefa.eq.'QU8' .or.&
-     &          elrefa.eq.'QU9') then
+    else if ( elrefa.eq.'QU4' .or. elrefa.eq.'QU8' .or. elrefa.eq.'QU9') then
 !
         if (fapg .eq. 'FPG1') then
             xpg(1) = zero
@@ -1470,14 +1295,14 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             a(4) = -a(3)
             npar = 4
             npi = 0
-            do 130 ix = 1, npar
-                do 132 iy = 1, npar
+            do ix = 1, npar
+                do iy = 1, npar
                     npi = npi + 1
                     xpg(npi) = a(ix)
                     ypg(npi) = a(iy)
                     hpg(npi) = h(ix)*h(iy)
-132              continue
-130          continue
+                end do
+            end do
         else if (fapg.eq.'FPG4NOS') then
 ! ------- POUR LES POINTS DE GAUSS -------------------------------------
             xpg(1) = -0.577350269189626d0
@@ -1493,24 +1318,19 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             hpg(3) = un
             hpg(4) = un
 ! ------- POUR LES SOMMETS ---------------------------------------------
-            do 200,ino = 1,nnos
-            hpg(ino+4) = vol/nnos
-! ---------- ON UTILISE LE FAIT QUE LES SOMMETS SONT TOUJOURS ----------
-! ---------- NUMEROTES EN PREMIER --------------------------------------
-            xpg(ino+4) = xno(ndim* (ino-1)+1)
-            if (ndim .ge. 2) ypg(ino+4) = xno(ndim* (ino-1)+2)
-            if (ndim .eq. 3) zpg(ino+4) = xno(ndim* (ino-1)+3)
-200          continue
+            do ino = 1,nnos
+                hpg(ino+4) = vol/nnos
+                xpg(ino+4) = xno(ndim* (ino-1)+1)
+                if (ndim .ge. 2) ypg(ino+4) = xno(ndim* (ino-1)+2)
+                if (ndim .eq. 3) zpg(ino+4) = xno(ndim* (ino-1)+3)
+            end do
 !
         else
-            valk (1) = elrefa
-            valk (2) = fapg
-            call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
+            ASSERT(ASTER_FALSE)
         endif
 !
 !     ------------------------------------------------------------------
-        else if (elrefa.eq.'SE2' .or. elrefa.eq.'SE3' .or. elrefa.eq.'SE4'&
-    ) then
+    else if (elrefa.eq.'SE2' .or. elrefa.eq.'SE3' .or. elrefa.eq.'SE4') then
 !
         if (fapg .eq. 'FPG1') then
             xpg(1) = zero
@@ -1628,9 +1448,7 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
             hpg(10) = 1.d0/12.d0
 !
         else
-            valk (1) = elrefa
-            valk (2) = fapg
-            call utmess('F', 'ELEMENTS4_84', nk=2, valk=valk)
+            ASSERT(ASTER_FALSE)
         endif
 !
 !     ------------------------------------------------------------------
@@ -1640,15 +1458,15 @@ subroutine elraga(elrefz, fapz, ndim, nbpg, coopg,&
 !
 !     ------------------------------------------------------------------
     else
-        call utmess('F', 'ELEMENTS4_88', sk=elrefa)
+        ASSERT(ASTER_FALSE)
     endif
 !
 170  continue
 !     ------------------------------------------------------------------
-    do 180 i = 1, nbpg
+    do i = 1, nbpg
         poipg(i) = hpg(i)
         if (ndim .ge. 1) coopg(ndim* (i-1)+1) = xpg(i)
         if (ndim .ge. 2) coopg(ndim* (i-1)+2) = ypg(i)
         if (ndim .eq. 3) coopg(ndim* (i-1)+3) = zpg(i)
-180  continue
+    end do
 end subroutine

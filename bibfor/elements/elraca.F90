@@ -16,42 +16,50 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine elraca(elrefz, ndim, nno, nnos, nbfpg, fapg, nbpg, x, vol)
+subroutine elraca(elrefz, ndim, nno, nnos, nbfpg,&
+                  fapg, nbpg, x, vol)
 !
 implicit none
 !
+#include "asterfort/assert.h"
 #include "asterfort/elrfno.h"
-#include "asterfort/utmess.h"
 !
-    integer, parameter            :: nbfamx = 20
-    character(len=*), intent(in)  :: elrefz
-    integer, intent(out)          :: ndim, nno, nnos, nbfpg, nbpg(nbfamx)
-    real(kind=8), intent(out)     :: x(*), vol
-    character(len=8), intent(out) :: fapg(*)
+integer, parameter            :: nbfamx = 20
+character(len=*), intent(in)  :: elrefz
+integer, intent(out)          :: ndim, nno, nnos, nbfpg, nbpg(nbfamx)
+real(kind=8), intent(out)     :: x(*), vol
+character(len=8), intent(out) :: fapg(*)
 !
-! BUT :  RETOURNE LES CARACTERISTIQUES DE L'ELREFA
-! ----------------------------------------------------------------------
-!   IN   ELREFZ : NOM DE L'ELREFA (K8)
-!   OUT  NDIM   : DIMENSION TOPOLOGIQUE : 0/1/2/3
-!        NNO    : NOMBRE DE NOEUDS
-!        NNOS   : NOMBRE DE NOEUDS SOMMETS
-!        NBFPG  : NOMBRE DE FAMILLE DE POINTS DE GAUSS
-!        FAPG(*): NOMS DES FAMILLES DE POINTS DE GAUSS
-!        NBPG(*): NOMBRE DE POINTS DES FAMILLES DE POINTS DE GAUSS
-!        X(*)   : COORDONNEES DES NOEUDS DE L'ELREFA
-!        VOL    : VOLUME DE L'ELREFA
-! COMMENTAIRE POUR LES ROUTINES ELRAGA, INMAT4, INMAT5, INMAT6, JNI002
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
+! Finite elements management
+!
+! Get parameters of geometric support for finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  elrefa           : name of geometric support for finite element
+! Out ndim             : topological dimension (0/1/2/3)
+! Out nno              : number of nodes
+! Out nnos             : number of middle nodes
+! Out nbfpg            : number of families of integration schemes
+! Out fapg             : name of families of integration schemes
+! Out nbpg             : number of nodes of integration schemes
+! Out x                : coordinates of nodes
+! Out vol              : volume of element
+!
 !        NBPGMX : NOMBRE DE POINTS DE GAUSS MAX DE L'ELEMENT
 !                 NBPGMX=1000 DU A XFEM
 !        NBNOMX : NOMBRE DE NOEUDS MAX DE L'ELEMENT
 !        NBFAMX : NOMBRE DE FAMILLES DE POINTS DE GAUSS MAX DE L'ELEMENT
 !
-!   -------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     character(len=8) :: elrefa
     integer :: i, deca
     real(kind=8) :: coorno(3,27)
-!  ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     elrefa = elrefz
     nbpg(1:nbfamx) = 0
@@ -145,7 +153,7 @@ implicit none
         fapg(6) = 'FPG15'
         fapg(7) = 'FPG4NOS'
 !
-    else if (elrefa.eq.'PE6' .or. elrefa .eq. 'SH6') then
+    else if (elrefa.eq.'PE6') then
         vol = 1.d0
 !
         nbfpg = 8
@@ -174,7 +182,7 @@ implicit none
         fapg(6) = 'FPG27'
         fapg(7) = 'FPG5NOS'
 !
-    else if (elrefa.eq.'P15' .or. elrefa .eq. 'S15') then
+    else if (elrefa.eq.'P15') then
         vol = 1.d0
 !
         nbfpg = 7
@@ -396,7 +404,7 @@ implicit none
         fapg(8) = 'COTES'
 !
     else
-        call utmess('F', 'ELEMENTS_55', sk=elrefa)
+        ASSERT(ASTER_FALSE)
     endif
 !
     do i = 1, nno
