@@ -35,11 +35,8 @@ implicit none
 #include "jeveux.h"
 #include "asterc/getres.h"
 #include "asterc/indik8.h"
-#include "asterc/r8nnem.h"
 #include "asterfort/alchlo.h"
 #include "asterfort/alrslt.h"
-#include "asterfort/asmpi_barrier.h"
-#include "asterfort/asmpi_info.h"
 #include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/assert.h"
 #include "asterfort/caldbg.h"
@@ -52,6 +49,7 @@ implicit none
 #include "asterfort/infniv.h"
 #include "asterfort/inigrl.h"
 #include "asterfort/inpara.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -72,11 +70,9 @@ implicit none
 #include "asterfort/sdmpic.h"
 #include "asterfort/te0000.h"
 #include "asterfort/typele.h"
-#include "asterfort/utimsd.h"
 #include "asterfort/utmess.h"
 #include "asterfort/uttcpu.h"
 #include "asterfort/vrcdec.h"
-#include "asterfort/wkvect.h"
 #include "asterfort/zechlo.h"
 
     integer, intent(in) :: nou
@@ -97,7 +93,8 @@ implicit none
 
 !     entrees:
 !        stop   :  /'S' : on s'arrete si aucun element fini du ligrel
-!                         ne sait calculer l'option.
+!                         ne sait calculer l'option. Attention pour un parallel_mesh,
+!                         cette posibilité est désactivée
 !                  /'C' : On continue meme si aucun element fini du ligrel
 !                         ne sait calculer l'option.
 !                         Il n'existe pas de champ "out" dans ce cas.
@@ -121,18 +118,17 @@ implicit none
     aster_logical :: dbg, l_thm
     character(len=8) :: lpain2(nin), lpaou2(nou)
     character(len=19) :: lchin2(nin), lchou2(nou)
-    character(len=24) :: valk(2), kret
+    character(len=24) :: valk(2)
     integer ::   ima, ifm
     integer :: niv
-    integer :: ier
     integer ::  iret, iuncod, j
     integer ::  nval
-    integer :: afaire,afaire2
+    integer :: afaire
     integer :: numc
     integer :: i, ipar, jpar, nin2, nin3, nou2, nou3
     character(len=8) :: nompar, exiele, k8bid, tych,noma
     character(len=10) :: k10b
-    character(len=16) :: k16bid, cmde,typeco
+    character(len=16) :: k16bid, cmde
     character(len=20) :: k20b1, k20b2, k20b3, k20b4
     character(len=8), pointer :: typma(:) => null()
 !----------------------------------------------------------------------
@@ -153,7 +149,6 @@ implicit none
 !   -- Pour que les mesures de temps en // soient comprehensibles
 !      par les utilisateurs, il faut forcer une synchro avant les mesures :
 !   -----------------------------------------------------------------------
-!    call asmpi_barrier()
     call uttcpu('CPU.CALC.1', 'DEBUT', ' ')
     call uttcpu('CPU.CALC.2', 'DEBUT', ' ')
 
@@ -192,7 +187,6 @@ implicit none
 !      on va directement a la sortie :
 !   -------------------------------------------------------------
     afaire=0
-    ier=0
     ca_nbgr_=nbgrel(ca_ligrel_)
     do j = 1, ca_nbgr_
         ca_nute_=typele(ca_ligrel_,j,1)
@@ -217,27 +211,25 @@ implicit none
 
         afaire=max(afaire,numc)
     enddo
-    ASSERT(ier.le.0)
-
-!   Dans le cas d'un ParallelMesh, on vérifie qu'aucun élément sur l'intégralité
-!   du maillage distribué ne sait calculer l'option
-    afaire2=afaire
-    call dismoi('NOM_MAILLA', ca_ligrel_, 'LIGREL', repk=noma)
-    call dismoi('PARALLEL_MESH', noma, 'MAILLAGE', repk=kret)
-    if( kret.eq.'OUI' ) then
-        call asmpi_comm_vect('MPI_MAX', 'I', sci=afaire2)
-    endif
-
+!
     if (afaire .eq. 0) then
-        if (afaire2.ne.0) goto 999
+!   Dans le cas d'un ParallelMesh, on ne vérifie plus qu'aucun élément sur l'intégralité
+!   du maillage distribué ne sait calculer l'option car cela peut engendrer un blocage du calcul
+!   on emet un message d'information dans ce cas
+        call dismoi('NOM_MAILLA', ca_ligrel_, 'LIGREL', repk=noma)
+        if(isParallelMesh(noma)) then
+            if(niv > 1 .and. stop .eq. 'S')  then
+                call utmess('I', 'CALCUL_38', sk=ca_option_)
+            end if
+            goto 999
+        end if
         if (stop .eq. 'S') then
             call utmess('F', 'CALCUL_38', sk=ca_option_)
         else
             goto 999
         endif
     endif
-
-
+!
 !   2. On rend propres les listes : lpain,lchin,lpaou,lchou :
 !      en ne gardant que les parametres du catalogue de l'option
 !      qui servent a au moins un type_element.
@@ -443,7 +435,6 @@ implicit none
 
 !   9- Mesure du temps consomme :
 !   ----------------------------------
-!    call asmpi_barrier()
     call uttcpu('CPU.CALC.2', 'FIN', ' ')
     call uttcpu('CPU.CALC.1', 'FIN', ' ')
 
