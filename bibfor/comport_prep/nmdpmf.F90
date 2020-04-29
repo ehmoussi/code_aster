@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
+#include "asterfort/tecart.h"
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 !
@@ -53,7 +54,7 @@ implicit none
 !
     integer :: ibid, iret
     aster_logical :: lcumu(2), lcoc(2)
-    character(len=8) :: licmp(3)
+    character(len=8), parameter :: licmp(3) = (/'DEFORM  ', 'DEFO_LDC', 'RIGIGEOM'/)
     character(len=19) :: chs(2), chs3, chsx
     real(kind=8) :: lcoer(2)
     complex(kind=8) :: lcoec(2)
@@ -88,9 +89,8 @@ implicit none
 !
     call carces(chmate//'.COMPOR', 'ELEM', ' ', 'V', chsx,&
                 'A', ibid)
-
+!
 !   ON ENLEVE LA CARTE LES COMPOSANTES DE COMPOR A CONSERVER
-    data licmp/'DEFORM','DEFO_LDC','RIGIGEOM'/
     call cesred(chsx, 0, [ibid], -3, licmp,&
                 'V', chs(2))
 !
@@ -99,6 +99,10 @@ implicit none
     call cesfus(2, chs, lcumu, lcoer, lcoec,&
                 lcoc(1), 'V', chs3)
     call cescar(chs3, compor, 'V')
+!
+! - Compress COMPOR <CARTE>
+!    
+    call tecart(compor)
 !
 !     MENAGE
     call detrsd('CHAM_ELEM_S', chs(1))
