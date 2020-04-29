@@ -42,8 +42,9 @@ class XUnitReport:
         resudir (str): Directory containing the result files.
     """
 
-    def __init__(self, resudir):
+    def __init__(self, resudir, legend=""):
         self.base = resudir
+        self.legend = legend
         self.junit_test = []
 
     def read_ctest(self):
@@ -115,7 +116,8 @@ class XUnitReport:
             filename (str): Output XML file (relative to the base directory).
         """
         junit = JUNIT.JunitXml("code_aster " + CFG.get("version_tag", "?") +
-                               "-" + CFG.get("version_sha1", "?"),
+                               "-" + CFG.get("version_sha1", "?")[:12] +
+                               self.legend,
                                self.junit_test)
         with open(osp.join(self.base, filename), "w") as fobj:
             fobj.write(junit.dump())
