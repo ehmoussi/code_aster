@@ -103,7 +103,7 @@ PARAMS_TYPE = {
 # deprecated for simple execution
 PARAMS_TYPE.update({}.fromkeys(
     ["MASTER_memory_limit", "MASTER_time_limit", "aster_root", "consbtc",
-     "cpresok", "debug", "diag_pickled", "facmtps", "mclient", "mem_aster",
+     "cpresok", "debug", "diag_pickled", "timefactor", "mclient", "mem_aster",
      "memjob", "mode", "mpi_nbnoeud", "nbmaxnook", "noeud", "nomjob", "parent",
      "platform", "protocol_copyfrom", "protocol_copyto", "protocol_exec",
      "proxy_dir", "rep_trav", "origine", "server", "serveur", "service",
