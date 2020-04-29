@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,18 +47,18 @@ subroutine hujmat(fami, kpg, ksp, mod, imat,&
 #include "asterfort/rccoma.h"
 #include "asterfort/rcvala.h"
 #include "asterfort/rcvalb.h"
-    integer :: ndt, ndi, nvi, imat, i, kpg, ksp
+    integer :: ndt, ndi, nvi, imat, kpg, ksp
     real(kind=8) :: materf(22, 2), tempf, nu21, nu31, nu32
     character(len=16) :: phenom
     character(len=8) :: mod, nomc(24)
     character(len=*) :: fami
-    integer :: icodre(1)
+    integer :: icodre
     integer :: cerr(24)
 !
 !
 ! ---- RECUPERATION DU TYPE DU MATERIAU DANS PHENOM
 !      --------------------------------------------
-    call rccoma(imat, 'ELAS', 1, phenom, icodre(1))
+    call rccoma(imat, 'ELAS', 1, phenom, icodre)
 !
 ! -  NB DE COMPOSANTES / VARIABLES INTERNES
     call hujnvi(mod, ndt, ndi, nvi)
@@ -92,16 +92,15 @@ subroutine hujmat(fami, kpg, ksp, mod, imat,&
     nomc(24)= 'PTRAC   '
 !af fin
 !
-    do i = 1, 22
-        materf(i,1)=0.d0
-        materf(i,2)=0.d0
-    enddo
+    materf(:,:)=0.d0
+    cerr(:) = 0.d0
+    tempf= 0.d0
 !
 !
 ! --- RECUPERATION DES PROPRIETES DE LA LOI DE HUJEUX
     call rcvalb(fami, kpg, ksp, '+', imat,&
                 ' ', 'HUJEUX', 0, '   ', [tempf],&
-                21, nomc(4), materf(1, 2), cerr(4), 2)
+                21, nomc(4:24), materf(1:21, 2), cerr(4:24), 2)
 !
 !
     if (phenom .eq. 'ELAS') then
@@ -109,7 +108,7 @@ subroutine hujmat(fami, kpg, ksp, mod, imat,&
 ! --- RECUPERATION DES PROPRIETES ELASTIQUES
         call rcvalb(fami, kpg, ksp, '+', imat,&
                     ' ', phenom, 0, '   ', [tempf],&
-                    3, nomc(1), materf(1, 1), cerr(1), 0, nan='NON')
+                    3, nomc, materf(1:3, 1), cerr, 0, nan='NON')
 !
         materf(17,1) =1.d0
 !
@@ -144,7 +143,7 @@ subroutine hujmat(fami, kpg, ksp, mod, imat,&
 !        ALPHA3= MATERF(9,1)
         call rcvalb(fami, kpg, ksp, '+', imat,&
                     ' ', phenom, 0, '   ', [tempf],&
-                    12, nomc(1), materf(1, 1), cerr(1), 0, nan='NON')
+                    12, nomc, materf(1:12, 1), cerr, 0, nan='NON')
 !
         nu21 = materf(2,1)*materf(4,1)/materf(1,1)
         nu31 = materf(3,1)*materf(5,1)/materf(1,1)
