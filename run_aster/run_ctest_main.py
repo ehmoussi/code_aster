@@ -123,19 +123,20 @@ def parse_args(argv):
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('-j', '--jobs', action='store',
                         type=int, default=max(1, get_nbcores() - 2),
-                        help="Run the tests in parallel using the given "
+                        help="run the tests in parallel using the given "
                              "number of jobs")
     parser.add_argument('--testlist', action='store',
                         metavar="FILE",
-                        help="List of testcases to run")
+                        help="list of testcases to run")
     parser.add_argument('--resutest', action='store',
-                        help="Directory to write the results of the testcases "
+                        help="directory to write the results of the testcases "
                              "(relative to the current directory). "
                              "Use 'None' not to keep result files.")
     parser.add_argument('--clean', action='store_true', default='auto',
-                        help="Remove the content of 'resutest' directory "
+                        help="remove the content of 'resutest' directory "
                              "before starting (default: auto)")
-    parser.add_argument('--no-clean', action='store_false', dest="clean",
+    parser.add_argument('--no-clean', action='store_false', default='auto',
+                        dest="clean",
                         help="do not remove the content of 'resutest' "
                              "directory")
     parser.add_argument('--facmtps', action='store', type=float, default=1.0,
@@ -143,19 +144,19 @@ def parse_args(argv):
                              "passed through environment to run_aster")
     group = parser.add_argument_group('ctest options')
     group.add_argument('--rerun-failed', action='store_true',
-                       help="Run only the tests that failed previously")
+                       help="run only the tests that failed previously")
     group.add_argument('-L', '--label-regex', action='append', metavar="regex",
                        default=[],
-                       help="Run tests with labels matching regular "
+                       help="run tests with labels matching regular "
                             "expression.")
     group.add_argument('--print-labels', action='store_true',
-                       help="Print all available test labels")
+                       help="print all available test labels")
 
     args, others = parser.parse_known_args(argv)
     if not args.resutest:
         parser.error("'--resutest' argument is required")
 
-    # args to be re-inject for ctest
+    # args to be re-injected for ctest
     if args.print_labels:
         others.append("--print-labels")
     if args.rerun_failed:
@@ -195,10 +196,11 @@ def main(argv=None):
     if not osp.exists(resutest):
         os.makedirs(resutest, exist_ok=True)
 
+    testlist = osp.abspath(args.testlist) if args.testlist else ""
     if not args.rerun_failed:
         # create CTestTestfile.cmake
-        create_ctest_file(args.testlist or "",
-                        osp.join(resutest, "CTestTestfile.cmake"))
+        create_ctest_file(testlist,
+                          osp.join(resutest, "CTestTestfile.cmake"))
     parallel = CFG.get("parallel", 0)
     labels = set()
     if not parallel:
@@ -213,7 +215,10 @@ def main(argv=None):
     os.chdir(resutest)
     proc = _run(["ctest"] + ctest_args)
     if not use_tmp:
-        report = XUnitReport(resutest)
+        legend = ""
+        if testlist:
+            legend += " from "  + osp.join(*testlist.split(osp.sep)[-2:])
+        report = XUnitReport(resutest, legend)
         report.read_ctest()
         report.write_xml("run_testcases.xml")
     else:
