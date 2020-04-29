@@ -196,7 +196,7 @@ def main(argv=None):
     if not osp.exists(resutest):
         os.makedirs(resutest, exist_ok=True)
 
-    testlist = osp.abspath(args.testlist) or ""
+    testlist = osp.abspath(args.testlist) if args.testlist else ""
     if not args.rerun_failed:
         # create CTestTestfile.cmake
         create_ctest_file(testlist,
