@@ -139,7 +139,7 @@ def parse_args(argv):
                         dest="clean",
                         help="do not remove the content of 'resutest' "
                              "directory")
-    parser.add_argument('--facmtps', action='store', type=float, default=1.0,
+    parser.add_argument('--timefactor', action='store', type=float, default=1.0,
                         help="multiplicative factor applied to the time limit, "
                              "passed through environment to run_aster")
     group = parser.add_argument_group('ctest options')
@@ -210,7 +210,7 @@ def main(argv=None):
         ctest_args.extend(["-L", ".*".join(sorted(labels))])
 
     # options passed through environment
-    os.environ["FACMTPS"] = str(args.facmtps)
+    os.environ["FACMTPS"] = str(args.timefactor)
     # execute ctest
     os.chdir(resutest)
     proc = _run(["ctest"] + ctest_args)
