@@ -228,6 +228,7 @@ subroutine hujela(mod, mater, deps, sigd, sigf, iret)
 !
 !
 !--->   INCREMENTATION DES CONTRAINTES  SIGF = SIGD + HOOK DEPS
+    sigf(:) = 0.d0
     call lcprmv(hook, deps, dsig)
     call lcsove(sigd, dsig, sigf)
 !

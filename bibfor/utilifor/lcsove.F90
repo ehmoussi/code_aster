@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,10 +23,11 @@ subroutine lcsove(x, y, z)
 !       IN  Y      :  VECTEUR
 !       OUT Z      :  VECTEUR RESULTAT
 !       ----------------------------------------------------------------
-    integer :: n, nd, i
+    integer :: n, i
     real(kind=8) :: x(6), y(6), z(6)
-    common /tdim/   n , nd
-    do 1 i = 1, n
+    common /tdim/   n
+!
+    do i = 1, n
         z(i) = x(i) + y(i)
- 1  continue
+    end do
 end subroutine
