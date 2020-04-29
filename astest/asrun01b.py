@@ -346,7 +346,7 @@ class TestExport(unittest.TestCase):
         self.assertFalse(export.has_param("consbtc"))
         self.assertIsInstance(export.get_param("time_limit"), ParameterFloat)
         self.assertIsNone(export.get_param("consbtc"))
-        # because of facmtps
+        # because of timefactor
         self.assertGreaterEqual(export.get("time_limit"), 60.0)
         export.set_time_limit(123.456)
         self.assertEqual(export.get("time_limit"), 123.456)
