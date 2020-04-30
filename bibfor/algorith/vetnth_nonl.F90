@@ -74,7 +74,7 @@ character(len=24), optional,intent(in) :: hydr_prev_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer , parameter :: nbin = 10
+    integer , parameter :: nbin = 11
     integer , parameter :: nbout = 2
     character(len=8) :: lpain(nbin), lpaout(nbout)
     character(len=19) :: lchin(nbin), lchout(nbout)
@@ -159,6 +159,8 @@ character(len=24), optional,intent(in) :: hydr_prev_
     lchin(9)  = dry_prev(1:19)
     lpain(10) = 'PTMPCHF'
     lchin(10) = dry_curr(1:19)
+    lpain(11) = 'PCAMASS'
+    lchin(11) = chcara(12)(1:19)
 !
 ! - Generate new RESU_ELEM name
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0521(option, nomte)
 !
 !
@@ -42,12 +42,13 @@ subroutine te0521(option, nomte)
     real(kind=8) :: xkpt, alpha, tpg
     real(kind=8) :: dfdx(27), dfdy(27), dfdz(27), poids
     integer :: ipoids, ivf, idfde, igeom, imate
-    integer :: jgano, nno, kp, npg, i, j, l, ij, imattt, itemps, ifon(3)
+    integer :: jgano, nno, kp, npg, i, j, l, ij, imattt, itemps, ifon(6)
     integer :: ndim, itemp, itempi, nnos
+    aster_logical :: aniso
 !
 ! DEB ------------------------------------------------------------------
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
@@ -56,27 +57,28 @@ subroutine te0521(option, nomte)
     call jevech('PTEMPEI', 'L', itempi)
     call jevech('PMATTTR', 'E', imattt)
 !
-    call ntfcma(' ', zi(imate), ifon)
+    aniso = .false.
+    call ntfcma(' ', zi(imate), aniso, ifon)
 !
-    do 40 kp = 1, npg
+    do kp = 1, npg
         l = (kp-1)*nno
         call dfdm3d(nno, kp, ipoids, idfde, zr(igeom),&
                     poids, dfdx, dfdy, dfdz)
         tpg = 0.d0
-        do 10 i = 1, nno
+        do i = 1, nno
             tpg = tpg + zr(itempi+i-1)*zr(ivf+l+i-1)
-10      continue
+        end do
 !
         call rcfode(ifon(2), tpg, alpha, xkpt)
 !
-        do 30 i = 1, nno
+        do i = 1, nno
 !
-            do 20 j = 1, i
+            do j = 1, i
                 ij = (i-1)*i/2 + j
-                zr(imattt+ij-1) = zr(imattt+ij-1) + poids* (alpha* ( dfdx(i)*dfdx(j)+ dfdy(i)*dfd&
-                                  &y(j)+dfdz(i)*dfdz(j)))
-20          continue
-30      continue
-40  end do
+                zr(imattt+ij-1) = zr(imattt+ij-1) + poids* (alpha*&
+                                  &(dfdx(i)*dfdx(j)+dfdy(i)*dfdy(j)+dfdz(i)*dfdz(j)))
+            end do
+        end do
+    end do
 ! FIN ------------------------------------------------------------------
 end subroutine

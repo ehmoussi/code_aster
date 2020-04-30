@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,32 +15,38 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine nuelrf(elrefe, nujni)
-    implicit  none
+!
+implicit  none
+!
 #include "asterfort/assert.h"
-    character(len=8) :: elrefe
-    integer :: nujni
-! person_in_charge: jacques.pellet at edf.fr
-! BUT :  DONNER LE NUMERO DE LA ROUTINE JNI00I ASSOCIEE
-!        A UN ELREFE
-! IN  ELREFE : NOM DE L'ELREFE
-! OUT NUJNI  : NUMERO DE LA ROUTINE JNI00I
-!.......................................................................
 !
-!     D'ABORD LES ELREFA :
-!     --------------------
-    if (elrefe .eq. 'HE8' .or. elrefe .eq. 'H20' .or. elrefe .eq. 'H27' .or. elrefe .eq.&
-        'PE6' .or. elrefe .eq. 'P15' .or. elrefe .eq. 'TE4' .or. elrefe .eq. 'TE8' &
-        .or. elrefe .eq. 'T10' .or.&
-        elrefe .eq. 'PY5' .or. elrefe .eq. 'P13' .or. elrefe .eq. 'QU4' .or. elrefe .eq.&
-        'QU8' .or. elrefe .eq. 'QU9' .or. elrefe .eq. 'TR3' .or. elrefe .eq. 'TR4' &
-        &.or. elrefe .eq. 'TR6' .or.&
-        elrefe .eq. 'TR7' .or. elrefe .eq. 'SE2' .or. elrefe .eq. 'SE3' .or. elrefe .eq.&
-        'SE4' .or. elrefe .eq. 'PO1' .or. elrefe .eq. 'P18' .or.  elrefe .eq. 'SH6' &
-         .or. elrefe .eq. 'S15'  ) then
+character(len=8), intent(in) :: elrefe
+integer, intent(out) :: nujni
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Finite elements management
+!
+! Get index of JNI subroutine
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  elrefe           : name of geometric support for finite element
+! Out nujni            : index of JNI subroutine
+!
+! --------------------------------------------------------------------------------------------------
+!
+    if (elrefe .eq. 'HE8' .or. elrefe .eq. 'H20' .or. elrefe .eq. 'H27' .or.&
+        elrefe .eq. 'PE6' .or. elrefe .eq. 'P15' .or. elrefe .eq. 'TE4' .or.&
+        elrefe .eq. 'TE8' .or. elrefe .eq. 'TR4' .or.&
+        elrefe .eq. 'T10' .or. elrefe .eq. 'PY5' .or. elrefe .eq. 'P13' .or.&
+        elrefe .eq. 'QU4' .or. elrefe .eq. 'QU8' .or. elrefe .eq. 'QU9' .or.&
+        elrefe .eq. 'TR3' .or. elrefe .eq. 'TR6' .or. elrefe .eq. 'TR7' .or.&
+        elrefe .eq. 'SE2' .or. elrefe .eq. 'SE3' .or. elrefe .eq. 'SE4' .or.&
+        elrefe .eq. 'PO1' .or. elrefe .eq. 'P18') then
         nujni = 2
-!
     else if (elrefe.eq.'CABPOU') then
         nujni = 92
     else if (elrefe.eq.'THCOSE2') then
@@ -53,13 +59,8 @@ subroutine nuelrf(elrefe, nujni)
         nujni = 80
     else if (elrefe.eq.'MEC3TR7H') then
         nujni = 80
-!
-!     -- POUR LES ELREFE VIDES :
-    else if (elrefe(1:2).eq.'V_') then
-        nujni = 1
-!
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 end subroutine

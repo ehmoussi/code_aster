@@ -89,7 +89,7 @@ aster_logical, optional, intent(out) :: coecst_
         call getvid(' ', 'MODELE'    , scal=model)
         call getvid(' ', 'CHAM_MATER', scal=materi)
         call getvid(' ', 'CARA_ELEM' , scal=cara_elem, nbret=iret)
-!       CARA_ELEM is optional in THER_LINEAIRE
+!       CARA_ELEM is optional in THER_LINEAIRE and THER_NON_LINE
         if (iret .eq. 0) then
             cara_elem = ' '
         endif

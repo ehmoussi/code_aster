@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine verstp(model     , lload_name , lload_info, mate     , time_curr,&
-                  time      , compor_ther, temp_prev , temp_iter, varc_curr,&
-                  vect_elem , base       , &
+subroutine verstp(model     , lload_name,  lload_info, cara_elem, mate     ,&
+                   time_curr,       time, compor_ther, temp_prev, temp_iter,&
+                   varc_curr, vect_elem , base       , &
                   hydr_prev_, hydr_curr_ , dry_prev_ , dry_curr_)
 !
 implicit none
@@ -44,6 +44,7 @@ implicit none
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: lload_name
 character(len=24), intent(in) :: lload_info
+character(len=24), intent(in) :: cara_elem
 character(len=24), intent(in) :: mate
 real(kind=8), intent(in) :: time_curr
 character(len=24), intent(in) :: time
@@ -69,6 +70,7 @@ character(len=24), optional, intent(in) :: dry_curr_
 ! In  model            : name of the model
 ! In  lload_name       : name of object for list of loads name
 ! In  lload_info       : name of object for list of loads info
+! In  cara_elem        : name of elementary characteristics (field)
 ! In  mate             : name of material characteristics (field)
 ! In  time_curr        : current time
 ! In  time             : time (<CARTE>)
@@ -147,9 +149,9 @@ character(len=24), optional, intent(in) :: dry_curr_
 !
 ! - Residuals from non-linear laws
 !
-    call resi_ther(model    , mate     , time     , compor_ther, temp_prev,&
-                   temp_iter, hydr_prev, hydr_curr, dry_prev   , dry_curr ,&
-                   varc_curr, resu_elem, vect_elem, base)
+    call resi_ther(model    , cara_elem,      mate, time     , compor_ther,&
+                   temp_prev, temp_iter, hydr_prev, hydr_curr, dry_prev   ,&
+                   dry_curr , varc_curr, resu_elem, vect_elem, base)
 !
 ! - Preparing input fields
 !

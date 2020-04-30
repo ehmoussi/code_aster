@@ -145,9 +145,9 @@ integer, intent(out) ::  nb_obje
 ! - Residuals
 !
     if (l_resi_ther) then
-        call verstp(model      , lload_name , lload_info, mateco   , time_curr,&
-                    time       , compor_ther, temp_prev , incr_temp, varc_curr,&
-                    ve_resither, 'G')
+        call verstp(model    , lload_name,  lload_info, cara_elem, mateco   ,&
+                    time_curr, time      , compor_ther, temp_prev, incr_temp,&
+                    varc_curr, ve_resither, 'G')
     endif
 !
 ! - New objects in table

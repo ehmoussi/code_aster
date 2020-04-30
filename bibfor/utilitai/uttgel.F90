@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine uttgel(nomte, typgeo)
-! person_in_charge: jacques.pellet at edf.fr
+!
 !  UTILITAIRE - TYPE GEOMETRIQUE D'UN ELEMENT FINI
 !  **           *    *                **
 ! =====================================================================
@@ -53,8 +53,7 @@ subroutine uttgel(nomte, typgeo)
         typgeo='QU'
     elseif (codtma.eq.'HE8' .or. codtma.eq.'H20' .or. codtma.eq.'H27') then
         typgeo='HE'
-    elseif (codtma.eq.'PE6' .or. codtma.eq.'P15' .or. codtma.eq.'P18' .or. &
-            codtma == 'SH6' .or. codtma == 'S15' ) then
+    elseif (codtma.eq.'PE6' .or. codtma.eq.'P15' .or. codtma.eq.'P18') then
         typgeo='PE'
     elseif (codtma.eq.'TE4' .or. codtma.eq.'T10') then
         typgeo='TE'

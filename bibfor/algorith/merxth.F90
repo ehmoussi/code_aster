@@ -123,9 +123,9 @@ character(len=24), optional, intent(in) :: dry_curr_
 !
 ! - Tangent matrix - Volumic terms
 !
-    call ther_mtan(model    , mateco  , time    , varc_curr, compor_ther,&
-                   temp_iter, dry_prev, dry_curr, resu_elem, matr_elem  ,&
-                   base)
+    call ther_mtan(model      , cara_elem,   mateco,     time, varc_curr,&
+                   compor_ther, temp_iter, dry_prev, dry_curr, resu_elem,&
+                   matr_elem  ,      base)
 !
 ! - Init fields
 !

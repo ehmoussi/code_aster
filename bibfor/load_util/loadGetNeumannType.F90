@@ -67,9 +67,9 @@ integer, intent(out) :: i_neum_lapl
                                                                '.FCO2D','.EPSIN','.FLUX ','.VEASS',&
                                                                '.ONDPL','.SIINT','.ETHM ','.VNOR '/)
     integer :: i_type_neum, iret, iret_cable_cine, infc, i_lapl
-    character(len=5) :: suffix, para_inst, para_vite
+    character(len=5) :: suffix, para_inst, para_vite, para_acce
     character(len=24) :: info_type, lchin
-    aster_logical :: l_para_inst, l_para_vite
+    aster_logical :: l_para_inst, l_para_vite, l_para_acce
     aster_logical :: l_func_inst(99), l_func_vite(99)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -96,9 +96,11 @@ integer, intent(out) :: i_neum_lapl
             if (ligr_name(i_type_neum) .eq. '.VEASS') then
                 para_inst = 'NON'
                 para_vite = 'NON'
+                para_acce = 'NON'
             else
                 call dismoi('PARA_INST', lchin, 'CARTE', repk=para_inst)
                 call dismoi('PARA_VITE', lchin, 'CARTE', repk=para_vite)
+                call dismoi('PARA_ACCE', lchin, 'CARTE', repk=para_acce)
             endif
             if (ligr_name(i_type_neum) .eq. '.ETHM') then
               if (.not.(load_apply .eq. 'SUIV')) then
@@ -107,6 +109,7 @@ integer, intent(out) :: i_neum_lapl
             endif
             l_para_inst = para_inst .eq. 'OUI'
             l_para_vite = para_vite .eq. 'OUI'
+            l_para_acce = para_acce .eq. 'OUI'
 ! --------- Identification
             if (ligr_name(i_type_neum) .eq. '.ONDPL') then
                 info_type = 'NEUM_ONDE'
@@ -167,7 +170,7 @@ integer, intent(out) :: i_neum_lapl
             else
                 ASSERT(ASTER_FALSE)
             endif
-            if (l_para_vite) then
+            if (l_para_vite .or. l_para_acce) then
                 if (load_apply .ne. 'SUIV') then
                     call utmess('F', 'CHARGES_55', sk=load_name)
                 endif
@@ -217,7 +220,7 @@ integer, intent(out) :: i_neum_lapl
             endif
             if (load_apply .eq. 'SUIV') then
                 call utmess('F', 'CHARGES_51', sk=load_name)
-            elseif (load_apply .eq. 'DIDI') then
+            else if (load_apply .eq. 'DIDI') then
                 call utmess('F', 'CHARGES_52', sk=load_name)
             else if (load_apply .eq. 'FIXE_PILO') then
                 call utmess('F', 'CHARGES_34', sk=load_name)
@@ -251,7 +254,7 @@ integer, intent(out) :: i_neum_lapl
             else
                 exit
             endif
-        end do
+        enddo
         if (infc .ne. 0) then
             i_neum_lapl = max(0, infc)
             info_type   = 'NEUM_LAPL'
@@ -262,7 +265,7 @@ integer, intent(out) :: i_neum_lapl
             ASSERT(nb_info_type.lt.nb_info_maxi)
             list_info_type(nb_info_type) = info_type
         endif
-    end do
+    enddo
 !
     call jedema()
 end subroutine

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -156,7 +156,8 @@ class THPLQU4(Element):
         ),
 
         OP.CHAR_THER_EVOLNI(te=244,
-            para_in=((OP.CHAR_THER_EVOLNI.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+            para_in=((OP.CHAR_THER_EVOLNI.PCOMPOR, CCOMPOR),
+                     (SP.PGEOMER, NGEOMER),(SP.PCAMASS, CCAMASS),
                      (OP.CHAR_THER_EVOLNI.PHYDRPM, LC.EHYDRNO), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPER, DDL_THER), (SP.PTEMPSR, CTEMPSR),
                      (SP.PTMPCHF, DDL_THER), (SP.PTMPCHI, DDL_THER),
@@ -286,7 +287,8 @@ class THPLQU4(Element):
         ),
 
         OP.MTAN_RIGI_MASS(te=242,
-            para_in=((OP.MTAN_RIGI_MASS.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+            para_in=((OP.MTAN_RIGI_MASS.PCOMPOR, CCOMPOR),
+                     (SP.PGEOMER, NGEOMER),(SP.PCAMASS, CCAMASS),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPEI, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (SP.PTMPCHF, DDL_THER),
                      (SP.PTMPCHI, DDL_THER), (OP.MTAN_RIGI_MASS.PVARCPR, LC.ZVARCPG),
@@ -321,7 +323,8 @@ class THPLQU4(Element):
         ),
 
         OP.RESI_RIGI_MASS(te=243,
-            para_in=((OP.RESI_RIGI_MASS.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+            para_in=((OP.RESI_RIGI_MASS.PCOMPOR, CCOMPOR),
+                     (SP.PGEOMER, NGEOMER),(SP.PCAMASS, CCAMASS),
                      (OP.RESI_RIGI_MASS.PHYDRPM, LC.EHYDRNO), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPEI, DDL_THER), (SP.PTEMPER, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (SP.PTMPCHF, DDL_THER),
