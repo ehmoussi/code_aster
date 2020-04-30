@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0076(option, nomte)
     implicit none
 #include "asterf_types.h"
@@ -47,7 +47,7 @@ subroutine te0076(option, nomte)
     integer :: icamas, ij, nbres, nuno
     real(kind=8) :: alpha, xnorm, xu, yu
 !-----------------------------------------------------------------------
-    parameter         (       nbres=2 )
+    parameter ( nbres=2 )
     integer :: icodre(nbres)
     character(len=8) :: elrefe, alias8
     character(len=16) :: nomres(nbres)
@@ -120,41 +120,41 @@ subroutine te0076(option, nomte)
 !
     call connec(nomte, nse, nnop2, c)
 !
-    do 11 i = 1, nnop2
-        do 11 j = 1, nnop2
-            mrigt(i,j)=0.d0
- 11     continue
+    do i = 1, nnop2
+        do j = 1, nnop2
+            mrigt(i,j) = 0.d0
+        end do
+    end do
 !
 ! --- CALCUL ISO-P2 : BOUCLE SUR LES SOUS-ELEMENTS -------
 !
-    do 100 ise = 1, nse
+    do ise = 1, nse
 !
-        do 105 i = 1, nno
-            do 105 j = 1, 2
+        do i = 1, nno
+            do j = 1, 2
                 coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-105         continue
+            end do
+        end do
 !
-        do 101 kp = 1, npg
+        do kp = 1, npg
             k=(kp-1)*nno
             call dfdm2d(nno, kp, ipoids, idfde, coorse,&
                         poids, dfdx, dfdy)
             if (lteatt('AXIS','OUI')) then
                 r = 0.d0
-                do 102 i = 1, nno
+                do i = 1, nno
                     r = r + coorse(2*(i-1)+1)*zr(ivf+k+i-1)
-102             continue
+                end do
                 poids = poids*r
             endif
 !
             if (.not.global .and. aniso) then
-                point(1)=0.d0
-                point(2)=0.d0
-                do 104 nuno = 1, nno
-                    point(1)= point(1) + zr(ivf+k+nuno-1)*coorse(2*(&
-                    nuno-1)+1)
-                    point(2)= point(2) + zr(ivf+k+nuno-1)*coorse(2*(&
-                    nuno-1)+2)
-104             continue
+                point(1) = 0.d0
+                point(2) = 0.d0
+                do nuno = 1, nno
+                    point(1)= point(1) + zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+1)
+                    point(2)= point(2) + zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+2)
+                end do
 !
                 xu = orig(1) - point(1)
                 yu = orig(2) - point(2)
@@ -167,7 +167,7 @@ subroutine te0076(option, nomte)
                 p(2,2) = xu
             endif
 !
-            do 103 i = 1, nno
+            do i = 1, nno
                 if (.not.aniso) then
                     fluglo(1) = lambda*dfdx(i)
                     fluglo(2) = lambda*dfdy(i)
@@ -180,24 +180,23 @@ subroutine te0076(option, nomte)
                     fluglo(2) = p(2,1)*fluloc(1) + p(2,2)*fluloc(2)
                 endif
 !
-                do 103 j = 1, nno
-                    mrigt(c(ise,i),c(ise,j)) = mrigt(&
-                                               c(ise, i),&
-                                               c(ise, j) ) + poids*theta* ( fluglo(1)*dfdx(j) + f&
-                                               &luglo(2)* dfdy(j)&
-                                               )
+                do j = 1, nno
+                    mrigt(c(ise,i),c(ise,j)) = mrigt(c(ise,i),c(ise,j)) +&
+                    & poids*theta* ( fluglo(1)*dfdx(j) + fluglo(2)*dfdy(j) )
 !
-103             continue
-101     continue
+                end do
+            end do
+        end do
 !
-100 end do
+    end do
 !
 ! MISE SOUS FORME DE VECTEUR
 !
     ij = imattt-1
-    do 106 i = 1, nnop2
-        do 106 j = 1, i
+    do i = 1, nnop2
+        do j = 1, i
             ij = ij + 1
-            zr(ij)=mrigt(i,j)
-106     continue
+            zr(ij) = mrigt(i,j)
+        end do
+    end do
 end subroutine

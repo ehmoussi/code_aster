@@ -22,7 +22,7 @@ interface
     subroutine vecgme(model    , cara_elem   , matez          , matecoz    , &
                       lload_namez, lload_infoz,&
                       inst_curr, disp_prevz  , disp_cumu_instz, vect_elemz , inst_prev  ,&
-                      compor   , ligrel_calcz, vite_currz     , strx_prevz )
+                      compor   , ligrel_calcz, vite_currz     , acce_currz , strx_prevz)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: cara_elem
         character(len=*), intent(in) :: matez, matecoz
@@ -36,6 +36,7 @@ interface
         character(len=24), intent(in) :: compor
         character(len=*), intent(in) :: ligrel_calcz
         character(len=*), intent(in) :: vite_currz
+        character(len=*), intent(in) :: acce_currz
         character(len=*), intent(in) :: strx_prevz
     end subroutine vecgme
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -269,8 +269,7 @@ subroutine pj3dtr(cortr3, corres, nutm3d, elrf3d, geom1,&
                 dzeta = dzeta + pjef_cf(ideca1+kk)*x3
             enddo
 
-        else if (elrefa.eq.'PE6' .or. elrefa.eq.'P15'.or. elrefa.eq.'P18' &
-                 .or. elrefa.eq.'SH6' .or. elrefa.eq.'S15' ) then
+        else if (elrefa.eq.'PE6' .or. elrefa.eq.'P15'.or. elrefa.eq.'P18') then
             do kk = 1, 4
                 x1 = crrefe(ndim*(cnpent(kk,ityp)-1)+1)
                 x2 = crrefe(ndim*(cnpent(kk,ityp)-1)+2)

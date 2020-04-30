@@ -43,23 +43,25 @@ CHAM_MAT=AFFE_MATERIAU(AFFE=_F(MATER=MAT,
                                TOUT='OUI',),
                        MAILLAGE=MAIL,)
 
-CINE=AFFE_CHAR_CINE(MECA_IMPO=_F(GROUP_MA='ENCASTR',
+CHA=AFFE_CHAR_MECA(DDL_IMPO=_F(GROUP_MA='ENCASTR',
                                DZ=0.0,
                                DX=0.0,
                                DY=0.0,
                                DRZ=0.0,
                                DRX=0.0,
                                DRY=0.0,),
-                   MODELE=MO,)
-
-CHA=AFFE_CHAR_MECA(MODELE=MO,
+                   MODELE=MO,
                    FORCE_ARETE=_F(GROUP_MA='LIBRE',
-                                  FZ=8.7594,),)
+                                  FZ=8.7594,),);
+
+
+# 29746: RESI_RELA = 1.E-5 parce que le système est un peu mal conditéonné (vérif. verrouillage en cisaillement)
 
 RESU=MECA_STATIQUE(CHAM_MATER=CHAM_MAT,
                    MODELE=MO,
                    CARA_ELEM=CAR_ELE,
-                   EXCIT=(_F(CHARGE=CHA,),_F(CHARGE=CINE)),)
+                   SOLVEUR=_F(RESI_RELA=1.E-5),
+                   EXCIT=_F(CHARGE=CHA,),);
 
 RESU=CALC_CHAMP(reuse=RESU,RESULTAT=RESU,CONTRAINTE=('SIGM_ELNO'))
 

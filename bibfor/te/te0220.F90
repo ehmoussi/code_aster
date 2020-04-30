@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ subroutine te0220(option, nomte)
 #include "asterfort/tecach.h"
 #include "asterfort/utpvgl.h"
 #include "asterfort/utpvlg.h"
+#include "asterfort/utmess.h"
 !
     character(len=16) :: option, nomte
 ! ......................................................................
@@ -79,12 +80,12 @@ subroutine te0220(option, nomte)
     spt=1
     poum='+'
     call rccoma(zi(imate), 'THER', 1, phenom, iret)
-    if (phenom .ne. 'THER_ORTH') then
+    if (phenom .eq. 'THER') then
         call rcvalb(fami, kpg, spt, poum, zi(imate),&
                     ' ', 'THER', nbpar, nompar, [valpar],&
                     1, 'LAMBDA', valres, icodre, 1)
         aniso = .false.
-    else
+    else if (phenom.eq.'THER_ORTH') then
         nomres(1) = 'LAMBDA_L'
         nomres(2) = 'LAMBDA_T'
         call rcvalb(fami, kpg, spt, poum, zi(imate),&
@@ -97,6 +98,8 @@ subroutine te0220(option, nomte)
         p(2,1) = sin(angmas(1))
         p(1,2) = -sin(angmas(1))
         p(2,2) = cos(angmas(1))
+    else
+        call utmess('F', 'ELEMENTS2_68')
     endif
 !
     epot = 0.d0

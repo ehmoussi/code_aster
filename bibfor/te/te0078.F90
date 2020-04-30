@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ subroutine te0078(option, nomte)
     call jevech('PTEMPER', 'L', itemp)
     call jevech('PVECTTR', 'E', ivectt)
     deltat = zr(itemps+1)
-    theta = zr(itemps+2)
+    theta  = zr(itemps+2)
     call rccoma(zi(imate), 'THER', 1, phenom, icodre(1))
 !
 !====
@@ -123,11 +123,11 @@ subroutine te0078(option, nomte)
         call jevech('PCAMASS', 'L', icamas)
         if (zr(icamas) .gt. 0.d0) then
             global = .true.
-            alpha = zr(icamas+1)*r8dgrd()
-            p(1,1) = cos(alpha)
-            p(2,1) = sin(alpha)
+            alpha  = zr(icamas+1)*r8dgrd()
+            p(1,1) =  cos(alpha)
+            p(2,1) =  sin(alpha)
             p(1,2) = -sin(alpha)
-            p(2,2) = cos(alpha)
+            p(2,2) =  cos(alpha)
         else
             global = .false.
             orig(1) = zr(icamas+4)
@@ -142,33 +142,35 @@ subroutine te0078(option, nomte)
 !
 !  CALCUL ISO-P2 : ELTS P2 DECOMPOSES EN SOUS-ELTS LINEAIRES
     call connec(nomte, nse, nnop2, c)
-    do 10 i = 1, nnop2
+    do i = 1, nnop2
         vectt(i)=0.d0
- 10 continue
+    end do
 !
 ! ----- TERME DE RIGIDITE : 2EME FAMILLE DE PTS DE GAUSS ---------
 ! BOUCLE SUR LES SOUS-ELEMENTS
 !
-    do 200 ise = 1, nse
-        do 205 i = 1, nno
-            do 205 j = 1, 2
+    do ise = 1, nse
+        do i = 1, nno
+            do j = 1, 2
                 coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-205         continue
-        do 201 kp = 1, npg
+            end do
+        end do
+        do kp = 1, npg
             k=(kp-1)*nno
             call dfdm2d(nno, kp, ipoids, idfde, coorse,&
                         poids, dfdx, dfdy)
-            r = 0.d0
-            tpg = 0.d0
+            r      = 0.d0
+            tpg    = 0.d0
             dtpgdx = 0.d0
             dtpgdy = 0.d0
-            do 202 i = 1, nno
+            do i = 1, nno
 ! CALCUL DE T- ET DE GRAD(T-)
                 r = r + coorse(2*(i-1)+1) * zr(ivf+k+i-1)
                 dtpgdx = dtpgdx + zr(itemp-1+c(ise,i)) * dfdx(i)
                 dtpgdy = dtpgdy + zr(itemp-1+c(ise,i)) * dfdy(i)
-202         continue
+            end do
             if (lteatt('AXIS','OUI')) poids = poids*r
+!
             if (.not.aniso) then
                 fluglo(1) = lambda*dtpgdx
                 fluglo(2) = lambda*dtpgdy
@@ -176,21 +178,19 @@ subroutine te0078(option, nomte)
                 if (.not.global) then
                     point(1)=0.d0
                     point(2)=0.d0
-                    do 204 nuno = 1, nno
-                        point(1)= point(1)+ zr(ivf+k+nuno-1)*coorse(2*&
-                        (nuno-1)+1)
-                        point(2)= point(2)+ zr(ivf+k+nuno-1)*coorse(2*&
-                        (nuno-1)+2)
-204                 continue
+                    do nuno = 1, nno
+                        point(1)= point(1)+ zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+1)
+                        point(2)= point(2)+ zr(ivf+k+nuno-1)*coorse(2*(nuno-1)+2)
+                    end do
                     xu = orig(1) - point(1)
                     yu = orig(2) - point(2)
                     xnorm = sqrt( xu**2 + yu**2 )
                     xu = xu / xnorm
                     yu = yu / xnorm
-                    p(1,1) = xu
-                    p(2,1) = yu
+                    p(1,1) =  xu
+                    p(2,1) =  yu
                     p(1,2) = -yu
-                    p(2,2) = xu
+                    p(2,2) =  xu
                 endif
                 fluglo(1) = dtpgdx
                 fluglo(2) = dtpgdy
@@ -201,34 +201,33 @@ subroutine te0078(option, nomte)
                 fluglo(1) = p(1,1)*fluloc(1) + p(1,2)*fluloc(2)
                 fluglo(2) = p(2,1)*fluloc(1) + p(2,2)*fluloc(2)
             endif
-            do 203 i = 1, nno
-                vectt(c(ise,i)) = vectt(&
-                                  c(ise,i)) + poids * (theta- 1.0d0)*( fluglo(1)*dfdx(i) + fluglo&
-                                  &(2)*dfdy(i)&
-                                  )
-203         continue
-201     continue
+            do i = 1, nno
+                vectt(c(ise,i)) = vectt(c(ise,i)) +&
+                & poids * (theta - 1.0d0) * (fluglo(1)*dfdx(i) + fluglo(2)*dfdy(i))
+            end do
+        end do
 !
 !====
 ! 3.2 CALCULS TERMES DE MASSE
 !    POUR LES ELEMENTS LUMPES
 !====
 !
-        do 305 i = 1, nno
-            do 305 j = 1, 2
+        do i = 1, nno
+            do j = 1, 2
                 coorse(2*(i-1)+j) = zr(igeom-1+2*(c(ise,i)-1)+j)
-305         continue
-        do 301 kp = 1, npg2
+            end do
+        end do
+        do kp = 1, npg2
             k=(kp-1)*nno
             call dfdm2d(nno, kp, ipoid2, idfde2, coorse,&
                         poids, dfdx, dfdy)
-            r = 0.d0
+            r   = 0.d0
             tpg = 0.d0
-            do 302 i = 1, nno
+            do i = 1, nno
 ! CALCUL DE T-
-                r = r + coorse(2*(i-1)+1) * zr(ivf2+k+i-1)
+                r   = r   + coorse(2*(i-1)+1)    * zr(ivf2+k+i-1)
                 tpg = tpg + zr(itemp-1+c(ise,i)) * zr(ivf2+k+i-1)
-302         continue
+            end do
             if (lteatt('AXIS','OUI')) then
                 poids = poids*r
                 if (r .eq. 0.d0) then
@@ -236,16 +235,16 @@ subroutine te0078(option, nomte)
                 endif
             endif
 !
-            do 303 i = 1, nno
-                vectt(c(ise,i)) = vectt( c(ise,i)) + poids * ( cp/ deltat*zr(ivf2+k+i-1)*tpg )
-303         continue
-301     continue
-200 continue
+            do i = 1, nno
+                vectt(c(ise,i)) = vectt(c(ise,i)) + poids*( cp/deltat*zr(ivf2+k+i-1)*tpg )
+            end do
+        end do
+    end do
 !
 ! MISE SOUS FORME DE VECTEUR
 !
-    do 306 i = 1, nnop2
+    do i = 1, nnop2
         zr(ivectt-1+i)=vectt(i)
-306 continue
+    end do
 !
 end subroutine

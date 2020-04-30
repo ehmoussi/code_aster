@@ -19,7 +19,7 @@
 subroutine te0478(option, nomte)
 !
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
 !     CALCUL DES COORDONNEES DES POINTS DE GAUSS + POIDS
 !     POUR LES ELEMENTS 0D ET 1D (POI ET SEG)
@@ -27,7 +27,7 @@ subroutine te0478(option, nomte)
 !     TRAITEMENT SPECIFIQUE POUR LES ELEMENTS A SOUS POINTS
 !     (PMF, TUYAU, COQUE(2D))
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     implicit none
     character(len=16) :: option, nomte
@@ -45,7 +45,7 @@ subroutine te0478(option, nomte)
 #include "asterfort/tecach.h"
 #include "asterfort/utpvlg.h"
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     integer :: ndim, nno, nnos, npg, jgano, icopg, idfde, ipoids, ivf, igeom
     integer :: tab(2), iret, ndim1
@@ -56,12 +56,12 @@ subroutine te0478(option, nomte)
     real(kind=8) :: dfdx(3), cour, jacp, cosa, sina, spoid
 !
     integer :: nbfibr, nbgrfi, tygrfi, nbcarm, nug(10)
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
     integer, parameter :: nb_cara1 = 2
     real(kind=8) :: vale_cara1(nb_cara1)
     character(len=8) :: noms_cara1(nb_cara1)
     data noms_cara1 /'R1','EP1'/
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !
     call elrefe_info(fami='RIGI',ndim=ndim1,nno=nno,nnos=nnos,&
                      npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
@@ -74,9 +74,10 @@ subroutine te0478(option, nomte)
 !   zr(icopg) : coordonnees points de gauss + poids
     call jevech('PCOORPG', 'E', icopg)
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !   POUTRES MULTIFIBRES
-    if (nomte .eq. 'MECA_POU_D_EM' .or. nomte .eq. 'MECA_POU_D_TGM'.or. nomte .eq. 'MECA_POU_D_SQUE') then
+    if (nomte .eq. 'MECA_POU_D_EM' .or. nomte .eq. 'MECA_POU_D_TGM' &
+        .or. nomte .eq. 'MECA_POU_D_SQUE') then
 !       Récupération des caractéristiques des fibres
         call pmfinfo(nbfibr,nbgrfi,tygrfi,nbcarm,nug,jacf=jacf)
         call jevech('PCAORIE', 'L', iorien)
@@ -102,7 +103,7 @@ subroutine te0478(option, nomte)
             enddo
         enddo
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !   TUYAUX
     else if((nomte.eq.'MET3SEG3').or.(nomte.eq.'MET3SEG4').or.(nomte.eq.'MET6SEG3')) then
 !       nombre de couches et nombre de sections
@@ -180,7 +181,7 @@ subroutine te0478(option, nomte)
             enddo
         enddo
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !   COQUE(2D)
     else if(nomte.eq.'MECXSE3') then
         ASSERT(ndim.eq.2)
@@ -226,7 +227,7 @@ subroutine te0478(option, nomte)
             enddo
         enddo
 !
-! --------------------------------------------------------------------------------------------------
+! ------------------------------------------------------------------------------
 !   autres elements
     else
         call ppga1d(ndim, nno, npg, zr(ipoids), zr(ivf), zr(idfde), zr( igeom), zr(icopg))
