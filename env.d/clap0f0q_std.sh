@@ -5,7 +5,7 @@
 export DEVTOOLS_COMPUTER_ID=clap0f0q
 # expected version of official prerequisites
 export OFFICIAL_PLATFORM=1
-export PREREQ_PATH=/home/aster/dev/codeaster-prerequisites/v15
+export PREREQ_PATH=/home/aster/public/v15
 export PREREQ_VERSION=20200117
 
 # generic environment: compilers, python
