@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -88,8 +88,8 @@ subroutine te0061(option, nomte)
     call jevech('PTEMPER', 'L', itemp)
     call jevech('PTEMPSR', 'L', itps)
     valpar(1) = zr(itps)
-    deltat = zr(itps+1)
-    theta = zr(itps+2)
+    deltat    = zr(itps+1)
+    theta     = zr(itps+2)
     call rccoma(zi(imate), 'THER', 1, phenom, icodre(1))
 !
 !====
@@ -134,10 +134,10 @@ subroutine te0061(option, nomte)
             call matrot(angl, p)
         else
             global = .false.
-            alpha = zr(icamas+1)*r8dgrd()
-            beta = zr(icamas+2)*r8dgrd()
-            dire(1) = cos(alpha)*cos(beta)
-            dire(2) = sin(alpha)*cos(beta)
+            alpha   = zr(icamas+1)*r8dgrd()
+            beta    = zr(icamas+2)*r8dgrd()
+            dire(1) =  cos(alpha)*cos(beta)
+            dire(2) =  sin(alpha)*cos(beta)
             dire(3) = -sin(beta)
             orig(1) = zr(icamas+4)
             orig(2) = zr(icamas+5)
@@ -201,8 +201,9 @@ subroutine te0061(option, nomte)
 ! --- AFFECTATION DES TERMES DE RIGIDITE :
 !     ----------------------------------
         do 140 i = 1, nno
-            zr(ivectt+i-1) = zr(ivectt+i-1) - poids* ((1.0d0-theta)* (dfdx(i)*fluglo(1)+dfdy(i)*f&
-                             &luglo(2)+ dfdz(i)*fluglo(3)))
+            zr(ivectt+i-1) = zr(ivectt+i-1) - poids*&
+                             & ( (1.0d0-theta)*&
+                                 & (dfdx(i)*fluglo(1)+dfdy(i)*fluglo(2)+ dfdz(i)*fluglo(3)))
 140     continue
 160 continue
 !

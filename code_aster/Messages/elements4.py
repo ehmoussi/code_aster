@@ -227,17 +227,6 @@ ajoutez un état initial nul au calcul.
   Distance au plan :  %(r1)f
 """),
 
-    84 : _("""
- famille non disponible élément de référence  %(k1)s
- famille  %(k2)s
-"""),
-
-    88 : _("""
-élément de référence  %(k1)s non disponible
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
-
     90 : _("""
  élément mal programmé maille  %(k1)s  type  %(k2)s  nombre noeuds  %(i1)d
  nombre noeuds pour le passage Gauss noeuds  %(i2)d

@@ -113,6 +113,7 @@ subroutine te0517(option, nomte)
         call jevech('PSTRXMR', 'L', istrxm)
 !
         reactu = .false.
+        rigige = .false.
         call tecach('ONO', 'PCOMPOR', 'L', iretc, iad=icompo)
         if (iretc .eq. 0) then
            reactu = (zk16(icompo+2).eq.'GROT_GDEP')

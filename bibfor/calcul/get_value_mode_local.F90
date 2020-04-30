@@ -69,16 +69,16 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ii, ii1,ii2, jj, kk, npari2, nbec, imodat, imodloc, nbscalmloc, itab
-    integer :: iparg, debugr, iachlo, ilchlo, lgcata, iopt, igd, nbin, inomcp, iaopd2
-    integer :: jceld, adiel, debgr2, decael, lonchl, iapara, itrou, nbcmp, iaoplo, iadgd
+    integer :: ii, ii1,ii2, kk, nbec, imodat, imodloc, nbscalmloc, itab
+    integer :: iparg, debugr, iachlo, ilchlo, lgcata, igd, nbin, inomcp
+    integer :: jceld, adiel, debgr2, decael, lonchl, itrou, nbcmp, iadgd
     integer :: iposimloc, iposicarte
 !
     real(kind=8)        :: rundf
     character(len=8)    :: nompar
     character(len=24)   :: valk(5)
 !
-    aster_logical       :: etendu, oknompar, lretpara
+    aster_logical       :: etendu, lretpara
 !
     integer, parameter  :: maxentiercode = 5
     integer             :: entiercode(maxentiercode)

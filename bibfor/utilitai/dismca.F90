@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,15 +52,16 @@ character(len=*), intent(out)  :: answerk_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=24) :: question
-    character(len=32) :: answerk
-    character(len=19) :: object, func_name, field
-    character(len=8) ::  func_type, para_name(10), type, nogd
-    integer ::  iexi, iret
-    integer :: jvale, i_zone, i_para, nb_zone, ltyp, nb_para
-    integer, pointer :: v_desc(:) => null()
-    character(len=24), pointer :: v_prol(:) => null()
-    character(len=8), pointer :: v_noma(:) => null()
+    character(len=24)   :: question
+    character(len=32)   :: answerk
+    character(len=19)   :: object, func_name, field
+    integer, parameter  :: max_para_name=15
+    character(len=8)    :: func_type, para_name(max_para_name), type, nogd
+    integer             :: iexi, iret
+    integer             :: jvale, i_zone, i_para, nb_zone, ltyp, nb_para
+    integer, pointer            :: v_desc(:) => null()
+    character(len=24), pointer  :: v_prol(:) => null()
+    character(len=8), pointer   :: v_noma(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -118,18 +119,16 @@ character(len=*), intent(out)  :: answerk_
                     call jeexin(func_name//'.PROL', iret)
                     if (iret .gt. 0) then
                         call jeveuo(func_name//'.PROL', 'L', vk24=v_prol)
-                        call fonbpa(func_name, v_prol, func_type, 10, nb_para,&
-                                    para_name)
+                        call fonbpa(func_name, v_prol, func_type, max_para_name, nb_para, para_name)
                         do i_para = 1, nb_para
                             if (para_name(i_para)(1:4) .eq. 'INST') then
                                 answerk = 'OUI'
-                                goto 11
+                                goto 999
                             endif
-                        end do
+                        enddo
                     endif
                 endif
-            end do
-11          continue
+            enddo
         endif
 !
     else if (question .eq. 'PARA_VITE') then
@@ -152,20 +151,52 @@ character(len=*), intent(out)  :: answerk_
                     call jeexin(func_name//'.PROL', iret)
                     if (iret .gt. 0) then
                         call jeveuo(func_name//'.PROL', 'L', vk24=v_prol)
-                        call fonbpa(func_name, v_prol, func_type, 10, nb_para,&
-                                    para_name)
+                        call fonbpa(func_name, v_prol, func_type, max_para_name, nb_para, para_name)
                         do i_para = 1, nb_para
                             if (para_name(i_para) .eq. 'VITE_X' .or.&
                                 para_name(i_para) .eq. 'VITE_Y' .or.&
                                 para_name(i_para) .eq. 'VITE_Z') then
                                 answerk = 'OUI'
-                                goto 12
+                                goto 999
                             endif
-                        end do
+                        enddo
                     endif
                 endif
-            end do
-12          continue
+            enddo
+        endif
+!
+    else if (question .eq. 'PARA_ACCE') then
+        answerk = ' '
+        field   = object
+        call jeveuo(field//'.VALE', 'L', jvale)
+        call jelira(field//'.VALE', 'TYPE', cval=type)
+        if (type(1:1) .eq. 'K') then
+            call jelira(field//'.VALE', 'LONMAX', nb_zone)
+            call jelira(field//'.VALE', 'LTYP', ltyp)
+            do i_zone = 1, nb_zone
+                if (ltyp .eq. 8) then
+                    func_name = zk8(jvale+i_zone-1)
+                else if (ltyp .eq. 24) then
+                    func_name = zk24(jvale+i_zone-1)(1:19)
+                else
+                    ASSERT(.false.)
+                endif
+                if (func_name(1:8) .ne. ' ') then
+                    call jeexin(func_name//'.PROL', iret)
+                    if (iret .gt. 0) then
+                        call jeveuo(func_name//'.PROL', 'L', vk24=v_prol)
+                        call fonbpa(func_name, v_prol, func_type, max_para_name, nb_para, para_name)
+                        do i_para = 1, nb_para
+                            if (para_name(i_para) .eq. 'ACCE_X' .or.&
+                                para_name(i_para) .eq. 'ACCE_Y' .or.&
+                                para_name(i_para) .eq. 'ACCE_Z') then
+                                answerk = 'OUI'
+                                goto 999
+                            endif
+                        enddo
+                    endif
+                endif
+            enddo
         endif
     else
         ierd = 1

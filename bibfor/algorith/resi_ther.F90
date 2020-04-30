@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,9 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine resi_ther(model    , mate     , time     , compor    , temp_prev,&
-                     temp_iter, hydr_prev, hydr_curr, dry_prev  , dry_curr ,&
-                     varc_curr, resu_elem, vect_elem, base)
+subroutine resi_ther(model    , cara_elem, mate     , time     , compor    ,&
+                     temp_prev, temp_iter, hydr_prev, hydr_curr, dry_prev  ,&
+                     dry_curr , varc_curr, resu_elem, vect_elem, base)
 !
 implicit none
 !
@@ -26,11 +26,13 @@ implicit none
 #include "asterfort/calcul.h"
 #include "asterfort/corich.h"
 #include "asterfort/gcnco2.h"
+#include "asterfort/mecara.h"
 #include "asterfort/megeom.h"
 #include "asterfort/reajre.h"
 #include "asterfort/inical.h"
 !
 character(len=24), intent(in) :: model
+character(len=24), intent(in) :: cara_elem
 character(len=24), intent(in) :: time
 character(len=24), intent(in) :: mate
 character(len=24), intent(in) :: temp_prev
@@ -54,6 +56,7 @@ character(len=1), intent(in) :: base
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of the model
+! In  cara_elem        : name of elementary characteristics (field)
 ! In  mate             : name of material characteristics (field)
 ! In  time             : time (<CARTE>)
 ! In  temp_prev        : previous temperature
@@ -70,7 +73,7 @@ character(len=1), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nbin  = 10
+    integer, parameter :: nbin  = 11
     integer, parameter :: nbout = 2
     character(len=8) :: lpain(nbin), lpaout(nbout)
     character(len=19) :: lchin(nbin), lchout(nbout)
@@ -78,7 +81,7 @@ character(len=1), intent(in) :: base
     character(len=1) :: stop_calc
     character(len=16) :: option
     character(len=24) :: ligrel_model
-    character(len=24) :: chgeom
+    character(len=24) :: chgeom, chcara(18)
     integer :: ibid
 !
 ! --------------------------------------------------------------------------------------------------
@@ -95,6 +98,10 @@ character(len=1), intent(in) :: base
 ! - Geometry field
 !
     call megeom(model, chgeom)
+!
+! - Elementary characteristics field
+!
+    call mecara(cara_elem, chcara)
 !
 ! - Input fields
 !
@@ -118,6 +125,8 @@ character(len=1), intent(in) :: base
     lchin(9)  = dry_curr(1:19)
     lpain(10) = 'PVARCPR'
     lchin(10) = varc_curr(1:19)
+    lpain(11) = 'PCAMASS'
+    lchin(11) = chcara(12)(1:19)
 !
 ! - Output fields
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0069(option, nomte)
     implicit none
 #include "asterf_types.h"
@@ -105,10 +105,10 @@ subroutine te0069(option, nomte)
         lambor(1) = valres(1)
         lambor(2) = valres(2)
         aniso = .true.
-!
     else if (phenom .eq. 'THER_NL') then
         aniso = .false.
-!
+    else if (phenom .eq. 'THER_NL_ORTH') then
+        aniso = .true.
     else
         call utmess('F', 'ELEMENTS2_63')
     endif
@@ -137,7 +137,7 @@ subroutine te0069(option, nomte)
 !====
 ! 2. CALCULS TERMES DE FLUX
 !====
-    do 101 kp = 1, npg
+    do kp = 1, npg
         k=(kp-1)*nno
         ifpg=(kp-1)*2
         call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
@@ -148,10 +148,10 @@ subroutine te0069(option, nomte)
         if (.not.global .and. aniso) then
             point(1)=0.d0
             point(2)=0.d0
-            do 103 nuno = 1, nno
+            do nuno = 1, nno
                 point(1) = point(1) + zr(ivf+k+nuno-1)*zr(igeom+2* nuno-2)
                 point(2) = point(2) + zr(ivf+k+nuno-1)*zr(igeom+2* nuno-1)
-103         continue
+            end do
             xu = orig(1) - point(1)
             yu = orig(2) - point(2)
             xnorm = sqrt( xu**2 + yu**2 )
@@ -164,17 +164,27 @@ subroutine te0069(option, nomte)
         endif
 !
 !     CALCUL DE T ET DE GRAD(T) AUX POINTS DE GAUSS
-        do 110 j = 1, nno
+        do j = 1, nno
             tpg = tpg + zr(itempe+j-1)*zr(ivf+k+j-1)
             fluxx = fluxx + zr(itempe+j-1)*dfdx(j)
             fluxy = fluxy + zr(itempe+j-1)*dfdy(j)
-110     continue
+        end do
 !
         if (phenom .eq. 'THER_NL') then
             call rcvalb(fami, kpg, spt, poum, zi(imate),&
                         ' ', phenom, 1, 'TEMP', [tpg],&
                         1, 'LAMBDA', lambda, icodre, 1)
         endif
+!
+        if (phenom .eq. 'THER_NL_ORTH') then
+            call rcvalb('FPG1', 1, 1, '+', zi(imate),&
+                        ' ', phenom, 1, 'TEMP', [tpg],&
+                        1, 'LAMBDA_L', lambor(1), icodre, 1)
+            call rcvalb('FPG1', 1, 1, '+', zi(imate),&
+                        ' ', phenom, 1, 'TEMP', [tpg],&
+                        1, 'LAMBDA_T', lambor(2), icodre, 1)
+        endif
+!
         if (.not.aniso) then
             fluglo(1) = lambda(1)*fluxx
             fluglo(2) = lambda(1)*fluxy
@@ -190,11 +200,11 @@ subroutine te0069(option, nomte)
         fpg(ifpg+1) = -fluglo(1)
         fpg(ifpg+2) = -fluglo(2)
 !
-101 end do
+    end do
 !
-    do 90 kp = 1, npg
+    do kp = 1, npg
         zr(iflux+(kp-1)*nbcmp-1+1) = fpg(2*(kp-1)+1)
         zr(iflux+(kp-1)*nbcmp-1+2) = fpg(2*(kp-1)+2)
- 90 end do
+    end do
 !
 end subroutine

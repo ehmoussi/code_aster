@@ -378,7 +378,6 @@ DEFI_CONTACT=OPER(nom       = "DEFI_CONTACT", op=30, sd_prod   = char_contact, r
                                           ALGO_FROT       =SIMP(statut='f',typ='TXM',defaut="STANDARD", into=("STANDARD","PENALISATION"),),
                                           b_frot_std      =BLOC(condition = """equal_to("ALGO_FROT", 'STANDARD') """,
                                                                   fr=tr("Paramètres de la formulation Lagrangienne"),
-                                                                  COEF_FROT  =SIMP(statut='f',typ='R',defaut=100.E+0),
                                           ),
 
                                           b_contpen_frotstd=BLOC(condition ="""(equal_to("ALGO_CONT", 'PENALISATION') and equal_to("ALGO_FROT", 'STANDARD') )""",

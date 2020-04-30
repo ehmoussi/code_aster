@@ -156,6 +156,18 @@ Problème d'interpolation pour RHO_CP
  - THER_HYDR
 """),
 
+    67 : _("""
+ Le calcul de l'option SOUR_ELGA n'est pas implémenté pour les matériaux orthotropes :
+ - THER_ORTH
+ - THER_NL_ORTH
+"""),
+
+    68 : _("""
+ Le calcul de l'option ETHE_ELEM n'est pas implémenté en thermique non linéaire :
+ - THER_NL
+ - THER_NL_ORTH
+"""),
+
     72 : _("""
   -> La réactualisation de la géométrie (DEFORMATION='PETIT_REAC') est déconseillée pour les éléments de type plaque.
      Les grandes rotations ne sont pas modélisées correctement.

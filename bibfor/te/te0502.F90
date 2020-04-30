@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0502(option, nomte)
     implicit none
 !
@@ -47,13 +47,14 @@ subroutine te0502(option, nomte)
     real(kind=8) :: xr, xrr, xaux, rbid
     real(kind=8) :: s, um, xma, xm, coef, cmin, alfa, aksi, cc
     integer :: kp, i, j, k, ij, itemps, imattt
-    integer :: itempi, ifon(3), ivite, igeom, imate
+    integer :: itempi, ifon(6), ivite, igeom, imate
     integer :: iad, nbvf, jvalf, idim, jdim
     integer :: ndim, nno, nnos, npg, ipoids, ivf, idfde, jgano
+    aster_logical :: aniso
 ! DEB ------------------------------------------------------------------
 !
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PVITESR', 'L', ivite)
@@ -64,32 +65,33 @@ subroutine te0502(option, nomte)
     call jevech('PTEMPEI', 'L', itempi)
     call jevech('PMATTTR', 'E', imattt)
 !
-    call ntfcma(' ',zi(imate), ifon)
+    aniso = .false.
+    call ntfcma(' ', zi(imate), aniso, ifon)
     nbvf = zi(ifon(1))
     jvalf = zi(ifon(1) + 2)
     xr = 0.d0
-    do 22 i = 1, nbvf
+    do i = 1, nbvf
         xaux = zr(jvalf + i - 1)
         call rcfodi(ifon(1), xaux, rbid, xrr)
         if (xrr .gt. xr) then
             xr = xrr
         endif
-22  end do
+    end do
     rr = 0.6d0/xr
 !
     k = 0
-    do 10 i = 1, nno
-        do 20 idim = 1, 2
+    do i = 1, nno
+        do idim = 1, 2
             k = k+1
             uloc(idim,i) = zr(ivite+k-1)
-20      continue
-10  end do
+        end do
+    end do
 !
     aire = 0.d0
     umi(1) = 0.d0
     umi(2) = 0.d0
 !
-    do 30 kp = 1, npg
+    do kp = 1, npg
         ul(1,kp) = 0.d0
         ul(2,kp) = 0.d0
         k=(kp-1)*nno
@@ -98,46 +100,46 @@ subroutine te0502(option, nomte)
 !
         if (lteatt('AXIS','OUI')) then
             r = 0.d0
-            do 40 i = 1, nno
+            do i = 1, nno
                 r = r + zr(igeom+2*(i-1))*zr(ivf+k+i-1)
-40          continue
+            end do
             poids = poids*r
         endif
 !
-        do 50 i = 1, nno
+        do i = 1, nno
             ul(1,kp) = ul(1,kp) + uloc(1,i)*zr(ivf+k+i-1)
             ul(2,kp) = ul(2,kp) + uloc(2,i)*zr(ivf+k+i-1)
-50      continue
+        end do
 !
         aire = aire + poids
-        do 60 i = 1, nno
+        do i = 1, nno
             dni(1,i,kp) = dfdx(i)
             dni(2,i,kp) = dfdy(i)
-60      continue
+        end do
 !
         jacob(kp) = poids
         umi(1) = umi(1)+ul(1,kp)*poids
         umi(2) = umi(2)+ul(2,kp)*poids
-30  end do
+    end do
 !
     umi(1) = umi(1)/aire
     umi(2) = umi(2)/aire
 !
     ij = imattt - 1
 !
-    do 70 i = 1, nno
-        do 80 j = 1, nno
+    do i = 1, nno
+        do j = 1, nno
             s = 0.d0
-            do 90 kp = 1, npg
+            do kp = 1, npg
                 k = (kp-1)*nno
-                s = s +zr(ivf+k+i-1)*dni(1,j,kp)*ul(1,kp)*jacob(kp)* rr +zr(ivf+k+i-1)*dni(2,j,kp&
-                    &)*ul(2,kp)*jacob(kp)*rr
-90          continue
+                s = s +zr(ivf+k+i-1)*dni(1,j,kp)*ul(1,kp)*jacob(kp)*rr+&
+                      &zr(ivf+k+i-1)*dni(2,j,kp)*ul(2,kp)*jacob(kp)*rr
+            end do
             ij = ij+1
             zr(ij) = zr(ij)+s
-
-80      end do
-70  end do
+!
+        end do
+    end do
 !
     if (decent .eq. 'OUI') then
 !
@@ -145,7 +147,7 @@ subroutine te0502(option, nomte)
 !
         um = umi(1)*umi(1) + umi(2)*umi(2)
         um = sqrt(um)
-        if (um .lt. 1.d-10) goto 9999
+        if (um .lt. 1.d-10) goto 999
         umi(1) = umi(1)/um
         umi(2) = umi(2)/um
 !
@@ -153,7 +155,7 @@ subroutine te0502(option, nomte)
 !
         do i = 2, nno
             xm = 0.d0
-            xm =xm+(zr(igeom)-zr(igeom+2*i-2))*(zr(igeom)-zr(igeom+2*i-2))&
+            xm =xm+(zr(igeom  )-zr(igeom+2*i-2))*(zr(igeom  )-zr(igeom+2*i-2))&
                   +(zr(igeom+1)-zr(igeom+2*i-1))*(zr(igeom+1)-zr(igeom+2*i-1))
             xm = sqrt(xm)
             if (xm .gt. xma) xma = xm
@@ -169,20 +171,20 @@ subroutine te0502(option, nomte)
         cc = aksi*um*xma
         do i = 1, nno
             do j = 1, nno
-              s=0.d0
-              do kp = 1, npg
-                 do idim = 1, 2
-                    do jdim = 1, 2
-                       s = s+(dni(idim,i,kp)*dni(jdim,j,kp)&
-                             *ul( idim,kp)*ul(jdim,kp) *jacob(kp)/(um*um))* coef*cc
+                s=0.d0
+                do kp = 1, npg
+                    do idim = 1, 2
+                        do jdim = 1, 2
+                            s = s+(dni(idim,i,kp)*dni(jdim,j,kp)&
+                                   *ul( idim,kp)*ul(jdim,kp) *jacob(kp)/(um*um))* coef*cc
+                        end do
                     end do
-                 end do
-              end do
-              ij = ij+1
-              zr(ij) = zr(ij) + s
+                end do
+                ij = ij+1
+                zr(ij) = zr(ij) + s
             end do
         end do
     endif
 !
-9999  continue
+999 continue
 end subroutine

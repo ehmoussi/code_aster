@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -493,7 +493,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 !   -- 8. Creation si necessaire d'une fonction pour stocker beta
 !         (enthalpie volumique) calculee a partir de RHO_CP
 !   ---------------------------------------------------------------
-    if (nomrc(1:8) .eq. 'THER_NL') then
+    if (nomrc(1:7) .eq. 'THER_NL') then
         do i = 1, nbk
             if (( valk(nbr+nbc+i)(1:4) .eq. 'BETA' )) then
                 nomfct = valk(nbr+nbc+nbk+i)

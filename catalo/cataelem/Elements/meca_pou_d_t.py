@@ -294,7 +294,8 @@ class MECA_POU_D_T(Element):
                        (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                        (SP.PFF1D1D, CFORCEF), (SP.PGEOMER, NGEOMER),
                        (SP.PMATERC, LC.CMATERC), (SP.PTEMPSR, CTEMPSR),
-                       (SP.PSTRXMR, ESTRAUX), (SP.PVITPLU, DDL_MECA), ),
+                       (SP.PSTRXMR, ESTRAUX), (SP.PVITPLU, DDL_MECA),
+                       (SP.PACCPLU, DDL_MECA), ),
             para_out=( (SP.PVECTUR, MVECTUR), ),
         ),
 
