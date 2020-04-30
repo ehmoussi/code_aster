@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -125,8 +125,7 @@ subroutine pjeflo(elrefa, ndim, ipb, xr2, disprj)
 !
 ! --------------------------------------------------------------------------------------------------
 !   POUR LES PENTA :
-    elseif (elrefa.eq.'PE6' .or. elrefa.eq.'P15' .or. elrefa.eq.'P18' &
-            .or. elrefa.eq.'SH6' .or. elrefa.eq.'S15' ) then
+    elseif (elrefa.eq.'PE6' .or. elrefa.eq.'P15' .or. elrefa.eq.'P18') then
         ASSERT(ndim.eq.3)
         if (x .lt. -1.d0) goto 40
         if (x .gt. +1.d0) goto 40

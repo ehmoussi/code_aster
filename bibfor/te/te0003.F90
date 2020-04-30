@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0003(option, nomte)
 ! person_in_charge: olivier.boiteau at edf.fr
 !-----------------------------------------------------------------------
@@ -63,8 +63,8 @@ subroutine te0003(option, nomte)
 #include "asterfort/dfdm2d.h"
 #include "asterfort/dfdm3d.h"
 #include "asterfort/elref1.h"
-#include "asterfort/elrefe_info.h"
 #include "asterfort/elref7.h"
+#include "asterfort/elrefe_info.h"
 #include "asterfort/fointe.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedema.h"
@@ -116,7 +116,7 @@ subroutine te0003(option, nomte)
     integer :: i, j, k, icode, i1, ij, i2, mceld, mcelv, pceld, pcelv, iaux1
     integer :: iavaf, ncmpf, iavah, ncmph, jno, mno, imav, iaptma, ientf, ienth
     integer :: ientt, iavat, ncmpt, nbsv, nbnv, jad, jadv, igrel, iel, iavalp
-    integer :: iavalm, iarepe, niveau, ifon(3), nbpar, ijeveo
+    integer :: iavalm, iarepe, niveau, ifon(6), nbpar, ijeveo
     integer :: ipg
     integer :: nbf
     integer :: tymvol, ndegre, ifa, tyv
@@ -143,7 +143,7 @@ subroutine te0003(option, nomte)
     character(len=19) :: cartef, carteh, cartet, cartes, nomgdf, nomgdh, nomgdt
     character(len=19) :: nomgds, ligrel, chflum, chflup
     character(len=24) :: valk(2)
-    aster_logical :: levol, ltheta, laxi, lmaj, lnonli, l2d, llumpe
+    aster_logical :: levol, ltheta, laxi, lmaj, lnonli, l2d, llumpe, aniso
 !
 ! --- INITIALISATION DU TABLEAU DES NUMEROS DE NOEUDS FACE PAR FACE ----
 !     REMARQUE : NE PAS SUPPRIMER CE COMMENTAIRE DETAILLE CAR IL EST
@@ -507,7 +507,8 @@ subroutine te0003(option, nomte)
         endif
     else if (phenom.eq.'THER_NL') then
         lnonli = .true.
-        call ntfcma(phenom, zi(imate), ifon)
+        aniso = .false.
+        call ntfcma(phenom, zi(imate), aniso, ifon)
         call utmess('A', 'ELEMENTS4_91')
     else
         call utmess('F', 'ELEMENTS2_63')

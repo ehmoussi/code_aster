@@ -23,10 +23,10 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 !
-    character(len=*), intent(in)        :: elrefz
-    integer, intent(out)                :: nno
-    integer, optional, intent(out)      :: ndim, nnos
-    real(kind=8), optional, intent(out) :: coorno(3,27)
+character(len=*), intent(in)        :: elrefz
+integer, intent(out)                :: nno
+integer, optional, intent(out)      :: ndim, nnos
+real(kind=8), optional, intent(out) :: coorno(3,27)
 !
 ! --------------------------------------------------------------------------------------------------
 ! BUT:   CARACTERISTIQUE DE ELREFE
@@ -112,38 +112,6 @@ implicit none
                 coorno(1,21:27) = [ 0.d0,  0.d0, +1.d0,  0.d0, -1.d0,  0.d0, 0.d0]
                 coorno(2,21:27) = [ 0.d0, -1.d0,  0.d0, +1.d0,  0.d0,  0.d0, 0.d0]
                 coorno(3,21:27) = [-1.d0,  0.d0,  0.d0,  0.d0,  0.d0, +1.d0, 0.d0]
-            end if
-        case('SH6')
-            nno   = 6
-            nnos_ = 6
-            ndim_ = 3
-!
-            if(present(coorno)) then
-!
-!   NOEUDS SOMMETS
-!
-                coorno(1,1:6) = [+1.d0,  0.d0,  0.d0, +1.d0,  0.d0,  0.d0]
-                coorno(2,1:6) = [ 0.d0, +1.d0,  0.d0,  0.d0, +1.d0,  0.d0]
-                coorno(3,1:6) = [-1.d0, -1.d0, -0.d0, +1.d0, +1.d0, +1.d0]
-            end if
-        case('S15')
-            nno   = 15
-            nnos_ = 6
-            ndim_ = 3
-!
-            if(present(coorno)) then
-!
-!   NOEUDS SOMMETS
-!
-                coorno(1,1:6) = [+1.d0,  0.d0,  0.d0, +1.d0,  0.d0,  0.d0]
-                coorno(2,1:6) = [ 0.d0, +1.d0,  0.d0,  0.d0, +1.d0,  0.d0]
-                coorno(3,1:6) = [-1.d0, -1.d0, -1.d0, +1.d0, +1.d0, +1.d0]
-!
-!   NOEUDS MILIEUX DES ARETES
-!
-                coorno(1,7:15) = [0.5d0,  0.d0, 0.5d0, +1.d0,  0.d0,  0.d0, 0.5d0,  0.d0, 0.5d0]
-                coorno(2,7:15) = [0.5d0, 0.5d0,  0.d0,  0.d0, +1.d0,  0.d0, 0.5d0, 0.5d0,  0.d0]
-                coorno(3,7:15) = [-1.d0, -1.d0, -1.d0,  0.d0,  0.d0,  0.d0, +1.d0, +1.d0, +1.d0]
             end if
         case('PE6')
             nno   = 6

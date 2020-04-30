@@ -1,5 +1,6 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 2019 Christophe Durand - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,32 +17,34 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine ntfcma(compo, jmat, ifon)
+subroutine ntfcma(compo, jmat, aniso, ifon)
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/utmess.h"
-    integer :: imate, ifon(3)
+    integer :: imate, jmat, ifon(6)
     character(len=*) :: compo
+    aster_logical :: aniso
 ! ----------------------------------------------------------------------
 !     OBTENTION DES ADRESSES DES FONCTIONS BETA ET LAMBDA DANS LE
 !     MATERIAU CODE IMATE
 ! IN  COMPO  : NOM DU COMPORTEMENT CHERCHE
 ! IN  IMATE  : ADRESSE DU MATERIAU CODE
+! IN  ANISO  : LOGICAL ANISOTROPE OU ISOTROPE
 ! OUT IFON   : ADRESSE RELATIVE DES PARAMETRES BETA ET LAMBDA
 !      IFON(1) : ADRESSE RELATIVE DU PARAMETRE BETA OU -1 SI BETA ABSENT
-!      IFON(2) : ADRESSE RELATIVE DU PARAMETRE LAMBDA
+!      IFON(2) : ADRESSE RELATIVE DU PARAMETRE LAMBDA   (ISOTROPIE)
 !      IFON(3) : ADRESSE DU NOM DE LA FONCTION AFFINITE SI THER_HYDR
-!
-!
-!
+!      IFON(4) : ADRESSE RELATIVE DU PARAMETRE LAMBDA_L (ORTHOTROPIE)
+!      IFON(5) : ADRESSE RELATIVE DU PARAMETRE LAMBDA_T (ORTHOTROPIE)
+!      IFON(6) : ADRESSE RELATIVE DU PARAMETRE LAMBDA_N (ORTHOTROPIE)
 !
     integer :: ipi, k, nbmat
 ! ----------------------------------------------------------------------
 ! PARAMETER ASSOCIE AU MATERIAU CODE
 !
 !-----------------------------------------------------------------------
-    integer :: idf, jmat, lfct, lmat
+    integer :: idf, lfct, lmat
     character(len=16) :: valk(2), compo2
 !-----------------------------------------------------------------------
     parameter  ( lmat = 9 , lfct = 10 )
@@ -51,7 +54,7 @@ subroutine ntfcma(compo, jmat, ifon)
     nbmat=zi(jmat)
     ASSERT(nbmat.eq.1)
     imate = jmat+zi(jmat+nbmat+1)
-!    
+!
     ASSERT( compo(1:7).eq. 'THER_NL' .or. compo(1:9).eq. 'THER_HYDR' .or. compo.eq. ' ' )
 !
     if (compo .eq. ' ') then
@@ -71,7 +74,7 @@ subroutine ntfcma(compo, jmat, ifon)
         end do
     else
         do k = 1, zi(imate+1)
-            if (compo(1:9) .eq. zk32(zi(imate)+k-1)(1:9)) then
+            if (compo(1:7) .eq. zk32(zi(imate)+k-1)(1:7)) then
                 ipi = zi(imate+2+k-1)
                 compo2 = compo
                 goto 11
@@ -79,8 +82,8 @@ subroutine ntfcma(compo, jmat, ifon)
         end do
     endif
     do k = 1, zi(imate+1)
-        if ('THER_ ' .eq. zk32(zi(imate)+k-1)(1:5)) then
-            valk(1) = zk32(zi(imate)+k-1)
+        if ('THER_' .eq. zk32(zi(imate)+k-1)(1:5)) then
+            valk(1) = zk32(zi(imate)+k-1)(1:16)
             valk(2) = compo
             if (compo .eq. ' ') then
                 call utmess('F', 'ELEMENTS2_65', sk=valk(1))
@@ -95,6 +98,9 @@ subroutine ntfcma(compo, jmat, ifon)
         call utmess('F', 'ELEMENTS2_63', sk=compo)
     endif
  11 continue
+!!!
+! RECUPERATION DE L ADRESSE DE BETA DANS IFON(1)
+!
     idf = zi(ipi)+zi(ipi+1)
     do k = 1, zi(ipi+2)
         if ('BETA    ' .eq. zk16(zi(ipi+3)+idf+k-1)) then
@@ -104,23 +110,61 @@ subroutine ntfcma(compo, jmat, ifon)
     end do
     call utmess('F', 'MODELISA5_44')
  25 continue
-    do k = 1, zi(ipi+2)
-        if ('LAMBDA  ' .eq. zk16(zi(ipi+3)+idf+k-1)) then
-            ifon(2) = ipi+lmat-1+lfct*(k-1)
-            goto 35
-        endif
-    end do
-    call utmess('F', 'MODELISA5_45')
- 35 continue
+!!!
+! RECUPERATION DE L ADRESSE DE LA CONDUCTIVITE LAMBDA
+! CAS ISOTROPE   : LAMBDA DANS IFON(2)
+! CAS ORTHOTROPE : LAMBDA_L DANS IFON(4)
+! CAS ORTHOTROPE : LAMBDA_T DANS IFON(5)
+! CAS ORTHOTROPE : LAMBDA_N DANS IFON(6)
+!
+    if (.not.aniso) then
+       do k = 1, zi(ipi+2)
+           if ('LAMBDA  ' .eq. zk16(zi(ipi+3)+idf+k-1)) then
+               ifon(2) = ipi+lmat-1+lfct*(k-1)
+               goto 35
+           endif
+       end do
+       call utmess('F', 'MODELISA5_45')
+ 35    continue
+    else
+       do k = 1, zi(ipi+2)
+           if ('LAMBDA_L' .eq. zk16(zi(ipi+3)+idf+k-1)) then
+               ifon(4) = ipi+lmat-1+lfct*(k-1)
+               goto 45
+           endif
+       end do
+       call utmess('F', 'MODELISA5_46',sk='LAMBDA_L')
+ 45    continue
+       do k = 1, zi(ipi+2)
+           if ('LAMBDA_T' .eq. zk16(zi(ipi+3)+idf+k-1)) then
+               ifon(5) = ipi+lmat-1+lfct*(k-1)
+               goto 55
+           endif
+       end do
+       call utmess('F', 'MODELISA5_46',sk='LAMBDA_T')
+ 55    continue
+       do k = 1, zi(ipi+2)
+           if ('LAMBDA_N' .eq. zk16(zi(ipi+3)+idf+k-1)) then
+               ifon(6) = ipi+lmat-1+lfct*(k-1)
+               goto 65
+           endif
+       end do
+       call utmess('F', 'MODELISA5_46',sk='LAMBDA_N')
+ 65    continue
+    endif
+!!!
+! TRAITEMENT DE L HYDRATATION
+! RECUPERATION DE L ADRESSE DE AFFINITE DANS IFON(3)
+!
     if (compo2(1:9) .eq. 'THER_HYDR') then
         do k = 1, zi(ipi+2)
             if ('AFFINITE  ' .eq. zk16(zi(ipi+3)+idf+k-1)) then
                 ifon(3) = ipi+lmat-1+lfct*(k-1)
-                goto 45
+                goto 75
             endif
         end do
         call utmess('F', 'MODELISA5_47')
- 45     continue
+ 75     continue
     endif
 !
 ! FIN ------------------------------------------------------------------

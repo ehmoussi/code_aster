@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -92,7 +92,7 @@ integer, intent(out) :: retcom
     integer :: icodre(2)
     character(len=16) :: meca
     integer :: advime, advico, vicphi
-    character(len=8), parameter :: ncra(2) = (/'OUV_FICT','UN_SUR_N' /)
+    character(len=16), parameter :: ncra(2) = (/'OUV_FICT','UN_SUR_N' /)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -155,7 +155,7 @@ integer, intent(out) :: retcom
         else
             call rcvalb(fami, kpg, spt, poum, j_mater,&
                         ' ', 'THM_RUPT', 0, ' ', [0.d0],&
-                        2, ncra(1), para(1), icodre, 1)
+                        2, ncra, para(1), icodre, 1)
             ouvfic = para(1)
             unsurn = para(2)
         endif
@@ -223,7 +223,7 @@ integer, intent(out) :: retcom
 !
         call rcvalb(fami, kpg, spt, poum, j_mater,&
                     ' ', 'THM_RUPT', 0, ' ', [0.d0],&
-                    2, ncra(1), para(1), icodre, 1)
+                    2, ncra, para(1), icodre, 1)
         ouvfic = para(1)
         unsurn = para(2)
 !

@@ -91,20 +91,20 @@ Contactez le support technique.
 """),
 
     44 : _("""
- paramètre bêta non trouvé
+ paramètre matériau BETA non trouvé
 """),
 
     45 : _("""
- paramètre lambda non trouvé
+ paramètre matériau LAMBDA non trouvé
+"""),
+
+   46 : _("""
+ paramètre matériau %(k1)s (conductivité orthotrope) non trouvé
 """),
 
     47 : _("""
- paramètre AFFINITE non trouvé
+ paramètre matériau AFFINITE non trouvé
 """),
-
-
-
-
 
     49 : _("""
   -> La phase de vérification du maillage a été volontairement désactivée.
@@ -113,8 +113,6 @@ Contactez le support technique.
      Soyez sur de votre maillage. Si des mailles dégénérées sont présentes elles
      ne seront pas détectées. Cela pourra nuire à la qualité des résultats.
 """),
-
-
 
     51 : _("""
 DEFI_CABLE_BP : Échec de projection du noeud de câble %(k1)s.
@@ -171,7 +169,7 @@ La présence de la caractéristique %(k1)s est obligatoire.
 """),
 
     62 : _("""
- des câbles ne sont pas affectes
+ des câbles ne sont pas affectés
 """),
 
     63 : _("""

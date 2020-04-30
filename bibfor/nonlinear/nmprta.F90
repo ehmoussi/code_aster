@@ -37,7 +37,6 @@ implicit none
 #include "asterfort/diinst.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
-#include "asterfort/ndynlo.h"
 #include "asterfort/nmassp.h"
 #include "asterfort/nmforc_pred.h"
 #include "asterfort/nmfint_pred.h"

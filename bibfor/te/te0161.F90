@@ -18,7 +18,24 @@
 !
 subroutine te0161(option, nomte)
 !
-implicit none
+! --------------------------------------------------------------------------------------------------
+!
+!                          CALCUL FORCES REPARTIES
+!
+! nomte :
+!           MECABL2
+!           MECA_POU_D_T_GD
+! option :
+!           CHAR_MECA_PESA_R
+!           CHAR_MECA_FR1D1D
+!           CHAR_MECA_FF1D1D
+!           CHAR_MECA_SR1D1D
+!           CHAR_MECA_SF1D1D'
+!
+! --------------------------------------------------------------------------------------------------
+!
+    implicit none
+    character(len=16), intent(in) :: option, nomte
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -35,43 +52,36 @@ implicit none
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "blas/ddot.h"
-character(len=16), intent(in) :: option, nomte
-! --- ------------------------------------------------------------------
-!                          CALCUL FORCES REPARTIES
-!     NOMTE :
-!        MECABL2
-!        MECA_POU_D_T_GD
-!    OPTION :
-!        CHAR_MECA_FR1D1D
-!        CHAR_MECA_FF1D1D
-!        CHAR_MECA_SR1D1D
-!        CHAR_MECA_SF1D1D'
 !
-! --- ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     integer :: icodre(1), jj
     integer :: nno, kp, i, ivectu, ipesa, nddl, npg, iyty, nordre, lsect
     integer :: ipoids, ivf, igeom, imate, iforc
     integer :: itemps, nbpar, idepla, ideplp, k, l, ic, neu, iret, neum1
     aster_logical :: normal
     real(kind=8) :: r8min, r8bid, rho(1), a, coef
-    real(kind=8) :: s, s2, s3, s4, s5, x(4), c1, c2(3), w(6), u(3), v(3), w2(3)
+    real(kind=8) :: xss, xs2, xs4, c1, force(3), xuu(3), xvv(3), w2(3)
 !
     integer :: ifcx, idfdk, jgano, ndim, nnos
-    character(len=8) :: nompar(10)
     character(len=8), parameter :: nompav(1) = ['VITE']
-    real(kind=8) :: valpav(1), fcx, vite2, vp(3)
-    aster_logical :: okvent, fozero
-    real(kind=8) :: valpar(10), xv(3) ,wv(6)
-    integer      :: ivite
-! --- ------------------------------------------------------------------
-    r8min = r8miem()
-    r8bid=0.d0
-    nompar(1:3) = (/'X','Y','Z'/)
-    nompar(4:6) = (/'DX','DY','DZ'/)
-    nompar(7:9) = (/'VITE_X','VITE_Y','VITE_Z'/)
-    nompar(10)  = 'INST'
+    real(kind=8)                :: valpav(1), viterela(3)
 !
-    if (nomte .eq. 'MECA_POU_D_T_GD') then
+    integer             :: ichamp
+    aster_logical       :: okvent, fozero
+    character(len=8)    :: nompar(13)
+    real(kind=8)        :: valpar(13), fcx, vite2, xvp(3)
+    real(kind=8)        :: xx(3), xv(3), xa(3), wx(6), wv(6), wa(6), temps
+! --------------------------------------------------------------------------------------------------
+    r8min = r8miem()
+    r8bid=0.0; c1= 1.0
+    nompar(1:3)   = ['X','Y','Z']
+    nompar(4:6)   = ['DX','DY','DZ']
+    nompar(7:9)   = ['VITE_X','VITE_Y','VITE_Z']
+    nompar(10:12) = ['ACCE_X','ACCE_Y','ACCE_Z']
+    nompar(13)    = 'INST'
+!
+    if (nomte.eq.'MECA_POU_D_T_GD') then
         nddl = 6
     else
         nddl = 3
@@ -81,15 +91,19 @@ character(len=16), intent(in) :: option, nomte
     call jevete('&INEL.CABPOU.YTY', 'L', iyty)
 !
     nordre = 3*nno
-! --- ------------------------------------------------------------------
+!   Par défaut pas de vent, effort dans le repère global
+    normal = .false.; okvent = .false.
+    temps  = 0.0; nbpar = 12
+! --------------------------------------------------------------------------------------------------
+    wx(:) = 0.0; wv(:) = 0.0; wa(:) = 0.0; w2(:) = 0.0; viterela(:) = 0.0
+! --------------------------------------------------------------------------------------------------
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PVECTUR', 'E', ivectu)
-! --- ------------------------------------------------------------------
-    if (option .eq. 'CHAR_MECA_PESA_R') then
+! --------------------------------------------------------------------------------------------------
+    if (option.eq.'CHAR_MECA_PESA_R') then
         call jevech('PMATERC', 'L', imate)
         call jevech('PPESANR', 'L', ipesa)
-        call rcvalb('FPG1', 1, 1, '+', zi(imate),&
-                    ' ', 'ELAS', 0, ' ', [r8bid],&
+        call rcvalb('FPG1', 1, 1, '+', zi(imate), ' ', 'ELAS', 0, ' ', [r8bid],&
                     1, 'RHO', rho, icodre, 1)
         if (nomte .eq. 'MECA_POU_D_T_GD') then
             call poutre_modloc('CAGNPO', ['A1'], 1, valeur=a)
@@ -98,188 +112,153 @@ character(len=16), intent(in) :: option, nomte
             a = zr(lsect)
         endif
         c1 = a*rho(1)*zr(ipesa)
-        c2(1) = zr(ipesa+1)
-        c2(2) = zr(ipesa+2)
-        c2(3) = zr(ipesa+3)
-    endif
-!     PAR DEFAUT PAS DE VENT,  EFFORT DANS LE REPERE GLOBAL
-    normal = .false.
-    okvent = .false.
-! --- ------------------------------------------------------------------
-    if (option .eq. 'CHAR_MECA_FR1D1D' .or. option .eq. 'CHAR_MECA_SR1D1D') then
-        c1 = 1.0d0
-!        POUR LE CAS DU VENT
-        call tecach('NNO', 'PVITER', 'L', iret, iad=iforc)
-        if (iret .eq. 0) then
-            normal = .true.
-            okvent = .true.
-        else
-            call jevech('PFR1D1D', 'L', iforc)
-            normal = abs(zr(iforc+6)) .gt. 1.001d0
-        endif
-    endif
-!
-! --- ------------------------------------------------------------------
-    if (option .eq. 'CHAR_MECA_FF1D1D' .or. option .eq. 'CHAR_MECA_SF1D1D') then
-        c1 = 1.0d0
-        call jevech('PFF1D1D', 'L', iforc)
-        normal = zk8(iforc+6) .eq. 'VENT'
-        call tecach('NNO', 'PTEMPSR', 'L', iret, iad=itemps)
-        if (iret .eq. 0) then
-            x(4) = zr(itemps)
-            nbpar = 10
-        else
-            nbpar = 9
-        endif
-    endif
-!
-! --- ------------------------------------------------------------------
-    if (option .eq. 'CHAR_MECA_SR1D1D' .or. option .eq. 'CHAR_MECA_SF1D1D') then
-        call jevech('PDEPLMR', 'L', idepla)
-        call jevech('PDEPLPR', 'L', ideplp)
-!CCP         w(1 2 3 4 5 6) => position
-        do i = 1, 3
-            w(i) = zr(igeom+i-1) + zr(idepla-1+i) + zr(ideplp-1+i)
-            w(i+3) = zr(igeom+i+2) + zr(idepla-1+i+nddl) + zr(ideplp- 1+i+nddl)
-            w2(i) = w(i+3) - w(i)
-        enddo
-!CCP       wv (1 2 3 4 5 6) => Vitesses
-         call tecach('NNO', 'PVITPLU', 'L', iret, iad=ivite)
-         do i = 1, 3
-             wv(i)   = zr(ivite+i-1)
-             wv(i+3) = zr(ivite+i+3-1)
-         enddo
-    else
-        do i = 1, 3
-            w(i) = zr(igeom+i-1)
-            w(i+3) = zr(igeom+i+2)
-            w2(i) = w(i+3) - w(i)
-        enddo
-    endif
-!
-! --- ------------------------------------------------------------------
-! --- FORCES REPARTIES PAR VALEURS REELLES
-    if (option .eq. 'CHAR_MECA_FR1D1D') then
-!        PAS DE MOMENT REPARTIS
+        force(1) = zr(ipesa+1)
+        force(2) = zr(ipesa+2)
+        force(3) = zr(ipesa+3)
+! --------------------------------------------------------------------------------------------------
+!   Forces Fixes réparties par valeurs réelles
+    else if (option.eq.'CHAR_MECA_FR1D1D') then
+        call jevech('PFR1D1D', 'L', iforc)
+        normal = abs(zr(iforc+6)) .gt. 1.001
+!       Pas de moment repartis
         r8bid = sqrt(ddot(3,zr(iforc+3),1,zr(iforc+3),1))
         if (r8bid .gt. r8min) then
             call utmess('F', 'ELEMENTS3_1', sk=nomte)
         endif
-!
-        c2(1) = zr(iforc)
-        c2(2) = zr(iforc+1)
-        c2(3) = zr(iforc+2)
-        if (normal) then
-            s=ddot(3,c2,1,c2,1)
-            s4 = sqrt(s)
-            if (s4 .gt. r8min) then
-                s=ddot(3,w2,1,w2,1)
-                s2 = 1.d0/s
-                call provec(w2, c2, u)
-                s=ddot(3,u,1,u,1)
-                s3 = sqrt(s)
-                s5 = s3*sqrt(s2)/s4
-                call provec(u, w2, v)
-                call pscvec(3, s2, v, u)
-                call pscvec(3, s5, u, c2)
+        force(1) = zr(iforc)
+        force(2) = zr(iforc+1)
+        force(3) = zr(iforc+2)
+        if (normal) call ForceNormale(w2,force)
+! --------------------------------------------------------------------------------------------------
+!   Forces Suiveuses réparties par valeurs réelles
+    else if (option.eq.'CHAR_MECA_SR1D1D') then
+!       Pour le cas du vent
+        call tecach('NNO', 'PVITER', 'L', iret, iad=iforc)
+        if (iret .eq. 0) then
+            normal = .true.
+            okvent = .true.
+            ! Récupération de la fonction d'effort en fonction de la vitesse
+            call tecach('ONO', 'PVENTCX', 'L', iret, iad=ifcx)
+            if (iret .ne. 0) then
+                call utmess('F', 'ELEMENTS3_39')
             endif
+            if (zk8(ifcx)(1:1) .eq. '.') then
+                call utmess('F', 'ELEMENTS3_39')
+            endif
+!           Récupération de la vitesse de vent relative au noeud
+            viterela(1) = zr(iforc)
+            viterela(2) = zr(iforc+1)
+            viterela(3) = zr(iforc+2)
+        endif
+! --------------------------------------------------------------------------------------------------
+!   Forces Fixes et Suiveuses réparties par Fonctions
+    else if ((option.eq.'CHAR_MECA_FF1D1D').or.(option.eq.'CHAR_MECA_SF1D1D')) then
+        call jevech('PFF1D1D', 'L', iforc)
+!       Pas de moment répartis
+        fozero = (zk8(iforc+3).ne.'&FOZERO').or.(zk8(iforc+4).ne.'&FOZERO').or.&
+                 (zk8(iforc+5).ne.'&FOZERO')
+        if (fozero) then
+            call utmess('F', 'ELEMENTS3_1', sk=nomte)
+        endif
+        normal = zk8(iforc+6) .eq. 'VENT'
+        call tecach('NNO', 'PTEMPSR', 'L', iret, iad=itemps)
+        if (iret .eq. 0) then
+            temps = zr(itemps)
+            nbpar = 13
         endif
     endif
 !
-! --- ------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!   Forces Suiveuses : Actualisations des déplacements, vitesses, accélérations
+    if ((option.eq.'CHAR_MECA_SR1D1D').or.(option.eq.'CHAR_MECA_SF1D1D')) then
+        call jevech('PDEPLMR', 'L', idepla)
+        call jevech('PDEPLPR', 'L', ideplp)
+!       wx(1 2 3 4 5 6)  => position
+!       w2(1 2 3)        => vecteur directeur
+        do i = 1, 3
+            wx(i)   = zr(igeom+i-1) + zr(idepla-1+i)      + zr(ideplp-1+i)
+            wx(i+3) = zr(igeom+i+2) + zr(idepla-1+i+nddl) + zr(ideplp-1+i+nddl)
+            w2(i)   = wx(i+3) - wx(i)
+        enddo
+!       wv(1 2 3 4 5 6) => Vitesses
+        call tecach('NNO', 'PVITPLU', 'L', iret, iad=ichamp)
+        if ( iret.eq.0 ) then
+            do i = 1, 3
+                wv(i)   = zr(ichamp+i-1)
+                wv(i+3) = zr(ichamp+i+3-1)
+            enddo
+        endif
+!       wa(1 2 3 4 5 6) => Accélérations
+        call tecach('NNN', 'PACCPLU', 'L', iret, iad=ichamp)
+        if ( iret.eq.0 ) then
+            do i = 1, 3
+                wa(i)   = zr(ichamp+i-1)
+                wa(i+3) = zr(ichamp+i+3-1)
+            enddo
+        endif
+    else
+        do i = 1, 3
+            wx(i)   = zr(igeom+i-1)
+            wx(i+3) = zr(igeom+i+2)
+            w2(i)   = wx(i+3) - wx(i)
+        enddo
+    endif
+!
+! --------------------------------------------------------------------------------------------------
     do kp = 1, npg
         k = (kp-1)*nordre*nordre
         l = (kp-1)*nno
-        if (option .eq. 'CHAR_MECA_FF1D1D' .or. option .eq. 'CHAR_MECA_SF1D1D') then
-!           PAS DE MOMENT REPARTIS
-            fozero = (zk8(iforc+3).ne.'&FOZERO') .or. (zk8(iforc+4) .ne.'&FOZERO') .or.&
-                     (zk8(iforc+5).ne.'&FOZERO')
-            if (fozero) then
-                call utmess('F', 'ELEMENTS3_1', sk=nomte)
-            endif
-!
-!CCP       x(1 2 3) => position
+!       Forces Fixes et Suiveuses réparties par Fonctions
+        if ((option.eq.'CHAR_MECA_FF1D1D').or.(option.eq.'CHAR_MECA_SF1D1D')) then
+            xx(:) = 0.0d0; xv(:) = 0.0d0; xa(:) = 0.0d0
+!           xx(1 2 3) => position des points de gauss
             do ic = 1, 3
-                x(ic) = 0.d0
                 do neu = 1, nno
-                    x(ic) = x(ic) + w(3*neu+ic-3)*zr(ivf+l+neu-1)
+                    xx(ic) = xx(ic) + wx(3*neu+ic-3)*zr(ivf+l+neu-1)
                 enddo
             enddo
-
-!CCP       xv (1 2 3) => Vitesses
+!           xv(1 2 3) => Vitesses aux points de gauss
             do ic = 1, 3
-               xv(ic) = 0.d0
-               do neu = 1, nno
-                  xv(ic) = xv(ic) + wv(3*neu+ic-3)*zr(ivf+l+neu-1)
-               enddo
+                do neu = 1, nno
+                    xv(ic) = xv(ic) + wv(3*neu+ic-3)*zr(ivf+l+neu-1)
+                enddo
             enddo
-
-! ici : x designe la position du point de gauss, w2 le vecteur directeur de l element cable
-!CCP    PG i
-            valpar(1)  = x(1)
-            valpar(2)  = x(2)
-            valpar(3)  = x(3)
-            valpar(4)  = w2(1)
-            valpar(5)  = w2(2)
-            valpar(6)  = w2(3)
-            valpar(7)  = xv(1)
-            valpar(8)  = xv(2)
-            valpar(9)  = xv(3)
-            valpar(10) = x(4)
-
+!           xa(1 2 3) => Accélérations aux points de gauss
             do ic = 1, 3
-                call fointe('FM', zk8(iforc+ic-1), nbpar, nompar, valpar,&
-                            c2( ic), iret)
+                do neu = 1, nno
+                    xa(ic) = xa(ic) + wa(3*neu+ic-3)*zr(ivf+l+neu-1)
+                enddo
             enddo
-            if (normal) then
-                s=ddot(3,c2,1,c2,1)
-                s4 = sqrt(s)
-                if (s4 .gt. r8min) then
-                    s=ddot(3,w2,1,w2,1)
-                    s2 = 1.d0/s
-                    call provec(w2, c2, u)
-                    s=ddot(3,u,1,u,1)
-                    s3 = sqrt(s)
-                    s5 = s3*sqrt(s2)/s4
-                    call provec(u, w2, v)
-                    call pscvec(3, s2, v, u)
-                    call pscvec(3, s5, u, c2)
-                endif
-            endif
+!
+            valpar(1:3) = xx(1:3); valpar(4:6)   = w2(1:3)
+            valpar(7:9) = xv(1:3); valpar(10:12) = xa(1:3)
+            valpar(13) = temps
+!
+            do ic = 1, 3
+                call fointe('FM', zk8(iforc+ic-1), nbpar, nompar, valpar, force(ic), iret)
+            enddo
+            if (normal) call ForceNormale(w2,force)
         endif
         if (okvent) then
-!           RECUPERATION DE LA VITESSE DE VENT RELATIVE AU NOEUD
-            c2(1) = zr(iforc)
-            c2(2) = zr(iforc+1)
-            c2(3) = zr(iforc+2)
-!           CALCUL DU VECTEUR VITESSE PERPENDICULAIRE
-            s=ddot(3,c2,1,c2,1)
-            s4 = sqrt(s)
-            fcx = 0.0d0
-            if (s4 .gt. r8min) then
-                s=ddot(3,w2,1,w2,1)
-                s2 = 1.d0/s
-                call provec(w2, c2, u)
-                call provec(u, w2, v)
-                call pscvec(3, s2, v, vp)
-!              NORME DE LA VITESSE PERPENDICULAIRE
-                vite2=ddot(3,vp,1,vp,1)
+            fcx = 0.0; xvp(:) = 0.0
+!           Calcul du vecteur vitesse perpendiculaire
+            xss=ddot(3,viterela,1,viterela,1)
+            xs4 = sqrt(xss)
+            if (xs4 .gt. r8min) then
+                xss=ddot(3,w2,1,w2,1)
+                xs2 = 1.0/xss
+                call provec(w2, viterela, xuu)
+                call provec(xuu, w2, xvv)
+                call pscvec(3, xs2, xvv, xvp)
+!               Norme de la vitesse perpendiculaire
+                vite2 = ddot(3,xvp,1,xvp,1)
                 valpav(1) = sqrt(vite2)
                 if (valpav(1) .gt. r8min) then
-!                 RECUPERATION DE L'EFFORT EN FONCTION DE LA VITESSE
-                    call tecach('ONO', 'PVENTCX', 'L', iret, iad=ifcx)
-                    if (iret .ne. 0) then
-                        call utmess('F', 'ELEMENTS3_39')
-                    endif
-                    if (zk8(ifcx)(1:1) .eq. '.') then
-                        call utmess('F', 'ELEMENTS3_39')
-                    endif
-                    call fointe('FM', zk8(ifcx), 1, nompav, valpav,&
-                                fcx, iret)
-                    fcx = fcx/valpav(1)
+                    call fointe('FM', zk8(ifcx), 1, nompav(1), valpav, fcx, iret)
+                    fcx = fcx / valpav(1)
                 endif
             endif
-            call pscvec(3, fcx, vp, c2)
+            call pscvec(3, fcx, xvp, force)
         endif
 !
         coef = zr(ipoids-1+kp)*c1*sqrt(biline(nordre,zr(igeom), zr(iyty+k),zr(igeom)))
@@ -287,8 +266,42 @@ character(len=16), intent(in) :: option, nomte
             neum1 = neu - 1
             do ic = 1, 3
                 jj = ivectu+nddl*neum1+(ic-1)
-                zr(jj) = zr(jj) + coef*c2(ic)*zr(ivf+l+neum1)
+                zr(jj) = zr(jj) + coef*force(ic)*zr(ivf+l+neum1)
             enddo
         enddo
-    end do
-end subroutine
+    enddo
+!
+! ==================================================================================================
+!
+contains
+!
+subroutine ForceNormale(w2,force)
+!
+#include "asterfort/provec.h"
+#include "asterfort/pscvec.h"
+#include "blas/ddot.h"
+#include "asterc/r8miem.h"
+!
+    real(kind=8), intent(in)    :: w2(3)
+    real(kind=8), intent(inout) :: force(3)
+!
+    real(kind=8) :: xuu(3), xvv(3), xsu(3)
+    real(kind=8) :: xss, xs2, xs3, xs4, xs5, r8min
+!
+    r8min = r8miem()
+    xss   = ddot(3,force,1,force,1)
+    xs4 = sqrt(xss)
+    if (xs4.gt.r8min) then
+        xss = ddot(3,w2,1,w2,1)
+        xs2 = 1.0/xss
+        call provec(w2, force, xuu)
+        call provec(xuu, w2, xvv)
+        call pscvec(3, xs2, xvv, xsu)
+        xss = ddot(3,xuu,1,xuu,1)
+        xs3 = sqrt(xss)
+        xs5 = xs3*sqrt(xs2)/xs4
+        call pscvec(3, xs5, xsu, force)
+    endif
+end subroutine ForceNormale
+
+end subroutine te0161

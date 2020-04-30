@@ -96,12 +96,12 @@ type(NL_DS_Contact), intent(out) :: ds_contact
     ds_contact%nb_loop = nb_loop_defi
     ASSERT(ds_contact%nb_loop.le.ds_contact%nb_loop_maxi)
     do i_loop = 1, nb_loop_defi
-        ds_contact%loop(i_loop)%type       = loop_type(i_loop)
-        ds_contact%loop(i_loop)%conv       = ASTER_FALSE
-        ds_contact%loop(i_loop)%error      = ASTER_FALSE
-        ds_contact%loop(i_loop)%counter    = 0
-        ds_contact%loop(i_loop)%vale_calc  = 0
-        ds_contact%loop(i_loop)%locus_calc = ' '
+        ds_contact%loop(i_loop)%type        = loop_type(i_loop)
+        ds_contact%loop(i_loop)%conv        = ASTER_FALSE
+        ds_contact%loop(i_loop)%error       = ASTER_FALSE
+        ds_contact%loop(i_loop)%counter     = 0
+        ds_contact%loop(i_loop)%vale_calc   = 0
+        ds_contact%loop(i_loop)%locus_calc  = ' '
     end do
 !
 ! - Field for CONT_NODE

@@ -128,7 +128,8 @@ class THER_HEXA20(Element):
         ),
 
         OP.CHAR_THER_EVOLNI(te=281,
-            para_in=((OP.CHAR_THER_EVOLNI.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+            para_in=((OP.CHAR_THER_EVOLNI.PCOMPOR, CCOMPOR),
+                     (SP.PGEOMER, NGEOMER),(SP.PCAMASS, CCAMASS),
                      (OP.CHAR_THER_EVOLNI.PHYDRPM, LC.EHYDRNO), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPER, DDL_THER), (SP.PTEMPSR, CTEMPSR),
                      (SP.PTMPCHF, DDL_THER), (SP.PTMPCHI, DDL_THER),
@@ -258,7 +259,8 @@ class THER_HEXA20(Element):
         ),
 
         OP.MTAN_RIGI_MASS(te=279,
-            para_in=((OP.MTAN_RIGI_MASS.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+            para_in=((OP.MTAN_RIGI_MASS.PCOMPOR, CCOMPOR),
+                     (SP.PGEOMER, NGEOMER),(SP.PCAMASS, CCAMASS),
                      (SP.PMATERC, LC.CMATERC), (SP.PTEMPEI, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (SP.PTMPCHF, DDL_THER),
                      (SP.PTMPCHI, DDL_THER), (OP.MTAN_RIGI_MASS.PVARCPR, LC.ZVARCPG),
@@ -293,7 +295,8 @@ class THER_HEXA20(Element):
         ),
 
         OP.RESI_RIGI_MASS(te=283,
-            para_in=((OP.RESI_RIGI_MASS.PCOMPOR, CCOMPOR), (SP.PGEOMER, NGEOMER),
+            para_in=((OP.RESI_RIGI_MASS.PCOMPOR, CCOMPOR),
+                     (SP.PGEOMER, NGEOMER),(SP.PCAMASS, CCAMASS),
                      (OP.RESI_RIGI_MASS.PHYDRPM, LC.EHYDRNO), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPEI, DDL_THER), (SP.PTEMPER, DDL_THER),
                      (SP.PTEMPSR, CTEMPSR), (SP.PTMPCHF, DDL_THER),

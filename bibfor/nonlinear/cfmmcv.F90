@@ -80,7 +80,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_cont_disc, l_cont_cont, l_newt_cont
-    aster_logical :: loop_cont_conv
+    aster_logical :: loop_cont_conv, l_all_verif
     character(len=8) :: model
     real(kind=8) :: r8bid, loop_cont_vale
     integer :: loop_cont_vali
@@ -95,6 +95,7 @@ implicit none
     l_cont_disc = isfonc(list_func_acti,'CONT_DISCRET')
     l_cont_cont = isfonc(list_func_acti,'CONT_CONTINU')
     l_newt_cont = isfonc(list_func_acti,'CONT_NEWTON')
+    l_all_verif = isfonc(list_func_acti,'CONT_ALL_VERIF')
 !
 ! - Values in convergence table: not affected
 !
@@ -113,15 +114,20 @@ implicit none
     if (l_newt_cont) then
         call mmbclc(mesh  , model , iter_newt, nume_inst, ds_measure,&
                     sddisc, sddyna, hval_incr, hval_algo, ds_contact)
-        call mmbouc(ds_contact, 'Cont', 'Get_Vale'      , loop_vale_  = loop_cont_vale)
+        
         call mmbouc(ds_contact, 'Cont', 'Is_Convergence', loop_state_ = loop_cont_conv)
-        loop_cont_vali = nint(loop_cont_vale)
+        
         if (loop_cont_conv) then
             call nmcrel(sderro, 'DIVE_CTCC', .false._1)
         else
             call nmcrel(sderro, 'DIVE_CTCC', .true._1)
         endif
-        call nmimci(ds_print, 'CONT_NEWT', loop_cont_vali, .true._1)
+
+        if (.not. l_all_verif) then 
+            call mmbouc(ds_contact, 'Cont', 'Get_Vale', loop_vale_  = loop_cont_vale)
+            loop_cont_vali = nint(loop_cont_vale)
+            call nmimci(ds_print, 'CONT_NEWT', loop_cont_vali, .true._1)
+        endif
     endif
 !
 ! - Cycling informations printing in convergence table

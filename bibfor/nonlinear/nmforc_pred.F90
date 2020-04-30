@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -132,7 +132,7 @@ character(len=19), intent(in) :: hval_measse(*)
                            ds_material, ds_constitutive, ds_measure,&
                            time_prev  , time_curr      ,&
                            hval_incr  , hval_algo      ,&
-                           hval_veelem, hval_veasse)
+                           hval_veelem, hval_veasse, prediction_= ASTER_TRUE)
 !
 ! - Compute sub-structuring effect on second member
 !

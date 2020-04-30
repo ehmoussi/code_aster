@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -41,9 +41,9 @@ TEMP_EXT=DEFI_CONSTANTE(   VALE=37.78E0)
 H_CONV=DEFI_CONSTANTE( VALE=1362.71E0)
 
 MATE=DEFI_MATERIAU( THER_ORTH=_F(  LAMBDA_L = 34.614E0,
-                                    LAMBDA_T = 6.237E0,
-                                    LAMBDA_N = 1.00E0,
-                                          RHO_CP = 2.4168E5))
+                                   LAMBDA_T = 6.237E0,
+                                   LAMBDA_N = 1.00E0,
+                                   RHO_CP = 2.4168E5))
 
 #
 # AFFECTATIONS: MATERIAU, MODELE, CHARGEMENT ----------------------
@@ -132,13 +132,3 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='N26',
           )
 
 FIN()
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#

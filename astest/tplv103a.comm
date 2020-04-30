@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,11 +34,6 @@ PHIEX=DEFI_CONSTANTE(    NOM_RESU='FLUN',  VALE=0.0     )
 TIMP1=DEFI_CONSTANTE(    NOM_RESU='FLUN',  VALE=0.0     )
 
 TIMP2=DEFI_CONSTANTE(    NOM_RESU='FLUN',  VALE=100.0   )
-
-MATER2=DEFI_MATERIAU( THER_ORTH=_F(   LAMBDA_L = 3.,
-                                      LAMBDA_T = 0.5,
-                                      LAMBDA_N = 1.,
-                                      RHO_CP = 2.0) )
 
 MATERI=DEFI_MATERIAU( THER_ORTH=_F(   LAMBDA_L = 3.,
                                       LAMBDA_T = 0.5,

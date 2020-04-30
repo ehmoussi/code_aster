@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0501(option, nomte)
 !
 !
@@ -39,15 +39,16 @@ subroutine te0501(option, nomte)
 !
 !
     real(kind=8) :: dfdx(9), dfdy(9), poids, r, tpg, xkpt, alpha
-    integer :: kp, i, j, k, itemps, ifon(3), imattt, igeom, imate
+    integer :: kp, i, j, k, itemps, ifon(6), imattt, igeom, imate
     integer :: ndim, nno, nnos, npg, ipoids, ivf, idfde, jgano
+    aster_logical :: aniso
 ! DEB ------------------------------------------------------------------
 !
 !-----------------------------------------------------------------------
     integer :: ij, itemp, itempi
 !-----------------------------------------------------------------------
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde,jgano=jgano)
+    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfde, jgano=jgano)
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
@@ -56,30 +57,32 @@ subroutine te0501(option, nomte)
     call jevech('PTEMPEI', 'L', itempi)
     call jevech('PMATTTR', 'E', imattt)
 !
-    call ntfcma(' ',zi(imate), ifon)
-    do 101 kp = 1, npg
+    aniso = .false.
+    call ntfcma(' ', zi(imate), aniso, ifon)
+    do kp = 1, npg
         k=(kp-1)*nno
         call dfdm2d(nno, kp, ipoids, idfde, zr(igeom),&
                     poids, dfdx, dfdy)
         r = 0.d0
         tpg = 0.d0
-        do 102 i = 1, nno
+        do i = 1, nno
             r = r + zr(igeom+2*(i-1))*zr(ivf+k+i-1)
             tpg =tpg + zr(itempi+i-1)*zr(ivf+k+i-1)
-102      continue
+        end do
         if (lteatt('AXIS','OUI')) poids = poids*r
 !
         call rcfode(ifon(2), tpg, alpha, xkpt)
 !
         ij = imattt - 1
-        do 103 i = 1, nno
+        do i = 1, nno
 !
-            do 103 j = 1, i
+            do j = 1, i
                 ij = ij + 1
-                zr(ij) = zr(ij) + poids*( alpha*(dfdx(i)*dfdx(j)+dfdy( i)*dfdy(j)) )
+                zr(ij) = zr(ij) + poids*(alpha*(dfdx(i)*dfdx(j)+dfdy(i)*dfdy(j)))
 !
-103          continue
-101  end do
+            end do
+        end do
+    end do
 !
 ! FIN ------------------------------------------------------------------
 end subroutine
