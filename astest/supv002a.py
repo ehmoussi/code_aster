@@ -295,27 +295,28 @@ def get_personal_dict():
     global _pws
     if _pws:
         return _pws
-    fd, _pws = tempfile.mkstemp(dir=os.getcwd())
-    fobj = os.fdopen(fd, 'w')
     cnt = ['personal_ws-1.1 fr 0 %s' % ENCODING, ]
     dictdir = osp.join(os.environ['HOME'], 'dev', 'codeaster', 'devtools',
                        'share', 'spell')
     cata = osp.join(dictdir, 'code_aster_cata.aspell.per')
     if osp.exists(cata):
         # ignore the first line
-        cnt.extend(open(cata, 'r').read().splitlines()[1:])
+        with open(cata, 'r') as fper:
+            cnt.extend(fper.read().splitlines()[1:])
     else:
         raise IOError("no such file: {0}\nAn updated devtools repository is "
                       "required!".format(cata))
     cawl = osp.join(dictdir, 'code_aster_dict.aspell.per')
     if osp.exists(cawl):
         # ignore the first line
-        cnt.extend(open(cawl, 'r').read().splitlines()[1:])
+        with open(cawl, 'r') as fper:
+            cnt.extend(fper.read().splitlines()[1:])
     else:
         raise IOError("no such file: {0}\nAn updated devtools repository is "
                       "required!".format(cawl))
-    fobj.write(os.linesep.join([line for line in cnt if line.strip()]))
-    fobj.close()
+    fd, _pws = tempfile.mkstemp(dir=os.getcwd())
+    with open(fd, 'w') as fobj:
+        fobj.write(os.linesep.join([line for line in cnt if line.strip()]))
     return _pws
 
 

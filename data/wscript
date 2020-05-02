@@ -364,6 +364,8 @@ def check_config(self):
     # for config.txt
     self.env['addmem'] = cfg['addmem']
     self.env["CONFIG_PARAMETERS"] = cfg
+    if cfg["parallel"]:
+        self.check_vmsize()
 
 
 @Configure.conf

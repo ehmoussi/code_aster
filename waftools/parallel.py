@@ -49,7 +49,7 @@ def configure(self):
     self.check_compilers_version()
     self.check_fortran_verbose_flag()
     self.check_openmp()
-    self.check_vmsize()
+    # self.check_vmsize() differs after mpiexec checking
 
 ###############################################################################
 
@@ -176,10 +176,16 @@ def check_vmsize(self):
     if not is_ok:
         self.start_msg("Checking measure of VmSize during MPI_Init")
         try:
-            size = self.check_cc(fragment=fragment_failure_vmsize,
-                                 mandatory=True, execute=True, define_ret=True,
-                                 use="MPI")
-        except Errors.ConfigurationError:
+            prg = osp.join(self.bldnode.abspath(),
+                           'test_mpi_init_' + str(os.getpid()))
+            self.check_cc(fragment=fragment_failure_vmsize,
+                          mandatory=True, use="MPI", target=prg)
+            try:
+                cmd = self.env["base_mpiexec"] + ["-n", "1", prg]
+                size = self.cmd_and_log(cmd)
+            finally:
+                os.remove(prg)
+        except Errors.WafError:
             self.end_msg("failed (memory consumption can not be estimated "
                          "during the calculation)", 'YELLOW')
         else:
