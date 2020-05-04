@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -128,10 +128,16 @@ def check_vmsize(self):
     if not is_ok:
         self.start_msg("Checking measure of VmSize during MPI_Init")
         try:
-            size = self.check_cc(fragment=fragment_failure_vmsize,
-                                 mandatory=True, execute=True, define_ret=True,
-                                 use="MPI")
-        except Errors.ConfigurationError:
+            prg = osp.join(self.bldnode.abspath(),
+                           'test_mpi_init_' + str(os.getpid()))
+            self.check_cc(fragment=fragment_failure_vmsize,
+                          mandatory=True, use="MPI", target=prg)
+            try:
+                cmd = ["mpiexec", "-n", "1", prg]
+                size = self.cmd_and_log(cmd)
+            finally:
+                os.remove(prg)
+        except Errors.WafError:
             self.end_msg("failed (memory consumption can not be estimated "
                          "during the calculation)", 'YELLOW')
         else:
