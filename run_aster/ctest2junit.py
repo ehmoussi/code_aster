@@ -107,7 +107,7 @@ class XUnitReport:
             time = float(mat.group("time").replace(",", "."))
             self.junit_test.append(
                 JUNIT.TestCase(ctname, content, state, jstate,
-                               time or timedict[testname]))
+                               time or timedict.get(testname, 0.)))
 
     def write_xml(self, filename):
         """Export the report in XML.
