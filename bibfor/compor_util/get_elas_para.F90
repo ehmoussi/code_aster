@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ subroutine get_elas_para(fami    , j_mater, poum, ipg, ispg, &
                          e1_     , e2_  , e3_  ,&
                          nu12_   , nu13_, nu23_,&
                          g1_     , g2_  , g3_  ,&
-                         BEHinteg)
+                         BEHinteg, xyzgau_)
 !
 use Behaviour_type
 !
@@ -42,6 +42,7 @@ integer, intent(in) :: elas_id
 character(len=16), intent(in) :: elas_keyword
 real(kind=8), optional, intent(in) :: time
 real(kind=8), optional, intent(in) :: temp
+real(kind=8), optional, intent(in) :: xyzgau_(3)
 real(kind=8), optional, intent(out) :: e_, nu_, g_
 real(kind=8), optional, intent(out) :: e1_,e2_, e3_
 real(kind=8), optional, intent(out) :: nu12_, nu13_, nu23_
@@ -113,6 +114,17 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
         nb_para   = nb_para + 1
         para_name(nb_para) = 'TEMP'
         para_vale(nb_para) = temp
+    endif
+    if (present(xyzgau_)) then
+            nb_para   = nb_para + 1
+            para_name(nb_para) = 'X'
+            para_vale(nb_para) = xyzgau_(1)
+            nb_para   = nb_para + 1
+            para_name(nb_para) = 'Y'
+            para_vale(nb_para) = xyzgau_(2)
+            nb_para   = nb_para + 1
+            para_name(nb_para) = 'Z'
+            para_vale(nb_para) = xyzgau_(3)
     endif
     if (present(BEHinteg)) then
         if (.not.BEHinteg%l_varext_geom) then
