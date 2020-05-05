@@ -696,7 +696,8 @@ def defi_sol_equi_ops(self, TITRE, INFO, **args):
                                     INDIC_PARA=[2, 1], INDIC_RESU=[2, j + 1],
                                     )
             for val in __DG[j].Ordo():
-                if val > 2.: UTMESS('F','MISS0_44', valk='TABLE_AMOR_EQUI')
+                if val > 2.:
+                    UTMESS('F', 'MISS0_44', valk='TABLE_AMOR_EQUI')
         UL.EtatInit()
     else:
     # 1. dictionnaires des MATERIAUX
