@@ -64,6 +64,9 @@ subroutine as_allocate(size, vl, vi, vi4, vr,&
     character(len=3) :: tsca
     aster_logical :: alloc
 !
+    if(size <= 0) then
+        call utmess('F', 'UTILITAI_78' , si=size)
+    end if
 !
     if (iprem .eq. 0) then
         cuvtrav=0.d0
