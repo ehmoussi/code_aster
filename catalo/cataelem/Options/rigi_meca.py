@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -94,16 +94,16 @@ comment=""" HHO - degres de liberte de la cellule""")
 PCELLIR  = InputParameter(phys=PHY.CELL_R,
 comment=""" HHO - degres de liberte de la cellule""")
 
-PCSMTIR  = OutputParameter(phys=PHY.N6480R, type='ELEM',
+PCSMTIR  = OutputParameter(phys=PHY.N3240R, type='ELEM',
 comment=""" HHO - matrice cellule pour condensation statique""")
 
 PCSRTIR  = OutputParameter(phys=PHY.CELL_R, type='ELEM',
 comment=""" HHO - 2nd membre cellule pour condensation statique""")
 
-PCHHOGT  = InputParameter(phys=PHY.N6480R,
+PCHHOGT  = InputParameter(phys=PHY.N1920R,
 comment=""" HHO - matrice du gradient local""")
 
-PCHHOST  = InputParameter(phys=PHY.N6480R,
+PCHHOST  = InputParameter(phys=PHY.N2448R,
 comment=""" HHO - matrice de la stabilisation locale""")
 
 PVARIPR  = OutputParameter(phys=PHY.VARI_R, type='ELGA',

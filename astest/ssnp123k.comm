@@ -42,7 +42,7 @@ INSTANTS = DEFI_LIST_REEL(DEBUT=0.0,
                           INTERVALLE=(_F(JUSQU_A=0.1,
                                          NOMBRE=10,),
                                       _F(JUSQU_A=1.0,
-                                         NOMBRE=10,),),)
+                                         NOMBRE=15,),),)
 
 RAMPE = DEFI_FONCTION(NOM_PARA='INST',
                       VALE=(0.0, 0.0,
@@ -56,11 +56,11 @@ DEFLIST = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=INSTANTS),
                                   SUBD_PAS_MINI=0.00001),)
 
 
-Test1 = [234.63374793192267]
-Test2 = [242.13791894157538]
-Test3 = [297.776637447608]
-Test4 = [420.9738474468938]
-Test5 = [1.3074001191591271]
+Test1 = [234.69625470003277]
+Test2 = [242.0949474766369]
+Test3 = [297.8434629271649]
+Test4 = [415.7028629992019]
+Test5 = [1.1161276716011894]
 
 MO = AFFE_MODELE(MAILLAGE=MA,
                  AFFE=_F(GROUP_MA='SURF',
