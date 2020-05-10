@@ -113,7 +113,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     character(len=24) :: mate, varc_refe
     aster_logical :: l_stat, l_load_cine, l_cont_cont, l_cont_lac, l_rom, l_macr
     aster_logical :: l_resi_refe, l_varc_init, l_resi_comp, l_rela
-    aster_logical :: l_no_disp, l_pilo, l_disp
+    aster_logical :: l_no_disp, l_pilo, l_disp, l_hho
     character(len=19) :: profch
     character(len=19) :: varc_prev, disp_prev
     character(len=19) :: cndiri, cnbudi, cnfext
@@ -193,6 +193,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     l_cont_lac  = isfonc(list_func_acti,'CONT_LAC')
     l_rom       = isfonc(list_func_acti,'ROM')
     l_macr      = isfonc(list_func_acti, 'MACR_ELEM_STAT')
+    l_hho       = isfonc(list_func_acti, 'HHO')
     l_varc_init = (nume_inst .eq. 1) .and. (.not.ds_inout%l_state_init)
     l_no_disp   = .not.(ndynlo(sddyna,'FORMUL_DEPL').or.l_stat)
     l_disp      = ASTER_TRUE
@@ -250,6 +251,9 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! - Compute RESI_COMP_RELA
 !
     if (l_resi_comp) then
+        if(l_hho) then
+            call utmess('F', 'HHO1_15')
+        end if
         call rescmp(ds_system%cnfnod, cnequi,&
                     r_comp_vale, r_comp_name, r_comp_indx)
     endif
