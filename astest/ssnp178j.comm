@@ -111,6 +111,11 @@ resnonl = CALC_CHAMP(
     RESULTAT=resnonl,
 )
 
+IMPR_RESU(UNITE=80,
+            RESU=_F(RESULTAT=resnonl,
+                    IMPR_NOM_VARI='OUI',),
+            FORMAT='MED',)
+
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('A', ),
                   REFERENCE='AUTRE_ASTER',
