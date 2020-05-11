@@ -295,10 +295,12 @@ real(kind=8) :: inst, prec
         iaux = 1
     endif
 !
-    AS_ALLOCATE(vk8 = cmpUserName, size = nbcmpv)
-    do iCmp = 1, nbcmpv
-        cmpUserName(iCmp) = zk8(iaux-1+iCmp)
-    end do
+    if(nbcmpv > 0) then
+        AS_ALLOCATE(vk8 = cmpUserName, size = nbcmpv)
+        do iCmp = 1, nbcmpv
+            cmpUserName(iCmp) = zk8(iaux-1+iCmp)
+        end do
+    end if
     AS_ALLOCATE(vk8 = cmpCataName, size = ncmprf)
     do iCmp = 1, ncmprf
         cmpCataName(iCmp) = zk8(jnocmp-1+iCmp)

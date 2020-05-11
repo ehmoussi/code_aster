@@ -107,7 +107,7 @@ S_T = MACR_LIGN_COUPE(RESULTAT=RESU,  NOM_CHAM='SIGM_NOEU', INST=1.0,
                              )))
 
 IMPR_RESU(UNITE=80,
-            RESU=_F(RESULTAT=resnonl,
+            RESU=_F(RESULTAT=RESU,
                     IMPR_NOM_VARI='OUI',),
             FORMAT='MED',)
 
