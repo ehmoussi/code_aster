@@ -69,9 +69,9 @@ def include_maillage(MAILLAGE):
     return osp.join(rcdir, 'tests_data', MAILLAGE)
 
 nom_maillage = include_maillage('ssll501a.mail')
-unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=nom_maillage, ACCES='NEW', UNITE=20)
+DEFI_FICHIER(ACTION='ASSOCIER', ACCES='OLD', FICHIER=nom_maillage, UNITE=20)
 
-MAILL=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='ASTER',UNITE=unite,  )
+MAILL=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='ASTER',UNITE=20)
 
 DEFI_FICHIER(ACTION='LIBERER', UNITE=20)
 
