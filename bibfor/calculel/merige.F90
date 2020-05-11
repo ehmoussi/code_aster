@@ -124,15 +124,6 @@ subroutine merige(model_, cara_elem_, sigg, strx, matel,&
         lpain(13) = 'PHEA_NO'
         lchin(13) = hea_no
         nbpara=13
-        lfiss=exi_fiss(modele)
-        if (lfiss) then
-          ASSERT(present(mater)) 
-          if (mater.ne.' ') then
-            nbpara=nbpara+1
-            lpain(nbpara) = 'PMATERC'
-            lchin(nbpara) = mater
-          endif
-        endif
 !
 ! --- CHAMPS DE SORTIE
 !

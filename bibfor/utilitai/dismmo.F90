@@ -195,7 +195,7 @@ subroutine dismmo(questi, nomobz, repi, repkz, ierd)
             call jenuno(jexnum('&CATA.TE.NOMTE', itypel), nomte)
             call dismte('MODELISATION', nomte, repi, repk, ierd)
             nomodl=repk(1:16)
-            if (nomodl(1:4) .ne. 'DIS_') then
+            if ((nomodl(1:4) .ne. 'DIS_') .and. (nomodl(1:4) .ne. '2D_DIS_')) then
                 repk='OUI'
                 goto 70
 !
@@ -204,6 +204,28 @@ subroutine dismmo(questi, nomobz, repi, repkz, ierd)
         else
             repk='NON'
         endif
+
+    else if (questi.eq.'SI_CABLE') then
+        !     ----------------------------------------
+        call jeexin(nolig//'.LIEL', iret)
+        if (iret .gt. 0) then
+            call jelira(nolig//'.LIEL', 'NUTIOC', nbgrel)
+            repk='NON'
+            do 90,igrel=1,nbgrel
+            call jeveuo(jexnum(nolig//'.LIEL', igrel), 'L', ialiel)
+            call jelira(jexnum(nolig//'.LIEL', igrel), 'LONMAX', nel)
+            itypel=zi(ialiel-1+nel)
+            call jenuno(jexnum('&CATA.TE.NOMTE', itypel), nomte)
+
+            if (nomte(1:7) .eq. 'MECABL2') then
+                repk='OUI'
+                goto 70
+        !
+            endif
+90          continue
+        else
+            repk='NON'
+        endif        
 !
 !     --------------------------------------
     else if (questi.eq.'EXI_ELTVOL') then
