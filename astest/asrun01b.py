@@ -399,7 +399,8 @@ class TestExport(unittest.TestCase):
         addmem = CFG.get("addmem", 0.)
         export = Export(from_string=text)
         memory = export.get_argument_value("memory", float) # with addmem
-        self.assertEqual(memory, 4096.0 + addmem)
+        refval = 512.0 * (8 if "64" in platform.architecture()[0] else 4)
+        self.assertEqual(memory, refval + addmem)
         self.assertSequenceEqual(export.args,
             ["--continue",
              "--max_base", "1000", "--abort",

@@ -71,7 +71,7 @@ def includeExternalData(theFile):
     return osp.join(rcdir, 'tests_data', theFile)
 
 nom_maillage = includeExternalData('ssll501a.mail')
-unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=nom_maillage, ACCES='NEW', UNITE=20)
+DEFI_FICHIER(ACTION='ASSOCIER', FICHIER=nom_maillage, ACCES='NEW', UNITE=20)
 
 MAILL=LIRE_MAILLAGE(VERI_MAIL=_F(VERIF='OUI'),FORMAT='ASTER',UNITE=20,  )
 
