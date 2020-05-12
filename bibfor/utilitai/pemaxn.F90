@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine pemaxn(resu, nomcha, lieu, nomlie, modele,&
-                  chpost, nbcmp, nomcmp, nuord, inst)
+                  chpost, nbcmp, nomcmp, nuord, inst, nbmail, numemail)
 !
     implicit none
 !
@@ -42,10 +42,10 @@ subroutine pemaxn(resu, nomcha, lieu, nomlie, modele,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: nbcmp, nuord
-    character(len=8) :: nomcmp(nbcmp), modele, nomlie, lieu
+    integer :: nbcmp, nuord, nbmail, numemail(*)
+    character(len=8) :: nomcmp(nbcmp), modele, lieu
     character(len=19) :: chpost, resu
-    character(len=24) :: nomcha
+    character(len=24) :: nomcha, nomlie
 !
 !
 !     OPERATEUR   POST_ELEM
@@ -68,19 +68,19 @@ subroutine pemaxn(resu, nomcha, lieu, nomlie, modele,&
 !     IN  INST    : INSTANT
 !     ------------------------------------------------------------------
 !
-    integer :: nbma, i, jcesl
-    integer :: jcmpgd, ncmpm
-    integer :: icmp, nbpara, nbno
+    integer :: i, jcesl, jcmpgd, ncmpm, nbnoma
+    integer :: icmp, nbpara, nbno, numno, iacnex
     integer :: ino, nmin, nmax, npara, nbcmpm
     real(kind=8) :: vmin, vmax, inst
     complex(kind=8) :: cbid
     character(len=8) :: noma, k8b, nomgd, nomva, knmin, knmax
-    character(len=19) :: ligrel, cesout
+    character(len=19) :: cesout
     character(len=24) :: nomnoe
     aster_logical :: exist
 ! Tableaux automatiques F90
     real(kind=8) :: mima(2*nbcmp+2)
-    character(len=16) :: nompar(4*nbcmp+5), nomax(2*nbcmp+3)
+    character(len=24) :: nompar(4*nbcmp+5), nomax(2*nbcmp+3)
+    integer, pointer :: list_no(:) => null()
     integer, pointer :: cnsd(:) => null()
     character(len=8), pointer :: cnsk(:) => null()
     character(len=8), pointer :: cesc(:) => null()
@@ -89,17 +89,30 @@ subroutine pemaxn(resu, nomcha, lieu, nomlie, modele,&
     call jemarq()
     cbid=(0.d0,0.d0)
 !
-    call dismoi('NOM_LIGREL', modele, 'MODELE', repk=ligrel)
     call dismoi('NOM_MAILLA', modele, 'MODELE', repk=noma)
-    call dismoi('NB_MA_MAILLA', noma, 'MAILLAGE', repi=nbma)
     call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbno)
 !
-    if (lieu(1:4) .ne. 'TOUT') then
-        call utmess('A', 'UTILITAI3_94')
+! --- CREATION D'UN TABLEAU D'INDICES POUR REPERER
+!     LES MAILLES DU POST TRAITEMENT
+    call wkvect('&&PEMAXC_IND.NOEUD', 'V V I', nbno, vi=list_no)
+    if (lieu == 'GROUP_MA') then
+        list_no(:) = 0
+        do i = 1, nbmail
+            call jeveuo(jexnum(noma//'.CONNEX', numemail(i)), 'L', iacnex)
+            call jelira(jexnum(noma//'.CONNEX', numemail(i)), 'LONMAX', nbnoma)
+            do ino = 1, nbnoma
+                numno = zi(iacnex-1+ino)
+                list_no(numno) = 1
+            end do
+        end do
+    elseif (lieu == 'TOUT') then
+        list_no(:) = 1
+    else
+        ASSERT(ASTER_FALSE)
     endif
 !
     nomnoe = noma//'.NOMNOE         '
-    nompar(1)  ='CHAMP_GD'
+    nompar(1)='CHAMP_GD'
     nompar(2)='NUME_ORDRE'
     nompar(3)='INST'
     nompar(4)=lieu
@@ -109,7 +122,7 @@ subroutine pemaxn(resu, nomcha, lieu, nomlie, modele,&
 !
     call tbexip(resu, lieu, exist, k8b)
     if (.not.exist) then
-        call tbajpa(resu, 1, nompar(4), 'K16')
+        call tbajpa(resu, 1, nompar(4), 'K24')
     endif
 !
 ! --- CALCULS DES CHAMPS SIMPLES:
@@ -145,7 +158,7 @@ subroutine pemaxn(resu, nomcha, lieu, nomlie, modele,&
         icmp=indik8(cesc,nomcmp(i),1,nbcmpm)
         ASSERT(icmp.gt.0)
         do ino = 1, nbno
-            if (zl(jcesl+(ino-1)*nbcmpm+icmp-1)) then
+            if (list_no(ino) == 1 .and. zl(jcesl+(ino-1)*nbcmpm+icmp-1)) then
                 if (vmax .lt. cnsv(1+(ino-1)*nbcmpm+icmp-1)) then
                     vmax=cnsv(1+(ino-1)*nbcmpm+icmp-1)
                     nmax=ino
@@ -187,6 +200,7 @@ subroutine pemaxn(resu, nomcha, lieu, nomlie, modele,&
 !
     call jedetr('&&PEMAXC_CESOUT')
     call jedetr('&&PEMAXC.LIST_CMP')
+    call jedetr('&&PEMAXC_IND.NOEUD')
 !
     call jedema()
 !

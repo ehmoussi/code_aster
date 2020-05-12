@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
+subroutine peecal(tych, resu, nomcha, lieu, nomlie, list_ma, nbma,&
                   modele, ichagd, chpost, nbcmp, nomcmp,&
                   nomcp2, nuord, inst, iocc, ligrel, cespoi)
 !
@@ -50,7 +50,7 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
 #include "asterfort/jexnum.h"
 #include "asterfort/jenuno.h"
 #include "asterfort/panbno.h"
-    integer :: nbcmp, nuord, iocc, ichagd
+    integer :: nbcmp, nuord, iocc, ichagd, nbma, list_ma(*)
     character(len=8) :: nomcmp(nbcmp), nomcp2(nbcmp), modele, lieu
     character(len=19) :: chpost, resu, cespoi, ligrel
     character(len=24) :: nomcha
@@ -83,9 +83,9 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
 !     IN  IOCC    : NUMERO DE L'OCCURENCE DE INTEGRALE
 !     ------------------------------------------------------------------
 !
-    integer :: iret, nbma, nbmai, i, jcesl, jcesd, jpoil, jpoid
+    integer :: iret, i, jcesl, jcesd, jpoil, jpoid
     integer :: nucmp, jcmpgd, ncmpm, iad, jintr, jintk
-    integer :: ipt, nbsp, nbpt, icmp, ima, nbpara
+    integer :: ipt, nbsp, nbpt, icmp, ima, nbpara, nume_ma
     integer :: ico, ind1, ind2, ifm, niv, ier, type_cell, nbnott(3)
     real(kind=8) :: vol, val, inst, volpt
     complex(kind=8) :: cbid
@@ -110,7 +110,6 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
 !
 !
     call dismoi('NOM_MAILLA', modele, 'MODELE', repk=noma)
-    call dismoi('NB_MA_MAILLA', noma, 'MAILLAGE', repi=nbma)
 
     call jeveuo(ligrel//'.REPE', 'L', vi=repe)
 !
@@ -186,7 +185,7 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
 !
 !     - INFOS
     if (niv .gt. 1) then
-        write(6,*) '<PEECAL> NOMBRE DE MAILLES A TRAITER : ',nbmai
+        write(6,*) '<PEECAL> NOMBRE DE MAILLES A TRAITER : ',nbma
         write(6,*) '<PEECAL> NOMBRE DE COMPOSANTES : ',ncmpm
     endif
 !
@@ -200,17 +199,18 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
         vol=0.d0
         ico=0
         do ima = 1, nbma
-            if (repe(2*(ima-1)+1).eq.0) cycle
-            nbpt=zi(jcesd-1+5+4*(ima-1)+1)
-            nbsp=zi(jcesd-1+5+4*(ima-1)+2)
+            nume_ma = list_ma(ima)
+            if (repe(2*(nume_ma-1)+1).eq.0) cycle
+            nbpt=zi(jcesd-1+5+4*(nume_ma-1)+1)
+            nbsp=zi(jcesd-1+5+4*(nume_ma-1)+2)
             l_red = ASTER_FALSE
-            if (v_model_elem(ima) .ne. 0) then
-                call jenuno(jexnum('&CATA.TE.NOMTE', v_model_elem(ima)), nomte)
+            if (v_model_elem(nume_ma) .ne. 0) then
+                call jenuno(jexnum('&CATA.TE.NOMTE', v_model_elem(nume_ma)), nomte)
                 call teattr('C', 'INTTHM', type_inte, ier, typel=nomte)
-                if (ier .eq. 0) then 
+                if (ier .eq. 0) then
                     l_red = type_inte .eq. 'RED'
                     if (l_red) then
-                        type_cell = v_type_cell(ima)
+                        type_cell = v_type_cell(nume_ma)
                         call panbno(type_cell, nbnott)
                         ! nbpt = nbpt - nbnott(1)
                     endif
@@ -220,7 +220,7 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
                 call utmess('F', 'UTILITAI8_60')
             endif
             do ipt = 1, nbpt
-                call cesexi('C', jcesd, jcesl, ima, ipt,&
+                call cesexi('C', jcesd, jcesl, nume_ma, ipt,&
                             1, nucmp, iad)
                 ASSERT(iad.ge.0)
                 if (iad .eq. 0) cycle
@@ -228,18 +228,18 @@ subroutine peecal(tych, resu, nomcha, lieu, nomlie,&
                 val=val+cesv(iad)
 !
                 if (tych .eq. 'ELGA') then
-                    call cesexi('C', jpoid, jpoil, ima, ipt,&
+                    call cesexi('C', jpoid, jpoil, nume_ma, ipt,&
                                 1, 1, iad)
                     ASSERT(iad.gt.0)
                     volpt=poiv(iad)
                 else if (tych.eq.'ELEM') then
                     ASSERT(nbpt.eq.1)
-                    volpt=pdsm(ima)
+                    volpt=pdsm(nume_ma)
                 else if (tych.eq.'ELNO') then
                     ASSERT(nbpt.ge.1)
-                    volpt=pdsm(ima)/nbpt
+                    volpt=pdsm(nume_ma)/nbpt
                 endif
-                
+
                 if (.NOT. l_red) then
                     vol=vol+volpt
                 else if ((l_red) .AND. (ipt< nbpt - nbnott(1) + 1) ) then
