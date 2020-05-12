@@ -557,6 +557,54 @@ TEST_TABLE(CRITERE='RELATIF',
                      VALE_K='ALL',),),
            )
 
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           VALE_CALC=1.1640314358974E-03,
+           VALE_REFE=1.1640299999999999E-3,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_TO4,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=0.1,),
+                    _F(NOM_PARA='LIEU',
+                     VALE_K='UNION_GROUP_MA',),),
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           VALE_CALC=1.8422223797491,
+           VALE_REFE=1.8433999999999999,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_TO4,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=0.9,),
+                    _F(NOM_PARA='LIEU',
+                     VALE_K='UNION_GROUP_MA',),),
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           VALE_CALC=9.5834292958369,
+           VALE_REFE=9.5848700000000004,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_TO4,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=2.0,),
+                    _F(NOM_PARA='LIEU',
+                     VALE_K='UNION_GROUP_MA',),),
+           )
+
+TEST_TABLE(CRITERE='RELATIF',
+           REFERENCE='AUTRE_ASTER',
+           VALE_CALC=9.406505126965,
+           VALE_REFE=9.40794,
+           NOM_PARA='TOTALE',
+           TABLE=ENER_TO4,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=3.0,),
+                    _F(NOM_PARA='LIEU',
+                     VALE_K='UNION_GROUP_MA',),),
+           )
+
 #
 # SI ENERGIE CALCULEE SUR TOUT LE MAILLAGE
 
@@ -625,8 +673,8 @@ IND_SEUI=POST_ELEM(INDIC_SEUIL=(_F(TOUT='OUI',),
                    RESULTAT=U,
                    NUME_ORDRE=(12,52,53,),)
 
-#IMPR_TABLE(TABLE=IND_ENER, UNITE=6)
-#IMPR_TABLE(TABLE=IND_SEUI, UNITE=6)
+IMPR_TABLE(TABLE=IND_ENER, UNITE=6)
+IMPR_TABLE(TABLE=IND_SEUI, UNITE=6)
 
 TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
@@ -788,6 +836,45 @@ TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
            VALE_CALC=0.0E+00,
            VALE_REFE=0.0,
+           NOM_PARA='INDIC_ENER',
+           TABLE=IND_ENER,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                      VALE_I=12,),
+                   _F(NOM_PARA='LIEU',
+                      VALE_K='UNION_GROUP_MA',),
+                   ),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.03,
+           VALE_CALC=0.033376265107205,
+           VALE_REFE=0.032599999999999997,
+           NOM_PARA='INDIC_ENER',
+           TABLE=IND_ENER,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                      VALE_I=52,),
+                   _F(NOM_PARA='LIEU',
+                      VALE_K='UNION_GROUP_MA',),
+                   ),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.03,
+           VALE_CALC=0.047729904860200,
+           VALE_REFE=0.046899999999999997,
+           NOM_PARA='INDIC_ENER',
+           TABLE=IND_ENER,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                      VALE_I=53,),
+                   _F(NOM_PARA='LIEU',
+                      VALE_K='UNION_GROUP_MA',),
+                   ),
+           )
+
+TEST_TABLE(CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0E+00,
+           VALE_REFE=0.0,
            NOM_PARA='INDIC_SEUIL',
            TABLE=IND_SEUI,
            FILTRE=(_F(NOM_PARA='NUME_ORDRE',
@@ -937,6 +1024,45 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                       VALE_I=53,),
                    _F(NOM_PARA='LIEU',
                       VALE_K='ALL',),
+                   ),
+           )
+
+TEST_TABLE(CRITERE='ABSOLU',
+           REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0E+00,
+           VALE_REFE=0.0,
+           NOM_PARA='INDIC_SEUIL',
+           TABLE=IND_SEUI,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                      VALE_I=12,),
+                   _F(NOM_PARA='LIEU',
+                      VALE_K='UNION_GROUP_MA',),
+                   ),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-2,
+           VALE_CALC=0.096406982716527,
+           VALE_REFE=0.097100000000000006,
+           NOM_PARA='INDIC_SEUIL',
+           TABLE=IND_SEUI,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                      VALE_I=52,),
+                   _F(NOM_PARA='LIEU',
+                      VALE_K='UNION_GROUP_MA',),
+                   ),
+           )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-2,
+           VALE_CALC=1.0,
+           VALE_REFE=1.0,
+           NOM_PARA='INDIC_SEUIL',
+           TABLE=IND_SEUI,
+           FILTRE=(_F(NOM_PARA='NUME_ORDRE',
+                      VALE_I=53,),
+                   _F(NOM_PARA='LIEU',
+                      VALE_K='UNION_GROUP_MA',),
                    ),
            )
 

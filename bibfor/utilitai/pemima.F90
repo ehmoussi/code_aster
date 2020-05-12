@@ -44,7 +44,7 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
 #include "asterfort/rsutnu.h"
 #include "asterfort/tbajpa.h"
 #include "asterfort/tbcrsd.h"
-!#include "asterfort/umalma.h"
+#include "asterfort/umalma.h"
 #include "asterfort/utmess.h"
 #include "asterfort/uttrii.h"
 #include "asterfort/wkvect.h"
@@ -57,7 +57,7 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
 !     TRAITEMENT DU MOT CLE-FACTEUR "MINMAX"
 !     ------------------------------------------------------------------
 !
-    integer :: iret, nbcmp, nzero, nbordr, iocc, nbma
+    integer :: iret, nbcmp, nzero, nbordr, iocc, nbma, nbtot
     integer :: n1, nr, np, nc, ni, no, jno, jin, numo, tord(1)
     integer :: nbgma, igm, nbpar, nn, inum, nli, nlo, iarg
     parameter(nzero=0,nbpar=3)
@@ -67,7 +67,7 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
     character(len=8) :: nomgd
     character(len=8), parameter :: typpar(nbpar) = ['K16','I  ','R  ']
     character(len=8), parameter :: tout='TOUT', grpma='GROUP_MA'
-!    character(len=24), parameter :: union='UNION_GROUP_MA'
+    character(len=24), parameter :: union='UNION_GROUP_MA'
     character(len=16), parameter :: nompar(nbpar) = ['CHAMP_GD  ','NUME_ORDRE','INST      ']
     character(len=19) :: knum, cham, kins, lisins
     character(len=24) :: nomcha, nomlieu
@@ -75,7 +75,7 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
     character(len=8), pointer :: cmp(:) => null()
     character(len=24), pointer :: v_gma(:) => null()
     integer, pointer :: v_lma(:) => null()
-!    integer, pointer :: v_allma(:) => null()
+    integer, pointer :: v_allma(:) => null()
 !     ------------------------------------------------------------------
 !
     call jemarq()
@@ -237,17 +237,19 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
                 end do
 !
 ! --- UNION
-!                 call umalma(mailla, v_gma, nbgma, v_allma, nbtot)
-!                 ASSERT(nbtot>0)
-!                 if (tych(1:2) .eq. 'EL') then
-!                     call pemaxe(resu, nomcha, grpma, union, modele,&
-!                                 cham, nbcmp, cmp, numo, inst, nbtot, v_allma)
-!                 else
-!                     call pemaxn(resu, nomcha, grpma, union, modele,&
-!                                 cham, nbcmp, cmp, numo, inst, nbtot, v_allma)
-!                 endif
-! !
-!                 AS_DEALLOCATE(vi=v_allma)
+                if(nbgma > 1) then
+                    call umalma(mailla, v_gma, nbgma, v_allma, nbtot)
+                    ASSERT(nbtot>0)
+                    if (tych(1:2) .eq. 'EL') then
+                        call pemaxe(resu, nomcha, grpma, union, modele,&
+                                    cham, nbcmp, cmp, numo, inst, nbtot, v_allma)
+                    else
+                        call pemaxn(resu, nomcha, grpma, union, modele,&
+                                    cham, nbcmp, cmp, numo, inst, nbtot, v_allma)
+                    endif
+                    AS_DEALLOCATE(vi=v_allma)
+                end if
+!
                 call jedetr('&&PEMIMA_GMA')
             endif
 !

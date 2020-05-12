@@ -56,6 +56,7 @@ subroutine peingl(resu, modele, mate, mateco, cara, nh,&
 #include "asterfort/tbajli.h"
 #include "asterfort/tbajpa.h"
 #include "asterfort/tbcrsd.h"
+#include "asterfort/umalma.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vrcins.h"
 #include "asterfort/vrcref.h"
@@ -181,7 +182,7 @@ subroutine peingl(resu, modele, mate, mateco, cara, nh,&
     integer :: nbparr, nr, np, nc, iret, jord, nbordr, jins, iord, iainst, numord, nbin, nt, nm
     integer :: ng, nbgrma, jgr, ig, nbma, jad, nbmail, jma, im, iocc, nume, nbout, numorm
     integer :: ngdmax, ncmpmx, igd, idebgd, dg, ima, iconex, nbno, nec, ivari
-    integer :: i, nbgrma_tot, deca, iarg
+    integer :: i, nbgrma_tot, deca, iarg, nbtot
     real(kind=8) :: work(5), indic1, volume, inst, valr(6), zero, prec
     real(kind=8) :: energy_tout, energy_ma
     complex(kind=8) :: c16b
@@ -198,6 +199,7 @@ subroutine peingl(resu, modele, mate, mateco, cara, nh,&
     integer, pointer :: desc(:) => null()
     character(len=16), pointer :: vale(:) => null()
     real(kind=8), pointer :: energy_grpma(:) => null()
+    integer, pointer :: v_allma(:) => null()
 !
     integer :: nfiss
     aster_logical :: lxfem
@@ -761,6 +763,93 @@ subroutine peingl(resu, modele, mate, mateco, cara, nh,&
                     call tbajli(resu, nbparr, noparr, [numord], valr,&
                                 [c16b], vk24, 0)
                 end do
+!
+! --- UNION
+                if(nbgrma > 1) then
+                    nomgrm = "UNION_GROUP_MA"
+                    call umalma(noma, zk24(jgr), nbgrma, v_allma, nbtot)
+                    ASSERT(nbtot>0)
+                    if (motfac .eq. 'INDIC_ENER' .or. motfac .eq. 'INDIC_SEUIL') then
+!
+! ---      SOMMATION DES INTEGRALES SUIVANTES SUR LES
+! ---      MAILLES DU GROUP_ MA
+! ---      LA PREMIERE INTEGRALE CALCULEE EST :
+! ---      SOMME_DOMAINE((1 - PSI(EPS)/OMEGA(EPS,VARI)).DV
+! ---      LA SECONDE INTEGRALE CALCULEE EST LE VOLUME :
+!          -------------------------------------------
+                        call mesomm(lchout(1), 1, vr=work(1), nbma=nbtot, linuma=v_allma)
+                        call mesomm(lchout(2), 1, vr=work(2), nbma=nbtot, linuma=v_allma)
+!
+                        indic1 = work(1)
+                        volume = work(2)
+!
+                        if (indic1 .le. 1.0d4*r8prem()) then
+                            indic1 = zero
+                        endif
+!
+                        if (volume .le. r8prem()) then
+                            call utmess('F', 'UTILITAI3_81', sk=nomgrm)
+                        endif
+!
+                        valr(2) = indic1/volume
+                        vk24(1) = nomgrm
+!
+                    else if (motfac.eq.'ENER_ELAS' .or.&
+     &                       motfac.eq.'ENER_ELTR' .or.&
+     &                       motfac.eq.'ENER_TOTALE' .or.&
+     &                       motfac.eq.'ENER_DISS') then
+!
+! ---          SOMMATION DE L'ENERGIE ( ELASTIQUE OU TOTALE)
+! ---          SUR LE MODELE :
+!              -------------
+                        deca = deca + 1
+                        ASSERT(deca <= nbgrma_tot)
+                        if (motfac .eq. 'ENER_TOTALE' .or. motfac.eq.'ENER_DISS') then
+                            call mesomm(lchout(1), 1, vr=work(1), nbma=nbtot, linuma=v_allma)
+                        else
+                            call mesomm(lchout(1), 5, vr=work, nbma=nbtot, linuma=v_allma)
+                        endif
+!
+! ---  BOUCLE SUR LES PAS DE TEMPS ON SOMME LES TERMES DE
+! ---  L ENERGIE TOTAL
+!
+                        if ((compt(1:9).ne.'VMIS_ISOT') .and. (compt( 1:4).ne.'ELAS') .and.&
+                            (motfac .ne.'ENER_ELAS' .and. motfac .ne. 'ENER_ELTR') .and.&
+                            (motfac.ne.'ENER_DISS')) then
+!
+                            energy_grpma(deca) = energy_grpma(deca) + work(1)
+                        else
+                            energy_grpma(deca) = work(1)
+                        endif
+!
+                        vk24(1) = nomgrm
+                        valr(2) = energy_grpma(deca)
+                        if (motfac.eq.'ENER_ELAS' .or. motfac.eq.'ENER_ELTR' .or.&
+                            motfac.eq.'ENER_TOTALE') then
+                            valr(3) = work(2)
+                            valr(4) = work(3)
+                            if (motfac .eq. 'ENER_ELAS') then
+! ---    AJOUT INUTILE POUR L INSTANT PUISQUE WORK(4) ET WORK(5)
+!        SONT NULS. EN PREVISION DU CALCUL DE L ENERGIE ELASTIQUE
+!        DE CISAILLEMENT ET DE COUPLAGE MEMBRANE FLEXION POUR LES
+!        PLAQUES EN MECA STATIQUE UNIQUEMENT, SI ON L AUTORISE
+!        UN JOUR.
+                                valr(5) = work(4)
+                                valr(6) = work(5)
+                            endif
+                        endif
+                    endif
+!
+!
+! ---    ECRITURE DE L'INDICATEUR OU DE L'ENERGIE DANS LA TABLE :
+!        ------------------------------------------------------
+!
+! ---      ECRITURE DE L'INDICATEUR DANS LA TABLE :
+!          --------------------------------------
+                    call tbajli(resu, nbparr, noparr, [numord], valr,&
+                                [c16b], vk24, 0)
+                    AS_DEALLOCATE(vi=v_allma)
+                end if
 !
                 call jedetr('&&PEINGL_GROUPM')
             endif

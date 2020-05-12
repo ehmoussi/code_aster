@@ -89,17 +89,17 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
            ),
            )
 
-# TEST_TABLE(REFERENCE='AUTRE_ASTER',
-#            VALE_CALC= 9.3330808151363E-04,
-#            VALE_REFE=9.3330799999999999E-4,
-#            NOM_PARA='MIN_EPZZ',
-#            TABLE=MAX_EP,
-#            FILTRE=(_F(NOM_PARA='INST',
-#                      VALE=5.0E-3,),
-#                    _F(NOM_PARA='GROUP_MA',
-#                      VALE_K='UNION_GROUP_MA',),
-#            ),
-#            )
+TEST_TABLE(REFERENCE='AUTRE_ASTER',
+           VALE_CALC= 9.3330808151363E-04,
+           VALE_REFE=9.3330799999999999E-4,
+           NOM_PARA='MIN_EPZZ',
+           TABLE=MAX_EP,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=5.0E-3,),
+                   _F(NOM_PARA='GROUP_MA',
+                     VALE_K='UNION_GROUP_MA',),
+           ),
+           )
 
 TEST_TABLE(
            VALE_CALC= 0.0021218071359128334,
@@ -185,16 +185,16 @@ TEST_TABLE(
                      VALE_K='GM2',),
            ),
            )
-# TEST_TABLE(
-#            VALE_CALC= -0.003948490052369693,
-#            NOM_PARA='MIN_EPXX',
-#            TABLE=TABEP,
-#            FILTRE=(_F(NOM_PARA='INST',
-#                      VALE=5.0E-3,),
-#                    _F(NOM_PARA='GROUP_MA',
-#                      VALE_K='UNION_GROUP_MA',),
-#            ),
-#            )
+TEST_TABLE(
+           VALE_CALC= -0.003948490052369693,
+           NOM_PARA='MIN_EPXX',
+           TABLE=TABEP,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=5.0E-3,),
+                   _F(NOM_PARA='GROUP_MA',
+                     VALE_K='UNION_GROUP_MA',),
+           ),
+           )
 
 
 #####################################################################

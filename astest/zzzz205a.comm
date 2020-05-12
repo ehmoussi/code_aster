@@ -89,15 +89,15 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='00000002',),
            )
 
-# TEST_TABLE(REFERENCE='ANALYTIQUE',
-#            PRECISION=1.E-4,
-#            VALE_CALC= 2.04750000E+03,
-#            VALE_REFE=2047.5,
-#            NOM_PARA='MASSE',
-#            TABLE=MASSE,
-#            FILTRE=_F(NOM_PARA='LIEU',
-#                      VALE_K='UNION_GROUP_MA',),
-#            )
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-4,
+           VALE_CALC= 2.04750000E+03,
+           VALE_REFE=2047.5,
+           NOM_PARA='MASSE',
+           TABLE=MASSE,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='UNION_GROUP_MA',),
+           )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-4,

@@ -22,6 +22,8 @@ subroutine peeint(resu, modele, nbocc)
 #include "jeveux.h"
 #include "asterc/indik8.h"
 #include "asterfort/alchml.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/assert.h"
 #include "asterfort/chpchd.h"
 #include "asterfort/chsut1.h"
@@ -39,8 +41,8 @@ subroutine peeint(resu, modele, nbocc)
 #include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
-#include "asterfort/jelira.h"
 #include "asterfort/jeexin.h"
+#include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jeveuo.h"
@@ -54,12 +56,11 @@ subroutine peeint(resu, modele, nbocc)
 #include "asterfort/rsutnu.h"
 #include "asterfort/tbajpa.h"
 #include "asterfort/tbcrsd.h"
-#include "asterfort/utmess.h"
+#include "asterfort/umalma.h"
 #include "asterfort/utflmd.h"
+#include "asterfort/utmess.h"
 #include "asterfort/varinonu.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
 !
     integer :: nbocc
     character(len=8) :: modele
@@ -72,7 +73,7 @@ subroutine peeint(resu, modele, nbocc)
     integer :: iret, nbcmp, nzero, ibid, nbordr, iocc, nbma, ncmpm
     integer :: jcmp, n1, numa, nr, np, nc, im, ni, no, jno, jin, numo, i, ivari
     integer :: nbgma, jgma, nma, jma, igm, nbpa1, nbpa2, nn, inum, nli, nlo
-    integer :: nd, ib, nucmp, tord(1)
+    integer :: nd, ib, nucmp, tord(1), nbtot
     parameter(nzero=0,nbpa1=4,nbpa2=2)
     real(kind=8) :: prec, inst
     complex(kind=8) :: cbid
@@ -80,6 +81,7 @@ subroutine peeint(resu, modele, nbocc)
     character(len=4) :: tych, ki, exirdm
     character(len=8) :: nomgd, tout, grpma, maille, typpa1(nbpa1), typpa2(nbpa2)
     parameter(tout='TOUT',grpma='GROUP_MA',maille='MAILLE')
+    character(len=24), parameter :: union='UNION_GROUP_MA'
     character(len=16) :: nompa1(nbpa1), nompa2(nbpa2), optio2
     character(len=19) :: knum, cham, kins, lisins, chamg, celmod
     character(len=19) :: ligrel, cespoi, tmpcha
@@ -97,7 +99,7 @@ subroutine peeint(resu, modele, nbocc)
     character(len=8), pointer :: cmp_init(:) => null()
     character(len=8), pointer :: cnsc(:) => null()
     integer, pointer :: v_lma(:) => null()
-
+    integer, pointer :: v_allma(:) => null()
 
     data nompa1/'NOM_CHAM','NUME_ORDRE','INST','VOL'/
     data typpa1/'K16','I','R','R'/
@@ -414,6 +416,16 @@ subroutine peeint(resu, modele, nbocc)
                                 cmp_init, numo, inst, iocc, ligrel, cespoi)
 30 continue
                 end do
+! --- UNION
+                if(nbgma > 1) then
+                    call umalma(mailla, zk24(jgma), nbgma, v_allma, nbtot)
+                    ASSERT(nbtot>0)
+                    call peecal(tych, resu, nomcha, grpma, union, v_allma, nbtot,&
+                                modele, nr, cham, nbcmp, zk8(jcmp),&
+                                cmp_init, numo, inst, iocc, ligrel, cespoi)
+!
+                    AS_DEALLOCATE(vi=v_allma)
+                end if
                 call jedetr('&&PEEINT_GMA')
 
             endif

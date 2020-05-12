@@ -44,7 +44,7 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
 #include "asterfort/tbajpa.h"
 #include "asterfort/tbcrsd.h"
 #include "asterfort/utmess.h"
-!#include "asterfort/umalma.h"
+#include "asterfort/umalma.h"
 #include "asterfort/uttrii.h"
 #include "asterfort/vtgpld.h"
 #include "asterfort/wkvect.h"
@@ -57,7 +57,7 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
 !
     integer :: mxvale, nbparr, ibid, iret,  iocc, nt, ng, nr, nm, nbgrma, jgr, ig, nbma, jad
     integer :: nbmail, jma, im, nume, nb, ifm, niv, mxval1, nbpar1, mxval2, nbpar2, iorig, nre
-    integer :: icage
+    integer :: icage, nbtot
     parameter (mxval1=16,nbpar1=18)
     parameter (mxval2=25,nbpar2=27)
     real(kind=8) :: zero, orig(3), r8b
@@ -69,7 +69,7 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
     complex(kind=8) :: c16b
     integer :: iarg
     real(kind=8), pointer :: trav1(:) => null()
-!    integer, pointer :: v_allma(:) => null()
+    integer, pointer :: v_allma(:) => null()
 !
     data noparr/'LIEU','ENTITE','MASSE','CDG_X','CDG_Y','CDG_Z', &
             'IX_G','IY_G','IZ_G','IXY_G','IXZ_G','IYZ_G','IX_PRIN_G', &
@@ -220,14 +220,16 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
 !
 !
 ! --- UNION
-!             call umalma(noma, zk24(jgr), nbgrma, v_allma, nbtot)
-!             ASSERT(nbtot>0)
-! !
-!             call pemica(chelem, mxvale, trav1, nbtot, v_allma, orig, iorig, icage)
-!             valk2(1) = "UNION_GROUP_MA"
-!             call tbajli(resu, nbparr, noparr, [ibid], trav1, [c16b], valk2, 0)
-! !
-!             AS_DEALLOCATE(vi=v_allma)
+            if(nbgrma > 1) then
+                call umalma(noma, zk24(jgr), nbgrma, v_allma, nbtot)
+                ASSERT(nbtot>0)
+    !
+                call pemica(chelem, mxvale, trav1, nbtot, v_allma, orig, iorig, icage)
+                valk2(1) = "UNION_GROUP_MA"
+                call tbajli(resu, nbparr, noparr, [ibid], trav1, [c16b], valk2, 0)
+    !
+                AS_DEALLOCATE(vi=v_allma)
+            end if
             call jedetr('&&PEMAIN_GROUPM')
         endif
         if (nm .ne. 0) then
