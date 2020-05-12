@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,35 +21,35 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
 #.....................................................................
 
-M=LIRE_MAILLAGE(FORMAT='MED');
+M=LIRE_MAILLAGE(FORMAT='MED')
 
 M=DEFI_GROUP(reuse =M,
              MAILLAGE=M,
              CREA_GROUP_NO=(_F(GROUP_MA='SSUP',),
-                            _F(GROUP_MA='SINF',),),);
+                            _F(GROUP_MA='SINF',),),)
 
 MO=AFFE_MODELE(AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
                        MODELISATION='3D',),
-               MAILLAGE=M,);
+               MAILLAGE=M,)
 
 SIGY=DEFI_FONCTION(PROL_GAUCHE='LINEAIRE',
                    NOM_PARA='TEMP',
                    VALE=(-150.0,750.0,-100.0,700.0,-50.0,650.0),
-                   PROL_DROITE='LINEAIRE',);
+                   PROL_DROITE='LINEAIRE',)
 
 SIGREF=DEFI_FONCTION(PROL_GAUCHE='LINEAIRE',
                      NOM_PARA='TEMP',
                      VALE=(-150.0,2600.0,-50.0,2800.0),
-                     PROL_DROITE='LINEAIRE',);
+                     PROL_DROITE='LINEAIRE',)
 
-YOUNG=DEFI_CONSTANTE(VALE=2.E5,);
+YOUNG=DEFI_CONSTANTE(VALE=2.E5,)
 
-NUT=DEFI_CONSTANTE(VALE=0.29999999999999999,);
+NUT=DEFI_CONSTANTE(VALE=0.29999999999999999,)
 
-ALPHAT=DEFI_CONSTANTE(VALE=0.0,);
+ALPHAT=DEFI_CONSTANTE(VALE=0.0,)
 
-ET=DEFI_CONSTANTE(VALE=2000.0,);
+ET=DEFI_CONSTANTE(VALE=2000.0,)
 
 ACIER=DEFI_MATERIAU(ECRO_LINE_FO=_F(D_SIGM_EPSI=ET,
                                     SY=SIGY,),
@@ -59,43 +59,43 @@ ACIER=DEFI_MATERIAU(ECRO_LINE_FO=_F(D_SIGM_EPSI=ET,
                     WEIBULL_FO=_F(M=24.,
                                VOLU_REFE=1.25E-4,
                                SIGM_CNV=2600.0,
-                               SIGM_REFE=SIGREF,),);
+                               SIGM_REFE=SIGREF,),)
 
 
-ZERO=DEFI_CONSTANTE(VALE=0.0,);
+ZERO=DEFI_CONSTANTE(VALE=0.0,)
 
 TRAC50=DEFI_FONCTION(PROL_GAUCHE='EXCLU',
                      PROL_DROITE='EXCLU',
                      NOM_PARA='INST',
                      VALE=(0.0,0.0,10.0,20.35,
                      20.0,20.30,30.0,20.30,
-                     40.0,30.525),);
+                     40.0,30.525),)
 
 T_T=DEFI_FONCTION(PROL_GAUCHE='CONSTANT',
                   NOM_PARA='INST',
                   VALE=(0.0,-50.0,20.0,-50.0,30.0,-150.0,40.0,-150.0),
-                  PROL_DROITE='CONSTANT',);
+                  PROL_DROITE='CONSTANT',)
 
 TEMP_T=CREA_CHAMP(AFFE=_F(NOM_CMP='TEMP',
                           TOUT='OUI',
                           VALE_F=T_T,),
                   TYPE_CHAM='NOEU_TEMP_F',
                   MAILLAGE=M,
-                  OPERATION='AFFE',);
+                  OPERATION='AFFE',)
 
 L_INST=DEFI_LIST_REEL(INTERVALLE=_F(JUSQU_A=40.0, NOMBRE=4,),
-                      DEBUT=0.0,);
+                      DEBUT=0.0,)
 
 RESU_T=CREA_RESU(OPERATION='AFFE', TYPE_RESU='EVOL_THER', NOM_CHAM='TEMP',
                  AFFE=(_F(CHAM_GD=TEMP_T, LIST_INST=L_INST, NUME_FIN=4,),
                        _F(CHAM_GD=TEMP_T, INST=41,),),
-                 );
+                 )
 
 CM=AFFE_MATERIAU(AFFE=_F(MATER=ACIER,
                          TOUT='OUI',),
                  AFFE_VARC=_F(EVOL=RESU_T,NOM_VARC='TEMP',VALE_REF=0.,
                          TOUT='OUI',),
-                 MAILLAGE=M,);
+                 MAILLAGE=M,)
 
 
 CHARG=AFFE_CHAR_MECA_F(MODELE=MO,
@@ -107,7 +107,7 @@ CHARG=AFFE_CHAR_MECA_F(MODELE=MO,
                                     DZ=ZERO,
                                     GROUP_NO='P5',),
                                  _F(DZ=ZERO,
-                                    GROUP_NO='P6',),),);
+                                    GROUP_NO='P6',),),)
 
 U=STAT_NON_LINE(CHAM_MATER=CM,
                 MODELE=MO,
@@ -118,11 +118,11 @@ U=STAT_NON_LINE(CHAM_MATER=CM,
                 INCREMENT=_F(NUME_INST_FIN=4,
                              LIST_INST=L_INST,),
                 NEWTON=_F(MATRICE ='TANGENTE',
-                          REAC_ITER=3,),);
+                          REAC_ITER=3,),)
 
 U=CALC_CHAMP(reuse =U,
              RESULTAT=U,
-             DEFORMATION=('EPSG_ELGA',),);
+             DEFORMATION=('EPSG_ELGA',),)
 
 # WEIBULL AVEC OPTION SIGM_ELGA
 WEIB=POST_ELEM(WEIBULL=_F(CORR_PLAST='NON',
@@ -130,7 +130,7 @@ WEIB=POST_ELEM(WEIBULL=_F(CORR_PLAST='NON',
                           COEF_MULT=2.0,
                           OPTION='SIGM_ELGA',),
                RESULTAT=U,
-               TOUT_ORDRE='OUI',);
+               TOUT_ORDRE='OUI',)
 
 # WEIBULL AVEC OPTION SIGM_ELMOY ET CORR_PLAST=NON
 WEIB2=POST_ELEM(WEIBULL=_F(CORR_PLAST='NON',
@@ -138,7 +138,7 @@ WEIB2=POST_ELEM(WEIBULL=_F(CORR_PLAST='NON',
                            COEF_MULT=2.0,
                            OPTION='SIGM_ELMOY',),
                 RESULTAT=U,
-                TOUT_ORDRE='OUI',);
+                TOUT_ORDRE='OUI',)
 
 # WEIBULL AVEC OPTION SIGM_ELMOY ET CORR_PLAST=OUI
 WEIB3=POST_ELEM(WEIBULL=_F(CORR_PLAST='OUI',
@@ -146,7 +146,7 @@ WEIB3=POST_ELEM(WEIBULL=_F(CORR_PLAST='OUI',
                            COEF_MULT=2.0,
                            OPTION='SIGM_ELMOY',),
                 RESULTAT=U,
-                TOUT_ORDRE='OUI',);
+                TOUT_ORDRE='OUI',)
 
 # RICE ET TRACEY
 RET=POST_ELEM(
@@ -154,7 +154,7 @@ RET=POST_ELEM(
                              TOUT='OUI',
                              OPTION='SIGM_ELMOY',),
               NUME_ORDRE=(1,2,3,4),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 # TESTS WEIBULL
@@ -327,7 +327,7 @@ AOUI_MOY=POST_ELEM(
                              TOUT='OUI',
                              OPTION='SIGM_ELMOY',),
                NUME_ORDRE=(1,2,3,4),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -346,7 +346,7 @@ BOUI_MOY=POST_ELEM(
                              GROUP_MA='CYL',
                              OPTION='SIGM_ELMOY',),
                              NUME_ORDRE=(1,2,3,4),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -365,7 +365,7 @@ COUI_MOY=POST_ELEM(NUME_ORDRE=(1,2,3,4),
                              MAILLE=('M1','M2','M3','M4','M5','M6','M7',
                                      'M8','M9','M10','M11','M12','M13','M14'),
                              OPTION='SIGM_ELMOY',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 TEST_TABLE(
@@ -390,7 +390,7 @@ DOUI_ELG=POST_ELEM(NUME_ORDRE=(1,2,3,4),
               RICE_TRACEY=_F(LOCAL='OUI',
                              TOUT='OUI',
                              OPTION='SIGM_ELGA',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -408,7 +408,7 @@ EOUI_ELG=POST_ELEM(NUME_ORDRE=(1,2,3,4),
               RICE_TRACEY=_F(LOCAL='OUI',
                              GROUP_MA='CYL',
                              OPTION='SIGM_ELGA',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 #----------------------
@@ -418,7 +418,7 @@ FOUI_ELG=POST_ELEM(NUME_ORDRE=(1,2,3,4),
                              MAILLE=('M1','M2','M3','M4','M5','M6','M7',
                                      'M8','M9','M10','M11','M12','M13','M14'),
                              OPTION='SIGM_ELGA',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 #
 # ATTENTION : ON NE TESTE PAS LES VOLUMES USES POUR CES 2 TABLES
@@ -437,7 +437,7 @@ ANON_MOY=POST_ELEM(NUME_ORDRE=(1,2,3,4),
               RICE_TRACEY=_F(LOCAL='NON',
                              TOUT='OUI',
                              OPTION='SIGM_ELMOY',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 #----------------------
 
@@ -445,7 +445,7 @@ BNON_MOY=POST_ELEM(NUME_ORDRE=(1,2,3,4),
               RICE_TRACEY=_F(LOCAL='NON',
                              GROUP_MA='CYL',
                              OPTION='SIGM_ELMOY',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 #----------------------
@@ -455,7 +455,7 @@ CNON_MOY=POST_ELEM(NUME_ORDRE=(1,2,3,4),
                              MAILLE=('M1','M2','M3','M4','M5','M6','M7',
                                      'M8','M9','M10','M11','M12','M13','M14'),
                              OPTION='SIGM_ELMOY',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 #--------------------------------------------------
@@ -469,7 +469,7 @@ DNON_ELG=POST_ELEM(NUME_ORDRE=(1,2,3,4),
               RICE_TRACEY=_F(LOCAL='NON',
                              TOUT='OUI',
                              OPTION='SIGM_ELGA',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 #----------------------
@@ -478,7 +478,7 @@ ENON_ELG=POST_ELEM(NUME_ORDRE=(1,2,3,4),
               RICE_TRACEY=_F(LOCAL='NON',
                              GROUP_MA='CYL',
                              OPTION='SIGM_ELGA',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 
 #----------------------
@@ -488,7 +488,7 @@ FNON_ELG=POST_ELEM(NUME_ORDRE=(1,2,3,4),
                              MAILLE=('M1','M2','M3','M4','M5','M6','M7',
                                      'M8','M9','M10','M11','M12','M13','M14'),
                              OPTION='SIGM_ELGA',),
-              RESULTAT=U,);
+              RESULTAT=U,)
 
 FIN()
 #

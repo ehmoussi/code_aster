@@ -70,12 +70,13 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
 MAX_EP=POST_ELEM(
                    MINMAX=(_F(NOM_CHAM='EPSP_ELGA',RESULTAT=SOLNL,
                                 NOM_CMP=('EPXX','EPYY','EPZZ'),
-                                GROUP_MA='ALL'),
+                                GROUP_MA=('ALL','GM1','GM2',),),
                            _F(NOM_CHAM='EPSP_ELGA',RESULTAT=SOLNL,
                                 NOM_CMP=('EPXX','EPYY','EPZZ'),
                                 TOUT='OUI')     ,),)
 
 IMPR_TABLE(TABLE=MAX_EP, UNITE=6)
+
 TEST_TABLE(REFERENCE='AUTRE_ASTER',
            VALE_CALC= 9.3330808151363E-04,
            VALE_REFE=9.3330799999999999E-4,
@@ -85,6 +86,29 @@ TEST_TABLE(REFERENCE='AUTRE_ASTER',
                      VALE=5.0E-3,),
                    _F(NOM_PARA='GROUP_MA',
                      VALE_K='ALL',),
+           ),
+           )
+
+# TEST_TABLE(REFERENCE='AUTRE_ASTER',
+#            VALE_CALC= 9.3330808151363E-04,
+#            VALE_REFE=9.3330799999999999E-4,
+#            NOM_PARA='MIN_EPZZ',
+#            TABLE=MAX_EP,
+#            FILTRE=(_F(NOM_PARA='INST',
+#                      VALE=5.0E-3,),
+#                    _F(NOM_PARA='GROUP_MA',
+#                      VALE_K='UNION_GROUP_MA',),
+#            ),
+#            )
+
+TEST_TABLE(
+           VALE_CALC= 0.0021218071359128334,
+           NOM_PARA='MIN_EPZZ',
+           TABLE=MAX_EP,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=5.0E-3,),
+                   _F(NOM_PARA='GROUP_MA',
+                     VALE_K='GM1',),
            ),
            )
 
@@ -130,6 +154,48 @@ TEST_TABLE(
            NOM_PARA='MIN_DX',
            TABLE=MAX_DE2,
            )
+
+TABEP=POST_ELEM(
+                   MINMAX=(_F(NOM_CHAM='EPSP_ELGA',RESULTAT=SOLNL,
+                                NOM_CMP=('EPXX',),
+                                GROUP_MA=('GM1','GM2',)),
+                           ),)
+
+IMPR_TABLE(TABLE=TABEP, UNITE=6)
+
+TEST_TABLE(
+           VALE_CALC= -0.003948490052369693,
+           NOM_PARA='MIN_EPXX',
+           TABLE=TABEP,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=5.0E-3,),
+                   _F(NOM_PARA='GROUP_MA',
+                     VALE_K='GM1',),
+           ),
+           )
+
+
+TEST_TABLE(
+           VALE_CALC= -0.002948383677655784,
+           NOM_PARA='MIN_EPXX',
+           TABLE=TABEP,
+           FILTRE=(_F(NOM_PARA='INST',
+                     VALE=5.0E-3,),
+                   _F(NOM_PARA='GROUP_MA',
+                     VALE_K='GM2',),
+           ),
+           )
+# TEST_TABLE(
+#            VALE_CALC= -0.003948490052369693,
+#            NOM_PARA='MIN_EPXX',
+#            TABLE=TABEP,
+#            FILTRE=(_F(NOM_PARA='INST',
+#                      VALE=5.0E-3,),
+#                    _F(NOM_PARA='GROUP_MA',
+#                      VALE_K='UNION_GROUP_MA',),
+#            ),
+#            )
+
 
 #####################################################################
 # Calcul des moyennes
@@ -246,16 +312,13 @@ INT3EPX=POST_ELEM(  RESULTAT=SOLNL,
 
 # --------  VALIDATION DE POST_ELEM/INTEGRALE SUR N GROUPES correction issue20129
 
-ng=10
-prefix='GM'
-intesig = {}
-intesig['INTEGRALE'] = []
-for IP in range (ng):
-   intesig['INTEGRALE'].append(_F(NOM_CHAM='SIEF_ELGA', NOM_CMP=('SIXX','SIYY','SIZZ'),
-                                                        TYPE_MAILLE='3D',
-                                                        GROUP_MA=prefix+str(IP+1)))
 
-INSIG=POST_ELEM(MODELE=TROISD,RESULTAT=SOLNL, **intesig)
+INSIG=POST_ELEM(MODELE=TROISD,RESULTAT=SOLNL,
+                INTEGRALE=_F(GROUP_MA=("GM1","GM2","GM3","GM4", "GM5", "GM6",
+                                       "GM7","GM8","GM9","GM10"),
+                                NOM_CHAM='SIEF_ELGA',
+                                NOM_CMP=('SIXX', 'SIYY', 'SIZZ'),
+                                TYPE_MAILLE='3D',))
 
 # la table contient tous les instants et tous les grains
 

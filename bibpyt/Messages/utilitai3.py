@@ -88,10 +88,6 @@ Contactez le support technique.
  problème maillage <-> modèle
 """),
 
-
-
-
-
     21 : _("""
  maillage et modèle incohérents.
 """),
@@ -205,10 +201,6 @@ L'opération  %(k1)s est incompatible avec TYPE_CHAM %(k2)s
  de torsion doit être égal a 1.
 """),
 
-
-
-
-
     53 : _("""
  La table "CARA_GEOM" n'existe pas.
 """),
@@ -299,11 +291,6 @@ L'opération  %(k1)s est incompatible avec TYPE_CHAM %(k2)s
  on attend un résultat de type "EVOL_NOLI" ou "EVOL_ELAS".
 """),
 
-
-
-
-
-
     79 : _("""
  Le résultat  %(k1)s  doit comporter un champ de variables internes au numéro
  d'ordre  %(k2)s  .
@@ -330,22 +317,6 @@ L'opération  %(k1)s est incompatible avec TYPE_CHAM %(k2)s
  on attend un concept "EVOL_NOLI"
 """),
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     89 : _("""
  les 2 nuages : %(k1)s  et  %(k2)s  doivent avoir le même nombre de coordonnées.
 """),
@@ -358,14 +329,8 @@ L'opération  %(k1)s est incompatible avec TYPE_CHAM %(k2)s
  il manque des composantes sur :  %(k1)s
 """),
 
-
-
     93 : _("""
  seuls les types "réel" et "complexe" sont autorises.
-"""),
-
-    94 : _("""
- MINMAX est toujours calculé sur TOUT le modèle pour les champs aux noeuds.
 """),
 
 }
