@@ -417,7 +417,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
             return ConstantFieldOnZone( _FEDesc );
         else if ( code == 2 ) {
             const auto numGrp = ( *_descriptor )[4 + 2 * position];
-            const auto &map = _mesh->getGroupOfNodesNames();
+            const auto &map = _mesh->getGroupsOfNodesMap();
             const auto name = map->findStringOfElement( numGrp );
             return ConstantFieldOnZone( _mesh, GroupOfCellsPtr( new GroupOfCells( name ) ) );
         } else if ( code == 3 ) {

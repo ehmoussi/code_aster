@@ -50,12 +50,45 @@ Glossary
 Mesh object
 -----------
 
+Terms for the :py:class:`~code_aster.Objects.Mesh` object:
+
 - *mesh* for a mesh.
 - *node* for a node.
 - *cell* for an element of the mesh.
 - *GroupOfNodes* for a group of nodes, named with at most 24 chars.
 - *GroupOfCells* for a group of cells, named with at most 24 chars.
 - *Connectivity* for the mesh connectivity.
-- A boolean argument named *local* is added when methods may work on the local part
-  of a *ParallelMesh* (that belongs to each MPI process, *local=True*)
-  or on the global mesh (*local=False*).
+- For a *ParallelMesh*, an additional boolean argument named *local* allows to work
+  on the local part (that belongs to each MPI process, *local=True*) or on the
+  global mesh (*local=False*).
+
+
+Méthodes:
+
+mesh.isParallel() => drapeau pour savoir si le maillage est parallèle ou perpendiculaire
+
+mesh.getDimension() => renvoie la "vraie" dimension géométrique (2 ou 3)
+
+mesh.getNumberOfNodes(local=True/False) => renvoie le nombre de noeuds (on peut récupérer à partir de getConnectivity)
+
+mesh.getNumberOfCells(local=True/False) => renvoie le nombre de cellules (on peut récupérer à partir de getConnectivity)
+
+mesh.getCoordinates() => renvoie un MeshCoordinatesField (CHAM_NO spécifique pour éviter les références circulaires)
+                         => MeshCoordinatesFields.getValues() renvoie une <list(list)>
+                             nb Lignes: nombre de noeuds (2 ou 3 valeurs par ligne)
+mesh.getConnectivity() => renvoie une <list(list)>
+                             chaque "ligne" = une cellule, longueur = nombre de noeuds de cette cellule
+
+mesh.getGroupsOfNodes(local=True/False) => renvoie une <list> des noms des GROUP_NO
+
+mesh.getGroupsOfCells(local=True/False) => renvoie une <list> des noms des GROUP_MA
+
+mesh.getNodes(groupName, local=True/False) => renvoie une <list> d'entiers indexant les noeuds dans le maillage
+
+mesh.getCells(groupName, local=True/False) => renvoie une <list> d'entiers indexant les cellules dans le maillage
+
+Exemples: récupérer les coordonnées des noeuds
+mesh.getCoordinates().getValues()
+
+A supprimer:
+hasGroupOfNodes et hasGroupOfCells

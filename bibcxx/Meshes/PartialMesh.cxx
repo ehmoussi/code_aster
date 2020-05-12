@@ -55,7 +55,7 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
     {
         if( mesh->hasLocalGroupOfNodes( nameOfGrp ) )
         {
-            const auto& grp = mesh->getGroupOfNodes( nameOfGrp );
+            const auto& grp = mesh->getGroupOfNodesObject( nameOfGrp );
             const int nbNodesGrp = grp.size();
             VectorLong toSendGrp;
             for( int pos = 0; pos < nbNodesGrp; ++pos )

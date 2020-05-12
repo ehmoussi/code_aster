@@ -28,7 +28,25 @@ Example
 Documentation of functions arguments is using the *Google Style* supported
 by the `sphinx-napoleon`_ extension.
 
-As an example, this description of :py:func:`~help_doc.my_function`:
+This style is used in C++/Python bindings, for example, see the documentation of
+:py:func:`code_aster.Objects.Formula.evaluate` which is generated from the
+source file :file:`FormulaInterface.cxx`:
+
+.. code-block:: c++
+
+            .def( "evaluate", &FormulaClass::evaluate, R"(
+    Evaluate the formula with the given variables values.
+
+    Arguments:
+        val (list[float]): List of the values of the variables.
+
+    Returns:
+        float/complex: Value of the formula for these values.
+            )",
+                ( py::arg( "self" ), py::arg( "*val" ) ) )
+
+
+As an example for pure Python function, this description of :py:func:`~help_doc.my_function`:
 
 .. automodule:: help_doc
    :members:

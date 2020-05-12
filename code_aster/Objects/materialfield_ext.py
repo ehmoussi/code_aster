@@ -57,7 +57,7 @@ class ExtendedMaterialField(object):
                 partState.extend([0, names])
             elif type is EntityType.GroupOfCellsType:
                 partState.extend([1, names])
-            elif type is EntityType.ElementType:
+            elif type is EntityType.CellType:
                 partState.extend([2, names])
             else:
                 assert False
@@ -90,7 +90,7 @@ class ExtendedMaterialField(object):
                     elif state[i] == 1:
                         type = EntityType.GroupOfCellsType
                     elif state[i] == 2:
-                        type = EntityType.ElementType
+                        type = EntityType.CellType
                     else:
                         assert False
                 if i == endMater + 2:
@@ -99,7 +99,7 @@ class ExtendedMaterialField(object):
                         self.addMaterialsOnAllMesh(listOfMater)
                     elif type is EntityType.GroupOfCellsType:
                         self.addMaterialsOnGroupOfCells(listOfMater, names)
-                    elif type is EntityType.ElementType:
+                    elif type is EntityType.CellType:
                         self.addMaterialsOnElement(listOfMater, names)
                     searchForSize = True
                     endMater = 0
