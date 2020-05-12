@@ -88,6 +88,7 @@ Contents
     devguide/datastructures
     devguide/boost
     devguide/supervis
+    devguide/naming-conventions
     devguide/utilities
     devguide/debugging
 

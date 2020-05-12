@@ -5,18 +5,6 @@ Recommendations / howto
 ***********************
 
 
-Members naming conventions
-==========================
-
-.. todo::
-    Start a glossary for members names.
-
-Reuse existing names in newly created objects. Have a look to the :ref:`genindex` page
-should give some ideas.
-
-One can also search for names in the :ref:`devguide-objects_datastructure` page.
-
-
 Definitions ``.h`` vs Implementation ``.cxx``
 =============================================
 
