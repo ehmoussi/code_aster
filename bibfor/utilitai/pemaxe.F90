@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine pemaxe(resu, nomcha, lieu, nomlie, modele,&
                   chpost, nbcmp, nomcmp, nuord, inst,&
-                  iocc)
+                  nbmail, numemail)
 !
     implicit none
 !
@@ -44,10 +44,10 @@ subroutine pemaxe(resu, nomcha, lieu, nomlie, modele,&
 #include "asterfort/tbexip.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: nbcmp, nuord, iocc
-    character(len=8) :: nomcmp(nbcmp), modele, nomlie, lieu
+    integer :: nbcmp, nuord, nbmail, numemail(*)
+    character(len=8) :: nomcmp(nbcmp), modele, lieu
     character(len=19) :: chpost, resu
-    character(len=24) :: nomcha
+    character(len=24) :: nomcha, nomlie
 !
 !
 !     OPERATEUR   POST_ELEM
@@ -69,59 +69,51 @@ subroutine pemaxe(resu, nomcha, lieu, nomlie, modele,&
 !     IN  NUORD   : NUMERO D'ORDRE
 !     IN  INST    : INSTANT
 !     IN  IOCC    : NUMERO DE L'OCCURENCE
+!     IN  NBAMIL  : NOMBRE DE MAILLE DE LA LISTE A TRAITER
+!     IN  NUMEMAIL : NUMERO DES MAILLES A TRAITER
 !     ------------------------------------------------------------------
 !
-    integer :: nbma, nbmai, i, jcesl, jcesd
-    integer :: nucmp, jcmpgd, ncmpm, iad, indma
-    integer :: jmesma, ipt, nbsp, nbpt, icmp, ima, nbpara, nbno
+    integer :: nbma, i, jcesl, jcesd
+    integer :: nucmp, jcmpgd, ncmpm, iad
+    integer :: ipt, nbsp, nbpt, icmp, ima, nbpara
     integer :: nmin, nmax, npara, pmax, pmin
     real(kind=8) :: vmin, vmax, inst
     complex(kind=8) :: cbid
-    character(len=8) :: noma, k8b, typmcl(2), nomgd, nomva, knmin, knmax
-    character(len=16) :: motcle(2)
-    character(len=19) :: ligrel, cesout
-    character(len=24) :: mesmai, nommai
+    character(len=8) :: noma, k8b, nomgd, nomva, knmin, knmax
+    character(len=19) :: cesout
+    character(len=24) :: nommai
     aster_logical :: exist
 ! Tableaux automatiques F90
     real(kind=8) :: mima(2*nbcmp+2)
-    character(len=16) :: nompar(6*nbcmp+5), mamax(2*nbcmp+3)
+    character(len=24) :: nompar(6*nbcmp+5), mamax(2*nbcmp+3)
     integer :: ptmax(1+2*nbcmp)
     character(len=8), pointer :: cesk(:) => null()
     real(kind=8), pointer :: cesv(:) => null()
+    integer, pointer :: list_ma(:) => null()
 !
     call jemarq()
 !
     cbid=(0.d0,0.d0)
-    call dismoi('NOM_LIGREL', modele, 'MODELE', repk=ligrel)
     call dismoi('NOM_MAILLA', modele, 'MODELE', repk=noma)
     call dismoi('NB_MA_MAILLA', noma, 'MAILLAGE', repi=nbma)
-    call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbno)
 !
-    nommai = noma//'.NOMMAI         '
+    nommai = noma//'.NOMMAI'
 !
 ! --- CREATION D'UN TABLEAU D'INDICES POUR REPERER
 !     LES MAILLES DU POST TRAITEMENT
-    call wkvect('&&PEMAXC_IND.MAILLE', 'V V I', nbma, indma)
-    if (lieu(1:4) .ne. 'TOUT') then
-        mesmai = '&&PEMAXC_NUM.MAILLE'
-        motcle(1) = 'GROUP_MA'
-        typmcl(1) = 'GROUP_MA'
-        call reliem(' ', noma, 'NU_MAILLE', 'MINMAX', iocc,&
-                    1, motcle, typmcl, mesmai, nbmai)
-        call jeveuo(mesmai, 'L', jmesma)
-        do i = 1, nbma
-            zi(indma+i-1)=0
+    call wkvect('&&PEMAXC_IND.MAILLE', 'V V I', nbma, vi=list_ma)
+    if (lieu == 'GROUP_MA') then
+        list_ma(:) = 0
+        do i = 1, nbmail
+            list_ma(numemail(i)) = 1
         end do
-        do i = 1, nbmai
-            zi(indma+zi(jmesma+i-1)-1)=1
-        end do
+    elseif (lieu == 'TOUT') then
+        list_ma(:) = 1
     else
-        do i = 1, nbma
-            zi(indma+i-1)=1
-        end do
+        ASSERT(ASTER_FALSE)
     endif
 !
-    nompar(1)  ='CHAMP_GD'
+    nompar(1)='CHAMP_GD'
     nompar(2)='NUME_ORDRE'
     nompar(3)='INST'
     nompar(4)=lieu
@@ -131,7 +123,7 @@ subroutine pemaxe(resu, nomcha, lieu, nomlie, modele,&
 !
     call tbexip(resu, lieu, exist, k8b)
     if (.not.exist) then
-        call tbajpa(resu, 1, nompar(4), 'K16')
+        call tbajpa(resu, 1, nompar(4), 'K24')
     endif
 !
 ! --- CALCULS DES CHAMPS SIMPLES:
@@ -165,27 +157,27 @@ subroutine pemaxe(resu, nomcha, lieu, nomlie, modele,&
         vmax=-r8maem()
 !
         do ima = 1, nbma
-            if (zi(indma+ima-1) .ne. 1) goto 35
-            nbpt=zi(jcesd-1+5+4*(ima-1)+1)
-            nbsp=zi(jcesd-1+5+4*(ima-1)+2)
-            ASSERT(nbsp.eq.1)
-            do ipt = 1, nbpt
-                call cesexi('C', jcesd, jcesl, ima, ipt,&
-                            1, nucmp, iad)
-                if (iad .gt. 0) then
-                    if (vmax .lt. cesv(iad)) then
-                        vmax=cesv(iad)
-                        nmax=ima
-                        pmax=ipt
+            if (list_ma(ima) == 1) then
+                nbpt=zi(jcesd-1+5+4*(ima-1)+1)
+                nbsp=zi(jcesd-1+5+4*(ima-1)+2)
+                ASSERT(nbsp.eq.1)
+                do ipt = 1, nbpt
+                    call cesexi('C', jcesd, jcesl, ima, ipt,&
+                                1, nucmp, iad)
+                    if (iad .gt. 0) then
+                        if (vmax .lt. cesv(iad)) then
+                            vmax=cesv(iad)
+                            nmax=ima
+                            pmax=ipt
+                        endif
+                        if (vmin .gt. cesv(iad)) then
+                            vmin=cesv(iad)
+                            nmin=ima
+                            pmin=ipt
+                        endif
                     endif
-                    if (vmin .gt. cesv(iad)) then
-                        vmin=cesv(iad)
-                        nmin=ima
-                        pmin=ipt
-                    endif
-                endif
-            end do
- 35         continue
+                end do
+            endif
         end do
 !
         nompar(4+6*(icmp-1)+1)='MAX_'//nomcmp(icmp)

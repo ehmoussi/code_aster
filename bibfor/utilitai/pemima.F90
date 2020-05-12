@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,18 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/getvem.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
@@ -39,9 +44,10 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
 #include "asterfort/rsutnu.h"
 #include "asterfort/tbajpa.h"
 #include "asterfort/tbcrsd.h"
+!#include "asterfort/umalma.h"
+#include "asterfort/utmess.h"
+#include "asterfort/uttrii.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
 !
     integer :: nbocc, indch
     character(len=8) :: modele
@@ -51,22 +57,25 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
 !     TRAITEMENT DU MOT CLE-FACTEUR "MINMAX"
 !     ------------------------------------------------------------------
 !
-    integer :: iret, nbcmp, nzero, nbordr, iocc, jnuma, nbma
+    integer :: iret, nbcmp, nzero, nbordr, iocc, nbma
     integer :: n1, nr, np, nc, ni, no, jno, jin, numo, tord(1)
-    integer :: nbgma, jgma, nma, igm, nbpar, nn, inum, nli, nlo
+    integer :: nbgma, igm, nbpar, nn, inum, nli, nlo, iarg
     parameter(nzero=0,nbpar=3)
     real(kind=8) :: prec, inst
     complex(kind=8) :: cbid
     character(len=8) :: k8b, kbid, mailla, resuco, crit, tych
-    character(len=8) :: nomgd, tout, grpma, typpar(nbpar)
-    parameter(tout='TOUT',grpma='GROUP_MA')
-    character(len=16) :: nompar(nbpar)
+    character(len=8) :: nomgd
+    character(len=8), parameter :: typpar(nbpar) = ['K16','I  ','R  ']
+    character(len=8), parameter :: tout='TOUT', grpma='GROUP_MA'
+!    character(len=24), parameter :: union='UNION_GROUP_MA'
+    character(len=16), parameter :: nompar(nbpar) = ['CHAMP_GD  ','NUME_ORDRE','INST      ']
     character(len=19) :: knum, cham, kins, lisins
-    character(len=24) :: nomcha
+    character(len=24) :: nomcha, nomlieu
     aster_logical :: exiord
     character(len=8), pointer :: cmp(:) => null()
-    data nompar/'CHAMP_GD','NUME_ORDRE','INST'/
-    data typpar/'K16','I','R'/
+    character(len=24), pointer :: v_gma(:) => null()
+    integer, pointer :: v_lma(:) => null()
+!    integer, pointer :: v_allma(:) => null()
 !     ------------------------------------------------------------------
 !
     call jemarq()
@@ -158,73 +167,87 @@ subroutine pemima(indch, chamgd, resu, modele, nbocc)
                 else
                     inst=zr(jin+inum-1)
                     call rsorac(resuco, 'INST', 0, zr(jin+inum-1), kbid,&
-                                cbid, prec, crit, tord, nbordr,&
-                                iret)
+                                cbid, prec, crit, tord, nbordr, iret)
                     numo=tord(1)
                 endif
 !
 !             --- CHAMP DU POST-TRAITEMENT
                 call getvtx('MINMAX', 'NOM_CHAM', iocc=iocc, scal=nomcha, nbret=iret)
-                call rsexch(' ', resuco, nomcha, numo, cham,&
-                            iret)
+                call rsexch(' ', resuco, nomcha, numo, cham, iret)
             else
-                cham=chamgd
+                cham=chamgd(1:19)
                 nomcha=chamgd
                 numo=0
                 inst=0.d0
             endif
 !
-            call dismoi('TYPE_CHAMP', cham, 'CHAMP', repk=tych, arret='C',&
-                        ier=iret)
+            call dismoi('TYPE_CHAMP', cham, 'CHAMP', repk=tych, arret='C', ier=iret)
 !
-            call dismoi('NOM_GD', cham, 'CHAMP', repk=nomgd, arret='C',&
-                        ier=iret)
+            call dismoi('NOM_GD', cham, 'CHAMP', repk=nomgd, arret='C', ier=iret)
             if (nomgd(6:6) .eq. 'C') goto 10
 !
 !         --- COMPOSANTES DU POST-TRAITEMENT
-            call getvtx('MINMAX', 'NOM_CMP', iocc=iocc, nbval=nzero, vect=k8b,&
-                        nbret=nbcmp)
+            call getvtx('MINMAX', 'NOM_CMP', iocc=iocc, nbval=nzero, vect=k8b, nbret=nbcmp)
             nbcmp=-nbcmp
             AS_ALLOCATE(vk8=cmp, size=nbcmp)
-            call getvtx('MINMAX', 'NOM_CMP', iocc=iocc, nbval=nbcmp, vect=cmp,&
-                        nbret=iret)
+            call getvtx('MINMAX', 'NOM_CMP', iocc=iocc, nbval=nbcmp, vect=cmp, nbret=iret)
 !
 !         --- CALCUL ET STOCKAGE DES MINMAX : MOT-CLE 'TOUT'
 !
-            call getvtx('MINMAX', 'TOUT', iocc=iocc, nbval=nzero, vect=k8b,&
-                        nbret=iret)
+            call getvtx('MINMAX', 'TOUT', iocc=iocc, nbval=nzero, vect=k8b, nbret=iret)
             if (iret .ne. 0) then
+                nomlieu = 'TOUT'
                 if (tych(1:2) .eq. 'EL') then
-                    call pemaxe(resu, nomcha, tout, tout, modele,&
-                                cham, nbcmp, cmp, numo, inst,&
-                                iocc)
+                    call pemaxe(resu, nomcha, tout, nomlieu, modele,&
+                                cham, nbcmp, cmp, numo, inst, 0, v_lma)
                 else
-                    call pemaxn(resu, nomcha, tout, tout, modele,&
-                                cham, nbcmp, cmp, numo, inst)
+                    call pemaxn(resu, nomcha, tout, nomlieu, modele,&
+                                cham, nbcmp, cmp, numo, inst, 0, v_lma)
                 endif
             endif
 !
 !         --- CALCUL ET STOCKAGE DES MOYENNES : MOT-CLE 'GROUP_MA'
-            call getvtx('MINMAX', 'GROUP_MA', iocc=iocc, nbval=nzero, vect=k8b,&
-                        nbret=n1)
-            if (n1 .ne. 0) then
-                nbgma=-n1
-                call wkvect('&&PEMIMA_GMA', 'V V K8', nbgma, jgma)
-                call getvtx('MINMAX', 'GROUP_MA', iocc=iocc, nbval=nbgma, vect=zk8(jgma),&
-                            nbret=n1)
+            call getvem(mailla, 'GROUP_MA', 'MINMAX', 'GROUP_MA', iocc,&
+                    iarg, 0, k8b, n1)
+            nbgma=-n1
+            if (nbgma > 0) then
+                call wkvect('&&PEMIMA_GMA', 'V V K24', nbgma, vk24=v_gma)
+                call getvem(mailla, 'GROUP_MA', 'MINMAX', 'GROUP_MA', iocc,&
+                        iarg, nbgma, v_gma, n1)
                 do igm = 1, nbgma
-                    call jelira(jexnom(mailla//'.GROUPEMA', zk8(jgma+ igm-1)), 'LONMAX', nma,&
-                                k8b)
-                    call jeveuo(jexnom(mailla//'.GROUPEMA', zk8(jgma+ igm-1)), 'L', jnuma)
-                    if (tych(1:2) .eq. 'EL') then
-                        call pemaxe(resu, nomcha, grpma, zk8(jgma+igm-1), modele,&
-                                    cham, nbcmp, cmp, numo, inst,&
-                                    iocc)
-                    else
-                        call pemaxn(resu, nomcha, grpma, zk8(jgma+igm-1), modele,&
-                                    cham, nbcmp, cmp, numo, inst)
+                    call jeexin(jexnom(mailla//'.GROUPEMA', v_gma(igm)), iret)
+                    if (iret .eq. 0) then
+                        call utmess('A', 'UTILITAI3_46', sk=v_gma(igm))
+                        goto 30
                     endif
+                    call jelira(jexnom(mailla//'.GROUPEMA', v_gma(igm)), 'LONUTI', nbma)
+                    if (nbma .eq. 0) then
+                        call utmess('A', 'UTILITAI3_47', sk=v_gma(igm))
+                        goto 30
+                    endif
+                    call jeveuo(jexnom(mailla//'.GROUPEMA', v_gma(igm)), 'L', vi=v_lma)
+                    if (tych(1:2) .eq. 'EL') then
+                        call pemaxe(resu, nomcha, grpma, v_gma(igm), modele,&
+                                    cham, nbcmp, cmp, numo, inst, nbma, v_lma)
+                    else
+                        call pemaxn(resu, nomcha, grpma, v_gma(igm), modele,&
+                                    cham, nbcmp, cmp, numo, inst, nbma, v_lma)
+                    endif
+30 continue
                 end do
+!
+! --- UNION
+!                 call umalma(mailla, v_gma, nbgma, v_allma, nbtot)
+!                 ASSERT(nbtot>0)
+!                 if (tych(1:2) .eq. 'EL') then
+!                     call pemaxe(resu, nomcha, grpma, union, modele,&
+!                                 cham, nbcmp, cmp, numo, inst, nbtot, v_allma)
+!                 else
+!                     call pemaxn(resu, nomcha, grpma, union, modele,&
+!                                 cham, nbcmp, cmp, numo, inst, nbtot, v_allma)
+!                 endif
+! !
+!                 AS_DEALLOCATE(vi=v_allma)
                 call jedetr('&&PEMIMA_GMA')
             endif
 !

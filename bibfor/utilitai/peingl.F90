@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,8 @@ subroutine peingl(resu, modele, mate, cara, nh,&
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 #include "asterfort/gettco.h"
 #include "asterc/r8prem.h"
 #include "asterfort/alchml.h"
@@ -179,26 +181,23 @@ subroutine peingl(resu, modele, mate, cara, nh,&
     integer :: nbparr, nr, np, nc, iret, jord, nbordr, jins, iord, iainst, numord, nbin, nt, nm
     integer :: ng, nbgrma, jgr, ig, nbma, jad, nbmail, jma, im, iocc, nume, nbout, numorm
     integer :: ngdmax, ncmpmx, igd, idebgd, dg, ima, iconex, nbno, nec, ivari
-    integer :: i
-    real(kind=8) :: work(5), indic1, volume, inst, valr(6), zero, prec, energi
+    integer :: i, nbgrma_tot, deca, iarg
+    real(kind=8) :: work(5), indic1, volume, inst, valr(6), zero, prec
+    real(kind=8) :: energy_tout, energy_ma
     complex(kind=8) :: c16b
     character(len=2) :: codret
     character(len=8) :: resul, crit, noma, nommai, vk8(2), kiordm
-    character(len=8) :: kiord, k8b, lpain(14), lpaout(2), typarr(9)
-    character(len=8) :: nomgd
+    character(len=8) :: kiord, k8b, lpain(14), lpaout(2), typarr(9), nomgd
     character(len=16) :: typres, motfac, noparr(9), ligrmo, compt, option
-    character(len=19) :: knum, ligrel, kins, compor
-    character(len=19) :: chvarc, chvref
+    character(len=19) :: knum, ligrel, kins, compor,chvarc, chvref
     character(len=24) :: chgeom, chcara(18), chharm, chvari, chdepl
-    character(len=24) :: vk24(2), nomgrm
-    character(len=24) :: chsig, lchin(14), lchout(2)
-    character(len=24) :: mlggma, mlgnma
-    character(len=24) :: chsigm, chdepm, chbid
+    character(len=24) :: vk24(2), nomgrm, chsig, lchin(14), lchout(2)
+    character(len=24) :: mlggma, mlgnma, chsigm, chdepm, chbid
     aster_logical :: evol
-    integer :: iarg
     integer, pointer :: ptma(:) => null()
     integer, pointer :: desc(:) => null()
     character(len=16), pointer :: vale(:) => null()
+    real(kind=8), pointer :: energy_grpma(:) => null()
 !
     integer :: nfiss
     aster_logical :: lxfem
@@ -243,13 +242,30 @@ subroutine peingl(resu, modele, mate, cara, nh,&
             option='ENER_TOTALE'
         endif
     endif
-    energi = zero
     do i = 1, 5
         work(i)=0.d0
     end do
     do i = 1, 6
         valr(i)=0.d0
     end do
+!
+    nbgrma_tot = 1
+    if(motfac(1:5) == 'ENER_') then
+        call dismoi('NOM_MAILLA', modele, 'MODELE', repk=noma)
+        do iocc = 1, nbocc
+            call getvem(noma, 'GROUP_MA', motfac, 'GROUP_MA', iocc,&
+                            iarg, 0, k8b, ng)
+            if(ng <0) then
+                nbgrma_tot = nbgrma_tot - ng
+            end if
+        end do
+    else
+        nbgrma_tot = nbgrma_tot + 1
+    end if
+    AS_ALLOCATE(vr=energy_grpma, size=nbgrma_tot)
+    energy_tout = 0.d0
+    energy_ma = 0.0
+    energy_grpma(:) = 0.d0
 !
 ! --- RECUPERATION DU RESULTAT A TRAITER :
 !     ----------------------------------
@@ -550,6 +566,9 @@ subroutine peingl(resu, modele, mate, cara, nh,&
 ! ---  BOUCLE SUR LES OCCURENCES DU MOT-CLE INDIC_ENER :
 !      -----------------------------------------------
         do iocc = 1, nbocc
+            work(:) = 0.d0
+            valr(2:6) = 0.d0
+            deca = 0
 !
 ! ---   RECUPERATION DES MAILLES POUR LESQUELLES ON VA CALCULER
 ! ---   L'INDICATEUR :
@@ -607,14 +626,14 @@ subroutine peingl(resu, modele, mate, cara, nh,&
                     if ((compt(1:9).ne.'VMIS_ISOT') .and. (compt(1:4) .ne.'ELAS') .and.&
                         (motfac .ne. 'ENER_ELAS' .and. motfac .ne. 'ENER_ELTR') .and. &
                         (motfac.ne.'ENER_DISS')) then
-                        energi = energi + work(1)
+                        energy_tout = energy_tout + work(1)
                     else
-                        energi = work(1)
+                        energy_tout = work(1)
                     endif
 !
                     vk8(1) = noma
                     vk8(2) = 'TOUT'
-                    valr(2) = energi
+                    valr(2) = energy_tout
                     if (motfac.eq.'ENER_ELAS' .or. motfac.eq.'ENER_ELTR' .or.&
                         motfac.eq.'ENER_TOTALE') then
                         valr(3) = work(2)
@@ -695,6 +714,8 @@ subroutine peingl(resu, modele, mate, cara, nh,&
 ! ---          SOMMATION DE L'ENERGIE ( ELASTIQUE OU TOTALE)
 ! ---          SUR LE MODELE :
 !              -------------
+                        deca = deca + 1
+                        ASSERT(deca < nbgrma_tot)
                         if (motfac .eq. 'ENER_TOTALE' .or. motfac.eq.'ENER_DISS') then
                             call mesomm(lchout(1), 1, vr=work(1), nbma=nbma, linuma=zi(jad))
                         else
@@ -708,13 +729,13 @@ subroutine peingl(resu, modele, mate, cara, nh,&
                             (motfac .ne.'ENER_ELAS' .and. motfac .ne. 'ENER_ELTR') .and.&
                             (motfac.ne.'ENER_DISS')) then
 !
-                            energi = energi + work(1)
+                            energy_grpma(deca) = energy_grpma(deca) + work(1)
                         else
-                            energi = work(1)
+                            energy_grpma(deca) = work(1)
                         endif
 !
                         vk24(1) = nomgrm
-                        valr(2) = energi
+                        valr(2) = energy_grpma(deca)
                         if (motfac.eq.'ENER_ELAS' .or. motfac.eq.'ENER_ELTR' .or.&
                             motfac.eq.'ENER_TOTALE') then
                             valr(3) = work(2)
@@ -805,12 +826,13 @@ subroutine peingl(resu, modele, mate, cara, nh,&
                         if ((compt(1:9).ne.'VMIS_ISOT') .and. (compt( 1:4).ne.'ELAS') .and.&
                             (motfac .ne.'ENER_ELAS' .and. motfac.ne.'ENER_ELTR')) then
 !
-                            energi = energi + work(1)
+                            ASSERT(nbmail == 1)
+                            energy_ma = energy_ma + work(1)
                         else
-                            energi = work(1)
+                            energy_ma = work(1)
                         endif
 !
-                        valr(2) = energi
+                        valr(2) = energy_ma
                         vk8(1) = nommai
                         if (motfac.eq.'ENER_ELAS' .or. motfac.eq.'ENER_ELTR' .or.&
                             motfac.eq.'ENER_TOTALE') then
@@ -855,5 +877,6 @@ subroutine peingl(resu, modele, mate, cara, nh,&
     endif
 !
  80 continue
+    AS_DEALLOCATE(vr=energy_grpma)
     call jedema()
 end subroutine

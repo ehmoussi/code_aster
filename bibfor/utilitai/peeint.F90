@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ subroutine peeint(resu, modele, nbocc)
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
+#include "asterfort/jeexin.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jenonu.h"
 #include "asterfort/jeveuo.h"
@@ -68,7 +69,7 @@ subroutine peeint(resu, modele, nbocc)
 !     TRAITEMENT DU MOT CLE-FACTEUR "INTEGRALE"
 !     ------------------------------------------------------------------
 !
-    integer :: iret, nbcmp, nzero, ibid, nbordr, iocc, jnuma, nbma, ncmpm
+    integer :: iret, nbcmp, nzero, ibid, nbordr, iocc, nbma, ncmpm
     integer :: jcmp, n1, numa, nr, np, nc, im, ni, no, jno, jin, numo, i, ivari
     integer :: nbgma, jgma, nma, jma, igm, nbpa1, nbpa2, nn, inum, nli, nlo
     integer :: nd, ib, nucmp, tord(1)
@@ -95,6 +96,8 @@ subroutine peeint(resu, modele, nbocc)
     character(len=8), pointer :: cmp2(:) => null()
     character(len=8), pointer :: cmp_init(:) => null()
     character(len=8), pointer :: cnsc(:) => null()
+    integer, pointer :: v_lma(:) => null()
+
 
     data nompa1/'NOM_CHAM','NUME_ORDRE','INST','VOL'/
     data typpa1/'K16','I','R','R'/
@@ -374,9 +377,15 @@ subroutine peeint(resu, modele, nbocc)
             call getvtx('INTEGRALE', 'TOUT', iocc=iocc, nbval=nzero, vect=k8b,&
                         nbret=iret)
             if (iret .ne. 0) then
-                call peecal(tych, resu, nomcha, tout, tout,&
+                call dismoi('NB_MA_MAILLA', mailla, 'MAILLAGE', repi=nbma)
+                call wkvect('&&PEEINT_AMA', 'V V I', nbma, vi=v_lma)
+                do im =1, nbma
+                    v_lma(im) = im
+                end do
+                call peecal(tych, resu, nomcha, tout, tout, v_lma, nbma,&
                             modele, nr, cham, nbcmp, zk8(jcmp),&
                             cmp_init, numo, inst, iocc, ligrel, cespoi)
+                call jedetr('&&PEEINT_AMA')
             endif
 !
 !         --- CALCUL ET STOCKAGE DES MOYENNES : MOT-CLE 'GROUP_MA'
@@ -388,14 +397,25 @@ subroutine peeint(resu, modele, nbocc)
                 call getvtx('INTEGRALE', 'GROUP_MA', iocc=iocc, nbval=nbgma, vect=zk24(jgma),&
                             nbret=n1)
                 do igm = 1, nbgma
-                    call jelira(jexnom(mailla//'.GROUPEMA', zk24(jgma+ igm-1)), 'LONMAX', nma,&
-                                k8b)
-                    call jeveuo(jexnom(mailla//'.GROUPEMA', zk24(jgma+ igm-1)), 'L', jnuma)
-                    call peecal(tych, resu, nomcha, grpma, zk24(jgma+igm- 1),&
+                    call jeexin(jexnom(mailla//'.GROUPEMA', zk24(jgma+igm- 1)), iret)
+                    if (iret .eq. 0) then
+                        call utmess('A', 'UTILITAI3_46', sk=zk24(jgma+igm- 1))
+                        goto 30
+                    endif
+                    call jelira(jexnom(mailla//'.GROUPEMA', zk24(jgma+igm- 1)), 'LONUTI', nbma)
+                    if (nbma .eq. 0) then
+                        call utmess('A', 'UTILITAI3_47', sk=zk24(jgma+igm- 1))
+                        goto 30
+                    endif
+                    call jeveuo(jexnom(mailla//'.GROUPEMA', zk24(jgma+igm- 1)), 'L', vi=v_lma)
+
+                    call peecal(tych, resu, nomcha, grpma, zk24(jgma+igm- 1), v_lma, nbma,&
                                 modele, nr, cham, nbcmp, zk8(jcmp),&
                                 cmp_init, numo, inst, iocc, ligrel, cespoi)
+30 continue
                 end do
                 call jedetr('&&PEEINT_GMA')
+
             endif
 !
 !         --- CALCUL ET STOCKAGE DES MOYENNES : MOT-CLE 'MAILLE'
@@ -408,8 +428,8 @@ subroutine peeint(resu, modele, nbocc)
                             nbret=n1)
                 do im = 1, nma
                     call jenonu(jexnom(mailla//'.NOMMAI', zk8(jma+im-1) ), numa)
-                    call peecal(tych, resu, nomcha, maille, zk8(jma+im-1),&
-                                modele, nr, cham, nbcmp, zk8(jcmp),&
+                    call peecal(tych, resu, nomcha, maille, zk8(jma+im-1), [numa], 1,&
+                                modele, nr, cham, nbcmp, zk8(jcmp), &
                                 cmp_init, numo, inst, iocc, ligrel, cespoi)
                 end do
                 call jedetr('&&PEEINT_MAIL')
