@@ -4,7 +4,6 @@
 /**
  * @file Mesh.h
  * @brief Fichier entete de la classe Mesh
- * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
@@ -42,7 +41,6 @@
 /**
  * @class BaseMeshClass
  * @brief Cette classe decrit un maillage Aster
- * @author Nicolas Sellenet
  */
 class BaseMeshClass : public DataStructure {
   public:
@@ -135,8 +133,8 @@ class BaseMeshClass : public DataStructure {
      * @brief Recuperation d'un groupe de noeuds
      * @return Objet de collection contenant la liste des noeuds
      */
-    const JeveuxCollectionObject< ASTERINTEGER > &getGroupOfNodes( const std::string &name ) const
-        {
+    const JeveuxCollectionObject< ASTERINTEGER > &
+    getGroupOfNodesObject( const std::string &name ) const {
         if ( _groupOfNodes->size() == -1 )
             _groupOfNodes->buildFromJeveux();
         return _groupOfNodes->getObjectFromName( name );
@@ -146,10 +144,10 @@ class BaseMeshClass : public DataStructure {
      * @brief Get all the names of group of elements
      * @return JeveuxBidirectionalMapChar24 _nameOfGrpCells
      */
-    const JeveuxBidirectionalMapChar24 &getGroupOfNodesNames() const { return _nameOfGrpCells; };
+    const JeveuxBidirectionalMapChar24 &getGroupsOfNodesMap() const { return _nameOfGrpCells; };
 
     /**
-     * @brief Recuperation du nombre de noeuds
+     * @brief Returns the number of nodes
      */
     int getNumberOfNodes() const {
         if ( isEmpty() )
@@ -157,6 +155,17 @@ class BaseMeshClass : public DataStructure {
         if ( !_dimensionInformations->updateValuePointer() )
             return 0;
         return ( *_dimensionInformations )[0];
+    };
+
+    /**
+     * @brief Returns the number of cells
+     */
+    int getNumberOfCells() const {
+        if ( isEmpty() )
+            return 0;
+        if ( !_dimensionInformations->updateValuePointer() )
+            return 0;
+        return ( *_dimensionInformations )[1];
     };
 
     /**
@@ -170,15 +179,14 @@ class BaseMeshClass : public DataStructure {
 
         const int dimGeom = ( *_dimensionInformations )[5];
 
-        if( dimGeom == 3)
-        {
+        if ( dimGeom == 3 ) {
             const std::string typeco( "MAILLAGE" );
             ASTERINTEGER repi = 0, ier = 0;
             JeveuxChar32 repk( " " );
             const std::string arret( "F" );
             const std::string questi( "DIM_GEOM" );
 
-            CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier);
+            CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier );
 
             return repi;
         }
@@ -191,7 +199,6 @@ class BaseMeshClass : public DataStructure {
      */
     virtual bool hasGroupOfCells( const std::string &name ) const {
         throw std::runtime_error( "Not allowed" );
-        return _groupOfCells->existsObject( name );
     };
 
     /**
@@ -200,7 +207,24 @@ class BaseMeshClass : public DataStructure {
      */
     virtual bool hasGroupOfNodes( const std::string &name ) const {
         throw std::runtime_error( "Not allowed" );
-        return _groupOfNodes->existsObject( name );
+    };
+
+    /**
+     * @brief Returns the names of the groups of cells
+     * @return std::vector< std::string >
+     */
+    std::vector< std::string > getGroupsOfCells() const {
+        std::vector< std::string > names;
+        return names;
+    };
+
+    /**
+     * @brief Returns the names of the groups of nodes
+     * @return std::vector< std::string >
+     */
+    std::vector< std::string > getGroupsOfNodes() const {
+        std::vector< std::string > names;
+        return names;
     };
 
     /**
@@ -231,15 +255,13 @@ class BaseMeshClass : public DataStructure {
 /**
  * @class MeshClass
  * @brief Cette classe decrit un maillage Aster
- * @author Nicolas Sellenet
  */
 class MeshClass : public BaseMeshClass {
   protected:
     /**
      * @brief Constructeur
      */
-    MeshClass( const std::string name, const std::string type )
-        : BaseMeshClass( name, type ){};
+    MeshClass( const std::string name, const std::string type ) : BaseMeshClass( name, type ){};
 
   public:
     /**
@@ -264,8 +286,7 @@ class MeshClass : public BaseMeshClass {
      * @param vec liste des noeuds
      * @return Retourne true si tout s'est bien déroulé
      */
-    bool addGroupOfNodesFromNodes( const std::string &name,
-                                   const VectorString &vec ) ;
+    bool addGroupOfNodesFromNodes( const std::string &name, const VectorString &vec );
 
     /**
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
@@ -283,23 +304,27 @@ class MeshClass : public BaseMeshClass {
         return _groupOfNodes->existsObject( name );
     };
 
-    /**
-     * @brief Read a Aster Mesh file
-     * @return retourne true si tout est ok
-     */
-    bool readAsterMeshFile( const std::string &fileName ) ;
+    std::vector< std::string > getGroupsOfCells() const;
+
+    std::vector< std::string > getGroupsOfNodes() const;
 
     /**
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readGibiFile( const std::string &fileName ) ;
+    bool readAsterMeshFile( const std::string &fileName );
 
     /**
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readGmshFile( const std::string &fileName ) ;
+    bool readGibiFile( const std::string &fileName );
+
+    /**
+     * @brief Read a Aster Mesh file
+     * @return retourne true si tout est ok
+     */
+    bool readGmshFile( const std::string &fileName );
 };
 
 /**

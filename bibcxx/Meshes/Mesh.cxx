@@ -34,33 +34,6 @@
 #include "Supervis/ResultNaming.h"
 #include "Utilities/CapyConvertibleValue.h"
 
-bool MeshClass::addGroupOfNodesFromNodes( const std::string &name,
-                                             const VectorString &vec ) {
-    CommandSyntax cmdSt( "DEFI_GROUP" );
-    cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
-
-    CapyConvertibleContainer toCapyConverter;
-    toCapyConverter.add(
-        new CapyConvertibleValue< std::string >( false, "MAILLAGE", getName(), true ) );
-
-    CapyConvertibleContainer toCapyConverter2( "CREA_GROUP_NO" );
-    toCapyConverter2.add( new CapyConvertibleValue< VectorString >( false, "NOEUD", vec, true ) );
-    toCapyConverter2.add( new CapyConvertibleValue< std::string >( false, "NOM", name, true ) );
-
-    CapyConvertibleSyntax syntax;
-    syntax.setSimpleKeywordValues( toCapyConverter );
-    syntax.addCapyConvertibleContainer( toCapyConverter2 );
-
-    cmdSt.define( syntax );
-    try {
-        ASTERINTEGER op = 104;
-        CALL_EXECOP( &op );
-    } catch ( ... ) {
-        throw;
-    }
-    return true;
-};
-
 bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string &format ) {
     FileType type = Ascii;
     if ( format == "MED" )
@@ -119,26 +92,67 @@ bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string
     return true;
 };
 
+bool BaseMeshClass::readMedFile( const std::string &fileName ) {
+    readMeshFile( fileName, "MED" );
+
+    return true;
+};
+
+bool MeshClass::addGroupOfNodesFromNodes( const std::string &name, const VectorString &vec ) {
+    CommandSyntax cmdSt( "DEFI_GROUP" );
+    cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
+
+    CapyConvertibleContainer toCapyConverter;
+    toCapyConverter.add(
+        new CapyConvertibleValue< std::string >( false, "MAILLAGE", getName(), true ) );
+
+    CapyConvertibleContainer toCapyConverter2( "CREA_GROUP_NO" );
+    toCapyConverter2.add( new CapyConvertibleValue< VectorString >( false, "NOEUD", vec, true ) );
+    toCapyConverter2.add( new CapyConvertibleValue< std::string >( false, "NOM", name, true ) );
+
+    CapyConvertibleSyntax syntax;
+    syntax.setSimpleKeywordValues( toCapyConverter );
+    syntax.addCapyConvertibleContainer( toCapyConverter2 );
+
+    cmdSt.define( syntax );
+    try {
+        ASTERINTEGER op = 104;
+        CALL_EXECOP( &op );
+    } catch ( ... ) {
+        throw;
+    }
+    return true;
+};
+
 bool MeshClass::readAsterMeshFile( const std::string &fileName ) {
     readMeshFile( fileName, "ASTER" );
-
     return true;
 };
 
 bool MeshClass::readGibiFile( const std::string &fileName ) {
     readMeshFile( fileName, "GIBI" );
-
     return true;
 };
 
 bool MeshClass::readGmshFile( const std::string &fileName ) {
     readMeshFile( fileName, "GMSH" );
-
     return true;
 };
 
-bool BaseMeshClass::readMedFile( const std::string &fileName ) {
-    readMeshFile( fileName, "MED" );
+std::vector< std::string > MeshClass::getGroupsOfCells() const {
+    ASTERINTEGER size = _nameOfGrpCells->size();
+    std::vector< std::string > names;
+    for(int i = 0; i < size; i++) {
+        names.push_back(_nameOfGrpCells->findStringOfElement(i + 1));
+    }
+    return names;
+};
 
-    return true;
+std::vector< std::string > MeshClass::getGroupsOfNodes() const {
+    ASTERINTEGER size = _nameOfGrpNodes->size();
+    std::vector< std::string > names;
+    for(int i = 0; i < size; i++) {
+        names.push_back(_nameOfGrpNodes->findStringOfElement(i + 1));
+    }
+    return names;
 };

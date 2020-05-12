@@ -29,7 +29,7 @@
 #include "MemoryManager/JeveuxCollection.h"
 
 enum EntityType { GroupOfNodesType, GroupOfCellsType, AllMeshEntitiesType,
-                  ElementType, NodeType, NoType };
+                  CellType, NodeType, NoType };
 
 /**
  * @todo Un MeshEntity pourrait etre concu comme un template qui prendrait
@@ -172,14 +172,14 @@ public:
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    Element( std::string name ): VirtualMeshEntity( name, ElementType )
+    Element( std::string name ): VirtualMeshEntity( name, CellType )
     {};
 
     /**
      * @brief Constructor
      * @param names names in entity
      */
-    Element( const VectorString& names ): VirtualMeshEntity( names, ElementType )
+    Element( const VectorString& names ): VirtualMeshEntity( names, CellType )
     {};
 };
 

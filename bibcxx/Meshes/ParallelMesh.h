@@ -31,9 +31,9 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "Meshes/Mesh.h"
 #include "astercxx.h"
 #include "definition.h"
-#include "Meshes/Mesh.h"
 #include <set>
 
 /**
@@ -52,7 +52,7 @@ class ParallelMeshClass : public BaseMeshClass {
     /** @brief Set of all groups of nodes (parallel mesh) */
     SetOfString _setOfAllGON;
     /** @brief All groups of elements (parallel mesh) */
-    JeveuxVectorChar24 _globalGroupOfEements;
+    JeveuxVectorChar24 _globalGroupOfCells;
     /** @brief Set of all groups of elements (parallel mesh) */
     SetOfString _setOfAllGOE;
     /** @brief Identify outer nodes */
@@ -81,7 +81,7 @@ class ParallelMeshClass : public BaseMeshClass {
      */
     ParallelMeshClass( const std::string &name )
         : BaseMeshClass( name, "MAILLAGE_P" ), _globalGroupOfNodes( getName() + ".PAR_GRPNOE" ),
-          _globalGroupOfEements( getName() + ".PAR_GRPMAI" ), _outerNodes( getName() + ".NOEX" ),
+          _globalGroupOfCells( getName() + ".PAR_GRPMAI" ), _outerNodes( getName() + ".NOEX" ),
           _globalNumbering( getName() + ".NULOGL" ),
           _listOfOppositeDomain( getName() + ".DOMJOINTS" ){};
 
@@ -145,16 +145,15 @@ class ParallelMeshClass : public BaseMeshClass {
      * @brief Read a MED ParallelMesh file
      * @return retourne true si tout est ok
      */
-    bool readMedFile( const std::string &fileName ) ;
-
+    bool readMedFile( const std::string &fileName );
 
     /**
      * @brief Read a MED ParallelMesh file
      * @return retourne true si tout est ok
      */
-    bool updateGlobalGroupOfNodes( void ) ;
+    bool updateGlobalGroupOfNodes( void );
 
-    bool updateGlobalGroupOfCells( void ) ;
+    bool updateGlobalGroupOfCells( void );
 };
 
 /**
