@@ -280,16 +280,16 @@ class MeshClass : public BaseMeshClass {
      * @brief Read a Aster Mesh file
      * @return retourne true si tout est ok
      */
-    bool readAsterMeshFile( const std::string &fileName );
+    bool readAsterFile( const std::string &fileName );
 
     /**
-     * @brief Read a Aster Mesh file
+     * @brief Read a Gibi Mesh file
      * @return retourne true si tout est ok
      */
     bool readGibiFile( const std::string &fileName );
 
     /**
-     * @brief Read a Aster Mesh file
+     * @brief Read a Gmsh Mesh file
      * @return retourne true si tout est ok
      */
     bool readGmshFile( const std::string &fileName );

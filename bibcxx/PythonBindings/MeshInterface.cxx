@@ -116,7 +116,7 @@ Returns:
         .def( "addGroupOfNodesFromNodes", &MeshClass::addGroupOfNodesFromNodes )
         .def( "getGroupsOfCells", &MeshClass::getGroupsOfCells )
         .def( "getGroupsOfNodes", &MeshClass::getGroupsOfNodes )
-        .def( "readAsterMeshFile", &MeshClass::readAsterMeshFile, R"(
+        .def( "readAsterFile", &MeshClass::readAsterFile, R"(
 Read a mesh file from ASTER format.
 
 Arguments:
