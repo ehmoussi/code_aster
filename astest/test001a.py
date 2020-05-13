@@ -55,7 +55,7 @@ with test.assertRaises(NameError):
     mesh
 
 mesh2 = model.getMesh()
-test.assertTrue(mesh2.hasGroupOfCells('Tout'))
+test.assertTrue('Tout' in mesh2.getGroupsOfCells())
 
 # Vérification du debug
 mesh2.debugPrint(66)
