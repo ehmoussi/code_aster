@@ -83,7 +83,7 @@ bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string
 
     if ( format == "GIBI" || format == "GMSH" ) {
         // Fichier temporaire
-        LogicalUnitFile file2( "", Ascii, Append );
+        LogicalUnitFile file2( "", Ascii, New );
         std::string preCmd = "PRE_" + format;
         ASTERINTEGER op2 = 47;
         if ( format == "GIBI" )
