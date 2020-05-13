@@ -149,49 +149,17 @@ class BaseMeshClass : public DataStructure {
     /**
      * @brief Returns the number of nodes
      */
-    int getNumberOfNodes() const {
-        if ( isEmpty() )
-            return 0;
-        if ( !_dimensionInformations->updateValuePointer() )
-            return 0;
-        return ( *_dimensionInformations )[0];
-    };
+    int getNumberOfNodes() const;
 
     /**
      * @brief Returns the number of cells
      */
-    int getNumberOfCells() const {
-        if ( isEmpty() )
-            return 0;
-        if ( !_dimensionInformations->updateValuePointer() )
-            return 0;
-        return ( *_dimensionInformations )[1];
-    };
+    int getNumberOfCells() const;
 
     /**
      * @brief Recuperation de la dimension du maillage
      */
-    int getDimension() const {
-        if ( isEmpty() )
-            return 0;
-        if ( !_dimensionInformations->updateValuePointer() )
-            return 0;
-
-        const int dimGeom = ( *_dimensionInformations )[5];
-
-        if ( dimGeom == 3 ) {
-            const std::string typeco( "MAILLAGE" );
-            ASTERINTEGER repi = 0, ier = 0;
-            JeveuxChar32 repk( " " );
-            const std::string arret( "F" );
-            const std::string questi( "DIM_GEOM" );
-
-            CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier );
-
-            return repi;
-        }
-        return dimGeom;
-    };
+    int getDimension() const;
 
     /**
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
