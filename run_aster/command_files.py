@@ -74,7 +74,7 @@ def stop_at_end(text):
     Returns:
         str: Changed content.
     """
-    refin = re.compile(r"^(?P<cmd>FIN *\()", re.M)
+    refin = re.compile(r"^(?P<cmd>(FIN|code_aster\.close) *\()", re.M)
     subst = "\n".join([
         "print('Type <Enter> to enter in interactive mode "
         "(it is normal to see EOFError).')",
