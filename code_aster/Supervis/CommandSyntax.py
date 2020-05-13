@@ -100,7 +100,7 @@ class CommandSyntax(object):
         self._resultType = " "
         self._resultValue = None
         self._definition = None
-        logger.debug( "Syntax: new command is %r", self._name )
+        logger.debug(f"Syntax: new command is {self._name!r}")
         currentCommand = self.getCurrentCommand()
         # only FIN is allowed to free the current "in failure" command
         if self._name == "FIN" and currentCommand is not None:
@@ -113,14 +113,13 @@ class CommandSyntax(object):
         if not cata:
             cata = getattr(Commands, name, None)
             if not cata:
-                logger.debug("CommandSyntax: catalog not found for {0!r}"
-                             .format(name))
+                logger.debug(f"CommandSyntax: catalog not found for {name!r}")
         self._commandCata = cata
 
     def free( self ):
         """Reset the current command pointer as soon as possible"""
         # `currentCommand` must be reset before the garbage collector will do it
-        logger.debug( "Syntax: del command %r", self._name )
+        logger.debug(f"Syntax: del command {self._name!r}")
         self.setCurrentCommand(None)
 
     def __repr__( self ):
@@ -152,10 +151,10 @@ class CommandSyntax(object):
                 added or not.
         """
         if self._commandCata != None and add_default:
-            logger.debug( "define0 %r: %r", self._name, dictSyntax )
+            logger.debug(f"define0 {self._name!r}: {dictSyntax!r}")
             self._commandCata.addDefaultKeywords( dictSyntax )
         self._definition = dictSyntax
-        logger.debug( "define1 %r: %r", self._name, self._definition )
+        logger.debug(f"define1 {self._name!r}: {self._definition!r}")
 
     def getName( self ):
         """Return the command name.
@@ -201,7 +200,7 @@ class CommandSyntax(object):
         """
         # a factor keyword may be empty: {} (None means 'does not exist')
         dictDef = self._definition.get( factName, None )
-        logger.debug( "factor keyword %r: %r", factName, dictDef )
+        logger.debug(f"factor keyword {factName!r}: {dictDef!r}")
         if dictDef is None:
             return None
         if isinstance(dictDef, dict):
@@ -279,10 +278,10 @@ class CommandSyntax(object):
             int: Number of occurrences of a factor keyword.
         """
         dictDef = self._getFactorKeyword( factName )
-        logger.debug( "_getFactorKeyword %r: %r", factName, dictDef )
+        logger.debug(f"_getFactorKeyword {factName!r}: {dictDef!r}")
         if dictDef is None:
             return 0
-        logger.debug( "getFactorKeywordNbOcc: len(dictDef) = %d", len(dictDef) )
+        logger.debug(f"getFactorKeywordNbOcc: len(dictDef) = {len(dictDef)}")
         return len(dictDef)
 
     getfac = getFactorKeywordNbOcc
@@ -321,7 +320,7 @@ class CommandSyntax(object):
             return []
         value = self._getDefinition( factName, occurrence )[simpName]
         value = force_list(value)
-        logger.debug( "getValue: %r", value )
+        logger.debug(f"getValue: {value!r}")
         return value
 
     def getltx(self, factName, simpName, occurrence, maxval, lenmax):
@@ -482,9 +481,9 @@ class CommandSyntax(object):
             str: Type name of the result.
             str: Command name.
         """
-        ret = self.getResultName(), self.getResultType(), self.getName()
-        logger.debug("Command {2}: result name {0!r}, type {1!r}".format(*ret))
-        return ret
+        jev, typ, cmd = self.getResultName(), self.getResultType(), self.getName()
+        logger.debug(f"Command {cmd}: result name {jev!r}, type {typ!r}")
+        return jev, typ, cmd
 
     def setres(self, value):
         """Define a value for special commands that returns a builtin type
@@ -507,14 +506,12 @@ class CommandSyntax(object):
             int: 1 if the keyword exists, else 0.
         """
         catadef = self._getCataDefinition(factName)
-        logger.debug("getexm: catadef: {0}".format(list(catadef.keys())
-                                                   if catadef else None))
         if not catadef:
             return 0
         if not simpName.strip():
             return 1
         keywords = catadef.simple_keywords
-        logger.debug("getexm: simple keywords: {0}".format(list(keywords.keys())))
+        logger.debug(f"getexm: simple keywords: {list(keywords.keys())}")
         return int(keywords.get(simpName) is not None)
 
     def getmjm(self, factName, occurrence, maxval):
@@ -534,7 +531,7 @@ class CommandSyntax(object):
         userkw = self._getDefinition(factName, occurrence)
         if not userkw:
             return (), ()
-        logger.debug("getmjm: user keywords: {0}".format(userkw))
+        logger.debug(f"getmjm: user keywords: {userkw}")
         catadef = self._getCataDefinition(factName).simple_keywords
         lkeywords = sorted(userkw.keys())
         kws, types = [], []

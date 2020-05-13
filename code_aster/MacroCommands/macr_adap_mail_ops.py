@@ -170,7 +170,7 @@ class HomardInfo:
         logger.info("Loaded objects from homard history:")
         for obj in context['objects'].values():
             self.store_object(obj)
-            logger.info("{0:<24s} {1}".format(obj.getName(), type(obj)))
+            logger.info(f"{obj.getName():<24s} {obj}")
 
         for dico in context['runs']:
             Rep_Calc_HOMARD_local = dico["Rep_Calc_HOMARD_local"]
@@ -198,7 +198,7 @@ class HomardInfo:
             pickler.save()
             logger.info("Saved objects for homard history:")
             for obj in ginfos.objects.values():
-                logger.info("{0:<24s} {1}".format(obj.getName(), type(obj)))
+                logger.info(f"{obj.getName():<24s} {obj}")
 
             os.chdir(wrkdir)
         return dirs
