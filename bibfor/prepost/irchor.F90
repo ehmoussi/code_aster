@@ -269,6 +269,8 @@ integer, intent(out) :: codret
                             call dismoi('NUM_GD', fieldName, 'CHAMP', repi=quantityIndx)
                             call jenuno(jexnum('&CATA.GD.NOMGD', quantityIndx), quantityName)
                             if (quantityName .eq. 'VARI_R') then
+                                ! TRAITEMENT PARTICULIER POUR LA GRANDEUR VARI_R
+                                nbCmpOut = nbCmpOut + 1
                                 goto 17
                             endif
                             call jelira(jexnum('&CATA.GD.NOMCMP', quantityIndx),&
