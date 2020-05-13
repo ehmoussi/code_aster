@@ -179,19 +179,19 @@ class BaseMeshClass : public DataStructure {
 
     /**
      * @brief Returns the names of the groups of cells
-     * @return std::vector< std::string >
+     * @return VectorString
      */
-    std::vector< std::string > getGroupsOfCells() const {
-        std::vector< std::string > names;
+    VectorString getGroupsOfCells() const {
+        VectorString names;
         return names;
     };
 
     /**
      * @brief Returns the names of the groups of nodes
-     * @return std::vector< std::string >
+     * @return VectorString
      */
-    std::vector< std::string > getGroupsOfNodes() const {
-        std::vector< std::string > names;
+    VectorString getGroupsOfNodes() const {
+        VectorString names;
         return names;
     };
 
@@ -272,9 +272,9 @@ class MeshClass : public BaseMeshClass {
         return _groupOfNodes->existsObject( name );
     };
 
-    std::vector< std::string > getGroupsOfCells() const;
+    VectorString getGroupsOfCells() const;
 
-    std::vector< std::string > getGroupsOfNodes() const;
+    VectorString getGroupsOfNodes() const;
 
     /**
      * @brief Read a Aster Mesh file

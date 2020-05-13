@@ -178,18 +178,18 @@ bool MeshClass::readGmshFile( const std::string &fileName ) {
     return true;
 };
 
-std::vector< std::string > MeshClass::getGroupsOfCells() const {
+VectorString MeshClass::getGroupsOfCells() const {
     ASTERINTEGER size = _nameOfGrpCells->size();
-    std::vector< std::string > names;
+    VectorString names;
     for ( int i = 0; i < size; i++ ) {
         names.push_back( trim( _nameOfGrpCells->findStringOfElement( i + 1 ) ) );
     }
     return names;
 };
 
-std::vector< std::string > MeshClass::getGroupsOfNodes() const {
+VectorString MeshClass::getGroupsOfNodes() const {
     ASTERINTEGER size = _nameOfGrpNodes->size();
-    std::vector< std::string > names;
+    VectorString names;
     for ( int i = 0; i < size; i++ ) {
         names.push_back( trim( _nameOfGrpNodes->findStringOfElement( i + 1 ) ) );
     }
