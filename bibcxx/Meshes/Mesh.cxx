@@ -33,6 +33,45 @@
 #include "Supervis/Exceptions.h"
 #include "Supervis/ResultNaming.h"
 #include "Utilities/CapyConvertibleValue.h"
+#include "Utilities/Tools.h"
+
+int BaseMeshClass::getNumberOfNodes() const {
+    if ( isEmpty() )
+        return 0;
+    if ( !_dimensionInformations->updateValuePointer() )
+        return 0;
+    return ( *_dimensionInformations )[0];
+}
+
+int BaseMeshClass::getNumberOfCells() const {
+    if ( isEmpty() )
+        return 0;
+    if ( !_dimensionInformations->updateValuePointer() )
+        return 0;
+    return ( *_dimensionInformations )[2];
+}
+
+int BaseMeshClass::getDimension() const {
+    if ( isEmpty() )
+        return 0;
+    if ( !_dimensionInformations->updateValuePointer() )
+        return 0;
+
+    const int dimGeom = ( *_dimensionInformations )[5];
+
+    if ( dimGeom == 3 ) {
+        const std::string typeco( "MAILLAGE" );
+        ASTERINTEGER repi = 0, ier = 0;
+        JeveuxChar32 repk( " " );
+        const std::string arret( "F" );
+        const std::string questi( "DIM_GEOM" );
+
+        CALLO_DISMOI( questi, getName(), typeco, &repi, repk, arret, &ier );
+
+        return repi;
+    }
+    return dimGeom;
+}
 
 bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string &format ) {
     FileType type = Ascii;
@@ -142,8 +181,8 @@ bool MeshClass::readGmshFile( const std::string &fileName ) {
 std::vector< std::string > MeshClass::getGroupsOfCells() const {
     ASTERINTEGER size = _nameOfGrpCells->size();
     std::vector< std::string > names;
-    for(int i = 0; i < size; i++) {
-        names.push_back(_nameOfGrpCells->findStringOfElement(i + 1));
+    for ( int i = 0; i < size; i++ ) {
+        names.push_back( trim( _nameOfGrpCells->findStringOfElement( i + 1 ) ) );
     }
     return names;
 };
@@ -151,8 +190,8 @@ std::vector< std::string > MeshClass::getGroupsOfCells() const {
 std::vector< std::string > MeshClass::getGroupsOfNodes() const {
     ASTERINTEGER size = _nameOfGrpNodes->size();
     std::vector< std::string > names;
-    for(int i = 0; i < size; i++) {
-        names.push_back(_nameOfGrpNodes->findStringOfElement(i + 1));
+    for ( int i = 0; i < size; i++ ) {
+        names.push_back( trim( _nameOfGrpNodes->findStringOfElement( i + 1 ) ) );
     }
     return names;
 };
