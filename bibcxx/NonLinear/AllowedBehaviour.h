@@ -189,7 +189,7 @@ enum ConstitutiveLawEnum {
 };
 
 extern const std::vector< ConstitutiveLawEnum > allConstitutiveLaw;
-extern const std::vector< std::string > allConstitutiveLawNames;
+extern const VectorString allConstitutiveLawNames;
 
 /**
  * @enum StrainEnum
@@ -198,7 +198,7 @@ extern const std::vector< std::string > allConstitutiveLawNames;
  */
 enum StrainEnum { SmallStrain, PetitReac, LargeStrainAndRotation, SimoMiehe, GdefLog };
 extern const std::vector< StrainEnum > allStrain;
-extern const std::vector< std::string > allStrainNames;
+extern const VectorString allStrainNames;
 
 /**
  * @enum TangentMatrixEnum
@@ -207,7 +207,7 @@ extern const std::vector< std::string > allStrainNames;
  */
 enum TangentMatrixEnum { PerturbationMatrix, VerificationMatrix, TangentSecantMatrix };
 extern const std::vector< TangentMatrixEnum > allTangentMatrix;
-extern const std::vector< std::string > allTangentMatrixNames;
+extern const VectorString allTangentMatrixNames;
 
 /**
  * @enum IntegrationAlgoEnum
@@ -228,6 +228,6 @@ enum IntegrationAlgoEnum {
     NoAlgo
 };
 extern const std::vector< IntegrationAlgoEnum > allIntegrationAlgo;
-extern const std::vector< std::string > allIntegrationAlgoNames;
+extern const VectorString allIntegrationAlgoNames;
 
 #endif /* ALLOWEDBEHAVIOUR_H_ */

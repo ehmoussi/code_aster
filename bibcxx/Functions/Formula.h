@@ -97,13 +97,13 @@ class FormulaClass : public GenericFunctionClass {
      * @param name name of the parameter
      * @type  name string
      */
-    void setVariables( const std::vector< std::string > &varnames ) ;
+    void setVariables( const VectorString &varnames ) ;
 
     /**
      * @brief Return the name of the variables
      * @return name of the variables
      */
-    std::vector< std::string > getVariables() const;
+    VectorString getVariables() const;
 
     /**
      * @brief Mark formula as a complex one.
@@ -160,9 +160,9 @@ class FormulaClass : public GenericFunctionClass {
      * @brief Return the properties of the function
      * @return vector of strings
      */
-    std::vector< std::string > getProperties() const {
+    VectorString getProperties() const {
         _property->updateValuePointer();
-        std::vector< std::string > prop;
+        VectorString prop;
         for ( int i = 0; i < 6; ++i ) {
             prop.push_back( ( *_property )[i].rstrip() );
         }
@@ -187,7 +187,7 @@ typedef boost::shared_ptr< FormulaClass > FormulaPtr;
  * @brief Evaluate Python code of a Formula
  */
 VectorReal evaluate_formula( const PyObject *code, PyObject *globals,
-                               const std::vector< std::string > &variables,
+                               const VectorString &variables,
                                const VectorReal &values, int *retcode );
 
 #ifdef __cplusplus

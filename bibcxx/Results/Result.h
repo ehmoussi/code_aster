@@ -336,7 +336,7 @@ class ResultClass : public DataStructure {
     * @brief Get the number of steps stored in the Result
     * @return nbRanks
     */
-    std::vector< long > getRanks() const;
+    VectorLong getRanks() const;
 
     /**
     * @brief Print all the fields stored in the Result
