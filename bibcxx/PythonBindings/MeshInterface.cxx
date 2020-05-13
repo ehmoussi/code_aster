@@ -113,7 +113,6 @@ Returns:
     py::class_< MeshClass, MeshClass::MeshPtr, py::bases< BaseMeshClass > >( "Mesh", py::no_init )
         .def( "__init__", py::make_constructor( &initFactoryPtr< MeshClass > ) )
         .def( "__init__", py::make_constructor( &initFactoryPtr< MeshClass, std::string > ) )
-        .def( "addGroupOfNodesFromNodes", &MeshClass::addGroupOfNodesFromNodes )
         .def( "getGroupsOfCells", &MeshClass::getGroupsOfCells, R"(
 Return the list of the existing groups of cells.
 

@@ -15,7 +15,6 @@ MAT=DEFI_MATERIAU(ELAS = _F(RHO = 7.8E03,
 
 MAYA=code_aster.Mesh()
 MAYA.readMedFile('xxModalMechanics001a.med')
-MAYA.addGroupOfNodesFromNodes("N26", ["N26"])
 test.assertEqual(MAYA.getType(), "MAILLAGE_SDASTER")
 
 CHMAT=AFFE_MATERIAU(MAILLAGE = MAYA,
@@ -51,7 +50,7 @@ test.assertEqual(CharMeca2.getType(), "CHAR_MECA")
 imposedDof3 = code_aster.DisplacementReal()
 imposedDof3.setValue( code_aster.PhysicalQuantityComponent.Dx, 0.0 )
 CharMeca3 = code_aster.ImposedDisplacementReal(POVOL)
-CharMeca3.setValue( imposedDof1, "N26" )
+CharMeca3.setValue( imposedDof1, "CENTRE" )
 CharMeca3.build()
 test.assertEqual(CharMeca2.getType(), "CHAR_MECA")
 

@@ -249,14 +249,6 @@ class MeshClass : public BaseMeshClass {
     MeshClass( const std::string name ) : BaseMeshClass( name, "MAILLAGE" ){};
 
     /**
-     * @brief Ajout d'un groupe de noeuds au maillage en partant d'une liste noeuds
-     * @param name nom du groupe à créer
-     * @param vec liste des noeuds
-     * @return Retourne true si tout s'est bien déroulé
-     */
-    bool addGroupOfNodesFromNodes( const std::string &name, const VectorString &vec );
-
-    /**
      * @brief Teste l'existence d'un groupe de mailles dans le maillage
      * @return true si le groupe existe
      */

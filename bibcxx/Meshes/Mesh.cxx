@@ -137,32 +137,6 @@ bool BaseMeshClass::readMedFile( const std::string &fileName ) {
     return true;
 };
 
-bool MeshClass::addGroupOfNodesFromNodes( const std::string &name, const VectorString &vec ) {
-    CommandSyntax cmdSt( "DEFI_GROUP" );
-    cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
-
-    CapyConvertibleContainer toCapyConverter;
-    toCapyConverter.add(
-        new CapyConvertibleValue< std::string >( false, "MAILLAGE", getName(), true ) );
-
-    CapyConvertibleContainer toCapyConverter2( "CREA_GROUP_NO" );
-    toCapyConverter2.add( new CapyConvertibleValue< VectorString >( false, "NOEUD", vec, true ) );
-    toCapyConverter2.add( new CapyConvertibleValue< std::string >( false, "NOM", name, true ) );
-
-    CapyConvertibleSyntax syntax;
-    syntax.setSimpleKeywordValues( toCapyConverter );
-    syntax.addCapyConvertibleContainer( toCapyConverter2 );
-
-    cmdSt.define( syntax );
-    try {
-        ASTERINTEGER op = 104;
-        CALL_EXECOP( &op );
-    } catch ( ... ) {
-        throw;
-    }
-    return true;
-};
-
 bool MeshClass::readAsterFile( const std::string &fileName ) {
     readMeshFile( fileName, "ASTER" );
     return true;
