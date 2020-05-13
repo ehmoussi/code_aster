@@ -107,7 +107,7 @@ def parse_args(argv):
                         help="print debugging information (same as "
                              "DEBUG=1 in environment)")
     parser.add_argument('-i', '--interactive', action='store_true',
-                        help="inspect interactively after running script"
+                        help="inspect interactively after running script "
                              "instead of calling FIN command")
     parser.add_argument('--env', action='store_true',
                         help="do not execute, only prepare the working "
@@ -137,13 +137,13 @@ def parse_args(argv):
                              "on stdout.")
     parser.add_argument('--time_limit', dest='time_limit', type=float,
                         action='store', default=None,
-                        help='override the time limit (may also be changed by '
-                             'FACMTPS environment variable)')
+                        help="override the time limit (may also be changed by "
+                             "FACMTPS environment variable)")
     parser.add_argument('--memory_limit', dest='memory_limit', type=float,
                         action='store',
                         help="override the memory limit in MB")
     parser.add_argument('--no-comm', action='store_true',
-                        help="do not executes the `.comm` files but starts an "
+                        help="do not execute the `.comm` files but start an "
                              "interactive Python session. Execute "
                              "`code_aster.init()` to copy data files.")
     parser.add_argument('--exectool', action='store',

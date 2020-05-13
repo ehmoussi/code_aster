@@ -342,7 +342,7 @@ def check_config(self):
     cfg["addmem"] = addmem
     cfg["version_tag"] = ".".join([str(i) for i in self.env.ASTER_VERSION[0]])
     cfg["version_sha1"] = self.env.ASTER_VERSION[1]
-    cfg["python"] = list(self.env.PYTHON)[0]
+    cfg["python"] = "python3"
     cfg["parallel"] = int(self.get_define('HAVE_MPI') or 0)
     cfg["only-proc0"] = 0
     self.env["base_mpiexec"] = ["mpiexec"]
