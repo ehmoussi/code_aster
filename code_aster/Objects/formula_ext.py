@@ -64,8 +64,8 @@ class ExtendedFormula(object):
             ctxt.update(loads(state[1]))
             self.setContext(ctxt)
         except:
-            logger.warning("can not restore context of formula '{0}'"
-                        .format(self.getName()))
+            name = self.getName()
+            logger.warning(f"can not restore context of formula '{name}'")
             logger.debug(traceback.format_exc())
 
     def __call__(self, *val):

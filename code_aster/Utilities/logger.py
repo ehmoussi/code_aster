@@ -57,10 +57,10 @@ class PerLevelFormatter(logging.Formatter):
     """Formatter for messages"""
 
     formats = {
-        ERROR: "ERROR: %(msg)s",
-        WARNING: "WARNING: %(msg)s",
-        INFO: "%(msg)s",
-        DEBUG: "DEBUG: %(msg)s",
+        ERROR: "ERROR: %(message)s",
+        WARNING: "WARNING: %(message)s",
+        INFO: "%(message)s",
+        DEBUG: "DEBUG: %(message)s",
     }
 
     def format(self, record):

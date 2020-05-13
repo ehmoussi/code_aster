@@ -326,7 +326,7 @@ class ExecuteCommand(object):
             keywords (dict): Keywords arguments of user's keywords, changed
                 in place.
         """
-        logger.debug("checking syntax of {0}...".format(self.name))
+        logger.debug(f"checking syntax of {self.name}...")
         max_check = ExecutionParameter().get_option("max_check")
         checkCommandSyntax(self._cata, keywords, add_default=False,
                            max_check=max_check)
@@ -569,8 +569,8 @@ class ExecuteMacro(ExecuteCommand):
         result.userName = name
         self._add_results[name] = result
         if ExecutionParameter().option & Options.ShowChildCmd:
-            logger.info("Intermediate result '{0}' will be available as '{1}'."
-                        .format(orig, name))
+            logger.info(f"Intermediate result '{orig}' will be available "
+                        f"as '{name}'.")
 
     @property
     @deprecated(True, help="Not yet implemented.")
