@@ -1,8 +1,8 @@
 .. _devguide-naming-conventions:
 
-******************
-Naming conventions
-******************
+*******************************
+Naming conventions / Python API
+*******************************
 
 .. note::
     This article is still a *work in progress* document.
@@ -13,29 +13,31 @@ General rules
 
 A general rule is to follow the `CamelCase <https://en.wikipedia.org/wiki/Camel_case>`_
 convention in C++ code *and* its Python Bindings.
-By extension, the *high level* user API also follows *CamelCase* naming.
+By extension, the *high level* user API (Python) also follows *CamelCase* naming.
 The rest of the Python code, *low level* functions, should follow the
 `PEP8 Style Guide for Python code <https://www.python.org/dev/peps/pep-0008/>`_
 that does not recommend *CamelCase* naming.
 
-- The **classes** names start with an upper case (example: *MeshCoordinatesField*).
+- The names of **classes** start with an upper case (example: *MeshCoordinatesField*).
 
-- The **methods**/**members** names start with a lower case and
+- The names of **methods**/**members** start with a lower case and
   does not contain the object name (example: *getValues* and not *getFieldValues*).
 
-- At least at the beginning, only pure Python objects are returned (example: *list[list]*
-  and not *numpy* arrays).
+- Reuse existing names in newly created objects. Have a look to the :ref:`genindex` page
+  should give good ideas for new methods.
+  One can also search for names in the :ref:`devguide-objects_datastructure` page.
 
+- Plural forms should be used when it is relevant.
 
-Reuse existing names in newly created objects. Have a look to the :ref:`genindex` page
-should give good ideas for new methods.
+- At least at the beginning, only pure Python objects are returned (example: *list* or
+  *list[list]* and not *numpy* arrays).
 
-One can also search for names in the :ref:`devguide-objects_datastructure` page.
+- Strings values are returned without trailing spaces.
 
 Another rule is to define elementary methods not to create objects with a huge size.
 For example, the groups names can be extracted from a mesh and cells indexes can be
 extracted for a named group. But no method returns a *dict* of cells indexes for all
-groups for exammple.
+groups for example.
 Another example: do not create shortcuts as *mesh.getCoordinatesValues()*
 but *mesh.getCoordinates().getValues()*.
 
@@ -52,9 +54,9 @@ Mesh object
 
 Terms for the :py:class:`~code_aster.Objects.Mesh` object:
 
-- *mesh* for a mesh.
+- *mesh* is an object composed of *nodes* and *cells*.
 - *node* for a node.
-- *cell* for an element of the mesh.
+- *cell* for an element of the mesh (*element* term is used for a *finite element*).
 - *GroupOfNodes* for a group of nodes, named with at most 24 chars.
 - *GroupOfCells* for a group of cells, named with at most 24 chars.
 - *Connectivity* for the mesh connectivity.
@@ -62,33 +64,24 @@ Terms for the :py:class:`~code_aster.Objects.Mesh` object:
   on the local part (that belongs to each MPI process, *local=True*) or on the
   global mesh (*local=False*).
 
+.. todo::
+    *mesh.getCoordinates().getValues()*,
+    *mesh.getConnectivity()*,
+    *mesh.getNodes(group)*,
+    *mesh.getCells(group)*
 
-Méthodes:
+    Add *local* argument for *ParallelMesh*.
 
-mesh.isParallel() => drapeau pour savoir si le maillage est parallèle ou perpendiculaire
+    Rename *PartialMesh*.
 
-mesh.getDimension() => renvoie la "vraie" dimension géométrique (2 ou 3)
 
-mesh.getNumberOfNodes(local=True/False) => renvoie le nombre de noeuds (on peut récupérer à partir de getConnectivity)
+Model object
+------------
 
-mesh.getNumberOfCells(local=True/False) => renvoie le nombre de cellules (on peut récupérer à partir de getConnectivity)
+- *element* for a finite element (not a *cell*).
 
-mesh.getCoordinates() => renvoie un MeshCoordinatesField (CHAM_NO spécifique pour éviter les références circulaires)
-                         => MeshCoordinatesFields.getValues() renvoie une <list(list)>
-                             nb Lignes: nombre de noeuds (2 ou 3 valeurs par ligne)
-mesh.getConnectivity() => renvoie une <list(list)>
-                             chaque "ligne" = une cellule, longueur = nombre de noeuds de cette cellule
 
-mesh.getGroupsOfNodes(local=True/False) => renvoie une <list> des noms des GROUP_NO
+Result objects
+--------------
 
-mesh.getGroupsOfCells(local=True/False) => renvoie une <list> des noms des GROUP_MA
-
-mesh.getNodes(groupName, local=True/False) => renvoie une <list> d'entiers indexant les noeuds dans le maillage
-
-mesh.getCells(groupName, local=True/False) => renvoie une <list> d'entiers indexant les cellules dans le maillage
-
-Exemples: récupérer les coordonnées des noeuds
-mesh.getCoordinates().getValues()
-
-A supprimer:
-hasGroupOfNodes et hasGroupOfCells
+- *result* is an object that contains several fields and eventually some other properties.
