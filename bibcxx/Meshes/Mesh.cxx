@@ -163,7 +163,7 @@ bool MeshClass::addGroupOfNodesFromNodes( const std::string &name, const VectorS
     return true;
 };
 
-bool MeshClass::readAsterMeshFile( const std::string &fileName ) {
+bool MeshClass::readAsterFile( const std::string &fileName ) {
     readMeshFile( fileName, "ASTER" );
     return true;
 };

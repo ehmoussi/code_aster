@@ -8,7 +8,7 @@ code_aster.init()
 test = code_aster.TestCase()
 
 MA = code_aster.Mesh()
-MA.readAsterMeshFile("xxElementaryCharacteristics001a.mail")
+MA.readAsterFile("xxElementaryCharacteristics001a.mail")
 
 BETON=DEFI_MATERIAU(ELAS=_F(E = 1.E9,NU = 0.3,),)
 

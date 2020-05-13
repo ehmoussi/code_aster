@@ -10,7 +10,7 @@ code_aster.init()
 test = code_aster.TestCase()
 
 monMaillage = code_aster.Mesh()
-monMaillage.readAsterMeshFile( "test004c.mail" )
+monMaillage.readAsterFile( "test004c.mail" )
 
 monModel = code_aster.Model(monMaillage)
 monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
