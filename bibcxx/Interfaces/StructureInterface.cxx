@@ -27,7 +27,7 @@
 
 const std::vector< InterfaceTypeEnum > allInterfaceType = {MacNeal, CraigBampton,
                                                            HarmonicCraigBampton, NoInterfaceType};
-const std::vector< std::string > allInterfaceTypeNames = {"MNEAL", "CRAIGB", "CB_HARMO", "AUCUN"};
+const VectorString allInterfaceTypeNames = {"MNEAL", "CRAIGB", "CB_HARMO", "AUCUN"};
 
 bool StructureInterfaceClass::build() {
     CommandSyntax cmdSt( "DEFI_INTERF_DYNA" );

@@ -250,9 +250,9 @@ int ResultClass::getNumberOfRanks() const
     return _serialNumber->usedSize();
 };
 
-std::vector< long > ResultClass::getRanks() const
+VectorLong ResultClass::getRanks() const
 {
-    std::vector< long > v;
+    VectorLong v;
     _serialNumber->updateValuePointer();
     for ( int j = 0; j < _serialNumber->usedSize(); ++j ) {
         v.push_back( ( *_serialNumber )[j] );

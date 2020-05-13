@@ -40,7 +40,7 @@
  */
 enum InterfaceTypeEnum { MacNeal, CraigBampton, HarmonicCraigBampton, NoInterfaceType };
 extern const std::vector< InterfaceTypeEnum > allInterfaceType;
-extern const std::vector< std::string > allInterfaceTypeNames;
+extern const VectorString allInterfaceTypeNames;
 
 /**
  * @class StructureInterfaceClass

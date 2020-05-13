@@ -33,32 +33,32 @@ void exportKinematicsLoadToPython() {
                                                     const double &, const std::string & ) =
         &KinematicsMechanicalLoadClass::addImposedMechanicalDOFOnCells;
     bool ( KinematicsMechanicalLoadClass::*c2 )(
-        const PhysicalQuantityComponent &, const double &, const std::vector< std::string > & ) =
+        const PhysicalQuantityComponent &, const double &, const VectorString & ) =
         &KinematicsMechanicalLoadClass::addImposedMechanicalDOFOnCells;
 
     bool ( KinematicsMechanicalLoadClass::*c3 )( const PhysicalQuantityComponent &,
                                                     const double &, const std::string & ) =
         &KinematicsMechanicalLoadClass::addImposedMechanicalDOFOnNodes;
     bool ( KinematicsMechanicalLoadClass::*c4 )(
-        const PhysicalQuantityComponent &, const double &, const std::vector< std::string > & ) =
+        const PhysicalQuantityComponent &, const double &, const VectorString & ) =
         &KinematicsMechanicalLoadClass::addImposedMechanicalDOFOnNodes;
 
     bool ( KinematicsThermalLoadClass::*c5 )( const PhysicalQuantityComponent &, const double &,
                                                  const std::string & ) =
         &KinematicsThermalLoadClass::addImposedThermalDOFOnCells;
     bool ( KinematicsThermalLoadClass::*c6 )( const PhysicalQuantityComponent &, const double &,
-                                                 const std::vector< std::string > & ) =
+                                                 const VectorString & ) =
         &KinematicsThermalLoadClass::addImposedThermalDOFOnCells;
 
     bool ( KinematicsThermalLoadClass::*c7 )( const PhysicalQuantityComponent &, const double &,
                                                  const std::string & ) =
         &KinematicsThermalLoadClass::addImposedThermalDOFOnNodes;
     bool ( KinematicsThermalLoadClass::*c8 )( const PhysicalQuantityComponent &, const double &,
-                                                 const std::vector< std::string > & ) =
+                                                 const VectorString & ) =
         &KinematicsThermalLoadClass::addImposedThermalDOFOnNodes;
     bool ( KinematicsThermalLoadClass::*c9 )( const PhysicalQuantityComponent &,
                                                  const FunctionPtr &,
-                                                 const std::vector< std::string > & ) =
+                                                 const VectorString & ) =
         &KinematicsThermalLoadClass::addImposedThermalDOFOnNodes;
 
     py::class_< KinematicsLoadClass, KinematicsLoadClass::KinematicsLoadPtr,

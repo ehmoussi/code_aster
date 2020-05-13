@@ -128,10 +128,10 @@ class BaseFunctionClass : public GenericFunctionClass {
     /**
      * @brief Return the values of the function as an unidimensional vector
      */
-    std::vector< double > getValues() const {
+    VectorReal getValues() const {
         _value->updateValuePointer();
         const double *ptr = getDataPtr();
-        std::vector< double > vect( ptr, ptr + _value->size() );
+        VectorReal vect( ptr, ptr + _value->size() );
         return vect;
     }
 

@@ -139,9 +139,9 @@ template < typename Type > class GenericParameter {
 
 /** @typedef Definition d'un GenericParameter d'un type boost::variant */
 typedef GenericParameter<
-    boost::variant< double, ASTERINTEGER, std::string, RealComplex, std::vector< double >,
-                    std::vector< ASTERINTEGER >, std::vector< RealComplex >,
-                    std::vector< std::string > > > GenParam;
+    boost::variant< double, ASTERINTEGER, std::string, RealComplex, VectorReal,
+                    VectorLong, VectorComplex,
+                    VectorString > > GenParam;
 
 /** @typedef Definition d'une list de GenParam */
 typedef std::list< GenParam * > ListGenParam;

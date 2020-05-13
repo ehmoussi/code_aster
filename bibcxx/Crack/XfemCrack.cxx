@@ -167,7 +167,7 @@ bool XfemCrackClass::build() {
 
     if ( _junctingCracks.size() != 0 ) {
         SyntaxMapContainer dict3;
-        std::vector< std::string > junctingCracksNames;
+        VectorString junctingCracksNames;
         for ( std::vector< XfemCrackPtr >::iterator crack = _junctingCracks.begin();
               crack != _junctingCracks.end(); ++crack ) {
             junctingCracksNames.push_back( ( *( *crack ) ).getName() );

@@ -26,12 +26,12 @@
 const std::vector< DrivingTypeEnum > allDrivingType = {
     DisplacementValue, DisplacementNorm, JumpOnCrackValue, JumpOnCrackNorm,
     LimitLoad,         MonotonicStrain,  ElasticityLimit};
-const std::vector< std::string > allDrivingTypeNames = {
+const VectorString allDrivingTypeNames = {
     "DDL_IMPO", "LONG_ARC", "SAUT_IMPO", "SAUT_LONG_ARC", "ANA_LIM", "DEFORMATION", "PRED_ELAS"};
 
 const std::vector< SelectionCriterionEnum > allSelectionCriterion = {
     SmallestDisplacementIncrement, SmallestAngleIncrement, SmallestResidual, MixedCriterion};
-const std::vector< std::string > allSelectionCriterionNames = {"NORM_INCR_DEPL", "ANGL_INCR_DEPL",
+const VectorString allSelectionCriterionNames = {"NORM_INCR_DEPL", "ANGL_INCR_DEPL",
                                                                "RESIDU", "MIXTE"};
 
 const std::vector< PhysicalQuantityComponent >

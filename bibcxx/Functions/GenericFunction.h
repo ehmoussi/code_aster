@@ -79,10 +79,10 @@ class GenericFunctionClass : public DataStructure {
      * @brief Return the properties of the function
      * @return vector of strings
      */
-    std::vector< std::string > getProperties() const {
+    VectorString getProperties() const {
         _property->updateValuePointer();
         const auto size = _property->size();
-        std::vector< std::string > prop;
+        VectorString prop;
         for ( int i = 0; i < size; ++i ) {
             prop.push_back( ( *_property )[i].rstrip() );
         }

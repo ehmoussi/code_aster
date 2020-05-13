@@ -48,7 +48,7 @@ enum ExcitationEnum {
     IncrementalDirichletExcitation
 };
 extern const std::vector< ExcitationEnum > allExcitation;
-extern const std::vector< std::string > allExcitationNames;
+extern const VectorString allExcitationNames;
 
 /**
  * @class ExcitationClass
