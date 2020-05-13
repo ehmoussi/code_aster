@@ -114,8 +114,20 @@ Returns:
         .def( "__init__", py::make_constructor( &initFactoryPtr< MeshClass > ) )
         .def( "__init__", py::make_constructor( &initFactoryPtr< MeshClass, std::string > ) )
         .def( "addGroupOfNodesFromNodes", &MeshClass::addGroupOfNodesFromNodes )
-        .def( "getGroupsOfCells", &MeshClass::getGroupsOfCells )
-        .def( "getGroupsOfNodes", &MeshClass::getGroupsOfNodes )
+        .def( "getGroupsOfCells", &MeshClass::getGroupsOfCells, R"(
+Return the list of the existing groups of cells.
+
+Returns:
+    list[str]: List of groups names (stripped).
+        )",
+              ( py::arg( "self" ) ) )
+        .def( "getGroupsOfNodes", &MeshClass::getGroupsOfNodes, R"(
+Return the list of the existing groups of nodes.
+
+Returns:
+    list[str]: List of groups names (stripped).
+        )",
+              ( py::arg( "self" ) ) )
         .def( "readAsterFile", &MeshClass::readAsterFile, R"(
 Read a mesh file from ASTER format.
 
