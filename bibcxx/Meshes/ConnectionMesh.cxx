@@ -1,5 +1,5 @@
 /**
- * @file PartialMesh.cxx
+ * @file ConnectionMesh.cxx
  * @brief Implementation de
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -21,14 +21,14 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Meshes/PartialMesh.h"
+#include "Meshes/ConnectionMesh.h"
 #include "ParallelUtilities/MPIInfos.h"
 #include "aster_fort.h"
 #include <algorithm>
 
 #ifdef _USE_MPI
 
-PartialMeshClass::PartialMeshClass( const std::string& name,
+ConnectionMeshClass::ConnectionMeshClass( const std::string& name,
                                           const ParallelMeshPtr& mesh,
                                           const VectorString& toFind ):
     BaseMeshClass( name, "MAILLAGE_PARTIEL" ),

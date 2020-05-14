@@ -76,9 +76,9 @@ except NameError:
     class ParallelMesh(OnlyParallelObject):
         pass
 try:
-    PartialMesh
+    ConnectionMesh
 except NameError:
-    class PartialMesh(OnlyParallelObject):
+    class ConnectionMesh(OnlyParallelObject):
         pass
 try:
     ParallelMechanicalLoad
