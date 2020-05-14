@@ -41,7 +41,7 @@
 #include "astercxx.h"
 
 /**
- * @class ConstantFieldOnZone Piecewise Constant (PC) Field Zone
+ * @class ConstantFieldOnZone Constant Field Zone
  * @author Natacha Bereux
  */
 class ConstantFieldOnZone {
@@ -101,7 +101,7 @@ class ConstantFieldOnZone {
 };
 
 /**
- * @class ConstantFieldValues Piecewise Constant (PC) Field values
+ * @class ConstantFieldValues Constant Field values
  * @author Natacha Bereux
  */
 template < class ValueType > class ConstantFieldValues {
@@ -119,7 +119,7 @@ template < class ValueType > class ConstantFieldValues {
 };
 
 /**
- * @class ConstantFieldOnCellsClass Piecewise Constant (PC) Field on Mesh template
+ * @class ConstantFieldOnCellsClass Constant Field on Mesh template
  * @brief Cette classe permet de definir une carte (champ défini sur les mailles)
  * @author Natacha Bereux
  */
