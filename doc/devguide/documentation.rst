@@ -21,9 +21,9 @@ See the Sphinx Documentation for details.
 Getting started
 ***************
 
-=======
-Example
-=======
+===================================
+Documenting functions and arguments
+===================================
 
 Documentation of functions arguments is using the *Google Style* supported
 by the `sphinx-napoleon`_ extension.

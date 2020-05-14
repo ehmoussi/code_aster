@@ -18,6 +18,8 @@
 # --------------------------------------------------------------------
 
 import code_aster
+import numpy as np
+
 code_aster.init()
 
 # check Mesh object API
@@ -36,6 +38,8 @@ test.assertSequenceEqual( sorted(mesh.getGroupsOfNodes()),
 test.assertSequenceEqual( sorted(mesh.getGroupsOfCells()), ['Bas', 'Haut'] )
 coord = mesh.getCoordinates()
 test.assertEqual( coord[3], 0.0 )
+values = coord.getValues()
+test.assertEqual(len(values), 27 * 3)
 
 # from ASTER format
 mail = code_aster.Mesh()
@@ -50,6 +54,8 @@ test.assertSequenceEqual( sorted(mail.getGroupsOfCells()),
                           ['BAS', 'DROITE', 'GAUCHE', 'HAUT'] )
 coord = mail.getCoordinates()
 test.assertEqual( coord[3], 1.0 )
+values = coord.getValues()
+test.assertEqual(len(values), 22 * 3)
 
 # # from GMSH format
 gmsh = code_aster.Mesh()
@@ -65,6 +71,8 @@ test.assertSequenceEqual( sorted(gmsh.getGroupsOfCells()),
                           ['GM1', 'GM3', 'GM4', 'GM5', 'GM6'] )
 coord = gmsh.getCoordinates()
 test.assertEqual( coord[3], 1.0 )
+values = coord.getValues()
+test.assertEqual(len(values), 132 * 3)
 
 # from GIBI format
 gibi = code_aster.Mesh()
@@ -80,6 +88,8 @@ test.assertSequenceEqual( sorted(gibi.getGroupsOfCells()),
                           ['AB', 'BASE1', 'CUBE1'] )
 coord = gibi.getCoordinates()
 test.assertEqual( coord[3], 10.0 )
+values = coord.getValues()
+test.assertEqual(len(values), 125 * 3)
 
 test.printSummary()
 

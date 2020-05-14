@@ -22,7 +22,7 @@ that does not recommend *CamelCase* naming.
 - The names of **classes** start with an upper case (example: *MeshCoordinatesField*).
 
 - The names of **methods**/**members** start with a lower case and
-  does not contain the object name (example: *getValues* and not *getValues*).
+  does not contain the object name (example: *getValues* and not *getFieldValues*).
 
 - Reuse existing names in newly created objects. Have a look to the :ref:`genindex` page
   should give good ideas for new methods.
@@ -32,6 +32,9 @@ that does not recommend *CamelCase* naming.
 
 - At least at the beginning, only pure Python objects are returned (example: *list* or
   *list[list]* and not *numpy* arrays).
+
+- *std::vector* and *JeveuxVector* are automatically converted to Python *list*
+  (see :file:`bibcxx/PythonBindings/VectorUtilitiesInterface.h` for supported converters).
 
 - Strings values are returned without trailing spaces.
 
@@ -66,7 +69,6 @@ Terms for the :py:class:`~code_aster.Objects.Mesh` object:
   global mesh (*local=False*).
 
 .. todo::
-    *mesh.getCoordinates().getValues()*,
     *mesh.getConnectivity()*,
     *mesh.getNodes(group)*,
     *mesh.getCells(group)*
