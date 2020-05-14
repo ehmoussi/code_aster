@@ -47,7 +47,7 @@ typedef boost::shared_ptr< FiniteElementDescriptorClass > FiniteElementDescripto
 class FiniteElementDescriptorClass: public DataStructure
 {
 public:
-    typedef MeshExplorer< ElementBuilderFromFiniteElementDescriptor,
+    typedef MeshExplorer< CellsIteratorFromFiniteElementDescriptor,
                           const JeveuxCollectionLong& > ConnectivityDelayedElementsExplorer;
 
 protected:
@@ -73,9 +73,9 @@ protected:
     JeveuxVectorChar16                        _nameOfNeighborhoodStructure;
     /** @brief Base mesh */
     BaseMeshPtr                               _mesh;
-    /** @brief Object to allow loop over connectivity of delayed numbered elements */
+    /** @brief Object to loop over connectivity of delayed numbered cells */
     const ConnectivityDelayedElementsExplorer _explorer;
-    /** @brief Object to allow loop over list of group of elements */
+    /** @brief Object to loop over list of group of cells */
     const ConnectivityDelayedElementsExplorer _explorer2;
 
 public:

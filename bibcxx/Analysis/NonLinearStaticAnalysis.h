@@ -122,7 +122,7 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
         if ( nameOfGroup.size() == 0 ) {
             meshEntity = MeshEntityPtr( new AllMeshEntities() );
         }
-        // otherwise, if nameOfGroup is the name of a group of elements in the mesh
+        // otherwise, if nameOfGroup is the name of a group of cells in the mesh
         else if ( currentMesh->hasGroupOfCells( nameOfGroup ) ) {
             meshEntity = MeshEntityPtr( new GroupOfCells( nameOfGroup ) );
         } else

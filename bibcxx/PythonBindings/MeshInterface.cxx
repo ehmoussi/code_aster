@@ -55,11 +55,6 @@ void exportMeshToPython() {
         // fake initFactoryPtr: created by subclass
         ;
 
-    py::class_< Cell, ElementPtr, py::bases< VirtualMeshEntity > >( "Cell", py::no_init )
-        // fake initFactoryPtr: created by subclass
-        // fake initFactoryPtr: created by subclass
-        ;
-
     py::class_< AllMeshEntities, AllMeshEntitiesPtr, py::bases< VirtualMeshEntity > >(
         "AllMeshEntities", py::no_init )
         // fake initFactoryPtr: created by subclass

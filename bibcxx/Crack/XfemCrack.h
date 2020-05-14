@@ -70,7 +70,7 @@ class XfemCrackClass : public DataStructure {
     FunctionPtr _tangentialLevelSetFunction;
     /** @brief Crack Shape */
     CrackShapePtr _crackShape;
-    /** @brief List of group of elements that define the crack tip in case of propagation in the
+    /** @brief List of group of cells that define the crack tip in case of propagation in the
      * cohesive case */
     VectorString _cohesiveCrackTipForPropagation;
     /** @brief Field defining the normal level set */

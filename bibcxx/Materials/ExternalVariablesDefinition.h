@@ -395,12 +395,12 @@ class ExternalVariablesFieldClass {
      */
     template < class ExternalVariablePtr >
     void addExternalVariableonCell( const ExternalVariablePtr &curBehav,
-                                    const std::string &nameOfElement ) {
+                                    const std::string &nameOfCell ) {
         if ( !_mesh )
             throw std::runtime_error( "Mesh is not defined" );
 
         _externalVars.push_back( VectorOfexternalVarAndGrpsValue(
-            curBehav, MeshEntityPtr( new Cell( nameOfElement ) ) ) );
+            curBehav, MeshEntityPtr( new Cell( nameOfCell ) ) ) );
     };
 };
 

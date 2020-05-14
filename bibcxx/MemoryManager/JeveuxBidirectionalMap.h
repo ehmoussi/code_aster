@@ -39,7 +39,7 @@
  */
 template < typename ValueType >
 class JeveuxBidirectionalMapClass : public JeveuxObjectClass,
-                                       private AllowedJeveuxType< ValueType > {
+                                    private AllowedJeveuxType< ValueType > {
   private:
     ASTERINTEGER _size;
 
@@ -98,25 +98,25 @@ class JeveuxBidirectionalMapClass : public JeveuxObjectClass,
 
     /**
      * @brief Recuperation de la chaine correspondante a l'entier
-     * @param elementNumber Numero de l'element demande
+     * @param index Numero de l'element demande
      * @return Chaine de caractere correspondante
      */
-    std::string findStringOfElement( ASTERINTEGER elementNumber ) const {
+    std::string getStringFromIndex( ASTERINTEGER index ) const {
         JeveuxChar32 objName( " " );
         JeveuxChar32 charName( " " );
-        CALLO_JEXNUM( objName, _name, &elementNumber );
+        CALLO_JEXNUM( objName, _name, &index );
         CALLO_JENUNO( objName, charName );
         return charName.toString();
     };
 
     /**
      * @brief Recuperation de l'entier correspondant a une chaine
-     * @param elementName Chaine recherchee
+     * @param string Chaine recherchee
      * @return Entier correspondant
      */
-    ASTERINTEGER findIntegerOfElement( const std::string &elementName ) const {
+    ASTERINTEGER getIndexFromString( const std::string &string ) const {
         JeveuxChar32 objName( " " );
-        CALLO_JEXNOM( objName, _name, elementName );
+        CALLO_JEXNOM( objName, _name, string );
         ASTERINTEGER resu = -1;
         CALLO_JENONU( objName, &resu );
         return resu;

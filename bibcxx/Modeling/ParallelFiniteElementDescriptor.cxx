@@ -58,7 +58,7 @@ ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
     // gardes dans le nouveau ligrel
     for( const auto meshElem : explorer )
     {
-        const auto& numElem = meshElem.getElementNumber();
+        const auto& numElem = meshElem.getCellIndex();
         bool keepElem = false;
         int pos = 0, curOwner = -1;
         for( auto numNode : meshElem )
@@ -219,7 +219,7 @@ ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
         nbCollObj = 1;
         for( const auto& colObj : liel )
         {
-            const ASTERINTEGER numInColl = colObj.getElementNumber();
+            const ASTERINTEGER numInColl = colObj.getCellIndex();
             bool addedElem = false;
             for( const auto& val : colObj )
             {

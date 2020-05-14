@@ -78,28 +78,27 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
     }
     // recup mailles connexes et nouveaux noeuds
     int taille = toSend.size();
-    VectorLong elementsType;
+    VectorLong cellsTypes;
     std::vector<VectorLong> connectivity;
-    for ( const auto meshElem : mesh->getConnectivityExplorer() )
+    for ( const auto cell : mesh->getConnectivityExplorer() )
     {
-        const auto& numElem = meshElem.getElementNumber();
-        bool keepElem = false;
-        for( auto nodeNum : meshElem )
+        bool keepCell = false;
+        for( auto nodeNum : cell )
         {
-            if ( keepElem )
+            if ( keepCell )
                 break;
             for ( int i=0; i<taille; i++)
             {
                 if ( nodeNum-1 == toSend[i] )
-                    keepElem = true;
+                    keepCell = true;
                     break;
             }
         }
-        if (keepElem)
+        if (keepCell)
         {
-            elementsType.push_back( meshElem.getType() );
+            cellsTypes.push_back( cell.getType() );
             VectorLong listOfNodes;
-            for( auto nodeNum : meshElem )
+            for( auto nodeNum : cell )
             {
                 if( boolToSend[ nodeNum-1 ] == -1 )
                 {
@@ -191,13 +190,13 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
                     vecTmp2.push_back( val + offset );
             }
         }
-        taille = elementsType.size();
+        taille = cellsTypes.size();
         aster_mpi_bcast( &taille, 1, MPI_INT, proc, commWorld );
         if( proc == rank )
         {
-            aster_mpi_bcast( elementsType.data(), taille, MPI_LONG, proc, commWorld );
+            aster_mpi_bcast( cellsTypes.data(), taille, MPI_LONG, proc, commWorld );
             completeCellsType.insert( completeCellsType.end(),
-                                              elementsType.begin(), elementsType.end() );
+                                              cellsTypes.begin(), cellsTypes.end() );
         }
         else
         {
@@ -270,14 +269,14 @@ PartialMeshClass::PartialMeshClass( const std::string& name,
         _groupOfNodes->getObjectFromName( nameOfGrp ).setValues( toCopy );
     }
     _nameOfCells->allocate( Permanent, nbElems );
-    _elementsType->allocate( Permanent, nbElems );
+    _cellsType->allocate( Permanent, nbElems );
     _connectivity->allocateContiguous( Permanent, nbElems, completeConnectivitySize, Numbered );
     for( int position = 1; position <= nbElems; ++position )
     {
         _nameOfCells->add( position, std::string( "M" + std::to_string( position ) ) );
         _connectivity->allocateObject( completeConnectivity[position-1].size() );
         _connectivity->getObject( position ).setValues( completeConnectivity[position-1] );
-        (*_elementsType)[ position-1 ] = completeCellsType[position-1];
+        (*_cellsType)[ position-1 ] = completeCellsType[position-1];
     }
     CALLO_CARGEO( getName() );
 };

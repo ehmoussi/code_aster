@@ -218,10 +218,4 @@ typedef std::vector< GroupOfCellsPtr > VectorOfGroupOfCellsPtr;
 typedef boost::shared_ptr< AllMeshEntities > AllMeshEntitiesPtr;
 typedef std::vector< AllMeshEntitiesPtr > VectorOfAllMeshEntitiesPtr;
 
-typedef boost::shared_ptr< Cell > ElementPtr;
-typedef std::vector< ElementPtr > VectorOfElementPtr;
-
-typedef boost::shared_ptr< Node > NodePtr;
-typedef std::vector< NodePtr > VectorOfNodePtr;
-
 #endif /* MESHENTITES_H_ */
