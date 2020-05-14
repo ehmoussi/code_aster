@@ -12,9 +12,9 @@ _usage()
     echo
     echo "  --help (-h)            Print this help information and exit."
     echo
-    echo "  --waf script           Define the script to be used (default: ./waf)."
+    echo "  --waf script           Define the script to be used (default: ./waf_mpi)."
     echo
-    echo "  --builddir DIR         Define the build directory (default: build/std)."
+    echo "  --builddir DIR         Define the build directory (default: build/mpi)."
     echo
     echo "  --use-debug            Use the debug build (Use 'release' by default)."
     echo
@@ -25,8 +25,8 @@ _usage()
 
 check_docs_main()
 {
-    local waf=./waf
-    local builddir=build/std
+    local waf=./waf_mpi
+    local builddir=build/mpi
     local variant="release"
     local verbose=0
 
@@ -66,22 +66,29 @@ check_docs_main()
         fi
         echo "ok"
 
-        printf "\nSource environment...\n"
-        . ${builddir}/${variant}/data/profile.sh
+        (
+            printf "\nSource environment...\n"
+            . ${builddir}/${variant}/data/profile.sh
+            printf "\nGenerate objects documentation...\n"
+            python3 doc/generate_rst.py --objects
+            return $?
+        )
+        iret=$?
+        [ ${iret} -ne 0 ] && return 1
 
-        printf "\nGenerate objects documentation...\n"
-        python doc/generate_rst.py --objects
-        test $? -eq 0 || return 1
-
-        if [ `hg status -ardm | wc -l` != 0 ]
-        then
+        if [ `hg status -ardm | wc -l` != 0 ]; then
             printf "\nChanges must be committed:\n"
             hg status
             return 1
         fi
 
-        printf "\nGenerate html documentation...\n"
-        ${waf} doc${suffix}
+        (
+            printf "\nSource environment...\n"
+            . ${builddir}/${variant}/data/profile.sh
+            printf "\nGenerate html documentation...\n"
+            ${waf} doc${suffix}
+            return $?
+        )
         return $?
 
     ) >> ${log} 2>&1

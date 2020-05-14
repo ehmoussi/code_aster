@@ -49,12 +49,6 @@ void exportMeshToPython() {
         .def( "getType", &VirtualMeshEntity::getType )
         .def( "getNames", &VirtualMeshEntity::getNames );
 
-    py::class_< GroupOfCells, GroupOfCellsPtr, py::bases< VirtualMeshEntity > >( "GroupOfCells",
-                                                                                 py::no_init )
-        // fake initFactoryPtr: created by subclass
-        // fake initFactoryPtr: created by subclass
-        ;
-
     py::class_< AllMeshEntities, AllMeshEntitiesPtr, py::bases< VirtualMeshEntity > >(
         "AllMeshEntities", py::no_init )
         // fake initFactoryPtr: created by subclass
