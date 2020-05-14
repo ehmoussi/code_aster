@@ -138,7 +138,7 @@ namespace py = boost::python;
 #include "PythonBindings/UnitaryThermalLoadInterface.h"
 #include "PythonBindings/VariantModalBasisInterface.h"
 #include "PythonBindings/VariantStiffnessMatrixInterface.h"
-#include "PythonBindings/VectorUtilitiesInterface.h"
+#include "PythonBindings/ConvertersInterface.h"
 #include "PythonBindings/XfemCrackInterface.h"
 // Please keep '*Interface.h' files in alphabetical order to ease merging
 
@@ -194,7 +194,7 @@ BOOST_PYTHON_MODULE( libaster ) {
     // do not sort (compilation error)
     exportStiffnessMatrixVariantToPython();
     exportModalBasisVariantToPython();
-    exportVectorUtilitiesToPython();
+    exportConverters();
     exportDataStructureToPython();
     exportDebugToPython();
     exportMeshToPython();

@@ -1,8 +1,8 @@
-#ifndef VECTORUTILITIES_H_
-#define VECTORUTILITIES_H_
+#ifndef CONVERTERSINTERFACE_H_
+#define CONVERTERSINTERFACE_H_
 
 /**
- * @file VectorUtilitiesInterface.h
+ * @file ConvertersInterface.h
  * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -124,7 +124,7 @@ template < class T > void exportJeveuxVectorConverter() {
 
 };
 
-void exportVectorUtilitiesToPython();
+void exportConverters();
 
 
-#endif /* VECTORUTILITIES_H_ */
+#endif /* CONVERTERSINTERFACE_H_ */
