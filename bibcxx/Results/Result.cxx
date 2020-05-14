@@ -344,7 +344,7 @@ bool ResultClass::update()
 
     int cmpt = 1;
     for ( const auto curIter : _namesOfFields->getVectorOfObjects() ) {
-        auto nomSymb = trim( _symbolicNamesOfFields->findStringOfElement( cmpt ) );
+        auto nomSymb = trim( _symbolicNamesOfFields->getStringFromIndex( cmpt ) );
         if ( numberOfSerialNum > curIter.size() )
             throw std::runtime_error( "Programming error" );
 

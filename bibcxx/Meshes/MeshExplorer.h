@@ -31,7 +31,7 @@
 
 class CellObject
 {
-    const ASTERINTEGER        _elemNum;
+    const ASTERINTEGER        _cellIndex;
     const ASTERINTEGER* const _listOfNodes;
     const ASTERINTEGER        _nbNodes;
     const ASTERINTEGER        _type;
@@ -39,7 +39,7 @@ class CellObject
 public:
     CellObject( const ASTERINTEGER& num, const ASTERINTEGER* const listOfNodes,
                  const ASTERINTEGER& nbNodes, const ASTERINTEGER& type ):
-        _elemNum( num ),
+        _cellIndex( num ),
         _listOfNodes( listOfNodes ),
         _nbNodes( nbNodes ),
         _type( type )
@@ -50,9 +50,9 @@ public:
         return _nbNodes;
     };
 
-    const ASTERINTEGER& getElementNumber() const
+    const ASTERINTEGER& getCellIndex() const
     {
-        return _elemNum;
+        return _cellIndex;
     };
 
     const ASTERINTEGER& getType() const
@@ -123,14 +123,14 @@ public:
     };
 };
 
-class ElementBuilderFromConnectivity
+class CellsIteratorFromConnectivity
 {
 private:
     const JeveuxCollectionLong _connect;
     const JeveuxVectorLong     _type;
 
 public:
-    ElementBuilderFromConnectivity( const JeveuxCollectionLong& connect,
+    CellsIteratorFromConnectivity( const JeveuxCollectionLong& connect,
                                     const JeveuxVectorLong& type ):
         _connect( connect ),
         _type( type )
@@ -157,13 +157,13 @@ public:
     };
 };
 
-class ElementBuilderFromFiniteElementDescriptor
+class CellsIteratorFromFiniteElementDescriptor
 {
 private:
     const JeveuxCollectionLong _connectAndType;
 
 public:
-    ElementBuilderFromFiniteElementDescriptor( const JeveuxCollectionLong& connect ):
+    CellsIteratorFromFiniteElementDescriptor( const JeveuxCollectionLong& connect ):
         _connectAndType( connect )
     {
         _connectAndType->buildFromJeveux();

@@ -51,9 +51,9 @@ class ParallelMeshClass : public BaseMeshClass {
     JeveuxVectorChar24 _globalGroupOfNodes;
     /** @brief Set of all groups of nodes (parallel mesh) */
     SetOfString _setOfAllGON;
-    /** @brief All groups of elements (parallel mesh) */
+    /** @brief All groups of cells (parallel mesh) */
     JeveuxVectorChar24 _globalGroupOfCells;
-    /** @brief Set of all groups of elements (parallel mesh) */
+    /** @brief Set of all groups of cells (parallel mesh) */
     SetOfString _setOfAllGOE;
     /** @brief Identify outer nodes */
     JeveuxVectorLong _outerNodes;

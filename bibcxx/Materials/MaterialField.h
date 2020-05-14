@@ -221,12 +221,12 @@ class MaterialFieldClass: public DataStructure
          * @param nameOfGroup Name of group
          */
         void addBehaviouronCell( BehaviourDefinitionPtr& curBehav,
-                                            std::string nameOfElement )
+                                            std::string nameOfCell )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
-                                            MeshEntityPtr( new Cell(nameOfElement) ) ) );
+                                            MeshEntityPtr( new Cell(nameOfCell) ) ) );
         };
 
         /**
@@ -259,15 +259,15 @@ class MaterialFieldClass: public DataStructure
         /**
          * @brief Ajout d'un materiau sur une entite du maillage
          * @param curMaters Materiau a ajouter
-         * @param nameOfElement Nom des mailles
+         * @param nameOfCell Nom des mailles
          */
         void addMaterialsonCell( std::vector< MaterialPtr > curMaters,
-                                    VectorString namesOfElement )
+                                    VectorString namesOfCells )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( curMaters,
-                                            MeshEntityPtr( new Cell(namesOfElement) ) ) );
+                                            MeshEntityPtr( new Cell(namesOfCells) ) ) );
         };
 
         /**
@@ -300,15 +300,15 @@ class MaterialFieldClass: public DataStructure
         /**
          * @brief Ajout d'un materiau sur une entite du maillage
          * @param curMater Materiau a ajouter
-         * @param nameOfElement Nom des mailles
+         * @param nameOfCell Nom des mailles
          */
         void addMaterialonCell( MaterialPtr& curMater,
-                                   VectorString namesOfElement )
+                                   VectorString namesOfCells )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( { curMater },
-                                            MeshEntityPtr( new Cell(namesOfElement) ) ) );
+                                            MeshEntityPtr( new Cell(namesOfCells) ) ) );
         };
 
         /**

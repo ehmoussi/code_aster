@@ -44,7 +44,7 @@
  */
 class BaseMeshClass : public DataStructure {
   public:
-    typedef MeshExplorer< ElementBuilderFromConnectivity, const JeveuxCollectionLong &,
+    typedef MeshExplorer< CellsIteratorFromConnectivity, const JeveuxCollectionLong &,
                           const JeveuxVectorLong & >
         ConnectivityMeshExplorer;
 
@@ -66,7 +66,7 @@ class BaseMeshClass : public DataStructure {
     /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
     JeveuxBidirectionalMapChar8 _nameOfCells;
     /** @brief Objet Jeveux '.TYPMAIL' */
-    JeveuxVectorLong _elementsType;
+    JeveuxVectorLong _cellsType;
     /** @brief Pointeur de nom Jeveux '.PTRNOMMAI' */
     JeveuxBidirectionalMapChar24 _nameOfGrpCells;
     /** @brief Objet Jeveux '.GROUPEMA' */
@@ -97,12 +97,12 @@ class BaseMeshClass : public DataStructure {
               JeveuxCollectionLongNamePtr( getName() + ".GROUPENO  ", _nameOfGrpNodes ) ),
           _connectivity( JeveuxCollectionLong( getName() + ".CONNEX    " ) ),
           _nameOfCells( JeveuxBidirectionalMapChar8( getName() + ".NOMMAI    " ) ),
-          _elementsType( JeveuxVectorLong( getName() + ".TYPMAIL   " ) ),
+          _cellsType( JeveuxVectorLong( getName() + ".TYPMAIL   " ) ),
           _nameOfGrpCells( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMMAI " ) ),
           _groupOfCells(
               JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ", _nameOfGrpCells ) ),
           _title( JeveuxVectorChar80( getName() + "           .TITR" ) ),
-          _explorer( ConnectivityMeshExplorer( _connectivity, _elementsType ) ){};
+          _explorer( ConnectivityMeshExplorer( _connectivity, _cellsType ) ){};
 
   public:
     /**
@@ -115,7 +115,7 @@ class BaseMeshClass : public DataStructure {
      * @brief Get the connectivity
      */
     const ConnectivityMeshExplorer &getConnectivityExplorer() const {
-        _elementsType->updateValuePointer();
+        _cellsType->updateValuePointer();
         _connectivity->buildFromJeveux();
         return _explorer;
     };
@@ -141,7 +141,7 @@ class BaseMeshClass : public DataStructure {
     };
 
     /**
-     * @brief Get all the names of group of elements
+     * @brief Get all the names of group of cells
      * @return JeveuxBidirectionalMapChar24 _nameOfGrpCells
      */
     const JeveuxBidirectionalMapChar24 &getGroupsOfNodesMap() const { return _nameOfGrpCells; };

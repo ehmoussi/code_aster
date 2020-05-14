@@ -467,9 +467,9 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
 
     /**
      * @brief Set a physical quantity on a MeshEntity (group of nodes
-     *        or group of elements)
+     *        or group of cells)
      * @param physPtr shared pointer to a PhysicalQuantity
-     * @param nameOfGroup name of the group of elements
+     * @param nameOfGroup name of the group of cells
      * @return bool success/failure index
      */
     bool setValue( PhysicalQuantityPtr physPtr,
@@ -484,7 +484,7 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
         if ( nameOfGroup.size() == 0 && Traits::isAllowedOnWholeMesh ) {
             _meshEntity = MeshEntityPtr( new AllMeshEntities() );
         }
-        // nameOfGroup is the name of a group of elements and
+        // nameOfGroup is the name of a group of cells and
         // LoadTraits authorizes to base the current load on such a group
         else if ( currentMesh->hasGroupOfCells( nameOfGroup ) &&
                   Traits::isAllowedOnGroupOfCells ) {

@@ -46,5 +46,5 @@ PhysicalQuantityManager::getPhysicalQuantityName( const ASTERINTEGER &quantityNu
     {
     if ( quantityNumber <= 0 || quantityNumber > _nameOfPhysicalQuantity->size() )
         throw std::runtime_error( "Not a known physical quantity" );
-    return _nameOfPhysicalQuantity->findStringOfElement( quantityNumber );
+    return _nameOfPhysicalQuantity->getStringFromIndex( quantityNumber );
 };
