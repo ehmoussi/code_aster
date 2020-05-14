@@ -34,7 +34,7 @@ that does not recommend *CamelCase* naming.
   *list[list]* and not *numpy* arrays).
 
 - *std::vector* and *JeveuxVector* are automatically converted to Python *list*
-  (see :file:`bibcxx/PythonBindings/VectorUtilitiesInterface.h` for supported converters).
+  (see :file:`bibcxx/PythonBindings/ConvertersInterface.h` for supported converters).
 
 - Strings values are returned without trailing spaces.
 
