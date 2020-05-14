@@ -29,7 +29,7 @@
 
 ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
     ( const std::string& name, const FiniteElementDescriptorPtr& FEDesc,
-      const PartialMeshPtr& mesh, const ModelPtr& model, const JeveuxMemory memType ):
+      const ConnectionMeshPtr& mesh, const ModelPtr& model, const JeveuxMemory memType ):
                     FiniteElementDescriptorClass( name, model->getMesh(), memType ),
                     _joins( JeveuxVectorLong( getName() + ".DOMJ" ) ),
                     _owner( JeveuxVectorLong( getName() + ".PNOE" ) ),

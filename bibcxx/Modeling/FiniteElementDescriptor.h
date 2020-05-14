@@ -152,8 +152,8 @@ public:
 
 #ifdef _USE_MPI
     /** @brief Transert .PRNM from other FiniteElementDescriptor.
-     * this should be associated to a partialMesh,
-     * other should be associated to the parallelMesh of the partialMesh */
+     * this should be associated to a ConnectionMesh,
+     * other should be associated to the parallelMesh of the ConnectionMesh */
     void transferDofDescriptorFrom( FiniteElementDescriptorPtr& );
 #endif /* _USE_MPI */
 };

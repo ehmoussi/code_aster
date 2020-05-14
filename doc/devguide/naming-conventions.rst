@@ -73,8 +73,6 @@ Terms for the :py:class:`~code_aster.Objects.Mesh` object:
 
     Add *local* argument for *ParallelMesh*.
 
-    Rename *PartialMesh*.
-
 
 Model object
 ------------

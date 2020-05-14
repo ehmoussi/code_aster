@@ -31,7 +31,7 @@
 
 #include "Modeling/Model.h"
 #include "Modeling/FiniteElementDescriptor.h"
-#include "Meshes/PartialMesh.h"
+#include "Meshes/ConnectionMesh.h"
 #include "ParallelUtilities/CommunicationGraph.h"
 
 /**
@@ -65,7 +65,7 @@ public:
      */
     ParallelFiniteElementDescriptorClass( const std::string& name,
                                              const FiniteElementDescriptorPtr& FEDesc,
-                                             const PartialMeshPtr& mesh,
+                                             const ConnectionMeshPtr& mesh,
                                              const ModelPtr& model,
                                              const JeveuxMemory memType = Permanent );
 

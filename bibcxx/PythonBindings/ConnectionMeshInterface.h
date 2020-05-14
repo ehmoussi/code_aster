@@ -1,8 +1,8 @@
-#ifndef PARTIALMESHINTERFACE_H_
-#define PARTIALMESHINTERFACE_H_
+#ifndef CONNECTIONMESHINTERFACE_H_
+#define CONNECTIONMESHINTERFACE_H_
 
 /**
- * @file PartialMeshInterface.h
+ * @file ConnectionMeshInterface.h
  * @brief Fichier entete de
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -27,8 +27,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
-#include "Meshes/PartialMesh.h"
+#include "Meshes/ConnectionMesh.h"
 
-void exportPartialMeshToPython();
+void exportConnectionMeshToPython();
 
-#endif /* PARTIALMESHINTERFACE_H_ */
+#endif /* CONNECTIONMESHINTERFACE_H_ */

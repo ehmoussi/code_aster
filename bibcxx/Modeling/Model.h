@@ -33,7 +33,7 @@
 #include "DataStructures/DataStructure.h"
 #include "Meshes/Mesh.h"
 #include "Meshes/ParallelMesh.h"
-#include "Meshes/PartialMesh.h"
+#include "Meshes/ConnectionMesh.h"
 #include "Meshes/Skeleton.h"
 #include "Modeling/ElementaryModeling.h"
 #include "Loads/PhysicalQuantity.h"
@@ -110,7 +110,7 @@ class ModelClass : public DataStructure {
  * @todo a supprimer en templatisant Model etc.
  */
 #ifdef _USE_MPI
-    PartialMeshPtr _partialMesh;
+    ConnectionMeshPtr _connectionMesh;
 #endif /* _USE_MPI */
     /** @brief Méthode de parallélisation du modèle */
     ModelSplitingMethod _splitMethod;
@@ -149,7 +149,7 @@ class ModelClass : public DataStructure {
         if ( _baseMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 #ifdef _USE_MPI
-        _partialMesh = nullptr ;
+        _connectionMesh = nullptr ;
 #endif
     };
 
@@ -157,22 +157,22 @@ class ModelClass : public DataStructure {
        ModelClass(ResultNaming::getNewResultName(), mesh){};
 
 #ifdef _USE_MPI
-    ModelClass(const std::string name, const PartialMeshPtr mesh):
+    ModelClass(const std::string name, const ConnectionMeshPtr mesh):
         DataStructure( name, 8, "MODELE" ),
         _typeOfCells( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
         _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
         _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-        _saneModel( nullptr ), _baseMesh( mesh ), _partialMesh(mesh),
+        _saneModel( nullptr ), _baseMesh( mesh ), _connectionMesh(mesh),
         _splitMethod( Centralized ), _graphPartitioner( MetisPartitioner ),
         _ligrel( new FiniteElementDescriptorClass(getName() + ".MODELE", _baseMesh ) )
     {
         if ( _baseMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        if ( _partialMesh->isEmpty() )
+        if ( _connectionMesh->isEmpty() )
             throw std::runtime_error( "Partial mesh is empty" );
     };
 
-    ModelClass(const PartialMeshPtr mesh):
+    ModelClass(const ConnectionMeshPtr mesh):
         ModelClass(ResultNaming::getNewResultName(), mesh){};
 #endif /* _USE_MPI */
 
@@ -256,10 +256,10 @@ class ModelClass : public DataStructure {
     GraphPartitioner getGraphPartitioner() const { return _graphPartitioner; };
 
 #ifdef _USE_MPI
-    PartialMeshPtr getPartialMesh() const {
-        if ( ( !_partialMesh ) || _partialMesh->isEmpty() )
+    ConnectionMeshPtr getConnectionMesh() const {
+        if ( ( !_connectionMesh ) || _connectionMesh->isEmpty() )
             throw std::runtime_error( "Mesh of model is empty" );
-        return _partialMesh;
+        return _connectionMesh;
     };
 #endif /* _USE_MPI */
 
@@ -311,7 +311,7 @@ class ModelClass : public DataStructure {
     void setSplittingMethod( ModelSplitingMethod split )
     {
 #ifdef _USE_MPI
-        if ( _partialMesh && ! _partialMesh->isEmpty() && split != Centralized )
+        if ( _connectionMesh && ! _connectionMesh->isEmpty() && split != Centralized )
             throw std::runtime_error( "For Parallel mesh, Centralized splitting is mandatory" );
 #endif /* _USE_MPI */
 

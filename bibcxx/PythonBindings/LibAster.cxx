@@ -111,7 +111,7 @@ namespace py = boost::python;
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
-#include "PythonBindings/PartialMeshInterface.h"
+#include "PythonBindings/ConnectionMeshInterface.h"
 #include "PythonBindings/ConstantFieldOnCellsInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
@@ -298,7 +298,7 @@ BOOST_PYTHON_MODULE( libaster ) {
 #endif /* _USE_MPI */
     exportMPIInfosToPython();
 
-    exportPartialMeshToPython();
+    exportConnectionMeshToPython();
     exportResultNamingToPython();
     exportListOfFloatsToPython();
     exportListOfIntegersToPython();
