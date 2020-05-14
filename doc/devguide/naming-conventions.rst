@@ -22,7 +22,7 @@ that does not recommend *CamelCase* naming.
 - The names of **classes** start with an upper case (example: *MeshCoordinatesField*).
 
 - The names of **methods**/**members** start with a lower case and
-  does not contain the object name (example: *getValues* and not *getFieldValues*).
+  does not contain the object name (example: *getValues* and not *getValues*).
 
 - Reuse existing names in newly created objects. Have a look to the :ref:`genindex` page
   should give good ideas for new methods.

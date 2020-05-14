@@ -245,9 +245,9 @@ ConnectionMeshClass::ConnectionMeshClass( const std::string& name,
         (*_owner)[i] = completeMatchingNumbering[3*i+2];
     }
 
-    *_coordinates->getFieldDescriptor() = *mesh->getCoordinates()->getFieldDescriptor();
-    *_coordinates->getFieldReference() = *mesh->getCoordinates()->getFieldReference();
-    auto values = _coordinates->getFieldValues();
+    *_coordinates->getDescriptor() = *mesh->getCoordinates()->getDescriptor();
+    *_coordinates->getReference() = *mesh->getCoordinates()->getReference();
+    auto values = _coordinates->getValues();
     values->allocate( Permanent, completeCoords.size() );
     values->updateValuePointer();
     for( int position = 0; position < completeCoords.size(); ++position )
