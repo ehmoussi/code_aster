@@ -220,13 +220,13 @@ class MaterialFieldClass: public DataStructure
          * @param curMater behaviour to add
          * @param nameOfGroup Name of group
          */
-        void addBehaviourOnElement( BehaviourDefinitionPtr& curBehav,
+        void addBehaviouronCell( BehaviourDefinitionPtr& curBehav,
                                             std::string nameOfElement )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _behaviours.push_back( listOfBehavAndGrpsValue( curBehav,
-                                            MeshEntityPtr( new Element(nameOfElement) ) ) );
+                                            MeshEntityPtr( new Cell(nameOfElement) ) ) );
         };
 
         /**
@@ -261,13 +261,13 @@ class MaterialFieldClass: public DataStructure
          * @param curMaters Materiau a ajouter
          * @param nameOfElement Nom des mailles
          */
-        void addMaterialsOnElement( std::vector< MaterialPtr > curMaters,
+        void addMaterialsonCell( std::vector< MaterialPtr > curMaters,
                                     VectorString namesOfElement )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( curMaters,
-                                            MeshEntityPtr( new Element(namesOfElement) ) ) );
+                                            MeshEntityPtr( new Cell(namesOfElement) ) ) );
         };
 
         /**
@@ -302,13 +302,13 @@ class MaterialFieldClass: public DataStructure
          * @param curMater Materiau a ajouter
          * @param nameOfElement Nom des mailles
          */
-        void addMaterialOnElement( MaterialPtr& curMater,
+        void addMaterialonCell( MaterialPtr& curMater,
                                    VectorString namesOfElement )
         {
             if ( ! _mesh ) throw std::runtime_error( "Mesh is not defined" );
 
             _materialsFieldEntity.push_back( listOfMatsAndGrpsValue( { curMater },
-                                            MeshEntityPtr( new Element(namesOfElement) ) ) );
+                                            MeshEntityPtr( new Cell(namesOfElement) ) ) );
         };
 
         /**
