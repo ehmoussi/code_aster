@@ -5,7 +5,8 @@ Naming conventions / Python API
 *******************************
 
 .. note::
-    This article is still a *work in progress* document.
+    This section is still a *work in progress* document.
+
 
 =============
 General rules

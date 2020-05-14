@@ -98,7 +98,7 @@ public:
 };
 
 /**
- * @class GroupOfNodesClass
+ * @class GroupOfNodes
  * @brief Cette classe permet de definir des groupes de noeuds
  * @author Nicolas Sellenet
  */
@@ -161,30 +161,30 @@ public:
 };
 
 /**
- * @class ElementEntities
+ * @class Cell
  * @brief Cette classe permet de definir des éléments du maillage
  * @author Nicolas Sellenet
  */
-class Element: public VirtualMeshEntity
+class Cell: public VirtualMeshEntity
 {
 public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    Element( std::string name ): VirtualMeshEntity( name, CellType )
+    Cell( std::string name ): VirtualMeshEntity( name, CellType )
     {};
 
     /**
      * @brief Constructor
      * @param names names in entity
      */
-    Element( const VectorString& names ): VirtualMeshEntity( names, CellType )
+    Cell( const VectorString& names ): VirtualMeshEntity( names, CellType )
     {};
 };
 
 /**
- * @class NodeEntities
+ * @class Node
  * @brief Cette classe permet de definir des noeuds du maillage
  * @author Nicolas Sellenet
  */
@@ -218,7 +218,7 @@ typedef std::vector< GroupOfCellsPtr > VectorOfGroupOfCellsPtr;
 typedef boost::shared_ptr< AllMeshEntities > AllMeshEntitiesPtr;
 typedef std::vector< AllMeshEntitiesPtr > VectorOfAllMeshEntitiesPtr;
 
-typedef boost::shared_ptr< Element > ElementPtr;
+typedef boost::shared_ptr< Cell > ElementPtr;
 typedef std::vector< ElementPtr > VectorOfElementPtr;
 
 typedef boost::shared_ptr< Node > NodePtr;

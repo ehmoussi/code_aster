@@ -64,18 +64,18 @@ void exportMaterialFieldToPython()
     c1.def( "addBehaviourOnAllMesh", &MaterialFieldClass::addBehaviourOnAllMesh );
     c1.def( "addBehaviourOnGroupOfCells",
               &MaterialFieldClass::addBehaviourOnGroupOfCells );
-    c1.def( "addBehaviourOnElement",
-              &MaterialFieldClass::addBehaviourOnElement );
+    c1.def( "addBehaviouronCell",
+              &MaterialFieldClass::addBehaviouronCell );
     c1.def( "addMaterialsOnAllMesh", &MaterialFieldClass::addMaterialsOnAllMesh );
     c1.def( "addMaterialsOnGroupOfCells",
               &MaterialFieldClass::addMaterialsOnGroupOfCells );
-    c1.def( "addMaterialsOnElement",
-              &MaterialFieldClass::addMaterialsOnElement );
+    c1.def( "addMaterialsonCell",
+              &MaterialFieldClass::addMaterialsonCell );
     c1.def( "addMaterialOnAllMesh", &MaterialFieldClass::addMaterialOnAllMesh );
     c1.def( "addMaterialOnGroupOfCells",
               &MaterialFieldClass::addMaterialOnGroupOfCells );
-    c1.def( "addMaterialOnElement",
-              &MaterialFieldClass::addMaterialOnElement );
+    c1.def( "addMaterialonCell",
+              &MaterialFieldClass::addMaterialonCell );
     c1.def( "buildWithoutExternalVariable", &MaterialFieldClass::buildWithoutExternalVariable );
     c1.def( "getMesh", &MaterialFieldClass::getMesh );
     c1.def( "getVectorOfMaterial", &MaterialFieldClass::getVectorOfMaterial );
