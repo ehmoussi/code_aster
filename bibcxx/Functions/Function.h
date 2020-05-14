@@ -126,13 +126,10 @@ class BaseFunctionClass : public GenericFunctionClass {
                             const VectorReal &ord ) ;
 
     /**
-     * @brief Return the values of the function as an unidimensional vector
+     * @brief Return the values of the function
      */
-    VectorReal getValues() const {
-        _value->updateValuePointer();
-        const double *ptr = getDataPtr();
-        VectorReal vect( ptr, ptr + _value->size() );
-        return vect;
+    const JeveuxVectorReal getValues() const {
+        return _value;
     }
 
     /**

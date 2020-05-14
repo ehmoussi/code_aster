@@ -24,10 +24,13 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "astercxx.h"
 #include <boost/python.hpp>
 
+#include "astercxx.h"
+#include "MemoryManager/JeveuxVector.h"
+
 namespace py = boost::python;
+
 
 template < typename T > struct VectorToPythonList {
     static PyObject *convert( std::vector< T > const &v ) {
@@ -35,6 +38,17 @@ template < typename T > struct VectorToPythonList {
         typename std::vector< T >::const_iterator p;
         for ( p = v.begin(); p != v.end(); ++p ) {
             blst.append( py::object( *p ) );
+        }
+        return py::incref( blst.ptr() );
+    }
+};
+
+template < typename T > struct JeveuxVectorToPythonList {
+    static PyObject *convert( JeveuxVector< T > const &v ) {
+        py::list blst;
+        v->updateValuePointer();
+        for ( int i = 0; i < v->size(); ++i ) {
+            blst.append( py::object( (*v)[i] ) );
         }
         return py::incref( blst.ptr() );
     }
@@ -94,7 +108,7 @@ template < typename T > struct VectorFromPythonList {
     }
 };
 
-template < class T > void exportVectorUtilities() {
+template < class T > void exportVectorConverter() {
 
     // register the to-python converter
     py::to_python_converter< std::vector< T >, VectorToPythonList< T > >();
@@ -103,6 +117,14 @@ template < class T > void exportVectorUtilities() {
     VectorFromPythonList< T >();
 };
 
+template < class T > void exportJeveuxVectorConverter() {
+
+    // register the to-python converter
+    py::to_python_converter< JeveuxVector< T >, JeveuxVectorToPythonList< T > >();
+
+};
+
 void exportVectorUtilitiesToPython();
+
 
 #endif /* VECTORUTILITIES_H_ */

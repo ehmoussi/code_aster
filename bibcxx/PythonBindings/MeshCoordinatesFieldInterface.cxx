@@ -39,5 +39,20 @@ void exportMeshCoordinatesFieldToPython() {
         .def( "__init__",
               py::make_constructor( &initFactoryPtr< MeshCoordinatesFieldClass, std::string > ) )
         .def( "__getitem__",
-              +[]( const MeshCoordinatesFieldClass &v, int i ) { return v.operator[]( i ); } );
+              +[]( const MeshCoordinatesFieldClass &v, int i ) { return v.operator[]( i ); }, R"(
+Return the coordinate at index *idx* in the vector.
+
+The value is the same as *getValues()[idx]* without creating the entire vector.
+
+Returns:
+    float: Values of the *idx*-th coordinate.
+        )",
+            ( py::arg( "self" ), py::arg( "idx" ) ) )
+        .def( "getValues", &MeshCoordinatesFieldClass::getValues, R"(
+Return a list of values of the coordinates as (x1, y1, z1, x2, y2, z2...)
+
+Returns:
+    list[float]: List of coordinates (size = 3 * number of nodes).
+        )",
+            ( py::arg( "self" ) ) );
 };

@@ -33,16 +33,20 @@
 
 void exportVectorUtilitiesToPython() {
 
-    exportVectorUtilities< long >();
-    exportVectorUtilities< int >();
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-    exportVectorUtilities< MaterialPtr >();
-    exportVectorUtilities< FiniteElementDescriptorPtr >();
-    exportVectorUtilities< BaseFunctionPtr >();
-    exportVectorUtilities< FunctionPtr >();
-    exportVectorUtilities< PartOfMaterialFieldPtr >();
-    exportVectorUtilities< GenericMaterialPropertyPtr >();
-    exportVectorUtilities< DataStructurePtr >();
+    exportVectorConverter< int >();
+    exportVectorConverter< ASTERINTEGER >();
+    exportVectorConverter< double >();
+    exportVectorConverter< std::string >();
+    exportVectorConverter< PhysicalQuantityComponent >();
+    exportVectorConverter< MaterialPtr >();
+    exportVectorConverter< FiniteElementDescriptorPtr >();
+    exportVectorConverter< BaseFunctionPtr >();
+    exportVectorConverter< FunctionPtr >();
+    exportVectorConverter< PartOfMaterialFieldPtr >();
+    exportVectorConverter< GenericMaterialPropertyPtr >();
+    exportVectorConverter< DataStructurePtr >();
+
+    exportJeveuxVectorConverter< short int >();
+    exportJeveuxVectorConverter< ASTERINTEGER >();
+    exportJeveuxVectorConverter< double >();
 };
