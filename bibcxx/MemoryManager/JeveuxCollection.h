@@ -57,9 +57,9 @@ template < class ValueType > class JeveuxCollectionObject : private AllowedJeveu
     std::string _nameOfObject;
     /** @brief Pointeur vers le vecteur Jeveux */
     ValueType *_valuePtr;
-    /** @brief Pointeur vers le vecteur Jeveux */
+    /** @brief Longueur du vecteur Jeveux */
     ASTERINTEGER _size;
-    /** @brief Pointeur vers le vecteur Jeveux */
+    /** @brief Adresse du vecteur Jeveux */
     ASTERINTEGER _jeveuxAdress;
 
     /**
@@ -521,7 +521,7 @@ class JeveuxCollectionClass : public JeveuxObjectClass, private AllowedAccessTyp
      */
     bool allocateObjectByName( const std::string &name, const int &size ) {
         if ( _listObjects.size() == _size )
-            throw std::runtime_error( "Out of collection bound" );
+            throw std::runtime_error( "Out of collection bounds" );
 
         _mapNumObject[std::string( trim( name.c_str() ) )] = _listObjects.size();
         _listObjects.push_back(
@@ -534,7 +534,7 @@ class JeveuxCollectionClass : public JeveuxObjectClass, private AllowedAccessTyp
      */
     bool allocateObject( const int &size ) {
         if ( _listObjects.size() == _size )
-            throw std::runtime_error( "Out of collection bound" );
+            throw std::runtime_error( "Out of collection bounds" );
 
         _listObjects.push_back( JeveuxCollObjValType( _name, _listObjects.size() + 1, size ) );
         return true;
@@ -556,14 +556,14 @@ class JeveuxCollectionClass : public JeveuxObjectClass, private AllowedAccessTyp
     bool buildFromJeveux( bool force = false );
 
     /**
-     * @brief Methode verifiant l'existance d'un objet de collection dans la collection
+     * @brief Methode verifiant l'existence d'un objet de collection dans la collection
      * @param name Chaine contenant le nom de l'objet
      * @return Renvoit true si l'objet existe dans la collection
      */
     bool existsObject( const std::string &name ) const;
 
     /**
-     * @brief Methode verifiant l'existance d'un objet de collection dans la collection
+     * @brief Methode verifiant l'existence d'un objet de collection dans la collection
      * @param number entier
      * @return Renvoit true si l'objet existe dans la collection
      */
@@ -579,27 +579,27 @@ class JeveuxCollectionClass : public JeveuxObjectClass, private AllowedAccessTyp
 
     const JeveuxCollObjValType &getObject( const int &position ) const {
         if ( _isEmpty )
-            throw std::runtime_error( "Collection not build" );
+            throw std::runtime_error( "Collection not built" );
 
         if ( position > _listObjects.size() || position <= 0 )
-            throw std::runtime_error( "Out of collection bound" );
+            throw std::runtime_error( "Out of collection bounds" );
 
         return _listObjects[position - 1];
     };
 
     JeveuxCollObjValType &getObject( const int &position ) {
         if ( _isEmpty )
-            throw std::runtime_error( "Collection not build" );
+            throw std::runtime_error( "Collection not built" );
 
         if ( position > _listObjects.size() || position <= 0 )
-            throw std::runtime_error( "Out of collection bound" );
+            throw std::runtime_error( "Out of collection bounds" );
 
         return _listObjects[position - 1];
     };
 
     const JeveuxCollObjValType &getObjectFromName( const std::string &name ) const {
         if ( _isEmpty )
-            throw std::runtime_error( "Collection not build" );
+            throw std::runtime_error( "Collection not built" );
 
         if ( !_isNamed )
             throw std::runtime_error( "Collection " + _name + " is not named" );
@@ -613,7 +613,7 @@ class JeveuxCollectionClass : public JeveuxObjectClass, private AllowedAccessTyp
 
     JeveuxCollObjValType &getObjectFromName( const std::string &name ) {
         if ( _isEmpty )
-            throw std::runtime_error( "Collection not build" );
+            throw std::runtime_error( "Collection not built" );
 
         if ( !_isNamed )
             throw std::runtime_error( "Collection " + _name + " is not named" );

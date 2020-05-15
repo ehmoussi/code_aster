@@ -15,26 +15,6 @@ This definition can be added directly in
 :py:mod:`code_aster.Objects.datastructure_ext` in the ``DICT_SDJ`` dict.
 
 
-*************
-Class diagram
-*************
-
-.. Add here "main" DataStructures
-
-.. inheritance-diagram::
-    code_aster.Objects.assemblymatrix_ext
-    code_aster.Objects.datastructure_ext
-    code_aster.Objects.fieldoncells_ext
-    code_aster.Objects.fieldonnodes_ext
-    code_aster.Objects.function_ext
-    code_aster.Objects.listoffloats
-    code_aster.Objects.meshcoordinatesfield_ext
-    code_aster.Objects.table_ext
-    code_aster.Objects.timestepmanager_ext
-   :parts: 1
-
-
-
 ********************
 Detailed description
 ********************

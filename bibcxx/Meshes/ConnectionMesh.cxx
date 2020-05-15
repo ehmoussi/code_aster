@@ -261,12 +261,12 @@ ConnectionMeshClass::ConnectionMeshClass( const std::string& name,
     for( int position = 1; position <= nbNodes; ++position )
         _nameOfNodes->add( position, std::string( "N" + std::to_string( position ) ) );
 
-    _groupOfNodes->allocate( Permanent, toFind2.size() );
+    _groupsOfNodes->allocate( Permanent, toFind2.size() );
     for( const auto& nameOfGrp : toFind2 )
     {
         const auto& toCopy = gatheredMap[ nameOfGrp ];
-        _groupOfNodes->allocateObjectByName( nameOfGrp, toCopy.size() );
-        _groupOfNodes->getObjectFromName( nameOfGrp ).setValues( toCopy );
+        _groupsOfNodes->allocateObjectByName( nameOfGrp, toCopy.size() );
+        _groupsOfNodes->getObjectFromName( nameOfGrp ).setValues( toCopy );
     }
     _nameOfCells->allocate( Permanent, nbElems );
     _cellsType->allocate( Permanent, nbElems );

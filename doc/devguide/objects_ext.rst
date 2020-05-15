@@ -4,18 +4,6 @@
 Pure Python extensions for :py:class:`~code_aster.Objects.DataStructure`
 ########################################################################
 
-*************
-Class diagram
-*************
-
-.. inheritance-diagram::
-    code_aster.Objects.fieldoncells_ext
-    code_aster.Objects.fieldonnodes_ext
-    code_aster.Objects.listoffloats
-    code_aster.Objects.datastructure_ext
-   :parts: 1
-
-
 ********************
 Detailed description
 ********************

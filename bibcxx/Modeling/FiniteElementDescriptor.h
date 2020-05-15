@@ -60,7 +60,7 @@ protected:
     /** @brief Collection '.LIEL' */
     JeveuxCollectionLong                      _listOfGroupOfCells;
     /** @brief Vecteur Jeveux '.REPE' */
-    JeveuxVectorLong                          _groupOfCellsNumberByElement;
+    JeveuxVectorLong                          _groupsOfCellsNumberByElement;
     /** @brief Collection '.NEMA' */
     JeveuxCollectionLong                      _delayedNumberedConstraintElementsDescriptor;
     /** @brief Vecteur Jeveux '.PRNS' */
