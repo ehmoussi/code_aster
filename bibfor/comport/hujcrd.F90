@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,25 +29,25 @@ subroutine hujcrd(k, mater, sig, vin, seuild, iret)
 !    ---------------------------------------------------------------
 #include "asterf_types.h"
 #include "asterfort/hujprj.h"
+#include "asterc/r8prem.h"
     integer, intent(in) :: k
     real(kind=8), intent(in) :: mater(22, 2), sig(6), vin(*)
     real(kind=8), intent(out) :: seuild
     integer, intent(out) :: iret
 
     integer :: ndt, ndi
-    real(kind=8) :: un, r, epsvp, pcr, pa, tole
-    real(kind=8) :: degr, beta, b, m, phi, pcref, ptrac
-    real(kind=8) :: sigd(3), p, q
+    real(kind=8) :: r, epsvp, pcr
+    real(kind=8) :: beta, b, m, phi, pcref, ptrac
+    real(kind=8) :: sigd(3), p, q,rap
+    real(kind=8), parameter :: un = 1.d0, degr = 0.0174532925199d0
     aster_logical :: debug
-    parameter    (un = 1.d0)
-    parameter    (tole = 1.d-7)
-    parameter    (degr = 0.0174532925199d0)
 !
 !       ------------------------------------------------------------
     common /tdim/   ndt, ndi
     common /meshuj/ debug
 !
     iret = 0
+    seuild = 0.d0
 !
 ! ==================================================================
 ! --- VARIABLES INTERNES -------------------------------------------
@@ -62,7 +62,6 @@ subroutine hujcrd(k, mater, sig, vin, seuild, iret)
     b = mater(4, 2)
     phi = mater(5, 2)
     pcref = mater(7, 2)
-    pa = mater(8, 2)
     if (-beta*epsvp .gt. 700.d0) then
         iret = 1
         goto 999
@@ -78,8 +77,9 @@ subroutine hujcrd(k, mater, sig, vin, seuild, iret)
 !
     p = p - ptrac
 !
-    if ((p/pa) .le. tole) then
-        if (debug) write (6, '(A)') 'HUJCRD :: LOG(P/PA) NON DEFINI'
+    rap = p/pcr
+    if (rap .le. 1.d-7 .or. abs(p) .le. r8prem() .or. abs(m) .le. r8prem()) then
+        if (debug) write (6, '(A)') 'HUJCRD :: LOG(P/PCR) NON DEFINI'
         seuild = -1.d0
         goto 999
     endif
@@ -90,7 +90,7 @@ subroutine hujcrd(k, mater, sig, vin, seuild, iret)
 ! ==================================================================
 ! --- CALCUL DU SEUIL DU MECANISME DEVIATOIRE K ------------------
 ! ==================================================================
-    seuild = -q /m/p - r*(un-b*log(p/pcr))
+    seuild = -q /m/p - r*(un-b*log(rap))
 !
 999 continue
 end subroutine

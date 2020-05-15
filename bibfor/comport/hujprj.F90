@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,6 +18,9 @@
 
 subroutine hujprj(k, tin, toud, p, q)
     implicit none
+!
+#include "asterfort/assert.h"
+!
 !  LOI DE HUJEUX: PROJECTION DANS LE PLAN DEVIATEUR K
 !  IN  K        :  DIRECTION K=1 A 3
 !      TIN( )   :  TENSEUR A PROJETER (NDIM), EGAL A:
@@ -30,14 +33,16 @@ subroutine hujprj(k, tin, toud, p, q)
 !      Q     :  NORME DEVIATEUR K
 !  ------------------------------------------------------
     integer :: ndt, ndi, i, j, k
-    real(kind=8) :: d12, dd, deux
+    real(kind=8) :: dd
     real(kind=8) :: tin(6), tou(3), toud(3), p, q
 !
     common /tdim/ ndt  , ndi
 !
-    data   d12, deux /0.5d0, 2.d0/
+    tou(:) = 0.d0
+    toud(:) = 0.d0
 !
     j = 1
+    ASSERT(ndi >= 3)
     do i = 1, ndi
         if (i .ne. k) then
             tou(j) = tin(i)
@@ -47,13 +52,12 @@ subroutine hujprj(k, tin, toud, p, q)
 !
     tou(3) = tin(ndt+1-k)
 !
-    dd = d12*( tou(1)-tou(2) )
+    dd = ( tou(1)-tou(2) ) /2.d0
     toud(1) = dd
     toud(2) = -dd
     toud(3) = tou(3)
 !
-    p = d12*( tou(1)+tou(2) )
-    q = dd**deux + ((tou(3))**deux)/deux
-    q = sqrt(q)
+    p = ( tou(1)+tou(2) ) /2.d0
+    q = sqrt(dd**2 + (tou(3)**2)/2.d0)
 !
 end subroutine

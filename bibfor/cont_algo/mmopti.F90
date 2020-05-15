@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
-subroutine mmopti(mesh, ds_contact)
+subroutine mmopti(mesh, ds_contact, list_func_acti)
 !
 use NonLin_Datastructure_type
 !
@@ -48,9 +48,12 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterc/r8prem.h"
 #include "blas/ddot.h"
+#include "asterfort/isfonc.h"
+#include "asterfort/mmvalp.h"
 !
 character(len=8), intent(in) :: mesh
 type(NL_DS_Contact), intent(inout) :: ds_contact
+integer, intent(in) :: list_func_acti(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,7 +79,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     real(kind=8) :: vectpm(3), seuil_init, epsint, armini, ksipr1, ksipr2
     aster_logical :: l_node_excl
     integer :: jdecme
-    integer :: cont_init, type_inte, pair_type
+    integer :: cont_init, pair_type
     aster_logical :: l_veri, l_gliss, l_auto_seuil
     integer :: ndexfr
     character(len=8) :: elem_slav_type
@@ -86,8 +89,10 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     real(kind=8), pointer :: v_sdcont_tabfin(:) => null()
     integer  ::  elem_mast_nume,elem_mast_nbno
     character(len=8) :: elem_mast_type
-    character(len=19) :: oldgeo
+    character(len=19) :: oldgeo, newgeo
     real(kind=8) :: elem_mast_coor(27),lenght_master_elem,lenght_master_elem_init,milieu(3)
+    real(kind=8) :: coef_cont, cont_eval, elem_slav_coor(27)
+    aster_logical :: l_reuse
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -111,6 +116,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
     nb_cont_zone = cfdisi(ds_contact%sdcont_defi,'NZOCO')
     model_ndim   = cfdisi(ds_contact%sdcont_defi,'NDIM') 
+    l_reuse = isfonc(list_func_acti,'REUSE')
 !
 ! - Datastructure for contact solving
 !
@@ -132,12 +138,14 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 ! - Initial Geometric coordinates
 !
     oldgeo = mesh//'.COORDO'
+    newgeo = ds_contact%sdcont_solv(1:14)//'.NEWG'
 !
 ! - Preparation for SEUIL_INIT
 !
     do i_zone = 1, nb_cont_zone
         l_auto_seuil = mminfl(ds_contact%sdcont_defi,'SEUIL_AUTO', i_zone)
-        if (l_auto_seuil) then
+        cont_init    = mminfi(ds_contact%sdcont_defi,'CONTACT_INIT', i_zone)
+        if ((l_auto_seuil) .or. ((l_reuse) .and. (cont_init .eq. 2)) ) then
             disp_init =  ds_contact%sdcont_solv(1:14)//'.INIT'
             call mmfield_prep(disp_init, cnscon,&
                               l_sort_ = .true._1, nb_cmp_ = 1, list_cmp_ = ['LAGS_C  '])
@@ -154,12 +162,12 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
         jdecme       = mminfi(ds_contact%sdcont_defi,'JDECME'        , i_zone)
         nb_elem_slav = mminfi(ds_contact%sdcont_defi,'NBMAE'         , i_zone)
-        type_inte    = mminfi(ds_contact%sdcont_defi,'INTEGRATION'   , i_zone)
         l_gliss      = mminfl(ds_contact%sdcont_defi,'GLISSIERE_ZONE', i_zone)
         l_auto_seuil = mminfl(ds_contact%sdcont_defi,'SEUIL_AUTO'    , i_zone)
         seuil_init   = mminfr(ds_contact%sdcont_defi,'SEUIL_INIT'    , i_zone)
         seuil_init   = -abs(seuil_init)
         cont_init    = mminfi(ds_contact%sdcont_defi,'CONTACT_INIT'  , i_zone)
+        coef_cont    = mminfr(ds_contact%sdcont_defi,'COEF_AUGM_CONT', i_zone)
 !
 ! ----- No computation: no contact point
 !
@@ -201,8 +209,17 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! --------- Get coordinates of master element
 !
-                call mcomce(mesh          , oldgeo, elem_mast_nume, elem_mast_coor, elem_mast_type,&
-                            elem_mast_nbno)
+                if ((l_reuse) .and. (cont_init .eq. 2)) then
+                    call mcomce(mesh          , newgeo, elem_mast_nume, elem_mast_coor, &
+                                elem_mast_type, elem_mast_nbno)
+                    call mcomce(mesh          , newgeo, elem_slav_nume, elem_slav_coor, &
+                                elem_slav_type, elem_slav_nbno)             
+                else
+                    call mcomce(mesh          , oldgeo, elem_mast_nume, elem_mast_coor, &
+                                elem_mast_type, elem_mast_nbno)
+                    call mcomce(mesh          , oldgeo, elem_slav_nume, elem_slav_coor, &
+                                elem_slav_type, elem_slav_nbno)  
+                endif    
     ! Compute the minima lenght of the master element in the current zone
 !                 write (6,*) "elem_mast_type",elem_mast_type
                  
@@ -268,8 +285,13 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! ------------- Get pairing info
 !
-                call apinfr(sdappa, 'APPARI_PROJ_KSI1', i_poin_appa, ksipr1)
-                call apinfr(sdappa, 'APPARI_PROJ_KSI2', i_poin_appa, ksipr2)
+                if ((l_reuse) .and. (cont_init .eq. 2)) then
+                    ksipr1 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+4)
+                    ksipr2 = v_sdcont_tabfin(ztabf*(i_cont_poin-1)+5)
+                else
+                    call apinfr(sdappa, 'APPARI_PROJ_KSI1', i_poin_appa, ksipr1)
+                    call apinfr(sdappa, 'APPARI_PROJ_KSI2', i_poin_appa, ksipr2)
+                endif
                 call apinfi(sdappa, 'APPARI_TYPE'     , i_poin_appa, pair_type)
                 call apvect(sdappa, 'APPARI_VECTPM'   , i_poin_appa, vectpm)   
 !
@@ -297,7 +319,7 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
 !
 ! ------------- Option: SEUIL_INIT
 !
-                if (l_auto_seuil) then
+                if ((l_auto_seuil) .or. ((l_reuse) .and. (cont_init .eq. 2)) ) then
                     call mmextm(ds_contact%sdcont_defi, cnscon, elem_slav_indx, mlagc)
                     call mmvalp_scal(model_ndim, elem_slav_type, elem_slav_nbno, ksipr1,&
                                      ksipr2    , mlagc         , pres_cont)
@@ -311,8 +333,17 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
                 flag_cont = 0.d0
                 if (cont_init .eq. 2) then
 ! ----------------- Only interpenetrated points
-                    if (jeusgn .le. epsint) then
-                        flag_cont = 1.d0
+                    if (l_reuse) then
+                        cont_eval = pres_cont + jeusgn*coef_cont
+                        if (cont_eval .lt. 0.0) then
+                            flag_cont = 1.0
+                            nb_cont_init = nb_cont_init + 1
+                        endif
+                    else
+                        if (jeusgn .le. epsint) then
+                            flag_cont = 1.d0
+                            nb_cont_init = nb_cont_init + 1
+                        endif
                     endif
                 else if (cont_init .eq. 1) then
 ! ----------------- All points

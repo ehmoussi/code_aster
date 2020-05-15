@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
+#include "asterfort/tecart.h"
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 !
@@ -54,7 +55,7 @@ implicit none
     integer :: ibid, iret
     aster_logical :: lcumu(2)
     aster_logical :: lcoc
-    character(len=8) :: licmp(3)
+    character(len=8), parameter :: licmp(3) = (/'DEFORM  ', 'DEFO_LDC', 'RIGIGEOM'/)
     character(len=19) :: chs(2), chs3, chsx
     real(kind=8) :: lcoer(2)
     complex(kind=8) :: lcoec(2)
@@ -65,7 +66,6 @@ implicit none
     lcoc = ASTER_FALSE
     lcoer = 1.d0
     lcoec = (0.d0, 0.d0)
-    licmp = (/'DEFORM  ', 'DEFO_LDC', 'RIGIGEOM'/)
     call jemarq()
 !
 !     EN PRESENCE DE MULTIFIBRE, ON FUSIONNE LES CARTES
@@ -91,7 +91,7 @@ implicit none
 !
     call carces(chmate//'.COMPOR', 'ELEM', ' ', 'V', chsx,&
                 'A', ibid)
-
+!
 !   ON ENLEVE LA CARTE LES COMPOSANTES DE COMPOR A CONSERVER
     call cesred(chsx, 0, [ibid], -3, licmp,&
                 'V', chs(2))
@@ -101,6 +101,10 @@ implicit none
     call cesfus(2, chs, lcumu, lcoer, lcoec,&
                 lcoc, 'V', chs3)
     call cescar(chs3, compor, 'V')
+!
+! - Compress COMPOR <CARTE>
+!    
+    call tecart(compor)
 !
 !     MENAGE
     call detrsd('CHAM_ELEM_S', chs(1))

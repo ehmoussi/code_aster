@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -112,6 +112,8 @@ character(len=16) :: option, nomte
     dlagrc    = 0.d0
     ddeple(:) = 0.d0
     ddeplm(:) = 0.d0
+    fk_mait(:,:,:) = 0.d0
+    fk_escl(:,:,:) = 0.d0
 !
 ! --- RECUPERATION DES DONNEES DE LA CARTE CONTACT POINT (VOIR XMCART)
 !

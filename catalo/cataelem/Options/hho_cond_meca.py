@@ -24,7 +24,7 @@ import cataelem.Commons.parameters as SP
 import cataelem.Commons.attributes as AT
 
 
-PCSMTIR  = OutputParameter(phys=PHY.N6480R, type='ELEM',
+PCSMTIR  = OutputParameter(phys=PHY.N3240R, type='ELEM',
 comment=""" HHO - matrice cellule pour condensation statique""")
 
 PCSRTIR  = OutputParameter(phys=PHY.CELL_R, type='ELEM',

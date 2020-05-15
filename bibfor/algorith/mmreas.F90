@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/mminfm.h"
 #include "asterfort/mmvalp_scal.h"
 #include "asterfort/nmchex.h"
+#include "asterfort/nmdebg.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -104,6 +105,8 @@ implicit none
 ! --- TRANSFORMATION DEPPLU EN CHAM_NO_S ET REDUCTION SUR LES LAGRANGES
 !
     cnslbd = '&&REACLM.CNSLBD'
+    !print*, 'dans mmreas'
+    !call nmdebg('VECT', depplu, ifm)
     call mmfield_prep(depplu, cnslbd,&
                       l_sort_ = .true._1, nb_cmp_ = 1, list_cmp_ = ['LAGS_C  '])
 !
