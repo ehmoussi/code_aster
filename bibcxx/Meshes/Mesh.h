@@ -121,6 +121,13 @@ class BaseMeshClass : public DataStructure {
     };
 
     /**
+     * @brief Return the connectivity
+     */
+    const JeveuxCollectionLong getConnectivity() const {
+        return _connectivity;
+    }
+
+    /**
      * @brief Recuperation des coordonnees du maillage
      * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
      */
