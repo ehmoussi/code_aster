@@ -28,6 +28,7 @@
 #include "DataStructures/DataStructure.h"
 #include "Loads/PhysicalQuantity.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Meshes/BaseMesh.h"
 #include "Meshes/LocalizationManager.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Modeling/Model.h"
@@ -53,8 +54,7 @@ struct GenericUnitaryAcousticLoadClass {};
  * @brief Classe template definissant une charge acoustique
  * @author Nicolas Sellenet
  */
-template < typename Phys, typename Loc >
-class UnitaryAcousticLoadClass : public Phys, public Loc {
+template < typename Phys, typename Loc > class UnitaryAcousticLoadClass : public Phys, public Loc {
   public:
     UnitaryAcousticLoadClass() : Phys(), Loc(){};
 
@@ -70,8 +70,7 @@ typedef CapyLocalizationManager< GroupOfCellsManager<>, GroupOfNodesManager<>,
 
 typedef boost::shared_ptr< GenericUnitaryAcousticLoadClass > GenericAcousticLoadPtr;
 
-template class UnitaryAcousticLoadClass< PressureComplexClass,
-                                             AllNodesCellsWithoutLocalization >;
+template class UnitaryAcousticLoadClass< PressureComplexClass, AllNodesCellsWithoutLocalization >;
 typedef UnitaryAcousticLoadClass< PressureComplexClass, AllNodesCellsWithoutLocalization >
     ImposedComplexPressureClass;
 typedef boost::shared_ptr< ImposedComplexPressureClass > ImposedComplexPressurePtr;
@@ -148,8 +147,7 @@ class AcousticLoadClass : public DataStructure {
      * @brief Constructeur
      */
     AcousticLoadClass( const std::string name, const ModelPtr &model )
-        : DataStructure( name, 8, "CHAR_ACOU" ), _model( model ),
-          _mesh( model->getMesh() ),
+        : DataStructure( name, 8, "CHAR_ACOU" ), _model( model ), _mesh( model->getMesh() ),
           _modelName( JeveuxVectorChar8( getName() + ".CHAC.MODEL.NOMO" ) ),
           _type( JeveuxVectorChar8( getName() + ".TYPE" ) ),
           _imposedValues( ConstantFieldOnCellsComplexPtr(
@@ -173,7 +171,7 @@ class AcousticLoadClass : public DataStructure {
     };
 
     void addImposedNormalSpeedOnGroupOfCells( const VectorString &names,
-                                                  const RealComplex &speed ) {
+                                              const RealComplex &speed ) {
         ImposedComplexNormalSpeedPtr toAdd( new ImposedComplexNormalSpeedClass() );
         toAdd->setValue( Vnor, speed );
         for ( auto name : names )
@@ -203,8 +201,7 @@ class AcousticLoadClass : public DataStructure {
         _pressure.push_back( toAdd );
     };
 
-    void addImposedPressureOnGroupOfCells( const VectorString &names,
-                                               const RealComplex &pres ) {
+    void addImposedPressureOnGroupOfCells( const VectorString &names, const RealComplex &pres ) {
         ImposedComplexPressurePtr toAdd( new ImposedComplexPressureClass() );
         toAdd->setValue( Pres, pres );
         for ( auto name : names )
@@ -221,7 +218,7 @@ class AcousticLoadClass : public DataStructure {
     };
 
     void addUniformConnectionOnGroupOfCells( const VectorString &names,
-                                                 const VectorComponent &val ) {
+                                             const VectorComponent &val ) {
         UniformConnectionPtr toAdd( new UniformConnection() );
         toAdd->setValue( val );
         for ( auto name : names )
@@ -230,7 +227,7 @@ class AcousticLoadClass : public DataStructure {
     };
 
     void addUniformConnectionOnGroupOfNodes( const VectorString &names,
-                                              const VectorComponent &val ) {
+                                             const VectorComponent &val ) {
         UniformConnectionPtr toAdd( new UniformConnection() );
         toAdd->setValue( val );
         for ( auto name : names )
@@ -248,10 +245,7 @@ class AcousticLoadClass : public DataStructure {
     /**
      * @brief Get the model
      */
-    ModelPtr getModel()
-    {
-        return _model;
-    };
+    ModelPtr getModel() { return _model; };
 };
 
 typedef boost::shared_ptr< AcousticLoadClass > AcousticLoadPtr;

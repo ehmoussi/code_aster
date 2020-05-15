@@ -26,14 +26,16 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-#include "Meshes/Mesh.h"
-#include "Meshes/Skeleton.h"
-#include "Meshes/ParallelMesh.h"
 #include "DataFields/DataField.h"
-#include "Results/TransientResult.h"
-#include "Functions/Function.h"
 #include "Functions/Formula.h"
+#include "Functions/Function.h"
+#include "Meshes/BaseMesh.h"
+#include "Meshes/Mesh.h"
+#include "Meshes/MeshEntities.h"
+#include "Meshes/ParallelMesh.h"
+#include "Meshes/Skeleton.h"
+#include "Results/TransientResult.h"
+#include "astercxx.h"
 
 class MaterialFieldBuilderClass;
 
@@ -135,9 +137,8 @@ struct Neutral2ExternalVariablesTraits {
     constexpr static const char *name = "NEUT2";
 };
 
-struct Neutral3ExternalVariablesTraits
-{
-   constexpr static const char* name = "NEUT3";
+struct Neutral3ExternalVariablesTraits {
+    constexpr static const char *name = "NEUT3";
 };
 
 struct ConcreteDryingExternalVariablesTraits {
@@ -262,8 +263,7 @@ class ExternalVariablesClass : public BaseExternalVariablesClass {
     /**
      * @brief Constructeur
      */
-    ExternalVariablesClass( const BaseMeshPtr &mesh )
-        : BaseExternalVariablesClass( mesh ){};
+    ExternalVariablesClass( const BaseMeshPtr &mesh ) : BaseExternalVariablesClass( mesh ){};
 
     /**
      * @brief Constructeur
@@ -279,17 +279,13 @@ class ExternalVariablesClass : public BaseExternalVariablesClass {
     /**
      * @brief Get the name of the variable
      */
-    std::string getVariableName() const {
-        return std::string( _varcName );
-    };
+    std::string getVariableName() const { return std::string( _varcName ); };
 };
 
 typedef ExternalVariablesClass< TemperatureExternalVariablesTraits >
     TemperatureExternalVariableClass;
-typedef ExternalVariablesClass< GeometryExternalVariablesTraits >
-    GeometryExternalVariableClass;
-typedef ExternalVariablesClass< CorrosionExternalVariablesTraits >
-    CorrosionExternalVariableClass;
+typedef ExternalVariablesClass< GeometryExternalVariablesTraits > GeometryExternalVariableClass;
+typedef ExternalVariablesClass< CorrosionExternalVariablesTraits > CorrosionExternalVariableClass;
 typedef ExternalVariablesClass< IrreversibleDeformationExternalVariablesTraits >
     IrreversibleDeformationExternalVariableClass;
 typedef ExternalVariablesClass< ConcreteHydratationExternalVariablesTraits >
@@ -300,12 +296,9 @@ typedef ExternalVariablesClass< SteelPhasesExternalVariablesTraits >
     SteelPhasesExternalVariableClass;
 typedef ExternalVariablesClass< ZircaloyPhasesExternalVariablesTraits >
     ZircaloyPhasesExternalVariableClass;
-typedef ExternalVariablesClass< Neutral1ExternalVariablesTraits >
-    Neutral1ExternalVariableClass;
-typedef ExternalVariablesClass< Neutral2ExternalVariablesTraits >
-    Neutral2ExternalVariableClass;
-typedef ExternalVariablesClass< Neutral3ExternalVariablesTraits >
-    Neutral3ExternalVariableClass;
+typedef ExternalVariablesClass< Neutral1ExternalVariablesTraits > Neutral1ExternalVariableClass;
+typedef ExternalVariablesClass< Neutral2ExternalVariablesTraits > Neutral2ExternalVariableClass;
+typedef ExternalVariablesClass< Neutral3ExternalVariablesTraits > Neutral3ExternalVariableClass;
 typedef ExternalVariablesClass< ConcreteDryingExternalVariablesTraits >
     ConcreteDryingExternalVariableClass;
 typedef ExternalVariablesClass< TotalFluidPressureExternalVariablesTraits >
@@ -378,9 +371,8 @@ class ExternalVariablesFieldClass {
      * @brief Add an input variable on a group of mesh
      */
     template < class ExternalVariablePtr >
-    void addExternalVariableOnGroupOfCells(
-        const ExternalVariablePtr &curBehav,
-        const std::string &nameOfGroup ) {
+    void addExternalVariableOnGroupOfCells( const ExternalVariablePtr &curBehav,
+                                            const std::string &nameOfGroup ) {
         if ( !_mesh )
             throw std::runtime_error( "Mesh is not defined" );
         if ( !_mesh->hasGroupOfCells( nameOfGroup ) )
@@ -399,8 +391,8 @@ class ExternalVariablesFieldClass {
         if ( !_mesh )
             throw std::runtime_error( "Mesh is not defined" );
 
-        _externalVars.push_back( VectorOfexternalVarAndGrpsValue(
-            curBehav, MeshEntityPtr( new Cell( nameOfCell ) ) ) );
+        _externalVars.push_back(
+            VectorOfexternalVarAndGrpsValue( curBehav, MeshEntityPtr( new Cell( nameOfCell ) ) ) );
     };
 };
 

@@ -30,7 +30,7 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "Meshes/Mesh.h"
+#include "Meshes/MeshEntities.h"
 #include "Utilities/GenericParameter.h"
 
 /**

@@ -29,7 +29,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "Meshes/MeshExplorer.h"
-#include "Meshes/Mesh.h"
+#include "Meshes/BaseMesh.h"
 
 class FiniteElementDescriptorClass;
 
