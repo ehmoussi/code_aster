@@ -124,7 +124,7 @@ class ParallelMeshClass : public BaseMeshClass {
      * @return true si le groupe existe
      */
     bool hasLocalGroupOfCells( const std::string &name ) const {
-        return _groupOfCells->existsObject( name );
+        return _groupsOfCells->existsObject( name );
     };
 
     /**
@@ -132,7 +132,7 @@ class ParallelMeshClass : public BaseMeshClass {
      * @return true si le groupe existe
      */
     bool hasLocalGroupOfNodes( const std::string &name ) const {
-        return _groupOfNodes->existsObject( name );
+        return _groupsOfNodes->existsObject( name );
     };
 
     /**

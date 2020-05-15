@@ -45,8 +45,8 @@ bool ParallelMeshClass::readMedFile( const std::string &fileName ) {
 bool ParallelMeshClass::updateGlobalGroupOfNodes( void ) {
 
     MPIContainerUtilities util;
-    _groupOfNodes->buildFromJeveux();
-    auto gONNames = _groupOfNodes->getObjectNames();
+    _groupsOfNodes->buildFromJeveux();
+    auto gONNames = _groupsOfNodes->getObjectNames();
     auto allgONNames = util.gatheringVectorsOnAllProcs( gONNames );
 
     for ( auto &nameOfGrp : allgONNames )
@@ -68,8 +68,8 @@ bool ParallelMeshClass::updateGlobalGroupOfNodes( void ) {
 bool ParallelMeshClass::updateGlobalGroupOfCells( void ) {
 
     MPIContainerUtilities util;
-    _groupOfCells->buildFromJeveux();
-    auto gOENames = _groupOfCells->getObjectNames();
+    _groupsOfCells->buildFromJeveux();
+    auto gOENames = _groupsOfCells->getObjectNames();
     auto allgOENames = util.gatheringVectorsOnAllProcs( gOENames );
 
     for ( auto &nameOfGrp : allgOENames )

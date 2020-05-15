@@ -59,7 +59,7 @@ class BaseMeshClass : public DataStructure {
     /** @brief Pointeur de nom Jeveux '.PTRNOMNOE' */
     NamesMapChar24 _nameOfGrpNodes;
     /** @brief Collection Jeveux '.GROUPENO' */
-    JeveuxCollectionLongNamePtr _groupOfNodes;
+    JeveuxCollectionLongNamePtr _groupsOfNodes;
     /** @brief Collection Jeveux '.CONNEX' */
     JeveuxCollectionLong _connectivity;
     /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
@@ -69,7 +69,7 @@ class BaseMeshClass : public DataStructure {
     /** @brief Pointeur de nom Jeveux '.PTRNOMMAI' */
     NamesMapChar24 _nameOfGrpCells;
     /** @brief Objet Jeveux '.GROUPEMA' */
-    JeveuxCollectionLongNamePtr _groupOfCells;
+    JeveuxCollectionLongNamePtr _groupsOfCells;
     /** @brief jeveux vector '.TITR' */
     JeveuxVectorChar80 _title;
     /** @brief Object to allow loop over connectivity */
@@ -92,13 +92,13 @@ class BaseMeshClass : public DataStructure {
           _nameOfNodes( NamesMapChar8( getName() + ".NOMNOE    " ) ),
           _coordinates( new MeshCoordinatesFieldClass( getName() + ".COORDO    " ) ),
           _nameOfGrpNodes( NamesMapChar24( getName() + ".PTRNOMNOE " ) ),
-          _groupOfNodes(
+          _groupsOfNodes(
               JeveuxCollectionLongNamePtr( getName() + ".GROUPENO  ", _nameOfGrpNodes ) ),
           _connectivity( JeveuxCollectionLong( getName() + ".CONNEX    " ) ),
           _nameOfCells( NamesMapChar8( getName() + ".NOMMAI    " ) ),
           _cellsType( JeveuxVectorLong( getName() + ".TYPMAIL   " ) ),
           _nameOfGrpCells( NamesMapChar24( getName() + ".PTRNOMMAI " ) ),
-          _groupOfCells(
+          _groupsOfCells(
               JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ", _nameOfGrpCells ) ),
           _title( JeveuxVectorChar80( getName() + "           .TITR" ) ),
           _explorer( ConnectivityMeshExplorer( _connectivity, _cellsType ) ){};
@@ -139,9 +139,9 @@ class BaseMeshClass : public DataStructure {
      */
     const JeveuxCollectionObject< ASTERINTEGER > &
     getGroupOfNodesObject( const std::string &name ) const {
-        if ( _groupOfNodes->size() == -1 )
-            _groupOfNodes->buildFromJeveux();
-        return _groupOfNodes->getObjectFromName( name );
+        if ( _groupsOfNodes->size() == -1 )
+            _groupsOfNodes->buildFromJeveux();
+        return _groupsOfNodes->getObjectFromName( name );
     };
 
     /**
@@ -185,19 +185,33 @@ class BaseMeshClass : public DataStructure {
      * @brief Returns the names of the groups of cells
      * @return VectorString
      */
-    VectorString getGroupsOfCells() const {
-        VectorString names;
-        return names;
+    virtual VectorString getGroupsOfCells() const {
+        throw std::runtime_error( "Not allowed" );
     };
 
     /**
      * @brief Returns the names of the groups of nodes
      * @return VectorString
      */
-    VectorString getGroupsOfNodes() const {
-        VectorString names;
-        return names;
+    virtual VectorString getGroupsOfNodes() const {
+        throw std::runtime_error( "Not allowed" );
     };
+
+    /**
+     * @brief Returns the cells indexes of a group of cells
+     * @return VectorLong
+     */
+    virtual const VectorLong getCells( const std::string name ) const {
+        throw std::runtime_error( "Not allowed" );
+    }
+
+    /**
+     * @brief Returns the nodes indexes of a group of nodes
+     * @return VectorLong
+     */
+    virtual const VectorLong getNodes( const std::string name ) const {
+        throw std::runtime_error( "Not allowed" );
+    }
 
     /**
      * @brief Fonction permettant de savoir si un maillage est vide (non relu par exemple)
@@ -252,25 +266,17 @@ class MeshClass : public BaseMeshClass {
      */
     MeshClass( const std::string name ) : BaseMeshClass( name, "MAILLAGE" ){};
 
-    /**
-     * @brief Teste l'existence d'un groupe de mailles dans le maillage
-     * @return true si le groupe existe
-     */
-    bool hasGroupOfCells( const std::string &name ) const {
-        return _groupOfCells->existsObject( name );
-    };
+    bool hasGroupOfCells( const std::string &name ) const;
 
-    /**
-     * @brief Teste l'existence d'un groupe de noeuds dans le maillage
-     * @return true si le groupe existe
-     */
-    bool hasGroupOfNodes( const std::string &name ) const {
-        return _groupOfNodes->existsObject( name );
-    };
+    bool hasGroupOfNodes( const std::string &name ) const;
 
     VectorString getGroupsOfCells() const;
 
     VectorString getGroupsOfNodes() const;
+
+    const VectorLong getCells( const std::string name ) const;
+
+    const VectorLong getNodes( const std::string name ) const;
 
     /**
      * @brief Read a Aster Mesh file

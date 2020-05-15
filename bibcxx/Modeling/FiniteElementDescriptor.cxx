@@ -34,7 +34,7 @@ FiniteElementDescriptorClass::FiniteElementDescriptorClass( const std::string &n
       _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
       _parameters( getName() + ".LGRF" ), _dofDescriptor( getName() + ".PRNM" ),
       _listOfGroupOfCells( getName() + ".LIEL" ),
-      _groupOfCellsNumberByElement( getName() + ".REPE" ),
+      _groupsOfCellsNumberByElement( getName() + ".REPE" ),
       _delayedNumberedConstraintElementsDescriptor( getName() + ".NEMA" ),
       _dofOfDelayedNumberedConstraintNodes( getName() + ".PRNS" ),
       _delayedNodesNumbering( getName() + ".LGNS" ),

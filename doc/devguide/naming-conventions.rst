@@ -70,10 +70,7 @@ Terms for the :py:class:`~code_aster.Objects.Mesh` object:
   global mesh (*local=False*).
 
 .. todo::
-    *mesh.getNodes(group)*,
-    *mesh.getCells(group)*
-
-    Add *local* argument for *ParallelMesh*.
+    Add *same* methods to *ParallelMesh* with a *local* argument.
 
 
 Model object

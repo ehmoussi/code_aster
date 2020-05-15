@@ -116,6 +116,16 @@ Returns:
     list[str]: List of groups names (stripped).
         )",
               ( py::arg( "self" ) ) )
+        .def( "getCells", &MeshClass::getCells, R"(
+Return the list of the indexes of the cells that belong to a group of cells.
+
+Arguments:
+    group_name (str): Name of the group.
+
+Returns:
+    list[int]: Indexes of the cells of the group.
+        )",
+              ( py::arg( "self" ), py::arg( "group_name" ) ) )
         .def( "getGroupsOfNodes", &MeshClass::getGroupsOfNodes, R"(
 Return the list of the existing groups of nodes.
 
@@ -123,6 +133,16 @@ Returns:
     list[str]: List of groups names (stripped).
         )",
               ( py::arg( "self" ) ) )
+        .def( "getNodes", &MeshClass::getNodes, R"(
+Return the list of the indexes of the nodes that belong to a group of nodes.
+
+Arguments:
+    group_name (str): Name of the group.
+
+Returns:
+    list[int]: Indexes of the nodes of the group.
+        )",
+              ( py::arg( "self" ), py::arg( "group_name" ) ) )
         .def( "readAsterFile", &MeshClass::readAsterFile, R"(
 Read a mesh file from ASTER format.
 

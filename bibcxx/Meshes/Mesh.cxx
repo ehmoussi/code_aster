@@ -129,28 +129,42 @@ bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string
     }
 
     return true;
-};
+}
 
 bool BaseMeshClass::readMedFile( const std::string &fileName ) {
     readMeshFile( fileName, "MED" );
 
     return true;
-};
+}
 
 bool MeshClass::readAsterFile( const std::string &fileName ) {
     readMeshFile( fileName, "ASTER" );
     return true;
-};
+}
 
 bool MeshClass::readGibiFile( const std::string &fileName ) {
     readMeshFile( fileName, "GIBI" );
     return true;
-};
+}
 
 bool MeshClass::readGmshFile( const std::string &fileName ) {
     readMeshFile( fileName, "GMSH" );
     return true;
-};
+}
+
+bool MeshClass::hasGroupOfCells( const std::string &name ) const {
+    if ( _groupsOfCells->size() < 0 && !_groupsOfCells->buildFromJeveux() ) {
+        return false;
+    }
+    return _groupsOfCells->existsObject( name );
+}
+
+bool MeshClass::hasGroupOfNodes( const std::string &name ) const {
+    if ( _groupsOfNodes->size() < 0 && !_groupsOfNodes->buildFromJeveux() ) {
+        return false;
+    }
+    return _groupsOfNodes->existsObject( name );
+}
 
 VectorString MeshClass::getGroupsOfCells() const {
     ASTERINTEGER size = _nameOfGrpCells->size();
@@ -159,7 +173,7 @@ VectorString MeshClass::getGroupsOfCells() const {
         names.push_back( trim( _nameOfGrpCells->getStringFromIndex( i + 1 ) ) );
     }
     return names;
-};
+}
 
 VectorString MeshClass::getGroupsOfNodes() const {
     ASTERINTEGER size = _nameOfGrpNodes->size();
@@ -168,4 +182,18 @@ VectorString MeshClass::getGroupsOfNodes() const {
         names.push_back( trim( _nameOfGrpNodes->getStringFromIndex( i + 1 ) ) );
     }
     return names;
-};
+}
+
+const VectorLong MeshClass::getCells( const std::string name ) const {
+    if ( !hasGroupOfCells( name ) ) {
+        return VectorLong();
+    }
+    return _groupsOfCells->getObjectFromName( name ).toVector();
+}
+
+const VectorLong MeshClass::getNodes( const std::string name ) const {
+    if ( !hasGroupOfNodes( name ) ) {
+        return VectorLong();
+    }
+    return _groupsOfNodes->getObjectFromName( name ).toVector();
+}
