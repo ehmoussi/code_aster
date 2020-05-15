@@ -25,86 +25,15 @@
 
 #include <boost/python.hpp>
 
-namespace py = boost::python;
-#include "PythonBindings/ConstViewerUtilities.h"
 #include "PythonBindings/MeshInterface.h"
-#include "PythonBindings/factory.h"
+#include <Meshes/BaseMesh.h>
+#include <Meshes/Mesh.h>
 #include <Meshes/MeshEntities.h>
 #include <PythonBindings/factory.h>
 
+namespace py = boost::python;
+
 void exportMeshToPython() {
-
-    py::enum_< EntityType >( "EntityType" )
-        .value( "GroupOfNodesType", GroupOfNodesType )
-        .value( "GroupOfCellsType", GroupOfCellsType )
-        .value( "AllMeshEntitiesType", AllMeshEntitiesType )
-        .value( "CellType", CellType )
-        .value( "NodeType", NodeType )
-        .value( "NoType", NoType );
-
-    py::class_< VirtualMeshEntity, MeshEntityPtr >( "MeshEntity", py::no_init )
-        .def( "__init__", py::make_constructor(
-                              &initFactoryPtr< VirtualMeshEntity, std::string, EntityType > ) )
-        // fake initFactoryPtr: created by subclass
-        .def( "getType", &VirtualMeshEntity::getType )
-        .def( "getNames", &VirtualMeshEntity::getNames );
-
-    py::class_< AllMeshEntities, AllMeshEntitiesPtr, py::bases< VirtualMeshEntity > >(
-        "AllMeshEntities", py::no_init )
-        // fake initFactoryPtr: created by subclass
-        // fake initFactoryPtr: created by subclass
-        ;
-
-    py::class_< BaseMeshClass, BaseMeshClass::BaseMeshPtr, py::bases< DataStructure > >(
-        "BaseMesh", py::no_init )
-        // fake initFactoryPtr: created by subclass
-        // fake initFactoryPtr: created by subclass
-        //         .def( "getCoordinates", +[](const BaseMeshClass& v)
-        //         {
-        //             return ConstViewer<MeshCoordinatesFieldClass>( v.getCoordinates() );
-        //         })
-        .def( "getNumberOfNodes", &BaseMeshClass::getNumberOfNodes, R"(
-Return the number of nodes of the mesh.
-
-Returns:
-    int: Number of nodes.
-        )",
-              ( py::arg( "self" ) ) )
-        .def( "getNumberOfCells", &BaseMeshClass::getNumberOfCells, R"(
-Return the number of cells of the mesh.
-
-Returns:
-    int: Number of cells.
-        )",
-              ( py::arg( "self" ) ) )
-        .def( "getCoordinates", &BaseMeshClass::getCoordinates, R"(
-Return the coordinates of the mesh.
-
-Returns:
-    MeshCoordinatesField: Field of the coordinates.
-        )",
-              ( py::arg( "self" ) ) )
-        .def( "isParallel", &BaseMeshClass::isParallel, R"(
-Tell if the mesh is distributed on parallel instances.
-
-Returns:
-    bool: *False* for a centralized mesh, *True* for a parallel mesh.
-        )",
-              ( py::arg( "self" ) ) )
-        .def( "getDimension", &BaseMeshClass::getDimension, R"(
-Return the dimension of the mesh.
-
-Returns:
-    int: 2 or 3
-        )",
-              ( py::arg( "self" ) ) )
-        .def( "getConnectivity", &BaseMeshClass::getConnectivity, R"(
-Return the connectivity of the mesh as Python lists.
-
-Returns:
-    list[list[int]]: List of, for each cell, a list of the nodes indexes.
-        )",
-              ( py::arg( "self" ) ) );
 
     py::class_< MeshClass, MeshClass::MeshPtr, py::bases< BaseMeshClass > >( "Mesh", py::no_init )
         .def( "__init__", py::make_constructor( &initFactoryPtr< MeshClass > ) )
