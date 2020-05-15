@@ -97,6 +97,13 @@ Return the dimension of the mesh.
 Returns:
     int: 2 or 3
         )",
+              ( py::arg( "self" ) ) )
+        .def( "getConnectivity", &BaseMeshClass::getConnectivity, R"(
+Return the connectivity of the mesh as Python lists.
+
+Returns:
+    list[list[int]]: List of, for each cell, a list of the nodes indexes.
+        )",
               ( py::arg( "self" ) ) );
 
     py::class_< MeshClass, MeshClass::MeshPtr, py::bases< BaseMeshClass > >( "Mesh", py::no_init )

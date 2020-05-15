@@ -294,7 +294,7 @@ enum JeveuxCollectionObjectSizes { Constant, Variable };
 
 /**
  * @struct AllowedNamePointerType
- * @brief Structure template permettant de limiter les type dans JeveuxCollectionClass
+ * @brief Structure template permettant de limiter les types dans JeveuxCollectionClass
  * @tparam T Type autorise
  */
 template < typename T > struct AllowedNamePointerType; // undefined for bad types!

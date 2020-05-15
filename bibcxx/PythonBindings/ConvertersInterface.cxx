@@ -49,4 +49,8 @@ void exportConverters() {
     exportJeveuxVectorConverter< short int >();
     exportJeveuxVectorConverter< ASTERINTEGER >();
     exportJeveuxVectorConverter< double >();
+
+    exportJeveuxCollectionConverter< short int >();
+    exportJeveuxCollectionConverter< ASTERINTEGER >();
+    exportJeveuxCollectionConverter< double >();
 };

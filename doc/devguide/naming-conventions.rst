@@ -33,8 +33,9 @@ that does not recommend *CamelCase* naming.
 - At least at the beginning, only pure Python objects are returned (example: *list* or
   *list[list]* and not *numpy* arrays).
 
-- *std::vector* and *JeveuxVector* are automatically converted to Python *list*
-  (see :file:`bibcxx/PythonBindings/ConvertersInterface.h` for supported converters).
+- *std::vector* and *JeveuxVector* objects are automatically converted to Python *list*.
+  *JeveuxCollection* objects are also converted as *list[list]*.
+  See :file:`PythonBindings/ConvertersInterface` for supported converters.
 
 - Strings values are returned without trailing spaces.
 
@@ -69,7 +70,6 @@ Terms for the :py:class:`~code_aster.Objects.Mesh` object:
   global mesh (*local=False*).
 
 .. todo::
-    *mesh.getConnectivity()*,
     *mesh.getNodes(group)*,
     *mesh.getCells(group)*
 
