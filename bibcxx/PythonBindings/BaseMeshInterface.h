@@ -1,8 +1,8 @@
-#ifndef MESHINTERFACE_H_
-#define MESHINTERFACE_H_
+#ifndef BASEMESHINTERFACE_H_
+#define BASEMESHINTERFACE_H_
 
 /**
- * @file MeshInterface.h
+ * @file BaseMeshInterface.h
  * @brief Fichier entete de la classe MeshInterface
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -23,6 +23,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-void exportMeshToPython();
+void exportBaseMeshToPython();
 
-#endif /* MESHINTERFACE_H_ */
+#endif /* BASEMESHINTERFACE_H_ */
