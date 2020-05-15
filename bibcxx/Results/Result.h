@@ -34,7 +34,7 @@
 #include "Materials/MaterialField.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
-#include "MemoryManager/JeveuxBidirectionalMap.h"
+#include "MemoryManager/NamesMap.h"
 #include "DataFields/FieldOnNodes.h"
 #include "DataFields/FieldOnCells.h"
 #include "Numbering/DOFNumbering.h"
@@ -77,11 +77,11 @@ class ResultClass : public DataStructure {
     /** @typedef Valeur contenue dans mapStrVOFE */
     typedef mapStrVOFE::value_type mapStrVOFEValue;
     /** @brief Pointeur de nom Jeveux '.DESC' */
-    JeveuxBidirectionalMapChar16 _symbolicNamesOfFields;
+    NamesMapChar16 _symbolicNamesOfFields;
     /** @brief Collection '.TACH' */
     JeveuxCollectionChar24 _namesOfFields;
     /** @brief Pointeur de nom Jeveux '.NOVA' */
-    JeveuxBidirectionalMapChar16 _accessVariables;
+    NamesMapChar16 _accessVariables;
     /** @brief Collection '.TAVA' */
     JeveuxCollectionChar8 _calculationParameter;
     /** @brief Vecteur Jeveux '.ORDR' */
@@ -140,9 +140,9 @@ class ResultClass : public DataStructure {
      */
     ResultClass( const std::string &name, const std::string &resuTyp )
         : DataStructure( name, 19, resuTyp ),
-          _symbolicNamesOfFields( JeveuxBidirectionalMapChar16( getName() + ".DESC" ) ),
+          _symbolicNamesOfFields( NamesMapChar16( getName() + ".DESC" ) ),
           _namesOfFields( JeveuxCollectionChar24( getName() + ".TACH" ) ),
-          _accessVariables( JeveuxBidirectionalMapChar16( getName() + ".NOVA" ) ),
+          _accessVariables( NamesMapChar16( getName() + ".NOVA" ) ),
           _calculationParameter( JeveuxCollectionChar8( getName() + ".TAVA" ) ),
           _serialNumber( JeveuxVectorLong( getName() + ".ORDR" ) ), _nbRanks( 0 ),
           _rspi( JeveuxVectorLong( getName() + ".RSPI" ) ),

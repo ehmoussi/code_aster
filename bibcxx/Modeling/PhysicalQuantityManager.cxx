@@ -26,7 +26,7 @@
 
 PhysicalQuantityManager::PhysicalQuantityManager()
     : _nameOfCmp( JeveuxCollectionChar8( "&CATA.GD.NOMCMP" ) ),
-      _nameOfPhysicalQuantity( JeveuxBidirectionalMapChar8( "&CATA.GD.NOMGD" ) ){};
+      _nameOfPhysicalQuantity( NamesMapChar8( "&CATA.GD.NOMGD" ) ){};
 
 const JeveuxCollectionObjectChar8 &
 PhysicalQuantityManager::getComponentNames( const ASTERINTEGER &quantityNumber ) const {

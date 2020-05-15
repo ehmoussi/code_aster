@@ -66,7 +66,7 @@ class FieldOnNodesDescriptionClass : public DataStructure {
     /** @brief Objet Jeveux '.PRNO' */
     JeveuxCollectionLong _componentsOnNodes;
     /** @brief Objet Jeveux '.LILI' */
-    JeveuxBidirectionalMapChar24 _namesOfGroupOfCells;
+    NamesMapChar24 _namesOfGroupOfCells;
     /** @brief Objet Jeveux '.NUEQ' */
     JeveuxVectorLong _indexationVector;
     /** @brief Objet Jeveux '.DEEQ' */

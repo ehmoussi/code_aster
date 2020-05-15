@@ -1,8 +1,8 @@
-#ifndef JEVEUXBIDIRECTIONALMAP_H_
-#define JEVEUXBIDIRECTIONALMAP_H_
+#ifndef NAMESMAP_H_
+#define NAMESMAP_H_
 
 /**
- * @file JeveuxBidirectionalMap.h
+ * @file NamesMap.h
  * @brief Fichier entete de la classe JeveuxBidirectionnalMap
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -26,20 +26,19 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-#include "MemoryManager/JeveuxObject.h"
 #include "MemoryManager/JeveuxAllowedTypes.h"
+#include "MemoryManager/JeveuxObject.h"
 #include "aster_fort.h"
 #include "aster_utils.h"
+#include "astercxx.h"
 
 /**
- * @class JeveuxBidirectionalMapClass
+ * @class NamesMapClass
  * @brief Equivalent du pointeur de nom dans Jeveux
  * @author Nicolas Sellenet
  */
 template < typename ValueType >
-class JeveuxBidirectionalMapClass : public JeveuxObjectClass,
-                                    private AllowedJeveuxType< ValueType > {
+class NamesMapClass : public JeveuxObjectClass, private AllowedJeveuxType< ValueType > {
   private:
     ASTERINTEGER _size;
 
@@ -48,13 +47,13 @@ class JeveuxBidirectionalMapClass : public JeveuxObjectClass,
      * @brief Constructeur
      * @param name Nom Jeveux de l'objet
      */
-    JeveuxBidirectionalMapClass( std::string name, JeveuxMemory mem = Permanent )
+    NamesMapClass( std::string name, JeveuxMemory mem = Permanent )
         : JeveuxObjectClass( name, mem ), _size( 0 ){};
 
     /**
      * @brief Destructeur
      */
-    ~JeveuxBidirectionalMapClass(){};
+    ~NamesMapClass(){};
 
     /**
      * @brief Ajout d'un élément
@@ -139,59 +138,55 @@ class JeveuxBidirectionalMapClass : public JeveuxObjectClass,
 };
 
 /**
- * class JeveuxBidirectionalMap
- *   Enveloppe d'un pointeur intelligent vers un JeveuxBidirectionalMapClass
+ * class NamesMap
+ *   Enveloppe d'un pointeur intelligent vers un NamesMapClass
  * @author Nicolas Sellenet
  */
-template < class ValueType > class JeveuxBidirectionalMap {
+template < class ValueType > class NamesMap {
   public:
-    typedef boost::shared_ptr< JeveuxBidirectionalMapClass< ValueType > >
-        JeveuxBidirectionalMapPtr;
+    typedef boost::shared_ptr< NamesMapClass< ValueType > > NamesMapPtr;
 
   private:
-    JeveuxBidirectionalMapPtr _jeveuxBidirectionalMapPtr;
+    NamesMapPtr _namesMapPtr;
 
   public:
-    JeveuxBidirectionalMap( std::string nom )
-        : _jeveuxBidirectionalMapPtr( new JeveuxBidirectionalMapClass< ValueType >( nom ) ){};
+    NamesMap( std::string nom ) : _namesMapPtr( new NamesMapClass< ValueType >( nom ) ){};
 
-    ~JeveuxBidirectionalMap(){};
+    ~NamesMap(){};
 
-    JeveuxBidirectionalMap &operator=( const JeveuxBidirectionalMap< ValueType > &tmp ) {
-        _jeveuxBidirectionalMapPtr = tmp._jeveuxBidirectionalMapPtr;
+    NamesMap &operator=( const NamesMap< ValueType > &tmp ) {
+        _namesMapPtr = tmp._namesMapPtr;
         return *this;
     };
 
-    const JeveuxBidirectionalMapPtr &operator->( void ) const {
-        return _jeveuxBidirectionalMapPtr;
-    };
+    const NamesMapPtr &operator->(void)const { return _namesMapPtr; };
 
     bool isEmpty() const {
-        if ( _jeveuxBidirectionalMapPtr.use_count() == 0 )
+        if ( _namesMapPtr.use_count() == 0 )
             return true;
         return false;
     };
 };
 
 /** @typedef Definition d'un pointeur de nom Jeveux long */
-typedef JeveuxBidirectionalMap< ASTERINTEGER > JeveuxBidirectionalMapLong;
+typedef NamesMap< ASTERINTEGER > NamesMapLong;
 /** @typedef Definition d'un pointeur de nom Jeveux short int */
-typedef JeveuxBidirectionalMap< short int > JeveuxBidirectionalMapShort;
+typedef NamesMap< short int > NamesMapShort;
 /** @typedef Definition d'un pointeur de nom Jeveux double */
-typedef JeveuxBidirectionalMap< double > JeveuxBidirectionalMapReal;
+typedef NamesMap< double > NamesMapReal;
 /** @typedef Definition d'un pointeur de nom Jeveux double complex */
-typedef JeveuxBidirectionalMap< RealComplex > JeveuxBidirectionalMapComplex;
+typedef NamesMap< RealComplex > NamesMapComplex;
 /** @typedef Definition d'un vecteur de JeveuxChar8 */
-typedef JeveuxBidirectionalMap< JeveuxChar8 > JeveuxBidirectionalMapChar8;
+typedef NamesMap< JeveuxChar8 > NamesMapChar8;
 /** @typedef Definition d'un pointeur de nom JeveuxChar16 */
-typedef JeveuxBidirectionalMap< JeveuxChar16 > JeveuxBidirectionalMapChar16;
+typedef NamesMap< JeveuxChar16 > NamesMapChar16;
 /** @typedef Definition d'un pointeur de nom JeveuxChar24 */
-typedef JeveuxBidirectionalMap< JeveuxChar24 > JeveuxBidirectionalMapChar24;
+typedef NamesMap< JeveuxChar24 > NamesMapChar24;
 /** @typedef Definition d'un pointeur de nom JeveuxChar32 */
-typedef JeveuxBidirectionalMap< JeveuxChar32 > JeveuxBidirectionalMapChar32;
+typedef NamesMap< JeveuxChar32 > NamesMapChar32;
 /** @typedef Definition d'un pointeur de nom JeveuxChar80 */
-typedef JeveuxBidirectionalMap< JeveuxChar80 > JeveuxBidirectionalMapChar80;
+typedef NamesMap< JeveuxChar80 > NamesMapChar80;
 /** @typedef Definition d'un pointeur de nom JeveuxLogical */
-typedef JeveuxBidirectionalMap< bool > JeveuxBidirectionalMapLogical;
+typedef NamesMap< bool > NamesMapLogical;
 
-#endif /* JEVEUXBIDIRECTIONALMAP_H_ */
+#endif /* NAMESMAP_H_ */

@@ -32,7 +32,7 @@
 
 #include "DataFields/MeshCoordinatesField.h"
 #include "DataStructures/DataStructure.h"
-#include "MemoryManager/JeveuxBidirectionalMap.h"
+#include "MemoryManager/NamesMap.h"
 #include "Meshes/MeshEntities.h"
 #include "Meshes/MeshExplorer.h"
 #include "PythonBindings/LogicalUnitManager.h"
@@ -49,26 +49,25 @@ class BaseMeshClass : public DataStructure {
         ConnectivityMeshExplorer;
 
   protected:
-    typedef JeveuxCollection< ASTERINTEGER, JeveuxBidirectionalMapChar24 >
-        JeveuxCollectionLongNamePtr;
+    typedef JeveuxCollection< ASTERINTEGER, NamesMapChar24 > JeveuxCollectionLongNamePtr;
     /** @brief Objet Jeveux '.DIME' */
     JeveuxVectorLong _dimensionInformations;
     /** @brief Pointeur de nom Jeveux '.NOMNOE' */
-    JeveuxBidirectionalMapChar8 _nameOfNodes;
+    NamesMapChar8 _nameOfNodes;
     /** @brief Champ aux noeuds '.COORDO' */
     MeshCoordinatesFieldPtr _coordinates;
     /** @brief Pointeur de nom Jeveux '.PTRNOMNOE' */
-    JeveuxBidirectionalMapChar24 _nameOfGrpNodes;
+    NamesMapChar24 _nameOfGrpNodes;
     /** @brief Collection Jeveux '.GROUPENO' */
     JeveuxCollectionLongNamePtr _groupOfNodes;
     /** @brief Collection Jeveux '.CONNEX' */
     JeveuxCollectionLong _connectivity;
     /** @brief Pointeur de nom Jeveux '.NOMMAIL' */
-    JeveuxBidirectionalMapChar8 _nameOfCells;
+    NamesMapChar8 _nameOfCells;
     /** @brief Objet Jeveux '.TYPMAIL' */
     JeveuxVectorLong _cellsType;
     /** @brief Pointeur de nom Jeveux '.PTRNOMMAI' */
-    JeveuxBidirectionalMapChar24 _nameOfGrpCells;
+    NamesMapChar24 _nameOfGrpCells;
     /** @brief Objet Jeveux '.GROUPEMA' */
     JeveuxCollectionLongNamePtr _groupOfCells;
     /** @brief jeveux vector '.TITR' */
@@ -90,15 +89,15 @@ class BaseMeshClass : public DataStructure {
     BaseMeshClass( const std::string &name, const std::string &type )
         : DataStructure( name, 8, type ),
           _dimensionInformations( JeveuxVectorLong( getName() + ".DIME      " ) ),
-          _nameOfNodes( JeveuxBidirectionalMapChar8( getName() + ".NOMNOE    " ) ),
+          _nameOfNodes( NamesMapChar8( getName() + ".NOMNOE    " ) ),
           _coordinates( new MeshCoordinatesFieldClass( getName() + ".COORDO    " ) ),
-          _nameOfGrpNodes( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMNOE " ) ),
+          _nameOfGrpNodes( NamesMapChar24( getName() + ".PTRNOMNOE " ) ),
           _groupOfNodes(
               JeveuxCollectionLongNamePtr( getName() + ".GROUPENO  ", _nameOfGrpNodes ) ),
           _connectivity( JeveuxCollectionLong( getName() + ".CONNEX    " ) ),
-          _nameOfCells( JeveuxBidirectionalMapChar8( getName() + ".NOMMAI    " ) ),
+          _nameOfCells( NamesMapChar8( getName() + ".NOMMAI    " ) ),
           _cellsType( JeveuxVectorLong( getName() + ".TYPMAIL   " ) ),
-          _nameOfGrpCells( JeveuxBidirectionalMapChar24( getName() + ".PTRNOMMAI " ) ),
+          _nameOfGrpCells( NamesMapChar24( getName() + ".PTRNOMMAI " ) ),
           _groupOfCells(
               JeveuxCollectionLongNamePtr( getName() + ".GROUPEMA  ", _nameOfGrpCells ) ),
           _title( JeveuxVectorChar80( getName() + "           .TITR" ) ),
@@ -123,9 +122,7 @@ class BaseMeshClass : public DataStructure {
     /**
      * @brief Return the connectivity
      */
-    const JeveuxCollectionLong getConnectivity() const {
-        return _connectivity;
-    }
+    const JeveuxCollectionLong getConnectivity() const { return _connectivity; }
 
     /**
      * @brief Recuperation des coordonnees du maillage
@@ -149,9 +146,9 @@ class BaseMeshClass : public DataStructure {
 
     /**
      * @brief Get all the names of group of cells
-     * @return JeveuxBidirectionalMapChar24 _nameOfGrpCells
+     * @return NamesMapChar24 _nameOfGrpCells
      */
-    const JeveuxBidirectionalMapChar24 &getGroupsOfNodesMap() const { return _nameOfGrpCells; };
+    const NamesMapChar24 &getGroupsOfNodesMap() const { return _nameOfGrpCells; };
 
     /**
      * @brief Returns the number of nodes

@@ -45,7 +45,7 @@
  */
 class ConnectionMeshClass : public BaseMeshClass {
   private:
-    typedef JeveuxCollection< ASTERINTEGER, JeveuxBidirectionalMapChar24 >
+    typedef JeveuxCollection< ASTERINTEGER, NamesMapChar24 >
         JeveuxCollectionLongNamePtr;
     /** @brief Base ParallelMesh */
     ParallelMeshPtr _pMesh;

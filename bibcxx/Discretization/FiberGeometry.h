@@ -30,7 +30,7 @@
 #include "definition.h"
 #include "DataStructures/DataStructure.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "MemoryManager/JeveuxBidirectionalMap.h"
+#include "MemoryManager/NamesMap.h"
 #include "Supervis/ResultNaming.h"
 
 /**
@@ -41,7 +41,7 @@
 class FiberGeometryClass : public DataStructure {
   private:
     /** @brief Objet Jeveux '.NOMS_GROUPES' */
-    JeveuxBidirectionalMapChar24 _nomsGroupes;
+    NamesMapChar24 _nomsGroupes;
     /** @brief Objet Jeveux '.NB_FIBRE_GROUPE' */
     JeveuxVectorLong _nbFibreGroupe;
     /** @brief Objet Jeveux '.POINTEUR' */
@@ -75,7 +75,7 @@ class FiberGeometryClass : public DataStructure {
      */
     FiberGeometryClass( const std::string name )
         : DataStructure( name, 8, "GFIBRE" ),
-          _nomsGroupes( JeveuxBidirectionalMapChar24( getName() + ".NOMS_GROUPES" ) ),
+          _nomsGroupes( NamesMapChar24( getName() + ".NOMS_GROUPES" ) ),
           _nbFibreGroupe( JeveuxVectorLong( getName() + ".NB_FIBRE_GROUPE" ) ),
           _pointeur( JeveuxVectorLong( getName() + ".POINTEUR" ) ),
           _typeGroupe( JeveuxVectorLong( getName() + ".TYPE_GROUPE" ) ),
