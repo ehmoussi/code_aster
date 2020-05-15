@@ -113,16 +113,16 @@ comment=""" HHO - degres de liberte de la cellule""")
 PCELLIR  = InputParameter(phys=PHY.CELL_R,
 comment=""" HHO - degres de liberte de la cellule""")
 
-PCSMTIR  = OutputParameter(phys=PHY.N6480R, type='ELEM',
+PCSMTIR  = OutputParameter(phys=PHY.N3240R, type='ELEM',
 comment=""" HHO - matrice cellule pour condensation statique""")
 
 PCSRTIR  = OutputParameter(phys=PHY.CELL_R, type='ELEM',
 comment=""" HHO - 2nd membre cellule pour condensation statique""")
 
-PCHHOGT  = InputParameter(phys=PHY.N6480R,
+PCHHOGT  = InputParameter(phys=PHY.N1920R,
 comment=""" HHO - matrice du gradient local""")
 
-PCHHOST  = InputParameter(phys=PHY.N6480R,
+PCHHOST  = InputParameter(phys=PHY.N2448R,
 comment=""" HHO - matrice de la stabilisation locale""")
 
 

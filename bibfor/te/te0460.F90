@@ -52,7 +52,6 @@ implicit none
     type(HHO_Data) :: hhoData
     type(HHO_Cell) :: hhoCell
     real(kind=8), dimension(MSIZE_CELL_MAT, MSIZE_TDOFS_VEC)   :: gradfull
-    real(kind=8), dimension(MSIZE_TDOFS_VEC, MSIZE_TDOFS_VEC)  :: stab
     real(kind=8), dimension(MSIZE_CELL_VEC, MSIZE_TDOFS_SCAL)  :: gradfullvec
     real(kind=8), dimension(MSIZE_TDOFS_SCAL, MSIZE_TDOFS_SCAL):: stabvec
     real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_TDOFS_SCAL) :: gradrec_scal
@@ -62,13 +61,6 @@ implicit none
 ! --- Retrieve HHO informations
 !
     call hhoInfoInitCell(hhoCell, hhoData)
-!
-! -- Number of dofs
-!
-    call hhoMecaNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs, gbs_sym)
-    ASSERT(cbs <= MSIZE_CELL_VEC)
-    ASSERT(fbs <= MSIZE_FACE_VEC)
-    ASSERT(total_dofs <= MSIZE_TDOFS_VEC)
 !
 ! -- Get ouput field
 !
@@ -81,12 +73,13 @@ implicit none
     l_largestrains = isLargeStrain(zk16(jcompo-1+DEFO))
 !
     if(hhoCell%ndim == 2) then
+        call hhoMecaNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs, gbs_sym)
 !
 ! ---- if ndim = 2, we save the full operator
 !
 ! ----- Compute Gradient reconstruction
 !
-        call hhoCalcOpMeca(hhoCell, hhoData, l_largestrains, gradfull, stab)
+        call hhoCalcOpMeca(hhoCell, hhoData, l_largestrains, gradfull)
 !
 ! ----- Save
 !
@@ -100,7 +93,6 @@ implicit none
 !
         do j = 1, total_dofs
             call dcopy(gbs2, gradfull(1,j), 1, zr(jgrad + (j-1) * gbs2), 1)
-            call dcopy(total_dofs, stab(1,j), 1, zr(jstab + (j-1) * total_dofs), 1)
         end do
 !
     elseif(hhoCell%ndim == 3) then
@@ -108,30 +100,36 @@ implicit none
 ! ---- if ndim = 3, we save the scalar operator for large_strain (not for small strains)
 ! ---- because the matrix are too big to be save
 !
+        call hhoTherNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs2)
+!
         if(l_largestrains) then
 ! ----- Compute vectoriel Gradient reconstruction
             call hhoGradRecFullVec(hhoCell, hhoData, gradfullvec)
 !
-! ----- Compute Stabilizatiion
-!
-            if (hhoData%cell_degree() <= hhoData%face_degree()) then
-                call hhoGradRecVec(hhoCell, hhoData, gradrec_scal)
-                call hhoStabScal(hhoCell, hhoData, gradrec_scal, stabvec)
-            else if (hhoData%cell_degree() == (hhoData%face_degree() + 1)) then
-                call hdgStabScal(hhoCell, hhoData, stabvec)
-            else
-                    ASSERT(ASTER_FALSE)
-            end if
-!
-            call hhoTherNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs2)
 ! -- Copy the results
             do j = 1, total_dofs
                 call dcopy(gbs2, gradfullvec(1,j), 1, zr(jgrad + (j-1) * gbs2), 1)
-                call dcopy(total_dofs, stabvec(1,j), 1, zr(jstab + (j-1) * total_dofs), 1)
             end do
         end if
+!
     else
         ASSERT(ASTER_FALSE)
     end if
+!
+! ----- Compute Stabilizatiion
+!
+    if (hhoData%cell_degree() <= hhoData%face_degree()) then
+        call hhoGradRecVec(hhoCell, hhoData, gradrec_scal)
+        call hhoStabScal(hhoCell, hhoData, gradrec_scal, stabvec)
+    else if (hhoData%cell_degree() == (hhoData%face_degree() + 1)) then
+        call hdgStabScal(hhoCell, hhoData, stabvec)
+    else
+        ASSERT(ASTER_FALSE)
+    end if
+!
+    call hhoTherNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs2)
+    do j = 1, total_dofs
+        call dcopy(total_dofs, stabvec(1,j), 1, zr(jstab + (j-1) * total_dofs), 1)
+    end do
 !
 end subroutine
