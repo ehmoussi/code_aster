@@ -197,4 +197,10 @@ doivent obligatoirement être définies en utilisant le mot-clé MATER_FLUIDE.
     43 : _("""Le mot-clé %(k1)s étant renseigné, sa valeur outrepasse celle calculée par le mode AUTO.
 """),
 
+    44 : _("""Une valeur d'amortissement hystérétique renseignée par le mot-clé %(k1)s 
+est supérieure à 2. 
+              
+Conseil : les valeurs d'amortissement doivent être renseignées en absolu et non en pourcentage.
+"""),
+
 }

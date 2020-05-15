@@ -124,7 +124,7 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
     real(kind=8) :: epsd(6), deps(6), deps0(6)
     real(kind=8) :: sigd(6), sigf(6), dsde(6, 6), seuil
     real(kind=8) :: piso, depsr(6), depsq(6), tin(3)
-    real(kind=8) :: d, q, m, phi, b, degr, angmas(3)
+    real(kind=8) :: d, q, m, phi, b, angmas(3)
     real(kind=8) :: pc0, sigd0(6), hill, dsig(6)
     character(len=7)  :: etatd, etatf
     character(len=8)  :: mod, typmod(*)
@@ -132,31 +132,46 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
     character(len=*)  :: fami
     real(kind=8) :: depsth(6), alpha(3), tempm, tempf, tref
     real(kind=8) :: det, bid16(6), bid66(6, 6)
-    real(kind=8) :: materf(22, 2), zero, un, deux, trois, dix
+    real(kind=8) :: materf(22, 2)
+    real(kind=8), parameter :: zero = 0.d0, un=1.d0, deux=2.d0, trois=3.d0
+    real(kind=8), parameter :: degr  = 0.0174532925199d0, tole = 0.1d0
     real(kind=8) :: neps, nsig, ptrac, rtrac
-    real(kind=8) :: crit, dpiso, tole
+    real(kind=8) :: crit, dpiso
     aster_logical:: debug, conv, reorie, tract
-!
-    parameter     ( degr  = 0.0174532925199d0 )
 !
 !     ----------------------------------------------------------------
     common /tdim/   ndt, ndi
-    common /meshuj/ debug
-!     ----------------------------------------------------------------
-    data       zero  / 0.0d0 /
-    data       un    / 1.0d0 /
-    data       deux  / 2.0d0 /
-    data       trois / 3.0d0 /
-    data       dix   / 10.d0 /
-! Marc Kham, 31/01/2019: test sur Aratozawa montre que 20%
-!                        donne de bons resultats
-!                        (a 20%, le temps CPU et la solution se degradent)
-    data       tole  / 0.1d0 /
 !
     iret  = 0
-! --- DEBUG = .TRUE. : MODE AFFICHAGE ENRICHI
-    debug = .false.
-    tract = .false.
+! --- DEBUG = ASTER_TRUE : MODE AFFICHAGE ENRICHI
+    debug = ASTER_FALSE
+    tract = ASTER_FALSE
+    conv  = ASTER_TRUE
+    reorie= ASTER_FALSE
+!
+    materf(:,:) = 0.d0
+    vind0(:) = 0.d0
+    depsth(:) = 0.d0
+    alpha(:)= 0.d0
+    tempm= 0.d0
+    tempf= 0.d0
+    tref= 0.d0
+    crit=0.d0
+    seuil=0.d0
+    dsig(:)=0.d0
+    pc0=0.d0
+    sigd0(6)=0.d0
+    hill=0.d0
+    piso=0.d0
+    depsr(:)=0.d0
+    depsq(:)=0.d0
+    tin(:)=0.d0
+    d=0.d0
+    q=0.d0
+    m=0.d0
+    phi=0.d0
+    b=0.d0
+    dsde(:,:) = 0.d0
 !
     if (debug) then
        write(6,*)
@@ -358,7 +373,6 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 ! -------------------------------------------------------------
 ! OPTIONS 'FULL_MECA' ET 'RAPH_MECA' = CALCUL DE SIG(T+DT)
 ! -------------------------------------------------------------
-    conv =.true.
     if (opt(1:9) .eq. 'RAPH_MECA' .or. opt(1:9) .eq. 'FULL_MECA') then
 !
         if (debug) write(6,*) ' * DEPS =',(depsth(i),i=1,3)
@@ -366,7 +380,7 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
         do i = 1, 3
             call hujprj(i, sigd, tin, piso, q)
             if (abs(piso+deux*rtrac-ptrac) .lt. r8prem()) &
-              tract = .true.
+              tract = ASTER_TRUE
         enddo
 !
 ! INTEGRATION ELASTIQUE SUR DT
@@ -458,9 +472,9 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 ! - CONTROLE DES DEFORMATIONS DEJA APPLIQUEES
 ! -------------------------------------------
         if (inc .lt. incmax) then
-            conv =.false.
+            conv =ASTER_FALSE
         else
-            conv =.true.
+            conv =ASTER_TRUE
         endif
 !
         if (.not.conv) then
@@ -476,8 +490,8 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
         do i = 1, ndt
             dsig(i) = sigf(i) - sigd0(i)
             hill = hill + dsig(i)*deps0(i)
-            nsig = nsig + dsig(i)**deux
-            neps = neps + deps0(i)**deux
+            nsig = nsig + dsig(i)**2
+            neps = neps + deps0(i)**2
         enddo
 !
 ! --- NORMALISATION DU CRITERE : VARIE ENTRE -1 ET 1
@@ -565,20 +579,6 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
             endif
         endif
 !
-!        vinf(34) = zero
-!         do i = 1, 8
-!             if (abs(vinf(23+i)-un) .lt. r8prem()) then
-!                 if (i .eq. 1) vinf(34)=vinf(34)+dix**zero
-!                 if (i .eq. 2) vinf(34)=vinf(34)+dix**un
-!                 if (i .eq. 3) vinf(34)=vinf(34)+dix**deux
-!                 if (i .eq. 4) vinf(34)=vinf(34)+dix**3.d0
-!                 if (i .eq. 5) vinf(34)=vinf(34)+dix**4.d0
-!                 if (i .eq. 6) vinf(34)=vinf(34)+dix**5.d0
-!                 if (i .eq. 7) vinf(34)=vinf(34)+dix**6.d0
-!                 if (i .eq. 8) vinf(34)=vinf(34)+dix**7.d0
-!             endif
-!         enddo
-!
     endif
 ! --- ON RENVOIE LA VALEUR ADEQUATE DE NDT
 !     POUR MODELISATION D_PLAN
@@ -620,11 +620,11 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 !                 call lceqve(sigd0, sigf)
 !
 ! y-a-t-il traction?
-                conv = .true.
+                conv = ASTER_TRUE
                 do i = 1, 3
                   call hujprj(i, sigf, tin, piso, q)
                   if (abs(piso+deux*rtrac-ptrac) .lt. r8prem()) &
-                    conv = .false.
+                    conv = ASTER_FALSE
                 enddo
 !
                 if (.not.conv) then
@@ -709,7 +709,6 @@ subroutine nmhuj(fami, kpg, ksp, typmod, imat,&
 
                  call hujcic(materf, sigf, vinf, seuil)
                  seuil = seuil/materf(1,1)*abs(materf(7,2))
-
               endif
 
               crit = max(seuil,crit)

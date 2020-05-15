@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine mminit(mesh  , ds_contact, sddyna  , hat_valinc, ds_measure,&
-                      sdnume, nume_inst)
+                      sdnume, nume_inst, list_func_acti)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
         type(NL_DS_Contact), intent(inout) :: ds_contact
@@ -29,5 +29,6 @@ interface
         character(len=19), intent(in) :: sddyna
         character(len=19), intent(in) :: sdnume
         integer, intent(in) :: nume_inst
+        integer, intent(in) :: list_func_acti(*)
     end subroutine mminit
 end interface

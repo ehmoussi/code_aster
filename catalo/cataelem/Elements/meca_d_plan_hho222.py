@@ -215,23 +215,23 @@ CCELLIM  = LocatedComponents(phys=PHY.CELL_R, type='ELEM',
 CCELLPR  = LocatedComponents(phys=PHY.CELL_R, type='ELEM',
     components=('HHO_U[6]','HHO_V[6]'))
 
-CCSMTIR  = LocatedComponents(phys=PHY.N6480R, type='ELEM',
+CCSMTIR  = LocatedComponents(phys=PHY.N3240R, type='ELEM',
     components=('X[288]',))
 
 CCSRTIR  = LocatedComponents(phys=PHY.CELL_R, type='ELEM',
     components=('HHO_U[6]', 'HHO_V[6]'))
 
-CHHOGTQ  = LocatedComponents(phys=PHY.N6480R, type='ELEM',
+CHHOGTQ  = LocatedComponents(phys=PHY.N1920R, type='ELEM',
     components=('X[864]',))
 
-CHHOGTT  = LocatedComponents(phys=PHY.N6480R, type='ELEM',
+CHHOGTT  = LocatedComponents(phys=PHY.N1920R, type='ELEM',
     components=('X[720]',))
 
-CHHOSTQ  = LocatedComponents(phys=PHY.N6480R, type='ELEM',
-    components=('X[1296]',))
+CHHOSTQ  = LocatedComponents(phys=PHY.N2448R, type='ELEM',
+    components=('X[324]',))
 
-CHHOSTT  = LocatedComponents(phys=PHY.N6480R, type='ELEM',
-    components=('X[900]',))
+CHHOSTT  = LocatedComponents(phys=PHY.N2448R, type='ELEM',
+    components=('X[225]',))
 
 DEPLHHO  = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
     components=('DX','DY',))
