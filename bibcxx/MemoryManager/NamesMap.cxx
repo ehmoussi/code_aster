@@ -1,6 +1,6 @@
 /**
- * @file JeveuxBidirectionalMap.cxx
- * @brief Implementation de JeveuxBidirectionalMap
+ * @file NamesMap.cxx
+ * @brief Implementation de NamesMap
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -21,4 +21,4 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MemoryManager/JeveuxBidirectionalMap.h"
+#include "MemoryManager/NamesMap.h"

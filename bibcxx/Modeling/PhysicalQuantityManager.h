@@ -43,7 +43,7 @@ template < typename T > class Singleton {
 class PhysicalQuantityManager : public Singleton< PhysicalQuantityManager > {
   private:
     const JeveuxCollectionChar8 _nameOfCmp;
-    const JeveuxBidirectionalMapChar8 _nameOfPhysicalQuantity;
+    const NamesMapChar8 _nameOfPhysicalQuantity;
 
     PhysicalQuantityManager();
 

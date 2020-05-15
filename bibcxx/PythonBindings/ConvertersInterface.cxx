@@ -23,13 +23,12 @@
 
 #include "PythonBindings/ConvertersInterface.h"
 #include "DataStructures/DataStructure.h"
-#include "Loads/PhysicalQuantity.h"
-#include "Materials/Material.h"
-#include "Modeling/FiniteElementDescriptor.h"
 #include "Functions/Function.h"
+#include "Loads/PhysicalQuantity.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialField.h"
 #include "Materials/MaterialProperty.h"
+#include "Modeling/FiniteElementDescriptor.h"
 
 void exportConverters() {
 

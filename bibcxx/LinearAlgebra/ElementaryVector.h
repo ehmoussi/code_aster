@@ -61,7 +61,7 @@ class ElementaryVectorClass : public DataStructure {
     /** @brief Liste de charges */
     ListOfLoadsPtr _listOfLoads;
 
-    JeveuxBidirectionalMapChar24 _corichRept;
+    NamesMapChar24 _corichRept;
 
   public:
     /**
@@ -80,7 +80,7 @@ class ElementaryVectorClass : public DataStructure {
           _description( JeveuxVectorChar24( getName() + ".RERR" ) ),
           _listOfElementaryTerms( JeveuxVectorChar24( getName() + ".RELR" ) ), _isEmpty( true ),
           _listOfLoads( new ListOfLoadsClass( memType ) ),
-          _corichRept( JeveuxBidirectionalMapChar24( "&&CORICH." + getName8() + ".REPT" ) ){};
+          _corichRept( NamesMapChar24( "&&CORICH." + getName8() + ".REPT" ) ){};
 
     /**
      * @brief Constructeur
