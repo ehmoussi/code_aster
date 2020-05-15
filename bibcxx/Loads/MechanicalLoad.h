@@ -22,18 +22,19 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include "DataFields/ConstantFieldOnCells.h"
-#include "DataStructures/DataStructure.h"
-#include "Loads/PhysicalQuantity.h"
-#include "Meshes/MeshEntities.h"
-#include "Modeling/FiniteElementDescriptor.h"
-#include "Modeling/Model.h"
-#include "astercxx.h"
 #include <iostream>
 #include <stdexcept>
 #include <string>
 
+#include "astercxx.h"
+
+#include "DataFields/ConstantFieldOnCells.h"
+#include "DataStructures/DataStructure.h"
+#include "Loads/PhysicalQuantity.h"
+#include "Meshes/BaseMesh.h"
+#include "Meshes/MeshEntities.h"
+#include "Modeling/FiniteElementDescriptor.h"
+#include "Modeling/Model.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"
 
@@ -472,8 +473,7 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
      * @param nameOfGroup name of the group of cells
      * @return bool success/failure index
      */
-    bool setValue( PhysicalQuantityPtr physPtr,
-                   std::string nameOfGroup = "" ) {
+    bool setValue( PhysicalQuantityPtr physPtr, std::string nameOfGroup = "" ) {
         // Check that the pointer to the model is not empty
         if ( ( !_mecaLoad._model ) || _mecaLoad._model->isEmpty() )
             throw std::runtime_error( "Model is empty" );
@@ -486,8 +486,7 @@ class MechanicalLoadClass : public GenericMechanicalLoadClass {
         }
         // nameOfGroup is the name of a group of cells and
         // LoadTraits authorizes to base the current load on such a group
-        else if ( currentMesh->hasGroupOfCells( nameOfGroup ) &&
-                  Traits::isAllowedOnGroupOfCells ) {
+        else if ( currentMesh->hasGroupOfCells( nameOfGroup ) && Traits::isAllowedOnGroupOfCells ) {
             _meshEntity = MeshEntityPtr( new GroupOfCells( nameOfGroup ) );
         }
         // nameOfGroup is the name of a group of nodes and LoadTraits authorizes
@@ -567,8 +566,7 @@ typedef boost::shared_ptr< NodalForceRealClass > NodalForceRealPtr;
 /* Appliquer une force nodale sur des éléments de structure */
 /** @typedef NodalStructuralForceReal  */
 template class MechanicalLoadClass< StructuralForceRealClass, NodalForce >;
-typedef MechanicalLoadClass< StructuralForceRealClass, NodalForce >
-    NodalStructuralForceRealClass;
+typedef MechanicalLoadClass< StructuralForceRealClass, NodalForce > NodalStructuralForceRealClass;
 typedef boost::shared_ptr< NodalStructuralForceRealClass > NodalStructuralForceRealPtr;
 
 /** @typedef ForceOnFaceReal  */
@@ -585,8 +583,7 @@ typedef boost::shared_ptr< ForceOnEdgeRealClass > ForceOnEdgeRealPtr;
 /* Appliquer une force sur une arête d'élément de structure (coque/plaque) */
 /** @typedef StructuralForceOnEdgeReal  */
 template class MechanicalLoadClass< StructuralForceRealClass, ForceOnEdge >;
-typedef MechanicalLoadClass< StructuralForceRealClass, ForceOnEdge >
-    StructuralForceOnEdgeRealClass;
+typedef MechanicalLoadClass< StructuralForceRealClass, ForceOnEdge > StructuralForceOnEdgeRealClass;
 typedef boost::shared_ptr< StructuralForceOnEdgeRealClass > StructuralForceOnEdgeRealPtr;
 
 /** @typedef LineicForceReal  */
@@ -602,15 +599,13 @@ typedef boost::shared_ptr< InternalForceRealClass > InternalForceRealPtr;
 /* Appliquer une force (définie dans le repère global) à une poutre */
 /** @typedef StructuralForceOnBeamReal  */
 template class MechanicalLoadClass< StructuralForceRealClass, ForceOnBeam >;
-typedef MechanicalLoadClass< StructuralForceRealClass, ForceOnBeam >
-    StructuralForceOnBeamRealClass;
+typedef MechanicalLoadClass< StructuralForceRealClass, ForceOnBeam > StructuralForceOnBeamRealClass;
 typedef boost::shared_ptr< StructuralForceOnBeamRealClass > StructuralForceOnBeamRealPtr;
 
 /* Appliquer une force (définie dans le repère local) à une poutre */
 /** @typedef LocalForceOnBeamReal  */
 template class MechanicalLoadClass< LocalBeamForceRealClass, ForceOnBeam >;
-typedef MechanicalLoadClass< LocalBeamForceRealClass, ForceOnBeam >
-    LocalForceOnBeamRealClass;
+typedef MechanicalLoadClass< LocalBeamForceRealClass, ForceOnBeam > LocalForceOnBeamRealClass;
 typedef boost::shared_ptr< LocalForceOnBeamRealClass > LocalForceOnBeamRealPtr;
 
 /* Appliquer une force (définie dans le repère global) à une coque/plaque */
@@ -623,29 +618,25 @@ typedef boost::shared_ptr< StructuralForceOnShellRealClass > StructuralForceOnSh
 /* Appliquer une force (définie dans le repère local) à une coque/plaque */
 /** @typedef LocalForceOnShellReal  */
 template class MechanicalLoadClass< LocalShellForceRealClass, ForceOnShell >;
-typedef MechanicalLoadClass< LocalShellForceRealClass, ForceOnShell >
-    LocalForceOnShellRealClass;
+typedef MechanicalLoadClass< LocalShellForceRealClass, ForceOnShell > LocalForceOnShellRealClass;
 typedef boost::shared_ptr< LocalForceOnShellRealClass > LocalForceOnShellRealPtr;
 
 /* Appliquer une pression à une coque/plaque */
 /** @typedef PressureOnShellReal  */
 template class MechanicalLoadClass< PressureRealClass, ForceOnShell >;
-typedef MechanicalLoadClass< PressureRealClass, ForceOnShell >
-    PressureOnShellRealClass;
+typedef MechanicalLoadClass< PressureRealClass, ForceOnShell > PressureOnShellRealClass;
 typedef boost::shared_ptr< PressureOnShellRealClass > PressureOnShellRealPtr;
 
 /* Appliquer une pression à un tuyau */
 /** @typedef PressureOnPipeReal  */
 template class MechanicalLoadClass< PressureRealClass, PressureOnPipe >;
-typedef MechanicalLoadClass< PressureRealClass, PressureOnPipe >
-    PressureOnPipeRealClass;
+typedef MechanicalLoadClass< PressureRealClass, PressureOnPipe > PressureOnPipeRealClass;
 typedef boost::shared_ptr< PressureOnPipeRealClass > PressureOnPipeRealPtr;
 
 /* Imposer un déplacement sur des noeuds */
 /** @typedef ImposedDisplacementReal  */
 template class MechanicalLoadClass< DisplacementRealClass, ImposedDoF >;
-typedef MechanicalLoadClass< DisplacementRealClass, ImposedDoF >
-    ImposedDisplacementRealClass;
+typedef MechanicalLoadClass< DisplacementRealClass, ImposedDoF > ImposedDisplacementRealClass;
 typedef boost::shared_ptr< ImposedDisplacementRealClass > ImposedDisplacementRealPtr;
 
 /* Imposer une pression sur des noeuds */
@@ -656,26 +647,22 @@ typedef boost::shared_ptr< ImposedPressureRealClass > ImposedPressureRealPtr;
 
 /** @typedef DistributedPressureReal  */
 template class MechanicalLoadClass< PressureRealClass, DistributedPressure >;
-typedef MechanicalLoadClass< PressureRealClass, DistributedPressure >
-    DistributedPressureRealClass;
+typedef MechanicalLoadClass< PressureRealClass, DistributedPressure > DistributedPressureRealClass;
 typedef boost::shared_ptr< DistributedPressureRealClass > DistributedPressureRealPtr;
 
 /** @typedef ImpedanceOnFaceReal  */
 template class MechanicalLoadClass< ImpedanceRealClass, ImpedanceOnFace >;
-typedef MechanicalLoadClass< ImpedanceRealClass, ImpedanceOnFace >
-    ImpedanceOnFaceRealClass;
+typedef MechanicalLoadClass< ImpedanceRealClass, ImpedanceOnFace > ImpedanceOnFaceRealClass;
 typedef boost::shared_ptr< ImpedanceOnFaceRealClass > ImpedanceOnFaceRealPtr;
 
 /** @typedef NormalSpeedOnFaceReal  */
 template class MechanicalLoadClass< NormalSpeedRealClass, NormalSpeedOnFace >;
-typedef MechanicalLoadClass< NormalSpeedRealClass, NormalSpeedOnFace >
-    NormalSpeedOnFaceRealClass;
+typedef MechanicalLoadClass< NormalSpeedRealClass, NormalSpeedOnFace > NormalSpeedOnFaceRealClass;
 typedef boost::shared_ptr< NormalSpeedOnFaceRealClass > NormalSpeedOnFaceRealPtr;
 
 /** @typedef WavePressureOnFaceReal  */
 template class MechanicalLoadClass< PressureRealClass, WavePressureOnFace >;
-typedef MechanicalLoadClass< PressureRealClass, WavePressureOnFace >
-    WavePressureOnFaceRealClass;
+typedef MechanicalLoadClass< PressureRealClass, WavePressureOnFace > WavePressureOnFaceRealClass;
 typedef boost::shared_ptr< WavePressureOnFaceRealClass > WavePressureOnFaceRealPtr;
 
 /** @typedef DistributedHeatFluxReal  */
@@ -685,10 +672,8 @@ typedef boost::shared_ptr< DistributedHeatFluxRealClass > DistributedHeatFluxRea
 
 /** @typedef DistributedHydraulicFluxReal  */
 template class MechanicalLoadClass< HydraulicFluxRealClass, THMFlux >;
-typedef MechanicalLoadClass< HydraulicFluxRealClass, THMFlux >
-    DistributedHydraulicFluxRealClass;
-typedef boost::shared_ptr< DistributedHydraulicFluxRealClass >
-    DistributedHydraulicFluxRealPtr;
+typedef MechanicalLoadClass< HydraulicFluxRealClass, THMFlux > DistributedHydraulicFluxRealClass;
+typedef boost::shared_ptr< DistributedHydraulicFluxRealClass > DistributedHydraulicFluxRealPtr;
 
 /** @typedef std::list de MechanicalLoad */
 typedef std::list< GenericMechanicalLoadPtr > ListMecaLoad;

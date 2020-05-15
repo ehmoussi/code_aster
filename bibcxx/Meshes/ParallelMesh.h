@@ -30,11 +30,11 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "Meshes/Mesh.h"
-#include "astercxx.h"
-#include "definition.h"
 #include <set>
+
+#include "astercxx.h"
+
+#include "Meshes/BaseMesh.h"
 
 /**
  * @class ParallelMeshClass

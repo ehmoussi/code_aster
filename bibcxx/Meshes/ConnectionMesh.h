@@ -29,11 +29,9 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
 #include "astercxx.h"
-#include "definition.h"
-#include "Meshes/Mesh.h"
+
+#include "Meshes/BaseMesh.h"
 #include "Meshes/ParallelMesh.h"
 #include "Supervis/ResultNaming.h"
 
@@ -45,8 +43,7 @@
  */
 class ConnectionMeshClass : public BaseMeshClass {
   private:
-    typedef JeveuxCollection< ASTERINTEGER, NamesMapChar24 >
-        JeveuxCollectionLongNamePtr;
+    typedef JeveuxCollection< ASTERINTEGER, NamesMapChar24 > JeveuxCollectionLongNamePtr;
     /** @brief Base ParallelMesh */
     ParallelMeshPtr _pMesh;
     /** @brief id of node in local numbering */
@@ -86,10 +83,7 @@ class ConnectionMeshClass : public BaseMeshClass {
      * @brief Fonction permettant de savoir si un maillage est partiel
      * @return retourne true si le maillage est partiel
      */
-    virtual bool isPartial() const
-    {
-        return true;
-    };
+    virtual bool isPartial() const { return true; };
 };
 
 /**

@@ -33,7 +33,8 @@
 #include "DataFields/DataField.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Meshes/Mesh.h"
+#include "Meshes/BaseMesh.h"
+#include "Meshes/MeshEntities.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Modeling/PhysicalQuantityManager.h"
 #include "Supervis/ResultNaming.h"
@@ -66,8 +67,7 @@ class ConstantFieldOnZone {
         : _mesh( mesh ), _localisation( AllMesh ), _grp( new GroupOfCells( "" ) ){};
 
     ConstantFieldOnZone( FiniteElementDescriptorPtr ligrel )
-        : _ligrel( ligrel ), _localisation( AllDelayedCells ),
-          _grp( new GroupOfCells( "" ) ){};
+        : _ligrel( ligrel ), _localisation( AllDelayedCells ), _grp( new GroupOfCells( "" ) ){};
 
     ConstantFieldOnZone( BaseMeshPtr mesh, GroupOfCellsPtr grp )
         : _mesh( mesh ), _localisation( OnGroupOfCells ), _grp( grp ){};
@@ -86,8 +86,7 @@ class ConstantFieldOnZone {
         return _mesh;
     };
 
-    const FiniteElementDescriptorPtr &getFiniteElementDescriptor() const
-        {
+    const FiniteElementDescriptorPtr &getFiniteElementDescriptor() const {
         if ( _localisation != AllDelayedCells and _localisation != ListOfDelayedCells )
             throw std::runtime_error( "Zone not on a FiniteElementDescriptor" );
         return _ligrel;
@@ -214,8 +213,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
         }
     };
 
-    void fortranAllocate( const std::string base,
-                          const std::string quantity ) {
+    void fortranAllocate( const std::string base, const std::string quantity ) {
         try {
             CALLO_ALCART( base, getName(), _mesh->getName(), quantity );
         } catch ( ... ) {
@@ -236,7 +234,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @param mesh Maillage
      */
     ConstantFieldOnCellsClass( const std::string &name, const BaseMeshPtr &mesh,
-                           const JeveuxMemory memType = Permanent )
+                               const JeveuxMemory memType = Permanent )
         : DataFieldClass( name, "CARTE", memType ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
@@ -252,7 +250,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @param ligrel Ligrel support
      */
     ConstantFieldOnCellsClass( std::string name, const FiniteElementDescriptorPtr &ligrel,
-                           const JeveuxMemory memType = Permanent )
+                               const JeveuxMemory memType = Permanent )
         : DataFieldClass( name, "CARTE", memType ),
           _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
@@ -268,8 +266,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @param name Nom Jeveux de la carte
      */
     ConstantFieldOnCellsClass( const BaseMeshPtr &mesh, const JeveuxMemory memType = Permanent )
-        : DataFieldClass( memType, "CARTE" ),
-          _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
+        : DataFieldClass( memType, "CARTE" ), _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _listOfMeshCells( JeveuxCollectionLong( getName() + ".LIMA" ) ),
@@ -283,9 +280,8 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @param name Nom Jeveux de la carte
      */
     ConstantFieldOnCellsClass( const FiniteElementDescriptorPtr &ligrel,
-                           const JeveuxMemory memType = Permanent )
-        : DataFieldClass( memType, "CARTE" ),
-          _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
+                               const JeveuxMemory memType = Permanent )
+        : DataFieldClass( memType, "CARTE" ), _meshName( JeveuxVectorChar8( getName() + ".NOMA" ) ),
           _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
           _nameOfLigrels( JeveuxVectorChar24( getName() + ".NOLI" ) ),
           _listOfMeshCells( JeveuxCollectionLong( getName() + ".LIMA" ) ),
@@ -294,7 +290,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
           _componentNames( getName() + ".NCMP" ), _valuesListTmp( getName() + ".VALV" ){};
 
     typedef boost::shared_ptr< ConstantFieldOnCellsClass< ValueType > >
-                                                                ConstantFieldOnCellsValueTypePtr;
+        ConstantFieldOnCellsValueTypePtr;
 
     /**
      * @brief Destructeur
@@ -305,8 +301,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @brief Allocation de la carte
      * @return true si l'allocation s'est bien deroulee, false sinon
      */
-    void allocate( const JeveuxMemory jeveuxBase,
-                   const std::string componant ) {
+    void allocate( const JeveuxMemory jeveuxBase, const std::string componant ) {
         if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
@@ -321,8 +316,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @brief Allocation de la carte
      * @return true si l'allocation s'est bien deroulee, false sinon
      */
-    void allocate( const JeveuxMemory jeveuxBase,
-                   const ConstantFieldOnCellsValueTypePtr &model ) {
+    void allocate( const JeveuxMemory jeveuxBase, const ConstantFieldOnCellsValueTypePtr &model ) {
         auto componant = model->getPhysicalQuantityName();
         std::string strJeveuxBase( "V" );
         if ( jeveuxBase == Permanent )
@@ -363,10 +357,7 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
     /**
      * @brief Get mesh
      */
-    BaseMeshPtr getMesh() const
-    {
-        return _mesh;
-    };
+    BaseMeshPtr getMesh() const { return _mesh; };
 
     /**
      * @brief Get values of a zone
@@ -463,8 +454,8 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @return renvoit true si l'ajout s'est bien deroulee, false sinon
      */
     bool setValueOnListOfDelayedCells( const JeveuxVectorChar8 &component,
-                                          const JeveuxVector< ValueType > &values,
-                                          const VectorLong &grp ) {
+                                       const JeveuxVector< ValueType > &values,
+                                       const VectorLong &grp ) {
         if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 
@@ -488,8 +479,8 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @return renvoit true si l'ajout s'est bien deroulee, false sinon
      */
     bool setValueOnGroupOfCells( const JeveuxVectorChar8 &component,
-                                    const JeveuxVector< ValueType > &values,
-                                    const GroupOfCells &grp ) {
+                                 const JeveuxVector< ValueType > &values,
+                                 const GroupOfCells &grp ) {
         if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
         if ( !_mesh->hasGroupOfCells( grp.getName() ) )

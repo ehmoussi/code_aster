@@ -29,11 +29,12 @@
 
 #include "Algorithms/StaticNonLinearAlgorithm.h"
 #include "Algorithms/TimeStepper.h"
-#include "Solvers/LinearSolver.h"
-#include "Loads/KinematicsLoad.h"
+#include "Analysis/GenericAnalysis.h"
 #include "Loads/Excitation.h"
+#include "Loads/KinematicsLoad.h"
 #include "Loads/MechanicalLoad.h"
 #include "Materials/MaterialField.h"
+#include "Meshes/BaseMesh.h"
 #include "Modeling/Model.h"
 #include "NonLinear/Behaviour.h"
 #include "NonLinear/Driving.h"
@@ -41,7 +42,7 @@
 #include "NonLinear/NonLinearControl.h"
 #include "NonLinear/State.h"
 #include "Results/NonLinearResult.h"
-#include "Analysis/GenericAnalysis.h"
+#include "Solvers/LinearSolver.h"
 #include "Studies/TimeStepManager.h"
 
 /**
@@ -109,9 +110,8 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
      * @param BehaviourPtr is the constitutive law
      * @param nameOfGroup is the name of the group defining the MeshEntity.
      * Default value corresponds to set the bahaviour on the whole mesh.
-    */
-    void addBehaviourOnCells( const BehaviourPtr &behaviour,
-                                 std::string nameOfGroup = "" ) {
+     */
+    void addBehaviourOnCells( const BehaviourPtr &behaviour, std::string nameOfGroup = "" ) {
         // Check that the pointer to the model is not empty
         if ( ( !_model ) || _model->isEmpty() )
             throw std::runtime_error( "Model is empty" );
@@ -140,10 +140,10 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
      *        this function wraps Code_Aster's legacy operator for nonlinear analysis
      *        (op0070)
      */
-    NonLinearResultPtr execute() ;
+    NonLinearResultPtr execute();
 
     /** @brief Define the nonlinear method
-    */
+     */
     void setNonLinearMethod( const NonLinearMethodPtr &currentMethod ) {
         _nonLinearMethod = currentMethod;
     };
@@ -185,16 +185,16 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
         _linearSolver = currentSolver;
     };
     /**
-    * @brief definition of the initial state of the analysis
-    */
+     * @brief definition of the initial state of the analysis
+     */
     void setInitialState( const StatePtr &currentState ) { _initialState = currentState; }
     /**
      * @brief get the linear solver
      */
     BaseLinearSolverPtr &getBaseLinearSolver() { return _linearSolver; };
     /**
-    * @brief definition of the driving method
-    */
+     * @brief definition of the driving method
+     */
     void setDriving( const DrivingPtr &currentDriving ) { _driving = currentDriving; }
     /**
      * @brief definition of several excitations

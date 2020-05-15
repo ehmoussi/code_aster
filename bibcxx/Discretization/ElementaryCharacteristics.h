@@ -26,12 +26,13 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
-#include "definition.h"
-#include "DataStructures/DataStructure.h"
 #include "DataFields/ConstantFieldOnCells.h"
+#include "DataStructures/DataStructure.h"
+#include "Meshes/BaseMesh.h"
 #include "Modeling/Model.h"
 #include "Supervis/ResultNaming.h"
+#include "astercxx.h"
+#include "definition.h"
 
 /**
  * @class ElementaryCharacteristicsClass

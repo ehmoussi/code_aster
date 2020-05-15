@@ -21,15 +21,17 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Meshes/ConnectionMesh.h"
-#include "Modeling/FiniteElementDescriptor.h"
-#include "Modeling/PhysicalQuantityManager.h"
-#include "ParallelUtilities/MPIInfos.h"
 #include <algorithm>
 
+#include "Modeling/FiniteElementDescriptor.h"
+#include "Meshes/BaseMesh.h"
+#include "Meshes/ConnectionMesh.h"
+#include "Modeling/PhysicalQuantityManager.h"
+#include "ParallelUtilities/MPIInfos.h"
+
 FiniteElementDescriptorClass::FiniteElementDescriptorClass( const std::string &name,
-                                                                  const BaseMeshPtr mesh,
-                                                                  const JeveuxMemory memType )
+                                                            const BaseMeshPtr mesh,
+                                                            const JeveuxMemory memType )
     : DataStructure( name, 19, "LIGREL", memType ),
       _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
       _parameters( getName() + ".LGRF" ), _dofDescriptor( getName() + ".PRNM" ),
@@ -45,8 +47,7 @@ FiniteElementDescriptorClass::FiniteElementDescriptorClass( const std::string &n
       _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfCells ) ){};
 
 #ifdef _USE_MPI
-void
-FiniteElementDescriptorClass::transferDofDescriptorFrom( FiniteElementDescriptorPtr &other ) {
+void FiniteElementDescriptorClass::transferDofDescriptorFrom( FiniteElementDescriptorPtr &other ) {
     if ( !getMesh()->isPartial() )
         throw std::runtime_error(
             "the mesh associated to finiteElementDescriptorClass is not a partial mesh" );
