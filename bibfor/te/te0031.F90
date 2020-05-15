@@ -341,6 +341,8 @@ character(len=16), intent(in) :: option, nomte
                 effgt((i-1)*ind+j) = foref
                 effgt((i-1)*ind+3+j) = moref
             enddo
+            effgt((i-1)*ind+7) = 0.0d0
+            effgt((i-1)*ind+8) = 0.0d0
         enddo
 !
 ! ------ CALCUL DES EFFORTS INTERNES (I.E. SOMME_VOL(BT_SIG))

@@ -1750,7 +1750,7 @@ FTHM_R   = PhysicalQuantity(type='R',
 """)
 
 ETHM_R   = PhysicalQuantity(type='R',
-    components=( 
+    components=(
        'COEF[4]',
        'PRE[2]',
     ),
@@ -1760,7 +1760,7 @@ ETHM_R   = PhysicalQuantity(type='R',
 
 """)
 ETHM_F   = PhysicalQuantity(type='K8',
-    components=( 
+    components=(
        'COEF[4]',
        'PRE[2]',
     ),
@@ -2171,7 +2171,7 @@ N2448R   = PhysicalQuantity(type='R',
        'X[2448]',
     ),)
 
-N6480R   = PhysicalQuantity(type='R',
+N3240R   = PhysicalQuantity(type='R',
     components=(
        'X[6480]',
     ),)

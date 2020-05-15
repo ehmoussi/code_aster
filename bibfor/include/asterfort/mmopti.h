@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mmopti(mesh, ds_contact)
+    subroutine mmopti(mesh, ds_contact, list_func_acti)
         use NonLin_Datastructure_type
         character(len=8), intent(in) :: mesh
         type(NL_DS_Contact), intent(inout) :: ds_contact
+        integer, intent(in) :: list_func_acti(*)
     end subroutine mmopti
 end interface

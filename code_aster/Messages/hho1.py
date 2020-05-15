@@ -75,4 +75,10 @@ Condensation statique: la matrice de la cellule n'est pas factorisable
     14: _("""
 Condensation statique: le code retour %(i1)d n'est pas traité
 """),
+
+    15: _("""
+L'option RESI_COMP_RELA n'est pas disponible pour les méthodes HHO.
+
+Conseil: Utilisez un autre critère de convergence
+"""),
 }
