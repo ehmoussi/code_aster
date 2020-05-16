@@ -257,7 +257,7 @@ class MaterialAssignment(ExecuteCommand):
             self._result.addMaterialsOnGroupOfCells(mater, kwGrMa)
         elif kwMail is not None:
             kwMail = force_list(kwMail)
-            self._result.addMaterialsOnElement(mater, kwMail)
+            self._result.addMaterialsOnCell(mater, kwMail)
         else:
             raise TypeError("At least {0}, {1} or {2} is required"
                             .format("TOUT", "GROUP_MA", "MAILLE"))

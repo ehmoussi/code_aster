@@ -23,7 +23,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = 2.e11,
                                 NU = 0.3,),)
 
 affectMat = code_aster.MaterialField(pMesh)
-affectMat.addMaterialOnAllMesh( acier )
+affectMat.addMaterialsOnAllMesh( acier )
 affectMat.buildWithoutExternalVariable()
 
 testMesh2 = affectMat.getMesh()

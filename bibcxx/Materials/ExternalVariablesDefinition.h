@@ -386,7 +386,7 @@ class ExternalVariablesFieldClass {
      * @brief Add an input variable on an element
      */
     template < class ExternalVariablePtr >
-    void addExternalVariableonCell( const ExternalVariablePtr &curBehav,
+    void addExternalVariableOnCell( const ExternalVariablePtr &curBehav,
                                     const std::string &nameOfCell ) {
         if ( !_mesh )
             throw std::runtime_error( "Mesh is not defined" );

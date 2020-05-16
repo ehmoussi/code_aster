@@ -21,7 +21,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
 #acier.debugPrint(6)
 
 affectMat = code_aster.MaterialField(monMaillage)
-affectMat.addMaterialOnAllMesh( acier )
+affectMat.addMaterialsOnAllMesh( acier )
 affectMat.buildWithoutExternalVariable()
 
 
