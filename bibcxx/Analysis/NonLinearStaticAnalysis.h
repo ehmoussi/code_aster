@@ -109,7 +109,7 @@ class NonLinearStaticAnalysisClass : public GenericAnalysis {
      * @brief Define a Constitutive Law on a MeshEntity
      * @param BehaviourPtr is the constitutive law
      * @param nameOfGroup is the name of the group defining the MeshEntity.
-     * Default value corresponds to set the bahaviour on the whole mesh.
+     * Default value corresponds to set the behaviour on the whole mesh.
      */
     void addBehaviourOnCells( const BehaviourPtr &behaviour, std::string nameOfGroup = "" ) {
         // Check that the pointer to the model is not empty

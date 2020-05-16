@@ -54,7 +54,7 @@ test.assertSequenceEqual( nodes47, [10, 1, 18, 26])
 npcoord = np.array(values).reshape((-1, 3))
 # z(cell #47) == 1.
 for i in nodes47:
-    test.assertEqual( npcoord[i - 1][3], 1.0)
+    test.assertEqual( npcoord[i - 1][2], 1.0)
 
 # boundingbox of mesh: (0, 0, 0) -> (1, 1, 1)
 test.assertEqual( npcoord.min(), 0.)

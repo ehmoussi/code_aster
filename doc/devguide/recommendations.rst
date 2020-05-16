@@ -23,14 +23,14 @@ Default arguments in Boost Interface
 When a C++ method has default arguments, the number of these arguments must be
 explicitly described by the boost wrapper.
 
-See as example :meth:`NonLinearStaticAnalysisInstance.addBehaviourOnElements`
+See as example :meth:`NonLinearStaticAnalysisInstance.addBehaviourOnCells`
 and its interface in :file:`bibcxx/PythonBindings/NonLinearStaticAnalysisInterface.cxx`.
 The macro generates a wrapper with between 1 and 2 arguments.
 
 .. code-block:: c++
 
-    BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addBehaviourOnElements_overloads,
-        addBehaviourOnElements, 1, 2)
+    BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(addBehaviourOnCells_overloads,
+        addBehaviourOnCells, 1, 2)
 
     void exportNonLinearStaticAnalysisToPython()
     {
@@ -38,9 +38,9 @@ The macro generates a wrapper with between 1 and 2 arguments.
 
         class_< NonLinearStaticAnalysisInstance, NonLinearStaticAnalysisPtr >
             ( "NonLinearStaticAnalysis", no_init )
-            .def( "addBehaviourOnElements",
-                  &NonLinearStaticAnalysisInstance::addBehaviourOnElements,
-                  addBehaviourOnElements_overloads())
+            .def( "addBehaviourOnCells",
+                  &NonLinearStaticAnalysisInstance::addBehaviourOnCells,
+                  addBehaviourOnCells_overloads())
 
 
 Source: `Boost Python Overloads <http://www.boost.org/doc/libs/1_65_1/libs/python/doc/html/reference/function_invocation_and_creation/boost_python_overloads_hpp.html#function_invocation_and_creation.boost_python_overloads_hpp.macros>`_.
