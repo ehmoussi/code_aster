@@ -234,7 +234,7 @@ class MaterialAssignment(ExecuteCommand):
         elif kwMail is not None:
             kwMail = force_list(kwMail)
             for elem in kwMail:
-                externalVarOnMesh.addExternalVariableOnElement(externalVar, elem)
+                externalVarOnMesh.addExternalVariableOnCell(externalVar, elem)
         elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
