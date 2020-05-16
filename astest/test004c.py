@@ -29,7 +29,7 @@ beton = DEFI_MATERIAU(ELAS = _F(E = Young,
                                            ECROD = 0.06,),)
 
 affectMat = code_aster.MaterialField(monMaillage)
-affectMat.addMaterialOnAllMesh( beton )
+affectMat.addMaterialsOnAllMesh( beton )
 affectMat.buildWithoutExternalVariable()
 
 

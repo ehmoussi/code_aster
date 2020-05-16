@@ -57,7 +57,7 @@ affectMat = code_aster.MaterialField(pMesh)
 testMesh2 = affectMat.getMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
 
-affectMat.addMaterialOnAllMesh(acier)
+affectMat.addMaterialsOnAllMesh(acier)
 affectMat.buildWithoutExternalVariable()
 
 charCine = code_aster.KinematicsMechanicalLoad()

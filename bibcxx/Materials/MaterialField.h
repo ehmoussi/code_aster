@@ -176,47 +176,28 @@ class MaterialFieldClass : public DataStructure {
      * @brief Add a behaviour on all mesh
      * @param curBehav behaviour to add
      */
-    void addBehaviourOnAllMesh( BehaviourDefinitionPtr &curBehav ) {
-        _behaviours.push_back(
-            listOfBehavAndGrpsValue( curBehav, MeshEntityPtr( new AllMeshEntities() ) ) );
-    };
+    void addBehaviourOnAllMesh( BehaviourDefinitionPtr &curBehav );
 
     /**
      * @brief Ajout d'un materiau sur une entite du maillage
      * @param curMater behaviour to add
      * @param nameOfGroup Name of group
      */
-    void addBehaviourOnGroupOfCells( BehaviourDefinitionPtr &curBehav, std::string nameOfGroup ) {
-        if ( !_mesh )
-            throw std::runtime_error( "Mesh is not defined" );
-        if ( !_mesh->hasGroupOfCells( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + "not in mesh" );
-
-        _behaviours.push_back(
-            listOfBehavAndGrpsValue( curBehav, MeshEntityPtr( new GroupOfCells( nameOfGroup ) ) ) );
-    };
+    void addBehaviourOnGroupOfCells( BehaviourDefinitionPtr &curBehav, std::string nameOfGroup );
 
     /**
      * @brief Ajout d'un materiau sur une entite du maillage
      * @param curMater behaviour to add
      * @param nameOfGroup Name of group
      */
-    void addBehaviouronCell( BehaviourDefinitionPtr &curBehav, std::string nameOfCell ) {
-        if ( !_mesh )
-            throw std::runtime_error( "Mesh is not defined" );
-
-        _behaviours.push_back(
-            listOfBehavAndGrpsValue( curBehav, MeshEntityPtr( new Cell( nameOfCell ) ) ) );
-    };
+    void addBehaviourOnCell( BehaviourDefinitionPtr &curBehav, std::string nameOfCell );
 
     /**
-     * @brief Ajout d'un materiau sur tout le maillage
-     * @param curMaters Materiau a ajouter
+     * @brief Add one or mmore materials on all the mesh
+     * @param curMaters Material to be added
      */
-    void addMaterialsOnAllMesh( std::vector< MaterialPtr > curMaters ) {
-        _materialsFieldEntity.push_back(
-            listOfMatsAndGrpsValue( curMaters, MeshEntityPtr( new AllMeshEntities() ) ) );
-    };
+    void addMaterialsOnAllMesh( std::vector< MaterialPtr > curMaters );
+    void addMaterialsOnAllMesh( MaterialPtr &curMater ) { addMaterialsOnAllMesh( {curMater} ); }
 
     /**
      * @brief Ajout d'un materiau sur une entite du maillage
@@ -224,67 +205,20 @@ class MaterialFieldClass : public DataStructure {
      * @param nameOfGroup Nom du groupe de mailles
      */
     void addMaterialsOnGroupOfCells( std::vector< MaterialPtr > curMaters,
-                                     VectorString namesOfGroup ) {
-        if ( !_mesh )
-            throw std::runtime_error( "Mesh is not defined" );
-        for ( const auto &nameOfGroup : namesOfGroup )
-            if ( !_mesh->hasGroupOfCells( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in mesh" );
-
-        _materialsFieldEntity.push_back( listOfMatsAndGrpsValue(
-            curMaters, MeshEntityPtr( new GroupOfCells( namesOfGroup ) ) ) );
-    };
+                                     VectorString namesOfGroup );
+    void addMaterialsOnGroupOfCells( MaterialPtr &curMater, VectorString namesOfGroup ) {
+        addMaterialsOnGroupOfCells( {curMater}, namesOfGroup );
+    }
 
     /**
      * @brief Ajout d'un materiau sur une entite du maillage
      * @param curMaters Materiau a ajouter
      * @param nameOfCell Nom des mailles
      */
-    void addMaterialsonCell( std::vector< MaterialPtr > curMaters, VectorString namesOfCells ) {
-        if ( !_mesh )
-            throw std::runtime_error( "Mesh is not defined" );
-
-        _materialsFieldEntity.push_back(
-            listOfMatsAndGrpsValue( curMaters, MeshEntityPtr( new Cell( namesOfCells ) ) ) );
-    };
-
-    /**
-     * @brief Ajout d'un materiau sur tout le maillage
-     * @param curMater Materiau a ajouter
-     */
-    void addMaterialOnAllMesh( MaterialPtr &curMater ) {
-        _materialsFieldEntity.push_back(
-            listOfMatsAndGrpsValue( {curMater}, MeshEntityPtr( new AllMeshEntities() ) ) );
-    };
-
-    /**
-     * @brief Ajout d'un materiau sur une entite du maillage
-     * @param curMater Materiau a ajouter
-     * @param nameOfGroup Nom du groupe de mailles
-     */
-    void addMaterialOnGroupOfCells( MaterialPtr &curMater, VectorString namesOfGroup ) {
-        if ( !_mesh )
-            throw std::runtime_error( "Mesh is not defined" );
-        for ( const auto &nameOfGroup : namesOfGroup )
-            if ( !_mesh->hasGroupOfCells( nameOfGroup ) )
-                throw std::runtime_error( nameOfGroup + "not in mesh" );
-
-        _materialsFieldEntity.push_back( listOfMatsAndGrpsValue(
-            {curMater}, MeshEntityPtr( new GroupOfCells( namesOfGroup ) ) ) );
-    };
-
-    /**
-     * @brief Ajout d'un materiau sur une entite du maillage
-     * @param curMater Materiau a ajouter
-     * @param nameOfCell Nom des mailles
-     */
-    void addMaterialonCell( MaterialPtr &curMater, VectorString namesOfCells ) {
-        if ( !_mesh )
-            throw std::runtime_error( "Mesh is not defined" );
-
-        _materialsFieldEntity.push_back(
-            listOfMatsAndGrpsValue( {curMater}, MeshEntityPtr( new Cell( namesOfCells ) ) ) );
-    };
+    void addMaterialsOnCell( std::vector< MaterialPtr > curMaters, VectorString namesOfCells );
+    void addMaterialsOnCell( MaterialPtr &curMater, VectorString namesOfCells ) {
+        addMaterialsOnCell( {curMater}, namesOfCells );
+    }
 
     /**
      * @brief Build MaterialFieldPtr without ExternalVariable

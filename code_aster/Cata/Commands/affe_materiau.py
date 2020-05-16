@@ -212,7 +212,7 @@ AFFE_MATERIAU=OPER(nom="AFFE_MATERIAU",op=6,sd_prod=cham_mater,
          translation={
             "AFFE_MATERIAU": "Assign a material",
             "AFFE": "Material assignement",
-            "AFFE_COMPOR": "Behavior assignement",
+            "AFFE_COMPOR": "Behaviour assignement",
             "AFFE_VARC": "External state variable assignement",
             "NOM_VARC": "External state variable" ,
             "NOM_CHAM": "Field name",

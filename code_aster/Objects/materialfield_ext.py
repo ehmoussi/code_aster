@@ -100,7 +100,7 @@ class ExtendedMaterialField(object):
                     elif type is EntityType.GroupOfCellsType:
                         self.addMaterialsOnGroupOfCells(listOfMater, names)
                     elif type is EntityType.CellType:
-                        self.addMaterialsOnElement(listOfMater, names)
+                        self.addMaterialsOnCell(listOfMater, names)
                     searchForSize = True
                     endMater = 0
                     listOfMater = []

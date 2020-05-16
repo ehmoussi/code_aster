@@ -29,7 +29,7 @@ acier = DEFI_MATERIAU(ELAS=_F(E=200000.,
                                    SY=200.,),)
 
 affectMat = code_aster.MaterialField(monMaillage)
-affectMat.addMaterialOnAllMesh(acier)
+affectMat.addMaterialsOnAllMesh(acier)
 affectMat.buildWithoutExternalVariable()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()

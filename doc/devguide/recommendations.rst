@@ -5,8 +5,8 @@ Recommendations / howto
 ***********************
 
 
-Definitions ``.h`` vs Implementation ``.cxx``
-=============================================
+Definition ``.h`` vs Implementation ``.cxx``
+============================================
 
 The header files ``.h`` should only contain definitions. Exceptions are allowed
 for *properties* that directly return the content of an attribute
@@ -14,7 +14,7 @@ for *properties* that directly return the content of an attribute
 Others functions should be implemented in the ``.cxx`` file
 (example: ``DataStructure.addDependency()``).
 
-It avoids to rebuild every thing for a small change.
+It avoids to rebuild everything for a small change.
 
 
 Default arguments in Boost Interface
