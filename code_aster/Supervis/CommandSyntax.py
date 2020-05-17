@@ -63,6 +63,9 @@ from ..Utilities import (force_list, is_complex, is_float, is_int, is_str,
                          logger, value_is_sequence)
 from .typeaster import typeaster
 
+# WARNING:
+#   user keywords dict may be very big, uncomment 'logger.debug' lines
+#   only during debugging
 
 class CommandSyntax(object):
     """This class describes the syntax of command for compatibility
@@ -119,7 +122,7 @@ class CommandSyntax(object):
     def free( self ):
         """Reset the current command pointer as soon as possible"""
         # `currentCommand` must be reset before the garbage collector will do it
-        logger.debug(f"Syntax: del command {self._name!r}")
+        # logger.debug(f"Syntax: del command {self._name!r}")
         self.setCurrentCommand(None)
 
     def __repr__( self ):
@@ -151,10 +154,10 @@ class CommandSyntax(object):
                 added or not.
         """
         if self._commandCata != None and add_default:
-            logger.debug(f"define0 {self._name!r}: {dictSyntax!r}")
+            # logger.debug(f"define0 {self._name!r}: {dictSyntax!r}")
             self._commandCata.addDefaultKeywords( dictSyntax )
         self._definition = dictSyntax
-        logger.debug(f"define1 {self._name!r}: {self._definition!r}")
+        # logger.debug(f"define1 {self._name!r}: {self._definition!r}")
 
     def getName( self ):
         """Return the command name.
@@ -200,7 +203,7 @@ class CommandSyntax(object):
         """
         # a factor keyword may be empty: {} (None means 'does not exist')
         dictDef = self._definition.get( factName, None )
-        logger.debug(f"factor keyword {factName!r}: {dictDef!r}")
+        # logger.debug(f"factor keyword {factName!r}: {dictDef!r}")
         if dictDef is None:
             return None
         if isinstance(dictDef, dict):
@@ -278,10 +281,10 @@ class CommandSyntax(object):
             int: Number of occurrences of a factor keyword.
         """
         dictDef = self._getFactorKeyword( factName )
-        logger.debug(f"_getFactorKeyword {factName!r}: {dictDef!r}")
+        # logger.debug(f"_getFactorKeyword {factName!r}: {dictDef!r}")
         if dictDef is None:
             return 0
-        logger.debug(f"getFactorKeywordNbOcc: len(dictDef) = {len(dictDef)}")
+        # logger.debug(f"getFactorKeywordNbOcc: len(dictDef) = {len(dictDef)}")
         return len(dictDef)
 
     getfac = getFactorKeywordNbOcc
@@ -320,7 +323,7 @@ class CommandSyntax(object):
             return []
         value = self._getDefinition( factName, occurrence )[simpName]
         value = force_list(value)
-        logger.debug(f"getValue: {value!r}")
+        # logger.debug(f"getValue: {value!r}")
         return value
 
     def getltx(self, factName, simpName, occurrence, maxval, lenmax):
@@ -511,7 +514,7 @@ class CommandSyntax(object):
         if not simpName.strip():
             return 1
         keywords = catadef.simple_keywords
-        logger.debug(f"getexm: simple keywords: {list(keywords.keys())}")
+        # logger.debug(f"getexm: simple keywords: {list(keywords.keys())}")
         return int(keywords.get(simpName) is not None)
 
     def getmjm(self, factName, occurrence, maxval):
@@ -531,7 +534,7 @@ class CommandSyntax(object):
         userkw = self._getDefinition(factName, occurrence)
         if not userkw:
             return (), ()
-        logger.debug(f"getmjm: user keywords: {userkw}")
+        # logger.debug(f"getmjm: user keywords: {userkw}")
         catadef = self._getCataDefinition(factName).simple_keywords
         lkeywords = sorted(userkw.keys())
         kws, types = [], []
