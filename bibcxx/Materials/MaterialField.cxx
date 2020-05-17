@@ -142,6 +142,10 @@ void MaterialFieldClass::addMaterialsOnAllMesh( std::vector< MaterialPtr > curMa
         listOfMatsAndGrpsValue( curMaters, MeshEntityPtr( new AllMeshEntities() ) ) );
 }
 
+void MaterialFieldClass::addMaterialsOnAllMesh( MaterialPtr &curMater ) {
+    addMaterialsOnAllMesh( (std::vector< MaterialPtr >){curMater} );
+}
+
 void MaterialFieldClass::addMaterialsOnGroupOfCells( std::vector< MaterialPtr > curMaters,
                                                      VectorString namesOfGroup ) {
     if ( !_mesh )
@@ -154,6 +158,11 @@ void MaterialFieldClass::addMaterialsOnGroupOfCells( std::vector< MaterialPtr > 
         listOfMatsAndGrpsValue( curMaters, MeshEntityPtr( new GroupOfCells( namesOfGroup ) ) ) );
 }
 
+void MaterialFieldClass::addMaterialsOnGroupOfCells( MaterialPtr &curMater,
+                                                     VectorString namesOfGroup ) {
+    addMaterialsOnGroupOfCells( (std::vector< MaterialPtr >){curMater}, namesOfGroup );
+}
+
 void MaterialFieldClass::addMaterialsOnCell( std::vector< MaterialPtr > curMaters,
                                              VectorString namesOfCells ) {
     if ( !_mesh )
@@ -161,4 +170,8 @@ void MaterialFieldClass::addMaterialsOnCell( std::vector< MaterialPtr > curMater
 
     _materialsFieldEntity.push_back(
         listOfMatsAndGrpsValue( curMaters, MeshEntityPtr( new Cell( namesOfCells ) ) ) );
+}
+
+void MaterialFieldClass::addMaterialsOnCell( MaterialPtr &curMater, VectorString namesOfCells ) {
+    addMaterialsOnCell( (std::vector< MaterialPtr >){curMater}, namesOfCells );
 }

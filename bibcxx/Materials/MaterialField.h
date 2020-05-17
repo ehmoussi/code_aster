@@ -197,7 +197,7 @@ class MaterialFieldClass : public DataStructure {
      * @param curMaters Material to be added
      */
     void addMaterialsOnAllMesh( std::vector< MaterialPtr > curMaters );
-    void addMaterialsOnAllMesh( MaterialPtr &curMater ) { addMaterialsOnAllMesh( {curMater} ); }
+    void addMaterialsOnAllMesh( MaterialPtr &curMater );
 
     /**
      * @brief Ajout d'un materiau sur une entite du maillage
@@ -206,9 +206,7 @@ class MaterialFieldClass : public DataStructure {
      */
     void addMaterialsOnGroupOfCells( std::vector< MaterialPtr > curMaters,
                                      VectorString namesOfGroup );
-    void addMaterialsOnGroupOfCells( MaterialPtr &curMater, VectorString namesOfGroup ) {
-        addMaterialsOnGroupOfCells( {curMater}, namesOfGroup );
-    }
+    void addMaterialsOnGroupOfCells( MaterialPtr &curMater, VectorString namesOfGroup );
 
     /**
      * @brief Ajout d'un materiau sur une entite du maillage
@@ -216,9 +214,7 @@ class MaterialFieldClass : public DataStructure {
      * @param nameOfCell Nom des mailles
      */
     void addMaterialsOnCell( std::vector< MaterialPtr > curMaters, VectorString namesOfCells );
-    void addMaterialsOnCell( MaterialPtr &curMater, VectorString namesOfCells ) {
-        addMaterialsOnCell( {curMater}, namesOfCells );
-    }
+    void addMaterialsOnCell( MaterialPtr &curMater, VectorString namesOfCells );
 
     /**
      * @brief Build MaterialFieldPtr without ExternalVariable
