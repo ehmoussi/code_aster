@@ -755,13 +755,13 @@ class MEDPQS8(Element):
         ),
 
         OP.MATE_ELGA(te=142,
-            para_in=((SP.PMATERC, LC.CMATERC),
+            para_in=((SP.PMATERC, LC.CMATERC),(SP.PGEOMER, NGEOMER), 
                      (OP.MATE_ELGA.PVARCPR, LC.ZVARCPG), ),
             para_out=((OP.MATE_ELGA.PMATERR, LC.EGMATE_R), ),
         ),
 
         OP.MATE_ELEM(te=142,
-            para_in=((SP.PMATERC, LC.CMATERC),
+            para_in=((SP.PMATERC, LC.CMATERC),(SP.PGEOMER, NGEOMER), 
                      (OP.MATE_ELEM.PVARCPR, LC.ZVARCPG), ),
             para_out=((OP.MATE_ELEM.PMATERR, LC.EEMATE_R), ),
         ),

@@ -338,6 +338,11 @@ Contactez le support technique.
  unité logique  %(k1)s , problème lors du close
 """),
 
+    78 : _("""
+ Vous essayez d'allouer dynamiquement un vecteur de dimension %(i1)d <= 0.
+ Ce n'est pas possible.
+"""),
+
 
 
 

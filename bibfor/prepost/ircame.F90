@@ -174,10 +174,14 @@ integer :: codret
 !
 ! 3. PREPARATION DU CHAMP A ECRIRE
 !   3.1. ==> NUMEROS, NOMS ET UNITES DES COMPOSANTES A ECRIRE
-    AS_ALLOCATE(vk8 = cmpUserName, size = nbcmp)
-    do iCmp = 1, nbCmp
-        cmpUserName(iCmp) = nomcmp(iCmp)
-    end do
+    if(nbCmp>0) then
+        AS_ALLOCATE(vk8 = cmpUserName, size = nbcmp)
+!
+        do iCmp = 1, nbCmp
+            cmpUserName(iCmp) = nomcmp(iCmp)
+        end do
+    end if
+!
     AS_ALLOCATE(vk8 = cmpCataName, size = ncmprf)
     do iCmp = 1, ncmprf
         cmpCataName(iCmp) = zk8(adsc-1+iCmp)

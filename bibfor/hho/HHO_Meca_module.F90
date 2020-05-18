@@ -283,15 +283,12 @@ contains
         real(kind=8), dimension(MSIZE_CELL_VEC, MSIZE_TDOFS_SCAL)  :: gradfullvec
         real(kind=8), dimension(MSIZE_TDOFS_SCAL, MSIZE_TDOFS_SCAL):: stabvec
 !
-! --- Number of dofs
-        call hhoMecaNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs, gbs_sym)
-!
         if(hhoCell%ndim == 2) then
 !
 ! ---- if ndim = 2, we save the full operator
 !
+            call hhoMecaNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs, gbs_sym)
             gradfull = 0.d0
-            stab = 0.d0
 !
             if(l_largestrains) then
                 gbs2 = gbs
@@ -301,7 +298,6 @@ contains
 !
             do j = 1, total_dofs
                 call dcopy(gbs2, gradsav((j-1) * gbs2+1), 1, gradfull(1,j), 1)
-                call dcopy(total_dofs, stabsav((j-1) * total_dofs+1), 1, stab(1,j), 1)
             end do
 !
         elseif(hhoCell%ndim == 3) then
@@ -312,24 +308,30 @@ contains
 !
             if(l_largestrains) then
                 gradfullvec = 0.d0
-                stabvec = 0.d0
 !
                 do j = 1, total_dofs
                     call dcopy(gbs2, gradsav((j-1) * gbs2+1), 1, gradfullvec(1,j), 1)
-                    call dcopy(total_dofs, stabsav((j-1) * total_dofs+1), 1, stabvec(1,j), 1)
                 end do
 !
 ! ------- Compute vectoriel Gradient reconstruction
                 call hhoGradRecFullMatFromVec(hhoCell, hhoData, gradfullvec, gradfull)
-                call MatScal2Vec(hhoCell, hhoData, stabvec, stab)
 !
             else
 ! -------- Compute Operators
-                call hhoCalcOpMeca(hhoCell, hhoData, l_largestrains, gradfull, stab)
+                call hhoCalcOpMeca(hhoCell, hhoData, l_largestrains, gradfull)
             endif
         else
             ASSERT(ASTER_FALSE)
         end if
+!
+! -------- Reload stabilization
+        stab = 0.d0
+        stabvec = 0.d0
+        call hhoTherNLDofs(hhoCell, hhoData, cbs, fbs, total_dofs, gbs2)
+        do j = 1, total_dofs
+            call dcopy(total_dofs, stabsav((j-1) * total_dofs+1), 1, stabvec(1,j), 1)
+        end do
+        call MatScal2Vec(hhoCell, hhoData, stabvec, stab)
 !
     end subroutine
 !
@@ -523,7 +525,7 @@ contains
         type(HHO_Data), intent(in) :: hhoData
         aster_logical, intent(in)  :: l_largestrains
         real(kind=8), dimension(MSIZE_CELL_MAT, MSIZE_TDOFS_VEC), intent(out)   :: gradfull
-        real(kind=8), dimension(MSIZE_TDOFS_VEC, MSIZE_TDOFS_VEC), intent(out)  :: stab
+        real(kind=8), dimension(MSIZE_TDOFS_VEC, MSIZE_TDOFS_VEC), intent(out), optional  :: stab
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -541,7 +543,7 @@ contains
 ! --------------------------------------------------------------------------------------------------
 !
         real(kind=8), dimension(MSIZE_CELL_SCAL, MSIZE_TDOFS_SCAL) :: gradrec_scal
-        real(kind=8), dimension(MSIZE_CELL_VEC, MSIZE_TDOFS_VEC)   :: gradrec_sym
+!        real(kind=8), dimension(MSIZE_CELL_VEC, MSIZE_TDOFS_VEC)   :: gradrec_sym
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -549,25 +551,19 @@ contains
 !
 ! ----- Compute Gradient reconstruction
             call hhoGradRecFullMat(hhoCell, hhoData, gradfull)
-!
-! ----- Compute Stabilizatiion
-            if (hhoData%cell_degree() <= hhoData%face_degree()) then
-                call hhoGradRecVec(hhoCell, hhoData, gradrec_scal)
-                call hhoStabVec(hhoCell, hhoData, gradrec_scal, stab)
-            else if (hhoData%cell_degree() == (hhoData%face_degree() + 1)) then
-                call hdgStabVec(hhoCell, hhoData, stab)
-            else
-                    ASSERT(ASTER_FALSE)
-            end if
         else
 !
 ! ----- Compute Symmetric Gradient reconstruction
             call hhoGradRecSymFullMat(hhoCell, hhoData, gradfull)
+        end if
 !
 ! ----- Compute Stabilizatiion
+        if(present(stab)) then
             if (hhoData%cell_degree() <= hhoData%face_degree()) then
-                call hhoGradRecSymMat(hhoCell, hhoData, gradrec_sym)
-                call hhoStabSymVec(hhoCell, hhoData, gradrec_sym, stab)
+                call hhoGradRecVec(hhoCell, hhoData, gradrec_scal)
+                call hhoStabVec(hhoCell, hhoData, gradrec_scal, stab)
+!               call hhoGradRecSymMat(hhoCell, hhoData, gradrec_sym)
+!               call hhoStabSymVec(hhoCell, hhoData, gradrec_sym, stab)
             else if (hhoData%cell_degree() == (hhoData%face_degree() + 1)) then
                 call hdgStabVec(hhoCell, hhoData, stab)
             else

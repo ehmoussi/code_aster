@@ -41,7 +41,9 @@ Comportement - Occurrence  %(i1)d"""),
 
    11: _("""     Relation                             : défini par DEFI_COMPOR"""),
 
-    13: _("""
+   12: _("""   Relation MULTIFIBRE (définie par DEFI_COMPOR) affectée sur %(i1)d éléments"""),
+
+ 13: _("""
   Il y a deux types de modélisations différents pour une même affectation du comportement MFRONT.
   Chaque occurrence de COMPORTEMENT avec relation MFRONT doit contenir un seul type de modélisation.
   Par exemple, une occurrence pour les groupes de mailles contenant des éléments 3D (et comportement MFRONT),
