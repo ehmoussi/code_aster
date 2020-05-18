@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 # a clamped-clamped steel tubes (beam model).
 #
 # Note : The modeling procedure requires the representation of a single beam
-#        Fluid-structure coupling forces consider confinement details of the 
+#        Fluid-structure coupling forces consider confinement details of the
 #        array.
 #
 #                                    ^ y-axis
@@ -30,10 +30,10 @@
 #  //|         L, D          |//
 #  //|=======================|//
 #  //|       ^ ^ ^ ^ ^       |//
-#          ^ | | | | | ^            
-#        ^ | | | | | | | ^  
-#      ^ | | | | | | | | | ^ 
-#      | | | | | | | | | | |  
+#          ^ | | | | | ^
+#        ^ | | | | | | | ^
+#      ^ | | | | | | | | | ^
+#      | | | | | | | | | | |
 #
 #          Fluid velocity (parabolic function)
 #
@@ -43,7 +43,7 @@
 #-------------------------------------------------------------------
 # person_in_charge: yannick.tampango at edf.fr
 
-L = 1.000 # Tube length    = 1  m (used for velocity profile definition and 
+L = 1.000 # Tube length    = 1  m (used for velocity profile definition and
 #                                  coherent with the associated mesh file)
 D = 0.040 # Tube diameter  = 4 cm
 t = 0.005 # Tube thickness = 5 mm
@@ -80,7 +80,7 @@ RHOE=DEFI_FONCTION(NOM_PARA ='ABSC',
 
 Velo = [-4*x*(x-1) for x in Absc]  # Parabolic velocity profile
 Data = [None]*2*NbNodes
-for i in range(NbNodes) : 
+for i in range(NbNodes) :
     Data[2*i  ] = Absc[i]
     Data[2*i+1] = Velo[i]
 
@@ -92,7 +92,7 @@ TYPEFLUI=DEFI_FLUI_STRU(FAISCEAU_TRANS=_F(
                                           CARA_ELEM = CARA,
                                           PROF_RHO_F_INT = RHOI,
                                           PROF_RHO_F_EXT = RHOE,
-                                          COEF_MASS_AJOU = 1.0, 
+                                          COEF_MASS_AJOU = 1.0,
                                           NOM_CMP = 'DY',
                                           TYPE_PAS = 'CARRE_LIGN',
                                           TYPE_RESEAU = 675,
@@ -101,6 +101,8 @@ TYPEFLUI=DEFI_FLUI_STRU(FAISCEAU_TRANS=_F(
                                           RHO_TUBE = 2500.,
                                           NB_CONNORS   = 5,
                                           CSTE_CONNORS = (3.0,5.0),
+                                          UNITE_CD=70,
+                                          UNITE_CK=70,
                                           ),
                         INFO=2)
 
@@ -189,8 +191,8 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=4.566804940706,
                         VALE_PARA=4.5,
                         FONCTION=VCRIT))
 
-# TEST DU RAPPORT D'INSTABILITE AVEC LA METHODE CONSERVATIVE 
-# (APPLICATION DE LA METHODE CONNOR'S SUR LA COMPOSANTE UNIQUE 
+# TEST DU RAPPORT D'INSTABILITE AVEC LA METHODE CONSERVATIVE
+# (APPLICATION DE LA METHODE CONNOR'S SUR LA COMPOSANTE UNIQUE
 #  DE LA SOLLICITATION IFS)
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.20088651868682,
                         CRITERE='RELATIF',
