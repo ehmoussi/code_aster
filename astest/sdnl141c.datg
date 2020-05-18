@@ -1,7 +1,7 @@
 
 ##################################################################################################################################################################################
 # CONDITIONS DE MER
-H  =  0.
+H  =  3.
 T  = 12.
 proinf  =  0
 depth  = 30.
@@ -102,7 +102,7 @@ def dragquad(VTX,VTY,VTZ,VT,D,RHO,CD) :
     FZR=0.5*RHO*CD*D*VT*VTZ
     return FXR,FYR,FZR
 
-def Fmor(rho,cd,D,xx,yy,zz,tps,H,T,L,THETA,UC,THETAC,PROINF,dd,LSTRECH,vite_x,vite_y,vite_z,dx,dy,dz,dir,cinelin,projvect,dragquad):
+def Fmor(rho,cd,ca,D,xx,yy,zz,tps,H,T,L,THETA,UC,THETAC,PROINF,dd,LSTRECH,vite_x,vite_y,vite_z,dx,dy,dz,dir,cinelin,projvect,dragquad):
 #   Cinematique de vague        
     eta,ux,uy,uz,ax,ay,az=cinelin(xx,yy,zz,tps,H,T,L,THETA,UC,THETAC,PROINF,dd,LSTRECH)
 #   verif si dans l'eau et pas dans le sol !!
@@ -113,11 +113,18 @@ def Fmor(rho,cd,D,xx,yy,zz,tps,H,T,L,THETA,UC,THETAC,PROINF,dd,LSTRECH,vite_x,vi
         ez= dz/norme
 # projection vitesse relative ux-vite_x,uy-vite_y,uz-vite_z |_ dx,dy,dz
         vtx,vty,vtz=projvect(ux-vite_x,uy-vite_y,uz-vite_z,ex,ey,ez)
+        
 # projection ax,ay,az |_ dx,dy,dz
         atx,aty,atz=projvect(ax,ay,az,ex,ey,ez)
+        
 # calcul 1/2 rho cd D V abs(V) sur 3 direction
         vt=numpy.sqrt(vtx**2+vty**2+vtz**2)
-        FX,FY,FZ=dragquad(vtx,vty,vtz,vt,D,rho,cd)
+        FXd,FYd,FZd=dragquad(vtx,vty,vtz,vt,D,rho,cd)
+        
+        FX = FXd + numpy.pi*(D**2/4.)*(1. + ca)*rho*atx
+        FY = FYd + numpy.pi*(D**2/4.)*(1. + ca)*rho*aty
+        FZ = FZd + numpy.pi*(D**2/4.)*(1. + ca)*rho*atz        
+        
     else:
         FX=0.
         FY=0.
@@ -133,9 +140,11 @@ def Fmor(rho,cd,D,xx,yy,zz,tps,H,T,L,THETA,UC,THETAC,PROINF,dd,LSTRECH,vite_x,vi
         F=0
     return F
 
+
 ##################################################################################################################################################################################
 
 
 #print 'FP(0) =', FP(1,1,0,0,-10,0,2,10,150,0,0,0,0,65,0,0,0,1,1,0,0,3,cinelin,projvect,dragquad)
 
 #print 'FP(1) =', FP(1,1,0,0,-10,1,2,10,150,0,0,0,0,65,0,0,0,-10,1,0,0,3,cinelin,projvect,dragquad)
+
