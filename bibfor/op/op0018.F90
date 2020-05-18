@@ -254,11 +254,12 @@ implicit none
                 end do
             endif
 ! --------- ON VERIFIE QU'A CHAQUE OCCURENCE DE AFFE, LES MAILLES
-! --------- "PRINCIPALES" ONT BIEN ETE AFFECTEES PAR DES ELEMENTS
+! --------- "PRINCIPALES" (QUI N'ETAIENT PAS DEJA AFFECTEES) ONT BIEN ETE AFFECTEES 
+! --------- PAR DES ELEMENTS
 ! --------- (PB DES MODELISATIONS A "TROUS") :
             ico=0
             do nume_elem = 1, nb_mesh_elem
-                if ((p_wk_mail2(nume_elem).eq.1) .and. (p_wk_mail3(nume_elem).eq.0)) then
+                if ((p_wk_mail2(nume_elem).eq.1) .and. (p_model_maille(nume_elem).eq.0)) then
                     ico=ico+1
                 endif
             end do
@@ -267,6 +268,19 @@ implicit none
                 vali(2) = ico
                 vali(3) = dim_topo_init
                 call utmess('A', 'MODELE1_70', ni=3, vali=vali)
+            endif
+! --------- ON VERIFIE QUE L'OCCURRENCE A UN EFFET, C'EST A DIRE QU'ELLE A AFFECTE
+! --------- OU REAFFECTE AU MOINS UNE MAILLE
+            ico=0
+            do nume_elem = 1, nb_mesh_elem
+                if ((p_wk_mail2(nume_elem).eq.1) .and. (p_wk_mail3(nume_elem).ne.0)) then
+                    ico=ico+1
+                endif
+            end do
+            if (ico .eq. 0) then
+                vali(1) = iaffe
+                vali(2) = dim_topo_init
+                call utmess('A', 'MODELE1_71', ni=2, vali=vali)
             endif
 ! --------- Check if user elements have been affected
             nb_elem_naffe = 0
