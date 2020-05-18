@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -78,7 +78,8 @@ implicit none
                        e_ = e      , nu_ = nu    , g_ = g,&
                        e1_ = e1    , e2_ = e2    , e3_ = e3,& 
                        nu12_ = nu12, nu13_ = nu13, nu23_ = nu23,&
-                       g1_ = g1    , g2_ = g2    , g3_ = g3)
+                       g1_ = g1    , g2_ = g2    , g3_ = g3,&
+                       xyzgau_ = xyzgau)
 !
 ! - Compute Hooke matrix
 !
