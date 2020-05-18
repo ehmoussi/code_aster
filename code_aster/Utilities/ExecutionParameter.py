@@ -160,6 +160,8 @@ class ExecutionParameter(metaclass=Singleton):
             self._args[option] = value
             if option == "tpmax":
                 libaster.set_option(option, value)
+            elif option == "numthreads":
+                os.environ["OMP_NUM_THREADS"] = str(value)
         elif value is not None:
             if value:
                 self.enable(Options.by_name(option))
