@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,8 +37,8 @@ DEFI_FLUI_STRU=OPER(nom="DEFI_FLUI_STRU",op= 143,sd_prod=type_flui_stru,
            COEF_MASS_AJOU  =SIMP(statut='f',typ='R' ),
            TYPE_PAS        =SIMP(statut='f',typ='TXM',into=("CARRE_LIGN","TRIA_LIGN") ),
            TYPE_RESEAU     =SIMP(statut='f',typ='I' ),
-           UNITE_CD        =SIMP(statut='f',typ=UnitType(),defaut=70, inout='out'),
-           UNITE_CK        =SIMP(statut='f',typ=UnitType(),defaut=71, inout='out'),
+           UNITE_CD        =SIMP(statut='f',typ=UnitType(),defaut=70, inout='in'),
+           UNITE_CK        =SIMP(statut='f',typ=UnitType(),defaut=71, inout='in'),
            PAS             =SIMP(statut='f',typ='R' ),
            CSTE_CONNORS    =SIMP(statut='f',typ='R',min=2,max=2,val_min=0.E+00),
            NB_CONNORS      =SIMP(statut='f',typ='I',val_min=2,),
@@ -58,8 +58,8 @@ DEFI_FLUI_STRU=OPER(nom="DEFI_FLUI_STRU",op= 143,sd_prod=type_flui_stru,
            MODELE          =SIMP(statut='f',typ=modele_sdaster ),
            COEF_MASS_AJOU  =SIMP(statut='f',typ='R' ),
            RHO_FLUI        =SIMP(statut='f',typ='R' ),
-           UNITE_CA        =SIMP(statut='f',typ=UnitType(),defaut=70, inout='out'),
-           UNITE_KA        =SIMP(statut='f',typ=UnitType(),defaut=71, inout='out'),
+           UNITE_CA        =SIMP(statut='f',typ=UnitType(),defaut=70, inout='in'),
+           UNITE_KA        =SIMP(statut='f',typ=UnitType(),defaut=71, inout='in'),
          ),
          FAISCEAU_AXIAL  =FACT(statut='f',max='**',
            regles=(UN_PARMI('GROUP_MA','TRI_GROUP_MA'),
