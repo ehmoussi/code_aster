@@ -155,15 +155,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.ConnectionMesh` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ConnectionMesh
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.ConstantFieldOnCellsReal` object
 ================================================================================
 
@@ -969,33 +960,6 @@
 ================================================================================
 
 .. autoclass:: code_aster.Objects.NormalSpeedOnFaceReal
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.ParallelDOFNumbering` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ParallelDOFNumbering
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.ParallelMechanicalLoad` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ParallelMechanicalLoad
-   :show-inheritance:
-   :members:
-
-
-================================================================================
-:py:class:`~code_aster.Objects.ParallelMesh` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.ParallelMesh
    :show-inheritance:
    :members:
 
