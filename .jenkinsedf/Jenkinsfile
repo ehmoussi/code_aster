@@ -53,14 +53,18 @@ pipeline {
             steps {
                 sh '''#!/bin/bash -l
                 cd build/install/std
-                ./bin/run_ctest --timefactor=3.0 --resutest=../../resutest --clean -L ci || \
-                  ./bin/run_ctest --timefactor=3.0 --resutest=../../resutest -L ci --rerun-failed
+                ./bin/run_ctest --jobs=16 --timefactor=3.0 \
+                        --resutest=../../resutest --clean -L ci || \
+                    ./bin/run_ctest --jobs=16 --timefactor=3.0 \
+                        --resutest=../../resutest -L ci --rerun-failed
                 exit 0
                 '''
                 sh '''#!/bin/bash -l
                 cd build/install/mpi
-                ./bin/run_ctest --timefactor=3.0 --resutest=../../resutest_mpi --clean -L ci -L parallel || \
-                  ./bin/run_ctest --timefactor=3.0 --resutest=../../resutest_mpi -L ci -L parallel --rerun-failed
+                ./bin/run_ctest --jobs=16 --timefactor=3.0 \
+                        --resutest=../../resutest_mpi --clean -L ci -L parallel || \
+                    ./bin/run_ctest --jobs=16 --timefactor=3.0 \
+                    --resutest=../../resutest_mpi -L ci -L parallel --rerun-failed
                 exit 0
                 '''
                 junit 'build/resutest*/run_testcases.xml'
