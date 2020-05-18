@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm zzzz274c.comm D 1
-F mail zzzz274c.mail D 20
+F mail zzzz274a.mail D 20

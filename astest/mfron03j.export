@@ -6,6 +6,6 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm mfron03j.comm D 1
-F mail mfron03j.mail D 20
+F mail ssnd112a.mail D 20
 F libr  GdefMonoCrystal.mfront   D 38
 F libr  GdefMono_Jacnum.mfront   D 39

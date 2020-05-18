@@ -8,7 +8,6 @@ P testlist verification sequential
 F comm mac3c04v.comm D 1
 F mmed mac3c04k.mmed D 20
 F libr mac3c04l.32   D 32
-F libr mac3c04v.38   D 38
-F libr mac3c04v.21   D 21
-F libr mac3c04v.22   D 22
-
+F libr mac3c04u.38   D 38
+F libr mac3c04l.21   D 21
+F libr mac3c04l.22   D 22
