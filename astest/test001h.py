@@ -35,7 +35,7 @@ with test.assertRaises(TypeError):
 # Definition du modele Aster
 model = code_aster.Model(mesh)
 test.assertEqual(model.getType(), "MODELE_SDASTER")
-model.addModelingOnAllMesh(
+model.addModelingOnMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 
 model.setSplittingMethod(code_aster.ModelSplitingMethod.GroupOfCells)
@@ -52,7 +52,7 @@ model.build()
 model2 = code_aster.Model(mesh)
 
 with test.assertRaisesRegex(RuntimeError, 'not allowed'):
-    model2.addModelingOnAllMesh(
+    model2.addModelingOnMesh(
         code_aster.Physics.Thermal, code_aster.Modelings.DKT)
 
 # Verification du comptage de référence sur le maillage

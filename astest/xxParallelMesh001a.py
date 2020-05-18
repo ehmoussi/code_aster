@@ -39,7 +39,7 @@ pMesh.debugPrint(rank+30)
 
 model = code_aster.Model(pMesh)
 test.assertEqual(model.getType(), "MODELE_SDASTER")
-model.addModelingOnAllMesh(code_aster.Physics.Mechanics,
+model.addModelingOnMesh(code_aster.Physics.Mechanics,
                            code_aster.Modelings.Tridimensional)
 model.build()
 
@@ -57,7 +57,7 @@ affectMat = code_aster.MaterialField(pMesh)
 testMesh2 = affectMat.getMesh()
 test.assertEqual(testMesh2.getType(), "MAILLAGE_P")
 
-affectMat.addMaterialsOnAllMesh(acier)
+affectMat.addMaterialsOnMesh(acier)
 affectMat.buildWithoutExternalVariable()
 
 charCine = code_aster.KinematicsMechanicalLoad()

@@ -30,6 +30,12 @@ that does not recommend *CamelCase* naming.
 
 - Plural forms should be used when it is relevant.
 
+- Use same method name to pass a single value or a vector.
+  Example: Do not define :py:obj:`addMaterialOnMesh(mater)` and
+  :py:obj:`addMaterialsOnMesh(vect_mater)`, but only
+  :py:meth:`~code_aster.Objects.MaterialField.addMaterialsOnMesh` with the both
+  interfaces.
+
 - At least at the beginning, only pure Python objects are returned (example: *list* or
   *list[list]* and not *numpy* arrays).
 
@@ -68,6 +74,9 @@ Terms for the :py:class:`~code_aster.Objects.Mesh` object:
 - For a *ParallelMesh*, an additional boolean argument named *local* allows to work
   on the local part (that belongs to each MPI process, *local=True*) or on the
   global mesh (*local=False*).
+
+Methods are applied on all the mesh: *OnMesh*, on a group of cells: *OnGroupOfCells*
+or on a group of nodes *OnGroupOfNodes*.
 
 .. todo::
     Add *same* methods to *ParallelMesh* with a *local* argument.

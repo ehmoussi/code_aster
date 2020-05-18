@@ -34,14 +34,14 @@ void exportAcousticLoadToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< AcousticLoadClass, ModelPtr >))
         .def( "__init__",
               py::make_constructor(&initFactoryPtr< AcousticLoadClass, std::string, ModelPtr >))
-        .def( "addImposedNormalSpeedOnAllMesh",
-              &AcousticLoadClass::addImposedNormalSpeedOnAllMesh )
+        .def( "addImposedNormalSpeedOnMesh",
+              &AcousticLoadClass::addImposedNormalSpeedOnMesh )
         .def( "addImposedNormalSpeedOnGroupOfCells",
               &AcousticLoadClass::addImposedNormalSpeedOnGroupOfCells )
-        .def( "addImpedanceOnAllMesh", &AcousticLoadClass::addImpedanceOnAllMesh )
+        .def( "addImpedanceOnMesh", &AcousticLoadClass::addImpedanceOnMesh )
         .def( "addImpedanceOnGroupOfCells",
               &AcousticLoadClass::addImpedanceOnGroupOfCells )
-        .def( "addImposedPressureOnAllMesh", &AcousticLoadClass::addImposedPressureOnAllMesh )
+        .def( "addImposedPressureOnMesh", &AcousticLoadClass::addImposedPressureOnMesh )
         .def( "addImposedPressureOnGroupOfCells",
               &AcousticLoadClass::addImposedPressureOnGroupOfCells )
         .def( "addImposedPressureOnGroupOfNodes",

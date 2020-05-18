@@ -431,8 +431,8 @@ template < class ValueType > class ConstantFieldOnCellsClass : public DataFieldC
      * @param values JeveuxVector< ValueType > contenant les valeurs
      * @return renvoit true si l'ajout s'est bien deroulee, false sinon
      */
-    bool setValueOnAllMesh( const JeveuxVectorChar8 &component,
-                            const JeveuxVector< ValueType > &values ) {
+    bool setValueOnMesh( const JeveuxVectorChar8 &component,
+                         const JeveuxVector< ValueType > &values ) {
         if ( _mesh.use_count() == 0 || _mesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 

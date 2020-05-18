@@ -11,7 +11,7 @@ monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
 monModel = code_aster.Model(monMaillage)
-monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
+monModel.addModelingOnMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
 test.assertEqual( monModel.getType(), "MODELE_SDASTER" )
 
@@ -49,7 +49,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
 test.assertEqual( acier.getType(), "MATER_SDASTER" )
 
 affectMat = code_aster.MaterialField(monMaillage)
-affectMat.addMaterialsOnAllMesh( acier )
+affectMat.addMaterialsOnMesh( acier )
 affectMat.addMaterialsOnGroupOfCells( acier, ['Haut', 'Bas'] )
 affectMat.buildWithoutExternalVariable()
 test.assertEqual( affectMat.getType(), "CHAM_MATER" )

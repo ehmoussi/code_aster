@@ -178,7 +178,7 @@ class ModelClass : public DataStructure {
      * @param phys Physique a ajouters
      * @param mod Modelisation a ajouter
      */
-    void addModelingOnAllMesh( Physics phys, Modelings mod ) {
+    void addModelingOnMesh( Physics phys, Modelings mod ) {
         _modelisations.push_back( listOfModsAndGrpsValue(
             ElementaryModeling( phys, mod ), MeshEntityPtr( new AllMeshEntities() ) ) );
     };

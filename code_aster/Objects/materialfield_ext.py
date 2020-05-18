@@ -96,7 +96,7 @@ class ExtendedMaterialField(object):
                 if i == endMater + 2:
                     names =  state[i]
                     if type is EntityType.AllMeshEntitiesType:
-                        self.addMaterialsOnAllMesh(listOfMater)
+                        self.addMaterialsOnMesh(listOfMater)
                     elif type is EntityType.GroupOfCellsType:
                         self.addMaterialsOnGroupOfCells(listOfMater, names)
                     elif type is EntityType.CellType:

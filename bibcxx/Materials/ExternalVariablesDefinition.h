@@ -362,7 +362,7 @@ class ExternalVariablesFieldClass {
      * @brief Add an input variable on all mesh
      */
     template < class ExternalVariablePtr >
-    void addExternalVariableOnAllMesh( const ExternalVariablePtr &curBehav ) {
+    void addExternalVariableOnMesh( const ExternalVariablePtr &curBehav ) {
         _externalVars.push_back(
             VectorOfexternalVarAndGrpsValue( curBehav, MeshEntityPtr( new AllMeshEntities() ) ) );
     };
