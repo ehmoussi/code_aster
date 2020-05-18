@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist verification sequential
 
 F comm ssnv234a.comm D 1
-F mail ssnv234a.mail D 20
+F mail ssnv223a.mail D 20
