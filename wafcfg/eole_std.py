@@ -47,7 +47,8 @@ def configure(self):
     self.env.append_value('OPT_ENV', [
         'module unload mkl',
         'module load ifort/2016.0.047 icc/2016.0.047 mkl/2016.0.047',
-        'export OPENBLAS_CORETYPE=SANDYBRIDGE'])
+        'export OPENBLAS_CORETYPE=SANDYBRIDGE',
+        'export I_MPI_PIN_DOMAIN=omp:compact'])
 
     TFELHOME = YAMMROOT + '/prerequisites/Mfront-TFEL321_aster'
     TFELVERS = '3.2.1'
