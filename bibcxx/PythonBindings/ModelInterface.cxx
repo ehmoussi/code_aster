@@ -53,7 +53,7 @@ void exportModelToPython() {
         .def( "__init__", py::make_constructor(&initFactoryPtr< ModelClass, std::string,
                                                                             ConnectionMeshPtr>))
 #endif /* _USE_MPI */
-        .def( "addModelingOnAllMesh", &ModelClass::addModelingOnAllMesh )
+        .def( "addModelingOnMesh", &ModelClass::addModelingOnMesh )
         .def( "addModelingOnGroupOfCells", &ModelClass::addModelingOnGroupOfCells )
         .def( "addModelingOnGroupOfNodes", &ModelClass::addModelingOnGroupOfNodes )
         .def( "build", &ModelClass::build )

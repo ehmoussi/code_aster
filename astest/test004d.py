@@ -10,7 +10,7 @@ monMaillage = code_aster.Mesh()
 monMaillage.readMedFile( "test001f.mmed" )
 
 monModel = code_aster.Model(monMaillage)
-monModel.addModelingOnAllMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
+monModel.addModelingOnMesh( code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional )
 monModel.build()
 
 YOUNG = 200000.0
@@ -21,7 +21,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
 #acier.debugPrint(6)
 
 affectMat = code_aster.MaterialField(monMaillage)
-affectMat.addMaterialsOnAllMesh( acier )
+affectMat.addMaterialsOnMesh( acier )
 affectMat.buildWithoutExternalVariable()
 
 

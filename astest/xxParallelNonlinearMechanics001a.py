@@ -18,7 +18,7 @@ else:
     monMaillage.readMedFile("xxParallelNonlinearMechanics001a.med")
 
 monModel = code_aster.Model(monMaillage)
-monModel.addModelingOnAllMesh(
+monModel.addModelingOnMesh(
     code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 monModel.build()
 
@@ -29,7 +29,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = YOUNG,
                                 NU = POISSON,),)
 
 affectMat = code_aster.MaterialField(monMaillage)
-affectMat.addMaterialsOnAllMesh(acier)
+affectMat.addMaterialsOnMesh(acier)
 affectMat.buildWithoutExternalVariable()
 
 charMeca1 = code_aster.KinematicsMechanicalLoad()

@@ -163,7 +163,7 @@ class AcousticLoadClass : public DataStructure {
             new CapyConvertibleValue< ModelPtr >( true, "MODELE", _model, true ) );
     };
 
-    void addImposedNormalSpeedOnAllMesh( const RealComplex &speed ) {
+    void addImposedNormalSpeedOnMesh( const RealComplex &speed ) {
         ImposedComplexNormalSpeedPtr toAdd( new ImposedComplexNormalSpeedClass() );
         toAdd->setValue( Vnor, speed );
         toAdd->setOnAllMeshEntities();
@@ -179,7 +179,7 @@ class AcousticLoadClass : public DataStructure {
         _speed.push_back( toAdd );
     };
 
-    void addImpedanceOnAllMesh( const RealComplex &impe ) {
+    void addImpedanceOnMesh( const RealComplex &impe ) {
         ComplexImpedancePtr toAdd( new ComplexImpedanceClass() );
         toAdd->setValue( Impe, impe );
         toAdd->setOnAllMeshEntities();
@@ -194,7 +194,7 @@ class AcousticLoadClass : public DataStructure {
         _impedance.push_back( toAdd );
     };
 
-    void addImposedPressureOnAllMesh( const RealComplex &pres ) {
+    void addImposedPressureOnMesh( const RealComplex &pres ) {
         ImposedComplexPressurePtr toAdd( new ImposedComplexPressureClass() );
         toAdd->setValue( Pres, pres );
         toAdd->setOnAllMeshEntities();

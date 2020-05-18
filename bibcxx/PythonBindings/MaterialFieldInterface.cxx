@@ -39,9 +39,9 @@ void exportMaterialFieldToPython() {
         .def( "getMeshEntity", &PartOfMaterialFieldClass::getMeshEntity );
 
     void ( MaterialFieldClass::*addmat1all )( std::vector< MaterialPtr > curMaters ) =
-        &MaterialFieldClass::addMaterialsOnAllMesh;
+        &MaterialFieldClass::addMaterialsOnMesh;
     void ( MaterialFieldClass::*addmat2all )( MaterialPtr & curMater ) =
-        &MaterialFieldClass::addMaterialsOnAllMesh;
+        &MaterialFieldClass::addMaterialsOnMesh;
 
     void ( MaterialFieldClass::*addmat1grp )( std::vector< MaterialPtr > curMaters,
                                               VectorString namesOfGroup ) =
@@ -71,12 +71,12 @@ void exportMaterialFieldToPython() {
               py::make_constructor( &initFactoryPtr< MaterialFieldClass, const std::string &,
                                                      const ParallelMeshPtr & > ) )
 #endif /* _USE_MPI */
-        .def( "addBehaviourOnAllMesh", &MaterialFieldClass::addBehaviourOnAllMesh )
+        .def( "addBehaviourOnMesh", &MaterialFieldClass::addBehaviourOnMesh )
         .def( "addBehaviourOnGroupOfCells", &MaterialFieldClass::addBehaviourOnGroupOfCells )
         .def( "addBehaviourOnCell", &MaterialFieldClass::addBehaviourOnCell )
 
-        .def( "addMaterialsOnAllMesh", addmat1all )
-        .def( "addMaterialsOnAllMesh", addmat2all )
+        .def( "addMaterialsOnMesh", addmat1all )
+        .def( "addMaterialsOnMesh", addmat2all )
 
         .def( "addMaterialsOnGroupOfCells", addmat1grp )
         .def( "addMaterialsOnGroupOfCells", addmat2grp )

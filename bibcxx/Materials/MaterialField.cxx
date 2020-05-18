@@ -112,7 +112,7 @@ bool MaterialFieldClass::existsExternalVariablesComputation( const std::string &
     return false;
 };
 
-void MaterialFieldClass::addBehaviourOnAllMesh( BehaviourDefinitionPtr &curBehav ) {
+void MaterialFieldClass::addBehaviourOnMesh( BehaviourDefinitionPtr &curBehav ) {
     _behaviours.push_back(
         listOfBehavAndGrpsValue( curBehav, MeshEntityPtr( new AllMeshEntities() ) ) );
 }
@@ -137,13 +137,13 @@ void MaterialFieldClass::addBehaviourOnCell( BehaviourDefinitionPtr &curBehav,
         listOfBehavAndGrpsValue( curBehav, MeshEntityPtr( new Cell( nameOfCell ) ) ) );
 }
 
-void MaterialFieldClass::addMaterialsOnAllMesh( std::vector< MaterialPtr > curMaters ) {
+void MaterialFieldClass::addMaterialsOnMesh( std::vector< MaterialPtr > curMaters ) {
     _materialsFieldEntity.push_back(
         listOfMatsAndGrpsValue( curMaters, MeshEntityPtr( new AllMeshEntities() ) ) );
 }
 
-void MaterialFieldClass::addMaterialsOnAllMesh( MaterialPtr &curMater ) {
-    addMaterialsOnAllMesh( (std::vector< MaterialPtr >){curMater} );
+void MaterialFieldClass::addMaterialsOnMesh( MaterialPtr &curMater ) {
+    addMaterialsOnMesh( (std::vector< MaterialPtr >){curMater} );
 }
 
 void MaterialFieldClass::addMaterialsOnGroupOfCells( std::vector< MaterialPtr > curMaters,

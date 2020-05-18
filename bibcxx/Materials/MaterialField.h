@@ -176,7 +176,7 @@ class MaterialFieldClass : public DataStructure {
      * @brief Add a behaviour on all mesh
      * @param curBehav behaviour to add
      */
-    void addBehaviourOnAllMesh( BehaviourDefinitionPtr &curBehav );
+    void addBehaviourOnMesh( BehaviourDefinitionPtr &curBehav );
 
     /**
      * @brief Ajout d'un materiau sur une entite du maillage
@@ -196,8 +196,8 @@ class MaterialFieldClass : public DataStructure {
      * @brief Add one or mmore materials on all the mesh
      * @param curMaters Material to be added
      */
-    void addMaterialsOnAllMesh( std::vector< MaterialPtr > curMaters );
-    void addMaterialsOnAllMesh( MaterialPtr &curMater );
+    void addMaterialsOnMesh( std::vector< MaterialPtr > curMaters );
+    void addMaterialsOnMesh( MaterialPtr &curMater );
 
     /**
      * @brief Ajout d'un materiau sur une entite du maillage

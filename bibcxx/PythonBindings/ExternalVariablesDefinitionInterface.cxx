@@ -219,8 +219,8 @@ void exportExternalVariablesToPython() {
                 &initFactoryPtr< ExternalVariablesFieldClass, const ParallelMeshPtr & >));
 #endif /* _USE_MPI */
     c3.def(
-        "addExternalVariableOnAllMesh",
-        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+        "addExternalVariableOnMesh",
+        &ExternalVariablesFieldClass::addExternalVariableOnMesh<
         TemperatureExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -229,8 +229,8 @@ void exportExternalVariablesToPython() {
         "addExternalVariableOnCell",
         &ExternalVariablesFieldClass::addExternalVariableOnCell<
         TemperatureExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+            &ExternalVariablesFieldClass::addExternalVariableOnMesh<
             GeometryExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -238,8 +238,8 @@ void exportExternalVariablesToPython() {
     c3.def( "addExternalVariableOnCell",
             &ExternalVariablesFieldClass::addExternalVariableOnCell<
             GeometryExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+            &ExternalVariablesFieldClass::addExternalVariableOnMesh<
             CorrosionExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -247,8 +247,8 @@ void exportExternalVariablesToPython() {
     c3.def( "addExternalVariableOnCell",
             &ExternalVariablesFieldClass::addExternalVariableOnCell<
             CorrosionExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-    &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+    &ExternalVariablesFieldClass::addExternalVariableOnMesh<
                                              IrreversibleDeformationExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -256,8 +256,8 @@ void exportExternalVariablesToPython() {
     c3.def( "addExternalVariableOnCell",
     &ExternalVariablesFieldClass::addExternalVariableOnCell<
                                              IrreversibleDeformationExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-    &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+    &ExternalVariablesFieldClass::addExternalVariableOnMesh<
                                              ConcreteHydratationExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -266,8 +266,8 @@ void exportExternalVariablesToPython() {
            &ExternalVariablesFieldClass::addExternalVariableOnCell<
                                              ConcreteHydratationExternalVariablePtr > );
     c3.def(
-        "addExternalVariableOnAllMesh",
-        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+        "addExternalVariableOnMesh",
+        &ExternalVariablesFieldClass::addExternalVariableOnMesh<
         IrradiationExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -277,8 +277,8 @@ void exportExternalVariablesToPython() {
         &ExternalVariablesFieldClass::addExternalVariableOnCell<
         IrradiationExternalVariablePtr > );
     c3.def(
-        "addExternalVariableOnAllMesh",
-        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+        "addExternalVariableOnMesh",
+        &ExternalVariablesFieldClass::addExternalVariableOnMesh<
         SteelPhasesExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -288,8 +288,8 @@ void exportExternalVariablesToPython() {
         &ExternalVariablesFieldClass::addExternalVariableOnCell<
         SteelPhasesExternalVariablePtr > );
     c3.def(
-        "addExternalVariableOnAllMesh",
-        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+        "addExternalVariableOnMesh",
+        &ExternalVariablesFieldClass::addExternalVariableOnMesh<
         ZircaloyPhasesExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -298,8 +298,8 @@ void exportExternalVariablesToPython() {
         "addExternalVariableOnCell",
         &ExternalVariablesFieldClass::addExternalVariableOnCell<
         ZircaloyPhasesExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+            &ExternalVariablesFieldClass::addExternalVariableOnMesh<
             Neutral1ExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -307,8 +307,8 @@ void exportExternalVariablesToPython() {
     c3.def( "addExternalVariableOnCell",
             &ExternalVariablesFieldClass::addExternalVariableOnCell<
             Neutral1ExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+            &ExternalVariablesFieldClass::addExternalVariableOnMesh<
             Neutral2ExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -316,8 +316,8 @@ void exportExternalVariablesToPython() {
     c3.def( "addExternalVariableOnCell",
             &ExternalVariablesFieldClass::addExternalVariableOnCell<
             Neutral2ExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+            &ExternalVariablesFieldClass::addExternalVariableOnMesh<
             Neutral3ExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -326,8 +326,8 @@ void exportExternalVariablesToPython() {
             &ExternalVariablesFieldClass::addExternalVariableOnCell<
             Neutral3ExternalVariablePtr > );
     c3.def(
-        "addExternalVariableOnAllMesh",
-        &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+        "addExternalVariableOnMesh",
+        &ExternalVariablesFieldClass::addExternalVariableOnMesh<
                ConcreteDryingExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -335,8 +335,8 @@ void exportExternalVariablesToPython() {
     c3.def( "addExternalVariableOnCell",
             &ExternalVariablesFieldClass::addExternalVariableOnCell<
                                              ConcreteDryingExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+            &ExternalVariablesFieldClass::addExternalVariableOnMesh<
                                              TotalFluidPressureExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<
@@ -344,8 +344,8 @@ void exportExternalVariablesToPython() {
     c3.def( "addExternalVariableOnCell",
             &ExternalVariablesFieldClass::addExternalVariableOnCell<
                                              TotalFluidPressureExternalVariablePtr > );
-    c3.def( "addExternalVariableOnAllMesh",
-            &ExternalVariablesFieldClass::addExternalVariableOnAllMesh<
+    c3.def( "addExternalVariableOnMesh",
+            &ExternalVariablesFieldClass::addExternalVariableOnMesh<
                                              VolumetricDeformationExternalVariablePtr > );
     c3.def( "addExternalVariableOnGroupOfCells",
             &ExternalVariablesFieldClass::addExternalVariableOnGroupOfCells<

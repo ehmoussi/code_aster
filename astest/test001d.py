@@ -14,7 +14,7 @@ monMaillage.readMedFile("test001d.mmed")
 
 # Definition du modele Aster
 monModel = code_aster.Model(monMaillage)
-monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
+monModel.addModelingOnMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 monModel.build()
 
 # Definition d'un chargement de type FORCE_NODALE à partir d'une ForceReal
