@@ -21,7 +21,10 @@ export CXX=mpiicpc
 export LD_PRELOAD=/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_scalapack_lp64.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_intel_lp64.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_intel_thread.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_core.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/mkl/lib/intel64_lin/libmkl_blacs_intelmpi_lp64.so:/opt/mkl-2017.0.098/compilers_and_libraries_2017.0.098/linux/compiler/lib/intel64_lin/libiomp5.so
 # suppress too aggressive optimization with Intel impi/2017.0.98
 export I_MPI_DAPL_TRANSLATION_CACHE=0
+# openblas on Eole: issue27636
 export OPENBLAS_CORETYPE=Sandybridge
+# threads placement: issue24556
+export I_MPI_PIN_DOMAIN=omp:compact
 
 export PATH=${PREREQ_PATH}/prerequisites/Python-365/bin:${PATH}
 export LD_LIBRARY_PATH=${PREREQ_PATH}/prerequisites/Python-365/lib:${LD_LIBRARY_PATH}
