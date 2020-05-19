@@ -18,11 +18,8 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-#
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
-
-#
 
 #=======================================================================
 #
@@ -36,10 +33,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 #    DEFI_FONCTION : UL 34
 #    ACCELEROGRAMME : LBNS
 #    (LONG BEACH NORTH SOUTH)
-#
 
-
-INCLUDE(UNITE=34,);
+INCLUDE(UNITE=34, )
 
 #
 #  ACCELEROGRAMMES NORMES A 0.1G
@@ -47,65 +42,78 @@ INCLUDE(UNITE=34,);
 #
 #
 
-N=64.
-dt=0.05
-TFIN=N*dt
-FMAX=0.5/dt
+N = 64.
+dt = 0.05
+TFIN = N * dt
+FMAX = 0.5 / dt
 
-linst = DEFI_LIST_REEL ( DEBUT = 0.,
-                          INTERVALLE = (
-                                      _F(
-                                         JUSQU_A = (N-1.)*dt,
-                                         PAS=1.*dt,
-                                         ),
-                                       ),
-                           );
+linst = DEFI_LIST_REEL(
+    DEBUT=0.,
+    INTERVALLE=(_F(
+        JUSQU_A=(N - 1.) * dt,
+        PAS=1. * dt,
+    ), ),
+)
 
-ACCEX=CALC_FONCTION(COMB=_F(FONCTION=LBNS,
-                               COEF=1.5,),
-                       LIST_PARA=linst,);
+ACCEX = CALC_FONCTION(
+    COMB=_F(
+        FONCTION=LBNS,
+        COEF=1.5,
+    ),
+    LIST_PARA=linst,
+)
 
-df=1./TFIN
+df = 1. / TFIN
 
-fc0=0.05
+fc0 = 0.05
 
-fc = 31.0*df
-                    
-deplx = CALC_FONCTION (INTEGRE_FREQ=_F(FONCTION=ACCEX, FREQ_FILTRE=fc0,FREQ_COUP=fc,NIVEAU=2),);
+fc = 31.0 * df
 
-VITEX1 = CALC_FONCTION (DERIVE_FREQ=_F(FONCTION=deplx, FREQ_COUP=fc,NIVEAU=1),);
+deplx = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=ACCEX,
+                                      FREQ_FILTRE=fc0,
+                                      FREQ_COUP=fc,
+                                      NIVEAU=2), )
 
-depx1 = CALC_FONCTION (INTEGRE_FREQ=_F(FONCTION=VITEX1, FREQ_COUP=fc,NIVEAU=1),);
+VITEX1 = CALC_FONCTION(DERIVE_FREQ=_F(FONCTION=deplx, FREQ_COUP=fc,
+                                      NIVEAU=1), )
 
-ACCEX2 = CALC_FONCTION (DERIVE_FREQ=_F(FONCTION=deplx, FREQ_COUP=fc,NIVEAU=2),);
+depx1 = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=VITEX1, FREQ_COUP=fc,
+                                      NIVEAU=1), )
 
-depx2 = CALC_FONCTION (INTEGRE_FREQ=_F(FONCTION=ACCEX2, FREQ_COUP=fc,NIVEAU=2),);
+ACCEX2 = CALC_FONCTION(DERIVE_FREQ=_F(FONCTION=deplx, FREQ_COUP=fc,
+                                      NIVEAU=2), )
 
+depx2 = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=ACCEX2, FREQ_COUP=fc,
+                                      NIVEAU=2), )
 
 TEST_FONCTION(VALEUR=(
-                      _F(VALE_CALC=0.05330669498324,
-                         VALE_REFE=0.053306695,
-                         VALE_PARA=(2.05),
-                         REFERENCE='AUTRE_ASTER',
-                         PRECISION=1.0E-4,
-                         NOM_PARA=('INST'),
-                         FONCTION=deplx,),
-                      _F(VALE_CALC=0.05330669498324,
-                         VALE_REFE=0.053306695,
-                         VALE_PARA=(2.05),
-                         REFERENCE='AUTRE_ASTER',
-                         PRECISION=1.0E-4,
-                         NOM_PARA=('INST'),
-                         FONCTION=depx1,),
-                      _F(VALE_CALC=0.05330669498324,
-                         VALE_REFE=0.053306695,
-                         VALE_PARA=(2.05),
-                         REFERENCE='AUTRE_ASTER',
-                         PRECISION=1.0E-4,
-                         NOM_PARA=('INST'),
-                         FONCTION=depx2,),
-                      ),
-              )
+    _F(
+        VALE_CALC=0.05330669498324,
+        VALE_REFE=0.053306695,
+        VALE_PARA=(2.05),
+        REFERENCE='AUTRE_ASTER',
+        PRECISION=1.0E-4,
+        NOM_PARA=('INST'),
+        FONCTION=deplx,
+    ),
+    _F(
+        VALE_CALC=0.05330669498324,
+        VALE_REFE=0.053306695,
+        VALE_PARA=(2.05),
+        REFERENCE='AUTRE_ASTER',
+        PRECISION=1.0E-4,
+        NOM_PARA=('INST'),
+        FONCTION=depx1,
+    ),
+    _F(
+        VALE_CALC=0.05330669498324,
+        VALE_REFE=0.053306695,
+        VALE_PARA=(2.05),
+        REFERENCE='AUTRE_ASTER',
+        PRECISION=1.0E-4,
+        NOM_PARA=('INST'),
+        FONCTION=depx2,
+    ),
+), )
 
-FIN( );
-
+FIN()
