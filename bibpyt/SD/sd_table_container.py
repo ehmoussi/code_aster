@@ -73,7 +73,13 @@ class sd_table_container(sd_table):
         if col3 is not None:
             lnom3 = col3.data.get_stripped()
         for k in range(nbli):
-            if lnom1[k].startswith("VECT_ELEM"):
+            if lnom1[k] == '' or lnom2[k] == '':
+                if lnom1[k] != '' or lnom2[k] != '':
+                    checker.err(self, f"Ligne {k + 1} : TYPE_OBJET et NOM_SD "
+                                      f"doivent être définis ensemble")
+                else:
+                    continue
+            elif lnom1[k].startswith("VECT_ELEM"):
                 sd5 = sd_vect_elem(lnom2[k])
                 sd5.check(checker)
             elif lnom1[k].startswith("MATR_ELEM"):
@@ -107,10 +113,5 @@ class sd_table_container(sd_table):
             elif lnom1[k][:8] == 'MAILLAGE':
                 sd5 = sd_maillage(lnom2[k])
                 sd5.check(checker)
-            elif lnom1[k] == '':
-                if lnom2[k] != '':
-                    checker.err(self, "Ligne %d : TYPE_OBJET est vide, "
-                    "NOM_SD doit être vide mais il vaut %s" %
-                                (k+1, lnom2[k]))
             else:
                 assert 0, lnom1[k]
