@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ subroutine srlima(mo, mail2d, mail3d, mailto, nbma2d)
 !
     integer :: jma2d, jma3d, n1, n2, n3
     integer :: ima, iret, jcesd, jcesl, iad1, numa2d, numa3d
-    integer :: nbma, nbmamo, jlima, nbmat, jmato
+    integer :: nbma, nbmamo, jlima, nbmat, jmato, ndim, ndim2
 !
     character(len=8) :: ma, limocl(3), tymocl(3)
     character(len=24) :: mesmai, limamo
@@ -79,6 +79,7 @@ subroutine srlima(mo, mail2d, mail3d, mailto, nbma2d)
 !   ----------------------------------
     call dismoi('NOM_MAILLA', mo, 'MODELE', repk=ma)
     call dismoi('NB_MA_MAILLA', ma, 'MAILLAGE', repi=nbmat)
+    call dismoi('DIM_GEOM', ma, 'MAILLAGE', repi=ndim)
     mesmai = '&&SRLIMA.MAILLU'
 !
     call getvtx(' ', 'TOUT', nbret=n1)
@@ -98,7 +99,8 @@ subroutine srlima(mo, mail2d, mail3d, mailto, nbma2d)
 
 !   -- on ne garde que les mailles surfaciques :
 !   ---------------------------------------------
-    call utflmd(ma, mesmai, nbma, 2, ' ',&
+    ndim2 = ndim-1
+    call utflmd(ma, mesmai, nbma, ndim2, ' ',&
                 nbma2d, mail2d)
     if (nbma2d .gt. 0) then
         call jeveuo(mail2d, 'L', jma2d)
@@ -134,8 +136,14 @@ subroutine srlima(mo, mail2d, mail3d, mailto, nbma2d)
 !   -- on recherche les mailles 3d associees aux mailles de peau :
 !   ---------------------------------------------------------------
     call jeveuo(ma//'.COORDO    .VALE', 'L', vr=vale)
-    call utmasu(ma, '3D', nbma2d, zi(jma2d), mail3d,&
+    if (ndim.eq.3) then
+        call utmasu(ma, '3D', nbma2d, zi(jma2d), mail3d,&
                 vale, nbmamo, zi(jlima), .true._1)
+    endif
+    if (ndim.eq.2) then
+        call utmasu(ma, '2D', nbma2d, zi(jma2d), mail3d,&
+                vale, nbmamo, zi(jlima), .true._1)
+    endif
     call jeveuo(mail3d, 'L', jma3d)
 !
     call wkvect(mailto, 'V V I', nbma2d*2, jmato)
@@ -146,7 +154,9 @@ subroutine srlima(mo, mail2d, mail3d, mailto, nbma2d)
         if (numa3d.eq.0) goto 1
 
 !       -- si la maille 3d n'est pas du cote "-", on la met a zero (issue22570) :
-        call oriem1(ma,'3D',numa2d,numa3d)
+        if (ndim.eq.3) then
+            call oriem1(ma,'3D',numa2d,numa3d)
+        endif
 
         zi(jmato-1+ima) = numa2d
         zi(jmato-1+nbma2d+ima) = numa3d

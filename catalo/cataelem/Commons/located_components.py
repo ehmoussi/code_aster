@@ -497,7 +497,7 @@ EPJSIGM = LocatedComponents(phys=PHY.SIEF_R, type='ELEM',
                             components=(
                                 'SIG_NX', 'SIG_NY', 'SIG_NZ', 'SIG_N', 'SIG_TX',
                             'SIG_TY', 'SIG_TZ', 'SIG_T1X', 'SIG_T1Y', 'SIG_T1Z',
-                            'SIG_T1', 'SIG_T2X', 'SIG_T2Y', 'SIG_T2Z', 'SIG_T2',))
+                            'SIG_T1', 'SIG_T2X', 'SIG_T2Y', 'SIG_T2Z', 'SIG_T2','SIG_TN'))
 
 EREFE1K = LocatedComponents(phys=PHY.NEUT_K8, type='ELEM',
                             components=('Z1',))
