@@ -27,59 +27,67 @@
 
 namespace py = boost::python;
 
-void exportMaterialFieldToPython()
-{
+void exportMaterialFieldToPython() {
 
-    py::class_< PartOfMaterialFieldClass,
-            PartOfMaterialFieldPtr > c2( "PartOfMaterialField", py::no_init );
-    c2.def( "__init__", py::make_constructor(
-            &initFactoryPtr< PartOfMaterialFieldClass > ) );
-    c2.def( "__init__", py::make_constructor(
-            &initFactoryPtr< PartOfMaterialFieldClass,
-                             std::vector< MaterialPtr >, MeshEntityPtr > ) );
-    c2.def( "getVectorOfMaterial", &PartOfMaterialFieldClass::getVectorOfMaterial );
-    c2.def( "getMeshEntity", &PartOfMaterialFieldClass::getMeshEntity );
+    py::class_< PartOfMaterialFieldClass, PartOfMaterialFieldPtr >( "PartOfMaterialField",
+                                                                    py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< PartOfMaterialFieldClass > ) )
+        .def( "__init__",
+              py::make_constructor( &initFactoryPtr< PartOfMaterialFieldClass,
+                                                     std::vector< MaterialPtr >, MeshEntityPtr > ) )
+        .def( "getVectorOfMaterial", &PartOfMaterialFieldClass::getVectorOfMaterial )
+        .def( "getMeshEntity", &PartOfMaterialFieldClass::getMeshEntity );
+
+    void ( MaterialFieldClass::*addmat1all )( std::vector< MaterialPtr > curMaters ) =
+        &MaterialFieldClass::addMaterialsOnMesh;
+    void ( MaterialFieldClass::*addmat2all )( MaterialPtr & curMater ) =
+        &MaterialFieldClass::addMaterialsOnMesh;
+
+    void ( MaterialFieldClass::*addmat1grp )( std::vector< MaterialPtr > curMaters,
+                                              VectorString namesOfGroup ) =
+        &MaterialFieldClass::addMaterialsOnGroupOfCells;
+    void ( MaterialFieldClass::*addmat2grp )( MaterialPtr & curMater, VectorString namesOfGroup ) =
+        &MaterialFieldClass::addMaterialsOnGroupOfCells;
+
+    void ( MaterialFieldClass::*addmat1cell )( std::vector< MaterialPtr > curMaters,
+                                               VectorString namesOfCells ) =
+        &MaterialFieldClass::addMaterialsOnCell;
+    void ( MaterialFieldClass::*addmat2cell )( MaterialPtr & curMater, VectorString namesOfCells ) =
+        &MaterialFieldClass::addMaterialsOnCell;
 
     py::class_< MaterialFieldClass, MaterialFieldClass::MaterialFieldPtr,
-            py::bases< DataStructure > > c1( "MaterialField", py::no_init );
-    c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialFieldClass,
-                             const MeshPtr& > ) );
-    c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialFieldClass,
-                             const SkeletonPtr& > ) );
-    c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialFieldClass,
-                             const std::string&,
-                             const MeshPtr& > ) );
+                py::bases< DataStructure > >( "MaterialField", py::no_init )
+        .def( "__init__",
+              py::make_constructor( &initFactoryPtr< MaterialFieldClass, const MeshPtr & > ) )
+        .def( "__init__",
+              py::make_constructor( &initFactoryPtr< MaterialFieldClass, const SkeletonPtr & > ) )
+        .def( "__init__",
+              py::make_constructor(
+                  &initFactoryPtr< MaterialFieldClass, const std::string &, const MeshPtr & > ) )
 #ifdef _USE_MPI
-    c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialFieldClass,
-                             const ParallelMeshPtr& > ) );
-    c1.def( "__init__", py::make_constructor(
-            &initFactoryPtr< MaterialFieldClass,
-                             const std::string&,
-                             const ParallelMeshPtr& > ) );
+        .def( "__init__", py::make_constructor(
+                              &initFactoryPtr< MaterialFieldClass, const ParallelMeshPtr & > ) )
+        .def( "__init__",
+              py::make_constructor( &initFactoryPtr< MaterialFieldClass, const std::string &,
+                                                     const ParallelMeshPtr & > ) )
 #endif /* _USE_MPI */
-    c1.def( "addBehaviourOnAllMesh", &MaterialFieldClass::addBehaviourOnAllMesh );
-    c1.def( "addBehaviourOnGroupOfCells",
-              &MaterialFieldClass::addBehaviourOnGroupOfCells );
-    c1.def( "addBehaviourOnElement",
-              &MaterialFieldClass::addBehaviourOnElement );
-    c1.def( "addMaterialsOnAllMesh", &MaterialFieldClass::addMaterialsOnAllMesh );
-    c1.def( "addMaterialsOnGroupOfCells",
-              &MaterialFieldClass::addMaterialsOnGroupOfCells );
-    c1.def( "addMaterialsOnElement",
-              &MaterialFieldClass::addMaterialsOnElement );
-    c1.def( "addMaterialOnAllMesh", &MaterialFieldClass::addMaterialOnAllMesh );
-    c1.def( "addMaterialOnGroupOfCells",
-              &MaterialFieldClass::addMaterialOnGroupOfCells );
-    c1.def( "addMaterialOnElement",
-              &MaterialFieldClass::addMaterialOnElement );
-    c1.def( "buildWithoutExternalVariable", &MaterialFieldClass::buildWithoutExternalVariable );
-    c1.def( "getMesh", &MaterialFieldClass::getMesh );
-    c1.def( "getVectorOfMaterial", &MaterialFieldClass::getVectorOfMaterial );
-    c1.def( "getVectorOfPartOfMaterialField",
-            &MaterialFieldClass::getVectorOfPartOfMaterialField );
-    c1.def( "setModel", &MaterialFieldClass::setModel );
+        .def( "addBehaviourOnMesh", &MaterialFieldClass::addBehaviourOnMesh )
+        .def( "addBehaviourOnGroupOfCells", &MaterialFieldClass::addBehaviourOnGroupOfCells )
+        .def( "addBehaviourOnCell", &MaterialFieldClass::addBehaviourOnCell )
+
+        .def( "addMaterialsOnMesh", addmat1all )
+        .def( "addMaterialsOnMesh", addmat2all )
+
+        .def( "addMaterialsOnGroupOfCells", addmat1grp )
+        .def( "addMaterialsOnGroupOfCells", addmat2grp )
+
+        .def( "addMaterialsOnCell", addmat1cell )
+        .def( "addMaterialsOnCell", addmat2cell )
+
+        .def( "buildWithoutExternalVariable", &MaterialFieldClass::buildWithoutExternalVariable )
+        .def( "getMesh", &MaterialFieldClass::getMesh )
+        .def( "getVectorOfMaterial", &MaterialFieldClass::getVectorOfMaterial )
+        .def( "getVectorOfPartOfMaterialField",
+              &MaterialFieldClass::getVectorOfPartOfMaterialField )
+        .def( "setModel", &MaterialFieldClass::setModel );
 };

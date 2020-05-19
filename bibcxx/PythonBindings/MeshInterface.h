@@ -4,7 +4,6 @@
 /**
  * @file MeshInterface.h
  * @brief Fichier entete de la classe MeshInterface
- * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
@@ -23,12 +22,6 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "astercxx.h"
-#include "Meshes/Mesh.h"
-#include "PythonBindings/DataStructureInterface.h"
 
 void exportMeshToPython();
 

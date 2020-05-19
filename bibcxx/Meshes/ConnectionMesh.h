@@ -3,11 +3,11 @@
 
 #ifdef _USE_MPI
 
-#ifndef PARTIALMESH_H_
-#define PARTIALMESH_H_
+#ifndef CONNECTIONMESH_H_
+#define CONNECTIONMESH_H_
 
 /**
- * @file PartialMesh.h
+ * @file ConnectionMesh.h
  * @brief Fichier entete de la classe
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -29,24 +29,21 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
-
 #include "astercxx.h"
-#include "definition.h"
-#include "Meshes/Mesh.h"
+
+#include "Meshes/BaseMesh.h"
 #include "Meshes/ParallelMesh.h"
 #include "Supervis/ResultNaming.h"
 
 /**
- * @class PartialMeshClass
+ * @class ConnectionMeshClass
  * @brief Cette classe decrit un maillage partiel reconstruit a partir d'une liste de groupe de
  * noeuds
  * @author Nicolas Sellenet
  */
-class PartialMeshClass : public BaseMeshClass {
+class ConnectionMeshClass : public BaseMeshClass {
   private:
-    typedef JeveuxCollection< ASTERINTEGER, JeveuxBidirectionalMapChar24 >
-        JeveuxCollectionLongNamePtr;
+    typedef JeveuxCollection< ASTERINTEGER, NamesMapChar24 > JeveuxCollectionLongNamePtr;
     /** @brief Base ParallelMesh */
     ParallelMeshPtr _pMesh;
     /** @brief id of node in local numbering */
@@ -58,21 +55,21 @@ class PartialMeshClass : public BaseMeshClass {
 
   public:
     /**
-     * @typedef PartialMeshPtr
-     * @brief Pointeur intelligent vers un PartialMeshClass
+     * @typedef ConnectionMeshPtr
+     * @brief Pointeur intelligent vers un ConnectionMeshClass
      */
-    typedef boost::shared_ptr< PartialMeshClass > PartialMeshPtr;
+    typedef boost::shared_ptr< ConnectionMeshClass > ConnectionMeshPtr;
 
     /**
      * @brief Constructeur
      */
-    PartialMeshClass( const ParallelMeshPtr &mesh, const VectorString &toFind )
-        : PartialMeshClass( ResultNaming::getNewResultName(), mesh, toFind ){};
+    ConnectionMeshClass( const ParallelMeshPtr &mesh, const VectorString &toFind )
+        : ConnectionMeshClass( ResultNaming::getNewResultName(), mesh, toFind ){};
 
     /**
      * @brief Constructeur
      */
-    PartialMeshClass( const std::string &name, const ParallelMeshPtr &, const VectorString & );
+    ConnectionMeshClass( const std::string &name, const ParallelMeshPtr &, const VectorString & );
 
     const JeveuxVectorLong &getGlobalNumbering() const { return _globalNumbering; };
 
@@ -86,18 +83,15 @@ class PartialMeshClass : public BaseMeshClass {
      * @brief Fonction permettant de savoir si un maillage est partiel
      * @return retourne true si le maillage est partiel
      */
-    virtual bool isPartial() const
-    {
-        return true;
-    };
+    virtual bool isPartial() const { return true; };
 };
 
 /**
- * @typedef PartialMeshPtr
- * @brief Pointeur intelligent vers un PartialMeshClass
+ * @typedef ConnectionMeshPtr
+ * @brief Pointeur intelligent vers un ConnectionMeshClass
  */
-typedef boost::shared_ptr< PartialMeshClass > PartialMeshPtr;
+typedef boost::shared_ptr< ConnectionMeshClass > ConnectionMeshPtr;
 
-#endif /* PARTIALMESH_H_ */
+#endif /* CONNECTIONMESH_H_ */
 
 #endif /* _USE_MPI */

@@ -42,9 +42,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "astercxx.h"
 #include <stdexcept>
 #include <string>
+
+#include "astercxx.h"
 #include "boost/variant.hpp"
 
 #include "DataStructures/DataStructure.h"
@@ -54,6 +55,7 @@
 #include "Loads/ListOfLoads.h"
 #include "Loads/MechanicalLoad.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Meshes/BaseMesh.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Modeling/Model.h"
 
@@ -66,7 +68,7 @@ class FieldOnNodesDescriptionClass : public DataStructure {
     /** @brief Objet Jeveux '.PRNO' */
     JeveuxCollectionLong _componentsOnNodes;
     /** @brief Objet Jeveux '.LILI' */
-    JeveuxBidirectionalMapChar24 _namesOfGroupOfCells;
+    NamesMapChar24 _namesOfGroupOfCells;
     /** @brief Objet Jeveux '.NUEQ' */
     JeveuxVectorLong _indexationVector;
     /** @brief Objet Jeveux '.DEEQ' */
@@ -88,8 +90,7 @@ class FieldOnNodesDescriptionClass : public DataStructure {
      * @param name nom souhaité de la sd (utile pour le FieldOnNodesDescriptionClass d'une
      * sd_resu)
      */
-    FieldOnNodesDescriptionClass( const std::string name,
-                                     const JeveuxMemory memType = Permanent );
+    FieldOnNodesDescriptionClass( const std::string name, const JeveuxMemory memType = Permanent );
 };
 typedef boost::shared_ptr< FieldOnNodesDescriptionClass > FieldOnNodesDescriptionPtr;
 
@@ -99,30 +100,23 @@ typedef boost::shared_ptr< FieldOnNodesDescriptionClass > FieldOnNodesDescriptio
  *        Cette classe est volontairement succinte car on n'en connait pas encore l'usage
  * @author Nicolas Sellenet
  */
-class BaseDOFNumberingClass : public DataStructure
-{
+class BaseDOFNumberingClass : public DataStructure {
   private:
     typedef boost::variant< ElementaryMatrixDisplacementRealPtr,
                             ElementaryMatrixDisplacementComplexPtr,
-                            ElementaryMatrixTemperatureRealPtr,
-                            ElementaryMatrixPressureComplexPtr > MatrElem;
+                            ElementaryMatrixTemperatureRealPtr, ElementaryMatrixPressureComplexPtr >
+        MatrElem;
 
-    class ElementaryMatrixGetModel: public boost::static_visitor< ModelPtr >
-    {
+    class ElementaryMatrixGetModel : public boost::static_visitor< ModelPtr > {
       public:
-        template< typename T >
-        ModelPtr operator()( const T& operand ) const
-        {
+        template < typename T > ModelPtr operator()( const T &operand ) const {
             return operand->getModel();
         };
     };
 
-    class ElementaryMatrixGetName: public boost::static_visitor< std::string >
-    {
+    class ElementaryMatrixGetName : public boost::static_visitor< std::string > {
       public:
-        template< typename T >
-        std::string operator()( const T& operand ) const
-        {
+        template < typename T > std::string operator()( const T &operand ) const {
             return operand->getName();
         };
     };
@@ -272,7 +266,7 @@ class BaseDOFNumberingClass : public DataStructure
      * @param name nom souhaité de la sd (utile pour le BaseDOFNumberingClass d'une sd_resu)
      */
     BaseDOFNumberingClass( const std::string name, const std::string &type,
-                              const JeveuxMemory memType = Permanent );
+                           const JeveuxMemory memType = Permanent );
 
   public:
     /**
@@ -306,7 +300,7 @@ class BaseDOFNumberingClass : public DataStructure
     /**
      * @brief Determination de la numerotation
      */
-    bool computeNumbering() ;
+    bool computeNumbering();
 
     /**
      * @brief Get FieldOnNodesDescription
@@ -322,13 +316,11 @@ class BaseDOFNumberingClass : public DataStructure
     /**
      * @brief Get model
      */
-    ModelPtr getModel()
-    {
-        if( _model != nullptr )
+    ModelPtr getModel() {
+        if ( _model != nullptr )
             return _model;
-        else
-        {
-            if( _matrix.size() != 0 )
+        else {
+            if ( _matrix.size() != 0 )
                 return boost::apply_visitor( ElementaryMatrixGetModel(), _matrix[0] );
         }
         return ModelPtr( nullptr );
@@ -338,11 +330,9 @@ class BaseDOFNumberingClass : public DataStructure
      * @brief Get mesh
      * @return Internal mesh
      */
-    BaseMeshPtr getMesh()
-    {
+    BaseMeshPtr getMesh() {
         const auto model = this->getModel();
-        if( model != nullptr )
-        {
+        if ( model != nullptr ) {
             return model->getMesh();
         }
         return nullptr;

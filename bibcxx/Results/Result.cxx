@@ -250,9 +250,9 @@ int ResultClass::getNumberOfRanks() const
     return _serialNumber->usedSize();
 };
 
-std::vector< long > ResultClass::getRanks() const
+VectorLong ResultClass::getRanks() const
 {
-    std::vector< long > v;
+    VectorLong v;
     _serialNumber->updateValuePointer();
     for ( int j = 0; j < _serialNumber->usedSize(); ++j ) {
         v.push_back( ( *_serialNumber )[j] );
@@ -344,7 +344,7 @@ bool ResultClass::update()
 
     int cmpt = 1;
     for ( const auto curIter : _namesOfFields->getVectorOfObjects() ) {
-        auto nomSymb = trim( _symbolicNamesOfFields->findStringOfElement( cmpt ) );
+        auto nomSymb = trim( _symbolicNamesOfFields->getStringFromIndex( cmpt ) );
         if ( numberOfSerialNum > curIter.size() )
             throw std::runtime_error( "Programming error" );
 

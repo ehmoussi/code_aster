@@ -28,18 +28,19 @@
 
 #include <map>
 #include <stdexcept>
+
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "Meshes/Mesh.h"
+#include "Loads/PhysicalQuantity.h"
+#include "Meshes/BaseMesh.h"
+#include "Meshes/ConnectionMesh.h"
 #include "Meshes/ParallelMesh.h"
-#include "Meshes/PartialMesh.h"
 #include "Meshes/Skeleton.h"
 #include "Modeling/ElementaryModeling.h"
-#include "Loads/PhysicalQuantity.h"
-#include "Utilities/SyntaxDictionary.h"
-#include "Supervis/ResultNaming.h"
 #include "Modeling/FiniteElementDescriptor.h"
+#include "Supervis/ResultNaming.h"
+#include "Utilities/SyntaxDictionary.h"
 
 /**
  * @enum ModelSplitingMethod
@@ -110,7 +111,7 @@ class ModelClass : public DataStructure {
  * @todo a supprimer en templatisant Model etc.
  */
 #ifdef _USE_MPI
-    PartialMeshPtr _partialMesh;
+    ConnectionMeshPtr _connectionMesh;
 #endif /* _USE_MPI */
     /** @brief Méthode de parallélisation du modèle */
     ModelSplitingMethod _splitMethod;
@@ -129,51 +130,47 @@ class ModelClass : public DataStructure {
      * @brief Construction (au sens Jeveux fortran) de la sd_modele
      * @return booleen indiquant que la construction s'est bien deroulee
      */
-    bool buildWithSyntax( SyntaxMapContainer & ) ;
+    bool buildWithSyntax( SyntaxMapContainer & );
 
   public:
     /**
      * @brief Constructor: a mesh is mandatory
      */
-    ModelClass(void) = delete;
+    ModelClass( void ) = delete;
 
-    ModelClass(const std::string name, const BaseMeshPtr mesh):
-        DataStructure( name, 8, "MODELE" ),
-        _typeOfCells( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
-        _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
-        _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-        _saneModel( nullptr ), _baseMesh( mesh ),
-        _splitMethod( SubDomain ), _graphPartitioner( MetisPartitioner ),
-         _ligrel( new FiniteElementDescriptorClass(getName() + ".MODELE", _baseMesh ) )
-    {
+    ModelClass( const std::string name, const BaseMeshPtr mesh )
+        : DataStructure( name, 8, "MODELE" ),
+          _typeOfCells( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+          _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
+          _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ), _saneModel( nullptr ),
+          _baseMesh( mesh ), _splitMethod( SubDomain ), _graphPartitioner( MetisPartitioner ),
+          _ligrel( new FiniteElementDescriptorClass( getName() + ".MODELE", _baseMesh ) ) {
         if ( _baseMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
 #ifdef _USE_MPI
-        _partialMesh = nullptr ;
+        _connectionMesh = nullptr;
 #endif
     };
 
-    ModelClass(const BaseMeshPtr mesh):
-       ModelClass(ResultNaming::getNewResultName(), mesh){};
+    ModelClass( const BaseMeshPtr mesh ) : ModelClass( ResultNaming::getNewResultName(), mesh ){};
 
 #ifdef _USE_MPI
-    ModelClass(const std::string name, const PartialMeshPtr mesh):
-        DataStructure( name, 8, "MODELE" ),
-        _typeOfCells( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
-        _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
-        _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ),
-        _saneModel( nullptr ), _baseMesh( mesh ), _partialMesh(mesh),
-        _splitMethod( Centralized ), _graphPartitioner( MetisPartitioner ),
-        _ligrel( new FiniteElementDescriptorClass(getName() + ".MODELE", _baseMesh ) )
-    {
+    ModelClass( const std::string name, const ConnectionMeshPtr mesh )
+        : DataStructure( name, 8, "MODELE" ),
+          _typeOfCells( JeveuxVectorLong( getName() + ".MAILLE    " ) ),
+          _typeOfNodes( JeveuxVectorLong( getName() + ".NOEUD     " ) ),
+          _partition( JeveuxVectorChar8( getName() + ".PARTIT    " ) ), _saneModel( nullptr ),
+          _baseMesh( mesh ), _connectionMesh( mesh ), _splitMethod( Centralized ),
+          _graphPartitioner( MetisPartitioner ),
+          _ligrel( new FiniteElementDescriptorClass( getName() + ".MODELE", _baseMesh ) ) {
         if ( _baseMesh->isEmpty() )
             throw std::runtime_error( "Mesh is empty" );
-        if ( _partialMesh->isEmpty() )
+        if ( _connectionMesh->isEmpty() )
             throw std::runtime_error( "Partial mesh is empty" );
     };
 
-    ModelClass(const PartialMeshPtr mesh):
-        ModelClass(ResultNaming::getNewResultName(), mesh){};
+    ModelClass( const ConnectionMeshPtr mesh )
+        : ModelClass( ResultNaming::getNewResultName(), mesh ){};
 #endif /* _USE_MPI */
 
     /**
@@ -181,7 +178,7 @@ class ModelClass : public DataStructure {
      * @param phys Physique a ajouters
      * @param mod Modelisation a ajouter
      */
-    void addModelingOnAllMesh( Physics phys, Modelings mod ) {
+    void addModelingOnMesh( Physics phys, Modelings mod ) {
         _modelisations.push_back( listOfModsAndGrpsValue(
             ElementaryModeling( phys, mod ), MeshEntityPtr( new AllMeshEntities() ) ) );
     };
@@ -192,16 +189,14 @@ class ModelClass : public DataStructure {
      * @param mod Modelisation a ajouter
      * @param nameOfGroup Nom du groupe de mailles
      */
-    void addModelingOnGroupOfCells( Physics phys, Modelings mod,
-                                       std::string nameOfGroup ) {
+    void addModelingOnGroupOfCells( Physics phys, Modelings mod, std::string nameOfGroup ) {
         if ( !_baseMesh )
             throw std::runtime_error( "Mesh is not defined" );
         if ( !_baseMesh->hasGroupOfCells( nameOfGroup ) )
             throw std::runtime_error( nameOfGroup + " not in mesh" );
 
-        _modelisations.push_back(
-            listOfModsAndGrpsValue( ElementaryModeling( phys, mod ),
-                                    MeshEntityPtr( new GroupOfCells( nameOfGroup ) ) ) );
+        _modelisations.push_back( listOfModsAndGrpsValue(
+            ElementaryModeling( phys, mod ), MeshEntityPtr( new GroupOfCells( nameOfGroup ) ) ) );
     };
 
     /**
@@ -210,8 +205,7 @@ class ModelClass : public DataStructure {
      * @param mod Modelisation a ajouter
      * @param nameOfGroup Nom du groupe de noeuds
      */
-    void addModelingOnGroupOfNodes( Physics phys, Modelings mod,
-                                    std::string nameOfGroup ) {
+    void addModelingOnGroupOfNodes( Physics phys, Modelings mod, std::string nameOfGroup ) {
         if ( !_baseMesh )
             throw std::runtime_error( "Mesh is not defined" );
         if ( !_baseMesh->hasGroupOfNodes( nameOfGroup ) )
@@ -225,7 +219,7 @@ class ModelClass : public DataStructure {
      * @brief Construction (au sens Jeveux fortran) de la sd_modele
      * @return booleen indiquant que la construction s'est bien deroulee
      */
-    virtual bool build() ;
+    virtual bool build();
 
     /**
      * @brief Function to know if there is MultiFiberBeam in the Model
@@ -256,20 +250,17 @@ class ModelClass : public DataStructure {
     GraphPartitioner getGraphPartitioner() const { return _graphPartitioner; };
 
 #ifdef _USE_MPI
-    PartialMeshPtr getPartialMesh() const {
-        if ( ( !_partialMesh ) || _partialMesh->isEmpty() )
+    ConnectionMeshPtr getConnectionMesh() const {
+        if ( ( !_connectionMesh ) || _connectionMesh->isEmpty() )
             throw std::runtime_error( "Mesh of model is empty" );
-        return _partialMesh;
+        return _connectionMesh;
     };
 #endif /* _USE_MPI */
 
     /**
      * @brief Get the sane base model
      */
-    ModelPtr getSaneModel() const
-    {
-        return _saneModel;
-    };
+    ModelPtr getSaneModel() const { return _saneModel; };
 
     /**
      * @brief Obtention de la methode de partition
@@ -291,16 +282,12 @@ class ModelClass : public DataStructure {
     /**
      * @brief Set the sane base model
      */
-    void setSaneModel( ModelPtr saneModel )
-    {
-        _saneModel = saneModel;
-    };
+    void setSaneModel( ModelPtr saneModel ) { _saneModel = saneModel; };
 
     /**
      * @brief Definition de la methode de partition
      */
-    void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner )
-    {
+    void setSplittingMethod( ModelSplitingMethod split, GraphPartitioner partitioner ) {
         setSplittingMethod( split );
         _graphPartitioner = partitioner;
     };
@@ -308,14 +295,13 @@ class ModelClass : public DataStructure {
     /**
      * @brief Definition de la methode de partition
      */
-    void setSplittingMethod( ModelSplitingMethod split )
-    {
+    void setSplittingMethod( ModelSplitingMethod split ) {
 #ifdef _USE_MPI
-        if ( _partialMesh && ! _partialMesh->isEmpty() && split != Centralized )
+        if ( _connectionMesh && !_connectionMesh->isEmpty() && split != Centralized )
             throw std::runtime_error( "For Parallel mesh, Centralized splitting is mandatory" );
 #endif /* _USE_MPI */
 
-         _splitMethod = split;
+        _splitMethod = split;
     };
 };
 

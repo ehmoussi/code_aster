@@ -29,17 +29,17 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 
-class MeshElement
+class CellObject
 {
-    const ASTERINTEGER        _elemNum;
+    const ASTERINTEGER        _cellIndex;
     const ASTERINTEGER* const _listOfNodes;
     const ASTERINTEGER        _nbNodes;
     const ASTERINTEGER        _type;
 
 public:
-    MeshElement( const ASTERINTEGER& num, const ASTERINTEGER* const listOfNodes,
+    CellObject( const ASTERINTEGER& num, const ASTERINTEGER* const listOfNodes,
                  const ASTERINTEGER& nbNodes, const ASTERINTEGER& type ):
-        _elemNum( num ),
+        _cellIndex( num ),
         _listOfNodes( listOfNodes ),
         _nbNodes( nbNodes ),
         _type( type )
@@ -50,9 +50,9 @@ public:
         return _nbNodes;
     };
 
-    const ASTERINTEGER& getElementNumber() const
+    const ASTERINTEGER& getCellIndex() const
     {
-        return _elemNum;
+        return _cellIndex;
     };
 
     const ASTERINTEGER& getType() const
@@ -86,14 +86,12 @@ public:
 
         inline bool operator==( const const_iterator& testIter ) const
         {
-            if ( testIter.positionInList != positionInList ) return false;
-            return true;
+            return ( testIter.positionInList == positionInList );
         };
 
         inline bool operator!=( const const_iterator& testIter ) const
         {
-            if ( testIter.positionInList != positionInList ) return true;
-            return false;
+            return ( testIter.positionInList != positionInList );
         };
 
         inline const ASTERINTEGER& operator->() const
@@ -125,20 +123,20 @@ public:
     };
 };
 
-class ElementBuilderFromConnectivity
+class CellsIteratorFromConnectivity
 {
 private:
     const JeveuxCollectionLong _connect;
     const JeveuxVectorLong     _type;
 
 public:
-    ElementBuilderFromConnectivity( const JeveuxCollectionLong& connect,
+    CellsIteratorFromConnectivity( const JeveuxCollectionLong& connect,
                                     const JeveuxVectorLong& type ):
         _connect( connect ),
         _type( type )
     {};
 
-    MeshElement getElement( const int& pos ) const
+    CellObject getCellObject( const int& pos ) const
 
     {
         const int size2 = _connect->size();
@@ -146,11 +144,11 @@ public:
             throw std::runtime_error ( "Connectivity not available" );
 
         if( pos > size2 || pos < 0 )
-            return MeshElement( 0, nullptr, 0, -1 );
+            return CellObject( 0, nullptr, 0, -1 );
         const auto& obj = _connect->getObject( pos + 1 );
         const auto size = obj.size();
         const ASTERINTEGER type = (*_type)[ pos ];
-        return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
+        return CellObject( pos+1, &obj.operator[]( 0 ), size, type );
     };
 
     int size() const
@@ -159,19 +157,19 @@ public:
     };
 };
 
-class ElementBuilderFromFiniteElementDescriptor
+class CellsIteratorFromFiniteElementDescriptor
 {
 private:
     const JeveuxCollectionLong _connectAndType;
 
 public:
-    ElementBuilderFromFiniteElementDescriptor( const JeveuxCollectionLong& connect ):
+    CellsIteratorFromFiniteElementDescriptor( const JeveuxCollectionLong& connect ):
         _connectAndType( connect )
     {
         _connectAndType->buildFromJeveux();
     };
 
-    MeshElement getElement( const int& pos ) const
+    CellObject getCellObject( const int& pos ) const
 
     {
         const int size2 = _connectAndType->size();
@@ -179,11 +177,11 @@ public:
             throw std::runtime_error ( "Connectivity not available" );
 
         if( pos > size2 || pos < 0 )
-            return MeshElement( 0, nullptr, 0, -1 );
+            return CellObject( 0, nullptr, 0, -1 );
         const auto& obj = _connectAndType->getObject( pos + 1 );
         const auto size = obj.size() - 1;
         const ASTERINTEGER type = obj[ size ];
-        return MeshElement( pos+1, &obj.operator[]( 0 ), size, type );
+        return CellObject( pos+1, &obj.operator[]( 0 ), size, type );
     };
 
     int size() const
@@ -194,7 +192,7 @@ public:
 
 /**
  * @class MeshExplorer
- * @brief Utility to loop over mesh elements
+ * @brief Utility to loop over mesh cells
  * @author Nicolas Sellenet
  */
 template< class ElemBuilder, typename... Args >
@@ -245,30 +243,28 @@ public:
 
         inline bool operator==( const const_iterator& testIter ) const
         {
-            if ( testIter.position != position ) return false;
-            return true;
+            return ( testIter.position == position );
         };
 
         inline bool operator!=( const const_iterator& testIter ) const
         {
-            if ( testIter.position != position ) return true;
-            return false;
+            return ( testIter.position != position );
         };
 
-        inline MeshElement operator->() const
+        inline CellObject operator->() const
         {
-            return builder.getElement( position );
+            return builder.getCellObject( position );
         };
 
-        inline MeshElement operator*() const
+        inline CellObject operator*() const
         {
-            return builder.getElement( position );
+            return builder.getCellObject( position );
         };
     };
 
-    inline MeshElement operator[]( int i ) const
+    inline CellObject operator[]( int i ) const
     {
-        return _builder.getElement(i-1);
+        return _builder.getCellObject(i-1);
     };
 
     /**

@@ -35,7 +35,7 @@ const std::string &value( const std::pair< PhysicalQuantityComponent, std::strin
 const int nbComponent = ComponentNames.size();
 
 auto rangeComp = boost::irange( 0, nbComponent );
-const std::vector< int > numbers( rangeComp.begin(), rangeComp.end() );
+const VectorInt numbers( rangeComp.begin(), rangeComp.end() );
 const VectorComponent allComponents( (const VectorComponent &)numbers );
 
 // VectorString values( ComponentNames.size() );

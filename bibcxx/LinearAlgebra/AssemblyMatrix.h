@@ -37,18 +37,20 @@
 #include "Loads/ListOfLoads.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
+#include "Meshes/BaseMesh.h"
 #include "Supervis/CommandSyntax.h"
 #include "Utilities/Tools.h"
+
 #ifdef _HAVE_PETSC4PY
 #if _HAVE_PETSC4PY == 1
 #include <petscmat.h>
 #endif
 #endif
 
-#include "Numbering/DOFNumbering.h"
-#include "Numbering/ParallelDOFNumbering.h"
 #include "Loads/PhysicalQuantity.h"
 #include "Modeling/Model.h"
+#include "Numbering/DOFNumbering.h"
+#include "Numbering/ParallelDOFNumbering.h"
 
 class BaseLinearSolverClass;
 
@@ -98,7 +100,7 @@ class AssemblyMatrixClass : public DataStructure {
     JeveuxVectorLong _ccii;
 
     /** @brief ElementaryMatrix sur lesquelles sera construit la matrice */
-    std::vector< ElementaryMatrixPtr >  _elemMatrix;
+    std::vector< ElementaryMatrixPtr > _elemMatrix;
     /** @brief Objet nume_ddl */
     BaseDOFNumberingPtr _dofNum;
     /** @brief La matrice est elle vide ? */
@@ -152,23 +154,19 @@ class AssemblyMatrixClass : public DataStructure {
      * @brief Methode permettant de definir les matrices elementaires
      * @param currentElemMatrix objet ElementaryMatrix
      */
-    void appendElementaryMatrix( const ElementaryMatrixPtr &currentElemMatrix )
-    {
+    void appendElementaryMatrix( const ElementaryMatrixPtr &currentElemMatrix ) {
         _elemMatrix.push_back( currentElemMatrix );
     };
 
     /**
      * @brief Assemblage de la matrice
      */
-    bool build() ;
+    bool build();
 
     /**
      * @brief Clear all ElementaryMatrixPtr
      */
-    void clearElementaryMatrix()
-    {
-        _elemMatrix.clear();
-    };
+    void clearElementaryMatrix() { _elemMatrix.clear(); };
 
     /**
      * @brief Get the internal DOFNumbering
@@ -180,10 +178,8 @@ class AssemblyMatrixClass : public DataStructure {
      * @brief Get model
      * @return Internal Model
      */
-    ModelPtr getModel()
-    {
-        if( _dofNum != nullptr )
-        {
+    ModelPtr getModel() {
+        if ( _dofNum != nullptr ) {
             return _dofNum->getModel();
         }
         return ModelPtr( nullptr );
@@ -193,10 +189,8 @@ class AssemblyMatrixClass : public DataStructure {
      * @brief Get mesh
      * @return Internal mesh
      */
-    BaseMeshPtr getMesh()
-    {
-        if( _dofNum != nullptr )
-        {
+    BaseMeshPtr getMesh() {
+        if ( _dofNum != nullptr ) {
             return _dofNum->getMesh();
         }
         return nullptr;
@@ -206,8 +200,7 @@ class AssemblyMatrixClass : public DataStructure {
      * @brief Get MaterialField
      * @return MaterialField of the first ElementaryMatrix (all others must be the same)
      */
-    MaterialFieldPtr getMaterialField() const
-    {
+    MaterialFieldPtr getMaterialField() const {
         if ( _elemMatrix.size() != 0 )
             return _elemMatrix[0]->getMaterialField();
         throw std::runtime_error( "No ElementaryMatrix in AssemblyMatrix" );
@@ -217,10 +210,7 @@ class AssemblyMatrixClass : public DataStructure {
      * @brief Get the number of defined ElementaryMatrix
      * @return size of vector containing ElementaryMatrix
      */
-    int getNumberOfElementaryMatrix() const
-    {
-        return _elemMatrix.size();
-    };
+    int getNumberOfElementaryMatrix() const { return _elemMatrix.size(); };
 
 #ifdef _HAVE_PETSC4PY
 #if _HAVE_PETSC4PY == 1
@@ -228,7 +218,7 @@ class AssemblyMatrixClass : public DataStructure {
      * @brief Conversion to petsc4py
      * @return converted matrix
      */
-    Mat toPetsc4py() ;
+    Mat toPetsc4py();
 #endif
 #endif
 
@@ -236,19 +226,13 @@ class AssemblyMatrixClass : public DataStructure {
      * @brief Methode permettant de savoir si la matrice est vide
      * @return true si vide
      */
-    bool isEmpty() const
-    {
-        return _isEmpty;
-    };
+    bool isEmpty() const { return _isEmpty; };
 
     /**
      * @brief Methode permettant de savoir si la matrice est factorisée
      * @return true si factorisée
      */
-    bool isFactorized() const
-    {
-        return _isFactorized;
-    };
+    bool isFactorized() const { return _isFactorized; };
 
     /**
      * @brief Methode permettant de definir la numerotation
@@ -256,16 +240,16 @@ class AssemblyMatrixClass : public DataStructure {
      */
     void setDOFNumbering( const BaseDOFNumberingPtr currentNum ) { _dofNum = currentNum; };
 
-/**
- * @brief Methode permettant de definir la numerotation
- * @param currentNum objet ParallelDOFNumbering
- */
-// #ifdef _USE_MPI
-//         void setDOFNumbering( const ParallelDOFNumberingPtr& currentNum )
-//         {
-//             _dofNum = currentNum;
-//         };
-// #endif /* _USE_MPI */
+    /**
+     * @brief Methode permettant de definir la numerotation
+     * @param currentNum objet ParallelDOFNumbering
+     */
+    // #ifdef _USE_MPI
+    //         void setDOFNumbering( const ParallelDOFNumberingPtr& currentNum )
+    //         {
+    //             _dofNum = currentNum;
+    //         };
+    // #endif /* _USE_MPI */
 
     /**
      * @brief Methode permettant de definir la liste de chargement
@@ -285,8 +269,7 @@ class AssemblyMatrixClass : public DataStructure {
      * @param sName name of solver ("MUMPS" or "PETSC")
      * @todo delete this function and the attribute _solverName
      */
-    bool deleteFactorizedMatrix(void)
-    {
+    bool deleteFactorizedMatrix( void ) {
         if ( _description->exists() && ( _solverName == "MUMPS" || _solverName == "PETSC" ) &&
              get_sh_jeveux_status() == 1 ) {
             CALLO_DELETE_MATRIX( getName(), _solverName );
@@ -302,8 +285,7 @@ class AssemblyMatrixClass : public DataStructure {
 template class AssemblyMatrixClass< double, Displacement >;
 typedef AssemblyMatrixClass< double, Displacement > AssemblyMatrixDisplacementRealClass;
 /** @typedef Definition d'une matrice assemblee de complexe */
-typedef AssemblyMatrixClass< RealComplex, Displacement >
-    AssemblyMatrixDisplacementComplexClass;
+typedef AssemblyMatrixClass< RealComplex, Displacement > AssemblyMatrixDisplacementComplexClass;
 
 /** @typedef Definition d'une matrice assemblee de double temperature */
 template class AssemblyMatrixClass< double, Temperature >;
@@ -315,19 +297,16 @@ typedef AssemblyMatrixClass< double, Pressure > AssemblyMatrixPressureRealClass;
 
 /** @typedef Definition d'une matrice assemblee de RealComplex temperature */
 template class AssemblyMatrixClass< RealComplex, Temperature >;
-typedef AssemblyMatrixClass< RealComplex, Temperature >
-    AssemblyMatrixTemperatureComplexClass;
+typedef AssemblyMatrixClass< RealComplex, Temperature > AssemblyMatrixTemperatureComplexClass;
 
 /** @typedef Definition d'une matrice assemblee de RealComplex pression */
 template class AssemblyMatrixClass< RealComplex, Pressure >;
 typedef AssemblyMatrixClass< RealComplex, Pressure > AssemblyMatrixPressureComplexClass;
 
-typedef boost::shared_ptr< AssemblyMatrixDisplacementRealClass >
-    AssemblyMatrixDisplacementRealPtr;
+typedef boost::shared_ptr< AssemblyMatrixDisplacementRealClass > AssemblyMatrixDisplacementRealPtr;
 typedef boost::shared_ptr< AssemblyMatrixDisplacementComplexClass >
     AssemblyMatrixDisplacementComplexPtr;
-typedef boost::shared_ptr< AssemblyMatrixTemperatureRealClass >
-    AssemblyMatrixTemperatureRealPtr;
+typedef boost::shared_ptr< AssemblyMatrixTemperatureRealClass > AssemblyMatrixTemperatureRealPtr;
 typedef boost::shared_ptr< AssemblyMatrixTemperatureComplexClass >
     AssemblyMatrixTemperatureComplexPtr;
 typedef boost::shared_ptr< AssemblyMatrixPressureRealClass > AssemblyMatrixPressureRealPtr;
@@ -337,7 +316,7 @@ template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
 AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass(
     const JeveuxMemory memType )
     : DataStructure( "MATR_ASSE_" + std::string( PhysicalQuantityNames[PhysicalQuantity] ) +
-                         ( typeid( ValueType ) == typeid(double)? "_R" : "_C" ),
+                         ( typeid( ValueType ) == typeid( double ) ? "_R" : "_C" ),
                      memType, 19 ),
       _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
       _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
@@ -355,11 +334,10 @@ AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass(
       _listOfLoads( ListOfLoadsPtr( new ListOfLoadsClass( memType ) ) ){};
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass(
-    const std::string &name )
-    : DataStructure( name, 19, "MATR_ASSE_" +
-                                   std::string( PhysicalQuantityNames[PhysicalQuantity] ) +
-                                   ( typeid( ValueType ) == typeid(double)? "_R" : "_C" ) ),
+AssemblyMatrixClass< ValueType, PhysicalQuantity >::AssemblyMatrixClass( const std::string &name )
+    : DataStructure( name, 19,
+                     "MATR_ASSE_" + std::string( PhysicalQuantityNames[PhysicalQuantity] ) +
+                         ( typeid( ValueType ) == typeid( double ) ? "_R" : "_C" ) ),
       _description( JeveuxVectorChar24( getName() + ".REFA" ) ),
       _matrixValues( JeveuxCollection< ValueType >( getName() + ".VALM" ) ),
       _scaleFactorLagrangian( JeveuxVectorReal( getName() + ".CONL" ) ),
@@ -384,7 +362,7 @@ bool AssemblyMatrixClass< ValueType, PhysicalQuantity >::build() {
         throw std::runtime_error( "Elementary matrix is empty" );
 
     ASTERINTEGER typscal = 2;
-    if ( typeid( ValueType ) == typeid(double) )
+    if ( typeid( ValueType ) == typeid( double ) )
         typscal = 1;
     VectorString names;
     for ( const auto elemIt : _elemMatrix )
@@ -411,8 +389,7 @@ bool AssemblyMatrixClass< ValueType, PhysicalQuantity >::build() {
 #if _HAVE_PETSC4PY == 1
 
 template < class ValueType, PhysicalQuantityEnum PhysicalQuantity >
-Mat
-AssemblyMatrixClass< ValueType, PhysicalQuantity >::toPetsc4py() {
+Mat AssemblyMatrixClass< ValueType, PhysicalQuantity >::toPetsc4py() {
     Mat myMat;
     PetscErrorCode ierr;
 

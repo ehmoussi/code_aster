@@ -68,7 +68,7 @@ class NonLinearControlClass : public SolverControlClass {
     /* TODO resi_refe_rela */
 
   private:
-    std::vector< double > _relResNorm;
+    VectorReal _relResNorm;
 };
 
 /**

@@ -4,14 +4,6 @@
 Interface with the user syntax
 ##############################
 
-*************
-Class diagram
-*************
-
-.. inheritance-diagram::
-    code_aster.Supervis.CommandSyntax
-   :parts: 1
-
 
 ********************
 Detailed description

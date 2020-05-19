@@ -30,7 +30,7 @@
 #include "astercxx.h"
 
 #include "DataStructures/DataStructure.h"
-#include "Meshes/Mesh.h"
+#include "Meshes/MeshEntities.h"
 #include "Utilities/GenericParameter.h"
 
 /**
@@ -215,10 +215,10 @@ template <
     typename MatchingType = typename std::conditional<
         std::is_same< Type, ASTERINTEGER >::value || std::is_same< Type, double >::value ||
             std::is_same< Type, RealComplex >::value ||
-            std::is_same< Type, std::vector< double > >::value ||
-            std::is_same< Type, std::vector< RealComplex > >::value ||
-            std::is_same< Type, std::vector< ASTERINTEGER > >::value,
-        Type, typename std::conditional< is_vector< Type >::value, std::vector< std::string >,
+            std::is_same< Type, VectorReal >::value ||
+            std::is_same< Type, VectorComplex >::value ||
+            std::is_same< Type, VectorLong >::value,
+        Type, typename std::conditional< is_vector< Type >::value, VectorString,
                                          std::string >::type >::type >
 class CapyConvertibleValue : public GenericCapyConvertibleValue {
   public:
@@ -297,9 +297,9 @@ class CapyConvertibleValue : public GenericCapyConvertibleValue {
     typename std::enable_if< ( std::is_same< T, ASTERINTEGER >::value ||
                                std::is_same< T, double >::value ||
                                std::is_same< T, RealComplex >::value ||
-                               std::is_same< T, std::vector< double > >::value ||
-                               std::is_same< T, std::vector< RealComplex > >::value ||
-                               std::is_same< T, std::vector< ASTERINTEGER > >::value ) &&
+                               std::is_same< T, VectorReal >::value ||
+                               std::is_same< T, VectorComplex >::value ||
+                               std::is_same< T, VectorLong >::value ) &&
                                  !std::is_same< M, std::string >::value,
                              GenParam * >::type
     virtualGetValueOfKeyWord() const {
@@ -328,14 +328,14 @@ class CapyConvertibleValue : public GenericCapyConvertibleValue {
      */
     template < typename T = Type, typename M = MatchingType >
     typename std::enable_if<
-        is_vector< T >::value && !std::is_same< T, std::vector< double > >::value &&
-            !std::is_same< T, std::vector< RealComplex > >::value &&
-            !std::is_same< T, std::vector< ASTERINTEGER > >::value &&
+        is_vector< T >::value && !std::is_same< T, VectorReal >::value &&
+            !std::is_same< T, VectorComplex >::value &&
+            !std::is_same< T, VectorLong >::value &&
             !( is_vector< T >::value &&
                std::is_base_of< DataStructure,
                                 typename is_vector_of_shared_ptr< T >::value_type >::value ) &&
             !std::is_same< T, std::vector< MeshEntityPtr > >::value &&
-            !std::is_same< T, std::vector< std::string > >::value,
+            !std::is_same< T, VectorString >::value,
         GenParam * >::type
     virtualGetValueOfKeyWord() const {
         MatchingType toReturn;
@@ -357,7 +357,7 @@ class CapyConvertibleValue : public GenericCapyConvertibleValue {
      * @warning la gestion du pointeur est déléguée à l'appelant !!
      */
     template < typename T = Type, typename M = MatchingType >
-    typename std::enable_if< std::is_same< T, std::vector< std::string > >::value,
+    typename std::enable_if< std::is_same< T, VectorString >::value,
                              GenParam * >::type
     virtualGetValueOfKeyWord() const {
         MatchingType toReturn;
@@ -419,9 +419,9 @@ class CapyConvertibleValue : public GenericCapyConvertibleValue {
     typename std::enable_if<
         !std::is_same< T, ASTERINTEGER >::value && !std::is_same< T, double >::value &&
             !std::is_same< T, RealComplex >::value &&
-            !std::is_same< T, std::vector< double > >::value &&
-            !std::is_same< T, std::vector< RealComplex > >::value &&
-            !std::is_same< T, std::vector< ASTERINTEGER > >::value && !is_vector< T >::value &&
+            !std::is_same< T, VectorReal >::value &&
+            !std::is_same< T, VectorComplex >::value &&
+            !std::is_same< T, VectorLong >::value && !is_vector< T >::value &&
             !( is_vector< T >::value &&
                std::is_base_of< DataStructure,
                                 typename is_vector_of_shared_ptr< T >::value_type >::value ) &&

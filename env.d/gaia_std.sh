@@ -13,6 +13,8 @@ export PREREQ_VERSION=20191105
 module load ifort/2019.0.045 icc/2019.0.045 mkl/2019.0.045
 
 export LD_PRELOAD=/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_lp64.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_thread.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_core.so:/opt/intel/2019.0.045/compilers_and_libraries/linux/lib/intel64/libiomp5.so
+# threads placement: issue24556
+export I_MPI_PIN_DOMAIN=omp:compact
 
 export PATH=${PREREQ_PATH}/prerequisites/Python-365/bin:${PATH}
 export LD_LIBRARY_PATH=${PREREQ_PATH}/prerequisites/Python-365/lib:${LD_LIBRARY_PATH}

@@ -28,10 +28,11 @@
 
 #include "astercxx.h"
 
-#include "DataFields/FieldOnNodes.h"
 #include "DataFields/FieldOnCells.h"
-#include "Numbering/DOFNumbering.h"
+#include "DataFields/FieldOnNodes.h"
+#include "Meshes/BaseMesh.h"
 #include "Modeling/FiniteElementDescriptor.h"
+#include "Numbering/DOFNumbering.h"
 
 /**
  * @class FieldBuilderClass

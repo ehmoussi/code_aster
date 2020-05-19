@@ -24,15 +24,19 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
 #include <list>
+#include <stdexcept>
 #include <string>
+
 #include "astercxx.h"
-#include "Modeling/Model.h"
-#include "Loads/UnitaryThermalLoad.h"
-#include "Utilities/CapyConvertibleValue.h"
-#include "Modeling/FiniteElementDescriptor.h"
+
 #include "DataFields/ConstantFieldOnCells.h"
+#include "Loads/UnitaryThermalLoad.h"
+#include "Meshes/BaseMesh.h"
+#include "Meshes/MeshEntities.h"
+#include "Modeling/FiniteElementDescriptor.h"
+#include "Modeling/Model.h"
+#include "Utilities/CapyConvertibleValue.h"
 
 /**
  * @class ThermalLoadClass
@@ -148,7 +152,7 @@ class ThermalLoadClass : public DataStructure {
      * @brief Construction de la charge (appel a OP0101)
      * @return Booleen indiquant que tout s'est bien passe
      */
-    bool build() ;
+    bool build();
 
     /**
      * @brief Get the finite element descriptor

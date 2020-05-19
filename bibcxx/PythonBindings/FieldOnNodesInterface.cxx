@@ -28,7 +28,6 @@ namespace py = boost::python;
 #include <PythonBindings/factory.h>
 
 #include "DataFields/MeshCoordinatesField.h"
-#include "PythonBindings/ConstViewerUtilities.h"
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/FieldOnNodesInterface.h"
 

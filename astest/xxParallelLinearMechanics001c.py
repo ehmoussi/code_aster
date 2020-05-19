@@ -12,7 +12,7 @@ pMesh = code_aster.ParallelMesh()
 pMesh.readMedFile("xxParallelMesh001a")
 
 monModel = code_aster.Model(pMesh)
-monModel.addModelingOnAllMesh(code_aster.Physics.Mechanics,
+monModel.addModelingOnMesh(code_aster.Physics.Mechanics,
                               code_aster.Modelings.Tridimensional)
 monModel.build()
 
@@ -23,7 +23,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = 2.e11,
                                 NU = 0.3,),)
 
 affectMat = code_aster.MaterialField(pMesh)
-affectMat.addMaterialOnAllMesh( acier )
+affectMat.addMaterialsOnMesh( acier )
 affectMat.buildWithoutExternalVariable()
 
 testMesh2 = affectMat.getMesh()

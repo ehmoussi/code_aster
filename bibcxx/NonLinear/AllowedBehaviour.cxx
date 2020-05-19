@@ -65,7 +65,7 @@ const std::vector< ConstitutiveLawEnum > allConstitutiveLaw = {
     Vmis_Isot_Line,            Vmis_Isot_Puis,  Vmis_Isot_Trac,      Vmis_John_Cook,
     Umat,                      Mfront};
 
-const std::vector< std::string > allConstitutiveLawNames = {
+const VectorString allConstitutiveLawNames = {
     "ELAS",             "ELAS_VMIS_LINE",  "ELAS_VMIS_TRAC",   "ELAS_VMIS_PUIS",
     "ELAS_HYPER",       "ELAS_POUTRE_GR",  "CABLE",            "ARME",
     "ASSE_CORN",        "BARCELONE",       "BETON_BURGER_FP",  "BETON_DOUBLE_DP",
@@ -108,17 +108,17 @@ const std::vector< std::string > allConstitutiveLawNames = {
 
 const std::vector< StrainEnum > allStrain = {SmallStrain, PetitReac, LargeStrainAndRotation,
                                              SimoMiehe, GdefLog};
-const std::vector< std::string > allStrainNames = {"PETIT", "PETIT_REAC", "GROT_GDEP", "SIMO_MIEHE",
+const VectorString allStrainNames = {"PETIT", "PETIT_REAC", "GROT_GDEP", "SIMO_MIEHE",
                                                    "GDEF_LOG"};
 
 const std::vector< TangentMatrixEnum > allTangentMatrix = {PerturbationMatrix, VerificationMatrix,
                                                            TangentSecantMatrix};
-const std::vector< std::string > allTangentMatrixNames = {"PERTURBATION", "VERIFICATION",
+const VectorString allTangentMatrixNames = {"PERTURBATION", "VERIFICATION",
                                                           "TANGENTE_SECANTE"};
 
 const std::vector< IntegrationAlgoEnum > allIntegrationAlgo = {
     AnalyticalAlgo, SecantAlgo,     DekkerAlgo,     Newton1DAlgo,   BrentAlgo, NewtonAlgo,
     NewtonReliAlgo, NewtonLossAlgo, RungeKuttaAlgo, ParticularAlgo, NoAlgo};
-const std::vector< std::string > allIntegrationAlgoNames = {
+const VectorString allIntegrationAlgoNames = {
     "ANALYTIQUE",  "SECANTE",     "DEKKER",      "NEWTON_1D",  "BRENT",     "NEWTON",
     "NEWTON_RELI", "NEWTON_PERT", "RUNGE_KUTTA", "SPECIFIQUE", "SANS_OBJET"};

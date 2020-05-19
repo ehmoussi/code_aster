@@ -35,7 +35,7 @@ ParallelMechanicalLoadClass::ParallelMechanicalLoadClass(
     DataStructure( name, 8, "CHAR_MECA" ),
     _FEDesc( new ParallelFiniteElementDescriptorClass
                     ( getName() + ".CHME.LIGRE", load->getMechanicalLoadDescription()._FEDesc,
-                      load->getModel()->getPartialMesh(), model ) ),
+                      load->getModel()->getConnectionMesh(), model ) ),
     _cimpo( new ConstantFieldOnCellsRealClass( getName() + ".CHME.CIMPO", _FEDesc ) ),
     _cmult( new ConstantFieldOnCellsRealClass( getName() + ".CHME.CMULT", _FEDesc ) ),
     _type( getName() + ".TYPE" ),

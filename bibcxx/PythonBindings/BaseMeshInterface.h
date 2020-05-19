@@ -1,7 +1,9 @@
+#ifndef BASEMESHINTERFACE_H_
+#define BASEMESHINTERFACE_H_
+
 /**
- * @file JeveuxBidirectionalMap.cxx
- * @brief Implementation de JeveuxBidirectionalMap
- * @author Nicolas Sellenet
+ * @file BaseMeshInterface.h
+ * @brief Fichier entete de la classe MeshInterface
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
  *
@@ -21,4 +23,6 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "MemoryManager/JeveuxBidirectionalMap.h"
+void exportBaseMeshToPython();
+
+#endif /* BASEMESHINTERFACE_H_ */

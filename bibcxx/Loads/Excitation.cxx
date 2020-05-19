@@ -26,4 +26,4 @@
 const std::vector< ExcitationEnum > allExcitation = {StandardExcitation, DrivenExcitation,
                                                      OnUpdatedGeometryExcitation,
                                                      IncrementalDirichletExcitation};
-const std::vector< std::string > allExcitationNames = {"FIXE_CSTE", "FIXE_PILO", "SUIV", "DIDI"};
+const VectorString allExcitationNames = {"FIXE_CSTE", "FIXE_PILO", "SUIV", "DIDI"};

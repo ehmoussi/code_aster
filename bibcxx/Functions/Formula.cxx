@@ -50,21 +50,21 @@ FormulaClass::~FormulaClass() {
     Py_XDECREF( _context );
 }
 
-void FormulaClass::setVariables( const std::vector< std::string > &names ) {
+void FormulaClass::setVariables( const VectorString &names ) {
     const int nbvar = names.size();
     _variables->allocate( Permanent, nbvar );
 
-    std::vector< std::string >::const_iterator varIt = names.begin();
+    VectorString::const_iterator varIt = names.begin();
     int idx = 0;
     for ( ; varIt != names.end(); ++varIt ) {
         ( *_variables )[idx] = *varIt;
         ++idx;
     }
 }
-std::vector< std::string > FormulaClass::getVariables() const {
+VectorString FormulaClass::getVariables() const {
     _variables->updateValuePointer();
     long nbvars = _variables->size();
-    std::vector< std::string > vars;
+    VectorString vars;
     for ( int i = 0; i < nbvars; ++i ) {
         vars.push_back( ( *_variables )[i].rstrip() );
     }
@@ -89,7 +89,7 @@ void FormulaClass::setExpression( const std::string expression ) {
 VectorReal FormulaClass::evaluate( const VectorReal &values ) const
     {
     int iret = 0;
-    std::vector< std::string > vars = getVariables();
+    VectorString vars = getVariables();
     VectorReal result = evaluate_formula( _code, _context, vars, values, &iret );
     if ( iret == 1 ) {
         const long nbvars = vars.size();
@@ -104,7 +104,7 @@ VectorReal FormulaClass::evaluate( const VectorReal &values ) const
 
 /* functions shared with evaluation from Fortran */
 VectorReal evaluate_formula( const PyObject *code, PyObject *globals,
-                               const std::vector< std::string > &variables,
+                               const VectorString &variables,
                                const VectorReal &values, int *retcode ) {
     if ( !code ) {
         std::cerr << "Formula has no expression:" << std::endl;
@@ -164,7 +164,7 @@ void DEFPPSPPPPP( EVAL_FORMULA, eval_formula, ASTERINTEGER *pcode, ASTERINTEGER 
     PyObject *code = (PyObject *)( *pcode );
     PyObject *globals = (PyObject *)( *pglobals );
 
-    std::vector< std::string > vars;
+    VectorString vars;
     VectorReal values;
     for ( int i = 0; i < *nbvar; ++i ) {
         vars.push_back( std::string( array_vars + i * lenvars, lenvars ) );

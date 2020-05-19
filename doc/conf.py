@@ -22,7 +22,7 @@ import time
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 DOCDIR = osp.dirname(__file__)
 SRCDIR = osp.abspath(osp.join(osp.dirname(__file__), os.pardir))
-BUILDDIR = os.environ['BUILDDIR']
+BUILDDIR = os.environ.get('BUILDDIR', 'build/mpi/release/doc')
 
 paths = [osp.join(DOCDIR, '_extensions'),
          osp.join(DOCDIR, '_fake'),

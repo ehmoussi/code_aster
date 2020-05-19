@@ -35,6 +35,6 @@
 
 enum UnitVectorEnum { Ex, Ey, Ez, FirstTangentVector, SecondTangentVector, NormalVector };
 extern const std::vector< UnitVectorEnum > allUnitVector;
-extern const std::vector< std::string > allUnitVectorNames;
+extern const VectorString allUnitVectorNames;
 
 #endif /* GEOMETRY_H_ */

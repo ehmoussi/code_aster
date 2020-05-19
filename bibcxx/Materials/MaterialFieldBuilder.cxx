@@ -57,7 +57,7 @@ void MaterialFieldBuilderClass::buildClass( MaterialFieldClass &curMater,
             dict2.container["GROUP_MA"] = ( curIter.second )->getNames();
         else if ( tmp->getType() == GroupOfNodesType )
             dict2.container["GROUP_NO"] = ( curIter.second )->getNames();
-        else if ( tmp->getType() == ElementType )
+        else if ( tmp->getType() == CellType )
             dict2.container["MAILLE"] = ( curIter.second )->getNames();
         else
             throw std::runtime_error( "Support entity undefined" );
@@ -74,7 +74,7 @@ void MaterialFieldBuilderClass::buildClass( MaterialFieldClass &curMater,
             dict2.container["TOUT"] = "OUI";
         else if ( tmp->getType() == GroupOfCellsType )
             dict2.container["GROUP_MA"] = ( curIter.second )->getName();
-        else if ( tmp->getType() == ElementType )
+        else if ( tmp->getType() == CellType )
             dict2.container["MAILLE"] = ( curIter.second )->getName();
         else
             throw std::runtime_error( "Support entity undefined" );
@@ -113,7 +113,7 @@ void MaterialFieldBuilderClass::buildClass( MaterialFieldClass &curMater,
                 dict2.container["TOUT"] = "OUI";
             else if ( tmp->getType() == GroupOfCellsType )
                 dict2.container["GROUP_MA"] = ( curIter.second )->getName();
-            else if ( tmp->getType() == ElementType )
+            else if ( tmp->getType() == CellType )
                 dict2.container["MAILLE"] = ( curIter.second )->getName();
             else
                 throw std::runtime_error( "Support entity undefined" );

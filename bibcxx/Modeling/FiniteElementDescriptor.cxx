@@ -21,20 +21,22 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Meshes/PartialMesh.h"
-#include "Modeling/FiniteElementDescriptor.h"
-#include "Modeling/PhysicalQuantityManager.h"
-#include "ParallelUtilities/MPIInfos.h"
 #include <algorithm>
 
+#include "Modeling/FiniteElementDescriptor.h"
+#include "Meshes/BaseMesh.h"
+#include "Meshes/ConnectionMesh.h"
+#include "Modeling/PhysicalQuantityManager.h"
+#include "ParallelUtilities/MPIInfos.h"
+
 FiniteElementDescriptorClass::FiniteElementDescriptorClass( const std::string &name,
-                                                                  const BaseMeshPtr mesh,
-                                                                  const JeveuxMemory memType )
+                                                            const BaseMeshPtr mesh,
+                                                            const JeveuxMemory memType )
     : DataStructure( name, 19, "LIGREL", memType ),
       _numberOfDelayedNumberedConstraintNodes( getName() + ".NBNO" ),
       _parameters( getName() + ".LGRF" ), _dofDescriptor( getName() + ".PRNM" ),
       _listOfGroupOfCells( getName() + ".LIEL" ),
-      _groupOfCellsNumberByElement( getName() + ".REPE" ),
+      _groupsOfCellsNumberByElement( getName() + ".REPE" ),
       _delayedNumberedConstraintElementsDescriptor( getName() + ".NEMA" ),
       _dofOfDelayedNumberedConstraintNodes( getName() + ".PRNS" ),
       _delayedNodesNumbering( getName() + ".LGNS" ),
@@ -45,14 +47,13 @@ FiniteElementDescriptorClass::FiniteElementDescriptorClass( const std::string &n
       _explorer2( ConnectivityDelayedElementsExplorer( _listOfGroupOfCells ) ){};
 
 #ifdef _USE_MPI
-void
-FiniteElementDescriptorClass::transferDofDescriptorFrom( FiniteElementDescriptorPtr &other ) {
+void FiniteElementDescriptorClass::transferDofDescriptorFrom( FiniteElementDescriptorPtr &other ) {
     if ( !getMesh()->isPartial() )
         throw std::runtime_error(
             "the mesh associated to finiteElementDescriptorClass is not a partial mesh" );
-    const PartialMeshPtr partialMesh =
-        boost::static_pointer_cast< PartialMeshClass >( getMesh() );
-    if ( partialMesh->getParallelMesh() != other->getMesh() )
+    const ConnectionMeshPtr connectionMesh =
+        boost::static_pointer_cast< ConnectionMeshClass >( getMesh() );
+    if ( connectionMesh->getParallelMesh() != other->getMesh() )
         throw std::runtime_error(
             "parallel mesh associated to partial mesh of FiniteElementDescriptorClass \n"
             "does not correspond to other FiniteElementDescriptorClass mesh" );
@@ -60,11 +61,11 @@ FiniteElementDescriptorClass::transferDofDescriptorFrom( FiniteElementDescriptor
 
     const int rank = getMPIRank();
     aster_comm_t *commWorld = aster_get_comm_world();
-    int nbNodes = partialMesh->getNumberOfNodes();
+    int nbNodes = connectionMesh->getNumberOfNodes();
     int nec = _dofDescriptor->size() / nbNodes;
 
-    const JeveuxVectorLong &localNumbering = partialMesh->getLocalNumbering();
-    const JeveuxVectorLong &owner = partialMesh->getOwner();
+    const JeveuxVectorLong &localNumbering = connectionMesh->getLocalNumbering();
+    const JeveuxVectorLong &owner = connectionMesh->getOwner();
     const JeveuxVectorLong &otherDofDescriptor = other->getPhysicalNodesComponentDescriptor();
     for ( int i = 0; i < nbNodes; ++i ) {
         int proc = ( *owner )[i];

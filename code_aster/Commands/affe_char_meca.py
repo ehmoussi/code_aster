@@ -21,7 +21,7 @@
 
 from ..Cata.Language.SyntaxObjects import FactorKeyword
 from ..Objects import (GenericMechanicalLoad, ParallelMechanicalLoad,
-                       PartialMesh)
+                       ConnectionMesh)
 from ..Supervis import ExecuteCommand
 from .affe_modele import AFFE_MODELE
 
@@ -102,12 +102,12 @@ class MechanicalLoadDefinition(ExecuteCommand):
             super(MechanicalLoadDefinition, self).exec_(keywords)
         else:
             model = keywords.pop("MODELE")
-            partialMesh = PartialMesh(model.getMesh(), self._getNodeGroups(keywords))
-            if partialMesh.getDimension()==3:
+            connectionMesh = ConnectionMesh(model.getMesh(), self._getNodeGroups(keywords))
+            if connectionMesh.getDimension()==3:
                 modelisation = "3D"
             else:
                 modelisation = "D_PLAN"
-            partialModel = AFFE_MODELE(MAILLAGE=partialMesh,
+            partialModel = AFFE_MODELE(MAILLAGE=connectionMesh,
                                        AFFE=(_F(TOUT='OUI',
                                                PHENOMENE='MECANIQUE',
                                                MODELISATION=modelisation,),

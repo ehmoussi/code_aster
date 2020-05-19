@@ -61,24 +61,24 @@ class XfemCrackClass : public DataStructure {
     /** @brief Type de discontinuité */
     std::string _discontinuityType;
     /** @brief MeshEntity defining the lips of the crack */
-    std::vector< std::string > _crackLipsEntity;
+    VectorString _crackLipsEntity;
     /** @brief MeshEntity defining the tip of the crack */
-    std::vector< std::string > _crackTipEntity;
+    VectorString _crackTipEntity;
     /** @brief Function defining the normal level set */
     FunctionPtr _normalLevelSetFunction;
     /** @brief Function defining the tangential level set */
     FunctionPtr _tangentialLevelSetFunction;
     /** @brief Crack Shape */
     CrackShapePtr _crackShape;
-    /** @brief List of group of elements that define the crack tip in case of propagation in the
+    /** @brief List of group of cells that define the crack tip in case of propagation in the
      * cohesive case */
-    std::vector< std::string > _cohesiveCrackTipForPropagation;
+    VectorString _cohesiveCrackTipForPropagation;
     /** @brief Field defining the normal level set */
     FieldOnNodesRealPtr _normalLevelSetField;
     /** @brief Field defining the tangential level set */
     FieldOnNodesRealPtr _tangentialLevelSetField;
     /** @brief MeshEntity defining the enriched elements */
-    std::vector< std::string > _enrichedCells;
+    VectorString _enrichedCells;
     /** @brief Name of the discontinuous field */
     std::string _discontinuousField;
     /** @brief Type of the enrichment */
@@ -90,7 +90,7 @@ class XfemCrackClass : public DataStructure {
     /** @brief List of juncting cracks */
     std::vector< XfemCrackPtr > _junctingCracks;
     /** @brief Point to define juncting cracks */
-    std::vector< double > _pointForJunctingCracks;
+    VectorReal _pointForJunctingCracks;
 
     /** @brief Nodal Field named '.GRLTNO' */
     FieldOnNodesRealPtr _tangentialLevelSetGradient;
@@ -178,9 +178,9 @@ class XfemCrackClass : public DataStructure {
         }
     }
 
-    std::vector< std::string > getCrackLipsEntity() const { return _crackLipsEntity; }
+    VectorString getCrackLipsEntity() const { return _crackLipsEntity; }
 
-    void setCrackLipsEntity( const std::vector< std::string > &crackLips ) {
+    void setCrackLipsEntity( const VectorString &crackLips ) {
         if ( !( _crackShape && _normalLevelSetField && _normalLevelSetFunction ) ) {
             _crackLipsEntity = crackLips;
         } else {
@@ -189,17 +189,17 @@ class XfemCrackClass : public DataStructure {
         }
     }
 
-    std::vector< std::string > getCrackTipEntity() const { return _crackTipEntity; }
+    VectorString getCrackTipEntity() const { return _crackTipEntity; }
 
-    void setCrackTipEntity( const std::vector< std::string > &crackTip ) {
+    void setCrackTipEntity( const VectorString &crackTip ) {
         _crackTipEntity = crackTip;
     }
 
-    std::vector< std::string > getCohesiveCrackTipForPropagation() const {
+    VectorString getCohesiveCrackTipForPropagation() const {
         return _cohesiveCrackTipForPropagation;
     }
 
-    void setCohesiveCrackTipForPropagation( const std::vector< std::string > &crackTipEntity ) {
+    void setCohesiveCrackTipForPropagation( const VectorString &crackTipEntity ) {
         _cohesiveCrackTipForPropagation = crackTipEntity;
     }
 
@@ -255,9 +255,9 @@ class XfemCrackClass : public DataStructure {
         _tangentialLevelSetField = tangentialLevelSet;
     }
 
-    std::vector< std::string > getEnrichedCells() const { return _enrichedCells; }
+    VectorString getEnrichedCells() const { return _enrichedCells; }
 
-    void setEnrichedCells( const std::vector< std::string > &enrichedCells ) {
+    void setEnrichedCells( const VectorString &enrichedCells ) {
         _enrichedCells = enrichedCells;
     }
 
@@ -291,7 +291,7 @@ class XfemCrackClass : public DataStructure {
         _junctingCracks.push_back( junctingCracks );
     }
 
-    void setPointForJunction( const std::vector< double > point ) {
+    void setPointForJunction( const VectorReal point ) {
         _pointForJunctingCracks = point;
     }
 

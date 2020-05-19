@@ -45,8 +45,8 @@ bool ParallelMeshClass::readMedFile( const std::string &fileName ) {
 bool ParallelMeshClass::updateGlobalGroupOfNodes( void ) {
 
     MPIContainerUtilities util;
-    _groupOfNodes->buildFromJeveux();
-    auto gONNames = _groupOfNodes->getObjectNames();
+    _groupsOfNodes->buildFromJeveux();
+    auto gONNames = _groupsOfNodes->getObjectNames();
     auto allgONNames = util.gatheringVectorsOnAllProcs( gONNames );
 
     for ( auto &nameOfGrp : allgONNames )
@@ -68,20 +68,20 @@ bool ParallelMeshClass::updateGlobalGroupOfNodes( void ) {
 bool ParallelMeshClass::updateGlobalGroupOfCells( void ) {
 
     MPIContainerUtilities util;
-    _groupOfCells->buildFromJeveux();
-    auto gOENames = _groupOfCells->getObjectNames();
+    _groupsOfCells->buildFromJeveux();
+    auto gOENames = _groupsOfCells->getObjectNames();
     auto allgOENames = util.gatheringVectorsOnAllProcs( gOENames );
 
     for ( auto &nameOfGrp : allgOENames )
         _setOfAllGOE.insert( trim( nameOfGrp.toString() ) );
 
-    if(_globalGroupOfEements->isAllocated())
-        _globalGroupOfEements->deallocate();
+    if(_globalGroupOfCells->isAllocated())
+        _globalGroupOfCells->deallocate();
 
-    _globalGroupOfEements->allocate( Permanent, _setOfAllGOE.size() );
+    _globalGroupOfCells->allocate( Permanent, _setOfAllGOE.size() );
     int num = 0;
     for ( auto &nameOfGrp : _setOfAllGOE ) {
-        ( *_globalGroupOfEements )[num] = nameOfGrp;
+        ( *_globalGroupOfCells )[num] = nameOfGrp;
         ++num;
     }
 

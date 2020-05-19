@@ -155,7 +155,7 @@ class KinematicsMechanicalLoadClass : public KinematicsLoadClass {
      */
     bool addImposedMechanicalDOFOnCells(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::vector< std::string > &namesOfGroup ) {
+        const VectorString &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedMechanicalDOFOnCells( coordinate, value, nameOfGroup );
         return true;
@@ -192,7 +192,7 @@ class KinematicsMechanicalLoadClass : public KinematicsLoadClass {
      */
     bool addImposedMechanicalDOFOnNodes(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::vector< std::string > &namesOfGroup ) {
+        const VectorString &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedMechanicalDOFOnNodes( coordinate, value, nameOfGroup );
         return true;
@@ -254,7 +254,7 @@ class KinematicsThermalLoadClass : public KinematicsLoadClass {
      */
     bool addImposedThermalDOFOnCells(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::vector< std::string > &namesOfGroup ) {
+        const VectorString &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnCells( coordinate, value, nameOfGroup );
         return true;
@@ -290,7 +290,7 @@ class KinematicsThermalLoadClass : public KinematicsLoadClass {
      */
     bool addImposedThermalDOFOnNodes(
         const PhysicalQuantityComponent &coordinate, const double &value,
-        const std::vector< std::string > &namesOfGroup ) {
+        const VectorString &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnNodes( coordinate, value, nameOfGroup );
         return true;
@@ -326,7 +326,7 @@ class KinematicsThermalLoadClass : public KinematicsLoadClass {
      */
     bool addImposedThermalDOFOnNodes(
         const PhysicalQuantityComponent &coordinate, const FunctionPtr &function,
-        const std::vector< std::string > &namesOfGroup ) {
+        const VectorString &namesOfGroup ) {
         for ( const auto &nameOfGroup : namesOfGroup )
             addImposedThermalDOFOnNodes( coordinate, function, nameOfGroup );
         return true;

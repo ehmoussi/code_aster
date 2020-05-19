@@ -16,10 +16,10 @@ with test.assertRaises(NameError):
 with test.assertRaises(NameError):
     coord
 
-test.assertTrue(mesh2.hasGroupOfCells("Tout"))
-test.assertFalse(mesh2.hasGroupOfNodes("Tout"))
-test.assertFalse(mesh2.hasGroupOfCells("POINT"))
-test.assertTrue(mesh2.hasGroupOfNodes("POINT"))
+test.assertTrue("Tout" in mesh2.getGroupsOfCells())
+test.assertTrue("Tout" not in mesh2.getGroupsOfNodes())
+test.assertTrue("POINT" not in mesh2.getGroupsOfCells())
+test.assertTrue("POINT" in mesh2.getGroupsOfNodes())
 
 support = model.getMesh()
 test.assertIsNotNone(support)

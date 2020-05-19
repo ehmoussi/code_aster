@@ -23,33 +23,36 @@
 
 #include <boost/python.hpp>
 
-namespace py = boost::python;
-
-#include "astercxx.h"
 #include "aster_init.h"
+#include "astercxx.h"
 
-#include "Supervis/Exceptions.h"
 #include "PythonBindings/Fortran.h"
+#include "Supervis/Exceptions.h"
 
 // Please keep '*Interface.h' files in alphabetical order to ease merging
 #include "PythonBindings/AcousticLoadInterface.h"
 #include "PythonBindings/AcousticModeResultInterface.h"
 #include "PythonBindings/AssemblyMatrixInterface.h"
+#include "PythonBindings/BaseMaterialPropertyInterface.h"
+#include "PythonBindings/BaseMeshInterface.h"
 #include "PythonBindings/BehaviourDefinitionInterface.h"
 #include "PythonBindings/BehaviourInterface.h"
 #include "PythonBindings/BucklingModeResultInterface.h"
 #include "PythonBindings/CombinedFourierResultInterface.h"
+#include "PythonBindings/ConnectionMeshInterface.h"
+#include "PythonBindings/ConstantFieldOnCellsInterface.h"
 #include "PythonBindings/ContactInterface.h"
+#include "PythonBindings/ConvertersInterface.h"
 #include "PythonBindings/CppToFortranGlossaryInterface.h"
 #include "PythonBindings/CrackInterface.h"
 #include "PythonBindings/CrackShapeInterface.h"
 #include "PythonBindings/CrackTipInterface.h"
 #include "PythonBindings/CyclicSymmetryModeInterface.h"
+#include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DataFieldInterface.h"
 #include "PythonBindings/DataStructureInterface.h"
 #include "PythonBindings/DebugInterface.h"
 #include "PythonBindings/DiscreteProblemInterface.h"
-#include "PythonBindings/DOFNumberingInterface.h"
 #include "PythonBindings/DrivingInterface.h"
 #include "PythonBindings/DynamicMacroElementInterface.h"
 #include "PythonBindings/ElasticFourierResultInterface.h"
@@ -74,36 +77,37 @@ namespace py = boost::python;
 #include "PythonBindings/FullHarmonicResultInterface.h"
 #include "PythonBindings/FullResultInterface.h"
 #include "PythonBindings/FullTransientResultInterface.h"
+#include "PythonBindings/Function2DInterface.h"
 #include "PythonBindings/FunctionInterface.h"
 #include "PythonBindings/GeneralizedAssemblyMatrixInterface.h"
 #include "PythonBindings/GeneralizedAssemblyVectorInterface.h"
 #include "PythonBindings/GeneralizedDOFNumberingInterface.h"
-#include "PythonBindings/GeneralizedModelInterface.h"
 #include "PythonBindings/GeneralizedModeResultInterface.h"
+#include "PythonBindings/GeneralizedModelInterface.h"
 #include "PythonBindings/GeneralizedResultInterface.h"
 #include "PythonBindings/GenericFunctionInterface.h"
 #include "PythonBindings/GridInterface.h"
 #include "PythonBindings/InterspectralMatrixInterface.h"
 #include "PythonBindings/KinematicsLoadInterface.h"
+#include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/LinearSolverInterface.h"
 #include "PythonBindings/LinearStaticAnalysisInterface.h"
-#include "PythonBindings/LineSearchMethodInterface.h"
 #include "PythonBindings/ListOfFloatsInterface.h"
 #include "PythonBindings/ListOfIntegersInterface.h"
 #include "PythonBindings/LoadResultInterface.h"
-#include "PythonBindings/MeshesMappingInterface.h"
-#include "PythonBindings/BaseMaterialPropertyInterface.h"
-#include "PythonBindings/MaterialPropertyInterface.h"
-#include "PythonBindings/MaterialInterface.h"
+#include "PythonBindings/MPIInfosInterface.h"
 #include "PythonBindings/MaterialFieldBuilderInterface.h"
 #include "PythonBindings/MaterialFieldInterface.h"
+#include "PythonBindings/MaterialInterface.h"
+#include "PythonBindings/MaterialPropertyInterface.h"
 #include "PythonBindings/MechanicalLoadInterface.h"
 #include "PythonBindings/MeshCoordinatesFieldInterface.h"
+#include "PythonBindings/MeshEntitiesInterface.h"
 #include "PythonBindings/MeshInterface.h"
+#include "PythonBindings/MeshesMappingInterface.h"
 #include "PythonBindings/ModalBasisInterface.h"
-#include "PythonBindings/ModelInterface.h"
 #include "PythonBindings/ModeResultInterface.h"
-#include "PythonBindings/MPIInfosInterface.h"
+#include "PythonBindings/ModelInterface.h"
 #include "PythonBindings/MultipleElasticResultInterface.h"
 #include "PythonBindings/NonLinearMethodInterface.h"
 #include "PythonBindings/NonLinearResultInterface.h"
@@ -111,8 +115,6 @@ namespace py = boost::python;
 #include "PythonBindings/ParallelDOFNumberingInterface.h"
 #include "PythonBindings/ParallelMechanicalLoadInterface.h"
 #include "PythonBindings/ParallelMeshInterface.h"
-#include "PythonBindings/PartialMeshInterface.h"
-#include "PythonBindings/ConstantFieldOnCellsInterface.h"
 #include "PythonBindings/PhysicalQuantityInterface.h"
 #include "PythonBindings/PhysicsAndModelingsInterface.h"
 #include "PythonBindings/PrestressingCableInterface.h"
@@ -125,7 +127,6 @@ namespace py = boost::python;
 #include "PythonBindings/StaticMacroElementInterface.h"
 #include "PythonBindings/StructureInterfaceInterface.h"
 #include "PythonBindings/StudyDescriptionInterface.h"
-#include "PythonBindings/Function2DInterface.h"
 #include "PythonBindings/TableContainerInterface.h"
 #include "PythonBindings/TableInterface.h"
 #include "PythonBindings/ThermalFourierResultInterface.h"
@@ -138,7 +139,6 @@ namespace py = boost::python;
 #include "PythonBindings/UnitaryThermalLoadInterface.h"
 #include "PythonBindings/VariantModalBasisInterface.h"
 #include "PythonBindings/VariantStiffnessMatrixInterface.h"
-#include "PythonBindings/VectorUtilitiesInterface.h"
 #include "PythonBindings/XfemCrackInterface.h"
 // Please keep '*Interface.h' files in alphabetical order to ease merging
 
@@ -167,13 +167,11 @@ BOOST_PYTHON_MODULE( libaster ) {
     ErrorPy[ASTER_ERROR] = createPyException( "AsterError" );
     py::register_exception_translator< ErrorCpp< ASTER_ERROR > >( &translateError< ASTER_ERROR > );
 
-    ErrorPy[CONVERGENCE_ERROR] =
-        createPyException( "ConvergenceError", ErrorPy[ASTER_ERROR] );
+    ErrorPy[CONVERGENCE_ERROR] = createPyException( "ConvergenceError", ErrorPy[ASTER_ERROR] );
     py::register_exception_translator< ErrorCpp< CONVERGENCE_ERROR > >(
         &translateError< CONVERGENCE_ERROR > );
 
-    ErrorPy[INTEGRATION_ERROR] =
-        createPyException( "IntegrationError", ErrorPy[ASTER_ERROR] );
+    ErrorPy[INTEGRATION_ERROR] = createPyException( "IntegrationError", ErrorPy[ASTER_ERROR] );
     py::register_exception_translator< ErrorCpp< INTEGRATION_ERROR > >(
         &translateError< INTEGRATION_ERROR > );
 
@@ -194,9 +192,11 @@ BOOST_PYTHON_MODULE( libaster ) {
     // do not sort (compilation error)
     exportStiffnessMatrixVariantToPython();
     exportModalBasisVariantToPython();
-    exportVectorUtilitiesToPython();
+    exportConverters();
     exportDataStructureToPython();
     exportDebugToPython();
+    exportMeshEntitiesToPython();
+    exportBaseMeshToPython();
     exportMeshToPython();
     exportDiscreteProblemToPython();
     exportDOFNumberingToPython();
@@ -298,7 +298,7 @@ BOOST_PYTHON_MODULE( libaster ) {
 #endif /* _USE_MPI */
     exportMPIInfosToPython();
 
-    exportPartialMeshToPython();
+    exportConnectionMeshToPython();
     exportResultNamingToPython();
     exportListOfFloatsToPython();
     exportListOfIntegersToPython();

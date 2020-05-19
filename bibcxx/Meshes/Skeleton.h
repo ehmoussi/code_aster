@@ -29,7 +29,7 @@
 #include "astercxx.h"
 
 #include "MemoryManager/JeveuxVector.h"
-#include "Meshes/Mesh.h"
+#include "Meshes/BaseMesh.h"
 
 /**
  * @class SkeletonClass

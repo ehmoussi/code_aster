@@ -74,17 +74,17 @@ class MeshCoordinatesFieldClass : public DataStructure {
     /**
      * @brief Get _descriptor
      */
-    const JeveuxVectorLong getFieldDescriptor() const { return _descriptor; };
+    const JeveuxVectorLong getDescriptor() const { return _descriptor; };
 
     /**
      * @brief Get _reference
      */
-    const JeveuxVectorChar24 getFieldReference() const { return _reference; };
+    const JeveuxVectorChar24 getReference() const { return _reference; };
 
     /**
      * @brief Get _valuesList
      */
-    const JeveuxVectorReal getFieldValues() const { return _valuesList; };
+    const JeveuxVectorReal getValues() const { return _valuesList; };
 
     /**
      * @brief Surcharge de l'operateur []

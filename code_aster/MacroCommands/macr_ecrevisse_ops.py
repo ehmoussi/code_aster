@@ -315,7 +315,7 @@ def macr_ecrevisse_ops(self, **args):
                     entityType = meshEntity.getType()
                     if entityType is EntityType.GroupOfCellsType:
                         dictToAdd["GROUP_MA"] = meshEntity.getNames()
-                    elif entityType is EntityType.ElementType:
+                    elif entityType is EntityType.CellType:
                         dictToAdd["MAILLE"] = meshEntity.getNames()
                     elif entityType is EntityType.AllMeshEntitiesType:
                         dictToAdd["TOUT"] = "OUI"

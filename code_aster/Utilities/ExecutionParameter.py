@@ -160,6 +160,8 @@ class ExecutionParameter(metaclass=Singleton):
             self._args[option] = value
             if option == "tpmax":
                 libaster.set_option(option, value)
+            elif option == "numthreads":
+                os.environ["OMP_NUM_THREADS"] = str(value)
         elif value is not None:
             if value:
                 self.enable(Options.by_name(option))
@@ -176,7 +178,7 @@ class ExecutionParameter(metaclass=Singleton):
         Returns:
             misc: Parameter value.
         """
-        logger.debug("get_option {0!r}".format(option))
+        logger.debug(f"get_option {option!r}")
         if option.startswith("prog:"):
             value = get_program_path(re.sub('^prog:', '', option))
         elif option in self._args:
@@ -188,8 +190,7 @@ class ExecutionParameter(metaclass=Singleton):
                 value = None
         if isinstance(value, str):
             value = convert(value)
-        logger.debug("return for {0!r}: {1} {2}"
-                     .format(option, value, type(value)))
+        logger.debug(f"return for {option!r}: {value} {type(value)}")
         return value
 
     def enable(self, option):
@@ -339,8 +340,8 @@ class ExecutionParameter(metaclass=Singleton):
 
         args, ignored = parser.parse_known_args(argv or sys.argv)
 
-        logger.debug("Ignored arguments: %r", ignored)
-        logger.debug("Read options: %r", vars(args))
+        logger.debug(f"Ignored arguments: {ignored!r}")
+        logger.debug(f"Read options: {vars(args)!r}")
 
         # assign parameter values
         for opt, value in list(vars(args).items()):

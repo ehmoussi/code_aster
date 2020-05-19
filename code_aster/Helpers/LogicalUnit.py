@@ -203,7 +203,7 @@ class LogicalUnitFile(object):
             if filename:
                 kwargs['FICHIER'] = filename
                 if access == FileAccess.New and osp.exists(filename):
-                    logger.warning("remove existing file '{0}'".format(filename))
+                    logger.warning(f"remove existing file '{filename}'")
                     os.remove(filename)
             kwargs['TYPE'] = FileType.name(typ)
             kwargs['ACCES'] = FileAccess.name(access)
@@ -265,8 +265,8 @@ class LogicalUnitFile(object):
     @classmethod
     def _register(cls, fileobj):
         """Register a logical unit."""
-        logger.debug("LogicalUnit: register unit {0}, name {1!r}"
-                     .format(fileobj._unit, fileobj._filename))
+        logger.debug(f"LogicalUnit: register unit {fileobj._unit}, "
+                     f"name {fileobj._filename!r}")
         cls._used_unit[fileobj._unit] = fileobj
 
     @classmethod
@@ -277,7 +277,7 @@ class LogicalUnitFile(object):
             unit (int): Number of logical unit to release.
             to_register (bool): Boolean to avoid calling of register.
         """
-        logger.debug("LogicalUnit: release unit {0}".format(unit))
+        logger.debug(f"LogicalUnit: release unit {unit}")
         fileobj = cls.from_number(unit)
         if not fileobj:
             # RESERVED_UNIT or not registered
