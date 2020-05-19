@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -51,9 +51,7 @@ POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
                                   TYPE_MAILLAGE = SIMP(statut='f',typ='TXM',into=("REGLE",),defaut="REGLE"),
                              ),
 
-                         NOEUD         = SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**'),
                          GROUP_NO      = SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
-                         SANS_NOEUD    = SIMP(statut='c',typ=no  ,validators=NoRepeat(),max='**'),
                          SANS_GROUP_NO = SIMP(statut='f',typ=grno,validators=NoRepeat(),max='**'),
                          TOUT          = SIMP(statut='f',typ='TXM',into=("OUI",) ),
                          ABSC_CURV_MAXI=SIMP(statut='f',typ='R',
