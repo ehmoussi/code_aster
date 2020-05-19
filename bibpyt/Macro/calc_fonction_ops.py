@@ -33,7 +33,7 @@ from code_aster.Cata.Syntax import _F
 from code_aster.Cata.DataStructure import fonction_sdaster, fonction_c, nappe_sdaster
 
 from Cata_Utils.t_fonction import (
-    t_fonction, t_nappe,
+    t_fonction, t_fonction_c, t_nappe,
     homo_support_nappe, enveloppe, fractile, moyenne,
     FonctionError, ParametreError, InterpolationError, ProlongementError,
 )
@@ -123,11 +123,6 @@ class CalcFonctionOper(object):
         DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
         IMPR_FONCTION = macr.get_cmd('IMPR_FONCTION')
         DEFI_NAPPE = macr.get_cmd('DEFI_NAPPE')
-
-  #--------------------------------------------------------------------------------
-  # On importe les definitions des commandes a utiliser dans la macro
-  #
-
         macr.DeclareOut('result', macr.sd)
         # common keywords to DEFI_FONCTION & DEFI_NAPPE
         para = self.resu.para
@@ -874,90 +869,47 @@ class CalcFonction_INTEGRE_FREQ(CalcFonctionOper):
         """INTEGRE_FREQ"""
         kw = self.kw
         f_in = self._lf[0]
-        para      = f_in.para.copy()
-        fonc_acce = kw['FONCTION']
-        __fonc_acce = CALC_FONCTION(COMB=(
-                   _F(FONCTION=fonc_acce, COEF=1.0),
-                         ),
-                    PROL_DROITE='CONSTANT',
-                    PROL_GAUCHE='CONSTANT',
-                     );
-        tt, vale_s = __fonc_acce.Valeurs()
-        dt = tt[1] - tt[0]
-        nbdt = len(vale_s)
-        tfin = tt[nbdt - 1]
+        para = f_in.para.copy()
+        para.update(_F(PROL_GAUCHE="CONSTANT", PROL_DROITE="CONSTANT"))
+        vale_t = f_in.vale_x
+        vale_s = f_in.vale_y
+        dt = vale_t[1] - vale_t[0]
+        nbdt = len(vale_t)
+        tfin = vale_t[nbdt - 1]
         fmax = 0.5 / dt  # facteur 1/2 car FFT calculee avec SYME='NON'
         df = 2.0 * fmax / nbdt
-        deuxpi = 2. * math.pi
-        fc = kw['FREQ_COUP']
-        fc0 = kw['FREQ_FILTRE']
-        niv = kw['NIVEAU']
+        freq_coup = kw['FREQ_COUP']
+        freq_filt = kw['FREQ_FILTRE']
 
-        if fc0 > 0.0:
-          __ACC0=CALC_FONCTION(CORR_ACCE=_F(  FONCTION = __fonc_acce, FREQ_FILTRE=fc0, METHODE="FILTRAGE") )
+        if freq_filt > 0.0:
+            # CORR_ACCE / METHODE="FILTRAGE"
+            vale_s = acce_filtre_CP(vale_s, dt, freq_filt)
 
-          __XFF0=CALC_FONCTION( FFT=_F( FONCTION = __ACC0, METHODE='COMPLET',) );
+        acc0 = t_fonction(vale_t, vale_s, para)
+        xff0 = acc0.fft(methode="COMPLET")
 
+        lfreq = NP.arange(0., fmax, df)
+
+        para_filt = para.copy()
+        para_filt.update(_F(INTERPOL=["LIN", "LIN"]))
+        filtre = t_fonction_c([0., df, freq_coup, freq_coup + df],
+                              [0., 1., 1., 0.], para_filt)
+        xf1 = (xff0 * filtre).evalfonc(lfreq)
+        if kw["NIVEAU"] == 2:
+            vale = -1. / (2. * math.pi * lfreq[1:])**2 * xf1.vale_y[1:]
         else:
-          __XFF0=CALC_FONCTION( FFT=_F( FONCTION = __fonc_acce, METHODE='COMPLET',) );
+            vale = 1. / (2. * math.pi * lfreq[1:]) * xf1.vale_y[1:]
+            vale = -1j * vale
 
-        __lfreq= DEFI_LIST_REEL ( DEBUT = 0.,
-                        INTERVALLE = _F(JUSQU_A = fmax-df,
-                                        PAS = df,),
-                      );
-                      
-        __lfreq1= DEFI_LIST_REEL ( DEBUT = df,
-                        INTERVALLE = _F(JUSQU_A = fmax-df,
-                                        PAS = df,),
-                      );
+        xf0 = t_fonction_c(lfreq, NP.concatenate(([0.], vale)), para)
+        xf0.para["NOM_PARA"] = "FREQ"
+        depl = xf0.fft(methode="COMPLET", syme="NON")
+        dep0 = - depl(0.)
 
-        __linst= DEFI_LIST_REEL ( DEBUT = 0.,
-                        INTERVALLE = _F(JUSQU_A = tfin,
-                                        PAS = dt,),
-                      );
-
-        __FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
-                       VALE_C=(0., 0., 0., df, 1., 0., fc, 1., 0., (fc+df), 0., 0.),
-                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',)
-
-        __XF1 = CALC_FONCTION(MULT=(_F(FONCTION=__XFF0,), _F(FONCTION=__FILTRE,)), 
-                               LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-
-        xff = __XF1.convert('complex')
-        med = int(fmax/df)
-        lfreq = xff.vale_x.tolist()
-        lvale = xff.vale_y.tolist()
-
-        # création des concepts
-        Vale = [0.0,0.0,0.0]
-        for k in range(1, med):
-            freqk = lfreq[k]
-            Vale.append(freqk)
-            if niv == 2:
-              Vale.append(-1.0*(deuxpi*freqk)**(-2)*NP.real(lvale[k]))
-              Vale.append(-1.0*(deuxpi*freqk)**(-2)*NP.imag(lvale[k]))
-            if niv == 1:
-              Vale.append((deuxpi*freqk)**(-1)*NP.imag(lvale[k]))
-              Vale.append(-1.0*(deuxpi*freqk)**(-1)*NP.real(lvale[k]))
-
-        __XF0 = DEFI_FONCTION(NOM_PARA='FREQ', VALE_C=Vale,
-                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',);                       
-
-        __depl0 = CALC_FONCTION(FFT=_F(FONCTION=__XF0, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)
-        
-        __fTC0 = DEFI_CONSTANTE(VALE=__depl0(0))
-
-        __dep0 = CALC_FONCTION(COMB=(
-                            _F(FONCTION=__depl0, COEF=1.0,),
-                            _F(FONCTION=__fTC0, COEF=-1.0,)
-                                    ),
-                            LIST_PARA=__linst, NOM_PARA='INST',
-                            PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
-                         )
-
-        tt, vale_s = __dep0.Valeurs()
-        
-        self.resu = t_fonction(tt, vale_s, para)
+        linst = NP.arange(0., tfin + dt, dt)
+        result = (depl + dep0).evalfonc(linst)
+        result.para = f_in.para.copy()
+        self.resu = result
 
 class CalcFonction_DERIVE_FREQ(CalcFonctionOper):
     """DERIVE_FREQ"""
@@ -965,80 +917,39 @@ class CalcFonction_DERIVE_FREQ(CalcFonctionOper):
         """DERIVE_FREQ"""
         kw = self.kw
         f_in = self._lf[0]
-        para      = f_in.para.copy()
-        fonc_acce = kw['FONCTION']
-        __fonc_acce = CALC_FONCTION(COMB=(
-                   _F(FONCTION=fonc_acce, COEF=1.0),
-                         ),
-                    PROL_DROITE='CONSTANT',
-                    PROL_GAUCHE='CONSTANT',
-                     );
-        tt, vale_s = __fonc_acce.Valeurs()
-        dt = tt[1] - tt[0]
-        nbdt = len(vale_s)
-        tfin = tt[nbdt - 1]
+        para = f_in.para.copy()
+        para.update(_F(PROL_GAUCHE="CONSTANT", PROL_DROITE="CONSTANT"))
+        vale_t = f_in.vale_x
+        dt = vale_t[1] - vale_t[0]
+        nbdt = len(vale_t)
+        tfin = vale_t[nbdt - 1]
         fmax = 0.5 / dt  # facteur 1/2 car FFT calculee avec SYME='NON'
         df = 2.0 * fmax / nbdt
-        deuxpi = 2. * math.pi
-        fc = kw['FREQ_COUP']
-        niv = kw['NIVEAU']
+        freq_coup = kw['FREQ_COUP']
 
-        __XFF0=CALC_FONCTION( FFT=_F( FONCTION = __fonc_acce, METHODE='COMPLET',) );
+        xff0 = f_in.fft(methode="COMPLET")
 
-        __lfreq= DEFI_LIST_REEL ( DEBUT = 0.,
-                        INTERVALLE = _F(JUSQU_A = fmax-df,
-                                        PAS = df,),
-                      );
-                      
-        __lfreq1= DEFI_LIST_REEL ( DEBUT = df,
-                        INTERVALLE = _F(JUSQU_A = fmax-df,
-                                        PAS = df,),
-                      );
+        lfreq = NP.arange(0., fmax, df)
 
-        __linst= DEFI_LIST_REEL ( DEBUT = 0.,
-                        INTERVALLE = _F(JUSQU_A = tfin,
-                                        PAS = dt,),
-                      );
+        para_filt = para.copy()
+        para_filt.update(_F(INTERPOL=["LIN", "LIN"]))
+        filtre = t_fonction_c([0., df, freq_coup, freq_coup + df],
+                              [0., 1., 1., 0.], para_filt)
+        xf1 = (xff0 * filtre).evalfonc(lfreq)
+        if kw["NIVEAU"] == 2:
+            vale = -1. * (2. * math.pi * lfreq[1:])**2 * xf1.vale_y[1:]
+        else:
+            vale = 2. * math.pi * lfreq[1:] * xf1.vale_y[1:]
+            vale = 1j * vale
 
-        __FILTRE = DEFI_FONCTION(NOM_PARA='FREQ',
-                       VALE_C=(0., 0., 0., df, 1., 0., fc, 1., 0., (fc+df), 0., 0.),
-                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',)
+        xf0 = t_fonction_c(lfreq, NP.concatenate(([0.], vale)), para)
+        xf0.para["NOM_PARA"] = "FREQ"
+        depl = xf0.fft(methode="COMPLET", syme="NON")
 
-        __XF1 = CALC_FONCTION(MULT=(_F(FONCTION=__XFF0,), _F(FONCTION=__FILTRE,)), 
-                               LIST_PARA=__lfreq, NOM_PARA='FREQ',)
-
-        xff = __XF1.convert('complex')
-        med = int(fmax/df)
-        lfreq = xff.vale_x.tolist()
-        lvale = xff.vale_y.tolist()
-
-        # création des concepts
-        Vale = [0.0,0.0,0.0]
-        for k in range(1, med):
-            freqk = lfreq[k]
-            Vale.append(freqk)
-            if niv == 2:
-              Vale.append(-1.0*(deuxpi*freqk)**(2)*NP.real(lvale[k]))
-              Vale.append(-1.0*(deuxpi*freqk)**(2)*NP.imag(lvale[k]))
-            if niv == 1:
-              Vale.append(-1.0*deuxpi*freqk*NP.imag(lvale[k]))
-              Vale.append(deuxpi*freqk*NP.real(lvale[k]))
-
-        __XF0 = DEFI_FONCTION(NOM_PARA='FREQ', VALE_C=Vale,
-                    PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',);                       
-
-        __depl0 = CALC_FONCTION(FFT=_F(FONCTION=__XF0, METHODE='COMPLET', SYME='NON',),PROL_DROITE='CONSTANT',)        
-
-        __dep0 = CALC_FONCTION(COMB=(
-                            _F(FONCTION=__depl0, COEF=1.0,),
-                                    ),
-                            LIST_PARA=__linst, NOM_PARA='INST',
-                            PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
-                         )
-
-        tt, vale_s = __dep0.Valeurs()
-        
-        self.resu = t_fonction(tt, vale_s, para)
+        linst = NP.arange(0., tfin + dt, dt)
+        result = depl.evalfonc(linst)
+        result.para = f_in.para.copy()
+        self.resu = result
 
 
 class Context(object):
