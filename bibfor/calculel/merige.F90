@@ -57,7 +57,6 @@ subroutine merige(model_, cara_elem_, sigg, strx, matel,&
     character(len=16) :: option
     character(len=24) :: ligrmo, chgeom, chcara(18), chharm
     character(len=19) :: pintto, cnseto, heavto, loncha, basloc, lsn, lst, stano, pmilto, hea_no
-    aster_logical :: lfiss
     character(len=8) :: modele, cara
 !
 !-----------------------------------------------------------------------
