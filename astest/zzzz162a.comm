@@ -140,7 +140,7 @@ MOTHER=AFFE_MODELE(MAILLAGE=MAIL,
 
 
 MOMECA=AFFE_MODELE(MAILLAGE=MAIL,
-                   AFFE=_F(TOUT='OUI',
+                   AFFE=_F(GROUP_MA='GRSD1',
                            PHENOMENE='MECANIQUE',
                            MODELISATION='AXIS',),);
 #

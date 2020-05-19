@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ subroutine mearcc(option, mo, chin, chout)
     integer ::  jcesd3, jcesk3, jcesl3,   jcesd2, ima
     integer :: jcesk2, jcesl2, jcesc2, jlcnx, jcnx, ipt, icp, ino2, ino3
     integer :: jco3, jco2, npt3, npt2, ipt2, ipt3,  k, npt
-    integer :: iad3, iad2, nucmp, numasu, numavo
+    integer :: iad3, iad2, nucmp, numasu, numavo, nbcmp2
 !
     character(len=8) :: ma, comp(nbcmp), k8b, nomasu, nomavo, valk(2)
     character(len=19) :: chous, chins
@@ -82,7 +82,9 @@ subroutine mearcc(option, mo, chin, chout)
 !
     call dismoi('NOM_MAILLA', mo, 'MODELE', repk=ma)
     call dismoi('DIM_GEOM', ma, 'MAILLAGE', repi=ndim)
-    ASSERT(ndim.eq.3)
+    nbcmp2 = nbcmp
+    if (ndim.eq.2) nbcmp2 = 4
+!    ASSERT(ndim.eq.3)
 !
 !     RECUPERATION DES MAILLES DE FACES ET DES MAILLES 3D SUPPORT
     call srlima(mo, mail2d, mail3d, mailto, nbma)
@@ -106,7 +108,7 @@ subroutine mearcc(option, mo, chin, chout)
 !     CREATION DU CHAMP 2D (OUT) SIMPLE
     chous='&&MEARCC.CHOUT_S'
     call cescre('V', chous, 'ELNO', ma, 'SIEF_R',&
-                nbcmp, comp, [-1], [-1], [-nbcmp])
+                nbcmp2, comp, [-1], [-1], [-nbcmp2])
 !
     call jeveuo(chous//'.CESV', 'E', vr=cesv2)
     call jeveuo(chous//'.CESD', 'E', jcesd2)
@@ -154,7 +156,7 @@ subroutine mearcc(option, mo, chin, chout)
         call jenuno(jexnum(ma//'.NOMMAI', zi(jma2d+ima-1)), k8b)
         call jenuno(jexnum(ma//'.NOMMAI', zi(jma3d+ima-1)), k8b)
         do ipt = 1, npt
-            do icp = 1, nbcmp
+            do icp = 1, nbcmp2
                 nucmp=indik8( cesc3, comp(icp), 1, zi(jcesd3+1)&
                 )
 !
