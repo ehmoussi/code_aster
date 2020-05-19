@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -264,4 +264,135 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   ),
           )
 
+##################################################################
+# TEST DES OPTIONS DE CHOIX DES POINTS DE CALCUL DANS POST_K1_K2_K3
+##################################################################
+
+MAIB = DEFI_GROUP(reuse=MAIB,
+                MAILLAGE=MAIB,
+                CREA_GROUP_NO = (
+                 _F(NOM = 'NFF',
+                    GROUP_MA = 'FONDFISS'),
+                 _F(NOM = 'part1',
+                    OPTION='ENV_SPHERE',
+                    POINT = (3.5, 8.0, 0.),
+                   RAYON = 1.1,
+                   PRECISION = 1.1),
+                 _F(NOM = 'part2',
+                    OPTION='ENV_SPHERE',
+                    POINT = (3.5, 8.0, 3.5),
+                    RAYON = 0.8,
+                    PRECISION = 0.8),
+                 _F(NOM = 'GRoui',
+                    INTERSEC = ('NFF','part1')),
+                 _F(NOM = 'GRnon',
+                    INTERSEC = ('NFF','part2')),
+                 ),
+        )
+
+K1=POST_K1_K2_K3(RESULTAT=RESU,
+                TYPE_MAILLAGE='LIBRE',
+                FOND_FISS=FISS,
+                TOUT='OUI',
+                GROUP_NO='GRoui',
+                SANS_GROUP_NO='GRnon')  
+        
+K2=POST_K1_K2_K3(RESULTAT=RESU,
+                TYPE_MAILLAGE='LIBRE',
+                FOND_FISS=FISS,
+                TOUT='OUI',
+                GROUP_NO='GRoui')  
+        
+K3=POST_K1_K2_K3(RESULTAT=RESU,
+                TYPE_MAILLAGE='LIBRE',
+                FOND_FISS=FISS,
+                TOUT='OUI',
+                SANS_GROUP_NO='GRnon')    
+        
+K4=POST_K1_K2_K3(RESULTAT=RESU,
+                TYPE_MAILLAGE='LIBRE',
+                FOND_FISS=FISS,
+                TOUT='OUI')    
+        
+K5=POST_K1_K2_K3(RESULTAT=RESU,
+                TYPE_MAILLAGE='LIBRE',
+                FOND_FISS=FISS,
+                GROUP_NO='GRoui',
+                SANS_GROUP_NO='GRnon')  
+        
+K6=POST_K1_K2_K3(RESULTAT=RESU,
+                TYPE_MAILLAGE='LIBRE',
+                FOND_FISS=FISS,
+                GROUP_NO='GRoui')  
+        
+K7=POST_K1_K2_K3(RESULTAT=RESU,
+                TYPE_MAILLAGE='LIBRE',
+                FOND_FISS=FISS,
+                SANS_GROUP_NO='GRnon')        
+
+# cas par defaut : POST_K
+        
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-10,
+           VALE_CALC_I=12,
+           VALE_REFE_I=12,
+           NOM_PARA='NUM_PT',
+           TYPE_TEST='MAX',
+           TABLE=K1,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-10,
+           VALE_CALC_I=14,
+           VALE_REFE_I=14,
+           NOM_PARA='NUM_PT',
+           TYPE_TEST='MAX',
+           TABLE=K2,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-10,
+           VALE_CALC_I=12,
+           VALE_REFE_I=12,
+           NOM_PARA='NUM_PT',
+           TYPE_TEST='MAX',
+           TABLE=K3,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-10,
+           VALE_CALC_I=23,
+           VALE_REFE_I=23,
+           NOM_PARA='NUM_PT',
+           TYPE_TEST='MAX',
+           TABLE=K4,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-10,
+           VALE_CALC_I=12,
+           VALE_REFE_I=12,
+           NOM_PARA='NUM_PT',
+           TYPE_TEST='MAX',
+           TABLE=K5,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-10,
+           VALE_CALC_I=14,
+           VALE_REFE_I=14,
+           NOM_PARA='NUM_PT',
+           TYPE_TEST='MAX',
+           TABLE=K6,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-10,
+           VALE_CALC_I=6,
+           VALE_REFE_I=6,
+           NOM_PARA='NUM_PT',
+           TYPE_TEST='MAX',
+           TABLE=K7,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.0E-10,
+           VALE_CALC_I=12,
+           VALE_REFE_I=12,
+           NOM_PARA='NUM_PT',
+           TYPE_TEST='MAX',
+           TABLE=POST_K,)
 FIN();
