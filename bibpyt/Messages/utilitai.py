@@ -197,6 +197,11 @@ Erreur utilisateur dans la commande CREA_CHAMP.
  le champ  %(k1)s n'est pas de type complexe
 """),
 
+    36 : _("""
+Erreur dans la commande CREA_CHAMP.
+ Le champ de sortie ne contient pas de composante %(k1)s. Les valeurs 
+ correspondantes ne seront pas prises en compte.
+"""),
 
     37 : _("""
 Erreur utilisateur dans la commande CREA_CHAMP.
@@ -214,8 +219,37 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
+    42 : _("""
+CREA_CHAMP/ASSE :
 
+Une ou plusieurs composantes demandées sont inexistantes dans le champ produit.
+Si vous ne comprenez pas pourquoi, sachez que cela peut-être dû au champ d'entrée
+de la première occurrence qui dans certains cas impose ses composantes.
 
+Par exemple, si vous souhaitez créer un champ de type ELGA_EPSI_R avec
+les composantes EPXX et EPYY à partir notamment d'un champ EPVC_ELGA
+(extrait d'un résultat), lui aussi de type ELGA_EPSI_R, placé en première
+occurrence, aucune des composantes souhaitées ne sera prise en compte 
+car elles ne font pas partie des composantes du champ créé.
+
+Conseils :
+
+1/ Si plusieurs occurrences sont présentes, vous pouvez en placer une autre
+en première position s'il elle ne présente pas le même problème.
+
+2/ Vous pouvez faire les choses en deux temps en passant par l'intermédiaire
+d'un champ de type NEUT.
+
+3/ Vous pouvez ajouter artificiellement un champ permettant uniquement d'avoir
+les composantes souhaitées. Dans l'exemple ci-dessus, on pourrait extraire
+d'un résultat le champ EPSI_ELGA et le donner en première occurrence avec
+un COEF_R à 0.
+"""),
+
+    43 : _("""
+Erreur utilisateur dans la commande CREA_CHAMP.
+Il n'y a pas de composante %(k1)s dans le champ %(k2)s.
+"""),
 
 
 
