@@ -14,7 +14,7 @@ mesh.readMedFile("test001f.mmed")
 
 
 model = code_aster.Model(mesh)
-model.addModelingOnAllMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
+model.addModelingOnMesh(code_aster.Physics.Mechanics, code_aster.Modelings.Tridimensional)
 model.build()
 
 
@@ -25,7 +25,7 @@ acier = DEFI_MATERIAU(ELAS = _F(E = young,
                                 NU = poisson,),)
 
 affe_mat = code_aster.MaterialField(mesh)
-affe_mat.addMaterialOnAllMesh(acier)
+affe_mat.addMaterialsOnMesh(acier)
 affe_mat.buildWithoutExternalVariable()
 
 imposed_dof_1 = code_aster.DisplacementReal()

@@ -46,7 +46,7 @@ enum DrivingTypeEnum {
     ElasticityLimit
 };
 extern const std::vector< DrivingTypeEnum > allDrivingType;
-extern const std::vector< std::string > allDrivingTypeNames;
+extern const VectorString allDrivingTypeNames;
 
 /**
  * Components defining the degree of freedom on which we act
@@ -66,7 +66,7 @@ enum SelectionCriterionEnum {
     MixedCriterion
 };
 extern const std::vector< SelectionCriterionEnum > allSelectionCriterion;
-extern const std::vector< std::string > allSelectionCriterionNames;
+extern const VectorString allSelectionCriterionNames;
 
 /**
  * @class DrivingClass

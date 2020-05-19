@@ -930,7 +930,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
       resultfile.close()
 
       __mail0 = Mesh()
-      __mail0.readAsterMeshFile("dse.mail")
+      __mail0.readAsterFile("dse.mail")
       __mailla = CREA_MAILLAGE(MAILLAGE=__mail0,
                              CREA_POI1=(
                              _F(NOM_GROUP_MA='PCOL',

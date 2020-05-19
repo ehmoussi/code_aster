@@ -46,8 +46,7 @@ def no_new_attributes(wrapped_setattr):
         if hasattr(self, name): # not a new attribute, allow setting
             wrapped_setattr(self, name, value)
         else:
-            message = "Can't add attribute %r to %s" % (name, self)
-            raise AttributeError(message)
+            raise AttributeError(f"Can't add attribute {name!r} to {self}")
 
     return __setattr__
 

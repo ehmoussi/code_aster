@@ -37,7 +37,7 @@ NonLinearControlClass::NonLinearControlClass( double rTol, int nIterMax, double 
                                                     double relMaxTol, double relTolCmp )
     : SolverControlClass( rTol, nIterMax ), _maxTol( maxTol ), _relativeMaxTol( relMaxTol ),
       _relativeTolByComponent( relTolCmp ) {
-    std::vector< double > v( nIterMax, 0. );
+    VectorReal v( nIterMax, 0. );
     _relResNorm = v;
 }
 
@@ -69,7 +69,7 @@ ConvergenceState NonLinearControlClass::check( const DiscreteProblemPtr &dProble
 
 /* Clean convergence history */
 void NonLinearControlClass::cleanLog() {
-    for ( std::vector< double >::iterator it( _relResNorm.begin() ); it < _relResNorm.end();
+    for ( VectorReal::iterator it( _relResNorm.begin() ); it < _relResNorm.end();
           it++ ) {
         *it = 0.0;
     }

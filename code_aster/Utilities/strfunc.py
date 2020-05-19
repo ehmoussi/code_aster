@@ -82,7 +82,7 @@ def from_unicode(ustring, encoding, errors='replace'):
     Arguments:
         ustring (str): Unicode string to encode.
         encoding (str): Encoding name.
-        errors (str): Behavior in case of encoding error
+        errors (str): Behaviour in case of encoding error
             (see :py:func:`string.encode`).
 
     Returns:
@@ -101,7 +101,7 @@ def convert(content, encoding=None, errors='replace'):
     Arguments:
         content (str/unicode): Text to convert.
         encoding (str): Encoding name.
-        errors (str): Behavior in case of encoding error
+        errors (str): Behaviour in case of encoding error
             (see :meth:`string.encode`).
 
     Returns:

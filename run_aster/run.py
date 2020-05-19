@@ -221,11 +221,11 @@ class RunAster:
             _log_mess(FMT_DIAG.format(state=status.diag))
         return status
 
-    def _get_cmdline(self, commfile):
-        """Build the command line.
+    def _get_cmdline_exec(self, commfile):
+        """Build the command line really executed, without redirection.
 
         Returns:
-            list[str]: List of command line arguments.
+            list[str]: List of command line arguments, without redirection.
         """
         cmd = []
         if self._exectool:
@@ -239,7 +239,16 @@ class RunAster:
         for obj in self.export.datafiles:
             cmd.append(f'--link="{obj.as_argument}"')
         cmd.extend(self.export.args)
+        # TODO add pid + mode to identify the process by asrun
+        return cmd
 
+    def _get_cmdline(self, commfile):
+        """Build the command line.
+
+        Returns:
+            list[str]: List of command line arguments.
+        """
+        cmd = self._get_cmdline_exec(commfile)
         if self._tee:
             orig = " ".join(cmd)
             cmd = [
@@ -248,7 +257,6 @@ class RunAster:
             ]
         else:
             cmd.extend([">>", TMPMESS, "2>&1"])
-        # TODO add pid + mode to identify the process by asrun
         return cmd
 
     def _get_status(self, exitcode, last):
@@ -312,8 +320,11 @@ class RunOnlyEnv(RunAster):
             last (bool): *True* for the last command file.
             timeout (float): Remaining time.
         """
-        cmd = self._get_cmdline(comm)
+        cmd = self._get_cmdline_exec(comm)
         logger.info(f"    {' '.join(cmd)}")
+        with open(f"cmd{idx}.sh", "w") as fobj:
+            fobj.write(' '.join(cmd) + '\n')
+        os.chmod(f"cmd{idx}.sh", 0o755)
         return Status(StateOptions.Ok, exitcode=0)
 
     def ending_execution(self, _):

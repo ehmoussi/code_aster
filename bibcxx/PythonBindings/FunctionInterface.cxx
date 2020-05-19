@@ -40,14 +40,28 @@ void exportFunctionToPython() {
         .def( "setResultName", &FunctionClass::setResultName )
         .def( "setInterpolation", &FunctionClass::setInterpolation )
         .def( "setValues", &FunctionClass::setValues )
-        .def( "getValues", &FunctionClass::getValues );
+        .def( "getValues", &FunctionClass::getValues, R"(
+Return a list of the values of the functions as (x1, x2, ..., y1, y2, ...)
+
+Returns:
+    list[float]: List of values (size = 2 * *size()*).
+
+        )",
+        ( py::arg( "self" ) ) );
 
     py::class_< FunctionClass, FunctionClass::FunctionPtr,
                 py::bases< BaseFunctionClass > >( "Function", py::no_init )
         .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionClass >))
         .def( "__init__", py::make_constructor(&initFactoryPtr< FunctionClass, std::string >))
         .def( "setValues", &FunctionClass::setValues )
-        .def( "size", &FunctionClass::size )
+        .def( "size", &FunctionClass::size, R"(
+Return the number of points of the function.
+
+Returns:
+    int: Number of points.
+
+        )",
+        ( py::arg( "self" ) ) )
         .def( "setAsConstant", &FunctionClass::setAsConstant );
 
     // Candidates for setValues
@@ -63,5 +77,12 @@ void exportFunctionToPython() {
               py::make_constructor(&initFactoryPtr< FunctionComplexClass, std::string >))
         .def( "setValues", c1 )
         .def( "setValues", c2 )
-        .def( "size", &FunctionComplexClass::size );
+        .def( "size", &FunctionComplexClass::size, R"(
+Return the number of points of the function.
+
+Returns:
+    int: Number of points.
+
+        )",
+        ( py::arg( "self" ) ) );
 };

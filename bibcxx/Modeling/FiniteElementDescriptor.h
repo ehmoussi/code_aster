@@ -29,7 +29,7 @@
 #include "MemoryManager/JeveuxVector.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "Meshes/MeshExplorer.h"
-#include "Meshes/Mesh.h"
+#include "Meshes/BaseMesh.h"
 
 class FiniteElementDescriptorClass;
 
@@ -47,7 +47,7 @@ typedef boost::shared_ptr< FiniteElementDescriptorClass > FiniteElementDescripto
 class FiniteElementDescriptorClass: public DataStructure
 {
 public:
-    typedef MeshExplorer< ElementBuilderFromFiniteElementDescriptor,
+    typedef MeshExplorer< CellsIteratorFromFiniteElementDescriptor,
                           const JeveuxCollectionLong& > ConnectivityDelayedElementsExplorer;
 
 protected:
@@ -60,7 +60,7 @@ protected:
     /** @brief Collection '.LIEL' */
     JeveuxCollectionLong                      _listOfGroupOfCells;
     /** @brief Vecteur Jeveux '.REPE' */
-    JeveuxVectorLong                          _groupOfCellsNumberByElement;
+    JeveuxVectorLong                          _groupsOfCellsNumberByElement;
     /** @brief Collection '.NEMA' */
     JeveuxCollectionLong                      _delayedNumberedConstraintElementsDescriptor;
     /** @brief Vecteur Jeveux '.PRNS' */
@@ -73,9 +73,9 @@ protected:
     JeveuxVectorChar16                        _nameOfNeighborhoodStructure;
     /** @brief Base mesh */
     BaseMeshPtr                               _mesh;
-    /** @brief Object to allow loop over connectivity of delayed numbered elements */
+    /** @brief Object to loop over connectivity of delayed numbered cells */
     const ConnectivityDelayedElementsExplorer _explorer;
-    /** @brief Object to allow loop over list of group of elements */
+    /** @brief Object to loop over list of group of cells */
     const ConnectivityDelayedElementsExplorer _explorer2;
 
 public:
@@ -152,8 +152,8 @@ public:
 
 #ifdef _USE_MPI
     /** @brief Transert .PRNM from other FiniteElementDescriptor.
-     * this should be associated to a partialMesh,
-     * other should be associated to the parallelMesh of the partialMesh */
+     * this should be associated to a ConnectionMesh,
+     * other should be associated to the parallelMesh of the ConnectionMesh */
     void transferDofDescriptorFrom( FiniteElementDescriptorPtr& );
 #endif /* _USE_MPI */
 };

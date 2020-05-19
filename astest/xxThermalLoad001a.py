@@ -17,7 +17,7 @@ monMaillage.readMedFile("test001f.mmed")
 
 # Definition du modele Aster
 monModel = code_aster.Model(monMaillage)
-monModel.addModelingOnAllMesh(code_aster.Physics.Thermal, code_aster.Modelings.Tridimensional)
+monModel.addModelingOnMesh(code_aster.Physics.Thermal, code_aster.Modelings.Tridimensional)
 monModel.build()
 
 # @@@@

@@ -40,7 +40,7 @@
  */
 enum InterfaceTypeEnum { MacNeal, CraigBampton, HarmonicCraigBampton, NoInterfaceType };
 extern const std::vector< InterfaceTypeEnum > allInterfaceType;
-extern const std::vector< std::string > allInterfaceTypeNames;
+extern const VectorString allInterfaceTypeNames;
 
 /**
  * @class StructureInterfaceClass
@@ -67,7 +67,7 @@ class StructureInterfaceClass : public DataStructure {
     struct InterfaceDefinition {
         const std::string _name;
         const InterfaceTypeEnum _type;
-        VectorOfGroupOfNodesPtr _groupOfNodes;
+        VectorOfGroupOfNodesPtr _groupsOfNodes;
         const VectorComponent _components;
         CapyConvertibleContainer _container;
 
@@ -80,9 +80,9 @@ class StructureInterfaceClass : public DataStructure {
                 true, "TYPE", _type, allInterfaceType, allInterfaceTypeNames, true ) );
 
             for ( const auto &iter : groupOfNodes )
-                _groupOfNodes.emplace_back( new GroupOfNodes( iter ) );
+                _groupsOfNodes.emplace_back( new GroupOfNodes( iter ) );
             _container.add( new CapyConvertibleValue< VectorOfGroupOfNodesPtr >(
-                true, "GROUP_NO", _groupOfNodes, true ) );
+                true, "GROUP_NO", _groupsOfNodes, true ) );
 
             VectorString values( ComponentNames.size() );
             transform( ComponentNames.begin(), ComponentNames.end(), values.begin(), value );

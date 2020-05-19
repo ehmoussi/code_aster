@@ -25,68 +25,91 @@
 
 #include <boost/python.hpp>
 
-namespace py = boost::python;
-#include <PythonBindings/factory.h>
-#include <Meshes/MeshEntities.h>
 #include "PythonBindings/MeshInterface.h"
-#include "PythonBindings/factory.h"
-#include "PythonBindings/ConstViewerUtilities.h"
+#include <Meshes/BaseMesh.h>
+#include <Meshes/Mesh.h>
+#include <Meshes/MeshEntities.h>
+#include <PythonBindings/factory.h>
+
+namespace py = boost::python;
 
 void exportMeshToPython() {
 
-    py::enum_< EntityType >( "EntityType" )
-        .value( "GroupOfNodesType", GroupOfNodesType )
-        .value( "GroupOfCellsType", GroupOfCellsType )
-        .value( "AllMeshEntitiesType", AllMeshEntitiesType )
-        .value( "ElementType", ElementType )
-        .value( "NodeType", NodeType )
-        .value( "NoType", NoType );
+    py::class_< MeshClass, MeshClass::MeshPtr, py::bases< BaseMeshClass > >( "Mesh", py::no_init )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< MeshClass > ) )
+        .def( "__init__", py::make_constructor( &initFactoryPtr< MeshClass, std::string > ) )
+        .def( "getGroupsOfCells", &MeshClass::getGroupsOfCells, R"(
+Return the list of the existing groups of cells.
 
-    py::class_< VirtualMeshEntity, MeshEntityPtr >( "MeshEntity", py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< VirtualMeshEntity, std::string, EntityType >))
-        // fake initFactoryPtr: created by subclass
-        .def( "getType", &VirtualMeshEntity::getType )
-        .def( "getNames", &VirtualMeshEntity::getNames );
+Returns:
+    list[str]: List of groups names (stripped).
+        )",
+              ( py::arg( "self" ) ) )
+        .def( "getCells", &MeshClass::getCells, R"(
+Return the list of the indexes of the cells that belong to a group of cells.
 
-    py::class_< GroupOfCells, GroupOfCellsPtr, py::bases< VirtualMeshEntity > >(
-        "GroupOfCells", py::no_init )
-        // fake initFactoryPtr: created by subclass
-        // fake initFactoryPtr: created by subclass
-        ;
+Arguments:
+    group_name (str): Name of the group.
 
-    py::class_< Element, ElementPtr, py::bases< VirtualMeshEntity > >( "Element", py::no_init )
-        // fake initFactoryPtr: created by subclass
-        // fake initFactoryPtr: created by subclass
-        ;
+Returns:
+    list[int]: Indexes of the cells of the group.
+        )",
+              ( py::arg( "self" ), py::arg( "group_name" ) ) )
+        .def( "getGroupsOfNodes", &MeshClass::getGroupsOfNodes, R"(
+Return the list of the existing groups of nodes.
 
-    py::class_< AllMeshEntities, AllMeshEntitiesPtr, py::bases< VirtualMeshEntity > >(
-        "AllMeshEntities", py::no_init )
-        // fake initFactoryPtr: created by subclass
-        // fake initFactoryPtr: created by subclass
-        ;
+Returns:
+    list[str]: List of groups names (stripped).
+        )",
+              ( py::arg( "self" ) ) )
+        .def( "getNodes", &MeshClass::getNodes, R"(
+Return the list of the indexes of the nodes that belong to a group of nodes.
 
-    py::class_< BaseMeshClass, BaseMeshClass::BaseMeshPtr, py::bases< DataStructure > >(
-        "BaseMesh", py::no_init )
-        // fake initFactoryPtr: created by subclass
-        // fake initFactoryPtr: created by subclass
-        //         .def( "getCoordinates", +[](const BaseMeshClass& v)
-        //         {
-        //             return ConstViewer<MeshCoordinatesFieldClass>( v.getCoordinates() );
-        //         })
-        .def( "getCoordinates", &BaseMeshClass::getCoordinates )
-        .def( "isParallel", &BaseMeshClass::isParallel )
-        .def( "getDimension", &BaseMeshClass::getDimension );
+Arguments:
+    group_name (str): Name of the group.
 
-    py::class_< MeshClass, MeshClass::MeshPtr, py::bases< BaseMeshClass > >( "Mesh",
-                                                                                      py::no_init )
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MeshClass >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< MeshClass, std::string >))
-        .def( "addGroupOfNodesFromNodes", &MeshClass::addGroupOfNodesFromNodes )
-        .def( "hasGroupOfCells", &MeshClass::hasGroupOfCells )
-        .def( "hasGroupOfNodes", &MeshClass::hasGroupOfNodes )
-        .def( "readAsterMeshFile", &MeshClass::readAsterMeshFile )
-        .def( "readGibiFile", &MeshClass::readGibiFile )
-        .def( "readGmshFile", &MeshClass::readGmshFile )
-        .def( "readMedFile", &MeshClass::readMedFile );
+Returns:
+    list[int]: Indexes of the nodes of the group.
+        )",
+              ( py::arg( "self" ), py::arg( "group_name" ) ) )
+        .def( "readAsterFile", &MeshClass::readAsterFile, R"(
+Read a mesh file from ASTER format.
+
+Arguments:
+    filename (str): Path to the file to be read.
+
+Returns:
+    bool: *True* if succeeds, *False* otherwise.
+        )",
+              ( py::arg( "self" ), py::arg( "filename" ) ) )
+        .def( "readGibiFile", &MeshClass::readGibiFile, R"(
+Read a mesh file from GIBI format.
+
+Arguments:
+    filename (str): Path to the file to be read.
+
+Returns:
+    bool: *True* if succeeds, *False* otherwise.
+        )",
+              ( py::arg( "self" ), py::arg( "filename" ) ) )
+        .def( "readGmshFile", &MeshClass::readGmshFile, R"(
+Read a mesh file from GMSH format.
+
+Arguments:
+    filename (str): Path to the file to be read.
+
+Returns:
+    bool: *True* if succeeds, *False* otherwise.
+        )",
+              ( py::arg( "self" ), py::arg( "filename" ) ) )
+        .def( "readMedFile", &MeshClass::readMedFile, R"(
+Read a mesh file from MED format.
+
+Arguments:
+    filename (str): Path to the file to be read.
+
+Returns:
+    bool: *True* if succeeds, *False* otherwise.
+        )",
+              ( py::arg( "self" ), py::arg( "filename" ) ) );
 };

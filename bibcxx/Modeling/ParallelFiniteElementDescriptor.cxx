@@ -29,7 +29,7 @@
 
 ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
     ( const std::string& name, const FiniteElementDescriptorPtr& FEDesc,
-      const PartialMeshPtr& mesh, const ModelPtr& model, const JeveuxMemory memType ):
+      const ConnectionMeshPtr& mesh, const ModelPtr& model, const JeveuxMemory memType ):
                     FiniteElementDescriptorClass( name, model->getMesh(), memType ),
                     _joins( JeveuxVectorLong( getName() + ".DOMJ" ) ),
                     _owner( JeveuxVectorLong( getName() + ".PNOE" ) ),
@@ -58,7 +58,7 @@ ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
     // gardes dans le nouveau ligrel
     for( const auto meshElem : explorer )
     {
-        const auto& numElem = meshElem.getElementNumber();
+        const auto& numElem = meshElem.getCellIndex();
         bool keepElem = false;
         int pos = 0, curOwner = -1;
         for( auto numNode : meshElem )
@@ -219,7 +219,7 @@ ParallelFiniteElementDescriptorClass::ParallelFiniteElementDescriptorClass
         nbCollObj = 1;
         for( const auto& colObj : liel )
         {
-            const ASTERINTEGER numInColl = colObj.getElementNumber();
+            const ASTERINTEGER numInColl = colObj.getCellIndex();
             bool addedElem = false;
             for( const auto& val : colObj )
             {

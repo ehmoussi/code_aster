@@ -145,7 +145,7 @@ class MaterialAssignment(ExecuteCommand):
         mater = fkw["COMPOR"]
 
         if kwTout is not None:
-            self._result.addBehaviourOnAllMesh(mater)
+            self._result.addBehaviourOnMesh(mater)
         elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
@@ -230,17 +230,17 @@ class MaterialAssignment(ExecuteCommand):
             externalVar.setEvolutionParameter(evolParam)
 
         if kwTout is not None:
-            externalVarOnMesh.addExternalVariableOnAllMesh(externalVar)
+            externalVarOnMesh.addExternalVariableOnMesh(externalVar)
         elif kwMail is not None:
             kwMail = force_list(kwMail)
             for elem in kwMail:
-                externalVarOnMesh.addExternalVariableOnElement(externalVar, elem)
+                externalVarOnMesh.addExternalVariableOnCell(externalVar, elem)
         elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             for grp in kwGrMa:
                 externalVarOnMesh.addExternalVariableOnGroupOfCells(externalVar, grp)
         else:
-            externalVarOnMesh.addExternalVariableOnAllMesh(externalVar)
+            externalVarOnMesh.addExternalVariableOnMesh(externalVar)
 
     def _addMaterial(self, fkw):
         kwTout = fkw.get("TOUT")
@@ -251,13 +251,13 @@ class MaterialAssignment(ExecuteCommand):
             mater = list(mater)
 
         if kwTout is not None:
-            self._result.addMaterialsOnAllMesh(mater)
+            self._result.addMaterialsOnMesh(mater)
         elif kwGrMa is not None:
             kwGrMa = force_list(kwGrMa)
             self._result.addMaterialsOnGroupOfCells(mater, kwGrMa)
         elif kwMail is not None:
             kwMail = force_list(kwMail)
-            self._result.addMaterialsOnElement(mater, kwMail)
+            self._result.addMaterialsOnCell(mater, kwMail)
         else:
             raise TypeError("At least {0}, {1} or {2} is required"
                             .format("TOUT", "GROUP_MA", "MAILLE"))

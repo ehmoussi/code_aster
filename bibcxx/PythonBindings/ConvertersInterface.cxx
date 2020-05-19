@@ -1,5 +1,5 @@
 /**
- * @file VectorUtilitiesInterface.cxx
+ * @file ConvertersInterface.cxx
  * @brief Utilitaires pour convertir un vector en list et inversement
  * @author Nicolas Sellenet
  * @section LICENCE
@@ -21,28 +21,35 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "PythonBindings/VectorUtilitiesInterface.h"
+#include "PythonBindings/ConvertersInterface.h"
 #include "DataStructures/DataStructure.h"
-#include "Loads/PhysicalQuantity.h"
-#include "Materials/Material.h"
-#include "Modeling/FiniteElementDescriptor.h"
 #include "Functions/Function.h"
+#include "Loads/PhysicalQuantity.h"
 #include "Materials/Material.h"
 #include "Materials/MaterialField.h"
 #include "Materials/MaterialProperty.h"
+#include "Modeling/FiniteElementDescriptor.h"
 
-void exportVectorUtilitiesToPython() {
+void exportConverters() {
 
-    exportVectorUtilities< long >();
-    exportVectorUtilities< int >();
-    exportVectorUtilities< double >();
-    exportVectorUtilities< std::string >();
-    exportVectorUtilities< PhysicalQuantityComponent >();
-    exportVectorUtilities< MaterialPtr >();
-    exportVectorUtilities< FiniteElementDescriptorPtr >();
-    exportVectorUtilities< BaseFunctionPtr >();
-    exportVectorUtilities< FunctionPtr >();
-    exportVectorUtilities< PartOfMaterialFieldPtr >();
-    exportVectorUtilities< GenericMaterialPropertyPtr >();
-    exportVectorUtilities< DataStructurePtr >();
+    exportVectorConverter< int >();
+    exportVectorConverter< ASTERINTEGER >();
+    exportVectorConverter< double >();
+    exportVectorConverter< std::string >();
+    exportVectorConverter< PhysicalQuantityComponent >();
+    exportVectorConverter< MaterialPtr >();
+    exportVectorConverter< FiniteElementDescriptorPtr >();
+    exportVectorConverter< BaseFunctionPtr >();
+    exportVectorConverter< FunctionPtr >();
+    exportVectorConverter< PartOfMaterialFieldPtr >();
+    exportVectorConverter< GenericMaterialPropertyPtr >();
+    exportVectorConverter< DataStructurePtr >();
+
+    exportJeveuxVectorConverter< short int >();
+    exportJeveuxVectorConverter< ASTERINTEGER >();
+    exportJeveuxVectorConverter< double >();
+
+    exportJeveuxCollectionConverter< short int >();
+    exportJeveuxCollectionConverter< ASTERINTEGER >();
+    exportJeveuxCollectionConverter< double >();
 };

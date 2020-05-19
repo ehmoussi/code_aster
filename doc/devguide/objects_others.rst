@@ -333,14 +333,6 @@ Documentation of all other types.
    :show-inheritance:
    :members:
 
-.. autoclass:: code_aster.Objects.Element
-   :show-inheritance:
-   :members:
-
-.. autoclass:: code_aster.Objects.GroupOfCells
-   :show-inheritance:
-   :members:
-
 
 ********************************************************************************
 :py:class:`~code_aster.Objects.NonLinearMethod` object

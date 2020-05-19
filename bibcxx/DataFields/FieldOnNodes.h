@@ -35,10 +35,11 @@
 #include "DataFields/DataField.h"
 #include "DataFields/MeshCoordinatesField.h"
 #include "DataFields/SimpleFieldOnNodes.h"
-#include "Numbering/DOFNumbering.h"
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "MemoryManager/JeveuxVector.h"
-#include "Meshes/Mesh.h"
+#include "Meshes/BaseMesh.h"
+#include "Numbering/DOFNumbering.h"
+#include "PythonBindings/LogicalUnitManager.h"
 
 /**
  * @struct AllowedFieldType
@@ -51,9 +52,7 @@ template <> struct AllowedFieldType< ASTERINTEGER > {
     static const unsigned short numTypeJeveux = Integer;
 };
 
-template <> struct AllowedFieldType< double > {
-    static const unsigned short numTypeJeveux = Real;
-};
+template <> struct AllowedFieldType< double > { static const unsigned short numTypeJeveux = Real; };
 
 template <> struct AllowedFieldType< RealComplex > {
     static const unsigned short numTypeJeveux = Complex;
@@ -67,8 +66,7 @@ class FieldBuilder;
  * @author Nicolas Sellenet
  */
 template < class ValueType >
-class FieldOnNodesClass : public DataFieldClass,
-                             private AllowedFieldType< ValueType > {
+class FieldOnNodesClass : public DataFieldClass, private AllowedFieldType< ValueType > {
   private:
     typedef SimpleFieldOnNodesClass< ValueType > SimpleFieldOnNodesValueTypeClass;
     typedef boost::shared_ptr< SimpleFieldOnNodesValueTypeClass > SimpleFieldOnNodesValueTypePtr;
@@ -99,37 +97,31 @@ class FieldOnNodesClass : public DataFieldClass,
      * @brief Constructeur
      * @param name Nom Jeveux du champ aux noeuds
      */
-    FieldOnNodesClass( const std::string name ):
-        DataFieldClass( name, "CHAM_NO" ),
-        _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
-        _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-        _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
-        _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) ),
-        _mesh( nullptr )
-    {};
+    FieldOnNodesClass( const std::string name )
+        : DataFieldClass( name, "CHAM_NO" ), _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+          _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+          _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
+          _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) ),
+          _mesh( nullptr ){};
 
     /**
      * @brief Constructeur
      * @param memType Mémoire d'allocation
      */
-    FieldOnNodesClass( const JeveuxMemory memType = Permanent ):
-        DataFieldClass( memType, "CHAM_NO" ),
-        _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
-        _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
-        _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
-        _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) )
-    {};
+    FieldOnNodesClass( const JeveuxMemory memType = Permanent )
+        : DataFieldClass( memType, "CHAM_NO" ),
+          _descriptor( JeveuxVectorLong( getName() + ".DESC" ) ),
+          _reference( JeveuxVectorChar24( getName() + ".REFE" ) ),
+          _valuesList( JeveuxVector< ValueType >( getName() + ".VALE" ) ), _dofNum( nullptr ),
+          _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
 
     /**
      * @brief Constructeur from a MeshCoordinatesFieldPtr&
      */
-    FieldOnNodesClass( MeshCoordinatesFieldPtr &toCopy ):
-        DataFieldClass( toCopy->getMemoryType(), "CHAM_NO" ),
-        _descriptor( toCopy->_descriptor ), _reference( toCopy->_reference ),
-        _valuesList( toCopy->_valuesList ), _dofNum( nullptr ), _dofDescription( nullptr ),
-        _title( JeveuxVectorChar80( getName() + ".TITR" ) )
-    {};
-
+    FieldOnNodesClass( MeshCoordinatesFieldPtr &toCopy )
+        : DataFieldClass( toCopy->getMemoryType(), "CHAM_NO" ), _descriptor( toCopy->_descriptor ),
+          _reference( toCopy->_reference ), _valuesList( toCopy->_valuesList ), _dofNum( nullptr ),
+          _dofDescription( nullptr ), _title( JeveuxVectorChar80( getName() + ".TITR" ) ){};
 
     /**
      * @brief Surcharge de l'operateur []
@@ -205,12 +197,9 @@ class FieldOnNodesClass : public DataFieldClass,
     /**
      * @brief Get mesh
      */
-    BaseMeshPtr getMesh() const
-    {
-        return _mesh;
-    };
+    BaseMeshPtr getMesh() const { return _mesh; };
 
-    bool printMedFile( const std::string fileName ) const ;
+    bool printMedFile( const std::string fileName ) const;
 
     /**
      * @brief Set DOFNumering
@@ -219,11 +208,10 @@ class FieldOnNodesClass : public DataFieldClass,
         if ( _dofNum )
             throw std::runtime_error( "DOFNumbering already set" );
         _dofNum = dofNum;
-        if( _mesh != nullptr )
-        {
+        if ( _mesh != nullptr ) {
             const auto name1 = _mesh->getName();
             const auto name2 = _dofNum->getMesh()->getName();
-            if( name1 != name2 )
+            if ( name1 != name2 )
                 throw std::runtime_error( "Meshes inconsistents" );
         }
     };
@@ -243,14 +231,13 @@ class FieldOnNodesClass : public DataFieldClass,
      * @param mesh object BaseMeshPtr
      */
     void setMesh( const BaseMeshPtr &mesh ) {
-        if( _mesh )
+        if ( _mesh )
             throw std::runtime_error( "Mesh already set" );
         _mesh = mesh;
-        if( _dofNum != nullptr )
-        {
+        if ( _dofNum != nullptr ) {
             const auto name1 = _mesh->getName();
             const auto name2 = _dofNum->getMesh()->getName();
-            if( name1 != name2 )
+            if ( name1 != name2 )
                 throw std::runtime_error( "Meshes inconsistents" );
         }
     };
@@ -286,8 +273,7 @@ class FieldOnNodesClass : public DataFieldClass,
 };
 
 template < class ValueType >
-bool FieldOnNodesClass< ValueType >::printMedFile( const std::string fileName ) const
-    {
+bool FieldOnNodesClass< ValueType >::printMedFile( const std::string fileName ) const {
     LogicalUnitFile a( fileName, Binary, New );
     int retour = a.getLogicalUnit();
     CommandSyntax cmdSt( "IMPR_RESU" );

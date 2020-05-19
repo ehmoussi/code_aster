@@ -20,9 +20,11 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "Geometry/Geometry.h"
 #include <vector>
+
+#include "astercxx.h"
+#include "Geometry/Geometry.h"
 
 const std::vector< UnitVectorEnum > allUnitVector = {
     Ex, Ey, Ez, FirstTangentVector, SecondTangentVector, NormalVector};
-const std::vector< std::string > allUnitVectorNames = {"DX", "DY", "DZ", "DTAN", "DTAN2", "DNOR"};
+const VectorString allUnitVectorNames = {"DX", "DY", "DZ", "DTAN", "DTAN2", "DNOR"};

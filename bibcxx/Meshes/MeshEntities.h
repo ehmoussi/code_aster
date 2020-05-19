@@ -28,8 +28,14 @@
 
 #include "MemoryManager/JeveuxCollection.h"
 
-enum EntityType { GroupOfNodesType, GroupOfCellsType, AllMeshEntitiesType,
-                  ElementType, NodeType, NoType };
+enum EntityType {
+    GroupOfNodesType,
+    GroupOfCellsType,
+    AllMeshEntitiesType,
+    CellType,
+    NodeType,
+    NoType
+};
 
 /**
  * @todo Un MeshEntity pourrait etre concu comme un template qui prendrait
@@ -43,40 +49,36 @@ enum EntityType { GroupOfNodesType, GroupOfCellsType, AllMeshEntitiesType,
  *        groupe de mailles ou groupe de noeuds
  * @author Nicolas Sellenet
  */
-class VirtualMeshEntity
-{
-private:
+class VirtualMeshEntity {
+  private:
     /** @brief Nom de l'entite */
     const VectorString _names;
 
-protected:
+  protected:
     /** @brief Type de l'entite */
-    const EntityType  _type;
+    const EntityType _type;
 
-public:
+  public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    VirtualMeshEntity( const std::string& name,
-                       EntityType type ): _names( { name } ), _type( type )
-    {};
+    VirtualMeshEntity( const std::string &name, EntityType type )
+        : _names( {name} ), _type( type ){};
 
     /**
      * @brief Constructor
      * @param names names in entity
      */
-    VirtualMeshEntity( const VectorString& names,
-                       EntityType type ): _names( names ), _type( type )
-    {};
+    VirtualMeshEntity( const VectorString &names, EntityType type )
+        : _names( names ), _type( type ){};
 
     /**
      * @brief Obtenir le nom de l'entite
      * @return renvoit le nom de l'entite
      */
-    const std::string& getName() const
-    {
-        if( _names.size() > 1 )
+    const std::string &getName() const {
+        if ( _names.size() > 1 )
             throw std::runtime_error( "Error in mesh entity. This entity must not be a list" );
 
         return _names[0];
@@ -86,38 +88,29 @@ public:
      * @brief Get the names inside the entity
      * @return vector of strings
      */
-    VectorString getNames()
-    {
-        return _names;
-    };
+    VectorString getNames() { return _names; };
 
-    EntityType getType() const
-    {
-        return _type;
-    };
+    EntityType getType() const { return _type; };
 };
 
 /**
- * @class GroupOfNodesClass
+ * @class GroupOfNodes
  * @brief Cette classe permet de definir des groupes de noeuds
  * @author Nicolas Sellenet
  */
-class GroupOfNodes: public VirtualMeshEntity
-{
-public:
+class GroupOfNodes : public VirtualMeshEntity {
+  public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    GroupOfNodes( std::string name ): VirtualMeshEntity( name, GroupOfNodesType )
-    {};
+    GroupOfNodes( std::string name ) : VirtualMeshEntity( name, GroupOfNodesType ){};
 
     /**
      * @brief Constructor
      * @param names names in entity
      */
-    GroupOfNodes( const VectorString& names): VirtualMeshEntity( names, GroupOfNodesType )
-    {};
+    GroupOfNodes( const VectorString &names ) : VirtualMeshEntity( names, GroupOfNodesType ){};
 };
 
 /**
@@ -125,22 +118,19 @@ public:
  * @brief Cette classe permet de definir des groupes de mailles
  * @author Nicolas Sellenet
  */
-class GroupOfCells: public VirtualMeshEntity
-{
-public:
+class GroupOfCells : public VirtualMeshEntity {
+  public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    GroupOfCells( std::string name ): VirtualMeshEntity( name, GroupOfCellsType )
-    {};
+    GroupOfCells( std::string name ) : VirtualMeshEntity( name, GroupOfCellsType ){};
 
     /**
      * @brief Constructor
      * @param names names in entity
      */
-    GroupOfCells( const VectorString& names ): VirtualMeshEntity( names, GroupOfCellsType )
-    {};
+    GroupOfCells( const VectorString &names ) : VirtualMeshEntity( names, GroupOfCellsType ){};
 };
 
 /**
@@ -149,61 +139,53 @@ public:
  *        Equivalent du mot cle simple TOUT = 'OUI'
  * @author Nicolas Sellenet
  */
-class AllMeshEntities: public VirtualMeshEntity
-{
-public:
+class AllMeshEntities : public VirtualMeshEntity {
+  public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    AllMeshEntities(): VirtualMeshEntity( "OUI", AllMeshEntitiesType )
-    {};
+    AllMeshEntities() : VirtualMeshEntity( "OUI", AllMeshEntitiesType ){};
 };
 
 /**
- * @class ElementEntities
+ * @class Cell
  * @brief Cette classe permet de definir des éléments du maillage
  * @author Nicolas Sellenet
  */
-class Element: public VirtualMeshEntity
-{
-public:
+class Cell : public VirtualMeshEntity {
+  public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    Element( std::string name ): VirtualMeshEntity( name, ElementType )
-    {};
+    Cell( std::string name ) : VirtualMeshEntity( name, CellType ){};
 
     /**
      * @brief Constructor
      * @param names names in entity
      */
-    Element( const VectorString& names ): VirtualMeshEntity( names, ElementType )
-    {};
+    Cell( const VectorString &names ) : VirtualMeshEntity( names, CellType ){};
 };
 
 /**
- * @class NodeEntities
+ * @class Node
  * @brief Cette classe permet de definir des noeuds du maillage
  * @author Nicolas Sellenet
  */
-class Node: public VirtualMeshEntity
-{
-public:
+class Node : public VirtualMeshEntity {
+  public:
     /**
      * @brief Constructeur
      * @param name nom de l'entite
      */
-    Node( std::string name ): VirtualMeshEntity( name, NodeType )
-    {};
+    Node( std::string name ) : VirtualMeshEntity( name, NodeType ){};
 
     /**
      * @brief Constructor
      * @param names names in entity
      */
-    Node( const VectorString& names ): VirtualMeshEntity( names, NodeType )
-    {};
+    Node( const VectorString &names ) : VirtualMeshEntity( names, NodeType ){};
 };
 
 typedef boost::shared_ptr< VirtualMeshEntity > MeshEntityPtr;
@@ -217,11 +199,5 @@ typedef std::vector< GroupOfCellsPtr > VectorOfGroupOfCellsPtr;
 
 typedef boost::shared_ptr< AllMeshEntities > AllMeshEntitiesPtr;
 typedef std::vector< AllMeshEntitiesPtr > VectorOfAllMeshEntitiesPtr;
-
-typedef boost::shared_ptr< Element > ElementPtr;
-typedef std::vector< ElementPtr > VectorOfElementPtr;
-
-typedef boost::shared_ptr< Node > NodePtr;
-typedef std::vector< NodePtr > VectorOfNodePtr;
 
 #endif /* MESHENTITES_H_ */

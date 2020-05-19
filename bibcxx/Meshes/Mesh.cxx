@@ -1,6 +1,6 @@
 /**
  * @file Mesh.cxx
- * @brief Implementation de BaseMeshClass
+ * @brief Implementation de MeshClass
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -25,120 +25,67 @@
 
 #include "astercxx.h"
 
-// emulate_LIRE_MAILLAGE_MED.h is auto-generated and requires Mesh.h and Python.h
 #include "Meshes/Mesh.h"
-#include "Python.h"
-#include "PythonBindings/LogicalUnitManager.h"
-#include "Supervis/CommandSyntax.h"
-#include "Supervis/Exceptions.h"
-#include "Supervis/ResultNaming.h"
-#include "Utilities/CapyConvertibleValue.h"
+#include "Utilities/Tools.h"
 
-bool MeshClass::addGroupOfNodesFromNodes( const std::string &name,
-                                             const VectorString &vec ) {
-    CommandSyntax cmdSt( "DEFI_GROUP" );
-    cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
 
-    CapyConvertibleContainer toCapyConverter;
-    toCapyConverter.add(
-        new CapyConvertibleValue< std::string >( false, "MAILLAGE", getName(), true ) );
-
-    CapyConvertibleContainer toCapyConverter2( "CREA_GROUP_NO" );
-    toCapyConverter2.add( new CapyConvertibleValue< VectorString >( false, "NOEUD", vec, true ) );
-    toCapyConverter2.add( new CapyConvertibleValue< std::string >( false, "NOM", name, true ) );
-
-    CapyConvertibleSyntax syntax;
-    syntax.setSimpleKeywordValues( toCapyConverter );
-    syntax.addCapyConvertibleContainer( toCapyConverter2 );
-
-    cmdSt.define( syntax );
-    try {
-        ASTERINTEGER op = 104;
-        CALL_EXECOP( &op );
-    } catch ( ... ) {
-        throw;
-    }
-    return true;
-};
-
-bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string &format ) {
-    FileType type = Ascii;
-    if ( format == "MED" )
-        type = Binary;
-    LogicalUnitFile file1( fileName, type, Old );
-
-    SyntaxMapContainer syntax;
-
-    if ( format == "GIBI" || format == "GMSH" ) {
-        // Fichier temporaire
-        LogicalUnitFile file2( "", Ascii, Append );
-        std::string preCmd = "PRE_" + format;
-        ASTERINTEGER op2 = 47;
-        if ( format == "GIBI" )
-            op2 = 49;
-
-        CommandSyntax *cmdSt2 = new CommandSyntax( preCmd );
-        SyntaxMapContainer syntax2;
-        syntax2.container["UNITE_" + format] = file1.getLogicalUnit();
-        syntax2.container["UNITE_MAILLAGE"] = file2.getLogicalUnit();
-        cmdSt2->define( syntax2 );
-
-        try {
-            CALL_EXECOP( &op2 );
-        } catch ( ... ) {
-            throw;
-        }
-        delete cmdSt2;
-        syntax.container["FORMAT"] = "ASTER";
-        syntax.container["UNITE"] = file2.getLogicalUnit();
-
-        CommandSyntax cmdSt( "LIRE_MAILLAGE" );
-        cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
-
-        cmdSt.define( syntax );
-
-        try {
-            ASTERINTEGER op = 1;
-            CALL_EXECOP( &op );
-        } catch ( ... ) {
-            throw;
-        }
-    } else {
-        syntax.container["FORMAT"] = format;
-        syntax.container["UNITE"] = file1.getLogicalUnit();
-
-        CommandSyntax cmdSt( "LIRE_MAILLAGE" );
-        cmdSt.setResult( ResultNaming::getCurrentName(), "MAILLAGE" );
-
-        cmdSt.define( syntax );
-
-        ASTERINTEGER op = 1;
-        CALL_EXECOP( &op );
-    }
-
-    return true;
-};
-
-bool MeshClass::readAsterMeshFile( const std::string &fileName ) {
+bool MeshClass::readAsterFile( const std::string &fileName ) {
     readMeshFile( fileName, "ASTER" );
-
     return true;
-};
+}
 
 bool MeshClass::readGibiFile( const std::string &fileName ) {
     readMeshFile( fileName, "GIBI" );
-
     return true;
-};
+}
 
 bool MeshClass::readGmshFile( const std::string &fileName ) {
     readMeshFile( fileName, "GMSH" );
-
     return true;
-};
+}
 
-bool BaseMeshClass::readMedFile( const std::string &fileName ) {
-    readMeshFile( fileName, "MED" );
+bool MeshClass::hasGroupOfCells( const std::string &name ) const {
+    if ( _groupsOfCells->size() < 0 && !_groupsOfCells->buildFromJeveux() ) {
+        return false;
+    }
+    return _groupsOfCells->existsObject( name );
+}
 
-    return true;
-};
+bool MeshClass::hasGroupOfNodes( const std::string &name ) const {
+    if ( _groupsOfNodes->size() < 0 && !_groupsOfNodes->buildFromJeveux() ) {
+        return false;
+    }
+    return _groupsOfNodes->existsObject( name );
+}
+
+VectorString MeshClass::getGroupsOfCells() const {
+    ASTERINTEGER size = _nameOfGrpCells->size();
+    VectorString names;
+    for ( int i = 0; i < size; i++ ) {
+        names.push_back( trim( _nameOfGrpCells->getStringFromIndex( i + 1 ) ) );
+    }
+    return names;
+}
+
+VectorString MeshClass::getGroupsOfNodes() const {
+    ASTERINTEGER size = _nameOfGrpNodes->size();
+    VectorString names;
+    for ( int i = 0; i < size; i++ ) {
+        names.push_back( trim( _nameOfGrpNodes->getStringFromIndex( i + 1 ) ) );
+    }
+    return names;
+}
+
+const VectorLong MeshClass::getCells( const std::string name ) const {
+    if ( !hasGroupOfCells( name ) ) {
+        return VectorLong();
+    }
+    return _groupsOfCells->getObjectFromName( name ).toVector();
+}
+
+const VectorLong MeshClass::getNodes( const std::string name ) const {
+    if ( !hasGroupOfNodes( name ) ) {
+        return VectorLong();
+    }
+    return _groupsOfNodes->getObjectFromName( name ).toVector();
+}

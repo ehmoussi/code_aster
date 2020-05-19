@@ -1,6 +1,6 @@
 /**
- * @file PartialMeshInterface.cxx
- * @brief Interface python de PartialMesh
+ * @file ConnectionMeshInterface.cxx
+ * @brief Interface python de ConnectionMesh
  * @author Nicolas Sellenet
  * @section LICENCE
  *   Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
@@ -27,17 +27,17 @@
 
 namespace py = boost::python;
 #include "PythonBindings/factory.h"
-#include "PythonBindings/PartialMeshInterface.h"
+#include "PythonBindings/ConnectionMeshInterface.h"
 
-void exportPartialMeshToPython() {
+void exportConnectionMeshToPython() {
 
 #ifdef _USE_MPI
-    py::class_< PartialMeshClass, PartialMeshClass::PartialMeshPtr,
-                py::bases< BaseMeshClass > >( "PartialMesh", py::no_init )
+    py::class_< ConnectionMeshClass, ConnectionMeshClass::ConnectionMeshPtr,
+                py::bases< BaseMeshClass > >( "ConnectionMesh", py::no_init )
         .def( "__init__",
               py::make_constructor(
-                  &initFactoryPtr< PartialMeshClass, ParallelMeshPtr, VectorString >))
-        .def( "__init__", py::make_constructor(&initFactoryPtr< PartialMeshClass, std::string,
+                  &initFactoryPtr< ConnectionMeshClass, ParallelMeshPtr, VectorString >))
+        .def( "__init__", py::make_constructor(&initFactoryPtr< ConnectionMeshClass, std::string,
                                                                 ParallelMeshPtr, VectorString >));
 #endif /* _USE_MPI */
 };
