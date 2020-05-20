@@ -46,8 +46,9 @@ extern void DEFSPPSSSP( MDNOCH, mdnoch, char *, STRING_SIZE, ASTERINTEGER *, AST
                         STRING_SIZE, char *, STRING_SIZE, char *, STRING_SIZE, ASTERINTEGER * );
 
 #define CALL_GET_MED_TYPES( a, b ) CALLSS( GET_MED_TYPES, get_med_types, a, b )
-#define CALL0_GET_MED_TYPES( a, b ) CALL00( GET_MED_TYPES, get_med_types, a, b )
-extern void DEFSS( GET_MED_TYPES, get_med_types, char *, STRING_SIZE, char *, STRING_SIZE );
+#define CALLO_GET_MED_TYPES( a, b ) CALLOO( GET_MED_TYPES, get_med_types, a, b )
+extern void DEFSS( GET_MED_TYPES, get_med_types, const char *, STRING_SIZE, const char *,
+                   STRING_SIZE );
 
 #ifdef __cplusplus
 }

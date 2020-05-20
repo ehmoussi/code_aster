@@ -48,8 +48,14 @@ nodesHaut = mesh.getNodes('Haut')
 test.assertSequenceEqual(nodesHaut, [1, 3, 5, 7, 10, 14, 18, 20, 26])
 
 medconn = mesh.getMedConnectivity()
-medtypes = mesh.getMedCellsTypes()
+medtypes = np.array(mesh.getMedCellsTypes())
 test.assertEqual(len(medtypes), mesh.getNumberOfCells())
+# cells 1-24: SEG2
+test.assertTrue((medtypes[:24] == 102).all())
+# cells 25-48: QUAD4
+test.assertTrue((medtypes[25:48] == 204).all())
+# cells 49-56: HEXA8
+test.assertTrue((medtypes[49:] == 308).all())
 
 # check cell #47 (index 46)
 quad47 = connect[47 - 1]
