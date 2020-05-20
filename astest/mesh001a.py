@@ -29,51 +29,62 @@ test = code_aster.TestCase()
 mesh = code_aster.Mesh()
 mesh.readMedFile("test001f.mmed")
 
-test.assertFalse( mesh.isParallel() )
-test.assertEqual( mesh.getDimension(), 3 )
-test.assertEqual( mesh.getNumberOfNodes(), 27 )
-test.assertEqual( mesh.getNumberOfCells(), 56 )
-test.assertSequenceEqual( sorted(mesh.getGroupsOfNodes()),
-                          ['A', 'B', 'Bas', 'C', 'D', 'E', 'F', 'G', 'H', 'Haut'] )
-test.assertSequenceEqual( sorted(mesh.getGroupsOfCells()), ['Bas', 'Haut'] )
+test.assertFalse(mesh.isParallel())
+test.assertEqual(mesh.getDimension(), 3)
+test.assertEqual(mesh.getNumberOfNodes(), 27)
+test.assertEqual(mesh.getNumberOfCells(), 56)
+test.assertSequenceEqual(sorted(mesh.getGroupsOfNodes()),
+                         ['A', 'B', 'Bas', 'C', 'D', 'E', 'F', 'G', 'H', 'Haut'])
+test.assertSequenceEqual(sorted(mesh.getGroupsOfCells()), ['Bas', 'Haut'])
 coord = mesh.getCoordinates()
-test.assertEqual( coord[3], 0.0 )
+test.assertEqual(coord[3], 0.0)
 values = coord.getValues()
 test.assertEqual(len(values), 27 * 3)
 
 connect = mesh.getConnectivity()
 cellsHaut = mesh.getCells('Haut')
-test.assertSequenceEqual( cellsHaut, [45, 46, 47, 48])
+test.assertSequenceEqual(cellsHaut, [45, 46, 47, 48])
 nodesHaut = mesh.getNodes('Haut')
-test.assertSequenceEqual( nodesHaut, [1, 3, 5, 7, 10, 14, 18, 20, 26])
+test.assertSequenceEqual(nodesHaut, [1, 3, 5, 7, 10, 14, 18, 20, 26])
+
+medconn = mesh.getMedConnectivity()
+medtypes = mesh.getMedCellsTypes()
+test.assertEqual(len(medtypes), mesh.getNumberOfCells())
 
 # check cell #47 (index 46)
-nodes47 = connect[47 - 1]
-test.assertSequenceEqual( nodes47, [10, 1, 18, 26])
+quad47 = connect[47 - 1]
+test.assertSequenceEqual(quad47, [10, 1, 18, 26])
+test.assertSequenceEqual(medconn[47 - 1], [10, 1, 18, 26])
+
 # always 3 coordinates, even if 'getDimension() == 2'
 npcoord = np.array(values).reshape((-1, 3))
 # z(cell #47) == 1.
-for i in nodes47:
-    test.assertEqual( npcoord[i - 1][2], 1.0)
+for i in quad47:
+    test.assertEqual(npcoord[i - 1][2], 1.0)
+
+conn_ast = [1, 9, 21, 10, 18, 23, 27, 26]
+conn_med = [1, 10, 21, 9, 18, 26, 27, 23]
+test.assertSequenceEqual(connect[49 - 1], conn_ast)
+test.assertSequenceEqual(medconn[49 - 1], conn_med)
 
 # boundingbox of mesh: (0, 0, 0) -> (1, 1, 1)
-test.assertEqual( npcoord.min(), 0.)
-test.assertEqual( npcoord.max(), 1.)
+test.assertEqual(npcoord.min(), 0.)
+test.assertEqual(npcoord.max(), 1.)
 
 
 # from ASTER format
 mail = code_aster.Mesh()
 mail.readAsterFile("ssnp14c.mail")
 
-test.assertFalse( mail.isParallel() )
-test.assertEqual( mail.getDimension(), 3 )
-test.assertEqual( mail.getNumberOfNodes(), 22 )
-test.assertEqual( mail.getNumberOfCells(), 6 )
-test.assertSequenceEqual( mail.getGroupsOfNodes(), [] )
-test.assertSequenceEqual( sorted(mail.getGroupsOfCells()),
-                          ['BAS', 'DROITE', 'GAUCHE', 'HAUT'] )
+test.assertFalse(mail.isParallel())
+test.assertEqual(mail.getDimension(), 3)
+test.assertEqual(mail.getNumberOfNodes(), 22)
+test.assertEqual(mail.getNumberOfCells(), 6)
+test.assertSequenceEqual(mail.getGroupsOfNodes(), [])
+test.assertSequenceEqual(sorted(mail.getGroupsOfCells()),
+                         ['BAS', 'DROITE', 'GAUCHE', 'HAUT'])
 coord = mail.getCoordinates()
-test.assertEqual( coord[3], 1.0 )
+test.assertEqual(coord[3], 1.0)
 values = coord.getValues()
 test.assertEqual(len(values), 22 * 3)
 
@@ -81,16 +92,16 @@ test.assertEqual(len(values), 22 * 3)
 gmsh = code_aster.Mesh()
 gmsh.readGmshFile("ssnv187a.msh")
 
-test.assertFalse( gmsh.isParallel() )
-test.assertEqual( gmsh.getDimension(), 2 )
-test.assertEqual( gmsh.getNumberOfNodes(), 132 )
-test.assertEqual( gmsh.getNumberOfCells(), 207 )
-test.assertSequenceEqual( gmsh.getGroupsOfNodes(),
-                          ['GM5'] )
-test.assertSequenceEqual( sorted(gmsh.getGroupsOfCells()),
-                          ['GM1', 'GM3', 'GM4', 'GM5', 'GM6'] )
+test.assertFalse(gmsh.isParallel())
+test.assertEqual(gmsh.getDimension(), 2)
+test.assertEqual(gmsh.getNumberOfNodes(), 132)
+test.assertEqual(gmsh.getNumberOfCells(), 207)
+test.assertSequenceEqual(gmsh.getGroupsOfNodes(),
+                         ['GM5'])
+test.assertSequenceEqual(sorted(gmsh.getGroupsOfCells()),
+                         ['GM1', 'GM3', 'GM4', 'GM5', 'GM6'])
 coord = gmsh.getCoordinates()
-test.assertEqual( coord[3], 1.0 )
+test.assertEqual(coord[3], 1.0)
 values = coord.getValues()
 test.assertEqual(len(values), 132 * 3)
 
@@ -98,16 +109,16 @@ test.assertEqual(len(values), 132 * 3)
 gibi = code_aster.Mesh()
 gibi.readGibiFile("erreu03a.mgib")
 
-test.assertFalse( gibi.isParallel() )
-test.assertEqual( gibi.getDimension(), 3 )
-test.assertEqual( gibi.getNumberOfNodes(), 125 )
-test.assertEqual( gibi.getNumberOfCells(), 84 )
-test.assertSequenceEqual( sorted(gibi.getGroupsOfNodes()),
-                          ['A', 'B', 'C'] )
-test.assertSequenceEqual( sorted(gibi.getGroupsOfCells()),
-                          ['AB', 'BASE1', 'CUBE1'] )
+test.assertFalse(gibi.isParallel())
+test.assertEqual(gibi.getDimension(), 3)
+test.assertEqual(gibi.getNumberOfNodes(), 125)
+test.assertEqual(gibi.getNumberOfCells(), 84)
+test.assertSequenceEqual(sorted(gibi.getGroupsOfNodes()),
+                         ['A', 'B', 'C'])
+test.assertSequenceEqual(sorted(gibi.getGroupsOfCells()),
+                         ['AB', 'BASE1', 'CUBE1'])
 coord = gibi.getCoordinates()
-test.assertEqual( coord[3], 10.0 )
+test.assertEqual(coord[3], 10.0)
 values = coord.getValues()
 test.assertEqual(len(values), 125 * 3)
 

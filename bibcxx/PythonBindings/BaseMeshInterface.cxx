@@ -78,5 +78,19 @@ Return the connectivity of the mesh as Python lists.
 Returns:
     list[list[int]]: List of, for each cell, a list of the nodes indexes.
         )",
+              ( py::arg( "self" ) ) )
+        .def( "getMedConnectivity", &BaseMeshClass::getMedConnectivity, R"(
+Return the connectivity of the mesh as Python lists following the Med numbering.
+
+Returns:
+    list[list[int]]: List of, for each cell, a list of the nodes indexes.
+        )",
+              ( py::arg( "self" ) ) )
+        .def( "getMedCellsTypes", &BaseMeshClass::getMedCellsTypes, R"(
+Return the Med type of each cell.
+
+Returns:
+    list[int]: List of Med types.
+        )",
               ( py::arg( "self" ) ) );
 };
