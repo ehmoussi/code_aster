@@ -50,6 +50,12 @@ extern void DEFSPPSSSP( MDNOCH, mdnoch, char *, STRING_SIZE, ASTERINTEGER *, AST
 extern void DEFSS( GET_MED_TYPES, get_med_types, const char *, STRING_SIZE, const char *,
                    STRING_SIZE );
 
+#define CALL_GET_MED_CONNECTIVITY( a, b ) CALLSS( GET_MED_CONNECTIVITY, get_med_connectivity, a, b )
+#define CALLO_GET_MED_CONNECTIVITY( a, b ) \
+    CALLOO( GET_MED_CONNECTIVITY, get_med_connectivity, a, b )
+extern void DEFSS( GET_MED_CONNECTIVITY, get_med_connectivity, const char *, STRING_SIZE,
+                   const char *, STRING_SIZE );
+
 #ifdef __cplusplus
 }
 #endif
