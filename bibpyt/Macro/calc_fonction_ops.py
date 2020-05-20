@@ -21,33 +21,28 @@
 
 """Commande CALC_FONCTION"""
 
+import math
 import os
 import traceback
-import math
 
 import numpy as NP
-
+from Cata_Utils.t_fonction import (FonctionError, InterpolationError,
+                                   ParametreError, ProlongementError,
+                                   enveloppe, fractile, homo_support_nappe,
+                                   moyenne, t_fonction, t_fonction_c, t_nappe)
+from code_aster.Cata.Commands import DEFI_FONCTION, DEFI_NAPPE, IMPR_FONCTION
+from code_aster.Cata.DataStructure import (fonction_c, fonction_sdaster,
+                                           nappe_sdaster)
+from code_aster.Cata.Syntax import _F
+from Macro.defi_inte_spec_ops import tocomplex
 from Noyau.N_types import force_list
 from Noyau.N_utils import AsType
-from code_aster.Cata.Syntax import _F
-from code_aster.Cata.DataStructure import fonction_sdaster, fonction_c, nappe_sdaster
-
-from Cata_Utils.t_fonction import (
-    t_fonction, t_fonction_c, t_nappe,
-    homo_support_nappe, enveloppe, fractile, moyenne,
-    FonctionError, ParametreError, InterpolationError, ProlongementError,
-)
 from Utilitai import liss_enveloppe as LISS
 from Utilitai.calc_coherency import calc_cohefromdata
 from Utilitai.random_signal_utils import (ACCE2SRO, DSP2SRO, SRO2DSP,
-                                acce_filtre_CP, f_phase_forte)
+                                          acce_filtre_CP, f_phase_forte)
+from Utilitai.Utmess import ASSERT, UTMESS
 
-from Utilitai.Utmess import UTMESS, ASSERT
-from Macro.defi_inte_spec_ops import tocomplex
-from code_aster.Cata.Commands import (
-    DEFI_LIST_REEL, CALC_FONCTION, DEFI_FONCTION,
-    DEFI_CONSTANTE,
-)
 
 def calc_fonction_ops(self, **args):
     """Corps de la macro CALC_FONCTION"""
@@ -120,9 +115,6 @@ class CalcFonctionOper(object):
     def build_result(self):
         """Create the result function"""
         macr = self.macro
-        DEFI_FONCTION = macr.get_cmd('DEFI_FONCTION')
-        IMPR_FONCTION = macr.get_cmd('IMPR_FONCTION')
-        DEFI_NAPPE = macr.get_cmd('DEFI_NAPPE')
         macr.DeclareOut('result', macr.sd)
         # common keywords to DEFI_FONCTION & DEFI_NAPPE
         para = self.resu.para
