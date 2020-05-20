@@ -131,3 +131,12 @@ bool BaseMeshClass::readMedFile( const std::string &fileName ) {
     readMeshFile( fileName, "MED" );
     return true;
 }
+
+const JeveuxCollectionLong BaseMeshClass::getMedConnectivity() const {
+    return _connectivity;
+}
+
+const JeveuxVectorLong BaseMeshClass::getMedCellsTypes() const {
+    VectorLong result;
+    return result;
+}
