@@ -251,9 +251,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 ! - Compute RESI_COMP_RELA
 !
     if (l_resi_comp) then
-        if(l_hho) then
-            call utmess('F', 'HHO1_15')
-        end if
+        ASSERT(.not. l_hho)
         call rescmp(ds_system%cnfnod, cnequi,&
                     r_comp_vale, r_comp_name, r_comp_indx)
     endif

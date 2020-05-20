@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -315,5 +315,8 @@ A cause des erreurs précédentes, le code s'arrête.
 
     71 : _("""La formulation HHO est incompatible en reprise de calcul."""),
 
+    72 : _("""La modélisation XFEM implique la réactualisation de la matrice REAC_ITER=1."""),
 
+    73 : _("""L'option RESI_COMP_RELA n'est pas disponible pour les méthodes HHO. Il faut utiliser un autre critère de convergence.
+"""),
 }
