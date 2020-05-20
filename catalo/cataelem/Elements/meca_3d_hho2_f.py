@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -145,9 +145,26 @@ class MECA3DQU9_HHO2_F(Element):
             ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9',), mater=('RIGI',),),
         )
     calculs = (
+        OP.CHAR_MECA_PRES_F(te=459,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PPRESSF, CPRESSF),
+                     (SP.PTEMPSR, CTEMPSR), ),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
 
-        OP.INIT_VARC(te=99,
-            para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), ),
+        OP.CHAR_MECA_PRES_R(te=459,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PPRESSR, EPRESNO),),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.CHAR_MECA_FF2D3D(te=459,
+            para_in=((SP.PFF2D3D, CFORCEF), (SP.PGEOMER, NGEOMER),
+                     (SP.PTEMPSR, CTEMPSR), ),
+            para_out=((SP.PVECTUR, MVECTUR), ),
+        ),
+
+        OP.CHAR_MECA_FR2D3D(te=459,
+            para_in=((SP.PFR2D3D, NFORCER), (SP.PGEOMER, NGEOMER),),
+            para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
         OP.NSPG_NBVA(te=496,
@@ -172,27 +189,6 @@ class MECA3DQU9_HHO2_F(Element):
                      (OP.TOU_INI_ELNO.PSIEF_R, ECONTNO), ),
         ),
 
-        OP.CHAR_MECA_PRES_F(te=459,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PPRESSF, CPRESSF),
-                     (SP.PTEMPSR, CTEMPSR), ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
-        ),
-
-        OP.CHAR_MECA_PRES_R(te=459,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PPRESSR, EPRESNO),),
-            para_out=((SP.PVECTUR, MVECTUR), ),
-        ),
-
-        OP.CHAR_MECA_FF2D3D(te=459,
-            para_in=((SP.PFF2D3D, CFORCEF), (SP.PGEOMER, NGEOMER),
-                     (SP.PTEMPSR, CTEMPSR), ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
-        ),
-
-        OP.CHAR_MECA_FR2D3D(te=459,
-            para_in=((SP.PFR2D3D, NFORCER), (SP.PGEOMER, NGEOMER),),
-            para_out=((SP.PVECTUR, MVECTUR), ),
-        ),
     )
 #------------------------------------------------------------
 class MECA3DTR4_HHO2_F(MECA3DQU9_HHO2_F):
