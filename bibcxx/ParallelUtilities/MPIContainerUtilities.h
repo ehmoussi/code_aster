@@ -1,8 +1,3 @@
-
-#include "astercxx.h"
-
-#ifdef _USE_MPI
-
 #ifndef MPICONTAINERUTILITIES_H_
 #define MPICONTAINERUTILITIES_H_
 
@@ -30,12 +25,15 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
-
-#include "ParallelUtilities/MPIInfos.h"
-#include "aster_fort.h"
-
-#include "MemoryManager/JeveuxString.h"
 #include <set>
+
+#ifdef _USE_MPI
+
+#include "astercxx.h"
+
+#include "aster_mpi.h"
+#include "ParallelUtilities/MPIInfos.h"
+#include "MemoryManager/JeveuxString.h"
 
 class MPIContainerUtilities {
   private:

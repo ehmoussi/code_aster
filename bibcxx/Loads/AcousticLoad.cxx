@@ -21,6 +21,7 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "aster_fort_superv.h"
 #include "Loads/AcousticLoad.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"

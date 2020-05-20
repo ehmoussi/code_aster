@@ -17,7 +17,7 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 
 #ifdef _HAVE_METIS
 #include "programs/metisbin.h"

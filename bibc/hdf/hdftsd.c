@@ -17,10 +17,10 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
 / Récupération du type et de la taille des valeurs stockées dans un dataset
-/ au sein d'un fichier HDF 
+/ au sein d'un fichier HDF
 /  Paramètres :
 /   - in  iddat : identificateur du dataset (hid_t)
 /   - out type  : type associé (char *)
@@ -44,7 +44,7 @@ ASTERINTEGER DEFPSPP(HDFTSD, hdftsd, hid_t *iddat, char *type, STRING_SIZE lt,
   int k,rank,status;
 
   id=(hid_t) *iddat;
-  datatype  = H5Dget_type(id);     
+  datatype  = H5Dget_type(id);
   class     = H5Tget_class(datatype);
   if      (class == H5T_INTEGER)  *type='I';
   else if (class == H5T_FLOAT)    *type='R';
@@ -55,10 +55,10 @@ ASTERINTEGER DEFPSPP(HDFTSD, hdftsd, hid_t *iddat, char *type, STRING_SIZE lt,
     *(type+k)=' ';
   }
   if ((*ltype = (ASTERINTEGER)H5Tget_size(datatype))>=0 ) {
-    if ((dataspace = H5Dget_space(id))>=0 ) { 
+    if ((dataspace = H5Dget_space(id))>=0 ) {
       if ((rank = H5Sget_simple_extent_ndims(dataspace))==1) {
         status = H5Sget_simple_extent_dims(dataspace, dims_out, NULL);
-        *lv = (ASTERINTEGER)dims_out[0];  
+        *lv = (ASTERINTEGER)dims_out[0];
         H5Sclose(dataspace);
         iret=0;
       }

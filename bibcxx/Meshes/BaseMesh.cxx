@@ -25,10 +25,13 @@
 
 #include "astercxx.h"
 
+#include "aster_fort_utils.h"
+#include "aster_fort_superv.h"
 #include "Meshes/BaseMesh.h"
 #include "PythonBindings/LogicalUnitManager.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/Exceptions.h"
+#include "Supervis/ResultNaming.h"
 #include "Utilities/CapyConvertibleValue.h"
 
 int BaseMeshClass::getNumberOfNodes() const {
@@ -132,11 +135,10 @@ bool BaseMeshClass::readMedFile( const std::string &fileName ) {
     return true;
 }
 
-const JeveuxCollectionLong BaseMeshClass::getMedConnectivity() const {
-    return _connectivity;
-}
+const JeveuxCollectionLong BaseMeshClass::getMedConnectivity() const { return _connectivity; }
 
 const JeveuxVectorLong BaseMeshClass::getMedCellsTypes() const {
-    VectorLong result;
+    JeveuxVectorLong result;
+    result->updateValuePointer();
     return result;
 }

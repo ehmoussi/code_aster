@@ -23,15 +23,15 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <list>
+#include <stdexcept>
+#include <string>
 
+#include "astercxx.h"
 #include "Functions/Function.h"
 #include "Loads/UnitaryLoad.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "Modeling/Model.h"
-#include "astercxx.h"
-#include <list>
-#include <stdexcept>
-#include <string>
 
 /**
  * @class KinematicsLoadClass

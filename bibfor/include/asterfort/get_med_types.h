@@ -15,16 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-#include "MeshTypes_type.h"
+
+!
+!
+#include "asterf_types.h"
 !
 interface
-    subroutine lrmtyp(nbtyp, nomtyp, nnotyp, typgeo, renumd,&
-                      modnum, nuanom, numnoa)
-        integer, intent(out), optional :: nbtyp
-        character(len=8), intent(out), optional :: nomtyp(MT_NTYMAX)
-        integer, intent(out), optional :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX)
-        integer, intent(out), optional :: renumd(MT_NTYMAX), modnum(MT_NTYMAX)
-        integer, intent(out), optional :: nuanom(MT_NTYMAX, MT_NNOMAX)
-        integer, intent(out), optional :: numnoa(MT_NTYMAX, MT_NNOMAX)
-    end subroutine lrmtyp
+    subroutine get_med_types(mesh, vect_types)
+        character(len=8), intent(in) :: mesh
+        character(len=24), intent(out) :: vect_types
+    end subroutine getnode
 end interface

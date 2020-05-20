@@ -24,6 +24,8 @@
 #include <iostream>
 #include <string>
 
+#include "aster_fort_calcul.h"
+#include "aster_fort_superv.h"
 #include "Discretization/DiscreteProblem.h"
 #include "Numbering/ParallelDOFNumbering.h"
 #include "Loads/KinematicsLoad.h"

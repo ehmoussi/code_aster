@@ -25,9 +25,9 @@
 
 #include "astercxx.h"
 
-
+#include "aster_mpi.h"
 #include "ParallelUtilities/MPIInfos.h"
-#include "aster_fort.h"
+
 
 int getMPINumberOfProcs() {
 #ifdef _USE_MPI

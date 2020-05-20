@@ -30,6 +30,11 @@
 #include <stdexcept>
 #include <string>
 
+#include "astercxx.h"
+#include "aster_fort_calcul.h"
+#include "aster_fort_ds.h"
+#include "aster_fort_utils.h"
+
 #include "DataFields/DataField.h"
 #include "MemoryManager/JeveuxCollection.h"
 #include "MemoryManager/JeveuxVector.h"
@@ -38,8 +43,6 @@
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Modeling/PhysicalQuantityManager.h"
 #include "Supervis/ResultNaming.h"
-#include "aster_fort.h"
-#include "astercxx.h"
 
 /**
  * @class ConstantFieldOnZone Constant Field Zone

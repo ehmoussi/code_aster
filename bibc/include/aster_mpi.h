@@ -102,6 +102,9 @@ extern void DEFPPP(ASMPI_INFO_WRAP, asmpi_info_wrap, MPI_Fint *, MPI_Fint *, MPI
 
 extern void terminate( void );
 
+#define CALL_ASABRT( a ) CALLP( ASABRT, asabrt, a )
+extern void DEFP( ASABRT, asabrt, _IN ASTERINTEGER * );
+
 /*
  *   PRIVATE FUNCTIONS
  *
@@ -112,6 +115,7 @@ aster_comm_t* get_node_by_id(MPI_Comm *);
 #ifdef UNITTEST
 extern void _unittest_aster_mpi();
 #endif
+
 #ifdef __cplusplus
 }
 #endif

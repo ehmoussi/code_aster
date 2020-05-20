@@ -23,7 +23,7 @@
 
 /* person_in_charge: natacha.bereux at edf.fr */
 
-#include "aster_fort.h"
+#include "aster_fort_ds.h"
 
 #include "Results/ModeResultComplex.h"
 #include "Supervis/CommandSyntax.h"

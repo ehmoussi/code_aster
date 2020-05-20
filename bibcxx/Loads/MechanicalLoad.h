@@ -27,6 +27,7 @@
 #include <string>
 
 #include "astercxx.h"
+#include "aster_fort_superv.h"
 
 #include "DataFields/ConstantFieldOnCells.h"
 #include "DataStructures/DataStructure.h"

@@ -23,6 +23,7 @@
 
 #include <algorithm>
 
+#include "aster_mpi.h"
 #include "Modeling/FiniteElementDescriptor.h"
 #include "Meshes/BaseMesh.h"
 #include "Meshes/ConnectionMesh.h"
