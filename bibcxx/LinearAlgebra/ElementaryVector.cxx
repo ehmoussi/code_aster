@@ -39,9 +39,11 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "astercxx.h"
 #include <stdexcept>
 
+#include "astercxx.h"
+
+#include "aster_fort_calcul.h"
 #include "LinearAlgebra/ElementaryVector.h"
 #include "Supervis/CommandSyntax.h"
 

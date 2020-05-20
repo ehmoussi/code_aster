@@ -17,9 +17,9 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Fermeture d'un dataset HDF 
+/ Fermeture d'un dataset HDF
 /  Paramètres :
 /   - in  idfic : identificateur du dataset (hid_t)
 /  Résultats :
@@ -34,12 +34,12 @@ ASTERINTEGER DEFP(HDFCLD, hdfcld, hid_t *idd)
 #ifndef _DISABLE_HDF5
     hid_t id;
     herr_t icode;
- 
+
     id=(hid_t) *idd;
-    if ((icode = H5Dclose(id)) < 0) 
+    if ((icode = H5Dclose(id)) < 0)
         return -1 ;
 #else
     CALL_UTMESS("F", "FERMETUR_3");
 #endif
     return 0;
-}     
+}

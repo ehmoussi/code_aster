@@ -26,7 +26,7 @@
 namespace py = boost::python;
 
 #include "astercxx.h"
-#include "aster_fort.h"
+#include "aster_fort_jeveux.h"
 
 #include "Meshes/Mesh.h"
 #include "Modeling/Model.h"

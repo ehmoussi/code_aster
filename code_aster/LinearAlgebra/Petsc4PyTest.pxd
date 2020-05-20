@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# Copyright (C) 1991 - 2019  EDF R&D                www.code-aster.org
+# Copyright (C) 1991 - 2020  EDF R&D                www.code-aster.org
 #
 # This file is part of Code_Aster.
 #
@@ -31,7 +31,7 @@ IF _HAVE_PETSC4PY == 1:
 
         ctypedef int PetscErrorCode
 
-    cdef extern from "aster_fort.h":
+    cdef extern from "aster_fort_petsc.h":
 
         IF _HAVE_PETSC4PY == 1:
             cdef void CALL_MATASS2PETSC(const char*, PetscMat*, PetscErrorCode*)

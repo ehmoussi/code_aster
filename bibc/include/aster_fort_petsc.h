@@ -16,50 +16,34 @@
 /* along with code_aster.  If not, see <http://www.gnu.org/licenses/>.  */
 /* -------------------------------------------------------------------- */
 
+#ifndef ASTER_FORT_PETSC_H
+#define ASTER_FORT_PETSC_H
+
 #include "aster.h"
-#include "aster_fort_utils.h"
-/*-----------------------------------------------------------------------------/
-/ Ouverture d'un groupe HDF, renvoie une erreur si le groupe ne peut être ouvert
-/  Paramètres :
-/   - in idfile : identificateur du fichier (hid_t)
-/   - in  nomgr : nom du groupe (contient toute l'arborescence depuis "/")
-/  Résultats :
-/     identificateur du groupe, -1 sinon (hid_t = int)
-/-----------------------------------------------------------------------------*/
-#ifndef _DISABLE_HDF5
-#include <hdf5.h>
+
+/* ******************************************************
+ *
+ * Interfaces of fortran subroutines called from C/C++.
+ *
+ * ******************************************************/
+
+#ifdef _HAVE_PETSC
+#include "petscmat.h"
 #endif
 
-hid_t DEFPS(HDFOPG, hdfopg, hid_t *idf, char *nomgr, STRING_SIZE ln)
-{
-  hid_t iret=-1;
-#ifndef _DISABLE_HDF5
-  hid_t  idgrp,idfic;
-  char *nomd;
-  int k;
-  void *malloc(size_t size);
-
-  idfic=(hid_t) *idf;
-  nomd = (char *) malloc((ln+1) * sizeof(char));
-  for (k=0;k<ln;k++) {
-     nomd[k] = nomgr[k];
-  }
-  k=ln-1;
-  while (k>=0){
-     if (nomd[k] == ' ' || nomd[k] == '/') { k--;}
-     else break;
-  }
-  if ( k == -1 ) {
-    nomd[k+1] = '/';
-    k++;
-  }
-  nomd[k+1] = '\0';
-
-  if ((idgrp = H5Gopen2(idfic, nomd, H5P_DEFAULT)) >= 0)
-    iret = idgrp;
-  free (nomd);
-#else
-  CALL_UTMESS("F", "FERMETUR_3");
+#ifdef __cplusplus
+extern "C" {
 #endif
-  return iret;
+
+#ifdef _HAVE_PETSC
+#define CALLO_MATASS2PETSC( a, b, c ) CALLOPP( MATASS2PETSC, matass2petsc, a, b, c )
+#define CALL_MATASS2PETSC( a, b, c ) CALLSPP( MATASS2PETSC, matass2petsc, a, b, c )
+void DEFSPP( MATASS2PETSC, matass2petsc, const char *, STRING_SIZE, Mat *, PetscErrorCode * );
+#endif
+
+#ifdef __cplusplus
 }
+#endif
+
+/* FIN ASTER_FORT_PETSC_H */
+#endif

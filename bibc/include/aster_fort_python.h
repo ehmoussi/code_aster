@@ -16,50 +16,32 @@
 /* along with code_aster.  If not, see <http://www.gnu.org/licenses/>.  */
 /* -------------------------------------------------------------------- */
 
+#ifndef ASTER_FORT_PYTHON_H
+#define ASTER_FORT_PYTHON_H
+
 #include "aster.h"
-#include "aster_fort_utils.h"
-/*-----------------------------------------------------------------------------/
-/ Ouverture d'un groupe HDF, renvoie une erreur si le groupe ne peut être ouvert
-/  Paramètres :
-/   - in idfile : identificateur du fichier (hid_t)
-/   - in  nomgr : nom du groupe (contient toute l'arborescence depuis "/")
-/  Résultats :
-/     identificateur du groupe, -1 sinon (hid_t = int)
-/-----------------------------------------------------------------------------*/
-#ifndef _DISABLE_HDF5
-#include <hdf5.h>
+
+/* ******************************************************
+ *
+ * Interfaces of fortran subroutines called from C/C++.
+ *
+ * ******************************************************/
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-hid_t DEFPS(HDFOPG, hdfopg, hid_t *idf, char *nomgr, STRING_SIZE ln)
-{
-  hid_t iret=-1;
-#ifndef _DISABLE_HDF5
-  hid_t  idgrp,idfic;
-  char *nomd;
-  int k;
-  void *malloc(size_t size);
+#define CALL_GMARDM(a,b,c) CALLSSP(GMARDM,gmardm,a,b,c)
+extern void DEFSSP(GMARDM, gmardm, const char *,STRING_SIZE,
+                       const char *,STRING_SIZE, ASTERINTEGER *);
 
-  idfic=(hid_t) *idf;
-  nomd = (char *) malloc((ln+1) * sizeof(char));
-  for (k=0;k<ln;k++) {
-     nomd[k] = nomgr[k];
-  }
-  k=ln-1;
-  while (k>=0){
-     if (nomd[k] == ' ' || nomd[k] == '/') { k--;}
-     else break;
-  }
-  if ( k == -1 ) {
-    nomd[k+1] = '/';
-    k++;
-  }
-  nomd[k+1] = '\0';
+#define CALL_POSTKUTIL(a,b,c,d) CALLSSSS(POSTKUTIL,postkutil,a,b,c,d)
+extern void DEFSSSS(POSTKUTIL,postkutil,char *,STRING_SIZE,char *,STRING_SIZE,
+                    char *,STRING_SIZE,char *,STRING_SIZE);
 
-  if ((idgrp = H5Gopen2(idfic, nomd, H5P_DEFAULT)) >= 0)
-    iret = idgrp;
-  free (nomd);
-#else
-  CALL_UTMESS("F", "FERMETUR_3");
-#endif
-  return iret;
+#ifdef __cplusplus
 }
+#endif
+
+/* FIN ASTER_FORT_PYTHON_H */
+#endif

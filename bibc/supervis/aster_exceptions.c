@@ -25,7 +25,6 @@
 #include <signal.h>
 
 #include "aster.h"
-#include "aster_fort.h"
 #include "aster_exceptions.h"
 
 /*

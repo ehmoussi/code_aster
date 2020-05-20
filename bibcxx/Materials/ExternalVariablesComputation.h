@@ -27,7 +27,6 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
-#include "aster_fort.h"
 #include "Materials/MaterialField.h"
 #include "Materials/CodedMaterial.h"
 #include "Modeling/Model.h"

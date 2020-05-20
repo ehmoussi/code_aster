@@ -31,7 +31,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "aster_fort.h"
 #include "astercxx.h"
 
 #include "DataStructures/DataStructureNaming.h"

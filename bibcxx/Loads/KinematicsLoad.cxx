@@ -26,6 +26,7 @@
 #include <string>
 #include "astercxx.h"
 
+#include "aster_fort_superv.h"
 #include "Loads/KinematicsLoad.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/ResultNaming.h"

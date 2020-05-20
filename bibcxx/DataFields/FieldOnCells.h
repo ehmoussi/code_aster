@@ -30,8 +30,8 @@
 #include <assert.h>
 
 #include "astercxx.h"
-#include "aster_fort.h"
 
+#include "aster_fort_ds.h"
 #include "MemoryManager/JeveuxVector.h"
 #include "DataFields/DataField.h"
 #include "DataFields/SimpleFieldOnCells.h"

@@ -17,9 +17,9 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Ouverture d'un fichier HDF, renvoie éventuellement une erreur  
+/ Ouverture d'un fichier HDF, renvoie éventuellement une erreur
 /  Paramètres :
 /   - in  nomfic : nom du fichier (char *)
 /  Résultats :
@@ -33,11 +33,11 @@ hid_t DEFS(HDFOPF, hdfopf, char *nomfic, STRING_SIZE ln)
 {
   hid_t iret=-1;
 #ifndef _DISABLE_HDF5
-  hid_t idfic; 
+  hid_t idfic;
   int k;
   char *nomf;
   void *malloc(size_t size);
-  
+
   nomf = (char *) malloc((ln+1) * sizeof(char));
   for (k=0;k<ln;k++) {
      nomf[k] = nomfic[k];
@@ -47,11 +47,11 @@ hid_t DEFS(HDFOPF, hdfopf, char *nomfic, STRING_SIZE ln)
   nomf[k+1] = '\0';
   // désactive les impressions HDF dans stdout
   H5Eset_auto1(NULL,NULL);
-  if ( (idfic = H5Fopen(nomf, H5F_ACC_RDONLY, H5P_DEFAULT)) >= 0) 
+  if ( (idfic = H5Fopen(nomf, H5F_ACC_RDONLY, H5P_DEFAULT)) >= 0)
     iret =  idfic;
   free (nomf);
 #else
   CALL_UTMESS("F", "FERMETUR_3");
 #endif
   return iret;
-}     
+}

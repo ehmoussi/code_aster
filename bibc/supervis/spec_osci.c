@@ -17,7 +17,7 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 
 void calc_SPEC_OSCI( int nbpts, double* vale_x, double* vale_y,
                      int len_f, double* l_freq, int len_a, double* l_amor,

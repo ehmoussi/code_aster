@@ -29,8 +29,10 @@
 #include <list>
 #include <stdexcept>
 
-#include "aster_fort.h"
 #include "astercxx.h"
+#include "aster_fort_calcul.h"
+#include "aster_fort_ds.h"
+#include "aster_fort_petsc.h"
 
 #include "DataStructures/DataStructure.h"
 #include "LinearAlgebra/ElementaryMatrix.h"

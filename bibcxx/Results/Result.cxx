@@ -23,7 +23,9 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "aster_fort.h"
+#include "aster_fort_ds.h"
+#include "aster_fort_superv.h"
+#include "aster_fort_utils.h"
 
 #include "Results/Result.h"
 #include "PythonBindings/LogicalUnitManager.h"

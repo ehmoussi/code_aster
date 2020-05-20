@@ -24,7 +24,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "aster_fort.h"
 #include "shared_vars.h"
 
 #include "DataStructures/DataStructure.h"

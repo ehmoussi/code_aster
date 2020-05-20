@@ -18,10 +18,10 @@
 
 /* person_in_charge: j-pierre.lefebvre at edf.fr */
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Récupération du nombre de datasets et de groups contenus dans un groupe 
-/ au sein d'un fichier HDF 
+/ Récupération du nombre de datasets et de groups contenus dans un groupe
+/ au sein d'un fichier HDF
 /  Paramètres :
 /   - in  idfic : identificateur du fichier (hid_t)
 /   - in  nomgr : nom du groupe (char *)
@@ -41,7 +41,7 @@ ASTERINTEGER DEFPS(HDFNBO, hdfnbo, hid_t *idf, char *nomgr, STRING_SIZE ln)
   int k;
   int idx ;
   void *malloc(size_t size);
-  
+
   herr_t indiceNbName(hid_t loc_id, const char *name, const H5L_info_t *info, void *opdata);
 
   idfic=(hid_t) *idf;
@@ -60,11 +60,11 @@ ASTERINTEGER DEFPS(HDFNBO, hdfnbo, hid_t *idf, char *nomgr, STRING_SIZE ln)
 #else
   CALL_UTMESS("F", "FERMETUR_3");
 #endif
-  return nbobj; 
+  return nbobj;
 }
-/*  
+/*
     http://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Visit
-    
+
     The protoype of the callback function op is as follows (as defined in the source code
     file H5Lpublic.h):
     herr_t (*H5L_iterate_t)( hid_t g_id, const char *name, const H5L_info_t *info, void *op_data)
@@ -85,7 +85,7 @@ ASTERINTEGER DEFPS(HDFNBO, hdfnbo, hid_t *idf, char *nomgr, STRING_SIZE ln)
         * A positive value causes the visit iterator to immediately return that positive value,
           indicating short-circuit success. The iterator can be restarted at the next group member.
         * A negative value causes the visit iterator to immediately return that value, indicating
-          failure. The iterator can be restarted at the next group member. 
+          failure. The iterator can be restarted at the next group member.
 */
 
 #ifndef _DISABLE_HDF5

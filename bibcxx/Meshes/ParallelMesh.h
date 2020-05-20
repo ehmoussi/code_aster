@@ -1,8 +1,3 @@
-
-#include "astercxx.h"
-
-#ifdef _USE_MPI
-
 #ifndef PARALLELMESH_H_
 #define PARALLELMESH_H_
 
@@ -33,6 +28,8 @@
 #include <set>
 
 #include "astercxx.h"
+
+#ifdef _USE_MPI
 
 #include "Meshes/BaseMesh.h"
 
@@ -161,7 +158,6 @@ class ParallelMeshClass : public BaseMeshClass {
  * @brief Pointeur intelligent vers un ParallelMeshClass
  */
 typedef boost::shared_ptr< ParallelMeshClass > ParallelMeshPtr;
+#endif /* _USE_MPI */
 
 #endif /* PARALLELMESH_H_ */
-
-#endif /* _USE_MPI */

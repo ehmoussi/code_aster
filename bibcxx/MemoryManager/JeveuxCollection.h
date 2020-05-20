@@ -26,7 +26,6 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
-#include "aster_fort.h"
 #include "astercxx.h"
 
 // @todo prefer use JeveuxString

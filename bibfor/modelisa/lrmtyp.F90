@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -33,30 +33,32 @@ implicit none
 #include "asterfort/jexnum.h"
 #include "asterfort/utmess.h"
 !
-integer, intent(out) :: nbtyp
-integer, intent(out) :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX), renumd(MT_NTYMAX)
-integer, intent(out) :: modnum(MT_NTYMAX)
-integer, intent(out) :: nuanom(MT_NTYMAX, MT_NNOMAX), numnoa(MT_NTYMAX, MT_NNOMAX)
-character(len=8), intent(out) :: nomtyp(MT_NTYMAX)
+integer, intent(out), optional :: nbtyp
+character(len=8), intent(out), optional :: nomtyp(MT_NTYMAX)
+integer, intent(out), optional :: nnotyp(MT_NTYMAX), typgeo(MT_NTYMAX)
+integer, intent(out), optional :: renumd(MT_NTYMAX), modnum(MT_NTYMAX)
+integer, intent(out), optional :: nuanom(MT_NTYMAX, MT_NNOMAX)
+integer, intent(out), optional :: numnoa(MT_NTYMAX, MT_NNOMAX)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!     RECUP DES NOMS/NBNO DES TYPES DE MAILLES DANS LE CATALOGUE
-!     ET RECUP DES TYPE GEO CORRESPONDANT POUR MED
+! Returns several informations to map the aster cells types and the med ones.
 !
-! --------------------------------------------------------------------------------------------------
-!
-!     SORTIE:
-!       MODNUM : INDICATEUR SI LA SPECIFICATION DE NUMEROTATION DES
-!                NOEUDS DES MAILLES EST DIFFERENTES ENTRE ASTER ET MED:
-!                     MODNUM = 0 : NUMEROTATION IDENTIQUE
-!                     MODNUM = 1 : NUMEROTATION DIFFERENTE
-!       NUANOM : TABLEAU DE CORRESPONDANCE DES NOEUDS (MED/ASTER).
-!                NUANOM(ITYP,J): NUMERO DANS ASTER DU J IEME NOEUD
-!                DE LA MAILLE DE TYPE ITYP DANS MED.
-!       NUMNOA : TABLEAU DE CORRESPONDANCE DES NOEUDS (MED/ASTER).
-!                NUMNOA(ITYP,J) : NUMERO DANS MED DU J IEME NOEUD
-!                DE LA MAILLE DE TYPE ITYP D'ASTER
+! Outputs:
+!   nbtyp  : number of cells types supported by med (and used in aster)
+!   nomtyp : array of aster cells names
+!   nnotyp : number of nodes for each cell type
+!   typgeo : array of med cells types
+!   renumd : redirection array (size: nbtyp):
+!               #supported_type => #type_index in typgeo
+!   modnum : array that tells if the connectivity differs between med and aster
+!               modnum = 0 : same nodes numbering
+!               modnum = 1 : different nodes numbering
+!   nuanom : mapping array of connectivity med to aster
+!   nuanom : tableau de correspondance des noeuds (med/aster).
+!               nuanom(ityp, k) = j : node k in med is the node j in aster
+!   numnoa : mapping array of connectivity aster to med
+!               numnoa(ityp, j) = k : node j in aster is the node k in med
 !
 ! --------------------------------------------------------------------------------------------------
 !
