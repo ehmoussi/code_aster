@@ -23,6 +23,6 @@
 interface
     subroutine get_med_types(mesh, vect_types)
         character(len=8), intent(in) :: mesh
-        character(len=24), intent(out) :: vect_types
+        character(len=24), intent(inout) :: vect_types
     end subroutine getnode
 end interface
