@@ -317,6 +317,9 @@ A cause des erreurs précédentes, le code s'arrête.
 
     72 : _("""La modélisation XFEM implique la réactualisation de la matrice REAC_ITER=1."""),
 
-    73 : _("""L'option RESI_COMP_RELA n'est pas disponible pour les méthodes HHO. Il faut utiliser un autre critère de convergence.
-"""),
+    73 : _("""L'option RESI_COMP_RELA n'est pas disponible pour les méthodes HHO. Il faut utiliser un autre critère de convergence."""),
+
+    74 : _("""La formulation HHO implique la réactualisation de la matrice REAC_ITER=1."""),
+
+    75 : _("""La formulation HHO ne peut pas utiliser la matrice élastique en prédiction."""),
 }

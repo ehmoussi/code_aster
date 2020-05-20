@@ -182,5 +182,6 @@ RAPH_MECA = Option(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
       CondCalcul('-', ((AT.FLUIDE,'OUI'),(AT.ABSO,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.FSI ,'OUI'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
     ),
 )

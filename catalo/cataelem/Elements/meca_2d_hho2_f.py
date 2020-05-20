@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -142,10 +142,6 @@ class MECA_2D_HHO2_F(Element):
             ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG3',), mater=('RIGI',),),
         )
     calculs = (
-
-        OP.INIT_VARC(te=99,
-            para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), ),
-        ),
 
         OP.NSPG_NBVA(te=496,
             para_in=((OP.NSPG_NBVA.PCOMPOR, LC.CCOMPO2), ),
