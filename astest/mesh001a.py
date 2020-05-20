@@ -68,6 +68,10 @@ npcoord = np.array(values).reshape((-1, 3))
 for i in quad47:
     test.assertEqual(npcoord[i - 1][2], 1.0)
 
+# same connectivities for SEG2, QUAD4
+test.assertSequenceEqual(connect[12], medconn[12])
+test.assertSequenceEqual(connect[36], medconn[36])
+# different connectivities for HEXA8
 conn_ast = [1, 9, 21, 10, 18, 23, 27, 26]
 conn_med = [1, 10, 21, 9, 18, 26, 27, 23]
 test.assertSequenceEqual(connect[49 - 1], conn_ast)

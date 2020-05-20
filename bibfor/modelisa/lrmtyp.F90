@@ -55,7 +55,6 @@ integer, intent(out), optional :: numnoa(MT_NTYMAX, MT_NNOMAX)
 !               modnum_ = 0 : same nodes numbering
 !               modnum_ = 1 : different nodes numbering
 !   nuanom  : mapping array of connectivity med to aster
-!   nuanom  : tableau de correspondance des noeuds (med/aster).
 !               nuanom_(ityp, k) = j : node k in med is the node j in aster
 !   numnoa  : mapping array of connectivity aster to med
 !               numnoa_(ityp, j) = k : node j in aster is the node k in med

@@ -21,7 +21,6 @@ subroutine get_med_types(mesh, vect_types)
 
     implicit none
 
-#include "asterfort/assert.h"
 #include "asterfort/gnomsd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"

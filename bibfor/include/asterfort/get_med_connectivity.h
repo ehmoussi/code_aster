@@ -19,8 +19,8 @@
 #include "asterf_types.h"
 
 interface
-    subroutine get_med_types(mesh, vect_types)
+    subroutine get_med_connectivity(mesh, med_connect)
         character(len=8), intent(in) :: mesh
-        character(len=24), intent(inout) :: vect_types
-    end subroutine get_med_types
+        character(len=24), intent(inout) :: med_connect
+    end subroutine get_med_connectivity
 end interface

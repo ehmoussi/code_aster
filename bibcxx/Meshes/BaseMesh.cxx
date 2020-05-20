@@ -136,12 +136,16 @@ bool BaseMeshClass::readMedFile( const std::string &fileName ) {
     return true;
 }
 
-const JeveuxCollectionLong BaseMeshClass::getMedConnectivity() const { return _connectivity; }
+const JeveuxCollectionLong BaseMeshClass::getMedConnectivity() const {
+    JeveuxChar24 objv( " " );
+    CALLO_GET_MED_CONNECTIVITY( getName(), objv );
+    JeveuxCollectionLong result( objv.toString() );
+    return result;
+}
 
 const JeveuxVectorLong BaseMeshClass::getMedCellsTypes() const {
     JeveuxChar24 objv( " " );
     CALLO_GET_MED_TYPES( getName(), objv );
     JeveuxVectorLong result( objv.toString() );
-    result->updateValuePointer();
     return result;
 }
