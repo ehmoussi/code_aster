@@ -1,0 +1,119 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: mathieu.courtois at edf.fr
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+#=======================================================================
+#
+#          VALIDATION DE CALC_FONCTION / INTEGRE_FREQ, DERIVE_FREQ
+#
+#=======================================================================
+
+#
+#-----------------------------
+#
+#    DEFI_FONCTION : UL 34
+#    ACCELEROGRAMME : LBNS
+#    (LONG BEACH NORTH SOUTH)
+
+INCLUDE(UNITE=34, )
+
+#
+#  ACCELEROGRAMMES NORMES A 0.1G
+#
+#
+#
+
+N = 64.
+dt = 0.05
+TFIN = N * dt
+FMAX = 0.5 / dt
+
+linst = DEFI_LIST_REEL(
+    DEBUT=0.,
+    INTERVALLE=(_F(
+        JUSQU_A=(N - 1.) * dt,
+        PAS=1. * dt,
+    ), ),
+)
+
+ACCEX = CALC_FONCTION(
+    COMB=_F(
+        FONCTION=LBNS,
+        COEF=1.5,
+    ),
+    LIST_PARA=linst,
+)
+
+df = 1. / TFIN
+
+fc0 = 0.05
+
+fc = 31.0 * df
+
+deplx = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=ACCEX,
+                                      FREQ_FILTRE=fc0,
+                                      FREQ_COUP=fc,
+                                      NIVEAU=2), )
+
+VITEX1 = CALC_FONCTION(DERIVE_FREQ=_F(FONCTION=deplx, FREQ_COUP=fc,
+                                      NIVEAU=1), )
+
+depx1 = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=VITEX1, FREQ_COUP=fc,
+                                      NIVEAU=1), )
+
+ACCEX2 = CALC_FONCTION(DERIVE_FREQ=_F(FONCTION=deplx, FREQ_COUP=fc,
+                                      NIVEAU=2), )
+
+depx2 = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=ACCEX2, FREQ_COUP=fc,
+                                      NIVEAU=2), )
+
+TEST_FONCTION(VALEUR=(
+    _F(
+        VALE_CALC=0.05330669498324,
+        VALE_REFE=0.053306695,
+        VALE_PARA=(2.05),
+        REFERENCE='AUTRE_ASTER',
+        PRECISION=1.0E-4,
+        NOM_PARA=('INST'),
+        FONCTION=deplx,
+    ),
+    _F(
+        VALE_CALC=0.05330669498324,
+        VALE_REFE=0.053306695,
+        VALE_PARA=(2.05),
+        REFERENCE='AUTRE_ASTER',
+        PRECISION=1.0E-4,
+        NOM_PARA=('INST'),
+        FONCTION=depx1,
+    ),
+    _F(
+        VALE_CALC=0.05330669498324,
+        VALE_REFE=0.053306695,
+        VALE_PARA=(2.05),
+        REFERENCE='AUTRE_ASTER',
+        PRECISION=1.0E-4,
+        NOM_PARA=('INST'),
+        FONCTION=depx2,
+    ),
+), )
+
+FIN()

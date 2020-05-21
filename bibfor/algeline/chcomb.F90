@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,7 +63,7 @@ subroutine chcomb(tablez, nomaou)
     integer :: ibid, iret, idcode, dimcoo, nbno, jcoor, idcoor, ino
     real(kind=8) :: r8b, xt, yt
     complex(kind=8) :: c16b
-    character(len=8) :: k8b, noma
+    character(len=8) :: k8b, noma,typobj
     character(len=19) :: table
     character(len=24) :: cooval, coodes
 !.========================= DEBUT DU CODE EXECUTABLE ==================
@@ -78,7 +78,7 @@ subroutine chcomb(tablez, nomaou)
 !
 ! --- VERIFICATION DES PARAMETRES DE LA TABLE
 !     ---------------------------------------
-    call tbexp2(table, 'MAILLAGE')
+    call tbexp2(table, 'TYPE_OBJET')
     call tbexp2(table, 'LIEU')
     call tbexp2(table, 'EY')
     call tbexp2(table, 'EZ')
@@ -87,9 +87,17 @@ subroutine chcomb(tablez, nomaou)
 ! --- DE CISAILLEMENT-TORSION :
 !     -----------------------
     call tbliva(table, 0, k8b, [ibid], [r8b],&
-                [c16b], k8b, k8b, [r8b], 'MAILLAGE',&
+                [c16b], k8b, k8b, [r8b], 'TYPE_OBJET',&
+                k8b, ibid, r8b, c16b, typobj,&
+                iret)
+    if (typobj.ne.'MAILLAGE') call utmess('F', 'MODELISA2_89')
+    
+    call tbexp2(table, 'NOM_SD')
+    call tbliva(table, 0, k8b, [ibid], [r8b],&
+                [c16b], k8b, k8b, [r8b], 'NOM_SD',&
                 k8b, ibid, r8b, c16b, noma,&
                 iret)
+
     call tbliva(table, 1, 'LIEU', [ibid], [r8b],&
                 [c16b], noma, k8b, [r8b], 'EY',&
                 k8b, ibid, xt, c16b, k8b,&

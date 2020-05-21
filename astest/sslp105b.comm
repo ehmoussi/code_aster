@@ -182,6 +182,7 @@ F0=DEFI_FONCTION(NOM_PARA='INST',
 
 RES1=CREA_CHAMP(TYPE_CHAM='ELNO_SIEF_R',
                 OPERATION='AFFE',
+                PROL_ZERO='OUI',
                 MODELE=MO,
                 AFFE=(_F(GROUP_MA=('SOL_REST','EXCAV','BETON'),
                         NOM_CMP=('SIXX','SIYY','SIZZ','SIXY'),

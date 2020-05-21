@@ -49,6 +49,10 @@ Il ne peut y avoir qu'une seule occurrence du chargement PRE_EPSI quand le mot-c
 est présent.
 """),
 
+    6 : _("""
+Le champ fourni à PRE_EPSI via la mot-clé EPSI contient une composante non autorisée : %(k1)s.
+"""),
+
     20 : _("""
 La charge %(k1)s n'est pas compatible avec FONC_MULT.
 """),

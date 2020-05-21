@@ -26,7 +26,7 @@ from ..Language.Syntax import *
 
 def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C, MULT,
                        ENVELOPPE, FRACTILE, PROL_SPEC_OSCI, SPEC_OSCI, ASSE, FFT, COMPOSE, CORR_ACCE, COHERENCE,
-                       PUISSANCE, LISS_ENVELOP, ABS, REGR_POLYNOMIALE, DSP, MOYENNE,
+                       PUISSANCE, LISS_ENVELOP, ABS, REGR_POLYNOMIALE, DSP, MOYENNE, INTEGRE_FREQ, DERIVE_FREQ,
                        INTERPOL_FFT, **args):
    if args.get('__all__'):
        return (fonction_sdaster, fonction_c, nappe_sdaster)
@@ -88,6 +88,8 @@ def calc_fonction_prod(self, DERIVE, EXTRACTION, INTEGRE, INVERSE, COMB, COMB_C,
    if (REGR_POLYNOMIALE is not None): return fonction_sdaster
    if (PUISSANCE   is not None): return AsType(PUISSANCE[0]['FONCTION'])
    if (ABS         is not None): return fonction_sdaster
+   if (INTEGRE_FREQ  is not None): return fonction_sdaster
+   if (DERIVE_FREQ   is not None): return fonction_sdaster
    raise AsException("type de concept resultat non prevu")
 
 
@@ -98,7 +100,7 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
                     reentrant='n',
          regles=(UN_PARMI('DERIVE', 'INTEGRE', 'SPEC_OSCI', 'DSP', 'FFT', 'CORR_ACCE',
                           'COMB', 'COMB_C', 'MULT', 'ASSE', 'INVERSE', 'ABS',
-                          'ENVELOPPE', 'COMPOSE', 'EXTRACTION', 'PUISSANCE', 'PROL_SPEC_OSCI',
+                          'ENVELOPPE', 'COMPOSE', 'EXTRACTION', 'PUISSANCE', 'PROL_SPEC_OSCI', 'INTEGRE_FREQ', 'DERIVE_FREQ',
                           'LISS_ENVELOP', 'FRACTILE', 'REGR_POLYNOMIALE', 'MOYENNE', 'COHERENCE','INTERPOL_FFT',),),
          FFT             =FACT(statut='f',fr=tr("Transformée de Fourier ou de son inverse"),
            FONCTION        =SIMP(statut='o',typ=(fonction_sdaster,fonction_c) ),
@@ -243,6 +245,17 @@ CALC_FONCTION=MACRO(nom="CALC_FONCTION",
          ),
          INVERSE         =FACT(statut='f',fr=tr("Inverse d'une fonction"),
             FONCTION      =SIMP(statut='o', typ=fonction_sdaster),
+         ),
+         INTEGRE_FREQ       =FACT(statut='f',fr=tr("Integration frequentielle d un accelerogramme reel"),
+            FONCTION        =SIMP(statut='o',typ=fonction_sdaster ),
+            NIVEAU          =SIMP(statut='f',typ='I',defaut=2,into=(1,2) ),
+            FREQ_FILTRE  =SIMP(statut='f',typ='R', defaut= 0.0, val_min=0.0, fr=tr("frequence du filtre temporel") ),
+            FREQ_COUP    =SIMP(statut='f',typ='R', defaut= 50.0, val_min=0.0, fr=tr("frequence de coupure") ),
+         ),
+         DERIVE_FREQ       =FACT(statut='f',fr=tr("Integration frequentielle d un accelerogramme reel"),
+            FONCTION        =SIMP(statut='o',typ=fonction_sdaster ),
+            NIVEAU          =SIMP(statut='f',typ='I',defaut=2,into=(1,2) ),
+            FREQ_COUP    =SIMP(statut='f',typ='R', defaut= 50.0, val_min=0.0, fr=tr("frequence de coupure") ),
          ),
          NOM_PARA        =SIMP(statut='f',typ='TXM',into=C_PARA_FONCTION() ),
          NOM_RESU        =SIMP(statut='f',typ='TXM' ),

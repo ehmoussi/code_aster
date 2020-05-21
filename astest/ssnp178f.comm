@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -57,8 +57,10 @@ times = DEFI_LIST_INST(
     ECHEC=_F(ACTION='DECOUPE', EVENEMENT='ERREUR', SUBD_NIVEAU=3)
 )
 
-depl = AFFE_CHAR_CINE(
-    MECA_IMPO=_F(DX=0.0, DY=0.0, DZ=0.0, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
+zero = DEFI_CONSTANTE(VALE=0.0)
+
+depl = AFFE_CHAR_CINE_F(
+    MECA_IMPO=_F(DX=zero, DY=zero, DZ=zero, GROUP_MA=('Encast', )), MODELE=model, INFO=1,
 )
 
 plan = AFFE_CHAR_CINE(

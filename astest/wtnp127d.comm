@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -322,5 +322,43 @@ TEST_TABLE(VALE_REFE=2.0E-10,
            REFERENCE='ANALYTIQUE',
            NOM_PARA='INTE_FH11',
            TABLE=FLUXNG,)
+
+
+FLUXTT = POST_ELEM(RESULTAT   = cal1,
+              INST=TFINAL,
+              MODELE     = MODELT,
+              INTEGRALE=_F(GROUP_MA=('MGAUCHE','MMIL', 'MDROIT'),
+              NOM_CHAM='FLHN_ELGA',
+              NOM_CMP=('FH11'),
+              TYPE_MAILLE='1D'))
+IMPR_TABLE(TABLE=FLUXTT, UNITE=6)
+
+TEST_TABLE(VALE_REFE=-2.0E-10,
+           VALE_CALC=-2.0E-10,
+           PRECISION=1.E-3,
+           REFERENCE='ANALYTIQUE',
+           NOM_PARA='INTE_FH11',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='MDROIT',),
+           TABLE=FLUXTT,)
+
+TEST_TABLE(VALE_REFE=-2.0E-10,
+           VALE_CALC=-2.0E-10,
+           PRECISION=1.E-3,
+           REFERENCE='ANALYTIQUE',
+           NOM_PARA='INTE_FH11',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='MMIL',),
+           TABLE=FLUXTT,)
+
+
+TEST_TABLE(VALE_REFE=2.0E-10,
+           VALE_CALC=2.0E-10,
+           PRECISION=1.E-3,
+           REFERENCE='ANALYTIQUE',
+           NOM_PARA='INTE_FH11',
+           FILTRE=_F(NOM_PARA='GROUP_MA',
+                     VALE_K='MGAUCHE',),
+           TABLE=FLUXTT,)
 
 FIN();

@@ -17,10 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: jacques.pellet at edf.fr
-
-
-
 from cataelem.Tools.base_objects import InputParameter, OutputParameter, Option, CondCalcul
 import cataelem.Commons.physical_quantities as PHY
 import cataelem.Commons.parameters as SP
@@ -176,5 +172,6 @@ RIGI_MECA = Option(
       CondCalcul('-', ((AT.FLUIDE,'OUI'),(AT.ABSO,'OUI'),)),
       CondCalcul('-', ((AT.FLUIDE,'OUI'),(AT.FSI ,'OUI'),)),
       CondCalcul('+', ((AT.POUTRE,'OUI'),(AT.FSI ,'OUI'),)),
+      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
     ),
 )

@@ -23,6 +23,7 @@ from .sd_cham_no import sd_cham_no
 # from .sd_mode_meca import sd_mode_meca
 from .sd_dyna_phys import sd_dyna_phys
 from .sd_fonction import sd_fonction
+from .sd_maillage import sd_maillage
 from .sd_matr_elem import sd_matr_elem
 from .sd_table import sd_table
 from .sd_vect_elem import sd_vect_elem
@@ -72,7 +73,13 @@ class sd_table_container(sd_table):
         if col3 is not None:
             lnom3 = col3.data.get_stripped()
         for k in range(nbli):
-            if lnom1[k].startswith("VECT_ELEM"):
+            if lnom1[k] == '' or lnom2[k] == '':
+                if lnom1[k] != '' or lnom2[k] != '':
+                    checker.err(self, f"Ligne {k + 1} : TYPE_OBJET et NOM_SD "
+                                      f"doivent être définis ensemble")
+                else:
+                    continue
+            elif lnom1[k].startswith("VECT_ELEM"):
                 sd5 = sd_vect_elem(lnom2[k])
                 sd5.check(checker)
             elif lnom1[k].startswith("MATR_ELEM"):
@@ -102,6 +109,9 @@ class sd_table_container(sd_table):
                 sd5.check(checker)
             elif lnom1[k].startswith("TABLE"):
                 sd5 = sd_table(lnom2[k])
+                sd5.check(checker)
+            elif lnom1[k][:8] == 'MAILLAGE':
+                sd5 = sd_maillage(lnom2[k])
                 sd5.check(checker)
             else:
                 assert 0, lnom1[k]

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,17 +21,17 @@
 interface
     subroutine pemaxe(resu, nomcha, lieu, nomlie, modele,&
                       chpost, nbcmp, nomcmp, nuord, inst,&
-                      iocc)
+                    nbmail, numemail)
         integer :: nbcmp
         character(len=19) :: resu
         character(len=24) :: nomcha
         character(len=8) :: lieu
-        character(len=8) :: nomlie
+        character(len=24) :: nomlie
         character(len=8) :: modele
         character(len=19) :: chpost
         character(len=8) :: nomcmp(nbcmp)
         integer :: nuord
         real(kind=8) :: inst
-        integer :: iocc
+        integer :: nbmail, numemail(*)
     end subroutine pemaxe
 end interface
