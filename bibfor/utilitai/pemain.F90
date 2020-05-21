@@ -20,6 +20,9 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
                   nbocc, deform)
     implicit none
 #include "jeveux.h"
+#include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/assert.h"
 #include "asterfort/calcul.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/exlim3.h"
@@ -41,10 +44,10 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
 #include "asterfort/tbajpa.h"
 #include "asterfort/tbcrsd.h"
 #include "asterfort/utmess.h"
+!#include "asterfort/umalma.h"
+#include "asterfort/uttrii.h"
 #include "asterfort/vtgpld.h"
 #include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
 !
     integer :: nh, nbocc
     character(len=*) :: resu, modele, mate, mateco, cara, deform
@@ -66,6 +69,7 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
     complex(kind=8) :: c16b
     integer :: iarg
     real(kind=8), pointer :: trav1(:) => null()
+!    integer, pointer :: v_allma(:) => null()
 !
     data noparr/'LIEU','ENTITE','MASSE','CDG_X','CDG_Y','CDG_Z', &
             'IX_G','IY_G','IZ_G','IXY_G','IXZ_G','IYZ_G','IX_PRIN_G', &
@@ -147,14 +151,14 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
 !
     mxvale = mxval1
     nbparr = nbpar1
-    do 10 iocc = 1, nbocc
+    do iocc = 1, nbocc
         call getvr8('MASS_INER', 'ORIG_INER', iocc=iocc, nbval=0, nbret=nr)
         if (nr .ne. 0) then
             mxvale = mxval2
             nbparr = nbpar2
             goto 20
         endif
-10  continue
+    end do
 20  continue
 !
 !     --- CREATION DE LA TABLE ---
@@ -162,7 +166,7 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
     call tbajpa(resu, nbparr, noparr, typarr)
 !
     AS_ALLOCATE(vr=trav1, size=mxvale)
-    do 50 iocc = 1, nbocc
+    do iocc = 1, nbocc
         iorig = 0
         orig(1) = zero
         orig(2) = zero
@@ -172,6 +176,7 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
                     iarg, 0, k8b, ng)
         call getvem(noma, 'MAILLE', 'MASS_INER', 'MAILLE', iocc,&
                     iarg, 0, k8b, nm)
+
         call getvr8('MASS_INER', 'ORIG_INER', iocc=iocc, nbval=0, nbret=nr)
         if (nr .ne. 0) then
             iorig = 1
@@ -193,7 +198,7 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
             call getvem(noma, 'GROUP_MA', 'MASS_INER', 'GROUP_MA', iocc,&
                         iarg, nbgrma, zk24(jgr), ng)
             valk2(2) = 'GROUP_MA'
-            do 30 ig = 1, nbgrma
+            do ig = 1, nbgrma
                 call jeexin(jexnom(mlggma, zk24(jgr+ig-1)), iret)
                 if (iret .eq. 0) then
                     call utmess('A', 'UTILITAI3_46', sk=zk24(jgr+ig-1))
@@ -210,7 +215,19 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
                 valk2(1) = zk24(jgr+ig-1)
                 call tbajli(resu, nbparr, noparr, [ibid], trav1,&
                             [c16b], valk2, 0)
-30          continue
+30  continue
+            end do
+!
+!
+! --- UNION
+!             call umalma(noma, zk24(jgr), nbgrma, v_allma, nbtot)
+!             ASSERT(nbtot>0)
+! !
+!             call pemica(chelem, mxvale, trav1, nbtot, v_allma, orig, iorig, icage)
+!             valk2(1) = "UNION_GROUP_MA"
+!             call tbajli(resu, nbparr, noparr, [ibid], trav1, [c16b], valk2, 0)
+! !
+!             AS_DEALLOCATE(vi=v_allma)
             call jedetr('&&PEMAIN_GROUPM')
         endif
         if (nm .ne. 0) then
@@ -219,7 +236,7 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
             call getvem(noma, 'MAILLE', 'MASS_INER', 'MAILLE', iocc,&
                         iarg, nbmail, zk8(jma), nm)
             valk(2) = 'MAILLE'
-            do 40 im = 1, nbmail
+            do im = 1, nbmail
                 call jeexin(jexnom(mlgnma, zk8(jma+im-1)), iret)
                 if (iret .eq. 0) then
                     call utmess('A', 'UTILITAI3_49', sk=zk8(jma+im-1))
@@ -231,10 +248,11 @@ subroutine pemain(resu, modele, mate, mateco, cara, nh,&
                 valk(1) = zk8(jma+im-1)
                 call tbajli(resu, nbparr, noparr, [ibid], trav1,&
                             [c16b], valk, 0)
-40          continue
+40  continue
+            end do
             call jedetr('&&PEMAIN_MAILLE')
         endif
-50  continue
+    end do
 !
 ! --- MENAGE
     call detrsd('CHAM_ELEM', '&&PEMAIN.MASS_INER')

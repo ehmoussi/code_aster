@@ -194,6 +194,9 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         if (l_iden_rela .and. l_mult_front) then
             call utmess('F', 'MECANONLINE3_99')
         endif
+        if (reac_iter .ne. 1) then
+            call utmess('F', 'MECANONLINE5_72')
+        endif
     endif
 !
 ! - Contact (LAC)
@@ -421,6 +424,15 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         endif
         if (l_state_init) then
             call utmess('F', 'MECANONLINE5_71')
+        endif
+        if (l_comp_rela) then
+            call utmess('F', 'MECANONLINE5_73')
+        end if
+        if (reac_iter .ne. 1) then
+            call utmess('F', 'MECANONLINE5_74')
+        endif
+        if (ds_algopara%matrix_pred .eq. 'ELASTIQUE') then
+            call utmess('F', 'MECANONLINE5_75')
         endif
     endif
 !

@@ -73,8 +73,8 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
                               fr=tr("Groupe(s) de mailles linéiques, bord(s) de(s) section(s)")),
 
          b_nom =BLOC(
-            condition = """(equal_to("TABLE_CARA", 'OUI')) and (not exists("GROUP_MA"))""",
-            NOM   =SIMP(statut='f',typ='TXM',max=1,validators=LongStr(1,8),
+            condition = """not (equal_to("TABLE_CARA", 'OUI') and exists("GROUP_MA"))""",
+            NOM   =SIMP(statut='o',typ='TXM',max=1,validators=LongStr(1,8),
                         fr=tr("Nom de la section, 8 caractères maximum."))
          ),
 
