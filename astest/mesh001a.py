@@ -81,6 +81,28 @@ test.assertSequenceEqual(medconn[49 - 1], conn_med)
 test.assertEqual(npcoord.min(), 0.)
 test.assertEqual(npcoord.max(), 1.)
 
+# read a HEXA27 from ASTER format
+mail = code_aster.Mesh()
+mail.readAsterFile("zzzz366a.mail")
+m1, m2, m3 = mail.getConnectivity()
+# reference connectivities from '.mail' file
+ast27 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+         21, 22, 23, 24, 25, 26, 27]
+ast20 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+ast08 = [1, 2, 3, 4, 5, 6, 7, 8]
+test.assertSequenceEqual(m1, ast27)
+test.assertSequenceEqual(m2, ast20)
+test.assertSequenceEqual(m3, ast08)
+
+m1, m2, m3 = mail.getMedConnectivity()
+# reference connectivities from IMPR_RESU/MED + mdump
+med27 = [1, 4, 3, 2, 5, 8, 7, 6, 12, 11, 10, 9, 20, 19, 18, 17, 13, 16, 15, 14,
+         21, 25, 24, 23, 22, 26, 27]
+med20 = [1, 4, 3, 2, 5, 8, 7, 6, 12, 11, 10, 9, 20, 19, 18, 17, 13, 16, 15, 14]
+med08 = [1, 4, 3, 2, 5, 8, 7, 6]
+test.assertSequenceEqual(m1, med27)
+test.assertSequenceEqual(m2, med20)
+test.assertSequenceEqual(m3, med08)
 
 # from ASTER format
 mail = code_aster.Mesh()
