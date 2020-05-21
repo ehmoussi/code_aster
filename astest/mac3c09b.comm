@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # VALIDATION CALC_MAC3COEUR DEFORMATION LIGNE (1300)
 # person_in_charge: pierre.badel at edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='OUI',PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='NON',PAR_LOT='NON')
 
 tabn = LIRE_TABLE(UNITE      = 38,
                   FORMAT     = 'LIBRE',
@@ -28,22 +28,31 @@ tabn = LIRE_TABLE(UNITE      = 38,
                   
 MA1=LIRE_MAILLAGE(FORMAT='MED',UNITE=20);
 
-RESUL = CALC_MAC3COEUR(TYPE_COEUR  = 'LIGNE1300',
+INI_C = CALC_MAC3COEUR(TYPE_COEUR  = 'LIGNE1300',
                        NB_ASSEMBLAGE=13,
-                      TABLE_N     =  tabn,
-                      MAILLAGE_N  =  MA1,
-                      DEFORMATION = _F(
-                                       UNITE_THYC   = 32,
-                                       NIVE_FLUENCE = 33))
+                       TABLE_N     =  tabn,
+                       MAILLAGE_N  =  MA1,
+                       DEFORMATION = _F(
+                           UNITE_THYC   = 32,
+                           NIVE_FLUENCE = 33))
+
+RESUL = PERM_MAC3COEUR( TYPE_COEUR_N   = 'LIGNE1300',
+                        TYPE_COEUR_NP1   = 'LIGNE1300',
+                        NB_ASSEMBLAGE_N = 13,
+                        NB_ASSEMBLAGE_NP1 = 13,
+                        RESU_N       = INI_C,
+                        TABLE_N      = tabn,
+                        TABLE_NP1    = tabn,
+                        MAILLAGE_NP1 = MA1,)
 
 post_i = RESUL.LIST_PARA()['INST'][-1]
 TAB=POST_MAC3COEUR(RESULTAT   = RESUL,
-               TYPE_COEUR = 'LIGNE1300',
-               NB_ASSEMBLAGE=13,
-               INST       = post_i,
-               TABLE      = tabn,
-               DEFORMATION = _F(FORMAT = 'TABLE', UNITE = 31, NOM_SITE = 'BIDON')
-              )
+                   TYPE_COEUR = 'LIGNE1300',
+                   NB_ASSEMBLAGE=13,
+                   INST       = post_i,
+                   TABLE      = tabn,
+                   DEFORMATION = _F(FORMAT = 'TABLE', UNITE = 31, NOM_SITE = 'BIDON')
+)
 
 TEST_TABLE(VALE_CALC=2.173392402832336,   TABLE=TAB, TOLE_MACHINE=0.0001,NOM_PARA='moyRhoCoeur')
 TEST_TABLE(VALE_CALC=3.702897489013114,    TABLE=TAB, TOLE_MACHINE=0.0001,NOM_PARA='maxRhoCoeur',)

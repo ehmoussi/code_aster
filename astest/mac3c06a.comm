@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,11 +21,9 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='OUI',PAR_LOT='NON')
 
-# LE BUT DE CET AJOUT EST DE TESTER 
-# POST_MAC3COEUR / DEFORMATION / FORMAT = 'TABLE'
 DAMAC1=LIRE_TABLE(UNITE=38,
-                 SEPARATEUR = '\t'
-                 )
+                  SEPARATEUR = '\t'
+)
 
 MA1=LIRE_MAILLAGE(FORMAT='MED',UNITE=20);
 
@@ -39,18 +37,37 @@ RESU_C1D = CALC_MAC3COEUR(TYPE_COEUR  = 'TEST',
                                            NIVE_FLUENCE = 33))
 
 
-# TAB2_CB = CREA_TABLE(RESU=_F(RESULTAT=RESU_C1D,NOM_CHAM='DEPL',INST=33.008,NOM_CMP=('DY','DZ'),
-#                             GROUP_MA=('TG_C_B')))
+TAB_C1D = CREA_TABLE(RESU=_F(RESULTAT=RESU_C1D,
+                             NOM_CHAM='DEPL',
+                             INST=33.008,
+                             NOM_CMP=('DY','DZ'),
+                             GROUP_MA=('TG_B_B')))
 
 
-TAB2_BB = CREA_TABLE(RESU=_F(RESULTAT=RESU_C1D,NOM_CHAM='DEPL',INST=33.008,NOM_CMP=('DY','DZ'),
-                            GROUP_MA=('TG_B_B')))
+RESU_C2D = CALC_MAC3COEUR(TYPE_COEUR  = 'TEST',
+                          TABLE_N     =  DAMAC1,
+                          MAILLAGE_N  =  MA1, 
+                          ETAT_INITIAL = _F(
+                              MAINTIEN_GRILLE='OUI',
+                              UNITE_THYC   = 32, 
+                              NIVE_FLUENCE = 33))
 
+TAB_C2D = CREA_TABLE(RESU=_F(RESULTAT=RESU_C2D,
+                             NOM_CHAM='DEPL',
+                             INST=33.008,
+                             NOM_CMP=('DY','DZ'),
+                             GROUP_MA=('TG_B_B')))
 
 TEST_TABLE(VALE_CALC=0.0013152917993928775,
            NOM_PARA='DY',
            TYPE_TEST='MAX',
-           TABLE=TAB2_BB,
+           TABLE=TAB_C1D,
+           )
+
+TEST_TABLE(VALE_CALC=0.0013152917993928775,
+           NOM_PARA='DY',
+           TYPE_TEST='MAX',
+           TABLE=TAB_C2D,
            )
 
 FIN()
