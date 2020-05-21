@@ -21,7 +21,7 @@ subroutine get_med_connectivity(mesh, med_connect)
 
     implicit none
 
-#include "asterfort/gnomsd.h"
+#include "asterfort/gnomsd_xx.h"
 #include "asterfort/jecrec.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeecra.h"
@@ -31,7 +31,6 @@ subroutine get_med_connectivity(mesh, med_connect)
 #include "asterfort/jexnum.h"
 #include "asterfort/lrmtyp.h"
 #include "asterfort/wkvect.h"
-
 
     character(len=8), intent(in) :: mesh
     character(len=24), intent(inout) :: med_connect
@@ -58,10 +57,8 @@ subroutine get_med_connectivity(mesh, med_connect)
 
     call jemarq()
 
-!   TODO: this could be an utility function for all temporary object
     if (med_connect .eq. ' ') then
-        med_connect = '00000000.TMP123456789012'
-        call gnomsd(med_connect(1:8), med_connect, 13, 24)
+        call gnomsd_xx(med_connect)
     endif
 
 !   get conversion arrays code_aster <---> med

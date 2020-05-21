@@ -21,13 +21,12 @@ subroutine get_med_types(mesh, vect_types)
 
     implicit none
 
-#include "asterfort/gnomsd.h"
+#include "asterfort/gnomsd_xx.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/lrmtyp.h"
 #include "asterfort/wkvect.h"
-
 
     character(len=8), intent(in) :: mesh
     character(len=24), intent(inout) :: vect_types
@@ -55,10 +54,8 @@ subroutine get_med_types(mesh, vect_types)
     call jeveuo(mesh//'.DIME', 'L', vi=dime)
     nbcell = dime(3)
 
-!   TODO: this could be an utility function for all temporary object
     if (vect_types .eq. ' ') then
-        vect_types = '00000000.TMP123456789012'
-        call gnomsd(vect_types(1:8), vect_types, 13, 24)
+        call gnomsd_xx(vect_types)
     endif
 
     call wkvect(vect_types, 'V V I', nbcell, vi=typmmed)
