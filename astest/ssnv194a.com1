@@ -518,7 +518,7 @@ TEST_TABLE(
            NOM_PARA='DISTRIBUTION',
            TABLE=VSIXX,
            FILTRE=(_F(NOM_PARA='CHAM_GD',
-                      VALE_K='0000002c',),
+                      VALE_K=CSIXX.getName(),),
                    _F(NOM_PARA='INTERVALLE',
                       VALE_I=3,),
                    ),
