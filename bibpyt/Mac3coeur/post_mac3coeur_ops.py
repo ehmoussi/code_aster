@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: samuel.geniaut at edf.fr
+# person_in_charge: francesco.bettonte at edf.fr
 import os.path as osp
 
 import numpy as N
@@ -432,7 +432,12 @@ def post_mac3coeur_ops(self, **args):
         for name in _coeur.get_contactCuve() :
 
             _TAB2 = CREA_TABLE(
-                RESU=_F(RESULTAT=_RESU, NOM_CHAM='VARI_ELGA', NOM_CMP='V8', GROUP_MA=name, INST=_inst))
+                RESU=_F(RESULTAT=_RESU,
+                        NOM_CMP='V8',
+                        GROUP_MA=name,
+                        NOM_CHAM='VARI_ELGA',
+                        INST=_inst,
+                        PRECISION=1.E-08))
 
             _TAB2 = CALC_TABLE(reuse=_TAB2, TABLE=_TAB2,
                                ACTION=(
@@ -473,7 +478,13 @@ def post_mac3coeur_ops(self, **args):
         if dim != 0:
             for name in _coeur.get_contactAssLame():
                 _TAB1 = CREA_TABLE(
-                    RESU=_F(RESULTAT=_RESU, NOM_CHAM='VARI_ELGA', NOM_CMP='V8', GROUP_MA=name, INST=_inst))
+                    RESU=_F(RESULTAT=_RESU,
+                            NOM_CMP='V8',
+                            GROUP_MA=name,
+                            NOM_CHAM='VARI_ELGA',
+                            INST=_inst,
+                            PRECISION=1.E-08))
+                
                 _TAB1 = CALC_TABLE(reuse=_TAB1, TABLE=_TAB1,
                                    ACTION=(
                                    _F(OPERATION='FILTRE', NOM_PARA='POINT',
@@ -603,11 +614,11 @@ def post_mac3coeur_ops(self, **args):
         for name in POSITION:
             name_AC_aster = name[0] + '_' + name[1]
             _TAB1 = CREA_TABLE(RESU=_F(RESULTAT=_RESU,
+                                       NOM_CMP=('DY', 'DZ'),
+                                       GROUP_MA='GR_' + name_AC_aster,
                                        NOM_CHAM='DEPL',
                                        INST=_inst,
-                                       NOM_CMP=('DY', 'DZ'),
-                                       GROUP_MA='GR_' + name_AC_aster)
-                               )
+                                       PRECISION=1.E-08))
 
             _TAB1 = CALC_TABLE(reuse=_TAB1, TABLE=_TAB1,
                                ACTION=(

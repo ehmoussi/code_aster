@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: samuel.geniaut at edf.fr
+# person_in_charge: francesco.bettonte at edf.fr
 
 """
 Module dédié à la macro MAC3COEUR.
@@ -593,7 +593,7 @@ class Coeur(object):
         LISCR2.append(DICCR)
 
         _MA=CREA_MAILLAGE(MAILLAGE=_MA1,
-                      INFO=2,
+                      INFO=1,
                      CREA_MAILLE=tuple(LISCR2),)
 
         _MA = DEFI_GROUP(reuse=_MA, ALARME='NON',
@@ -927,22 +927,34 @@ class Coeur(object):
         # DEFI_CONSTANT = self.macro.get_cmd('DEFI_CONSTANT')
         #AAA modifier Tref => -Tref
         mcf = []
+        groups_ma_tini = []
         
         for ac in self.collAC.values():
             # boucle sur les grilles
-            Ttmp_val = self.TP_REF
             try :
               _alpha = ac._para['AL_DIL']
               _dilatbu = ac._para['dilatBU']
             except KeyError :
               _alpha = 1.
               _dilatbu = [0.]*ac._para['NBGR']
-            for igr in range(0, ac._para['NBGR']):
-                Ttmp_val = self.TP_REF - _dilatbu[igr]/_alpha
-                mtmp =  (_F(NOM_CMP='TEMP',
-                            GROUP_MA='DI_' + ac.idAST + str(igr + 1),
-                            VALE = Ttmp_val)),
-                mcf.extend(mtmp)
+
+            if all([i==0. for i in _dilatbu]):
+                groups_ma_tini.extend(['DI_%s%d'%(ac.idAST, (igr + 1))
+                                       for igr in range(ac._para['NBGR'])])
+            else :              
+                for igr in range(0, ac._para['NBGR']):
+                    Ttmp_val = self.TP_REF - _dilatbu[igr]/_alpha
+                    mtmp =  (_F(NOM_CMP='TEMP',
+                                GROUP_MA='DI_%s%d'%(ac.idAST, (igr + 1)),
+                                VALE = Ttmp_val)),
+                    mcf.extend(mtmp)
+                    
+        if groups_ma_tini :
+            Ttmp_val = self.TP_REF
+            mtmp =  (_F(NOM_CMP='TEMP',
+                        GROUP_MA=groups_ma_tini,
+                        VALE = Ttmp_val)),
+            mcf.extend(mtmp)
 
         return mcf
 
@@ -1143,23 +1155,24 @@ class Coeur(object):
                        PROL_DROITE='CONSTANT',
                        VALE_REF=self.TP_REF))
         mcf.extend(_VARCIRR)
+      
         for ac in self.collAC.values():
-            # boucle sur les grilles
-            Ttmp = self.TP_REF 
             try :
-              _alpha = ac._para['AL_DIL']
-              _dilatbu = ac._para['dilatBU']
+                _alpha = ac._para['AL_DIL']
+                _dilatbu = ac._para['dilatBU']
+
+                if not all([i==0. for i in _dilatbu]):
+                    for igr in range(ac._para['NBGR']):
+                        Ttmp = self.TP_REF - _dilatbu[igr]/_alpha
+                        mtmp =  (_F(NOM_VARC='TEMP',
+                                    GROUP_MA='DI_%s%d'%(ac.idAST, (igr + 1)),
+                                    EVOL=CHTH,
+                                    PROL_DROITE='CONSTANT',
+                                    VALE_REF=Ttmp)),
+                        mcf.extend(mtmp)
+                     
             except KeyError :
-              _alpha = 1.
-              _dilatbu = [0.]*ac._para['NBGR']
-            for igr in range(0, ac._para['NBGR']):
-                Ttmp = self.TP_REF - _dilatbu[igr]/_alpha
-                mtmp =  (_F(NOM_VARC='TEMP',
-                            GROUP_MA='DI_' + ac.idAST + str(igr + 1),
-                            EVOL=CHTH,
-                            PROL_DROITE='CONSTANT',
-                            VALE_REF=Ttmp)),
-                mcf.extend(mtmp)
+              pass
 
         return mcf
 

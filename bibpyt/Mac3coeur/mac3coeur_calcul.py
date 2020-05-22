@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: pierre.badel at edf.fr
+# person_in_charge: francesco.bettonte at edf.fr
 
 """
 This module defines the different types of calculations
@@ -489,11 +489,9 @@ class Mac3CoeurCalcul(object):
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
                              _F(RELATION='DIS_CHOC',
-                                GROUP_MA='RES_TOT',),
-                             _F(RELATION='DIS_CHOC',   GROUP_MA ='CREIC',),
-                             _F(RELATION='ELAS',   GROUP_MA ='CREI',),
+                                GROUP_MA=('CREIC', 'RES_TOT')),
                              _F(RELATION='ELAS',
-                                GROUP_MA=('EBOINF', 'EBOSUP', 'RIG', 'DIL')),
+                                GROUP_MA=('CREI', 'EBOINF', 'EBOSUP', 'RIG', 'DIL')),
                              _F(RELATION='VMIS_ISOT_TRAC',
                                 GROUP_MA='MAINTIEN',
                                 DEFORMATION='PETIT'),),
@@ -521,11 +519,9 @@ class Mac3CoeurCalcul(object):
                              _F(RELATION='DIS_GRICRA',
                                 GROUP_MA='ELA',),
                              _F(RELATION='DIS_CHOC',
-                                GROUP_MA='RES_TOT',),
-                             _F(RELATION='DIS_CHOC',   GROUP_MA ='CREIC',),
-                             _F(RELATION='ELAS',   GROUP_MA ='CREI',),
+                                GROUP_MA=('CREIC', 'RES_TOT')),
                              _F(RELATION='ELAS',
-                                GROUP_MA=('EBOINF', 'EBOSUP', 'RIG', 'DIL')),
+                                GROUP_MA=('CREI','EBOINF', 'EBOSUP', 'RIG', 'DIL')),
                              _F(RELATION='VMIS_ISOT_TRAC',
                                 GROUP_MA='MAINTIEN',
                                 DEFORMATION='PETIT'),),
@@ -676,6 +672,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                 self.symetric_cond + self.periodic_cond + self.rigid_load
             __RESULT = STAT_NON_LINE(**self.snl(
                                reuse=__RESULT,
+                               RESULTAT=__RESULT,
                                CHAM_MATER=self.cham_mater_free,
                                INCREMENT=_F(LIST_INST=self.times,
                                             INST_FIN=coeur.temps_simu['T8']),
@@ -690,6 +687,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             # T8 - Tf
             __RESULT = STAT_NON_LINE(**self.snl(
                                   reuse=__RESULT,
+                                  RESULTAT=__RESULT,
                                   CHAM_MATER=self.cham_mater_free,
                                   ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                                   EXCIT=constant_load+[_F(CHARGE=F_EMB2,FONC_MULT=LI2),],
@@ -753,6 +751,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                 raise 'no convergence'
             keywords = self.snl(
                                 reuse=__RESULT,
+                                RESULTAT=__RESULT,
                                 NEWTON= _F(MATRICE='TANGENTE',
                                     PREDICTION='DEPL_CALCULE',
                                     EVOL_NOLI = __res_int[-1],
@@ -767,6 +766,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
 
             __RESULT = STAT_NON_LINE(**self.snl(
                                   reuse=__RESULT,
+                                  RESULTAT=__RESULT,
                                   CHAM_MATER=chmat_contact,
                                   INCREMENT=_F(LIST_INST=self.times,
                                                 INST_FIN=coeur.temps_simu['T8']),
@@ -778,6 +778,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             # T8 - Tf
             __RESULT = STAT_NON_LINE(**self.snl(
                                   reuse=__RESULT,
+                                  RESULTAT=__RESULT,
                                   CHAM_MATER=chmat_contact,
                                   ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                                   EXCIT=constant_load+[_F(CHARGE=F_EMB2,FONC_MULT=LI2),],
@@ -822,6 +823,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             else :
                 raise 'no convergence'
             keywords = self.snl(reuse = __RESULT,
+                                RESULTAT=__RESULT,
                                 NEWTON= _F(MATRICE='TANGENTE',
                                     PREDICTION='DEPL_CALCULE',
                                     EVOL_NOLI = __res_int[-1],
@@ -1071,6 +1073,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
 
         keywords = self.snl_lame(
                             reuse = __RESULT,
+                            RESULTAT=__RESULT,
                             ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                             NEWTON= _F(MATRICE='TANGENTE',
                                 PREDICTION='DEPL_CALCULE',
@@ -1089,6 +1092,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         __RESULT = STAT_NON_LINE(**keywords)
         keywords = self.snl_lame(
                             reuse = __RESULT,
+                            RESULTAT=__RESULT,
                             ETAT_INIT=_F(EVOL_NOLI=__RESULT),
                             CHAM_MATER=self.cham_mater_contact,
                             INCREMENT=_F(LIST_INST=self.times,
