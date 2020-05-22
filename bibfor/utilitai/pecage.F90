@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,11 +57,11 @@ subroutine pecage(resu, modele, nbocc)
     integer :: mxvale, nbparr, ibid, iret, iocc, nt, ng, nm, nbgrma, jgr
     integer :: ig, nbma, jad, nbmail, jma, im, nume, ndim, ns1, ns2, nbparc
     integer :: np, ifm, niv, iorig, i, icage
-    parameter (mxvale=29,nbparr=46)
+    parameter (mxvale=29,nbparr=48)
     real(kind=8) :: valpar(nbparr), r8b, xyp(2), orig(3), zero
     character(len=3) :: symex, symey, typarr(nbparr)
     character(len=8) :: k8b, noma, lpain(15), lpaout(5)
-    character(len=24) :: valk(2)
+    character(len=24) :: valk(3)
     character(len=16) :: option, noparr(nbparr)
     character(len=19) :: chelem
     character(len=24) :: lchin(15), lchout(1), ligrel, mlggma, mlgnma
@@ -77,11 +77,11 @@ subroutine pecage(resu, modele, nbocc)
      &     'IZ','ALPHA','Y_P','Z_P','IY_P','IZ_P','IYZ_P','JX',&
      &     'AY','AZ','EY','EZ','PCTY','PCTZ','JG','KY','KZ','IYR2_G',&
      &     'IZR2_G','IYR2','IZR2','IYR2_P','IZR2_P','RY','RZ',&
-     &     'MAILLAGE'/
+     &     'NOM_OBJET', 'TYPE_OBJET', 'NOM_SD'/
     data typarr/  'K24','K8','R','R','R','R','R','R','R','R','R','R',&
      &     'R','R','R','R','R','R','R','R','R','R','R','R','R','R','R',&
      &     'R','R','R','R','R','R','R','R','R','R','R','R','R','R','R',&
-     &     'R','R','R','K8'/
+     &     'R','R','R','K8','K8','K8'/
 !     ------------------------------------------------------------------
 !
     call jemarq()
@@ -138,9 +138,12 @@ subroutine pecage(resu, modele, nbocc)
     else
         call utmess('F', 'UTILITAI3_48')
     endif
-    nbparc = nbparr - 1
-    call tbajli(resu, 1, noparr(nbparr), [ibid], [r8b],&
-                [c16b], noma, 0)
+    nbparc = nbparr - 3
+    valk(1) = noma
+    valk(2) = 'MAILLAGE'
+    valk(3) = noma
+    call tbajli(resu, 3, noparr(nbparr-2), [ibid], [r8b],&
+                [c16b], valk, 0)
 !
     AS_ALLOCATE(vr=trav1, size=mxvale)
     do iocc = 1, nbocc

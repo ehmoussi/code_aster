@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,6 +89,10 @@ subroutine op0113()
 ! ----------------------------------------------------------------------
 !
     call jemarq()
+!
+! - This functionnality is NOT qualified for nuclear safety studies
+!
+    call utmess('A', 'QUALITY1_1')
 !
 ! --- NOM DU MODELE MODIFIE
 !

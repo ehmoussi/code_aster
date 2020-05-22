@@ -1,0 +1,212 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+import math
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
+      DEBUG=_F(SDVERI='OUI',))
+
+MA = LIRE_MAILLAGE()
+
+MO=AFFE_MODELE(MAILLAGE=MA,
+               AFFE=_F(TOUT='OUI',
+                       PHENOMENE='MECANIQUE',
+                       MODELISATION='POU_D_EM')
+                )
+
+GF=DEFI_GEOM_FIBRE(FIBRE=_F(GROUP_FIBRE="GF",
+                            CARA='SURFACE',
+                            COOR_AXE_POUTRE=(0.,0.,),
+                            VALE =( 2.5e-3, 2.5e-3, math.pi/4*(6.e-3)**2,
+                                    2.5e-3,-2.5e-3, math.pi/4*(6.e-3)**2,
+                                   -2.5e-3,-2.5e-3, math.pi/4*(6.e-3)**2,
+                                   -2.5e-3, 2.5e-3, math.pi/4*(6.e-3)**2,
+                                   ),
+                            ),
+                    )
+
+MATR=DEFI_MATERIAU(ELAS=_F(ALPHA=1.2E-5,
+                           E = 2.E11,
+                           NU = 0.3,),
+                   CORR_ACIER=_F(D_CORR=0.2,
+                                 ECRO_K=500.E6,
+                                 ECRO_M=2.781,
+                                 SY = 500.E6,),
+                )
+
+COMPF=DEFI_COMPOR(GEOM_FIBRE=GF,
+                  MATER_SECT=MATR,
+                  MULTIFIBRE=_F(GROUP_FIBRE="GF",
+                                MATER=MATR,
+                                RELATION='CORR_ACIER'))
+
+CHCOR=CREA_CHAMP(TYPE_CHAM='CART_CORR_R',
+                 OPERATION='AFFE',
+                 MAILLAGE=MA,
+                 AFFE=_F(TOUT='OUI',
+                         NOM_CMP='CORR',
+                         VALE=0.)
+                 )
+
+TEMP_F=DEFI_FONCTION(NOM_PARA='INST',
+                     NOM_RESU='TEMP',
+                     VALE=(0. , 20., 1.0, 120)
+                     )
+
+CHTEMP=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_F',
+                  OPERATION='AFFE',
+                  MAILLAGE=MA,
+                  AFFE=_F(TOUT='OUI',
+                          NOM_CMP='TEMP',
+                          VALE_F=TEMP_F,),);
+
+LINST=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=(_F(JUSQU_A=1,
+                                    NOMBRE=2,)))
+
+EVOLTEMP=CREA_RESU(OPERATION='AFFE',
+                   TYPE_RESU='EVOL_THER',
+                   NOM_CHAM='TEMP',
+                   AFFE=_F(CHAM_GD=CHTEMP,
+                           LIST_INST=LINST,),)
+
+CHMAT = AFFE_MATERIAU(MAILLAGE=MA,
+                      MODELE=MO,
+                      AFFE=_F(GROUP_MA="GF",
+                              MATER=MATR),
+                      AFFE_VARC=(_F(NOM_VARC="CORR",
+                                    CHAM_GD=CHCOR,),
+                                 _F(NOM_VARC="TEMP",
+                                    EVOL=EVOLTEMP,
+                                    VALE_REF=20.)),
+                      AFFE_COMPOR=_F(GROUP_MA="GF",COMPOR=COMPF)
+                      )
+
+CAREL = AFFE_CARA_ELEM(MODELE= MO,
+                       POUTRE=_F(SECTION='GENERALE',
+                                 GROUP_MA="GF",
+                                 CARA=('A','IY','IZ','JX'),
+                                 VALE=(1.1309733552923255e-04, 7.068583470577034e-10, 7.068583470577034e-10, 1.4137166941154069e-09),
+                                 ),
+                       GEOM_FIBRE=GF,
+                       MULTIFIBRE=(_F(GROUP_MA="GF",GROUP_FIBRE="GF", PREC_AIRE=1.0E-06, PREC_INERTIE=1.0E-06,),),
+                        )
+
+BLOC=AFFE_CHAR_MECA(MODELE=MO,
+                    DDL_IMPO=_F(GROUP_NO='A',
+                                 DX=0., DY=0., DZ=0.,
+                                 DRX=0., DRY=0., DRZ=0.),
+                    )
+
+# on se place à la limite élastique sigm_xx = 500e6
+# on a M_z = F_y*L = 4*e_y*sigm_xx*pi*phi^2/4
+# soit F_y = 4*2.5e-3*500e6*math.pi/4*(6.e-3)**2 / 0.1 = 1413.7167
+
+FORC=AFFE_CHAR_MECA(MODELE=MO,
+                    FORCE_NODALE=_F(GROUP_NO='B',
+                                    FY=1413.7167)
+                    )
+
+RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0., 0.,
+                                          1., 1.))
+
+RESU=STAT_NON_LINE(MODELE=MO,
+                   CHAM_MATER=CHMAT,
+                   CARA_ELEM=CAREL,
+                   EXCIT=(_F(CHARGE=BLOC),
+                          _F(CHARGE=FORC, FONC_MULT=RAMPE),),
+                   INCREMENT= _F(LIST_INST=LINST),
+                   NEWTON= _F(MATRICE = 'TANGENTE', REAC_ITER= 1),
+                   COMPORTEMENT=_F(RELATION="MULTIFIBRE",
+                                   DEFORMATION="PETIT",
+                                   GROUP_MA="GF"),
+                    )
+
+RESU=CALC_CHAMP(reuse=RESU,
+                RESULTAT=RESU,
+                CONTRAINTE='EFGE_NOEU',
+                CRITERES='SIEQ_ELGA'
+                )
+
+# deformation thermique u_x = alpha*delta_t*L = 1.2e-5*100*.1 = 1.2e-4
+TEST_RESU(RESU=_F(NUME_ORDRE=2,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU,
+                  NOM_CHAM='DEPL',
+                  GROUP_NO='B',
+                  NOM_CMP='DX',
+                  VALE_CALC=1.2e-4,
+                  VALE_REFE=1.2e-4,
+                  CRITERE='RELATIF',
+                  PRECISION=1.E-6,),
+          )
+
+# u_y = F_y*L^3*(4+Phy_y) /(12*E*I_z) = 1413.7167*0.1**3*(4+0)/(12*2e11*7.06858e-10) = 3.333333333333333e-03
+TEST_RESU(RESU=_F(NUME_ORDRE=2,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU,
+                  NOM_CHAM='DEPL',
+                  GROUP_NO='B',
+                  NOM_CMP='DY',
+                  VALE_CALC=3.333333333333333e-03,
+                  VALE_REFE=3.333333333333333e-03,
+                  CRITERE='RELATIF',
+                  PRECISION=1.E-6,),
+          )
+
+# theta_z = F_y*L^2 /(2*E*I_z) = 1413.7167*.1**2 /(2*2e11*7.06858e-10) = 5.e-02
+TEST_RESU(RESU=_F(NUME_ORDRE=2,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU,
+                  NOM_CHAM='DEPL',
+                  GROUP_NO='B',
+                  NOM_CMP='DRZ',
+                  VALE_CALC=5.e-02,
+                  VALE_REFE=5.e-02,
+                  CRITERE='RELATIF',
+                  PRECISION=1.E-6,),
+          )
+
+# V_y = F_y = 1413.7167
+TEST_RESU(RESU=_F(NUME_ORDRE=2,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU,
+                  NOM_CHAM='EFGE_NOEU',
+                  GROUP_NO='A',
+                  NOM_CMP='VY',
+                  VALE_CALC=1413.7167,
+                  VALE_REFE=1413.7167,
+                  CRITERE='RELATIF',
+                  PRECISION=1.E-6,),
+          )
+
+# M_z = F_y*L = 1413.7167*.1 = 1413.7167
+TEST_RESU(RESU=_F(NUME_ORDRE=2,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=RESU,
+                  NOM_CHAM='EFGE_NOEU',
+                  GROUP_NO='A',
+                  NOM_CMP='MFZ',
+                  VALE_CALC=141.37167,
+                  VALE_REFE=141.37167,
+                  CRITERE='RELATIF',
+                  PRECISION=1.E-6,),
+          )
+
+FIN()

@@ -6,5 +6,5 @@ P mpi_nbnoeud 1
 P testlist asterxx ci verification sequential
 
 F comm ssls111h.comm D 1
-F datg ssls111h.datg D 16
+F datg ssls111f.datg D 16
 F mgib ssls111d.mgib D 19

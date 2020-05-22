@@ -500,7 +500,7 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             SOLVEUR=_F(STOP_SINGULIER='NON', METHODE='LDLT',),)
 
         # CALCUL DE L INERTIE DE GAUCHISSEMENT :
-        nomres = POST_ELEM(
+        __tabtmp = POST_ELEM(
             MODELE=__nomot2,
             CHAM_MATER=__chmat2,
             CARA_POUTRE=_F(
@@ -775,62 +775,68 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
         # On remplace dans le TITRE le nom du concept __catp2.getName() par self.sd.getName()
         if ('TITRE' in list(dprod.keys())):
             conceptOld = __catp2.getName()
-            ## to fix
+            # FIXME
             conceptNew = conceptOld #self.sd.getName()
             for ii in range(len(dprod['TITRE'])):
                 zz = dprod['TITRE'][ii]
                 if (conceptOld.strip() in zz):
                     dprod['TITRE'][ii] = zz.replace(conceptOld.strip(), conceptNew.strip())
         #
-        nomres = CREA_TABLE(**dprod)
+        dprod['TYPE_TABLE'] = 'TABLE_CONTENEUR'
+        __tabtmp = CREA_TABLE(**dprod)
     #
     if not GROUP_MA_BORD:
-        nomres = POST_ELEM(
+        __tabtmp = POST_ELEM(
             MODELE=__nomamo, CHAM_MATER=__nomama, CARA_GEOM=mfact
         )
+    #
+    # mise au propre de la table
+    #
+    
+    # On enlève la ligne avec LIEU='-' et donc les colonnes TYPE_OBJET, NOM_SD
+    # on utilise TYPE_TABLE pour forcer le type à table_sdaster et plus table_container
+    nomres = CALC_TABLE(
+            TABLE=__tabtmp, TYPE_TABLE='TABLE',
+            ACTION=_F(
+                OPERATION='FILTRE', NOM_PARA='LIEU', CRIT_COMP='NON_VIDE'),
+        )
+    
+    NomMaillageNew, NomMaillageOld = NomMaillage
+    
+    # Suppression de la référence à NomMaillageOld, remplacé par NOM = NomMaillageNew
+    # Si TABLE_CARA == "OUI" et GROUP_MA la ligne est supprimée
+    
+    if not (TABLE_CARA == "OUI" and GROUP_MA):
+    
+        TabTmp = nomres.EXTR_TABLE()
+        for ii in range(len(TabTmp.rows)):
+            zz = TabTmp.rows[ii]['LIEU']
+            if (zz.strip() == NomMaillageOld):
+                TabTmp.rows[ii]['LIEU'] = NomMaillageNew
+        #
+        TabTmp = TabTmp.dict_CREA_TABLE()
+    else:
+        # Une ligne avec LIEU=NomMaillageOld ==> on la supprime
+        nomres = CALC_TABLE(
+            reuse=nomres, TABLE=nomres,
+            ACTION=_F(OPERATION='FILTRE', NOM_PARA='LIEU',
+                      CRIT_COMP='NE', VALE_K=NomMaillageOld),
+        )
+        TabTmp = nomres.EXTR_TABLE().dict_CREA_TABLE()
+    
+    DETRUIRE(CONCEPT=_F(NOM=nomres), INFO=1)
+    nomres = CREA_TABLE(**TabTmp)
+    
     #
     # On retourne une table exploitable par AFFE_CARA_ELEM, avec seulement les
     # caractéristiques nécessaires
     if (TABLE_CARA == "OUI"):
-        # si GROUP_MA     : le concept NomMaillageOld ne fait plus partie de la table
-        # si pas GROUP_MA :
-        #     si NOM      : le nom du concept NomMaillageOld est remplacé par NomMaillageNew
-        #     si pas NOM  : le nom du concept NomMaillageOld est gardé
-        # On enlève la ligne avec LIEU='-'
-        nomres = CALC_TABLE(
-            reuse=nomres, TABLE=nomres,
-            ACTION=_F(
-                OPERATION='FILTRE', NOM_PARA='LIEU', CRIT_COMP='NON_VIDE'),
-        )
-        #
-        NomMaillageNew, NomMaillageOld = NomMaillage
-        if (GROUP_MA):
-            # Une ligne avec LIEU=NomMaillageOld ==> on la supprime
-            nomres = CALC_TABLE(
-                reuse=nomres, TABLE=nomres,
-                ACTION=_F(OPERATION='FILTRE', NOM_PARA='LIEU',
-                          CRIT_COMP='NE', VALE_K=NomMaillageOld),
-            )
-            TabTmp = nomres.EXTR_TABLE().dict_CREA_TABLE()
-        else:
-            # si NomMaillageNew est donné on remplace LIEU=NomMaillageOld par LIEU=NomMaillageNew
-            if (NomMaillageNew is not None):
-                TabTmp = nomres.EXTR_TABLE()
-                for ii in range(len(TabTmp.rows)):
-                    zz = TabTmp.rows[ii]['LIEU']
-                    if (zz.strip() == NomMaillageOld):
-                        TabTmp.rows[ii]['LIEU'] = NomMaillageNew
-                #
-                TabTmp = TabTmp.dict_CREA_TABLE()
-            else:
-                TabTmp = nomres.EXTR_TABLE().dict_CREA_TABLE()
-        #
-        __catp2 = CREA_TABLE(**TabTmp)
-        DETRUIRE(CONCEPT=_F(NOM=nomres), INFO=1)
+        
         #
         if GROUP_MA_BORD and not GROUP_MA:
             nomres = CALC_TABLE(
-                TABLE=__catp2,
+                TABLE=nomres,
+                reuse=nomres,
                 ACTION=(
                     _F(OPERATION='EXTR', NOM_PARA=('LIEU', 'A', 'IY', 'IZ', 'AY',
                                                    'AZ', 'EY', 'EZ', 'JX', 'JG', 'IYR2', 'IZR2', 'RY', 'RZ', 'RT',
@@ -839,7 +845,8 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             )
         elif GROUP_MA_BORD and GROUP_MA:
             nomres = CALC_TABLE(
-                TABLE=__catp2,
+                TABLE=nomres,
+                reuse=nomres,
                 ACTION=(
                     _F(OPERATION='EXTR', NOM_PARA=('LIEU', 'A', 'IY', 'IZ', 'AY',
                                                    'AZ', 'EY', 'EZ', 'JX', 'IYR2', 'IZR2', 'RY', 'RZ', 'RT',
@@ -848,7 +855,8 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             )
         else:
             nomres = CALC_TABLE(
-                TABLE=__catp2,
+                TABLE=nomres,
+                reuse=nomres,
                 ACTION=(
                     _F(OPERATION='EXTR', NOM_PARA=('LIEU', 'A', 'IY', 'IZ', 'IYR2', 'IZR2', 'RY', 'RZ',
                                                    'ALPHA','CDG_Y','CDG_Z'),),
@@ -895,7 +903,8 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
     else:
         if GROUP_MA_BORD and not GROUP_MA:
             nomres = CALC_TABLE(
-                reuse=nomres, TABLE=nomres,
+                TABLE=nomres,
+                reuse=nomres,
                 ACTION=(
                     _F(OPERATION='EXTR', NOM_PARA=('LIEU', 'ENTITE', 'A_M', 'CDG_Y_M', 'CDG_Z_M', 'IY_G_M',
                                                    'IZ_G_M', 'IYZ_G_M', 'Y_MAX', 'Z_MAX', 'Y_MIN', 'Z_MIN', 'R_MAX',
@@ -907,7 +916,8 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             )
         elif GROUP_MA_BORD and GROUP_MA:
             nomres = CALC_TABLE(
-                reuse=nomres, TABLE=nomres,
+                TABLE=nomres,
+                reuse=nomres,
                 ACTION=(
                     _F(OPERATION='EXTR', NOM_PARA=('LIEU', 'ENTITE', 'A_M', 'CDG_Y_M', 'CDG_Z_M', 'IY_G_M',
                                                    'IZ_G_M', 'IYZ_G_M', 'Y_MAX', 'Z_MAX', 'Y_MIN', 'Z_MIN', 'R_MAX',
@@ -919,7 +929,8 @@ def macr_cara_poutre_ops(self, MAILLAGE=None, SYME_Y=None, SYME_Z=None, GROUP_MA
             )
         else:
             nomres = CALC_TABLE(
-                reuse=nomres, TABLE=nomres,
+                TABLE=nomres,
+                reuse=nomres,
                 ACTION=(
                     _F(OPERATION='EXTR', NOM_PARA=('LIEU', 'ENTITE', 'A_M', 'CDG_Y_M', 'CDG_Z_M', 'IY_G_M',
                                                    'IZ_G_M', 'IYZ_G_M', 'Y_MAX', 'Z_MAX', 'Y_MIN', 'Z_MIN', 'R_MAX',

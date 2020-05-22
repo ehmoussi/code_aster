@@ -962,6 +962,94 @@ class CalcFonction_REGR_POLYNOMIALE(CalcFonctionOper):
                                        for i, ci in enumerate(coef)])
         UTMESS('I', 'FONCT0_57', coef_as_str)
 
+class CalcFonction_INTEGRE_FREQ(CalcFonctionOper):
+    """INTEGRE_FREQ"""
+    def _run(self):
+        """INTEGRE_FREQ"""
+        kw = self.kw
+        f_in = self._lf[0]
+        para = f_in.para.copy()
+        para.update(_F(PROL_GAUCHE="CONSTANT", PROL_DROITE="CONSTANT"))
+        vale_t = f_in.vale_x
+        vale_s = f_in.vale_y
+        dt = vale_t[1] - vale_t[0]
+        nbdt = len(vale_t)
+        tfin = vale_t[nbdt - 1]
+        fmax = 0.5 / dt  # facteur 1/2 car FFT calculee avec SYME='NON'
+        df = 2.0 * fmax / nbdt
+        freq_coup = kw['FREQ_COUP']
+        freq_filt = kw['FREQ_FILTRE']
+
+        if freq_filt > 0.0:
+            # CORR_ACCE / METHODE="FILTRAGE"
+            vale_s = acce_filtre_CP(vale_s, dt, freq_filt)
+
+        acc0 = t_fonction(vale_t, vale_s, para)
+        xff0 = acc0.fft(methode="COMPLET")
+
+        lfreq = NP.arange(0., fmax, df)
+
+        para_filt = para.copy()
+        para_filt.update(_F(INTERPOL=["LIN", "LIN"]))
+        filtre = t_fonction_c([0., df, freq_coup, freq_coup + df],
+                              [0., 1., 1., 0.], para_filt)
+        xf1 = (xff0 * filtre).evalfonc(lfreq)
+        if kw["NIVEAU"] == 2:
+            vale = -1. / (2. * math.pi * lfreq[1:])**2 * xf1.vale_y[1:]
+        else:
+            vale = 1. / (2. * math.pi * lfreq[1:]) * xf1.vale_y[1:]
+            vale = -1j * vale
+
+        xf0 = t_fonction_c(lfreq, NP.concatenate(([0.], vale)), para)
+        xf0.para["NOM_PARA"] = "FREQ"
+        depl = xf0.fft(methode="COMPLET", syme="NON")
+        dep0 = - depl(0.)
+
+        linst = NP.arange(0., tfin + dt, dt)
+        result = (depl + dep0).evalfonc(linst)
+        result.para = f_in.para.copy()
+        self.resu = result
+
+class CalcFonction_DERIVE_FREQ(CalcFonctionOper):
+    """DERIVE_FREQ"""
+    def _run(self):
+        """DERIVE_FREQ"""
+        kw = self.kw
+        f_in = self._lf[0]
+        para = f_in.para.copy()
+        para.update(_F(PROL_GAUCHE="CONSTANT", PROL_DROITE="CONSTANT"))
+        vale_t = f_in.vale_x
+        dt = vale_t[1] - vale_t[0]
+        nbdt = len(vale_t)
+        tfin = vale_t[nbdt - 1]
+        fmax = 0.5 / dt  # facteur 1/2 car FFT calculee avec SYME='NON'
+        df = 2.0 * fmax / nbdt
+        freq_coup = kw['FREQ_COUP']
+
+        xff0 = f_in.fft(methode="COMPLET")
+
+        lfreq = NP.arange(0., fmax, df)
+
+        para_filt = para.copy()
+        para_filt.update(_F(INTERPOL=["LIN", "LIN"]))
+        filtre = t_fonction_c([0., df, freq_coup, freq_coup + df],
+                              [0., 1., 1., 0.], para_filt)
+        xf1 = (xff0 * filtre).evalfonc(lfreq)
+        if kw["NIVEAU"] == 2:
+            vale = -1. * (2. * math.pi * lfreq[1:])**2 * xf1.vale_y[1:]
+        else:
+            vale = 2. * math.pi * lfreq[1:] * xf1.vale_y[1:]
+            vale = 1j * vale
+
+        xf0 = t_fonction_c(lfreq, NP.concatenate(([0.], vale)), para)
+        xf0.para["NOM_PARA"] = "FREQ"
+        depl = xf0.fft(methode="COMPLET", syme="NON")
+
+        linst = NP.arange(0., tfin + dt, dt)
+        result = depl.evalfonc(linst)
+        result.para = f_in.para.copy()
+        self.resu = result
+
 
 class Context(object):
     """Permet de stocker des éléments de contexte pour aider au

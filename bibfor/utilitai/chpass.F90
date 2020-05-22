@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,11 +63,12 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
 !
 !
     integer :: n1, ib, nbocc, iocc, nbtrou, jnutro, nbmocl, lnom, ibid
-    aster_logical :: chgcmp, cumul, lcumul(2)
+    aster_logical :: chgcmp, cumul, lcumul(2), compOK, messConseil
     integer :: ncmp, jlicmp, gd, jcmpgd, iret, nncp, nchg
+    integer :: jcesd, jcesc, i, ncmpdisp, j
     real(kind=8) :: coefr, lcoefr(2)
     complex(kind=8) :: coefc, lcoefc(2)
-    character(len=8) :: kbid, modele
+    character(len=8) :: kbid, modele, nomcmp
     character(len=8) :: champ, nomgd, nomgd2, ma2
     character(len=3) :: prol0, tsca
     character(len=16) :: limocl(5), tymocl(5), typem
@@ -77,6 +78,7 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
 !
     aster_logical :: lcoc, bool(1)
     character(len=8), pointer :: licmp2(:) => null()
+    character(len=8), pointer :: licmpdisp(:) => null()
 !     -----------------------------------------------------------------
 !
     call jemarq()
@@ -84,6 +86,8 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
     chs1 = '&&CHPASS.CHS1'
     chs2 = '&&CHPASS.CHS2'
     chs3 = '&&CHPASS.CHS3'
+    
+    messConseil = ASTER_FALSE
 !
 !
 ! 1- CALCUL DE:
@@ -119,11 +123,18 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
         call exisd('MODELE', modele, iret)
         if (iret .ne. 1) modele = ' '
 !
+        call jeveuo(cesmod//'.CESD', 'L', jcesd)
+        call jeveuo(cesmod//'.CESC', 'L', jcesc)
+        ncmpdisp = zi(jcesd+1)
+        AS_ALLOCATE(vk8=licmpdisp, size=ncmpdisp)
+        licmpdisp(1:ncmpdisp) = zk8(jcesc:jcesc-1+ncmpdisp)
+!
     else
         ligrel = ' '
         option = ' '
         cesmod = ' '
         modele = ' '
+        ncmpdisp = 0
     endif
 !
 !
@@ -229,6 +240,7 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
             call wkvect('&&CHPASS.LICMP', 'V V K8', ncmp, jlicmp)
             call getvtx('ASSE', 'NOM_CMP', iocc=iocc, nbval=ncmp, vect=zk8(jlicmp),&
                         nbret=ib)
+            AS_ALLOCATE(vk8=licmp2, size=ncmp)
             call getvtx('ASSE', 'NOM_CMP_RESU', iocc=iocc, nbval=0, nbret=n1)
             if (n1 .lt. 0) then
                 chgcmp = .true.
@@ -236,9 +248,35 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
                 if (n1 .ne. -ncmp) then
                     call utmess('F', 'UTILITAI_31')
                 endif
-                AS_ALLOCATE(vk8=licmp2, size=ncmp)
                 call getvtx('ASSE', 'NOM_CMP_RESU', iocc=iocc, nbval=ncmp, vect=licmp2,&
                             nbret=ib)
+            else
+                if (ncmpdisp > 0) licmp2(1:ncmp) = zk8(jlicmp:jlicmp-1+ncmp)
+            endif
+            
+            if (ncmpdisp > 0 .and. nomgd.ne. 'VARI_R') then
+                do i=1,ncmp
+                    compOK = ASTER_FALSE
+                    do j=1,ncmpdisp
+                        if (licmp2(i) .eq. licmpdisp(j))then
+                            compOK = ASTER_TRUE
+                            exit
+                        endif
+                    enddo
+                    if (.not. compOK) then
+                        call utmess('A','UTILITAI_36', sk=licmp2(i))
+                        messConseil = ASTER_TRUE
+                    endif
+                enddo
+            elseif (ncmpdisp > 0)then
+                do i=1,ncmp
+                    do j=1,ncmpdisp
+                        nomcmp = licmp2(i)
+                        if (nomcmp(1:1) .ne. 'V')then
+                            call utmess('A','UTILITAI_36', sk=licmp2(i))
+                        endif
+                    enddo
+                enddo
             endif
 !
         else
@@ -286,6 +324,25 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
 !
         else if (tych2(1:2).eq.'EL') then
             call celces(champ, 'V', chs1)
+            
+            call jeveuo(chs1//'.CESD', 'L', jcesd)
+            call jeveuo(chs1//'.CESC', 'L', jcesc)
+            
+            if (nomgd2 .ne. 'VARI_R')then
+                do i=1,ncmp
+                    compOK = ASTER_FALSE
+                    do j=1,zi(jcesd+1)
+                        if (zk8(jlicmp-1+i) .eq. zk8(jcesc-1+j))then
+                            compOK = ASTER_TRUE
+                            exit
+                        endif
+                    enddo
+                    if (.not. compOK) then
+                        call utmess('F','UTILITAI_43', nk=2, valk=[zk8(jlicmp-1+i),champ])
+                    endif
+                enddo
+            endif
+            
             call cesred(chs1, nbtrou, zi(jnutro), ncmp, zk8(jlicmp),&
                         'V', chs2)
 !
@@ -297,6 +354,25 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
                 call carces(champ, tychr, cesmod, 'V', chs1,&
                             'A', ib)
             endif
+            
+            call jeveuo(chs1//'.CESD', 'L', jcesd)
+            call jeveuo(chs1//'.CESC', 'L', jcesc)
+            
+            if (nomgd2 .ne. 'VARI_R')then
+                do i=1,ncmp
+                    compOK = ASTER_FALSE
+                    do j=1,zi(jcesd+1)
+                        if (zk8(jlicmp-1+i) .eq. zk8(jcesc-1+j))then
+                            compOK = ASTER_TRUE
+                            exit
+                        endif
+                    enddo
+                    if (.not. compOK) then
+                        call utmess('F','UTILITAI_43', nk=2, valk=[zk8(jlicmp-1+i),champ])
+                    endif
+                enddo
+            endif
+            
             call cesred(chs1, nbtrou, zi(jnutro), ncmp, zk8(jlicmp),&
                         'V', chs2)
 !
@@ -349,10 +425,13 @@ subroutine chpass(tychr, ma, celmod, nomgd, prol0,&
     else
         ASSERT(.false.)
     endif
+    
+    if (messConseil) call utmess('A','UTILITAI_42')
 !
 !
 !     6- MENAGE :
 !     -----------------------------------------------------
+    if (ncmpdisp .gt. 0) AS_DEALLOCATE(vk8=licmpdisp)
     call detrsd('CHAM_NO_S', chs1)
     call detrsd('CHAM_NO_S', chs2)
     call detrsd('CHAM_NO_S', chs3)

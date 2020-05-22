@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,9 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 MA_INIT = LIRE_MAILLAGE(FORMAT='GMSH',
                         UNITE=19,
                         )
+
+MA_INIT=DEFI_GROUP(reuse=MA_INIT,  MAILLAGE=MA_INIT,
+                    CREA_GROUP_MA=_F(  NOM = 'ALL', TOUT = 'OUI'))
 
 MA=CREA_MAILLAGE(MAILLAGE=MA_INIT,LINE_QUAD=_F(TOUT='OUI'))
 
@@ -71,10 +74,10 @@ VITE=CREA_RESU(reuse=VITE,
 #
 MASSE=POST_ELEM(  MODELE=MO,
                         CHAM_MATER=CHMAT,
-                        MASS_INER=(_F(  GROUP_MA = ( 'GM100','GM200', ),),
+                        MASS_INER=(_F(  GROUP_MA = ( 'GM100','GM200', 'ALL' ),),
                                     _F(TOUT = 'OUI') ))
 
-IMPR_TABLE(TABLE=MASSE)
+#IMPR_TABLE(TABLE=MASSE, UNITE=6)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=1.E-4,
@@ -84,6 +87,26 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            TABLE=MASSE,
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='00000002',),
+           )
+
+# TEST_TABLE(REFERENCE='ANALYTIQUE',
+#            PRECISION=1.E-4,
+#            VALE_CALC= 2.04750000E+03,
+#            VALE_REFE=2047.5,
+#            NOM_PARA='MASSE',
+#            TABLE=MASSE,
+#            FILTRE=_F(NOM_PARA='LIEU',
+#                      VALE_K='UNION_GROUP_MA',),
+#            )
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=1.E-4,
+           VALE_CALC= 2.04750000E+03,
+           VALE_REFE=2047.5,
+           NOM_PARA='MASSE',
+           TABLE=MASSE,
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ALL',),
            )
 
 #
