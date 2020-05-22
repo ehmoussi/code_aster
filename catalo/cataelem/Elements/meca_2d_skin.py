@@ -33,6 +33,9 @@ import cataelem.Commons.attributes as AT
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
                              components=('DX', 'DY', ))
 
+ECONTNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
+    components=('SIXX','SIYY','SIZZ','SIXY',))
+
 MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=DDL_MECA)
 
 MVECTUR  = ArrayOfComponents(phys=PHY.VDEP_R, locatedComponents=DDL_MECA)
@@ -163,6 +166,12 @@ class MEPLSE2(Element):
             para_out = ((SP.PMATUNS, MMATUNS),),
         ),
 
+        OP.SIRO_ELEM(te=554,
+            para_in=((SP.PGEOMER, LC.EGEOM2D), (SP.PSIG3D, ECONTNO),
+                     ),
+            para_out=((SP.PPJSIGM, LC.EPJSIGM), ),
+        ),
+
         OP.TOU_INI_ELEM(te=99,
             para_out = ((OP.TOU_INI_ELEM.PERREUR, LC.CERROR),),
         ),
@@ -175,7 +184,8 @@ class MEPLSE2(Element):
 
         OP.TOU_INI_ELNO(te=99,
             para_out = ((OP.TOU_INI_ELNO.PGEOM_R, LC.EGEOM2D), (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F),
-                        (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R), (OP.TOU_INI_ELNO.PPRES_R, LC.EPRE2DR),),
+                        (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R), (OP.TOU_INI_ELNO.PPRES_R, LC.EPRE2DR),
+                        (OP.TOU_INI_ELNO.PSIEF_R, ECONTNO), ),
         ),
     )
 

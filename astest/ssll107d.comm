@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,9 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
-TCARS=MACR_CARA_POUTRE(    SYME_Z='OUI',FORMAT='MED',
+nom='SECT1'
+
+TCARS=MACR_CARA_POUTRE(    SYME_Z='OUI',FORMAT='MED', NOM=nom,
                               ORIG_INER=(0., -0.025,) )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -226,7 +228,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            )
 
 TCAR2=MACR_CARA_POUTRE(    UNITE=38,FORMAT='ASTER',
-                                GROUP_MA=('GR1', 'GR2',),
+                                GROUP_MA=('GR1', 'GR2',),  NOM=nom,
                               ORIG_INER=(0.005, 0.,) )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -285,7 +287,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 
 # Pareil que TACR2, mais avec le maillage lu avant
 mail = LIRE_MAILLAGE(UNITE=38,FORMAT='ASTER')
-TCAR3=MACR_CARA_POUTRE(MAILLAGE=mail, GROUP_MA=('GR1', 'GR2',), ORIG_INER=(0.005, 0.0,) )
+TCAR3=MACR_CARA_POUTRE(MAILLAGE=mail, GROUP_MA=('GR1', 'GR2',), ORIG_INER=(0.005, 0.0,),  NOM=nom,)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC= 7.21666667E-08,
@@ -344,7 +346,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 # Pareil que TACR2, mais avec le format MED
 IMPR_RESU(FORMAT='MED',UNITE=39,RESU=_F(MAILLAGE=mail),PROC0='NON')
 #
-TCAR4=MACR_CARA_POUTRE(UNITE=39,FORMAT='MED', GROUP_MA=('GR1', 'GR2',), ORIG_INER=(0.005, 0.0,) )
+TCAR4=MACR_CARA_POUTRE(UNITE=39,FORMAT='MED', GROUP_MA=('GR1', 'GR2',), ORIG_INER=(0.005, 0.0,),  NOM=nom, )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC= 7.21666667E-08,

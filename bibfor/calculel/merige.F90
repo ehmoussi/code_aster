@@ -57,7 +57,6 @@ subroutine merige(model_, cara_elem_, sigg, strx, matel,&
     character(len=16) :: option
     character(len=24) :: ligrmo, chgeom, chcara(18), chharm
     character(len=19) :: pintto, cnseto, heavto, loncha, basloc, lsn, lst, stano, pmilto, hea_no
-    aster_logical :: lfiss
     character(len=8) :: modele, cara
 !
 !-----------------------------------------------------------------------
@@ -124,15 +123,6 @@ subroutine merige(model_, cara_elem_, sigg, strx, matel,&
         lpain(13) = 'PHEA_NO'
         lchin(13) = hea_no
         nbpara=13
-        lfiss=exi_fiss(modele)
-        if (lfiss) then
-          ASSERT(present(mateco))
-          if (mateco.ne.' ') then
-            nbpara=nbpara+1
-            lpain(nbpara) = 'PMATERC'
-            lchin(nbpara) = mateco
-          endif
-        endif
 !
 ! --- CHAMPS DE SORTIE
 !

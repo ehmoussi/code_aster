@@ -6,4 +6,4 @@ P mpi_nbnoeud 1
 P testlist asterxx ci verification sequential
 
 F comm zzzz341c.comm D 1
-F mmed zzzz341c.mail D 20
+F mmed zzzz341a.mail D 20

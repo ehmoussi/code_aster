@@ -17,28 +17,13 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from cataelem.Tools.base_objects import InputParameter, OutputParameter, Option, CondCalcul
-import cataelem.Commons.physical_quantities as PHY
-import cataelem.Commons.parameters as SP
-import cataelem.Commons.attributes as AT
+from ..Utilities import _
+
+cata_msg = {
+
+    1 : _("""La fonctionnalité XFEM n'est pas qualifiée pour les études de sûreté. Il ne faut pas l'utiliser dans ce cadre.
+Pour plus de détails, référez-vous à la fiche qualité de la version d’exploitation de code_aster.
+"""),
 
 
-PVOISIN  = OutputParameter(phys=PHY.VOISIN, type='ELEM',
-comment="""  PVOISIN : VOISINS DE L ELEMENT  """)
-
-
-INIT_MAIL_VOIS = Option(
-    para_in=(
-    ),
-    para_out=(
-           PVOISIN,
-    ),
-    condition=(
-      CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
-      CondCalcul('+', ((AT.PHENO,'TH'),(AT.BORD,'0'),)),
-      CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
-    ),
-    comment="""  INIT_MAIL_VOIS :
-           CALCUL DES VOISINS DE L ELEMENT
-           PRODUIT UN CHAMP PAR ELEMENT  """,
-)
+}

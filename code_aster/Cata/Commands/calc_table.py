@@ -24,23 +24,31 @@ from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
 
-def calc_table_prod(self, TABLE, ACTION, **kargs):
-   """Typage du concept produit.
-   """
-   if kargs.get('__all__'):
+def calc_table_prod(self, TABLE, ACTION, TYPE_TABLE, **kargs):
+    """Typage du concept produit.
+    """
+    if kargs.get('__all__'):
        return (table_sdaster, table_container, table_fonction)
 
-   l_typ = [AsType(TABLE),]
-   for mcf in ACTION:
-      if mcf.get('TABLE') is not None:
-         l_typ.append(AsType(mcf['TABLE']))
-   # une table_fonction étant une table
-   if table_fonction in l_typ:
-      return table_fonction
-   elif table_container in l_typ:
-      return table_container
-   else:
-      return table_sdaster
+    if TYPE_TABLE is None:
+       l_typ = [AsType(TABLE),]
+       for mcf in ACTION:
+          if mcf.get('TABLE') is not None:
+             l_typ.append(AsType(mcf['TABLE']))
+       # une table_fonction étant une table
+       if table_fonction in l_typ:
+          return table_fonction
+       elif table_container in l_typ:
+          return table_container
+       else:
+          return table_sdaster
+    else:
+        if TYPE_TABLE == 'TABLE_FONCTION':
+            return table_fonction
+        elif TYPE_TABLE == 'TABLE_CONTENEUR':
+            return table_container
+        else:
+            return table_sdaster
 
 CALC_TABLE=MACRO(nom="CALC_TABLE",
                  op=OPS('code_aster.MacroCommands.calc_table_ops.calc_table_ops'),
@@ -160,6 +168,9 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
                             fr=tr("Type des calculs à appliquer")),
       ),
    ),
+   
+   TYPE_TABLE = SIMP(statut='c', typ='TXM',
+                             into=('TABLE', 'TABLE_FONCTION', 'TABLE_CONTENEUR'),),
 
    TITRE = SIMP(statut='f',typ='TXM',
                 fr=tr("Titre de la table produite")),

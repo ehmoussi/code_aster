@@ -135,11 +135,22 @@ character(len=8), intent(out) :: disp
         cara_elem = ' '
     endif
     call getvid(' ', 'CHAM_MATER', scal=mate, nbret=nocc)
-    call dismoi('BESOIN_MATER', model, 'MODELE', repk=answer)
-    if (nocc .eq. 0) then
+
+    if (nocc .eq. 0) then 
         mate = ' '
-        if (answer .eq. 'OUI') then
-            call utmess('A', 'MECHANICS1_40')
+        if (option.eq.'RIGI_GEOM')  then
+            ! necessaire seulement pour CABLE 
+            call dismoi('SI_CABLE', model, 'MODELE', repk=answer)
+            if (answer .eq. 'OUI') then
+                call utmess('A', 'MECHANICS1_40')
+            endif
+        elseif ((option .ne. 'RIGI_ACOU') .and. (option.ne.'RIGI_GEOM') ) then
+            ! mater pas besoin pour RIGI_ACOU, 
+            ! mater peu besoin pour DIS_/2D_DIS_ pour d'autres options
+            call dismoi('BESOIN_MATER', model, 'MODELE', repk=answer)
+            if (answer .eq. 'OUI') then
+                call utmess('A', 'MECHANICS1_40')
+            endif            
         endif
     endif
 
