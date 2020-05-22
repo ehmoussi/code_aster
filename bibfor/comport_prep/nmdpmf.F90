@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/utmess.h"
+#include "asterfort/tecart.h"
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 !
@@ -99,6 +100,9 @@ implicit none
                 lcoc(1), 'V', chs3)
     call cescar(chs3, compor, 'V')
 !
+! - Compress COMPOR <CARTE>   
+    call tecart(compor)
+!   
 !     MENAGE
     call detrsd('CHAM_ELEM_S', chs(1))
     call detrsd('CHAM_ELEM_S', chs(2))

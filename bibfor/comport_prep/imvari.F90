@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ character(len=19), intent(in) :: compor_info
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_vari, i_zone
+    integer :: i_vari, i_zone, c_pmf
     integer :: nb_vari, nb_zone, nb_elem_zone, nt_vari
     character(len=16) :: vari_excl
     character(len=16) :: rela_comp, defo_comp, type_cpla
@@ -75,6 +75,7 @@ character(len=19), intent(in) :: compor_info
     call jeveuo(compor_info(1:19)//'.RELA', 'L', vk16 = v_rela)
     call jeveuo(compor_info(1:19)//'.ZONE', 'L', vi = v_zone)
 
+    c_pmf = 0
     do i_zone = 1, nb_zone
         
         nb_elem_zone = v_zone(i_zone)
@@ -103,19 +104,22 @@ character(len=19), intent(in) :: compor_info
 ! --------- Print name of internal variables
 !
             if (l_excl) then
-                call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
-                if (vari_excl.eq.'&&MULT_COMP') then
-                    call utmess('I', 'COMPOR4_11')
-                    call utmess('I', 'COMPOR4_9' , si = nb_vari)
-                    call utmess('I', 'COMPOR4_15')
-                else if (vari_excl.eq.'&&PROT_COMP') then
-                    call utmess('I', 'COMPOR4_10')
-                    call utmess('I', 'COMPOR4_6', sk = defo_comp)
-                    call utmess('I', 'COMPOR4_9', si = nb_vari)
-                    call utmess('I', 'COMPOR4_16')
-                else
-                    ASSERT(ASTER_FALSE)
-                endif
+               if (vari_excl.eq.'&&MULT_COMP') then
+                  call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
+                  call utmess('I', 'COMPOR4_11')
+                  call utmess('I', 'COMPOR4_9' , si = nb_vari)
+                  call utmess('I', 'COMPOR4_15')
+               else if (vari_excl.eq.'&&PROT_COMP') then
+                  call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
+                  call utmess('I', 'COMPOR4_10')
+                  call utmess('I', 'COMPOR4_6', sk = defo_comp)
+                  call utmess('I', 'COMPOR4_9', si = nb_vari)
+                  call utmess('I', 'COMPOR4_16')
+               else if (vari_excl.eq.'&&MULT_PMF') then
+                  c_pmf = c_pmf + 1 
+               else
+                  ASSERT(ASTER_FALSE)
+               endif
             else
                 call utmess('I', 'COMPOR4_4', si = nb_elem_zone)
                 call utmess('I', 'COMPOR4_5', sk = rela_comp)
@@ -129,7 +133,10 @@ character(len=19), intent(in) :: compor_info
                 enddo
             endif
         endif
-    end do
+     end do
+     if (c_pmf .ne. 0) then
+        call utmess('I', 'COMPOR4_12', si = c_pmf)
+     endif
 !
 99  continue
 !
