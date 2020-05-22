@@ -569,7 +569,7 @@ TEST_TABLE(CRITERE='RELATIF',
            FILTRE=(_F(NOM_PARA='INST',
                      VALE=0.1,),
                     _F(NOM_PARA='LIEU',
-                     VALE_K='MA',),),
+                     VALE_K=MA.getName(),),),
            )
 
 TEST_TABLE(CRITERE='RELATIF',
@@ -581,7 +581,7 @@ TEST_TABLE(CRITERE='RELATIF',
            FILTRE=(_F(NOM_PARA='INST',
                      VALE=0.9,),
                     _F(NOM_PARA='LIEU',
-                     VALE_K='MA',),),
+                     VALE_K=MA.getName(),),),
            )
 
 TEST_TABLE(CRITERE='RELATIF',
@@ -593,7 +593,7 @@ TEST_TABLE(CRITERE='RELATIF',
            FILTRE=(_F(NOM_PARA='INST',
                      VALE=2.0,),
                     _F(NOM_PARA='LIEU',
-                     VALE_K='MA',),),
+                     VALE_K=MA.getName(),),),
            )
 
 TEST_TABLE(CRITERE='RELATIF',
@@ -605,7 +605,7 @@ TEST_TABLE(CRITERE='RELATIF',
            FILTRE=(_F(NOM_PARA='INST',
                      VALE=3.0,),
                     _F(NOM_PARA='LIEU',
-                     VALE_K='MA',),),
+                     VALE_K=MA.getName(),),),
            )
 
 #
