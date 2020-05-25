@@ -34,7 +34,7 @@ DEBUT(CODE=_F(
 M=LIRE_MAILLAGE(FORMAT='MED');
 
 MO=AFFE_MODELE(MAILLAGE=M,
-               
+
                AFFE=_F(TOUT='OUI',
                        PHENOMENE='MECANIQUE',
                        MODELISATION='D_PLAN_INCO_UPGB'));
@@ -49,9 +49,12 @@ CM=AFFE_MATERIAU(MAILLAGE=M,
                  AFFE=_F(TOUT='OUI',
                          MATER=MA));
 
+
+CCINE=AFFE_CHAR_CINE(MODELE=MO,
+                    MECA_IMPO=_F(GROUP_MA='GRMA11',
+                                DX=0.0),)
+
 CLIM=AFFE_CHAR_MECA(MODELE=MO,
-                    DDL_IMPO=_F(GROUP_MA='GRMA11',
-                                DX=0.0),
                     FACE_IMPO=(_F(GROUP_MA='GRMA12',
                                   DNOR=0.0),
                                _F(GROUP_MA='GRMA13',
@@ -70,8 +73,10 @@ RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.0,0.0,
 # CORRIGE LES EVENTUELLES DERIVES.
 EVOL=STAT_NON_LINE(MODELE=MO,
                    CHAM_MATER=CM,
-                   EXCIT=_F(CHARGE=CLIM,
+                   EXCIT=(_F(CHARGE=CLIM,
                             FONC_MULT=RAMPE),
+                            _F(CHARGE=CCINE,
+                            FONC_MULT=RAMPE),),
                    COMPORTEMENT=_F(RELATION='VMIS_ISOT_LINE',
                                 DEFORMATION='GDEF_LOG'),
                    INCREMENT=_F(LIST_INST=L_INST1),
@@ -79,7 +84,7 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                    CONVERGENCE=_F(SIGM_REFE=60.0,
                                   EPSI_REFE=3.E-4,
                                   RESI_REFE_RELA=1.E-5),
-                   SOLVEUR=_F(METHODE='MUMPS',
+                   SOLVEUR=_F(METHODE='MUMPS',POSTTRAITEMENTS='FORCE',
    NPREC=-1));
 
 EVOL=CALC_CHAMP(reuse=EVOL,RESULTAT=EVOL,CRITERES=('SIEQ_ELNO'),CONTRAINTE=('SIGM_ELNO'))
