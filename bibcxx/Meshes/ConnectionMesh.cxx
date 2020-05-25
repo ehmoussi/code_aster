@@ -21,10 +21,12 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <algorithm>
+
+#include "aster_fort_mesh.h"
+#include "aster_mpi.h"
 #include "Meshes/ConnectionMesh.h"
 #include "ParallelUtilities/MPIInfos.h"
-#include "aster_fort.h"
-#include <algorithm>
 
 #ifdef _USE_MPI
 

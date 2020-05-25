@@ -24,11 +24,13 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include <stdexcept>
-#include "astercxx.h"
-
-#include "Modeling/Model.h"
 #include <typeinfo>
 
+#include "astercxx.h"
+
+#include "aster_fort_superv.h"
+#include "aster_fort_utils.h"
+#include "Modeling/Model.h"
 #include "Supervis/CommandSyntax.h"
 
 const char *const ModelSplitingMethodNames[nbModelSplitingMethod] = {"CENTRALISE", "SOUS_DOMAINE",

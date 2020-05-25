@@ -37,7 +37,7 @@ from ..Objects import Function, FunctionComplex, Function2D
 from ..Objects.function_py import (FonctionError, InterpolationError,
                                    ParametreError, ProlongementError,
                                    enveloppe, fractile, homo_support_nappe,
-                                   moyenne, t_fonction, t_nappe)
+                                   moyenne, t_fonction, t_fonction_c, t_nappe)
 from ..Utilities import force_list
 from .defi_inte_spec_ops import tocomplex
 from .Utils import liss_enveloppe as LISS
@@ -46,15 +46,16 @@ from .Utils.random_signal_utils import (ACCE2SRO, DSP2SRO, SRO2DSP,
                                         acce_filtre_CP, f_phase_forte)
 
 
-def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None, COMB=None, COMB_C=None, MULT=None,
+def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
+                       COMB=None, COMB_C=None, MULT=None,
                        ENVELOPPE=None, FRACTILE=None, PROL_SPEC_OSCI=None, SPEC_OSCI=None, ASSE=None, FFT=None,
                        COMPOSE=None, CORR_ACCE=None, COHERENCE=None,
-                       PUISSANCE=None, LISS_ENVELOP=None, ABS=None, REGR_POLYNOMIALE=None, DSP=None, MOYENNE=None,
+                       PUISSANCE=None, LISS_ENVELOP=None, ABS=None, REGR_POLYNOMIALE=None, DSP=None, MOYENNE=None, INTEGRE_FREQ=None, DERIVE_FREQ=None,
                        INTERPOL_FFT=None, **args):
-    if (INTEGRE     != None): return Function
-    if (DERIVE      != None): return Function
-    if (INVERSE     != None): return Function
-    if (COMB        != None):
+    if (INTEGRE is not None): return Function
+    if (DERIVE is not None): return Function
+    if (INVERSE is not None): return Function
+    if (COMB is not None):
         comb = COMB[0]['FONCTION']
         if type(comb) not in (list, tuple):
             type(COMB[0]['FONCTION'])
@@ -63,55 +64,55 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
             type_vale=type(COMB[0]['FONCTION'][0])
         for mcfact in COMB :
             if(type(mcfact['FONCTION'])!=type_vale):
-                raise AsException("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
+                raise TypeError("CALC_FONCTION/COMB : pas de types hétérogènes nappe/fonction")
         return type_vale
-    if (COMB_C      != None):
+    if (COMB_C is not None):
         vale=COMB_C[0]['FONCTION']
         if type(vale) is list: vale = vale[0]
         if(type(vale) == Function2D):
             for mcfact in COMB_C[1:] :
                 if(type(mcfact['FONCTION'])!=Function2D):
-                    raise AsException("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
+                    raise TypeError("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
             return Function2D
         else:
             for mcfact in COMB_C :
                 if(type(mcfact['FONCTION'])==Function2D):
-                    raise AsException("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
+                    raise TypeError("CALC_FONCTION/COMB_C : pas de types hétérogènes nappe/fonction")
             return FunctionComplex
-    if (ENVELOPPE   != None):
+    if (ENVELOPPE is not None):
         if type(ENVELOPPE[0]['FONCTION']) not in (list, tuple):
             return type(ENVELOPPE[0]['FONCTION'])
         else:
             return type(ENVELOPPE[0]['FONCTION'][0])
-    if (FRACTILE    != None):
+    if (FRACTILE is not None):
         if type(FRACTILE[0]['FONCTION']) not in (list, tuple):
             return type(FRACTILE[0]['FONCTION'])
         else:
             return type(FRACTILE[0]['FONCTION'][0])
-    if (MOYENNE    != None):
+    if (MOYENNE is not None):
         if type(MOYENNE[0]['FONCTION']) not in (list, tuple):
             return type(MOYENNE[0]['FONCTION'])
         else:
             return type(MOYENNE[0]['FONCTION'][0])
-    if (EXTRACTION  != None):
+    if (EXTRACTION is not None):
         return Function
-    if (PROL_SPEC_OSCI   != None):
+    if (PROL_SPEC_OSCI is not None):
         return Function
-    if (SPEC_OSCI   != None):
+    if (SPEC_OSCI is not None):
         if (SPEC_OSCI[0]['TYPE_RESU'] == "NAPPE"):
             return Function2D
         else:
-            if (SPEC_OSCI[0]['AMOR_REDUIT'] != None):
+            if (SPEC_OSCI[0]['AMOR_REDUIT'] is not None):
                 if len(SPEC_OSCI[0]['AMOR_REDUIT']) == 1:
                     return Function
                 else:
                     return Function2D
             else:
                 return Function2D
-    if (DSP         != None): return Function
-    if (COMPOSE     != None): return Function
-    if (ASSE        != None): return Function
-    if (MULT        != None):
+    if (DSP is not None): return Function
+    if (COMPOSE is not None): return Function
+    if (ASSE is not None): return Function
+    if (MULT is not None):
         comb = MULT[0]['FONCTION']
         if type(comb) not in (list, tuple):
             type_vale=type(MULT[0]['FONCTION'])
@@ -123,24 +124,26 @@ def calc_fonction_prod(DERIVE=None, EXTRACTION=None, INTEGRE=None, INVERSE=None,
             else:
                 type_test = type(MULT[0]['FONCTION'][0])
             if(type_test != type_vale):
-                raise AsException("CALC_FONCTION/MULT : pas de types hétérogènes nappe/fonction")
+                raise TypeError("CALC_FONCTION/MULT : pas de types hétérogènes nappe/fonction")
         return type_vale
-    if (FFT         != None):
+    if (FFT is not None):
         vale=FFT[0]['FONCTION']
         if (type(vale) == Function )  : return FunctionComplex
         if (type(vale) == FunctionComplex) : return Function
-    if (INTERPOL_FFT   != None): return Function
-    if (CORR_ACCE   != None): return Function
-    if (COHERENCE   != None): return Function
-    if (LISS_ENVELOP!= None): return Function2D
-    if (REGR_POLYNOMIALE != None): return Function
-    if (PUISSANCE   != None):
+    if (INTERPOL_FFT is not None): return Function
+    if (CORR_ACCE is not None): return Function
+    if (COHERENCE is not None): return Function
+    if (LISS_ENVELOP is not None): return Function2D
+    if (REGR_POLYNOMIALE is not None): return Function
+    if (PUISSANCE is not None):
         if type(PUISSANCE[0]['FONCTION']) not in (list, tuple):
             return type(PUISSANCE[0]['FONCTION'])
         else:
             return type(PUISSANCE[0]['FONCTION'][0])
-    if (ABS         != None): return Function
-    raise AsException("type de concept resultat non prevu")
+    if (ABS is not None): return Function
+    if (INTEGRE_FREQ is not None): return Function
+    if (DERIVE_FREQ  is not None): return Function
+    raise TypeError("type de concept resultat non prevu")
 
 
 def calc_fonction_ops(self, **args):

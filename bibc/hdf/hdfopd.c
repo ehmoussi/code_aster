@@ -17,9 +17,9 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Ouverture d'un dataset HDF, renvoie éventuellement une erreur  
+/ Ouverture d'un dataset HDF, renvoie éventuellement une erreur
 /  Paramètres :
 /   - in  idfic : identificateur du fichier hdf (hid_t = int)
 /   - in  nomg : nom du groupe (char *)
@@ -39,12 +39,12 @@ hid_t DEFPSS(HDFOPD, hdfopd, hid_t *idf, char *nomg,
 {
   hid_t iret=-1;
 #ifndef _DISABLE_HDF5
-  hid_t id,idfic,dapl_id; 
+  hid_t id,idfic,dapl_id;
   int k,lg2;
   char *nom;
-  void *malloc(size_t size); 
+  void *malloc(size_t size);
   dapl_id=0;
-  
+
   idfic=(hid_t) *idf;
   nom = (char *) malloc((lg+ln+2) * sizeof(char));
   for (k=0;k<lg;k++) {
@@ -67,7 +67,7 @@ hid_t DEFPSS(HDFOPD, hdfopd, hid_t *idf, char *nomg,
   }
   nom[k+1] = '\0';
 
-  if ( (id = H5Dopen2(idfic,nom,dapl_id)) >= 0) 
+  if ( (id = H5Dopen2(idfic,nom,dapl_id)) >= 0)
     iret = id;
 
   free (nom);
@@ -75,4 +75,4 @@ hid_t DEFPSS(HDFOPD, hdfopd, hid_t *idf, char *nomg,
   CALL_UTMESS("F", "FERMETUR_3");
 #endif
   return iret;
-}     
+}

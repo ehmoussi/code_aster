@@ -27,8 +27,8 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "astercxx.h"
+#include "aster_fort_jeveux.h"
 #include "shared_vars.h"
-#include "aster_fort.h"
 
 #include <string>
 

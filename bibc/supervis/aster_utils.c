@@ -18,9 +18,9 @@
 
 /* person_in_charge: mathieu.courtois at edf.fr */
 
-#include "aster_utils.h"
+#include "aster_fort_utils.h"
 #include "aster_module.h"
-#include "aster_fort.h"
+#include "aster_utils.h"
 
 /*
  * Fonctions de manipulation des chaines de caractères pour échange avec le Fortran.
@@ -266,7 +266,7 @@ void convertxt( _IN int nval, _IN PyObject *tup, _OUT char *val, _IN STRING_SIZE
             v=PyTuple_GetItem(tup,i);
             /*                               v=PySequence_GetItem(tup,i); */
             s=PyUnicode_AsUTF8(v);
-            
+
             if(s == NULL){
                 printf("s : ");
                 PyObject_Print(v, stdout, 0);

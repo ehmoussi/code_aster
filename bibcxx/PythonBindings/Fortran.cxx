@@ -23,11 +23,12 @@
 
 /* person_in_charge: mathieu.courtois@edf.fr */
 
-#include "PythonBindings/Fortran.h"
-#include "aster_fort.h"
-#include "aster_utils.h"
 #include "astercxx.h"
+#include "aster_fort_superv.h"
+#include "aster_fort_utils.h"
+#include "aster_utils.h"
 #include "shared_vars.h"
+#include "PythonBindings/Fortran.h"
 
 void jeveux_init() {
     ASTERINTEGER dbg = 0;

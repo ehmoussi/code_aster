@@ -25,6 +25,7 @@
 #include <typeinfo>
 #include "astercxx.h"
 
+#include "aster_fort_superv.h"
 #include "Loads/ThermalLoad.h"
 #include "Supervis/ResultNaming.h"
 

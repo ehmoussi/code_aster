@@ -24,17 +24,15 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* person_in_charge: nicolas.sellenet at edf.fr */
+#include <string>
 
 #include "astercxx.h"
-#include "shared_vars.h"
-#include "aster_fort.h"
+#include "aster_fort_jeveux.h"
 #include "aster_utils.h"
+#include "shared_vars.h"
 
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "MemoryManager/JeveuxObject.h"
-
-#include <string>
 
 /**
  * @class JeveuxVectorClass

@@ -27,6 +27,7 @@
 
 #ifdef _USE_MPI
 
+#include "aster_mpi.h"
 #include "ParallelUtilities/CommunicationGraph.h"
 #include "ParallelUtilities/MPIInfos.h"
 
