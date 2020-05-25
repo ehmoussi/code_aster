@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -188,6 +188,11 @@ Contactez le support technique.
  Seule la première valeur de l'angle nautique est retenue :  %(r1)f
 """),
 
+    44 : _("""
+ La modélisation détectée à partir du maillage est de dimension 2 (2D).
+ Mais le mot-clé TYPE_CHAM %(k1)s indique la dimension 3 (3D).
+ La dimension 3 (3D) est retenue.
+"""),
 
     49 : _("""
  problème: sous-structure inconnue
