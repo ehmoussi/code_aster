@@ -64,6 +64,7 @@ use petsc_data_module
     integer :: k,isol,neq
     character(len=24) :: precon,kperm
     character(len=19) :: matas2,nosolv,vcin2, vcine_avant
+    character(len=3) :: matd
     character(len=24), dimension(:), pointer :: slvk => null()
     real(kind=8), dimension(:), pointer :: tempor => null()
     real(kind=8), dimension(:), pointer :: vciv1 => null()
@@ -80,6 +81,11 @@ use petsc_data_module
 
     nomat_courant=nomats(kptsc)
     nonu_courant=nonus(kptsc)
+!
+    call dismoi('MATR_DISTRIBUEE', nomat_courant, 'MATR_ASSE', repk=matd)
+    if ( matd == 'OUI' ) then 
+       call utmess( 'F', 'PETSC_17')
+    endif
 
 
 !   1. Il n'y a peut-etre rien a faire => goto 999 :

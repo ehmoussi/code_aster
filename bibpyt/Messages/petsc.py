@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -134,6 +134,15 @@ Solveur PETSc :
   Conseils : utilisez le préconditionneur 'LDLT_SP' avec ALGORITHME='FGMRES' ou un solveur direct ('MULT_FRONT' ou 'MUMPS')
 """),
 
+17: _("""
+Solveur PETSC : 
+   Vous utilisez le préconditionneur LDLT_INC : l'option MATR_DISTRIBUEE='OUI' n'est pas
+   disponible avec ce préconditionneur.
+
+Conseils :
+   Utilisez 'MATR_DISTRIBUEE='NON'. Vous pouvez également remplacer le préconditionneur 
+   LDLT_INC par LDLT_SP, qui est compatible avec  MATR_DISTRIBUEE='OUI'.
+"""),
 
 18 : _("""
 Solveur PETSc :
