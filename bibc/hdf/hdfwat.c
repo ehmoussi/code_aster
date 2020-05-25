@@ -17,17 +17,17 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Ecrire un attribut de type chaine de caractères associé à un dataset 
-/ au sein d'un fichier HDF 
+/ Ecrire un attribut de type chaine de caractères associé à un dataset
+/ au sein d'un fichier HDF
 /  Paramètres :
 /   - in  iddat : identificateur du dataset (hid_t)
 /   - in  nomat : nom de l'attribut (char *)
-/   - in  nbv   : nombre de valeurs 
+/   - in  nbv   : nombre de valeurs
 /   - in  valat : valeur de l'attribut (char *)
 /  Résultats :
-/     =0 OK, =-1 problème 
+/     =0 OK, =-1 problème
 /-----------------------------------------------------------------------------*/
 #ifndef _DISABLE_HDF5
 #include <hdf5.h>
@@ -38,14 +38,14 @@ ASTERINTEGER DEFPSPS(HDFWAT, hdfwat, hid_t *iddat, char *nomat, STRING_SIZE ln,
 {
   ASTERINTEGER iret=-1;
 #ifndef _DISABLE_HDF5
-  hid_t ida,aid,aty,att;  
-  herr_t ret,retc; 
+  hid_t ida,aid,aty,att;
+  herr_t ret,retc;
   hsize_t dimsf[1];
   int rank=1;
   int k;
   char *nom;
-  void *malloc(size_t size); 
-      
+  void *malloc(size_t size);
+
   ida=(hid_t) *iddat;
   dimsf[0]=(hsize_t)*nbv;
   nom = (char *) malloc((ln+1) * sizeof(char));
@@ -55,17 +55,17 @@ ASTERINTEGER DEFPSPS(HDFWAT, hdfwat, hid_t *iddat, char *nomat, STRING_SIZE ln,
   k=ln-1;
   while (nom[k] == ' ') { k--;}
   nom[k+1] = '\0';
-  if ( (aid = H5Screate(H5S_SIMPLE)) >= 0) {  
+  if ( (aid = H5Screate(H5S_SIMPLE)) >= 0) {
     H5Sset_extent_simple( aid, rank, dimsf, NULL );
     if ( (aty = H5Tcopy(H5T_FORTRAN_S1)) >= 0) {
                 H5Tset_size(aty, lv);
       if ( (att = H5Acreate(ida, nom, aty, aid, H5P_DEFAULT, H5P_DEFAULT)) >= 0) {
-        if ( (ret = H5Awrite(att, aty, valat)) >= 0) { 
+        if ( (ret = H5Awrite(att, aty, valat)) >= 0) {
           if ( (retc = H5Sclose(aid)) >= 0)  iret = 0;
-        } 
-      } 
-    } 
-  } 
+        }
+      }
+    }
+  }
   free(nom);
 #else
   CALL_UTMESS("F", "FERMETUR_3");

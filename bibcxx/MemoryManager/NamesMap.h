@@ -26,11 +26,11 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "astercxx.h"
+#include "aster_fort_jeveux.h"
+#include "aster_utils.h"
 #include "MemoryManager/JeveuxAllowedTypes.h"
 #include "MemoryManager/JeveuxObject.h"
-#include "aster_fort.h"
-#include "aster_utils.h"
-#include "astercxx.h"
 
 /**
  * @class NamesMapClass

@@ -127,6 +127,7 @@ from .impr_co import IMPR_CO
 from .impr_jeveux import IMPR_JEVEUX
 from .impr_macr_elem import IMPR_MACR_ELEM
 from .impr_resu import IMPR_RESU
+from .include import INCLUDE
 from .info_exec_aster import INFO_EXEC_ASTER
 from .info_mode import INFO_MODE
 from .info_resu import INFO_RESU

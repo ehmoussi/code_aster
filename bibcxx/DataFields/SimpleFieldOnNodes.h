@@ -30,7 +30,6 @@
 #include <assert.h>
 
 #include "astercxx.h"
-#include "aster_fort.h"
 
 #include "MemoryManager/JeveuxVector.h"
 #include "DataStructures/DataStructure.h"

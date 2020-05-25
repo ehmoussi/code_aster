@@ -1,8 +1,3 @@
-
-#include "astercxx.h"
-
-#ifdef _USE_MPI
-
 #ifndef CONNECTIONMESH_H_
 #define CONNECTIONMESH_H_
 
@@ -30,6 +25,8 @@
  */
 
 #include "astercxx.h"
+
+#ifdef _USE_MPI
 
 #include "Meshes/BaseMesh.h"
 #include "Meshes/ParallelMesh.h"
@@ -92,6 +89,6 @@ class ConnectionMeshClass : public BaseMeshClass {
  */
 typedef boost::shared_ptr< ConnectionMeshClass > ConnectionMeshPtr;
 
-#endif /* CONNECTIONMESH_H_ */
-
 #endif /* _USE_MPI */
+
+#endif /* CONNECTIONMESH_H_ */

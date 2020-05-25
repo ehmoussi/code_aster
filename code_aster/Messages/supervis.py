@@ -112,6 +112,18 @@ Conseils :
   Débogage SDVERI demandé
 """),
 
+    25: _("""
+L'usage de la commande INCLUDE n'est pas conseillé.
+
+Une étude utilisant la commande INCLUDE ne peut pas être éditée en mode
+graphique dans %(k1)s. Il est alors conseillé de remplacer INCLUDE par
+un "Stage" supplémentaire.
+
+De plus, le fonctionnement de INCLUDE est différent de ce qu'il était dans les versions
+antérieures à la version 15. Il est à la fois plus simple et plus robuste.
+S'il s'agit d'exécuter des instructions Python, il serait préférable d'utiliser "%(k2)s".
+"""),
+
     31: _("""
  Valeur invalide pour le mot clé RESERVE_CPU
 """),

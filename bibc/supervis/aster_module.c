@@ -18,20 +18,27 @@
 
 /* person_in_charge: mathieu.courtois at edf.fr */
 /* ------------------------------------------------------------------ */
+#include <ctype.h>
+#include <signal.h>
+#include <stdlib.h>
 
 #include "Python.h"
-#include <ctype.h>
-#include <stdlib.h>
-#include <signal.h>
 
 #include "aster.h"
-#include "aster_module.h"
+
 #include "aster_core_module.h"
-#include "shared_vars.h"
-#include "aster_mpi.h"
-#include "aster_fort.h"
-#include "aster_utils.h"
 #include "aster_exceptions.h"
+#include "aster_module.h"
+#include "aster_mpi.h"
+#include "aster_fort_ds.h"
+#include "aster_fort_jeveux.h"
+#include "aster_fort_material.h"
+#include "aster_fort_mesh.h"
+#include "aster_fort_python.h"
+#include "aster_fort_superv.h"
+#include "aster_fort_utils.h"
+#include "aster_utils.h"
+#include "shared_vars.h"
 
 #ifdef _HAVE_PETSC
 #include "petsc.h"

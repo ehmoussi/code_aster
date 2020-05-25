@@ -17,9 +17,9 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Fermeture d'un fichier HDF, renvoie une erreur si le fichier existe 
+/ Fermeture d'un fichier HDF, renvoie une erreur si le fichier existe
 /  Paramètres :
 /   - in  idfic : identificateur du fichier (hid_t)
 /  Résultats :
@@ -36,10 +36,10 @@ hid_t DEFP(HDFCLF, hdfclf, hid_t *idf)
     herr_t icode;
 
     idfic=(hid_t) *idf;
-    if ((icode = H5Fclose(idfic)) < 0) 
+    if ((icode = H5Fclose(idfic)) < 0)
         return -1 ;
 #else
     CALL_UTMESS("F", "FERMETUR_3");
 #endif
     return 0;
-}     
+}

@@ -29,7 +29,11 @@
 #include "PythonBindings/LogicalUnitManager.h"
 #include "Supervis/CommandSyntax.h"
 #include "Supervis/Exceptions.h"
+#include "Supervis/ResultNaming.h"
 #include "Utilities/CapyConvertibleValue.h"
+#include "aster_fort_mesh.h"
+#include "aster_fort_superv.h"
+#include "aster_fort_utils.h"
 
 int BaseMeshClass::getNumberOfNodes() const {
     if ( isEmpty() )
@@ -130,4 +134,18 @@ bool BaseMeshClass::readMeshFile( const std::string &fileName, const std::string
 bool BaseMeshClass::readMedFile( const std::string &fileName ) {
     readMeshFile( fileName, "MED" );
     return true;
+}
+
+const JeveuxCollectionLong BaseMeshClass::getMedConnectivity() const {
+    JeveuxChar24 objv( " " );
+    CALLO_GET_MED_CONNECTIVITY( getName(), objv );
+    JeveuxCollectionLong result( objv.toString() );
+    return result;
+}
+
+const JeveuxVectorLong BaseMeshClass::getMedCellsTypes() const {
+    JeveuxChar24 objv( " " );
+    CALLO_GET_MED_TYPES( getName(), objv );
+    JeveuxVectorLong result( objv.toString() );
+    return result;
 }

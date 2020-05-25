@@ -21,8 +21,8 @@
  *   along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "aster_fort_utils.h"
 #include "Modeling/PhysicalQuantityManager.h"
-#include "aster_fort.h"
 
 PhysicalQuantityManager::PhysicalQuantityManager()
     : _nameOfCmp( JeveuxCollectionChar8( "&CATA.GD.NOMCMP" ) ),

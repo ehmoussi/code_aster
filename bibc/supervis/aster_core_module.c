@@ -28,17 +28,19 @@
  *        than here.
  *  - give informations about the execution.
  */
+#include <signal.h>
 
 #include "Python.h"
-#include <signal.h>
 #include "aster.h"
+
 #include "aster_core_module.h"
-#include "shared_vars.h"
-#include "aster_module.h"
 #include "aster_exceptions.h"
+#include "aster_fort_mpi.h"
+#include "aster_fort_utils.h"
+#include "aster_module.h"
 #include "aster_mpi.h"
-#include "aster_fort.h"
 #include "aster_utils.h"
+#include "shared_vars.h"
 
 FILE* fileOut = NULL;
 

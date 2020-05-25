@@ -117,6 +117,16 @@ class BaseMeshClass : public DataStructure {
     const JeveuxCollectionLong getConnectivity() const { return _connectivity; }
 
     /**
+     * @brief Return the connectivity with MED numberings
+     */
+    const JeveuxCollectionLong getMedConnectivity() const;
+
+    /**
+     * @brief Return the MED type for each cell
+     */
+    const JeveuxVectorLong getMedCellsTypes() const;
+
+    /**
      * @brief Recuperation des coordonnees du maillage
      * @return champ aux noeuds contenant les coordonnees des noeuds du maillage
      */

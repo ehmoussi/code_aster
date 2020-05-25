@@ -17,13 +17,13 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Création d'un groupe HDF, renvoie une erreur si le groupe ne peut être créé 
+/ Création d'un groupe HDF, renvoie une erreur si le groupe ne peut être créé
 /  Paramètres :
 /   - in idfile : identificateur du fichier (hid_t)
 /   - in  nomgp : nom du groupe père (contient toute l'arborescence depuis "/")
-/   - in  nomgr : nom du groupe (char *) à créer 
+/   - in  nomgr : nom du groupe (char *) à créer
 /  Résultats :
 /     identificateur du groupe, -1 sinon (hid_t = int)
 /-----------------------------------------------------------------------------*/
@@ -36,12 +36,12 @@ hid_t DEFPSS(HDFCRG, hdfcrg, hid_t *idf, char *nomgp, STRING_SIZE lp,
 {
   hid_t iret=-1;
 #ifndef _DISABLE_HDF5
-  hid_t  idgrp,idfic,lcpl_id,gcpl_id;     
+  hid_t  idgrp,idfic,lcpl_id,gcpl_id;
   char *nomd;
   int k,lg2;
   void *malloc(size_t size);
   lcpl_id=0;gcpl_id=0;
-  
+
   idfic=(hid_t) *idf;
   nomd = (char *) malloc((lp+ln+2) * sizeof(char));
   for (k=0;k<lp;k++) {
@@ -63,12 +63,12 @@ hid_t DEFPSS(HDFCRG, hdfcrg, hid_t *idf, char *nomgp, STRING_SIZE lp,
     else break;
   }
   nomd[k+1] = '\0';
- 
-  if ((idgrp = H5Gcreate2(idfic, nomd, lcpl_id, gcpl_id, H5P_DEFAULT)) >= 0) 
+
+  if ((idgrp = H5Gcreate2(idfic, nomd, lcpl_id, gcpl_id, H5P_DEFAULT)) >= 0)
     iret = idgrp;
   free (nomd);
 #else
   CALL_UTMESS("F", "FERMETUR_3");
 #endif
   return iret;
-}     
+}

@@ -22,13 +22,15 @@
  */
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
+#include "astercxx.h"
 
+#ifdef _USE_MPI
+
+#include "aster_fort_mesh.h"
 #include "Meshes/ParallelMesh.h"
 #include "ParallelUtilities/MPIInfos.h"
 #include "ParallelUtilities/MPIContainerUtilities.h"
 #include "Utilities/Tools.h"
-
-#ifdef _USE_MPI
 
 bool ParallelMeshClass::readMedFile( const std::string &fileName ) {
     std::string completeFileName = fileName + "/" + std::to_string( getMPIRank() ) + ".med";

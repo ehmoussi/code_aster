@@ -18,7 +18,7 @@
 
 #include "aster.h"
 #include "aster_utils.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 
 #define MAX_FAC         256
 #define LONG_NOM_FIC    513

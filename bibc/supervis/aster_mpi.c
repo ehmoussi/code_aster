@@ -19,17 +19,22 @@
 /* person_in_charge: mathieu.courtois at edf.fr */
 
 #include "aster.h"
-#include "aster_fort.h"
-#include "aster_mpi.h"
-#include "aster_utils.h"
-#include "aster_fort.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef _USE_MPI
+#   include "mpi.h"
 #ifdef OPEN_MPI
-#include <dlfcn.h>
+#   include <dlfcn.h>
 #endif
+#endif
+
+#include "aster_mpi.h"
+#include "aster_fort_mpi.h"
+#include "aster_fort_utils.h"
+#include "aster_utils.h"
 
 /*! Global object that store the entire tree */
 static aster_comm_t aster_mpi_world;

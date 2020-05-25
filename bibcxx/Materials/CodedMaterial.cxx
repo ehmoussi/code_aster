@@ -23,8 +23,10 @@
 
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
+#include "aster_fort_jeveux.h"
+#include "aster_fort_material.h"
+#include "aster_fort_utils.h"
 #include "Materials/CodedMaterial.h"
-#include "aster_fort.h"
 
 CodedMaterialClass::CodedMaterialClass( const std::string& name,
                                         const MaterialFieldPtr &mater,
