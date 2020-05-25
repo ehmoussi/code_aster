@@ -18,6 +18,7 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
+import os
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 
@@ -34,7 +35,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
 #    ACCELEROGRAMME : LBNS
 #    (LONG BEACH NORTH SOUTH)
 
-INCLUDE(UNITE=34, )
+os.rename("fort.34", "fort34.py")
+from fort34 import *
 
 #
 #  ACCELEROGRAMMES NORMES A 0.1G
