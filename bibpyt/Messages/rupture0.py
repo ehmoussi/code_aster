@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,11 @@ cata_msg = {
     1: _("""
 Vous avez renseigné le mot clé simple MATER de la commande POST_K1_K2_K3.
 Le matériau %(k1)s présent dans la structure de données résultat va être surchargée par le matériau %(k2)s .
+"""),
+
+    2: _("""
+Le champ de variables de commande VARC %(k1)s ne contient pas autant de valeurs (%(i1)d) que le nombre
+de noeuds (%(i2)d) dans la structure de données résultat.
 """),
 
     4: _("""
