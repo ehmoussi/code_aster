@@ -72,7 +72,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     # Dans les tables on retrouve une ligne avec __nomlma.nom. Soit :
     #   - on remplace __nomlma.nom par NomMaillageNew.
     #   - on supprime la ligne
-    
+
     NomMaillage = (None, __nomlma.get_name())
     if ('NOM' in args):
         NomMaillage = (args['NOM'], __nomlma.get_name())
@@ -103,7 +103,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     motsimps['ORIG_INER'] = ORIG_INER
     mfact = _F(TOUT='OUI', **motsimps)
     __cageo = POST_ELEM(MODELE=__nomamo, CHAM_MATER=__nomama, CARA_GEOM=mfact)
-    
+
     #
     # Création d'un modèle plan 2D thermique représentant la section
     # de la poutre car on doit résoudre des E.D.P. avec des laplaciens
@@ -806,19 +806,19 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
                 if (conceptOld.strip() in zz):
                     dprod['TITRE'][ii] = zz.replace(conceptOld.strip(), conceptNew.strip())
         #
-        dprod['TYPE_TABLE'] = 'TABLE_CONTENEUR'
+        dprod['TYPE_TABLE'] = 'TABLE_CONTAINER'
         __tabtmp = CREA_TABLE(**dprod)
     #
     if not GROUP_MA_BORD:
-        
+
         __tabtmp = POST_ELEM(
             MODELE=__nomamo, CHAM_MATER=__nomama, CARA_GEOM=mfact
         )
-    
+
     #
     # mise au propre de la table
     #
-    
+
     # On enlève la ligne avec LIEU='-' et donc les colonnes TYPE_OBJET, NOM_SD
     # on utilise TYPE_TABLE pour forcer le type à table_sdaster et plus table_container
     nomres = CALC_TABLE(
@@ -826,14 +826,14 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
             ACTION=_F(
                 OPERATION='FILTRE', NOM_PARA='LIEU', CRIT_COMP='NON_VIDE'),
         )
-    
+
     NomMaillageNew, NomMaillageOld = NomMaillage
-    
+
     # Suppression de la référence à NomMaillageOld, remplacé par NOM = NomMaillageNew
     # Si TABLE_CARA == "OUI" et GROUP_MA la ligne est supprimée
-    
+
     if not (TABLE_CARA == "OUI" and GROUP_MA):
-    
+
         TabTmp = nomres.EXTR_TABLE()
         for ii in range(len(TabTmp.rows)):
             zz = TabTmp.rows[ii]['LIEU']
@@ -849,15 +849,15 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
                       CRIT_COMP='NE', VALE_K=NomMaillageOld),
         )
         TabTmp = nomres.EXTR_TABLE().dict_CREA_TABLE()
-    
+
     DETRUIRE(CONCEPT=_F(NOM=nomres), INFO=1)
     nomres = CREA_TABLE(**TabTmp)
-    
+
     #
     # On retourne une table exploitable par AFFE_CARA_ELEM, avec seulement les
     # caractéristiques nécessaires
     if (TABLE_CARA == "OUI"):
-        
+
         #
         if GROUP_MA_BORD and not GROUP_MA:
             nomres = CALC_TABLE(
@@ -927,7 +927,7 @@ def macr_cara_poutre_ops(self, MAILLAGE, SYME_Y, SYME_Z, GROUP_MA_BORD,
     #
     # On retourne une table contenant toutes les caractéristiques calculées
     else:
-        
+
         if GROUP_MA_BORD and not GROUP_MA:
             nomres = CALC_TABLE(
                 TABLE=nomres,

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
     self.set_icmd(1)
 
     motscit = {}
-    
+
     if  CALC_FREQ['OPTION']== 'PLUS_PETITE':
         motscit['CALC_FREQ'] = _F(SEUIL_FREQ=CALC_FREQ['SEUIL_FREQ'],
                                   NMAX_FREQ=CALC_FREQ['NMAX_FREQ'])
@@ -89,5 +89,5 @@ def calc_mode_rotation_ops(self, MATR_RIGI, MATR_MASS, MATR_AMOR, MATR_GYRO,
                    'MODE_MECA', 'TYPE_OBJET': 'MODE_MECA', 'NOM_SD': _mod[ii].nom})
 
     motcles = tab.dict_CREA_TABLE()
-    tab_out = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **motcles)
+    tab_out = CREA_TABLE(TYPE_TABLE='TABLE_CONTAINER', **motcles)
     return ier
