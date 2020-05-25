@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1104,6 +1104,7 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
     import numpy as NP
     from math import pi
     from Internal.post_k_varc import POST_K_VARC
+    from Utilitai.Utmess import UTMESS
 
     POST_RELEVE_T = self.get_cmd('POST_RELEVE_T')
     DETRUIRE = self.get_cmd('DETRUIRE')
@@ -1127,7 +1128,8 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
     # -> permet de se premunir de l'oubli du couple (OP.INIT_VARC.PVARCNO, LC.ZVARCNO)
     #    en para_out de l'option INIT_VARC d'un catalogue EF
     NbNoMa = MAILLAGE.sdj.DIME.get()[0]
-    assert len(ChnoVrcNoeu) == NbNoMa
+    if len(ChnoVrcNoeu) != NbNoMa:
+      UTMESS('F', 'RUPTURE0_2', valk=para_fonc, vali=[len(ChnoVrcNoeu), NbNoMa])
 
     # extraction d'une table contenant les valeurs de la varc en fond de fissure
     __VARC = POST_RELEVE_T(
@@ -1214,7 +1216,8 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     # -> permet de se premunir de l'oubli du couple (OP.INIT_VARC.PVARCNO, LC.ZVARCNO)
     #    en para_out de l'option INIT_VARC d'un catalogue EF
     NbNoMa = MAILLAGE.sdj.DIME.get()[0]
-    assert len(ChnoVrcNoeu) == NbNoMa
+    if len(ChnoVrcNoeu) != NbNoMa:
+      UTMESS('F', 'RUPTURE0_2', valk=para_fonc, vali=[len(ChnoVrcNoeu), NbNoMa])
 
     # extraction des vecteurs :
     #  - FISSURE.FONDFISS (coords des points du fond)
