@@ -1,5 +1,5 @@
 P time_limit 120
-P memory_limit 606
+P memory_limit 640
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
@@ -11,7 +11,7 @@ P testlist verification sequential
 # Modifier cet argument peut entrainer un surcoût dans une étude.
 
 # aslint: disable=E2003
-A max_base 1000
+A max_base 2000
 
 F comm sdlv128a.comm D 1
 F mmed sdlv128a.mmed D 20

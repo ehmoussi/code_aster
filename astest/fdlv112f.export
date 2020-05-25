@@ -1,6 +1,6 @@
 P time_limit 300
 P memory_limit 1200
-P ncpus 16
+P ncpus 8
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
