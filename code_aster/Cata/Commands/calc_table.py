@@ -44,7 +44,7 @@ def calc_table_prod(self, TABLE, ACTION, TYPE_TABLE, **kargs):
     else:
         if TYPE_TABLE == 'TABLE_FONCTION':
             return table_fonction
-        elif TYPE_TABLE == 'TABLE_CONTENEUR':
+        elif TYPE_TABLE == 'TABLE_CONTAINER':
             return table_container
         else:
             return table_sdaster
@@ -61,7 +61,7 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
       OPERATION = SIMP(statut='o', typ='TXM',
                   into=('FILTRE', 'EXTR', 'RENOMME', 'TRI', 'COMB',
                         'AJOUT_LIGNE', 'OPER', 'SUPPRIME', 'UNIQUE', 'AJOUT_COLONNE',
-                        'STATISTIQUES', 'CALCUL')),  
+                        'STATISTIQUES', 'CALCUL')),
 
       b_filtre = BLOC(condition="""equal_to("OPERATION", 'FILTRE')""",
                       fr=tr("Sélectionne les lignes de la table vérifiant un critère"),
@@ -157,7 +157,7 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
          NOM_COLONNE = SIMP(statut='f',typ='TXM', max='**',
                          fr=tr("Nom des colonnes à utiliser en tant que paramètres de la formule")),
       ),
-      
+
       b_calcul = BLOC(condition="""equal_to("OPERATION", 'CALCUL')""",
                         fr=tr("Appliquer des calculs simples sur des colonnes de la table"),
          NOM_PARA = SIMP(statut='o',typ='TXM', validators=NoRepeat(),max='**',
@@ -167,9 +167,9 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
                             fr=tr("Type des calculs à appliquer")),
       ),
    ),
-   
+
    TYPE_TABLE = SIMP(statut='c', typ='TXM',
-                             into=('TABLE', 'TABLE_FONCTION', 'TABLE_CONTENEUR'),),
+                             into=('TABLE', 'TABLE_FONCTION', 'TABLE_CONTAINER'),),
 
    TITRE = SIMP(statut='f',typ='TXM',
                 fr=tr("Titre de la table produite")),

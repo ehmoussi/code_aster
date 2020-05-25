@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -186,9 +186,9 @@ def calc_stabilite_ops(self, reuse, SCHEMA_TEMPS, FILTRE, **args):
         DETRUIRE = self.get_cmd('DETRUIRE')
         DETRUIRE(CONCEPT=_F(NOM=args['MODE_NON_LINE']), INFO=1)
 
-   
+
     tab = t_res.dict_CREA_TABLE()
-    t_resu = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **tab)
+    t_resu = CREA_TABLE(TYPE_TABLE='TABLE_CONTAINER', **tab)
 
     return
 
