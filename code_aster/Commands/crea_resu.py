@@ -105,20 +105,29 @@ class ResultCreator(ExecuteCommand):
 
             modele = fkw[0].get("MODELE")
             chamGd = fkw[0].get("CHAM_GD")
+            result = fkw[0].get("RESULTAT")
+
             if modele is not None:
                 self._result.appendModelOnAllRanks(modele)
-            else:
-                if chamGd is not None:
-                    try:
-                        modele = chamGd.getModel()
-                        self._result.appendModelOnAllRanks(modele)
-                    except:
-                        pass
-                    try:
-                        mesh = chamGd.getMesh()
-                        self._result.setMesh(mesh)
-                    except:
-                        pass
+            elif result is not None:
+                modele = result.getModel()
+                if modele is not None:
+                    self._result.appendModelOnAllRanks(modele)
+
+                mesh = result.getMesh()
+                if mesh is not None:
+                    self._result.setMesh(mesh)
+            elif chamGd is not None:
+                try:
+                    modele = chamGd.getModel()
+                    self._result.appendModelOnAllRanks(modele)
+                except:
+                    pass
+                try:
+                    mesh = chamGd.getMesh()
+                    self._result.setMesh(mesh)
+                except:
+                    pass
 
         self._result.update()
 
