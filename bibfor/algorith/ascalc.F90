@@ -100,6 +100,7 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
 ! IN  : F2GUP  : FREQUENCE F2 POUR LA METHODE DE GUPTA
 !     ------------------------------------------------------------------
     integer :: id, iopt, iret, jcrer, jcrep, jdir, jmod, jrep1, jtabs
+    integer :: jcrto, jdir1, jdir2
     integer :: nbmode, nbopt, nbpara, nbpari, nbpark, nbparr, nbsup, ndepl
     integer :: neq, jrep2, nbdis(3, nbsup), noc, ioc, n1, nno, is, ino, igr
     integer :: ngr, jdgn, ier, ncompt, nintra, nbvect
@@ -112,7 +113,7 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
     character(len=16) :: nomsy, nomsy2, nopara(nbpara)
     character(len=19) :: kvec, kval, moncha
     character(len=24) :: kvx1, kvx2, kve2, kve3, kve4, kve5, obj1, obj2
-    character(len=24) :: grnoeu, valk(2)
+    character(len=24) :: grnoeu, valk(2), kve6, kve7, kve8
     integer :: iarg
     character(len=24), pointer :: group_no(:) => null()
     character(len=8), pointer :: noeud(:) => null()
@@ -130,6 +131,9 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
     kve3 = '&&ASCALC.REP_DIR'
     kve4 = '&&ASCALC.TABS'
     kve5 = '&&ASCALC.C_REP_MOD_RIG'
+    kve6 = '&&ASCALC.C_REP_MOD_TOT'
+    kve7 = '&&ASCALC.REP_DIR_RIG'
+    kve8 = '&&ASCALC.REP_DIR_PER'
     call rsexch('F', mome, 'DEPL', 1, moncha,&
                 ier)
 !
@@ -283,6 +287,9 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
         call wkvect(kve3, 'V V R', 3*neq, jdir)
         call wkvect(kve4, 'V V R', nbsup*neq, jtabs)
         call wkvect(kve5, 'V V R', 3*neq*nbsup, jcrer)
+        call wkvect(kve6, 'V V R', 3*neq*nbsup, jcrto)
+        call wkvect(kve7, 'V V R', 3*neq, jdir1)
+        call wkvect(kve8, 'V V R', 3*neq, jdir2)
 !
 !        ---------------------------------------------------------------
 !                        REPONSE PRIMAIRE OU GLOBAL
@@ -327,18 +334,38 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
                 call asacce(nomsy, monoap, nbsup, neq,&
                             nbmode, id, moncha, zr(jmod), mome,&
                             gamma0, zr( jcrer), zr(jcrep), nbdis, nopara,&
-                            nordr)
+                            nordr, zr(jcrto))
 !
 !              --- CALCUL DES RECOMBINAISONS PAR DIRECTIONS---
+!
+!               réponse totale
                 call asdir(monoap, muapde, id, neq, nbsup,&
-                           nsupp, tcosup, zr(jcrep), zr(jdir))
+                           nsupp, tcosup, zr(jcrto), zr(jdir))
+!               réponse statique
+                call asdir(monoap, muapde, id, neq, nbsup,&
+                           nsupp, tcosup, zr(jcrer), zr(jdir1))
+!               réponse dynamique ou périodique
+                call asdir(monoap, muapde, id, neq, nbsup,&
+                           nsupp, tcosup, zr(jcrep), zr(jdir2))
             endif
         end do
 !
 !        --- STOCKAGE ---
 !
+!       réponse totale
         call asstoc(mome, resu, nomsy, neq, zr(jdir),&
-                    ndir, comdir, typcdi, glob, prim)
+                    ndir, comdir, typcdi, glob, prim,&
+                    1)
+
+!       réponse dynamique ou périodique
+        call asstoc(mome, resu, nomsy, neq, zr(jdir2),&
+                    ndir, comdir, typcdi, glob, prim,&
+                    11)
+
+!       réponse statique
+        call asstoc(mome, resu, nomsy, neq, zr(jdir1),&
+                    ndir, comdir, typcdi, glob, prim,&
+                    21)
 !
 !        ---------------------------------------------------------------
 !                            REPONSE SECONDAIRE
@@ -362,6 +389,9 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
         call jedetr(kve3)
         call jedetr(kve4)
         call jedetr(kve5)
+        call jedetr(kve6)
+        call jedetr(kve7)
+        call jedetr(kve8)
 !
     end do
 !

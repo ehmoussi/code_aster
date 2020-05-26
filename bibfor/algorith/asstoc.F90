@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 ! --------------------------------------------------------------------
 
 subroutine asstoc(mome, resu, nomsy, neq, repdir,&
-                  ndir, comdir, typcdi, glob, prim)
+                  ndir, comdir, typcdi, glob, prim,&
+                  iordInit)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -39,7 +40,7 @@ subroutine asstoc(mome, resu, nomsy, neq, repdir,&
 #include "asterfort/rsorac.h"
 #include "asterfort/utmess.h"
 #include "asterfort/vtdefs.h"
-    integer :: neq, ndir(*)
+    integer :: neq, ndir(*), iordInit
     real(kind=8) :: repdir(neq, *)
     aster_logical :: comdir, glob, prim
     character(len=16) :: nomsy
@@ -56,13 +57,14 @@ subroutine asstoc(mome, resu, nomsy, neq, repdir,&
 ! IN  : COMDIR : =.TRUE.  , COMBINAISON DES DIRECTIONS
 !                =.FALSE. , PAS DE COMBINAISON DES DIRECTIONS
 ! IN  : TYPCDI : TYPE DE COMBINAISON DES DIRECTIONS
+! IN  : IORDINIT : NUMERO D'ORDRE AUQUEL ON COMMENCE LE STOCKAGE 
 !     ------------------------------------------------------------------
     integer :: ibid, i, id, ieq, ier, in, iordr, jdef, jdir, jval, lvale, nbmode
     integer :: nbtrou, jdrr, jdor, jmod, jcar, jchm, tordr(1), icole
     real(kind=8) :: r8b, r1, r10, r11, r12, r13, r14, r15, r16, r17, r18, r19
     real(kind=8) :: r2, r20, r21, r22, r23, r24, r3, r4, r5, r6, r7, r8, r9, rx
     real(kind=8) :: ry, rz, xxx
-    character(len=8) :: k8b, comp(5)
+    character(len=8) :: k8b, comp(5), combi
     character(len=16) :: noms2, concep, nomcmd, def
     character(len=19) :: moncha, champ, resu19
     character(len=24) :: vale
@@ -77,27 +79,29 @@ subroutine asstoc(mome, resu, nomsy, neq, repdir,&
 !
     call jemarq()
     call getres(k8b, concep, nomcmd)
-    call getfac('DEPL_MULT_APPUI', nbmode)
-!
-    do 10 i = 1, 3
-        if (ndir(i) .eq. 1) nbmode = nbmode + 1
- 10 continue
-    if (comdir) nbmode = nbmode + 1
 !
 !     --- CREATION DE LA STRUCTURE D'ACCUEIL ---
     call rsexis(resu, ier)
-    if (ier .eq. 0) call rscrsd('G', resu, concep, nbmode)
+    if (ier .eq. 0) then
+        call getfac('DEPL_MULT_APPUI', nbmode)
+        do  i = 1, 3
+            if (ndir(i) .eq. 1) nbmode = nbmode + 3
+        enddo
+        if (comdir) nbmode = nbmode + 3
+        call rscrsd('G', resu, concep, nbmode)
+    endif
+    
     noms2 = nomsy
     if (nomsy(1:4) .eq. 'VITE') noms2 = 'DEPL'
     if (nomsy(1:4) .eq. 'ACCE') noms2 = 'DEPL'
     call rsorac(mome, 'TOUT_ORDRE', ibid, r8b, k8b,&
                 c16b, r8b, k8b, tordr, 1,&
                 nbtrou)
-    iordr=tordr(1)            
+    iordr=tordr(1)         
     call rsexch('F', mome, noms2, iordr, moncha,&
                 ier)
 !
-    iordr = 0
+    iordr = iordInit-1
 !
     if (glob) then
         def = 'GLOBALE'
@@ -135,9 +139,17 @@ subroutine asstoc(mome, resu, nomsy, neq, repdir,&
             call rsnoch(resu, nomsy, iordr)
 !
 !           --- PARAMETRE ---
+            if (iordInit .eq. 1) then
+                combi = 'DIR     '
+            else if (iordInit .eq. 11) then
+                combi = 'DIR_DYN '
+            else if (iordInit .eq. 21) then
+                combi = 'DIR_QS '
+            endif
+            
             call rsadpa(resu, 'E', 1, 'NOEUD_CMP', iordr,&
                         0, sjv=jdir, styp=k8b)
-            zk16(jdir) = 'DIR     '//comp(id)
+            zk16(jdir) = combi//comp(id)
             call rsadpa(resu, 'E', 1, 'TYPE_DEFO', iordr,&
                         0, sjv=jdef, styp=k8b)
             zk16(jdef) = def
@@ -233,11 +245,21 @@ subroutine asstoc(mome, resu, nomsy, neq, repdir,&
 !        --- PARAMETRE ---
         call rsadpa(resu, 'E', 1, 'NOEUD_CMP', iordr,&
                     0, sjv=jdir, styp=k8b)
-        if (typcdi(1:4) .eq. 'QUAD') then
-            zk16(jdir) = 'COMBI   '//comp(4)
-        else if (typcdi(1:4).eq.'NEWM') then
-            zk16(jdir) = 'COMBI   '//comp(5)
+        
+        if (iordInit .eq. 1) then
+            combi = 'COMBI   '
+        else if (iordInit .eq. 11) then
+            combi = 'COMBIDYN'
+        else if (iordInit .eq. 21) then
+            combi = 'COMBIQS '
         endif
+        
+        if (typcdi(1:4) .eq. 'QUAD') then
+            zk16(jdir) = combi//comp(4)
+        else if (typcdi(1:4).eq.'NEWM') then
+            zk16(jdir) = combi//comp(5)
+        endif
+        
         call rsadpa(resu, 'E', 1, 'TYPE_DEFO', iordr,&
                     0, sjv=jdef, styp=k8b)
         zk16(jdef) = def

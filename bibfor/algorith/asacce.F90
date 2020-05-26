@@ -19,7 +19,7 @@
 subroutine asacce(nomsy, monoap, nbsup, neq,&
                   nbmode, id, moncha, vecmod, momec,&
                   gamma0, recmor, recmod, nbdis, nopara,&
-                  nordr)
+                  nordr, recmot)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -30,7 +30,7 @@ subroutine asacce(nomsy, monoap, nbsup, neq,&
 #include "asterfort/pteddl.h"
 #include "asterfort/wkvect.h"
     integer :: nbsup, neq, nbmode, id, nbdis(3, nbsup), nordr(*)
-    real(kind=8) :: vecmod(neq, *), gamma0(*)
+    real(kind=8) :: vecmod(neq, *), gamma0(*), recmot(nbsup, neq, *)
     real(kind=8) :: recmod(nbsup, neq, *), recmor(nbsup, neq, *)
     character(len=16) :: nomsy, nopara(*)
     character(len=*) :: moncha, momec
@@ -50,7 +50,7 @@ subroutine asacce(nomsy, monoap, nbsup, neq,&
 ! IN  : GAMMA0 : VECTEUR DES CORRECTIONS STATIQUES
 ! IN  : RECMOD : VECTEUR DES COMBINAISONS DES REPONSES PERIO DES MODES
 ! IN  : RECMOR : VECTEUR DES COMBINAISONS DES REPONSES RIGIDES DES MODES
-! OUT : RECMOD : VECTEUR DES RECOMBINAISONS MODALES
+! OUT : RECMOT : VECTEUR DES RECOMBINAISONS MODALES
 ! IN  : NBDIS  : APPARTENANCE DES SUPPORTS AUX INTRAGROUPES
 ! IN  : NORDR  : LISTE DES NUMEROS DE MODES
 !     ------------------------------------------------------------------
@@ -63,13 +63,16 @@ subroutine asacce(nomsy, monoap, nbsup, neq,&
 !     ------------------------------------------------------------------
 !
     call jemarq()
-!
+
+    recmot(:,:,id) = recmod(:,:,id)
+
     if (monoap) then
 !       SOMME DES CARRES DES REPONSES PERIO ET RIGIDES
         do in = 1, neq
             ioc = nbdis(1, 1)
 !         VALEUR DE IOC REFERENCE A ASCORM.F
-            recmod(ioc,in,id) = recmod(ioc,in,id)+ (recmor(ioc,in,id)* recmor(ioc,in,id))
+            recmor(ioc,in,id) = recmor(ioc,in,id)* recmor(ioc,in,id)
+            recmot(ioc,in,id) = recmot(ioc,in,id)+ recmor(ioc,in,id)
         enddo
     endif
 !
@@ -95,7 +98,7 @@ subroutine asacce(nomsy, monoap, nbsup, neq,&
 !
             do in = 1, neq
                 xxx = gamma0(id) * ( zi(juni+in-1) - zr(jmod+in-1) )
-                recmod(is,in,id) = recmod(is,in,id) + xxx*xxx
+                recmot(is,in,id) = recmot(is,in,id) + xxx*xxx
             enddo
             call jedetr('&&ASTRON.VECTEUR_UNIT')
             call jedetr('&&ASTRON.VECTEUR_MODA')
@@ -120,7 +123,7 @@ subroutine asacce(nomsy, monoap, nbsup, neq,&
 !
             do in = 1, neq
                 xxx = gamma0(is+nbsup*(id-1)) * ( zi(juni+in-1) - zr(jmod+in-1) )
-                recmod(is,in,id) = recmod(is,in,id) + xxx*xxx
+                recmot(is,in,id) = recmot(is,in,id) + xxx*xxx
             enddo
             call jedetr('&&ASTRON.VECTEUR_UNIT')
             call jedetr('&&ASTRON.VECTEUR_MODA')

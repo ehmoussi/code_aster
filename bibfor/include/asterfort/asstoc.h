@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,8 @@
 !
 interface
     subroutine asstoc(mome, resu, nomsy, neq, repdir,&
-                      ndir, comdir, typcdi, glob, prim)
+                      ndir, comdir, typcdi, glob, prim,&
+                      iordInit)
         integer :: neq
         character(len=*) :: mome
         character(len=*) :: resu
@@ -33,5 +34,6 @@ interface
         character(len=*) :: typcdi
         aster_logical :: glob
         aster_logical :: prim
+        integer :: iordInit
     end subroutine asstoc
 end interface

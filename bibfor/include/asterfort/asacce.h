@@ -24,7 +24,7 @@ interface
     subroutine asacce(nomsy, monoap, nbsup, neq,&
                       nbmode, id, moncha, vecmod, momec,&
                       gamma0, recmor, recmod, nbdis, nopara,&
-                      nordr)
+                      nordr, recmot)
         integer :: nbmode
         integer :: neq
         integer :: nbsup
@@ -40,5 +40,6 @@ interface
         integer :: nbdis(3, nbsup)
         character(len=16) :: nopara(*)
         integer :: nordr(*)
+        real(kind=8) :: recmot(nbsup, neq, *)
     end subroutine asacce
 end interface
