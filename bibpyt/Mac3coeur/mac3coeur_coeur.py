@@ -729,7 +729,19 @@ class Coeur(object):
             return _LI
         else :
             _TE = DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=_LI,),
-                             ECHEC=_F(SUBD_PAS=4, SUBD_NIVEAU=nbSubdEchec,),)
+                                 ECHEC=(
+                                     _F(EVENEMENT='ERREUR',
+                                        ACTION='DECOUPE',
+                                        SUBD_METHODE='MANUEL',
+                                        SUBD_PAS=4,
+                                        SUBD_NIVEAU=nbSubdEchec),
+                                     _F(EVENEMENT = 'DIVE_RESI',
+                                        ACTION = 'DECOUPE',
+                                        SUBD_METHODE = 'MANUEL',
+                                        SUBD_PAS=4,
+                                        SUBD_NIVEAU=nbSubdEchec)
+                                 )
+                             )                  
             return _TE
 
 
