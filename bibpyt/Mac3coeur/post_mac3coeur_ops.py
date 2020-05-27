@@ -767,7 +767,7 @@ def post_mac3coeur_ops(self, **args):
             vals = np.mean(vals.reshape(vals.shape[0], vals.shape[1]//4, 4),axis=2)
 
             # Passage en mm et arrondi
-            l_x, l_dy, l_dz = np.around(1000.0*vals[:, vals[0].argsort()],8)
+            l_x, l_dy, l_dz = np.around(1000.0*vals[:, vals[0].argsort()],12)
             nb_grilles = len(l_x)
 
             # on applique la formule des fleches

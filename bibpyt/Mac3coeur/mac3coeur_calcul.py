@@ -515,10 +515,15 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',),
+            'CONVERGENCE' : _F(ITER_GLOB_MAXI = 10,
+                               RESI_GLOB_MAXI = 1.E-2,
+                               RESI_GLOB_RELA = 1.E-6),
+            'SOLVEUR': _F(METHODE='MUMPS',
+                          PRETRAITEMENTS='AUTO'),
             'ARCHIVAGE': _F(LIST_INST=self.times_arch,
                             PRECISION=1.E-08),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
+            'INFO' : 1,
         }
         keywords.update(kwds)
         return keywords
@@ -547,10 +552,16 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',),
+            'CONVERGENCE' : _F(ITER_GLOB_MAXI = 10,
+                               RESI_GLOB_MAXI = 1.E-2,
+                               RESI_GLOB_RELA = 1.E-6),
+            'SOLVEUR': _F(METHODE='MUMPS',
+                          PRETRAITEMENTS='AUTO'),
             'ARCHIVAGE': _F(INST=self.coeur.temps_simu['T1'],
                             PRECISION=1.E-08),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
+            'INFO' : 1,
+
         }
         keywords.update(kwds)
         return keywords
@@ -786,7 +797,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                     ))
                 nb_test+=1
             else :
-                raise 'no convergence'
+                raise aster.NonConvergenceError('no convergence')
             keywords = self.snl(
                                 reuse=__RESULT,
                                 RESULTAT=__RESULT,
@@ -874,7 +885,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                    ))
                 nb_test+=1
             else :
-                raise 'no convergence'
+                raise aster.NonConvergenceError('no convergence')
             keywords = self.snl(reuse = __RESULT,
                                 RESULTAT=__RESULT,
                                 NEWTON= _F(MATRICE='TANGENTE',
@@ -1134,7 +1145,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                                ))
             nb_test+=1
         else :
-            raise 'no convergence'
+            raise  aster.NonConvergenceError('no convergence')
 
 
         keywords = self.snl_lame(
