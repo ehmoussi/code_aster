@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -277,7 +277,7 @@ Il n'y a aucun degré de liberté de déplacement sur le modèle.
 """),
 
     57 : _("""
-De manière générale, PREDICTION = 'DEPL_CALCULE' est là pour éviter de devoir factoriser une matrice et gagner en temps de calcul. 
+De manière générale, PREDICTION = 'DEPL_CALCULE' est là pour éviter de devoir factoriser une matrice et gagner en temps de calcul.
 Mais les limitations (problèmes de conditions limites) font que cette fonctionnalité n'est pas à recommander et qu'on lui préférera par exemple un PREDICTION='ELASTIQUE'.
 """),
 
@@ -287,8 +287,11 @@ A cause des erreurs précédentes, le code s'arrête.
   Pour cela, vous précisez un état initial (mot clé ETAT_INIT).
   Pour le calcul du premier pas de temps, le champ des contraintes du début du pas est pris
   dans le concept EVOL_NOLI fourni ou par le champ SIGM.
-  On a comparé son nombre des sous-points avec celui correspondant au mot-clef COMPORTEMENT, 
+  On a comparé son nombre des sous-points avec celui correspondant au mot-clef COMPORTEMENT,
   il y a incohérence.
 """),
 
+    72 : _("""
+La modélisation XFEM implique la réactualisation de la matrice REAC_ITER=1.
+"""),
 }
