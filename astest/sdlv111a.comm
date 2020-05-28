@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -253,9 +253,9 @@ MASMA=ASSE_MATRICE(  MATR_ELEM=MMA,    NUME_DDL=NUMA  )
 MASRB=ASSE_MATRICE(  MATR_ELEM=MRB,    NUME_DDL=NUMB  )
 
 MASMB=ASSE_MATRICE(  MATR_ELEM=MMB,    NUME_DDL=NUMB  )
-
-RESA=CALC_MODES(MATR_RIGI=MASRA,
-                VERI_MODE=_F(SEUIL=1.E-5,
+nprec=10
+RESA=CALC_MODES(MATR_RIGI=MASRA,SOLVEUR=_F(NPREC=nprec),
+                VERI_MODE=_F(SEUIL=3.E-5,
                              ),
                 OPTION='BANDE',
                 CALC_FREQ=_F(FREQ=( 3.0,9.3,),
@@ -268,7 +268,7 @@ RESA=CALC_MODES(MATR_RIGI=MASRA,
                 )
 
 
-RESB=CALC_MODES(MATR_RIGI=MASRB,
+RESB=CALC_MODES(MATR_RIGI=MASRB,SOLVEUR=_F(NPREC=nprec),
                 OPTION='BANDE',
                 CALC_FREQ=_F(FREQ=( 0.5,3.8,),
                              SEUIL_FREQ=0.,

@@ -41,6 +41,8 @@ from Utilitai.Utmess import MESSAGE_LOGGER
 # messages d'erreur
 mess = MESSAGE_LOGGER()
 
+#parametre pour MODE_ITER_SIMULT
+nprec=10
 
 class CalcEssaiModifStruct:
 
@@ -354,6 +356,7 @@ class CalcEssaiModifStruct:
         try:
             __MODGEN = MODE_ITER_SIMULT(MATR_RIGI=__KPROJ,
                                         MATR_MASS=__MPROJ,
+                                        SOLVEUR=_F(NPREC=nprec),
                                         VERI_MODE=_F(SEUIL=1.E-05,
                                                      STOP_ERREUR='OUI',),
                                         PARA_ORTHO_SOREN=-0.717,
@@ -704,6 +707,7 @@ class CalcEssaiModifStruct:
             try:
                 _MODCPL = MODE_ITER_SIMULT(MATR_RIGI=kcouple,
                                            MATR_MASS=mcouple,
+                                           SOLVEUR=_F(NPREC=nprec),
                                            VERI_MODE=_F(SEUIL=1.E-05,
                                                         STOP_ERREUR='OUI',),
                                            PARA_ORTHO_SOREN=-0.717,
