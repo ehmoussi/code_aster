@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -139,7 +139,7 @@ MODE_1=CALC_MODES(MATR_RIGI=K_MODAL,
                   CALC_FREQ=_F(NMAX_FREQ=20,
                                ),
                   OPTION='PLUS_PETITE',
-                  SOLVEUR=_F(METHODE='MUMPS',
+                  SOLVEUR=_F(METHODE='MUMPS',NPREC=10,
                              ),
                   MATR_MASS=M_ASSE,
                   )
