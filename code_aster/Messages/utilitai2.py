@@ -65,9 +65,9 @@ cata_msg = {
  Erreur:
      Vous utilisez CREA_TABLE LISTE/LISTE_CO pour créer une table à
      partir d'une liste de concepts. Or, TYPE_TABLE n'a pas la
-     valeur TYPE_TABLE='TABLE_CONTENEUR'.
+     valeur TYPE_TABLE='TABLE_CONTAINER'.
  Conseil:
-     Il est obligatoire de renseigner TYPE_TABLE='TABLE_CONTENEUR'.
+     Il est obligatoire de renseigner TYPE_TABLE='TABLE_CONTAINER'.
 """),
 
     19 : _("""

@@ -32,7 +32,7 @@ def crea_table_prod(TYPE_TABLE, **args):
 
    if TYPE_TABLE == 'TABLE_FONCTION':
       return table_fonction
-   elif TYPE_TABLE == 'TABLE_CONTENEUR':
+   elif TYPE_TABLE == 'TABLE_CONTAINER':
       return table_container
    else:
       return table_sdaster
@@ -107,7 +107,7 @@ CREA_TABLE=OPER(nom="CREA_TABLE",op=36,sd_prod=crea_table_prod,
                       ),
 
            TYPE_TABLE = SIMP(statut='f', typ='TXM', defaut="TABLE",
-                             into=('TABLE', 'TABLE_FONCTION', 'TABLE_CONTENEUR'),),
+                             into=('TABLE', 'TABLE_FONCTION', 'TABLE_CONTAINER'),),
 
            TITRE=SIMP(statut='f',typ='TXM'),
 )  ;

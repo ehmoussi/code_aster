@@ -26,6 +26,11 @@ Vous avez renseigné le mot clé simple MATER de la commande POST_K1_K2_K3.
 Le matériau %(k1)s présent dans la structure de données résultat va être surchargée par le matériau %(k2)s .
 """),
 
+    2: _("""
+Le champ de variables de commande VARC %(k1)s ne contient pas autant de valeurs (%(i1)d) que le nombre
+de noeuds (%(i2)d) dans la structure de données résultat.
+"""),
+
     4: _("""
 Erreur utilisateur :
 Incohérence entre le mot-clé FISSURE et le modèle associé au mot-clé RESULTAT.

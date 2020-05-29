@@ -18,25 +18,30 @@
 # --------------------------------------------------------------------
 
 # Caracteristiques poutre
+
 import numpy
 
-ray=0.5;
-epe=0.01;
-#
+ray=0.5
+epe=0.01
+section  = numpy.pi*(2.0*ray*epe - epe**2)
+sectionH = numpy.pi*ray**2
+
 Cd1=1.
+Ca1=0.9
 D1=2.0*ray
 rho=7800.0
 rhoeau=1000.
-#
+# Prise en compte du terme d'inertie solide dans la matrice de masse
+rho_MA = rho + Ca1*rhoeau*sectionH/section
+
 dt=0.05
 tfin = 100.
 
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
-
-ma=LIRE_MAILLAGE();
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
 
+ma=LIRE_MAILLAGE()
 
 mo=AFFE_MODELE(MAILLAGE=ma,
                AFFE=(_F(GROUP_MA=('POUTRE',),
@@ -44,23 +49,21 @@ mo=AFFE_MODELE(MAILLAGE=ma,
                         MODELISATION='POU_D_E',),
                      _F(GROUP_MA=('R1','R2',),
                         PHENOMENE='MECANIQUE',
-                        MODELISATION='DIS_TR',),),);
+                        MODELISATION='DIS_TR',),),)
 
 bracing=DEFI_MATERIAU(ELAS=_F(E=2.e11,
                               NU=0.3,
-                              RHO=rho,),);
+                              RHO=rho_MA,),)
 
 mater=AFFE_MATERIAU(MAILLAGE=ma,
                     AFFE=_F(GROUP_MA='POUTRE',
-                            MATER=bracing,),);
-
-
+                            MATER=bracing,),)
 
 cara=AFFE_CARA_ELEM(MODELE=mo,
                     POUTRE=_F(GROUP_MA='POUTRE',
                              SECTION='CERCLE',
                              CARA=('R','EP',),
-                             VALE=(0.5,0.01,),
+                             VALE=(ray,epe,),
                              ),
                     DISCRET=(_F(CARA='K_TR_D_L',
                                GROUP_MA=('R1','R2',),
@@ -68,8 +71,7 @@ cara=AFFE_CARA_ELEM(MODELE=mo,
                             _F(CARA='M_TR_D_L',
                                GROUP_MA=('R1','R2',),
                                VALE=(0.,0.,0.,0.),),)
-);
-
+)
 
 encas14=AFFE_CHAR_MECA(MODELE=mo,
                        DDL_IMPO=_F(NOEUD=('N0001','N0004',),
@@ -78,27 +80,28 @@ encas14=AFFE_CHAR_MECA(MODELE=mo,
                                    DZ=0.,
                                    DRX=0.,
                                    DRY=0.,
-                                   DRZ=0.,),);
+                                   DRZ=0.,),)
 
 plan=AFFE_CHAR_MECA(MODELE=mo,
                     DDL_IMPO=_F(GROUP_NO='POUTRE',
-                                DY=0.,),);
+                                DY=0.,),)
 
 DZ=AFFE_CHAR_MECA(MODELE=mo,
                   DDL_IMPO=_F(GROUP_NO='POUTRE',
-                              DZ=1.,),);
+                              DZ=1.,),)
 
 liai=AFFE_CHAR_MECA(MODELE=mo,
                     LIAISON_DDL=_F(NOEUD=('N0002','N0003',),
                                    DDL=('DZ','DZ',),
                                    COEF_MULT=(1.0,-1.0,),
-                                   COEF_IMPO=0.,),);
+                                   COEF_IMPO=0.,),)
 
-from sdnl141a import *
 
-FZP = FORMULE(VALE="""Fmor(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,
-                         VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,3,cinelin,projvect,dragquad)""",
-              Fmor=Fmor, rhoeau=rhoeau, Cd1=Cd1, D1=D1, H=H, T=T, L=L,
+INCLUDE(UNITE=77,)
+
+FZP = FORMULE(VALE="""Fmor(rhoeau,Cd1,Ca1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,depth,lstrech,
+                        VITE_X,VITE_Y,VITE_Z,DX,DY,DZ,3,cinelin,projvect,dragquad)""",
+              Fmor=Fmor, rhoeau=rhoeau, Cd1=Cd1, Ca1=Ca1, D1=D1, H=H, T=T, L=L,
               thetai=thetai, proinf=proinf, depth=depth, lstrech=lstrech,
               cinelin=cinelin, projvect=projvect, dragquad=dragquad,
               NOM_PARA=['X', 'Y', 'Z', 'INST', 'VITE_X', 'VITE_Y', 'VITE_Z', 'DX', 'DY', 'DZ'],)
@@ -107,58 +110,60 @@ FZP = FORMULE(VALE="""Fmor(rhoeau,Cd1,D1,X,Y,Z,INST,H,T,L,thetai,0.,0.,proinf,de
 visqueux=AFFE_CHAR_MECA_F(MODELE=mo,
                      FORCE_POUTRE=_F(GROUP_MA='POUTRE',
                                      TYPE_CHARGE='FORCE',
-                                     FZ=FZP,),);
+                                     FZ=FZP,),)
+
 
 temps=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=tfin,
-                                   PAS=dt,),);
+                                   PAS=dt,),)
 
 tempsm=DEFI_LIST_REEL(DEBUT=-1.,
                       INTERVALLE=_F(JUSQU_A=0.,
-                                    PAS=1,),);
+                                    PAS=1,),)
 
-stat=STAT_NON_LINE(MODELE=mo,
-                   CHAM_MATER=mater,
-                   CARA_ELEM=cara,
-                   EXCIT=(_F(CHARGE=encas14,),
-                          _F(CHARGE=DZ,),
-                          _F(CHARGE=plan,),
-                          ),
-                   COMPORTEMENT=_F(RELATION='ELAS',
-                                DEFORMATION='PETIT',
-                                TOUT='OUI',),
-                   INCREMENT=_F(LIST_INST=tempsm,),
-                   NEWTON=_F(REAC_ITER=1,),
-                   CONVERGENCE=_F(ITER_GLOB_MAXI=100,),
-                   SOLVEUR=_F(),);
+stat=STAT_NON_LINE(
+    MODELE=mo,
+    CHAM_MATER=mater,
+    CARA_ELEM=cara,
+    EXCIT=(
+        _F(CHARGE=encas14,),
+        _F(CHARGE=DZ,),
+        _F(CHARGE=plan,),
+    ),
+    COMPORTEMENT=_F(RELATION='ELAS', DEFORMATION='PETIT', TOUT='OUI',),
+    INCREMENT=_F(LIST_INST=tempsm,),
+    NEWTON=_F(REAC_ITER=1,),
+    CONVERGENCE=_F(ITER_GLOB_MAXI=100,),
+    SOLVEUR=_F(),
+)
+
 
 dyna=DYNA_NON_LINE(
     MODELE=mo,
     CHAM_MATER=mater,
     CARA_ELEM=cara,
-    EXCIT=(_F(CHARGE=encas14,),
-            _F(CHARGE=liai,),
-            _F(TYPE_CHARGE='SUIV', CHARGE=visqueux,),
+    EXCIT=(
+        _F(CHARGE=encas14,),
+        _F(CHARGE=liai,),
+        _F(TYPE_CHARGE='SUIV', CHARGE=visqueux,),
     ),
-    COMPORTEMENT=_F(RELATION='ELAS',
-                DEFORMATION='PETIT',
-                TOUT='OUI',),
+    COMPORTEMENT=_F(RELATION='ELAS', DEFORMATION='PETIT', TOUT='OUI',),
     ETAT_INIT=_F(EVOL_NOLI=stat,),
-    INCREMENT=_F(LIST_INST=temps,
-                INST_FIN=tfin,),
+    INCREMENT=_F(LIST_INST=temps, INST_FIN=tfin,),
     SCHEMA_TEMPS=_F(SCHEMA='HHT',MODI_EQUI='NON',FORMULATION='DEPLACEMENT',),
-);
+)
+
 
 # Test de non-régression
 TEST_RESU(
     RESU=(
         _F(RESULTAT=dyna, INST= 1.0, NOM_CHAM='DEPL', NOEUD='N0002', NOM_CMP='DZ',
-           VALE_CALC= 0.8238310531884948, REFERENCE='SOURCE_EXTERNE',
-           VALE_REFE= 0.8246757638083541, PRECISION=0.5E-02,),
+           VALE_CALC= 0.9482929760004651, REFERENCE='SOURCE_EXTERNE',
+           VALE_REFE= 0.9483296224651554, PRECISION=0.5E-02,),
         _F(RESULTAT=dyna, INST= 2.0, NOM_CHAM='DEPL', NOEUD='N0002', NOM_CMP='DZ',
-           VALE_CALC= 0.4865223875790444, REFERENCE='SOURCE_EXTERNE',
-           VALE_REFE= 0.4888139538842588, PRECISION=0.5E-02,),
+           VALE_CALC= 0.8036541785171513, REFERENCE='SOURCE_EXTERNE',
+           VALE_REFE= 0.8039064669491974, PRECISION=0.5E-02,),
     ),
 )
 
-FIN();
+FIN()

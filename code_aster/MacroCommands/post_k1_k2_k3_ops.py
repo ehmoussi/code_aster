@@ -30,6 +30,7 @@ from ..Cata.Syntax import _F
 from ..Commands import (AFFE_MODELE, CALC_TABLE, CREA_MAILLAGE, CREA_TABLE,
                         DETRUIRE, FORMULE, MACR_LIGN_COUPE, POST_RELEVE_T,
                         PROJ_CHAMP)
+from ..Messages import UTMESS
 from ..Objects import ModeResult
 from ..Objects.table_py import Table, merge
 from ..SD.sd_mater import sd_compor1
@@ -1071,7 +1072,8 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
     # -> permet de se premunir de l'oubli du couple (OP.INIT_VARC.PVARCNO, LC.ZVARCNO)
     #    en para_out de l'option INIT_VARC d'un catalogue EF
     NbNoMa = MAILLAGE.sdj.DIME.get()[0]
-    assert len(ChnoVrcNoeu) == NbNoMa
+    if len(ChnoVrcNoeu) != NbNoMa:
+      UTMESS('F', 'RUPTURE0_2', valk=para_fonc, vali=[len(ChnoVrcNoeu), NbNoMa])
 
     # extraction d'une table contenant les valeurs de la varc en fond de fissure
     __VARC = POST_RELEVE_T(
@@ -1151,7 +1153,8 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     # -> permet de se premunir de l'oubli du couple (OP.INIT_VARC.PVARCNO, LC.ZVARCNO)
     #    en para_out de l'option INIT_VARC d'un catalogue EF
     NbNoMa = MAILLAGE.sdj.DIME.get()[0]
-    assert len(ChnoVrcNoeu) == NbNoMa
+    if len(ChnoVrcNoeu) != NbNoMa:
+      UTMESS('F', 'RUPTURE0_2', valk=para_fonc, vali=[len(ChnoVrcNoeu), NbNoMa])
 
     # extraction des vecteurs :
     #  - FISSURE.FONDFISS (coords des points du fond)
