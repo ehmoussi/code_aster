@@ -175,7 +175,7 @@ def calc_stabilite_ops(self, **args):
 
 
     tab = t_res.dict_CREA_TABLE()
-    t_resu = CREA_TABLE(TYPE_TABLE='TABLE_CONTENEUR', **tab)
+    t_resu = CREA_TABLE(TYPE_TABLE='TABLE_CONTAINER', **tab)
 
     return t_resu
 

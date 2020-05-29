@@ -149,11 +149,13 @@ PRES=RECU_FONCTION(TABLE=RELE,
 # ===========================================
 
 # champ de contraintes de Cauchy aux noeuds
-RESU=CALC_PRESSION(MAILLAGE=MESH,reuse=RESU,
-                             RESULTAT=RESU,
-                             GROUP_MA=('Bottom_C','Top_B',),
-                            INST=1.0,
-                    );
+RESU=CALC_PRESSION(MAILLAGE=MESH,
+                   reuse=RESU,
+                   RESULTAT=RESU,
+                   PRECISION=1.E-05,
+                   CRITERE='ABSOLU',
+                   GROUP_MA=('Bottom_C','Top_B',),
+                   INST=1.0)
 
 depl=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                 OPERATION='EXTR',

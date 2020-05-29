@@ -101,7 +101,7 @@ def options(self):
 
     group = self.get_option_group('Build and installation options')
     group.add_option('--fast', dest='custom_fc_sig', action='store_true',
-                     default=True,
+                     default=False,
                      help="use fast algorithm based on modification time to "
                           "check for dependencies of fortran sources")
     group.add_option('--safe', dest='custom_fc_sig', action='store_false',

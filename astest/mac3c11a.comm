@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='OUI',PAR_LOT='NON')
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET'),IMPR_MACRO='NON',PAR_LOT='NON')
 
 tabn = LIRE_TABLE(UNITE      = 38,
                   FORMAT     = 'LIBRE',
@@ -36,7 +36,7 @@ FLEX = CALC_MAC3COEUR(TYPE_COEUR  = 'MONO_FROID',
                                        NIVE_FLUENCE = 0.,
                                        TYPE_MAINTIEN = 'FORCE',
                                        FORCE_MAINTIEN =9000.,
-                                       #MAINTIEN_GRILLE = 'OUI',
+                                       MAINTIEN_GRILLE = 'OUI',
                                        ARCHIMEDE      = 'NON',
                                        ),)
 POST_V=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION',
@@ -117,14 +117,14 @@ fgrille = CREA_TABLE(LISTE=(
 
 TEST_TABLE(
   CRITERE='RELATIF',
-  VALE_CALC=1000,
+  VALE_CALC=-263.4865715982741,
   NOM_PARA='EFFORT',
   TABLE=fgrille,
   FILTRE=_F(NOM_PARA='N_GRILLE',VALE_I=6),)
 
 TEST_TABLE(
   CRITERE='RELATIF',
-  VALE_CALC=1000,  
+  VALE_CALC=-499.141696102546,
   NOM_PARA='EFFORT',
   TABLE=fgrille,
   TYPE_TEST='SOMM',)
