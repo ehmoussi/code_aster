@@ -34,8 +34,8 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA,
            les éléments de structures types discret, poutre, plaque, coques,...
     """
 
-    # On importe les definitions des commandes a utiliser dans la macro
-    # Le nom de la variable doit etre obligatoirement le nom de la commande
+    typ_resu = RESULTAT.getType()
+    insts = args.get("INST") or RESULTAT.LIST_VARI_ACCES()['INST']
 
     model = args.get('MODELE')
     if model == None:
@@ -47,15 +47,18 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA,
     test_structure = aster.dismoi('EXI_RDM', model.getName(), 'MODELE', 'F')[-1]
     # si oui dans le modele, ensuite check toutes les mailles dans les group_ma
     if test_structure != 'NON':
-        for igrm in range(len(GROUP_MA)):
-            iret = aster.gmardm(GROUP_MA[igrm], model.getName())
+        for grm in GROUP_MA:
+            iret = aster.gmardm(grm, model.getName())
             if iret == 1:
                 UTMESS('F', 'CALCPRESSION0_3')
     dim = MAILLAGE.getDimension()
 
     MasquerAlarme('CALCCHAMP_1')
+    # Champ de contraintes de Cauchy aux noeuds
     RESULTAT = CALC_CHAMP(reuse=RESULTAT,
                         RESULTAT=RESULTAT,
+                        PRECISION=PRECISION,
+                        CRITERE=CRITERE,
                         CONTRAINTE='SIEF_NOEU',)
     RetablirAlarme('CALCCHAMP_1')
 
@@ -70,27 +73,27 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA,
         __Pression = FORMULE(VALE='(SIXX*X*X+SIYY*Y*Y+2*SIXY*X*Y)',
                              NOM_PARA=('SIXX', 'SIYY', 'SIXY', 'X', 'Y'),)
 
-    # boucle pour INST
-    time = args.get("INST")
-    if not time:
-        # TOUT_ORDRE
-        time = RESULTAT.LIST_VARI_ACCES()['INST']
-    linst = len(time)
-
-    for iinst in range(linst):
+    # Corps de la commande
+    __chp = [None]*len(insts)
+    for i, inst in enumerate(insts):
         __sigm = CREA_CHAMP(TYPE_CHAM='NOEU_SIEF_R',
                             OPERATION='EXTR',
                             RESULTAT=RESULTAT,
                             NOM_CHAM='SIEF_NOEU',
-                            INST=time[iinst],
+                            INST=inst,
+                            PRECISION=PRECISION,
+                            CRITERE=CRITERE,
                             )
+        
         if  GEOMETRIE == 'DEFORMEE' :
             __depl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                                 OPERATION='EXTR',
                                 RESULTAT=RESULTAT,
                                 NOM_CHAM='DEPL',
-                                INST=time[iinst],
-                               )
+                                INST=inst,
+                                PRECISION=PRECISION,
+                                CRITERE=CRITERE,
+            )
             __mdepl = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                                  OPERATION='COMB',
                                  COMB=_F(CHAM_GD=__depl,
@@ -102,19 +105,19 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA,
                                      MAILLAGE=MAILLAGE,
                                      DEFORME=_F(OPTION='TRAN',
                                                 DEPL=__depl,),)
-#
+
         __NormaleF = CREA_CHAMP(TYPE_CHAM='NOEU_GEOM_R',
                                 OPERATION='NORMALE',
                                 MODELE=model,
                                 GROUP_MA=GROUP_MA,
                                 )
-#
+
         if  GEOMETRIE == 'DEFORMEE' :
             MAILLAGE = MODI_MAILLAGE(reuse=MAILLAGE,
                                      MAILLAGE=MAILLAGE,
                                      DEFORME=_F(OPTION='TRAN',
                                                 DEPL=__mdepl,),)
-#
+
         __Pres = CREA_CHAMP(TYPE_CHAM='NOEU_NEUT_F',
                             OPERATION='AFFE',
                             MAILLAGE=MAILLAGE,
@@ -126,26 +129,31 @@ def calc_pression_ops(self, MAILLAGE, RESULTAT, GROUP_MA,
                           CHAM_F=__Pres,
                           CHAM_PARA=(__NormaleF, __sigm,),)
 #
-        __chp = CREA_CHAMP(TYPE_CHAM='NOEU_PRES_R',
-                                OPERATION='ASSE',
-                                MODELE=model,
-                                ASSE=_F(GROUP_MA=GROUP_MA,
-                                        CHAM_GD=__pF,
-                                        NOM_CMP='X1',
-                                        NOM_CMP_RESU='PRES',),)
+        __chp[i] = CREA_CHAMP(TYPE_CHAM='NOEU_PRES_R',
+                              OPERATION='ASSE',
+                              MODELE=model,
+                              ASSE=_F(GROUP_MA=GROUP_MA,
+                                      CHAM_GD=__pF,
+                                      NOM_CMP='X1',
+                                      NOM_CMP_RESU='PRES',),)
 
-        MasquerAlarme('COMPOR2_23')
-        RESULTAT = CREA_RESU(reuse=RESULTAT,
-                            RESULTAT=RESULTAT,
-                            TYPE_RESU=RESULTAT.getType(),
-                            NOM_CHAM='PRES_NOEU',
-                            OPERATION='AFFE',
-                            AFFE=_F(INST=time[iinst],
-                                    CHAM_GD=__chp,
-                                    MODELE=model,
-                                    PRECISION=1.0e-6,
-                                    CRITERE='ABSOLU',
-                                    ),)
-        RetablirAlarme('COMPOR2_23')
 
+    MasquerAlarme('ALGORITH11_87')  
+    MasquerAlarme('COMPOR2_23') 
+
+    RESULTAT = CREA_RESU(reuse=RESULTAT,
+                         RESULTAT=RESULTAT,
+                         TYPE_RESU=typ_resu,
+                         NOM_CHAM='PRES_NOEU',
+                         OPERATION='AFFE',
+                         AFFE=[_F(INST=inst,
+                                  CHAM_GD=__chp[i],
+                                  MODELE=model,
+                                  PRECISION=PRECISION,
+                                  CRITERE=CRITERE,)
+                               for i, inst in enumerate(insts)])
+    
+    RetablirAlarme('COMPOR2_23')
+    RetablirAlarme('ALGORITH11_87')     
+    
     return RESULTAT

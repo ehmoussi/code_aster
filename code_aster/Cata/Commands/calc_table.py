@@ -45,7 +45,7 @@ def calc_table_prod(self, TABLE, ACTION, TYPE_TABLE, **kargs):
     else:
         if TYPE_TABLE == 'TABLE_FONCTION':
             return table_fonction
-        elif TYPE_TABLE == 'TABLE_CONTENEUR':
+        elif TYPE_TABLE == 'TABLE_CONTAINER':
             return table_container
         else:
             return table_sdaster
@@ -168,9 +168,9 @@ CALC_TABLE=MACRO(nom="CALC_TABLE",
                             fr=tr("Type des calculs à appliquer")),
       ),
    ),
-   
+
    TYPE_TABLE = SIMP(statut='c', typ='TXM',
-                             into=('TABLE', 'TABLE_FONCTION', 'TABLE_CONTENEUR'),),
+                             into=('TABLE', 'TABLE_FONCTION', 'TABLE_CONTAINER'),),
 
    TITRE = SIMP(statut='f',typ='TXM',
                 fr=tr("Titre de la table produite")),
