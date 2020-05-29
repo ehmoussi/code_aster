@@ -47,7 +47,7 @@ def calc_table_prod(TABLE, ACTION, **args):
    if table_fonction in l_typ:
       return table_fonction, 'TABLE_FONCTION'
    elif table_container in l_typ:
-      return table_container, 'TABLE_CONTENEUR'
+      return table_container, 'TABLE_CONTAINER'
    else:
       return table_sdaster, 'TABLE'
 

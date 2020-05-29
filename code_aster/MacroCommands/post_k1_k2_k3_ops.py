@@ -30,6 +30,7 @@ from ..Cata.Syntax import _F
 from ..Commands import (AFFE_MODELE, CALC_TABLE, CREA_MAILLAGE, CREA_TABLE,
                         DETRUIRE, FORMULE, MACR_LIGN_COUPE, POST_RELEVE_T,
                         PROJ_CHAMP)
+from ..Messages import UTMESS
 from ..Objects import ModeResult
 from ..Objects.table_py import Table, merge
 from ..SD.sd_mater import sd_compor1
@@ -298,9 +299,6 @@ def get_noeud_fond_fiss(FOND_FISS):
 
 def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
     """ retourne la liste des noeuds de FOND_FISS a calculer"""
-
-    NOEUD = args.get('NOEUD')
-    SANS_NOEUD = args.get('SANS_NOEUD')
     GROUP_NO = args.get('GROUP_NO')
     SANS_GROUP_NO = args.get('SANS_GROUP_NO')
     TOUT = args.get('TOUT')
@@ -315,40 +313,40 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
 #        construction de la liste des noeuds "AVEC" et des noeuds "SANS"
         NO_SANS = []
         NO_AVEC = []
+
         if GROUP_NO is not None:
             collgrno = MAILLAGE.sdj.GROUPENO.get()
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(GROUP_NO) not in EnumTypes:
                 GROUP_NO = (GROUP_NO,)
-            for m in range(len(GROUP_NO)):
-                ngrno = GROUP_NO[m].ljust(24).upper()
+
+            for grpno in GROUP_NO:
+                ngrno = grpno.ljust(24)
                 if ngrno not in list(collgrno.keys()):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
-                for i in range(len(collgrno[ngrno])):
-                    NO_AVEC.append(cnom[collgrno[ngrno][i] - 1])
+                for node in collgrno[ngrno]:
+                    NO_AVEC.append(cnom[node - 1])
             NO_AVEC = list(map(lambda x: x.rstrip(), NO_AVEC))
-        if NOEUD is not None:
-            if type(NOEUD) not in EnumTypes:
-                NO_AVEC = (NOEUD,)
+        else:
+            Typ = FOND_FISS.sdj.FOND_TYPE.get()
+            Typ = Typ[0].rstrip()
+            if (Typ == 'SEG3') and (TOUT is None):
+                NO_AVEC = Lnoff[::2]
             else:
-                NO_AVEC = NOEUD
+                NO_AVEC = Lnoff
+
         if SANS_GROUP_NO is not None:
             collgrno = MAILLAGE.sdj.GROUPENO.get()
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(SANS_GROUP_NO) not in EnumTypes:
                 SANS_GROUP_NO = (SANS_GROUP_NO,)
-            for m in range(len(SANS_GROUP_NO)):
-                ngrno = SANS_GROUP_NO[m].ljust(24).upper()
+            for grpno in SANS_GROUP_NO:
+                ngrno = grpno.ljust(24)
                 if ngrno not in list(collgrno.keys()):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
-                for i in range(len(collgrno[ngrno])):
-                    NO_SANS.append(cnom[collgrno[ngrno][i] - 1])
+                for node in collgrno[ngrno]:
+                    NO_SANS.append(cnom[node - 1])
             NO_SANS = list(map(lambda x: x.rstrip(), NO_SANS))
-        if SANS_NOEUD is not None:
-            if type(SANS_NOEUD) not in EnumTypes:
-                NO_SANS = (SANS_NOEUD,)
-            else:
-                NO_SANS = SANS_NOEUD
 
 # verification que les noeuds "AVEC" et "SANS" appartiennent au fond de
 # fissure
@@ -359,13 +357,8 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
         if set_tmp:
             UTMESS('F', 'RUPTURE0_15', valk=list(set_tmp)[0])
 
-#        creation de Lnocal
-        if NO_AVEC:
-            Lnocal = tuple(NO_AVEC)
-        elif NO_SANS:
-            Lnocal = tuple(set(Lnoff) - set(NO_SANS))
-        else:
-            Lnocal = tuple(Lnoff)
+#       Creation de la liste des noeuds a garder reeordonnee selon l'ordre de Lnoff
+        Lnocal = tuple([val for val in Lnoff if (val in NO_AVEC) and (val not in NO_SANS)])
 
     return Lnocal
 
@@ -1071,7 +1064,8 @@ def get_propmat_varc_fem(self, RESULTAT, MAILLAGE, MATER, MODELISATION, Lnofon, 
     # -> permet de se premunir de l'oubli du couple (OP.INIT_VARC.PVARCNO, LC.ZVARCNO)
     #    en para_out de l'option INIT_VARC d'un catalogue EF
     NbNoMa = MAILLAGE.sdj.DIME.get()[0]
-    assert len(ChnoVrcNoeu) == NbNoMa
+    if len(ChnoVrcNoeu) != NbNoMa:
+      UTMESS('F', 'RUPTURE0_2', valk=para_fonc, vali=[len(ChnoVrcNoeu), NbNoMa])
 
     # extraction d'une table contenant les valeurs de la varc en fond de fissure
     __VARC = POST_RELEVE_T(
@@ -1151,7 +1145,8 @@ def get_propmat_varc_xfem(self, args, RESULTAT, MAILLAGE, MATER, MODELISATION, F
     # -> permet de se premunir de l'oubli du couple (OP.INIT_VARC.PVARCNO, LC.ZVARCNO)
     #    en para_out de l'option INIT_VARC d'un catalogue EF
     NbNoMa = MAILLAGE.sdj.DIME.get()[0]
-    assert len(ChnoVrcNoeu) == NbNoMa
+    if len(ChnoVrcNoeu) != NbNoMa:
+      UTMESS('F', 'RUPTURE0_2', valk=para_fonc, vali=[len(ChnoVrcNoeu), NbNoMa])
 
     # extraction des vecteurs :
     #  - FISSURE.FONDFISS (coords des points du fond)

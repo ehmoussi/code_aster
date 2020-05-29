@@ -38,9 +38,10 @@ class TableCreation(ExecuteCommand):
             self._result = reuse
         else:
             typ = keywords["TYPE_TABLE"]
+            assert typ in ("TABLE", "TABLE_CONTAINER", "TABLE_FONCTION"), typ
             if typ == "TABLE_FONCTION":
                 self._result = TableOfFunctions()
-            elif typ == "TABLE_CONTENEUR":
+            elif typ == "TABLE_CONTAINER":
                 self._result = TableContainer()
             else:
                 self._result = Table()
