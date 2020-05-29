@@ -299,9 +299,6 @@ def get_noeud_fond_fiss(FOND_FISS):
 
 def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
     """ retourne la liste des noeuds de FOND_FISS a calculer"""
-
-    NOEUD = args.get('NOEUD')
-    SANS_NOEUD = args.get('SANS_NOEUD')
     GROUP_NO = args.get('GROUP_NO')
     SANS_GROUP_NO = args.get('SANS_GROUP_NO')
     TOUT = args.get('TOUT')
@@ -316,40 +313,40 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
 #        construction de la liste des noeuds "AVEC" et des noeuds "SANS"
         NO_SANS = []
         NO_AVEC = []
+
         if GROUP_NO is not None:
             collgrno = MAILLAGE.sdj.GROUPENO.get()
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(GROUP_NO) not in EnumTypes:
                 GROUP_NO = (GROUP_NO,)
-            for m in range(len(GROUP_NO)):
-                ngrno = GROUP_NO[m].ljust(24).upper()
+
+            for grpno in GROUP_NO:
+                ngrno = grpno.ljust(24)
                 if ngrno not in list(collgrno.keys()):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
-                for i in range(len(collgrno[ngrno])):
-                    NO_AVEC.append(cnom[collgrno[ngrno][i] - 1])
+                for node in collgrno[ngrno]:
+                    NO_AVEC.append(cnom[node - 1])
             NO_AVEC = list(map(lambda x: x.rstrip(), NO_AVEC))
-        if NOEUD is not None:
-            if type(NOEUD) not in EnumTypes:
-                NO_AVEC = (NOEUD,)
+        else:
+            Typ = FOND_FISS.sdj.FOND_TYPE.get()
+            Typ = Typ[0].rstrip()
+            if (Typ == 'SEG3') and (TOUT is None):
+                NO_AVEC = Lnoff[::2]
             else:
-                NO_AVEC = NOEUD
+                NO_AVEC = Lnoff
+
         if SANS_GROUP_NO is not None:
             collgrno = MAILLAGE.sdj.GROUPENO.get()
             cnom = MAILLAGE.sdj.NOMNOE.get()
             if type(SANS_GROUP_NO) not in EnumTypes:
                 SANS_GROUP_NO = (SANS_GROUP_NO,)
-            for m in range(len(SANS_GROUP_NO)):
-                ngrno = SANS_GROUP_NO[m].ljust(24).upper()
+            for grpno in SANS_GROUP_NO:
+                ngrno = grpno.ljust(24)
                 if ngrno not in list(collgrno.keys()):
                     UTMESS('F', 'RUPTURE0_13', valk=ngrno)
-                for i in range(len(collgrno[ngrno])):
-                    NO_SANS.append(cnom[collgrno[ngrno][i] - 1])
+                for node in collgrno[ngrno]:
+                    NO_SANS.append(cnom[node - 1])
             NO_SANS = list(map(lambda x: x.rstrip(), NO_SANS))
-        if SANS_NOEUD is not None:
-            if type(SANS_NOEUD) not in EnumTypes:
-                NO_SANS = (SANS_NOEUD,)
-            else:
-                NO_SANS = SANS_NOEUD
 
 # verification que les noeuds "AVEC" et "SANS" appartiennent au fond de
 # fissure
@@ -360,13 +357,8 @@ def get_noeud_a_calculer(Lnoff, ndim, FOND_FISS, MAILLAGE, EnumTypes, args):
         if set_tmp:
             UTMESS('F', 'RUPTURE0_15', valk=list(set_tmp)[0])
 
-#        creation de Lnocal
-        if NO_AVEC:
-            Lnocal = tuple(NO_AVEC)
-        elif NO_SANS:
-            Lnocal = tuple(set(Lnoff) - set(NO_SANS))
-        else:
-            Lnocal = tuple(Lnoff)
+#       Creation de la liste des noeuds a garder reeordonnee selon l'ordre de Lnoff
+        Lnocal = tuple([val for val in Lnoff if (val in NO_AVEC) and (val not in NO_SANS)])
 
     return Lnocal
 
