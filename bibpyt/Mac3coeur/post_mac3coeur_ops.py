@@ -26,24 +26,14 @@ import numpy.linalg as LA
 import aster_core
 from .mac3coeur_coeur import CoeurFactory
 from Utilitai.UniteAster import UniteAster
+from Utilitai.Table import Table
 
 UL=UniteAster()
-
-K_star = 100000.
 
 round_post = lambda s : round(s,4)
 
 def NodePos(coeur,k):
-
     return coeur.get_XYOut('%s_%s'%(k[0],k[1]))
-
-def compute_cos_alpha(G_0,G_1,G_2):
-    a=G_1-G_0
-    b=G_2-G_1
-    cos_alpha_ = np.dot(a,b)/LA.norm(a)/LA.norm(b)
-    # cos_alpha_ = dotProduct(coorVect(G_0,G_1),coorVect(G_1,G_2))/(norm(G_0,G_1)*norm(G_1,G_2))
-    return cos_alpha_
-
 
 def makeXMGRACE_entete(coeur,xmgrfile) :
     length   = coeur.get_length()
@@ -349,28 +339,211 @@ def makeXMGRACEdeforme(unit, name, typeAC, coeur, valdefac):
                    'uteur (m))"\n@DEVICE \"JPEG\" PAGE SIZE 1200,1200\n@autoscale\n@redraw\n' % (name))
     xmgrfile.close()
 
+class CollectionPostAC():
 
-def PostForme(dx, dy, unite='mm'):
-    """ post-traite la forme suivant une methode (Damac pour le moment) d'apres une liste de fleches en mm"""
-    assert unite in ('mm','m')
-    
-    crit = 0.5 if unite == 'm' else 500.0
-    
-    A1x = abs(min(dx))
-    A2x = abs(max(dx))
-    CCx = max(dx) - min(dx)
-    shape_x = 'S' if (A1x > crit and A2x > crit) else 'C'
-    
-    A1y = abs(min(dy))
-    A2y = abs(max(dy))
-    CCy = max(dy) - min(dy)
-    shape_y = 'S' if (A1y > crit and A2y > crit) else 'C'
-    
-    letters = ''.join(sorted(set((shape_x, shape_y))))
-    shape_global = '2%s'%letters if len(letters) == 1 else letters
+    def __init__(self):
+        self._collection = {}
 
-    return shape_x, shape_y, shape_global
+        self.maxRho = 0.
+        self.maxGravite = 0.
+        self.locMaxRho = ''
+        self.locMaxGravite = ''
+        self.maxDeplGrille = [0.]*10
+        self.locMaxDeplGrille = ['']*10
+        self.moyenneRho = 0.
+        self.moyenneGravite = 0.
+        self.sigmaGravite = 0.
+        self.maxGraviteParType = {}
+        self.moyenneRhoParType = {}
+        self.moyenneGraviteParType = {}
+        
+    def add(self, ac):
+        self._collection[ac.get('PositionDAMAC')] = ac
 
+    def get(self, pos):
+        return self._collection[pos]
+
+    def analyse(self, prec=1.e-8):
+     
+        for pos_damac in sorted(self._collection.keys()) : 
+            AC = self.get(pos_damac)
+            
+            if AC.get('Rho') - self.maxRho > prec :
+                self.maxRho = AC.get('Rho')
+                self.locMaxRho = pos_damac
+                
+            if AC.get('Gravite') - self.maxGravite > prec :
+                self.maxGravite = AC.get('Gravite')
+                self.locMaxGravite = pos_damac
+
+            for g in range(AC.nb_grilles):
+                if AC.get('NormF')[g] - self.maxDeplGrille[g] > prec:
+                    self.maxDeplGrille[g] = AC.get('NormF')[g]
+                    self.locMaxDeplGrille[g] = pos_damac
+                    
+        self.moyenneRho = np.mean(tuple(AC.get('Rho') for AC in self._collection.values()))
+        self.moyenneGravite = np.mean(tuple(AC.get('Gravite') for AC in self._collection.values()))
+
+        self.sigmaGravite = np.sqrt(np.mean((np.array(tuple(AC.get('Gravite') for AC in self._collection.values()))-self.moyenneGravite)**2))
+
+        types = set((AC.get('TypeAC') for AC in self._collection.values()))
+        self.maxRhoParType = {i : max((AC.get('Rho') for AC in self._collection.values() if i == AC.get('TypeAC'))) for i in types}
+        self.maxGraviteParType = {i : max((AC.get('Gravite') for AC in self._collection.values() if i == AC.get('TypeAC'))) for i in types}
+        self.moyenneRhoParType = {i : np.mean(tuple(AC.get('Rho') for AC in self._collection.values() if i == AC.get('TypeAC'))) for i in types}
+        self.moyenneGraviteParType = {i : np.mean(tuple(AC.get('Gravite') for AC in self._collection.values() if i == AC.get('TypeAC'))) for i in types}
+
+    def extr_table_fleche(self):
+
+        listdic = [AC.get_fleche_props() for pos, AC in sorted(self._collection.items())]
+        listpara, listtype = PostAC.fleche_parameters_types()
+        return Table(listdic,listpara,listtype)
+
+    def extr_table_analyse(self):
+
+        self.analyse()
+        
+        dico = {
+            'moyRhoCoeur' : round_post(self.moyenneRho),
+            'maxRhoCoeur' : round_post(self.maxRho),
+            'moyGravCoeur' : round_post(self.moyenneGravite),
+            'maxGravCoeur' : round_post(self.maxGravite),
+            'sigGravCoeur' : round_post(self.sigmaGravite),
+            'locMaxRho' : self.locMaxRho,
+            'locMaxGrav' : self.locMaxGravite,
+        }
+
+        dico.update({'moR%s'%typ : round_post(value) for typ, value in self.moyenneRhoParType.items()})
+        dico.update({'maR%s'%typ : round_post(value) for typ, value in self.maxRhoParType.items()})
+        dico.update({'maG%s'%typ : round_post(value) for typ, value in self.maxGraviteParType.items()})
+        dico.update({'moG%s'%typ : round_post(value) for typ, value in self.moyenneGraviteParType.items()})
+        dico.update({'locMaxDeplG%i'%(i+1) : value for i, value in enumerate(self.locMaxDeplGrille) if value != ''})
+        dico.update({'maxDeplGrille%i'%(i+1) : round_post(self.maxDeplGrille[i]) for i, value in enumerate(self.locMaxDeplGrille) if value != ''})
+
+        print('table_post = ', dico)
+        
+        listpara = sorted(dico.keys())
+        f = lambda s : 'K16' if s.startswith('loc') else 'R'
+        listtype = [f(i) for i in listpara]
+        
+        return Table([dico],listpara,listtype)
+    
+
+class PostAC():
+    
+    def _compute_gravite(self, coor_x, fy, fz):
+
+        K_star = 100000.
+        sum_of_squared_sin = 0
+        
+        for i in range(1, len(coor_x)-1):
+            gi_p = np.array((fy[i-1], fz[i-1], coor_x[i-1])) # previous grid
+            gi_c = np.array((fy[i], fz[i], coor_x[i])) # current grid
+            gi_n = np.array((fy[i+1], fz[i+1], coor_x[i+1])) # next grid
+            
+            squared_cos = np.dot(gi_c-gi_p, gi_n-gi_c)/(np.linalg.norm(gi_c-gi_p)*np.linalg.norm(gi_n-gi_c))
+            sum_of_squared_sin += (1. - squared_cos)
+            
+        return K_star*sum_of_squared_sin
+
+    def _compute_forme(self, fx, fy):
+        crit = 500.0 #mm
+        
+        A1x = abs(min(fx))
+        A2x = abs(max(fx))
+        CCx = max(fx) - min(fx)
+        shape_x = 'S' if (A1x > crit and A2x > crit) else 'C'
+        
+        A1y = abs(min(fy))
+        A2y = abs(max(fy))
+        CCy = max(fy) - min(fy)
+        shape_y = 'S' if (A1y > crit and A2y > crit) else 'C'
+        
+        letters = ''.join(sorted(set((shape_x, shape_y))))
+        shape_global = '2%s'%letters if len(letters) == 1 else letters
+        
+        return shape_x, shape_y, shape_global
+
+    def get(self, kw):
+        return self.props[kw]
+
+    def __init__(self, coor_x, dy, dz, AC):
+
+        fy = dy - dy[0] - (dy[-1] - dy[0])/(coor_x[-1] - coor_x[0])*(coor_x - coor_x[0])
+        fz = dz - dz[0] - (dz[-1] - dz[0])/(coor_x[-1] - coor_x[0])*(coor_x - coor_x[0])
+        FormeY, FormeZ, Forme = self._compute_forme(fy,fz)
+
+        self.nb_grilles = len(coor_x)
+        
+        self.props = {
+            'PositionDAMAC' : AC.idDAM,
+            'PositionASTER' : AC.idAST,
+            'Cycle' : AC._cycle,
+            'Repere' : AC.name,
+            'Rho' : max([np.sqrt((fy[i] - fy[j]) ** 2 + (fz[i] - fz[j]) ** 2)
+                         for i in range(self.nb_grilles - 1) for j in range(i + 1, self.nb_grilles)]),
+            'DepY' : dy[0] - dy[-1],
+            'DepZ' : dz[0] - dz[-1],
+            'TypeAC' : AC.typeAC,
+            'MinY' : fy.min(),
+            'MaxY' : fy.max(),
+            'CCY' : fy.max() - fy.min(),
+            'MinZ' : fz.min(),
+            'MaxZ' : fz.max(),
+            'CCZ' : fz.max() - fz.min(),
+            'FormeY' : FormeY,
+            'FormeZ' : FormeZ,
+            'Forme' : Forme,
+            'Gravite' : self._compute_gravite(coor_x, fy, fz),
+            'NormF' : np.sqrt(fy**2+fz**2),
+            'FY' : fy,
+            'FZ' : fz,
+        }
+        
+        self.props.update({'XG%d'%(i+1) : 0. for i in range(10)})
+        self.props.update({'YG%d'%(i+1) : 0. for i in range(10)})
+        
+        self.props.update({'XG%d'%(i+1) : val for i, val in enumerate(fy)})
+        self.props.update({'YG%d'%(i+1) : val for i, val in enumerate(fz)})
+        
+    def get_fleche_props(self):
+
+        fleche_props = {
+            'POS' : self.get('PositionDAMAC'),
+            'Cycle' : self.get('Cycle'),
+            'T5' : 0.,
+            'T6' : 0.,
+            'Repere' : self.get('Repere'),
+            'Ro' : self.get('Rho'),
+            'EinfXgg' : self.get('DepY'),
+            'EinfYgg' : self.get('DepZ'),
+            'Milieu' : self.get('TypeAC'),
+            'Min X' : self.get('MinY'),
+            'Max X' : self.get('MaxY'),
+            'CC X' : self.get('CCY'),
+            'Min Y' : self.get('MinZ'),
+            'Max Y' : self.get('MaxZ'),
+            'CC Y' : self.get('CCZ'),
+            'Forme X' : self.get('FormeY'),
+            'Forme Y' : self.get('FormeZ'),
+            'Forme' : self.get('Forme'),
+        }
+        fleche_props.update({'XG%d'%(i+1) : self.get('XG%d'%(i+1)) for i in range(10)})
+        fleche_props.update({'YG%d'%(i+1) : self.get('YG%d'%(i+1)) for i in range(10)})
+
+        return fleche_props
+
+
+    @staticmethod
+    def fleche_parameters_types():
+
+        para = ['POS', 'Cycle', 'T5', 'T6', 'Repere', 'Ro', 'EinfXgg', 'EinfYgg'] + \
+               ['XG%d'%(d+1) for d in range(10)] + ['YG%d'%(d+1) for d in range(10)] + \
+               ['Milieu', 'Min X', 'Max X', 'CC X', 'Min Y', 'Max Y', 'CC Y', 'Forme X', 'Forme Y', 'Forme']
+        types = ['K8', 'I', 'R', 'R', 'K16', 'R', 'R', 'R'] + \
+                ['R']*20 + \
+                ['K16', 'R', 'R', 'R', 'R', 'R', 'R', 'K8', 'K8', 'K8']
+
+        return para, types
 
 def post_mac3coeur_ops(self, **args):
     """Corps principal de la macro de post-traitement de MAC3COEUR"""
@@ -384,9 +557,9 @@ def post_mac3coeur_ops(self, **args):
     CALC_TABLE = self.get_cmd('CALC_TABLE')
     EXTR_TABLE = self.get_cmd('EXTR_TABLE')
     FORMULE = self.get_cmd('FORMULE')
+    DETRUIRE = self.get_cmd('DETRUIRE')
     DEFI_FICHIER = self.get_cmd('DEFI_FICHIER')
     IMPR_TABLE = self.get_cmd('IMPR_TABLE')
-
     rcdir = aster_core.get_option("rcdir")
     datg = osp.join(rcdir, "datg")
     coeur_factory = CoeurFactory(datg)
@@ -738,334 +911,49 @@ def post_mac3coeur_ops(self, **args):
     # "
     if (POST_DEF is not None):
 
-        valdefac = {}
-        valdirYac = {}
-        valdirZac = {}
-        valrho = {}
-        valforme = {}
-        val_deport_y = {}
-        val_deport_z = {}
-
         UTMESS('I', 'COEUR0_6')
-        POSITION = _coeur.get_geom_coeur()
-        k = 0
-        dim = len(POSITION)
 
-        for name in POSITION:
-            name_AC_aster = name[0] + '_' + name[1]
+        post_coeur = CollectionPostAC()
+        for AC in _coeur.collAC.values():
+            
             _TAB1 = CREA_TABLE(RESU=_F(RESULTAT=_RESU,
                                        NOM_CMP=('DY', 'DZ'),
-                                       GROUP_MA='GR_' + name_AC_aster,
+                                       GROUP_MA='GR_%s'%AC.idAST,
                                        NOM_CHAM='DEPL',
                                        INST=_inst,
                                        PRECISION=1.E-08))
-
+            
             # Extraction des valeurs
             vals = np.stack((_TAB1.EXTR_TABLE().values()[i] for i in ('COOR_X', 'DY', 'DZ')))
+            DETRUIRE(CONCEPT=_F(NOM=_TAB1))
             
             # Moyenne sur les 4 discrets de la grille (qui portent tous la meme valeur)
             vals = np.mean(vals.reshape(vals.shape[0], vals.shape[1]//4, 4),axis=2)
-
             # Passage en mm et arrondi
-            l_x, l_dy, l_dz = np.around(1000.0*vals[:, vals[0].argsort()],12)
-            nb_grilles = len(l_x)
+            coor_x, dy, dz = np.around(1000.0*vals[:, vals[0].argsort()],12)
 
-            # on applique la formule des fleches
-            l_fy = []
-            l_fz = []
-            for i in range(nb_grilles):
-                fy = l_dy[i] - l_dy[0] - (l_dy[-1] - l_dy[0]) / (l_x[-1] - l_x[0]) * (l_x[i] - l_x[0])
-                l_fy.append(fy)
-                fz = l_dz[i] - l_dz[0] - (l_dz[-1] - l_dz[0]) / (l_x[-1] - l_x[0]) * (l_x[i] - l_x[0])
-                l_fz.append(fz)
-
-            # on applique la formule de Rho
-            rho = 0.
-            for i in range(nb_grilles):
-                for j in range(nb_grilles):
-                    rho = max(
-                        rho, sqrt((l_fy[i] - l_fy[j]) ** 2 + (l_fz[i] - l_fz[j]) ** 2))
-
-            # on applique la formule de la norme des fleches
-            l_fnor = [sqrt(l_fy[i] ** 2 + l_fz[i] ** 2)
-                      for i in range(nb_grilles)]
-
-            # calcul des formes 
-            formeY, formeZ, forme = PostForme(l_fy, l_fz, 'mm')
+            post_coeur.add(PostAC(coor_x, dy, dz, AC))
             
-            # creation des dictionnaires
-            valdefac[name_AC_aster] = l_fnor
-            valdirYac[name_AC_aster] = l_fy
-            valdirZac[name_AC_aster] = l_fz
-            valrho[name_AC_aster] = rho
-            valforme[name_AC_aster] = [formeY, formeZ, forme]
-            val_deport_y[name_AC_aster] = (-l_dy[-1] + l_dy[0])
-            val_deport_z[name_AC_aster] = (-l_dz[-1] + l_dz[0])
-
-            k = k + 1
-
-            l_nom_AC = []
-            l_cycle = []
-            l_repere = []
-            l_def_max = []
-            l_XG1 = []
-            l_XG2 = []
-            l_XG3 = []
-            l_XG4 = []
-            l_XG5 = []
-            l_XG6 = []
-            l_XG7 = []
-            l_XG8 = []
-            l_XG9 = []
-            l_XG10 = []
-            l_YG1 = []
-            l_YG2 = []
-            l_YG3 = []
-            l_YG4 = []
-            l_YG5 = []
-            l_YG6 = []
-            l_YG7 = []
-            l_YG8 = []
-            l_YG9 = []
-            l_YG10 = []
-            l_milieu = []
-            l_MinX = []
-            l_MaxX = []
-            l_CCX = []
-            l_MinY = []
-            l_MaxY = []
-            l_CCY = []
-            l_formeX = []
-            l_formeY = []
-            l_forme = []
-            l_valdx = []
-            l_valdy = []
-            l_T5 = []
-            l_T6 = []
-
-
-        # combien de grille ?
-        nbGrille = 0
-        for idAC in list(_coeur.collAC.keys()) :
-            AC = _coeur.collAC[idAC]
-            if len(AC.altitude) > nbGrille :
-                nbGrille=len(AC.altitude)
-
-        moyenneRhoParType = {}
-        moyenneGraviteParType = {}
-
-        maxRho=0.
-        maxRhoParType = {}
-        listeGravite = []
-        maxGravite = -1.
-        maxGraviteParType = {}
-        maxDeplGrille = [0]*nbGrille
-        locMaxDeplGrille = [None]*nbGrille
-
-        #for name in POSITION:
-        for idAC in list(_coeur.collAC.keys()) :
-            AC = _coeur.collAC[idAC]
-            altitudeGrilles = [v*1000. for v in AC.altitude]
-            name_AC_aster = AC.idAST
-            #name_AC_aster = name[0] + '_' + name[1]
-            name_AC_damac = _coeur.position_todamac(name_AC_aster)
-
-            cycle = 1
-            repere = AC.name
-            def_max = valrho[name_AC_aster]
-            XG1 = valdirYac[name_AC_aster][1 - 1]
-            XG2 = valdirYac[name_AC_aster][2 - 1]
-            XG3 = valdirYac[name_AC_aster][3 - 1]
-            XG4 = valdirYac[name_AC_aster][4 - 1]
-            XG5 = valdirYac[name_AC_aster][5 - 1]
-            XG6 = valdirYac[name_AC_aster][6 - 1]
-            XG7 = valdirYac[name_AC_aster][7 - 1]
-            XG8 = valdirYac[name_AC_aster][8 - 1]
-            # XG9 = valdirYac[name_AC_aster][9 - 1]
-            # XG10 = valdirYac[name_AC_aster][10 - 1]
-            YG1 = valdirZac[name_AC_aster][1 - 1]
-            YG2 = valdirZac[name_AC_aster][2 - 1]
-            YG3 = valdirZac[name_AC_aster][3 - 1]
-            YG4 = valdirZac[name_AC_aster][4 - 1]
-            YG5 = valdirZac[name_AC_aster][5 - 1]
-            YG6 = valdirZac[name_AC_aster][6 - 1]
-            YG7 = valdirZac[name_AC_aster][7 - 1]
-            YG8 = valdirZac[name_AC_aster][8 - 1]
-            # YG9 = valdirZac[name_AC_aster][9 - 1]
-            # YG10 = valdirZac[name_AC_aster][10 - 1]
-            if (_typ_coeur == '900' or _typ_coeur == 'LIGNE900'):
-                XG9 = 0.
-                XG10 = 0.
-                YG9 = 0.
-                YG10 = 0.
-            else :
-                XG9 = valdirYac[name_AC_aster][9 - 1]
-                XG10 = valdirYac[name_AC_aster][10 - 1]
-                YG9 = valdirZac[name_AC_aster][9 - 1]
-                YG10 = valdirZac[name_AC_aster][10 - 1]
-            XG=[XG1,XG2,XG3,XG4,XG5,XG6,XG7,XG8,XG9,XG10]
-            YG=[YG1,YG2,YG3,YG4,YG5,YG6,YG7,YG8,YG9,YG10]
-            posGrille = []
-            cosGrille = []
-            for i in range(nbGrille) :
-                posGrille.append(np.array((XG[i],YG[i],altitudeGrilles[i])))
-            for i in range(nbGrille-2) :
-                cosGrille.append(compute_cos_alpha(posGrille[i],posGrille[i+1],posGrille[i+2]))
-            gravite = K_star*np.sum(1.-np.array(cosGrille))
-            normeDepl = np.sqrt(np.array(XG)**2+np.array(YG)**2)
-            Milieu = AC.typeAC
-            MinX = min(valdirYac[name_AC_aster])
-            MaxX = max(valdirYac[name_AC_aster])
-            CCX = MaxX - MinX
-            MinY = min(valdirZac[name_AC_aster])
-            MaxY = max(valdirZac[name_AC_aster])
-            CCY = MaxY - MinY
-            FormeX = valforme[name_AC_aster][0]
-            FormeY = valforme[name_AC_aster][1]
-            Forme = valforme[name_AC_aster][2]
-            valdx = val_deport_y[name_AC_aster]
-            valdy = val_deport_z[name_AC_aster]
-
-            l_nom_AC.append(name_AC_damac)
-            l_cycle.append(cycle)
-            l_repere.append(repere)
-            l_def_max.append(def_max)
-            try :
-                moyenneRhoParType[Milieu].append(def_max)
-            except KeyError :
-                moyenneRhoParType[Milieu]=[def_max]
-            if def_max>maxRho :
-                maxRho=def_max
-                locMaxRho = name_AC_damac
-            try :
-                if def_max>maxRhoParType[Milieu] :
-                    maxRhoParType[Milieu]=def_max
-            except KeyError :
-                maxRhoParType[Milieu] = def_max
-            listeGravite.append(gravite)
-            try :
-                moyenneGraviteParType[Milieu].append(gravite)
-            except KeyError :
-                moyenneGraviteParType[Milieu]=[gravite]
-            if gravite>maxGravite :
-                maxGravite=gravite
-                locMaxGravite = name_AC_damac
-            try :
-                if gravite>maxGraviteParType[Milieu] :
-                    maxGraviteParType[Milieu]=gravite
-            except KeyError :
-                maxGraviteParType[Milieu] = gravite
-            for i in range(nbGrille) :
-                if normeDepl[i] > maxDeplGrille[i] :
-                    maxDeplGrille[i] = normeDepl[i]
-                    locMaxDeplGrille[i] = name_AC_damac
-
-            l_XG1.append(XG1)
-            l_XG2.append(XG2)
-            l_XG3.append(XG3)
-            l_XG4.append(XG4)
-            l_XG5.append(XG5)
-            l_XG6.append(XG6)
-            l_XG7.append(XG7)
-            l_XG8.append(XG8)
-            l_XG9.append(XG9)
-            l_XG10.append(XG10)
-            l_YG1.append(YG1)
-            l_YG2.append(YG2)
-            l_YG3.append(YG3)
-            l_YG4.append(YG4)
-            l_YG5.append(YG5)
-            l_YG6.append(YG6)
-            l_YG7.append(YG7)
-            l_YG8.append(YG8)
-            l_YG9.append(YG9)
-            l_YG10.append(YG10)
-            l_milieu.append(Milieu)
-            l_MinX.append(MinX)
-            l_MaxX.append(MaxX)
-            l_CCX.append(CCX)
-            l_MinY.append(MinY)
-            l_MaxY.append(MaxY)
-            l_CCY.append(CCY)
-            l_formeX.append(FormeX)
-            l_formeY.append(FormeY)
-            l_forme.append(Forme)
-            l_valdx.append(valdx)
-            l_valdy.append(valdy)
-            l_T5.append(0.)
-            l_T6.append(0.)
-        moyenneRhoCoeur = np.mean(np.array(l_def_max))
-        for typ in list(moyenneRhoParType.keys()) :
-            moyenneRhoParType[typ] = np.mean(np.array(moyenneRhoParType[typ]))
-        moyenneGravite = np.mean(np.array(listeGravite))
-        sigmaGravite = np.sqrt(np.mean((np.array(listeGravite)-moyenneGravite)**2))
-        for typ in list(moyenneGraviteParType.keys()) :
-            moyenneGraviteParType[typ] = np.mean(np.array(moyenneGraviteParType[typ]))
-
-
-
-        liste_out = []
-
-        # Valeurs
-        liste_out.append({'LISTE_R' : round_post(moyenneRhoCoeur), 'PARA' : 'moyRhoCoeur'})
-        liste_out.append({'LISTE_R' : round_post(maxRho), 'PARA' : 'maxRhoCoeur'})
-        liste_out.append({'LISTE_R' : round_post(moyenneGravite), 'PARA' : 'moyGravCoeur'})
-        liste_out.append({'LISTE_R' : round_post(maxGravite), 'PARA' : 'maxGravCoeur'})
-        liste_out.append({'LISTE_R' : round_post(sigmaGravite), 'PARA' : 'sigGravCoeur'})
-     
-        for typ, value in moyenneRhoParType.items():
-            liste_out.append({'LISTE_R' : round_post(value), 'PARA' : 'moR%s'%typ})
-            
-        for typ, value in maxRhoParType.items():
-            liste_out.append({'LISTE_R' : round_post(value), 'PARA' : 'maR%s'%typ})
-            
-        for typ, value in maxGraviteParType.items():
-            liste_out.append({'LISTE_R' : round_post(value), 'PARA' : 'maG%s'%typ})
-            
-        for typ, value in moyenneGraviteParType.items():
-            liste_out.append({'LISTE_R' : round_post(value), 'PARA' : 'moG%s'%typ})
-            
-        for i in range(2,len(maxDeplGrille)):
-            liste_out.append({'LISTE_R' : round_post(maxDeplGrille[i-1]), 'PARA' : 'maxDeplGrille%i'%i})
-            
-        # Positions
-        liste_out.append({'LISTE_K' : locMaxRho, 'PARA' : 'locMaxRho', 'TYPE_K' : 'K8' })
-        liste_out.append({'LISTE_K' : locMaxGravite, 'PARA' : 'locMaxGrav', 'TYPE_K' : 'K8' })
-
-        for i, value in enumerate(locMaxDeplGrille[1:-1]):
-            liste_out.append({'LISTE_K' : value, 'PARA' : 'locMaxDeplG%i'%(i+2), 'TYPE_K' : 'K8'})
-            
-        print('liste_out : ', liste_out)
-
-        if tableCreated :
-            tmp_vale = []
-            tmp_para = []
-            for el in liste_out :
-                try :
-                    tmp_vale.append(el['LISTE_R'])
-                except KeyError :
-                    tmp_vale.append(el['LISTE_K'])
-                tmp_para.append(el['PARA'])
-            __TAB_OUT = CALC_TABLE(reuse=__TAB_OUT,TABLE=__TAB_OUT,
-                                   ACTION=(_F(OPERATION = 'AJOUT_COLONNE',
-                                              NOM_PARA  = tmp_para,
-                                              VALE      = tmp_vale)))
-
+        table_analyse = post_coeur.extr_table_analyse()
+        motcles = table_analyse.dict_CREA_TABLE()
+        
+        if not tableCreated: 
+            __TAB_OUT = CREA_TABLE(**motcles)
 
         else :
-            __TAB_OUT = CREA_TABLE(TITRE='RESU_GLOB_'+nameCoeur,
-                             LISTE=liste_out
-                             )
-
+            _TAB_A = CREA_TABLE(**motcles)
+            __TAB_OUT = CALC_TABLE(reuse=__TAB_OUT,
+                                   TABLE=__TAB_OUT,
+                                   ACTION=_F(OPERATION='COMB',TABLE=_TAB_A))
+            DETRUIRE(CONCEPT=_F(NOM=_TAB_A))
+        
 
         for attr in POST_DEF:
             _unit = attr['UNITE']
             _typ_post = attr['FORMAT']
-
-            #DEFI_FICHIER(ACTION='LIBERER', UNITE=_unit)
-
+            
             if (_typ_post == 'GRACE'):
-
+                
                 _num_grille = attr['NUME_GRILLE']
                 _extremum = attr['TYPE_RESU']
                 _autre = attr['TYPE_VISU']
@@ -1075,6 +963,10 @@ def post_mac3coeur_ops(self, **args):
                 else:
                     post = _extremum
 
+                valdefac = {AC.get('PositionASTER') : list(AC.get('NormF')) for AC in post_coeur._collection.values()}
+                valdirYac = {AC.get('PositionASTER') : list(AC.get('FY')) for AC in post_coeur._collection.values()}
+                valdirZac = {AC.get('PositionASTER') : list(AC.get('FZ')) for AC in post_coeur._collection.values()}
+                
                 if (_autre == 'AMPLITUDE'):
                     makeXMGRACEdef_amp(_unit, post, _coeur, valdefac)
                 elif (_autre == 'MODULE'):
@@ -1091,55 +983,12 @@ def post_mac3coeur_ops(self, **args):
                 _format_standard = attr['FORMAT_R'] == 'STANDARD'
                 _nom_site = attr['NOM_SITE']
 
-
-
                 # creation de la table de sortie
-                _TABOUT = CREA_TABLE(TITRE=_typ_coeur,
-                                     LISTE=(
-                                         _F(LISTE_K=l_nom_AC, PARA=_nom_site),
-                                     _F(LISTE_I=l_cycle, PARA='Cycle'),
-                                     _F(LISTE_R=l_T5, PARA='T5'),
-                                     _F(LISTE_R=l_T6, PARA='T6'),
-                                     _F(LISTE_K=l_repere,
-                                        PARA='Repere', TYPE_K='K16'),
-                                     _F(LISTE_R=l_def_max, PARA='Ro'),
-                                     _F(LISTE_R=l_valdx, PARA='EinfXgg'),
-                                     _F(LISTE_R=l_valdy, PARA='EinfYgg'),
-                                     _F(LISTE_R=l_XG1, PARA='XG1'),
-                                     _F(LISTE_R=l_XG2, PARA='XG2'),
-                                     _F(LISTE_R=l_XG3, PARA='XG3'),
-                                     _F(LISTE_R=l_XG4, PARA='XG4'),
-                                     _F(LISTE_R=l_XG5, PARA='XG5'),
-                                     _F(LISTE_R=l_XG6, PARA='XG6'),
-                                     _F(LISTE_R=l_XG7, PARA='XG7'),
-                                     _F(LISTE_R=l_XG8, PARA='XG8'),
-                                     _F(LISTE_R=l_XG9, PARA='XG9'),
-                                     _F(LISTE_R=l_XG10, PARA='XG10'),
-                                     _F(LISTE_R=l_YG1, PARA='YG1'),
-                                     _F(LISTE_R=l_YG2, PARA='YG2'),
-                                     _F(LISTE_R=l_YG3, PARA='YG3'),
-                                     _F(LISTE_R=l_YG4, PARA='YG4'),
-                                     _F(LISTE_R=l_YG5, PARA='YG5'),
-                                     _F(LISTE_R=l_YG6, PARA='YG6'),
-                                     _F(LISTE_R=l_YG7, PARA='YG7'),
-                                     _F(LISTE_R=l_YG8, PARA='YG8'),
-                                     _F(LISTE_R=l_YG9, PARA='YG9'),
-                                     _F(LISTE_R=l_YG10, PARA='YG10'),
-                                     _F(LISTE_K=l_milieu,
-                                        PARA='Milieu', TYPE_K='K16'),
-                                     _F(LISTE_R=l_MinX, PARA='Min X'),
-                                     _F(LISTE_R=l_MaxX, PARA='Max X'),
-                                     _F(LISTE_R=l_CCX, PARA='CC X'),
-                                     _F(LISTE_R=l_MinY, PARA='Min Y'),
-                                     _F(LISTE_R=l_MaxY, PARA='Max Y'),
-                                     _F(LISTE_R=l_CCY, PARA='CC Y'),
-                                     _F(LISTE_K=l_formeX,
-                                        PARA='Forme X'),
-                                     _F(LISTE_K=l_formeY,
-                                        PARA='Forme Y'),
-                                     _F(LISTE_K=l_forme, PARA='Forme'),
-                                     )
-                                     )
+                tab_extr = post_coeur.extr_table_fleche()
+                tab_extr.Renomme('POS', _nom_site)
+                tab_extr.titr = _typ_coeur
+                motcles = tab_extr.dict_CREA_TABLE()
+                _TABOUT = CREA_TABLE(**motcles)
 
                 # impression de la table de sortie
                 if _format_standard :
