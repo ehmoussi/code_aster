@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -305,5 +305,23 @@ TEST_RESU(RESU=(_F(INST=6.0007000000000001,
                    VALE_REFE=1.57674,),
                 ),
           )
+
+
+# COORDONNEES DES POINTS DE GAUSS
+
+COOR = CALC_CHAM_ELEM(MODELE = MO,
+                OPTION = 'COOR_ELGA',)
+
+TEST_RESU(CHAM_ELEM=_F(CHAM_GD=COOR,
+                       TYPE_TEST='SOMM_ABS',
+                       NOM_CMP='X',
+                       GROUP_MA='JOINT',
+                       VALE_CALC=25536.00000000009,))
+
+TEST_RESU(CHAM_ELEM=_F(CHAM_GD=COOR,
+                       TYPE_TEST='SOMM_ABS',
+                       NOM_CMP='Y',
+                       GROUP_MA='JOINT',
+                       VALE_CALC=42560.000000000815,))
 
 FIN()
