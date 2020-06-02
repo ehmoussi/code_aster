@@ -1,20 +1,9 @@
 P time_limit 120
-P memory_limit 256
+P memory_limit 1024
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
-
-# L'argument max_base est ajouté pour couvrir l'appel à la routine jjagod.
-# Il n'est pas recommandé d'utiliser cet argument. La valeur positionnée par
-# défaut dans le code étant plus optimale.
-# Modifier cet argument peut entrainer un surcoût dans une étude.
-# Ici, on force le déclenchement du découpage des bases en limitant 'memory_limit'.
-# Il faut donc trouver la bonne valeur pour déclencher le découpage sans tomber
-# dans une zone où le découpage est impossible (manipulation d'objets système).
-
-# aslint: disable=E2003
-A max_base 1000
 
 F comm sdlv128a.comm D 1
 F mmed sdlv128a.mmed D 20
