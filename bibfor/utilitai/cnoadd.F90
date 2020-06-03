@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@ subroutine cnoadd(chno, chnop)
 ! pour un cham_no (chno) provenant d'un assemblage,
 ! on met à zéro les entrées dont on n'est pas strictement propriétaires
 !----------------------------------------------------------------
+#ifdef _USE_MPI
+
 #include "asterf_config.h"
 #include "asterf.h"
 #include "asterf_types.h"
@@ -39,7 +41,7 @@ subroutine cnoadd(chno, chnop)
 #include "asterfort/assert.h"
 #include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/asmpi_info.h"
-#ifdef _USE_MPI
+
     integer :: rang, nbproc
     integer :: iaux, jvale, jprddl, nbeq
     mpi_int :: mrank, msize
@@ -63,25 +65,23 @@ subroutine cnoadd(chno, chnop)
     numddl=pfchno(1:14)
     call dismoi('NOM_MAILLA', numddl, 'NUME_DDL', repk=nommai)
     call gettco(nommai(1:8), typsd)
-    if( typsd.ne.'MAILLAGE_P' ) then
-        goto 9999
+    if( typsd .eq. 'MAILLAGE_P' ) then
+
+        call jeveuo(numddl//'.NUME.PDDL', 'L', jprddl)
+        call jelira(numddl//'.NUME.PDDL', 'LONMAX', nbeq, k8bid)
+
+        call asmpi_info(rank = mrank, size = msize)
+        rang = to_aster_int(mrank)
+        nbproc = to_aster_int(msize)
+        call jeveuo(cn19p//'.VALE','E',jvale)
+
+        do iaux=1, nbeq
+            if( zi(jprddl+iaux-1).ne.rang ) then
+                zr(jvale-1+iaux) = 0.d0
+            endif
+        enddo
+
     endif
-
-    call jeveuo(numddl//'.NUME.PDDL', 'L', jprddl)
-    call jelira(numddl//'.NUME.PDDL', 'LONMAX', nbeq, k8bid)
-!
-    call asmpi_info(rank = mrank, size = msize)
-    rang = to_aster_int(mrank)
-    nbproc = to_aster_int(msize)
-    call jeveuo(cn19p//'.VALE','E',jvale)
-
-    do iaux=1, nbeq
-        if( zi(jprddl+iaux-1).ne.rang ) then
-            zr(jvale-1+iaux) = 0.d0
-        endif
-    enddo
-
-9999 continue
 
     call jedema()
 #endif
