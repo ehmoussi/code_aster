@@ -22,6 +22,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/calcG_type.h"
+#include "asterfort/gcncon.h"
 
 !
 ! --------------------------------------------------------------------------------------------------
@@ -41,6 +42,8 @@ implicit none
         character(len=16)  :: result_in_type = ' '
 ! ----- name of table container (out)
         character(len=24)  :: table_out = ' '
+! ----- name of table G (out)
+        character(len=24)  :: table_g = ' '
 ! ----- CARTE for behavior
         character(len=24)  :: compor = ' '
 ! ----- topological dimension
@@ -102,6 +105,8 @@ implicit none
     type CalcG_Theta
 ! ----- name of theta field
         character(len=24)       :: theta_field = ' '
+! ----- number of theta field
+        integer                 :: nb_theta_field = 0
 ! ----- name of crack
         character(len=8)        :: crack = ' '
 ! ----- type of crack
@@ -189,6 +194,10 @@ contains
 ! --- Concept de sortie (table container)
 !
         call getres(this%table_out, k16bid, k16bid)
+!
+! --- Table pour les valeurs (table)
+!
+        call gcncon("_", this%table_g)
 !
 ! --- Get name and type of result (in)
 !
@@ -435,8 +444,8 @@ contains
         aster_logical :: l_disc
 !
         call jemarq()
-! --- to do get name
-        this%theta_field = "&&THETA"
+! --- get automatic name
+        call gcncon("_", this%theta_field)
 !
 ! --- get informations about the crack
 !

@@ -23,7 +23,7 @@ from ..Commons import *
 from ..Language.DataStructure import *
 from ..Language.Syntax import *
 
-CALC_H=OPER(nom="CALC_H",op=27,sd_prod=table_sdaster,
+CALC_H=OPER(nom="CALC_H",op=27,sd_prod=table_container,
             fr=tr("Nouvel opérateur de calcul du taux de restitution d'énergie par la méthode theta en thermo-élasticité"
                   " et des facteurs d'intensité de contraintes."),
             reentrant='n',
@@ -62,6 +62,7 @@ CALC_H=OPER(nom="CALC_H",op=27,sd_prod=table_sdaster,
 
 
         # Create theta-field
+         CHAM_THETA   =SIMP(statut='f',typ=CO, max=1),
          THETA          =FACT(statut='o',
             FISSURE         =SIMP(statut='o',typ=(fiss_xfem, fond_fissure),max=1),
             DISCRETISATION  =SIMP(statut='f',typ='TXM',into=("LINEAIRE","LEGENDRE"), defaut="LINEAIRE" ),

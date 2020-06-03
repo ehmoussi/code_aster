@@ -18,9 +18,9 @@
 !
 !
 interface
-    subroutine cgComputeTheta(cgField, cgTheta)
+    subroutine cgExportTableG(cgField, cgTheta)
     use calcG_type
         type(CalcG_field), intent(in) :: cgField
-        type(CalcG_theta), intent(inout) :: cgTheta
-    end subroutine cgComputeTheta
+        type(CalcG_theta), intent(in) :: cgTheta
+    end subroutine cgExportTableG
 end interface

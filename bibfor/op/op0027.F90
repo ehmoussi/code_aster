@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/cgComputeTheta.h"
 #include "asterfort/cgTableG.h"
+#include "asterfort/cgExportTableG.h"
 #include "asterfort/cgVerification.h"
 #include "asterfort/deprecated_algom.h"
 #include "asterfort/infmaj.h"
@@ -63,7 +64,6 @@ implicit none
 !
     call cgField%initialize()
     call cgTheta%initialize()
-!
 !
     if(cgField%level_info > 1) then
         call cgField%print()
@@ -108,5 +108,9 @@ implicit none
 ! --- Create Table for G (temporary)
 !
     call cgTableG(cgField, cgTheta)
+!
+! --- Export table container with G and CHAM_THETA
+!
+    call cgExportTableG(cgField, cgTheta)
 !
 end subroutine

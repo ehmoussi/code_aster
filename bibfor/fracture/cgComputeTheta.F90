@@ -30,7 +30,7 @@ use calcG_type
 #include "asterfort/gcou2d.h"
 !
     type(CalcG_field), intent(in) :: cgField
-    type(CalcG_theta), intent(in) :: cgTheta
+    type(CalcG_theta), intent(inout) :: cgTheta
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,7 +47,8 @@ use calcG_type
     if (cgField%ndim .eq. 2) then
 !
        call gcou2d('G', cgTheta%theta_field, cgTheta%mesh, cgTheta%nomNoeud, cgTheta%fondNoeud(1), &
-                    cgTheta%coorNoeud, cgTheta%r_inf, cgTheta%r_sup)
+                    cgTheta%coorNoeud, cgTheta%r_inf, cgTheta%r_sup, ASTER_TRUE)
+        cgTheta%nb_theta_field = 1
     elseif (cgField%ndim .eq. 3) then
         !
         ! if(cgTheta%lxfem) then
@@ -63,6 +64,8 @@ use calcG_type
         !             cgTheta%crack, cgTheta%l_closed, stok4, cgTheta%discretization,&
         !             cdTheta%nombre, milieu, ndimte, norfon)
         ! end if
+!
+        cgTheta%nb_theta_field = 0
     else
         ASSERT(ASTER_FALSE)
     endif

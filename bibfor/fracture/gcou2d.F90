@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine gcou2d(base, resu, noma, nomno, noeud,&
-                  coor, rinf, rsup)
+                  coor, rinf, rsup, l_new_fiss)
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
@@ -44,6 +44,7 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
     character(len=1) :: base
     character(len=8) :: noma, noeud
     character(len=24) :: resu, nomno
+    aster_logical, optional :: l_new_fiss
 !
 !
 ! FONCTION REALISEE:
@@ -65,6 +66,7 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 !        COOR   : COORDONNEES DES NOEUDS
 !        RINF   : RAYON INFERIEURE DE LA COURONNE
 !        RSUP   : RAYON SUPERIEURE DE LA COURONNE
+!        L_NEW_FISS : nouvelle SD FISSURE (provisoire)
 !
 ! SORTIE:
 !        DIR    : DIRECTION DU CHAMPS THETA NORMALISEE
@@ -81,7 +83,7 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
     real(kind=8), pointer :: fondfiss(:) => null()
     real(kind=8), pointer :: cnsv(:) => null()
     real(kind=8), pointer :: vbasfd(:) => null()
-    aster_logical :: estfem
+    aster_logical :: estfem, l_new_fissure
 !     ------------------------------------------------------------------
 !
     call jemarq()
@@ -89,6 +91,10 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
     chgrs=''
     fiss=''
     fonfis=''
+    l_new_fissure = ASTER_FALSE
+    if(present(l_new_fiss)) then
+        l_new_fissure = l_new_fiss
+    end if
 !
     n1=1
     n2=0
@@ -99,7 +105,7 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 
 !   TEST DU TYPE DE FISSURE ET RECUPERATION DU NUMERO DE NOEUD DU FOND DE FISSURE FEM
     estfem=.true.
-    if (n1 .ne. 0) then
+    if (n1 .ne. 0 .or. l_new_fissure) then
         estfem=.true.
         call jenonu(jexnom(nomno, noeud), num)
     else if (n2 .ne. 0) then
@@ -117,22 +123,27 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 !     --- LA DIRECTION DE THETA N'EST DONNEE, ON LA RECUPERE
 !         DE BASEFOND CALCULE DANS DEFI_FOND_FISS. ---
     if (estfem) then
-        if (estbf .eq. 0) then
+        if (estbf .eq. 0 .and. (.not.l_new_fissure)) then
            ! basefond n'existe pas
             call utmess('F', 'RUPTURE0_58')
         end if
 
-        call jeveuo(fonfis//'.BASEFOND', 'L', vr=vbasfd)
-        if (size(vbasfd).gt.4) then
+        if(.not.l_new_fissure) then
+            call jeveuo(fonfis//'.BASEFOND', 'L', vr=vbasfd)
+            if (size(vbasfd).gt.4) then
             ! le front ne doit contenir qu'un noeud, donc 4 composantes dans basefond
             call utmess('F', 'RUPTURE0_33')
+            end if
+            norme = sqrt(vbasfd(3)**2+vbasfd(4)**2)
+    !       Basefond contient 4*1 composantes (XN YN XP YP)i
+    !       Avec N pour direction normale et P pour direction plan.
+            dir(1) = vbasfd(3)/norme
+            dir(2) = vbasfd(4)/norme
+            dir(3) = 0.d0
+        else
+            call utmess('A', 'RUPTURE0_62')
+            dir = [1.d0, 0.d0, 0.d0]
         end if
-        norme = sqrt(vbasfd(3)**2+vbasfd(4)**2)
-!       Basefond contient 4*1 composantes (XN YN XP YP)i
-!       Avec N pour direction normale et P pour direction plan.
-        dir(1) = vbasfd(3)/norme
-        dir(2) = vbasfd(4)/norme
-        dir(3) = 0.d0
     endif
 !
 !  .DESC

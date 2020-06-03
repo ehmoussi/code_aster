@@ -356,6 +356,11 @@ Cela signifie que la fissure est fortement non plane.
  - Un raffinement du fond de fissure est probablement nécessaire.
 """),
 
+    62 : _("""
+Attention, la direction de la fissure est fixe pour le moment (selon X) - cela est provisoire
+Il ne faut pas l'utiliser pour une étude
+"""),
+
     63 : _("""
 Les mailles du fond de fissure doivent être du type segment (SEG2 ou SEG3).
 """),

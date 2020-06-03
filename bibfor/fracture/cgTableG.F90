@@ -70,36 +70,31 @@ use calcG_type
 !
     lmoda = cgField%isModeMeca()
 !
-    call cgcrtb(cgField%table_out, option, cgField%ndim, typfis, nxpara, &
+    option = "G"
+    call cgcrtb(cgField%table_g, option, cgField%ndim, typfis, nxpara, &
                 lmoda, nbpara, linopa, litypa)
 !
-    call getvis('THETA', 'NUME_FOND', iocc=1, scal=numfon, nbret=ibid)
-
-    call tbajvi(cgField%table_out, nbpara, 'NUME_FOND', numfon, livi)
-    lfond=10
     k8bid = 'K8_BIDON'
-   ! call tbajvk(cgField%table_out, nbpara, 'ABSC_CURV_NORM', 0.0, livr)
-   ! call tbajvk(cgField%table_out, nbpara, 'TEMP', 0.0, livr)
-   ! call tbajvk(cgField%table_out, nbpara, 'COMPORTEMENT', k8bid, livk)
-
-
+   ! call tbajvk(cgField%table_g, nbpara, 'ABSC_CURV_NORM', 0.0, livr)
+   ! call tbajvk(cgField%table_g, nbpara, 'TEMP', 0.0, livr)
+   ! call tbajvk(cgField%table_g, nbpara, 'COMPORTEMENT', k8bid, livk)
 !
-    iord = 1
-    call tbajvi(cgField%table_out, nbpara, 'NUME_ORDRE', iord, livi)
-    time = 2.0
-    call tbajvr(cgField%table_out, nbpara, 'INST', time, livr)
+    ! iord = 1
+    ! call tbajvi(cgField%table_g, nbpara, 'NUME_ORDRE', iord, livi)
+    ! time = 2.0
+    ! call tbajvr(cgField%table_g, nbpara, 'INST', time, livr)
 !
-    call tbajvr(cgField%table_out, nbpara, 'COOR_X', cgTheta%coorNoeud(1),   livr)
-    call tbajvr(cgField%table_out, nbpara, 'COOR_Y', cgTheta%coorNoeud(2), livr)
+    ! call tbajvr(cgField%table_g, nbpara, 'COOR_X', cgTheta%coorNoeud(1),   livr)
+    ! call tbajvr(cgField%table_g, nbpara, 'COOR_Y', cgTheta%coorNoeud(2), livr)
 
     g(1)= 123456789.0
-    call tbajvr(cgField%table_out, nbpara, 'G', g(1), livr)
-    call tbajli(cgField%table_out, nbpara, linopa, livi, livr, livc, livk, 0)
+    call tbajvr(cgField%table_g, nbpara, 'G', g(1), livr)
+    call tbajli(cgField%table_g, nbpara, linopa, livi, livr, livc, livk, 0)
 !
-    !call utimsd(6, 2, .true._1, .true._1,cgField%table_out, 1, ' ')
+    !call utimsd(6, 2, .true._1, .true._1,cgField%table_g, 1, ' ')
 
 !
-    call titre()
+!    call titre()
 !
     call jedema()
 !

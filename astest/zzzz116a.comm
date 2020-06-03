@@ -77,7 +77,7 @@ TEST_RESU(
         INST=0,
         RESULTAT=cham_theta_no,
         VALE_REFE=4.2484695E-01,
-        VALE_CALC=0.424857,
+        VALE_CALC=0.42485725,
         ),
     _F(
         CRITERE=('ABSOLU', ),
@@ -141,6 +141,95 @@ TEST_RESU(
         )
 )
 
+FISSH=DEFI_FISSURE(MAILLAGE=mesh, SYME='OUI',
+                    FOND_FISS=_F(GROUP_NO='FOND_FISS',),
+                    LEVRE_SUP=_F(GROUP_MA='LEVRE_SUP',),
+                    )
+
+H0 = CALC_H(RESULTAT=RES0,
+            CHAM_THETA=CO('cham_theta_no2'),
+            OPTION=("G",),
+            THETA=_F(FISSURE=FISSH,
+                     R_INF=0.0203282,
+                     R_SUP=0.025))
+
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NO_TEST', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        RESULTAT=cham_theta_no2,
+        VALE_REFE=4.2484695E-01,
+        VALE_CALC=0.42485725,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NO_TEST', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=0,
+        RESULTAT=cham_theta_no2,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NO_ZERO', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        RESULTAT=cham_theta_no2,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NO_ZERO', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=0,
+        RESULTAT=cham_theta_no2,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NO_UN', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        RESULTAT=cham_theta_no2,
+        VALE_REFE=1.0,
+        VALE_CALC=1.0,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NO_UN', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=0,
+        RESULTAT=cham_theta_no2,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        )
+)
+
 IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=cham_theta_no))
+
+IMPR_RESU(FORMAT='MED',UNITE=81,RESU=_F(RESULTAT=cham_theta_no2))
 
 FIN()

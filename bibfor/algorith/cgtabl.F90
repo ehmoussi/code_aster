@@ -111,7 +111,6 @@ character(len=24), intent(in) :: obje_sdname(nb_obje)
             print*, "OBJET NAME", i_obj, " : ", obje_name(i_obj)
             print*, "OBJET TYPE", i_obj, " : ", obje_type
             print*, "SD NAME   ", i_obj, " : ", obje_sdname(i_obj)
-
         end if
 !
         vk(1) = obje_name(i_obj)
