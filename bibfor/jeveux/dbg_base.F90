@@ -30,6 +30,7 @@ subroutine dbg_base()
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jelibe.h"
+#include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
     aster_logical :: exist
@@ -50,33 +51,27 @@ subroutine dbg_base()
      &               iitlec(n) , iitecr(n) , nitecr(n) , kmarq(n)
 !
     character(len=19) :: objname
-    integer :: dbsize, recsize, recint, recavail
+    integer :: dbsize, recsize, recint
     integer :: nbrec, objint, nbobj, ic, i, total
-    integer :: jadr
+    integer :: jadr, vali(8)
 !
     ic = index(classe, 'V')
     ASSERT(ic .ne. 0)
-    ! dbsize = mfic * 1024
-    ! recint = 100 * 1024
-    ! recsize = 8 * recint
-    ! nbrec = dbsize / recsize
-    ! objint = recint / 16
-    ! nbobj = 16 + 8
     recint = longbl(ic) * 1024
     recsize = 8 * recint
     nbrec = nblmax(ic)
     dbsize = recsize * nbrec
     objint = recint / 4
     nbobj = 4 * nbrec + 8
-    print *, "--- Check for the extensions of out of core database ---"
-    print *, "Database size         :", dbsize, "kB"
-    print *, "Record size           :", recsize, "kB"
-    print *, "Record size           :", recint, "integers"
-    print *, "Number of records     :", nbrec
-    print *, "Object size           :", objint, "integers"
-    print *, "Max. number of objects:", nbobj
-    print *, "Allocated size        :", nbobj * objint * 8, "kB"
-    print *, "Allocated size        :", nbobj * objint, "integers"
+    vali(1) = dbsize
+    vali(2) = recsize
+    vali(3) = recint
+    vali(4) = nbrec
+    vali(5) = objint
+    vali(6) = nbobj
+    vali(7) = nbobj * objint * 8
+    vali(8) = nbobj * objint
+    call utmess('I', 'JEVEUX1_97', vali=vali, ni=8)
 
     inquire(file='vola.1', exist=exist)
     ASSERT(exist)
@@ -94,14 +89,14 @@ subroutine dbg_base()
         call wkvect(objname, 'V V I', objint, jadr)
         call jelibe(objname)
         inquire(file='vola.2', exist=exist)
-        print *, "Object created", objname, " exist ? ", exist, total
+        call utmess('I', 'JEVEUX1_98', sk=objname, si=total)
     end do
 
 !   TEST_RESU
     inquire(file='vola.2', exist=exist)
     if (exist) then
-        write(6,*) "  OK  "
+        call utmess('I', 'JEVEUX1_99', sk='OK')
     else
-        write(6,*) " NOOK "
+        call utmess('I', 'JEVEUX1_99', sk='NOOK')
     endif
 end subroutine
