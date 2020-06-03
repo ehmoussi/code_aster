@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -173,7 +173,7 @@ Conseil :
     25: _("""
   Attention : %(i1)d mailles de type %(k1)s n'ont pas été projetées car la famille
   de points de Gauss sur le champ en question a une maille support 1D.
-  
+
   Il s'agit certainement d'éléments de joint 2D.
 """),
 
@@ -277,6 +277,17 @@ Erreur utilisateur :
   Le champ à traiter en comporte %(i2)d.
 """),
 
+
+    52: _("""
+Vous utilisez la commande CREA_TABLE sur un champ incomplet issu d'éléments à sous-points :
+    poutres multi-fibres, plaques multi-couches, tuyaux , ...
+Ce champ a peut-être été crée par POST_CHAMP/EXTR_**
+
+Le champ extrait a  %(i1)d sous-point(s).
+L'élément support a %(i2)d sous-point(s).
+
+Les coordonnées qui sont écrites dans la table ne correspondront pas au lieu d'extraction.
+"""),
 
 
     57: _("""
@@ -386,7 +397,7 @@ Erreur utilisateur :
   Mais on ne peut rien calculer, faute de données.
 
 Risques et conseils :
-  Il faut fournir en argument du mot clé CHARGE au moins une charge 
+  Il faut fournir en argument du mot clé CHARGE au moins une charge
   mécanique qui utilise le mot clé IMPE_FACE.
 """),
 
@@ -396,7 +407,7 @@ Erreur utilisateur :
   Mais on ne peut rien calculer, faute de données.
 
 Risques et conseils :
-  Il faut fournir en argument du mot clé CHARGE au moins une charge 
+  Il faut fournir en argument du mot clé CHARGE au moins une charge
   mécanique qui utilise le mot clé ONDE_FLUI.
 """),
 
