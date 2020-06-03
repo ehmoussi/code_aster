@@ -19,16 +19,6 @@
 
 # person_in_charge: mathieu.courtois@edf.fr
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(ENVIMA='TEST', SDVERI='OUI'))
-
-"""
-Ce fichier de commande permet d'imprimer les valeurs associées aux constantes
-numériques dépendant de la plate-forme (32 ou 64 bits). Notamment les longueurs
-et les valeurs extrémales des nombres entiers et des nombres flottants,
-quelques constantes mathématiques particulières, et certains paramètres liés à
-l'utilisation de la mémoire et des fichiers.
-Les valeurs sont accessibles à l'aide des fonctions ENVIMA décrites dans le
-document d6.01.01.
-"""
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(VERI_BASE='OUI', JEVEUX='OUI'))
 
 FIN()

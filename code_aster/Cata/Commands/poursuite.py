@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,6 +71,8 @@ POURSUITE=MACRO(nom="POURSUITE",
                                  statut='f',typ='TXM',into=('OUI','NON'),defaut='NON'),
            ENVIMA          =SIMP(fr=tr("imprime les valeurs définies dans ENVIMA"),
                                  statut='f',typ='TXM',into=('TEST',)),
+           VERI_BASE       =SIMP(fr=tr("exécute un test de vérification sur les bases"),
+                                 statut='f',typ='TXM',into=('OUI','NON')),
            HIST_ETAPE = SIMP(fr=tr("permet de conserver toutes les étapes du jeu de commandes"),
                              statut='f', typ='TXM', into=('OUI', 'NON'), defaut='NON'),
          ),

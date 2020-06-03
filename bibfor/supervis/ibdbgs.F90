@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,6 +89,13 @@ subroutine ibdbgs()
     if (repons .eq. 'OUI') then
         ndbg = 1
         call utmess('I', 'SUPERVIS_12')
+        idebug = 1
+    endif
+    repons = ' '
+    call getvtx('DEBUG', 'VERI_BASE', iocc=1, scal=repons, nbret=l)
+    if (l.eq. 1 .and. repons .eq. 'OUI') then
+        ! force debug_jeveux
+        ndbg = 1
         idebug = 1
     endif
     call jdcset('jeveux', idebug)
