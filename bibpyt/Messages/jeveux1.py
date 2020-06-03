@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-
-# person_in_charge: josselin.delmas at edf.fr
 
 cata_msg = {
 
@@ -471,6 +469,31 @@ Contactez le support technique.
     78 : _("""
  La mémoire demandée au lancement est surestimée, elle est de %(r2).2f Mo.
  Le pic mémoire utilisée est de %(r1).2f Mo.
+
+"""),
+
+    97 : _("""
+
+Vérification de l'extension automatique des bases JEVEUX:
+
+    Taille de la base          : %(i1)12d octets
+    Taille d'un enregistrement : %(i2)12d octets
+    Taille d'un enregistrement : %(i3)12d entiers
+    Nombre d'enregistrements   : %(i4)12d
+    Taille d'un objet alloué   : %(i5)12d entiers
+    Nombre maximal d'objets    : %(i6)12d
+    Taille allouée             : %(i7)12d octets
+    Taille allouée             : %(i8)12d entiers
+
+"""),
+
+    98 : _("""Objet créé '%(k1)s', taille cumulée %(i1)12d"""),
+
+    99 : _("""
+
+Résultat de VERI_BASE : existence de 'vola.2' :
+
+    %(k1)s   test VERI_BASE
 
 """),
 }
