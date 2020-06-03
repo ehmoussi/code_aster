@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,10 +35,10 @@ interface
         real(kind=8) :: epsm(6)
         real(kind=8) :: deps(6)
         real(kind=8) :: sigm(6)
-        real(kind=8) :: vim(7)
+        real(kind=8) :: vim(8)
         character(len=16) :: option
         real(kind=8) :: sigp(6)
-        real(kind=8) :: vip(7)
+        real(kind=8) :: vip(8)
         real(kind=8) :: dsidep(6, 6)
         integer :: iret
     end subroutine nmcine

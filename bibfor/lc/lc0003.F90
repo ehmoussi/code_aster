@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,87 +16,135 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lc0003(fami, kpg, ksp, ndim, imate,&
-                  compor, crit, instam, instap, epsm,&
-                  deps, sigm, vim, option, angmas,&
-                  sigp, vip, typmod, icomp,&
-                  nvi, dsidep, codret)
+subroutine lc0003(fami,   kpg,  ksp,    ndim,   imate,  &
+                  compor, crit, instam, instap, epsm,   &
+                  deps,   sigm, vim,    option, angmas, &
+                  sigp,   vip,  typmod, icomp,  nvi,    &
+                  dsidep, codret)
+!
+! --------------------------------------------------------------------------------------------------
+!
+!                       LOI DE COMPORTEMENT ÉLASTIQUE A ÉCROUISSAGE
+!
+!                               CINÉMATIQUE LINÉAIRE
+!                               CINÉMATIQUE LINÉAIRE + ISOTROPE
+!
+!      RELATIONS :  'VMIS_CINE_LINE'    en  3D  C_PLAN
+!                   'VMIS_CINE_GC'      en      C_PLAN
+!                   'VMIS_ECMI_LINE'    en  3D  C_PLAN
+!                   'VMIS_ECMI_TRAC'    en  3D  C_PLAN
+!
+! --------------------------------------------------------------------------------------------------
+!
+! IN
+!   fami        famille de point de gauss (rigi,mass,...)
+!   kpg, ksp    numéro du (sous)point de gauss
+!   ndim        dimension de l espace (3d=3,2d=2,1d=1)
+!   typmod      type de modélisation
+!   imate       adresse du matériau code
+!   compor      comportement de l'élément
+!                   compor(1) = relation de comportement
+!                   compor(2) = nb de variables internes
+!                   compor(3) = type de déformation
+!   crit        critères  locaux
+!                   crit(1) = nombre d'itérations maxi a convergence (iter_inte_maxi == itecrel)
+!                   crit(2) = type de jacobien a t+dt (type_matr_comp == macomp)
+!                                   0 = en vitesse     > symétrique
+!                                   1 = en incrémental > non-symétrique
+!                   crit(3) = valeur de la tolérance de convergence (resi_inte_rela == rescrel)
+!                   crit(5) = nombre d'incréments pour le redécoupage local du pas de temps
+!                             (iter_inte_pas == itedec)
+!                                   0 = pas de redécoupage
+!                                   n = nombre de paliers
+!   angmas      les trois angles du mot-clef massif venant de AFFE_CARA_ELEM
+!                   un réel qui vaut 0 si nautiques ou 2 si Euler
+!                   les angles soit nautiques soit Euler
 
-    implicit none
+!   icomp       compteur de redécoupage produit par redece
+!   nvi         nombre de variables internes du point d'intégration
+!   instam      instant t-
+!   instap      instant t+
+!   deps        incrément de déformation totale
+!   sigm        contrainte  à t-
+!   epsm        déformation à t-
+!   vim         variables internes a t-
+!                   attention "vim" variables internes a t- modifiées si redécoupage local
+!   option      option de calcul
+!                   'rigi_meca_tang'> dsidep(t)
+!                   'full_meca'     > dsidep(t+dt) , sig(t+dt)
+!                   'raph_meca'     > sig(t+dt)
+!
+! OUT
+!   sigp        contrainte a t+
+!   vip         variables internes a t+
+!   dsidep      matrice de comportement tangent
+!   codret      code retour
+!                   0   Tout va bien
+!                   1   Redécoupage global ?
+!                   2   Redécoupage local  ?
+! --------------------------------------------------------------------------------------------------
+!
+implicit none
+!
+#include "asterf_types.h"
 #include "asterfort/nmcine.h"
+#include "asterfort/nmcine_line_gc.h"
 #include "asterfort/nmecmi.h"
-    integer :: kpg, ksp, ndim, imate
-    character(len=*) :: fami
-    character(len=16) :: compor(*), option
-    character(len=8) :: typmod(*)
-    integer :: icomp, nvi
-    integer :: codret
-    real(kind=8) :: angmas(*)
-    real(kind=8) :: crit(*), instam, instap
-    real(kind=8) :: epsm(6), deps(6)
-    real(kind=8) :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
+#include "asterfort/utmess.h"
 !
+    integer             :: kpg, ksp, ndim, imate
+    integer             :: icomp, nvi
+    integer             :: codret
+    character(len=8)    :: typmod(*)
+    character(len=16)   :: compor(*), option
+    character(len=*)    :: fami
 !
-! aslint: disable=W1504,W0104
+    real(kind=8)        :: angmas(*)
+    real(kind=8)        :: crit(*), instam, instap
+    real(kind=8)        :: epsm(6), deps(6)
+    real(kind=8)        :: sigm(6), vim(*), sigp(6), vip(*), dsidep(6, 6)
 !
-! ======================================================================
-!.......................................................................
+! --------------------------------------------------------------------------------------------------
 !
-!     BUT: LOI DE COMPORTEMENT ELASTIQUE A ECROUISSAGE CINEMATIQUE
-!          LINEAIRE (PRAGER) ET/OU ECROUISSAGE ISOTROPE
+    character(len=32)   :: messk(3)
+    logical             :: iscplane
 !
-!      RELATIONS : 'VMIS_CINE_LINE', 'VMIS_ECMI_LINE' 'VMIS_ECMI_TRAC'
+! --------------------------------------------------------------------------------------------------
 !
-!       IN      FAMI    FAMILLE DE POINT DE GAUSS (RIGI,MASS,...)
-!       IN      KPG,KSP NUMERO DU (SOUS)POINT DE GAUSS
-!       IN      NDIM    DIMENSION DE L ESPACE (3D=3,2D=2,1D=1)
-!       IN      TYPMOD  : TYPE DE MODELISATION
-!               IMATE    ADRESSE DU MATERIAU CODE
-!               COMPOR    COMPORTEMENT DE L ELEMENT
-!                     COMPOR(1) = RELATION DE COMPORTEMENT (CHABOCHE...)
-!                     COMPOR(2) = NB DE VARIABLES INTERNES
-!                     COMPOR(3) = TYPE DE DEFORMATION (PETIT,JAUMANN...)
-!               CRIT    CRITERES  LOCAUX
-!                       CRIT(1) = NOMBRE D ITERATIONS MAXI A CONVERGENCE
-!                                 (ITER_INTE_MAXI == ITECREL)
-!                       CRIT(2) = TYPE DE JACOBIEN A T+DT
-!                                 (TYPE_MATR_COMP == MACOMP)
-!                                 0 = EN VITESSE     > SYMETRIQUE
-!                                 1 = EN INCREMENTAL > NON-SYMETRIQUE
-!                       CRIT(3) = VALEUR DE LA TOLERANCE DE CONVERGENCE
-!                                 (RESI_INTE_RELA == RESCREL)
-!                       CRIT(5) = NOMBRE D'INCREMENTS POUR LE
-!                                 REDECOUPAGE LOCAL DU PAS DE TEMPS
-!                                 (ITER_INTE_PAS == ITEDEC)
-!                                 0 = PAS DE REDECOUPAGE
-!                                 N = NOMBRE DE PALIERS
-!               INSTAM   INSTANT T
-!               INSTAP   INSTANT T+DT
-!               DEPS   INCREMENT DE DEFORMATION TOTALE
-!               SIGM    CONTRAINTE A T
-!               VIM    VARIABLES INTERNES A T    + INDICATEUR ETAT T
-!    ATTENTION  VIM    VARIABLES INTERNES A T MODIFIEES SI REDECOUPAGE
-!               OPTION     OPTION DE CALCUL A FAIRE
-!                             'RIGI_MECA_TANG'> DSIDEP(T)
-!                             'FULL_MECA'     > DSIDEP(T+DT) , SIG(T+DT)
-!                             'RAPH_MECA'     > SIG(T+DT)
-!       OUT     SIGP    CONTRAINTE A T+DT
-!               VIP    VARIABLES INTERNES A T+DT + INDICATEUR ETAT T+DT
-!               DSIDEP    MATRICE DE COMPORTEMENT TANGENT A T+DT OU T
+    if (compor(1)(1:14) .eq. 'VMIS_CINE_LINE') then
 !
+        iscplane = typmod(1)(1:6).eq.'C_PLAN'
+        if ( iscplane) then
+            call nmcine_line_gc(fami,   kpg,    ksp,    ndim, typmod, &
+                                imate,  compor, crit,   epsm, deps,   &
+                                sigm,   vim,    option, sigp, vip,    &
+                                dsidep, codret)
+        else
+            call nmcine(fami,   kpg,    ksp,    ndim,  imate, &
+                        compor, crit,   instam, instap, epsm, &
+                        deps,   sigm,   vim,    option, sigp, &
+                        vip,    dsidep, codret)
+        endif
 !
-    if (compor(1) .eq. 'VMIS_CINE_LINE') then
+    else if (compor(1)(1:12) .eq. 'VMIS_CINE_GC') then
 !
-        call nmcine(fami, kpg, ksp, ndim, imate,&
-                    compor, crit, instam, instap, epsm,&
-                    deps, sigm, vim, option, sigp,&
-                    vip, dsidep, codret)
+        iscplane = typmod(1)(1:6).eq.'C_PLAN'
+        if ( .not. iscplane) then
+            messk(1) = compor(1)
+            messk(2) = 'C_PLAN, 1D, GRILLE_EXCENTRE'
+            messk(3) = typmod(1)
+            call utmess('F', 'ALGORITH4_1', nk=3, valk=messk)
+        endif
+        call nmcine_line_gc(fami,   kpg,    ksp,    ndim, typmod, &
+                            imate,  compor, crit,   epsm, deps,   &
+                            sigm,   vim,    option, sigp, vip,    &
+                            dsidep, codret)
 !
     else if (compor(1)(1:9).eq.'VMIS_ECMI') then
 !
-        call nmecmi(fami, kpg, ksp, ndim, typmod,&
-                    imate, compor, crit, deps, sigm,&
-                    vim, option, sigp, vip, dsidep,&
+        call nmecmi(fami,   kpg,    ksp,  ndim, typmod, &
+                    imate,  compor, crit, deps, sigm,   &
+                    vim,    option, sigp, vip,  dsidep, &
                     codret)
 !
     endif

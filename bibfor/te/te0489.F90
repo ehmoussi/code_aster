@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ subroutine te0489(option, nomte)
     integer :: idera1, idera2
     integer :: nbcmp, imate, idecal, isig
     integer :: nno, nbsig, nnos, isigtm, isigtp, idvar1
-    integer :: idvar2, nbsig2, npg, i, k, ndim, igau, icodre(3)
+    integer :: idvar2, nbvarint, npg, i, k, ndim, igau, icodre(3)
     integer :: nbvari, jprolp, jvalep, nbvalp, ibid
     real(kind=8) :: sigma1(mxcmel), sigma2(mxcmel)
     real(kind=8) :: sigt1(mxcmel), sigt2(mxcmel)
@@ -210,12 +210,12 @@ subroutine te0489(option, nomte)
 ! ----   LES TENSEURS DE RAPPEL RESPECTIVEMENT AUX INSTANTS T
 ! ----   ET T+DT :
 !        -------
-        nbsig2 = 7
+        nbvarint = 8
 !
         do 60 igau = 1, npg
             do 50 i = 1, nbsig
-                x1(i+ (igau-1)*nbsig) = zr(idvar1+i+ (igau-1)*nbsig2- 1)
-                x2(i+ (igau-1)*nbsig) = zr(idvar2+i+ (igau-1)*nbsig2- 1)
+                x1(i+ (igau-1)*nbsig) = zr(idvar1+i+ (igau-1)*nbvarint- 1)
+                x2(i+ (igau-1)*nbsig) = zr(idvar2+i+ (igau-1)*nbvarint- 1)
 50          continue
 60      continue
 !

@@ -190,7 +190,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: cstseu(6)
 !   -- attention la taille de ecp depend du nombre de variable interne
 !   -- lors de l ajout de variable interne il faut incrementer ecr et ecrp
-    integer, parameter :: nbvarmax = 35
+    integer, parameter :: nbvarmax = 36
     real(kind=8) :: epst(6), ep, surfgp, sig(8), dsig(8), ecr(nbvarmax), ecrp(nbvarmax)
     real(kind=8) :: epsm(6), qsi, eta, ctor
     real(kind=8) :: carat3(21), jacob(5), caraq4(25)
@@ -819,7 +819,7 @@ character(len=16), intent(in) :: option, nomte
     if (lVect) then
         call utpvlg(nno, 6, pgl, vecloc, zr(ivectu))
     endif
-! 
+!
     if (lSigm) then
         zi(jcret) = codret
     endif

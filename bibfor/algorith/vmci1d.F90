@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,23 +51,27 @@ subroutine vmci1d(fami, kpg, ksp, imate, em,&
 !        VIP    : VARIABLE INTERNES PLUS
 !        DSDE   : DSIG/DEPS
 ! --------------------------------------------------------------------------------------------------
-!     VARIABLES INTERNES
-!        1  -> ICELS : CRITERE SIGMA
-!        2  -> ICELU : CRITERE EPSI
-!        3  -> IXM   : ECROUISSAGE CINEMATIQUE
-!        4  -> IPLAS : INDICATEUR PLASTIQUE
-!        5  -> IDISS : DISSIPATION PLASTIQUE
-!        6  -> IWTHE : DISSIPATION THERMODYNAMIQUE
+!     Variables internes
+!       icels : critère sigma
+!       icelu : critère epsi
+!       iepsq : déformation équivalente
+!       iplas : indicateur plastique
+!       idiss : dissipation plastique
+!       iwthe : dissipation thermodynamique
+!       i..m  : ecrouissage cinematique
 ! --------------------------------------------------------------------------------------------------
 !   index des variables internes
-    integer :: icels,  icelu,  ixm,  iplas,  idiss,  iwthe
-    parameter (icels=1,icelu=2,ixm=3,iplas=4,idiss=5,iwthe=6)
+!           'CRITSIG', 'CRITEPS', 'EPSPEQ', 'INDIPLAS', 'DISSIP', 'DISSTHER',
+!           'XCINXX',  'XCINYY',  'XCINZZ', 'XCINXY', 'XCINXZ', 'XCINYZ',
+    integer, parameter :: icels=1, icelu=2, iepsq=3, iplas=4, idiss=5, iwthe=6
+    integer, parameter :: ixxm=7
+    integer, parameter :: nbvari = 12
 ! --------------------------------------------------------------------------------------------------
-    real(kind=8) :: sigy, sieleq, sige, dp, etm, etp, xp, xm, hm, hp, sgels, epelu
-    character(len=16) :: valkm(3)
-    integer ::          icodre(4)
-    real(kind=8) ::     valres(4)
-    character(len=16) :: nomecl(4)
+    real(kind=8)        :: sigy, sieleq, sige, dp, etm, etp, xp, xm, hm, hp, sgels, epelu
+    character(len=16)   :: valkm(3)
+    integer             :: icodre(4)
+    real(kind=8)        :: valres(4)
+    character(len=16)   :: nomecl(4)
 !
     data nomecl/'D_SIGM_EPSI','SY','SIGM_LIM','EPSI_LIM'/
 ! --------------------------------------------------------------------------------------------------
@@ -86,27 +90,30 @@ subroutine vmci1d(fami, kpg, ksp, imate, em,&
         valkm(3)=nomecl(4)
         call utmess('F', 'COMPOR1_76', nk=3, valk=valkm)
     endif
-    etp = valres(1)
-    sigy = valres(2)
+    etp   = valres(1)
+    sigy  = valres(2)
     sgels = valres(3)
     epelu = valres(4)
 !
     hp = ep*etp/(ep-etp)
-    xm = vim(ixm)
+    xm = vim(ixxm)
 !
     sige = ep*(sigm/em+deps) - hp*xm/hm
     sieleq = abs(sige)
+!
 ! --------------------------------------------------------------------------------------------------
 !   calcul : EPSP, P , SIG
     if ((option(1:9).eq.'FULL_MECA') .or. (option.eq.'RAPH_MECA')) then
+        vip(1:nbvari) = vim(1:nbvari)
         if (sieleq .le. sigy) then
             vip(iplas) = 0.d0
             dsde = ep
             dp = 0.d0
             xp = hp*xm/hm
             sigp = ep*(sigm/em+deps)
-            vip(ixm) = xp
+            vip(ixxm) = xp
             vip(icelu) = (sigm/em+deps)/epelu
+            vip(iepsq) = (sigm/em+deps)
         else
             vip(iplas) = 1.d0
             dp = (sieleq-sigy)/(ep+hp)
@@ -117,8 +124,9 @@ subroutine vmci1d(fami, kpg, ksp, imate, em,&
             endif
             xp = hp*xm/hm + hp*dp*sige/sieleq
             sigp = xp + sigy*sige/sieleq
-            vip(ixm) = xp
+            vip(ixxm) = xp
             vip(icelu) = ((sigp-sigy)/etp + sigy/ep)/epelu
+            vip(iepsq) = ((sigp-sigy)/etp + sigy/ep)
         endif
         vip(icels) = sigp/sgels
 !       dissipation thermodynamique

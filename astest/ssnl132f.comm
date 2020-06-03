@@ -1,0 +1,170 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+#
+import math
+#
+# Géométrie
+RayonExte = 0.300 ; Epaisseur = 0.006
+# Matériau
+Young    = 200000.0E+06
+Sigmay   =    240.0E+06
+Rho      =   7800.0
+TanPlast =   1000.0E+06
+relation = 'VMIS_CINE_LINE'
+#
+# Inertie
+Ipoutre = math.pi*( math.pow(RayonExte,4) - math.pow(RayonExte - Epaisseur,4) )/4.0
+L2 = 1.5 ; L3 = 2.0
+Pelas = Sigmay*Ipoutre/RayonExte*2.0/(L3*L2)
+# Masse/m du tronçon milieu
+Masse = math.pi*( math.pow(RayonExte,2) - math.pow(RayonExte - Epaisseur,2) )*Rho
+# Coeff multiplicateur du chargement pour atteindre le seuil élastique
+CoeffChargeElas = Pelas/Masse
+
+MAIL = LIRE_MAILLAGE(UNITE=20, FORMAT='MED',)
+
+MODELE = AFFE_MODELE(
+    MAILLAGE=MAIL,
+    AFFE=(
+        _F(GROUP_MA=('TOUT','SAppu1','SAppu2',),
+           PHENOMENE='MECANIQUE', MODELISATION='DKT',),
+        _F(GROUP_MA=('P0DAppu1','P0DAppu2',),
+           PHENOMENE='MECANIQUE', MODELISATION='DIS_TR',),
+    ),
+)
+
+RaidApp = 1000.0
+Null10 = [0.0]*10
+CAREL = AFFE_CARA_ELEM(
+    MODELE=MODELE,
+    COQUE=(
+        _F(GROUP_MA=('TOUT','SAppu1','SAppu2',),
+           EPAIS=Epaisseur, COQUE_NCOU=3, VECTEUR=(1.0,0.0,0.0),),
+    ),
+    DISCRET=(
+        _F(GROUP_MA=('P0DAppu1','P0DAppu2',),
+           CARA='K_TR_D_N', VALE=(RaidApp,RaidApp,RaidApp,0.0,0.0,0.0), ),
+        _F(GROUP_MA=('P0DAppu1','P0DAppu2',),
+           CARA='M_TR_D_N', VALE=Null10, ),
+    ),
+    ORIENTATION=_F(GROUP_MA=('P0DAppu1','P0DAppu2',),
+                   CARA='VECT_X_Y',
+                   VALE=(1.0,0.0,0.0, 1.0,0.0,0.0,),
+    ),
+)
+
+MAT0 = DEFI_MATERIAU(
+    ELAS=_F(E=Young, NU=0.3, RHO=0.0,),
+    ECRO_LINE=_F(SY=Sigmay, D_SIGM_EPSI=TanPlast,)
+)
+MAT1 = DEFI_MATERIAU(
+    ELAS=_F(E=Young, NU=0.3, RHO=Rho,),
+    ECRO_LINE=_F(SY=Sigmay, D_SIGM_EPSI=TanPlast,)
+)
+
+CHMAT = AFFE_MATERIAU(
+    MAILLAGE=MAIL,
+    AFFE=(
+        _F(MATER=MAT0, GROUP_MA=('P0DAppu1','P0DAppu2',), ),
+        _F(MATER=MAT0, GROUP_MA=('TFree1','TFree2','TLoad1','TLoad2',), ),
+        _F(MATER=MAT1, GROUP_MA=('TTronM',), ),
+    ),
+)
+
+BLOCAGE = AFFE_CHAR_MECA(
+    MODELE=MODELE,
+    PESANTEUR=_F(GROUP_MA='TOUT', GRAVITE=1.0, DIRECTION=(0.0,0.0,-1.0),),
+    LIAISON_ELEM=(
+        _F(GROUP_MA_1='SAppu1', GROUP_NO_2='PAppu1',
+           OPTION='COQ_POU', CARA_ELEM=CAREL, AXE_POUTRE=(1.0,0.0,0.0),),
+        _F(GROUP_MA_1='SAppu2', GROUP_NO_2='PAppu2',
+           OPTION='COQ_POU', CARA_ELEM=CAREL, AXE_POUTRE=(1.0,0.0,0.0),),
+    ),
+    DDL_IMPO=(
+        _F(GROUP_NO=('PAppu1',), DX=0.0, DY=0.0, DZ=0.0, DRX=0.0, ),
+        _F(GROUP_NO=('PAppu2',), DY=0.0, DZ=0.0, DRX=0.0, ),
+    ),
+)
+
+linst = DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE=(
+        _F(JUSQU_A= 0.2, NOMBRE=  2,),
+        _F(JUSQU_A= 1.0, NOMBRE=  4,),
+        _F(JUSQU_A= 2.0, NOMBRE=  5,),
+        _F(JUSQU_A= 2.5, NOMBRE=  5,),
+    ),
+)
+L_INIT = DEFI_LIST_INST(
+    METHODE='MANUEL',
+    DEFI_LIST=_F(LIST_INST = linst,),
+    ECHEC=_F(ACTION        ='DECOUPE',
+             SUBD_METHODE  ='MANUEL',
+             SUBD_PAS      = 4,
+             SUBD_NIVEAU   = 10,
+             SUBD_PAS_MINI = 1.0e-04,),
+)
+
+FOBLOC = DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE=(  0.00,  0.00,
+            0.20,  CoeffChargeElas,
+            1.00,  CoeffChargeElas*1.20,
+            2.00, -CoeffChargeElas*1.10,
+            2.50, -CoeffChargeElas*1.20,
+        ),
+    PROL_GAUCHE='EXCLU',
+    PROL_DROITE='CONSTANT',
+)
+tempsfin = 2.5
+instpost = ( 2.00 , 2.50, )
+
+RESULT = STAT_NON_LINE(
+    MODELE=MODELE,
+    CHAM_MATER=CHMAT,
+    CARA_ELEM=CAREL,
+    EXCIT=(
+        _F(CHARGE=BLOCAGE, FONC_MULT=FOBLOC,),
+    ),
+    COMPORTEMENT=(
+        _F(GROUP_MA='TOUT', RELATION=relation,),
+        _F(GROUP_MA=('P0DAppu1','P0DAppu2',), RELATION='ELAS', ),
+    ),
+    INCREMENT=_F(LIST_INST=L_INIT,),
+    NEWTON=_F(REAC_INCR=1, MATRICE='TANGENTE', REAC_ITER=1,),
+    SOLVEUR=_F(METHODE='MUMPS',),
+)
+
+lefic = './REPE_OUT/sief_elga.table'
+GrpMaille = ('TTronM',)
+unite = DEFI_FICHIER(FICHIER = lefic, ACTION='ASSOCIER', TYPE='ASCII', ACCES='NEW')
+TSIEF = CREA_TABLE(
+    RESU=_F(RESULTAT=RESULT, NOM_CHAM=('SIEF_ELGA',), INST=instpost,
+            GROUP_MA=GrpMaille, TOUT_CMP='OUI',),
+)
+IMPR_TABLE(UNITE=unite,TABLE=TSIEF,
+    NOM_PARA=('INST','COOR_X','COOR_Y','COOR_Z','SIXX','SIYY','SIXY','SIXZ',)
+)
+DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
+
+TEST_FICHIER(FICHIER=lefic, NB_VALE=645121, VALE_CALC=463695.0088,)
+
+FIN()

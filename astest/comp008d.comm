@@ -43,7 +43,7 @@ UN =DEFI_CONSTANTE(VALE=1.0);
 
 compor='VMIS_CINE_LINE'
 
-NB_VARI=7
+NB_VARI=8
 
 NVmodif1=0
 NVmodif2=5
