@@ -82,12 +82,6 @@ use petsc_data_module
     nomat_courant=nomats(kptsc)
     nonu_courant=nonus(kptsc)
 !
-    call dismoi('MATR_DISTRIBUEE', nomat_courant, 'MATR_ASSE', repk=matd)
-    if ( matd == 'OUI' ) then 
-       call utmess( 'F', 'PETSC_17')
-    endif
-
-
 !   1. Il n'y a peut-etre rien a faire => goto 999 :
 !   ------------------------------------------------
     if (action.ne.'PRERES' .and. action.ne.'RESOUD') goto 999
@@ -96,7 +90,10 @@ use petsc_data_module
     call jeveuo(nosolv//'.SLVK', 'L', vk24=slvk)
     precon = slvk(2)
     if (precon.ne.'LDLT_INC') goto 999
-
+    call dismoi('MATR_DISTRIBUEE', nomat_courant, 'MATR_ASSE', repk=matd)
+    if ( matd == 'OUI' ) then 
+       call utmess( 'F', 'PETSC_17')
+    endif
 
 !   2. Calcul de la nouvelle matrice, du nouveau nume_ddl et de kprem :
 !   -------------------------------------------------------------------
