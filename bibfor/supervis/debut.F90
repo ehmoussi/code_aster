@@ -26,6 +26,7 @@ subroutine debut()
 !
 #include "asterc/getres.h"
 #include "asterc/prhead.h"
+#include "asterfort/dbg_base.h"
 #include "asterfort/foint0.h"
 #include "asterfort/fozero.h"
 #include "asterfort/gcncon.h"
@@ -101,5 +102,14 @@ subroutine debut()
 !
 ! --- LECTURE DU MOT CLE FACTEUR  CATALOGUE ---
     if (fichdf .eq. '  ') call ibcata(ier)
+!
+!
+! --- DEBUG / VERI_BASE : lu ici et non dans ibdbgs car après ibbase
+    repons = ' '
+    call getvtx('DEBUG', 'VERI_BASE', iocc=1, scal=repons, nbret=n)
+    if (n .eq. 1 .and. repons .eq. 'OUI') then
+        ! message et debug_jeveux forcé dans ibdbgs
+        call dbg_base()
+    endif
 !
 end subroutine
