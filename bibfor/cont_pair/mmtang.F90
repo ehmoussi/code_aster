@@ -57,9 +57,6 @@ subroutine mmtang(ndim, nno, coorma, dff, tau1,&
         ASSERT(.false.)
     endif
 !
-    tau1(:) = 0.d0
-    tau2(:) = 0.d0
-!
 ! --- CALCUL DES TANGENTES
 !
     do idim = 1, 3

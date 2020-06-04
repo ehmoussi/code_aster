@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,14 @@ Conseils :
 3. Vérifier TOLE_PROJ_EXT (prolongement fictif de la maille maître).
 4. Vérifier les déplacements induits par votre modélisation.
 5. Si l'alarme persiste, changez d'algorithme avec ALGO_RESO_GEOM='POINT_FIXE' dans DEFI_CONTACT
+"""),
+
+    12 : _("""
+Il y a une incompatibilité de dimension entre le maillage (dimension=%(i1)i) et la maille
+(dimension=%(i2)i) sur laquelle est projeté le point de contact.
+
+Ceci peut arriver avec des éléments de structures. Dans ce cas, le maillage doit être
+dans le plan x-O-y.
 """),
 
     13 : _("""
