@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -129,7 +129,7 @@ subroutine mmnewt(type_elem, nb_node  , nb_dim, elem_coor, pt_coor,&
 !
 ! - Position vector of current point
 !
-    do idim = 1, nb_dim
+    do idim = 1, 3
         do ino = 1, nb_node
             vect_posi(idim) = elem_coor(3*(ino-1)+idim)*ff(ino) + vect_posi(idim)
         end do
@@ -142,7 +142,7 @@ subroutine mmnewt(type_elem, nb_node  , nb_dim, elem_coor, pt_coor,&
 !
 ! - Quantity to minimize
 !
-    do idim = 1, nb_dim
+    do idim = 1, 3
         vect_posi(idim) = pt_coor(idim) - vect_posi(idim)
     end do
     dist = sqrt(vect_posi(1)*vect_posi(1)+vect_posi(2)*vect_posi(2)+vect_posi(3)*vect_posi(3))
@@ -170,7 +170,7 @@ subroutine mmnewt(type_elem, nb_node  , nb_dim, elem_coor, pt_coor,&
 !
 ! - Tangent matrix (Newton)
 !
-    do idim = 1, nb_dim
+    do idim = 1, 3
         matrix(1,1) = -tang_1(idim)*tang_1(idim) + par11(idim)*vect_posi(idim) + matrix(1,1)
         if (nb_dim .eq. 3) then
             matrix(1,2) = -tang_2(idim)*tang_1(idim) + par12(idim)*vect_posi(idim) + matrix(1,2)
@@ -201,7 +201,7 @@ subroutine mmnewt(type_elem, nb_node  , nb_dim, elem_coor, pt_coor,&
         dksi1 = (matrix(2,2)* (-residu(1))-matrix(1,2)* (-residu(2)))/ det
         dksi2 = (matrix(1,1)* (-residu(2))-matrix(2,1)* (-residu(1)))/ det
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Line search
