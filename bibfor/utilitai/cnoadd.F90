@@ -47,7 +47,7 @@ subroutine cnoadd(chno, chnop)
     mpi_int :: mrank, msize
     character(len=8)  :: k8bid
     character(len=14) :: numddl
-    character(len=16) :: typsd='****'
+    character(len=16) :: typsd
     character(len=19) :: cn19, pfchno, nommai, cn19p
 !----------------------------------------------------------------
     call jemarq()
@@ -64,6 +64,7 @@ subroutine cnoadd(chno, chnop)
     ASSERT(pfchno(15:19).eq.'.NUME')
     numddl=pfchno(1:14)
     call dismoi('NOM_MAILLA', numddl, 'NUME_DDL', repk=nommai)
+    typsd = ' '
     call gettco(nommai(1:8), typsd)
     if( typsd .eq. 'MAILLAGE_P' ) then
 
