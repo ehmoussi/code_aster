@@ -1,0 +1,16 @@
+P time_limit 60
+P memory_limit 256
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist verification sequential
+
+# L'argument max_base est ajouté pour ne pas à devoir écrire 48 Go !
+# Il n'est pas recommandé d'utiliser cet argument dans les études, la valeur
+# positionnée par défaut dans le code étant plus optimale.
+# Modifier cet argument peut entrainer un surcoût dans une étude.
+
+# aslint: disable=E2003
+A args --max_base=100
+
+F comm zzzz103b.comm D 1
