@@ -27,6 +27,7 @@ subroutine ibdbgs()
 !     ----- DEBUT COMMON DE DEBUG JEVEUX
 #include "jeveux.h"
 #include "asterc/getfac.h"
+#include "asterc/gtopti.h"
 #include "asterc/jdcget.h"
 #include "asterc/jdcset.h"
 #include "asterfort/assert.h"
@@ -49,7 +50,7 @@ subroutine ibdbgs()
 !
 ! ----------------------------------------------------------------------
     character(len=3) :: repons
-    integer :: l, i1
+    integer :: l, i1, iret
 !
 !     --- OPTIONS PAR DEFAUT ---
 !-----------------------------------------------------------------------
@@ -58,6 +59,9 @@ subroutine ibdbgs()
     call jemarq()
     tbloc = 800.d0
 !
+!     -- DEBUG / JEVEUX :
+    call gtopti('dbgjeveux', idebug, iret)
+
 !     -- DEBUG / ENVIMA :
 !     -----------------------------------------------------
     repons = ' '
