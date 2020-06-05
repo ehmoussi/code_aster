@@ -57,8 +57,7 @@ La rotation de réseau n'est pas compatible avec RUNGE_KUTTA. Utiliser l'intégr
 
     12 : _("""
    On ne peut pas utiliser les variables de commandes intrinsèques dans SIMU_POINT_MAT en mode POINT.
-   Elles seront ignorées dans le calcul. 
-   Si votre loi de comportement en utilise (par exemple ENDO_PORO_BETON, BETON_DOUBLE_DP, MONOCRISTAL ou META_LEMA_ANI), vous aurez des résultats faux ou le calcul n'aboutira pas.
+   Votre loi de comportement en utilise. Par exemple, la taille de l'élément. Le calcul est donc impossible. Il faut demander une évolution.
 """),
 
     13 : _("""
@@ -202,6 +201,9 @@ Risques & conseils :
   Or vous avez renseigné la liste suivante :
   %(k3)s
 """),
+
+    39 : _("""SIMU_POINT_MAT utilise une loi de comportement avec le gradient de vélocité comme paramètre. Ce paramètre a été initialisé à zéro car il n'est pas calculable en l'état dans la commande.
+Assurez-vous que cette valeur par défaut correspond bien au cas que vous voulez traiter."""),
 
     40: _("""
   CALC_ESSAI_GEOMECA : %(k1)s numéro %(k2)s.
