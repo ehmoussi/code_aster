@@ -54,6 +54,10 @@ def build(self):
 def pre_build_catalo(self):
     catalo = self.path
     deps = catalo.ant_glob('**/*.py')
+    asterlib = [task.outputs
+                for task in self.bld.get_tgen_by_name('asterlib').tasks
+                if task.__class__.__name__ == "cxxshlib"]
+    deps.extend(asterlib[0])
     catalo.get_bld().mkdir()
     ojb = catalo.get_bld().make_node('cata_ele.ojb')
     self.create_task('printcata', src=[catalo] + deps, tgt=ojb)
