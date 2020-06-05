@@ -135,6 +135,8 @@ implicit none
         type(Behaviour_External), pointer   :: v_exte(:)
 ! ----- Flag for IMPLEX method
         aster_logical                       :: l_implex = ASTER_FALSE
+! ----- Flag for non-incremental cases (at least one behaviour is NOT incremental)
+        aster_logical                       :: lNonIncr = ASTER_FALSE
     end type Behaviour_PrepPara
 
 end module

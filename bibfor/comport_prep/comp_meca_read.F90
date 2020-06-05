@@ -64,7 +64,7 @@ character(len=8), intent(in), optional :: model
     character(len=16) :: kit_comp(4)
     character(len=255) :: libr_name, subr_name
     integer :: unit_comp, nb_vari_umat
-    aster_logical :: l_cristal, l_kit
+    aster_logical :: l_cristal, l_kit, lNonIncr
     aster_logical :: l_comp_external, l_ldc_sm
     integer, pointer :: v_model_elem(:) => null()
 !
@@ -73,6 +73,7 @@ character(len=8), intent(in), optional :: model
     keywordfact = 'COMPORTEMENT'
     nb_comp     = ds_compor_prep%nb_comp
     mesh        = ' '
+    lNonIncr     = ASTER_FALSE
 !
 ! - Pointer to list of elements in model
 !
@@ -155,7 +156,9 @@ character(len=8), intent(in), optional :: model
 ! ----- Select type of comportment (incremental or total)
 !
         call comp_meca_incr(rela_comp, defo_comp, type_comp, l_etat_init)
-!
+        if (type_comp .eq. 'COMP_ELAS') then
+            lNonIncr = ASTER_TRUE
+        endif
 ! ----- Select type of strain (mechanical or total) from catalog
 !
         call comp_meca_deflc(rela_comp, defo_comp, defo_ldc)
@@ -172,5 +175,9 @@ character(len=8), intent(in), optional :: model
         ds_compor_prep%v_comp(i_comp)%defo_ldc       = defo_ldc
         
     end do
+!
+! - Is at least ONE behaviour is not incremental ?
+!
+    ds_compor_prep%lNonIncr = lNonIncr
 !
 end subroutine
