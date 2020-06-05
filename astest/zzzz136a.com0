@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1869,7 +1869,7 @@ TEST_TABLE(
 
 
 TEST_TABLE(
-           VALE_CALC=   0.11390010204615,
+           VALE_CALC= 0.22320051623379,
            NOM_PARA='SIXX',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1877,7 +1877,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   -0.47553162855561,
+           VALE_CALC=  -0.4684683849920,
            NOM_PARA='SIYY',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1885,7 +1885,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   -0.20845409095706,
+           VALE_CALC=  -0.29421035993269,
            NOM_PARA='SIZZ',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1893,7 +1893,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   0.23860611445314,
+           VALE_CALC=   -0.03410028124614,
            NOM_PARA='SIXY',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1901,7 +1901,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   0.23860611445314,
+           VALE_CALC=   0.329707158110,
            NOM_PARA='SIXZ',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1909,7 +1909,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   -0.046909409130759,
+           VALE_CALC=  -0.020434789870492,
            NOM_PARA='SIYZ',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1917,7 +1917,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   0.42198680388702,
+           VALE_CALC=   0.5119163804220,
            NOM_PARA='SIXX',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1925,7 +1925,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   -0.41249652299217,
+           VALE_CALC=   -0.3481358213035,
            NOM_PARA='SIYY',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1933,7 +1933,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   -0.74626954255325,
+           VALE_CALC=   -0.6216634467928,
            NOM_PARA='SIZZ',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1941,7 +1941,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   -0.29678870265864,
+           VALE_CALC=   -0.04445520817276,
            NOM_PARA='SIXY',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1949,7 +1949,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   -0.29678870265864,
+           VALE_CALC=   -0.17122485927218,
            NOM_PARA='SIXZ',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
@@ -1957,7 +1957,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=   0.023657471575675,
+           VALE_CALC=   0.015228659645235,
            NOM_PARA='SIYZ',
            TABLE=M4L_C,
            FILTRE=_F(NOM_PARA='ABSC_CURV',
