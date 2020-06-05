@@ -599,7 +599,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     a = 1
     v = 1
     s = 1
-
+    nprec=10
     deltaE = 100
     # initialisation de l erreur sur E
     iter = 0
@@ -1568,6 +1568,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                         MATR_AMOR = __AMORTIH,
                         SOLVEUR=_F(
                                 STOP_SINGULIER='NON',
+                                NPREC=nprec,
                                 METHODE='MUMPS',),
                         EXCIT_RESU=(
                                  _F( RESULTAT = __CHAONF,
@@ -1593,6 +1594,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                        ),
                                        SOLVEUR=_F(
                                                   STOP_SINGULIER='OUI',
+                                                  NPREC=nprec,
                                                   METHODE='MUMPS',
                                                   ),
                                        )
@@ -1610,6 +1612,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                        ),
                                        SOLVEUR=_F(
                                                   STOP_SINGULIER='OUI',
+                                                  NPREC=nprec,
                                                   METHODE='MUMPS',
                                                   ),
                                        )
@@ -1629,6 +1632,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                        ),
                                        SOLVEUR=_F(
                                                   STOP_SINGULIER='OUI',
+                                                  NPREC=nprec,
                                                   METHODE='MUMPS',
                                                   ),
                                        )
@@ -1648,6 +1652,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                                        ),
                                        SOLVEUR=_F(
                                                   STOP_SINGULIER='OUI',
+                                                  NPREC=nprec,
                                                   METHODE='MUMPS',
                                                   ),
                                        )

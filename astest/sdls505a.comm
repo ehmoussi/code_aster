@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ ASSEMBLAGE ( MODELE=MOEL,
               _F( MATRICE= CO('MAS_RI_M'), OPTION= 'RIGI_MECA'),
               _F( MATRICE= CO('MAS_RI_G'), OPTION= 'RIGI_GEOM',SIEF_ELGA=SIG),),);
 
-RESULT=CALC_MODES(MATR_RIGI_GEOM=MAS_RI_G,
+RESULT=CALC_MODES(MATR_RIGI_GEOM=MAS_RI_G,SOLVEUR=_F(NPREC=10),
                   VERI_MODE=_F(SEUIL=5.E-5,),
                   OPTION='PLUS_PETITE',
                   MATR_RIGI=MAS_RI_M,
