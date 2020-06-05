@@ -296,6 +296,9 @@ class ExecutionParameter(metaclass=Singleton):
             action='store', type=float, default=DEFAULT_BASE_SIZE_LIMIT,
             help="size limit in MB for code_aster out-of-core files (glob.*, "
               "default: 48 GB)")
+        parser.add_argument('--max_base', dest='maxbase',
+            action='store', type=float, default=DEFAULT_BASE_SIZE_LIMIT,
+            help=SUPPRESS)
         parser.add_argument('--numthreads',
             action='store', type=int, default=1,
             help="maximum number of threads")
