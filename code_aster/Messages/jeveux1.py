@@ -473,4 +473,29 @@ Contactez le support technique.
  Le pic mémoire utilisée est de %(r1).2f Mo.
 
 """),
+
+    97 : _("""
+
+Vérification de l'extension automatique des bases JEVEUX:
+
+    Taille de la base          : %(i1)12d octets
+    Taille d'un enregistrement : %(i2)12d octets
+    Taille d'un enregistrement : %(i3)12d entiers
+    Nombre d'enregistrements   : %(i4)12d
+    Taille d'un objet alloué   : %(i5)12d entiers
+    Nombre maximal d'objets    : %(i6)12d
+    Taille allouée             : %(i7)12d octets
+    Taille allouée             : %(i8)12d entiers
+
+"""),
+
+    98 : _("""Objet créé '%(k1)s', taille cumulée %(i1)12d"""),
+
+    99 : _("""
+
+Résultat de VERI_BASE : existence de 'vola.2' :
+
+    %(k1)s   test VERI_BASE
+
+"""),
 }

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
-
+nprec=10
 MAIL=LIRE_MAILLAGE(FORMAT='MED', )
 
 
@@ -61,7 +61,7 @@ CHARGE_1=AFFE_CHAR_MECA(MODELE=MODELE,
                                   FX  =  -1.))
 
 
-RESU_1=MECA_STATIQUE(MODELE=MODELE,
+RESU_1=MECA_STATIQUE(MODELE=MODELE,SOLVEUR=_F(NPREC=nprec),
                    CHAM_MATER=CH_MAT,
                    CARA_ELEM=CARAC,
                    EXCIT=(
@@ -83,7 +83,7 @@ CHARGE_2=AFFE_CHAR_MECA(MODELE=MODELE,
                                   FX  =  1.))
 
 
-RESU_2=MECA_STATIQUE(MODELE=MODELE,
+RESU_2=MECA_STATIQUE(MODELE=MODELE,SOLVEUR=_F(NPREC=nprec),
                    CHAM_MATER=CH_MAT,
                    CARA_ELEM=CARAC,
                    EXCIT=(
@@ -105,15 +105,14 @@ ASSEMBLAGE ( MODELE=MODELE,
               _F( MATRICE= CO('RIGGEO1'), OPTION= 'RIGI_GEOM',SIEF_ELGA=SIGMA_1),
               _F( MATRICE= CO('RIGGEO2'), OPTION= 'RIGI_GEOM',SIEF_ELGA=SIGMA_2),),);
 
-
-MOD_1=CALC_MODES(MATR_RIGI=RIGSTA,
+MOD_1=CALC_MODES(MATR_RIGI=RIGSTA,SOLVEUR=_F(NPREC=nprec),
                  OPTION='BANDE',
                  MATR_RIGI_GEOM=RIGGEO1,
                  CALC_CHAR_CRIT=_F(CHAR_CRIT=(0.,2.),
                                    ),
                  TYPE_RESU='MODE_FLAMB',
                  )
-MOD_2=CALC_MODES(MATR_RIGI=RIGSTA,
+MOD_2=CALC_MODES(MATR_RIGI=RIGSTA,SOLVEUR=_F(NPREC=nprec),
                  OPTION='BANDE',
                  MATR_RIGI_GEOM=RIGGEO2,
                  CALC_CHAR_CRIT=_F(CHAR_CRIT=(0.,2.),
@@ -159,7 +158,7 @@ listinst=DEFI_LIST_REEL(DEBUT=0.0,
 list1=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = listinst,),
                     ECHEC=_F(EVENEMENT='INSTABILITE',ACTION='CONTINUE',),);
 
-res=STAT_NON_LINE(MODELE=MODELE,
+res=STAT_NON_LINE(MODELE=MODELE,SOLVEUR=_F(NPREC=nprec),
                   CHAM_MATER=CH_MAT,
                   CARA_ELEM=CARAC,
                   EXCIT=(_F(CHARGE=CLIM,),
@@ -195,7 +194,7 @@ TEST_TABLE(
            )
 
 
-res2=STAT_NON_LINE(MODELE=MODELE,
+res2=STAT_NON_LINE(MODELE=MODELE,SOLVEUR=_F(NPREC=nprec),
                    CHAM_MATER=CH_MAT,
                    CARA_ELEM=CARAC,
                    EXCIT=(_F(CHARGE=CLIM,),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,11 +38,6 @@ implicit none
 !
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_info.h"
-!
-#ifdef _USE_MPI
-#include "mpif.h"
-#include "asterf_mpi.h"
-#endif
 !
 character(len=8), intent(in) :: model, mesh
 character(len=19), intent(in) :: full_elem_s
@@ -88,7 +83,7 @@ type(Behaviour_PrepPara), intent(inout) :: ds_compor_prep
     l_comp_erre    = ASTER_FALSE
 !
 ! - MPI initialisation
-! 
+!
     call asmpi_comm('GET', mpicou)
     call asmpi_info(mpicou, size=nb_proc)
 !

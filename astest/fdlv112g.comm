@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -380,7 +380,10 @@ ax253i = RECU_FONCTION ( RESULTAT = DYNA, NOM_CHAM = 'ACCE',
                         INTERPOL='LIN',
                         PROL_DROITE='LINEAIRE',
                         PROL_GAUCHE='LINEAIRE',
+                        NOEUD = 'N253', NOM_CMP = 'DX', );
+                        
                         NOEUD = 'N253', NOM_CMP = 'DX', )
+                        NOEUD = 'N253', NOM_CMP = 'DX', );
 
 ax316i = RECU_FONCTION ( RESULTAT = DYNA, NOM_CHAM = 'ACCE',
                         INTERPOL='LIN',
@@ -461,7 +464,7 @@ TEST_FONCTION(VALEUR=(
                       _F(VALE_CALC=4.684936613651,
                          VALE_REFE=4.885,
                          PRECISION=0.05,
-                         TOLE_MACHINE=3.2E-06,   # En attente issue24202
+                         TOLE_MACHINE=4.E-06,   # En attente issue24202
                          REFERENCE = 'AUTRE_ASTER',
                          VALE_PARA=1.00,
                          FONCTION=ax253i,

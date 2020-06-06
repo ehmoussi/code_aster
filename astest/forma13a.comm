@@ -79,7 +79,7 @@ ASSEMBLAGE(MODELE=POMPE,
                          OPTION='RIGI_MECA',),),);
 
 
-MOD_POMP=CALC_MODES(MATR_RIGI=RIGI,
+MOD_POMP=CALC_MODES(MATR_RIGI=RIGI,SOLVEUR=_F(NPREC=10),
                     VERI_MODE=_F(SEUIL=1e-05,
                                  ),
                     OPTION='CENTRE',
@@ -248,7 +248,7 @@ SQUEL=DEFI_SQUELETTE(MODELE_GENE=POMPE_GE,
 
 # SOLVEUR/NPREC BOUGE POUR DECALAGE MODAL
 MODES_GE=CALC_MODES(MATR_RIGI=RIGI_GE,
-                    OPTION='PLUS_PETITE',SOLVEUR=_F(NPREC=9),
+                    OPTION='PLUS_PETITE',SOLVEUR=_F(NPREC=10),
                     CALC_FREQ=_F(NMAX_FREQ=10,
                                  ),
                     MATR_MASS=MASS_GE,

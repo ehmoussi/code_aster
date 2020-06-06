@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,12 +35,6 @@ implicit none
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_info.h"
 
-#ifdef _USE_MPI
-#include "mpif.h"
-#include "asterf_mpi.h"
-#endif
-!
-!
     character(len=8), intent(in) :: mesh
     character(len=19), intent(in) :: sdappa
     integer, intent(in) :: i_zone
@@ -62,7 +56,7 @@ implicit none
     character(len=8) :: knuzo
     character(len=24) :: cnives
     integer :: nb_elem_mast, nb_elem_slav, nb_node_mast
-    character(len=24) :: sdappa_mast, sdappa_slav 
+    character(len=24) :: sdappa_mast, sdappa_slav
     character(len=24) :: sdappa_slne, sdappa_mane, sdappa_civm, sdappa_lnma
     integer :: mast_indx_maxi , slav_indx_maxi, mast_indx_mini, slav_indx_mini
     integer, pointer :: v_sdappa_mast(:) => null()
@@ -91,7 +85,7 @@ implicit none
 ! - Access to objects
 !
     call jelira(sdappa_mast, 'LONMAX', nb_elem_mast)
-    call jelira(sdappa_slav, 'LONMAX', nb_elem_slav) 
+    call jelira(sdappa_slav, 'LONMAX', nb_elem_slav)
     call jeveuo(sdappa_mast, 'L', vi = v_sdappa_mast)
     call jeveuo(sdappa_slav, 'L', vi = v_sdappa_slav)
 !
@@ -112,14 +106,14 @@ implicit none
     cnives = '&&aplcpg_cnives'
 !
 ! - MPI initialisation
-! 
+!
     call asmpi_comm('GET', mpicou)
     call asmpi_info(mpicou,rank=i_proc , size=nb_proc)
     nb_elem_mpi  = int(nb_elem_slav/nb_proc)
     nbr_elem_mpi = nb_elem_slav-nb_elem_mpi*nb_proc
     idx_start    = 1+(i_proc)*nb_elem_mpi
     idx_end      = idx_start+nb_elem_mpi-1+nbr_elem_mpi*int((i_proc+1)/nb_proc)
-    nb_el_slav_mpi = idx_end - idx_start + 1 
+    nb_el_slav_mpi = idx_end - idx_start + 1
     AS_ALLOCATE(vi=v_appa_slav_mpi, size=nb_el_slav_mpi)
     v_appa_slav_mpi(:)=v_sdappa_slav(idx_start:idx_end)
     slav_indx_maxi = maxval(v_appa_slav_mpi)
@@ -133,7 +127,7 @@ implicit none
 ! - Create neighbouring objects
 !
     call jedetr(sdappa_slne)
-    call jedetr(sdappa_mane) 
+    call jedetr(sdappa_mane)
     call cnvois(mesh  , v_appa_slav_mpi, nb_el_slav_mpi, slav_indx_mini, slav_indx_maxi,&
                 cnives, sdappa_slne)
     call cnvois(mesh       , v_sdappa_mast, nb_elem_mast, mast_indx_mini, mast_indx_maxi,&
@@ -144,4 +138,4 @@ implicit none
 !
     call jedetr(cnives)
 !
-end subroutine        
+end subroutine

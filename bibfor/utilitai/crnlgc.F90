@@ -49,7 +49,6 @@ subroutine crnlgc(numddl)
     character(len=14) :: numddl
 
 #ifdef _USE_MPI
-#include "mpif.h"
 !
     integer :: rang, nbproc, jrefn, jdojoi, nbjoin, iaux, jgraco, nddll
     integer :: jmasqu, iproc1, iproc2, nbedge, posit, nmatch, icmp, ico2, nbcmp

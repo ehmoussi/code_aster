@@ -160,7 +160,8 @@ class Starter(ExecuteCommand):
             ExecutionParameter().set_option("sdveri", int(sdveri))
             if sdveri:
                 UTMESS("I", "SUPERVIS_24")
-            dbgjeveux = debug.get('JEVEUX', 'NON') == 'OUI'
+            dbgjeveux = 'OUI' in (debug.get('JEVEUX', 'NON'),
+                                  debug.get('VERI_BASE', 'NON'))
             ExecutionParameter().set_option("dbgjeveux", int(dbgjeveux))
             if dbgjeveux:
                 UTMESS("I", "SUPERVIS_12")
