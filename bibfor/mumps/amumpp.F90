@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,6 +50,7 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 !
 #include "asterf_types.h"
 #include "asterf.h"
+#include "jeveux.h"
 #include "asterc/r4maem.h"
 #include "asterc/r4miem.h"
 #include "asterc/r8maem.h"
@@ -83,8 +84,6 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     type(smumps_struc), pointer :: smpsk => null()
     type(cmumps_struc), pointer :: cmpsk => null()
     type(dmumps_struc), pointer :: dmpsk => null()

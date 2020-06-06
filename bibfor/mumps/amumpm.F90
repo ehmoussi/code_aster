@@ -42,8 +42,9 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 ! aslint: disable=W1501
 ! person_in_charge: olivier.boiteau at edf.fr
 !
-#include "asterf_types.h"
 #include "asterf.h"
+#include "asterf_types.h"
+#include "jeveux.h"
 #include "asterc/getres.h"
 #include "asterc/r4maem.h"
 #include "asterc/r4miem.h"
@@ -75,8 +76,6 @@ subroutine amumpm(ldist, kxmps, kmonit, impr, ifmump,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
 !
 !
     type(smumps_struc), pointer :: smpsk => null()

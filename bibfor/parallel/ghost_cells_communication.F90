@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,7 +38,6 @@ subroutine ghost_cells_communication(numddl, rsolu)
     real(kind=8) :: rsolu(*)
     character(len=14) :: numddl
 #ifdef _USE_MPI
-#include "mpif.h"
 !
     integer :: rang, nbproc, jnbjoi, nbjoin, numpro, jjointr, jjointe
     integer :: lgenvo, lgrecep, jvaleue, jvaleur, iaux, jaux, jprddl
