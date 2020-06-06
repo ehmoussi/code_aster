@@ -54,6 +54,7 @@ subroutine amumps(action, kxmps, rsolu, vcine, nbsol,&
 !
 #include "asterf.h"
 #include "asterf_types.h"
+#include "jeveux.h"
 #include "asterc/matfpe.h"
 #include "asterfort/amumpi.h"
 #include "asterfort/amumpm.h"
@@ -79,8 +80,6 @@ subroutine amumps(action, kxmps, rsolu, vcine, nbsol,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     type(smumps_struc), pointer :: smpsk => null()
     integer :: rang, nbproc, niv, ifm, ibid, ietdeb, ifactm, nbfact
     integer :: ietrat, nprec, ifact, iaux, iaux1, vali(4), pcpi

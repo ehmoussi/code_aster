@@ -62,6 +62,7 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 !
 #include "asterf_types.h"
 #include "asterf.h"
+#include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_comm_jev.h"
 #include "asterfort/assert.h"
@@ -86,8 +87,6 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     type(smumps_struc), pointer :: smpsk => null()
     type(cmumps_struc), pointer :: cmpsk => null()
     type(dmumps_struc), pointer :: dmpsk => null()
@@ -226,9 +225,9 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
 !
 ! ---   INITS. PROPRE A L'OPTION
 !       On récupère dans la structure de données MUMPS
-!       quelques paramètres : 
+!       quelques paramètres :
 !       - icntl(35) => low rank/full rank
-!       - estimations MUMPS de la mémoire nécessaire, 
+!       - estimations MUMPS de la mémoire nécessaire,
 !         qui sont stockées dans des cases différentes
 !         du vecteur infog selon que l'on est en full rank
 !         ou bien en low rank
@@ -272,9 +271,9 @@ subroutine amumpu(option, type, kxmps, usersm, nprec,&
         case (1,2)
           maxmem_ic=infog36
           maxmem_ooc=infog38
-        case default 
+        case default
           ASSERT(.false.)
-        end select 
+        end select
 !
         ASSERT(nbproc>0)
         if (info3 .lt. 0) then

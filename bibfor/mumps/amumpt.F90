@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ subroutine amumpt(option, kmonit, temps, rang, nbproc,&
 !
 #include "asterf_types.h"
 #include "asterf.h"
+#include "jeveux.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
@@ -57,8 +58,6 @@ subroutine amumpt(option, kmonit, temps, rang, nbproc,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     type(smumps_struc), pointer :: smpsk => null()
     type(cmumps_struc), pointer :: cmpsk => null()
     type(dmumps_struc), pointer :: dmpsk => null()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,11 +42,6 @@ implicit none
 #include "asterfort/mmctan.h"
 #include "asterfort/mmtann.h"
 #include "asterfort/utmess.h"
-!
-#ifdef _USE_MPI
-#include "mpif.h"
-#include "asterf_mpi.h"
-#endif
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !

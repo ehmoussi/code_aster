@@ -31,8 +31,9 @@ subroutine amumpi(option, lquali, ldist, kxmps, type, lmhpc)
 !---------------------------------------------------------------
 ! person_in_charge: olivier.boiteau at edf.fr
 !
-#include "asterf_types.h"
 #include "asterf.h"
+#include "asterf_types.h"
+#include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterc/r4maem.h"
 #include "asterfort/amumpu.h"
@@ -48,8 +49,6 @@ subroutine amumpi(option, lquali, ldist, kxmps, type, lmhpc)
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     mpi_int :: mpicou, mpimum
     integer :: nicntl, ncntl
     parameter (nicntl=40,ncntl=15)
@@ -103,7 +102,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type, lmhpc)
     call jeveuo(nosolv//'.SLVI', 'L', vi=slvi)
     nprec=slvi(1)
     call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
-       
+
     kacmum=trim(adjustl(slvk(5)))
     blreps=slvr(4)
 
@@ -295,7 +294,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type, lmhpc)
         case default
             ASSERT(.false.)
         end select
-        
+
 !
 ! ---     MESSAGES/ALERTES MUMPS
         icntl(1) = -1

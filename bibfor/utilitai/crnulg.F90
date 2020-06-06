@@ -33,7 +33,6 @@ subroutine crnulg(numddl)
     character(len=14) :: numddl
 !
 #ifdef _USE_MPI
-#include "mpif.h"
 !
     integer :: rang, nbproc
     mpi_int :: mrank, msize, mpicou
