@@ -1,0 +1,76 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: mathieu.courtois@edf.fr
+
+"""
+L'objectif de ce test est de vérifier l'extension automatique des bases.
+Les bases contiennent les données qui ne peuvent plus être stockées en mémoire
+vive, principe de l'*out-of-core*.
+
+Par défaut, la taille maximale des bases est de 48 Go (base globale ou volatile).
+JEVEUX utilise des fichiers à accès direct de 12 Go maximum. Lorsque le nombre
+maximal d'enregistrements est presque atteint, un nouveau fichier est créé, et
+donc par défaut, jusqu'à 4 fichiers.
+Ce test permet de vérifier qu'un nouveau fichier est bien créé quand le premier
+est presque plein ("presque" est défini dans ``jxecro.F90``).
+
+Le mode VERI_BASE exécute automatiquement cette vérification qui en souterrain
+active le mode DEBUG/JEVEUX='OUI' pour écrire sur disque les objets dès qu'ils
+sont libérés.
+
+Pour exécuter rapidement le test sans avoir à écrire 48 Go sur disque avant
+découpage, on limite la taille maximale à 100 Mo (argument ``--max_base=100``
+dans le fichier ``.export``).
+Le test affiche (avec les valeurs par défaut pour les autres paramètres)::
+
+    Vérification de l'extension automatique des bases JEVEUX:
+
+        Taille de la base          :    104857600 octets
+        Taille d'un enregistrement :       819200 octets
+        Taille d'un enregistrement :       102400 entiers
+        Nombre d'enregistrements   :          128
+        Taille d'un objet alloué   :        25600 entiers
+        Nombre maximal d'objets    :          520
+        Taille allouée             :    106496000 octets
+        Taille allouée             :     13312000 entiers
+
+Principe du test :
+
+- On alloue des vecteurs de taille 1/4 par rapport à un enregistrement.
+  On fixe une limite du nombre d'objets créés à 4 fois le nombre
+  d'enregistrements (plus 8 pour être certain de dépasser la taille de la base
+  initiale).
+
+- Comme il y a une partie réservé pour les objets systèmes dans chaque
+  enregistrement (voir ``jxecro.F90``), seuls 3 objets peuvent être écrits par
+  enregistrement.
+
+- La création d'une deuxième base se produit donc quand on a besoin d'écrire
+  l'objet 384 (= 128 * 3).
+
+- Le test s'arrête dès qu'il détecte la création de la base ``vola.2``.
+
+- Le test est OK si la base ``vola.2`` existe, NOOK dans le cas contraire.
+
+"""
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(VERI_BASE='OUI'))
+
+FIN()

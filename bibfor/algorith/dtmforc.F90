@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
-    use yacsnl_module , only:  
+    use yacsnl_module , only:
     implicit none
 !
 ! person_in_charge: hassan.berro at edf.fr
@@ -62,10 +62,6 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 #include "asterc/asmpi_comm.h"
 #include "asterfort/asmpi_info.h"
 !
-#ifdef _USE_MPI
-#include "mpif.h"
-#include "asterf_mpi.h"
-#endif
 !   -0.1- Input/output arguments
     character(len=*) , intent(in) :: sd_dtm_
     character(len=*) , intent(in) :: sd_int_
@@ -186,7 +182,7 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
 
 !        print *, "-----bfore FEXT----"
 !        print *, fext
-!        print *, "-------------"    
+!        print *, "-------------"
 
     if (nbnli.ne.0) then
         call dtmget(sd_dtm, _SD_NONL  , kscal=sd_nl, buffer=buffdtm)
@@ -203,27 +199,27 @@ subroutine dtmforc(sd_dtm_, sd_int_, index, buffdtm, buffint, nlaccnt)
         !
             one_proc = .false.
             call asmpi_comm('GET', mpicou)
-            call asmpi_info(mpicou,rank=i_proc , size=nb_proc)    
+            call asmpi_info(mpicou,rank=i_proc , size=nb_proc)
             if(nb_proc .eq. 1 .or. nbnli .le. nb_proc) one_proc = .true.
 
-            if (one_proc) then 
+            if (one_proc) then
                 idx_start=1
                 idx_end  =nbnli
                 call dtmforc_calcnoli(sd_dtm, sd_nl, buffdtm, buffnl,&
                                       temps,dt, depl, vite, fext,&
                                       nbmode,nlacc,nlcase,idx_start,idx_end)
-            else 
+            else
             ! ----- MPI initialisation
-            ! ----- Temporary non linear force 
+            ! ----- Temporary non linear force
                 call nlget(sd_nl, _FEXT_MPI, savejv=sd_fextnl_tmp,vr=fext_tmp)
                 call vecini(nbmode, 0.d0, fext_tmp)
                 call jeexin(sd_fextnl_tmp(1:20)//'.MPI',iret_mpi)
-                
+
                 if (iret_mpi .eq. 0) then
                     call wkvect(sd_fextnl_tmp(1:20)//'.MPI','V V K16',1,vk16=valk)
-                else 
+                else
                     call jeveuo(sd_fextnl_tmp(1:20)//'.MPI', 'E',vk16=valk)
-                endif   
+                endif
                 valk(1)='MPI_INCOMPLET'
                 nb_nbnli_mpi  = int(nbnli/nb_proc)
                 nbr_nbnli_mpi = nbnli-nb_nbnli_mpi*nb_proc

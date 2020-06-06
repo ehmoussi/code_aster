@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,18 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: j-pierre.lefebvre at edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(ENVIMA='TEST', SDVERI='OUI'))
 
-'''
-Ce fichier de commande permet d'imprimer les valeurs associees aux constantes numeriques 
-dependant de la plate-forme (32 ou 64 bits). Notamment les longueurs et les valeurs extremales
-des nombres entiers et des nombres flottants, quelques constantes mathematiques particulieres, 
-et certains parametres lies a l'utilisation de la memoire et des fichiers.
-Les valeurs sont accessibles a l'aide des fonctions ENVIMA decrites dans le document d6.01.01.
-'''
+"""
+Ce fichier de commande permet d'imprimer les valeurs associées aux constantes
+numériques dépendant de la plate-forme (32 ou 64 bits). Notamment les longueurs
+et les valeurs extrémales des nombres entiers et des nombres flottants,
+quelques constantes mathématiques particulières, et certains paramètres liés à
+l'utilisation de la mémoire et des fichiers.
+Les valeurs sont accessibles à l'aide des fonctions ENVIMA décrites dans le
+document d6.01.01.
+"""
+
 FIN()
-#
-#
-#

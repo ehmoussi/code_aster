@@ -53,6 +53,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 ! person_in_charge: olivier.boiteau at edf.fr
 !
 #include "asterf.h"
+#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterc/matfpe.h"
 #include "asterfort/amumpi.h"
@@ -79,8 +80,6 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     type(dmumps_struc), pointer :: dmpsk => null()
     integer :: rang, nbproc, niv, ifm, ibid, ietdeb, ifactm, nbfact
     integer :: ietrat, nprec, ifact, iaux, iaux1, vali(4), pcpi
