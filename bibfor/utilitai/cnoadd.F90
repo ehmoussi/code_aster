@@ -23,12 +23,10 @@ subroutine cnoadd(chno, chnop)
 ! pour un cham_no (chno) provenant d'un assemblage,
 ! on met à zéro les entrées dont on n'est pas strictement propriétaires
 !----------------------------------------------------------------
+#include "asterf.h"
 #ifdef _USE_MPI
 
-#include "asterf_config.h"
-#include "asterf.h"
 #include "asterf_types.h"
-#include "mpif.h"
 #include "jeveux.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
