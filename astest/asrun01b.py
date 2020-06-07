@@ -412,8 +412,8 @@ class TestExport(unittest.TestCase):
         self.assertEqual(export.get_argument_value("tpmax", float), None)
         self.assertEqual(export.get_argument_value("dbgjeveux", bool), False)
         self.assertEqual(repr(export), "\n".join([
-            "A args --continue --max_base 1000 --abort --memory {}"
-            .format(4096.0 + addmem),
+            "A args --continue --max_base 1000 --abort --memory {0:.1f}"
+            .format(refval + addmem),
             ""]))
 
     def test_memory(self):
