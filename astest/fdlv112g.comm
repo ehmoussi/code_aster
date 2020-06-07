@@ -380,10 +380,7 @@ ax253i = RECU_FONCTION ( RESULTAT = DYNA, NOM_CHAM = 'ACCE',
                         INTERPOL='LIN',
                         PROL_DROITE='LINEAIRE',
                         PROL_GAUCHE='LINEAIRE',
-                        NOEUD = 'N253', NOM_CMP = 'DX', );
-                        
                         NOEUD = 'N253', NOM_CMP = 'DX', )
-                        NOEUD = 'N253', NOM_CMP = 'DX', );
 
 ax316i = RECU_FONCTION ( RESULTAT = DYNA, NOM_CHAM = 'ACCE',
                         INTERPOL='LIN',
