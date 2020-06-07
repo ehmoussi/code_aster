@@ -118,7 +118,7 @@ subroutine build_lmp_context( ksp, ctxt )
     !
     PetscErrorCode :: ierr
     Vec :: xx, sn(3)
-    PetscInt :: ii, jj
+    PetscInt :: ii, jj, mm
     PC :: pc
     Mat :: amat
     PetscScalar :: norm
@@ -129,7 +129,8 @@ subroutine build_lmp_context( ksp, ctxt )
     ! allocation des vecteurs PETSc à partir du vecteur solution du ksp
     call KSPGetSolution( ksp, xx, ierr )
     ASSERT( ierr == 0 )
-    call VecDuplicateVecs( xx, ctxt%ritz+1, ctxt%ss, ierr)
+    mm =  ctxt%ritz+1
+    call VecDuplicateVecs( xx, mm, ctxt%ss, ierr)
     ASSERT( ierr == 0 )
     ! Calcul de ritzeff vecteurs de Ritz
     call KSPComputeRitz(ksp,PETSC_TRUE,PETSC_TRUE,ctxt%ritzeff,ctxt%ss, &
@@ -142,16 +143,18 @@ subroutine build_lmp_context( ksp, ctxt )
 !   =>  H=I+ZY^T
 !
 !   Creation des vecteurs de travail sn
-    call VecDuplicateVecs(ctxt%ss(1),3,sn,ierr)
+    mm=3
+    call VecDuplicateVecs(ctxt%ss(1),mm,sn,ierr)
     ASSERT( ierr == 0 )
 
     call KSPGetPC(ksp,pc,ierr)
     ASSERT( ierr == 0 )
 !
 !   Creation des matrices qui stockent les directions A^{T}A-orthonormales
-    call VecDuplicateVecs(ctxt%ss(1),ctxt%ritz+1,ctxt%yy,ierr)
+    mm=ctxt%ritz+1
+    call VecDuplicateVecs(ctxt%ss(1),mm,ctxt%yy,ierr)
     ASSERT( ierr == 0 )
-    call VecDuplicateVecs(ctxt%ss(1),ctxt%ritz+1,ctxt%zz,ierr)
+    call VecDuplicateVecs(ctxt%ss(1),mm,ctxt%zz,ierr)
     ASSERT( ierr == 0 )
 
 !   Algorithme de Gram Schmidt (thèse de Sylvain Mercier p. 111, algo 12)
