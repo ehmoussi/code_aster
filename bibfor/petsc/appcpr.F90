@@ -296,8 +296,6 @@ implicit none
         ASSERT(ierr == 0)
         call PCShellSetSetUp(pc,augmented_lagrangian_setup, ierr )
         ASSERT(ierr == 0)
-        call PCShellSetContext(pc,kptsc,ierr)
-        ASSERT(ierr == 0)
         call PCShellSetDestroy(pc, augmented_lagrangian_destroy, ierr )
         ASSERT( ierr == 0 )
 !       Si LMP, on définit un préconditionneur à gauche et à droite

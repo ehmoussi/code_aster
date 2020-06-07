@@ -47,8 +47,6 @@ use petsc_data_module
 !----------------------------------------------------------------
 !
 #ifdef _HAVE_PETSC
-#include "asterfort/ldsp1.h"
-#include "asterfort/ldsp2.h"
 !----------------------------------------------------------------
 !
 !     VARIABLES LOCALES
@@ -66,10 +64,11 @@ use petsc_data_module
 !----------------------------------------------------------------
 !     Variables PETSc
     PetscErrorCode ::  ierr
-    integer :: fill, neq, ndprop
+    PetscInt :: nlocal, first
+    PetscInt :: fill, neq, ndprop
     PetscReal :: fillp
     Mat :: a
-    KSP :: ksp, kspp
+    KSP :: ksp, kspp, subksp(1)
     PC :: pc, pcp
     mpi_int :: mrank, msize
 !----------------------------------------------------------------
@@ -113,8 +112,12 @@ use petsc_data_module
             ASSERT(ierr.eq.0)
             call KSPSetUp(kspp, ierr)
             ASSERT(ierr.eq.0)
-            call PCBJacobiGetSubKSP(pcp, PETSC_NULL_INTEGER, PETSC_NULL_INTEGER, ksp, ierr)
+            call PCBJacobiGetSubKSP(pcp, nlocal, first, (/PETSC_NULL_KSP/), ierr)
             ASSERT(ierr.eq.0)
+            ASSERT( nlocal == 1 ) 
+            call PCBJacobiGetSubKSP(pcp, nlocal, first, subksp, ierr)
+            ASSERT(ierr.eq.0)
+            ksp=subksp(1)
         else
             goto 999
         endif
@@ -128,7 +131,7 @@ use petsc_data_module
     if (precon .eq. 'LDLT_INC') then
         call PCSetType(pc, PCILU, ierr)
         ASSERT(ierr.eq.0)
-        call PCFactorSetLevels(pc, to_petsc_int(fill), ierr)
+        call PCFactorSetLevels(pc, fill, ierr)
         ASSERT(ierr.eq.0)
         call PCFactorSetFill(pc, fillp, ierr)
         ASSERT(ierr.eq.0)
@@ -154,12 +157,12 @@ use petsc_data_module
             end do
 !
             ASSERT( xlocal == PETSC_NULL_VEC )
-            call VecCreateMPI(mpicou, to_petsc_int(ndprop), to_petsc_int(neq), xlocal, ierr)
+            call VecCreateMPI(mpicou, ndprop, neq, xlocal, ierr)
         else
             call jelira(nonu//'.SMOS.SMDI', 'LONMAX', nsmdi)
             neq=nsmdi
             ASSERT( xlocal == PETSC_NULL_VEC )
-            call VecCreateMPI(mpicou, PETSC_DECIDE, to_petsc_int(neq), xlocal, ierr)
+            call VecCreateMPI(mpicou, PETSC_DECIDE, neq, xlocal, ierr)
         endif
         ASSERT(ierr.eq.0)
 !

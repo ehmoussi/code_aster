@@ -144,8 +144,6 @@ use elg_module
 !
         call PetscInitialize(PETSC_NULL_CHARACTER, ierr)
         if (ierr .ne. 0) call utmess('F', 'PETSC_1')
-        call PetscInitializeFortran(ierr)
-        ASSERT(ierr .eq. 0)
         do k = 1, nmxins
             ap(k) = PETSC_NULL_MAT
             kp(k) = PETSC_NULL_KSP
