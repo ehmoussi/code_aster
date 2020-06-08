@@ -207,6 +207,8 @@ def remove_optflags(self, type_flags):
     remove duplicates"""
     for var in self.env:
         if var.startswith(type_flags):
+            if not isinstance(self.env[var], (list, tuple)):
+                self.env[var] = [self.env[var], ]
             self.env[var] = self.remove_duplicates(self.env[var])
             self.env[var] = [i for i in self.env[var] if not i.startswith("-O")]
 
