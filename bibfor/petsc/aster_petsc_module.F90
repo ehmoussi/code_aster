@@ -144,6 +144,15 @@ interface
          PetscErrorCode, intent(out) :: ierr  
      end subroutine MatRestoreRowIJ
 end interface
+interface
+    subroutine MatShellSetOperation(mat, operation, myop, ierr)
+         use petscmatdef 
+         Mat :: mat
+         PetscInt :: operation
+         external :: myop
+         PetscErrorCode, intent(out) :: ierr  
+    end subroutine  MatShellSetOperation
+end interface
 !
 ! PC and KSP routines
 !    
