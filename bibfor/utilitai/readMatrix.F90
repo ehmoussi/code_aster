@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: jv_matr_in, j, deca, ij, i
+    integer :: jv_matr_in, j, ij, i
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,8 +64,10 @@ implicit none
         end do
     else
         do j = 1, ncols
-            deca = (j - 1) * nrows
-            call dcopy(nrows, zr(jv_matr_in + deca), 1, mat(:,j), 1)
+            do i = 1, nrows
+                ij = j + (i - 1) * ncols
+                mat(i,j) = zr(jv_matr_in + ij -1)
+            end do
         end do
     end if
 !
