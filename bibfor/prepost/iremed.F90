@@ -82,8 +82,8 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
     integer :: numord, isy, iordr, iret, ibid, codret, nbcham
     integer :: lnochm, nbcmdu, jnosym, ierd
     integer :: jnocha, jliord, nbordr, nbrcmp, jnocmp
+    aster_logical :: lfirst, l_mult_model, l_vari_name, l_meta_name
 !
-    aster_logical :: lfirst, l_mult_model, l_vari_name
     integer, pointer :: numcmp(:) => null()
     character(len=24), pointer :: celk(:) => null()
     parameter   (cesnsp = '&&IREMED.CANBSP')
@@ -173,7 +173,7 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
     do isy = 1, nbcham
         l_mult_model = ASTER_FALSE
         l_vari_name  = ASTER_FALSE
-!
+        l_meta_name  = ASTER_FALSE
 !       --- BOUCLE SUR LA LISTE DES NUMEROS D'ORDRE
 !
         do iordr = 1, nbordr
@@ -298,6 +298,9 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
             if (codret .eq. 200) then
                 l_vari_name  = ASTER_TRUE
             endif
+            if (codret .eq. 400) then
+                l_meta_name  = ASTER_TRUE
+            endif
 !
  22         continue
 !
@@ -309,6 +312,9 @@ subroutine iremed(nomcon, ifichi, nocham, novcmp, partie,&
         endif
         if (l_vari_name) then
             call utmess('A', 'MED2_7')
+        endif
+        if (l_meta_name) then
+            call utmess('A', 'MED2_10')
         endif
         lfirst=.false.
 !
