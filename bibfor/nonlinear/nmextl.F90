@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,9 +23,11 @@ subroutine nmextl(mesh      , model    , keyw_fact, i_keyw_fact, field_type,&
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/getelem.h"
 #include "asterfort/getnode.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/utmess.h"
 !
 ! person_in_charge: mickael.abbas at edf.fr
@@ -44,7 +46,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! *_NON_LINE - Extraction (OBSERVATION/SUIVI_DDL) utilities 
+! *_NON_LINE - Extraction (OBSERVATION/SUIVI_DDL) utilities
 !
 ! Get topology (nodes or elements) and type of extraction for field
 !
@@ -72,13 +74,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nocc
+    integer :: nocc, nbobj
+    aster_logical :: l_pmesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_node   = 0
     nb_elem   = 0
     type_extr = 'VALE'
+    l_pmesh = isParallelMesh(mesh)
 !
 ! - Type of extraction on field
 !
@@ -93,7 +97,11 @@ implicit none
     if (field_disc .eq. 'NOEU') then
         call getnode(mesh   , keyw_fact, i_keyw_fact, ' ', list_node,&
                      nb_node, model)
-        if (nb_node .eq. 0) then
+        nbobj = nb_node
+        if(l_pmesh) then
+            call asmpi_comm_vect('MPI_MAX', 'I', sci=nbobj)
+        end if
+        if (nbobj .eq. 0) then
             call utmess('F', 'EXTRACTION_3', sk=field_type)
         endif
     endif
@@ -103,7 +111,11 @@ implicit none
     if (field_disc .eq. 'ELGA' .or. field_disc .eq. 'ELEM') then
         call getelem(mesh   , keyw_fact, i_keyw_fact, ' ', list_elem,&
                      nb_elem, model = model)
-        if (nb_elem .eq. 0) then
+        nbobj = nb_elem
+        if(l_pmesh) then
+            call asmpi_comm_vect('MPI_MAX', 'I', sci=nbobj)
+        end if
+        if (nbobj .eq. 0) then
             call utmess('F', 'EXTRACTION_4', sk=field_type)
         endif
     endif

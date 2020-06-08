@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ character(len=19), intent(out) :: sd_obsv
 !
 ! --------------------------------------------------------------------------------------------------
 ! ancienne routine : nmcrob
-! supprimer ce qui ne concerne pas champs DEPL, VITE, ACCE 
+! supprimer ce qui ne concerne pas champs DEPL, VITE, ACCE
 
     integer :: nb_obsv, nb_keyw_fact, numrep
     character(len=8) :: result
@@ -61,7 +61,7 @@ character(len=19), intent(out) :: sd_obsv
     character(len=16) :: keyw_fact
     character(len=24) :: extr_info
     integer, pointer :: v_extr_info(:) => null()
-    
+
     nb_obsv   = 0
     sd_obsv   = '&&NMCROB.OBSV'
     keyw_fact = 'OBSERVATION'
@@ -74,12 +74,12 @@ character(len=19), intent(out) :: sd_obsv
     sdextr_obsv = sd_obsv(1:14)
 
 ! - Read parameters
-! 
+!
     call nmextr(mesh , modele,  sdextr_obsv,  ds_inout , keyw_fact,&
-                nb_keyw_fact, nb_obsv   ,  materi)            
+                nb_keyw_fact, nb_obsv   ,  materi)
 !
 ! - Set reuse index in OBSERVATION table
-! 
+!
     call nmarnr(result, 'PARA_CALC', numrep)
     extr_info  = sdextr_obsv(1:14)//'     .INFO'
     call jeveuo(extr_info, 'E', vi = v_extr_info)
@@ -89,7 +89,7 @@ character(len=19), intent(out) :: sd_obsv
 !
     if (nb_obsv .ne. 0) then
 !
-        call utmess('I', 'OBSERVATION_3', si=nb_obsv)   
+        call utmess('I', 'OBSERVATION_3', si=nb_obsv)
 !
 ! ----- Read time list
 !
