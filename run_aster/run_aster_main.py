@@ -43,7 +43,7 @@ Using the first syntax, ``bin/run_aster`` re-runs with ``mpiexec`` itself using
 the second syntax (``mpiexec`` syntax is provided by the configuration, see
 :py:mod:`~run_aster.config`).
 
-``bin/run_aster`` only runs each own version, those installed at the level of
+``bin/run_aster`` only runs its own version, those installed at the level of
 the ``bin`` directory; unlike ``as_run`` where the same instance of ``as_run``
 executes several versions of code_aster.
 This makes ``bin/run_aster`` simpler and allows per version settings

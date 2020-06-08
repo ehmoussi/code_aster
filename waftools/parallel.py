@@ -117,8 +117,8 @@ def check_openmp(self):
     ifort = 'ifort' in self.env.FC_NAME.lower()
     icc = 'icc' in self.env.CC_NAME.lower()
     if ifort and icc:
-        self.env['FCFLAGS_OPENMP'] = '-qopenmp'
-        self.env['FCLINKFLAGS_OPENMP'] = '-qopenmp'
+        self.env['FCFLAGS_OPENMP'] = ['-qopenmp']
+        self.env['FCLINKFLAGS_OPENMP'] = ['-qopenmp']
         self.env['CCFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
         self.env['CCLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
         self.env['CXXFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
