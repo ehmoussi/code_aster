@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ subroutine materc(matmas, matrig, matamo, numnu, amor, nommes,&
     character(len=3) :: rep_eval
     character(len=4) :: typmes
     character(len=8) :: baseno, k8bid, matprj, mainum, maiexp
-    character(len=8) :: nomgd,  numdl1, numdl2, numdl3
+    character(len=8) :: nomgd,  numdl1, numdl2, numdl3, answer
     character(len=19) :: lifreq
     integer :: n1, lfreq,  iproj, nbnexp, inn, inp, nnopr, nec1, nec2
     integer :: idec(6), itach, tach1, iprnom, iprnoc, irefe, lprno, ipjnb
@@ -142,6 +142,12 @@ subroutine materc(matmas, matrig, matamo, numnu, amor, nommes,&
 ! --- RECUPERATION DES MAILLAGES NUM/EXP ET CONCEPTS ASSOCIES
     call dismoi('NOM_MAILLA', matmas, 'MATR_ASSE', repk=mainum)
     call dismoi('NOM_MAILLA', nommes, 'RESULTAT', repk=maiexp)
+    call dismoi('ONLY_SEG2', mainum, 'MAILLAGE', repk = answer)
+    if (answer .ne. 'OUI') then
+        call utmess('A', 'CALCERROR1_1')
+    endif
+
+
 !
 ! --- INFOS SUR LA MATRICE DE PROJECTION
     call jeveuo(matprj//'        .PJXX_K1', 'L', iproj)

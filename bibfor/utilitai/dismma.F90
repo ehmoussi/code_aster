@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -231,7 +231,23 @@ subroutine dismma(questi, nomobz, repi, repkz, ierd)
 51      continue
         repk='OUI'
 52      continue
+
+
+    else if (questi.eq.'ONLY_SEG2')then
+!     ----------------------------------------
+        typma='SEG2'
+        call jenonu(jexnom('&CATA.TM.NOMTM', typma), typv)
+        ASSERT(typv.gt.0)
 !
+        repk = 'OUI'
+        nbma = dime(3)
+        call jeveuo(nomob//'.TYPMAIL', 'L', vi=typmail)
+        do k = 1,nbma
+            if (typmail(k) .ne. typv) then
+                repk='NON'
+                exit
+            endif
+        end do
     else
         ASSERT(.false.)
     endif
