@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -78,7 +78,8 @@ integer, intent(out) :: codret
 ! In  result           : name of results datastructure
 ! In  model            : name of model         
 ! Out codret           : error code
-!                        0   - Everything is OK       
+!                        0   - Everything is OK
+!                        400 - error
 !       IFI    : UNITE LOGIQUE D'IMPRESSION DU CHAMP
 !       PARTIE : IMPRESSION DE LA PARTIE IMAGINAIRE OU REELLE POUR
 !                UN CHAMP COMPLEXE
@@ -135,7 +136,11 @@ integer, intent(out) :: codret
 !
 ! - Get name of <CARTE> COMPORMETA
 !
-    call rsexch('F', result, 'COMPORMETA', nume_store, compor, iret)
+    call rsexch(' ', result, 'COMPORMETA', nume_store, compor, iret)
+    if (iret .ne. 0) then
+        codret = 400
+        goto 99
+    endif
 !
 ! - Prepare informations about internal variables
 !
@@ -262,6 +267,8 @@ integer, intent(out) :: codret
                 nb_cmp_sele, cmp_name_sele, label_med, partie, numpt,&
                 instan, nume_store, nbmaec, limaec, cara_elem,&
                 cara_elem, field_type, codret)
+!
+ 99 continue
 !
 ! - Cleaning
 !

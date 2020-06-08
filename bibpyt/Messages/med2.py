@@ -66,6 +66,12 @@ format MED.
   Cette impression n'est pas possible au format MED.
 """),
 
+   10 : _("""
+  Il n'a pas été possible d'imprimer le champ des variables internes pour la métallurgie en utilisant IMPR_NOM_VARI='OUI'.
+  Cela est dû au fait la structure de données résultat ne contient pas les informations nécessaire
+  N'utilisez pas IMPR_NOM_VARI='OUI' pour imprimer ce champ
+"""),
+
     11 : _("""
   Votre champ repose sur un modèle comportant des éléments joints
   ou interfaces non encore imprimables au format MED.
