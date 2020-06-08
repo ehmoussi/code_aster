@@ -62,14 +62,16 @@ implicit none
 ! - Behaviour - Integration - Parameters on element
 !
     type Behaviour_Elem
+! ----- Flags
+        aster_logical :: l_eltsize1 = ASTER_FALSE
 ! ----- Size of element
-        real(kind=8) :: eltsize1         = 0.d0
+        real(kind=8)  :: eltsize1         = 0.d0
 ! ----- Size of element for ENDO_PORO_BETON
-        real(kind=8) :: eltsize2(9)      = 0.d0
+        real(kind=8)  :: eltsize2(9)      = 0.d0
 ! ----- Gradient of velocity for *CRISTAL
-        real(kind=8) :: gradvelo(9)      = 0.d0
+        real(kind=8)  :: gradvelo(9)      = 0.d0
 ! ----- Coordinates of all Gauss points
-        real(kind=8) :: coor_elga(27, 3) = 0.d0
+        real(kind=8)  :: coor_elga(27, 3) = 0.d0
     end type Behaviour_Elem
 !
 ! - Behaviour - Integration - Parameters on current Gauss point

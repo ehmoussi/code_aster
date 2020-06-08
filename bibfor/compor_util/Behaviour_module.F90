@@ -205,10 +205,11 @@ end subroutine
 ! IO  BEHinteg         : parameters for integration of behaviour
 !
 ! --------------------------------------------------------------------------------------------------
-subroutine behaviourInitPoint(carcri, BEHinteg)
+subroutine behaviourInitPoint(carcri, rela_comp, BEHinteg)
 !   ------------------------------------------------------------------------------------------------
 ! - Parameters
     real(kind=8), intent(in) :: carcri(*)
+    character(len=16), intent(in) :: rela_comp
     type(Behaviour_Integ), intent(inout) :: BEHinteg
 !   ------------------------------------------------------------------------------------------------
 
@@ -230,9 +231,14 @@ subroutine behaviourInitPoint(carcri, BEHinteg)
 !
 ! - Don't use some external state variables for SIMU_POINT_MAT
 !
-    if ((BEHinteg%tabcod(ELTSIZE1) .eq. 1) .or. &
-        (BEHinteg%tabcod(ELTSIZE2) .eq. 1)) then
+    if (BEHinteg%tabcod(ELTSIZE2) .eq. 1) then
         call utmess('F', 'COMPOR2_12')
+    endif
+
+    if (BEHinteg%tabcod(ELTSIZE1) .eq. 1) then
+        if (rela_comp .ne. 'BETON_DOUBLE_DP') then
+            call utmess('F', 'COMPOR2_12')
+        endif
     endif
 !   ------------------------------------------------------------------------------------------------
 end subroutine
@@ -906,7 +912,8 @@ subroutine prepEltSize1(nno     , npg    , ndim    ,&
         ASSERT(ASTER_FALSE)
     endif
 !
-    BEHelem%eltsize1 = lc
+    BEHelem%l_eltsize1 = ASTER_TRUE
+    BEHelem%eltsize1   = lc
 !   ------------------------------------------------------------------------------------------------
 end subroutine
 ! --------------------------------------------------------------------------------------------------
