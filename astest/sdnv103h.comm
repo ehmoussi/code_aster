@@ -139,7 +139,8 @@ DEF_MANU =DEFI_LIST_INST(  DEFI_LIST=_F(LIST_INST = temps,),
                         )
 
 RESU1=DYNA_NON_LINE(MODELE=MODE,
-                   SOLVEUR=_F(METHODE='MUMPS',ELIM_LAGR='NON'),
+                   SOLVEUR=_F(METHODE='MUMPS',
+                              ELIM_LAGR='NON'),
                    CHAM_MATER=CHMAT,
                    EXCIT=_F(CHARGE=CH,),
                    CONTACT = CHCONT,
@@ -303,6 +304,8 @@ DEF_AUTO = DEFI_LIST_INST(METHODE='AUTO',
                         )
 
 RESU2=DYNA_NON_LINE(MODELE=MODE,
+                   SOLVEUR=_F(METHODE='MUMPS',
+                              ELIM_LAGR='NON'),
                    CHAM_MATER=CHMAT,
                    EXCIT=_F(CHARGE=CH,),
                    CONTACT = CHCONT,
