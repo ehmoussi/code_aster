@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ subroutine asefen(muapde, nomsy, id, stat, neq,&
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-    integer :: id, neq, nbsup, nsupp(*), ndir(*), nintra, nbdis(nbsup)
+    integer :: id, neq, nbsup, nsupp(*), ndir(*), nintra, nbdis(3, nbsup)
     real(kind=8) :: depsup(nbsup, *), recmod(nbsup, neq, *)
     character(len=*) :: stat, nomsup(nbsup, *), masse
     character(len=16) :: nomsy
@@ -253,7 +253,7 @@ subroutine asefen(muapde, nomsy, id, stat, neq,&
             endif
 !
             if (muapde) then
-                ioc = nbdis(is)
+                ioc = nbdis(id, is)
                 do in = 1, neq
                     xxx = zr(jvale+in-1) * xx1
                     repmo(in+(ioc-1)*neq) = repmo(in+(ioc- 1)*neq ) + xxx

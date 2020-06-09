@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ subroutine ascorm(monoap, typcmo, nbsup, nsupp, neq,&
 #include "asterfort/jemarq.h"
 #include "asterfort/rsadpa.h"
     integer :: nbsup, nsupp(*), neq, nbmode, id, nintra, tcosup(nbsup, *)
-    integer :: nbdis(nbsup), nordr(*)
+    integer :: nbdis(3, nbsup), nordr(*)
     real(kind=8) :: vecmod(neq, *), spectr(*)
     real(kind=8) :: repmo1(nbsup, neq, *), amort(*)
     real(kind=8) :: repmo2(nbsup, neq, *)
@@ -110,14 +110,14 @@ subroutine ascorm(monoap, typcmo, nbsup, nsupp, neq,&
             do is = 1, nsup
                 do in = 1, neq
                     xxx = repmo1(is,in,id)
-                    ioc = nbdis(is)
+                    ioc = nbdis(id, is)
                     recmop(ioc,in,id) = recmop(ioc,in,id) + abs(xxx)
                 enddo
             enddo
         enddo
         do is = 1, nsup
             do in = 1, neq
-                ioc = nbdis(is)
+                ioc = nbdis(id, is)
                 recmop(ioc,in,id) = recmop(ioc,in,id) * recmop(ioc,in, id)
             enddo
         enddo
@@ -174,7 +174,7 @@ subroutine ascorm(monoap, typcmo, nbsup, nsupp, neq,&
             do is = 1, nsup
                 do in = 1, neq
                     xxx = tabs(is,in)
-                    ioc = nbdis(is)
+                    ioc = nbdis(id, is)
                     recmop(ioc,in,id) = recmop(ioc,in,id) + xxx*xxx
                 enddo
             enddo
@@ -207,7 +207,7 @@ subroutine ascorm(monoap, typcmo, nbsup, nsupp, neq,&
 !           MODE IM
                     repmor = alpha*repmo1(is,in,id)
                     repmop = sqrt(un-alpha*alpha)*repmo1(is,in,id)
-                    ioc = nbdis(is)
+                    ioc = nbdis(id, is)
 !
 !           SOMME ALGEBRIQUE DES REPONSES RIGIDES MODALES
                     recmor(ioc,in,id) = recmor(ioc,in,id) + repmor
@@ -269,7 +269,7 @@ subroutine ascorm(monoap, typcmo, nbsup, nsupp, neq,&
                     do in = 1, neq
                         xx1 = sqrt(un-alpha1*alpha1)*repmo1(is,in,id)
                         xx2 = sqrt(un-alpha2*alpha2)*repmo2(is,in,id)
-                        ioc = nbdis(is)
+                        ioc = nbdis(id, is)
                         recmop(ioc,in,id) = recmop(ioc,in,id) + (deux* xx1*xx2*xxx)
                     enddo
                 enddo
@@ -286,7 +286,7 @@ subroutine ascorm(monoap, typcmo, nbsup, nsupp, neq,&
             do is = 1, nsup
                 do in = 1, neq
                     xxx = repmo1(is,in,id)
-                    ioc = nbdis(is)
+                    ioc = nbdis(id, is)
                     recmop(ioc,in,id) = recmop(ioc,in,id) + ( xxx * xxx )
                 enddo
             enddo
@@ -326,7 +326,7 @@ subroutine ascorm(monoap, typcmo, nbsup, nsupp, neq,&
                         do in = 1, neq
                             xx1 = repmo1(is,in,id)
                             xx2 = repmo2(is,in,id)
-                            ioc = nbdis(is)
+                            ioc = nbdis(id, is)
                             recmop(ioc,in,id) = recmop(ioc,in,id) + (deux*xx1*xx2*xxx)
                         enddo
                     enddo
@@ -365,7 +365,7 @@ subroutine ascorm(monoap, typcmo, nbsup, nsupp, neq,&
                         do in = 1, neq
                             xx1 = repmo1(is,in,id)
                             xx2 = repmo2(is,in,id)
-                            ioc = nbdis(is)
+                            ioc = nbdis(id, is)
                             recmop(ioc,in,id) = recmop(ioc,in,id) + (deux*xx1*xx2*xxx)
                         enddo
                     enddo
