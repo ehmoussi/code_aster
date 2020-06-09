@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine te0553(option, nomte)
 #include "asterfort/jevech.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/vff2dn.h"
+#include "asterfort/writeMatrix.h"
 !
     character(len=16) :: option, nomte
 ! ......................................................................
@@ -51,7 +52,7 @@ subroutine te0553(option, nomte)
     real(kind=8) :: valpar(2)
 !
 !-----------------------------------------------------------------------
-    integer :: ij, imate, imatuu, j, jgano, ll, ndim
+    integer :: imate, j, jgano, ll, ndim
     integer :: ideplm, ideplp, ivectu
     integer :: nnos
 !-----------------------------------------------------------------------
@@ -96,7 +97,7 @@ subroutine te0553(option, nomte)
     rho = valres(3)
     coef_amor = valres(4)
 !
-    usl0 = 0.d0    
+    usl0 = 0.d0
     if (icodre(5) .eq. 0) then
       l0 = valres(5)
       usl0=1.d0/l0
@@ -184,13 +185,7 @@ subroutine te0553(option, nomte)
 !       --- PASSAGE AU STOCKAGE TRIANGULAIRE
 !
     if (option .ne. 'FORC_NODA' .and. option .ne. 'RAPH_MECA') then
-      call jevech('PMATUUR', 'E', imatuu)
-      do 100 i = 1, 2*nno
-        do 101 j = 1, i
-            ij = (i-1)*i/2 + j
-            zr(imatuu+ij-1) = matr(i,j)
-101     continue
-100   continue
+        call writeMatrix('PMATUUR', 2*nno, 2*nno, ASTER_TRUE, matr)
     endif
     if (option(1:9) .ne. 'RIGI_MECA' .and. option .ne. 'AMOR_MECA') then
       call jevech('PVECTUR', 'E', ivectu)

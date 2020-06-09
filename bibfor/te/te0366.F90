@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,6 +50,7 @@ subroutine te0366(option, nomte)
 #include "asterfort/xtlagf.h"
 #include "asterfort/xcalfev_wrap.h"
 #include "asterfort/xkamat.h"
+#include "asterfort/writeMatrix.h"
     character(len=16) :: option, nomte
 !
 ! ----------------------------------------------------------------------
@@ -67,10 +68,10 @@ subroutine te0366(option, nomte)
     integer :: n
     parameter    (n=336)
 !
-    integer :: i, j, ij, nfaes
+    integer :: nfaes
     integer :: ndim, nddl, nnc
     integer :: nsinge, nsingm
-    integer :: imatt, jpcpo
+    integer :: jpcpo
     integer :: jpcpi, jpcai, jpccf, jstno
     integer :: indnor, ifrott, indco
     integer :: jdepde, jdepm, jgeom, jheafa, jheano, jheavn, ncompn, jtab(7), iret
@@ -223,7 +224,7 @@ subroutine te0366(option, nomte)
                    zr(jlsn), zr(jlsn), zr(jgeom), ka, mu, ffe, fk_escl, face='ESCL')
     endif
 !
-! --- BRICOLAGES POUR RESPECTER LES ANCIENNES CONVENTIONS DE SIGNE 
+! --- BRICOLAGES POUR RESPECTER LES ANCIENNES CONVENTIONS DE SIGNE
     fk_escl=-1.d0*fk_escl
     if (nnm(1) .eq. 0) fk_escl=2.d0*fk_escl
     if (nsingm.eq.1 .and. nnm(1).gt.0) then
@@ -387,29 +388,11 @@ subroutine te0366(option, nomte)
 ! --- RECOPIE VALEURS FINALES (SYMETRIQUE OU NON)
 !
     if (lpenac .or. lpenaf) then
-        call jevech('PMATUNS', 'E', imatt)
-        do j = 1, nddl
-            do i = 1, nddl
-                ij = nddl*(i-1) + j
-                zr(imatt+ij-1) = mmat(i,j)
-            end do
-        end do
+        call writeMatrix('PMATUNS', nddl, nddl, ASTER_FALSE, mmat)
     else if ((coefff.eq.0.d0) .or.(ifrott.ne.3)) then
-        call jevech('PMATUUR', 'E', imatt)
-        do j = 1, nddl
-            do i = 1, j
-                ij = (j-1)*j/2 + i
-                zr(imatt+ij-1) = mmat(i,j)
-            end do
-        end do
+        call writeMatrix('PMATUUR', nddl, nddl, ASTER_TRUE, mmat)
     else
-        call jevech('PMATUNS', 'E', imatt)
-        do j = 1, nddl
-            do i = 1, nddl
-                ij = nddl*(i-1) + j
-                zr(imatt+ij-1) = mmat(i,j)
-            end do
-        end do
+        call writeMatrix('PMATUNS', nddl, nddl, ASTER_FALSE, mmat)
     endif
 !
 end subroutine
