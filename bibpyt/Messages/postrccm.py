@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -124,10 +124,15 @@ cata_msg = {
  défini sous l'occurrence numéro %(i1)d
 """),
 
-
-
-
-
+    22: _("""
+ Vous réalisez un post traitement en fatigue conformément à l'annexe ZH210
+ du RCCM-M avec l'intégralité des instants disponibles dans le résultat.
+ Dans cette situation, chaque instant de calcul est considéré comme un 
+ extremum local de contraintes.
+ Cela peut conduire à des temps de calcul importants et à un facteur 
+ d'usage sur-estimé.
+ Les extremum locaux peuvent être identifiés par les mots-clés INST ou LIST_INST. 
+"""),
 
     23: _("""
  on n'a pas pu récupérer le résultat thermique correspondant au numéro %(i2)d
