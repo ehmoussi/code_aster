@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,8 @@ subroutine ascarm(nomsy, monoap, nbsup, nsupp, neq,&
 #include "jeveux.h"
 #include "asterf_types.h"
 #include "asterfort/rsadpa.h"
-    integer :: nbsup, nsupp(*), neq, nbmode, id, tcosup(nbsup, *), im, nbdis(*)
+    integer :: nbsup, nsupp(*), neq, nbmode, id, tcosup(nbsup, *), im
+    integer :: nbdis(3, nbsup)
     integer :: nordr(*)
     real(kind=8) :: vecmod(neq, *), spectr(*), amort(*)
     real(kind=8) :: repmod(nbsup, neq, *)
@@ -95,7 +96,7 @@ subroutine ascarm(nomsy, monoap, nbsup, nsupp, neq,&
             ind = id + 3*(im-1) + 3*nbmode*(is-1)
             xxx = reasup(is,im,id) * xxm * spectr(ind)
             do in = 1, neq
-                ioc = nbdis(is)
+                ioc = nbdis(id, is)
                 repmod(ioc,in,id) = repmod(ioc,in,id)+ xxx * vecmod( in,im)
             enddo
         enddo

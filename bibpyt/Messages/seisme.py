@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -452,6 +452,21 @@ dans les données fournies. Ce mot-clé n'a donc aucun impact.
     92: _("""
 Il y a un spectre vertical dans les données fournies, cependant vous n'avez pas renseigné
 le mot-clé RATIO_HV. Cette valeur est fixée à 1.
+"""),
+
+
+    93: _("""
+En mode multi-appui décorrélé, les appuis doivent obligatoirement être disjoints des
+groupes d'appuis définis avec le mot-clé GROUP_APPUI.
+
+Le noeud %(k1)s est impliqué dans au moins deux groupes d'appuis.
+"""),
+
+    94: _("""
+En mode multi-appui décorrélé, les appuis doivent obligatoirement être disjoints des
+groupes d'appuis définis avec le mot-clé GROUP_APPUI.
+
+Le noeud %(k1)s du groupe %(k2)s est impliqué dans au moins deux groupes d'appuis.
 """),
 
 }
