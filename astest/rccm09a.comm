@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -53,9 +53,11 @@ AMOR_1=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                           INFO=2,
                          TITRE='FACTEUR AMORCAGE, RESULTAT: RESU1 - RESU2',
                    TRANSITOIRE=(_F(  TABL_SIGM_THETA = T_RESU1,
-                                     NB_OCCUR = 1 ),
+                                     NB_OCCUR = 1,
+                                TOUT_INST='OUI',),
                                 _F(  TABL_SIGM_THETA = T_RESU2,
-                                     NB_OCCUR = 1 ),)
+                                     NB_OCCUR = 1,
+                                TOUT_INST='OUI', ),)
               )
 
 IMPR_TABLE ( TABLE = AMOR_1 )
@@ -76,7 +78,8 @@ AMOR_1b=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                           INFO=2,
                          TITRE='FACTEUR AMORCAGE, RESULTAT: RESU1 SEUL',
                    TRANSITOIRE=(_F(  TABL_SIGM_THETA = T_RESU1,
-                                     NB_OCCUR = 1 ),)
+                                     NB_OCCUR = 1,
+                                TOUT_INST='OUI',),)
               )
 
 IMPR_TABLE ( TABLE = AMOR_1b )
@@ -96,7 +99,8 @@ AMOR_1c=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                           INFO=2,
                          TITRE='FACTEUR AMORCAGE, RESULTAT: RESU3 (RESU1 NEGATIF)',
                    TRANSITOIRE=(_F(  TABL_SIGM_THETA = T_RESU3,
-                                     NB_OCCUR = 1 ),)
+                                     NB_OCCUR = 1,
+                                TOUT_INST='OUI',),)
               )
 
 IMPR_TABLE ( TABLE = AMOR_1c )
@@ -116,7 +120,8 @@ AMOR_1d=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                           INFO=2,
                          TITRE='FACTEUR AMORCAGE, RESULTAT: RESU4 (RESU3, OFFSET 100, NOCC=10)',
                    TRANSITOIRE=(_F(  TABL_SIGM_THETA = T_RESU4,
-                                     NB_OCCUR = 10 ),)
+                                     NB_OCCUR = 10,
+                                TOUT_INST='OUI',),)
               )
 
 IMPR_TABLE ( TABLE = AMOR_1d )
@@ -136,7 +141,8 @@ AMOR_1e=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                           INFO=2,
                          TITRE='FACTEUR AMORCAGE, RESULTAT: RESU5 (RESU1, OFFSET 100)',
                    TRANSITOIRE=(_F(  TABL_SIGM_THETA = T_RESU5,
-                                     NB_OCCUR = 1 ),)
+                                     NB_OCCUR = 1,
+                                TOUT_INST='OUI',),)
               )
 IMPR_TABLE ( TABLE = AMOR_1e )
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -154,9 +160,11 @@ AMOR_2=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                          MATER=MAT,
                          TITRE='FACTEUR AMORCAGE, RESULTAT: RESU1 - RESU2',
                    TRANSITOIRE=(_F(  TABL_SIGM_THETA = T_RESU1,
-                                     NB_OCCUR = 2 ),
+                                     NB_OCCUR = 2,
+                                TOUT_INST='OUI',),
                                 _F(  TABL_SIGM_THETA = T_RESU2,
-                                     NB_OCCUR = 1 ),)
+                                     NB_OCCUR = 1, 
+                                TOUT_INST='OUI',),)
               )
 
 IMPR_TABLE ( TABLE = AMOR_2 )
@@ -177,9 +185,11 @@ AMOR_3=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                          MATER=MAT,
                          TITRE='FACTEUR AMORCAGE, RESULTAT: RESU1 - RESU2',
                    TRANSITOIRE=(_F(  TABL_SIGM_THETA = T_RESU1,
-                                     NB_OCCUR = 1 ),
+                                     NB_OCCUR = 1,
+                                TOUT_INST='OUI',),
                                 _F(  TABL_SIGM_THETA = T_RESU2,
-                                     NB_OCCUR = 3 ),)
+                                     NB_OCCUR = 3,
+                                TOUT_INST='OUI',),)
               )
 
 IMPR_TABLE ( TABLE = AMOR_3 )

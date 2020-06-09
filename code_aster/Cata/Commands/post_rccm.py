@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
                                fr=tr("Ke meca seul ou partition mecanique + thermique") ),
 
          TRANSITOIRE     =FACT(statut='o',max='**',fr=tr("transitoire à dépouiller"),
-           regles=(EXCLUS('TOUT_ORDRE','INST','LIST_INST'),
+           regles=(UN_PARMI('TOUT_ORDRE','INST','LIST_INST','TOUT_INST',),
                    UN_PARMI('TABL_RESU_MECA','TABL_SIGM_THETA'),),
            NB_OCCUR        =SIMP(statut='f',typ='I',defaut= 1,
                                  fr=tr("nombre d occurences réelles de ce transitoire") ),
@@ -57,6 +57,7 @@ POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
            TABL_SIGM_THETA =SIMP(statut='f',typ=table_sdaster,
                                  fr=tr("table relevé des contraintes a la distance d de la singularité pour chacun des angles THETA") ),
            TOUT_ORDRE      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
+           TOUT_INST      =SIMP(statut='f',typ='TXM',into=("OUI",) ),
            INST            =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
            LIST_INST       =SIMP(statut='f',typ=listr8_sdaster ),
            b_inst          =BLOC(condition = """(exists("INST")) or (exists("LIST_INST"))""" ,
