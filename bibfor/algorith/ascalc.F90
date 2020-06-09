@@ -101,7 +101,7 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
 !     ------------------------------------------------------------------
     integer :: id, iopt, iret, jcrer, jcrep, jdir, jmod, jrep1, jtabs
     integer :: nbmode, nbopt, nbpara, nbpari, nbpark, nbparr, nbsup, ndepl
-    integer :: neq, jrep2, nbdis(nbsup), noc, ioc, n1, nno, is, ino, igr
+    integer :: neq, jrep2, nbdis(3, nbsup), noc, ioc, n1, nno, is, ino, igr
     integer :: ngr, jdgn, ier, ncompt, nintra, nbvect
     parameter     ( nbpara = 5 )
     real(kind=8) :: temps
@@ -112,7 +112,7 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
     character(len=16) :: nomsy, nomsy2, nopara(nbpara)
     character(len=19) :: kvec, kval, moncha
     character(len=24) :: kvx1, kvx2, kve2, kve3, kve4, kve5, obj1, obj2
-    character(len=24) :: grnoeu
+    character(len=24) :: grnoeu, valk(2)
     integer :: iarg
     character(len=24), pointer :: group_no(:) => null()
     character(len=8), pointer :: noeud(:) => null()
@@ -148,11 +148,15 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
 !  ----         CAS DECORRELE            ----
 !  ---- INITIALISATION DU TABLEAU CONCERNANT
 !  ---- LES REGROUPEMENTS EN INTRA-GROUPE
-    do is = 1, nbsup
-        nbdis(is) = 0
+    do id = 1, 3
+        do is = 1, nbsup
+            nbdis(id, is) = 0
+        end do
     end do
+
     nintra = nbsup
     noc = nbsup
+
 !
 !  ---- CONSTITUTION DES GROUPES D'APPUI ----
     if ((.not.monoap) .and. muapde) then
@@ -170,13 +174,13 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
                     do ino = 1, nno
                         noeu = noeud(ino)
                         call getvtx(motfa1, 'NOEUD', iocc=ioc, nbval=0, nbret=n1)
-                        do is = 1, nbsup
-                            do id = 1, 3
+                        do id = 1, 3
+                            do is = 1, nsupp(id)
                                 if (nomsup((id-1)*nbsup+is) .eq. noeu) then
-                                    if (nbdis(is) .ne. 0 .and. nbdis(is) .ne. ioc) then
-                                        call utmess('F', 'SEISME_29')
+                                    if (nbdis(id, is) .ne. 0) then
+                                        call utmess('F', 'SEISME_93', sk=noeu)
                                     endif
-                                    nbdis(is) = ioc
+                                    nbdis(id, is) = ioc
                                 endif
                             end do
                         end do
@@ -205,13 +209,16 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
 !
                             do ino = 1, nno
                                 call jenuno(jexnum(obj2, zi(jdgn+ino-1) ), noeu)
-                                do is = 1, nbsup
-                                    do id = 1, 3
+                                do id = 1, 3
+                                    do is = 1, nsupp(id)
                                         if (nomsup((id-1)*nbsup+is) .eq. noeu) then
-                                            if (nbdis(is) .ne. 0 .and. nbdis(is) .ne. ioc) then
-                                                call utmess('F', 'SEISME_29')
+                                            if (nbdis(id, is) .ne. 0) then
+                                                valk(1) = noeu
+                                                valk(2) = grnoeu
+                                                call utmess('F', 'SEISME_94', nk=2,&
+                                                    valk=valk)
                                             endif
-                                            nbdis(is) = ioc
+                                            nbdis(id, is) = ioc
                                         endif
                                     end do
                                 end do
@@ -221,10 +228,12 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
                     endif
                 endif
             end do
-            ncompt = 0
             if (noc .eq. 1) then
-                do is = 1, nbsup
-                    ncompt = ncompt + nbdis(is)
+                do id = 1, 3
+                    ncompt = 0
+                    do is = 1, nsupp(id)
+                        ncompt = ncompt + nbdis(id, is)
+                    end do
                 end do
                 if (ncompt .eq. nbsup) then
                     call utmess('F', 'SEISME_30')
@@ -232,18 +241,25 @@ subroutine ascalc(resu, masse, mome, psmo, stat,&
             endif
         endif
 !  ---- SI GROUP_APPUI EST ABSENT ----
-        ncompt = 0
-        do is = 1, nbsup
-            if (nbdis(is) .eq. 0) then
-                ncompt = ncompt + 1
-                nbdis(is) = noc + ncompt
-            endif
+        nintra = -1
+        do id = 1, 3
+            ncompt = 0
+            do is = 1, nsupp(id)
+                if (nbdis(id, is) .eq. 0) then
+                    ncompt = ncompt + 1
+                    nbdis(id, is) = noc + ncompt
+                endif
+            end do
+            if (noc + ncompt .gt. nintra) nintra = noc + ncompt
         end do
-        nintra = noc + ncompt
     else
 !  ---- SI LES EXCITATIONS SONT CORRELEES ----
-        do is = 1, nbsup
-            nbdis(is) = is
+        do id = 1, 3
+            ncompt = 0
+            do is = 1, nbsup
+                ncompt = ncompt + 1
+                nbdis(id, is) = ncompt
+            end do
         end do
         nintra = nbsup
     endif

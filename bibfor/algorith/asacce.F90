@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ subroutine asacce(nomsy, monoap, nbsup, neq,&
 #include "asterfort/rsadpa.h"
 #include "asterfort/pteddl.h"
 #include "asterfort/wkvect.h"
-    integer :: nbsup, neq, nbmode, id, nbdis(nbsup), nordr(*)
+    integer :: nbsup, neq, nbmode, id, nbdis(3, nbsup), nordr(*)
     real(kind=8) :: vecmod(neq, *), gamma0(*)
     real(kind=8) :: recmod(nbsup, neq, *), recmor(nbsup, neq, *)
     character(len=16) :: nomsy, nopara(*)
@@ -67,7 +67,7 @@ subroutine asacce(nomsy, monoap, nbsup, neq,&
     if (monoap) then
 !       SOMME DES CARRES DES REPONSES PERIO ET RIGIDES
         do in = 1, neq
-            ioc = nbdis(1)
+            ioc = nbdis(1, 1)
 !         VALEUR DE IOC REFERENCE A ASCORM.F
             recmod(ioc,in,id) = recmod(ioc,in,id)+ (recmor(ioc,in,id)* recmor(ioc,in,id))
         enddo
