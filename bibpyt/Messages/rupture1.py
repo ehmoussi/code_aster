@@ -423,4 +423,9 @@ et MIXTE
 Veuillez revoir le type de lissage utilisé
 """),
 
+    74: _("""
+POST_K1_K2_K3 : Cet opérateur est incompatible avec les modélisations incompressibles. En effet, il n'est valide qu'en élasticité linéaire, où les modélisations incompressibles ne sont pas nécessaires.
+"""),
+
+
 }

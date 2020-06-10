@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,7 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
     character(len=16) :: ktyel
     character(len=19) :: chmat, cesmat, cnxinv
     character(len=24) :: mesmai, limafo
-    aster_logical :: l_xfem
+    aster_logical :: l_xfem, inco
     integer, pointer :: vmatmp(:) => null()
     integer, pointer :: vmafon(:) => null()
     integer, pointer :: vtyele(:) => null()
@@ -303,15 +303,30 @@ subroutine postkutil(nomres, nomfis, repmat, repmod)
     imaf = vmafon(1)
     nutyel = vtyele(imaf)
     call jenuno(jexnum('&CATA.TE.NOMTE', nutyel), ktyel)
+
     do i = 1, 4
         if (lteatt('TYPMOD', vk8_typmod(i), ktyel)) then
             imodeli = i
             exit
         endif
     enddo
+    inco = .False.
+! .or. lteatt('INCO','C3B') .or. lteatt('INCO','C2 ') .or. lteatt('INCO','C2O')
+    if (lteatt('INCO','C5GV', ktyel) .or. &
+        lteatt('INCO','C3B', ktyel) .or. &
+        lteatt('INCO','C2 ', ktyel) .or. &
+        lteatt('INCO','C2O', ktyel)) then
+      inco = .True.
+    endif
+
+    if (inco) then
+      call utmess('F', 'RUPTURE1_74')
+    endif
     ASSERT( imodeli .gt. 0 )
     k8typmo = vk8_typmod(imodeli)
     k8model = vk8_modeli(imodeli)
+
+
     ASSERT( ndim .eq. vin_modeli(imodeli) )
 !
 !   recup du materiau sur la 1ere maille de vmafon
