@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -407,6 +407,9 @@ subroutine rcevo2(nbinti, kinti, csigm, cinst, csiex,&
                 call getvr8(motclf, 'PRECISION', iocc=iocc, scal=prec(1), nbret=n1)
                 call getvtx(motclf, 'CRITERE', iocc=iocc, scal=crit(1), nbret=n1)
             else
+                if(lfatig)then
+                    call utmess('A','POSTRCCM_22')
+                endif
                 prec(1) = 1.0d-06
                 crit(1) = 'RELATIF'
                 call tbexip(table, valek(1), exist, k8b)

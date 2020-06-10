@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,14 +25,17 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8gaem.h"
-#include "asterfort/cfinvm.h"
+#include "asterc/r8prem.h"
 #include "asterfort/apchoi.h"
 #include "asterfort/apcoma.h"
 #include "asterfort/apdist.h"
-#include "asterfort/cfnben.h"
-#include "asterfort/cfnumm.h"
 #include "asterfort/aptypm.h"
 #include "asterfort/assert.h"
+#include "asterfort/cfdisl.h"
+#include "asterfort/cfinvm.h"
+#include "asterfort/cfnben.h"
+#include "asterfort/cfnumm.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/mmproj.h"
 #include "asterfort/utmess.h"
 !
@@ -46,7 +49,7 @@ implicit none
     real(kind=8), intent(in) :: pair_vect(3)
     integer, intent(in) :: iter_maxi
     real(kind=8), intent(in) :: epsi_maxi
-    real(kind=8), intent(in) :: tole_proj_ext 
+    real(kind=8), intent(in) :: tole_proj_ext
     real(kind=8), intent(in) :: poin_coor(3)
     real(kind=8), intent(out) :: tau1_mini(3)
     real(kind=8), intent(out) :: tau2_mini(3)
@@ -90,13 +93,14 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: elem_mast_type, elem_mast_name
-    integer :: elem_mast_ndim, niverr, elem_mast_nbnode, node_nbelem
+    integer :: elem_mast_ndim, niverr, elem_mast_nbnode, node_nbelem, ino
     real(kind=8) :: elem_mast_coor(27), vect_pm(3)
     real(kind=8) :: tau1(3), tau2(3)
     real(kind=8) :: ksi1, ksi2, dist
     integer :: proj_stat, i_elem_mast, elem_mast_indx, elem_mast_nume
-    integer :: jdeciv
-    aster_logical :: l_poi1
+    integer :: jdeciv, mesh_ndim
+    aster_logical :: l_poi1, l_cont_disc
+
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -112,6 +116,13 @@ implicit none
 ! - No node excluded
 !
     ASSERT(node_mast_indx.ne.0)
+!
+! - Dimension of the mesh
+!
+    call dismoi('DIM_GEOM', mesh, 'MAILLAGE', repi=mesh_ndim)
+    ASSERT((mesh_ndim == 2) .or. (mesh_ndim == 3))
+!
+    l_cont_disc = cfdisl(sdcont_defi,'FORMUL_DISCRETE')
 !
 ! - Number of elements attached to master node
 !
@@ -141,6 +152,15 @@ implicit none
 ! ----- Coordinates of master elements
 !
         call apcoma(mesh, newgeo, elem_mast_nume, elem_mast_nbnode, elem_mast_coor)
+!
+        if((elem_mast_ndim .lt. mesh_ndim) .and. .not.l_cont_disc) then
+! ----- The nodes have to be in the plane xOy (problem for shell element)
+            do ino = 1, elem_mast_nbnode
+                if(abs(elem_mast_coor(3*(ino-1)+3)) > r8prem()) then
+                    call utmess('F', 'APPARIEMENT_12', ni=2, vali=[mesh_ndim, elem_mast_ndim])
+                end if
+            end do
+        end if
 !
 ! ----- No POI1 master element
 !

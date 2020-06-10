@@ -148,7 +148,6 @@ use elg_module
         call aster_petsc_initialize(ier2)
         ierr = to_petsc_int(ier2)
         if (ierr .ne. 0) call utmess('F', 'PETSC_1')
-        ASSERT(ierr .eq. 0)
         do k = 1, nmxins
             ap(k) = PETSC_NULL_MAT
             kp(k) = PETSC_NULL_KSP

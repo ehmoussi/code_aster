@@ -168,6 +168,7 @@ def perm_mac3coeur_ops(self, **args):
                          NOM_CHAM='DEPL',
                          AFFE=_F(CHAM_GD=__ASSDEP,
                                  INST=0.0,
+                                 PRECISION=1.E-10,
                                  MODELE=_MO_NP1,))
 
     __CHSIE = CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
@@ -191,6 +192,7 @@ def perm_mac3coeur_ops(self, **args):
               TYPE_RESU='EVOL_NOLI',
               NOM_CHAM='SIEF_ELGA',
               AFFE=_F(CHAM_GD=__ASSSIE,
+                      PRECISION=1.0E-10,
                       INST=0.0,
                       MODELE=_MO_NP1,))
 
@@ -216,6 +218,7 @@ def perm_mac3coeur_ops(self, **args):
               NOM_CHAM='VARI_ELGA',
               AFFE=_F(CHAM_GD=__ASSVAR,
                       INST=0.0,
+                      PRECISION=1.E-10,
                       MODELE=_MO_NP1,))
     nbresu = len(l_RESUI)
     assert (len(_l_coeur) == nbresu)

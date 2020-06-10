@@ -61,7 +61,7 @@ subroutine te0439(option, nomte)
 !
     if(iret_cmp == 0) then
         grdef = (zk16 ( icompo + 2 )(1:9) .eq. 'GROT_GDEP')
-    end if
+    end if 
 !
     ldiag = (option(1:10).eq.'MASS_MECA_')
 !

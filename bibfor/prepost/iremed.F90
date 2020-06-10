@@ -101,7 +101,7 @@ character(len=8), intent(in) :: caraElem
     character(len=64) :: fieldNameMed
     integer :: storeIndx, iField, iStore, iret, ibid, codret
     integer :: lnochm, ierd
-    aster_logical :: lfirst, l_mult_model, l_vari_name
+    aster_logical :: lfirst, l_mult_model, l_vari_name, l_meta_name
     integer, pointer :: cmpListNume(:) => null()
     character(len=24), pointer :: celk(:) => null()
     parameter   (cesnsp = '&&IREMED.CANBSP')
@@ -166,6 +166,7 @@ character(len=8), intent(in) :: caraElem
         fieldType = fieldListType(iField)
         l_mult_model = ASTER_FALSE
         l_vari_name  = ASTER_FALSE
+        l_meta_name  = ASTER_FALSE
 ! ----- Loop on storing slots
         do iStore = 1, storeListNb
             storeIndx = storeListIndx(iStore)
@@ -281,6 +282,9 @@ character(len=8), intent(in) :: caraElem
             if (codret .eq. 200) then
                 l_vari_name  = ASTER_TRUE
             endif
+            if (codret .eq. 400) then
+                l_meta_name  = ASTER_TRUE
+            endif
 !
  22         continue
 !
@@ -292,6 +296,9 @@ character(len=8), intent(in) :: caraElem
         endif
         if (l_vari_name) then
             call utmess('A', 'MED2_7')
+        endif
+        if (l_meta_name) then
+            call utmess('A', 'MED2_10')
         endif
         lfirst=.false.
 !

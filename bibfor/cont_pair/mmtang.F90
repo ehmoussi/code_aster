@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,14 +59,14 @@ subroutine mmtang(ndim, nno, coorma, dff, tau1,&
 !
 ! --- CALCUL DES TANGENTES
 !
-    do 41 idim = 1, ndim
-        do 31 ino = 1, nno
+    do idim = 1, 3
+        do ino = 1, nno
             tau1(idim) = coorma(3*(ino-1)+idim)*dff(1,ino) + tau1( idim)
             if (ndim .eq. 3) then
                 tau2(idim) = coorma(3*(ino-1)+idim)*dff(2,ino) + tau2( idim)
             endif
- 31     continue
- 41 end do
+        end do
+    end do
 !
 !
 end subroutine
