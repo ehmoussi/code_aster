@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ MAILLAGE = DEFI_GROUP( reuse        = MAILLAGE,
                                             TOUT='OUI',)),
                           CREA_GROUP_NO=(_F(NOM='ROCHES',
                                             CRIT_NOEUD='SOMMET',
-                                            GROUP_MA='ROCHE'),),);
+                                            GROUP_MA='ROCHE'),),)
 
 
 THMALP1 = DEFI_CONSTANTE(VALE=0.000100)
@@ -160,14 +160,14 @@ PR_V=AFFE_CHAR_MECA(    MODELE=MODELE,
                                     )
                         )
 
-DEP_SYM=AFFE_CHAR_MECA(    MODELE=MODELE,FACE_IMPO=(
+DEP_SYM=AFFE_CHAR_CINE(    MODELE=MODELE,MECA_IMPO=(
                               _F(  GROUP_MA = 'BAS',    DZ = 0.,   ),
                               _F(  GROUP_MA = 'DERRIERE',    DX = 0.,   ),
                               _F(  GROUP_MA = 'GAUCHE',    DY = 0.,   ))
                            )
 
-P0=AFFE_CHAR_MECA(    MODELE=MODELE,
-                               DDL_IMPO=_F( GROUP_NO='ROCHES',   PRE1 = 0.,  )
+P0=AFFE_CHAR_CINE(    MODELE=MODELE,
+                               MECA_IMPO=_F( GROUP_NO='ROCHES',   PRE1 = 0.,  )
                            )
 
 EVOL_HYD=DEFI_FONCTION(      NOM_PARA='INST',
@@ -211,7 +211,17 @@ U1=STAT_NON_LINE(
                 ),
                        CONVERGENCE=_F(
                 RESI_GLOB_RELA = 1.E-6,
-                )
+                ), #INFO=2,
+                SOLVEUR=_F(ELIM_LAGR='NON',
+                              FILTRAGE_MATRICE=-1.0,
+                              LOW_RANK_SEUIL=0.0,
+                              METHODE='MUMPS',
+                              MIXER_PRECISION='NON',
+                              NPREC=8,
+                              PCENT_PIVOT=20,
+                              POSTTRAITEMENTS='FORCE',
+                              PRETRAITEMENTS='AUTO',
+                              RESI_RELA=1.0e-10,)
               )
 
 U1=CALC_CHAMP(reuse=U1,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_ELNO'),RESULTAT=U1)
@@ -219,7 +229,7 @@ U1=CALC_CHAMP(reuse=U1,CONTRAINTE=('SIGM_ELNO'),VARI_INTERNE=('VARI_ELNO'),RESUL
 
 IMPR_RESU(FORMAT="RESULTAT",MODELE=MODELE,
           RESU=(_F(RESULTAT=U1,INST=(7000.)),
-                   ),);
+                   ),)
 
 TEMPS2=DEFI_LIST_REEL(   DEBUT=7000.,
                          INTERVALLE=(_F(  JUSQU_A = 8000.00,    NOMBRE = 100, ),
@@ -238,8 +248,8 @@ ARCHI=DEFI_LIST_REEL(   DEBUT=7000.,
                                      _F(  JUSQU_A =12000.00,   NOMBRE = 10, ),
                                      _F(  JUSQU_A =13000.00,   NOMBRE = 10, ),
                    ))
-DEP_V=AFFE_CHAR_MECA(    MODELE=MODELE,
-                              FACE_IMPO=_F(  GROUP_MA = 'HAUT',    DZ = 1.,   )
+DEP_V=AFFE_CHAR_CINE(    MODELE=MODELE,
+                              MECA_IMPO=_F(  GROUP_MA = 'HAUT',    DZ = 1.,   )
                            )
 
 EVOL_DEV=DEFI_FONCTION(      NOM_PARA='INST',
@@ -265,7 +275,8 @@ DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =TEMPS2 ,),
                                          SUBD_PAS      = 10,
                                          SUBD_PAS_MINI = 0.01,),)
 
-
+# On force les post-traitements dans le solveur et on diminue le critère de convergence
+# afin de limiter l'accumulation des erreurs sur les différents pas de temps
 U2=STAT_NON_LINE(
                             MODELE=MODELE,
                         CHAM_MATER=CHMAT,EXCIT=(
@@ -301,10 +312,21 @@ U2=STAT_NON_LINE(
                 REAC_ITER_ELAS=100,
                 ),
                        CONVERGENCE=_F(
-                RESI_GLOB_RELA = 1.E-6,
+                RESI_GLOB_RELA = 1.E-9,
                 ITER_GLOB_MAXI = 20,
                 ITER_GLOB_ELAS = 100,
-                )
+                ),
+                SOLVEUR=_F(ELIM_LAGR='NON',
+                              FILTRAGE_MATRICE=-1.0,
+                              LOW_RANK_SEUIL=0.0,
+                              METHODE='MUMPS',
+                              MIXER_PRECISION='NON',
+                              NPREC=8,
+                              PCENT_PIVOT=20,
+                              POSTTRAITEMENTS='FORCE',
+                              PRETRAITEMENTS='AUTO',
+                              RESI_RELA=1.0e-10,)
+                #INFO=2,
               )
 
 U2=CALC_CHAMP(reuse=U2,CRITERES=('SIEQ_ELNO'),VARI_INTERNE=('VARI_ELNO'),CONTRAINTE=('SIGM_ELNO'),RESULTAT=U2)
@@ -326,7 +348,7 @@ TEST_RESU(RESU=_F(INST=1.3000E4,
                   NOM_CHAM='DEPL',
                   NOEUD='NO8',
                   NOM_CMP='DX',
-                  VALE_CALC=0.030194228316090,
+                  VALE_CALC=0.03019605053137588,
                   ),
           )
 
@@ -335,8 +357,8 @@ TEST_RESU(RESU=_F(INST=1.3000E4,
                   NOM_CHAM='SIGM_NOEU',
                   NOEUD='NO8',
                   NOM_CMP='SIZZ',
-                  VALE_CALC=-11940517.514,
+                  VALE_CALC=-11940436.117873782,
                   ),
           )
 
-FIN () ;
+FIN ()
