@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,10 +32,12 @@ FAT12=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TITRE='FATIGUE (MAX), SITUATIONS 1 et 2, NOCC1 = 1',
                 TRANSITOIRE=(_F( TABL_RESU_MECA = T_TOT1,
                                  TABL_SIGM_THER = T_TH1, 
-                                  NB_OCCUR=1,),
+                                  NB_OCCUR=1,
+                                   TOUT_INST='OUI',),
                              _F( TABL_RESU_MECA = T_TOT2,
                                  TABL_SIGM_THER = T_TH2,
-                                 NB_OCCUR=1,),),
+                                 NB_OCCUR=1,
+                                   TOUT_INST='OUI',),),
                  )
 
 IMPR_TABLE(    TABLE=FAT12,)
@@ -48,10 +50,12 @@ FAT12b=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TITRE='FATIGUE (MAX), SITUATIONS 1 et 2, NOCC1=10',
                 TRANSITOIRE=(_F( TABL_RESU_MECA = T_TOT1,
                                  TABL_SIGM_THER = T_TH1, 
-                                  NB_OCCUR=10,),
+                                  NB_OCCUR=10,
+                                   TOUT_INST='OUI',),
                              _F( TABL_RESU_MECA = T_TOT2,
                                  TABL_SIGM_THER = T_TH2,
-                                 NB_OCCUR=1,),),
+                                 NB_OCCUR=1,
+                                   TOUT_INST='OUI',),),
                  )
 
 IMPR_TABLE(    TABLE=FAT12b,)
@@ -64,10 +68,12 @@ FAT12c=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TITRE='FATIGUE (MAX) SECOND MATERIAU, SITUATIONS 1 et 2, NOCC1 = 10',
                 TRANSITOIRE=(_F( TABL_RESU_MECA = T_TOT1,
                                  TABL_SIGM_THER = T_TH1, 
-                                  NB_OCCUR=10,),
+                                  NB_OCCUR=10,
+                                   TOUT_INST='OUI',),
                              _F( TABL_RESU_MECA = T_TOT2,
                                  TABL_SIGM_THER = T_TH2,
-                                 NB_OCCUR=1,),),
+                                 NB_OCCUR=1,
+                                   TOUT_INST='OUI',),),
                  )
 
 IMPR_TABLE(    TABLE=FAT12c,)
@@ -81,10 +87,12 @@ FAT12MIX=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TITRE='FATIGUE (MAX) EN KE MIXTE, SITUATIONS 1 et 2',
                 TRANSITOIRE=(_F( TABL_RESU_MECA = T_TOT1,
                                  TABL_SIGM_THER = T_TH1, 
-                                  NB_OCCUR=1,),
+                                  NB_OCCUR=1,
+                                   TOUT_INST='OUI',),
                              _F( TABL_RESU_MECA = T_TOT2,
                                  TABL_SIGM_THER = T_TH2,
-                                 NB_OCCUR=1,),),
+                                 NB_OCCUR=1,
+                                   TOUT_INST='OUI',),),
                  )
 
 IMPR_TABLE(    TABLE=FAT12MIX,)
@@ -157,6 +165,23 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=1.000000000,
            VALE_REFE=1.0,
            NOM_PARA='KE',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+          TABLE=FAT12,)
+
+# SALT
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=50.000000000,
+           VALE_REFE=50.0,
+           NOM_PARA='SALT',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=FAT12,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=105.000000000,
+           VALE_REFE=105.0,
+           NOM_PARA='SALT',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
           TABLE=FAT12,)
@@ -246,7 +271,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
           TABLE=FAT12b,)
-
+          
 # DOMMAGE
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=0.000100000,
@@ -346,6 +371,23 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_CALC=3.2666666700,
            VALE_REFE=3.26666667,
            NOM_PARA='KE',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='EXTR',),
+          TABLE=FAT12c,)
+
+# SALT
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=50.000000000,
+           VALE_REFE=50.0,
+           NOM_PARA='SALT',
+           FILTRE=_F(NOM_PARA='LIEU',
+                     VALE_K='ORIG',),
+           TABLE=FAT12c,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=343.000000,
+           VALE_REFE=343.0,
+           NOM_PARA='SALT',
            FILTRE=_F(NOM_PARA='LIEU',
                      VALE_K='EXTR',),
           TABLE=FAT12c,)

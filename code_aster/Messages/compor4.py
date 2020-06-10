@@ -66,6 +66,8 @@ Comportement - Occurrence  %(i1)d"""),
   Pour les comportements externes prototypes (MFRONT ou UMAT), on n'a pas d'informations sur le nom des variables internes.
 """),
 
+    17: _("""Il y a au moins un comportement qui sera traité en mode total or vous avez des variables de commande. Référez-vous à la documentation pour comprendre la manière dont seront prises en comptes les variables de commande dans cette situation."""),
+
 
     20: _("""            V%(i1)d : %(k1)s"""),
 

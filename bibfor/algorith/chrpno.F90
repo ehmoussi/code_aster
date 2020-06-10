@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -128,6 +128,15 @@ subroutine chrpno(champ1, repere, nbcmp, icham, type)
     call dismoi('Z_CST', ma, 'MAILLAGE', repk=k8b)
     ndim = 3
     if (k8b .eq. 'OUI') ndim = 2
+
+    if (type(6:7) .eq. '3D') then
+        if (ndim .ne. 3) then
+            valk = type(1:7)
+            call utmess('A', 'ALGORITH12_44', sk=valk)
+        endif
+        ndim = 3
+    endif
+    
     call dismoi('NB_MA_MAILLA', ma, 'MAILLAGE', repi=nbma)
 !
 !

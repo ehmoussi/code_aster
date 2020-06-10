@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,9 @@ SN1=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TYPE_RESU='DETAILS',
                 MATER=MAT,
                 TITRE='CALCUL DE SN (DETAILS), SITUATION 1, EVOLUTION',
-                TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT1,)
+                TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT1,
+                                TOUT_INST='OUI',
+                )
               )
 
 IMPR_TABLE(    TABLE=SN1,)        
@@ -85,7 +87,9 @@ SN2=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TYPE_RESU='DETAILS',
                 MATER=MAT,
                 TITRE='CALCUL DE SN (DETAILS), SITUATION 2, EVOLUTION',
-                TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT2,)
+                TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT2,
+                                 TOUT_INST='OUI',
+                )
                  )
 
 IMPR_TABLE(    TABLE=SN2,)
@@ -97,7 +101,8 @@ SN1et=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 MATER=MAT,
                 TITRE='CALCUL DE SN et SN* (DETAILS), SITUATION 1, EVOLUTION',
                 TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT1,
-                                 TABL_SIGM_THER = T_TH1,)
+                                 TABL_SIGM_THER = T_TH1,
+                                 TOUT_INST='OUI',)
               )
 
 IMPR_TABLE(    TABLE=SN1et,) 
@@ -109,7 +114,8 @@ SN2et=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 MATER=MAT,
                 TITRE='CALCUL DE SN et SN* (DETAILS), SITUATION 2, EVOLUTION',
                 TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT2,
-                                 TABL_SIGM_THER = T_TH2,)
+                                 TABL_SIGM_THER = T_TH2,
+                                 TOUT_INST='OUI',)
               )
 
 IMPR_TABLE(    TABLE=SN2et,)     
@@ -122,7 +128,8 @@ SNROC1=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TITRE='CALCUL DE SN/SN*/ROCHET (DETAILS), SITUATION 1 ',
                 TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT1,
                                  TABL_SIGM_THER = T_TH1,
-                                 TABL_RESU_PRES = T_PR1, )
+                                 TABL_RESU_PRES = T_PR1, 
+                                 TOUT_INST='OUI',)
                  )
 
 IMPR_TABLE(    TABLE=SNROC1,) 
@@ -136,7 +143,8 @@ SNROC2=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TITRE='CALCUL DE SN/SN*/ROCHET (DETAILS), SITUATION 2 ',
                 TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT2,
                                  TABL_SIGM_THER = T_TH2,
-                                 TABL_RESU_PRES = T_PR2, )
+                                 TABL_RESU_PRES = T_PR2, 
+                                 TOUT_INST='OUI',)
                  )
 
 IMPR_TABLE(    TABLE=SNROC2,)
@@ -148,9 +156,11 @@ SN12=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 MATER=MAT,
                 TITRE='CALCUL DE SN/SN*, SITUATIONS 1 et 2',
                 TRANSITOIRE=(_F( TABL_RESU_MECA = T_TOT1,
-                                 TABL_SIGM_THER = T_TH1, ),
+                                 TABL_SIGM_THER = T_TH1, 
+                                 TOUT_INST='OUI',),
                              _F( TABL_RESU_MECA = T_TOT2,
-                                 TABL_SIGM_THER = T_TH2, ),),
+                                 TABL_SIGM_THER = T_TH2, 
+                                 TOUT_INST='OUI',),),
                  )
 
 IMPR_TABLE(    TABLE=SN12,)

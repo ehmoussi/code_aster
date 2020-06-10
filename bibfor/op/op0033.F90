@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -84,7 +84,7 @@ implicit none
     character(len=4) :: fami, cargau
     character(len=8) :: typmod(2), mater(30), table, fonimp(9), typpar(ntamax)
     character(len=16) :: option, compor(COMPOR_SIZE), nompar(ntamax), opt2
-    character(len=16) :: mult_comp, type_comp, defo_ldc
+    character(len=16) :: mult_comp, type_comp, defo_ldc,rela_comp
     character(len=19) :: codi, sddisc, k19b, sdcrit
     character(len=24) :: sderro
     real(kind=8) :: instam, instap, ang(7), r8b, carcri(CARCRI_SIZE), fem(9)
@@ -246,7 +246,8 @@ implicit none
 ! - Initialisation of behaviour datastructure - Special for SIMU_POINT_MAT
 !
     read (compor(DEFO_LDC),'(A16)') defo_ldc
-    call behaviourInitPoint(carcri, BEHinteg)
+    rela_comp    = compor(RELA_NAME)
+    call behaviourInitPoint(carcri, rela_comp, BEHinteg)
 !
 !        6 CMP DE EPSI OU 9 CMP DE GRAD DONNEES : PAS BESOIN DE NEWTON
     if ((defimp.ge.1) .and. (abs(carcri(2)).lt.0.1d0)) then

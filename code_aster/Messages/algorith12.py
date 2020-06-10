@@ -190,6 +190,11 @@ Contactez le support technique.
  Seule la première valeur de l'angle nautique est retenue :  %(r1)f
 """),
 
+    44 : _("""
+ La modélisation détectée à partir du maillage est de dimension 2 (2D).
+ Mais le mot-clé TYPE_CHAM %(k1)s indique la dimension 3 (3D).
+ La dimension 3 (3D) est retenue.
+"""),
 
     49 : _("""
  problème: sous-structure inconnue

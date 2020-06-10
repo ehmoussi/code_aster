@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ implicit none
 !
 ! - Check dimension of elements versus model dimension
 !
-        call cfbord(sdcont, mesh)
+    call cfbord(sdcont, mesh)
     if (iform .ne. 5) then
 !
 ! - Check normals/tangents

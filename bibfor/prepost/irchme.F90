@@ -289,7 +289,8 @@ character(len=16), pointer :: paraListName(:)
 ! 3. BILAN
 !====
 !
-    if (codret .ne. 0 .and. codret .ne. 100 .and. codret .ne. 200 .and. codret .ne. 300) then
+    if (codret .ne. 0 .and.&
+        codret .ne. 100 .and. codret .ne. 200 .and. codret .ne. 300 .and. codret .ne. 400) then
         call utmess('A', 'MED_89', sk=nomsym)
     endif
 !

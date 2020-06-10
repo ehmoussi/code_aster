@@ -17,11 +17,16 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: j-pierre.lefebvre at edf.fr
+# person_in_charge: mickael.abbas at edf.fr
 
 from ..Commons import *
 from ..Language.DataStructure import *
 from ..Language.Syntax import *
+
+# Le traitement systématique des mots-clés dans l'op interdit d'avoir
+# uniquement des mots-clés facultatifs sous un mot-clé facteur.
+# Il faut donc au moins un mot-clé obligatoire ou bien une des
+# règles UN_PARMI, AU_MOINS_UN ou NON_VIDE.
 
 DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
                    fr=tr("Définition des paramètres décrivant le comportement d un matériau"),
@@ -408,8 +413,8 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # comportements mécanique non linéaire
 # vérification du domaine de validité
            VERI_BORNE      =FACT(statut='f',
-             regles=(ENSEMBLE('TEMP_MAXI','TEMP_MINI'),
-                     ),
+             regles=(NON_VIDE(),
+                     ENSEMBLE('TEMP_MAXI','TEMP_MINI'),),
              EPSI_MAXI       =SIMP(statut='f',typ='R'),
              TEMP_MAXI       =SIMP(statut='f',typ='R'),
              TEMP_MINI       =SIMP(statut='f',typ='R'),
@@ -755,7 +760,8 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              R_P0            =SIMP(statut='f',typ='R',defaut= 1.E+4 ),
            ),
             DIS_CONTACT =FACT(statut='f',
-                regles=(PRESENT_ABSENT('DIST_2','JEU',)),
+                regles=(NON_VIDE(),
+                        PRESENT_ABSENT('DIST_2','JEU',)),
                 RIGI_NOR =SIMP(statut='f',typ='R', ),
                 RIGI_TAN =SIMP(statut='f',typ='R', ),
                 AMOR_NOR =SIMP(statut='f',typ='R', ),
@@ -1079,6 +1085,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              SY_T            =SIMP(statut='o',typ='R'),
            ),
            BETON_GRANGER      =FACT(statut='f',
+                 regles=NON_VIDE(),
                  J1              =SIMP(statut='f',typ='R'),
                  J2              =SIMP(statut='f',typ='R'),
                  J3              =SIMP(statut='f',typ='R'),
@@ -1341,7 +1348,8 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # Discrets non-linéaires : début
          DIS_ECRO_CINE  =FACT(statut='f',
             fr=tr("Loi pour les discrets avec écrouissage cinématique."),
-            regles=(PRESENT_PRESENT('LIMY_DX','KCIN_DX',),PRESENT_PRESENT('PUIS_DX','LIMU_DX',),
+            regles=(NON_VIDE(),
+                    PRESENT_PRESENT('LIMY_DX','KCIN_DX',),PRESENT_PRESENT('PUIS_DX','LIMU_DX',),
                     PRESENT_PRESENT('LIMY_DY','KCIN_DY',),PRESENT_PRESENT('PUIS_DY','LIMU_DY',),
                     PRESENT_PRESENT('LIMY_DZ','KCIN_DZ',),PRESENT_PRESENT('PUIS_DZ','LIMU_DZ',),
                     PRESENT_PRESENT('LIMY_RX','KCIN_RX',),PRESENT_PRESENT('PUIS_RX','LIMU_RX',),
@@ -1432,7 +1440,8 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
          ),
          DIS_BILI_ELAS =FACT(statut='f',
             fr=tr("Loi bi-linéaire pour les discrets."),
-            regles=(PRESENT_PRESENT('KDEB_DX','KFIN_DX','FPRE_DX',),
+            regles=(NON_VIDE(),
+                    PRESENT_PRESENT('KDEB_DX','KFIN_DX','FPRE_DX',),
                     PRESENT_PRESENT('KDEB_DY','KFIN_DY','FPRE_DY',),
                     PRESENT_PRESENT('KDEB_DZ','KFIN_DZ','FPRE_DZ',),),
             KDEB_DX =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule),
@@ -1633,6 +1642,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              S_VP_MELANGE    =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
            ),
            META_ECRO_LINE  =FACT(statut='f',
+             regles=NON_VIDE(),
              F1_D_SIGM_EPSI  =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
              F2_D_SIGM_EPSI  =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
              F3_D_SIGM_EPSI  =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -1640,6 +1650,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              C_D_SIGM_EPSI   =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
            ),
            META_TRACTION   =FACT(statut='f',
+             regles=NON_VIDE(),
              SIGM_F1         =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
              SIGM_F2         =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
              SIGM_F3         =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -1647,6 +1658,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              SIGM_C          =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
            ),
            META_VISC_FO    =FACT(statut='f',
+             regles=NON_VIDE(),
              F1_ETA          =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
              F1_N            =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
              F1_C            =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -1669,6 +1681,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              C_M             =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
            ),
            META_PT         =FACT(statut='f',
+             regles=NON_VIDE(),
              F1_K            =SIMP(statut='f',typ='R'),
              F2_K            =SIMP(statut='f',typ='R'),
              F3_K            =SIMP(statut='f',typ='R'),
@@ -1679,6 +1692,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              F4_D_F_META     =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
            ),
            META_RE         =FACT(statut='f',
+             regles=NON_VIDE(),
              C_F1_THETA      =SIMP(statut='f',typ='R'),
              C_F2_THETA      =SIMP(statut='f',typ='R'),
              C_F3_THETA      =SIMP(statut='f',typ='R'),
@@ -1880,6 +1894,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # --- MOT-CLE INUTILE -------------------------------------------------------------
 # =================================================================================
            THM_GAZ         =FACT(statut='f',
+             regles=NON_VIDE(),
              MASS_MOL        =SIMP(statut='f',typ='R'),
              CP              =SIMP(statut='f',typ='R'),
              VISC            =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -1889,6 +1904,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # --- MOT-CLE INUTILE -------------------------------------------------------------
 # =================================================================================
            THM_VAPE_GAZ    =FACT(statut='f',
+             regles=NON_VIDE(),
              MASS_MOL        =SIMP(statut='f',typ='R'),
              CP              =SIMP(statut='f',typ='R'),
              VISC            =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -2072,6 +2088,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # --- MOT-CLE INUTILE -------------------------------------------------------------
 # =================================================================================
            THM_VAPE_GAZ    =FACT(statut='f',
+             regles=NON_VIDE(),
              MASS_MOL        =SIMP(statut='f',typ='R'),
              CP              =SIMP(statut='f',typ='R'),
              VISC            =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -2221,6 +2238,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # --- MOT-CLE INUTILE -------------------------------------------------------------
 # =================================================================================
            THM_LIQU        =FACT(statut='f',
+             regles=NON_VIDE(),
              RHO             =SIMP(statut='f',typ='R'),
              UN_SUR_K        =SIMP(statut='f',typ='R'),
              ALPHA           = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -2233,6 +2251,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # --- MOT-CLE INUTILE -------------------------------------------------------------
 # =================================================================================
            THM_VAPE_GAZ    =FACT(statut='f',
+             regles=NON_VIDE(),
              MASS_MOL        =SIMP(statut='f',typ='R'),
              CP              =SIMP(statut='f',typ='R'),
              VISC            =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -2387,6 +2406,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # --- MOT-CLE INUTILE -------------------------------------------------------------
 # =================================================================================
                              THM_GAZ    = FACT(statut='f',
+                                           regles=NON_VIDE(),
                                            MASS_MOL         = SIMP(statut='f',typ='R'),
                                            VISC             = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
                                            D_VISC_TEMP      = SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -2396,6 +2416,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # --- MOT-CLE INUTILE -------------------------------------------------------------
 # =================================================================================
            THM_VAPE_GAZ    =FACT(statut='f',
+             regles=NON_VIDE(),
              MASS_MOL        =SIMP(statut='f',typ='R'),
              CP              =SIMP(statut='f',typ='R'),
              VISC            =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -3162,6 +3183,7 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # --- MOT-CLE INUTILE -------------------------------------------------------------
 # =================================================================================
            THM_GAZ         =FACT(statut='f',
+             regles=NON_VIDE(),
              MASS_MOL        =SIMP(statut='f',typ='R'),
              CP              =SIMP(statut='f',typ='R'),
              VISC            =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -3171,7 +3193,8 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 # courbes et coefficients associés à la fatigue et au dommage
 #
            FATIGUE         =FACT(statut='f',
-             regles=(PRESENT_ABSENT('WOHLER','A_BASQUIN','BETA_BASQUIN'),
+             regles=(NON_VIDE(),
+                     PRESENT_ABSENT('WOHLER','A_BASQUIN','BETA_BASQUIN'),
                      PRESENT_ABSENT('WOHLER','A0','A1','A2','A3','SL'),
                      PRESENT_ABSENT('A_BASQUIN','A0','A1','A2','A3','SL'),
                      ENSEMBLE('A_BASQUIN','BETA_BASQUIN'),
@@ -3364,7 +3387,8 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              OUV_MIN         =SIMP(statut='f',typ='R',val_min=1.E-15),
            ),
            RCCM            =FACT(statut='f',
-             regles=(ENSEMBLE('A_AMORC','B_AMORC','D_AMORC','R_AMORC'),),
+             regles=(NON_VIDE(),
+                     ENSEMBLE('A_AMORC','B_AMORC','D_AMORC','R_AMORC'),),
              SY_02           =SIMP(statut='f',typ='R'),
              SM              =SIMP(statut='f',typ='R'),
              SU              =SIMP(statut='f',typ='R'),
@@ -3378,7 +3402,8 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
              R_AMORC         =SIMP(statut='f',typ='R'),
            ),
            RCCM_FO         =FACT(statut='f',
-             regles=(ENSEMBLE('A_AMORC','B_AMORC','D_AMORC','R_AMORC'),),
+             regles=(NON_VIDE(),
+                     ENSEMBLE('A_AMORC','B_AMORC','D_AMORC','R_AMORC'),),
              SY_02           =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
              SM              =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
              SU              =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),
@@ -3730,21 +3755,21 @@ DEFI_MATERIAU=OPER(nom="DEFI_MATERIAU",op=5,sd_prod=mater_sdaster,
 
 ### MFRONT
            MFRONT  =FACT(statut='f',
-             LISTE_COEF =SIMP(statut='f',typ='R',min=2,max='**'),
+             LISTE_COEF =SIMP(statut='o',typ='R',min=2,max='**'),
            ),
 
            MFRONT_FO   =FACT(statut='f',
-             LISTE_COEF =SIMP(statut='f',typ=(fonction_sdaster,formule), min=2,max='**'),
+             LISTE_COEF =SIMP(statut='o',typ=(fonction_sdaster,formule), min=2,max='**'),
            ),
 ### MFRONT
 
 ### UMAT
            UMAT  =FACT(statut='f',
-             LISTE_COEF =SIMP(statut='f',typ='R',min=2,max='**'),
+             LISTE_COEF =SIMP(statut='o',typ='R',min=2,max='**'),
            ),
 
            UMAT_FO   =FACT(statut='f',
-             LISTE_COEF =SIMP(statut='f',typ=(fonction_sdaster,formule), min=2,max='**'),
+             LISTE_COEF =SIMP(statut='o',typ=(fonction_sdaster,formule), min=2,max='**'),
            ),
 ### UMAT
 

@@ -33,7 +33,7 @@ from ...Commands import (AFFE_CHAR_CINE, AFFE_CHAR_MECA, CALC_CHAMP,
                          CREA_CHAMP, CREA_RESU, DEFI_FONCTION, MODI_MAILLAGE,
                          POST_RELEVE_T, STAT_NON_LINE)
 from ...Helpers.UniteAster import UniteAster
-from ...Messages import UTMESS
+from ...Messages import MasquerAlarme, RetablirAlarme, UTMESS
 from ...Utilities import ExecutionParameter
 from .mac3coeur_coeur import CoeurFactory
 from .thyc_result import lire_resu_thyc
@@ -41,8 +41,17 @@ from .thyc_result import lire_resu_thyc
 
 def calc_mac3coeur_ops(self, **args):
     """Fonction d'appel de la macro CALC_MAC3COEUR"""
+
+    MasquerAlarme('MECANONLINE5_57')
+    MasquerAlarme('ELEMENTS3_59')
+
     analysis = Mac3CoeurCalcul.factory(self, args)
-    return analysis.run()
+    result = analysis.run()
+
+    RetablirAlarme('MECANONLINE5_57')
+    RetablirAlarme('ELEMENTS3_59')
+
+    return result
 
 # decorator to cache values of properties
 NULL = object()
@@ -499,9 +508,15 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',),
-            'ARCHIVAGE': _F(LIST_INST=self.times_arch),
+            'CONVERGENCE' : _F(ITER_GLOB_MAXI = 10,
+                               RESI_GLOB_MAXI = 1.E-2,
+                               RESI_GLOB_RELA = 1.E-6),
+            'SOLVEUR': _F(METHODE='MUMPS',
+                          PRETRAITEMENTS='AUTO'),
+            'ARCHIVAGE': _F(LIST_INST=self.times_arch,
+                            PRECISION=1.E-08),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
+            'INFO' : 1,
         }
         keywords.update(kwds)
         return keywords
@@ -530,9 +545,16 @@ class Mac3CoeurCalcul(object):
             'SUIVI_DDL':_F(NOM_CHAM='DEPL',EVAL_CHAM='MAXI_ABS',GROUP_NO='CR_BAS',NOM_CMP=('DX',)),
             'NEWTON': _F(MATRICE='TANGENTE',
                          REAC_ITER=1,),
-            'SOLVEUR': _F(METHODE='MUMPS',),
-            'ARCHIVAGE': _F(INST=self.coeur.temps_simu['T1']),
+            'CONVERGENCE' : _F(ITER_GLOB_MAXI = 10,
+                               RESI_GLOB_MAXI = 1.E-2,
+                               RESI_GLOB_RELA = 1.E-6),
+            'SOLVEUR': _F(METHODE='MUMPS',
+                          PRETRAITEMENTS='AUTO'),
+            'ARCHIVAGE': _F(INST=self.coeur.temps_simu['T1'],
+                            PRECISION=1.E-08),
             'AFFICHAGE': _F(INFO_RESIDU='OUI'),
+            'INFO' : 1,
+
         }
         keywords.update(kwds)
         return keywords
@@ -609,20 +631,24 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
 
     def dechargePSC(self,RESU) :
         coeur = self.coeur
-
+        
         CALC_CHAMP(reuse =RESU,
-                    RESULTAT=RESU,
-                    INST = coeur.temps_simu['T8'],
-                    FORCE=('FORC_NODA',),)
+                   RESULTAT=RESU,
+                   PRECISION=1.E-08,
+                   CRITERE='RELATIF',
+                   INST=coeur.temps_simu['T8'],
+                   FORCE=('FORC_NODA',),)
 
-        __SPRING=POST_RELEVE_T(
-                    ACTION=_F(INTITULE='FORCES',
-                              GROUP_NO=('PMNT_S'),
-                              RESULTAT=RESU,
-                              NOM_CHAM='FORC_NODA',
-                              NOM_CMP=('DX',),
-                              REPERE='GLOBAL',
-                              OPERATION='EXTRACTION',),)
+        __SPRING=POST_RELEVE_T(ACTION=_F(INTITULE='FORCES',
+                                         GROUP_NO=('PMNT_S'),
+                                         RESULTAT=RESU,
+                                         NOM_CHAM='FORC_NODA',
+                                         NOM_CMP=('DX',),
+                                         REPERE='GLOBAL',
+                                         PRECISION=1.E-08,
+                                         INST=coeur.temps_simu['T8'],
+                                         CRITERE='RELATIF',
+                                         OPERATION='EXTRACTION',),)
 
         tab2=__SPRING.EXTR_TABLE()
         valeurs=tab2.values()
@@ -630,7 +656,6 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
         inst=valeurs['INST'][-1]
         fx=valeurs['DX']
         noeuds=valeurs['NOEUD']
-
         listarg = []
         for el in zip(fx,noeuds) :
           listarg.append(_F(NOEUD=el[1],FX=el[0]))
@@ -661,6 +686,7 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                CHAM_MATER=self.cham_mater_free,
                                INCREMENT=_F(LIST_INST=self.times,
                                             INST_INIT=0.,
+                                            PRECISION=1.E-08,
                                             INST_FIN=coeur.temps_simu['T5']),
                                COMPORTEMENT=self.char_ini_comp,
                                EXCIT=constant_load + self.vessel_head_load + \
@@ -674,11 +700,14 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                RESULTAT=__RESULT,
                                CHAM_MATER=self.cham_mater_free,
                                INCREMENT=_F(LIST_INST=self.times,
+                                            PRECISION=1.E-08,
                                             INST_FIN=coeur.temps_simu['T8']),
                                COMPORTEMENT=self.char_ini_comp,
                                EXCIT=constant_load + self.vessel_head_load +
                                       self.thyc_load[0],
-                               ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                               ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                            PRECISION=1.E-08,
+                                            CRITERE='RELATIF',),
                                ))
 
             (LI2,F_EMB2)=self.dechargePSC(__RESULT)
@@ -688,9 +717,12 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                   reuse=__RESULT,
                                   RESULTAT=__RESULT,
                                   CHAM_MATER=self.cham_mater_free,
-                                  ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                  ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                               PRECISION=1.E-08,
+                                               CRITERE='RELATIF',),
                                   EXCIT=constant_load+[_F(CHARGE=F_EMB2,FONC_MULT=LI2),],
-                                  INCREMENT=_F(LIST_INST=self.times),
+                                  INCREMENT=_F(LIST_INST=self.times,
+                                               PRECISION=1.E-08),
                                   COMPORTEMENT=self.char_ini_comp,
                                   ))
 
@@ -704,21 +736,27 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             mater=[]
             ratio = 1.
             mater.append(self.cham_mater_contact_progressif(ratio))
+
             __RESULT = None
             if (not self.etat_init) :
                 __RESULT = STAT_NON_LINE(**self.snl(CHAM_MATER=self.cham_mater_free,
                                 INCREMENT=_F(LIST_INST=self.times,
+                                             PRECISION=1.E-08,
                                              INST_FIN=0.),
                                 EXCIT=loads,
-                               ))
-                # for debugging: return __RESULT
-                self.etat_init = _F(EVOL_NOLI=__RESULT,)
+                ))
+                self.etat_init = _F(EVOL_NOLI=__RESULT,
+                                    PRECISION=1.E-08,
+                                    CRITERE='RELATIF')
+
             keywords.append(self.snl(CHAM_MATER=mater[-1],
                                 INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                             PRECISION=1.E-08,
                                              INST_FIN=coeur.temps_simu['T0b']),
                                 EXCIT=loads,
-                                ETAT_INIT=self.etat_init,
-                               ))
+                                ETAT_INIT=self.etat_init
+            ))
+            
             nb_test = 0
             while nb_test < nbRatio :
                 try :
@@ -741,13 +779,14 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                     mater.append(self.cham_mater_contact_progressif(ratio))
                     keywords.append(self.snl(CHAM_MATER=mater[-1],
                                     INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                                 PRECISION=1.E-08,
                                                  INST_FIN=coeur.temps_simu['T0b']),
                                     EXCIT=loads,
-                                    ETAT_INIT=self.etat_init,
-                                   ))
+                                    ETAT_INIT=self.etat_init
+                    ))
                 nb_test+=1
             else :
-                raise 'no convergence'
+                raise aster.NonConvergenceError('no convergence')
             keywords = self.snl(
                                 reuse=__RESULT,
                                 RESULTAT=__RESULT,
@@ -757,10 +796,12 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                     REAC_ITER=1,),
                                 CHAM_MATER=self.cham_mater_contact,
                                 INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                             PRECISION=1.E-08,
                                              INST_FIN=coeur.temps_simu['T0b']),
                                 EXCIT=loads,
-                                ETAT_INIT=self.etat_init,
+                                ETAT_INIT=self.etat_init
                                 )
+            
             __RESULT = STAT_NON_LINE(**keywords)
 
             __RESULT = STAT_NON_LINE(**self.snl(
@@ -768,9 +809,12 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                   RESULTAT=__RESULT,
                                   CHAM_MATER=chmat_contact,
                                   INCREMENT=_F(LIST_INST=self.times,
-                                                INST_FIN=coeur.temps_simu['T8']),
+                                               PRECISION=1.E-08,
+                                               INST_FIN=coeur.temps_simu['T8']),
                                   EXCIT=loads,
-                                  ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                  ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                               PRECISION=1.E-08,
+                                               CRITERE='RELATIF'),
                                   ))
 
             (LI2,F_EMB2)=self.dechargePSC(__RESULT)
@@ -779,9 +823,13 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                   reuse=__RESULT,
                                   RESULTAT=__RESULT,
                                   CHAM_MATER=chmat_contact,
-                                  ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                  ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                               PRECISION=1.E-08,
+                                               CRITERE='RELATIF'),
                                   EXCIT=constant_load+[_F(CHARGE=F_EMB2,FONC_MULT=LI2),],
-                                  INCREMENT=_F(LIST_INST=self.times,INST_FIN=coeur.temps_simu['T8b']),
+                                  INCREMENT=_F(LIST_INST=self.times,
+                                               PRECISION=1.E-08,
+                                               INST_FIN=coeur.temps_simu['T8b']),
                                   ))
 
             keywords=[]
@@ -789,9 +837,12 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
             ratio = 1.e-8
             mater.append(self.cham_mater_contact_progressif(ratio))
             keywords.append(self.snl(CHAM_MATER=mater[-1],
-                                INCREMENT=_F(LIST_INST=self.times_woSubd,),
+                                INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                             PRECISION=1.E-08),
                                 EXCIT=constant_load,
-                                ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                             PRECISION=1.E-08,
+                                             CRITERE='RELATIF'),
                                ))
             nb_test = 0
             while nb_test < nbRatio :
@@ -814,13 +865,16 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                     ratio = ratio*10.
                     mater.append(self.cham_mater_contact_progressif(ratio))
                     keywords.append(self.snl(CHAM_MATER=mater[-1],
-                                    INCREMENT=_F(LIST_INST=self.times_woSubd,),
+                                    INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                                 PRECISION=1.E-08,),
                                     EXCIT=constant_load,
-                                    ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                    ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                                 PRECISION=1.E-08,
+                                                 CRITERE='RELATIF'),
                                    ))
                 nb_test+=1
             else :
-                raise 'no convergence'
+                raise aster.NonConvergenceError('no convergence')
             keywords = self.snl(reuse = __RESULT,
                                 RESULTAT=__RESULT,
                                 NEWTON= _F(MATRICE='TANGENTE',
@@ -828,9 +882,12 @@ class Mac3CoeurDeformation(Mac3CoeurCalcul):
                                     EVOL_NOLI = __res_int[-1],
                                     REAC_ITER=1,),
                                 CHAM_MATER=self.cham_mater_free,
-                                INCREMENT=_F(LIST_INST=self.times_woSubd,),
+                                INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                             PRECISION=1.E-08,),
                                 EXCIT=constant_load,
-                                ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                             PRECISION=1.E-08,
+                                             CRITERE='RELATIF'),
                                 )
             __RESULT = STAT_NON_LINE(**keywords)
         return __RESULT
@@ -882,6 +939,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         """Use the displacement of the result to deform the mesh"""
         _depl = CREA_CHAMP(OPERATION='EXTR',
                            INST = self.coeur.temps_simu['T1'],
+                           PRECISION=1.E-08,
                            TYPE_CHAM='NOEU_DEPL_R',
                            NOM_CHAM='DEPL',
                            RESULTAT=resu)
@@ -899,6 +957,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                            TYPE_CHAM='NOEU_DEPL_R',
                            NOM_CHAM='DEPL',
                            INST=inst,
+                           PRECISION=1.E-08,
                            RESULTAT=resu)
         return _depl
 
@@ -922,6 +981,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
             'NOM_CHAM'  : 'DEPL',
             'AFFE': (_F(CHAM_GD = cham_gd,
                         INST    = inst,
+                        PRECISION=1.E-08,
                         MODELE  = self.model))
                    }
         if reuse :
@@ -974,6 +1034,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         _snl_lame = STAT_NON_LINE(**self.snl_lame(
                                   INCREMENT=_F(LIST_INST=self.times,
                                                INST_INIT=0.,
+                                               PRECISION=1.E-08,
                                                INST_FIN=coeur.temps_simu['T1']),
                                   EXCIT=self.archimede_load + self.vessel_head_load +
                                   self.vessel_dilatation_load + self.gravity_load +
@@ -986,6 +1047,7 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         keywords=[]
         keywords.append(self.snl_lame(CHAM_MATER=self.cham_mater_free,
                             INCREMENT=_F(LIST_INST=self.times,
+                                         PRECISION=1.E-08,
                                          INST_FIN=0.),
                             EXCIT=self.rigid_load + self.archimede_load +
                             self.vessel_head_load +
@@ -1002,9 +1064,12 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         ratio = 1.
         mater.append(self.cham_mater_contact_progressif(ratio))
         kwds = {    'CHAM_MATER' : mater[-1],
-                    'ETAT_INIT' : _F(EVOL_NOLI=__RESULT),
+                    'ETAT_INIT' : _F(EVOL_NOLI=__RESULT,
+                                     PRECISION=1.E-08,
+                                     CRITERE='RELATIF'),
                     'INCREMENT' : _F(LIST_INST=self.times_woSubd,
-                             INST_FIN=coeur.temps_simu['T0b']),
+                                     PRECISION=1.E-08,
+                                     INST_FIN=coeur.temps_simu['T0b']),
 
             }
         keywords[-1].update(kwds)
@@ -1033,8 +1098,11 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                 mater.append(self.cham_mater_contact_progressif(ratio))
                 keywords.append(self.snl_lame(CHAM_MATER=mater[-1],
                                 INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                             PRECISION=1.E-08,
                                              INST_FIN=coeur.temps_simu['T0b']),
-                                ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                                ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                             PRECISION=1.E-08,
+                                             CRITERE='RELATIF'),
                                 EXCIT=self.rigid_load + self.archimede_load +
                                 self.vessel_head_load +
                                 self.vessel_dilatation_load +
@@ -1044,19 +1112,22 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
                                ))
             nb_test+=1
         else :
-            raise 'no convergence'
+            raise  aster.NonConvergenceError('no convergence')
 
 
         keywords = self.snl_lame(
                             reuse = __RESULT,
                             RESULTAT=__RESULT,
-                            ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                            ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                         PRECISION=1.E-08,
+                                         CRITERE='RELATIF'),
                             NEWTON= _F(MATRICE='TANGENTE',
                                 PREDICTION='DEPL_CALCULE',
                                 EVOL_NOLI = __res_int[-1],
                                 REAC_ITER=1,),
                             CHAM_MATER=self.cham_mater_contact,
                             INCREMENT=_F(LIST_INST=self.times_woSubd,
+                                         PRECISION=1.E-08,
                                          INST_FIN=coeur.temps_simu['T0b']),
                             EXCIT=self.rigid_load + self.archimede_load +
                             self.vessel_head_load +
@@ -1069,9 +1140,12 @@ class Mac3CoeurLame(Mac3CoeurCalcul):
         keywords = self.snl_lame(
                             reuse = __RESULT,
                             RESULTAT=__RESULT,
-                            ETAT_INIT=_F(EVOL_NOLI=__RESULT),
+                            ETAT_INIT=_F(EVOL_NOLI=__RESULT,
+                                         PRECISION=1.E-08,
+                                         CRITERE='RELATIF'),
                             CHAM_MATER=self.cham_mater_contact,
                             INCREMENT=_F(LIST_INST=self.times,
+                                         PRECISION=1.E-08,
                                          INST_FIN=coeur.temps_simu['T4']),
                             EXCIT=self.rigid_load + self.archimede_load +
                             self.vessel_head_load +
