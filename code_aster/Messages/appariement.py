@@ -31,6 +31,14 @@ Conseils :
 5. Si l'alarme persiste, changez d'algorithme avec ALGO_RESO_GEOM='POINT_FIXE' dans DEFI_CONTACT
 """),
 
+    12 : _("""
+Il y a une incompatibilité de dimension entre le maillage (dimension=%(i1)i) et la maille
+(dimension=%(i2)i) sur laquelle est projeté le point de contact.
+
+Ceci peut arriver avec des éléments de structures. Dans ce cas, le maillage doit être
+dans le plan x-O-y.
+"""),
+
     13 : _("""
 L'algorithme de Newton a échoué lors de la projection du point de coordonnées
   (%(r1)f,%(r2)f,%(r3)f)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -298,7 +298,8 @@ T_RESU=MACR_LIGN_COUPE(RESULTAT=RESU,  NOM_CHAM='SIGM_ELNO',
 T1=POST_RCCM(  OPTION='PM_PB',
                TYPE_RESU_MECA='EVOLUTION',
                MATER=MA,
-               TRANSITOIRE=_F( TABL_RESU_MECA=T_RESU, ),
+               TRANSITOIRE=_F( TABL_RESU_MECA=T_RESU,
+                               TOUT_INST='OUI',),
              )
 
 IMPR_TABLE( TABLE=T1,

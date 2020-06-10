@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -196,7 +196,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=0.0002622270983682585,
+           VALE_CALC=0.00026222646766367,
            NOM_PARA='V1',
            TYPE_TEST='MAX',
            TABLE=TABV2_BA,

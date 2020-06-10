@@ -536,7 +536,7 @@ implicit none
             l_obsv = ASTER_FALSE
             call lobs(sd_obsv, ipas, temps, l_obsv)
             if (l_obsv) then
-                call nmobse(mesh, sd_obsv  , t0)
+                call nmobse(mesh, sd_obsv  , temps)
             endif
 
 !

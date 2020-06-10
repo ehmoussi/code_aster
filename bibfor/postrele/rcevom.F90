@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -575,8 +575,8 @@ subroutine rcevom(csigm, cinst, cnoc, sm, lfatig,&
         ind = 0
         do 310 i1 = 1, nbinst
             ind = ind + 1
-            if (zr(jfao-1+4*(ind-1)+2) .gt. sao) then
-                sao = zr(jfao-1+4*(ind-1)+2)
+            if (zr(jfao-1+5*(ind-1)+2) .gt. sao) then
+                sao = zr(jfao-1+5*(ind-1)+2)
                 ioo1 = zi(jnoc+i1-1)
                 ioo2 = zi(jnoc+i1-1)
                 r1sno = zk8(jresu+i1-1)
@@ -584,8 +584,8 @@ subroutine rcevom(csigm, cinst, cnoc, sm, lfatig,&
                 i1sno = zr(jinst+i1-1)
                 i2sno = zr(jinst+i1-1)
             endif
-            if (zr(jfae-1+4*(ind-1)+2) .gt. sae) then
-                sao = zr(jfae-1+4*(ind-1)+2)
+            if (zr(jfae-1+5*(ind-1)+2) .gt. sae) then
+                sao = zr(jfae-1+5*(ind-1)+2)
                 ioe1 = zi(jnoc+i1-1)
                 ioe2 = zi(jnoc+i1-1)
                 r1sne = zk8(jresu+i1-1)
@@ -595,8 +595,8 @@ subroutine rcevom(csigm, cinst, cnoc, sm, lfatig,&
             endif
             do 312 i2 = i1+1, nbinst
                 ind = ind + 1
-                if (zr(jfao-1+4*(ind-1)+2) .gt. sao) then
-                    sao = zr(jfao-1+4*(ind-1)+2)
+                if (zr(jfao-1+5*(ind-1)+2) .gt. sao) then
+                    sao = zr(jfao-1+5*(ind-1)+2)
                     ioo1 = zi(jnoc+i1-1)
                     ioo2 = zi(jnoc+i2-1)
                     r1sno = zk8(jresu+i1-1)
@@ -604,8 +604,8 @@ subroutine rcevom(csigm, cinst, cnoc, sm, lfatig,&
                     i1sno = zr(jinst+i1-1)
                     i2sno = zr(jinst+i2-1)
                 endif
-                if (zr(jfae-1+4*(ind-1)+2) .gt. sae) then
-                    sae = zr(jfae-1+4*(ind-1)+2)
+                if (zr(jfae-1+5*(ind-1)+2) .gt. sae) then
+                    sae = zr(jfae-1+5*(ind-1)+2)
                     ioe1 = zi(jnoc+i1-1)
                     ioe2 = zi(jnoc+i2-1)
                     r1sne = zk8(jresu+i1-1)

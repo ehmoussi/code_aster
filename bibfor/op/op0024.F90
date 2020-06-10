@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,6 +38,8 @@ subroutine op0024()
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
+#include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/infmaj.h"
@@ -49,7 +51,7 @@ subroutine op0024()
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     real(kind=8) :: debut, fin, pas, xxx, xpdt, toler, derpas
-    real(kind=8) :: valr(3)
+    real(kind=8) :: valr(3), newval
     integer :: ifm, niv, nv, nbvale, ndim, jpas, jnbp, jbor, jval, kval, i
     integer :: vali
     integer :: n1, nbocc, nsup, iocc, np, nbpas, nbval, iinter, ico, j
@@ -146,6 +148,7 @@ subroutine op0024()
                 nbpas = nint(xxx/pas)
 !
                 derpas = fin - (debut+ (nbpas-1)*pas)
+
                 if (abs((derpas-pas)/pas) .gt. toler) then
                     if ((debut+nbpas*pas) .gt. fin) nbpas = nbpas - 1
                     zi(jnbp-1+iinter) = nbpas
@@ -194,9 +197,13 @@ subroutine op0024()
         ico = 0
         do 50 i = 1, nbocc + nsup
             xpdt = zr(jpas-1+i)
+
             do 40 j = 1, zi(jnbp-1+i) - 1
+            
                 ico = ico + 1
-                zr(jval+ico) = zr(jval+ico-1) + xpdt
+                newval = zr(jval+ico-1) + xpdt
+                if (abs(newval) .le. r8prem()) newval = 0.d0
+                zr(jval+ico) = newval
 40          continue
             ico = ico + 1
             zr(jval+ico) = zr(jbor+i)
