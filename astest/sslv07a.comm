@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -58,6 +58,9 @@ DEFI_GROUP( reuse=MA, MAILLAGE=MA,
 
 DEFI_GROUP( reuse=MA, MAILLAGE=MA,
             CREA_GROUP_NO=_F( NOM = 'ABSANSA',UNION=('BX','AXSANSA')))
+
+DEFI_GROUP( reuse=MA, MAILLAGE=MA,
+            CREA_GROUP_NO=_F( GROUP_MA='B34',))
 
 DEFI_GROUP( reuse=MA, MAILLAGE=MA,
             CREA_GROUP_MA=_F( NOM = 'BAS',
@@ -156,8 +159,65 @@ RESU=MECA_STATIQUE(MODELE=MO,
 
 
 
-RESU=CALC_CHAMP(reuse=RESU,RESULTAT=RESU,CONTRAINTE=('SIGM_ELNO'))
+RESU=CALC_CHAMP(reuse=RESU,RESULTAT=RESU,CONTRAINTE=('SIGM_ELNO', 'SIGM_NOEU',))
 
+# test MACR_LIGN_COUPE avec repere local
+#-------------------------------------------------------------------
+
+# segment correspondant au groupe 'B34'
+ligne34 = MACR_LIGN_COUPE( RESULTAT= RESU,
+                     NOM_CHAM= 'SIGM_NOEU',
+                     LIGN_COUPE = _F( NB_POINTS= 5,VECT_Y=(0.,1.,2.),
+                                      TYPE='SEGMENT',REPERE='LOCAL',
+                                      COOR_ORIG= (-0.5, 0.5, 1.),
+                                      COOR_EXTR= (0.5, 0.5, 1.),
+                                    ) )
+
+TEST_TABLE(TABLE=ligne34,
+           NOM_PARA='SIXX',
+           FILTRE=_F(NOM_PARA='COOR_X',
+                   VALE=0.0,
+                   ),
+           VALE_CALC=1.8795230285326E-02,)
+
+TEST_TABLE(TABLE=ligne34,
+           NOM_PARA='SIXY',
+           FILTRE=_F(NOM_PARA='COOR_X',
+                   VALE=-0.5,
+                   ),
+           VALE_CALC=3.25108115671E-02,)
+
+
+RESU2=MODI_REPERE(RESULTAT=RESU,REPERE='UTILISATEUR',
+                  TOUT_ORDRE='OUI',
+                  MODI_CHAM=(_F(NOM_CHAM='SIGM_NOEU',
+                              NOM_CMP=('SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIXZ', 'SIYZ'),
+                              TYPE_CHAM='TENS_3D'),),
+                  AFFE=_F(ANGL_NAUT = (0.0, -0.0, 63.43494882292201),
+                        TOUT='OUI',),);
+
+
+tabgr34=POST_RELEVE_T(ACTION=_F(OPERATION='EXTRACTION', INTITULE='Moment/P Utilisateur',
+                              RESULTAT=RESU2, NOM_CHAM='SIGM_NOEU',
+                              GROUP_NO='B34',
+                              TOUT_CMP='OUI',
+                              ),);
+
+TEST_TABLE(TABLE=tabgr34,
+           NOM_PARA='SIXX',
+           FILTRE=_F(NOM_PARA='COOR_X',
+                   VALE=0.0,
+                   ),
+           VALE_CALC=1.8795230285326E-02,)
+
+TEST_TABLE(TABLE=tabgr34,
+           NOM_PARA='SIXY',
+           FILTRE=_F(NOM_PARA='COOR_X',
+                   VALE=-0.5,
+                   ),
+           VALE_CALC=3.25108115671E-02,)
+
+#-------------------------------------------------------------------
 
 DEPLA=CREA_CHAMP( OPERATION='EXTR', TYPE_CHAM='NOEU_DEPL_R',
                     RESULTAT=RESU, NUME_ORDRE=1,

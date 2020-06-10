@@ -130,3 +130,13 @@ class AllTogether(Rule):
         super().check(dictSyntax)
         if sum( self._not_none(dictSyntax) ) not in ( 0, len(self.ruleArgs) ):
             raise ValueError("{} must be all defined or all undefined".format(self.ruleArgs))
+
+class NotEmpty(Rule):
+    """Check that at least one keyword is provided."""
+
+    @work_on_copy
+    def check(self, dictSyntax):
+        """Check the rule"""
+        super().check(dictSyntax)
+        if not dictSyntax:
+            raise ValueError("At least one argument must be defined")

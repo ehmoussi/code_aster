@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,9 @@ PMPB1=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 MATER=MAT,
                 TITRE='CALCUL DE PM_PB (DETAILS), SITUATION 1, EVOLUTION',
                 TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT1,
-                                 TABL_SIGM_THER = T_TH1  )
+                                 TABL_SIGM_THER = T_TH1,
+                                 TOUT_INST='OUI',
+                                   )
                  )
 
 IMPR_TABLE(    TABLE=PMPB1,)        
@@ -80,7 +82,9 @@ PMPB2=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 MATER=MAT,
                 TITRE='CALCUL DE PM_PB (DETAILS), SITUATION 2, EVOLUTION',
                 TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT2,
-                                 TABL_SIGM_THER = T_TH2  )
+                                 TABL_SIGM_THER = T_TH2,
+                                 TOUT_INST='OUI',
+                                   )
                  )
 
 IMPR_TABLE(    TABLE=PMPB2,)         
@@ -91,7 +95,9 @@ PMPB1ath=POST_RCCM(TYPE_RESU_MECA='EVOLUTION',
                 TYPE_RESU='DETAILS',
                 MATER=MAT,
                 TITRE='CALCUL DE PM-PB (DETAILS), SITUATION 1 SANS TRANSITOIRE THERMIQUE, EVOLUTION',
-                TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT1 )
+                TRANSITOIRE=_F(  TABL_RESU_MECA = T_TOT1,
+                                TOUT_INST='OUI',
+                 )
                  )
 
 IMPR_TABLE(    TABLE=PMPB1ath,)        

@@ -28,7 +28,7 @@ import builtins
 from . import DataStructure as DS
 from .DataStructure import AsType
 from .Rules import (AllTogether, AtLeastOne, AtMostOne, ExactlyOne,
-                    IfFirstAllPresent, OnlyFirstPresent)
+                    IfFirstAllPresent, NotEmpty, OnlyFirstPresent)
 from .SyntaxChecker import SyntaxCheckerVisitor
 from .SyntaxObjects import (_F, Bloc, CataError, FactorKeyword, Formule,
                             ListFact, Macro, Operator, Procedure,
@@ -93,6 +93,7 @@ EXCLUS = AtMostOne
 PRESENT_PRESENT = IfFirstAllPresent
 PRESENT_ABSENT = OnlyFirstPresent
 ENSEMBLE = AllTogether
+NON_VIDE = NotEmpty
 
 
 class Translation:

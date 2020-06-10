@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 2016 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 2016 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -72,9 +72,11 @@ subroutine convert_mat_to_saddle_point( matrasse, a_mat )
    ! Local size of the matrix
    PetscInt :: m, n
    mpi_int :: mpicomm
+   PetscMPIInt :: comm
    !
    ! Récupération du communicateur MPI
    call asmpi_comm('GET', mpicomm)
+   comm=mpicomm
    ! Init Saddle Point Context
    sp_context = new_saddle_point_context( matrasse, distributed_data, &
                 a_mat )
@@ -93,9 +95,9 @@ subroutine convert_mat_to_saddle_point( matrasse, a_mat )
    ASSERT(ierr == 0)
    !
    ! Create MatShell matrix
-   ! TODO  trouver un moyen de passer un pointeur vers l'objet fortran context
+   ! TODO  utiliser l'objet  fortran context
    ! au lieu de PETSC_NULL_INTEGER
-   call MatCreateShell(mpicomm, m, m, mg,mg, PETSC_NULL_INTEGER, a_mat, ierr)
+   call MatCreateShell(comm, m, m, mg,mg, PETSC_NULL_INTEGER, a_mat, ierr)
    ASSERT( ierr == 0 )
    ! Define matrix-vector product operation
    call  MatShellSetOperation(a_mat, MATOP_MULT, saddle_point_matmult, ierr )

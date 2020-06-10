@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -855,8 +855,8 @@ IMPR_TABLE(TABLE=M3_U,
 
 
 #------------
-
-M4L_C=MACR_LIGN_COUPE( RESULTAT= RESU,NOM_CHAM = 'SIGM_ELNO',
+# 
+M4L_C=MACR_LIGN_COUPE( RESULTAT= RESU,NOM_CHAM = 'SIGM_NOEU',
                       LIGN_COUPE = _F(TYPE='GROUP_NO', REPERE = 'CYLINDRIQUE',
                                       ORIGINE = ( 0., 0., 0., ),AXE_Z = ( 0., 0., 1., ),
                                       OPERATION='EXTRACTION',
@@ -866,8 +866,8 @@ M4L_C=MACR_LIGN_COUPE( RESULTAT= RESU,NOM_CHAM = 'SIGM_ELNO',
 IMPR_TABLE(TABLE=M4L_C,
    NOM_PARA=( 'ABSC_CURV', 'SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIXZ', 'SIYZ', )
              )
-
-
+#print(M4L_C.EXTR_TABLE())
+# même resultat que SIGM_NOEU, car on moyenne les valeurs dans les différentes mailles
 P4L_C=POST_RELEVE_T(  ACTION=_F(  NOEUD = ( 'N31', 'N32', 'N30', 'N14', 'N1', ),
                                     INTITULE = 'CYLINDR',
                                     RESULTAT = RESU,
@@ -884,7 +884,7 @@ P4L_C=POST_RELEVE_T(  ACTION=_F(  NOEUD = ( 'N31', 'N32', 'N30', 'N14', 'N1', ),
 IMPR_TABLE(   TABLE=P4L_C,
    NOM_PARA=( 'ABSC_CURV', 'SIXX', 'SIYY', 'SIZZ', 'SIXY', 'SIXZ', 'SIYZ', )
              )
-
+#print(P4L_C.EXTR_TABLE())
 
 #
 # ==> VECTEUR

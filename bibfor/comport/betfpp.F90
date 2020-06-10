@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -93,7 +93,11 @@ implicit none
 ! --- LONGUEUR CARACTERISTIQUE POUR LOI BETON LC
 !
     if (materf(9,2) .lt. zero) then
-        lc = BEHinteg%elem%eltsize1
+        if (BEHinteg%elem%l_eltsize1) then
+            lc = BEHinteg%elem%eltsize1
+        else
+            call utmess('F', 'COMPOR2_12')
+        endif
     else
         lc = materf(9,2)
     endif
