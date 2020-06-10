@@ -113,6 +113,8 @@ MODELE2 = AFFE_MODELE(MAILLAGE = MA2,
                                 PHENOMENE = 'MECANIQUE',
                                 MODELISATION = 'POU_D_SQUE',),)
 
+
+
 CAREL = AFFE_CARA_ELEM(MODELE = MODELE,
                        INFO = 2,
                        GEOM_FIBRE = GF,
@@ -141,6 +143,10 @@ CAREL2 = AFFE_CARA_ELEM(MODELE = MODELE2,
                                          PREC_AIRE = 0.01,
                                          PREC_INERTIE = 0.01,),
                         ),)
+
+COOR = CALC_CHAM_ELEM(MODELE = MODELE2,
+                      CARA_ELEM = CAREL2,
+                      OPTION = 'COOR_ELGA',)
 
 CHMAT = AFFE_MATERIAU(MAILLAGE = MA,
                       AFFE = _F(GROUP_MA = ['P%d'%(i+1) for i in range(nbpmf)],

@@ -263,45 +263,7 @@ class MECA_POU_D_SQUE(Element):
                      para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
                      ),
 
-        OP.COOR_ELGA_MATER(te=463,
-                           para_in=(
-                           (OP.COOR_ELGA_MATER.PCAORIE, CCAORIE), (
-                           SP.PFIBRES, LC.ECAFIEL),
-                           (SP.PGEOMER, NGEOMER), (
-                           OP.COOR_ELGA_MATER.PNBSP_I, ENBSP_I),
-                           ),
-                           para_out=((SP.PCOOPGM, LC.EGGEMA_R), ),
-                           ),
-
-        OP.DEGE_ELNO(te=158,
-                     para_in=(
-                         (SP.PCAGNPO, CCAGNPO), (
-                             OP.DEGE_ELNO.PCAORIE, CCAORIE),
-                     (OP.DEGE_ELNO.PCOMPOR, LC.CCOMPOR), (SP.PDEPLAR, DDL_MECA),
-                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (OP.DEGE_ELNO.PVARCPR, LC.ZVARCPG), (
-                         SP.PVARCRR, LC.ZVARCPG),
-                     ),
-                     para_out=((SP.PDEFOGR, EDEFGNO), ),
-                     ),
-
-        OP.EFGE_ELNO(te=185,
-                     para_in=(
-                         (SP.PCAGNPO, CCAGNPO), (
-                             OP.EFGE_ELNO.PCAORIE, CCAORIE),
-                     (OP.EFGE_ELNO.PCOMPOR, LC.CCOMPOR), (
-                     OP.EFGE_ELNO.PCONTRR, ECONTPG),
-                     (SP.PDEPLAR, DDL_MECA), (SP.PFIBRES, LC.ECAFIEL),
-                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (OP.EFGE_ELNO.PNBSP_I, ENBSP_I), (SP.PNONLIN, LC.ENONLIN),
-                     (OP.EFGE_ELNO.PSTRXRR, ESTRAUX), (
-                         OP.EFGE_ELNO.PVARCPR, LC.ZVARCPG),
-                     ),
-                     para_out=(
-                         (SP.PEFFORC, EEFGENC), (
-                             OP.EFGE_ELNO.PEFFORR, EEFGENO),
-                     ),
-                     ),
+ 
 
         OP.FORC_NODA(te=517,
                      para_in=(
@@ -344,21 +306,10 @@ class MECA_POU_D_SQUE(Element):
                      para_out=((OP.INIT_VARC.PVARCPR, LC.ZVARCPG), ),
                      ),
 
-        OP.INI_SP_MATER(te=99,
-                        para_out=(
-                            (SP.PHYDMAT, LC.EHYDRMA), (SP.PNEUMAT, EMNEUT_R),
-                        (SP.PTEMMAT, LC.ETEMPMA), ),
-                        ),
-
         OP.INI_STRX(te=23,
                     para_in=((OP.INI_STRX.PCAORIE, CCAORIE), ),
                     para_out=((SP.PSTRX_R, ESTRAUX), ),
                     ),
-
-        OP.MINMAX_SP(te=99,
-                     para_out=((SP.PGAMIMA, EGAMIMA), (SP.PNOMIMA, LC.ENOMIMA),
-                               ),
-                     ),
 
         OP.NSPG_NBVA(te=496,
                      para_in=(
@@ -368,38 +319,6 @@ class MECA_POU_D_SQUE(Element):
                      para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
                      ),
 
-        OP.RAPH_MECA(te=540,
-                     para_in=(
-                         (SP.PCAGNPO, CCAGNP2), (
-                             OP.RAPH_MECA.PCAORIE, CCAORIE),
-                     (SP.PCARCRI, CCARCRI), (OP.RAPH_MECA.PCOMPOR, LC.CCOMPOR),
-                     (OP.RAPH_MECA.PCONTMR, ECONTPG), (SP.PDDEPLA, DDL_MECA),
-                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
-                     (SP.PFIBRES, LC.ECAFIEL), (SP.PGEOMER, NGEOMER),
-                     (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
-                     (SP.PITERAT, LC.CITERAT), (SP.PMATERC, LC.CMATERC),
-                     (OP.RAPH_MECA.PNBSP_I, ENBSP_I), (SP.PSTRXMP, ESTRAUX),
-                     (SP.PSTRXMR, ESTRAUX), (SP.PVARCMR, LC.ZVARCPG),
-                     (OP.RAPH_MECA.PVARCPR, LC.ZVARCPG), (
-                         SP.PVARCRR, LC.ZVARCPG),
-                     (SP.PVARIMP, ZVARIPG), (OP.RAPH_MECA.PVARIMR, ZVARIPG),
-                     ),
-                     para_out=(
-                     (SP.PCODRET, LC.ECODRET), (OP.RAPH_MECA.PCONTPR, ECONTPG),
-                     (SP.PSTRXPR, ESTRAUX), (OP.RAPH_MECA.PVARIPR, ZVARIPG),
-                     (SP.PVECTUR, MVECTUR), ),
-                     ),
-
-        OP.REFE_FORC_NODA(te=517,
-                          para_in=((SP.PREFCO, EREFCO), ),
-                          para_out=((SP.PVECTUR, MVECTUR), ),
-                          ),
-
-        OP.REPERE_LOCAL(te=135,
-                        para_in=((OP.REPERE_LOCAL.PCAORIE, CCAORIE), ),
-                        para_out=((SP.PREPLO1, LC.CGEOM3D), (SP.PREPLO2, LC.CGEOM3D),
-                                  (SP.PREPLO3, LC.CGEOM3D), ),
-                        ),
 
         OP.RIGI_MECA_TANG(te=540,
                           para_in=(
@@ -425,38 +344,6 @@ class MECA_POU_D_SQUE(Element):
                        (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
         ),
 
-        OP.SIEF_ELNO(te=4,
-                     para_in=(
-                     (OP.SIEF_ELNO.PCONTRR, ECONTPG), (
-                     OP.SIEF_ELNO.PVARCPR, LC.ZVARCPG),
-                     ),
-                     para_out=(
-                     (SP.PSIEFNOC, ECONTNC), (OP.SIEF_ELNO.PSIEFNOR, ECONTNO),
-                     ),
-                     ),
-
-        OP.SIEQ_ELGA(te=335,
-                     para_in=((OP.SIEQ_ELGA.PCONTRR, ECONTPG), ),
-                     para_out=((OP.SIEQ_ELGA.PCONTEQ, ECOEQPG), ),
-                     ),
-
-        OP.SIEQ_ELNO(te=335,
-                     para_in=((OP.SIEQ_ELNO.PCONTRR, ECONTNO), ),
-                     para_out=((OP.SIEQ_ELNO.PCONTEQ, LC.ECOEQNO), ),
-                     ),
-
-        OP.SIGM_ELGA(te=546,
-                     para_in=((SP.PSIEFR, ECONTPG), ),
-                     para_out=((SP.PSIGMC, ECONTPC), (SP.PSIGMR, ECONTPG),
-                               ),
-                     ),
-
-        OP.SIGM_ELNO(te=4,
-                     para_in=((OP.SIGM_ELNO.PCONTRR, ECONTPG), ),
-                     para_out=(
-                     (SP.PSIEFNOC, ECONTNC), (OP.SIGM_ELNO.PSIEFNOR, ECONTNO),
-                     ),
-                     ),
 
         OP.TOU_INI_ELEM(te=99,
                         para_out=(
