@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/mmCombLineMatr.h"
 #include "asterfort/mmCompMatrCont.h"
 #include "asterfort/mmCompMatrFric.h"
+#include "asterfort/writeMatrix.h"
 #include "Contact_type.h"
 !
 character(len=16), intent(in) :: option, nomte
@@ -53,8 +54,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i, j, ij, jv_matr
-    integer :: nne, nnm, nnl
+    integer :: nne, nnm, nnl, i, j, ij
     integer :: nddl, ndim, nbcps, nbdm
     integer :: i_reso_fric, i_reso_geom, ialgoc, ialgof
     integer :: ndexfr
@@ -110,6 +110,7 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: vech1_prev(3), vech2_prev(3)
     real(kind=8) :: matr_cont(81, 81), matr_conp(81, 81)
     real(kind=8) :: matr_fric(81, 81), matr_frip(81, 81)
+    real(kind=8) :: matr(81, 81)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -429,27 +430,27 @@ character(len=16), intent(in) :: option, nomte
     if ((lpenac.and.(.not.leltf)) .or.&
         (leltf.and.(i_reso_fric.eq.ALGO_NEWT)) .or.&
         (lpenaf.and.leltf)) then
-        call jevech('PMATUNS', 'E', jv_matr)
         do j = 1, nddl
             do i = 1, nddl
                 ij = j+nddl*(i-1)
-                zr(jv_matr+ij-1) = matr_cont(i,j) + matr_fric(i,j)
+                matr(i,j) = matr_cont(i,j) + matr_fric(i,j)
                 if (debug) then
-                    call mmmtdb( matr_cont(i,j) + matr_fric(i,j), 'IJ', i, j)
+                    call mmmtdb( matr(i,j), 'IJ', i, j)
                 endif
             enddo
         enddo
+        call writeMatrix('PMATUNS', nddl, nddl, ASTER_FALSE, matr)
     else
-        call jevech('PMATUUR', 'E', jv_matr)
         do j = 1, nddl
             do i = 1, j
                 ij = (j-1)*j/2 + i
-                zr(jv_matr+ij-1) = matr_cont(i,j) + matr_fric(i,j)
+                matr(i,j) = matr_cont(i,j) + matr_fric(i,j)
                 if (debug) then
-                    call mmmtdb( matr_cont(i,j) + matr_fric(i,j), 'IJ', i, j)
+                    call mmmtdb( matr(i,j), 'IJ', i, j)
                 endif
             end do
         end do
+        call writeMatrix('PMATUUR', nddl, nddl, ASTER_TRUE, matr)
     endif
 !
 end subroutine

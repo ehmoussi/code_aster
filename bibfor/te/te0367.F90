@@ -30,6 +30,7 @@ implicit none
 #include "asterfort/normev.h"
 #include "asterfort/ttprsm.h"
 #include "asterfort/utmess.h"
+#include "asterfort/writeVector.h"
 #include "asterfort/xlacti.h"
 #include "asterfort/xmelet.h"
 #include "asterfort/xmmjac.h"
@@ -65,11 +66,10 @@ character(len=16) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: vcont(336), vfric(336)
-    integer :: i, nfaes
+    integer :: nfaes
     integer :: ndim, nddl, nne(3), nnm(3), nnc
     integer :: nsinge, nsingm
     integer :: jpcpo, jpcpi, jpcai, jpccf, jstno
-    integer :: jv_cont, jv_fric
     integer :: indnor, ifrott, indco
     integer :: jdepde, jdepm, jgeom, jheafa, jheano, jheavn, ncompn, jtab(7), iret
     real(kind=8) :: tau1(3), tau2(3), norm(3)
@@ -376,13 +376,7 @@ character(len=16) :: option, nomte
 !
 ! - RECOPIE VALEURS FINALES
 !
-    call jevech('PVECTCR', 'E', jv_cont)
-    do i = 1, nddl
-        zr(jv_cont-1+i) = vcont(i)
-    end do
-    call jevech('PVECTFR', 'E', jv_fric)
-    do i = 1, nddl
-        zr(jv_fric-1+i) = vfric(i)
-    end do
+    call writeVector('PVECTCR', nddl, vcont)
+    call writeVector('PVECTFR', nddl, vfric)
 !
 end subroutine
