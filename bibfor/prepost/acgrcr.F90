@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -112,8 +112,8 @@ subroutine acgrcr(nbvec, jvectn, jvectu, jvectv, nbordr,&
     if ((praccr(24) .eq. 1) .or. (praccr(25) .eq. 1) .or. (praccr(32) .eq. 1)) then
         rayon = .true.
     endif
-!
-    do 20 i = 24, 35
+! initialisation
+    do 20 i = 1, 35
         valpar(i) = 0.0d0
  20 continue
 !
@@ -225,7 +225,7 @@ subroutine acgrcr(nbvec, jvectn, jvectu, jvectv, nbordr,&
         !
         call fointe('F', forcri, np, nompf, valpu,&
                     gcmax, ibid)
-!
+!            
         if (gcmax .gt. epsilo) then
             if ((gcmax-grcrma(1)) .gt. epsilo) then
                 grcrma(2) = grcrma(1)
