@@ -454,4 +454,19 @@ Il y a un spectre vertical dans les données fournies, cependant vous n'avez pas
 le mot-clé RATIO_HV. Cette valeur est fixée à 1.
 """),
 
+
+    93: _("""
+En mode multi-appui décorrélé, les appuis doivent obligatoirement être disjoints des
+groupes d'appuis définis avec le mot-clé GROUP_APPUI.
+
+Le noeud %(k1)s est impliqué dans au moins deux groupes d'appuis.
+"""),
+
+    94: _("""
+En mode multi-appui décorrélé, les appuis doivent obligatoirement être disjoints des
+groupes d'appuis définis avec le mot-clé GROUP_APPUI.
+
+Le noeud %(k1)s du groupe %(k2)s est impliqué dans au moins deux groupes d'appuis.
+"""),
+
 }
