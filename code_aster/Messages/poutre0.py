@@ -166,8 +166,11 @@ Vous risquez d'avoir des résultats inattendus, si vous ne renseignez ni :
  - ORIENTATION dans AFFE_CARA_ELEM
 """),
 
+    14 : _("""Vous utilisez un élément de type multifibre. Il faut que sous COMPORTEMENT le mot clef RELATION soit 'MULTIFIBRE'."""),
 
-   20: _("""
+    15 : _("""La raideur tangente de la section de la poutre est nulle. Vérifier votre matériau, vous avez peut être défini un matériau élastoplastique parfait. Mettre un léger écrouissage peut permettre de passer cette difficulté."""),
+
+    20 : _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 
 Vous avez renseigné %(k2)s. Le GROUP_MA %(k1)s n'existe pas dans le maillage.
@@ -183,5 +186,7 @@ Vous avez renseigné %(k2)s. Le GROUP_MA %(k1)s n'existe pas dans le maillage.
     64 : _("""Avec l'option GROT_GDEP, les coefficients de flexibilité ne sont pas pris en compte dans la matrice de raideur géométrique.
    Coefficient de flexibilité suivant y : %(r1)f
    Coefficient de flexibilité suivant z : %(r2)f"""),
+
+    90 : _("""Le seul comportement élastique valide est ELAS pour les éléments de poutre squelette."""),
 
 }

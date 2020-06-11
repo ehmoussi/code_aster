@@ -15,7 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1003
 subroutine te0540(option, nomte)
 !
 !
@@ -28,8 +28,12 @@ subroutine te0540(option, nomte)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    implicit none
-    character(len=16) :: option, nomte
+!
+use Behaviour_module, only : behaviourOption
+!
+implicit none
+!
+character(len=16) :: option, nomte
 !
 #include "jeveux.h"
 #include "asterf_types.h"
@@ -70,6 +74,7 @@ subroutine te0540(option, nomte)
 #include "asterfort/utpvgl.h"
 #include "asterfort/utpvlg.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/Behaviour_type.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -92,11 +97,12 @@ subroutine te0540(option, nomte)
     real(kind=8) :: ang1(3), epsm
     real(kind=8) :: alicom, dalico, ss1, hv, he, vs(3), sv(dimklv)
 !
-    aster_logical :: vecteu, matric, reactu
+    aster_logical :: reactu
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
     character(len=4) :: fami
     character(len=8) :: mator
-    character(len=24) :: valk(2)
+    character(len=16) :: rela_comp, defo_comp, mult_comp, type_comp
 !
     real(kind=8), allocatable :: vfv(:,:),vvp(:,:),skp(:,:)
     integer :: nbfibr, nbgrfi, tygrfi, nbcarm, nug(10)
@@ -123,10 +129,6 @@ subroutine te0540(option, nomte)
     fl(1:2*nc) = 0.0d0
     codret=0
     codrep=0
-!
-!   booleens pratiques
-    matric = option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG'
-    vecteu = option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA'
 !
 ! --------------------------------------------------------------------------------------------------
 !   Récupération des caractéristiques des fibres
@@ -177,25 +179,32 @@ subroutine te0540(option, nomte)
     ivarip = ivarim
     istrxp = istrxm
     ivarmp = ivarim
-
-    if (vecteu) then
-        call tecach('OOO', 'PVARIMP', 'L', iret, nval=7, itab=jtab)
-        ivarmp = jtab(1)
-        call jevech('PSTRXMP', 'L', istrmp)
-    endif
+!
+! - Properties of behaviour
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+    mult_comp = zk16(icompo-1+MULTCOMP)
+    type_comp = zk16(icompo-1+INCRELAS)
+    read (zk16(icompo-1+NVAR),'(I16)') nbvalc
+!
+! - Select objects to construct from option name
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
 !
 !   verification que c'est bien des multifibres
 !
-    call jeexin(zk16(icompo-1+7), iret)
+    
+    call jeexin(mult_comp, iret)
     if (iret .eq. 0) then
-        call utmess('F', 'ELEMENTS4_14', sk=nomte)
+        call utmess('F', 'POUTRE0_14', sk=nomte)
     endif
 !   Recuperation de la SD_COMPOR ou le comportement des groupes de fibres est stocke
 !   pour chaque groupe : (nom, mater, loi, algo1d, deformation nbfig) dans
 !   l'ordre croissant des numeros de groupes
-    call jeveuo(zk16(icompo-1+7), 'L', isdcom)
-    call jeimpo(6,zk16(icompo-1+7),'COMPOCATA')
-    read (zk16(icompo-1+2),'(I16)') nbvalc
+    call jeveuo(mult_comp, 'L', isdcom)
+    call jeimpo(6,mult_comp,'COMPOCATA')
 !
 !   deformations anelastiques
 !
@@ -204,36 +213,43 @@ subroutine te0540(option, nomte)
 !
 !  Paramètres en sortie
 !
-    if (matric) call jevech('PMATUUR', 'E', imat)
-
-    if (vecteu) then
+    if (lMatr) then
+        call jevech('PMATUUR', 'E', imat)
+    endif
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
+        call jevech('PCODRET', 'E', jcret)
+    endif
+    if (lVari) then
+        call tecach('OOO', 'PVARIMP', 'L', iret, nval=7, itab=jtab)
+        ivarmp = jtab(1)
+        call jevech('PSTRXMP', 'L', istrmp)
         call jevech('PVARIPR', 'E', ivarip)
         call jevech('PSTRXPR', 'E', istrxp)
     endif
 !
 !   Calcul des matrices de changement de repère
 !
-    if (zk16(icompo+3) .eq. 'COMP_ELAS') then
-        call utmess('F', 'ELEMENTS2_90')
-    else if ((zk16(icompo+2) .ne. 'PETIT').and.(zk16(icompo+2).ne.'GROT_GDEP')) then
-        valk(1) = zk16(icompo+2)
-        valk(2) = nomte
-        call utmess('F', 'ELEMENTS3_40', nk=2, valk=valk)
+    if (type_comp .eq. 'COMP_ELAS') then
+        call utmess('F', 'POUTRE0_90')
+    else if ((defo_comp .ne. 'PETIT').and.(defo_comp.ne.'GROT_GDEP')) then
+        call utmess('F', 'POUTRE0_40', sk = defo_comp)
     endif
 !
 !   Géometrie éventuellement reactualisée
 !
-    reactu = zk16(icompo+2).eq.'GROT_GDEP'
+    reactu = defo_comp .eq. 'GROT_GDEP'
     if (reactu) then
 !       recuperation du 3eme angle nautique au temps t-
         gamma = zr(istrxm+18-1)
 !       calcul de PGL,XL et ANGP
         call porea1(nno, nc, zr(ideplm), zr(ideplp), zr(igeom+1),&
-                    gamma, vecteu, pgl, xl, angp)
+                    gamma, lVect, pgl, xl, angp)
 !       sauvegarde des angles nautiques
-        if (vecteu) then
+        if (lVect) then
             zr(istrxp+16-1) = angp(1)
             zr(istrxp+17-1) = angp(2)
             zr(istrxp+18-1) = angp(3)
@@ -277,8 +293,6 @@ subroutine te0540(option, nomte)
 !   deformatiions moins et increment de deformation pour chaque fibre
     AS_ALLOCATE(vr=defmfib, size=nbfibr)
     AS_ALLOCATE(vr=defpfib, size=nbfibr)
-!   nombre de variable interne de la loi de comportement
-    read (zk16(icompo-1+2),'(I16)') nbvalc
 !   module et contraintes sur chaque fibre (comportement)
     call wkvect('&&TE0540.MODUFIB', 'V V R8', (nbfibr*npg), jmodfb)
     call wkvect('&&TE0540.SIGFIB', 'V V R8', (nbfibr*npg), jsigfb)
@@ -336,7 +350,7 @@ subroutine te0540(option, nomte)
         end do
 !
         if (abs(hv) .le. r8prem()) then
-            call utmess('F', 'ELEMENTS_8')
+            call utmess('F', 'POUTRE0_15')
         endif
 !       Correction de la position du noeud bulle
         dalico = dalico-he/hv
@@ -355,7 +369,7 @@ subroutine te0540(option, nomte)
     do kp = 1, npg
 !
         call pmfpti(kp, zr(ipoids), zr(ivf), xl, xi, wi, b, gg)
-        if (matric) then
+        if (lMatr) then
             ipomod=jmodfb + nbfibr*(kp-1)
 !           calcul matrice de rigidité
 !           Calcul des caracteristiques de section par integration sur les fibres
@@ -372,7 +386,7 @@ subroutine te0540(option, nomte)
 !
         endif
 !
-        if (vecteu) then
+        if (lVect) then
 !           calcul des forces internes
             iposig=jsigfb + nbfibr*(kp-1)
             call pmfitsbts(3, nbfibr, nbcarm, zr(jacf), zr(iposig), b, wi, &
@@ -386,7 +400,7 @@ subroutine te0540(option, nomte)
     enddo
 !
 !   On modifie la matrice de raideur par condensation statique
-    if (matric) then
+    if (lMatr) then
         call pmffftsq(fv, sv)
         do i = 1, dimklv
             klv(i) = klv(i) - sv(i)/hv
@@ -397,7 +411,7 @@ subroutine te0540(option, nomte)
     call pmftorcor(3, nbasspou, gxjx, gxjxpou, u, du, xl, fl)
 !
 !   Stockage des efforts généralisés et passage des forces en repère local
-    if (vecteu) then
+    if (lSigm) then
 !       on sort les contraintes sur chaque fibre
         do kp = 1, 2
             iposcp=icontp + nbfibr*(kp-1)
@@ -418,18 +432,19 @@ subroutine te0540(option, nomte)
             zr(istrxp+ifgp+21) = fl(9*(kp-1)+9)
             zr(istrxp+ifgp+15)= alicom+dalico
         enddo
+    endif
+    if (lVect) then
         call utpvlg(nno, nc, pgl, fl, zr(ivectu))
     endif
 !
 !   On sort la matrice tangente
-    if (matric) then
+    if (lMatr) then
 !       Passage local -> global
         call utpslg(nno, nc, pgl, klv, zr(imat))
     endif
 !
 999 continue
-    if (vecteu) then
-        call jevech('PCODRET', 'E', jcret)
+    if (lSigm) then
         zi(jcret) = codret
     endif
 !   Deallocation memoire pour tableaux temporaires
