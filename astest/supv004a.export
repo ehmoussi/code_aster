@@ -1,6 +1,6 @@
 P time_limit 60
 P memory_limit 128
-P testlist asterxx ci verification sequential
+P testlist submit ci verification sequential
 
 F comm supv004a.comm D 1
 P ncpus 1

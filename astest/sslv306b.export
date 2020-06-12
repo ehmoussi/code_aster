@@ -1,5 +1,5 @@
 P memory_limit 128
-P testlist asterxx ci verification sequential
+P testlist submit ci verification sequential
 P time_limit 30
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
