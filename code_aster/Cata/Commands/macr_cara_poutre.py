@@ -20,13 +20,12 @@
 # person_in_charge: jean-luc.flejou at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
-                       op=OPS('Macro.macr_cara_poutre_ops.macr_cara_poutre_ops'),
+                       op=OPS('code_aster.MacroCommands.macr_cara_poutre_ops.macr_cara_poutre_ops'),
                        sd_prod=table_sdaster,
                        reentrant='n',
                        fr=tr("Calculer les caractéristiques d'une section transversale de "
@@ -38,7 +37,7 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
          ),
 
          MAILLAGE = SIMP(statut='f',typ=maillage_sdaster, fr=tr("Nom du concept maillage")),
- 
+
          b_maillage = BLOC(
             condition = """not exists("MAILLAGE")""",
             FORMAT = SIMP(statut='f',typ='TXM',defaut="MED",into=("ASTER","MED"),
@@ -47,14 +46,14 @@ MACR_CARA_POUTRE=MACRO(nom="MACR_CARA_POUTRE",
 
          b_format_med =BLOC( condition = """ ( equal_to("FORMAT", 'MED') ) """ ,
                              fr=tr("Informations complémentaires pour le format MED."),
-           UNITE           =SIMP(statut='f',typ=UnitType('med') , inout='in'),               
- 
+           UNITE           =SIMP(statut='f',typ=UnitType('med') , inout='in'),
+
          ),
 
          b_format_autre =BLOC( condition = """ ( not equal_to("FORMAT", 'MED') ) """ ,
                              fr=tr("Informations complémentaires pour les autres formats."),
-           UNITE           =SIMP(statut='f',typ=UnitType() , inout='in'),               
- 
+           UNITE           =SIMP(statut='f',typ=UnitType() , inout='in'),
+
          ),
 
 

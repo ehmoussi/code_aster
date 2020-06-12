@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: j-pierre.lefebvre at edf.fr
 !
-subroutine rcmaco(chmat, indmat, nbmat, imate, l_ther)
+subroutine rcmaco(chmat, chmatgrp, indmat, nbmat, imate, l_ther, basename)
 !
 implicit none
 !
@@ -33,19 +33,20 @@ implicit none
 #include "asterfort/matcod.h"
 #include "asterfort/utmess.h"
 !
-character(len=8) :: chmat
+character(len=8) :: chmat, basename
+character(len=24) :: chmatgrp
 integer :: indmat, nbmat, imate
 aster_logical, intent(in) :: l_ther
 !
 ! ----------------------------------------------------------------------
 !
-!     BUT: CREER L'OBJET NOMMAT//'      .CODI' ,LE REMPLIR ET RENVOYER
+!     BUT: CREER L'OBJET BASENAME//'      .CODI' ,LE REMPLIR ET RENVOYER
 !          SON ADRESSE PAR RAPPORT A ZI
 !
 ! ----------------------------------------------------------------------
 !
     integer :: nbcmp,  igrp
-    character(len=8) :: nommat, nomgd, materi
+    character(len=8) :: nomgd
     character(len=19) :: codi
     integer, pointer :: desc(:) => null()
 !
@@ -53,9 +54,7 @@ aster_logical, intent(in) :: l_ther
 !
     call jemarq()
 !
-    call jeveut(chmat(1:8)//'.MATE_CODE.GRP', 'L', igrp)
-    materi = zk8(igrp+indmat)
-    nommat = materi
+    call jeveut(chmatgrp, 'L', igrp)
     call jeveuo(chmat(1:8)//'.CHAMP_MAT .DESC', 'L', vi=desc)
     call jenuno(jexnum('&CATA.GD.NOMCMP', desc(1)), nomgd)
     call dismoi('NB_CMP_MAX', nomgd, 'GRANDEUR', repi=nbcmp)
@@ -64,7 +63,7 @@ aster_logical, intent(in) :: l_ther
     endif
 !
     call matcod(chmat, indmat, nbmat, imate, igrp,&
-                nommat, codi, l_ther)
+                    basename, codi, l_ther)
 !
     call jedema()
 !

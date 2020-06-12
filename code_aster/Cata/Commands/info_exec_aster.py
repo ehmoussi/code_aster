@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 INFO_EXEC_ASTER=OPER(nom="INFO_EXEC_ASTER",op=35,sd_prod=table_sdaster,
                     fr=tr("Récupère différentes informations propres à l'exécution en cours"),
@@ -32,7 +32,7 @@ INFO_EXEC_ASTER=OPER(nom="INFO_EXEC_ASTER",op=35,sd_prod=table_sdaster,
                               into=("TEMPS_RESTANT","UNITE_LIBRE","ETAT_UNITE"),),
          b_etat_unite   =BLOC(condition = """is_in('LISTE_INFO', 'ETAT_UNITE')""",
             regles=(UN_PARMI('UNITE','FICHIER'),),
-            UNITE          =SIMP(statut='f',typ=UnitType(),val_min=1,val_max=99,max=1,  inout='in',
+            UNITE          =SIMP(statut='f',typ=UnitType(), inout='in',
                                  fr=tr("Unité logique dont on veut obtenir l'état"),),
             FICHIER        =SIMP(statut='f',typ='TXM',validators=LongStr(1,255),
                                  fr=tr("Nom du fichier dont on veut obtenir l'état"),),

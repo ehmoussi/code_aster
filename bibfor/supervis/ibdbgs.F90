@@ -27,12 +27,13 @@ subroutine ibdbgs()
 !     ----- DEBUT COMMON DE DEBUG JEVEUX
 #include "jeveux.h"
 #include "asterc/getfac.h"
+#include "asterc/gtopti.h"
+#include "asterc/jdcget.h"
 #include "asterc/jdcset.h"
 #include "asterfort/assert.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
 #include "asterfort/getvtx.h"
-#include "asterfort/ibcode.h"
 #include "asterfort/impvem.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
@@ -49,72 +50,26 @@ subroutine ibdbgs()
 !
 ! ----------------------------------------------------------------------
     character(len=3) :: repons
-    integer :: l, ncode, ndbg, i1
+    integer :: l, i1, iret
 !
 !     --- OPTIONS PAR DEFAUT ---
 !-----------------------------------------------------------------------
     integer :: ifi
 !-----------------------------------------------------------------------
     call jemarq()
-    tbloc=800.d0
-    call ibcode(ncode)
-    ndbg = 0
-!
-!     -- DEBUG / JXVERI :
-    call getvtx('DEBUG', 'JXVERI', iocc=1, scal=repons)
-    if (repons .eq. 'OUI') then
-        ndbg = 1
-        call utmess('I', 'SUPERVIS_23')
-        ! lu dans ops.py, puis transmis en argument à expass.F90
-    endif
-!
-!     -- DEBUG / SDVERI :
-    call getvtx('DEBUG', 'SDVERI', iocc=1, scal=repons)
-    if (ncode .gt. 0) then
-        ! Un jour, on mettra 'OUI' par defaut...
-    endif
-!
-    if (repons .eq. 'OUI') then
-        ndbg = 1
-        call jdcset('sdveri', 1)
-        call utmess('I', 'SUPERVIS_24')
-    else
-        call jdcset('sdveri', 0)
-    endif
-!
+    tbloc = 800.d0
 !
 !     -- DEBUG / JEVEUX :
-!     -----------------------------------------------------
-    call getvtx('DEBUG', 'JEVEUX', iocc=1, scal=repons)
-    if (repons .eq. 'OUI') then
-        ndbg = 1
-        call utmess('I', 'SUPERVIS_12')
-        idebug = 1
-    endif
-    repons = ' '
-    call getvtx('DEBUG', 'VERI_BASE', iocc=1, scal=repons, nbret=l)
-    if (l.eq. 1 .and. repons .eq. 'OUI') then
-        ! force debug_jeveux
-        ndbg = 1
-        idebug = 1
-    endif
-    call jdcset('jeveux', idebug)
-!
+    call gtopti('dbgjeveux', idebug, iret)
+
 !     -- DEBUG / ENVIMA :
 !     -----------------------------------------------------
     repons = ' '
     call getvtx('DEBUG', 'ENVIMA', iocc=1, scal=repons, nbret=l)
     if (l .eq. 1 .and. repons .eq. 'TES') then
-        ndbg = 1
         ifi = iunifi ( 'RESULTAT' )
         call impvem(ifi)
     endif
-!
-!     -- WARNING SUR LES MOTS-CLES CODE ET DEBUG
-    if (ncode .gt. 0 .or. ndbg .gt. 0) then
-        call utmess('I', 'SUPERVIS_22')
-    endif
-!
 !
 !     -- MESURE_TEMPS:
 !     -----------------------------------------------------

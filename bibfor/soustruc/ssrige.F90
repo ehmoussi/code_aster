@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ subroutine ssrige(nomu)
     time = varm(2)
 !
 !   -- CALCULS MATRICES ELEMENTAIRES DE RIGIDITE:
-    call merime(nomo, nchaci, zk8(iarefm-1+9+1), mate, cara,&
+    call merime(nomo, nchaci, zk8(iarefm-1+9+1), materi, mate, cara,&
                 time, ' ', matel, ibid,&
                 base)
 !
@@ -104,7 +104,7 @@ subroutine ssrige(nomu)
 !   -- ASSEMBLAGE:
     call assmam('G', matas, 1, matel, [1.d0],&
                 nu, 'ZERO', 1)
-                
+
 !   -- IL FAUT COMPLETER LA MATRICE SI LES CALCULS SONT DISTRIBUES:
     call sdmpic('MATR_ASSE', matas)
 !

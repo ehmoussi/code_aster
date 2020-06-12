@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -1123,7 +1123,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='MASSE',
            TABLE=MASSIN,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MA',),
+                     VALE_K='00000002',),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -1132,7 +1132,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='CDG_X',
            TABLE=MASSIN,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MA',),
+                     VALE_K='00000002',),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -1141,7 +1141,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='CDG_Y',
            TABLE=MASSIN,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MA',),
+                     VALE_K='00000002',),
            )
 
 TEST_TABLE(CRITERE='ABSOLU',
@@ -1151,7 +1151,7 @@ TEST_TABLE(CRITERE='ABSOLU',
            NOM_PARA='CDG_Z',
            TABLE=MASSIN,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MA',),
+                     VALE_K='00000002',),
            )
 
 RIGI=CALC_MATR_ELEM(OPTION='RIGI_MECA',

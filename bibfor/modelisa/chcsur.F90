@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine chcsur(chcinez, chamnosz, type, modelz, gran_name)
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exisdg.h"
+#include "asterfort/gettco.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
@@ -51,7 +52,8 @@ subroutine chcsur(chcinez, chamnosz, type, modelz, gran_name)
     integer :: nb_affe_cine, i_affe_cine, i_cmp_chmx, nb_cmp_chmx, i_node, nb_node, nbec, i_cmp
     integer :: jcnsd, jcnsv, jcnsl, iaprnm, jcnsc, i_cmp_mx
     integer :: nb_cmp_mx
-    character(len=8) :: model, cmp_name
+    character(len=8) :: model, cmp_name, nommai
+    character(len=16) :: sdtyp
     character(len=19) :: chcine, chamnos
     character(len=24) :: cafci, cafcv
     integer, pointer :: corres(:) => null()
@@ -67,6 +69,8 @@ subroutine chcsur(chcinez, chamnosz, type, modelz, gran_name)
 !
     model = modelz
     call dismoi('NB_EC', gran_name, 'GRANDEUR', repi=nbec)
+    call dismoi('NOM_MAILLA', model, 'MODELE', repk=nommai)
+    call gettco(nommai, sdtyp)
     call jeveuo(model//'.MODELE    .PRNM', 'L', iaprnm)
 !
     chcine      = chcinez
@@ -146,7 +150,7 @@ subroutine chcsur(chcinez, chamnosz, type, modelz, gran_name)
         end do
     end do
 !
-    if (i_affe_cine .eq. 0) then
+    if (i_affe_cine .eq. 0 .and. sdtyp .ne. 'MAILLAGE_P') then
         call utmess('F', 'CALCULEL_9')
     endif
     afci(1) = i_affe_cine

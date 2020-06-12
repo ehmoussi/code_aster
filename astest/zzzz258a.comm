@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -159,13 +159,13 @@ U2_2=STAT_NON_LINE(MODELE=MOMEC2,  CHAM_MATER=CHMAT,
 # TEST_RESU (NON-REGRESSION) :
 #------------------------------
 TEST_RESU(OBJET=(_F(VALE_CALC=4.1698896080000001,
-                    NOM='U1      .001.000005.VALE',
+                    NOM='00000008.001.000005.VALE',
                     ),
                  _F(VALE_CALC=8.9899605359999999,
-                    NOM='U2_1    .001.000002.VALE',
+                    NOM='0000000b.001.000002.VALE',
                     ),
                  _F(VALE_CALC=8.9899605359999999,
-                    NOM='U2_2    .001.000002.VALE',
+                    NOM='0000000f.001.000002.VALE',
                     ),
                  ),
           )

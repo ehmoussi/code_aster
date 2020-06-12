@@ -29,7 +29,7 @@ t_pas = 0.01                    # Fréquence d'échantillonage du signal
 t_DPF = 10.                     # Durée de phase forte 5-95% de l'intensité d'Arias
 t_init = 2.                     # Instant du début de la durée de phase forte
 n_tir = 2                       # Nbr d'accélérogrammes
-n_point = t_DPF / t_pas * 8.    # Longueur de l'accélérogramme
+n_point = int(t_DPF / t_pas * 8.) # Longueur de l'accélérogramme
 fc = 0.05                       # Fréquence de coupure (filtre passe-bas)
 fmin = 0.3                      # Fréquence minimale pour vérification du spectre cible
 fmax = 50.                      # Fréquence maximale pour vérification du spectre cible
@@ -66,8 +66,8 @@ SPECTRE2=LIRE_FONCTION(UNITE=30,
                    PROL_GAUCHE='LINEAIRE',
                    INTERPOL='LIN',
                    INDIC_PARA=[1,1],
-                   INDIC_RESU=[1,2])                   
-                   
+                   INDIC_RESU=[1,2])
+
 #----------------------------------------------------------------------------------
 #Definition de la liste de frequence en fonction des parametres
 L_FREQ = DEFI_LIST_REEL(DEBUT=fmin, INTERVALLE=(_F(JUSQU_A=1.0, PAS=fpas,),_F(JUSQU_A=10.0, PAS=10*fpas,),_F(JUSQU_A=fmax, PAS=50*fpas,),) );
@@ -128,7 +128,7 @@ ACC0=RECU_FONCTION(TABLE=ACCE0,
 ACC1=RECU_FONCTION(TABLE=ACCE1,
                    FILTRE=_F(NOM_PARA = 'NUME_ORDRE',VALE_I = 1),
                    NOM_PARA_TABL='FONCTION',)
-                   
+
 ACC2=RECU_FONCTION(TABLE=ACCE2,
                    FILTRE=_F(NOM_PARA = 'NUME_ORDRE',VALE_I = 1),
                    NOM_PARA_TABL='FONCTION',)
@@ -163,7 +163,7 @@ DIFFLOG = FORMULE(VALE='abs(LOG-REF)',
                  NOM_PARA=('LOG','REF'),)
 
 
-TABLIN = CALC_TABLE(reuse=TABLIN, 
+TABLIN = CALC_TABLE(reuse=TABLIN,
                     TABLE=TABLIN,
                     ACTION=(_F(OPERATION='RENOMME',
                                NOM_PARA=('ACCE', 'LIN')),
@@ -178,7 +178,7 @@ TABLIN = CALC_TABLE(reuse=TABLIN,
                            )
                     )
 
-TABLOG = CALC_TABLE(reuse=TABLOG, 
+TABLOG = CALC_TABLE(reuse=TABLOG,
                     TABLE=TABLOG,
                     ACTION=(_F(OPERATION='RENOMME',
                                NOM_PARA=('ACCE', 'LOG')),
@@ -196,14 +196,14 @@ TABLOG = CALC_TABLE(reuse=TABLOG,
 TEST_TABLE(  TABLE=TABLIN,
              NOM_PARA='DIFF_ABS',
              TYPE_TEST = 'MAX',
-             VALE_CALC=0.16444855715661588, 
+             VALE_CALC=0.16444855715661588,
              CRITERE='RELATIF',
              )
 
 TEST_TABLE(  TABLE=TABLOG,
              NOM_PARA='DIFF_ABS',
              TYPE_TEST = 'MAX',
-             VALE_CALC=0.00042331295493511223, 
+             VALE_CALC=0.00042331295493511223,
              CRITERE='RELATIF',
              )
 

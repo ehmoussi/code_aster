@@ -3,7 +3,9 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist asterxx ci verification sequential
 
 F comm ssna117b.comm D 1
+F nom ssna117b_mater.py D 0
+F comm ssna117b.com2 D 1
 F mail ssna117a.mail D 20

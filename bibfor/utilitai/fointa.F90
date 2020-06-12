@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 subroutine fointa(ipif, nbpu, nompu, valpu, resu)
     implicit none
 #include "jeveux.h"
-#include "asterc/fiintf.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8vide.h"
+#include "asterfort/fiintf.h"
 #include "asterfort/focoli.h"
 #include "asterfort/fointn.h"
 #include "asterfort/folocx.h"
@@ -44,7 +44,7 @@ subroutine fointa(ipif, nbpu, nompu, valpu, resu)
 !
     integer :: npar(2), indfct, jpro, jpar, lpara, nbvn, nbpara, i
     integer :: nupar, nbpt, jval, inume, ier, iret
-    real(kind=8) :: tab(4), rpar, rvar, epsi
+    real(kind=8) :: tab(4), rpar, rvar, epsi, tresu(1)
     character(len=1) :: coli
     character(len=19) :: nomf
     character(len=24) :: nompf(2)
@@ -90,7 +90,8 @@ subroutine fointa(ipif, nbpu, nompu, valpu, resu)
 !             ------------------------
         nomf = zk24(jpro+5)(1:19)
         call fiintf(nomf, nbpu, nompu, valpu, iret,&
-                    'E', resu)
+                    'E', tresu)
+        resu = tresu(1)
         if (iret .ne. 0) then
             call tecael(iadzi, iazk24)
             call utmess('F+', 'FONCT0_9', sk=nomf)

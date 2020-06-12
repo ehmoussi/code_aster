@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ MODEL=AFFE_MODELE(    MAILLAGE=MAYA,
 THERL=LIRE_RESU(TYPE_RESU='EVOL_THER',
               FORMAT='MED',UNITE=80,
               MODELE=MODEL,
-              FORMAT_MED=(_F( NOM_RESU='THERL',
+              FORMAT_MED=(_F( NOM_RESU='00000008',
                               NOM_CHAM    ='TEMP' ),
                               ) ,
               TOUT_ORDRE='OUI',);
@@ -142,11 +142,11 @@ CALCNL=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                              _F(CHARGE = PRES), 
                              _F(CHARGE = ROTA,FONC_MULT = ROTA_FO),
                              _F(CHARGE = CONDLIM)),
-              FORMAT_MED=(_F( NOM_RESU='CALCNL',
+              FORMAT_MED=(_F( NOM_RESU='00000018',
                               NOM_CHAM    ='DEPL' ),
-                          _F( NOM_RESU='CALCNL',
+                          _F( NOM_RESU='00000018',
                               NOM_CHAM    ='SIEF_ELGA'),
-                          _F( NOM_RESU='CALCNL',
+                          _F( NOM_RESU='00000018',
                               NOM_CHAM    ='VARI_ELGA'),
                               ) ,
               TOUT_ORDRE='OUI',);

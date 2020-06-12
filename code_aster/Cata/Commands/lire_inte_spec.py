@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 # person_in_charge: irmela.zentner at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 LIRE_INTE_SPEC=MACRO(nom="LIRE_INTE_SPEC",
-                     op=OPS('Macro.lire_inte_spec_ops.lire_inte_spec_ops'),
+                     op=OPS('code_aster.MacroCommands.lire_inte_spec_ops.lire_inte_spec_ops'),
                      sd_prod=interspectre,
                      fr=tr("Lecture sur un fichier externe de fonctions complexes pour "
                           "créer une matrice interspectrale"),

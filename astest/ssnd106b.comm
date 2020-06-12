@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,9 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-from Contrib.veri_matr_tang import VERI_MATR_TANG
+from code_aster.Commands import *
+from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
+from ssnd106b import CHAR_ROTA
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
 
@@ -84,7 +86,6 @@ ClFixe=AFFE_CHAR_MECA(MODELE=modele,DDL_IMPO=(
                         _F(GROUP_NO='NAXE',DX=0.0,DY=0.0),
                         ),);
 
-INCLUDE(UNITE=30)
 
 #listes d'instants initiale
 L_inst=DEFI_LIST_REEL(DEBUT=0.0,INTERVALLE=_F(JUSQU_A=dureetrac,NOMBRE=npastrac),)
@@ -118,9 +119,8 @@ for icomp,comp in enumerate(compor) :
         tini=dureetrac+ dureetracrot*incr
         tfinrot=dureetracrot+dureetracrot*incr
         tfintrac=dureetrac+dureetracrot+dureetracrot*incr
-        # appel a la macro dans INCLUDE
         icl+=1
-        Rota2[icl]=CHAR_ROTA(ANGLE_DEGRES=angle_degres,TINI=tini,TFIN=tfinrot,RESU=resu[icomp],MAIL=MA)
+        Rota2[icl]=CHAR_ROTA(MODELE=modele,ANGLE_DEGRES=angle_degres,TINI=tini,TFIN=tfinrot,RESU=resu[icomp],MAIL=MA)
 
         Linst2=DEFI_LIST_REEL(DEBUT=tini,INTERVALLE=_F(JUSQU_A=tfinrot,NOMBRE=npasrota),);
         DEFLIST2 = DEFI_LIST_INST(METHODE='MANUEL', DEFI_LIST=_F(LIST_INST = Linst2,))

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,9 +25,9 @@
 #  CHAMP SCALAIRE 2D
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def post_endo_fiss_prod(self,TABLE,**args) :
@@ -37,7 +37,7 @@ def post_endo_fiss_prod(self,TABLE,**args) :
     return maillage_sdaster
 
 POST_ENDO_FISS=MACRO(nom="POST_ENDO_FISS",
-                     op=OPS('Macro.post_endo_fiss_ops.post_endo_fiss_ops'),
+                     op=OPS('code_aster.MacroCommands.post_endo_fiss_ops.post_endo_fiss_ops'),
                      sd_prod=post_endo_fiss_prod,
                      reentrant='n',
                      fr=tr("Individuation du trace d'une fissure a partir d'un champ scalaire pertinant"),

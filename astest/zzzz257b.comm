@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,10 +23,18 @@
 # MAILLAGE : TRIA6
 # COMPORTEMENT ELASTIQUE
 
+from math import *
+
+from code_aster.Commands import *
+# verification de l'emission de l'alarme :
+#-----------------------------------------
+from code_aster.Messages import MessageLog
+
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI',), PAR_LOT='NON');
 # PAR_LOT='NON' pour pouvoir tester l'emission d'une alarme importante
+
 
 #####################################
 ###Definition de la fissure en dur###
@@ -215,9 +223,6 @@ CHARDUAL=AFFE_CHAR_MECA_F(MODELE=MODL,
                                             FY=FMOINY,
                                             FZ=FMOINZ,),),);
 
-# verification de l'emission de l'alarme :
-#-----------------------------------------
-from Utilitai.Utmess import MessageLog
 infos = MessageLog.get_info_alarm()
 
 # dict pour simplifier le test

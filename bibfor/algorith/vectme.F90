@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vectme(modelz, carelz, mate, compor, complz,&
+subroutine vectme(modelz, carelz, mate, mateco, compor, complz,&
                   vecelz)
     implicit none
 #include "asterf_types.h"
@@ -37,7 +37,7 @@ subroutine vectme(modelz, carelz, mate, compor, complz,&
 #include "asterfort/reajre.h"
 #include "asterfort/vrcref.h"
 #include "asterfort/xajcin.h"
-    character(len=*) :: modelz, carelz, complz, vecelz, mate
+    character(len=*) :: modelz, carelz, complz, vecelz, mate, mateco
     character(len=24) :: compor
 !
 ! ----------------------------------------------------------------------
@@ -58,7 +58,7 @@ subroutine vectme(modelz, carelz, mate, compor, complz,&
     character(len=19) :: vecele, resuel, chvref, chsith
     character(len=24) :: chgeom, chcara(18), chtime, ligrmo, vrcplu
     character(len=24) :: lchin(mxnbin), lchout(mxnbou), modele, carele
-    aster_logical :: ltemp, lxfem
+    aster_logical :: lxfem
 !
     call jemarq()
     newnom = '.0000000'
@@ -74,11 +74,6 @@ subroutine vectme(modelz, carelz, mate, compor, complz,&
     call detrsd('VECT_ELEM', vecele)
     call memare('V', vecele, modele(1:8), mate, carele,&
                 'CHAR_MECA')
-!
-!     -- S'IL N'Y A PAS DE TEMPERATURE, IL N'Y A RIEN A FAIRE :
-!     ---------------------------------------------------------
-    call nmvcd2('TEMP', mate, ltemp)
-    if (.not.ltemp) goto 999
 !
 !     -- S'AGIT-IL D'UN MODELE X-FEM
     call exixfe(modele, iret)
@@ -105,7 +100,7 @@ subroutine vectme(modelz, carelz, mate, compor, complz,&
     lpain(2) = 'PTEMPSR'
     lchin(2) = chtime
     lpain(3) = 'PMATERC'
-    lchin(3) = mate
+    lchin(3) = mateco
     lpain(4) = 'PCACOQU'
     lchin(4) = chcara(7)
     lpain(5) = 'PCAGNPO'
@@ -182,7 +177,6 @@ subroutine vectme(modelz, carelz, mate, compor, complz,&
         call detrsd('CHAM_ELEM', chsith)
     endif
 !
-999 continue
     vecelz = vecele//'.RELR'
 !
     call jedema()

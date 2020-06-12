@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,14 +23,12 @@
 # Il est preferable d'utiliser :
 #       as_run --make_shared -o libumat.so src.f
 # avant de lancer l'etude.
-import os
-from asrun.toolbox import make_shared
-
-os.rename("fort.22", "fort.22.f")
-make_shared("libumat.so", "fort.22.f")
+from run_aster.toolbox import make_shared
 
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+make_shared("libumat.so", "umat001a.f")
 
 
 L_INST =DEFI_LIST_REEL(  DEBUT=0.0,

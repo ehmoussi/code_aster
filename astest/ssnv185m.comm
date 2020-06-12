@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -229,10 +229,10 @@ UTOT1=MECA_STATIQUE(MODELE=MODELEK,
                           _F(CHARGE=CHF),
                           _F(CHARGE=CH),
                           ),
-                   SOLVEUR=_F(   
+                   SOLVEUR=_F(
                             METHODE='MUMPS'),
                    INFO=1,
-                   ); 
+                   );
 # -------------------------------------------------------------
 #            POST-TRAITEMENT POUR LA VISUALISATION X-FEM
 # -------------------------------------------------------------
@@ -248,7 +248,7 @@ MOD_VISU=AFFE_MODELE(MAILLAGE=MA_XFEM,
 
 RES_XFEM=POST_CHAM_XFEM(MODELE_VISU   = MOD_VISU,
                         RESULTAT      = UTOT1,
-                        
+
                         INFO          = 2)
 
 IMPR_RESU(FORMAT='GMSH',UNITE=81,RESU=_F(RESULTAT=RES_XFEM));
@@ -268,6 +268,7 @@ for i in range(0,nbc) :
 
    SIF[i]=CALC_G(RESULTAT=UTOT1,
                  OPTION='CALC_K_G',
+                 CHAM_THETA=CO('cham_theta_no'),
                  THETA=_F(FISSURE=FISS,
                           R_INF=RI[i],
                           R_SUP=RS[i]),
@@ -276,6 +277,7 @@ for i in range(0,nbc) :
                  INFO=2);
 
    IMPR_TABLE(TABLE=SIF[i]);
+   DETRUIRE(CONCEPT=_F(NOM=cham_theta_no,))
 
 # SOLUTION ANALYTIQUE (MODE III PUR)
 K1REF=0.
@@ -326,49 +328,49 @@ for i in range(0,nbc) :
    TEST_TABLE(TABLE=SIF[i],
               NOM_PARA='K1',
               TYPE_TEST='MAX',
-              VALE_CALC=VAL_CALC[6*i+0], VALE_REFE=K1REF,    
+              VALE_CALC=VAL_CALC[6*i+0], VALE_REFE=K1REF,
               CRITERE='ABSOLU',
-              PRECISION=0.02,    
+              PRECISION=0.02,
               REFERENCE='ANALYTIQUE');
 
    TEST_TABLE(TABLE=SIF[i],
               NOM_PARA='K1',
               TYPE_TEST='MIN',
-              VALE_CALC=VAL_CALC[6*i+1], VALE_REFE=K1REF,    
+              VALE_CALC=VAL_CALC[6*i+1], VALE_REFE=K1REF,
               CRITERE='ABSOLU',
-              PRECISION=0.02,    
+              PRECISION=0.02,
               REFERENCE='ANALYTIQUE');
 
    TEST_TABLE(TABLE=SIF[i],
               NOM_PARA='K2',
               TYPE_TEST='MAX',
-              VALE_CALC=VAL_CALC[6*i+2], VALE_REFE=K2REF,    
+              VALE_CALC=VAL_CALC[6*i+2], VALE_REFE=K2REF,
               CRITERE='ABSOLU',
-              PRECISION=0.02,    
+              PRECISION=0.02,
               REFERENCE='ANALYTIQUE');
 
    TEST_TABLE(TABLE=SIF[i],
               NOM_PARA='K2',
               TYPE_TEST='MIN',
-              VALE_CALC=VAL_CALC[6*i+3], VALE_REFE=K2REF,    
+              VALE_CALC=VAL_CALC[6*i+3], VALE_REFE=K2REF,
               CRITERE='ABSOLU',
-              PRECISION=0.02,    
+              PRECISION=0.02,
               REFERENCE='ANALYTIQUE');
 
    TEST_TABLE(TABLE=SIF[i],
               NOM_PARA='K3',
               TYPE_TEST='MAX',
-              VALE_CALC=VAL_CALC[6*i+4], VALE_REFE=K3REF,    
+              VALE_CALC=VAL_CALC[6*i+4], VALE_REFE=K3REF,
               CRITERE='RELATIF',
-              PRECISION=prec_k3,    
+              PRECISION=prec_k3,
               REFERENCE='ANALYTIQUE');
 
    TEST_TABLE(TABLE=SIF[i],
               NOM_PARA='K3',
               TYPE_TEST='MIN',
-              VALE_CALC=VAL_CALC[6*i+5], VALE_REFE=K3REF,    
+              VALE_CALC=VAL_CALC[6*i+5], VALE_REFE=K3REF,
               CRITERE='RELATIF',
-              PRECISION=prec_k3,    
+              PRECISION=prec_k3,
               REFERENCE='ANALYTIQUE');
 
 

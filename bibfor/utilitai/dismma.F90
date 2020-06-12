@@ -30,6 +30,7 @@ subroutine dismma(questi, nomobz, repi, repkz, ierd)
 #include "asterfort/jenonu.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexatr.h"
+#include "asterfort/gettco.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/ltnotb.h"
@@ -53,6 +54,7 @@ subroutine dismma(questi, nomobz, repi, repkz, ierd)
 !     ------------------
     complex(kind=8) :: c16b
     character(len=19) :: table
+    character(len=16) :: typeco
     character(len=1) :: k1bid
     real(kind=8) :: xmax, xmin, ymax, ymin, zmax, zmin
     integer ::  ibid, ier, ilmaco, ism, k, nbma, nbno
@@ -90,6 +92,16 @@ subroutine dismma(questi, nomobz, repi, repkz, ierd)
     else if (questi.eq.'NB_NL_MAILLA') then
 !     ---------------------------------
         repi = dime(2)
+!
+!
+    else if (questi.eq.'PARALLEL_MESH') then
+!     ---------------------------------
+        call gettco(nomob, typeco)
+        if( typeco.eq.'MAILLAGE_P' ) then
+            repk = 'OUI'
+        else
+            repk = 'NON'
+        endif
 !
 !
     else if (questi.eq.'NB_NO_SS_MAX') then

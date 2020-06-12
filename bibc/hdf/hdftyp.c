@@ -18,10 +18,10 @@
 
 /* person_in_charge: j-pierre.lefebvre at edf.fr */
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Récupération du type associé (dataset,group,etc) de chaque entité d'une liste 
-/ de noms d'un groupe donné au sein d'un fichier HDF 
+/ Récupération du type associé (dataset,group,etc) de chaque entité d'une liste
+/ de noms d'un groupe donné au sein d'un fichier HDF
 /  Paramètres :
 /   - in  idfic : identificateur du fichier (hid_t)
 /   - in  nomgr : identificateur du fichier (hid_t)
@@ -42,17 +42,17 @@ ASTERINTEGER DEFPSPS(HDFTYP, hdftyp, hid_t *idf, char *nomgr, STRING_SIZE ln,
   hid_t idfic, bidon=0;
   herr_t indx;
   hsize_t ind;
-  char *nomg, *pt, *ptype; 
+  char *nomg, *pt, *ptype;
   int j;
   int k, ll;
   void *malloc(size_t size);
-  
+
   herr_t indiceType(hid_t loc_id, const char *name, const H5L_info_t *info, void *opdata);
 
   idfic=(hid_t) *idf;
 
   nomg = (char *) malloc((ln+1) * sizeof(char));
-  for (k=0;k<ln;k++)  
+  for (k=0;k<ln;k++)
      nomg[k] = nomgr[k];
   k=ln-1;
   while (nomg[k] == ' ') { k--;}
@@ -76,12 +76,12 @@ ASTERINTEGER DEFPSPS(HDFTYP, hdftyp, hid_t *idf, char *nomgr, STRING_SIZE ln,
 #else
   CALL_UTMESS("F", "FERMETUR_3");
 #endif
-  return 0; 
+  return 0;
 }
 
-/*  
+/*
     http://www.hdfgroup.org/HDF5/doc/RM/RM_H5L.html#Link-Visit
-    
+
     The protoype of the callback function op is as follows (as defined in the source
     code file H5Lpublic.h):
     herr_t (*H5L_iterate_t)( hid_t g_id, const char *name, const H5L_info_t *info, void *op_data)
@@ -102,7 +102,7 @@ ASTERINTEGER DEFPSPS(HDFTYP, hdftyp, hid_t *idf, char *nomgr, STRING_SIZE ln,
         * A positive value causes the visit iterator to immediately return that positive value,
           indicating short-circuit success. The iterator can be restarted at the next group member.
         * A negative value causes the visit iterator to immediately return that value, indicating
-          failure. The iterator can be restarted at the next group member. 
+          failure. The iterator can be restarted at the next group member.
 */
 
 #ifndef _DISABLE_HDF5
@@ -117,13 +117,13 @@ herr_t indiceType(hid_t id, const char *nom, const H5L_info_t *info, void *donne
   status = H5Oget_info_by_name (id, nom, &infobuf, H5P_DEFAULT);
 
   switch (infobuf.type) {
-  case H5O_TYPE_GROUP: 
+  case H5O_TYPE_GROUP:
      strcpy(retour,"group");
      break;
-  case H5O_TYPE_DATASET: 
+  case H5O_TYPE_DATASET:
      strcpy(retour,"dataset");
      break;
-  case H5O_TYPE_NAMED_DATATYPE: 
+  case H5O_TYPE_NAMED_DATATYPE:
      strcpy(retour,"datatype");
      break;
   default:

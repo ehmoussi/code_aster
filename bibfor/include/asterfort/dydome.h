@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 !
 !
 interface
-    subroutine dydome(nomo, mate, carele)
+    subroutine dydome(nomo, mate, mateco, carele)
         character(len=8) :: nomo
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         character(len=24) :: carele
     end subroutine dydome
 end interface

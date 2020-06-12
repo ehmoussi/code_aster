@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -315,7 +315,9 @@ TABSOL=DEFI_SOL_MISS(MATERIAU=_F(E=3.0e11,
                      TITRE='SOL HOMOGENE',INFO=2,);
 
 
-INCLUDE(UNITE=31,);
+from fdlv112d import F_ACC_X
+acc_x = F_ACC_X()
+
 
 N=200 
 dt=0.01
@@ -528,7 +530,7 @@ FSEISX0=CALC_MISS(MODELE=MODELB, TYPE_RESU='CHARGE', #INFO=2,
                                     ),
                         );
                         
-BAMO2=DEFI_BASE_MODALE(RITZ=(_F(MODE_MECA=mode_ri1, NMAX_MODE=24.,), #36,),
+BAMO2=DEFI_BASE_MODALE(RITZ=(_F(MODE_MECA=mode_ri1, NMAX_MODE=24,), #36,),
                              _F(MODE_INTF=mode_ri2, NMAX_MODE=6,),
                              ),
                        INTERF_DYNA=INTERDY2,

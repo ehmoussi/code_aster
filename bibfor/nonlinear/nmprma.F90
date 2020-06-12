@@ -59,7 +59,6 @@ implicit none
 #include "asterfort/nmxmat.h"
 #include "asterfort/preres.h"
 #include "asterfort/romAlgoNLCorrEFMatrixModify.h"
-#include "asterfort/sdmpic.h"
 #include "asterfort/utmess.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
@@ -137,9 +136,10 @@ integer :: faccvg, ldccvg, condcvg
 !                 1 : ECHEC DE LA CONDENSATION
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: reasma, renume
+    aster_logical :: reasma, renume, lmhpc
     aster_logical :: lcrigi, lcfint, lcamor, larigi, l_hho
     aster_logical :: ldyna, lamor, l_neum_undead, l_diri_undead, l_rom, l_cont_elem
+    character(len=3) :: mathpc
     character(len=16) :: metcor, metpre
     character(len=16) :: optrig, optamo
     character(len=19) :: matr_elem, rigid
@@ -272,7 +272,8 @@ integer :: faccvg, ldccvg, condcvg
 ! - For HHO: assembly rigidity and condensation
 !
     if (l_hho) then
-        call hhoPrepMatrix(modelz, ds_material%field_mate, ds_system%merigi, ds_system%vefint, &
+        call hhoPrepMatrix(modelz, ds_material%mater, ds_material%mateco, ds_system%merigi, &
+                           ds_system%vefint, &
                            rigid, hhoField, fonact, meelem, numedd, lischa, ds_algopara, ds_system,&
                            ds_measure, condcvg, l_cond = ASTER_TRUE, l_asse = ASTER_TRUE)
     endif
@@ -314,9 +315,11 @@ integer :: faccvg, ldccvg, condcvg
 !            write (6,*) "l_contact_adapt", &
 !                l_contact_adapt,ds_contact%update_init_coefficient
         if ((nint(ds_contact%update_init_coefficient) .eq. 0) .and. l_contact_adapt) then
+            call dismoi('MATR_HPC', matass, 'MATR_ASSE', repk=mathpc)
+            lmhpc = mathpc .eq. 'OUI'
             call dismoi('PARTITION', modelz, 'MODELE', repk=partit)
             ldist = partit .ne. ' '
-            call echmat(matass, ldist, minmat, maxmat)
+            call echmat(matass, ldist, lmhpc, minmat, maxmat)
             ds_contact%max_coefficient = maxmat
             if (abs(log(minmat)) .ge. r8prem()) then
 

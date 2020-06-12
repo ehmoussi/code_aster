@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -35,10 +35,8 @@ mailcol=LIRE_MAILLAGE(FORMAT="MED",UNITE=20);
 #    (LONG BEACH EAST WEST)
 #
 
-
-INCLUDE(UNITE=33,);
-
-INCLUDE(UNITE=34,);
+from sdnx100a import F_FONC
+LBEW, LBNS = F_FONC()
 
 #
 #  ACCELEROGRAMMES NORMES A 0.1G

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -278,11 +278,8 @@ NDDLGEN = NUME_DDL_GENE( BASE= BAMO, STOCKAGE= 'PLEIN',);
 #    (LONG BEACH EAST WEST)
 #
 
-
-
-INCLUDE(UNITE=33,);
-
-INCLUDE(UNITE=34,);
+from sdnx100a import F_FONC
+LBEW, LBNS = F_FONC()
 
 #
 #  ACCELEROGRAMMES NORMES A 0.1G
@@ -390,8 +387,6 @@ CALC_MISS(
         SPEC_NB=16384,
     ),
 );
-        
-DEFI_FICHIER(ACTION='LIBERER',UNITE=31,);
  
 impe = LIRE_IMPE_MISS(BASE=BAMO, NUME_DDL_GENE=NDDLGEN,           
                         UNITE_RESU_IMPE=31, FREQ_EXTR=3.,
@@ -949,7 +944,6 @@ GABK_Y=CALC_FONCTION(LIST_PARA=L_INST,
 
 SRADBX5=CALC_FONCTION(SPEC_OSCI=_F(FONCTION=GARADB_X,
                                    NORME=9.81, AMOR_REDUIT=(0.05),),);
-
 #
 #
 

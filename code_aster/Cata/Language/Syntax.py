@@ -26,7 +26,6 @@ It mainly converts new objects to old ones for backward compatibility.
 import builtins
 
 from . import DataStructure as DS
-from . import ops
 from .DataStructure import AsType
 from .Rules import (AllTogether, AtLeastOne, AtMostOne, ExactlyOne,
                     IfFirstAllPresent, NotEmpty, OnlyFirstPresent)
@@ -95,3 +94,40 @@ PRESENT_PRESENT = IfFirstAllPresent
 PRESENT_ABSENT = OnlyFirstPresent
 ENSEMBLE = AllTogether
 NON_VIDE = NotEmpty
+
+
+class Translation:
+    """Class to dynamically assign a translation function.
+
+    The package Cata must stay independent. So the translation function will
+    be defined by code_aster or by AsterStudy.
+    """
+
+    def __init__(self):
+        self._func = lambda arg: arg
+
+    def set_translator(self, translator):
+        """Define the translator function.
+
+        Args:
+            translator (function): Function returning the translated string.
+        """
+        self._func = translator
+
+    def __call__(self, arg):
+        """Return the translated string"""
+        if type(arg) is str:
+            uarg = arg
+        else:
+            uarg = arg.decode('utf-8', 'replace')
+        return self._func(uarg)
+
+    def __getstate__(self):
+        """Does not support pickling."""
+        return
+
+    def __setstate__(self, dummy):
+        """Does not support pickling."""
+
+
+tr = Translation()

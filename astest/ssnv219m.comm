@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,14 +18,6 @@
 # --------------------------------------------------------------------
 
 import math
-
-try:
-  # Import du module de calcul symbolique Sympy
-  import sympy
-  sympy_available = True
-except ImportError:
-  sympy_available = False
-
 
 # ================================================================================================================================================================================
 def NormeAster(RESULTAT, Depl_Ana, P_ana, MAIL, MODELE, GROUP_MA_VOL, GROUP_MA_SUR):
@@ -305,7 +297,7 @@ NU=0.;
 # Calcul de la solution de reference
 #================================================================================================
 
-INCLUDE(UNITE=38)
+from ssnv219e import *
 
 #================================================================================================
 # Debut de l'etude de la convergence
@@ -449,25 +441,6 @@ for Raff in range(0,Nb_Raffinement):
         MA[Raff+1]=CREA_MAILLAGE(MAILLAGE=MA0[Raff+1],
                     DECOUPE_LAC=_F(GROUP_MA_ESCL='ESCLAVE',DECOUPE_HEXA="PYRA",),);
 
-     # DESTRUCTION DES CONCEPTS INUTILISES DANS LES PROCHAINES ETAPES DE LA BOUCLE
-        DETRUIRE(CONCEPT=(_F(NOM=modl,),
-                       _F(NOM=chmat),
-                       _F(NOM=BlocBase),
-                       _F(NOM=Neumann),
-                       _F(NOM=Dirich),
-                       _F(NOM=Contact),
-                       _F(NOM=ForceInt),
-                       _F(NOM=EVOLNOLI),
-                       _F(NOM=Uana),
-                       _F(NOM=Ucalc),
-                       _F(NOM=DIFFUN),
-                       _F(NOM=DIFFPG),
-                       _F(NOM=Pana),
-                       _F(NOM=Pcalc),
-                       ),
-               INFO=1,
-              );
-
 
 
 #================================================================================================
@@ -551,25 +524,6 @@ IMPR_RESU(FORMAT='MED',
             _F(CHAM_GD=dicResu['DIFFUN'],GROUP_MA='VOLUME',NOM_CMP=('DX','DY','DZ'),),
             _F(RESULTAT=EVOLNOLI),
            ),);
-DETRUIRE(CONCEPT=(_F(NOM=modl,),
-                  _F(NOM=chmat),
-                  _F(NOM=BlocBase),
-                  _F(NOM=Neumann),
-                  _F(NOM=Dirich),
-                  _F(NOM=Contact),
-                  _F(NOM=ForceInt),
-                  _F(NOM=EVOLNOLI),
-                  _F(NOM=Uana),
-                  _F(NOM=Ucalc),
-                  _F(NOM=DIFFUN),
-                  _F(NOM=Pana),
-                  _F(NOM=Pcalc),
-                  _F(NOM=DIFFPG),
-                  _F(NOM=RAMPE),
-                  _F(NOM=LINST),
-                  _F(NOM=acier),
-                  ),
-           INFO=1,);
 
 for n in range(0,Nb_Raffinement):
     DETRUIRE(CONCEPT=(_F(NOM=MA0[n],),

@@ -1,0 +1,112 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+import os.path as osp
+import sys
+
+from waflib import Errors, Logs
+
+"""
+Build code_aster documentation using Sphinx.
+"""
+
+def options(self):
+    group = self.add_option_group('Documentation options')
+    group.add_option('--disable-doc', action='store_false', default=None,
+                    dest='enable_doc', help='Disable documentation support.')
+    group.add_option('--enable-doc', action='store_true', default=None,
+                    dest='enable_doc',
+                    help='Force documentation support.'
+                         'NB: The documentation build must be explicitly '
+                         ' called by running `waf doc|doc_debug`.')
+    group.add_option('--enable-pdf', action='store_true', default=None,
+                    dest='enable_pdf',
+                    help='Build pdf documentation.')
+
+def configure(self):
+    opts = self.options
+    try:
+        self.find_program('dot', var='DOT')
+        self.find_program('convert', var='CONVERT')
+        self.find_program("sphinx-build", var="SPHINX_BUILD")
+        self.env.SPHINX_ARGS = ['-W']
+    except Errors.ConfigurationError:
+        if opts.enable_doc == True:
+            raise
+    else:
+        self.env.BUILD_DOC = True
+
+
+def _setup_doc(self):
+    self.path.make_node('_static').mkdir()
+    out = self.path.get_bld().abspath()
+    Logs.info("building documentation in {0}".format(out))
+
+    files = self.path.parent.find_dir('code_aster').ant_glob('**/*.py')
+    files.extend(self.path.ant_glob('**/*.rst'))
+    files.extend(self.path.ant_glob('conf.py'))
+    files.extend(self.path.ant_glob('_static/mystyles.css'))
+    return out, files
+
+
+def build_doc(self):
+    env = self.all_envs[self.variant]
+    if not env.BUILD_DOC:
+        raise Errors.ConfigurationError("Documentation build not configure. "
+            "Please re-run 'waf configure' with '--enable-doc' to "
+            "force documentation support.")
+    build_html(self)
+    if self.options.enable_pdf:
+        build_pdf(self)
+
+
+def build_html(self):
+    env = self.all_envs[self.variant]
+    out, files = _setup_doc(self)
+
+    cmd = (". ${{ASTERDATADIR}}/profile.sh ; "
+           "BUILDDIR={0} ${{SPHINX_BUILD}} ${{SPHINX_ARGS}} "
+           "-b html -d {1} . {2}"
+           .format(self.path.parent.get_bld().abspath(),
+                   osp.join(out, "doctrees"), osp.join(out, "html")))
+    self(
+        rule   = "bash -c '{0}'".format(cmd),
+        cwd    = self.path.abspath(),
+        source = files,
+        target = self.path.find_or_declare('html/index.html'),
+        install_path = env.HTMLDIR,
+    )
+
+
+def build_pdf(self):
+    env = self.all_envs[self.variant]
+    out, files = _setup_doc(self)
+
+    cmd = (". ${{ASTERDATADIR}}/profile.sh ; "
+           "BUILDDIR={0} ${{SPHINX_BUILD}} ${{SPHINX_ARGS}} "
+           "-b latex -d {1} . {2} && cd {2} && make"
+           .format(self.path.parent.get_bld().abspath(),
+                   osp.join(out, "doctrees"), osp.join(out, "latex")))
+    self(
+        rule   = "bash -c '{0}'".format(cmd),
+        cwd    = self.path.abspath(),
+        source = files,
+        target = self.path.find_or_declare('latex/code_aster.pdf'),
+        install_path = env.HTMLDIR,
+    )

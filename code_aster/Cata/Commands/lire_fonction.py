@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: mathieu.courtois at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def lire_fonction_prod(self,TYPE,**args):
@@ -35,7 +35,7 @@ def lire_fonction_prod(self,TYPE,**args):
   raise AsException("type de concept resultat non prevu")
 
 LIRE_FONCTION=MACRO(nom="LIRE_FONCTION",
-                    op=OPS('Macro.lire_fonction_ops.lire_fonction_ops'),
+                    op=OPS('code_aster.MacroCommands.lire_fonction_ops.lire_fonction_ops'),
                     sd_prod=lire_fonction_prod,
                     fr=tr("Lit les valeurs réelles dans un fichier de données représentant une "
                          "fonction et crée un concept de type fonction ou nappe"),

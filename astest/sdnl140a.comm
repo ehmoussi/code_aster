@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -189,9 +189,9 @@ listarc2=DEFI_LIST_REEL(DEBUT=0.,
                                     _F(JUSQU_A=.15,
                                       NOMBRE=nombre*1,),
                                       ));
-list2=DEFI_LIST_INST(METHODE='MANUEL',
+list2=DEFI_LIST_INST(METHODE='MANUEL', 
                      DEFI_LIST=_F( LIST_INST=listinst,),
-                     ECHEC=_F(SUBD_PAS=2.,SUBD_NIVEAU=12,),);
+                     ECHEC=_F(SUBD_PAS=2,SUBD_NIVEAU=12,),);
 
 evol1=DYNA_NON_LINE(MODELE=modele,
                        CHAM_MATER=affe_mat,

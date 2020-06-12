@@ -53,6 +53,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 ! person_in_charge: olivier.boiteau at edf.fr
 !
 #include "asterf.h"
+#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterc/matfpe.h"
 #include "asterfort/amumpi.h"
@@ -79,13 +80,11 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     type(cmumps_struc), pointer :: cmpsk => null()
     integer :: rang, nbproc, niv, ifm, ibid, ietdeb, ifactm, nbfact
     integer :: ietrat, nprec, ifact, iaux, iaux1, vali(4), pcpi
     character(len=1) :: rouc, type, prec
-    character(len=3) :: matd
+    character(len=3) :: matd, mathpc
     character(len=5) :: etam, klag2
     character(len=8) :: ktypr
     character(len=12) :: usersm, k12bid
@@ -94,7 +93,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
     character(len=24) :: kmonit(12), k24aux, kvers, k24bid, posttrait
     real(kind=8) :: epsmax, valr(2), rctdeb, rbid(1), temps(6), epsmat
     aster_logical :: lquali, ldist, lresol, lmd, lbid, lpreco, lbis, lpb13, ldet
-    aster_logical :: lopfac
+    aster_logical :: lopfac, lmhpc
     real(kind=8), pointer :: slvr(:) => null()
     integer, pointer :: slvi(:) => null()
     character(len=24), pointer :: slvk(:) => null()
@@ -170,6 +169,10 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
     call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
     lmd = matd.eq.'OUI'
 !
+! --- MATRICE ASTER HPC ?
+    call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=mathpc)
+    lmhpc = mathpc.eq.'OUI'
+!
 ! --- MUMPS EST-IL UTILISE COMME PRECONDITIONNEUR ?
 ! --- SI OUI, ON DEBRANCHE LES ALARMES ET INFO (PAS LES UTMESS_F)
     lpreco = slvk(8)(1:3).eq.'OUI'
@@ -195,7 +198,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !       ------------------------------------------------
 !        INITIALISATION DE L'OCCURENCE MUMPS KXMPS:
 !       ------------------------------------------------
-        call amumpi(0, lquali, ldist, kxmps, type)
+        call amumpi(0, lquali, ldist, kxmps, type, lmhpc)
         call cmumps(cmpsk)
         rang=cmpsk%myid
         nbproc=cmpsk%nprocs
@@ -203,7 +206,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !       --------------------------------------------------------------
 !        CHOIX ICNTL VECTEUR DE PARAMETRES POUR MUMPS (ANALYSE+FACTO):
 !       --------------------------------------------------------------
-        call amumpi(2, lquali, ldist, kxmps, type)
+        call amumpi(2, lquali, ldist, kxmps, type, lmhpc)
 !
 !       ----------------------------------------------------------
 !        ON RECUPERE ET STOCKE DS SD_SOLVEUR LE NUMERO DE VERSION
@@ -235,7 +238,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
                     rctdeb, ldist)
         call amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     klag2, type, lmd, epsmat, ktypr,&
-                    lpreco)
+                    lpreco, lmhpc)
 !
 !       -----------------------------------------------------
 !       CONSERVE-T-ON LES FACTEURS OU NON ?
@@ -449,9 +452,9 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !
 !       ON SOULAGE LA MEMOIRE JEVEUX DES QUE POSSIBLE D'OBJETS MUMPS
 !       INUTILES
-        if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
+        if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
             if (.not.(lquali).and.(posttrait(1:4).ne.'MINI').and. .not.lopfac) then
-                if (ldist) then
+                if (ldist.or.lmhpc) then
                     deallocate(cmpsk%a_loc,stat=ibid)
                     deallocate(cmpsk%irn_loc,stat=ibid)
                     deallocate(cmpsk%jcn_loc,stat=ibid)
@@ -477,12 +480,12 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
                     rctdeb, ldist)
         call amumpp(0, nbsol, kxmps, ldist, type,&
                     impr, ifmump, lbis, rbid, csolu,&
-                    vcine, prepos, lpreco)
+                    vcine, prepos, lpreco, lmhpc)
 !
 !       --------------------------------------------------------------
 !        CHOIX ICNTL VECTEUR DE PARAMETRES POUR MUMPS (SOLVE):
 !       --------------------------------------------------------------
-        call amumpi(3, lquali, ldist, kxmps, type)
+        call amumpi(3, lquali, ldist, kxmps, type, lmhpc)
 !
 !       ------------------------------------------------
 !        RESOLUTION MUMPS :
@@ -533,7 +536,7 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !       ------------------------------------------------
         call amumpp(2, nbsol, kxmps, ldist, type,&
                     impr, ifmump, lbis, rbid, csolu,&
-                    vcine, prepos, lpreco)
+                    vcine, prepos, lpreco, lmhpc)
 !
 !       ------------------------------------------------
 !        AFFICHAGE DU MONITORING :
@@ -553,8 +556,8 @@ subroutine amumpc(action, kxmps, csolu, vcine, nbsol,&
 !        MENAGE ASTER ET MUMPS:
 !       ------------------------------------------------
         if (nomats(kxmps) .ne. ' ') then
-            if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
-                if (ldist) then
+            if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
+                if (ldist.or.lmhpc) then
                     deallocate(cmpsk%a_loc,stat=ibid)
                     deallocate(cmpsk%irn_loc,stat=ibid)
                     deallocate(cmpsk%jcn_loc,stat=ibid)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -94,7 +94,7 @@ character(len=24) :: grpnoe, grpmai
     integer, parameter :: ednoeu=3,edmail=0,typnoe=0
     integer :: codret, major, minor, rel, cret, nblim1, nblim2
     integer :: nbgr, jv2, jv3, num, ifam, igrp, jnogrp, numfam, nbver
-    integer :: ityp, ilmed, jgrp, ecart, jv4
+    integer :: ityp, ilmed, jgrp, ecart, jv4, nbgrp
     integer :: nbrfam, jnbnog, jadcor, ino, jcolno, jnbno, jvec, nbno
     integer :: adfano, val_max, val_min, ngro, ima
     integer :: ifm, niv, jcolma, jnbma, nbma, nummai, nbattr
@@ -318,10 +318,6 @@ character(len=24) :: grpnoe, grpmai
         call jedetr(nonufa)
 !
         if( nbgrno.gt.0 ) then
-            call jecreo(gpptnn, 'G N K24')
-            call jeecra(gpptnn, 'NOMMAX', nbgrno)
-            call jecrec(grpnoe, 'G V I', 'NO '//gpptnn, 'DISPERSE', 'VARIABLE',&
-                        nbgrno)
             call wkvect('&&LRMMFA.NB_NO_GRP', 'V V I', nbgrno, jnbnog)
 !
             do ino = 1, nbnoeu
@@ -340,6 +336,18 @@ character(len=24) :: grpnoe, grpmai
                     endif
                 endif
             enddo
+!
+            nbgrp = 0
+            do igrp = 1, nbgrno
+                nbma = zi(jnbnog-1+igrp)
+                if( nbma.gt.0 ) then
+                    nbgrp = nbgrp + 1
+                endif
+            enddo
+            call jecreo(gpptnn, 'G N K24')
+            call jeecra(gpptnn, 'NOMMAX', nbgrp)
+            call jecrec(grpnoe, 'G V I', 'NO '//gpptnn, 'DISPERSE', 'VARIABLE',&
+                        nbgrp)
 
             call wkvect('&&LRMMFA.COL_NO', 'V V I', nbgrno, jcolno)
             do igrp = 1, nbgrno
@@ -377,10 +385,6 @@ character(len=24) :: grpnoe, grpmai
         call jedetr(nonogn)
 !
         if( nbgrma.gt.0 ) then
-            call jecreo(gpptnm, 'G N K24')
-            call jeecra(gpptnm, 'NOMMAX', nbgrma)
-            call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE',&
-                        nbgrma)
             call wkvect('&&LRMMFA.NB_MA_GRP', 'V V I', nbgrma, jnbnog)
 !
             do ityp = 1 , MT_NTYMAX
@@ -405,6 +409,18 @@ character(len=24) :: grpnoe, grpmai
                 endif
 !
             enddo
+!
+            nbgrp = 0
+            do igrp = 1, nbgrma
+                nbma = zi(jnbnog-1+igrp)
+                if( nbma.gt.0 ) then
+                    nbgrp = nbgrp + 1
+                endif
+            enddo
+            call jecreo(gpptnm, 'G N K24')
+            call jeecra(gpptnm, 'NOMMAX', nbgrp)
+            call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE',&
+                        nbgrp)
 
             call wkvect('&&LRMMFA.COL_MA', 'V V I', nbgrma, jcolma)
             do igrp = 1, nbgrma

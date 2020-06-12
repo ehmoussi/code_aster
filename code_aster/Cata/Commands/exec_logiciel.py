@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def exec_logiciel_prod(self, SALOME, MAILLAGE, **args):
@@ -36,7 +36,7 @@ def exec_logiciel_prod(self, SALOME, MAILLAGE, **args):
     return None
 
 EXEC_LOGICIEL = MACRO(nom="EXEC_LOGICIEL",
-                      op=OPS('Macro.exec_logiciel_ops.exec_logiciel_ops'),
+                      op=OPS('code_aster.MacroCommands.exec_logiciel_ops.exec_logiciel_ops'),
                       sd_prod=exec_logiciel_prod,
                       fr=tr("Exécute un logiciel ou une commande système depuis Aster"),
 
@@ -55,7 +55,7 @@ EXEC_LOGICIEL = MACRO(nom="EXEC_LOGICIEL",
 
       MAILLAGE = FACT(statut='f',
          FORMAT     = SIMP(statut='o', typ='TXM', into=("GMSH", "SALOME")),
-         UNITE_GEOM = SIMP(statut='f', typ=UnitType(), val_min=10, val_max=90, defaut=16, inout='in',
+         UNITE_GEOM = SIMP(statut='f', typ=UnitType(), defaut=16, inout='in',
                            fr=tr("Unité logique définissant le fichier (fort.N) "
                                  "contenant les données géométriques (datg)")),
       ),

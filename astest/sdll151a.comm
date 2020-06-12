@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -115,8 +115,8 @@ IMPR_RESU(FORMAT='RESULTAT',
 
 
 # CALCUL DE LA SOLUTION "ITERATIVE - ANALYTIQUE"
-INCLUDE(UNITE=60)
 
+from sdll151a import *
 
 # TESTS SUR LES MODES DE FLEXION DANS L'EPAISSEUR DE LA POUTRE
 # (FREQUENCES PROPRES ET AMORTISSEMENTS MODAUX)

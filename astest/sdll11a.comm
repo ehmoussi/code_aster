@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,8 @@
 # ELEMENTS  : HEXA20
 # REFERENCE : GUIDE VPCS
 
-import aster
+from code_aster import SolverError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       PAR_LOT='NON',MESURE_TEMPS=_F(NIVE_DETAIL=2))
@@ -71,6 +72,7 @@ M_ASSE=ASSE_MATRICE(    MATR_ELEM=M_ELEM,
 
 # ON EN PROFITE POUR TESTER LE MECANISME D'EXCEPTION
 # DES BANDES DE FREQUENCE VIDES
+import aster
 
 try:
    MODE1=CALC_MODES( MATR_RIGI=K_ASSE,
@@ -79,7 +81,7 @@ try:
                      SOLVEUR=_F(METHODE='MUMPS'),
                      CALC_FREQ=_F( FREQ = (100., 200.) ) )
 
-except aster.BandeFrequenceVideError:
+except SolverError:
    MODE1=CALC_MODES( MATR_RIGI=K_ASSE,
                      MATR_MASS=M_ASSE,
                      OPTION = 'BANDE',
@@ -222,7 +224,6 @@ try:
 except aster.EventError:
    # on verifie l'etat de 'MODE2' par le TEST_RESU qui suit
    print('  Test validation resultats sur erreur VERI_MODE!!! ')
-   pass
 
 
 TEST_RESU(RESU=(_F(PARA='FREQ',
@@ -357,7 +358,6 @@ try:
 except aster.EventError:
    # on verifie l'etat de 'MODE4' par le TEST_RESU qui suit
    print('  Test validation resultats sur erreur VERI_MODE!!! ')
-   pass
 
 
 TEST_RESU(RESU=(_F(PARA='FREQ',

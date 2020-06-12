@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -182,8 +182,9 @@ CHART3=AFFE_CHAR_MECA(MODELE=MO,
                       FORCE_TUYAU=_F(GROUP_MA=('COUDES','POUTRES',),
                                      PRES=120.E5,),);
 #--------- ACCELEROGRAMMES EXCITATION ----------------
+from sdnl113a import F_ACCEL
+ACCEL=F_ACCEL()
 
-INCLUDE(UNITE=22,);
 #  LE COEFFICIENT SUIVANT PERMET DE METTRE A L'ECHELLE L'ACCELERO
 COEFMULT = 1. ;
 ACCEL2 = CALC_FONCTION(COMB=_F(FONCTION=ACCEL,COEF=COEFMULT),);

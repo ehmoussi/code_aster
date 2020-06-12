@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),);
 # Pour vérifier que l'on peut lire et ecrire des noms de groupe de plus 8 caracteres :
 MA1=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=20)
 IMPR_RESU(RESU=_F(MAILLAGE=MA1),UNITE=21,FORMAT='ASTER',PROC0='NON',)
-DEFI_FICHIER(UNITE=21, ACTION='LIBERER')
 MAILLAGE=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=21)
 
 
@@ -107,7 +106,7 @@ REPLO_1 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_1',
+                      NOM_MED     = '00000004.REPLO_1',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLO_2 = LIRE_CHAMP(
@@ -117,7 +116,7 @@ REPLO_2 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_2',
+                      NOM_MED     = '00000004.REPLO_2',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLO_3 = LIRE_CHAMP(
@@ -127,7 +126,7 @@ REPLO_3 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_3',
+                      NOM_MED     = '00000004.REPLO_3',
                       NOM_CMP_IDEM='OUI',
                      )
 

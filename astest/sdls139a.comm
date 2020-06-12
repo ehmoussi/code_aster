@@ -20,7 +20,7 @@
 DEBUT( CODE = _F(
                   NIV_PUB_WEB='INTERNET'),
        DEBUG=_F(SDVERI='OUI'),
-      );
+      )
 
 
 #***************************************************************************************#
@@ -34,7 +34,7 @@ DEBUT( CODE = _F(
 #IMPORTATION DU MAILLAGE DE MESURES
 #==================================
 
-MAINUM0=LIRE_MAILLAGE(FORMAT='MED',UNITE=20);
+MAINUM0=LIRE_MAILLAGE(FORMAT='MED',UNITE=20)
 
 #=================================================
 #AFFECTATION DES PROPRIETES AU MODELE ELEMTS FINIS
@@ -53,18 +53,18 @@ MODELNUM=AFFE_MODELE(MAILLAGE=MAINUM,
                              MODELISATION='DIS_TR',),
                           _F(GROUP_MA=('MC','MG',),
                              PHENOMENE='MECANIQUE',
-                             MODELISATION='POU_D_T',),),);
+                             MODELISATION='POU_D_T',),),)
 
 
 MATGUI=DEFI_MATERIAU(ELAS=_F(E=9.84E10,
                              NU=0.3,
                              RHO=6526.0,
-                     ),);
+                     ),)
 
 MATCRAY=DEFI_MATERIAU(ELAS=_F(E=9.84E10,
                              NU=0.3,
                              RHO=1.581E4,
-                             ),);
+                             ),)
 
 CARANUM=AFFE_CARA_ELEM(MODELE=MODELNUM,
                        POUTRE=(_F(GROUP_MA='MG',
@@ -80,14 +80,14 @@ CARANUM=AFFE_CARA_ELEM(MODELE=MODELNUM,
                                   VALE=(1000000.0,1000000.0,1000000.0,100.0,100.0,100.0,),),
                                  _F(GROUP_MA='GRILLES',
                                   CARA='M_TR_D_N',
-                                  VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),));
+                                  VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),))
 
 MATNUM=AFFE_MATERIAU(MAILLAGE=MAINUM,
                      MODELE=MODELNUM,
                      AFFE=(_F(GROUP_MA='MG',
                               MATER=MATGUI,),
                            _F(GROUP_MA='MC',
-                              MATER=MATCRAY,),),);
+                              MATER=MATCRAY,),),)
 
 #==================================
 #CONDITIONS LIMITES DE LA STRUCTURE
@@ -107,7 +107,7 @@ CLs1=AFFE_CHAR_MECA(MODELE=MODELNUM,
                                  DZ=0.0,
                                  DRX=0.0,
                                  DRY=0.0,
-                              ),),);
+                              ),),)
 
 
 #===========================================================================
@@ -119,22 +119,22 @@ KELNUM=CALC_MATR_ELEM(OPTION='RIGI_MECA',
                       MODELE=MODELNUM,
                       CHAM_MATER=MATNUM,
                       CARA_ELEM=CARANUM,
-                      CHARGE=CLs1,);
+                      CHARGE=CLs1,)
 
 MELNUM=CALC_MATR_ELEM(OPTION='MASS_MECA',
                       MODELE=MODELNUM,
                       CHAM_MATER=MATNUM,
                       CARA_ELEM=CARANUM,
-                      CHARGE=CLs1,);
+                      CHARGE=CLs1,)
 
 
-NUMENUM=NUME_DDL(MATR_RIGI=KELNUM,);
+NUMENUM=NUME_DDL(MATR_RIGI=KELNUM,)
 
 KASNUM=ASSE_MATRICE(MATR_ELEM=KELNUM,
-                    NUME_DDL=NUMENUM,);
+                    NUME_DDL=NUMENUM,)
 
 MASNUM=ASSE_MATRICE(MATR_ELEM=MELNUM,
-                    NUME_DDL=NUMENUM,);
+                    NUME_DDL=NUMENUM,)
 
 
 #=============================================
@@ -145,6 +145,12 @@ MODEAIR1=CALC_MODES(MATR_RIGI=KASNUM,
                     VERI_MODE=_F(STOP_ERREUR='NON',
                                  SEUIL=1e-03,
                                  ),
+                    SOLVEUR=_F(ELIM_LAGR='NON',
+                                 METHODE='MUMPS',
+                                 NPREC=8,
+                                 PCENT_PIVOT=20,
+                                 POSTTRAITEMENTS='FORCE',
+                                 RESI_RELA=1e-8,),
                     TYPE_RESU='DYNAMIQUE',
                     CALC_FREQ=_F(NMAX_FREQ=10,
                                  SEUIL_FREQ=10.0,
@@ -167,10 +173,10 @@ MODEAIR1=NORM_MODE(
 
 # ON AJOUTE D'UN AMORTISSEMENT MODAL A LA MAIN DE 1%
 list_amor = [0.02]*10
-LISTAMOR = DEFI_LIST_REEL( VALE = list_amor);
+LISTAMOR = DEFI_LIST_REEL( VALE = list_amor)
 
 MODEAIR = DEFI_BASE_MODALE( RITZ = _F( MODE_MECA = MODEAIR1 ),
-                            LIST_AMOR = LISTAMOR );
+                            LIST_AMOR = LISTAMOR )
 
 
 #***************************************************************************************
@@ -184,12 +190,12 @@ MODEAIR = DEFI_BASE_MODALE( RITZ = _F( MODE_MECA = MODEAIR1 ),
 MAICRA=CREA_MAILLAGE(MAILLAGE=MAINUM0,
                      CREA_POI1=_F(NOM_GROUP_MA='CRAYON',
                                   GROUP_NO='NC',
-                                  ),);
+                                  ),)
 
 MODELCRA=AFFE_MODELE(MAILLAGE=MAICRA,
                      AFFE=_F(GROUP_MA='CRAYON',
                              PHENOMENE='MECANIQUE',
-                             MODELISATION='DIS_TR',),);
+                             MODELISATION='DIS_TR',),)
 
 CARACRA=AFFE_CARA_ELEM(MODELE=MODELCRA,
                       DISCRET=(_F(GROUP_MA='CRAYON',
@@ -200,21 +206,21 @@ CARACRA=AFFE_CARA_ELEM(MODELE=MODELCRA,
                                  REPERE='GLOBAL',
                                  CARA='M_TR_D_N',
                                  VALE=(0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),)
-                      ));
+                      ))
 
 MATCRA=AFFE_MATERIAU(MAILLAGE=MAICRA,
                      MODELE=MODELCRA,
                      AFFE=_F(TOUT='OUI',
-                             MATER=MATCRAY,),);
+                             MATER=MATCRAY,),)
 
 
 KELCRA=CALC_MATR_ELEM(OPTION='RIGI_MECA',
                       MODELE=MODELCRA,
                       CHAM_MATER=MATCRA,
                       CARA_ELEM=CARACRA,
-                     );
+                     )
 
-NUMCRA=NUME_DDL(MATR_RIGI = KELCRA,);
+NUMCRA=NUME_DDL(MATR_RIGI = KELCRA,)
 
 
 MODCRA=PROJ_CHAMP(METHODE='COLLOCATION',
@@ -226,7 +232,7 @@ MODCRA=PROJ_CHAMP(METHODE='COLLOCATION',
                   TOUT_ORDRE='OUI',
                   NOM_PARA=('FREQ','AMOR_REDUIT','AMOR_GENE','MASS_GENE',),
                   VIS_A_VIS=_F(TOUT_1='OUI',
-                               TOUT_2='OUI',),);
+                               TOUT_2='OUI',),)
 
 
 
@@ -250,7 +256,7 @@ def gauss(mu,sigma,freq):
 
 liste = DEFI_LIST_REEL( DEBUT = 0.0,
                         INTERVALLE = _F( JUSQU_A = 600.0,
-                                         PAS     = 1),);
+                                         PAS     = 1),)
 
 
 # excitation spectre large
@@ -260,7 +266,7 @@ tmp11 = FORMULE(VALE='gauss(300,100,FREQ)',
 
 tmp12 = CALC_FONC_INTERP( FONCTION  = tmp11,
                           LIST_PARA = liste,
-                          NOM_PARA  = 'FREQ',);
+                          NOM_PARA  = 'FREQ',)
 
 FONC_11 = CALC_FONCTION( COMB_C = _F( FONCTION = tmp12 , COEF_C= 2.0E12*complex(1,0)) )
 
@@ -271,7 +277,7 @@ tmp21 = FORMULE(VALE='gauss(250,1,FREQ)',
 
 tmp22 = CALC_FONC_INTERP( FONCTION  = tmp21,
                           LIST_PARA = liste,
-                          NOM_PARA  = 'FREQ',);
+                          NOM_PARA  = 'FREQ',)
 
 FONC_22 = CALC_FONCTION( COMB_C = _F( FONCTION = tmp22 , COEF_C = 2.0E10*complex(1,0)) )
 
@@ -284,7 +290,7 @@ INTESP = DEFI_INTE_SPEC( DIMENSION = 2,
                                          _F( NUME_ORDRE_I = 2, NUME_ORDRE_J = 2, FONCTION = FONC_22),
                                          _F( NUME_ORDRE_I = 1, NUME_ORDRE_J = 2, FONCTION = FONC_12),
                                          ),
-                        );
+                        )
 
 
 
@@ -301,7 +307,7 @@ DYN=DYNA_ALEA_MODAL( BASE_MODALE = _F( MODE_MECA = MODEAIR,
                                  NOEUD = ('N3','N136'),
                                  NOM_CMP = ('DX','DX'),
                                  GRANDEUR = 'EFFO',),
-                    );
+                    )
 
 
 # Restitution de la mesure sur 19 capteurs
@@ -314,7 +320,7 @@ SPECTR19 = REST_SPEC_PHYS( MODE_MECA = MODEAIR,
                            NOEUD = noeuds,
                            NOM_CMP = cmp,
                            NOM_CHAM = 'DEPL',
-                           OPTION = 'TOUT_TOUT',);
+                           OPTION = 'TOUT_TOUT',)
 
 
 
@@ -335,13 +341,13 @@ DETRUIRE( CONCEPT = _F( NOM = (DYN,INTESP) ), INFO=1)
 MAIEXP = CREA_MAILLAGE( MAILLAGE = MAINUM0,
                         CREA_POI1 = _F( NOM_GROUP_MA = 'CAPTEURS',
                                         NOEUD = noeuds,
-                                        ),);
+                                        ),)
 
 
 MODELEXP = AFFE_MODELE( MAILLAGE = MAIEXP,
                         AFFE = _F( GROUP_MA = 'CAPTEURS',
                                    PHENOMENE = 'MECANIQUE',
-                                   MODELISATION = 'DIS_T',),);
+                                   MODELISATION = 'DIS_T',),)
 
 CAREXP = AFFE_CARA_ELEM( MODELE = MODELEXP,
                          DISCRET = (_F( GROUP_MA = 'CAPTEURS',
@@ -351,34 +357,34 @@ CAREXP = AFFE_CARA_ELEM( MODELE = MODELEXP,
                                     _F( GROUP_MA = 'CAPTEURS',
                                        REPERE = 'GLOBAL',
                                        CARA = 'M_T_D_N',
-                                       VALE = (0.,),),));
+                                       VALE = (0.,),),))
 
 MATEXP = AFFE_MATERIAU( MAILLAGE = MAIEXP,
                         MODELE = MODELEXP,
                         AFFE = _F( TOUT = 'OUI',
-                                   MATER = MATCRAY,),);
+                                   MATER = MATCRAY,),)
 
 KELEXP=CALC_MATR_ELEM(OPTION     = 'RIGI_MECA',
                       MODELE     = MODELEXP,
                       CHAM_MATER = MATEXP,
-                      CARA_ELEM  = CAREXP,);
+                      CARA_ELEM  = CAREXP,)
 
 MELEXP=CALC_MATR_ELEM(OPTION     = 'MASS_MECA',
                       MODELE     = MODELEXP,
                       CHAM_MATER = MATEXP,
-                      CARA_ELEM  = CAREXP,);
+                      CARA_ELEM  = CAREXP,)
 
 # la fabrication du NUME_DDL est obligatoire pour fabriquer le concept "observe"
 # (avec la macro OBSERVATION, en interactif ou non interactif).
 # Amelioration possible : les etapes CAREXP, MATEXP et KELEXP pourraient etre
 # effectuees automatiquement pour un modele experimental...
-NUMEXP = NUME_DDL( MATR_RIGI = KELEXP,);
+NUMEXP = NUME_DDL( MATR_RIGI = KELEXP,)
 
 KASEXP=ASSE_MATRICE(MATR_ELEM=KELEXP,
-                    NUME_DDL=NUMEXP,);
+                    NUME_DDL=NUMEXP,)
 
 MASEXP=ASSE_MATRICE(MATR_ELEM=MELEXP,
-                    NUME_DDL=NUMEXP,);
+                    NUME_DDL=NUMEXP,)
 
 
 MODEEXP = PROJ_CHAMP( RESULTAT = MODEAIR,
@@ -389,7 +395,7 @@ MODEEXP = PROJ_CHAMP( RESULTAT = MODEAIR,
                       TOUT_ORDRE='OUI',
                       NOM_PARA=('FREQ','AMOR_REDUIT','AMOR_GENE','MASS_GENE',),
                       VIS_A_VIS=_F(TOUT_1='OUI',
-                                   TOUT_2='OUI',),);
+                                   TOUT_2='OUI',),)
 
 
 #***********************************************************************************#
@@ -405,7 +411,7 @@ MAIACT = CREA_MAILLAGE( MAILLAGE=MAINUM0,
                         CREA_POI1 = _F( NOM_GROUP_MA = 'GMA2',
                                         NOEUD=('N3','N136'),
                                       ),
-                       );
+                       )
 
 # on utilise un modele avec DDL de translation et de rotation.
 # Les DDL de translation correspondent a des efforts ponctuels
@@ -413,7 +419,7 @@ MAIACT = CREA_MAILLAGE( MAILLAGE=MAINUM0,
 MODELACT = AFFE_MODELE( MAILLAGE = MAIACT,
                         AFFE = _F( GROUP_MA = 'GMA2',
                                    PHENOMENE = 'MECANIQUE',
-                                   MODELISATION = 'DIS_TR',),);
+                                   MODELISATION = 'DIS_TR',),)
 
 CARACT = AFFE_CARA_ELEM( MODELE = MODELACT,
                          DISCRET = (_F( GROUP_MA = 'GMA2',
@@ -423,30 +429,30 @@ CARACT = AFFE_CARA_ELEM( MODELE = MODELACT,
                                    _F( GROUP_MA = 'GMA2',
                                        REPERE = 'GLOBAL',
                                        CARA = 'M_TR_D_N',
-                                       VALE = (0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),));
+                                       VALE = (0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,),),))
 
 MATACT = AFFE_MATERIAU( MAILLAGE = MAIACT,
                         MODELE = MODELACT,
                         AFFE = _F( TOUT = 'OUI',
-                                   MATER = MATCRAY,),);
+                                   MATER = MATCRAY,),)
 
 KELACT = CALC_MATR_ELEM( OPTION = 'RIGI_MECA',
                          MODELE = MODELACT,
                          CHAM_MATER = MATACT,
-                         CARA_ELEM = CARACT,);
+                         CARA_ELEM = CARACT,)
 
 MELACT = CALC_MATR_ELEM( OPTION = 'MASS_MECA',
                          MODELE = MODELACT,
                          CHAM_MATER = MATACT,
-                         CARA_ELEM = CARACT,);
+                         CARA_ELEM = CARACT,)
 
-NUMACT = NUME_DDL( MATR_RIGI = KELACT,);
+NUMACT = NUME_DDL( MATR_RIGI = KELACT,)
 
 KASACT=ASSE_MATRICE(MATR_ELEM=KELACT,
-                    NUME_DDL=NUMACT,);
+                    NUME_DDL=NUMACT,)
 
 MASACT=ASSE_MATRICE(MATR_ELEM=MELACT,
-                    NUME_DDL=NUMACT,);
+                    NUME_DDL=NUMACT,)
 
 OBS = OBSERVATION( RESULTAT = MODEAIR,
                    MODELE_1 = MODELNUM,
@@ -461,7 +467,7 @@ OBS = OBSERVATION( RESULTAT = MODEAIR,
                                 NOM_CHAM = 'DEPL',
                                 DDL_ACTIF = ('DX')
                            ),
-                  );
+                  )
 
 # Pour le concept de commandabilite, on garde les DDL DX uniquement
 # si on veut identifier des efforts, et DX et DRZ si on veut identifier
@@ -479,7 +485,7 @@ COM = OBSERVATION( RESULTAT = MODEAIR,
                                 NOM_CHAM = 'DEPL',
                                   DDL_ACTIF = ('DX','DRZ')),
                            ),
-                  );
+                  )
 
 
 CALC_ESSAI(
@@ -498,7 +504,7 @@ CALC_ESSAI(
                                         _F(TABLE = CO("DEPL_PHY")), # intsp des deplacements mesures
                                         _F(TABLE = CO("DEPL_SYN")), # intsp des deplacements resynthetises
                                        ),
-               );
+               )
 
 
 
@@ -561,4 +567,4 @@ for ind in range(len(FONC0)):
                TYPE_TEST='MAX',
                TABLE=NORM[ind],)
 
-FIN();
+FIN()

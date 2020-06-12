@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,11 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Commands import *
+from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
+from comp002i import TEST_ECART
+
 POURSUITE(PAR_LOT='NON', CODE='OUI')
-
-from Contrib.veri_matr_tang import VERI_MATR_TANG
-
-from umat002a import TEST_ECART
 
 ch_param=['V1','VMIS','TRACE','SIXX','SIYY','SIZZ','SIXY','SIXZ','SIYZ']
 

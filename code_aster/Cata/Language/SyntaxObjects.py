@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,9 @@ import inspect
 import types
 from collections import OrderedDict
 
+from . import DataStructure as DS
 from .DataStructure import DataStructure, UnitBaseType
+from .SyntaxChecker import checkCommandSyntax
 from .SyntaxUtils import (add_none_sdprod, block_utils, debug_message2,
                           disable_0key, enable_0key, force_list, mixedcopy,
                           sorted_dict, value_is_sequence)
@@ -156,7 +158,16 @@ class CataDefinition(OrderedDict):
             if isinstance(value, typeslist):
                 entities[key] = value
             elif with_block and isinstance(value, Bloc):
-                entities.update(value.definition._filter_entities(typeslist))
+                bloc_kwds = value.definition._filter_entities(typeslist)
+                # update without overwriting factorkeywords but extending them
+                for kwd, obj in bloc_kwds.items():
+                    if type(obj) is FactorKeyword and kwd in entities:
+                        # do not change existing FactorKeyword!
+                        all_kwds = entities[kwd].definition.copy()
+                        all_kwds.update(obj.definition)
+                        entities[kwd] = FactorKeyword(all_kwds)
+                    else:
+                        entities[kwd] = obj
         return entities
 
     def iterItemsByType(self):
@@ -341,10 +352,9 @@ class PartOfSyntax(UIDMixing):
 
     def _def_status(self):
         """Wrapper that returns the value of 'statut' after precondition."""
-        from code_aster.Cata import HAVE_ASTERSTUDY
         definition = self.definition
         value = definition.get("statut", "f")
-        if not HAVE_ASTERSTUDY or value == "c":
+        if value == "c":
             return value
         # In AsterStudy, a simple keyword with a default value...
         if self.getCataTypeId() == IDS.simp and self.hasDefaultValue():
@@ -416,26 +426,25 @@ class PartOfSyntax(UIDMixing):
     def checkMandatory(self, userSyntax, stack, _parent_ctxt=None):
         """Check that the mandatory keywords are provided by the user.
 
+        Warning: Default keywords must be added before visiting the objects.
         Warning: this does not check recursively, only the current level.
 
         Arguments:
-            userSyntax (dict): dict of the keywords as filled by the user.
+            userSyntax (dict): dict of the user and default keywords.
             stack (list): used to give contextual informations in error
                 messages.
             _parent_ctxt (dict): contains the keywords as known in the parent.
                 This context is used to evaluate block conditions.
         """
         ctxt = _parent_ctxt.copy() if _parent_ctxt else {}
-        userSyntax = mixedcopy(userSyntax)
-        # add default keywords into userSyntax
-        self.addDefaultKeywords(userSyntax, ctxt)
-        # and update parent context with local keywords
+        # update parent context with local keywords
         ctxt.update(userSyntax)
 
         for key, kwd in self.definition.iterItemsByType():
             if isinstance(kwd, (SimpleKeyword, FactorKeyword)):
                 if key == "reuse": # reuse is deprecated
                     continue
+                    #raise KeyError("reuse has been removed")
                 # pragma pylint: disable=no-member
                 if kwd.isMandatory() and kwd.undefined(userSyntax.get(key)):
                     debug_message2("mandatory keyword =", key, ":", kwd)
@@ -450,9 +459,11 @@ class PartOfSyntax(UIDMixing):
     def getKeyword(self, userKeyword, userSyntax, _parent_ctxt=None):
         """Return the keyword in the current composite object.
 
+        Warning: Default keywords must be added before visiting the objects.
+
         Arguments:
             userKeyword (str): name of the searched keyword.
-            userSyntax (dict): dict of the keywords as filled by the user.
+            userSyntax (dict): dict of the user and default keywords.
             _parent_ctxt (dict): contains the keywords as known in the parent.
                 This context is used to evaluate block conditions.
         """
@@ -462,14 +473,11 @@ class PartOfSyntax(UIDMixing):
             return found
 
         ctxt = _parent_ctxt.copy() if _parent_ctxt else {}
-        userSyntax = mixedcopy(userSyntax)
-        # add default keywords into userSyntax
-        self.addDefaultKeywords(userSyntax, ctxt)
-        # and update parent context with local keywords
+        # update parent context with local keywords
         ctxt.update(userSyntax)
 
         # search in BLOC objects
-        for key, kwd in self.definition.iterItemsByType():
+        for _, kwd in self.definition.iterItemsByType():
             if not isinstance(kwd, Bloc):
                 continue
             # debug_message2("block", key, repr(kwd.getCondition()), "with", ctxt,
@@ -484,21 +492,20 @@ class PartOfSyntax(UIDMixing):
     def getRules(self, userSyntax, _parent_ctxt=None):
         """Return the rules to be applied to the given keywords.
 
+        Warning: Default keywords must be added before visiting the objects.
+
         Arguments:
-            userSyntax (dict): dict of the keywords as filled by the user.
+            userSyntax (dict): dict of the user and default keywords.
             _parent_ctxt (dict): contains the keywords as known in the parent.
                 This context is used to evaluate block conditions.
         """
         ctxt = _parent_ctxt.copy() if _parent_ctxt else {}
-        userSyntax = mixedcopy(userSyntax)
-        # add default keywords into userSyntax
-        self.addDefaultKeywords(userSyntax, ctxt)
-        # and update parent context with local keywords
+        # update parent context with local keywords
         ctxt.update(userSyntax)
 
         rules = list(self.rules)
         # search in BLOC objects
-        for key, kwd in self.definition.iterItemsByType():
+        for _, kwd in self.definition.iterItemsByType():
             if not isinstance(kwd, Bloc):
                 continue
             if not kwd.isEnabled(ctxt):
@@ -525,6 +532,14 @@ class SimpleKeyword(PartOfSyntax):
     """
     Objet mot-clé simple équivalent à SIMP dans les capy
     """
+
+    def __init__(self, curDict):
+        """Initialization"""
+        super(SimpleKeyword, self).__init__(curDict)
+        if "val_min" in self._definition or "val_max" in self._definition:
+            typ = self._definition['typ']
+            assert typ in ('I', 'R'), ("'val_min/val_max' not allowed for type"
+                                       " '{0}'".format(typ))
 
     def getCataTypeId(self):
         """Get the type id of SimpleKeyword.
@@ -626,7 +641,6 @@ class Bloc(PartOfSyntax):
 
     def isEnabled(self, context):
         """Tell if the block is enabled by the given context"""
-        from . import DataStructure as DS
         eval_context = {}
         eval_context.update(DS.__dict__)
         eval_context.update(block_utils(eval_context))
@@ -637,7 +651,7 @@ class Bloc(PartOfSyntax):
             enabled = eval(self.getCondition(), {}, eval_context)
         except AssertionError:
             raise
-        except Exception as exc:
+        except Exception:
             # TODO: re-enable CataError, it seems me a catalog error!
             # raise CataError("Error evaluating {0!r}: {1}".format(
             #                 self.getCondition(), str(exc)))
@@ -690,8 +704,7 @@ class Command(PartOfSyntax):
         """
         strict = args.pop("__strict__", ConversionLevel.Syntaxic)
         if strict & ConversionLevel.Syntaxic:
-            from .SyntaxChecker import checkCommandSyntax
-            checkCommandSyntax(self, args, in_place=False)
+            checkCommandSyntax(self, args)
             resultType = self.get_type_sd_prod(**args)
         else:
             try:
@@ -711,12 +724,11 @@ class Command(PartOfSyntax):
         else:
             return Command._call_callback(self, **args)
 
-    def get_type_sd_prod(self, **args):
+    def get_type_sd_prod(self, **ctxt):
         """Return the type of the command result."""
         resultType = self.definition.get('sd_prod')
         if resultType is not None:
             if type(resultType) is types.FunctionType:
-                ctxt = mixedcopy(args)
                 self.addDefaultKeywords(ctxt)
                 # if os.environ.get('DEBUG'):
                     # print "COMMAND:", self.name
@@ -774,6 +786,10 @@ class Macro(Command):
         if result is None:
             return
         result.settype(astype)
+
+    def accept(self, visitor, syntax=None):
+        """Called by a Visitor"""
+        visitor.visitMacro(self, syntax)
 
 
 class Procedure(Command):

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vechms(nomo, mate, carele, varplu, lischa,&
+subroutine vechms(nomo, mate, mateco, carele, varplu, lischa,&
                   partps, vecele)
 !
 !
@@ -38,7 +38,7 @@ subroutine vechms(nomo, mate, carele, varplu, lischa,&
 #include "asterfort/vechmp.h"
 #include "asterfort/vechmx.h"
     character(len=8) :: nomo
-    character(len=24) :: mate, carele
+    character(len=24) :: mate, carele, mateco
     real(kind=8) :: partps(3)
     character(len=19) :: lischa, varplu
     character(len=19) :: vecele
@@ -101,7 +101,7 @@ subroutine vechms(nomo, mate, carele, varplu, lischa,&
 !
 ! --- CHAMPS D'ENTREES STANDARDS
 !
-    call vechmp(nomo, mate, carele, varplu, lxfem,&
+    call vechmp(nomo, mate, mateco, carele, varplu, lxfem,&
                 partps, nbin_maxi, lpain, lchin, lastin)
 !
 ! --- LISTE DES INDEX DES CHARGES

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -48,10 +48,9 @@ CARA=AFFE_CARA_ELEM(
              VALE=(18.0,0.54,1350.0,1.2,1.2,2.16,),),
    ORIENTATION=_F(GROUP_MA='LAME', CARA='ANGL_VRIL', VALE=0.,),)
 
-CL=AFFE_CHAR_MECA(
+CL=AFFE_CHAR_CINE(
    MODELE=MO,
-   DDL_IMPO=_F(GROUP_NO='PA',DX=0., DY=0., DZ=0., DRX=0., DRY=0., DRZ=0.,),
-   #FORCE_NODALE=_F(GROUP_NO='PC', FZ=0.001,),
+   MECA_IMPO=_F(GROUP_NO='PA',DX=0., DY=0., DZ=0., DRX=0., DRY=0., DRZ=0.,),
 )
 
 FORCE=AFFE_CHAR_MECA(
@@ -90,7 +89,7 @@ RESO=STAT_NON_LINE(
    INCREMENT=_F(LIST_INST=DEFLIST, INST_FIN=tfin, ),
    NEWTON=_F(MATRICE='TANGENTE', REAC_ITER=1,),
    CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-6, ITER_GLOB_MAXI=21,),
-   SOLVEUR=_F(METHODE='LDLT', ),
+   SOLVEUR=_F(METHODE='MULT_FRONT'),
 )
 
 DEPX=RECU_FONCTION(
@@ -159,7 +158,7 @@ for vpara, vdx,vdz in ResuRefe:
    motclef['VALEUR'].append( _F(VALE_PARA=vpara, FONCTION=DEPX, VALE_CALC=vdx,
                                 TOLE_MACHINE=4.e-6, CRITERE='RELATIF',) )
    motclef['VALEUR'].append( _F(VALE_PARA=vpara, FONCTION=DEPZ, VALE_CALC=vdz,
-                                TOLE_MACHINE=4.e-6, CRITERE='RELATIF',) )
+                                TOLE_MACHINE=4.5e-6, CRITERE='RELATIF',) )
 TEST_FONCTION(**motclef)
 
 FIN()

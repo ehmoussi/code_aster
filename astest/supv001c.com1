@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,29 +17,36 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-#
 # person_in_charge: mathieu.courtois at edf.fr
 # .comm : en PAR_LOT='OUI'
 # .com1 : en PAR_LOT='NON'
 # .com2 : THER_LINEAIRE en PAR_LOT='NON'
 # .com3 : THER_LINEAIRE en PAR_LOT='OUI'
 
+from code_aster.Cata.DataStructure import CO as typCO
+from code_aster.Cata.DataStructure import table_sdaster
+from code_aster.Cata.Syntax import MACRO, SIMP
+from code_aster.Commands import *
+from code_aster.Supervis import UserMacro
+
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       PAR_LOT='NON', IGNORE_ALARM='SUPERVIS_1',
       IMPR_MACRO='OUI',)
 
-def ma_macro_ops(self, TABLE, **kwargs):
+def ma_macro_ops(self, TABLE=None, **kwargs):
     """Corps de la macro de test."""
-    CREA_TABLE = self.get_cmd('CREA_TABLE')
-    self.set_icmd(1)
+    from code_aster.Commands import CREA_TABLE
     # on crée une table que l'on retourne soit sous le mot-clé TABLE,
     # soit en concept principal.
-    self.DeclareOut('tabout', TABLE or self.sd)
     tabout = CREA_TABLE(LISTE=_F(PARA='NUME',
                                  LISTE_I=list(range(5)),),)
-    return 0
+    if TABLE is None:
+        return tabout
+    self.register_result(tabout, TABLE or self.sd)
+    return None
 
-def ma_macro_prod(self, TABLE, **kwargs):
+def ma_macro_prod(self, TABLE=None, **kwargs):
     """Déclaration des concepts de sortie"""
     if kwargs.get('__all__'):
         return ([None, table_sdaster], [None, table_sdaster])
@@ -49,10 +56,15 @@ def ma_macro_prod(self, TABLE, **kwargs):
         return None
     return table_sdaster
 
-MA_MACRO = MACRO(nom="MA_MACRO",
-                 op=ma_macro_ops,
-                 sd_prod=ma_macro_prod,
-                 TABLE = SIMP(statut='f', typ=CO,),)
+MA_MACRO_cata = MACRO(
+    nom="MA_MACRO",
+    op=ma_macro_ops,
+    sd_prod=ma_macro_prod,
+    TABLE = SIMP(statut='f', typ=typCO,),
+)
+
+MA_MACRO = UserMacro("MA_MACRO", MA_MACRO_cata, ma_macro_ops)
+
 
 MA_MACRO(TABLE=CO('tabd'))
 tabg = MA_MACRO()

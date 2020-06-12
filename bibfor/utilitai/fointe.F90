@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ subroutine fointe(codmes, nomf, nbpu, nompu, valpu,&
                   resu, ier)
     implicit none
 #include "jeveux.h"
-#include "asterc/fiintf.h"
+#include "asterfort/fiintf.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/focoli.h"
@@ -90,7 +90,7 @@ subroutine fointe(codmes, nomf, nbpu, nompu, valpu,&
 !     ------------------------------------------------------------------
     integer :: mxsave, mxpara, svnbpa, svpar, isvnxt, isvind, nextsv
     integer :: iaprol, iavale, iapara, luvale, lupara
-    real(kind=8) :: svresu
+    real(kind=8) :: svresu, tresu(1)
     character(len=1) :: svtypf
     character(len=2) :: svprgd
     character(len=24) :: svinte
@@ -144,7 +144,8 @@ subroutine fointe(codmes, nomf, nbpu, nompu, valpu,&
     if (zk24(lprol) .eq. 'INTERPRE') then
 !     ------------------------ CAS DES FORMULES ------------------------
         call fiintf(nomf, nbpu, nompu, valpu, ier,&
-                    'A', resu)
+                    'A', tresu)
+        resu = tresu(1)
         if (ier .gt. 0) then
             ier = 200
         endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine resloc(modele, ligrel, yaxfem, yathm, tbgrca,&
-                  perman, chtime, mate, sigmam, sigmap,&
+                  perman, chtime, mateco, sigmam, sigmap,&
                   chsigx, chdepm, chdepp, cherrm, lchar,&
                   nchar, tabido, chvois, cvoisx, chelem)
 ! ......................................................................
@@ -40,7 +40,7 @@ subroutine resloc(modele, ligrel, yaxfem, yathm, tbgrca,&
 !              (UTILISE SI MODELISATION HM)
 !     PERMAN : SI OUI, EST-CE UNE MODELISATION PERMANENTE ?
 !     CHTIME : CARTE D'INSTANTS POUR L'INSTANT ACTUEL
-!     MATE   : NOM DU CONCEPT CHAMP_MATERIAU
+!     mateco   : NOM DU MATERIAU CODE
 !     SIGMAM : NOM DU CHAMP DE CONTRAINTES AUX NOEUDS PAR ELEMENT
 !              A L'INSTANT PRECEDENT
 !     SIGMAP : NOM DU CHAMP DE CONTRAINTES AUX NOEUDS PAR ELEMENT
@@ -93,7 +93,7 @@ subroutine resloc(modele, ligrel, yaxfem, yathm, tbgrca,&
     character(len=8) :: modele, lchar(1)
     character(len=24) :: sigmam, sigmap, chdepm, chdepp, cherrm
     character(len=24) :: chtime, chvois, chsigx, cvoisx, chelem
-    character(len=*) :: ligrel, mate
+    character(len=*) :: ligrel, mateco
     real(kind=8) :: tbgrca(3)
     aster_logical :: yaxfem, yathm, perman
 !
@@ -158,21 +158,21 @@ subroutine resloc(modele, ligrel, yaxfem, yathm, tbgrca,&
     ktych(8) = 'F3D3D'
     ktych(9) = 'FLUX'
 !
-    do 11 , j = 1 , ntychx
-    itycha(j) = 0
-    11 end do
+    do j = 1 , ntychx
+        itycha(j) = 0
+    end do
 !
 !GN      WRITE(6,*) 'NCHAR =', NCHAR
     iret1 = 0
     do i = 1, nchar
         iret2 = 0
-        do 121 , j = 1 , ntychx
-        call exisd('CHAMP_GD', lchar(i)//'.CHME.'//ktych(j), iret)
-        if (iret .ne. 0) then
-            itycha(j) = itycha(j) + 1
-            iret2 = iret2 + 1
-        endif
-121     continue
+        do j = 1 , ntychx
+            call exisd('CHAMP_GD', lchar(i)//'.CHME.'//ktych(j), iret)
+            if (iret .ne. 0) then
+                itycha(j) = itycha(j) + 1
+                iret2 = iret2 + 1
+            endif
+        end do
         if (iret2 .eq. 0) then
             call utmess('A', 'INDICATEUR_6', sk=lchar(i))
             iret1 = iret1 + 1
@@ -183,13 +183,13 @@ subroutine resloc(modele, ligrel, yaxfem, yathm, tbgrca,&
 !     REMARQUE : SAUF POUR DU DIRICHLET (CIMPO)
 !
 !GN        WRITE(6,*) 'ITYCHA(',1,') =', ITYCHA(1)
-    do 13 , j = 2 , ntychx
+    do j = 2 , ntychx
 !GN        WRITE(6,*) 'ITYCHA(',J,') =', ITYCHA(J)
     if (itycha(j) .gt. 1) then
         call utmess('A', 'INDICATEUR_7', sk=ktych(j))
         iret1 = iret1 + 1
     endif
-    13 end do
+    end do
 !
     if (iret1 .ne. 0) then
         call utmess('F', 'INDICATEUR_8')
@@ -474,7 +474,7 @@ subroutine resloc(modele, ligrel, yaxfem, yathm, tbgrca,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = mateco
     lpain(3) = 'PVOISIN'
     lchin(3) = chvois
     lpain(4) = 'PTEMPSR'

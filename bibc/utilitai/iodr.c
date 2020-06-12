@@ -18,7 +18,7 @@
 
 #include "aster.h"
 #include "aster_utils.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 
 #define MAX_FAC         256
 #define LONG_NOM_FIC    513
@@ -109,12 +109,14 @@ void DEFSPP(OPENDR, opendr, char *dfname, STRING_SIZE len_dfname,
         SetTabFStr(valk, 0, fname, VALK_SIZE);
         if ( imode == 2 ) {
             DEBUG_IODR("open in %s mode: %s\n", "write", fname);
-            CALL_UTMESS_CORE("I", "JEVEUX_45", &n1, valk, &n0, &ibid, &n0, &rbid, " ");
+            CALL_UTMESS_CORE("I", "JEVEUX_45", &n1, valk, &n0,
+                             &ibid, &n0, &rbid, &n0, " ");
             nenr[iu] = -1;
             *ierr = 0;
         } else {
             DEBUG_IODR("open in %s mode: %s\n", "read", fname);
-            CALL_UTMESS_CORE("I", "JEVEUX_44", &n1, valk, &n0, &ibid, &n0, &rbid, " ");
+            CALL_UTMESS_CORE("I", "JEVEUX_44", &n1, valk, &n0,
+                             &ibid, &n0, &rbid, &n0, " ");
             nbread=fread(&nenr[iu], OFF_INIT, 1, fpfile[iu]);
         }
         FreeStr(valk);

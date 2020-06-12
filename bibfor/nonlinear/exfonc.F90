@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine exfonc(list_func_acti, ds_algopara, solver, ds_contact, sddyna,&
-                  mate, model)
+                  mater, model)
 !
 use NonLin_Datastructure_type
 !
@@ -41,7 +41,7 @@ integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: solver
 character(len=19), intent(in) :: sddyna
 type(NL_DS_Contact), intent(in) :: ds_contact
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mater
 character(len=24), intent(in) :: model
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
@@ -58,7 +58,7 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 ! In  solver           : datastructure for solver parameters
 ! In  ds_contact       : datastructure for contact management
 ! In  sddyna           : dynamic parameters datastructure
-! In  mate             : name of material characteristics (field)
+! In  mater            : name of material
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -322,9 +322,9 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         if ((matrix_pred.eq.'DEPL_CALCULE') .or. (matrix_pred .eq.'EXTRAPOLE')) then
             call utmess('F', 'MECANONLINE5_36')
         endif
-        call dismoi('VARC_F_INST', mate, 'CHAM_MATER', repk=mfdet)
+        call dismoi('VARC_F_INST', mater, 'CHAM_MATER', repk=mfdet)
         if (mfdet .eq. 'OUI') then
-            call utmess('F', 'CALCULEL2_58', nk=1, valk=mate(1:8))
+            call utmess('F', 'CALCULEL2_58', nk=1, valk=mater(1:8))
         endif
     endif
     if (l_line_search) then

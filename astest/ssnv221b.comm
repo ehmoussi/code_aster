@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -79,7 +79,7 @@ TEMPS1 = DEFI_LIST_REEL( DEBUT = 0.,
 DEFLIST1 = DEFI_LIST_INST( DEFI_LIST = _F( LIST_INST    =  TEMPS1),
                            ECHEC     = _F( ACTION        = 'DECOUPE',
                                            SUBD_METHODE  = 'MANUEL',
-                                           SUBD_PAS     = 4.,
+                                           SUBD_PAS     = 4,
                                            SUBD_NIVEAU  = 10),)
 
 

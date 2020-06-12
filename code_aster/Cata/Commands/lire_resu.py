@@ -19,9 +19,9 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def lire_resu_prod(TYPE_RESU,**args):

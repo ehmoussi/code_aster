@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,19 +26,18 @@
 # Validation basée sur EPZZ et V7 (variables internes MFront) en testant
 # le maximum de la différence relative entre Code_Aster et MFront
 
-#from numpy import*
+import os.path
 import numpy as NP
 from numpy.linalg import norm
 
 
-# solution analytique python
-# os.rename("fort.30", "soluce.py")
-# from soluce import *
-# print 'rho final', rho_solb2[-1]
-# juste pour en verifier la syntaxe
-assert os.path.isfile("fort.30")
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+# solution analytique python
+# from mfron03e import *
+# print('rho final', rho_solb2[-1])
+# juste pour en verifier la syntaxe
+assert os.path.isfile("mfron03e.py")
 
 
 CREA_LIB_MFRONT(UNITE_MFRONT=38,UNITE_LIBRAIRIE=40)

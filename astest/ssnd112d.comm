@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -456,28 +456,28 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=269.5583433288,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=4.719408788234E+07,
                         VALE_PARA=4000.0,
                         NOM_PARA='INST',
-                        FONCTION=rho_5,
+                        FONCTION=rho[5],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=-0.42996601140607,
                         VALE_PARA=4000.0,
                         NOM_PARA='INST',
-                        FONCTION=gamma_5,
+                        FONCTION=gamma[5],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=3.847356282155E+07,
                         VALE_PARA=4000.0,
                         NOM_PARA='INST',
-                        FONCTION=rho_8,
+                        FONCTION=rho[8],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.26136525944739,
                         VALE_PARA=4000.0,
                         NOM_PARA='INST',
-                        FONCTION=gamma_8,
+                        FONCTION=gamma[8],
                         ),
               )
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -191,7 +191,7 @@ DYNLINEW=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='PHYS',
                            MATR_AMOR=MATRAMOR,
                            SCHEMA_TEMPS=_F(SCHEMA='NEWMARK',),
                            INCREMENT=_F(  LIST_INST = L_INST, NUME_FIN = 3000),
-                           ARCHIVAGE=_F(  PAS_ARCH = 1.e6, INST=AR_LIST),
+                           ARCHIVAGE=_F(  PAS_ARCH = 10**6, INST=AR_LIST),
                            EXCIT=_F(  VECT_ASSE = VECTASS,
                                    FONC_MULT = FONCALPH)
                            )
@@ -213,7 +213,7 @@ DYNMODEU=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                      FONC_MULT = FONCALPH),
                              INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 3.,
                                           PAS = 0.0001),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.e6, INST=AR_LIST),)
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**6, INST=AR_LIST),)
 
 #
 # RETOUR DANS L'ESPACE PHYSIQUE
@@ -237,7 +237,7 @@ DYNMODAD=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                                      FONC_MULT = FONCALPH),
                              INCREMENT=_F(INST_INIT = 0.,  INST_FIN = 3.,
                              PAS = 0.00005),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.e6, INST=AR_LIST))
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**6, INST=AR_LIST))
 
 
 #
@@ -262,7 +262,7 @@ DYNMO_54=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              INCREMENT=_F(
                              INST_INIT = 0.,  INST_FIN = 3.,
                              PAS = 0.0001),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.e6, INST=AR_LIST),)
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**6, INST=AR_LIST),)
 
 
 DYNMO_32=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
@@ -274,7 +274,7 @@ DYNMO_32=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
                              INCREMENT=_F(
                              INST_INIT = 0.,  INST_FIN = 3.,
                              PAS = 0.0001),
-                             ARCHIVAGE=_F(  PAS_ARCH = 1.e6, INST=AR_LIST),)
+                             ARCHIVAGE=_F(  PAS_ARCH = 10**6, INST=AR_LIST),)
 
 #
 # RETOUR DANS L'ESPACE PHYSIQUE

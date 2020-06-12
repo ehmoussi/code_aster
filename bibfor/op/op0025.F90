@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ implicit none
     character(len=24) :: nume_dof
     character(len=24) :: mediri, matass
     character(len=24) :: cndiri, cncine, time
-    character(len=24) :: mate
+    character(len=24) :: mater, mateco
     character(len=24) :: vec2nd
 !
     type(NL_DS_AlgoPara) :: ds_algopara
@@ -100,13 +100,13 @@ implicit none
 ! - Read parameters (linear)
 !
     call ntdata(list_load, solver, matcst   , coecst  , result   ,&
-                model    , mate  , cara_elem, ds_inout, theta_read)
+                model    , mater , mateco   , cara_elem, ds_inout, theta_read)
     para(1) = theta_read
     para(2) = 0.d0
 !
 ! - Initial state and some parameters
 !
-    call ntinit(model , mate    , cara_elem, list_load,&
+    call ntinit(model , mater   , cara_elem, list_load,&
                 para  , nume_dof, lostat   , levol    ,&
                 sddisc, ds_inout, mesh     , time)
 !
@@ -187,7 +187,7 @@ implicit none
 !
 ! - Solve system
 !
-    call ntreso(model , mate  , cara_elem, list_load, nume_dof,&
+    call ntreso(model , mater , mateco, cara_elem, list_load, nume_dof,&
                 solver, lostat, time     , tpsthe   , reasrg  ,&
                 reasms, vec2nd, matass   , maprec   , cndiri  ,&
                 cncine, mediri)
@@ -203,7 +203,7 @@ implicit none
     else
         force = .false.
     endif
-    call ntarch(nume_inst, model    , mate , cara_elem, para,&
+    call ntarch(nume_inst, model    , mater , cara_elem, para,&
                 sddisc   , ds_inout , force)
 !
 ! ------- VERIFICATION SI INTERRUPTION DEMANDEE PAR SIGNAL USR1
@@ -223,7 +223,7 @@ implicit none
         valr(1) = tps1(4)
         valr(2) = tps1(1)
         call utmess('Z', 'ALGORITH16_68', si=vali, nr=2, valr=valr,&
-                    num_except=28)
+                    num_except=TIMELIMIT_ERROR)
     else
         write (ifm,'(A,1X,I6,2(1X,A,1X,1PE11.3))') 'NUMERO D''ORDRE:',&
         nume_inst,'INSTANT:',instap, 'DUREE MOYENNE:',tps1(4)

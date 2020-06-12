@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,14 +26,7 @@ Module SyntaxObjects
 This module defines the objects on which the commands language is based.
 Only the 'Command' object is imported at this top level.
 
-It works as a switch between the legacy supervisor and the next generation
-of the commands language (already used by AsterStudy).
+Used by AsterStudy and code_aster >= 15.2.
 """
 
-from . import HAVE_ASTERSTUDY
-
-if not HAVE_ASTERSTUDY:
-    from .Legacy.SyntaxObjects import Command
-
-else:
-    from .Language.SyntaxObjects import Command
+from .Language.SyntaxObjects import Command

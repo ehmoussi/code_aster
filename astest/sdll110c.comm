@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,9 @@
 #-------------------------------------------------------------------
 # FICHIER MODELE GEVIBUS
 # person_in_charge: andre.adobes at edf.fr
+
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
 
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
@@ -72,12 +75,11 @@ PROFVIT1=DEFI_FONC_FLUI(MAILLAGE=TUBE,
                         VITE=_F(PROFIL='UNIFORME',
                                 VALE=1.000000E+00),);
 
-import aster_core
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""
     import os.path as osp
-    rcdir = aster_core.get_option('rcdir')
+    rcdir = ExecutionParameter().get_option('rcdir')
     return osp.join(rcdir, 'tests_data', theFile)
 
 CD = includeExternalData('sdll110a.70')
@@ -373,7 +375,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=-8.114583602961E-03,
 TEST_TABLE(
            VALE_CALC=1.75938489588E-06,
            NOM_PARA='ECART',
-           TABLE=DYN0_0,
+           TABLE=DYN0[0],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',
@@ -384,7 +386,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=6.34353898573E-06,
            NOM_PARA='ECART',
-           TABLE=DYN0_25,
+           TABLE=DYN0[25],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',
@@ -395,7 +397,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=1.56294919658E-05,
            NOM_PARA='ECART',
-           TABLE=DYN0_50,
+           TABLE=DYN0[50],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',
@@ -406,7 +408,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=3.32093839904E-05,
            NOM_PARA='ECART',
-           TABLE=DYN0_75,
+           TABLE=DYN0[75],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',
@@ -417,7 +419,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=7.8979847269E-05,
            NOM_PARA='ECART',
-           TABLE=DYN0_100,
+           TABLE=DYN0[100],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',
@@ -428,7 +430,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=0.000165757281078,
            NOM_PARA='ECART',
-           TABLE=DYN0_125,
+           TABLE=DYN0[125],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',
@@ -439,7 +441,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=0.000613798581098,
            NOM_PARA='ECART',
-           TABLE=DYN0_150,
+           TABLE=DYN0[150],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',
@@ -450,7 +452,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=0.000754307961057,
            NOM_PARA='ECART',
-           TABLE=DYN0_175,
+           TABLE=DYN0[175],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',
@@ -461,7 +463,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=0.000907037000247,
            NOM_PARA='ECART',
-           TABLE=DYN0_200,
+           TABLE=DYN0[200],
            FILTRE=(_F(NOM_PARA='NOEUD_I',
                       VALE_K='N_02_030',),
                    _F(NOM_PARA='NOEUD_J',

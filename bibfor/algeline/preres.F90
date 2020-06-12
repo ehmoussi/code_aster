@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,14 +21,9 @@ subroutine preres(solveu, base, iret, matpre, matass,&
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
-#include "asterfort/jeveuo.h"
 #include "asterfort/jemarq.h"
-#include "asterfort/prere3.h"
-#include "asterfort/prere2.h"
-#include "asterfort/xfem_ksolv.h"
-#include "asterfort/matr_asse_syme.h"
+#include "asterfort/matrix_factor.h"
 #include "asterfort/uttcpu.h"
 !-----------------------------------------------------------------------
     integer :: npvneg, istop, iret
@@ -70,7 +65,6 @@ subroutine preres(solveu, base, iret, matpre, matass,&
 ! Cette routine est une surcouche de la routine prere1.
 ! elle est necessaire pour traiter le cas ELIM_LAGR='OUI'
 !----------------------------------------------------------------------
-    character(len=3) :: kxfem
     character(len=19) :: matas1
 !----------------------------------------------------------------------
     call jemarq()
@@ -78,19 +72,9 @@ subroutine preres(solveu, base, iret, matpre, matass,&
     call uttcpu('CPU.RESO.4', 'DEBUT', ' ')
     matas1=matass
     ASSERT(solveu.ne.' ')
-
-
-!    VERIFICATION SI XFEM :
-!   -------------------------------------
-    call xfem_ksolv(solveu, kxfem)
-    if ( kxfem .eq. 'OUI') then
-       call prere3(solveu, base, iret, matpre, matass,&
-                  npvneg, istop)
-    else
-       call prere2(solveu, base, iret, matpre, matass,&
-                  npvneg, istop)
-    endif
-
+!
+    call matrix_factor(solveu, base, iret, matpre, matas1,&
+                       npvneg, istop)
     call uttcpu('CPU.RESO.1', 'FIN', ' ')
     call uttcpu('CPU.RESO.4', 'FIN', ' ')
     call jedema()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,12 +24,12 @@
 
 import numpy as NP
 from math import atan
-import aster
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
 PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
 
-#
+import aster
+
 #################################################################
 # 1.  CAS GENERATION AVEC INTERPOLATION, DUREE IMPOSEE
 #################################################################
@@ -165,9 +165,9 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
 # CALCUL DE L INTERSPECTRE DES FCTS GENEREES
 ##############################
 
-ts =  aster.getvectjev("FONCT1             .VALE        ");
-nbpoin=(len(ts)//2-1)/nbtir
-tfin=ts[len(ts)//2-1]
+ts =  FONCT1.getValues()
+nbpoin= FONCT1.size()//nbtir
+tfin= ts[FONCT1.size()-1]
 
 #
 INTERS=CALC_INTE_SPEC(          INST_INIT=0.,
@@ -271,9 +271,9 @@ MF11=RECU_FONCTION(    INTE_SPEC=INTERS,
                       )
 
 
-tt =  aster.getvectjev("MF11               .VALE        ");
+tt = MF11.getValues()
 fmin=tt[0]
-fmax=tt[len(tt)//2-1]
+fmax=tt[MF11.size()-1]
 
 RMS11=INFO_FONCTION( RMS=_F(  FONCTION = MF11))
 

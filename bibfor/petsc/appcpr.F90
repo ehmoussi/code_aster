@@ -81,7 +81,7 @@ implicit none
     real(kind=8), dimension(:), pointer :: coordo => null()
     real(kind=8), dimension(:), pointer :: slvr => null()
 !
-    aster_logical :: lmd, lmp_is_active
+    aster_logical :: lmd, lmhpc, lmp_is_active
 !
 !----------------------------------------------------------------
 !     Variables PETSc
@@ -119,6 +119,9 @@ implicit none
     niremp = slvi(4)
     call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
     lmd = matd == 'OUI'
+    call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=matd)
+    lmhpc = matd.eq.'OUI'
+    ASSERT(.not.(lmd .and. lmhpc))
 !
     lmp_is_active = slvk(6) =='GMRES_LMP'
     if ( lmp_is_active .and. precon/= 'LDLT_SP' ) then
@@ -129,7 +132,6 @@ implicit none
     fill = niremp
     fillp = fillin
     bs = 1
-
 !
 !   -- RECUPERE DES INFORMATIONS SUR LE MAILLAGE POUR
 !      LE CALCUL DES MODES RIGIDES
@@ -184,92 +186,130 @@ implicit none
 !       tous dans le plan z=0
 !       c'est une condition nécessaire au pré-calcul des modes de corps rigides
         if ( dimgeo == 3 ) then
-        call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
-        neqg=zi(jnequ)
-        call jeveuo(nonu//'.NUME.DEEQ', 'L', vi=deeq)
-        call jeveuo(nomail//'.COORDO    .VALE','L',vr=coordo)
-        !
-        call VecCreate(mpicomm, coords, ierr)
-        call VecSetBlockSize(coords, bs, ierr)
-        if (lmd) then
-            call jeveuo(nonu//'.NUML.NEQU', 'L', jnequl)
-            call jeveuo(nonu//'.NUML.PDDL', 'L', vi=prddl)
-            nloc=zi(jnequl)
-            ! Nb de ddls dont le proc courant est propriétaire (pour PETSc)
-            ndprop = 0
-            do il = 1, nloc
-               if (prddl(il) == rang ) then
-                   ndprop = ndprop + 1
-               endif
-            end do
-!
-            call VecSetSizes(coords, to_petsc_int(ndprop), to_petsc_int(neqg), ierr)
-        else
-            call VecSetSizes(coords, PETSC_DECIDE, to_petsc_int(neqg), ierr)
-        endif
-!
-        call VecSetType(coords, VECMPI, ierr)
-!           * REMPLISSAGE DU VECTEUR
-!             coords: vecteur PETSc des coordonnées des noeuds du maillage,
-!             dans l'ordre de la numérotation PETSc des équations
-        if (lmd) then
-          call jeveuo(nonu//'.NUML.NULG', 'L', vi=nulg)
-          call jeveuo(nonu//'.NUML.NLGP', 'L', vi=nlgp)
-          do il = 1, nloc
-            ! Indice global PETSc (F) correspondant à l'indice local il
-            igp_f = nlgp( il )
-            ! Indice global Aster (F) correspondant à l'indice local il
-            iga_f = nulg( il )
-            ! Noeud auquel est associé le ddl global Aster iga_f
-            numno = deeq( (iga_f -1)* 2 +1 )
-            ! Composante (X, Y ou Z) à laquelle est associé
-            ! le ddl global Aster iga_f
-            icmp  = deeq( (iga_f -1)* 2 +2 )
-            ASSERT((numno .gt. 0) .and. (icmp .gt. 0))
-            ! Valeur de la coordonnée (X,Y ou Z) icmp du noeud numno
-            val = coordo( dimgeo_b*(numno-1)+icmp )
-            ! On met à jour le vecteur PETSc des coordonnées
-            nterm=1
-            call VecSetValues( coords, nterm, [to_petsc_int(igp_f - 1)], [val], &
-              INSERT_VALUES, ierr )
-            ASSERT( ierr == 0 )
-          enddo
-            call VecAssemblyBegin( coords, ierr )
-            call VecAssemblyEnd( coords, ierr )
-            ASSERT( ierr == 0 )
-        ! la matrice est centralisée
-        else
-          call VecGetOwnershipRange(coords, low, high, ierr)
-          call VecGetArray(coords,xx_v, xx_i, ierr)
-          ix=0
-          do ieq = low+1, high
-            ! Noeud auquel est associé le ddl Aster ieq
-            numno = deeq( (ieq -1)* 2 +1 )
-            ! Composante (X, Y ou Z) à laquelle est associé
-            ! le ddl Aster ieq
-            icmp  = deeq( (ieq -1)* 2 +2 )
-            ASSERT((numno .gt. 0) .and. (icmp .gt. 0))
-            ix=ix+1
-            xx_v(xx_i+ ix) = coordo( dimgeo*(numno-1)+icmp )
-          end do
-         !
-          call VecRestoreArray(coords,xx_v, xx_i, ierr)
-          ASSERT(ierr==0)
-        endif
-        !
-        !
-!           * CALCUL DES MODES A PARTIR DES COORDONNEES
-        if (bs.le.3) then
-            call MatNullSpaceCreateRigidBody(coords, sp, ierr)
+            call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
+            call jeveuo(nonu//'.NUME.DEEQ', 'L', vi=deeq)
+            call jeveuo(nomail//'.COORDO    .VALE','L',vr=coordo)
+            !
+            call VecCreate(mpicomm, coords, ierr)
+            call VecSetBlockSize(coords, bs, ierr)
+            ! la matrice est distribuée
+            if (lmd) then
+                call jeveuo(nonu//'.NUML.NEQU', 'L', jnequl)
+                call jeveuo(nonu//'.NUML.PDDL', 'L', vi=prddl)
+                neqg=zi(jnequ)
+                nloc=zi(jnequl)
+                ! Nb de ddls dont le proc courant est propriétaire (pour PETSc)
+                ndprop = 0
+                do il = 1, nloc
+                   if (prddl(il) == rang ) then
+                       ndprop = ndprop + 1
+                   endif
+                end do
+    !
+                call VecSetSizes(coords, to_petsc_int(ndprop), to_petsc_int(neqg), ierr)
+            ! la matrice est issue d'un ParallelMesh
+            else if (lmhpc) then
+                call jeveuo(nonu//'.NUME.PDDL', 'L', vi=prddl)
+                call jeveuo(nonu//'.NUME.NEQU', 'L', jnequl)
+                nloc = zi(jnequl)
+                neqg = zi(jnequl+1)
+                ndprop = 0
+                do il = 1, nloc
+                   if (prddl(il) == rang ) then
+                        ndprop = ndprop + 1
+                    endif
+                enddo
+                call VecSetSizes(coords, to_petsc_int(ndprop), to_petsc_int(neqg), ierr)
+            ! la matrice est centralisée
+            else
+                neqg=zi(jnequ)
+                call VecSetSizes(coords, PETSC_DECIDE, to_petsc_int(neqg), ierr)
+            endif
+    !
+            call VecSetType(coords, VECMPI, ierr)
+    !           * REMPLISSAGE DU VECTEUR
+    !             coords: vecteur PETSc des coordonnées des noeuds du maillage,
+    !             dans l'ordre de la numérotation PETSc des équations
+            if (lmd) then
+              call jeveuo(nonu//'.NUML.NULG', 'L', vi=nulg)
+              call jeveuo(nonu//'.NUML.NLGP', 'L', vi=nlgp)
+              do il = 1, nloc
+                ! Indice global PETSc (F) correspondant à l'indice local il
+                igp_f = nlgp( il )
+                ! Indice global Aster (F) correspondant à l'indice local il
+                iga_f = nulg( il )
+                ! Noeud auquel est associé le ddl global Aster iga_f
+                numno = deeq( (iga_f -1)* 2 +1 )
+                ! Composante (X, Y ou Z) à laquelle est associé
+                ! le ddl global Aster iga_f
+                icmp  = deeq( (iga_f -1)* 2 +2 )
+                ASSERT((numno .gt. 0) .and. (icmp .gt. 0))
+                ! Valeur de la coordonnée (X,Y ou Z) icmp du noeud numno
+                val = coordo( dimgeo_b*(numno-1)+icmp )
+                ! On met à jour le vecteur PETSc des coordonnées
+                nterm=1
+                call VecSetValues( coords, nterm, [to_petsc_int(igp_f - 1)], [val], &
+                  INSERT_VALUES, ierr )
+                ASSERT( ierr == 0 )
+              enddo
+                call VecAssemblyBegin( coords, ierr )
+                call VecAssemblyEnd( coords, ierr )
+                ASSERT( ierr == 0 )
+            ! la matrice est issue d'un ParallelMesh
+            else if (lmhpc) then
+                call jeveuo(nonu//'.NUME.NULG', 'L', vi=nulg)
+                do il = 1, nloc
+                    if (prddl(il) == rang ) then
+                        ! Noeud auquel est associé le ddl Aster ieq
+                        numno = deeq( (il -1)* 2 +1 )
+                        ! Composante (X, Y ou Z) à laquelle est associé
+                        ! le ddl Aster ieq
+                        icmp  = deeq( (il -1)* 2 +2 )
+                        ASSERT((numno .gt. 0) .and. (icmp .gt. 0))
+                        ! Valeur de la coordonnée (X,Y ou Z) icmp du noeud numno
+                        val = coordo( dimgeo_b*(numno-1)+icmp )
+                        ! On met à jour le vecteur PETSc des coordonnées
+                        nterm=1
+                        ! Indice global Aster (F) correspondant à l'indice local il
+                        iga_f = nulg( il )
+                        call VecSetValues( coords, nterm, [to_petsc_int(iga_f)], [val], &
+                          INSERT_VALUES, ierr )
+                        ASSERT( ierr == 0 )
+                    endif
+                enddo
+            ! la matrice est centralisée
+            else
+              call VecGetOwnershipRange(coords, low, high, ierr)
+              call VecGetArray(coords,xx_v, xx_i, ierr)
+              ix=0
+              do ieq = low+1, high
+                ! Noeud auquel est associé le ddl Aster ieq
+                numno = deeq( (ieq -1)* 2 +1 )
+                ! Composante (X, Y ou Z) à laquelle est associé
+                ! le ddl Aster ieq
+                icmp  = deeq( (ieq -1)* 2 +2 )
+                ASSERT((numno .gt. 0) .and. (icmp .gt. 0))
+                ix=ix+1
+                xx_v(xx_i+ ix) = coordo( dimgeo*(numno-1)+icmp )
+              end do
+             !
+              call VecRestoreArray(coords,xx_v, xx_i, ierr)
+              ASSERT(ierr==0)
+            endif
+            !
+            !
+    !           * CALCUL DES MODES A PARTIR DES COORDONNEES
+            if (bs.le.3) then
+                call MatNullSpaceCreateRigidBody(coords, sp, ierr)
+                ASSERT(ierr == 0)
+                call MatSetNearNullSpace(a, sp, ierr)
+                ASSERT(ierr == 0)
+                call MatNullSpaceDestroy(sp, ierr)
+                ASSERT(ierr == 0)
+            endif
+            call VecDestroy(coords, ierr)
             ASSERT(ierr == 0)
-            call MatSetNearNullSpace(a, sp, ierr)
-            ASSERT(ierr == 0)
-            call MatNullSpaceDestroy(sp, ierr)
-            ASSERT(ierr == 0)
-        endif
-        call VecDestroy(coords, ierr)
-        ASSERT(ierr == 0)
-        endif
+            endif
 ! Si dimgeo /= 3 on ne pré-calcule pas les modes de corps rigides
         endif
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def DEFIC_prod(self,ACTION,UNITE,**args):
@@ -38,7 +39,7 @@ def DEFIC_prod(self,ACTION,UNITE,**args):
     raise AsException("ACTION non prevue : %s" % ACTION)
 
 DEFI_FICHIER=MACRO(nom="DEFI_FICHIER",
-                   op=OPS("code_aster.Cata.ops.build_DEFI_FICHIER"),
+                   op=None,
                    sd_prod=DEFIC_prod,
                    reentrant='n',
                    fr=tr("Ouvre ou ferme un fichier associé à un numéro d'unité logique"),
@@ -48,7 +49,7 @@ DEFI_FICHIER=MACRO(nom="DEFI_FICHIER",
             b_associer    =BLOC(condition = """equal_to("ACTION", 'ASSOCIER')""",
                                 fr=tr("Paramètres pour l'ouverture du fichier"),
                                 regles=(AU_MOINS_UN('FICHIER','UNITE'),),
-               UNITE      =SIMP(statut='f',typ=UnitType() ,val_min=1, inout='out'),
+               UNITE      =SIMP(statut='f',typ=UnitType(), inout='out'),
                FICHIER    =SIMP(statut='f',typ='TXM',validators=LongStr(1,255)),
                TYPE       =SIMP(statut='f',typ='TXM',into=("ASCII","BINARY","LIBRE"),defaut="ASCII"),
 
@@ -63,7 +64,7 @@ DEFI_FICHIER=MACRO(nom="DEFI_FICHIER",
             b_reserver    =BLOC(condition = """equal_to("ACTION", 'RESERVER')""",
                                 fr=tr("Paramètres pour la réservation de l'unité du fichier"),
                                 regles=(AU_MOINS_UN('FICHIER','UNITE'),),
-               UNITE      =SIMP(statut='f',typ=UnitType() ,val_min=1, inout='out'),
+               UNITE      =SIMP(statut='f',typ=UnitType(), inout='out'),
                FICHIER    =SIMP(statut='f',typ='TXM',validators=LongStr(1,255)),
                TYPE       =SIMP(statut='f',typ='TXM',into=("ASCII",),defaut="ASCII"),
                ACCES      =SIMP(statut='f',typ='TXM',into=("APPEND",),defaut="APPEND"),
@@ -72,7 +73,7 @@ DEFI_FICHIER=MACRO(nom="DEFI_FICHIER",
             b_liberer    =BLOC(condition = """equal_to("ACTION", 'LIBERER')""",
                                fr=tr("Paramètres pour la fermeture du fichier"),
                                regles=(UN_PARMI('FICHIER','UNITE'),),
-                  UNITE     =SIMP(statut='f',typ=UnitType() ,val_min=1, inout='out'),
+                  UNITE     =SIMP(statut='f',typ=UnitType(), inout='out'),
                   FICHIER   =SIMP(statut='f',typ='TXM',validators=LongStr(1,255)),
            ),
 

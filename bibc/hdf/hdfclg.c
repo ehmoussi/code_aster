@@ -17,9 +17,9 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Fermeture d'un groupe HDF, renvoie une erreur si le groupe ne peut être fermé 
+/ Fermeture d'un groupe HDF, renvoie une erreur si le groupe ne peut être fermé
 /  Paramètres :
 /   - in idgrp : identificateur du groupe (hid_t)
 /  Résultats :
@@ -32,13 +32,13 @@
 ASTERINTEGER DEFP(HDFCLG, hdfclg, hid_t *idg)
 {
 #ifndef _DISABLE_HDF5
-   hid_t  idgrp;     
+   hid_t  idgrp;
    herr_t icode;
    idgrp=(hid_t) *idg;
-   if ((icode = H5Gclose(idgrp)) < 0) 
+   if ((icode = H5Gclose(idgrp)) < 0)
       return -1 ;
 #else
    CALL_UTMESS("F", "FERMETUR_3");
 #endif
    return 0;
-}     
+}

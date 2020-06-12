@@ -224,6 +224,7 @@ character(len=16) :: compor(*), option
         pp = pm+pd
 !
 ! - CALCUL DES FONCTIONS A, B,... DETERMINANT LA RELATION LIANT G ET J
+!
         call nirela(2, jp, gm, gp, am,&
                     ap, bp, boa, aa, bb,&
                     daa, dbb, dboa, d2boa, iret)

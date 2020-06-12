@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -109,7 +109,8 @@ ASSEMBLAGE(MODELE=MODELE,
                       _F(MATRICE=CO('AMOR'),
                          OPTION='AMOR_MECA',),),);
 
-INCLUDE(UNITE=28,);
+from sdls140a import F_FONC
+sinus = F_FONC()
 
 d_sinus=CALC_FONCTION(DERIVE=_F(FONCTION=sinus,),PROL_GAUCHE= 'CONSTANT',
                       PROL_DROITE= 'CONSTANT',);

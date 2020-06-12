@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,6 +39,12 @@ def options(self):
 
 
 def configure(self):
+    if not self.env.BUILD_MPI:
+        self.define('_DISABLE_PETSC', 1)
+        self.undefine('HAVE_PETSC')
+        self.define('_DISABLE_PETSC4PY', 1)
+        self.define('_HAVE_PETSC4PY',0)
+        return
     try:
         self.env.stash()
         self.check_petsc()
@@ -46,11 +52,14 @@ def configure(self):
         self.env.revert()
         self.define('_DISABLE_PETSC', 1)
         self.undefine('HAVE_PETSC')
+        self.define('_DISABLE_PETSC4PY', 1)
+        self.define('_HAVE_PETSC4PY',0)
         if self.options.enable_petsc:
             raise
     else:
         self.define('_HAVE_PETSC', 1)
         self.define('HAVE_PETSC', 1)
+        self.check_petsc4py()
 
 ###############################################################################
 @Configure.conf
@@ -64,7 +73,7 @@ def check_petsc(self):
         opts.petsc_libs = 'petsc'
         # add optional libs
         optlibs ='ml HYPRE superlu stdc++'
-    if opts.petsc_libs:   
+    if opts.petsc_libs:
         self.check_petsc_libs(optlibs)
 
     self.check_petsc_headers()
@@ -74,14 +83,16 @@ def check_petsc(self):
 def check_petsc_libs(self, optlibs):
     opts = self.options
     keylib = ('st' if opts.embed_all or opts.embed_scotch else '') + 'lib'
-    for lib in Utils.to_list(opts.petsc_libs):
-        self.check_cc(uselib_store='PETSC', use='MPI', mandatory=True, **{ keylib: lib})
     for lib in Utils.to_list(optlibs or ''):
-        self.check_cc(uselib_store='PETSC', use='MPI', mandatory=False, **{ keylib: lib})
+        self.check_cc(uselib_store='PETSC', use='MPI', uselib='PETSC',
+                      mandatory=False, **{ keylib: lib})
+    for lib in Utils.to_list(opts.petsc_libs):
+        self.check_cc(uselib_store='PETSC', use='MPI', uselib='PETSC',
+                      mandatory=True, **{ keylib: lib})
 
 @Configure.conf
 def check_petsc_headers(self):
-    check = partial(self.check, header_name='petsc.h', use='MPI', uselib='PETSC',
+    check = partial(self.check, header_name='petsc.h', use='PETSC MPI', uselib='SCOTCH Z',
                     uselib_store='PETSC')
 
     self.start_msg('Checking for header petsc.h')
@@ -110,14 +121,15 @@ int main(void){
 }'''
     self.start_msg('Checking petsc version')
     try:
-        ret = self.check_cc(fragment=fragment, use='PETSC MPI',
+        ret = self.check_cc(fragment=fragment, use='PETSC MPI', uselib='SCOTCH Z',
                             mandatory=True, execute=True, define_ret=True)
         mat = re.search('PETSCVER: *(?P<vers>[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', ret)
         vers = mat and mat.group('vers')
         major, minor, sub, patch = [int(i) for i in vers.split('.')]
         vers = '%d.%d.%dp%d' % (major, minor, sub, patch)
-        if major < 3 or (major == 3 and minor < 2):
-            self.end_msg('unsupported petsc version: %s (expected 3.2.* or newer)' % vers, 'RED')
+        if major < 3 or (major == 3 and minor < 9):
+            self.end_msg("unsupported petsc version: {0} "
+                         "(expected 3.9.* or newer)".format(vers), 'RED')
             raise Errors.ConfigurationError
         self.define('ASTER_PETSC_VERSION', vers)
     except:
@@ -125,3 +137,17 @@ int main(void){
         raise
     else:
         self.end_msg(vers)
+
+@Configure.conf
+def check_petsc4py(self):
+    try:
+        self.check_python_module('petsc4py')
+        pymodule_path = self.get_python_variables(['petsc4py.get_include()'],
+                                                  ['import petsc4py'])[0]
+        self.env.append_unique('CYTHONFLAGS', '-I{0}'.format(pymodule_path))
+    except Errors.ConfigurationError:
+        self.define('_DISABLE_PETSC4PY', 1)
+        self.define('_HAVE_PETSC4PY',0)
+    else:
+        self.undefine('_DISABLE_PETSC4PY')
+        self.define('_HAVE_PETSC4PY', 1)

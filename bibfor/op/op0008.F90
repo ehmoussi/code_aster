@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,15 +47,16 @@ subroutine op0008()
 #include "asterfort/sdmpic.h"
 #include "asterfort/ss2mme.h"
 #include "asterfort/utmess.h"
+#include "asterfort/isParallelMesh.h"
 !
     integer :: ibid, ich, icha, ncha, nh
     integer :: n1, n3, n4, n5, n7, n9, iresu,  iexi, nbresu
     real(kind=8) :: time, tps(6), vcmpth(4)
-    character(len=8) :: matez, modele, cara, k8bid, kmpic
-    character(len=8) :: nomcmp(6), mo1, materi, ncmpth(4)
+    character(len=8) :: matez, modele, cara, k8bid, kmpic, mesh
+    character(len=8) :: nomcmp(6), mo1, ncmpth(4)
     character(len=16) :: type, oper, suropt
     character(len=19) :: matel, resuel
-    character(len=24) :: time2, mate
+    character(len=24) :: time2, mateco, materi
     aster_logical :: l_ther
     character(len=24), pointer :: relr(:) => null()
     data nomcmp/'INST    ','DELTAT  ','THETA   ','KHI     ',&
@@ -111,9 +112,9 @@ subroutine op0008()
     call getvid(' ', 'CARA_ELEM', scal=cara, nbret=n5)
     call getvid(' ', 'CHAM_MATER', scal=materi, nbret=n4)
     if (n4 .ne. 0) then
-        call rcmfmc(materi, mate, l_ther_ = l_ther)
+        call rcmfmc(materi, mateco, l_ther_ = l_ther)
     else
-        mate = ' '
+        mateco = ' '
     endif
 !
     call getvr8(' ', 'INST', scal=time, nbret=n7)
@@ -154,7 +155,7 @@ subroutine op0008()
 !     ----------------------------------
 !        -- TRAITEMENT DES ELEMENTS FINIS CLASSIQUES (.RELR)
 !           (ET CREATION DE L'OBJET .RERR).
-        call me2mme_2(modele, ncha, zk8(icha), mate, cara,&
+        call me2mme_2(modele, ncha, zk8(icha), materi, mateco, cara,&
                     time, matel, nh, 'G')
 !
 !        -- TRAITEMENT DES SOUS-STRUCTURES EVENTUELLES. (.RELC):
@@ -172,7 +173,7 @@ subroutine op0008()
         call me2mth(modele, ncha, zk8(icha), cara,&
                     time2, '&&OP0008.PTEMPER', matel)
     else if (suropt.eq.'CHAR_ACOU') then
-        call me2mac(modele, ncha, zk8(icha), mate, matel)
+        call me2mac(modele, ncha, zk8(icha), materi, mateco, matel)
 !
     endif
 !
@@ -180,17 +181,21 @@ subroutine op0008()
 !
 !     -- SI MATEL N'EST PAS MPI_COMPLET, ON LE COMPLETE :
 !     ----------------------------------------------------
-    call jelira(matel//'.RELR', 'LONMAX', nbresu)
-    call jeveuo(matel//'.RELR', 'L', vk24=relr)
-    do iresu = 1, nbresu
-        resuel=relr(iresu)(1:19)
-        call jeexin(resuel//'.RESL', iexi)
-        if (iexi .eq. 0) goto 101
-        call dismoi('MPI_COMPLET', resuel, 'RESUELEM', repk=kmpic)
-        ASSERT((kmpic.eq.'OUI').or.(kmpic.eq.'NON'))
-        if (kmpic .eq. 'NON') call sdmpic('RESUELEM', resuel)
-101     continue
-    end do
+
+    call dismoi('NOM_MAILLA', matel, 'MATR_ELEM', repk=mesh)
+    if(.not. isParallelMesh(mesh)) then
+        call jelira(matel//'.RELR', 'LONMAX', nbresu)
+        call jeveuo(matel//'.RELR', 'L', vk24=relr)
+        do iresu = 1, nbresu
+            resuel=relr(iresu)(1:19)
+            call jeexin(resuel//'.RESL', iexi)
+            if (iexi .eq. 0) goto 101
+            call dismoi('MPI_COMPLET', resuel, 'RESUELEM', repk=kmpic)
+            ASSERT((kmpic.eq.'OUI').or.(kmpic.eq.'NON'))
+            if (kmpic .eq. 'NON') call sdmpic('RESUELEM', resuel)
+101         continue
+        end do
+    end if
 !
 !
 !

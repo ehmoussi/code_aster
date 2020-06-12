@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine merige(model_, cara_elem_, sigg, strx, matel,&
-                  base, nh, deplr, mater)
+                  base, nh, deplr, mateco)
     implicit none
 #include "jeveux.h"
 #include "asterf_types.h"
@@ -39,7 +39,7 @@ subroutine merige(model_, cara_elem_, sigg, strx, matel,&
     character(len=*) , intent(in) :: model_
     character(len=*) , intent(in) :: cara_elem_
     character(len=*), optional, intent(in) :: deplr
-    character(len=*), optional, intent(in) :: mater
+    character(len=*), optional, intent(in) :: mateco
 !
 !     CALCUL DES MATRICES ELEMENTAIRES DE RIGIDITE GEOMETRIQUE
 !
@@ -174,11 +174,11 @@ subroutine merige(model_, cara_elem_, sigg, strx, matel,&
                 lchin(nbpara) = deplr
             endif
         endif
-        if ( present(mater) ) then
-            if ( mater.ne.' ' ) then
+        if ( present(mateco) ) then
+            if ( mateco.ne.' ' ) then
                 nbpara= nbpara+1
                 lpain(nbpara) = 'PMATERC'
-                lchin(nbpara) = mater
+                lchin(nbpara) = mateco
             endif
         endif
 

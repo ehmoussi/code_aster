@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 !
 subroutine cme_getpara(option      ,&
-                       model       , cara_elem, mate, compor_mult,&
+                       model       , cara_elem, mate, mateco, compor_mult,&
                        v_list_load8, nb_load  ,&
                        rigi_meca   , mass_meca,&
                        time_curr   , time_incr, nh       ,&
@@ -40,7 +40,7 @@ implicit none
 character(len=16), intent(out) :: option
 character(len=8), intent(out) :: model
 character(len=8), intent(out) :: cara_elem
-character(len=24), intent(out) :: mate
+character(len=24), intent(out) :: mate, mateco
 character(len=24), intent(out) :: compor_mult
 character(len=8), pointer :: v_list_load8(:)
 integer, intent(out) :: nb_load
@@ -80,7 +80,7 @@ character(len=8), intent(out) :: disp
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: nocc, ier
-    character(len=8) :: chmate, answer
+    character(len=8) ::  answer
     aster_logical :: l_ther
 !
 ! --------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ character(len=8), intent(out) :: disp
     model        = ' '
     cara_elem    = ' '
     mate         = ' '
-    chmate       = ' '
+    mateco       = ' '
     compor_mult  = ' '
     v_list_load8 => null()
     nb_load      = 0
@@ -134,11 +134,10 @@ character(len=8), intent(out) :: disp
         call utmess('A', 'MECHANICS1_39')
         cara_elem = ' '
     endif
+    call getvid(' ', 'CHAM_MATER', scal=mate, nbret=nocc)
 
-    call getvid(' ', 'CHAM_MATER', scal=chmate, nbret=nocc)
-    
     if (nocc .eq. 0) then 
-        chmate = ' '
+        mate = ' '
         if (option.eq.'RIGI_GEOM')  then
             ! necessaire seulement pour CABLE 
             call dismoi('SI_CABLE', model, 'MODELE', repk=answer)
@@ -155,14 +154,13 @@ character(len=8), intent(out) :: disp
         endif
     endif
 
-
     l_ther = ASTER_FALSE
     if (option .eq. 'MASS_THER' .or. option.eq. 'RIGI_THER') then
         l_ther = ASTER_TRUE
     endif
 
-    if (chmate .ne. ' ') then
-        call rcmfmc(chmate, mate, l_ther_ = l_ther)
+    if (mate .ne. ' ') then
+        call rcmfmc(mate, mateco, l_ther_ = l_ther)
     else
         mate = ' '
     endif

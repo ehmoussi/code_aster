@@ -3,9 +3,10 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist ci verification sequential
 
 F comm mfron01c.comm D 1
-F libr mfron01c.93 D 93
+F comm mfron01c.com1 D 1
+F comm mfron01c.com2 D 1
 F libr ViscoChaboche.mfront   D 38
 F libr ViscoMemoNrad.mfront   D 39

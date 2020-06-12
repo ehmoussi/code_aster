@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,6 @@ subroutine acearp(infdonn, lmax, noemaf, nbocc, infcarte, ivr)
     integer :: jdcinf, jdvinf
     integer :: i, iamto, ier, ii, in, inbn, ino, inoe, ioc, irep
     integer :: irgno, irgto, isym, itbmp, itbno, iv
-    integer :: irepn, irepv, iaepn, iaepv
     integer :: j, jd, jdls, jj, jn
     integer :: l, ldgm, ldnm, lokm, lorep, nbnma
     integer :: nbno, nbnoeu, nc, ncar, ncmp
@@ -74,14 +73,13 @@ subroutine acearp(infdonn, lmax, noemaf, nbocc, infcarte, ivr)
 ! --------------------------------------------------------------------------------------------------
     real(kind=8) :: val(nbval), eta, vale(nbval), rirot(3)
     character(len=1) :: kma(3)
-    character(len=8) :: nomnoe, nommai, k8bid, nomu, car(nbcar), lamass, noma
+    character(len=8) :: nomnoe, nommai, nomu, car(nbcar), lamass, noma
     character(len=16) :: rep, repdis(nrd)
     character(len=19) :: cart(3), cartdi
-    character(len=19) :: vrepxv, vrepxn, vaepxv, vaepxn
     character(len=24) :: nogp
     character(len=24) :: mlgnno, mlgnma
 ! --------------------------------------------------------------------------------------------------
-    aster_logical :: transl, trarot, eurplx, lbid
+    aster_logical :: transl, trarot
     integer :: iarg
 !
     data repdis  /'GLOBAL          ','LOCAL           '/
@@ -105,28 +103,6 @@ subroutine acearp(infdonn, lmax, noemaf, nbocc, infcarte, ivr)
     call wkvect('&&TMPRIGTO', 'V V R', 6*noemaf, irgto)
     call wkvect('&&TMPAMOTO', 'V V R', 6*noemaf, iamto)
     call wkvect('&&TMPTABMP', 'V V K8', lmax, itbmp)
-!
-!   Pour EUROPLEXUS
-!       si europlexus alors toutes les occurrences de rigi_parasol doivent avoir europlexus='oui'.
-!       Test sur la 1ere occurence du mot clef, puis dans la boucle sur les occurrences pour
-!       vérifier que l'option ne change pas
-    eurplx = .false.
-    call getvtx('RIGI_PARASOL', 'EUROPLEXUS', iocc=1, scal=k8bid, nbret=ibid)
-    if (ibid .ne. 0) then
-        eurplx = ( k8bid(1:3) .eq. 'OUI' )
-    endif
-    if (eurplx) then
-!       numcar = 12
-        vrepxv = nomu//'.CARRIGXV'
-        vrepxn = nomu//'.CARRIGXN'
-        vaepxv = nomu//'.CARAMOXV'
-        vaepxn = nomu//'.CARAMOXN'
-!       les structures sont utilisees seulement en python
-        call wkvect(vrepxv, 'G V R', 6*lmax, irepv)
-        call wkvect(vrepxn, 'G V K8', lmax, irepn)
-        call wkvect(vaepxv, 'G V R', 6*lmax, iaepv)
-        call wkvect(vaepxn, 'G V K8', lmax, iaepn)
-    endif
 !
 !   Les cartes sont déjà construites : ace_crea_carte
     cartdi = infcarte(ACE_CAR_DINFO)%nom_carte
@@ -164,7 +140,6 @@ subroutine acearp(infdonn, lmax, noemaf, nbocc, infcarte, ivr)
         call getvtx('RIGI_PARASOL', 'GROUP_MA_POI1', iocc=ioc, scal=nogp, nbret=ngp)
         if (ngp .eq. 0) then
             call getvtx('RIGI_PARASOL', 'GROUP_MA_SEG2', iocc=ioc, scal=nogp, nbret=ngp)
-            if (eurplx) call utmess('F', 'MODELISA9_92')
         endif
         ASSERT( ngp  .ne. 0 )
         ASSERT( ncar .ge. 1 )
@@ -173,15 +148,6 @@ subroutine acearp(infdonn, lmax, noemaf, nbocc, infcarte, ivr)
             do i = 1, nrd
                 if (rep .eq. repdis(i)) irep = i
             enddo
-        endif
-!       Pour EUROPLEXUS
-        lbid = .false.
-        call getvtx('RIGI_PARASOL', 'EUROPLEXUS', iocc=1, scal=k8bid, nbret=ibid)
-        if (ibid .ne. 0) then
-            lbid = ( k8bid(1:3) .eq. 'OUI' )
-        endif
-        if (lbid .neqv. eurplx) then
-            call utmess('F', 'MODELISA9_93', si=ioc)
         endif
 !       Unité pour imprimer les valeur des discrets
         call getvis('RIGI_PARASOL', 'UNITE', iocc=ioc, scal=ibid, nbret=ier)
@@ -339,40 +305,7 @@ subroutine acearp(infdonn, lmax, noemaf, nbocc, infcarte, ivr)
                 iv = 1
                 jd = itbmp + i - 1
                 jn = itbno + i - 1
-!               Pour EUROPLEXUS préparation de l'attribut python
-                if (eurplx) then
-                    if (nbnoeu .eq. 1) then
-                        if (car(nc)(1:3) .eq. 'K_T') then
-                            if (transl) then
-                                do jj = 0, 2
-                                    zr(irepv+6*ir+jj)=zr(irgno+6*i-6+jj)
-                                    zr(irepv+6*ir+3+jj)=0.d0
-                                enddo
-                            else
-                                do jj = 0, 5
-                                    zr(irepv+6*ir+jj)=zr(irgno+6*i-6+jj)
-                                enddo
-                            endif
-                            zk8(irepn+ir) = zk8(jd)
-                            ir = ir + 1
-                        else if (car(nc)(1:3) .eq. 'A_T') then
-                            if (transl) then
-                                do jj = 0, 2
-                                    zr(iaepv+6*ia+jj)=zr(irgno+6*i-6+jj)
-                                    zr(iaepv+6*ia+3+jj)=0.d0
-                                enddo
-                            else
-                                do jj = 0, 5
-                                    zr(iaepv+6*ia+jj)=zr(irgno+6*i-6+jj)
-                                enddo
-                            endif
-                            zk8(iaepn+ia) = zk8(jd)
-                            ia = ia + 1
-                        endif
-                    else
-                        call utmess('A', 'MODELISA9_96', sk=zk8(jd))
-                    endif
-                endif
+!
 !               Affectation des valeurs réparties
                 call affdis(ndim, irep, eta, car(nc), zr(irgno+6*i-6),&
                             jdc, jdv, ivr, iv, kma,&

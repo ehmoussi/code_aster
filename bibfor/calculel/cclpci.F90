@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cclpci(option, modele, resuin, resuou, mateco,&
+subroutine cclpci(option, modele, resuin, resuou, mater , mateco,&
                   carael, ligrel, numord, nbpain, lipain,&
                   lichin, codret)
     implicit none
@@ -35,7 +35,7 @@ subroutine cclpci(option, modele, resuin, resuou, mateco,&
 #include "asterfort/utmess.h"
 !
     integer :: nbpain, numord, codret
-    character(len=8) :: modele, resuin, resuou, mateco, carael
+    character(len=8) :: modele, resuin, resuou, mater, mateco, carael
     character(len=8) :: lipain(*)
     character(len=16) :: option
     character(len=24) :: lichin(*), ligrel
@@ -48,7 +48,7 @@ subroutine cclpci(option, modele, resuin, resuou, mateco,&
 !   MODELE  K8   NOM DU MODELE
 !   RESUIN  K8   NOM DE LA STRUCUTRE DE DONNEES RESULTAT IN
 !   RESUOU  K8   NOM DE LA STRUCUTRE DE DONNEES RESULTAT OUT
-!   MATECO  K8   NOM DU MATERIAU CODE
+!   MATER   K8   NOM DU MATERIAU
 !   CARAEL  K8   NOM DU CARAELE
 !   LIGREL  K24  NOM DU LIGREL
 !   NUMORD  I    NUMERO D'ORDRE COURANT
@@ -152,6 +152,9 @@ subroutine cclpci(option, modele, resuin, resuou, mateco,&
             nochin = zk24(iaoplo+3*ipara-2)
 !       CAS OU CE PARAM EST UN OBJET DU CHAMMAT
         else if (zk24(iaoplo+3*ipara-3).eq.'CHMA') then
+            nochin = mater//zk24(iaoplo+3*ipara-2)
+!       CAS OU CE PARAM EST UN OBJET DU MATECODE
+        else if (zk24(iaoplo+3*ipara-3).eq.'MACO') then
             nochin = mateco//zk24(iaoplo+3*ipara-2)
         endif
         lichin(nbpain) = nochin

@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: natacha.bereux at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def modi_repere_prod(RESULTAT,CHAM_GD,**args):

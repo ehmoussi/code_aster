@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ subroutine redetr(matelz)
 #include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/assert.h"
 #include "asterfort/detrsd.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/exisd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
@@ -46,8 +47,10 @@ subroutine redetr(matelz)
 !
 !
     integer :: iret1, iexi, iexiav
-    integer :: izero, ico, k, nb1, nbdet, nb1av
+    integer :: izero, ico, k, nb1, nbdet, nb1av, ibid
     aster_logical :: ldetr
+    character(len=3) :: kret
+    character(len=8) :: noma
     character(len=19) :: matele, resuel
     character(len=24), pointer :: relr(:) => null()
     integer, pointer :: adetr(:) => null()
@@ -73,9 +76,13 @@ subroutine redetr(matelz)
 !
 !     -- LE MATR_ELEM DOIT CONTENIR LE MEME NOMBRE DE RESUELEM
 !        SUR TOUS LES PROCESSEURS :
-    nb1av=nb1
-    call asmpi_comm_vect('MPI_MAX', 'I', sci=nb1)
-    ASSERT(nb1.eq.nb1av)
+    call dismoi('NOM_MAILLA', matele, 'MATR_ELEM', repk=noma)
+    call dismoi('PARALLEL_MESH', noma, 'MAILLAGE', repk=kret)
+    if( kret.eq.'NON' ) then
+        nb1av=nb1
+        call asmpi_comm_vect('MPI_MAX', 'I', sci=nb1)
+        ASSERT(nb1.eq.nb1av)
+    endif
 !
 !     -- SI LE MATR_ELEM NE CONTIENT QU'1 RESUELEM OU AUCUN,
 !        IL NE FAUT RIEN DETRUIRE
@@ -116,7 +123,9 @@ subroutine redetr(matelz)
 !          ON PEUT LE DETRUIRE:
         izero=1
         if (zerosd('RESUELEM',resuel)) izero=0
-        call asmpi_comm_vect('MPI_MAX', 'I', sci=izero)
+        if( kret.eq.'NON' ) then
+            call asmpi_comm_vect('MPI_MAX', 'I', sci=izero)
+        endif
         if (izero .eq. 0) then
             adetr(k)=3
         else

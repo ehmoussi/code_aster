@@ -18,7 +18,7 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine nxrech(model    , mate    , cara_elem, list_load  , nume_dof   ,&
+subroutine nxrech(model    , mate    , mateco   , cara_elem, list_load  , nume_dof   ,&
                   tpsthe   , time    , lonch    , compor     , varc_curr  ,&
                   temp_iter, vtempp  , vtempr   , temp_prev  , hydr_prev  ,&
                   hydr_curr, dry_prev, dry_curr , vec2nd     , cnvabt     ,&
@@ -39,7 +39,7 @@ implicit none
 #include "asterfort/vethbt.h"
 !
 character(len=24), intent(in) :: model
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 character(len=24), intent(in) :: cara_elem
 character(len=19), intent(in) :: list_load
 character(len=24), intent(in) :: nume_dof
@@ -116,7 +116,7 @@ character(len=24) :: hydr_prev, hydr_curr, compor, dry_prev, dry_curr
 !
 ! ----- Neumann loads elementary vectors (residuals)
 !
-        call verstp(model    , lload_name, lload_info, cara_elem,   mate,&
+        call verstp(model    , lload_name, lload_info, cara_elem, mateco,&
                     time_curr,  time     , compor    , temp_prev ,vtempr,&
                     varc_curr,  veresi   , 'V'       ,&
                     hydr_prev, hydr_curr , dry_prev  , dry_curr )

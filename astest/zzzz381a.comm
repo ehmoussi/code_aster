@@ -168,11 +168,11 @@ DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/GF.concept",
-             NB_VALE_I=441,
-             VALE_CALC_I=342833,
-             NB_VALE=1818,
-             VALE_CALC=1363.940666,
-             VALE_CALC_K="13d205855397b696dd0eefd833f71e9d",
+             NB_VALE_I=445,
+             VALE_CALC_I=342849,
+             NB_VALE=1832,
+             VALE_CALC=1.4199406660e+03,
+             VALE_CALC_K="fb8f221e487aa2e6dfdf8b63cad7ffb9",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
@@ -183,12 +183,12 @@ DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/POUCA.concept",
-             NB_VALE_I=1429,
+             NB_VALE_I=1503,
              # VALE_CALC_I: on ne teste pas les entiers car on y trouve des
              # décalages dans l'objet CELD
-             NB_VALE=2960,
-             VALE_CALC=4234.6971548,
-             VALE_CALC_K="55f60d48103e8ec2cf2f947101acb417",
+             NB_VALE=3068,
+             VALE_CALC=4.8766971548e+03,
+             VALE_CALC_K="5ad57ea21bd51563647f9cabf151423c",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
@@ -199,11 +199,11 @@ DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 
 TEST_FICHIER(FICHIER="./REPE_OUT/COMP1.concept",
-             NB_VALE_I=59,
-             VALE_CALC_I=1152,
+             NB_VALE_I=65,
+             VALE_CALC_I=1191,
              NB_VALE=0,
              VALE_CALC=0.0000000000,
-             VALE_CALC_K="d67cc3fe40822018545c7b888c5f0567",
+             VALE_CALC_K="b11d6089492670aa3184f0318b6e47ef",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 
@@ -213,12 +213,12 @@ IMPR_CO(CONCEPT=_F(NOM=CHMAT), ATTRIBUT='OUI', NIVEAU=2, UNITE=unite)
 DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
 DETRUIRE(CONCEPT=_F(NOM=unite),INFO=1)
 
-TEST_FICHIER(FICHIER="./REPE_OUT/CHMAT.concept", 
-             NB_VALE_I=108,
-             VALE_CALC_I=8399161,
+TEST_FICHIER(FICHIER="./REPE_OUT/CHMAT.concept",
+             NB_VALE_I=228,
+             VALE_CALC_I=25177786,
              NB_VALE=0,
-             VALE_CALC=0.0000000000,
-             VALE_CALC_K="069b8725d71d41af38815b27c233fa85",
+             VALE_CALC=0.00000000000,
+             VALE_CALC_K="87255e1b8f2f77d8d47356ffacc78c3f",
              EXPR_IGNORE=('IADM','DATE','LTYP','LONO'),
 )
 

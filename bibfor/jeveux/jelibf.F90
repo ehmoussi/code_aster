@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ subroutine jelibf(cond, clas, info)
 ! ----------------------------------------------------------------------
 !-----------------------------------------------------------------------
     integer :: i, iad2, iadacc, iadacy, iadadi, iadady
-    integer :: iadmi, iadyn, ibacol, ic, idb
+    integer :: iadmi, iadyn, ibacol, ic, idb, iret
     integer :: jcara, jdate, jdocu, jgenr, jhcod, jiacce, jiadd
     integer :: jiadm, jindir, jlong, jlono, jltyp, jluti, jmarq
     integer :: jorig, jrnom, jtype, jusadi, k16, k17, k17i
@@ -178,14 +178,14 @@ subroutine jelibf(cond, clas, info)
 ! --- PEUT ETRE NULLE
 !
         call jxecro(ic, iadadi, iaddad, ladi, 0, lideff-1)
-        iadd (jiadd(ic) + 2*(lideff-1)-1) = iaddad(1) 
-        iadd (jiadd(ic) + 2*(lideff-1) )  = iaddad(2) 
+        iadd (jiadd(ic) + 2*(lideff-1)-1) = iaddad(1)
+        iadd (jiadd(ic) + 2*(lideff-1) )  = iaddad(2)
 !
         iadad2 = iadm (jiadm(ic) + 2*lideff-1)
-        ladi2 = lono (jlono(ic) + lideff)* ltyp(jltyp(ic)+lideff)        
+        ladi2 = lono (jlono(ic) + lideff)* ltyp(jltyp(ic)+lideff)
         call jxecro(ic, iadad2, iaddac, ladi2, 0, lideff)
-        iadd (jiadd(ic) + 2*lideff-1) = iaddac(1) 
-        iadd (jiadd(ic) + 2*lideff )  = iaddac(2) 
+        iadd (jiadd(ic) + 2*lideff-1) = iaddac(1)
+        iadd (jiadd(ic) + 2*lideff )  = iaddac(2)
 
         idb = idebug
         idebug = 0
@@ -322,7 +322,7 @@ subroutine jelibf(cond, clas, info)
             nom = nomfic(ic)(1:4)//'.?  '
             call lxmins(nom)
             info = 0
-            call rmfile(nom, info)
+            call rmfile(nom, info, iret)
         endif
 !
         classe(ic:ic) = ' '

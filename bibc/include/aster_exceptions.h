@@ -25,10 +25,11 @@
 #include "aster.h"
 #include "asterc_debug.h"
 #include "aster_module.h"
+#include "Supervis/Exceptions.h"
 
 #define FatalError 18   /* kept for backward compatibility only */
 #define EOFError   19
-#define AsterError 21
+#define AsterError 1
 
 #define NIVMAX     10
 
@@ -38,13 +39,13 @@
                                 DEBUG_EXCEPT("interruptTry: level=%d", gExcLvl); \
                                 longjmp(gExcEnv[gExcLvl], val); } \
                             else { printf("Exception raised out of Code_Aster commands.\n"); \
-                                _raiseException(val); }
+                                _raiseException(); }
 #define except(val)         else if (gExcNumb == val)
 #define exceptAll           else
 #define endTry()            _end_try(); DEBUG_EXCEPT("endTry: level=%d", gExcLvl);
 #define raiseException()    _end_try(); \
                             DEBUG_EXCEPT("raiseException: level=%d", gExcLvl); \
-                            _raiseException(gExcNumb); \
+                            _raiseException(); \
                             return NULL
 #define raiseExceptionString(exc, args) \
                             _end_try(); \
@@ -52,14 +53,12 @@
                             return NULL
 
 /*
- *   PUBLIC FUNCTIONS
+ *   PUBLIC ATTRS
  *
  */
 extern int gExcLvl;
 extern int gExcNumb;
 extern jmp_buf gExcEnv[NIVMAX+1];
-
-extern void initExceptions(PyObject *dict);
 
 /*
  *   PRIVATE/HIDDEN FUNCTIONS
@@ -67,7 +66,6 @@ extern void initExceptions(PyObject *dict);
  */
 extern void _new_try();
 extern void _end_try();
-void _raiseException( _IN int val );
 
 /* FIN ASTER_EXCEPTIONS_H */
 #endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 !
 !
 interface
-    subroutine phi199(model, mate, ma, nu, num,&
+    subroutine phi199(model, mate, mateco, ma, nu, num,&
                       nbmode, solvez, indice, tabad)
         character(len=2) :: model
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=8) :: ma
         character(len=14) :: nu
         character(len=14) :: num

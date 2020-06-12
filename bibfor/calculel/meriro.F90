@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine meriro(modele, cara, nchar, lchar, mate,&
+subroutine meriro(modele, cara, nchar, lchar, mate, mateco, &
                   time, compor, matel)
     implicit none
 !
@@ -40,7 +40,7 @@ subroutine meriro(modele, cara, nchar, lchar, mate,&
 !
     character(len=8) :: modele, cara, lchar(*)
     character(len=19) :: matel
-    character(len=24) :: mate, compor
+    character(len=24) :: mate, compor, mateco
     real(kind=8) :: time
     integer :: nchar
 ! ----------------------------------------------------------------------
@@ -121,7 +121,7 @@ subroutine meriro(modele, cara, nchar, lchar, mate,&
         lpain(1) = 'PGEOMER'
         lchin(1) = chgeom
         lpain(2) = 'PMATERC'
-        lchin(2) = mate
+        lchin(2) = mateco
         lpain(3) = 'PROTATR'
         lchin(3) = chrota
         lpain(4) = 'PVARCPR'

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -180,7 +180,7 @@ DYNMODNE=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
 
                              INST_INIT = 0.,  INST_FIN = 5.,
                              PAS = 0.0001),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E6) )
+                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**6) )
 
 #
 # 2- SCHEMA EULER
@@ -197,7 +197,7 @@ DYNMODEU=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
 
                              INST_INIT = 0.,  INST_FIN = 5.,
                              PAS = 0.0001),
-                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=1.E6) )
+                             ARCHIVAGE=_F(INST=AR_LIST, PAS_ARCH=10**6) )
 
 #
 # DEFINITION DES INSTANTS DE CALCUL DE LA SOLUTION

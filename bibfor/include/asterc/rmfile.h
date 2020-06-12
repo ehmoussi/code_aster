@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 !
 !
 interface
-    subroutine rmfile(k80, info)
+    subroutine rmfile(k80, info, iret)
         character(len=*) :: k80(*)
-        integer :: info
+        integer :: info, iret
     end subroutine rmfile
 end interface

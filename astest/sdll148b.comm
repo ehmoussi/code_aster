@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -145,12 +145,18 @@ SYX = FORMULE(VALE_C='rho*exp(-FREQ/freq0)*exp(distance(X1,Y1,Z1,X2,Y2,Z2)/corre
               NOM_PARA=['X1', 'Y1', 'Z1', 'X2', 'Y2', 'Z2', 'FREQ'],)
 
 # INTER-SPECTRE AVEC EFFORTS X ET Y CORRELES
-INTESPEC=CREA_TABLE(LISTE=(_F(LISTE_K=('SXX','SYY','SXY','SYX'),PARA='FONCTION_C'),
+INTESPEC=CREA_TABLE(LISTE=(_F(LISTE_K=(SXX.getName(),
+                                       SYY.getName(),
+                                       SXY.getName(),
+                                       SYX.getName()),PARA='FONCTION_C'),
                            _F(LISTE_K=('DX','DY','DX','DY'),PARA='NUME_ORDRE_I'),
                            _F(LISTE_K=('DX','DY','DY','DX'),PARA='NUME_ORDRE_J'),),
                     TYPE_TABLE='TABLE_FONCTION',
                     TITRE='EXCITATION FLUIDE TURBULENTE');
-
+INTESPEC.addFunction(SXX)
+INTESPEC.addFunction(SYY)
+INTESPEC.addFunction(SXY)
+INTESPEC.addFunction(SYX)
 
 SPECTRE1=DEFI_SPEC_TURB( SPEC_CORR_CONV_3=_F( TABLE_FONCTION = INTESPEC ),);
 

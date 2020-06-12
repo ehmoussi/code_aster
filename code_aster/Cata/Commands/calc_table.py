@@ -18,9 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_table_prod(self, TABLE, ACTION, TYPE_TABLE, **kargs):
@@ -50,7 +51,7 @@ def calc_table_prod(self, TABLE, ACTION, TYPE_TABLE, **kargs):
             return table_sdaster
 
 CALC_TABLE=MACRO(nom="CALC_TABLE",
-                 op=OPS('Macro.calc_table_ops.calc_table_ops'),
+                 op=OPS('code_aster.MacroCommands.calc_table_ops.calc_table_ops'),
                  sd_prod=calc_table_prod,
                  fr=tr("Opérations sur une table"),
                  reentrant='f:TABLE',

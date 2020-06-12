@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine assma1(matas, ldist)
+subroutine assma1(matas, ldist, lmhpc)
     implicit none
 ! person_in_charge: jacques.pellet at edf.fr
 !--------------------------------------------------------------
@@ -31,6 +31,7 @@ subroutine assma1(matas, ldist)
 !---------------------------------------------------------------
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/assert.h"
 #include "asterfort/echmat.h"
 #include "asterfort/jedema.h"
@@ -43,8 +44,8 @@ subroutine assma1(matas, ldist)
 !
     character(len=*) :: matas
 !---------------------------------------------------------------
-    aster_logical :: lmnsy, exilag, ldist
-    integer :: nsmhc, jdelgg, jdelgl, jsmhc, ng, nz, n, imatd
+    aster_logical :: lmnsy, exilag, ldist, lmhpc
+    integer :: nsmhc, jdelgg, jdelgl, jsmhc, ng, nz, n, imatd, comm(1)
     integer :: ilig, jcol, kterm, nlong, nvale, jvalm1, jvalm2, jconl
     character(len=1) :: ktyp, base1
     character(len=14) :: nonu
@@ -117,12 +118,19 @@ subroutine assma1(matas, ldist)
         exilag=.true.
     endif
 !
+    if (lmhpc) then
+        comm(1) = 0
+        if (exilag) comm(1) = 1
+        call asmpi_comm_vect('MPI_MAX', 'I', nbval=1, vi=comm)
+        if (comm(1).eq.1) exilag = .true.
+    endif
+!
 !     -- S'IL N'Y A PAS DE LAGRANGE, IL N'Y A RIEN A FAIRE :
     if (.not.exilag) goto 40
 !
 ! 2.  CALCUL DU COEFFICIENT DE CONDITIONNEMENT DES LAGRANGES (RCOEF)
 ! -------------------------------------------------------------------
-    call echmat(mat19, ldist, rmin, rmax)
+    call echmat(mat19, ldist, lmhpc, rmin, rmax)
 !     -- PARFOIS, LA MATRICE EST == 0.
     if (rmax .eq. 0.d0) then
         rcoef=1.d0

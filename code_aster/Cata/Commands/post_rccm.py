@@ -19,10 +19,9 @@
 
 # person_in_charge: sarah.plessis at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_RCCM=OPER(nom="POST_RCCM",op= 165,sd_prod=table_sdaster,
                fr=tr("Vérification des critères de niveau 0 et certains critères de niveau A du RCC-M"),

@@ -7,5 +7,5 @@ P testlist verification parallel
 
 F comm fdlv112i.comm D 1
 F mail fdlv112i.mail D 20
-F libr fdlv112d.31 D 31
+F nom  fdlv112d.py D 0
 

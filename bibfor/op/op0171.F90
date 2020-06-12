@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ implicit none
     character(len=8) :: k8bid
     character(len=16) :: k16bid, nomcvg
     character(len=19) :: list_load, solver, maprec, list_load_save
-    character(len=24) :: model, mate, cara_elem
+    character(len=24) :: model, mateco, cara_elem, mater
     character(len=24) :: nomch, vtemp, vtempm, vtempp, vec2nd
     character(len=24) :: result, ligrmo, tempev, tempin
     character(len=24) :: time, matass, noojb, nume_dof
@@ -120,7 +120,7 @@ implicit none
 !
 ! - Read parameters
 !
-    call ntdoth(model, mate, cara_elem, list_load,&
+    call ntdoth(model, mater, mateco, cara_elem, list_load,&
                 matcst_ = matcst, coecst_ = coecst )
 !
 ! - EVOL_CHAR is prohibden
@@ -247,7 +247,7 @@ implicit none
 !
 ! --- ACTUALISATION EVENTUELLE DES VECTEURS ET DES MATRICES
 !
-    call nttcmv(model , mate  , cara_elem, list_load, nume_dof,&
+    call nttcmv(model , mater , mateco   , cara_elem, list_load, nume_dof,&
                 solver, time  , tpsthe   , tpsnp1   , reasvt  ,&
                 reasmt, creas , vtemp    , vtempm   , vec2nd  ,&
                 matass, maprec, cndirp   , cnchci   , cnchtp)
@@ -264,7 +264,7 @@ implicit none
 !
 ! - ITERATIONS INTERNES
 !
-        call nttain(model , mate  , cara_elem, list_load, nume_dof,&
+        call nttain(model , mateco, cara_elem, list_load, nume_dof,&
                     solver, time  , epsr     , lonch    , matass  ,&
                     maprec, cnchci, cnresi   , vtemp    , vtempm  ,&
                     vtempp, vec2nd, chlapm   , chlapp   , ci1     ,&
@@ -314,7 +314,7 @@ implicit none
             valr(1) = tps2(4)
             valr(2) = tps2(1)
             call utmess('Z', 'DISCRETISATION2_79', si=vali(1), nr=2, valr=valr,&
-                        num_except=28)
+                        num_except=TIMELIMIT_ERROR)
         endif
 !
 ! - ON VA REFAIRE UNE ITERATION
@@ -328,7 +328,7 @@ implicit none
 !
         if ((parcri(9).eq.0) .and. (iterl.ge.itmaxl)) then
             write (ifm,fmt)
-            call utmess('Z', 'MECANONLINE9_7', num_except=22)
+            call utmess('Z', 'MECANONLINE9_7', num_except=CONVERGENCE_ERROR)
         endif
 !
     endif
@@ -358,7 +358,7 @@ implicit none
 !
 !      ARCHIVAGE DU MODELE, MATERIAU, CARA_ELEM ET DE LA SD CHARGE
 !
-    call rssepa(result(1:8), 0, model(1:8), mate(1:8), cara_elem(1:8),&
+    call rssepa(result(1:8), 0, model(1:8), mater(1:8), cara_elem(1:8),&
                 list_load_save)
 !
     call titre()

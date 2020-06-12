@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@
 #
 # Il s agit en fait du test SDND102A auquel on a ajoute :
 #      la definition d un parametre (VAL)
-#      l inclusion d un fichier (INCLUDE)
 #      une poursuite (POURSUITE)
 # Il contient ainsi :
 # des parametres, des formules, des macros, des mots cles facteurs repetes
@@ -257,67 +256,5 @@ VITESSE2=CALC_FONC_INTERP(FONCTION=VITE2,
                           PROL_GAUCHE='LINEAIRE',)
 
 xx=2
-
-INCLUDE(UNITE=11,
-        INFO=1,)
-
-MUR=DEFI_OBSTACLE(TYPE='PLAN_Z',)
-
-TRAN_GE1=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
-                         SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE'),
-                         MATR_MASS=MASS_GEN,
-                         MATR_RIGI=RIGI_GEN,
-                         MODE_STAT=MODE_STA,
-                         AMOR_MODAL=_F(AMOR_REDUIT=0.07,),
-                         INCREMENT=_F(INST_INIT=0.0,
-                                      INST_FIN=1.0,
-                                      PAS=2.0E-4,),
-                         ARCHIVAGE=_F(PAS_ARCH=8,),
-                         EXCIT=_F(VECT_ASSE_GENE=VECT_X,
-                                  ACCE=ACCELER1,
-                                  VITE=VITESSE1,
-                                  DEPL=DEPLACE1,
-                                  MULT_APPUI='OUI',
-                                  DIRECTION=(1.0,0.0,0.0,),
-                                  NOEUD='NO1',),
-                         COMPORTEMENT=_F(RELATION='DIS_CHOC',
-                                 INTITULE='NO2/MUR',
-                                 GROUP_NO_1='MASSES',
-                                 OBSTACLE=MUR,
-                                 ORIG_OBST=(-1.0,0.0,0.0,),
-                                 NORM_OBST=(0.0,0.0,1.0,),
-                                 JEU=1.1005,
-                                 RIGI_NOR=5.76E7,
-                                 AMOR_NOR=0.0,
-                                 RIGI_TAN=0.0,
-                                 FROTTEMENT='COULOMB_STAT_DYNA',
-                                 COULOMB_STAT=0.0,COULOMB_DYNA=0.0,),)
-
-MULT_X1=CALC_CHAR_SEISME(MATR_MASS=MASS_BIC,
-                         DIRECTION=(1.0,0.0,0.0,),
-                         MODE_STAT=MSTA_BIC,
-                         NOEUD='NO1',)
-
-MULT_X2=CALC_CHAR_SEISME(MATR_MASS=MASS_BIC,
-                         DIRECTION=(1.0,0.0,0.0,),
-                         MODE_STAT=MSTA_BIC,
-                         NOEUD='NO11',)
-
-PROJ_BASE(BASE=MODE_BIC,
-          STOCKAGE='DIAG',
-          MATR_ASSE_GENE=(_F(MATRICE=CO('MGEN_BIC'),
-                             MATR_ASSE=MASS_BIC,),
-                          _F(MATRICE=CO('RGEN_BIC'),
-                             MATR_ASSE=RIGI_BIC,),),
-          VECT_ASSE_GENE=(_F(VECTEUR=CO('VECT_X1'),
-                             VECT_ASSE=MULT_X1,
-                             TYPE_VECT = 'FORC'),
-                          _F(VECTEUR=CO('VECT_X2'),
-                             VECT_ASSE=MULT_X2,
-                             TYPE_VECT = 'FORC'),),)
-
-GRILLE=DEFI_OBSTACLE(TYPE='BI_PLAN_Z',)
-
-MAILLA3=LIRE_MAILLAGE(FORMAT="ASTER",UNITE=22,)
 
 FIN()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -201,8 +201,11 @@ for i in range(nb_fond) :
 #  calcul sans R_INF et R_SUP
    G2[i]=CALC_G(THETA=_F(FISSURE=fiss_1,
                          NUME_FOND=i+1,),
+                CHAM_THETA=CO('cham_theta_no'),
                 RESULTAT=RESU,
                 OPTION='CALC_K_G')
+
+   DETRUIRE(CONCEPT=_F(NOM=cham_theta_no,))
 
 #----------------------------------------------------------------------
 #              TEST DE K1 EN 1 POINT
@@ -216,7 +219,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.595000E6,
            NOM_PARA='K1',
            TYPE_TEST='MAX',
-           TABLE=G1_0,)
+           TABLE=G1[0],)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.029999999999999999,
@@ -224,7 +227,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.595000E6,
            NOM_PARA='K1',
            TYPE_TEST='MIN',
-           TABLE=G1_0,)
+           TABLE=G1[0],)
 
 #  sans R_INF et R_SUP
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -233,7 +236,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.595000E6,
            NOM_PARA='K1',
            TYPE_TEST='MAX',
-           TABLE=G2_0,)
+           TABLE=G2[0],)
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
            PRECISION=0.029999999999999999,
@@ -241,6 +244,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            VALE_REFE=1.595000E6,
            NOM_PARA='K1',
            TYPE_TEST='MIN',
-           TABLE=G2_0,)
+           TABLE=G2[0],)
 
 FIN();

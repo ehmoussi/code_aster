@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine metnth(modele, lchar, cara, mate, time,&
+    subroutine metnth(modele, lchar, cara, mate, mateco, time,&
                       chtni, metrnl)
         character(len=24) :: modele
         character(len=*) :: lchar
         character(len=24) :: cara
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=24) :: time
         character(len=24) :: chtni
         character(len=24) :: metrnl

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -196,7 +196,7 @@ IMPR_RESU(FORMAT='MED',
 MODES_1=LIRE_RESU(FORMAT='MED',
                   UNITE=81,
                   FORMAT_MED=_F(NOM_CHAM='DEPL',
-                                NOM_CHAM_MED='MOD_CAL1DEPL',),
+                                NOM_CHAM_MED='00000014DEPL',),
                   TYPE_RESU='MODE_MECA',
                   MATR_RIGI=RAID_1,
                   MATR_MASS=MASS_1,
@@ -269,7 +269,7 @@ IMPR_RESU(FORMAT='MED',
 MODES_2=LIRE_RESU(FORMAT='MED',
                   UNITE=82,
                   FORMAT_MED=_F(NOM_CHAM='DEPL',
-                                NOM_CHAM_MED='MOD_CAL2DEPL',),
+                                NOM_CHAM_MED='0000001fDEPL',),
                   TYPE_RESU='MODE_MECA',
                   MATR_RIGI=RAID_2,
                   MATR_MASS=MASS_2,

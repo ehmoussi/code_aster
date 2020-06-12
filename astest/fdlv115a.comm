@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from Contrib.calc_matr_ifs import CALC_MATR_IFS
+from code_aster.Commands import *
+from code_aster.MacroCommands.Contrib.calc_matr_ifs import CALC_MATR_IFS
 
 DEBUT(PAR_LOT='OUI',CODE=_F(NIV_PUB_WEB='INTERNET'),);
 
@@ -78,7 +79,6 @@ model=AFFE_MODELE(MAILLAGE=mesh,
 Encast=AFFE_CHAR_CINE(MODELE=model, MECA_IMPO=_F(GROUP_MA=('encast1','encast2','encast3',),
                                                  DX=0.0, DY=0.0, DZ=0.0,),);
 Press =AFFE_CHAR_MECA(MODELE=model, FORCE_NODALE=_F(GROUP_NO='effort1', FX=1.0e-5,),);
-
 
 # CALCUL DES MATRICES
 CALC_MATR_IFS(

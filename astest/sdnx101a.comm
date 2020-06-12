@@ -275,8 +275,6 @@ CALC_MISS(
     ),
 )
 
-DEFI_FICHIER(ACTION='LIBERER',UNITE=25,);
-
 #
 # ----------------------------------------------------------------------
 # AFFECTATION DES CARACTERISTIQUES ELEMENTAIRES RIGI_MISS_3D
@@ -416,7 +414,6 @@ L_INST=DEFI_LIST_REEL(DEBUT=-1.0,
 #
 # EVOLUTIONS
 #  LECTURE DE L ACCELEROGRAMME DE SOL ACCE
-#  INCLUDE ( UNITE : 15  ) ;
 
 ACCE1=DEFI_FONCTION(NOM_PARA='INST',
                     VALE=

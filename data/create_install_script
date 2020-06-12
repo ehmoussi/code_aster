@@ -25,7 +25,7 @@ read -p "Please enter the installation directory: " instdir
 script=${wrkdir}/install.sh
 mkdir ${wrkdir}/data
 
-cp /scif/apps/aster/lib/aster/aster_pkginfo.py ${wrkdir}/data/aster_pkginfo.py
+cp /scif/apps/aster/lib/aster/code_aster/Utilities/aster_pkginfo.py ${wrkdir}/data/aster_pkginfo.py
 sed -e 's/\(BIN_.*|.*|.*|\).*$/\1 execute_codeaster/g' \
     -e 's/\(BUILD_TYPE .*$\)/\1 container/g' \
     /scif/apps/aster/share/aster/config.txt > ${wrkdir}/data/config.txt

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine echmat(matz, ldist, rmin, rmax)
+subroutine echmat(matz, ldist, lmhpc, rmin, rmax)
 ! person_in_charge: jacques.pellet at edf.fr
     implicit none
 #include "asterf_types.h"
@@ -36,7 +36,7 @@ subroutine echmat(matz, ldist, rmin, rmax)
 !
     character(len=*) :: matz
     real(kind=8) :: rmin, rmax
-    aster_logical :: ldist
+    aster_logical :: ldist, lmhpc
 ! ---------------------------------------------------------------------
 ! BUT: DONNER LES VALEURS EXTREMES DES VALEURS ABSOLUES
 !      DES TERMES NON NULS DE LA DIAGONALE D'UNE MATR_ASSE
@@ -61,6 +61,7 @@ subroutine echmat(matz, ldist, rmin, rmax)
 !     ------------------------------------------------------------------
     integer :: nsmhc, jdelgg, jdelgl, jsmhc, ng, nz, n, imatd
     integer :: jcol, nlong, jvalm1, jcolg
+    real(kind=8) :: rminc(1), rmaxc(1)
     character(len=1) :: ktyp, base1
     character(len=14) :: nonu
     character(len=19) :: mat19
@@ -148,7 +149,7 @@ subroutine echmat(matz, ldist, rmin, rmax)
             call asmpi_comm_vect('MPI_SUM', 'R', nbval=ng, vr=rdiag)
         else
             call asmpi_comm_vect('MPI_SUM', 'C', nbval=ng, vc=zdiag)
-        endif 
+        endif
     endif
 !
 !   Tous les procs possèdent les termes qui correspondent à des ddls physiques. 
@@ -160,6 +161,17 @@ subroutine echmat(matz, ldist, rmin, rmax)
     else
         rmax = maxval(abs(zdiag))
         rmin = minval(abs(zdiag), mask = abs(zdiag) > r8prem())
+    endif
+!
+    if (lmhpc) then
+        if (ktyp .eq. 'R') then
+            rminc(1) = rmin
+            rmaxc(1) = rmax
+            call asmpi_comm_vect('MPI_MIN', 'R', nbval=1, vr=rminc)
+            call asmpi_comm_vect('MPI_MAX', 'R', nbval=1, vr=rmaxc)
+        else
+            ASSERT(.false.)
+        endif 
     endif
 !
 !   Libération de la mémoire

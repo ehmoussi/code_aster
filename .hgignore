@@ -3,6 +3,7 @@ syntax: glob
 *.pyc
 *.bak
 *.orig
+fichierOut.txt
 
 syntax: regexp
 ^build/
@@ -13,3 +14,7 @@ syntax: regexp
 ^waf_.*
 .*~$
 .*%$
+^.*/fort\.*
+^fort\.*
+glob\.*
+vola\.*

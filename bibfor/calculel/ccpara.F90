@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine ccpara(option, modele, resuin, resuou, numord,&
-                  nordm1, exitim, mateco, carael)
+                  nordm1, exitim, mater , carael)
     implicit none
 !     --- ARGUMENTS ---
 #include "asterf_types.h"
@@ -38,7 +38,7 @@ subroutine ccpara(option, modele, resuin, resuou, numord,&
 #include "asterc/isnnem.h"
 !
     integer :: numord, nordm1
-    character(len=8) :: modele, resuin, resuou, mateco, carael
+    character(len=8) :: modele, resuin, resuou, mater, carael
     character(len=16) :: option
     aster_logical :: exitim
 ! person_in_charge: nicolas.sellenet at edf.fr
@@ -85,8 +85,8 @@ subroutine ccpara(option, modele, resuin, resuou, numord,&
     else
         time = zero
     endif
-    call vrcref(modele, mateco, carael, chvref(1:19))
-    call vrcins(modele, mateco, carael, time, chvarc(1:19),&
+    call vrcref(modele, mater, carael, chvref(1:19))
+    call vrcins(modele, mater, carael, time, chvarc(1:19),&
                 chdret)
 !
     do ipara = 1, nparin
@@ -157,7 +157,7 @@ subroutine ccpara(option, modele, resuin, resuou, numord,&
             else
                 time = zero
             endif
-            call vrcins(modele, mateco, carael, time, chvac2(1:19),&
+            call vrcins(modele, mater, carael, time, chvac2(1:19),&
                         chdret)
 !
         else if (curcha.eq.chnova) then

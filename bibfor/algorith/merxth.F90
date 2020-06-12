@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine merxth(model    , lload_name, lload_info, cara_elem  , mate     ,&
+subroutine merxth(model    , lload_name, lload_info, cara_elem  , mate     , mateco, &
                   time_curr, time      , temp_iter , compor_ther, varc_curr,&
                   matr_elem, base      ,&
                   dry_prev_, dry_curr_)
@@ -39,7 +39,7 @@ character(len=24), intent(in) :: model
 character(len=24), intent(in) :: lload_name
 character(len=24), intent(in) :: lload_info
 character(len=24), intent(in) :: cara_elem
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 real(kind=8), intent(in) :: time_curr
 character(len=24), intent(in) :: time
 character(len=24), intent(in) :: temp_iter
@@ -53,7 +53,7 @@ character(len=24), optional, intent(in) :: dry_curr_
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic
-! 
+!
 ! Tangent matrix (non-linear) - Volumic and surfacic terms
 !
 ! --------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ character(len=24), optional, intent(in) :: dry_curr_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer , parameter :: nb_in_maxi = 10 
+    integer , parameter :: nb_in_maxi = 10
     integer , parameter :: nbout = 1
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
@@ -123,7 +123,7 @@ character(len=24), optional, intent(in) :: dry_curr_
 !
 ! - Tangent matrix - Volumic terms
 !
-    call ther_mtan(model      , cara_elem,     mate,     time, varc_curr,&
+    call ther_mtan(model      , cara_elem,   mateco,     time, varc_curr,&
                    compor_ther, temp_iter, dry_prev, dry_curr, resu_elem,&
                    matr_elem  ,      base)
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,11 +22,13 @@
 # EN FATIGUE VIBRATOIRE
 # FICHIER MODELE GEVIBUS
 # person_in_charge: andre.adobes at edf.fr
-#-------------------------------------------------------------------
-#
-DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 #
 from math import log
+
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
+
+DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 TUBE=LIRE_MAILLAGE(FORMAT='MED')
 MODI_MAILLAGE(reuse=TUBE, MAILLAGE=TUBE,ABSC_CURV=_F(NOEUD_ORIG='N_01_001',TOUT='OUI'))
@@ -76,12 +78,11 @@ PROFVIT1=DEFI_FONCTION(  NOM_PARA='ABSC',
 'N_05_005'  , 'N_05_012'  , 'N_05_015'  , 'N_06_001'  , 'N_06_007'  , )
 )
 
-import aster_core
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""
     import os.path as osp
-    rcdir = aster_core.get_option('rcdir')
+    rcdir = ExecutionParameter().get_option('rcdir')
     return osp.join(rcdir, 'tests_data', theFile)
 
 CD = includeExternalData('sdll110a.70')
@@ -445,7 +446,7 @@ TPSB=PROJ_SPEC_BASE( SPEC_TURB=TSPC1,
 
 VECTINT=GENE_FONC_ALEA(INTE_SPEC=TPSB,
                        INTERPOL='NON',
-                       NB_POIN=N_POIN_1,
+                       NB_POIN=int(N_POIN_1),
                        INIT_ALEA = 272170,
                        INFO=1,
                        NB_TIRAGE=NB_TIR,

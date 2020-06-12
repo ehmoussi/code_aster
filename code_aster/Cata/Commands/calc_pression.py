@@ -24,21 +24,21 @@
 # au frottement et aux éléments de structures si le besoin se manifeste.
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 def calc_pression_prod(self, RESULTAT,**args):
     if args.get('__all__'):
         return (evol_elas, evol_noli, evol_ther, mult_elas, mode_meca,
                 mode_meca_c, dyna_trans, dyna_harmo, fourier_elas,
                 fourier_ther, evol_varc, evol_char)
-    
+
     if AsType(RESULTAT) is not None : return AsType(RESULTAT)
     raise AsException("type de concept resultat non prevu")
 
 CALC_PRESSION=MACRO(nom="CALC_PRESSION",
-                    op=OPS('Macro.calc_pression_ops.calc_pression_ops'),
+                    op=OPS('code_aster.MacroCommands.calc_pression_ops.calc_pression_ops'),
                     sd_prod=calc_pression_prod,
                     reentrant='o:RESULTAT',
                     fr="Calcul de la pression nodale sur une interface a partir de SIEF_NOEU. Cette option n existe que pour les éléments isoparamétriques.",

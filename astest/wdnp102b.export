@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm wdnp102b.comm D 1
 F mmed wdnp102b.mmed D 20
-F libr wdnp102a.38 D 38
+F nom  wdnp102a.py D 0

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
-                      op=OPS('Macro.defi_sol_equi_ops.defi_sol_equi_ops'),
+                      op=OPS('code_aster.MacroCommands.defi_sol_equi_ops.defi_sol_equi_ops'),
                       sd_prod=table_sdaster,
                       fr=tr("Définition des données de sol pour Miss"),
                       reentrant='n',
@@ -39,13 +38,13 @@ DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
               EXCLUS('FONC_SIGNAL_X','LIAISON'),
               ENSEMBLE('GROUP_MA_DROITE', 'GROUP_MA_GAUCHE')
               ),
-      FONC_SIGNAL   =SIMP(statut='f',typ=(fonction_sdaster), 
+      FONC_SIGNAL   =SIMP(statut='f',typ=(fonction_sdaster),
                          fr=tr("Signal impose d'accelero horizontal") ),
-      FONC_SIGNAL_X   =SIMP(statut='f',typ=(fonction_sdaster), 
+      FONC_SIGNAL_X   =SIMP(statut='f',typ=(fonction_sdaster),
                             fr=tr("Signal impose d'accelero dans la direction X") ),
-      FONC_SIGNAL_Y   =SIMP(statut='f',typ=(fonction_sdaster), 
+      FONC_SIGNAL_Y   =SIMP(statut='f',typ=(fonction_sdaster),
                             fr=tr("Signal impose d'accelero dans la direction Y") ),
-      FONC_SIGNAL_Z   =SIMP(statut='f',typ=(fonction_sdaster), 
+      FONC_SIGNAL_Z   =SIMP(statut='f',typ=(fonction_sdaster),
                             fr=tr("Signal impose d'accelero dans la direction Z") ),
       TOUT_CHAM     =SIMP(statut='f',typ='TXM',into=("OUI","NON",),defaut="OUI"),
       # Unite d entree de table de signaux
@@ -76,22 +75,22 @@ DEFI_SOL_EQUI = MACRO(nom="DEFI_SOL_EQUI",
             EXCLUS('FONC_SIGNAL_X','GROUP_MA_DROITE'),
             ENSEMBLE('GROUP_MA_DROITE', 'GROUP_MA_GAUCHE')
             ),
-      FONC_SIGNAL   =SIMP(statut='f',typ=(fonction_sdaster), 
+      FONC_SIGNAL   =SIMP(statut='f',typ=(fonction_sdaster),
                          fr=tr("Signal impose d'accelero horizontal") ),
-      FONC_SIGNAL_X   =SIMP(statut='f',typ=(fonction_sdaster), 
+      FONC_SIGNAL_X   =SIMP(statut='f',typ=(fonction_sdaster),
                               fr=tr("Signal impose d'accelero dans la direction X") ),
-      FONC_SIGNAL_Y   =SIMP(statut='f',typ=(fonction_sdaster), 
+      FONC_SIGNAL_Y   =SIMP(statut='f',typ=(fonction_sdaster),
                               fr=tr("Signal impose d'accelero dans la direction Y") ),
-      FONC_SIGNAL_Z   =SIMP(statut='f',typ=(fonction_sdaster), 
+      FONC_SIGNAL_Z   =SIMP(statut='f',typ=(fonction_sdaster),
                               fr=tr("Signal impose d'accelero dans la direction Z") ),
-      DSP   =SIMP(statut='f',typ=(fonction_sdaster), 
-                         fr=tr("DSP Signal impose d'accelero horizontal") ), 
+      DSP   =SIMP(statut='f',typ=(fonction_sdaster),
+                         fr=tr("DSP Signal impose d'accelero horizontal") ),
       b_type_dsp   = BLOC(condition="""exists('DSP')""",
         DUREE           =SIMP(statut='o', typ='R', val_min=0.,
                                    fr=tr("durée de la phase forte pour facteur de pic")),
         UNITE_RESU_DSP =SIMP(statut='o', typ=UnitType(),  inout='out',),
                     ),
-   
+
       NOM_CMP    =SIMP(statut='f',typ='TXM',into=("DX","DY",),
                        defaut="DX",fr=tr("sollicitation horizontale"),),
       TOUT_CHAM     =SIMP(statut='f',typ='TXM',into=("OUI","NON",),defaut="NON"),

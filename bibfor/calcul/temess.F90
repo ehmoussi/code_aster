@@ -114,7 +114,7 @@ use calcul_module, only : ca_option_, ca_nomte_, ca_icaelk_, ca_ialiel_,&
     if (nbgrma.eq.4)  valkc(5+4)='...'
 
     call utmess_core(typ, 'CALCUL_49', 9, valkc, 0,&
-                         [0], 3, valrc, ufname)
+                     [0], 3, valrc, 0, ufname)
 
     call jedema()
 end subroutine temess

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine getvtx(motfac, motcle, iocc, nbval, vect,&
-                      scal, nbret, isdefault)
+                      scal, nbret)
         character(len=*), intent(in) :: motfac
         character(len=*), intent(in) :: motcle
         integer, intent(in), optional :: iocc
@@ -28,6 +28,5 @@ interface
         character(len=*), intent(out), optional :: vect(*)
         character(len=*), intent(out), optional :: scal
         integer, intent(out), optional :: nbret
-        integer, intent(out), optional :: isdefault
     end subroutine getvtx
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -118,7 +118,7 @@ type(NL_DS_Material), intent(in) :: ds_material
 !
 ! --- ARCHIVAGE DU MODELE, MATERIAU, CARA_ELEM ET DE LA SD CHARGE
 !
-    call rssepa(result, numarc, modele(1:8), ds_material%field_mate(1:8), carele(1:8),&
+    call rssepa(result, numarc, modele(1:8), ds_material%mater(1:8), carele(1:8),&
                 list_load_resu)
 !
 ! --- ARCHIVAGE DES CRITERES DE CONVERGENCE

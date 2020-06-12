@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/echmat.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
@@ -51,8 +52,9 @@ real(kind=8) :: freqr
 !
 !
 !
-    aster_logical :: valtst, ldist, l_geom_matr
+    aster_logical :: valtst, ldist, l_geom_matr, lmhpc
     real(kind=8) :: freqr0, prec, minmat, maxmat
+    character(len=3) :: mathpc
     character(len=16) :: sign
     character(len=24), pointer :: refa(:) => null()
 !
@@ -79,7 +81,9 @@ real(kind=8) :: freqr
             call utmess('F', 'MECANONLINE6_13')
         endif
         ldist = ASTER_FALSE
-        call echmat(matass, ldist, minmat, maxmat)
+        call dismoi('MATR_HPC', matass, 'MATR_ASSE', repk=mathpc)
+        lmhpc = mathpc.eq.'OUI'
+        call echmat(matass, ldist, lmhpc, minmat, maxmat)
         if (((freqr0*freqr).lt.0.d0) .or. (abs(freqr).lt.(prec*minmat))) then
             linsta = ASTER_TRUE
         endif

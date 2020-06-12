@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,12 +23,6 @@
 import sys
 import unittest
 
-# to be runnable without aster module
-if not 'DEBUT' in list(globals().keys()):
-    def does_nothing(**kwargs):
-        """empty function"""
-        return
-    DEBUT = FIN = _F = does_nothing
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),)
 
@@ -38,8 +32,8 @@ suite = unittest.TestSuite()
 
 if hasattr(ldr, 'discover'):    # only python >= 2.7
     count = suite.countTestCases()
-    suite.addTests(ldr.discover('Miss', pattern='*.py'))
-    suite.addTests(ldr.discover('Utilitai', pattern='*.py'))
+    suite.addTests(ldr.discover('code_aster.MacroCommands.Miss', pattern='*.py'))
+    suite.addTests(ldr.discover('code_aster.MacroCommands.Contrib', pattern='*.py'))
 else:
     TESTLIST = [
         'Miss.miss_fichier_cmde', 'Miss.miss_resu_aster', 'Miss.miss_resu_miss',

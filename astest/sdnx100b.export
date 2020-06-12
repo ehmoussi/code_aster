@@ -7,5 +7,4 @@ P testlist verification sequential
 
 F comm sdnx100b.comm D 1
 F mail sdnx100b.mail D 20
-F libr sdnx100a.33 D 33
-F libr sdnx100a.34 D 34
+F nom  sdnx100a.py D 0

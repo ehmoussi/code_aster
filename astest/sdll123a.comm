@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster
-import aster_core
 import numpy as NP
 import numpy.linalg as LA
+from math import pi
+
+from code_aster.Commands import *
+import aster
+import aster_core
+
 
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),
        PAR_LOT='NON', DEBUG=_F(SDVERI='OUI'))
@@ -285,7 +289,7 @@ gyro=GYOM.EXTR_MATR()
 #-- les lignes ind_nolag correspondent aux equations sur
 #-- les DDL physiques
 
-nom_nume='NUMEDDL'
+nom_nume = NUMEDDL.getName().strip()
 Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
 ind_lag1=[]
 ind_nolag=[]

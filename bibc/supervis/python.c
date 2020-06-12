@@ -32,12 +32,12 @@
  * etc...
  */
 
-/* NOTE: 
+/* NOTE:
  *  Since Python may define some pre-processor definitions which affect the
  *  standard headers on some systems, you must include "Python.h" before any
  *  standard headers are included.
  *  The warning on _POSIX_C_SOURCE redefinition must not occur.
- * 
+ *
  *  source: http://docs.python.org/c-api/intro.html
  */
 #include "Python.h"
@@ -47,23 +47,30 @@
 #include "aster_fonctions_module.h"
 #include "med_aster_module.h"
 
-//extern DL_EXPORT(int) Py_Main();
+#include <stdio.h>
+
 
 #ifndef _MAIN_
 #define _MAIN_ main
 #endif
 
+void initAsterModules()
+{
+    PyImport_AppendInittab("aster_core", PyInit_aster_core);
+    PyImport_AppendInittab("aster", PyInit_aster);
+
+    /* Module définissant des opérations sur les objets fonction_sdaster */
+    PyImport_AppendInittab("aster_fonctions", PyInit_aster_fonctions);
+#ifndef _DISABLE_MED
+    PyImport_AppendInittab("med_aster", PyInit_med_aster);
+#endif
+}
+
 int _MAIN_(int argc, char** argv){
     int ierr;
 
-    PyImport_AppendInittab("_aster_core", init_aster_core);
-    PyImport_AppendInittab("aster", initaster);
+    initAsterModules();
 
-    /* Module définissant des opérations sur les objets fonction_sdaster */
-    PyImport_AppendInittab("aster_fonctions", initaster_fonctions);
-#ifndef _DISABLE_MED
-    PyImport_AppendInittab("med_aster", initmed_aster);
-#endif
     wchar_t **wargv = PyMem_Malloc(sizeof(wchar_t*)*argc);
     int i;
     for (i=0; i<argc; i++)

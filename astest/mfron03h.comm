@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -499,13 +499,13 @@ sys1=5
 
 
 # DIFF DES COURBES OBTENUES AVEC LES DEUX METHODES
-DIF1=CALC_FONCTION(COMB=(_F( FONCTION = rhoia_5, COEF =  1.),
-                         _F( FONCTION = rhoim_5, COEF = -1.),
+DIF1=CALC_FONCTION(COMB=(_F( FONCTION = rhoia[5], COEF =  1.),
+                         _F( FONCTION = rhoim[5], COEF = -1.),
                          ) );
 
 TDIF1=CREA_TABLE(FONCTION= _F(FONCTION = DIF1,PARA = ('INST','NEUT1')),);
 
-TRHO1=CREA_TABLE(FONCTION= _F(FONCTION = rhoia_5,PARA = ('INST','RHO_5')),);
+TRHO1=CREA_TABLE(FONCTION= _F(FONCTION = rhoia[5],PARA = ('INST','RHO_5')),);
 
 def ecart_relatif(diff, ref):
     if abs(ref) == 0 :

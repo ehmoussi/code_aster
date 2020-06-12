@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 
 # person_in_charge: jean-luc.flejou at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def force_tuple(obj):
@@ -849,8 +849,7 @@ AFFE_CARA_ELEM=OPER(nom="AFFE_CARA_ELEM",
         GROUP_NO_CENTRE = SIMP(statut='f',typ=grno),
         NOEUD_CENTRE    = SIMP(statut='c',typ=no),
         COOR_CENTRE     = SIMP(statut='f',typ='R',min=2,max=3),
-        EUROPLEXUS      = SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="NON"),
-        UNITE           = SIMP(statut='f',typ=UnitType(),val_min=1,inout='out'),
+        UNITE           = SIMP(statut='f',typ=UnitType(),inout='out'),
      ),
 #
 # ==============================================================================

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ interface
                       dep0, vit0, acc0, depl1, vite1,&
                       acce1, vite2, fexte, famor, fliai,&
                       nchar, nveca, liad, lifo, modele,&
-                      ener, mate, carele, charge,&
+                      ener, mate, mateco, carele, charge,&
                       infoch, fomult, numedd, dt, temps,&
                       tabwk0, tabwk1, archiv, nbtyar, typear,&
                       numrep, ds_energy)
@@ -58,7 +58,7 @@ interface
         character(len=24) :: lifo(*)
         character(len=24) :: modele
         aster_logical :: ener
-        character(len=24) :: mate
+        character(len=24) :: mate, mateco
         character(len=24) :: carele
         character(len=24) :: charge
         character(len=24) :: infoch

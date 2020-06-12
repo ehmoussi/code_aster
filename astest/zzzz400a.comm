@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -129,9 +129,9 @@ RESU21=LIRE_RESU(TYPE_RESU='EVOL_NOLI', FORMAT='MED', MODELE=MODELE, UNITE=80,
                                      _F(GROUP_MA='CARR2',  RELATION='VMIS_CINE_LINE',),
                                      ),
                 FORMAT_MED=(
-                    _F(   NOM_CHAM_MED='RESU20__DEPL',      NOM_CHAM ='DEPL',),
-                    _F(   NOM_CHAM_MED='RESU20__SIEF_ELGA', NOM_CHAM ='SIEF_ELGA',),
-                    _F(   NOM_CHAM_MED='RESU20__VARI_ELGA', NOM_CHAM ='VARI_ELGA',),
+                    _F(   NOM_CHAM_MED='0000000cDEPL',      NOM_CHAM ='DEPL',),
+                    _F(   NOM_CHAM_MED='0000000cSIEF_ELGA', NOM_CHAM ='SIEF_ELGA',),
+                    _F(   NOM_CHAM_MED='0000000cVARI_ELGA', NOM_CHAM ='VARI_ELGA',),
                 ))
 
 # NOM_CHAM ='VARI_ELGA',),)

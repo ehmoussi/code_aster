@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,10 @@
 
 import os.path as osp
 import sys
+from functools import partial
 
-from waflib import TaskGen, Configure, Logs, Utils, Errors
+from waflib import Configure, Errors, Logs, TaskGen, Utils
+
 
 def options(self):
     self.load('compiler_c')
@@ -46,11 +48,12 @@ def configure(self):
         # http://stackoverflow.com/questions/21279036/what-is-clangs-equivalent-to-rdynamic-gcc-flag
         self.env.append_unique('LINKFLAGS', ['-Wl,-export_dynamic'])
 
-    incpath = osp.join(self.path.get_src().abspath(), 'include')
-    self.env.append_value('INCLUDES', incpath)
+    # prefer memory usage over speed
+    self.env.append_unique('LINKFLAGS', ['-Wl,--no-keep-memory'])
 
-    if opts.embed_all or opts.embed_aster:
-        self.env.append_value('ASTER_EMBEDS', ['bibc'])
+    incpath = osp.join(self.path.get_src().abspath(), 'include')
+    self.env.append_value('INCLUDES_BIBC', incpath)
+
     if 'ifort' in self.env.FC_NAME.lower():
         self.env.append_value('LINKFLAGS_fcprogram', ['-nofor_main'])
         if opts.embed_all or opts.embed_aster:
@@ -58,7 +61,6 @@ def configure(self):
             if self.get_define('HAVE_MPI'):
                 self.env.append_value('LINKFLAGS_fcprogram', ['-static_mpi'])
     self.check_cflags()
-    self.check_bibc_depends()
 
 @Configure.conf
 def check_bibc_depends(self):
@@ -66,28 +68,18 @@ def check_bibc_depends(self):
     # never in static
     self.check_cc(uselib_store='SYS', lib='dl')
 
+PYMAIN = 'supervis/python.c'
+
 def build(self):
-    # We split code_aster byte code:
-    #
-    # - libaster.so: a shared library that store symbols
-    # - *aster*.so: python C-extension that contains python bindings
-    #
-    # Some functions are called from C, Fortran or Python
-    # (cross-language communication). Some of them are coded within
-    # python C-extension files while the corresponding byte-codes and
-    # symbols shall be stored in libaster.so. To do so, we define
-    # _WITHOUT_PYMOD_.
-    #
-    from waflib.Tools.c_config import DEFKEYS
+    # The build is splitted in 3 stages:
+    # - compilation of C source files
+    # - build of the shared lib (libaster)
     get_srcs = self.path.get_src().ant_glob
-
     env = self.all_envs[self.variant]
-    buildenv = env.derive()
+    excl = [] if env.BUILD_MED else ['**/med_aster_module.c']
 
-    if env.ASTER_EMBEDS and 'bibc' in env.ASTER_EMBEDS:
-        build_as_embeded(self, env)
-    else:
-        build_as_shared(self, env)
+    build_libbibc(self, env, excl)
+    build_libaster(self, env)
 
     self.add_group()
     # install headers
@@ -97,115 +89,51 @@ def build(self):
     )
     # install generated headers (C + fortran)
     bld = self.path.get_bld().parent
-    config_includes = bld.ant_glob('*.h', quiet=True)
-    self.install_files(
-        env.ASTERINCLUDEDIR,
-        config_includes
-    )
+    config_includes = bld.ant_glob('aster*_config.h', quiet=True)
+    self.install_files(env.ASTERINCLUDEDIR, config_includes)
 
 @TaskGen.extension('.h')
 def process_h(self, node):
     pass
 
-def build_as_shared(self, shenv):
-    if sys.platform == 'darwin':
-        raise Errors.WafError("OS X / Darwin not yet supported")
+def build_libbibc(self, env, excl):
+    use = ['BIBCXX', 'PETSC', 'SCOTCH', 'PARMETIS', 'METIS', 'MED', 'HDF5',
+           'NUMPY', 'PYEXT']
     get_srcs = self.path.get_src().ant_glob
-    uses = shenv['all_dependencies']
-    if shenv.BUILD_MFRONT:
-        uses.append('astermfront')
-
-    nblib = max(1, shenv.NUM_BIBFOR)
-    libasterfor = ['asterbibfor%d' % i for i in range(nblib)]
+    # compile *.c
     self(
         features = 'c cshlib',
+            name = 'asterbibc',
+          source = get_srcs('**/*.c', excl=excl + [PYMAIN]),
+          target = 'bibc',
+         defines = '',
+             use = use,
+             env = env.derive(),
+    install_path = env.ASTERLIBDIR
+    )
+
+def build_libaster(self, env):
+    use = ['asterbibfor', 'asterbibc', 'asterbibcxx']
+    if env.BUILD_MFRONT:
+        use.append('astermfront')
+    # {bibfor, bibc, bibcxx}/*.o
+    self(
+        features = 'cxx cxxshlib',
             name = 'asterlib',
           target = 'aster',
-          source = get_srcs('**/*.c', excl=['supervis/python.c']),
-         defines = '_WITHOUT_PYMOD_',
-             env = shenv.derive(),
-             use = (['PYEMBED', 'NUMPY'] + libasterfor + ['asterbibcxx']
-                    + uses + ['CXX']),
-    install_path = shenv.ASTERLIBDIR,
+          source = PYMAIN,
+         defines = '_MAIN_=_unused_main_', #'_WITHOUT_PYMOD_',
+             env = env.derive(),
+             use = use,
+    install_path = env.ASTERLIBDIR
     )
-
-    self.add_group()
-
-    self(
-        features = 'c cshlib pyext',
-          target = '../bibpyt/_aster_core',
-            name = 'aster_core_module',
-          source = get_srcs('**/aster_core_module.c'),
-             env = shenv.derive(),
-             use = ['asterlib'] + uses,
-    install_path = shenv.ASTERLIBDIR,
-    )
-
-    self(
-        features = 'c cshlib pyext',
-          target = '../bibpyt/aster',
-            name = 'aster_module',
-          source = get_srcs('**/aster_module.c'),
-             env = shenv.derive(),
-             use = ['asterlib'] + uses,
-    install_path = shenv.ASTERLIBDIR,
-    )
-
-    self(
-        features = 'c cshlib pyext',
-          target = '../bibpyt/aster_fonctions',
-            name = 'aster_fonctions',
-          source = get_srcs('**/aster_fonctions_module.c'),
-             env = shenv.derive(),
-             use = ['NUMPY', 'asterlib'] + uses,
-    install_path = shenv.ASTERLIBDIR,
-    )
-
-    if shenv.BUILD_MED:
-        self(
-            features = 'c cshlib pyext',
-              target = '../bibpyt/med_aster',
-                name = 'med_aster',
-              source = get_srcs('**/med_aster_module.c'),
-                 env = shenv.derive(),
-                 use = ['asterlib'] + uses,
-        install_path = shenv.ASTERLIBDIR,
-        )
-
-def build_as_embeded(self, stenv):
-    get_srcs = self.path.get_src().ant_glob
-    uses = stenv['all_dependencies'][:]
-    if stenv.BUILD_MFRONT:
-        uses.append('astermfront')
-
-    excl = ['**/med_aster_module.c'] if not stenv.BUILD_MED else []
-
-    # FC_MAIN = 'main' with gfortran, 'MAIN__' with Intel
-    # Intel compiler requires -nofor_main to link a no fortran program.
-    # So in all cases, main='main' !
-    main = 'main' if stenv.FC_MAIN == -1 or 'ifort' in stenv.FC_NAME.lower() else stenv.FC_MAIN
-
-    tgt = (self.variant == 'release' and stenv.ASTERBINOPT) or stenv.ASTERBINDBG
-    nblib = max(1, stenv.NUM_BIBFOR)
-    libasterfor = ['asterbibfor%d' % i for i in range(nblib)]
-    self(
-        features = 'c fcprogram pyembed',
-          target = tgt,
-            name = 'asterexec',
-          source = get_srcs(['**/*.c'], excl=excl),
-         defines = ['_MAIN_=%s' % main],
-             env = stenv.derive(),
-             use = ['NUMPY'] + libasterfor + ['asterbibcxx'] + uses + ['CXX'],
-        )
+    for submodule in ("aster", "aster_core", "aster_fonctions", "med_aster"):
+        src = osp.join(env.ASTERLIBDIR, submodule + '.so')
+        self.symlink_as(src, "libaster.so")
 
 @Configure.conf
 def check_cflags(self):
     self.start_msg('Getting C compiler flags')
-    if 'icc' in self.env.CC_NAME:
-        self.safe_remove('CFLAGS_PYEXT', '-fwrapv')
-        self.safe_remove('CFLAGS_PYEMBED', '-fwrapv')
-        self.safe_remove('CXXFLAGS_PYEXT', '-fwrapv')
-        self.safe_remove('CXXFLAGS_PYEMBED', '-fwrapv')
     self.end_msg(self.env['CFLAGS'])
 
 @Configure.conf

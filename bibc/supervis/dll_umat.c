@@ -18,7 +18,7 @@
 
 #include "Python.h"
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 #include "aster_utils.h"
 #include "definition_pt.h"
 
@@ -70,7 +70,8 @@ void load_umat_lib(const char* libname, const char* symbol)
         valk = MakeTabFStr(nk, VALK_SIZE);
         SetTabFStr(valk, 0, "UMAT", VALK_SIZE);
         SetTabFStr(valk, 1, (char *)libname, VALK_SIZE);
-        CALL_UTMESS_CORE("F", "FERMETUR_13", &nk, valk, &n0, &ibid, &n0, &rbid, " ");
+        CALL_UTMESS_CORE("F", "FERMETUR_13", &nk, valk, &n0,
+                         &ibid, &n0, &rbid, &n0, " ");
         FreeStr(valk);  // uncallable
     }
     printf("searching symbol '%s'... ", symbol);
@@ -91,7 +92,8 @@ void load_umat_lib(const char* libname, const char* symbol)
         SetTabFStr(valk, 0, "UMAT", VALK_SIZE);
         SetTabFStr(valk, 1, (char *)libname, VALK_SIZE);
         SetTabFStr(valk, 2, (char *)symbol, VALK_SIZE);
-        CALL_UTMESS_CORE("F", "FERMETUR_14", &nk, valk, &n0, &ibid, &n0, &rbid, " ");
+        CALL_UTMESS_CORE("F", "FERMETUR_14", &nk, valk, &n0,
+                         &ibid, &n0, &rbid, &n0, " ");
         FreeStr(valk);  // uncallable
     }
     printf("found\n");

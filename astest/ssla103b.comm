@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from Utilitai.Utmess import MessageLog
+from code_aster.Commands import *
+from code_aster.Messages import MessageLog
 
 DEBUT(CODE=_F( NIV_PUB_WEB='INTERNET', ),
       ERREUR=_F(ERREUR_F='EXCEPTION',), DEBUG=_F(SDVERI='OUI'),
@@ -25,6 +26,7 @@ DEBUT(CODE=_F( NIV_PUB_WEB='INTERNET', ),
       PAR_LOT='NON')
 # ALARME 'SUPERVIS_1' : PAR_LOT='NON' necessaire pour verifier l'emission
 # d'une alarme
+
 
 M=LIRE_MAILLAGE(FORMAT="ASTER",);
 
@@ -348,7 +350,7 @@ TEST_RESU(RESU=(_F(INST=3600.0,
                    PRECISION=9.9999999999999995E-07,),
                 ),
           )
-          
+
 #------------------------------------------------------------------------------
 # 2. Validation de l'emission de l'alarme MECANONLINE2_97 (voir issue24621):
 #-------------------------------------------------------------------------------
@@ -407,7 +409,7 @@ W2_2=STAT_NON_LINE(MODELE=MO, CHAM_MATER=CM2_2,
                 INCREMENT=_F(LIST_INST=L_INST,),
                 NEWTON=_F(MATRICE='TANGENTE',  REAC_ITER=1,),
                 CONVERGENCE=_F(RESI_GLOB_MAXI=1e-06, ITER_GLOB_MAXI=25,),);
-                
+
 # on souhaite verifier que l'alarme MECANONLINE2_97 N'a PAS ete emise
 infos = MessageLog.get_info_alarm()
 emit = [alr[0] for alr in infos if alr[0] == 'MECANONLINE2_97']

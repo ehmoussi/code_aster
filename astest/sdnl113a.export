@@ -7,4 +7,4 @@ P testlist verification sequential
 
 F comm sdnl113a.comm D 1
 F mgib sdnl113a.mgib D 19
-F libr sdnl113a.22 D 22
+F nom  sdnl113a.py D 0

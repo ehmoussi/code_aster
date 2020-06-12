@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,11 +99,11 @@ subroutine assvec(base, vec, nbvec, tlivec, licoef,&
 !
     character(len=1) :: bas, ktyp
     character(len=8) :: ma, mo, mo2, nogdsi, nogdco, nomcas, partit
-    character(len=14) :: nume_ddl
+    character(len=14) :: nume_ddl,kret
     character(len=19) :: vecas, vprof, vecel, a19, b19, c19, resu, nume_equa
     character(len=24) :: kmaila, k24prn, knueq, knequ
     character(len=24) :: knulil, kvelil, kveref, kvedsc, nomli, kvale
-    aster_logical :: ldist, ldgrel, dbg, lcalc_me
+    aster_logical :: ldist, ldgrel, dbg, lcalc_me,lparallel_mesh
     integer :: i, i1, iad, iad1, ialcha
     integer :: iamail, iancmp, ianueq, ianulo, iaprol, iapsdl
     integer :: ichar, icmp, iconx2
@@ -139,11 +139,6 @@ subroutine assvec(base, vec, nbvec, tlivec, licoef,&
 ! --- DEBUT ------------------------------------------------------------
     call jemarq()
 !
-    call asmpi_barrier()
-    call uttcpu('CPU.CALC.1', 'DEBUT', ' ')
-    call uttcpu('CPU.ASSE.1', 'DEBUT', ' ')
-    call uttcpu('CPU.ASSE.3', 'DEBUT', ' ')
-!
 !-----RECUPERATION DU NIVEAU D'IMPRESSION
 !
     call infniv(ifm, niv)
@@ -178,6 +173,17 @@ subroutine assvec(base, vec, nbvec, tlivec, licoef,&
         nume_ddl=refe(2)(1:14)
     endif
     nume_equa = nume_ddl(1:14)//'.NUME'
+
+    call dismoi('NOM_MAILLA', nume_ddl, 'NUME_DDL', repk=ma)
+    call dismoi('PARALLEL_MESH', ma, 'MAILLAGE', repk=kret)
+    lparallel_mesh=(kret.eq.'OUI')
+    if (.not.lparallel_mesh) then
+        call asmpi_barrier()
+    endif
+    call uttcpu('CPU.CALC.1', 'DEBUT', ' ')
+    call uttcpu('CPU.ASSE.1', 'DEBUT', ' ')
+    call uttcpu('CPU.ASSE.3', 'DEBUT', ' ')
+
 !
 !
 ! --- CALCUL D UN LILI POUR VECAS
@@ -736,7 +742,9 @@ subroutine assvec(base, vec, nbvec, tlivec, licoef,&
     call jedetr('&&ASSVEC.NUMLOC')
 !
 !
-    call asmpi_barrier()
+    if (.not.lparallel_mesh) then
+        call asmpi_barrier()
+    endif
     call uttcpu('CPU.CALC.1', 'FIN', ' ')
     call uttcpu('CPU.ASSE.1', 'FIN', ' ')
     call uttcpu('CPU.ASSE.3', 'FIN', ' ')

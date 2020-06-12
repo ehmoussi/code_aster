@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -71,8 +71,10 @@ CONDLIM=AFFE_CHAR_MECA(MODELE=MODELE,
                                      _F(GROUP_NO=('BARFOND'),
                                         DDL='DZ',),),);
 
-INCLUDE(UNITE=38,
-        INFO=1,);
+# --- LECTURE DES FONCTIONS D'ACCELERATION ---
+from fdlv112a import F_ACC_XYZ
+ACC_X, ACC_Y, ACC_Z = F_ACC_XYZ()
+
 
 DYN2 = DYNA_LINE(TYPE_CALCUL='TRAN',
                  BASE_CALCUL='GENE',

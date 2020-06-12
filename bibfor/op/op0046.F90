@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -80,7 +80,7 @@ implicit none
     character(len=24) :: chamel, chstrx
     character(len=24) :: chgeom, chcara(18), chharm
     character(len=24) :: chvarc, chvref
-    character(len=24) :: mate, noobj, compor
+    character(len=24) :: mate, noobj, compor, mateco
     aster_logical :: exipou
     complex(kind=8) :: calpha
     real(kind=8), pointer :: vale(:) => null()
@@ -116,7 +116,7 @@ implicit none
 !
 ! --- LECTURE DES OPERANDES DE LA COMMANDE
 !
-    call nmlect(result, model, mate, cara_elem,&
+    call nmlect(result, model, mate, mateco, cara_elem,&
                 list_load, solver)
 !
 ! - For multifiber beams
@@ -142,7 +142,7 @@ implicit none
 !
 ! ---- CALCUL MECANIQUE
 !
-    call mestat(model, fomult, list_load, mate, cara_elem,&
+    call mestat(model, fomult, list_load, mate, mateco, cara_elem,&
                 listps, solver, compor, matass)
 !
 ! ---- CALCUL DE L'OPTION SIEF_ELGA OU RIEN
@@ -212,7 +212,7 @@ implicit none
 !         -- SI LE CHAMP A DEJE ETE CALCULE :
             if (iret .eq. 0) goto 62
             call compStrx(nomode, ligrel, compor,&
-                          chamgd, chgeom, mate  , chcara ,&
+                          chamgd, chgeom, mateco, chcara ,&
                           chvarc, chvref, &
                           base  , chstrx, iret  ,&
                           exipou, charep, typcoe, alpha, calpha)
@@ -226,7 +226,7 @@ implicit none
 !           -- SI LE CHAMP A DEJE ETE CALCULE :
             if (iret .eq. 0) goto 13
             call compStress(nomode, ligrel, compor,&
-                            chamgd, chgeom, mate  ,&
+                            chamgd, chgeom, mateco ,&
                             chcara, chtime, chharm,&
                             chvarc, chvref, chstrx,&
                             base  , chamel, iret  )

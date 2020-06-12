@@ -1,7 +1,6 @@
-from functools import reduce
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,62 +17,10 @@ from functools import reduce
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-########################################################################
-# macro commande de post-traitement (ex POST_GOUJ2E)
-# calcul des reactions cumulees suivant les filets
+DEBUT(CODE=_F(NIV_PUB_WEB='INTRANET',), PAR_LOT='NON',
+      DEBUG=_F(SDVERI='OUI'))
 
-def POST_GOUJ_ops(self,TABLE):
-  self.set_icmd(1)
-  ### On importe les definitions des commandes a utiliser dans la macro
-  CREA_TABLE  =self.get_cmd('CREA_TABLE')
-
-  aa1=TABLE.EXTR_TABLE()
-  aaa=aa1.values()
-
-  v_DY=aaa['DY']
-  v_NU=aaa['NUME_ORDRE']
-  NBVAL=len(v_DY)
-  nbv=0
-  for num in v_NU :
-    if num==v_NU[0] : nbv=nbv+1
-  if nbv>0 : ninch=NBVAL//nbv
-  else : print("error")
-
-  v_F1=[v_DY[i*nbv:(i+1)*nbv] for i in range(ninch)]
-  v_FO=[]
-  v_CU=[]
-  def add(x,y): return x+y
-  for liste in v_F1:
-    liste.reverse()
-    v_FO.append(liste)
-    ftot=reduce(add,liste)
-    v_CU.append([reduce(add,liste[:i+1])*100./ftot for i in range(len(liste))])
-
-  v_NF=[]
-  for i in range(ninch):
-     v_NF.extend(range(1, nbv + 1))
-  v_RE=[]
-  for liste in v_FO : v_RE=v_RE+liste
-  v_RC=[]
-  for liste in v_CU : v_RC=v_RC+liste
-
-  self.DeclareOut('tab3',self.sd)
-  tab3=CREA_TABLE(LISTE=(_F(PARA    = 'NUME_ORDRE' ,
-                              LISTE_I = v_NU ),
-                           _F(PARA    = 'NUME_FILET' ,
-                              LISTE_I = v_NF ),
-                           _F(PARA    = 'REACTION' ,
-                              LISTE_R = v_RE ),
-                           _F(PARA    = 'REACTION_CUMU' ,
-                              LISTE_R = v_RC ),
-                 ))
-  return 0
-
-POST_GOUJ=MACRO(nom="POST_GOUJ",op=POST_GOUJ_ops,sd_prod=table_sdaster,reentrant='n',fr="",
-                TABLE=SIMP(statut='o',typ=table_sdaster),)
-########################################################################
-
-POURSUITE(CODE='OUI')
+from zzzz120a_geom import *
 
 # CAS TEST : CALCUL D UN ASSEMBLAGE GOUJON-BRIDE
 # LA BRIDE COMPORTE UN HAUT DE BRIDE DE 200 MM

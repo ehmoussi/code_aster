@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -162,7 +162,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
 !
 ! -- TRAITEMENTS SOLVEUR LINEAIRE
 ! -- LECTURE DES PARAMETRES SOLVEURS LINEAIRES ET CREATION DE
-!    LA SD SOLVEUR ASSOCIEE. CETTE SD SOLVEUR EST LOCALE A L'OPERATEUR. POUR CE CALCUL, C'EST ELLE 
+!    LA SD SOLVEUR ASSOCIEE. CETTE SD SOLVEUR EST LOCALE A L'OPERATEUR. POUR CE CALCUL, C'EST ELLE
 !    QUI EST UTILISEE POUR PARAMETREE LE SOLVEUR LINEAIRE, ET NON PAS LA SD SOLVEUR CREE PAR LA
 !    CMDE ECLATEE NUME_DDL LORS DE LA CONSTITUTION DES MATRICES.
     call jeveuo(solveu//'.SLVK', 'L', islvk)
@@ -195,7 +195,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
         call tldlg2(lraide, nprec, nstoc, vecrig)
         call uttcpu('CPU.RESO.1', 'FIN', ' ')
         call uttcpu('CPU.RESO.4', 'FIN', ' ')
-    endif 
+    endif
 !
 ! --  CONSTRUCTION DES BORNES DE RECHERCHE (FMIN/FMAX, OMEMIN/OMEMAX)
 ! --  EVENTUELLEMENT VIA UNE TABLE PROVENANT D'INFO_MODE
@@ -253,7 +253,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
       omemin=-omemax
       omemax=-rbid
     endif
-    
+
 !
 ! --- DETERMINATION D'INFO POUR LE TEST DE STURM ET LES POSITIONS
 !     MODALES + CONSTRUCTION DE LA MATRICE DYNAMIQUE/ SA FACTORISEE
@@ -292,7 +292,7 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
             if (mod45(1:4).eq.'OP45') then
               if (nfreq .le. 0) then
                 if (arret(1:3) .eq. 'OUI') then
-                  call utmess('Z', 'MODAL_1', num_except=24)
+                  call utmess('Z', 'MODAL_1', num_except=SOLVER_ERROR)
                 else
                   nfreq = 1
                   call rscrsd('G', modes, typcon, nfreq)
@@ -307,13 +307,13 @@ subroutine vpini1(eigsol, modes, solveu, typcon, vecblo,&
                 goto 999
               else
                 call codent(nfreq, 'G', chaine)
-                call utmess('I', 'ALGELINE2_16', sk=chaine)             
+                call utmess('I', 'ALGELINE2_16', sk=chaine)
               endif
               if (typcal(1:11).eq.'CALIBRATION') then
                 iretr=-3
                 nfreq_calibr_ = nfreq
                 goto 999
-              endif         
+              endif
             endif
             lmtpsc=lmatra
             matpsc=matopa

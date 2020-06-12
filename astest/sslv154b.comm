@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ sig = 1000000.
 a = 2
 
 MA=LIRE_MAILLAGE(FORMAT='MED')
- 
+
 MA=DEFI_GROUP( reuse=MA,
                MAILLAGE=MA,
                CREA_GROUP_NO=_F(GROUP_MA='FACE_AV',),
@@ -45,18 +45,18 @@ MA=DEFI_GROUP( reuse=MA,
                                   TOUT = 'OUI',
                                   TYPE_MAILLE='3D',
                                  ),);
-  
+
 MA=MODI_MAILLAGE(reuse =MA,
                  MAILLAGE=MA,
                  ORIE_PEAU_3D=_F(GROUP_MA=('FACE_SUP','FACE_INF'),),);
-           
+
 MO=AFFE_MODELE(MAILLAGE=MA,
                AFFE=_F(GROUP_MA=('CUBE','FACE_SUP','FACE_INF','FACE_LAD','FACE_AV','FACE_LAG',),
                        PHENOMENE='MECANIQUE',
                        MODELISATION='3D',),)
 
 # fissure X-FEM
-FISS=DEFI_FISS_XFEM(MAILLAGE=MA, 
+FISS=DEFI_FISS_XFEM(MAILLAGE=MA,
                     #TYPE_ENRI_FOND='TOPOLOGIQUE',
                     NB_COUCHES=5,
                     DEFI_FISS=_F(FORM_FISS='ELLIPSE',
@@ -131,6 +131,7 @@ CG=CALC_G(THETA=_F(FISSURE=FISS,
           RESULTAT=RESU,
           LISSAGE=_F(LISSAGE_THETA='LAGRANGE',
                      LISSAGE_G='LAGRANGE',),
+          CHAM_THETA=CO('cham_theta_no1'),
           OPTION='CALC_K_G')
 
 
@@ -140,7 +141,7 @@ PK=POST_K1_K2_K3(FISSURE=FISS,
                  RESULTAT=RESU,
                  ABSC_CURV_MAXI=0.5,
                  INST=1.)
-                
+
 # formule pour le calcul de l'angle en degre
 ANGLE = FORMULE(VALE='ABSC_CURV/a * 180./pi',
                 a=a,

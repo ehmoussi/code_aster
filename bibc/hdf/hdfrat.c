@@ -18,17 +18,17 @@
 
 /* person_in_charge: j-pierre.lefebvre at edf.fr */
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Lire un attribut de type chaine de caractères associé à un dataset 
-/ au sein d'un fichier HDF 
+/ Lire un attribut de type chaine de caractères associé à un dataset
+/ au sein d'un fichier HDF
 /  Paramètres :
 /   - in  iddat : identificateur du dataset (hid_t)
 /   - in  nomat : nom de l'attribut (char *)
 /   - in  nbv   : nombre de valeurs associées à l'attribut (long)
 /   - out valat : valeur de l'attribut (char *)
 /  Résultats :
-/     =0 OK, =-1 problème 
+/     =0 OK, =-1 problème
 /-----------------------------------------------------------------------------*/
 #ifndef _DISABLE_HDF5
 #include <hdf5.h>
@@ -39,15 +39,15 @@ ASTERINTEGER DEFPSPS(HDFRAT, hdfrat, hid_t *iddat, char *nomat, STRING_SIZE ln,
 {
   ASTERINTEGER iret=-1;
 #ifndef _DISABLE_HDF5
-  hid_t ida,attr,atyp,aspa;  
+  hid_t ida,attr,atyp,aspa;
   herr_t ret;
   int k;
   int rank;
   size_t lt;
-  hsize_t sdim[1]; 
+  hsize_t sdim[1];
   char *nom;
-  void *malloc(size_t size); 
-   
+  void *malloc(size_t size);
+
   ida=(hid_t) *iddat;
   nom = (char *) malloc((ln+1) * sizeof(char));
   for (k=0;k<ln;k++) {
@@ -56,7 +56,7 @@ ASTERINTEGER DEFPSPS(HDFRAT, hdfrat, hid_t *iddat, char *nomat, STRING_SIZE ln,
   k=ln-1;
   while (nom[k] == ' ') { k--;}
   nom[k+1] = '\0';
-  if ( (attr = H5Aopen(ida,nom,H5P_DEFAULT)) >= 0) { 
+  if ( (attr = H5Aopen(ida,nom,H5P_DEFAULT)) >= 0) {
     atyp = H5Aget_type(attr);
     lt=H5Tget_size(atyp);
     aspa = H5Aget_space(attr);
@@ -64,9 +64,9 @@ ASTERINTEGER DEFPSPS(HDFRAT, hdfrat, hid_t *iddat, char *nomat, STRING_SIZE ln,
       ret  = H5Sget_simple_extent_dims(aspa, sdim, NULL);
       ret  = H5Aread(attr, atyp, valat);
       iret = 0;
-    } 
+    }
     ret  = H5Aclose(attr);
-  } 
+  }
   free(nom);
 #else
   CALL_UTMESS("F", "FERMETUR_3");

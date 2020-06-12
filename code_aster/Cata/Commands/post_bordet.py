@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,12 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_BORDET =MACRO(nom="POST_BORDET",
-                   op=OPS('Macro.post_bordet_ops.post_bordet_ops'),
+                   op=OPS('code_aster.MacroCommands.post_bordet_ops.post_bordet_ops'),
                    sd_prod=table_sdaster,
                    reentrant='n',
                    fr=tr("calcul de la probabilite de clivage via le modele de Bordet"),
@@ -44,7 +43,7 @@ POST_BORDET =MACRO(nom="POST_BORDET",
          b_nucl          =BLOC( condition = """equal_to("PROBA_NUCL", 'OUI')""",
                           PARAM =FACT(statut='o',
                                  M                =SIMP(statut='o',typ='R',val_min=0.E+0),
-                                 SIGM_REFE         =SIMP(statut='o',typ=(fonction_sdaster),val_min=0.E+0),
+                                 SIGM_REFE         =SIMP(statut='o',typ=fonction_sdaster,),
                                  VOLU_REFE        =SIMP(statut='o',typ='R',val_min=0.E+0),
                                  SIG_CRIT         =SIMP(statut='o',typ='R',val_min=0.E+0),
                                  SEUIL_REFE       =SIMP(statut='o',typ='R',val_min=0.E+0),
@@ -54,7 +53,7 @@ POST_BORDET =MACRO(nom="POST_BORDET",
          b_prop          =BLOC( condition = """equal_to("PROBA_NUCL", 'NON')""",
                           PARAM =FACT(statut='o',
                                  M                =SIMP(statut='o',typ='R',val_min=0.E+0),
-                                 SIGM_REFE         =SIMP(statut='o',typ=fonction_sdaster,val_min=0.E+0),
+                                 SIGM_REFE         =SIMP(statut='o',typ=fonction_sdaster,),
                                  VOLU_REFE        =SIMP(statut='o',typ='R',val_min=0.E+0),
                                  SIG_CRIT         =SIMP(statut='o',typ='R',val_min=0.E+0),
                                  SEUIL_REFE       =SIMP(statut='o',typ='R',val_min=0.E+0),

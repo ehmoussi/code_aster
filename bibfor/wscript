@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -28,24 +28,11 @@ def options(self):
     self.load('compiler_fc')
     default_nblib = 0 if sys.platform != 'darwin' else 3
     group = self.get_option_group("code_aster options")
-    group.add_option('--num-bibfor', dest='num_bibfor', type=int,
-                    action='store', default=0, metavar='NUM',
-                    help="number of libraries to store fortran objects. "
-                         "0: only uses '.o', 1: builds one static lib, "
-                         ">1: builds several shared libs "
-                         "(default: {0})"
-                         .format(default_nblib))
 
 def configure(self):
+    self.load('compiler_fc')
     incpath = osp.join(self.path.get_src().abspath(), 'include')
-    self.env.append_value('INCLUDES', incpath)
-
-    if self.get_define('HAVE_MUMPS'):
-        vers = eval(self.get_define('ASTER_MUMPS_VERSION'))
-        suffix = self.options.parallel and '_mpi' or ''
-        ant = 'bibfor/include_mumps-%s%s' % (vers, suffix)
-        dirs = [d.abspath() for d in self.srcnode.ant_glob(ant, src=True, dir=True)]
-        self.env.append_value('INCLUDES', dirs)
+    self.env.append_value('INCLUDES_BIBFOR', incpath)
 
     self.check_fortran()
     self.check_fortran_dummy_main()
@@ -58,41 +45,25 @@ def configure(self):
     self.check_fortran_types()
     self.check_fortran_preprocessor()
     self.check_optional_features()
-    # number of libs
-    self.env['NUM_BIBFOR'] = self.options.num_bibfor
 
 def build(self):
     env = self.all_envs[self.variant]
     get_srcs = self.path.get_src().ant_glob
 
-    uses = env['all_dependencies']
+    use = ['BIBFOR', 'PETSC', 'MUMPS', 'MATH', 'NUMPY']
+    if self.env.BUILD_OPENMP:
+      use.append('OPENMP')
 
-    # split object files in `NUM_BIBFOR` libs
-    allF90 = get_srcs('**/*.F90')
-    nblib = env['NUM_BIBFOR']
-    if type(nblib) is not int:
-        raise Errors.WafError("'--num-bibfor' not defined. "
-                              "Please run './waf configure'")
-    if nblib == 0:
-        fclib = ''
-    elif nblib == 1:
-        fclib = 'fcstlib'
-    else:
-        fclib = 'fcshlib'
-    nblib = max(1, nblib)
-    nbobj = len(allF90) // nblib
-    for i in range(nblib):
-        last = (i + 1) * nbobj
-        if i == nblib - 1:
-            last = len(allF90)
-        libF90 = allF90[i * nbobj:last]
-        self(features = 'fc ' + fclib,
-             name = 'asterbibfor%d' % i,
-             target = 'bibfor%d' % i,
-             source = libF90,
+    srcF90 = get_srcs('**/*.F90')
+    self(
+        features = 'fc fcshlib',
+            name = 'asterbibfor',
+          target = 'bibfor',
+          source = srcF90,
+             use = use,
              env = env.derive(),
-             use = uses,
-             install_path = env.ASTERLIBDIR)
+    install_path = env.ASTERLIBDIR
+    )
 
 ###############################################################################
 MAIN = "      program main\n      end program main\n"
@@ -113,7 +84,7 @@ def check_fortran_compiler_flags(self):
         self.check_fortran_compiler_options(['-fpe0', '-traceback'])
         if self.env.DEST_CPU == 'x86_64':
             self.check_fortran_compiler_options(['-i8', '-r8'])
-        self.check_fortran_compiler_options(['-warn', 'interfaces', '-nogen-interfaces'])
+        self.check_fortran_compiler_options(['-nogen-interfaces', '-xAVX'])
         # all Intel specific features must use: _USE_INTEL_IFORT && HAVE_xxx
         # this marker must be specified on command line (using -D)
         # because it must not be enabled by aslint

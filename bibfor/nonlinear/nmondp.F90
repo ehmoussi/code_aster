@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ aster_logical :: londe
     call jeveuo(lload_info, 'L', vi   = v_load_info)
     nb_load = v_load_info(1)
     do i_load = 1, nb_load
-        if (ischar_iden(v_load_info, i_load, nb_load, 'NEUM', 'ONDE' , v_load_name(i_load))) then
+        if (ischar_iden(v_load_info, i_load, nb_load, 'NEUM', 'ONDE', v_load_name(i_load))) then
             nondp = nondp + 1
         endif
     end do

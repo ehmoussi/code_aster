@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine meamgy(modele, mate, cara, compor, matel,&
+subroutine meamgy(modele, mate, mateco, cara, compor, matel,&
                   nchar, lchar)
     implicit none
 !     ARGUMENTS:
@@ -36,7 +36,7 @@ subroutine meamgy(modele, mate, cara, compor, matel,&
 #include "asterfort/exisd.h"
     character(len=8) :: modele, cara, lchar(*)
     character(len=19) :: matel
-    character(len=24) :: mate
+    character(len=24) :: mate, mateco
     character(len=*) :: compor
     integer :: nchar
 ! ----------------------------------------------------------------------
@@ -95,7 +95,7 @@ subroutine meamgy(modele, mate, cara, compor, matel,&
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom
     lpain(2) = 'PMATERC'
-    lchin(2) = mate
+    lchin(2) = mateco
     lpain(3) = 'PCAORIE'
     lchin(3) = chcara(1)
     lpain(4) = 'PCAGNPO'

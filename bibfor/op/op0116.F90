@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,22 +62,22 @@ implicit none
 !
 
     aster_logical :: ltrans, force
-    integer :: i, ib, imod,  nbmod, j1, jdisc, dim, icor(2), iadx, iady 
+    integer :: i, ib, imod,  nbmod, j1, jdisc, dim, icor(2), iadx, iady
     integer :: nbdesc, nbrefe, nbvale, nbcoefs, icoef, jcoef
     real(kind=8) :: r8b, pi, freq, para(2), constant,  epstol
     character(len=2) :: modelisa(2), modelis
-    character(len=8) :: mater, rigthe, modmec, nomres, potentiel
+    character(len=8) :: rigthe, modmec, nomres, potentiel
     character(len=8) :: mailla, maflui, nume
     character(len=19) :: chamno, vectas, solve1, solve2, resuas, nomch(3)
     character(len=19) :: tmpmod
-    character(len=24) :: typres, nomcom, mate, metres, arcinf, inflis
+    character(len=24) :: typres, nomcom, mateco, metres, arcinf, inflis, mater
     character(len=24) :: chcmb2, vesolx, vesoly, vesolz, vect2
     character(len=24) :: liditr, nuddl, modele, bl24, chcomb, chamnx, chamny, chamnz
     complex(kind=8) :: c16b
     type(NL_DS_InOut) :: ds_inout
     modele  = ' '
     mater   = ' '
-    mate    = ' '
+    mateco  = ' '
     rigthe  = ' '
     modmec  = ' '
     chamno  = ' '
@@ -88,12 +88,12 @@ implicit none
     epstol = 1.d5*r8prem()
     r8b=0.d0
     c16b = dcmplx(0.,0.)
-    
+
 !---------------------------------------------------------------------
     call jemarq()
 !---------------------------------------------------------------------
     call getres(nomres, typres, nomcom)
-    
+
 !---------------------------------------------------------------------
 !---------- RECUPERATION DES ARGUMENTS DE LA COMMANDE ----------------
 !---------------------------------------------------------------------
@@ -105,7 +105,7 @@ implicit none
 !---------------------------------------------------------------------
     call dismoi('NOM_MODELE', rigthe, 'MATR_ASSE', repk=modele)
     call dismoi('CHAM_MATER', rigthe, 'MATR_ASSE', repk=mater )
-    if (ib .ne. 0) call rcmfmc(mater, mate, l_ther_ = ASTER_FALSE)
+    if (ib .ne. 0) call rcmfmc(mater, mateco, l_ther_ = ASTER_FALSE)
 !---------------------------------------------------------------------
 !---------- NUMEROTATION DES DDL FLUIDES -----------------------------
 !---------------------------------------------------------------------
@@ -152,7 +152,7 @@ implicit none
         call wkvect('&&OP0116.TYSTO', 'V V K24', nbmod, iady)
         call wkvect('&&OP0116.TZSTO', 'V V K24', nbmod, iady)
 
-        call tabcor(modelis, mate, mailla, maflui, modele, nuddl, 0, icor)
+        call tabcor(modelis, mater, mateco, mailla, maflui, modele, nuddl, 0, icor)
 
         call getvr8(' ', 'COEF_MULT',  iocc=1, nbval=0, nbret=icoef)
         nbcoefs = 1
@@ -186,10 +186,10 @@ implicit none
             chamny = '&&OP0116.CHAMNY'
             vesolx = '&&OP0116.VESOLX'
             vesoly = '&&OP0116.VESOLY'
-            call alimrs(mate, mailla, maflui, modele, 0,nuddl, tmpmod, chamnx, 'DX', icor)
-            call alimrs(mate, mailla, maflui, modele, 0,nuddl, tmpmod, chamny, 'DY', icor)
-            call calflu(chamnx, modele, mate, nuddl, vesolx, nbdesc, nbrefe, nbvale, 'X')
-            call calflu(chamny, modele, mate, nuddl, vesoly, nbdesc, nbrefe, nbvale, 'Y')
+            call alimrs(mater, mateco, mailla, maflui, modele, 0,nuddl, tmpmod, chamnx, 'DX', icor)
+            call alimrs(mater, mateco, mailla, maflui, modele, 0,nuddl, tmpmod, chamny, 'DY', icor)
+            call calflu(chamnx, modele, mater, mateco, nuddl, vesolx, nbdesc, nbrefe, nbvale, 'X')
+            call calflu(chamny, modele, mater, mateco, nuddl, vesoly, nbdesc, nbrefe, nbvale, 'Y')
 !
             chcomb = "&&OP0116.CHCOMB"
             nomch  = [vect2(1:19), vesolx(1:19),vesoly(1:19)]
@@ -198,8 +198,10 @@ implicit none
             if (dim .eq. 3) then
                 chamnz = '&&OP0116.CHAMNZ'
                 vesolz = '&&OP0116.VESOLZ'
-                call alimrs(mate, mailla, maflui, modele, 0,nuddl, tmpmod, chamnz, 'DZ', icor)
-                call calflu(chamnz, modele, mate, nuddl, vesolz, nbdesc, nbrefe, nbvale, 'Z')
+                call alimrs(mater, mateco, mailla, maflui, modele, 0,nuddl, tmpmod, chamnz, &
+                            'DZ', icor)
+                call calflu(chamnz, modele, mater, mateco, nuddl, vesolz, nbdesc, nbrefe,&
+                             nbvale, 'Z')
 !
                 chcmb2 = "&&OP0116.CHCOMB2"
                 call vtcmbl(2, ['R','R'], [1.d0, 1.d0], ['R','R'], [chcomb,vesolz], 'R', chcmb2)
@@ -231,7 +233,7 @@ implicit none
                 call wkvect(liditr, 'V V R', nbmod, jdisc)
                 zr(jdisc+1-1) = freq
 !
-                call ntnoli(modele, mate, bl24, .false._1, ltrans,&
+                call ntnoli(modele, mater, bl24, .false._1, ltrans,&
                             para, arcinf(1:19), ds_inout)
             endif
 !           --- Pour les modes doubles, assurer la qualite monotone de la discretisation
@@ -243,7 +245,7 @@ implicit none
             end if
             zr(jdisc+i-1) = freq
             force = .false._1
-            call ntarch(i-1         , modele  , mate   , bl24, para, &
+            call ntarch(i-1         , modele  , mater   , bl24, para, &
                         arcinf(1:19), ds_inout, force)
 !
 10      continue

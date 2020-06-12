@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ function cotsti(typsup)
         typinf='LISTR8'
     else if (typsup.eq.'LISTIS_SDASTER') then
         typinf='LISTIS'
-    else if (typsup.eq.'MAILLAGE_SDASTER') then
+    else if (typsup.eq.'MAILLAGE_SDASTER'.or.typsup.eq.'MAILLAGE') then
         typinf='MAILLAGE'
     else if (typsup.eq.'MODELE_SDASTER') then
         typinf='MODELE'

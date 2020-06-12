@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine rcmaco(chmat, indmat, nbmat, imate, l_ther)
-        character(len=8) :: chmat
+    subroutine rcmaco(chmat, chmatgrp, indmat, nbmat, imate, l_ther, basename)
+        character(len=8) :: chmat, basename
+        character(len=24) :: chmatgrp
         integer :: indmat
         integer :: nbmat
         integer :: imate

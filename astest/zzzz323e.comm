@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -85,7 +85,7 @@ REPLO_1 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_1',
+                      NOM_MED     = '00000003.REPLO_1',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLO_2 = LIRE_CHAMP(
@@ -95,7 +95,7 @@ REPLO_2 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_2',
+                      NOM_MED     = '00000003.REPLO_2',
                       NOM_CMP_IDEM='OUI',
                      )
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,9 @@
 
 # person_in_charge: david.haboussa at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_COMPOR=OPER(nom="DEFI_COMPOR",op=59,sd_prod=compor_sdaster,
     fr=tr("Définir le comportement d'un monocristal, d'un polycristal ou de groupes de fibres"),
@@ -53,25 +52,25 @@ DEFI_COMPOR=OPER(nom="DEFI_COMPOR",op=59,sd_prod=compor_sdaster,
         ),
 #
         b_dd_kr = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_DD_KR')""",
-            FAMI_SYST_GLIS  = SIMP(statut='f', typ='TXM', max=1, into=('BCC24','UTILISATEUR'), defaut=('BCC24',),),
+            FAMI_SYST_GLIS  = SIMP(statut='f', typ='TXM', max=1, into=('BCC24','UTILISATEUR'), defaut='BCC24',),
             b_util = BLOC(condition="""equal_to("FAMI_SYST_GLIS", 'UTILISATEUR') """,
                 TABL_SYST_GLIS = SIMP(statut='f', typ=table_sdaster, max=1,),
             ),
         ),
 #
         b_ecp_cfc = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_DD_FAT')""",
-            FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('OCTAEDRIQUE',), defaut=('OCTAEDRIQUE',),),
+            FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('OCTAEDRIQUE',), defaut='OCTAEDRIQUE',),
         ),
 #
         b_dd_cfc = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_DD_CFC') or equal_to("ECOULEMENT", 'MONO_DD_CFC_IRRA')""",
-            FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('OCTAEDRIQUE','UTILISATEUR',), defaut=('OCTAEDRIQUE',),),
+            FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('OCTAEDRIQUE','UTILISATEUR',), defaut='OCTAEDRIQUE',),
             b_util = BLOC(condition="""equal_to("FAMI_SYST_GLIS", 'UTILISATEUR')""",
                 TABL_SYST_GLIS = SIMP(statut='f', typ=table_sdaster, max=1,),
             ),
         ),
 #
         b_dd_cc = BLOC(condition="""equal_to("ECOULEMENT", 'MONO_DD_CC') or equal_to("ECOULEMENT", 'MONO_DD_CC_IRRA') """,
-            FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('CUBIQUE1','UTILISATEUR',), defaut=('CUBIQUE1',),),
+            FAMI_SYST_GLIS = SIMP(statut='f', typ='TXM', max=1, into=('CUBIQUE1','UTILISATEUR',), defaut='CUBIQUE1',),
             b_util = BLOC(condition="""equal_to("FAMI_SYST_GLIS", 'UTILISATEUR')""",
                 TABL_SYST_GLIS = SIMP(statut='f', typ=table_sdaster, max=1,),
             ),

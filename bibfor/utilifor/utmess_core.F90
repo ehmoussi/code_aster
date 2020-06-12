@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine utmess_core(typ, idmess, nk, valk, ni,&
-                       vali, nr, valr, fname)
+                       vali, nr, valr, nexcep, fname)
 ! person_in_charge: mathieu.courtois at edf.fr
 !
     use message_module, only: Message, init_message, free_message
@@ -48,10 +48,8 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     integer, intent(in) :: vali(*)
     integer, intent(in) :: nr
     real(kind=8), intent(in) :: valr(*)
+    integer, intent(in) :: nexcep
     character(len=*), intent(in) :: fname
-!
-    integer :: nexcep
-    common /utexc /  nexcep
 !
     integer, save :: recurs
     character(len=24) :: msgId
@@ -84,7 +82,9 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     msgId = idmess
     typm = typ
     idf = index('EFIMASZD', typm(1:1))
-    ASSERT(idf .ne. 0)
+    if (idf .eq. 0) then
+        idf = 2
+    endif
     lstop = .false.
 !
 !     --- COMPORTEMENT EN CAS D'ERREUR
@@ -108,14 +108,14 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
     lvalid = (idf.eq.6 .or. idf.eq.7) .or. (idf.eq.2 .and. compex(1:lout).eq.'EXCEPTION+VALID')
 !     DOIT-ON S'ARRETER BRUTALEMENT (POUR DEBUG) ?
     labort = idf.eq.2 .and. compex(1:lout).eq.'ABORT'
-!     AFFICHIER LE TRACEBACK SI DISPONIBLE
+!     AFFICHER LE TRACEBACK SI DISPONIBLE
     ltrb = labort .or. (lerror .and. msgId(1:4).eq.'DVP_') .or. idf.eq.8
 !
     numex = nexcep
-    if (lerror .and. idf .ne. 7) then
+    if (numex .eq. 0 .or. (lerror .and. idf .ne. 7)) then
 !     SI EXCEPTION, NEXCEP EST FIXE PAR COMMON VIA UTEXCP
 !     SINON ON LEVE L'EXCEPTION DE BASE ASTER.ERROR
-        numex = 21
+        numex = 1
     endif
 !
     suite = .false.
@@ -182,7 +182,7 @@ subroutine utmess_core(typ, idmess, nk, valk, ni,&
 !           DES APPELS SONT IMBRIQUES
             if (idf .ne. 7) then
 !           SINON ON LEVE L'EXCEPTION DE BASE ASTER.ERROR
-                numex = 21
+                numex = 1
             endif
 !
             if (isjvup() .eq. 1) then

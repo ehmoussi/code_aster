@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -297,7 +297,7 @@ Resultat=DYNA_VIBRA(
     ),
     COMPORTEMENT=_F(RELATION='DIS_ECRO_TRAC',
                     NOEUD_1='N01', NOEUD_2='N02', FTAN= fctsy, ECROUISSAGE='ISOTROPE'),
-    ARCHIVAGE=_F(PAS_ARCH=1.E8, INST=archivedInstants),
+    ARCHIVAGE=_F(PAS_ARCH=10**8, INST=archivedInstants),
     IMPRESSION=_F(UNITE_DIS_ECRO_TRAC =unite),
 )
 #

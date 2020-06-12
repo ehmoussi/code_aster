@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,6 @@
 #    *---* N1   Y=-5
 
 import numpy
-import aster
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',));
 
@@ -123,10 +122,10 @@ linst+=list(linstf);
 #linst+=list(linstg);
 #linst+=list(linsth);
 
-aster.affiche('RESULTAT','################################\n\n');
-aster.affiche('RESULTAT','liste d instants du calcul : \n\n');
-aster.affiche('RESULTAT',str(linst)+'\n\n');
-aster.affiche('RESULTAT','################################\n\n');
+print('################################\n\n')
+print('liste d instants du calcul : \n\n')
+print(str(linst)+'\n\n')
+print('################################\n\n')
 
 #############################################################
 # Le python precedent est equivalent a la commande ASTER

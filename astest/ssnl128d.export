@@ -3,7 +3,9 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist ci verification sequential
 
 F comm ssnl128d.comm D 1
+F nom ssnl128d_mater.py D 0
+F comm ssnl128d.com2 D 1
 F mail ssnl128a.mail D 20

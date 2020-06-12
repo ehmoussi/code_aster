@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine vecgme(model    , cara_elem   , matez          , lload_namez, lload_infoz,&
+subroutine vecgme(model    , cara_elem   , matez          , matecoz, lload_namez, lload_infoz,&
                   inst_curr, disp_prevz  , disp_cumu_instz, vect_elemz , inst_prev  ,&
                   compor   , ligrel_calcz, vite_currz     , acce_currz , strx_prevz)
 !
@@ -37,7 +37,7 @@ implicit none
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: cara_elem
-character(len=*), intent(in) :: matez
+character(len=*), intent(in) :: matez, matecoz
 real(kind=8), intent(in) :: inst_curr
 character(len=*), intent(in) :: disp_prevz
 character(len=*), intent(in) :: disp_cumu_instz
@@ -88,7 +88,7 @@ character(len=*), intent(in) :: strx_prevz
     integer :: load_nume
     integer :: nb_in_prep
     real(kind=8) :: inst_theta
-    character(len=24) :: ligrel_calc, mate
+    character(len=24) :: ligrel_calc, mate, mateco
     character(len=19) :: vect_elem, resu_elem
     character(len=19) :: disp_prev, disp_cumu_inst, vite_curr, acce_curr, strx_prev
     character(len=24) :: lload_name
@@ -108,6 +108,7 @@ character(len=*), intent(in) :: strx_prevz
     newnom         = '.0000000'
     resu_elem      = '&&VECGME.0000000'
     mate           = matez
+    mateco         = matecoz
     lload_name     = lload_namez
     lload_info     = lload_infoz
     disp_prev      = disp_prevz
@@ -151,7 +152,7 @@ character(len=*), intent(in) :: strx_prevz
 !
 ! - Preparing input fields
 !
-    call load_neum_prep(model    , cara_elem , mate      , 'Suiv'      , inst_prev,&
+    call load_neum_prep(model    , cara_elem , mate      , mateco, 'Suiv'      , inst_prev,&
                         inst_curr, inst_theta, nb_in_maxi, nb_in_prep  , lchin    ,&
                         lpain    , disp_prev = disp_prev, disp_cumu_inst = disp_cumu_inst,&
                         compor = compor, strx_prev_=strx_prev, vite_curr_=vite_curr, &

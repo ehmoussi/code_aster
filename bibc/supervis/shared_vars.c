@@ -25,7 +25,7 @@
  * So when a global variable is set from Python to C it is stored in the symbols
  * of the `module`. And when this same variable is accessed from Fortran it is
  * taken in the symbols of libaster.so.
- * 
+ *
  * Before a wider refactoring here are defined these exchanged variables with
  * their access methods.
  */
@@ -36,17 +36,12 @@
 #include "shared_vars.h"
 
 /* Global variables */
-/*! Global variable to handle the JDC object from libaster */
-static PyObject* gJDC = (PyObject*)0;
 
-/*! Global variable to handle the CoreOptions object from libaster */
-static PyObject* gCoreOpts = (PyObject*)0;
+/*! Global variable to handle the ExecutionParameter object */
+static PyObject* gParams = (PyObject*)0;
 
-/*! Global variable to handle the MessageLog object from libaster */
+/*! Global variable to handle the MessageLog object */
 static PyObject* gMsgLog = (PyObject*)0;
-
-/*! Global variable to handle the aster_core python module from libaster */
-static PyObject* gPyMod = (PyObject*)0;
 
 
 /*! gJeveuxStatus is:
@@ -66,15 +61,9 @@ static PyObject *gPileEtapes = (PyObject*)0;
 
 
 /* register functions */
-/*! Register the JDC object as a global variable */
-void register_sh_jdc(PyObject *obj) {
-    gJDC = obj;
-    return;
-}
-
-/*! Register the CoreOptions object as a global variable */
-void register_sh_coreopts(PyObject *obj) {
-    gCoreOpts = obj;
+/*! Register the ExecutionParameter object as a global variable */
+void register_sh_params(PyObject *obj) {
+    gParams = obj;
     return;
 }
 
@@ -84,14 +73,11 @@ void register_sh_msglog(PyObject *obj) {
     return;
 }
 
-/*! Register the aster_core python module as a global variable */
-void register_sh_pymod(PyObject *obj) {
-    gPyMod = obj;
-    return;
-}
-
 /*! Register the current 'etape' object as a global variable */
 void register_sh_etape(PyObject *obj) {
+    // printf("DEBUG: register: ");
+    // PyObject_Print(obj, stdout, 0);
+    // printf("\n");
     gEtape = obj;
     return;
 }
@@ -103,24 +89,14 @@ void register_sh_jeveux_status(int obj) {
 }
 
 /* get functions */
-/*! Return the global JDC object */
-PyObject * get_sh_jdc() {
-    return gJDC;
-}
-
-/*! Return the global CoreOptions object */
-PyObject * get_sh_coreopts() {
-    return gCoreOpts;
+/*! Return the global ExecutionParameter object */
+PyObject * get_sh_params() {
+    return gParams;
 }
 
 /*! Return the global MessageLog object */
 PyObject * get_sh_msglog() {
     return gMsgLog;
-}
-
-/*! Return the global aster_core python module */
-PyObject * get_sh_pymod() {
-    return gPyMod;
 }
 
 /*! Return the current 'etape' object */
@@ -159,7 +135,7 @@ PyObject * append_etape(PyObject *etape)
     return etape;
 }
 
-/*! Remove and return the last 'etape' object on stack */
+/*! Remove and return the previous 'etape' object on stack ('.pop()' x 2) */
 PyObject * pop_etape()
 {
     PyObject * etape;
@@ -171,7 +147,7 @@ PyObject * pop_etape()
     }
     /* Derniere commande dans la pile */
     etape = PyList_GetItem(gPileEtapes, l-1);
-    /* PyList_GetItem n incremente pas le compteur de ref de etape */
+    /* PyList_GetItem n'incremente pas le compteur de ref de etape */
     /* On tronque la liste a la dimension l-1 */
     PyList_SetSlice(gPileEtapes, l-1, l, NULL);
     /* Le compteur de ref de etape est decremente de 1 */
@@ -180,8 +156,6 @@ PyObject * pop_etape()
         Py_INCREF(Py_None);
         return Py_None;
     }
-    /* On ne passe ici que pour les macros avec sous commandes
-     * en mode commande par commande */
     /* On retourne la derniere commande de la pile */
     etape = PyList_GetItem(gPileEtapes, l-2);
     return etape;

@@ -1,9 +1,9 @@
 P time_limit 240
-P memory_limit 1012
+P memory_limit 1024
 P ncpus 1
 P mpi_nbcpu 2
 P mpi_nbnoeud 1
-P testlist verification parallel
+P testlist ci verification parallel
 
 F comm sdld21b.comm D 1
 F mail sdld21b.mail D 20

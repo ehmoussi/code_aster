@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine calcGetDataTher(list_load, model    , mate       , cara_elem,&
+    subroutine calcGetDataTher(list_load, model    , mate       , mateco , cara_elem,&
                                temp_prev, incr_temp, compor_ther, theta)
         character(len=19), intent(out) :: list_load
-        character(len=24), intent(out) :: model, mate, cara_elem
+        character(len=24), intent(out) :: model, mate, mateco, cara_elem
         character(len=19), intent(out) :: temp_prev, incr_temp
         character(len=24), intent(out) :: compor_ther
         real(kind=8), intent(out) :: theta

@@ -101,6 +101,7 @@ type(NL_DS_Contact), intent(out) :: ds_contact
         ds_contact%loop(i_loop)%error       = ASTER_FALSE
         ds_contact%loop(i_loop)%counter     = 0
         ds_contact%loop(i_loop)%vale_calc   = 0
+        ds_contact%loop(i_loop)%locus_calc  = ' '
     end do
 !
 ! - Field for CONT_NODE

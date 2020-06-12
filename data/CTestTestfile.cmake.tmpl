@@ -19,84 +19,10 @@
 # person_in_charge: mathieu.courtois@edf.fr
 
 set(COMPONENT_NAME ASTER_@ASTER_TAG@)
-set(TIMEOUT        300)
 
-set(USER "salometest")
+set(USER "code_aster_test")
 if(DEFINED ENV{USER})
     set(USER "$ENV{USER}")
 endif()
-set(RESUTEST_DIR "@ASRUN_TMPDIR@/${USER}_resutest@ASTER_TAG@")
 
-set(ASTER_TEST_FILES_SEQ
-@ASTER_TEST_FILES_SEQ@
-)
-
-set(ASTER_TEST_FILES_PAR
-@ASTER_TEST_FILES_PAR@
-)
-
-set(ASTER_TEST_FILES_VALID_SEQ
-@ASTER_TEST_FILES_VALID_SEQ@
-)
-
-set(ASTER_TEST_FILES_VALID_PAR
-@ASTER_TEST_FILES_VALID_PAR@
-)
-
-set(ASTER_TEST_FILES_INTEGR
-forma02a
-forma01c
-mumps01a
-mfron01a
-zzzz151a
-zzzz200b
-zzzz218a
-zzzz401a
-)
-
-set(ASTER_TEST_FILES_ALL_VALID
-    ${ASTER_TEST_FILES_VALID_SEQ}
-    ${ASTER_TEST_FILES_VALID_PAR}
-)
-set(ASTER_TEST_FILES_ALL_PAR
-    ${ASTER_TEST_FILES_PAR}
-    ${ASTER_TEST_FILES_VALID_PAR}
-)
-set(ASTER_TEST_FILES_ALL
-    ${ASTER_TEST_FILES_SEQ}
-    ${ASTER_TEST_FILES_PAR}
-    ${ASTER_TEST_FILES_VALID_SEQ}
-    ${ASTER_TEST_FILES_VALID_PAR}
-)
-
-foreach(testname ${ASTER_TEST_FILES_ALL})
-    if(NOT (testname MATCHES "^(erreu06a|plexu|supv002a)"))
-        set(TEST_NAME ASTER_@ASTER_TAG@_${testname})
-        set(TEST_DIR ${RESUTEST_DIR}/${testname})
-        add_test(${TEST_NAME} as_run --vers=@ASTERDATADIR@ --test ${testname} ${TEST_DIR} --run_params=facmtps=3)
-
-        set(_props "${COMPONENT_NAME}")
-
-        string(FIND "${ASTER_TEST_FILES_INTEGR}" ${testname} _integr)
-        string(FIND "${ASTER_TEST_FILES_ALL_PAR}" ${testname} _par)
-        string(FIND "${ASTER_TEST_FILES_ALL_VALID}" ${testname} _valid)
-
-        if(${_integr} GREATER -1)
-          string(CONCAT _props "${_props}" ";" "SMECA_INTEGR")
-        endif()
-
-        if(${_valid} GREATER -1)
-          string(CONCAT _props "${_props}" ";" "ASTER_VALIDATION")
-        else()
-          string(CONCAT _props "${_props}" ";" "ASTER_VERIFICATION")
-        endif()
-
-        if(${_par} GREATER -1)
-          string(CONCAT _props "${_props}_PARALLEL")
-        else()
-          string(CONCAT _props "${_props}_SEQUENTIAL")
-        endif()
-
-        set_tests_properties(${TEST_NAME} PROPERTIES LABELS "${_props}")
-    endif()
-endforeach()
+@ASTER_TEST_DEFINITION@

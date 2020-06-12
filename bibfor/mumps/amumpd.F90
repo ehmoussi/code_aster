@@ -53,6 +53,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 ! person_in_charge: olivier.boiteau at edf.fr
 !
 #include "asterf.h"
+#include "jeveux.h"
 #include "asterf_types.h"
 #include "asterc/matfpe.h"
 #include "asterfort/amumpi.h"
@@ -79,13 +80,11 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     type(dmumps_struc), pointer :: dmpsk => null()
     integer :: rang, nbproc, niv, ifm, ibid, ietdeb, ifactm, nbfact
     integer :: ietrat, nprec, ifact, iaux, iaux1, vali(4), pcpi
     character(len=1) :: rouc, type, prec
-    character(len=3) :: matd
+    character(len=3) :: matd, mathpc
     character(len=5) :: etam, klag2
     character(len=8) :: ktypr
     character(len=12) :: usersm, k12bid
@@ -95,7 +94,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     real(kind=8) :: epsmax, valr(2), rctdeb, temps(6), epsmat
     complex(kind=8) :: cbid(1)
     aster_logical :: lquali, ldist, lresol, lmd, lbid, lpreco, lbis, lpb13, ldet
-    aster_logical :: lopfac
+    aster_logical :: lopfac, lmhpc
     integer, pointer :: slvi(:) => null()
     character(len=24), pointer :: refa(:) => null()
     character(len=24), pointer :: slvk(:) => null()
@@ -127,35 +126,6 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     ASSERT((rouc.eq.'R').and.(prec.eq.'D'))
     dmpsk=>dmps(kxmps)
     iret=0
-    call jeveuo(nosolv//'.SLVK', 'E', vk24=slvk)
-    call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
-    call jeveuo(nosolv//'.SLVI', 'E', vi=slvi)
-!
-! --- L'UTILISATEUR VEUT-IL UNE ESTIMATION DE LA QUALITE DE LA SOL ?
-! --- => LQUALI
-    epsmax=slvr(2)
-    posttrait=slvk(11)
-    lquali=(epsmax.gt.0.d0)
-!
-! --- POUR "ELIMINER" LE 2EME LAGRANGE:
-! --- OPTION DEBRANCHEE SI CALCUL DE DETERMINANT
-    klag2=slvk(6)(1:5)
-    lbis=klag2(1:5).eq.'LAGR2'
-!
-! --- TRES PROBABLEMENT COMMANDE FACTORISER (POSTTRAITEMENTS
-! --- INITIALISE A 'XXXX'). ON NE DETRUIRA RIEN A L'ISSU DE LA
-! --- FACTO, AU CAS OU UN OP. RESOUDRE + RESI_RELA>0 SUIVRAIT
-    if (slvk(11)(1:4) .eq. 'XXXX') then
-        lopfac=.true.
-    else
-        lopfac=.false.
-    endif
-!
-! --- TYPE DE RESOLUTION
-    ktypr=slvk(3)(1:8)
-!
-! --- PARAMETRE NPREC
-    nprec=slvi(1)
 !
 ! --- MUMPS PARALLELE DISTRIBUE ?
     call jeveuo(nomat//'.REFA', 'L', vk24=refa)
@@ -167,16 +137,53 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
     call dismoi('MATR_DISTRIBUEE', nomat, 'MATR_ASSE', repk=matd)
     lmd = matd.eq.'OUI'
 !
+! --- MATRICE ASTER HPC ?
+    call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=mathpc)
+    lmhpc = mathpc.eq.'OUI'
+!
+    lquali=.false.
+    if( action(1:5).ne.'DETR_' ) then
+        call jeveuo(nosolv//'.SLVK', 'E', vk24=slvk)
+        call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
+        call jeveuo(nosolv//'.SLVI', 'E', vi=slvi)
+!
+! --- L'UTILISATEUR VEUT-IL UNE ESTIMATION DE LA QUALITE DE LA SOL ?
+! --- => LQUALI
+        epsmax=slvr(2)
+        posttrait=slvk(11)
+        lquali=(epsmax.gt.0.d0)
+!
+! --- POUR "ELIMINER" LE 2EME LAGRANGE:
+! --- OPTION DEBRANCHEE SI CALCUL DE DETERMINANT
+        klag2=slvk(6)(1:5)
+        lbis=klag2(1:5).eq.'LAGR2'
+!
+! --- TRES PROBABLEMENT COMMANDE FACTORISER (POSTTRAITEMENTS
+! --- INITIALISE A 'XXXX'). ON NE DETRUIRA RIEN A L'ISSU DE LA
+! --- FACTO, AU CAS OU UN OP. RESOUDRE + RESI_RELA>0 SUIVRAIT
+        if (slvk(11)(1:4) .eq. 'XXXX') then
+            lopfac=.true.
+        else
+            lopfac=.false.
+        endif
+!
+! --- TYPE DE RESOLUTION
+        ktypr=slvk(3)(1:8)
+!
+! --- PARAMETRE NPREC
+        nprec=slvi(1)
+!
 ! --- MUMPS EST-IL UTILISE COMME PRECONDITIONNEUR ?
 ! --- SI OUI, ON DEBRANCHE LES ALARMES ET INFO (PAS LES UTMESS_F)
-    lpreco = slvk(8)(1:3).eq.'OUI'
+        lpreco = slvk(8)(1:3).eq.'OUI'
 !
 ! --- FILTRAGE DE LA MATRICE DONNEE A MUMPS (UNIQUEMENT NON LINEAIRE)
-    epsmat=slvr(1)
+        epsmat=slvr(1)
 !
 ! --- STRATEGIE MEMOIRE POUR MUMPS
-    usersm=slvk(9)(1:12)
-    nbfact=slvi(6)
+        usersm=slvk(9)(1:12)
+        nbfact=slvi(6)
+    endif
 !
 ! --- POUR MONITORING
     call amumpt(0, kmonit, temps, rang, nbproc,&
@@ -192,7 +199,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !       ------------------------------------------------
 !        INITIALISATION DE L'OCCURENCE MUMPS KXMPS:
 !       ------------------------------------------------
-        call amumpi(0, lquali, ldist, kxmps, type)
+        call amumpi(0, lquali, ldist, kxmps, type, lmhpc)
         call dmumps(dmpsk)
         rang=dmpsk%myid
         nbproc=dmpsk%nprocs
@@ -202,7 +209,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !       --------------------------------------------------------------
 !        CHOIX ICNTL VECTEUR DE PARAMETRES POUR MUMPS (ANALYSE+FACTO):
 !       --------------------------------------------------------------
-        call amumpi(2, lquali, ldist, kxmps, type)
+        call amumpi(2, lquali, ldist, kxmps, type, lmhpc)
 !
 !       ----------------------------------------------------------
 !        ON RECUPERE ET STOCKE DS SD_SOLVEUR LE NUMERO DE VERSION
@@ -234,7 +241,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
                     rctdeb, ldist)
         call amumpm(ldist, kxmps, kmonit, impr, ifmump,&
                     klag2, type, lmd, epsmat, ktypr,&
-                    lpreco)
+                    lpreco, lmhpc)
 !
 !       -----------------------------------------------------
 !       CONSERVE-T-ON LES FACTEURS OU NON ?
@@ -444,9 +451,9 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !
 !       ON SOULAGE LA MEMOIRE JEVEUX DES QUE POSSIBLE D'OBJETS MUMPS
 !       INUTILES
-        if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
+        if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
             if (.not.(lquali).and.(posttrait(1:4).ne.'MINI') .and. .not.lopfac) then
-                if (ldist) then
+                if (ldist.or.lmhpc) then
                     deallocate(dmpsk%a_loc,stat=ibid)
                     deallocate(dmpsk%irn_loc,stat=ibid)
                     deallocate(dmpsk%jcn_loc,stat=ibid)
@@ -472,12 +479,12 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
                     rctdeb, ldist)
         call amumpp(0, nbsol, kxmps, ldist, type,&
                     impr, ifmump, lbis, rsolu, cbid,&
-                    vcine, prepos, lpreco)
+                    vcine, prepos, lpreco, lmhpc)
 !
 !       --------------------------------------------------------------
 !        CHOIX ICNTL VECTEUR DE PARAMETRES POUR MUMPS (SOLVE):
 !       --------------------------------------------------------------
-        call amumpi(3, lquali, ldist, kxmps, type)
+        call amumpi(3, lquali, ldist, kxmps, type, lmhpc)
 !
 !       ------------------------------------------------
 !        RESOLUTION MUMPS :
@@ -529,7 +536,7 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !       ------------------------------------------------
         call amumpp(2, nbsol, kxmps, ldist, type,&
                     impr, ifmump, lbis, rsolu, cbid,&
-                    vcine, prepos, lpreco)
+                    vcine, prepos, lpreco, lmhpc)
 !
 !       ------------------------------------------------
 !        AFFICHAGE DU MONITORING :
@@ -548,8 +555,8 @@ subroutine amumpd(action, kxmps, rsolu, vcine, nbsol,&
 !        MENAGE ASTER ET MUMPS:
 !       ------------------------------------------------
         if (nomats(kxmps) .ne. ' ') then
-            if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist)) then
-                if (ldist) then
+            if ((( rang.eq.0).and.(.not.ldist)) .or. (ldist) .or. (lmhpc)) then
+                if (ldist.or.lmhpc) then
                     deallocate(dmpsk%a_loc,stat=ibid)
                     deallocate(dmpsk%irn_loc,stat=ibid)
                     deallocate(dmpsk%jcn_loc,stat=ibid)

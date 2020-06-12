@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,23 +20,25 @@
 #
 # CAS_TEST__:SDLL123C
 #
-import aster
-import aster_core
 import numpy as NP
 import numpy.linalg as LA
+from math import pi, sqrt
+
+from code_aster.Commands import *
+import aster
+import aster_core
 
 def EXTR_MATR(matrrr,option) :
 # fonction permettant de recuperer les matrices assemblees au format numpy
 # attention a l'espace memoire
 
 # construction des vecteurs jeveux
-                nommatr=matrrr.nom
+                nommatr=matrrr.getName()
                 lenm=len(nommatr)
                 nommatr=nommatr+' '*(8-lenm+1)
                 vectrav=nommatr+'          .REFA        '
                 nom=aster.getvectjev(vectrav)
                 nomnume=nom[1]
-                typm=nom[8]
                 lenm=len(nomnume)
                 nomnume=nomnume[0:9]
 
@@ -80,7 +82,6 @@ def EXTR_MATR(matrrr,option) :
 
 # contruction du vect contenant les indices des ddls non lagr et non nuls
                 gg=0
-                tt=0
                 pp=0
                 limm=nnddl[pp]
                 vecc=[1]*limm
@@ -110,7 +111,6 @@ def EXTR_MATR(matrrr,option) :
                 valeu=NP.zeros([lon,lon])
                 opi=0
                 indc=0
-                indl=0
                 for ii in range(0,lon):
                         if (ii==0):
                                 opi=adia[ii]
@@ -370,7 +370,7 @@ CARELEM=AFFE_CARA_ELEM(INFO=1,
                                    ),
                                    ),
                        MODELE=MODELE,
-                       );
+                       )
 
 BLOQUAGE=AFFE_CHAR_MECA(MODELE=MODELE,
                        DDL_IMPO=(
@@ -400,7 +400,7 @@ ASSEMBLAGE(MODELE=MODELE,
                            _F(MATRICE=CO('GYASS'),
                               OPTION='MECA_GYRO',),
                            _F(MATRICE=CO('AMOR'),
-                              OPTION='AMOR_MECA',),),);
+                              OPTION='AMOR_MECA',),),)
 
 ######################################
 # TEST GENERALISE REEL NON SYM
@@ -457,7 +457,7 @@ masF=MATM.EXTR_MATR()
 #--                                                 --#
 #-----------------------------------------------------#
 
-nom_nume='NUMEDDL'
+nom_nume = NUMEDDL.getName().strip()
 Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
 ind_lag1=[]
 ind_nolag=[]
@@ -673,7 +673,7 @@ amorF=MATC1.EXTR_MATR()
 #--                                                 --#
 #-----------------------------------------------------#
 
-nom_nume='NUMEDDL'
+nom_nume = NUMEDDL.getName().strip()
 Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
 ind_lag1=[]
 ind_nolag=[]

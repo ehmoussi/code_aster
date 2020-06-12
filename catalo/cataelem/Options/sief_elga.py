@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,37 +54,37 @@ PLONCHA  = InputParameter(phys=PHY.N120_I, container='MODL!.TOPOSE.LON',
 comment="""  XFEM - NBRE DE TETRAEDRES ET DE SOUS-ELEMENTS  """)
 
 
-PPINTTO  = InputParameter(phys=PHY.N132_R,
+PPINTTO  = InputParameter(phys=PHY.N132_R, container='MODL!.TOPOSE.PIN',
 comment=""" XFEM - COORD. POINTS SOMMETS DES SOUS-ELEMENTS """)
 
 
-PHEAVTO  = InputParameter(phys=PHY.N512_I,
+PHEAVTO  = InputParameter(phys=PHY.N512_I, container='MODL!.TOPOSE.HEA',
 comment=""" XFEM - VALEUR FONCTION HEAVISIDE SUR LES SOUS-ELEMENTS """)
 
 
-PBASLOR  = InputParameter(phys=PHY.NEUT_R,
+PBASLOR  = InputParameter(phys=PHY.NEUT_R, container='MODL!.BASLOC',
 comment=""" XFEM - BASE LOCALE AU FOND DE FISSURE """)
 
 
-PLSN     = InputParameter(phys=PHY.NEUT_R,
+PLSN     = InputParameter(phys=PHY.NEUT_R, container='MODL!.LNNO',
 comment=""" XFEM - VALEURS DE LA LEVEL SET NORMALE """)
 
 
-PLST     = InputParameter(phys=PHY.NEUT_R,
+PLST     = InputParameter(phys=PHY.NEUT_R, container='MODL!.LTNO',
 comment=""" XFEM - VALEURS DE LA LEVEL SET TANGENTE """)
 
 
-PSTANO   = InputParameter(phys=PHY.N120_I,
+PSTANO   = InputParameter(phys=PHY.N120_I, container='MODL!.STNO',
 comment=""" XFEM - STATUT DES NOEUDS (ENRICHISSEMENT) """)
 
 
-PPMILTO  = InputParameter(phys=PHY.N792_R)
+PPMILTO  = InputParameter(phys=PHY.N792_R, container='MODL!.TOPOSE.PMI')
 
 
-PHEA_NO  = InputParameter(phys=PHY.N120_I)
+PHEA_NO  = InputParameter(phys=PHY.N120_I, container='MODL!.TOPONO.HNO')
 
 
-PFISNO   = InputParameter(phys=PHY.NEUT_I,
+PFISNO   = InputParameter(phys=PHY.NEUT_I, container='MODL!.FISSNO',
 comment=""" PFISNO : CONNECTIVITE DES FISSURES ET DES DDL HEAVISIDE """)
 
 

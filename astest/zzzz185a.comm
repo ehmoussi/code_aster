@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -111,7 +111,6 @@ IMPR_RESU( FORMAT='MED', UNITE=81,
                     NOM_CHAM='TEMP', TOUT_ORDRE='OUI',),
            PROC0='NON',
 )
-DEFI_FICHIER (ACTION='LIBERER',UNITE=81)
 
 
 # ==========================================================
@@ -148,7 +147,7 @@ mamed01=LIRE_MAILLAGE( UNITE=81, FORMAT='MED',)
 # B.1.b
 dmed01=LIRE_CHAMP(
    MAILLAGE=mamed01, FORMAT='MED',UNITE=81,
-   NOM_MED='rther08_TEMP',
+   NOM_MED='00000006TEMP',
    NOM_CMP_IDEM='OUI',
    NUME_ORDRE=0, NUME_PT=0,
    TYPE_CHAM='NOEU_TEMP_R',
@@ -190,7 +189,7 @@ mamed02=MODI_MAILLAGE(
 # B.3.c
 dmed02=LIRE_CHAMP(
    MAILLAGE=mamed02, FORMAT='MED', UNITE=81,
-   NOM_MED='rther08_TEMP',
+   NOM_MED='00000006TEMP',
    NOM_CMP_IDEM='OUI',
    NUME_ORDRE=0, NUME_PT=0,
    TYPE_CHAM='NOEU_TEMP_R',
@@ -373,7 +372,6 @@ if ( ficgmsh == 1 ):
                      RESULTAT=rther08,
                      NOM_CHAM='TEMP', TOUT_ORDRE='OUI',),
            )
-  DEFI_FICHIER (ACTION='LIBERER',UNITE=55)
 
   IMPR_RESU( FORMAT='GMSH', UNITE=56, VERSION=1.2,
              MODELE=mode04,
@@ -392,7 +390,6 @@ if ( ficgmsh == 1 ):
                       NOM_CHAM='TEMP', TOUT_ORDRE='OUI',),
                    ),
            )
-  DEFI_FICHIER (ACTION='LIBERER',UNITE=56)
 
 
 FIN()

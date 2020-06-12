@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,12 +25,12 @@ subroutine op0037()
 !     PARAMETRES "MODE_MECA"
 #include "asterf_types.h"
 #include "jeveux.h"
-#include "asterc/gcucon.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8vide.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/gcucon.h"
 #include "asterfort/getvem.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
@@ -209,7 +209,7 @@ subroutine op0037()
     call rsorac(modein, 'LONUTI', ibid, r8b, k8b,&
                 c16b, 0.0d0, k8b, tmod, 1,&
                 nbtrou)
-    nbmod=tmod(1)            
+    nbmod=tmod(1)
     call wkvect('&&OP0037.NUMERO.ORDRE', 'V V I', nbmod, lnumor)
     call rsorac(modein, 'TOUT_ORDRE', ibid, r8b, k8b,&
                 c16b, 0.0d0, k8b, zi(lnumor), nbmod,&
@@ -324,10 +324,10 @@ subroutine op0037()
 !
 !
 !     --- POUR LES MODES DE FLAMBAGE PAS DE MASSE UNITAIRE ---
-    if (typcon(1:10) .eq. 'MODE_FLAMB') then 
+    if (typcon(1:10) .eq. 'MODE_FLAMB') then
         goto 100
     end if
-    
+
     maxmas = 0.d0
     do i = 1, 3
         dir(1) = 0.d0

@@ -28,16 +28,21 @@
  *        than here.
  *  - give informations about the execution.
  */
+#include <signal.h>
 
 #include "Python.h"
 #include "aster.h"
+
 #include "aster_core_module.h"
-#include "shared_vars.h"
-#include "aster_module.h"
 #include "aster_exceptions.h"
+#include "aster_fort_mpi.h"
+#include "aster_fort_utils.h"
+#include "aster_module.h"
 #include "aster_mpi.h"
-#include "aster_fort.h"
 #include "aster_utils.h"
+#include "shared_vars.h"
+
+FILE* fileOut = NULL;
 
 /*! aster_core C module */
 static PyObject* aster_core = (PyObject*)0;
@@ -50,13 +55,11 @@ static PyObject* register_jdc(PyObject *self, PyObject *args)
      * Register the Python instances for usage from fortran/libaster
      */
     PyObject *val;
-    PyObject *jdc, *coreopts, *msglog, *pymod;
-    if ( !PyArg_ParseTuple(args, "OOOO:register_jdc", &jdc, &coreopts, &msglog, &pymod) )
+    PyObject *coreopts, *msglog;
+    if ( !PyArg_ParseTuple(args, "OO:register_jdc", &coreopts, &msglog) )
         return NULL;
-    register_sh_jdc(jdc);
-    register_sh_coreopts(coreopts);
+    register_sh_params(coreopts);
     register_sh_msglog(msglog);
-    register_sh_pymod(pymod);
 
     // Add some wrappers for convenience
     val = PyObject_GetAttrString(coreopts, "get_option");
@@ -78,9 +81,9 @@ ASTERINTEGER DEFS(JDCGET,jdcget,char *attr, STRING_SIZE l_attr)
     PyObject *val;
     ASTERINTEGER value;
 
-    val = PyObject_CallMethod(get_sh_jdc(), "get_jdc_attr", "s#", attr, l_attr);
+    val = PyObject_CallMethod(get_sh_params(), "get_option", "s#", attr, l_attr);
     if (val == NULL){
-        printf("attribut inexistant dans le jdc : '%s'\n\n", attr);
+        fprintf(fileOut, "attribut inexistant dans le jdc : '%s'\n\n", attr);
         MYABORT("erreur dans JDCGET");
     }
     if (! PyLong_Check(val) )
@@ -99,7 +102,7 @@ void DEFSP(JDCSET,jdcset,char *attr, STRING_SIZE l_attr, ASTERINTEGER *value)
      */
     PyObject *res;
 
-    res = PyObject_CallMethod(get_sh_jdc(), "set_jdc_attr", "s#l", attr, l_attr, (long)*value);
+    res = PyObject_CallMethod(get_sh_params(), "set_option", "s#l", attr, l_attr, (long)*value);
     if (res == NULL)
         MYABORT("erreur dans JDCSET");
     Py_XDECREF(res);
@@ -111,7 +114,7 @@ PyObject* GetJdcAttr(_IN char *attribut)
      * Retourne un attribut du 'jdc' en tant que PyObject.
      */
     PyObject *objattr;
-    objattr = PyObject_GetAttrString(get_sh_jdc(), attribut);
+    objattr = PyObject_GetAttrString(get_sh_params(), attribut);
     /* traiter l'erreur "objattr == NULL" dans l'appelant */
     return objattr;
 }
@@ -133,7 +136,7 @@ double get_tpmax()
     /*
      * Retourne le temps maximum autorisé pour l'exécution
      */
-    int iret;
+    int iret = 0;
     double tpmax;
     if ( _cache_tpmax < 0 ) {
         tpmax =  asterc_getopt_double("tpmax", &iret);
@@ -151,7 +154,7 @@ void DEFP(RDTMAX, rdtmax, _IN ASTERDOUBLE *tsub)
      */
     PyObject *res;
 
-    res = PyObject_CallMethod(get_sh_coreopts(), "sub_tpmax", "d", (double)(*tsub));
+    res = PyObject_CallMethod(get_sh_params(), "sub_tpmax", "d", (double)(*tsub));
     if (res == NULL)
         MYABORT("erreur dans RDTMAX");
     // reset du cache
@@ -174,7 +177,7 @@ PyObject* asterc_getopt(_IN char *option)
      */
     PyObject *res;
 
-    res = PyObject_CallMethod(get_sh_coreopts(), "get_option", "s", option);
+    res = PyObject_CallMethod(get_sh_params(), "get_option", "s", option);
     if ( !res ) MYABORT("erreur lors de l'appel a la methode CoreOptions.get_option");
 
     return res;
@@ -198,7 +201,7 @@ PyObject *args;
     if ( !PyArg_ParseTuple(args, "OO:set_option", &option, &value) )
         return NULL;
 
-    res = PyObject_CallMethodObjArgs(get_sh_coreopts(),
+    res = PyObject_CallMethodObjArgs(get_sh_params(),
                                      PyUnicode_FromString("set_option"),
                                      option, value, NULL);
     if ( !res ) MYABORT("erreur lors de l'appel a la methode CoreOptions.set_option");
@@ -253,6 +256,9 @@ double asterc_getopt_double(_IN char *option, _OUT int *iret)
     res = asterc_getopt(option);
     if ( PyFloat_Check(res) ) {
         value = PyFloat_AsDouble(res);
+        *iret = 0;
+    } else if ( PyLong_Check(res) ) {
+        value = (double)PyLong_AsLong(res);
         *iret = 0;
     }
     Py_DECREF(res);
@@ -461,10 +467,11 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
      * WARNING: In the case that the error indicator has already been set, we must
      * restore it after PyObject_CallMethod.
      */
+    char test = ' ';
     char *kvar;
-    int i, iexc=0, iret;
-    PyObject *tup_valk, *tup_vali, *tup_valr, *res;
-    PyObject *method, *args, *kwargs, *pyfname;
+    int i, iret, iexc=0;
+    PyObject *args, *kwargs, *pyfname, *pFunc, *res;
+    PyObject *tup_valk, *tup_vali, *tup_valr;
     PyObject *etype, *eval, *etb;
 
     if ( PyErr_Occurred() ) {
@@ -473,24 +480,28 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     }
 
     tup_valk = PyTuple_New( (Py_ssize_t)*nbk ) ;
-    for(i=0;i<*nbk;i++){
+    for( i = 0; i < *nbk; i++ )
+    {
        kvar = valk + i*lvk;
-       PyTuple_SetItem( tup_valk, i, PyUnicode_FromStringAndSize(kvar,(Py_ssize_t)lvk) ) ;
+       char* copyChaine = MakeCStrFromFStr(kvar, lvk);
+       PyTuple_SetItem( tup_valk, i, PyUnicode_FromString(copyChaine));
+       FreeStr(copyChaine);
     }
 
     tup_vali = PyTuple_New( (Py_ssize_t)*nbi ) ;
-    for(i=0;i<*nbi;i++){
+    for( i = 0; i < *nbi; i++ )
+    {
        PyTuple_SetItem( tup_vali, i, PyLong_FromLong((long)vali[i]) ) ;
     }
 
     tup_valr = PyTuple_New( (Py_ssize_t)*nbr ) ;
-    for(i=0;i<*nbr;i++){
+    for( i = 0; i < *nbr; i++ )
+    {
        PyTuple_SetItem( tup_valr, i, PyFloat_FromDouble((double)valr[i]) ) ;
     }
 
-    method = PyObject_GetAttrString(get_sh_msglog(), "print_message");
-    args = Py_BuildValue("s#s#OOOi", typmess, ltype, idmess, lidmess,
-                         tup_valk, tup_vali, tup_valr, (int)*exc_typ),
+    args = Py_BuildValue("s#s#OOOi", typmess, ltype, idmess, lidmess, tup_valk,
+                                     tup_vali, tup_valr, (int)*exc_typ);
     kwargs = PyDict_New();
     pyfname = PyUnicode_FromStringAndSize(fname, lfn);
     iret = PyDict_SetItemString(kwargs, "files", pyfname);
@@ -498,8 +509,9 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
        MYABORT("error the given filename in utprin");
     }
 
-    res = PyObject_Call(method, args, kwargs);
-    if (!res) {
+    res = PyObject_Call(get_sh_msglog(), args, kwargs);
+    if (!res)
+    {
        MYABORT("erreur lors de l'appel a MessageLog");
     }
     if ( iexc == 1 ) {
@@ -509,7 +521,6 @@ void DEFSPSPSPPPPS(UTPRIN,utprin, _IN char *typmess, _IN STRING_SIZE ltype,
     Py_DECREF(pyfname);
     Py_DECREF(args);
     Py_XDECREF(kwargs);
-    Py_DECREF(method);
     Py_DECREF(tup_valk);
     Py_DECREF(tup_vali);
     Py_DECREF(tup_valr);
@@ -568,7 +579,7 @@ void DEFP(GTALRM,gtalrm, _OUT ASTERINTEGER *nb)
      */
     PyObject *res;
     res = PyObject_CallMethod(get_sh_msglog(), "get_info_alarm_nb", "");
-    if (!res) MYABORT("erreur lors de l'appel a la methode 'get_info_alarm'");
+    if (!res) MYABORT("erreur lors de l'appel a la methode 'get_info_alarm_nb'");
     *nb = (ASTERINTEGER)PyLong_AsLong(res);
     Py_DECREF(res);
 }
@@ -584,7 +595,7 @@ void DEFP(PRHEAD,prhead, _IN ASTERINTEGER *part)
      * Voir help(aster_core.print_header)
      */
     PyObject *res;
-    res = PyObject_CallMethod(get_sh_pymod(), "print_header", "i", (int)(*part));
+    res = PyObject_CallFunction(GetJdcAttr("print_header"), "i", (int)(*part));
     if (!res) MYABORT("erreur lors de l'appel a la fonction E_Global.print_header");
     Py_DECREF(res);
 }
@@ -602,7 +613,7 @@ void DEFSSP(CHEKSD,cheksd,_IN char *nomsd,_IN STRING_SIZE lnom,
    */
    PyObject *res;
 
-   res = PyObject_CallMethod(get_sh_pymod(), "checksd", "s#s#", nomsd, lnom, typsd, ltyp);
+   res = PyObject_CallFunction(GetJdcAttr("checksd"), "s#s#", nomsd, lnom, typsd, ltyp);
    if (!res) MYABORT("erreur lors de l'appel a la methode CHECKSD");
    *iret = (ASTERINTEGER)PyLong_AsLong(res);
 
@@ -629,7 +640,7 @@ void DEFSSPPPPPPPPPPPP(TESTRESU_PRINT,testresu_print,
     PyObject *res, *func, *args, *kwargs, *ref, *val, *comp=NULL;
     int ityp;
 
-    func = PyObject_GetAttrString(get_sh_pymod(), "testresu_print");
+    func = PyObject_GetAttrString(get_sh_params(), "testresu_print");
     /* positional arguments */
     args = Py_BuildValue("s#s#llld", refer, lref, legend, lleg,
                          (long)(*llab), (long)(*skip), (long)(*rela),
@@ -739,7 +750,6 @@ static PyObject* aster_mpi_barrier(self, args)
 PyObject *self; /* Not used */
 PyObject *args;
 {
-    int iret;
     /* Set a MPI barrier */
     if ( aster_set_mpi_barrier(aster_get_current_comm()) ) {
         return NULL;
@@ -928,9 +938,9 @@ static PyMethodDef methods[] = {
 };
 
 
-static struct PyModuleDef moduledef = {
+static struct PyModuleDef aster_core_def = {
         PyModuleDef_HEAD_INIT,
-        "_aster_core",
+        "aster_core",
         NULL,
         -1,
         methods,
@@ -941,9 +951,11 @@ static struct PyModuleDef moduledef = {
 };
 
 #ifndef _WITHOUT_PYMOD_
-PyMODINIT_FUNC init_aster_core(void)
+PyObject* PyInit_aster_core(void)
 {
-    aster_core = PyModule_Create(&moduledef);
+    aster_core = PyModule_Create(&aster_core_def);
+    // until all fileOut are removed
+    fileOut = stderr;
 
     // Add macro constant for dependance
 #ifdef _USE_MPI

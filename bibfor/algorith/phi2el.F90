@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine phi2el(modele, carele, mate, accel, phibar,&
+subroutine phi2el(modele, carele, mate, mateco, accel, phibar,&
                   instap, ve)
     implicit none
 !
@@ -34,7 +34,7 @@ subroutine phi2el(modele, carele, mate, accel, phibar,&
 #include "asterfort/megeom.h"
 #include "asterfort/memare.h"
 #include "asterfort/wkvect.h"
-    character(len=*) :: modele, carele, mate, accel, phibar, ve
+    character(len=*) :: modele, carele, mate, mateco, accel, phibar, ve
     real(kind=8) :: instap
 ! ---------------------------------------------------------------------
 !     CALCUL DES VECTEURS ELEMENTAIRES DES FLUX FLUIDES
@@ -107,7 +107,7 @@ subroutine phi2el(modele, carele, mate, accel, phibar,&
     lpain(3) = 'PACCELR'
     lchin(3) = accel
     lpain(4) = 'PMATERC'
-    lchin(4) = mate
+    lchin(4) = mateco
     lpaout(1) = 'PVECTTR'
     option = 'CHAR_THER_PHID_R'
     lpain(5) = 'PTEMPER'

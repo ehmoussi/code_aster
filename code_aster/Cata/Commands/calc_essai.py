@@ -20,9 +20,9 @@
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def calc_essai_prod(self,RESU_IDENTIFICATION,
@@ -52,15 +52,14 @@ def calc_essai_prod(self,RESU_IDENTIFICATION,
             self.type_sdprod(res['TABLE'],interspectre)
 
     if RESU_MODIFSTRU is not None:
-        for res in RESU_MODIFSTRU:
-            for mc, typ in list(MTYPES.items()):
-                if res[mc]:
-                    self.type_sdprod(res[mc], typ)
+        for mc, typ in list(MTYPES.items()):
+            if RESU_MODIFSTRU[mc]:
+                self.type_sdprod(RESU_MODIFSTRU[mc], typ)
     return None
 
 
 CALC_ESSAI = MACRO(nom       = 'CALC_ESSAI',
-                   op        = OPS('Macro.calc_essai_ops.calc_essai_ops'),
+                   op        = OPS('code_aster.MacroCommands.calc_essai_ops.calc_essai_ops'),
                    sd_prod   = calc_essai_prod,
                    reentrant = 'n',
                    fr        = tr("Outil de post-traitement pour Meidee "),

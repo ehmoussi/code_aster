@@ -32,6 +32,7 @@ use petsc_data_module
 #include "asterfort/asmpi_info.h"
 #include "asterfort/assert.h"
 #include "asterfort/crsmsp.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
@@ -58,8 +59,11 @@ use petsc_data_module
     character(len=24) :: precon, usersm
     character(len=19) :: nomat, nosolv
     character(len=14) :: nonu
+    character(len=3)  :: kmatd
 !
     real(kind=8) :: fillin
+!
+    aster_logical :: lmhpc
 !
 !----------------------------------------------------------------
 !     Variables PETSc
@@ -98,6 +102,10 @@ use petsc_data_module
     call asmpi_info(rank=mrank, size=msize)
     rang = to_aster_int(mrank)
     nbproc = to_aster_int(msize)
+
+!  Est-ce que la matrice est distribuee dans asterxx?
+    call dismoi('MATR_HPC', nomat, 'MATR_ASSE', repk=kmatd)
+    lmhpc = (kmatd == 'OUI')
 !
 !     -- CAS PARTICULIER (LDLT_INC/SOR)
 !     -- CES PC NE SONT PAS PARALLELISES
@@ -145,12 +153,19 @@ use petsc_data_module
         usersm = zk24(jslvk-1+9)
         call crsmsp(spsomu, nomat, pcpiv, usersm )
 !        CREATION DES VECTEURS TEMPORAIRES UTILISES DANS LDLT_SP
-        if (lmd) then
-            call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
-            call jeveuo(nonu//'.NUML.NEQU', 'L', jnequl)
-            call jeveuo(nonu//'.NUML.PDDL', 'L', jprddl)
-            nloc=zi(jnequl)
-            neq=zi(jnequ)
+        if (lmd.or.lmhpc) then
+            if (lmd) then
+               call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
+               call jeveuo(nonu//'.NUML.NEQU', 'L', jnequl)
+               call jeveuo(nonu//'.NUML.PDDL', 'L', jprddl)
+               nloc = zi(jnequl)
+               neq = zi(jnequ)
+            else
+               call jeveuo(nonu//'.NUME.NEQU', 'L', jnequ)
+               call jeveuo(nonu//'.NUME.PDDL', 'L', jprddl)
+               nloc = zi(jnequ)
+               neq = zi(jnequ+1)
+            end if
             ndprop = 0
             do jcoll = 0, nloc-1
                 if (zi(jprddl+jcoll) .eq. rang) ndprop = ndprop+1
@@ -170,7 +185,7 @@ use petsc_data_module
         ASSERT( xglobal == PETSC_NULL_VEC )
 ! Ne pas supprimer VecCreate: si xglobal vaut PETSC_NULL_VEC en entrée de VecScatterCreateToAll,
 ! il n'est pas alloué en sortie
-        call VecCreate( mpicou, xglobal, ierr )
+        call VecCreateSeq( PETSC_COMM_SELF, to_petsc_int(neq), xglobal, ierr )
         ASSERT( ierr == 0 )
         call VecScatterCreateToAll(xlocal, xscatt, xglobal, ierr)
         ASSERT(ierr.eq.0)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -112,7 +112,8 @@ VECTASS=ASSE_VECTEUR(    VECT_ELEM=VECTELEM,
                          )
 
 # --- LECTURE DE LA FONCTION D'EXCITATION ---
-INCLUDE(   UNITE=11,   INFO=1 )
+from fdlv111a import F_FONC
+FONC=F_FONC()
 
 TEMPLI=DEFI_LIST_REEL(DEBUT=0., INTERVALLE=_F( JUSQU_A = 2.5, NOMBRE = 2000))
 

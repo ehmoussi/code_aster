@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -240,7 +240,7 @@ subroutine vppost(vecrer, vecrei, vecrek, vecvp, nbpark,&
                 nbrss, precsh)
 !
         if ((stoper(1:3) .eq. 'OUI') .and. (ierx .ne. 0))&
-          call utmess('Z', 'ALGELINE2_74',num_except=33)
+          call utmess('Z', 'ALGELINE2_74',num_except=SOLVER_ERROR)
 !
         if (flage) call utmess('F', 'ALGELINE5_75')
 !

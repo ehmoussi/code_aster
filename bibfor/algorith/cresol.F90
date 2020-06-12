@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cresol(solveu)
+subroutine cresol(solveu, basz, xfem)
     use superv_module, only: asthread_blasset
     implicit none
 #include "jeveux.h"
@@ -39,6 +39,8 @@ subroutine cresol(solveu)
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
     character(len=19) :: solveu
+    character(len=1), optional :: basz
+    character(len=3), optional :: xfem
 ! person_in_charge: jacques.pellet at edf.fr
 ! ----------------------------------------------------------------------
 !
@@ -51,6 +53,7 @@ subroutine cresol(solveu)
     integer :: zslvk, zslvr, zslvi
     integer :: istop, nsolve, ibid, nprec, islvk, islvr, islvi, n1
     real(kind=8) :: epsmat
+    character(len=1) :: base
     character(len=3) :: mixpre, kellag
     character(len=8) :: kstop, modele, kxfem
     character(len=16) :: method, nomsol
@@ -59,6 +62,11 @@ subroutine cresol(solveu)
 ! ----------------------------------------------------------------------
 !
     call jemarq()
+    if( present(basz) ) then
+        base = basz
+    else
+        base = 'V'
+    endif
 !
 ! --- INITS. GLOBALES (CAR MOT-CLES OPTIONNELS)
     nomsol='SOLVEUR'
@@ -123,20 +131,24 @@ subroutine cresol(solveu)
     endif
 !
 ! ------ PRE_COND_XFEM
-    eximc=getexm(' ','MODELE')
-    if (eximc .eq. 1) then
-        call getvid(' ', 'MODELE', scal=modele, nbret=n1)
-            if (n1 .eq. 1 .and. modele .ne. ' ') then
-               call dismoi('PRE_COND_XFEM', modele, 'MODELE', repk=kxfem)
-            endif
+    if( present(xfem) ) then
+        kxfem = xfem
+    else
+        eximc=getexm(' ','MODELE')
+        if (eximc .eq. 1) then
+            call getvid(' ', 'MODELE', scal=modele, nbret=n1)
+                if (n1 .eq. 1 .and. modele .ne. ' ') then
+                    call dismoi('PRE_COND_XFEM', modele, 'MODELE', repk=kxfem)
+                endif
+        endif
     endif
 !
     zslvk = sdsolv('ZSLVK')
     zslvr = sdsolv('ZSLVR')
     zslvi = sdsolv('ZSLVI')
-    call wkvect(solveu//'.SLVK', 'V V K24', zslvk, islvk)
-    call wkvect(solveu//'.SLVR', 'V V R', zslvr, islvr)
-    call wkvect(solveu//'.SLVI', 'V V I', zslvi, islvi)
+    call wkvect(solveu//'.SLVK', base//' V K24', zslvk, islvk)
+    call wkvect(solveu//'.SLVR', base//' V R', zslvr, islvr)
+    call wkvect(solveu//'.SLVI', base//' V I', zslvi, islvi)
 !
 ! ------------------------------------------------------
 ! --- LECTURE MOT-CLE ET REMPLISSAGE DE LA SD_SOLVEUR PROPRE A CHAQUE

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -90,7 +90,7 @@ DEFI_FICHIER(UNITE=38)
 
 IMPR_RESU(FORMAT="RESULTAT",UNITE=38,RESU=_F(MAILLAGE=MA),)
 
-DEFI_FICHIER (ACTION='ASSOCIER',UNITE=38)
+DEFI_FICHIER (ACTION='ASSOCIER',UNITE=38,ACCES='APPEND')
 
 IMPR_RESU(FORMAT="RESULTAT",UNITE=38,RESU=_F(MAILLAGE=MA2),)
 

@@ -17,8 +17,6 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       PAR_LOT='NON',
       DEBUG=_F(SDVERI='OUI'),
@@ -29,7 +27,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
 #......................................................................
 
 
-MAIL=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAIL=LIRE_MAILLAGE(FORMAT="ASTER",)
 #
 # DONNEES DE MODELISATION
 #
@@ -39,7 +37,7 @@ MAIL=LIRE_MAILLAGE(FORMAT="ASTER",);
 FCT1=DEFI_FONCTION(NOM_PARA='EPSI',
                    VALE=(0.002,400.0,0.004,500.0,),
                    PROL_DROITE='LINEAIRE',
-                   PROL_GAUCHE='LINEAIRE',);
+                   PROL_GAUCHE='LINEAIRE',)
 #
 #
 
@@ -47,7 +45,7 @@ FCT1=DEFI_FONCTION(NOM_PARA='EPSI',
 FCT2=DEFI_FONCTION(NOM_PARA='EPSI',
                    VALE=(0.001,200.0,0.003,300.0,),
                    PROL_DROITE='LINEAIRE',
-                   PROL_GAUCHE='LINEAIRE',);
+                   PROL_GAUCHE='LINEAIRE',)
 #
 #
 
@@ -56,7 +54,7 @@ CTRACB=DEFI_NAPPE(NOM_PARA='TEMP',
                   PARA=(0.0,50.0,),
                   FONCTION=(FCT1,FCT2,),
                   PROL_DROITE='LINEAIRE',
-                  PROL_GAUCHE='LINEAIRE',);
+                  PROL_GAUCHE='LINEAIRE',)
 #
 # MATERIAU ISOTROPE
 #
@@ -68,7 +66,7 @@ MAT=DEFI_MATERIAU(ELAS=_F(E=200000.0,
                           ALPHA=1e-05,),
                   TRACTION=_F(SIGM=CTRACB,),
                   THER=_F(LAMBDA=0.001,
-                          RHO_CP=0.0,),);
+                          RHO_CP=0.0,),)
 #
 # MATERIAU ORTHOTROPE EN FAIT ISOTROPE
 #
@@ -89,7 +87,7 @@ MATO=DEFI_MATERIAU(ELAS_ORTH=_F(E_L=200000.0,
                                 ALPHA_N=1e-05,),
                    TRACTION=_F(SIGM=CTRACB,),
                    THER=_F(LAMBDA=0.001,
-                           RHO_CP=0.0,),);
+                           RHO_CP=0.0,),)
 #
 #
 
@@ -101,7 +99,7 @@ CM=AFFE_MATERIAU(MAILLAGE=MAIL, AFFE=_F(TOUT='OUI', MATER=MAT, ),)
 
 CMO=AFFE_MATERIAU(MAILLAGE=MAIL,
                   AFFE=_F(TOUT='OUI',
-                          MATER=MATO),);
+                          MATER=MATO),)
 #
 #
 
@@ -111,7 +109,7 @@ T0=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
               MAILLAGE=MAIL,
               AFFE=_F(TOUT='OUI',
                       NOM_CMP='TEMP',
-                      VALE=0.0,),);
+                      VALE=0.0,),)
 
 L_INST=DEFI_LIST_REEL(DEBUT=0.0,INFO=2,
                       INTERVALLE=(_F(JUSQU_A=66.666,
@@ -119,14 +117,14 @@ L_INST=DEFI_LIST_REEL(DEBUT=0.0,INFO=2,
                                   _F(JUSQU_A=80.0,
                                      NOMBRE=2,),
                                   _F(JUSQU_A=90.0,
-                                     NOMBRE=2,),),);
+                                     NOMBRE=2,),),)
 #
 #
 
 
 TIMPVAR=DEFI_FONCTION(NOM_PARA='INST',
                       NOM_RESU='TEMP',
-                      VALE=(0.0,0.0,100.0,100.0,),);
+                      VALE=(0.0,0.0,100.0,100.0,),)
 #
 #
 
@@ -134,7 +132,7 @@ TIMPVAR=DEFI_FONCTION(NOM_PARA='INST',
 MOTHER=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='THERMIQUE',
-                           MODELISATION='AXIS',),);
+                           MODELISATION='AXIS',),)
 #
 #
 
@@ -142,7 +140,7 @@ MOTHER=AFFE_MODELE(MAILLAGE=MAIL,
 MOMECA=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(GROUP_MA='GRSD1',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='AXIS',),);
+                           MODELISATION='AXIS',),)
 #
 #
 
@@ -155,7 +153,7 @@ CHTHER=AFFE_CHAR_THER_F(MODELE=MOTHER,
                                    _F(GROUP_NO='GRNO3',
                                       TEMP=TIMPVAR,),
                                    _F(GROUP_NO='GRNO4',
-                                      TEMP=TIMPVAR,),),);
+                                      TEMP=TIMPVAR,),),)
 #
 #
 
@@ -164,11 +162,11 @@ TEMPE1=THER_LINEAIRE(MODELE=MOTHER,
                      CHAM_MATER=CM,
                      EXCIT=_F(CHARGE=CHTHER,),
                      INCREMENT=_F(LIST_INST=L_INST,),
-                     ETAT_INIT=_F(CHAM_NO=T0,),);
+                     ETAT_INIT=_F(CHAM_NO=T0,),)
 
 DEFI_FICHIER(FICHIER='MED_70', UNITE=70, TYPE='LIBRE')
 
-IMPR_RESU(FORMAT='MED', UNITE=70, RESU=_F( RESULTAT=TEMPE1,),);
+IMPR_RESU(FORMAT='MED', UNITE=70, RESU=_F( RESULTAT=TEMPE1,),)
 
 import med_aster
 dic_champ_med = med_aster.get_nom_champ_med("MED_70")
@@ -183,6 +181,10 @@ for nom_cham,cmps in dic_champ_med.items():
         tab3.append(compteur)
         compteur += 1
 
+def med_name(result):
+   """Returns the result name used for a field name."""
+   return '{0:_<8s}'.format(result.getName().strip())
+
 TAB=CREA_TABLE(LISTE=(_F(PARA='NUMERO',
                          LISTE_I=tab3,),
                       _F(PARA='NOM_CHAM',
@@ -190,14 +192,14 @@ TAB=CREA_TABLE(LISTE=(_F(PARA='NUMERO',
                          TYPE_K='K24',),
                       _F(PARA='NOM_CMP',
                          LISTE_K=tab2,
-                         TYPE_K='K24',),),);
+                         TYPE_K='K24',),),)
 
-IMPR_TABLE(TABLE=TAB,UNITE=50,);
+IMPR_TABLE(TABLE=TAB,UNITE=50,)
 TEST_FICHIER(FICHIER="./fort.50",
              NB_VALE_I=2,
-             VALE_CALC_I=2,
+             VALE_CALC_I=1,
              NB_VALE=0,
-             VALE_CALC_K="9ad3416e570da40ccfbd2089baa629cc",
+             VALE_CALC_K="f41d7f05d3a9bc2d9284d05f814bbb73",
              EXPR_IGNORE='ASTER',
 )
 
@@ -205,9 +207,9 @@ TEMPE=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 FORMAT='MED',
                 MAILLAGE=MAIL,
                 UNITE=70,
-                FORMAT_MED=_F(   NOM_CHAM_MED='TEMPE1__TEMP',
+                FORMAT_MED=_F(   NOM_CHAM_MED = med_name(TEMPE1) + 'TEMP',
                                  NOM_CHAM    ='TEMP',),
-                TOUT_ORDRE='OUI',);
+                TOUT_ORDRE='OUI',)
 
 CM1=AFFE_MATERIAU(MAILLAGE=MAIL, AFFE=_F(TOUT='OUI', MATER=MAT, ),
                   AFFE_VARC=_F(NOM_VARC='TEMP',EVOL=TEMPE,VALE_REF=0.),
@@ -219,16 +221,16 @@ CM1=AFFE_MATERIAU(MAILLAGE=MAIL, AFFE=_F(TOUT='OUI', MATER=MAT, ),
 
 IMPR_RESU(FORMAT="RESULTAT",UNITE=88,RESU=_F(RESULTAT=TEMPE1,
                   MAILLE='M5',NUME_ORDRE=5,
-                  GROUP_MA='GRMA1',),);
+                  GROUP_MA='GRMA1',),)
 
 IMPR_RESU(FORMAT="RESULTAT",UNITE=88,RESU=_F(RESULTAT=TEMPE1,
                   NOEUD='N1',NUME_ORDRE=5,
-                  GROUP_MA='GRMA1',),);
+                  GROUP_MA='GRMA1',),)
 
 IMPR_RESU(FORMAT="RESULTAT",UNITE=88,RESU=_F(RESULTAT=TEMPE1,NUME_ORDRE=5,
-                  GROUP_NO=('GRNO1','GRNM1',),),);
+                  GROUP_NO=('GRNO1','GRNM1',),),)
 
-DEFI_FICHIER(UNITE=88, ACTION='LIBERER')
+# DEFI_FICHIER(UNITE=88, ACTION='LIBERER')
 
 TEST_FICHIER(FICHIER="./fort.88",
              NB_VALE_I=15,
@@ -252,24 +254,24 @@ IMPR_RESU(FORMAT='MED', UNITE=81,
                    NUME_ORDRE=(1,5),
                    NOEUD='N1',
                    GROUP_MA='GRMA1',
-                   ),);
+                   ),)
 
 TEMPE2=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 FORMAT='MED',
                 MAILLAGE=MAIL,
                 UNITE=81,
-                FORMAT_MED=_F(   NOM_CHAM_MED='TEMPE1__TEMP',
+                FORMAT_MED=_F(   NOM_CHAM_MED = med_name(TEMPE1) + 'TEMP',
                                  NOM_CHAM    ='TEMP',),
-                TOUT_ORDRE='OUI',);
+                TOUT_ORDRE='OUI',)
 
 IMPR_RESU(UNITE=82, FORMAT='GMSH',
           RESU=_F(RESULTAT=TEMPE2, NOM_CHAM='TEMP',NOM_CMP='TEMP'),)
 
-DEFI_FICHIER(UNITE=82, ACTION='LIBERER')
+# DEFI_FICHIER(UNITE=82, ACTION='LIBERER')
 
 TEST_FICHIER(FICHIER="./fort.82",
              NB_VALE_I=32,
-             VALE_CALC_I=17,
+             VALE_CALC_I=32,
              NB_VALE=63,
              VALE_CALC=1.1398620000e+03,
 )
@@ -283,9 +285,9 @@ TEMP0=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 FORMAT='MED',
                 MAILLAGE=MAIL,
                 UNITE=70,
-                FORMAT_MED=_F(   NOM_CHAM_MED='TEMPE1__TEMP',
+                FORMAT_MED=_F(   NOM_CHAM_MED = med_name(TEMPE1) + 'TEMP',
                                  NOM_CHAM    ='TEMP',),
-                NUME_ORDRE=(1,4,2),);
+                NUME_ORDRE=(1,4,2),)
 
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
@@ -322,9 +324,9 @@ TEMP0=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 MAILLAGE=MAIL,
                 UNITE=70,
                 PRECISION=1.E-3,
-                FORMAT_MED=_F(   NOM_CHAM_MED='TEMPE1__TEMP',
+                FORMAT_MED=_F(   NOM_CHAM_MED = med_name(TEMPE1) + 'TEMP',
                                  NOM_CHAM    ='TEMP',),
-                INST=(85.,73.33,),);
+                INST=(85.,73.33,),)
 
 
 TEST_RESU(RESU=(_F(INST=85.0,
@@ -360,7 +362,7 @@ TB01=CALC_TABLE(reuse=TB01,
                 TABLE=TB01,
                 ACTION=(_F(OPERATION='OPER',
                            FORMULE=NORM,
-                           NOM_PARA='NORM',),),);
+                           NOM_PARA='NORM',),),)
 
 PourTest = [
    [ 1, 'N1', 1.0, 0.0, 85.0],
@@ -421,7 +423,7 @@ CHMECA=AFFE_CHAR_MECA(MODELE=MOMECA,
                       DDL_IMPO=(_F(GROUP_NO='GRNO1',
                                    DY=0.0,),
                                 _F(GROUP_NO='GRNO3',
-                                   DY=0.0,),),);
+                                   DY=0.0,),),)
 
 U=STAT_NON_LINE(MODELE=MOMECA,
                 CHAM_MATER=CM1,
@@ -429,60 +431,60 @@ U=STAT_NON_LINE(MODELE=MOMECA,
                 COMPORTEMENT=_F(RELATION='VMIS_ISOT_TRAC',),
                 INCREMENT=_F(LIST_INST=L_INST,),
                 CONVERGENCE=_F(RESI_GLOB_RELA=1.E-8,
-                               ITER_GLOB_MAXI=10,),);
+                               ITER_GLOB_MAXI=10,),)
 
 U=CALC_CHAMP(reuse =U,
              RESULTAT=U,
              CONTRAINTE=('SIGM_ELNO','SIGM_NOEU',),
-             VARI_INTERNE=('VARI_ELNO','VARI_NOEU'),);
+             VARI_INTERNE=('VARI_ELNO','VARI_NOEU'),)
 
 
-IMPR_RESU(FORMAT='MED', UNITE=71, RESU=_F(RESULTAT=U,),);
+IMPR_RESU(FORMAT='MED', UNITE=71, RESU=_F(RESULTAT=U,),)
 
 
 UUU=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
               FORMAT='MED',
               MODELE=MOMECA,
-              FORMAT_MED=(_F( NOM_RESU='U',
+              FORMAT_MED=(_F( NOM_RESU=U.getName(),
                               NOM_CHAM    ='DEPL' ),
-                          _F( NOM_RESU='U',
+                          _F( NOM_RESU=U.getName(),
                               NOM_CHAM    ='SIGM_ELNO'),
-                          _F( NOM_RESU='U',
+                          _F( NOM_RESU=U.getName(),
                               NOM_CHAM    ='VARI_ELNO'),
-                          _F( NOM_RESU='U',
+                          _F( NOM_RESU=U.getName(),
                               NOM_CHAM    ='SIEF_ELGA'),
-                          _F( NOM_RESU='U',
+                          _F( NOM_RESU=U.getName(),
                               NOM_CHAM    ='VARI_ELGA'),
-                          _F( NOM_RESU='U',
+                          _F( NOM_RESU=U.getName(),
                               NOM_CHAM    ='SIGM_NOEU'),
-                          _F( NOM_RESU='U',
+                          _F( NOM_RESU=U.getName(),
                               NOM_CHAM    ='VARI_NOEU'),
                          ) ,
               UNITE=71,
-              TOUT_ORDRE='OUI',);
+              TOUT_ORDRE='OUI',)
 
 CH1=LIRE_CHAMP(FORMAT='MED',
                MODELE=MOMECA,
                MAILLAGE=MAIL,
                NOM_CMP_IDEM='OUI',
-               NOM_MED='U_______SIEF_ELGA',
+               NOM_MED= med_name(U) + 'SIEF_ELGA',
                TYPE_CHAM='ELGA_SIEF_R',
                INST=90.,
-               UNITE=71,);
+               UNITE=71,)
 
-IMPR_RESU(FORMAT="RESULTAT",UNITE=75,RESU=_F(CHAM_GD=CH1,),);
+IMPR_RESU(FORMAT="RESULTAT",UNITE=75,RESU=_F(CHAM_GD=CH1,),)
 
-IMPR_RESU(FORMAT="RESULTAT",UNITE=76,RESU=_F(RESULTAT=U,NOM_CHAM='SIEF_ELGA',INST=90.),);
+IMPR_RESU(FORMAT="RESULTAT",UNITE=76,RESU=_F(RESULTAT=U,NOM_CHAM='SIEF_ELGA',INST=90.),)
 
 MONU=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                FORMAT='MED',
                MODELE=MOMECA,
-               FORMAT_MED=(_F( NOM_RESU='U',
+               FORMAT_MED=(_F( NOM_RESU=U.getName(),
                                NOM_CHAM    ='VARI_ELGA'),) ,
                UNITE=71,
-               LIST_INST=L_INST,);
+               LIST_INST=L_INST,)
 
-IMPR_RESU(FORMAT="RESULTAT",UNITE=74,RESU=_F(RESULTAT=UUU),);
+IMPR_RESU(FORMAT="RESULTAT",UNITE=74,RESU=_F(RESULTAT=UUU),)
 
 
 TEST_RESU(RESU=(_F(INST=90.0,
@@ -527,23 +529,23 @@ TEST_RESU(RESU=(_F(INST=90.0,
 IMPR_RESU(FORMAT='MED', UNITE=83,
           RESU=(_F(RESULTAT=U,NOM_CHAM=('SIGM_ELNO','VARI_ELNO'),NUME_ORDRE=1,MAILLE='M1',),
                 _F(RESULTAT=U,NOM_CHAM='DEPL',NUME_ORDRE=1,GROUP_NO='GRNO3'),
-                   ),);
+                   ),)
 
 UUU2=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                FORMAT='MED',
               MODELE=MOMECA,
               FORMAT_MED=(
-                          _F( NOM_CHAM_MED='U_______DEPL',
+                          _F( NOM_CHAM_MED = med_name(U) + 'DEPL',
                               NOM_CHAM    ='DEPL' ),
-                          _F( NOM_CHAM_MED='U_______SIGM_ELNO',
+                          _F( NOM_CHAM_MED = med_name(U) + 'SIGM_ELNO',
                               NOM_CHAM    ='SIGM_ELNO'),
-                          _F( NOM_CHAM_MED='U_______VARI_ELNO',
+                          _F( NOM_CHAM_MED = med_name(U) + 'VARI_ELNO',
                              NOM_CMP=('V1','V2',),
                               NOM_CMP_MED=('V1','V2',),
                               NOM_CHAM    ='VARI_ELNO'),
                          ) ,
               UNITE=83,
-              TOUT_ORDRE='OUI',);
+              TOUT_ORDRE='OUI',)
 
 
 IMPR_RESU(UNITE=84, FORMAT='GMSH',
@@ -554,14 +556,16 @@ IMPR_RESU(UNITE=84, FORMAT='GMSH',
                 _F(RESULTAT=UUU2,
                    NOM_CHAM='VARI_ELNO',NOM_CMP=('V1','V2'),),),)
 
-DEFI_FICHIER(UNITE=84, ACTION='LIBERER')
+# DEFI_FICHIER(UNITE=84, ACTION='LIBERER')
 
 TEST_FICHIER(FICHIER="./fort.84",
              NB_VALE_I=244,
-             VALE_CALC_I=51,
+             VALE_CALC_I=243,
              NB_VALE=201,
              VALE_CALC=1.6920779992e+02,
 )
+import os
+os.system("cat fort.84")
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -575,13 +579,13 @@ UUU0=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
               FORMAT='MED',
               MODELE=MOMECA,
               FORMAT_MED=(
-                          _F( NOM_CHAM_MED='U_______VARI_ELNO',
+                          _F( NOM_CHAM_MED = med_name(U) + 'VARI_ELNO',
                               NOM_CMP=('V1','V2',),
                               NOM_CMP_MED=('V1','V2',),
                               NOM_CHAM    ='VARI_ELNO'),
                          ) ,
               UNITE=71,
-              NUME_ORDRE=4,);
+              NUME_ORDRE=4,)
 
 
 TEST_RESU(RESU=_F(INST=85.0,
@@ -730,21 +734,21 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=4,
                 ),
           )
 
-IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=UUU,),);
+IMPR_RESU(FORMAT='RESULTAT',RESU=_F(RESULTAT=UUU,),)
 
 MAIL2=LIRE_MAILLAGE(FORMAT='MED',
-                    UNITE =71     );
+                    UNITE =71     )
 
 MOMECA2=AFFE_MODELE(MAILLAGE=MAIL2,
                    AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='AXIS',),);
+                           MODELISATION='AXIS',),)
 
 SIGMRELU=LIRE_CHAMP(MAILLAGE=MAIL2,
                 MODELE=MOMECA2,
                 FORMAT='MED',
                 UNITE=71,
-                NOM_MED='U_______SIGM_ELNO',
+                NOM_MED=med_name(U) + 'SIGM_ELNO',
                 NUME_ORDRE=2,NUME_PT=2,
                 TYPE_CHAM='ELNO_SIEF_R',
                 NOM_CMP_IDEM='OUI',
@@ -756,7 +760,7 @@ VARIRELU=LIRE_CHAMP(MAILLAGE=MAIL2,
                 MODELE=MOMECA2,
                 FORMAT='MED',
                 UNITE=71,
-                NOM_MED='U_______VARI_ELNO',
+                NOM_MED=med_name(U) + 'VARI_ELNO',
                 NOM_CMP=('V1','V2',),
                 NOM_CMP_MED=('V1','V2',),
                 NUME_ORDRE=2,NUME_PT=2,
@@ -768,7 +772,7 @@ IMPR_RESU ( RESU=_F( CHAM_GD=VARIRELU, ) ) ;
 DEPLRELU=LIRE_CHAMP(MAILLAGE=MAIL2,
                 FORMAT='MED',
                 UNITE=71,
-                NOM_MED='U_______DEPL',
+                NOM_MED=med_name(U) + 'DEPL',
                 NUME_ORDRE=2,NUME_PT=2,
                 TYPE_CHAM='NOEU_DEPL_R',
                 NOM_CMP_IDEM='OUI',
@@ -783,29 +787,29 @@ IMPR_RESU ( RESU=_F( CHAM_GD=DEPLRELU, ) )
 IMPR_RESU(FORMAT='MED', UNITE=87,
           RESU=(_F(RESULTAT=U,NOM_RESU_MED='U_M1',NUME_ORDRE=1,MAILLE='M1',),
                 _F(RESULTAT=U,NOM_RESU_MED='U_GRNO3',NUME_ORDRE=2,GROUP_NO='GRNO3'),
-                _F(RESULTAT=U,NOM_RESU_MED='U_ALL',NUME_ORDRE=2),   ),);
+                _F(RESULTAT=U,NOM_RESU_MED='U_ALL',NUME_ORDRE=2),   ),)
 
 UUU3=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                FORMAT='MED',
               MODELE=MOMECA,
               FORMAT_MED=(
-                          _F( NOM_CHAM_MED='U_M1____DEPL',
+                          _F( NOM_CHAM_MED = 'U_M1____DEPL',
                               NOM_CHAM    ='DEPL' ),
-                          _F( NOM_CHAM_MED='U_M1____SIGM_ELNO',
+                          _F( NOM_CHAM_MED = 'U_M1____SIGM_ELNO',
                               NOM_CHAM    ='SIGM_ELNO'),
-                          _F( NOM_CHAM_MED='U_GRNO3_VARI_ELNO',
+                          _F( NOM_CHAM_MED = 'U_GRNO3_VARI_ELNO',
                               NOM_CMP     =('V1','V2',),
                               NOM_CMP_MED =('V1','V2',),
                               NOM_CHAM    ='VARI_ELNO'),
-                          _F( NOM_CHAM_MED='U_GRNO3_DEPL',
+                          _F( NOM_CHAM_MED = 'U_GRNO3_DEPL',
                               NOM_CHAM    ='DEPL' ),
-                          _F( NOM_CHAM_MED='U_ALL___SIEF_ELGA',
+                          _F( NOM_CHAM_MED = 'U_ALL___SIEF_ELGA',
                               NOM_CHAM    ='SIEF_ELGA'),
                          ) ,
               UNITE=87,
-              TOUT_ORDRE='OUI',);
+              TOUT_ORDRE='OUI',)
 
-DEFI_FICHIER(UNITE=87, ACTION='LIBERER')
+# DEFI_FICHIER(UNITE=87, ACTION='LIBERER')
 
 IMPR_RESU(FORMAT="RESULTAT",RESU=_F(RESULTAT=UUU3),)
 
@@ -881,7 +885,7 @@ chirra=LIRE_RESU(
    UNITE=unit_m,
    FORMAT_MED=_F(
       NOM_CHAM    ='IRRA',
-      NOM_CHAM_MED='IRRAD___IRRA',
+      NOM_CHAM_MED= med_name(IRRAD) + 'IRRA',
    ),
    TOUT_ORDRE = 'OUI',
 )
@@ -967,14 +971,14 @@ HELNO0=CREA_CHAMP(TYPE_CHAM='ELNO_HYDR_R',
                   MODELE=MOTHER,
                   AFFE=_F(MAILLE='M1',
                           NOM_CMP='HYDR',
-                          VALE=0.0,),);
+                          VALE=0.0,),)
 
 HELNO1=CREA_CHAMP(TYPE_CHAM='ELNO_HYDR_R',
                   OPERATION='AFFE',
                   MODELE=MOTHER,
                   AFFE=_F(MAILLE='M1',
                           NOM_CMP='HYDR',
-                          VALE=1.0,),);
+                          VALE=1.0,),)
 
 RESHYD=CREA_RESU(OPERATION='AFFE',
                  TYPE_RESU='EVOL_THER',
@@ -985,15 +989,15 @@ RESHYD=CREA_RESU(OPERATION='AFFE',
                     INST=0.0,),
                  _F(CHAM_GD=HELNO1,
                     MODELE=MOTHER,
-                    INST=90,),),);
+                    INST=90,),),)
 
 RESHYD=CALC_CHAMP(reuse =RESHYD,
                   RESULTAT=RESHYD,
-                  THERMIQUE='HYDR_NOEU',);
+                  THERMIQUE='HYDR_NOEU',)
 
 IMPR_RESU(FORMAT='MED',
           UNITE=72,
-          RESU=_F(RESULTAT=RESHYD,),);
+          RESU=_F(RESULTAT=RESHYD,),)
 
 LUHYD=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 FORMAT='MED',
@@ -1001,10 +1005,10 @@ LUHYD=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 UNITE=72,
                 FORMAT_MED=(
                 _F(NOM_CHAM='HYDR_ELNO',
-                   NOM_RESU='RESHYD',),
+                   NOM_RESU='0000003b',),
                 _F(NOM_CHAM='HYDR_NOEU',
-                   NOM_RESU='RESHYD',),),
-                TOUT_ORDRE='OUI',);
+                   NOM_RESU='0000003b',),),
+                TOUT_ORDRE='OUI',)
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    RESULTAT=LUHYD,
@@ -1044,7 +1048,7 @@ IMPR_RESU(UNITE=18, FORMAT='GMSH',
                    NOM_CHAM='SIGM_ELNO',
                    NOM_CMP=('SIXX','SIYY','SIZZ','SIXY'),
                    TYPE_CHAM='TENS_2D',
-                   NUME_ORDRE= 1,),),);
+                   NUME_ORDRE= 1,),),)
 
 #-----------------------------------------------------------------------
 #===> couverture IRGNTE
@@ -1056,7 +1060,7 @@ IMPR_RESU(UNITE=30,
                    TYPE_CHAM='TENS_2D',
                    NOM_CMP=('SIXX','SIYY','SIXY','SIZZ',),
                    NUME_ORDRE= 1,),),
-                   INFO=2);
+                   INFO=2)
 
 #-----------------------------------------------------------------------
 # TESTS DE VALIDATION DE LIRE_RESU re-entrant avec MODELE variable
@@ -1065,32 +1069,32 @@ IMPR_RESU(UNITE=30,
 MODEL1 = AFFE_MODELE(MAILLAGE=MAIL,
                       AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='AXIS',),);
+                           MODELISATION='AXIS',),)
 
 MODEL2 = AFFE_MODELE(MAILLAGE=MAIL,
                       AFFE=_F(TOUT='OUI',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='AXIS',),);
+                           MODELISATION='AXIS',),)
 
 MONU1=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                FORMAT='MED',
                MODELE=MODEL1,
-               FORMAT_MED=(_F( NOM_RESU='U',
+               FORMAT_MED=(_F( NOM_RESU=U.getName(),
                                NOM_CHAM    ='VARI_ELGA'),) ,
                UNITE=71,
-               INST=(0.,66.666,73.333,80.,),);
+               INST=(0.,66.666,73.333,80.,),)
 
 MONU1=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
                FORMAT='MED',
                RESULTAT=MONU1,
                reuse=MONU1,
                MODELE=MODEL2,
-               FORMAT_MED=(_F( NOM_RESU='U',
+               FORMAT_MED=(_F( NOM_RESU=U.getName(),
                                NOM_CHAM    ='VARI_ELGA'),) ,
                UNITE=71,
-               INST=(85.,90.,),);
+               INST=(85.,90.,),)
 
-IMPR_RESU(FORMAT="RESULTAT",UNITE=75,RESU=_F(RESULTAT=MONU1),);
+IMPR_RESU(FORMAT="RESULTAT",UNITE=75,RESU=_F(RESULTAT=MONU1),)
 
 
 TEST_RESU(RESU=(
@@ -1104,4 +1108,4 @@ TEST_RESU(RESU=(
                 ),
           )
 
-FIN();
+FIN()

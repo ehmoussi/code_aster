@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,6 +22,8 @@ This module allows to check the syntax of a user command file that used the
 syntax of legacy operators.
 The check is performed at execution of an operator. So, the user file can mix
 legacy operators and pure Python instructions.
+
+Warning: Default keywords must be added before checking the syntax.
 """
 
 import numpy
@@ -29,6 +31,7 @@ import numpy
 from . import DataStructure as DS
 from .SyntaxUtils import (debug_message2, force_list, mixedcopy, old_complex,
                           remove_none, value_is_sequence)
+
 
 class CheckerError(Exception):
     """Exception raised during checking the syntax.
@@ -148,23 +151,25 @@ def isValidType(obj, expected):
 
 class SyntaxCheckerVisitor:
 
-    """This class walks along the tree of a Command object to check its syntax
+    """This class walks along the tree of a Command object to check its syntax.
+
+    Warning: Default keywords must be added before visiting the objects.
+
+    Arguments:
+        max_check (int): Limit the number of checked occurrences
+            (default: 99999).
 
     Attributes:
         _stack (list): Stack of checked objects for error report.
         _parent_context (dict): Context of the parent used to evaluate block
             conditions.
-        _in_place (bool): If *True* the keywords dict is changed in place.
-        _default_command (bool): Marker not to add default keywords several
-            times (for performance).
     """
 
-    def __init__(self, in_place=False):
+    def __init__(self, max_check=99999):
         """Initialization"""
         self._stack = []
         self._parent_context = []
-        self._in_place = in_place
-        self._default_command = False
+        self._max_check = max_check
 
     @property
     def stack(self):
@@ -191,23 +196,20 @@ class SyntaxCheckerVisitor:
         if step.name in ("_CONVERT_VARIABLE", "_CONVERT_COMMENT",
                          "_RESULT_OF_MACRO"):
             return
-        if self._in_place:
-            keywords = userDict
-        else:
-            keywords = mixedcopy(userDict)
-        # mark that default keywords have already added at command level
-        self._default_command = True
-        step.addDefaultKeywords(keywords)
-        debug_message2("checking syntax of", step.name, "with", keywords)
-        self._parent_context.append(keywords)
-        self._visitComposite(step, keywords)
+        debug_message2("checking syntax of", step.name, "with", userDict)
+        self._parent_context.append(userDict)
+        self._visitComposite(step, userDict)
         self._parent_context.pop()
         try:
-            step.get_type_sd_prod(**keywords)
+            step.get_type_sd_prod(**userDict)
         except Exception as exc:
             self.error(TypeError,
                        ("Cannot type result of the command {0}\n"
                         "Exception raised: {1})").format(step.name, repr(exc)))
+
+    def visitMacro(self, step, userDict=None):
+        """Visit a Macro object"""
+        self.visitCommand(step, userDict)
 
     def visitBloc(self, step, userDict=None):
         """Visit a Bloc object"""
@@ -269,7 +271,13 @@ class SyntaxCheckerVisitor:
             skwValue = [skwValue]
 
         # Vérification du type et des bornes des valeurs
+        count = 0
         for i in skwValue:
+            count += 1
+            if count > self._max_check:
+                print("Only the first {0} values are checked."
+                      .format(self._max_check))
+                break
             if complex in validType:
                 i = old_complex(i)
             # AsterStudy: for PythonVariable
@@ -366,11 +374,14 @@ class SyntaxCheckerVisitor:
                            .format(max_occurences))
 
         # loop on occurrences filled by the user
+        count = 0
         for userOcc in userDict:
+            count += 1
+            if count > self._max_check:
+                print("Only the first {0} occurrences are checked."
+                      .format(self._max_check))
+                break
             ctxt = self._parent_context[-1] if self._parent_context else {}
-            if not self._default_command:
-                userOcc = mixedcopy(userOcc)
-                step.addDefaultKeywords(userOcc, ctxt)
             # check rules
             for rule in step.getRules(userOcc, ctxt):
                 self._stack.append(rule)
@@ -408,21 +419,27 @@ class SyntaxCheckerVisitor:
                     self._stack.pop()
 
 
-def checkCommandSyntax(command, keywords, in_place=True):
-    """Check the syntax of a command `keywords` contains the keywords filled by
-    the user.
+def checkCommandSyntax(command, keywords, add_default=True, max_check=99999):
+    """Check the syntax of a command `keywords` contains the default keywords
+    and the user keywords filled by the user.
+
+    Default keywords must be added before checking the syntax if `add_default`
+    is set to `False`.
 
     Arguments:
         command (Command): Command object to be checked.
-        keywords (dict): Dict of the user keywords.
-        in_place (bool): If *True* the default keywords are added in the user
-            dict. *None* values are removed from the user dict.
+        keywords (dict): Dict of keywords.
+            *None* values are removed from the user dict.
+        add_default (bool, optional): Tell if default keywords have to be
+            added or not.
+        max_check (int): Limit the number of checked occurrences
+            (default: 99999).
     """
-    checker = SyntaxCheckerVisitor(in_place)
+    checker = SyntaxCheckerVisitor(max_check)
     if not isinstance(keywords, dict):
         checker.error(TypeError, "'dict' object is expected")
 
-    command.accept(checker, keywords)
-    if in_place:
+    if add_default:
         command.addDefaultKeywords(keywords)
-        remove_none(keywords)
+    command.accept(checker, keywords)
+    remove_none(keywords)

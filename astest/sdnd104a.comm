@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -101,7 +101,7 @@ OMEGA=2.*pi
 #
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=12.,
-                                       NOMBRE =(12.-0.)/(5.E-5),),);
+                                   NOMBRE =int((12.-0.)/(5.E-5)),),);
 ACCE1 = FORMULE(VALE='15.*sin (OMEGA *INST)',
                 OMEGA=OMEGA,
                 NOM_PARA='INST',)

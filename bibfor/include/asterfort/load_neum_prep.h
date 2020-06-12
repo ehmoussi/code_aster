@@ -17,13 +17,13 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine load_neum_prep(model    , cara_elem , mate      , load_type     , inst_prev,&
+    subroutine load_neum_prep(model    , cara_elem , mate      , mateco , load_type   , inst_prev,&
                               inst_curr, inst_theta, nb_in_maxi, nb_in_prep    , lchin    ,&
                               lpain    , varc_curr , disp_prev , disp_cumu_inst, compor   ,&
                               nharm    , strx_prev_, vite_curr_, acce_curr_)
         character(len=24), intent(in) :: model
         character(len=24), intent(in) :: cara_elem
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mate, mateco
         integer, intent(in) :: nb_in_maxi
         character(len=4), intent(in) :: load_type
         real(kind=8), intent(in) :: inst_prev

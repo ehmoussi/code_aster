@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine getvid(motfac, motcle, iocc, nbval, vect,&
-                  scal, nbret, isdefault)
+                  scal, nbret)
 ! person_in_charge: mathieu.courtois at edf.fr
     implicit none
     character(len=*), intent(in) :: motfac
@@ -27,13 +27,12 @@ subroutine getvid(motfac, motcle, iocc, nbval, vect,&
     character(len=*), intent(out), optional :: vect(*)
     character(len=*), intent(out), optional :: scal
     integer, intent(out), optional :: nbret
-    integer, intent(out), optional :: isdefault
 #include "asterc/getvid_wrap.h"
 #include "asterfort/assert.h"
 #include "asterc/getres.h"
 !
 !   really used variables
-    integer :: uioc, uisdef, unbret, umax
+    integer :: uioc, unbret, umax
 !   len=8 should be sufficient, but the same as in getvtx
     integer, parameter :: maxlen=255
     character(len=maxlen) :: uvect(1)
@@ -56,26 +55,20 @@ subroutine getvid(motfac, motcle, iocc, nbval, vect,&
     endif
 !
     if (present(vect)) then
-        call getvid_wrap(motfac, motcle, uioc, uisdef, umax,&
-                         vect, unbret)
+        call getvid_wrap(motfac, motcle, uioc, umax, vect, unbret)
     else if (present(scal)) then
         ASSERT(len(scal) .le. maxlen)
-        call getvid_wrap(motfac, motcle, uioc, uisdef, umax,&
-                         uvect, unbret)
+        call getvid_wrap(motfac, motcle, uioc, umax, uvect, unbret)
         if (unbret .ne. 0) then
             scal = uvect(1)(1:len(scal))
         endif
     else
-        call getvid_wrap(motfac, motcle, uioc, uisdef, umax,&
-                         vdummy, unbret)
+        call getvid_wrap(motfac, motcle, uioc, umax, vdummy, unbret)
     endif
 !   if the ".capy" can not ensure that at least 'umax' are provided, you must check
 !   the number of values really read using the 'nbret' argument
     ASSERT(present(nbret) .or. umax .eq. unbret)
 !
-    if (present(isdefault)) then
-        isdefault = uisdef
-    endif
     if (present(nbret)) then
         nbret = unbret
     endif

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,23 +17,125 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+# person_in_charge: mathieu.courtois at edf.fr
+
+POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='OUI'))
+
+NAP1 = FORMULE(VALE='NAP(INST,FREQ1,AMOR) ',
+               NAP=NAP,
+               FREQ1=FREQ1,
+               NOM_PARA=['AMOR', 'INST'],)
 #
-POURSUITE( CODE='OUI', PAR_LOT='NON')
+NAP2 = CALC_FONC_INTERP ( FONCTION = NAP1,
+                          NOM_RESU = 'VIT',
+                          NOM_PARA = 'AMOR',
+                          VALE_PARA = (0.01,0.03),
+                          PROL_DROITE='EXCLU',
+                          PROL_GAUCHE='EXCLU',
+                          INTERPOL='LIN',
+                          NOM_PARA_FONC = 'INST',
+                          VALE_PARA_FONC = LINST,
+                          PROL_DROITE_FONC='CONSTANT',
+                          PROL_GAUCHE_FONC='CONSTANT',
+                          INTERPOL_FONC='LIN'
+       )
+#
+IMPR_CO(CONCEPT=_F(NOM=NAP2))
+#
+LPARA=DEFI_LIST_REEL (   DEBUT=0.,INTERVALLE=(
+                         _F(  JUSQU_A = 0.05, PAS = 0.01), ))
+#
+NAP3 = CALC_FONC_INTERP (  FONCTION = NAP1,
+                           NOM_RESU = 'VIT',
+                           NOM_PARA = 'AMOR',
+                           LIST_PARA = LPARA,
+                           PROL_DROITE='EXCLU',
+                           PROL_GAUCHE='EXCLU',
+                           INTERPOL='LIN',
+                           NOM_PARA_FONC = 'INST',
+                           VALE_PARA_FONC = LINST,
+                           PROL_DROITE_FONC='CONSTANT',
+                           PROL_GAUCHE_FONC='CONSTANT',
+                           INTERPOL_FONC='LIN'
+       )
+#
+IMPR_CO(CONCEPT=_F(NOM=NAP3))
 
-# But : Tester l'evaluation des fonctions et formules en poursuite.
-#       Le PAR_LOT='NON' est nécessaire pour évaluer des fonctions produites
-#       dans un autre jdc.
+#=======================================================================
+# VALIDATION DU DECOUPAGE DES FORMULES
+#
 
-tab = CREA_TABLE(LISTE=_F(PARA='TEST',
-                          LISTE_R=[SIi(pi/2.), DFR1(1.), SIa(pi/2.)],))
+XXX = (1./ ((DEPI**2 - OMEGA**2 )**2 +(2.*DEPI*OMEGA)**2))*((DEPI**2 - OMEGA**2)*
+   cos(OMEGA) + 2.*DEPI* OMEGA*sin(OMEGA) - ( (DEPI**2 - OMEGA**2)*cos(DEPI) )
+   *exp(-DEPI) )
 
-IMPR_TABLE(TABLE=tab)
+FXXX = DEFI_FONCTION ( NOM_PARA    = 'INST',
+                       VALE        = (  0.,  0.,
+                                        1.,  XXX ), )
 
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=5.000000000,
-           VALE_REFE=5.0,
-           NOM_PARA='TEST',
-           TYPE_TEST='SOMM',
-           TABLE=tab,)
+TEST_FONCTION(VALEUR=_F(VALE_CALC=-0.0157436635134,
+                        VALE_REFE=-0.015743663500000001,
+                        VALE_PARA=1.0,
+                        REFERENCE='ANALYTIQUE',
+                        FONCTION=FXXX,),
+              )
 
-FIN()
+#
+
+#=======================================================================
+# VALIDATION DES FORMULES COMPLEXES
+#
+
+frmcpx = FORMULE(VALE_C='complex(X,2.*X)',
+                 NOM_PARA='X',)
+
+labs=DEFI_LIST_REEL( VALE=( 0., 1., 2., 3. ) )
+
+fctcpx=CALC_FONC_INTERP( FONCTION=frmcpx,
+                         LIST_PARA=labs,
+                         NOM_PARA = 'X', )
+
+IMPR_FONCTION( COURBE=_F(FONCTION=frmcpx,
+                         LIST_PARA=labs,
+                         PARTIE='IMAG',),
+               UNITE=6,);
+
+TEST_FONCTION(VALEUR=(_F(VALE_CALC_C=(1+2j),
+                         VALE_REFE_C=('RI', 1.0, 2.0),
+                         VALE_PARA=1.0,
+                         REFERENCE='ANALYTIQUE',
+                         FONCTION=fctcpx,),
+                      _F(VALE_CALC_C=(3+6j),
+                         VALE_REFE_C=('RI', 3.0, 6.0),
+                         VALE_PARA=3.0,
+                         REFERENCE='ANALYTIQUE',
+                         FONCTION=fctcpx,),
+                      ),
+              )
+
+frmxm1 = FORMULE(VALE_C='1./fctcpx(X)',
+                 fctcpx=fctcpx,
+                 NOM_PARA='X',)
+
+labs1=DEFI_LIST_REEL( VALE=( 1.5, 2.5,  ) )
+
+fcpxm1=CALC_FONC_INTERP( FONCTION=frmxm1,
+                         LIST_PARA=labs1,
+                         NOM_PARA = 'X', )
+
+
+TEST_FONCTION(VALEUR=(_F(VALE_CALC_C=(0.133333333333-0.266666666667j),
+                         VALE_REFE_C=('RI', 0.13333333333333333, -0.26666666666666666),
+                         VALE_PARA=1.5,
+                         REFERENCE='ANALYTIQUE',
+                         FONCTION=fcpxm1,),
+                      _F(VALE_CALC_C=(0.08-0.16j),
+                         VALE_REFE_C=('RI', 0.080000000000000002, -0.16),
+                         VALE_PARA=2.5,
+                         REFERENCE='ANALYTIQUE',
+                         FONCTION=fcpxm1,),
+                      ),
+              )
+
+#
+FIN( )

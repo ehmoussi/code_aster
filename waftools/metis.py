@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ def configure(self):
         self.env.revert()
         self.define('_DISABLE_METIS', 1)
         self.undefine('HAVE_METIS')
-        if self.options.enable_metis == True:
+        if self.options.enable_metis:
             raise
     else:
         self.define('_HAVE_METIS', 1)
@@ -65,7 +65,8 @@ def check_metis(self):
 @Configure.conf
 def check_metis_libs(self):
     opts = self.options
-    check_metis = partial(self.check_cc, uselib_store='METIS', mandatory=True)
+    check_metis = partial(self.check_cc, uselib_store='METIS',
+                          use='METIS', mandatory=True)
     if opts.embed_all or opts.embed_metis:
         check = lambda lib: check_metis(stlib=lib)
     else:
@@ -74,7 +75,8 @@ def check_metis_libs(self):
 
 @Configure.conf
 def check_metis_headers(self):
-    check = partial(self.check_cc, header_name='metis.h', uselib_store='METIS', use='METIS')
+    check = partial(self.check_cc, header_name='metis.h', uselib_store='METIS',
+                    use='METIS')
     self.start_msg('Checking for header metis.h')
     try:
         if not check(mandatory=False):
@@ -108,8 +110,8 @@ int main(void){
     try:
         ret = self.check_cc(fragment=fragment, use='METIS',
                             mandatory=True, execute=True, define_ret=True)
-        mat4 = re.search('METISTITLE: *METIS *(?P<vers>[0-9]+\.[0-9]+\.\w+) ', ret)
-        mat5 = re.search('METISVER: *(?P<vers>[0-9]+\.[0-9]+\.\w+)', ret)
+        mat4 = re.search(r'METISTITLE: *METIS *(?P<vers>[0-9]+\.[0-9]+\.\w+) ', ret)
+        mat5 = re.search(r'METISVER: *(?P<vers>[0-9]+\.[0-9]+\.\w+)', ret)
         vers = (mat4 and mat4.group('vers')) or (mat5 and mat5.group('vers'))
         major = int(vers.split('.')[0])
         if major != 5:

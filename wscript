@@ -42,33 +42,30 @@ from waflib import Build, Configure, Logs, Utils
 from waflib.Tools.c_config import DEFKEYS
 from waflib.Tools.fc import fc
 
-if sys.version_info.major < 3:
-    Logs.error("Python 2 is not supported anymore. "
-               "Please upgrade to Python 3.5 or newer")
+if sys.version_info < (3, 6):
+    Logs.error("Python 3.6 or newer is required.")
     sys.exit(1)
 
 
 def options(self):
-    ori_get_usage = self.parser.get_usage
+    orig_get_usage = self.parser.get_usage
     def _usage():
-        return ori_get_usage() + os.linesep.join((
+        return orig_get_usage() + os.linesep.join((
         '',
         'Environment variables:',
         '  CC             : C compiler',
         '  FC             : Fortran compiler',
         '  CXX            : C++ compiler',
-        '  INCLUDES       : extra include paths',
         '  DEFINES        : extra preprocessor defines',
         '  LINKFLAGS      : extra linker options',
-        '  LIBPATH        : extra paths where to find libraries',
-        '  LIB            : extra libraries to link with',
-        '  STLIB          : extra static libraries to link with',
-        '  OPTLIB_FLAGS   : extra linker flags appended at the end of link commands '
-        '(for example when -Wl,start-group options are necessary). '
-        'OPTLIB_FLAGS will be added for all links. Usually, you should prefer '
-        'to define more specific variable as OPTLIB_FLAGS_MATH (or OPTLIB_FLAGS_HDF5...)',
         '  CFLAGS         : extra C compilation options',
         '  FCFLAGS        : extra Fortran compilation options',
+        '  LIBPATH_x, LIB_x, INCLUDES_x, PYPATH_x : paths for component "x" for libs, '
+        'incudes, python modules',
+        '  CONFIG_PARAMETERS_name=value: extra configuration parameters '
+        '(for config.json)',
+        '  WAFBUILD_ENV   : environment file to be included in runtime '
+        'environment file',
         '  PREFIX         : default installation prefix to be used, '
         'if no --prefix option is given.',
         '  BLAS_INT_SIZE  : kind of integers to use in the fortran blas/lapack '
@@ -118,34 +115,73 @@ def options(self):
     self.load('mathematics', tooldir='waftools')
     self.load('med', tooldir='waftools')
     self.load('metis', tooldir='waftools')
+    self.load('parmetis', tooldir='waftools')
     self.load('mumps', tooldir='waftools')
     self.load('scotch', tooldir='waftools')
     self.load('petsc', tooldir='waftools')
     self.load('runtest', tooldir='waftools')
+    self.recurse('bibfor')
+    self.recurse('code_aster')
+    self.recurse('run_aster')
+    self.recurse('bibcxx')
+    self.recurse('bibc')
+    self.recurse('mfront')
+    self.recurse('i18n')
+    self.recurse('data')
+    self.recurse('doc')
+    self.recurse('astest')
 
     group.add_option('-E', '--embed-all', dest='embed_all',
                     action='store_true', default=False,
                     help='activate all embed-* options (except embed-python)')
-    group.add_option('--install-as', dest='astervers',
-                    action='store', default='',
-                    help='install as this version name, used for '
-        'subdirectories (example: X.Y will use aster/X.Y/...), '
-        "[Default: '']")
-    self.recurse('bibfor')
-    self.recurse('bibcxx')
-    self.recurse('bibc')
-    self.recurse('bibpyt')
-    self.recurse('mfront')
-    self.recurse('i18n')
-    self.recurse('data')
-    self.recurse('astest')
+    group.add_option('--enable-all', dest='enable_all',
+                    action='store_true', default=os.environ.get('ENABLE_ALL'),
+                    help="activate all 'enable-*' options (same as "
+                         "ENABLE_ALL environment variable)")
 
+@Configure.conf
+def all_components(self):
+    components = ['HDF5', 'MED', 'MFRONT', 'METIS', 'PARMETIS', 'SCOTCH',
+                  'MUMPS', 'PETSC', 'PETSC4PY',
+                  'MATH', 'NUMPY', 'BOOST', 'OPENMP', 'MPI', 'Z', 'CXX',
+                  'ASRUN', 'PYTHON']
+    return components
 
 def configure(self):
+    opts = self.options
     self.setenv('default')
-    # store arguments for reconfigure
-    import sys
-    self.env.WAFCMDLINE = sys.argv[1:]
+    self.load('official_platforms', tooldir='waftools')
+
+    # add environment variables into `self.env`
+    self.add_os_flags('FC')
+    self.add_os_flags('CC')
+    self.add_os_flags('CXX')
+    self.add_os_flags('CFLAGS')
+    self.add_os_flags('CXXFLAGS')
+    self.add_os_flags('FCFLAGS')
+    self.add_os_flags('LINKFLAGS')
+    self.add_os_flags('DEFINES')
+    self.add_os_flags('WAFBUILD_ENV')
+
+    for comp in self.all_components():
+        self.add_os_flags('LIBPATH_' + comp)
+        self.add_os_flags('LIB_' + comp)
+        self.add_os_flags('INCLUDES_' + comp)
+        self.add_os_flags('PYPATH_' + comp)
+        if not opts.enable_all:
+            continue
+        if not opts.parallel and comp in ['PARMETIS', 'PETSC', 'MPI']:
+            continue
+        opt = "enable_" + comp.lower()
+        if hasattr(opts, opt):
+            setattr(opts, opt, True)
+
+    self.env["CONFIG_PARAMETERS"] = {}
+    for key in os.environ.keys():
+        if not key.startswith("CONFIG_PARAMETERS_"):
+            continue
+        name = key.split("CONFIG_PARAMETERS_")[1]
+        self.env["CONFIG_PARAMETERS"][name] = os.environ[key]
 
     # compute default prefix
     if self.env.PREFIX in ('', '/'):
@@ -155,37 +191,10 @@ def configure(self):
     self.msg('Setting prefix to', self.env.PREFIX)
 
     self.load('ext_aster', tooldir='waftools')
-    computer_id = os.environ.get('DEVTOOLS_COMPUTER_ID', 'None')
-    if not self.options.use_config and computer_id != 'None':
-        suffix = os.environ.get('WAF_SUFFIX', '')
-        if suffix:
-            suffix = '_' + suffix
-        self.options.use_config = os.environ['DEVTOOLS_COMPUTER_ID'] + suffix
     self.load('use_config')
     self.load('gnu_dirs')
-    self.env['BIBPYTPATH'] = self.path.find_dir('bibpyt').abspath()
-
-    self.env.ASTER_EMBEDS = []
-
-    # add environment variables into `self.env`
-    self.add_os_flags('CFLAGS')
-    self.add_os_flags('CXXFLAGS')
-    self.add_os_flags('FCFLAGS')
-    self.add_os_flags('LINKFLAGS')
-    self.add_os_flags('LIB')
-    self.add_os_flags('LIBPATH')
-    self.add_os_flags('STLIB')
-    self.add_os_flags('STLIBPATH')
-    self.add_os_flags('INCLUDES')
-    self.add_os_flags('DEFINES')
-    self.add_os_flags('OPTLIB_FLAGS')
-
-    # Add *LIBPATH paths to LD_LIBRARY_PATH
-    libpaths = list(chain(*[Utils.to_list(self.env[key]) for key in self.env.table
-                            if 'libpath' in key.lower()]))
-    ldpaths = [p for p in os.environ.get('LD_LIBRARY_PATH', '').split(os.pathsep)]
-    paths =  libpaths + ldpaths
-    os.environ['LD_LIBRARY_PATH'] = os.pathsep.join(p for p in paths if p)
+    self.env['CODEASTERPATH'] = self.path.find_dir('code_aster').abspath()
+    self.env['CATALOPATH'] = self.path.find_dir('catalo').abspath()
 
     self.set_installdirs()
     self.load('parallel', tooldir='waftools')
@@ -194,32 +203,27 @@ def configure(self):
 
     self.load('mathematics', tooldir='waftools')
 
-    self.env.append_value('FCFLAGS', ['-fPIC'])
-    self.env.append_value('CFLAGS', ['-fPIC'])
-    self.env.append_value('CXXFLAGS', ['-fPIC'])
+    self.env.append_value('FCFLAGS', '-fPIC')
+    self.env.append_value('CFLAGS', '-fPIC')
+    self.env.append_value('CXXFLAGS', '-fPIC')
 
     self.load('med', tooldir='waftools')
     self.load('metis', tooldir='waftools')
+    self.load('parmetis', tooldir='waftools')
     self.load('mumps', tooldir='waftools')
     self.load('scotch', tooldir='waftools')
     self.load('petsc', tooldir='waftools')
     self.load('runtest', tooldir='waftools')
 
-    paths = self.srcnode.ant_glob('bibc/include', src=True, dir=True)
-    paths = [d.abspath() for d in paths]
-    self.env.append_value('INCLUDES', paths)
-    paths = self.srcnode.ant_glob('bibcxx/include', src=True, dir=True)
-    paths = [d.abspath() for d in paths]
-    self.env.append_value('INCLUDES', paths)
-
     self.recurse('bibfor')
+    self.recurse('code_aster')
+    self.recurse('run_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
-    self.recurse('bibpyt')
-    self.recurse('code_aster')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('data')
+    self.recurse('doc')
     self.recurse('astest')
 
     # keep compatibility for as_run
@@ -233,9 +237,6 @@ def build(self):
     fc._use_custom_sig = self.options.custom_fc_sig
     # shared the list of dependencies between bibc/bibfor
     # the order may be important
-    self.env['all_dependencies'] = [
-        'MED', 'HDF5','PETSC','MUMPS', 'METIS', 'SCOTCH', 'MFRONT',
-        'MATH', 'MPI', 'OPENMP', 'CLIB', 'SYS']
     if not self.variant:
         self.fatal('Call "waf build_debug" or "waf build_release", and read ' \
                    'the comments in the wscript file!')
@@ -248,10 +249,10 @@ def build(self):
 
     self.load('ext_aster', tooldir='waftools')
     self.recurse('bibfor')
+    self.recurse('code_aster')
+    self.recurse('run_aster')
     self.recurse('bibcxx')
     self.recurse('bibc')
-    self.recurse('bibpyt')
-    self.recurse('code_aster')
     self.recurse('mfront')
     self.recurse('i18n')
     self.recurse('catalo')
@@ -262,8 +263,10 @@ def build_elements(self):
     self.recurse('catalo')
 
 def init(self):
-    from waflib.Build import BuildContext, CleanContext, InstallContext, UninstallContext
-    _all = (BuildContext, CleanContext, InstallContext, UninstallContext, TestContext, I18NContext)
+    from waflib.Build import (BuildContext, CleanContext, InstallContext,
+                              UninstallContext)
+    _all = (BuildContext, CleanContext, InstallContext, UninstallContext,
+            TestContext, I18NContext, DocContext)
     for x in ['debug', 'release']:
         for y in _all:
             name = y.__name__.replace('Context','').lower()
@@ -301,19 +304,18 @@ class I18NContext(Build.BuildContext):
     cmd = 'i18n'
     fun = 'update_i18n'
 
+def build_doc(self):
+    self.recurse('doc')
+
+class DocContext(Build.BuildContext):
+    """build the documentation files"""
+    cmd = 'doc'
+    fun = 'build_doc'
+
 @Configure.conf
 def set_installdirs(self):
     # set the installation subdirectories
-    vers = self.options.astervers
-    if vers is None:
-        try:
-            vers = str(self.env.ASTER_VERSION[0][0]) + '-dev'
-        except (TypeError, IndexError):
-            vers = 'N-dev'
-    self.env.astervers = vers
-    norm = lambda path : osp.normpath(osp.join(path, 'aster', vers))
-    self.env['ASTERBINOPT'] = 'aster' + vers
-    self.env['ASTERBINDBG'] = 'asterd' + vers
+    norm = lambda path : osp.normpath(osp.join(path, 'aster'))
     self.env['ASTERLIBDIR'] = norm(self.env.LIBDIR)
     self.env['ASTERINCLUDEDIR'] = norm(self.env.INCLUDEDIR)
     self.env['ASTERDATADIR'] = norm(self.env.DATADIR)
@@ -353,6 +355,8 @@ def check_optimization_options(self):
     self.check_optimization_cxxflags()
     self.check_optimization_fcflags()
     self.check_optimization_python()
+    if self.env.BUILD_CYTHON:
+        self.check_optimization_cython()
     self.check_variant_vars()
 
 @Configure.conf
@@ -368,7 +372,66 @@ def check_variant_vars(self):
 # same idea than waflib.Tools.c_config.write_config_header
 # but defines are not removed from `env`
 # XXX see write_config_header(remove=True/False) + format Fortran ?
-CMT = { 'C' : '/* %s */', 'Fortran' : '! %s' }
+class ConfigHelper(object):
+
+    def __init__(self, language):
+        self._lang = language
+
+    def cmt(self, text):
+        return {
+            'C': '/* {0} */',
+            'Fortran': '! {0}',
+            'Cython': '# {0}'
+        }[self._lang].format(text)
+
+    @property
+    def filename(self):
+        return {
+            'C': 'asterc_config.h',
+            'Fortran': 'asterf_config.h',
+            'Cython': 'astercython_config.pxi'
+        }[self._lang]
+
+    @property
+    def header(self):
+        return [
+            self.cmt("WARNING! Automatically generated by `waf configure`!")
+        ]
+
+    @property
+    def guard_begin(self):
+        if self._lang in ('C', 'Fortran'):
+            guard = Utils.quote_define_name(self.filename)
+            return ["#ifndef {0}".format(guard),
+                    self.define(guard),
+                    ""]
+        return [""]
+
+    @property
+    def guard_end(self):
+        if self._lang in ('C', 'Fortran'):
+            return ["#endif", ""]
+        return [""]
+
+    def support(self, var):
+        """Tell if the language supports the variable name."""
+        if self._lang != 'C' and var.startswith('ASTERC'):
+            return False
+        if self._lang == 'Cython' and 'PETSC4PY' not in var:
+            return False
+        return True
+
+    def define(self, var, value=""):
+        if self._lang == 'Cython':
+            fmt = 'DEF {0}' + '={1}' if value else ''
+        else:
+            fmt = '#define {0} {1}'
+        return fmt.format(var, value)
+
+    def undefine(self, var):
+        fmt = self.cmt('#undef {0}')
+        return fmt.format(var)
+
 
 @Configure.conf
 def write_config_headers(self):
@@ -378,6 +441,8 @@ def write_config_headers(self):
         self.setenv(variant)
         self.write_config_h('Fortran', variant)
         self.write_config_h('C', variant)
+        if self.env.BUILD_CYTHON:
+            self.write_config_h('Cython', variant)
         for key in self.env[DEFKEYS]:
             self.undefine(key)
         self.env[DEFKEYS] = []
@@ -387,42 +452,41 @@ def write_config_h(self, language, variant, configfile=None, env=None):
     # Write a configuration header containing defines
     # ASTERC defines will be used if language='C', not 'Fortran'.
     self.start_msg('Write config file')
-    assert language in ('C', 'Fortran')
-    cmt = CMT[language]
-    configfile = configfile or 'aster%s_config.h' % language[0].lower()
+    cfg = ConfigHelper(language)
+    configfile = configfile or cfg.filename
     env = env or self.env
-    guard = Utils.quote_define_name(configfile)
-    lst = [
-        cmt % "WARNING! Automatically generated by `waf configure`!",
-        "", "",
-        "#ifndef %s" % guard, "#define %s" % guard, "",
-        self.get_config_h(language),
-        "", "#endif", "",
-    ]
+    lst = cfg.header
+    lst.append("")
+    lst.extend(cfg.guard_begin)
+    lst.extend(self.get_config_h(cfg))
+    lst.extend(cfg.guard_end)
+
     node = self.bldnode or self.path.get_bld()
     node = node.make_node(osp.join(variant, configfile))
     node.parent.mkdir()
     node.write('\n'.join(lst))
-    self.env.append_unique('INCLUDES', node.parent.abspath())
+    incpath = node.parent.abspath()
+    self.env.append_unique('INCLUDES', incpath)
+    if language == 'Cython':
+        self.env.append_unique('CYTHONFLAGS', ["-I{0}".format(incpath)])
     # config files are not removed on "waf clean"
     env.append_unique(Build.CFG_FILES, [node.abspath()])
     self.end_msg(node.bldpath())
 
 @Configure.conf
-def get_config_h(self, language):
+def get_config_h(self, cfg):
     # Create the contents of a ``config.h`` file from the defines
     # set in conf.env.define_key / conf.env.include_key. No include guards are added.
-    cmt = CMT[language]
     lst = []
     for x in self.env[DEFKEYS]:
-        if language != 'C' and x.startswith('ASTERC'):
+        if not cfg.support(x):
             continue
         if self.is_defined(x):
-            val = self.get_define(x)
-            lst.append('#define %s %s' % (x, val))
+            lst.append(cfg.define(x, self.get_define(x)))
         else:
-            lst.append(cmt % '#undef %s' % x)
-    return "\n".join(lst)
+            lst.append(cfg.undefine(x))
+    lst.append("")
+    return lst
 
 
 def _remove_previous(install_node, patterns):

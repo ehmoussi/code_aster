@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,10 @@
 !
 !
 interface
-    subroutine lcmohr(fami, kpg, ksp, ndim,&
+    subroutine lcmohr(ndim,&
                       typmod, imate, carcri, option,&
                       dstrai0, stresm0, stres, vim, vip,&
                       dsidep, codret)
-        character(len=*), intent(in) :: fami
-        integer, intent(in) :: kpg
-        integer, intent(in) :: ksp
         integer :: ndim
         character(len=8) :: typmod(*)
         integer :: imate

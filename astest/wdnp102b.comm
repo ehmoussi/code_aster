@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@
 # CAS 3D
 #=======================================================================
 
-
+from math import *
 # Nombre de couches
 # (dont la couche elastique correspondant au BEDROCK)
 nbcouche  = 11;
@@ -106,7 +106,8 @@ MAT1=DEFI_MATERIAU(ELAS=_F(E =YOUNG, NU =NU, RHO =RHO, ALPHA=0.),
 
 MAT_PAR=DEFI_MATERIAU(ELAS=_F(E =YOUNG, NU =NU, RHO =RHO));
 
-INCLUDE(UNITE=38,INFO=1);
+from wdnp102a import f_vite
+vite=f_vite()
 
 Paraxia = 'BAS';
 

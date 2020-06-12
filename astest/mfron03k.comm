@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -105,7 +105,9 @@ COMPORT=DEFI_COMPOR(MONOCRISTAL=_F(MATER=ACIERDA,
                                     FAMI_SYST_GLIS='CUBIQUE1',
                                     ),);
 
-INCLUDE(UNITE=91)
+from mfron03k import F_COMPORP
+COMPORP = F_COMPORP(COMPORT, MU)
+
 
 ACIERDD=DEFI_MATERIAU( ELAS=_F(E=E,NU=Nu,ALPHA=0.),
                        MFRONT=_F(LISTE_COEF=(E ,E ,E,Nu,Nu,Nu,G,G,G,b,GH, DeltaG0,tau_0,tau_f, gamma0,N,rho_ini,D,d_lat, y_at, K_f, K_self , k,epsi_1,G,a_self,a_coli,a_ncol,a_ncol,a_ncol,a_ncol,

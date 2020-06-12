@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -54,11 +54,11 @@ SA = 200.0
 
 # Number of Alpha considered
 NBALP = 23
-ALP   = [NONE]*NBALP
-SXM   = [NONE]*NBALP
-SYM   = [NONE]*NBALP
-SX    = [NONE]*NBALP
-SY    = [NONE]*NBALP
+ALP   = [None]*NBALP
+SXM   = [None]*NBALP
+SYM   = [None]*NBALP
+SX    = [None]*NBALP
+SY    = [None]*NBALP
 
 ###############################################################################
 #Test DANG_VAN_MODI_AC criterion
@@ -73,7 +73,7 @@ MATDC = DEFI_MATERIAU   ( ELAS = _F( E = 193000.,
                                                COEF_CISA_TRAC = 1.0 )
                          )
               
-TABDC   = [NONE]*NBALP
+TABDC   = [None]*NBALP
 for i in range(NBALP):
     ALP[i] = i/2.0-1.0
     SXM[i] = ALP[i]*SA
@@ -139,7 +139,7 @@ MATMC = DEFI_MATERIAU( ELAS = _F( E = 193000.,
                                             COEF_FLEX_TORS = 1.0 )
                       )
                
-TABMC = [NONE]*NBALP
+TABMC = [None]*NBALP
 for i in range(NBALP):
  
    TABMC[i] = POST_FATIGUE( CHARGEMENT = 'MULTIAXIAL',
@@ -192,7 +192,7 @@ MATD   = DEFI_MATERIAU   ( ELAS  = _F( E        = 193000.,
                                                 COEF_CISA_TRAC = 1.0 )
                                     )
 
-TABD   = [NONE]*NBALP
+TABD   = [None]*NBALP
 #PHIZ PEUT ETRE 43.75 OU 46.25, ON NOTE QUE 43.75 + 46.25 = 90
 RESUC = [(43.75, 46.25) , (43.75, 46.25) ,(43.75, 46.25) , (43.75, 46.25) ,(43.75, 46.25) ,(43.75, 46.25) ,
          (43.75, 46.25) , (43.75, 46.25) ,(43.75, 46.25) , (43.75, 46.25) ,(43.75, 46.25) ,(43.75, 46.25) ,
@@ -249,7 +249,7 @@ MATM   = DEFI_MATERIAU   ( ELAS  = _F( E        = 193000.,
                                                  COEF_FLEX_TORS = 1.0 )
                                     )
 
-TABM   = [NONE]*NBALP
+TABM   = [None]*NBALP
 
 # Analytical results
 RESUM  = [(45,45), 45.71604807, 46.43120259, 47.14457665, 47.85529654, 48.56250816, 49.26538279,
@@ -326,10 +326,10 @@ MATF   = DEFI_MATERIAU   ( ELAS  = _F( E        = 193000.,
                                                COEF_CISA_TRAC = 1, )
                                     )
 
-EX   = [NONE]*NBALP
-EY   = [NONE]*NBALP
-EZ   = [NONE]*NBALP
-TABF = [NONE]*NBALP
+EX   = [None]*NBALP
+EY   = [None]*NBALP
+EZ   = [None]*NBALP
+TABF = [None]*NBALP
 
 #Analytical results
 RESUF  = [(45,45), 45.34014828, 45.67180774, 45.99482259, 46.30909462, 46.61457847, 46.91127686,

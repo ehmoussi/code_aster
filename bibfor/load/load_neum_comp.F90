@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ subroutine load_neum_comp(stop       , i_load    , load_name , load_nume  , load
 !
 #include "asterfort/assert.h"
 #include "asterfort/calcul.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/copisd.h"
 #include "asterfort/exisd.h"
 #include "asterfort/reajre.h"
@@ -52,7 +53,7 @@ subroutine load_neum_comp(stop       , i_load    , load_name , load_nume  , load
 ! --------------------------------------------------------------------------------------------------
 !
 ! Neumann loads computation
-! 
+!
 ! Elementary (on one load) - Vector
 !
 ! --------------------------------------------------------------------------------------------------
@@ -79,10 +80,10 @@ subroutine load_neum_comp(stop       , i_load    , load_name , load_nume  , load
     parameter (nb_type_neum=19)
 !
     integer :: iexist, i_type_neum, nb_in_add, ibid
-    character(len=16) :: load_option
-    character(len=24) :: load_ligrel  
+    character(len=16) :: load_option,typeco
+    character(len=24) :: load_ligrel
     integer :: nbout, nbin
-    character(len=8) :: lpaout, newnom
+    character(len=8) :: lpaout, newnom,noma,kret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -131,7 +132,15 @@ subroutine load_neum_comp(stop       , i_load    , load_name , load_nume  , load
 ! --------- Copying output field
 !
             call exisd('CHAMP_GD', resu_elem, iexist)
-            ASSERT((iexist.gt.0).or.(stop.eq.'C'))
+            if (load_option .ne. 'Copy_Load') then
+                call dismoi('NOM_MAILLA', load_ligrel, 'LIGREL', repk=noma)
+                call dismoi('PARALLEL_MESH', noma, 'MAILLAGE', repk=kret)
+            else
+                kret = 'NON'
+            endif
+            if ( kret.eq.'NON' ) then
+                ASSERT((iexist.gt.0).or.(stop.eq.'C'))
+            endif
             call reajre(vect_elem, resu_elem, base)
         endif
     end do

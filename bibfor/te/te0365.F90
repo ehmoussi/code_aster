@@ -41,6 +41,7 @@ implicit none
 #include "asterfort/mmvape.h"
 #include "asterfort/mmvfpe.h"
 #include "asterfort/mmvppe.h"
+#include "asterfort/writeVector.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -52,7 +53,6 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: iddl, jvect
     integer :: nne, nnm, nnl
     integer :: nddl, ndim, nbcps, nbdm
     integer :: i_reso_fric, i_reso_geom, ialgoc, ialgof
@@ -255,15 +255,9 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Copy
 !
-    call jevech('PVECTCR', 'E', jvect)
-    do iddl = 1, nddl
-        zr(jvect-1+iddl) = vcont(iddl)
-    end do
+    call writeVector('PVECTCR', nddl, vcont)
     if (leltf) then
-        call jevech('PVECTFR', 'E', jvect)
-        do iddl = 1, nddl
-            zr(jvect-1+iddl) = vfric(iddl)
-        end do
+        call writeVector('PVECTFR', nddl, vfric)
     endif
 !
 end subroutine

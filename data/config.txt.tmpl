@@ -3,18 +3,13 @@
 #
 # orbinitref: tells to asrun that the option `--ORBInitRef=value` is supported
 #
-BUILD_TYPE     | env     | -     | waf nocopy noresu use_numthreads orbinitref
+BUILD_TYPE     | env     | -     | waf nocopy nosuperv noresu use_numthreads orbinitref
 ENV_SH         | env     | -     | profile.sh
-ADDMEM         | memory  | -     | @ADDMEM@
+ADDMEM         | memory  | -     | @addmem@
 DEFS           | defined | -     | @DEFINES@
 #
-PYTHON         | python  | -     | @PYTHON@
-#
-BIN_NODBG      | bin     | -     | @BIN_NODBG@
-BIN_DBG        | bin     | -     | @BIN_DBG@
-BINCMDE        | bin     | -     | @ASTERLIBDIR@/Cata
-BINELE         | bin     | -     | @ASTERLIBDIR@/elem.1
-BINPICKLED     | bin     | -     | @SRC@/build/release/catalo/cata_ele.pickled
+BIN_NODBG      | bin     | -     | @PYTHON@
+BIN_DBG        | bin     | -     | @PYTHON@
 #
 # for as_run --make_shared...
 F90            | compil  | -     | @FC@
@@ -23,17 +18,13 @@ OPTF90_O       | compil  | -     | @FCFLAGS@
 # for as_run --messages, --get, --show..., and astout
 SRCFOR         | src     | -     | @SRC@/bibfor
 SRCC           | src     | -     | @SRC@/bibc
-SRCPY          | src     | -     | @ASTERLIBDIR@
+SRCPY          | src     | -     | @ASTERLIBDIR@/code_aster/Utilities
 SRCCATA        | src     | -     | @SRC@/catalo
 SRCCAPY        | src     | -     | @SRC@/catapy
 @srctest@
 SRCTEST        | src     | -     | $ASTER_VERSION_DIR/tests_data
 SRCMAT         | src     | -     | @SRC@/../data/materiau
 SRCHIST        | src     | -     | @SRC@/histor
-#
-REPPY          | exec    | -     | Python
-ARGPYT         | exec    | -     | Execution/E_SUPERV.py
-ARGEXE         | exec    | -     | -eficas_path ./Python
 #
 REPOUT         | exec    | -     | $ASTER_ROOT/outils
 REPMAT         | exec    | -     | $ASTER_VERSION_DIR/materiau

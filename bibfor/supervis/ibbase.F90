@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ subroutine ibbase(ier, fichdf)
 !
 !     --- VARIABLES LOCALES --------------------------------------------
 !-----------------------------------------------------------------------
-    integer :: i, ibase, ideb, indbas, indcas, ltt
+    integer :: i, ibase, ideb, indbas, indcas, ltt, iret
     integer :: mxbase, mxcas, nb, nbbase, n
 !-----------------------------------------------------------------------
     parameter   ( mxbase = 2 , n = 5 )
@@ -209,7 +209,7 @@ subroutine ibbase(ier, fichdf)
 !           --- DESTRUCTION DU FICHIER POUR QU'ON NE CONFONDE PAS PLUS
 !               TARD AVEC UNE EVENTUELLE BASE HDF EN RESULTAT ---
             info=1
-            call rmfile(fichdf, info)
+            call rmfile(fichdf, info, iret)
         endif
         ideb = 1
         if (fichdf .ne. ' ') ideb = 2

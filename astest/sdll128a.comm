@@ -20,23 +20,27 @@
 # CAS_TEST__:SDLL128A
 #
 
+from math import pi
+
 import numpy as NP
-from Utilitai.Table import Table
+
+from code_aster.Commands import *
+from code_aster.Objects.table_py import Table
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET',
               ),
               PAR_LOT='NON',
-              DEBUG=_F(SDVERI='OUI'),);
+              DEBUG=_F(SDVERI='OUI'),)
 
-DEBV=5000.0;
-FINV=6500.0;
-PASV = 250.0;
-VIT=NP.arange(DEBV,FINV+1,PASV);
-nbV=len(VIT);
-nbF=12;
-print(nbV)
-L_VITROT=[VIT[ii]*pi/30. for ii in range(nbV)];
+
+DEBV=5000.0
+FINV=6500.0
+PASV = 250.0
+VIT=NP.arange(DEBV,FINV+1,PASV)
+nbV=len(VIT)
+nbF=12
+L_VITROT=[VIT[ii]*pi/30. for ii in range(nbV)]
 
 VA={}
 cara=[None]*nbV
@@ -47,23 +51,24 @@ GYOM=[None]*nbV
 GYAS=[None]*nbV
 NUME=[None]*nbV
 bloc=[None]*nbV
+_mod=[None]*nbV
 
 L_INTERP=DEFI_LIST_REEL(DEBUT=DEBV,
                         INTERVALLE=_F(JUSQU_A=FINV,
-                                      PAS=PASV,),);
+                                      PAS=PASV,),)
 
 K1YY=DEFI_FONCTION(NOM_PARA='INST',
                    VALE=(5000.0, 0.9000000e+08,
                          6500.0, 1.0000000e+08,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='EXCLU',
-                   );
+                   )
 
 K1YYL=CALC_FONC_INTERP(FONCTION=K1YY,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='K1YY',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABK1YY=CREA_TABLE(FONCTION=_F(FONCTION=K1YYL, ))
 
@@ -80,13 +85,13 @@ K1YZ=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 1.5000000e+05,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 K1YZL=CALC_FONC_INTERP(FONCTION=K1YZ,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='K1YZ',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABK1YZ=CREA_TABLE(FONCTION=_F(FONCTION=K1YZL, ))
 
@@ -103,13 +108,13 @@ K1ZY=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, -1.5000000e+05,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 K1ZYL=CALC_FONC_INTERP(FONCTION=K1ZY,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='K1ZY',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABK1ZY=CREA_TABLE(FONCTION=_F(FONCTION=K1ZYL, ))
 
@@ -126,13 +131,13 @@ K1ZZ=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 4.0000000e+08,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 K1ZZL=CALC_FONC_INTERP(FONCTION=K1ZZ,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='K1ZZ',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABK1ZZ=CREA_TABLE(FONCTION=_F(FONCTION=K1ZZL, ))
 
@@ -149,13 +154,13 @@ C1YY=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 1.3000000e+05,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 C1YYL=CALC_FONC_INTERP(FONCTION=C1YY,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='C1YY',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABC1YY=CREA_TABLE(FONCTION=_F(FONCTION=C1YYL, ))
 
@@ -172,13 +177,13 @@ C1YZ=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, -1.0000000e+02,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 C1YZL=CALC_FONC_INTERP(FONCTION=C1YZ,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='C1YZ',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABC1YZ=CREA_TABLE(FONCTION=_F(FONCTION=C1YZL, ))
 
@@ -195,13 +200,13 @@ C1ZY=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 1.0000000e+02,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 C1ZYL=CALC_FONC_INTERP(FONCTION=C1ZY,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='C1ZY',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABC1ZY=CREA_TABLE(FONCTION=_F(FONCTION=C1ZYL, ))
 
@@ -218,13 +223,13 @@ C1ZZ=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 3.3000000e+05,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 C1ZZL=CALC_FONC_INTERP(FONCTION=C1ZZ,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='C1ZZ',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABC1ZZ=CREA_TABLE(FONCTION=_F(FONCTION=C1ZZL, ))
 
@@ -241,13 +246,13 @@ K2YY=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 0.7000000e+08,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 K2YYL=CALC_FONC_INTERP(FONCTION=K2YY,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='K2YY',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABK2YY=CREA_TABLE(FONCTION=_F(FONCTION=K2YYL, ))
 
@@ -264,13 +269,13 @@ K2YZ=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 1.3000000e+05,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 K2YZL=CALC_FONC_INTERP(FONCTION=K2YZ,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='K2YZ',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABK2YZ=CREA_TABLE(FONCTION=_F(FONCTION=K2YZL, ))
 
@@ -287,13 +292,13 @@ K2ZY=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, -1.3000000e+05,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 K2ZYL=CALC_FONC_INTERP(FONCTION=K2ZY,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='K2ZY',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABK2ZY=CREA_TABLE(FONCTION=_F(FONCTION=K2ZYL, ))
 
@@ -310,13 +315,13 @@ K2ZZ=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 1.4000000e+08,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 K2ZZL=CALC_FONC_INTERP(FONCTION=K2ZZ,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='K2ZZ',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABK2ZZ=CREA_TABLE(FONCTION=_F(FONCTION=K2ZZL, ))
 
@@ -333,13 +338,13 @@ C2YY=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 1.0000000e+05,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 C2YYL=CALC_FONC_INTERP(FONCTION=C2YY,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='C2YY',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABC2YY=CREA_TABLE(FONCTION=_F(FONCTION=C2YYL, ))
 
@@ -356,13 +361,13 @@ C2YZ=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, -1.0000000e+02,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 C2YZL=CALC_FONC_INTERP(FONCTION=C2YZ,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='C2YZ',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABC2YZ=CREA_TABLE(FONCTION=_F(FONCTION=C2YZL, ))
 
@@ -379,13 +384,13 @@ C2ZY=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 1.0000000e+02,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 C2ZYL=CALC_FONC_INTERP(FONCTION=C2ZY,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='C2ZY',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABC2ZY=CREA_TABLE(FONCTION=_F(FONCTION=C2ZYL, ))
 
@@ -402,13 +407,13 @@ C2ZZ=DEFI_FONCTION(NOM_PARA='INST',
                          6500.0, 1.5000000e+05,),
                    PROL_DROITE='CONSTANT',
                    PROL_GAUCHE='CONSTANT',
-                   );
+                   )
 
 C2ZZL=CALC_FONC_INTERP(FONCTION=C2ZZ,
                        LIST_PARA=L_INTERP,
                        NOM_PARA='INST',
                        NOM_RESU='C2ZZ',
-                       INTERPOL='LIN',);
+                       INTERPOL='LIN',)
 
 TABC2ZZ=CREA_TABLE(FONCTION=_F(FONCTION=C2ZZL, ))
 
@@ -420,14 +425,14 @@ for kk in range(0,nbV,1) :
     i=i+1
 
 
-mail=LIRE_MAILLAGE(FORMAT="ASTER",);
+mail=LIRE_MAILLAGE(FORMAT="ASTER",)
 
 # ---------------------
 # DEFINITION DU MATERIAU
 # ---------------------
 acier=DEFI_MATERIAU(ELAS=_F(E=2.e11,
                             NU=0.3,
-                            RHO=7800,),);
+                            RHO=7800,),)
 
 # ---------------------
 # AFFECTATION DU MODELE
@@ -438,14 +443,14 @@ modele=AFFE_MODELE(MAILLAGE=mail,
                             MODELISATION='POU_D_T',),
                          _F(GROUP_MA=('DISQ1','DISQ2','DISQ3','PALIER1','PALIER2'),
                             PHENOMENE='MECANIQUE',
-                            MODELISATION='DIS_TR',),),);
+                            MODELISATION='DIS_TR',),),)
 
 # -----------------------
 # AFFECTATION DU MATERIAU
 # -----------------------
 chmat=AFFE_MATERIAU(MAILLAGE=mail,
                     AFFE=_F(GROUP_MA='ROTOR',
-                            MATER=acier,),);
+                            MATER=acier,),)
 
 for kk in range(0,nbV,1) :
 
@@ -530,7 +535,7 @@ for kk in range(0,nbV,1) :
                                    0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
                                    0.,   0.,   0.,   0.,   0.,   0.,),),
                            )
-                        );
+                        )
 
    # ------------------
    # CONDITIONS AUX LIMITES
@@ -562,11 +567,11 @@ for kk in range(0,nbV,1) :
                            _F(MATRICE=GYAS[kk],
                               OPTION='MECA_GYRO',),
                            _F(MATRICE=AMOR[kk],
-                              OPTION='AMOR_MECA',),),);
+                              OPTION='AMOR_MECA',),),)
 
-_mod=[None]*nbV;
 
 tab=Table()
+dictToAdd = {}
 for kk in range(0,nbV):
    OM=L_VITROT[kk]
    nom = 'OM_'+str(kk)
@@ -594,15 +599,18 @@ for kk in range(0,nbV):
                                            ),
                           )
 
-   tab.append({'NUME_VITE' : kk, 'VITE_ROTA' : OM, 'NOM_OBJET': 'MODE_MECA', 'TYPE_OBJET': 'MODE_MECA', 'NOM_SD' : _mod[kk].nom})
+   tab.append({'NUME_VITE' : kk, 'VITE_ROTA' : OM, 'NOM_OBJET': 'MODE_MECA_'+str(kk), 'TYPE_OBJET': 'MODE_MECA', 'NOM_SD' : _mod[kk].getName()})
+   dictToAdd['MODE_MECA_'+str(kk)] = _mod[kk]
 
 motcles=tab.dict_CREA_TABLE()
-tab_out=CREA_TABLE(TYPE_TABLE = 'TABLE_CONTAINER', **motcles);
+tab_out=CREA_TABLE(TYPE_TABLE = 'TABLE_CONTAINER', **motcles)
+for key, value in dictToAdd.items():
+    tab_out.addObject(key, value)
 
 lmod=EXTR_TABLE(TYPE_RESU='MODE_MECA',
                 TABLE=tab_out,
                 NOM_PARA='NOM_SD',
-                FILTRE=_F(NOM_PARA='NUME_VITE',VALE_I=3),);
+                FILTRE=_F(NOM_PARA='NUME_VITE',VALE_I=3),)
 
 #VITESSE DE ROTATION OMEGA=602.139 RAD/S
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
@@ -793,7 +801,7 @@ cara_ele=AFFE_CARA_ELEM(MODELE=modele,
                                    0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,   0.,
                                    0.,   0.,   0.,   0.,   0.,   0.,),),
                            )
-                        );
+                        )
 
 # ------------------
 # CONDITIONS AUX LIMITES
@@ -817,15 +825,15 @@ ASSEMBLAGE(MODELE=modele,
                            _F(MATRICE=CO('MASSE'),
                               OPTION='MASS_MECA',),
                            _F(MATRICE=CO('AMOR'),
-                              OPTION='AMOR_MECA',),),);
+                              OPTION='AMOR_MECA',),),)
 
 GYELEM=CALC_MATR_ELEM(OPTION='MECA_GYRO',
                       MODELE=modele,
                       CHAM_MATER=chmat,
-                      CARA_ELEM=cara_ele,);
+                      CARA_ELEM=cara_ele,)
 
 GYASS=ASSE_MATRICE(MATR_ELEM=GYELEM,
-                   NUME_DDL=NUMEDDL,);
+                   NUME_DDL=NUMEDDL,)
 
 OM=(L_VITROT[0]+L_VITROT[6])/2
 
@@ -960,4 +968,4 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 ),
           )
 
-FIN();
+FIN()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,6 +86,7 @@ subroutine op0001()
 !                   12345678901234567890123456789012
             nomamd = ' '
         endif
+        infmed = 0
         call getvis(' ', 'INFO_MED', scal=infmed, nbret=iaux)
 !
     endif

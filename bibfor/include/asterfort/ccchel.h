@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 interface
     subroutine ccchel(option, modele, resuin, resuou, numord,&
-                      nordm1, mateco, carael, typesd, ligrel,&
+                      nordm1, mater , mateco, carael, typesd, ligrel,&
                       l_poux, exitim, lischa, nbchre, ioccur,&
                       suropt, basopt, resout)
         character(len=16) :: option
@@ -28,7 +28,7 @@ interface
         character(len=8) :: resuou
         integer :: numord
         integer :: nordm1
-        character(len=24) :: mateco
+        character(len=24) :: mater, mateco
         character(len=8) :: carael
         character(len=16) :: typesd
         character(len=24) :: ligrel

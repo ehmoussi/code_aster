@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -94,11 +94,12 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     character(len=16) :: k16b, nomcmd
     character(len=8) :: nomfiss, resu, noma, k8b
     character(len=6) :: kiord
+    character(len=1), parameter :: base = 'G'
 !
     integer :: nbnoeu, iadrt1, iadrt2, iadrt3, itheta, ifon
     integer :: in2, iadrco, jmin, ielinf, iadnum, jvect
     integer :: iadrno, num, indic, iadrtt, nbre, nbptfd
-    integer :: iret, numa, ndimte, iebas, iftyp
+    integer :: iret, numa, ndimte, iebas, iftyp, nec
 !
     real(kind=8) :: xi1, yi1, zi1, xj1, yj1, zj1
     real(kind=8) :: xij, yij, zij, eps, d, tei, tej
@@ -121,7 +122,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     call jeveuo(trav3, 'E', iadrt3)
     call jeveuo(fonoeu, 'L', iadrno)
     call jeveuo(coorn, 'L', iadrco)
-    call jeveuo(chfond, 'L', ifon)    
+    call jeveuo(chfond, 'L', ifon)
 !
 ! VERIFICATION SI MAILLAGE QUADRATIQUE OU NON
 !
@@ -156,7 +157,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     numgam = '&&COURON.NUMGAMM0'
     call wkvect(numgam, 'V V I', nbnoeu, iadnum)
     do j = 1, nbnoeu
-        call jenonu(jexnom(nomno, zk8(iadrno+j-1)), zi(iadnum+j-1))      
+        call jenonu(jexnom(nomno, zk8(iadrno+j-1)), zi(iadnum+j-1))
     enddo
 !
 !  SI LEVRE_INF EST DEFINIE DANS LE CONCEPT FOND
@@ -172,7 +173,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     stok4 = '&&COURON.DIREC'
     call wkvect(stok4, 'V V R', 3*nbnoeu, in2)
     call jeexin(basfon, iebas)
-!    
+!
 !   DETERMINATION DE LA DIRECTION DE PROPAGATION
     if(iebas .ne. 0) then
 !       CAS D'UNE FISSURE : LA DIRECTION EST A PRENDRE DANS BASEFOND
@@ -197,7 +198,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     call jeexin(nomfiss//'.BASEFOND', iebas)
 !
     if (iebas .ne. 0) then
-!       * cas general : la base du fond de fissure est definie et on 
+!       * cas general : la base du fond de fissure est definie et on
 !                       copie la normale
         call jeveuo(basfon, 'L', jvect)
         do i = 1, nbnoeu
@@ -223,7 +224,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
     call dismoi('NB_NO_MAILLA', noma, 'MAILLAGE', repi=nbel)
 
     indicg = '&&COURON.INDIC        '
-    
+
     call wkvect(indicg, 'V V I', nbel, indic)
 !
 ! ALLOCATION DES OBJETS POUR STOCKER LE CHAMP_NO THETA ET LA DIRECTION
@@ -235,7 +236,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
         ndimte = nbre + 1
     endif
 !
-    call wkvect(resu, 'V V K24', ndimte+1, jresu)
+    call wkvect(resu, base//' V K24', ndimte+1, jresu)
 !
 ! CREATION DES NDIMTE+1 CHAMPS_NO ET VALEUR SUR GAMMA0
 !
@@ -252,7 +253,9 @@ subroutine gcour2(resu, noma, nomno, coorn,&
         endif
 !  .DESC
         chamno(20:24) = '.DESC'
-        call wkvect(chamno, 'V V I', 3, idesc)
+        call dismoi('NB_EC', 'DEPL_R', 'GRANDEUR', repi=nec)
+        call wkvect(chamno, base//' V I', 2+nec, idesc)
+!
         call jeecra(chamno, 'DOCU', cval='CHNO')
         call jenonu(jexnom('&CATA.GD.NOMGD', 'DEPL_R'), numa)
         zi(idesc+1-1) = numa
@@ -260,11 +263,11 @@ subroutine gcour2(resu, noma, nomno, coorn,&
         zi(idesc+3-1) = 14
 !  .REFE
         chamno(20:24) = '.REFE'
-        call wkvect(chamno, 'V V K24', 4, irefe)
+        call wkvect(chamno, base//' V K24', 4, irefe)
         zk24(irefe+1-1) = noma//'                '
 !  .VALE
         chamno(20:24) = '.VALE'
-        call wkvect(chamno, 'V V R', 3*nbel, itheta)
+        call wkvect(chamno, base//' V R', 3*nbel, itheta)
 !
         if (k .ne. (ndimte+1)) then
             if ((liss.eq.'LAGRANGE').or.(liss.eq.'LAGRANGE_NO_NO')&
@@ -326,7 +329,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
                 else
                     do i = 1, nbnoeu
                         zr(iadrt3-1+(k-1)*nbnoeu+i) = 1.d0
-                    end do 
+                    end do
                 endif
             endif
         else
@@ -426,7 +429,7 @@ subroutine gcour2(resu, noma, nomno, coorn,&
                     zr(itheta+(i-1)*3+2-1) = 0.d0
                     zr(itheta+(i-1)*3+3-1) = 0.d0
                 endif
-            end do          
+            end do
         endif
     end do
 !

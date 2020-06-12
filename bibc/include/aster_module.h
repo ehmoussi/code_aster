@@ -28,7 +28,7 @@
  *
  */
 
-extern PyMODINIT_FUNC initaster();
+extern PyObject* PyInit_aster(void);
 
 extern void PRE_myabort(_IN const char *nomFichier , _IN const int numeroLigne,
                         _IN const char *message ) ;

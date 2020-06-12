@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 # person_in_charge: david.haboussa at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 SIMU_POINT_MAT=MACRO(nom="SIMU_POINT_MAT",
-                     op=OPS('Macro.simu_point_mat_ops.simu_point_mat_ops'),
+                     op=OPS('code_aster.MacroCommands.simu_point_mat_ops.simu_point_mat_ops'),
                      sd_prod=table_sdaster,
                      fr=tr("Calcul de l'évolution mécanique, en quasi-statique, "
                           "d'un point matériel en non linéaire"),

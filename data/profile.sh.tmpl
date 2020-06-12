@@ -1,5 +1,8 @@
 # created by waf using data/wscript
 
+@BUILD_ENV@
+@OPT_ENV@
+
 remove_path()
 {
     # usage: remove_path value pattern1 [pattern2 [...]]
@@ -22,21 +25,13 @@ remove_path()
     echo ${values}
 }
 
-@OPT_ENV@
-
-LD_LIBRARY_PATH=.:@ASTERLIBDIR@:\
-@LD_LIBRARY_PATH@:\
-$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=@ASTERLIBDIR@:${LD_LIBRARY_PATH}:.
 export LD_LIBRARY_PATH
 
-# This 'Subprocess' module was used in SALOME 8 for Python 2.
 # Exclude paths to 'python2.7'.
-PYTHONPATH=$(remove_path "${PYTHONPATH}" Subprocess python2.7)
+PYTHONPATH=$(remove_path "${PYTHONPATH}" python2.7)
 
-PYTHONPATH=\
-.:@ASTERLIBDIR@:\
-@CFG_PYTHONPATH@:\
-$PYTHONPATH
+PYTHONPATH=@ASTERLIBDIR@:${PYTHONPATH}:.
 export PYTHONPATH
 
 # sometimes one should not change PYTHONHOME under SALOME environment...
@@ -45,8 +40,7 @@ export PYTHONHOME
 
 # as PYTHONHOME is changed, path to 'python' must preceed all others if a
 # subprocess calls it
-PATH=@PYTHON_DIRNAME@:\
-$PATH
+PATH=@PYTHON_DIRNAME@:${PATH}
 export PATH
 
 ASTER_LIBDIR=@ASTERLIBDIR@
@@ -60,7 +54,5 @@ export ASTER_LOCALEDIR
 
 ASTER_ELEMENTSDIR=@ASTERLIBDIR@
 export ASTER_ELEMENTSDIR
-
-@MFRONT_SPECIFIC@
 
 @OPT_ENV_FOOTER@

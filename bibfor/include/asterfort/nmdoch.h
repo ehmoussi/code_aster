@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nmdoch(list_load, l_load_user, list_load_resu_)
+    subroutine nmdoch(list_load, l_load_user, list_load_resu_, base)
         aster_logical, intent(in) :: l_load_user
         character(len=19), intent(in) :: list_load
         character(len=19), optional, intent(in) :: list_load_resu_
+        character(len=1), optional, intent(in) :: base
     end subroutine nmdoch
 end interface

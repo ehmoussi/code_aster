@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -118,7 +118,7 @@ subroutine mecalr(newcal, tysd, knum, kcha, resuco,&
     character(len=16) :: nomcmd, option, types, k16b
     character(len=19) :: leres1
     character(len=19) :: cherrs, chenes, chsins, chsinn
-    character(len=24) :: cheneg, chsing, cherr1, cherr2, cherr3, cherr4
+    character(len=24) :: cheneg, chsing, cherr1, cherr2, cherr3, cherr4, mateco
     character(len=24) :: chamgd, chsig, chsign
     character(len=24) :: chgeom, chcara(18)
     character(len=24) :: chharm, chelem
@@ -246,7 +246,7 @@ subroutine mecalr(newcal, tysd, knum, kcha, resuco,&
         if (iret .eq. 0) goto 660
 !
         nuord=zi(jordr)
-        call medom1(modele, mate, cara, kcha, nchar,&
+        call medom1(modele, mate, mateco, cara, kcha, nchar,&
                     ctyp, resuco, nuord)
         call jeveuo(kcha//'.LCHA', 'L', jcha)
 !
@@ -264,7 +264,7 @@ subroutine mecalr(newcal, tysd, knum, kcha, resuco,&
                 call jemarq()
                 call jerecu('V')
                 iordr=zi(jordr+iaux-1)
-                call medom1(modele, mate, cara, kcha, nchar,&
+                call medom1(modele, mate, mateco, cara, kcha, nchar,&
                             ctyp, resuco, iordr)
                 call jeveuo(kcha//'.LCHA', 'L', jcha)
                 call mecara(cara, chcara)

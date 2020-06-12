@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ subroutine ops026()
 #include "asterfort/ulnume.h"
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
-    integer :: unite, ifm, niv, n1, nf, nu
+    integer :: unite, ifm, niv, n1, nf, nu, iret
     aster_logical :: sortie
     character(len=1) :: kacc, ktyp
     character(len=8) :: action, acces, type
@@ -104,12 +104,12 @@ subroutine ops026()
 !---- POUR DETRUIRE LE FICHIER SI CE DERNIER EST OUVERT EN NEW
 !
     if (ktyp .ne. 'A') then
-        if (kacc .eq. 'N') then
-            call rmfile(fichie, 1)
+        if (kacc .eq. 'N' .and. fichie .ne. ' ') then
+            call rmfile(fichie, 1, iret)
         endif
     endif
 !
-    if (sortie) call putvir(unite)
+!    if (sortie) call putvir(unite)
 !
 999 continue
     if (niv .gt. 1) call ulimpr(ifm)

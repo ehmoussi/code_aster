@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vechth(type_ther , model_   , lload_name_, lload_info_, cara_elem_,&
-                  mate_     , time_curr, time_      , temp_prev_ , vect_elem_,&
+subroutine vechth(type_ther , model_   , lload_name_, lload_info_, cara_elem_, mate_, &
+                  mateco_     , time_curr, time_      , temp_prev_ , vect_elem_,&
                   varc_curr_, time_move_)
 !
 implicit none
@@ -42,14 +42,14 @@ implicit none
     character(len=*), intent(in) :: time_
     character(len=*), intent(in) :: temp_prev_
     character(len=*), intent(inout) :: vect_elem_
-    character(len=*), intent(in) :: mate_
+    character(len=*), intent(in) :: mateco_, mate_
     character(len=*), optional, intent(in) :: varc_curr_
     character(len=*), optional, intent(in) :: time_move_
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic - Loads
-! 
+!
 ! Neumann loads elementary vectors (second member)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ implicit none
 !                        'MOVE' for moving sources
 !                        'STAT' if not
 ! In  model            : name of the model
-! In  mate             : name of material characteristics (field)
+! In  mateco           : name of coded material
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  lload_name       : name of object for list of loads name
 ! In  lload_info       : name of object for list of loads info
@@ -81,7 +81,7 @@ implicit none
     integer :: nb_load, i_load, load_nume
     character(len=1) :: base, stop_calc
     character(len=8) :: load_name
-    character(len=24) :: model, cara_elem, time, temp_prev, mate, time_move
+    character(len=24) :: model, cara_elem, time, temp_prev, mateco, time_move, mate
     aster_logical :: load_empty
     character(len=24) :: lload_name
     character(len=24), pointer :: v_load_name(:) => null()
@@ -98,6 +98,7 @@ implicit none
     lload_name  = lload_name_
     lload_info  = lload_info_
     cara_elem   = cara_elem_
+    mateco      = mateco_
     mate        = mate_
     time        = time_
     temp_prev   = temp_prev_
@@ -143,7 +144,7 @@ implicit none
 ! - Preparing input fields
 !
     call load_neut_prep(model, nb_in_maxi, nb_in_prep, lchin, lpain, &
-                        mate_ = mate, varc_curr_ = varc_curr, temp_prev_ = temp_prev)
+                        mateco_ = mateco, varc_curr_ = varc_curr, temp_prev_ = temp_prev)
 !
 ! - Computation
 !

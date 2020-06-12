@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,9 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine assma1(matas, ldist)
+    subroutine assma1(matas, ldist, lmhpc)
         character(len=*) :: matas
         aster_logical :: ldist
+        aster_logical :: lmhpc
     end subroutine assma1
 end interface

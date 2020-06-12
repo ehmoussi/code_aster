@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-from Contrib.veri_matr_tang import VERI_MATR_TANG
-from Contrib.testcomp_utils import rename_components
-
+from code_aster.Commands import *
+from code_aster.MacroCommands.Utils.testcomp_utils import rename_components
+from code_aster.MacroCommands.Utils.veri_matr_tang import VERI_MATR_TANG
 from comp002j import TEST_ECART
 
 POURSUITE(PAR_LOT='NON', CODE='OUI')
@@ -96,7 +96,7 @@ TEST_ECART(ch_param2,label_cal,N_pas,Ncal,nbequi,R_SI,prec_ecart,prec_zero,coef_
 TEST_TABLE(
            VALE_CALC=3.31336000E8,
            NOM_PARA='VMIS_Pa_1',
-           TABLE=R_SI_1,
+           TABLE=R_SI[1],
            FILTRE=_F(NOM_PARA='INST',
                      VALE=5.0,),
            )
@@ -104,7 +104,7 @@ TEST_TABLE(
 TEST_TABLE(
            VALE_CALC=2.079485379201E7,
            NOM_PARA='SIXX_Pa_1',
-           TABLE=R_SI_3,
+           TABLE=R_SI[3],
            FILTRE=_F(NOM_PARA='INST',
                      VALE=5.0,),
            )
@@ -157,7 +157,6 @@ RESU_TGT=SIMU_POINT_MAT(
                    EPSI_IMPOSE=_F(EPXX=eps_def[0], EPYY=eps_def[1], EPZZ=eps_def[2],
                                   EPXY=eps_def[3], EPXZ=eps_def[4], EPYZ=eps_def[5]),
                         );
-
 
 DIFF_MAT=VERI_MATR_TANG()
 

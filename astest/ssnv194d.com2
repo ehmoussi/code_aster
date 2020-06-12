@@ -1,0 +1,126 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: david.haboussa at edf.fr
+#
+import numpy
+
+POURSUITE(CODE='OUI',DEBUG=_F(SDVERI='NON'),IGNORE_ALARM=('COMPOR4_62',),);
+
+##chargement
+EpsMax=0.1
+viteps=3.e-4
+tmax=EpsMax/viteps
+
+EPSZZ=DEFI_FONCTION(
+                      NOM_PARA='INST',  NOM_RESU='EPSI',
+                       VALE=(  0. , 0., tmax , EpsMax),
+                       PROL_DROITE='LINEAIRE',
+                        )
+
+
+
+LINST=DEFI_LIST_REEL(DEBUT=0.0,
+                     INTERVALLE=(_F(JUSQU_A=tmax,
+                                    NOMBRE=500,),
+                                    ),);
+
+DEFLIST1 =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = LINST),)
+
+nbgr=100
+nb_syst=12
+nvarit=7+nbgr*(6+3*nb_syst+6)+1
+
+nvarpargr=3*nb_syst
+
+
+# densites de dislocation initiales : variables internes de 0 a 44
+avari = numpy.zeros(nvarit)
+for igr in range(nbgr):
+   for isy in range(12):
+       avari[7+6*nbgr+igr*nvarpargr+isy*3]=rho_ini
+
+lvari=list(avari)
+
+
+TIMP=DEFI_CONSTANTE(VALE=TEMP)
+
+SOLNL=SIMU_POINT_MAT(INFO=2,
+                   COMPORTEMENT=_F(
+                                RELATION='POLYCRISTAL',
+                                COMPOR=COMPORP,
+                                ALGO_INTE='RUNGE_KUTTA',
+                                RESI_INTE_RELA=1.E-4,
+                                ),
+                   NEWTON=_F(
+                             MATRICE='ELASTIQUE',
+                             PREDICTION='EXTRAPOLE',
+                             REAC_ITER=0
+                             ),
+                   CONVERGENCE=_F(ITER_GLOB_MAXI=50,
+                                  RESI_GLOB_RELA=1.E-5,
+                                     ),
+                   MATER      = ACIERDD,
+
+                   NB_VARI_TABLE=6,
+
+                   VARI_INIT=_F(VALE=lvari,
+                                  ),
+
+                   INCREMENT=_F(LIST_INST=DEFLIST1),
+                   ARCHIVAGE=_F(LIST_INST=LINST),
+                   EPSI_IMPOSE=_F(EPZZ=EPSZZ),
+                      AFFE_VARC=_F(  NOM_VARC='TEMP',
+                                     VALE_FONC=TIMP,
+                                     VALE_REF=TEMP),
+                        );
+
+
+F_SI=RECU_FONCTION(TABLE=SOLNL,
+                           PARA_X='INST',
+                           PARA_Y='SIZZ',);
+
+F_EP=RECU_FONCTION(TABLE=SOLNL,
+                           PARA_X='INST',
+                           PARA_Y='EPZZ',);
+
+
+IMPR_FONCTION(
+FORMAT ='XMGRACE',
+UNITE=38,
+COURBE=(
+_F(FONC_X=F_EP, FONC_Y=F_SI),
+))
+
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=0.10000000,
+                        VALE_PARA=333.33333333333337,
+                        NOM_PARA='INST',
+                        FONCTION=F_EP,
+                        ),
+              )
+
+TEST_FONCTION(VALEUR=_F(VALE_CALC=815.4568495137,
+                        VALE_PARA=333.33333333333337,
+                        NOM_PARA='INST',
+                        FONCTION=F_SI,
+                        ),
+              )
+
+FIN()

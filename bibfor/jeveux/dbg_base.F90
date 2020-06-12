@@ -62,7 +62,8 @@ subroutine dbg_base()
     nbrec = nblmax(ic)
     dbsize = recsize * nbrec
     objint = recint / 4
-    nbobj = 4 * nbrec + 8
+    ! with 48 GB, noobj=245768, force a failure quickly after 1000 objects
+    nbobj = min(4 * nbrec + 8, 1000)
     vali(1) = dbsize
     vali(2) = recsize
     vali(3) = recint

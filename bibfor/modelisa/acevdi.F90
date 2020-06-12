@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,6 +52,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
 #include "asterfort/assert.h"
 #include "asterfort/getvem.h"
 #include "asterfort/getvtx.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
 #include "asterfort/jenonu.h"
@@ -66,7 +67,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 ! --------------------------------------------------------------------------------------------------
-    integer ::  i3d, i2d, ndim1, ioc, nc, ng, nm, nsom, nbmail
+    integer ::  i3d, i2d, ndim1, ioc, nc, ng, nm, nsom, nbmail, un
     integer :: n1, ima, nbgrm,  ig, jmail, numa, nutyma, lmax2
     integer :: iarg
     character(len=4) :: type
@@ -74,6 +75,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
     character(len=16) :: concep, cmd
     character(len=24) :: grmama, mailma, cara, nogrm
     character(len=24) :: valk(4)
+    aster_logical :: l_parallel_mesh
 ! --------------------------------------------------------------------------------------------------
     integer, pointer :: typmail(:) => null()
     character(len=24), pointer :: group_ma(:) => null()
@@ -86,8 +88,10 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
     nlg = 0
     nln = 0
     nlj = 0
+    un  = 1
     grmama = noma//'.GROUPEMA'
     mailma = noma//'.NOMMAI'
+    l_parallel_mesh = isParallelMesh(noma)
 !
 !   Vecteur du type des mailles du maillage :
     call jeveuo(noma//'.TYPMAIL', 'L', vi=typmail)
@@ -118,12 +122,15 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
         endif
 !
         if (nm .ne. 0) then
+            if (l_parallel_mesh) then
+                call utmess('F', 'MODELISA7_86')
+            endif
             nbmail = -nm
             call wkvect('&&ACEVDI.MAILLE', 'V V K8', nbmail, jmail)
             call getvtx(mcf, 'MAILLE', iocc=ioc, nbval=nbmail, vect=zk8(jmail), nbret=n1)
             do ima = 1, nbmail
                 nomail = zk8(jmail+ima-1)
-                call verima(noma, nomail, 1, 'MAILLE')
+                call verima(noma, nomail, un, 'MAILLE')
                 call jenonu(jexnom(mailma, nomail), numa)
                 nutyma = typmail(numa)
                 call jenuno(jexnum('&CATA.TM.NOMTM', nutyma), typel)
@@ -144,7 +151,7 @@ subroutine acevdi(nbocc, nomaz, nomoz, mcf, nlm,&
             call getvtx(mcf, 'GROUP_MA', iocc=ioc, nbval=nbgrm, vect=group_ma, nbret=n1)
             do ig = 1, nbgrm
                 nogrm = group_ma(ig)
-                call verima(noma, nogrm, 1, 'GROUP_MA')
+                call verima(noma, nogrm, un, 'GROUP_MA')
                 call jelira(jexnom(grmama, nogrm), 'LONUTI', nbmail)
                 call jeveuo(jexnom(grmama, nogrm), 'L', jmail)
                 do ima = 1, nbmail

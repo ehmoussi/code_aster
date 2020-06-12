@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -165,107 +165,111 @@ implicit none
 ! - Check components
 !
     if (field_disc .eq. 'NOEU') then
-    
+
         call exisd('CHAM_NO', field, iret)
         if (iret.ne.1) call utmess('F','EXTRACTION_1', sk=field_type)
 !
 ! ----- For nodes
 !
-        call jeveuo(list_node, 'L', vi = v_list_node)
-        do i_node = 1, nb_node
+        if(nb_node > 0) then
+            call jeveuo(list_node, 'L', vi = v_list_node)
+            do i_node = 1, nb_node
 !
 ! --------- Current node
 !
-            node_nume = v_list_node(i_node)
-            call jenuno(jexnum(mesh(1:8)//'.NOMNOE', node_nume), node_name)
-            do i_cmp = 1, nb_cmp
-                cmp_name = v_list_cmp(i_cmp)
-                call posddl('CHAM_NO', field, node_name, cmp_name, nuno,&
-                            nuddl)
-                if ((nuno.eq.0) .or. (nuddl.eq.0)) then
-                    valk(1) = node_name
-                    valk(2) = cmp_name
-                    call utmess('F', 'EXTRACTION_20', nk=2, valk=valk)
-                endif
+                node_nume = v_list_node(i_node)
+                call jenuno(jexnum(mesh(1:8)//'.NOMNOE', node_nume), node_name)
+                do i_cmp = 1, nb_cmp
+                    cmp_name = v_list_cmp(i_cmp)
+                    call posddl('CHAM_NO', field, node_name, cmp_name, nuno,&
+                                nuddl)
+                    if ((nuno.eq.0) .or. (nuddl.eq.0)) then
+                        valk(1) = node_name
+                        valk(2) = cmp_name
+                        call utmess('F', 'EXTRACTION_20', nk=2, valk=valk)
+                    endif
+                end do
             end do
-        end do
+        end if
     else if (field_disc.eq.'ELGA' .or. field_disc.eq.'ELEM') then
 !
 ! ----- For elements
 !
-        call jeveuo(list_elem, 'L', vi = v_list_elem)
-        call jeveuo(list_poin, 'L', vi = v_list_poin)
-        call jeveuo(list_spoi, 'L', vi = v_list_spoi)
-        do i_elem = 1, nb_elem
+        if(nb_elem > 0) then
+            call jeveuo(list_elem, 'L', vi = v_list_elem)
+            call jeveuo(list_poin, 'L', vi = v_list_poin)
+            call jeveuo(list_spoi, 'L', vi = v_list_spoi)
+            do i_elem = 1, nb_elem
 !
 ! --------- Current element
 !
-            elem_nume = v_list_elem(i_elem)
-            call jenuno(jexnum(mesh(1:8)//'.NOMMAI', elem_nume), elem_name)
+                elem_nume = v_list_elem(i_elem)
+                call jenuno(jexnum(mesh(1:8)//'.NOMMAI', elem_nume), elem_name)
 !
 ! --------- Number of points/subpoints on current element
 !
-            nb_elem_poin = zi(jcesd+5+4*(elem_nume-1))
-            nb_elem_spoi = zi(jcesd+5+4*(elem_nume-1)+1)
+                nb_elem_poin = zi(jcesd+5+4*(elem_nume-1))
+                nb_elem_spoi = zi(jcesd+5+4*(elem_nume-1)+1)
 !
 ! --------- Check
 !
-            npi = nb_poin
-            nspi = nb_spoi
-            if (npi .gt. nb_elem_poin) npi = nb_elem_poin
-            if (nspi .gt. nb_elem_spoi) nspi = nb_elem_spoi
+                npi = nb_poin
+                nspi = nb_spoi
+                if (npi .gt. nb_elem_poin) npi = nb_elem_poin
+                if (nspi .gt. nb_elem_spoi) nspi = nb_elem_spoi
 !
-            nb_cmp_maxi = zi(jcesd+4)
-            do ipar = 1, nb_cmp
-                if (type_sele_cmp .eq. 'NOM_CMP') then
-                    cmp_name = v_list_cmp(ipar)
-                elseif (type_sele_cmp .eq. 'NOM_VARI') then
-                    cmp_name = v_list_cmp(nb_cmp*(i_elem-1)+ipar)
-                else
-                    ASSERT(.false.)
-                endif
+                nb_cmp_maxi = zi(jcesd+4)
+                do ipar = 1, nb_cmp
+                    if (type_sele_cmp .eq. 'NOM_CMP') then
+                        cmp_name = v_list_cmp(ipar)
+                    elseif (type_sele_cmp .eq. 'NOM_VARI') then
+                        cmp_name = v_list_cmp(nb_cmp*(i_elem-1)+ipar)
+                    else
+                        ASSERT(.false.)
+                    endif
 !
 ! ------------- For VARI_ELGA field
 !
-                if (field_type(1:4) .eq. 'VARI') then
-                    cmp_vari_name = cmp_name(2:8)//' '
-                    call lxliis(cmp_vari_name, i_vari, iret)
-                    if (iret.ne.0) then
-                        call utmess('F', 'EXTRACTION_22', sk=cmp_name)
+                    if (field_type(1:4) .eq. 'VARI') then
+                        cmp_vari_name = cmp_name(2:8)//' '
+                        call lxliis(cmp_vari_name, i_vari, iret)
+                        if (iret.ne.0) then
+                            call utmess('F', 'EXTRACTION_22', sk=cmp_name)
+                        endif
+                    else
+                        i_vari = 0
                     endif
-                else
-                    i_vari = 0
-                endif
 
-                if (field_type(1:4) .eq. 'VARI') then
-                    i_cmp = i_vari
-                else
-                    do i_cmp_maxi = 1, nb_cmp_maxi
-                        if (cmp_name .eq. cesc(i_cmp_maxi)) then
-                            i_cmp=i_cmp_maxi
-                        endif
-                    end do
-                endif
-                do ipi = 1, npi
-                    num = v_list_poin(ipi)
-                    ASSERT(num.ne.0)
-                    do ispi = 1, nspi
-                        snum = v_list_spoi(ispi)
-                        ASSERT(snum.ne.0)
-                        call cesexi('C', jcesd, jcesl, elem_nume, num,&
-                                    snum, i_cmp, iad)
-                        if (iad .eq. 0) then
-                            valk(1) = elem_name
-                            valk(2) = cmp_name
-                            vali(1) = num
-                            vali(2) = snum
-                            call utmess('F', 'EXTRACTION_21', nk=2, valk=valk, ni=2,&
-                                        vali=vali)
-                        endif
+                    if (field_type(1:4) .eq. 'VARI') then
+                        i_cmp = i_vari
+                    else
+                        do i_cmp_maxi = 1, nb_cmp_maxi
+                            if (cmp_name .eq. cesc(i_cmp_maxi)) then
+                                i_cmp=i_cmp_maxi
+                            endif
+                        end do
+                    endif
+                    do ipi = 1, npi
+                        num = v_list_poin(ipi)
+                        ASSERT(num.ne.0)
+                        do ispi = 1, nspi
+                            snum = v_list_spoi(ispi)
+                            ASSERT(snum.ne.0)
+                            call cesexi('C', jcesd, jcesl, elem_nume, num,&
+                                        snum, i_cmp, iad)
+                            if (iad .eq. 0) then
+                                valk(1) = elem_name
+                                valk(2) = cmp_name
+                                vali(1) = num
+                                vali(2) = snum
+                                call utmess('F', 'EXTRACTION_21', nk=2, valk=valk, ni=2,&
+                                            vali=vali)
+                            endif
+                        end do
                     end do
                 end do
             end do
-        end do
+        end if
     else
         ASSERT(.false.)
     endif

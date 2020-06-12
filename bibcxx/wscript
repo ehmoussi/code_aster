@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,24 +17,37 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import os
 import os.path as osp
+from distutils.version import LooseVersion
 
-from waflib import Configure, Utils
+from waflib import Configure, Errors, Utils
 
 def options(self):
     self.load('compiler_cxx')
+    self.load('boost')
+
 
 def configure(self):
     self.load('compiler_cxx')
     self.check_cxx_compiler_flags()
-    self.check_bibcxx_depends()
-    incpath = osp.join(self.path.get_src().abspath(), 'include')
-    self.env.append_value('INCLUDES', incpath)
+    if 'icc' not in self.env.CC_NAME:
+        self.check_bibcxx_depends()
+    self.check_boost_aster()
+
+    cxxpath = self.path.get_src().abspath()
+    self.env.append_value('INCLUDES_BIBCXX', cxxpath)
+
+    incpath = osp.join(cxxpath, 'include')
+    self.env.append_value('INCLUDES_BIBCXX', incpath)
+
+    cpath = self.path.find_node('../bibc').abspath()
+    incpath = osp.join(cpath, 'include')
+    self.env.append_value('INCLUDES_BIBCXX', incpath)
 
 def build(self):
     env = self.all_envs[self.variant]
     get_srcs = self.path.get_src().ant_glob
-    uses = env['all_dependencies']
 
     if env.BUILD_MFRONT:
         paths = get_srcs('mfront', src=True, dir=True)
@@ -45,15 +58,17 @@ def build(self):
                 name = 'astermfront',
               source = get_srcs('mfront/*.cxx'),
                  env = env.derive(),
-                 use = ['PYEMBED'] + uses,
+                 use = ['BIBCXX', 'MFRONT', 'BOOST', 'PYEXT', 'CXX'],
             )
 
     self(
-        features = 'cxx',
+        features = 'cxx cxxshlib',
             name = 'asterbibcxx',
           source = get_srcs('**/*.cxx', excl='mfront/*.cxx'),
+          target = 'bibcxx',
+             use = ['BIBCXX', 'PETSC', 'BOOST', 'PYEXT', 'CXX'],
              env = env.derive(),
-             use = ['PYEMBED'] + uses,
+    install_path = env.ASTERLIBDIR
     )
 
 ###############################################################################
@@ -66,12 +81,12 @@ def check_bibcxx_depends(self):
 def check_cxx_compiler_flags(self):
     """check C++ compiler flags"""
     # this option is compiler independent (ifort & g++)
-    self.check_cxx(cxxflags='-std=c++11', uselib_store='SYS',
-                   mandatory=False)
+    self.check_cxx(cxxflags='-std=c++11', uselib_store='CXX', mandatory=False)
 
 @Configure.conf
 def check_optimization_cxxflags(self):
     self.setenv('debug')
+    self.define('_DEBUG_CXX', 1)
     self.remove_optflags("CXXFLAGS")
     flags = ['-g', '-O0'] + Utils.to_list(self.env['CXXFLAGS_ASTER_DEBUG'])
     self.start_msg('Setting C++ debug flags')
@@ -83,3 +98,11 @@ def check_optimization_cxxflags(self):
     self.start_msg('Setting C++ optimization flags')
     self.env.append_unique('CXXFLAGS', flags)
     self.end_msg(flags)
+
+@Configure.conf
+def check_boost_aster(self):
+    self.load('boost')
+    self.check_boost(includes=self.env.INCLUDES_BOOST,
+                     libs=self.env.LIBPATH_BOOST,
+                     lib="python",
+                     toolset='cxx')

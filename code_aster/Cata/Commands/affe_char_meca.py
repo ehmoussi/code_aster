@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mickael.abbas at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
                     fr=tr("Affectation de charges et conditions aux limites mécaniques constantes"),
@@ -36,22 +36,11 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
                              'PRE_SIGM','PRES_REP','EFFE_FOND','PRE_EPSI','FORCE_POUTRE','FORCE_TUYAU',
                              'FORCE_COQUE','LIAISON_COQUE','RELA_CINE_BP','FORCE_ELEC','INTE_ELEC',
                              'IMPE_FACE','VITE_FACE','ONDE_FLUI','FLUX_THM_REP','FORCE_SOL','ECHANGE_THM'),
-                 PRESENT_ABSENT('LIAISON_EPX','EVOL_CHAR','PESANTEUR','ROTATION','DDL_IMPO','DDL_POUTRE','FACE_IMPO',
-                             'CHAMNO_IMPO','ARETE_IMPO',
-                             'LIAISON_DDL','LIAISON_OBLIQUE','LIAISON_GROUP',
-                             'LIAISON_CYCL','LIAISON_SOLIDE','LIAISON_ELEM','LIAISON_UNIF',
-                             'LIAISON_CHAMNO','LIAISON_RBE3','LIAISON_INTERF','LIAISON_PROJ',
-                             'VECT_ASSE',
-                             'FORCE_NODALE','FORCE_FACE','FORCE_ARETE','FORCE_CONTOUR','FORCE_INTERNE',
-                             'PRE_SIGM','PRES_REP','EFFE_FOND','PRE_EPSI','FORCE_POUTRE','FORCE_TUYAU',
-                             'FORCE_COQUE','LIAISON_COQUE','RELA_CINE_BP','FORCE_ELEC','INTE_ELEC',
-                             'IMPE_FACE','VITE_FACE','ONDE_FLUI','FLUX_THM_REP','FORCE_SOL','ECHANGE_THM'),
                          ),
          VERI_NORM       =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
          MODELE          =SIMP(statut='o',typ=(modele_sdaster) ),
          EVOL_CHAR       =SIMP(statut='f',fr=tr("Champ de pression issu d'un autre calcul"),
                                typ=evol_char,min=1,max=1),
-         LIAISON_EPX         =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          DOUBLE_LAGRANGE =SIMP(statut='f',typ='TXM',into=("OUI","NON"),defaut="OUI"),
 
          PESANTEUR       =FACT(statut='f',max=1,fr=tr("Champ de pesanteur"),

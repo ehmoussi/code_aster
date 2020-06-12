@@ -999,8 +999,6 @@ IMPR_TABLE ( TABLE = TABME0,
              UNITE=39
              )
 
-DEFI_FICHIER(ACTION='LIBERER',UNITE=39)
-
 TABME1=LIRE_TABLE( UNITE=39,
                    FORMAT='ASTER',
                    NUME_TABLE=1,

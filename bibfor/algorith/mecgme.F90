@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mecgme(modelz   , cara_elemz    , matez    , list_load, inst_curr,&
+subroutine mecgme(modelz   , cara_elemz    , matez    , matecoz  ,list_load, inst_curr,&
                   disp_prev, disp_cumu_inst, inst_prev, compor   , matr_elem)
 !
 implicit none
@@ -43,7 +43,7 @@ implicit none
 !
     character(len=*), intent(in) :: modelz
     character(len=*), intent(in) :: cara_elemz
-    character(len=*), intent(in) :: matez
+    character(len=*), intent(in) :: matez, matecoz
     character(len=19), intent(in) :: list_load
     real(kind=8), intent(in) :: inst_prev
     real(kind=8), intent(in) :: inst_curr
@@ -55,13 +55,14 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! Compute Neumann loads
-! 
+!
 ! Undead loads - Depending on geometry or speed - Matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model          : name of model
 ! In  mate           : name of material characteristics (field)
+! In  mateco         : mane of coded material
 ! In  cara_elem      : name of elementary characteristics (field)
 ! In  inst_prev      : previous time
 ! In  inst_curr      : current time
@@ -78,7 +79,7 @@ implicit none
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
 !
-    character(len=24) :: model, cara_elem, mate
+    character(len=24) :: model, cara_elem, mate, mateco
     character(len=24), pointer :: v_relr(:) => null()
     character(len=24), pointer :: v_load_name(:) => null()
     character(len=24), pointer :: v_load_func(:) => null()
@@ -102,6 +103,7 @@ implicit none
     model        = modelz
     cara_elem    = cara_elemz
     mate         = matez
+    mateco       = matecoz
     ligrel_model = model(1:8)//'.MODELE'
     nb_load      = 0
     list_coef    = matr_elem(1:15)//'.COEF'
@@ -137,7 +139,7 @@ implicit none
 !
 ! - Preparing input fields
 !
-    call load_neum_prep(model    , cara_elem , mate      , 'Suiv'    , inst_prev,&
+    call load_neum_prep(model    , cara_elem , mate      , matecoz   , 'Suiv'   , inst_prev,&
                         inst_curr, inst_theta, nb_in_maxi, nb_in_prep, lchin    ,&
                         lpain    , disp_prev = disp_prev , disp_cumu_inst = disp_cumu_inst,&
                         compor = compor)
@@ -148,7 +150,7 @@ implicit none
         do i_load = 1, nb_load
             idx_matr  = 0
             load_name = v_load_name(i_load)(1:8)
-            load_nume = v_load_info(nb_load+i_load+1)  
+            load_nume = v_load_info(nb_load+i_load+1)
             if (load_nume .eq. 4) then
                 call load_neum_matr(i_load      , idx_matr  , load_name , load_nume, 'Suiv',&
                                     ligrel_model, nb_in_maxi, nb_in_prep, lpain    , lchin ,&

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,7 +67,7 @@ RESU[nbadap]=CALC_ERREUR(reuse =RESU[nbadap],
 
 TEST_RESU(RESU=(_F(GROUP_NO='NO_TEST',
                    INST=500.0,
-                   RESULTAT=RESU_2,
+                   RESULTAT=RESU[2],
                    NOM_CHAM='ERME_NOEU',
                    NOM_CMP='ESTERG1',
                    VALE_CALC=0.00688931662605,
@@ -76,7 +76,7 @@ TEST_RESU(RESU=(_F(GROUP_NO='NO_TEST',
                    ),
                 _F(PARA='ERRE_TPS_GLOB',
                    INST=500.0,
-                   RESULTAT=RESU_2,
+                   RESULTAT=RESU[2],
                    VALE_CALC=0.0984633573862,
 
                    CRITERE='RELATIF',

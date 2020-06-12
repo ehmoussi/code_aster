@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine load_neut_prep(model, nb_in_maxi, nb_in_prep, lchin     , lpain,&
-                          mate_, varc_curr_, temp_prev_, temp_iter_)
+                          mateco_, varc_curr_, temp_prev_, temp_iter_)
 !
 implicit none
 !
@@ -34,7 +34,7 @@ implicit none
     character(len=8), intent(inout) :: lpain(nb_in_maxi)
     character(len=19), intent(inout) :: lchin(nb_in_maxi)
     integer, intent(out) :: nb_in_prep
-    character(len=24), optional, intent(in) :: mate_
+    character(len=24), optional, intent(in) :: mateco_
     character(len=19), optional, intent(in) :: varc_curr_
     character(len=19), optional, intent(in) :: temp_prev_
     character(len=19), optional, intent(in) :: temp_iter_
@@ -52,7 +52,7 @@ implicit none
 ! IO  lpain            : list of input parameters
 ! IO  lchin            : list of input fields
 ! Out nb_in_prep       : number of input fields before specific ones
-! In  mate             : name of material characteristics (field)
+! In  mateco           : name of coded material
 ! In  varc_curr        : command variable for current time
 ! In  temp_prev        : temperature at beginning of current time
 ! In  temp_iter        : temperature field at current Newton iteration
@@ -70,7 +70,7 @@ implicit none
     call megeom(model, chgeom)
     nb_in_prep = 1
     lpain(nb_in_prep) = 'PGEOMER'
-    lchin(nb_in_prep) = chgeom(1:19)   
+    lchin(nb_in_prep) = chgeom(1:19)
 !
 ! - Input fields
 !
@@ -84,10 +84,10 @@ implicit none
         lpain(nb_in_prep) = 'PTEMPEI'
         lchin(nb_in_prep) = temp_iter_(1:19)
     endif
-    if (present(mate_)) then
+    if (present(mateco_)) then
         nb_in_prep = nb_in_prep + 1
         lpain(nb_in_prep) = 'PMATERC'
-        lchin(nb_in_prep) = mate_(1:19)
+        lchin(nb_in_prep) = mateco_(1:19)
     endif
     if (present(varc_curr_)) then
         nb_in_prep = nb_in_prep + 1

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 RECU_TABLE=OPER(nom="RECU_TABLE",op= 174,sd_prod=table_sdaster,
          fr=tr("Récupérer dans une table les valeurs d'un paramètre d'une SD Résultat ou d'extraire une table contenue"
@@ -30,6 +30,6 @@ RECU_TABLE=OPER(nom="RECU_TABLE",op= 174,sd_prod=table_sdaster,
          regles=(UN_PARMI('NOM_TABLE','NOM_PARA','TOUT_PARA')),
          NOM_TABLE       =SIMP(statut='f',typ='TXM' ),
          NOM_PARA        =SIMP(statut='f',typ='TXM',max='**'),
-         TOUT_PARA       =SIMP(statut='f',typ='TXM', into=('OUI',), ), 
+         TOUT_PARA       =SIMP(statut='f',typ='TXM', into=('OUI',), ),
          TITRE           =SIMP(statut='f',typ='TXM'),
 )  ;

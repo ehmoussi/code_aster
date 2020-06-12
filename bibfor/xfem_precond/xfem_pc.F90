@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,6 +62,7 @@ subroutine xfem_pc(matass, base)
     character(len=1) :: base
 !-----------------------------------------------------------------------
     character(len=1) :: bas1
+    character(len=3) :: mathpc
     character(len=8) :: nomgd, noma
     character(len=14) :: nonu
     character(len=19) :: matas1, pc_1
@@ -73,6 +74,7 @@ subroutine xfem_pc(matass, base)
     integer, pointer :: iglob_ddl(:) => null()
     integer, pointer :: ieq_loc(:) => null()
     aster_logical, pointer :: is_xfem(:) => null()
+    aster_logical lmhpc
     integer :: nuno, neq, ieq, jcmp, jdeeq
     integer :: jdime, nbnomax, nbnoxfem, maxi_ddl, nvale, niv, ifm
     real(kind=8) :: kmin, kmax, coef, scal
@@ -142,7 +144,9 @@ subroutine xfem_pc(matass, base)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! CALCUL COEFFICIENT MISE A ECHELLE
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    call echmat(matas1, lmd, kmin, kmax)
+    call dismoi('MATR_HPC', matass, 'MATR_ASSE', repk=mathpc)
+    lmhpc = mathpc.eq.'OUI'
+    call echmat(matas1, lmd, lmhpc, kmin, kmax)
     coef=(kmin+kmax)/2.d0
     scal=dsqrt(coef)
 !

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -197,7 +197,7 @@ IMPR_RESU(FORMAT='RESULTAT', UNITE=6, RESU=_F(RESULTAT=RESU, NOM_CHAM='VARI_ELGA
 
 # les resultats experimentaux sont donnees dans le fichier joint
 # il s'agit de Fy_(N)Uy_(m)Eps_xx(S)_traction
-INCLUDE(UNITE=12)
+from ssnl119b import val_exp
 
 POST=POST_RELEVE_T(ACTION=_F(INTITULE='RESULTANTE',
                              RESULTAT=RESU,

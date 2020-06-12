@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ IMPR_RESU(FORMAT='MED',
 
 CHAM27_3=LIRE_CHAMP(UNITE=80,
                     FORMAT='MED',
-                    NOM_MED='CHAM27_2',
+                    NOM_MED='00000004',
                     TYPE_CHAM='ELNO_SIEF_R',
                     NOM_CMP_IDEM='OUI',
                     MAILLAGE=MAIL,
@@ -273,7 +273,7 @@ IMPR_RESU(FORMAT='MED',
 
 CHAM20_3=LIRE_CHAMP(UNITE=81,
                     FORMAT='MED',
-                    NOM_MED='CHAM20_2',
+                    NOM_MED='00000009',
                     TYPE_CHAM='ELNO_SIEF_R',
                     NOM_CMP_IDEM='OUI',
                     MAILLAGE=MAIL,
@@ -415,7 +415,7 @@ IMPR_RESU(FORMAT='MED',
 
 CHAM08_3=LIRE_CHAMP(UNITE=82,
                     FORMAT='MED',
-                    NOM_MED='CHAM08_2',
+                    NOM_MED='0000000d',
                     TYPE_CHAM='ELNO_SIEF_R',
                     NOM_CMP_IDEM='OUI',
                     MAILLAGE=MAIL,

@@ -3,8 +3,9 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist ci verification sequential
 
 F comm zzzz100a.comm D 1
 F comm zzzz100a.com1 D 1
-F libr zzzz100a.11 D 11
+F nom  zzzz100a.py   D 0
+

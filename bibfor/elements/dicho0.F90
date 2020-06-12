@@ -92,6 +92,7 @@ subroutine dicho0(option, nomte, ndim, nbt, nno,&
 !
     do ii = 1, 8
         varmo(ii) = zr(ivarim+ii-1)
+        varpl(ii) = 0.
     enddo
 !
     call jevech('PINSTPR', 'L', jinst)

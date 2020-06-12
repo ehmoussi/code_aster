@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine vetnth_nonl(model      , cara_elem   , mate      , time , compor   ,&
+subroutine vetnth_nonl(model      , cara_elem   , mate      , mateco, time , compor   ,&
                        temp_iter  , varc_curr,&
                        vect_elem_l, vect_elem_nl, base,&
                        dry_prev_  , dry_curr_   , hydr_prev_)
@@ -38,7 +38,7 @@ implicit none
 !
 character(len=24), intent(in) :: model
 character(len=24), intent(in) :: cara_elem
-character(len=24), intent(in) :: mate
+character(len=24), intent(in) :: mate, mateco
 character(len=24), intent(in) :: time
 character(len=24), intent(in) :: compor
 character(len=24), intent(in) :: temp_iter
@@ -53,7 +53,7 @@ character(len=24), optional,intent(in) :: hydr_prev_
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic - Residuals
-! 
+!
 ! Evolution for non-linear (CHAR_THER_EVOLNI)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ character(len=24), optional,intent(in) :: hydr_prev_
     lpain(2)  = 'PTEMPER'
     lchin(2)  = temp_iter(1:19)
     lpain(3)  = 'PMATERC'
-    lchin(3)  = mate(1:19)
+    lchin(3)  = mateco(1:19)
     lpain(4)  = 'PTEMPSR'
     lchin(4)  = time(1:19)
     lpain(5)  = 'PCACOQU'

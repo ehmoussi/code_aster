@@ -18,7 +18,7 @@
 
 #include "Python.h"
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 #include "definition_pt.h"
 
 #include "dll_register.h"
@@ -28,11 +28,11 @@
 #endif
 
 /* *********************************************************************
- * 
+ *
  * Utilities to Load Dynamically (optionnal) external Libraries
- * 
+ *
  * Supported components : UMAT
- * 
+ *
  * *********************************************************************/
 
 /* Global dictionnary used to register (libraries, symbol) couples */

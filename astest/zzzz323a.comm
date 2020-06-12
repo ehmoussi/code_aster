@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -152,7 +152,7 @@ REPLO_1 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_1',
+                      NOM_MED     = '00000004.REPLO_1',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLO_2 = LIRE_CHAMP(
@@ -162,7 +162,7 @@ REPLO_2 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_2',
+                      NOM_MED     = '00000004.REPLO_2',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLO_3 = LIRE_CHAMP(
@@ -172,7 +172,7 @@ REPLO_3 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODELE,
-                      NOM_MED     = 'CARAELEM.REPLO_3',
+                      NOM_MED     = '00000004.REPLO_3',
                       NOM_CMP_IDEM='OUI',
                      )
 
@@ -364,7 +364,7 @@ REPLTU1 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODTUY4,
-                      NOM_MED     = 'CARATUY4.REPLO_1',
+                      NOM_MED     = '00000009.REPLO_1',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLTU2 = LIRE_CHAMP(
@@ -374,7 +374,7 @@ REPLTU2 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODTUY4,
-                      NOM_MED     = 'CARATUY4.REPLO_2',
+                      NOM_MED     = '00000009.REPLO_2',
                       NOM_CMP_IDEM='OUI',
                      )
 REPLTU3 = LIRE_CHAMP(
@@ -384,7 +384,7 @@ REPLTU3 = LIRE_CHAMP(
                       NUME_ORDRE  = 0,
                       MAILLAGE    = MAILLAGE,
                       MODELE      = MODTUY4,
-                      NOM_MED     = 'CARATUY4.REPLO_3',
+                      NOM_MED     = '00000009.REPLO_3',
                       NOM_CMP_IDEM='OUI',
                      )
 TEST_RESU(CHAM_ELEM=(_F(

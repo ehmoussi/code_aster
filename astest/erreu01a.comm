@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster
+import re
+from code_aster import AsterError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),DEBUG=_F(SDVERI='OUI'),
       ERREUR=_F(ERREUR_F='EXCEPTION',),
       PAR_LOT='NON',)
 
-import re
 fmt_raison='-'*80+"""
 
    Exception interceptee
@@ -64,7 +65,6 @@ CH2=AFFE_CHAR_MECA(MODELE=MOD,
                                DX=0.,
                                DY=0.),)
 
-
 # 1) message de la routine CALCUL pour dire qu'un calcul elementaire n'est pas encore programme :
 #----------------------------------------------------------------------------------------------
 is_ok = 0
@@ -74,7 +74,7 @@ try :
                         CARA_ELEM=CARBA,
                         EXCIT=_F(CHARGE=CH2),
                         INST=1.)
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCUL_37":
@@ -93,7 +93,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(UELAS, TAB1),),)
+DETRUIRE(CONCEPT=_F(NOM=TAB1))
 
 
 # 2) message de la routine PRERES pour dire qu'une matrice est singuliere :
@@ -105,7 +105,7 @@ try :
                         CARA_ELEM=CARBA,
                         EXCIT=_F(CHARGE=CH1),
                         INST=1.)
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
@@ -124,6 +124,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(UELAS, TAB1),),)
+DETRUIRE(CONCEPT=_F(NOM=TAB1))
 
 FIN()

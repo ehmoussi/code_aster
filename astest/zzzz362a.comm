@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -179,7 +179,7 @@ ListLMEXC = [] # 32 <-> MLMEXC
 ListLTHX  = [] # 33 <-> MLTHX
 
 # 31 <-> ListLMEX  / MLMEX
-nommo  = 'MLMEX'
+nommo  = '00000015'
 nommo += (8-len(nommo))*" "
 for line in LinesFile31:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -191,7 +191,7 @@ for line in LinesFile31:
     ListLMEX.append(lsplit)
 
 # 32 <-> ListLMEXC / MLMEXC
-nommo  = 'MLMEXC'
+nommo  = '00000016'
 nommo += (8-len(nommo))*" "
 for line in LinesFile32:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -203,7 +203,7 @@ for line in LinesFile32:
     ListLMEXC.append(lsplit)
 
 # 33 <-> ListLTHX  / MLTHX
-nommo  = 'MLTHX'
+nommo  = '00000017'
 nommo += (8-len(nommo))*" "
 for line in LinesFile33:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -396,7 +396,7 @@ ListQHMX = [] # 32 <-> MQHMX
 ListQHMXC = [] # 33 <-> MQHMXC
 
 # 31 <-> ListQMEX / MQMEX
-nommo  = 'MQMEX'
+nommo  = '00000020'
 nommo += (8-len(nommo))*" "
 for line in LinesFile31:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -408,7 +408,7 @@ for line in LinesFile31:
     ListQMEX.append(lsplit)
 
 # 32 <-> ListQHMX / MQHMX
-nommo  = 'MQHMX'
+nommo  = '00000021'
 nommo += (8-len(nommo))*" "
 for line in LinesFile32:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \
@@ -420,7 +420,7 @@ for line in LinesFile32:
     ListQHMX.append(lsplit)
 
 # 33 <-> ListQHMXC / MQHMXC
-nommo  = 'MQHMXC'
+nommo  = '00000022'
 nommo += (8-len(nommo))*" "
 for line in LinesFile33:
   if ('TOPOFAC' in line) and ('.CELV' in line) or \

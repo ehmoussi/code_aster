@@ -20,7 +20,7 @@
 
 #include "Python.h"
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 #include "aster_utils.h"
 #include "definition_pt.h"
 
@@ -671,7 +671,8 @@ int load_mfront_lib(const char* libname, const char* symbol)
         valk = MakeTabFStr(nk, VALK_SIZE);
         SetTabFStr(valk, 0, "MFRONT", VALK_SIZE);
         SetTabFStr(valk, 1, (char *)libname, VALK_SIZE);
-        CALL_UTMESS_CORE("F", "FERMETUR_13", &nk, valk, &n0, &ibid, &n0, &rbid, " ");
+        CALL_UTMESS_CORE("F", "FERMETUR_13", &nk, valk, &n0,
+                         &ibid, &n0, &rbid, &n0, " ");
         FreeStr(valk);  // uncallable
     }
     DEBUG_DLL_VV("searching symbol '%s'%s ", symbol, "...");
@@ -764,6 +765,7 @@ void error_symbol_not_found(const char* libname, const char* symbname)
     SetTabFStr(valk, 0, "MFRONT", VALK_SIZE);
     SetTabFStr(valk, 1, (char *)libname, VALK_SIZE);
     SetTabFStr(valk, 2, (char *)symbname, VALK_SIZE);
-    CALL_UTMESS_CORE("F", "FERMETUR_14", &nk, valk, &n0, &ibid, &n0, &rbid, " ");
+    CALL_UTMESS_CORE("F", "FERMETUR_14", &nk, valk, &n0,
+                     &ibid, &n0, &rbid, &n0, " ");
     FreeStr(valk);  // uncallable
 }

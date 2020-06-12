@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -83,7 +83,7 @@ subroutine op0152()
     character(len=19) :: max, may, maz, chamno
     character(len=19) :: stomor, solveu, nomr19
     character(len=24) :: nomcha, time, nocham
-    character(len=24) :: mate, phib24
+    character(len=24) :: mateco, phib24
     complex(kind=8) :: cbid
 ! -----------------------------------------------------------------
     data nomcmp /'INST    ','DELTAT  ','THETA   ',&
@@ -185,15 +185,15 @@ subroutine op0152()
 !
 !--------- RECUPERATION DU MATERIAU FLUIDE----------------------------
     if (n4 .ne. 0) then
-        call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
+        call rcmfmc(materi, mateco, l_ther_ = ASTER_FALSE)
     else
-        mate = ' '
+        mateco = ' '
     endif
 !
 !--------CALCUL DE LA MATRICE ASSEMBLEE DE RIGIDITE DU FLUIDE---------
 !
     call rigflu(moflui, time, nomcmp, tps, n2,&
-                char, mate, solveu, ma, nu)
+                char, materi, mateco, solveu, ma, nu)
 !
 !=====================================================================
 !---------------- ALTERNATIVE CHAMNO OU MODE_MECA OU---------
@@ -245,7 +245,7 @@ subroutine op0152()
 ! ET AUX EFFETS D'AMORTISSEMENT ET DE RAIDEUR DU FLUIDE
 ! SUR LA STRUCTURE
 !================================================================
-    call phi152(model, option, mate, phib24, ma,&
+    call phi152(model, option, materi, mateco, phib24, ma,&
                 nu, num, nbmode, solveu, indice,&
                 tabad)
 !
@@ -290,7 +290,7 @@ subroutine op0152()
             ndble=0
         endif
         call calmdg(model, modgen, nugene, num, nu,&
-                    ma, mate, moint, moflui, ndble,&
+                    ma, materi, mateco, moint, ndble,&
                     itxsto, itysto, itzsto, iprsto, nbmo,&
                     iadirg)
 !

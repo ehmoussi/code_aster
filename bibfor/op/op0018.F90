@@ -77,7 +77,7 @@ implicit none
 !
     integer :: dim_topo_curr, dim_topo_init
     integer :: ifm, niv
-    character(len=8) :: mesh, model, sd_partit1
+    character(len=8) :: mesh, model, sd_partit1, kret
     character(len=8) :: name_elem, z_quasi_zero, methode
     character(len=16) :: k16dummy, name_type_geom, repk, valk(2)
     character(len=16) :: phenom, phenomRead, modeli, list_modelisa(10), keywordfact, modeli_in
@@ -87,7 +87,7 @@ implicit none
     character(len=24) :: list_elem
     integer, pointer :: p_list_elem(:) => null()
     integer :: nb_elem
-    aster_logical :: l_elem, l_grandeur_cara
+    aster_logical :: l_elem, l_grandeur_cara, lparallel_mesh
     aster_logical :: l_calc_rigi, l_veri_elem, l_need_neigh, l_hho
     integer :: ielem, iaffe
     integer :: vali(4), ico, idx_modelisa
@@ -130,6 +130,8 @@ implicit none
 ! - Get mesh
 !
     call getvid(' ', 'MAILLAGE', scal=mesh)
+    call dismoi('PARALLEL_MESH', mesh, 'MAILLAGE', repk=kret)
+    lparallel_mesh=(kret.eq.'OUI')
 !
 ! - Check jacobians
 !
@@ -218,7 +220,7 @@ implicit none
 ! --------- Get elements
             call jedetr(list_elem)
             call getelem(mesh, keywordfact, iaffe, ' ', list_elem, nb_elem)
-            ASSERT(nb_elem.gt.0)
+            ASSERT(lparallel_mesh .or. nb_elem.gt.0)
 ! --------- Check dimensions
             call dismoi('DIM_TOPO', phemod, 'PHEN_MODE', repi=dim_topo_curr)
             if (dim_topo_init .eq. -99) then
@@ -254,7 +256,7 @@ implicit none
                 end do
             endif
 ! --------- ON VERIFIE QU'A CHAQUE OCCURENCE DE AFFE, LES MAILLES
-! --------- "PRINCIPALES" (QUI N'ETAIENT PAS DEJA AFFECTEES) ONT BIEN ETE AFFECTEES 
+! --------- "PRINCIPALES" (QUI N'ETAIENT PAS DEJA AFFECTEES) ONT BIEN ETE AFFECTEES
 ! --------- PAR DES ELEMENTS
 ! --------- (PB DES MODELISATIONS A "TROUS") :
             ico=0
@@ -418,6 +420,9 @@ implicit none
     call getvtx('DISTRIBUTION', 'METHODE', iocc=1, scal=kdis, nbret=n1)
     ASSERT(n1.eq.1)
     if (nbproc.eq.1) kdis='CENTRALISE'
+    if ((lparallel_mesh) .and. (kdis.ne.'CENTRALISE')) then
+        call utmess('F','MODELE1_99', nk = 2, valk = [kdis, mesh])
+    end if
     if (kdis.eq.'SOUS_DOM.OLD' .or. kdis.eq.'SOUS_DOMAINE') then
         call gcncon('_', sd_partit1)
         call getvtx('DISTRIBUTION', 'PARTITIONNEUR', iocc=1, scal=methode, nbret=n1)

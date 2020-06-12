@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,9 @@
 
 # person_in_charge: sam.cuvilliez at edf.fr
 
-# determination du type de sd produite par la commande
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def raff_xfem_prod(self,TYPE,**args):
@@ -38,7 +37,7 @@ def raff_xfem_prod(self,TYPE,**args):
 
 
 RAFF_XFEM=MACRO(nom="RAFF_XFEM",
-                op=OPS('Macro.raff_xfem_ops.raff_xfem_ops'),
+                op=OPS('code_aster.MacroCommands.raff_xfem_ops.raff_xfem_ops'),
                 sd_prod=raff_xfem_prod,
                 fr=tr("Calcul d'un indicateur pour le raffinement"),
                 reentrant='n',

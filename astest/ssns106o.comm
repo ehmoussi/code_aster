@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -309,10 +309,22 @@ relation='ELAS'
 
 # Materiau pour RELATION = 'ELAS' :
 #-------------------------------------
-DETRUIRE(INFO=1, CONCEPT=_F(NOM=MAT_G))
 MAT_G=DEFI_MATERIAU(
              ELAS      =_F(E = 4.e11 , NU=0.2, ALPHA = 1.E-5),
              );
+
+MATER1=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,))
+
+MATER2=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,),
+                    AFFE_VARC=_F(TOUT='OUI',EVOL=TEMPLI1,NOM_VARC='TEMP',
+                                 NOM_CHAM='TEMP',VALE_REF=(10.,)),)
+
+MATER3=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,),
+                    AFFE_VARC=_F(TOUT='OUI',EVOL=TEMPLI2,NOM_VARC='TEMP',
+                                 NOM_CHAM='TEMP',VALE_REF=(10.,)),)
 
 #-------------------------------------------
 # 2.1 Dilation homogene dans l'epaisseur :
@@ -427,9 +439,21 @@ relation='DHRC'
 
 # Materiau pour RELATION = 'DHRC' :
 #-------------------------------------
-DETRUIRE(INFO=1, CONCEPT=_F(NOM=MAT_G))
 
-INCLUDE(UNITE=12, INFO=1,);
+from ssns106o import *
+
+MATER1=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,))
+
+MATER2=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,),
+                    AFFE_VARC=_F(TOUT='OUI',EVOL=TEMPLI1,NOM_VARC='TEMP',
+                                 NOM_CHAM='TEMP',VALE_REF=(10.,)),)
+
+MATER3=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,),
+                    AFFE_VARC=_F(TOUT='OUI',EVOL=TEMPLI2,NOM_VARC='TEMP',
+                                 NOM_CHAM='TEMP',VALE_REF=(10.,)),)
 
 
 #-------------------------------------------
@@ -544,7 +568,6 @@ relation='GLRC_DAMAGE'
 
 # Materiau pour RELATION = 'GLRC_DAMAGE' :
 #-------------------------------------
-DETRUIRE(INFO=1, CONCEPT=_F(NOM=MAT_G))
 
 MAT_A = DEFI_MATERIAU(ECRO_LINE=_F(SY=5.E8, D_SIGM_EPSI=0.0,),
                       ELAS=_F(E=2.1E11, NU=0.3,))
@@ -585,6 +608,19 @@ MAT_G = DEFI_GLRC(RELATION='GLRC_DAMAGE',
                             RY=-0.6333333333333333,),
                          ),
                   )
+
+MATER1=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,))
+
+MATER2=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,),
+                    AFFE_VARC=_F(TOUT='OUI',EVOL=TEMPLI1,NOM_VARC='TEMP',
+                                 NOM_CHAM='TEMP',VALE_REF=(10.,)),)
+
+MATER3=AFFE_MATERIAU(MAILLAGE=MAIL,
+                    AFFE=_F(GROUP_MA='DALLE',  MATER=MAT_G,),
+                    AFFE_VARC=_F(TOUT='OUI',EVOL=TEMPLI2,NOM_VARC='TEMP',
+                                 NOM_CHAM='TEMP',VALE_REF=(10.,)),)
 
 
 

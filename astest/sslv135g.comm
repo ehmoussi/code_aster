@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -108,9 +108,9 @@ LINST = DEFI_LIST_REEL ( DEBUT =  0.,
                           );
 
 NBALP = 23
-ALP   = [NONE]*NBALP
-COEF  = [NONE]*NBALP
-SOL   = [NONE]*NBALP
+ALP   = [None]*NBALP
+COEF  = [None]*NBALP
+SOL   = [None]*NBALP
 
 for i in range(NBALP):
 
@@ -155,9 +155,9 @@ LINST2 = DEFI_LIST_REEL ( DEBUT =  0.,
                           );
 
 NBALP2 = 5
-ALP2   = [NONE]*NBALP2
-COEF2  = [NONE]*NBALP2
-SONL   = [NONE]*NBALP2
+ALP2   = [None]*NBALP2
+COEF2  = [None]*NBALP2
+SONL   = [None]*NBALP2
 
 for i in range(NBALP2):
    ALP2[i] = i;
@@ -230,10 +230,10 @@ MATDC   = AFFE_MATERIAU( MAILLAGE = CUBE,
                          AFFE = _F ( TOUT = 'OUI',
                                      MATER = ACIERDC,))
 
-FATDC   = [NONE]*NBALP
-TABDC   = [NONE]*NBALP
-FATDC2  = [NONE]*NBALP2
-TABDC2  = [NONE]*NBALP2
+FATDC   = [None]*NBALP
+TABDC   = [None]*NBALP
+FATDC2  = [None]*NBALP2
+TABDC2  = [None]*NBALP2
 
 for i in range(NBALP):
    FATDC[i] = CALC_FATIGUE( TYPE_CALCUL   = 'FATIGUE_MULTI',
@@ -312,10 +312,10 @@ MATMC   = AFFE_MATERIAU ( MAILLAGE = CUBE,
                           AFFE = _F ( TOUT = 'OUI',
                                       MATER = ACIERMC,))
 
-FATMC   = [NONE]*NBALP
-TABMC   = [NONE]*NBALP
-FATMC2  = [NONE]*NBALP2
-TABMC2  = [NONE]*NBALP2
+FATMC   = [None]*NBALP
+TABMC   = [None]*NBALP
+FATMC2  = [None]*NBALP2
+TABMC2  = [None]*NBALP2
 
 for i in range(NBALP):
 
@@ -396,10 +396,10 @@ MATDV   = AFFE_MATERIAU    (    MAILLAGE = CUBE,
                               AFFE = _F ( TOUT = 'OUI',
                                           MATER = ACIERDV,
                                                 ))
-FATDV   = [NONE]*NBALP
-TABDV   = [NONE]*NBALP
-FATDV2  = [NONE]*NBALP2
-TABDV2  = [NONE]*NBALP2
+FATDV   = [None]*NBALP
+TABDV   = [None]*NBALP
+FATDV2  = [None]*NBALP2
+TABDV2  = [None]*NBALP2
 
 #PHIZ PEUT ETRE 43.75 OU 46.25, ON NOTE QUE 43.75 + 46.25 = 90
 RESUC = [(43.75, 46.25) , (43.75, 46.25) ,(43.75, 46.25) , (43.75, 46.25) ,(43.75, 46.25) ,(43.75, 46.25) ,
@@ -487,10 +487,10 @@ MATMV   = AFFE_MATERIAU    (    MAILLAGE    =   CUBE,
                                                   MATER      = ACIERMV,
                                                 ))
 
-FATMV   = [NONE]*NBALP
-TABMV   = [NONE]*NBALP
-FATMV2  = [NONE]*NBALP2
-TABMV2  = [NONE]*NBALP2
+FATMV   = [None]*NBALP
+TABMV   = [None]*NBALP
+FATMV2  = [None]*NBALP2
+TABMV2  = [None]*NBALP2
 
 RESUM  = [(45,45), 45.71604807, 46.43120259, 47.14457665, 47.85529654, 48.56250816, 49.26538279, 49.96312274,
                     50.65496622, 51.34019173, 52.01812172, 52.68812561, 53.3496221, 54.00208078, 54.64502311,
@@ -596,10 +596,10 @@ MATF   = AFFE_MATERIAU ( MAILLAGE = CUBE,
                                     MATER = ACIERF,))
 
 
-FATF   = [NONE]*NBALP
-TABF   = [NONE]*NBALP
-FATF2  = [NONE]*NBALP2
-TABF2  = [NONE]*NBALP2
+FATF   = [None]*NBALP
+TABF   = [None]*NBALP
+FATF2  = [None]*NBALP2
+TABF2  = [None]*NBALP2
 
 #Analytical results
 RESUF  = [(45, 45), 45.34014828, 45.67180774, 45.99482259, 46.30909462, 46.61457847, 46.91127686,

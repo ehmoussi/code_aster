@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ subroutine op0066()
    call utcrre(result, 2*nbfreq)
    call refdaj('F', result, 2*nbfreq, numnu, 'DYNAMIQUE',[matrig, matmas,' '], iret)
 
-! --- ASSEMBLAGE INITIAL DE LA MATRICE ERC 
+! --- ASSEMBLAGE INITIAL DE LA MATRICE ERC
 !
 ! --- --- CREATION DU NUME_DDL_GENE ET INITIALISATION DU MATR/VECT_ASSE_GENE
 
@@ -159,7 +159,7 @@ subroutine op0066()
         call preres(solveu, 'V', iret, maprec, nom_matr_erc, ibid, -9999)
 !
 ! --- --- RESOLUTION DU PROBLEME D'ERC SOUS FORME A*x=b
-        call jeveuo(nom_vect_erc//'.VALE','E',ivecterc) 
+        call jeveuo(nom_vect_erc//'.VALE','E',ivecterc)
         cbid = dcmplx(0.d0, 0.d0)
         call resoud(nom_matr_erc, maprec, solveu, '', 1,'', '', 'v', zr(ivecterc), &
                     [cbid],'', .false._1, 0, iret)
@@ -170,7 +170,7 @@ subroutine op0066()
                          omega,alpha,cout_fon,cout_uv)
         end if
 ! --- --- ARCHIVAGE DES RESULTATS
-        call archi_erc(result,ifreq,matmas,obsdim,zr(ivecterc),freq,eval,cout_fon,cout_uv)  
+        call archi_erc(result,ifreq,matmas,obsdim,zr(ivecterc),freq,eval,cout_fon,cout_uv)
 ! --- --- VERIFICATION SI INTERRUPTION DEMANDEE PAR SIGNAL USR1
 !
         if (etausr() .eq. 1) call sigusr()
@@ -182,10 +182,10 @@ subroutine op0066()
        if (tps1(4) .gt. .90d0*tps1(1) .and. ifreq .ne. nbfreq) then
            rtab(1) = tps1(4)
            rtab(2) = tps1(1)
-           call utmess('Z', 'DYNAMIQUE_13', si=ifreq, nr=2, valr=rtab,num_except=28)
+           call utmess('Z', 'DYNAMIQUE_13', si=ifreq, nr=2, valr=rtab,num_except=TIMELIMIT_ERROR)
        endif
 !
-    end do 
+    end do
     ! boucle sur les frequences
 !
 !     NETOYAGE DES OBJETS JEVEUX TEMPORAIRES ET STOCKAGES FINAUX

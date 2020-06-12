@@ -68,15 +68,13 @@ for kk,cc in enumerate(lClasse) :
     #     print(nomresGLRC[jj]+' = '+str(valres[jj]))
 
 # Vérification de la non-régression des propriétés du matériau généré
-    TEST_RESU(OBJET=_F(NOM='BETONG  .CPT.000001.VALR        ',
+    TEST_RESU(OBJET=_F(NOM=BETONG.getName()+'.CPT.000001.VALR        ',
             VALE_CALC=testrefELAS[kk]))
-    TEST_RESU(OBJET=_F(NOM='BETONG  .CPT.000002.VALR        ',
+    TEST_RESU(OBJET=_F(NOM=BETONG.getName()+'.CPT.000002.VALR        ',
             VALE_CALC=testrefGLRC[kk]))
-    
+
     DETRUIRE(CONCEPT=_F(NOM=BETONG))
 
 
 
 FIN()
-
-

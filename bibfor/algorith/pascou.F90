@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine pascou(mate, carele, sddyna, sddisc)
+subroutine pascou(mate, mateco, carele, sddyna, sddisc)
 !
 ! person_in_charge: mickael.abbas at edf.fr
 !
@@ -44,7 +44,7 @@ subroutine pascou(mate, carele, sddyna, sddisc)
 #include "asterfort/utmess.h"
 #include "asterfort/vrcins.h"
 !
-    character(len=24) :: mate, carele
+    character(len=24) :: mate, mateco, carele
     character(len=19) :: sddyna, sddisc
 !
 ! ----------------------------------------------------------------------
@@ -90,7 +90,7 @@ subroutine pascou(mate, carele, sddyna, sddisc)
     ligrel=mo//'.MODELE'
 !
     lpain(1)='PMATERC'
-    lchin(1)=mate
+    lchin(1)=mateco
 !
 ! --- RECUPERATION DU CHAMP GEOMETRIQUE
     call megeom(mo, chgeom)
@@ -103,7 +103,7 @@ subroutine pascou(mate, carele, sddyna, sddisc)
     instin = diinst(sddisc,numins)
     call vrcins(mo, mate, carele, instin, chvarc,&
                     codret)
-    
+
     lpain(3)='PVARCPR'
     lchin(3)=chvarc(1:19)
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
 #include "asterfort/jexnum.h"
 #include "asterfort/reliem.h"
 #include "asterfort/utmess.h"
+#include "asterfort/infniv.h"
 #include "asterfort/utnono.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
@@ -390,8 +391,10 @@ subroutine cgnoor(mafour, nomail, motfac, iocc, nbmc,&
         if (erreur) call utmess('F', 'ELEMENTS_71')
 
 100     continue
+!
         call jenuno(jexnum(nomnoe, nunori), ndorig)
         call utmess('I', 'ELEMENTS_72', sk=ndorig)
+!
         AS_DEALLOCATE(vi=noeud_apparies)
     endif
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -185,6 +185,7 @@ G00=CALC_G(RESULTAT=RESU,
                     FOND_FISS=FOND,
                     R_SUP=7.50E-5,),
            EXCIT=_F(CHARGE=CH,),
+           CHAM_THETA=CO('cham_theta_no0'),
            )
 
 GK00=CALC_G(RESULTAT=RESU,
@@ -192,7 +193,8 @@ GK00=CALC_G(RESULTAT=RESU,
                      R_INF = 3.75E-5,
                      R_SUP = 7.50E-5,),
             EXCIT=_F(CHARGE=CH,),
-            OPTION='CALC_K_G'
+            OPTION='CALC_K_G',
+            CHAM_THETA=CO('cham_theta_no1'),
            )
 
 #
@@ -253,6 +255,7 @@ G03=CALC_G(RESULTAT=RESU,
                     FOND_FISS=FOND,
                     R_SUP=1.875E-4,),
            EXCIT=_F(CHARGE=CH,),
+           CHAM_THETA=CO('cham_theta_no3'),
             )
 
 #

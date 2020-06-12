@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -149,15 +149,15 @@ MACRO_MATR_AJOU(MAILLAGE=MAYA,
                 INFO=2,);
 
 TEST_RESU(OBJET=_F(VALE_CALC=1.6082276230835E+09,
-                   NOM='MASSAJ             .VALM',),
+                   NOM='00000017           .VALM',),
           )
 
 TEST_RESU(OBJET=_F(VALE_CALC=-3.935551356804E+08,
-                   NOM='AMORAJ             .VALM',),
+                   NOM='0000001b           .VALM',),
           )
 
 TEST_RESU(OBJET=_F(VALE_CALC=3.4963008885108E+06,
-                   NOM='RIGIAJ             .VALM',),
+                   NOM='0000001c           .VALM',),
           )
 
 FIN();

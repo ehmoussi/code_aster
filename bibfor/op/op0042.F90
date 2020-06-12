@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ subroutine op0042()
     character(len=8) :: resuc1, resuco, modele, cara, crit
     character(len=16) :: nomcmd, tysd, pheno, concep, k16bid, compex
     character(len=19) :: knum, kcha, solveu
-    character(len=24) :: mate
+    character(len=24) :: mate, mateco
     aster_logical :: newcal
     mpi_int :: msize
 !     ------------------------------------------------------------------
@@ -80,12 +80,12 @@ subroutine op0042()
     call onerrf(' ', compex, ibid)
     call onerrf('EXCEPTION+VALID', k16bid, ibid)
 !
-! --- ON INTERDIT L'UTILISATION DE CALC_ERREUR EN PARALLELE 
+! --- ON INTERDIT L'UTILISATION DE CALC_ERREUR EN PARALLELE
 !
     call asmpi_info(size=msize)
     if ( msize > 1 ) then
         call utmess('F', 'CALCULEL3_5', si=to_aster_int(msize))
-    endif 
+    endif
 !
     call getres(resuc1, concep, nomcmd)
     call getvid(' ', 'RESULTAT', scal=resuco, nbret=n0)
@@ -123,7 +123,7 @@ subroutine op0042()
     solveu = '&&OP0042.SOLVEUR'
     call cresol(solveu)
 !
-    call medom1(modele, mate, cara, kcha, nchar,&
+    call medom1(modele, mate, mateco, cara, kcha, nchar,&
                 ctyp, resuco, nuord)
     call dismoi('PHENOMENE', modele, 'MODELE', repk=pheno)
 !

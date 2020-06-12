@@ -33,7 +33,6 @@ subroutine debut()
 #include "asterfort/getvtx.h"
 #include "asterfort/ibbase.h"
 #include "asterfort/ibcata.h"
-#include "asterfort/ibcode.h"
 #include "asterfort/ibdbgs.h"
 #include "asterfort/ibfhdf.h"
 #include "asterfort/ibtcpu.h"
@@ -41,9 +40,9 @@ subroutine debut()
 #include "asterfort/ulopen.h"
 #include "asterfort/utmess.h"
     character(len=8) :: k8b, repons
-    character(len=16) :: nomcmd, k16b, cmpdef, cmput, cmpout
+    character(len=16) :: nomcmd, k16b
     character(len=80) :: fichdf
-    integer :: ier, lout, n, ncode
+    integer :: ier, n
     integer, save :: ipass=0
 !
     if (ipass .ne. 0) then
@@ -52,22 +51,6 @@ subroutine debut()
     ipass = 1
 !
     fichdf=' '
-!
-!   ERREUR / ERREUR_F : mot-cle CODE present ?
-    call ibcode(ncode)
-    if (ncode .ne. 0) then
-        cmpdef = 'ABORT'
-    else
-        call prhead(3)
-        cmpdef = 'EXCEPTION'
-!       fermeture du .code (ouvert par ib0mai)
-        call ulopen(-15, ' ', ' ', ' ', ' ')
-    endif
-    call getvtx('ERREUR', 'ERREUR_F', iocc=1, scal=cmput, nbret=n)
-    if (n .eq. 1) then
-        cmpdef = cmput
-    endif
-    call onerrf(cmpdef, cmpout, lout)
 !
 ! --- LECTURE DU MOT CLE FACTEUR DEBUG OU DE GESTION MEMOIRE DEMANDE
     call ibdbgs()
@@ -82,7 +65,7 @@ subroutine debut()
     call ibtcpu(ier)
 !
 ! --- LECTURE DU MOT CLE HDF ---
-    call ibfhdf(fichdf)
+    ! call ibfhdf(fichdf)
 !
 ! --- LECTURE DU MOT CLE FACTEUR BASE ET ---
 ! --- ALLOCATION DES BASES DE DONNEES ---

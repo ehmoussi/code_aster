@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 
 import os
 import os.path as osp
+import platform
 from functools import partial
 from itertools import chain
 import shutil
@@ -26,7 +27,7 @@ from waflib import TaskGen, Logs, Utils, Errors, Task, Context
 
 
 def build(self):
-    env = self.all_envs[self.variant].derive()
+    env = self.all_envs[self.variant] #.derive()
     if self.variant == "debug":
         env.OPTDEBUG = '-g'
     if self.cmd.startswith('uninstall'):
@@ -37,13 +38,15 @@ def build(self):
             pass
         return
 
+    elem1 = self.path.find_or_declare('elem.1')
     self(
         features = 'catalo',
             name = 'cataelem',
-          target = 'elem.1',
+          target = elem1,
              env = env,
             vars = ['CATALO_CMD'],
-    install_path = self.options.destdir + env.ASTERLIBDIR,
+             use = 'asterlib',
+    install_path = env.ASTERLIBDIR
     )
 
 @TaskGen.feature('catalo')
@@ -51,6 +54,10 @@ def build(self):
 def pre_build_catalo(self):
     catalo = self.path
     deps = catalo.ant_glob('**/*.py')
+    asterlib = [task.outputs
+                for task in self.bld.get_tgen_by_name('asterlib').tasks
+                if task.__class__.__name__ == "cxxshlib"]
+    deps.extend(asterlib[0])
     catalo.get_bld().mkdir()
     ojb = catalo.get_bld().make_node('cata_ele.ojb')
     self.create_task('printcata', src=[catalo] + deps, tgt=ojb)
@@ -62,11 +69,11 @@ class printcata(Task.Task):
     def run(self):
         """Execute the command"""
         environ = os.environ.copy()
-        # add src/bibpyt + catalo in PYTHONPATH
-        python_path = self.env["BIBPYTPATH"] + ":" + self.inputs[0].abspath()
-        add_to_env_paths(environ, "PYTHONPATH", python_path)
+        # add src/code_aster + catalo in PYTHONPATH
+        add_to_env_paths(environ, "PYTHONPATH", self.env["CODEASTERPATH"])
+        add_to_env_paths(environ, "PYTHONPATH", self.env["CATALOPATH"])
         exec_pyaster(self.generator.bld,
-                     osp.join(self.inputs[0].abspath(), "build_cata.py"),
+                     osp.join(self.env["CATALOPATH"], "build_cata.py"),
                      env=environ,
                      args=[self.env['OPTDEBUG'] or "",
                            "-o", self.outputs[0].abspath()])
@@ -87,46 +94,47 @@ def buildcata(self, node):
     if not getattr(self.bld, 'is_install', None) \
         or not getattr(self, 'install_path', None):
         return
-    install_path = osp.join(self.install_path, self.target)
-    post = partial(build_cata_ele, ojb=node, install_path=install_path)
+    # install_path = osp.join(self.install_path, self.target
+    post = partial(build_cata_ele, ojb=node,
+                   elem1=self.target, install_path=self.install_path)
     self.bld.add_post_fun(post)
 
-def build_cata_ele(self, ojb, install_path):
+def build_cata_ele(self, ojb, elem1, install_path):
     """Build the catalog of elements"""
-    bldnode = self.path.get_bld()
-    Logs.info('+ build the elements catalog %s using installed aster (from %s)'
-              % ('elem.1', ojb))
+    builddir = elem1.parent.get_bld().abspath()
+    # I added this test on timestamps because I don't understand why it is rerun
+    # if 'asterlib' and *.py did not change
+    stime = os.stat(ojb.abspath()).st_mtime_ns
+    elem1path = elem1.abspath()
+    skipped = osp.isfile(elem1path) and os.stat(elem1path).st_mtime_ns > stime
+    if not skipped:
+        Logs.info(f"+ build the elements catalog {elem1.name} using installed "
+                  f"aster (from {ojb.name})")
+        # generate the command file
+        comm = osp.join(builddir, "fort.1")
+        with open(comm, "w") as fcomm:
+            content = os.linesep.join([
+                "from code_aster.Commands import DEBUT, MAJ_CATA, FIN",
+                "DEBUT(CATALOGUE=_F(FICHIER='CATAELEM', UNITE=4), ",
+                "      ERREUR=_F(ERREUR_F='ABORT'), PAR_LOT='NON')",
+                "MAJ_CATA(ELEMENT=_F())",
+                "FIN()", ""
+            ])
+            fcomm.write(content)
 
-    # generate the command file
-    comm = bldnode.make_node('fort.1')
-    content = os.linesep.join([
-        "DEBUT(CATALOGUE=_F(FICHIER='CATAELEM', UNITE=4), ",
-        "      ERREUR=_F(ERREUR_F='ABORT'), PAR_LOT='NON')",
-        "MAJ_CATA(ELEMENT=_F())",
-        "FIN()", ""
-    ])
-    comm.write(content, 'w')
+        # .ojb -> fort.4
+        shutil.copy(ojb.abspath(), osp.join(builddir, "fort.4"))
 
-    # .ojb -> fort.4
-    before = ojb.abspath()
-    after= bldnode.make_node('fort.4').abspath()
-    os.rename(before, after)
+        # memory value
+        memlim = 2047 if "32" in platform.architecture()[0] else 4096
+        exec_pyaster(self, comm, cwd=builddir,
+                     args=['--memory={0}'.format(memlim)])
 
-    try:
-        #  generate the command line
-        exec_pyaster(self, 'Execution/E_SUPERV.py', cwd=bldnode.abspath(),
-                     args=['-commandes', comm.abspath(),
-                           '-memjeveux', '500',
-                           '-tpmax', '120'],
-                     with_aster=True)
-    finally: # fort.4 -> .ojb
-        os.rename(after, before)
+    dest = osp.join(install_path, osp.basename(elem1.name))
+    shutil.copy(elem1path, dest)
+    os.chmod(dest, Utils.O644)
 
-    elem = bldnode.find_node('elem.1')
-    shutil.copy(elem.abspath(), install_path)
-    os.chmod(install_path, Utils.O644)
-
-def exec_pyaster(self, pyfile, args, with_aster=False, **kwargs):
+def exec_pyaster(self, pyfile, args, **kwargs):
     """Execute aster depending on the configuration"""
     env = self.all_envs[self.variant]
     if "env" in kwargs:
@@ -135,67 +143,33 @@ def exec_pyaster(self, pyfile, args, with_aster=False, **kwargs):
     else:
         environ = os.environ.copy()
     cmdenv = []
-    if with_aster and env.ASTER_EMBEDS and 'bibc' in env.ASTER_EMBEDS:
-        exec_task = self.get_tgen_by_name('asterexec')
-        python = osp.join(exec_task.install_task.dest, exec_task.target)
-    else:
-        python = list(env.PYTHON)[0]
+    python = list(env.PYTHON)[0]
 
-    ld_paths = get_ld_paths(self)
-    if ld_paths:
-        add_to_env_paths(environ, 'LD_LIBRARY_PATH', ld_paths)
-        # add to cli as it could contain variable (``$LIBDIR`` for example)
-        cmdenv.append('LD_LIBRARY_PATH="%s"' % environ['LD_LIBRARY_PATH'])
+    python_ld_path = env.ASTERLIBDIR
+    add_to_env_paths(environ, 'PYTHONPATH', python_ld_path)
+    add_to_env_paths(environ, 'LD_LIBRARY_PATH', python_ld_path)
 
-    destdir = self.options.destdir
-    python_path = destdir + self.get_tgen_by_name('bibpyt').install_path
-    add_to_env_paths(environ, 'LIBDIR', destdir + env['LIBDIR'])
-    add_to_env_paths(environ, 'BINDIR', destdir + env['BINDIR'])
-    add_to_env_paths(environ, 'PYTHONARCHDIR', env['PYTHONARCHDIR'])
-    add_to_env_paths(environ, 'PYTHONDIR', env['PYTHONDIR'])
-    add_to_env_paths(environ, 'PYTHONPATH', python_path)
-    add_to_env_paths(environ, 'PYTHONHOME', env['CFG_PYTHONHOME'])
-    add_to_env_paths(environ, 'ASTER_ROOT', env['PREFIX'])
-
-    cmdexe = [python, osp.join(python_path, pyfile)] + args
+    cmdexe = [python, pyfile] + args
     # this position allows CATALO_CMD to define an environment variable
     # or a prefix to wrap the executable
     cmdprefix = Utils.to_list(env['CATALO_CMD'])
-    if self.env.BUILD_PARALLEL and not cmdprefix:
-        cmdprefix = ['mpirun', '-n', '1']
+    if self.env.BUILD_MPI and not cmdprefix:
+        cmdprefix = env["base_mpiexec"] + ["-n", "1"]
     cmds = ' '.join(cmdenv + cmdprefix + cmdexe)
     Logs.debug('os environ: %r' % environ)
     # do not confuse with installed elementsdir
     environ['ASTER_ELEMENTSDIR'] = ''
     kwargs['output'] = Context.BOTH
     try:
-        out, err = self.cmd_and_log(cmds, env=environ, shell=True, quiet=0, **kwargs)
-        #Logs.warn(out)
-        #Logs.warn(err)
-    except Exception as err:
+        self.cmd_and_log(cmds, env=environ, shell=True, quiet=0, **kwargs)
+    except Errors.WafError as err:
         Logs.warn('stdout: %s' % err.stdout)
         Logs.warn('stderr: %s' % err.stderr)
         Logs.info('To run manually, use:')
-        Logs.info('BINDIR="%s"' % environ['BINDIR'])
-        Logs.info('LIBDIR="%s"' % environ['LIBDIR'])
-        Logs.info('PYTHONDIR="%s"' % environ['PYTHONDIR'])
         Logs.info('export LD_LIBRARY_PATH="%s"' % environ['LD_LIBRARY_PATH'])
         Logs.info('export PYTHONPATH="%s"' % environ['PYTHONPATH'])
         Logs.info(' '.join(cmdprefix + cmdexe))
         raise
-
-def get_ld_paths(self):
-    # Add *LIBPATH paths to LD_LIBRARY_PATH
-    env = self.all_envs[self.variant]
-    ld_path = list(chain(*[Utils.to_list(env[name])
-                           for name in ('LIBPATH', 'LIBDIR', 'ASTERLIBDIR')
-                           if env[name]]))
-    # add path where built libs are installed
-    try:
-        ld_path.insert(0, self.get_tgen_by_name('asterlib').install_task.dest)
-    except Errors.WafError:# depends on --embed-* options
-        pass
-    return [self.options.destdir + p for p in ld_path]
 
 def add_to_env_paths(environ, name, path):
     if not path:

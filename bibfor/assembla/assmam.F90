@@ -100,16 +100,17 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     character(len=16) :: optio, optio2
     character(len=1) :: base1, typsca
     character(len=2) :: tt
+    character(len=3) :: mathpc
     character(len=8) ::  nogdco, nogdsi, ma, ma2, mo, mo2, partit
     character(len=8) :: symel, kempic
     character(len=14) :: nudev, nu14
     character(len=19) :: matdev, mat19, resu, matel, ligre1
     character(len=1) :: matsym
-    character(len=3) :: matd
+    character(len=3) :: matd,kret
     real(kind=8) :: c1, temps(7)
 !
-    aster_logical :: acreer, cumul, dbg, ldistme, lmatd
-    aster_logical :: lmasym, lmesym, ldgrel
+    aster_logical :: acreer, cumul, dbg, ldistme, lmatd, lmhpc
+    aster_logical :: lmasym, lmesym, ldgrel,lparallel_mesh
 !
     integer :: admodl, i, nbi1mx
     integer :: jdesc
@@ -198,18 +199,24 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     dbg=.false.
     call jedbg2(idbgav, 0)
     call infniv(ifm, niv)
-    call asmpi_barrier()
-    call uttcpu('CPU.CALC.1', 'DEBUT', ' ')
-    call uttcpu('CPU.ASSE.1', 'DEBUT', ' ')
-    call uttcpu('CPU.ASSE.2', 'DEBUT', ' ')
 
     base1=base
     matdev=matas
     nudev=nu
-    if (dbg) call cheksd(nudev, 'SD_NUME_DDL', iret)
 
     call dismoi('NOM_MODELE', nudev, 'NUME_DDL', repk=mo)
     call dismoi('NOM_MAILLA', mo, 'MODELE', repk=ma)
+    call dismoi('PARALLEL_MESH', ma, 'MAILLAGE', repk=kret)
+    lparallel_mesh=(kret.eq.'OUI')
+    if (.not.lparallel_mesh) then
+        call asmpi_barrier()
+    endif
+    call uttcpu('CPU.CALC.1', 'DEBUT', ' ')
+    call uttcpu('CPU.ASSE.1', 'DEBUT', ' ')
+    call uttcpu('CPU.ASSE.2', 'DEBUT', ' ')
+
+    if (dbg) call cheksd(nudev, 'SD_NUME_DDL', iret)
+
     call dismoi('NOM_MAILLA', nudev, 'NUME_DDL', repk=ma2)
     ASSERT(ma.eq.ma2)
     call dismoi('NB_NO_SS_MAX', ma, 'MAILLAGE', repi=nbnoss)
@@ -574,14 +581,16 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
         end do
     endif
 
+    call dismoi('MATR_HPC', mat19, 'MATR_ASSE', repk=mathpc)
+    lmhpc = mathpc.eq.'OUI'
 !   -- il faut communiquer ellagr entre les procs :
-    if (ldistme) then
+    if (ldistme.or.lmhpc) then
         call asmpi_comm_vect('MPI_MAX', 'I', sci=ellagr)
     endif
 
 
 !   -- mise a l'echelle des coef. de lagrange si necessaire :
-    if (ellagr .gt. 0) call assma1(mat19, ldistme)
+    if (ellagr .gt. 0) call assma1(mat19, ldistme, lmhpc)
 
 
     if (.not.ldistme) then
@@ -604,7 +613,9 @@ subroutine assmam(base, matas, nbmat, tlimat, licoef,&
     call jedbg2(ibid, idbgav)
     if (dbg) call cheksd(matdev, 'SD_MATR_ASSE', iret)
 
-    call asmpi_barrier()
+    if (.not.lparallel_mesh) then
+        call asmpi_barrier()
+    endif
     call uttcpu('CPU.CALC.1', 'FIN', ' ')
     call uttcpu('CPU.ASSE.1', 'FIN', ' ')
     call uttcpu('CPU.ASSE.2', 'FIN', ' ')

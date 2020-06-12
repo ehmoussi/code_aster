@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
-import aster
+
+from code_aster import ConvergenceError, NonLinearResult
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'),
       ERREUR=_F(ERREUR_F='EXCEPTION'),
@@ -156,10 +158,12 @@ LINST2 = DEFI_LIST_INST(
    ),
 )
 
-
 ok_poursuite = 0
+U1MAZAR = NonLinearResult()
 try:
     U1MAZAR=STAT_NON_LINE(
+        reuse=U1MAZAR,
+        RESULTAT=U1MAZAR,
         MODELE=MOPOU,
         CHAM_MATER=MATMAZAR,
         CARA_ELEM=POUCA,
@@ -172,11 +176,11 @@ try:
         NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1),
         CONVERGENCE=_F(RESI_GLOB_RELA=1.0E-5, ITER_GLOB_MAXI=10,),
     )
-except aster.NonConvergenceError as err:
+except ConvergenceError as err:
     if err.id_message == "MECANONLINE9_7":
         ok_poursuite = 1
 
-if ( ok_poursuite==1 ):
+if ok_poursuite == 1:
     try:
         U1MAZAR=STAT_NON_LINE(
             reuse=U1MAZAR,
@@ -193,9 +197,15 @@ if ( ok_poursuite==1 ):
             NEWTON=_F(MATRICE='TANGENTE',),
             CONVERGENCE=_F(RESI_GLOB_RELA=2.0E-4, ITER_GLOB_MAXI=20,),
         )
-    except aster.NonConvergenceError as err:
+    except ConvergenceError as err:
         if err.id_message == "MECANONLINE9_7":
             ok_poursuite = 2
+
+# the initialization is partial because of exception raised
+U1MAZAR.appendModelOnAllRanks(MOPOU)
+U1MAZAR.appendMaterialFieldOnAllRanks(MATMAZAR)
+U1MAZAR.appendElementaryCharacteristicsOnAllRanks(POUCA)
+U1MAZAR.update()
 
 U1MAZAR=CALC_CHAMP(FORCE='REAC_NODA', reuse =U1MAZAR, RESULTAT=U1MAZAR, );
 U1MAZAR=CALC_CHAMP(reuse=U1MAZAR, RESULTAT=U1MAZAR, DEFORMATION=('EPSI_ELGA'), )

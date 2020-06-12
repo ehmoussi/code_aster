@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -236,7 +236,7 @@ EVOL = STAT_NON_LINE( MODELE = MODEMECA,
                                         ITER_GLOB_MAXI = 10),
                       SOLVEUR = _F( METHODE = 'MUMPS',
                                     PCENT_PIVOT = 30),  
-                      ARCHIVAGE = _F( PAS_ARCH = 5.),);
+                      ARCHIVAGE = _F( PAS_ARCH = 5),);
 
 # DESTRUCTION DE LA RAMPE POUR REUTILISATION
 DETRUIRE( CONCEPT=_F( NOM = RAMPE,),); 
@@ -272,7 +272,7 @@ for i in inst2do :
                                             ITER_GLOB_MAXI = 30),
                           SOLVEUR = _F( METHODE = 'MUMPS',
                                         PCENT_PIVOT = 30),  
-                          ARCHIVAGE = _F( PAS_ARCH = 5.),);
+                          ARCHIVAGE = _F( PAS_ARCH = 5),);
 
     inst_old = i
     DETRUIRE (CONCEPT = _F(NOM = RAMPE),); 

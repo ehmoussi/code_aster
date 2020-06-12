@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 # person_in_charge: sylvie.michel-ponnelle at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 CALC_PRECONT=MACRO(nom="CALC_PRECONT",
-                   op=OPS('Macro.calc_precont_ops.calc_precont_ops'),
+                   op=OPS('code_aster.MacroCommands.calc_precont_ops.calc_precont_ops'),
                    sd_prod=evol_noli,
                    fr=tr("Imposer la tension définie par le BPEL dans les cables"),
                    reentrant='f:ETAT_INIT:EVOL_NOLI',

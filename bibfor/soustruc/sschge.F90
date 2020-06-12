@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ subroutine sschge(nomacr)
     character(len=8) :: kbid
     character(len=14) :: nu
     character(len=8) :: nomo, materi, cara
-    character(len=24) :: mate
+    character(len=24) :: mateco
     character(len=8) :: vprof, nomcas
     character(len=19) :: vecas, vecel
 !
@@ -82,9 +82,9 @@ subroutine sschge(nomacr)
     nomo= refm(1)
     materi = refm(3)
     if (materi .ne. '        ') then
-        call rcmfmc(materi, mate, l_ther_ = ASTER_FALSE)
+        call rcmfmc(materi, mateco, l_ther_ = ASTER_FALSE)
     else
-        mate = ' '
+        mateco = ' '
     endif
     cara = refm(4)
     nu= refm(5)
@@ -137,7 +137,7 @@ subroutine sschge(nomacr)
 !
 !       -- CALCULS VECTEURS ELEMENTAIRES DU CHARGEMENT :
 !       ------------------------------------------------
-        call me2mme(nomo, -n1, zk8(ialich+1), mate, cara,&
+        call me2mme(nomo, -n1, zk8(ialich+1), materi, mateco, cara,&
                     time, vecel, 0, base)
         call ss2mm2(nomo, vecel, nomcas)
 !

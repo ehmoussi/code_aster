@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@
 interface
     subroutine prcoch(noche8, nochs8, nocmp, ktype, itopo,&
                       ngroup, group)
-        character(len=8), intent(in) :: noche8
-        character(len=8), intent(in) :: nochs8
+        character(len=*), intent(in) :: noche8
+        character(len=*), intent(in) :: nochs8
         character(len=8), intent(in) :: nocmp
         character(len=8), intent(in) :: ktype
         integer, intent(in) :: itopo

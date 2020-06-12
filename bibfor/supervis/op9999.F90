@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine op9999()
-    use parameters_module
+subroutine op9999(isave)
+    use parameters_module, only : ST_OK
     implicit none
 !     ------------------------------------------------------------------
 ! person_in_charge: j-pierre.lefebvre at edf.fr
@@ -28,10 +28,10 @@ subroutine op9999()
 #include "jeveux.h"
 #include "asterc/gettyp.h"
 #include "asterc/jdcset.h"
+#include "asterc/rmfile.h"
 #include "asterfort/assert.h"
 #include "asterfort/fin999.h"
-#include "asterfort/getvis.h"
-#include "asterfort/getvtx.h"
+#include "asterfort/get_jvbasename.h"
 #include "asterfort/iunifi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
@@ -51,42 +51,43 @@ subroutine op9999()
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/asmpi_info.h"
+
+!   isave = 1 : The objects must be saved properly.
+!   isave = 0 : The objects can be wiped out (== automatically called).
+    integer, intent(in) :: isave
+
     mpi_int :: mrank, msize
-    integer :: info, nbenre, nboct, iret, nbrank
+    integer :: info, nbenre, nboct, iret, rank
     integer :: ifm, iunres, iunmes
     integer :: i, jco, nbco
-    integer :: nbext, nfhdf, nproc
-    aster_logical :: bool
+    integer :: nbext, nfhdf
+    aster_logical :: close_base
     character(len=8) :: k8b, ouinon, infr, proc
     character(len=16) :: fhdf, typres
     character(len=80) :: fich
+    character(len=256) :: fbase
 !-----------------------------------------------------------------------
 !
     call jemarq()
     info = 1
 
     call asmpi_info(rank=mrank, size=msize)
-    nbrank = to_aster_int(mrank)
+    rank = to_aster_int(mrank)
 !
 !   --- PROC0 = 'OUI' pour effectuer les ecritures uniquement sur le processeur de rang 0 ---
-!       si PROC0 = 'NON' on force nbrank=0
-    call getvtx(' ', 'PROC0', scal=proc, nbret=nproc)
-    if ( proc .eq. 'NON' ) then
-      nbrank = 0
-    endif
-    call getvis(' ', 'STATUT', scal=iret)
-    bool = iret == ST_ER .or. iret == ST_OK .or. iret == ST_ER_PR0 .or. &
-           iret == ST_ER_OTH .or. iret == ST_UN_OTH .or. iret == ST_EXCEPT
-    ASSERT(bool)
-    call ststat(iret)
+!       si PROC0 = 'NON' on force rank=0
+    proc = 'OUI'
+    close_base = isave .eq. 1 .and. (proc.eq.'NON' .or. rank.eq.0)
+
+    call ststat(ST_OK)
 
 ! --- MENAGE DANS LES BIBLIOTHEQUES, ALARMES, ERREURS, MPI
 !
-    call fin999()
+    call fin999(isave)
 !
 ! --- ecriture des informations sur le contenu de chaque sd_resultat :
 !
-    call getvtx(' ', 'INFO_RESU', scal=infr)
+    infr = 'NON'
     if (infr.eq.'OUI') then
         ifm = iunifi('MESSAGE')
 !
@@ -108,7 +109,7 @@ subroutine op9999()
 !
 ! --- SUPPRESSION DES CONCEPTS TEMPORAIRES DES MACRO
 !
-    if ( nbrank .eq. 0 ) then
+    if ( close_base ) then
       call jedetc('G', '.', 1)
 !
 ! --- IMPRESSION DE LA TAILLE DES CONCEPTS DE LA BASE GLOBALE
@@ -117,13 +118,14 @@ subroutine op9999()
 !
 ! --- RETASSAGE EVENTUEL DE LA GLOBALE
 !
-      call getvtx(' ', 'RETASSAGE', scal=ouinon)
+      ouinon = 'NON'
       if (ouinon .eq. 'OUI') call jetass('G')
 !
 ! --- SAUVEGARDE DE LA GLOBALE AU FORMAT HDF
 !
       fhdf = 'NON'
-      call getvtx(' ', 'FORMAT_HDF', scal=fhdf, nbret=nfhdf)
+      fhdf = 'NON'
+      nfhdf = 1
       if (nfhdf .gt. 0) then
         if (fhdf .eq. 'OUI') then
             if (ouinon .eq. 'OUI') then
@@ -143,37 +145,47 @@ subroutine op9999()
 !
 ! --- APPEL JXVERI POUR VERIFIER LA BONNE FIN D'EXECUTION
 !
-    if ( nbrank .eq. 0 ) then
+    if ( close_base ) then
       call jxveri()
-!
-! --- CLOTURE DES FICHIERS
-!
+      !
+      ! --- CLOTURE DES FICHIERS
+      !
       call jelibf('SAUVE', 'G', info)
-!
+      !
       call jelibf('DETRUIT', 'V', info)
-!
-! --- RETASSAGE EFFECTIF
-!
+      !
+      ! --- RETASSAGE EFFECTIF
+      !
       if (ouinon .eq. 'OUI') then
         call jxcopy('G', 'GLOBALE', 'V', 'VOLATILE', nbext)
         if (iunres .gt. 0) write(iunres, '(A,I2,A)'&
-                           ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
-                           nbext, ' FICHIER(S) UTILISE(S).'
+        ) ' <I> <FIN> RETASSAGE DE LA BASE "GLOBALE" EFFECTUEE, ',&
+        nbext, ' FICHIER(S) UTILISE(S).'
       endif
-!
-! --- IMPRESSION DES STATISTIQUES ( AVANT CLOTURE DE JEVEUX )
-!
-      call utmess('I', 'SUPERVIS2_97')
-      if (iunres .gt. 0) write(iunres, *) '<I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".'
+
     endif
+
     call jedema()
+!
+!   the diagnosis of the execution is OK thanks to this message
+    call utmess('I', 'SUPERVIS2_99')
 !
 ! --- CLOTURE DE JEVEUX
 !
-    call jefini('NORMAL' , arg_rank=nbrank)
-!
-!-----------------------------------------------------------------------
-!
-    100 format(/,1x,'======>')
+    call jefini('NORMAL', close_base)
+
+    if ( isave .eq. 0 ) then
+        do i=1,99
+            call get_jvbasename('glob', i, fbase)
+            call rmfile(fbase, 0, iret)
+            if (iret .ne. 0) then
+                exit
+            endif
+            call get_jvbasename('vola', i, fbase)
+            call rmfile(fbase, 0, iret)
+        end do
+    endif
+
+100 format(/,1x,'======>')
 !
 end subroutine

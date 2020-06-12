@@ -25,7 +25,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       DEBUG=_F(SDVERI='NON'),      # ok sdveri mais temps x5
      )
 
-MA0=LIRE_MAILLAGE(FORMAT='ASTER',);
+MA0=LIRE_MAILLAGE(FORMAT='ASTER',)
 
 MA=CREA_MAILLAGE(MAILLAGE=MA0,
     CREA_POI1=(
@@ -57,26 +57,26 @@ CDL=AFFE_CHAR_CINE(  MODELE=MO,MECA_IMPO=(_F(  NOEUD='N1', DX = 0., DY = 0., DZ 
 
 Ke=CALC_MATR_ELEM(OPTION='RIGI_MECA',
                   MODELE=MO,
-                  CARA_ELEM=CARA_ELE,);
+                  CARA_ELEM=CARA_ELE,)
 
 Me=CALC_MATR_ELEM(OPTION='MASS_MECA',
                   MODELE=MO,
-                  CARA_ELEM=CARA_ELE,);
+                  CARA_ELEM=CARA_ELE,)
 
-NUM=NUME_DDL(MATR_RIGI=Ke,);
+NUM=NUME_DDL(MATR_RIGI=Ke,)
 
 K=ASSE_MATRICE(MATR_ELEM=Ke,
                NUME_DDL=NUM,
-               CHAR_CINE=CDL,);
+               CHAR_CINE=CDL,)
 
 M=ASSE_MATRICE(MATR_ELEM=Me,
                NUME_DDL=NUM,
-               CHAR_CINE=CDL,);
+               CHAR_CINE=CDL,)
 
-hu=33;
-hf=151;
-nbranch=12;
-ndiscr=10;
+hu=33
+hf=151
+nbranch=12
+ndiscr=10
 
 MODES=CALC_MODES(MATR_RIGI=K,
                  CALC_FREQ=_F(FREQ=(0.01,10.,),
@@ -159,21 +159,19 @@ FREQC=RECU_FONCTION(TABLE=MNL,
 fs=0.25790528513017497
 es=1.19768
 
-calc_aster5_fs = 1.197698218423
-calc_aster5_es = 0.25790526592004
 
 TEST_FONCTION(VALEUR=_F(VALE_PARA=fs,
-                       VALE_CALC=calc_aster5_fs,
-                       TOLE_MACHINE=8.E-05,  # valeur tres sensible en fonction de la machine
+                       VALE_CALC=1.197654438808,
+                       TOLE_MACHINE=2.E-04,  # valeur tres sensible en fonction de la machine
                        REFERENCE='AUTRE_ASTER',
                        VALE_REFE=es,
                        FONCTION=ENRGC,),
              )
 
 TEST_FONCTION(VALEUR=_F(VALE_PARA=es,
-                       VALE_CALC=calc_aster5_es,
+                       VALE_CALC=0.25790530633207,
                        VALE_REFE=fs,
                        REFERENCE='AUTRE_ASTER',
                        FONCTION=FREQC,),
              )
-FIN();
+FIN()

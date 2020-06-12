@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ import aster
 ############################################################
 ################  Bilan energetique  #######################
 ############################################################
-tmpd = aster.getvectjev('D_EULER            .VALE        ');
+tmpd = aster.getvectjev('0000001b           .VALE        ');
 t = NP.array(tmpd[0:len(tmpd)//2])
 fext = Fa*NP.sin(2*NP.pi*f*t)  # formule qui definit le chargement exterieur
 
@@ -34,11 +34,11 @@ fext = Fa*NP.sin(2*NP.pi*f*t)  # formule qui definit le chargement exterieur
 d_euler = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
-tmpv = aster.getvectjev('V_EULER            .VALE        ');
+tmpv = aster.getvectjev('0000001c           .VALE        ');
 v_euler = NP.array(tmpv[len(tmpv)//2:len(tmpv)])
 del tmpv
 
-tmpa = aster.getvectjev('A_EULER            .VALE        ');
+tmpa = aster.getvectjev('0000001d           .VALE        ');
 a_euler = NP.array(tmpa[len(tmpa)//2:len(tmpa)])
 del tmpa
 
@@ -60,16 +60,16 @@ err_globale_E_euler = NP.sqrt( NP.sum((E_inj_euler-E_tot_euler)**2) / NP.sum(E_i
 #-------
 
 # Adapt:
-tmpd = aster.getvectjev('D_ADAPT            .VALE        ');
+tmpd = aster.getvectjev('0000001e           .VALE        ');
 t = NP.array(tmpd[0:len(tmpd)//2])
 d_adapt = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
-tmpv = aster.getvectjev('V_ADAPT            .VALE        ');
+tmpv = aster.getvectjev('0000001f           .VALE        ');
 v_adapt = NP.array(tmpv[len(tmpv)//2:len(tmpv)])
 del tmpv
 
-tmpa = aster.getvectjev('A_ADAPT            .VALE        ');
+tmpa = aster.getvectjev('00000020           .VALE        ');
 a_adapt = NP.array(tmpa[len(tmpa)//2:len(tmpa)])
 del tmpa
 
@@ -88,11 +88,11 @@ err_globale_E_adapt = NP.sqrt( NP.sum((E_inj_adapt-E_tot_adapt)**2) / NP.sum(E_i
 ############################################################
 # Verification de la coherence entre la force de choc et la cinematique:
 ############################################################
-tmpd = aster.getvectjev('D_ADAP2            .VALE        ');
+tmpd = aster.getvectjev('00000021           .VALE        ');
 d_adap2 = NP.array(tmpd[len(tmpd)//2:len(tmpd)])
 del tmpd
 
-tmpf = aster.getvectjev('FC_ADAP2           .VALE        ');
+tmpf = aster.getvectjev('00000022           .VALE        ');
 fchoc_adap2 = NP.array(tmpf[len(tmpf)//2:len(tmpf)])
 del tmpf
 
@@ -140,8 +140,10 @@ t_inout_adapt.sort()
 
 # Instants d'entrees et sorties de contact pour la solution quasi-analytique
 # (a 10^-9 s pres) :
-INCLUDE(UNITE=60);
 
+from sdnd121a import F_linst
+t_inout_analyique=F_linst()
+ 
 # Test du bilan energetique :
 TEMPSFIN = DEFI_LIST_REEL(VALE=duree,);
 
@@ -513,8 +515,6 @@ for i in range(0,len(t_inout_adapt)):
 # # numeriquement a 10^-9 s pres) :
 # #####################################################################
 # c_rappel=0. # amortissement au noeud de rappel (pour un probleme plus general)
-# INCLUDE(UNITE=61);
-# INCLUDE(UNITE=62);
 #
 # err_globale_D_euler = NP.sqrt( NP.sum((d_euler-D)**2) / NP.sum(D**2) ) *100
 # err_globale_V_euler = NP.sqrt( NP.sum((v_euler-V)**2) / NP.sum(V**2) ) *100

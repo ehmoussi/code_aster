@@ -33,6 +33,8 @@ use elg_module
 !
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
+#include "asterc/aster_petsc_initialize.h"
+#include "asterc/aster_petsc_finalize.h"
 #include "asterfort/apmain.h"
 #include "asterfort/apldlt.h"
 #include "asterfort/asmpi_info.h"
@@ -87,7 +89,7 @@ use elg_module
 #ifdef _HAVE_PETSC
 !
 !     VARIABLES LOCALES
-    integer :: iprem, k, l, nglo, kdeb, jnequ
+    integer :: iprem, k, l, nglo, kdeb, jnequ, ier2
     integer ::  kptsc
     integer :: np
     real(kind=8) :: r8
@@ -126,7 +128,7 @@ use elg_module
     if (action .eq. 'FIN') then
 !       petsc a-t-il ete initialise ?
         if (iprem .eq. 1) then
-            call PetscFinalize(ierr)
+            call aster_petsc_finalize()
 !           on ne verifie pas le code retour car on peut
 !           se retrouver dans fin suite a une erreur dans l'initialisation
             iprem = 0
@@ -142,7 +144,9 @@ use elg_module
         ASSERT(kind(sbid).eq.kind(r8))
         ASSERT(kind(offbid).eq.kind(np))
 !
-        call PetscInitialize(PETSC_NULL_CHARACTER, ierr)
+        ier2 = 0
+        call aster_petsc_initialize(ier2)
+        ierr = to_petsc_int(ier2)
         if (ierr .ne. 0) call utmess('F', 'PETSC_1')
         do k = 1, nmxins
             ap(k) = PETSC_NULL_MAT

@@ -19,6 +19,7 @@
 
 import os
 import os.path as osp
+import re
 
 from waflib import Build, Configure, Logs, TaskGen, Utils
 from waflib.Context import Context
@@ -66,23 +67,35 @@ def signature(self):
 fc.fc.signature = signature
 
 ###############################################################################
-# Add OPTLIB_FLAGS support
 # original run_str command line is store as hcode
-for lang in ('c', 'cxx', 'fc'):
-    for feature in ('', 'program', 'shlib'):
-        ccroot.USELIB_VARS[lang + feature].add('OPTLIB_FLAGS')
+for feature in ('program', 'shlib'):
+    ccroot.USELIB_VARS['c'  + feature].add('CCLINKFLAGS')
+    ccroot.USELIB_VARS['fc' + feature].add('FCLINKFLAGS')
+    ccroot.USELIB_VARS['cxx' + feature].add('CXXLINKFLAGS')
 
 class fcprogram(fc.fcprogram):
-    """Link object files into a fortran program, add optional OPTLIB_FLAGS at the end"""
-    run_str = fc.fcprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
+    """Modifying cxxprogram. Add FCLINKFLAGS."""
+    run_str = '${LINK_FC} ${FCLINKFLAGS} ${LINKFLAGS} ${FCLNK_SRC_F}${SRC} ${FCLNK_TGT_F}${TGT[0].abspath()} ${RPATH_ST:RPATH} ${FCSTLIB_MARKER} ${FCSTLIBPATH_ST:STLIBPATH} ${FCSTLIB_ST:STLIB} ${FCSHLIB_MARKER} ${FCLIBPATH_ST:LIBPATH} ${FCLIB_ST:LIB} ${LDFLAGS}'
+
+class fcshlib(fcprogram):
+    """ Modifying fcshlib """
+    inst_to = '${LIBDIR}'
 
 class cprogram(c.cprogram):
-    """Link object files into a C program, add optional OPTLIB_FLAGS at the end"""
-    run_str = c.cprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
+    """Modifying cxxprogram. Add CCLINKFLAGS."""
+    run_str = '${LINK_CC} ${CCLINKFLAGS} ${LINKFLAGS} ${CCLNK_SRC_F}${SRC} ${CCLNK_TGT_F}${TGT[0].abspath()} ${RPATH_ST:RPATH} ${FRAMEWORKPATH_ST:FRAMEWORKPATH} ${FRAMEWORK_ST:FRAMEWORK} ${ARCH_ST:ARCH} ${STLIB_MARKER} ${STLIBPATH_ST:STLIBPATH} ${STLIB_ST:STLIB} ${SHLIB_MARKER} ${LIBPATH_ST:LIBPATH} ${LIB_ST:LIB} ${LDFLAGS}'
+
+class cshlib(cprogram):
+    """ Modifying cshlib """
+    inst_to = '${LIBDIR}'
 
 class cxxprogram(cxx.cxxprogram):
-    """Link object files into a C program, add optional OPTLIB_FLAGS at the end"""
-    run_str = cxx.cxxprogram.hcode.decode() + ' ${OPTLIB_FLAGS}'
+    """Modifying cxxprogram. Add CXXLINKFLAGS."""
+    run_str = '${LINK_CXX} ${CXXLINKFLAGS} ${LINKFLAGS} ${CXXLNK_SRC_F}${SRC} ${CXXLNK_TGT_F}${TGT[0].abspath()} ${RPATH_ST:RPATH} ${FRAMEWORKPATH_ST:FRAMEWORKPATH} ${FRAMEWORK_ST:FRAMEWORK} ${ARCH_ST:ARCH} ${STLIB_MARKER} ${STLIBPATH_ST:STLIBPATH} ${STLIB_ST:STLIB} ${SHLIB_MARKER} ${LIBPATH_ST:LIBPATH} ${LIB_ST:LIB} ${LDFLAGS}'
+
+class cxxshlib(cxxprogram):
+    """ Modifying cxxshlib """
+    inst_to = '${LIBDIR}'
 
 ###############################################################################
 def customize_configure_output():
@@ -108,9 +121,7 @@ def customize_configure_output():
     Context.start_msg = start_msg40
 
 customize_configure_output()
-###############################################################################
 
-SRCWIDTH = 120
 def format_error(self):
     """Write task details into a file. Print only the first line in console.
     See :py:meth:`waflib.Task.Task.format_error`"""
@@ -119,6 +130,10 @@ def format_error(self):
         msg = getattr(self, 'last_cmd', '')
         name = getattr(self.generator, 'name', '')
         bldlog = osp.join(self.generator.bld.path.get_bld().abspath(), '%s.log' % name)
+        try:
+            os.makedirs(osp.dirname(bldlog))
+        except:
+            pass
         slog = ''
         try:
             open(bldlog, 'w').write('task: %r\nlast command:\n%r\n' % (self, msg))
@@ -128,13 +143,12 @@ def format_error(self):
              + '\n    task details in: {0}{1}'.format(bldlog, slog)
     return text
 
+fcprogram.format_error = format_error
 cprogram.format_error = format_error
 cxxprogram.format_error = format_error
-fcprogram.format_error = format_error
 
-###############################################################################
+
 # support for the "dynamic_source" attribute
-
 @TaskGen.feature('c', 'cxx')
 @TaskGen.before('process_source', 'process_rule')
 def dynamic_post(self):
@@ -167,9 +181,25 @@ def dynamic_post(self):
 @Configure.conf
 def safe_remove(self, var, value):
     """Remove 'value' from the variable, remove duplicates"""
+    if type(self.env[var]) is not list:
+        return
     self.env[var] = self.remove_duplicates(self.env[var])
     while value in self.env[var]:
         self.env[var].remove(value)
+
+@Configure.conf
+def remove_flags(self, var, flags):
+    """Remove `flags` from `env[var]`."""
+    if not isinstance(self.env[var], list):
+        return
+    regexps = [re.compile(re.escape(flag) + '.*') for flag in flags]
+    # TODO itertools.chain?
+    flatten = lambda l: [item for sublist in l for item in sublist]
+    fl = []
+    for regexp in regexps:
+        fl.extend(flatten(filter(None, map(regexp.findall, self.env[var]))))
+    self.env[var] = list(set([i for i in self.env[var] if i not in fl]))
+
 
 @Configure.conf
 def remove_optflags(self, type_flags):
@@ -177,6 +207,8 @@ def remove_optflags(self, type_flags):
     remove duplicates"""
     for var in self.env:
         if var.startswith(type_flags):
+            if not isinstance(self.env[var], (list, tuple)):
+                self.env[var] = [self.env[var], ]
             self.env[var] = self.remove_duplicates(self.env[var])
             self.env[var] = [i for i in self.env[var] if not i.startswith("-O")]
 
@@ -188,35 +220,3 @@ def remove_duplicates(self, list_in):
     # relies on the fact that dset.add() always returns None.
     return [path for path in list_in
             if path not in dset and not dset.add(path) ]
-
-# Force static libs
-CHECK = '_check'
-
-@Configure.conf
-def _force_stlib(self, *args, **kwargs):
-    """Always use 'stlib' keyword argument"""
-    kwargs = kwargs.copy()
-    stlib = kwargs.get('stlib') or kwargs.get('lib')
-    if stlib:
-        kwargs['stlib'] = stlib
-    try:
-        del kwargs['lib']
-    except KeyError:
-        pass
-    return getattr(self, CHECK)(*args, **kwargs)
-
-@Configure.conf
-def static_lib_pref(self):
-    """Change temporarly the 'check' method"""
-    if not self.options.embed_all:
-        return
-    if getattr(self, CHECK, None) is None:
-        setattr(self, CHECK, self.check)
-    self.check = self._force_stlib
-
-@Configure.conf
-def revert_lib_pref(self):
-    """Restore original method"""
-    if not self.options.embed_all:
-        return
-    self._force_stlib = getattr(self, CHECK)

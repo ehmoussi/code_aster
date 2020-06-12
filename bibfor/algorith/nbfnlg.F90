@@ -153,6 +153,7 @@ subroutine nbfnlg(ndim, nno1, nno2, nno3, npg,&
         pm = ddot(nno3,vff3(1,g),1,presm,1)
 !
 ! - CALCUL DU GRADIENT DU GONFLEMENT POUR LA REGULARISATION
+
         if (nonloc) then
             call dfdmip(ndim, nno2, axi, geomi, g,&
                         iw, vff2(1, g), idff2, r, w,&
@@ -171,6 +172,7 @@ subroutine nbfnlg(ndim, nno1, nno2, nno3, npg,&
         end do
 !
 ! - CALCUL DES FONCTIONS A,B,... QUI LIENT G ET J
+!
         call nirela(2, jm, gm, gm, am,&
                     ap, bm, boa, aa, bb,&
                     daa, dbb, dboa, d2boa, iret)

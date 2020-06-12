@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ MODEL2=AFFE_MODELE(MAILLAGE=MAILLA2,
                        ),);
 
 RESUV2=LIRE_RESU(  TYPE_RESU='EVOL_NOLI', FORMAT='MED',  MODELE=MODEL2, TOUT_ORDRE='OUI',UNITE=87,
-         FORMAT_MED=(_F( NOM_RESU    ='SIG',
+         FORMAT_MED=(_F( NOM_RESU    ='0000000f'+'VARI',
                          NOM_CHAM    ='VARI_ELGA',
                          NOM_CMP=('V79','V80'),
                          NOM_CMP_MED=('V79','V80'),)),);

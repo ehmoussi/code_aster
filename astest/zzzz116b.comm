@@ -1,0 +1,513 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# person_in_charge: nicolas.pignet at edf.fr
+
+# Modelisation B : FEM - 3D
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI',),IMPR_MACRO='OUI',)
+
+mesh = LIRE_MAILLAGE(UNITE=20)
+
+model = AFFE_MODELE(AFFE=_F(MODELISATION=('3D', ),
+                            PHENOMENE='MECANIQUE',
+                            TOUT='OUI'),
+                    MAILLAGE=mesh)
+
+ACIER = DEFI_MATERIAU(ELAS=_F(E=210000000000.0,
+                              NU=0.3))
+
+fieldmat = AFFE_MATERIAU(AFFE=_F(MATER=(ACIER, ),
+                                 TOUT='OUI'),
+                         MODELE=model)
+
+CHAM0 = CREA_CHAMP(AFFE=(_F(NOM_CMP=('DX', ),
+                            TOUT='OUI',
+                            VALE=(0.0, )),
+                         _F(NOM_CMP=('DY', ),
+                            TOUT='OUI',
+                            VALE=(0.0, )),
+                         _F(NOM_CMP=('DZ', ),
+                            TOUT='OUI',
+                            VALE=(0.0, ))),
+                   MAILLAGE=mesh,
+                   OPERATION='AFFE',
+                   TYPE_CHAM='NOEU_DEPL_R')
+
+RES0 = CREA_RESU(AFFE=_F(CHAM_GD=CHAM0,
+                         CHAM_MATER=fieldmat,
+                         INST=(1.0, ),
+                         MODELE=model),
+                 NOM_CHAM='DEPL',
+                 OPERATION='AFFE',
+                 TYPE_RESU='EVOL_ELAS')
+
+FISS = DEFI_FOND_FISS(FOND_FISS=_F(GROUP_MA='FOND_FISS',
+                                     GROUP_NO_ORIG='NFORIG',
+                                     GROUP_NO_EXTR='NFEXTR',
+                                     TYPE_FOND='OUVERT',),
+                      LEVRE_SUP=_F(GROUP_MA=('LEVRE2D', )),
+                      MAILLAGE=mesh,
+                      SYME='OUI')
+
+
+
+G0 = CALC_G(LISSAGE=_F(DEGRE=3,
+                       LISSAGE_G='LEGENDRE',
+                       LISSAGE_THETA='LEGENDRE'),
+            RESULTAT=RES0,
+            CHAM_THETA=CO('cham_theta_no'),
+            THETA=_F(FOND_FISS=FISS,
+                     R_INF=2.5,
+                     R_SUP=5.0))
+
+# cham_theta_no.printMedFile("/home/C00976/tmp/cham_theta_no.med")
+IMPR_RESU(FORMAT='MED',UNITE=80,RESU=_F(RESULTAT=cham_theta_no,), )
+
+#### TEST #####
+# Longueur fissure
+L = 12.5
+un_L = sqrt(1./L)
+trois_L = sqrt(3./L)
+cinq_L = sqrt(5./L)
+sept_L = sqrt(7./L)
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF1', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=un_L,
+        VALE_CALC=0.282842712474619,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF1', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=1,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=-trois_L,
+        VALE_CALC=-0.4898979485566356,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF1', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=2,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=cinq_L,
+        VALE_CALC=0.6324555320336759,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF1', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=-sept_L,
+        VALE_CALC=-0.7483314773547883,
+        ),
+    _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF1', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=0,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF1', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=1,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF1', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=2,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF1', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DY',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF1', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DZ',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+     _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF1', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DZ',
+        INST=1,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF1', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DZ',
+        INST=2,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF1', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DZ',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+    )
+)
+
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF2', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=un_L,
+        VALE_CALC=0.282842712474619,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF2', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=1,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF2', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=2,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=-0.5*cinq_L,
+        VALE_CALC=-0.31622776601683794,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF2', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        )
+)
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF3', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=un_L,
+        VALE_CALC=0.282842712474619,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF3', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=1,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=trois_L,
+        VALE_CALC=0.4898979485566356,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NINF3', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=2,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=cinq_L,
+        VALE_CALC=0.6324555320336759,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NINF3', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=sept_L,
+        VALE_CALC=0.7483314773547883,
+        ),
+        )
+)
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NMIL1', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=0.5*un_L,
+        VALE_CALC=0.1414213562373095,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NMIL1', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=1,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=-0.5*trois_L,
+        VALE_CALC=-0.2449489742783178,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NMIL1', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=2,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=0.5*cinq_L,
+        VALE_CALC=0.31622776601683794,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NMIL1', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=-0.5*sept_L,
+        VALE_CALC=-0.37416573867739417,
+        ),
+        )
+)
+
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NMIL2', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=0.5*un_L,
+        VALE_CALC=0.1414213562373095,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NMIL2', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=1,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NMIL2', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=2,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=-0.5*0.5*cinq_L,
+        VALE_CALC=-0.15811388300841897,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NMIL2', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        ORDRE_GRANDEUR= 1.0,
+        VALE_REFE=0.0,
+        VALE_CALC=0.0,
+        ),
+        )
+)
+
+TEST_RESU(
+    RESU=(_F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NMIL3', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=0,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=0.5*un_L,
+        VALE_CALC=0.1414213562373095,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NMIL3', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=1,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=0.5*trois_L,
+        VALE_CALC=0.2449489742783178,
+        ),
+        _F(
+        CRITERE=('RELATIF', ),
+        REFERENCE = 'ANALYTIQUE',
+        GROUP_NO=('NMIL3', ),
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=2,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=0.5*cinq_L,
+        VALE_CALC=0.316227766016837949,
+        ),
+    _F(
+        CRITERE=('ABSOLU', ),
+        GROUP_NO=('NMIL3', ),
+        REFERENCE = 'ANALYTIQUE',
+        NOM_CHAM='DEPL',
+        NOM_CMP='DX',
+        INST=3,
+        PRECISION=1.0e-6,
+        RESULTAT=cham_theta_no,
+        VALE_REFE=0.5*sept_L,
+        VALE_CALC=0.37416573867739417,
+        ),
+        )
+)
+
+FIN()

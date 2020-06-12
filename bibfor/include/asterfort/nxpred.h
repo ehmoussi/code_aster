@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine nxpred(model     , mate     , cara_elem, list_load, nume_dof ,&
+    subroutine nxpred(model     , mate     , mateco   , cara_elem, list_load, nume_dof ,&
                       solver    , lostat   , tpsthe   , time     , matass   ,&
                       lonch     , maprec   , varc_curr, temp_prev, temp_iter,&
                       cn2mbr    , hydr_prev, hydr_curr, dry_prev , dry_curr ,&
@@ -30,7 +30,7 @@ interface
                       ds_algorom)
         use Rom_Datastructure_type
         character(len=24), intent(in) :: model
-        character(len=24), intent(in) :: mate
+        character(len=24), intent(in) :: mate, mateco
         character(len=24), intent(in) :: cara_elem
         character(len=19), intent(in) :: list_load
         character(len=24), intent(in) :: nume_dof

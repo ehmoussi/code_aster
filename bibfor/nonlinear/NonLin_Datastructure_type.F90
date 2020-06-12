@@ -631,8 +631,10 @@ implicit none
 ! - Type: material properties
 !
     type NL_DS_Material
-! ----- Field of material parameters
-        character(len=24) :: field_mate = ' '
+! ----- Material
+        character(len=24) :: mater = ' '
+! ----- Field of material parameters (coded material)
+        character(len=24) :: mateco = ' '
 ! ----- Field for reference of external state variables
         character(len=24) :: varc_refe = ' '
 ! ----- Field for initial value of external state variables

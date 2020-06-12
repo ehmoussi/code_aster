@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,12 +34,16 @@ mult2 = FORMULE(NOM_PARA='INST', VALE='INST * a', a=a)
 assert mult2(2.) == 4.
 print("mult2(2.) =", mult2(2.))
 
-INCLUDE(UNITE=11)
+import os
+os.rename('fort.11', 'fort11.py')
+from fort11 import formula_def
+
+mult3, mult2inc = formula_def(mult2)
 
 assert mult3(6.) == 18.
 print("mult3(6.) =", mult3(6.))
 
-# the *python* function objects are not pickled by E_JDC, so ``funct3`` won't be
+# the *python* function objects can be not pickled, so ``funct3`` won't be
 # available to evaluate ``mult3`` in POURSUITE.
 
 freal = CALC_FONC_INTERP(FONCTION=mult3,

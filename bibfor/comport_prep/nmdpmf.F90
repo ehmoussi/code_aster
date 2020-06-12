@@ -53,17 +53,19 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ibid, iret
-    aster_logical :: lcumu(2), lcoc(2)
+    aster_logical :: lcumu(2)
+    aster_logical :: lcoc
     character(len=8), parameter :: licmp(3) = (/'DEFORM  ', 'DEFO_LDC', 'RIGIGEOM'/)
     character(len=19) :: chs(2), chs3, chsx
     real(kind=8) :: lcoer(2)
     complex(kind=8) :: lcoec(2)
-    data lcumu/.false._1,.false./
-    data lcoc/.false._1,.false./
-    data lcoer/1.d0,1.d0/
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    lcumu = ASTER_FALSE
+    lcoc = ASTER_FALSE
+    lcoer = 1.d0
+    lcoec = (0.d0, 0.d0)
     call jemarq()
 !
 !     EN PRESENCE DE MULTIFIBRE, ON FUSIONNE LES CARTES
@@ -97,7 +99,7 @@ implicit none
 !     FUSION DES CHAM_ELEM_S + COPIE DANS "COMPOR"
     call detrsd('CARTE', compor)
     call cesfus(2, chs, lcumu, lcoer, lcoec,&
-                lcoc(1), 'V', chs3)
+                lcoc, 'V', chs3)
     call cescar(chs3, compor, 'V')
 !
 ! - Compress COMPOR <CARTE>

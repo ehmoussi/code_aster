@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine dldiff(result, force1, lcrea, lamort, neq,&
                   imat, masse, rigid, amort, dep0,&
                   vit0, acc0, fexte, famor, fliai,&
                   t0, nchar, nveca, liad, lifo,&
-                  modele, mate, carele, charge, infoch,&
+                  modele, mate, mateco, carele, charge, infoch,&
                   fomult, numedd, nume, numrep, ds_energy,&
                   sd_obsv, mesh)
 !
@@ -92,7 +92,7 @@ implicit none
 !
     integer :: neq, imat(*), liad(*), nchar, nveca, nume, numrep
     character(len=8) :: masse, rigid, amort
-    character(len=24) :: modele, carele, charge, fomult, mate, numedd
+    character(len=24) :: modele, carele, charge, fomult, mate, mateco, numedd
     character(len=24) :: infoch, lifo(*)
     character(len=8) :: result
     character(len=19) :: force1
@@ -301,7 +301,7 @@ implicit none
                         dep0, vit0, acc0, vale, zr(ivite1),&
                         zr(iacce1), zr(ivite2), fexte(1), famor(1), fliai(1),&
                         nchar, nveca, liad, lifo, modele,&
-                        ener, mate, carele, charge,&
+                        ener, mate, mateco, carele, charge,&
                         infoch, fomult, numedd, dt, temps,&
                         zr(iwk0), zr(iwk1), archiv, nbtyar, typear,&
                         numrep, ds_energy)
@@ -316,8 +316,8 @@ implicit none
                 end if
             end if
 
-            ! - SI OBSERVATION 
-            
+            ! - SI OBSERVATION
+
             l_obsv = ASTER_FALSE
             call lobs(sd_obsv, ipas, temps, l_obsv)
             if (l_obsv) then
@@ -389,7 +389,7 @@ implicit none
 !
     if (istop .eq. 1) then
         call utmess('Z', 'DYNAMIQUE_10', ni=2, vali=vali, nr=2,&
-                    valr=valr, num_except=28)
+                    valr=valr, num_except=TIMELIMIT_ERROR)
     endif
 !
 !     --- DESTRUCTION DES OBJETS DE TRAVAIL ---

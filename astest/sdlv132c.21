@@ -1,5 +1,5 @@
 % fichier de maillage du cas test dlra03
-TITRE 
+TITRE
 %MAILLAGE
 FINSF
 %
@@ -79,7 +79,7 @@ FINSF
     MA17 N10 N11
     MA18 N11 N31
     MA19 N31 N12
-    MA20 N12 N5 
+    MA20 N12 N5
 %
 % petite traverse horizontale 2
     MA21 N22 N23
@@ -106,38 +106,38 @@ FINSF
 %
 % groupe de tous les elements du massif
     GROUP_MA NOM = MASSIF
-    MA1 
-    MA2 
-    MA3 
-    MA4 
-    MA5 
-    MA6 
-    MA7 
-    MA8 
-    MA9 
-    MA10 
-    MA11 
-    MA12 
-    MA13 
-    MA14 
-    MA15 
-    MA16 
-    MA17 
-    MA18 
-    MA19 
-    MA20 
-    MA21 
-    MA22 
-    MA23 
-    MA24 
-    MA25 
-    MA26 
-    MA27 
-    MA28 
-    MA29 
-    MA30 
-    MA31 
-    MA32 
+    MA1
+    MA2
+    MA3
+    MA4
+    MA5
+    MA6
+    MA7
+    MA8
+    MA9
+    MA10
+    MA11
+    MA12
+    MA13
+    MA14
+    MA15
+    MA16
+    MA17
+    MA18
+    MA19
+    MA20
+    MA21
+    MA22
+    MA23
+    MA24
+    MA25
+    MA26
+    MA27
+    MA28
+    MA29
+    MA30
+    MA31
+    MA32
     FINSF
 %
 %
@@ -145,9 +145,9 @@ FINSF
 %
 % groupe des noeuds a encaster
     GROUP_NO NOM = BLOC
-    N1 
-    N6 
-    N13 
+    N1
+    N6
+    N13
     N18
     FINSF
 %

@@ -29,8 +29,10 @@ def options(self):
     self.load('compiler_fc')
 
     group = self.get_option_group("code_aster options")
-    group.add_option('--enable-mpi', dest='parallel', action='store_true',
-                     help='Build a parallel version with mpi')
+    group.add_option('--enable-mpi', dest='parallel',
+                     action='store_true', default=os.environ.get('ENABLE_MPI'),
+                     help='Build a parallel version with mpi (same as '
+                          'ENABLE_MPI environment variable)')
     group.add_option('--enable-openmp', dest='openmp', action='store_true',
                      help='Build a parallel version supporting OpenMP')
     group.add_option('--disable-openmp', dest='openmp', action='store_false',
@@ -47,8 +49,7 @@ def configure(self):
     self.check_compilers_version()
     self.check_fortran_verbose_flag()
     self.check_openmp()
-    self.check_fortran_clib()
-    self.check_vmsize()
+    # self.check_vmsize() differs after mpiexec checking
 
 ###############################################################################
 
@@ -68,23 +69,42 @@ def load_compilers(self):
     self.load('compiler_cxx')
     self.load('compiler_fc')
     if self.options.parallel:
-        cc = self.env.CC[0]
-        cxx = self.env.CXX[0]
-        fc = self.env.FC[0]
-        check = partial(self.check_cfg, args='--showme:compile --showme:link -show',
-                        package='', uselib_store='MPI', mandatory=False)
-        # do not add flags given by cxx linker
-        if check(path=cc) and check(path=fc):
-            self.check_mpi()
-        if not self.get_define('HAVE_MPI'):
-            self.fatal("Unable to configure the parallel environment")
-        self.env.BUILD_PARALLEL = 1
+        self.load_compilers_mpi()
 
 @Configure.conf
-def check_mpi(self):
-    self.check_cc(header_name='mpi.h', use='MPI', define_name='_USE_MPI')
-    if self.get_define('_USE_MPI'):
-        self.define('HAVE_MPI', 1)
+def load_compilers_mpi(self):
+    check = partial(self.check_cfg, args='--showme:compile --showme:link -show',
+                    package='', uselib_store='MPI', mandatory=False)
+
+    fc = self.env.FC[0]
+    cc = self.env.CC[0]
+    ifort = fc == 'mpiifort'
+    icc = cc == 'mpiicc'
+
+    # We won't alter environment if Intel compiler is detected...
+    if not icc:
+        msg='Checking ' + cc + ' package (collect configuration flags)'
+        if not check(path=cc,msg=msg):
+            self.fatal("Unable to configure the parallel environment for C compiler")
+        self.env['CCLINKFLAGS_MPI'] = self.env['LINKFLAGS_MPI']
+        del self.env['LINKFLAGS_MPI']
+
+
+    # We won't alter environment if Intel compiler is detected...
+    if not ifort:
+        msg='Checking ' + fc + ' package (collect configuration flags)'
+        if not check(path=fc,msg=msg):
+            self.fatal("Unable to configure the parallel environment for FORTRAN compiler")
+        self.env['FCLINKFLAGS_MPI'] = self.env['LINKFLAGS_MPI']
+        del self.env['LINKFLAGS_MPI']
+
+    if not icc:
+        self.check_cc(header_name='mpi.h', use='MPI', define_name='_USE_MPI')
+
+    self.define('HAVE_MPI', 1)
+    self.define('_USE_MPI', 1)
+    self.env.BUILD_MPI = 1
+    self.env.HAVE_MPI = 1
 
 @Configure.conf
 def check_openmp(self):
@@ -92,16 +112,44 @@ def check_openmp(self):
     if opts.openmp is False:
         self.msg('Checking for OpenMP flag', 'no', color='YELLOW')
         return
-    try:
-        self.detect_openmp()
-    except (Errors.ConfigurationError, Errors.BuildError):
-        if opts.openmp is True:
-            raise
-        self.env.append_value('FCFLAGS_OPENMP', ['-fopenmp'])
-        self.env.append_value('FCLINKFLAGS_OPENMP', ['-fopenmp'])
-    if self.env.FCFLAGS_OPENMP:
-        self.env.BUILD_OPENMP = 1
-        self.define('_USE_OPENMP', 1)
+    # OpenMP interoperability is not secure
+    # we consider both compiler should be from same vendor
+    ifort = 'ifort' in self.env.FC_NAME.lower()
+    icc = 'icc' in self.env.CC_NAME.lower()
+    if ifort and icc:
+        self.env['FCFLAGS_OPENMP'] = ['-qopenmp']
+        self.env['FCLINKFLAGS_OPENMP'] = ['-qopenmp']
+        self.env['CCFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
+        self.env['CCLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
+        self.env['CXXFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
+        self.env['CXXLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
+        self.env.HAVE_OPENMP = 1
+        self.msg('Checking for OpenMP flag -qopenmp for Intel compilers', 'Yes', color='GREEN')
+    elif not (ifort or icc):
+        for x in ('-fopenmp', '-openmp', '-mp', '-xopenmp', '-omp', '-qsmp=omp'):
+            try:
+                self.check_fc(
+                    msg          = 'Checking for OpenMP flag %s' % x,
+                    fragment     = 'program main\n  call omp_get_num_threads()\nend program main',
+                    fcflags      = x,
+                    fclinkflags  = x,
+                    uselib_store = 'OPENMP'
+                )
+            except self.errors.ConfigurationError:
+                pass
+            else:
+                self.env['CCFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
+                self.env['CCLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
+                self.env['CXXFLAGS_OPENMP'] = self.env['FCFLAGS_OPENMP']
+                self.env['CXXLINKFLAGS_OPENMP'] = self.env['FCLINKFLAGS_OPENMP']
+                break
+        else:
+            self.fatal('Could not set OpenMP')
+    else:
+        self.fatal('Could not set OpenMP due to incompatible compilers...')
+    self.define('_USE_OPENMP', 1)
+    self.env.BUILD_OPENMP = 1
+
 
 @Configure.conf
 def check_sizeof_mpi_int(self):
@@ -133,7 +181,7 @@ def check_vmsize(self):
             self.check_cc(fragment=fragment_failure_vmsize,
                           mandatory=True, use="MPI", target=prg)
             try:
-                cmd = ["mpiexec", "-n", "1", prg]
+                cmd = self.env["base_mpiexec"] + ["-n", "1", prg]
                 size = self.cmd_and_log(cmd)
             finally:
                 os.remove(prg)

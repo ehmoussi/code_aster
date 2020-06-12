@@ -1,0 +1,74 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+#
+POURSUITE(CODE='OUI',
+          LANG='EN')
+
+
+MAT3=INCLUDE_MATERIAU(FICHIER='efica01a.data',
+                      INFO=2)
+
+CHMAT3=AFFE_MATERIAU(  MAILLAGE=MAILLA3,
+                       AFFE=_F(  TOUT='OUI', MATER = MAT3))
+
+riginor = 2.88E7
+
+TRAN_GE2=DYNA_VIBRA(TYPE_CALCUL='TRAN',BASE_CALCUL='GENE',
+                 MATR_MASS=MGEN_BIC,   MATR_RIGI=RGEN_BIC,
+                 SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENTRE'),
+                 AMOR_MODAL=_F(AMOR_REDUIT=( 0.07,  0.07, ),),
+                 MODE_STAT=MSTA_BIC,
+                EXCIT=(
+                _F(  VECT_ASSE_GENE = VECT_X1,  ACCE = ACCELER1,
+                       MULT_APPUI = 'OUI',
+                       DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO1',
+                       VITE = VITESSE1, DEPL = DEPLACE1),
+                _F(  VECT_ASSE_GENE = VECT_X2,  ACCE = ACCELER2,
+                       MULT_APPUI = 'OUI',
+                       DIRECTION = ( 1., 0., 0.,), NOEUD = 'NO11',
+                       VITE = VITESSE2, DEPL = DEPLACE2)),
+                COMPORTEMENT=_F(RELATION='DIS_CHOC',
+                       GROUP_NO_1 = 'MASSES1',
+                       GROUP_NO_2 = 'MASSES2',
+                       OBSTACLE = GRILLE,
+                       INTITULE = 'NO2/NO12',
+                       NORM_OBST = (0., 0., 1.,),
+                       DIST_1 = 0.4495,
+                       DIST_2 = 0.4495,
+                       RIGI_NOR = riginor,
+                       AMOR_NOR = 0.,
+                       RIGI_TAN = 0.,
+               FROTTEMENT='COULOMB_STAT_DYNA',
+                       COULOMB_STAT = 0.,COULOMB_DYNA = 0.),
+                 INCREMENT=_F( INST_INIT = 0.,  INST_FIN = 1.,  PAS = 0.00025),
+                ARCHIVAGE=_F(  PAS_ARCH = 8)
+                )
+
+LISTIMP=DEFI_LIST_REEL(  DEBUT=0.,
+                    INTERVALLE=_F(  JUSQU_A = 1.,  NOMBRE = 500))
+
+RESUA1=REST_GENE_PHYS(  RESU_GENE=TRAN_GE1,
+                        LIST_INST=LISTIMP,
+                        INTERPOL='LIN',
+                        NOM_CHAM='DEPL',
+                        MULT_APPUI='OUI'
+                       )
+
+FIN()

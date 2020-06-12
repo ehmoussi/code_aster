@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@
 #            REMARQUE 1   : ON TESTE DEFI_GLRC
 
 import aster
+from code_aster.Commands import *
 
 POURSUITE(CODE='OUI',
           DEBUG=_F(SDVERI='OUI',),
@@ -34,7 +35,6 @@ POURSUITE(CODE='OUI',
 
 
 
-import aster
 
 
 MPa = 1E6
@@ -87,12 +87,12 @@ for cmpt in matph :
       phenom=cmpt
       break
 if phenom is None :
-   from Utilitai.Utmess import UTMESS
+   from code_aster.Messages import UTMESS
    UTMESS('F','GENERIC_1','ELAS_GLRC non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.getName(), ns,'.VALR'))
 
 TAB_G_RA=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -170,12 +170,12 @@ for cmpt in matph :
       phenom=cmpt
       break
 if phenom is None :
-   from Utilitai.Utmess import UTMESS
+   from code_aster.Messages import UTMESS
    UTMESS('F','GENERIC_2','GLRC_DM non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_RA.getName(), ns,'.VALR'))
 
 TAB_G_RA=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -257,12 +257,12 @@ for cmpt in matph :
       phenom=cmpt
       break
 if phenom is None :
-   from Utilitai.Utmess import UTMESS
+   from code_aster.Messages import UTMESS
    UTMESS('F','GENERIC_3','ELAS_GLRC non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.getName(), ns,'.VALR'))
 
 TAB_G_PA=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -340,12 +340,12 @@ for cmpt in matph :
       phenom=cmpt
       break
 if phenom is None :
-   from Utilitai.Utmess import UTMESS
+   from code_aster.Messages import UTMESS
    UTMESS('F','GENERIC_4','GLRC_DM non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_PA.getName(), ns,'.VALR'))
 
 TAB_G_PA=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -424,12 +424,12 @@ for cmpt in matph :
       phenom=cmpt
       break
 if phenom is None :
-   from Utilitai.Utmess import UTMESS
+   from code_aster.Messages import UTMESS
    UTMESS('F','GENERIC_5','ELAS_GLRC non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.getName(), ns,'.VALR'))
 
 TAB_G_UT=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -507,12 +507,12 @@ for cmpt in matph :
       phenom=cmpt
       break
 if phenom is None :
-   from Utilitai.Utmess import UTMESS
+   from code_aster.Messages import UTMESS
    UTMESS('F','GENERIC_6','GLRC_DM non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_UT.getName(), ns,'.VALR'))
 
 TAB_G_UT=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -591,12 +591,12 @@ for cmpt in matph :
       phenom=cmpt
       break
 if phenom is None :
-   from Utilitai.Utmess import UTMESS
+   from code_aster.Messages import UTMESS
    UTMESS('F','GENERIC_11','ELAS_GLRC non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.getName(), ns,'.VALR'))
 
 TAB_G_CI=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),
@@ -677,12 +677,12 @@ for cmpt in matph :
       phenom=cmpt
       break
 if phenom is None :
-   from Utilitai.Utmess import UTMESS
+   from code_aster.Messages import UTMESS
    UTMESS('F','GENERIC_12','GLRC_DM non trouvé')
 ns = '{:06d}'.format(ind)
 
-nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.nom, ns,'.VALK'))
-valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.nom, ns,'.VALR'))
+nomres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.getName(), ns,'.VALK'))
+valres=aster.getvectjev('%-8s.CPT.%s%s' % (MAT_G_CI.getName(), ns,'.VALR'))
 
 TAB_G_CI=CREA_TABLE(LISTE=(_F(PARA='NOM_PARA',
                               LISTE_K=nomres,),

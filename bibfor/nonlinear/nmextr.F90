@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/getvtx.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/nmextr_read_1.h"
 #include "asterfort/nmextr_read_2.h"
@@ -107,12 +108,14 @@ real(kind=8), optional, intent(in) :: time
     character(len=24), pointer :: v_extr_comp(:) => null()
     character(len=24), pointer :: list_field(:) => null()
     integer, pointer :: rela_field_keyw(:) => null()
+    aster_logical :: l_pmesh
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_extr    = 0
     nb_field   = 0
     sdextr     = sdextrz
+    l_pmesh    = isParallelMesh(meshz)
 !
 ! - List of fields to extract
 !
@@ -282,6 +285,13 @@ real(kind=8), optional, intent(in) :: time
     v_extr_info(5) = 0
     v_extr_info(6) = nb_field
     v_extr_info(7) = nb_field_comp
+!
+    if(nb_extr == 0) then
+        if(l_pmesh) then
+! --- No observation for this mesh -> do not try observation after
+            v_extr_info(1) = 0
+        end if
+    end if
 !
 ! - Create LIGREL for fields not a default in nonlinear operator
 !

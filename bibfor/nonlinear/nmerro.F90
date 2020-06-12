@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -94,41 +94,43 @@ integer, intent(in) :: nume_inst
         rtab(1) = iter_mean_time
         rtab(2) = remain_time
         call utmess('Z', 'MECANONLINE9_1', si=itab(1), nr=2, valr=rtab,&
-                    num_except=28)
+                    num_except=TIMELIMIT_ERROR)
     else if (mtcpup) then
         itab(1) = nume_inst
         rtab(1) = step_mean_time
         rtab(2) = remain_time
         call utmess('Z', 'MECANONLINE9_2', si=itab(1), nr=2, valr=rtab,&
-                    num_except=28)
+                    num_except=TIMELIMIT_ERROR)
     else if (echldc) then
-        call utmess('Z', 'MECANONLINE9_3', num_except=23)
+        call utmess('Z', 'MECANONLINE9_3', num_except=INTEGRATION_ERROR)
     else if (echeq1.or.echeq2) then
-        call utmess('Z', 'MECANONLINE9_4', num_except=25)
+        call utmess('Z', 'MECANONLINE9_4', num_except=SOLVER_ERROR)
     else if (echco1) then
-        call utmess('Z', 'MECANONLINE9_5', num_except=26)
+        call utmess('Z', 'MECANONLINE9_5', num_except=CONTACT_ERROR)
     else if (echco2) then
-        call utmess('Z', 'MECANONLINE9_6', num_except=27)
+        call utmess('Z', 'MECANONLINE9_6', num_except=SOLVER_ERROR)
     else if (itemax) then
-        call utmess('Z', 'MECANONLINE9_7', num_except=22)
+        call utmess('Z', 'MECANONLINE9_7', num_except=CONVERGENCE_ERROR)
     else if (echpil) then
-        call utmess('Z', 'MECANONLINE9_8', num_except=29)
+        call utmess('Z', 'MECANONLINE9_8', num_except=CONVERGENCE_ERROR)
     else if (echpfg) then
-        call utmess('Z', 'MECANONLINE9_9', num_except=30)
+        call utmess('Z', 'MECANONLINE9_9', num_except=CONTACT_ERROR)
     else if (echpff) then
-        call utmess('Z', 'MECANONLINE9_10', num_except=31)
+        call utmess('Z', 'MECANONLINE9_10', num_except=CONTACT_ERROR)
     else if (echpfc) then
-        call utmess('Z', 'MECANONLINE9_11', num_except=32)
+        call utmess('Z', 'MECANONLINE9_11', num_except=CONTACT_ERROR)
     else if (errres) then
-        call utmess('Z', 'MECANONLINE9_12', num_except=35)
+        call utmess('Z', 'MECANONLINE9_12', num_except=SOLVER_ERROR)
     else
         call nmecev(sderro, 'L', event_type, action_type)
         valk(1) = failActionKeyword(action_type)
         valk(2) = failEventKeyword(event_type)
         if (action_type .eq. FAIL_ACT_STOP) then
-            call utmess('Z', 'MECANONLINE9_51', sk=failEventKeyword(event_type), num_except=33)
+            call utmess('Z', 'MECANONLINE9_51', sk=failEventKeyword(event_type),&
+                        num_except=CONVERGENCE_ERROR)
         else
-            call utmess('Z', 'MECANONLINE9_50', nk=2, valk=valk, num_except=34)
+            call utmess('Z', 'MECANONLINE9_50', nk=2, valk=valk,&
+                        num_except=CONVERGENCE_ERROR)
         endif
     endif
 !

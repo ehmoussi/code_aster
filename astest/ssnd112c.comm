@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -428,28 +428,28 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=230.7133,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.35669922,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,
+                        FONCTION=gamma[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.490252E-05,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho_1,
+                        FONCTION=rho[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.05493022,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,
+                        FONCTION=gamma[9],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=6.306764E-06,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,
+                        FONCTION=rho[9],
                         ),
               )
 
@@ -472,28 +472,28 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=114.1254,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.808516E-07,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=rho_1,
+                        FONCTION=rho[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03854542,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,
+                        FONCTION=gamma[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.074071E-07,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,
+                        FONCTION=rho[9],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.049440E-03,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,
+                        FONCTION=gamma[9],
                         ),
               )
 
@@ -609,28 +609,28 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=230.7133,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.35669922,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamm2_1,
+                        FONCTION=gamm2[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.490252E-05,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho2_1,
+                        FONCTION=rho2[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.05493022,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamm2_9,
+                        FONCTION=gamm2[9],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=6.306764E-06,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho2_9,
+                        FONCTION=rho2[9],
                         ),
               )
 
@@ -653,28 +653,28 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=114.1254,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.808516E-07,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=rho2_1,
+                        FONCTION=rho2[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03854542,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gamm2_1,
+                        FONCTION=gamm2[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.074071E-07,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=rho2_9,
+                        FONCTION=rho2[9],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.049440E-03,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gamm2_9,
+                        FONCTION=gamm2[9],
                         ),
               )
 
@@ -791,28 +791,28 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=230.7133,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.35669922,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamm3_1,
+                        FONCTION=gamm3[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.490252E-05,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho3_1,
+                        FONCTION=rho3[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.05493022,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamm3_9,
+                        FONCTION=gamm3[9],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=6.306764E-06,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho3_9,
+                        FONCTION=rho3[9],
                         ),
               )
 
@@ -835,28 +835,28 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=114.1254,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.808516E-07,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=rho3_1,
+                        FONCTION=rho3[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03854542,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gamm3_1,
+                        FONCTION=gamm3[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.074071E-07,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=rho3_9,
+                        FONCTION=rho3[9],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.049440E-03,
                         VALE_PARA=0.02,
                         NOM_PARA='INST',
-                        FONCTION=gamm3_9,
+                        FONCTION=gamm3[9],
                         ),
               )
 

@@ -25,9 +25,9 @@
 #       from your package manager.
 #       Example: apt-get install aspell-fr
 
-from supv002a import SUPV002
-
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ))
+
+from supv002a import SUPV002
 
 # Que faire en cas d'erreur avec ce test ?
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,6 +82,8 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ))
 # du message incriminé ou bien mettre un ASSERT(condition) si cela concerne
 # uniquement le développeur.
 previous_errors = [
+    # Marqueur d'exécution pour asrun
+    'JEFINI',
     # LE fameux LIGREL !
     'LIGREL',
     # Solveur PETSc
@@ -96,8 +98,6 @@ previous_errors = [
     'PHYSICAL',
     # Pour LD_LIBRARY_PATH
     'LIBRARY','PATH',
-    # Pour ASTER_ROOT (MACR_RECAL)
-    'ROOT',
     # Pour Code_Saturne (coupleur IFS)
     'USASTE',
     ]

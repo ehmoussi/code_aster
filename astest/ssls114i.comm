@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -98,7 +98,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='MASSE',
            TABLE=MASS_INE,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAIL',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(CRITERE='ABSOLU',
@@ -108,7 +108,7 @@ TEST_TABLE(CRITERE='ABSOLU',
            NOM_PARA='CDG_X',
            TABLE=MASS_INE,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAIL',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(CRITERE='ABSOLU',
@@ -118,7 +118,7 @@ TEST_TABLE(CRITERE='ABSOLU',
            NOM_PARA='CDG_Y',
            TABLE=MASS_INE,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAIL',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -127,7 +127,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='CDG_Z',
            TABLE=MASS_INE,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAIL',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -136,7 +136,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='IX_G',
            TABLE=MASS_INE,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAIL',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -145,7 +145,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='IY_G',
            TABLE=MASS_INE,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAIL',),
+                     VALE_K='00000001',),
            )
 
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -154,7 +154,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
            NOM_PARA='IZ_G',
            TABLE=MASS_INE,
            FILTRE=_F(NOM_PARA='LIEU',
-                     VALE_K='MAIL',),
+                     VALE_K='00000001',),
            )
 
 #____________________ MODELISATION PRES_REP REEL _______________

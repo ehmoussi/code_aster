@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine ccaccl(option, modele, mateco, carael, ligrel, &
+    subroutine ccaccl(option, modele, mater , carael, ligrel, &
                       typesd, nbpain, lipain, lichin, lichou, &
                       codret)
         character(len=16) :: option
         character(len=8) :: modele
-        character(len=8) :: mateco
+        character(len=8) :: mater
         character(len=8) :: carael
         character(len=24) :: ligrel
         character(len=16) :: typesd

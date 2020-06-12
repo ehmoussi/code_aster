@@ -38,6 +38,7 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnum.h"
 #include "asterfort/lxlgut.h"
+#include "asterfort/rcstoc_verif.h"
 #include "asterfort/tbexp2.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
@@ -95,17 +96,13 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
     call jemarq()
     AS_ALLOCATE(vk8=typobj, size=nbobj)
     AS_ALLOCATE(vk32=nomobj, size=nbobj)
-
     nbr = 0
     nbc = 0
     nbk = 0
-
-
 !   -- 1. Recuperation de la liste des mots cles utilises
 !         et de leurs types associes => nomobj(:) et typboj(:)
 !   -------------------------------------------------------------------------
     call getmjm(nomrc, 1, nbobj, nomobj, typobj, nmcs)
-
 
 !   -- 2. Le mot cle ORDRE_PARAM est special (mot cle cache).
 !         Il donne l'ordre des mots cles simples pour l'acces via la routine rcvalt.F90.
@@ -481,131 +478,15 @@ subroutine rcstoc(nommat, nomrc, noobrc, nbobj, valr, valc,&
             call utmess('F', 'MODELISA6_70', sk=nomcle(ii))
 151         continue
             nomfct = valk(nbr+nbc+nbk+ii)
-!
-            call jeveuo(nomfct//'.PROL', 'L', vk24=prol)
-            if (prol(1)(1:1) .eq. 'F') then
-                call jelira(nomfct//'.VALE', 'LONMAX', nbptm)
-                if (nomrc(1:8) .eq. 'TRACTION') then
-                    if (nbptm .lt. 4) then
-                        call utmess('F', 'MODELISA6_71', sk=nomcle(ii))
-                    endif
-                endif
-                if (nomrc(1:13) .eq. 'META_TRACTION') then
-                    if (nbptm .lt. 2) then
-                        call utmess('F', 'MODELISA6_72', sk=nomcle(ii))
-                    endif
-                endif
-                nbcoup = nbptm / 2
-                if (nbptm .ge. nbmax) nbmax = nbptm
-!
-                call jeveuo(nomfct//'.VALE', 'L', jrpv)
-                if (zr(jrpv) .le. 0.d0) then
-                    valkk (1) = nomcle(ii)
-                    valkk (2) = nomfct
-                    valrr (1) = zr(jrpv)
-                    call utmess('F', 'MODELISA9_59', nk=2, valk=valkk, sr=valrr(1))
-                endif
-                if (zr(jrpv+nbptm/2) .le. 0.d0) then
-                    valkk (1) = nomcle(ii)
-                    valkk (2) = nomfct
-                    valrr (1) = zr(jrpv+nbptm/2)
-                    call utmess('F', 'MODELISA9_60', nk=2, valk=valkk, sr=valrr(1))
-                endif
-!               VERIF ABSCISSES CROISSANTES (AU SENS LARGE)
-                iret=2
-                call foverf(zr(jrpv), nbcoup, iret)
-                iret = 0
-                e1 = zr(jrpv+nbcoup) / zr(jrpv)
-                precma = 1.d-10
-!
-                do i = 1, nbcoup-1
-                    ei = (zr(jrpv+nbcoup+i) - zr(jrpv+nbcoup+i-1))/(zr(jrpv+i) - zr(jrpv+i-1))
-                    if (ei .gt. e1) then
-                        iret = iret + 1
-                        valkk (1) = nomcle(ii)
-                        valrr (1) = e1
-                        valrr (2) = ei
-                        valrr (3) = zr(jrpv+i)
-                        call utmess('E', 'MODELISA9_61', sk=valkk(1), nr=3, valr=valrr)
-                    else if ((e1-ei)/e1 .le. precma) then
-                        valkk (1) = nomcle(ii)
-                        valrr (1) = e1
-                        valrr (2) = ei
-                        valrr (3) = precma
-                        valrr (4) = zr(jrpv+i)
-                        call utmess('A', 'MODELISA9_62', sk=valkk(1), nr=4, valr=valrr)
-                    endif
-                enddo
-                if (iret .ne. 0) then
-                    call utmess('F', 'MODELISA6_73')
-                endif
-!
-            else if (prol(1)(1:1) .eq. 'N') then
-                call jelira(nomfct//'.VALE', 'NUTIOC', nbfct)
-                nbptm = 0
-                do k = 1, nbfct
-                    call jelira(jexnum(nomfct//'.VALE', k), 'LONMAX', nbpts)
-                    nbcoup = nbpts / 2
-                    if (nbpts .ge. nbmax) nbmax = nbpts
-                    if (nomrc(1:8) .eq. 'TRACTION') then
-                        if (nbpts .lt. 4) then
-                            call utmess('F', 'MODELISA6_74')
-                        endif
-                    endif
-                    if (nomrc(1:13) .eq. 'META_TRACTION') then
-                        if (nbpts .lt. 2) then
-                            call utmess('F', 'MODELISA6_75', sk=nomcle( ii))
-                        endif
-                    endif
-                    call jeveuo(jexnum(nomfct//'.VALE', k), 'L', jrpv)
-                    if (zr(jrpv) .le. 0.d0) then
-                        vali = k
-                        valkk (1) = nomcle(ii)
-                        valkk (2) = nomfct
-                        valrr (1) = zr(jrpv)
-                        call utmess('F', 'MODELISA9_63', nk=2, valk=valkk, si=vali, sr=valrr(1))
-                    endif
-                    if (zr(jrpv+nbpts/2) .le. 0.d0) then
-                        vali = k
-                        valkk (1) = nomcle(ii)
-                        valkk (2) = nomfct
-                        valrr (1) = zr(jrpv+nbpts/2)
-                        call utmess('F', 'MODELISA9_64', nk=2, valk=valkk, si=vali, sr=valrr(1))
-                    endif
-
-!                   verif abscisses croissantes (au sens large)
-                    iret=2
-                    call foverf(zr(jrpv), nbcoup, iret)
-                    iret = 0
-                    e1 = zr(jrpv+nbcoup) / zr(jrpv)
-                    do i = 1, nbcoup-1
-                        ei = (zr(jrpv+nbcoup+i) - zr(jrpv+nbcoup+i-1))/(zr(jrpv+i) - zr(jrpv+i-1))
-                        if (ei .gt. e1) then
-                            iret = iret + 1
-                            valkk (1) = nomcle(ii)
-                            valrr (1) = e1
-                            valrr (2) = ei
-                            valrr (3) = zr(jrpv+i)
-                            call utmess('E', 'MODELISA9_65', sk=valkk(1), nr=3, valr=valrr)
-                        endif
-                    enddo
-                    if (iret .ne. 0) then
-                        call utmess('F', 'MODELISA6_73')
-                    endif
-                enddo
-!
-            else
-                call utmess('F', 'MODELISA6_76')
-            endif
+            call rcstoc_verif(nomfct, nomcle(ii), nomrc, nbmax)
         enddo
 !
-        rdep = nommat//'.&&RDEP'
-        call wkvect(rdep//'.PROL', 'G V K24', 6, jprol)
+        call wkvect(nommat//'.&&RDEP'//'.PROL', 'G V K24', 6, jprol)
         zk24(jprol ) = 'FONCTION'
         zk24(jprol+1) = 'LIN LIN '
         zk24(jprol+2) = 'EPSI    '
         zk24(jprol+3) = prol(4)
-        call wkvect(rdep//'.VALE', 'G V R', 2*nbmax, jvale)
+        call wkvect(nommat//'.&&RDEP'//'.VALE', 'G V R', 2*nbmax, jvale)
     endif
 
 

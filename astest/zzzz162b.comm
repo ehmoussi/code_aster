@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -128,7 +128,7 @@ TEMPE=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 MAILLAGE=MAIL,
                 UNITE=70,
                 FORMAT_MED=_F(NOM_CHAM='TEMP',
-                              NOM_CHAM_MED='TEMPE1__TEMP',),
+                              NOM_CHAM_MED='0000000dTEMP',),
                 TOUT_ORDRE='OUI',);
 
 CHMECA=AFFE_CHAR_MECA(MODELE=MOMECA,
@@ -181,9 +181,9 @@ UUU=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
               UNITE=71,
               FORMAT_MED=(
               _F(NOM_CHAM='DEPL',
-                 NOM_CHAM_MED='U_______DEPL',),
+                 NOM_CHAM_MED='00000011DEPL',),
               _F(NOM_CHAM='SIGM_ELNO',
-                 NOM_CHAM_MED='U_______SIGM_ELNO',),),
+                 NOM_CHAM_MED='00000011SIGM_ELNO',),),
               TOUT_ORDRE='OUI',);
 
 #
@@ -222,7 +222,7 @@ MOMECA2=AFFE_MODELE(MAILLAGE=MAIL2,
 SIGMRELU=LIRE_CHAMP(MAILLAGE=MAIL2,
                     FORMAT='MED',
                     UNITE=71,
-                    NOM_MED='U_______SIGM_ELNO',
+                    NOM_MED='00000011SIGM_ELNO',
                     NOM_CMP_IDEM='OUI',
                     NUME_PT=1,
                     NUME_ORDRE=1,
@@ -236,7 +236,7 @@ IMPR_RESU(FORMAT='RESULTAT',
 DEPLRELU=LIRE_CHAMP(MAILLAGE=MAIL2,
                     FORMAT='MED',
                     UNITE=71,
-                    NOM_MED='U_______DEPL',
+                    NOM_MED='00000011DEPL',
                     NOM_CMP_IDEM='OUI',
                     NUME_PT=1,
                     NUME_ORDRE=1,
@@ -303,9 +303,9 @@ LUHYD=LIRE_RESU(TYPE_RESU='EVOL_THER',
                 UNITE=72,
                 FORMAT_MED=(
                 _F(NOM_CHAM='HYDR_ELNO',
-                   NOM_RESU='RESHYD',),
+                   NOM_RESU='00000020',),
                 _F(NOM_CHAM='HYDR_NOEU',
-                   NOM_RESU='RESHYD',),),
+                   NOM_RESU='00000020',),),
                 TOUT_ORDRE='OUI',);
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,

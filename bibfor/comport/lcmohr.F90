@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcmohr(fami, kpg, ksp, ndim,&
+subroutine lcmohr(ndim,&
                   typmod, imate, carcri, option,&
                   dstrai0, stresm0, stres, vim, vip,&
                   dsidep, codret)
@@ -63,9 +63,6 @@ subroutine lcmohr(fami, kpg, ksp, ndim,&
     implicit none
 ! ======================================================================
 !
-    character(len=*), intent(in) :: fami
-    integer, intent(in) :: kpg
-    integer, intent(in) :: ksp
     character(len=8)  :: typmod(*)
     character(len=16) :: option
     integer           :: ndim, imate, codret
@@ -184,31 +181,34 @@ subroutine lcmohr(fami, kpg, ksp, ndim,&
         stresm(6)=stresm(6)/sqr
     endif
 !
+    rprops = 0.d0
+!
 ! Reading material linear elastic properties
     nomres(1)= 'ALPHA   '
     nomres(2)= 'E       '
     nomres(3)= 'NU      '
     call rcvala(imate, ' ', 'ELAS', 0, '   ', &
-                [tm], 3, nomres, rprops, icode, 2)
+                [0.d0], 3, nomres, rprops, icode, 2)
 !
 ! Reading material Mohr-Coulomb properties
     nomres(1)= 'PHI     '
     nomres(2)= 'ANGDIL  '
     nomres(3)= 'COHESION'
     call rcvala(imate, ' ', 'MOHR_COULOMB', 0, '   ', &
-                [tp], 3, nomres, rprops(4), icode(4), 2)
+                [0.d0], 3, nomres, rprops(4:6), icode(4:6), 2)
 !
 ! Thermal deformation rate
 ! -------------------------
-    if ((.not.isnan(tm)) .and. (.not.isnan(tp)) &
-         .and. (rprops(1).gt.r0)) then
-        
+    tm = 0.d0
+    tp = 0.d0
+    if (rprops(1).gt.r0) then
+
         call get_varc('RIGI' , 1  , 1 , 'T', tm, tp, tref)
-        
+
         do i = 1, ndi
             dstrai(i) = dstrai(i) - rprops(1)*(tp-tm)
         enddo
-        
+
     endif
 !
 ! Initialize some algorithmic and internal variables
@@ -485,7 +485,7 @@ subroutine lcmohr(fami, kpg, ksp, ndim,&
 !
 ! Compute Plastic Multipliers
         call mgauss('NFSP', mat, phi, 3, 3, 1, r1ddet, codret)
-        
+
         if (codret .eq. 1) then
             goto 999
         endif
@@ -494,7 +494,7 @@ subroutine lcmohr(fami, kpg, ksp, ndim,&
         dgamb=phi(2)
         dgamc=phi(3)
 !
-! Compute new residual   
+! Compute new residual
         phia  =smcta- r2cphi*cohe &
                - r2*drvbb*dgama &
                - r2*(drvaa+gmodu*(r1+sinpsi+sinphi))*dgamb &

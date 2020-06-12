@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -42,8 +42,8 @@ TEST_FONCTION(VALEUR=(_F(FONCTION=FOA3,
                          VALE_PARA=12.0,
                          VALE_CALC=13.0),),)
 
-tupl00 = aster.getvectjev("L00                .VALE")
-tupl01 = aster.getvectjev("L01                .VALE")
+tupl00 = aster.getvectjev(L00.getName() + "           .VALE")
+tupl01 = aster.getvectjev(L01.getName() + "           .VALE")
 tupl02 = tupl00 + tupl01
 
 FOL = DEFI_FONCTION(NOM_PARA='X',

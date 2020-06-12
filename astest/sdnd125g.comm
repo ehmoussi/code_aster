@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 
 # person_in_charge: hassan.berro at edf.fr
 import numpy as np
+
+from math import *
 
 #################################################
 ##############Model Illustration#################
@@ -190,7 +192,7 @@ INTEGR   = DYNA_VIBRA    (TYPE_CALCUL   =  'TRAN',
                           TRAITEMENT_NONL = 'EXPLICITE', INFO=2)
 
 INTEGR.INFO_NONL()
-FV_RELA  = RECU_FONCTION(RESU_GENE=INTEGR, GROUP_NO_CHOC='CENTER', INTITULE='N03     DX      FV_REL  ', PARA_X='INST', PARA_Y='VINT2')
+FV_RELA  = RECU_FONCTION(RESU_GENE=INTEGR, GROUP_NO_CHOC='CENTER', INTITULE='N03     DX      0000001b', PARA_X='INST', PARA_Y='VINT2')
 
 TEST_FONCTION(VALEUR=(_F(VALE_CALC  = 9.562489444456,
                          CRITERE    = 'RELATIF',

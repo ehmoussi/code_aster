@@ -19,19 +19,15 @@
 
 # person_in_charge: j-pierre.lefebvre at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POURSUITE=MACRO(nom="POURSUITE",
-                op=OPS("code_aster.Cata.ops.build_poursuite"),
+                op=None,
                 repetable='n',
                 fr=tr("Poursuite d'une étude à partir de la sauvegarde au format JEVEUX "
                      "ou HDF de sa base globale"),
-                sd_prod = ops.POURSUITE,
-                op_init=ops.POURSUITE_context,
-                fichier_ini=1,
          FORMAT_HDF      =SIMP(fr=tr("sauvegarde de la base GLOBALE au format HDF"),statut='f',
                                typ='TXM',defaut="NON",into=("OUI","NON",) ),
          PAR_LOT         =SIMP(fr=tr("mode de traitement des commandes"),statut='f',typ='TXM',

@@ -18,10 +18,10 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: mathieu.courtois at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
 
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                  fr=tr("Définir le phénomène physique modélisé et le type d'éléments finis sur le maillage"),reentrant='n',
@@ -294,6 +294,6 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
             "AFFE_SOUS_STRUC": "Substructures assignement",
             "VERI_JACOBIEN": "Jacobian check",
             "DISTRIBUTION": "MPI distribution" ,
-            "TOUT": "Everywhere",  
+            "TOUT": "Everywhere",
          }
 ) ;

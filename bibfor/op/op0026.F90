@@ -64,7 +64,7 @@ implicit none
     type(NL_DS_Constitutive) :: ds_constitutive
     character(len=16) :: phenom
     character(len=19) :: list_load, list_inst
-    character(len=24) :: model, mate, cara_elem, compor_ther
+    character(len=24) :: model, mate, cara_elem, compor_ther, mateco
     character(len=19) :: disp_prev, disp_cumu_inst, vari_prev, sigm_prev
     character(len=19) :: temp_prev, temp_curr, incr_temp
     character(len=19) :: merigi, vediri, vefint, veforc, vevarc_prev, vevarc_curr
@@ -86,11 +86,11 @@ implicit none
                      nume_inst, list_inst  ,&
                      phenom)
     if (phenom .eq. 'MECANIQUE') then
-        call calcGetDataMeca(list_load      , model         , mate     , cara_elem,&
+        call calcGetDataMeca(list_load      , model         , mate     , mateco   , cara_elem,&
                              disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                              ds_constitutive, l_elem_nonl   , nume_harm)
     elseif (phenom .eq. 'THERMIQUE') then
-        call calcGetDataTher(list_load  , model    , mate       , cara_elem,&
+        call calcGetDataTher(list_load  , model    , mate       , mateco,  cara_elem,&
                              temp_prev  , incr_temp, compor_ther, theta)
     else
         ASSERT(ASTER_FALSE)
@@ -113,13 +113,13 @@ implicit none
 ! - Prepare data
 !
     if (phenom .eq. 'MECANIQUE') then
-        call calcPrepDataMeca(model          , mate          , cara_elem,&
+        call calcPrepDataMeca(model          , mate          , mateco   , cara_elem,&
                               disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                               time_prev      , time_curr     ,&
                               ds_constitutive, ds_material   ,&
                               hval_incr      , hval_algo     ,&
                               merigi         , vediri        , vefint   , veforc   ,&
-                              vevarc_prev    , vevarc_curr   )    
+                              vevarc_prev    , vevarc_curr   )
     elseif (phenom .eq. 'THERMIQUE') then
         call calcPrepDataTher(model        , temp_prev     , incr_temp  ,&
                               time_curr    , deltat        , theta      , khi,&
@@ -130,12 +130,12 @@ implicit none
         ASSERT(ASTER_FALSE)
     endif
 !
-! - Compute 
+! - Compute
 !
     if (phenom .eq. 'MECANIQUE') then
         call calcCalcMeca(nb_option      , list_option,&
                           l_elem_nonl    , nume_harm  ,&
-                          list_load      , model      , cara_elem,& 
+                          list_load      , model      , cara_elem,&
                           ds_constitutive, ds_material,&
                           hval_incr      , hval_algo  ,&
                           merigi         , vediri     , vefint     , veforc,&
@@ -143,7 +143,7 @@ implicit none
                           nb_obje_maxi   , obje_name  , obje_sdname, nb_obje)
     elseif (phenom .eq. 'THERMIQUE') then
         call calcCalcTher(nb_option    , list_option   , &
-                          list_load    , model         , mate       , cara_elem,&
+                          list_load    , model         , mate       , mateco, cara_elem,&
                           time_curr    , time          ,&
                           temp_prev    , incr_temp     , compor_ther, temp_curr,&
                           ve_charther  , me_mtanther   , vediri     ,&

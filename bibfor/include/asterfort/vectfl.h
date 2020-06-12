@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 !
 !
 interface
-    subroutine vectfl(opt, modele, carele, mate, templu,&
+    subroutine vectfl(opt, modele, carele, mate, mateco, templu,&
                       instap, ve)
         character(len=*) :: opt
         character(len=*) :: modele
         character(len=*) :: carele
-        character(len=*) :: mate
+        character(len=*) :: mate, mateco
         character(len=*) :: templu
         real(kind=8) :: instap
         character(len=*) :: ve

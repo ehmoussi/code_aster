@@ -99,11 +99,13 @@ for i in range(0,nb_pas) :
 
    SIF[i]=CALC_G(RESULTAT=UTOT[i],
               OPTION='CALC_K_G',
+              CHAM_THETA=CO('cham_theta_no'),
               THETA=_F(FISSURE=FISS[i],
                        R_INF=2.,
                        R_SUP=4.,),);
 
    IMPR_TABLE(TABLE=SIF[i])
+   DETRUIRE(CONCEPT=_F(NOM=cham_theta_no,))
 
    MAX[i+1]=CO('MAX_%d' %(i+1) )
    MAT[i+1] = CO('MAT_%d'%(i+1))

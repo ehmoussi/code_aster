@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -126,7 +126,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
     character(len=19) :: kchap, kchad, tabp, tabd
     character(len=24) :: blan24, k24b
     character(len=24) :: chs
-    character(len=24) :: chdepp, chsgpn, chsgdn
+    character(len=24) :: chdepp, chsgpn, chsgdn, mateco
     character(len=24) :: chsig, chsigp, chsigd, chsign
     character(len=24) :: chsigm, chdepm, cherrm, chsigx
     character(len=24) :: chcara(18), chelem, chtime
@@ -223,7 +223,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 !
 ! 2.2.1 ==> SAISIT ET VERIFIE LA COHERENCE DES DONNEES MECANIQUES
 !           RECUPERE LES CHARGES POUR LE NUMERO D'ORDRE IORDR
-            call medom1(modele, mate, cara, kcha, nchar,&
+            call medom1(modele, mate, mateco, cara, kcha, nchar,&
                         ctyp, resuco, iordr)
             call jeveuo(kcha//'.LCHA', 'L', jcha)
             call mecara(cara, chcara)
@@ -388,7 +388,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 ! 2.2.8. ==> CALCULE L'ESTIMATEUR D'ERREUR EN RESIDU LOCAL
 !
             call resloc(modele, ligrmo, yaxfem, yathm, tbgrca,&
-                        perman, chtime, mate, chsigm, chsigp,&
+                        perman, chtime, mateco, chsigm, chsigp,&
                         chsigx, chdepm, chdepp, cherrm, zk8(jcha),&
                         nchar, tabido, chvois, cvoisx, chelem)
 !
@@ -492,9 +492,9 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
                     ncmp=1, nomcmp='X1', sr=s)
 !
 ! 4.2.2. ==> SAISIE ET VERIFIE LA COHERENCE DES DONNEES MECANIQUES
-        call medom1(modele, mate, cara, kchap, ncharp,&
+        call medom1(modele, mate, mateco, cara, kchap, ncharp,&
                     ctyp, resup, iordr)
-        call medom1(modele, mate, cara, kchad, nchard,&
+        call medom1(modele, mate, mateco, cara, kchad, nchard,&
                     ctyp, resud, iordr)
         call jeveuo(kchap//'.LCHA', 'L', jchap)
         call jeveuo(kchad//'.LCHA', 'L', jchad)
@@ -555,7 +555,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 !
         call qires1(modele, ligrmo, chtime, chsigp, chsigd,&
                     zk8(jchap), zk8(jchad), ncharp, nchard, chs,&
-                    mate, chvois, tabido, chelem)
+                    mateco, chvois, tabido, chelem)
 !
 ! 4.2.11. ==> VERIFIE L'EXISTENCE DU CHAMP CHELEM
         call exisd('CHAMP_GD', chelem, iret)
@@ -624,9 +624,9 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
         iordr = zi(jordr+iaux-1)
 !
 ! 6.2.1. ==> SAISIT ET VERIFIE LA COHERENCE DES DONNEES MECANIQUES
-        call medom1(modele, mate, cara, kchap, ncharp,&
+        call medom1(modele, mate, mateco, cara, kchap, ncharp,&
                     ctyp, resup, iordr)
-        call medom1(modele, mate, cara, kchad, nchard,&
+        call medom1(modele, mate, mateco, cara, kchad, nchard,&
                     ctyp, resud, iordr)
         call jeveuo(kchap//'.LCHA', 'L', jchap)
         call jeveuo(kchad//'.LCHA', 'L', jchad)
@@ -656,7 +656,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 ! 6.2.6 ==> CALCUL
         call rsexc1(resuc1, option, iordr, chelem)
 !
-        call qintzz(modele, ligrmo, mate, chsigp, chsigd,&
+        call qintzz(modele, ligrmo, mateco, chsigp, chsigd,&
                     chsgpn, chsgdn, chelem)
 !
 ! 6.2.7.0. ==> RECUPERE L'ADRESSE JEVEUX DE L'INSTANT DE CALCUL
@@ -675,7 +675,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
 !
 ! 6.2.7.2. ==> CALCUL DE L'ESTIMATEUR GLOBAL A PARTIR DES ESTIMATEURS
 !             LOCAUX
-        call ernozz(modele, chsigp, mate, chsgpn, chvarc,&
+        call ernozz(modele, chsigp, mateco, chsgpn, chvarc,&
                     option, ligrmo, iordr, resuco, leres1,&
                     chelem)
 !
@@ -700,7 +700,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
         call jerecu('V')
 !
         iordr = zi(jordr+iaux-1)
-        call medom1(modele, mate, cara, kcha, nchar,&
+        call medom1(modele, mate, mateco, cara, kcha, nchar,&
                     ctyp, resuco, iordr)
         call jeveuo(kcha//'.LCHA', 'L', jcha)
         call mecara(cara, chcara)
@@ -727,7 +727,7 @@ subroutine meca01(optio0, nbordr, jordr, nchar, jcha,&
             call vrcins(modele, mate, cara, time, chvarc,&
                         cret)
             call rsexc1(leres1, option, iordr, chelem)
-            call ernozz(modele, chsig, mate, chsign, chvarc,&
+            call ernozz(modele, chsig, mateco, chsign, chvarc,&
                         option, ligrmo, iordr, resuco, leres1,&
                         chelem)
             call rsnoch(leres1, option, iordr)

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,8 +20,12 @@
 #  IDENTIQUE A SSNA111A JUSQU'A STAT_NON_LINE.
 #  LANCE EN ETUDE SIMPLE, LE DIAGNOSTIC EST CPU_LIMIT
 #
+from code_aster import TimeLimitError
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
 import aster
-import aster_core
+
+params = ExecutionParameter()
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       PAR_LOT='NON',
@@ -104,14 +108,14 @@ F=DEFI_FONCTION(NOM_PARA='INST',
                       );
 
 
-tpmax = aster_core.get_option("tpmax")
+tpmax = params.get_option("tpmax")
 tpsnl = 7.
 print(("Decrease time limit from {0} to {1} s to force STAT_NON_LINE to "
       "interrupt.".format(tpmax, tpsnl)))
-aster_core.set_option("tpmax", tpsnl)
-is_ok = 0
-try:
-  RESU=STAT_NON_LINE(
+params.set_option("tpmax", tpsnl)
+
+# should raise TimeLimitError and exit(1)
+RESU = STAT_NON_LINE(
                      MODELE=MO,
                      CHAM_MATER=CHMAT,
                      EXCIT=_F(CHARGE=CHA,
@@ -132,24 +136,3 @@ try:
                               PREDICTION='ELASTIQUE',MATR_RIGI_SYME='OUI',
                               REAC_ITER=1,),
                      ARCHIVAGE=_F(LIST_INST=L_INST,),);
-except aster.ArretCPUError as msg:
-   is_ok = 1
-
-print("Restore time limit to {0} s".format(tpmax))
-aster_core.set_option("tpmax", tpmax)
-
-
-TAB1=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
-                     _F(PARA='BOOLEEN',LISTE_I=is_ok,),
-                     ),
-               )
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC_I=1,
-           VALE_REFE_I=1,
-           NOM_PARA='BOOLEEN',
-           TABLE=TAB1,
-           FILTRE=_F(NOM_PARA='TEST',
-                     VALE_K='VALEUR  ',),
-           )
-
-FIN();

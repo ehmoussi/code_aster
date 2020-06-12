@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -99,7 +99,7 @@ subroutine thcalr(newcal, tysd, knum, lload_name, resuco,&
     character(len=19) :: nomgds, leres1
     character(len=24) :: chcara(18), chelem, chtemm, chtemp
     character(len=24) :: chflum, chsour, chflup, cherre, cherrn
-    character(len=24) :: chgeom, chharm, nompar
+    character(len=24) :: chgeom, chharm, nompar, mateco
     character(len=24) :: lesopt, blan24
     character(len=24) :: ligrel, ligrmo
     aster_logical :: evol
@@ -172,7 +172,7 @@ subroutine thcalr(newcal, tysd, knum, lload_name, resuco,&
 !
 !
         nuord=zi(jordr)
-        call medom1(modele, mate, cara, lload_name, nb_load,&
+        call medom1(modele, mate, mateco, cara, lload_name, nb_load,&
                     ctyp, resuco, nuord)
         call jeveuo(lload_name//'.LCHA', 'L', jcha)
 !
@@ -242,7 +242,7 @@ subroutine thcalr(newcal, tysd, knum, lload_name, resuco,&
                 call jemarq()
                 call jerecu('V')
                 iordr=zi(jordr+iaux-1)
-                call medom1(modele, mate, cara, lload_name, nb_load,&
+                call medom1(modele, mate, mateco, cara, lload_name, nb_load,&
                             ctyp, resuco, iordr)
                 call mecara(cara, chcara)
 ! RECUPERATION DU PARM_THETA CORRESPONDANT A IORDR
@@ -313,7 +313,7 @@ subroutine thcalr(newcal, tysd, knum, lload_name, resuco,&
                 call rsexc1(leres1, option, iordr, chelem)
 ! PREPARATION DES DONNEES/LANCEMENT DU CALCUL DES INDICATEURS
                 call resthe(ligrmo, evol, chtemm, chtemp, chflum,&
-                            chflup, mate, valthe, insold, inst,&
+                            chflup, mateco, valthe, insold, inst,&
                             chelem, niveau, ifm, niv, ma,&
                             cartef, nomgdf, carteh, nomgdh, cartet,&
                             nomgdt, cartes, nomgds, chgeom, chsour,&

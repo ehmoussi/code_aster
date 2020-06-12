@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -287,7 +287,7 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
 
 !                   --- Alert the user, raise exceptions and stop the calculation
                     call utmess('Z', 'ALGORITH16_77', ni=2, vali=[i, isto(1)], nr=3,&
-                                valr=[lastarch, tps1(4), tps1(1)], num_except=28)
+                                valr=[lastarch, tps1(4), tps1(1)], num_except=TIMELIMIT_ERROR)
                     call utmess('F', 'ALGORITH5_24')
                 endif
             endif
@@ -338,5 +338,5 @@ subroutine dtmcalc(sd_dtm_, sd_int_)
     end if
 !
     call jedema()
-    
+
 end subroutine

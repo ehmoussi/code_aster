@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,12 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
-                    op=OPS('Macro.impr_fonction_ops.impr_fonction_ops'),
+                    op=OPS('code_aster.MacroCommands.impr_fonction_ops.impr_fonction_ops'),
                     sd_prod=None,
                     fr=tr("Imprime le contenu d'objets de type fonction ou liste de "
                          "réels dans un fichier destiné à un traceur de courbe"),
@@ -36,7 +35,7 @@ IMPR_FONCTION=MACRO(nom="IMPR_FONCTION",
            PILOTE          =SIMP(statut='f',typ='TXM',defaut='',
                                  into=('','POSTSCRIPT','EPS','MIF','SVG','PNM','PNG','JPEG','PDF','INTERACTIF', 'INTERACTIF_BG'),
                             fr=tr("Pilote de sortie, PNG/JPEG/PDF ne sont pas disponibles sur toutes les installations de xmgrace")),
-           UNITE           =SIMP(statut='f',typ=UnitType(),val_min=10,val_max=99,defaut=29, inout='out',
+           UNITE           =SIMP(statut='f',typ=UnitType(),defaut=29, inout='out',
                                  fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
          ),
          b_agraf = BLOC(condition = """equal_to("FORMAT", 'AGRAF')""",

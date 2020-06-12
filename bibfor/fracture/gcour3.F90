@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -91,6 +91,7 @@ subroutine gcour3(resu, noma, coorn, lnoff, trav1,&
     character(len=8) :: resu, noma, nomfis
     character(len=6) :: kiord
     character(len=2) :: licmp(3)
+    character(len=1), parameter :: base = 'G'
 !
     integer :: lnoff, iadrt1, iadrt2, iadrt3, itheta, iadrco, jmin
     integer :: imodu, nbre, iret, ndimte
@@ -153,7 +154,7 @@ subroutine gcour3(resu, noma, coorn, lnoff, trav1,&
         ndimte = nbre + 1
     endif
 !
-    call wkvect(resu, 'V V K24', ndimte+1, jresu)
+    call wkvect(resu, base//' V K24', ndimte+1, jresu)
 !
 ! BOUCLE GENERALE SUR LES NDIMTE+1 CHAMPS_NO A CREER
 !
@@ -361,7 +362,7 @@ subroutine gcour3(resu, noma, coorn, lnoff, trav1,&
 500         continue
             end do
 ! on transforme le cham_no_s en cham_no
-          call cnscno(cnstet,' ','OUI','V',chamno,'F',iret)
+          call cnscno(cnstet,' ','OUI',base,chamno,'F',iret)
           call detrsd('CHAM_NO_S',cnstet)
         endif
 !

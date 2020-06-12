@@ -17,9 +17,9 @@
 /* -------------------------------------------------------------------- */
 
 #include "aster.h"
-#include "aster_fort.h"
+#include "aster_fort_utils.h"
 /*-----------------------------------------------------------------------------/
-/ Ouverture d'un groupe HDF, renvoie une erreur si le groupe ne peut être ouvert 
+/ Ouverture d'un groupe HDF, renvoie une erreur si le groupe ne peut être ouvert
 /  Paramètres :
 /   - in idfile : identificateur du fichier (hid_t)
 /   - in  nomgr : nom du groupe (contient toute l'arborescence depuis "/")
@@ -34,11 +34,11 @@ hid_t DEFPS(HDFOPG, hdfopg, hid_t *idf, char *nomgr, STRING_SIZE ln)
 {
   hid_t iret=-1;
 #ifndef _DISABLE_HDF5
-  hid_t  idgrp,idfic;     
+  hid_t  idgrp,idfic;
   char *nomd;
   int k;
   void *malloc(size_t size);
-  
+
   idfic=(hid_t) *idf;
   nomd = (char *) malloc((ln+1) * sizeof(char));
   for (k=0;k<ln;k++) {
@@ -52,14 +52,14 @@ hid_t DEFPS(HDFOPG, hdfopg, hid_t *idf, char *nomgr, STRING_SIZE ln)
   if ( k == -1 ) {
     nomd[k+1] = '/';
     k++;
-  } 
+  }
   nomd[k+1] = '\0';
 
-  if ((idgrp = H5Gopen2(idfic, nomd, H5P_DEFAULT)) >= 0) 
+  if ((idgrp = H5Gopen2(idfic, nomd, H5P_DEFAULT)) >= 0)
     iret = idgrp;
   free (nomd);
 #else
   CALL_UTMESS("F", "FERMETUR_3");
 #endif
   return iret;
-}     
+}

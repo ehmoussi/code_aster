@@ -252,6 +252,7 @@
     Thouraya Baranger <thouraya.baranger .at. univ-lyon1.fr>
     Nicolas Chauvat <nicolas.chauvat .at. logilab.fr>
     Daniele Colombo <daniele.colombo .at. ifpen.fr>
+    Laurent Duhem <laurent.duhem .at. intel.com>
     Peter Halverson <halverson .at. byu.edu>
     Pierre Juillard <pierre.juillard@gmail.com>
     Joachim Kopp
@@ -262,4 +263,3 @@
     Stefan H. Reiterer <stefan.harald.reiterer .at. gmail.com>
     Thierry Thomas <thierry .at. FreeBSD.org>
     Alain Sellier <sellier .at. insa-toulouse.fr>
-

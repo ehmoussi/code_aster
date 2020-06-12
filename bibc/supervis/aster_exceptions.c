@@ -22,9 +22,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>
+#include <signal.h>
 
 #include "aster.h"
-#include "aster_fort.h"
 #include "aster_exceptions.h"
 
 /*
@@ -68,33 +68,6 @@ static PyObject* gExcArgs = NULL;
 static PyObject *exc_module = NULL;
 
 /*
- *   PUBLIC FUNCTIONS
- *
- */
-void initExceptions(PyObject *dict)
-{
-    /* The exception of the 'aster' module are defined in Execution/E_Exception.py.
-     * They are added to the module through the function 'add_to_dict_module'.
-     */
-    PyObject *res;
-
-    exc_module = PyImport_ImportModule("Execution.E_Exception");
-    if ( ! exc_module ) {
-        fprintf(stderr, "\n\nWARNING:\n    ImportError of Execution.E_Exception module!\n");
-        fprintf(stderr, "    No exception defined in the aster module.\n");
-        fprintf(stderr, "    It may be unusable.\n\n");
-        PyErr_Clear();
-        Py_XDECREF(exc_module);
-        return;
-    }
-
-    /* assign the dict using the method add_to_dict_module of E_Exception */
-    res = PyObject_CallMethod(exc_module, "add_to_dict_module", "O", dict);
-    Py_DECREF(res);
-    Py_DECREF(exc_module);
-}
-
-/*
  *   PRIVATE FUNCTIONS
  *
  */
@@ -114,62 +87,4 @@ void _end_try()
     /* End if try : `gExcLvl` is decremented
      */
     gExcLvl -= 1;
-}
-
-void _raiseException( _IN int val )
-{
-    /* Raise the exception of code `val`.
-     * Called through raiseException by aster_oper, aster_opsexe, aster_debut,
-     * aster_poursu.
-     *
-     * WARNING: The error indicator will be reset by a PyObject_CallMethod or similar.
-     * All C-Python methods must take care of that indicator (ex. UTPRIN).
-     */
-    PyObject *exc;
-
-    if ( val == EOFError ) {
-        PyErr_SetString(PyExc_EOFError, "exit ASTER");
-    } else {
-        exc = PyObject_CallMethod(exc_module, "get_exception", "i", val);
-        PyErr_SetObject(exc, gExcArgs);
-    }
-    return;
-}
-
-void DEFPSPSPPPP(UEXCEP,uexcep, _IN ASTERINTEGER *exc_type,
-                                _IN char *idmess, _IN STRING_SIZE lidmess,
-                                _IN ASTERINTEGER *nbk, _IN char *valk, _IN STRING_SIZE lvk,
-                                _IN ASTERINTEGER *nbi, _IN ASTERINTEGER *vali,
-                                _IN ASTERINTEGER *nbr, _IN ASTERDOUBLE *valr)
-{
-    /*
-     * Fortran/Python interface to raise an exception from the fortran subroutines
-     */
-    PyObject *tup_valk, *tup_vali, *tup_valr;
-    char *kvar;
-    int i;
-
-    tup_valk = PyTuple_New( *nbk ) ;
-    for(i=0;i<*nbk;i++){
-       kvar = valk + i*lvk;
-       PyTuple_SetItem( tup_valk, i, PyUnicode_FromStringAndSize(kvar,lvk) ) ;
-    }
-
-    tup_vali = PyTuple_New( *nbi ) ;
-    for(i=0;i<*nbi;i++){
-       PyTuple_SetItem( tup_vali, i, PyLong_FromLong(vali[i]) ) ;
-    }
-
-    tup_valr = PyTuple_New( *nbr ) ;
-    for(i=0;i<*nbr;i++){
-       PyTuple_SetItem( tup_valr, i, PyFloat_FromDouble(valr[i]) ) ;
-    }
-
-    gExcArgs = PyTuple_New( 4 );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)0, PyUnicode_FromStringAndSize(idmess, lidmess) );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)1, tup_valk );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)2, tup_vali );
-    PyTuple_SetItem( gExcArgs, (Py_ssize_t)3, tup_valr );
-
-    interruptTry((int)*exc_type);
 }

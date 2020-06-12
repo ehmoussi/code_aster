@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -269,8 +269,8 @@ DEFI_FICHIER(ACTION='LIBERER',
              UNITE=38,);
 
 TEST_FICHIER(FICHIER="./REPE_OUT/FGEN.gene",
-             NB_VALE_I=13,
-             VALE_CALC_I=23,
+             NB_VALE_I=16,
+             VALE_CALC_I=101,
              NB_VALE=11,
              VALE_CALC=4.1752370000,
 )
@@ -317,8 +317,8 @@ DEFI_FICHIER(ACTION='LIBERER',
              UNITE=37,);
 
 TEST_FICHIER(FICHIER="./REPE_OUT/RESU.gene",
-             NB_VALE_I=53,
-             VALE_CALC_I=386,
+             NB_VALE_I=65,
+             VALE_CALC_I=575,
              NB_VALE=52,
              VALE_CALC=31.980381000,
 )

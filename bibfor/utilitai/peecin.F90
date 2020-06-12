@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine peecin(resu, modele, mate, cara, nh, nbocc)
+subroutine peecin(resu, modele, mate, mateco, cara, nh, nbocc)
 !
 implicit none
 !
@@ -60,7 +60,7 @@ implicit none
 #include "asterfort/wkvect.h"
 !
     integer :: nh, nbocc
-    character(len=*) :: resu, modele, mate, cara
+    character(len=*) :: resu, modele, mate, mateco, cara
 !     OPERATEUR   POST_ELEM
 !     TRAITEMENT DU MOT CLE-FACTEUR "ENER_CIN"
 !     ------------------------------------------------------------------
@@ -101,7 +101,7 @@ implicit none
     exitim = .false.
     inst = 0.d0
     chdisp = ' '
-    chvite = ' ' 
+    chvite = ' '
     chtemp = ' '
     chfreq = ' '
     typres = ' '
@@ -292,7 +292,7 @@ implicit none
         endif
 
         call compEnergyKinetic(modele, ligrel, l_modal,&
-                               chdisp, chvite, chfreq , chgeom , mate,&
+                               chdisp, chvite, chfreq , chgeom , mateco,&
                                chcara, chmasd, chvarc , &
                                base  , chelem, iret)
  30     continue

@@ -3,7 +3,7 @@ P memory_limit 512
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist asterxx ci verification sequential
 
 F comm fdlv112j.comm D 1
 F mmed fdlv112j.mmed D 20

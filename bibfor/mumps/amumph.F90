@@ -73,8 +73,9 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 !----------------------------------------------------------------------
 ! person_in_charge: olivier.boiteau at edf.fr
 !
-#include "asterf_types.h"
 #include "asterf.h"
+#include "asterf_types.h"
+#include "jeveux.h"
 #include "asterfort/amumpc.h"
 #include "asterfort/amumpd.h"
 #include "asterfort/amumps.h"
@@ -99,8 +100,6 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
 !
     integer :: iprem
     type(smumps_struc), pointer :: smpsk => null()
@@ -111,6 +110,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
     integer :: nprec, iretz, pcentp(2), ipiv, iretp
     aster_logical :: lbid, lpreco, limpr_matsing
     character(len=1) :: rouc, prec
+    character(len=3) :: mathpc
     character(len=4) :: etam
     character(len=12) :: k12bid
     character(len=14) :: nonu, nu, impr
@@ -118,6 +118,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
     character(len=24) :: kvers, kpiv
     character(len=24), pointer :: slvk(:) => null()
     integer, pointer :: slvi(:) => null()
+    integer, pointer :: nequ(:) => null()
 !----------------------------------------------------------------
     save iprem
     data  iprem /0/
@@ -199,11 +200,16 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 !
     call dismoi('NOM_NUME_DDL', matas, 'MATR_ASSE', repk=nu)
     call jelira(matas//'.VALM', 'TYPE', cval=rouc)
-    nsmdi = 0 
+    nsmdi = 0
     call jeexin(nu//'.SMOS.SMDI', ibid )
-    if ( ibid /= 0 ) then 
+    if ( ibid /= 0 ) then
        call jelira(nu//'.SMOS.SMDI', 'LONMAX', nsmdi)
-    endif 
+    endif
+    call dismoi('MATR_HPC', matas, 'MATR_ASSE', repk=mathpc)
+    if(mathpc.eq.'OUI') then
+        call jeveuo(nu//'.NUME.NEQU', 'L', vi=nequ)
+        nsmdi=nequ(2)
+    endif
 !
     call jeveuo(matas//'.REFA', 'L', jrefa)
     if (zk24(jrefa-1+11) .eq. 'MATR_DISTR') then

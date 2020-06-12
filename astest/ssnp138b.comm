@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,8 @@
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
       DEBUG=_F(SDVERI='OUI'),)
+
+from math import *
 
 # MODELISATION B : CHARGEMENT VOLUMIQUE, MAILLES QUAD4, ENRICHISSEMENT GEOMETRIQUE
 
@@ -58,7 +60,7 @@ ACIER=DEFI_MATERIAU(ELAS=_F(E=E,NU=nu,RHO=rho,),);
 #*********************************************************
 
 # ANGLES D INCLINAISON DE LA FISSURE (EN DEGRES)
-alphaf = [0., 45.] 
+alphaf = [0., 45.]
 
 # DEFINITION DE lA COURONNE POUR LE CALCUL DES SIF
 RI=0.1*A
@@ -214,6 +216,7 @@ for i in range(nbcalc) :
                    THETA=_F(FISSURE=FISS[i],
                             R_INF=RI,
                             R_SUP=RS,),
+                    CHAM_THETA=CO('cham_theta_no1'),
                    )
 
   SI2CH1[i]=CALC_G(RESULTAT=UTOT1[i],
@@ -248,11 +251,15 @@ for i in range(nbcalc) :
   SI2CH2[i]=CALC_G(RESULTAT=UTOT2[i],
                    INST=0.,
                    OPTION='CALC_K_G',
+                   CHAM_THETA=CO('cham_theta_no2'),
                    THETA=_F(FISSURE=FISS[i],
                             NUME_FOND=2,
                             R_INF=RI,
                             R_SUP=RS,),
                    )
+
+
+  DETRUIRE(CONCEPT=_F(NOM=(cham_theta_no1, cham_theta_no2),))
 
   TG1CH2[i]=CALC_G(RESULTAT=UTOT2[i],
                    INST=0.,
@@ -297,7 +304,7 @@ for i in range(nbcalc) :
 
   TEST_TABLE(TABLE=TG1CH2[i],
              NOM_PARA='G',
-             VALE_CALC=VAL_CALC[8*i+5],  
+             VALE_CALC=VAL_CALC[8*i+5],
              CRITERE='RELATIF',);
 
 # 2) CALCUL AVEC POST_K1_K2_K3  POUR L'ANGLE COURANT i
@@ -325,13 +332,13 @@ for i in range(nbcalc) :
               NOM_PARA='K1',
               VALE_CALC=VAL_CALC[8*i+6],
               CRITERE='RELATIF',
-              
+
               );
 
 
   TEST_TABLE(CRITERE='RELATIF',
              VALE_CALC=VAL_CALC[8*i+7],
-             
+
              NOM_PARA='K1',
              TABLE=PK2[i],
              )

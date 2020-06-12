@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -23,9 +23,12 @@
 # ----- PERTE DE COHESION DE 5% DANS LA MAILLE (M1) EN QUESTION. -------
 # ======================================================================
 
-import aster
+from code_aster import ConvergenceError
+from code_aster.Commands import *
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'))
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),PAR_LOT='NON',DEBUG=_F(SDVERI='OUI'),
+      ERREUR=_F(ERREUR_F='EXCEPTION'))
 
 MAILLAGE=LIRE_MAILLAGE(FORMAT='MED', );
 
@@ -143,29 +146,27 @@ DEFLIST =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =TEMPS ),
                                  SUBD_PAS      = 10,
                                  SUBD_PAS_MINI = 0.000001),)
 
-try :
-     U=STAT_NON_LINE(MODELE=MODELE,
-                     CHAM_MATER=CHMAT,
-                 EXCIT=( _F( CHARGE=CHAR_DR,  ),
-                         _F( CHARGE=CHAR_GA,  ),
-                         _F( CHARGE = DEPL_BA, ),
-                         _F( CHARGE = DEPL_GA,),
-                         _F( CHARGE = DEPL_HA,
-                             FONC_MULT = COEF,),),
-                 COMPORTEMENT=_F( RELATION = 'DRUCK_PRAGER'),
-                 INCREMENT=_F( LIST_INST = DEFLIST,),
-                 NEWTON=_F( MATRICE = 'TANGENTE',
-                            REAC_ITER = 1,),
-                 ETAT_INIT   = _F( SIGM  = SIGINIT,),
-                 CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-6,
-                                ITER_GLOB_MAXI =  26,),
-                           );
-except aster.NonConvergenceError:
-     print("""\nProbleme de convergence pour cause de localisation\n""")
-# ON RECUPERE LE DERNIER INSTANT PROPREMENT CALCULE DANS STAT_NON_LINE
-# POUR FAIRE UNE VERIFICATION EN NON-REGRESSION SUR CE NUMERO D'ORDRE
-
-     last_iter=U.LIST_VARI_ACCES()['NUME_ORDRE'][-1]
+try:
+     U = STAT_NON_LINE(MODELE=MODELE,
+                       CHAM_MATER=CHMAT,
+                       EXCIT=(_F(CHARGE=CHAR_DR,  ),
+                              _F(CHARGE=CHAR_GA,  ),
+                              _F(CHARGE = DEPL_BA, ),
+                              _F(CHARGE = DEPL_GA,),
+                              _F(CHARGE = DEPL_HA,
+                                 FONC_MULT = COEF,),),
+                       COMPORTEMENT=_F( RELATION = 'DRUCK_PRAGER'),
+                       INCREMENT=_F( LIST_INST = DEFLIST,),
+                       NEWTON=_F( MATRICE = 'TANGENTE',
+                                  REAC_ITER = 1,),
+                       ETAT_INIT   = _F( SIGM  = SIGINIT,),
+                       CONVERGENCE=_F( RESI_GLOB_RELA = 1.E-6,
+                                  ITER_GLOB_MAXI =  26,))
+except ConvergenceError:
+    print("""\nProbleme de convergence pour cause de localisation\n""")
+    # ON RECUPERE LE DERNIER INSTANT PROPREMENT CALCULE DANS STAT_NON_LINE
+    # POUR FAIRE UNE VERIFICATION EN NON-REGRESSION SUR CE NUMERO D'ORDRE
+    last_iter = U.getRanks()[-1]
 
 
 U=CALC_CHAMP(reuse=U,CRITERES=('INDL_ELGA'),RESULTAT=U,NUME_ORDRE=(19,last_iter))

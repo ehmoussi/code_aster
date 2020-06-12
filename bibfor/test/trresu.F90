@@ -59,6 +59,7 @@ subroutine trresu(ific, nocc)
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/isParallelMesh.h"
     integer, intent(in) :: ific
     integer, intent(in) :: nocc
 !     COMMANDE:  TEST_RESU
@@ -87,7 +88,7 @@ subroutine trresu(ific, nocc)
     character(len=33) :: titres, valk(3)
     character(len=200) :: lign1, lign2
     integer :: iarg
-    aster_logical :: lref, skip
+    aster_logical :: lref, skip, l_parallel_mesh
     character(len=8), pointer :: nom_cmp(:) => null()
 !     NONOEU= NOM_NOEUD (K8) SUIVI EVENTUELLEMENT DU NOM DU GROUP_NO
 !             A PARTIR DUQUEL ON TROUVE LE NOM DU NOEUD.
@@ -298,7 +299,7 @@ subroutine trresu(ific, nocc)
                 call getvtx('RESU', 'NOEUD', iocc=iocc, scal=exclgr, nbret=n2)
                 call getvtx('RESU', 'GROUP_NO', iocc=iocc, scal=exclgr, nbret=n3)
                 call getvtx('RESU', 'POINT', iocc=iocc, scal=exclgr, nbret=n4)
-                if ((n2+n3+n4) .gt. 0) then 
+                if ((n2+n3+n4) .gt. 0) then
                     call utmess('A', 'CALCULEL6_96')
                 endif
 
@@ -384,9 +385,13 @@ subroutine trresu(ific, nocc)
 !
                 nonoeu = ' '
                 call dismoi('NOM_MAILLA', cham19, 'CHAMP', repk=nomma)
+                l_parallel_mesh = isParallelMesh(nomma)
                 call getvem(nomma, 'NOEUD', 'RESU', 'NOEUD', iocc,&
                             iarg, 1, nonoeu(1:8), n1)
                 if (n1 .ne. 0) then
+                    if (l_parallel_mesh) then
+                        call utmess('F', 'MODELISA7_86')
+                    endif
                     nl1 = lxlgut(lign1)
                     nl2 = lxlgut(lign2)
                     lign1(1:nl1+16)=lign1(1:nl1-1)//' NOEUD'
@@ -490,6 +495,9 @@ subroutine trresu(ific, nocc)
                     endif
 !
                     if (n1a.ne.0) then
+                        if (l_parallel_mesh) then
+                            call utmess('F', 'MODELISA7_86')
+                        endif
                         nl1 = lxlgut(lign1)
                         nl2 = lxlgut(lign2)
                         lign1(1:nl1+16)=lign1(1:nl1-1)//' MAILLE'

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,15 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: gerald.nicolas at edf.fr
-#
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 MACR_INFO_MAIL=MACRO(nom="MACR_INFO_MAIL",
-                     op=OPS('Macro.macr_adap_mail_ops.macr_adap_mail_ops'),
+                     op=OPS('code_aster.MacroCommands.macr_adap_mail_ops.macr_adap_mail_ops'),
                      docu="U7.03.02",
                      fr=tr("Donner des informations sur un maillage."),
 
@@ -134,7 +131,7 @@ MACR_INFO_MAIL=MACRO(nom="MACR_INFO_MAIL",
                                 fr=tr("Fichier supplementaire."),
 
 #
-  UNITE = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
+  UNITE = SIMP(statut='f',typ=UnitType(), inout='in',
                fr=tr("Unite logique a ajouter a HOMARD.Configuration"),
                ),
 #

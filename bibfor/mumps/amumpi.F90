@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine amumpi(option, lquali, ldist, kxmps, type)
+subroutine amumpi(option, lquali, ldist, kxmps, type, lmhpc)
 !
 !
     implicit none
@@ -31,8 +31,9 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
 !---------------------------------------------------------------
 ! person_in_charge: olivier.boiteau at edf.fr
 !
-#include "asterf_types.h"
 #include "asterf.h"
+#include "asterf_types.h"
+#include "jeveux.h"
 #include "asterc/asmpi_comm.h"
 #include "asterc/r4maem.h"
 #include "asterfort/amumpu.h"
@@ -43,13 +44,11 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
 #include "asterfort/jeveuo.h"
 #include "asterfort/utmess.h"
     integer :: kxmps, option
-    aster_logical :: lquali, ldist
+    aster_logical :: lquali, ldist, lmhpc
     character(len=1) :: type
 !
 #ifdef _HAVE_MUMPS
 #include "asterf_mumps.h"
-#include "mpif.h"
-#include "jeveux.h"
     mpi_int :: mpicou, mpimum
     integer :: nicntl, ncntl
     parameter (nicntl=40,ncntl=15)
@@ -103,7 +102,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
     call jeveuo(nosolv//'.SLVI', 'L', vi=slvi)
     nprec=slvi(1)
     call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
-       
+
     kacmum=trim(adjustl(slvk(5)))
     blreps=slvr(4)
 
@@ -295,7 +294,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
         case default
             ASSERT(.false.)
         end select
-        
+
 !
 ! ---     MESSAGES/ALERTES MUMPS
         icntl(1) = -1
@@ -414,7 +413,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type)
         cntl(4)=-1.d0
 !
 ! ---     PARALLELISME/DISTRIBUTION SECOND MEMBRE/SOLUTION
-        if (ldist) then
+        if (ldist.or.lmhpc) then
             icntl(18)=3
         else
             icntl(18)=0

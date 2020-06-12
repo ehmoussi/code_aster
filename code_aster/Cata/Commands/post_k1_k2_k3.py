@@ -19,13 +19,12 @@
 
 # person_in_charge: samuel.geniaut at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
-                    op=OPS('Macro.post_k1_k2_k3_ops.post_k1_k2_k3_ops'),
+                    op=OPS('code_aster.MacroCommands.post_k1_k2_k3_ops.post_k1_k2_k3_ops'),
                     sd_prod=table_sdaster,
                     fr=tr("Calcul des facteurs d'intensité de contraintes en 2D et en 3D par "
                          "extrapolation des sauts de déplacements sur les lèvres de la fissure"),
@@ -67,10 +66,10 @@ POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
                          ),
 
 
-         
+
          PREC_VIS_A_VIS=SIMP(statut='f',typ='R',defaut=0.1),
 
-         b_mod_meca  =BLOC (condition="""is_type("RESULTAT")== mode_meca """,      
+         b_mod_meca  =BLOC (condition="""is_type("RESULTAT")== mode_meca """,
          TOUT_ORDRE    =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          NUME_ORDRE    =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
          LIST_ORDRE    =SIMP(statut='f',typ=listis_sdaster),
@@ -90,7 +89,7 @@ POST_K1_K2_K3=MACRO(nom="POST_K1_K2_K3",
          b_no_mod_meca  =BLOC (condition="""is_type("RESULTAT")!= mode_meca """,
          TOUT_ORDRE    =SIMP(statut='f',typ='TXM',into=("OUI",) ),
          NUME_ORDRE    =SIMP(statut='f',typ='I',validators=NoRepeat(),max='**'),
-         LIST_ORDRE    =SIMP(statut='f',typ=listis_sdaster),   
+         LIST_ORDRE    =SIMP(statut='f',typ=listis_sdaster),
          INST          =SIMP(statut='f',typ='R',validators=NoRepeat(),max='**'),
          LIST_INST     =SIMP(statut='f',typ=listr8_sdaster),
              b_acce_reel     =BLOC(condition="""(exists("INST"))or(exists("LIST_INST"))""",

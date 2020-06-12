@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,6 @@ subroutine dismms(questi, nomobz, repi, repkz, ierd)
     character(len=24), pointer :: lime(:) => null()
     character(len=24), pointer :: refa(:) => null()
     character(len=24), pointer :: slvk(:) => null()
-    aster_logical :: istop
 !-----------------------------------------------------------------------
     call jemarq()
     repk = ' '
@@ -98,8 +97,7 @@ subroutine dismms(questi, nomobz, repi, repkz, ierd)
 
     else if (questi.eq.'MATR_HPC') then
         nommai=refa(1)(1:8)
-        istop = .true.
-        call gettco(nommai, typeco, istop)
+        call gettco(nommai, typeco)
         if( typeco.eq.'MAILLAGE_P' ) then
             repk = 'OUI'
         else

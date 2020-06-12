@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -80,15 +80,15 @@ for nopartit in lparallel :
                        VALE_CALC = 2.0, VALE_REFE=2.0, )))
 
               if typ_CL=="dualise" :
-                  TEST_RESU(OBJET=_F(NOM='RESU1   .001.000000.VALE',
+                  TEST_RESU(OBJET=_F(NOM=RESU1.getName()[:8]+'.001.000000.VALE',
                              VALE_CALC=115.957868591, ))
-                  TEST_RESU(OBJET=_F(NOM='RESU1   .012.000000.CELV',
+                  TEST_RESU(OBJET=_F(NOM=RESU1.getName()[:8]+'.012.000000.CELV',
                              VALE_CALC=926.59471201, ))
               elif typ_CL=="elimine":
-                  TEST_RESU(OBJET=_F(NOM='RESU1   .001.000000.VALE',
+                  TEST_RESU(OBJET=_F(NOM=RESU1.getName()[:8]+'.001.000000.VALE',
                              VALE_CALC=112.457868591, ))
               elif typ_CL=="transverse":
-                  TEST_RESU(OBJET=_F(NOM='RESU1   .001.000000.VALE',
+                  TEST_RESU(OBJET=_F(NOM=RESU1.getName()[:8]+'.001.000000.VALE',
                              VALE_CALC=478.957868591, ))
 
               DETRUIRE(CONCEPT=_F(NOM=(RESU1)),INFO=1)
@@ -121,7 +121,7 @@ for nopartit in lparallel :
     for nopartit2 in lparallel :
         MODI_MODELE(  reuse=MO, MODELE=MO, DISTRIBUTION=_F(METHODE=nopartit2),)
         RESU2=CALC_CHAMP(RESULTAT = RESU1, DEFORMATION = ('EPSI_ELGA',),)
-        TEST_RESU(OBJET=_F(NOM='RESU2   .009.000000.CELV', VALE_CALC=577.172255332, ))
+        TEST_RESU(OBJET=_F(NOM=RESU2.getName()[:8]+'.009.000000.CELV', VALE_CALC=577.172255332, ))
         DETRUIRE(CONCEPT=_F(NOM=(RESU2)),INFO=1)
 
 #   -- on remet la partition en etat pour la boucle principale :

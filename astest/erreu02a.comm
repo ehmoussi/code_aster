@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-import aster
+from code_aster import AsterError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),DEBUG=_F(SDVERI='OUI'),
       ERREUR=_F(ERREUR_F='EXCEPTION',),
@@ -83,7 +84,8 @@ CH1=AFFE_CHAR_MECA(MODELE=MO, FACE_IMPO=_F(GROUP_MA=('D1','D3'), DY=1.0,),)
 #------------------------------------------------------
 CM1=AFFE_MATERIAU(MAILLAGE=M,
                  AFFE=_F(TOUT='OUI', MATER=BETON1, ),
-                 AFFE_VARC=( _F(TOUT='OUI',EVOL=TEMP1,NOM_VARC='TEMP',NOM_CHAM='TEMP',VALE_REF=20),),)
+                 AFFE_VARC=( _F(TOUT='OUI',EVOL=TEMP1,NOM_VARC='TEMP',NOM_CHAM='TEMP',VALE_REF=20),),
+                  )
 
 U1=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM1, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
 U1=CALC_CHAMP(reuse=U1,RESULTAT=U1,CONTRAINTE=('SIGM_ELNO'),DEFORMATION=('EPSI_ELNO'))
@@ -143,7 +145,7 @@ CM1A=AFFE_MATERIAU(MAILLAGE=M,
 is_ok = 0
 try :
     U1A=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM1A, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MATERIAL1_56":
@@ -173,7 +175,7 @@ CM1B=AFFE_MATERIAU(MAILLAGE=M,
 is_ok = 0
 try :
     U1B=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM1B, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message.strip() == "MATERIAL1_2":
@@ -204,7 +206,7 @@ CM2A=AFFE_MATERIAU(MAILLAGE=M,
 is_ok = 0
 try :
     U2A=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2A, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
-except  aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
@@ -235,7 +237,7 @@ CM2B=AFFE_MATERIAU(MAILLAGE=M,
 is_ok = 0
 try :
     U2B=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2B, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
-except  aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MATERIAL1_56":
@@ -266,7 +268,7 @@ CM2C=AFFE_MATERIAU(MAILLAGE=M,
 is_ok = 0
 try :
     U2C=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2C, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
-except  aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "CALCULEL6_62":
@@ -297,7 +299,7 @@ CM2D=AFFE_MATERIAU(MAILLAGE=M,
 is_ok = 0
 try :
     U2D=MECA_STATIQUE( MODELE=MO, CHAM_MATER=CM2D, EXCIT=_F(CHARGE=CH1,), INST = 1800.)
-except  aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "MATERIAL1_2":

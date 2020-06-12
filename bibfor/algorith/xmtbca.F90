@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -146,13 +146,13 @@ type(NL_DS_Contact), intent(inout) :: ds_contact
     lpain(7) = 'PHEA_FA'
     lchin(7) = hea_fa
     lpain(8) = 'PBASLOC'
-    lchin(8) =  basefo   
+    lchin(8) =  basefo
     lpain(9) = 'PLSNGG'
     lchin(9) =  lnno
     lpain(10) = 'PSTANO'
     lchin(10) =  stano
     lpain(11)  = 'PMATERC'
-    lchin(11)  = ds_material%field_mate(1:19)
+    lchin(11)  = ds_material%mateco(1:19)
 
 !
 ! --- CREATION DES LISTES DES CHAMPS OUT

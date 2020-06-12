@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,12 @@
 # person_in_charge: nicolas.relun at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_FONC_ELEC=MACRO(nom="DEFI_FONC_ELEC",
-                     op=OPS('Macro.defi_fonc_elec_ops.defi_fonc_elec_ops'),
+                     op=OPS('code_aster.MacroCommands.defi_fonc_elec_ops.defi_fonc_elec_ops'),
                      sd_prod=fonction_sdaster,
                      reentrant='n',
                      fr=tr("Définir une fonction du temps intervenant dans le calcul des "

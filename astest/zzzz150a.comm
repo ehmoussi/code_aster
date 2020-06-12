@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -90,13 +90,12 @@ IMPR_FONCTION(
             _F( FONCTION=CTRACB, ),
             _F( FONCTION=FCT2,   ), )
    )
-
 TEST_FICHIER(FICHIER="fort.51",
-             NB_VALE_I=12,
-             VALE_CALC_I=65,
+             NB_VALE_I=14,
+             VALE_CALC_I=77,
              NB_VALE=10,
              VALE_CALC=3.0000060000e+03,
-             VALE_CALC_K="38a090c2ef30c6c759c863ea64ad5df4",
+             VALE_CALC_K="3748566127c10a666e1cf40f34731138",
 )
 
 # ------------------------------------------------------------------------------
@@ -109,10 +108,10 @@ IMPR_FONCTION(
 
 TEST_FICHIER(FICHIER="fort.52",
              NB_VALE_I=4,
-             VALE_CALC_I=2,
+             VALE_CALC_I=3,
              NB_VALE=4,
              VALE_CALC=1.5000000000e+03,
-             VALE_CALC_K="dc6b6f265a8ad492634f50da4fe167d3",
+             VALE_CALC_K="b28595fbb201fe819547759360ee46e4",
 )
 
 # ------------------------------------------------------------------------------
@@ -121,8 +120,8 @@ IMPR_FONCTION(
    UNITE=53,
    COURBE=(
       _F(
-         ABSCISSE=[0.]+A5.Absc(),
-         ORDONNEE=[0.]+A5.Ordo(),
+         ABSCISSE=[0.]+list(A5.Absc()),
+         ORDONNEE=[0.]+list(A5.Ordo()),
          COULEUR=2,
       ),
    ),
@@ -152,11 +151,11 @@ IMPR_FONCTION(
 )
 DEFI_FICHIER(UNITE=54, ACTION='LIBERER')
 TEST_FICHIER(FICHIER="./REPE_OUT/unite.54",
-             NB_VALE_I=386,
-             VALE_CALC_I=61842,
+             NB_VALE_I=388,
+             VALE_CALC_I=61852,
              NB_VALE=77,
              VALE_CALC=7.4403563000e+02,
-             VALE_CALC_K="e7f764d48ba4bec78e56e2c41ff86617",
+             VALE_CALC_K="067290afa42289f961d4301f1679578a",
 )
 
 FIN()

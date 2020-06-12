@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ implicit none
 !
 ! Compute Dirichlet loads
 !
-! For Lagrange elements (AFFE_CHAR_MECA) - B . U 
+! For Lagrange elements (AFFE_CHAR_MECA) - B . U
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -108,7 +108,7 @@ implicit none
 !
 ! - Cart for Lagrange conditionner
 !
-    call conlag(matass, alpha)  
+    call conlag(matass, alpha)
     call mecact('V', chalph, 'MODELE', model, 'NEUT_R  ',&
                 ncmp=1, nomcmp='X1', sr=alpha)
 !
@@ -120,14 +120,14 @@ implicit none
     call reajre(vect_elem, ' ', 'V')
 !
 ! - Input fields
-! 
+!
     lpain(1) = 'PDDLIMR'
     lchin(1) = disp
     lpain(2) = 'PALPHAR'
     lchin(2) = chalph(1:19)
 !
 ! - Output fields
-! 
+!
     lpaout(1) = 'PVECTUR'
 !
 ! - Computation

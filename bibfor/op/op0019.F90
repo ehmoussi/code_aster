@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -79,6 +79,7 @@ subroutine op0019()
 #include "asterfort/getvtx.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/infniv.h"
+#include "asterfort/isParallelMesh.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jeexin.h"
@@ -116,9 +117,9 @@ subroutine op0019()
     integer :: lxd, nboccd, lxrp, noemaf, lxrm, noemf2, nbmail, nbnoeu
     integer :: lxmr, noemf3
     integer :: npoutr, ncable, nbarre, nbdisc
-    integer :: iclf, ioc, icle, ng
+    integer :: iclf, ioc, icle, ng, nocc
     integer :: depart, jdnm
-    aster_logical :: locaco, locagb, locamb
+    aster_logical :: locaco, locagb, locamb, l_pmesh
     character(len=8) :: ver(3), nomu, nomo, noma, lpain(3), lpaout(1)
     character(len=16) :: concep, cmd, mclef, k16bid
     character(len=19) :: cartcf, ligrmo, lchin(3), lchout(1)
@@ -145,6 +146,7 @@ subroutine op0019()
 !   Récupération du nom du maillage associé
     call jeveuo(modnom, 'L', jdnm)
     noma = zk8(jdnm)
+    l_pmesh = isParallelMesh(noma)
 !   Construction des noms jeveux du concept maillage associé
     mlgnma = noma//'.NOMMAI'
     mlgnno = noma//'.NOMNOE'
@@ -270,6 +272,7 @@ subroutine op0019()
 !           verima   getvem(getvtx+verima)
 !   Comptage des GROUP_MA et MAILLE. Pour ne pas faire des ALLOCATE dans la boucle.
     lmax = 10
+    nocc = 0
     do iclf = 1, ACE_NB_MCLEF
         do ioc = 1, nbocc(iclf)
             do icle = 1, ACE_NB_GRMA_MA
@@ -278,11 +281,12 @@ subroutine op0019()
                     mclef = ACE_GRMA_MA( ii )
                     call getvtx(ACE_MCLEF(iclf), mclef, iocc=ioc, nbval=0, nbret=ng)
                     lmax = max(lmax,-ng)
+                    nocc = max(nocc,-ng)
                 endif
             enddo
         enddo
     enddo
-    if ( lmax .le. 0 ) then
+    if ( nocc .le. 0 ) then
         call utmess('F', 'AFFECARAELEM_2')
     endif
 !   Vérification
@@ -599,8 +603,6 @@ subroutine op0019()
             endif
         enddo
     endif
-
-
 ! --------------------------------------------------------------------------------------------------
 !   Audit assignments
     call verif_affe(modele=nomo,sd=nomu)

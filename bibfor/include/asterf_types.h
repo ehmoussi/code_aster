@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,9 @@
 #define aster_logical_kind ASTER_LOGICAL_SIZE
 #define aster_logical logical(kind=aster_logical_kind)
 #define to_aster_logical(a) logical(a, ASTER_LOGICAL_SIZE)
+!
+! convert C "bool" stored as a long (1:true, 0,false) as a logical
+#define int_to_logical(a) transfer(a, .true.)
 !
 #define ASTER_TRUE to_aster_logical(.true.)
 #define ASTER_FALSE to_aster_logical(.false.)

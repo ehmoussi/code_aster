@@ -21,7 +21,7 @@ subroutine dlnewi(result, force0, force1, lcrea, lamort,&
                   iinteg, neq, imat, masse, rigid,&
                   amort, dep0, vit0, acc0, fexte,&
                   famor, fliai, t0, nchar, nveca,&
-                  liad, lifo, modele, mate, carele,&
+                  liad, lifo, modele, mate, mateco, carele,&
                   charge, infoch, fomult, numedd, nume,&
                   solveu, criter, chondp, nondp, numrep, ds_energy,&
                   sd_obsv, mesh)
@@ -120,7 +120,7 @@ implicit none
     character(len=8) :: result
     character(len=19) :: force0, force1
     character(len=19) :: solveu
-    character(len=24) :: modele, mate, carele, charge, infoch, fomult, numedd
+    character(len=24) :: modele, mate, carele, charge, infoch, fomult, numedd, mateco
     character(len=24) :: criter
     character(len=24) :: lifo(*)
     real(kind=8) :: dep0(*), vit0(*), acc0(*), t0, fexte(*), famor(*), fliai(*)
@@ -505,7 +505,7 @@ implicit none
                         istoc, iarchi, nbexci, nondp, nmodam,&
                         lamort, limped, lmodst, imat, masse,&
                         rigid, amort, nchar, nveca, liad,&
-                        lifo, modele, mate, carele, charge,&
+                        lifo, modele, mate, mateco, carele, charge,&
                         infoch, fomult, numedd, zr(idepla), zr(ivitea),&
                         zr(iaccea), dep0, vit0, acc0, fexte,&
                         famor, fliai, epl1, zr(ivite1), zr( iacce1),&
@@ -602,7 +602,7 @@ implicit none
 !
     if (istop .eq. 1) then
         call utmess('Z', 'DYNAMIQUE_10', ni=2, vali=vali, nr=2,&
-                    valr=valr, num_except=28)
+                    valr=valr, num_except=TIMELIMIT_ERROR)
     endif
 !
 !     --- DESTRUCTION DES OBJETS DE TRAVAIL ---

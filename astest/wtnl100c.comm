@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,14 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+import code_aster
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter, Options
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
+
+params = ExecutionParameter()
+params.disable(Options.UseLegacyMode)
 
 MAIL=LIRE_MAILLAGE(FORMAT='MED');
 
@@ -186,40 +193,43 @@ RESULIN = PROJ_CHAMP(
 # 2eme methode de projection par macr_adap_mail
 ########
 
-PRE  = [None]*nbinst;
-PREB = [None]*nbinst;
+PRE  = [None] * nbinst
+PREB = [None] * nbinst
 
-for k in range(nbinst) :
+for k in range(nbinst):
+    PRE[k] = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                        OPERATION='EXTR',
+                        RESULTAT=RESU1,
+                        NOM_CHAM='DEPL',
+                        INST=linst[k])
 
-  PRE[k]=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
-                    OPERATION='EXTR',
-                    RESULTAT=RESU1,
-                    NOM_CHAM='DEPL',
-                    INST=linst[k]);
+motcle1 = {}
+motcle2 = {}
 
-motcle1={}
-motcle2={}
+motcle1['MAJ_CHAM'] = []
+motcle2['AFFE'] = []
 
-motcle1['MAJ_CHAM']=[]
-motcle2['AFFE']=[]
+for k in range(nbinst):
+    PREB[k] = CO('PREB_%d' % k)
 
-for k in range(nbinst) :
+    motcle1['MAJ_CHAM'].append(_F(TYPE_CHAM='NOEU_DEPL_R',
+                                  CHAM_GD=PRE[k],
+                                  CHAM_MAJ=PREB[k]))
 
-  PREB[k] =CO('PREB_%d' % (k))
+result = MACR_ADAP_MAIL(ADAPTATION='MODIFICATION',
+                        DEGRE='OUI',
+                        MAILLAGE_N   = MAIL,
+                        MAILLAGE_NP1 = CO('MAILLIN2'),
+                        **motcle1)
 
-  motcle1['MAJ_CHAM'].append(
-  _F(TYPE_CHAM='NOEU_DEPL_R',CHAM_GD  = PRE[k],
-                                  CHAM_MAJ = PREB[k]));
+for k in range(nbinst):
+    motcle2['AFFE'].append(_F(CHAM_GD=getattr(result, 'PREB_%d' % k),
+                              INST=linst[k]))
 
-  motcle2['AFFE'].append(
-  _F(CHAM_GD=PREB[k],INST=linst[k]));
-
-MACR_ADAP_MAIL( ADAPTATION='MODIFICATION',DEGRE='OUI',
-                MAILLAGE_N   = MAIL,
-                MAILLAGE_NP1 = CO('MAILLIN2'),
-                **motcle1);
-
-RESULINB=CREA_RESU(OPERATION='AFFE',TYPE_RESU='EVOL_NOLI',NOM_CHAM='DEPL',**motcle2);
+RESULINB = CREA_RESU(OPERATION='AFFE',
+                     TYPE_RESU='EVOL_NOLI',
+                     NOM_CHAM='DEPL',
+                     **motcle2)
 
 #####
 # On verifie que les 2 methodes de projection donnent le meme resultat
@@ -228,7 +238,7 @@ RESULINB=CREA_RESU(OPERATION='AFFE',TYPE_RESU='EVOL_NOLI',NOM_CHAM='DEPL',**motc
 RESULINC = PROJ_CHAMP(
                METHODE='COLLOCATION',
                RESULTAT=RESULINB,
-               MAILLAGE_1=MAILLIN2,
+               MAILLAGE_1=result.MAILLIN2,
                MAILLAGE_2=MAILLIN,
                NOM_CHAM ='DEPL')
 

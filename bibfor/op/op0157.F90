@@ -220,6 +220,7 @@ implicit none
         call jedetr('&&OP0157.NUME_ORDRE')
         call jedetr('&&OP0157.DISCRET')
     end do
+    call ulopen(-ifi, ' ', fich, ' ', 'O')
 !
     call jedema()
 end subroutine

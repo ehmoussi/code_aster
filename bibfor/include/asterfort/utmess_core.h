@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 !
 interface
     subroutine utmess_core(typ, idmess, nk, valk, ni,&
-                           vali, nr, valr, fname)
+                           vali, nr, valr, nexcep, fname)
         character(len=*), intent(in) :: typ
         character(len=*), intent(in) :: idmess
         integer, intent(in) :: nk
@@ -29,6 +29,7 @@ interface
         integer, intent(in) :: vali(*)
         integer, intent(in) :: nr
         real(kind=8), intent(in) :: valr(*)
+        integer, intent(in) :: nexcep
         character(len=*), intent(in) :: fname
     end subroutine utmess_core
 end interface

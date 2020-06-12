@@ -3,8 +3,8 @@ P memory_limit 256
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist asterxx ci verification sequential
 
 F comm ssnl119c.comm D 1
 F mmed ssnl119b.mmed D 20
-F libr ssnl119b.12 D 12
+F nom  ssnl119b.py   D 0

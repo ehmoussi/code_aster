@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -90,7 +90,6 @@ subroutine imprsd(typesd, nomsd, ific, titre)
         call exisd('CHAM_ELEM_S', ch, i2)
         call exisd('CHAM_NO', ch, i3)
         call exisd('CHAM_ELEM', ch, i4)
-        call exisd('CARTE', ch, i5)
         call exisd('RESUELEM', ch, i6)
 !
 !
@@ -109,16 +108,18 @@ subroutine imprsd(typesd, nomsd, ific, titre)
             call detrsd('CHAM_ELEM_S', chs)
         endif
 !
-        if (i5 .gt. 0) then
-            call carces(ch, 'ELEM', ' ', 'V', chs,&
-                        'A', ib)
+        if (i6 .gt. 0) write (ific,*) 'TYPE : RESUELEM NON TRAITE.'
+!
+    else if (typ2sd.eq.'CARTE') then
+!
+        ch = nomsd
+        call exisd('CARTE', ch, i5)
+        chs = '&&IMPRSD.CHS'
+         if (i5 .gt. 0) then
+            call carces(ch, 'ELEM', ' ', 'V', chs, 'A', ib)
             call cesimp(chs, ific, 0, [0])
             call detrsd('CHAM_ELEM_S', chs)
         endif
-!
-        if (i6 .gt. 0) write (ific,*) 'TYPE : RESUELEM NON TRAITE.'
-!
-!
     else if (typ2sd.eq.'TABLE') then
 !     --------------------------------------
         table=nomsd
@@ -126,9 +127,9 @@ subroutine imprsd(typesd, nomsd, ific, titre)
         call jeveuo(table//'  .TBLP', 'L', vk24=tblp)
         npara=tbnp(1)
         AS_ALLOCATE(vk16=lipara, size=npara)
-        do 1, k=1,npara
-        lipara(k)=tblp(4*(k-1)+1)
- 1      continue
+        do k=1,npara
+            lipara(k)=tblp(4*(k-1)+1)(1:16)
+        end do
         call tbimpr(table, 'ASTER', ific, npara, lipara,&
                     0, '1PE12.5')
         AS_DEALLOCATE(vk16=lipara)

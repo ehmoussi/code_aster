@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -22,8 +22,11 @@
 # D'USURE PAR DES CHOCS
 # FICHIER MODELE GEVIBUS
 # person_in_charge: andre.adobes at edf.fr
-#-------------------------------------------------------------------
-#
+from code_aster.Commands import *
+from code_aster.Utilities import ExecutionParameter
+
+from math import log
+
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 #
 
@@ -33,7 +36,7 @@ MODI_MAILLAGE(reuse=TUBE, MAILLAGE=TUBE,ABSC_CURV=_F(NOEUD_ORIG='N_01_001',TOUT=
 TUBE=DEFI_GROUP( reuse=TUBE,   MAILLAGE=TUBE,
                        CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'),
                        CREA_GROUP_NO =_F(NOEUD = 'N_04_001',
-                                         NOM = 'G_NO_04'),);
+                                         NOM = 'G_NO_04'),)
 
 
 #
@@ -78,12 +81,11 @@ PROFVIT1=DEFI_FONCTION(  NOM_PARA='ABSC',
 'N_05_005'  , 'N_05_012'  , 'N_05_015'  , 'N_06_001'  , 'N_06_007'  , )
 )
 
-import aster_core
 
 def includeExternalData(theFile):
     """Retrieve a file in the external data folder"""
     import os.path as osp
-    rcdir = aster_core.get_option('rcdir')
+    rcdir = ExecutionParameter().get_option('rcdir')
     return osp.join(rcdir, 'tests_data', theFile)
 
 CD = includeExternalData('sdll110a.70')
@@ -427,7 +429,7 @@ TPSB=PROJ_SPEC_BASE( SPEC_TURB=TSPC1,
 
 VECTINT=GENE_FONC_ALEA(INTE_SPEC=TPSB,
                        INTERPOL='NON',
-                       NB_POIN=N_POIN_1,
+                       NB_POIN=int(N_POIN_1),
                        INIT_ALEA = 272170,
                        INFO=1,
                        NB_TIRAGE=NB_TIR,
@@ -646,46 +648,46 @@ FIN( )
 #  Par exemple, en 6.2.17, avec une variation de 0.17 pourcent sur
 #  les TEST_RESU de TABLE, on bouge de 17 pourcent sur ceux de USURE.
 
-TEST_TABLE(  TABLE=USURE,
-             REFERENCE = 'NON_DEFINI',
-               VERSION = '6.1.18',
-             PRECISION = 2.E-2,
-              NOM_PARA = 'PUIS_USUR_GLOBAL',
-# sur SOLARIS: VALE =  7.94189E-11
-# sur CLASTER: VALE =  8.26558E-11
-                  VALE = 8.103735E-11     )
+#TEST_TABLE(  TABLE=USURE,
+             #REFERENCE = 'NON_DEFINI',
+               #VERSION = '6.1.18',
+             #PRECISION = 2.E-2,
+              #NOM_PARA = 'PUIS_USUR_GLOBAL',
+## sur SOLARIS: VALE =  7.94189E-11
+## sur CLASTER: VALE =  8.26558E-11
+                  #VALE = 8.103735E-11     )
 
-TEST_TABLE(  TABLE=USURE,
-             FILTRE=_F(  NOM_PARA = 'INST',
-                         VALE     = 1.0   ),
-             REFERENCE = 'NON_DEFINI',
-               VERSION = '6.1.18',
-             PRECISION = 2.E-2,
-              NOM_PARA = 'V_USUR_TUBE',
-# sur SOLARIS: VALE =  1.58838E-10
-# sur CLASTER: VALE =  1.65312E-10
-                  VALE = 1.62075E-10     )
+#TEST_TABLE(  TABLE=USURE,
+             #FILTRE=_F(  NOM_PARA = 'INST',
+                         #VALE     = 1.0   ),
+             #REFERENCE = 'NON_DEFINI',
+               #VERSION = '6.1.18',
+             #PRECISION = 2.E-2,
+              #NOM_PARA = 'V_USUR_TUBE',
+## sur SOLARIS: VALE =  1.58838E-10
+## sur CLASTER: VALE =  1.65312E-10
+                  #VALE = 1.62075E-10     )
 
-TEST_TABLE(  TABLE=USURE,
-             FILTRE=_F(  NOM_PARA = 'INST',
-                         VALE     = 5.0   ),
-             REFERENCE = 'NON_DEFINI',
-               VERSION = '6.1.18',
-             PRECISION = 2.E-2,
-              NOM_PARA = 'V_USUR_TUBE',
-# sur SOLARIS: VALE =  7.94189E-10
-# sur CLASTER: VALE =  8.26558E-10
-                  VALE = 8.103735E-10     )
+#TEST_TABLE(  TABLE=USURE,
+             #FILTRE=_F(  NOM_PARA = 'INST',
+                         #VALE     = 5.0   ),
+             #REFERENCE = 'NON_DEFINI',
+               #VERSION = '6.1.18',
+             #PRECISION = 2.E-2,
+              #NOM_PARA = 'V_USUR_TUBE',
+## sur SOLARIS: VALE =  7.94189E-10
+## sur CLASTER: VALE =  8.26558E-10
+                  #VALE = 8.103735E-10     )
 
-TEST_TABLE(  TABLE=USURE,
-             FILTRE=_F(  NOM_PARA = 'INST',
-                         VALE     = 10.0  ),
-             REFERENCE = 'NON_DEFINI',
-               VERSION = '6.1.18',
-             PRECISION = 2.E-2,
-              NOM_PARA = 'V_USUR_TUBE',
-# sur SOLARIS: VALE =  1.58838E-09
-# sur CLASTER: VALE =  1.65312E-09
-                  VALE = 1.62075E-09     )
+#TEST_TABLE(  TABLE=USURE,
+             #FILTRE=_F(  NOM_PARA = 'INST',
+                         #VALE     = 10.0  ),
+             #REFERENCE = 'NON_DEFINI',
+               #VERSION = '6.1.18',
+             #PRECISION = 2.E-2,
+              #NOM_PARA = 'V_USUR_TUBE',
+## sur SOLARIS: VALE =  1.58838E-09
+## sur CLASTER: VALE =  1.65312E-09
+                  #VALE = 1.62075E-09     )
 
 #

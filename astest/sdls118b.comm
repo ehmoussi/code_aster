@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -212,8 +212,10 @@ AMORT=COMB_MATR_ASSE(CALC_AMOR_GENE=_F(MASS_GENE = MASSGEN,
 # #
 # ACCELEROGRAMME SELON SPECTRE EUR POUR SOL DUR (ROCHER)
 #
-INCLUDE(UNITE=34,);
-INCLUDE(UNITE=35,);
+
+from sdls118b import F_FONC
+ACCE1, ACCE2 =F_FONC()
+
 ACCE_X=CALC_FONCTION(COMB=_F(FONCTION=ACCE1,
                             COEF=9.8100000000000005,),);
 ACCE_X2=CALC_FONCTION(COMB=_F(FONCTION=ACCE2,

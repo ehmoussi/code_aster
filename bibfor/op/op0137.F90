@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,11 +50,11 @@ subroutine op0137()
     if (repons .eq. 'OUI') then
         idebug = 1
         call utmess('I', 'SUPERVIS_44', sk='JEVEUX')
-        call jdcset('jeveux', 1)
+        call jdcset('dbgjeveux', 1)
     else if (repons .eq. 'NON') then
         idebug = 0
         call utmess('I', 'SUPERVIS_43', sk='JEVEUX')
-        call jdcset('jeveux', 0)
+        call jdcset('dbgjeveux', 0)
     endif
 !
 !

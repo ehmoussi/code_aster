@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@ subroutine fointc(codmes, nomf, nbpu, nompu, valpu,&
                   resure, resuim, ier)
     implicit none
 #include "jeveux.h"
-#include "asterc/fiintfc.h"
 #include "asterc/r8prem.h"
 #include "asterc/r8vide.h"
+#include "asterfort/fiintf.h"
 #include "asterfort/folocx.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jelira.h"
@@ -94,8 +94,8 @@ subroutine fointc(codmes, nomf, nbpu, nompu, valpu,&
 !        -- SI LA FONCTION EST REELLE, FIINTF NE CALCULE QUE
 !           RESU(1). IL FAUT DONC INITIALISER RESU(2).
         resu(2)=0.d0
-        call fiintfc(nomf, nbpu, nompu, valpu, ier,&
-                     'A', resu)
+        call fiintf(nomf, nbpu, nompu, valpu, ier,&
+                    'A', resu)
         if (ier .gt. 0) then
             ier = 110
             goto 999

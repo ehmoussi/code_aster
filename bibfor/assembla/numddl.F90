@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,6 +21,9 @@ subroutine numddl(nume_ddlz, base, nb_matr, list_matr)
 implicit none
 !
 #include "asterfort/as_deallocate.h"
+#include "asterfort/crnulg.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/gettco.h"
 #include "asterfort/infniv.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/nueffe.h"
@@ -58,6 +61,9 @@ implicit none
     integer :: i_matr
     character(len=4) :: renum
     character(len=8) :: nomres
+    character(len=8) :: nommai, nommod
+    character(len=14) :: nume_ddl
+    character(len=16) :: typsd
     character(len=16) :: typres,nomcom
 !
 ! --------------------------------------------------------------------------------------------------
@@ -81,6 +87,14 @@ implicit none
     endif
 
     call nueffe(nb_ligr, list_ligr, base, nume_ddlz, renum)
+!
+    call dismoi('NOM_MODELE', list_matr_elem(1), 'MATR_ELEM', repk=nommod)
+    call dismoi('NOM_MAILLA', nommod, 'MODELE', repk=nommai)
+    call gettco(nommai, typsd)
+    if( typsd.eq.'MAILLAGE_P' ) then
+        nume_ddl = nume_ddlz
+        call crnulg(nume_ddl)
+    endif
 !
     AS_DEALLOCATE(vk24 = list_ligr)
 !

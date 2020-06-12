@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine merime(modelz, nchar, lchar, mate, carelz,&
+subroutine merime(modelz, nchar, lchar, mater, mateco, carelz,&
                   time, compoz, matelz, nh,&
                   basz)
 !
@@ -46,8 +46,9 @@ subroutine merime(modelz, nchar, lchar, mate, carelz,&
 #include "asterfort/getvtx.h"
     integer :: nchar, nh
     character(len=*) :: modelz, carelz, matelz
-    character(len=*) :: lchar(*), mate, basz, compoz
+    character(len=*) :: lchar(*), mateco, basz, compoz
     real(kind=8), intent(in) :: time
+    character(len=*), intent(in) :: mater
 !
 ! ----------------------------------------------------------------------
 !
@@ -58,7 +59,8 @@ subroutine merime(modelz, nchar, lchar, mate, carelz,&
 ! IN  MODELE : NOM DU MODELE
 ! IN  NCHAR  : NOMBRE DE CHARGES
 ! IN  LCHAR  : LISTE DES CHARGES
-! IN  MATE   : CARTE DE MATERIAU
+! IN  MATECO : CARTE DE MATERIAU CODE
+! IN  MATER  : CHAMP MATERIAU
 ! IN  CARELE : CHAMP DE CARAC_ELEM
 ! IN  MATELZ : NOM DU MATR_ELEM RESULTAT
 ! IN  TIME   : INSTANT DE CALCUL
@@ -127,13 +129,13 @@ subroutine merime(modelz, nchar, lchar, mate, carelz,&
 ! --- CHAMP DES VARIABLES DE COMMANDE
 !
     if (nomcmd .eq. 'MECA_STATIQUE' .or. nomcmd .eq. 'CALC_MATR_ELEM') then
-        call vrcins(modele, mate, carele, time, chvarc,&
+        call vrcins(modele, mater, carele, time, chvarc,&
                     codret)
     endif
 !
 ! --- PREPARATION DES MATRICES ELEMENTAIRES
 !
-    call memare(base, matele, modele, mate, carele,&
+    call memare(base, matele, modele, mater, carele,&
                 option)
 !     SI LA RIGIDITE EST CALCULEE SUR LE MODELE, ON ACTIVE LES S_STRUC:
     call jeveuo(matele//'.RERR', 'E', vk24=rerr)
@@ -191,7 +193,7 @@ subroutine merime(modelz, nchar, lchar, mate, carelz,&
         lpain(1) = 'PGEOMER'
         lchin(1) = chgeom(1:19)
         lpain(2) = 'PMATERC'
-        lchin(2) = mate(1:19)
+        lchin(2) = mateco(1:19)
         lpain(3) = 'PCAORIE'
         lchin(3) = chcara(1)(1:19)
         lpain(4) = 'PCADISK'

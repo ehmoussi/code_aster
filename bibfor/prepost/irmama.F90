@@ -25,6 +25,7 @@ subroutine irmama(meshNameZ , meshNbCell  ,&
 implicit none
 !
 #include "asterfort/assert.h"
+#include "asterfort/existGrpMa.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelira.h"
@@ -53,8 +54,9 @@ integer, pointer :: cellFlag(:)
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: meshName
-    integer :: iCell, cellNume, iGrCell, iret, grCellNbCell
+    integer :: iCell, cellNume, iGrCell, grCellNbCell
     integer, pointer :: listCell(:) => null()
+    aster_logical :: l_exi_in_grp, l_exi_in_grp_p
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -88,8 +90,8 @@ integer, pointer :: cellFlag(:)
 !
     if (nbGrCell .ne. 0) then
         do iGrCell = 1, nbGrCell
-            call jeexin(jexnom(meshName//'.GROUPEMA', grCellName(iGrCell)), iret)
-            if (iret .eq. 0) then
+            call existGrpMa(meshName, grCellName(iGrCell), l_exi_in_grp, l_exi_in_grp_p)
+            if(.not.l_exi_in_grp) then
                 call utmess('A', 'RESULT3_10', sk=grCellName(iGrCell))
                 grCellName(iGrCell) = ' '
             else

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,10 @@
 !
 !
 interface
-    subroutine getvid_wrap(motfac, motcle, iocc, iarg, mxval,&
-                           idval, nbval)
+    subroutine getvid_wrap(motfac, motcle, iocc, mxval, idval, nbval)
         character(len=*) :: motfac
         character(len=*) :: motcle
         integer :: iocc
-        integer :: iarg
         integer :: mxval
         character(len=*) :: idval(*)
         integer :: nbval

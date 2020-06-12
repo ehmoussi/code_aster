@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 # person_in_charge: thomas.de-soza at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macr_recal_prod(self,**args ):
@@ -32,7 +32,7 @@ def macr_recal_prod(self,**args ):
     return listr8_sdaster
 
 MACR_RECAL = MACRO(nom="MACR_RECAL",
-                   op=OPS('Macro.macr_recal_ops.macr_recal_ops'),
+                   op=OPS('code_aster.MacroCommands.macr_recal_ops.macr_recal_ops'),
                    sd_prod=macr_recal_prod,
                    fr=tr("Réalise le recalage des calculs Aster sur des résultats expérimentaux "
                         "ou sur d'autres résultats de calculs"),
@@ -68,7 +68,7 @@ MACR_RECAL = MACRO(nom="MACR_RECAL",
              FORMAT          =SIMP(statut='f',typ='TXM',defaut='XMGRACE',into=("XMGRACE","GNUPLOT"),),
              AFFICHAGE       =SIMP(statut='f',typ='TXM',defaut='TOUTE_ITERATION',into=("TOUTE_ITERATION","ITERATION_FINALE"),),
 
-             UNITE           =SIMP(statut='f',typ=UnitType(),val_min=10,val_max=90,defaut=29, inout='out',
+             UNITE           =SIMP(statut='f',typ=UnitType(),defaut=29, inout='out',
                             fr=tr("Unité logique définissant le fichier (fort.N) dans lequel on écrit")),
              b_pilote = BLOC(condition = """equal_to("FORMAT", 'XMGRACE')""", fr=tr("Mots-clés propres à XMGRACE"),
                  PILOTE          =SIMP(statut='f',typ='TXM',defaut='',
@@ -125,7 +125,7 @@ MACR_RECAL = MACRO(nom="MACR_RECAL",
             LANCEMENT         =SIMP(statut='f', typ='TXM', defaut='INCLUSION',into=("DISTRIBUTION","INCLUSION"),),
 
             b_eval_distrib =BLOC(condition = """equal_to("LANCEMENT", 'DISTRIBUTION')""",
-                UNITE_SUIVI   =SIMP(statut='f', typ=UnitType(),val_min=10,val_max=99,defaut=29, inout='out',
+                UNITE_SUIVI   =SIMP(statut='f', typ=UnitType(),defaut=29, inout='out',
                                   fr=tr("Affichage de l'output et/ou error des jobs esclaves dans ce fichier")),
                 MODE          =SIMP(statut='f', typ='TXM',      into=("INTERACTIF","BATCH"),),
                 MEMOIRE       =SIMP(statut='f', typ='I',            fr=tr("Memoire demandee pour les calculs esclaves (Mo)")),

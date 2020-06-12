@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine memame(option , model_    , mate_, cara_elem_, time,&
+subroutine memame(option , model_    , mate_, mateco_, cara_elem_, time,&
                   compor_, matr_elem_, base)
 !
 implicit none
@@ -46,7 +46,7 @@ implicit none
 !
     character(len=*), intent(in) :: option
     character(len=*), intent(in) :: model_
-    character(len=*), intent(in) :: mate_
+    character(len=*), intent(in) :: mate_, mateco_
     character(len=*), intent(in) :: cara_elem_
     real(kind=8), intent(in) :: time
     character(len=*), intent(in) :: compor_
@@ -80,7 +80,7 @@ implicit none
     character(len=24) :: chgeom, chcara(18), chharm
     integer :: nbout2, nbin, nh, iret, icode, nb_subs_stat
     aster_logical :: l_xfem
-    character(len=24) :: cara_elem, mate
+    character(len=24) :: cara_elem, mate, mateco
     character(len=8) :: model
 !
 ! --------------------------------------------------------------------------------------------------
@@ -92,6 +92,7 @@ implicit none
     model     = model_
     cara_elem = cara_elem_
     mate      = mate_
+    mateco    = mateco_
     matr_elem = matr_elem_
     nh        = 0
     ligrmo    = model(1:8)//'.MODELE'
@@ -103,7 +104,7 @@ implicit none
 ! - Init fields
 !
     call inical(nb_in_maxi, lpain, lchin, nbout, lpaout,&
-                lchout    )   
+                lchout    )
 !
 ! - Create fields (geometry, elem. characteristics, Fourier)
 !
@@ -134,7 +135,7 @@ implicit none
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = mate(1:19)
+    lchin(2) = mateco(1:19)
     lpain(3) = 'PCAORIE'
     lchin(3) = chcara(1)(1:19)
     lpain(4) = 'PCADISM'

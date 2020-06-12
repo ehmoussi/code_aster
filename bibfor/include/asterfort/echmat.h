@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine echmat(matz, ldist, rmin, rmax)
+    subroutine echmat(matz, ldist, lmhpc, rmin, rmax)
         character(len=*) :: matz
         aster_logical :: ldist
+        aster_logical :: lmhpc
         real(kind=8) :: rmin
         real(kind=8) :: rmax
     end subroutine echmat

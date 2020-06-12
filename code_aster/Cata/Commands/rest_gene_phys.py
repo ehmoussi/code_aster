@@ -19,19 +19,22 @@
 
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
-def rest_gene_phys_prod(RESU_GENE,**args ):
+def rest_gene_phys_prod(RESU_GENE, **args):
   if args.get('__all__'):
       return (dyna_trans, mode_meca, dyna_harmo)
-  if AsType(RESU_GENE) == tran_gene : return dyna_trans
-  if AsType(RESU_GENE) == mode_gene : return mode_meca
-  if AsType(RESU_GENE) == harm_gene : return dyna_harmo
+  if AsType(RESU_GENE) == tran_gene:
+    return dyna_trans
+  if AsType(RESU_GENE) == mode_gene:
+    return mode_meca
+  if AsType(RESU_GENE) == harm_gene:
+    return dyna_harmo
 
-  raise AsException("type de concept resultat non prevu")
+  raise Exception("Unknown result type")
 
 REST_GENE_PHYS=OPER(nom="REST_GENE_PHYS",op=  75,sd_prod=rest_gene_phys_prod,
                     fr=tr("Restituer dans la base physique des résultats en coordonnées généralisées"),

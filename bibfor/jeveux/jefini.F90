@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,9 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine jefini(cond,arg_rank)
+subroutine jefini(cond,close)
 ! person_in_charge: j-pierre.lefebvre at edf.fr
     implicit none
+#include "asterf_types.h"
 #include "jeveux_private.h"
 #include "asterc/asabrt.h"
 #include "asterc/xfini.h"
@@ -33,10 +34,8 @@ subroutine jefini(cond,arg_rank)
 #include "asterfort/utgtme.h"
 #include "asterfort/utmess.h"
 
-#include "asterc/rmfile.h"
-
     character(len=*) :: cond
-    integer, intent(in), optional :: arg_rank
+    aster_logical, intent(in), optional :: close
 ! ======================================================================
 !
     integer :: i, n
@@ -65,19 +64,17 @@ subroutine jefini(cond,arg_rank)
     real(kind=8) :: mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio, cuvtrav
     common /r8dyje/ mxdyn, mcdyn, mldyn, vmxdyn, vmet, lgio(2), cuvtrav
 !     ==================================================================
-    integer :: vali(7), info, ifm, ires, iret, rank
+    integer :: vali(7), info, ifm, ires, iret
+    aster_logical :: close_base
     character(len=8) :: kcond, staou, k8tab(3)
     character(len=24) :: ladate
     real(kind=8) :: rval(3)
 !     ------------------------------------------------------------------
 !
-    if (present(arg_rank)) then
-       rank=arg_rank
+    if (present(close)) then
+       close_base = close
     else
-!
-!   SI L'ARGUMENT N'EST PAS PRESENT, ON N'EFFECTUE PAS D'ECRITURE rank=1
-!
-       rank=1
+       close_base = ASTER_FALSE
     endif
 !
 
@@ -95,13 +92,13 @@ subroutine jefini(cond,arg_rank)
     k8tab(2)='MEM_TOTA'
     call utgtme(2, k8tab, rval, iret)
 !
-    if (rval(1) .gt. 0) then
-        if (rval(2) .lt. rval(1)) then
-            call utmess('I', 'JEVEUX1_77', nr=2, valr=rval)
-        else if (rval(2) - rval(1) .gt. 0.5d0 * rval(1)) then
-            call utmess('I', 'JEVEUX1_78', nr=2, valr=rval)
-        endif
-    endif
+!    if (rval(1) .gt. 0) then
+!        if (rval(2) .lt. rval(1)) then
+!            call utmess('I', 'JEVEUX1_77', nr=2, valr=rval)
+!        else if (rval(2) - rval(1) .gt. 0.5d0 * rval(1)) then
+!            call utmess('I', 'JEVEUX1_78', nr=2, valr=rval)
+!        endif
+!    endif
 !
 !     -------------  EDITION DES REPERTOIRES ---------------------------
     if (kcond .eq. 'TEST    ') then
@@ -115,8 +112,8 @@ subroutine jefini(cond,arg_rank)
     endif
 !     -------------  LIBERATION FICHIER --------------------------------
     if (kcond .ne. 'ERREUR  ') then
-        if (rank.eq.0) then
-            info = 1
+        if ( close_base ) then
+            info = 0
             do i = 1, nbfic
                 if (classe(i:i) .ne. ' ') then
                     call jelibf(staou, classe(i:i), info)

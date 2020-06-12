@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,12 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine execop()
+subroutine execop(num)
 use superv_module, only: superv_before, superv_after
     implicit none
 !     EXECUTION DE LA COMMANDE
 !     ------------------------------------------------------------------
 !     COMMON POUR LE NIVEAU D'"INFO"
+#include "asterf.h"
 #include "asterc/etausr.h"
 #include "asterc/gcecdu.h"
 #include "asterc/uttrst.h"
@@ -33,6 +34,8 @@ use superv_module, only: superv_before, superv_after
 #include "asterfort/sigusr.h"
 #include "asterfort/utmess.h"
 #include "asterfort/uttcpg.h"
+    integer, intent(in), optional :: num
+!
     integer :: nivuti, nivpgm, unite
     common /inf001/ nivuti,nivpgm,unite
 !
@@ -40,10 +43,10 @@ use superv_module, only: superv_before, superv_after
     real(kind=8) :: tpres
 !     ------------------------------------------------------------------
 !
-    call gcecdu(nuoper)
-!
-    if (nuoper .eq. 9999) then
-        call op9999()
+    if (present(num)) then
+        nuoper = num
+    else
+        call gcecdu(nuoper)
     endif
 !
 !     -- ON NOTE LA MARQUE AVANT D'APPELER LA PROCHAINE COMMANDE :
@@ -64,7 +67,7 @@ use superv_module, only: superv_before, superv_after
         call opsexe(nuop2)
     else if (nuoper.lt. 200) then
         call ex0000(nuoper)
-    else if (nuoper.ne.9999) then
+    else
         call utmess('E', 'SUPERVIS_61', si=nuoper)
     endif
 !
@@ -76,7 +79,7 @@ use superv_module, only: superv_before, superv_after
 !
     call uttrst(tpres)
     if (tpres .lt. 0.d0) then
-        call utmess('Z', 'SUPERVIS_63', sr=-tpres, num_except=28)
+        call utmess('Z', 'SUPERVIS_63', sr=-tpres, num_except=TIMELIMIT_ERROR)
     endif
 !
 !     -- CONTROLE DE L'APPARIEMMENT DES JEMARQ/JEDEMA

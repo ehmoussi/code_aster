@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -38,17 +38,12 @@ subroutine ib0mai()
     integer :: lfic(n), mfic
     common /fenvje/  lfic,mfic
 !
-    integer :: nexcep
-    common /utexc /  nexcep
-!     ------------------------------------------------------------------
     character(len=8) :: nomf, k8tab(4)
     integer :: unmega, idebug, iret, lois
-    integer :: mxdyn, ibid
+    integer :: mxdyn
     real(kind=8) :: valr(4), moctet, memory, sizf
 !
     call ib1mai()
-    nexcep = 0
-    ibid = 0
 !
     call r8inir(4, 0.d0, valr, 1)
 !     --- MEMOIRE POUR LE GESTIONNAIRE D'OBJET ---

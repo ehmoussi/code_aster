@@ -19,17 +19,22 @@
 /* person_in_charge: mathieu.courtois at edf.fr */
 
 #include "aster.h"
-#include "aster_fort.h"
-#include "aster_mpi.h"
-#include "aster_utils.h"
-#include "aster_fort.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef _USE_MPI
+#   include "mpi.h"
 #ifdef OPEN_MPI
-#include <dlfcn.h>
+#   include <dlfcn.h>
 #endif
+#endif
+
+#include "aster_mpi.h"
+#include "aster_fort_mpi.h"
+#include "aster_fort_utils.h"
+#include "aster_utils.h"
 
 /*! Global object that store the entire tree */
 static aster_comm_t aster_mpi_world;
@@ -65,8 +70,8 @@ void aster_mpi_init(int argc, char **argv)
 {
     /*! MPI initialization */
 #ifdef _USE_MPI
-
     printf("MPI_Init...\n");
+    int isdone;
 #ifdef OPEN_MPI
     void *handle = 0;
     int mode = RTLD_NOW | RTLD_GLOBAL;
@@ -81,7 +86,13 @@ void aster_mpi_init(int argc, char **argv)
     if (!handle) handle = dlopen("libmpi.so.0", mode);
     if (!handle) handle = dlopen("libmpi.so",   mode);
 #endif
-    AS_ASSERT(MPI_Init(&argc, &argv) == MPI_SUCCESS);
+    MPI_Initialized(&isdone);
+    if(! isdone) {
+        printf("calling MPI_Init...\n");
+        AS_ASSERT(MPI_Init(&argc, &argv) == MPI_SUCCESS);
+    } else {
+        printf("MPI is already initialized.\n");
+    }
     AS_ASSERT(atexit(terminate) == 0);
     /* set the error handler */
     AS_ASSERT(MPI_Comm_create_errhandler(errhdlr_func, &errhdlr) == MPI_SUCCESS);
@@ -216,7 +227,8 @@ int aster_set_mpi_barrier(aster_comm_t *node) {
         // valk = MakeCStrFromFStr("MPI_Barrier", VALK_SIZE);
         valk = MakeTabFStr(1, VALK_SIZE);
         SetTabFStr(valk, 0, "MPI_Barrier", VALK_SIZE);
-        CALL_UTMESS_CORE("I", "APPELMPI_83", &n1, valk, &n0, &ibid, &n0, &rbid, " ");
+        CALL_UTMESS_CORE("I", "APPELMPI_83", &n1, valk, &n0,
+                         &ibid, &n0, &rbid, &n0, " ");
         FreeStr(valk);
         return 1;
     }
@@ -244,6 +256,19 @@ int aster_mpi_gather(void *sendbuf, int sendcnt, MPI_Datatype sendtype,
     AS_ASSERT(MPI_Gather(sendbuf, sendcnt, sendtype,
                          recvbuf, recvcnt, recvtype,
                          root, node->id) == MPI_SUCCESS);
+#endif
+    return 0;
+}
+
+int aster_mpi_allgather(void *sendbuf, int sendcnt, MPI_Datatype sendtype,
+                        void *recvbuf, int recvcnt, MPI_Datatype recvtype,
+                        aster_comm_t *node) {
+    /*! Gathers together values from a group of processes */
+#ifdef _USE_MPI
+    DEBUG_MPI("MPI_Gather: %d gathered values by all %d\n", sendcnt, -1);
+    AS_ASSERT(MPI_Allgather(sendbuf, sendcnt, sendtype,
+                            recvbuf, recvcnt, recvtype,
+                            node->id) == MPI_SUCCESS);
 #endif
     return 0;
 }
@@ -434,6 +459,40 @@ void DEFPPPPP(ASMPI_RECV_I4, asmpi_recv_i4, ASTERINTEGER4 *buf, ASTERINTEGER4 *c
     mpicom = MPI_Comm_f2c(*comm);
     AS_ASSERT(MPI_Recv((void *)buf, *count, MPI_INTEGER4,
                        *source, *tag, mpicom, MPI_STATUS_IGNORE) == MPI_SUCCESS);
+#endif
+    return;
+}
+
+/*
+ * Wrapper around MPI_ISend
+ * Do not check returncode because all errors raise
+ */
+void DEFPPPPPP(ASMPI_ISEND_I, asmpi_isend_i, ASTERINTEGER *buf, ASTERINTEGER4 *count,
+               ASTERINTEGER4 *dest, ASTERINTEGER4 *tag, MPI_Fint *comm, MPI_Fint *request) {
+    MPI_Comm mpicom;
+    MPI_Request mpireq;
+#ifdef _USE_MPI
+    mpicom = MPI_Comm_f2c(*comm);
+    AS_ASSERT(MPI_Isend((void *)buf, *count, MPI_INTEGER8,
+                        *dest, *tag, mpicom, &mpireq) == MPI_SUCCESS);
+    *request = MPI_Request_c2f(mpireq);
+#endif
+    return;
+}
+
+/*
+ * Wrapper around MPI_IRecv
+ * Do not check returncode because all errors raise
+ */
+void DEFPPPPPP(ASMPI_IRECV_I, asmpi_irecv_i, ASTERINTEGER *buf, ASTERINTEGER4 *count,
+               ASTERINTEGER4 *source, ASTERINTEGER4 *tag, MPI_Fint *comm, MPI_Fint *request) {
+    MPI_Comm mpicom;
+    MPI_Request mpireq;
+#ifdef _USE_MPI
+    mpicom = MPI_Comm_f2c(*comm);
+    AS_ASSERT(MPI_Irecv((void *)buf, *count, MPI_INTEGER8,
+                        *source, *tag, mpicom, &mpireq) == MPI_SUCCESS);
+    *request = MPI_Request_c2f(mpireq);
 #endif
     return;
 }
@@ -721,12 +780,16 @@ void terminate( void )
     ASTERINTEGER dummy=0;
     printf("End of the Code_Aster execution\n");
 #ifdef _USE_MPI
+    int isdone;
     if ( gErrFlg == 0 ) {
         /* see help of asabrt */
-        CALL_ASMPI_CHECK(&dummy);
         printf("Code_Aster MPI exits normally\n");
-        MPI_Errhandler_free(&errhdlr);
-        MPI_Finalize();
+        MPI_Finalized(&isdone);
+        if (! isdone) {
+            CALL_ASMPI_CHECK(&dummy);
+            MPI_Errhandler_free(&errhdlr);
+            MPI_Finalize();
+        }
     } else {
         printf("Code_Aster MPI exits with errors\n");
     }

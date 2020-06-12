@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 
 # person_in_charge: mickael.abbas at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def C_OBSERVATION(PHYSIQUE) :
@@ -61,10 +61,10 @@ def C_OBSERVATION(PHYSIQUE) :
         _Keywords['LIST_INST']      = SIMP(statut='f',typ=listr8_sdaster)
         _Keywords['PAS_OBSE']       = SIMP(statut='f',typ='I')
         _Keywords['CRITERE']        = SIMP(statut='f',typ='TXM',defaut="RELATIF",into=("RELATIF","ABSOLU") )
-        
+
         if _dyna :
             _Keywords['NOM_CHAM'] = SIMP(statut='o',typ='TXM',max=1,
-                                   into=("DEPL","VITE","ACCE",)) 
+                                   into=("DEPL","VITE","ACCE",))
 
         if _meca :
             _Keywords['NOM_CHAM'] = SIMP(statut='o',typ='TXM',max=1,

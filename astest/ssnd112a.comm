@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -503,7 +503,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.797004669567E-07,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=5.0E-3,
                         NOM_PARA='INST',
-                        FONCTION=rho_1,),
+                        FONCTION=rho[1],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03864011492080,
@@ -512,7 +512,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.03864011492080,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=5.0E-3,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,),
+                        FONCTION=gamma[1],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.334290953850E-08,
@@ -521,7 +521,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.334290953850E-08,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.14,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,),
+                        FONCTION=rho[9],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=7.102478026514E-04,
@@ -530,7 +530,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=7.102478026514E-04,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.33,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,),
+                        FONCTION=gamma[9],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.334290953850E-08,
@@ -539,7 +539,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.334290953850E-08,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=1.E-2,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,
+                        FONCTION=rho[9],
                         ),
               )
 
@@ -549,7 +549,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=7.102478026514E-04,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=1.E-2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,
+                        FONCTION=gamma[9],
                         ),
               )
 
@@ -582,7 +582,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.426899803911E-05,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.18,
                         NOM_PARA='INST',
-                        FONCTION=rho_1,),
+                        FONCTION=rho[1],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29717808877422,
@@ -591,7 +591,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29717808877422,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.6,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,),
+                        FONCTION=gamma[1],),
               )
 
 # ce systeme n'evolue plus
@@ -602,7 +602,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=7.868719914876E-07,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.06,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,),
+                        FONCTION=rho[9],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=9.783649775568E-03,
@@ -611,7 +611,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.783649775568E-03,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.07,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,),
+                        FONCTION=gamma[9],),
               )
 
 # systeme 12 active seulement en GDEF ou ROTA_RESEAU
@@ -622,7 +622,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=1.309624971762E-05,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.25,
                         NOM_PARA='INST',
-                        FONCTION=rho_12,),
+                        FONCTION=rho[12],),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.08852079553306,
@@ -631,7 +631,7 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=0.08852079553306,
                         REFERENCE='AUTRE_ASTER',
                         PRECISION=0.21,
                         NOM_PARA='INST',
-                        FONCTION=gamma_12,),
+                        FONCTION=gamma[12],),
               )
 
 # non regression
@@ -646,21 +646,21 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=293.3106488512,
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.426899803911E-05,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho_1,
+                        FONCTION=rho[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.29717808877422,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_1,
+                        FONCTION=gamma[1],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=7.868719914876E-07,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho_9,
+                        FONCTION=rho[9],
                         ),
               )
 
@@ -670,21 +670,21 @@ TEST_FONCTION(VALEUR=_F(VALE_CALC=9.783649775568E-03,
                         REFERENCE='NON_DEFINI',
                         PRECISION=1.E-2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_9,
+                        FONCTION=gamma[9],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=1.309624971762E-05,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=rho_12,
+                        FONCTION=rho[12],
                         ),
               )
 
 TEST_FONCTION(VALEUR=_F(VALE_CALC=0.08852079553306,
                         VALE_PARA=0.2,
                         NOM_PARA='INST',
-                        FONCTION=gamma_12,
+                        FONCTION=gamma[12],
                         ),
               )
 

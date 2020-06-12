@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,15 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
+from code_aster.Commands import *
+from code_aster import AsterError
+
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),
       ERREUR=_F(ERREUR_F='EXCEPTION',), IGNORE_ALARM='SUPERVIS_1', PAR_LOT='NON')
 # ALARME 'SUPERVIS_1' : PAR_LOT='NON' nécessaire pour intercepter l'exception
 
 import aster
-from Utilitai.Utmess import MessageLog
+from code_aster.Messages import MessageLog
 import re
 fmt_raison='-'*80+"""
 
@@ -51,10 +54,12 @@ TSec22b=MACR_CARA_POUTRE(
 try:
     TSec22a=MACR_CARA_POUTRE(
         MAILLAGE=MSec22a, TABLE_CARA='OUI', GROUP_MA_BORD='BORDLIB', NOM='TAB22a', NOEUD='N1',)
-except aster.error as err:
+except AsterError as err:
     print(fmt_raison % str(err))
+
     # on vérifie que l'erreur fatale est bien celle que l'on attendait :
-    if err.id_message == "POUTRE0_11": is_11 = 1
+    if err.id_message == "POUTRE0_11":
+        is_11 = 1
 
 # ==================================================================================================
 # Utilisation des sections pour vérification du déplacement et de la rotation
@@ -82,10 +87,11 @@ try:
             _F(GROUP_FIBRE='GrFib22', GROUP_MA = ('GrSect22',),),
         ),
     )
-except aster.error as err:
+except AsterError as err:
     print(fmt_raison % str(err))
     # on vérifie que l'erreur fatale est bien celle que l'on attendait :
-    if err.id_message == "MODELISA8_6": is_86 = 1
+    if err.id_message == "MODELISA8_6":
+        is_86 = 1
 
 
 # Alarme POUTRE0_12

@@ -38,7 +38,7 @@ class MFrontBehaviour {
     /**
      * \brief Return a vector of the properties names
      */
-    std::vector< std::string > getMaterialPropertiesNames();
+    VectorString getMaterialPropertiesNames();
     ~MFrontBehaviour();
 
   private:
@@ -49,7 +49,7 @@ class MFrontBehaviour {
     //! behaviour
     const std::string _bname;
     //! names of the material properties
-    std::vector< std::string > _mpnames;
+    VectorString _mpnames;
     //! indicator to compute properties names only once
     bool _mpnames_computed;
 
@@ -69,7 +69,7 @@ std::string toAsterParameter( const std::string & );
  * \brief Apply toAsterParameter to the elements of a vector
  * \return a new vector
  */
-std::vector< std::string > toAsterParameterVect( const std::vector< std::string > & );
+VectorString toAsterParameterVect( const VectorString & );
 
 /**
  * \brief Convert a vector of strings into a char** and size
@@ -78,7 +78,7 @@ std::vector< std::string > toAsterParameterVect( const std::vector< std::string 
  * \param[out] size : number of elements in the vector
  * \return char**
  */
-char **vectorOfStringsAsCharArray( const std::vector< std::string > &, unsigned int * );
+char **vectorOfStringsAsCharArray( const VectorString &, unsigned int * );
 
 extern "C" {
 #endif // __cplusplus

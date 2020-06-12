@@ -7,4 +7,4 @@ P testlist verification parallel
 
 F comm sdls119a.comm D 1
 F mmed sdls119a.mmed D 20
-F libr sdls119a.22 D 22
+F nom  sdls119a.py   D 0

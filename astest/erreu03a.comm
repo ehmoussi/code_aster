@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -34,7 +34,8 @@
 # AVEC MUMPS, VALIDATION DE LA VALEUR 'EVAL' DU MOT-CLE GESTION_MEMOIRE
 #########################################################################
 
-import aster
+from code_aster import AsterError
+from code_aster.Commands import *
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),
      DEBUG=_F(SDVERI='OUI'),
@@ -83,7 +84,7 @@ try :
                      SOLVEUR=_F(METHODE='MUMPS',GESTION_MEMOIRE='EVAL',),
                    )
 
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_77":
@@ -99,7 +100,7 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU01, TAB01),),)
+DETRUIRE(CONCEPT=_F(NOM=(TAB01),),)
 
 # 1 : MANQUE DE BLOCAGE DETECTE VIA LE MECANISME NPREC/STOP_SINGULIER
 #     TEST AVEC LDLT/MF/MUMPS. AVEC MUMPS ON TESTE AUSSI LE MECANISME NPREC<0
@@ -111,7 +112,7 @@ try :
                      SOLVEUR=_F(METHODE='LDLT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
 
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_10":
@@ -127,15 +128,13 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU11, TAB11),),)
-
 is_ok = 0
 try :
   RESU12=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
                      EXCIT=( _F(CHARGE = CHAR),),
                      SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_10":
@@ -151,15 +150,13 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU12, TAB12),),)
-
 is_ok = 0
 try :
   RESU130=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
                      EXCIT=( _F(CHARGE = CHAR),),
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=8,STOP_SINGULIER='OUI',),
                    )
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
@@ -175,15 +172,13 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU130, TAB130),),)
-
 is_ok = 0
 try :
   RESU131=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
                      EXCIT=( _F(CHARGE = CHAR),),
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=-8,STOP_SINGULIER='OUI',),
                    )
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_57":
@@ -199,8 +194,6 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU131, TAB131),),)
-
 
 # 2 : REDONDANCE DE BLOCAGES DETECTE VIA LE MECANISME NPREC/STOP_SINGULIER
 #     TEST AVEC LDLT/MF/MUMPS. AVEC MUMPS ON TESTE AUSSI LE MECANISME NPREC<0
@@ -212,7 +205,7 @@ try :
                      SOLVEUR=_F(METHODE='LDLT',NPREC=8,STOP_SINGULIER='OUI',),
                    )
 
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
@@ -228,19 +221,20 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU21, TAB21),),)
+## #issue29549, we let a loop to check the garbage collector
+for i in range(100):
+   is_ok = 0
+   try :
+      RESU22=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
+                        EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
+                        SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=8,STOP_SINGULIER='OUI',),
+                     )
+   except AsterError as err:
+      print(fmt_raison % str(err))
+      # on verifie que l'erreur fatale est bien celle que l'on attendait :
+      if err.id_message == "FACTOR_11":
+         is_ok = 1
 
-is_ok = 0
-try :
-  RESU22=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
-                     EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
-                     SOLVEUR=_F(METHODE='MULT_FRONT',NPREC=8,STOP_SINGULIER='OUI',),
-                   )
-except aster.error as err:
-   print(fmt_raison % str(err))
-   # on verifie que l'erreur fatale est bien celle que l'on attendait :
-   if err.id_message == "FACTOR_11":
-      is_ok = 1
 TAB22=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
                          _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
 TEST_TABLE(REFERENCE='ANALYTIQUE',
@@ -252,15 +246,13 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU22, TAB22),),)
-
 is_ok = 0
 try :
   RESU230=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=1,
                      EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=8,STOP_SINGULIER='OUI',),
                    )
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_11":
@@ -276,15 +268,13 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU230, TAB230),),)
-
 is_ok = 0
 try :
   RESU231=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=2,
                      EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
                      SOLVEUR=_F(METHODE='MUMPS',NPREC=-8,STOP_SINGULIER='OUI',),
                    )
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_42":
@@ -300,15 +290,13 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU231, TAB231),),)
-
 is_ok = 0
 try :
   RESU232=MECA_STATIQUE(MODELE=MO, CHAM_MATER=CHAM_MAT, INFO=2,
                      EXCIT=( _F(CHARGE = CTROP),_F(CHARGE = CHARCI)),
                      SOLVEUR=_F(METHODE='MUMPS',TYPE_RESOL='SYMDEF'),
                    )
-except aster.error as err:
+except AsterError as err:
    print(fmt_raison % str(err))
    # on verifie que l'erreur fatale est bien celle que l'on attendait :
    if err.id_message == "FACTOR_84":
@@ -324,5 +312,4 @@ TEST_TABLE(REFERENCE='ANALYTIQUE',
                      VALE_K='VALEUR  ',),
            )
 
-DETRUIRE(CONCEPT=_F(NOM=(RESU232, TAB232),),)
 FIN();

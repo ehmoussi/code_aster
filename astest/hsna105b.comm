@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -155,7 +155,7 @@ THER0=THER_NON_LINE(MODELE=MOD_THE,
                     ETAT_INIT=_F(VALE=TREF,),);
 
 #2 Calcul thermomecanique
-NBPAS=len(L_REEL.Valeurs());
+NBPAS=len(L_REEL.getValues());
 
 for k in range (1,NBPAS):
 #2.1 Premier pas de chargement
@@ -194,7 +194,7 @@ for k in range (1,NBPAS):
                      OPERATION='EXTR',
                      RESULTAT=RESU_MEC,
                      NOM_CHAM='DEPL',
-                     INST=L_REEL.Valeurs()[k],);
+                     INST=L_REEL.getValues()[k],);
 
 #2.1.5 Projection du champ de deplacement definit sur le maillage mecanique
 #      sur le maillage thermique
@@ -212,7 +212,7 @@ for k in range (1,NBPAS):
                        OPERATION='EXTR',
                        RESULTAT=RESU_MEC,
                        NOM_CHAM='VARI_ELGA',
-                       INST=L_REEL.Valeurs()[k],);
+                       INST=L_REEL.getValues()[k],);
 
 #2.1.7 Creation d'un champ de type source thermique par assemblage
 #      du champ de dissipation mecanique (variable interne V5 de VMIS_JOHN_COOK)
@@ -288,7 +288,7 @@ for k in range (1,NBPAS):
                        MODELE=MOD_MEC,
                        ASSE=_F(CHAM_GD=__chtot,
                                TOUT='OUI',
-                               COEF_R=1./(L_REEL.Valeurs()[k]-L_REEL.Valeurs()[k-1]),),);
+                               COEF_R=1./(L_REEL.getValues()[k]-L_REEL.getValues()[k-1]),),);
 
       DETRUIRE(CONCEPT=_F(NOM=(__chtot,),),
                INFO=1,);
@@ -335,14 +335,14 @@ for k in range (1,NBPAS):
                     OPERATION='EXTR',
                     RESULTAT=RESU_TH,
                     NOM_CHAM='TEMP',
-                    INST=L_REEL.Valeurs()[k-1],);
+                    INST=L_REEL.getValues()[k-1],);
 
 #2.1.13 Creation d'un champ representant la temperature au numero d'ordre 1 par extraction
     __t1=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
                     OPERATION='EXTR',
                     RESULTAT=RESU_TH,
                     NOM_CHAM='TEMP',
-                    INST=L_REEL.Valeurs()[k],);
+                    INST=L_REEL.getValues()[k],);
 
 #2.1.14 Creation d un evol_ther a partir des champs au numero d ordre 0 et 1
 #       pour lequel on modifie les numeros d'ordres 0 --> 1 et 1 --> 2
@@ -352,9 +352,9 @@ for k in range (1,NBPAS):
                     NOM_CHAM='TEMP',
                     OPERATION='AFFE',
                     AFFE=(_F(CHAM_GD=__t0,
-                             INST=L_REEL.Valeurs()[k],),
+                             INST=L_REEL.getValues()[k],),
                           _F(CHAM_GD=__t1,
-                             INST=L_REEL.Valeurs()[k+1],),),);
+                             INST=L_REEL.getValues()[k+1],),),);
 
 #2.2 Pas de chargement suivant
   if (k>1) and (k<NBPAS):
@@ -391,7 +391,7 @@ for k in range (1,NBPAS):
                                    EVOL=__a,
                                    VALE_REF=TREF,),);
 
-    nb_nu_orb=len(RESU_MEC.LIST_VARI_ACCES()['NUME_ORDRE']);
+    nb_nu_orb = RESU_MEC.getNumberOfRanks()
 
 #2.2.5 Calcul mecanique du pas de temps k
     RESU_MEC=STAT_NON_LINE(reuse=RESU_MEC,
@@ -416,7 +416,7 @@ for k in range (1,NBPAS):
                      OPERATION='EXTR',
                      RESULTAT=RESU_MEC,
                      NOM_CHAM='DEPL',
-                     INST=L_REEL.Valeurs()[k],);
+                     INST=L_REEL.getValues()[k],);
 
 #2.2.7 Projection du champ de deplacement definit sur le maillage mecanique
 #      sur le maillage thermique
@@ -435,7 +435,7 @@ for k in range (1,NBPAS):
                        OPERATION='EXTR',
                        RESULTAT=RESU_MEC,
                        NOM_CHAM='VARI_ELGA',
-                       INST=L_REEL.Valeurs()[k],);
+                       INST=L_REEL.getValues()[k],);
 
 #2.2.9 Creation d'un champ de type source thermique par assemblage
 #      du champ de dissipation mecanique (variable interne V5 de VMIS_JOHN_COOK)
@@ -512,7 +512,7 @@ for k in range (1,NBPAS):
                        MODELE=MOD_MEC,
                        ASSE=_F(CHAM_GD=__chtot,
                                TOUT='OUI',
-                               COEF_R=1./(L_REEL.Valeurs()[k]-L_REEL.Valeurs()[k-1]),),);
+                               COEF_R=1./(L_REEL.getValues()[k]-L_REEL.getValues()[k-1]),),);
 
       DETRUIRE(CONCEPT=_F(NOM=(__chtot,),),
                INFO=1,);
@@ -551,7 +551,7 @@ for k in range (1,NBPAS):
 #2.2.13 Calcul thermique du pas de temps k
     RESU_TH=THER_NON_LINE(reuse=RESU_TH,
                           ETAT_INIT=_F(EVOL_THER=RESU_TH,
-                                       INST=L_REEL.Valeurs()[k-1],),
+                                       INST=L_REEL.getValues()[k-1],),
                           CHAM_MATER=MAT_THE,
                           MODELE=MOD_THE,
                           EXCIT=(_F(CHARGE=CH_THE,),
@@ -566,14 +566,14 @@ for k in range (1,NBPAS):
                       OPERATION='EXTR',
                       RESULTAT=RESU_TH,
                       NOM_CHAM='TEMP',
-                      INST=L_REEL.Valeurs()[k-1],);
+                      INST=L_REEL.getValues()[k-1],);
 
 #2.2.15 Creation d'un champ representant la temperature au numero d'ordre k par extraction
       __t1=CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
                       OPERATION='EXTR',
                       RESULTAT=RESU_TH,
                       NOM_CHAM='TEMP',
-                      INST=L_REEL.Valeurs()[k],);
+                      INST=L_REEL.getValues()[k],);
 
 #2.2.16 Creation d un evol_ther a partir des champs au numero d ordre k-1 et k
 #       pour lequel on modifie les numeros d'ordres k-1 --> k et k --> k+1
@@ -581,9 +581,9 @@ for k in range (1,NBPAS):
                       NOM_CHAM='TEMP',
                       OPERATION='AFFE',
                       AFFE=(_F(CHAM_GD=__t0,
-                              INST=L_REEL.Valeurs()[k],),
+                              INST=L_REEL.getValues()[k],),
                             _F(CHAM_GD=__t1,
-                              INST=L_REEL.Valeurs()[k+1],),),);
+                              INST=L_REEL.getValues()[k+1],),),);
 
 ###################################################################
 #           FIN DU CALCUL AVEC COUPLAGE THERMOMECANIQUE           #

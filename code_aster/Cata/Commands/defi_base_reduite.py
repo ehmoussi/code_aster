@@ -20,10 +20,9 @@
 # person_in_charge: mickael.abbas at edf.fr
 #
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 DEFI_BASE_REDUITE=OPER(
     nom="DEFI_BASE_REDUITE",op=53,

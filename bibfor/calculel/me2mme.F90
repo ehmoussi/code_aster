@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine me2mme(modelz, nb_load, lchar, mate, caraz,&
+subroutine me2mme(modelz, nb_load, lchar, mate, mateco, caraz,&
                   time, vect_elem_, nharm, basez)
 ! aslint: disable=W1501
     implicit none
@@ -51,7 +51,7 @@ subroutine me2mme(modelz, nb_load, lchar, mate, caraz,&
 #include "asterfort/me2mme_evol.h"
 !
     character(len=8) :: model, cara_elem, kbid, lcmp(5)
-    character(len=*) :: modelz, caraz, vect_elem_, lchar(*), mate, basez
+    character(len=*) :: modelz, caraz, vect_elem_, lchar(*), mate, mateco, basez
     character(len=19) :: vect_elem
     real(kind=8) :: time
     aster_logical :: lfonc
@@ -256,7 +256,7 @@ subroutine me2mme(modelz, nb_load, lchar, mate, caraz,&
     lpain(1)='PGEOMER'
     lchin(1)=chgeom
     lpain(2)='PMATERC'
-    lchin(2)=mate
+    lchin(2)=mateco
     lpain(3)='PVARCPR'
     lchin(3)=chvarc
 !
@@ -481,7 +481,7 @@ subroutine me2mme(modelz, nb_load, lchar, mate, caraz,&
         if (iret .ne. 0) then
             option='CHAR_MECA_PESA_R'
             lpain(2)='PMATERC'
-            lchin(2)=mate
+            lchin(2)=mateco
             lpain(4)='PPESANR'
             lchin(4)=ligrch(1:13)//'.PESAN.DESC'
             ilires=ilires+1
@@ -496,7 +496,7 @@ subroutine me2mme(modelz, nb_load, lchar, mate, caraz,&
         if (iret .ne. 0) then
             option='CHAR_MECA_ROTA_R'
             lpain(2)='PMATERC'
-            lchin(2)=mate
+            lchin(2)=mateco
             lpain(4)='PROTATR'
             lchin(4)=ligrch(1:13)//'.ROTAT.DESC'
             lpain(15)='PCOMPOR'
@@ -512,7 +512,7 @@ subroutine me2mme(modelz, nb_load, lchar, mate, caraz,&
         call exisd('CHAMP_GD', ligrch(1:13)//'.EPSIN', iret)
         if (iret .ne. 0) then
             lpain(2)='PMATERC'
-            lchin(2)=mate
+            lchin(2)=mateco
             if (lfonc) then
                 option='CHAR_MECA_EPSI_F'
                 lpain(4)='PEPSINF'
@@ -647,7 +647,7 @@ subroutine me2mme(modelz, nb_load, lchar, mate, caraz,&
 
         call jeexin(lchar(i_load)//'.CHME.EVOL.CHAR', ier)
         if (ier.ne.0) then
-            call me2mme_evol(model     , cara_elem, mate       , nharm    , base    ,&
+            call me2mme_evol(model     , cara_elem, mate, mateco,     nharm    , base    ,&
                             i_load    , load_name, ligrmo, inst_prev, inst_curr,&
                             inst_theta, lchout(1), vect_elem)
         endif
@@ -682,7 +682,7 @@ subroutine me2mme(modelz, nb_load, lchar, mate, caraz,&
                     codret)
         option='CHAR_MECA_TEMP_R'
         lpain(2)='PMATERC'
-        lchin(2)=mate
+        lchin(2)=mateco
         lpain(4)='PVARCRR'
         lchin(4)=chvref
         call meharm(model, nharm, chharm)

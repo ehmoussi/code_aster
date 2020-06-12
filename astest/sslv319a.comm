@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -315,6 +315,8 @@ for i_propa in range(nb_pas) :
 
    MAF[i_propa+1]=CO('MAF_%d' %(i_propa+1) )
    MAIT[i_tot+1]=CO('MAIT_%d' %(i_tot+1))
+   # dernier maillage adapté
+   prevmesh = MAIT[i_tot].getName()
 
    PROPA_FISS(METHODE_PROPA='MAILLAGE',
               MAIL_STRUC=MAIT[i_tot], # maillage de la structure (en fait maillage total : feinte)
@@ -349,7 +351,6 @@ for i_propa in range(nb_pas) :
    #                RAFFINEMENT DU MAILLAGE APRES PROPAGATION
    #-----------------------------------------------------------------------------------------
 
-   # feinte : il faut que homard reparte du meme maillage (meme nom) que le dernier NP1
    MAIT[i_tot]= COPIER(CONCEPT= MAIT[i_tot+1])
    DETRUIRE(CONCEPT=_F(NOM=MAIT[i_tot+1]),INFO=1)
 
@@ -396,6 +397,7 @@ for i_propa in range(nb_pas) :
 
       crit = -max(r_raff , 2.*h0/(2.**i_raff) )
 
+      # il faut que MAILLAGE_N corresponde au MAILLAGE_NP1 du passage précédent
       MACR_ADAP_MAIL( ADAPTATION='RAFF_DERA',
 #                      VERSION_HOMARD = 'V10_N',
                       NIVE_MAX = nb_raff,
@@ -404,6 +406,7 @@ for i_propa in range(nb_pas) :
                       CRIT_RAFF_ABS =crit,
                       CRIT_DERA_ABS =crit,
                       USAGE_CMP ='RELATIF',
+                      IDENTIFICATION = prevmesh,
                       MAILLAGE_N   = MAIT[i_tot],
                       MAILLAGE_NP1 = MAIT[i_tot+1],
                       MAJ_CHAM=(_F(TYPE_CHAM='NOEU_NEUT_R',
@@ -412,6 +415,7 @@ for i_propa in range(nb_pas) :
                                 _F(TYPE_CHAM='NOEU_NEUT_R',
                                    CHAM_GD  = LST[i_raff],
                                    CHAM_MAJ = LST[i_raff+1]),),)
+      prevmesh = MAIT[i_tot+1].getName()
 
       DETRUIRE(CONCEPT=_F(NOM=(CHERR,MAIT[i_tot])),INFO=1)
 

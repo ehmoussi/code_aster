@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,11 +17,9 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# person_in_charge: gerald.nicolas at edf.fr
-#
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
 def macr_adap_mail_prod(self, MAJ_CHAM, ADD_CHAM, ADAPTATION, **args):
@@ -62,7 +60,7 @@ def macr_adap_mail_prod(self, MAJ_CHAM, ADD_CHAM, ADAPTATION, **args):
   return None
 
 MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
-                     op=OPS('Macro.macr_adap_mail_ops.macr_adap_mail_ops'),
+                     op=OPS('code_aster.MacroCommands.macr_adap_mail_ops.macr_adap_mail_ops'),
                      sd_prod=macr_adap_mail_prod,
                      fr=tr("Adapter un maillage avec le logiciel HOMARD."),
 #
@@ -81,6 +79,11 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
 #
   b_maillage = BLOC( condition = """ (not equal_to("ADAPTATION", 'LECTURE')) """ ,
                           fr=tr("Lectures de champs aux points de Gauss ou aux noeuds par element."),
+    IDENTIFICATION = SIMP(statut='f',typ='TXM',
+                        fr=tr("Nom du maillage dont on souhaite reprendre "
+                              "l'historique de raffinement dans le cas où "
+                              "MAILLAGE_N en est une légère modification."),
+                        ),
 #
 # 2.2.1. Le concept du maillage final (sortie)
 #
@@ -769,7 +772,7 @@ MACR_ADAP_MAIL=MACRO(nom="MACR_ADAP_MAIL",
   b_unite = BLOC( condition = """is_in("VERSION_HOMARD", ('V11_N','V11_N_PERSO') )""" ,
                                 fr=tr("Fichier supplémentaire."),
 #
-  UNITE = SIMP(statut='f',typ=UnitType(),val_min=1, inout='in',
+  UNITE = SIMP(statut='f',typ=UnitType(), inout='in',
                fr=tr("Unite logique à ajouter à HOMARD.Configuration"),
                ),
 #

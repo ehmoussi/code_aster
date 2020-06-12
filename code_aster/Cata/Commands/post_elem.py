@@ -19,10 +19,9 @@
 
 # person_in_charge: josselin.delmas at edf.fr
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
-
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 def post_elem_prod(CARA_POUTRE,CARA_GEOM,**args):
     if args.get('__all__'):

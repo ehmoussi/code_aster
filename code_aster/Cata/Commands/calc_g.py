@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -18,16 +18,20 @@
 # --------------------------------------------------------------------
 
 # person_in_charge: samuel.geniaut at edf.fr
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
-CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
+CALC_G=OPER(nom="CALC_G",
+            op=100,
+            sd_prod=table_container,
             fr=tr("Calcul du taux de restitution d'énergie par la méthode theta en thermo-élasticité"
                   " et les facteurs d'intensité de contraintes."),
             reentrant='n',
-         THETA          =FACT(statut='o',
+            CHAM_THETA   =SIMP(statut='f',typ=CO, max=1),
+            THETA           =FACT(statut='o',
            FOND_FISS       =SIMP(statut='f',typ=fond_fiss,max=1),
            FISSURE         =SIMP(statut='f',typ=fiss_xfem,max=1),
            NB_POINT_FOND   =SIMP(statut='f',typ='I',val_min=2),
@@ -66,7 +70,7 @@ CALC_G=OPER(nom="CALC_G",op=100,sd_prod=table_sdaster,
                   b_prec_abso=BLOC(condition="""(equal_to("CRITERE", 'ABSOLU'))""",
                       PRECISION       =SIMP(statut='o',typ='R'),),
         ),
-         
+
         EXCIT           =FACT(statut='f',max='**',
             CHARGE          =SIMP(statut='f',typ=(char_meca,char_cine_meca)),
             FONC_MULT       =SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule)),

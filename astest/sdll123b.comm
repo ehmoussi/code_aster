@@ -34,10 +34,13 @@
 #   - TECHNIQUE DE REDUCTION LINEAIRE POUR PASSAGE ASTER/PYTHON
 #   - EN QUADRATIQUE, VARIANTES DE SORENSEN
 
-import aster
-import aster_core
 import numpy as NP
 import numpy.linalg as LA
+from math import pi, sqrt
+
+from code_aster.Commands import *
+import aster
+import aster_core
 
 DEBUT( CODE=_F(NIV_PUB_WEB='INTERNET'),
        PAR_LOT='NON', DEBUG=_F(SDVERI='OUI'))
@@ -168,7 +171,7 @@ masF=MATM.EXTR_MATR()
 #--                                                 --#
 #-----------------------------------------------------#
 
-nom_nume='NUMEDDL'
+nom_nume = NUMEDDL.getName().strip()
 Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
 ind_lag1=[]
 ind_nolag=[]
@@ -412,7 +415,7 @@ amorF=MATC1.EXTR_MATR()
 #--                                                 --#
 #-----------------------------------------------------#
 
-nom_nume='NUMEDDL'
+nom_nume = NUMEDDL.getName().strip()
 Nume=aster.getvectjev(nom_nume.ljust(8)+'      .NUME.DELG        ' )
 ind_lag1=[]
 ind_nolag=[]

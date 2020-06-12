@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine ntdoth(model     , mate   , cara_elem, list_load, result, &
+    subroutine ntdoth(model     , mater  , mateco   , cara_elem, list_load, result, &
                       nume_store, matcst_, coecst_  )
         character(len=24), intent(out) :: model
         character(len=24), intent(out) :: cara_elem
-        character(len=24), intent(out) :: mate
+        character(len=24), intent(out) :: mater, mateco
         character(len=19), intent(inout) :: list_load
         character(len=8), optional, intent(in) :: result
         integer, optional, intent(in) :: nume_store

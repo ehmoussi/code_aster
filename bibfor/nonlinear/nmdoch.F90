@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmdoch(list_load, l_load_user, list_load_resu_)
+subroutine nmdoch(list_load, l_load_user, list_load_resu_, base)
 !
 implicit none
 !
@@ -50,6 +50,7 @@ implicit none
 character(len=19), intent(in) :: list_load
 aster_logical, intent(in) :: l_load_user
 character(len=19), optional, intent(in) :: list_load_resu_
+character(len=1), optional, intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,6 +69,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
     integer, parameter :: nb_info_maxi = 99
     character(len=24) :: list_info_type(nb_info_maxi)
     integer :: n1, npilo, nb_load
+    character(len=1) :: bas
     integer ::  i_excit, i_load, iret, i_load_new
     character(len=4) :: typcal
     character(len=8) :: k8bid, load_type, func_para_inst, const_func
@@ -88,6 +90,10 @@ character(len=19), optional, intent(in) :: list_load_resu_
 !
     call jemarq()
     call getres(k8bid, typesd, nomcmd)
+    bas = 'V'
+    if( present(base) ) then
+        bas = base
+    endif
 !
 ! - Initializations
 !
@@ -146,7 +152,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
 ! - Create "zero-load" list of loads datastructure
 !
     if (nb_load .eq. 0) then
-        call lisccr('MECA', list_load, 1, 'V')
+        call lisccr('MECA', list_load, 1, bas)
         call jeveuo(list_load(1:19)//'.INFC', 'E', vi=v_ll_infc)
         v_ll_infc(1) = 1
     endif
@@ -163,7 +169,7 @@ character(len=19), optional, intent(in) :: list_load_resu_
 !
 ! ----- Create list of loads
 !
-        call lisccr('MECA', list_load, nb_load, 'V')
+        call lisccr('MECA', list_load, nb_load, bas)
 !
 ! ----- List of loads to avoid same loads
 !

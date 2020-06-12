@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -55,13 +55,8 @@ use calcul_module, only : calcul_status
     integer, intent(in), optional :: num_except
     character(len=*), optional :: fname
 !
-!   common used to pass the exception number
-!   TODO: add this argument to utmess_core
-    integer :: nexcep
-    common /utexc/ nexcep
-!
 !   working variables
-    integer :: unk, uni, unr
+    integer :: unk, uni, unr, nexcep
     character(len=256), target :: uvk(1)
 !   because it is not supported by older versions of gfortran, we use two different
 !   calls to utmess_core
@@ -83,6 +78,7 @@ use calcul_module, only : calcul_status
     ASSERT(EXCLUS2(vali,si))
     ASSERT(EXCLUS2(valr,sr))
     ASSERT(absent(num_except) .or. typ == 'Z')
+    nexcep = 0
     if (present(num_except)) then
         nexcep = num_except
     endif
@@ -151,10 +147,10 @@ use calcul_module, only : calcul_status
 !   --------------------------------
     if (use_valk) then
         call utmess_core(typ2, idmess, unk, valk, uni,&
-                         ptri, unr, ptrr, ufname)
+                         ptri, unr, ptrr, nexcep, ufname)
     else
         call utmess_core(typ2, idmess, unk, uvk, uni,&
-                         ptri, unr, ptrr, ufname)
+                         ptri, unr, ptrr, nexcep, ufname)
     endif
 
 !   3. Complement de message pour un calcul elementaire :

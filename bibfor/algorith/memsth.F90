@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine memsth(model_    , cara_elem_, mate_, chtime_, matr_elem, base,&
+subroutine memsth(model_    , cara_elem_, mate_, mateco_, chtime_, matr_elem, base,&
                   varc_curr_, time_curr_)
 !
 implicit none
@@ -40,7 +40,7 @@ implicit none
 !
     character(len=*), intent(in) :: model_
     character(len=*), intent(in) :: cara_elem_
-    character(len=*), intent(in) :: mate_
+    character(len=*), intent(in) :: mate_, mateco_
     character(len=*), intent(in) :: chtime_
     character(len=19), intent(in) :: matr_elem
     character(len=1), intent(in) :: base
@@ -50,7 +50,7 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
 ! Thermic
-! 
+!
 ! Mass matrix
 !
 ! --------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ implicit none
     character(len=8) :: lpain(nb_in_maxi), lpaout(nbout)
     character(len=19) :: lchin(nb_in_maxi), lchout(nbout)
     character(len=16) :: option
-    character(len=24) :: ligrmo, cara_elem, mate, chtime
+    character(len=24) :: ligrmo, cara_elem, mate, mateco, chtime
     character(len=19) :: resu_elem, varc_curr
     character(len=24) :: chgeom, chcara(18)
     integer :: iret, nbin
@@ -88,6 +88,7 @@ implicit none
     model     = model_
     cara_elem = cara_elem_
     mate      = mate_
+    mateco    = mateco_
     chtime    = chtime_
     resu_elem = matr_elem(1:8)//'.0000000'
     ligrmo    = model(1:8)//'.MODELE'
@@ -122,7 +123,7 @@ implicit none
 ! - Init fields
 !
     call inical(nb_in_maxi, lpain, lchin, nbout, lpaout,&
-                lchout    )    
+                lchout    )
 !
 ! - Geometry field
 !
@@ -137,7 +138,7 @@ implicit none
     lpain(1) = 'PGEOMER'
     lchin(1) = chgeom(1:19)
     lpain(2) = 'PMATERC'
-    lchin(2) = mate(1:19)
+    lchin(2) = mateco(1:19)
     lpain(3) = 'PCACOQU'
     lchin(3) = chcara(7)(1:19)
     lpain(4) = 'PTEMPSR'

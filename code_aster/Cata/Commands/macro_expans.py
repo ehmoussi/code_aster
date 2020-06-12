@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -20,19 +20,20 @@
 # person_in_charge: harinaivo.andriambololona at edf.fr
 
 
-from code_aster.Cata.Syntax import *
-from code_aster.Cata.DataStructure import *
-from code_aster.Cata.Commons import *
+from ..Commons import *
+from ..Language.DataStructure import *
+from ..Language.Syntax import *
 
 
-def macro_expans_prod(self, MODELE_MESURE, RESU_NX, RESU_EX, RESU_ET, RESU_RD, **args):
+def macro_expans_prod(self, MODELE_MESURE, RESU_NX=None, RESU_EX=None, RESU_ET=None, RESU_RD=None, **args):
     if args.get('__all__'):
-      return ([None], [mode_meca], [None, mode_meca, dyna_harmo])
+      return ([None], [None, mode_meca], [None, mode_meca, dyna_harmo])
 
     RESU_EXP = MODELE_MESURE['MESURE']
-    self.type_sdprod(RESU_NX, mode_meca)
+    if RESU_NX is not None:
+        self.type_sdprod(RESU_NX, mode_meca)
     for res in (RESU_EX, RESU_ET, RESU_RD):
-        if res is not None and res.is_typco():
+        if res is not None and isinstance(res, CO):
             if AsType(RESU_EXP) == mode_meca:
                 self.type_sdprod(res, mode_meca)
             else:
@@ -40,7 +41,7 @@ def macro_expans_prod(self, MODELE_MESURE, RESU_NX, RESU_EX, RESU_ET, RESU_RD, *
     return None
 
 MACRO_EXPANS=MACRO(nom="MACRO_EXPANS",
-                   op=OPS('Macro.macro_expans_ops.macro_expans_ops'),
+                   op=OPS('code_aster.MacroCommands.macro_expans_ops.macro_expans_ops'),
                    sd_prod=macro_expans_prod,
                    reentrant='n',
                    fr=tr("Outil d'expansion de resultats exprimentaux sur une base definie sur un modele numerique"),
@@ -60,7 +61,7 @@ MACRO_EXPANS=MACRO(nom="MACRO_EXPANS",
                            NUME_ORDRE      = SIMP(statut='f',typ='I',validators=NoRepeat(),max='**',defaut=0),
 
                                              ),
-                        NUME_DDL       = SIMP(statut='f',typ=(nume_ddl_sdaster)),
+                        NUME_DDL       = SIMP(statut='f', typ=nume_ddl_sdaster),
                         RESU_NX        = SIMP(statut='f',typ=(mode_meca,dyna_harmo, CO)),
                         RESU_EX        = SIMP(statut='f',typ=(mode_meca,dyna_harmo, CO)),
                         RESU_ET        = SIMP(statut='f',typ=(mode_meca,dyna_harmo, CO)),

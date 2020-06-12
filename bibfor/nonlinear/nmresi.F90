@@ -35,6 +35,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
+#include "asterfort/cnoadd.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
@@ -53,9 +54,11 @@ implicit none
 #include "asterfort/nmvcmx.h"
 #include "asterfort/rescmp.h"
 #include "asterfort/romAlgoNLMecaResidual.h"
+#include "asterfort/asmpi_comm_vect.h"
 #include "asterfort/romAlgoNLCorrEFMecaResidual.h"
 #include "asterfort/nmequi.h"
 #include "asterfort/utmess.h"
+#include "asterfort/ap_assembly_vector.h"
 !
 character(len=8), intent(in) :: mesh
 integer, intent(in) :: list_func_acti(*)
@@ -116,8 +119,8 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     aster_logical :: l_no_disp, l_pilo, l_disp, l_hho
     character(len=19) :: profch
     character(len=19) :: varc_prev, disp_prev
-    character(len=19) :: cndiri, cnbudi, cnfext
-    character(len=19) :: cnrefe
+    character(len=19) :: cndiri, cnbudi, cnfext, cnfexp
+    character(len=19) :: cnrefe, cnfinp, cndirp, cnbudp
     character(len=19) :: cndfdo, cnequi, cndipi, cnsstr
     real(kind=8) :: vale_equi, vale_refe, vale_varc
     integer :: r_rela_indx, r_resi_indx, r_equi_indx
@@ -157,7 +160,7 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     cnequi    = ' '
     cndipi    = ' '
     cnsstr    = ' '
-    mate      = ds_material%field_mate
+    mate      = ds_material%mater
     varc_refe = ds_material%varc_refe
     call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=nb_equa)
     r_rela_vale = 0.d0
@@ -209,6 +212,10 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
     call nmchex(hval_veasse, 'VEASSE', 'CNFEXT', cnfext)
     call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
     cndfdo = '&&CNCHAR.DFDO'
+    cnfexp = '&&NMRESI.CNFEXP'
+    cnfinp = '&&NMRESI.CNFINP'
+    cndirp = '&&NMRESI.CNDIRP'
+    cnbudp = '&&NMRESI.CNBUDP'
 !
 ! - Compute external forces
 !
@@ -239,13 +246,27 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
                 hval_measse   , hval_incr ,&
                 r_char_vale   , r_char_indx)
 !
+! --- COMPLETION DES CHAMPS PRODUITS PAR ASSEMBLAGE :
+#ifdef _USE_MPI
+    call ap_assembly_vector(cnbudi)
+    call cnoadd(cnfext, cnfexp)
+    call cnoadd(ds_system%cnfint, cnfinp)
+    call cnoadd(cndiri, cndirp)
+    call cnoadd(cnbudi, cnbudp)
+#else
+    cnfexp = cnfext
+    cnfinp = ds_system%cnfint
+    cndirp = cndiri
+    cnbudp = cnbudi
+#endif
+!
 ! - Compute lack of balance forces
 !
     cnequi = '&&CNCHAR.DONN'
     call nmequi(l_disp     , l_pilo, l_macr, cnequi,&
-                ds_system%cnfint     , cnfext, cndiri, cnsstr,&
+                cnfinp     , cnfexp, cndirp, cnsstr,&
                 ds_contact,&
-                cnbudi     , cndfdo,&
+                cnbudp     , cndfdo,&
                 cndipi     , eta)
 !
 ! - Compute RESI_COMP_RELA
@@ -258,9 +279,9 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 !
 ! - Access to fields
 !
-    call jeveuo(ds_system%cnfint(1:19)//'.VALE', 'L', vr=v_cnfint)
-    call jeveuo(cndiri(1:19)//'.VALE', 'L', vr=v_cndiri)
-    call jeveuo(cnfext(1:19)//'.VALE', 'L', vr=v_cnfext)
+    call jeveuo(cnfinp(1:19)//'.VALE', 'L', vr=v_cnfint)
+    call jeveuo(cndirp(1:19)//'.VALE', 'L', vr=v_cndiri)
+    call jeveuo(cnfexp(1:19)//'.VALE', 'L', vr=v_cnfext)
     if (l_varc_init) then
         call jeveuo(ds_material%fvarc_init(1:19)//'.VALE', 'L', vr=v_fvarc_init)
     endif
@@ -328,6 +349,9 @@ real(kind=8), intent(out) :: r_char_vale, r_equi_vale
 !
 ! - Results
 !
+    call asmpi_comm_vect('MPI_MAX', 'R', scr=r_equi_vale)
+    call asmpi_comm_vect('MPI_MAX', 'R', scr=r_char_vale)
+    call asmpi_comm_vect('MPI_MAX', 'R', scr=r_varc_vale)
     if (r_char_vale .gt. 0.d0) then
         r_rela_vale = r_equi_vale/r_char_vale
         r_rela_indx = r_equi_indx

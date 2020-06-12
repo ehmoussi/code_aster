@@ -3,10 +3,11 @@ P memory_limit 256
 P ncpus 1
 P mpi_nbcpu 1
 P mpi_nbnoeud 1
-P testlist verification sequential
+P testlist ci verification sequential
 
 F comm ssns112c.comm D 1
+F comm ssns112c.com1 D 1
+F comm ssns112c.com2 D 1
+F nom  ssns112a.py   D 0
 F mmed ssns112c.mmed D 20
-F libr ssns112a.12 D 12
-F libr ssns112c.22 D 22
 F datg ssns112c.datg D 16

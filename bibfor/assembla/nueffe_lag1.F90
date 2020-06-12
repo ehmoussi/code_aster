@@ -98,6 +98,7 @@ implicit none
 !
     character(len=24) :: moloc
     character(len=8) :: gran_name, kbid
+    character(len=3) :: kret
     integer :: n, igds, nec, nlili
     character(len=8) :: nomcmp
     character(len=8) :: mesh
@@ -114,7 +115,7 @@ implicit none
     integer :: i, iad, ianueq, icddlb
     integer :: iconx1, iconx2, iddlag, iderli
     integer :: idnocm, idprn1, idprn2, idref
-    integer :: iec, iel, iexi1, ifm, igr, ilag, ilag2, n0, n1, n2, nn
+    integer :: iec, iel, iexi1, ifm, igr, ilag, ilag2, n0, n1, n2, nn, n22
     integer :: ili, inewn, ino, inum21
     integer :: inuno2, ioldn, iprnm, ire, iret
     integer :: j, jprno, k, l
@@ -123,6 +124,7 @@ implicit none
     integer :: nel, niv, nlag, nno, nblag
     integer :: numa, nunoel, nume_late_node, nunoel_save
     integer :: vali(5)
+    aster_logical :: lparallel_mesh
     integer, pointer :: v_nnli(:) => null()
     integer, pointer :: adli(:) => null()
     integer, pointer :: bid(:) => null()
@@ -130,6 +132,8 @@ implicit none
     integer, pointer :: qrns(:) => null()
     integer, pointer :: p_nequ(:) => null()
     integer, pointer :: v_sdiden_info(:) => null()
+    integer, pointer :: lagr_mult(:) => null()
+
     aster_logical, parameter :: debug = ASTER_FALSE
 !
 ! --------------------------------------------------------------------------------------------------
@@ -282,6 +286,8 @@ implicit none
         call jeveuo(mesh(1:8)//'.CONNEX', 'L', iconx1)
         call jeveuo(jexatr(mesh(1:8)//'.CONNEX', 'LONCUM'), 'L', iconx2)
     endif
+    call dismoi('PARALLEL_MESH', mesh, 'MAILLAGE', repk=kret)
+    lparallel_mesh=(kret.eq.'OUI')
     call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi=nb_node_mesh)
     call dismoi('NB_NL_MAILLA', mesh, 'MAILLAGE', repi=nb_node_subs)
     nb_node = nb_node_mesh + nb_node_subs
@@ -368,6 +374,12 @@ implicit none
         call wkvect(dsclag, ' V V I', 2*nlag, iddlag)
 !
         do ili = 2, nlili
+!
+            call jeexin(nomli(1:19)//'.MULT', iret)
+            if( lparallel_mesh.and.iret.ne.0 ) then
+                call jeveuo(nomli(1:19)//'.MULT', 'L', vi=lagr_mult)
+            endif
+!
             do iel = 1, zznels(ili)
                 nn = zznsup(ili,iel)
                 if (nn .eq. 2) then
@@ -397,6 +409,10 @@ implicit none
                             zi(iddlag+2* (ilag2-1)) = n1
                             zi(iddlag+2* (ilag2-1)+1) = -1
                             zi(iderli+n2) = n1
+                        endif
+                        if ((lparallel_mesh) .and. (lagr_mult(n22).gt.1)) then
+                            zi(iddlag+2* (ilag2-1)) = 0
+                            zi(iddlag+2* (ilag2-1)+1) = 0
                         endif
                     endif
                 endif

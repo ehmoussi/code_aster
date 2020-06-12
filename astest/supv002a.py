@@ -19,25 +19,24 @@
 
 # person_in_charge: mathieu.courtois at edf.fr
 
+import gettext
+import multiprocessing as MPR
 import os
 import os.path as osp
+import queue
 import re
-import gettext
+import signal
 import tempfile
-from subprocess import Popen, PIPE
+import time
+import traceback
 from functools import partial
 from glob import glob
-import traceback
-import multiprocessing as MPR
-import queue
-import time
-import signal
+from subprocess import PIPE, Popen
 
-from Noyau.N_types import is_int
-from Utilitai.Utmess import UTMESS, MessageLog
-from Execution.i18n import localization as LO
-from Execution.strfunc import ufmt, convert
-import Messages
+import code_aster.Messages
+from code_aster.Messages import UTMESS, MessageLog
+from code_aster.Utilities import convert, is_int
+from code_aster.Utilities import localization as LO
 
 ENCODING = "utf-8"
 VALUES = MessageLog.default_args.copy()
@@ -56,8 +55,7 @@ RE_UNAUTH = [
 try:
     import aster
     from code_aster.Cata.Syntax import _F
-    from code_aster.Cata.Syntax import MACRO, SIMP
-    from code_aster.Cata.Commands import CREA_TABLE, TEST_TABLE
+    from code_aster.Commands import CREA_TABLE, TEST_TABLE
     loginfo = partial(aster.affiche, 'MESSAGE')
 except ImportError:
     def loginfo(msg):
@@ -227,7 +225,7 @@ def get_cata_msg(catamess):
     cata_msg = {}
     try:
         d = {}
-        mod = __import__('Messages.%s' % catamess, d, d, [catamess])
+        mod = __import__("code_aster.Messages.%s" % catamess, d, d, [catamess])
         importlib.reload(mod)
         cata_msg = getattr(mod, 'cata_msg', {})
     except UnicodeDecodeError:
@@ -274,7 +272,7 @@ def check_msg(checker, catamess, msg, key, lang):
     # check formatting
     txt = None
     try:
-        txt = ufmt(msg, VALUES)
+        txt = msg % VALUES
     except Exception as exc:
         trace = repr(exc)
         checker.error("%s can not be formatted :\nmessage: %r\n%s"
@@ -327,7 +325,7 @@ def check_catamess(checker, lang, l_cata):
     checker.set_current_lang(lang)
     checker.set_current_mod('-')
     loginfo("<i18n> lang=%s, domain=%s, localedir=%s" % (LO.current_lang, LO.domain, LO.localedir))
-    tr = LO.install(lang)
+    tr = LO.translation(lang)
     if lang != 'fr' and not isinstance(tr, gettext.GNUTranslations):
         checker.warning("no translation object for language '%s'" % lang)
         return
@@ -364,8 +362,6 @@ def supv002_ops(self, ERREUR, **kwargs):
     global logdbg
     if kwargs.get('INFO') == 2:
         logdbg = loginfo
-    if not kwargs.get('unittest'):
-        self.set_icmd(1)
     # existing errors
     previous_errors = set(ERREUR)
     os.environ['LANG'] = 'fr_FR.utf8'
@@ -373,7 +369,7 @@ def supv002_ops(self, ERREUR, **kwargs):
     keys = [k for k in list(os.environ.keys()) if k.startswith('LC_')]
     for k in keys:
         del os.environ[k]
-    msgdir = osp.dirname(Messages.__file__)
+    msgdir = osp.dirname(code_aster.Messages.__file__)
     LCATA = [osp.basename(osp.splitext(cata)[0]) for cata in glob(osp.join(msgdir, '*.py'))]
     #LCATA = [osp.basename(osp.splitext(cata)[0]) for cata in glob(osp.join(msgdir, 'mecanonline9.py'))]
 
@@ -465,14 +461,17 @@ def supv002_ops(self, ERREUR, **kwargs):
                NOM_PARA='NBWARN',
                TABLE=__tabw,
                )
-    return 0
+    return
 
 
 if __name__ != '__main__':
-    SUPV002 = MACRO(nom='SUPV002', op=supv002_ops,
-                    ERREUR = SIMP(statut='o',typ='TXM', max='**',),
-                    INFO = SIMP(statut='f',typ='I', defaut=1, into=(1, 2),),
+    from code_aster.Cata.Syntax import MACRO, SIMP
+    from code_aster.Supervis.ExecuteCommand import UserMacro
+    supv_cata = MACRO(nom='SUPV002', op=supv002_ops,
+                      ERREUR = SIMP(statut='o',typ='TXM', max='**',),
+                      INFO = SIMP(statut='f',typ='I', defaut=1, into=(1, 2),),
     )
+    SUPV002 = UserMacro("SUPV002", supv_cata, supv002_ops)
 else:
     # run as unittest
     # PYTHONPATH=$PYTHONPATH:/home/courtois/dev/codeaster/install/std/lib/python3.6/site-packages
