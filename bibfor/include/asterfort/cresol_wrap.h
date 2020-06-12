@@ -22,6 +22,6 @@ interface
     subroutine cresol_wrap(solveu, base, xfem)
         character(len=19) :: solveu
         character(len=1) :: base
-        character(len=3), optional :: xfem
+        character(len=3) :: xfem
     end subroutine cresol_wrap
 end interface

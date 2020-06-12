@@ -22,7 +22,6 @@ subroutine ap_assembly_vector(chno)
 #include "asterf_petsc.h"
 !
 ! person_in_charge: nicolas.sellenet at edf.fr
-! aslint:disable=
 use aster_petsc_module
 use petsc_data_module
 use saddle_point_module, only : convert_rhs_to_saddle_point
@@ -62,7 +61,7 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
     character(len=14) :: numddl
 
     real(kind=8), dimension(:), pointer :: val => null()
-    character(len=16) :: typsd='****'
+    character(len=16) :: typsd
     character(len=19) :: cn19, pfchno, nommai
     aster_logical :: petscInit
 !
@@ -79,6 +78,7 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
     call jemarq()
 !
     cn19=chno
+    typsd='****'
 
     call dismoi('PROF_CHNO',cn19,'CHAM_NO', repk=pfchno)
     ASSERT(pfchno(15:19).eq.'.NUME')
@@ -123,7 +123,7 @@ use saddle_point_module, only : convert_rhs_to_saddle_point
         value = zr(jvale+iloc-1)
         if( value.ne.0.d0 ) then
             nval = nval+1
-            ig_petsc_c(nval) = zi(jnulg+iloc-1) 
+            ig_petsc_c(nval) = zi(jnulg+iloc-1)
             val(nval) = value
         endif
     end do

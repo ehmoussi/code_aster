@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine jeveuoc(nomlu, cel, pc)
-! aslint: disable=W0405,C1002,W1304
+! aslint: disable=W0405,C1002
       use iso_c_binding, only:  c_loc, c_ptr, c_f_pointer
       implicit none
 #include "asterf_types.h"
@@ -175,8 +175,6 @@ subroutine jeveuoc(nomlu, cel, pc)
     call jgetlmx(noml32,n1)
     call jelira(noml32,'TYPELONG',cval=ktyp)
 
-102 continue
-
     if (ktyp.eq.'L') then
         call jgetptc(jad,pc,vl=zl(1))
 
@@ -210,7 +208,5 @@ subroutine jeveuoc(nomlu, cel, pc)
     else
         ASSERT(.false.)
     endif
-
-999 continue
 
 end subroutine

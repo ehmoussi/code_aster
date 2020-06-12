@@ -24,9 +24,9 @@ interface
                            modelz       , list_loadz)
         character(len=*), intent(inout) :: nume_ddlz
         character(len=2), intent(in) :: base
-        character(len=*), optional, intent(in) :: modelz
-        character(len=*), optional, intent(in) :: list_loadz
-        character(len=*), optional, intent(in) :: old_nume_ddlz
-        character(len=*), optional, intent(in) :: modelocz
+        character(len=*), intent(in) :: modelz
+        character(len=*), intent(in) :: list_loadz
+        character(len=*), intent(in) :: old_nume_ddlz
+        character(len=*), intent(in) :: modelocz
     end subroutine numero_wrap
 end interface

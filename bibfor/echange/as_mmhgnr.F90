@@ -25,13 +25,14 @@ subroutine as_mmhgnr(fid, nomail, typent, typgeo, tblogl,&
 #include "asterf_config.h"
 #include "asterf_types.h"
 #include "asterfort/conv_int.h"
+#include "asterfort/utmess.h"
 #include "med/mmhgnr.h"
     med_idt :: fid
     aster_int :: typent, typgeo, n, cret, numdt, numo
     aster_int :: tblogl(n)
     character(len=*) :: nomail
 #ifdef _DISABLE_MED
-    call u2mess('F', 'FERMETUR_2')
+    call utmess('F', 'FERMETUR_2')
 #else
 
 #if med_int_kind != aster_int_kind || med_idt_kind != aster_int_kind

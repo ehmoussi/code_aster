@@ -17,8 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine wkvectc(nom, carac, dim, pc)
-! person_in_charge: jacques.pellet at edf.fr
-! aslint: disable=W1304
     use iso_c_binding, only: c_loc, c_ptr, c_f_pointer
     implicit none
 !
@@ -113,7 +111,5 @@ subroutine wkvectc(nom, carac, dim, pc)
     else
         ASSERT(.false.)
     endif
-!
-999 continue
 !
 end subroutine

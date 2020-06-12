@@ -26,6 +26,7 @@ subroutine as_msdcrr(fid,lmname,jname,numdt,numit,entlcl,&
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/conv_int.h"
+#include "asterfort/utmess.h"
 #include "med/msdcrr.h"
     character(len=*) :: lmname,jname
     med_idt :: fid
@@ -33,7 +34,7 @@ subroutine as_msdcrr(fid,lmname,jname,numdt,numit,entlcl,&
     aster_int :: geodst,ncorr,corrtab(*),cret
 
 #ifdef _DISABLE_MED
-    call u2mess('F', 'FERMETUR_2')
+    call utmess('F', 'FERMETUR_2')
 #else
 
 #ifdef _DEBUG_MED

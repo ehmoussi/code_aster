@@ -26,12 +26,12 @@ implicit none
 !
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
-    character(len=*) :: nume_ddlz
-    character(len=2) :: base
-    character(len=*) :: modelz
-    character(len=*) :: list_loadz
-    character(len=*) :: old_nume_ddlz
-    character(len=*) :: modelocz
+    character(len=*), intent(inout) :: nume_ddlz
+    character(len=2), intent(in) :: base
+    character(len=*), intent(in) :: modelz
+    character(len=*), intent(in) :: list_loadz
+    character(len=*), intent(in) :: old_nume_ddlz
+    character(len=*), intent(in) :: modelocz
 !
 ! --------------------------------------------------------------------------------------------------
 !

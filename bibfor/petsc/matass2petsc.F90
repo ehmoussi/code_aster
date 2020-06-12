@@ -19,7 +19,6 @@
 subroutine matass2petsc(matasz, petscMatz, iret)
 !
 !
-! aslint: disable=C1308
 ! person_in_charge: natacha.bereux at edf.fr
 !
 #include "asterf_types.h"
@@ -49,11 +48,16 @@ use petsc_data_module
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 #include "blas/dcopy.h"
-#ifndef _HAVE_PETSC
-    integer :: petscMatz, iret
+!
+! arguments
+    character(len=*), intent(in) :: matasz
+#ifdef _HAVE_PETSC
+        PetscErrorCode, intent(out) :: iret
+        Mat, intent(out) :: petscMatz
+#else
+        integer, intent(out) :: petscMatz, iret
 #endif
 !
-    character(len=*) :: matasz
 !-----------------------------------------------------------------------
 ! BUT : ROUTINE D'INTERFACE ENTRE CODE_ASTER ET LA BIBLIOTHEQUE PETSC
 !       DE RESOLUTION DE SYSTEMES LINEAIRES.
@@ -84,8 +88,7 @@ use petsc_data_module
 !----------------------------------------------------------------
 !
 !     Variables PETSc
-    PetscErrorCode :: iret,ierr
-    Mat :: petscMatz
+    PetscErrorCode :: ierr
 
     call jemarq()
 !

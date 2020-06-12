@@ -17,7 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine rsadpa_zr_wrap(nomsd, nuordr, value, typesd)
-! aslint: disable=W1306
     implicit none
 #include "jeveux.h"
 #include "asterfort/rsadpa.h"
@@ -26,7 +25,6 @@ subroutine rsadpa_zr_wrap(nomsd, nuordr, value, typesd)
     character(len=*), intent(in) :: typesd
     character(len=8), intent(in) :: nomsd
     real(kind=8) :: value
-! person_in_charge: nicolas.sellenet at edf.fr
 !
     integer :: jpara
 ! ----------------------------------------------------------------------

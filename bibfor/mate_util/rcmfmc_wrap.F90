@@ -29,7 +29,7 @@ implicit none
     character(len=*), intent(out) :: chmacz
     integer, intent(in) :: l_thm_, l_ther_
     character(len=*), intent(inout) :: basename
-    character(len=1), intent(in), optional :: base
+    character(len=1), intent(in) :: base
     aster_logical :: l_thm, l_ther
 !
 ! --------------------------------------------------------------------------------------------------

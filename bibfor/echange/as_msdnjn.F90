@@ -23,13 +23,14 @@ subroutine as_msdnjn(fid,maa,n,cret)
     implicit none
 #include "asterf_config.h"
 #include "asterf_types.h"
+#include "asterfort/utmess.h"
 #include "med/msdnjn.h"
     med_idt :: fid
     character(len=*) :: maa
     aster_int :: n, cret
 
 #ifdef _DISABLE_MED
-    call u2mess('F', 'FERMETUR_2')
+    call utmess('F', 'FERMETUR_2')
 #else
 
 #ifdef _DEBUG_MED

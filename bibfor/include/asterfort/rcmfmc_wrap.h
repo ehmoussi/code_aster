@@ -25,7 +25,7 @@ interface
         character(len=*), intent(in) :: chmatz
         character(len=*), intent(out) :: chmacz
         integer, intent(in) :: l_thm_, l_ther_
-        character(len=*), intent(in) :: basename
-        character(len=1), intent(in), optional :: base
+        character(len=*), intent(inout) :: basename
+        character(len=1), intent(in) :: base
     end subroutine rcmfmc
 end interface

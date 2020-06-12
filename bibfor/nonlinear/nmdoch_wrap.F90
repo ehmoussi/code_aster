@@ -26,10 +26,10 @@ implicit none
 !
 ! person_in_charge: nicolas.sellenet at edf.fr
 !
-    integer :: l_load_user0
-    character(len=*) :: list_load0
-    character(len=*) :: list_load_resu0
-    character(len=*) :: base
+    character(len=*), intent(in) :: list_load0
+    integer, intent(in) :: l_load_user0
+    character(len=*), intent(in) :: list_load_resu0
+    character(len=*), intent(in) :: base
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,8 +45,8 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: l_load_user
     character(len=19) :: list_load
+    aster_logical :: l_load_user
     character(len=19) :: list_load_resu
 !
 ! --------------------------------------------------------------------------------------------------
