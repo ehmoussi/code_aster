@@ -56,4 +56,6 @@ avec deux ancrages actifs, il est nécessaire de définir les noeuds d'ancrage �
 GROUP_NO_ANCRAGE (et non NOEUD_ANCRAGE) dans DEFI_CABLE_BP.
 """),
 
+    6: _("""La déformation %(k1)s n'est pas disponible pour l'élément CABLE_GAINE"""),
+
 }

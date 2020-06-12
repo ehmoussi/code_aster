@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0340(option, nomte)
 !
+use Behaviour_module, only : behaviourOption
 !
-    implicit none
+implicit none
+!
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/cgfint.h"
 #include "asterfort/cginit.h"
 #include "asterfort/cgtang.h"
@@ -31,41 +34,59 @@ subroutine te0340(option, nomte)
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
 #include "blas/dcopy.h"
-    character(len=16) :: option, nomte
-! ......................................................................
-!    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
-!                          POUR LES ELEMENTS CABLE-GAINE
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-!      INSPIRE DE TE0360
-! ......................................................................
+#include "asterfort/Behaviour_type.h"
 !
-    character(len=8) :: typmod(2), nomail, lielrf(10)
+character(len=16), intent(in) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: CABLE_GAINE
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=8) :: typmod(2), lielrf(10)
     integer :: nno1, nno2, npg, imatuu, lgpg, lgpg1, lgpg2
     integer :: iw, ivf1, idf1, igeom, imate
-    integer :: npgn, iwn, ivf1n, idf1n, jgnn
-    integer :: ivf2, idf2, nnos, jgn, ino, i, nddl1
+    integer :: npgn, idf1n
+    integer :: ivf2, ino, i, nddl1
     integer :: ivarim, ivarip, iinstm, iinstp
     integer :: iddlm, iddld, icompo, icarcr
     integer :: ivectu, icontp
     integer :: ivarix
-    integer :: jtab(7), iadzi, iazk24, jcret, codret
-    integer :: ndim, iret, ntrou, vali(2)
+    integer :: jtab(7), jcret, codret
+    integer :: ndim, iret, ntrou
     integer :: iu(3, 3), iuc(3), im(3), isect, icontm
     real(kind=8) :: tang(3, 3), a, geom(3, 3)
+    character(len=16) :: defo_comp, rela_comp, rela_cpla
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
+! --------------------------------------------------------------------------------------------------
+!
+    codret = 0
+    imatuu=1
+    ivectu=1
+    icontp=1
+    ivarip=1
 !
 ! - FONCTIONS DE FORME
 !
     call elref2(nomte, 2, lielrf, ntrou)
-    call elrefe_info(elrefe=lielrf(1),fami='RIGI',ndim=ndim,nno=nno1,nnos=nnos,&
-  npg=npg,jpoids=iw,jvf=ivf1,jdfde=idf1,jgano=jgn)
-    call elrefe_info(elrefe=lielrf(1),fami='NOEU',ndim=ndim,nno=nno1,nnos=nnos,&
-  npg=npgn,jpoids=iwn,jvf=ivf1n,jdfde=idf1n,jgano=jgnn)
-    call elrefe_info(elrefe=lielrf(2),fami='RIGI',ndim=ndim,nno=nno2,nnos=nnos,&
-  npg=npg,jpoids=iw,jvf=ivf2,jdfde=idf2,jgano=jgn)
-    ndim=3
+    call elrefe_info(elrefe=lielrf(1),fami='RIGI',&
+                     jvf=ivf1,jdfde=idf1)
+    call elrefe_info(elrefe=lielrf(1),fami='NOEU',nno=nno1,&
+                     npg=npgn,jdfde=idf1n)
+    call elrefe_info(elrefe=lielrf(2),fami='RIGI',nno=nno2,&
+                     npg=npg,jpoids=iw,jvf=ivf2)
+    ndim  = 3
     nddl1 = 5
 !
 ! - DECALAGE D'INDICE POUR LES ELEMENTS D'INTERFACE
@@ -75,9 +96,9 @@ subroutine te0340(option, nomte)
 !
     typmod(1) = '1D'
     typmod(2) = ' '
-    codret = 0
+
 !
-! - PARAMETRES EN ENTREE
+! - Get input fields
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
@@ -88,16 +109,31 @@ subroutine te0340(option, nomte)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
     call jevech('PCAGNBA', 'L', isect)
+    call jevech('PINSTMR', 'L', iinstm)
+    call jevech('PINSTPR', 'L', iinstp)
+!
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+    rela_cpla = zk16(icompo-1+PLANESTRESS)
 !
 !     MISE A JOUR EVENTUELLE DE LA GEOMETRIE
 !
-    if (zk16(icompo+2).eq. 'PETIT') then
+    if (defo_comp .eq. 'PETIT') then
         do ino = 1, nno1
             do i = 1, ndim
                 geom(i,ino) = zr(igeom-1+(ino-1)*ndim+i)
             enddo
         enddo
-    elseif (zk16(icompo+2) .eq. 'PETIT_REAC') then
+    elseif (defo_comp .eq. 'PETIT_REAC') then
         do ino = 1, nno1
             do i = 1, ndim
                 geom(i,ino) = zr(igeom-1+(ino-1)*ndim+i)&
@@ -106,70 +142,47 @@ subroutine te0340(option, nomte)
             enddo
         enddo
     else
-        call utmess('F', 'ALGORITH17_3', sk=zk16(icompo+2))
+        call utmess('F', 'CABLE0_6', sk=defo_comp)
     endif
 !
 !     DEFINITION DES TANGENTES
 !
-    call cgtang(3, nno1, npgn, geom, zr(idf1n),&
-                tang)
+    call cgtang(3, nno1, npgn, geom, zr(idf1n), tang)
 !
 !     SECTION DE LA BARRE
     a = zr(isect)
 !
 ! - ON VERIFIE QUE PVARIMR ET PVARIPR ONT LE MEME NOMBRE DE V.I. :
 !
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
     lgpg1 = max(jtab(6),1)*jtab(7)
 !
-    if ((option(1:4).eq.'RAPH') .or. (option(1:4).eq.'FULL')) then
-        call tecach('OOO', 'PVARIPR', 'E', iret, nval=7,&
-                    itab=jtab)
+    if (lVari) then
+        call tecach('OOO', 'PVARIPR', 'E', iret, nval=7, itab=jtab)
         lgpg2 = max(jtab(6),1)*jtab(7)
-!
-        if (lgpg1 .ne. lgpg2) then
-            call tecael(iadzi, iazk24)
-            nomail = zk24(iazk24-1+3) (1:8)
-            vali(1)=lgpg1
-            vali(2)=lgpg2
-            call utmess('A', 'CALCULEL6_64', sk=nomail, ni=2, vali=vali)
-        endif
+        ASSERT(lgpg1 .eq. lgpg2)
     endif
     lgpg = lgpg1
 !
+! - Get output fields
 !
-! - VARIABLES DE COMMANDE
-!
-    call jevech('PINSTMR', 'L', iinstm)
-    call jevech('PINSTPR', 'L', iinstp)
-!
-!
-! PARAMETRES EN SORTIE
-!
-    if (option(1:4) .eq. 'RIGI' .or. option(1:4) .eq. 'FULL') then
+    if (lMatr) then
         call jevech('PMATUNS', 'E', imatuu)
-    else
-        imatuu=1
     endif
-!
-    if (option(1:4) .eq. 'RAPH' .or. option(1:4) .eq. 'FULL') then
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
+        call jevech('PCODRET', 'E', jcret)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
-!
-!      ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
         call jevech('PVARIMP', 'L', ivarix)
         call dcopy(npg*lgpg, zr(ivarix), 1, zr(ivarip), 1)
-    else
-        ivectu=1
-        icontp=1
-        ivarip=1
     endif
 !
-!
 ! - FORCES INTERIEURES ET MATRICE TANGENTE
-!
 !
     call cgfint(ndim, nno1, nno2, npg, zr(iw),&
                 zr(ivf1), zr(ivf2), zr(idf1), geom, tang,&
@@ -179,8 +192,7 @@ subroutine te0340(option, nomte)
                 zr(ivarim), zr(icontp), zr(ivarip), zr( imatuu), zr(ivectu),&
                 codret)
 !
-    if (option(1:4) .eq. 'FULL' .or. option(1:4) .eq. 'RAPH') then
-        call jevech('PCODRET', 'E', jcret)
+    if (lSigm) then
         zi(jcret) = codret
     endif
 !

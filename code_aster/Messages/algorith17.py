@@ -29,10 +29,6 @@ cata_msg = {
   aussi bien en vol libre qu'en état de choc.
 """),
 
-    3: _("""
-         Choix de déformation %(k1)s non disponible pour l'élément CABLE_GAINE
-"""),
-
     5 : _("""
   Le champ post-traité est un CHAM_ELEM, le calcul de moyenne ne fonctionne que
  sur les CHAM_NO. Pour les CHAM_ELEM utiliser POST_ELEM mot-clé INTEGRALE.
