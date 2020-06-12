@@ -12,9 +12,9 @@ _usage()
     echo
     echo "  --help (-h)            Print this help information and exit."
     echo
-    echo "  --waf script           Define the script to be used (default: ./waf_mpi)."
+    echo "  --waf script           Define the script to be used (default: ./waf_std)."
     echo
-    echo "  --builddir DIR         Define the build directory (default: build/mpi)."
+    echo "  --builddir DIR         Define the build directory (default: build/std)."
     echo
     echo "  --use-debug            Use the debug build (Use 'release' by default)."
     echo
@@ -25,8 +25,8 @@ _usage()
 
 check_docs_main()
 {
-    local waf=./waf_mpi
-    local builddir=build/mpi
+    local waf=./waf_std
+    local builddir=build/std
     local variant="release"
     local verbose=0
 
