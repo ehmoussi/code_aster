@@ -46,7 +46,7 @@ FACTORISER=OPER(nom="FACTORISER",op=14,
          MATR_ASSE       =SIMP(statut='o',typ=(matr_asse_depl_r,matr_asse_depl_c,matr_asse_temp_r,
                                                matr_asse_temp_c,matr_asse_pres_r,matr_asse_pres_c) ),
 
-         METHODE         =SIMP(statut='f',typ='TXM',defaut="MULT_FRONT",into=("MULT_FRONT","LDLT","GCPC","PETSC","MUMPS") ),
+         METHODE         =SIMP(statut='f',typ='TXM',defaut="MUMPS",into=("MULT_FRONT","LDLT","GCPC","PETSC","MUMPS") ),
          b_mult_front    =BLOC(condition="""equal_to("METHODE", 'MULT_FRONT')""",fr=tr("paramètres associés à la méthode multifrontale"),
            RENUM           =SIMP(statut='f',typ='TXM',into=("MD","MDA","METIS"),defaut="METIS" ),
            STOP_SINGULIER  =SIMP(statut='f',typ='TXM',defaut="OUI",into=("OUI","NON") ),
@@ -96,4 +96,4 @@ FACTORISER=OPER(nom="FACTORISER",op=14,
 
          TITRE           =SIMP(statut='f',typ='TXM'),
          INFO            =SIMP(statut='f',typ='I',into=(1,2) ),
-)  ;
+)

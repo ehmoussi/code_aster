@@ -87,7 +87,22 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
 
         __nomras = ASSE_MATRICE(MATR_ELEM=__nomrig, NUME_DDL=num)
 
-        __nomras = FACTORISER(reuse=__nomras, MATR_ASSE=__nomras,
+        if(SOLVEUR['METHODE'] == "MUMPS"):
+            __nomras = FACTORISER(reuse=__nomras, MATR_ASSE=__nomras,
+                                NPREC          =SOLVEUR['NPREC'],
+                                STOP_SINGULIER =SOLVEUR['STOP_SINGULIER'],
+                                METHODE        ="MUMPS",
+                                PCENT_PIVOT    = SOLVEUR['PCENT_PIVOT'],
+                                RENUM          =SOLVEUR['RENUM'],
+                                TYPE_RESOL      =SOLVEUR['TYPE_RESOL'],
+                                PRETRAITEMENTS  =SOLVEUR['PRETRAITEMENTS'],
+                                ELIM_LAGR       =SOLVEUR['ELIM_LAGR'],
+                                GESTION_MEMOIRE =SOLVEUR['GESTION_MEMOIRE'],
+                                ACCELERATION=SOLVEUR['ACCELERATION'],
+                                LOW_RANK_SEUIL=SOLVEUR['LOW_RANK_SEUIL'],
+                                )
+        else:
+            __nomras = FACTORISER(reuse=__nomras, MATR_ASSE=__nomras,
                               NPREC          =SOLVEUR['NPREC'],
                               STOP_SINGULIER =SOLVEUR['STOP_SINGULIER'],
                               METHODE        =SOLVEUR['METHODE'],
@@ -136,7 +151,22 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
 
             __nomras = ASSE_MATRICE(MATR_ELEM=__nomrig, NUME_DDL=num)
 
-            __nomras = FACTORISER(reuse=__nomras, MATR_ASSE=__nomras,
+            if(SOLVEUR['METHODE'] == "MUMPS"):
+                __nomras = FACTORISER(reuse=__nomras, MATR_ASSE=__nomras,
+                                NPREC          =SOLVEUR['NPREC'],
+                                STOP_SINGULIER =SOLVEUR['STOP_SINGULIER'],
+                                METHODE        ="MUMPS",
+                                PCENT_PIVOT    = SOLVEUR['PCENT_PIVOT'],
+                                RENUM          =SOLVEUR['RENUM'],
+                                TYPE_RESOL      =SOLVEUR['TYPE_RESOL'],
+                                PRETRAITEMENTS  =SOLVEUR['PRETRAITEMENTS'],
+                                ELIM_LAGR       =SOLVEUR['ELIM_LAGR'],
+                                GESTION_MEMOIRE =SOLVEUR['GESTION_MEMOIRE'],
+                                ACCELERATION=SOLVEUR['ACCELERATION'],
+                                LOW_RANK_SEUIL=SOLVEUR['LOW_RANK_SEUIL'],
+                                )
+            else:
+                __nomras = FACTORISER(reuse=__nomras, MATR_ASSE=__nomras,
                               NPREC          =SOLVEUR['NPREC'],
                               STOP_SINGULIER =SOLVEUR['STOP_SINGULIER'],
                               METHODE        =SOLVEUR['METHODE'],
@@ -206,8 +236,15 @@ def macro_elas_mult_ops(self, MODELE, CAS_CHARGE,
         else:
             __nomasv = m['VECT_ASSE']
 
-        __nomchn = RESOUDRE(
-            MATR=__nomras, CHAM_NO=__nomasv, TITRE=m['SOUS_TITRE'])
+        if(SOLVEUR['METHODE'] == "MUMPS"):
+            __nomchn = RESOUDRE(
+                            MATR=__nomras, CHAM_NO=__nomasv, TITRE=m['SOUS_TITRE'],
+                           RESI_RELA=SOLVEUR['RESI_RELA'],
+                           POSTTRAITEMENTS=SOLVEUR['POSTTRAITEMENTS'])
+        else:
+            __nomchn = RESOUDRE(
+                            MATR=__nomras, CHAM_NO=__nomasv, TITRE=m['SOUS_TITRE'])
+
         nomchn.append(__nomchn)
 
 # fin de la boucle sur les items de CAS_CHARGE
