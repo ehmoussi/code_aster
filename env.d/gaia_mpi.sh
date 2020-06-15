@@ -18,7 +18,7 @@ export CC=mpiicc
 export FC=mpiifort
 export CXX=mpiicpc
 
-export LD_PRELOAD=/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_scalapack_lp64.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_lp64.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_thread.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_core.so:/opt/intel/2019.0.045/compilers_and_libraries/linux/lib/intel64/libiomp5.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_blacs_intelmpi_lp64.so
+export LD_PRELOAD=${LD_PRELOAD}:/opt/intel/2019.0.045/impi/2019.0.117/intel64/libfabric/lib/libfabric.so:/opt/intel/2019.0.045/impi/2019.0.117/intel64/lib/release_mt/libmpi.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_scalapack_lp64.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_lp64.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_intel_thread.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_core.so:/opt/intel/2019.0.045/compilers_and_libraries/linux/lib/intel64/libiomp5.so:/opt/intel/2019.0.045/mkl/lib/intel64/libmkl_blacs_intelmpi_lp64.so
 # threads placement: issue24556
 export I_MPI_PIN_DOMAIN=omp:compact
 
