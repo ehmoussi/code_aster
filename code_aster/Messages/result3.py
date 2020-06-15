@@ -66,6 +66,8 @@ Pour supprimer l'émission de ce message d'alarme, il faut donner la valeur BINA
 
     66 : _("""Le modèle et le maillage introduits ne sont pas cohérents."""),
 
+    67 : _("""L'impression au format ASTER d'un champ (ou d'un résultat) ne sera pas réalisée car IMPR_RESU au format ASTER n'imprime qu'un MAILLAGE. C'est le format RESULTAT qui permettrait cela."""),
+
     68 : _("""Le format GMSH ne permet pas d'imprimer simultanément un maillage et un champ (ou un résultat)."""),
 
     69 : _(""" L'impression d'un champ complexe nécessite l'utilisation du mot-clé PARTIE. Ce mot-clé permet de choisir la partie du champ à imprimer (réelle, imaginaire, module ou phase)."""),

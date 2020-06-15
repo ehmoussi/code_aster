@@ -172,6 +172,21 @@ implicit none
                 call utmess('F', 'RESULT3_68')
             endif
         endif
+! ----- Check consistency for ASTER
+        if (fileFormat .eq. 'ASTER') then
+            lResu = ASTER_FALSE
+            do keywfIocc = 1, keywfNb
+                call getvid(keywf, 'RESULTAT', iocc=keywfIocc, scal=result, nbret=nbResu)
+                call getvid(keywf, 'CHAM_GD', iocc=keywfIocc, scal=result, nbret=nbField)
+                if (nbResu .ne. 0 .or. nbField .ne. 0) then
+                    lResu = ASTER_TRUE
+                    exit
+                endif
+            end do
+            if (lResu) then
+                call utmess('A', 'RESULT3_67')
+            endif
+        endif
 ! ----- Loop on factor keywords
         do keywfIocc = 1, keywfNb
             call irmfac(keywfIocc, fileFormat, fileUnit, fileVersion, model)
