@@ -277,6 +277,7 @@ class DynaLineFEM:
         __rigiPhyInv = FACTORISER(reuse = self.getRigiPhy(),
                                   MATR_ASSE = self.getRigiPhy(),
                                   STOP_SINGULIER='OUI',
+                                  METHODE="MULT_FRONT",
                                   NPREC=8)
         self.__rigiPhyInv = __rigiPhyInv
         return self.__rigiPhyInv
@@ -857,6 +858,7 @@ class DynaLineBasis:
                         del charge[key]
             __elasModes = MACRO_ELAS_MULT(__use_namedtuple__=True,
                                         CAS_CHARGE=elasCharges,
+                                        SOLVEUR=_F(METHODE="MULT_FRONT"),
                                         NUME_DDL=self.dynaLineFEM.getNumeddl(),
                                         **keywords)
         self.__elasModes = __elasModes

@@ -17,34 +17,34 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'), IMPR_MACRO="OUI")
 
-tfin = 0.1;
+tfin = 0.1
 
-pa = 0.002;
+pa = 0.002
 
-fc = 15.0;
+fc = 15.0
 
-om = ((2.0 * pi) * fc);
+om = ((2.0 * pi) * fc)
 
-E = 200.E9;
+E = 200.E9
 
-rho = 8000.0;
+rho = 8000.0
 
-nu = 0.3;
+nu = 0.3
 
 
 LISTR=DEFI_LIST_REEL(DEBUT=0.,
                      INTERVALLE=_F(JUSQU_A=tfin,
-                                   PAS=pa,),);
+                                   PAS=pa,),)
 
 MAIL=LIRE_MAILLAGE(UNITE=20,
-                   FORMAT='MED',);
+                   FORMAT='MED',)
 
 MODELE=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(GROUP_MA='VOL',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='3D',),);
+                           MODELISATION='3D',),)
 
 MAT=DEFI_MATERIAU(ELAS=_F(E=E,
                           NU=nu,
@@ -52,22 +52,22 @@ MAT=DEFI_MATERIAU(ELAS=_F(E=E,
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
                     AFFE=_F(GROUP_MA='VOL',
-                            MATER=MAT,),);
+                            MATER=MAT,),)
 
 TAMAS=POST_ELEM(MASS_INER=_F(TOUT='OUI',),
                 MODELE=MODELE,
-                CHAM_MATER=CHMAT,);
+                CHAM_MATER=CHMAT,)
 
-IMPR_TABLE(TABLE=TAMAS,);
+IMPR_TABLE(TABLE=TAMAS,)
 
 BLOCAGE=AFFE_CHAR_MECA(MODELE=MODELE,
                        DDL_IMPO=_F(GROUP_MA='ENCAS',
-                                   LIAISON='ENCASTRE',),);
+                                   LIAISON='ENCASTRE',),)
 
 
 GRAV=AFFE_CHAR_MECA(MODELE=MODELE,
                     PESANTEUR=_F(GRAVITE=300.,
-                                 DIRECTION=(-1.,0,1,),),);
+                                 DIRECTION=(-1.,0,1,),),)
 
 
 sinom = FORMULE(VALE='sin(om*INST)',
@@ -96,12 +96,12 @@ TRANGENE=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
 DEPLPDZ=RECU_FONCTION(RESU_GENE=TRANGEN,
                       NOM_CHAM='DEPL',
                       NOM_CMP='DZ',
-                      GROUP_NO='P',);
+                      GROUP_NO='P',)
 
 DEPLPDX=RECU_FONCTION(RESU_GENE=TRANGEN,
                       NOM_CHAM='DEPL',
                       NOM_CMP='DX',
-                      GROUP_NO='P',);
+                      GROUP_NO='P',)
 
 TEST_FONCTION(VALEUR=(_F(
                          FONCTION=DEPLPDZ,
@@ -135,12 +135,12 @@ TRANPHY=DYNA_LINE(TYPE_CALCUL='TRAN', BASE_CALCUL='PHYS',
 UZ3=RECU_FONCTION(RESULTAT=TRANPHY,
                       NOM_CHAM='DEPL',
                       NOM_CMP='DZ',
-                      GROUP_NO='P',);
+                      GROUP_NO='P',)
 
 UX3=RECU_FONCTION(RESULTAT=TRANPHY,
                       NOM_CHAM='DEPL',
                       NOM_CMP='DX',
-                      GROUP_NO='P',);
+                      GROUP_NO='P',)
 
 TEST_FONCTION(VALEUR=(_F(
                          FONCTION=UZ3,
@@ -195,13 +195,13 @@ UZ4=RECU_FONCTION(RESULTAT=TRANGEN2,
                       NOM_CHAM='DEPL',
                       NOM_CMP='DZ',
                       GROUP_NO='P',
-                      );
+                      )
 
 UX4=RECU_FONCTION(RESULTAT=TRANGEN2,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DX',
                   GROUP_NO='P',
-                   );
+                   )
 
 TEST_FONCTION(VALEUR=(_F(
                          FONCTION=UZ4,
@@ -235,8 +235,8 @@ MAXDUZ34 = INFO_FONCTION( MAX=_F(  FONCTION = DUZ34))
     # DEFI_FICHIER(UNITE=unite,FICHIER=  fichier )
     # IMPR_FONCTION(FORMAT='TABLEAU',
               # COURBE=_F(FONCTION=eval(st),),
-              # UNITE=unite,);
-    # DEFI_FICHIER(UNITE=unite,ACTION='LIBERER');
+              # UNITE=unite,)
+    # DEFI_FICHIER(UNITE=unite,ACTION='LIBERER')
 
 TEST_TABLE(CRITERE='ABSOLU',
            REFERENCE='ANALYTIQUE',
