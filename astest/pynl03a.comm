@@ -105,7 +105,7 @@ T        = CREA_CHAMP(TYPE_CHAM = 'NOEU_TEMP_R',
                                     NOM_CMP = ('TEMP'),
                                     VALE    = (temp_init,),
                                    ),
-                      );
+                      )
 DELTA_T  = CREA_CHAMP(TYPE_CHAM = 'NOEU_TEMP_R',
                       OPERATION = 'AFFE',
                       MAILLAGE  = MAIL,
@@ -115,7 +115,7 @@ DELTA_T  = CREA_CHAMP(TYPE_CHAM = 'NOEU_TEMP_R',
                                     NOM_CMP = ('TEMP'),
                                     VALE    = (0.,),
                                    ),
-                      );
+                      )
 
 for i_inst in range(1,len(l_inst)) :
     inst = l_inst[i_inst]
@@ -255,7 +255,7 @@ for i_inst in range(1,len(l_inst)) :
                           )
 
     MT_AS    = ASSE_MATRICE(MATR_ELEM = MT_EL,
-                            NUME_DDL  = NU,);
+                            NUME_DDL  = NU,)
     DETRUIRE(CONCEPT=_F(NOM=MT_EL),INFO=1)
 
 ####################################################################################################
@@ -263,13 +263,13 @@ for i_inst in range(1,len(l_inst)) :
 ####################################################################################################
 
     # Factor matrix
-    MT_AS    = FACTORISER(reuse     = MT_AS,
+    MT_AS    = FACTORISER(reuse     = MT_AS, METHODE="MULT_FRONT",
                           MATR_ASSE = MT_AS,)
 
     # Solve
     DETRUIRE(CONCEPT=_F(NOM=DELTA_T),INFO=1)
     DELTA_T  = RESOUDRE(MATR    = MT_AS,
-                        CHAM_NO = F2M_PRED,);
+                        CHAM_NO = F2M_PRED,)
     #DETRUIRE(CONCEPT=_F(NOM=MT_AS),INFO=1)
 
 #=========================================================
@@ -426,7 +426,7 @@ for i_inst in range(1,len(l_inst)) :
         # Solve
         DETRUIRE(CONCEPT=_F(NOM=T),INFO=1)
         T  = RESOUDRE(MATR    = MT_AS,
-                      CHAM_NO = CN2MBR,);
+                      CHAM_NO = CN2MBR,)
 
 
         # Somme en python T+ = DELTA_t + T-

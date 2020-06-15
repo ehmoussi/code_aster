@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -237,16 +237,16 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 M_EL=CALC_MATR_ELEM(OPTION='RIGI_MECA',
                    MODELE=MO,
                    CHAM_MATER=CHMA1,
-                   CHARGE=CHDIL,);
+                   CHARGE=CHDIL,)
 
-NUMEDD=NUME_DDL(MATR_RIGI=M_EL,);
+NUMEDD=NUME_DDL(MATR_RIGI=M_EL,)
 
 
 MATAS=ASSE_MATRICE(MATR_ELEM=M_EL,
-                   NUME_DDL=NUMEDD,);
+                   NUME_DDL=NUMEDD,)
 
 MATAS=FACTORISER(reuse =MATAS,
-                MATR_ASSE=MATAS,);
+                MATR_ASSE=MATAS, METHODE="MULT_FRONT",)
 
 
 U=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
@@ -255,7 +255,7 @@ U=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
              AFFE=_F(TOUT='OUI',
                      NOM_CMP=('DX','DY',),
                      VALE=(0.,0.,),
-                     ),);
+                     ),)
 
 
 SIGP=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
@@ -265,7 +265,7 @@ SIGP=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                         NOM_CMP=('SIXX','SIYY','SIZZ',
                                  'SIXY',),
                         VALE=(0.,0.,0.,0.,),
-                        ),);
+                        ),)
 
 
 VARIP=CREA_CHAMP(OPERATION='AFFE',
@@ -278,7 +278,7 @@ VARIP=CREA_CHAMP(OPERATION='AFFE',
 
 LIST1=DEFI_LIST_REEL(DEBUT=0.0,
                     INTERVALLE=_F(JUSQU_A=1.0,
-                                  NOMBRE=1,),);
+                                  NOMBRE=1,),)
 
 CONT1=CALCUL(OPTION=('FORC_VARC_ELEM_P'),
             MODELE=MO,
@@ -291,7 +291,7 @@ CONT1=CALCUL(OPTION=('FORC_VARC_ELEM_P'),
             SIGM=SIGP,
             VARI=VARIP,
             COMPORTEMENT=_F(RELATION='ELAS',),
-            );
+            )
 
 FEL_DIL1=EXTR_TABLE(TYPE_RESU='VECT_ELEM_DEPL_R',
                  TABLE=CONT1,
@@ -301,12 +301,12 @@ FEL_DIL1=EXTR_TABLE(TYPE_RESU='VECT_ELEM_DEPL_R',
 
 
 FAS_DIL1=ASSE_VECTEUR(VECT_ELEM=FEL_DIL1,
-                    NUME_DDL=NUMEDD,);
+                    NUME_DDL=NUMEDD,)
 
 
 LIST2=DEFI_LIST_REEL(DEBUT=-1.0,
                     INTERVALLE=_F(JUSQU_A=1.0,
-                                  NOMBRE=2,),);
+                                  NOMBRE=2,),)
 
 CONT2=CALCUL(OPTION=('FORC_VARC_ELEM_M'),
             MODELE=MO,
@@ -319,7 +319,7 @@ CONT2=CALCUL(OPTION=('FORC_VARC_ELEM_M'),
             SIGM=SIGP,
             VARI=VARIP,
             COMPORTEMENT=_F(RELATION='ELAS',),
-            );
+            )
 
 FEL_DIL2=EXTR_TABLE(TYPE_RESU='VECT_ELEM_DEPL_R',
                  TABLE=CONT2,
@@ -329,15 +329,15 @@ FEL_DIL2=EXTR_TABLE(TYPE_RESU='VECT_ELEM_DEPL_R',
 
 
 FAS_DIL2=ASSE_VECTEUR(VECT_ELEM=FEL_DIL2,
-                    NUME_DDL=NUMEDD,);
+                    NUME_DDL=NUMEDD,)
 
 
 DU1=RESOUDRE(MATR=MATAS,
-             CHAM_NO=FAS_DIL1,);
+             CHAM_NO=FAS_DIL1,)
 
 
 DU2=RESOUDRE(MATR=MATAS,
-             CHAM_NO=FAS_DIL2,);
+             CHAM_NO=FAS_DIL2,)
 
 TEST_RESU(CHAM_NO=(_F(
                    GROUP_NO='A',
@@ -373,4 +373,4 @@ TEST_RESU(CHAM_NO=(_F(
                 ),
           )
 
-FIN();
+FIN()

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ pa = 0.002;
 
 fc = 15.0;
 
-om = ((2.0 * pi) * fc);
+om = ((2.0 * pi) * fc)
 
 E = 200.E9;
 
@@ -35,12 +35,12 @@ nu = 0.3;
 
 
 MAIL=LIRE_MAILLAGE(UNITE=20,
-                   FORMAT='MED',);
+                   FORMAT='MED',)
 
 MODELE=AFFE_MODELE(MAILLAGE=MAIL,
                    AFFE=_F(GROUP_MA='VOL',
                            PHENOMENE='MECANIQUE',
-                           MODELISATION='3D',),);
+                           MODELISATION='3D',),)
 
 MAT=DEFI_MATERIAU(ELAS=_F(E=E,
                           NU=nu,
@@ -48,17 +48,17 @@ MAT=DEFI_MATERIAU(ELAS=_F(E=E,
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
                     AFFE=_F(GROUP_MA='VOL',
-                            MATER=MAT,),);
+                            MATER=MAT,),)
 
 TAMAS=POST_ELEM(MASS_INER=_F(TOUT='OUI',),
                 MODELE=MODELE,
-                CHAM_MATER=CHMAT,);
+                CHAM_MATER=CHMAT,)
 
-IMPR_TABLE(TABLE=TAMAS,);
+IMPR_TABLE(TABLE=TAMAS,)
 
 BLOCAGE=AFFE_CHAR_MECA(MODELE=MODELE,
                        DDL_IMPO=_F(GROUP_MA='ENCAS',
-                                   LIAISON='ENCASTRE',),);
+                                   LIAISON='ENCASTRE',),)
 
 ASSEMBLAGE(MODELE=MODELE,
            CHAM_MATER=CHMAT,
@@ -67,7 +67,7 @@ ASSEMBLAGE(MODELE=MODELE,
            MATR_ASSE=(_F(MATRICE=CO('RIGIDITE'),
                          OPTION='RIGI_MECA',),
                       _F(MATRICE=CO('MASSE'),
-                         OPTION='MASS_MECA',),),);
+                         OPTION='MASS_MECA',),),)
 
 MODES=CALC_MODES(MATR_RIGI=RIGIDITE,
                  OPTION='BANDE',
@@ -78,30 +78,30 @@ MODES=CALC_MODES(MATR_RIGI=RIGIDITE,
 
 MODES=NORM_MODE(reuse =MODES,
                 MODE=MODES,
-                NORME='MASS_GENE',);
+                NORME='MASS_GENE',)
 
 MODEE=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
                                FREQ_MIN=0.0,
                                FREQ_MAX=100.0,),
-                IMPRESSION=_F(CUMUL='OUI',),);
+                IMPRESSION=_F(CUMUL='OUI',),)
 
 fc_x4 = 4.*fc
 
 MODEF=EXTR_MODE(FILTRE_MODE=_F(MODE=MODES,
                                FREQ_MIN=0.0,
                                FREQ_MAX=fc_x4,),
-                IMPRESSION=_F(CUMUL='OUI',),);
+                IMPRESSION=_F(CUMUL='OUI',),)
 
 GRAV=AFFE_CHAR_MECA(MODELE=MODELE,
                     PESANTEUR=_F(GRAVITE=300.,
-                                 DIRECTION=(-1.,0,1,),),);
+                                 DIRECTION=(-1.,0,1,),),)
 
 PESELEM=CALC_VECT_ELEM(OPTION='CHAR_MECA',
                        CHARGE=GRAV,
-                       CHAM_MATER=CHMAT,);
+                       CHAM_MATER=CHMAT,)
 
 PESA=ASSE_VECTEUR(VECT_ELEM=PESELEM,
-                  NUME_DDL=NUMEDDL,);
+                  NUME_DDL=NUMEDDL,)
 
 PROJ_BASE(BASE=MODEF,
           STOCKAGE='DIAG',
@@ -111,13 +111,14 @@ PROJ_BASE(BASE=MODEF,
                              MATR_ASSE=RIGIDITE,),),
           VECT_ASSE_GENE=_F(VECTEUR=CO('PESPRO'),
                             VECT_ASSE=PESA,
-                            TYPE_VECT='FORC'),);
+                            TYPE_VECT='FORC'),)
 
 CORGRA=MACRO_ELAS_MULT(MODELE=MODELE,
+                       SOLVEUR=_F(METHODE="MULT_FRONT"),
                        CHAM_MATER=CHMAT,
                        CHAR_MECA_GLOBAL=BLOCAGE,
                        CAS_CHARGE=_F(NOM_CAS='grav',
-                                     CHAR_MECA=GRAV,),);
+                                     CHAR_MECA=GRAV,),)
 
 sinom = FORMULE(VALE='sin(om*INST)',
                 om=om,
@@ -142,19 +143,19 @@ TRANGENE= DYNA_VIBRA(TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
                               CORR_STAT='OUI',
                               D_FONC_DT=dsinom,
                               D_FONC_DT2=d2sinom,),
-                     MODE_CORR=CORGRA,);
+                     MODE_CORR=CORGRA,)
 
 
 DEPLPDZ=RECU_FONCTION(RESU_GENE=TRANGENE,
                       NOM_CHAM='DEPL',
                       NOM_CMP='DZ',
-                      GROUP_NO='P',);
+                      GROUP_NO='P',)
 
 DEPLPDZc=RECU_FONCTION(RESU_GENE=TRANGENE,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DZ',
                        GROUP_NO='P',
-                       CORR_STAT='OUI',);
+                       CORR_STAT='OUI',)
 
 DEPLPDX=RECU_FONCTION(RESU_GENE=TRANGENE,
                       NOM_CHAM='DEPL',
@@ -165,7 +166,7 @@ DEPLPDXc=RECU_FONCTION(RESU_GENE=TRANGENE,
                        NOM_CHAM='DEPL',
                        NOM_CMP='DX',
                        GROUP_NO='P',
-                       CORR_STAT='OUI',);
+                       CORR_STAT='OUI',)
 
 IMPR_FONCTION(FORMAT='XMGRACE',
               COURBE=(_F(FONCTION=DEPLPDZ,
@@ -194,4 +195,4 @@ TEST_FONCTION(VALEUR=(_F(
                          VALE_CALC=1.587087698170E-04
                        )))
 
-FIN();
+FIN()

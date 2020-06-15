@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -32,71 +32,72 @@ MODI_MAILLAGE(reuse =MAIL, MAILLAGE=MAIL, DEFORME=_F(OPTION='TRAN', ALEA=1.e-8,)
 MAIL=DEFI_GROUP(reuse =MAIL,
                 MAILLAGE=MAIL,
                 CREA_GROUP_MA=_F(NOM='TOUT',
-                                 TOUT='OUI',),);
+                                 TOUT='OUI',),)
 
 MODMECA=AFFE_MODELE(MAILLAGE=MAIL,
                     AFFE=_F(GROUP_MA='TOUT',
                             PHENOMENE='MECANIQUE',
-                            MODELISATION='AXIS_FOURIER',),);
+                            MODELISATION='AXIS_FOURIER',),)
 
 MAIL = MODI_MAILLAGE(MAILLAGE=MAIL, reuse=MAIL,
-                     ORIE_PEAU_2D=_F(GROUP_MA=('BC',),),);
+                     ORIE_PEAU_2D=_F(GROUP_MA=('BC',),),)
 
 MAT1=DEFI_MATERIAU(ELAS=_F(E=2.1E11,
                            NU=0.3,
-                           RHO=7800,),);
+                           RHO=7800,),)
 
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAIL,
                     MODELE=MODMECA,
                     AFFE=_F(TOUT='OUI',
-                            MATER=MAT1,),);
+                            MATER=MAT1,),)
 
-PCRIT=1./(2.*pi);
+PCRIT=1./(2.*pi)
 
 
 CLS=AFFE_CHAR_MECA(MODELE=MODMECA,
                    DDL_IMPO=(_F(GROUP_MA='DA',
                                 DX=0.0,DZ=0.),
                              _F(GROUP_MA='BC',
-                                DY=0.,DZ=0.),),);
+                                DY=0.,DZ=0.),),)
 
 CHAR=AFFE_CHAR_MECA(MODELE=MODMECA,
                     FORCE_CONTOUR=_F(GROUP_MA='BC',
-                                     FX=PCRIT,),);
+                                     FX=PCRIT,),)
 
 ELAS=MACRO_ELAS_MULT(MODELE=MODMECA,
                      CHAM_MATER=CHMAT,
+                     SOLVEUR=_F(METHODE="MULT_FRONT"),
                      CHAR_MECA_GLOBAL=CLS,
                      CAS_CHARGE=_F(MODE_FOURIER=0,
                                    TYPE_MODE='SYME',
-                                   CHAR_MECA=CHAR,),);
+                                   CHAR_MECA=CHAR,),)
 
 SIG=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
                OPERATION='EXTR',
                RESULTAT=ELAS,
                NOM_CHAM='SIEF_ELGA',
                TYPE_MAXI='MINI',
-               TYPE_RESU='VALE',);
+               TYPE_RESU='VALE',)
 
 MAT_RI_M=CALC_MATR_ELEM(OPTION='RIGI_MECA',
                         MODELE=MODMECA,
                         CHAM_MATER=CHMAT,
                         MODE_FOURIER=0,
-                        CHARGE=(CLS,CHAR,),);
+                        CHARGE=(CLS,CHAR,),)
 
 MAT_RI_G=CALC_MATR_ELEM(OPTION='RIGI_GEOM',
                         MODELE=MODMECA,
                         SIEF_ELGA=SIG,
-                        MODE_FOURIER=0,);
+                        MODE_FOURIER=0,)
 
 
-NUM=NUME_DDL(MATR_RIGI=MAT_RI_M,);
+NUM=NUME_DDL(MATR_RIGI=MAT_RI_M,)
 
 MAS_RI_M=ASSE_MATRICE(MATR_ELEM=MAT_RI_M,
-                      NUME_DDL=NUM,);
+                      NUME_DDL=NUM,)
 
 MAS_RI_G=ASSE_MATRICE(MATR_ELEM=MAT_RI_G,
-                      NUME_DDL=NUM,);
+                      NUME_DDL=NUM,)
 
 
 RESULT=CALC_MODES(MATR_RIGI=MAS_RI_M,
@@ -115,19 +116,19 @@ RESULT=CALC_MODES(MATR_RIGI=MAS_RI_M,
                   )
 
 RES_NORM=NORM_MODE(MODE=RESULT,
-                   NORME='TRAN',);
+                   NORME='TRAN',)
 
 CHA_DEPL=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                     OPERATION='EXTR',
                     RESULTAT=RESULT,
                     NOM_CHAM='DEPL',
-                    NUME_MODE=1,);
+                    NUME_MODE=1,)
 
 MODE_1=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
                    OPERATION='EXTR',
                    RESULTAT=RES_NORM,
                    NOM_CHAM='DEPL',
-                   NUME_ORDRE=10,);
+                   NUME_ORDRE=10,)
 
 TEST_RESU(RESU=_F(PARA='CHAR_CRIT',
                   NUME_MODE=10,
@@ -146,4 +147,4 @@ TEST_RESU(CHAM_NO=_F(NOEUD='N4',
           )
 
 
-FIN();
+FIN()

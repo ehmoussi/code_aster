@@ -2,7 +2,7 @@
 # --------------------------------------------------------------------
 # Copyright (C) 2019 Aether Engineering Solutions - www.aethereng.com
 # Copyright (C) 2019 Kobe Innovation Engineering - www.kobe-ie.com
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -131,7 +131,7 @@ ch1 = AFFE_CHAR_MECA(
         GROUP_MA = (
             'END',
         ),
-        FY = fy / H,        
+        FY = fy / H,
         FZ = fz / H,
     ),
 )
@@ -144,7 +144,7 @@ ch2 = AFFE_CHAR_MECA(
             'END',
         ),
         FX = fx / H,
-    ),    
+    ),
 )
 
 reslin = MACRO_ELAS_MULT (
@@ -166,6 +166,7 @@ reslin = MACRO_ELAS_MULT (
                 OPTION = 'SANS',
         ),
     ),
+    SOLVEUR=_F(METHODE="MULT_FRONT"),
 )
 
 # ~ IMPR_RESU(FORMAT='MED',
@@ -175,8 +176,8 @@ reslin = MACRO_ELAS_MULT (
 tbcoup = CALC_COUPURE(RESULTAT=reslin,
                       OPERATION='RESULTANTE',
                       LIGN_COUPE=(
-                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1500.,-1500.), COOR_EXTR=(0.,1500.,1500.), NB_POINTS=100, DISTANCE_MAX=1.0), 
-                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1650.,-1500.), COOR_EXTR=(0.,1650.,1500.), NB_POINTS=100, DISTANCE_MAX=1.0), 
+                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1500.,-1500.), COOR_EXTR=(0.,1500.,1500.), NB_POINTS=100, DISTANCE_MAX=1.0),
+                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1650.,-1500.), COOR_EXTR=(0.,1650.,1500.), NB_POINTS=100, DISTANCE_MAX=1.0),
                     ))
 
 # ~ IMPR_TABLE(TABLE=tbcoup)
@@ -202,12 +203,12 @@ tbcoup = CALC_COUPURE(RESULTAT=reslin,
                                  # ~ )
                          # ~ )
 
-            # ~ DETRUIRE(CONCEPT=_F(NOM=(fonc)))    
+            # ~ DETRUIRE(CONCEPT=_F(NOM=(fonc)))
 
 # ===================================== #
 # TEST COUPE RESULTANTE
 # ===================================== #
-# ------------------------- # 
+# ------------------------- #
 # TEST COUPE 3 m, ch1
 # ------------------------- #
 
@@ -223,7 +224,7 @@ TEST_TABLE(  TABLE=tbcoup,
              NOM_PARA='N',
              VALE_CALC=5999996.918079951,
              VALE_REFE=effortNormal,
-             );
+             )
 
 TEST_TABLE(  TABLE=tbcoup,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -249,7 +250,7 @@ TEST_TABLE(  TABLE=tbcoup,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='MPL',
-             VALE_CALC=-5400497831.495169, 
+             VALE_CALC=-5400497831.495169,
              VALE_REFE=momentPL_d1,
              )
 
@@ -280,7 +281,7 @@ TEST_TABLE(  TABLE=tbcoup,
              REFERENCE='ANALYTIQUE',
              CRITERE='ABSOLU',
              NOM_PARA='MHP',
-             VALE_CALC=-5.995210939169265E-07, 
+             VALE_CALC=-5.995210939169265E-07,
              VALE_REFE=0.0,
              PRECISION=1.E-6,
              )
@@ -300,7 +301,7 @@ TEST_TABLE(  TABLE=tbcoup,
              NOM_PARA='N',
              VALE_CALC=5999999.98901463,
              VALE_REFE=effortNormal,
-             );
+             )
 
 TEST_TABLE(  TABLE=tbcoup,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -326,7 +327,7 @@ TEST_TABLE(  TABLE=tbcoup,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='MPL',
-             VALE_CALC=-5310489128.329362, 
+             VALE_CALC=-5310489128.329362,
              VALE_REFE=momentPL_d2,
              )
 
@@ -341,7 +342,7 @@ TEST_TABLE(  TABLE=tbcoup,
              REFERENCE='ANALYTIQUE',
              CRITERE='ABSOLU',
              NOM_PARA='VHP',
-             VALE_CALC=-6.451749030440969E-11, 
+             VALE_CALC=-6.451749030440969E-11,
              VALE_REFE=0.0,
              PRECISION=1.E-6,
              )
@@ -362,7 +363,7 @@ TEST_TABLE(  TABLE=tbcoup,
              PRECISION=1.E-6,
              )
 
-# ------------------------- # 
+# ------------------------- #
 # TEST COUPE 3 m, ch2
 # ------------------------- #
 TEST_TABLE(  TABLE=tbcoup,
@@ -380,7 +381,7 @@ TEST_TABLE(  TABLE=tbcoup,
              VALE_REFE=0.0,
              ORDRE_GRANDEUR=1E-6,
              PRECISION=1.E-6,
-             );
+             )
 
 TEST_TABLE(  TABLE=tbcoup,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -424,7 +425,7 @@ TEST_TABLE(  TABLE=tbcoup,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='VHP',
-             VALE_CALC=-97993.46454110165, 
+             VALE_CALC=-97993.46454110165,
              VALE_REFE=cisaillementHP,
              PRECISION=3E-2,
              )
@@ -439,7 +440,7 @@ TEST_TABLE(  TABLE=tbcoup,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='MHP',
-             VALE_CALC=-900000991.8834115, 
+             VALE_CALC=-900000991.8834115,
              VALE_REFE=momentHP_d1,
              )
 
@@ -461,7 +462,7 @@ TEST_TABLE(  TABLE=tbcoup,
              VALE_REFE=0.0,
              ORDRE_GRANDEUR=1E-6,
              PRECISION=1.E-6,
-             );
+             )
 
 TEST_TABLE(  TABLE=tbcoup,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -520,7 +521,7 @@ TEST_TABLE(  TABLE=tbcoup,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='MHP',
-             VALE_CALC=-885000885.145294, 
+             VALE_CALC=-885000885.145294,
              VALE_REFE=momentHP_d2,
              )
 
@@ -532,11 +533,11 @@ tbextr = CALC_COUPURE(RESULTAT=reslin,
                       OPERATION='EXTRACTION',
                       NOM_CAS = 'ch1',
                       LIGN_COUPE=(
-                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1500.,-1500.), COOR_EXTR=(0.,1500.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0), 
-                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1650.,-1500.), COOR_EXTR=(0.,1650.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0), 
+                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1500.,-1500.), COOR_EXTR=(0.,1500.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0),
+                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1650.,-1500.), COOR_EXTR=(0.,1650.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0),
                     ))
 
-# ------------------------- # 
+# ------------------------- #
 # TEST COUPE 3 m, ch1
 # ------------------------- #
 
@@ -553,9 +554,9 @@ TEST_TABLE(  TABLE=tbextr,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='NXY',
-             VALE_CALC=-300.1375762039183, 
+             VALE_CALC=-300.1375762039183,
              VALE_REFE=3.*cisaillementPL/(2*H),
-             );
+             )
 
 TEST_TABLE(  TABLE=tbextr,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -570,10 +571,10 @@ TEST_TABLE(  TABLE=tbextr,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='NYY',
-             VALE_CALC=2010.0207531451338, 
+             VALE_CALC=2010.0207531451338,
              VALE_REFE=effortNormal/H,
               PRECISION=1.E-2,
-             );
+             )
 
 TEST_TABLE(  TABLE=tbextr,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -592,7 +593,7 @@ TEST_TABLE(  TABLE=tbextr,
              VALE_CALC=-1.9842754616757935E-10,
              VALE_REFE=0.0,
              PRECISION=1.E-6,
-            );
+            )
 
 TEST_TABLE(  TABLE=tbextr,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -611,19 +612,19 @@ TEST_TABLE(  TABLE=tbextr,
              VALE_CALC=-2.196357705686945E-14,
              VALE_REFE=0.0,
              PRECISION=1.E-6,
-             );
+             )
 
-DETRUIRE( CONCEPT = _F( NOM = tbextr),);
+DETRUIRE( CONCEPT = _F( NOM = tbextr),)
 
 tbextr = CALC_COUPURE(RESULTAT=reslin,
                       OPERATION='EXTRACTION',
                       NOM_CAS = 'ch2',
                       LIGN_COUPE=(
-                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1500.,-1500.), COOR_EXTR=(0.,1500.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0), 
-                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1650.,-1500.), COOR_EXTR=(0.,1650.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0), 
+                       _F(INTITULE="coupe 3 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1500.,-1500.), COOR_EXTR=(0.,1500.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0),
+                       _F(INTITULE="coupe 3.15 m", GROUP_MA = 'ELEMENTS', COOR_ORIG=(0.,1650.,-1500.), COOR_EXTR=(0.,1650.,1500.), NB_POINTS=3, DISTANCE_MAX=1.0),
                     ))
 
-# ------------------------- # 
+# ------------------------- #
 # TEST COUPE 3.15 m, ch2
 # ------------------------- #
 
@@ -644,7 +645,7 @@ TEST_TABLE(  TABLE=tbextr,
              VALE_CALC=5.550330460919054E-15,
              VALE_REFE=0.0,
              PRECISION=1.E-6,
-             );
+             )
 
 TEST_TABLE(  TABLE=tbextr,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -664,7 +665,7 @@ TEST_TABLE(  TABLE=tbextr,
              VALE_REFE=0.0,
              ORDRE_GRANDEUR=1E-6,
              PRECISION=1.E-6,
-             );
+             )
 
 TEST_TABLE(  TABLE=tbextr,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -682,7 +683,7 @@ TEST_TABLE(  TABLE=tbextr,
              VALE_CALC=-293123.9113781933,
              VALE_REFE=momentHP_d2/H,
              PRECISION=1E-2,
-             );
+             )
 
 TEST_TABLE(  TABLE=tbextr,
              FILTRE=(_F(NOM_PARA='INTITULE',
@@ -697,9 +698,9 @@ TEST_TABLE(  TABLE=tbextr,
                     ),
              REFERENCE='ANALYTIQUE',
              NOM_PARA='QY',
-             VALE_CALC=-32.52184698817971, 
+             VALE_CALC=-32.52184698817971,
              VALE_REFE=cisaillementHP/H,
              PRECISION=3E-2,
-            );
+            )
 
 FIN()

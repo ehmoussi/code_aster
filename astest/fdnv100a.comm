@@ -18,7 +18,7 @@
 # --------------------------------------------------------------------
 
 DEBUT( CODE = _F(NIV_PUB_WEB = 'INTERNET' ,
-                  ) ,DEBUG=_F(SDVERI='NON'));
+                  ) ,DEBUG=_F(SDVERI='NON'))
 #
 #  Modelisation de la plaque flexible par COQUE_3D
 #  Maillage_interface :  ASTER pour IFLUSTRU
@@ -35,13 +35,13 @@ DEBUT( CODE = _F(NIV_PUB_WEB = 'INTERNET' ,
 #
 #-----------------------------------------------------------------------------------
 #
-#PRE_GIBI();
+#PRE_GIBI()
 #
-MAILLA1=LIRE_MAILLAGE(  FORMAT='MED',UNITE=20, );
+MAILLA1=LIRE_MAILLAGE(  FORMAT='MED',UNITE=20, )
 #
 MAILLA2=CREA_MAILLAGE(MAILLAGE=MAILLA1,
                       CREA_POI1=_F(NOM_GROUP_MA='POI1',
-                                   GROUP_NO='Q',),);
+                                   GROUP_NO='Q',),)
 #
 #-----------------------------------------------------------------------------------
 #
@@ -61,7 +61,7 @@ MAILLA2=DEFI_GROUP(reuse =MAILLA2,
                                   _F(INTERSEC=('PLAQUE','PLANBAS',),
                                      NOM='FONDP',),
                                   _F(GROUP_MA='FONDS',),),
-                   INFO=1,);
+                   INFO=1,)
 #
 #-----------------------------------------------------------------------------------
 #
@@ -87,7 +87,7 @@ MODELE=AFFE_MODELE(MAILLAGE=MAILLA2,
                             MODELISATION='3D',),
                          _F(GROUP_MA=('FONDS',),
                             PHENOMENE='MECANIQUE',
-                            MODELISATION='DKT',),),);
+                            MODELISATION='DKT',),),)
 #
 #  MODELE STRUCTURE SEUL (POUR CRIT_STAB)
 #
@@ -100,7 +100,7 @@ MODELEST=AFFE_MODELE(MAILLAGE=MAILLA2,
                             MODELISATION='3D',),
                          _F(GROUP_MA=('FONDS',),
                             PHENOMENE='MECANIQUE',
-                            MODELISATION='DKT',),),);
+                            MODELISATION='DKT',),),)
 #
 #-----------------------------------------------------------------------------------
 #
@@ -110,15 +110,15 @@ MODELEST=AFFE_MODELE(MAILLAGE=MAILLA2,
 #
 DURALU=DEFI_MATERIAU(ELAS=_F(E=62430000000.0,
                              NU=0.35,
-                             RHO=2787.0,),);
+                             RHO=2787.0,),)
 #
 DURALU2=DEFI_MATERIAU(ELAS=_F(E=62430000000000.0,
                              NU=0.35,
-                             RHO=2.0,),);
+                             RHO=2.0,),)
 #
 EAU=DEFI_MATERIAU(FLUIDE=_F(RHO=1000.0,
                              PESA_Z=9.81,
-                            CELE_R=1500.0,),);
+                            CELE_R=1500.0,),)
 #
 CHMAT=AFFE_MATERIAU(MAILLAGE=MAILLA2,
                     AFFE=(_F(GROUP_MA=('FLUID1','FLUID2',
@@ -127,7 +127,7 @@ CHMAT=AFFE_MATERIAU(MAILLAGE=MAILLA2,
                           _F(GROUP_MA=('PLAQUE','POI1',),
                              MATER=DURALU,),
                           _F(GROUP_MA=('FONDS',),
-                             MATER=DURALU2,),),);
+                             MATER=DURALU2,),),)
 #
 #  MATERIAU POUR MODELE STRUCTURE SEULE
 #
@@ -136,7 +136,7 @@ CHMATST=AFFE_MATERIAU(MAILLAGE=MAILLA2,
                           _F(GROUP_MA=('PLAQUE','POI1',),
                              MATER=DURALU,),
                           _F(GROUP_MA=('FONDS',),
-                             MATER=DURALU2,),),);
+                             MATER=DURALU2,),),)
 #
 CARAELEM=AFFE_CARA_ELEM(MODELE=MODELE,
                         DISCRET=(
@@ -148,10 +148,10 @@ CARAELEM=AFFE_CARA_ELEM(MODELE=MODELE,
                                    VALE=(0.0,0.0,0.0,),),
 ),
                         COQUE=_F( GROUP_MA = 'FONDS',
-                        EPAIS = 0.00001 ),);
+                        EPAIS = 0.00001 ),)
 #
 TABL_MAS=POST_ELEM(MASS_INER= _F(GROUP_MA=('FLUID1','FLUID2','FACELATE','IFLUSTRU','PLAQUE','FONDS',)),
-                   MODELE=MODELE, CHAM_MATER=CHMAT, CARA_ELEM=CARAELEM,);
+                   MODELE=MODELE, CHAM_MATER=CHMAT, CARA_ELEM=CARAELEM,)
 #
 #-----------------------------------------------------------------------------------
 #
@@ -163,33 +163,33 @@ TABL_MAS=POST_ELEM(MASS_INER= _F(GROUP_MA=('FLUID1','FLUID2','FACELATE','IFLUSTR
 vnorFunc = DEFI_CONSTANTE(VALE=0.0)
 CONDLIM=AFFE_CHAR_MECA_F(MODELE=MODELE,
                        VITE_FACE=_F(GROUP_MA=('FACELATE','IFLUSTRU'),
-                                    VNOR=vnorFunc,),);
+                                    VNOR=vnorFunc,),)
 #
 CONDLC=AFFE_CHAR_CINE(MODELE=MODELE,
                       MECA_IMPO=(_F(GROUP_NO=('FONDS','FONDP',),
                                     DY=0.0,
                                     DZ=0.0,
-                                    DRX=0.,DRY=0.,DRZ=0.,),),);
+                                    DRX=0.,DRY=0.,DRZ=0.,),),)
 #
 CONDLCST=AFFE_CHAR_CINE(MODELE=MODELEST,
                         MECA_IMPO=(_F(GROUP_NO=('FONDS','FONDP',),
                                       DY=0.0,
                                       DZ=0.0,
-                                      DRX=0.,DRY=0.,DRZ=0.,),),);
+                                      DRX=0.,DRY=0.,DRZ=0.,),),)
 #
 PESA=AFFE_CHAR_MECA(MODELE=MODELE,
                     PESANTEUR=_F(GRAVITE=9.81,
-                                 DIRECTION=(0.,0.,-1.,),),);
+                                 DIRECTION=(0.,0.,-1.,),),)
 #
 PESAST=AFFE_CHAR_MECA(MODELE=MODELEST,
                       PESANTEUR=_F(GRAVITE=9.81,
-                                   DIRECTION=(0.,0.,-1.,),),);
+                                   DIRECTION=(0.,0.,-1.,),),)
 #
-FREQ = 1.7704;
+FREQ = 1.7704
 #
 LFONC=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=_F(JUSQU_A=10.0,
-                                   PAS=0.01,),);
+                                   PAS=0.01,),)
 #
 FONC = FORMULE(VALE='(0.001)*sin(2*pi*FREQ*INST)',
                FREQ=FREQ,
@@ -197,15 +197,15 @@ FONC = FORMULE(VALE='(0.001)*sin(2*pi*FREQ*INST)',
 #
 DEPLX=CALC_FONC_INTERP(FONCTION=FONC,
                        NOM_PARA='INST',
-                       LIST_PARA=LFONC,);
+                       LIST_PARA=LFONC,)
 #
 CHARG_SE=AFFE_CHAR_MECA_F(MODELE=MODELE,
                           DDL_IMPO=_F(GROUP_NO=('FONDS','FONDP',),
-                                      DX=DEPLX,),);
+                                      DX=DEPLX,),)
 #
 CHARG_ST=AFFE_CHAR_MECA_F(MODELE=MODELEST,
                           DDL_IMPO=_F(GROUP_NO=('FONDS','FONDP',),
-                                      DX=DEPLX,),);
+                                      DX=DEPLX,),)
 #
 #-----------------------------------------------------------------------------------
 #
@@ -218,22 +218,22 @@ TPSFIN = 2.
 LINST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=(_F(JUSQU_A=TPSFIN,
                                     PAS=0.1,),),
-                     INFO=1,);
+                     INFO=1,)
 #
 LINST2=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = LINST),
-                        ECHEC=_F(EVENEMENT='INSTABILITE',ACTION='ARRET',),);
+                        ECHEC=_F(EVENEMENT='INSTABILITE',ACTION='ARRET',),)
 #
 LARCH=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=(_F(JUSQU_A=TPSFIN,
-                                    PAS=0.2,),),);
+                                    PAS=0.2,),),)
 #
 LCAST=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=(_F(JUSQU_A=TPSFIN,
-                                    PAS=0.2,),),);
+                                    PAS=0.2,),),)
 #
 L_OBS=DEFI_LIST_REEL(DEBUT=0.0,
                      INTERVALLE=(_F(JUSQU_A=TPSFIN,
-                                    PAS=0.2,),),);
+                                    PAS=0.2,),),)
 #
 #-----------------------------------------------------------------------------------
 #
@@ -243,21 +243,21 @@ L_OBS=DEFI_LIST_REEL(DEBUT=0.0,
 #
 CONDSTA=AFFE_CHAR_MECA(MODELE=MODELE,
                        VITE_FACE=_F(GROUP_MA='FACELATE',
-                                    VNOR=0.0,),);
+                                    VNOR=0.0,),)
 #
 CONDSTC=AFFE_CHAR_CINE(MODELE=MODELE,
                        MECA_IMPO=(_F(GROUP_NO=('FONDS','FONDP',),
                                     DX=0.0,
                                     DY=0.0,
                                     DZ=0.0,
-                                    DRX=0.,DRY=0.,DRZ=0.,),),);
+                                    DRX=0.,DRY=0.,DRZ=0.,),),)
 #
 CONDSTCS=AFFE_CHAR_CINE(MODELE=MODELEST,
                         MECA_IMPO=(_F(GROUP_NO=('FONDS','FONDP',),
                                       DX=0.0,
                                       DY=0.0,
                                       DZ=0.0,
-                                      DRX=0.,DRY=0.,DRZ=0.,),),);
+                                      DRX=0.,DRY=0.,DRZ=0.,),),)
 #
 ASSEMBLAGE (MODELE = MODELE,
                   CHAM_MATER=CHMAT,
@@ -270,7 +270,7 @@ ASSEMBLAGE (MODELE = MODELE,
                    _F( MATRICE= CO('MASSTA'), OPTION= 'MASS_MECA'),
                             ),
                   VECT_ASSE=(_F(VECTEUR=CO("F_0"),OPTION='CHAR_MECA')),
-                             );
+                             )
 #
 ASSEMBLAGE (MODELE = MODELEST,
                   CHAM_MATER=CHMATST,
@@ -283,14 +283,14 @@ ASSEMBLAGE (MODELE = MODELEST,
                    _F( MATRICE= CO('MASSTAST'), OPTION= 'MASS_MECA'),
                             ),
                   VECT_ASSE=(_F(VECTEUR=CO("F_0ST"),OPTION='CHAR_MECA')),
-                             );
+                             )
 #
 RIGICOMB = COMB_MATR_ASSE(
          COMB_R=(
                _F( MATR_ASSE= RIGSTA, COEF_R= 1.),
                _F( MATR_ASSE= MASSTA, COEF_R= -0.001),
                 ),
-                         );
+                         )
 #
 #-----------------------------------------------------------------------------------
 #
@@ -298,17 +298,18 @@ RIGICOMB = COMB_MATR_ASSE(
 #
 #-----------------------------------------------------------------------------------
 #
-RIGICOMB = FACTORISER(reuse=RIGICOMB, MATR_ASSE= RIGICOMB, STOP_SINGULIER= 'NON');
+RIGICOMB = FACTORISER(reuse=RIGICOMB, MATR_ASSE= RIGICOMB, STOP_SINGULIER= 'NON',
+                       METHODE="MULT_FRONT",)
 #
-RIGSTAST = FACTORISER(reuse=RIGSTAST, MATR_ASSE= RIGSTAST);
+RIGSTAST = FACTORISER(reuse=RIGSTAST, MATR_ASSE= RIGSTAST, METHODE="MULT_FRONT",)
 #
 VCINE   = CALC_CHAR_CINE(   NUME_DDL=NUMSTA,  CHAR_CINE=CONDSTC)
 #
 VCINEST = CALC_CHAR_CINE(   NUME_DDL=NUMSTAST,  CHAR_CINE=CONDSTCS)
 #
-DEP0    = RESOUDRE(MATR= RIGICOMB, CHAM_NO=F_0,CHAM_CINE=VCINE,);
+DEP0    = RESOUDRE(MATR= RIGICOMB, CHAM_NO=F_0,CHAM_CINE=VCINE,)
 #
-DEP0ST  = RESOUDRE(MATR= RIGSTAST, CHAM_NO=F_0ST,CHAM_CINE=VCINEST,);
+DEP0ST  = RESOUDRE(MATR= RIGSTAST, CHAM_NO=F_0ST,CHAM_CINE=VCINEST,)
 #
 VIT0    = CREA_CHAMP(   OPERATION='AFFE',
                         TYPE_CHAM='NOEU_DEPL_R',
@@ -317,7 +318,7 @@ VIT0    = CREA_CHAMP(   OPERATION='AFFE',
                         AFFE=( _F( TOUT='OUI',
                                    NOM_CMP = ('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ', 'PRES', 'PHI', 'DH',),
                                    VALE = (  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,  0.0,)),
-                    ));
+                    ))
 #
 VIT0ST    = CREA_CHAMP(   OPERATION='AFFE',
                         TYPE_CHAM='NOEU_DEPL_R',
@@ -326,14 +327,14 @@ VIT0ST    = CREA_CHAMP(   OPERATION='AFFE',
                         AFFE=( _F( TOUT='OUI',
                                    NOM_CMP = ('DX', 'DY', 'DZ',),
                                    VALE = (  0.0,  0.0,  0.0,)),
-                    ));
+                    ))
 #
 ACCE0 = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',OPERATION='AFFE',MODELE=MODELE,
                    AFFE=_F(TOUT='OUI',NOM_CMP=('DX', 'DY', 'DZ', 'DRX', 'DRY', 'DRZ', 'PRES', 'PHI', 'DH',),
-                   VALE = (0., 0., 0., 0., 0., 0., 0., 0., 0.,),),);
+                   VALE = (0., 0., 0., 0., 0., 0., 0., 0., 0.,),),)
 #
 ACCE0ST = CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',OPERATION='AFFE',MODELE=MODELEST,
-                   AFFE=_F(TOUT='OUI',NOM_CMP=('DX', 'DY', 'DZ',),VALE = (0., 0., 0.,),),);
+                   AFFE=_F(TOUT='OUI',NOM_CMP=('DX', 'DY', 'DZ',),VALE = (0., 0., 0.,),),)
 #
 #-----------------------------------------------------------------------------------
 #
@@ -373,7 +374,7 @@ RESU=DYNA_NON_LINE(MODELE=MODELE,
                    CRIT_STAB=_F(RIGI_GEOM='NON',
                                 DDL_EXCLUS=('PHI','PRES','DH',),
                                 MODI_RIGI='OUI',NMAX_CHAR_CRIT = 1,),
-                   );
+                   )
 #
 RESUST=DYNA_NON_LINE(MODELE=MODELEST,
                    CHAM_MATER=CHMATST,
@@ -406,7 +407,7 @@ RESUST=DYNA_NON_LINE(MODELE=MODELEST,
                                    GROUP_NO=('P6','P12',)),),
                    RECH_LINEAIRE=_F(),
                    CRIT_STAB=_F(RIGI_GEOM='NON',),
-                   );
+                   )
 #
 #-----------------------------------------------------------------------------------
 #
@@ -487,7 +488,7 @@ TEST_RESU(RESU=_F(INST=2.0,
 valstab = -2.477264942149
 #
 TABSPEC1=RECU_TABLE(CO=RESU,
-                    NOM_TABLE='ANALYSE_MODALE',);
+                    NOM_TABLE='ANALYSE_MODALE',)
 
 TEST_TABLE(
            REFERENCE='AUTRE_ASTER',
@@ -509,7 +510,7 @@ TEST_TABLE(
            )
 
 TABSPEC2=RECU_TABLE(CO=RESUST,
-                    NOM_TABLE='ANALYSE_MODALE',);
+                    NOM_TABLE='ANALYSE_MODALE',)
 
 TEST_TABLE(
            REFERENCE='AUTRE_ASTER',
@@ -530,4 +531,4 @@ TEST_TABLE(
                    ),
            )
 
-FIN();
+FIN()

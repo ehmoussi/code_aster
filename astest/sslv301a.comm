@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -67,20 +67,22 @@ CHARGT=AFFE_CHAR_MECA_F(   MODELE=MODELE,
 
 DEF_1=MACRO_ELAS_MULT(MODELE=MODELE,
                       CHAM_MATER=CHMAT,
+                      SOLVEUR=_F(METHODE="MULT_FRONT"),
                       CHAR_MECA_GLOBAL=CLIM,
                       CAS_CHARGE=(_F(MODE_FOURIER = 0,
                                      TYPE_MODE = 'SYME',
                                      CHAR_MECA = CHARGT,),
                                   _F(MODE_FOURIER = 1,
                                      TYPE_MODE = 'SYME',
-                                     CHAR_MECA = CHARGT,),),);
+                                     CHAR_MECA = CHARGT,),),)
 
 DEF_1=CALC_CHAMP(reuse= DEF_1,
                  RESULTAT = DEF_1,
-                 CONTRAINTE='SIGM_ELNO',);
+                 CONTRAINTE='SIGM_ELNO',)
 
 DEF_2=MACRO_ELAS_MULT(MODELE=MODELE,
                       CHAM_MATER=CHMAT,
+                      SOLVEUR=_F(METHODE="MULT_FRONT"),
                       CHAR_MECA_GLOBAL=CLIM,
                       CAS_CHARGE=(_F(MODE_FOURIER = 0,
                                      TYPE_MODE = 'SYME',
@@ -111,11 +113,11 @@ DEF_2=MACRO_ELAS_MULT(MODELE=MODELE,
                                      CHAR_MECA = CHARGT,),
                                   _F(MODE_FOURIER = 9,
                                      TYPE_MODE = 'SYME',
-                                     CHAR_MECA = CHARGT,),),);
+                                     CHAR_MECA = CHARGT,),),)
 
 DEF_2=CALC_CHAMP(reuse= DEF_2,
                  RESULTAT = DEF_2,
-                 CONTRAINTE='SIGM_ELNO',);
+                 CONTRAINTE='SIGM_ELNO',)
 
 # RECOMBINAISONS DE FOURIER EN DEPLACEMENTS ET CONTRAINTES
 # CALCUL 1: 2 MODES  - CALCUL 2: 10 MODES

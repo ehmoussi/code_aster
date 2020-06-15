@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -112,21 +112,23 @@ CHARG5=AFFE_CHAR_MECA(  MODELE=MODELE,
 
 STATIQUE=MACRO_ELAS_MULT(MODELE=MODELE,
                          CHAM_MATER=CH_MATER,
+                         SOLVEUR=_F(METHODE="MULT_FRONT"),
                          CARA_ELEM=CARA_ELE,
                          CHAR_MECA_GLOBAL=BLOQU,
                          NUME_DDL=CO("NU_DDL"),
                          CAS_CHARGE=_F(NOM_CAS = 'CHARGE NUMERO 1',
                                        CHAR_MECA = CHARG1,
                                        SOUS_TITRE = 'CHARGE REPARTIE FY SUR LE TRONCON DC',
-                                       OPTION =  'SIEF_ELGA',),);
+                                       OPTION =  'SIEF_ELGA',),)
 
 STATIQUE=CALC_CHAMP(reuse= STATIQUE,
                     RESULTAT = STATIQUE,
                     NOM_CAS='CHARGE NUMERO 1',
-                    FORCE='REAC_NODA',);
+                    FORCE='REAC_NODA',)
 
 STATIQUE=MACRO_ELAS_MULT(reuse=STATIQUE,
                          RESULTAT=STATIQUE,
+                         SOLVEUR=_F(METHODE="MULT_FRONT"),
                          MODELE=MODELE,
                          CHAM_MATER=CH_MATER,
                          CARA_ELEM=CARA_ELE,
@@ -142,33 +144,33 @@ STATIQUE=MACRO_ELAS_MULT(reuse=STATIQUE,
                                         SOUS_TITRE = 'MOMEMT MZ EN D',),
                                      _F(NOM_CAS = 'CHARGE NUMERO 5',
                                         CHAR_MECA = CHARG5,
-                                        SOUS_TITRE = 'COMBINAISON DES 4 CHARGEMENTS PRECEDENTS',),),);
+                                        SOUS_TITRE = 'COMBINAISON DES 4 CHARGEMENTS PRECEDENTS',),),)
 
 STATIQUE=CALC_CHAMP(reuse= STATIQUE,
                     RESULTAT = STATIQUE,
                     NOM_CAS = 'CHARGE NUMERO 2',
-                    FORCE='REAC_NODA',);
+                    FORCE='REAC_NODA',)
 
 STATIQUE=CALC_CHAMP(reuse= STATIQUE,
                     RESULTAT = STATIQUE,
                     NOM_CAS = 'CHARGE NUMERO 3',
-                    FORCE='REAC_NODA',);
+                    FORCE='REAC_NODA',)
 
 STATIQUE=CALC_CHAMP(reuse= STATIQUE,
                     RESULTAT = STATIQUE,
                     NOM_CAS = 'CHARGE NUMERO 4',
-                    FORCE='REAC_NODA',);
+                    FORCE='REAC_NODA',)
 
 STATIQUE=CALC_CHAMP(reuse= STATIQUE,
                     RESULTAT = STATIQUE,
                     NOM_CAS = 'CHARGE NUMERO 5',
-                    FORCE='REAC_NODA',);
+                    FORCE='REAC_NODA',)
 
 STATIQUE=CALC_CHAMP(reuse= STATIQUE,
                     RESULTAT = STATIQUE,
                     NOM_CAS = 'CHARGE NUMERO 5',
                     CONTRAINTE='EFGE_NOEU',
-                    GROUP_MA = 'PORTI1');
+                    GROUP_MA = 'PORTI1')
 
 TEST_RESU(RESU=_F(REFERENCE='ANALYTIQUE',
                   RESULTAT=STATIQUE,
@@ -199,7 +201,7 @@ tab1=MACR_LIGN_COUPE(RESULTAT=STATIQUE,
                                     DISTANCE_MAX=0.1,
                                     RESULTANTE=('NXX','NYY','NXY',),
                                     MOMENT=('MXX','MYY','MXY',),
-                                    POINT=(10.,12.,0.,),),),);
+                                    POINT=(10.,12.,0.,),),),)
 
 TEST_TABLE(CRITERE='ABSOLU',
            VALE_CALC=3.2588441172265E-06,
