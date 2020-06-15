@@ -159,15 +159,15 @@ class MEGMTR3(Element):
                      (OP.CHAR_MECA_EPSI_R.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
-        
+
         OP.CHAR_MECA_EPSI_F(te=430,
             para_in=((SP.PCACOQU, CCACOQU), (SP.PEPSINF, CEPSINF),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (OP.CHAR_MECA_EPSI_F.PVARCPR, LC.ZVARCPG), 
+                     (OP.CHAR_MECA_EPSI_F.PVARCPR, LC.ZVARCPG),
                      (SP.PTEMPSR, CTEMPSR),),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
-        
+
         OP.CHAR_MECA_HYDR_R(te=312,
                             para_in=(
                             (SP.PMATERC, LC.CMATERC), (
@@ -182,7 +182,7 @@ class MEGMTR3(Element):
                      (OP.CHAR_MECA_PESA_R.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
-        
+
         OP.CHAR_MECA_PRES_R(te=580,
                             para_in=((SP.PPRESSR, EPRESNO), ),
                             para_out=((SP.PVECTUR, MVECTUR), ),
@@ -439,7 +439,10 @@ class MEGMTR3(Element):
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), (SP.PVARIMP, ZVARIPG),
                      (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
+            para_out=((SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
         ),
 
         OP.SIEF_ELGA(te=433,

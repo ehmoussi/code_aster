@@ -192,10 +192,10 @@ class MEGCTR3(Element):
         ),
 
         OP.CHAR_MECA_PRES_R(te=580,
-            para_in=((SP.PPRESSR, EPRESNO), ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
-        ),
-
+                            para_in=((SP.PPRESSR, EPRESNO), ),
+                            para_out=((SP.PVECTUR, MVECTUR), ),
+                            ),
+        
         OP.CHAR_MECA_SECH_R(te=312,
                             para_in=(
                             (SP.PMATERC, LC.CMATERC), (
@@ -213,8 +213,7 @@ class MEGCTR3(Element):
         ),
 
         OP.COOR_ELGA(te=488,
-            para_in=((SP.PCACOQU, CCACOQU), (SP.PGEOMER, NGEOMER),
-                     ),
+            para_in=((SP.PCACOQU, CCACOQU), (SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
         ),
 
@@ -446,7 +445,10 @@ class MEGCTR3(Element):
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), (SP.PVARIMP, ZVARIPG),
                      (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
+            para_out=((SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
         ),
 
         OP.SIEF_ELGA(te=433,
