@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -24,12 +24,14 @@ MAILLAGE  =  LIRE_MAILLAGE(FORMAT='MED')
 
 MA         = CREA_MAILLAGE( MAILLAGE = MAILLAGE,
                             LINE_QUAD = _F(TOUT = 'OUI'),
-                          );
+                          )
 
 
 TEMPS1     = DEFI_LIST_REEL( DEBUT=1.10,
-                             INTERVALLE=_F(JUSQU_A=1.28,
-                             NOMBRE=2,)
+                             INTERVALLE=(_F(JUSQU_A=1.19,
+                             NOMBRE=4,),
+                                         _F(JUSQU_A=1.28,
+                             NOMBRE=1,),)
                            )
 
 
@@ -44,7 +46,7 @@ MATER      = DEFI_MATERIAU( ELAS = _F(E  = 1.0,
 
 CHMAT      = AFFE_MATERIAU(MAILLAGE=MA,
                            AFFE=_F(TOUT='OUI',
-                                   MATER=MATER),);
+                                   MATER=MATER),)
 
 COEF1      = DEFI_FONCTION( NOM_PARA    = 'INST',
                             PROL_DROITE = 'LINEAIRE',
@@ -58,7 +60,7 @@ MO         = AFFE_MODELE(MAILLAGE=MA,
                                  PHENOMENE='MECANIQUE',
                                  MODELISATION='D_PLAN_GVNO',
                                 ),
-                        );
+                        )
 
 #***********************************************************************
 #    CHARGEMENT MECANIQUE
@@ -105,6 +107,7 @@ EVOL   = STAT_NON_LINE( MODELE     = MO,
                                          NMAX_CHAR_CRIT       = 25,
                                          COEF_DIM_ESPACE = 2,
                                          DDL_STAB        = ('DAMG'),
+                                         INST=(1.19, 1.28),
                                         ),
                         COMPORTEMENT  = _F( TOUT            = 'OUI',
                                          RELATION        = 'ENDO_CARRE',
@@ -114,7 +117,7 @@ EVOL   = STAT_NON_LINE( MODELE     = MO,
                                          REAC_ITER       = 1,),
                         CONVERGENCE= _F( RESI_GLOB_RELA  = 1.E-6,),
                         INCREMENT  = _F( LIST_INST       = TEMPS1,),
-                        AFFICHAGE  = _F( INFO_RESIDU     = 'OUI',)
+                        AFFICHAGE  = _F( INFO_RESIDU     = 'OUI',),
                      )
 
 #***********************************************************************
@@ -122,10 +125,10 @@ EVOL   = STAT_NON_LINE( MODELE     = MO,
 #***********************************************************************
 
 TABSPEC0=RECU_TABLE(CO=EVOL,
-                   NOM_TABLE='ANALYSE_MODALE',);
+                   NOM_TABLE='ANALYSE_MODALE',)
 
 TEST_TABLE(
-           VALE_CALC=3.4309377105661E-08,
+           VALE_CALC=3.430937711123401E-08,
            NOM_PARA='CHAR_STAB',
            TABLE=TABSPEC0,
            FILTRE=(
@@ -141,7 +144,7 @@ TEST_TABLE(
            )
 
 TEST_TABLE(
-           VALE_CALC=-5.5982443335167E-09,
+           VALE_CALC=-5.598244328084313E-09,
            NOM_PARA='CHAR_STAB',
            TABLE=TABSPEC0,
            FILTRE=(
@@ -157,4 +160,4 @@ TEST_TABLE(
            )
 
 
-FIN();
+FIN()

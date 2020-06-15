@@ -30,7 +30,7 @@
 
 DEBUT(CODE=_F(
               NIV_PUB_WEB='INTERNET'),
-      DEBUG=_F(SDVERI='OUI'));
+      DEBUG=_F(SDVERI='OUI'))
 
 
 M1 = LIRE_MAILLAGE(FORMAT='GMSH',
@@ -38,7 +38,7 @@ M1 = LIRE_MAILLAGE(FORMAT='GMSH',
                    )
 
 M=CREA_MAILLAGE(MAILLAGE=M1,
-                LINE_QUAD=_F(TOUT='OUI'));
+                LINE_QUAD=_F(TOUT='OUI'))
 
 M=DEFI_GROUP(reuse =M,
              MAILLAGE=M,
@@ -57,27 +57,27 @@ M=DEFI_GROUP(reuse =M,
              CREA_GROUP_NO=(_F(GROUP_MA='GM1',
                                NOM='A'),
                             _F(GROUP_MA='GM2',
-                               NOM='F')));
+                               NOM='F')))
 
 MO=AFFE_MODELE(MAILLAGE=M,
-               
+
                AFFE=_F(GROUP_MA=('VOLUME','FACEEF','FACEAE'),
                        PHENOMENE='MECANIQUE',
-                       MODELISATION='3D_INCO_UPGB'));
+                       MODELISATION='3D_INCO_UPGB'))
 
 M=MODI_MAILLAGE(reuse =M,
                 MAILLAGE=M,
-                ORIE_PEAU_3D=_F(GROUP_MA=('FACEEF','FACEAE','FACEAB','FACSUP','FACINF')));
+                ORIE_PEAU_3D=_F(GROUP_MA=('FACEEF','FACEAE','FACEAB','FACSUP','FACINF')))
 
 MA=DEFI_MATERIAU(ELAS=_F(E=200000.,
                          NU=0.49999,
                          ALPHA=0.),
                  ECRO_LINE=_F(D_SIGM_EPSI=0.,
-                              SY=1.E10));
+                              SY=1.E10))
 
 CM=AFFE_MATERIAU(MAILLAGE=M,
                  AFFE=_F(TOUT='OUI',
-                         MATER=MA));
+                         MATER=MA))
 
 CH=AFFE_CHAR_MECA(MODELE=MO,
                   DDL_IMPO=(_F(GROUP_MA='FACEAB',
@@ -89,7 +89,7 @@ CH=AFFE_CHAR_MECA(MODELE=MO,
                   FACE_IMPO=(_F(GROUP_MA='FACEEF',
                                 DNOR=0.),
                              _F(GROUP_MA='FACEAE',
-                                DNOR=-6.E-5)));
+                                DNOR=-6.E-5)))
 
 # DXF = DEFI_FONCTION (NOM_PARA = 'X',
 #                      VALE = (0.1, 0., 0.2, 6.E-4 ))
@@ -106,13 +106,13 @@ CH=AFFE_CHAR_MECA(MODELE=MO,
 
 INSTANTS=DEFI_LIST_REEL(DEBUT=0.,
                         INTERVALLE=_F(JUSQU_A=1.,
-                                      NOMBRE=1));
+                                      NOMBRE=1))
 
 RAMPE=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.,0.,
                           1.,1.,
-                          ));
+                          ))
 
-DEFLIST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = INSTANTS));
+DEFLIST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST = INSTANTS))
 
 # LES SYSTEMES LINEAIRES SONT DIFFICILES A RESOUDRE.
 # ON DEVERROUILLE LA DETECTION DE SINGULARITE. LE PROCESSUS DE NEWTON
@@ -127,9 +127,9 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                    NEWTON=_F(REAC_ITER=1),
                    CONVERGENCE=_F(SIGM_REFE=60.0,
                                   EPSI_REFE=3.E-4,
-                                  RESI_REFE_RELA=1.E-4),
+                                  RESI_REFE_RELA=2.E-4),
                    SOLVEUR=_F(METHODE='MUMPS',
-   NPREC=-1));
+   NPREC=-1))
 
 # REMARQUE : STRICTO SENSU, LE CALCUL DE ERME_ELEM EST FAUX CAR
 #            DES BORDS A CONTRAINTE NULLE N'ONT PAS ETE DEFINIS DANS LE
@@ -140,15 +140,15 @@ EVOL=CALC_CHAMP(reuse=EVOL,RESULTAT=EVOL,CRITERES=('SIEQ_ELNO'),CONTRAINTE=('SIG
 
 EVOL=CALC_ERREUR(reuse =EVOL,
                  RESULTAT=EVOL,
-                 OPTION=('ERME_ELEM','ERME_ELNO'));
+                 OPTION=('ERME_ELEM','ERME_ELNO'))
 
 EVOL=CALC_CHAMP(reuse =EVOL,
              RESULTAT=EVOL,
-             CONTRAINTE='SIGM_NOEU',CRITERES='SIEQ_NOEU');
+             CONTRAINTE='SIGM_NOEU',CRITERES='SIEQ_NOEU')
 
 EVOL=CALC_CHAMP(reuse =EVOL,
                 RESULTAT=EVOL,
-                DEFORMATION=('EPSL_NOEU'));
+                DEFORMATION=('EPSL_NOEU'))
 
 
 #--------------------------------------------------------------
@@ -461,6 +461,6 @@ TEST_RESU(RESU=_F(GROUP_NO='A',
                   ),
           )
 
-FIN();
+FIN()
 
 #

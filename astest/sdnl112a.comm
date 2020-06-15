@@ -174,6 +174,10 @@ MODES=CALC_MODES(MATR_RIGI=MATRR,
                  MATR_MASS=MATRM,
                  SOLVEUR_MODAL=_F(METHODE='TRI_DIAG',
                                   ),
+                 SOLVEUR=_F(ELIM_LAGR='NON',
+                              METHODE='MUMPS',
+                              POSTTRAITEMENTS='FORCE',
+                              RESI_RELA=1e-8,),
                  )
 
 
@@ -211,7 +215,7 @@ FREQ1=RECU_FONCTION(
 
 #
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=25.39099701945,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=25.39099701925,
                         VALE_PARA=4.811,
                         FONCTION=FREQ1,
                         ),
@@ -228,7 +232,7 @@ FREQ2=RECU_FONCTION(
 
 #
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=52.85637768188,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=52.85637768026,
                         VALE_PARA=4.811,
                         FONCTION=FREQ2,
                         ),
@@ -245,7 +249,7 @@ AMOR1=RECU_FONCTION(
 
 #
 
-TEST_FONCTION(VALEUR=_F(VALE_CALC=-0.02805218753951,
+TEST_FONCTION(VALEUR=_F(VALE_CALC=-0.02805218753970,
                         VALE_PARA=4.811,
                         FONCTION=AMOR1,
                         ),
@@ -312,7 +316,7 @@ DYN0=POST_DYNA_ALEA(INTERSPECTRE=_F(
 IMPR_TABLE(  TABLE=DYN0, )
 
 TEST_TABLE(
-           VALE_CALC=0.0022842080442,
+           VALE_CALC=0.002284208085030607,
            NOM_PARA='ECART',
            TABLE=DYN0,
            FILTRE=(_F(NOM_PARA='NOEUD_I',
@@ -362,7 +366,7 @@ REPP45=REST_SPEC_PHYS(BASE_ELAS_FLUI = MELFLU45,
 DYN45=POST_DYNA_ALEA(INTERSPECTRE=_F(INTE_SPEC = REPP45,
                                      OPTION    = 'DIAG'))
 
-TEST_TABLE(VALE_CALC=2.32030483231E-33,
+TEST_TABLE(VALE_CALC=1.9284778747137343E-33,
            CRITERE        = 'ABSOLU',
            ORDRE_GRANDEUR = 2.0E-3, # ~ RMS de déplacement obténu sur les 4 premiers modes
            NOM_PARA       = 'ECART',
