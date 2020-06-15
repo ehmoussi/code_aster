@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,6 +17,8 @@
 ! --------------------------------------------------------------------
 !
 subroutine te0560(option, nomte)
+!
+use Behaviour_module, only : behaviourOption
 !
 implicit none
 !
@@ -45,6 +47,7 @@ character(len=16), intent(in) :: option, nomte
 !           D_PLAN_GVNO
 !
 ! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!          MASS_MECA*
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -68,7 +71,8 @@ character(len=16), intent(in) :: option, nomte
     integer :: icodr1(1)
     character(len=8) :: typmod(2)
     character(len=4) :: fami
-    character(len=16) :: phenom, defo_comp
+    character(len=16) :: elasKeyword, defo_comp
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -106,7 +110,7 @@ character(len=16), intent(in) :: option, nomte
         nb_DOF = ndim + 2
 !
         call massup(option, ndim, nb_DOF, nnoQ, nnoL,&
-                    zi(imate), phenom, npg, jv_poids, jv_dfdeQ,&
+                    zi(imate), elasKeyword, npg, jv_poids, jv_dfdeQ,&
                     zr(igeom), zr(jv_vfQ), imatuu, icodr1, igeom,&
                     jv_vfQ)
 !
@@ -124,6 +128,10 @@ character(len=16), intent(in) :: option, nomte
         if (defo_comp .ne. 'PETIT') then
             call utmess('F', 'ELEMENTS3_16', sk=defo_comp)
         endif
+! ----- Select objects to construct from option name
+        call behaviourOption(option, zk16(icompo),&
+                             lMatr , lVect ,&
+                             lVari , lSigm)
 !
         call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
         lgpg1 = max(jtab(6),1)*jtab(7)
@@ -148,46 +156,43 @@ character(len=16), intent(in) :: option, nomte
 !
 !     PARAMETRES EN SORTIE
 !
-        if (option(1:10) .eq. 'RIGI_MECA_' .or. option(1:9) .eq. 'FULL_MECA') then
+        ivectu=1
+        icontp=1
+        ivarip=1
+        if (lMatr) then
             call nmtstm(zr(icarcr), imatuu, matsym)
         endif
-!
-        if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+        if (lVect) then
             call jevech('PVECTUR', 'E', ivectu)
+        endif
+        if (lSigm) then
+            call jevech('PCODRET', 'E', jcret)
+
             call jevech('PCONTPR', 'E', icontp)
+        endif
+        if (lVari) then
             call jevech('PVARIPR', 'E', ivarip)
-!
-!     ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
             call jevech('PVARIMP', 'L', ivarix)
             call dcopy(npg*lgpg, zr(ivarix), 1, zr(ivarip), 1)
-        else
-            ivectu=1
-            icontp=1
-            ivarip=1
         endif
 !
         if (option .eq. 'RIGI_MECA_ELAS' .or. option .eq. 'FULL_MECA_ELAS' .or.&
             option .eq. 'RAPH_MECA') then
-!
-            call nmgvno('ELAS', ndim, nnoQ, nnoL, npg,&
-                        jv_poids, zr(jv_vfQ), zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
-                        zr(igeom), typmod, option, zi(imate), zk16(icompo),&
-                        lgpg, zr(icarcr), zr(iinstm), zr(iinstp), zr(ideplm),&
-                        zr(ideplp), angmas, zr(icontm), zr(ivarim), zr(icontp),&
-                        zr(ivarip), zr(imatuu), zr(ivectu), codret)
+            fami = 'ELAS'
         else
-            call nmgvno('RIGI', ndim, nnoQ, nnoL, npg,&
-                        jv_poids, zr(jv_vfQ), zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
-                        zr(igeom), typmod, option, zi(imate), zk16(icompo),&
-                        lgpg, zr(icarcr), zr(iinstm), zr(iinstp), zr(ideplm),&
-                        zr(ideplp), angmas, zr(icontm), zr(ivarim), zr(icontp),&
-                        zr(ivarip), zr(imatuu), zr(ivectu), codret)
+            fami = 'RIGI'
         endif
+!
+        call nmgvno(fami, ndim, nnoQ, nnoL, npg,&
+                    jv_poids, zr(jv_vfQ), zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
+                    zr(igeom), typmod, option, zi(imate), zk16(icompo),&
+                    lgpg, zr(icarcr), zr(iinstm), zr(iinstp), zr(ideplm),&
+                    zr(ideplp), angmas, zr(icontm), zr(ivarim), zr(icontp),&
+                    zr(ivarip), zr(imatuu), zr(ivectu), codret)
 !
     endif
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jcret)
+    if (lSigm) then
         zi(jcret) = codret
     endif
 !

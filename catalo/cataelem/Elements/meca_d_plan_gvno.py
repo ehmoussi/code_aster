@@ -34,7 +34,6 @@ CCAMASS  = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
     components=('C','ALPHA',))
 
 
-
 NDEPLAR  = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
     components=('DX','DY',))
 
@@ -67,8 +66,6 @@ NFORCER  = LocatedComponents(phys=PHY.FORC_R, type='ELNO',
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
     components=('X','Y',))
-
-
 
 
 EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
@@ -385,6 +382,8 @@ class MNDPTR6(Element):
                      (SP.PVARCRR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      ),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
                      ),
         ),
 

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -89,10 +89,10 @@ implicit none
 ! ---------------------------------------------------------------------
 !
     integer :: k2(1)
-    character(len=16) :: nom(1)
+    character(len=16), parameter :: nom(1) = (/'C_GRAD_VARI'/)
     character(len=8) ::  famil, poum
-!
-    aster_logical :: resi, rigi, grand, axi, elas, full
+    aster_logical :: grand, axi, lElas, lMatrPred
+    aster_logical :: lVect, lMatr, lVari, lSigm
     integer :: nddl, ndimsi, g, cod(27), n, i, m, j, kl, pq, os, osa, kk
     integer :: iu(3*27), ia(8), kpg, spt
     real(kind=8) :: rac2, c, val(1)
@@ -105,24 +105,21 @@ implicit none
     real(kind=8) :: critd(20)
     type(Behaviour_Integ) :: BEHinteg
 !
-    data  nom /'C_GRAD_VARI'/
-!
 ! ---------------------------------------------------------------------
 !
-! - INITIALISATION
-!
-    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
-    rigi = option.eq.'RIGI_MECA_TANG'
-    full = option(1:9).eq.'FULL_MECA'
-    elas = option.eq.'FULL_MECA_ELAS' .or. option.eq.'RIGI_MECA_ELAS'
+
 !
 ! - Initialisation of behaviour datastructure
 !
     call behaviourInit(BEHinteg)
 !
-    if (elas) then
-        full = .false.
-    endif
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, compor,&
+                         lMatr , lVect ,&
+                         lVari , lSigm)
+    lElas = option.eq.'FULL_MECA_ELAS' .or. option.eq.'RIGI_MECA_ELAS'
+    lMatrPred = option.eq.'RIGI_MECA_TANG'
 !
     rac2 = sqrt(2.d0)
     grand = .false.
@@ -143,14 +140,14 @@ implicit none
 !
     c = val(1)
 !
-    do g = 1, npg
-        cod(g)=0
-    end do
+    cod = 0
 !
-    if (rigi) call r8inir((nddl*(nddl+1))/2, 0.d0, matr, 1)
-    if (full) call r8inir((nddl*(nddl+1))/2, 0.d0, matr, 1)
-    if (elas) call r8inir((nddl*(nddl+1))/2, 0.d0, matr, 1)
-    if (resi) call r8inir(nddl, 0.d0, vect, 1)
+    if (lMatr) then
+        call r8inir((nddl*(nddl+1))/2, 0.d0, matr, 1)
+    endif
+    if (lVect) then
+        call r8inir(nddl, 0.d0, vect, 1)
+    endif
 !
     call nmgvdn(ndim, nno1, nno2, iu, ia)
 !
@@ -159,7 +156,7 @@ implicit none
     do n = 1, nno1
         do i = 1, ndim
             deplm(i+(n-1)*ndim) = ddlm(iu(nno1*(i-1)+n))
-            if (rigi) then
+            if (lMatrPred) then
                 depld(i+(n-1)*ndim) = 0.d0
             else
                 depld(i+(n-1)*ndim) = ddld(iu(nno1*(i-1)+n))
@@ -190,7 +187,7 @@ implicit none
         do n = 1, nno2
             avm = avm + vff2(n,g)*ddlm(ia(n))
             avd = avd + vff2(n,g)*ddld(ia(n))
-            if (rigi) then
+            if (lMatrPred) then
                 avd = 0.d0
             endif
         end do
@@ -206,7 +203,7 @@ implicit none
             do n = 1, nno2
                 agm(i) = agm(i) + dfdi2(nno2*(i-1)+n)*ddlm(ia(n))
                 agd(i) = agd(i) + dfdi2(nno2*(i-1)+n)*ddld(ia(n))
-                if (rigi) then
+                if (lMatrPred) then
                     agd(i) = 0.d0
                 endif
             end do
@@ -254,7 +251,7 @@ implicit none
 !
 !      FORCE INTERIEURE ET CONTRAINTES DE CAUCHY
 !
-        if (resi) then
+        if (lSigm) then
 !
 !        CONTRAINTES
 !
@@ -266,6 +263,8 @@ implicit none
             end do
 !
             sigp(ndimsi+1,g) = dsidep(1,1,4)
+        endif
+        if (lVect) then
             bp = sigp(ndimsi+1,g)
 !
 !        VECTEUR FINT:U
@@ -297,7 +296,7 @@ implicit none
 !   CALCUL DE LA MATRICE DE RIGIDITE
 !   STOCKAGE TRIANGLE INFERIEUR LIGNE DE DFI/DUJ
 !
-        if (elas .or. rigi .or. full) then
+        if (lMatr) then
 !
 !        MATRICE K:U(I,N),U(J,M)
 !
@@ -340,7 +339,7 @@ implicit none
             end do
         endif
 !
-        if (rigi .or. full) then
+        if (lMatr .and. .not. lElas) then
 !
 !        MATRICES K:A(N),U(J,M)
 !
@@ -364,7 +363,7 @@ implicit none
 !
         endif
 !
-        if (elas .or. rigi .or. full) then
+        if (lMatr) then
 !
             do n = 1, nno2
                 osa = ((ia(n)-1)*ia(n))/2
@@ -403,7 +402,7 @@ implicit none
 !
         endif
 !
-        if (rigi .or. full) then
+        if (lMatr .and. .not. lElas) then
 !
             do n = 1, nno2
 !
