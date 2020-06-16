@@ -111,12 +111,12 @@ contains
 !
 !===================================================================================================
 !
-    subroutine hhoCombMeca(model, mate, mateco, matr_elem, vect_elem, hhoField)
+    subroutine hhoCombMeca(model, ds_material, matr_elem, vect_elem, hhoField)
 !
     implicit none
 !
         character(len=24), intent(in) :: model
-        character(len=*), intent(in)  :: mate, mateco
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=19), intent(in) :: matr_elem(2), vect_elem(4)
         type(HHO_Field), intent(in) :: hhoField
 !
@@ -125,7 +125,7 @@ contains
 !
 !   Combine vectors and matrices for cell quantities
 !   In model        : name of model
-!   In mate         : name of material characteristics (field)
+!   In ds_material  : datastructure for material parameters
 !   In matr_elem    : name of elem. matrices to combine
 !   In vect_elem    : name of vect. matrices to combine
 !   In hhoField     : fields for HHO
@@ -184,8 +184,8 @@ contains
         call jedetr(hhoField%matrcomb//'.RELR')
         call jedetr(hhoField%vectcomb//'.RERR')
         call jedetr(hhoField%vectcomb//'.RELR')
-        call memare(base, hhoField%matrcomb, model, mate, ' ', ' ')
-        call memare(base, hhoField%vectcomb, model, mate, ' ', ' ')
+        call memare(base, hhoField%matrcomb, model, ds_material%mater, ' ', ' ')
+        call memare(base, hhoField%vectcomb, model, ds_material%mater, ' ', ' ')
 !
 ! ----- Output fields
 !
@@ -215,23 +215,23 @@ contains
 !
 !===================================================================================================
 !
-    subroutine hhoPrepMatrix(model    , mate       , mateco   ,&
-                             merigi   , vefint     , rigid    ,&
-                             hhoField , hval_meelem, list_load,&
-                             ds_system, ds_measure , index_success,&
-                             l_cond   , l_asse)
+    subroutine hhoPrepMatrix(model      , ds_material  , list_load,&
+                             ds_system  , ds_measure   ,&
+                             hval_meelem, hhoField     ,&
+                             l_cond     , l_asse       ,&
+                             rigid      , index_success)
 !
     implicit none
 !
         character(len=24), intent(in) :: model
-        character(len=*), intent(in)  :: mate, mateco
-        character(len=19), intent(in) :: merigi, vefint, rigid
-        type(HHO_Field), intent(in) :: hhoField
-        character(len=19), intent(in) :: hval_meelem(*)
+        type(NL_DS_Material), intent(in) :: ds_material
         character(len=19), intent(in) :: list_load
         type(NL_DS_System), intent(in) :: ds_system
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        character(len=19), intent(in) :: hval_meelem(*)
+        type(HHO_Field), intent(in) :: hhoField
         aster_logical, intent(in) :: l_cond, l_asse
+        character(len=19), intent(in) :: rigid
         integer, intent(out)      :: index_success
 !
 ! --------------------------------------------------------------------------------------------------
@@ -239,11 +239,14 @@ contains
 !
 !   Prepare rigidity matrix
 !   In model        : name of model
-!   In mate         : name of material characteristics (field)
-!   In merigi       : name of the resultant rigidity matrix
-!   In vefint       : name of the resultant rigidity vector
+!   In ds_material  : datastructure for material parameters
+!   In list_load    : name of datastructure for list of loads
+!   In ds_system    : datastructure for non-linear system management
+!   IO ds_measure   : datastructure for measure and statistics management
+!   In hval_meelem  : hat variable for elementary matrixes
 !   In hhoField     : fields for HHO
-!   IO  ds_measure  : datastructure for measure and statistics management
+!   In l_cond       : flag for static condensation
+!   In l_asse       : flag for assembly
 !   Out index_success :  0 if success / 1  if fails
 !
 ! --------------------------------------------------------------------------------------------------
@@ -267,17 +270,17 @@ contains
 !
         if (l_cond) then
 ! --------- Get names of matrices/vectors
-            matr_elem(1) = merigi
-            vect_elem(1) = vefint
+            matr_elem(1) = ds_system%merigi
+            vect_elem(1) = ds_system%vefint
 ! --------- Combine matrices/vectors
             call nmtime(ds_measure, 'Init', 'HHO_Comb')
             call nmtime(ds_measure, 'Launch', 'HHO_Comb')
-            call hhoCombMeca(model, mate, mateco, matr_elem, vect_elem, hhoField)
+            call hhoCombMeca(model, ds_material, matr_elem, vect_elem, hhoField)
             call nmtime(ds_measure, 'Stop', 'HHO_Comb')
 ! --------- Condensation
             call nmtime(ds_measure, 'Init', 'HHO_Cond')
             call nmtime(ds_measure, 'Launch', 'HHO_Cond')
-            call hhoMecaCondOP(model, hhoField, merigi, vefint, index_success)
+            call hhoMecaCondOP(model, hhoField, ds_system%merigi, ds_system%vefint, index_success)
             call nmtime(ds_measure, 'Stop', 'HHO_Cond')
         endif
 !
