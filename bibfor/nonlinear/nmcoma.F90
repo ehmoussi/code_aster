@@ -248,8 +248,7 @@ integer :: faccvg, ldccvg
         endif
 ! ----- Assembly rigidity matrix
         if (l_asse_rigi) then
-            call asmari(list_func_acti, meelem, ds_system, numedd, lischa, ds_algopara,&
-                        rigid)
+            call asmari(ds_system, meelem, lischa, rigid)
         endif
 ! ----- Compute damping (Rayleigh) elementary matrices
         if (l_comp_damp) then
@@ -272,11 +271,10 @@ integer :: faccvg, ldccvg
         endif
 ! ----- For HHO: assembly rigidity and condensation
         if (l_hho) then
-            call hhoPrepMatrix(modelz,&
-                               ds_material%mater, ds_material%mateco, ds_system%merigi, ds_system%vefint, &
-                               rigid, hhoField, list_func_acti,&
-                               meelem, numedd, lischa,&
-                               ds_algopara, ds_system, ds_measure, condcvg,&
+            call hhoPrepMatrix(modelz, ds_material%mater, ds_material%mateco,&
+                               ds_system%merigi, ds_system%vefint, rigid,&
+                               hhoField, meelem, lischa,&
+                               ds_system, ds_measure, condcvg,&
                                l_cond = ASTER_FALSE, l_asse = ASTER_TRUE)
         endif
 ! ----- Compute and assemble matrices

@@ -215,10 +215,11 @@ contains
 !
 !===================================================================================================
 !
-    subroutine hhoPrepMatrix(model         , mate       , mateco, merigi  , vefint   , rigid, &
-                             hhoField,&
-                             list_func_acti, hval_meelem, nume_dof, list_load, ds_algopara,&
-                             ds_system, ds_measure, index_success , l_cond        , l_asse)
+    subroutine hhoPrepMatrix(model    , mate       , mateco   ,&
+                             merigi   , vefint     , rigid    ,&
+                             hhoField , hval_meelem, list_load,&
+                             ds_system, ds_measure , index_success,&
+                             l_cond   , l_asse)
 !
     implicit none
 !
@@ -226,12 +227,9 @@ contains
         character(len=*), intent(in)  :: mate, mateco
         character(len=19), intent(in) :: merigi, vefint, rigid
         type(HHO_Field), intent(in) :: hhoField
-        integer, intent(in) :: list_func_acti(*)
         character(len=19), intent(in) :: hval_meelem(*)
-        character(len=24), intent(in) :: nume_dof
         character(len=19), intent(in) :: list_load
         type(NL_DS_System), intent(in) :: ds_system
-        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         type(NL_DS_Measure), intent(inout) :: ds_measure
         aster_logical, intent(in) :: l_cond, l_asse
         integer, intent(out)      :: index_success
@@ -250,8 +248,8 @@ contains
 !
 ! --------------------------------------------------------------------------------------------------
 !
-        character(len=19) :: matr_elem(2), vect_elem(4)
         integer:: ifm, niv
+        character(len=19) :: matr_elem(2), vect_elem(4)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -265,22 +263,18 @@ contains
         matr_elem(:) = ' '
         vect_elem(:) = ' '
 !
+! ----- Condensation
+!
         if (l_cond) then
-!
 ! --------- Get names of matrices/vectors
-!
             matr_elem(1) = merigi
             vect_elem(1) = vefint
-!
 ! --------- Combine matrices/vectors
-!
             call nmtime(ds_measure, 'Init', 'HHO_Comb')
             call nmtime(ds_measure, 'Launch', 'HHO_Comb')
             call hhoCombMeca(model, mate, mateco, matr_elem, vect_elem, hhoField)
             call nmtime(ds_measure, 'Stop', 'HHO_Comb')
-!
 ! --------- Condensation
-!
             call nmtime(ds_measure, 'Init', 'HHO_Cond')
             call nmtime(ds_measure, 'Launch', 'HHO_Cond')
             call hhoMecaCondOP(model, hhoField, merigi, vefint, index_success)
@@ -292,8 +286,7 @@ contains
         if (l_asse) then
             call nmtime(ds_measure, 'Init', 'Matr_Asse')
             call nmtime(ds_measure, 'Launch', 'Matr_Asse')
-            call asmari(list_func_acti, hval_meelem, ds_system, nume_dof, list_load, ds_algopara, &
-                        rigid)
+            call asmari(ds_system, hval_meelem, list_load, rigid)
             call nmtime(ds_measure, 'Stop', 'Matr_Asse')
         endif
 !

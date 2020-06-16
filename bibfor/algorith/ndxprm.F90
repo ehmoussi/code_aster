@@ -195,8 +195,7 @@ integer :: faccvg, ldccvg
                     valinc        , solalg         , hhoField, &
                     option_nonlin , ldccvg)
         if (l_asse_rigi) then
-            call asmari(list_func_acti, meelem, ds_system, numedd, lischa, ds_algopara,&
-                        rigid)
+            call asmari(ds_system, meelem, lischa, rigid)
         endif
     endif
 !

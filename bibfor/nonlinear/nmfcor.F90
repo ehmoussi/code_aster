@@ -213,7 +213,7 @@ aster_logical :: lerrit
             call nmchex(hval_measse, 'MEASSE', 'MERIGI', rigid)
             call hhoPrepMatrix(model, mate, mateco, ds_system%merigi, ds_system%vefint, rigid, &
                                hhoField,&
-                               list_func_acti, hval_meelem, nume_dof, list_load, ds_algopara,&
+                               hval_meelem, list_load,&
                                ds_system, ds_measure, condcvg, &
                                l_cond = ASTER_TRUE, l_asse = ASTER_FALSE)
         end if

@@ -235,8 +235,7 @@ integer :: faccvg, ldccvg, condcvg
                     valinc        , solalg         , hhoField, &
                     option_nonlin , ldccvg)
         if (l_asse_rigi) then
-            call asmari(list_func_acti, meelem, ds_system, numedd, lischa, ds_algopara,&
-                        rigid)
+            call asmari(ds_system, meelem, lischa, rigid)
         endif
     endif
 !
@@ -278,8 +277,8 @@ integer :: faccvg, ldccvg, condcvg
     if (l_hho) then
         call hhoPrepMatrix(modelz, ds_material%mater, ds_material%mateco, ds_system%merigi, &
                            ds_system%vefint, &
-                           rigid, hhoField, list_func_acti, meelem, numedd, lischa,&
-                           ds_algopara, ds_system,&
+                           rigid, hhoField, meelem, lischa,&
+                           ds_system,&
                            ds_measure, condcvg, l_cond = ASTER_TRUE, l_asse = ASTER_TRUE)
     endif
 !

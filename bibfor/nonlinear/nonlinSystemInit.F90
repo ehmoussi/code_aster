@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinSystemInit(list_func_acti , sddyna, nume_dof, ds_system)
+subroutine nonlinSystemInit(list_func_acti, sddyna, nume_dof, ds_algopara, ds_system)
 !
 use NonLin_Datastructure_type
 !
@@ -34,6 +34,7 @@ implicit none
 integer, intent(in) :: list_func_acti(*)
 character(len=19), intent(in) :: sddyna
 character(len=24), intent(in) :: nume_dof
+type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 type(NL_DS_System), intent(inout) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
@@ -46,6 +47,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! In  list_func_acti   : list of active functionnalities
 ! In  sddyna           : dynamic parameters datastructure
+! IO  ds_algopara      : datastructure for algorithm parameters
 ! In  nume_dof         : name of numbering object (NUME_DDL)
 ! IO  ds_system        : datastructure for non-linear system management
 !
@@ -53,6 +55,7 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
     integer :: ifm, niv
     aster_logical :: l_implex, l_resi_comp, l_stat, l_dyna, l_hho
+    aster_logical :: l_cont_elem, l_cont_all_verif
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -63,11 +66,13 @@ type(NL_DS_System), intent(inout) :: ds_system
 !
 ! - Active functionnalities
 !
-    l_implex    = isfonc(list_func_acti,'IMPLEX')
-    l_resi_comp = isfonc(list_func_acti,'RESI_COMP')
-    l_stat      = ndynlo(sddyna,'STATIQUE')
-    l_dyna      = ndynlo(sddyna,'DYNAMIQUE')
-    l_hho       = isfonc(list_func_acti,'HHO')
+    l_implex         = isfonc(list_func_acti,'IMPLEX')
+    l_resi_comp      = isfonc(list_func_acti,'RESI_COMP')
+    l_stat           = ndynlo(sddyna,'STATIQUE')
+    l_dyna           = ndynlo(sddyna,'DYNAMIQUE')
+    l_hho            = isfonc(list_func_acti, 'HHO')
+    l_cont_elem      = isfonc(list_func_acti, 'ELT_CONTACT')
+    l_cont_all_verif = isfonc(list_func_acti, 'CONT_ALL_VERIF')
 !
 ! - Activation
 !
@@ -96,5 +101,19 @@ type(NL_DS_System), intent(inout) :: ds_system
 ! - Create fields
 !
     call vtcreb(ds_system%cnfint, 'V', 'R', nume_ddlz = nume_dof)
+!
+! - Set flag for symmetric rigidity matrix
+!
+    ds_system%l_rigi_syme = ds_algopara%l_matr_rigi_syme
+!
+! - Set flag for contact matrix to add in rigidity matrix
+!
+    if (l_cont_elem .and. .not.l_cont_all_verif) then
+        ds_system%l_rigi_cont = ASTER_TRUE
+    endif
+!
+! - Set name of numbering object
+!
+    ds_system%nume_dof = nume_dof
 !
 end subroutine

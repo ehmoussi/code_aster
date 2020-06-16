@@ -17,8 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine asmari(list_func_acti, hval_meelem, ds_system, nume_dof, list_load, ds_algopara,&
-                  matr_rigi)
+subroutine asmari(ds_system, hval_meelem, list_load, matr_rigi)
 !
 use NonLin_Datastructure_type
 !
@@ -27,20 +26,15 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/asmatr.h"
 #include "asterfort/assert.h"
-#include "asterfort/isfonc.h"
 #include "asterfort/nmchex.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/matr_asse_syme.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 !
-integer, intent(in) :: list_func_acti(*)
-character(len=19), intent(in) :: hval_meelem(*)
 type(NL_DS_System), intent(in) :: ds_system
-character(len=24), intent(in) :: nume_dof
-character(len=19), intent(in) :: list_load
-character(len=19), intent(in) :: matr_rigi
-type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+character(len=19), intent(in) :: hval_meelem(*)
+character(len=19), intent(in) :: list_load, matr_rigi
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,13 +44,10 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  list_func_acti   : list of active functionnalities
-! In  hval_meelem      : hat variable for elementary matrixes
 ! In  ds_system        : datastructure for non-linear system management
-! In  nume_dof         : name of numbering object (NUME_DDL)
+! In  hval_meelem      : hat variable for elementary matrixes
 ! In  list_load        : name of datastructure for list of loads
-! In  ds_algopara      : datastructure for algorithm parameters
-! In  matr_rigi        : name of rigidity matrix
+! In  matr_rigi        : name of assembled rigidity matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -64,7 +55,6 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
     integer :: nb_matr_elem, iexi
     character(len=19) :: merigi, mediri, meeltc
     character(len=19) :: list_matr_elem(8)
-    aster_logical :: l_cont_elem, l_cont_all_verif
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,11 +63,6 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
         call utmess('I', 'MECANONLINE13_70')
     endif
     nb_matr_elem = 0
-!
-! - Active functionnalities
-!
-    l_cont_elem      = isfonc(list_func_acti,'ELT_CONTACT')
-    l_cont_all_verif = isfonc(list_func_acti,'CONT_ALL_VERIF')
 !
 ! - Rigidity MATR_ELEM
 !
@@ -93,26 +78,25 @@ type(NL_DS_AlgoPara), intent(in) :: ds_algopara
 !
 ! - Contact/friction MATR_ELEM
 !
-    if (l_cont_elem) then
-        if (.not.l_cont_all_verif) then
-            call nmchex(hval_meelem, 'MEELEM', 'MEELTC', meeltc)
-            call jeexin(meeltc//'.RERR', iexi)
-            if (iexi.ne.0) then
-                nb_matr_elem = nb_matr_elem + 1
-                list_matr_elem(nb_matr_elem) = meeltc
-            end if
-        endif
+    if (ds_system%l_rigi_cont) then
+        call nmchex(hval_meelem, 'MEELEM', 'MEELTC', meeltc)
+        call jeexin(meeltc//'.RERR', iexi)
+        if (iexi.ne.0) then
+            nb_matr_elem = nb_matr_elem + 1
+            list_matr_elem(nb_matr_elem) = meeltc
+        end if
     endif
 !
 ! - Assembly MATR_ELEM
 !
     ASSERT(nb_matr_elem .le. 8)
-    call asmatr(nb_matr_elem, list_matr_elem, ' ', nume_dof, &
-                list_load, 'ZERO', 'V', 1, matr_rigi)
+    call asmatr(nb_matr_elem, list_matr_elem, ' ', ds_system%nume_dof,&
+                list_load   , 'ZERO'        , 'V',&
+                1           , matr_rigi)
 !
 ! - Symmetry of rigidity matrix
 !
-    if (ds_algopara%l_matr_rigi_syme) then
+    if (ds_system%l_rigi_syme) then
         call matr_asse_syme(matr_rigi)
     endif
 !

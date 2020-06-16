@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -277,8 +277,7 @@ type(NL_DS_PostTimeStep), intent(in) :: ds_posttimestep
 !
 ! --- ON RECONSTRUIT RIGI2 TOUJOURS SYMETRIQUE
 !
-    call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
-                rigi2)
+    call asmari(ds_system, meelem, lischa, rigi2)
     matass = rigi2
 !
 ! --- PRISE EN COMPTE DE LA MATRICE TANGENTE DES FORCES SUIVEUSES

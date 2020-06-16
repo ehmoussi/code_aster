@@ -658,6 +658,8 @@ implicit none
 ! - Type: non-linear system
 !
     type NL_DS_System
+! ----- Name of numbering (for assembling)
+        character(len=24)     :: nume_dof = 'Unknown'
 ! ----- Flag to compute nodal force at prediction
         aster_logical         :: l_pred_cnfnod = ASTER_FALSE
 ! ----- Flag to integrate behaviour law at prediction
@@ -676,6 +678,10 @@ implicit none
         character(len=19)     :: cnpred = '&&OP00XX.CNPRED'
 ! ----- Elementary rigidity matrix
         character(len=19)     :: merigi = '&&OP00XX.MERIGI'
+! ----- Flag for symmetric rigidity matrix
+        aster_logical         :: l_rigi_syme = ASTER_FALSE
+! ----- Flag for contact matrix to add in rigidity matrix
+        aster_logical         :: l_rigi_cont = ASTER_FALSE
     end type NL_DS_System
 !
 ! - Type: error indicators' management

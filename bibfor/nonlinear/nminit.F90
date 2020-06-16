@@ -340,7 +340,7 @@ type(HHO_Field), intent(inout) :: hhoField
 !
 ! - Initializations for non-linear system
 !
-    call nonlinSystemInit(list_func_acti, sddyna, numedd, ds_system)
+    call nonlinSystemInit(list_func_acti, sddyna, numedd, ds_algopara, ds_system)
 !
 ! --- PRE-CALCUL DES MATR_ELEM CONSTANTES AU COURS DU CALCUL
 !
