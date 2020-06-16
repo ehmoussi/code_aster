@@ -67,7 +67,7 @@ export PATH=\
 ${PREREQ_PATH}/prerequisites/Medfichier-400/bin:\
 ${PREREQ_PATH}/prerequisites/Gmsh_bin-2120Linux64/bin:\
 ${PREREQ_PATH}/tools/Miss3d-67_aster2:\
-${PREREQ_PATH}/tools/Homard_aster-1112_aster2:\
+${PREREQ_PATH}/tools/Homard_aster-1112_aster1:\
 ${PREREQ_PATH}/tools/Ecrevisse-322:\
 ${TFELHOME}/bin:\
 ${PATH}
