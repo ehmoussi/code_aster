@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ real(kind=8), intent(out) :: residu
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: cnfext, cndiri, cnbudi, cndipi, cndfdo, cnequi, cnsstr, cnfint
+    character(len=19) :: cnfext, cndiri, cnbudi, cndipi, cndfdo, cnequi, cnsstr
     integer :: i_equa, nb_equa
     aster_logical :: l_load_cine, l_disp, l_pilo, l_macr
     integer, pointer :: v_ccid(:) => null()
@@ -86,7 +86,6 @@ real(kind=8), intent(out) :: residu
     call nmchex(hval_veasse, 'VEASSE', 'CNDIPI', cndipi)
     call nmchex(hval_veasse, 'VEASSE', 'CNSSTR', cnsstr)
     cndfdo = '&&CNCHAR.DFDO'
-    cnfint = ds_system%cnfint
 !
 ! - For kinematic loads
 !
@@ -99,7 +98,7 @@ real(kind=8), intent(out) :: residu
 !
     cnequi = '&&CNCHAR.DONN'
     call nmequi(l_disp     , l_pilo, l_macr, cnequi,&
-                cnfint, cnfext, cndiri, cnsstr,&
+                ds_system%cnfint, cnfext, cndiri, cnsstr,&
                 ds_contact_ = ds_contact,&
                 cnbudi_ = cnbudi, cndfdo_ = cndfdo,&
                 cndipi_ = cndipi, eta_    = eta)

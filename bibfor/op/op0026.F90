@@ -66,12 +66,13 @@ implicit none
     character(len=24) :: model, mate, cara_elem, compor_ther, mateco
     character(len=19) :: disp_prev, disp_cumu_inst, vari_prev, sigm_prev
     character(len=19) :: temp_prev, temp_curr, incr_temp
-    character(len=19) :: merigi, vediri, vefint, veforc, vevarc_prev, vevarc_curr
+    character(len=19) :: vediri, vefnod, vevarc_prev, vevarc_curr
     aster_logical :: l_elem_nonl
     character(len=24) :: ve_charther, me_mtanther, ve_evolther_l, ve_evolther_nl
     character(len=24) :: ve_resither
     character(len=24) :: time
     type(NL_DS_Material) :: ds_material
+    type(NL_DS_System) :: ds_system
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -115,10 +116,10 @@ implicit none
         call calcPrepDataMeca(model          , mate          , mateco   , cara_elem,&
                               disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                               time_prev      , time_curr     ,&
-                              ds_constitutive, ds_material   ,&
+                              ds_constitutive, ds_material   , ds_system  ,&
                               hval_incr      , hval_algo     ,&
-                              merigi         , vediri        , vefint   , veforc   ,&
-                              vevarc_prev    , vevarc_curr   )
+                              vediri         , vefnod        ,&
+                              vevarc_prev    , vevarc_curr)
     elseif (phenom .eq. 'THERMIQUE') then
         call calcPrepDataTher(model        , temp_prev     , incr_temp  ,&
                               time_curr    , deltat        , theta      , khi,&
@@ -135,9 +136,9 @@ implicit none
         call calcCalcMeca(nb_option      , list_option,&
                           l_elem_nonl    , nume_harm  ,&
                           list_load      , model      , cara_elem,&
-                          ds_constitutive, ds_material,&
+                          ds_constitutive, ds_material, ds_system,&
                           hval_incr      , hval_algo  ,&
-                          merigi         , vediri     , vefint     , veforc,&
+                          vediri         , vefnod     ,&
                           vevarc_prev    , vevarc_curr,&
                           nb_obje_maxi   , obje_name  , obje_sdname, nb_obje)
     elseif (phenom .eq. 'THERMIQUE') then

@@ -90,7 +90,6 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
     integer :: ifm, niv
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_dyna, l_implex
-    character(len=19) :: vefnod, cnfnod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -140,13 +139,11 @@ character(len=19), intent(in) :: hval_veelem(*), hval_veasse(*)
 ! - Compute nodal force BT . SIGMA (No integration of behaviour)
 !
     if (ds_system%l_pred_cnfnod .and. .not. l_implex) then
-        vefnod = ds_system%vefnod
-        cnfnod = ds_system%cnfnod
-        call nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
-                                 ds_material, ds_constitutive, ds_measure,&
+        call nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
+                                 ds_material, ds_constitutive,&
+                                 ds_measure , ds_system      ,&
                                  time_prev  , time_curr      ,&
-                                 hval_incr  , hval_algo      ,&
-                                 vefnod     , cnfnod)
+                                 hval_incr  , hval_algo)
     endif
 !
 end subroutine

@@ -21,9 +21,9 @@ interface
     subroutine calcCalcMeca(nb_option      , list_option,&
                             l_elem_nonl    , nume_harm  ,&
                             list_load      , model      , cara_elem,&
-                            ds_constitutive, ds_material,&
+                            ds_constitutive, ds_material, ds_system,&
                             hval_incr      , hval_algo  ,&
-                            merigi         , vediri     , vefint     , veforc,&
+                            vediri         , vefnod     ,&
                             vevarc_prev    , vevarc_curr,&
                             nb_obje_maxi   , obje_name  , obje_sdname, nb_obje)
         use NonLin_Datastructure_type
@@ -35,9 +35,9 @@ interface
         character(len=24), intent(in) :: model, cara_elem
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Material), intent(in) :: ds_material
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: hval_incr(:), hval_algo(:)
-        character(len=19), intent(in) :: merigi, vediri, vefint
-        character(len=19), intent(inout) :: veforc
+        character(len=19), intent(in) :: vediri, vefnod
         character(len=19), intent(in) :: vevarc_prev, vevarc_curr
         integer, intent(in) :: nb_obje_maxi
         character(len=16), intent(inout) :: obje_name(nb_obje_maxi)

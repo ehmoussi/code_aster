@@ -53,7 +53,7 @@ character(len=19), intent(in) :: list_load, matr_rigi
 !
     integer :: ifm, niv
     integer :: nb_matr_elem, iexi
-    character(len=19) :: merigi, mediri, meeltc
+    character(len=19) :: mediri, meeltc
     character(len=19) :: list_matr_elem(8)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -66,9 +66,8 @@ character(len=19), intent(in) :: list_load, matr_rigi
 !
 ! - Rigidity MATR_ELEM
 !
-    merigi = ds_system%merigi
     nb_matr_elem = nb_matr_elem + 1
-    list_matr_elem(nb_matr_elem) = merigi
+    list_matr_elem(nb_matr_elem) = ds_system%merigi
 !
 ! - Boundary conditions MATR_ELEM
 !

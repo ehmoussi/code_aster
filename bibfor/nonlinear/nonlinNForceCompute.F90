@@ -17,11 +17,11 @@
 ! --------------------------------------------------------------------
 ! person_in_lload_name: mickael.abbas at edf.fr
 !
-subroutine nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
-                               ds_material, ds_constitutive, ds_measure,&
+subroutine nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
+                               ds_material, ds_constitutive,&
+                               ds_measure , ds_system      ,&
                                time_prev  , time_curr      ,&
-                               hval_incr  , hval_algo      ,&
-                               vefnod     , cnfnod)
+                               hval_incr  , hval_algo)
 !
 use NonLin_Datastructure_type
 !
@@ -40,14 +40,14 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 !
-character(len=24), intent(in) :: model, cara_elem, nume_dof
+character(len=24), intent(in) :: model, cara_elem
 integer, intent(in) :: list_func_acti(*)
 type(NL_DS_Material), intent(in) :: ds_material
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
+type(NL_DS_System), intent(in) :: ds_system
 real(kind=8), intent(in) :: time_prev, time_curr
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-character(len=19), intent(in) :: vefnod, cnfnod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -59,17 +59,15 @@ character(len=19), intent(in) :: vefnod, cnfnod
 !
 ! In  model            : name of model
 ! In  cara_elem        : name of elementary characteristics (field)
-! In  nume_dof         : name of numbering object (NUME_DDL)
 ! In  list_func_acti   : list of active functionnalities
 ! In  ds_material      : datastructure for material parameters
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! IO  ds_measure       : datastructure for measure and statistics management
+! In  ds_system        : datastructure for non-linear system management
 ! In  time_prev        : time at beginning of time step
 ! In  time_curr        : time at end of time step
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  vefnod           : elementary vector for nodal force (no integration)
-! In  cnfnod           : assembled vector for nodal force (no integration)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -106,6 +104,8 @@ character(len=19), intent(in) :: vefnod, cnfnod
     call nmchex(hval_incr, 'VALINC', 'COMMOI', varc_prev)
     call nmvcex('TOUT', varc_prev, vrcmoi)
 !
+! - Active functionnalities
+!
     l_implex     = isfonc(list_func_acti,'IMPLEX')
 !
 ! - Time
@@ -121,19 +121,20 @@ character(len=19), intent(in) :: vefnod, cnfnod
 ! - Compute
 !
     if (l_implex) then
-        call vefnme(option                , model         , ds_material%mateco, cara_elem,&
-                    ds_constitutive%compor, time_list     , 0                     , ' '      ,&
-                    vrcmoi                , sigm_extr     , ' ',&
-                    disp_prev             , disp_cumu_inst,&
-                    'V'                   , vefnod)
+        call vefnme(option                , model           , ds_material%mateco, cara_elem,&
+                    ds_constitutive%compor, time_list       , 0                 , ' '      ,&
+                    vrcmoi                , sigm_extr       , ' ',&
+                    disp_prev             , disp_cumu_inst  ,&
+                    'V'                   , ds_system%vefnod)
     else
-        call vefnme(option                , model         , ds_material%mateco, cara_elem,&
-                    ds_constitutive%compor, time_list     , 0                     , ' '      ,&
-                    vrcmoi                , sigm_prev     , strx_prev,&
-                    disp_prev             , disp_cumu_inst,&
-                    'V'                   , vefnod)
+        call vefnme(option                , model           , ds_material%mateco, cara_elem,&
+                    ds_constitutive%compor, time_list       , 0                 , ' '      ,&
+                    vrcmoi                , sigm_prev       , strx_prev,&
+                    disp_prev             , disp_cumu_inst  ,&
+                    'V'                   , ds_system%vefnod)
     endif
-    call assvec('V', cnfnod, 1, vefnod, [1.d0], nume_dof, ' ', 'ZERO', 1)
+    call assvec('V', ds_system%cnfnod, 1, ds_system%vefnod, [1.d0],&
+                ds_system%nume_dof, ' ', 'ZERO', 1)
 !
 ! - Restore disp_cumu_inst
 !
@@ -146,7 +147,7 @@ character(len=19), intent(in) :: vefnod, cnfnod
 ! - Debug
 !
     if (niv .ge. 2) then
-        call nmdebg('VECT', cnfnod, 6)
+        call nmdebg('VECT', ds_system%cnfnod, 6)
     endif
 !
 end subroutine

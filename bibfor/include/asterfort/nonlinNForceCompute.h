@@ -17,19 +17,19 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
-                                   ds_material, ds_constitutive, ds_measure,&
+    subroutine nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
+                                   ds_material, ds_constitutive,&
+                                   ds_measure , ds_system      ,&
                                    time_prev  , time_curr      ,&
-                                   hval_incr  , hval_algo      ,&
-                                   vefnod     , cnfnod)
+                                   hval_incr  , hval_algo)
         use NonLin_Datastructure_type
-        character(len=24), intent(in) :: model, cara_elem, nume_dof
+        character(len=24), intent(in) :: model, cara_elem
         integer, intent(in) :: list_func_acti(*)
         type(NL_DS_Material), intent(in) :: ds_material
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Measure), intent(inout) :: ds_measure
+        type(NL_DS_System), intent(in) :: ds_system
         real(kind=8), intent(in) :: time_prev, time_curr
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-        character(len=19), intent(in) :: vefnod, cnfnod
     end subroutine nonlinNForceCompute
 end interface

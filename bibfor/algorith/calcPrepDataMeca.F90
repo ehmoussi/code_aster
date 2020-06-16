@@ -20,10 +20,10 @@
 subroutine calcPrepDataMeca(model          , mate          , mateco   , cara_elem,&
                             disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                             time_prev      , time_curr     ,&
-                            ds_constitutive, ds_material   ,&
+                            ds_constitutive, ds_material   , ds_system,&
                             hval_incr      , hval_algo     ,&
-                            merigi         , vediri        , vefint   , veforc   ,&
-                            vevarc_prev    , vevarc_curr   )
+                            vediri         , vefnod        ,&
+                            vevarc_prev    , vevarc_curr)
 !
 use NonLin_Datastructure_type
 !
@@ -52,9 +52,10 @@ character(len=19), intent(in) :: vari_prev, sigm_prev
 real(kind=8), intent(in) :: time_prev, time_curr
 type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
 type(NL_DS_Material), intent(out) :: ds_material
+type(NL_DS_System), intent(out) :: ds_system
 character(len=19), intent(out) :: hval_incr(:), hval_algo(:)
-character(len=19), intent(out) :: merigi, vefint, veforc
-character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
+character(len=19), intent(out) :: vediri, vefnod
+character(len=19), intent(out) :: vevarc_prev, vevarc_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -75,12 +76,11 @@ character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
 ! In  time_curr        : time at end of step
 ! IO  ds_constitutive  : datastructure for constitutive laws management
 ! Out ds_material      : datastructure for material parameters
+! Out ds_system        : datastructure for non-linear system management
 ! Out hval_incr        : hat-variable for incremental values fields
 ! Out hval_algo        : hat-variable for algorithms fields
-! Out merigi           : name of elementary for tangent matrix
 ! Out vediri           : name of elementary for reaction (Lagrange) vector
-! Out vefint           : name of elementary for internal forces vector (RAPH_MECA)
-! Out veforc           : name of elementary for forces vector (FORC_NODA)
+! Out vefnod           : name of elementary for forces vector (FORC_NODA)
 ! Out vevarc_prev      : name of elementary for external state variables at beginning of step
 ! Out vevarc_curr      : name of elementary for external state variables at end of step
 !
@@ -88,6 +88,7 @@ character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
 !
     integer :: iret
     character(len=19) :: disp_curr, varc_prev, varc_curr, sigm_curr, vari_curr, ligrmo
+    character(len=19) :: merigi, vefint
     character(len=24) :: varc_refe
 !
 ! --------------------------------------------------------------------------------------------------
@@ -161,7 +162,7 @@ character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
     call gcncon('_', merigi)
     call gcncon('_', vefint)
     call gcncon('_', vediri)
-    call gcncon('_', veforc)
+    call gcncon('_', vefnod)
     call gcncon('_', vevarc_prev)
     call gcncon('_', vevarc_curr)
     call gcncon('_', ds_constitutive%comp_error)
@@ -176,5 +177,7 @@ character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
     ds_material%mater  = mate
     ds_material%mateco = mateco
     ds_material%varc_refe  = varc_refe
+    ds_system%merigi       = merigi
+    ds_system%vefint       = vefint
 !
 end subroutine

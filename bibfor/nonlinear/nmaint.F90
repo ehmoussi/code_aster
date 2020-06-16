@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ character(len=*), intent(in) :: sdnumz
     aster_logical :: lendo
     real(kind=8), pointer :: v_cnfint(:) => null()
     integer, pointer :: v_endo(:) => null()
-    character(len=19):: vefint, cnfint, sdnume
+    character(len=19):: sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -73,22 +73,20 @@ character(len=*), intent(in) :: sdnumz
 ! - Initializations
 !
     sdnume = sdnumz
-    vefint = ds_system%vefint
-    cnfint = ds_system%cnfint
     base   = 'V'
-    call vtzero(cnfint)
+    call vtzero(ds_system%cnfint)
     lendo = isfonc(list_func_acti,'ENDO_NO')
 !
 ! - Assemble
 !
-    call assvec(base, cnfint, 1, vefint, [1.d0],&
+    call assvec(base, ds_system%cnfint, 1, ds_system%vefint, [1.d0],&
                 nume_dof, ' ', 'ZERO', 1)
 !
 ! - Change values fro GDVARINO
 !
     if (lendo) then
         call jeveuo(sdnume(1:19)//'.ENDO', 'L', vi=v_endo)
-        call jeveuo(cnfint(1:19)//'.VALE', 'E', vr=v_cnfint)
+        call jeveuo(ds_system%cnfint(1:19)//'.VALE', 'E', vr=v_cnfint)
         call dismoi('NB_EQUA', nume_dof, 'NUME_DDL', repi=nb_equa)
         endop1 = 0
         endop2 = 0
@@ -107,7 +105,7 @@ character(len=*), intent(in) :: sdnumz
 ! - Debug
 !
     if (niv .ge. 2) then
-        call nmdebg('VECT', cnfint, 6)
+        call nmdebg('VECT', ds_system%cnfint, 6)
     endif
 !
 end subroutine

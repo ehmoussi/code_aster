@@ -15,17 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
     subroutine merimo(base           ,&
                       l_xfem         , l_macr_elem, l_hho    ,&
                       model          , cara_elem  , iter_newt,&
-                      ds_constitutive, ds_material,&
-                      hval_incr      , hval_algo  , hhoField, &
-                      optioz         , merigi     , vefint   ,&
-                      ldccvg         , sddynz_)
+                      ds_constitutive, ds_material, ds_system,&
+                      hval_incr      , hval_algo  , hhoField ,&
+                      optioz         , ldccvg     , sddynz_)
         use NonLin_Datastructure_type
         use HHO_type
         character(len=1), intent(in) :: base
@@ -34,10 +32,10 @@ interface
         integer, intent(in) :: iter_newt
         type(NL_DS_Constitutive), intent(in) :: ds_constitutive
         type(NL_DS_Material), intent(in) :: ds_material
+        type(NL_DS_System), intent(in) :: ds_system
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
         type(HHO_Field), intent(in) :: hhoField
         character(len=*), intent(in) :: optioz
-        character(len=19), intent(in) :: merigi, vefint
         integer, intent(out) :: ldccvg
         character(len=*), optional, intent(in) :: sddynz_
     end subroutine merimo

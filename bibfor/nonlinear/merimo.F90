@@ -20,10 +20,9 @@
 subroutine merimo(base           ,&
                   l_xfem         , l_macr_elem, l_hho    ,&
                   model          , cara_elem  , iter_newt,&
-                  ds_constitutive, ds_material,&
+                  ds_constitutive, ds_material, ds_system,&
                   hval_incr      , hval_algo  , hhoField ,&
-                  optioz         , merigi     , vefint   ,&
-                  ldccvg         , sddynz_)
+                  optioz         , ldccvg     , sddynz_)
 !
 use NonLin_Datastructure_type
 use HHO_type
@@ -54,10 +53,10 @@ character(len=24), intent(in) :: model, cara_elem
 integer, intent(in) :: iter_newt
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
 type(HHO_Field), intent(in) :: hhoField
 character(len=*), intent(in) :: optioz
-character(len=19), intent(in) :: merigi, vefint
 integer, intent(out) :: ldccvg
 character(len=*), optional, intent(in) :: sddynz_
 !
@@ -83,8 +82,6 @@ character(len=*), optional, intent(in) :: sddynz_
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hhoField         : datastructure for HHO
 ! In  option           : name of option to compute
-! In  merigi           : name of elementary matrices for tangent matrix
-! In  vefint           : elementary vectors for internal forces
 ! Out ldccvg           : return code from integration of behaviour
 !                       -1 - no integration of behaviour
 !                        0 - OK
@@ -186,28 +183,30 @@ character(len=*), optional, intent(in) :: sddynz_
 ! - Prepare vector and matrix
 !
     if (l_merigi) then
-        call jeexin(merigi//'.RELR', iret)
+        call jeexin(ds_system%merigi//'.RELR', iret)
         if (iret .eq. 0) then
-            call jeexin(merigi//'.RERR', ires)
+            call jeexin(ds_system%merigi//'.RERR', ires)
             if (ires .eq. 0) then
-                call memare(base, merigi, model, ds_material%mater, cara_elem, 'RIGI_MECA')
+                call memare(base, ds_system%merigi, model, ds_material%mater, cara_elem,&
+                            'RIGI_MECA')
             endif
             if (l_macr_elem) then
-                call jeveuo(merigi//'.RERR', 'E', vk24=v_rerr)
+                call jeveuo(ds_system%merigi//'.RERR', 'E', vk24=v_rerr)
                 v_rerr(3) = 'OUI_SOUS_STRUC'
             endif
         endif
-        call jedetr(merigi//'.RELR')
-        call reajre(merigi, ' ', base)
+        call jedetr(ds_system%merigi//'.RELR')
+        call reajre(ds_system%merigi, ' ', base)
     endif
 !
     if (l_vefint) then
-        call jeexin(vefint//'.RELR', iret)
+        call jeexin(ds_system%vefint//'.RELR', iret)
         if (iret .eq. 0) then
-            call memare(base, vefint, model, ds_material%mater, cara_elem, 'CHAR_MECA')
+            call memare(base, ds_system%vefint, model, ds_material%mater, cara_elem,&
+                        'CHAR_MECA')
         endif
-        call jedetr(vefint//'.RELR')
-        call reajre(vefint, ' ', base)
+        call jedetr(ds_system%vefint//'.RELR')
+        call reajre(ds_system%vefint, ' ', base)
     endif
 !
 ! - Output fields
@@ -222,17 +221,17 @@ character(len=*), optional, intent(in) :: sddynz_
     if (l_merigi) then
         nbout = nbout+1
         lpaout(nbout) = 'PMATUUR'
-        lchout(nbout) = merigi(1:15)//'.M01'
+        lchout(nbout) = ds_system%merigi(1:15)//'.M01'
         ich_matrixs = nbout
         nbout = nbout+1
         lpaout(nbout) = 'PMATUNS'
-        lchout(nbout) = merigi(1:15)//'.M02'
+        lchout(nbout) = ds_system%merigi(1:15)//'.M02'
         ich_matrixn = nbout
     endif
     if (l_vefint) then
         nbout = nbout+1
         lpaout(nbout) = 'PVECTUR'
-        lchout(nbout) = vefint(1:15)//'.R01'
+        lchout(nbout) = ds_system%vefint(1:15)//'.R01'
         ich_vefint = nbout
     endif
     if (l_sigmex) then
@@ -283,12 +282,12 @@ character(len=*), optional, intent(in) :: sddynz_
 ! - Save
 !
     if (l_merigi) then
-        call reajre(merigi, lchout(ich_matrixs), base)
-        call reajre(merigi, lchout(ich_matrixn), base)
-        call redetr(merigi)
+        call reajre(ds_system%merigi, lchout(ich_matrixs), base)
+        call reajre(ds_system%merigi, lchout(ich_matrixn), base)
+        call redetr(ds_system%merigi)
     endif
     if (l_vefint) then
-        call reajre(vefint, lchout(ich_vefint), base)
+        call reajre(ds_system%vefint, lchout(ich_vefint), base)
     endif
 !
 ! - Errors

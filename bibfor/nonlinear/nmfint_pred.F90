@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ character(len=19), optional, intent(in) :: sdnume_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: vefnod, cnfnod, sdnume
+    character(len=19) :: sdnume
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -102,13 +102,11 @@ character(len=19), optional, intent(in) :: sdnume_
 ! - Direct computation (no integration of behaviour)
 !
     if (ds_system%l_pred_cnfnod) then
-        vefnod = ds_system%vefnod
-        cnfnod = ds_system%cnfnod
-        call nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
-                                 ds_material, ds_constitutive, ds_measure,&
+        call nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
+                                 ds_material, ds_constitutive,&
+                                 ds_measure , ds_system      ,&
                                  time_prev  , time_curr      ,&
-                                 hval_incr  , hval_algo      ,&
-                                 vefnod     , cnfnod)
+                                 hval_incr  , hval_algo      )
     endif
 !
 ! - Integration of behaviour

@@ -120,11 +120,10 @@ character(len=19), intent(in), optional :: sddyna_
     character(len=19) :: cnfins(2), cndirs(2), k19bla
     character(len=19) :: depplu, sigplu, varplu, complu
     character(len=19) :: sigplt, varplt, depplt
-    character(len=19) :: vefint, vediri
-    character(len=19) :: cnfint, cndiri, cnfext, cnsstr
+    character(len=19) :: vediri
+    character(len=19) :: cndiri, cnfext, cnsstr
     character(len=19) :: depdet, ddepla, depdel, sddyna
     character(len=19) :: solalt(zsolal), valint(zvalin, 2)
-    character(len=24) :: mate, varc_refe
     aster_logical :: echec
     integer :: ifm, niv
     real(kind=8), pointer :: vale(:) => null()
@@ -150,8 +149,6 @@ character(len=19), intent(in), optional :: sddyna_
 !
 ! --- INITIALISATIONS
 !
-    mate      = ds_material%mateco
-    varc_refe = ds_material%varc_refe
     opt = 1
     parmul = 3.d0
     fopt = r8maem()
@@ -189,8 +186,6 @@ character(len=19), intent(in), optional :: sddyna_
 ! - Copy dastructure for solving system
 !
     ds_system2 = ds_system
-    cnfint     = ds_system%cnfint
-    vefint     = ds_system%vefint
 !
 ! --- ACCES VARIABLES
 !
@@ -198,7 +193,7 @@ character(len=19), intent(in), optional :: sddyna_
 !
 ! --- PREPARATION DES ZONES TEMPORAIRES POUR ITERATION COURANTE
 !
-    cnfins(1) = cnfint
+    cnfins(1) = ds_system%cnfint
     cnfins(2) = '&&NMRECH.RESI'
     cndirs(1) = cndiri
     cndirs(2) = '&&NMRECH.DIRI'
@@ -228,7 +223,7 @@ character(len=19), intent(in), optional :: sddyna_
 ! --- CALCUL DE F(RHO=0)
 !
     call nmrecz(nume_dof, ds_contact, list_func_acti, &
-                cndiri, cnfint, cnfext, cnsstr, ddepla,&
+                cndiri, ds_system%cnfint, cnfext, cnsstr, ddepla,&
                 f0)
 !
     if (niv .ge. 2) then
@@ -286,7 +281,7 @@ character(len=19), intent(in), optional :: sddyna_
         endif
 ! ----- Update internal forces
         ds_system2%cnfint = cnfins(act)
-        ds_system2%vefint = vefint
+        ds_system2%vefint = ds_system%vefint
         call nmfint(model         , cara_elem      ,&
                     ds_material   , ds_constitutive,&
                     list_func_acti, iter_newt      , ds_measure, ds_system2,&
@@ -368,7 +363,7 @@ character(len=19), intent(in), optional :: sddyna_
     if (opt .ne. 1) then
         call copisd('CHAMP_GD', 'V', sigplt, sigplu)
         call copisd('CHAMP_GD', 'V', varplt, varplu)
-        call copisd('CHAMP_GD', 'V', cnfins(opt), cnfint)
+        call copisd('CHAMP_GD', 'V', cnfins(opt), ds_system%cnfint)
         call copisd('CHAMP_GD', 'V', cndirs(opt), cndiri)
     endif
 !

@@ -186,7 +186,7 @@ character(len=19) :: matele
             call utmess('I', 'MECANONLINE13_83')
         endif
         call meamme(optmat, model, nbchar, zk8(jchar2), ds_material%mater, ds_material%mateco, &
-                    carele, instam, 'V', merigi,&
+                    carele, instam, 'V', ds_system%merigi,&
                     memass, matele, varplu, ds_constitutive%compor)
 !
 ! --- MATR_ELEM POUR CHARGES SUIVEUSES
@@ -207,7 +207,7 @@ character(len=19) :: matele
         call messtr(base  , optmat, model, carele, ds_material%mater,&
                     matele)
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! --- MENAGE

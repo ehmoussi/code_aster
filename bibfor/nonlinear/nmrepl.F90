@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -124,7 +124,7 @@ integer :: pilcvg, ldccvg
     real(kind=8) :: fgmax, fgmin, amelio, residu, etaopt, rho
     character(len=19) :: veasst(zveass), solalt(zsolal), valint(zvalin, 2)
     character(len=19) :: cnfins(2), vefins(2), cndirs(2), k19bla
-    character(len=19) :: cndiri, cnfint, vefint, cnfext, cnsstr
+    character(len=19) :: cndiri, cnfext, cnsstr
     character(len=19) :: depplu, sigplu, varplu, complu
     character(len=19) :: depdet
     character(len=19) :: sigplt, varplt, depplt
@@ -173,8 +173,6 @@ integer :: pilcvg, ldccvg
 !
 ! --- DECOMPACTION VARIABLES CHAPEAUX
 !
-    cnfint = ds_system%cnfint
-    vefint = ds_system%vefint
     call nmchex(veasse, 'VEASSE', 'CNDIRI', cndiri)
     call nmchex(veasse, 'VEASSE', 'CNSSTR', cnsstr)
     call nmchex(valinc, 'VALINC', 'DEPPLU', depplu)
@@ -199,9 +197,9 @@ integer :: pilcvg, ldccvg
 !
 ! --- PREPARATION DES ZONES TEMPORAIRES POUR ITERATION COURANTE
 !
-    cnfins(1) = cnfint
+    cnfins(1) = ds_system%cnfint
     cnfins(2) = '&&CNREPL.CHP1'
-    vefins(1) = vefint
+    vefins(1) = ds_system%vefint
     vefins(2) = '&&CNREPL.CHPX'
     cndirs(1) = cndiri
     cndirs(2) = '&&CNREPL.CHP2'
@@ -353,7 +351,7 @@ integer :: pilcvg, ldccvg
     if (opt .ne. 1) then
         call copisd('CHAMP_GD', 'V', sigplt, sigplu)
         call copisd('CHAMP_GD', 'V', varplt, varplu)
-        call copisd('CHAMP_GD', 'V', cnfins(opt), cnfint)
+        call copisd('CHAMP_GD', 'V', cnfins(opt), ds_system%cnfint)
         call copisd('CHAMP_GD', 'V', cndirs(opt), cndiri)
     endif
 !

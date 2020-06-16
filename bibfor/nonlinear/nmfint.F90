@@ -80,7 +80,7 @@ character(len=*), optional, intent(in) :: sddynz_
     aster_logical :: l_xfem, l_macr_elem, l_hho
     character(len=1) :: base
     character(len=16) :: option
-    character(len=19) :: merigi, vefint, sddyna
+    character(len=19) :: sddyna
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -105,11 +105,6 @@ character(len=*), optional, intent(in) :: sddynz_
     l_macr_elem = isfonc(list_func_acti, 'MACR_ELEM_STAT')
     l_hho       = isfonc(list_func_acti, 'HHO')
 !
-! - Elementaries
-!
-    merigi = ds_system%merigi
-    vefint = ds_system%vefint
-!
 ! - Launch timer
 !
     call nmtime(ds_measure, 'Init'  , 'Integrate')
@@ -120,10 +115,9 @@ character(len=*), optional, intent(in) :: sddynz_
     call merimo(base           ,&
                 l_xfem         , l_macr_elem, l_hho      ,&
                 model          , cara_elem  , iter_newt+1,&
-                ds_constitutive, ds_material,&
+                ds_constitutive, ds_material, ds_system  ,&
                 hval_incr      , hval_algo  , hhoField   ,&
-                option         , merigi     , vefint     ,&
-                ldccvg         , sddyna)
+                option         , ldccvg     , sddyna)
 !
 ! - End timer
 !

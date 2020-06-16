@@ -20,9 +20,9 @@
 subroutine calcCalcMeca(nb_option      , list_option,&
                         l_elem_nonl    , nume_harm  ,&
                         list_load      , model      , cara_elem,&
-                        ds_constitutive, ds_material,&
+                        ds_constitutive, ds_material, ds_system,&
                         hval_incr      , hval_algo  ,&
-                        merigi         , vediri     , vefint     , veforc,&
+                        vediri         , vefnod     ,&
                         vevarc_prev    , vevarc_curr,&
                         nb_obje_maxi   , obje_name  , obje_sdname, nb_obje)
 !
@@ -32,20 +32,20 @@ use HHO_type
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/exixfe.h"
 #include "asterfort/assert.h"
 #include "asterfort/copisd.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/exixfe.h"
 #include "asterfort/knindi.h"
-#include "asterfort/medime.h"
-#include "asterfort/merimo.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmvcd2.h"
-#include "asterfort/nmvcpr_elem.h"
-#include "asterfort/utmess.h"
+#include "asterfort/merimo.h"
+#include "asterfort/medime.h"
 #include "asterfort/vebtla.h"
 #include "asterfort/vefnme.h"
+#include "asterfort/nmvcpr_elem.h"
+#include "asterfort/utmess.h"
+#include "asterfort/nmvcd2.h"
 #include "asterfort/vtzero.h"
 !
 integer, intent(in) :: nb_option
@@ -56,9 +56,9 @@ character(len=19), intent(in) :: list_load
 character(len=24), intent(in) :: model, cara_elem
 type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Material), intent(in) :: ds_material
+type(NL_DS_System), intent(in) :: ds_system
 character(len=19), intent(in) :: hval_incr(:), hval_algo(:)
-character(len=19), intent(in) :: merigi, vediri, vefint
-character(len=19), intent(inout) :: veforc
+character(len=19), intent(in) :: vediri, vefnod
 character(len=19), intent(in) :: vevarc_prev, vevarc_curr
 integer, intent(in) :: nb_obje_maxi
 character(len=16), intent(inout) :: obje_name(nb_obje_maxi)
@@ -83,10 +83,8 @@ integer, intent(out) ::  nb_obje
 ! In  ds_material      : datastructure for material parameters
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! In  merigi           : name of elementary for tangent matrix
 ! In  vediri           : name of elementary for reaction (Lagrange) vector
-! In  vefint           : name of elementary for internal forces vector (RAPH_MECA)
-! In  veforc           : name of elementary for forces vector (FORC_NODA)
+! In  vefnod           : name of elementary for forces vector (FORC_NODA)
 ! In  vevarc_prev      : name of elementary for external state variables at beginning of step
 ! In  vevarc_curr      : name of elementary for external state variables at end of step
 ! In  nb_obje_maxi     : maximum number of new objects to add
@@ -107,7 +105,6 @@ integer, intent(out) ::  nb_obje
     real(kind=8) :: partps(3)
     character(len=19) :: ligrmo, caco3d
     character(len=32) :: answer
-    type(NL_DS_System) :: ds_system
     type(HHO_Field) :: hhoField
     character(len=1) :: base
     character(len=24) :: depnul
@@ -197,23 +194,20 @@ integer, intent(out) ::  nb_obje
 ! - Physical dof computation
 !
     if (l_nonl) then
-        ds_system%merigi = merigi
-        ds_system%vefint = vefint
         iter_newt = 1
         call merimo(base           ,&
                     l_xfem         , l_macr_elem, l_hho    ,&
                     model          , cara_elem  , iter_newt,&
-                    ds_constitutive, ds_material,&
+                    ds_constitutive, ds_material, ds_system,&
                     hval_incr      , hval_algo  , hhoField ,&
-                    option         , merigi     , vefint   ,&
-                    ldccvg)
+                    option         , ldccvg)
         call detrsd('CHAMP', caco3d)
     endif
 !
 ! - Lagrange dof computation
 !
     if (l_lagr) then
-        call medime(base, 'CUMU', model, list_load, merigi)
+        call medime(base, 'CUMU', model, list_load, ds_system%merigi)
         call vebtla(base, model, ds_material%mater, cara_elem, disp_curr,&
                     list_load, vediri)
     endif
@@ -225,19 +219,19 @@ integer, intent(out) ::  nb_obje
         if (.not. l_nonl) then
             ! calcul avec sigma init (sans integration de comportement)
             call copisd('CHAMP_GD', 'V', sigm_prev, sigm_curr)
-            call vefnme(option                , model    , ds_material%mateco, cara_elem,&
-                    ds_constitutive%compor, partps   , 0                     , ligrmo   ,&
-                    varc_curr             , sigm_curr, ' '                   , disp_prev,&
-                    disp_cumu_inst        , base     , veforc)
+            call vefnme(option            , model    , ds_material%mateco, cara_elem,&
+                    ds_constitutive%compor, partps   , 0                 , ligrmo   ,&
+                    varc_curr             , sigm_curr, ' '               , disp_prev,&
+                    disp_cumu_inst        , base     , vefnod)
         else
             ! t(i) => t(i+1) : depplu => depmoi, depdel = 0
             depnul='&&calcul.depl_nul'
             call copisd('CHAMP_GD', 'V', disp_cumu_inst, depnul)
             call vtzero(depnul)
-            call vefnme(option                , model    , ds_material%mateco, cara_elem,&
-                    ds_constitutive%compor, partps   , 0                     , ligrmo   ,&
-                    varc_curr             , sigm_curr, ' '                   , disp_curr,&
-                    depnul       , base     , veforc)
+            call vefnme(option            , model    , ds_material%mateco, cara_elem,&
+                    ds_constitutive%compor, partps   , 0                 , ligrmo   ,&
+                    varc_curr             , sigm_curr, ' '               , disp_curr,&
+                    depnul                , base     , vefnod)
         endif
     endif
 !
@@ -271,7 +265,7 @@ integer, intent(out) ::  nb_obje
         nb_obje = nb_obje + 1
         ASSERT(nb_obje.le.nb_obje_maxi)
         obje_name(nb_obje)   = 'FORC_INTE_ELEM'
-        obje_sdname(nb_obje) = vefint
+        obje_sdname(nb_obje) = ds_system%vefint
         nb_obje = nb_obje + 1
         ASSERT(nb_obje.le.nb_obje_maxi)
         obje_name(nb_obje)   = 'SIEF_ELGA'
@@ -288,14 +282,14 @@ integer, intent(out) ::  nb_obje
             nb_obje = nb_obje + 1
             ASSERT(nb_obje.le.nb_obje_maxi)
             obje_name(nb_obje)   = 'MATR_TANG_ELEM'
-            obje_sdname(nb_obje) = merigi
+            obje_sdname(nb_obje) = ds_system%merigi
         endif
     endif
     if (l_forc_noda) then
         nb_obje = nb_obje + 1
         ASSERT(nb_obje.le.nb_obje_maxi)
         obje_name(nb_obje)   = 'FORC_NODA_ELEM'
-        obje_sdname(nb_obje) = veforc
+        obje_sdname(nb_obje) = vefnod
     endif
     if (l_varc_prev) then
         nb_obje = nb_obje + 1

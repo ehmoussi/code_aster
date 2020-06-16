@@ -20,9 +20,9 @@ interface
     subroutine calcPrepDataMeca(model          , mate          , mateco,  cara_elem,&
                                 disp_prev      , disp_cumu_inst, vari_prev, sigm_prev,&
                                 time_prev      , time_curr     ,&
-                                ds_constitutive, ds_material   ,&
+                                ds_constitutive, ds_material   , ds_system,&
                                 hval_incr      , hval_algo     ,&
-                                merigi         , vediri        , vefint   , veforc   ,&
+                                vediri         , vefnod        ,&
                                 vevarc_prev    , vevarc_curr   )
         use NonLin_Datastructure_type
         character(len=24), intent(in) :: model, mate, cara_elem, mateco
@@ -31,8 +31,9 @@ interface
         real(kind=8), intent(in) :: time_prev, time_curr
         type(NL_DS_Constitutive), intent(inout) :: ds_constitutive
         type(NL_DS_Material), intent(out) :: ds_material
+        type(NL_DS_System), intent(out) :: ds_system
         character(len=19), intent(out) :: hval_incr(:), hval_algo(:)
-        character(len=19), intent(out) :: merigi, vefint, veforc
-        character(len=19), intent(out) :: vediri, vevarc_prev, vevarc_curr
+        character(len=19), intent(out) :: vediri, vefnod
+        character(len=19), intent(out) :: vevarc_prev, vevarc_curr
     end subroutine calcPrepDataMeca
 end interface

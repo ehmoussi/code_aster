@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -94,7 +94,6 @@ character(len=19), intent(in) :: hval_measse(*)
     real(kind=8) :: time_prev, time_curr
     aster_logical :: l_macr, l_impe
     character(len=19) :: disp_curr, cnsstr
-    character(len=19) :: vefnod, cnfnod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -152,12 +151,10 @@ character(len=19), intent(in) :: hval_measse(*)
 !
 ! - Compute nodal force BT . SIGMA (No integration of behaviour)
 !
-    vefnod = ds_system%vefnod
-    cnfnod = ds_system%cnfnod
-    call nonlinNForceCompute(model      , cara_elem      , nume_dof  , list_func_acti,&
-                             ds_material, ds_constitutive, ds_measure,&
+    call nonlinNForceCompute(model      , cara_elem      , list_func_acti,&
+                             ds_material, ds_constitutive,&
+                             ds_measure , ds_system      ,&
                              time_prev  , time_curr      ,&
-                             hval_incr  , hval_algo      ,&
-                             vefnod     , cnfnod)
+                             hval_incr  , hval_algo      )
 !
 end subroutine

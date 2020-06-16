@@ -81,7 +81,6 @@ integer, intent(out) :: ldccvg
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=19) :: merigi, vefint
     character(len=1) :: base
     character(len=24) :: model
     character(len=16) :: optrig
@@ -108,11 +107,6 @@ integer, intent(out) :: ldccvg
     lendo       = isfonc(list_func_acti, 'ENDO_NO')
     l_hho       = isfonc(list_func_acti, 'HHO')
 !
-! - Elementaries
-!
-    merigi = ds_system%merigi
-    vefint = ds_system%vefint
-!
 ! --- INCREMENT DE DEPLACEMENT NUL EN PREDICTION
 !
     if (.not.lendo) then
@@ -131,10 +125,9 @@ integer, intent(out) :: ldccvg
     call merimo(base           ,&
                 l_xfem         , l_macr_elem, l_hho      ,&
                 model          , cara_elem  , iter_newt+1,&
-                ds_constitutive, ds_material, &
+                ds_constitutive, ds_material, ds_system  ,&
                 hval_incr      , hval_algo  , hhoField   ,&
-                optrig         , merigi     , vefint     ,&
-                ldccvg         , sddyna)
+                optrig         , ldccvg     , sddyna)
 !
 ! - End timer
 !

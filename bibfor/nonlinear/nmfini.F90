@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -93,7 +93,6 @@ integer :: numins
     real(kind=8), pointer :: flimo(:) => null()
     real(kind=8), pointer :: fnomo(:) => null()
     real(kind=8), pointer :: vitmo(:) => null()
-    character(len=19) :: vefnod, cnfnod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -153,16 +152,14 @@ integer :: numins
         AS_DEALLOCATE(vr=ma)
     endif
 !
-! --- AJOUT DU TERME CNFNOD
+! - Direct computation (no integration of behaviour)
 !
-    vefnod = ds_system%vefnod
-    cnfnod = ds_system%cnfnod
-    call nonlinNForceCompute(modele     , carele         , numedd  , fonact,&
-                             ds_material, ds_constitutive, ds_measure,&
+    call nonlinNForceCompute(modele     , carele         , fonact   ,&
+                             ds_material, ds_constitutive,&
+                             ds_measure , ds_system      ,&
                              time_prev  , time_curr      ,&
-                             valinc     , solalg         ,&
-                             vefnod     , cnfnod)
-    call jeveuo(cnfnod//'.VALE', 'L', vr=cnfno)
+                             valinc     , solalg)
+    call jeveuo(ds_system%cnfnod//'.VALE', 'L', vr=cnfno)
     do i_equa = 1, nb_equa
         fexmo(i_equa) = fexmo(i_equa) + cnfno(i_equa)
     end do
