@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
                       lischa        , numedd         , numfix     ,&
                       solveu        , ds_system      , sddisc     ,&
                       sddyna        , ds_print       , ds_measure ,&
-                      ds_algorom    , numins         , iter_newt  ,&
+                      ds_algorom    , nume_inst      , iter_newt  ,&
                       list_func_acti, ds_contact     , hval_incr  ,&
                       hval_algo     , hhoField       , meelem     , measse,&
                       maprec        , matass         , faccvg     ,&
@@ -46,9 +46,7 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         type(ROM_DS_AlgoPara), intent(in) :: ds_algorom
         type(NL_DS_System), intent(in) :: ds_system
-        integer :: numins
-        integer :: iter_newt
-        integer :: list_func_acti(*)
+        integer, intent(in) :: list_func_acti(*), nume_inst, iter_newt
         type(NL_DS_Contact), intent(inout) :: ds_contact
         character(len=19) :: hval_incr(*)
         character(len=19) :: hval_algo(*)

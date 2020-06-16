@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,34 +17,25 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara,&
-                      lischa, numedd, numfix    , solveu         , ds_system,&
-                      sddisc, sddyna, ds_measure, numins         , fonact     ,&
-                      valinc, solalg, meelem    , measse     ,&
-                      maprec, matass, faccvg    , ldccvg)
+    subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara   ,&
+                      lischa, numedd     , numfix    , solveu         , ds_system     ,&
+                      sddisc, sddyna     , ds_measure, nume_inst      , list_func_acti,&
+                      valinc, solalg     , meelem    , measse     ,&
+                      maprec, matass     , faccvg    , ldccvg)
         use NonLin_Datastructure_type
+        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
+        integer, intent(in) :: list_func_acti(*), nume_inst
         character(len=*) :: modelz
         type(NL_DS_Material), intent(in) :: ds_material
         character(len=24) :: carele
-        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
-        type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-        type(NL_DS_System), intent(in) :: ds_system
-        character(len=19) :: lischa
-        character(len=24) :: numedd
-        character(len=24) :: numfix
-        character(len=19) :: solveu
-        character(len=19) :: sddisc
-        character(len=19) :: sddyna
         type(NL_DS_Measure), intent(inout) :: ds_measure
-        integer :: numins
-        integer :: fonact(*)
-        character(len=19) :: valinc(*)
-        character(len=19) :: solalg(*)
-        character(len=19) :: meelem(*)
-        character(len=19) :: measse(*)
-        character(len=19) :: maprec
-        character(len=19) :: matass
-        integer :: faccvg
-        integer :: ldccvg
+        character(len=24) :: numedd, numfix
+        type(NL_DS_Constitutive), intent(in) :: ds_constitutive
+        type(NL_DS_System), intent(in) :: ds_system
+        character(len=19) :: sddisc, sddyna, lischa, solveu
+        character(len=19) :: solalg(*), valinc(*)
+        character(len=19) :: meelem(*), measse(*)
+        character(len=19) :: maprec, matass
+        integer :: faccvg, ldccvg
     end subroutine ndxprm
 end interface

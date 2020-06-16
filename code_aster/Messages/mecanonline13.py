@@ -93,14 +93,6 @@ cata_msg = {
 
    36  : _("""   Nouvelle numérotation des inconnues."""),
 
-   37  : _("""   On assemblera la matrice d'amortissement."""),
-
-   38  : _("""   On n'assemblera pas la matrice d'amortissement."""),
-
-   39  : _("""   On assemblera la matrice globale du système."""),
-
-   40  : _("""   On n'assemblera pas la matrice globale du système."""),
-
    41  : _("""   Calcul de la matrice globale du système."""),
 
    42  : _("""   Factorisation de la matrice globale du système."""),

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,14 +18,15 @@
 ! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1504
 !
-subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara,&
-                  lischa, numedd     , numfix    , solveu         , ds_system  ,&
-                  sddisc, sddyna     , ds_measure, numins         , fonact     ,&
+subroutine ndxprm(modelz, ds_material, carele    , ds_constitutive, ds_algopara   ,&
+                  lischa, numedd     , numfix    , solveu         , ds_system     ,&
+                  sddisc, sddyna     , ds_measure, nume_inst      , list_func_acti,&
                   valinc, solalg     , meelem    , measse     ,&
                   maprec, matass     , faccvg    , ldccvg)
 !
 use NonLin_Datastructure_type
 use HHO_type
+use NonLinear_module, only : isDampMatrCompute
 !
 implicit none
 !
@@ -34,7 +35,6 @@ implicit none
 #include "asterfort/isfonc.h"
 #include "asterfort/ndxmat.h"
 #include "asterfort/ndynlo.h"
-#include "asterfort/nmchra.h"
 #include "asterfort/nmcmat.h"
 #include "asterfort/nmrinc.h"
 #include "asterfort/nmtime.h"
@@ -46,7 +46,7 @@ implicit none
 #include "asterfort/nmchex.h"
 !
 type(NL_DS_AlgoPara), intent(in) :: ds_algopara
-integer :: fonact(*)
+integer, intent(in) :: list_func_acti(*), nume_inst
 character(len=*) :: modelz
 type(NL_DS_Material), intent(in) :: ds_material
 character(len=24) :: carele
@@ -57,7 +57,6 @@ type(NL_DS_System), intent(in) :: ds_system
 character(len=19) :: sddisc, sddyna, lischa, solveu
 character(len=19) :: solalg(*), valinc(*)
 character(len=19) :: meelem(*), measse(*)
-integer :: numins
 character(len=19) :: maprec, matass
 integer :: faccvg, ldccvg
 !
@@ -105,13 +104,13 @@ integer :: faccvg, ldccvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: reasma
-    aster_logical :: lcrigi, lcfint, lcamor, larigi, lprem
-    aster_logical :: lamor, l_neum_undead, lshima, lprmo
-    character(len=16) :: metpre
-    character(len=16) :: optrig, optamo
+    aster_logical :: l_update_matr
+    aster_logical :: l_comp_rigi, l_comp_damp, l_asse_rigi, l_first_step
+    aster_logical :: l_neum_undead, lshima, lprmo
+    character(len=16) :: explMatrType
+    character(len=16) :: option_nonlin, optamo
     integer :: ifm, niv, ibid
-    integer :: iterat
+    integer :: iter_newt
     integer :: nb_matr
     character(len=19) :: rigid
     character(len=6) :: list_matr_type(20)
@@ -128,100 +127,92 @@ integer :: faccvg, ldccvg
 !
 ! - Initializations
 !
+    call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
     nb_matr              = 0
     list_matr_type(1:20) = ' '
+    optamo = 'AMOR_MECA'
     faccvg = -1
     ldccvg = -1
-    iterat = 0
-    lcamor = .false.
+!
+! - Prediction
+!
+    iter_newt = 0
 !
 ! - Active functionnalities
 !
-    lamor         = ndynlo(sddyna,'MAT_AMORT')
     lprmo         = ndynlo(sddyna,'PROJ_MODAL')
-    l_neum_undead = isfonc(fonact,'NEUM_UNDEAD')
+    l_neum_undead = isfonc(list_func_acti,'NEUM_UNDEAD')
     lshima        = ndynlo(sddyna,'COEF_MASS_SHIFT')
-    call nmchex(measse, 'MEASSE', 'MERIGI', rigid)
 !
 ! - First step ?
 !
-    lprem = numins.le.1
+    l_first_step = nume_inst .le. 1
 !
-! --- PARAMETRES
+! - Get type of matrix
 !
-    metpre = ds_algopara%matrix_pred
-    if (metpre .ne. 'TANGENTE') then
+    explMatrType = ds_algopara%matrix_pred
+    if (explMatrType .ne. 'TANGENTE') then
         call utmess('F', 'MECANONLINE5_1')
     endif
 !
-! --- CHOIX DE REASSEMBLAGE DE LA MATRICE GLOBALE
+! - Update global matrix ?
 !
-    reasma = .false.
-    if (lprem) then
+    l_update_matr = ASTER_FALSE
+    if (l_first_step) then
         if (lprmo) then
-            reasma = .false.
+            l_update_matr = ASTER_FALSE
         else
-            reasma = .true.
+            l_update_matr = ASTER_TRUE
         endif
     endif
 !
-! --- CHOIX DE REASSEMBLAGE DE L'AMORTISSEMENT
+! - Do the damping matrices have to be calculated ?
 !
-    if (lamor) then
-        call nmchra(sddyna, .false._1, optamo, lcamor)
+    call isDampMatrCompute(sddyna, ASTER_FALSE, l_comp_damp)
+!
+! - Select non-linear option for compute matrices
+!
+    option_nonlin = 'RIGI_MECA_TANG'
+!
+! - Do the rigidity matrices have to be calculated/assembled ?
+!
+    l_comp_rigi = ASTER_FALSE
+    l_asse_rigi = ASTER_FALSE
+    if (l_comp_damp) then
+        l_comp_rigi = ASTER_TRUE
+    endif
+    if (lshima .and. l_first_step) then
+        l_comp_rigi = ASTER_TRUE
+        l_asse_rigi = ASTER_TRUE
     endif
 !
-! --- OPTION DE CALCUL POUR MERIMO
+! - Compute rigidity elementary matrices / internal forces elementary vectors
 !
-    optrig = 'RIGI_MECA_TANG'
-    lcfint = .false.
-    lcrigi = .false.
-    larigi = .false.
-!
-! --- SI ON DOIT RECALCULER L'AMORTISSEMENT DE RAYLEIGH
-!
-    if (lcamor) then
-        lcrigi = .true.
+    if (l_comp_rigi) then
+        call nmrigi(modelz        , carele,&
+                    ds_material   , ds_constitutive,&
+                    list_func_acti, iter_newt      , sddyna, ds_measure, ds_system,&
+                    valinc        , solalg         , hhoField, &
+                    option_nonlin , ldccvg)
+        if (l_asse_rigi) then
+            call asmari(list_func_acti, meelem, ds_system, numedd, lischa, ds_algopara,&
+                        rigid)
+        endif
     endif
 !
-! --- DECALAGE COEF_MASS_SHIFT AU PREMIER PAS DE TEMPS -> ON A BESOIN
-! --- DE LA MATRICE DE RIGIDITE
+! - Compute damping (Rayleigh) elementary matrices
 !
-    if (lshima .and. lprem) then
-        lcrigi = .true.
-        larigi = .true.
-    endif
-!
-! --- CALCUL DES MATR-ELEM DE RIGIDITE
-!
-    if (lcrigi) then
-        call nmrigi(modelz     , carele,&
-                    ds_material, ds_constitutive,&
-                    fonact     , iterat         , sddyna, ds_measure, ds_system,&
-                    valinc     , solalg         , hhoField, &
-                    optrig     , ldccvg)
-    endif
-!
-! - Assembly internal forces/rigidity matrix
-!
-    if (larigi) then
-        call asmari(fonact, meelem, ds_system, numedd, lischa, ds_algopara,&
-                    rigid)
-    endif
-!
-! --- CALCUL ET ASSEMBLAGE DES MATR-ELEM D'AMORTISSEMENT DE RAYLEIGH
-!
-    if (lcamor) then
-        call nmcmat('MEAMOR', optamo, ' ', .true._1,&
-                    .true._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+    if (l_comp_damp) then
+        call nmcmat('MEAMOR', optamo, ' ', ASTER_TRUE,&
+                    ASTER_TRUE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
 ! --- CALCUL DES MATR-ELEM DES CHARGEMENTS
 !
     if (l_neum_undead) then
-        call nmcmat('MESUIV', ' ', ' ', .true._1,&
-                    .false._1, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
+        call nmcmat('MESUIV', ' ', ' ', ASTER_TRUE,&
+                    ASTER_FALSE, nb_matr, list_matr_type, list_calc_opti, list_asse_opti,&
                     list_l_calc, list_l_asse)
     endif
 !
@@ -229,7 +220,7 @@ integer :: faccvg, ldccvg
 !
     if (nb_matr .gt. 0) then
         call nmxmat(modelz         , ds_material   , carele        ,&
-                    ds_constitutive, sddisc        , numins        ,&
+                    ds_constitutive, sddisc        , nume_inst        ,&
                     valinc         , solalg        , lischa        ,&
                     numedd         , numfix        , ds_measure    ,&
                     nb_matr        , list_matr_type, list_calc_opti,&
@@ -237,30 +228,23 @@ integer :: faccvg, ldccvg
                     meelem         , measse        , ds_system)
     endif
 !
-! --- ERREUR SANS POSSIBILITE DE CONTINUER
+! - No error => continue
 !
-    if (ldccvg .eq. 1) then
-        goto 999
+    if (ldccvg .ne. 1) then
+! ----- Compute global matrix of system
+        if (l_update_matr) then
+            call ndxmat(list_func_acti, lischa, numedd, sddyna, nume_inst,&
+                        meelem, measse, matass)
+        endif
+! ----- Factorization of global matrix of system
+        if (l_update_matr) then
+            call nmtime(ds_measure, 'Init'  , 'Factor')
+            call nmtime(ds_measure, 'Launch', 'Factor')
+            call preres(solveu, 'V', faccvg, maprec, matass,&
+                        ibid, -9999)
+            call nmtime(ds_measure, 'Stop', 'Factor')
+            call nmrinc(ds_measure, 'Factor')
+        endif
     endif
-!
-! --- CALCUL DE LA MATRICE ASSEMBLEE GLOBALE
-!
-    if (reasma) then
-        call ndxmat(fonact, lischa, numedd, sddyna, numins,&
-                    meelem, measse, matass)
-    endif
-!
-! --- FACTORISATION DE LA MATRICE ASSEMBLEE GLOBALE
-!
-    if (reasma) then
-        call nmtime(ds_measure, 'Init'  , 'Factor')
-        call nmtime(ds_measure, 'Launch', 'Factor')
-        call preres(solveu, 'V', faccvg, maprec, matass,&
-                    ibid, -9999)
-        call nmtime(ds_measure, 'Stop', 'Factor')
-        call nmrinc(ds_measure, 'Factor')
-    endif
-!
-999 continue
 !
 end subroutine

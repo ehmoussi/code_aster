@@ -21,17 +21,20 @@
 subroutine nmfcor(model          , nume_dof   , ds_material   , cara_elem  , ds_system,&
                   ds_constitutive, list_load  , list_func_acti, ds_algopara, nume_inst,&
                   iter_newt      , ds_measure , sddisc        , sddyna     , sdnume   ,&
-                  sderro         , ds_contact , hval_incr     , hval_algo  , hhoField,&
-                  hval_meelem    , hval_veelem    , hval_veasse, hval_measse   , matass   ,&
+                  sderro         , ds_contact , hval_incr     , hval_algo  , hhoField ,&
+                  hval_meelem    , hval_veelem, hval_veasse   , hval_measse, matass   ,&
                   lerrit)
 !
 use NonLin_Datastructure_type
 use HHO_type
 use HHO_comb_module, only : hhoPrepMatrix
+use NonLinear_module, only : getOption, getMatrType, isMatrUpdate,&
+                             isInteVectCompute
 !
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/NonLinear_type.h"
 #include "asterfort/assert.h"
 #include "asterfort/infdbg.h"
 #include "asterfort/isfonc.h"
@@ -39,7 +42,6 @@ implicit none
 #include "asterfort/nonlinLoadDirichletCompute.h"
 #include "asterfort/nmforc_corr.h"
 #include "asterfort/nmchex.h"
-#include "asterfort/nmchfi.h"
 #include "asterfort/nmcret.h"
 #include "asterfort/nmctcd.h"
 #include "asterfort/ndynin.h"
@@ -109,12 +111,13 @@ aster_logical :: lerrit
 !
     integer :: ifm, niv
     character(len=24) :: mate, mateco, varc_refe
-    aster_logical :: lcfint, lcrigi, lcdiri, lcbudi
+    aster_logical :: l_comp_fint, l_comp_rigi
     character(len=19) :: disp_curr, vite_curr, acce_curr, vect_lagr, rigid
-    character(len=16) :: option
-    aster_logical :: l_cont_disc, l_unil, leltc, l_hho
-    aster_logical :: l_disp, l_vite, l_acce, l_dyna
-    integer :: ldccvg, condcvg
+    character(len=16) :: corrMatrType, option_nonlin
+    aster_logical :: l_cont_disc, l_unil, l_comp_cont, l_hho
+    aster_logical :: l_disp, l_vite, l_acce, l_dyna, l_update_matr
+    integer :: ldccvg, reac_iter
+    integer :: condcvg
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -123,7 +126,7 @@ aster_logical :: lerrit
         call utmess('I', 'MECANONLINE13_63')
     endif
 !
-! --- INITIALISATIONS CODES RETOURS
+! - Initializations
 !
     mate      = ds_material%mater
     mateco    = ds_material%mateco
@@ -131,11 +134,11 @@ aster_logical :: lerrit
     ldccvg    = -1
     condcvg   = -1
 !
-! --- FONCTIONNALITES ACTIVEES
+! - Active functionnalites
 !
     l_unil      = isfonc(list_func_acti,'LIAISON_UNILATER')
     l_cont_disc = isfonc(list_func_acti,'CONT_DISCRET')
-    leltc       = isfonc(list_func_acti,'ELT_CONTACT')
+    l_comp_cont = isfonc(list_func_acti,'ELT_CONTACT')
     l_hho       = isfonc(list_func_acti,'HHO')
 !
 ! - Get hat-variables
@@ -156,29 +159,48 @@ aster_logical :: lerrit
                      hval_veelem   , hval_veasse    ,&
                      hval_measse)
 !
-! --- CALCUL DU SECOND MEMBRE POUR CONTACT/XFEM
+! - Compute vectors for CONTINUE contact
 !
-    if (leltc) then
+    if (l_comp_cont) then
         call nmfocc('CONVERGENC', model     , ds_material, nume_dof , list_func_acti,&
                     ds_contact  , ds_measure, hval_algo  , hval_incr, ds_constitutive)
     endif
 !
-! - Get option for update internal forces
+! - Get type of matrix
 !
-    call nmchfi(ds_algopara, list_func_acti, sddyna   , ds_contact,&
-                sddisc     , nume_inst     , iter_newt,&
-                lcfint     , lcdiri        , lcbudi   , lcrigi    ,&
-                option)
+    call getMatrType(CORR_NEWTON, list_func_acti, sddisc, nume_inst, ds_algopara,&
+                     corrMatrType, reac_iter_ = reac_iter)
+!
+! - Update global matrix ?
+!
+    call isMatrUpdate(CORR_NEWTON  , corrMatrType, list_func_acti,&
+                      ds_contact   , sddyna      ,&
+                      l_update_matr,&
+                      iter_newt_ = iter_newt, reac_iter_ = reac_iter)
+!
+! - Select option for compute matrices
+!
+    call getOption(CORR_NEWTON, list_func_acti, corrMatrType, option_nonlin, l_update_matr)
+!
+! - Do the rigidity matrices have to be calculated/assembled ?
+!
+    l_comp_rigi = option_nonlin .ne. 'RAPH_MECA'
+!
+! - Do the internal forces vectors have to be calculated ?
+!
+    call isInteVectCompute(INTE_FORCE   , list_func_acti,&
+                           option_nonlin, iter_newt     ,&
+                           l_comp_rigi  , l_comp_fint)
 !
 ! - Compute internal forces / matrix rigidity
 !
-    if (lcfint) then
-        if (lcrigi) then
+    if (l_comp_fint) then
+        if (l_comp_rigi) then
             call nmrigi(model          , cara_elem,&
                         ds_material    , ds_constitutive,&
                         list_func_acti , iter_newt      , sddyna, ds_measure, ds_system,&
                         hval_incr      , hval_algo      , hhoField, &
-                        option         , ldccvg)
+                        option_nonlin         , ldccvg)
         else
             call nmfint(model          , cara_elem      ,&
                         ds_material    , ds_constitutive,&
@@ -187,7 +209,7 @@ aster_logical :: lerrit
                         ldccvg         , sddyna)
         endif
 !
-        if(l_hho) then
+        if (l_hho) then
             call nmchex(hval_measse, 'MEASSE', 'MERIGI', rigid)
             call hhoPrepMatrix(model, mate, mateco, ds_system%merigi, ds_system%vefint, rigid, &
                                hhoField,&
@@ -229,11 +251,11 @@ aster_logical :: lerrit
             call nmctcd(list_func_acti, ds_contact, nume_dof)
         endif
 ! ----- Assemble internal forces
-        if (lcfint) then
+        if (l_comp_fint) then
             call nmaint(nume_dof, list_func_acti, sdnume, ds_system)
         endif
 ! ----- Compute force for Dirichlet boundary conditions (dualized) - BT.LAMBDA
-        if (lcdiri) then
+        if (l_comp_fint) then
             call nonlinRForceCompute(model      , ds_material, cara_elem, list_load,&
                                      nume_dof   , ds_measure , vect_lagr,&
                                      hval_veelem, hval_veasse)

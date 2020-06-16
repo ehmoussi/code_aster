@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,16 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
+#define PRED_EULER          1
+#define CORR_NEWTON         2
+#define INTE_FORCE          3
 !
-#include "asterf_types.h"
-!
-interface
-    subroutine nmchra(sddyna, l_renumber, optamo, lcamor)
-        character(len=19) :: sddyna
-        aster_logical :: l_renumber
-        character(len=16) :: optamo
-        aster_logical :: lcamor
-    end subroutine nmchra
-end interface
+! Set to 1 to activate DEBUG
+#define NONLINEAR_DEBUG     0

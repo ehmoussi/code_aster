@@ -17,16 +17,15 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nmprma(mesh       , modelz  , ds_material, carele    , ds_constitutive,&
-                      ds_algopara, lischa  , numedd     , numfix    , solveu,&
-                      ds_system  , ds_print, ds_measure , ds_algorom, sddisc,&
-                      sddyna     , numins  , fonact     , ds_contact, valinc,&
-                      solalg     , hhoField, meelem  , measse      ,maprec    , matass,&
-                      faccvg     , ldccvg, condcvg)
+    subroutine nmprma(mesh       , modelz   , ds_material, carele    , ds_constitutive,&
+                      ds_algopara, lischa   , numedd     , numfix    , solveu,&
+                      ds_system  , ds_print , ds_measure , ds_algorom, sddisc,&
+                      sddyna     , nume_inst, list_func_acti, ds_contact, valinc,&
+                      solalg     , hhoField , meelem  , measse      ,maprec    , matass,&
+                      faccvg     , ldccvg   , condcvg)
         use NonLin_Datastructure_type
         use Rom_Datastructure_type
         use HHO_type
-
         character(len=8), intent(in) :: mesh
         character(len=*) :: modelz
         character(len=24) :: carele
@@ -44,8 +43,7 @@ interface
         type(NL_DS_System), intent(in) :: ds_system
         character(len=19) :: sddisc
         character(len=19) :: sddyna
-        integer :: numins
-        integer :: fonact(*)
+        integer, intent(in) :: nume_inst, list_func_acti(*)
         type(NL_DS_Contact), intent(inout) :: ds_contact
         character(len=19) :: valinc(*)
         character(len=19) :: solalg(*)
