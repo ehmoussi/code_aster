@@ -144,10 +144,6 @@ OPTION MASS_INER : la masse volumique RHO doit être non nulle
   relation : ELAS obligatoirement
 """),
 
-    47 : _("""
-    Il n'est pas possible d'utiliser ANGL_AXE et ORIG_AXE de AFFE_CARA_ELEM pour les modélisations XXX_INTERFACE
-"""),
-
     48 : _("""
     Il n'est pas possible d'utiliser ANGL_AXE et ORIG_AXE de AFFE_CARA_ELEM pour les modélisations XXX_JHMS
 """),

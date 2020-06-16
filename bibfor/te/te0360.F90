@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0360(option, nomte)
 !
-! person_in_charge: jerome.laverne at edf.fr
+use Behaviour_module, only : behaviourOption
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/eiangl.h"
 #include "asterfort/eifint.h"
 #include "asterfort/eiinit.h"
@@ -31,48 +33,67 @@ subroutine te0360(option, nomte)
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
 #include "asterfort/tecach.h"
-#include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 #include "blas/dcopy.h"
-    character(len=16) :: option, nomte
-! ......................................................................
-!    - FONCTION REALISEE:  CALCUL DES OPTIONS NON-LINEAIRES MECANIQUES
-!                          POUR LES ELEMENTS D'INTERFACE
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
 !
-    character(len=8) :: typmod(2), nomail, lielrf(10)
+character(len=16), intent(in) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: 3D_INTERFACE
+!           PLAN_INTERFACE, AXIS_INTERFACE
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=16) :: defo_comp
+    character(len=8) :: typmod(2), lielrf(10)
     aster_logical :: axi
-    integer :: nno1, nno2, npg, imatuu, lgpg, lgpg1, lgpg2
-    integer :: iw, ivf1, idf1, igeom, imate
-    integer :: ivf2, idf2, nnos, jgn
+    integer :: nno1, nno2, npg, imatuu, lgpg
+    integer :: iw, ivf1, igeom, imate
+    integer :: ivf2, idf2
     integer :: ivarim, ivarip, iinstm, iinstp
     integer :: iddlm, iddld, icompo, icarcr, icamas
-    integer :: ivectu, icontp
-    integer :: ivarix
-    integer :: jtab(7), iadzi, iazk24, jcret, codret
-    integer :: ndim, iret, ntrou, vali(2)
+    integer :: ivectu, icontp, ivarix
+    integer :: jtab(7)
+    integer :: ndim, iret, ntrou
     integer :: iu(3, 18), im(3, 9), it(18)
     real(kind=8) :: ang(24)
+    aster_logical :: lVect, lMatr, lVari, lSigm
+    integer :: codret
+    integer :: jv_codret
 !
+! --------------------------------------------------------------------------------------------------
 !
+    ivectu = 1
+    icontp = 1
+    ivarip = 1
+    imatuu = 1
+    axi    = lteatt('AXIS','OUI')
+    codret = 0
 !
-! - FONCTIONS DE FORME
+! - Get element parameters
 !
     call elref2(nomte, 2, lielrf, ntrou)
-    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno1, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf1, jdfde=idf1, jgano=jgn)
-    call elrefe_info(elrefe=lielrf(2), fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos,&
-                     npg=npg, jpoids=iw, jvf=ivf2, jdfde=idf2, jgano=jgn)
+    call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno1,&
+                     npg=npg, jpoids=iw, jvf=ivf1)
+    call elrefe_info(elrefe=lielrf(2), fami='RIGI', ndim=ndim, nno=nno2,&
+                     npg=npg, jpoids=iw, jvf=ivf2, jdfde=idf2)
     ndim = ndim + 1
-    axi = lteatt('AXIS','OUI')
 !
 ! - DECALAGE D'INDICE POUR LES ELEMENTS D'INTERFACE
     call eiinit(nomte, iu, im, it)
 !
-! - TYPE DE MODELISATION
+! - Type of finite element
 !
     if (ndim .eq. 3) then
         typmod(1) = '3D'
@@ -81,11 +102,9 @@ subroutine te0360(option, nomte)
     else
         typmod(1) = 'PLAN'
     endif
-!
     typmod(2) = 'INTERFAC'
-    codret = 0
 !
-! - PARAMETRES EN ENTREE
+! - Get input fields
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
@@ -95,88 +114,74 @@ subroutine te0360(option, nomte)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
 !
+! - Properties of behaviour
+!
+    defo_comp = zk16(icompo-1+DEFO)
+!
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
 ! --- ORIENTATION DE L'ELEMENT D'INTERFACE : REPERE LOCAL
 !     RECUPERATION DES ANGLES NAUTIQUES DEFINIS PAR AFFE_CARA_ELEM
 !
     call jevech('PCAMASS', 'L', icamas)
     if (zr(icamas) .eq. -1.d0) then
-        call utmess('F', 'ELEMENTS5_47')
+        call utmess('F', 'JOINT1_47')
     endif
 !
 !     DEFINITION DES ANGLES NAUTIQUES AUX NOEUDS SOMMETS : ANG
 !
     call eiangl(ndim, nno2, zr(icamas+1), ang)
 !
+! - Total number of internal state variables on element
 !
-! - ON VERIFIE QUE PVARIMR ET PVARIPR ONT LE MEME NOMBRE DE V.I. :
-!
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
-    lgpg1 = max(jtab(6),1)*jtab(7)
-!
-    if ((option(1:4).eq.'RAPH') .or. (option(1:4).eq.'FULL')) then
-        call tecach('OOO', 'PVARIPR', 'E', iret, nval=7,&
-                    itab=jtab)
-        lgpg2 = max(jtab(6),1)*jtab(7)
-!
-        if (lgpg1 .ne. lgpg2) then
-            call tecael(iadzi, iazk24)
-            nomail = zk24(iazk24-1+3) (1:8)
-            vali(1)=lgpg1
-            vali(2)=lgpg2
-            call utmess('A', 'CALCULEL6_64', sk=nomail, ni=2, vali=vali)
-        endif
-    endif
-    lgpg = lgpg1
-!
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,itab=jtab)
+    lgpg = max(jtab(6),1)*jtab(7)
 !
 ! - VARIABLES DE COMMANDE
 !
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PINSTPR', 'L', iinstp)
 !
+! - Get output fields
 !
-! PARAMETRES EN SORTIE
-!
-    if (option(1:4) .eq. 'RIGI' .or. option(1:4) .eq. 'FULL') then
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imatuu)
-    else
-        imatuu=1
     endif
-!
-    if (option(1:4) .eq. 'RAPH' .or. option(1:4) .eq. 'FULL') then
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
-!
-!      ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
         call jevech('PVARIMP', 'L', ivarix)
         call dcopy(npg*lgpg, zr(ivarix), 1, zr(ivarip), 1)
-    else
-        ivectu=1
-        icontp=1
-        ivarip=1
     endif
-!
 !
 ! - FORCES INTERIEURES ET MATRICE TANGENTE
 !
-    if (zk16(icompo+2)(1:5) .eq. 'PETIT') then
-!
+    if (defo_comp(1:5) .eq. 'PETIT') then
         call eifint(ndim, axi, nno1, nno2, npg,&
                     zr(iw), zr(ivf1), zr(ivf2), zr(idf2), zr(igeom),&
                     ang, typmod, option, zi(imate), zk16(icompo),&
                     lgpg, zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm),&
                     zr(iddld), iu, im, zr(ivarim), zr(icontp),&
-                    zr(ivarip), zr(imatuu), zr(ivectu), codret)
-!
+                    zr(ivarip), zr(imatuu), zr(ivectu),&
+                    lMatr, lVect, lSigm,&
+                    codret)
     else
-        call utmess('F', 'ALGORITH17_2', sk=zk16(icompo+2))
+        call utmess('F', 'JOINT1_2', sk=defo_comp)
     endif
 !
-    if (option(1:4) .eq. 'FULL' .or. option(1:4) .eq. 'RAPH') then
-        call jevech('PCODRET', 'E', jcret)
-        zi(jcret) = codret
+    if (lSigm) then
+        call jevech('PCODRET', 'E', jv_codret)
+        zi(jv_codret) = codret
     endif
 !
 end subroutine

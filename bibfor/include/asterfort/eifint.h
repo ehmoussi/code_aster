@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,18 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
     subroutine eifint(ndim, axi, nno1, nno2, npg,&
                       wref, vff1, vff2, dffr2, geom,&
                       ang, typmod, option, mat, compor,&
-                      lgpg, crit, instam, instap, ddlm,&
+                      lgpg, carcri, instam, instap, ddlm,&
                       ddld, iu, im, vim, sigp,&
-                      vip, matr, vect, codret)
+                      vip, matr, vect, lMatr, lVect, lSigm, codret)
         integer :: lgpg
         integer :: npg
         integer :: nno2
@@ -43,7 +40,7 @@ interface
         character(len=16) :: option
         integer :: mat
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
         real(kind=8) :: ddlm(2*nno1*ndim+nno2*ndim)
@@ -55,6 +52,7 @@ interface
         real(kind=8) :: vip(lgpg, npg)
         real(kind=8) :: matr(*)
         real(kind=8) :: vect(2*nno1*ndim+nno2*ndim)
+        aster_logical, intent(in) :: lMatr, lVect, lSigm
         integer :: codret
     end subroutine eifint
 end interface

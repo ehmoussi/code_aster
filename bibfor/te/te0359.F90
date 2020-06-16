@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,12 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0359(option, nomte)
 !
-! person_in_charge: jerome.laverne at edf.fr
+implicit none
 !
-    implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/eiangl.h"
@@ -33,15 +32,24 @@ subroutine te0359(option, nomte)
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 !
-    character(len=16) :: option, nomte
+character(len=16) :: option, nomte
 !
-! ----------------------------------------------------------------------
-!    - FONCTION REALISEE:  PILOTAGE PRED_ELAS
-!                          POUR LES ELEMENTS D'INTERFACE
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: 3D_INTERFACE
+!           PLAN_INTERFACE, AXIS_INTERFACE
+!
+! Options: PILO_PRED_ELAS
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
     character(len=8) :: lielrf(10)
     aster_logical :: axi
     integer :: nno1, nno2, npg, lgpg, ndim, iret, ntrou, iu(3, 18), im(3, 9)
@@ -50,10 +58,11 @@ subroutine te0359(option, nomte)
     integer :: ivarim, icopil, ictau, iddlm, iddld, iddl0, iddl1, icompo, icamas
     real(kind=8) :: ang(24)
 !
+! --------------------------------------------------------------------------------------------------
 !
+    axi = lteatt('AXIS','OUI')
 !
-!
-! - FONCTIONS DE FORME
+! - Get element parameters
 !
     call elref2(nomte, 2, lielrf, ntrou)
     call elrefe_info(elrefe=lielrf(1), fami='RIGI', ndim=ndim, nno=nno1, nnos=nnos,&
@@ -61,7 +70,6 @@ subroutine te0359(option, nomte)
     call elrefe_info(elrefe=lielrf(2), fami='RIGI', ndim=ndim, nno=nno2, nnos=nnos,&
                      npg=npg, jpoids=iw, jvf=ivf2, jdfde=idf2, jgano=jgn)
     ndim = ndim + 1
-    axi = lteatt('AXIS','OUI')
 !
 ! - DECALAGE D'INDICE POUR LES ELEMENTS D'INTERFACE
     call eiinit(nomte, iu, im, it)
@@ -71,7 +79,7 @@ subroutine te0359(option, nomte)
 !
     call jevech('PCAMASS', 'L', icamas)
     if (zr(icamas) .eq. -1.d0) then
-        call utmess('F', 'ELEMENTS5_47')
+        call utmess('F', 'JOINT1_47')
     endif
 !
 !     DEFINITION DES ANGLES NAUTIQUES AUX NOEUDS SOMMETS : ANG
@@ -92,8 +100,7 @@ subroutine te0359(option, nomte)
     call jevech('PCOPILO', 'E', icopil)
 !
 !    NOMBRE DE VARIABLES INTERNES
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
     lgpg = max(jtab(6),1)*jtab(7)
 !
 !

@@ -29,10 +29,6 @@ cata_msg = {
   aussi bien en vol libre qu'en état de choc.
 """),
 
-    2: _("""
-         Comportement %(k1)s non implanté pour l'élément d'interface
-"""),
-
     3: _("""
          Choix de déformation %(k1)s non disponible pour l'élément CABLE_GAINE
 """),

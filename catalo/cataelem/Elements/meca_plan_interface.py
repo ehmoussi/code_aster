@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,29 +39,30 @@ CCAMASS  = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
     components=('C','ALPHA','BETA','KAPPA','X',
           'Y','Z',))
 
-
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     components=(
-    ('EN1',('DX','DY','DZ',)),
-    ('EN2',('SIGN','SITX','SITY',)),))
+    ('EN1',('DX','DY',)),
+    ('EN2',('DX','DY',)),
+    ('EN3',('SIGN','SITX',)),))
 
 
 EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','Z',))
+    components=('X','Y',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','Z','W',))
+    components=('X','Y','W',))
 
 
 ENGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y','Z',))
+    components=('X','Y',))
 
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO', diff=True,
     components=(
-    ('EN1',()),
-    ('EN2',('X','Y','Z',)),))
+    ('EN1',('X','Y',)),
+    ('EN2',()),
+    ('EN3',()),))
 
 
 CTEMPSR  = LocatedComponents(phys=PHY.INST_R, type='ELEM',
@@ -85,13 +86,11 @@ EREFCO   = LocatedComponents(phys=PHY.PREC, type='ELEM',
 
 
 ECONTPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
-    components=('SIGN','SITX','SITY','CONT_X','CONT_Y',
-          'CONT_Z',))
+    components=('SIGN','SITX','CONT_X','CONT_Y',))
 
 
 ECONTNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
-    components=('SIGN','SITX','SITY','CONT_X','CONT_Y',
-          'CONT_Z',))
+    components=('SIGN','SITX','CONT_X','CONT_Y',))
 
 
 ZVARIPG  = LocatedComponents(phys=PHY.VARI_R, type='ELGA', location='RIGI',
@@ -106,17 +105,18 @@ MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class MEEI_HEXA20(Element):
+class EIPLQU8(Element):
     """Please document this element"""
-    meshType = MT.HEXA20
+    meshType = MT.QUAD8
     nodes = (
-            SetOfNodes('EN1', (1,2,3,4,5,6,7,8,9,10,11,12,17,18,19,20,)),
-            SetOfNodes('EN2', (13,14,15,16,)),
+            SetOfNodes('EN1', (1,2,5,)),
+            SetOfNodes('EN2', (3,4,7,)),
+            SetOfNodes('EN3', (6,8,)),
         )
-    attrs = ((AT.TYPE_VOISIN,'F3'),)
+    attrs = ((AT.TYPE_VOISIN,'A2'),)
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG4','NOEU=NOEU','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG9',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG3','MASS=FPG2','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG3',),),
         )
     calculs = (
 
@@ -179,10 +179,10 @@ class MEEI_HEXA20(Element):
         ),
 
         OP.PILO_PRED_ELAS(te=359,
-            para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCAMASS, CCAMASS),
+            para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
                      (SP.PCDTAU, LC.CCDTAU), (OP.PILO_PRED_ELAS.PCOMPOR, LC.CCOMPOR),
                      (OP.PILO_PRED_ELAS.PCONTMR, ECONTPG), (SP.PDDEPLR, DDL_MECA),
-                     (SP.PDEPL0R, DDL_MECA), (SP.PDEPL1R, DDL_MECA), (SP.PCARCRI, LC.CCARCRI),
+                     (SP.PDEPL0R, DDL_MECA), (SP.PDEPL1R, DDL_MECA),
                      (SP.PDEPLMR, DDL_MECA), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (SP.PTYPEPI, LC.CTYPEPI),
                      (OP.PILO_PRED_ELAS.PVARIMR, ZVARIPG), ),
@@ -209,13 +209,6 @@ class MEEI_HEXA20(Element):
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.REPERE_LOCAL(te=133,
-            para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
-                     ),
-            para_out=((SP.PREPLO1, LC.CGEOM3D), (SP.PREPLO2, LC.CGEOM3D),
-                     (SP.PREPLO3, LC.CGEOM3D), ),
-        ),
-
         OP.RIGI_MECA_ELAS(te=360,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PCARCRI, LC.CCARCRI),
                      (OP.RIGI_MECA_ELAS.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_ELAS.PCONTMR, ECONTPG),
@@ -239,6 +232,8 @@ class MEEI_HEXA20(Element):
                      (SP.PVARCRR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      ),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
                      ),
         ),
 
@@ -256,7 +251,7 @@ class MEEI_HEXA20(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
         ),
 
 
@@ -268,8 +263,7 @@ class MEEI_HEXA20(Element):
         ),
 
         OP.VARI_ELNO(te=122,
-            para_in=((OP.VARI_ELNO.PCOMPOR, LC.CCOMPOR), (SP.PVARIGR, ZVARIPG),
-                     ),
+            para_in=((SP.PVARIGR, ZVARIPG), ),
             para_out=((OP.VARI_ELNO.PVARINR, LC.ZVARINO), ),
         ),
 
@@ -277,45 +271,48 @@ class MEEI_HEXA20(Element):
 
 
 #------------------------------------------------------------
-class MEEI_HEXS20(MEEI_HEXA20):
+class EIPLQS8(EIPLQU8):
     """Please document this element"""
-    meshType = MT.HEXA20
+    meshType = MT.QUAD8
     nodes = (
-            SetOfNodes('EN1', (1,2,3,4,5,6,7,8,9,10,11,12,17,18,19,20,)),
-            SetOfNodes('EN2', (13,14,15,16,)),
+            SetOfNodes('EN1', (1,2,5,)),
+            SetOfNodes('EN2', (3,4,7,)),
+            SetOfNodes('EN3', (6,8,)),
         )
-    attrs = ((AT.TYPE_VOISIN,'F3'),)
+    attrs = ((AT.TYPE_VOISIN,'A2'),)
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4','MASS=FPG4','NOEU=NOEU','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG2','MASS=FPG2','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
         )
 
 
 #------------------------------------------------------------
-class MEEI_PENTA15(MEEI_HEXA20):
+class EIAXQU8(EIPLQU8):
     """Please document this element"""
-    meshType = MT.PENTA15
+    meshType = MT.QUAD8
     nodes = (
-            SetOfNodes('EN1', (1,2,3,4,5,6,7,8,9,13,14,15,)),
-            SetOfNodes('EN2', (10,11,12,)),
+            SetOfNodes('EN1', (1,2,5,)),
+            SetOfNodes('EN2', (3,4,7,)),
+            SetOfNodes('EN3', (6,8,)),
         )
-    attrs = ((AT.TYPE_VOISIN,'F3'),)
+    attrs = ((AT.TYPE_VOISIN,'A2'),)
     elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG3','NOEU=NOEU','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG6',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG3','MASS=FPG2','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG3',),),
         )
 
 
 #------------------------------------------------------------
-class MEEI_PENTS15(MEEI_HEXA20):
+class EIAXQS8(EIPLQU8):
     """Please document this element"""
-    meshType = MT.PENTA15
+    meshType = MT.QUAD8
     nodes = (
-            SetOfNodes('EN1', (1,2,3,4,5,6,7,8,9,13,14,15,)),
-            SetOfNodes('EN2', (10,11,12,)),
+            SetOfNodes('EN1', (1,2,5,)),
+            SetOfNodes('EN2', (3,4,7,)),
+            SetOfNodes('EN3', (6,8,)),
         )
-    attrs = ((AT.TYPE_VOISIN,'F3'),)
+    attrs = ((AT.TYPE_VOISIN,'A2'),)
     elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3','MASS=FPG3','NOEU=NOEU','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG2','MASS=FPG2','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
         )
