@@ -47,8 +47,7 @@ type(NL_DS_Constitutive), intent(in) :: ds_constitutive
 type(NL_DS_Measure), intent(inout) :: ds_measure
 real(kind=8), intent(in) :: time_prev, time_curr
 character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-character(len=19), intent(inout) :: vefnod
-character(len=19), intent(in) :: cnfnod
+character(len=19), intent(in) :: vefnod, cnfnod
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,7 +68,7 @@ character(len=19), intent(in) :: cnfnod
 ! In  time_curr        : time at end of time step
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
-! IO  vefnod           : elementary vector for nodal force (no integration)
+! In  vefnod           : elementary vector for nodal force (no integration)
 ! In  cnfnod           : assembled vector for nodal force (no integration)
 !
 ! --------------------------------------------------------------------------------------------------

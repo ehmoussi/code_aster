@@ -75,15 +75,17 @@ implicit none
 !
     character(len=2) :: codret
     character(len=6) :: nompro
-    character(len=8) :: k8bid, ctyp, crit, materi
+    character(len=8) :: ctyp, crit, materi
     character(len=8) :: kiord
     character(len=16) :: option, type, oper, k16bid
     character(len=16) :: compex
-    character(len=19) :: resuco, knum, ligrel, resuc1, chdep2, list_load
-    character(len=24) :: modele, mateco, carac, chamno, mater
-    character(len=24) :: nume, vfono, vafono, sigma, chdepl, k24bid
-    character(len=24) :: vreno, compor, chvive, chacve, raide
-    character(len=24) :: bidon, chvarc
+    character(len=19) :: resuco, knum, ligrel, resuc1, chdep2
+    character(len=19), parameter :: list_load = '&&OP0183.LIST_LOAD'
+    character(len=24) :: model, mater, caraElem, chamno, mateco
+    character(len=24) :: nume, vafono, sigma, chdepl, k24bid
+    character(len=24) :: compor, chvive, chacve, raide
+    character(len=24), parameter :: vefnod = '&&OP0183.VEFNOD'
+    character(len=24) :: chvarc
     character(len=24) :: numref, valk(3)
     aster_logical :: l_etat_init, l_implex
 !     ------------------------------------------------------------------
@@ -110,8 +112,6 @@ implicit none
 !
     call infmue()
 !
-    list_load = '&&OP0183.LIST_LOAD'
-!
 ! --- OPTIONS A CALCULER
 !
     call getres(resuc1, type, oper)
@@ -125,38 +125,28 @@ implicit none
 !
 !
     knum='&&'//nompro//'.NUME_ORDRE'
-!
-!=======================================================================
-    k8bid='&&'//nompro
-    ibid=1
-!=======================================================================
-!
+
     call getvr8(' ', 'PRECISION', scal=prec, nbret=np)
     call getvtx(' ', 'CRITERE', scal=crit, nbret=nc)
-!
     call rsutnu(resuco, ' ', 0, knum, nbordr,&
                 prec, crit, iret)
     if (iret .eq. 10) then
         call utmess('F', 'CALCULEL4_8', sk=resuco)
         goto 60
-!
     endif
     if (iret .ne. 0) then
         call utmess('F', 'ALGORITH3_41')
         goto 60
-!
     endif
     call jeveuo(knum, 'L', jordr)
-    bidon='&&'//nompro//'.BIDON'
 !
 !
     l_implex = .false.
     exitim=.true.
-    carac=' '
-    mateco=' '
+    mateco = ' '
     call rscrsd('G', resuc1, type, nbordr)
-    call getvid(' ', 'MODELE', scal=modele, nbret=n0)
-    ligrel=modele(1:8)//'.MODELE'
+    call getvid(' ', 'MODELE', scal=model, nbret=n0)
+    ligrel=model(1:8)//'.MODELE'
     ASSERT(n0.eq.1)
     call getvid(' ', 'CHAM_MATER', scal=materi, nbret=n0)
     if (n0 .gt. 0) then
@@ -164,17 +154,14 @@ implicit none
     else
         mateco=' '
     endif
-    carac=' '
-    call getvid(' ', 'CARA_ELEM', scal=carac, nbret=n0)
+    caraElem=' '
+    call getvid(' ', 'CARA_ELEM', scal=caraElem, nbret=n0)
 !
 !
 !
-    time=0.d0
-    partps(1)=0.d0
-    partps(2)=0.d0
-    partps(3)=0.d0
+    time   = 0.d0
+    partps = 0.d0
     l_etat_init = .false.
-!
 !
     numref=' '
     call refdcp(resuco, resuc1)
@@ -183,36 +170,10 @@ implicit none
         call dismoi('NOM_NUME_DDL', raide, 'MATR_ASSE', repk=numref)
     endif
 !
-!
     do i = 1, nbordr
         call jemarq()
-        iordr=zi(jordr+i-1)
-        !charge=infcha//'.LCHA'
-        !infoch=infcha//'.INFC'
-        !call jeexin(infoch, iret)
-        !if (iret .ne. 0) then
-        !    call jeveuo(infoch, 'L', jinfc)
-        !    nbchar=zi(jinfc)
-        !    if (nbchar .ne. 0) then
-        !        call jeveuo(charge, 'L', iachar)
-        !        call jedetr('&&'//nompro//'.L_CHARGE')
-        !        call wkvect('&&'//nompro//'.L_CHARGE', 'V V K8', nbchar, ichar)
-        !        do ii = 1, nbchar
-        !            zk8(ichar-1+ii)=zk24(iachar-1+ii)(1:8)
-        !        end do
-        !    else
-        !        ichar=1
-        !    endif
-        !else
-        !    nbchar=0
-        !    ichar=1
-        !endif
-!
-!
-!
-        vfono = ' '
-        vafono=' '
-        vreno='&&'//nompro//'           .RELR'
+        iordr  = zi(jordr+i-1)
+        vafono = ' '
         nh=0
 !
         call rsexch(' ', resuco, 'SIEF_ELGA', iordr, sigma,&
@@ -277,32 +238,31 @@ implicit none
             time=zr(iad)
         endif
 !
-        call vrcins(modele, materi, carac, time, chvarc(1:19),&
+        call vrcins(model, mater, caraElem, time, chvarc(1:19),&
                     codret)
 !
 !       --- CALCUL DES VECTEURS ELEMENTAIRES ---
         if (i .eq. 1) then
             compor='&&OP0183.COMPOR'
-            call nmdocc(modele(1:8), materi, l_etat_init, l_implex, compor)
+            call nmdocc(model(1:8), materi, l_etat_init, l_implex, compor)
             if (niv .ge. 2) then
-                call comp_info(modele(1:8), compor)
+                call comp_info(model(1:8), compor)
             endif
         endif
 !
-        call vefnme(option, modele, mateco, carac,&
+        call vefnme(option, model, mateco, caraElem,&
                     compor, partps, nh, ligrel, chvarc,&
-                    sigma, ' ', chdepl, chdep2, 'V',  vfono)
+                    sigma, ' ', chdepl, chdep2, 'V',&
+                    vefnod)
 !
 !       --- ASSEMBLAGE DES VECTEURS ELEMENTAIRES ---
-        call asasve(vfono, nume, 'R', vafono)
+        call asasve(vefnod, nume, 'R', vafono)
 !
         call rsexch(' ', resuc1, 'DEPL', iordr, chamno,&
                     iret)
-        call rsadpa(resuc1, 'E', 1, 'INST', iordr,&
-                    0, sjv=ltps2, styp=k8bid)
-        call rsadpa(resuco, 'L', 1, 'INST', iordr,&
-                    0, sjv=ltps, styp=k8bid)
-        zr(ltps2)=zr(ltps)
+        call rsadpa(resuc1, 'E', 1, 'INST', iordr, 0, sjv=ltps2)
+        call rsadpa(resuco, 'L', 1, 'INST', iordr, 0, sjv=ltps)
+        zr(ltps2) = zr(ltps)
 !
 !
         call jeexin(chamno(1:19)//'.REFE', iret)
@@ -326,18 +286,16 @@ implicit none
         end do
 !
         call rsnoch(resuc1, 'DEPL', iordr)
-        call nmdome(modele, mater, mateco, carac, list_load, resuc1(1:8),&
+        call nmdome(model, mater, mateco, caraElem, list_load, resuc1(1:8),&
                     iordr)
 !
         call detrsd('CHAMP_GD', '&&'//nompro//'.SIEF')
-        call detrsd('VECT_ELEM', vfono(1:8))
-        call detrsd('VECT_ELEM', vreno(1:8))
+        call detrsd('VECT_ELEM', vefnod)
  40     continue
         call jedema()
     end do
 !
     call jedetr(knum)
-    call detrsd('CHAMP_GD', bidon)
 !
 ! --- ON REMET LE MECANISME D'EXCEPTION A SA VALEUR INITIALE
     call onerrf(compex, k16bid, ibid)

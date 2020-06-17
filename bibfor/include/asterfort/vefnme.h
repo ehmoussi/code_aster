@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,20 +17,19 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine vefnme(option_, model     , mate , cara_elem_,&
-                      compor , partps    , nh   , ligrel_   ,&
-                      varc_  , sigm_     , strx_,&
-                      disp_  , disp_incr_,&
-                      base   , vect_elem_)
-        character(len=16), intent(in) :: option_
-        character(len=1), intent(in) :: base
-        character(len=8), intent(in) :: model
-        real(kind=8), intent(in) :: partps(*)
-        character(len=24), intent(in) :: cara_elem_,  mate
-        character(len=*), intent(in) :: ligrel_
-        integer, intent(in) :: nh
+    subroutine vefnme(optionz, modelz    , mate , cara_elem,&
+                      compor , partps    , nh   , ligrelz  ,&
+                      varcz  , sigmz     , strxz,&
+                      dispz  , disp_incrz,&
+                      base   , vect_elemz)
+        character(len=*), intent(in) :: optionz, modelz
+        character(len=24), intent(in) :: cara_elem, mate
         character(len=19), intent(in) :: compor
-        character(len=*), intent(in) :: sigm_, varc_, strx_, disp_, disp_incr_
-        character(len=*), intent(inout) :: vect_elem_
+        real(kind=8), intent(in) :: partps(*)
+        integer, intent(in) :: nh
+        character(len=*), intent(in) :: ligrelz
+        character(len=*), intent(in) :: sigmz, varcz, strxz, dispz, disp_incrz
+        character(len=1), intent(in) :: base
+        character(len=*), intent(in) :: vect_elemz
     end subroutine vefnme
 end interface

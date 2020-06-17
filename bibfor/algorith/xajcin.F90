@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -168,6 +168,34 @@ implicit none
         lchin(nchin + 13) = model(1:8)//'.TOPOFAC.LO'
         lpain(nchin + 14) = 'PBASLOR'
         lchin(nchin + 14) = model(1:8)//'.BASLOC'
+        nchin = nchin+nbadd
+!
+    elseif (option.eq.'FORC_NODA') then
+!
+        nbadd = 11
+        ASSERT(nchin+nbadd .le. mxchin)
+        lpain(nchin + 1 ) = 'PPINTTO'
+        lchin(nchin + 1 ) = model(1:8)//'.TOPOSE.PIN'
+        lpain(nchin + 2 ) = 'PCNSETO'
+        lchin(nchin + 2 ) = model(1:8)//'.TOPOSE.CNS'
+        lpain(nchin + 3 ) = 'PHEAVTO'
+        lchin(nchin + 3 ) = model(1:8)//'.TOPOSE.HEA'
+        lpain(nchin + 4 ) = 'PLONCHA'
+        lchin(nchin + 4 ) = model(1:8)//'.TOPOSE.LON'
+        lpain(nchin + 5 ) = 'PPMILTO'
+        lchin(nchin + 5 ) = model(1:8)//'.TOPOSE.PMI'
+        lpain(nchin + 6 ) = 'PBASLOR'
+        lchin(nchin + 6 ) = model(1:8)//'.BASLOC'
+        lpain(nchin + 7 ) = 'PLSN'
+        lchin(nchin + 7 ) = model(1:8)//'.LNNO'
+        lpain(nchin + 8 ) = 'PLST'
+        lchin(nchin + 8 ) = model(1:8)//'.LTNO'
+        lpain(nchin + 9 ) = 'PSTANO'
+        lchin(nchin + 9 ) = model(1:8)//'.STNO'
+        lpain(nchin + 10) = 'PFISNO'
+        lchin(nchin + 10) = model(1:8)//'.FISSNO'
+        lpain(nchin + 11) = 'PHEA_NO'
+        lchin(nchin + 11) = model(1:8)// '.TOPONO.HNO'
         nchin = nchin+nbadd
 !
     elseif (option(6:14).eq.'THER_PARO') then

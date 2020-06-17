@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ interface
         type(NL_DS_Measure), intent(inout) :: ds_measure
         real(kind=8), intent(in) :: time_prev, time_curr
         character(len=19), intent(in) :: hval_incr(*), hval_algo(*)
-        character(len=19), intent(inout) :: vefnod
-        character(len=19), intent(in) :: cnfnod
+        character(len=19), intent(in) :: vefnod, cnfnod
     end subroutine nonlinNForceCompute
 end interface
