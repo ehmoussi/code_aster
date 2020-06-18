@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -200,7 +200,7 @@ implicit none
 !
 ! - For node discretization
 !
-    if (field_disc .eq. 'NOEU') then
+    if (field_disc .eq. 'NOEU' .and. nb_node > 0) then
         call jeveuo(work_node, 'L', vr = v_work_node)
         call jeveuo(list_node, 'L', vi = v_list_node)
 !
@@ -208,7 +208,7 @@ implicit none
 !
 ! --------- Current node
 !
-            node_nume = v_list_node(+i_node)
+            node_nume = v_list_node(i_node)
             call jenuno(jexnum(meshz(1:8)//'.NOMNOE', node_nume), node_name)
 !
 ! --------- Write values
@@ -228,13 +228,18 @@ implicit none
 ! - For element discretization
 !
     if (field_disc .eq. 'ELGA' .or. field_disc .eq. 'ELEM') then
-        call jeveuo(work_elem, 'L', vr = v_work_elem)
-        call jeveuo(list_elem, 'L', vi = v_list_elem)
-        call jeveuo(list_poin, 'L', vi = v_list_poin)
-        call jeveuo(list_spoi, 'L', vi = v_list_spoi)
+        if(nb_elem > 0) then
+            call jeveuo(work_elem, 'L', vr = v_work_elem)
+            call jeveuo(list_elem, 'L', vi = v_list_elem)
+        end if
+!
+        if(nb_poin > 0) then
+            call jeveuo(list_poin, 'L', vi = v_list_poin)
+            call jeveuo(list_spoi, 'L', vi = v_list_spoi)
+        end if
 !
         do i_elem = 1, nb_elem_r
-        
+
             if (type_extr .eq. 'VALE') then
 !
 ! ------------- Current element

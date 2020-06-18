@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -71,9 +71,18 @@ implicit none
 ! --------------------------------------------------------------------------------------------------
 !
     if (field_disc .eq. 'NOEU') then
+        if(nb_node == 0) then
+            go to 999
+        end if
         call wkvect(work_node, 'V V R', nb_node*nb_cmp                , vr = v_work_node)
     else if (field_disc.eq.'ELGA' .or. field_disc.eq.'ELEM') then
+        if(nb_poin == 0) then
+            go to 999
+        end if
         call wkvect(work_poin, 'V V R', nb_poin*nb_spoi*nb_cmp        , vr = v_work_poin)
+        if(nb_elem == 0) then
+            go to 999
+        end if
         call wkvect(work_elem, 'V V R', nb_elem*nb_poin*nb_spoi*nb_cmp, vr = v_work_elem)
     else
         ASSERT(.false.)
@@ -148,5 +157,7 @@ implicit none
             end do
         end do
     endif
+!
+999 continue
 !
 end subroutine
