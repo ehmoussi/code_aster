@@ -17,7 +17,10 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1501,W1504,W1306
 !
-subroutine assesu(ds_thm   , option   , j_mater  ,&
+subroutine assesu(ds_thm   ,&
+                  lMatr    , lVect    , lSigm ,&
+                  lVari    , lMatrPred,&
+                  option   , j_mater  ,&
                   type_elem, &
                   ndim     , nbvari   ,&
                   nno      , nnos     , nface ,&
@@ -57,6 +60,7 @@ implicit none
 #include "asterfort/Behaviour_type.h"
 !
 type(THM_DS), intent(inout) :: ds_thm
+aster_logical, intent(in) :: lVect, lMatr, lVari, lSigm, lMatrPred
 integer, parameter :: maxfa=6
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
@@ -226,7 +230,6 @@ real(kind=8), intent(inout) :: vectu(dimuel)
     integer :: ipg, retcom, fa, i, j
     real(kind=8) :: gravity(3), kintvf(6)
     real(kind=8) :: valcen(14, 6), valfac(maxfa, 14, 6)
-    aster_logical :: l_matr, l_resi, bool
     real(kind=8) :: dsde(dimcon, dimdef)
     real(kind=8) :: mface(maxfa), dface(maxfa), xface(3, maxfa), normfa(3, maxfa), vol
     integer :: ifa, jfa, idim
@@ -264,6 +267,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
     integer :: iadp1k, iadp2k
     integer :: adcm1, adcm2
     integer :: nume_thmc, advico, vicpr1, vicpr2
+    
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -346,28 +350,10 @@ real(kind=8), intent(inout) :: vectu(dimuel)
     fm2ass(1:maxfa+1,1:maxfa)=zero
     fm1ads(1:maxfa+1,1:maxfa)=zero
     fm2ads(1:maxfa+1,1:maxfa)=zero
-!
-! - What to compute ?
-!
-    bool = (option(1:9).eq.'RIGI_MECA' ) .or. (option(1:9).eq.'RAPH_MECA' ) .or.&
-           (option(1:9).eq.'FULL_MECA' )
-    ASSERT(bool)
-    l_resi = ASTER_FALSE
-    l_matr = ASTER_FALSE
-    if (option(1:9) .eq. 'RIGI_MECA') then
-        l_matr = ASTER_TRUE
-    else if (option(1:9) .eq. 'RAPH_MECA') then
-        l_resi = ASTER_TRUE
-    else if (option(1:9) .eq. 'FULL_MECA') then
-        l_matr = ASTER_TRUE
-        l_resi = ASTER_TRUE
-    else
-        ASSERT(ASTER_FALSE)
-    endif
-    if (l_matr) then
+    if (lMatr) then
         matuu(1:dimuel*dimuel) = zero
     endif
-    if (l_resi) then
+    if (lVect) then
         vectu(1:dimuel) = zero
     endif
 !
@@ -451,7 +437,10 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Compute generalized stresses and derivatives
 !
-    call comthm_vf(ds_thm     , option     , j_mater    ,&
+    call comthm_vf(ds_thm     ,&
+                   lMatr      , lVect, lSigm      ,&
+                   lVari      , lMatrPred  ,&
+                   option     , j_mater    ,&
                    type_elem  , angl_naut  ,&
                    ndim       , nbvari     ,&
                    dimdef     , dimcon     ,&
@@ -492,7 +481,10 @@ real(kind=8), intent(inout) :: vectu(dimuel)
             end do
         end do
 ! ----- Compute generalized stresses and derivatives
-        call comthm_vf(ds_thm        , option        , j_mater,&
+        call comthm_vf(ds_thm        ,&
+                       lMatr         , lVect         , lSigm         ,&
+                       lVari         , lMatrPred     ,&
+                       option        , j_mater       ,&
                        type_elem     , angl_naut     ,&
                        ndim          , nbvari        ,&
                        dimdef        , dimcon        ,&
@@ -512,11 +504,11 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Set 
 !
-    if (l_resi) then
+    if (lVect) then
         vectu(adcm1) = valcen(masse, eau)*vol
         vectu(adcm2) = valcen(masse, air)*vol
     endif
-    if (l_matr) then
+    if (lMatr) then
         matuu(zzadma(0,adcm1,iadp1k)) = valcen(dmasp1, eau)*vol
         matuu(zzadma(0,adcm2,iadp1k)) = valcen(dmasp1, air)*vol
         matuu(zzadma(0,adcm1,iadp2k)) = valcen(dmasp2, eau)*vol
@@ -601,28 +593,28 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Compute "volumic" flux
 !
-    call vfcfks(l_matr, maxfa  , ndim  , nface,&
+    call vfcfks(lMatr, maxfa  , ndim  , nface,&
                 cvp   , dcvp1  , dcvp2 ,&
                 cvpf  , dcvp1f , dcvp2f,&
                 d     , gravity,&
                 zero  , zero   , zero  ,&
                 xg    , xface  ,&
                 ftgks , ftgks1  , ftgks2)
-    call vfcfks(l_matr, maxfa  , ndim  , nface,&
+    call vfcfks(lMatr, maxfa  , ndim  , nface,&
                 cad   , dcad1  , dcad2 ,&
                 cadf  , dcad1f , dcad2f,&
                 d     , gravity,&
                 zero  , zero   , zero  ,&
                 xg    , xface  ,&
                 fclks , fclks1 , fclks2)
-    call vfcfks(l_matr, maxfa  , ndim  , nface,&
+    call vfcfks(lMatr, maxfa  , ndim  , nface,&
                 pwp   , dpwp1  , dpwp2 ,&
                 pwpf  , dpwp1f , dpwp2f,&
                 c     , gravity,&
                 rhol  , drhol1 , drhol2,&
                 xg    , xface  ,&
                 flks  , dflks1 , dflks2)
-    call vfcfks(l_matr, maxfa  , ndim  , nface,&
+    call vfcfks(lMatr, maxfa  , ndim  , nface,&
                 pgp   , dpgp1  , dpgp2 ,&
                 pgpf  , dpgp1f , dpgp2f,&
                 c     , gravity,&
@@ -704,37 +696,37 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 ! - Compute "massic" flux
 !
     do ifa = 1, nface
-        call cafmes(ifa       , ASTER_TRUE, l_matr, maxfa, nface,&
+        call cafmes(ifa       , ASTER_TRUE, lMatr, maxfa, nface,&
                     flks(ifa) , dflks1    , dflks2,&
                     mobwf(ifa), dw1f      , dw2f  ,&
                     dw1ffa    , dw2ffa    ,&
                     fmws      , fm1ws     , fm2ws)
-        call cafmes(ifa       , ASTER_TRUE, l_matr, maxfa, nface,&
+        call cafmes(ifa       , ASTER_TRUE, lMatr, maxfa, nface,&
                     fgks(ifa) , dfgks1    , dfgks2,&
                     movpf(ifa), dvp1f     , dvp2f ,&
                     dvp1ff    , dvp2ff    ,&
                     fmvps     , fm1vps    , fm2vps)
-        call cafmes(ifa        , l_resi, l_matr, maxfa, nface,&
+        call cafmes(ifa        , lVect, lMatr, maxfa, nface,&
                     ftgks(ifa) , ftgks1, ftgks2,&
                     difuvp(ifa), divp1 , divp2 ,&
                     divp1f     , divp2f,&
                     fmvps      , fm1vps, fm2vps)
-        call cafmes(ifa       , ASTER_TRUE, l_matr, maxfa, nface,&
+        call cafmes(ifa       , ASTER_TRUE, lMatr, maxfa, nface,&
                     fgks(ifa) , dfgks1    , dfgks2,&
                     moasf(ifa), das1f     , das2f ,&
                     das1ff    , das2ff    ,&
                     fmass     , fm1ass    , fm2ass)
-        call cafmes(ifa        , l_resi, l_matr, maxfa, nface,&
+        call cafmes(ifa        , lVect, lMatr, maxfa, nface,&
                     ftgks(ifa) , ftgks1, ftgks2,&
                     difuas(ifa), dias1 , dias2 ,&
                     dias1f     , dias2f,&
                     fmass      , fm1ass, fm2ass)
-        call cafmes(ifa       , ASTER_TRUE, l_matr, maxfa, nface,&
+        call cafmes(ifa       , ASTER_TRUE, lMatr, maxfa, nface,&
                     flks(ifa) , dflks1    , dflks2,&
                     moadf(ifa), dad1f     , dad2f ,&
                     dad1ff    , dad2ff    ,&
                     fmads     , fm1ads    , fm2ads)
-        call cafmes(ifa        , l_resi, l_matr, maxfa, nface,&
+        call cafmes(ifa        , lVect, lMatr, maxfa, nface,&
                     fclks(ifa) , fclks1, fclks2,&
                     difuad(ifa), diad1 , diad2 ,&
                     diad1f     , diad2f,&
@@ -743,37 +735,37 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Compute total "volumic" flux
 !
-    call cafves(l_matr, maxfa , nface ,&
+    call cafves(lMatr, maxfa , nface ,&
                 flks  , dflks1, dflks2,&
                 mobwf , dw1f  , dw2f  ,&
                 dw1ffa, dw2ffa,&
                 fluws , fw1s  , fw2s)
-    call cafves(l_matr, maxfa , nface ,&
+    call cafves(lMatr, maxfa , nface ,&
                 fgks  , dfgks1, dfgks2,&
                 movpf , dvp1f , dvp2f ,&
                 dvp1ff, dvp2ff,&
                 fluvps, fvp1s, fvp2s)
-    call cafves(l_matr, maxfa , nface ,&
+    call cafves(lMatr, maxfa , nface ,&
                 ftgks , ftgks1, ftgks2,&
                 difuvp, divp1 , divp2 ,&
                 divp1f, divp2f,&
                 fluvps, fvp1s , fvp2s)
-    call cafves(l_matr, maxfa , nface ,&
+    call cafves(lMatr, maxfa , nface ,&
                 fgks  , dfgks1, dfgks2,&
                 moasf , das1f , das2f ,&
                 das1ff, das2ff,&
                 fluass, fas1s , fas2s)
-    call cafves(l_matr, maxfa, nface,&
+    call cafves(lMatr, maxfa, nface,&
                 ftgks, ftgks1, ftgks2,&
                 difuas, dias1, dias2,&
                 dias1f, dias2f,&
                 fluass, fas1s, fas2s)
-    call cafves(l_matr, maxfa , nface ,&
+    call cafves(lMatr, maxfa , nface ,&
                 flks  , dflks1, dflks2,&
                 moadf , dad1f , dad2f ,&
                 dad1ff, dad2ff,&
                 fluads, fad1s , fad2s)
-    call cafves(l_matr, maxfa , nface ,&
+    call cafves(lMatr, maxfa , nface ,&
                 fclks , fclks1, fclks2,&
                 difuad, diad1 , diad2 ,&
                 diad1f, diad2f,&
@@ -781,7 +773,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Compute residual
 !
-    if (l_resi) then
+    if (lVect) then
 ! ----- Continuity of flux
         do ifa = 1, nface
             congep(adcp11+1,ifa+1) = fmws(ifa)+fmvps(ifa)
@@ -800,7 +792,7 @@ real(kind=8), intent(inout) :: vectu(dimuel)
 !
 ! - Compute matrix
 !
-    if (l_matr) then
+    if (lMatr) then
         matuu(zzadma(0,adcm1,iadp1k))= matuu(zzadma(0,adcm1,iadp1k))+fw1s(1)+fvp1s(1)
         matuu(zzadma(0,adcm1,iadp2k))= matuu(zzadma(0,adcm1,iadp2k))+fw2s(1)+fvp2s(1)
         matuu(zzadma(0,adcm2,iadp1k))= matuu(zzadma(0,adcm2,iadp1k))+fas1s(1)+fad1s(1)

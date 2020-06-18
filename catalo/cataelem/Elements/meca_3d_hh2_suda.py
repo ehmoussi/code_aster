@@ -136,7 +136,10 @@ class ZHH2_HEXA27_SUDA(Element):
                      (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
                      (SP.PMATERC, LC.CMATERC), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      ),
-            para_out=((SP.PMATUNS, MMATUNS), ),
+            para_out=((SP.PMATUNS, MMATUNS), 
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
         ),
 
         OP.TOU_INI_ELGA(te=99,

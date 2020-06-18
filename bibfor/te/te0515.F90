@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 subroutine te0515(option, nomte)
 !
 use THM_type
+use Behaviour_module, only : behaviourOption
 !
 implicit none
 !
@@ -60,6 +61,7 @@ character(len=16), intent(in) :: option, nomte
     character(len=8) :: type_elem(2)
     integer :: li
     aster_logical :: l_axi, l_vf, l_steady
+    aster_logical :: lVect, lMatr, lVari, lSigm, lMatrPred
     type(THM_DS) :: ds_thm
 !
 ! --------------------------------------------------------------------------------------------------
@@ -78,6 +80,7 @@ character(len=16), intent(in) :: option, nomte
 !
     if ((option(1:14).eq.'RIGI_MECA_TANG' ) .or. (option(1:9).eq.'RAPH_MECA' ) .or.&
         (option(1:9).eq.'FULL_MECA' )) then
+! ----- Get input fields
         call jevech('PGEOMER', 'L', igeom)
         call jevech('PMATERC', 'L', imate)
         call jevech('PINSTMR', 'L', iinstm)
@@ -88,26 +91,37 @@ character(len=16), intent(in) :: option, nomte
         call jevech('PCARCRI', 'L', icarcr)
         call jevech('PVARIMR', 'L', ivarim)
         call jevech('PCONTMR', 'L', icontm)
+! ----- Select objects to construct from option name
+        lMatrPred = option(1:9) .eq. 'RIGI_MECA'
+        call behaviourOption(option, zk16(icompo),&
+                             lMatr , lVect ,&
+                             lVari , lSigm ,&
+                             retloi)
+! ----- Properties of behaviour
         read (zk16(icompo-1+NVAR),'(I16)') nbvari
-        if ((option(1:14).eq.'RIGI_MECA_TANG' ) .or. option(1:9) .eq. 'FULL_MECA') then
+! ----- Get output fields
+        ivectu = ismaem()
+        icontp = ismaem()
+        ivarip = ismaem()
+        imatuu = ismaem()
+        if (lMatr) then
             call jevech('PMATUNS', 'E', imatuu)
-        else
-            imatuu = ismaem()
         endif
-        if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+        if (lVect) then
             call jevech('PVECTUR', 'E', ivectu)
-            call jevech('PCONTPR', 'E', icontp)
-            call jevech('PVARIPR', 'E', ivarip)
-            call jevech('PCODRET', 'E', jcret)
-            zi(jcret) = 0
-        else
-            ivectu = ismaem()
-            icontp = ismaem()
-            ivarip = ismaem()
         endif
-        retloi = 0
+        if (lSigm) then
+            call jevech('PCONTPR', 'E', icontp)
+            call jevech('PCODRET', 'E', jcret)
+        endif
+        if (lVari) then
+            call jevech('PVARIPR', 'E', ivarip)
+        endif
         if (option(1:14) .eq. 'RIGI_MECA_TANG') then
-            call assesu(ds_thm      , option    , zi(imate) ,&
+            call assesu(ds_thm      ,&
+                        lMatr       , lVect    , lSigm ,&
+                        lVari       , lMatrPred,&
+                        option      , zi(imate) ,&
                         type_elem   ,&
                         ndim        , nbvari    ,&
                         nno         , nnos      , nface ,&
@@ -125,7 +139,10 @@ character(len=16), intent(in) :: option, nomte
             do li = 1, dimuel
                 zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
             end do
-            call assesu(ds_thm      , option    , zi(imate) ,&
+            call assesu(ds_thm      ,&
+                        lMatr       , lVect    , lSigm ,&
+                        lVari       , lMatrPred,&
+                        option      , zi(imate) ,&
                         type_elem   ,&
                         ndim        , nbvari    ,&
                         nno         , nnos      , nface ,&
@@ -139,6 +156,9 @@ character(len=16), intent(in) :: option, nomte
                         zr(ivarim)  , zr(ivarip),&
                         zr(iinstm)  , zr(iinstp),& 
                         zr(imatuu)  , zr(ivectu))
+
+        endif
+        if (lSigm) then
             zi(jcret) = retloi
         endif
     endif

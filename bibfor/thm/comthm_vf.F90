@@ -16,9 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: sylvie.granet at edf.fr
-! aslint: disable=W1504,W1306
+! aslint: disable=W1504, W1306
 !
-subroutine comthm_vf(ds_thm   , option   , j_mater  ,&
+subroutine comthm_vf(ds_thm   ,&
+                     lMatr    , lVect    , lSigm ,&
+                     lVari    , lMatrPred,&
+                     option   , j_mater  ,&
                      type_elem, angl_naut,&
                      ndim     , nbvari   ,&
                      dimdef   , dimcon   ,&
@@ -55,6 +58,7 @@ implicit none
 #include "asterfort/THM_type.h"
 !
 type(THM_DS), intent(inout) :: ds_thm
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari, lMatrPred
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
 character(len=8), intent(in) :: type_elem(2)
@@ -140,7 +144,6 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: deltat
     aster_logical :: l_steady
-    aster_logical :: lMatr, lSigm, lVari, lMatrPred
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -188,7 +191,8 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 ! - Compute generalized stresses and matrix for coupled quantities
 !
     call calcco(ds_thm  , l_steady,&
-                lMatr, lSigm, lVari, lMatrPred, angl_naut,&
+                lMatr    , lSigm    , lVari,&
+                lMatrPred, angl_naut,&
                 j_mater ,&
                 ndim    , nbvari   ,&
                 dimdef  , dimcon   ,&
@@ -209,11 +213,11 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 !
     if (ifa.eq.0) then
         deltat = time_curr-time_prev
-        if ((option(1:9).eq.'FULL_MECA') .or. (option(1:9) .eq.'RAPH_MECA')) then
+        if (lVect) then
             valcen(masse,eau) = (congep(adcp11)+congep(adcp12)-congem(adcp11)-congem(adcp12))/deltat
             valcen(masse,air) = (congep(adcp21)+congep(adcp22)-congem(adcp21)-congem(adcp22))/deltat
         endif
-        if ((option(1:9) .eq. 'RIGI_MECA') .or. (option(1:9) .eq. 'FULL_MECA')) then
+        if (lMatr) then
             valcen(dmasp1, eau) = (dsde(adcp11, addep1)+ dsde(adcp12, addep1))/deltat
             valcen(dmasp2, eau) = (dsde(adcp11, addep2)+ dsde(adcp12, addep2))/deltat
             valcen(dmasp1, air) = (dsde(adcp22, addep1)+ dsde(adcp21, addep1))/deltat
@@ -231,7 +235,7 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
                            option   , j_mater  , ndim  , type_elem, angl_naut,&
                            carcri   ,&
                            time_prev, time_curr, dtemp ,&
-                           addeme   , addete   , adcome, addep1   , addep2   ,&
+                           addeme   , addete   , adcome, addep1, addep2   ,&
                            dimdef   , dimcon   ,&
                            defgem   , deps     ,&
                            congem   , vintm    ,&
@@ -305,7 +309,8 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 ! - Compute flux and stress for thermic
 !
     if (ds_thm%ds_elem%l_dof_ther) then
-        call calcft(ds_thm, lMatr    , lSigm , angl_naut,&
+        call calcft(ds_thm,&
+                    lMatr , lSigm    , angl_naut,&
                     ndim  , dimdef   , dimcon,&
                     adcote, &
                     addeme, addete   , addep1, addep2,&

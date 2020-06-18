@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,8 +18,11 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine assesu(ds_thm   , option   , j_mater  ,&
-                      type_elem, &
+    subroutine assesu(ds_thm   ,&
+                      lMatr    , lVect    , lSigm ,&
+                      lVari    , lMatrPred,&
+                      option   , j_mater  ,&
+                      type_elem,&
                       ndim     , nbvari   ,&
                       nno      , nnos     , nface ,&
                       dimdef   , dimcon   , dimuel,&
@@ -34,6 +37,7 @@ interface
                       matuu    , vectu)
         use THM_type
         type(THM_DS), intent(inout) :: ds_thm
+        aster_logical, intent(in) :: lVect, lMatr, lVari, lSigm, lMatrPred
         integer, parameter :: maxfa=6
         character(len=16), intent(in) :: option
         integer, intent(in) :: j_mater
