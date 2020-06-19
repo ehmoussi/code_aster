@@ -317,7 +317,10 @@ ACCEY=CALC_FONCTION(COMB=_F(FONCTION=LBEW,
 df=1./TFIN
 
 fc0=0.05
-                     
+
+fc = 31.0*df
+
+'''                    
 accx0=CALC_FONCTION(CORR_ACCE=_F(  FONCTION = ACCEX, FREQ_FILTRE=fc0, METHODE="FILTRAGE") )
 accy0=CALC_FONCTION(CORR_ACCE=_F(  FONCTION = ACCEY, FREQ_FILTRE=fc0, METHODE="FILTRAGE") )
                       
@@ -377,6 +380,45 @@ deply = CALC_FONCTION(COMB=(
                             LIST_PARA=linst, NOM_PARA='INST',
                             PROL_DROITE='CONSTANT', PROL_GAUCHE='CONSTANT',
                          )
+
+'''
+
+deplx = CALC_FONCTION (INTEGRE_FREQ=_F(FONCTION=ACCEX, FREQ_FILTRE=fc0,FREQ_COUP=fc,NIVEAU=2),);
+
+deply = CALC_FONCTION (INTEGRE_FREQ=_F(FONCTION=ACCEY, FREQ_FILTRE=fc0,FREQ_COUP=fc,NIVEAU=2),);
+
+VITEX1 = CALC_FONCTION (DERIVE_FREQ=_F(FONCTION=deplx, FREQ_COUP=fc,NIVEAU=1),);
+
+depx1 = CALC_FONCTION (INTEGRE_FREQ=_F(FONCTION=VITEX1, FREQ_COUP=fc,NIVEAU=1),);
+
+ACCEX2 = CALC_FONCTION (DERIVE_FREQ=_F(FONCTION=deplx, FREQ_COUP=fc,NIVEAU=2),);
+
+depx2 = CALC_FONCTION (INTEGRE_FREQ=_F(FONCTION=ACCEX2, FREQ_COUP=fc,NIVEAU=2),);
+
+TEST_FONCTION(VALEUR=(
+                      _F(VALE_CALC=0.05330669498324,
+                         VALE_REFE=0.053306695,
+                         VALE_PARA=(2.05),
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=1.0E-4,
+                         NOM_PARA=('INST'),
+                         FONCTION=deplx,),
+                      _F(VALE_CALC=0.05330669498324,
+                         VALE_REFE=0.053306695,
+                         VALE_PARA=(2.05),
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=1.0E-4,
+                         NOM_PARA=('INST'),
+                         FONCTION=depx1,),
+                      _F(VALE_CALC=0.05330669498324,
+                         VALE_REFE=0.053306695,
+                         VALE_PARA=(2.05),
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=1.0E-4,
+                         NOM_PARA=('INST'),
+                         FONCTION=depx2,),
+                      ),
+              )
 
 freqspec = DEFI_LIST_REEL ( DEBUT = 0.1,
                           INTERVALLE = (
