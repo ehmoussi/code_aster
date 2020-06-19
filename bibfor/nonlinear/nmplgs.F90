@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,12 @@
 !
 subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                   vff2, idfde2, npg, iw, geom,&
-                  typmod, option, mate, compor, crit,&
+                  typmod, option, mate, compor, carcri,&
                   instam, instap, angmas, ddlm, ddld,&
                   sigm, lgpg, vim, sigp, vip,&
                   matr, vect, codret, dfdi2, livois,&
-                  nbvois, numa, lisoco, nbsoco)
+                  nbvois, numa, lisoco, nbsoco,&
+                  lVari, lSigm, lMatr, lVect)
 !
 use Behaviour_type
 use Behaviour_module
@@ -48,7 +49,11 @@ implicit none
 #include "blas/dscal.h"
 #include "blas/dspev.h"
 !
+! --------------------------------------------------------------------------------------------------
+!
 ! CALCUL  RAPH_MECA, RIGI_MECA_* ET FULL_MECA_* POUR GRAD_SIGM(2D ET 3D)
+!
+! --------------------------------------------------------------------------------------------------
 !
 ! IN  NDIM    : DIMENSION DES ELEMENTS
 ! IN  NNO1    : NOMBRE DE NOEUDS (FAMILLE U)
@@ -78,9 +83,9 @@ implicit none
 ! OUT MATR    : MATRICE DE RIGIDITE   (RIGI_MECA_* ET FULL_MECA_*)
 ! OUT VECT    : FORCES INTERIEURES    (RAPH_MECA   ET FULL_MECA_*)
 ! OUT CODRET  : CODE RETOUR
-! ----------------------------------------------------------------------
 !
-
+! --------------------------------------------------------------------------------------------------
+!
     common  /trucit/iteamm
     character(len=8) :: typmod(*), fami, poum
     character(len=16) :: option, compor(*)
@@ -91,16 +96,17 @@ implicit none
     integer :: livois(1:nvoima), numa
     integer :: nbsoco(1:nvoima), lisoco(1:nvoima, 1:nscoma, 1:2)
     real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), geom(ndim, nno1)
-    real(kind=8) :: crit(*), instam, instap
+    real(kind=8) :: carcri(*), instam, instap
     real(kind=8) :: ddlm(*), ddld(*), sigm(2*ndim, npg), sigp(2*ndim, npg)
     real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg), matr(*), vect(*)
     real(kind=8) :: dfdi2(nno2, ndim), angmas(3), compar
     integer :: k2(1), kpg, spt
-    aster_logical :: resi, rigi, grand, axi
-    integer :: ndimsi, nddl, g, gg, cod(27), n, i, m, j, kl, pq, os, kk, vivois
+    aster_logical :: grand, axi
+    integer :: ndimsi, nddl, g, gg, cod(npg), n, i, m, j, kl, pq, os, kk, vivois
     integer :: iu(3, 27), ie(6, 8), kvois, ll
     integer :: nfin, vrarr(nno2), nn, nnn, vivonu, kvoinu, nini, nunu
-    real(kind=8) :: rac2, lc(1), c, deplm(3*27), depld(3*27), dfdi1(27, 3), nono
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+    real(kind=8) :: lc(1), c, deplm(3*27), depld(3*27), dfdi1(27, 3), nono
     real(kind=8) :: r, wg, epsgm(6, 2), epsgd(6, 2), gepsm(6, 3), geps(6, 3)
     real(kind=8) :: f(3, 3)
     real(kind=8) :: b(6, 3, 27), de(6), sigma(6), dsidep(6, 6, 2), t1, t2
@@ -108,29 +114,26 @@ implicit none
     real(kind=8) :: z(3, 3), w(3), work(9), bary(ndim), baryo(ndim), scal(3)
     real(kind=8) :: dirr(ndim)
     type(Behaviour_Integ) :: BEHinteg
+    aster_logical, intent(in) :: lVari, lSigm, lMatr, lVect
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-! - INITIALISATION
-!
-    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
-    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
-    rac2 = sqrt(2.d0)
-    grand = .false.
-    axi = .false.
+    grand  = ASTER_FALSE
+    axi    = ASTER_FALSE
     ndimsi = 2*ndim
-    nddl = nno1*ndim + nno2*ndimsi
-    fami='FPG1'
-    kpg=1
-    spt=1
-    poum='+'
+    nddl   = nno1*ndim + nno2*ndimsi
+    cod    = 0
+!
+! - Get length
+!
+    fami   = 'FPG1'
+    kpg    = 1
+    spt    = 1
+    poum   = '+'
     call rcvalb(fami, kpg, spt, poum, mate,&
                 ' ', 'NON_LOCAL', 0, ' ', [0.d0],&
                 1, 'LONG_CARA', lc, k2, 1)
     c = lc(1)**2
-    do g = 1, npg
-        cod(g)=0
-    end do
 !
 ! - Initialisation of behaviour datastructure
 !
@@ -148,8 +151,7 @@ implicit none
 !
     nunu=0
 !
-    if (resi) then
-!
+    if (lVari) then
         if (nini .eq. 0) then
             do gg = 1, npg
                 vip(8,gg) = vip(8,gg)+1.0d0
@@ -159,8 +161,7 @@ implicit none
         do kvois = 1, nbvois
 !
             numav=livois(kvois)
-            call tecach('OOO', 'PVARIMP', 'L', iret, iad=vivois,&
-                        numa=numav)
+            call tecach('OOO', 'PVARIMP', 'L', iret, iad=vivois, numa=numav)
             ASSERT(iret.eq.0)
 !
             if (nint(zr(vivois-1+5)) .eq. numa) then
@@ -213,7 +214,6 @@ implicit none
         endif
 !
         if (nint(vip(2,1)) .eq. 1) then
-!            call r8inir(6, 0.d0, epsrss, 1)
             scal(1)=0
             scal(2)=0
             scal(3)=0
@@ -459,8 +459,12 @@ implicit none
 !
 !
 !
-    if (rigi) call r8inir(nddl*nddl, 0.d0, matr, 1)
-    if (resi) call r8inir(nddl, 0.d0, vect, 1)
+    if (lMatr) then
+        call r8inir(nddl*nddl, 0.d0, matr, 1)
+    endif
+    if (lVect) then
+        call r8inir(nddl, 0.d0, vect, 1)
+    endif
     call r8inir(6, 0.d0, sigmam, 1)
 !
 !    POSITION DES INDICES POUR LES DEPLACEMENTS ET LES DEFORMATIONS
@@ -527,7 +531,6 @@ implicit none
 !
         call dcopy(ndimsi, sigm(1, g), 1, sigmam, 1)
         call dscal(3, rac2, sigmam(4), 1)
-!
         call r8inir(36, 0.d0, p, 1)
         if (nono .gt. 0.d0) then
             cod(g) = 1
@@ -536,18 +539,17 @@ implicit none
 !
         call nmcomp(BEHinteg,&
                     'RIGI', g, 1, ndim, typmod,&
-                    mate, compor, crit, instam, instap,&
+                    mate, compor, carcri, instam, instap,&
                     12, epsgm, epsgd, 6, sigmam,&
                     vim(1, g), option, angmas, &
                     sigma, vip(1, g), 72, dsidep, cod(g))
-        if (cod(g) .eq. 1) goto 999
+        if (cod(g) .eq. 1) then
+            goto 999
+        endif
 !
         call r8inir(6, 1.d0, p, 7)
-!
-!      FORCE INTERIEURE ET DES CONTRAINTES DE CAUCHY
-!
-        if (resi) then
-!
+! ----- Internal forces
+        if (lVect) then
 !        VECTEUR FINT:U
             do n = 1, nno1
                 do i = 1, ndim
@@ -559,8 +561,6 @@ implicit none
                     vect(kk) = vect(kk) + wg*t1
                 end do
             end do
-!
-!        VECTEUR FINT:E
             do n = 1, nno2
                 do kl = 1, ndimsi
                     kk = ie(kl,n)
@@ -578,17 +578,14 @@ implicit none
                     vect(kk) = vect(kk) + wg*(t1+t2)
                 end do
             end do
-!
-!        CONTRAINTES
+        endif
+! ----- Stress
+        if (lSigm) then
             call dcopy(ndimsi, sigma, 1, sigp(1, g), 1)
             call dscal(ndimsi-3, 1.d0/rac2, sigp(4, g), 1)
-!
         endif
-!
-! - CALCUL DE LA MATRICE DE RIGIDITE (STOCKAGE LIGNE DE DFI/DUJ)
-!
-        if (rigi) then
-!
+! ----- Rigidity matrix
+        if (lMatr) then
 !        MATRICE K:U(I,N),U(J,M)
             do n = 1, nno1
                 do i = 1, ndim
@@ -605,7 +602,6 @@ implicit none
                             matr(kk) = matr(kk) + wg*t1
                         end do
                     end do
-!
 !        MATRICE K:U(I,N),E(PQ,M)
                     do m = 1, nno2
                         do pq = 1, ndimsi
@@ -616,7 +612,6 @@ implicit none
                     end do
                 end do
             end do
-!
 !        MATRICE K:E(KL,N),U(J,M)
             do n = 1, nno2
                 do kl = 1, ndimsi
@@ -634,9 +629,7 @@ implicit none
                     end do
                 end do
             end do
-!
 !        MATRICE K:E(KL,N),E(PQ,M)
-!
             do n = 1, nno2
                 do m = 1, nno2
                     t1 = vff2(n,g)*vff2(m,g)
@@ -652,7 +645,6 @@ implicit none
                 end do
             end do
         endif
-!
     end do
 !
 ! - SYNTHESE DES CODES RETOUR

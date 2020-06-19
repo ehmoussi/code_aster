@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                       vff2, idfde2, npg, iw, geom,&
-                      typmod, option, mate, compor, crit,&
+                      typmod, option, mate, compor, carcri,&
                       instam, instap, angmas, ddlm, ddld,&
                       sigm, lgpg, vim, sigp, vip,&
                       matr, vect, codret, dfdi2, livois,&
-                      nbvois, numa, lisoco, nbsoco)
+                      nbvois, numa, lisoco, nbsoco,&
+                      lVari, lSigm, lMatr, lVect)
         integer :: lgpg
         integer :: npg
         integer :: nno2
@@ -41,7 +40,7 @@ interface
         character(len=16) :: option
         integer :: mate
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: instam
         real(kind=8) :: instap
         real(kind=8) :: angmas(3)
@@ -61,5 +60,6 @@ interface
         integer :: numa
         integer :: lisoco(1:nvoima, 1:nscoma, 1:2)
         integer :: nbsoco(1:nvoima)
+        aster_logical, intent(in) :: lVari, lSigm, lMatr, lVect
     end subroutine nmplgs
 end interface
