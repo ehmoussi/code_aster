@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ subroutine crcore()
 #include "asterfort/detrsd.h"
 #include "asterfort/exisd.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/getvem.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvis.h"
 #include "asterfort/getvr8.h"
@@ -68,8 +69,10 @@ subroutine crcore()
     integer :: jcpt, nbr, ivmx, k, iocc, nboini, inoe, ncmp
     integer :: tnum(1)
     integer :: nbordr1, nbordr2, numei, neq, nbnoeu, gd, nec
+    integer :: ngn, nbno, ino, in, nbd, jchi2, jchi1, iarg, ldgn, jdist
 !
     real(kind=8) :: rbid, tps, prec, coefr
+    real(kind=8) :: dist, dire(3), coorre(3), vs, delay, dt, tp2
     complex(kind=8) :: cbid
     aster_logical :: lddlex
 !
@@ -80,13 +83,16 @@ subroutine crcore()
     character(len=14) :: numedd
     character(len=16) :: type, oper
     character(len=19) :: nomch, listr8, list_load, resu19, profch
-    character(len=19) :: chamno, chamn2
+    character(len=19) :: chamno, chamn2, chamn1
     character(len=24) :: linst, nsymb, nsymb0, typres, lcpt, o1, o2
     character(len=24) :: matric(3), nprno
+    character(len=24) :: nomgr, magrno, ldist
+!    integer, pointer :: noeud(:) => null()
     real(kind=8), pointer :: val(:) => null()
+    real(kind=8), pointer :: vale(:) => null()
 !
-    data linst,listr8,lcpt/'&&CRCORE_LINST','&&CRCORE_LISR8',&
-     &     '&&CPT_CRCORE'/
+    data linst,listr8,lcpt,ldist/'&&CRCORE_LINST','&&CRCORE_LISR8',&
+     &     '&&CPT_CRCORE','&&CRCORE_LDIST'/
 ! --- ------------------------------------------------------------------
     call jemarq()
 !
@@ -186,7 +192,7 @@ subroutine crcore()
                 nbr = 0
             endif
             if (nbr .lt. 0) then
-                call utmess('F', 'ALGORITH2_48')
+                call utmess('F', 'SEISME_78')
             else if (nbr.eq.0) then
                 zi(jcpt+j-1) = ivmx + 1
                 ivmx = ivmx + 1
@@ -196,6 +202,7 @@ subroutine crcore()
  40         continue
         end do
     endif
+    dt = zr(jinst+1)- zr(jinst)
     numedd = ' '
     call getvid('CONV_RESU', 'MATR_RIGI', iocc=iocc, scal=matr, nbret=n1)
     if (n1 .eq. 1) then
@@ -237,6 +244,40 @@ subroutine crcore()
         if (nomcmp .eq. 'DRZ') icmp = 6
     endif
 !
+    call getvem(noma, 'GROUP_NO', 'CONV_RESU', 'GROUP_NO_INTERF', 1,&
+                    iarg, 1, nomgr, ngn)
+    if (ngn .ne. 0) then
+        magrno = noma//'.GROUPENO'
+        call jeveuo(jexnom(magrno, nomgr), 'L', ldgn)
+        call jelira(jexnom(magrno, nomgr), 'LONUTI', nbno)
+        call jeveuo(noma//'.COORDO    .VALE', 'L', vr=vale)
+        call getvr8('CONV_RESU', 'DIRECTION', iocc=iocc, nbval=3,&
+                     vect=dire, nbret=nbd)
+        dist = 0.d0
+        do in = 1, 3
+          dist = dist + dire(in)**2.0
+        end do
+        dist = dist**0.5
+        do in = 1, 3
+          dire(in) = dire(in)/dist
+        end do
+        call getvr8('CONV_RESU', 'COOR_REFE', iocc=iocc, nbval=3,&
+                     vect=coorre, nbret=nbd)
+        call getvr8('CONV_RESU', 'VITE_ONDE', iocc=iocc, scal=vs, nbret=nbd)
+        call wkvect(ldist, 'V V R', nbno, jdist)
+        do ino = 1, nbno
+          inoe = zi(ldgn+ino-1)
+          dist = 0.d0
+          do in = 1, 3
+            dist = dist + (vale(3*(inoe-1)+in)-coorre(in))*dire(in)
+          end do
+          if (dist .lt. 0.d0) then
+            call utmess('A', 'SEISME_78')  
+          end if
+          zr(jdist+ino-1) = dist
+        end do
+    endif
+
     do j = 1, nbinst
         if (j .ge. 2) call jemarq()
         call jerecu('V')
@@ -268,6 +309,34 @@ subroutine crcore()
               zr(jchin-1+iddl+icmp-1) = 0.d0
             endif
  50         continue
+          end do
+        endif
+        if (ngn .ne. 0) then
+          do ino = 1, nbno
+            inoe = zi(ldgn+ino-1)
+            iddl = zi( aprno + (nec+2)*(inoe-1) + 1 - 1 )
+            ncmp = zi( aprno + (nec+2)*(inoe-1) + 2 - 1 )
+!            dist = 0.d0
+!            do in = 1, 3
+!              dist = dist + (vale(3*(inoe-1)+in)-coorre(in))*dire(in)
+!            end do
+            delay = zr(jdist+ino-1)/vs
+            tp2 = tps - dt*int(delay/dt)
+            call rsorac(resui,typabs,ibid,tp2,k8b,cbid,prec,criter,tnum,1,nbr)
+            if (iddl .ne. 0) then
+              if (nbr .ne. 0) then
+                numei=tnum(1)
+                call rsexch(' ', resui, nsymb0, numei, chamn1, iret)
+                call jeveuo(chamn1//'.VALE', 'L', jchi1)
+                do icmp = 1, ncmp
+                  zr(jchin-1+iddl+icmp-1) = zr(jchi1-1+iddl+icmp-1)
+                end do
+              else
+                do icmp = 1, ncmp
+                  zr(jchin-1+iddl+icmp-1) = 0.d0
+                end do
+              endif
+            endif
           end do
         endif
 
