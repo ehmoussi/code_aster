@@ -62,13 +62,14 @@ import linecache
 import re
 from collections import namedtuple
 
+import aster_core
 import libaster
 
 from ..Cata import Commands
 from ..Cata.Language.SyntaxObjects import _F
 from ..Cata.SyntaxChecker import CheckerError, checkCommandSyntax
 from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
-from ..Messages import UTMESS
+from ..Messages import UTMESS, MessageLog
 from ..Objects import DataStructure, PyDataStructure
 from ..Utilities import (ExecutionParameter, Options, deprecated,
                          import_object, logger, no_new_attributes)
@@ -310,11 +311,12 @@ class ExecuteCommand(object):
         if self._result is not None:
             logger.info(command_result(self._counter, self.name,
                                        self._result))
-        self._print_timer()
+        self._print_stats()
 
-    def _print_timer(self):
-        """Print the timer informations."""
+    def _print_stats(self):
+        """Print the memory and timer informations."""
         timer = ExecutionParameter().timer
+        logger.info(command_memory())
         logger.info(command_time(*timer.StopAndGet(str(self._counter))))
         logger.info(command_separator())
 
@@ -521,7 +523,7 @@ class ExecuteMacro(ExecuteCommand):
             for name in self._result_names:
                 logger.info(command_result(self._counter, self.name,
                                            self._add_results.get(name)))
-        self._print_timer()
+        self._print_stats()
 
     def exec_(self, keywords):
         """Execute the command and fill the *_result* attribute.
@@ -698,3 +700,21 @@ def get_user_name(command, filename, lineno):
             break
 
     return ""
+
+def command_memory():
+    """Return a representation of the current memory consumption.
+
+    Returns:
+        str: String representation.
+    """
+    rval, iret = aster_core.get_mem_stat('VMPEAK', 'VMSIZE', 'CMAX_JV',
+                                         'CMXU_JV')
+    txt = ""
+    if iret == 0:
+        if rval[0] > 0.:
+            txt = ("Memory (MB) : {0:8.2f} / {1:8.2f} / {2:8.2f} / {3:8.2f} "
+                   "(VmPeak / VmSize / Optimum / Minimum)").format(*rval)
+        else:
+            txt = ("Memory (MB) : {2:8.2f} / {3:8.2f} "
+                   "(Optimum / Minimum)").format(*rval)
+    return txt
