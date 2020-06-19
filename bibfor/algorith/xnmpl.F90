@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,21 +15,22 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1306,W1504
+! person_in_charge: samuel.geniaut at edf.fr
+!
 subroutine xnmpl(nnop, nfh, nfe, ddlc, ddlm,&
                  igeom, instam, instap, ideplp, sigm,&
                  vip, typmod, option, imate, compor,&
                  lgpg, carcri, jpintt, cnset, heavt,&
                  lonch, basloc, idepl, lsn, lst,&
                  sig, vi, matuu, ivectu, codret,&
-                 jpmilt, nfiss, jheavn, jstno)
+                 jpmilt, nfiss, jheavn, jstno,&
+                 lMatr, lVect, lSigm)
 !
-! person_in_charge: samuel.geniaut at edf.fr
-!
-! aslint: disable=W1306,W1504
-    implicit none
+implicit none
 !
 #include "jeveux.h"
+#include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
@@ -38,30 +39,30 @@ subroutine xnmpl(nnop, nfh, nfe, ddlc, ddlm,&
 #include "asterfort/tecach.h"
 #include "asterfort/xxnmpl.h"
 !
-    integer :: nnop, imate, lgpg, codret, igeom, nfiss, jheavn
-    integer :: cnset(4*32), heavt(*), lonch(10), ndim
-    integer :: nfh, nfe, ddlc, ddlm, idepl, ivectu, ideplp
-    integer :: jpintt, jpmilt
-    integer :: jstno
-    character(len=8) :: typmod(*)
-    character(len=16) :: option, compor(*)
-    real(kind=8) :: carcri(*), vi(*)
-    real(kind=8) :: lsn(nnop)
-    real(kind=8) :: lst(nnop), matuu(*), sig(*), basloc(*)
-    real(kind=8) :: instam, instap, sigm(*), vip(*)
+integer :: nnop, imate, lgpg, codret, igeom, nfiss, jheavn
+integer :: cnset(4*32), heavt(*), lonch(10), ndim
+integer :: nfh, nfe, ddlc, ddlm, idepl, ivectu, ideplp
+integer :: jpintt, jpmilt
+integer :: jstno
+character(len=8) :: typmod(*)
+character(len=16) :: option, compor(*)
+real(kind=8) :: carcri(*), vi(*)
+real(kind=8) :: lsn(nnop)
+real(kind=8) :: lst(nnop), matuu(*), sig(*), basloc(*)
+real(kind=8) :: instam, instap, sigm(*), vip(*)
+aster_logical, intent(in) :: lMatr, lVect, lSigm
 !
-!
-!
-!
-!.......................................................................
+! --------------------------------------------------------------------------------------------------
 !
 !     BUT:  PRÉLIMINAIRES AU CALCUL DES OPTIONS RIGI_MECA_TANG,
 !           RAPH_MECA ET FULL_MECA  EN HYPER-ELASTICITE AVEC X-FEM
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  NNOP    : NOMBRE DE NOEUDS DE L'ELEMENT PARENT
 ! IN  IPOIDS  : POIDS DES POINTS DE GAUSS
 ! IN  IVF     : VALEUR  DES FONCTIONS DE FORME
-! IN  NFH    : NOMBRE DE DDL HEAVYSIDE (PAR NOEUD)
+! IN  NFH     : NOMBRE DE DDL HEAVISIDE (PAR NOEUD)
 ! IN  NFE     : NOMBRE DE FONCTIONS SINGULIÈRES D'ENRICHISSEMENT
 ! IN  DDLC    : NOMBRE DE DDL DE CONTACT (PAR NOEUD)
 ! IN  DDLM    : NOMBRE DE DDL PAR NOEUD MILIEU
@@ -89,18 +90,20 @@ subroutine xnmpl(nnop, nfh, nfe, ddlc, ddlm,&
 ! OUT VI      : VARIABLES INTERNES    (RAPH_MECA ET FULL_MECA)
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT IVECTU  : VECTEUR FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!..............................................................
-!----------------------------------------------------------------
-    character(len=8) :: elrefp, elrese(6), fami(6)
-    real(kind=8) :: he(nfiss), coorse(81)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=8) :: elrefp, fami_se
+    real(kind=8) :: coorse(81), he(nfiss)
     integer :: nse, npg
     integer :: j, ise, in, ino, idebs, idebv
-    integer ::  nbsig, idecpg, jtab(7), ncomp, iret
-    integer :: irese, nno, ig, ifiss
+    integer :: nbsig, idecpg, jtab(7), ncomp, iret
     integer :: ncompn, heavn(nnop, 5)
+    integer :: irese, nno, ig, ifiss
+    character(len=8), parameter :: elrese(6) = (/'SE2','TR3','TE4','SE3','TR6','T10'/)
+    character(len=8), parameter :: fami(6) = (/'BID ','XINT','XINT','BID ','XINT','XINT'/)
 !
-    data    elrese /'SE2','TR3','TE4','SE3','TR6','T10'/
-    data    fami   /'BID','XINT','XINT','BID','XINT','XINT'/
+! --------------------------------------------------------------------------------------------------
 !
 !     ATTENTION, DEPL ET VECTU SONT ICI DIMENSIONNÉS DE TELLE SORTE
 !     QU'ILS NE PRENNENT PAS EN COMPTE LES DDL SUR LES NOEUDS MILIEU
@@ -121,25 +124,25 @@ subroutine xnmpl(nnop, nfh, nfe, ddlc, ddlm,&
     else
         irese=0
     endif
-    call elrefe_info(elrefe=elrese(ndim+irese),fami=fami(ndim+irese),nno=nno,&
-  npg=npg)
+!
+! - Get element parameters
+!
+    fami_se=fami(ndim+irese)
+    call elrefe_info(elrefe=elrese(ndim+irese),fami=fami_se,nno=nno, npg=npg)
 !
 !     NOMBRE DE CONTRAINTES ASSOCIE A L'ELEMENT
     nbsig = nbsigm()
-!
-!   RECUPERATION DE LA DEFINITION DES FONCTIONS HEAVISIDES
+!    RECUPERATION DE LA DEFINITION DES DDL HEAVISIDES
     if (nfh.gt.0) then
-      call tecach('OOO', 'PHEA_NO', 'L', iret, nval=7,&
-                itab=jtab)
-      ncompn = jtab(2)/jtab(3)
-      ASSERT(ncompn.eq.5)
-      do ino = 1, nnop
-        do ig = 1 , ncompn
-          heavn(ino,ig) = zi(jheavn-1+ncompn*(ino-1)+ig)
+        call tecach('OOO', 'PHEA_NO', 'L', iret, nval=7, itab=jtab)
+        ncompn = jtab(2)/jtab(3)
+        ASSERT(ncompn.eq.5)
+        do ino = 1, nnop
+            do ig = 1 , ncompn
+                heavn(ino,ig) = zi(jheavn-1+ncompn*(ino-1)+ig)
+            enddo
         enddo
-      enddo
     endif
-!
 !     RÉCUPÉRATION DE LA SUBDIVISION DE L'ÉLÉMENT EN NSE SOUS ELEMENT
     nse=lonch(1)
 !
@@ -165,7 +168,7 @@ subroutine xnmpl(nnop, nfh, nfe, ddlc, ddlm,&
             end do
         end do
 !
-!       FONCTION HEAVYSIDE CSTE POUR CHAQUE FISSURE SUR LE SS-ELT
+!       FONCTION HEAVISIDE CSTE POUR CHAQUE FISSURE SUR LE SS-ELT
         do ifiss = 1, nfiss
             he(ifiss) = heavt(ncomp*(ifiss-1)+ise)
         end do
@@ -177,19 +180,19 @@ subroutine xnmpl(nnop, nfh, nfe, ddlc, ddlm,&
 !
         if (ndim .eq. 3) then
             ASSERT(nbsig.eq.6)
-        else if (ndim.eq.2) then
+        else if (ndim .eq. 2) then
             ASSERT(nbsig.eq.4)
+        else
+            ASSERT(ASTER_FALSE)
         endif
-!
         call xxnmpl(elrefp, elrese(ndim+irese), ndim, coorse, igeom,&
                     he, nfh, ddlc, ddlm, nfe,&
                     instam, instap, ideplp, sigm(idebs+1), vip( idebv+1),&
                     basloc, nnop, npg, typmod, option,&
                     imate, compor, lgpg, carcri, idepl,&
                     lsn, lst, idecpg, sig(idebs+1), vi(idebv+1),&
-                    matuu, ivectu, codret, nfiss, heavn, jstno)
-!
-!
+                    matuu, ivectu, codret, nfiss, heavn, jstno,&
+                    lMatr, lVect, lSigm)
     end do
 !
 end subroutine

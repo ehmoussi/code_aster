@@ -83,11 +83,12 @@ real(kind=8), optional, intent(out) :: vect(*)
 !
 !   OPTIONS RELATIVES A UNE MATRICE
     if (option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_GEOM' .or.&
-        option .eq. 'RIGI_MECA_TANG' .or. option .eq. 'RIGI_MECA' .or.&
+        option .eq. 'RIGI_MECA' .or.&
         option .eq. 'RIGI_CONT' .or. option .eq. 'MASS_MECA'.or.&
         option .eq. 'RIGI_CONT_M') then
         lmat = .true.
     endif
+
 !
 !   OPTIONS RELATIVES A UN VECTEUR
     if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA' .or.&
@@ -101,6 +102,11 @@ real(kind=8), optional, intent(out) :: vect(*)
         option .eq. 'CHAR_MECA_TEMP_R' .or. option .eq. 'CHAR_MECA_EFON_R' .or.&
         option .eq. 'CHAR_MECA_EFON_F' .or. option .eq. 'CHAR_MECA_CONT_M') then
         lvec = .true.
+    endif
+
+    if (option .eq. 'RIGI_MECA_TANG') then
+        lvec = .true.
+        lmat = .true.
     endif
 !
     ASSERT(lmat .or. lvec)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
 interface
     subroutine xnmel(poum, nnop, nfh, nfe, ddlc,&
                      ddlm, igeom, typmod, option, imate,&
-                     compor, lgpg, crit, jpintt, cnset,&
+                     compor, lgpg, carcri, jpintt, cnset,&
                      heavt, lonch, basloc, idepl, lsn,&
                      lst, sig, vi, matuu, ivectu,&
-                     codret, jpmilt, nfiss, jheavn, jstno)
+                     codret, jpmilt, nfiss, jheavn, jstno,&
+                     l_line, l_nonlin, lMatr, lVect, lSigm)
         integer :: nfiss
         integer :: nnop
         character(len=*) :: poum
@@ -37,7 +37,7 @@ interface
         integer :: imate
         character(len=16) :: compor(*)
         integer :: lgpg
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         integer :: jpintt
         integer :: cnset(128)
         integer :: heavt(*)
@@ -54,5 +54,6 @@ interface
         integer :: jpmilt
         integer :: jheavn
         integer :: jstno
+        aster_logical, intent(in) :: l_line, l_nonlin, lMatr, lVect, lSigm
     end subroutine xnmel
 end interface

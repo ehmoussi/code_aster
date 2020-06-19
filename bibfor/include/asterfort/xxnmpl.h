@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,8 +15,7 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
+#include "asterf_types.h"
 !
 interface
     subroutine xxnmpl(elrefp, elrese, ndim, coorse, igeom,&
@@ -25,7 +24,9 @@ interface
                       basloc, nnop, npg, typmod, option,&
                       imate, compor, lgpg, carcri, idepl,&
                       lsn, lst, idecpg, sig, vi,&
-                      matuu, ivectu, codret, nfiss, heavn, jstno)
+                      matuu, ivectu, codret, nfiss, heavn, jstno,&
+                      lMatr, lVect, lSigm)
+        aster_logical, intent(in) :: lMatr, lVect, lSigm
         integer :: nfiss
         integer :: lgpg
         integer :: npg
@@ -49,7 +50,7 @@ interface
         character(len=8) :: typmod(*)
         character(len=16) :: option
         integer :: imate
-        character(len=16) :: compor(4)
+        character(len=16) :: compor(*)
         real(kind=8) :: carcri(*)
         integer :: idepl
         real(kind=8) :: lsn(nnop)
