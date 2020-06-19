@@ -258,6 +258,7 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
     coefzpa = kh / zpa
 # frequence de coupure pour calcul des FDT
     fcoup = args['FREQ_COUP']
+    fc0 = args['FREQ_FILTRE']
 
 # Groupes de mailles et maillage
     mail0 = None
@@ -2128,23 +2129,44 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
             if ldevi == 'OUI':
 
-              __VX_CL[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_CL[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+              if args['INTEGRATION'] == 'FREQUENCE':
 
-              __DX_CL[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_CL[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+                __VX_CL[n] = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__AX_CL[n],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=1),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
-              __VX_RA[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_RA[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+                __DX_CL[n]=CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__AX_CL[n],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=2),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
-              __DX_RA[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_RA[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+                __VX_RA[n] = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__AX_RA[n],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=1),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
-              __VX_BH[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_BH[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+                __DX_RA[n]=CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__AX_RA[n],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=2),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
-              __DX_BH[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_BH[n],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+                __VX_BH[n] = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__AX_BH[n],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=1),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                __DX_BH[n]=CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__AX_BH[n],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=2),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+              else:
+
+                __VX_CL[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_CL[n],),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                __DX_CL[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_CL[n],),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                __VX_RA[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_RA[n],),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                __DX_RA[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_RA[n],),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                __VX_BH[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__AX_BH[n],),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                __DX_BH[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__VX_BH[n],),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
         # Calcul des contraintes et deformations dans tous les elements de
         # la colonne
@@ -2329,11 +2351,19 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
                      COMB=(_F(FONCTION=__axr, COEF=1.,), _F(FONCTION=__AX_RA[0], COEF=1.,),), LIST_PARA=__linst,)
 
                 if ldevi == 'OUI':
-                  __vix[k] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[k],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
 
-                  __dex[k]=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[k],),
-                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+                  if args['INTEGRATION'] == 'FREQUENCE':
+                    __vix[k] = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__axa[k],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=1),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                    __dex[k]=CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__axa[k],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=2),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                  else:
+                    __vix[k] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[k],),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                    __dex[k]=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[k],),
+                     PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
                   __ftfy = RECU_FONCTION(
                     GROUP_NO=('PN' + str(k)), RESULTAT=__DYNHARM, NOM_CHAM='FORC_NODA', NOM_CMP=CMP2, INTERPOL='LIN',
@@ -2475,11 +2505,18 @@ def defi_sol_equi_ops(self, TITRE=None, INFO=None, **args):
 
                     if ldevi == 'OUI':
 
-                      __vix[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[n],),
-                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+                      if args['INTEGRATION'] == 'FREQUENCE':
+                        __vix[n] = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__axa[n],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=1),
+                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
-                      __dex[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[n],),
-                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',)
+                        __dex[n] = CALC_FONCTION(INTEGRE_FREQ=_F(FONCTION=__axa[n],FREQ_FILTRE=fc0,FREQ_COUP=fcoup,NIVEAU=2),
+                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+                      else:
+                        __vix[n] = CALC_FONCTION(INTEGRE=_F(FONCTION=__axa[n],),
+                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
+
+                        __dex[n]=CALC_FONCTION(INTEGRE=_F(FONCTION=__vix[n],),
+                         PROL_DROITE='CONSTANT',PROL_GAUCHE='CONSTANT',);
 
                     DETRUIRE(CONCEPT=_F(NOM=(
                                        __fthr,

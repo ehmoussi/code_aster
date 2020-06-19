@@ -511,6 +511,8 @@ tabsol= DEFI_SOL_EQUI(#MAILLAGE=mailcol,
                        LIST_FREQ_SPEC_OSCI=freqspec,
                        SURF='OUI',
                        FREQ_COUP=9.5,
+                       INTEGRATION='FREQUENCE',
+                       FREQ_FILTRE=fc0,
                        COEF_AMPL_ACCE=1.);
                        
 IMPR_TABLE(TABLE=tabsol);
@@ -539,6 +541,28 @@ accexRA=LIRE_FONCTION(UNITE=40,NOM_PARA='INST',
                INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
                INDIC_PARA=[1,1],INDIC_RESU=[1,3],
                    );
+
+deplxCL=LIRE_FONCTION(UNITE=40,NOM_PARA='INST',
+               INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
+               INDIC_PARA=[3,1],INDIC_RESU=[3,2],
+                   );
+
+deplxRA=LIRE_FONCTION(UNITE=40,NOM_PARA='INST',
+               INTERPOL = 'LIN',PROL_DROITE = 'CONSTANT',
+               INDIC_PARA=[3,1],INDIC_RESU=[3,3],
+                   );
+
+TEST_FONCTION(VALEUR=(
+                      _F(VALE_CALC=0.0533945,
+                         VALE_PARA=(2.05),
+                         NOM_PARA=('INST'),
+                         FONCTION=deplxCL,),
+                      _F(VALE_CALC=-0.0116726,
+                         VALE_PARA=(1.85),
+                         NOM_PARA=('INST'),
+                         FONCTION=deplxRA,),
+                      ),
+              )
 
 #  RELECTURE DES IMPRESSIONS DE TABLES PRECEDENTES
 
