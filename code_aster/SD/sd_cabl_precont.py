@@ -27,6 +27,10 @@ from .sd_titre import sd_titre
 class sd_cabl_precont(sd_titre):
 #-----------------------------------------
     nomj = SDNom(fin=8)
-    chme_sigin = sd_carte(SDNom(nomj='.CHME.SIGIN', fin=19))
     lirela = sd_liste_rela(SDNom(nomj='.LIRELA', fin=19))
     lt = sd_l_table(SDNom(nomj=''))
+    SIGMACABLE_VALE = Facultatif(AsVR(SDNom(nomj='.SIGMACABLE.VALE')))
+    SIGMACABLE_NUMA = Facultatif(AsVI(SDNom(nomj='.SIGMACABLE.NUMA')))
+    SIGMACABLE_NOGD = Facultatif(AsVK8(SDNom(nomj='.SIGMACABLE.NOGD')))
+    SIGMACABLE_NCMP = Facultatif(AsVK8(SDNom(nomj='.SIGMACABLE.NCMP')))
+

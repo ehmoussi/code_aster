@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
+subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez, l_preallocz)
     implicit none
 ! person_in_charge: jacques.pellet at edf.fr
 #include "jeveux.h"
@@ -53,6 +53,7 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
     character(len=*), intent(in) :: type_liai
     character(len=*), intent(in), optional :: elim
     aster_logical   , intent(in), optional :: detr_lisrez
+    aster_logical   , intent(in), optional :: l_preallocz
 !
 ! -------------------------------------------------------
 !  affectation de l'objet de type  liste_rela et de nom
@@ -110,7 +111,7 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
     integer :: nbcmp, nec, nbnema, nbrela, nbteli, nbterm, nddla
     integer :: jliel0, jlielc, jnema0, jnemac, nbrela2, nbterm2
     character(len=3), parameter :: rapide='OUI'
-    aster_logical :: detr_lisrel, l_lag1
+    aster_logical :: detr_lisrel, l_lag1, l_prealloc
 
     integer :: niv, numel, nunewm, iexi, jlgns
     character(len=8), pointer :: lgrf(:) => null()
@@ -196,6 +197,11 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
         detr_lisrel = detr_lisrez
     endif
 !
+    l_prealloc = .false.
+    if ( present( l_preallocz ) ) then
+        l_prealloc =  l_preallocz 
+    endif
+!
     if (ligrch(12:13) .eq. 'TH') then
         ca1=charge//'.CHTH.CMULT'
         ca2=charge//'.CHTH.CIMPO'
@@ -226,19 +232,23 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
 ! --- DE LA CHARGE)
     call jeveuo(lisrel//'.RLPO', 'L', jrlpo)
     nbteli=zi(jrlpo+nbrela-1)
+! --- SI ON N'A PAS AU PREALABLE ALLOUE LE LIGREL DE CHARGE 
+!     ET LES CARTES CMULT ET CIMPO C'EST LE MOMENT DE LE FAIRE    
+    if ( .not. l_prealloc ) then 
 !
 ! --- VERIFICATION DE L'ADEQUATION DE LA TAILLE DU LIGREL DE
 ! --- CHARGE A SON AFFECTATION PAR LES MAILLES TARDIVES DUES
 ! --- AUX RELATIONS LINEAIRES
 ! --- SI LE LIGREL DE CHARGE N'EXISTE PAS, ON LE CREE
-    call craglc(nbteli, ligrch)
+        call craglc(nbteli, ligrch)
 !
 ! --- VERIFICATION DE L'ADEQUATION DE LA TAILLE DES CARTES
 ! --- .CMULT ET .CIMPO DE LA CHARGE A LEUR AFFECTATION
 ! --- PAR LES MAILLES TARDIVES DUES AUX RELATIONS LINEAIRES
 ! --- SI LES CARTES .CMULT ET .CIMPO N'EXISTENT PAS, ON
 ! --- LES CREE
-    call cragch(nbteli, typcoe, typval, ligrch)
+        call cragch(nbteli, typcoe, typval, ligrch)
+    endif
 !
 !
 !
@@ -439,7 +449,6 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
         ASSERT(nedit.eq.zi(jdesc2-1+3))
         call jeecra(ca1//'.LIMA','NUTIOC',ival= nedit)
         call jeecra(ca2//'.LIMA','NUTIOC',ival= nedit)
-
         call jeecra(ligrch//'.LIEL','NUTIOC',ival= igrel)
         call jeecra(ligrch//'.NEMA','NUTIOC',ival= inema)
     endif
@@ -464,7 +473,6 @@ subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
 !   ------------------------------------------------------------
     if (niv.ge.2) then
         call utmess('I', 'CHARGES2_34')
-
         do irela = 1, nbrela
             indsur=rlsu(irela)
             if (indsur .eq. 1) then

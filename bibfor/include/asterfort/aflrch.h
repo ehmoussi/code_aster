@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,12 @@
 !
 !
 interface
-subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez)
+subroutine aflrch(lisrez, chargz, type_liai, elim, detr_lisrez, l_preallocz)
     character(len=*), intent(in) :: lisrez
     character(len=*), intent(in) :: chargz
     character(len=*), intent(in) :: type_liai
     character(len=*), intent(in), optional :: elim
     aster_logical   , intent(in), optional :: detr_lisrez
+    aster_logical   , intent(in), optional :: l_preallocz
 end subroutine aflrch
 end interface

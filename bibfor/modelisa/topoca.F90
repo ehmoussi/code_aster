@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
-                  numaca, quad, sens)
+subroutine topoca( tablca, mailla, icabl, nbf0, nbnoca, &
+                   numaca, quad, sens, evalz)
     implicit none
 !  DESCRIPTION : CARACTERISATION DE LA TOPOLOGIE D'UN CABLE
 !  -----------   APPELANT : OP0180 , OPERATEUR DEFI_CABLE_BP
@@ -26,7 +26,6 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
 !                LES CASES RENSEIGNEES CORRESPONDENT AUX PARAMETRES
 !                <NUME_CABLE>, <NOEUD_CABLE>, <MAILLE_CABLE>,
 !                <NOM_CABLE>, <NOM_ANCRAGE1> ET <NOM_ANCRAGE2>
-!
 !  IN     : TABLCA : CHARACTER*19
 !                    NOM DE LA TABLE DECRIVANT LES CABLES
 !  IN     : MAILLA : CHARACTER*8 , SCALAIRE
@@ -45,6 +44,9 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
 !                    REMPLISSAGE DU DERNIER SOUS-BLOC ALLOUE
 !  OUT    : QUAD   : VRAI SI MAILLAGE QUADRATIQUE (SEG3)
 !           SENS   : ORIENTATION DES MAILLES
+!  IN     : EVALZ  : LOGICAL, OPTIONAL
+!                    MODE D'APPEL DE LA ROUTINE. SI VRAI ON RETOURNE 
+!                    UNIQUEMENT NBF0, NBNOCA ET QUAD
 !-------------------   DECLARATION DES VARIABLES   ---------------------
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -75,6 +77,7 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
     integer :: icabl, nbf0, nbnoca(*), sens
     character(len=19) :: numaca, tablca
     aster_logical :: quad
+    aster_logical, optional :: evalz
 !
 ! VARIABLES LOCALES
 ! -----------------
@@ -84,7 +87,7 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
     integer :: numail, n1, nbse2, nbse3, no3, ntseg2
     real(kind=8) :: rbid
     complex(kind=8) :: cbid
-    aster_logical :: ok1, ok2
+    aster_logical :: ok1, ok2, eval
     character(len=3) :: k3b
     character(len=8) :: k8b, noancr(2), nocour, noprec, nosui1, nosui2, nosuiv
     character(len=8) :: novois, tyancr(2)
@@ -112,6 +115,12 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
     call jemarq()
     cbid=(0.d0,0.d0)
     rbid=0.d0
+!   Par défaut, la routine calcule tout et remplit tous ses arguments de 
+!   sortie. Si eval = .true., on ne remplit que nbnoca et quad. 
+    eval=.false. 
+    if (present(evalz)) then
+        eval=evalz
+    endif
 !
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ! 1   SAISIE DES ENTITES TOPOLOGIQUES ASSOCIEES AU CABLE
@@ -440,6 +449,7 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
                 nbnoca(icabl) = nbno1
             endif
 !
+          if (.not. eval) then     
             if (icabl .eq. 1) then
                 call jeecra(numaca, 'LONUTI', nbno1-1)
                 call jeveuo(numaca, 'E', jnumac)
@@ -499,6 +509,7 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
             vk(5) = 'NON'
             call tbajli(tablca, 6, param, [icabl], [rbid],&
                         [cbid], vk, 0)
+          endif
 !
 !
 ! 3.2.2  CAS OU LE SECOND CHEMIN POSSIBLE EST VALIDE
@@ -511,6 +522,7 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
                 nbnoca(icabl) = nbno2
             endif
 !
+          if (.not. eval ) then
             if (icabl .eq. 1) then
                 call jeecra(numaca, 'LONUTI', nbno2-1)
                 call jeveuo(numaca, 'E', jnumac)
@@ -567,6 +579,7 @@ subroutine topoca(tablca, mailla, icabl, nbf0, nbnoca,&
             vk(5) = 'NON'
             call tbajli(tablca, 6, param, [icabl], [rbid],&
                         [cbid], vk, 0)
+          endif
 !
 ! 3.2.3  AUCUN CHEMIN CONTINU VALIDE
 ! .....

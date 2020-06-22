@@ -199,10 +199,6 @@ Erreur utilisateur :
  Le concept CABLE_BP de nom %(k1)s ne contient pas de relations linéaires. L'option RELA_CINE est donc inutilisable.
 """),
 
-    49: _("""
- Le concept CABLE_BP de nom %(k1)s ne contient pas de contraintes. L'option SIGM_BPEL est donc inutilisable.
-"""),
-
     50: _("""
  On ne trouve pas de noeud assez près du noeud %(k1)s .
 """),

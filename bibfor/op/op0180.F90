@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ subroutine op0180()
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
 #include "asterfort/alcart.h"
+#include "asterfort/assert.h"
 #include "asterfort/caelca.h"
 #include "asterfort/cncinv.h"
 #include "asterfort/crelrl.h"
@@ -71,22 +72,23 @@ subroutine op0180()
 #include "asterfort/voisca.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: ibid, icabl, icmp, irana1, iret, jcaba, jnbno, jsief
+    integer :: ibid, icabl, icmp, irana1, iret, jcaba, jnbno
     integer :: n1, n2, nbancr, nbcabl, nbf0, nbmama, nbnobe, nbnoma
-    integer :: ncaba, nsief, nbmabe, jlimab, nbnoca
+    integer :: ncaba, nbmabe, jlimab, nbnoca
     real(kind=8) :: delta, ea, f0, frco, frli, mu0, rh1000, sa, fprg, xflu, xret
     real(kind=8) :: trelax, valr(2), rbid
-    aster_logical :: mail2d, relax, quad
+    aster_logical :: mail2d, relax, quad, eval
     character(len=3) :: k3b
     character(len=8) :: caelem, chmat, mailla, modele, nomu, adher
     character(len=8) :: typanc(2), typ_ma
     character(len=16) :: cmd, concep
-    character(len=19) :: carsig, carte, ligrmo, lirela, numaca, nunobe, xnoca
-    character(len=19) :: ynoca, znoca, nomt19, nunobi, nomg19
+    character(len=19) :: carte, ligrmo, lirela, numaca, nunobe, xnoca
+    character(len=19) :: ynoca, znoca, nomt19, nunobi, nomg19, sigmcabl, kbid19
     character(len=24) :: cadesc, ncncin, nmabet, comima, gromai,  noancr(2)
     character(len=8) :: aire, effnor(3), valk(8)
     complex(kind=8) :: cbid
-    integer :: nbpar, nbnobi, sens, nbpar2
+    integer :: nbpar, nbnobi, sens, nbpar2, nbcmp, prem, nbgd
+    integer :: nbnoca_total, nbmaca_total
     parameter    (nbpar=14)
     character(len=3) :: typpar(nbpar)
     character(len=24) :: nompar(nbpar), typrel
@@ -94,8 +96,8 @@ subroutine op0180()
     parameter    (nbpar2=11)
     character(len=3) :: typpa2(nbpar2)
     character(len=24) :: nompa2(nbpar2)
-    character(len=8), pointer :: ncmp(:) => null()
-    real(kind=8), pointer :: valv(:) => null()
+    character(len=8), pointer :: ncmp(:) => null(), nogd(:) => null()
+    real(kind=8), pointer :: sigmvale(:)=>null()
 !
     data          aire  /'A1      '/
     data          effnor/'N       ','CONT_X  ','CONT_Y  '/
@@ -134,6 +136,7 @@ subroutine op0180()
     call jemarq()
     rbid=0.d0
     cbid=(0.d0,0.d0)
+    kbid19=repeat(" ",19)
     call infmaj()
 !
     call getres(nomu, concep, cmd)
@@ -349,27 +352,6 @@ subroutine op0180()
     if (iret .eq. 0) call tbcrsd(nomt19, 'G')
     call tbajpa(nomt19, nbpar, nompar, typpar)
 !
-!
-!
-! 4.5 CREATION ET INITIALISATION DE LA CARTE ELEMENTAIRE (= 0)
-! --- DES CONTRAINTES INITIALES
-!
-    carsig = nomu//'.CHME.SIGIN'
-    call alcart('G', carsig, mailla, 'SIEF_R')
-!
-    call jelira(jexnom('&CATA.GD.NOMCMP', 'SIEF_R'), 'LONMAX', nsief)
-    call jeveuo(jexnom('&CATA.GD.NOMCMP', 'SIEF_R'), 'L', jsief)
-    call jeveuo(carsig//'.NCMP', 'E', vk8=ncmp)
-    call jeveuo(carsig//'.VALV', 'E', vr=valv)
-    do icmp = 1, nsief
-        ncmp(icmp) = zk8(jsief+icmp-1)
-        valv(icmp) = 0.0d0
-    end do
-    call nocart(carsig, 1, nsief)
-    ncmp(1) = effnor(1)
-    ncmp(2) = effnor(2)
-    ncmp(3) = effnor(3)
-!
 ! 4.6 CREATION DE LA SD DE TYPE LISTE_DE_RELATIONS
 ! ---
     lirela = nomu//'.LIRELA    '
@@ -407,6 +389,43 @@ subroutine op0180()
                 gromai)
 !
     call wkvect(nunobi, 'V V I', nbnobe, ibid)
+!
+! ---
+!   ALLOCATION DU STOCKAGE DES CONTRAINTES DANS LES MAILLES BETON 
+!   DUES AU PASSAGE DES CABLES
+!   
+    do icabl = 1, nbcabl
+        eval=.true.
+        call topoca(kbid19, mailla, icabl, nbf0, zi(jnbno), kbid19, &
+                    quad, ibid, eval)
+    enddo 
+!
+    nbnoca_total=sum( zi(jnbno-1+1: jnbno-1+nbcabl))
+    if (quad) then
+        ASSERT((mod(nbnoca_total-1, 2).eq.0))
+        nbmaca_total=(nbnoca_total-1)/2
+    else
+        nbmaca_total = nbnoca_total-1
+    endif
+    sigmcabl=nomu//'.SIGMACABLE'
+!
+!   GRANDEUR ET COMPOSANTES A STOCKER 
+!   SIEF_R 
+    nbgd = 1 
+    call wkvect(sigmcabl//'.NOGD', 'G V K8',nbgd, vk8=nogd)
+    nogd(1)='SIEF_R'
+!   Composantes utilisées
+    nbcmp=3
+!   Liste de ces composantes  
+    call wkvect(sigmcabl//'.NCMP', 'G V K8', nbcmp, vk8=ncmp)
+    ncmp(1:3)=effnor(1:3)
+!   Valeur de la contrainte (3 valeurs par maille)
+    call wkvect(sigmcabl//'.VALE', 'G V R', nbmaca_total*nbcmp, vr=sigmvale)
+!   Numéro de maille (1 valeur par maille)
+    call wkvect(sigmcabl//'.NUMA', 'G V I', nbmaca_total, ibid)
+!
+!   Indice du premier emplacement libre dans le vecteur numa
+    prem=1 
 !
 ! 4.8 BOUCLE SUR LE NOMBRE DE CABLES
 ! ---
@@ -452,8 +471,8 @@ subroutine op0180()
 !
 ! 4.8.5  MISE A JOUR DE LA CARTE ELEMENTAIRE DES CONTRAINTES INITIALES
 ! .....
-        call sigmca(nomt19, carsig, icabl, zi(jnbno), numaca,&
-                    quad)
+        call sigmca(nomt19, icabl, zi(jnbno), numaca,&
+                    quad, sigmcabl, prem )
 !
 ! 4.8.6  DETERMINATION DES RELATIONS CINEMATIQUES ENTRE LES DDL DES
 ! .....  NOEUDS DU CABLE ET CEUX DES NOEUDS DE LA STRUCTURE BETON

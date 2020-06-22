@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -139,7 +139,6 @@ implicit none
 !   -----------------------------------------
     call getcara_lisno(noma,nb_node,zi(jlino),dist_mini,dim,linocara)
     ASSERT(dim.le.3)
-
 
 !   -- 1) Les relations potentiellement non-lineaires sont celles traduisant
 !         l'indeformabilite des dim+1 noeuds de linocara

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,13 +21,14 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine sigmca(tablca, carsig, icabl, nbnoca, numaca,&
-                      quad)
+    subroutine sigmca(tablca, icabl, nbnoca, numaca, quad, &
+                      sigmcabl, prem)
         character(len=19) :: tablca
-        character(len=19) :: carsig
         integer :: icabl
         integer :: nbnoca(*)
         character(len=19) :: numaca
         aster_logical :: quad
+        character(len=19) :: sigmcabl
+        integer :: prem
     end subroutine sigmca
 end interface

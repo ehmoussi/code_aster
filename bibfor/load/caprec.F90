@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,11 +31,13 @@ implicit none
 #include "asterfort/cescar.h"
 #include "asterfort/char_rcbp_cabl.h"
 #include "asterfort/char_rcbp_lino.h"
-#include "asterfort/char_rcbp_sigm.h"
 #include "asterfort/chsfus.h"
 #include "asterfort/copisd.h"
+#include "asterfort/craglc.h"
+#include "asterfort/cragch.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/solide_tran.h"
+#include "asterfort/detrsd.h"
 #include "asterfort/drz12d.h"
 #include "asterfort/drz13d.h"
 #include "asterfort/exisdg.h"
@@ -45,6 +47,7 @@ implicit none
 #include "asterfort/jedema.h"
 #include "asterfort/jedetc.h"
 #include "asterfort/jedetr.h"
+#include "asterfort/jeecra.h"
 #include "asterfort/jeexin.h"
 #include "asterfort/jelibe.h"
 #include "asterfort/jelira.h"
@@ -52,10 +55,15 @@ implicit none
 #include "asterfort/jenonu.h"
 #include "asterfort/jenuno.h"
 #include "asterfort/jeveuo.h"
+#include "asterfort/jexatr.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jexnum.h"
+#include "asterfort/nbec.h"
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
+#include "asterfort/alcart.h"
+#include "asterfort/nocart.h"
+#include "asterfort/tecart.h"
 !
 !
     character(len=8), intent(in) :: load
@@ -103,7 +111,7 @@ implicit none
     character(len=24) :: list_node
     integer :: nb_node, jlino
     character(len=8) :: cabl_prec
-    character(len=19) :: cabl_sigm
+    character(len=19) :: cabl_sigm, ligrch
     aster_logical :: l_rota_2d, l_rota_3d
     integer :: i_cabl, i_ancr, i_no, nume_node
     integer :: nb_elem
@@ -112,7 +120,24 @@ implicit none
     integer :: nume_cabl, nume_cabl0
     integer :: jlces, jll, jlr, nbchs
     integer, pointer :: rlnr(:) => null()
+    integer, pointer :: rlpo(:) => null()
+    character(len=8), pointer :: rltc(:) => null(), rltv(:) => null()
+    integer :: nbteli, nbteli_total
+    integer :: pass 
+    character(len=4) :: typval, typcoe
+    character(len=7) :: typcha
+    integer :: nbcmp, numa, iivale, nma, icmp, ima, nbma, nbval
+    integer :: jsief, nsief
+    integer, pointer :: sigmnuma(:) => null()
+    aster_logical :: l_prealloc
+    real(kind=8), pointer :: sigmvale(:) => null()
+    character(len=8), pointer :: ncmp(:) => null()
+    character(len=8), dimension(3) :: sigmcmp
+    integer :: jdesc,jnoma, jncmp,jnoli,jvale,jvalv,jnocmp,ncmpmx,nec
+    integer :: jlima0,jlimac,lontav,gd, nedit
+    character(len=8) :: ctype
     cbid = dcmplx(0.d0, 0.d0)
+   
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -132,6 +157,7 @@ implicit none
     list_rela_tmp = '&&CAPREC.LIRELA_TMP'
     cabl_sigm = load//'.CHME.SIGIN'
     model = ligrmo(1:8)
+    
 !
     call wkvect('&&CAPREC.LCES', 'V V K16', nliai, jlces)
     call wkvect('&&CAPREC.LCESL', 'V V L', nliai, jll)
@@ -191,7 +217,46 @@ implicit none
     call dismoi('NB_EC', nomg_sief, 'GRANDEUR', repi=nbec_sief)
     ASSERT(nbec_sief.le.10)
 !
-    do iocc = 1, nliai
+    call dismoi('TYPE_CHARGE', load, 'CHARGE', repk=typcha)
+    if (typcha(1:4) .eq. 'MECA') then
+        ligrch=load//'.CHME.LIGRE'
+    else if (typcha(1:4).eq.'THER') then
+        ligrch=load//'.CHTH.LIGRE'
+    else if (typcha(1:4).eq.'ACOU') then
+        ligrch=load//'.CHAC.LIGRE'
+    endif
+!
+! - On procède en deux passes : 
+!       - évaluation de la place nécessaire pour les cartes CMULT et CIMPO 
+!         et allocation des cartes
+!       - remplissage (appel de aflrch) 
+!
+    do pass = 1, 2
+!
+       if ( pass == 1 ) then 
+! Nombre total de termes dans les relations linéaires 
+       nbteli_total = 0
+! Type des coefficients et du second membre des relations linéaires 
+       typcoe=''
+       typval=''
+       else if (pass == 2 ) then 
+          if ( nbteli_total > 0 ) then 
+! --- VERIFICATION DE L'ADEQUATION DE LA TAILLE DU LIGREL DE
+! --- CHARGE A SON AFFECTATION PAR LES MAILLES TARDIVES DUES
+! --- AUX RELATIONS LINEAIRES
+! --- SI LE LIGREL DE CHARGE N'EXISTE PAS, ON LE CREE
+              call craglc(nbteli_total, ligrch)
+!
+! --- VERIFICATION DE L'ADEQUATION DE LA TAILLE DES CARTES
+! --- .CMULT ET .CIMPO DE LA CHARGE A LEUR AFFECTATION
+! --- PAR LES MAILLES TARDIVES DUES AUX RELATIONS LINEAIRES
+! --- SI LES CARTES .CMULT ET .CIMPO N'EXISTENT PAS, ON
+! --- LES CREE
+              call cragch(nbteli_total, typcoe, typval, ligrch)
+          endif
+       endif 
+!
+      do iocc = 1, nliai
 !
 ! ----- Minimum distance
 !
@@ -209,13 +274,6 @@ implicit none
 !
             call getvid(keywordfact, 'CABLE_BP', iocc=iocc, scal=cabl_prec, nbret=ibid)
 !
-! --------- Get and combine stresses
-!
-            if (l_sigm_bpel) then
-                call char_rcbp_sigm(cabl_prec, iocc, nbchs, jlces, jll,&
-                                    jlr)
-            endif
-!
 ! --------- Linear relations
 !
             if (l_rela_cine) then
@@ -231,8 +289,35 @@ implicit none
                 nbrela = rlnr(1)
                 call jelibe(list_rela_old//'.RLNR')
                 if (nbrela .gt. 0) then
-                    call copisd(' ', 'V', list_rela_old, list_rela_tmp)
-                    call aflrch(list_rela_tmp, load, 'NLIN')
+                    if ( pass == 1 ) then 
+!
+! --- NOMBRE TOTAL DE TERMES IMPLIQUES DANS LES RELATIONS
+! --- DE LA LISTE DE RELATIONS (SERT AU REDIMENSIONNEMENT
+! --- DU LIGREL DE CHARGE ET DES CARTES .CMULT ET .CIMPO
+! --- DE LA CHARGE)
+                        call jeveuo(list_rela_old//'.RLPO', 'L', vi=rlpo)
+                        nbteli=rlpo(nbrela)
+                        nbteli_total=nbteli_total+nbteli
+                        call jeveuo(list_rela_old//'.RLTC', 'L', vk8=rltc)
+                        if (typcoe == '') then 
+                            typcoe=rltc(1)(1:4)
+                        else 
+                            ASSERT(typcoe == rltc(1)(1:4))
+                        endif
+!
+! --- TYPE DES VALEURS AU SECOND MEMBRE DES RELATIONS
+                       call jeveuo(list_rela_old//'.RLTV', 'L', vk8=rltv)
+                       if (typval == '') then 
+                          typval=rltv(1)(1:4)
+                       else
+                          ASSERT( typval == rltv(1)(1:4))
+                       endif 
+                    else if ( pass == 2 ) then  
+                        call copisd(' ', 'V', list_rela_old, list_rela_tmp)
+                        l_prealloc=.true.
+                        call aflrch(list_rela_tmp, load, 'NLIN', &
+                                    l_preallocz = l_prealloc)                        
+                    endif
                 endif
 !
 ! ------------  Get information about cables
@@ -336,6 +421,7 @@ implicit none
                                                     cmp_index_drx, cmp_index_dry, cmp_index_drz,&
                                                     lagr_type, list_rela, nom_noeuds_tmp)
                                     else
+                                        
                                         call solide_tran('3D',mesh, vale_type, dist_mini, nb_node,&
                                                          list_node, lagr_type, list_rela,&
                                                          nom_noeuds_tmp, dim)
@@ -344,8 +430,44 @@ implicit none
                                     ASSERT(.false.)
                                 endif
                                 call jedetr(list_node)
-                                call aflrch(list_rela, load, 'NLIN', elim='NON')
-                            endif
+                                if ( pass == 1 ) then 
+!
+! --- NOMBRE TOTAL DE TERMES IMPLIQUES DANS LES RELATIONS
+! --- DE LA LISTE DE RELATIONS (SERT AU REDIMENSIONNEMENT
+! --- DU LIGREL DE CHARGE ET DES CARTES .CMULT ET .CIMPO
+! --- DE LA CHARGE)
+                                   call jeveuo(list_rela//'.RLNR', 'L', vi=rlnr)
+                                   nbrela = rlnr(1)
+                                   call jelibe(list_rela//'.RLNR')
+                                   call jeveuo(list_rela//'.RLPO', 'L', vi=rlpo)
+                                   nbteli=rlpo(nbrela)
+                                   call jelibe(list_rela//'.RLPO')
+                                   nbteli_total=nbteli_total+nbteli
+                                   call jeveuo(list_rela//'.RLTC', 'L', vk8=rltc)
+                                   if (typcoe == '') then 
+                                      typcoe=rltc(1)(1:4)
+                                   else 
+                                      ASSERT(typcoe == rltc(1)(1:4))
+                                   endif
+                                   call jelibe(list_rela//'.RLTC')
+!
+! --- TYPE DES VALEURS AU SECOND MEMBRE DES RELATIONS
+                                   call jeveuo(list_rela//'.RLTV', 'L', vk8=rltv)
+                                   if (typval == '') then 
+                                       typval=rltv(1)(1:4)
+                                   else
+                                       ASSERT( typval == rltv(1)(1:4))
+                                   endif 
+                                   call jelibe(list_rela//'.RLTV')
+!  Destruction de list_rela, à nouveau créée à la seconde passe
+                                   call detrsd('LISTE_RELA', list_rela)
+!
+                                else if ( pass == 2 ) then  
+                                   l_prealloc=.true.
+                                   call aflrch(list_rela, load, 'NLIN', elim='NON', &
+                                            l_preallocz=l_prealloc)
+                                endif
+                            endif 
 140                         continue
                         enddo
                     endif
@@ -355,17 +477,114 @@ implicit none
                 call jedetr(list_anc2)
             endif
         endif
-    enddo
+      enddo
+!  Fin de la boucle sur les passes
+    enddo  
 !
-! - Fusion des champs et transformation en carte
+!  Get and combine stresses 
 !
-    if (nbchs .gt. 0) then
-        call chsfus(nbchs, zk16(jlces), zl(jll), zr(jlr), [cbid],&
-                    .false._1, 'V', '&&CAPREC.CES')
-        call cescar('&&CAPREC.CES', cabl_sigm, 'G')
-    endif
+    do pass = 1, 2 
+      if ( pass == 1) then 
+        sigmcmp(1:3)=  (/ '', '', ''/)
+      endif
+!  
+      nma = 0 
 !
-    call jedetc('V', '&&CAPREC.CES', 1)
+      do iocc = 1, nliai
+!
+          call getvtx(keywordfact, 'SIGM_BPEL', iocc=iocc, scal=answer, nbret=ibid)
+          l_sigm_bpel = (answer.eq.'OUI')
+!
+          if (l_sigm_bpel) then
+!
+              call getvid(keywordfact, 'CABLE_BP', iocc=iocc, scal=cabl_prec, nbret=ibid)
+!
+! --------- Get and combine stresses
+!         
+              call jeveuo( cabl_prec//'.SIGMACABLE.VALE', 'L', vr=sigmvale )
+              call jelira( cabl_prec//'.SIGMACABLE.VALE', 'LONUTI', nbval ) 
+              call jeveuo( cabl_prec//'.SIGMACABLE.NUMA', 'L', vi=sigmnuma )
+              call jelira( cabl_prec//'.SIGMACABLE.NUMA', 'LONUTI', nbma ) 
+
+              if ( pass == 1 ) then
+                  call jeveuo( cabl_prec//'.SIGMACABLE.NCMP', 'L', vk8=ncmp )
+                  call jelira( cabl_prec//'.SIGMACABLE.NCMP', 'LONUTI', nbcmp ) 
+                  ASSERT(nbcmp==3)  
+                  if ( ALL(sigmcmp == '')) then 
+                     sigmcmp (1:3) = ncmp(1:3)
+                   else
+                     ASSERT( ALL(sigmcmp == ncmp) )
+                  endif
+              endif
+!        
+              do ima = 1, nbma
+                  if ( sigmnuma( ima ) == 0 ) then 
+                     exit
+                  else
+                     nma = nma + 1
+                     if ( pass == 2 ) then 
+                         numa=sigmnuma(ima)
+                         iivale = (ima-1)*nbcmp+1
+                         do icmp = 1, nbcmp
+                             zr(jvalv-1+icmp) = sigmvale(iivale-1+icmp)
+                         enddo
+                         call nocart (carte=cabl_sigm, code=3, ncmp=nbcmp, mode='NUM',&
+                             nma=1,limanu=[numa],&
+                             rapide='OUI',jdesc=jdesc,jnoma=jnoma,&
+                             jncmp=jncmp,jnoli=jnoli,&
+                             jvale=jvale,jvalv=jvalv,jnocmp=jnocmp,&
+                             ncmpmx=ncmpmx,nec=nec,ctype=ctype,&
+                             jlima0=jlima0,jlimac=jlimac,lontav=lontav)
+                      endif
+                   endif
+              enddo
+        endif
+      enddo
+      if ( pass == 1 ) then 
+          if (nma > 0 ) then
+      !
+      ! Création de la carte cabl_sigm 
+           
+           call alcart('G', cabl_sigm, mesh , 'SIEF_R') 
+           call jelira(jexnom('&CATA.GD.NOMCMP', 'SIEF_R'), 'LONMAX', nsief)
+           call jeveuo(jexnom('&CATA.GD.NOMCMP', 'SIEF_R'), 'L', jsief)
+           call jeveuo(cabl_sigm//'.NCMP', 'E', jncmp)
+           call jeveuo(cabl_sigm//'.VALV', 'E', jvalv)
+           do icmp = 1, nsief
+                 zk8(jncmp-1+icmp) = zk8(jsief+icmp-1)
+                 zr(jvalv-1+icmp) = 0.0d0
+           end do
+           call nocart(cabl_sigm, 1, nsief)
+           do icmp = 1,nbcmp
+              zk8(jncmp-1+icmp)=sigmcmp(icmp)
+           enddo
+!
+           call jeveuo(cabl_sigm//'.DESC', 'E', jdesc)
+           call jeveuo(cabl_sigm//'.NOMA', 'E', jnoma)
+           call jeveuo(cabl_sigm//'.NOLI', 'E', jnoli)
+           call jeveuo(cabl_sigm//'.VALE', 'E', jvale)
+           call jelira(cabl_sigm//'.VALV', 'TYPELONG', cval=ctype)
+           call jeveuo(cabl_sigm//'.LIMA', 'E', jlima0)
+           call jeveuo(jexatr(cabl_sigm//'.LIMA', 'LONCUM'), 'E', jlimac)
+           call jelira(cabl_sigm//'.LIMA', 'LONT', lontav)
+           gd = zi(jdesc-1+1)
+           call jeveuo(jexnum('&CATA.GD.NOMCMP', gd), 'L', jnocmp)
+           call jelira(jexnum('&CATA.GD.NOMCMP', gd), 'LONMAX', ncmpmx)
+           nec = nbec(gd)
+!
+          endif
+      else if ( pass == 2 ) then 
+!  Finalisation de la carte cabl_sigm
+          if ( nma > 0 ) then 
+            nedit = zi(jdesc-1+3)
+            call jeecra(cabl_sigm//'.LIMA','NUTIOC',ival= nedit)
+            call tecart( cabl_sigm )
+          endif 
+      endif 
+      !
+   enddo
+      !
+!
 !
 999 continue
     call jedema()
