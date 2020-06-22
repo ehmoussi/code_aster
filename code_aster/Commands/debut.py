@@ -47,6 +47,7 @@ from ..Cata.SyntaxUtils import remove_none
 from ..Helpers import LogicalUnitFile
 from ..Messages import UTMESS, MessageLog
 from ..Supervis import CommandSyntax, ExecuteCommand, Serializer, loadObjects
+from ..Supervis.code_file import track_coverage
 from ..Supervis.ctopy import checksd, print_header
 from ..Supervis.TestResult import testresu_print
 from ..Utilities import ExecutionParameter, Options, logger
@@ -143,6 +144,7 @@ class Starter(ExecuteCommand):
             ExecutionParameter().enable(Options.TestMode)
             stop_with = "ABORT"
             iwarn = True
+            track_coverage(self._cata, self.command_name, keywords)
 
         erreur = keywords.get('ERREUR')
         if erreur:

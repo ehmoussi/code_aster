@@ -181,7 +181,8 @@ class ExecuteCommand(object):
             raise exc.original(exc.msg)
         finally:
             timer.Stop(" . check syntax")
-        track_coverage(self._cata, self.command_name, keywords)
+        if ExecutionParameter().option & Options.TestMode:
+            track_coverage(self._cata, self.command_name, keywords)
         self.create_result(keywords)
         if hasattr(self._result, "userName"):
             self._result.userName = get_user_name(self.command_name,
