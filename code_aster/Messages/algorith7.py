@@ -35,10 +35,6 @@ cata_msg = {
  COMP1D et SIMO_MIEHE incompatibles
 """),
 
-    61 : _("""
- option  %(k1)s  non traitée
-"""),
-
     63 : _("""
  pas existence de solution pour le saut
 """),

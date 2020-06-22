@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0201(option, nomte)
 !
+use Behaviour_module, only : behaviourOption
 !
-    implicit none
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/jevech.h"
@@ -27,32 +29,48 @@ subroutine te0201(option, nomte)
 #include "asterfort/nmfi2d.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/tecach.h"
+#include "asterfort/Behaviour_type.h"
 #include "blas/dcopy.h"
+
 !
-    character(len=16) :: nomte, option
+character(len=16), intent(in) :: option, nomte
 !
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-!     BUT: CALCUL DES OPTIONS NON LINEAIRES DES ELEMENTS DE
-!          FISSURE JOINT
+! Elementary computation
 !
-!     OPTION : RAPH_MECA, FULL_MECA, RIGI_MECA_TANG, RIGI_MECA_ELAS
+! Elements: PLAN_JOINT
 !
-!-----------------------------------------------------------------------
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
 !
+! --------------------------------------------------------------------------------------------------
 !
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: kk, i, j, npg
     integer :: igeom, imater, icarcr, icomp, idepm, iddep, icoret
     integer :: icontm, icontp, ivect, imatr
-    integer :: kk, i, j, ivarim, ivarip, jtab(7), npg, iret, iinstm, iinstp
-    integer :: lgpg1, lgpg
+    integer :: ivarim, ivarip, jtab(7), iret, iinstm, iinstp
+    integer :: lgpg, codret
     real(kind=8) :: mat(8, 8), fint(8), sigmo(6, 2), sigma(6, 2)
     character(len=8) :: typmod(2)
-    aster_logical :: resi, rigi, matsym
+    character(len=16) :: rela_comp
+    aster_logical :: matsym
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
-    resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
-    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+! --------------------------------------------------------------------------------------------------
 !
     npg=2
+    ivarip=1
+    icoret=1
+    icontp=1
+    ivect=1
+    icoret=1
+!
+! - Type of finite element
 !
     if (lteatt('AXIS','OUI')) then
         typmod(1) = 'AXIS'
@@ -61,37 +79,51 @@ subroutine te0201(option, nomte)
     endif
     typmod(2) = 'ELEMJOIN'
 !
+! - Get input fields
+!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imater)
     call jevech('PCARCRI', 'L', icarcr)
     call jevech('PCOMPOR', 'L', icomp)
     call jevech('PDEPLMR', 'L', idepm)
+    call jevech('PDEPLPR', 'L', iddep)
     call jevech('PVARIMR', 'L', ivarim)
     call jevech('PCONTMR', 'L', icontm)
-!
-! - INSTANTS
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PINSTPR', 'L', iinstp)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
+    lgpg = max(jtab(6),1)*jtab(7)
 !
-! RECUPERATION DU NOMBRE DE VARIABLES INTERNES PAR POINTS DE GAUSS :
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
-    lgpg1 = max(jtab(6),1)*jtab(7)
-    lgpg = lgpg1
+! - Select objects to construct from option name
 !
-! POINTEURS POUR LA LECTURE DU DEPL ET L'ECRITURE DES VIP
-    if (resi) then
-        call jevech('PDEPLPR', 'L', iddep)
-        call jevech('PVARIPR', 'E', ivarip)
-        call jevech('PCODRET', 'E', icoret)
-    else
-        iddep=1
-        ivarip=1
-        icoret=1
+    call behaviourOption(option, zk16(icomp),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    rela_comp = zk16(icomp-1+RELA_NAME)
+!
+! - Get output fields
+!
+    if (lMatr) then
+        matsym = .true.
+        if (rela_comp .eq. 'JOINT_MECA_RUPT') matsym = .false.
+        if (rela_comp .eq. 'JOINT_MECA_FROT') matsym = .false.
     endif
-!
+    if (lVari) then
+        call jevech('PVARIPR', 'E', ivarip)
+    endif
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', icontp)
+    endif
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivect)
+    endif
+
 !     CONTRAINTE -, RANGEE DANS UN TABLEAU (6,NPG)
-    call r8inir(6*2, 0.d0, sigmo, 1)
+    sigmo = 0.d0
     sigmo(1,1) = zr(icontm)
     sigmo(2,1) = zr(icontm+1)
     sigmo(1,2) = zr(icontm+2)
@@ -101,52 +133,53 @@ subroutine te0201(option, nomte)
     call nmfi2d(npg, lgpg, zi(imater), option, zr(igeom),&
                 zr(idepm), zr(iddep), sigmo, sigma, fint,&
                 mat, zr(ivarim), zr(ivarip), zr(iinstm), zr(iinstp),&
-                zr(icarcr), zk16(icomp), typmod, zi(icoret))
+                zr(icarcr), zk16(icomp), typmod, lMatr, lVect, lSigm,&
+                codret)
 !
-! STOCKAGE DE LA MATRICE
-    if (rigi) then
+! - Save matrix
 !
-        matsym = .true.
-        if (zk16(icomp)(1:15) .eq. 'JOINT_MECA_RUPT') matsym = .false.
-        if (zk16(icomp)(1:15) .eq. 'JOINT_MECA_FROT') matsym = .false.
-!
+    if (lMatr) then
         if (matsym) then
-!
             call jevech('PMATUUR', 'E', imatr)
             kk = 0
-            do 10 i = 1, 8
-                do 15 j = 1, i
+            do i = 1, 8
+                do j = 1, i
                     zr(imatr+kk) = mat(i,j)
                     kk = kk+1
- 15             continue
- 10         continue
-!
+                end do
+            end do
         else
-!
             call jevech('PMATUNS', 'E', imatr)
             kk = 0
-            do 11 i = 1, 8
-                do 16 j = 1, 8
+            do i = 1, 8
+                do j = 1, 8
                     zr(imatr+kk) = mat(i,j)
                     kk = kk+1
- 16             continue
- 11         continue
-!
+                end do
+            end do
         endif
-!
     endif
 !
-! STOCKAGE DE LA CONTRAINTE ET DES FORCES INTERNES
-    if (resi) then
+! - Save stresses
 !
-        call jevech('PCONTPR', 'E', icontp)
-        call jevech('PVECTUR', 'E', ivect)
+    if (lSigm) then
         zr(icontp) = sigma(1,1)
         zr(icontp+1) = sigma(2,1)
         zr(icontp+2) = sigma(1,2)
         zr(icontp+3) = sigma(2,2)
-        call dcopy(8, fint, 1, zr(ivect), 1)
+    endif
 !
+! - Save internal forces
+!
+    if (lVect) then
+        call dcopy(8, fint, 1, zr(ivect), 1)
+    endif
+!
+! - Save return code
+!
+    if (lSigm) then
+        call jevech('PCODRET', 'E', icoret)
+        zi(icoret) = codret
     endif
 !
 end subroutine

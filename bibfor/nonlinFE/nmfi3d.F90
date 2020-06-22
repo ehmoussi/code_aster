@@ -1,6 +1,6 @@
 ! --------------------------------------------------------------------
 ! Copyright (C) 2007 NECS - BRUNO ZUBER   WWW.NECS.FR
-! Copyright (C) 2007 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 2007 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,9 @@
 subroutine nmfi3d(nno, nddl, npg, lgpg, wref,&
                   vff, dfde, mate, option, geom,&
                   deplm, ddepl, sigm, sigp, fint,&
-                  ktan, vim, vip, crit, compor,&
-                  matsym, coopg, tm, tp, codret)
+                  ktan, vim, vip, carcri, compor,&
+                  matsym, coopg, tm, tp, lMatr, lVect, lSigm,&
+                  codret)
 !
 use Behaviour_type
 use Behaviour_module
@@ -31,18 +32,21 @@ implicit none
 !
 #include "asterf_types.h"
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/nmfici.h"
 #include "asterfort/r8inir.h"
 #include "blas/ddot.h"
-    integer :: nno, nddl, npg, lgpg, mate, codret
-    real(kind=8) :: wref(npg), vff(nno, npg), dfde(2, nno, npg), crit(*)
-    real(kind=8) :: geom(nddl), deplm(nddl), ddepl(nddl), tm, tp
-    real(kind=8) :: fint(nddl), ktan(*), coopg(4, npg)
-    real(kind=8) :: sigm(3, npg), sigp(3, npg), vim(lgpg, npg), vip(lgpg, npg)
-    character(len=16) :: option, compor(*)
-    aster_logical :: matsym
+!
+integer :: nno, nddl, npg, lgpg, mate, codret
+real(kind=8) :: wref(npg), vff(nno, npg), dfde(2, nno, npg), carcri(*)
+real(kind=8) :: geom(nddl), deplm(nddl), ddepl(nddl), tm, tp
+real(kind=8) :: fint(nddl), ktan(*), coopg(4, npg)
+real(kind=8) :: sigm(3, npg), sigp(3, npg), vim(lgpg, npg), vip(lgpg, npg)
+character(len=16) :: option, compor(*)
+aster_logical :: matsym
+aster_logical, intent(in) :: lMatr, lVect, lSigm
 !
 !-----------------------------------------------------------------------
 !  OPTIONS DE MECANIQUE NON LINEAIRE POUR LES JOINTS 3D (TE0206)
@@ -70,41 +74,42 @@ implicit none
 ! IN  MATSYM INFORMATION SUR LA MATRICE TANGENTE : SYMETRIQUE OU PAS
 ! IN  COOPG  COORDONNEES GEOMETRIQUES DES PG + POIDS
 ! OUT CODRET CODE RETOUR DE L'INTEGRATION
-!-----------------------------------------------------------------------
-    aster_logical :: resi, rigi
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: code(9), ni, mj, kk, p, q, kpg, ibid, n
     real(kind=8) :: b(3, 60), sigmo(6), sigma(6)
     real(kind=8) :: sum(3), dsu(3), dsidep(6, 6), poids
     real(kind=8) :: angmas(3)
     type(Behaviour_Integ) :: BEHinteg
+    character(len=8), parameter :: typmod(2)=(/'3D      ','ELEMJOIN'/)
 !
-    character(len=8) :: typmod(2)
-    data typmod /'3D','ELEMJOIN'/
-!-----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    resi = option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA'
-    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+    sum = 0.d0
+    dsu = 0.d0
+    codret = 0
 !
 ! - Initialisation of behaviour datastructure
 !
     call behaviourInit(BEHinteg)
 !
-! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
-! --- INITIALISE A R8VIDE (ON NE S'EN SERT PAS)
-    call r8inir(3, r8vide(), angmas, 1)
+! - Don't use orientation (MASSIF in AFFE_CARA_ELEM)
 !
-    call r8inir(3, 0.d0, sum, 1)
-    call r8inir(3, 0.d0, dsu, 1)
+    angmas = r8vide()
 !
-    if (resi) call r8inir(nddl, 0.d0, fint, 1)
-!
-    if (rigi) then
+    if (lVect) then
+        call r8inir(nddl, 0.d0, fint, 1)
+    endif
+    if (lMatr) then
         if (matsym) then
             call r8inir((nddl*(nddl+1))/2, 0.d0, ktan, 1)
         else
             call r8inir(nddl*nddl, 0.d0, ktan, 1)
         endif
     endif
+!
+! - Loop on Gauss points
 !
     do kpg = 1, npg
 !
@@ -120,19 +125,14 @@ implicit none
         sum(1) = ddot(nddl,b(1,1),3,deplm,1)
         sum(2) = ddot(nddl,b(2,1),3,deplm,1)
         sum(3) = ddot(nddl,b(3,1),3,deplm,1)
-!
-        if (resi) then
+        if (lVect) then
             dsu(1) = ddot(nddl,b(1,1),3,ddepl,1)
             dsu(2) = ddot(nddl,b(2,1),3,ddepl,1)
             dsu(3) = ddot(nddl,b(3,1),3,ddepl,1)
         endif
-!
-! -   APPEL A LA LOI DE COMPORTEMENT
-!
+! ----- Compute behaviour
         code(kpg) = 0
-!
-!       CONTRAINTES -
-        call r8inir(6, 0.d0, sigmo, 1)
+        sigmo     = 0.d0
         do n = 1, 3
             sigmo(n) = sigm(n,kpg)
         end do
@@ -141,30 +141,26 @@ implicit none
 !
         call nmcomp(BEHinteg,&
                     'RIGI', kpg, 1, 3, typmod,&
-                    mate, compor, crit, tm, tp,&
+                    mate, compor, carcri, tm, tp,&
                     3, sum, dsu, 6, sigmo,&
                     vim(1, kpg), option, angmas, &
                     sigma, vip(1, kpg), 36, dsidep, ibid)
-!
-        if (resi) then
-!
-!         CONTRAINTES +
+! ----- Stresses
+        if (lSigm) then
             do n = 1, 3
                 sigp(n,kpg) = sigma(n)
             end do
-!         FORCES INTERIEURES
+        endif
+! ----- Internal forces
+        if (lVect) then
+            ASSERT(lSigm)
             do ni = 1, nddl
                 fint(ni) = fint(ni) + poids*ddot(3,b(1,ni),1,sigma,1)
             end do
         endif
-!
-! MATRICE TANGENTE
-!
-        if (rigi) then
-!
+! ----- Rigidity matrix
+        if (lMatr) then
             if (matsym) then
-!
-!           STOCKAGE SYMETRIQUE
                 kk = 0
                 do ni = 1, nddl
                     do mj = 1, ni
@@ -176,10 +172,7 @@ implicit none
                         end do
                     end do
                 end do
-!
             else
-!
-!           STOCKAGE COMPLET
                 kk = 0
                 do ni = 1, nddl
                     do mj = 1, nddl
@@ -195,5 +188,6 @@ implicit none
         endif
     end do
 !
-    if (resi) call codere(code, npg, codret)
+    call codere(code, npg, codret)
+!
 end subroutine
