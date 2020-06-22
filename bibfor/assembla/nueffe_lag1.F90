@@ -115,7 +115,7 @@ implicit none
     integer :: i, iad, ianueq, icddlb
     integer :: iconx1, iconx2, iddlag, iderli
     integer :: idnocm, idprn1, idprn2, idref
-    integer :: iec, iel, iexi1, ifm, igr, ilag, ilag2, n0, n1, n2, nn, n22
+    integer :: iec, iel, iexi1, ifm, igr, ilag, n0, n1, n2, nn, n22
     integer :: ili, inewn, ino, inum21
     integer :: inuno2, ioldn, iprnm, ire, iret
     integer :: j, jprno, k, l
@@ -147,13 +147,11 @@ implicit none
 !              SI ILAG LAGRANGE DE BLOCAGE
 !              DSCLAG(3*(ILAG-1)+1)= +NUM DU NOEUD PH. BLOQUE
 !              DSCLAG(3*(ILAG-1)+2)= -NUM DU DDL DU NOEUD PH. BLOQUE
-!              DSCLAG(3*(ILAG-1)+3)= +1 SI 1ER LAGR.
-!                                    +2 SI 2EME LAGR.
+!              DSCLAG(3*(ILAG-1)+3)= +1 (LAGR).
 !              SI ILAG LAGRANGE DE LIAISON
 !              DSCLAG(3*(ILAG-1)+1)= 0
 !              DSCLAG(3*(ILAG-1)+2)= 0
-!              DSCLAG(3*(ILAG-1)+3)= +1 SI 1ER LAGR.
-!                                    +2 SI 2EME LAGR.
+!              DSCLAG(3*(ILAG-1)+3)= +1 (LAGR).
 !-----------------------------------------------------------------------
 !     FONCTIONS LOCALES D'ACCES AUX DIFFERENTS CHAMPS DES
 !     S.D. MANIPULEES DANS LE SOUS PROGRAMME
@@ -391,28 +389,30 @@ implicit none
 ! ---    NUMEROTATION LOCALE AU LIGREL EN SON NUMERO DANS LA
 ! ---    NUMEROTATION GLOBALE :
 !        --------------------
+                        n22 = -n2
                         n2 = -n2
                         n2 = zi(inuno2+ili-1) + n2 - 1
-                        ilag2 = n2 - nb_node
+                        ilag = n2 - nb_node
 
 ! ---    RECUPERATION DU NOEUD PHYSIQUE DE NUMERO LE PLUS GRAND
-! ---    LIE AU SECOND LAGRANGE PAR LE TABLEAU DERLI, CETTE
+! ---    LIE AU LAGRANGE PAR LE TABLEAU DERLI, CETTE
 ! ---    VALEUR N'EST DIFFERENTE DE 0 QUE S'IL S'AGIT D'UNE
 ! ---    RELATION LINEAIRE :
 !        -----------------
                         n0 = zi(iderli+n2)
 !
                         if (n0 .gt. 0) then
-                            zi(iddlag+2* (ilag2-1)) = 0
-                            zi(iddlag+2* (ilag2-1)+1) = 0
+                            zi(iddlag+2* (ilag-1)) = 0
+                            zi(iddlag+2* (ilag-1)+1) = 0
                         else
-                            zi(iddlag+2* (ilag2-1)) = n1
-                            zi(iddlag+2* (ilag2-1)+1) = -1
+                            zi(iddlag+2* (ilag-1)) = n1
+                            zi(iddlag+2* (ilag-1)+1) = -1
                             zi(iderli+n2) = n1
                         endif
+!
                         if ((lparallel_mesh) .and. (lagr_mult(n22).gt.1)) then
-                            zi(iddlag+2* (ilag2-1)) = 0
-                            zi(iddlag+2* (ilag2-1)+1) = 0
+                            zi(iddlag+2* (ilag-1)) = 0
+                            zi(iddlag+2* (ilag-1)+1) = 0
                         endif
                     endif
                 endif

@@ -36,7 +36,7 @@ charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dy,
 charCine.addImposedMechanicalDOFOnNodes(code_aster.PhysicalQuantityComponent.Dz, 0., "COTE_B")
 charCine.build()
 
-charMeca = AFFE_CHAR_MECA(MODELE=monModel,
+charMeca = AFFE_CHAR_MECA(MODELE=monModel, DOUBLE_LAGRANGE="NON",
                            DDL_IMPO=_F(GROUP_NO=("COTE_H"),
                                        DZ=1.0,),)
 
