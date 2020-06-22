@@ -22,7 +22,7 @@ subroutine amumph(action, solvez, matasz, rsolu, csolu,&
 !
     implicit none
 !--------------------------------------------------------------
-! BUT : ROUTINE D'INTERFACE ENTRE LE CODE_ASTER ET LA BIBLIOTHEQUE
+! BUT : ROUTINE D'INTERFACE ENTRE CODE_ASTER ET LA BIBLIOTHEQUE
 !       MUMPS DE RESOLUTION DE SYSTEMES LINEAIRES.
 !       A UNE MATRICE ASTER CARACTERISEE PAR SON NOM (MATSZ) PEUT
 !       CORRESPONDRE PLUSIEURS INSTANCES MUMPS SUIVANT:

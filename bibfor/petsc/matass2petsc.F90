@@ -40,7 +40,7 @@ use petsc_data_module
 #include "asterfort/jedema.h"
 #include "asterfort/jedetr.h"
 #include "asterfort/jelira.h"
-#include "asterfort/crsmsp.h"
+#include "asterfort/crsvfm.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/jeveuo.h"
@@ -52,10 +52,10 @@ use petsc_data_module
 ! arguments
     character(len=*), intent(in) :: matasz
 #ifdef _HAVE_PETSC
-        PetscErrorCode, intent(out) :: iret
-        Mat, intent(out) :: petscMatz
+    PetscErrorCode, intent(out) :: iret
+    Mat, intent(out) :: petscMatz
 #else
-        integer, intent(out) :: petscMatz, iret
+    integer, intent(out) :: petscMatz, iret
 #endif
 !
 !-----------------------------------------------------------------------
@@ -76,7 +76,7 @@ use petsc_data_module
     integer :: iprem, k, l, nglo, kdeb, jnequ, ierror
     integer ::  kptsc, ibid
     integer :: np
-    real(kind=8) :: r8
+    real(kind=8) :: r8, rbid
 !
     logical :: bool
     character(len=24), dimension(:), pointer :: slvk  => null()
@@ -93,10 +93,11 @@ use petsc_data_module
     call jemarq()
 !
     matas = matasz
+    rbid=0.d0
 
 !   -- Creation d'un solveur bidon
     solvbd='&&MAT2PET'
-    call crsmsp(solvbd, matas, 50,'IN_CORE')
+    call crsvfm(solvbd, matas,'D', rank='L',pcpiv=50, usersmz='IN_CORE', blreps=rbid, renumz=' ')
     call jeveuo(solvbd//'.SLVK', 'L', vk24=slvk)
     slvk(2)='SANS'
 
@@ -113,6 +114,7 @@ use petsc_data_module
                 0, ibid, ierror)
 !   Destruction du solveur bidon
     call detrsd('SOLVEUR', solvbd)
+    iret = 0 
 
 999 continue
     call jedema()

@@ -23,7 +23,7 @@ from . import *
 class sd_solveur(AsBase):
     nomj = SDNom(fin=19)
     SLVK = AsVK24(SDNom(debut=19), lonmax=14, )
-    SLVR = AsVR(SDNom(debut=19), lonmax=4, )
+    SLVR = AsVR(SDNom(debut=19), lonmax=5, )
     SLVI = AsVI(SDNom(debut=19), lonmax=8, )
 
     def check_SLVK(self, checker):
@@ -65,7 +65,7 @@ class sd_solveur(AsBase):
             assert slvk[10] in ('XXXX')
             assert slvk[11] in ('XXXX')
         elif method == 'GCPC':
-            assert slvk[1] in ('LDLT_INC', 'LDLT_SP', 'SANS')
+            assert slvk[1] in ('LDLT_INC', 'LDLT_SP', 'LDLT_DP', 'SANS')
             assert slvk[3] in ('SANS','RCMK')
             assert slvk[5] in ('XXXX')
             assert slvk[6] in ('XXXX')
@@ -75,7 +75,7 @@ class sd_solveur(AsBase):
             assert slvk[11] in ('XXXX')
         elif method == 'PETSC':
             assert slvk[1] in (
-                'LDLT_INC', 'LDLT_SP', 'JACOBI', 'SOR', 'ML', 'BOOMER', 'SANS')
+                'LDLT_INC', 'LDLT_SP', 'LDLT_DP', 'JACOBI', 'SOR', 'ML', 'BOOMER', 'SANS')
             assert slvk[3] in ('SANS', 'RCMK')
             assert slvk[5] in ('CG', 'CR', 'GMRES', 'GCR')
             assert slvk[6] in ('XXXX')

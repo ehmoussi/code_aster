@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,8 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine crsvgc(motfac, solveu, istop, nprec, &
-                  epsmat, mixpre, kellag, kxfem)
+subroutine crsvgc(motfac, solveu, kellag )
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -28,30 +27,22 @@ subroutine crsvgc(motfac, solveu, istop, nprec, &
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
 #include "asterfort/jeveuo.h"
-!
-    integer :: istop, nprec
-    real(kind=8) :: epsmat
-    character(len=3) :: mixpre, kellag
-    character(len=8) :: kxfem
+
+    character(len=3) :: kellag
     character(len=16) :: motfac
     character(len=19) :: solveu
 !  BUT : REMPLISSAGE SD_SOLVEUR GCPC
 !
 ! IN K19 SOLVEU  : NOM DU SOLVEUR DONNE EN ENTREE
 ! OUT    SOLVEU  : LE SOLVEUR EST CREE ET INSTANCIE
-! IN  IN ISTOP   : PARAMETRE LIE AUX MOT-CLE STOP_SINGULIER
-! IN  IN NPREC   :                           NPREC
-! IN  R8 EPSMAT  :                           FILTRAGE_MATRICE
-! IN  K3 MIXPRE  :                           MIXER_PRECISION
-! IN  K3 KELLAG  :                           ELIM_LAGR
-! IN  K8 KXFEM   :                           PRE_COND_XFEM
+! IN  K3 KELLAG  : ELIM_LAGR
 ! ----------------------------------------------------------
 !
 !
 !
 !
     integer :: ibid,    nmaxit, niremp, reacpr, pcpiv
-    real(kind=8) :: resire
+    real(kind=8) :: resire, blreps
     character(len=8) :: precon
     character(len=19) :: solvbd
     character(len=24) :: usersm
@@ -86,12 +77,14 @@ subroutine crsvgc(motfac, solveu, istop, nprec, &
     if (precon .eq. 'LDLT_INC') then
         call getvis(motfac, 'NIVE_REMPLISSAGE', iocc=1, scal=niremp, nbret=ibid)
         ASSERT(ibid.eq.1)
-    else if (precon.eq.'LDLT_SP') then
+    else if ((precon.eq.'LDLT_SP').or.(precon.eq.'LDLT_DP')) then
         call getvis(motfac, 'REAC_PRECOND', iocc=1, scal=reacpr, nbret=ibid)
         ASSERT(ibid.eq.1)
         call getvis(motfac, 'PCENT_PIVOT', iocc=1, scal=pcpiv, nbret=ibid)
         ASSERT(ibid.eq.1)
         call getvtx(motfac, 'GESTION_MEMOIRE', iocc=1, scal=usersm, nbret=ibid)
+        ASSERT(ibid.eq.1)
+        call getvr8(motfac, 'LOW_RANK_SEUIL', iocc=1, scal=blreps, nbret=ibid)
         ASSERT(ibid.eq.1)
 !
 !       NOM DE SD SOLVEUR BIDON QUI SERA PASSEE A MUMPS
@@ -129,7 +122,8 @@ subroutine crsvgc(motfac, solveu, istop, nprec, &
     slvr(1) = resire
     slvr(2) = resire
     slvr(3) = 0.d0
-    slvr(4) = 0.d0
+    slvr(4) = blreps
+    slvr(5) = 0.d0
 !
     slvi(1) = -9999
     slvi(2) = nmaxit

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 subroutine crsvpe(motfac, solveu,  kellag )
     implicit none
 #include "jeveux.h"
+#include "asterc/r8prem.h"
 #include "asterfort/assert.h"
 #include "asterfort/gcncon.h"
 #include "asterfort/getvis.h"
@@ -35,14 +36,12 @@ subroutine crsvpe(motfac, solveu,  kellag )
 !
 ! IN K19 SOLVEU  : NOM DU SOLVEUR DONNE EN ENTREE
 ! OUT    SOLVEU  : LE SOLVEUR EST CREE ET INSTANCIE
-! IN  K3 KELLAG  :                           ELIM_LAGR
+! IN  K3 KELLAG  : ELIM_LAGR
 ! ----------------------------------------------------------
 !
-!
-!
-!
     integer :: ibid, niremp, nmaxit, reacpr, pcpiv
-    real(kind=8) :: fillin, epsmax, resipc
+    real(kind=8) :: fillin, epsmax, resipc, blreps
+    character(len=8) :: kacmum
     character(len=24) :: kalgo, kprec, renum
     character(len=19) :: solvbd
     character(len=24) :: usersm
@@ -54,7 +53,7 @@ subroutine crsvpe(motfac, solveu,  kellag )
     call jemarq()
 !
 ! --- LECTURES PARAMETRES DEDIES AU SOLVEUR
-!     PARAMETRES FORCEMMENT PRESENTS
+!     PARAMETRES FORCEMENT PRESENTS
     call getvtx(motfac, 'ALGORITHME', iocc=1, scal=kalgo, nbret=ibid)
     ASSERT(ibid.eq.1)
     call getvtx(motfac, 'PRE_COND', iocc=1, scal=kprec, nbret=ibid)
@@ -68,6 +67,7 @@ subroutine crsvpe(motfac, solveu,  kellag )
     call getvr8(motfac, 'RESI_RELA_PC', iocc=1, scal=resipc, nbret=ibid)
     ASSERT(ibid.eq.1)
 !
+!
 !     INITIALISATION DES PARAMETRES OPTIONNELS
     niremp = 0
     fillin = 1.d0
@@ -75,48 +75,59 @@ subroutine crsvpe(motfac, solveu,  kellag )
     pcpiv = -9999
     solvbd = ' '
     usersm = 'XXXX'
+    blreps = 0.d0
+    kacmum = 'XXXX'
 !
-    if (kprec .eq. 'LDLT_INC') then
+    select case (kprec)
+    case('LDLT_INC')
         call getvis(motfac, 'NIVE_REMPLISSAGE', iocc=1, scal=niremp, nbret=ibid)
         ASSERT(ibid.eq.1)
         call getvr8(motfac, 'REMPLISSAGE', iocc=1, scal=fillin, nbret=ibid)
         ASSERT(ibid.eq.1)
 
-!   PARAMETRES OPTIONNELS LIES AU PRECONDITIONNEUR SP
-    else if (kprec.eq.'LDLT_SP') then
+!   PARAMETRES OPTIONNELS LIES AU PRECONDITIONNEUR LDLT_SP/LDLT_DP
+    case ('LDLT_SP','LDLT_DP') 
         call getvis(motfac, 'REAC_PRECOND', iocc=1, scal=reacpr, nbret=ibid)
         ASSERT(ibid.eq.1)
         call getvis(motfac, 'PCENT_PIVOT', iocc=1, scal=pcpiv, nbret=ibid)
         ASSERT(ibid.eq.1)
         call getvtx(motfac, 'GESTION_MEMOIRE', iocc=1, scal=usersm, nbret=ibid)
         ASSERT(ibid.eq.1)
+        
 !       NOM DE SD SOLVEUR BIDON QUI SERA PASSEE A MUMPS
 !       POUR LE PRECONDITIONNEMENT
         call gcncon('.', solvbd)
-!       par defaut : nmaxit=100 si LDLT_SP
-        if (nmaxit.eq.0) nmaxit=100
+! 
+        if (nmaxit==0) nmaxit=100
+        if (( kprec.eq.'LDLT_SP' ).or.( kprec .eq. 'LDLT_DP')) then
+            call getvr8(motfac, 'LOW_RANK_SEUIL', iocc=1, scal=blreps, nbret=ibid)
+            ASSERT(ibid.eq.1)
+            if ( abs(blreps) < r8prem() ) then 
+               kacmum = 'FR+'
+            else 
+               kacmum='LR+'
+            endif 
+        endif
+!
 
 !   PARAMETRES OPTIONNELS LIES AU MULTIGRILLE ALGEBRIQUE ML
-    else if (kprec.eq.'ML') then
+    case ('ML') 
 
 !   PARAMETRES OPTIONNELS LIES AU MULTIGRILLE ALGEBRIQUE BOOMERAMG
-    else if (kprec.eq.'BOOMER') then
+    case ('BOOMER')
 !
 !   PARAMETRES OPTIONNELS LIES AU MULTIGRILLE ALGEBRIQUE BOOMERAMG
-    else if (kprec.eq.'GAMG') then
+    case ('GAMG')
 !   PARAMETRES OPTIONNELS LIES AU PRECONDITIONNEUR LAGRANGIEN AUGMENTE
-    else if (kprec.eq.'BLOC_LAGR') then
+    case ('BLOC_LAGR')
 
 !   PAS DE PARAMETRES POUR LES AUTRES PRECONDITIONNEURS
-    else if (kprec.eq.'JACOBI' .or.&
-     &       kprec.eq.'SOR'    .or.&
-     &       kprec.eq.'SANS'    .or.&
-     &       kprec.eq.'FIELDSPLIT') then
+    case( 'JACOBI', 'SOR', 'SANS','FIELDSPLIT') 
 !     RIEN DE PARTICULIER...
 !
-    else
+    case default
         ASSERT(.false.)
-    endif
+    end select
 !
 ! --- ON REMPLIT LA SD_SOLVEUR
     call jeveuo(solveu//'.SLVK', 'E', vk24=slvk)
@@ -127,7 +138,7 @@ subroutine crsvpe(motfac, solveu,  kellag )
     slvk(2) = kprec
     slvk(3) = solvbd
     slvk(4) = renum
-    slvk(5) = 'XXXX'
+    slvk(5) = kacmum
     slvk(6) = kalgo
     slvk(7) = 'XXXX'
     slvk(8) = 'XXXX'
@@ -146,7 +157,8 @@ subroutine crsvpe(motfac, solveu,  kellag )
     slvr(1) = epsmax
     slvr(2) = epsmax
     slvr(3) = fillin
-    slvr(4) = resipc
+    slvr(4) = blreps
+    slvr(5) = resipc
 !
     slvi(1) = -9999
     slvi(2) = nmaxit

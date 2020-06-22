@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,15 +19,9 @@
 !
 !
           interface 
-            subroutine crsvgc(motfac,solveu,istop,nprec,epsmat,mixpre,  &
-     &kellag,kxfem)
+            subroutine crsvgc(motfac,solveu, kellag )
               character(len=16) :: motfac
               character(len=19) :: solveu
-              integer :: istop
-              integer :: nprec
-              real(kind=8) :: epsmat
-              character(len=3) :: mixpre
               character(len=3) :: kellag
-              character(len=8) :: kxfem
             end subroutine crsvgc
           end interface 

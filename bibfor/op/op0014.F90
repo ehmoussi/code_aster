@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ subroutine op0014()
 
 #include "jeveux.h"
 #include "asterc/getres.h"
+#include "asterc/r8prem.h"
 #include "asterfort/apetsc.h"
 #include "asterfort/assert.h"
 #include "asterfort/copisd.h"
@@ -164,19 +165,26 @@ subroutine op0014()
             call jeveuo(mfac//'.REFA', 'E', vk24=refa)
             refa(7)=solveu
 
-        else if (precon.eq.'LDLT_SP') then
+        else if ((precon.eq.'LDLT_SP').or.(precon.eq.'LDLT_DP')) then
 !           -- nom du solveur pour mumps simple precision
             call gcncon('.', solvbd)
             zk24(jslvk-1+3) = solvbd
 
             call getvis(' ', 'REAC_PRECOND', scal=reacpr, nbret=ibid)
             call getvis(' ', 'PCENT_PIVOT', scal=pcpiv, nbret=ibid)
+            call getvtx(' ', 'GESTION_MEMOIRE', scal=usersm, nbret=ibid)
+            call getvr8(' ', 'LOW_RANK_SEUIL', iocc=1, scal=blreps, nbret=ibid)
+            if ( abs(blreps) < r8prem()) then
+               kacmum='FR+'
+            else
+               kacmum='LR+'
+            endif
             zi(jslvi-1+5) = 0
             zi(jslvi-1+6) = reacpr
             zi(jslvi-1+7) = pcpiv
-!
-            call getvtx(' ', 'GESTION_MEMOIRE', scal=usersm, nbret=ibid)
+            zk24(jslvk-1+5) = kacmum
             zk24(jslvk-1+9)=usersm
+            zr(jslvr-1+4) = blreps
 
 !           -- appel a la construction du preconditionneur
             call pcmump(mass, solveu, iret)
@@ -234,18 +242,31 @@ subroutine op0014()
             zr(jslvr-1+3) = fillin
             zi(jslvi-1+4) = niremp
 
-        else if (precon.eq.'LDLT_SP') then
-!           -- nom du solveur pour mumps simple precision
+        else if ((precon.eq.'LDLT_SP').or.(precon.eq.'LDLT_DP')) then
+!           -- nom du solveur pour mumps simple precision/low_rank
             call gcncon('.', solvbd)
             zk24(jslvk-1+3) = solvbd
-
+            kacmum='XXXX'
+            blreps=0.d0
             call getvis(' ', 'REAC_PRECOND', scal=reacpr, nbret=ibid)
+            ASSERT(ibid.eq.1)
             call getvis(' ', 'PCENT_PIVOT', scal=pcpiv, nbret=ibid)
+            ASSERT(ibid.eq.1)
             call getvtx(' ', 'GESTION_MEMOIRE', scal=usersm)
+            ASSERT(ibid.eq.1)
+            call getvr8(' ', 'LOW_RANK_SEUIL', iocc=1, scal=blreps, nbret=ibid)
+            ASSERT(ibid.eq.1)
+            if ( abs(blreps) < r8prem()) then
+               kacmum='FR+'
+            else
+               kacmum='LR+'
+            endif
             zi(jslvi-1+5) = 0
             zi(jslvi-1+6) = reacpr
             zi(jslvi-1+7) = pcpiv
+            zk24(jslvk-1+5) = kacmum
             zk24(jslvk-1+9)=usersm
+            zr(jslvr-1+4) = blreps
         endif
 
         call apetsc('DETR_MAT', ' ', mfac, [0.d0], ' ',&

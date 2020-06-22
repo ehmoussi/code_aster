@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -114,5 +114,42 @@ TEST_RESU(RESU=(_F(GROUP_NO='C',
                    PRECISION=1.0000000000000001E-08,),
                 ),
           )
+#  3 : GMRES + LDLT_DP 
+# --------------------
+RESU3=STAT_NON_LINE(MODELE=MO,
+                   SOLVEUR=_F(METHODE='PETSC',
+                              ALGORITHME='GMRES',
+                              PCENT_PIVOT=170,
+                              PRE_COND='LDLT_DP',
+                              RENUM='PARMETIS', 
+                              REAC_PRECOND=6, 
+                              RESI_RELA=1.E-14,
+                              ),
+                   CHAM_MATER=CH_MATER, INFO=1,
+                   EXCIT=(  _F(CHARGE=SYMETRI2)),
+                   COMPORTEMENT=_F(RELATION='ELAS'),
+                   INCREMENT=_F(LIST_INST=INSTANTS),
+                   NEWTON=_F(REAC_ITER=1),
+                   ARCHIVAGE=_F(LIST_INST=INSTANTS));
 
+TEST_RESU(RESU=(_F(GROUP_NO='C',
+                   INST=1.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=RESU3,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   VALE_CALC=1.000000000,
+                   VALE_REFE=1.0,
+                   PRECISION=1.0000000000000001E-08,),
+                _F(GROUP_NO='C',
+                   INST=1.0,
+                   REFERENCE='ANALYTIQUE',
+                   RESULTAT=RESU3,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   VALE_CALC=2.000000000,
+                   VALE_REFE=2.0,
+                   PRECISION=1.0000000000000001E-08,),
+                ),
+          )
 FIN();

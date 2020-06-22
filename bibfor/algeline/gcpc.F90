@@ -58,9 +58,10 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
 ! DECLARATION PARAMETRES D'APPELS
 #include "jeveux.h"
 #include "asterc/matfpe.h"
+#include "asterc/r8prem.h"
 #include "asterfort/amumph.h"
 #include "asterfort/assert.h"
-#include "asterfort/crsmsp.h"
+#include "asterfort/crsvfm.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/gcax.h"
 #include "asterfort/gcldm1.h"
@@ -88,12 +89,14 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
 
 ! -----------------------------------------------------------------
     real(kind=8) :: zero, bnorm, anorm, epsix, anormx, rrri, gama, rrrim1
-    real(kind=8) :: paraaf, anorxx, rau, valr(2)
+    real(kind=8) :: paraaf, anorxx, rau, valr(2), blreps
     integer :: ifm, niv, jcri, jcrr, jcrk, iter, ier, vali, pcpiv
-    character(len=24) :: precon, solvbd, usersm
+    character(len=24) :: precon, solvbd, usersm, renum
+    character :: prec, rank
     complex(kind=8) :: cbid
     integer, pointer :: slvi(:) => null()
     character(len=24), pointer :: slvk(:) => null()
+    real(kind=8), pointer :: slvr(:) => null()
     real(kind=8), pointer :: xtrav(:) => null()
     real(kind=8), pointer :: ytrav(:) => null()
 ! -----------------------------------------------------------------
@@ -119,19 +122,30 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
     ASSERT(irep.eq.0 .or. irep.eq.1)
 !
 !-----RECUPERATION DU PRECONDITIONNEUR
-!  -- CREATION DE LA SD SOLVEUR MUMPS SIMPLE PRECISION
+!  -- CREATION DE LA SD SOLVEUR MUMPS SIMPLE PRECISION/LOW_RANK
 !  -- (A DETRUIRE A LA SORTIE)
     call jeveuo(solveu//'.SLVK', 'L', vk24=slvk)
     call jeveuo(solveu//'.SLVI', 'L', vi=slvi)
+    call jeveuo(solveu//'.SLVR', 'L', vr=slvr)
     precon=slvk(2)
     usersm=slvk(9)
     pcpiv=slvi(7)
-    if (precon .eq. 'LDLT_SP') then
-        solvbd = slvk(3)
-        call crsmsp(solvbd, matas, pcpiv, usersm )
+    blreps=slvr(4) 
+    solvbd = slvk(3)
+    renum = slvk(4)
+    if (precon == 'LDLT_SP') then
+        prec='S'
+    else if ( precon == 'LDLT_DP') then 
+        prec='D'
     endif
-
-
+    if ( abs(blreps) < r8prem() ) then 
+       rank='F'
+    else
+       rank='L'
+    endif
+    if (( precon == 'LDLT_SP' ).or.( precon == 'LDLT_DP' )) then 
+        call crsvfm(solvbd, matas,prec, rank, pcpiv, usersm, blreps, renum )
+    endif
 !-----Pour tenir compte de la renumerotation de la matrice de preconditionnement (LDLT):
     if (precon .eq. 'LDLT_INC') then
         AS_ALLOCATE(vr=xtrav, size=m)
@@ -194,7 +208,7 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
 !                                                  ZK <--- RR()
         if (precon .eq. 'LDLT_INC') then
             call gcldm1(m, inpc, ippc, acpc, r, rr, perm, xtrav, ytrav)
-        else if (precon.eq.'LDLT_SP') then
+        else if ((precon.eq.'LDLT_SP').or.(precon.eq.'LDLT_DP')) then
           call dcopy(m, r, 1, rr, 1)
 !         ON PASSE ' ' AU LIEU DE VCINE, DEJA PRIS EN COMPTE DANS RESGRA
             call amumph('RESOUD', solvbd, matas, rr, [cbid],&
@@ -265,7 +279,7 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
         select case (precon)
         case('LDLT_INC')
             call utmess('F', 'ALGELINE4_3', si=vali, nr=2, valr=valr)
-        case('LDLT_SP')
+        case('LDLT_SP', 'LDLT_DP')
             call utmess('F', 'ALGELINE4_6', si=vali, nr=2, valr=valr)
         case default
             ASSERT(.false.)
@@ -296,7 +310,7 @@ subroutine gcpc(m, in, ip, ac, inpc, perm,&
 80  continue
 !
 ! --  DESTRUCTION DE LA SD SOLVEUR MUMPS SIMPLE PRECISION
-    if (precon .eq. 'LDLT_SP') then
+    if ((precon .eq. 'LDLT_SP').or.(precon.eq.'LDLT_DP')) then
         call detrsd('SOLVEUR', solvbd)
 !       ON STOCKE LE NOMBRE D'ITERATIONS DU GCPC
         call jeveuo(solveu//'.SLVI', 'E', vi=slvi)

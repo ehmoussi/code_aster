@@ -267,7 +267,6 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
     _BlocMU['TYPE_RESOL'] = SIMP(
         statut='f', typ='TXM', defaut="AUTO", into=("NONSYM", "SYMGEN", "SYMDEF", "AUTO", ), )
 
-
 # --------------------------------------------------------------------
 
     _BlocMU['ACCELERATION'] = SIMP(
@@ -331,9 +330,9 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 # --------------------------------------------------------------------
 
     _BlocGC['PRE_COND'] = SIMP(
-        statut='f', typ='TXM', defaut="LDLT_INC", into=("LDLT_INC", "LDLT_SP"), )
+        statut='f', typ='TXM', defaut="LDLT_INC", into=("LDLT_INC", "LDLT_SP", "LDLT_DP"), )
     _BlocPE['PRE_COND'] = SIMP(statut='f', typ='TXM', defaut="LDLT_SP",
-                               into=("LDLT_INC", "LDLT_SP", "JACOBI", "SOR", "ML", "BOOMER", "GAMG", "BLOC_LAGR", "FIELDSPLIT", "SANS", ), )
+                               into=("LDLT_INC", "LDLT_SP", "LDLT_DP", "JACOBI", "SOR", "ML", "BOOMER", "GAMG", "BLOC_LAGR", "FIELDSPLIT", "SANS", ), )
 
 # --------------------------------------------------------------------
 
@@ -373,13 +372,13 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 # --------------------------------------------------------------------
 
     _BlocXX_SP['RENUM'] = SIMP(
-        statut='f', typ='TXM', defaut="SANS", into=("SANS",), )
+        statut='f', typ='TXM', defaut="PARMETIS", into=("SANS", "PARMETIS"), )
     _BlocXX_SP['REAC_PRECOND'] = SIMP(statut='f', typ='I', defaut=30, )
     _BlocXX_SP['PCENT_PIVOT'] = SIMP(
         statut='f', typ='I', defaut=20, val_min=1, )
     _BlocXX_SP['GESTION_MEMOIRE'] = SIMP(
         statut='f', typ='TXM', defaut="AUTO", into=("IN_CORE", "AUTO"), )
-
+    _BlocXX_SP['LOW_RANK_SEUIL'] = SIMP(statut='f', typ='R', defaut=1.E-08, )
 # --------------------------------------------------------------------
 
     _BlocPE_ML['RENUM'] = SIMP(
@@ -402,7 +401,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 # --------------------------------------------------------------------
 
     _BlocXX_Autres['RENUM'] = SIMP(
-        statut='f', typ='TXM', defaut="SANS", into=("SANS", "RCMK", ), )
+        statut='f', typ='TXM', defaut="SANS", into=("SANS", "RCMK" ), )
 
 # --------------------------------------------------------------------
 
@@ -454,9 +453,9 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
                                                           **_BlocGC_INC
                                       ),
                                       b_simple=BLOC(
-                                          condition="""equal_to("PRE_COND", 'LDLT_SP') """,
+                                          condition="""is_in("PRE_COND", ('LDLT_SP', 'LDLT_DP')) """,
                                                           fr=tr(
-                                                              "Paramètres de la factorisation simple précision"),
+                                                              "Paramètres de la factorisation simple précision ou low-rank"),
                                                           **_BlocXX_SP
                                       ),
                                       **_BlocGC
@@ -471,9 +470,9 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
                                                           **_BlocPE_INC
                                       ),
                                       b_simple=BLOC(
-                                          condition="""equal_to("PRE_COND", 'LDLT_SP') """,
+                                          condition="""is_in("PRE_COND", ('LDLT_SP', 'LDLT_DP')) """,
                                                           fr=tr(
-                                                              "Paramètres de la factorisation simple précision"),
+                                                              "Paramètres de la factorisation simple précision ou low rank"),
                                                           **_BlocXX_SP
                                       ),
                                       b_ml=BLOC(

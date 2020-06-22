@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,10 @@
 subroutine pcmump(matasz, solvez, iretz, new_facto)
     implicit none
 #include "jeveux.h"
+#include "asterc/r8prem.h"
 #include "asterfort/amumph.h"
 #include "asterfort/assert.h"
-#include "asterfort/crsmsp.h"
+#include "asterfort/crsvfm.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -33,12 +34,14 @@ subroutine pcmump(matasz, solvez, iretz, new_facto)
 !-----------------------------------------------------------------------
 !
 !     CREATION D'UNE MATRICE DE PRECONDITIONNEMENT (PETSC, GCPC)
-!     PAR FACTORISATION SIMPLE PRECISION PAR MUMPS
+!     PAR FACTORISATION SIMPLE PRECISION/ LOW_RANK PAR MUMPS
 !
 !-----------------------------------------------------------------------
 ! IN  K*  MATASZ    : NOM DE LA MATR_ASSE A PRECONDITIONNER
 ! IN  K*  SOLVEZ    : NOM DE LA SD SOLVEUR
-! OUT  I   IRETZ     : CODE RETOUR (!=0 SI ERREUR)
+! OUT I   IRETZ     : CODE RETOUR (!=0 SI ERREUR)
+! OUT LOGICAL NEW_FACTO : FLAG TRUE -> EN SORTIE DE LA ROUTINE, UN
+!                         NOUVEAU PRECONDITIONNEUR A ETE RECONSTRUIT
 !----------------------------------------------------------------------
 !     VARIABLES LOCALES
 !----------------------------------------------------------------------
@@ -46,11 +49,14 @@ subroutine pcmump(matasz, solvez, iretz, new_facto)
     aster_logical :: new_facto_loc
     complex(kind=8) :: cbid
     character(len=19) :: solveu, matass
-    character(len=24) :: precon, solvbd
+    character(len=24) :: precon, solvbd, renum
     character(len=24) :: usersm
-    integer, pointer :: slvi(:) => null()
+    character :: prec, rank
+    real(kind=8) :: blreps
+    integer, pointer           :: slvi(:) => null()
     character(len=24), pointer :: refa(:) => null()
     character(len=24), pointer :: slvk(:) => null()
+    real(kind=8), pointer      :: slvr(:) => null()
 !----------------------------------------------------------------------
     call jemarq()
 !
@@ -61,16 +67,18 @@ subroutine pcmump(matasz, solvez, iretz, new_facto)
 ! --  PARAMETRES DU PRECONDITIONNEUR
     call jeveuo(solveu//'.SLVK', 'L', vk24=slvk)
     call jeveuo(solveu//'.SLVI', 'L', vi=slvi)
-    precon=slvk(2)
-    usersm=slvk(9)
-    iterpr=slvi(5)
-    reacpr=slvi(6)
-    pcpiv =slvi(7)
+    call jeveuo(solveu//'.SLVR', 'L', vr=slvr)
+    precon = slvk(2)
+    renum = slvk(4)
+    usersm = slvk(9)
+    iterpr = slvi(5)
+    reacpr = slvi(6)
+    pcpiv  = slvi(7)
+    blreps = slvr(4)
 !
     new_facto_loc = .false.
 !
-    ASSERT(precon.eq.'LDLT_SP')
-    
+    ASSERT((precon.eq.'LDLT_SP').or.(precon.eq.'LDLT_DP')) 
 !
 ! --  PRISE EN COMPTE DES CHARGEMENTS CINEMATIQUES
 ! --  SAUF DANS LE CAS OU LE SOLVEUR EST PETSC
@@ -82,10 +90,21 @@ subroutine pcmump(matasz, solvez, iretz, new_facto)
         ASSERT(refa(3).ne.'ELIML')
     endif
 !
-! --  CREATION DE LA SD SOLVEUR MUMPS SIMPLE PRECISION
+! --  CREATION DE LA SD SOLVEUR MUMPS SIMPLE PRECISION/LOW_RANK
 ! --  (A DETRUIRE A LA SORTIE)
     solvbd=slvk(3)
-    call crsmsp(solvbd, matass, pcpiv, usersm)
+    if ( precon .eq. 'LDLT_SP' ) then 
+       prec='S'
+    else if ( precon .eq. 'LDLT_DP') then
+       prec='D'
+    endif
+    if (abs(blreps) < r8prem()) then 
+        rank='F'
+    else
+        rank='L'
+    endif 
+    solvbd = slvk(3)
+    call crsvfm(solvbd, matass, prec, rank, pcpiv, usersm, blreps, renum )
 !
 ! --  APPEL AU PRECONDITIONNEUR
     iret = 0

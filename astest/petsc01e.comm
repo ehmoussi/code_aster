@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ EVOL=STAT_NON_LINE(MODELE=MO,
                               ALGORITHME='CR',
                               PRE_COND='LDLT_SP',
                               PCENT_PIVOT=30, ),
-                   INFO=2,);
+                   INFO=1,);
 
 TEST_RESU(RESU=(_F(RESULTAT=EVOL,
                    NUME_ORDRE=1,
@@ -110,4 +110,61 @@ TEST_RESU(RESU=(_F(RESULTAT=EVOL,
                    PRECISION=0.00015,
                    REFERENCE='AUTRE_ASTER',),),);
 
+EVOL2=STAT_NON_LINE(MODELE=MO,
+                   CHAM_MATER=CHMAT,
+                   EXCIT=(_F(CHARGE=CHA1,),
+                          _F(CHARGE=CHA2,),),
+                   COMPORTEMENT=_F(RELATION='ELAS',
+                                TOUT='OUI',),
+                   INCREMENT=_F(LIST_INST=LIST,),
+                   SOLVEUR=_F(METHODE='PETSC',
+                              ALGORITHME='CR',
+                              PRE_COND='LDLT_DP',
+                              PCENT_PIVOT=30, ),
+                   INFO=1,);
+TEST_RESU(RESU=(_F(RESULTAT=EVOL2,
+                   NUME_ORDRE=1,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   NOEUD='NO2958',
+                   VALE_CALC=0.01,
+                   VALE_REFE=0.01,
+                   PRECISION=0.00015,
+                   REFERENCE='AUTRE_ASTER',),
+                _F(RESULTAT=EVOL2,
+                   NUME_ORDRE=1,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   NOEUD='NO2958',
+                   VALE_CALC=0.000102958229512,
+                   VALE_REFE=0.00010296,
+                   PRECISION=0.00015,
+                   REFERENCE='AUTRE_ASTER',),
+                _F(RESULTAT=EVOL2,
+                   NUME_ORDRE=1,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   NOEUD='NO2974',
+                   VALE_CALC=0.00430057955608,
+                   VALE_REFE=0.0043006,
+                   PRECISION=0.00015,
+                   REFERENCE='AUTRE_ASTER',),
+                _F(RESULTAT=EVOL2,
+                   NUME_ORDRE=1,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DY',
+                   NOEUD='NO2974',
+                   VALE_CALC=0.00928897504148,
+                   VALE_REFE=0.009289,
+                   PRECISION=0.00015,
+                   REFERENCE='AUTRE_ASTER',),
+                _F(RESULTAT=EVOL2,
+                   NUME_ORDRE=1,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DZ',
+                   NOEUD='NO2974',
+                   VALE_CALC=-2.91729494193E-05,
+                   VALE_REFE=-2.9173e-05,
+                   PRECISION=0.00015,
+                   REFERENCE='AUTRE_ASTER',),),);
 FIN();

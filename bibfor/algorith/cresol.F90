@@ -172,8 +172,7 @@ subroutine cresol(solveu, basz, xfem)
 !
     else if (method.eq.'GCPC') then
 !     -----------------------------
-        call crsvgc(nomsol, solveu, istop, nprec,&
-                    epsmat, mixpre, kellag, kxfem)
+        call crsvgc(nomsol, solveu, kellag)
 !
     else if (method.eq.'MULT_FRONT') then
 !     -----------------------------

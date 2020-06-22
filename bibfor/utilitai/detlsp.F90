@@ -21,7 +21,7 @@ subroutine detlsp(matasz, solvez)
     implicit      none
 #include "jeveux.h"
 #include "asterfort/amumph.h"
-#include "asterfort/crsmsp.h"
+#include "asterfort/crsvfm.h"
 #include "asterfort/detrsd.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
@@ -30,7 +30,7 @@ subroutine detlsp(matasz, solvez)
 !
 ! ----------------------------------------------------------------------
 !
-!  DETRUIRE LES INSTANCES MUMPS DU PRECONDITIONNEUR LDLT_SP
+!  DETRUIRE LES INSTANCES MUMPS DU PRECONDITIONNEUR LDLT_SP/LDLT_DP
 !  ***                                              *    **
 !
 ! ----------------------------------------------------------------------
@@ -42,11 +42,12 @@ subroutine detlsp(matasz, solvez)
 !
 !
     character(len=19) :: solveu, matass
-    character(len=24) :: metres, precon, solvbd, usersmbd
+    character(len=24) :: metres, precon, solvbd, usersmbd, renumbd
     integer ::  iret, pcpivbd
-    real(kind=8) :: r8bid
+    real(kind=8) :: r8bid, blrepsbd
     complex(kind=8) :: c16bid
     character(len=24), pointer :: slvk(:) => null()
+    character :: precbd, rankbd
 !
 ! ----------------------------------------------------------------------
 !
@@ -62,11 +63,15 @@ subroutine detlsp(matasz, solvez)
     metres = slvk(1)
     if (metres .eq. 'PETSC' .or. metres .eq. 'GCPC') then
         precon = slvk(2)
-        if (precon .eq. 'LDLT_SP') then
+        if ((precon .eq. 'LDLT_SP').or.(precon.eq. 'LDLT_DP')) then
             solvbd = slvk(3)
             pcpivbd = 0
             usersmbd = 'XXXX'
-            call crsmsp(solvbd, matass, pcpivbd, usersmbd)
+            blrepsbd = -123.d0
+            precbd = 'S'
+            rankbd='F'
+            renumbd='XXXXX' 
+            call crsvfm(solvbd, matass, precbd, rankbd,pcpivbd, usersmbd, blrepsbd, renumbd )
             call amumph('DETR_MAT', solvbd, matass, [r8bid], [c16bid],&
                         ' ', 0, iret, .true._1)
             call detrsd('SOLVEUR', solvbd)

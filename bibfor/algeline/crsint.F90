@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -70,6 +70,7 @@ subroutine crsint(solveu)
     zr(islvr-1+2) = -1.d0
     zr(islvr-1+3) = 0.d0
     zr(islvr-1+4) = 0.d0
+    zr(islvr-1+5) = 0.d0
 !
     zi(islvi-1+1) = 9
     zi(islvi-1+2) = 50

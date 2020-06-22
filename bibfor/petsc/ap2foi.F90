@@ -41,7 +41,7 @@ implicit none
 !
 !--------------------------------------------------------------
 ! But :
-!  * recalculer un nouveau pre-conditionneur pour LDLT_SP
+!  * recalculer un nouveau pre-conditionneur pour LDLT_SP/LDLT_DP
 !  * faire une resolution avec ce nouveau preconditionneur
 !---------------------------------------------------------------
 !
@@ -86,7 +86,7 @@ implicit none
   !   - slvi(5) = 0 (on résout pour la première fois),
   !   - slvi(5) > reac_precond (la résolution linéaire précédente a demandé
   !                            "trop" d'itérations),
-  !   alors il faut effectuer le calcul du préconditionneur LDLT_SP (voir pcmump)
+  !   alors il faut effectuer le calcul du préconditionneur LDLT_SP/LDLT_DP (voir pcmump)
   !
   call jeveuo(nosolv//'.SLVI', 'E', vi=slvi)
   slvi(5) = 0

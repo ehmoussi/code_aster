@@ -29,9 +29,10 @@ use petsc_data_module
 
 #include "jeveux.h"
 #include "asterc/asmpi_comm.h"
+#include "asterc/r8prem.h"
 #include "asterfort/asmpi_info.h"
 #include "asterfort/assert.h"
-#include "asterfort/crsmsp.h"
+#include "asterfort/crsvfm.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jelira.h"
@@ -56,13 +57,12 @@ use petsc_data_module
     integer :: niremp, nsmdi, pcpiv
     mpi_int :: mpicou
 !
-    character(len=24) :: precon, usersm
+    character(len=24) :: precon, usersm, renum
     character(len=19) :: nomat, nosolv
     character(len=14) :: nonu
+    character :: prec, rank
     character(len=3)  :: kmatd
-!
-    real(kind=8) :: fillin
-!
+    real(kind=8) :: fillin, blreps
     aster_logical :: lmhpc
 !
 !----------------------------------------------------------------
@@ -146,12 +146,24 @@ use petsc_data_module
         call PCFactorSetMatOrderingType(pc, MATORDERINGNATURAL, ierr)
         ASSERT(ierr.eq.0)
 !-----------------------------------------------------------------------
-    else if (precon.eq.'LDLT_SP') then
-!        CREATION SOLVEUR BIDON SIMPLE PRECISION
+    else if ((precon.eq.'LDLT_SP').or.(precon.eq.'LDLT_DP')) then
+!       CREATION SOLVEUR BIDON SIMPLE PRECISION/LOW_RANK
         spsomu = zk24(jslvk-1+3)(1:19)
         pcpiv = zi(jslvi-1+7)
         usersm = zk24(jslvk-1+9)
-        call crsmsp(spsomu, nomat, pcpiv, usersm )
+        blreps = zr(jslvr-1+4)
+        renum = zk24(jslvk-1+4)
+        if ( precon == 'LDLT_SP' ) then 
+           prec='S'
+        else if ( precon == 'LDLT_DP' ) then 
+           prec='D'
+        endif
+        if ( blreps < r8prem()) then 
+           rank='F'
+        else 
+           rank='L'
+        endif
+        call crsvfm(spsomu, nomat, prec, rank, pcpiv, usersm, blreps, renum )
 !        CREATION DES VECTEURS TEMPORAIRES UTILISES DANS LDLT_SP
         if (lmd.or.lmhpc) then
             if (lmd) then

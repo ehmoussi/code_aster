@@ -323,7 +323,7 @@ subroutine amumpi(option, lquali, ldist, kxmps, type, lmhpc)
         endif
 !
 ! ---     Ordering phase
-! automatic choice of sequantial or parallel analysis
+! automatic choice of sequential or parallel analysis
         icntl(28)= 0
 ! automatic choice of the sequential ordering
         icntl(7) = 7
@@ -368,7 +368,8 @@ subroutine amumpi(option, lquali, ldist, kxmps, type, lmhpc)
             icntl(7) = 6
         else if (slvk(4).eq.'AUTO') then
 ! choosen par default
-        else
+        else if (slvk(4).eq.'SANS') then
+        else 
             ASSERT(.false.)
         endif
 !

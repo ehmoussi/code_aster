@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine crsmsp(solvbz, matasz, pcpiv, usersmz)
+subroutine crsvfm(solvbz, matasz, prec, rank, pcpiv, usersmz, blreps, renumz)
+!
     implicit none
 #include "jeveux.h"
 #include "asterfort/assert.h"
@@ -28,36 +29,43 @@ subroutine crsmsp(solvbz, matasz, pcpiv, usersmz)
 #include "asterfort/sdsolv.h"
 #include "asterfort/wkvect.h"
     character(len=*) :: solvbz, matasz
+    character        :: prec, rank 
     integer          :: pcpiv
-    character(len=*) :: usersmz
+    character(len=*) :: usersmz, renumz
+    real(kind=8)     :: blreps
 !-----------------------------------------------------------------------
-!     CREATION D'UNE SD SOLVEUR MUMPS SIMPLE PRECISION UTILISEE COMME
-!     PRECONDITIONNEUR
+!     CREATION (CR) D'UNE SD SOLVEUR (SV) POUR CALCULER UNE FACTORISATION (F)
+!     SIMPLE PRECISION OU LOW-RANK AVEC MUMPS (M)
 !     ATTENTION A LA COHERENCE AVEC CRSVMU ET CRSINT
 !-----------------------------------------------------------------------
 ! IN  K*  SOLVBZ    : NOM DE LA SD SOLVEUR MUMPS BIDON
 ! IN  K*  MATASZ    : MATRICE DU SYSTEME
+! IN  K1  PREC      : 'S' ou 'D' (SIMPLE/DOUBLE PRECISION)
+! IN  K1  RANK      : 'F' ou 'L' (FULL/LOW RANK)  
 ! IN  I   PCPIV     : VALEUR DE PCENT_PIVOT
+! IN  K*  USERSM    : STRATEGIE MEMOIRE (AUTO/IN_CORE/OUT_OF_CORE)
+! IN  R   BLREPS    : VALEUR DU SEUIL POUR UNE FACTO LOW_RANK
 !-----------------------------------------------------------------------
 !     VARIABLES LOCALES
 !----------------------------------------------------------------------
     integer :: zslvk, zslvr, zslvi
     integer :: jslvk, jslvr, jslvi, iret
     character(len=19) :: matass, solvbd
-    character(len=24) :: usersm
-    character(len=8) :: symk
-    character(len=3) :: syme
+    character(len=24) :: usersm, renum
+    character(len=8) :: symk, kacmum
+    character(len=3) :: syme, mixpre
 !----------------------------------------------------------------------
     call jemarq()
 !
     solvbd = solvbz
     matass = matasz
     usersm = usersmz
+    renum = renumz
 ! 
     call jeexin(solvbd, iret)
     if (iret .eq. 0) call detrsd('SOLVEUR', solvbd)
 !
-!     LA MATRICE EST-ELLE NON SYMETRIQUE
+!     LA MATRICE EST-ELLE NON SYMETRIQUE ? 
     call dismoi('TYPE_MATRICE', matass, 'MATR_ASSE', repk=symk)
     if (symk .eq. 'SYMETRI') then
         syme='OUI'
@@ -65,6 +73,19 @@ subroutine crsmsp(solvbz, matasz, pcpiv, usersmz)
         syme='NON'
     else
         ASSERT(.false.)
+    endif
+! 
+    ASSERT((rank == 'L').or.(rank=='F'))
+    ASSERT((prec == 'S').or.(prec =='D'))
+    if ( rank == 'F' ) then 
+        kacmum = 'AUTO'
+    elseif ( rank == 'L') then
+        kacmum = 'LR+' 
+    endif
+    if ( prec == 'S' ) then 
+        mixpre = 'OUI'
+    elseif ( prec == 'D') then
+        mixpre ='NON'
     endif
 !
     zslvk = sdsolv('ZSLVK')
@@ -85,13 +106,13 @@ subroutine crsmsp(solvbz, matasz, pcpiv, usersmz)
         zk24(jslvk-1+3) = 'SYMGEN'
     endif
 !     RENUM
-    zk24(jslvk-1+4) = 'AUTO'
-!     ACCELERATION
-    zk24(jslvk-1+5) = 'AUTO'
+    zk24(jslvk-1+4) = renum
+!     ACCELERATION 
+    zk24(jslvk-1+5) = kacmum
 !     ELIM_LAGR
     zk24(jslvk-1+6) = 'NON'
 !     MIXER_PRECISION
-    zk24(jslvk-1+7) = 'OUI'
+    zk24(jslvk-1+7) = mixpre
 !     PRECONDITIONNEUR
     zk24(jslvk-1+8) = 'OUI'
 !     MEMOIRE_MUMPS
@@ -105,7 +126,8 @@ subroutine crsmsp(solvbz, matasz, pcpiv, usersmz)
     zr(jslvr-1+1) = -1.d0
     zr(jslvr-1+2) = -1.d0
     zr(jslvr-1+3) = 0.d0
-    zr(jslvr-1+4) = 0.d0
+    zr(jslvr-1+4) = blreps
+    zr(jslvr-1+5) = 0.d0
 !
     zi(jslvi-1+1) = -1
     zi(jslvi-1+2) = pcpiv

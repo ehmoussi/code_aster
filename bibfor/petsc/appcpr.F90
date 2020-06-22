@@ -356,29 +356,27 @@ implicit none
              ASSERT(ierr == 0)
         endif
 !-----------------------------------------------------------------------
-    else if (precon == 'LDLT_SP') then
+    else if ((precon == 'LDLT_SP').or.(precon.eq.'LDLT_DP')) then
         call PCSetType(pc, PCSHELL, ierr)
         ASSERT(ierr == 0)
-        call PCShellSetName(pc,"LDLT_SP Preconditionner", ierr )
-        ASSERT(ierr == 0)
-!       LDLT_SP FAIT APPEL A DEUX ROUTINES EXTERNES
+!       LDLT_SP/LDLT_DP FAIT APPEL A DEUX ROUTINES EXTERNES
         call PCShellSetSetUp(pc, ldsp1, ierr)
         ASSERT(ierr == 0)
 !       Si LMP, on définit un préconditionneur à gauche et à droite
         if ( lmp_is_active ) then
              ASSERT( ierr == 0 )
-             call PCShellSetName(pc,"Symmetric Preconditionner: Left LDLT_SP, right LMP", ierr )
+             call PCShellSetName(pc,"Symmetric Preconditionner: Left LDLT_XP, right LMP", ierr )
              ASSERT( ierr == 0 )
              call PCShellSetApplySymmetricLeft(pc, ldsp2, ierr)
              ASSERT(ierr == 0)
              call PCShellSetApplySymmetricRight(pc, lmp_apply_right,ierr)
              ASSERT(ierr == 0)
              call KSPSetPCSide(ksp,PC_SYMMETRIC,ierr)
-             ASSERT( ierr == 0 )
-!       Pour le préconditionneur LDLT_SP, on définit reac_lmp à partir de reac_precond
+             ASSERT(ierr == 0)
+!       Pour le préconditionneur LDLT_XP, on définit reac_lmp à partir de reac_precond
              reac_lmp = reacpr/2
         else
-             call PCShellSetName(pc,"LDLT_SP Preconditionner", ierr )
+             call PCShellSetName(pc,"LDLT_XP Preconditionner", ierr )
              call PCShellSetApply(pc, ldsp2, ierr)
              ASSERT( ierr == 0 )
         endif
@@ -473,7 +471,7 @@ implicit none
     call PCSetUp(pc, ierr)
 !     ANALYSE DU CODE RETOUR
     if (ierr .ne. 0) then
-        if (precon  ==  'LDLT_SP') then
+        if ((precon  ==  'LDLT_SP').or.(precon == 'LDLT_DP')) then
 !           ERREUR : PCENT_PIVOT PAS SUFFISANT
             call utmess('F', 'PETSC_15')
         else

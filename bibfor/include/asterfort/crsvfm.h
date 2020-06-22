@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,15 @@
 !
 !
           interface 
-            subroutine crsmsp(solvbz,matasz,pcpiv, usersmz)
+            subroutine crsvfm( solvbz, matasz, prec, rank, pcpiv, usersmz, blreps, renumz)
               character(len=*) :: solvbz
               character(len=*) :: matasz
+              character        :: prec
+              character        :: rank
               integer          :: pcpiv
               character(len=*) :: usersmz
-            end subroutine crsmsp
+              real(kind=8)     :: blreps
+              character(len=*) :: renumz
+            end subroutine crsvfm
        
           end interface 

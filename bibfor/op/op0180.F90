@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -78,12 +78,12 @@ subroutine op0180()
     real(kind=8) :: trelax, valr(2), rbid
     aster_logical :: mail2d, relax, quad
     character(len=3) :: k3b
-    character(len=8) :: caelem, chmat, mailla, modele, noancr(2), nomu, adher
+    character(len=8) :: caelem, chmat, mailla, modele, nomu, adher
     character(len=8) :: typanc(2), typ_ma
     character(len=16) :: cmd, concep
     character(len=19) :: carsig, carte, ligrmo, lirela, numaca, nunobe, xnoca
     character(len=19) :: ynoca, znoca, nomt19, nunobi, nomg19
-    character(len=24) :: cadesc, ncncin, nmabet, comima, gromai
+    character(len=24) :: cadesc, ncncin, nmabet, comima, gromai,  noancr(2)
     character(len=8) :: aire, effnor(3), valk(8)
     complex(kind=8) :: cbid
     integer :: nbpar, nbnobi, sens, nbpar2
