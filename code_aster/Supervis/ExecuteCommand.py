@@ -74,6 +74,7 @@ from ..Objects import DataStructure, PyDataStructure
 from ..Utilities import (ExecutionParameter, Options, deprecated,
                          import_object, logger, no_new_attributes)
 from ..Utilities.outputs import command_text, decorate_name
+from .code_file import track_coverage
 from .CommandSyntax import CommandSyntax
 from .Serializer import saveObjects
 
@@ -180,6 +181,7 @@ class ExecuteCommand(object):
             raise exc.original(exc.msg)
         finally:
             timer.Stop(" . check syntax")
+        track_coverage(self._cata, self.command_name, keywords)
         self.create_result(keywords)
         if hasattr(self._result, "userName"):
             self._result.userName = get_user_name(self.command_name,
