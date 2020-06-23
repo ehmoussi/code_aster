@@ -41,8 +41,8 @@ from .logger import DEBUG, ERROR, INFO, WARNING, logger
 from .options import Options
 from .report import CR
 from .strfunc import (clean_string, convert, copy_text_to, cut_long_lines,
-                      from_unicode, get_encoding, maximize_lines, to_unicode,
-                      ufmt)
+                      from_unicode, get_encoding, maximize_lines, textbox,
+                      to_unicode, ufmt)
 from .Tester import TestCase
 from .transpose import transpose
 from .version import get_version, get_version_desc

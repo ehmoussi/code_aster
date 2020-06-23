@@ -368,7 +368,7 @@ Exception : %s
         si False, on n'écrit que sur les fichiers habituels (MESSAGE, RESULTAT,
         ERREUR) ou bien dans 'files' si fournit.
         """
-        if type(files) in (str, str):
+        if isinstance(files, str):
             files = files.strip()
         if len(self._buffer) < 1:
             return None

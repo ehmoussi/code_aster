@@ -211,13 +211,69 @@ def force_split(txt, maxlen):
 
 
 def copy_text_to(text, files):
-    """Imprime le texte dans les fichiers.
+    """Print a message into one or more files.
+
+    Files may be filenames (as string) or file-object.
+
+    Arguments:
+        text (str): Message to be printed
+        files (str|file, list[str|file]): Filename(s) or file-object(s)
     """
-    files = force_list(files)
-    for f_i in files:
-        assert type(f_i) == str
-        fobj = open(f_i, 'a')
-        # should be closed automatically
+    def _dump(fobj):
         fobj.write(text)
         fobj.write(os.linesep)
         fobj.flush()
+
+    files = force_list(files)
+    for f_i in files:
+        if isinstance(f_i, str):
+            with open(f_i, 'a') as obj:
+                _dump(obj)
+        else:
+            _dump(f_i)
+
+
+def _splitline(line, maxlen):
+    """Return a list of lines with a length <= `maxlen`"""
+    line = line.strip()
+    if len(line) <= maxlen:
+        return [line]
+    lines = []
+    for sep in " ,;:/":
+        try:
+            last = line.rindex(sep)
+        except ValueError:
+            last = 0
+    if last > 0:
+        lines.extend(_splitline(line[:last], maxlen))
+        lines.extend(_splitline(line[last:], maxlen))
+    else:
+        lines.append(line[:maxlen])
+        lines.extend(_splitline(line[maxlen:], maxlen))
+    return lines
+
+def _fixed_length(lines ,maxlen):
+    """Fix lines length at `maxlen`."""
+    fmt = "{{0:{}s}}".format(maxlen)
+    return [fmt.format(line) for line in lines]
+
+def textbox(text, maxlen=80):
+    """Format a text into a box to be highlighted.
+    """
+    upleft = chr(0x2554)
+    upright = chr(0x2557)
+    horiz = chr(0x2550)
+    vert = chr(0x2551)
+    botleft = chr(0x255a)
+    botright = chr(0x255d)
+    head = " " + upleft + horiz * (maxlen + 2) + upright
+    foot = " " + botleft + horiz * (maxlen + 2) + botright
+    fmt = " " + vert + " {0} " + vert
+    lines = ["", head]
+    splitted = []
+    for line in text.splitlines():
+        splitted.extend(_splitline(line, maxlen))
+    fixed = _fixed_length(splitted, maxlen)
+    lines.extend([fmt.format(line) for line in fixed])
+    lines.extend([foot, ""])
+    return os.linesep.join(lines)
