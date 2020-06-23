@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -114,6 +114,10 @@ U=STAT_NON_LINE(MODELE=MO,
                 NEWTON=_F(MATRICE='TANGENTE',
                           REAC_ITER=3,),
                 RECH_LINEAIRE=_F(RHO_MAX=150),
+                SOLVEUR=_F(METHODE='MUMPS',
+                             POSTTRAITEMENTS='FORCE',
+                             RESI_RELA=1e-06),
+                CONVERGENCE=_F(RESI_GLOB_RELA=1e-08),
                 )
 
 
