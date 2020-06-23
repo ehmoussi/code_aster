@@ -31,9 +31,9 @@
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),)
 
 MAIL=LIRE_MAILLAGE(FORMAT="ASTER",)
-                                                                                                                            
+
 # Pertubation legere des coordonnes du maillage pour eviter les modes multiples ou retournes :
-MAIL=MODI_MAILLAGE(reuse =MAIL, MAILLAGE=MAIL, DEFORME=_F(OPTION='TRAN', ALEA=1.e-8,),) 
+MAIL=MODI_MAILLAGE(reuse =MAIL, MAILLAGE=MAIL, DEFORME=_F(OPTION='TRAN', ALEA=1.e-8,),)
 #
 # Modèle
 Modele=AFFE_MODELE(
@@ -152,7 +152,7 @@ PROJ_BASE(
 # For improved precision over TEST_RESU, define a fixed list of instants to be calculated
 # and saved.
 dtarch = 1.e-2
-ARCHLIST = [0.0 + dtarch*i for i in range(int(4.0*Tsignal/dtarch)+1)] 
+ARCHLIST = [0.0 + dtarch*i for i in range(int(4.0*Tsignal/dtarch)+1)]
 pdt = 0.5/Frequence/640.0
 
 Resultat=DYNA_VIBRA(
@@ -332,7 +332,7 @@ TEST_TABLE(TABLE=TDDepl,
     FILTRE=_F(NOM_PARA='Depl',CRIT_COMP ='MAXI_ABS',),
     NOM_PARA='Depl',
     REFERENCE='SOURCE_EXTERNE', CRITERE='ABSOLU',PRECISION=5.0E-03,
-    VALE_REFE=2.81E-04, VALE_CALC=0.0007214901175341999,
+    VALE_REFE=2.81E-04, VALE_CALC=0.000721101175341999,
 )
 TEST_TABLE(TABLE=TDForc,
     FILTRE=_F(NOM_PARA='Forc',CRIT_COMP ='MAXI_ABS',),
@@ -353,8 +353,8 @@ IMPR_FONCTION(UNITE=26,
 #
 # Calcul en 2 fois avec RUNGE_KUTTA à pas constant
 #
-ARCHLIST1 = [0.0 + dtarch*i for i in range(int(2.0*Tsignal/dtarch)+1)] 
-ARCHLIST2 = [2.0*Tsignal + dtarch*i for i in range(1,int(2.0*Tsignal/dtarch)+1)] 
+ARCHLIST1 = [0.0 + dtarch*i for i in range(int(2.0*Tsignal/dtarch)+1)]
+ARCHLIST2 = [2.0*Tsignal + dtarch*i for i in range(1,int(2.0*Tsignal/dtarch)+1)]
 
 ResultA=DYNA_VIBRA(
     TYPE_CALCUL='TRAN', BASE_CALCUL='GENE',
@@ -442,7 +442,7 @@ TEST_TABLE(TABLE=TDDeplAB,
     NOM_PARA='Depl',
     REFERENCE='SOURCE_EXTERNE', CRITERE='ABSOLU',
      PRECISION=5.0E-03,
-    VALE_REFE= 6.0E-08, VALE_CALC=0.0004130770837238,
+    VALE_REFE= 6.0E-08, VALE_CALC=0.0004127770837238,
 )
 TEST_TABLE(TABLE=TDForcAB,
     FILTRE=_F(NOM_PARA='Forc',CRIT_COMP ='MAXI_ABS',),
