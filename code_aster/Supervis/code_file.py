@@ -128,6 +128,8 @@ class CodeVisitor:
             skwValue = [skwValue]
         as_list = step.is_list() and step.definition.get("into") is not None
         svalues = []
+        is_default = True
+        default = step.definition.get("defaut")
         for value in skwValue:
             repr_value = ''
             if is_float(value):
@@ -137,15 +139,18 @@ class CodeVisitor:
             elif type(value) in (str, str):
                 repr_value = repr(value)
             svalues.append(repr_value)
+            try:
+                if value != default:
+                    is_default = False
+            except ValueError:
+                pass
         if as_list and len(svalues) == 1:
             svalues.append("")
         self.value = ", ".join(svalues)
         if as_list:
             self.value = "(%s)" % self.value
         if step.definition.get("into") is None:
-            default = step.definition.get("defaut")
-            is_not_default = any([i != default for i in skwValue])
-            if is_not_default:
+            if not is_default:
                 self.value = ''
         self.add_args()
 
