@@ -169,8 +169,9 @@ RIGI_MECA = Option(
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),(AT.BORD,'0'),)),
+      CondCalcul('+', ((AT.FSI ,'OUI'),(AT.BORD,'-1'),(AT.FORMULATION,'FSI_UP'),)),
       CondCalcul('-', ((AT.FLUIDE,'OUI'),(AT.ABSO,'OUI'),)),
-      CondCalcul('-', ((AT.FLUIDE,'OUI'),(AT.FSI ,'OUI'),)),
+      CondCalcul('-', ((AT.FLUIDE,'OUI'),(AT.FSI ,'OUI'),(AT.FORMULATION,'FSI_UPPHI'),)),
       CondCalcul('+', ((AT.POUTRE,'OUI'),(AT.FSI ,'OUI'),)),
       CondCalcul('-', ((AT.PHENO,'ME'),(AT.TYPMOD2, 'HHO'),)),
     ),
