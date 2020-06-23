@@ -25,4 +25,7 @@ cata_msg = {
 
     2  : _("""Le calcul de l'option n'est pas possible avec la formulation %(k1)s. Il faut demander une évolution."""),
 
+    3  : _("""On n'a pas trouvé d'élément fluide en regard de l'élément d'interaction fluide-structure. On ne peut donc pas vérifier les normales."""),
+
+    4  : _("""Certaines normales entre fluide et structure ne sont pas orientées dans le bon sens."""),
 }

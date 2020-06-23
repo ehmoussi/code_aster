@@ -130,6 +130,13 @@ Il est d'usage d'utiliser un maillage dans le plan Z passant par l'origine pour 
    Cela veut dire que cette occurrence n'a aucun effet.
 """),
 
+
+    80 : _("""On a détecté %(i1)d mailles qui ont une modélisation de type interaction fluide-structure dont on va vérifier l'orientation des normales."""),
+
+    81 : _("""Les mailles concernées sont de dimension topologique 1 (segments)."""),
+
+    82 : _("""Les mailles concernées sont de dimension topologique 2 (triangles ou quadrangles)."""),
+
     99 : _("""Le modèle est basé sur le maillage parallèle %(k2)s. La méthode de distribution des éléments doit être CENTRALISE (et non pas %(k1)s)"""),
 
 }

@@ -77,7 +77,7 @@ implicit none
 !
     integer :: dim_topo_curr, dim_topo_init
     integer :: ifm, niv
-    character(len=8) :: mesh, model, sd_partit1, kret
+    character(len=8) :: mesh, model, sd_partit1
     character(len=8) :: name_elem, z_quasi_zero, methode
     character(len=16) :: k16dummy, name_type_geom, repk, valk(2)
     character(len=16) :: phenom, phenomRead, modeli, list_modelisa(10), keywordfact, modeli_in
@@ -88,7 +88,8 @@ implicit none
     integer, pointer :: p_list_elem(:) => null()
     integer :: nb_elem
     aster_logical :: l_elem, l_grandeur_cara, lparallel_mesh
-    aster_logical :: l_calc_rigi, l_veri_elem, l_need_neigh, l_hho
+    aster_logical :: l_calc_rigi, l_need_neigh
+    aster_logical :: lCheckJacobian, lCheckFSINorms
     integer :: ielem, iaffe
     integer :: vali(4), ico, idx_modelisa
     integer, pointer :: p_cata_dim(:) => null()
@@ -130,13 +131,18 @@ implicit none
 ! - Get mesh
 !
     call getvid(' ', 'MAILLAGE', scal=mesh)
-    call dismoi('PARALLEL_MESH', mesh, 'MAILLAGE', repk=kret)
-    lparallel_mesh=(kret.eq.'OUI')
+    call dismoi('PARALLEL_MESH', mesh, 'MAILLAGE', repk=repk)
+    lparallel_mesh = repk .eq. 'OUI'
 !
 ! - Check jacobians
 !
     call getvtx(' ', 'VERI_JACOBIEN', scal=repk)
-    l_veri_elem = repk.eq.'OUI'
+    lCheckJacobian = repk .eq. 'OUI'
+!
+! - Check FSI normals
+!
+    call getvtx(' ', 'VERI_NORM_IFS', scal=repk)
+    lCheckFSINorms = repk .eq. 'OUI'
 !
 ! - Grandeurs caracteristiques
 !
@@ -212,15 +218,10 @@ implicit none
             call modelGetFEType(iaffe, phenom, modeli_in, idx_modelisa, modeli)
             call jeveuo(jexnum('&CATA.'//phenom, idx_modelisa), 'L', vi = p_cata_model)
             phemod = phenom//modeli
-            !modeli = list_modelisa(1)
-            !call deprecated_model(modeli)
-            !call jenonu(jexnom('&CATA.'//phenom(1:13)//'.MODL', modeli), idx_modelisa)
-            !call jeveuo(jexnum('&CATA.'//phenom, idx_modelisa), 'L', vi = p_cata_model)
-            !phemod = phenom//modeli
 ! --------- Get elements
             call jedetr(list_elem)
             call getelem(mesh, keywordfact, iaffe, ' ', list_elem, nb_elem)
-            ASSERT(lparallel_mesh .or. nb_elem.gt.0)
+            ASSERT(nb_elem.gt.0)
 ! --------- Check dimensions
             call dismoi('DIM_TOPO', phemod, 'PHEN_MODE', repi=dim_topo_curr)
             if (dim_topo_init .eq. -99) then
@@ -448,7 +449,7 @@ implicit none
 !
 ! - Check model
 !
-    call modelCheck(model, l_veri_elem)
+    call modelCheck(model, lCheckJacobian, lCheckFSINorms)
 !
 ! - Create grandeurs caracteristiques
 !
@@ -461,17 +462,6 @@ implicit none
 !
     call dismoi('BESOIN_VOISIN', ligrel, 'LIGREL', repk=repk)
     l_need_neigh = repk.eq.'OUI'
-!
-! - HHO should be alone
-!
-    call dismoi('EXI_HHO', ligrel, 'LIGREL', repk=repk)
-    l_hho = repk .eq. 'OUI'
-    if (l_hho) then
-        call dismoi('EXI_NO_HHO', ligrel, 'LIGREL', repk=repk)
-        if (repk .eq. 'OUI') then
-            call utmess('F','MODELE1_10')
-        endif
-    endif
 !
 ! - Create SD_VOISINAGE if necessary
 !

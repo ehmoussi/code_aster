@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine modelCheck(model, l_veri_elem)
+subroutine modelCheck(model, lCheckJacobian, lCheckFSINorms)
 !
 implicit none
 !
@@ -27,9 +27,10 @@ implicit none
 #include "asterfort/modexi.h"
 #include "asterfort/utmess.h"
 #include "asterfort/taxis.h"
+#include "asterfort/modelCheckFSINormals.h"
 !
 character(len=8), intent(in) :: model
-aster_logical, optional, intent(in) :: l_veri_elem
+aster_logical, intent(in) :: lCheckJacobian, lCheckFSINorms
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -39,8 +40,9 @@ aster_logical, optional, intent(in) :: l_veri_elem
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  model        : name of the model
-! In  l_veri_elem  : .true. if check jacobian (element quality)
+! In  model           : name of the model
+! In  lCheckJacobian  : .true. if check jacobian (element quality)
+! In  lCheckFSINorms  : .true. if check normals for FSI elements
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,21 +50,36 @@ aster_logical, optional, intent(in) :: l_veri_elem
     character(len=16) :: repk
     integer :: i_disc_2d, i_disc_3d
     character(len=8) :: mesh
-    aster_logical :: l_axis
-    integer :: nb_mesh_elem
-    character(len=19) :: ligrel_model
-    character(len=24) :: model_maille
-    integer, pointer :: p_model_maille(:) => null()
+    aster_logical :: lAxis, lHHO
+    integer :: nbCell
+    character(len=19) :: modelLigrel
+    integer, pointer :: modelCells(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call dismoi('NOM_MAILLA', model, 'MODELE', repk = mesh)
-    call dismoi('NB_MA_MAILLA', mesh, 'MAILLAGE', repi = nb_mesh_elem)
-    call dismoi('AXIS', model, 'MODELE', repk = repk)
-    l_axis = repk.eq.'OUI'
-    call dismoi('DIM_GEOM', model, 'MODELE', repi = nb_dim_geom)
+    modelLigrel = model//'.MODELE'
 !
-    ligrel_model = model//'.MODELE'
+! - Get mesh support
+!
+    call dismoi('NOM_MAILLA', model, 'MODELE', repk = mesh)
+    call dismoi('NB_MA_MAILLA', mesh, 'MAILLAGE', repi = nbCell)
+!
+! - Parameters about model
+!
+    call dismoi('AXIS', model, 'MODELE', repk = repk)
+    lAxis = repk.eq.'OUI'
+    call dismoi('DIM_GEOM', model, 'MODELE', repi = nb_dim_geom)
+    call dismoi('EXI_HHO', modelLigrel, 'LIGREL', repk = repk)
+    lHHO = repk .eq. 'OUI'
+!
+! - HHO should be alone
+!
+    if (lHHO) then
+        call dismoi('EXI_NO_HHO', modelLigrel, 'LIGREL', repk=repk)
+        if (repk .eq. 'OUI') then
+            call utmess('F', 'MODELE1_10')
+        endif
+    endif
 !
 ! - Check topoaster_logical dimensions
 !
@@ -80,11 +97,8 @@ aster_logical, optional, intent(in) :: l_veri_elem
                 nb_dim_geom3=2
             endif
         endif
-!
         if ((nb_dim_geom.eq.3) .and. (nb_dim_geom2.eq.2)) then
-!
 ! --------- Correct: shells elements with Z=Constant
-!
         else if ((nb_dim_geom.eq.2) .and. (nb_dim_geom2.eq.3)) then
 ! --------- Warning: 2D model with 3D mesh
             call utmess('A', 'MODELE1_53')
@@ -106,19 +120,23 @@ aster_logical, optional, intent(in) :: l_veri_elem
 !
 ! - Check if X>0 for axis elements
 !
-    if (l_axis) then
-        model_maille = model//'.MAILLE'
-        call jeveuo(model_maille, 'L', vi = p_model_maille)
-        call taxis(mesh, p_model_maille, nb_mesh_elem)
+    if (lAxis) then
+        call jeveuo(model//'.MAILLE', 'L', vi = modelCells)
+        call taxis(mesh, modelCells, nbCell)
     endif
 !
 ! - ON VERIFIE QUE LA GEOMETRIE DES MAILLES N'EST PAS TROP CHAHUTEE
 !
-    if (present(l_veri_elem)) then
-        if (l_veri_elem) then
-            call calcul('C', 'VERI_JACOBIEN', ligrel_model, 1, mesh//'.COORDO',&
-                        'PGEOMER', 1, '&&OP0018.CODRET', 'PCODRET', 'V',&
-                        'OUI')
-        endif
+    if (lCheckJacobian) then
+        call calcul('C', 'VERI_JACOBIEN', modelLigrel, 1, mesh//'.COORDO',&
+                    'PGEOMER', 1, '&&OP0018.CODRET', 'PCODRET', 'V',&
+                    'OUI')
     endif
+!
+! - Check FSI norms
+!
+    if (lCheckFSINorms) then
+        call modelCheckFSINormals(model)
+    endif
+!
 end subroutine

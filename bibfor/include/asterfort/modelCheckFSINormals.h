@@ -19,8 +19,7 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine modelCheck(model, lCheckJacobian, lCheckFSINorms)
+    subroutine modelCheckFSINormals(model)
         character(len=8), intent(in) :: model
-        aster_logical, intent(in) :: lCheckJacobian, lCheckFSINorms
-    end subroutine modelCheck
+    end subroutine modelCheckFSINormals
 end interface
