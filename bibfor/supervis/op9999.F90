@@ -168,7 +168,9 @@ subroutine op9999(isave)
     call jedema()
 !
 !   the diagnosis of the execution is OK thanks to this message
-    call utmess('I', 'SUPERVIS2_99')
+    if ( isave .eq. 1 ) then
+        call utmess('I', 'SUPERVIS2_99')
+    endif
 !
 ! --- CLOTURE DE JEVEUX
 !
