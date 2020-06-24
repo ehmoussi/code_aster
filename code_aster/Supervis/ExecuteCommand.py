@@ -73,9 +73,7 @@ from ..Messages import UTMESS, MessageLog
 from ..Objects import DataStructure, PyDataStructure
 from ..Utilities import (ExecutionParameter, Options, deprecated,
                          import_object, logger, no_new_attributes)
-from ..Utilities.outputs import (command_header, command_result,
-                                 command_separator, command_text, command_time,
-                                 decorate_name)
+from ..Utilities.outputs import command_text, decorate_name
 from .CommandSyntax import CommandSyntax
 from .Serializer import saveObjects
 
@@ -317,7 +315,8 @@ class ExecuteCommand(object):
         """Print the memory and timer informations."""
         timer = ExecutionParameter().timer
         logger.info(command_memory())
-        logger.info(command_time(*timer.StopAndGet(str(self._counter))))
+        logger.info(command_time(self._counter,
+                                 *timer.StopAndGet(str(self._counter))))
         logger.info(command_separator())
 
     def check_syntax(self, keywords):
@@ -571,8 +570,8 @@ class ExecuteMacro(ExecuteCommand):
         result.userName = name
         self._add_results[name] = result
         if ExecutionParameter().option & Options.ShowChildCmd:
-            logger.info(f"Intermediate result '{orig}' will be available "
-                        f"as '{name}'.")
+            logger.info(MessageLog.GetText('I', 'SUPERVIS2_69',
+                                           valk=(orig, name)))
 
     @property
     @deprecated(True, help="Not yet implemented.")
@@ -701,6 +700,59 @@ def get_user_name(command, filename, lineno):
 
     return ""
 
+
+def command_separator():
+    """Return a separator line.
+
+    Returns:
+        str: A separator line.
+    """
+    if not hasattr(command_separator, "cache"):
+        command_separator.cache = MessageLog.GetText('I', 'SUPERVIS2_70')
+    return command_separator.cache
+
+
+def command_header(counter, filename, lineno):
+    """Return the command header.
+
+    Arguments:
+        counter (int): Number of the command.
+
+    Returns:
+        str: String representation.
+    """
+    return MessageLog.GetText('I', 'SUPERVIS2_71',
+                              vali=(counter, lineno),
+                              valk=filename)
+
+
+def command_result(counter, command_name, result):
+    """Return the command footer.
+
+    Arguments:
+        counter (int): Number of the command.
+        command_name (str): Command name.
+        result (DataStructure|str|list[str]): Result object or name(s) of the
+            result(s) of the command.
+
+    Returns:
+        str: String representation.
+    """
+    show_type = ""
+    if hasattr(result, "getName"):
+        show_name = decorate_name(result.getName().strip())
+        if result.userName:
+            show_name = "{0} ({1})".format(result.userName.strip(), show_name)
+        show_type = MessageLog.GetText('I', 'SUPERVIS2_76',
+                                       valk=type(result).__name__)
+    elif isinstance(result, str):
+        show_name = decorate_name(result)
+    else:
+        show_name = str(result)
+    return MessageLog.GetText('I', 'SUPERVIS2_72',
+                              vali=counter,
+                              valk=(command_name, show_name, show_type))
+
 def command_memory():
     """Return a representation of the current memory consumption.
 
@@ -712,9 +764,23 @@ def command_memory():
     txt = ""
     if iret == 0:
         if rval[0] > 0.:
-            txt = ("Memory (MB) : {0:8.2f} / {1:8.2f} / {2:8.2f} / {3:8.2f} "
-                   "(VmPeak / VmSize / Optimum / Minimum)").format(*rval)
+            txt = MessageLog.GetText('I', 'SUPERVIS2_73', valr=rval)
         else:
-            txt = ("Memory (MB) : {2:8.2f} / {3:8.2f} "
-                   "(Optimum / Minimum)").format(*rval)
+            txt = MessageLog.GetText('I', 'SUPERVIS2_74', valr=rval)
     return txt
+
+
+def command_time(counter, cpu, system, elapsed):
+    """Return a representation of elapsed times in a command.
+
+    Arguments:
+        cpu (float): User time.
+        system (float): System time.
+        elapsed (float): Elapsed time.
+
+    Returns:
+        str: String representation.
+    """
+    return MessageLog.GetText('I', 'SUPERVIS2_75',
+                              vali=counter,
+                              valr=(cpu, system, elapsed))

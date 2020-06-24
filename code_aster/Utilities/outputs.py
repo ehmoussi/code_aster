@@ -225,51 +225,6 @@ def decorate_name(name):
     return convert("'<{0}>'".format(name.strip()))
 
 
-def command_separator():
-    """Return a separator line.
-
-    Returns:
-        str: A separator line.
-    """
-    return "{0:-^100}".format("")
-
-def command_header(counter, filename, lineno):
-    """Return the command header.
-
-    Arguments:
-        counter (int): Number of the command.
-
-    Returns:
-        str: String representation.
-    """
-    return ("Command #{0:0>4} from file {1!r}, line {2}:"
-            .format(counter, filename, lineno))
-
-def command_result(counter, command_name, result):
-    """Return the command footer.
-
-    Arguments:
-        counter (int): Number of the command.
-        command_name (str): Command name.
-        result (DataStructure|str|list[str]): Result object or name(s) of the
-            result(s) of the command.
-
-    Returns:
-        str: String representation.
-    """
-    show_type = ""
-    if hasattr(result, "getName"):
-        show_name = decorate_name(result.getName().strip())
-        if result.userName:
-            show_name = "{0} ({1})".format(result.userName.strip(), show_name)
-        show_type = " of type <{0}>".format(type(result).__name__)
-    elif isinstance(result, str):
-        show_name = decorate_name(result)
-    else:
-        show_name = str(result)
-    return "Result of command #{0:0>4} ({1}): {2}{3}".format(
-        counter, command_name, show_name, show_type)
-
 def command_text(command_name, keywords, result="", limit=0):
     """Return a text representation of a command.
 
@@ -293,18 +248,3 @@ def command_text(command_name, keywords, result="", limit=0):
     text = export.get_text()
     text = export.clean(text)
     return text
-
-def command_time(cpu, system, elapsed):
-    """Return a representation of elapsed times in a command.
-
-    Arguments:
-        cpu (float): User time.
-        system (float): System time.
-        elapsed (float): Elapsed time.
-
-    Returns:
-        str: String representation.
-    """
-    txt = ("Statistics: user+syst:{0:12.2f}s (syst:{1:12.2f}s, "
-           "elaps:{2:12.2f}s)").format(cpu, system, elapsed)
-    return txt

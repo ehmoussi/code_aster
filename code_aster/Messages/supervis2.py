@@ -178,6 +178,24 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
             'flags': 'CENTER',
             },
 
+    # Affichage des commandes
+    69 : _("""Le résultat intermédiaire '%(k1)s' sera disponible sous '%(k2)s'."""),
+
+    70 : """# ----------------------------------------------------------------------------------------------""",
+
+    71 : _("""# Commande #%(i1)04d de %(k1)s, ligne %(i2)d"""),
+
+    72 : _("""# Résultat commande #%(i1)04d (%(k1)s): %(k2)s %(k3)s"""),
+
+    73 : _("""# Mémoire (Mo) : %(r1)8.2f / %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmPeak / VmSize / Optimum / Minimum)"""),
+
+    # attention au décalage
+    74 : _("""# Mémoire (Mo) : %(r3)8.2f / %(r4)8.2f (Optimum / Minimum)"""),
+
+    75 : _("""# Fin commande #%(i1)04d   user+syst:%(r1)12.2fs (syst:%(r2)12.2fs, elaps:%(r3)12.2fs)"""),
+
+    76 : _(""" de type <%(k1)s>"""),
+
     # sans formatage pour STAT_NON_LINE (impmem)
     77 : _("""
   Mémoire (Mo) : %(r1)8.2f / %(r2)8.2f / %(r3)8.2f / %(r4)8.2f (VmPeak / VmSize / Optimum / Minimum)
