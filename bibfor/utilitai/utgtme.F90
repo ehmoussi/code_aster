@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
     integer :: nbarg, iret
     character(len=8) :: nomarg(*)
     real(kind=8) :: valarg(*)
-! person_in_charge: j-pierre.lefebvre at edf.fr
+! person_in_charge: mathieu.courtois at edf.fr
 ! ----------------------------------------------------------------------
 !
 !   Return the values related to the parameters names given with `nomarg`.
@@ -61,81 +61,75 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
         nom = nomarg(k)
         if (nom .eq. 'VMPEAK') then
 !
-! ----- PIC MEMOIRE TOTALE
+! ----- Pic memoire totale
 !
             valarg(k) = dble(iv(2))/1024
 !
         else if (nom .eq. 'VMSIZE') then
 !
-! ----- MEMOIRE INSTANTANNEE
+! ----- Memoire instantannee
 !
             valarg(k) = dble(iv(1))/1024
 !
         else if (nom .eq. 'LIMIT_JV') then
 !
-! ----- LIMITE MEMOIRE JEVEUX (MODIFIEE PAR JERMXD)
+! ----- Limite memoire jeveux (modifiee par jermxd)
 !
             valarg(k) = vmxdyn*lois/(1024*1024)
 !
         else if (nom .eq. 'COUR_JV ') then
 !
-! ----- CONSOMMATION MEMOIRE JEVEUX COURANTE (CUMUL DES ALLOCATIONS)
+! ----- Consommation memoire jeveux courante (cumul des allocations)
 !
             valarg(k) = mcdyn*lois/(1024*1024)
 !
         else if (nom .eq. 'CMAX_JV ') then
 !
-! ----- CONSOMMATION MAXIMUM MEMOIRE JEVEUX (MAX DES CUMULS)
+! ----- Consommation maximum memoire jeveux (max des cumuls)
 !
             valarg(k) = mxdyn/(1024*1024)
 !
         else if (nom .eq. 'CMXU_JV ') then
 !
-! ----- CONSOMMATION MAXIMUM MEMOIRE JEVEUX
-!       OBJETS JEVEUX UTILISES
+! ----- Consommation maximum memoire jeveux
+!       objets jeveux utilises
 !
             valarg(k) = (smxuse*lois)/(1024*1024)
 !
         else if (nom .eq. 'CUSE_JV ') then
 !
-! ----- CONSOMMATION MEMOIRE COURANTE JEVEUX
-!       OBJETS JEVEUX UTILISES
+! ----- Consommation memoire courante jeveux
+!       objets jeveux utilises
 !
             valarg(k) = (svuse*lois)/(1024*1024)
 !
         else if (nom .eq. 'MEM_TOTA') then
 !
-! ----- LIMITE MEMOIRE ALLOUEE LORS DE L'EXECUTION
+! ----- Limite memoire allouee lors de l'execution
 !
             valarg(k) = vmet*lois/(1024*1024)
 !
         else if (nom .eq. 'MEM_MUMP') then
 !
-! ----- CONSOMMATION MEMOIRE DU SOLVEUR MUMPS
+! ----- Consommation memoire du solveur mumps
 !
             valarg(k) = vmumps/(1024*1024)
 !
         else if (nom .eq. 'MEM_PETS') then
 !
-! ----- CONSOMMATION MEMOIRE DU SOLVEUR PETSC
+! ----- Consommation memoire du solveur petsc
 !
             valarg(k) = vpetsc/(1024*1024)
 !
         else if (nom .eq. 'MEM_INIT') then
 !
-! ----- CONSOMMATION MEMOIRE DU JDC
+! ----- Consommation memoire de l'initialisation
 !
             valarg(k) = vminit/(1024*1024)
 !
-        else if (nom .eq. 'MEM_JDC') then
-!
-! ----- CONSOMMATION MEMOIRE DU JDC
-!
-            valarg(k) = vmjdc/(1024*1024)
-!
         else if (nom .eq. 'RLQ_MEM') then
 !
-! ------ ESTIMATION DU RELIQUAT MEMOIRE
+! ------ Estimation du reliquat memoire
 !
             valarg(k) = rlqmem/(1024*1024)
 !
@@ -145,5 +139,4 @@ subroutine utgtme(nbarg, nomarg, valarg, iret)
 !
     end do
 !
-! FIN ------------------------------------------------------------------
 end subroutine

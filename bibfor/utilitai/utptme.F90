@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine utptme(nomarg, valarg, iret)
     character(len=8), intent(in) :: nomarg
     real(kind=8), intent(in) :: valarg
     integer, intent(out) :: iret
-! person_in_charge: j-pierre.lefebvre at edf.fr
+! person_in_charge: mathieu.courtois at edf.fr
 ! ----------------------------------------------------------------------
 !     Affecte la valeur associée au nom nomarg du paramètre mémoire en Mo
 ! in  nomarg  : nom du paramètre
@@ -38,40 +38,34 @@ subroutine utptme(nomarg, valarg, iret)
     iret = 0
     if (nomarg .eq. 'MEM_TOTA') then
 !
-! --------- LIMITE MEMOIRE ALLOUEE LORS DE L'EXECUTION
+! --------- Limite memoire allouee lors de l'execution
 !
         vmet = valarg*(1024*1024)
 !
 !
     else if (nomarg .eq. 'RLQ_MEM') then
 !
-! -------- RELIQUAT MEMOIRE (CONSOMMATION HORS JEVEUX ET SOLVEUR)
+! -------- Reliquat memoire (consommation hors jeveux et solveur)
 !
         rlqmem = valarg*(1024*1024)
 !
     else if (nomarg .eq. 'MEM_MUMP') then
 !
-! --------- CONSOMMATION MEMOIRE DU SOLVEUR MUMPS
+! --------- Consommation memoire du solveur mumps
 !
         vmumps = valarg*(1024*1024)
 !
     else if (nomarg .eq. 'MEM_PETS') then
 !
-! --------- CONSOMMATION MEMOIRE DU SOLVEUR PETSC
+! --------- Consommation memoire du solveur petsc
 !
         vpetsc = valarg*(1024*1024)
 !
     else if (nomarg .eq. 'MEM_INIT') then
 !
-! --------- CONSOMMATION MEMOIRE DU JDC
+! --------- Consommation memoire du jdc
 !
         vminit = valarg*(1024*1024)
-!
-    else if (nomarg .eq. 'MEM_JDC') then
-!
-! --------- CONSOMMATION MEMOIRE DU JDC
-!
-        vmjdc = valarg*(1024*1024)
 !
     else
         iret = 1

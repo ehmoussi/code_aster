@@ -19,18 +19,30 @@
 subroutine ibmain()
     implicit none
 #include "asterc/inisig.h"
+#include "asterfort/assert.h"
 #include "asterfort/ib0mai.h"
 #include "asterfort/lxinit.h"
+#include "asterfort/utgtme.h"
+#include "asterfort/utptme.h"
 
-!     ENSEMBLE DES INITIALISATIONS POUR L'EXECUTION D'UN JOB
-!
-!     --- INITIALISATION DE L'ANALYSEUR LEXICAL ET DE L'UNITE DE LECTURE
+    character(len=8) :: k8tab(1)
+    real(kind=8) :: valr(1)
+    integer :: iret
+
+!   Initialization of MEM_INIT
+    k8tab(1) = 'VMSIZE'
+    call utgtme(1, k8tab, valr, iret)
+    ASSERT(iret .eq. 0)
+    call utptme('MEM_INIT', valr(1), iret)
+    ASSERT(iret .eq. 0)
+
+!   Initialization of the internal parser
     call lxinit()
-!
-!     --- INITIALISATION DE L"INTERCEPTION DE CERTAINS SIGNAUX
+
+!   Initialization of signal interruption
     call inisig()
-!
-!     --- INITIALISATION DE JEVEUX   ---
+
+!   Initialization of jeveux
     call ib0mai()
-!
+
 end subroutine

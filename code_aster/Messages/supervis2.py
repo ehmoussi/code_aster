@@ -145,7 +145,6 @@ dernière au format HDF (mot clé FORMAT_HDF="OUI" dans la commande FIN).
 
     22 : {  'message' : _("""Mémoire limite pour l'exécution : %(r2).2f Mo
                           consommée par l'initialisation : %(r3).2f Mo
-                         par les objets du jeu de commandes : %(r4).2f Mo
                          reste pour l'allocation dynamique : %(r1).2f Mo"""),
             'flags': 'CENTER',
             },

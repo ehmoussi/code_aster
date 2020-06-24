@@ -38,14 +38,14 @@ subroutine ib0mai()
     integer :: lfic(n), mfic
     common /fenvje/  lfic,mfic
 !
-    character(len=8) :: nomf, k8tab(4)
+    character(len=8) :: nomf, k8tab(3)
     integer :: unmega, idebug, iret, lois
     integer :: mxdyn
-    real(kind=8) :: valr(4), moctet, memory, sizf
+    real(kind=8) :: valr(3), moctet, memory, sizf
 !
     call ib1mai()
 !
-    call r8inir(4, 0.d0, valr, 1)
+    valr = 0.d0
 !     --- MEMOIRE POUR LE GESTIONNAIRE D'OBJET ---
     unmega = 1024 * 1024
 !     RESTRICTION POUR UNE TAILLE MEMOIRE JEVEUX EXACTE
@@ -79,10 +79,9 @@ subroutine ib0mai()
     k8tab(1) = 'LIMIT_JV'
     k8tab(2) = 'MEM_TOTA'
     k8tab(3) = 'MEM_INIT'
-    k8tab(4) = 'MEM_JDC'
-    call utgtme(4, k8tab, valr, iret)
+    call utgtme(3, k8tab, valr, iret)
     if (valr(3) .gt. 0) then
-        call utmess('I', 'SUPERVIS2_22', nr=4, valr=valr)
+        call utmess('I', 'SUPERVIS2_22', nr=3, valr=valr)
     else
         call utmess('I', 'SUPERVIS2_29', nr=2, valr=valr)
     endif
