@@ -67,6 +67,8 @@ subroutine tran75(nomres, typres, nomin, basemo)
 #include "asterfort/rstran.h"
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
+#include "asterfort/vtcopy.h"
+#include "asterfort/vtcrea.h"
 #include "asterfort/vtcreb.h"
 #include "asterfort/vtcrec.h"
 #include "asterfort/vtdefs.h"
@@ -85,7 +87,7 @@ subroutine tran75(nomres, typres, nomin, basemo)
     character(len=19) :: fonct, kinst, knume, prchno, prchn1, trange
     character(len=19) :: typref(8), prof
     character(len=24) :: matric, chamno, crefe(2), nomcha, chamn2, objve1
-    character(len=24) :: objve2, objve3, objve4, chmod
+    character(len=24) :: objve2, objve3, objve4, chmod, tmpcha
     aster_logical :: tousno, multap, leffor, prems
     integer :: iexi
 !     ------------------------------------------------------------------
@@ -97,7 +99,7 @@ subroutine tran75(nomres, typres, nomin, basemo)
     integer :: jnume, jpsdel, jvec, linst, llcha
     integer :: lpsdel, lval2, lvale, n1, n2, n3
     integer :: n4, nbcham, nbd, nbdir, nbexci, nbinsg, nbinst
-    integer :: nbmode, nbnoeu, ncmp, neq, nfonct, neq0
+    integer :: nbmode, nbnoeu, ncmp, neq, nfonct, neq0, neq1
     complex(kind=8) :: cbid
     real(kind=8), pointer :: base(:) => null()
     integer, pointer :: ddl(:) => null()
@@ -366,6 +368,10 @@ subroutine tran75(nomres, typres, nomin, basemo)
             call copmod(basemo, champ=typcha, numer=prchno(1:14), bmodr=base, nequa=neq,&
                         nbmodes=nbmode)
         else
+            crefe(1) = mailla
+            crefe(2) = prchno
+            tmpcha = '&&TRAN75.CHAMP'
+            call dismoi('NB_EQUA', prchno, 'PROF_CHNO', repi=neq1)
             do j = 1, nbmode
                 call rsexch('F', basemo, typcha, j, nomcha,&
                             ir)
@@ -378,9 +384,13 @@ subroutine tran75(nomres, typres, nomin, basemo)
 !              SI NOMCHA N'A PAS LA BONNE NUMEROTATION, ON ARRETE TOUT :
                 ASSERT(prchno.ne.' ')
                 call dismoi('PROF_CHNO', nomcha, 'CHAM_NO', repk=prchn1)
-                ASSERT(idensd('PROF_CHNO', prchno, prchn1))
-!
+                if (.not.idensd('PROF_CHNO', prchno, prchn1)) then
+                    call vtcrea(tmpcha, crefe, 'V', 'R', neq1)
+                    call vtcopy(nomcha, tmpcha, ' ', ir)
+                    nomcha = tmpcha
+                endif
                 nomcha(20:24)='.VALE'
+                call jelira(nomcha(1:19)//'.VALE', 'LONMAX', neq1)
                 call jeveuo(nomcha, 'L', idefm)
                 idec = 0
                 do i = 1, nbnoeu
@@ -391,6 +401,10 @@ subroutine tran75(nomres, typres, nomin, basemo)
                         endif
                     end do
                 end do
+                call jeexin(tmpcha(1:19)//'.VALE', iexi)
+                if (iexi .gt. 0) then
+                   call detrsd('CHAM_NO', tmpcha)
+                endif
             end do
         endif
         iarchi = 0
