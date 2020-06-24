@@ -24,6 +24,7 @@
 /* person_in_charge: nicolas.sellenet at edf.fr */
 
 #include "aster_fort_ds.h"
+#include "aster_fort_jeveux.h"
 #include "aster_fort_superv.h"
 #include "aster_fort_utils.h"
 
@@ -333,6 +334,7 @@ bool ResultClass::printMedFile( const std::string fileName ) const
 
 bool ResultClass::update()
 {
+    CALL_JEMARQ();
     _serialNumber->updateValuePointer();
     auto boolRet = _namesOfFields->buildFromJeveux( true );
     const auto numberOfSerialNum = _serialNumber->usedSize();
@@ -353,6 +355,7 @@ bool ResultClass::update()
         for ( int rank = 0; rank < numberOfSerialNum; ++rank ) {
             std::string name( trim( curIter[rank].toString() ) );
             if ( name != "" ) {
+                CALL_JEMARQ();
                 const std::string questi( "TYPE_CHAMP" );
                 const std::string typeco( "CHAMP" );
                 ASTERINTEGER repi = 0, ier = 0;
@@ -392,17 +395,19 @@ bool ResultClass::update()
                     if ( test2 == 0 ) {
                         if ( curMesh == nullptr )
                             throw std::runtime_error(
-                                "No mesh, impossible to build FieldOnCells" );
+                                "No mesh, can not build FieldOnCells" );
                         FieldOnCellsRealPtr result =
                             _fieldBuidler.buildFieldOnCells< double >( name, curMesh );
                         ( new FieldOnCellsRealClass( name ) );
                         _dictOfVectorOfFieldsCells[nomSymb][rank] = result;
                     }
                 }
+                CALL_JEDEMA();
             }
         }
         ++cmpt;
     }
 
+    CALL_JEDEMA();
     return true;
 };
