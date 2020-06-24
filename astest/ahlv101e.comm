@@ -18,16 +18,23 @@
 # --------------------------------------------------------------------
 
 #
+
 #  GUIDE D'ONDE INCIDENTE A SORTIE ANECHOIQUE
-#           EN U,P,PHI - CAS 3D
-#           CAS TEST AHLV101A
+
+#           EN U,P,PHI - CAS 2D
+
+#           CAS TEST AHLV101B
+
 #
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
 F=500.
 
-MAIL=LIRE_MAILLAGE(FORMAT='MED', )
+
+MAIL = LIRE_MAILLAGE(FORMAT='IDEAS',
+                     UNITE=19,
+                     )
 
 AIR=DEFI_MATERIAU( FLUIDE=_F( RHO = 1.3, CELE_R = 343.))
 
@@ -35,8 +42,8 @@ CHAMPMAT=AFFE_MATERIAU(  MAILLAGE=MAIL,
                                  AFFE=_F( TOUT = 'OUI',  MATER = AIR) )
 
 GUIDE=AFFE_MODELE(  MAILLAGE=MAIL,     
-                            AFFE=_F( TOUT = 'OUI', MODELISATION = '3D_FLUIDE',
-                                      FORMULATION='U_P_PHI',
+                            AFFE=_F( TOUT = 'OUI', MODELISATION = '2D_FLUIDE',
+                                     FORMULATION='U_P',
                                      PHENOMENE = 'MECANIQUE') )
 
 #
@@ -77,47 +84,48 @@ MATASI=COMB_MATR_ASSE( COMB_R=(_F( MATR_ASSE = MATASI1, COEF_R = 1.),
 #
 
 DYNAHARM=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
-                    MATR_MASS=MATASM,  MATR_RIGI=MATASK,
-                    MATR_IMPE_PHI=MATASI,  NOM_CHAM='DEPL',
-                    FREQ=F,
-                    EXCIT=_F( VECT_ASSE = VECTASS,  COEF_MULT = 1.,
-                              PUIS_PULS = 1,  PHAS_DEG = 90.))
+                             MATR_MASS=MATASM,  MATR_RIGI=MATASK,
+                             MATR_AMOR=MATASI,
+                             NOM_CHAM='DEPL',
+                             FREQ=F,
+                             EXCIT=_F( VECT_ASSE = VECTASS,  COEF_MULT = 1.,
+                                    PUIS_PULS = 1,  PHAS_DEG = 90.))
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_REFE_C=(0.5+0j),
-                   VALE_CALC_C=0.49999657918807+1.2726248366786E-05j,
+                   VALE_CALC_C=0.49999652337973+1.2736037006647E-05j,
                    PRECISION=1.E-3,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DYNAHARM,
                    NOM_CHAM='DEPL',
-                   NOEUD='NO1',
+                   NOEUD='N1',
                    NOM_CMP='PRES',),
                 _F(NUME_ORDRE=1,
                    VALE_REFE_C=(0.5+0j),
-                   VALE_CALC_C=0.49999657781829+1.2723087612133E-05j,
+                   VALE_CALC_C=0.49999652337973+1.2736037006498E-05j,
                    PRECISION=1.E-3,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DYNAHARM,
                    NOM_CHAM='DEPL',
-                   NOEUD='NO780',
+                   NOEUD='N3',
                    NOM_CMP='PRES',),
                 _F(NUME_ORDRE=1,
                    VALE_REFE_C=(-0.4825-0.1313j),
-                   VALE_CALC_C=-0.48235155981834-0.13166993000291j,
+                   VALE_CALC_C=-0.48235155969715-0.13166993841965j,
                    PRECISION=1.E-3,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DYNAHARM,
                    NOM_CHAM='DEPL',
-                   NOEUD='NO751',
+                   NOEUD='N151',
                    NOM_CMP='PRES',),
                 _F(NUME_ORDRE=1,
                    VALE_REFE_C=(-0.4825-0.1313j),
-                   VALE_CALC_C=-0.48235155427641-0.13166992587189j,
+                   VALE_CALC_C=-0.48235155969715-0.13166993841965j,
                    PRECISION=1.E-3,
                    REFERENCE='ANALYTIQUE',
                    RESULTAT=DYNAHARM,
                    NOM_CHAM='DEPL',
-                   NOEUD='NO763',
+                   NOEUD='N153',
                    NOM_CMP='PRES',),
                 ),
           )

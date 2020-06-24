@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ CHAMPMAT=AFFE_MATERIAU(  MAILLAGE=MAIL,
 
 GUIDE=AFFE_MODELE(  MAILLAGE=MAIL,     
                             AFFE=_F( TOUT = 'OUI', MODELISATION = '2D_FLUIDE',
+                                     FORMULATION='U_P_PHI',
                                      PHENOMENE = 'MECANIQUE') )
 
 #
@@ -84,7 +85,8 @@ MATASI=COMB_MATR_ASSE( COMB_R=(_F( MATR_ASSE = MATASI1, COEF_R = 1.),
 
 DYNAHARM=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
                              MATR_MASS=MATASM,  MATR_RIGI=MATASK,
-                             MATR_IMPE_PHI=MATASI,  NOM_CHAM='DEPL',
+                             MATR_IMPE_PHI=MATASI,
+                             NOM_CHAM='DEPL',
                              FREQ=F,
                              EXCIT=_F( VECT_ASSE = VECTASS,  COEF_MULT = 1.,
                                     PUIS_PULS = 1,  PHAS_DEG = 90.))

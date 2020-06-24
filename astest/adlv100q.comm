@@ -46,22 +46,23 @@ COLONNE=AFFE_MODELE(MAILLAGE=MAYA,
                     AFFE=(_F(GROUP_MA = ('EAU',  'AIR',),
                              MODELISATION = 'AXIS_FLUIDE',
                              PHENOMENE = 'MECANIQUE',
-                             FORMULATION = 'U_P_PHI'),
+                             FORMULATION = 'U_P'),
                           _F(GROUP_MA = ('COUPLAIR',  'COUPLEAU',),
                              MODELISATION = 'AXIS_FLUI_STRU', 
                              PHENOMENE = 'MECANIQUE',
-                             FORMULATION = 'U_P_PHI'),
+                             FORMULATION = 'U_P'),
                           _F(GROUP_MA = 'PISTON',
                              MODELISATION = 'AXIS',
                              PHENOMENE = 'MECANIQUE'),
-                         )
+                         ),
+                     VERI_NORM_IFS='NON',
                     )
 
 SURFLIBR=AFFE_CHAR_MECA( MODELE=COLONNE,
 #             DDL_IMPO:(GROUP_NO:NOEUSURF  PRES:0.  PHI:0.));
 #  -- POUR TESTER LIAISON_UNIF :
-              DDL_IMPO=_F( NOEUD = 'N19',  PRES = 0.,  PHI = 0.),
-              LIAISON_UNIF=_F( GROUP_NO = 'NOEUSURF', DDL = ('PRES','PHI',)))
+              DDL_IMPO=_F( NOEUD = 'N19',  PRES = 0.,),
+              LIAISON_UNIF=_F( GROUP_NO = 'NOEUSURF', DDL = ('PRES',)))
 
 GUIDAGE=AFFE_CHAR_MECA( MODELE=COLONNE,
                     DDL_IMPO=_F( GROUP_NO = 'NOEUPIST',  DX = 0.))
@@ -80,10 +81,12 @@ MATASK=ASSE_MATRICE( MATR_ELEM=MATELE_K,  NUME_DDL=NUM)
 
 MATASM=ASSE_MATRICE( MATR_ELEM=MATELE_M,  NUME_DDL=NUM)
 
-MODES=CALC_MODES( OPTION='BANDE',
+MODES=CALC_MODES( OPTION='CENTRE',
                   MATR_RIGI=MATASK,
                   MATR_MASS=MATASM,
-                  CALC_FREQ=_F( FREQ = (5., 100.) ),
+                  VERI_MODE=_F(SEUIL=2e-05,),
+                  CALC_FREQ=_F(NMAX_FREQ=2,
+                               FREQ=(13.5,), ),
                  )
 
 
@@ -110,14 +113,14 @@ TEST_TABLE(
            NOM_PARA='IZ_G',
            TABLE=MASSES,)
 
-TEST_RESU(RESU=_F(NUME_ORDRE=1,
+TEST_RESU(RESU=_F(NUME_ORDRE=2,
                   PARA='FREQ',
                   RESULTAT=MODES,
-                  VALE_CALC=13.827701314,
+                  VALE_CALC=13.827701311683795,
                   VALE_REFE=13.82,
                   REFERENCE='NON_DEFINI',
                   CRITERE='RELATIF',
-                  PRECISION=6.E-4,),
+                  PRECISION=6.0E-4,),
           )
 
 FIN()

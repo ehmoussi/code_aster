@@ -30,9 +30,9 @@ MA = LIRE_MAILLAGE(FORMAT='IDEAS',
 
 MO=AFFE_MODELE(
          MAILLAGE=MA,AFFE=(
-         _F( GROUP_MA = ('quadeau', 'quadair',),FORMULATION='U_P_PHI',
+         _F( GROUP_MA = ('quadeau', 'quadair',),FORMULATION='U_P',
                    MODELISATION = 'AXIS_FLUIDE', PHENOMENE = 'MECANIQUE'),
-         _F( GROUP_MA = ('lineau', 'linair',),FORMULATION='U_P_PHI',
+         _F( GROUP_MA = ('lineau', 'linair',),FORMULATION='U_P',
                    MODELISATION = 'AXIS_FLUI_STRU',
                    PHENOMENE = 'MECANIQUE'),
          _F( GROUP_MA = 'quadpist',
@@ -74,7 +74,7 @@ CHM=AFFE_MATERIAU(
 SURFLIBR=AFFE_CHAR_MECA(
          MODELE=MO,
          DDL_IMPO=_F( GROUP_NO = 'surflib',
-                    PRES = 0., PHI = 0.)
+                    PRES = 0.,)
          )
 
 GUIDAGE=AFFE_CHAR_MECA(
@@ -120,18 +120,18 @@ MATM=ASSE_MATRICE(
 #
 # CALCUL DES MODES
 #
-MODES=CALC_MODES(MATR_RIGI=MATK,
-                 OPTION='AJUSTE', SOLVEUR=_F(METHODE='MULT_FRONT'),
-                 CALC_FREQ=_F(FREQ=(10.,20.,),
-                              ),
-                 MATR_MASS=MATM,
-     SOLVEUR_MODAL=_F(PREC_AJUSTE=1.E-4,PREC_INV=1.E-07),
+MODES=CALC_MODES( OPTION='CENTRE',
+                  MATR_RIGI=MATK,
+                  MATR_MASS=MATM,
+                  VERI_MODE=_F(SEUIL=2e-05,),
+                  CALC_FREQ=_F(NMAX_FREQ=2,
+                               FREQ=(13.5,), ),
                  )
 
-TEST_RESU(RESU=_F(NUME_ORDRE=1,
+TEST_RESU(RESU=_F(NUME_ORDRE=2,
                   PARA='FREQ',
                   RESULTAT=MODES,
-                  VALE_CALC=13.827677759,
+                  VALE_CALC=13.827677851370957,
                   VALE_REFE=13.8285,
                   REFERENCE='NON_DEFINI',
                   CRITERE='RELATIF',

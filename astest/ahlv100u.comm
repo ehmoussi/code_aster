@@ -38,7 +38,7 @@ CHAMPMAT=AFFE_MATERIAU(  MAILLAGE=MAYA,
 COLONNE=AFFE_MODELE(  MAILLAGE=MAYA,     
                       AFFE=_F(TOUT = 'OUI', 
                               MODELISATION = 'AXIS_FLUIDE',
-                              FORMULATION='U_P_PHI',
+                              FORMULATION='U_P',
                               PHENOMENE = 'MECANIQUE') )
 
 #  --- AFIN DE TESTER UN CHARGEMENT AVEC UNE FONCTION ON DECOMPOSE
@@ -81,7 +81,7 @@ VECTASS=ASSE_VECTEUR(  VECT_ELEM=VECTELEM,   NUME_DDL=NUM )
 
 DYNAHARM=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
                             MATR_MASS=MATASM,  MATR_RIGI=MATASK,
-                            MATR_IMPE_PHI=MATASI,  NOM_CHAM='DEPL',
+                            MATR_AMOR=MATASI,  NOM_CHAM='DEPL',
                             FREQ=F,
                             EXCIT=_F( VECT_ASSE = VECTASS,  COEF_MULT = 1.,
                                       PUIS_PULS = 1,  PHAS_DEG = 90.),

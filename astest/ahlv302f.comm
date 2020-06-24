@@ -17,11 +17,12 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# MODELISATION 'MECANIQUE' 3D_FLUIDE AVEC HEXA20 ET FACE8
+# MODELISATION 'MECANIQUE' AXIS_FLUIDE  
+# AVEC MEAXFL_QU8 ET MEAXFL_SE3
 #
 # VALIDATION INDEPENDANTE PAR LMS_NT (J.P.ROSSION)
 #
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
 
 
 #
@@ -30,11 +31,11 @@ MA = LIRE_MAILLAGE(FORMAT='IDEAS',
                    )
 
 MO=AFFE_MODELE(
-         MAILLAGE=MA,
-         AFFE=_F( TOUT = 'OUI',
-              PHENOMENE = 'MECANIQUE',
-              FORMULATION='U_P_PHI',
-              MODELISATION = '3D_FLUIDE')
+         MAILLAGE=MA, 
+         AFFE=_F( TOUT = 'OUI', 
+              PHENOMENE = 'MECANIQUE', 
+              FORMULATION = 'U_P',
+              MODELISATION = 'AXIS_FLUIDE')
          )
 
 #
@@ -46,7 +47,7 @@ AIR=DEFI_MATERIAU(
          )
 
 CHM=AFFE_MATERIAU(
-         MAILLAGE=MA,
+         MAILLAGE=MA, 
          AFFE=_F( TOUT = 'OUI',
               MATER = AIR)
          )
@@ -58,64 +59,109 @@ VITES=AFFE_CHAR_MECA(
          MODELE=MO,
          VITE_FACE=_F( GROUP_MA = 'velo',
                   VNOR = -1.0),
+          IMPE_FACE=_F( GROUP_MA = 'velo',
+                    IMPE = -1000.)  
          )
 
 IMPE=AFFE_CHAR_MECA(
          MODELE=MO,
-         IMPE_FACE=(_F( GROUP_MA = 'impe',
-                        IMPE = -408.0),
-                    _F( GROUP_MA = 'velo',
-                        IMPE = -1000.))
+         IMPE_FACE=_F( GROUP_MA = 'impe',
+                   IMPE = -408.0)
          )
 
+#
+# MATRICES ELEMENTAIRES
+#
+MK=CALC_MATR_ELEM(  MODELE=MO,
+                     CHAM_MATER=CHM,
+                      OPTION='RIGI_MECA',
+                      CHARGE=VITES
+                    )
 
+MM=CALC_MATR_ELEM(  MODELE=MO,
+                     CHAM_MATER=CHM,
+                      OPTION='MASS_MECA',
+                      CHARGE=VITES
+                    )
+
+MI=CALC_MATR_ELEM(  MODELE=MO,
+                     CHAM_MATER=CHM,
+                      OPTION='IMPE_MECA',
+                      CHARGE=(IMPE, VITES,)
+                    )
+
+VECEL=CALC_VECT_ELEM(
+         OPTION='CHAR_MECA',
+         CHAM_MATER=CHM,
+         CHARGE=VITES
+        )
+
+#
+# ASSEMBLAGE
+#
+NDDL=NUME_DDL(  MATR_RIGI=MK)
+
+MATK=ASSE_MATRICE(  MATR_ELEM=MK,
+                      NUME_DDL=NDDL)
+
+MATM=ASSE_MATRICE(  MATR_ELEM=MM,
+                      NUME_DDL=NDDL)
+
+MATA=ASSE_MATRICE(  MATR_ELEM=MI,
+                      NUME_DDL=NDDL)
+
+VECAS=ASSE_VECTEUR(
+         VECT_ELEM=VECEL,
+         NUME_DDL=NDDL
+        )
+
+#
 #  REPONSE HARMONIQUE
-
-HARMO=DYNA_LINE(TYPE_CALCUL='HARM',
-                 BASE_CALCUL='PHYS',
-                 MODELE=MO,
-                 CHAM_MATER=CHM,
-                 CHARGE=IMPE,
-                 FREQ=500.0,
-                 EXCIT=_F(CHARGE = VITES,
-                          COEF_MULT = 1.0,
-                          PHAS_DEG = 90.0,
-                          PUIS_PULS = 1)
-                 )
+#
+HARMO=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS', 
+         MATR_MASS=MATM,
+         MATR_RIGI=MATK,
+         MATR_AMOR=MATA,
+         FREQ=500.0,
+          EXCIT=_F( VECT_ASSE = VECAS,
+               COEF_MULT = 1.0,
+               PHAS_DEG = 90.0,
+               PUIS_PULS = 1)
+         )
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
-                   VALE_CALC_C=-289.77126857898+7.761767307327E-03j,
+                   VALE_CALC_C=-289.77126914594+7.7622858513365E-03j,
                    VALE_REFE_C=-289.77+0.j,
                    REFERENCE = 'ANALYTIQUE',
                    RESULTAT=HARMO,
                    NOM_CHAM='DEPL',
-                   NOEUD='N50',
+                   NOEUD='N160',
                    NOM_CMP='PRES',),
                 _F(NUME_ORDRE=1,
-                   VALE_CALC_C=-289.77126857898+7.7617673070941E-03j,
+                   VALE_CALC_C=-289.77126827472+7.7622185650255E-03j,
                    VALE_REFE_C=-289.77+0.j,
                    REFERENCE = 'ANALYTIQUE',
                    RESULTAT=HARMO,
                    NOM_CHAM='DEPL',
-                   NOEUD='N34',
+                   NOEUD='N1',
                    NOM_CMP='PRES',),
                 _F(NUME_ORDRE=1,
-                   VALE_CALC_C=284.78961364274-53.505692917338j,
-                   VALE_REFE_C=284.14-53.246j,
-                   PRECISION = 3.E-3,
-                   REFERENCE = 'ANALYTIQUE',
-                   RESULTAT=HARMO,
-                   NOM_CHAM='DEPL',
-                   NOEUD='N27',
-                   NOM_CMP='PRES',),
-                _F(NUME_ORDRE=1,
-                   VALE_CALC_C=284.78961364274-53.505692917338j,
+                   VALE_CALC_C=284.78962212397-53.505698852946j,
                    VALE_REFE_C=284.14-53.246j,
                    REFERENCE = 'ANALYTIQUE',
                    PRECISION = 3.E-3,
                    RESULTAT=HARMO,
                    NOM_CHAM='DEPL',
-                   NOEUD='N716',
+                   NOEUD='N2',
+                   NOM_CMP='PRES',),
+                _F(NUME_ORDRE=1,
+                   VALE_CALC_C=284.78962309604-53.505698151165j,
+                   VALE_REFE_C=284.14-53.246j,
+                   REFERENCE = 'ANALYTIQUE',
+                   PRECISION = 3.E-3,
+                   RESULTAT=HARMO,
+                   NOM_CHAM='DEPL',
+                   NOEUD='N161',
                    NOM_CMP='PRES',),
                 ),
           )

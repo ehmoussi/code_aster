@@ -33,7 +33,7 @@ MO=AFFE_MODELE(
          MAILLAGE=MA,
          AFFE=_F( TOUT = 'OUI',
               PHENOMENE = 'MECANIQUE',
-              FORMULATION='U_P_PHI',
+              FORMULATION='U_P',
               MODELISATION = '3D_FLUIDE')
          )
 
@@ -69,19 +69,33 @@ IMPE=AFFE_CHAR_MECA(
          )
 
 
+# Matrice elementaire 
+K_elem = CALC_MATR_ELEM(CHAM_MATER=CHM, MODELE=MO, OPTION='RIGI_MECA')
+M_elem = CALC_MATR_ELEM(CHAM_MATER=CHM, MODELE=MO, OPTION='MASS_MECA')
+Imp_elem = CALC_MATR_ELEM(CHAM_MATER=CHM, MODELE=MO, OPTION='IMPE_MECA', CHARGE=IMPE)
+
+# Seconde membre elementaire
+F_elem=CALC_VECT_ELEM(OPTION='CHAR_MECA', CHARGE=VITES, CHAM_MATER=CHM,); 
+
+# Assemeblage matrice et vecteur seconde membre
+numedd = NUME_DDL(MATR_RIGI=(K_elem, ))
+MatK = ASSE_MATRICE(MATR_ELEM=K_elem, NUME_DDL=numedd)               
+MatM = ASSE_MATRICE(MATR_ELEM=M_elem, NUME_DDL=numedd)
+MatImp = ASSE_MATRICE(MATR_ELEM=Imp_elem, NUME_DDL=numedd)
+
+Fmtx=ASSE_VECTEUR(VECT_ELEM=F_elem, NUME_DDL=numedd,);
+
+
 #  REPONSE HARMONIQUE
 
-HARMO=DYNA_LINE(TYPE_CALCUL='HARM',
-                 BASE_CALCUL='PHYS',
-                 MODELE=MO,
-                 CHAM_MATER=CHM,
-                 CHARGE=IMPE,
-                 FREQ=500.0,
-                 EXCIT=_F(CHARGE = VITES,
-                          COEF_MULT = 1.0,
-                          PHAS_DEG = 90.0,
-                          PUIS_PULS = 1)
-                 )
+HARMO=DYNA_VIBRA(TYPE_CALCUL='HARM',BASE_CALCUL='PHYS',
+                             SOLVEUR=_F(METHODE='MULT_FRONT', RENUM='MD'),
+                             MATR_MASS=MatM, 
+                             MATR_RIGI=MatK, 
+                             MATR_AMOR=MatImp,
+                             FREQ=500.0,
+                             EXCIT=_F( VECT_ASSE = Fmtx,  COEF_MULT = 1.0,
+                                       PUIS_PULS = 1.0,  PHAS_DEG = 90.0))
 
 TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    VALE_CALC_C=-289.77126857898+7.761767307327E-03j,
