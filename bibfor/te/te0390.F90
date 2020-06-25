@@ -15,12 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0390(option, nomte)
 !
-    implicit none
+use Behaviour_module, only : behaviourOption
+!
+implicit none
 !
 #include "jeveux.h"
+#include "asterfort/assert.h"
 #include "asterfort/elref1.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/gddyng.h"
@@ -39,21 +42,27 @@ subroutine te0390(option, nomte)
 #include "asterfort/rcvalb.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
-    character(len=16) :: option, nomte
-! ......................................................................
-!    - ELEMENT:  MECA_POU_D_T_GD
-!      OPTION : 'FULL_MECA'   'RAPH_MECA'   'RIGI_MECA_TANG'
+character(len=16), intent(in) :: option, nomte
 !
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: POU_D_T_GD
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
 !
     real(kind=8) :: nu, instam, instap
     character(len=8) :: elrefe
-    character(len=16) :: nomres(4)
-    integer :: icodre(4)
     real(kind=8) :: en(3, 2), enprim(3, 2), valres(4), granc(6), grani(4)
     real(kind=8) :: rigi(18, 18), fint(6, 3), y0(3), x00(3, 3), x0k(3, 3)
     real(kind=8) :: x0pg(3), tetak(3, 3), tetag(3), tetapg(3), qim(3, 3)
@@ -62,35 +71,36 @@ subroutine te0390(option, nomte)
     real(kind=8) :: x0sk(3, 3), rmkm1(3, 3), rmk(3, 3), omkm1(3, 3)
     real(kind=8) :: ompkm1(3, 3), omk(3, 3), ompk(3, 3), x0sec(3), rgmkm(3)
     real(kind=8) :: rgmk(3), omgkm(3), ompgkm(3), omgk(3), ompgk(3)
-!
-!
-!-----------------------------------------------------------------------
+    character(len=16) :: rela_comp, defo_comp
+    aster_logical :: lVect, lMatr, lVari, lSigm
+    integer, parameter :: nbres = 3
+    integer :: icodre(nbres)
+    character(len=16), parameter :: nomres(nbres) =(/'E  ','NU ', 'RHO'/)
     integer :: i, iacckm, iaccp, ico, icompo, iddepl, idepde
     integer :: idepkm, idepm, idfdk, ifint, igeom, imat, imate
     integer :: imatuu, instmr, instpr, ipoids, iret, iromk, iromkm
     integer :: istady, ivarim, ivarip, ivf, ivitkm, ivitp, j
-    integer :: jcret, jefint, jgano, k0, k1, k2, k3
+    integer :: jcret, jefint, k0, k1, k2, k3
     integer :: k4, k5, k6, k7, kc, kp, ks
-    integer :: lorien, lsig, lsigma, ndim, ne, nno
-    integer :: nnos, nord, npg
+    integer :: iorien, lsig, lsigma, ne, nno
+    integer :: nord, npg, codret
     real(kind=8) :: a, ajacob, alfnmk, ay, az, delnmk, demi
     real(kind=8) :: deux, e, g, pas, pjacob, r8bid, rho
-    real(kind=8) :: stoudy, un, xiy, xiz, xjx, zero
-!-----------------------------------------------------------------------
+    real(kind=8) :: stoudy, un, xiy, xiz, xjx
     integer, parameter :: nb_cara = 6
     real(kind=8) :: vale_cara(nb_cara)
-    character(len=8) :: noms_cara(nb_cara)
-!-----------------------------------------------------------------------
-    call elref1(elrefe)
-    if (option .eq. 'FORC_NODA') goto 210
+    character(len=8), parameter :: noms_cara(nb_cara) = (/'A1   ','IY1  ','IZ1  ',&
+                                                          'AY1  ','AZ1  ','JX1  '/)
 !
+! --------------------------------------------------------------------------------------------------
+!
+    call elref1(elrefe)
     r8bid=0.d0
-    zero = 0.d0
     demi = 5.d-1
-    un = 1.d0
+    un   = 1.d0
     deux = 2.d0
-    noms_cara(1) = 'A1'
-    noms_cara(2:6)=['IY1','IZ1','AY1','AZ1','JX1']
+    rigi = 0.d0
+    fint = 0.d0
 !
 !* STOUDY VAUT: 1., SI L'ON EST EN DYNAMIQUE
 !*              0., SI L'ON EST EN STATIQUE
@@ -102,52 +112,72 @@ subroutine te0390(option, nomte)
         stoudy = zr(istady)
     endif
 !
-!
-    call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk,jgano=jgano)
+    call elrefe_info(fami='RIGI',nno=nno,&
+                     npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdk)
+    nord = 6*nno
 !
     ico = 0
     do kp = 1, npg
-        do 10 ne = 1, nno
+        do ne = 1, nno
             ico = ico + 1
             en(ne,kp) = zr(ivf-1+ico)
             enprim(ne,kp) = zr(idfdk-1+ico)
-10      continue
+        end do
     end do
 !
+! - Get input fields
 !
-! PARAMETRES EN ENTREE
-    call jevech('PCOMPOR', 'L', icompo)
-    if (zk16(icompo) (1:4) .ne. 'ELAS') then
-        call utmess('F', 'ELEMENTS3_85', sk=zk16(icompo))
-    endif
-    if (zk16(icompo+2) .ne. 'GROT_GDEP') then
-        call utmess('F', 'ELEMENTS3_86', sk=zk16(icompo+2))
-    endif
     call jevech('PMATERC', 'L', imate)
-    nomres(1) = 'E'
-    nomres(2) = 'NU'
-    nomres(3) = 'RHO'
-    nomres(4) = 'ALPHA'
-    r8bid=0.d0
+    call jevech('PCOMPOR', 'L', icompo)
+    call jevech('PCAORIE', 'L', iorien)
+    call jevech('PVARIMP', 'L', ivarim)
+    call jevech('PINSTMR', 'L', instmr)
+    call jevech('PINSTPR', 'L', instpr)
+    call jevech('PGEOMER', 'L', igeom)
+    call jevech('PDEPLMR', 'L', idepm)
+
+! ---- LA PRESENCE DU CHAMP DE DEPLACEMENT A L INSTANT T+
+! ---- DEVRAIT ETRE CONDITIONNE  PAR L OPTION (AVEC RIGI_MECA_TANG
+! ---- CA N A PAS DE SENS).
+! ---- CEPENDANT CE CHAMP EST INITIALISE A 0 PAR LA ROUTINE NMMATR.
+    call jevech('PDEPLPR', 'L', idepde)
+    call jevech('PDDEPLA', 'L', iddepl)
+!
+!
+! - Properties of behaviour
+!
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+!
+! - Some checks
+!
+    if (rela_comp(1:4) .ne. 'ELAS') then
+        call utmess('F', 'POUTRE0_17')
+    endif
+    if (defo_comp .ne. 'GROT_GDEP') then
+        call utmess('F', 'POUTRE0_41')
+    endif
+!
+! - Elastic properties
+!
     call rcvalb('RIGI', 1, 1, '+', zi(imate),&
                 ' ', 'ELAS', 0, '  ', [r8bid],&
-                2, nomres, valres, icodre, 1)
+                2  , nomres, valres, icodre, 1)
     call rcvalb('RIGI', 1, 1, '+', zi(imate),&
                 ' ', 'ELAS', 0, '  ', [r8bid],&
-                1, nomres(3), valres(3), icodre(3), 0)
+                1  , nomres(3), valres(3), icodre(3), 0)
     if (icodre(3) .ne. 0) then
         if (stoudy .gt. demi) then
-            call utmess('F', 'ELEMENTS3_87')
+            call utmess('F', 'POUTRE0_42')
         else
-            valres(3) = zero
+            valres(3) = 0.d0
         endif
     endif
-    e = valres(1)
-    nu = valres(2)
+    e   = valres(1)
+    nu  = valres(2)
     rho = valres(3)
-    g = e/ (deux* (un+nu))
-!
+    g   = e/ (deux* (un+nu))
+! 
 !     --- RECUPERATION DES CARACTERISTIQUES GENERALES DES SECTIONS ---
 !     --- LA SECTION EST SUPPOSEE CONSTANTE ---
     call poutre_modloc('CAGNPO', noms_cara, nb_cara, lvaleur=vale_cara)
@@ -159,7 +189,6 @@ subroutine te0390(option, nomte)
     az     = vale_cara(5)
     xjx    = vale_cara(6)
     granc(1) = e*a
-!     GRANC(1) = 1.D6
     granc(2) = g*a/ay
     granc(3) = g*a/az
     granc(4) = g*xjx
@@ -167,40 +196,30 @@ subroutine te0390(option, nomte)
     granc(6) = e*xiz
 !
 !     --- RECUPERATION DES ORIENTATIONS INITIALES Y0(1), Y0(2), Y0(3)
-    call jevech('PCAORIE', 'L', lorien)
-    y0(1) = zr(lorien)
-    y0(2) = zr(lorien+1)
-    y0(3) = zr(lorien+2)
-! PARAMETRES EN SORTIE
-    if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+
+    y0(1) = zr(iorien)
+    y0(2) = zr(iorien+1)
+    y0(3) = zr(iorien+2)
+!
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Get output fields
+!
+    if (lMatr) then
         call jevech('PMATUNS', 'E', imatuu)
-!
-        nord = 6*nno
-        do 40 j = 1, nord
-            do 30 i = 1, nord
-                rigi(i,j) = zero
-30          continue
-40      continue
     endif
-    if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+    if (lVect) then
         call jevech('PVECTUR', 'E', jefint)
-        call jevech('PCONTPR', 'E', lsigma)
-        do 60 ne = 1, nno
-            do 50 kc = 1, 6
-                fint(kc,ne) = zero
-50          continue
-60      continue
     endif
-!
-    call jevech('PGEOMER', 'L', igeom)
-    call jevech('PDEPLMR', 'L', idepm)
-! ---- LA PRESENCE DU CHAMP DE DEPLACEMENT A L INSTANT T+
-! ---- DEVRAIT ETRE CONDITIONNE  PAR L OPTION (AVEC RIGI_MECA_TANG
-! ---- CA N A PAS DE SENS).
-! ---- CEPENDANT CE CHAMP EST INITIALISE A 0 PAR LA ROUTINE NMMATR.
-    call jevech('PDEPLPR', 'L', idepde)
-    call jevech('PDDEPLA', 'L', iddepl)
-!
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', lsigma)
+        call jevech('PCODRET', 'E', jcret)
+    endif
 !
     k0 = igeom - 1
     k1 = idepm - 1
@@ -208,26 +227,23 @@ subroutine te0390(option, nomte)
     k3 = iddepl - 1
 !
     do ne = 1, nno
-        do 80 kc = 1, 3
+        do kc = 1, 3
             k0 = k0 + 1
             k1 = k1 + 1
             k2 = k2 + 1
             k3 = k3 + 1
             x00(kc,ne) = zr(k0)
-!
             if (option .eq. 'RIGI_MECA_TANG') then
                 x0k(kc,ne) = zr(k0) + zr(k1)
             else
                 x0k(kc,ne) = zr(k0) + zr(k1) + zr(k2)
             endif
-!
-80      continue
-        do 90 kc = 1, 3
+        end do
+        do kc = 1, 3
             k1 = k1 + 1
             k2 = k2 + 1
             k3 = k3 + 1
             qim(kc,ne) = zr(k1)
-!
             if (option .eq. 'RIGI_MECA_TANG') then
                 qik(kc,ne) = 0.d0
                 tetak(kc,ne) = 0.d0
@@ -235,15 +251,11 @@ subroutine te0390(option, nomte)
                 qik(kc,ne) = zr(k2)
                 tetak(kc,ne) = zr(k3)
             endif
-!
-90      continue
+        end do
     end do
 !
-    call jevech('PVARIMP', 'L', ivarim)
     if (stoudy .gt. demi) then
 !* ON TRAITE UN PROBLEME DYNAMIQUE
-        call jevech('PINSTMR', 'L', instmr)
-        call jevech('PINSTPR', 'L', instpr)
         instam = zr(instmr)
         instap = zr(instpr)
         pas = instap - instam
@@ -269,8 +281,8 @@ subroutine te0390(option, nomte)
         k5 = iaccp - 1
         k6 = iromkm - 1
         k7 = iromk - 1
-        do 130 ne = 1, nno
-            do 110 kc = 1, 3
+        do ne = 1, nno
+            do kc = 1, 3
                 k1 = k1 + 1
                 k2 = k2 + 1
                 k3 = k3 + 1
@@ -279,8 +291,8 @@ subroutine te0390(option, nomte)
                 k6 = k6 + 1
                 k7 = k7 + 1
                 x0sk(kc,ne) = zr(k5)
-110          continue
-            do 120 kc = 1, 3
+            end do
+            do kc = 1, 3
                 k1 = k1 + 1
                 k2 = k2 + 1
                 k3 = k3 + 1
@@ -295,8 +307,8 @@ subroutine te0390(option, nomte)
                 ompk(kc,ne) = zr(k5)
                 rmkm1(kc,ne) = zr(k6)
                 rmk(kc,ne) = zr(k7)
-120          continue
-130      continue
+            end do
+        end do
     endif
 !
 !* BOUCLE SUR LES POINTS DE GAUSS
@@ -332,7 +344,7 @@ subroutine te0390(option, nomte)
                         omgk, ompgk)
         endif
 !
-        if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+        if (lMatr) then
             call gdmrig(kp, nno, ajacob, pjacob, en,&
                         enprim, x0pg, rot0, rotk, granc,&
                         pn, pm, rigi)
@@ -345,19 +357,20 @@ subroutine te0390(option, nomte)
             endif
         endif
 !
-        if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+        if (lVect) then
+            ASSERT(lSigm)
             call gdfint(kp, nno, ajacob, pjacob, en,&
                         enprim, x0pg, pn, pm, fint)
             lsig = lsigma - 1 + (kp-1)*6
-            do 140 ks = 1, 3
+            do ks = 1, 3
                 lsig = lsig + 1
 !*** ATTENTION : LE TORSEUR EST EXPRIME EN COORDONNEES LOCALES
                 zr(lsig) = gn(ks)
-140          continue
-            do 150 ks = 1, 3
+            end do
+            do ks = 1, 3
                 lsig = lsig + 1
                 zr(lsig) = gm(ks)
-150          continue
+            end do
             if (stoudy .gt. demi) then
                 call gdfine(kp, nno, pjacob, en, grani,&
                             rot0, rotk, omgk, ompgk, fint)
@@ -368,27 +381,27 @@ subroutine te0390(option, nomte)
 !
     end do
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG') then
+    if (lMatr) then
         imat = imatuu - 1
-        do 180 i = 1, nord
-            do 170 j = 1, nord
+        do i = 1, nord
+            do j = 1, nord
                 imat = imat + 1
                 zr(imat) = rigi(i,j)
-170          continue
-180      continue
+            end do
+        end do
     endif
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+    if (lVect) then
         ifint = jefint - 1
-        do 200 ne = 1, nno
-            do 190 kc = 1, 6
+        do ne = 1, nno
+            do kc = 1, 6
                 ifint = ifint + 1
                 zr(ifint) = fint(kc,ne)
-190          continue
-200      continue
-!
-        call jevech('PCODRET', 'E', jcret)
-        zi(jcret) = 0
+            end do
+        end do
     endif
-210  continue
+!
+    if (lSigm) then
+        zi(jcret) = codret
+    endif
 end subroutine

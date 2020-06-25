@@ -161,18 +161,6 @@ Couplage fluage/fissuration :
 La loi BETON_DOUBLE_DP ne peut être couplée qu'avec une loi de fluage de GRANGER
 """),
 
-    85 : _("""
-La relation %(k1)s  non implantée sur les éléments "POU_D_T_GD"
-"""),
-
-    86 : _("""
-  déformation :  %(k1)s  non implantée sur les éléments "POU_D_T_GD"
-"""),
-
-    87 : _("""
-On ne trouve pas RHO, qui est nécessaire en dynamique
-"""),
-
     91 : _("""
   calcul de la masse non implanté pour les éléments COQUE_3D en grandes rotations, déformation : GROT_GDEP
 """),

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -341,8 +341,10 @@ class MECA_POU_D_T_GD(Element):
                           (SP.PVARCRR, LC.ZVARCPG), (SP.PVARIMP, ZVARIPG),
                           (SP.PVITKM1, DDL_MECA), (SP.PVITPLU, DDL_MECA),
                           ),
-                          para_out=((SP.PMATUNS, MMATUNS), ),
-                          ),
+                          para_out=((SP.PMATUNS, MMATUNS),
+                       (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, EEFGEGA),
+                       (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
+        ),
 
         OP.SIEF_ELNO(te=4,
                      para_in=(

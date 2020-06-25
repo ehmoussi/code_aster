@@ -172,7 +172,7 @@ Vous risquez d'avoir des résultats inattendus, si vous ne renseignez ni :
 
     16 : _("""Vous utilisez un élément de type multifibre avec DEFORMATION='%(k1)s'. L'option RIGI_GEOM='OUI' n'est pas autorisée dans ce cas."""),
 
-    17 : _("""L'élément POU_D_TG n'est utilisable qu'en élasticité."""),
+    17 : _("""L'élément n'est utilisable qu'en élasticité."""),
 
     20 : _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
@@ -182,6 +182,10 @@ Vous avez renseigné %(k2)s. Le GROUP_MA %(k1)s n'existe pas dans le maillage.
 
 
     40 : _("""Les éléments de poutre ne peuvent pas utiliser une déformation de type %(k1)s."""),
+
+    41 : _("""Ces éléments de poutre ne peuvent être utilisés qu'en grandes transformations (GROT_GDEP)."""),
+
+    42 : _("""Il manque la masse volumique RHO qui est nécessaire en dynamique."""),
 
     59 : _("""Le coefficient de poisson n'est pas constant. Les éléments de poutre n'en tiennent pas compte."""),
 
