@@ -1,0 +1,11 @@
+P time_limit 300
+P memory_limit 512
+P ncpus 1
+P mpi_nbcpu 1
+P mpi_nbnoeud 1
+P testlist ci verification sequential
+
+F comm comp003d.comm D 1
+F nom comp003a.py D 0
+F comm comp002j.com1 D 1
+F comm comp003d.com2 D 1

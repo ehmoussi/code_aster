@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -108,9 +108,9 @@ subroutine lcmfbo(ep0, ep1, l0, l1, etamin,&
 ! - BORNES ISSUES DU TERME DOMINANT DE L'EXPONENTIEL
 !
 !    ALTERNATIVE FIXEE (POSITIVE) DANS LE CHOIX DU MINORANT DE LA VP
-    am = s1(3)/abs(log(tau))
-    ap = s1(1)/abs(log(tau))
-    b = s0(3)/abs(log(tau))
+    am = s1(3)/log(tau)
+    ap = s1(1)/log(tau)
+    b  = s0(3)/log(tau)
 !
     if (etam .ge. 0) then
         call lcrkbo(ap, b, l0, l1, etam,&

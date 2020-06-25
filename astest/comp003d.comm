@@ -1,0 +1,157 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='NON'))
+
+
+# ---------------------------------------------------------------------
+#  Loi de comportement et parametres associes
+# ---------------------------------------------------------------------
+
+compor='ENDO_LOCA_EXP'
+
+
+# Parametres requis
+
+young = 34129.12261731629       # MPa
+nu    = 0.20
+kappa = 5.841940483092377
+p     = 2.0
+sigc  = 3.0339580553333283      # MPa
+sig0  = 0.8271021337402532      # Mpa
+rest  = 8532.280654329064
+
+
+# def des materiaux en Pa puis en MPa
+
+pa    = 1.e6
+C_Pa  = (pa, 1.0)
+BETON = [None]*2
+
+for i in range(2):
+    BETON[i] = DEFI_MATERIAU( 
+        ELAS = _F( 
+            E  = young * C_Pa[i],
+            NU = nu,
+            #ALPHA = ALPHA,
+            #TEMP_DEF_ALPHA = 0.,
+            #FONC_DESORP = FONC1,
+            ),
+        ENDO_LOCA_EXP =_F( 
+            KAPPA = kappa,
+            P     = p,
+            SIGC  = sigc * C_Pa[i],
+            SIG0  = sig0 * C_Pa[i],
+            REST_RIGIDITE = rest,
+            ),
+        );
+
+
+
+# ---------------------------------------------------------------------
+#  Definition de chaque calcul
+# ---------------------------------------------------------------------
+
+# Calcul 0: Unite =  Pa, Repere = Initial, Dicretisation =  1
+# Calcul 1: Unite = MPa, Repere = Tourne,  Dicretisation =  1
+# Calcul 2: Unite = MPa, Repere = Initial, Dicretisation =  1
+# Calcul 3: Unite = MPa, Repere = Initial, Dicretisation = 10
+
+ 
+N_pas     = [1       , 1        , 1      , 10    ]
+P_imat    = [0       , 1        , 1      , 1     ]
+angles    = [0.0     , 30.0     , 0.0    , 0.0   ]
+label_cal = ['_Pa_'  , '_rot_'  , '_N_'  , '_N_' ]
+
+t_0       = 1.0   # duree de chaque segment de chargement
+
+nbequi    = 2
+Ncal      = len(N_pas)
+
+
+# calibrage des deformations maximum dans l'extension 93
+calibrage = 1.0e-2  # scaling du trajet de chargement
+CALIB_E   = young
+CALIB_NU  = nu
+
+
+# liste d'archivage
+temps_ar=DEFI_LIST_REEL( VALE =[t_0*i for i in range(9)],)
+
+
+
+# ---------------------------------------------------------------------
+# les precisions sur chaque TEST_RESU
+# ---------------------------------------------------------------------
+
+# les quantites (invariants...) sur lequels portent les calculs d'erreur et les test_resu
+ch_param2=['VMIS','TRACE','V1']
+
+# coefficients pour ch_param2 pour calculer l'erreur sur le cas "Pa"
+coef_para=[pa,pa,1.0]
+
+prec_ecart=[
+            [1.E-7, 1.E-7,  1.E-7,   1.E-7],
+            [1.E-7, 1.E-7,  1.E-7,   1.E-7],
+            [1.E-3, 1.E-3,  1.E-3,   1.E-3],
+            ]
+
+vale_calc=[
+  [4.730326686285622E-16,  4.730326686285622E-16,  8.342404144002918E-12, 0.0E+00],
+  [6.915551632426141E-16,  8.712951068512042E-16,  8.631472881296379E-12, 0.0E+00],
+  [2.6034643874386166E-16, 2.6034643874386166E-16, 4.817710848931949E-12, 0.0E+00],
+    ]
+
+
+prec_zero=[0.01, 0.01, 1.e-10]  # si valeu de reference plus petite -> pas de test
+
+
+
+## definition de la temperature imposee
+#TIMP=DEFI_FONCTION(
+                      #NOM_PARA='INST',  NOM_RESU='TEMP',
+                       #VALE=(  0.E0,  20.,
+                             #10.E0*t_0, 20.,)
+                        #)
+
+#SECHIMP=DEFI_FONCTION(
+                      #NOM_PARA='INST',  NOM_RESU='SECH',
+                       #VALE=(  0.E0,  1.,
+                             #10.E0*t_0, 1.,)
+                        #)
+
+
+###################################################################################
+#  TEST 3D
+##################################################################################
+
+# les quantites extraites du calcul
+ch_param=['VMIS','TRACE','V1']
+
+# resultats
+RESU  = [None]*Ncal
+R_SI  = [None]*len(ch_param)
+
+# Impression des resultats dans le fichier resu
+impr_resultat = True
+
+
+FIN()

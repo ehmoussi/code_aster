@@ -101,6 +101,7 @@ def C_RELATION( COMMAND ):
                                         "ENDO_FISS_EXP",
                                         "ENDO_HETEROGENE",
                                         "ENDO_ISOT_BETON",
+                                        "ENDO_LOCA_EXP",
                                         "ENDO_ORTH_BETON",
                                         "ENDO_SCALAIRE",
                                         "FLUA_PORO_BETON",

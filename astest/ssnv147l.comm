@@ -1,0 +1,152 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# MODELISATION 2D AXI   (10 MAILLES QUAD8)
+#======================================================================
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+
+MA = LIRE_MAILLAGE(FORMAT='MED', UNITE=20)
+
+
+MO=AFFE_MODELE(
+    MAILLAGE = MA,
+    AFFE     = _F(
+        GROUP_MA     = ('BLOC', 'FIXE', 'TRAC'),
+        PHENOMENE    = 'MECANIQUE',
+        MODELISATION = '3D',
+        ),
+    )
+
+
+# Materiau affaibli
+young = 34129.12261731629 
+nu    = 0.00
+kappa = 5.841940483092377
+p     = 2.0
+sigc  = 3.0339580553333283
+sig0  = 0.8271021337402532
+rest  = 8532.280654329064
+
+
+
+BETON = DEFI_MATERIAU(
+    ELAS = _F(
+        E             = young, 
+        NU            = nu,
+        ),
+    ENDO_LOCA_EXP = _F(
+        KAPPA         = kappa,
+        P             = p,
+        SIGC          = sigc*1.5,
+        SIG0          = sig0*1.5,
+        REST_RIGIDITE = rest,
+        ),
+    )
+
+
+BET_FAIB = DEFI_MATERIAU(
+    ELAS = _F(
+        E             = young, 
+        NU            = nu,
+        ),
+    ENDO_LOCA_EXP = _F(
+        KAPPA         = kappa,
+        P             = p,
+        SIGC          = sigc,
+        SIG0          = sig0,
+        REST_RIGIDITE = rest,
+        ),
+    )
+
+
+CHMAT = AFFE_MATERIAU(
+    MAILLAGE = MA,
+    AFFE     = (
+        _F(GROUP_MA='BLOC',   MATER=BETON), 
+        _F(GROUP_MA='FAIBLE', MATER=BET_FAIB),
+        ),
+    )
+
+
+L_INST=DEFI_LIST_REEL(
+    DEBUT=0.0,
+    INTERVALLE = _F(JUSQU_A=100, NOMBRE=100),
+    )
+
+
+LIAISON=AFFE_CHAR_MECA(
+    MODELE    =  MO,
+    FACE_IMPO = _F( GROUP_MA='FIXE', DX=0, DY=0, DZ=0)
+    )
+
+
+TRACTION=AFFE_CHAR_MECA(
+    MODELE     = MO,
+    FORCE_FACE = _F(GROUP_MA='TRAC', FZ = 1)
+    )
+
+
+REPONSE = STAT_NON_LINE(
+    MODELE       = MO,
+    CHAM_MATER   = CHMAT,
+    EXCIT        = (
+       _F( CHARGE = LIAISON),
+       _F( CHARGE = TRACTION, TYPE_CHARGE = 'FIXE_PILO'),
+       ),
+    COMPORTEMENT = _F(RELATION = 'ENDO_LOCA_EXP'),
+    INCREMENT    =_F(
+        LIST_INST = L_INST,
+        INST_FIN  = 2,
+        ),
+    PILOTAGE     = _F(
+        TYPE           = 'PRED_ELAS',
+        COEF_MULT      =  10,
+        ETA_PILO_R_MIN =  0.,
+        SELECTION      = 'RESIDU',
+        ),
+    NEWTON       = _F(
+        MATRICE        = 'TANGENTE',
+        REAC_ITER      = 1,
+        ),
+    CONVERGENCE  = _F(
+        RESI_REFE_RELA = 1.e-3,
+        SIGM_REFE      = sigc,
+        ITER_GLOB_MAXI = 20,
+        ),
+    )
+
+    
+TEST_RESU(
+    RESU = _F(
+        REFERENCE = 'ANALYTIQUE',
+        RESULTAT  = REPONSE,
+        NOM_CHAM  = 'VARI_ELGA',
+        NOM_CMP   = 'V1',
+        INST      = 2,
+        GROUP_MA  = 'FAIBLE',
+        POINT     = 1,
+        VALE_REFE = 0.2,
+        VALE_CALC = 0.20000000371509194,
+        ),
+    )
+
+    
+FIN()

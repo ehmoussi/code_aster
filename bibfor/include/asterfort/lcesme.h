@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,15 +19,15 @@
 !
 !
 interface 
-    subroutine lcesme(tns,eig,fct,prec,val,drv)
+    subroutine lcesme(tns,eig,para,fct,prec,val,drv)
         interface
-        subroutine fct(x,v,d)
-            real(kind=8),intent(in) :: x
+        subroutine fct(x,p,v,d)
+            real(kind=8),intent(in) :: x,p(:)
             real(kind=8),intent(out):: v,d
         end subroutine fct
         end interface
 
-        real(kind=8),intent(in) :: tns(6),eig(3),prec
+        real(kind=8),intent(in) :: tns(6),eig(3),prec,para(:)
         real(kind=8),intent(out):: val(6),drv(6,6)
     end subroutine lcesme
 end interface 

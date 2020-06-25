@@ -454,6 +454,70 @@ def Endo_Fiss_Exp(DMATER, args):
     return mclef
 
 
+def Endo_Loca_Exp(DMATER, args):
+    """
+    ENDO_LOCA_EXP = Paramètres utilisateurs de la loi ENDO_LOCA_EXP
+      E              = Module de Young
+      NU             = Coefficient de Poisson
+      FT             = Limite en traction simple
+      FC             = Limite en compression simple
+      GF             = Energie de fissuration
+      P              = Parametre dominant de la loi cohésive asymptotique
+      DIST_FISSURE   = Distance moyenne inter-fissure
+      REST_RIGI_FC   = Restauration de rigidité pour eps=fc/E (0=sans)
+    """
+
+    MATER = DMATER.cree_dict_valeurs(DMATER.mc_liste)
+
+    # Lecture et interprétation des paramètres utilisateurs
+    E   = float(MATER['E'])
+    NU  = float(MATER['NU'])
+    GF  = float(MATER['GF'])
+    FT  = float(MATER['FT'])
+    FC  = float(MATER['FC'])
+    P   = float(MATER['P'])
+    D   = float(MATER['DIST_FISSURE'])
+    rrc = float(MATER['REST_RIGI_FC'])
+    
+    # Valeur par défaut
+    beta = 0.1
+    
+    # Paramètres de la fonction seuil
+    if FC / FT < 5.83:
+        UTMESS('F', 'COMPOR1_86', valr=(float(FC) / float(FT),))
+    (sig0, tau) = Ident_Endo_Fiss_Exp(FT, FC, beta)
+    sigc = ConfinedTension(NU, sig0, tau, beta)
+
+    # Paramètres internes au modèle
+    Ec = E * (1 - NU) / ((1 + NU) * (1 - 2 * NU))
+    wc = sigc**2/(2*Ec)
+    kappa = GF/(D*wc)
+    if rrc == 0.0:
+        gamma = 0
+    else:
+        gamma = E/(FC*2.0*(1-rrc))
+
+    # Controle de la distance inter-fissure
+    Dc = 0.75*NP.pi*GF/wc*(P+2.0)**(-1.5)
+    if D > Dc:
+        UTMESS('F', 'COMPOR1_97', valr=(Dc,))
+        
+    # Paramètres pour DEFI_MATERIAU
+    mclef = elastic_properties(E, NU, args)
+    mclef.update({
+        'ENDO_LOCA_EXP': {
+            'SIGC'          : sigc, 
+            'SIG0'          : sig0, 
+            'KAPPA'         : kappa, 
+            'P'             : P, 
+            'BETA0'         : beta, 
+            'REST_RIGIDITE' : gamma,
+            },
+        })
+
+    return mclef
+
+
 def elastic_properties(E, NU, args):
     """Returns the properties for elasticity.
 
@@ -476,9 +540,9 @@ def elastic_properties(E, NU, args):
     return mclef
 
 
-def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, BETON_GLRC=None, **args):
+def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, ENDO_LOCA_EXP=None, BETON_GLRC=None, **args):
     """
-    C'est : un parmi : ACIER  MAZARS  ENDO_FISS_EXP, BETON_GLRC
+    C'est : un parmi : ACIER  MAZARS  ENDO_FISS_EXP, ENDO_LOCA_EXP, BETON_GLRC
     """
 
     #
@@ -488,6 +552,8 @@ def defi_mater_gc_ops(self, MAZARS=None, ACIER=None, ENDO_FISS_EXP=None, BETON_G
         mclef = Acier_Cine_Line(ACIER[0], args)
     if ENDO_FISS_EXP is not None:
         mclef = Endo_Fiss_Exp(ENDO_FISS_EXP[0], args)
+    if ENDO_LOCA_EXP is not None:
+        mclef = Endo_Loca_Exp(ENDO_LOCA_EXP[0], args)
     if BETON_GLRC is not None:
         mclef = Beton_GLRC(BETON_GLRC[0], args)
 

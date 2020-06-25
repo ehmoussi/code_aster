@@ -223,6 +223,8 @@ DICT_NOM_VARI = {
     "ENDOYZ": _("tenseur endommagement, direction YZ"),
     "ENDOZZ": _("tenseur endommagement, direction ZZ"),
     "ENEL_RES": _("énergie résiduelle"),
+    "ENERDISS": _("densite d'energie dissipee par endommagement"),
+    "ENERELAS": _("densite d'energie elastique"),
     "EPAISSJO": _("épaisseur du joint clavé"),
     "EPC1": _("FLUA_ENDO_PORO defromations plastiques de druker prager"),
     "EPC2": _("FLUA_ENDO_PORO defromations plastiques de druker prager"),

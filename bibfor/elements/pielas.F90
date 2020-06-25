@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,8 +21,14 @@ subroutine pielas(BEHinteg,&
                   mate, lgpg, vim, epsm,&
                   epsp, epsd, sigma, etamin, etamax,&
                   tau, copilo)
-!
+                  
 use Behaviour_type
+
+use endo_loca_module, only: &
+    ELE_law             => CONSTITUTIVE_LAW, &
+    ELE_Init            => Init, &
+    ELE_PathFollowing   => PathFollowing
+    
 !
 implicit none
 !
@@ -73,19 +79,19 @@ real(kind=8) :: sigma(6)
 ! IN  ETAMAX : BORNE SUP. PILOTAGE
 ! IN  TAU    : 2ND MEMBRE DE L'EQUATION F(ETA)=TAU
 ! OUT COPILO : COEFFICIENTS A0 ET A1 POUR CHAQUE POINT DE GAUSS
-!
-!
-!
-!
-    integer :: ndimsi
-!
-! ----------------------------------------------------------------------
-!
-!
-!
+! ---------------------------------------------------------------------
+    integer      :: ndimsi,nsol,sgn(2)
+    real(kind=8) :: sol(2),eps0(2*ndim),eps1(2*ndim)
+    type(ELE_LAW):: ELE_ldc
+    character(len=16):: option
+! ---------------------------------------------------------------------
+
+
+
 ! --- INITIALISATIONS
-!
+
     ndimsi = 2*ndim
+    option = 'PILO_PRED_ELAS'
 !
 ! --- CALCUL SUIVANT COMPORTEMENT
 !
@@ -107,6 +113,31 @@ real(kind=8) :: sigma(6)
                     copilo(1, kpg), copilo(2, kpg), copilo(3, kpg), copilo(4, kpg),&
                     copilo(5, kpg))
 !
+
+
+    else if (compor(1).eq.'ENDO_LOCA_EXP') then
+    
+        eps0 = epsm(1:ndimsi) + epsp(1:ndimsi)
+        eps1 = epsd(1:ndimsi)
+        
+        ELE_ldc = ELE_Init(ndimsi, option, 'NONE', kpg, 1, mate, 100, 0.d0, 0.d0)
+        call ELE_PathFollowing(ELE_ldc, vim(1,kpg)+tau, eps0, eps1, etamin, etamax, &
+                               1.d-6, nsol, sol, sgn)
+        if (ELE_ldc%exception .ne. 0) call utmess('F', 'PILOTAGE_83')
+        
+        if (nsol .eq. 0) then
+            copilo(5,kpg) = 0.d0
+        else if (nsol .eq. 1) then
+            copilo(1,kpg) = tau - sgn(1)*sol(1)
+            copilo(2,kpg) = sgn(1)
+        else if (nsol.eq.2) then
+            copilo(1,kpg) = tau - sgn(1)*sol(1)
+            copilo(2,kpg) = sgn(1)
+            copilo(3,kpg) = tau - sgn(2)*sol(2)
+            copilo(4,kpg) = sgn(2)
+        end if
+
+
     else if (compor(1).eq.'ENDO_ORTH_BETON') then
         call daxpy(ndimsi, 1.d0, epsm, 1, epsp,&
                    1)

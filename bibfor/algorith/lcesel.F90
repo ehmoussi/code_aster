@@ -54,13 +54,13 @@ subroutine lcesel(eps,rigi,elas,prece,sigela,sigelu,dsade,dsude)
 
 !   PARTIE POSITIVE DES DEFORMATIONS ET DERIVEE
     if (.not. elas) then
-        call lcesun(treps,unitr,dertr)
+        call lcesun(treps,[0.d0],unitr,dertr)
         call lcvalp(eps,eigeps)
-        call lcesme(eps,eigeps,lcesun,prece/safe,unieps,dereps)
+        call lcesme(eps,eigeps,[0.d0],lcesun,prece/safe,unieps,dereps)
     else
-        call lcesus(treps,unitr,dertr)
+        call lcesus(treps,[0.d0],unitr,dertr)
         call lcvalp(eps,eigeps)
-        call lcesme(eps,eigeps,lcesus,prece/safe,unieps,dereps)
+        call lcesme(eps,eigeps,[0.d0],lcesus,prece/safe,unieps,dereps)
     end if
 
 

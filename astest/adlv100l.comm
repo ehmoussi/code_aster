@@ -37,7 +37,8 @@ MO=AFFE_MODELE(
                    PHENOMENE = 'MECANIQUE'),
          _F( GROUP_MA = 'quadpist',
                    MODELISATION = 'AXIS', PHENOMENE = 'MECANIQUE'))
-         )
+          VERI_NORM_IFS = 'NON',
+        )
 
 #
 # PROPRIETES MECANIQUES

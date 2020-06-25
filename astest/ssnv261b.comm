@@ -1,0 +1,367 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# ---------------------------------------------------------------------
+#  Traction - compression confinee pour la loi ENDO_LOCA_EXP (D_PLAN)
+# ---------------------------------------------------------------------
+
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+import math
+
+## PARAMETRES MATERIAUX EN ENTREE DE LA LOI
+
+#e  = 34129.12261731629         Young modulus (MPa)
+#nu = 0.2                       Poisson ratio
+#fc = 40.0                      Compressive strength (MPa)
+#ft = 3.023810519747695         Tensile strength (MPa)
+#gf = 0.14180569037671892       Fracture energy (N/mm)
+#s0 = 0.8271021337402532        sig0 threshold parameter (MPa)
+#g0 = 41.77999513417511         tau0 threshold parameter
+#b0 = 0.1                       beta0 threshold parameter
+#lb = 9480.311838143414         lambda Lame coefficient (MPa)
+#mu = 14220.46775721512         mu Lame coefficient
+#ec = 37921.24735257366         confined stiffness
+#wc = 0.00012136865377790994    peak elastic energy
+#sc = 3.0339580553333283        confined peak stress (MPa)
+#lc = 344.1186994573466         critical length (mm)
+#Lf = 200.0                     average crack distance (mm)
+#ka = 5.841940483092377         normalised damage energy
+#m0 = 0.5890486225480862        cohesive response m0 parameter
+#d1 = 4.08104856952699          cohesive response D1 parameter
+#r  = 3.9498515721856102        cohesive response r exponent
+
+
+# parametres a renseigner dans DEFI_MATER_GC (si utilise)
+young = 34129.12261731629 
+nu    = 0.20
+fc    = 40.0
+ft    = 3.023810519747695
+GF    = 0.14180569037671892
+p     = 2.0
+Lf    = 200.0
+
+
+# Parametres a renseigner dans DEFI_MATERIAU (si utilise)
+young = 34129.12261731629 
+nu    = 0.20
+kappa = 5.841940483092377
+p     = 2.0
+sigc  = 3.0339580553333283
+sig0  = 0.8271021337402532
+rest  = 8532.280654329064
+
+
+# Autres parametres internes pour la solution analytique
+m0    = 0.5890486225480862        
+D1    = 4.08104856952699          
+r     = 3.9498515721856102        
+ec    = 37921.24735257366
+
+
+# Solution analytique pour une valeur de b donnee
+b      = 0.1
+epsc   = sigc/ec
+sig    = (1-b)*sigc
+h      =  1-b + 0.5*kappa*b*(m0 + (D1-m0)*b**(r-1))
+B      = (1-b)/h
+eps    = sig/(ec*B)
+
+# Solution pour les variables de post-traitement
+wc    = 0.5*sigc**2/ec
+a     = 0.5*(m0*b + (D1-m0)*b**r - (D1-m0)*(r-1)/(r+1)*b**(r+1))
+wdiss = kappa*wc*a
+welas = 0.5*eps*sig  
+
+
+# Branche en compression
+epscomp    = -2*eps
+
+wall       = 0.5 * ec * epscomp**2
+wneg       = 0.5 * ec * epscomp**2 * math.exp(1/(rest*epscomp))
+wecomp     = B*wall + (1-B)*wneg
+
+sigall     = ec*epscomp
+signeg     = ec*(epscomp-0.5/rest)*math.exp(1/(rest*epscomp))
+sigcomp    = B*sigall + (1-B)*signeg
+
+
+
+#----------------------------------------------------------------#
+# MATERIAU                                                       #
+#----------------------------------------------------------------#
+
+#MATE = DEFI_MATERIAU( 
+    #ELAS = _F(
+        #E=young, 
+        #NU=nu,
+        #),
+    #ENDO_LOCA_EXP = _F(
+        #KAPPA = kappa,
+        #P     = p,
+        #SIGC  = sigc,
+        #SIG0  = sig0,
+        #REST_RIGIDITE = rest,
+        #),
+    #)
+    
+MATE = DEFI_MATER_GC( 
+    ENDO_LOCA_EXP = _F(
+        FC              = fc,
+        NU              = nu,
+        E               = young, 
+        FT              = ft,
+        GF              = GF,
+        P               = p,
+        DIST_FISSURE    = Lf,
+        REST_RIGI_FC    = 0.95,
+        ),
+    )
+ 
+TEMPS1 = DEFI_LIST_REEL( 
+    DEBUT      = 0.0,
+    INTERVALLE = (
+      _F(JUSQU_A = 1.0, NOMBRE  = 2),
+      _F(JUSQU_A = 2.0, NOMBRE  = 50),
+      _F(JUSQU_A = 3.0, NOMBRE  = 10),
+      ),
+    )
+
+DEFLIST1 = DEFI_LIST_INST( 
+    DEFI_LIST = _F( LIST_INST=TEMPS1),
+    ECHEC     = _F( ACTION='DECOUPE', SUBD_PAS=4, SUBD_NIVEAU=2),
+    )
+
+
+#----------------------------------------------------------------#
+# ESSAI DE TRACRION A DEFORMATIONS IMPOSEES                    #
+#----------------------------------------------------------------#
+
+HISTORY = DEFI_FONCTION(
+    NOM_PARA    = 'INST',
+    VALE        = (0.,0., 1.0,epsc, 2.0,eps, 3.0, epscomp),
+    )
+
+
+ZERO  = DEFI_CONSTANTE( VALE =  0.0 )
+
+
+
+EVOL_DP = SIMU_POINT_MAT( 
+    SUPPORT       = 'ELEMENT',
+    MODELISATION  = 'D_PLAN',
+    COMPORTEMENT  = _F( 
+        RELATION       = 'ENDO_LOCA_EXP',
+        ITER_INTE_MAXI = 20,
+        RESI_INTE_RELA = 1.E-8,
+        ),
+    MATER      = MATE,
+    INCREMENT  = _F( LIST_INST=DEFLIST1,),
+    NEWTON     = _F( MATRICE='TANGENTE', REAC_ITER=1),
+    CONVERGENCE= _F( RESI_GLOB_MAXI = 1.E-6, ITER_GLOB_MAXI = 10),
+    ARCHIVAGE  = _F(LIST_INST = TEMPS1,),
+    EPSI_IMPOSE= _F( 
+        EPXX = HISTORY,
+        EPYY = ZERO,
+        EPZZ = ZERO,
+        EPXY = ZERO,
+        EPXZ = ZERO,
+        EPYZ = ZERO,
+        ),
+    )
+
+
+
+#----------------------------------------------------------------#
+# TESTS PAR RAPPORT AUX RESULTAT ANALYTIQUE                      #
+#----------------------------------------------------------------#
+
+tol = 1.E-6
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = 2.7305622496832695,
+    VALE_REFE = sig,
+    NOM_PARA  = 'SIXX',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = 0.10000000002342764,
+    VALE_REFE = b,
+    NOM_PARA  = 'V1',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = 0.161389791862796,
+    VALE_REFE = 1-B,
+    NOM_PARA  = 'V3',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = 0.00011722801439547694,
+    VALE_REFE = welas,
+    NOM_PARA  = 'V4',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = 2.101329434057456E-05,
+    VALE_REFE = wdiss,
+    NOM_PARA  = 'V5',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 2.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+
+# ---------------------------------------------------------------------
+# En compression
+# ---------------------------------------------------------------------
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = -6.173493130946158,
+    VALE_REFE = sigcomp,
+    NOM_PARA  = 'SIXX',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 3.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = 0.10000000002342764,
+    VALE_REFE = b,
+    NOM_PARA  = 'V1',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 3.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = 0.0005145163984900537,
+    VALE_REFE = wecomp,
+    NOM_PARA  = 'V4',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 3.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+TEST_TABLE(
+    TABLE     = EVOL_DP,
+    CRITERE   = 'RELATIF',
+    REFERENCE = 'ANALYTIQUE',
+    PRECISION = tol,
+    VALE_CALC = 2.101329434057456E-05,
+    VALE_REFE = wdiss,
+    NOM_PARA  = 'V5',
+    FILTRE=_F(
+        NOM_PARA  = 'INST',
+        CRIT_COMP = 'EQ',
+        VALE      = 3.0,
+        CRITERE   = 'RELATIF',
+        PRECISION = 1.E-08,
+        ),
+    )
+
+
+
+FIN()

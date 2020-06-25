@@ -385,11 +385,11 @@ Aucun groupe de fibres n'a de comportement.
 """),
 
     86 : _("""
-Le ratio FC/FT (%(r1)E) est inférieur à 5.83 (valeur limite pour le modèle ENDO_FISS_BETON).
+Le ratio FC/FT (%(r1)E) est inférieur à 5.83 (valeur limite pour le modèle).
 """),
 
     87 : _("""
-L'identification numérique des paramètres SIG0 et TAU à partir de FT et FC a échoué : valeurs exotiques ?
+L'identification numérique des paramètres à partir de FT et FC a échoué : valeurs exotiques ?
 """),
 
     88 : _("""
@@ -426,5 +426,16 @@ Au temps %(r1)f, une grandeur liée au séchage est inférieure au seuil %(r2)f,
     Séchage au temps actuel    : %(r4)f
     Séchage de référence       : %(r5)f
  """),
+
+    97 : _("""
+La distance inter-fissure DIST_FISSURE est supérieure à la distance critique %(r1)f. Il faut diminuer
+DIST_FISSURE, augmenter GF ou diminuer FT.
+"""),
+
+    98 : _("""
+La condition de stabilité locale kappa * m0 > 2 n'est pas respectée. Il faut modifier les caractéristiques du
+matériau en augmentant KAPPA ou bien en diminuant P pour augmenter m0 (actuellement m0 = %(r1)f).
+"""),
+
 
 }

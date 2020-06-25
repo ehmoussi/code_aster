@@ -29,7 +29,7 @@ DEFI_MATER_GC=MACRO(nom="DEFI_MATER_GC",
     reentrant='n',
     fr=tr("Définir des lois matériaux spécifique au Génie Civil"),
     #
-    regles = (UN_PARMI('MAZARS','ACIER','ENDO_FISS_EXP','BETON_GLRC'), ),
+    regles = (UN_PARMI('MAZARS','ACIER','ENDO_FISS_EXP','ENDO_LOCA_EXP','BETON_GLRC'), ),
     #
     # ============================================================================
     MAZARS      =FACT(statut= 'f',max= 1,
@@ -110,6 +110,18 @@ DEFI_MATER_GC=MACRO(nom="DEFI_MATER_GC",
         LARG_BANDE     =SIMP(statut='o',typ='R',  val_min=0.0E+0                ,       fr=tr("Largeur de bande d'endommagement (2*D)")),
         REST_RIGI_FC   =SIMP(statut='f',typ='R',  val_min=0.0, val_max=0.99,defaut=0.9, fr=tr("Restauration de rigidité pour eps=fc/E (0=sans)")),
         COEF_RIGI_MINI =SIMP(statut='f',typ='R',  val_min=0.0, defaut = 0.0     ,       fr=tr("Rigidite minimale dans la matrice tangente")),
+    ),
+    # ============================================================================
+    ENDO_LOCA_EXP       =FACT(statut= 'f',max= 1,
+        fr=tr("Définir les paramètres matériaux du béton pour la loi ENDO_LOCA_EXP"),
+        E              =SIMP(statut='o',typ='R',  val_min=0.0E+0,                       fr=tr("Module d'Young")),
+        NU             =SIMP(statut='o',typ='R',  val_min=0.0E+0, val_max=0.5E+0,       fr=tr("Coefficient de poisson")),
+        FT             =SIMP(statut='o',typ='R',  val_min=0.0E+0                ,       fr=tr("Limite en traction simple")),
+        FC             =SIMP(statut='o',typ='R',  val_min=0.0E+0                ,       fr=tr("Limite en compression simple")),
+        GF             =SIMP(statut='o',typ='R',  val_min=0.0E+0                ,       fr=tr("Energie de fissuration")),
+        P              =SIMP(statut='f',typ='R',  val_min=1.0E+0                ,       fr=tr("Parametre de forme de la reponse cohesive")),
+        DIST_FISSURE   =SIMP(statut='o',typ='R',  val_min=0.0E+0                ,       fr=tr("Distance moyenne inter-fissures")),
+        REST_RIGI_FC   =SIMP(statut='f',typ='R',  val_min=0.0, val_max=1.00,defaut=0.95,fr=tr("Restauration de rigidité pour eps=fc/E (0=sans)")),
     ),
     # ============================================================================
     INFO        =SIMP(statut='f',typ='I',     into=(1,2,),     defaut=1),

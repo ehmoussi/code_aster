@@ -23,7 +23,7 @@ from ...Commands import CALC_TABLE
 
 def relative_error(X, Xref, coef=1., prec_zero=0.):
     """calcul erreur relative entre deux nombres"""
-    if Xref < prec_zero:
+    if abs(Xref) < prec_zero:
         err = 0.
     else:
         err = abs((X * coef - Xref) / Xref)

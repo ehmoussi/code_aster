@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,19 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine lcesme(tns,eig,fct,prec,val,drv)
+subroutine lcesme(tns,eig,para,fct,prec,val,drv)
     implicit none
 #include "asterfort/lcdpdt.h"
 #include "asterfort/assert.h"
 
     interface
-    subroutine fct(x,v,d)
-        real(kind=8),intent(in) :: x
+    subroutine fct(x,p,v,d)
+        real(kind=8),intent(in) :: x,p(:)
         real(kind=8),intent(out):: v,d
     end subroutine fct
     end interface
 
-    real(kind=8),intent(in) :: tns(6),eig(3),prec
+    real(kind=8),intent(in) :: tns(6),eig(3),prec,para(:)
     real(kind=8),intent(out):: val(6),drv(6,6)
 ! --------------------------------------------------------------------------------------------------
 !   Value and derivative (tangent matrix) of a tensorial function of the eigenvalues
@@ -36,6 +36,7 @@ subroutine lcesme(tns,eig,fct,prec,val,drv)
 ! --------------------------------------------------------------------------------------------------
 ! tns : symmetric argument tensor in symmetric format
 ! eig : eigenvalues of tensor tns in decreasing order
+! para: additional parameters to evaluate the function f(x)
 ! fct : scalar function of the eigenvalues. Return a vector(/value, derivative/)
 ! prec: precision for distinguishing close eigenvalues
 ! val : value of the tensorial function
@@ -84,7 +85,7 @@ subroutine lcesme(tns,eig,fct,prec,val,drv)
     case (1)
 !       Triple eigenvalue
 
-        call fct(x(1),f(1),d(1))
+        call fct(x(1),para,f(1),d(1))
         val = f(1)*kr
         drv = d(1)*id
 
@@ -92,7 +93,7 @@ subroutine lcesme(tns,eig,fct,prec,val,drv)
 !       Double eigenvalue
 
         do i = 1,2
-            call fct(x(i),f(i),d(i))
+            call fct(x(i),para,f(i),d(i))
         end do
 
         c(1) = 0.5d0 * ((x(1)-x(2))*(d(1)+d(2))-2*(f(1)-f(2)))
@@ -110,7 +111,7 @@ subroutine lcesme(tns,eig,fct,prec,val,drv)
         do i = 1,3
             j = perm(i+1)
             k = perm(i+2)
-            call fct(x(i),f(i),d(i))
+            call fct(x(i),para,f(i),d(i))
             g(i) = f(i) / ((x(i)-x(j)) * (x(i)-x(k)))
         end do
 
