@@ -66,11 +66,11 @@ NVITER = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
 
 CEPSINR = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
                             components=('EPX', 'KY', 'KZ',))
-                            
-                            
+
+
 CEPSINF  = LocatedComponents(phys=PHY.EPSI_F, type='ELEM',
                              components=('EPX', 'KY', 'KZ',))
-                             
+
 
 EDEFGNO = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
                             components=('EPXX', 'GAXY', 'GAXZ', 'GAT', 'KY',
@@ -573,23 +573,19 @@ class MECA_POU_D_TG(Element):
                         ),
 
         OP.RIGI_MECA_TANG(te=346,
-                          para_in=(
-                          (SP.PCAGNPO, LC.CCAGNP1), (
-                              OP.RIGI_MECA_TANG.PCAORIE, CCAORIE),
-                          (SP.PCARCRI, LC.CCARCRI), (
-                          OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
-                          (OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA), (
-                          SP.PDEPLMR, DDL_MECA),
-                          (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
-                          (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
-                          (SP.PMATERC, LC.CMATERC), (SP.PSTRXMR, ESTRAUX),
-                          (SP.PVARCMR, LC.ZVARCPG), (
-                          OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
-                          (SP.PVARCRR, LC.ZVARCPG), (
-                          OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
-                          ),
-                          para_out=((SP.PMATUUR, MMATUUR), ),
-                          ),
+            para_in =( (SP.PCAGNPO, LC.CCAGNP1),
+                       (OP.RIGI_MECA_TANG.PCAORIE, CCAORIE), (SP.PCARCRI, LC.CCARCRI),
+                       (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (OP.RIGI_MECA_TANG.PCONTMR, EEFGEGA),
+                       (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                       (SP.PGEOMER, NGEOMER), (SP.PINSTMR, CTEMPSR),
+                       (SP.PINSTPR, CTEMPSR), (SP.PMATERC, LC.CMATERC),
+                       (SP.PSTRXMR, ESTRAUX), (SP.PVARCMR, LC.ZVARCPG),
+                       (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
+                       (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
+            para_out=( (SP.PMATUUR, MMATUUR),
+                       (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, EEFGEGA),
+                       (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
+        ),
 
         OP.SIEF_ELGA(te=342,
                      para_in=(

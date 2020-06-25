@@ -172,6 +172,8 @@ Vous risquez d'avoir des résultats inattendus, si vous ne renseignez ni :
 
     16 : _("""Vous utilisez un élément de type multifibre avec DEFORMATION='%(k1)s'. L'option RIGI_GEOM='OUI' n'est pas autorisée dans ce cas."""),
 
+    17 : _("""L'élément POU_D_TG n'est utilisable qu'en élasticité."""),
+
     20 : _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 

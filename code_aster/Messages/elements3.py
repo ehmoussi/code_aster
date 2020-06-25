@@ -104,20 +104,6 @@ cata_msg = {
  un champ de vitesse de vent est impose sans donner un Cx dépendant de la vitesse sur un des câbles.
 """),
 
-    40 : _("""
- DEFORMATION %(k1)s non programmée.
- Seules les déformations PETIT et GROT_GDEP sont autorisées avec les
- éléments de type %(k2)s.
-"""),
-
-
-
-
-
-
-
-
-
 
     49 : _("""
  anisotropie non prévue pour coque1d
