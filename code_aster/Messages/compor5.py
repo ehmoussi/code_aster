@@ -101,14 +101,20 @@ La déformation est supposée nulle.
  Utilisez un autre type de déformations (cf. U4.51.11 et les documents R).
 """),
 
+    24 : _("""
+Erreur utilisateur :
+  Sur la maille %(k1)s le calcul prend en compte le séchage. Mais il manque la valeur de référence.
+  On ne peut donc pas calculer la déformation de dessication associée.
+"""),
+
     30: _("""
   Pour les poutres multifibres, l'utilisation de lois de comportement via
   DEBORST nécessite d'avoir un seul matériau par poutre!
  """),
-
+ 
     32 : _("""
-Sur la maille %(k1)s le calcul est thermo mécanique. Mais il manque le paramètre matériau %(k2)s.
-On ne peut donc pas calculer la déformation thermique.
+Sur la maille %(k1)s la variable de commande %(k2)s est définie. Mais il manque le paramètre matériau %(k3)s.
+On ne peut donc pas calculer la déformation générée par la variable de commande %(k2)s.
 """),
 
     40 : _("""
@@ -117,7 +123,7 @@ Il faut une température dans AFFE_MATERIAU/AFFE_VARC.
 """),
 
     42 : _("""
-Il existe un champ de température mais vous n'avez pas renseigné la paramètre ALPHA dans DEFI_MATERIAU ou la
+Il existe un champ de température mais vous n'avez pas renseigné le paramètre ALPHA dans DEFI_MATERIAU ou la 
 température de référence dans AFFE_MATERIAU/AFFE_VARC.
 On ne peut pas calculer la déformation thermique.
 """),

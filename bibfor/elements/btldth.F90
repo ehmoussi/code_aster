@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,14 +26,12 @@ subroutine btldth(fami, xi3, nb1, kpg, btild,&
 #include "asterc/r8nnem.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rcvarc.h"
-#include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
     integer :: nb1, kpg
     real(kind=8) :: wgt, young, nu, alpha, xi3
     real(kind=8) :: btild(5, 42), forthi(1), vecthr(2)
     integer :: jcou, imoy, iadzi, iazk24
     character(len=24) :: valk(3)
-    character(len=8) :: nommai
     character(len=4) :: fami
     real(kind=8) :: p1xi3, p2xi3, p3xi3
 !
@@ -61,11 +59,7 @@ subroutine btldth(fami, xi3, nb1, kpg, btild,&
                 3*zi(jcou), tsup, iret4)
     if ((iret2+iret3+iret4) .eq. 0) then
         if ((iret1.eq.1) .or. (indic.eq.0)) then
-            call tecael(iadzi, iazk24)
-            nommai=zk24(iazk24-1+3)(1:8)
-            valk(1)=nommai
-            valk(2)='TEMP_REF'
-            call utmess('F', 'COMPOR5_32', nk=2, valk=valk)
+            call utmess('F', 'COMPOR5_43')
         else
             temper=(tmoy*p1xi3+tinf*p2xi3+tsup*p3xi3)-tref
         endif

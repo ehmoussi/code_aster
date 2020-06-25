@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ implicit none
     real(kind=8) :: valres(nbresm)
 !
     character(len=8) :: para_name, materi
-    character(len=24) :: valk(2)
+    character(len=24) :: valk(3)
     real(kind=8) :: para_vale
     integer :: nbres, nb_para, i
     real(kind=8) :: alpha_c, alpha_f, alpha_a
@@ -178,8 +178,9 @@ implicit none
         if (icodre(i).ne.0) then
             call tecael(iadzi, iazk24)
             valk(1) = zk24(iazk24-1+3)
-            valk(2) = nomres(i)
-            call utmess('F', 'COMPOR5_32', nk=2, valk=valk)
+            valk(2) = 'TEMP'
+            valk(3) = nomres(i)
+            call utmess('F', 'COMPOR5_32', nk=3, valk=valk)
         endif
     end do
 !

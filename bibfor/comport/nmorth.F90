@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -32,6 +32,8 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
 #include "asterfort/utmess.h"
 #include "asterfort/utpslg.h"
 #include "asterfort/verift.h"
+#include "asterfort/verifh.h"
+#include "asterfort/verifs.h"
     character(len=*) :: fami, poum
     integer :: kpg, ksp, ndim, imate
     real(kind=8) :: deps(6), sigm(6), sigp(6)
@@ -45,6 +47,8 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
 !  IN    PHENOM : PHENOMENE (ELAS_ORTH OU ELAS_ISTR)
 !  IN    TYPMOD : TYPE DE MODELISATION
 !  IN    IMATE  : ADRESSE DU MATERIAU
+!  IN    POUM   : '+' INSTANT SUIVANT OU '-' INSTANT COURANT
+!                 OU 'T' = '+' - '-' INCREMENT
 !  IN    EPSM   : DEFORMATION A L INSTANT T-
 !  IN    DESPS  : INCREMENT DE DEFORMATION
 !  IN    SIGM   : CONTRAINTE A L INSTANT T-
@@ -56,7 +60,9 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
 !  OUT   DSIDEP : MATRICE DE RIGIDITE TANGENTE
 !
     real(kind=8) :: rbid, repere(7), hookf(36), mkooh(36), xyzgau(3)
-    real(kind=8) :: deplth(6), depgth(6), depstr(6), epsth_anis(3)
+    real(kind=8) :: depstr(6)
+    real(kind=8) :: epsth_anis(3), deplth(6), depgth(6)
+    real(kind=8) :: depghy, depgse
     real(kind=8) :: depsme(6), rac2, vepst1(6), vepst2(6), epsm2(6)
     integer :: nbsigm, i, j
     character(len=2) :: k2bid
@@ -67,6 +73,9 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
     rac2=sqrt(2.d0)
     nbsigm=ndim*2
     call r8inir(36, 0.d0, dsidep, 1)
+    do i = 1, nbsigm
+        depgth(i)=0.d0
+    end do
 !
     if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
         do i = 1, nbsigm
@@ -85,6 +94,8 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
     repere(1)=1.d0
     repere(2)=angmas(1)
 !
+! - VERIFICATION DE L'ELEMENT
+! 
     vrai = .false.
     if (fami .eq. 'PMAT') then
 !        ON VIENT DE OP0033
@@ -109,11 +120,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
         call utmess('F', 'ALGORITH8_22')
     endif
 !
-    do i = 1, nbsigm
-        depgth(i)=0.d0
-    end do
-!
-!     MATRICES TANGENTES
+! - MATRICES TANGENTES
 !
     if (fami .eq. 'PMAT') then
 !        ON VIENT DE OP0033
@@ -147,9 +154,12 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
         end do
     endif
 !
+! - INTEGRATION
+!
     if (option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
 !
-!
+!   DEFORMATION THERMIQUES
+!       DANS LE REPERE LOCAL
         if (phenom .eq. 'ELAS_ORTH') then
 !
             call verift(fami, kpg, ksp, poum, imate,&
@@ -158,10 +168,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
             deplth(2) = epsth_anis(2)
             deplth(3) = epsth_anis(3)
 !
-!
         else if (phenom.eq.'ELAS_ISTR') then
-!
-! RECUPERATION DES PARAMETRES MATERIAUX A L INSTANT -
 !
             call verift(fami, kpg, ksp, poum, imate,&
                         epsth_anis_=epsth_anis)
@@ -171,16 +178,14 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
 !
         endif
 !
-! INCREMENT DE DEFORMATIONS D ORIGINE THERMIQUE DANS LE REPERE LOCAL
-!
         deplth(4)=0.d0
         deplth(5)=0.d0
         deplth(6)=0.d0
 !
-! RECUPERATION DE LA MATRICE DE PASSAGE
+!       RECUPERATION DE LA MATRICE DE PASSAGE
         call matrot(angmas, p)
 !
-! PASSAGE DU TENSEUR DES DEFORMATIONS THERMIQUES DANS LE REPERE GLOBAL
+!       PASSAGE DU TENSEUR DES DEFORMATIONS THERMIQUES DANS LE REPERE GLOBAL
 !
         vepst1(1)=deplth(1)
         vepst1(2)=deplth(4)
@@ -196,6 +201,15 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
         depgth(4)=vepst2(2)
         depgth(5)=vepst2(4)
         depgth(6)=vepst2(5)
+!
+!
+!   RETRAIT ENDOGENE ET RETRAIT DE DESSICCATION (SCALAIRE)
+!       IDENTIQUES DANS LES 2 REPERES L ET G CAR ISOTROPES
+        call verifh(fami, kpg , ksp , poum , imate ,&
+                     depghy)
+        call verifs(fami, kpg , ksp , poum , imate ,&
+                     depgse)
+!
 ! CALCUL DES DEFORMATIONS MECANIQUES
 ! ATTENTION LES TERMES EXTRA DIAGONAUX DE DEFORMATIONS THERMIQUES
 ! DOIVENT ETRE MULTIPLIES PAR DEUX POUR ETRE CONFORME AVEC
@@ -203,7 +217,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
 !
         do i = 1, nbsigm
             if (i .le. 3) then
-                depsme(i)=depstr(i)-depgth(i)
+                depsme(i)=depstr(i)-depgth(i)-depghy-depgse
             else
                 depsme(i)=depstr(i)-2.d0*depgth(i)
             endif
@@ -213,7 +227,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
         do i = 4, nbsigm
             sigm(i)=sigm(i)/rac2
         end do
-! MODIFICATIOn DE SIGM POUR PRENDRE EN COMPTE LA VARIATION DE
+! MODIFICATION DE SIGM POUR PRENDRE EN COMPTE LA VARIATION DE
 ! COEF ELASTIQUES AVEC LA TEMPERATURE
 !
         do i = 1, nbsigm
