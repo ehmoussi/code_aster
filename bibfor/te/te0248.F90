@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine te0248(optioz, nomtez)
-    implicit none
+!
+subroutine te0248(option, nomte)
+!
+use Behaviour_module, only : behaviourOption
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8nnem.h"
@@ -37,18 +41,23 @@ subroutine te0248(optioz, nomtez)
 #include "asterfort/utpvlg.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
-    character(len=16) :: option, nomte
-    character(len=*) :: optioz, nomtez
+#include "asterfort/Behaviour_type.h"
+!
+character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
-!     CALCUL DES OPTIONS FULL_MECA, RAPH_MECA, RIGI_MECA_TANG, RIGI_MECA_IMPLEX
+! Elementary computation
 !
-!     POUR COMPORTEMENTS LINEAIRES ET NON LINÉAIRES DES ÉLÉMENTS DE BARRE 'MECA_BARRE'
+! Elements: BARRE / 2D_BARRE
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
 !
 ! --------------------------------------------------------------------------------------------------
-! IN  : OPTION : NOM DE L'OPTION A CALCULER (K16)
-! IN  : NOMTE  : NOM DU TYPE ÉLÉMENT (K16)
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: neq, nbt, nvamax, imate, igeom, iorie, isect, iinstm, ivarmp
@@ -57,7 +66,6 @@ subroutine te0248(optioz, nomtez)
     integer :: jtab(7), iret
     parameter (neq=6,nbt=21,nvamax=8)
     character(len=4) :: fami
-    character(len=16) :: valkm(3)
 !
 !   constantes pour PINTO_MENEGOTTO
     integer :: ncstpm, codret
@@ -75,17 +83,16 @@ subroutine te0248(optioz, nomtez)
     real(kind=8) :: etan
     real(kind=8) :: angmas(3)
     integer :: i
-!
-    aster_logical :: vecteu
+    character(len=16) :: defo_comp, rela_comp, rela_cpla
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    option = optioz
-    nomte = nomtez
     codret=0
     fami = 'RIGI'
 !
-!   Paramètres en entrée
+! - Get input fields
+!
     call jevech('PMATERC', 'L', imate)
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PCAORIE', 'L', iorie)
@@ -103,33 +110,50 @@ subroutine te0248(optioz, nomtez)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
 !
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+    rela_cpla = zk16(icompo-1+PLANESTRESS)
+!
+! - Some checks
+!
     if ( (option.eq. 'FULL_MECA_ELAS' .or. option.eq.'RIGI_MECA_ELAS') .and. &
-         (zk16(icompo) .ne. 'ELAS') ) then
-        valkm(1) = option
-        valkm(2) = zk16(icompo)
-        valkm(3) = nomte
-        call utmess('F', 'ELEMENTS3_2', nk=3, valk=valkm)
+         (rela_comp .ne. 'ELAS') ) then
+        call utmess('F', 'POUTRE0_43', sk = rela_comp)
     endif
 !
 !   Angle du mot clef MASSIF de AFFE_CARA_ELEM, initialisé à r8nnem (on ne s'en sert pas)
-    call r8inir(3, r8nnem(), angmas, 1)
 !
-!   Paramètres en sortie
-    if (option(1:10) .eq. 'RIGI_MECA_') then
+    angmas = r8nnem()
+!
+! - Get output fields
+!
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imatuu)
+
+    endif
+    if (option(1:10) .eq. 'RIGI_MECA_') then
         ivarip = ivarim
         icontp = icontm
-    else if (option(1:9).eq.'FULL_MECA') then
-        call jevech('PMATUUR', 'E', imatuu)
+    endif
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
-        call jevech('PVARIPR', 'E', ivarip)
-    else if (option.eq.'RAPH_MECA') then
-        call jevech('PVECTUR', 'E', ivectu)
-        call jevech('PCONTPR', 'E', icontp)
+        call jevech('PCODRET', 'E', jcret)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
     endif
-!
     if (option(1:16) .eq. 'RIGI_MECA_IMPLEX') then
         call jevech('PCONTXR', 'E', icontp)
     endif
@@ -140,7 +164,7 @@ subroutine te0248(optioz, nomtez)
     nc = 3
 !
 !   Récupération des orientations bêta,gamma et calcul des matrices de changement de repère
-    if (zk16(icompo+2) (6:10) .eq. '_REAC') then
+    if (defo_comp(6:10) .eq. '_REAC') then
         if (nomte .eq. 'MECA_BARRE') then
             do i = 1, 3
                 w(i)   = zr(igeom-1+i) + zr(ideplm-1+i) + zr(ideplp-1+i)
@@ -186,7 +210,7 @@ subroutine te0248(optioz, nomtez)
     xlong0 = sqrt(xlong0)
 !
     if (xlong0 .eq. 0.d0) then
-        call utmess('F', 'ELEMENTS3_62')
+        call utmess('F', 'POUTRE0_62')
     endif
 !
 !   Incrément de déplacement en repère local
@@ -220,15 +244,15 @@ subroutine te0248(optioz, nomtez)
     effnom = zr(icontm)
 !
 !   RELATION DE COMPORTEMENT
-    if ( (zk16(icompo) .eq. 'ELAS') .or. &
-         (zk16(icompo) .eq. 'VMIS_ISOT_LINE') .or. &
-         (zk16(icompo) .eq. 'VMIS_ISOT_TRAC') .or. &
-         (zk16(icompo) .eq. 'CORR_ACIER') .or. &
-         (zk16(icompo) .eq. 'VMIS_CINE_LINE') .or. &
-         (zk16(icompo) .eq. 'RELAX_ACIER') ) then
+    if ( (rela_comp .eq. 'ELAS') .or. &
+         (rela_comp .eq. 'VMIS_ISOT_LINE') .or. &
+         (rela_comp .eq. 'VMIS_ISOT_TRAC') .or. &
+         (rela_comp .eq. 'CORR_ACIER') .or. &
+         (rela_comp .eq. 'VMIS_CINE_LINE') .or. &
+         (rela_comp .eq. 'RELAX_ACIER') ) then
 !       Récupération des caractéristiques du matériau
         epsm = (uml(4)-uml(1))/xlong0
-        call nmiclb(fami, 1, 1, option, zk16(icompo),&
+        call nmiclb(fami, 1, 1, option, rela_comp,&
                     zi(imate), xlong0, aire, zr(iinstm), zr(iinstp),&
                     dlong, effnom, zr(ivarim), effnop, zr(ivarip),&
                     klv, fono, epsm, zr(icarcr), codret)
@@ -247,9 +271,9 @@ subroutine te0248(optioz, nomtez)
             call utpvlg(nno, nc, pgl, fono, vectu)
         endif
 !
-    else if (zk16(icompo).eq.'VMIS_ASYM_LINE') then
+    else if (rela_comp .eq. 'VMIS_ASYM_LINE') then
 !       Récupération des caractéristiques du matériau
-        call nmmaba(zi(imate), zk16(icompo), e, dsde, sigy,&
+        call nmmaba(zi(imate), rela_comp, e, dsde, sigy,&
                     ncstpm, cstpm)
 !
         call nmasym(fami, 1, 1, zi(imate), option,&
@@ -266,9 +290,9 @@ subroutine te0248(optioz, nomtez)
             call utpvlg(nno, nc, pgl, fono, vectu)
         endif
 !
-    else if (zk16(icompo).eq.'PINTO_MENEGOTTO') then
+    else if (rela_comp .eq. 'PINTO_MENEGOTTO') then
 !       Récupération des caractéristiques du matériau
-        call nmmaba(zi(imate), zk16(icompo), e, dsde, sigy,&
+        call nmmaba(zi(imate), rela_comp, e, dsde, sigy,&
                     ncstpm, cstpm)
 !
         vim(1) = zr(ivarim)
@@ -306,22 +330,18 @@ subroutine te0248(optioz, nomtez)
 !       Double DEBORST : risque d'impact sur les performances d'intégration de la loi
         call r8inir(neq, 0.d0, fono, 1)
         call r8inir(nbt, 0.d0, klv, 1)
-        vecteu = ( (option(1:9).eq.'FULL_MECA') .or. (option(1:9) .eq.'RAPH_MECA') )
 !
-        call jevech('PCOMPOR', 'L', icompo)
-        if ((zk16(icompo-1+5)(1:7).ne.'DEBORST') .and. (zk16(icompo)(1: 4).ne.'SANS')) then
-            valkm(1) = zk16(icompo)
-            valkm(2) = ' '
-            call utmess('F', 'ALGORITH6_81', nk=2, valk=valkm)
+
+        if ((rela_cpla.ne.'DEBORST') .and. (rela_comp .ne. 'SANS')) then
+            call utmess('F', 'COMPOR4_32', sk = rela_comp)
         else
 !
             sigx=effnom/aire
             epsx=(uml(4)-uml(1))/xlong0
             depx=dlong/xlong0
 !
-            if (vecteu) then
-                call tecach('OOO', 'PVARIMP', 'L', iret, nval=7,&
-                            itab=jtab)
+            if (lVect) then
+                call tecach('OOO', 'PVARIMP', 'L', iret, nval=7, itab=jtab)
                 nbvari = max(jtab(6),1)*jtab(7)
                 ivarmp=jtab(1)
                 call dcopy(nbvari, zr(ivarmp), 1, zr(ivarip), 1)
@@ -331,7 +351,7 @@ subroutine te0248(optioz, nomtez)
                         epsx, depx, angmas, zr(ivarim), zr(ivarip),&
                         sigxp, etan, codret)
 !
-            if (vecteu) then
+            if (lVect) then
 !               stockage de l'effort normal
                 zr(icontp) = sigxp*aire
 !               calcul des forces nodales
@@ -345,31 +365,29 @@ subroutine te0248(optioz, nomtez)
         endif
 !
 !       passage de klv et fono du repère local au repère global
-        if (option(1:10) .eq. 'RIGI_MECA_') then
+        if (lMatr) then
             call utpslg(nno, nc, pgl, klv, matuu)
-        else
-            if (option(1:9) .eq. 'FULL_MECA') then
-                call utpslg(nno, nc, pgl, klv, matuu)
-            endif
+        endif
+        if (lVect) then
             call utpvlg(nno, nc, pgl, fono, vectu)
         endif
 !
     endif
 !
     if (nomte .eq. 'MECA_BARRE') then
-        if ((option(1:10).eq.'RIGI_MECA_') .or. (option(1:9) .eq.'FULL_MECA')) then
+        if (lMatr) then
             do i = 1, 21
                 zr(imatuu+i-1) = matuu(i)
             enddo
         endif
-        if (option(1:10) .ne. 'RIGI_MECA_') then
+        if (lVect) then
             do i = 1, 6
                 zr(ivectu+i-1) = vectu(i)
             enddo
         endif
 !
     else if (nomte.eq.'MECA_2D_BARRE') then
-        if ((option(1:10).eq.'RIGI_MECA_') .or. (option(1:9) .eq.'FULL_MECA')) then
+        if (lMatr) then
             zr(imatuu) = matuu(1)
             zr(imatuu+1) = matuu(2)
             zr(imatuu+2) = matuu(3)
@@ -381,8 +399,7 @@ subroutine te0248(optioz, nomtez)
             zr(imatuu+8) = matuu(14)
             zr(imatuu+9) = matuu(15)
         endif
-        if (option(1:10) .ne. 'RIGI_MECA_') then
-!
+        if (lVect) then
             zr(ivectu) = vectu(1)
             zr(ivectu+1) = vectu(2)
             zr(ivectu+2) = vectu(4)
@@ -391,8 +408,7 @@ subroutine te0248(optioz, nomtez)
 !
     endif
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jcret)
+    if (lSigm) then
         zi(jcret) = codret
     endif
 !

@@ -495,8 +495,10 @@ class MECA_BARRE(Element):
                        (SP.PINSTMR, CTEMPSR), (SP.PINSTPR, CTEMPSR),
                        (SP.PMATERC, LC.CMATERC), (SP.PVARCMR, LC.ZVARCPG),
                        (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
-                       (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=( (SP.PMATUUR, MMATUUR), ),
+                       (SP.PVARIMP, ZVARIPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
+            para_out=( (SP.PMATUUR, MMATUUR),
+                       (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, EEFGEGA),
+                       (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
         ),
 
         OP.SIEF_ELGA(te=154,

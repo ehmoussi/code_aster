@@ -89,6 +89,8 @@ Ce n'est actuellement pas possible.
 
     26: _("""Le comportement utilise la variable d'état externe %(k1)s, or la température n'est pas définie dans AFFE_VARC."""),
 
+    32: _("""Le comportement %(k1)s n'est pas possible pour les éléments de type barre, grille ou autres éléments unidimensionnels."""),
+
     35: _("""Le modèle de déformation utilisé dans MFront est incompatible avec %(k1)s."""),
 
     53: _("""

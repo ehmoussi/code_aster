@@ -24,12 +24,6 @@ cata_msg = {
  On ne peut pas affecter des moments répartis sur des éléments de type %(k1)s.
 """),
 
-    2 : _("""
-
- L'option %(k1)s n'est pas développée avec le comportement %(k2)s pour les éléments %(k3)s.
-
-"""),
-
     3 : _("""
 
  L'option MASS_FLUI_STRU n'est pas disponible pour les POU_D_TGM en multi-matériaux.
@@ -135,10 +129,6 @@ cata_msg = {
 
     56 : _("""
  valeur utilisateur de RHO nulle
-"""),
-
-    62 : _("""
- Noeuds confondus pour un élément de barre
 """),
 
     63 : _("""

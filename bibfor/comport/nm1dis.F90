@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 subroutine nm1dis(fami, kpg, ksp, imate, em,&
                   ep, sigm, deps, vim, option,&
-                  compor, materi, sigp, vip, dsde)
+                  rela_comp, materi, sigp, vip, dsde)
 !
 !
 ! ----------------------------------------------------------------------
@@ -52,7 +52,7 @@ subroutine nm1dis(fami, kpg, ksp, imate, em,&
     real(kind=8) :: em, ep, et, sigy
     real(kind=8) :: sigm, deps, pm, vim(*), vip(*), para_vale
     real(kind=8) :: sigp, dsde
-    character(len=16) :: option, compor(*)
+    character(len=16) :: option, rela_comp
     character(len=*) :: fami, materi
 ! --------------------------------------------------------------------------------------------------
     integer :: jprolm, jvalem, nbvalm, nbvalp, jprolp, jvalep, iret
@@ -68,7 +68,7 @@ subroutine nm1dis(fami, kpg, ksp, imate, em,&
 !
     et = 0.0d0
 !   caractéristiques écrouissage linéaire
-    if ((compor(1).eq.'VMIS_ISOT_LINE') .or. (compor(1).eq.'GRILLE_ISOT_LINE')) then
+    if ((rela_comp.eq.'VMIS_ISOT_LINE') .or. (rela_comp.eq.'GRILLE_ISOT_LINE')) then
         call rcvalb(fami, kpg, ksp, '+', imate, materi, 'ECRO_LINE', 0, ' ', [0.d0],&
                     1, nomecl, valres, icodre, 1)
         call rcvalb(fami, kpg, ksp, '+', imate, materi, 'ECRO_LINE', 0, ' ', [0.d0],&
@@ -80,7 +80,7 @@ subroutine nm1dis(fami, kpg, ksp, imate, em,&
         rm = rprim*vim(1) + sigy
 !
 !   caractéristiques écrouissage donné par courbe de traction
-    else if (compor(1).eq.'VMIS_ISOT_TRAC') then
+    else if (rela_comp.eq.'VMIS_ISOT_TRAC') then
         call rcvarc(' ', 'TEMP', '-', fami, kpg, ksp, valpar, iret)
         call rctype(imate, 1, nompar, [valpar], para_vale, para_type, materi=materi)
         if ((para_type.eq.'TEMP') .and. (iret.eq.1)) then
@@ -115,7 +115,7 @@ subroutine nm1dis(fami, kpg, ksp, imate, em,&
             sigp = sige
         else
             vip(2) = 1.d0
-            if ((compor(1).eq.'VMIS_ISOT_LINE') .or. (compor(1) .eq.'GRILLE_ISOT_LINE')) then
+            if ((rela_comp.eq.'VMIS_ISOT_LINE') .or. (rela_comp.eq.'GRILLE_ISOT_LINE')) then
                 dp = abs(sige) - rm
                 dp = dp/ (rprim+ep)
                 rp = sigy + rprim* (pm+dp)

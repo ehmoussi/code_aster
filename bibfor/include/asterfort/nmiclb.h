@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,19 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmiclb(fami, kpg, ksp, option, compor,&
+    subroutine nmiclb(fami, kpg, ksp, option, rela_comp,&
                       imate, xlong0, aire, tmoins, tplus,&
                       dlong0, effnom, vim, effnop, vip,&
-                      klv, fono, epsm, crildc, codret)
+                      klv, fono, epsm, carcri, codret)
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp
         character(len=16) :: option
-        character(len=16) :: compor(*)
+        character(len=16) :: rela_comp
         integer :: imate
         real(kind=8) :: xlong0
         real(kind=8) :: aire
@@ -41,7 +39,7 @@ interface
         real(kind=8) :: klv(21)
         real(kind=8) :: fono(6)
         real(kind=8) :: epsm
-        real(kind=8) :: crildc(3)
+        real(kind=8) :: carcri(*)
         integer :: codret
     end subroutine nmiclb
 end interface

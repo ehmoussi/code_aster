@@ -147,10 +147,6 @@ OPTION MASS_INER : la masse volumique RHO doit être non nulle
     48 : _("""
     Il n'est pas possible d'utiliser ANGL_AXE et ORIG_AXE de AFFE_CARA_ELEM pour les modélisations XXX_JHMS
 """),
-    49 : _("""
-   La méthode IMPLEX ne peut pas être utilisée avec la loi de comportement que vous
-   avez choisi ; sur les éléments BARRE elle n'est utilisable qu'avec VMIS_ISOT_LINE et ELAS
-"""),
 
     50 : _("""
    La méthode IMPLEX ne peut pas être utilisée avec la loi de comportement que vous

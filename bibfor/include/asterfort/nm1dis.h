@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine nm1dis(fami, kpg, ksp, imate, em,&
                       ep, sigm, deps, vim, option,&
-                      compor, materi, sigp, vip, dsde)
+                      rela_comp, materi, sigp, vip, dsde)
         character(len=*) :: fami
         integer :: kpg
         integer :: ksp
@@ -32,7 +30,7 @@ interface
         real(kind=8) :: deps
         real(kind=8) :: vim(*)
         character(len=16) :: option
-        character(len=16) :: compor(*)
+        character(len=16) :: rela_comp
         character(len=*) :: materi
         real(kind=8) :: sigp
         real(kind=8) :: vip(*)

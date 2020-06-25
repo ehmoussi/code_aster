@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,13 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmmaba(icodma, compor, e, dsde, sigy,&
+subroutine nmmaba(icodma, rela_comp, e, dsde, sigy,&
                   ncstpm, cstpm)
     implicit none
 #include "asterfort/r8inir.h"
 #include "asterfort/rcvalb.h"
 #include "asterfort/utmess.h"
-    character(len=16) :: compor
+    character(len=16) :: rela_comp
     integer :: icodma
     integer :: ncstpm
     real(kind=8) :: cstpm(ncstpm)
@@ -80,11 +80,11 @@ subroutine nmmaba(icodma, compor, e, dsde, sigy,&
 !
 ! --- MESSAGE D'ERREUR SI COMPORTEMENT NON REPERTORIE POUR LES BARRES
 !
-    if ((compor.ne.'ELAS') .and. (compor.ne.'VMIS_ISOT_LINE') .and.&
-        (compor.ne.'VMIS_CINE_LINE') .and. (compor.ne.'VMIS_ASYM_LINE') .and.&
-        (compor.ne.'PINTO_MENEGOTTO') .and. (compor.ne.'GRILLE_CINE_LINE') .and.&
-        (compor.ne.'GRILLE_ISOT_LINE') .and. (compor.ne.'GRILLE_PINTO_MEN')) then
-        call utmess('F', 'ELEMENTS_32', sk=compor)
+    if ((rela_comp.ne.'ELAS') .and. (rela_comp.ne.'VMIS_ISOT_LINE') .and.&
+        (rela_comp.ne.'VMIS_CINE_LINE') .and. (rela_comp.ne.'VMIS_ASYM_LINE') .and.&
+        (rela_comp.ne.'PINTO_MENEGOTTO') .and. (rela_comp.ne.'GRILLE_CINE_LINE') .and.&
+        (rela_comp.ne.'GRILLE_ISOT_LINE') .and. (rela_comp.ne.'GRILLE_PINTO_MEN')) then
+        call utmess('F', 'COMPOR4_32', sk=rela_comp)
     endif
 !
 ! --- INITIALISATIONS
@@ -106,8 +106,8 @@ subroutine nmmaba(icodma, compor, e, dsde, sigy,&
 !
 ! --- CARACTERISTIQUES ECROUISSAGE LINEAIRE
 !
-    if ((compor.eq.'VMIS_ISOT_LINE') .or. (compor.eq.'VMIS_CINE_LINE') .or.&
-        (compor.eq.'GRILLE_CINE_LINE') .or. (compor.eq.'GRILLE_ISOT_LINE')) then
+    if ((rela_comp.eq.'VMIS_ISOT_LINE') .or. (rela_comp.eq.'VMIS_CINE_LINE') .or.&
+        (rela_comp.eq.'GRILLE_CINE_LINE') .or. (rela_comp.eq.'GRILLE_ISOT_LINE')) then
         nbres= 2
 !
 !
@@ -128,7 +128,7 @@ subroutine nmmaba(icodma, compor, e, dsde, sigy,&
 !
 ! --- CARACTERISTIQUES MODELE PINTO MENEGOTTO
 !
-    if ((compor.eq.'PINTO_MENEGOTTO') .or. (compor.eq.'GRILLE_PINTO_MEN')) then
+    if ((rela_comp.eq.'PINTO_MENEGOTTO') .or. (rela_comp.eq.'GRILLE_PINTO_MEN')) then
 !
         nbres= 12
 !

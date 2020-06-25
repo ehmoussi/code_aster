@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,13 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmiclb(fami,kpg,ksp, option, compor,&
+subroutine nmiclb(fami,kpg,ksp, option, rela_comp,&
                   imate, xlong0, aire, tmoins, tplus,&
                   dlong0, effnom, vim, effnop, vip,&
-                  klv, fono, epsm, crildc, codret)
+                  klv, fono, epsm, carcri, codret)
 !
     implicit none
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/lcimpl.h"
 #include "asterfort/nm1dci.h"
 #include "asterfort/nm1dco.h"
@@ -38,10 +39,10 @@ subroutine nmiclb(fami,kpg,ksp, option, compor,&
     integer :: imate, neq, nbt,kpg,ksp, codret
     parameter (neq=6,nbt=21)
 !
-    real(kind=8) :: xlong0, aire, tmoins, tplus, dlong0, crildc(3), epsm
+    real(kind=8) :: xlong0, aire, tmoins, tplus, dlong0, carcri(*), epsm
     real(kind=8) :: effnom, vim(*), effnop, vip(*), fono(neq), klv(nbt)
 !
-    character(len=16) :: compor(*), option
+    character(len=16) :: rela_comp, option
     character(len=*) :: fami
 !
 ! --------------------------------------------------------------------------------------------------
@@ -55,7 +56,6 @@ subroutine nmiclb(fami,kpg,ksp, option, compor,&
 ! --------------------------------------------------------------------------------------------------
 !
 ! IN  : IMATE : POINTEUR MATERIAU CODE
-!       COMPOR : LOI DE COMPORTEMENT
 !       XLONG0 : LONGUEUR DE L'ELEMENT DE BARRE AU REPOS
 !       aire   : SECTION DE LA BARRE
 !       TMOINS : INSTANT PRECEDENT
@@ -87,25 +87,25 @@ subroutine nmiclb(fami,kpg,ksp, option, compor,&
     impl   = .false.
     isotli = .false.
     relax  = .false.
-    if       (compor(1).eq. 'ELAS') then
+    if       (rela_comp.eq. 'ELAS') then
         elas = .true.
-    else if ((compor(1) .eq. 'VMIS_ISOT_LINE') .or. &
-             (compor(1) .eq. 'VMIS_ISOT_TRAC')) then
+    else if ((rela_comp .eq. 'VMIS_ISOT_LINE') .or. &
+             (rela_comp .eq. 'VMIS_ISOT_TRAC')) then
         isot = .true.
-        if (compor(1) .eq. 'VMIS_ISOT_LINE') then
+        if (rela_comp .eq. 'VMIS_ISOT_LINE') then
             isotli = .true.
         endif
-        if (crildc(2) .eq. 9) then
+        if (carcri(2) .eq. 9) then
             impl = .true.
         endif
         if (impl .and. (.not.isotli)) then
             call utmess('F', 'ELEMENTS5_50')
         endif
-    else if (compor(1) .eq. 'VMIS_CINE_LINE') then
+    else if (rela_comp .eq. 'VMIS_CINE_LINE') then
         cine = .true.
-    else if (compor(1) .eq. 'CORR_ACIER') then
+    else if (rela_comp .eq. 'CORR_ACIER') then
         corr = .true.
-    else if (compor(1) .eq. 'RELAX_ACIER') then
+    else if (rela_comp .eq. 'RELAX_ACIER') then
         relax = .true.
     endif
 !
@@ -129,7 +129,7 @@ subroutine nmiclb(fami,kpg,ksp, option, compor,&
         call verift(fami,kpg,ksp, 'T', imate, epsth_=depsth)
         depsm=deps-depsth
         call nm1dis(fami,kpg,ksp, imate, em, ep, sigm, depsm, vim, option,&
-                    compor, ' ', sigp, vip, dsde)
+                    rela_comp, ' ', sigp, vip, dsde)
     else if (cine) then
 !       Caractéristiques élastiques a t-
         call rcvalb(fami,kpg,ksp,'-',imate,' ','ELAS', &
@@ -174,7 +174,7 @@ subroutine nmiclb(fami,kpg,ksp, option, compor,&
         ep=val(1)
 !
         call nm1dco(fami,kpg,ksp, option, imate, ' ', ep, sigm, epsm, deps,&
-                    vim, sigp, vip, dsde, crildc, codret)
+                    vim, sigp, vip, dsde, carcri, codret)
     else if (impl) then
 !       Caractéristiques élastiques a t-
         call rcvalb(fami,kpg,ksp,'-',imate,' ','ELAS', &
@@ -188,7 +188,7 @@ subroutine nmiclb(fami,kpg,ksp, option, compor,&
         call lcimpl(fami,kpg,ksp, imate, em, ep, sigm, tmoins, tplus, deps,&
                     vim, option, sigp, vip, dsde)
     else
-        call utmess('F', 'ALGORITH6_87')
+        ASSERT(ASTER_FALSE)
     endif
 !
 !   Calcul du coefficient non nul de la matrice tangente
@@ -208,7 +208,7 @@ subroutine nmiclb(fami,kpg,ksp, option, compor,&
 !
     if (option(1:16) .eq. 'RIGI_MECA_IMPLEX') then
         if ((.not.impl) .and. (.not.elas)) then
-            call utmess('F', 'ELEMENTS5_49')
+            call utmess('F', 'POUTRE0_49', sk = rela_comp)
         endif
         effnop  =  sigp*aire
         fono(1) = -effnop

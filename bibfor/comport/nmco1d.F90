@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,10 +16,12 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmco1d(fami, kpg, ksp, imate, compor,&
+subroutine nmco1d(fami, kpg, ksp, imate, rela_comp, rela_cpla,&
                   option, epsm, deps, angmas, sigm,&
                   vim, sigp, vip, dsidep, codret)
-    implicit none
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/comp1d.h"
@@ -31,21 +33,19 @@ subroutine nmco1d(fami, kpg, ksp, imate, compor,&
 #include "asterfort/utmess.h"
 #include "asterfort/verift.h"
 #include "asterfort/vmci1d.h"
-    integer :: imate, codret, kpg, ksp
-    character(len=16) :: compor(*), option
-    character(len=*) :: fami
-    real(kind=8) :: epsm, deps, sigm, vim(*)
-    real(kind=8) :: angmas(3)
 !
-    real(kind=8) :: sigp, vip(*), dsidep
+integer :: imate, codret, kpg, ksp
+character(len=16) :: option, rela_comp, rela_cpla
+character(len=*) :: fami
+real(kind=8) :: epsm, deps, sigm, vim(*)
+real(kind=8) :: angmas(3)
+real(kind=8) :: sigp, vip(*), dsidep
 ! --------------------------------------------------------------------------------------------------
 !
 !          REALISE LES LOIS 1D (DEBORST OU EXPLICITEMENT 1D)
 !
 !
 ! IN  IMATE   : ADRESSE DU MATERIAU CODE
-! IN  COMPOR  : COMPORTEMENT :  (1) = TYPE DE RELATION COMPORTEMENT
-!                               (2) = NB VARIABLES INTERNES / PG
 ! IN  OPTION  : OPTION DEMANDEE : RIGI_MECA_TANG , FULL_MECA , RAPH_MECA
 ! IN  EPSM    : DEFORMATIONS A L'INSTANT DU CALCUL PRECEDENT
 ! IN  DEPS    : INCREMENT DE DEFORMATION (SCALAIRE DANS CE CAS)
@@ -70,7 +70,6 @@ subroutine nmco1d(fami, kpg, ksp, imate, compor,&
     real(kind=8) :: cstpm(ncstpm)
     real(kind=8) :: em, ep, depsth, depsm, val(1)
     integer :: codres(1)
-    character(len=16) :: valkm(2)
 ! --------------------------------------------------------------------------------------------------
 !
     elas = .false.
@@ -81,22 +80,20 @@ subroutine nmco1d(fami, kpg, ksp, imate, compor,&
     com1d = .false.
     codret = 0
 !
-    if (compor(1)(1:16) .eq. 'GRILLE_ISOT_LINE') then
+    if (rela_comp(1:16) .eq. 'GRILLE_ISOT_LINE') then
         isot = .true.
-    else if (compor(1)(1:16) .eq. 'GRILLE_CINE_LINE') then
+    else if (rela_comp(1:16) .eq. 'GRILLE_CINE_LINE') then
         cine = .true.
-    else if (compor(1)(1:12) .eq. 'VMIS_CINE_GC') then
+    else if (rela_comp(1:12) .eq. 'VMIS_CINE_GC') then
         cinegc = .true.
-    else if (compor(1)(1:16) .eq. 'GRILLE_PINTO_MEN') then
+    else if (rela_comp(1:16) .eq. 'GRILLE_PINTO_MEN') then
         pinto = .true.
-    else if (compor(1)(1:4) .eq. 'ELAS') then
+    else if (rela_comp(1:4) .eq. 'ELAS') then
         elas = .true.
     else
         com1d=.true.
-        if ((compor(5)(1:7).ne.'DEBORST') .and. (compor(1)(1:4) .ne.'SANS')) then
-            valkm(1) = compor(1)
-            valkm(2) = 'COMP_INCR'
-            call utmess('F', 'ALGORITH6_81', nk=2, valk=valkm)
+        if ((rela_cpla .ne. 'DEBORST') .and. (rela_comp .ne.'SANS')) then
+            call utmess('F', 'COMPOR4_32', sk=rela_comp)
         endif
     endif
 !
@@ -119,7 +116,7 @@ subroutine nmco1d(fami, kpg, ksp, imate, compor,&
         depsm = deps-depsth
         call nm1dis(fami, kpg, ksp, imate, em,&
                     ep, sigm, depsm, vim, option,&
-                    compor, ' ', sigp, vip, dsidep)
+                    rela_comp, ' ', sigp, vip, dsidep)
 !
     else if (cine) then
         call verift(fami, kpg, ksp, 'T', imate,&
@@ -153,7 +150,7 @@ subroutine nmco1d(fami, kpg, ksp, imate, compor,&
                     sigp, dsidep, codret)
 !
     else if (pinto) then
-        call nmmaba(imate, compor(1), e, et, sigy,&
+        call nmmaba(imate, rela_comp, e, et, sigy,&
                     ncstpm, cstpm)
         call verift(fami, kpg, ksp, 'T', imate,&
                     epsth_=depsth)

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,11 +16,14 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine nmiclg(fami, kpg, ksp, option, compor,&
+subroutine nmiclg(fami, kpg, ksp, option, rela_comp,&
                   imate, epsm, deps, sigm, vim,&
-                  sigp, vip, dsde, crildc, codret)
-    implicit none
+                  sigp, vip, dsde, carcri, codret)
+!
+implicit none
+!
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/lcimpl.h"
 #include "asterfort/nm1das.h"
 #include "asterfort/nm1dci.h"
@@ -33,9 +36,9 @@ subroutine nmiclg(fami, kpg, ksp, option, compor,&
 #include "asterfort/verift.h"
     integer :: imate, kpg, ksp, codret
 !
-    character(len=16) :: compor(*), option
+    character(len=16) :: rela_comp, option
     character(len=*) :: fami
-    real(kind=8) :: crildc(3)
+    real(kind=8) :: carcri(*)
     real(kind=8) :: vim(*)
     real(kind=8) :: vip(*)
     real(kind=8) :: sigy, sigm, deps, sigp
@@ -52,7 +55,6 @@ subroutine nmiclg(fami, kpg, ksp, option, compor,&
 !       KPG   : NUMERO DU POINT DE GAUSS DANS LA FAMILLE
 !       KSP   : NUMERO DU SOUS POINT
 !       OPTION : OPTION DEMANDEE (R_M_T,FULL OU RAPH_MECA)
-!       COMPOR : LOI DE COMPORTEMENT
 !       IMATE : POINTEUR MATERIAU CODE
 !       EPSM  : DEFORMATION A L'INSTANT MOINS
 !       DEPS  : INCREMENT DE DEFORMATION
@@ -87,28 +89,28 @@ subroutine nmiclg(fami, kpg, ksp, option, compor,&
     isotli = .false.
     pinto = .false.
     asyml = .false.
-    if (compor(1) .eq. 'ELAS') then
+    if (rela_comp .eq. 'ELAS') then
         elas = .true.
-    else if ((compor(1).eq.'VMIS_ISOT_LINE') .or. (compor(1).eq.'VMIS_ISOT_TRAC')) then
+    else if ((rela_comp.eq.'VMIS_ISOT_LINE') .or. (rela_comp.eq.'VMIS_ISOT_TRAC')) then
         isot = .true.
-        if (compor(1) .eq. 'VMIS_ISOT_LINE') then
+        if (rela_comp .eq. 'VMIS_ISOT_LINE') then
             isotli = .true.
         endif
-        if (crildc(2) .eq. 9) then
+        if (carcri(2) .eq. 9) then
             impl = .true.
         endif
         if (impl .and. (.not.isotli)) then
             call utmess('F', 'ELEMENTS5_50')
         endif
-    else if (compor(1).eq.'VMIS_CINE_LINE') then
+    else if (rela_comp.eq.'VMIS_CINE_LINE') then
         cine = .true.
-    else if (compor(1).eq.'CORR_ACIER') then
+    else if (rela_comp.eq.'CORR_ACIER') then
         corr = .true.
-    else if (compor(1).eq.'PINTO_MENEGOTTO') then
+    else if (rela_comp.eq.'PINTO_MENEGOTTO') then
         pinto = .true.
-    else if (compor(1).eq.'VMIS_ASYM_LINE') then
+    else if (rela_comp.eq.'VMIS_ASYM_LINE') then
         asyml = .true.
-    else if (compor(1).eq.'SANS') then
+    else if (rela_comp.eq.'SANS') then
         sans = .true.
     endif
 !
@@ -134,7 +136,7 @@ subroutine nmiclg(fami, kpg, ksp, option, compor,&
         depsm=deps-depsth
         call nm1dis(fami, kpg, ksp, imate, em,&
                     ep, sigm, depsm, vim, option,&
-                    compor, ' ', sigp, vip, dsde)
+                    rela_comp, ' ', sigp, vip, dsde)
     else if (cine) then
         call verift(fami, kpg, ksp, 'T', imate,&
                     epsth_=depsth)
@@ -151,14 +153,14 @@ subroutine nmiclg(fami, kpg, ksp, option, compor,&
     else if (corr) then
         call nm1dco(fami, kpg, ksp, option, imate,&
                     ' ', ep, sigm, epsm, deps,&
-                    vim, sigp, vip, dsde, crildc,&
+                    vim, sigp, vip, dsde, carcri,&
                     codret)
     else if (impl) then
         call lcimpl(fami, kpg, ksp, imate, em,&
                     ep, sigm, tmoins, tplus, deps,&
                     vim, option, sigp, vip, dsde)
     else if (asyml) then
-        call nmmaba(imate, compor(1), ep, dsde, sigy,&
+        call nmmaba(imate, rela_comp, ep, dsde, sigy,&
                     ncstpm, cstpm)
         call rcvalb(fami, 1, 1, '+', imate,&
                     ' ', 'ECRO_ASYM_LINE', 0, ' ', [0.d0],&
@@ -187,7 +189,7 @@ subroutine nmiclg(fami, kpg, ksp, option, compor,&
         call verift(fami, kpg, ksp, 'T', imate,&
                     epsth_=depsth)
         depsm=deps-depsth
-        call nmmaba(imate, compor(1), ep, dsde, sigy,&
+        call nmmaba(imate, rela_comp, ep, dsde, sigy,&
                     ncstpm, cstpm)
         call nm1dpm(fami, kpg, ksp, imate, option,&
                     8, ncstpm, cstpm, sigm, vim,&
@@ -196,10 +198,7 @@ subroutine nmiclg(fami, kpg, ksp, option, compor,&
         sigp=0.d0
         dsde=0.d0
     else
-        call utmess('F', 'ALGORITH6_87')
+        ASSERT(ASTER_FALSE)
     endif
-!
-!
-! -------------------------------------------------------------
 !
 end subroutine

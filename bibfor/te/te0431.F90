@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ subroutine te0431(option, nomte)
 #include "asterfort/lteatt.h"
 #include "asterfort/tecach.h"
 #include "blas/dcopy.h"
+#include "asterfort/Behaviour_type.h"
     character(len=16) :: option, nomte
 ! ......................................................................
 !    - FONCTION REALISEE:  CALCUL DES OPTIONS DE COMPORTEMENT :
@@ -53,7 +54,7 @@ subroutine te0431(option, nomte)
 !
     integer :: codres(2)
     character(len=4) :: fami
-    character(len=16) :: nomres(2)
+    character(len=16) :: nomres(2), rela_comp, rela_cpla
     integer :: nddl, nno, nnos, npg, ndim, i, j, j1, n, m, kpg, kk, kkd, lgpg
     integer :: cod(9)
     integer :: imatuu, ipoids, ivf, idfde, igeom, imate, icontm, ivarim
@@ -67,6 +68,8 @@ subroutine te0431(option, nomte)
 !
 ! - BOOLEEN UTILES
 !
+    rela_comp = ' '
+    rela_cpla = ' '
     vecteu = ((option(1:9).eq.'FULL_MECA').or. (option .eq.'RAPH_MECA'))
     matric = ((option(1:9).eq.'FULL_MECA').or. (option(1:9).eq.'RIGI_MECA'))
     lexc = (lteatt('MODELI','GRC'))
@@ -184,9 +187,11 @@ subroutine te0431(option, nomte)
 !
 ! --- RAPH_MECA, FULL_MECA*, RIGI_MECA_* : ON PASSE PAR LA LDC 1D
 !
-            elseif ((option .eq.'RAPH_MECA').or. (option(1:9)&
+        elseif ((option .eq.'RAPH_MECA').or. (option(1:9)&
         .eq.'FULL_MECA').or. (option(1:10).eq.'RIGI_MECA_')) then
             sigm = zr(icontm+kpg-1)
+            rela_comp = zk16(icompo-1+RELA_NAME)
+            rela_cpla = zk16(icompo-1+PLANESTRESS)
 !
 !         CALCUL DE LA DEFORMATION DEPS11
             epsm=0.d0
@@ -198,7 +203,7 @@ subroutine te0431(option, nomte)
                 enddo
             enddo
 !
-            call nmco1d(fami, kpg, 1, zi(imate), zk16(icompo),&
+            call nmco1d(fami, kpg, 1, zi(imate), rela_comp, rela_cpla,&
                         option, epsm, deps, angmas, sigm,&
                         zr(ivarim+(kpg-1)*lgpg), sig, zr( ivarip+(kpg-1)*lgpg), rig, cod(kpg))
 !

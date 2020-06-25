@@ -256,10 +256,6 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    87 : _("""
- loi de comportement inexistante
-"""),
-
     88 : _("""
  erreur dans le type de comportement
 """),

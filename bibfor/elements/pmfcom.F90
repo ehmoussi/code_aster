@@ -98,7 +98,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     real(kind=8) :: cstpm(13), angmas(3), depsm, nu, bendo, kdess, valsech, valsechref, valhydr
     character(len=4) :: fami
     character(len=8) :: nompim(12), mazars(8), materi
-    character(len=16) :: compo, algo, nomres(2)
+    character(len=16) :: rela_comp, algo, nomres(2)
     character(len=30) :: valkm(3)
     aster_logical :: istemp, ishydr, issech, resi
 !
@@ -111,7 +111,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
     codrep = 0
     fami = 'RIGI'
     materi = compor(1)(1:8)
-    compo  = compor(2)(1:16)
+    rela_comp  = compor(2)(1:16)
     algo   = compor(3)(1:16)
 
 !
@@ -134,7 +134,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
 
 !
 ! --------------------------------------------------------------------------------------------------
-    if (compo .eq. 'ELAS') then
+    if (rela_comp .eq. 'ELAS') then
         nomres(1) = 'E'
         do i = 1, nf
             if (istemp) then
@@ -146,7 +146,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         enddo
 !
 ! --------------------------------------------------------------------------------------------------
-    else if (compo.eq.'MAZARS_GC') then
+    else if (rela_comp.eq.'MAZARS_GC') then
 !       Y a-t-il de HYDR ou SECH
 !       Par défaut c'est nul
         bendo = 0.0
@@ -240,7 +240,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         enddo
 !
 ! --------------------------------------------------------------------------------------------------
-    else if (compo.eq.'VMIS_CINE_GC') then
+    else if (rela_comp.eq.'VMIS_CINE_GC') then
 !       boucle sur chaque fibre
         do i = 1, nf
             ivari = nbvalc*(i-1) + 1
@@ -255,7 +255,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         enddo
 !
 ! --------------------------------------------------------------------------------------------------
-    else if (compo.eq.'PINTO_MENEGOTTO') then
+    else if (rela_comp.eq.'PINTO_MENEGOTTO') then
 !       on récupère les paramètres matériau
         call r8inir(nbval, 0.d0, valres, 1)
         call rcvalb(fami, 1, 1, '-', icdmat,&
@@ -280,7 +280,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         enddo
 !
 ! --------------------------------------------------------------------------------------------------
-    else if (compo.eq.'VMIS_CINE_LINE') then
+    else if (rela_comp.eq.'VMIS_CINE_LINE') then
         do i = 1, nf
             ivari = nbvalc* (i-1) + 1
             if (istemp) then
@@ -294,7 +294,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         enddo
 !
 ! --------------------------------------------------------------------------------------------------
-    else if ((compo.eq.'VMIS_ISOT_LINE').or.(compo.eq.'VMIS_ISOT_TRAC')) then
+    else if ((rela_comp.eq.'VMIS_ISOT_LINE').or.(rela_comp.eq.'VMIS_ISOT_TRAC')) then
         do i = 1, nf
             ivari = nbvalc* (i-1) + 1
             if (istemp) then
@@ -304,11 +304,11 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
             depsm = ddefp(i)-depsth
             call nm1dis('RIGI', kpg, i, icdmat, em,&
                         ep, contm(i), depsm, varim(ivari), option,&
-                        compo, materi, sigf(i), varip(ivari), modf(i))
+                        rela_comp, materi, sigf(i), varip(ivari), modf(i))
         enddo
 !
 ! --------------------------------------------------------------------------------------------------
-    else if (compo.eq.'CORR_ACIER') then
+    else if (rela_comp.eq.'CORR_ACIER') then
         do i = 1, nf
             ivari = nbvalc* (i-1) + 1
             if (istemp) then
@@ -324,10 +324,10 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         enddo
 !
 ! --------------------------------------------------------------------------------------------------
-    else if ((compo.eq.'GRAN_IRRA_LOG').or.(compo.eq.'VISC_IRRA_LOG')) then
+    else if ((rela_comp.eq.'GRAN_IRRA_LOG').or.(rela_comp.eq.'VISC_IRRA_LOG')) then
         if (algo(1:10) .eq. 'ANALYTIQUE') then
             if (.not. istemp) then
-                call utmess('F', 'COMPOR5_40',sk=compo)
+                call utmess('F', 'COMPOR5_40',sk=rela_comp)
             endif
             do i = 1, nf
                 ivari = nbvalc* (i-1) + 1
@@ -341,7 +341,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
                             crit, instam, instap, tempm, tempp,&
                             tref, depsm, contm(i), varim(ivari), option,&
                             defam(1), defap(1), angmas, sigf(i), varip( ivari),&
-                            modf(i), codret, compo, nbvalc)
+                            modf(i), codret, rela_comp, nbvalc)
                 if (codret .ne. 0) goto 999
             enddo
         else
@@ -367,11 +367,11 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
         endif
 !
 ! --------------------------------------------------------------------------------------------------
-    else if (compo.eq.'BETON_GRANGER') then
+    else if (rela_comp.eq.'BETON_GRANGER') then
 !       Appel à comp1d pour bénéficier des comportements AXIS: méthode de DEBORST
 !           La LDC doit retourner le module tangent
-        if ((algo(1:7).ne.'DEBORST') .and. (compo(1:4).ne.'SANS')) then
-            valkm(1) = compo
+        if ((algo(1:7).ne.'DEBORST') .and. (rela_comp(1:4).ne.'SANS')) then
+            valkm(1) = rela_comp
             valkm(2) = 'DEFI_COMPOR/MULTIFIBRE'
             call utmess('F', 'ALGORITH6_81', nk=2, valk=valkm)
         else
@@ -396,7 +396,7 @@ subroutine pmfcom(kpg, debsp, option, compor, crit,&
             enddo
         endif
     else
-        call utmess('F', 'ELEMENTS2_39', sk=compo)
+        call utmess('F', 'ELEMENTS2_39', sk=rela_comp)
     endif
 !
 999 continue
