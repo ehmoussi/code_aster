@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -95,6 +95,13 @@ class MFPLQU4(Element):
             ElrefeLoc(MT.QU4, gauss = ('RIGI=FIS2','FPG1=FPG1',), mater=('RIGI','FPG1',),),
         )
     calculs = (
+
+        OP.AMOR_MECA(te=214,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PRIGINS, MMATUNS), (SP.PVARIPG, ZVARIPG),
+                     ),
+            para_out=((SP.PMATUUR, MMATUUR), ),
+        ),
 
         OP.COOR_ELGA(te=478,
             para_in=((SP.PGEOMER, NGEOMER), ),

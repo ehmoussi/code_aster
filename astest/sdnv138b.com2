@@ -1,0 +1,235 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+POURSUITE (CODE='OUI',PAR_LOT='OUI',DEBUG=_F(SDVERI='OUI'))
+
+
+DEP=CREA_CHAMP(TYPE_CHAM='NOEU_DEPL_R',
+                      OPERATION='EXTR',
+                      RESULTAT=U_F,
+                      NOM_CHAM='DEPL',
+                      INST = tfin,
+                      INFO=1,);
+
+SIG=CREA_CHAMP(TYPE_CHAM='ELGA_SIEF_R',
+                      OPERATION='EXTR',
+                      RESULTAT=U_F,
+                      NOM_CHAM='SIEF_ELGA',
+                      INST = tfin,
+                      INFO=1,);
+
+VAR=CREA_CHAMP(TYPE_CHAM='ELGA_VARI_R',
+                OPERATION='EXTR',
+                RESULTAT=U_F,
+                NOM_CHAM='VARI_ELGA',
+                INST = tfin,
+                INFO=1,);
+
+
+MONOX=AFFE_CHAR_MECA(MODELE=MO,
+                   PESANTEUR=_F(GRAVITE=1.0,
+                                DIRECTION=(-1.0,0.0,0.0),),);
+T000 = 0.;
+T_END = 3.41 ;
+
+pas_gro = 0.0050;
+pas_hfin = pas_gro/1. ;
+
+# Instant list devoted to seism
+
+T_END2 = T_END-3.01
+
+L_INSTh=DEFI_LIST_REEL(DEBUT=T000,
+                       INTERVALLE=(_F(JUSQU_A=T_END2, PAS=pas_hfin,),),);
+
+L_ARCH=DEFI_LIST_REEL(DEBUT=T000,
+                      INTERVALLE=_F(JUSQU_A=T_END2, PAS=pas_gro,),);
+
+L_COMB=DEFI_LIST_REEL(DEBUT=T000,
+                      INTERVALLE=_F(JUSQU_A=T_END2, PAS=pas_gro,),);
+
+DEFLISTh =DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST =L_INSTh ),
+                        ECHEC=_F(ACTION        = 'DECOUPE',
+                                 SUBD_METHODE  = 'MANUEL',
+                                 SUBD_PAS=2,
+                                 SUBD_NIVEAU=20),)
+
+# PRESSION D'EAU SUR LE BARRAGE
+p_amd = FORMULE(VALE='max(rho_e*ap*(9.-Y),0)',NOM_PARA=('Y',),
+               rho_e=rho_e, ap=ap, )
+p_avd = FORMULE(VALE='max(rho_e*ap*(0.-Y),0)',NOM_PARA=('Y',),
+               rho_e=rho_e, ap=ap, )
+
+PAMONTD=AFFE_CHAR_MECA_F(MODELE=MO,PRES_REP=_F(GROUP_MA=('BAR_AMON',),PRES=p_amd,),);
+PAVALD =AFFE_CHAR_MECA_F(MODELE=MO,PRES_REP=_F(GROUP_MA=('BAR_AVAL', ),PRES=p_avd,),);
+
+# PRESSION IMPOSEE DANS LE JOINT (LINEAIRE)
+f_flud = FORMULE(NOM_PARA=('X','Y'),
+                VALE='(1.0-(X/length))*rho_e*ap*9.',
+                length=length,
+                rho_e=rho_e,
+                ap=ap,)
+
+# MATERIAU JOINT MECANIQUE AVEC FROTTEMENT ET PRESSION DE FLUIDE
+MAT_JFD=DEFI_MATERIAU(
+                  JOINT_MECA_FROT=_F(K_N=k_n,
+                                     K_T=k_t,
+                                     AMOR_NOR=1.e-3*k_n, AMOR_TAN=1.e-3*k_t, 
+                                     #AMOR_NOR=5.e-4*k_n, AMOR_TAN=5.e-4*k_t, 
+                                     ##COEF_AMOR=0.0, #0.01,
+                                     PENA_TANG=ecrouissage,
+                                     MU=mu,
+                                     ADHESION=adhe,
+                                     PRES_FLUIDE=f_flud,
+                                ),);
+
+CM_FD=AFFE_MATERIAU(MAILLAGE=MA,
+                 AFFE=(
+                      _F(GROUP_MA='BARRAGE',MATER = MAT_B),
+                      _F(GROUP_MA='TERRE',  MATER = MAT_T),
+                      _F(GROUP_MA='JOINT',  MATER = MAT_JFD))
+                 );
+
+f00 = DEFI_FONCTION(NOM_PARA='INST',
+                       VALE=(0., 0., 1.5, 0.),
+                       INTERPOL='LIN', PROL_DROITE = 'CONSTANT', PROL_GAUCHE = 'CONSTANT',)
+
+L_COMBI=DEFI_LIST_REEL(DEBUT=T000,
+                      INTERVALLE=_F(JUSQU_A=T_END, PAS=pas_gro,),);
+
+ACCB=CALC_FONCTION(LIST_PARA=L_COMBI,
+                       COMB=(_F(FONCTION = ACCELE,  COEF = 1.),),);
+
+ACCF=FORMULE(NOM_PARA='INST',ACCB=ACCB,
+             VALE='ACCB(INST+3.01)')
+            
+ACCELE0=CALC_FONC_INTERP(FONCTION=ACCF, NOM_PARA = 'INST',
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        LIST_PARA=L_COMB);
+
+UDF=DYNA_NON_LINE(MODELE=MO,
+                  CHAM_MATER=CM_FD,
+                  EXCIT=(
+                         _F(CHARGE=TERRE),
+                         _F(CHARGE=PESBAR),
+                         _F(CHARGE=PESTER),
+                         _F(CHARGE=PAMONTD),
+                         _F(CHARGE=PAVALD),
+                         _F(CHARGE=MONOX, FONC_MULT=ACCELE0,),
+                        ),
+                  COMPORTEMENT=(_F(RELATION='JOINT_MECA_FROT',
+                                 GROUP_MA='JOINT',),
+                                _F(RELATION='ELAS',
+                                 GROUP_MA=('TERRE','BARRAGE')),),
+                  ETAT_INIT=_F(DEPL=DEP, SIGM=SIG, VARI=VAR),
+                  INCREMENT=_F(LIST_INST=DEFLISTh,
+                              PRECISION=1.E-6,),
+                  ARCHIVAGE=_F(LIST_INST=L_ARCH,),
+                  SCHEMA_TEMPS=_F(SCHEMA='HHT',
+                                 FORMULATION='DEPLACEMENT',
+                                 ALPHA=-0.05,),
+                  NEWTON=_F(MATRICE='TANGENTE',REAC_ITER=1,),
+                  CONVERGENCE=_F(ITER_GLOB_MAXI=15,
+                                 RESI_GLOB_RELA=1E-5),
+                  SOLVEUR=_F(METHODE='MUMPS',),
+                  );
+
+ACCRBX=RECU_FONCTION(RESULTAT=UDF,
+                      TITRE='ACC_RBX',
+                      NOM_CHAM='ACCE',
+                      NOM_CMP='DX',
+                      GROUP_NO='P_BAS',
+                      LIST_INST=L_COMB,
+                      PROL_DROITE='CONSTANT',
+                      PROL_GAUCHE='CONSTANT',
+                      INTERPOL='LIN',);
+
+ACCRHX=RECU_FONCTION( RESULTAT=UDF,
+                        TITRE='ACC_RHX',
+                        NOM_CHAM='ACCE',
+                        NOM_CMP='DX',
+                        GROUP_NO='P_HAUT',
+                        LIST_INST=L_COMB,
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        INTERPOL='LIN',);
+
+
+ACCABX=CALC_FONCTION(LIST_PARA=L_COMB,
+                      COMB=(_F(FONCTION = ACCRBX,COEF = 1.),
+                            _F(FONCTION = ACCELE0, COEF = 1.),),);
+
+ACCAHX=CALC_FONCTION(LIST_PARA=L_COMB,
+                       COMB=(_F(FONCTION = ACCRHX,COEF = 1.),
+                             _F(FONCTION = ACCELE0,  COEF = 1.),),);
+
+DEPBY=RECU_FONCTION(RESULTAT=UDF,
+                      TITRE='DEPBY',
+                      NOM_CHAM='DEPL',
+                      NOM_CMP='DY',
+                      GROUP_NO='P_BAS',
+                      LIST_INST=L_COMB,
+                      PROL_DROITE='CONSTANT',
+                      PROL_GAUCHE='CONSTANT',
+                      INTERPOL='LIN',);
+
+DEPHY=RECU_FONCTION( RESULTAT=UDF,
+                        TITRE='DEPHY',
+                        NOM_CHAM='DEPL',
+                        NOM_CMP='DY',
+                        GROUP_NO='P_HAUT',
+                        LIST_INST=L_COMB,
+                        PROL_DROITE='CONSTANT',
+                        PROL_GAUCHE='CONSTANT',
+                        INTERPOL='LIN',);
+
+TEST_FONCTION(VALEUR=(
+                      _F(VALE_CALC=-1.5525937,
+                         VALE_REFE=-1.4015067,
+                         VALE_PARA=(0.16),
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=0.12,
+                         NOM_PARA=('INST'),
+                         FONCTION=ACCAHX,),
+                      _F(VALE_CALC=-1.4015067,
+                         VALE_REFE=-1.5525937,
+                         VALE_PARA=(0.16),
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=0.12,
+                         NOM_PARA=('INST'),
+                         FONCTION=ACCABX,),
+                      _F(VALE_CALC=2.2346934E-05,
+                         VALE_REFE=2.2472063E-05,
+                         VALE_PARA=(0.16),
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=1.0E-2,
+                         NOM_PARA=('INST'),
+                         FONCTION=DEPHY,),
+                      _F(VALE_CALC=2.2472063E-05,
+                         VALE_REFE=2.2346934E-05,
+                         VALE_PARA=(0.16),
+                         REFERENCE='AUTRE_ASTER',
+                         PRECISION=1.0E-2,
+                         NOM_PARA=('INST'),
+                         FONCTION=DEPBY,),
+                      ),
+              )
+
+FIN()
