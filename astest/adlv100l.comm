@@ -29,16 +29,19 @@ MA = LIRE_MAILLAGE(FORMAT='IDEAS',
                    )
 
 MO=AFFE_MODELE(
-         MAILLAGE=MA,AFFE=(
-         _F( GROUP_MA = ('quadeau', 'quadair',),FORMULATION='U_P_PHI',
-                   MODELISATION = 'AXIS_FLUIDE', PHENOMENE = 'MECANIQUE'),
-         _F( GROUP_MA = ('lineau', 'linair',),FORMULATION='U_P_PHI',
-                   MODELISATION = 'AXIS_FLUI_STRU',
-                   PHENOMENE = 'MECANIQUE'),
-         _F( GROUP_MA = 'quadpist',
-                   MODELISATION = 'AXIS', PHENOMENE = 'MECANIQUE'))
-          VERI_NORM_IFS = 'NON',
-        )
+        MAILLAGE=MA,
+        AFFE=(_F(GROUP_MA=('quadeau', 'quadair',),
+                 FORMULATION='U_P_PHI',
+                 MODELISATION='AXIS_FLUIDE',
+                 PHENOMENE='MECANIQUE'),
+              _F(GROUP_MA=('lineau', 'linair',),
+                 FORMULATION='U_P_PHI',
+                 MODELISATION='AXIS_FLUI_STRU',
+                 PHENOMENE='MECANIQUE'),
+              _F(GROUP_MA='quadpist',
+                 MODELISATION='AXIS',
+                 PHENOMENE='MECANIQUE')),
+        VERI_NORM_IFS='NON')
 
 #
 # PROPRIETES MECANIQUES
