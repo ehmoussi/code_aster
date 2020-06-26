@@ -42,7 +42,6 @@ private
 #include "asterfort/normev.h"
 #include "asterfort/provec.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
 ! ==================================================================================================
 contains
@@ -192,7 +191,7 @@ subroutine checkNormalOnSkinCell(meshz         , modelDime,&
     aster_logical, intent(out) :: lMisoriented
 ! - Local
     character(len=8) :: mesh, skinCellType, suppCellType, cellName
-    integer :: iSkinCell, suppNume, nodeFirst
+    integer :: iSkinCell, suppNume, nodeFirst, iNode
     integer :: skinNume
     integer :: skinNbNode, skinNodeNume(27), suppNbNode, suppNodeNume(27)
     real(kind=8) :: signNorm
@@ -219,13 +218,19 @@ subroutine checkNormalOnSkinCell(meshz         , modelDime,&
             skinNbNode   = cellSkinNbNode(iSkinCell)
             ASSERT(skinNbNode .le. 27)
             nodeFirst    = cellSkinNodeIndx(iSKinCell)
-            skinNodeNume = meshConnex(nodeFirst:nodeFirst+skinNbNode)
+            skinNodeNume = 0
+            do iNode = 1, skinNbNode
+                skinNodeNume(iNode) = meshConnex(nodeFirst+iNode-1)
+            end do
             call jenuno(jexnum('&CATA.TM.NOMTM', meshCellType(skinNume)), skinCellType)
 ! --------- Parameters of support cell
             nodeFirst    = meshConnexLen(suppNume)
             suppNbNode   = meshConnexLen(suppNume+1) - nodeFirst
             ASSERT(suppNbNode .le. 27)
-            suppNodeNume = meshConnex(nodeFirst:nodeFirst+suppNbNode)
+            suppNodeNume = 0
+            do iNode = 1, suppNbNode
+                suppNodeNume(iNode) = meshConnex(nodeFirst+iNode-1)
+            end do
             call jenuno(jexnum('&CATA.TM.NOMTM', meshCellType(suppNume)), suppCellType)
             call jenuno(jexnum(mesh//'.NOMMAI', skinNume), cellName)
 
@@ -278,6 +283,7 @@ subroutine getSignNormalSkinToSupport(modelDime   ,&
 
 !   ------------------------------------------------------------------------------------------------
     signNorm = 0.d0
+    normal   = 0.d0
 !
 ! - Compute normal to skin element
 !
@@ -286,11 +292,13 @@ subroutine getSignNormalSkinToSupport(modelDime   ,&
     if (modelDime .eq. 3) then
         node3 = skinNodeNume(3)
     endif
-    do iDime = 1, 3
+    node1Coor = 0.d0
+    node2Coor = 0.d0
+    do iDime = 1, modelDime
         node1Coor(iDime) = meshNodeCoor(3*(node1-1)+iDime)
         node2Coor(iDime) = meshNodeCoor(3*(node2-1)+iDime)
     end do
-    call vdiff(3, node2Coor, node1Coor, n1n2)
+    n1n2 = node2Coor - node1Coor
     if (modelDime .eq. 2) then
         normal(1) = n1n2(2)
         normal(2) = -n1n2(1)
@@ -298,7 +306,7 @@ subroutine getSignNormalSkinToSupport(modelDime   ,&
         do iDime = 1, 3
             node3Coor(iDime) = meshNodeCoor(3*(node3-1)+iDime)
         end do
-        call vdiff(3, node3Coor, node1Coor, n1n3)
+        n1n3 = node3Coor - node1Coor
         call provec(n1n2, n1n3, normal)
     else
         ASSERT(ASTER_FALSE)
@@ -317,10 +325,13 @@ subroutine getSignNormalSkinToSupport(modelDime   ,&
     else
         ASSERT(ASTER_FALSE)
     endif
+    xgm = 0.d0
     do iNode = 1, skinNbNode
         xgm(1) = xgm(1) + meshNodeCoor(3*(skinNodeNume(iNode)-1)+1)
         xgm(2) = xgm(2) + meshNodeCoor(3*(skinNodeNume(iNode)-1)+2)
-        xgm(3) = xgm(3) + meshNodeCoor(3*(skinNodeNume(iNode)-1)+3)
+        if (modelDime .eq. 3) then
+            xgm(3) = xgm(3) + meshNodeCoor(3*(skinNodeNume(iNode)-1)+3)
+        endif
     end do
     xgm(1) = xgm(1) / skinNbNode
     xgm(2) = xgm(2) / skinNbNode
@@ -343,10 +354,13 @@ subroutine getSignNormalSkinToSupport(modelDime   ,&
     else
         ASSERT(ASTER_FALSE)
     endif
+    xg3d = 0.d0
     do iNode = 1, suppNbNode
         xg3d(1) = xg3d(1) + meshNodeCoor(3*(suppNodeNume(iNode)-1)+1)
         xg3d(2) = xg3d(2) + meshNodeCoor(3*(suppNodeNume(iNode)-1)+2)
-        xg3d(3) = xg3d(3) + meshNodeCoor(3*(suppNodeNume(iNode)-1)+3)
+        if (modelDime .eq. 3) then
+            xg3d(3) = xg3d(3) + meshNodeCoor(3*(suppNodeNume(iNode)-1)+3)
+        endif
     end do
     xg3d(1) = xg3d(1) / suppNbNode
     xg3d(2) = xg3d(2) / suppNbNode
@@ -354,9 +368,9 @@ subroutine getSignNormalSkinToSupport(modelDime   ,&
 !
 ! - Compute sign of normal from skin to support
 !
-    call vdiff(3, xg3d, xgm, n1g)
+    n1g = xg3d - xgm
     call normev(n1g, norm)
-    signNorm = ddot( 3, n1g, 1, normal, 1 )
+    signNorm = ddot(modelDime, n1g, 1, normal, 1)
 !   ------------------------------------------------------------------------------------------------
 end subroutine
 !
