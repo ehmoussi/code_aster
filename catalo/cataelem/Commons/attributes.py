@@ -332,7 +332,6 @@ INCO = Attribute(value=(
                  'C2',
                  'C2O',
                  'C3',
-                 'C3B',
                  'C5GV',
                  ),
                  comment="""

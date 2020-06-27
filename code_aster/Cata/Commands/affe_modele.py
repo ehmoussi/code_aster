@@ -75,7 +75,6 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "3D_FLUI_ABSO",    # person_in_charge: georges-cc.devesa at edf.fr
                                   "3D_FLUIDE",       # person_in_charge: nicolas.greffet at edf.fr
                                   "3D_INCO_UPG",     # person_in_charge: mickael.abbas at edf.fr
-                                  "3D_INCO_UPGB",    # person_in_charge: mickael.abbas at edf.fr
                                   "3D_INCO_UP",      # person_in_charge: mickael.abbas at edf.fr
                                   "3D_INCO_UPO",     # person_in_charge: mickael.abbas at edf.fr
                                   "3D_SI",           # person_in_charge: mickael.abbas at edf.fr
@@ -91,7 +90,6 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "AXIS_FLUIDE",     # person_in_charge: nicolas.greffet at edf.fr
                                   "AXIS_FOURIER",    # person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
                                   "AXIS_INCO_UPG",   # person_in_charge: mickael.abbas at edf.fr
-                                  "AXIS_INCO_UPGB",  # person_in_charge: mickael.abbas at edf.fr
                                   "AXIS_INCO_UP",    # person_in_charge: mickael.abbas at edf.fr
                                   "AXIS_INCO_UPO",   # person_in_charge: mickael.abbas at edf.fr
                                   "AXIS_SI",         # person_in_charge: mickael.abbas at edf.fr
@@ -123,7 +121,6 @@ AFFE_MODELE=OPER(nom="AFFE_MODELE",op=18,sd_prod=modele_sdaster,
                                   "PLAN_ELDI",       # person_in_charge: kyrylo.kazymyrenko at edf.fr
                                   "D_PLAN_ABSO",     # person_in_charge: georges-cc.devesa at edf.fr
                                   "D_PLAN_INCO_UPG", # person_in_charge: mickael.abbas at edf.fr
-                                  "D_PLAN_INCO_UPGB",# person_in_charge: mickael.abbas at edf.fr
                                   "D_PLAN_INCO_UP",  # person_in_charge: mickael.abbas at edf.fr
                                   "D_PLAN_INCO_UPO", # person_in_charge: mickael.abbas at edf.fr
                                   "D_PLAN_SI",       # person_in_charge: mickael.abbas at edf.fr

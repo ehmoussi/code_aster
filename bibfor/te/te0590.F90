@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,8 +29,6 @@ implicit none
 #include "asterfort/Behaviour_type.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
-#include "asterfort/nbfilg.h"
-#include "asterfort/nbfism.h"
 #include "asterfort/nifilg.h"
 #include "asterfort/nifipd.h"
 #include "asterfort/nifism.h"
@@ -179,9 +177,6 @@ character(len=16), intent(in) :: option, nomte
 100 continue
 ! - PETITES DEFORMATIONS
     if (defo_comp(1:6) .eq. 'PETIT ') then
-        if (lteatt('INCO','C3B')) then
-            call utmess('F', 'MODELISA10_17', sk=zk16(icompo+2))
-        endif
 !
 ! - PARAMETRES EN SORTIE
         if (l_rigi) then
@@ -205,23 +200,14 @@ character(len=16), intent(in) :: option, nomte
             imatuu=1
         endif
 !
-        if (lteatt('INCO','C3B')) then
-            call nbfilg(ndim, nno1, nno2, nno3, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
-                        vu, vg, vp, zr(igeom), typmod,&
-                        option, zi(imate), zk16(icompo), lgpg, zr(icarcr),&
-                        zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angl_naut,&
-                        zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), l_resi,&
-                        l_rigi, zr(ivectu), zr(imatuu), matsym, codret)
-        else
-            call nifilg(ndim, nno1, nno2, nno3, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
-                        vu, vg, vp, zr(igeom), typmod,&
-                        option, zi(imate), zk16(icompo), lgpg, zr(icarcr),&
-                        zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angl_naut,&
-                        zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), l_resi,&
-                        l_rigi, zr(ivectu), zr(imatuu), matsym, codret)
-        endif
+        call nifilg(ndim, nno1, nno2, nno3, npg,&
+                    iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
+                    vu, vg, vp, zr(igeom), typmod,&
+                    option, zi(imate), zk16(icompo), lgpg, zr(icarcr),&
+                    zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld), angl_naut,&
+                    zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), l_resi,&
+                    l_rigi, zr(ivectu), zr(imatuu), matsym, codret)
+
     else if (defo_comp .eq. 'SIMO_MIEHE') then
 !
 ! - PARAMETRES EN SORTIE
@@ -232,23 +218,13 @@ character(len=16), intent(in) :: option, nomte
             imatuu=1
         endif
 !
-        if (lteatt('INCO','C3B')) then
-            call nbfism(ndim, nno1, nno2, nno3, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
-                        idf2, vu, vg, vp, zr(igeom),&
-                        typmod, option, zi(imate), zk16(icompo), lgpg,&
-                        zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld),&
-                        angl_naut, zr(icontm), zr(ivarim), zr(icontp), zr(ivarip),&
-                        l_resi, l_rigi, zr(ivectu), zr(imatuu), codret)
-        else
-            call nifism(ndim, nno1, nno2, nno3, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
-                        idf2, vu, vg, vp, zr(igeom),&
-                        typmod, option, zi(imate), zk16(icompo), lgpg,&
-                        zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld),&
-                        angl_naut, zr(icontm), zr(ivarim), zr(icontp), zr(ivarip),&
-                        l_resi, l_rigi, zr(ivectu), zr(imatuu), codret)
-        endif
+        call nifism(ndim, nno1, nno2, nno3, npg,&
+                    iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
+                    idf2, vu, vg, vp, zr(igeom),&
+                    typmod, option, zi(imate), zk16(icompo), lgpg,&
+                    zr(icarcr), zr(iinstm), zr(iinstp), zr(iddlm), zr(iddld),&
+                    angl_naut, zr(icontm), zr(ivarim), zr(icontp), zr(ivarip),&
+                    l_resi, l_rigi, zr(ivectu), zr(imatuu), codret)
     else
         call utmess('F', 'ELEMENTS3_16', sk=defo_comp)
     endif

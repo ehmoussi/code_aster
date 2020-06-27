@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -26,8 +26,6 @@ implicit none
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/lteatt.h"
-#include "asterfort/nbfnlg.h"
-#include "asterfort/nbfnsm.h"
 #include "asterfort/nifnlg.h"
 #include "asterfort/nifnpd.h"
 #include "asterfort/nifnsm.h"
@@ -85,9 +83,6 @@ implicit none
 !
 ! - CALCUL DES FORCES INTERIEURES
     if (zk16(icompo+2) (1:6) .eq. 'PETIT ') then
-        if (lteatt('INCO','C3B')) then
-            call utmess('F', 'MODELISA10_17', sk=zk16(icompo+2))
-        endif
 !
         call nifnpd(ndim, nno1, nno2, nno3, npg,&
                     iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
@@ -96,31 +91,19 @@ implicit none
     else if (zk16(icompo+2) (1:8).eq.'GDEF_LOG') then
 !
         call jevech('PMATERC', 'L', imate)
-        if (lteatt('INCO','C3B')) then
-            call nbfnlg(ndim, nno1, nno2, nno3, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
-                        idf2, vu, vg, vp, typmod,&
-                        zi(imate), zr(igeom), zr(icontm), zr(iddlm), zr(ivectu))
-        else
-            call nifnlg(ndim, nno1, nno2, nno3, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
-                        idf2, vu, vg, vp, typmod,&
-                        zi(imate), zr(igeom), zr(icontm), zr(iddlm), zr(ivectu))
-        endif
+        call nifnlg(ndim, nno1, nno2, nno3, npg,&
+                    iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
+                    idf2, vu, vg, vp, typmod,&
+                    zi(imate), zr(igeom), zr(icontm), zr(iddlm), zr(ivectu))
+
     else if (zk16(icompo+2) (1:10).eq.'SIMO_MIEHE') then
 !
         call jevech('PMATERC', 'L', imate)
-        if (lteatt('INCO','C3B')) then
-            call nbfnsm(ndim, nno1, nno2, nno3, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
-                        idf2, vu, vg, vp, typmod,&
-                        zi(imate), zr(igeom), zr(icontm), zr(iddlm), zr(ivectu))
-        else
-            call nifnsm(ndim, nno1, nno2, nno3, npg,&
-                        iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
-                        idf2, vu, vg, vp, typmod,&
-                        zi(imate), zr(igeom), zr(icontm), zr(iddlm), zr(ivectu))
-        endif
+        call nifnsm(ndim, nno1, nno2, nno3, npg,&
+                    iw, zr(ivf1), zr(ivf2), zr(ivf3), idf1,&
+                    idf2, vu, vg, vp, typmod,&
+                    zi(imate), zr(igeom), zr(icontm), zr(iddlm), zr(ivectu))
+!
     else
         call utmess('F', 'ELEMENTS3_16', sk=zk16(icompo+2))
     endif

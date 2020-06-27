@@ -1165,21 +1165,6 @@ phen.add('3D_INCO_UPG', Modelisation(dim=(3,3), code='3DI',
         (MT.SEG3      , EL.MECA_ARETE3),
     )))
 
-phen.add('3D_INCO_UPGB', Modelisation(dim=(3,3), code='3DB',
-    attrs=(
-        (AT.NBSIGM,'6'),
-        (AT.INCO,'C3B'),
-        (AT.TYPMOD,'3D'),
-    ),
-    elements=(
-        (MT.HEXA20    , EL.MBNC_HEXA20),
-        (MT.PENTA15   , EL.MBNC_PENTA15),
-        (MT.TETRA10   , EL.MBNC_TETRA10),
-        (MT.QUAD8     , EL.MECA_FACE8),
-        (MT.TRIA6     , EL.MECA_FACE6),
-        (MT.SEG3      , EL.MECA_ARETE3),
-    )))
-
 phen.add('3D_INCO_UPO', Modelisation(dim=(3,3), code='3OS',
     attrs=(
         (AT.NBSIGM,'6'),
@@ -1878,19 +1863,6 @@ phen.add('AXIS_INCO_UPG', Modelisation(dim=(2,2), code='AXC',
     elements=(
         (MT.TRIA6     , EL.MIAXTR6),
         (MT.QUAD8     , EL.MIAXQU8),
-        (MT.SEG3      , EL.MEAXSE3),
-    )))
-
-phen.add('AXIS_INCO_UPGB', Modelisation(dim=(2,2), code='AXB',
-    attrs=(
-        (AT.AXIS,'OUI'),
-        (AT.NBSIGM,'4'),
-        (AT.TYPMOD,'AXIS'),
-        (AT.INCO,'C3B'),
-    ),
-    elements=(
-        (MT.TRIA6     , EL.MBAXTR6),
-        (MT.QUAD8     , EL.MBAXQU8),
         (MT.SEG3      , EL.MEAXSE3),
     )))
 
@@ -3838,19 +3810,6 @@ phen.add('D_PLAN_INCO_UPG', Modelisation(dim=(2,2), code='PLI',
     elements=(
         (MT.TRIA6     , EL.MIPLTR6),
         (MT.QUAD8     , EL.MIPLQU8),
-        (MT.SEG3      , EL.MEPLSE3),
-    )))
-
-phen.add('D_PLAN_INCO_UPGB', Modelisation(dim=(2,2), code='PLB',
-    attrs=(
-        (AT.NBSIGM,'4'),
-        (AT.D_PLAN,'OUI'),
-        (AT.TYPMOD,'D_PLAN'),
-        (AT.INCO,'C3B'),
-    ),
-    elements=(
-        (MT.TRIA6     , EL.MBPLTR6),
-        (MT.QUAD8     , EL.MBPLQU8),
         (MT.SEG3      , EL.MEPLSE3),
     )))
 
