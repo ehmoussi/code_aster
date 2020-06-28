@@ -220,7 +220,7 @@ class MEDPQS8(Element):
             SetOfNodes('EN1', (1,2,3,4,5,6,7,8,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4','MASS=FPG9','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4','MASS=FPG9','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU','MTGA=FPG4',), mater=('RIGI','NOEU','FPG1','MTGA',),),
             ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
         )
     calculs = (
@@ -1061,7 +1061,7 @@ class MEDPQU4(MEDPQS8):
             SetOfNodes('EN1', (1,2,3,4,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU','MTGA=FPG4',), mater=('RIGI','NOEU','FPG1','MTGA',),),
             ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
         )
 
@@ -1078,7 +1078,7 @@ class MDDPQU4(MEDPQS8):
             SetOfNodes('EN1', (1,2,3,4,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG4','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU','MTGA=FPG4',), mater=('RIGI','NOEU','FPG1','MTGA',),),
         )
 
 
@@ -1090,7 +1090,7 @@ class MEDPTR3(MEDPQS8):
             SetOfNodes('EN1', (1,2,3,)),
         )
     elrefe =(
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG1','MASS=FPG3','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG1','MASS=FPG3','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU','MTGA=FPG1',), mater=('RIGI','NOEU','FPG1','MTGA',),),
             ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
         )
 
@@ -1103,7 +1103,7 @@ class MEDPTR6(MEDPQS8):
             SetOfNodes('EN1', (1,2,3,4,5,6,)),
         )
     elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3','MASS=FPG6','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3','MASS=FPG6','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU','MTGA=FPG3',), mater=('RIGI','NOEU','FPG1','MTGA',),),
             ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
         )
 
@@ -1116,7 +1116,7 @@ class MEDPQU8(MEDPQS8):
             SetOfNodes('EN1', (1,2,3,4,5,6,7,8,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU','MTGA=FPG9',), mater=('RIGI','NOEU','FPG1','MTGA',),),
             ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
         )
 
@@ -1129,6 +1129,6 @@ class MEDPQU9(MEDPQS8):
             SetOfNodes('EN1', (1,2,3,4,5,6,7,8,9,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
+            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','MASS=FPG9','FPG1=FPG1','NOEU_S=NOEU_S','NOEU=NOEU','MTGA=FPG9',), mater=('RIGI','NOEU','FPG1','MTGA',),),
             ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
         )

@@ -284,7 +284,7 @@ class MECA3DH27_HHO222(Element):
             SetOfNodes('EN3', (1,)),
         )
     elrefe =(
-            ElrefeLoc(MT.H27, gauss = ('RIGI=FPG27','FPG1=FPG1',), mater=('RIGI', 'FPG1',),),
+            ElrefeLoc(MT.H27, gauss = ('RIGI=FPG27','FPG1=FPG1','MTGA=FPG27',), mater=('RIGI', 'FPG1','MTGA',),),
             ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9',),),
         )
     calculs = (
@@ -478,7 +478,7 @@ class MECA3DTE8_HHO222(MECA3DH27_HHO222):
            SetOfNodes('EN3', (1,)),
        )
     elrefe =(
-           ElrefeLoc(MT.TE8, gauss = ('RIGI=FPG11','FPG1=FPG1',), mater=('RIGI', 'FPG1',),),
+           ElrefeLoc(MT.TE8, gauss = ('RIGI=FPG11','FPG1=FPG1','MTGA=FPG11',), mater=('RIGI', 'FPG1','MTGA',),),
            ElrefeLoc(MT.TR4, gauss = ('RIGI=FPG6',),),
        )
 

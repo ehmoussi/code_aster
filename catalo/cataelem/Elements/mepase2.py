@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ class MEPASE2(Element):
     """Please document this element"""
     meshType = MT.SEG2
     elrefe =(
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )
     calculs = (
 
@@ -165,5 +165,5 @@ class MEPASE3(MEPASE2):
     """Please document this element"""
     meshType = MT.SEG3
     elrefe =(
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )

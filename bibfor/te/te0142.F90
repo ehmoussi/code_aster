@@ -43,12 +43,12 @@ implicit none
     character(len=8) :: fami, poum, novrc
     character(len=16) :: nomres(nbcomp)
     character(len=8) :: nompar(3),nompar0(3)
-    real(kind=8) :: valpar(3), valpar0(3), xyzgau(3), xyzgau0(3)
+    real(kind=8) :: xyzgau(3), xyzgau0(3)
     aster_logical::lfound
 !     ------------------------------------------------------------------
 !
     if (option .eq. 'MATE_ELGA')then
-        fami = 'RIGI'
+        fami = 'MTGA'
     elseif (option .eq. 'MATE_ELEM')then
         fami = 'FPG1'
     else
@@ -56,6 +56,12 @@ implicit none
     endif
     call elrefe_info(fami=fami,ndim=ndim,nno=nno, nnos=nnos, npg=npg1, jvf=ivf)
 !
+    if (lteatt('ABSO','OUI')) then
+        ndim2 = ndim + 1
+    else
+        ndim2 = ndim
+    endif
+    
     call jevech('PMATERC', 'L', imate)
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERR', 'E', ival)
@@ -73,7 +79,7 @@ implicit none
 
 !   check if X, Y or Z are present in the command variables and store indirection in indir
     nbpar = 0
-    do i=1, 3
+    do i=1, ndim2
         lfound=.false.
         do ipar=1,ca_nbcvrc_
             novrc=zk8(ca_jvcnom_-1+ipar)
@@ -92,55 +98,27 @@ implicit none
         nompar(i) = nompar0(indir(i))
     enddo
 
-
-    if (lteatt('ABSO','OUI')) then
-        fami='FPG1'
-        kpg=1
-!
-        ndim2 = ndim + 1
-        valpar0(:) = 0.d0
-        do i = 1, nnos
+    do kpg = 1, npg1
+        idecpg = nno* (kpg-1) - 1
+        ! ----- Coordinates for current Gauss point
+        xyzgau0(:) = 0.d0
+        do i = 1, nno
+            idecno = ndim2* (i-1) - 1
             do j = 1, ndim2
-                valpar0(j) = valpar0(j) + zr(igeom-1+(i-1)*ndim2+j)/nnos
+                xyzgau0(j) = xyzgau0(j) + zr(ivf+i+idecpg)*zr(igeom+j+idecno)
             enddo
-        enddo
-!       only use parameters in indir
-        do i=1,nbpar
-            valpar(i) = valpar0(indir(i))
-        enddo
-    
-!
-        call rcvalb(fami, kpg, spt, poum, mater,&
-                        ' ', 'ELAS', nbpar, nompar, valpar,&
-                        3, nomres, valres, icodre, 1)
-        do kpg = 1, npg1
-            zr(ival-1+(kpg-1)*nbcomp+1) = valres(1)
-            zr(ival-1+(kpg-1)*nbcomp+2) = valres(2)
-            zr(ival-1+(kpg-1)*nbcomp+3) = valres(3)
-        enddo
-    else
-        do kpg = 1, npg1
-            idecpg = nno* (kpg-1) - 1
-            ! ----- Coordinates for current Gauss point
-            xyzgau0(:) = 0.d0
-            do i = 1, nno
-                idecno = 3* (i-1) - 1
-                xyzgau0(1) = xyzgau0(1) + zr(ivf+i+idecpg)*zr(igeom+1+idecno)
-                xyzgau0(2) = xyzgau0(2) + zr(ivf+i+idecpg)*zr(igeom+2+idecno)
-                xyzgau0(3) = xyzgau0(3) + zr(ivf+i+idecpg)*zr(igeom+3+idecno)
-            end do
+        end do
 !           only use parameters in indir
-            do i=1,nbpar
-                xyzgau(i) = xyzgau0(indir(i))
-            enddo
-                    
-            call rcvalb(fami, kpg, spt, poum, mater,&
-                        ' ', 'ELAS', nbpar, nompar, xyzgau,&
-                        3, nomres, valres, icodre, 1)
-            zr(ival-1+(kpg-1)*nbcomp+1) = valres(1)
-            zr(ival-1+(kpg-1)*nbcomp+2) = valres(2)
-            zr(ival-1+(kpg-1)*nbcomp+3) = valres(3)
+        do i=1,nbpar
+            xyzgau(i) = xyzgau0(indir(i))
         enddo
-    endif
+                
+        call rcvalb(fami, kpg, spt, poum, mater,&
+                    ' ', 'ELAS', nbpar, nompar, xyzgau,&
+                    3, nomres, valres, icodre, 1)
+        zr(ival-1+(kpg-1)*nbcomp+1) = valres(1)
+        zr(ival-1+(kpg-1)*nbcomp+2) = valres(2)
+        zr(ival-1+(kpg-1)*nbcomp+3) = valres(3)
+    enddo
 !
 end subroutine

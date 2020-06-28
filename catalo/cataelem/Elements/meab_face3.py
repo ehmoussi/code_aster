@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,7 @@ class MEAB_FACE3(Element):
     """Please document this element"""
     meshType = MT.TRIA3
     elrefe =(
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','FPG1=FPG1', 'MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )
     calculs = (
 
@@ -160,7 +160,7 @@ class MEAB_FACE4(MEAB_FACE3):
     """Please document this element"""
     meshType = MT.QUAD4
     elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )
 
 
@@ -169,7 +169,7 @@ class MEAB_FACE6(MEAB_FACE3):
     """Please document this element"""
     meshType = MT.TRIA6
     elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG4','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG4','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )
 
 
@@ -178,7 +178,7 @@ class MEAB_FACE8(MEAB_FACE3):
     """Please document this element"""
     meshType = MT.QUAD8
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )
 
 
@@ -187,5 +187,5 @@ class MEAB_FACE9(MEAB_FACE3):
     """Please document this element"""
     meshType = MT.QUAD9
     elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','FPG1=FPG1',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )
