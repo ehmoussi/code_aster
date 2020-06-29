@@ -179,10 +179,6 @@ On ne trouve pas le coefficient de Poisson
  Problème récupération donnée matériau dans THM_DIFFU %(k1)s
 """),
 
-    79 : _("""
- la loi de comportement n'existe pas pour la modélisation DKTG :  %(k1)s
-"""),
-
     80 : _("""
   L'élément de plaque QUAD4 défini sur la maille : %(k1)s
   n'est pas plan et peut conduire a des résultats faux.

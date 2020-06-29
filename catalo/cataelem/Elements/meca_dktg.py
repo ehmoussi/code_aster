@@ -665,8 +665,11 @@ class MEDKQG4(Element):
                           (SP.PVARIMP, ZVARIPG), (
                           OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                           ),
-                          para_out=((SP.PMATUUR, MMATUUR), ),
-                          ),
+            para_out=((SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, EEFGEGA),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
+        ),
 
         OP.SIEF_ELGA(te=422,
                      para_in=((SP.PCACOQU, CCACOQU), (SP.PDEPLAR, DDL_MECA),
@@ -736,61 +739,3 @@ class MEDKTG3(MEDKQG4):
     )
 
 
-#------------------------------------------------------------
-class MEQ4GG4(MEDKQG4):
-
-    """Please document this element"""
-    meshType = MT.QUAD4
-    elrefe = (
-        ElrefeLoc(
-            MT.QU4, gauss=(
-                'RIGI=FPG4', 'MASS=FPG9', 'NOEU=NOEU', 'FPG1=FPG1',),
-            mater=('RIGI', 'NOEU', 'FPG1',),),
-        ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
-    )
-
-    calculs = (
-        OP.DISS_ELGA(te=-1),
-
-        OP.DISS_ELNO(te=-1),
-
-        OP.DISS_ELEM(te=-1),
-
-        OP.RIGI_GEOM(te=-1),
-
-        OP.CHAR_MECA_HYDR_R(te=-1),
-
-        OP.CHAR_MECA_SECH_R(te=-1),
-
-        OP.CHAR_MECA_TEMP_R(te=-1),
-    )
-
-
-#------------------------------------------------------------
-class MET3GG3(MEDKQG4):
-
-    """Please document this element"""
-    meshType = MT.TRIA3
-    elrefe = (
-        ElrefeLoc(
-            MT.TR3, gauss=(
-                'RIGI=FPG1', 'MASS=FPG4', 'NOEU=NOEU', 'FPG1=FPG1',),
-            mater=('RIGI', 'NOEU', 'FPG1',),),
-        ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
-    )
-
-    calculs = (
-        OP.DISS_ELGA(te=-1),
-
-        OP.DISS_ELNO(te=-1),
-
-        OP.DISS_ELEM(te=-1),
-
-        OP.RIGI_GEOM(te=-1),
-
-        OP.CHAR_MECA_HYDR_R(te=-1),
-
-        OP.CHAR_MECA_SECH_R(te=-1),
-
-        OP.CHAR_MECA_TEMP_R(te=-1),
-    )

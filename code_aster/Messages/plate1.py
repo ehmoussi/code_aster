@@ -40,6 +40,13 @@ Il est probable que le champ de contrainte a été extrait sur un seul sous-poin
 Il est impératif d'utiliser un champ de contrainte complet pour le calcul de FORC_NODA.
 """),
 
+     5 : _("""Les matériaux de coque homogénéisées (ELAS_COQUE) sont interdits en non-linéaire."""),
+
+     6 : _("""La réactualisation de la géométrie (DEFORMATION='PETIT_REAC') est déconseillée pour les éléments de type plaque. Les grandes rotations ne sont pas modélisées correctement.
+"""),
+
+     7 : _("""La loi de comportement  %(k1)s n'existe pas pour la modélisation DKTG"""),
+
     40 : _("""L'élément de plaque ne peut pas être orienté. Par défaut, pour orienter l'élément, on y projette l'axe global X.
 L'axe de référence pour le calcul du repère local est ici normal à l'élément.
 Il faut donc modifier l'axe de référence en utilisant ANGL_REP ou VECTEUR dans AFFE_CARA_ELEM."""),

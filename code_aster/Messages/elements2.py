@@ -176,9 +176,7 @@ Problème d'interpolation pour RHO_CP
      d'utiliser pour les modélisations type COQUE_3D ou  DKTG  DEFORMATION='GROT_GDEP'
 """),
 
-    75 : _("""
-  Les matériaux de coque homogénéisées (ELAS_COQUE) sont interdits en non-linéaire.
-"""),
+
 
     77 : _("""
  option :  %(k1)s  interdite
