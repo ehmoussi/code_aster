@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,13 +20,14 @@ subroutine vdxnlr(option, nomte, xi, rig, nb1,&
                   codret)
 !
 use Behaviour_type
-use Behaviour_module
+use Behaviour_module, only : behaviourOption, behaviourInit
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8vide.h"
+#include "asterfort/assert.h"
 #include "asterfort/btdfn.h"
 #include "asterfort/btdmsn.h"
 #include "asterfort/btdmsr.h"
@@ -53,11 +54,14 @@ implicit none
 #include "asterfort/vexpan.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
+#include "asterfort/Behaviour_type.h"
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: jnbspi
-    integer :: valret(26)
     character(len=8) :: typmod(2)
-    character(len=32) :: phenom
-    character(len=16) :: nomres(26), option, nomte
+    character(len=32) :: elasKeyword
+    character(len=16) :: option, nomte
     integer :: nb1, nb2, nddle, npge, npgsr, npgsn, itab(8), codret
     integer :: cod, ksp
     real(kind=8) :: xi(3, 9)
@@ -69,36 +73,34 @@ implicit none
     real(kind=8) :: btdf(3, 42), btild(5, 42), wmatcb(5, 42), ktildi(42, 42)
     real(kind=8) :: ktild(42, 42), rig(51, 51)
     real(kind=8) :: ctor, epais, kappa
-    real(kind=8) :: valres(26)
+    integer, parameter :: nbv = 2
+    character(len=16), parameter :: nomres (nbv) = (/'E ','NU'/)
+    integer :: valret (nbv)
+    real(kind=8) :: valres (nbv)
     real(kind=8) :: rotfcm(9), rotfcp(9)
     real(kind=8) :: deplm(42), deplp(42)
     real(kind=8) :: epsi(5), depsi(5), eps2d(4), deps2d(4)
     real(kind=8) :: dtild(5, 5), sgmtd(5), effint(42), vecl(48), vecll(51)
     real(kind=8) :: sign(4), sigma(4), dsidep(6, 6), angmas(3)
     real(kind=8) :: matc(5,5),valpar
-    aster_logical :: vecteu, matric
     type(Behaviour_Integ) :: BEHinteg
-!-----------------------------------------------------------------------
     integer :: i, ib, icarcr, icompo, icontm, icontp, icou
     integer :: ideplm, ideplp, iinstm, iinstp, imate, inte, intsn
     integer :: intsr, iret, ivarim, ivarip, ivarix, ivectu, j
     integer :: jcara, jcrf, k1, k2, kpgs, kwgt, lgpg
-    integer :: lzi, lzr, nbcou, nbv, nbvari, nddlet, ndimv
-!
+    integer :: lzi, lzr, nbcou, nbvari, nddlet, ndimv
     real(kind=8) :: cisail, coef, crf, gxz, gyz, hic, rac2
     real(kind=8) :: x(1), zic, zmin
-!-----------------------------------------------------------------------
     parameter (npge=3)
     real(kind=8) :: ksi3s2
-! ----------------------------------------------------------------------
+    aster_logical :: lVect, lMatr, lVari, lSigm
+!
+! --------------------------------------------------------------------------------------------------
 !
     rac2 = sqrt(2.d0)
     typmod(1) = 'C_PLAN  '
     typmod(2) = '        '
     codret = 0
-    nbv = 2
-    nomres(1) = 'E'
-    nomres(2) = 'NU'
 !
 ! - Initialisation of behaviour datastructure
 !
@@ -111,17 +113,12 @@ implicit none
     npgsn = zi(lzi-1+4)
 !
     nddle = 5*nb1 + 2
-    do i = 1, nddle
-        do j = 1, nddle
-            ktild(i,j) = 0.d0
-        end do
-        effint(i) = 0.d0
-    end do
+    ktild = 0.d0
+    effint = 0.d0
 !
     call jevete('&INEL.'//nomte(1:8)//'.DESR', ' ', lzr)
 !
-    vecteu = ((option.eq.'FULL_MECA') .or. (option.eq.'RAPH_MECA'))
-    matric = ((option.eq.'FULL_MECA') .or. (option(1:10).eq.'RIGI_MECA_'))
+! - Get input fields
 !
     call jevech('PMATERC', 'L', imate)
     call jevech('PVARIMR', 'L', ivarim)
@@ -134,29 +131,36 @@ implicit none
     call jevech('PCARCRI', 'L', icarcr)
     call jevech('PCONTMR', 'L', icontm)
     call jevech('PVARIMP', 'L', ivarix)
-!
-    nbcou=zi(jnbspi-1+1)
-    if (nbcou .le. 0) then
-        call utmess('F', 'ELEMENTS_12')
-    endif
-!
-!
-    read (zk16(icompo-1+2),'(I16)') nbvari
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=itab)
-!      LGPG = MAX(ITAB(6),1)*ITAB(7) resultats faux sur Bull avec ifort
+    call jevech('PCACOQU', 'L', jcara)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=itab)
     if (itab(6) .le. 1) then
-        lgpg=itab(7)
+        lgpg = itab(7)
     else
         lgpg = itab(6)*itab(7)
     endif
+    nbcou=zi(jnbspi-1+1)
+    if (nbcou .le. 0) then
+        call utmess('F', 'PLATE1_10')
+    endif
 !
-    call jevech('PCACOQU', 'L', jcara)
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    read (zk16(icompo-1+NVAR),'(I16)') nbvari
+
     epais = zr(jcara)
     kappa = zr(jcara+3)
     ctor = zr(jcara+4)
     zmin = -epais/2.d0
     hic = epais/nbcou
+!
+! - Get output fields
 !
     if (option .eq. 'RAPH_MECA') then
         call jevech('PCACO3D', 'L', jcrf)
@@ -164,14 +168,15 @@ implicit none
     else
         call jevech('PCACO3D', 'E', jcrf)
     endif
-!
-    if (vecteu) then
+    ivarip = ivarim
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
-    else
-!       -- POUR AVOIR UN TABLEAU BIDON A DONNER A NMCOMP :
-        ivarip = ivarim
     endif
 !
     ndimv=lgpg*npgsn
@@ -180,10 +185,9 @@ implicit none
     call vectan(nb1, nb2, xi, zr(lzr), vecta,&
                 vectn, vectpt)
 !
-    call rccoma(zi(imate), 'ELAS', 1, phenom, valret(1))
-!
-    if (phenom .ne. 'ELAS'.and.phenom.ne.'ELAS_ORTH') then
-        call utmess('F', 'ELEMENTS_44', sk=phenom)
+    call rccoma(zi(imate), 'ELAS', 1, elasKeyword, valret(1))
+    if (elasKeyword .ne. 'ELAS' .and. elasKeyword.ne.'ELAS_ORTH') then
+        call utmess('F', 'PLATE1_12', sk=elasKeyword)
     endif
 !
 !===============================================================
@@ -290,7 +294,7 @@ implicit none
                 ksp= (icou-1)*npge + inte
                 cisail=0.d0
 
-                if (phenom.eq.'ELAS') then
+                if (elasKeyword.eq.'ELAS') then
                     call nmcomp(BEHinteg,&
                                 'MASS', intsn, ksp, 2, typmod,&
                                 zi(imate), zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp),&
@@ -305,88 +309,76 @@ implicit none
                         endif
                         if (cod .eq. 1) goto 999
                     endif
-
-                    nbv = 2
-                    nomres(1) = 'E'
-                    nomres(2) = 'NU'
 !
-                call rcvalb('MASS', intsn, ksp, '+', zi(imate),&
-                            ' ', phenom, 0, ' ', [0.d0],&
-                            nbv, nomres, valres, valret, 1)
+                    call rcvalb('MASS', intsn, ksp, '+', zi(imate),&
+                                ' ', elasKeyword, 0, ' ', [0.d0],&
+                                nbv, nomres, valres, valret, 1)
 !
-                cisail = valres(1)/ (1.d0+valres(2))
+                    cisail = valres(1)/ (1.d0+valres(2))
 !
-                else if (phenom.eq.'ELAS_ORTH') then
+                else if (elasKeyword.eq.'ELAS_ORTH') then
                     call moytpg('RIGI', intsn, 3, '+', valpar,&
                                 iret)
                     call matrc2(1, 'TEMP    ', [valpar], kappa, matc, vectt)
                 endif
 !
 !    CALCULS DE LA MATRICE TANGENTE : BOUCLE SUR L'EPAISSEUR
-                if (matric) then
-!
-                  if (phenom .eq. 'ELAS') then                    
-                    dtild(1,1) = dsidep(1,1)
-                    dtild(1,2) = dsidep(1,2)
-                    dtild(1,3) = dsidep(1,4)/rac2
-                    dtild(1,4) = 0.d0
-                    dtild(1,5) = 0.d0
-!
-                    dtild(2,1) = dsidep(2,1)
-                    dtild(2,2) = dsidep(2,2)
-                    dtild(2,3) = dsidep(2,4)/rac2
-                    dtild(2,4) = 0.d0
-                    dtild(2,5) = 0.d0
-!
-                    dtild(3,1) = dsidep(4,1)/rac2
-                    dtild(3,2) = dsidep(4,2)/rac2
-                    dtild(3,3) = dsidep(4,4)/2.d0
-                    dtild(3,4) = 0.d0
-                    dtild(3,5) = 0.d0
-!
-                    dtild(4,1) = 0.d0
-                    dtild(4,2) = 0.d0
-                    dtild(4,3) = 0.d0
-                    dtild(4,4) = cisail*kappa/2.d0
-                    dtild(4,5) = 0.d0
-!
-                    dtild(5,1) = 0.d0
-                    dtild(5,2) = 0.d0
-                    dtild(5,3) = 0.d0
-                    dtild(5,4) = 0.d0
-                    dtild(5,5) = cisail*kappa/2.d0
-!
-                else if(phenom.eq.'ELAS_ORTH') then
-                    dtild(1,1) = matc(1,1)
-                    dtild(1,2) = matc(1,2)
-                    dtild(1,3) = matc(1,3)
-                    dtild(1,4) = 0.d0
-                    dtild(1,5) = 0.d0
-!
-                    dtild(2,1) = matc(2,1)
-                    dtild(2,2) = matc(2,2)
-                    dtild(2,3) = matc(2,3)
-                    dtild(2,4) = 0.d0
-                    dtild(2,5) = 0.d0
-!
-                    dtild(3,1) = matc(3,1)
-                    dtild(3,2) = matc(3,2)
-                    dtild(3,3) = matc(3,3)
-                    dtild(3,4) = 0.d0
-                    dtild(3,5) = 0.d0
-!
-                    dtild(4,1) = 0.d0
-                    dtild(4,2) = 0.d0
-                    dtild(4,3) = 0.d0
-                    dtild(4,4) = matc(4,4)
-                    dtild(4,5) = matc(4,5)
-!
-                    dtild(5,1) = 0.d0
-                    dtild(5,2) = 0.d0
-                    dtild(5,3) = 0.d0
-                    dtild(5,4) = matc(5,4)
-                    dtild(5,5) = matc(5,5)
-                endif
+                if (lMatr) then
+                    if (elasKeyword .eq. 'ELAS') then
+                        dtild(1,1) = dsidep(1,1)
+                        dtild(1,2) = dsidep(1,2)
+                        dtild(1,3) = dsidep(1,4)/rac2
+                        dtild(1,4) = 0.d0
+                        dtild(1,5) = 0.d0
+                        dtild(2,1) = dsidep(2,1)
+                        dtild(2,2) = dsidep(2,2)
+                        dtild(2,3) = dsidep(2,4)/rac2
+                        dtild(2,4) = 0.d0
+                        dtild(2,5) = 0.d0
+                        dtild(3,1) = dsidep(4,1)/rac2
+                        dtild(3,2) = dsidep(4,2)/rac2
+                        dtild(3,3) = dsidep(4,4)/2.d0
+                        dtild(3,4) = 0.d0
+                        dtild(3,5) = 0.d0
+                        dtild(4,1) = 0.d0
+                        dtild(4,2) = 0.d0
+                        dtild(4,3) = 0.d0
+                        dtild(4,4) = cisail*kappa/2.d0
+                        dtild(4,5) = 0.d0
+                        dtild(5,1) = 0.d0
+                        dtild(5,2) = 0.d0
+                        dtild(5,3) = 0.d0
+                        dtild(5,4) = 0.d0
+                        dtild(5,5) = cisail*kappa/2.d0
+                    else if (elasKeyword.eq.'ELAS_ORTH') then
+                        dtild(1,1) = matc(1,1)
+                        dtild(1,2) = matc(1,2)
+                        dtild(1,3) = matc(1,3)
+                        dtild(1,4) = 0.d0
+                        dtild(1,5) = 0.d0
+                        dtild(2,1) = matc(2,1)
+                        dtild(2,2) = matc(2,2)
+                        dtild(2,3) = matc(2,3)
+                        dtild(2,4) = 0.d0
+                        dtild(2,5) = 0.d0
+                        dtild(3,1) = matc(3,1)
+                        dtild(3,2) = matc(3,2)
+                        dtild(3,3) = matc(3,3)
+                        dtild(3,4) = 0.d0
+                        dtild(3,5) = 0.d0
+                        dtild(4,1) = 0.d0
+                        dtild(4,2) = 0.d0
+                        dtild(4,3) = 0.d0
+                        dtild(4,4) = matc(4,4)
+                        dtild(4,5) = matc(4,5)
+                        dtild(5,1) = 0.d0
+                        dtild(5,2) = 0.d0
+                        dtild(5,3) = 0.d0
+                        dtild(5,4) = matc(5,4)
+                        dtild(5,5) = matc(5,5)
+                    else
+                        ASSERT(ASTER_FALSE)
+                    endif
 
                     call dscal(25, wgt, dtild, 1)
 !
@@ -400,9 +392,9 @@ implicit none
                     end do
                 endif
 !
-                if (vecteu) then
-!
-                    if (phenom .eq. 'ELAS') then
+                if (lSigm) then
+                    ASSERT(lVect)
+                    if (elasKeyword .eq. 'ELAS') then
                        do i = 1, 3
                           zr(icontp-1+k1+i) = sigma(i)
                        end do
@@ -417,7 +409,7 @@ implicit none
                        sgmtd(4) = cisail*kappa*gxz/2.d0
                        sgmtd(5) = cisail*kappa*gyz/2.d0
 !
-                    else if(phenom.eq.'ELAS_ORTH') then
+                    else if (elasKeyword.eq.'ELAS_ORTH') then
                        zr(icontp-1+k1+1) = (epsi(1)+depsi(1))*matc(1,1) + &
                                            (epsi(2)+depsi(2))*matc(1,2) + &
                                            (epsi(3)+depsi(3))*matc(1,3) 
@@ -448,7 +440,7 @@ implicit none
         end do
     end do
 !
-    if (matric) then
+    if (lMatr) then
 !
 !     EXPANSION DE LA MATRICE : AJOUTER DE LA ROTATION FICTIVE
 !
@@ -463,7 +455,7 @@ implicit none
 !
     endif
 !
-    if (vecteu) then
+    if (lVect) then
 !
         call vexpan(nb1, effint, vecl)
 !

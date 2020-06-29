@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine te0414(optioz, nomtz)
-    implicit none
+!
+subroutine te0414(option, nomte)
+!
+use Behaviour_module, only : behaviourOption
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/cosiro.h"
@@ -29,123 +33,118 @@ subroutine te0414(optioz, nomtz)
 #include "asterfort/vdgnlr.h"
 #include "asterfort/vdpnlr.h"
 #include "asterfort/vdxnlr.h"
-    character(len=*) :: optioz, nomtz
-!     CALCUL DES OPTIONS DES ELEMENTS DE COQUE : COQUE_3D
-!     ----------------------------------------------------------------
+#include "asterfort/Behaviour_type.h"
+!
+character(len=16), intent(in) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: COQUE_3D
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: nb1, jcret, codret
     real(kind=8) :: matloc(51, 51), plg(9, 3, 3)
-    aster_logical :: matric
-    character(len=16) :: option, nomte
-! ----------------------------------------------------------------------
-!
-!-----------------------------------------------------------------------
     integer :: i, i1, i2, ibid, icompo, ideplm, ideplp
     integer :: jgeom, jmatr, lzr, nb2, nddlet, lzi
-!-----------------------------------------------------------------------
-    option = optioz
-    nomte = nomtz
+    character(len=16) :: defo_comp, rela_comp
+    aster_logical :: lVect, lMatr, lVari, lSigm
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jevete('&INEL.'//nomte(1:8)//'.DESI', ' ', lzi)
     nb2 = zi(lzi-1+2)
 !
-    if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq.&
-        'RIGI_MECA') then
-!        -- PASSAGE DES CONTRAINTES DANS LE REPERE INTRINSEQUE :
-        call cosiro(nomte, 'PCONTMR', 'L', 'UI', 'G',&
-                    ibid, 'S')
-    endif
+! - Get input fields
 !
-!
-    matric = ( option(1:9) .eq.'FULL_MECA' .or. option(1:10).eq.'RIGI_MECA_' )
-!
+    call cosiro(nomte, 'PCONTMR', 'L', 'UI', 'G', ibid, 'S')
     call jevech('PGEOMER', 'L', jgeom)
     call jevech('PDEPLMR', 'L', ideplm)
     call jevech('PDEPLPR', 'L', ideplp)
     call jevech('PCOMPOR', 'L', icompo)
 !
-!   SEULE RELATION HYPER_ELASTIQUE ADMISE : ELAS
-    if (zk16(icompo)(1:5) .eq. 'ELAS_') then
-        call utmess('F', 'ELEMENTS5_46', sk=zk16(icompo))
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+!
+! - Get output fields
+!
+    if (lMatr) then
+        call jevech('PMATUUR', 'E', jmatr)
+    endif
+    if (lSigm) then
+        call jevech('PCODRET', 'E', jcret)
     endif
 !
+! - Some checks
 !
-    if (zk16 ( icompo + 2 ) .eq. 'GROT_GDEP') then
+    if (rela_comp(1:5) .eq. 'ELAS_') then
+        call utmess('F', 'PLATE1_12', sk=rela_comp)
+    endif
 !
-!       DEFORMATION DE GREEN
+! - Compute
 !
-        if (zk16(icompo)(1:5) .eq. 'ELAS ') then
-!
+    if (defo_comp .eq. 'GROT_GDEP') then
+        if (rela_comp .eq. 'ELAS ') then
 !           HYPER-ELASTICITE
-!
-            call vdgnlr(option, nomte)
-            goto 9999
-!
+            call vdgnlr(lMatr, lVect, lSigm, lVari, rela_comp, nomte)
+            goto 999
         else
-!
 !           HYPO-ELASTICITE
-!
             call vdpnlr(option, nomte, codret)
-!
-            goto 9999
-!
+            goto 999
         endif
-!
-    else if (zk16(icompo+2)(1:5) .eq. 'PETIT') then
-!
-        if (zk16(icompo+2)(6:10) .eq. '_REAC') then
-!
-            call utmess('A', 'ELEMENTS3_94')
-!
-            do 90 i = 1, nb2-1
+    else if (defo_comp(1:5) .eq. 'PETIT') then
+        if (defo_comp(6:10) .eq. '_REAC') then
+            call utmess('A', 'PLATE1_13')
+            do i = 1, nb2-1
                 i1=3*(i-1)
                 i2=6*(i-1)
                 zr(jgeom+i1) = zr(jgeom+i1) +zr(ideplm+i2) +zr(ideplp+ i2)
                 zr(jgeom+i1+1) = zr(jgeom+i1+1)+zr(ideplm+i2+1) +zr(ideplp+i2+1)
                 zr(jgeom+i1+2) = zr(jgeom+i1+2)+zr(ideplm+i2+2) +zr(ideplp+i2+2)
- 90         continue
-!
+            end do
         endif
 !
-        call vdxnlr(option, nomte, zr(jgeom), matloc, nb1,&
-                    codret)
+        call vdxnlr(option, nomte, zr(jgeom), matloc, nb1, codret)
 !
-        if (matric) then
-!
-            call jevech('PMATUUR', 'E', jmatr)
-!
+        if (lMatr) then
 ! -----    MATRICE DE PASSAGE REPERE GLOBAL REPERE LOCAL
-!
             call jevete('&INEL.'//nomte(1:8)//'.DESR', ' ', lzr)
             call matpgl(nb2, zr(lzr), plg)
-!
-! -----    OPERATION DE TRANFORMATION DE MATLOC DANS LE REPERE GLOBAL
-!          ET STOCKAGE DANS ZR
-!
+! -----    OPERATION DE TRANFORMATION DE MATLOC DANS LE REPERE GLOBAL ET STOCKAGE DANS ZR
             nddlet = 6*nb1+3
-            call tranlg(nb1, 51, nddlet, plg, matloc,&
-                        zr(jmatr))
-!
+            call tranlg(nb1, 51, nddlet, plg, matloc, zr(jmatr))
         endif
-    else 
-!
-! ----- AUTRES MESURES DE DEFORMATIONS
-!
-        call utmess('F', 'ELEMENTS3_93', sk=zk16(icompo+2))
-!
+    else
+        call utmess('F', 'PLATE1_14', sk=defo_comp)
     endif
 !
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-        call jevech('PCODRET', 'E', jcret)
+    if (lSigm) then
         zi(jcret) = codret
     endif
 !
-9999 continue
+999 continue
 !
-    if (option .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
-!        -- PASSAGE DES CONTRAINTES DANS LE REPERE UTILISATEUR :
-        call cosiro(nomte, 'PCONTPR', 'E', 'IU', 'G',&
-                    ibid, 'R')
+    if (lSigm) then
+        call cosiro(nomte, 'PCONTPR', 'E', 'IU', 'G', ibid, 'R')
     endif
 !
 end subroutine

@@ -139,11 +139,6 @@ Un seul noeud doit constituer le groupe de noeuds %(k1)s. On n'utilisera que le 
 OPTION MASS_INER : la masse volumique RHO doit être non nulle
 """),
 
-    46 : _("""
-  relation :  %(k1)s  non implantée pour les éléments COQUE_3D
-  relation : ELAS obligatoirement
-"""),
-
     48 : _("""
     Il n'est pas possible d'utiliser ANGL_AXE et ORIG_AXE de AFFE_CARA_ELEM pour les modélisations XXX_JHMS
 """),

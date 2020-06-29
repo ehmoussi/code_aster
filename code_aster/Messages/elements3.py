@@ -152,17 +152,6 @@ La loi BETON_DOUBLE_DP ne peut être couplée qu'avec une loi de fluage de GRANG
   déformation : GROT_GDEP obligatoirement
 """),
 
-    94 : _("""
-  -> La réactualisation de la géométrie (DEFORMATION='PETIT_REAC') est déconseillée pour les éléments COQUE_3D.
-  -> Risque & Conseil :
-     Le calcul des déformations à l'aide de PETIT_REAC n'est qu'une
-     approximation des hypothèses des grands déplacements. Elle nécessite
-     d'effectuer de très petits incréments de chargement. Pour prendre en
-     compte correctement les grands déplacements et surtout les grandes
-     rotations, il est recommandé d'utiliser DEFORMATION='GROT_GDEP'.
-
-"""),
-
     98 : _("""
  comportement coeur homogénéise inexistant
 """),

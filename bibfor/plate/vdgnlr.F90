@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1501
 !
-subroutine vdpnlr(option, nomte, codret)
-!
-use Behaviour_type
-use Behaviour_module
+subroutine vdgnlr(lMatr, lVect, lSigm, lVari, rela_comp, nomte)
 !
 implicit none
 !
 #include "jeveux.h"
-#include "asterc/r8vide.h"
 #include "asterfort/antisy.h"
 #include "asterfort/btdbma.h"
 #include "asterfort/btsig.h"
@@ -41,13 +36,11 @@ implicit none
 #include "asterfort/matbmr.h"
 #include "asterfort/matbsr.h"
 #include "asterfort/matbsu.h"
-#include "asterfort/nmcomp.h"
+#include "asterfort/matrc2.h"
+#include "asterfort/moytpg.h"
 #include "asterfort/promat.h"
 #include "asterfort/r8inir.h"
-#include "asterfort/rccoma.h"
-#include "asterfort/rcvalb.h"
 #include "asterfort/rogllo.h"
-#include "asterfort/tecach.h"
 #include "asterfort/tilbar.h"
 #include "asterfort/transp.h"
 #include "asterfort/utmess.h"
@@ -55,11 +48,11 @@ implicit none
 #include "asterfort/vectgt.h"
 #include "asterfort/vectpe.h"
 #include "asterfort/vectrn.h"
-#include "blas/dcopy.h"
+#include "asterfort/verifg.h"
 #include "blas/ddot.h"
-    character(len=16) :: option, nomte
-    integer :: codret
 !
+aster_logical, intent(in) :: lMatr, lVect, lSigm, lVari
+character(len=16),  intent(in) :: nomte, rela_comp
 ! ......................................................................
 !     FONCTION  :  CALCUL DES OBJETS ELEMENTS FINIS EN NON LINEAIRE
 !                  GEOMETRIQUE AVEC GRANDES ROTATIONS
@@ -94,16 +87,10 @@ implicit none
     integer :: in
     integer :: jd
     integer :: ii, jj
-    integer :: k1, jnbspi
 !
 !---- DECLARATIONS RIGIDITE GEOMETRIQUE
 !
     real(kind=8) :: etild ( 5 ), stild ( 5 )
-    real(kind=8) :: etildm ( 5 )
-    real(kind=8) :: eps2d ( 4 ), deps2d ( 4 )
-    real(kind=8) :: sign ( 4 ), sigma ( 4 ), dsidep ( 6 , 6 )
-    real(kind=8) :: detild ( 5 )
-    real(kind=8) :: gxz, gyz
     real(kind=8) :: stlis ( 5 , 4 )
     real(kind=8) :: bars ( 9 , 9 )
     real(kind=8) :: vecni ( 3 ), antni ( 3 , 3 )
@@ -113,24 +100,23 @@ implicit none
 !
 !---- DECLARATIONS STANDARDS
 !
-    integer :: igeom, icontp, imatun, ivectu, ivarip, cod
-    integer :: icontm, ivarix
+    integer :: igeom, icontp, imatun, ivectu, ivarip
     integer :: lzi, lzr, jcara
-    integer :: nb1, nb2, ndimv
+    integer :: nb1, nb2
+    integer :: iinstm, iinstp, jmate
+    real(kind=8) :: valpar, epsthe
 !
 !---- DECLARATIONS PROPRES COQUE_3D NON LINEAIRE
 !
     real(kind=8) :: matc ( 5 , 5 )
-    real(kind=8) :: dtild ( 5 , 5 )
-    integer :: inte, intsr, intsn
+    integer :: inte, intsr, intsn, jnbspi
     integer :: kntsr
     real(kind=8) :: eptot, kappa, ctor
-    integer :: npge, npgsr, npgsn, ksp
+    integer :: npge, npgsr, npgsn
     parameter ( npge = 3 )
     real(kind=8) :: vecta ( 9 , 2 , 3 )
     real(kind=8) :: vectn ( 9 , 3 ), vectpt ( 9 , 2 , 3 )
     real(kind=8) :: vecnph ( 9 , 3 )
-    real(kind=8) :: vecphm( 9 , 3 )
     real(kind=8) :: vectg ( 2 , 3 ), vectt ( 3 , 3 )
     real(kind=8) :: jm1 ( 3 , 3 ), detj
     real(kind=8) :: hsc ( 5 , 9 )
@@ -138,16 +124,13 @@ implicit none
     real(kind=8) :: jdn1ni ( 9 , 51 ), jdn1nc ( 9 , 51 )
     real(kind=8) :: jdn2rc ( 9 , 51 )
     real(kind=8) :: jdn2nc ( 9 , 51 )
-    real(kind=8) :: jd2rcm ( 9 , 51 )
-    real(kind=8) :: jd2ncm ( 9 , 51 )
     real(kind=8) :: j1dn3 ( 9 , 27 )
     real(kind=8) :: btild3 ( 5 , 27 )
     real(kind=8) :: ksi3s2
 !
 !---- DECLARATIONS COUCHES
 !
-    integer :: icompo, nbcou
-    integer :: icou
+    integer :: nbcou, icou, k1
     real(kind=8) :: zic, zmin, epais, coef
 !
 !---- DECLARATIONS COQUE NON LINEAIRE
@@ -155,64 +138,27 @@ implicit none
     real(kind=8) :: vrignc ( 2601 ), vrigni ( 2601 )
     real(kind=8) :: vrigrc ( 2601 ), vrigri ( 2601 )
     real(kind=8) :: knn
-    integer :: iup, ium
+    integer :: iup, ium, iret
     real(kind=8) :: b1su ( 5 , 51 ), b2su ( 5 , 51 )
-    real(kind=8) :: b1sum ( 5 , 51 ), b2sum ( 5 , 51 )
     real(kind=8) :: b1src ( 2 , 51 , 4 )
     real(kind=8) :: b2src ( 2 , 51 , 4 )
-    real(kind=8) :: b1srcm ( 2 , 51 , 4 )
-    real(kind=8) :: b2srcm ( 2 , 51 , 4 )
     real(kind=8) :: b1mnc ( 3 , 51 ), b1mni ( 3 , 51 )
     real(kind=8) :: b2mnc ( 3 , 51 ), b2mni ( 3 , 51 )
-    real(kind=8) :: b1mncm ( 3 , 51 ), b1mnim ( 3 , 51 )
-    real(kind=8) :: b2mncm ( 3 , 51 ), b2mnim ( 3 , 51 )
     real(kind=8) :: b1mri ( 3 , 51 , 4 )
     real(kind=8) :: b2mri ( 3 , 51 , 4 )
-    real(kind=8) :: b1mrim ( 3 , 51 , 4 )
-    real(kind=8) :: b2mrim ( 3 , 51 , 4 )
     real(kind=8) :: dudxri ( 9 ), dudxni ( 9 )
     real(kind=8) :: dudxrc ( 9 ), dudxnc ( 9 )
-    real(kind=8) :: dudrim ( 9 ), dudnim ( 9 )
-    real(kind=8) :: dudrcm ( 9 ), dudncm ( 9 )
     real(kind=8) :: vecu ( 8 , 3 ), vecthe ( 9 , 3 )
-    real(kind=8) :: vecum( 8 , 3 ), vecthm ( 9 , 3 )
     real(kind=8) :: vecpe ( 51 )
-    real(kind=8) :: vecpem ( 51 )
 !
 !---- DECLARATIONS ROTATION GLOBAL LOCAL AU NOEUDS
 !
-!      INTEGER IRIG
 !
     real(kind=8) :: blam ( 9 , 3 , 3 )
-    real(kind=8) :: blamm ( 9 , 3 , 3 )
-!
 !
     real(kind=8) :: theta ( 3 ), thetan
     real(kind=8) :: tmoin1 ( 3 , 3 ), tm1t ( 3 , 3 )
     real(kind=8) :: term ( 3 )
-!
-!
-!---- LES REALS
-    integer :: icodre ( 26 )
-    character(len=8) :: typmod ( 2 )
-    character(len=16) :: nomres ( 26 )
-    character(len=32) :: phenom
-    integer :: imate, icarcr, iinstm, iinstp, ivarim
-    integer :: nbvari, itab(8), lgpg, k2
-    integer :: nbv, iret
-    real(kind=8) :: rac2, angmas(3)
-    real(kind=8) :: valres ( 26 )
-    real(kind=8) :: cisail
-    type(Behaviour_Integ) :: BEHinteg
-!
-    rac2 = sqrt(2.d0)
-    typmod(1) = 'C_PLAN  '
-    typmod(2) = '        '
-    codret=0
-!
-! - Initialisation of behaviour datastructure
-!
-    call behaviourInit(BEHinteg)
 !
 ! DEB
 !
@@ -224,43 +170,14 @@ implicit none
 !
 !---- LE NOMBRE DE COUCHES
 !
-    call jevech('PMATERC', 'L', imate)
-    nomres(1) = 'E'
-    nomres(2) = 'NU'
-    call jevech('PVARIMR', 'L', ivarim)
-    call jevech('PMATERC', 'L', imate)
-    call jevech('PINSTMR', 'L', iinstm)
-    call jevech('PINSTPR', 'L', iinstp)
-    call jevech('PCOMPOR', 'L', icompo)
-!
     call jevech('PNBSP_I', 'L', jnbspi)
     nbcou=zi(jnbspi-1+1)
 !
     if (nbcou .le. 0) then
-        call utmess('F', 'ELEMENTS_12')
+        call utmess('F', 'PLATE1_10')
     endif
 !
 
-!
-    read (zk16(icompo-1+2),'(I16)') nbvari
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=itab)
-!      LGPG = MAX(ITAB(6),1)*ITAB(7) resultats faux sur Bull avec ifort
-    if (itab(6) .le. 1) then
-        lgpg=itab(7)
-    else
-        lgpg = itab(6)*itab(7)
-    endif
-    call jevech('PCARCRI', 'L', icarcr)
-    call rccoma(zi(imate), 'ELAS', 1, phenom, icodre(1))
-!
-    if (phenom .eq. 'ELAS') then
-        nbv = 2
-        nomres(1) = 'E'
-        nomres(2) = 'NU'
-    else
-        call utmess('F', 'ELEMENTS_45', sk=phenom)
-    endif
 !______________________________________________________________________
 !
 !---- RECUPERATION DES POINTEURS ( L : LECTURE )
@@ -292,32 +209,28 @@ implicit none
 !
 !______________________________________________________________________
 !
+!---- POUR LE CALCUL DES DEFORMATIONS THERMIQUES
+!______________________________________________________________________
+!
+    call jevech('PMATERC', 'L', jmate)
+    call jevech('PINSTMR', 'L', iinstm)
+    call jevech('PINSTPR', 'L', iinstp)
+!
+!______________________________________________________________________
+!
 !---- RECUPERATION DES POINTEURS ( E : ECRITURE ) SELON OPTION
 !______________________________________________________________________
 !
-    if (option ( 1 : 9 ) .eq. 'RAPH_MECA' .or. option ( 1 : 9 ) .eq. 'FULL_MECA') then
-!
-!------- CONTRAINTES DE CAUCHY AUX POINTS DE GAUSS
-!
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
-!
-!------- VECTEUR DES FORCES INTERNES
-!
-        call jevech('PVECTUR', 'E', ivectu)
-!
-!------- VARIABLES INTERNES INACTIVES DANS NOTRE CAS
-!
-        call jevech('PVARIPR', 'E', ivarip)
-!
-    else
-!       -- POUR AVOIR UN TABLEAU BIDON A DONNER A NMCOMP :
-        ivarip = ivarim
     endif
-    ndimv=lgpg*npgsn
-    call jevech('PVARIMP', 'L', ivarix)
-    call dcopy(ndimv, zr(ivarix), 1, zr(ivarip), 1)
-!
-    if (option ( 1 : 16 ) .eq. 'RIGI_MECA_TANG' .or. option ( 1 : 9 ) .eq. 'FULL_MECA') then
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lVari) then
+        call jevech('PVARIPR', 'E', ivarip)
+    endif
+    if (lMatr) then
 !
 !------- MATRICE TANGENTE DE RIGIDITE ET INITIALISATION
 !
@@ -374,8 +287,6 @@ implicit none
 !
 !______________________________________________________________________
 !
-!______________________________________________________________________
-!
 !---- RECUPERATION DE L ADRESSE DES VARIABLES NODALES TOTALES
 !     QUI NE POSSEDE PAS LE MEME SENS POUR LES DEPLACEMENTS
 !     ET LES ROTATIONS
@@ -383,7 +294,6 @@ implicit none
 !---- A L INSTANT MOINS  ( PAS PRECEDENT )
 !
     call jevech('PDEPLMR', 'L', ium)
-    call jevech('PCONTMR', 'L', icontm)
 !
 !---- A L INSTANT PLUS  ( DEPUIS LE PAS PRECEDENT PAS PRECEDENT )
 !
@@ -400,25 +310,19 @@ implicit none
 !---- DEPLACEMENT TOTAL AUX NOEUDS DE SERENDIP
 !
     call r8inir(8 * 3, 0.d0, vecu, 1)
-    call r8inir(8 * 3, 0.d0, vecum, 1)
 !
     do in = 1, nb1
         do ii = 1, 3
-!
-            vecu ( in , ii ) = zr ( ium - 1 + 6 * ( in - 1 ) + ii&
-            ) + zr ( iup - 1 + 6 * ( in - 1 ) + ii )
-            vecum ( in , ii ) = zr ( ium - 1 + 6 * ( in - 1 ) + ii&
-            )
-!
-         end do
-     end do
+            vecu ( in , ii ) = zr ( ium - 1 + 6 * ( in - 1 ) + ii ) +&
+                               zr ( iup - 1 + 6 * ( in - 1 ) + ii )
+        end do
+    end do
 !
 !---- ROTATION TOTALE AUX NOEUDS
 !
     call r8inir(9 * 3, 0.d0, vecthe, 1)
-    call r8inir(9 * 3, 0.d0, vecthm, 1)
 !
-    if (zk16 ( icompo+2 ) .eq. 'GROT_GDEP') then
+    if (rela_comp ( 1 : 4 ) .eq. 'ELAS') then
 !
 !------- EN ACCORD AVEC LA MISE A JOUR DES GRANDES ROTATIONS AUFAURE
 !
@@ -426,20 +330,14 @@ implicit none
 !
         do in = 1, nb1
             do ii = 1, 3
-                vecthe ( in , ii ) = zr ( iup - 1 + 6 * ( in - 1 ) +&
-                ii + 3 )
-                vecthm ( in , ii ) = zr ( ium - 1 + 6 * ( in - 1 ) +&
-                ii + 3 )
-             end do
-         end do
+                vecthe ( in , ii ) = zr ( iup - 1 + 6 * ( in - 1 ) + ii + 3 )
+            end do
+        end do
 !
 !------- SUPERNOEUD
 !
         do ii = 1, 3
-            vecthe ( nb2, ii ) = zr ( iup - 1 + 6 * ( nb1 ) + ii&
-            )
-            vecthm ( nb2, ii ) = zr ( ium - 1 + 6 * ( nb1 ) + ii&
-            )
+            vecthe ( nb2, ii ) = zr ( iup - 1 + 6 * ( nb1 ) + ii)
         end do
 !
     else
@@ -450,37 +348,28 @@ implicit none
 !
         do in = 1, nb1
             do ii = 1, 3
-                vecthe ( in , ii ) = zr ( ium - 1 + 6 * ( in - 1 ) +&
-                ii + 3 ) + zr ( iup - 1 + 6 * ( in - 1 ) + ii + 3 )
-                vecthm ( in , ii ) = zr ( ium - 1 + 6 * ( in - 1 ) +&
-                ii + 3 )
+                vecthe ( in , ii ) = zr ( ium - 1 + 6 * ( in - 1 ) + ii + 3 ) +&
+                                     zr ( iup - 1 + 6 * ( in - 1 ) + ii + 3 )
             end do
         end do
 !
 !--------- SUPERNOEUD
 !
         do ii = 1, 3
-            vecthe ( nb2, ii ) = zr ( ium - 1 + 6 * ( nb1 ) + ii&
-            ) + zr ( iup - 1 + 6 * ( nb1 ) + ii )
-            vecthm ( nb2, ii ) = zr ( ium - 1 + 6 * ( nb1 ) + ii&
-            )
+            vecthe ( nb2, ii ) = zr ( ium - 1 + 6 * ( nb1 ) + ii) +&
+                                 zr ( iup - 1 + 6 * ( nb1 ) + ii )
         end do
-!
     endif
 !
 !---- TRANSFORMEES NORMALES ET MATRICES DE ROTATION AUX NOEUDS
 !
     call vectrn(nb2, vectpt, vectn, vecthe, vecnph,&
                 blam)
-    call vectrn(nb2, vectpt, vectn, vecthm, vecphm,&
-                blamm)
 !
 !---- VECTEUR PE DES VARIABLES NODALES TOTALES GENERALISEES
 !
     call vectpe(nb1, nb2, vecu, vectn, vecnph,&
                 vecpe)
-    call vectpe(nb1, nb2, vecum, vectn, vecphm,&
-                vecpem)
 !
 !______________________________________________________________________
 !
@@ -489,18 +378,14 @@ implicit none
 !---- MEMBRANE REDUIT INCOMPLET
 !
     call r8inir(3 * 51 * 4, 0.d0, b1mri, 1)
-    call r8inir(3 * 51 * 4, 0.d0, b1mrim, 1)
 !
     call r8inir(3 * 51 * 4, 0.d0, b2mri, 1)
-    call r8inir(3 * 51 * 4, 0.d0, b2mrim, 1)
 !
 !---- SHEAR    REDUIT   COMPLET
 !
     call r8inir(2 * 51 * 4, 0.d0, b1src, 1)
-    call r8inir(2 * 51 * 4, 0.d0, b1srcm, 1)
 !
     call r8inir(2 * 51 * 4, 0.d0, b2src, 1)
-    call r8inir(2 * 51 * 4, 0.d0, b2srcm, 1)
 !
 !---- COMPTEUR DES POINTS D INTEGRATIONS ( EPAISSEUR * SURFACE )
 !
@@ -558,16 +443,12 @@ implicit none
 !
                 call promat(jdn1ri, 9, 9, 6 * nb1 + 3, vecpe,&
                             6 * nb1 + 3, 6 * nb1 + 3, 1, dudxri)
-                call promat(jdn1ri, 9, 9, 6 * nb1 + 3, vecpem,&
-                            6 * nb1 + 3, 6 * nb1 + 3, 1, dudrim)
 !
 !+++++++++++++ B1MRI ( 3 , 51 , 4 ) MEMBRANE REDUIT INCOMPLET
 !              B2MRI ( 3 , 51 , 4 )
 !
                 call matbmr(nb1, vectt, dudxri, intsr, jdn1ri,&
                             b1mri, b2mri)
-                call matbmr(nb1, vectt, dudrim, intsr, jdn1ri,&
-                            b1mrim, b2mrim)
 !
 !------------- J1DN1RC ( 9 , 6 * NB1 + 3 ) INDN = 0 REDUIT
 !                                          INDC = 1 COMPLET
@@ -579,8 +460,6 @@ implicit none
 !
                 call promat(jdn1rc, 9, 9, 6 * nb1 + 3, vecpe,&
                             6 * nb1 + 3, 6 * nb1 + 3, 1, dudxrc)
-                call promat(jdn1rc, 9, 9, 6 * nb1 + 3, vecpem,&
-                            6 * nb1 + 3, 6 * nb1 + 3, 1, dudrcm)
 !
 !------------- J1DN2RC ( 9 , 6 * NB1 + 3 ) INDN = 0 REDUIT
 !                                          INDC = 1 COMPLET
@@ -588,31 +467,25 @@ implicit none
                 call jm1dn2(0, 1, nb1, nb2, zr ( lzr ),&
                             epais, ksi3s2, intsr, vecnph, jm1,&
                             jdn2rc)
-                call jm1dn2(0, 1, nb1, nb2, zr ( lzr ),&
-                            epais, ksi3s2, intsr, vecphm, jm1,&
-                            jd2rcm)
 !
 !+++++++++++++ B1SRC ( 2 , 51 , 4 ) SHEAR REDUIT COMPLET
 !              B2SRC ( 2 , 51 , 4 )
 !
                 call matbsr(nb1, vectt, dudxrc, intsr, jdn1rc,&
                             jdn2rc, b1src, b2src)
-                call matbsr(nb1, vectt, dudrcm, intsr, jdn1rc,&
-                            jd2rcm, b1srcm, b2srcm)
-!
-!========== FIN 1 ERE BOUCLE NPGSR
-!
             end do
+!
 !---------- INITIALISATION DES CONTRAINTES A LISSER
 !
-            if (option ( 1 : 16 ) .eq. 'RIGI_MECA_TANG' .or. option ( 1 : 9 ) .eq. 'FULL_MECA') &
-            call r8inir(5 * 4, 0.d0, stlis, 1)
+            if (lMatr) then
+                call r8inir(5 * 4, 0.d0, stlis, 1)
+            endif
 !
 !========== BOUCLE SUR POINTS INTEGRATION NORMALE SURFACE MOYENNE
 !
             do intsn = 1, npgsn
 !
-!C
+!
                 call vectgt(1, nb1, zr ( igeom ), ksi3s2, intsn,&
                             zr ( lzr ), epais, vectn, vectg, vectt)
 !
@@ -629,8 +502,6 @@ implicit none
 !
                 call promat(jdn1nc, 9, 9, 6 * nb1 + 3, vecpe,&
                             6 * nb1 + 3, 6 * nb1 + 3, 1, dudxnc)
-                call promat(jdn1nc, 9, 9, 6 * nb1 + 3, vecpem,&
-                            6 * nb1 + 3, 6 * nb1 + 3, 1, dudncm)
 !
 !------------- J1DN2NC ( 9 , 6 * NB1 + 3 ) INDN = 1 NORMAL
 !                                          INDC = 1 COMPLET
@@ -638,17 +509,12 @@ implicit none
                 call jm1dn2(1, 1, nb1, nb2, zr ( lzr ),&
                             epais, ksi3s2, intsn, vecnph, jm1,&
                             jdn2nc)
-                call jm1dn2(1, 1, nb1, nb2, zr ( lzr ),&
-                            epais, ksi3s2, intsn, vecphm, jm1,&
-                            jd2ncm)
 !
 !+++++++++++++ B1MNC ( 3 , 51 ) MEMBRANE NORMAL COMPLET
 !              B2MNC ( 3 , 51 )
 !
                 call matbmn(nb1, vectt, dudxnc, jdn1nc, jdn2nc,&
                             b1mnc, b2mnc)
-                call matbmn(nb1, vectt, dudncm, jdn1nc, jd2ncm,&
-                            b1mncm, b2mncm)
 !
 !------------- J1DN1NI ( 9 , 6 * NB1 + 3 ) INDN = 1 NORMAL
 !                                          INDC = 0 INCOMPLET
@@ -660,16 +526,12 @@ implicit none
 !
                 call promat(jdn1ni, 9, 9, 6 * nb1 + 3, vecpe,&
                             6 * nb1 + 3, 6 * nb1 + 3, 1, dudxni)
-                call promat(jdn1ni, 9, 9, 6 * nb1 + 3, vecpem,&
-                            6 * nb1 + 3, 6 * nb1 + 3, 1, dudnim)
 !
 !+++++++++++++ B1MNI ( 3 , 51 ) MEMBRANE NORMAL INCOMPLET
 !              B2MNI ( 3 , 51 )
 !
                 call matbmn(nb1, vectt, dudxni, jdn1ni, jdn1ni,&
                             b1mni, b2mni)
-                call matbmn(nb1, vectt, dudnim, jdn1ni, jdn1ni,&
-                            b1mnim, b2mnim)
 !
 !============= B1SU ( 5 , 51 ) SUBSTITUTION TOTAL
 !              B2SU ( 5 , 51 ) SUBSTITUTION DIFFERENTIEL
@@ -677,141 +539,31 @@ implicit none
                 call matbsu(nb1, zr ( lzr ), npgsr, intsn, b1mnc,&
                             b2mnc, b1mni, b2mni, b1mri, b2mri,&
                             b1src, b2src, b1su, b2su)
-                call matbsu(nb1, zr ( lzr ), npgsr, intsn, b1mncm,&
-                            b2mncm, b1mnim, b2mnim, b1mrim, b2mrim,&
-                            b1srcm, b2srcm, b1sum, b2sum)
 !
 !------------- LA  DEFORMATION TOTALE  DE GREEN LAGRANGE ETILD ( 5 )
 !
                 call promat(b1su, 5, 5, 6 * nb1 + 3, vecpe,&
                             6 * nb1 + 3, 6 * nb1 + 3, 1, etild)
-                call promat(b1sum, 5, 5, 6 * nb1 + 3, vecpem,&
-                            6 * nb1 + 3, 6 * nb1 + 3, 1, etildm)
 !
+!------------- EVALUATION DES DEFORMATIONS THERMIQUES
 !
-!------------ INCREMENENT DE DEFORMATION
+                call verifg('RIGI', intsn, 3, '+', zi(jmate),&
+                            epsthe)
+                etild(1) = etild(1) - epsthe
+                etild(2) = etild(2) - epsthe
 !
-                do i = 1, 5
-                    detild(i) = etild(i)-etildm(i)
-                end do
+!------------- LA  MATRICE DE COMPORTEMENT  MATC ( 5 , 5 )
 !
-                eps2d(1) = etildm(1)
-                eps2d(2) = etildm(2)
-                eps2d(3) = 0.d0
-                eps2d(4) = etildm(3)/rac2
-!
-                deps2d(1) = detild(1)
-                deps2d(2) = detild(2)
-                deps2d(3) = 0.d0
-                deps2d(4) = detild(3)/rac2
-!
-                gxz = etildm(4) + detild(4)
-                gyz = etildm(5) + detild(5)
-!
-                k2 = lgpg* (intsn-1) + (npge* (icou-1)+inte-1)*nbvari
-!
-!------- CONTRAINTES DE CAUCHY = PK2 AUX POINTS DE GAUSS INSTANT MOINS
-!
-                k1=6*((intsn-1)*npge*nbcou + (icou-1)*npge +inte - 1)
-                do i = 1, 3
-                    sign(i) = zr( icontm - 1 + k1 + i )
-                end do
-                sign(4) = zr( icontm - 1 + k1 + 4 )*rac2
-!
-! - LOI DE COMPORTEMENT
-! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
-! --- INITIALISE A R8VIDE (ON NE S'EN SERT PAS)
-                call r8inir(3, r8vide(), angmas, 1)
-! -    APPEL A LA LOI DE COMPORTEMENT
-                ksp= (icou-1)*npge + inte
-!
-                call nmcomp(BEHinteg,&
-                            'MASS', intsn, ksp, 2, typmod,&
-                            zi(imate), zk16(icompo), zr(icarcr), zr(iinstm), zr(iinstp),&
-                            4, eps2d, deps2d, 4, sign,&
-                            zr(ivarim+k2), option, angmas, &
-                            sigma, zr(ivarip+k2), 36, dsidep, cod)
-!
-                if (phenom .eq. 'ELAS') then
-                    nbv = 2
-                    nomres(1) = 'E'
-                    nomres(2) = 'NU'
-                else
-                    call utmess('F', 'ELEMENTS_45', sk=phenom)
-                endif
-!
-                call rcvalb('MASS', intsn, ksp, '+', zi(imate),&
-                            ' ', phenom, 0, ' ', [0.d0],&
-                            nbv, nomres, valres, icodre, 1)
-!
-                cisail = valres(1)/ (1.d0+valres(2))
-!
-!           COD=1 : ECHEC INTEGRATION LOI DE COMPORTEMENT
-!           COD=3 : C_PLAN DEBORST SIGZZ NON NUL
-                if (cod .ne. 0) then
-                    if (codret .ne. 1) then
-                        codret=cod
-                    endif
-                endif
+                call moytpg('RIGI', intsn, 3, '+', valpar,&
+                            iret)
+                call matrc2(1, 'TEMP    ', [valpar], kappa, matc, vectt)
 !
 !------------- LA  CONTRAINTE TOTALE  PK2 STILD ( 5 )
 !
+                call promat(matc, 5, 5, 5, etild,&
+                            5, 5, 1, stild)
 !
-                if (option ( 1 : 16 ) .eq. 'RIGI_MECA_TANG' .or. option ( 1 : 9 ) .eq.&
-                    'FULL_MECA') then
-!
-                    dtild(1,1) = dsidep(1,1)
-                    dtild(1,2) = dsidep(1,2)
-                    dtild(1,3) = dsidep(1,4)/rac2
-                    dtild(1,4) = 0.d0
-                    dtild(1,5) = 0.d0
-!
-                    dtild(2,1) = dsidep(2,1)
-                    dtild(2,2) = dsidep(2,2)
-                    dtild(2,3) = dsidep(2,4)/rac2
-                    dtild(2,4) = 0.d0
-                    dtild(2,5) = 0.d0
-!
-                    dtild(3,1) = dsidep(4,1)/rac2
-                    dtild(3,2) = dsidep(4,2)/rac2
-                    dtild(3,3) = dsidep(4,4)/2.d0
-                    dtild(3,4) = 0.d0
-                    dtild(3,5) = 0.d0
-!
-                    dtild(4,1) = 0.d0
-                    dtild(4,2) = 0.d0
-                    dtild(4,3) = 0.d0
-                    dtild(4,4) = cisail*kappa/2.d0
-                    dtild(4,5) = 0.d0
-!
-                    dtild(5,1) = 0.d0
-                    dtild(5,2) = 0.d0
-                    dtild(5,3) = 0.d0
-                    dtild(5,4) = 0.d0
-                    dtild(5,5) = cisail*kappa/2.d0
-!
-                    do i = 1, 5
-                        do j = 1, 5
-                            matc(i,j) = dtild(i,j)
-                        end do
-                    end do
-!
-                endif
-!
-                if (option ( 1 : 16 ) .eq. 'RIGI_MECA_TANG') then
-                    stild ( 1 ) = sign ( 1 )
-                    stild ( 2 ) = sign ( 2 )
-                    stild ( 3 ) = sign ( 4 ) / rac2
-                else
-                    stild ( 1 ) = sigma ( 1 )
-                    stild ( 2 ) = sigma ( 2 )
-                    stild ( 3 ) = sigma ( 4 ) / rac2
-                endif
-                stild ( 4 ) = cisail*kappa*gxz/2.d0
-                stild ( 5 ) = cisail*kappa*gyz/2.d0
-!
-                if (option ( 1 : 9 ) .eq. 'RAPH_MECA' .or. option ( 1 : 9 ) .eq.&
-                    'FULL_MECA') then
+                if (lSigm) then
 !
 !------- CONTRAINTES DE CAUCHY = PK2 AUX POINTS DE GAUSS
 !
@@ -841,21 +593,16 @@ implicit none
                 endif
 !
 !
-                if (option ( 1 : 16 ) .eq. 'RIGI_MECA_TANG' .or. option ( 1 : 9 ) .eq.&
-                    'FULL_MECA') then
+                if (lMatr) then
 !
 !------------- INTEGRATION DES CONTRAINTES LISSEES
 !
                     do kntsr = 1, npgsr
-!
                         do i = 1, 5
-!
-                            stlis ( i , kntsr ) = stlis ( i , kntsr )&
-                            + zr ( lzr - 1 + 702 + 4 * ( intsn - 1 ) +&
-                            kntsr ) * stild ( i ) * zr ( lzr - 1 +&
-                            127 + intsn - 1 )
-!
-                         end do
+                            stlis ( i , kntsr ) = stlis ( i , kntsr ) +&
+                                zr ( lzr - 1 + 702 + 4 * ( intsn - 1 ) +kntsr ) *&
+                                stild ( i ) * zr ( lzr - 1 + 127+ intsn - 1 )
+                        end do
                     end do
 !
 !------------- KM ( 6 * NB1 + 3 , 6 * NB1 + 3 )  =     INTEGRALE  DE
@@ -919,8 +666,6 @@ implicit none
                     call btdbma(jdn2nc, bars, zr (lzr - 1 + 127 + intsn - 1) * detj * coef, 9,&
                                 6 * nb1 + 3, vrignc)
 !
-!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-!
 !------------- VRIGNI  ( 6 * NB1 + 3 , 6 * NB1 + 3 )  = INTEGRALE
 !              ( JDN1NI ( 9 , 6 * NB1 + 3 ) ) T * BARS   ( 9 , 9 )
 !           *                               JDN1NI ( 9 , 6 * NB1 + 3 ) *
@@ -928,17 +673,9 @@ implicit none
 !
                     call btdbma(jdn1ni, bars, zr (lzr - 1 + 127 + intsn - 1) * detj * coef, 9,&
                                 6 * nb1 + 3, vrigni)
-!
-!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-!
                 endif
-!
-!========== FIN BOUCLE NPGSN
-!
             end do
-!
-            if (option ( 1 : 16 ) .eq. 'RIGI_MECA_TANG' .or. option ( 1 : 9 ) .eq.&
-                'FULL_MECA') then
+            if (lMatr) then
 !
 !========== 2 EME BOUCLE SUR POINTS INTEGRATION REDUITE SURFACE MOYENNE
 !
@@ -956,9 +693,6 @@ implicit none
                     call jm1dn1(0, 0, nb1, nb2, zr ( lzr ),&
                                 epais, ksi3s2, intsr, jm1, jdn1ri)
 !
-!
-!IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-!
 !------------- RESTITUTION DES CONTRAINTES LISSEES MEMBRANE FLEXION
 !
                     do i = 1, 3
@@ -972,19 +706,8 @@ implicit none
 !------------- BARS ( 9 , 9 )
 !
                     call tilbar(stild, vectt, bars)
-!
-!------------- VRIGRI  ( 6 * NB1 + 3 , 6 * NB1 + 3 )  = INTEGRALE
-!              ( JDN1RI ( 9 , 6 * NB1 + 3 ) ) T * BARS   ( 9 , 9 )
-!           *                               JDN1RI ( 9 , 6 * NB1 + 3 ) *
-!                                      DETJ * POIDS EPAISSEUR
-!DDDDDDDDDDDDD
-!------------- PAS D INTEGRATION REDUITE SURFACE MOYENNE
-!DDDDDDDDDDDDD
-!
                     call btdbma(jdn1ri, bars, detj * coef, 9, 6 * nb1 + 3,&
                                 vrigri)
-!
-!CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 !
 !------------- J1DN2RC ( 9 , 6 * NB1 + 3 ) INDN = 0 REDUIT
 !                                          INDC = 1 COMPLET
@@ -1016,31 +739,19 @@ implicit none
 !------------- PAS D INTEGRATION REDUITE SURFACE MOYENNE
 !DDDDDDDDDDDDD
 !
-                    call btdbma(jdn2rc, bars, detj * coef, 9, 6 * nb1 + 3,&
-                                vrigrc)
-!
-!========== FIN 2 EME BOUCLE NPGSR
-!
+                    call btdbma(jdn2rc, bars, detj * coef, 9, 6 * nb1 + 3, vrigrc)
                 end do
-!
             endif
+        end do
+    end do
 !
-!-------- FIN BOUCLE NPGE
-!
-          end do
-!
-!---- FIN BOUCLE NBCOU
-!
-     end do
-!
-    if (option ( 1 : 16 ) .eq. 'RIGI_MECA_TANG' .or. option ( 1 : 9 ) .eq. 'FULL_MECA') then
+    if (lMatr) then
 !
 !------- AFFECTATION DE LA RIGIDITE GEOMETRIQUE
 !
         do jd = 1, ( 6 * nb1 + 3 ) * ( 6 * nb1 + 3 )
-            zr ( imatun - 1 + jd ) = zr ( imatun - 1 + jd ) + vrignc (&
-            jd ) - vrigni ( jd ) + vrigri ( jd ) + vrigrc ( jd )
-!
+            zr ( imatun - 1 + jd ) = zr ( imatun - 1 + jd ) +&
+                vrignc (jd ) - vrigni ( jd ) + vrigri ( jd ) + vrigrc ( jd )
         end do
 !
 !------- AFFECTATION DE LA RIGIDITE NON CLASSIQUE RIGNC ( 3 , 3 )
@@ -1056,48 +767,13 @@ implicit none
             do ii = 1, 3
                 vecni ( ii ) = vecnph ( in , ii )
             end do
-!
             call antisy(vecni, 1.d0, antni)
 !
 !---------- RIGIDITE NON CLASSIQUE RIGN ( 3 , 3 ) NON SYMETRIQUE
 !
             call promat(antzi, 3, 3, 3, antni,&
                         3, 3, 3, rignc)
-!
-!--------- RIGIDITE NON CLASSIQUE DESACTIVEE
-!
-!            IF ( IN . LE . NB1 ) THEN
-!
-!------------- NOEUDS DE SERENDIP
-!
-!               DO 531 JJ = 1 , 3
-!                  J    = 6 * ( IN - 1 ) + JJ + 3
-!                  DO 541 II = 1 , 3
-!                     I    = 6 * ( IN - 1 ) + II + 3
-!                     IRIG = ( 6 * NB1 + 3 ) * ( J - 1 ) + I
-!                     ZR ( IMATUN-1 + IRIG ) = ZR ( IMATUN-1 + IRIG  )
-!     &       +  RIGNC ( II , JJ )
-!
-! 541              CONTINUE
-! 531           CONTINUE
-!
-!            ELSE
-!
-!------------- SUPERNOEUD
-!               DO 532 JJ = 1 , 3
-!                  J    = 6 * NB1        + JJ
-!                  DO 542 II = 1 , 3
-!                     I    = 6 * NB1        + II
-!                     IRIG = ( 6 * NB1 + 3 ) * ( J - 1 ) + I
-!                     ZR ( IMATUN-1 + IRIG ) = ZR ( IMATUN-1 + IRIG  )
-!     &       +  RIGNC ( II , JJ )
-!
-! 542              CONTINUE
-! 532           CONTINUE
-!
-!            ENDIF
-!
-         end do
+        end do
 !
 !------- ROTATION DE TOUTE LA MATRICE AU REPERE LOCAL
 !
@@ -1131,22 +807,16 @@ implicit none
 !
         call gdt(theta, tmoin1)
 !
-!
-!
 !+++++++++++ SON TRANSPOSE
 !
-        call transp(tmoin1, 3, 3, 3, tm1t,&
-                    3)
+        call transp(tmoin1, 3, 3, 3, tm1t, 3)
 !
 !+++++++++++ PRODUIT T MOINS 1 T FOIS VECNI
 !
         call promat(tm1t, 3, 3, 3, vecni,&
                     3, 3, 1, term)
 !
-!
-!
-!
-        if (option ( 1 : 16 ) .eq. 'RIGI_MECA_TANG' .or. option ( 1 : 9 ) .eq. 'FULL_MECA') then
+        if (lMatr) then
 !
             if (in .le. nb1) then
 !
@@ -1157,13 +827,11 @@ implicit none
                     j = 6 * ( in - 1 ) + jj + 3
                     do ii = 1, 3
                         i = 6 * ( in - 1 ) + ii + 3
-                        zr ( imatun - 1 + ( 6 * nb1 + 3 ) * ( j - 1 )&
-                        + i ) = zr ( imatun - 1 + ( 6 * nb1 + 3 ) * (&
-                        j - 1 ) + i ) + knn * term ( ii ) * term&
-                        ( jj )
+                        zr(imatun-1+(6*nb1+3)*(j-1)+i) =&
+                            zr ( imatun - 1 + ( 6 * nb1 + 3 ) * (j - 1 ) + i ) +&
+                            knn * term ( ii ) * term( jj )
                     end do
                 end do
-!
             else
 !
 !-------------- SUPERNOEUD
@@ -1171,47 +839,28 @@ implicit none
                     j = 6 * nb1 + jj
                     do ii = 1, 3
                         i = 6 * nb1 + ii
-                        zr ( imatun - 1 + ( 6 * nb1 + 3 ) * ( j - 1 )&
-                        + i ) = zr ( imatun - 1 + ( 6 * nb1 + 3 ) * (&
-                        j - 1 ) + i ) + knn * term ( ii ) * term&
-                        ( jj )
+                        zr(imatun-1+(6*nb1+3)*(j-1)+i) =&
+                             zr ( imatun - 1 + ( 6 * nb1 + 3 ) * ( j - 1 ) + i ) +&
+                             knn * term ( ii ) * term ( jj )
                     end do
                 end do
-!
             endif
-!
         endif
 !
-!
-!
-        if (option ( 1 : 9 ) .eq. 'RAPH_MECA' .or. option ( 1 : 9 ) .eq. 'FULL_MECA') then
-!
+        if (lVect) then
             if (in .le. nb1) then
-!
                 do ii = 1, 3
-!
                     zr ( ivectu - 1 + 6 * ( in - 1 ) + ii + 3 ) =&
                     zr ( ivectu - 1 + 6 * ( in - 1 ) + ii + 3 ) +&
                     knn * term(ii) * thetan
-!
                 end do
-!
             else
-!
                 do ii = 1, 3
-                    zr ( ivectu - 1 + 6 * ( in - 1 ) + ii ) = zr (&
-                    ivectu - 1 + 6 * ( in - 1 ) + ii ) + knn * term(&
-                    ii) * thetan
+                    zr ( ivectu - 1 + 6 * ( in - 1 ) + ii ) =&
+                        zr ( ivectu - 1 + 6 * ( in - 1 ) + ii ) + knn * term(ii) * thetan
                 end do
-!
             endif
-!
-!
         endif
-!
-     end do
-!
-!
-! FIN
+    end do
 !
 end subroutine

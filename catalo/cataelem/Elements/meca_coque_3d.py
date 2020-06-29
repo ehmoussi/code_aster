@@ -633,8 +633,11 @@ class TemplateElement(Element):
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), (SP.PVARIMP, ZVARIPG),
                      (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG), ),
-            para_out=((OP.RIGI_MECA_TANG.PCACO3D, CCACO3D), (SP.PMATUNS, MMATUNS),
-                     (SP.PMATUUR, MMATUUR), ),
+            para_out=((OP.RIGI_MECA_TANG.PCACO3D, CCACO3D),
+                     (SP.PMATUUR, MMATUUR), (SP.PMATUNS, MMATUNS),
+                     (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                     (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
         ),
 
         OP.SIEF_ELGA(te=410,

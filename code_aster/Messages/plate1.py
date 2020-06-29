@@ -51,9 +51,18 @@ Il est impératif d'utiliser un champ de contrainte complet pour le calcul de FO
 
      9 : _("""La réactualisation de la géométrie (déformation : %(k1)s) est déconseillée pour les éléments COQUE_AXIS."""),
 
-    10 : _("""Le nombre de couches doit être obligatoirement supérieur à zéro pour les éléments COQUE_AXIS."""),
+    10 : _("""Le nombre de couches doit être obligatoirement supérieur à zéro."""),
 
     11 : _("""Le nombre de couches est limité à 10 pour les éléments COQUE_AXIS."""),
+
+    12 : _("""La relation %(k1)s n'est pas possible pour les éléments COQUE_3D."""),
+
+    13 : _("""La réactualisation de la géométrie (DEFORMATION='PETIT_REAC') est déconseillée pour les éléments COQUE_3D.
+Le calcul des déformations à l'aide de PETIT_REAC n'est qu'une approximation des hypothèses des grands déplacements. Elle nécessite d'effectuer de très petits incréments de chargement. 
+Pour prendre en compte correctement les grands déplacements et surtout les grandes rotations, il est recommandé d'utiliser DEFORMATION='GROT_GDEP'."""),
+
+    14 : _("""La déformation %(k1)s n'est pas possible sur les éléments COQUE_3D."""),
+
 
     40 : _("""L'élément de plaque ne peut pas être orienté. Par défaut, pour orienter l'élément, on y projette l'axe global X.
 L'axe de référence pour le calcul du repère local est ici normal à l'élément.
