@@ -180,7 +180,7 @@ class RunAster:
                                          timeout - status.times[-1]))
             if not status.is_completed():
                 break
-        # TODO coredump analysis
+        self._coredump_analysis()
         return status
 
     def _exec_one(self, comm, idx, last, timeout):
@@ -193,7 +193,7 @@ class RunAster:
             timeout (float): Remaining time.
         """
         logger.info(f"TITLE Command line #{idx + 1}:")
-        cmd = self._get_cmdline(comm)
+        cmd = self._get_cmdline(idx, comm)
         logger.info(f"    {' '.join(cmd)}")
 
         exitcode = run_command(cmd, timeout, exitcode_file=EXITCODE_FILE)
@@ -224,6 +224,9 @@ class RunAster:
     def _get_cmdline_exec(self, commfile):
         """Build the command line really executed, without redirection.
 
+        Arguments:
+            commfile (str): Command file name.
+
         Returns:
             list[str]: List of command line arguments, without redirection.
         """
@@ -242,8 +245,32 @@ class RunAster:
         # TODO add pid + mode to identify the process by asrun
         return cmd
 
-    def _get_cmdline(self, commfile):
+    def _coredump_analysis(self):
+        """Process the coredump file."""
+        core = glob("core*")
+        if not core:
+            return
+        logger.info("\ncoredump analysis...")
+        python3 = None
+        for path in os.getenv("PATH").split(os.pathsep):
+            if osp.isfile(osp.join(path, "python3")):
+                python3 = osp.join(path, "python3")
+                break
+        if not python3:
+            logger.warn("'python3' not found in PATH.")
+            return
+        tmpf = "cmd_gdb.sh"
+        with open(tmpf, "w") as fobj:
+            fobj.write(os.linesep.join(["where", "quit", ""]))
+        cmd = ["gdb", "-batch", "-x", tmpf, "-e", python3, "-c", core[0]]
+        run_command(cmd)
+
+    def _get_cmdline(self, idx, commfile):
         """Build the command line.
+
+        Arguments:
+            idx (int): Index of execution.
+            commfile (str): Command file name.
 
         Returns:
             list[str]: List of command line arguments.
@@ -257,6 +284,8 @@ class RunAster:
             ]
         else:
             cmd.extend([">>", TMPMESS, "2>&1"])
+        if idx == 0:
+            cmd.insert(0, "ulimit -c unlimited ;")
         return cmd
 
     def _get_status(self, exitcode, last):
@@ -309,6 +338,7 @@ class RunOnlyEnv(RunAster):
         profile = osp.join(ROOT, "share", "aster", "profile.sh")
         logger.info(f"    cd {os.getcwd()}")
         logger.info(f"    . {profile}")
+        logger.info("    ulimit -c unlimited")
         return super().execute_study()
 
     def _exec_one(self, comm, idx, last, timeout):
