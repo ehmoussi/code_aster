@@ -454,6 +454,8 @@ class MVDPTR6(Element):
                      (SP.PVARCRR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      ),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
                      ),
         ),
 
@@ -526,39 +528,8 @@ class MVDPTR6(Element):
 
     )
 
-
 #------------------------------------------------------------
 class MVDPQS8(MVDPTR6):
-    """Please document this element"""
-    meshType = MT.QUAD8
-    nodes = (
-            SetOfNodes('EN2', (5,6,7,8,)),
-            SetOfNodes('EN1', (1,2,3,4,)),
-        )
-    elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4','MASS=FPG9','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG9',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
-        )
-
-
-#------------------------------------------------------------
-class MVAXTR6(MVDPTR6):
-    """Please document this element"""
-    meshType = MT.TRIA6
-    nodes = (
-            SetOfNodes('EN2', (4,5,6,)),
-            SetOfNodes('EN1', (1,2,3,)),
-        )
-    elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3','MASS=FPG6','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','MASS=FPG6',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
-        )
-
-
-#------------------------------------------------------------
-class MVAXQS8(MVDPTR6):
     """Please document this element"""
     meshType = MT.QUAD8
     nodes = (

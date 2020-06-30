@@ -19,6 +19,8 @@
 !
 subroutine te0545(option, nomte)
 !
+use Behaviour_module, only : behaviourOption
+!
 implicit none
 !
 #include "asterf_types.h"
@@ -60,23 +62,26 @@ character(len=16), intent(in) :: option, nomte
 !
     character(len=8) :: typmod(2)
     character(len=16) :: defo_comp
-    aster_logical :: resi, rigi, axi,matsym
+    aster_logical :: axi, matsym
     integer :: nnoQ, nnoL, npg, ndim, nddl, neps, lgpg
     integer :: jv_poids, jv_vfQ, jv_dfdeQ, jv_vfL, jv_dfdeL
     integer :: imate, icontm, ivarim, iinstm, iinstp, ideplm, ideplp, icompo
     integer :: ivectu, icontp, ivarip, imatuu, icarcr, ivarix, igeom, icoret
     integer :: iret, nnos, jv_ganoQ, jv_ganoL, itab(7)
-    integer :: i
+    integer :: i, codret
     real(kind=8) :: xyz(3), angmas(7)
     real(kind=8),allocatable:: b(:,:,:), w(:,:),ni2ldc(:,:)
+    aster_logical :: lMatr, lVect, lSigm, lVari
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    matsym=ASTER_FALSE
-    xyz(:)=0.d0
-!
-    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
-    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
+    matsym = ASTER_FALSE
+    xyz    = 0.d0
+    ivectu = 1
+    icontp = 1
+    ivarip = 1
+    icoret = 1
+    imatuu = 1
 !
 ! - Type of modelling
 !
@@ -112,37 +117,36 @@ character(len=16), intent(in) :: option, nomte
 !
     defo_comp = zk16(icompo-1+DEFO)
 !
-! - PARAMETRES EN SORTIE
+! - Select objects to construct from option name
 !
-    if (rigi) then
-!         call nmtstm(zr(icarcr), imatuu, matsym)
-        matsym = .false.
-        call jevech('PMATUNS','E',imatuu)
-    else
-        imatuu = 1
-    endif
-!
-    if (resi) then
-        call jevech('PVECTUR', 'E', ivectu)
-        call jevech('PCONTPR', 'E', icontp)
-        call jevech('PVARIPR', 'E', ivarip)
-        call jevech('PCODRET', 'E', icoret)
-    else
-        ivectu=1
-        icontp=1
-        ivarip=1
-        icoret=1
-    endif
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
 !
 !    NOMBRE DE VARIABLES INTERNES
     call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=itab)
     lgpg = max(itab(6),1)*itab(7)
 !
-!    ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
-    if (resi) then
+! - PARAMETRES EN SORTIE
+!
+    if (lMatr) then
+        matsym = .false.
+        call jevech('PMATUNS', 'E', imatuu)
+    endif
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', icontp)
+        call jevech('PCODRET', 'E', icoret)
+    endif
+    if (lVari) then
+        call jevech('PVARIPR', 'E', ivarip)
         call jevech('PVARIMP', 'L', ivarix)
         zr(ivarip:ivarip-1+npg*lgpg) = zr(ivarix:ivarix-1+npg*lgpg)
     endif
+!
 !    BARYCENTRE ET ORIENTATION DU MASSIF
     do i = 1,ndim
         xyz(i) = sum(zr(igeom-1+i:igeom-1+(nnoQ-1)*ndim+i:ndim))/nnoQ
@@ -157,17 +161,20 @@ character(len=16), intent(in) :: option, nomte
                        npg,nddl, jv_poids, zr(jv_vfQ), zr(jv_vfL),jv_dfdeQ,jv_dfdeL,&
                        zr(igeom),zk16(icompo), zi(imate), lgpg,&
                        zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
-                       zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
-                       zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
+                       zr(ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
+                       zr(ivarip), zr(ivectu), zr(imatuu),&
+                       lMatr, lVect, lSigm, lVari,&
+                       zi(icoret))
         else
             call ngvlog('RIGI', option, typmod, ndim, nnoQ,nnoL,&
-                   npg,nddl, jv_poids, zr(jv_vfQ), zr(jv_vfL),jv_dfdeQ,jv_dfdeL,&
-                   zr(igeom),zk16(icompo), zi(imate), lgpg,&
-                   zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
-                   zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
-                   zr( ivarip), zr(ivectu), zr(imatuu), zi(icoret))
+                       npg,nddl, jv_poids, zr(jv_vfQ), zr(jv_vfL),jv_dfdeQ,jv_dfdeL,&
+                       zr(igeom),zk16(icompo), zi(imate), lgpg,&
+                       zr(icarcr), angmas, zr(iinstm), zr(iinstp), matsym,&
+                       zr(ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
+                       zr(ivarip), zr(ivectu), zr(imatuu),&
+                       lMatr, lVect, lSigm, lVari,&
+                       zi(icoret))
         endif
-
     else if (defo_comp(1:5) .eq. 'PETIT') then
         call nmgvmb(ndim, nnoQ, nnoL, npg, axi,&
                     zr(igeom), zr(jv_vfQ), zr(jv_vfL), jv_dfdeQ, jv_dfdeL,&
@@ -178,6 +185,7 @@ character(len=16), intent(in) :: option, nomte
                     zi(imate), angmas, lgpg, zr(icarcr), zr(iinstm),&
                     zr(iinstp), zr(ideplm), zr(ideplp), ni2ldc, zr(icontm),&
                     zr(ivarim), zr(icontp), zr(ivarip), zr(ivectu), zr(imatuu),&
+                    lMatr, lVect, lSigm,&
                     zi(icoret))
         deallocate(b)
         deallocate(w)

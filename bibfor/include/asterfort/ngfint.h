@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,23 +15,25 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-
+!
 interface
     subroutine ngfint(option, typmod, ndim, nddl, neps,&
                       npg, w, b, compor, fami,&
                       mat, angmas, lgpg, crit, instam,&
                       instap, ddlm, ddld, ni2ldc, sigmam,&
                       vim, sigmap, vip, fint, matr,&
+                      lMatr, lVect, lSigm,&
                       codret)
         character(len=8)  :: typmod(*)
         character(len=*)  :: fami
         character(len=16) :: option, compor(*)
-        integer :: ndim, nddl, neps, npg, mat, lgpg, codret
+        integer :: ndim, nddl, neps, npg, mat, lgpg
         real(kind=8) :: w(neps,npg), ni2ldc(neps,npg), b(neps,npg,nddl)
         real(kind=8) :: angmas(3), crit(*), instam, instap
         real(kind=8) :: ddlm(nddl), ddld(nddl)
         real(kind=8) :: sigmam(neps,npg), sigmap(neps,npg)
         real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg), matr(nddl, nddl), fint(nddl)
+        aster_logical,intent(in)    :: lMatr, lVect, lSigm
+        integer,intent(out)         :: codret
     end subroutine ngfint
 end interface

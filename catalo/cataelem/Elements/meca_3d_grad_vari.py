@@ -31,40 +31,48 @@ from cataelem.Options.options import OP
 
 
 CCAMASS  = LocatedComponents(phys=PHY.CAMASS, type='ELEM',
-    components=('C','ALPHA',))
+    components=('C','ALPHA','BETA','KAPPA','X',
+          'Y','Z',))
+
 
 NDEPLAR  = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
-    components=('DX','DY',))
+    components=('DX','DY','DZ',))
 
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO', diff=True,
     components=(
-    ('EN1',('DX','DY','PRES','GONF','VARI','LAG_GV',)),
-    ('EN2',('DX','DY',)),))
+    ('EN1',('DX','DY','DZ','VARI','LAG_GV',)),
+    ('EN2',('DX','DY','DZ',)),))
 
 
-CEPSINF  = LocatedComponents(phys=PHY.EPSI_F, type='ELGA', location='RIGI',
-    components=('EPXX','EPYY','EPZZ','EPXY',))
+CEPSINF  = LocatedComponents(phys=PHY.EPSI_F, type='ELEM',
+    components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
+          'EPYZ',))
 
 
-CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELEM',
-    components=('EPXX','EPYY','EPZZ','EPXY',))
+CEPSINR  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
+    components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
+          'EPYZ',))
 
 
 EDEFOPC  = LocatedComponents(phys=PHY.EPSI_C, type='ELGA', location='RIGI',
-    components=('EPXX','EPYY','EPZZ','EPXY',))
+    components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
+          'EPYZ',))
 
 
 EDEFONC  = LocatedComponents(phys=PHY.EPSI_C, type='ELNO',
-    components=('EPXX','EPYY','EPZZ','EPXY',))
+    components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
+          'EPYZ',))
 
 
 EDEFOPG  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
-    components=('EPXX','EPYY','EPZZ','EPXY',))
+    components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
+          'EPYZ',))
 
 
 EDEFONO  = LocatedComponents(phys=PHY.EPSI_R, type='ELNO',
-    components=('EPXX','EPYY','EPZZ','EPXY',))
+    components=('EPXX','EPYY','EPZZ','EPXY','EPXZ',
+          'EPYZ',))
 
 
 EDFEQPG  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
@@ -73,30 +81,27 @@ EDFEQPG  = LocatedComponents(phys=PHY.EPSI_R, type='ELGA', location='RIGI',
           'VECT_3_Y','VECT_3_Z',))
 
 
+
 CFORCEF  = LocatedComponents(phys=PHY.FORC_F, type='ELEM',
-    components=('FX','FY',))
+    components=('FX','FY','FZ',))
 
 
 NFORCER  = LocatedComponents(phys=PHY.FORC_R, type='ELNO',
-    components=('FX','FY',))
+    components=('FX','FY','FZ',))
 
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y',))
+    components=('X','Y','Z',))
 
 
 
 
 EGGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y',))
+    components=('X','Y','Z',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','W',))
-
-
-ENGEOM_R = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y',))
+    components=('X','Y','Z','W',))
 
 
 CTEMPSR  = LocatedComponents(phys=PHY.INST_R, type='ELEM',
@@ -120,29 +125,35 @@ EREFCO   = LocatedComponents(phys=PHY.PREC, type='ELEM',
 
 
 ESIGMPC  = LocatedComponents(phys=PHY.SIEF_C, type='ELGA', location='RIGI',
-    components=('SIXX','SIYY','SIZZ','SIXY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIXZ',
+          'SIYZ',))
 
 
 ESIGMNC  = LocatedComponents(phys=PHY.SIEF_C, type='ELNO',
-    components=('SIXX','SIYY','SIZZ','SIXY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIXZ',
+          'SIYZ',))
 
 
 ECONTNC  = LocatedComponents(phys=PHY.SIEF_C, type='ELNO',
-    components=('SIXX','SIYY','SIZZ','SIXY','SIGONF',
-                'SIP','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIXZ',
+          'SIYZ','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',
+          'SIGV_GZ',))
 
 
 ESIGMPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
-    components=('SIXX','SIYY','SIZZ','SIXY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIXZ',
+          'SIYZ',))
 
 
 ESIGMNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
-    components=('SIXX','SIYY','SIZZ','SIXY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIXZ',
+          'SIYZ',))
 
 
 ECONTPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
-    components=('SIXX','SIYY','SIZZ','SIXY','SIGONF',
-                'SIP','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIXZ',
+          'SIYZ','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',
+          'SIGV_GZ',))
 
 
 ECOEQPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
@@ -152,12 +163,13 @@ ECOEQPG  = LocatedComponents(phys=PHY.SIEF_R, type='ELGA', location='RIGI',
 
 
 ECONTNO  = LocatedComponents(phys=PHY.SIEF_R, type='ELNO',
-    components=('SIXX','SIYY','SIZZ','SIXY','SIGONF',
-                'SIP','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',))
+    components=('SIXX','SIYY','SIZZ','SIXY','SIXZ',
+          'SIYZ','SIGV_A','SIGV_L','SIGV_GX','SIGV_GY',
+          'SIGV_GZ',))
 
 
 EGVALO_R = LocatedComponents(phys=PHY.VALO_R, type='ELGA', location='RIGI',
-    components=('VALEUR','GRAD_X','GRAD_Y',))
+    components=('VALEUR','GRAD_X','GRAD_Y','GRAD_Z',))
 
 
 ZVARIPG  = LocatedComponents(phys=PHY.VARI_R, type='ELGA', location='RIGI',
@@ -174,17 +186,17 @@ MMATUNS  = ArrayOfComponents(phys=PHY.MDNS_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class GVI_DP_TR6(Element):
+class MVCA_HEXA20(Element):
     """Please document this element"""
-    meshType = MT.TRIA6
+    meshType = MT.HEXA20
     nodes = (
-            SetOfNodes('EN2', (4,5,6,)),
-            SetOfNodes('EN1', (1,2,3,)),
+            SetOfNodes('EN2', (9,10,11,12,13,14,15,16,17,18,19,20,)),
+            SetOfNodes('EN1', (1,2,3,4,5,6,7,8,)),
         )
     elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG3','MASS=FPG6','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=FPG3','MASS=FPG6',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.H20, gauss = ('RIGI=FPG8','MASS=FPG27','FPG1=FPG1','NOEU=NOEU',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.HE8, gauss = ('RIGI=FPG8','MASS=FPG27',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','NOEU=NOEU',),),
         )
     calculs = (
 
@@ -195,14 +207,14 @@ class GVI_DP_TR6(Element):
             para_out=((SP.PMATUNS, MMATUNS), ),
         ),
 
-        OP.CHAR_MECA_EPSA_R(te=421,
+        OP.CHAR_MECA_EPSA_R(te=426,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPSR, CTEMPSR), (OP.CHAR_MECA_EPSA_R.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), ),
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
 
-        OP.CHAR_MECA_EPSI_F(te=284,
+        OP.CHAR_MECA_EPSI_F(te=49,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PEPSINF, CEPSINF),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPSR, CTEMPSR), (OP.CHAR_MECA_EPSI_F.PVARCPR, LC.ZVARCPG),
@@ -210,21 +222,21 @@ class GVI_DP_TR6(Element):
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
 
-        OP.CHAR_MECA_EPSI_R(te=284,
+        OP.CHAR_MECA_EPSI_R(te=49,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PEPSINR, CEPSINR),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (OP.CHAR_MECA_EPSI_R.PVARCPR, LC.ZVARCPG), ),
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
 
-        OP.CHAR_MECA_FF2D2D(te=94,
-            para_in=((SP.PFF2D2D, CFORCEF), (SP.PGEOMER, NGEOMER),
+        OP.CHAR_MECA_FF3D3D(te=17,
+            para_in=((SP.PFF3D3D, CFORCEF), (SP.PGEOMER, NGEOMER),
                      (SP.PTEMPSR, CTEMPSR), ),
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
 
-        OP.CHAR_MECA_FR2D2D(te=93,
-            para_in=((SP.PFR2D2D, NFORCER), (SP.PGEOMER, NGEOMER),
+        OP.CHAR_MECA_FR3D3D(te=16,
+            para_in=((SP.PFR3D3D, NFORCER), (SP.PGEOMER, NGEOMER),
                      ),
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
@@ -237,15 +249,24 @@ class GVI_DP_TR6(Element):
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
 
-        OP.CHAR_MECA_PESA_R(te=85,
+        OP.CHAR_MECA_META_Z(te=358,
+            para_in=((OP.CHAR_MECA_META_Z.PCOMPOR, LC.CCOMPOR), (OP.CHAR_MECA_META_Z.PCONTMR, ECONTPG),
+                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PVARCMR, LC.ZVARCPG), (OP.CHAR_MECA_META_Z.PVARCPR, LC.ZVARCPG),
+                     (OP.CHAR_MECA_META_Z.PVARIPR, ZVARIPG), ),
+            para_out=((SP.PVECTUR, MVECTDR), ),
+        ),
+
+        OP.CHAR_MECA_PESA_R(te=15,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PPESANR, LC.CPESANR), (OP.CHAR_MECA_PESA_R.PVARCPR, LC.ZVARCPG),
                      ),
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
 
-        OP.CHAR_MECA_ROTA_R(te=84,
-            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+        OP.CHAR_MECA_ROTA_R(te=14,
+            para_in=((SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
+                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PROTATR, LC.CROTATR), ),
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
@@ -258,7 +279,7 @@ class GVI_DP_TR6(Element):
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
 
-        OP.CHAR_MECA_TEMP_R(te=83,
+        OP.CHAR_MECA_TEMP_R(te=13,
             para_in=((SP.PCAMASS, CCAMASS), (OP.CHAR_MECA_TEMP_R.PCOMPOR, LC.CCOMPOR),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTEMPSR, CTEMPSR), (OP.CHAR_MECA_TEMP_R.PVARCPR, LC.ZVARCPG),
@@ -266,16 +287,9 @@ class GVI_DP_TR6(Element):
             para_out=((SP.PVECTUR, MVECTDR), ),
         ),
 
-        OP.COOR_ELGA(te=479,
+        OP.COOR_ELGA(te=488,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
-        ),
-
-        OP.FORC_NODA(te=508,
-            para_in=((OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
-                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (OP.FORC_NODA.PVARCPR, LC.ZVARCPG), ),
-            para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
         OP.EPEQ_ELGA(te=335,
@@ -298,11 +312,10 @@ class GVI_DP_TR6(Element):
             para_out=((OP.EPGQ_ELNO.PDEFOEQ, LC.EDFEQNO), ),
         ),
 
-        OP.EPSG_ELGA(te=87,
+        OP.EPSG_ELGA(te=25,
             para_in=((SP.PDEPLAR, NDEPLAR), (SP.PGEOMER, NGEOMER),
-                     (SP.PMATERC, LC.CMATERC), (SP.PTEMPSR, CTEMPSR),
-                     (OP.EPSG_ELGA.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
-                     ),
+                     (SP.PMATERC, LC.CMATERC), (OP.EPSG_ELGA.PVARCPR, LC.ZVARCPG),
+                     (SP.PVARCRR, LC.ZVARCPG), ),
             para_out=((OP.EPSG_ELGA.PDEFOPG, EDEFOPG), ),
         ),
 
@@ -311,11 +324,11 @@ class GVI_DP_TR6(Element):
             para_out=((SP.PDEFONO, EDEFONO), ),
         ),
 
-        OP.EPSI_ELGA(te=87,
-            para_in=((OP.EPSI_ELGA.PCOMPOR, LC.CCOMPOR), (SP.PDEPLAR, NDEPLAR),
+        OP.EPSI_ELGA(te=25,
+            para_in=((SP.PCAMASS, CCAMASS), (SP.PDEPLAR, NDEPLAR),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (SP.PTEMPSR, CTEMPSR), (OP.EPSI_ELGA.PVARCPR, LC.ZVARCPG),
-                     (SP.PVARCRR, LC.ZVARCPG), ),
+                     (OP.EPSI_ELGA.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
+                     ),
             para_out=((SP.PDEFOPC, EDEFOPC), (OP.EPSI_ELGA.PDEFOPG, EDEFOPG),
                      ),
         ),
@@ -324,6 +337,13 @@ class GVI_DP_TR6(Element):
             para_in=((OP.EPSI_ELNO.PDEFOPG, EDEFOPG), ),
             para_out=((SP.PDEFONC, EDEFONC), (SP.PDEFONO, EDEFONO),
                      ),
+        ),
+
+        OP.FORC_NODA(te=508,
+            para_in=((OP.FORC_NODA.PCOMPOR, LC.CCOMPOR), (OP.FORC_NODA.PCONTMR, ECONTPG), (SP.PDEPLMR, DDL_MECA),
+                     (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (OP.FORC_NODA.PVARCPR, LC.ZVARCPG), ),
+            para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
         OP.FULL_MECA(te=545,
@@ -383,6 +403,12 @@ class GVI_DP_TR6(Element):
             para_out=((SP.PDCEL_I, LC.EDCEL_I), ),
         ),
 
+        OP.PAS_COURANT(te=404,
+            para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (OP.PAS_COURANT.PVARCPR, LC.ZVARCPG),),
+            para_out=((SP.PCOURAN, LC.ECOURAN), ),
+        ),
+
         OP.PILO_PRED_DEFO(te=518,
             para_in=((SP.PCDTAU, LC.CCDTAU), (OP.PILO_PRED_DEFO.PCOMPOR, LC.CCOMPOR), (SP.PDDEPLR, DDL_MECA),
                      (SP.PDEPL0R, DDL_MECA), (SP.PDEPL1R, DDL_MECA),
@@ -394,8 +420,8 @@ class GVI_DP_TR6(Element):
         OP.PILO_PRED_ELAS(te=518,
             para_in=((SP.PBORNPI, LC.CBORNPI), (SP.PCDTAU, LC.CCDTAU),
                      (OP.PILO_PRED_ELAS.PCOMPOR, LC.CCOMPOR), (OP.PILO_PRED_ELAS.PCONTMR, ECONTPG),
-                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA),
-                     (SP.PDEPL1R, DDL_MECA), (SP.PDEPLMR, DDL_MECA), (SP.PCARCRI, LC.CCARCRI),
+                     (SP.PDDEPLR, DDL_MECA), (SP.PDEPL0R, DDL_MECA), (SP.PCARCRI, LC.CCARCRI),
+                     (SP.PDEPL1R, DDL_MECA), (SP.PDEPLMR, DDL_MECA),
                      (SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PTYPEPI, LC.CTYPEPI), (OP.PILO_PRED_ELAS.PVARIMR, ZVARIPG),
                      ),
@@ -417,7 +443,7 @@ class GVI_DP_TR6(Element):
         ),
 
         OP.REFE_FORC_NODA(te=508,
-            para_in=((OP.REFE_FORC_NODA.PCOMPOR, LC.CCOMPOR), (SP.PGEOMER, NGEOMER), 
+            para_in=((OP.REFE_FORC_NODA.PCOMPOR, LC.CCOMPOR), (SP.PGEOMER, NGEOMER),
                      (SP.PMATERC, LC.CMATERC), (SP.PREFCO, EREFCO), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
@@ -425,8 +451,8 @@ class GVI_DP_TR6(Element):
         OP.REPERE_LOCAL(te=133,
             para_in=((SP.PCAMASS, CCAMASS), (SP.PGEOMER, NGEOMER),
                      ),
-            para_out=((SP.PREPLO1, LC.CGEOM2D), (SP.PREPLO2, LC.CGEOM2D),
-                     ),
+            para_out=((SP.PREPLO1, LC.CGEOM3D), (SP.PREPLO2, LC.CGEOM3D),
+                     (SP.PREPLO3, LC.CGEOM3D), ),
         ),
 
         OP.RIGI_MECA_ELAS(te=545,
@@ -452,6 +478,8 @@ class GVI_DP_TR6(Element):
                      (SP.PVARCRR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      ),
             para_out=((SP.PMATUNS, MMATUNS), (SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
                      ),
         ),
 
@@ -493,7 +521,7 @@ class GVI_DP_TR6(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
         ),
 
         OP.TOU_INI_ELGA(te=99,
@@ -506,7 +534,7 @@ class GVI_DP_TR6(Element):
 
         OP.TOU_INI_ELNO(te=99,
             para_out=((OP.TOU_INI_ELNO.PDOMMAG, LC.EDOMGNO), (OP.TOU_INI_ELNO.PEPSI_R, EDEFONO),
-                     (OP.TOU_INI_ELNO.PGEOM_R, ENGEOM_R), (OP.TOU_INI_ELNO.PINST_R, LC.ENINST_R),
+                     (OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), (OP.TOU_INI_ELNO.PINST_R, LC.ENINST_R),
                      (OP.TOU_INI_ELNO.PNEUT_F, LC.ENNEUT_F), (OP.TOU_INI_ELNO.PNEUT_R, LC.ENNEUT_R),
                      (OP.TOU_INI_ELNO.PSIEF_R, ECONTNO), (OP.TOU_INI_ELNO.PVARI_R, LC.ZVARINO),
                      ),
@@ -526,25 +554,47 @@ class GVI_DP_TR6(Element):
 
 
 #------------------------------------------------------------
-class GVI_DP_QU8(GVI_DP_TR6):
+class MVCA_TETRA10(MVCA_HEXA20):
     """Please document this element"""
-    meshType = MT.QUAD8
+    meshType = MT.TETRA10
     nodes = (
-            SetOfNodes('EN2', (5,6,7,8,)),
+            SetOfNodes('EN2', (5,6,7,8,9,10,)),
             SetOfNodes('EN1', (1,2,3,4,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4','MASS=FPG9','FPG1=FPG1',), mater=('RIGI','FPG1',),),
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','MASS=FPG9',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.T10, gauss = ('RIGI=FPG4','MASS=FPG15','FPG1=FPG1','NOEU=NOEU',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.TE4, gauss = ('RIGI=FPG4','MASS=FPG15',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG6','NOEU=NOEU',),),
         )
 
+
 #------------------------------------------------------------
-class GVI_AX_TR6(GVI_DP_TR6):
+class MVCA_PENTA15(MVCA_HEXA20):
     """Please document this element"""
-    pass
-    
+    meshType = MT.PENTA15
+    nodes = (
+            SetOfNodes('EN2', (7,8,9,10,11,12,13,14,15,)),
+            SetOfNodes('EN1', (1,2,3,4,5,6,)),
+        )
+    elrefe =(
+            ElrefeLoc(MT.P15, gauss = ('RIGI=FPG6','MASS=FPG21','FPG1=FPG1','NOEU=NOEU',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.PE6, gauss = ('RIGI=FPG6','MASS=FPG6',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','NOEU=NOEU',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG6','NOEU=NOEU',),),
+        )
+
+
 #------------------------------------------------------------
-class GVI_AX_QU8(GVI_DP_QU8):
+class MVCA_PYRAM13(MVCA_HEXA20):
     """Please document this element"""
-    pass
+    meshType = MT.PYRAM13
+    nodes = (
+            SetOfNodes('EN2', (6,7,8,9,10,11,12,13,)),
+            SetOfNodes('EN1', (1,2,3,4,5,)),
+        )
+    elrefe =(
+            ElrefeLoc(MT.P13, gauss = ('RIGI=FPG5','MASS=FPG27','FPG1=FPG1','NOEU=NOEU',), mater=('RIGI','FPG1',),),
+            ElrefeLoc(MT.PY5, gauss = ('RIGI=FPG5','MASS=FPG5',),),
+            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','MASS=FPG9','NOEU=NOEU',),),
+            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG6','MASS=FPG6','NOEU=NOEU',),),
+        )

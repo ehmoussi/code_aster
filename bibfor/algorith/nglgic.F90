@@ -15,15 +15,16 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 !
 subroutine nglgic(fami, option, typmod, ndim, nno, &
-                    nnob,npg, nddl, iw, vff, &
-                    vffb, idff,idffb,geomi, compor, &
-                    mate, lgpg,crit, angmas, instm, &
-                    instp, matsym,ddlm, ddld, siefm, &
-                    vim, siefp,vip, fint, matr, &
-                    codret)
+                  nnob,npg, nddl, iw, vff, &
+                  vffb, idff,idffb,geomi, compor, &
+                  mate, lgpg,crit, angmas, instm, &
+                  instp, matsym,ddlm, ddld, siefm, &
+                  vim, siefp,vip, fint, matr, &
+                  lMatr, lVect, lSigm, lVari,&
+                  codret)
 !
 use gdlog_module, only: GDLOG_DS, gdlog_init, gdlog_defo, gdlog_matb,  &
                         gdlog_rigeo, gdlog_nice_cauchy, gdlog_delete
@@ -51,13 +52,17 @@ real(kind=8),intent(in)        :: vff(nno, npg),vffb(nnob, npg)
 real(kind=8),intent(in)        :: angmas(3), ddlm(nddl), ddld(nddl), siefm(3*ndim+4, npg)
 real(kind=8),intent(in)        :: vim(lgpg, npg)
 real(kind=8),intent(out)       :: fint(nddl),matr(nddl,nddl),siefp(3*ndim+4, npg),vip(lgpg,npg)
+aster_logical,intent(in)       :: lMatr, lVect, lSigm, lVari
 integer,intent(out)            :: codret
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
 !     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
 !           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D
 !          A GRADIENT DE VARIABLE INTERNE : XXXX_GRAD_INCO
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  FAMI    : FAMILLE DE POINTS DE GAUSS
 ! IN  OPTION  : OPTION DE CALCUL
 ! IN  TYPMOD  : TYPE DE MODELISATION
@@ -93,9 +98,9 @@ integer,intent(out)            :: codret
 ! OUT CODRET  : CODE RETOUR DE L'INTEGRATION DE LA LDC
 !! MEM DFF,DFFB: ESPACE MEMOIRE POUR LA DERIVEE DES FONCTIONS DE FORME
 !               DIM :(NNO,3) EN 3D, (NNO,4) EN AXI, (NNO,2) EN D_PLAN
-
-
-! ----------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
+!
     aster_logical, parameter               :: grand=ASTER_TRUE
     real(kind=8), parameter                :: tiers = 1.d0/3.d0
     real(kind=8), dimension(6), parameter  :: kron    = (/  1.d0,  1.d0,  1.d0, 0.d0, 0.d0, 0.d0 /)
@@ -109,7 +114,7 @@ integer,intent(out)            :: codret
               0.d0,    0.d0,    0.d0, 0.d0, 0.d0, 1.d0  /), (/6,6/))
 ! ----------------------------------------------------------------------
     type(GDLOG_DS):: gdlm,gdlp
-    aster_logical :: resi, rigi, axi
+    aster_logical :: axi, resi
     integer       :: g,n,i
     integer       :: xu(ndim,nno),xg(2,nnob),xq(2,nnob)
     integer       :: cod(npg)
@@ -134,14 +139,16 @@ integer,intent(out)            :: codret
     real(kind=8)  :: kefqu(2     ,2*ndim),kefqg(2     ,2+ndim),kefqq(2     ,2    )
     real(kind=8)  :: tbid(6)
     type(Behaviour_Integ) :: BEHinteg
-! ----------------------------------------------------------------------
-
+!
+! --------------------------------------------------------------------------------------------------
+!
 
 ! Remarque sur l'ordre des composantes (cf. grandeurs premieres)
 ! degres de liberte : DX,DY,DZ,PRES,GONF,VARI,LAG_GV
 ! Contraintes EF    : SIXX, .., SIYZ, SIGONF, SIP, SIGV_A, SIGV_L, SIGV_GX, ..., SIVG_GZ,
 ! Deformations ldc  : R2*EPXX, ..., R2*EPZZ, A, L, GX, ..., GZ
-
+! - La distinction RIGI_MECA_TANG est problématique en GDEF_LOG (rigi geom ! )
+    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
 !
 ! - Initialisation of behaviour datastructure
 !
@@ -153,8 +160,6 @@ integer,intent(out)            :: codret
 ! --- INITIALISATION ---
 
     axi  = typmod(1).eq.'AXIS'
-    resi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RAPH_MECA'
-    rigi = option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA'
 
     nnu = nno
     nng = nnob
@@ -168,12 +173,12 @@ integer,intent(out)            :: codret
     kr  = kron(1:neu)
     hyd = projhyd(1:neu)
     dev = projdev(1:neu,1:neu)
-    tbid(:) = 0.d0
+    tbid = 0.d0
 
-    call gdlog_init(gdlm,ndu,nnu,axi,rigi)
-    call gdlog_init(gdlp,ndu,nnu,axi,rigi)
-    if (resi) fint = 0
-    if (rigi) matr = 0
+    call gdlog_init(gdlm,ndu,nnu,axi,lMatr)
+    call gdlog_init(gdlp,ndu,nnu,axi,lMatr)
+    if (lVect) fint = 0
+    if (lMatr) matr = 0
     cod = 0
 
     ! tableaux de reference bloc (depl,inco,grad) -> numero du ddl
@@ -254,7 +259,7 @@ integer,intent(out)            :: codret
         if (cod(g) .eq. 1) goto 999
 
         ! Archivage des contraintes mecaniques en t+ (tau tilda) dans les vi
-        if (resi) then
+        if (lVari) then
             vip(lgpg-5:lgpg-6+neu,g) = silcp(1:neu)
         end if
 
@@ -263,24 +268,24 @@ integer,intent(out)            :: codret
         !   FORCES INTERIEURES ET CONTRAINTES EF  !
         ! ----------------------------------------!
 
-        if (resi) then
-
+        if (lSigm) then
             ! Contraintes generalisees EF par bloc
             t = silcp(1:neu)
             siefup = matmul(dev,t) + epefqp(1)*kr
             siefgp = silcp(neu+1:neu+neg)
             siefqp = (/ dot_product(kr,epefup)-epefqp(2), dot_product(hyd,t)-epefqp(1) /)
-
+        endif
+        if (lVect) then
             ! Forces interieures au point de Gauss g
             call add_fint(fint,xu,poids*prod_sb(siefup,bu))
             call add_fint(fint,xg,poids*prod_sb(siefgp,bg))
             call add_fint(fint,xq,poids*prod_sb(siefqp,bq))
-
+        endif
+        if (lSigm) then
             ! Stockage des contraintes generalisees (avec Cauchy au lieu de T)
             siefp(1:neu,g) = gdlog_nice_cauchy(gdlp,siefup)
             siefp(neu+1:neu+neq,g) = siefqp
             siefp(neu+neq+1:neu+neq+neg,g) = siefgp
-
         endif
 
 
@@ -288,7 +293,7 @@ integer,intent(out)            :: codret
         !    MATRICE TANGENTE    !
         ! -----------------------!
 
-        if (rigi) then
+        if (lMatr) then
 
             ! Contraintes generalisees EF (bloc mecanique pour la rigidite geometrique)
             if (.not. resi) then
@@ -344,7 +349,7 @@ integer,intent(out)            :: codret
 
 ! - SYNTHESE DES CODES RETOURS ET LIBERATION DES OBJETS
 999 continue
-    if (resi) call codere(cod, npg, codret)
+    if (lSigm) call codere(cod, npg, codret)
     call gdlog_delete(gdlm)
     call gdlog_delete(gdlp)
 
