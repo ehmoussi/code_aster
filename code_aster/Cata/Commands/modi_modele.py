@@ -33,16 +33,11 @@ MODI_MODELE=OPER(nom="MODI_MODELE",op= 103,sd_prod=modele_sdaster,
          DISTRIBUTION  =FACT(statut='d',
              METHODE    =SIMP(statut='f',typ='TXM',defaut="SOUS_DOMAINE",
                                    into=("MAIL_CONTIGU","MAIL_DISPERSE","CENTRALISE",
-                                         "SOUS_DOMAINE","GROUP_ELEM","SOUS_DOM.OLD")),
+                                         "SOUS_DOMAINE","GROUP_ELEM")),
              # remarque : "GROUP_ELEM" et "SOUS_DOMAINE" ne servent à rien car on ne modifie la distribution des éléments.
              #            Mais on les acceptent pour simplifier la programmation de calc_modes_multi_bandes.py
              b_dist_maille          =BLOC(condition = """is_in("METHODE", ('MAIL_DISPERSE','MAIL_CONTIGU'))""",
                  CHARGE_PROC0_MA =SIMP(statut='f',typ='I',defaut=100,val_min=0),
-             ),
-             b_partition  =BLOC(condition = """equal_to("METHODE", 'SOUS_DOM.OLD') """,
-                 NB_SOUS_DOMAINE    =SIMP(statut='f',typ='I'), # par defaut : le nombre de processeurs
-                 PARTITIONNEUR      =SIMP(statut='f',typ='TXM',into=("METIS","SCOTCH",), defaut="METIS" ),
-                 CHARGE_PROC0_SD =SIMP(statut='f',typ='I',defaut=0,val_min=0),
              ),
          ),
 )  ;

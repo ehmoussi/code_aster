@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ POURSUITE(CODE='OUI',)
 # 3.3 : AVEC CHARGE DUALISEE ET MUMPS DISTRIBUE PAR SOUS-DOMAINES
 #       AVEC MATRICE_DISTRIBUEE
 #----------------------------------------------------------
-MODI_MODELE(reuse=MO, MODELE=MO, DISTRIBUTION=_F(METHODE='SOUS_DOM.OLD',NB_SOUS_DOMAINE=24, CHARGE_PROC0_SD=2))
+MODI_MODELE(reuse=MO, MODELE=MO, DISTRIBUTION=_F(METHODE='SOUS_DOMAINE'))
 MECAD5=MECA_STATIQUE(INFO=niv_info,
                      MODELE=MO,
                      CHAM_MATER=CHAM_MAT,

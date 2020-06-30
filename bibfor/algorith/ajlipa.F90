@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -63,9 +63,9 @@ subroutine ajlipa(modelz, base, kdis, sd_partit1z)
     character(len=19) :: ligrmo, sd_partit1
     character(len=24) :: k24b
     integer :: i, rang, nbproc, ifm, niv, ibid, jpart, nbsd, nbma
-    integer :: idd, nbmasd, i2, nmpp, nmp0, nmp0af, ico, nbpro1, krang, nmp1
+    integer :: nmpp, nmp0, nmp0af, ico, nbpro1, krang, nmp1
     integer :: iexi
-    integer :: icobis, dist0, jnumsd, jparsd, jfeta, vali(3), nbmamo, ima
+    integer :: icobis, dist0, jnumsd, vali(3), nbmamo, ima
     integer ::  jprti, jprtk
     aster_logical :: plein0, exi_sdpart1
     integer, pointer :: fdim(:) => null()
@@ -127,9 +127,9 @@ subroutine ajlipa(modelz, base, kdis, sd_partit1z)
     if (kdis .eq. 'CENTRALISE') goto 999
 
 
-!   -- la sd_partit1 est a fournir si 'SOUS_DOM.OLD' ou 'SOUS_DOMAINE'
+!   -- la sd_partit1 est a fournir si 'SOUS_DOMAINE'
 !   -------------------------------------------------------------------
-    exi_sdpart1=(kdis .eq. 'SOUS_DOMAINE' .or. kdis .eq. 'SOUS_DOM.OLD')
+    exi_sdpart1=(kdis .eq. 'SOUS_DOMAINE')
     if (exi_sdpart1) then
         ASSERT(sd_partit1.ne.' ')
     else
@@ -155,7 +155,7 @@ subroutine ajlipa(modelz, base, kdis, sd_partit1z)
     zi(jprti-1+1)=nbproc
     call wkvect(partit//'.PRTK', base//' V K24', 2, jprtk)
     zk24(jprtk-1+1)= kdis
-    if (kdis(1:5) .eq. 'MAIL_'.or. kdis .eq. 'SOUS_DOM.OLD') then
+    if (kdis(1:5) .eq. 'MAIL_') then
         call wkvect(partit//'.NUPROC.MAILLE', base//' V I', nbma+1, jnumsd)
         zi(jnumsd-1+nbma+1) = nbproc
 
@@ -225,31 +225,7 @@ subroutine ajlipa(modelz, base, kdis, sd_partit1z)
 !   Remplissage de la sd
 ! ----------------------------------------------------------------------
 
-    if (kdis .eq. 'SOUS_DOM.OLD') then
-!   ----------------------------------
-        call wkvect('&&AJLIPA.PARTITION.SD', 'V V I', nbsd, jparsd)
-        call sdpart(nbsd, dist0, zi(jparsd))
-        do idd = 1, nbsd
-            if (zi(jparsd-1+idd) .eq. 1) then
-                call jeveuo(jexnum(sd_partit1//'.FETA', idd), 'L', jfeta)
-                call jelira(jexnum(sd_partit1//'.FETA', idd), 'LONMAX', nbmasd)
-                do i = 1, nbmasd
-                    i2 = zi(jfeta-1+i)
-                    if (zi(jnumsd-1+i2) .ne. -999) then
-!                       -- maille commune a plusieurs sous-domaines
-                        vali(1) = i2
-                        call utmess('F', 'PARTITION1_98', si=vali(1))
-                    else
-                        zi(jnumsd-1+i2) = rang
-                    endif
-                end do
-            endif
-        end do
-        call asmpi_comm_vect('MPI_MAX', 'I', nbval=nbma, vi=zi(jnumsd))
-        call jedetr('&&AJLIPA.PARTITION.SD')
-
-
-    else if (kdis.eq.'MAIL_DISPERSE') then
+    if (kdis.eq.'MAIL_DISPERSE') then
 !   ---------------------------------------
 !       -- le proc 0 a une charge differente des autres (dist0) :
 !       nmpp nbre de mailles par proc (a la louche)

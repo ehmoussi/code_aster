@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -34,9 +34,9 @@ subroutine op0103()
 #include "asterfort/jemarq.h"
 #include "asterfort/assert.h"
 #include "asterfort/asmpi_info.h"
-    character(len=8) :: model, methode, sd_partit1
+    character(len=8) :: model, sd_partit1
     character(len=24) :: kdis
-    integer :: ib,nbproc,n1,nbpart
+    integer :: ib,nbproc,n1
     mpi_int :: mrank, msize
 !------------------------------------------------------------------
 !
@@ -56,18 +56,8 @@ subroutine op0103()
     if (kdis.eq.'SOUS_DOMAINE') kdis='GROUP_ELEM'
 
     sd_partit1=' '
-    if (kdis.eq.'SOUS_DOM.OLD') then
-        call gcncon('_', sd_partit1)
-        call getvtx('DISTRIBUTION', 'PARTITIONNEUR', iocc=1, scal=methode, nbret=n1)
-        ASSERT(n1.eq.1)
-        call getvis('DISTRIBUTION', 'NB_SOUS_DOMAINE', iocc=1, scal=nbpart, nbret=n1)
-        if (n1.eq.0) nbpart=nbproc
-        call fetskp(model,methode,nbpart)
-        call fetcrf(sd_partit1,model,nbpart)
-    endif
 
     call ajlipa(model, 'G', kdis, sd_partit1)
-
 !
     call jedema()
 end subroutine

@@ -36,9 +36,9 @@ class sd_partition(AsBase):
 
         prtk = self.PRTK.get_stripped()
         assert prtk[0] in (
-            'SOUS_DOM.OLD', 'GROUP_ELEM', 'SOUS_DOMAINE', 'MAIL_DISPERSE', 'MAIL_CONTIGU'), prtk
+            'GROUP_ELEM', 'SOUS_DOMAINE', 'MAIL_DISPERSE', 'MAIL_CONTIGU'), prtk
 
-        if prtk[0] in ( 'SOUS_DOM.OLD', 'SOUS_DOMAINE' ):
+        if prtk[0] is 'SOUS_DOMAINE':
             assert prtk[1] != '', prtk
             sd2 = sd_partit(prtk[1])
             sd2.check(checker)

@@ -261,7 +261,7 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
 
 # 4.1 : MUMPS (distribue par sous-domaines) charge_dualisee + charge_cine + SYMGEN:
 # ----------------------------------------------------------------
-MODI_MODELE(reuse=MO, MODELE=MO, DISTRIBUTION=_F(METHODE='SOUS_DOM.OLD',NB_SOUS_DOMAINE=3))
+MODI_MODELE(reuse=MO, MODELE=MO, DISTRIBUTION=_F(METHODE='SOUS_DOMAINE'))
 RESU8=MECA_STATIQUE(       MODELE=MO, CHAM_MATER=CHAM_MAT, LIST_INST=L1,INFO=1,
                            EXCIT=( _F(CHARGE = CHAR), _F(CHARGE = CHARCI)  ),
                    SOLVEUR=_F(METHODE='MUMPS', TYPE_RESOL='SYMGEN',ELIM_LAGR='NON'))

@@ -24,7 +24,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),
 # Ce test valide le parallelisme des calculs elementaires et des assemblages.
 # Il teste TOUTES les combinaisons de :
 #   * DISTRIBUTION/METHODE=  /'CENTRALISE'/'MAIL_CONTIGU'/'MAIL_DISPERSE'
-#                            /'GROUP_ELEM'/'SOUS_DOMAINE'/'SOUS_DOM.OLD'/
+#                            /'GROUP_ELEM'/'SOUS_DOMAINE'/
 #   * MATR_DISTRIBUE='OUI'/'NON'
 #   * ELIM_LAGR='LAGR2'/'NON'
 #   * conditions cinematiques : dualisees / eliminees / "a cheval" sur plusieurs processeurs
@@ -39,7 +39,7 @@ MAT=DEFI_MATERIAU( ELAS=_F(  E = 1.0,  NU = 0.3) )
 CHMAT=AFFE_MATERIAU(  MAILLAGE=MA,  AFFE=_F(  TOUT = 'OUI',  MATER = MAT) )
 
 
-lparallel= ('CENTRALISE', 'MAIL_DISPERSE', 'MAIL_CONTIGU', 'SOUS_DOM.OLD', 'GROUP_ELEM', 'SOUS_DOMAINE')
+lparallel= ('CENTRALISE', 'MAIL_DISPERSE', 'MAIL_CONTIGU', 'GROUP_ELEM', 'SOUS_DOMAINE')
 
 for nopartit in lparallel :
     MO=AFFE_MODELE(  MAILLAGE=MA,

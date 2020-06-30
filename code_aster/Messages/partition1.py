@@ -57,10 +57,6 @@ cata_msg = {
 """),
 
 
-    98: _("""
-  La maille de numéro:  %(i1)d appartient à plusieurs sous-domaines !
-"""),
-
     99 : _("""
  Le paramètre CHARGE_PROC0_SD du mot-clé facteur DISTRIBUTION est mal renseigné.
  Il faut qu'il reste au moins un sous domaine par processeur une fois affectés tous les sous-domaines du processeur 0.
