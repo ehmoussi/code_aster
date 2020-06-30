@@ -196,6 +196,14 @@ def Calcul_mesure_3D(maya, nbcop, l_copo_tot, ltyma, nd_fiss, normale):
 
     return mesure
 
+def createListFromTableWithoutUnion(Table, para):
+    list_return = []
+    for row in Table:
+        if row['LIEU'] != "UNION_GROUP_MA":
+            list_return.append(row[para])
+
+    return list_return
+
 
 #
 # DEBUT DE LA MACRO PROPREMENT DITE
@@ -333,9 +341,10 @@ def calc_gp_ops(self, **args):
                                    ENER_ELTR=_F(GROUP_MA=lgroupma)
                                    )
             enerel = __enertemp.EXTR_TABLE()
-            tabenel = [mult * x for x in enerel.TOTALE.values()]
+            enerel_TOTALE = createListFromTableWithoutUnion(enerel, "TOTALE")
+            tabenel = [mult * x for x in enerel_TOTALE]
             tabgp = [tabenel[x] / tablcop[x] for x in range(len(tabenel))]
-            tabinst = enerel.INST.values()
+            tabinst = createListFromTableWithoutUnion(enerel, "INST")
 
             for i in range(nb_inst):
                 maxinst = max(tabgp[i * nbcop:(i + 1) * nbcop])
@@ -515,9 +524,12 @@ def calc_gp_ops(self, **args):
                                TITRE='Energie elastique de traction',)
 
         enerel = __enertemp.EXTR_TABLE()
-        tabcop = enerel.LIEU.values()
-        tabenel = [mult * x for x in enerel.TOTALE.values()]
-        tabinst = enerel.INST.values()
+
+
+        tabcop = createListFromTableWithoutUnion(enerel, "LIEU")
+        enerel_TOTALE = createListFromTableWithoutUnion(enerel, "TOTALE")
+        tabenel = [mult * x for x in enerel_TOTALE]
+        tabinst = createListFromTableWithoutUnion(enerel, "INST")
         tablcop = mesure * nb_inst
         tabgp = [tabenel[x] / tablcop[x] for x in range(len(tabenel))]
 
