@@ -51,21 +51,25 @@ Here is the diagram of the package organization:
 # discourage import *
 __all__ = []
 
-# import libaster to call initAsterModules
-import aster
-import aster_core
-import aster_fonctions
-import med_aster
+try:
+    # import libaster to call initAsterModules
+    import aster
+    import aster_core
+    import aster_fonctions
+    import med_aster
 
-# libaster must be imported after embedded submodules
-import libaster
+    # libaster must be imported after embedded submodules
+    import libaster
 
-from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
-                         TangentMatrixType)
-from .Commands.debut import init
-from .Commands.fin import FIN as close
-from .Objects import *
-from .Supervis import (AsterError, ContactError, ConvergenceError,
-                       IntegrationError, SolverError, TimeLimitError,
-                       saveObjects)
-from .Utilities import TestCase
+    from .Algorithms import (ConstitutiveLaw, IntegrationAlgorithm, StrainType,
+                            TangentMatrixType)
+    from .Commands.debut import init
+    from .Commands.fin import FIN as close
+    from .Objects import *
+    from .Supervis import (AsterError, ContactError, ConvergenceError,
+                        IntegrationError, SolverError, TimeLimitError,
+                        saveObjects)
+    from .Utilities import TestCase
+
+except ImportError:
+    pass
