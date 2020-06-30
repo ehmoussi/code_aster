@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,19 +18,18 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine thmFlh004(ds_thm, option, perman, ndim  , j_mater,&
-                           dimdef, dimcon,&
-                           addep1, addep2, adcp11, adcp12, adcp21 ,&
-                           addeme, addete, &
-                           t     , p2    , pvp    ,&
-                           grat  , grap1 , grap2  ,& 
-                           rho11 , h11   , h12    ,&
-                           satur , dsatur, gravity, tperm,&
-                           congep, dsde)
+    subroutine thmFlh004(ds_thm, lMatr , lSigm  , perman, ndim  , j_mater,&
+                         dimdef, dimcon,&
+                         addep1, addep2, adcp11, adcp12, adcp21 ,&
+                         addeme, addete, &
+                         t     , p2    , pvp    ,&
+                         grat  , grap1 , grap2  ,& 
+                         rho11 , h11   , h12    ,&
+                         satur , dsatur, gravity, tperm,&
+                         congep, dsde)
         use THM_type
         type(THM_DS), intent(in) :: ds_thm
-        character(len=16), intent(in) :: option
-        aster_logical, intent(in) :: perman
+        aster_logical, intent(in) :: lMatr, lSigm, perman
         integer, intent(in) :: j_mater
         integer, intent(in) :: ndim, dimdef, dimcon
         integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 interface 
     subroutine calcco(ds_thm  , l_steady ,&
-                      option  , angl_naut,&
+                      lMatr, lSigm, lVari, lMatrPred, angl_naut,&
                       j_mater ,&
                       ndim    , nbvari   ,&
                       dimdef  , dimcon   ,&
@@ -37,7 +37,7 @@ interface
         use THM_type
         type(THM_DS), intent(inout) :: ds_thm
         aster_logical, intent(in) :: l_steady
-        character(len=16), intent(in) :: option
+        aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred
         real(kind=8), intent(in) :: angl_naut(3)
         integer, intent(in) :: j_mater, ndim, nbvari
         integer, intent(in) :: dimdef, dimcon

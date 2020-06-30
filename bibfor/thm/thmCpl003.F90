@@ -19,7 +19,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 !
 subroutine thmCpl003(ds_thm,&
-                     option, angl_naut,&
+                     lMatr, lSigm, lVari, lMatrPred, angl_naut,&
                      j_mater,&
                      ndim  , nbvari   ,&
                      dimdef, dimcon   ,&
@@ -72,7 +72,7 @@ implicit none
 #include "asterfort/thmEvalSatuMiddle.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: j_mater, ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
@@ -99,7 +99,6 @@ integer, intent(out)  :: retcom
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
 !                        (2) Beta  - counterclockwise around Y1
@@ -256,7 +255,7 @@ integer, intent(out)  :: retcom
 !
 ! - Evaluation of volumic mass and save it in internal variables
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lVari) then
 ! ----- Compute volumic mass for water
         if (ds_thm%ds_elem%l_dof_ther) then
             call virhol(nbvari, vintm , vintp ,&
@@ -280,7 +279,7 @@ integer, intent(out)  :: retcom
 !
 ! - Compute steam pressure (no dissolved air)
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lVari) then
         call vipvp1(ds_thm,&
                     ndim  , nbvari,&
                     dimcon,&
@@ -306,8 +305,7 @@ integer, intent(out)  :: retcom
 !
     call thmEvalSatuMiddle(ds_thm, j_mater, pvp-p1,&
                            satur , dsatur , retcom)
-
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lVari) then
 !
 ! ----- Compute porosity with storage coefficient
 !
@@ -352,7 +350,7 @@ integer, intent(out)  :: retcom
         if (retcom .ne. 0) then
             goto 30
         endif
-        if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+        if (lSigm) then
 ! --------- Update enthalpy of liquid
             congep(adcp11+ndim+1) = congep(adcp11+ndim+1) +&
                                     enteau(dtemp, alpliq, temp,&
@@ -371,7 +369,7 @@ integer, intent(out)  :: retcom
 !
 ! - Compute derivative of stem pressure by temperature and by liquid pressure
 !
-    if (option(1:9) .eq. 'RIGI_MECA') then
+    if (lMatrPred) then
         dpvpl = rho12m/rho11m
         if (ds_thm%ds_elem%l_dof_ther) then
             dpvpt = rho12m * (congem(adcp12+ndim+1) - congem(adcp11+ ndim+1)) / temp
@@ -385,7 +383,7 @@ integer, intent(out)  :: retcom
 !
 ! - Update quantity of mass
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         congep(adcp11) = appmas(m11m ,&
                                 phi  , phim  ,&
                                 satur, saturm,&
@@ -404,7 +402,7 @@ integer, intent(out)  :: retcom
 !
 ! ==================================================================================================
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         if (ds_thm%ds_elem%l_dof_ther) then
 ! --------- Derivative of enthalpy of liquid by capillary pressure
             dsde(adcp11+ndim+1,addep1) = dsde(adcp11+ndim+1,addep1) + &

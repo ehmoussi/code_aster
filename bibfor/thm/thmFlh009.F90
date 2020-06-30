@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine thmFlh009(ds_thm, option, perman, ndim  , j_mater,&
+subroutine thmFlh009(ds_thm, lMatr , lSigm  , perman, ndim  , j_mater,&
                      dimdef, dimcon,&
                      addep1, addep2, adcp11 , adcp12, adcp21 , adcp22,&
                      addeme, addete, &
@@ -41,8 +41,7 @@ implicit none
 #include "asterfort/thmEvalFickAir.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
-aster_logical, intent(in) :: perman
+aster_logical, intent(in) :: lMatr, lSigm, perman
 integer, intent(in) :: j_mater
 integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
@@ -63,7 +62,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  perman           : .flag. for no-transient problem
 ! In  ndim             : dimension of space (2 or 3)
 ! In  j_mater          : coded material address
@@ -293,7 +291,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
             gca(i) = gca(i)-mamolg*pad/rgaz/t/t*grat(i)
         endif
     end do
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         dcvp1 = dp12p1/p2
         dcvp2 = dp12p2/p2-pvp/p2/p2
         if (ds_thm%ds_elem%l_dof_ther) then
@@ -303,7 +301,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Volumic mass - Derivative
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         dr11p1 = rho11*dp11p1*cliq
         dr11p2 = rho11*dp11p2*cliq
         dr12p1 = rho12/pvp*dp12p1
@@ -367,7 +365,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Hydraulic flux
 !
-    if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
+    if (lSigm) then
         do i = 1, ndim
             congep(adcp11+i) = 0.d0
             congep(adcp12+i) = -rho12*(1.d0-cvp)*fv(1)*gc(i)
@@ -388,7 +386,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Update matrix
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
+    if (lMatr) then
         do i = 1, ndim
             do j = 1, ndim
                 dsde(adcp11+i,addep1)   = dsde(adcp11+i,addep1)+&

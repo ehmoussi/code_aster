@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,11 +19,11 @@
 !
 interface 
     subroutine assthm(ds_thm   , option   , j_mater  ,&
-                      l_axi    , l_steady ,&
+                      lMatr    , lSigm    , lVect    ,&
+                      lVari    , lMatrPred, l_axi    , l_steady ,&
                       typmod   , inte_type, angl_naut,&
                       ndim     , nbvari   ,&
-                      nno      , nnos     ,&
-                      npg      , npi      ,&
+                      nno      , nnos     , npg      , npi      ,&
                       nddls    , nddlm    , nddl_meca, nddl_p1, nddl_p2, &
                       dimdef   , dimcon   , dimuel   ,&
                       mecani   , press1   , press2   , tempe  ,&
@@ -41,6 +41,7 @@ interface
         type(THM_DS), intent(inout) :: ds_thm
         character(len=16), intent(in) :: option
         integer, intent(in) :: j_mater
+        aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred, lVect
         aster_logical, intent(in)  :: l_axi, l_steady
         character(len=8), intent(in) :: typmod(2)
         character(len=3), intent(in) :: inte_type

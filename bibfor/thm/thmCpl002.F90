@@ -19,7 +19,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 !
 subroutine thmCpl002(ds_thm,&
-                     option, angl_naut,&
+                     lMatr, lSigm, lVari, angl_naut,&
                      ndim  , nbvari, &
                      dimdef, dimcon,&
                      adcome, adcote, adcp11,& 
@@ -61,7 +61,7 @@ implicit none
 #include "asterfort/THM_type.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm, lVari
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
@@ -87,7 +87,6 @@ integer, intent(out) :: retcom
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
 !                        (2) Beta  - counterclockwise around Y1
@@ -211,16 +210,16 @@ integer, intent(out) :: retcom
                 epsv     , depsv ,&
                 epsvm    , cs    , mdal , dalal,&
                 alpha0   , alphfi, cbiot, unsks)
-! 
+!
 ! ==================================================================================================
 !
 ! Internal state variables
 !
 ! ==================================================================================================
-! 
+!
 ! - Evaluation of porosity and save it in internal variables
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lVari) then
         if (ds_thm%ds_elem%l_dof_meca .or. l_emmag) then
             if (ds_thm%ds_elem%l_jhms) then
                 phi = vintp(advico+vicphi)
@@ -270,7 +269,7 @@ integer, intent(out) :: retcom
         if (retcom .ne. 0) then
             goto 30
         endif
-        if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+        if (lSigm) then
 ! --------- Update enthalpy of gaz
             congep(adcp11+ndim+1) = congep(adcp11+ndim+1) +&
                                     entgaz(dtemp, cp21)
@@ -284,7 +283,7 @@ integer, intent(out) :: retcom
 !
 ! - Update mechanical stresses from pressures
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         if (ds_thm%ds_elem%l_dof_meca .and. .not. ds_thm%ds_elem%l_jhms) then
             call sigmap(ds_thm,&
                         satur, signe, tbiot, dp2, dp1_,&
@@ -300,7 +299,7 @@ integer, intent(out) :: retcom
 !
 ! - Compute quantity of mass from change of volume, porosity and saturation
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         congep(adcp11) = appmas(m11m      ,&
                                 phi       , phim       ,&
                                 1.d0-satur, 1.d0-saturm,&
@@ -314,7 +313,7 @@ integer, intent(out) :: retcom
 !
 ! ==================================================================================================
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
 !
 ! ----- Mechanic
 !
@@ -332,7 +331,7 @@ integer, intent(out) :: retcom
 ! --------- Derivative of quantity of mass by volumic mass - Mechanical part (strains)
             call dmdepv(rho21, 1.d0-satur, tbiot, dmdeps)
             do i = 1, 6
-                dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ ndim-1+i) + &
+                dsde(adcp11,addeme+ndim-1+i) = dsde(adcp11,addeme+ndim-1+i) +&
                                                dmdeps(i)
             end do
         endif

@@ -139,6 +139,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
     real(kind=8) :: angl_naut(3)
     integer :: nume_thmc
     character(len=16) :: meca
+    aster_logical :: lMatrPred
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -159,6 +160,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
         dsde(1:dimcon,1:dimdef) = 0.d0
         drde(1:dimdef,1:dimdef) = 0.d0
     endif
+    lMatrPred = option .eq. 'RIGI_MECA_TANG' 
 !
 ! - Get storage parameters for behaviours
 !
@@ -218,7 +220,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
 ! - Compute generalized stresses and matrix for coupled quantities
 !
     call calcco(ds_thm  , l_steady ,&
-                option  , angl_naut,&
+                lMatr, lSigm, lVari, lMatrPred, angl_naut,&
                 j_mater  ,&
                 ndim-1  , nbvari   ,&
                 dimdef  , dimcon   ,&
@@ -270,7 +272,7 @@ real(kind=8), intent(out) :: res(dimdef), drde(dimdef, dimdef)
     end do
     if (ds_thm%ds_elem%l_dof_pre1) then
         call calcfh(ds_thm,&
-                    option, l_steady, ndim  , j_mater,&
+                    lMatr    , lSigm  , l_steady, ndim  , j_mater,&
                     dimdef, dimcon,&
                     addep1, addep2,&
                     adcp11, adcp12, adcp21 , adcp22,&

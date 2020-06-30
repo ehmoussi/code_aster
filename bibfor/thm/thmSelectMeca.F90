@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,6 +40,7 @@ implicit none
 #include "asterfort/thmMecaElas.h"
 #include "asterfort/thmCheckPorosity.h"
 #include "asterfort/thmMecaSpecial.h"
+#include "asterfort/Behaviour_type.h"
 !
 type(THM_DS), intent(in) :: ds_thm
 integer, intent(in) :: j_mater
@@ -103,10 +104,10 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
+    aster_logical :: lMatr, LSigm
     character(len=16) :: compor_meca(COMPOR_SIZE)
     integer :: i, j
     real(kind=8) :: dsdeme(6, 6), alpha0, ther_meca(6)
-    aster_logical :: l_matrix
     integer :: ndt, ndi
     common /tdim/   ndt  , ndi
     character(len=16) :: meca, defo
@@ -114,14 +115,15 @@ integer, intent(out) :: retcom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ndt            = 2*ndim
-    ndi            = ndim
-    dsdeme(:, :)   = 0.d0
-    ther_meca(:)   = 0.d0
-    alpha0         = ds_thm%ds_material%ther%alpha
-    compor_meca(:) = ' '
-    retcom         = 0
-    l_matrix       = (option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')
+    ndt         = 2*ndim
+    ndi         = ndim
+    dsdeme      = 0.d0
+    ther_meca   = 0.d0
+    alpha0      = ds_thm%ds_material%ther%alpha
+    compor_meca = ' '
+    retcom      = 0
+    lMatr       = L_MATR(option)
+    lSigm       = L_SIGM(option)
 !
 ! - Get storage parameters for behaviours
 !
@@ -139,10 +141,10 @@ integer, intent(out) :: retcom
 !
     if (nume_meca .eq. 0) then
 ! ----- Special behaviours
-        call thmMecaSpecial(ds_thm , option   , meca     ,&
-                            p1     , dp1      , p2       , dp2   , satur, tbiot,&
-                            j_mater, ndim     , typmod   , carcri, &
-                            addeme , adcome   , addep1   , addep2,&
+        call thmMecaSpecial(ds_thm , option   , lMatr , meca     ,&
+                            p1     , dp1      , p2    , dp2   , satur, tbiot,&
+                            j_mater, ndim     , typmod, carcri, &
+                            addeme , adcome   , addep1, addep2,&
                             dimdef , dimcon   ,&
                             defgem , deps     ,&
                             congem , vintm    ,&
@@ -152,7 +154,7 @@ integer, intent(out) :: retcom
     elseif (nume_meca .eq. 1) then
 ! ----- Elasticity
         ASSERT(meca .eq. 'ELAS')
-        call thmMecaElas(ds_thm, option, angl_naut, dtemp    ,&
+        call thmMecaElas(ds_thm, lMatr, lSigm, angl_naut, dtemp    ,&
                          adcome, dimcon,&
                          deps  , congep, dsdeme   , ther_meca)
 
@@ -187,7 +189,7 @@ integer, intent(out) :: retcom
 !
 ! - Add mechanical matrix
 !
-    if (l_matrix) then
+    if (lMatr) then
         do i = 1, ndt
             do j = 1, ndt
                 dsde(adcome+i-1,addeme+ndim+j-1) = dsde(adcome+i-1,addeme+ndim+j-1) +&
@@ -198,7 +200,7 @@ integer, intent(out) :: retcom
 !
 ! - Add thermic (dilatation) matrix
 !
-    if (l_matrix) then
+    if (lMatr) then
         if (ds_thm%ds_elem%l_dof_ther) then
             do i = 1, 6
                 dsde(adcome-1+i,addete) = dsde(adcome-1+i,addete) -&

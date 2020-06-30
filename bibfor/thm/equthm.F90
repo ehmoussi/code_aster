@@ -18,7 +18,9 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine equthm(ds_thm   , option   , j_mater  ,&
+subroutine equthm(ds_thm   , option   , j_mater   ,&
+                  lMatr    , lSigm    ,&
+                  lVari    , lMatrPred,&
                   typmod   , angl_naut, parm_theta,&
                   ndim     , nbvari   ,&
                   kpi      , npg      ,&
@@ -42,6 +44,7 @@ implicit none
 !
 type(THM_DS), intent(inout) :: ds_thm
 character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred
 integer, intent(in) :: j_mater
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in)  :: angl_naut(3), parm_theta
@@ -143,7 +146,7 @@ integer, intent(out) :: retcom
 !
 ! - Initialization of stresses
 !
-    if ((option .eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         do i = 1, dimcon
             congep(i) = congem(i)
         end do
@@ -152,6 +155,8 @@ integer, intent(out) :: retcom
 ! - Compute generalized stresses and derivatives at current Gauss point
 !
     call comthm(ds_thm   , l_steady ,&
+                lMatr    , lSigm    ,&
+                lVari    , lMatrPred,&
                 option   , j_mater  ,&
                 typmod   , angl_naut,&  
                 ndim     , nbvari   ,&
@@ -171,7 +176,7 @@ integer, intent(out) :: retcom
 !
 ! - Compute non-linear residual
 !
-    if ((option(1:9).eq.'FULL_MECA') .or. (option(1:9).eq.'RAPH_MECA')) then
+    if (lSigm) then
         call thmComputeResidual(ds_thm    , parm_theta, gravity,&
                                 ndim      ,&
                                 dimdef    , dimcon ,&
@@ -183,7 +188,7 @@ integer, intent(out) :: retcom
 !
 ! - Compute derivative
 !
-    if ((option(1:9) .eq. 'RIGI_MECA') .or. (option(1:9) .eq. 'FULL_MECA')) then
+    if (lMatr) then
         call thmComputeMatrix(ds_thm    , parm_theta, gravity,&
                               ndim      ,&
                               dimdef    , dimcon ,&
@@ -195,8 +200,7 @@ integer, intent(out) :: retcom
 !
 ! - Add sqrt(2) for stresses
 !
-    if ((ds_thm%ds_elem%l_dof_meca) .and.&
-        ((option .eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA'))) then
+    if (ds_thm%ds_elem%l_dof_meca .and. lSigm) then
         do i = 4, 6
             congep(adcome+i-1)   = congep(adcome+i-1)/rac2
             congep(adcome+6+i-1) = congep(adcome+6+i-1)/rac2

@@ -19,7 +19,7 @@
 ! aslint: disable=W1504
 !
 subroutine calcco(ds_thm , l_steady ,&
-                  option , angl_naut,&
+                  lMatr, lSigm, lVari, lMatrPred, angl_naut,&
                   j_mater,&
                   ndim   , nbvari   ,&
                   dimdef , dimcon   ,&
@@ -54,7 +54,7 @@ implicit none
 !
 type(THM_DS), intent(inout) :: ds_thm
 aster_logical, intent(in) :: l_steady
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: j_mater, ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
@@ -81,7 +81,6 @@ integer, intent(out)  :: retcom
 ! --------------------------------------------------------------------------------------------------
 !
 ! IO  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  l_steady         : .true. for no-transient problem
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
@@ -155,7 +154,7 @@ integer, intent(out)  :: retcom
     select case (ds_thm%ds_behaviour%nume_thmc)
     case (LIQU_SATU)
         call thmCpl001(ds_thm,&
-                       l_steady, option, angl_naut,&
+                       l_steady, lMatr, lSigm, lVari, angl_naut,&
                        ndim    , nbvari, &
                        dimdef  , dimcon,&
                        adcome  , adcote, bdcp11,& 
@@ -170,7 +169,7 @@ integer, intent(out)  :: retcom
                        retcom)
     case (GAZ)
         call thmCpl002(ds_thm,&
-                       option, angl_naut,&
+                       lMatr, lSigm, lVari, angl_naut,&
                        ndim  , nbvari, &
                        dimdef, dimcon,&
                        adcome, adcote, adcp11,& 
@@ -185,7 +184,7 @@ integer, intent(out)  :: retcom
                        retcom)
     case (LIQU_VAPE)
         call thmCpl003(ds_thm,&
-                       option, angl_naut,&
+                       lMatr, lSigm, lVari, lMatrPred, angl_naut,&
                        j_mater  ,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
@@ -202,7 +201,7 @@ integer, intent(out)  :: retcom
                        retcom)
     case (LIQU_VAPE_GAZ)
         call thmCpl004(ds_thm,&
-                       option, angl_naut,&
+                       lMatr, lSigm, lVari, angl_naut,&
                        j_mater,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
@@ -219,7 +218,7 @@ integer, intent(out)  :: retcom
                        retcom)
     case (LIQU_GAZ)
         call thmCpl005(ds_thm,&
-                       option, angl_naut,&
+                       lMatr, lSigm, lVari, angl_naut,&
                        j_mater,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
@@ -235,7 +234,7 @@ integer, intent(out)  :: retcom
                        retcom)
     case (LIQU_GAZ_ATM)
         call thmCpl006(ds_thm,&
-                       option, angl_naut,&
+                       lMatr, lSigm, lVari, angl_naut,&
                        j_mater,&
                        ndim  , nbvari   ,&
                        dimdef, dimcon   ,&
@@ -251,7 +250,7 @@ integer, intent(out)  :: retcom
                        retcom)
     case (LIQU_AD_GAZ_VAPE)
         call thmCpl009(ds_thm ,&
-                       option , angl_naut,&
+                       lMatr, lSigm, lVari, angl_naut,&
                        j_mater,&
                        ndim   , nbvari   ,&
                        dimdef , dimcon   ,&
@@ -268,7 +267,7 @@ integer, intent(out)  :: retcom
                        retcom)
     case (LIQU_AD_GAZ)
         call thmCpl010(ds_thm ,&
-                       option , angl_naut,&
+                       lMatr, lSigm, lVari, angl_naut,&
                        j_mater,&
                        ndim   , nbvari   ,&
                        dimdef , dimcon   ,&

@@ -19,7 +19,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 !
 subroutine thmCpl009(ds_thm   ,&
-                     option   , angl_naut,&
+                     lMatr, lSigm, lVari, angl_naut,&
                      j_mater  ,&
                      ndim     , nbvari   ,&
                      dimdef   , dimcon   ,&
@@ -87,7 +87,7 @@ implicit none
 #include "asterfort/thmEvalSatuInit.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm, lVari
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: j_mater, ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
@@ -114,7 +114,6 @@ integer, intent(out)  :: retcom
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
 !                        (2) Beta  - counterclockwise around Y1
@@ -282,7 +281,7 @@ integer, intent(out)  :: retcom
 !
 ! - Evaluation of porosity and save it in internal variables
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lVari) then
 ! ----- Compute standard porosity
         if (ds_thm%ds_elem%l_dof_meca) then
             call viporo(ds_thm, nbvari,&
@@ -417,7 +416,7 @@ integer, intent(out)  :: retcom
         if (retcom .ne. 0) then
             goto 30
         endif
-        if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+        if (lSigm) then
 ! --------- Update enthalpy of liquid
             congep(adcp11+ndim+1) = congep(adcp11+ndim+1) +&
                                     enteau(dtemp, alpliq, temp,&
@@ -446,7 +445,7 @@ integer, intent(out)  :: retcom
 !
 ! - Update mechanical stresses from pressures
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         if (ds_thm%ds_elem%l_dof_meca) then
             call sigmap(ds_thm, satur, signe, tbiot, dp2, dp1,&
                         sigmp)
@@ -461,7 +460,7 @@ integer, intent(out)  :: retcom
 !
 ! - Update quantity of mass
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         congep(adcp11) = appmas(m11m ,&
                                 phi  , phim  ,&
                                 satur, saturm,&
@@ -490,7 +489,7 @@ integer, intent(out)  :: retcom
 !
 ! ==================================================================================================
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
 ! ----- Compute partial derivatives
         call dplvga(ds_thm, ndim  , dimcon,&
                     rho11 , rho12 , rgaz  , kh,&

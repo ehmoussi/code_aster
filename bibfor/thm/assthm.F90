@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,10 +19,10 @@
 ! person_in_charge: sylvie.granet at edf.fr
 !
 subroutine assthm(ds_thm   , option   , j_mater  ,&
-                  l_axi    , l_steady ,&
+                  lMatr    , lSigm    , lVect    ,&
+                  lVari    , lMatrPred, l_axi    , l_steady ,&
                   typmod   , inte_type, angl_naut,&
-                  ndim     , nbvari   ,&
-                  nno      , nnos     ,&
+                  ndim     , nbvari   , nno      , nnos     ,&
                   npg      , npi      ,&
                   nddls    , nddlm    , nddl_meca, nddl_p1, nddl_p2, &
                   dimdef   , dimcon   , dimuel   ,&
@@ -62,6 +62,7 @@ implicit none
 type(THM_DS), intent(inout) :: ds_thm
 integer, parameter :: dimmat = 120
 character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred, lVect
 integer, intent(in) :: j_mater
 aster_logical, intent(in)  :: l_axi, l_steady
 character(len=8), intent(in) :: typmod(2)
@@ -216,10 +217,10 @@ integer, intent(out) :: codret
 !
 ! - Initialization of output fields
 !
-    if (option(1:9) .ne. 'RIGI_MECA') then
+    if (lVect) then
         vectu(1:dimuel) = 0.d0
     endif
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         matuu(1:dimuel*dimuel) = 0.d0
         matri(:,:)             = 0.d0
     endif
@@ -254,6 +255,8 @@ integer, intent(out) :: codret
 ! ----- Compute generalized stresses and derivatives at current Gauss point
         if (l_steady) then
             call equthp(ds_thm   , option   , j_mater  ,&
+                        lMatr    , lSigm    , lVect   ,&
+                        lVari    , lMatrPred,&
                         typmod   , angl_naut,&
                         ndim     , nbvari   ,&
                         kpi      , npg      ,&
@@ -267,6 +270,8 @@ integer, intent(out) :: codret
                         r        , drds     , dsde  , codret)
         else
             call equthm(ds_thm   , option   , j_mater  ,&
+                        lMatr    , lSigm    ,&
+                        lVari    , lMatrPred,&
                         typmod   , angl_naut, parm_theta,&
                         ndim     , nbvari   ,&
                         kpi      , npg      ,&
@@ -281,12 +286,16 @@ integer, intent(out) :: codret
 ! --------- For selective integrations => move Gauss points to nodes
             if (ds_thm%ds_elem%l_dof_meca) then
                 if (kpi .gt. npg) then
-                    do i = 1, 6
-                        congep((kpi-1)*dimcon+i) = congep((kpi-npg-1)*dimcon+i)
-                    end do
-                    do i = 1, nb_vari_meca
-                        vintp((kpi-1)*nbvari+i) = vintp((kpi-npg-1)*nbvari+i)
-                    end do
+                    if (lSigm) then
+                        do i = 1, 6
+                            congep((kpi-1)*dimcon+i) = congep((kpi-npg-1)*dimcon+i)
+                        end do
+                    endif
+                    if (lVari) then
+                        do i = 1, nb_vari_meca
+                            vintp((kpi-1)*nbvari+i) = vintp((kpi-npg-1)*nbvari+i)
+                        end do
+                    endif
                 endif
             endif
         endif
@@ -315,13 +324,12 @@ integer, intent(out) :: codret
 ! --- ON MODIFIE LA 7EME LIGNE (TERME EN TEMPERATURE) DE LA MATRICE ----
 ! --- DE MANIERE A L'ADAPTER AU PI -------------------------------------
 ! ======================================================================
-        if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+        if (lMatr) then
             do i = 1, dimdef
                 do j = 1, dimcon
                     drdsr(i,j)=drds(i,j)
                 end do
             end do
-!
             if (ds_thm%ds_elem%l_dof_ther) then
                 do i = 1, dimcon
                     drdsr(addete,i) = ak(1)*drds(addete,i) + ak(2)* drds(dimdef+1,i)
@@ -339,7 +347,7 @@ integer, intent(out) :: codret
 ! ======================================================================
 ! --- ON SELECTIONNE LES COMPOSANTES UTILES DE R POUR CE PI ------------
 ! ======================================================================
-        if ((option(1:9).eq.'FULL_MECA' .or. option(1:9) .eq.'RAPH_MECA')) then
+        if (lVect) then
             do i = 1, dimdef
                 sigbar(i) = ck(i)*r(i)
             end do
@@ -362,7 +370,7 @@ integer, intent(out) :: codret
 ! ======================================================================
 ! --- SORTIE DE BOUCLE SUR LES POINTS D'INTEGRATION --------------------
 ! ======================================================================
-    if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+    if (lMatr) then
         kji=1
         do ii = 1, dimuel
             do jj = 1, dimuel

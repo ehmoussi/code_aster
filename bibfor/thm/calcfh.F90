@@ -19,15 +19,15 @@
 ! aslint: disable=W1504
 !
 subroutine calcfh(ds_thm   ,&
-                  option   , l_steady, ndim  , j_mater,&
-                  dimdef   , dimcon  ,&
-                  addep1   , addep2  ,&
-                  adcp11   , adcp12  , adcp21 , adcp22,&
+                  lMatr    , lSigm  , l_steady, ndim  , j_mater,&
+                  dimdef   , dimcon ,&
+                  addep1   , addep2 ,&
+                  adcp11   , adcp12 , adcp21  , adcp22,&
                   addeme   , addete  , &
-                  temp     , p1      , p2     , pvp   , pad,&
-                  grad_temp, grad_p1 , grad_p2,& 
-                  rho11    , h11     , h12    ,&
-                  satur    , dsatur  , gravity, tperm,&
+                  temp     , p1     , p2      , pvp   , pad,&
+                  grad_temp, grad_p1, grad_p2 ,& 
+                  rho11    , h11    , h12     ,&
+                  satur    , dsatur , gravity , tperm ,&
                   congep   , dsde)
 !
 use THM_type
@@ -47,8 +47,7 @@ implicit none
 #include "asterfort/thmFlh010.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
-aster_logical, intent(in) :: l_steady
+aster_logical, intent(in) :: lMatr, lSigm, l_steady
 integer, intent(in) :: j_mater
 integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22
@@ -69,7 +68,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  l_steady         : .flag. for no-transient problem
 ! In  ndim             : dimension of space (2 or 3)
 ! In  j_mater          : coded material address
@@ -105,20 +103,20 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
     select case (ds_thm%ds_behaviour%nume_thmc)
     case (LIQU_SATU)
-        call thmFlh001(ds_thm , option, l_steady, ndim,&
+        call thmFlh001(ds_thm , lMatr   , lSigm, l_steady, ndim,&
                        dimdef , dimcon,&
                        addep1 , adcp11, addeme , addete,&
                        grad_p1, rho11 , gravity, tperm ,&
                        congep , dsde)
     case (GAZ)
-        call thmFlh002(ds_thm, option , l_steady, ndim,&
+        call thmFlh002(ds_thm, lMatr   , lSigm, l_steady, ndim,&
                        dimdef, dimcon ,&
                        addep1, adcp11 , addeme , addete,&
                        temp  , p1     , grad_p1,&
                        rho11 , gravity, tperm  ,&
                        congep, dsde)
     case (LIQU_VAPE)
-        call thmFlh003(ds_thm , option , ndim     , j_mater,&
+        call thmFlh003(ds_thm , lMatr   , lSigm, ndim     , j_mater,&
                        dimdef , dimcon   ,&
                        addep1 , adcp11   , adcp12 , addeme, addete,&
                        temp   , p2       , pvp,&
@@ -127,7 +125,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                        satur  , dsatur   , gravity, tperm,&
                        congep , dsde  )
     case (LIQU_VAPE_GAZ)
-        call thmFlh004(ds_thm , option   , l_steady, ndim  , j_mater,&
+        call thmFlh004(ds_thm , lMatr   , lSigm, l_steady, ndim  , j_mater,&
                        dimdef   , dimcon ,&
                        addep1   , addep2 , adcp11 , adcp12 , adcp21,&
                        addeme   , addete ,&
@@ -137,7 +135,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                        satur    , dsatur , gravity, tperm,&
                        congep   , dsde)
     case (LIQU_GAZ)
-        call thmFlh005(ds_thm , option , ndim   , j_mater,&
+        call thmFlh005(ds_thm , lMatr   , lSigm, ndim   , j_mater,&
                        dimdef , dimcon ,&
                        addep1 , addep2 , adcp11 , adcp21 ,&
                        addeme , addete ,&
@@ -147,7 +145,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                        satur  , dsatur , gravity, tperm,&
                        congep , dsde)
     case (LIQU_GAZ_ATM)
-        call thmFlh006(ds_thm , option , l_steady, ndim   , j_mater,&
+        call thmFlh006(ds_thm , lMatr   , lSigm, l_steady, ndim   , j_mater,&
                        dimdef , dimcon  ,&
                        addep1 , adcp11  ,&
                        addeme , addete  ,&
@@ -157,7 +155,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                        satur  , dsatur  , gravity, tperm ,&
                        congep , dsde)
     case (LIQU_AD_GAZ_VAPE)
-        call thmFlh009(ds_thm , option   , l_steady, ndim   , j_mater,&
+        call thmFlh009(ds_thm , lMatr   , lSigm, l_steady, ndim   , j_mater,&
                        dimdef   , dimcon  ,&
                        addep1   , addep2  , adcp11 , adcp12 , adcp21, adcp22,&
                        addeme   , addete  , &
@@ -167,7 +165,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                        satur    , dsatur  , gravity, tperm,&
                        congep   , dsde)
     case (LIQU_AD_GAZ)
-        call thmFlh010(ds_thm , option   , l_steady, ndim   , j_mater,&
+        call thmFlh010(ds_thm   , lMatr   , lSigm, l_steady, ndim   , j_mater,&
                        dimdef   , dimcon  ,&
                        addep1   , addep2  , adcp11 , adcp12, adcp21, adcp22,&
                        addeme   , addete  , &

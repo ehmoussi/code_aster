@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine thmMecaElas(ds_thm, option, angl_naut, dtemp,&
+subroutine thmMecaElas(ds_thm, lMatr, lSigm, angl_naut, dtemp,&
                        adcome, dimcon,&
                        deps  , congep, dsdeme   , ther_meca)
 !
@@ -30,7 +30,7 @@ implicit none
 #include "asterfort/thmTherElas.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm
 real(kind=8), intent(in) :: dtemp
 integer, intent(in) :: dimcon, adcome
 real(kind=8), intent(in) :: angl_naut(3)
@@ -48,7 +48,6 @@ real(kind=8), intent(out) :: ther_meca(6)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  typmod           : type of modelization (TYPMOD2)
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
@@ -66,25 +65,29 @@ real(kind=8), intent(out) :: ther_meca(6)
 !
     integer :: i, j
     real(kind=8) :: depstr(6), ther_dila
-    aster_logical :: l_matrix, l_stress
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    dsdeme(:,:)    = 0.d0
-    ther_dila      = 0.d0
-    depstr(:)      = 0.d0
-    ther_meca(:)   = 0.d0
-    l_matrix       = (option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')
-    l_stress       = (option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')
+    dsdeme    = 0.d0
+    ther_dila = 0.d0
+    depstr    = 0.d0
+    ther_meca = 0.d0
 !
-! - Prepare strains and stresses
+! - Prepare strains
 
     depstr = deps
     do i = 4, 6
         depstr(i)          = deps(i)*rac2
-        congep(adcome+i-1) = congep(adcome+i-1)/rac2
     end do
+!
+! - Prepare stresses
+
+    if (lSigm) then
+        do i = 4, 6
+            congep(adcome+i-1) = congep(adcome+i-1)/rac2
+        end do
+    endif
 !
 ! - Compute thermic quantities
 !
@@ -92,7 +95,7 @@ real(kind=8), intent(out) :: ther_meca(6)
 !
 ! - Compute matrix
 !
-    if (l_matrix) then
+    if (lMatr) then
         do i = 1, 3
             do j = 1, 3
                 dsdeme(i,j) = ds_thm%ds_material%elas%d(i,j)
@@ -113,23 +116,22 @@ real(kind=8), intent(out) :: ther_meca(6)
 !
 ! - Compute stress
 !
-    if (l_stress) then
+    if (lSigm) then
         do i = 1, 6
             do j = 1, 6
                 congep(adcome+i-1) = congep(adcome+i-1) + &
                                      ds_thm%ds_material%elas%d(i,j)*depstr(j)
             end do
         end do
+        do i = 4, 6
+            congep(adcome+i-1) = congep(adcome+i-1)*rac2
+        end do
     endif
-!
-    do i = 4, 6
-        congep(adcome+i-1) = congep(adcome+i-1)*rac2
-    end do
 !
 ! - For thermic (dilatation)
 !
     if (ds_thm%ds_elem%l_dof_ther) then
-        if (l_stress) then
+        if (lSigm) then
             do i = 1, 6
                 congep(adcome+i-1) = congep(adcome+i-1)-ther_meca(i)*dtemp
             end do

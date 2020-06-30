@@ -19,8 +19,10 @@
 ! aslint: disable=W1504, W1306
 !
 subroutine comthm(ds_thm   , l_steady ,&
+                  lMatr    , lSigm    ,&
+                  lVari    , lMatrPred,&
                   option   , j_mater  ,&
-                  type_elem, angl_naut,&   
+                  type_elem, angl_naut,&
                   ndim     , nbvari   ,&
                   dimdef   , dimcon   ,&
                   adcome   , adcote   , adcp11  , adcp12, adcp21, adcp22,&
@@ -56,6 +58,7 @@ implicit none
 #include "asterfort/THM_type.h"
 !
 type(THM_DS), intent(inout) :: ds_thm
+aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred
 aster_logical, intent(in) :: l_steady
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
@@ -172,21 +175,22 @@ integer, intent(out) :: retcom
 !
 ! - Compute generalized stresses and matrix for coupled quantities
 !
-    call calcco(ds_thm  , l_steady,&
-                option  , angl_naut,&
-                j_mater ,&
-                ndim    , nbvari   ,&
-                dimdef  , dimcon   ,&
-                adcome  , adcote   , adcp11, adcp12, adcp21, adcp22,&
-                addeme  , addete   , addep1, addep2,&
-                temp    , p1       , p2    ,&
-                dtemp   , dp1      , dp2   ,&
-                deps    , epsv     , depsv ,&
-                tbiot   ,&
-                phi     , rho11    , satur ,&
-                pad     , pvp      , h11   , h12   ,&
-                congem  , congep   ,&
-                vintm   , vintp    , dsde  ,& 
+    call calcco(ds_thm   , l_steady ,&
+                lMatr    , lSigm    , lVari,&
+                lMatrPred, angl_naut,&
+                j_mater  ,&
+                ndim     , nbvari   ,&
+                dimdef   , dimcon   ,&
+                adcome   , adcote   , adcp11, adcp12, adcp21, adcp22,&
+                addeme   , addete   , addep1, addep2,&
+                temp     , p1       , p2    ,&
+                dtemp    , dp1      , dp2   ,&
+                deps     , epsv     , depsv ,&
+                tbiot    ,&
+                phi      , rho11    , satur ,&
+                pad      , pvp      , h11   , h12   ,&
+                congem   , congep   ,&
+                vintm    , vintp    , dsde  ,& 
                 retcom)
     if (retcom .ne. 0) then
         goto 99
@@ -239,7 +243,7 @@ integer, intent(out) :: retcom
 !
     if (ds_thm%ds_elem%l_dof_pre1) then
         call calcfh(ds_thm   ,&
-                    option   , l_steady, ndim  , j_mater,&
+                    lMatr    , lSigm   , l_steady, ndim  , j_mater,&
                     dimdef   , dimcon  ,&
                     addep1   , addep2  ,&
                     adcp11   , adcp12  , adcp21 , adcp22,&
@@ -258,7 +262,7 @@ integer, intent(out) :: retcom
 !
     if (ds_thm%ds_elem%l_dof_ther) then
         call calcft(ds_thm,&
-                    option, angl_naut,&
+                    lMatr , lSigm    , angl_naut,&
                     ndim  , dimdef   , dimcon,&
                     adcote, &
                     addeme, addete   , addep1, addep2,&

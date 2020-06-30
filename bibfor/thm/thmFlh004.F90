@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine thmFlh004(ds_thm, option, perman, ndim  , j_mater,&
+subroutine thmFlh004(ds_thm, lMatr , lSigm , perman, ndim  , j_mater,&
                      dimdef, dimcon,&
                      addep1, addep2, adcp11, adcp12, adcp21 ,&
                      addeme, addete, &
@@ -39,8 +39,7 @@ implicit none
 #include "asterfort/thmEvalFickSteam.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
-aster_logical, intent(in) :: perman
+aster_logical, intent(in) :: lMatr, lSigm, perman
 integer, intent(in) :: j_mater
 integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21
@@ -61,7 +60,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  perman           : .flag. for no-transient problem
 ! In  ndim             : dimension of space (2 or 3)
 ! In  j_mater          : coded material address
@@ -227,7 +225,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
         endif
         gc(i) = gp(i)/p2-pvp/p2/p2*grap2(i)
     end do
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         dp12p1 = -rho12/rho11
         dp12p2 = rho12/rho11
         if (ds_thm%ds_elem%l_dof_ther) then
@@ -242,7 +240,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Volumic mass - Derivative
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         dr11p1 = -rho11*cliq
         dr11p2 = rho11*cliq
         dr12p1 = rho12/pvp*dp12p1
@@ -300,7 +298,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Hydraulic flux
 !
-    if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
+    if (lSigm) then
         do i = 1, ndim
             congep(adcp11+i) = 0.d0
             congep(adcp12+i) = 0.d0
@@ -320,24 +318,24 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Update matrix
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
+    if (lMatr) then
         do i = 1, ndim
             do j = 1, ndim
-                dsde(adcp11+i,addep1)   = dsde(adcp11+i,addep1)+&
+                dsde(adcp11+i,addep1)   = dsde(adcp11+i,addep1) +&
                     dr11p1*lambd1(1)*tperm(i,j)*(-grap2(j)+grap1(j)+rho11*gravity(j))
-                dsde(adcp11+i,addep1)   = dsde(adcp11+i,addep1)+&
+                dsde(adcp11+i,addep1)   = dsde(adcp11+i,addep1) +&
                     rho11*lambd1(3)*tperm(i,j)*(-grap2(j)+grap1(j)+rho11*gravity(j))
-                dsde(adcp11+i,addep1)   = dsde(adcp11+i,addep1)+&
+                dsde(adcp11+i,addep1)   = dsde(adcp11+i,addep1) +&
                     rho11*lambd1(1)*tperm(i,j)*(dr11p1*gravity(j))
-                dsde(adcp11+i,addep2)   = dsde(adcp11+i,addep2)+&
+                dsde(adcp11+i,addep2)   = dsde(adcp11+i,addep2) +&
                     dr11p2*lambd1(1)*tperm(i,j)*(-grap2(j)+grap1(j)+rho11*gravity(j))
-                dsde(adcp11+i,addep2)   = dsde(adcp11+i,addep2)+&
+                dsde(adcp11+i,addep2)   = dsde(adcp11+i,addep2) +&
                     rho11*lambd1(4)*tperm(i,j)*(-grap2(j)+grap1(j)+rho11*gravity(j))
-                dsde(adcp11+i,addep2)   = dsde(adcp11+i,addep2)+&
+                dsde(adcp11+i,addep2)   = dsde(adcp11+i,addep2) +&
                     rho11*lambd1(1)*tperm(i,j)*(dr11p2*gravity(j))
-                dsde(adcp11+i,addep1+j) = dsde(adcp11+i,addep1+j)+&
+                dsde(adcp11+i,addep1+j) = dsde(adcp11+i,addep1+j) +&
                     rho11*lambd1(1)*tperm(i,j)
-                dsde(adcp11+i,addep2+j) = dsde(adcp11+i,addep2+j)-&
+                dsde(adcp11+i,addep2+j) = dsde(adcp11+i,addep2+j) -&
                     rho11*lambd1(1)*tperm(i,j)
             end do
             do j = 1, ndim
@@ -487,7 +485,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
                 dsde(adcp21+i,addete+i) = dsde(adcp21+i,addete+i)+&
                     rho21*cvp*fv(1)*dgcgt(1)            
             endif
-        end do   
+        end do
     endif
 !
 end subroutine

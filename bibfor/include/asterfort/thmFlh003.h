@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine thmFlh003(ds_thm, option, ndim, j_mater,&
+    subroutine thmFlh003(ds_thm, lMatr , lSigm  , ndim, j_mater,&
                          dimdef, dimcon,&
                          addep1, adcp11, adcp12, addeme, addete,&
                          t     , p2    , pvp,&
@@ -28,7 +28,7 @@ interface
                          congep, dsde  )
         use THM_type
         type(THM_DS), intent(in) :: ds_thm
-        character(len=16), intent(in) :: option
+        aster_logical, intent(in) :: lMatr, lSigm
         integer, intent(in) :: ndim, dimdef, dimcon, j_mater
         integer, intent(in) :: addeme, addep1, addete, adcp11, adcp12
         real(kind=8), intent(in) :: rho11, satur, dsatur

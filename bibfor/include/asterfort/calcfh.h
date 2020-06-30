@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 !
 interface 
     subroutine calcfh(ds_thm   ,&
-                      option   , l_steady, ndim  , j_mater,&
+                      lMatr    , lSigm  , l_steady, ndim  , j_mater,&
                       dimdef   , dimcon  ,&
                       addep1   , addep2  ,&
                       adcp11   , adcp12  , adcp21 , adcp22,&
@@ -31,8 +31,7 @@ interface
                       congep   , dsde)
         use THM_type
         type(THM_DS), intent(in) :: ds_thm
-        character(len=16), intent(in) :: option
-        aster_logical, intent(in) :: l_steady
+        aster_logical, intent(in) :: lMatr    , lSigm  , l_steady
         integer, intent(in) :: j_mater
         integer, intent(in) :: ndim, dimdef, dimcon
         integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp12, adcp21, adcp22

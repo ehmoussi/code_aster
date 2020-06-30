@@ -18,7 +18,7 @@
 ! aslint: disable=W1504,W1306
 ! person_in_charge: sylvie.granet at edf.fr
 !
-subroutine calcft(ds_thm, option, angl_naut,&
+subroutine calcft(ds_thm, lMatr    , lSigm , angl_naut,&
                   ndim  , dimdef   , dimcon,&
                   adcote, &
                   addeme, addete   , addep1, addep2,&
@@ -34,12 +34,13 @@ use THM_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/dilata.h"
 #include "asterfort/unsmfi.h"
 #include "asterfort/THM_type.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: adcote
@@ -64,7 +65,6 @@ real(kind=8), intent(inout) :: congep(1:dimcon), dsde(1:dimcon, 1:dimdef)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : name of option- to compute
 ! In  angl_naut        : nautical angles
 ! In  ndim             : dimension of space (2 or 3)
 ! In  dimdef           : dimension of generalized strains vector
@@ -204,7 +204,7 @@ real(kind=8), intent(inout) :: congep(1:dimcon), dsde(1:dimcon, 1:dimdef)
 !
 ! - Compute matrix
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         do i = 1, ndim
             do j = 1, ndim
                 dsde(adcote+i,addete+j) = dsde(adcote+i,addete+j)-lamdt1(i,j)
@@ -235,7 +235,7 @@ real(kind=8), intent(inout) :: congep(1:dimcon), dsde(1:dimcon, 1:dimdef)
 !
 ! - Compute generalized stress
 !
-    if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         do i = 1, ndim
             congep(adcote+i) = 0.d0
             do j = 1, ndim

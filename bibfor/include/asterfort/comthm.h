@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,8 +19,10 @@
 !
 interface 
     subroutine comthm(ds_thm   , l_steady ,&
+                      lMatr    , lSigm    ,&
+                      lVari    , lMatrPred,&
                       option   , j_mater  ,&
-                      type_elem, angl_naut,&   
+                      type_elem, angl_naut,&
                       ndim     , nbvari   ,&
                       dimdef   , dimcon   ,&
                       adcome   , adcote   , adcp11  , adcp12, adcp21, adcp22,&
@@ -35,6 +37,7 @@ interface
         use THM_type
         type(THM_DS), intent(inout) :: ds_thm
         aster_logical, intent(in) :: l_steady
+        aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred
         character(len=16), intent(in) :: option
         integer, intent(in) :: j_mater
         character(len=8), intent(in) :: type_elem(2)

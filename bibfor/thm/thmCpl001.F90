@@ -19,7 +19,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 !
 subroutine thmCpl001(ds_thm,&
-                     perman, option, angl_naut,&
+                     perman, lMatr, lSigm, lVari, angl_naut,&
                      ndim  , nbvari, &
                      dimdef, dimcon,&
                      adcome, adcote, adcp11,& 
@@ -63,8 +63,7 @@ implicit none
 #include "asterfort/THM_type.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-aster_logical, intent(in) :: perman
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: perman, lMatr, lSigm, lVari
 real(kind=8), intent(in) :: angl_naut(3)
 integer, intent(in) :: ndim, nbvari
 integer, intent(in) :: dimdef, dimcon
@@ -91,7 +90,6 @@ integer, intent(out) :: retcom
 !
 ! In  ds_thm           : datastructure for THM
 ! In  perman           : .true. for no-transient problem
-! In  option           : option to compute
 ! In  angl_naut        : nautical angles
 !                        (1) Alpha - clockwise around Z0
 !                        (2) Beta  - counterclockwise around Y1
@@ -220,7 +218,7 @@ integer, intent(out) :: retcom
 !
 ! - Evaluation of porosity and save it in internal variables
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lVari) then
 ! ----- Compute standard porosity
         if (ds_thm%ds_elem%l_dof_meca .or. ds_thm%ds_elem%l_weak_coupling) then
             if (ds_thm%ds_elem%l_jhms) then
@@ -251,7 +249,7 @@ integer, intent(out) :: retcom
 !
 ! - Evaluation of volumic mass and save it in internal variables
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lVari) then
 ! ----- Compute volumic mass for water
         if (ds_thm%ds_elem%l_dof_ther) then
             call virhol(nbvari, vintm , vintp ,&
@@ -302,7 +300,7 @@ integer, intent(out) :: retcom
         if (retcom .ne. 0) then
             goto 30
         endif
-        if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+        if (lSigm) then
 ! --------- Update enthalpy of liquid
             congep(adcp11+ndim+1) = congep(adcp11+ndim+1) +&
                                     enteau(dtemp, alpliq, temp,&
@@ -318,7 +316,7 @@ integer, intent(out) :: retcom
 !
 ! - Update mechanical stresses from pressures
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         if (ds_thm%ds_elem%l_dof_meca .and. .not. ds_thm%ds_elem%l_jhms) then
             call sigmap(ds_thm,&
                         satur, signe, tbiot, dp2, dp1,&
@@ -334,7 +332,7 @@ integer, intent(out) :: retcom
 !
 ! - Compute quantity of mass from change of volume, porosity and saturation
 !
-    if ((option.eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
 ! ----- Update quantity of mass of liquid
         if (.not.perman) then
             congep(adcp11) = appmas(m11m ,&
@@ -351,7 +349,7 @@ integer, intent(out) :: retcom
 !
 ! ==================================================================================================
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
 !
 ! ----- Mechanic
 !
@@ -359,11 +357,11 @@ integer, intent(out) :: retcom
 ! --------- Derivative of _pressure part_ of stresses by capillary pressure
             call dspdp1(ds_thm, signe, tbiot, satur, dsdp1)
             do i = 1, 3
-                dsde(adcome+6+i-1,addep1) = dsde(adcome+6+i-1,addep1) +&
+                dsde(adcome+6+i-1,addep1) = dsde(adcome+6+i-1,addep1)+&
                                             dsdp1(i)
             end do
             do i = 4, 6
-                dsde(adcome+6+i-1,addep1) = dsde(adcome+6+i-1,addep1) +&
+                dsde(adcome+6+i-1,addep1) = dsde(adcome+6+i-1,addep1)+&
                                             dsdp1(i)*rac2
             end do
 ! --------- Derivative of quantity of mass by volumic mass - Mechanical part (strains)

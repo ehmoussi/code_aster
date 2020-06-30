@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -140,6 +140,7 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
     real(kind=8) :: tlambt(ndim, ndim), tlamct(ndim, ndim), tdlamt(ndim, ndim)
     real(kind=8) :: deltat
     aster_logical :: l_steady
+    aster_logical :: lMatr, lSigm, lVari, lMatrPred
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -187,7 +188,7 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 ! - Compute generalized stresses and matrix for coupled quantities
 !
     call calcco(ds_thm  , l_steady,&
-                option  , angl_naut,&
+                lMatr, lSigm, lVari, lMatrPred, angl_naut,&
                 j_mater ,&
                 ndim    , nbvari   ,&
                 dimdef  , dimcon   ,&
@@ -304,7 +305,7 @@ real(kind=8), intent(inout) :: valfac(maxfa, 14, 6)
 ! - Compute flux and stress for thermic
 !
     if (ds_thm%ds_elem%l_dof_ther) then
-        call calcft(ds_thm, option   , angl_naut,&
+        call calcft(ds_thm, lMatr    , lSigm , angl_naut,&
                     ndim  , dimdef   , dimcon,&
                     adcote, &
                     addeme, addete   , addep1, addep2,&

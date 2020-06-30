@@ -18,7 +18,7 @@
 !
 interface 
     subroutine thmCpl010(ds_thm ,&
-                         option , angl_naut,&
+                         lMatr, lSigm, lVari, angl_naut,&
                          j_mater,&
                          ndim   , nbvari   ,&
                          dimdef , dimcon   ,&
@@ -35,7 +35,7 @@ interface
                          retcom)
         use THM_type
         type(THM_DS), intent(in) :: ds_thm
-        character(len=16), intent(in) :: option
+        aster_logical, intent(in) :: lMatr, lSigm, lVari
         real(kind=8), intent(in) :: angl_naut(3)
         integer, intent(in) :: j_mater, ndim, nbvari
         integer, intent(in) :: dimdef, dimcon

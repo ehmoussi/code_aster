@@ -18,6 +18,8 @@
 ! aslint: disable=W1504
 !
 subroutine equthp(ds_thm   , option   , j_mater  ,&
+                  lMatr    , lSigm    , lVect    ,&
+                  lVari    , lMatrPred,&
                   typmod   , angl_naut,&
                   ndim     , nbvari   ,&
                   kpi      , npg      ,&
@@ -40,6 +42,7 @@ implicit none
 type(THM_DS), intent(inout) :: ds_thm
 character(len=16), intent(in) :: option
 integer, intent(in) :: j_mater
+aster_logical, intent(in) :: lMatr, lSigm, lVari, lMatrPred, lVect
 character(len=8), intent(in) :: typmod(2)
 real(kind=8), intent(in)  :: angl_naut(3)
 integer, intent(in) :: ndim, nbvari
@@ -138,7 +141,7 @@ integer, intent(out) :: retcom
 !
 ! - Initialization of stresses
 !
-    if ((option .eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lSigm) then
         do i = 1, dimcon
             congep(i) = congem(i)
         end do
@@ -147,8 +150,10 @@ integer, intent(out) :: retcom
 ! - Compute generalized stresses and derivatives at current Gauss point
 !
     call comthm(ds_thm   , l_steady ,&
+                lMatr    , lSigm    ,&
+                lVari    , lMatrPred,&
                 option   , j_mater  ,&
-                typmod   , angl_naut,&    
+                typmod   , angl_naut,&
                 ndim     , nbvari   ,&
                 dimdef   , dimcon   ,&
                 adcome   , adcote   , adcp11  , adcp12, adcp21, adcp22,&
@@ -166,7 +171,7 @@ integer, intent(out) :: retcom
 !
 ! - Compute non-linear residual
 !
-    if ((option(1:9).eq.'FULL_MECA') .or. (option(1:9).eq.'RAPH_MECA')) then
+    if (lVect) then
         if (ds_thm%ds_elem%l_dof_meca) then
             do i = 1, 6
                 r(addeme+ndim+i-1) = r(addeme+ndim+i-1) + congep(adcome+i-1)
@@ -184,7 +189,7 @@ integer, intent(out) :: retcom
 !
 ! - Compute derivative
 !
-    if ((option(1:9) .eq. 'RIGI_MECA') .or. (option(1:9) .eq. 'FULL_MECA')) then
+    if (lMatr) then
         if (ds_thm%ds_elem%l_dof_meca) then
             do i = 1, 6
                 drds(addeme+ndim-1+i,adcome+i-1)   = drds(addeme+ndim-1+i,adcome+i-1)+1.d0
@@ -202,8 +207,7 @@ integer, intent(out) :: retcom
 !
 ! - Add sqrt(2) for stresses
 !
-    if ((ds_thm%ds_elem%l_dof_meca) .and.&
-        ((option .eq.'RAPH_MECA') .or. (option(1:9).eq.'FULL_MECA'))) then
+    if ((ds_thm%ds_elem%l_dof_meca) .and. lSigm) then
         do i = 4, 6
             congep(adcome+i-1) = congep(adcome+i-1)/rac2
         end do

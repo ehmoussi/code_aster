@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 ! person_in_charge: sylvie.granet at edf.fr
 ! aslint: disable=W1504
 !
-subroutine thmFlh005(ds_thm, option, ndim  , j_mater,&
+subroutine thmFlh005(ds_thm, lMatr , lSigm , ndim  , j_mater,&
                      dimdef, dimcon,&
                      addep1, addep2, adcp11, adcp21 ,&
                      addeme, addete,&
@@ -39,7 +39,7 @@ implicit none
 #include "asterfort/thmEvalFickSteam.h"
 !
 type(THM_DS), intent(in) :: ds_thm
-character(len=16), intent(in) :: option
+aster_logical, intent(in) :: lMatr, lSigm
 integer, intent(in) :: j_mater
 integer, intent(in) :: ndim, dimdef, dimcon
 integer, intent(in) :: addeme, addep1, addep2, addete, adcp11, adcp21
@@ -59,7 +59,6 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  ds_thm           : datastructure for THM
-! In  option           : option to compute
 ! In  ndim             : dimension of space (2 or 3)
 ! In  j_mater          : coded material address
 ! In  dimdef           : dimension of generalized strains vector
@@ -143,7 +142,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Volumic mass - Derivative
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9).eq.'FULL_MECA')) then
+    if (lMatr) then
         dr11p1 =-rho11*cliq
         dr11p2 = rho11*cliq
         dr11t  = -3.d0*alpliq*rho11
@@ -153,10 +152,10 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Hydraulic flux
 !
-    if ((option(1:9).eq.'RAPH_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then
+    if (lSigm) then
         do i = 1, ndim
-            congep(adcp11+i)= 0.d0
-            congep(adcp21+i)= 0.d0
+            congep(adcp11+i) = 0.d0
+            congep(adcp21+i) = 0.d0
             do j = 1, ndim
                 congep(adcp11+i) = congep(adcp11+i)+&
                     rho11*lambd1(1)*tperm(i,j) *(-grap2(j)+grap1(j)+rho11*gravity(j))
@@ -168,7 +167,7 @@ real(kind=8), intent(inout) :: dsde(1:dimcon, 1:dimdef)
 !
 ! - Update matrix
 !
-    if ((option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')) then     
+    if (lMatr) then
         do i = 1, ndim
             do j = 1, ndim
                 dsde(adcp11+i,addep1)   = dsde(adcp11+i,addep1)+&

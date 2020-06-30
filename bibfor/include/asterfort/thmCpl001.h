@@ -18,7 +18,8 @@
 #include "asterf_types.h"
 !
 interface 
-    subroutine thmCpl001(ds_thm, perman, option, angl_naut,&
+    subroutine thmCpl001(ds_thm,&
+                         perman, lMatr, lSigm, lVari, angl_naut,&
                          ndim  , nbvari, &
                          dimdef, dimcon,&
                          adcome, adcote, adcp11,& 
@@ -33,8 +34,7 @@ interface
                          retcom)
         use THM_type
         type(THM_DS), intent(in) :: ds_thm
-        aster_logical, intent(in) :: perman
-        character(len=16), intent(in) :: option
+        aster_logical, intent(in) :: perman, lMatr, lSigm, lVari
         real(kind=8), intent(in) :: angl_naut(3)
         integer, intent(in) :: ndim, nbvari
         integer, intent(in) :: dimdef, dimcon

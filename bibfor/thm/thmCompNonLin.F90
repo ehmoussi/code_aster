@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 subroutine thmCompNonLin(option, ds_thm)
 !
 use THM_type
+use Behaviour_module, only : behaviourOption
 !
 implicit none
 !
@@ -64,10 +65,12 @@ type(THM_DS), intent(inout) :: ds_thm
     integer :: npi, npg, nbvari
     integer :: jv_poids, jv_func, jv_dfunc, jv_poids2, jv_func2, jv_dfunc2, jv_gano
     character(len=8) :: type_elem(2)
+    aster_logical :: lVect, lMatr, lVari, lSigm, lMatrPred
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    codret     = 0
+    codret    = 0
+    lMatrPred = option(1:9) .eq. 'RIGI_MECA'
 !
 ! - Get all parameters for current element
 !
@@ -95,23 +98,32 @@ type(THM_DS), intent(inout) :: ds_thm
     call jevech('PVARIMR', 'L', jv_varim)
     call jevech('PCONTMR', 'L', jv_sigmm)
 !
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(jv_compor),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
 ! - Output fields
 !
-    if (option(1:9) .eq. 'RIGI_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+    jv_matr  = ismaem()
+    jv_vect  = ismaem()
+    jv_sigmp = ismaem()
+    jv_varip = ismaem()
+    jv_cret  = ismaem()
+    if (lMatr) then
         call jevech('PMATUNS', 'E', jv_matr)
-    else
-        jv_matr = ismaem()
     endif
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+    if (lVect) then
         call jevech('PVECTUR', 'E', jv_vect)
-        call jevech('PCONTPR', 'E', jv_sigmp)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', jv_varip)
+    endif
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', jv_sigmp)
         call jevech('PCODRET', 'E', jv_cret)
-    else
-        jv_vect  = ismaem()
-        jv_sigmp = ismaem()
-        jv_varip = ismaem()
-        jv_cret  = ismaem()
     endif
 !
 ! - Get frame orientation for anisotropy
@@ -120,7 +132,7 @@ type(THM_DS), intent(inout) :: ds_thm
 !
 ! - Prepare reference configuration
 !
-    if (option(1:9) .eq. 'RIGI_MECA') then
+    if (lMatrPred) then
         jv_disp = jv_dispm
         jv_sigm = jv_sigmm
         jv_vari = jv_varim
@@ -139,21 +151,21 @@ type(THM_DS), intent(inout) :: ds_thm
 !
 ! - Compute
 !
-    call assthm(ds_thm         , option       , zi(jv_mater) ,&
-                l_axi          , l_steady     ,&
-                type_elem      , inte_type    , angl_naut,&
-                ndim           , nbvari       ,&
-                nno            , nnos         ,&
+    call assthm(ds_thm         , option       , zi(jv_mater),&
+                lMatr          , lSigm        , lVect       ,&
+                lVari          , lMatrPred    , l_axi       , l_steady,&
+                type_elem      , inte_type    , angl_naut   ,&
+                ndim           , nbvari       , nno         , nnos    ,&
                 npg            , npi          ,&
-                nddls          , nddlm        , nddl_meca, nddl_p1, nddl_p2, &
-                dimdef         , dimcon       , dimuel   ,&
-                mecani         , press1       , press2   , tempe  ,&
+                nddls          , nddlm        , nddl_meca   ,&
+                nddl_p1        , nddl_p2      ,&
+                dimdef         , dimcon       , dimuel      ,&
+                mecani         , press1       , press2      , tempe   ,&
                 zk16(jv_compor), zr(jv_carcri),&
                 jv_poids       , jv_poids2    ,&
                 jv_func        , jv_func2     ,&
                 jv_dfunc       , jv_dfunc2    ,&
-                zr(jv_geom)    ,&
-                zr(jv_dispm)   , zr(jv_disp)  ,&
+                zr(jv_geom)    , zr(jv_dispm) , zr(jv_disp) ,&
                 zr(jv_sigmm)   , zr(jv_sigm)  ,&
                 zr(jv_varim)   , zr(jv_vari)  ,&
                 zr(jv_instm)   , zr(jv_instp) ,& 
@@ -161,7 +173,7 @@ type(THM_DS), intent(inout) :: ds_thm
 !
 ! - Save error from integration
 !
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+    if (lSigm) then
         zi(jv_cret) = codret
     endif
 !

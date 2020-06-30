@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1504
 !
-subroutine thmMecaSpecial(ds_thm , option   , meca     , &
-                          p1     , dp1      , p2       , dp2   , satur, tbiot,&
-                          j_mater, ndim     , typmod   , carcri,&
-                          addeme , adcome   , addep1   , addep2,&
+subroutine thmMecaSpecial(ds_thm , option   , lMatr , meca  , &
+                          p1     , dp1      , p2    , dp2   , satur, tbiot,&
+                          j_mater, ndim     , typmod, carcri,&
+                          addeme , adcome   , addep1, addep2,&
                           dimdef , dimcon   ,&
                           defgem , deps     ,&
                           congem , vintm    ,&
@@ -41,6 +41,7 @@ implicit none
 !
 type(THM_DS), intent(in) :: ds_thm
 character(len=16), intent(in) :: option, meca
+aster_logical, intent(in) :: lMatr
 integer, intent(in) :: j_mater
 real(kind=8), intent(in) :: p1, dp1, p2, dp2, satur, tbiot(6)
 character(len=8), intent(in) :: typmod(2)
@@ -96,9 +97,9 @@ integer, intent(out) :: retcom
 !
     integer :: i, j
     real(kind=8) :: alpha0, young, nu
-    aster_logical :: l_matrix, l_dspdp2
+    aster_logical :: l_dspdp2
     real(kind=8) :: dsdeme(6, 6), dsidp1(6), dsidp2(6), dspdp1, dspdp2
-    real(kind=8) :: sipm, sipp
+    real(kind=8) :: sipm
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -110,7 +111,6 @@ integer, intent(out) :: retcom
     ther_meca(:)   = 0.d0
     retcom         = 0
     l_dspdp2       = ASTER_FALSE
-    l_matrix       = (option(1:9).eq.'RIGI_MECA') .or. (option(1:9) .eq.'FULL_MECA')
     young          = ds_thm%ds_material%elas%e
     nu             = ds_thm%ds_material%elas%nu
     alpha0         = ds_thm%ds_material%ther%alpha
@@ -118,14 +118,13 @@ integer, intent(out) :: retcom
     if (meca .eq. 'BARCELONE') then
 ! ----- Compute behaviour
         sipm = congem(adcome+6)
-        sipp = congep(adcome+6)
         call nmbarc(ndim  , j_mater       , carcri, satur   , tbiot(1),&
                     deps  , congem(adcome), vintm ,&
                     option, congep(adcome), vintp , dsdeme, p1      ,&
                     p2    , dp1           , dp2   , dsidp1, sipm    ,&
-                    sipp  , retcom)
+                    congep(adcome+6), retcom)
 ! ----- Add mecanic and p1 matrix
-        if (l_matrix) then
+        if (lMatr) then
             do i = 1, 2*ndim
                 dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) + dsidp1(i)
                 do j = 1, 2*ndim
@@ -146,13 +145,12 @@ integer, intent(out) :: retcom
     elseif (meca .eq. 'GONF_ELAS') then
 ! ----- Compute behaviour
         sipm = congem(adcome+6)
-        sipp = congep(adcome+6)
         call elagon(ndim  , j_mater       , tbiot(1),&
                     alpha0, deps          , young   , &
                     nu    , congem(adcome), option  , congep(adcome), dsdeme,&
                     p1    , dp1           , dsidp1  , dsidp2)
 ! ----- Add mecanic and p1 matrix
-        if (l_matrix) then
+        if (lMatr) then
             do i = 1, 2*ndim
                 dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) + dsidp1(i)
                 do j = 1, 2*ndim
@@ -162,7 +160,7 @@ integer, intent(out) :: retcom
             end do
         endif
 ! ----- Add p2 matrix
-        if (l_matrix) then
+        if (lMatr) then
             if (ds_thm%ds_elem%l_dof_pre2) then
                 do i = 1, 2*ndim
                     dsde(adcome+i-1,addep2) = dsde(adcome+i-1,addep2) + dsidp2(i)
@@ -186,12 +184,11 @@ integer, intent(out) :: retcom
                     dspdp1, dspdp2, l_dspdp2)
 ! ----- Compute behaviour
         sipm = congem(adcome+6)
-        sipp = congep(adcome+6)
         call lchbr2(typmod        , option             , j_mater, carcri,&
                     congem(adcome), defgem(addeme+ndim), deps   , vintm ,&
-                    vintp         , dspdp1             , dspdp2 , sipp  , congep(adcome),&
+                    vintp         , dspdp1             , dspdp2 , congep(adcome+6), congep(adcome),&
                     dsdeme        , dsidp1             , dsidp2 , retcom)
-        if (l_matrix) then
+        if (lMatr) then
             do i = 1, 2*ndim
                 if (ds_thm%ds_elem%l_dof_pre1) then
                     dsde(adcome+i-1,addep1) = dsde(adcome+i-1,addep1) + dsidp1(i)
