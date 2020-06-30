@@ -20,6 +20,8 @@
 !
 subroutine te0253(option, nomte)
 !
+use Behaviour_module, only : behaviourOption
+!
 implicit none
 !
 #include "jeveux.h"
@@ -32,6 +34,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/getFluidPara.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -45,10 +48,15 @@ character(len=16), intent(in) :: option, nomte
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: i, j, k, l
     integer :: n1, n2
     integer :: nn, nno2, nt2
-    integer :: ipg, ij, ik, ijkl
+    integer :: ipg, ij, ik, ijkl, codret
     integer :: jv_compo, jv_deplm, jv_deplp
     integer :: jv_geom, jv_mate
     integer :: jv_vect, jv_codret, jv_matr
@@ -63,11 +71,16 @@ character(len=16), intent(in) :: option, nomte
     character(len=16) :: fsi_form
     aster_logical :: l_axis
     real(kind=8) :: r
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    a    = 0.d0
-    mmat = 0.d0
+    a     = 0.d0
+    mmat  = 0.d0
+    lVect = ASTER_FALSE
+    lMatr = ASTER_FALSE
+    lVari = ASTER_FALSE
+    lSigm = ASTER_FALSE
 !
 ! - Check behaviour
 !
@@ -75,7 +88,12 @@ character(len=16), intent(in) :: option, nomte
         option .eq. 'RAPH_MECA' .or.&
         option .eq. 'RIGI_MECA_TANG') then
         call jevech('PCOMPOR', 'L', jv_compo)
-        rela_comp = zk16(jv_compo)
+! ----- Select objects to construct from option name
+        call behaviourOption(option, zk16(jv_compo),&
+                             lMatr , lVect ,&
+                             lVari , lSigm ,&
+                             codret)
+        rela_comp = zk16(jv_compo-1+RELA_NAME)
         if (rela_comp .ne. 'ELAS') then
             call utmess('F', 'FLUID1_1')
         endif
@@ -205,9 +223,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Save vector
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or.&
-        option .eq. 'RAPH_MECA' .or.&
-        option .eq. 'FORC_NODA') then
+    if (lVect .or. option .eq. 'FORC_NODA') then
         if (fsi_form .eq. 'FSI_UPPHI') then
             call jevech('PVECTUR', 'E', jv_vect)
             call jevech('PDEPLMR', 'L', jv_deplm)
@@ -236,7 +252,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Save return code
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+    if (lSigm) then
         if (fsi_form .eq. 'FSI_UPPHI') then
             call jevech('PCODRET', 'E', jv_codret)
             zi(jv_codret) = 0

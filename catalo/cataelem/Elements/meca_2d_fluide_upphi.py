@@ -123,7 +123,10 @@ class MEFLQU4(Element):
             para_in  = ((SP.PCOMPOR, LC.CCOMPOR), (SP.PDEPLMR, DDL_MECA),
                         (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, LC.EGEOM2D),
                         (SP.PMATERC, LC.CMATERC),),
-            para_out = ((SP.PMATUUR, MMATUUR),),
+            para_out = ((SP.PMATUUR, MMATUUR), 
+                        (SP.PVECTUR, MVECTUR), 
+                        (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                       ),
         ),
 
         OP.TOU_INI_ELEM(te=99,

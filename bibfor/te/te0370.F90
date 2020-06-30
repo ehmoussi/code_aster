@@ -18,6 +18,8 @@
 !
 subroutine te0370(option, nomte)
 !
+use Behaviour_module, only : behaviourOption
+!
 implicit none
 !
 #include "jeveux.h"
@@ -27,6 +29,7 @@ implicit none
 #include "asterfort/jevech.h"
 #include "asterfort/getFluidPara.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
 character(len=16), intent(in) :: option, nomte
 !
@@ -37,6 +40,11 @@ character(len=16), intent(in) :: option, nomte
 ! Elements: 2D_FLUI_PESA
 !
 ! Options: RIGI_MECA/FORC_NODA/FULL_MECA/RAPH_MECA/RIGI_MECA_HYST/RIGI_MECA_TANG
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -56,12 +64,17 @@ character(len=16), intent(in) :: option, nomte
     real(kind=8) :: jac
     real(kind=8) :: dxde, dxdk, dyde, dydk
     integer :: nno, npg
-    integer :: j_mater, iret
+    integer :: j_mater, iret, codret
     character(len=16) :: fsi_form
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    a(:,:,:,:) = 0.d0
+    a     = 0.d0
+    lVect = ASTER_FALSE
+    lMatr = ASTER_FALSE
+    lVari = ASTER_FALSE
+    lSigm = ASTER_FALSE
 !
 ! - Check behaviour
 !
@@ -69,7 +82,12 @@ character(len=16), intent(in) :: option, nomte
         option .eq. 'RAPH_MECA' .or.&
         option .eq. 'RIGI_MECA_TANG') then
         call jevech('PCOMPOR', 'L', jv_compo)
-        rela_comp = zk16(jv_compo)
+! ----- Select objects to construct from option name
+        call behaviourOption(option, zk16(jv_compo),&
+                             lMatr , lVect ,&
+                             lVari , lSigm ,&
+                             codret)
+        rela_comp = zk16(jv_compo-1+RELA_NAME)
         if (rela_comp .ne. 'ELAS') then
             call utmess('F', 'FLUID1_1')
         endif
@@ -139,7 +157,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Save matrix
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RIGI_MECA') then
+    if (lMatr .or. option(1:9) .eq. 'RIGI_MECA') then
         if (option .eq. 'RIGI_MECA_HYST') then
             call jevech('PMATUUC', 'E', jv_matr)
             do i = 1, nt2
@@ -155,9 +173,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Save vector
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or.&
-        option .eq. 'RAPH_MECA' .or.&
-        option .eq. 'FORC_NODA') then
+    if (lVect .or. option .eq. 'FORC_NODA') then
         call jevech('PVECTUR', 'E', jv_vect)
         call jevech('PDEPLMR', 'L', jv_deplm)
         call jevech('PDEPLPR', 'L', jv_deplp)
@@ -182,7 +198,7 @@ character(len=16), intent(in) :: option, nomte
 !
 ! - Save return code
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA') then
+    if (lSigm) then
         call jevech('PCODRET', 'E', jv_codret)
         zi(jv_codret) = 0
     endif

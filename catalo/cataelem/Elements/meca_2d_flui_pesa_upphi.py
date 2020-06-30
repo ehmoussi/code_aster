@@ -34,20 +34,15 @@ import cataelem.Commons.parameters as SP
 import cataelem.Commons.mesh_types as MT
 from cataelem.Options.options import OP
 
-#----------------
-# Modes locaux :
-#----------------
-
-
-NDEPLAC = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
-                            components=('PHI', 'DH',))
-
+#----------------------------------------------------------------------------------------------
+# Located components
+#----------------------------------------------------------------------------------------------
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
                              components=('PHI', 'DH',))
 
-
-
+NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
+                             components=('PHI', 'DH',))
 
 NGEOMER = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
                             components=('X', 'Y', 'Z',))
@@ -141,12 +136,14 @@ class MEFP_FACE3(Element):
                           ),
 
         OP.RIGI_MECA_TANG(te=370,
-                          para_in=(
-                          (OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR), (
-                              SP.PDEPLMR, DDL_MECA),
-                          (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
-                          (SP.PMATERC, LC.CMATERC), ),
-                          para_out=((SP.PMATUUR, MMATUUR), ),
+            para_in  = ((OP.RIGI_MECA_TANG.PCOMPOR, LC.CCOMPOR),
+                         (SP.PDEPLMR, DDL_MECA),
+                         (SP.PDEPLPR, DDL_MECA), (SP.PGEOMER, NGEOMER),
+                         (SP.PMATERC, LC.CMATERC),),
+            para_out = ((SP.PMATUUR, MMATUUR), 
+                        (SP.PVECTUR, MVECTUR), 
+                        (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                       ),
                           ),
 
         OP.TOU_INI_ELEM(te=99,
@@ -163,7 +160,6 @@ class MEFP_FACE3(Element):
 
     )
 
-
 #------------------------------------------------------------
 class MEFP_FACE4(MEFP_FACE3):
 
@@ -173,7 +169,6 @@ class MEFP_FACE4(MEFP_FACE3):
         ElrefeLoc(
             MT.QU4, gauss=('RIGI=FPG4', 'FPG1=FPG1',), mater=('FPG1',),),
     )
-
 
 #------------------------------------------------------------
 class MEFP_FACE6(MEFP_FACE3):
@@ -185,7 +180,6 @@ class MEFP_FACE6(MEFP_FACE3):
             MT.TR6, gauss=('RIGI=FPG4', 'FPG1=FPG1',), mater=('FPG1',),),
     )
 
-
 #------------------------------------------------------------
 class MEFP_FACE8(MEFP_FACE3):
 
@@ -195,7 +189,6 @@ class MEFP_FACE8(MEFP_FACE3):
         ElrefeLoc(
             MT.QU8, gauss=('RIGI=FPG9', 'FPG1=FPG1',), mater=('FPG1',),),
     )
-
 
 #------------------------------------------------------------
 class MEFP_FACE9(MEFP_FACE3):
