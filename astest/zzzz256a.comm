@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,18 +17,18 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'));
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET',),DEBUG=_F(SDVERI='OUI'))
 
-MAILLA0=LIRE_MAILLAGE(FORMAT="ASTER",);
+MAILLA0=LIRE_MAILLAGE(FORMAT="ASTER",)
 
 MAILLA=CREA_MAILLAGE(MAILLAGE=MAILLA0,
                      CREA_POI1=_F(NOM_GROUP_MA='M_DISCRE',
-                                  NOEUD='N1',),);
+                                  NOEUD='N1',),)
 
 AFMO=AFFE_MODELE(MAILLAGE=MAILLA,
                  AFFE=(_F(GROUP_MA='M_DISCRE',
                           PHENOMENE='MECANIQUE',
-                          MODELISATION='2D_DIS_T',),),);
+                          MODELISATION='2D_DIS_T',),),)
 
 AFCAEL=AFFE_CARA_ELEM(MODELE=AFMO,
                       DISCRET_2D=(_F(CARA='K_T_N',
@@ -37,55 +37,55 @@ AFCAEL=AFFE_CARA_ELEM(MODELE=AFMO,
                                      SYME='NON',),
                                   _F(CARA='M_T_D_N',
                                      GROUP_MA='M_DISCRE',
-                                     VALE=1.0,),),);
+                                     VALE=1.0,),),)
 
 AFEMEC=AFFE_CHAR_MECA(MODELE=AFMO,
                       FORCE_NODALE=_F(NOEUD='N1',
                                       FX=1,
-                                      FY=1,),);
+                                      FY=1,),)
 
 CAVEEL=CALC_VECT_ELEM(OPTION='CHAR_MECA',
                       CHARGE=AFEMEC,
-                      CARA_ELEM=AFCAEL,);
+                      CARA_ELEM=AFCAEL,)
 
 MASEL=CALC_MATR_ELEM(OPTION='MASS_MECA',
                      MODELE=AFMO,
                      CARA_ELEM=AFCAEL,
-                     CHARGE=AFEMEC,);
+                     CHARGE=AFEMEC,)
 
 RIGEL=CALC_MATR_ELEM(OPTION='RIGI_MECA',
                      MODELE=AFMO,
                      CARA_ELEM=AFCAEL,
-                     CHARGE=AFEMEC,);
+                     CHARGE=AFEMEC,)
 
 NUDDL=NUME_DDL(MODELE=AFMO,
-               CHARGE=AFEMEC,);
+               CHARGE=AFEMEC,)
 
 MASSE=ASSE_MATRICE(MATR_ELEM=MASEL,
-                   NUME_DDL=NUDDL,);
+                   NUME_DDL=NUDDL,)
 
 RIGI=ASSE_MATRICE(MATR_ELEM=RIGEL,
-                  NUME_DDL=NUDDL,);
+                  NUME_DDL=NUDDL,)
 
 VEC1=ASSE_VECTEUR(VECT_ELEM=CAVEEL,
-                  NUME_DDL=NUDDL,);
+                  NUME_DDL=NUDDL,)
 
 MAT1=COMB_MATR_ASSE(COMB_R=(_F(MATR_ASSE=MASSE,
                                COEF_R=1.0,),
                             _F(MATR_ASSE=RIGI,
-                               COEF_R=1.0,),),);
+                               COEF_R=1.0,),),)
 
 MASSE=FACTORISER(reuse =MASSE,
-                MATR_ASSE=MASSE,);
+                MATR_ASSE=MASSE,)
 
 SOL1=RESOUDRE(MATR=MASSE,
-              CHAM_NO=VEC1,);
+              CHAM_NO=VEC1,)
 
 MAT1=FACTORISER(reuse =MAT1,
-                MATR_ASSE=MAT1,);
+                MATR_ASSE=MAT1,)
 
 SOL2=RESOUDRE(MATR=MAT1,
-              CHAM_NO=VEC1,);
+              CHAM_NO=VEC1,)
 
 TEST_RESU(CHAM_NO=(_F(NOEUD='N1',
                       REFERENCE='ANALYTIQUE',
@@ -104,8 +104,9 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='N1',
                    _F(NOEUD='N1',
                       REFERENCE='ANALYTIQUE',
                       NOM_CMP='DX',
-                      PRECISION=1.E-3,
+                      PRECISION=1.E-15,
                       CHAM_GD=SOL2,
+                      CRITERE='ABSOLU',
                       VALE_CALC= 0.00000000E+00,
                       VALE_REFE=0,),
                    _F(NOEUD='N1',
@@ -118,4 +119,4 @@ TEST_RESU(CHAM_NO=(_F(NOEUD='N1',
                    ),
           )
 
-FIN();
+FIN()
