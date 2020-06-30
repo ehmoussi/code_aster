@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -187,7 +187,7 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                    RESULTAT=U1,
                    NOM_CHAM='EFGE_ELNO',
                    NOEUD='N1',
-                   NOM_CMP='N', ORDRE_GRANDEUR=1.0E-05,
+                   NOM_CMP='N', ORDRE_GRANDEUR=2.0E-05,
                    VALE_CALC=0.0, VALE_REFE=0.0, CRITERE='ABSOLU', REFERENCE='ANALYTIQUE',
                    MAILLE='M1',),
                 _F(NUME_ORDRE=1,
