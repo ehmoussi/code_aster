@@ -26,6 +26,7 @@ implicit none
 #include "asterfort/rcvalb.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
+#include "asterfort/get_elas_id.h"
 !
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg
@@ -62,8 +63,9 @@ integer, optional, intent(out) :: ihydr_
     integer :: iret_hydr, iret_hydrm, iret_hydrp
     real(kind=8) :: hydrm, hydrp
     real(kind=8) :: bendom, bendop
-    integer :: iadzi, iazk24, icodrm(1), icodrp(1)
+    integer :: elas_id, iadzi, iazk24, icodrm(1), icodrp(1)
     character(len=8) :: nomres, valk(3)
+    character(len=16) :: elas_keyword
     real(kind=8) :: valres(1)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -100,6 +102,10 @@ integer, optional, intent(out) :: ihydr_
                     ksp, hydrp, iret_hydrp)
     endif
 !
+! - Get type of elasticity (Isotropic/Orthotropic/Transverse isotropic)
+!
+    call get_elas_id(j_mater, elas_id, elas_keyword)
+!
 ! - Get elastic parameters
 !
     nomres='B_ENDOGE'
@@ -109,7 +115,7 @@ integer, optional, intent(out) :: ihydr_
     if (poum.eq.'T'.or.poum.eq.'-') then
         if (iret_hydrm.eq.0) then
             call rcvalb(fami, kpg, ksp, '-', j_mater,&
-                        materi, 'ELAS', 0, ' ', [0.d0],&
+                        materi, elas_keyword, 0, ' ', [0.d0],&
                         1, nomres, valres(1), icodrm(1), 1)
             bendom = valres(1)
         endif
@@ -117,7 +123,7 @@ integer, optional, intent(out) :: ihydr_
     if (poum.eq.'T'.or.poum.eq.'+') then
         if (iret_hydrp.eq.0) then
             call rcvalb(fami, kpg, ksp, '+', j_mater,&
-                        materi, 'ELAS', 0, ' ', [0.d0],&
+                        materi, elas_keyword, 0, ' ', [0.d0],&
                         1, nomres, valres(1), icodrp(1), 1)
             bendop = valres(1)
         endif

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -119,11 +119,12 @@ implicit none
 ! ----- Hydric strains
 !
         if (hydr .ne. 0.d0) then
-            phenom = 'ELAS'
+            call get_elas_id(j_mater, elas_id, elas_keyword)
+!            phenom = 'ELAS'
             nomres(1) = 'B_ENDOGE'
             nbv = 1
             call rcvalb(fami, kpg, ksp, poum, j_mater,&
-                        ' ', phenom, 1, nompar, [valpar],&
+                        ' ', elas_keyword, 1, nompar, [valpar],&
                         nbv, nomres, valres, icodre, 0)
             if (icodre(1) .eq. 0) then
                 bendog = valres(1)
@@ -165,11 +166,12 @@ implicit none
 !
 ! ----- Drying strains
 !
-        phenom = 'ELAS'
+        call get_elas_id(j_mater, elas_id, elas_keyword)
+!        phenom = 'ELAS'
         nomres(1) = 'K_DESSIC'
         nbv = 1
         call rcvalb(fami, kpg, ksp, poum, j_mater,&
-                    ' ', phenom, 1, nompar, [valpar],&
+                    ' ', elas_keyword, 1, nompar, [valpar],&
                     nbv, nomres, valres, icodre, 0)
         if (icodre(1) .eq. 0) then
             kdessi = valres(1)

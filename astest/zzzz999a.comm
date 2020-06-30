@@ -1,0 +1,160 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+EL = DEFI_CONSTANTE (VALE=  10.)
+ET = DEFI_CONSTANTE (VALE=  10.)
+EN = DEFI_CONSTANTE (VALE=  10.)
+GLT = DEFI_CONSTANTE (VALE=  5.)
+GTN = DEFI_CONSTANTE (VALE=  5.)
+GLN = DEFI_CONSTANTE (VALE=  5.)
+NULT = DEFI_CONSTANTE (VALE=  0.0)
+NULN = DEFI_CONSTANTE (VALE=  0.0)
+NUTN = DEFI_CONSTANTE (VALE=  0.0)
+
+SECHREF = 2.0
+SECHI = SECHREF
+SECHF = 3*SECHREF
+
+MAT = DEFI_MATERIAU( ELAS_ORTH_FO =_F(  E_L   = EL,
+                                        E_T   = ET,
+                                        E_N   = EN,
+                                        G_LT  = GLT,
+                                        G_TN  = GTN,
+                                        G_LN  = GLN,
+                                        NU_LT = NULT,
+                                        NU_LN = NULN,
+                                        NU_TN = NUTN,
+                                        B_ENDOGE = 1.5,
+                                        K_DESSIC = 3.5), )
+                                    
+HYDRIMP = DEFI_FONCTION( NOM_PARA='INST',
+                         NOM_RESU='HYDR',
+                         VALE=( 0. , 0. , 1. , 2.),)
+                         
+SECHIMP = DEFI_FONCTION( NOM_PARA='INST',
+                         NOM_RESU='SECH',
+                         VALE=( 0. , SECHI , 1. , SECHF),)
+                       
+LINST = DEFI_LIST_REEL(DEBUT=0.0,
+                       INTERVALLE=(_F(JUSQU_A=1.0,
+                                      NOMBRE=1,),
+                                        ),);
+                       
+UHYDR = SIMU_POINT_MAT(COMPORTEMENT=_F(RELATION='ELAS',),
+                       MATER=MAT,
+                       SUPPORT='POINT',
+                       AFFE_VARC=(_F(  NOM_VARC = 'HYDR',
+                                       VALE_FONC = HYDRIMP),
+                                    ),
+                       INCREMENT=_F(LIST_INST=LINST,),
+                       INFO=1,);
+                       
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=-3.0,
+           VALE_REFE=-3.0,
+           NOM_PARA='EPXX',
+           TABLE=UHYDR,
+           FILTRE=_F(PRECISION=1.0000000000000001E-05,
+                     NOM_PARA='INST',
+                     VALE=1.0,),
+           )
+           
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=-3.0,
+           VALE_REFE=-3.0,
+           NOM_PARA='EPYY',
+           TABLE=UHYDR,
+           FILTRE=_F(PRECISION=1.0000000000000001E-05,
+                     NOM_PARA='INST',
+                     VALE=1.0,),
+           )
+           
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=-3.0,
+           VALE_REFE=-3.0,
+           NOM_PARA='EPZZ',
+           TABLE=UHYDR,
+           FILTRE=_F(PRECISION=1.0000000000000001E-05,
+                     NOM_PARA='INST',
+                     VALE=1.0,),
+           )
+           
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0,
+           VALE_REFE=0.0,
+           NOM_PARA='EPXY',
+           TABLE=UHYDR,
+           FILTRE=_F(PRECISION=1.0000000000000001E-05,
+                     NOM_PARA='INST',
+                     VALE=1.0,),
+           )
+
+USECH = SIMU_POINT_MAT(COMPORTEMENT=_F(RELATION='ELAS',),
+                       MATER=MAT,
+                       SUPPORT='POINT',
+                       AFFE_VARC=(_F(  NOM_VARC = 'SECH',
+                                       VALE_FONC = SECHIMP,
+                                       VALE_REF = SECHREF),
+                                    ),
+                       INCREMENT=_F(LIST_INST=LINST,),
+                       INFO=2,);
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=14.0,
+           VALE_REFE=14.0,
+           NOM_PARA='EPXX',
+           TABLE=USECH,
+           FILTRE=_F(PRECISION=1.0000000000000001E-05,
+                     NOM_PARA='INST',
+                     VALE=1.0,),
+           )
+           
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=14.0,
+           VALE_REFE=14.0,
+           NOM_PARA='EPYY',
+           TABLE=USECH,
+           FILTRE=_F(PRECISION=1.0000000000000001E-05,
+                     NOM_PARA='INST',
+                     VALE=1.0,),
+           )
+           
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=14.0,
+           VALE_REFE=14.0,
+           NOM_PARA='EPZZ',
+           TABLE=USECH,
+           FILTRE=_F(PRECISION=1.0000000000000001E-05,
+                     NOM_PARA='INST',
+                     VALE=1.0,),
+           )
+           
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           VALE_CALC=0.0,
+           VALE_REFE=0.0,
+           NOM_PARA='EPXY',
+           TABLE=USECH,
+           FILTRE=_F(PRECISION=1.0000000000000001E-05,
+                     NOM_PARA='INST',
+                     VALE=1.0,),
+           )
+
+FIN()

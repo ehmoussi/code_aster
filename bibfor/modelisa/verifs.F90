@@ -26,6 +26,7 @@ implicit none
 #include "asterfort/rcvalb.h"
 #include "asterfort/tecael.h"
 #include "asterfort/utmess.h"
+#include "asterfort/get_elas_id.h"
 !
 character(len=*), intent(in) :: fami
 integer, intent(in) :: kpg
@@ -62,9 +63,10 @@ integer, optional, intent(out) :: isech_
     integer :: iret_sech, iret_sechm, iret_sechp, iret_sechref
     real(kind=8) :: sechm, sechp, sechref
     real(kind=8) :: kdessm, kdessp
-    integer :: iadzi, iazk24, icodrm(1), icodrp(1)
+    integer :: elas_id, iadzi, iazk24, icodrm(1), icodrp(1)
     character(len=8) :: nomres, valk(3)
     real(kind=8) :: valres(1)
+    character(len=16) :: elas_keyword
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -110,6 +112,10 @@ integer, optional, intent(out) :: isech_
                     ksp, sechp, iret_sechp)
     endif
 !
+! - Get type of elasticity (Isotropic/Orthotropic/Transverse isotropic)
+!
+    call get_elas_id(j_mater, elas_id, elas_keyword)
+!
 ! - Get elastic parameters
 !
     nomres='K_DESSIC'
@@ -119,7 +125,7 @@ integer, optional, intent(out) :: isech_
     if (poum.eq.'T'.or.poum.eq.'-') then
         if (iret_sechm.eq.0) then
             call rcvalb(fami, kpg, ksp, '-', j_mater,&
-                        materi, 'ELAS', 0, ' ', [0.d0],&
+                        materi, elas_keyword, 0, ' ', [0.d0],&
                         1, nomres, valres(1), icodrm(1), 1)
             kdessm = valres(1)
         endif
@@ -128,7 +134,7 @@ integer, optional, intent(out) :: isech_
     if (poum.eq.'T'.or.poum.eq.'+') then
         if (iret_sechp.eq.0) then
             call rcvalb(fami, kpg, ksp, '+', j_mater,&
-                        materi, 'ELAS', 0, ' ', [0.d0],&
+                        materi, elas_keyword, 0, ' ', [0.d0],&
                         1, nomres, valres(1), icodrp(1), 1)
             kdessp = valres(1)
         endif
