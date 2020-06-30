@@ -78,6 +78,7 @@ character(len=*), optional, intent(in) :: sddynz_
 ! In  iter_newt        : index of current Newton iteration
 ! In  ds_constitutive  : datastructure for constitutive laws management
 ! In  ds_material      : datastructure for material parameters
+! In  ds_system        : datastructure for non-linear system management
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  hhoField         : datastructure for HHO
@@ -153,10 +154,6 @@ character(len=*), optional, intent(in) :: sddynz_
         l_codret = ASTER_FALSE
         l_sigmex = ASTER_FALSE
         l_codpre = ASTER_FALSE
-!
-        if (l_hho) then
-            l_vefint = ASTER_TRUE
-        end if
     else if (option(1:16) .eq. 'RIGI_MECA_IMPLEX') then
         l_merigi = ASTER_TRUE
         l_vefint = ASTER_FALSE
@@ -168,11 +165,7 @@ character(len=*), optional, intent(in) :: sddynz_
         l_vefint = ASTER_FALSE
         l_codret = ASTER_FALSE
         l_sigmex = ASTER_FALSE
-        l_codpre = ASTER_FALSE
-!
-        if (l_hho) then
-            l_vefint = ASTER_TRUE
-        end if
+        l_codpre = ASTER_TRUE
     else if (option(1:9) .eq. 'RAPH_MECA') then
         l_merigi = ASTER_FALSE
         l_vefint = ASTER_TRUE
@@ -182,6 +175,13 @@ character(len=*), optional, intent(in) :: sddynz_
     else
         ASSERT(ASTER_FALSE)
     endif
+!
+! - For HHO: always integrate behaviour law
+!
+    if (l_hho) then
+        ASSERT(.not. l_sigmex)
+        l_vefint = ASTER_TRUE
+    end if
 !
 ! - Prepare vector and matrix
 !
@@ -212,15 +212,13 @@ character(len=*), optional, intent(in) :: sddynz_
 !
 ! - Output fields
 !
-    lpaout(1) = 'PCONTPR'
-    lchout(1) = sigm_curr(1:19)
-    lpaout(2) = 'PVARIPR'
-    lchout(2) = vari_curr(1:19)
-    lpaout(3) = 'PCACO3D'
-    lchout(3) = caco3d(1:19)
-    lpaout(4) = 'PSTRXPR'
-    lchout(4) = strx_curr(1:19)
-    nbout = 4
+    lpaout(1) = 'PVARIPR'
+    lchout(1) = vari_curr(1:19)
+    lpaout(2) = 'PCACO3D'
+    lchout(2) = caco3d(1:19)
+    lpaout(3) = 'PSTRXPR'
+    lchout(3) = strx_curr(1:19)
+    nbout = 3
     if (l_merigi) then
         nbout = nbout+1
         lpaout(nbout) = 'PMATUUR'
@@ -253,9 +251,16 @@ character(len=*), optional, intent(in) :: sddynz_
         lpaout(nbout) = 'PCOPRED'
         lchout(nbout) = ds_constitutive%code_pred(1:19)
         ich_codret = nbout
+        nbout = nbout+1
+        lpaout(nbout) = 'PCONTPR'
+        lchout(nbout) = ds_constitutive%sigm_pred(1:19)
+    else
+        nbout = nbout+1
+        lpaout(nbout) = 'PCONTPR'
+        lchout(nbout) = sigm_curr(1:19)
     endif
 !
-! - Prepare output for HHO
+! - Prepare output fields for HHO
 !
     if (l_hho) then
         nbout = nbout+1

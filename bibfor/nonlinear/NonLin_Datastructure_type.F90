@@ -540,6 +540,8 @@ implicit none
         character(len=24)     :: comp_error  = '&&OP00XX.COMP_ERROR'
 ! ----- Name of field for coefficient in prediction
         character(len=24)     :: code_pred   = '&&OP00XX.CODE_PRED'
+! ----- Name of field for stress at prediction
+        character(len=24)     :: sigm_pred   = '&&OP00XX.SIGM_PRED'
 ! ----- Flag for De Borst algorithm
         aster_logical         :: l_deborst   = ASTER_FALSE
 ! ----- Flag for DIS_CHOC

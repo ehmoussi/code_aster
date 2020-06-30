@@ -47,8 +47,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: zsolal = 17
-    integer, parameter :: zvalin = 28
+    integer, parameter :: zsolal = 17, zvalin = 28
     character(len=19) :: hval_incr(zvalin), hval_algo(zsolal)
     integer :: nb_obje
     integer, parameter :: nb_obje_maxi = 9

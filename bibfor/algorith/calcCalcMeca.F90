@@ -16,7 +16,6 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
-! aslint: disable=W1504
 !
 subroutine calcCalcMeca(nb_option      , list_option,&
                         l_elem_nonl    , nume_harm  ,&
@@ -81,7 +80,7 @@ integer, intent(out) ::  nb_obje
 ! In  cara_elem        : name of elementary characteristics (field)
 ! In  l_elem_nonl      : .true. if all elements can compute non-linear options
 ! In  ds_constitutive  : datastructure for constitutive laws management
-! IO  ds_material      : datastructure for material parameters
+! In  ds_material      : datastructure for material parameters
 ! In  hval_incr        : hat-variable for incremental values fields
 ! In  hval_algo        : hat-variable for algorithms fields
 ! In  merigi           : name of elementary for tangent matrix
@@ -201,7 +200,7 @@ integer, intent(out) ::  nb_obje
         ds_system%merigi = merigi
         ds_system%vefint = vefint
         iter_newt = 1
-        call merimo(base,&
+        call merimo(base           ,&
                     l_xfem         , l_macr_elem, l_hho    ,&
                     model          , cara_elem  , iter_newt,&
                     ds_constitutive, ds_material,&
