@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,10 @@ MO=AFFE_MODELE(MAILLAGE=MA,
                        MODELISATION='D_PLAN_SI',),);
 
 MATERIAU=DEFI_MATERIAU(ELAS=_F(E=200000.0,
-                               NU=0.3,),
+                               NU=0.3,),);
+
+MATERIAU=DEFI_MATERIAU(reuse=MATERIAU,
+                       MATER=MATERIAU,
                        ECRO_LINE=_F(D_SIGM_EPSI=1000.0,
                                     SY=200.0,),);
 

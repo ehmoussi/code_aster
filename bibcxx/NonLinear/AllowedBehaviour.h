@@ -75,6 +75,7 @@ enum ConstitutiveLawEnum {
     Endo_Poro_Beton,
     Endo_Carre,
     Endo_Fiss_Exp,
+    Endo_Loca_Exp,
     BrittleDamage,
     HeterogeneousDamage,
     ConcreteIsotropicDamage,

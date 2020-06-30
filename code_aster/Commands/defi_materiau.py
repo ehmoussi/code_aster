@@ -44,6 +44,7 @@ class MaterialDefinition(ExecuteCommand):
             keywords (dict): Keywords arguments of user's keywords.
         """
         if keywords.get("reuse"):
+            assert keywords["reuse"] == keywords["MATER"]
             self._result = keywords["MATER"]
         else:
             self._result = Material()
@@ -57,9 +58,11 @@ class MaterialDefinition(ExecuteCommand):
         check_keywords(keywords)
 
         mater = keywords.get("MATER")
-        if mater is not None:
-            if mater.getName() != self._result.getName():
-                self._result.setReferenceMaterial(mater)
+        if keywords.get("reuse"):
+            self._result.setReferenceMaterial(mater)
+        elif mater is not None:
+                if mater.getName() != self._result.getName():
+                    self._result.setReferenceMaterial(mater)
 
         classByName = MaterialDefinition._byKeyword()
         materByName = self._buildInstance(keywords, classByName)
