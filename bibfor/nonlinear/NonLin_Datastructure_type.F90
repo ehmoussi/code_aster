@@ -672,6 +672,8 @@ implicit none
         character(len=19)     :: cninte = '&&OP00XX.CNINTE'
 ! ----- Internal forces
         character(len=19)     :: cnfint = '&&OP00XX.CNFINT'
+! ----- Internal forces for RESI_COMP_RELA
+        character(len=19)     :: cncomp = '&&OP00XX.CNCOMP'
 ! ----- Elementary rigidity matrix
         character(len=19)     :: merigi = '&&OP00XX.MERIGI'
 ! ----- Flag for symmetric rigidity matrix

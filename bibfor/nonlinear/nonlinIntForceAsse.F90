@@ -33,6 +33,7 @@ implicit none
 #include "asterfort/infdbg.h"
 #include "asterfort/utmess.h"
 #include "asterfort/nmdebg.h"
+#include "asterfort/copisd.h"
 !
 integer, intent(in) :: typeAsse, list_func_acti(*)
 character(len=19), intent(in) :: sdnume
@@ -56,7 +57,7 @@ type(NL_DS_System), intent(in) :: ds_system
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    aster_logical :: l_gdvarino
+    aster_logical :: l_gdvarino, l_resi_comp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -67,7 +68,8 @@ type(NL_DS_System), intent(in) :: ds_system
 !
 ! - Active functionnalities
 !
-    l_gdvarino = isfonc(list_func_acti, 'ENDO_NO')
+    l_gdvarino  = isfonc(list_func_acti, 'ENDO_NO')
+    l_resi_comp = isfonc(list_func_acti, 'RESI_COMP')
 !
 ! - Assemble
 !
@@ -92,6 +94,12 @@ type(NL_DS_System), intent(in) :: ds_system
 !
     if (l_gdvarino .and. typeAsse .eq. INTE_FORCE_INTE) then
         call setNodalValuesGDVARINO(ds_system%nume_dof, sdnume, ds_system%cnfint)
+    endif
+!
+! - If RESI_COMP_RELA
+!
+    if (l_resi_comp.and. typeAsse .ne. INTE_FORCE_INTE) then
+        call copisd('CHAMP_GD', 'V', ds_system%cnfint, ds_system%cncomp)
     endif
 !
 ! - Debug
