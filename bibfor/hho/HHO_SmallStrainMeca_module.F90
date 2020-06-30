@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1504
 !
 module HHO_SmallStrainMeca_module
 !
@@ -213,6 +214,10 @@ contains
                 call dmatmc(fami, imate, time_curr, '+', ipg, 1, repere, coorpg(1:3), nb_sig, &
                             dsidep(1:nb_sig, 1:nb_sig))
             end if
+! --------- For new prediction and nmisot.F90
+            if (option.eq.'RIGI_MECA_TANG') then
+                Cauchy_curr = 0.d0
+            endif
 !
             if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
 ! -------- tranform Cauchy_curr in symmetric form
