@@ -91,7 +91,7 @@ with test.assertRaisesRegex(code_aster.AsterError, "listes.*longueurs"):
                          ORDONNEE=np.arange( n - 1. ),
                          INTERPOL=("LIN", "LIN"),)
 
-with test.assertRaisesRegex(TypeError, "Unexpected type.*str"):
+with test.assertRaisesRegex(code_aster.AsterError, "Unexpected type.*str"):
     bad_type = valy.tolist()
     bad_type[5] = "a"
     fsin = DEFI_FONCTION(NOM_PARA="INST",

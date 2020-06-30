@@ -172,14 +172,15 @@ class ExecuteCommand(object):
         remove_none(keywords)
         try:
             self.check_syntax(keywords)
-        except CheckerError as exc:
+        except (CheckerError, TypeError, ValueError) as exc:
             # in case of syntax error, show the syntax and raise the exception
             self.print_syntax(keywords)
             ExecuteCommand.level -= 1
+            msg = getattr(exc, "msg", str(exc))
             if ExecutionParameter().option & Options.Debug:
-                logger.error(exc.msg)
+                logger.error(msg)
                 raise
-            UTMESS("F", "SUPERVIS_4", valk=(self.command_name, exc.msg))
+            UTMESS("F", "SUPERVIS_4", valk=(self.command_name, msg))
         finally:
             timer.Stop(" . check syntax")
         if ExecutionParameter().option & Options.TestMode:
