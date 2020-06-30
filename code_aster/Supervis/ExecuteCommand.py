@@ -73,7 +73,7 @@ from ..Cata.SyntaxUtils import mixedcopy, remove_none, search_for
 from ..Messages import UTMESS, MessageLog
 from ..Objects import DataStructure, PyDataStructure
 from ..Utilities import (ExecutionParameter, Options, deprecated,
-                         import_object, logger, no_new_attributes, textbox)
+                         import_object, logger, no_new_attributes)
 from ..Utilities.outputs import command_text, decorate_name
 from .code_file import track_coverage
 from .CommandSyntax import CommandSyntax
@@ -179,12 +179,7 @@ class ExecuteCommand(object):
             if ExecutionParameter().option & Options.Debug:
                 logger.error(exc.msg)
                 raise
-            text = textbox(os.linesep.join([
-                "Syntax error in {}:".format(self.command_name),
-                "", exc.msg,
-                "", "Detailed exception below."]))
-            logger.info(text)
-            raise exc.original(exc.msg)
+            UTMESS("F", "SUPERVIS_4", valk=(self.command_name, exc.msg))
         finally:
             timer.Stop(" . check syntax")
         if ExecutionParameter().option & Options.TestMode:

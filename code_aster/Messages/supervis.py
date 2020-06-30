@@ -42,6 +42,14 @@ Les commandes DEBUT et POURSUITE doivent être appelées une fois et une seule.
   Erreur programmeur : %(k1)s non appariés.
 """),
 
+    4: _("""
+Erreur de syntaxe dans %(k1)s
+
+%(k2)s
+
+Exception détaillée ci-dessous.
+"""),
+
     8: _("""
   Un nom de concept intermédiaire doit commencer par '.' ou '_' et non :  %(k1)s
 """),

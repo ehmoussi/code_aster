@@ -28,8 +28,9 @@ import aster
 import aster_core
 import libaster
 
-from ..Utilities import (Singleton, _, clean_string, convert, copy_text_to,
-                         cut_long_lines, force_list, to_unicode, ufmt)
+from ..Utilities import (Singleton, _, center, clean_string, convert,
+                         copy_text_to, cut_long_lines, force_list, textbox,
+                         to_unicode, ufmt)
 from ..Utilities.misc import get_time
 
 DEBUG = False
@@ -37,7 +38,7 @@ CENTER = 1
 DECORATED = 2
 ALL_UNIT = 4
 
-MAXLENGTH = 132
+MAXLENGTH = 100
 LINE_WITH = 80
 
 contacter_assistance = _("""
@@ -287,7 +288,7 @@ Exception : %s
             # cette étape ne doit jamais faire planter !
             try:
                 dictmess['corps_message'] = dictmess['corps_message'] % args
-            except Exception as exc:
+            except Exception:
                 dictmess['corps_message'] = repr(args)
         # limite la longueur des lignes
         dictmess['corps_message'] = cut_long_lines(
@@ -553,9 +554,6 @@ Exception : %s
             'id_message'    : identification du message
             'corps_message' : texte
         """
-        charh = '-'    # horizontal
-        charv = '!'    # vertical
-        charc = '!'    # coin
         dcomm = {
             'A' : _("""Ceci est une alarme. Si vous ne comprenez pas le sens de cette
 alarme, vous pouvez obtenir des résultats inattendus !"""),
@@ -565,91 +563,27 @@ du calcul ont été sauvées dans la base jusqu'au moment de l'arret."""),
             'F' : _("""Cette erreur est fatale. Le code s'arrête."""),
         }
 
-        # format complet
-        format_general = {
-            'decal': '   ',
-            'header' : """<%(type_message)s> %(str_id_message)s""",
-            'ligne': '%(charv)s %%-%(maxlen)ds %(charv)s',
-            'corps'  : """%(header)s
-
-%(corps_message)s
-%(context_info)s
-
-%(commentaire)s
-""",
-            'final'  : """
-%(separateur)s
-%(corps)s
-%(separateur)s
-
-""",
-        }
-        # format light pour les infos
-        format_light = {
-            'decal': '',
-            'header' : """<%(type_message)s> """,
-            'ligne': '%%s',
-            'corps'  : """%(corps_message)s
-%(context_info)s""",
-            'final'  : """%(corps)s""",
-        }
         dmsg = dictmess.copy()
-        dmsg['type_message'] = self.get_type_message(dictmess)
-        if dmsg['id_message'] != 'I':
-            dmsg['str_id_message'] = '<%s>' % dmsg['id_message']
+        typmess = self.get_type_message(dictmess)
+        comm = dcomm.get(typmess, '')
+        if re.search('^DVP', dmsg['id_message']):
+            comm += contacter_assistance
+        comm = comm.strip()
+
+        if dmsg['flags'] & DECORATED or typmess != 'I':
+            text = ["<{0}> <{1}>".format(typmess, dmsg['id_message']), ""]
         else:
-            dmsg['str_id_message'] = ''
+            text = []
+        text.append(dmsg['corps_message'].lstrip())
+        if comm:
+            text.extend(["", comm])
 
-        # format utilisé
-        format = format_general
-        if dmsg['type_message'] == 'I':
-            format = format_light
-        if dmsg['flags'] & DECORATED:
-            format = format_general
-        if format is format_general:
-            lines = dmsg['corps_message'].splitlines()
-            while len(lines) > 1 and lines[0].strip() == '':
-                del lines[0]
-            dmsg['corps_message'] = os.linesep.join(lines).rstrip()
-
-        dmsg['header'] = ufmt(format['header'], dmsg)
-        dmsg['commentaire'] = dcomm.get(dmsg['type_message'], '')
-        if re.search('^DVP', dmsg['id_message']) is not None:
-            dmsg['commentaire'] += contacter_assistance
-
-        dmsg['corps'] = ufmt(format['corps'], dmsg)
-        if format is format_general:
-            dmsg['corps'] = dmsg['corps'].strip()
-
-        # longueur de la ligne la plus longue
-        l_line = dmsg['corps'].splitlines()
-        maxlen = max([len(line) for line in l_line])
-
-        # format des lignes sur maxlen caractères
-        dlin = {
-            'charh': charh,
-            'charv': charv,
-            'charc': charc,
-            'maxlen': maxlen
-        }
-        fmt_line = ufmt(format['ligne'], dlin)
-
-        # on formate toutes les lignes
+        body = os.linesep.join(text)
         if dmsg['flags'] & CENTER:
-            l_line = [line.strip().center(LINE_WITH) for line in l_line]
-        txt = [fmt_line % line for line in l_line]
-        dmsg['corps'] = os.linesep.join(txt)
-        dmsg['separateur'] = charc + charh * (maxlen + 2) + charc
-
-        # ligne haut et bas
-        newtxt = format['final'] % dmsg
-        # on décale
-        l_txt = [format['decal'] + line for line in newtxt.splitlines()]
-        if DEBUG:
-            l_txt.append('...' + ' ' * 50 + \
-                         ' {!s} [pid {!s}]'.format(get_time(), os.getpid()))
-
-        return clean_string(os.linesep.join(l_txt))
+            body = center(body, MAXLENGTH)
+        if dmsg['flags'] & DECORATED or typmess != 'I':
+            body = textbox(body, MAXLENGTH)
+        return body
 
     def get_type_message(self, dictmess):
         """Retourne le type du message affiché.

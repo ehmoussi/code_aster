@@ -252,14 +252,31 @@ def _splitline(line, maxlen):
         lines.extend(_splitline(line[maxlen:], maxlen))
     return lines
 
-def _fixed_length(lines ,maxlen):
-    """Fix lines length at `maxlen`."""
-    fmt = "{{0:{}s}}".format(maxlen)
+def _fixed_length(lines, maxlen, align="<"):
+    """Fix lines length at `maxlen`.
+
+    Arguments:
+        lines (list[str]): List of lines.
+        maxlen (int): Lines length.
+        align (str): One of "<", "^", ">"
+
+    Returns:
+        list[str]: List of formatted lines.
+    """
+    fmt = "{{0:{1}{0}s}}".format(maxlen, align)
     return [fmt.format(line) for line in lines]
 
-def textbox(text, maxlen=80):
+def textbox(text, maxlen=90):
     """Format a text into a box to be highlighted.
+
+    Arguments:
+        text (str): Text to be decorated.
+        maxlen (int): Lines length.
+
+    Returns:
+        str: Decorated text.
     """
+    maxlen = maxlen - 6
     upleft = chr(0x2554)
     upright = chr(0x2557)
     horiz = chr(0x2550)
@@ -276,4 +293,20 @@ def textbox(text, maxlen=80):
     fixed = _fixed_length(splitted, maxlen)
     lines.extend([fmt.format(line) for line in fixed])
     lines.extend([foot, ""])
+    return os.linesep.join(lines)
+
+def center(text, maxlen=90):
+    """Format a text as centered.
+
+    Arguments:
+        text (str): Text to be centered.
+        maxlen (int): Lines length.
+
+    Returns:
+        str: Centered text.
+    """
+    splitted = []
+    for line in text.splitlines():
+        splitted.extend(_splitline(line, maxlen))
+    lines = _fixed_length(splitted, maxlen, align="^")
     return os.linesep.join(lines)
