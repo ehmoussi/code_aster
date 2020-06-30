@@ -119,14 +119,6 @@ cata_msg = {
  Épaisseur dans AFFE_CARA_ELEM: %(r2)f
 """),
 
-    54 : _("""
-  la réactualisation de la géométrie (déformation : PETIT_REAC) est déconseillée pour les éléments de coque_1d.
-"""),
-
-    55 : _("""
- nombre de couches limite à 10 pour les coques 1d
-"""),
-
     56 : _("""
  valeur utilisateur de RHO nulle
 """),

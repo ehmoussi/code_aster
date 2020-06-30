@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,22 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0239(option, nomte)
-! ......................................................................
-!    - FONCTION REALISEE:  CALCUL DES OPTIONS NON LINEAIRES
-!                          COQUE 1D
-!                          OPTION : 'RIGI_MECA_TANG ',
-!                                   'FULL_MECA      ','RAPH_MECA      '
-!                          ELEMENT: MECXSE3 (COQUE_AXIS)
-!    - ARGUMENTS:
-!        DONNEES:      OPTION       -->  OPTION DE CALCUL
-!                      NOMTE        -->  NOM DU TYPE ELEMENT
-! ......................................................................
-! person_in_charge: ayaovi-dzifa.kudawoo at edf.fr
 !
 use Behaviour_type
-use Behaviour_module
+use Behaviour_module, only : behaviourOption, behaviourInit
 !
 implicit none
 !
@@ -52,17 +41,33 @@ implicit none
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "blas/dcopy.h"
+#include "asterfort/Behaviour_type.h"
+!
+character(len=16), intent(in) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: COQUE_AXIS
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
     integer :: icompo, nbcou, npge, icontm, ideplm, ivectu, icou, inte, icontp
     integer :: kpki, k1, k2, kompt, ivarim, ivarip, iinstm, iinstp, lgpg, ideplp
     integer :: icarcr, nbvari, jcret, codret
     real(kind=8) :: cisail, zic, coef, rhos, rhot, epsx3, gsx3, sgmsx3
     real(kind=8) :: zmin, hic, depsx3
-    integer :: nbres, itab(8), jnbspi
-    parameter (nbres=2)
-    character(len=16) :: nomres(nbres), option, nomte
+    integer :: itab(8), jnbspi
     character(len=8) ::  nompar, elrefe
-    integer :: valret(nbres)
-    real(kind=8) :: valres(nbres), tempm
+    real(kind=8) :: tempm
     real(kind=8) :: dfdx(3), zero, un, deux
     real(kind=8) :: test, test2, eps, nu, h, cosa, sina, cour, r
     real(kind=8) :: jacp, kappa, correc
@@ -71,56 +76,48 @@ implicit none
     real(kind=8) :: dtild(5, 5), dtildi(5, 5), dsidep(6, 6)
     real(kind=8) :: rtangi(9, 9), rtange(9, 9), sigm2d(4), sigp2d(4)
     real(kind=8) :: angmas(3)
-    integer :: nno, nnos, jgano, ndim, kp, npg, i, j, k, imatuu, icaco, ndimv
+    integer :: nno, kp, npg, i, j, k, imatuu, icaco, ndimv
     integer :: ivarix
     integer :: ipoids, ivf, idfdk, igeom, imate
     integer :: nbpar, cod, iret, ksp
-    aster_logical :: vecteu, matric, testl1, testl2
+    aster_logical :: testl1, testl2
     type(Behaviour_Integ) :: BEHinteg
-!
+    integer, parameter :: nbres = 2
+    character(len=16), parameter :: nomres(nbres) = (/'E ','NU'/)
+    integer :: valret(nbres)
+    real(kind=8) :: valres(nbres)
     parameter (npge=3)
-!
     data zero,un,deux/0.d0,1.d0,2.d0/
+    character(len=16) :: defo_comp, rela_comp, rela_cpla
+    aster_logical :: lVect, lMatr, lVari, lSigm
+!
+! --------------------------------------------------------------------------------------------------
 !
     ivarip=1
 !
-    eps = 1.d-3
+    eps   = 1.d-3
     codret = 0
 !
-!     ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
-!     INITIALISE A R8NNEM (ON NE S'EN SERT PAS)
-    angmas(1) = r8nnem()
-    angmas(2) = r8nnem()
-    angmas(3) = r8nnem()
+!   Angle du mot clef MASSIF de AFFE_CARA_ELEM, initialisé à r8nnem (on ne s'en sert pas)
+!
+    angmas = r8nnem()
 !
 ! - Initialisation of behaviour datastructure
 !
     call behaviourInit(BEHinteg)
 !
-!
-    vecteu = ((option.eq.'FULL_MECA') .or. (option.eq.'RAPH_MECA'))
-    matric = ((option.eq.'FULL_MECA') .or. (option.eq.'RIGI_MECA_TANG'))
-!
     call elref1(elrefe)
-    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
-                     jpoids=ipoids, jvf=ivf, jdfde=idfdk, jgano=jgano)
+    call elrefe_info(fami='RIGI',  nno=nno, npg=npg,&
+                     jpoids=ipoids, jvf=ivf, jdfde=idfdk)
 !
 !       TYPMOD(1) = 'C_PLAN  '
 !       TYPMOD(2) = '        '
 !
+! - Get input fields
+!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PCACOQU', 'L', icaco)
-    h = zr(icaco)
-    kappa = zr(icaco+1)
-    correc = zr(icaco+2)
-!
-!---- COTE MINIMALE SUR L'EPAISSEUR
-    zmin = -h/2.d0
-!
     call jevech('PMATERC', 'L', imate)
-    nomres(1) = 'E'
-    nomres(2) = 'NU'
-!
     call jevech('PVARIMR', 'L', ivarim)
     call jevech('PINSTMR', 'L', iinstm)
     call jevech('PDEPLMR', 'L', ideplm)
@@ -129,52 +126,75 @@ implicit none
     call jevech('PDEPLPR', 'L', ideplp)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
-!
-    if (zk16(icompo+3) .eq. 'COMP_ELAS') then
-        if (zk16(icompo) .ne. 'ELAS') then
-            call utmess('F', 'ELEMENTS2_90')
-        endif
-    endif
-!
-    if (zk16(icompo+2) (6:10) .eq. '_REAC') then
-        call utmess('A', 'ELEMENTS3_54')
-    endif
-!
-!--- LECTURE DU NBRE DE VAR. INTERNES, DE COUCHES ET LONG. MAX DU
-!--- POINT D'INTEGRATION
-    read (zk16(icompo-1+2),'(I16)') nbvari
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=itab)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=itab)
 !      LGPG = MAX(ITAB(6),1)*ITAB(7) resultats faux sur Bull avec ifort
     if (itab(6) .le. 1) then
-        lgpg=itab(7)
+        lgpg = itab(7)
     else
         lgpg = itab(6)*itab(7)
     endif
     call jevech('PNBSP_I', 'L', jnbspi)
+!
+! - Properties of shell
+!
+    h = zr(icaco)
+    kappa = zr(icaco+1)
+    correc = zr(icaco+2)
+    zmin = -h/2.d0
+!
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+    rela_cpla = zk16(icompo-1+PLANESTRESS)
+    read (zk16(icompo-1+2),'(I16)') nbvari
+!
+! - Some checks
+!
+    if (rela_cpla .eq. 'COMP_ELAS') then
+        if (rela_comp .ne. 'ELAS') then
+            call utmess('F', 'PLATE1_8')
+        endif
+    endif
+    if (defo_comp(6:10) .eq. '_REAC') then
+        call utmess('A', 'PLATE1_9', sk = defo_comp)
+    endif
+!
+!--- NBRE DE  COUCHES ET LONG. MAX
     nbcou = zi(jnbspi-1+1)
-!---- MESSAGES LIMITATION NBRE DE COUCHES
     if (nbcou .le. 0) then
-        call utmess('F', 'ELEMENTS_12')
+        call utmess('F', 'PLATE1_10')
     endif
     if (nbcou .gt. 10) then
-        call utmess('F', 'ELEMENTS3_55')
+        call utmess('F', 'PLATE1_11')
     endif
 !---- EPAISSEUR DE CHAQUE COUCHE
     hic = h/nbcou
-    if (vecteu) then
-        call jevech('PVECTUR', 'E', ivectu)
-        call jevech('PCONTPR', 'E', icontp)
-        call jevech('PVARIPR', 'E', ivarip)
+    ndimv = npg*npge*nbcou*nbvari
+!
+! - Get output fields
+!
+    if (lMatr) then
+        call jevech('PMATUUR', 'E', imatuu)
     endif
-    if (vecteu) then
-        ndimv = npg*npge*nbcou*nbvari
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', icontp)
+        call jevech('PCODRET', 'E', jcret)
+    endif
+    if (lVari) then
+        call jevech('PVARIPR', 'E', ivarip)
         call jevech('PVARIMP', 'L', ivarix)
         call dcopy(ndimv, zr(ivarix), 1, zr(ivarip), 1)
-    endif
-    if (matric) then
-        call jevech('PMATUUR', 'E', imatuu)
-!        IVARIP=IVARIM
     endif
 !
     call r8inir(81, 0.d0, rtange, 1)
@@ -198,8 +218,7 @@ implicit none
 !===============================================================
 !     -- RECUPERATION DE LA TEMPERATURE POUR LE MATERIAU:
 !     -- SI LA TEMPERATURE EST CONNUE AUX NOEUDS :
-        call moytpg('RIGI', kp, 3, '-', tempm,&
-                    iret)
+        call moytpg('RIGI', kp, 3, '-', tempm, iret)
         nbpar = 1
         nompar = 'TEMP'
         call rcvalb('RIGI', kp, 1, '-', zi(imate),&
@@ -278,7 +297,7 @@ implicit none
 !
                 do  i = 1, 4
                     sigm2d(i)=zr(icontm+k1+i-1)
-              enddo
+                enddo
 !
 !  APPEL AU COMPORTEMENT
                 call comcq1('RIGI', kp, ksp, zi(imate),&
@@ -286,10 +305,10 @@ implicit none
                             deps2d,  sigm2d, zr(ivarim+k2),&
                             option, angmas, sigp2d, zr( ivarip+k2), dsidep,&
                             cod, BEHinteg)
-                if (vecteu) then
+                if (lSigm) then
                     do  i = 1, 4
                         zr(icontp+k1+i-1)=sigp2d(i)
-                  enddo
+                    enddo
                 endif
 !
 !           COD=1 : ECHEC INTEGRATION LOI DE COMPORTEMENT
@@ -301,7 +320,7 @@ implicit none
                 endif
 !
 !
-                if (matric) then
+                if (lMatr) then
 !-- CALCULS DE LA MATRICE TANGENTE : BOUCLE SUR L'EPAISSEUR
 !-- CONSTRUCTION DE LA MATRICE DTD (DTILD)
                     call matdtd(nomte, testl1, testl2, dsidep, cisail,&
@@ -314,7 +333,7 @@ implicit none
                   enddo
                 endif
 !
-                if (vecteu) then
+                if (lVect) then
 !-- CALCULS DES EFFORTS INTERIEURS : BOUCLE SUR L'EPAISSEUR
 !
                     sigtdi(1) = zr(icontp-1+k1+1)/rhos
@@ -325,30 +344,29 @@ implicit none
 !
                     do  i = 1, 5
                         sigmtd(i) = sigmtd(i) + sigtdi(i)*0.5d0*hic* coef
-                  enddo
+                    enddo
                 endif
 !-- FIN DE BOUCLE SUR LES POINTS D'INTEGRATION DANS L'EPAISSEUR
-         enddo
-     enddo
+            enddo
+        enddo
 !
-        if (vecteu) then
+        if (lVect) then
 !-- CALCUL DES EFFORTS INTERIEURS
             call effi(nomte, sigmtd, zr(ivf+k), dfdx, jacp,&
                       sina, cosa, r, zr(ivectu))
         endif
-        if (matric) then
+        if (lMatr) then
 !-- CONSTRUCTION DE LA MATRICE TANGENTE
             call mattge(nomte, dtild, sina, cosa, r,&
-                        jacp, zr(ivf+k), dfdx, rtangi)
+                    jacp, zr(ivf+k), dfdx, rtangi)
             do  i = 1, 9
                 do  j = 1, 9
                     rtange(i,j) = rtange(i,j) + rtangi(i,j)
-             enddo
-         enddo
+                enddo
+            enddo
         endif
-!-- FIN DE BOUCLE SUR LES POINTS D'INTEGRATION DE LA SURFACE NEUTRE
- end do
-    if (matric) then
+    end do
+    if (lMatr) then
 !-- STOCKAGE DE LA MATRICE TANGENTE
         kompt = 0
         do  j = 1, 9
@@ -358,8 +376,8 @@ implicit none
          end do 
        end do
     endif
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jcret)
+!
+    if (lSigm) then
         zi(jcret) = codret
     endif
 end subroutine

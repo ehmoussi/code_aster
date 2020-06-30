@@ -47,6 +47,14 @@ Il est impératif d'utiliser un champ de contrainte complet pour le calcul de FO
 
      7 : _("""La loi de comportement  %(k1)s n'existe pas pour la modélisation DKTG"""),
 
+     8 : _("""Le seul comportement élastique valide est ELAS pour COQUE_AXIS."""),
+
+     9 : _("""La réactualisation de la géométrie (déformation : %(k1)s) est déconseillée pour les éléments COQUE_AXIS."""),
+
+    10 : _("""Le nombre de couches doit être obligatoirement supérieur à zéro pour les éléments COQUE_AXIS."""),
+
+    11 : _("""Le nombre de couches est limité à 10 pour les éléments COQUE_AXIS."""),
+
     40 : _("""L'élément de plaque ne peut pas être orienté. Par défaut, pour orienter l'élément, on y projette l'axe global X.
 L'axe de référence pour le calcul du repère local est ici normal à l'élément.
 Il faut donc modifier l'axe de référence en utilisant ANGL_REP ou VECTEUR dans AFFE_CARA_ELEM."""),

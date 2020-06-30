@@ -191,8 +191,4 @@ Problème d'interpolation pour RHO_CP
  éléments de poutre section variable homothétique : l'aire initiale est nulle.
 """),
 
-    90 : _("""
- le seul comportement élastique valide est ELAS
-"""),
-
 }
