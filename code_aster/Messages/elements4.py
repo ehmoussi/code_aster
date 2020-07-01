@@ -102,12 +102,6 @@ cata_msg = {
   NUME_SECT incorrect
 """),
 
-    53 : _("""
-MODI_METRIQUE pas adapté
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
-"""),
-
     54 : _("""
 MODI_METRIQUE pas adapté
 Ce message est un message d'erreur développeur.

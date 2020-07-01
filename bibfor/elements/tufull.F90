@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,18 +16,19 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine tufull(option, nomte, nbrddl, deplm, deplp,&
-                  b, ktild, effint, pass, vtemp,&
-                  codret)
+subroutine tufull(option, nFourier, nbrddl, deplm, deplp,&
+                  b, ktild, effint, pass, vtemp)
 !
 use Behaviour_type
-use Behaviour_module
+use Behaviour_module, only : behaviourOption, behaviourInit
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8pi.h"
+#include "asterc/r8nnem.h"
+#include "asterfort/assert.h"
 #include "asterfort/bcoudc.h"
 #include "asterfort/bcoude.h"
 #include "asterfort/carcou.h"
@@ -37,7 +38,6 @@ implicit none
 #include "asterfort/kcoude.h"
 #include "asterfort/klg.h"
 #include "asterfort/klgcou.h"
-#include "asterfort/matini.h"
 #include "asterfort/mavec.h"
 #include "asterfort/nmcomp.h"
 #include "asterfort/poutre_modloc.h"
@@ -48,9 +48,12 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/vlggl.h"
 #include "asterfort/vlgglc.h"
+#include "asterfort/Behaviour_type.h"
 #include "blas/dcopy.h"
-    character(len=16) :: option
-! ......................................................................
+!
+character(len=16) :: option
+!
+! --------------------------------------------------------------------------------------------------
 !
 !    - FONCTION REALISEE:  CALCUL DES MATRICES ELEMENTAIRES
 !                          TUYAU
@@ -59,13 +62,14 @@ implicit none
 !    - ARGUMENTS:
 !        DONNEES:      OPTION       -->  OPTION DE CALCUL
 !
+! --------------------------------------------------------------------------------------------------
 !
     integer :: nbres, nbrddl, nc, kpgs, nbcoum, nbsecm
-    integer :: vali
+    integer :: vali, jcret, nFourier
     parameter (nbres=9)
-    character(len=16) :: nomres(nbres), nomte
+    character(len=16) :: nomres(nbres)
     character(len=8) :: typmod(2)
-    character(len=32) :: phenom
+    character(len=32) :: elasKeyword
     integer :: valret(nbres)
     real(kind=8) :: valres(nbres), xpg(4)
     parameter (nbsecm=32,nbcoum=10)
@@ -81,7 +85,7 @@ implicit none
     real(kind=8) :: pgl(3, 3), omega, vtemp(nbrddl)
     real(kind=8) :: pgl1(3, 3), pgl2(3, 3), pgl3(3, 3), rayon, theta
     real(kind=8) :: angmas(3), r1
-    integer :: nno, npg, nbcou, nbsec, m, icompo, ndimv, ivarix
+    integer :: nno, npg, nbcou, nbsec, icompo, ndimv, ivarix
     integer :: ipoids, ivf, nbvari, lgpg, jtab(7)
     integer :: imate, imatuu, igeom
     integer :: ivarip, ivarim, icontm, icontp, ivectu
@@ -89,69 +93,117 @@ implicit none
     integer :: iinstm, iinstp, ideplm, ideplp, icarcr, nbv, icoude, k1, k2
     integer :: icoud2, mmt, codret, cod
     integer :: jnbspi, iret, ksp
-    integer :: ndim, nnos, jcoopg, idfdk, jdfd2, jgano
-    aster_logical :: vecteu, matric
+    integer :: jcoopg, idfdk, jdfd2
+    !aster_logical :: vecteu, matric
+    character(len=16) :: defo_comp, rela_comp, type_comp
+    aster_logical :: lVect, lMatr, lVari, lSigm
     type(Behaviour_Integ) :: BEHinteg
-!
     integer, parameter :: nb_cara1 = 2
     real(kind=8) :: vale_cara1(nb_cara1)
-    character(len=8) :: noms_cara1(nb_cara1)
-    data noms_cara1 /'R1','EP1'/
-!-----------------------------------------------------------------------
+    character(len=8), parameter :: noms_cara1(nb_cara1) = (/'R1 ','EP1'/)
 !
-    call elrefe_info(fami='RIGI', ndim=ndim, nno=nno, nnos=nnos, npg=npg,&
-                     jpoids=ipoids, jcoopg=jcoopg, jvf=ivf, jdfde=idfdk, jdfd2=jdfd2,&
-                     jgano=jgano)
+! --------------------------------------------------------------------------------------------------
 !
-    nc = nbrddl* (nbrddl+1)/2
-    pi = r8pi()
-    deuxpi = 2.d0*pi
-    rac2 = sqrt(2.d0)
+    call elrefe_info(fami='RIGI', nno=nno, npg=npg,&
+                     jpoids=ipoids, jcoopg=jcoopg, jvf=ivf, jdfde=idfdk, jdfd2=jdfd2)
+!
+    nc        = nbrddl* (nbrddl+1)/2
+    pi        = r8pi()
+    deuxpi    = 2.d0*pi
+    rac2      = sqrt(2.d0)
     typmod(1) = 'C_PLAN  '
-    typmod(2) = '        '
-    codret = 0
+    typmod(2) = ' '
+    codret    = 0
 !
 ! - Initialisation of behaviour datastructure
 !
     call behaviourInit(BEHinteg)
 !
-! --- ANGLE DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
-! --- INITIALISE A 0.d0 (ON NE S'EN SERT PAS)
-    call r8inir(3, 0.d0, angmas, 1)
+!   Angle du mot clef MASSIF de AFFE_CARA_ELEM, initialisé à r8nnem (on ne s'en sert pas)
 !
-    m = 3
-    if (nomte .eq. 'MET6SEG3') m = 6
+    angmas = r8nnem()
 !
-!=====RECUPERATION NOMBRE DE COUCHES ET DE SECTEURS ANGULAIRES
+!   Angle du mot clef MASSIF de AFFE_CARA_ELEM, initialisé à 0, nécessaire pour les LdC 
+! - LEMAITRE_IRRA et VIS_IRRA_LOG (voir ssnl121c)
 !
+    angmas = 0.d0
+!
+! - Get input fields
+!
+    call jevech('PVARIMR', 'L', ivarim)
+    call jevech('PINSTMR', 'L', iinstm)
+    call jevech('PINSTPR', 'L', iinstp)
+    call jevech('PDEPLMR', 'L', ideplm)
+    call jevech('PDEPLPR', 'L', ideplp)
+    call jevech('PCARCRI', 'L', icarcr)
+    call jevech('PCONTMR', 'L', icontm)
+    call jevech('PMATERC', 'L', imate)
     call jevech('PCOMPOR', 'L', icompo)
-    if (zk16(icompo+3) .eq. 'COMP_ELAS') then
-        if (zk16(icompo) .ne. 'ELAS') then
-            call utmess('F', 'ELEMENTS2_90')
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
+    lgpg = max(jtab(6),1)*jtab(7)
+    call jevech('PNBSP_I', 'L', jnbspi)
+    call jevech('PGEOMER', 'L', igeom)
+    call jevech('PCAORIE', 'L', lorien)
+!
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    read (zk16(icompo-1+NVAR),'(I16)') nbvari
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+    type_comp = zk16(icompo-1+INCRELAS)
+!
+! - Some checks
+!
+    if (type_comp .eq. 'COMP_ELAS') then
+        if (rela_comp .ne. 'ELAS') then
+            call utmess('F', 'TUYAU0_90')
         endif
     endif
 !
-    call jevech('PNBSP_I', 'L', jnbspi)
+! - For section
+!
     nbcou = zi(jnbspi-1+1)
     nbsec = zi(jnbspi-1+2)
     if (nbcou*nbsec .le. 0) then
-        call utmess('F', 'ELEMENTS4_46')
+        call utmess('F', 'TUYAU0_46')
     endif
     if (nbcou .gt. nbcoum) then
         vali = nbcoum
-        call utmess('F', 'ELEMENTS5_2', si=vali)
+        call utmess('F', 'TUYAU0_2', si=vali)
     endif
     if (nbsec .gt. nbsecm) then
         vali = nbsecm
-        call utmess('F', 'ELEMENTS5_3', si=vali)
+        call utmess('F', 'TUYAU0_3', si=vali)
+    endif
+    ndimv = npg*nbvari* (2*nbsec+1)* (2*nbcou+1)
+!
+! - Get output fields
+!
+    if (lMatr) then
+        call jevech('PMATUUR', 'E', imatuu)
+    endif
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', icontp)
+        call jevech('PCODRET', 'E', jcret)
+    endif
+    if (lVari) then
+        call jevech('PVARIPR', 'E', ivarip)
+        call jevech('PVARIMP', 'L', ivarix)
+        call dcopy(ndimv, zr(ivarix), 1, zr(ivarip), 1)
+    else
+        ivarip = ivarim
     endif
 !
-    read (zk16(icompo-1+2),'(I16)') nbvari
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
-    lgpg = max(jtab(6),1)*jtab(7)
-!
-    call jevech('PGEOMER', 'L', igeom)
     call poutre_modloc('CAGEP1', noms_cara1, nb_cara1, lvaleur=vale_cara1)
     r1 = vale_cara1(1)
     h  = vale_cara1(2)
@@ -183,11 +235,7 @@ implicit none
     poisec(2*nbsec) = 4.d0/3.d0
     poisec(2*nbsec+1) = 1.d0/3.d0
 !
-!   FIN DES POIDS D'INTEGRATION
-!
 !     --- RECUPERATION DES ORIENTATIONS ---
-!
-    call jevech('PCAORIE', 'L', lorien)
 !
     call carcou(zr(lorien), l, pgl, rayon, theta,&
                 pgl1, pgl2, pgl3, pgl4, nno,&
@@ -195,44 +243,20 @@ implicit none
     if (icoud2 .ge. 10) then
         icoude = icoud2 - 10
         mmt = 0
-        if (h/a .gt. (0.25d0)) then
-            call utmess('A', 'ELEMENTS4_53')
-        endif
     else
         icoude = icoud2
         mmt = 1
     endif
 !
-    vecteu = ((option.eq.'FULL_MECA') .or. (option.eq.'RAPH_MECA'))
-    matric = ((option.eq.'FULL_MECA') .or. (option.eq.'RIGI_MECA_TANG'))
+! - Get time
 !
-    call jevech('PVARIMR', 'L', ivarim)
-    call jevech('PINSTMR', 'L', iinstm)
-    call jevech('PINSTPR', 'L', iinstp)
     instm = zr(iinstm)
     instp = zr(iinstp)
-    call jevech('PDEPLMR', 'L', ideplm)
-    call jevech('PDEPLPR', 'L', ideplp)
-    call jevech('PCARCRI', 'L', icarcr)
-    call jevech('PCONTMR', 'L', icontm)
-    call jevech('PMATERC', 'L', imate)
-!
-    if (vecteu) then
-        call jevech('PVECTUR', 'E', ivectu)
-        call jevech('PCONTPR', 'E', icontp)
-        call jevech('PVARIPR', 'E', ivarip)
-        ndimv = npg*nbvari* (2*nbsec+1)* (2*nbcou+1)
-        call jevech('PVARIMP', 'L', ivarix)
-        call dcopy(ndimv, zr(ivarix), 1, zr(ivarip), 1)
-    else
-!       -- POUR AVOIR UN TABLEAU BIDON A DONNER A NMCOMP :
-        ivarip = ivarim
-    endif
 !
 ! ===== INITIALISATION DE LA MATRICE K DE RIGIDITE===
 ! ===== ET DES EFFORTS INTERNES======================
 !
-    call matini(nbrddl, nbrddl, 0.d0, ktild)
+    ktild = 0.d0
 !
     do i = 1, nbrddl
         effint(i) = 0.d0
@@ -257,7 +281,7 @@ implicit none
 !===============================================================
 !     RECUPERATION COMPORTEMENT POUR TERME DE CISAILLEMENT
 !
-    call rccoma(zi(imate), 'ELAS', 1, phenom, valret(1))
+    call rccoma(zi(imate), 'ELAS', 1, elasKeyword, valret(1))
 !
 !
 !==============================================================
@@ -281,24 +305,24 @@ implicit none
             do isect = 1, 2*nbsec + 1
                 kpgs = kpgs + 1
                 if (icoude .eq. 0) then
-!
-                    wgt = zr(ipoids-1+igau)*poicou(icou)*poisec(isect) * (l/2.d0)*h*deuxpi/ (4.d0&
-                          &*nbcou*nbsec)*r
-!
+                    wgt = zr(ipoids-1+igau)*poicou(icou)*poisec(isect) *&
+                          (l/2.d0)*h*deuxpi/ (4.d0*nbcou*nbsec)*r
                     call bcoude(igau, icou, isect, l, h,&
-                                a, m, nno, nbcou, nbsec,&
+                                a, nFourier, nno, nbcou, nbsec,&
                                 zr(ivf), zr(idfdk), zr(jdfd2), mmt, b)
-                else if (icoude.eq.1) then
+                else if (icoude .eq. 1) then
                     fi = (isect-1)*deuxpi/ (2.d0*nbsec)
 !               FI = FI - OMEGA
                     sinfi = sin(fi)
                     l = theta* (rayon+r*sinfi)
                     call bcoudc(igau, icou, isect, h, a,&
-                                m, omega, xpg, nno, nbcou,&
+                                nFourier, omega, xpg, nno, nbcou,&
                                 nbsec, zr(ivf), zr(idfdk), zr(jdfd2), rayon,&
                                 theta, mmt, b)
-                    wgt = zr(ipoids-1+igau)*poicou(icou)*poisec(isect) * (l/2.d0)*h*deuxpi/ (4.d0&
-                          &*nbcou*nbsec)*r
+                    wgt = zr(ipoids-1+igau)*poicou(icou)*poisec(isect) *&
+                          (l/2.d0)*h*deuxpi/ (4.d0*nbcou*nbsec)*r
+                else
+                    ASSERT(ASTER_FALSE)
                 endif
 !
                 k1 = 6* (kpgs-1)
@@ -339,16 +363,16 @@ implicit none
                             zr(ivarim+k2), option, angmas, &
                             sigma, zr( ivarip+k2), 36, dsidep, cod)
 !
-                if (phenom .eq. 'ELAS') then
+                if (elasKeyword .eq. 'ELAS') then
                     nbv = 2
                     nomres(1) = 'E'
                     nomres(2) = 'NU'
                 else
-                    call utmess('F', 'ELEMENTS_44', sk=phenom)
+                    call utmess('F', 'TUYAU0_44', sk=elasKeyword)
                 endif
 !
                 call rcvalb('RIGI', igau, ksp, '+', zi(imate),&
-                            ' ', phenom, 0, ' ', [0.d0],&
+                            ' ', elasKeyword, 0, ' ', [0.d0],&
                             nbv, nomres, valres, valret, 1)
 !
                 cisail = valres(1)/ (1.d0+valres(2))
@@ -362,7 +386,7 @@ implicit none
 !
 !    CALCULS DE LA MATRICE TANGENTE : BOUCLE SUR L'EPAISSEUR
 !
-                if (matric) then
+                if (lMatr) then
 !
                     dtild(1,1) = dsidep(1,1)
                     dtild(1,2) = dsidep(1,2)
@@ -389,7 +413,7 @@ implicit none
                     call kcoude(nbrddl, wgt, b, dtild, ktild)
                 endif
 !
-                if (vecteu) then
+                if (lSigm) then
 !
                     do i = 1, 3
                         zr(icontp-1+k1+i) = sigma(i)
@@ -397,38 +421,34 @@ implicit none
                     zr(icontp-1+k1+4) = sigma(4)/rac2
                     zr(icontp-1+k1+5) = cisail*gxz/2.d0
                     zr(icontp-1+k1+6) = 0.d0
-!
-!===========    CALCULS DES EFFORTS INTERIEURS
-!
+                endif
+                if (lVect) then
+                    ASSERT(lSigm)
                     sgmtd(1) = zr(icontp-1+k1+1)
                     sgmtd(2) = zr(icontp-1+k1+2)
                     sgmtd(3) = zr(icontp-1+k1+4)
                     sgmtd(4) = cisail*gxz/2.d0
-!
                     call epsett('EFFORI', nbrddl, rbid, b, sgmtd,&
                                 rbid, wgt, effint)
-!
                 endif
-!
             end do
         end do
     end do
 !
 ! STOCKAGE DE LA MATRICE DE RIGIDITE
-    if (matric) then
+    if (lMatr) then
 !     CHANGEMENT DE REPERE : REPERE LOCAL AU REPERE GLOBAL
         if (icoude .eq. 0) then
             call klg(nno, nbrddl, pgl, ktild)
-        else if (icoude.eq.1) then
+        else if (icoude .eq. 1) then
             call klgcou(nno, nbrddl, pgl1, pgl2, pgl3,&
                         pgl4, ktild)
         endif
-        call jevech('PMATUUR', 'E', imatuu)
         call mavec(ktild, nbrddl, zr(imatuu), nc)
     endif
 !
 ! STOCKAGE DES EFFORTS INTERIEURS
-    if (vecteu) then
+    if (lVect) then
 !     CHANGEMENT DE REPERE : REPERE LOCAL AU REPERE GLOBAL
         if (icoude .eq. 0) then
             call vlggl(nno, nbrddl, pgl, effint, 'LG',&
@@ -440,6 +460,10 @@ implicit none
         do i = 1, nbrddl
             zr(ivectu-1+i) = effint(i)
         end do
+    endif
+!
+    if (lSigm) then
+        zi(jcret) = codret
     endif
 !
 end subroutine

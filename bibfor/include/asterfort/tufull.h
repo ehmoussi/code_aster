@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine tufull(option, nomte, nbrddl, deplm, deplp,&
-                      b, ktild, effint, pass, vtemp,&
-                      codret)
+    subroutine tufull(option, nFourier, nbrddl, deplm, deplp,&
+                      b, ktild, effint, pass, vtemp)
         integer :: nbrddl
         character(len=16) :: option
         character(len=16) :: nomte
@@ -32,6 +29,6 @@ interface
         real(kind=8) :: effint(nbrddl)
         real(kind=8) :: pass(nbrddl, nbrddl)
         real(kind=8) :: vtemp(nbrddl)
-        integer :: codret
+        integer :: nFourier
     end subroutine tufull
 end interface

@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -506,7 +506,10 @@ class MET3SEG3(Element):
                      (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG), (SP.PVARCRR, LC.ZVARCPG),
                      (SP.PVARIMP, ZVARIPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
+            para_out=((SP.PMATUUR, MMATUUR),
+                      (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                      (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                     ),
         ),
 
         OP.SIEF_ELGA(te=584,
