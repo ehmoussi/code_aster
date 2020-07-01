@@ -151,28 +151,12 @@ cata_msg = {
  valeur utilisateur de RHO nulle
 """),
 
-    59 : _("""
-  le coefficient de poisson est non constant. la programmation actuelle n en tient pas compte.
-"""),
-
-    61 : _("""
- loi  %(k1)s  indisponible pour les POU_D_E/d_t
-"""),
-
     62 : _("""
  Noeuds confondus pour un élément de barre
 """),
 
     63 : _("""
  ne pas utiliser THER_LINEAIRE avec des éléments de Fourier mais les commandes développées
-"""),
-
-
-    64 : _("""
-Avec l'option GROT_GDEP, les coefficients de flexibilité ne sont pas pris en compte dans la
-matrice de raideur géométrique.
-   Coefficient de flexibilité suivant y : %(r1)f
-   Coefficient de flexibilité suivant z : %(r2)f
 """),
 
 

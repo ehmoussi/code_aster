@@ -172,6 +172,7 @@ RIGI_MECA_TANG = Option(
         SP.PCODRET,
            PCSMTIR,
            PCSRTIR,
+        SP.PSTRXPR,
            PCONTPR,
            PVARIPR,
     ),

@@ -174,5 +174,14 @@ Vous avez renseigné %(k2)s. Le GROUP_MA %(k1)s n'existe pas dans le maillage.
 """),
 
 
+    40 : _("""Les éléments de poutre ne peuvent pas utiliser une déformation de type %(k1)s."""),
+
+    59 : _("""Le coefficient de poisson n'est pas constant. Les éléments de poutre n'en tiennent pas compte."""),
+
+    61 : _("""La loi de comportement %(k1)s n'est pas disponible pour les poutres classiques. Utilisez les poutres multifibres."""),
+
+    64 : _("""Avec l'option GROT_GDEP, les coefficients de flexibilité ne sont pas pris en compte dans la matrice de raideur géométrique.
+   Coefficient de flexibilité suivant y : %(r1)f
+   Coefficient de flexibilité suivant z : %(r2)f"""),
 
 }

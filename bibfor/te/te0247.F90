@@ -34,7 +34,11 @@ subroutine te0247(option, nomte)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    implicit none
+!
+use Behaviour_module, only : behaviourOption
+!
+implicit none
+!
 #include "asterf_types.h"
 #include "jeveux.h"
 #include "asterc/r8miem.h"
@@ -57,6 +61,7 @@ subroutine te0247(option, nomte)
 #include "asterfort/utpvlg.h"
 #include "asterfort/verifm.h"
 #include "asterfort/get_value_mode_local.h"
+#include "asterfort/Behaviour_type.h"
 !
     character(len=*) :: option, nomte
 ! --------------------------------------------------------------------------------------------------
@@ -66,19 +71,20 @@ subroutine te0247(option, nomte)
     integer :: ivectu, icontp, itype, nno, nc, ivarim, ivarip, itemp, i
     integer :: jcret, iretm, iretp
     integer :: npg, ndimel, nnoel, nnosel
-    integer :: istrxm, istrxp, ldep
+    integer :: istrxm, istrxp, ldep, codret
     parameter    (nno=2,nc=6,nd=nc*nno,nk=nd*(nd+1)/2)
     real(kind=8) :: e, nu, em, num
     real(kind=8) :: a, xiy, xiz, alfay, alfaz, xjx, ez, ey, xfly, xflz
     real(kind=8) :: a2, xiy2, xiz2, alfay2, alfaz2, xjx2, xl
 !
-    character(len=24) :: valk(2)
+    character(len=16) :: rela_comp, defo_comp
 !
     real(kind=8) :: pgl(3, 3), fl(nd), klv(nk)
     real(kind=8) :: tempm, tempp
     real(kind=8) :: epsthe
     real(kind=8) :: sigma(nd), rgeom(nk), gamma, angp(3)
-    aster_logical :: reactu, matric, vecteu
+    aster_logical :: reactu
+    aster_logical :: lVect, lMatr, lVari, lSigm
 !
     integer             :: retp(2), iret
     real(kind=8)        :: valr(2)
@@ -86,9 +92,12 @@ subroutine te0247(option, nomte)
 ! --------------------------------------------------------------------------------------------------
     integer, parameter :: nb_cara = 17
     real(kind=8) :: vale_cara(nb_cara)
-    character(len=8) :: noms_cara(nb_cara)
-    data noms_cara /'A1','IY1','IZ1','AY1','AZ1','EY1','EZ1','JX1',&
-                    'A2','IY2','IZ2','AY2','AZ2','EY2','EZ2','JX2','TVAR'/
+    character(len=8), parameter :: noms_cara(nb_cara) = (/'A1  ','IY1 ','IZ1 ',&
+                                                          'AY1 ','AZ1 ','EY1 ',&
+                                                          'EZ1 ','JX1 ','A2  ',&
+                                                          'IY2 ','IZ2 ','AY2 ',&
+                                                          'AZ2 ','EY2 ','EZ2 ',&
+                                                          'JX2 ','TVAR'/)
 ! --------------------------------------------------------------------------------------------------
 !
     call jevech('PGEOMER', 'L', igeom)
@@ -110,18 +119,33 @@ subroutine te0247(option, nomte)
     call elrefe_info(fami='RIGI', ndim=ndimel, nno=nnoel, nnos=nnosel, npg=npg)
     ASSERT((npg.eq.2).or.(npg.eq.3))
 !
-!   booleens pratiques
-    matric = option .eq. 'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG'
-    vecteu = option .eq. 'FULL_MECA' .or. option .eq. 'RAPH_MECA'
+! - Properties of behaviour
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
 !
-!   parametres en sortie
-    if (matric) then
-        call jevech('PMATUUR', 'E', imatuu)
+! - Select objects to construct from option name
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+    if (option .eq. 'RIGI_MECA_TANG') then
+        lVect = ASTER_FALSE
+        lSigm = ASTER_FALSE
+        lVari = ASTER_FALSE
     endif
 !
-    if (vecteu) then
+!   parametres en sortie
+    if (lMatr) then
+        call jevech('PMATUUR', 'E', imatuu)
+    endif
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
+        call jevech('PCODRET', 'E', jcret)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
     endif
 !
@@ -145,20 +169,18 @@ subroutine te0247(option, nomte)
     ez = (vale_cara(7) +vale_cara(15))/2.d0
     itype = nint(vale_cara(17))
 !
-    if (zk16(icompo+2) .ne. 'PETIT' .and. zk16(icompo+2) .ne. 'GROT_GDEP') then
-        valk(1) = zk16(icompo+2)
-        valk(2) = nomte
-        call utmess('F', 'ELEMENTS3_40', nk=2, valk=valk)
+    if (defo_comp .ne. 'PETIT' .and.  defo_comp .ne. 'GROT_GDEP') then
+        call utmess('F', 'POUTRE0_40', sk = defo_comp)
     endif
-    reactu = zk16(icompo+2) .eq. 'GROT_GDEP'
-    if (reactu .and. (zk16(icompo).eq.'ELAS')) then
+    reactu = defo_comp .eq. 'GROT_GDEP'
+    if (reactu .and. (rela_comp.eq.'ELAS')) then
 !       recuperation du 3eme angle nautique au temps t-
         call jevech('PSTRXMR', 'L', istrxm)
         gamma = zr(istrxm+3-1)
 !       calcul de pgl,xl et angp
-        call porea1(nno, nc, zr(ideplm), zr(ideplp), zr(igeom), gamma, vecteu, pgl, xl, angp)
+        call porea1(nno, nc, zr(ideplm), zr(ideplp), zr(igeom), gamma, lVect, pgl, xl, angp)
 !       sauvegarde des angles nautiques
-        if (vecteu) then
+        if (lVect) then
             call jevech('PSTRXPR', 'E', istrxp)
             zr(istrxp+1-1) = angp(1)
             zr(istrxp+2-1) = angp(2)
@@ -176,24 +198,24 @@ subroutine te0247(option, nomte)
     call matela(zi(imate), ' ', itemp, tempm, em, num)
     call verifm('RIGI', npg, 1, 'T', zi(imate), epsthe, iret)
 !
-    if (zk16(icompo) .eq. 'ELAS') then
+    if (rela_comp .eq. 'ELAS') then
 !       calcul des matrices elementaires
         call porigi(nomte, e, nu, xl, klv)
 !
         if (option .eq. 'RAPH_MECA' .or. option .eq. 'FULL_MECA') then
             if ((itemp.ne.0) .and. (nu.ne.num)) then
-                call utmess('A', 'ELEMENTS3_59')
+                call utmess('A', 'POUTRE0_59')
             endif
             call nmpoel(npg, klv, xl, nno, nc, pgl, zr(ideplp),&
                         epsthe, e, em, zr(icontm), fl, zr( icontp))
         endif
 !
     else
-        call utmess('F', 'ELEMENTS3_61', sk=zk16(icompo))
+        call utmess('F', 'POUTRE0_61', sk=rela_comp)
     endif
-    if (matric) then
+    if (lMatr) then
 !       calcul de la matrice de rigidite geometrique
-        if (reactu .and. (zk16(icompo).eq.'ELAS')) then
+        if (reactu .and. (rela_comp.eq.'ELAS')) then
             ! Avec GROT_GDEP pas possible
             valp(1:2)=['C_FLEX_Y', 'C_FLEX_Z']
             call get_value_mode_local('PCAARPO', valp, valr, iret, retpara_=retp)
@@ -202,7 +224,7 @@ subroutine te0247(option, nomte)
             if ( retp(2).eq.0) xflz = valr(2)
             if ( (abs(xfly-1.0).gt.r8miem()).or. &
                  (abs(xflz-1.0).gt.r8miem()) ) then
-                call utmess('F', 'ELEMENTS3_64', nr=2, valr=[xfly,xflz])
+                call utmess('F', 'POUTRE0_64', nr=2, valr=[xfly,xflz])
             endif
             if (option .eq. 'FULL_MECA') then
                 ldep = icontp
@@ -227,13 +249,14 @@ subroutine te0247(option, nomte)
     endif
 !
 !   passage du repere local au repere global
-    if (matric) then
+    if (lMatr) then
         call utpslg(nno, nc, pgl, klv, zr(imatuu))
     endif
-    if (vecteu) then
+    if (lVect) then
         call utpvlg(nno, nc, pgl, fl, zr(ivectu))
-        call jevech('PCODRET', 'E', jcret)
-        zi(jcret) = 0
+    endif
+    if (lSigm) then
+        zi(jcret) = codret
     endif
 !
 end subroutine
