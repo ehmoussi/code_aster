@@ -71,7 +71,12 @@ def copy(src, dst, verbose=False):
             shutil.copytree(src, dst)
         else:
             for fname in os.listdir(src):
-                copy(osp.join(src, fname), dst, verbose=verbose)
+                if osp.isdir(osp.join(src, fname)):
+                    copy(osp.join(src, fname),
+                         osp.join(dst, osp.basename(fname)),
+                         verbose=verbose)
+                else:
+                    copy(osp.join(src, fname), dst, verbose=verbose)
 
 
 def compress(path, verbose=False):
