@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,41 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0569(option, nomte)
-    implicit none
+!
+implicit none
+!
 #include "jeveux.h"
 #include "asterfort/elrefe_info.h"
 #include "asterfort/jevech.h"
 #include "asterfort/rcvalb.h"
+#include "asterfort/Behaviour_type.h"
 !
-    character(len=16) :: option, nomte
+character(len=16), intent(in) :: option, nomte
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: 3D_GVNO
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!          AMOR_MECA
+!          RIGI_MECA
+!          FORC_NODA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
 !
     integer :: ipoids, ivf, idfdx, idfdy, igeom, i, j
-    integer :: ndim, nno, ipg, npg1, ino, jno, ij, kpg, spt
+    integer :: ndim, nno, kpg, npg, ino, jno, ij, spt
     integer :: idec, jdec, kdec, ldec, imate, imatuu
-    integer :: mater, ll, k, l, nnos, jgano
+    integer :: mater, ll, k, l, nnos
     integer :: ideplm, ideplp, ivectu
     real(kind=8) :: jac, nx, ny, nz, sx(9, 9), sy(9, 9), sz(9, 9)
     real(kind=8) :: valres(5), e, nu, lambda, mu, rho, coef_amor
@@ -40,33 +61,32 @@ subroutine te0569(option, nomte)
     real(kind=8) :: vtx, vty, vtz
     integer :: icodre(5), ndim2
     character(len=8) :: fami, poum
-    character(len=16) :: nomres(5)
+    character(len=16), parameter :: nomres(5) = (/'E        ', 'NU       ',&
+                                                  'RHO      ',&
+                                                  'COEF_AMOR', 'LONG_CARA'/)
     character(len=8) :: nompar(3)
     real(kind=8) :: valpar(3)
-!     ------------------------------------------------------------------
+    aster_logical :: lDamp, lMatr, lVect
+!
+! --------------------------------------------------------------------------------------------------
 !
     call elrefe_info(fami='RIGI',ndim=ndim,nno=nno,nnos=nnos,&
-  npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfdx,jgano=jgano)
+                      npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfdx)
     idfdy = idfdx + 1
 !
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
 !
-    mater=zi(imate)
-    nomres(1)='E'
-    nomres(2)='NU'
-    nomres(3) = 'RHO'
-    nomres(4) = 'COEF_AMOR'
-    nomres(5) = 'LONG_CARA'
+    mater = zi(imate)
     fami='FPG1'
     kpg=1
     spt=1
     poum='+'
+    ndim2 = 3
 !
     nompar(1) = 'X'
     nompar(2) = 'Y'
     nompar(3) = 'Z'
-    ndim2 = 3
 !   coordonnées du barycentre de l'élément
     valpar(:) = 0.d0
     do i = 1, nnos
@@ -74,6 +94,11 @@ subroutine te0569(option, nomte)
             valpar(j) = valpar(j) + zr(igeom-1+(i-1)*ndim2+j)/nnos
         enddo
     enddo
+    lDamp = option .eq. 'AMOR_MECA'
+    lVect = L_VECT(option)
+    lMatr = L_MATR(option)
+!
+! - Get material properties
 !
     call rcvalb(fami, kpg, spt, poum, mater,&
                 ' ', 'ELAS', 3, nompar, valpar,&
@@ -90,61 +115,59 @@ subroutine te0569(option, nomte)
 !
     usl0 = 0.d0    
     if (icodre(5) .eq. 0) then
-      l0 = valres(5)
-      usl0=1.d0/l0
+        l0 = valres(5)
+        usl0=1.d0/l0
     endif
-!
     lambda = e*nu/ (1.d0+nu)/ (1.d0-2.d0*nu)
     mu = e/2.d0/ (1.d0+nu)
-!
-    if (option .eq. 'AMOR_MECA') then
-      rhocp = coef_amor*sqrt((lambda+2.d0*mu)*rho)
-      rhocs = coef_amor*sqrt(mu*rho)
+    if (lDamp) then
+        rhocp = coef_amor*sqrt((lambda+2.d0*mu)*rho)
+        rhocs = coef_amor*sqrt(mu*rho)
     else
-      rhocp = (lambda+2.d0*mu)*usl0
-      rhocs = mu*usl0
+        rhocp = (lambda+2.d0*mu)*usl0
+        rhocs = mu*usl0
     endif
 !
+! - Get output fields
+!
+    if (lMatr .or. lDamp) then
+        call jevech('PMATUUR', 'E', imatuu)
+    endif
+    if (lVect) then
+        call jevech('PVECTUR', 'E', ivectu)
+    endif
 !
 !     VITESSE UNITAIRE DANS LES 3 DIRECTIONS
 !
     vituni(1,1) = 1.d0
     vituni(1,2) = 0.d0
     vituni(1,3) = 0.d0
-!
     vituni(2,1) = 0.d0
     vituni(2,2) = 1.d0
     vituni(2,3) = 0.d0
-!
     vituni(3,1) = 0.d0
     vituni(3,2) = 0.d0
     vituni(3,3) = 1.d0
 !
-    do 310 i = 1, nno
-        do 311 j = 1, 3
-            do 312 k = 1, 3*nno
-                vect(i,j,k) = 0.d0
-312         continue
-311     continue
-310 continue
+    vect = 0.d0
 !
 !     --- CALCUL DES PRODUITS VECTORIELS OMI X OMJ ---
 !
-    do 30 ino = 1, nno
+    do ino = 1, nno
         i = igeom + 3*(ino-1) -1
-        do 31 jno = 1, nno
+        do jno = 1, nno
             j = igeom + 3*(jno-1) -1
             sx(ino,jno) = zr(i+2)*zr(j+3) - zr(i+3)*zr(j+2)
             sy(ino,jno) = zr(i+3)*zr(j+1) - zr(i+1)*zr(j+3)
             sz(ino,jno) = zr(i+1)*zr(j+2) - zr(i+2)*zr(j+1)
-31      continue
-30  continue
+        end do
+    end do
 !
 !     --- BOUCLE SUR LES POINTS DE GAUSS ---
 !
-    do 100 ipg = 1, npg1
-        kdec = (ipg-1)*nno*ndim
-        ldec = (ipg-1)*nno
+    do kpg = 1, npg
+        kdec = (kpg-1)*nno*ndim
+        ldec = (kpg-1)*nno
 !
         nx = 0.0d0
         ny = 0.0d0
@@ -152,15 +175,15 @@ subroutine te0569(option, nomte)
 !
 !        --- CALCUL DE LA NORMALE AU POINT DE GAUSS IPG ---
 !
-        do 101 i = 1, nno
+        do i = 1, nno
             idec = (i-1)*ndim
-            do 102 j = 1, nno
+            do j = 1, nno
                 jdec = (j-1)*ndim
                 nx = nx + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sx(i,j)
                 ny = ny + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sy(i,j)
                 nz = nz + zr(idfdx+kdec+idec) * zr(idfdy+kdec+jdec) * sz(i,j)
-102         continue
-101     continue
+            end do
+        end do
 !
 !        --- LE JACOBIEN EST EGAL A LA NORME DE LA NORMALE ---
 !
@@ -174,22 +197,20 @@ subroutine te0569(option, nomte)
 !
 !        --- CALCUL DE V.N ---
 !
-        do 103 i = 1, nno
-            do 104 j = 1, 3
+        do i = 1, nno
+            do j = 1, 3
                 scal = nux*zr(ivf+ldec+i-1)*vituni(j,1)
-                scal = scal+nuy*zr(ivf+ldec+i-1)*vituni(j,2)
-                scal = scal+nuz*zr(ivf+ldec+i-1)*vituni(j,3)
+                scal = scal + nuy*zr(ivf+ldec+i-1)*vituni(j,2)
+                scal = scal + nuz*zr(ivf+ldec+i-1)*vituni(j,3)
 !
 !        --- CALCUL DE LA VITESSE NORMALE ET DE LA VITESSE TANGENCIELLE
 !
                 vnx = nux*scal
                 vny = nuy*scal
                 vnz = nuz*scal
-!
                 vtx = zr(ivf+ldec+i-1)*vituni(j,1)
                 vty = zr(ivf+ldec+i-1)*vituni(j,2)
                 vtz = zr(ivf+ldec+i-1)*vituni(j,3)
-!
                 vtx = vtx - vnx
                 vty = vty - vny
                 vtz = vtz - vnz
@@ -202,49 +223,46 @@ subroutine te0569(option, nomte)
 !
 !        --- CALCUL DU VECTEUR ELEMENTAIRE
 !
-                do 105 l = 1, nno
-                    ll = 3*l-2
-                    vect(i,j,ll) = vect(i,j,ll) + taux*zr(ivf+ldec+l- 1)*jac*zr(ipoids+ipg-1)
-                    vect(i,j,ll+1) = vect(i,j,ll+1) + tauy*zr(ivf+ ldec+l-1)*jac*zr(ipoids+ipg-1)
-                    vect(i,j,ll+2) = vect(i,j,ll+2) + tauz*zr(ivf+ ldec+l-1)*jac*zr(ipoids+ipg-1)
-105             continue
-104         continue
-103     continue
-100 continue
+                do l = 1, nno
+                    ll = 3*l - 2
+                    vect(i,j,ll) = vect(i,j,ll) + taux*zr(ivf+ldec+l- 1)*jac*zr(ipoids+kpg-1)
+                    vect(i,j,ll+1) = vect(i,j,ll+1) + tauy*zr(ivf+ ldec+l-1)*jac*zr(ipoids+kpg-1)
+                    vect(i,j,ll+2) = vect(i,j,ll+2) + tauz*zr(ivf+ ldec+l-1)*jac*zr(ipoids+kpg-1)
+                end do
+            end do
+        end do
+    end do
 !
-    do 400 i = 1, nno
-        do 401 j = 1, 3
-            do 402 k = 1, 3*nno
+    do i = 1, nno
+        do j = 1, 3
+            do k = 1, 3*nno
                 matr(3*(i-1)+j,k) = vect(i,j,k)
-402         continue
-401     continue
-400 continue
+            end do
+        end do
+    end do
 !
 !       --- PASSAGE AU STOCKAGE TRIANGULAIRE
 !
-
-    if (option .ne. 'FORC_NODA' .and. option .ne. 'RAPH_MECA') then
-      call jevech('PMATUUR', 'E', imatuu)
-      do 210 i = 1, 3*nno
-        do 211 j = 1, i
-            ij = (i-1)*i/2+j
-            zr(imatuu+ij-1) = matr(i,j)
-211     continue
-210   continue
+    if (lMatr .or. lDamp) then
+        do i = 1, 3*nno
+            do j = 1, i
+                ij = (i-1)*i/2 + j
+                zr(imatuu+ij-1) = matr(i,j)
+            end do
+        end do
     endif
-    if (option(1:9) .ne. 'RIGI_MECA' .and. option .ne. 'AMOR_MECA') then
-      call jevech('PVECTUR', 'E', ivectu)
-      call jevech('PDEPLMR', 'L', ideplm)
-      call jevech('PDEPLPR', 'L', ideplp)
-      do 212 i = 1, 3*nno
-         depla(i) = zr(ideplm+i-1) + zr(ideplp+i-1)
-         zr(ivectu+i-1) = 0.d0
-212   continue
-      do 213 i = 1, 3*nno
-        do 214 j = 1, 3*nno
-            zr(ivectu+i-1) = zr(ivectu+i-1) + matr(i,j)*depla(j)
-214     continue
-213   continue
+    if (lVect) then
+        call jevech('PDEPLMR', 'L', ideplm)
+        call jevech('PDEPLPR', 'L', ideplp)
+        do i = 1, 3*nno
+            depla(i) = zr(ideplm+i-1) + zr(ideplp+i-1)
+            zr(ivectu+i-1) = 0.d0
+        end do
+        do i = 1, 3*nno
+            do j = 1, 3*nno
+                zr(ivectu+i-1) = zr(ivectu+i-1) + matr(i,j)*depla(j)
+            end do
+        end do
     endif
 !
 end subroutine

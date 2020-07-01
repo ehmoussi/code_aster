@@ -29,20 +29,21 @@ from cataelem.Options.options import OP
 # Modes locaux :
 #----------------
 
+
 NDEPLAC  = LocatedComponents(phys=PHY.DEPL_C, type='ELNO',
-    components=('DX','DY','DZ',))
+    components=('DX','DY',))
 
 
 DDL_MECA = LocatedComponents(phys=PHY.DEPL_R, type='ELNO',
-    components=('DX','DY','DZ',))
+    components=('DX','DY',))
 
 
 NGEOMER  = LocatedComponents(phys=PHY.GEOM_R, type='ELNO',
-    components=('X','Y','Z',))
+    components=('X','Y',))
 
 
 EGGEOP_R = LocatedComponents(phys=PHY.GEOM_R, type='ELGA', location='RIGI',
-    components=('X','Y','Z','W',))
+    components=('X','Y','W',))
 
 
 CTEMPSR  = LocatedComponents(phys=PHY.INST_R, type='ELEM',
@@ -57,33 +58,33 @@ MMATUUR  = ArrayOfComponents(phys=PHY.MDEP_R, locatedComponents=DDL_MECA)
 
 
 #------------------------------------------------------------
-class MEAB_FACE3(Element):
+class MEPASE2(Element):
     """Please document this element"""
-    meshType = MT.TRIA3
+    meshType = MT.SEG2
     elrefe =(
-            ElrefeLoc(MT.TR3, gauss = ('RIGI=COT3','FPG1=FPG1', 'MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
+            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )
     calculs = (
 
-        OP.AMOR_MECA(te=569,
+        OP.AMOR_MECA(te=553,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      ),
             para_out=((SP.PMATUUR, MMATUUR), ),
         ),
 
-        OP.COOR_ELGA(te=488,
+        OP.COOR_ELGA(te=478,
             para_in=((SP.PGEOMER, NGEOMER), ),
             para_out=((OP.COOR_ELGA.PCOORPG, EGGEOP_R), ),
         ),
 
-        OP.FORC_NODA(te=569,
+        OP.FORC_NODA(te=553,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.FULL_MECA(te=569,
+        OP.FULL_MECA(te=553,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      ),
@@ -100,21 +101,21 @@ class MEAB_FACE3(Element):
             para_out=((OP.MATE_ELEM.PMATERR, LC.EEMATE_R), ),
         ),
 
-        OP.ONDE_PLAN(te=498,
+        OP.ONDE_PLAN(te=499,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PONDPLA, LC.CONDPLA), (SP.PONDPLR, LC.CONDPLR),
                      (SP.PTEMPSR, CTEMPSR), ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.RAPH_MECA(te=569,
+        OP.RAPH_MECA(te=553,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      ),
             para_out=((SP.PVECTUR, MVECTUR), ),
         ),
 
-        OP.RIGI_MECA(te=569,
+        OP.RIGI_MECA(te=553,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      ),
             para_out=((SP.PMATUUR, MMATUUR), ),
@@ -122,18 +123,22 @@ class MEAB_FACE3(Element):
 
         OP.RIGI_MECA_HYST(te=50,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
-                     (SP.PRIGIEL, MMATUUR),
+                     (SP.PRIGIEL, MMATUUR), 
                      ),
             para_out=((SP.PMATUUC, MMATUUC), ),
         ),
 
-        OP.RIGI_MECA_TANG(te=569,
+        OP.RIGI_MECA_TANG(te=553,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
+                     (SP.PDEPLMR, DDL_MECA), (SP.PDEPLPR, DDL_MECA),
                      ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
+            para_out = ((SP.PMATUUR, MMATUUR), 
+                        (SP.PVECTUR, MVECTUR), 
+                        (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),
+                       ),
         ),
         
-        OP.RIGI_MECA_ELAS(te=569,
+        OP.RIGI_MECA_ELAS(te=553,
             para_in=((SP.PGEOMER, NGEOMER), (SP.PMATERC, LC.CMATERC),
                      ),
             para_out=((SP.PMATUUR, MMATUUR), ),
@@ -144,7 +149,7 @@ class MEAB_FACE3(Element):
         ),
 
         OP.TOU_INI_ELEM(te=99,
-            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM3D), ),
+            para_out=((OP.TOU_INI_ELEM.PGEOM_R, LC.CGEOM2D), ),
         ),
 
 
@@ -152,40 +157,17 @@ class MEAB_FACE3(Element):
             para_out=((OP.TOU_INI_ELNO.PGEOM_R, NGEOMER), ),
         ),
 
+#------------------------
+# MASS_INER    G. Devesa affirme que MASS_INER ne concerne pas cet element
+#------------------------
+
     )
 
 
 #------------------------------------------------------------
-class MEAB_FACE4(MEAB_FACE3):
+class MEPASE3(MEPASE2):
     """Please document this element"""
-    meshType = MT.QUAD4
+    meshType = MT.SEG3
     elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
-        )
-
-
-#------------------------------------------------------------
-class MEAB_FACE6(MEAB_FACE3):
-    """Please document this element"""
-    meshType = MT.TRIA6
-    elrefe =(
-            ElrefeLoc(MT.TR6, gauss = ('RIGI=FPG4','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
-        )
-
-
-#------------------------------------------------------------
-class MEAB_FACE8(MEAB_FACE3):
-    """Please document this element"""
-    meshType = MT.QUAD8
-    elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG9','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
-        )
-
-
-#------------------------------------------------------------
-class MEAB_FACE9(MEAB_FACE3):
-    """Please document this element"""
-    meshType = MT.QUAD9
-    elrefe =(
-            ElrefeLoc(MT.QU9, gauss = ('RIGI=FPG9','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
+            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4','FPG1=FPG1','MTGA=FPG1',), mater=('RIGI','FPG1','MTGA',),),
         )
