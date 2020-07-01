@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,20 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine nmgr2d(option   , typmod    ,&
-                      fami     , imate     ,&
-                      nno      , npg       , lgpg     ,&
-                      ipoids   , ivf       , vff      , idfde,&
-                      compor   , carcri    , mult_comp,&
-                      instam   , instap    ,&
-                      geom_init, disp_prev , disp_incr,&
-                      sigm     , sigp      ,&
-                      vim      , vip       ,&
-                      matsym   , matuu     , vectu    ,&
+    subroutine nmgr2d(option  , typmod  ,&
+                      fami    , imate   ,&
+                      nno     , npg     , lgpg     ,&
+                      ipoids  , ivf     , vff      , idfde,&
+                      compor  , carcri  , mult_comp,&
+                      instam  , instap  ,&
+                      geomInit, dispPrev, dispIncr,&
+                      sigmPrev, sigmCurr,&
+                      vim     , vip     ,&
+                      matsym  , matuu   , vectu   ,&
                       codret)
         character(len=16), intent(in) :: option
         character(len=8), intent(in) :: typmod(*)
@@ -41,9 +40,9 @@ interface
         real(kind=8), intent(in) :: carcri(*)
         character(len=16), intent(in) :: mult_comp
         real(kind=8), intent(in) :: instam, instap
-        real(kind=8), intent(in) :: geom_init(2, nno)
-        real(kind=8), intent(inout) :: disp_prev(2*nno),  disp_incr(2*nno)
-        real(kind=8), intent(inout) :: sigm(4, npg), sigp(4, npg)
+        real(kind=8), intent(in) :: geomInit(2, nno)
+        real(kind=8), intent(inout) :: dispPrev(2*nno),  dispIncr(2*nno)
+        real(kind=8), intent(inout) :: sigmPrev(4, npg), sigmCurr(4, npg)
         real(kind=8), intent(inout) :: vim(lgpg, npg), vip(lgpg, npg)
         aster_logical, intent(in) :: matsym
         real(kind=8), intent(inout) :: matuu(*)

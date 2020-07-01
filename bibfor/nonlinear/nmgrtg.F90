@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,29 +15,35 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine nmgrtg(ndim, nno, poids, kpg, vff,&
-                  dfdi, def, pff, option, axi,&
-                  r, fm, f, dsidep, sign,&
-                  sigma, matsym, matuu, vectu)
-    implicit none
+! aslint: disable=W1504
+!
+subroutine nmgrtg(ndim    , nno   , poids    , kpg   , vff     ,&
+                  dfdi    , def   , pff      , axi   ,&
+                  lVect   , lMatr , lMatrPred,&
+                  r       , fPrev , fCurr    , dsidep, sigmPrev,&
+                  sigmCurr, matsym, matuu    , vectu)
+!
+implicit none
 !
 #include "asterf_types.h"
 #include "asterfort/nmfdff.h"
 #include "asterfort/nmgrt2.h"
 #include "asterfort/nmgrt3.h"
 #include "blas/dcopy.h"
-    integer :: ndim, nno, kpg
-    character(len=16) :: option
-    real(kind=8) :: pff(*), def(*), r, dsidep(6, 6), poids, vectu(*)
-    real(kind=8) :: sigma(6), sign(6), matuu(*), vff(*)
-    real(kind=8) :: fm(3, 3), f(3, 3), fr(3, 3), dfdi(*)
-    aster_logical :: matsym, axi, resi, rigi
 !
-!.......................................................................
+integer :: ndim, nno, kpg
+real(kind=8) :: pff(*), def(*), r, dsidep(6, 6), poids, vectu(*)
+real(kind=8) :: sigmCurr(6), sigmPrev(6), matuu(*), vff(*)
+real(kind=8) :: fPrev(3, 3), fCurr(3, 3), dfdi(*)
+aster_logical :: matsym, axi, lVect, lMatr, lMatrPred
+!
+! --------------------------------------------------------------------------------------------------
+!
 !     BUT:  CALCUL DE LA MATRICE TANGENTE EN CONFIGURATION LAGRANGIENNE
 !           OPTIONS RIGI_MECA_TANG ET FULL_MECA
-!.......................................................................
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN  NDIM    : DIMENSION DU PB
 ! IN  POIDS   : POIDS DES POINTS DE GAUSS
@@ -53,39 +59,34 @@ subroutine nmgrtg(ndim, nno, poids, kpg, vff,&
 ! IN  SIGMA   : CONTRAINTES PK2 A L'INSTANT ACTUEL    (AVEC RAC2)
 ! IN  MATSYM  : VRAI SI LA MATRICE DE RIGIDITE EST SYMETRIQUE
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
-!.......................................................................
 !
-    resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+! --------------------------------------------------------------------------------------------------
 !
-!     CALCUL DES PRODUITS SYMETR. DE F PAR N
+    real(kind=8) :: fr(3, 3)
 !
-    if (resi) then
-        call dcopy(9, f, 1, fr, 1)
+! --------------------------------------------------------------------------------------------------
+!
+    if (lVect) then
+        call dcopy(9, fCurr, 1, fr, 1)
     else
-        call dcopy(9, fm, 1, fr, 1)
+        call dcopy(9, fPrev, 1, fr, 1)
     endif
 !
-    call nmfdff(ndim, nno, axi, kpg, r,&
-                rigi, matsym, fr, vff, dfdi,&
-                def, pff)
-!
-!     DEUX ROUTINES DIFFERENTES POUR OPTIMISER lE TEMPS CPU
+    call nmfdff(ndim , nno   , axi, kpg, r   ,&
+                lMatr, matsym, fr , vff, dfdi,&
+                def  , pff)
 !
     if (ndim .eq. 3) then
-!
-        call nmgrt3(nno, poids, kpg, vff, def,&
-                    pff, option, axi, r, resi,&
-                    rigi, dsidep, sign, sigma, matsym,&
+        call nmgrt3(nno, poids, def, pff,&
+                    lVect, lMatr, lMatrPred,&
+                    dsidep, sigmPrev, sigmCurr, matsym,&
                     matuu, vectu)
-!
-    else if (ndim.eq.2) then
-!
+    else if (ndim .eq. 2) then
         call nmgrt2(nno, poids, kpg, vff, def,&
-                    pff, option, axi, r, resi,&
-                    rigi, dsidep, sign, sigma, matsym,&
+                    pff, axi, r,&
+                    lVect, lMatr, lMatrPred,&
+                    dsidep, sigmPrev, sigmCurr, matsym,&
                     matuu, vectu)
-!
     endif
 !
 end subroutine

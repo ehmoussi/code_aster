@@ -35,6 +35,7 @@
 #define L_VECT(option) (option.eq.'RAPH_MECA' .or. option(1:9).eq.'FULL_MECA' .or. option .eq. 'RIGI_MECA_TANG')
 #define L_MATR(option) (option(1:9).eq.'FULL_MECA' .or. option(1:9).eq.'RIGI_MECA')
 #define L_PRED(option) (option .eq. 'RIGI_MECA_TANG')
+#define L_MATR_PRED(option) (option(1:4) .eq. 'RIGI')
 !
 ! --------------------------------------------------------------------------------------------------
 !

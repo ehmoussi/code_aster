@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,15 +15,15 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! aslint: disable=W1504,W1306
+!
 subroutine nmed2d(nno, npg, ipoids, ivf, idfde,&
                   geom, typmod, option, imate, compor,&
-                  lgpg, crit, ideplm, iddepl, sigm,&
+                  lgpg, ideplm, iddepl, sigm,&
                   vim, dfdi, def, sigp, vip,&
                   matuu, ivectu, codret)
 !
-! aslint: disable=W1504
-    implicit none
+implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -32,23 +32,29 @@ subroutine nmed2d(nno, npg, ipoids, ivf, idfde,&
 #include "asterfort/nmedel.h"
 #include "asterfort/nmedsq.h"
 #include "asterfort/nmgeom.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
+#include "asterfort/Behaviour_type.h"
 !
-    integer :: nno, npg, imate, lgpg, codret, cod(9)
-    integer :: ipoids, ivf, idfde, ivectu, ideplm, iddepl
-    character(len=8) :: typmod(*)
-    character(len=16) :: option, compor(*)
-    real(kind=8) :: geom(2, nno), crit(3)
-    real(kind=8) :: dfdi(nno, 2), def(4, nno, 2)
-    real(kind=8) :: sigm(4, npg), sigp(4, npg)
-    real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
-    real(kind=8) :: matuu(*)
+integer :: nno, npg, imate, lgpg, codret
+integer :: ipoids, ivf, idfde, ivectu, ideplm, iddepl
+character(len=8) :: typmod(*)
+character(len=16) :: option, compor(*)
+real(kind=8) :: geom(2, nno)
+real(kind=8) :: dfdi(nno, 2), def(4, nno, 2)
+real(kind=8) :: sigm(4, npg), sigp(4, npg)
+real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
+real(kind=8) :: matuu(*)
 !
-!----------------------------------------------------------------------
-!     BUT:  CALCUL DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
-!           POUR L'ELEMENT A DISCONTINUITE INTERNE EN 2D
-!----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: AXIS_ELDI, PLAN_ELDI
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN  NPG     : NOMBRE DE POINTS DE GAUSS
 ! IN  IPOIDS  : POINTEUR SUR LES POIDS DES POINTS DE GAUSS
@@ -61,7 +67,6 @@ subroutine nmed2d(nno, npg, ipoids, ivf, idfde,&
 ! IN  COMPOR  : COMPORTEMENT
 ! IN  LGPG    : "LONGUEUR" DES VARIABLES INTERNES POUR 1 POINT DE GAUSS
 !               CETTE LONGUEUR EST UN MAJORANT DU NBRE REEL DE VAR. INT.
-! IN  CRIT    : CRITERES DE CONVERGENCE LOCAUX
 ! IN  DEPLM   : DEPLACEMENT A L'INSTANT PRECEDENT
 ! IN  DDEPL   : INCREMENT DE DEPLACEMENT
 ! IN  SIGM    : CONTRAINTES A L'INSTANT PRECEDENT
@@ -72,394 +77,297 @@ subroutine nmed2d(nno, npg, ipoids, ivf, idfde,&
 ! OUT VIP     : VARIABLES INTERNES    (RAPH_MECA ET FULL_MECA)
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!-----------------------------------------------------------------------
 !
+! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: grand, axi, resi, rigi, elas
-!
-    integer :: kpg, kk, kkd, n, i, m, j, j1, kl, k
-!
-    real(kind=8) :: dsidep(6, 6), f(3, 3), deps(6), r, sigma(6), sign(6)
-    real(kind=8) :: poids, tmp, sig(6)
-    real(kind=8) :: bum(6), bdu(6)
-    real(kind=8) :: rac2
+    integer, parameter :: ndim = 2, sz_tens = 4
+    aster_logical :: grand, axi
+    aster_logical :: elas
+    aster_logical :: lVect, lMatr, lSigm
+    integer :: kpg, kk, kkd, i_node, i_dime, m, j, j1, i_tens, k
+    integer :: cod(npg)
     real(kind=8) :: alpham(2), alphap(2)
     real(kind=8) :: s(2), q(2, 2), dsdu(2, 8), sg(2), qg(2, 2), dsdug(2, 8)
     real(kind=8) :: d(4, 2)
     real(kind=8) :: dda, xa, xb, ya, yb
     real(kind=8) :: rot(2, 2), cotmp, sitmp, co, si, drot, rtemp(4, 2)
     real(kind=8) :: dalfu(2, 8), dh(4, 8), dalfs(2, 2)
+    real(kind=8) :: bum(6), bdu(6)
+    real(kind=8) :: r
+    real(kind=8) :: f(3, 3), deps(6)
+    real(kind=8) :: dsidep(6, 6), sigma(6), sig(6), sigm_norm(6)
+    real(kind=8) :: poids, tmp
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
+
 !
-! - INITIALISATIONS
-!------------------
+! --------------------------------------------------------------------------------------------------
 !
-    resi = option.eq.'RAPH_MECA' .or. option.eq.'FULL_MECA'
-    rigi = option.eq.'FULL_MECA' .or. option.eq.'RIGI_MECA_TANG'
+    grand  = ASTER_FALSE
+    axi    = typmod(1) .eq. 'AXIS'
+    cod    = 0
+    lSigm  = L_SIGM(option)
+    lVect  = L_VECT(option)
+    lMatr  = L_MATR(option)
 !
-    if (.not. resi .and. .not. rigi) then
-        call utmess('F', 'ALGORITH7_61', sk=option)
-    endif
-!
-    call r8inir(2, 0.d0, s, 1)
-    call r8inir(4, 0.d0, q, 1)
-    call r8inir(16, 0.d0, dsdu, 1)
-!
-    rac2 = sqrt(2.d0)
-    grand = .false.
-    axi = typmod(1) .eq. 'AXIS'
-!
-!     INITIALISATION CODES RETOURS
-    do 1955 kpg = 1, npg
-        cod(kpg)=0
-1955 end do
-!
-!
-! MATRICE DE CHANGEMENT DE REPERE : DU GLOBAL AU LOCAL  :
-!    ROT X = XLOC
-! SOIT A ET B LES MILIEUX DES COTES [14] ET [23]
-! t TANGENT AU COTE [AB]
+! - MATRICE DE CHANGEMENT DE REPERE : DU GLOBAL AU LOCAL  : ROT X = XLOC
+! - SOIT A ET B LES MILIEUX DES COTES [14] ET [23] t TANGENT AU COTE [AB]
 !
     xa = ( geom(1,1) + geom(1,4) ) / 2
     ya = ( geom(2,1) + geom(2,4) ) / 2
-!
     xb = ( geom(1,2) + geom(1,3) ) / 2
     yb = ( geom(2,2) + geom(2,3) ) / 2
-!
     cotmp = (yb - ya)
     sitmp = (xa - xb)
-!
     co = cotmp / sqrt(cotmp*cotmp + sitmp*sitmp)
     si = sitmp / sqrt(cotmp*cotmp + sitmp*sitmp)
-!
     rot(1,1) = co
     rot(2,1) = -si
     rot(1,2) = si
     rot(2,2) = co
 !
+! - Loop on Gauss points
 !
-! - 1ERE BOUCLE SUR LES POINTS DE GAUSS
-! -------------------------------------
-!   (CALCUL DE S ET Q NECESSAIRE POUR LE CALCUL DU SAUT ALPHA)
-!
-    do 800 kpg = 1, npg
-!
-!       CALCUL DE DFDI,F,EPS (BUM),DEPS (BDU),R(EN AXI) ET POIDS
-!
-        call r8inir(6, 0.d0, bum, 1)
-        call r8inir(6, 0.d0, bdu, 1)
-!
-        call nmgeom(2, nno, axi, grand, geom,&
-                    kpg, ipoids, ivf, idfde, zr( ideplm),&
-                    .true._1, poids, dfdi, f, bum,&
+    s    = 0.d0
+    q    = 0.d0
+    dsdu = 0.d0
+    do kpg = 1, npg
+! ----- CALCUL DE DFDI,F,EPS (BUM),DEPS (BDU),R(EN AXI) ET POIDS
+        bum = 0.d0
+        bdu = 0.d0
+        call nmgeom(ndim    , nno   , axi , grand, geom      ,&
+                    kpg     , ipoids, ivf , idfde, zr(ideplm),&
+                    .true._1, poids , dfdi, f    , bum       ,&
                     r)
-        call nmgeom(2, nno, axi, grand, geom,&
-                    kpg, ipoids, ivf, idfde, zr( iddepl),&
-                    .true._1, poids, dfdi, f, bdu,&
+        call nmgeom(ndim    , nno   , axi , grand, geom,&
+                    kpg     , ipoids, ivf , idfde, zr(iddepl),&
+                    .true._1, poids , dfdi, f    , bdu       ,&
                     r)
-!
-!
-!       CALCUL DE D (LES AUTRES TERMES SONT NULS):
-!
-        call r8inir(8, 0.d0, d, 1)
-!
+! ----- CALCUL DE D (LES AUTRES TERMES SONT NULS):
+        d = 0.d0
         d(1,1) = - (dfdi(1,1) + dfdi(2,1))
         d(4,1) = - rac2*(dfdi(1,2) + dfdi(2,2))/2
         d(2,2) = - (dfdi(1,2) + dfdi(2,2))
         d(4,2) = - rac2*(dfdi(1,1) + dfdi(2,1))/2
-!
-!       CHANGEMENT DE REPERE DANS D : ON REMPLACE D PAR DRt :
-!
-        call r8inir(8, 0.d0, rtemp, 1)
-!
-        do 32 i = 1, 4
-            do 33 j = 1, 2
+! ----- CHANGEMENT DE REPERE DANS D : ON REMPLACE D PAR DRt :
+        rtemp = 0.d0
+        do i_dime = 1, 4
+            do j = 1, 2
                 drot = 0.d0
-                do 34 k = 1, 2
-                    drot = drot + d(i,k)*rot(j,k)
- 34             continue
-                rtemp(i,j) = drot
- 33         continue
- 32     continue
-!
-        do 38 i = 1, 4
-            do 39 j = 1, 2
-                d(i,j) = rtemp(i,j)
- 39         continue
- 38     continue
-!
-!       CALCUL DES PRODUITS SYMETR. DE F PAR N,
-!
-        call r8inir(32, 0.d0, def, 1)
-        do 40 n = 1, nno
-            do 30 i = 1, 2
-                def(1,n,i) = f(i,1)*dfdi(n,1)
-                def(2,n,i) = f(i,2)*dfdi(n,2)
-                def(3,n,i) = 0.d0
-                def(4,n,i) = (f(i,1)*dfdi(n,2) + f(i,2)*dfdi(n,1))/ rac2
- 30         continue
- 40     continue
-!
-!       TERME DE CORRECTION (3,3) AXI QUI PORTE EN FAIT SUR LE DDL 1
-!
+                do k = 1, 2
+                    drot = drot + d(i_dime,k)*rot(j,k)
+                end do
+                rtemp(i_dime,j) = drot
+            end do
+        end do
+        do i_dime = 1, 4
+            do j = 1, 2
+                d(i_dime,j) = rtemp(i_dime,j)
+            end do
+        end do
+! ----- Kinematic - Product [F].[B]
+        def = 0.d0
+        do i_node = 1, nno
+            do i_dime = 1, ndim
+                def(1,i_node,i_dime) = f(i_dime,1)*dfdi(i_node,1)
+                def(2,i_node,i_dime) = f(i_dime,2)*dfdi(i_node,2)
+                def(3,i_node,i_dime) = 0.d0
+                def(4,i_node,i_dime) = (f(i_dime,1)*dfdi(i_node,2) +&
+                                        f(i_dime,2)*dfdi(i_node,1))/ rac2
+            end do
+        end do
         if (axi) then
-            do 50 n = 1, nno
-                def(3,n,1) = f(3,3)*zr(ivf+n+(kpg-1)*nno-1)/r
- 50         continue
+            do i_node = 1, nno
+                def(3,i_node,1) = f(3,3)*zr(ivf+i_node+(kpg-1)*nno-1)/r
+            end do
         endif
-!
-        do 60 i = 1, 3
-            sign(i) = sigm(i,kpg)
- 60     continue
-        sign(4) = sigm(4,kpg)*rac2
-!
-!       CALCUL DE S ET Q AU POINT DE GAUSS COURANT I.E. SG ET QG :
-!
+! ----- Prepare stresses
+        do i_tens = 1, 3
+            sigm_norm(i_tens) = sigm(i_tens, kpg)
+        end do
+        sigm_norm(4) = sigm(4,kpg)*rac2
+! ----- CALCUL DE S ET Q AU POINT DE GAUSS COURANT I.E. SG ET QG :
         call nmedsq(sg, qg, dsdug, d, npg,&
-                    typmod, imate, bum, bdu, sign,&
+                    typmod, imate, bum, bdu, sigm_norm,&
                     vim, option, geom, nno, lgpg,&
                     kpg, def)
+! ----- CALCUL DES S ET Q POUR L'ELEMENT :
+        do i_dime = 1, 2
+            s(i_dime) = s(i_dime) + poids*sg(i_dime)
+            do j = 1, 2
+                q(i_dime,j) = q(i_dime,j) + poids*qg(i_dime,j)
+            end do
+            do j = 1, 8
+                dsdu(i_dime,j) = dsdu(i_dime,j) + poids*dsdug(i_dime,j)
+            end do
+        end do
+    end do
 !
-!       CALCUL DES S ET Q POUR L'ELEMENT :
-!
-        do 64 i = 1, 2
-            s(i) = s(i) + poids*sg(i)
-            do 65 j = 1, 2
-                q(i,j) = q(i,j) + poids*qg(i,j)
- 65         continue
-            do 66 j = 1, 8
-                dsdu(i,j) = dsdu(i,j) + poids*dsdug(i,j)
- 66         continue
- 64     continue
-!
-800 end do
-!
-!
-! - APPEL DU COMPORTEMENT :
-!--------------------------
+! - Compute behaviour
 !
     call nmedco(compor, option, imate, npg, lgpg,&
                 s, q, vim, vip, alphap,&
                 dalfs)
 !
+! - Loop on Gauss points
 !
-! - 2ND BOUCLE SUR LES POINTS DE GAUSS
-! -------------------------------------------------
-!   (CALCUL DE LA CONTRAINTE , FORCE INT ET MATRICE TANGENTE)
-!
-    do 801 kpg = 1, npg
-!
-!       CALCUL DE DFDI,F,BUM, BDU ,R(EN AXI) ET POIDS
-!
-        call r8inir(6, 0.d0, bum, 1)
-        call r8inir(6, 0.d0, bdu, 1)
-!
+    do kpg = 1, npg
+! ----- CALCUL DE DFDI,F,BUM, BDU ,R(EN AXI) ET POIDS
+        bum = 0.d0
+        bdu = 0.d0
         call nmgeom(2, nno, axi, grand, geom,&
                     kpg, ipoids, ivf, idfde, zr( ideplm),&
                     .true._1, poids, dfdi, f, bum,&
                     r)
-!
         call nmgeom(2, nno, axi, grand, geom,&
                     kpg, ipoids, ivf, idfde, zr( iddepl),&
                     .true._1, poids, dfdi, f, bdu,&
                     r)
-!
-!
-!       CALCUL DE D (LES AUTRES TERMES SONT NULS):
-!
-        call r8inir(8, 0.d0, d, 1)
-!
+! ----- CALCUL DE D (LES AUTRES TERMES SONT NULS):
+        d      = 0.d0
         d(1,1) = - (dfdi(1,1) + dfdi(2,1))
         d(4,1) = - rac2*(dfdi(1,2) + dfdi(2,2))/2
         d(2,2) = - (dfdi(1,2) + dfdi(2,2))
         d(4,2) = - rac2*(dfdi(1,1) + dfdi(2,1))/2
-!
-!       CHANGEMENT DE REPERE DANS D : ON REMPLACE D PAR DRt :
-!
-        call r8inir(8, 0.d0, rtemp, 1)
-!
-        do 35 i = 1, 4
-            do 36 j = 1, 2
+! ----- CHANGEMENT DE REPERE DANS D : ON REMPLACE D PAR DRt :
+        rtemp = 0.d0
+        do i_dime = 1, 4
+            do j = 1, 2
                 drot = 0.d0
-                do 37 k = 1, 2
-                    drot = drot + d(i,k)*rot(j,k)
- 37             continue
-                rtemp(i,j) = drot
- 36         continue
- 35     continue
-!
-        do 52 i = 1, 4
-            do 53 j = 1, 2
-                d(i,j) = rtemp(i,j)
- 53         continue
- 52     continue
-!
-!       CALCUL DES PRODUITS SYMETR. DE F PAR N,
-!
-        call r8inir(32, 0.d0, def, 1)
-        do 41 n = 1, nno
-            do 31 i = 1, 2
-                def(1,n,i) = f(i,1)*dfdi(n,1)
-                def(2,n,i) = f(i,2)*dfdi(n,2)
-                def(3,n,i) = 0.d0
-                def(4,n,i) = (f(i,1)*dfdi(n,2) + f(i,2)*dfdi(n,1))/ rac2
- 31         continue
- 41     continue
-!
-!       TERME DE CORRECTION (3,3) AXI QUI PORTE EN FAIT SUR LE DDL 1
-!
+                do k = 1, 2
+                    drot = drot + d(i_dime,k)*rot(j,k)
+                end do
+                rtemp(i_dime,j) = drot
+            end do
+        end do
+        do i_dime = 1, 4
+            do j = 1, 2
+                d(i_dime,j) = rtemp(i_dime,j)
+            end do
+        end do
+! ----- CALCUL DES PRODUITS SYMETR. DE F PAR N,
+        def = 0.d0
+        do i_node = 1, nno
+            do i_dime = 1, ndim
+                def(1,i_node,i_dime) = f(i_dime,1)*dfdi(i_node,1)
+                def(2,i_node,i_dime) = f(i_dime,2)*dfdi(i_node,2)
+                def(3,i_node,i_dime) = 0.d0
+                def(4,i_node,i_dime) = (f(i_dime,1)*dfdi(i_node,2) +&
+                                        f(i_dime,2)*dfdi(i_node,1))/ rac2
+            end do
+        end do
+! ----- TERME DE CORRECTION (3,3) AXI QUI PORTE EN FAIT SUR LE DDL 1
         if (axi) then
-            do 51 n = 1, nno
-                def(3,n,1) = f(3,3)*zr(ivf+n+(kpg-1)*nno-1)/r
- 51         continue
+            do i_node = 1, nno
+                def(3,i_node,1) = f(3,3)*zr(ivf+i_node+(kpg-1)*nno-1)/r
+            end do
         endif
-!
-        do 61 i = 1, 3
-            sign(i) = sigm(i,kpg)
- 61     continue
-        sign(4) = sigm(4,kpg)*rac2
-!
-!       LA VARIATION DE DEF DEPS : DEVIENT LA SOMME DES VARIATION
-!       DE DEF LIEE AU DEPL : 'BDU' PLUS CELLE LIEE AU SAUT : 'DDA'
-!
+        do i_tens = 1, 3
+            sigm_norm(i_tens) = sigm(i_tens, kpg)
+        end do
+        sigm_norm(4) = sigm(4,kpg)*rac2
+! ----- LA VARIATION DE DEF DEPS : DEVIENT LA SOMME DES VARIATION
+! ----- DE DEF LIEE AU DEPL : 'BDU' PLUS CELLE LIEE AU SAUT : 'DDA'
         alpham(1) = vim(1,kpg)
         alpham(2) = vim(2,kpg)
-        do 80 i = 1, 4
+        do i_tens = 1, 4
             dda = 0.d0
-            do 70 j = 1, 2
-                dda = dda + d(i,j)*(alphap(j)-alpham(j))
- 70         continue
-            deps(i) = bdu(i) + dda
- 80     continue
-!
-! CALCUL DE LA CONTRAINTE
-!------------------------
-!
-!       APPEL DE LA LDC ELASTIQUE : SIGMA=A.EPS AVEC EPS=BU-DA
-!       ON PASSE EN ARG LA VARIATION DE DEF 'DEPS' ET LA CONTRAINTE -
-!       'SIGN' ET ON SORT LA CONTAINTE + 'SIGMA'
-        call nmedel(2, typmod, imate, deps, sign,&
+            do j = 1, 2
+                dda = dda + d(i_tens,j)*(alphap(j)-alpham(j))
+            end do
+            deps(i_tens) = bdu(i_tens) + dda
+        end do
+! ----- APPEL DE LA LDC ELASTIQUE : SIGMA=A.EPS AVEC EPS=BU-DA
+! ----- ON PASSE EN ARG LA VARIATION DE DEF 'DEPS' ET LA CONTRAINTE -
+! ----- 'SIGN' ET ON SORT LA CONTAINTE + 'SIGMA'
+        call nmedel(2, typmod, imate, deps, sigm_norm,&
                     option, sigma, dsidep)
-!
-! CALCUL DES EFFORTS INTERIEURS ET MATRICE TANGENTE :
-! ---------------------------------------------------
-!
-        if (rigi) then
-!
-! CALCUL DE DH : TERME MANQUANT DANS LA MATRICE TANGENTE :
-!
+! ----- Rigidity matrix
+        if (lMatr) then
+! --------- Compute DH
             if (option .eq. 'RIGI_MECA_TANG') then
                 elas=(nint(vim(4,kpg)).eq.0)
             else
                 elas=(nint(vip(4,kpg)).eq.0)
             endif
-!
             if ((elas) .and. (vim(3,kpg).eq.0.d0)) then
-!
-                call r8inir(32, 0.d0, dh, 1)
-!
+                dh = 0.d0
             else
-!
-! CALCUL DE LA DERIVE DE ALPHA PAR RAPPORT A U : 'DALFU' EN UTILISANT LA
-! DERIVEE ALPHA PAR RAPPORT A S : 'DALFS' (CALCULE DANS LE COMPORTEMENT
-! CF NMEDCO.F) ET DE LA DERIVEE DE S PAR RAPPORT A U : 'DSDU'.
-!
-                call r8inir(16, 0.d0, dalfu, 1)
-                do 73 i = 1, 2
-                    do 74 j = 1, 8
-                        do 75 k = 1, 2
-                            dalfu(i,j) = dalfu(i,j) + dalfs(i,k)*dsdu( k,j)
- 75                     continue
- 74                 continue
- 73             continue
-!
-!
-! ON MET LE PRODUIT D.DALFU DANS DH :
-! DH  =  D  DALFU
-! 4x8 = 4x2  2x8
-!
-                call r8inir(32, 0.d0, dh, 1)
-                do 76 i = 1, 4
-                    do 77 j = 1, 8
-                        do 78 k = 1, 2
-                            dh(i,j) = dh(i,j) + d(i,k)*dalfu(k,j)
- 78                     continue
- 77                 continue
- 76             continue
-!
+! ------------- CALCUL DE LA DERIVE DE ALPHA PAR RAPPORT A U : 'DALFU' EN UTILISANT LA
+! ------------- DERIVEE ALPHA PAR RAPPORT A S : 'DALFS' (CALCULE DANS LE COMPORTEMENT
+! ------------- CF NMEDCO.F) ET DE LA DERIVEE DE S PAR RAPPORT A U : 'DSDU'.
+                dalfu = 0.d0
+                do i_dime = 1, 2
+                    do j = 1, 8
+                        do k = 1, 2
+                            dalfu(i_dime,j) = dalfu(i_dime,j) + dalfs(i_dime,k)*dsdu( k,j)
+                        end do
+                    end do
+                end do
+                dh = 0.d0
+                do i_dime = 1, 4
+                    do j = 1, 8
+                        do k = 1, 2
+                            dh(i_dime,j) = dh(i_dime,j) + d(i_dime,k)*dalfu(k,j)
+                        end do
+                    end do
+                end do
             endif
-!
-! - CALCUL DE LA MATRICE DE RIGIDITE
-!
-            do 160 n = 1, nno
-                do 150 i = 1, 2
-                    do 151 kl = 1, 4
-                        sig(kl)=0.d0
-                        sig(kl)=sig(kl) + def(1,n,i)*dsidep(1,kl)
-                        sig(kl)=sig(kl) + def(2,n,i)*dsidep(2,kl)
-                        sig(kl)=sig(kl) + def(3,n,i)*dsidep(3,kl)
-                        sig(kl)=sig(kl) + def(4,n,i)*dsidep(4,kl)
-151                 continue
-                    do 140 j = 1, 2
-                        do 130 m = 1, n
-                            if (m .eq. n) then
-                                j1 = i
+! --------- Rigidity matrix
+            do i_node = 1, nno
+                do i_dime = 1, ndim
+                    do i_tens = 1, sz_tens
+                        sig(i_tens)=0.d0
+                        sig(i_tens)=sig(i_tens) + def(1,i_node,i_dime)*dsidep(1,i_tens)
+                        sig(i_tens)=sig(i_tens) + def(2,i_node,i_dime)*dsidep(2,i_tens)
+                        sig(i_tens)=sig(i_tens) + def(3,i_node,i_dime)*dsidep(3,i_tens)
+                        sig(i_tens)=sig(i_tens) + def(4,i_node,i_dime)*dsidep(4,i_tens)
+                    end do
+                    do j = 1, 2
+                        do m = 1, i_node
+                            if (m .eq. i_node) then
+                                j1 = i_dime
                             else
                                 j1 = 2
                             endif
-!
-!                 RIGIDITE ELASTIQUE + TERME LIE AU SAUT :
-!                 TMP = Bt E (B + DH)
-!
-                            tmp=0.d0
-                            tmp=tmp + sig(1)*( def(1,m,j) + dh(1, 2*(&
-                            m-1)+j) )
-                            tmp=tmp + sig(2)*( def(2,m,j) + dh(2, 2*(&
-                            m-1)+j) )
-                            tmp=tmp + sig(3)*( def(3,m,j) + dh(3, 2*(&
-                            m-1)+j) )
-                            tmp=tmp + sig(4)*( def(4,m,j) + dh(4, 2*(&
-                            m-1)+j) )
-!
-!                 STOCKAGE EN TENANT COMPTE DE LA SYMETRIE
+! ------------------------  RIGIDITE ELASTIQUE + TERME LIE AU SAUT : TMP = Bt E (B + DH)
+                            tmp = 0.d0
+                            tmp = tmp + sig(1)*( def(1,m,j) + dh(1, 2*(m-1)+j))
+                            tmp = tmp + sig(2)*( def(2,m,j) + dh(2, 2*(m-1)+j))
+                            tmp = tmp + sig(3)*( def(3,m,j) + dh(3, 2*(m-1)+j))
+                            tmp = tmp + sig(4)*( def(4,m,j) + dh(4, 2*(m-1)+j))
+! ------------------------   STOCKAGE EN TENANT COMPTE DE LA SYMETRIE
                             if (j .le. j1) then
-                                kkd = (2*(n-1)+i-1) * (2*(n-1)+i) /2
+                                kkd = (2*(i_node-1)+i_dime-1) * (2*(i_node-1)+i_dime) /2
                                 kk = kkd + 2*(m-1)+j
                                 matuu(kk) = matuu(kk) + tmp*poids
                             endif
-!
-130                     continue
-140                 continue
-150             continue
-160         continue
-!
+                        end do
+                    end do
+                end do
+            end do
         endif
-!
-! - CALCUL DE LA FORCE INTERIEURE ET DES CONTRAINTES DE CAUCHY
-!
-        if (resi) then
-!
-            do 230 n = 1, nno
-                do 220 i = 1, 2
-                    do 210 kl = 1, 4
-!                VECTU(I,N) = VECTU(I,N) + DEF(KL,N,I)*SIGMA(KL)*POIDS
-                        zr(ivectu-1+2*(n-1)+i)= zr(ivectu-1+2*(n-1)+i)&
-                        +def(kl,n,i)*sigma(kl)*poids
-210                 continue
-220             continue
-230         continue
-!
-            do 310 kl = 1, 3
-                sigp(kl,kpg) = sigma(kl)
-310         continue
+! ----- Internal forces
+        if (lVect) then
+            do i_node = 1, nno
+                do i_dime = 1, ndim
+                    do i_tens = 1, sz_tens
+                        zr(ivectu-1+2*(i_node-1)+i_dime) = zr(ivectu-1+2*(i_node-1)+i_dime)+&
+                            poids*def(i_tens,i_node,i_dime)*sigma(i_tens)
+                    end do
+                end do
+            end do
+        endif
+! ----- Cauchy stresses
+        if (lSigm) then
+            do i_tens = 1, 3
+                sigp(i_tens,kpg) = sigma(i_tens)
+            end do
             sigp(4,kpg) = sigma(4)/rac2
-!
         endif
+    end do
 !
-801 end do
+! - Return code summary
 !
-!
-!
-! - SYNTHESE DES CODES RETOURS
     call codere(cod, npg, codret)
 !
 end subroutine

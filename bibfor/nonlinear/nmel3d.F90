@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 !
-subroutine nmel3d(fami, poum, nno, npg, ipoids,&
-                  ivf, idfde, geom, typmod, option,&
-                  imate, compor, lgpg, crit, depl,&
-                  angmas, dfdi, pff, def, sig,&
-                  vi, matuu, vectu, codret)
+subroutine nmel3d(fami  , poum  , nno   , npg  ,&
+                  ipoids, ivf   , idfde ,&
+                  geom  , typmod, option, imate,&
+                  compor, lgpg  , carcri, depl ,&
+                  angmas, sig   , vi    ,&
+                  matuu , vectu , codret)
 !
 use Behaviour_type
 use Behaviour_module
@@ -30,40 +31,51 @@ implicit none
 !
 #include "asterf_types.h"
 #include "jeveux.h"
+#include "asterfort/codere.h"
 #include "asterfort/nmcpel.h"
 #include "asterfort/nmgeom.h"
 #include "asterfort/Behaviour_type.h"
 !
-integer :: nno, npg, imate, lgpg, codret, ipoids, ivf, idfde
-character(len=8) :: typmod(*)
-character(len=16) :: option, compor(*)
-character(len=*) :: fami, poum
-real(kind=8) :: geom(3, nno), crit(*)
-real(kind=8) :: angmas(3)
-real(kind=8) :: depl(1:3, 1:nno), dfdi(nno, 3)
-real(kind=8) :: pff(6, nno, nno), def(6, nno, 3)
-real(kind=8) :: sig(6, npg), vi(lgpg, npg), sigp(6)
-real(kind=8) :: matuu(*), vectu(3, nno)
-!.......................................................................
+character(len=*), intent(in) :: fami, poum
+integer, intent(in) :: nno, npg
+integer, intent(in) :: ipoids, ivf, idfde
+real(kind=8), intent(in) :: geom(3, nno)
+character(len=8), intent(in) :: typmod(*)
+character(len=16), intent(in) :: option
+integer, intent(in) :: imate
+character(len=16), intent(in) :: compor(*)
+real(kind=8), intent(in) :: carcri(*)
+integer, intent(in) :: lgpg
+real(kind=8), intent(inout) :: depl(3, nno)
+real(kind=8), intent(in) :: angmas(*)
+real(kind=8), intent(inout)  :: sig(6, npg), vi(lgpg, npg)
+real(kind=8), intent(inout) :: matuu(*), vectu(3, nno)
+integer, intent(inout) :: codret
 !
-!     BUT:  CALCUL  DES OPTIONS RIGI_MECA_TANG, RAPH_MECA ET FULL_MECA
-!           EN HYPER-ELASTICITE
-!.......................................................................
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: 3D
+!
+! Options: RIGI_MECA_TANG, RAPH_MECA and FULL_MECA - Hyperelasticity
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN  NPG     : NOMBRE DE POINTS DE GAUSS
 ! IN  POIDSG  : POIDS DES POINTS DE GAUSS
 ! IN  VFF     : VALEUR  DES FONCTIONS DE FORME
 ! IN  DFDE    : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
-! IN  DFDN    : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
 ! IN  DFDK    : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
 ! IN  GEOM    : COORDONEES DES NOEUDS
 ! IN  TYPMOD  : TYPE DE MODELISATION
 ! IN  OPTION  : OPTION DE CALCUL
 ! IN  IMATE   : MATERIAU CODE
 ! IN  COMPOR  : COMPORTEMENT
-! IN  LGPG  : "LONGUEUR" DES VARIABLES INTERNES POUR 1 POINT DE GAUSS
-!              CETTE LONGUEUR EST UN MAJORANT DU NBRE REEL DE VAR. INT.
-! IN  CRIT    : CRITERES DE CONVERGENCE LOCAUX
+! IN  LGPG    : "LONGUEUR" DES VARIABLES INTERNES POUR 1 POINT DE GAUSS
+!               CETTE LONGUEUR EST UN MAJORANT DU NBRE REEL DE VAR. INT.
+! IN  CARCRI  : CRITERES DE CONVERGENCE LOCAUX
 ! IN  DEPL    : DEPLACEMENT A PARTIR DE LA CONF DE REF
 ! OUT DFDI    : DERIVEE DES FONCTIONS DE FORME  AU DERNIER PT DE GAUSS
 ! OUT PFF     : PRODUIT DES FCT. DE FORME       AU DERNIER PT DE GAUSS
@@ -72,27 +84,37 @@ real(kind=8) :: matuu(*), vectu(3, nno)
 ! OUT VI      : VARIABLES INTERNES    (RAPH_MECA ET FULL_MECA)
 ! OUT MATUU   : MATRICE DE RIGIDITE PROFIL (RIGI_MECA_TANG ET FULL_MECA)
 ! OUT VECTU   : FORCES NODALES (RAPH_MECA ET FULL_MECA)
-!......................................................................
 !
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: kpg, kk, n, i, m, j, j1, kl, pq, kkd
-    aster_logical :: grdepl
-    real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), r, sigma(6), ftf, detf
+    integer, parameter :: ndim = 3, sz_tens = 6
+    aster_logical :: grand, axi
+    aster_logical :: lVect, lMatr, lSigm
+    integer :: kpg, kk, m, j, j1, kl, pq, kkd
+    integer :: i_node, i_dime, i_tens
+    integer :: cod(npg)
+    real(kind=8) :: dfdi(nno, ndim), def(sz_tens, nno, ndim)
+    real(kind=8) :: pff(sz_tens, nno, nno)
+    real(kind=8) :: r
+    real(kind=8) :: f(3, 3), eps(6), ftf, detf
+    real(kind=8) :: dsidep(6, 6), sigma(6), sigp(6)
     real(kind=8) :: poids, tmp1, tmp2
-    type(Behaviour_Integ) :: BEHinteg
     real(kind=8), parameter :: rac2 = 1.4142135623731d0
-    integer, parameter :: ndim = 3
-    integer :: indi(6), indj(6)
-    real(kind=8) :: rind(6)
-    data    indi / 1 , 2 , 3 , 1 , 1 , 2 /
-    data    indj / 1 , 2 , 3 , 2 , 3 , 3 /
-    data    rind / 0.5d0,0.5d0,0.5d0,0.70710678118655d0,&
-     &               0.70710678118655d0,0.70710678118655d0 /
+    type(Behaviour_Integ) :: BEHinteg
+    integer, parameter :: indi(sz_tens) = (/ 1 , 2 , 3 , 1 , 1 , 2 /)
+    integer, parameter :: indj(sz_tens) = (/ 1 , 2 , 3 , 2 , 3 , 3 /)
+    real(kind=8), parameter :: rind(sz_tens) = (/ 0.5d0 , 0.5d0 ,&
+                                                  0.5d0 , sqrt(2.d0)/2.d0 ,&
+                                                  sqrt(2.d0)/2.d0, sqrt(2.d0)/2.d0 /)
 !
+! --------------------------------------------------------------------------------------------------
 !
-! - INITIALISATION
-!
-    grdepl = compor(3) .eq. 'GROT_GDEP'
+    grand  = compor(DEFO) .eq. 'GROT_GDEP'
+    axi    = ASTER_FALSE
+    cod    = 0
+    lSigm  = L_SIGM(option)
+    lVect  = L_VECT(option)
+    lMatr  = L_MATR(option)
 !
 ! - Initialisation of behaviour datastructure
 !
@@ -100,157 +122,140 @@ real(kind=8) :: matuu(*), vectu(3, nno)
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepESVAElem(crit  , typmod  ,&
+    call behaviourPrepESVAElem(carcri, typmod  ,&
                                nno   , npg     , ndim ,&
                                ipoids, ivf     , idfde,&
                                geom  , BEHinteg)
 !
+! - Loop on Gauss points
+!
     do kpg = 1, npg
-!
-! - CALCUL DES ELEMENTS GEOMETRIQUES
-!
-!      CALCUL DE DFDI, F, EPS, R (EN AXI) ET POIDS
-        call nmgeom(3, nno, .false._1, grdepl, geom,&
-                    kpg, ipoids, ivf, idfde, depl,&
-                    .true._1, poids, dfdi, f, eps,&
+        eps  = 0.d0
+! ----- Kinematic - Previous strains
+        call nmgeom(ndim    , nno   , axi , grand, geom,&
+                    kpg     , ipoids, ivf , idfde, depl,&
+                    .true._1, poids , dfdi, f    , eps ,&
                     r)
-!
-!      CALCUL DES PRODUITS SYMETR. DE F PAR N,
-        do 120 n = 1, nno
-            do 121 i = 1, 3
-                def(1,n,i) = f(i,1)*dfdi(n,1)
-                def(2,n,i) = f(i,2)*dfdi(n,2)
-                def(3,n,i) = f(i,3)*dfdi(n,3)
-                def(4,n,i) = (f(i,1)*dfdi(n,2) + f(i,2)*dfdi(n,1))/ rac2
-                def(5,n,i) = (f(i,1)*dfdi(n,3) + f(i,3)*dfdi(n,1))/ rac2
-                def(6,n,i) = (f(i,2)*dfdi(n,3) + f(i,3)*dfdi(n,2))/ rac2
-121         continue
-120     continue
-!
-!      CALCUL DES PRODUITS DE FONCTIONS DE FORMES (ET DERIVEES)
-        if (( option(1:10) .eq. 'RIGI_MECA_' .or. option(1: 9) .eq. 'FULL_MECA' ) .and.&
-            grdepl) then
-            do 125 n = 1, nno
-                do 126 m = 1, n
-                    pff(1,n,m) = dfdi(n,1)*dfdi(m,1)
-                    pff(2,n,m) = dfdi(n,2)*dfdi(m,2)
-                    pff(3,n,m) = dfdi(n,3)*dfdi(m,3)
-                    pff(4,n,m) =(dfdi(n,1)*dfdi(m,2)+dfdi(n,2)*dfdi(m,&
-                    1))/rac2
-                    pff(5,n,m) =(dfdi(n,1)*dfdi(m,3)+dfdi(n,3)*dfdi(m,&
-                    1))/rac2
-                    pff(6,n,m) =(dfdi(n,2)*dfdi(m,3)+dfdi(n,3)*dfdi(m,&
-                    2))/rac2
-126             continue
-125         continue
+! ----- Kinematic - Product [F].[B]
+        do i_node = 1, nno
+            do i_dime = 1, ndim
+                def(1,i_node,i_dime) = f(i_dime,1)*dfdi(i_node,1)
+                def(2,i_node,i_dime) = f(i_dime,2)*dfdi(i_node,2)
+                def(3,i_node,i_dime) = f(i_dime,3)*dfdi(i_node,3)
+                def(4,i_node,i_dime) = (f(i_dime,1)*dfdi(i_node,2) +&
+                                        f(i_dime,2)*dfdi(i_node,1))/ rac2
+                def(5,i_node,i_dime) = (f(i_dime,1)*dfdi(i_node,3) +&
+                                        f(i_dime,3)*dfdi(i_node,1))/ rac2
+                def(6,i_node,i_dime) = (f(i_dime,2)*dfdi(i_node,3) +&
+                                        f(i_dime,3)*dfdi(i_node,2))/ rac2
+            end do
+        end do
+        if (lMatr .and. grand) then
+            do i_node = 1, nno
+                do m = 1, i_node
+                    pff(1,i_node,m) = dfdi(i_node,1)*dfdi(m,1)
+                    pff(2,i_node,m) = dfdi(i_node,2)*dfdi(m,2)
+                    pff(3,i_node,m) = dfdi(i_node,3)*dfdi(m,3)
+                    pff(4,i_node,m) = (dfdi(i_node,1)*dfdi(m,2) +&
+                                       dfdi(i_node,2)*dfdi(m,1))/rac2
+                    pff(5,i_node,m) = (dfdi(i_node,1)*dfdi(m,3) +&
+                                       dfdi(i_node,3)*dfdi(m,1))/rac2
+                    pff(6,i_node,m) = (dfdi(i_node,2)*dfdi(m,3) +&
+                                       dfdi(i_node,3)*dfdi(m,2))/rac2
+                end do
+            end do
         endif
-!
-!
-! - LOI DE COMPORTEMENT : S(E) ET DS/DE
-!
+! ----- Compute behaviour
         call nmcpel(BEHinteg,&
-                    fami, kpg, 1, poum, 3,&
-                    typmod, angmas, imate, compor, crit,&
-                    option, eps, sigma, vi(1, kpg), dsidep,&
-                    codret)
-!
-!
-! - CALCUL DE LA MATRICE DE RIGIDITE
-!
-        if (option(1:10) .eq. 'RIGI_MECA_' .or. option(1: 9) .eq. 'FULL_MECA') then
-!
-            do 130 n = 1, nno
-                do 131 i = 1, 3
-                    kkd = (3*(n-1)+i-1) * (3*(n-1)+i) /2
-                    do 151 kl = 1, 6
-                        sigp(kl)=0.d0
-                        sigp(kl)=sigp(kl)+def(1,n,i)*dsidep(1,kl)
-                        sigp(kl)=sigp(kl)+def(2,n,i)*dsidep(2,kl)
-                        sigp(kl)=sigp(kl)+def(3,n,i)*dsidep(3,kl)
-                        sigp(kl)=sigp(kl)+def(4,n,i)*dsidep(4,kl)
-                        sigp(kl)=sigp(kl)+def(5,n,i)*dsidep(5,kl)
-                        sigp(kl)=sigp(kl)+def(6,n,i)*dsidep(6,kl)
-151                 continue
-                    do 140 j = 1, 3
-                        do 141 m = 1, n
-                            if (m .eq. n) then
-                                j1 = i
-                            else
-                                j1 = 3
-                            endif
-!
-!                 RIGIDITE GEOMETRIQUE
-                            tmp1 = 0.d0
-                            if (grdepl .and. i .eq. j) then
-                                tmp1 = 0.d0
-                                tmp1 = tmp1+pff(1,n,m)*sigma(1)
-                                tmp1 = tmp1+pff(2,n,m)*sigma(2)
-                                tmp1 = tmp1+pff(3,n,m)*sigma(3)
-                                tmp1 = tmp1+pff(4,n,m)*sigma(4)
-                                tmp1 = tmp1+pff(5,n,m)*sigma(5)
-                                tmp1 = tmp1+pff(6,n,m)*sigma(6)
-                            endif
-!
-!                 RIGIDITE ELASTIQUE
-                            tmp2=0.d0
-                            tmp2=tmp2+sigp(1)*def(1,m,j)
-                            tmp2=tmp2+sigp(2)*def(2,m,j)
-                            tmp2=tmp2+sigp(3)*def(3,m,j)
-                            tmp2=tmp2+sigp(4)*def(4,m,j)
-                            tmp2=tmp2+sigp(5)*def(5,m,j)
-                            tmp2=tmp2+sigp(6)*def(6,m,j)
-!                 STOCKAGE EN TENANT COMPTE DE LA SYMETRIE
-                            if (j .le. j1) then
-                                kk = kkd + 3*(m-1)+j
-                                matuu(kk) = matuu(kk) + (tmp1+tmp2)* poids
-                            endif
-!
-141                     continue
-140                 continue
-131             continue
-130         continue
+                    fami    , kpg   , 1    , poum      , ndim  ,&
+                    typmod  , angmas, imate, compor    , carcri,&
+                    option  , eps   , sigma, vi(1, kpg), dsidep,&
+                    cod(kpg))
+        if (cod(kpg) .eq. 1) then
+            goto 999
         endif
-!
-!
-! - CALCUL DE LA FORCE INTERIEURE ET DES CONTRAINTES DE CAUCHY
-!
-        if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-!
-            do 180 n = 1, nno
-                do 181 i = 1, 3
-                    do 182 kl = 1, 6
-                        vectu(i,n)=vectu(i,n)+def(kl,n,i)*sigma(kl)*&
-                        poids
-182                 continue
-181             continue
-180         continue
-!
-            if (grdepl) then
-!          CONVERSION LAGRANGE -> CAUCHY
-                detf = f(3,3)*(f(1,1)*f(2,2)-f(1,2)*f(2,1)) - f(2,3)*( f(1,1)*f(3,2)-f(3,1)*f(1,2&
-                       &)) + f(1,3)*(f(2,1)*f(3,2)- f(3,1)*f(2,2))
-                do 190 pq = 1, 6
-                    sig(pq,kpg) = 0.d0
-                    do 200 kl = 1, 6
-                        ftf = (&
-                              f(&
-                              indi(pq), indi(kl))*f(indj(pq), indj( kl)) + f(indi(pq),&
-                              indj(kl))*f(indj(pq), indi( kl))&
-                              )*rind(kl&
-                              )
+! ----- Rigidity matrix
+        if (lMatr) then
+            do i_node = 1, nno
+                do i_dime = 1, ndim
+                    kkd = (ndim*(i_node-1)+i_dime-1) * (ndim*(i_node-1)+i_dime) /2
+                    do i_tens = 1, sz_tens
+                        sigp(i_tens) = 0.d0
+                        sigp(i_tens) = sigp(i_tens)+def(1,i_node,i_dime)*dsidep(1,i_tens)
+                        sigp(i_tens) = sigp(i_tens)+def(2,i_node,i_dime)*dsidep(2,i_tens)
+                        sigp(i_tens) = sigp(i_tens)+def(3,i_node,i_dime)*dsidep(3,i_tens)
+                        sigp(i_tens) = sigp(i_tens)+def(4,i_node,i_dime)*dsidep(4,i_tens)
+                        sigp(i_tens) = sigp(i_tens)+def(5,i_node,i_dime)*dsidep(5,i_tens)
+                        sigp(i_tens) = sigp(i_tens)+def(6,i_node,i_dime)*dsidep(6,i_tens)
+                    end do
+                    do j = 1, ndim
+                        do m = 1, i_node
+                            if (m .eq. i_node) then
+                                j1 = i_dime
+                            else
+                                j1 = ndim
+                            endif
+! ------------------------- Geometric part of matrix
+                            tmp1 = 0.d0
+                            if (grand .and. i_dime .eq. j) then
+                                tmp1 = pff(1,i_node,m)*sigma(1) + pff(2,i_node,m)*sigma(2)+&
+                                       pff(3,i_node,m)*sigma(3) + pff(4,i_node,m)*sigma(4)+&
+                                       pff(5,i_node,m)*sigma(5) + pff(6,i_node,m)*sigma(6)
+                            endif
+! ------------------------- Elastic part of matrix
+                            tmp2 = def(1,m,j)*sigp(1) + def(2,m,j)*sigp(2)+&
+                                   def(3,m,j)*sigp(3) + def(4,m,j)*sigp(4)+&
+                                   def(5,m,j)*sigp(5) + def(6,m,j)*sigp(6)
+                            if (j .le. j1) then
+                                kk = kkd + ndim*(m-1)+j
+                                matuu(kk) = matuu(kk) + (tmp1+tmp2)*poids
+                            endif
+                        end do
+                    end do
+                end do
+            end do
+        endif
+! ----- Internal forces
+        if (lVect) then
+            do i_node = 1, nno
+                do i_dime = 1, ndim
+                    do i_tens = 1, sz_tens
+                        vectu(i_dime,i_node) = vectu(i_dime,i_node)+&
+                                               poids*def(i_tens,i_node,i_dime)*sigma(i_tens)
+                    end do
+                end do
+            end do
+        endif
+! ----- Cauchy stresses
+        if (lSigm) then
+            if (grand) then
+                detf = f(3,3)*(f(1,1)*f(2,2)-f(1,2)*f(2,1))-&
+                       f(2,3)*(f(1,1)*f(3,2)-f(3,1)*f(1,2))+&
+                       f(1,3)*(f(2,1)*f(3,2)-f(3,1)*f(2,2))
+                do pq = 1, sz_tens
+                    sig(pq, kpg) = 0.d0
+                    do kl = 1, sz_tens
+                        ftf = (f(indi(pq), indi(kl))*f(indj(pq), indj( kl)) +&
+                               f(indi(pq), indj(kl))*f(indj(pq), indi( kl)))*rind(kl)
                         sig(pq,kpg) = sig(pq,kpg)+ ftf*sigma(kl)
-200                 continue
+                    end do
                     sig(pq,kpg) = sig(pq,kpg)/detf
-190             continue
+                end do
             else
-!          SIMPLE CORRECTION DES CONTRAINTES
-                do 210 kl = 1, 3
-                    sig(kl,kpg) = sigma(kl)
-210             continue
-                do 220 kl = 4, 6
-                    sig(kl,kpg) = sigma(kl)/rac2
-220             continue
+                do i_tens = 1, 3
+                    sig(i_tens,kpg) = sigma(i_tens)
+                end do
+                sig(4,kpg) = sigma(4)/rac2
+                sig(5,kpg) = sigma(5)/rac2
+                sig(6,kpg) = sigma(6)/rac2
             endif
         endif
     end do
+!
+999 continue
+!
+! - Return code summary
+!
+    call codere(cod, npg, codret)
+!
 end subroutine

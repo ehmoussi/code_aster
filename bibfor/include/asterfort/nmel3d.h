@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,38 +15,29 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
-    subroutine nmel3d(fami, poum, nno, npg, ipoids,&
-                      ivf, idfde, geom, typmod, option,&
-                      imate, compor, lgpg, crit, depl,&
-                      angmas, dfdi, pff, def, sig,&
-                      vi, matuu, vectu, codret)
-        integer :: lgpg
-        integer :: npg
-        integer :: nno
-        character(len=*) :: fami
-        character(len=*) :: poum
-        integer :: ipoids
-        integer :: ivf
-        integer :: idfde
-        real(kind=8) :: geom(3, nno)
-        character(len=8) :: typmod(*)
-        character(len=16) :: option
-        integer :: imate
-        character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
-        real(kind=8) :: depl(1:3, 1:nno)
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: dfdi(nno, 3)
-        real(kind=8) :: pff(6, nno, nno)
-        real(kind=8) :: def(6, nno, 3)
-        real(kind=8) :: sig(6, npg)
-        real(kind=8) :: vi(lgpg, npg)
-        real(kind=8) :: matuu(*)
-        real(kind=8) :: vectu(3, nno)
-        integer :: codret
+    subroutine nmel3d(fami  , poum  , nno   , npg  ,&
+                      ipoids, ivf   , idfde ,&
+                      geom  , typmod, option, imate,&
+                      compor, lgpg  , carcri, depl ,&
+                      angmas, sig   , vi    ,&
+                      matuu , vectu , codret)
+        character(len=*), intent(in) :: fami
+        character(len=*), intent(in) :: poum
+        integer, intent(in) :: nno, npg
+        integer, intent(in) :: ipoids, ivf, idfde
+        real(kind=8), intent(in) :: geom(3, nno)
+        character(len=8), intent(in) :: typmod(*)
+        character(len=16), intent(in) :: option
+        integer, intent(in) :: imate
+        character(len=16), intent(in) :: compor(*)
+        real(kind=8), intent(in) :: carcri(*)
+        integer, intent(in) :: lgpg
+        real(kind=8), intent(inout) :: depl(3, nno)
+        real(kind=8), intent(in) :: angmas(*)
+        real(kind=8), intent(inout)  :: sig(6, npg), vi(lgpg, npg)
+        real(kind=8), intent(inout) :: matuu(*), vectu(3, nno)
+        integer, intent(inout) :: codret
     end subroutine nmel3d
 end interface

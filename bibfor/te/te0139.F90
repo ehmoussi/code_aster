@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,6 +18,8 @@
 ! person_in_charge: mickael.abbas at edf.fr
 !
 subroutine te0139(option, nomte)
+!
+use Behaviour_module, only : behaviourOption
 !
 implicit none
 !
@@ -58,18 +60,23 @@ character(len=16), intent(in) :: option, nomte
 !
     character(len=8) :: typmod(2)
     character(len=4) :: fami
-    integer :: nno, npg, i, imatuu, lgpg, ndim, iret
+    integer, parameter :: sz_tens = 6, ndim = 3
+    integer :: i_node, i_dime, i
+    integer :: nno, npg, imatuu, lgpg, iret
     integer :: ipoids, ivf, idfde, igeom, imate
     integer :: icontm, ivarim
     integer :: iinstm, iinstp, ideplm, ideplp, icompo, icarcr
-    integer :: ivectu, icontp, ivarip, li, jcret, codret
+    integer :: ivectu, icontp, ivarip
     integer :: ivarix, jv_mult_comp
-    aster_logical :: matsym
-    integer :: jtab(7), idim
+    integer :: jtab(7)
     real(kind=8) :: bary(3)
-    real(kind=8) :: pff(6*27*27), def(6*27*3), dfdi(3*27)
+    real(kind=8) :: dfdi(3*27)
     real(kind=8) :: angl_naut(7)
+    aster_logical :: matsym
     character(len=16) :: mult_comp, defo_comp, rela_comp, type_comp
+    aster_logical :: lVect, lMatr, lVari, lSigm
+    integer :: codret
+    integer :: jv_codret
 !     POUR TGVERI
     real(kind=8) :: sdepl(3*27), svect(3*27), scont(6*27), smatr(3*27*3*27)
     real(kind=8) :: epsilo
@@ -81,11 +88,14 @@ character(len=16), intent(in) :: option, nomte
     ivarip = 1
     imatuu = 1
     ivectu = 1
+    ivarix = 1
+    jv_codret = 1
     fami   = 'RIGI'
+    codret = 0
 !
 ! - Get element parameters
 !
-    call elrefe_info(fami=fami, ndim=ndim, nno=nno, npg=npg,&
+    call elrefe_info(fami=fami, nno=nno, npg=npg,&
                      jpoids=ipoids, jvf=ivf, jdfde=idfde)
     ASSERT(nno .le. 27)
 !
@@ -107,17 +117,15 @@ character(len=16), intent(in) :: option, nomte
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
     call jevech('PMULCOM', 'L', jv_mult_comp)
-    mult_comp = zk16(jv_mult_comp-1+1)
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
     lgpg = max(jtab(6),1)*jtab(7)
 !
 ! - Compute barycentric center
 !
     bary(:) = 0.d0
-    do i = 1, nno
-        do idim = 1, ndim
-            bary(idim) = bary(idim)+zr(igeom+idim+ndim*(i-1)-1)/nno
+    do i_node = 1, nno
+        do i_dime = 1, ndim
+            bary(i_dime) = bary(i_dime)+zr(igeom+i_dime+ndim*(i_node-1)-1)/nno
         end do
     end do
 !
@@ -125,75 +133,90 @@ character(len=16), intent(in) :: option, nomte
 !
     call rcangm(ndim, bary, angl_naut)
 !
+! - Select objects to construct from option name
+!
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
 ! - Properties of behaviour
 !
+    mult_comp = zk16(jv_mult_comp-1+1)
     rela_comp = zk16(icompo-1+RELA_NAME)
     defo_comp = zk16(icompo-1+DEFO)
     type_comp = zk16(icompo-1+INCRELAS)
 !
 ! - Get output fields
 !
-    if (option(1:10) .eq. 'RIGI_MECA_' .or. option(1:9) .eq. 'FULL_MECA') then
+    if (lMatr) then
         call nmtstm(zr(icarcr), imatuu, matsym)
     endif
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
+    endif
+    if (lSigm) then
         call jevech('PCONTPR', 'E', icontp)
+    endif
+    if (lVari) then
         call jevech('PVARIPR', 'E', ivarip)
         call jevech('PVARIMP', 'L', ivarix)
         call dcopy(npg*lgpg, zr(ivarix), 1, zr(ivarip), 1)
-    else
-        ivarix=1
     endif
-    if (option(1:16) .eq. 'RIGI_MECA_IMPLEX') then
+    if (option .eq. 'RIGI_MECA_IMPLEX') then
         call jevech('PCONTXR', 'E', icontp)
-        call dcopy(npg*6, zr(icontm), 1, zr(icontp), 1)
+        call dcopy(npg*sz_tens, zr(icontm), 1, zr(icontp), 1)
     endif
 !
 ! - HYPER-ELASTICITE
 !
     if (type_comp .eq. 'COMP_ELAS') then
         if (option(1:10) .eq. 'RIGI_MECA_') then
-            call nmel3d(fami, '-', nno, npg, ipoids,&
-                        ivf, idfde, zr(igeom), typmod, option,&
-                        zi(imate), zk16(icompo), lgpg, zr(icarcr), zr(ideplm),&
-                        angl_naut, dfdi, pff, def, zr(icontm),&
-                        zr(ivarim), zr( imatuu), zr(ivectu), codret)
+            call nmel3d(fami        , '-'       , nno       , npg       ,&
+                        ipoids      , ivf       , idfde     ,&
+                        zr(igeom)   , typmod    , option    , zi(imate) ,&
+                        zk16(icompo), lgpg      , zr(icarcr), zr(ideplm),&
+                        angl_naut   , zr(icontm), zr(ivarim),&
+                        zr(imatuu)  , zr(ivectu), codret)
         else
-            do li = 1, 3*nno
-                zr(ideplp+li-1) = zr(ideplm+li-1) + zr(ideplp+li-1)
+            do i = 1, ndim*nno
+                zr(ideplp+i-1) = zr(ideplm+i-1) + zr(ideplp+i-1)
             end do
-            call nmel3d(fami, '+', nno, npg, ipoids,&
-                        ivf, idfde, zr(igeom), typmod, option,&
-                        zi(imate), zk16(icompo), lgpg, zr(icarcr), zr(ideplp),&
-                        angl_naut, dfdi, pff, def, zr(icontp),&
-                        zr(ivarip), zr( imatuu), zr(ivectu), codret)
+            call nmel3d(fami        , '+'       , nno       , npg       ,&
+                        ipoids      , ivf       , idfde     ,&
+                        zr(igeom)   , typmod    , option    , zi(imate) ,&
+                        zk16(icompo), lgpg      , zr(icarcr), zr(ideplp),&
+                        angl_naut   , zr(icontp), zr(ivarip),&
+                        zr(imatuu)  , zr(ivectu), codret)
         endif
     else
 !
 ! - HYPO-ELASTICITE
 !
-!      Pour le calcul de la matrice tangente par perturbation
+!       Pour le calcul de la matrice tangente par perturbation
 500     continue
 !
         if (defo_comp(1:5) .eq. 'PETIT') then
             if (defo_comp(6:10) .eq. '_REAC') then
-                do i = 1, 3*nno
+                do i = 1, ndim*nno
                     zr(igeom+i-1) = zr(igeom+i-1) + zr(ideplm+i-1) + zr(ideplp+i-1)
                 end do
             endif
-            call nmpl3d(fami, nno, npg, ipoids, ivf,&
-                        idfde, zr(igeom), typmod, option, zi(imate),&
-                        zk16(icompo), mult_comp, lgpg, zr(icarcr), zr(iinstm), zr(iinstp),&
-                        zr(ideplm), zr(ideplp), angl_naut, zr(icontm), zr(ivarim),&
-                        matsym, dfdi, def, zr(icontp), zr( ivarip),&
-                        zr(imatuu), zr(ivectu), codret)
+            call nmpl3d(fami        , nno      , npg       ,&
+                        ipoids      , ivf      , idfde     ,&
+                        zr(igeom)   , typmod   , option    , zi(imate),&
+                        zk16(icompo), mult_comp, lgpg      , zr(icarcr),&
+                        zr(iinstm)  , zr(iinstp),&
+                        zr(ideplm)  , zr(ideplp),&
+                        angl_naut   , zr(icontm), zr(ivarim),&
+                        matsym      , zr(icontp), zr(ivarip),&
+                        zr(imatuu)  , zr(ivectu), codret)
         else if (defo_comp .eq. 'SIMO_MIEHE') then
-            call nmgpfi(fami, option, typmod, ndim, nno,&
-                        npg, ipoids, zr( ivf), idfde, zr(igeom),&
-                        dfdi, zk16(icompo), zi(imate), mult_comp, lgpg, zr( icarcr),&
-                        angl_naut, zr(iinstm), zr(iinstp), zr(ideplm), zr( ideplp),&
-                        zr(icontm), zr(ivarim), zr(icontp), zr(ivarip), zr( ivectu),&
+            call nmgpfi(fami      , option      , typmod    , ndim      , nno       ,&
+                        npg       , ipoids      , zr(ivf)   , idfde     , zr(igeom) ,&
+                        dfdi      , zk16(icompo), zi(imate) , mult_comp , lgpg      , zr(icarcr),&
+                        angl_naut , zr(iinstm)  , zr(iinstp), zr(ideplm), zr(ideplp),&
+                        zr(icontm), zr(ivarim)  , zr(icontp), zr(ivarip), zr(ivectu),&
                         zr(imatuu), codret)
         else if (defo_comp .eq. 'GROT_GDEP') then
             call nmgr3d(option      , typmod    ,&
@@ -209,32 +232,37 @@ character(len=16), intent(in) :: option, nomte
                         matsym      , zr(imatuu), zr(ivectu),&
                         codret)
         else if (defo_comp .eq. 'GDEF_LOG') then
-            call nmdlog(fami, option, typmod, ndim, nno,&
-                        npg, ipoids, ivf, zr(ivf), idfde,&
-                        zr(igeom), dfdi, zk16(icompo), mult_comp, zi(imate), lgpg,&
-                        zr(icarcr), angl_naut, zr(iinstm), zr(iinstp), matsym,&
-                        zr( ideplm), zr(ideplp), zr(icontm), zr(ivarim), zr(icontp),&
-                        zr( ivarip), zr(ivectu), zr(imatuu), codret)
+            call nmdlog(fami      , option    , typmod      , ndim      , nno       ,&
+                        npg       , ipoids    , ivf         , zr(ivf)   , idfde     ,&
+                        zr(igeom) , dfdi      , zk16(icompo), mult_comp , zi(imate) , lgpg,&
+                        zr(icarcr), angl_naut , zr(iinstm)  , zr(iinstp), matsym    ,&
+                        zr(ideplm), zr(ideplp), zr(icontm)  , zr(ivarim), zr(icontp),&
+                        zr(ivarip), zr(ivectu), zr(imatuu)  , codret)
         else
             ASSERT(ASTER_FALSE)
         endif
-!
-        if (codret .ne. 0) goto 999
+        if (codret .ne. 0) then
+            goto 999
+        endif
 ! ----- Calcul eventuel de la matrice TGTE par PERTURBATION
         call tgveri(option, zr(icarcr), zk16(icompo), nno, zr(igeom),&
                     ndim, ndim*nno, zr(ideplp), sdepl, zr(ivectu),&
-                    svect, 6*npg, zr(icontp), scont, npg*lgpg,&
+                    svect, sz_tens*npg, zr(icontp), scont, npg*lgpg,&
                     zr(ivarip), zr(ivarix), zr(imatuu), smatr, matsym,&
                     epsilo, varia, iret)
-        if (iret .ne. 0) goto 500
+        if (iret .ne. 0) then
+            goto 500
+        endif
 !
     endif
 !
 999 continue
 !
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jcret)
-        zi(jcret) = codret
+! - Save return code
+!
+    if (lSigm) then
+        call jevech('PCODRET', 'E', jv_codret)
+        zi(jv_codret) = codret
     endif
 !
 end subroutine

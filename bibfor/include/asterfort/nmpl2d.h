@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,46 +15,35 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine nmpl2d(fami, nno, npg, ipoids, ivf,&
-                      idfde, geom, typmod, option, imate,&
-                      compor, mult_comp, lgpg, carcri, instam, instap,&
-                      ideplm, ideplp, angmas, sigm, vim,&
-                      matsym, dfdi, def, sigp, vip,&
-                      matuu, ivectu, codret)
-        integer :: lgpg
-        integer :: npg
-        integer :: nno
-        character(len=*) :: fami
-        integer :: ipoids
-        integer :: ivf
-        integer :: idfde
-        real(kind=8) :: geom(2, nno)
-        character(len=8) :: typmod(*)
-        character(len=16) :: option
-        integer :: imate
-        character(len=16), intent(in) :: compor(*)
-        character(len=16), intent(in) :: mult_comp
+    subroutine nmpl2d(fami  , nno      , npg   ,&
+                      ipoids, ivf      , idfde ,&
+                      geom  , typmod   , option, imate ,&
+                      compor, mult_comp, lgpg  , carcri,&
+                      instam, instap   ,&
+                      dispPrev , dispIncr    ,&
+                      angmas, sigmPrev     , vim   ,&
+                      matsym, sigmCurr     , vip   ,&
+                      matuu , vectu    , codret)
+        character(len=*), intent(in) :: fami
+        integer, intent(in) :: nno, npg
+        integer, intent(in) :: ipoids, ivf, idfde
+        real(kind=8), intent(in) :: geom(2, nno)
+        character(len=8), intent(in) :: typmod(*)
+        character(len=16), intent(in) :: option
+        integer, intent(in) :: imate
+        character(len=16), intent(in) :: compor(*), mult_comp
         real(kind=8), intent(in) :: carcri(*)
-        real(kind=8) :: instam
-        real(kind=8) :: instap
-        integer :: ideplm
-        integer :: ideplp
-        real(kind=8) :: angmas(3)
-        real(kind=8) :: sigm(4, npg)
-        real(kind=8) :: vim(lgpg, npg)
-        aster_logical :: matsym
-        real(kind=8) :: dfdi(nno, 2)
-        real(kind=8) :: def(4, nno, 2)
-        real(kind=8) :: sigp(4, npg)
-        real(kind=8) :: vip(lgpg, npg)
-        real(kind=8) :: matuu(*)
-        integer :: ivectu
-        integer :: codret
+        integer, intent(in) :: lgpg
+        real(kind=8), intent(in) :: instam, instap
+        real(kind=8), intent(inout) :: dispPrev(2, nno), dispIncr(2, nno)
+        real(kind=8), intent(in) :: angmas(*)
+        real(kind=8), intent(inout) :: sigmPrev(4, npg), vim(lgpg, npg)
+        aster_logical, intent(in) :: matsym
+        real(kind=8), intent(inout) :: sigmCurr(4, npg), vip(lgpg, npg)
+        real(kind=8), intent(inout) :: matuu(*), vectu(2, nno)
+        integer, intent(inout) :: codret
     end subroutine nmpl2d
 end interface

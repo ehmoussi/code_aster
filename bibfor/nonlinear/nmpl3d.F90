@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,14 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
+! aslint: disable=W1504,W1306
 !
-subroutine nmpl3d(fami  , nno  , npg   , ipoids, ivf   ,&
-                  idfde , geom , typmod, option, imate ,&
-                  compor, mult_comp, lgpg , carcri  , instam, instap,&
-                  deplm , deplp, angmas, sigm  , vim   ,&
-                  matsym, dfdi , def   , sigp  , vip   ,&
-                  matuu , vectu, codret)
+subroutine nmpl3d(fami    , nno      , npg   ,&
+                  ipoids  , ivf      , idfde ,&
+                  geom    , typmod   , option, imate ,&
+                  compor  , mult_comp, lgpg  , carcri,&
+                  instam  , instap   ,&
+                  dispPrev, dispIncr ,&
+                  angmas  , sigmPrev , vim   ,&
+                  matsym  , sigmCurr , vip   ,&
+                  matuu   , vectu    , codret)
 !
 use Behaviour_type
 use Behaviour_module
@@ -43,23 +46,16 @@ real(kind=8), intent(in) :: geom(3, nno)
 character(len=8), intent(in) :: typmod(*)
 character(len=16), intent(in) :: option
 integer, intent(in) :: imate
-character(len=16), intent(in) :: compor(*)
-character(len=16), intent(in) :: mult_comp
+character(len=16), intent(in) :: compor(*), mult_comp
 real(kind=8), intent(in) :: carcri(*)
 integer, intent(in) :: lgpg
-real(kind=8), intent(in) :: instam
-real(kind=8), intent(in) :: instap
-real(kind=8), intent(inout) :: deplm(3, nno), deplp(3, nno)
+real(kind=8), intent(in) :: instam, instap
+real(kind=8), intent(inout) :: dispPrev(3, nno), dispIncr(3, nno)
 real(kind=8), intent(in) :: angmas(*)
-real(kind=8), intent(inout) :: sigm(6, npg)
-real(kind=8), intent(inout) :: vim(lgpg, npg)
+real(kind=8), intent(inout) :: sigmPrev(6, npg), vim(lgpg, npg)
 aster_logical, intent(in) :: matsym
-real(kind=8), intent(inout) :: dfdi(nno, 3)
-real(kind=8), intent(inout) :: def(6, nno, 3)
-real(kind=8), intent(inout) :: sigp(6, npg)
-real(kind=8), intent(inout) :: vip(lgpg, npg)
-real(kind=8), intent(inout) :: matuu(*)
-real(kind=8), intent(inout) :: vectu(3, nno)
+real(kind=8), intent(inout) :: sigmCurr(6, npg), vip(lgpg, npg)
+real(kind=8), intent(inout) :: matuu(*), vectu(3, nno)
 integer, intent(inout) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,15 +63,17 @@ integer, intent(inout) :: codret
 ! Elementary computation
 !
 ! Elements: 3D
+!
 ! Options: RIGI_MECA_TANG, RAPH_MECA and FULL_MECA - Hypoelasticity (PETIT/PETIT_REAC)
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! IN  NNO     : NOMBRE DE NOEUDS DE L'ELEMENT
 ! IN  NPG     : NOMBRE DE POINTS DE GAUSS
-! IN  IPOIDS  : POIDS DES POINTS DE GAUSS
-! IN  IVF     : VALEUR  DES FONCTIONS DE FORME
-! IN  IDFDE   : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
+! IN  POIDSG  : POIDS DES POINTS DE GAUSS
+! IN  VFF     : VALEUR  DES FONCTIONS DE FORME
+! IN  DFDE    : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
+! IN  DFDK    : DERIVEE DES FONCTIONS DE FORME ELEMENT DE REFERENCE
 ! IN  GEOM    : COORDONEES DES NOEUDS
 ! IN  TYPMOD  : TYPE DE MODELISATION
 ! IN  OPTION  : OPTION DE CALCUL
@@ -83,14 +81,12 @@ integer, intent(inout) :: codret
 ! IN  COMPOR  : COMPORTEMENT
 ! IN  LGPG    : "LONGUEUR" DES VARIABLES INTERNES POUR 1 POINT DE GAUSS
 !               CETTE LONGUEUR EST UN MAJORANT DU NBRE REEL DE VAR. INT.
-! IN  CRIT    : CRITERES DE CONVERGENCE LOCAUX
+! IN  CARCRI  : CRITERES DE CONVERGENCE LOCAUX
 ! IN  INSTAM  : INSTANT PRECEDENT
 ! IN  INSTAP  : INSTANT DE CALCUL
 ! IN  DEPLM   : DEPLACEMENT A L'INSTANT PRECEDENT
 ! IN  DEPLP   : INCREMENT DE DEPLACEMENT
 ! IN  ANGMAS  : LES TROIS ANGLES DU MOT_CLEF MASSIF (AFFE_CARA_ELEM)
-! IN  VARDEP  : VARIABLE DELOCALISEE EN T+
-! IN  DELOCA  : VRAI SI VARIABLES DELOCALISEES PRESENTES
 ! IN  SIGM    : CONTRAINTES A L'INSTANT PRECEDENT
 ! IN  VIM     : VARIABLES INTERNES A L'INSTANT PRECEDENT
 ! OUT DFDI    : DERIVEE DES FONCTIONS DE FORME  AU DERNIER PT DE GAUSS
@@ -102,20 +98,28 @@ integer, intent(inout) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: grand
-    integer, parameter :: ndim = 3
-    real(kind=8), parameter :: rac2 = sqrt(2.d0)
-    integer :: kpg, kk, i_node, i_dim, m, j, j1, kl, kkd, i_tens
-    integer :: cod(27)
-    real(kind=8) :: dsidep(6, 6), f(3, 3), eps(6), deps(6), r, sigma(6), sigm_norm(6)
-    real(kind=8) :: sig(6)
+    integer, parameter :: ndim = 3, sz_tens = 6
+    aster_logical :: grand, axi
+    aster_logical :: lVect, lMatr, lSigm
+    integer :: kpg, kk, j, m, j1, kkd
+    integer :: i_node, i_dime, i_tens
+    integer :: cod(npg)
+    real(kind=8) :: dfdi(nno, ndim), def(sz_tens, nno, ndim)
+    real(kind=8) :: r
+    real(kind=8) :: f(3, 3), eps(6), deps(6)
+    real(kind=8) :: dsidep(6, 6), sigmPost(6), sig(6), sigmPrep(6)
     real(kind=8) :: poids, tmp
+    real(kind=8), parameter :: rac2 = sqrt(2.d0)
     type(Behaviour_Integ) :: BEHinteg
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    grand       = ASTER_FALSE
-    cod         = 0
+    grand  = ASTER_FALSE
+    axi    = ASTER_FALSE
+    cod    = 0
+    lSigm  = L_SIGM(option)
+    lVect  = L_VECT(option)
+    lMatr  = L_MATR(option)
 !
 ! - Initialisation of behaviour datastructure
 !
@@ -123,99 +127,86 @@ integer, intent(inout) :: codret
 !
 ! - Prepare external state variables
 !
-    call behaviourPrepESVAElem(carcri, typmod  ,&
-                               nno   , npg     , ndim ,&
-                               ipoids, ivf     , idfde,&
-                               geom  , BEHinteg,&
-                               deplm , deplp)
+    call behaviourPrepESVAElem(carcri   , typmod  ,&
+                               nno      , npg     , ndim ,&
+                               ipoids   , ivf     , idfde,&
+                               geom     , BEHinteg,&
+                               dispPrev , dispIncr)
 !
 ! - Loop on Gauss points
 !
     do kpg = 1, npg
-        eps (1:6)=0.d0
-        deps(1:6)=0.d0
-!
+        eps  = 0.d0
+        deps = 0.d0
 ! ----- Kinematic - Previous strains
-!
-        call nmgeom(3       , nno   , .false._1, grand, geom ,&
-                    kpg     , ipoids, ivf      , idfde, deplm,&
-                    .true._1, poids , dfdi     , f    , eps  ,&
+        call nmgeom(ndim    , nno   , axi , grand, geom ,&
+                    kpg     , ipoids, ivf , idfde, dispPrev,&
+                    .true._1, poids , dfdi, f    , eps  ,&
                     r)
-!
 ! ----- Kinematic - Increment of strains
-!
-        call nmgeom(3        , nno   , .false._1, grand, geom ,&
-                    kpg      , ipoids, ivf      , idfde, deplp,&
-                    .false._1, poids , dfdi     , f    , deps ,&
+        call nmgeom(ndim     , nno   , axi , grand, geom ,&
+                    kpg      , ipoids, ivf , idfde, dispIncr,&
+                    .false._1, poids , dfdi, f    , deps ,&
                     r)
-!
 ! ----- Kinematic - Product [F].[B]
-!
         do i_node = 1, nno
-            do i_dim = 1, 3
-                def(1,i_node,i_dim) = f(i_dim,1)*dfdi(i_node,1)
-                def(2,i_node,i_dim) = f(i_dim,2)*dfdi(i_node,2)
-                def(3,i_node,i_dim) = f(i_dim,3)*dfdi(i_node,3)
-                def(4,i_node,i_dim) = (f(i_dim,1)*dfdi(i_node,2) +&
-                                       f(i_dim,2)*dfdi(i_node,1))/ rac2
-                def(5,i_node,i_dim) = (f(i_dim,1)*dfdi(i_node,3) +&
-                                       f(i_dim,3)*dfdi(i_node,1))/ rac2
-                def(6,i_node,i_dim) = (f(i_dim,2)*dfdi(i_node,3) +&
-                                       f(i_dim,3)*dfdi(i_node,2))/ rac2
+            do i_dime = 1, ndim
+                def(1,i_node,i_dime) = f(i_dime,1)*dfdi(i_node,1)
+                def(2,i_node,i_dime) = f(i_dime,2)*dfdi(i_node,2)
+                def(3,i_node,i_dime) = f(i_dime,3)*dfdi(i_node,3)
+                def(4,i_node,i_dime) = (f(i_dime,1)*dfdi(i_node,2) +&
+                                        f(i_dime,2)*dfdi(i_node,1))/ rac2
+                def(5,i_node,i_dime) = (f(i_dime,1)*dfdi(i_node,3) +&
+                                        f(i_dime,3)*dfdi(i_node,1))/ rac2
+                def(6,i_node,i_dime) = (f(i_dime,2)*dfdi(i_node,3) +&
+                                        f(i_dime,3)*dfdi(i_node,2))/ rac2
             end do
         end do
+! ----- Prepare stresses
         do i_tens = 1, 3
-            sigm_norm(i_tens) = sigm(i_tens,kpg)
+            sigmPrep(i_tens) = sigmPrev(i_tens, kpg)
         end do
-        do i_tens = 4, 6
-            sigm_norm(i_tens) = sigm(i_tens,kpg)*rac2
-        end do
-!
+        sigmPrep(4) = sigmPrev(4, kpg)*rac2
+        sigmPrep(5) = sigmPrev(5, kpg)*rac2
+        sigmPrep(6) = sigmPrev(6, kpg)*rac2
 ! ----- Compute behaviour
-!
         call nmcomp(BEHinteg   ,&
-                    fami       , kpg        , 1        , 3     , typmod        ,&
-                    imate      , compor     , carcri   , instam, instap        ,&
-                    6          , eps        , deps     , 6     , sigm_norm     ,&
-                    vim(1, kpg), option     , angmas                           ,&
-                    sigma      , vip(1, kpg), 36       , dsidep                ,&
+                    fami       , kpg        , 1     , ndim  , typmod  ,&
+                    imate      , compor     , carcri, instam, instap  ,&
+                    6          , eps        , deps  , 6     , sigmPrep,&
+                    vim(1, kpg), option     , angmas,&
+                    sigmPost   , vip(1, kpg), 36    , dsidep,&
                     cod(kpg)   , mult_comp)
         if (cod(kpg) .eq. 1) then
             goto 999
         endif
-!
 ! ----- Rigidity matrix
-!
-        if (option(1:10) .eq. 'RIGI_MECA_' .or. option(1: 9) .eq. 'FULL_MECA') then
+        if (lMatr) then
             if (matsym) then
                 do i_node = 1, nno
-                    do i_dim = 1, 3
-                        kkd = (3*(i_node-1)+i_dim-1) * (3*(i_node-1)+i_dim) /2
-                        do kl = 1, 6
-                            sig(kl)=0.d0
-                            sig(kl)=sig(kl)+def(1,i_node,i_dim)*dsidep(1,kl)
-                            sig(kl)=sig(kl)+def(2,i_node,i_dim)*dsidep(2,kl)
-                            sig(kl)=sig(kl)+def(3,i_node,i_dim)*dsidep(3,kl)
-                            sig(kl)=sig(kl)+def(4,i_node,i_dim)*dsidep(4,kl)
-                            sig(kl)=sig(kl)+def(5,i_node,i_dim)*dsidep(5,kl)
-                            sig(kl)=sig(kl)+def(6,i_node,i_dim)*dsidep(6,kl)
+                    do i_dime = 1, ndim
+                        kkd = (ndim*(i_node-1)+i_dime-1) * (ndim*(i_node-1)+i_dime) /2
+                        do i_tens = 1, sz_tens
+                            sig(i_tens) = 0.d0
+                            sig(i_tens) = sig(i_tens)+def(1,i_node,i_dime)*dsidep(1,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(2,i_node,i_dime)*dsidep(2,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(3,i_node,i_dime)*dsidep(3,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(4,i_node,i_dime)*dsidep(4,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(5,i_node,i_dime)*dsidep(5,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(6,i_node,i_dime)*dsidep(6,i_tens)
                         end do
-                        do j = 1, 3
+                        do j = 1, ndim
                             do m = 1, i_node
                                 if (m .eq. i_node) then
-                                    j1 = i_dim
+                                    j1 = i_dime
                                 else
-                                    j1 = 3
+                                    j1 = ndim
                                 endif
-                                tmp=0.d0
-                                tmp=tmp+sig(1)*def(1,m,j)
-                                tmp=tmp+sig(2)*def(2,m,j)
-                                tmp=tmp+sig(3)*def(3,m,j)
-                                tmp=tmp+sig(4)*def(4,m,j)
-                                tmp=tmp+sig(5)*def(5,m,j)
-                                tmp=tmp+sig(6)*def(6,m,j)
+                                tmp = def(1,m,j)*sig(1) + def(2,m,j)*sig(2)+&
+                                      def(3,m,j)*sig(3) + def(4,m,j)*sig(4)+&
+                                      def(5,m,j)*sig(5) + def(6,m,j)*sig(6)
                                 if (j .le. j1) then
-                                    kk = kkd + 3*(m-1)+j
+                                    kk = kkd + ndim*(m-1)+j
                                     matuu(kk) = matuu(kk) + tmp*poids
                                 endif
                             end do
@@ -224,26 +215,22 @@ integer, intent(inout) :: codret
                 end do
             else
                 do i_node = 1, nno
-                    do i_dim = 1, 3
-                        do kl = 1, 6
-                            sig(kl)=0.d0
-                            sig(kl)=sig(kl)+def(1,i_node,i_dim)*dsidep(1,kl)
-                            sig(kl)=sig(kl)+def(2,i_node,i_dim)*dsidep(2,kl)
-                            sig(kl)=sig(kl)+def(3,i_node,i_dim)*dsidep(3,kl)
-                            sig(kl)=sig(kl)+def(4,i_node,i_dim)*dsidep(4,kl)
-                            sig(kl)=sig(kl)+def(5,i_node,i_dim)*dsidep(5,kl)
-                            sig(kl)=sig(kl)+def(6,i_node,i_dim)*dsidep(6,kl)
+                    do i_dime = 1, ndim
+                        do i_tens = 1, sz_tens
+                            sig(i_tens) = 0.d0
+                            sig(i_tens) = sig(i_tens)+def(1,i_node,i_dime)*dsidep(1,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(2,i_node,i_dime)*dsidep(2,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(3,i_node,i_dime)*dsidep(3,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(4,i_node,i_dime)*dsidep(4,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(5,i_node,i_dime)*dsidep(5,i_tens)
+                            sig(i_tens) = sig(i_tens)+def(6,i_node,i_dime)*dsidep(6,i_tens)
                         end do
-                        do j = 1, 3
+                        do j = 1, ndim
                             do m = 1, nno
-                                tmp=0.d0
-                                tmp=tmp+sig(1)*def(1,m,j)
-                                tmp=tmp+sig(2)*def(2,m,j)
-                                tmp=tmp+sig(3)*def(3,m,j)
-                                tmp=tmp+sig(4)*def(4,m,j)
-                                tmp=tmp+sig(5)*def(5,m,j)
-                                tmp=tmp+sig(6)*def(6,m,j)
-                                kk = 3*nno*(3*(i_node-1)+i_dim-1) + 3*(m-1)+j
+                                tmp = def(1,m,j)*sig(1) + def(2,m,j)*sig(2)+&
+                                      def(3,m,j)*sig(3) + def(4,m,j)*sig(4)+&
+                                      def(5,m,j)*sig(5) + def(6,m,j)*sig(6)
+                                kk = ndim*nno*(ndim*(i_node-1)+i_dime-1) + ndim*(m-1)+j
                                 matuu(kk) = matuu(kk) + tmp*poids
                             end do
                         end do
@@ -251,43 +238,42 @@ integer, intent(inout) :: codret
                 end do
             endif
         endif
-!
-! ----- Cauchy stresses and internal forces
-!
-        if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
+! ----- Internal forces
+        if (lVect) then
             do i_node = 1, nno
-                vectu(1,i_node) = vectu(1,i_node)+ poids* (def(1,i_node,1)*sigma(1)+&
-                                  def(4,i_node,1)*sigma(4)+ def(5,i_node,1)*sigma(5))
-                vectu(2,i_node) = vectu(2,i_node)+ poids* (def(2,i_node,2)*sigma(2)+&
-                                  def(4,i_node,2)*sigma(4)+ def(6,i_node,2)*sigma(6))
-                vectu(3,i_node) = vectu(3,i_node)+ poids* (def(3,i_node,3)*sigma(3)+&
-                                  def(5,i_node,3)*sigma(5)+ def(6,i_node,3)*sigma(6))
-            end do
-            do kl = 1, 3
-                sigp(kl,kpg) = sigma(kl)
-            end do
-            do kl = 4, 6
-                sigp(kl,kpg) = sigma(kl)/rac2
+                vectu(1,i_node) = vectu(1,i_node) + poids*(def(1,i_node,1)*sigmPost(1)+&
+                                  def(4,i_node,1)*sigmPost(4)+ def(5,i_node,1)*sigmPost(5))
+                vectu(2,i_node) = vectu(2,i_node) + poids*(def(2,i_node,2)*sigmPost(2)+&
+                                  def(4,i_node,2)*sigmPost(4)+ def(6,i_node,2)*sigmPost(6))
+                vectu(3,i_node) = vectu(3,i_node) + poids*(def(3,i_node,3)*sigmPost(3)+&
+                                  def(5,i_node,3)*sigmPost(5)+ def(6,i_node,3)*sigmPost(6))
             end do
         endif
-!
+! ----- Cauchy stresses
+        if (lSigm) then
+            do i_tens = 1, 3
+                sigmCurr(i_tens,kpg) = sigmPost(i_tens)
+            end do
+            sigmCurr(4,kpg) = sigmPost(4)/rac2
+            sigmCurr(5,kpg) = sigmPost(5)/rac2
+            sigmCurr(6,kpg) = sigmPost(6)/rac2
+        endif
 ! ----- Cauchy stresses for IMPLEX
-!
         if (option .eq. 'RIGI_MECA_IMPLEX') then
-            do kl = 1, 3
-                sigp(kl,kpg) = sigma(kl)
+            do i_tens = 1, 3
+                sigmCurr(i_tens,kpg) = sigmPost(i_tens)
             end do
-            do kl = 4, 6
-                sigp(kl,kpg) = sigma(kl)/rac2
-            end do
+            sigmCurr(4,kpg) = sigmPost(4)/rac2
+            sigmCurr(5,kpg) = sigmPost(5)/rac2
+            sigmCurr(6,kpg) = sigmPost(6)/rac2
         endif
     end do
 !
 ! - For POST_ITER='CRIT_RUPT'
 !
     if (carcri(13) .gt. 0.d0) then
-        call crirup(fami, imate, ndim, npg, lgpg,&
-                    option, compor, sigp, vip, vim,&
+        call crirup(fami  , imate , ndim, npg, lgpg,&
+                    option, compor, sigmCurr, vip, vim ,&
                     instam, instap)
     endif
 !

@@ -15,13 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-! aslint: disable=W1504
+! aslint: disable=W1504, W1306
 !
 subroutine nmgpfi(fami, option, typmod, ndim, nno,&
-                  npg, iw, vff, idff, geomi,&
-                  dff, compor, mate, mult_comp, lgpg, crit,&
-                  angmas, instm, instp, deplm, depld,&
-                  sigm, vim, sigp, vip, fint,&
+                  npg, iw, vff, idff, geomInit,&
+                  dff, compor, imate, mult_comp, lgpg, carcri,&
+                  angmas, instm, instp, dispPrev, dispIncr,&
+                  sigmPrev, vim, sigmCurr, vip, fint,&
                   matr, codret)
 !
 use Behaviour_type
@@ -40,23 +40,24 @@ implicit none
 #include "asterfort/nmepsi.h"
 #include "asterfort/nmgpin.h"
 #include "asterfort/nmmalu.h"
-#include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "blas/dscal.h"
+#include "asterfort/Behaviour_type.h"
 !
-integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff
+integer :: ndim, nno, npg, imate, lgpg, iw, idff
 character(len=8) :: typmod(*)
 character(len=*) :: fami
 character(len=16) :: option, compor(*)
 character(len=16), intent(in) :: mult_comp
-real(kind=8) :: geomi(*), dff(nno, *), crit(*), instm, instp
+real(kind=8) :: geomInit(*), dff(nno, *), carcri(*), instm, instp
 real(kind=8) :: vff(nno, npg)
 real(kind=8) :: angmas(3)
-real(kind=8) :: deplm(*), depld(*), sigm(2*ndim, npg)
-real(kind=8) :: vim(lgpg, npg), sigp(2*ndim, npg), vip(lgpg, npg)
+real(kind=8) :: dispPrev(*), dispIncr(*), sigmPrev(2*ndim, npg)
+real(kind=8) :: vim(lgpg, npg), sigmCurr(2*ndim, npg), vip(lgpg, npg)
 real(kind=8) :: matr(*), fint(*)
+integer, intent(out) :: codret
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -97,26 +98,33 @@ real(kind=8) :: matr(*), fint(*)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    aster_logical :: grand, axi, resi, rigi
-    integer :: lij(3, 3), ia, ja, na, ib, jb, nb, g, kk, os, ija
+    aster_logical :: grand, axi
+    aster_logical :: lMatr, lSigm
+    integer :: lij(3, 3), ia, ja, na, ib, jb, nb, kpg, kk, os, ija
     integer :: nddl, ndu, vu(3, 27)
-    integer :: cod(27)
-    real(kind=8) :: geomm(3*27), geomp(3*27), r, w
-    real(kind=8) :: jm, jd, jp, fm(3, 3), fd(3, 3), coef
-    real(kind=8) :: sigmam(6), taup(6), dsidep(6, 3, 3)
+    integer :: cod(npg)
+    real(kind=8) :: geomPrev(3*27), geomCurr(3*27), r, w
+    real(kind=8) :: jacoPrev, jacoIncr, jacoCurr, fPrev(3, 3), fIncr(3, 3), coef
+    real(kind=8) :: sigmPrevComp(6), tauCurr(6), dsidep(6, 3, 3)
     real(kind=8) :: rbid, tbid(6), t1, t2
     real(kind=8), parameter :: rac2 = sqrt(2.d0)
     type(Behaviour_Integ) :: BEHinteg
     integer, parameter :: vij(3,3) = reshape((/1, 4, 5, 4, 2, 6, 5, 6, 3 /),(/3,3/))
+    aster_logical :: resi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    grand = ASTER_TRUE
-    axi  = typmod(1).eq.'AXIS'
-    resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
-    rbid = r8vide()
-    call r8inir(6, rbid, tbid, 1)
+    
+
+    grand      = ASTER_TRUE
+    axi        = typmod(1) .eq. 'AXIS'
+    lSigm      = L_SIGM(option)
+! - Special case for SIMO_MIEHE
+    resi       = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
+    lMatr      = L_MATR(option)
+    rbid       = r8vide()
+    tbid       = r8vide()
+    codret     = 0
 !
 ! - Initialisation of behaviour datastructure
 !
@@ -130,125 +138,100 @@ real(kind=8) :: matr(*), fint(*)
     if (axi) ndu = 3
     call nmgpin(ndim, nno, axi, vu)
 !
-!    DETERMINATION DES CONFIGURATIONS EN T- (GEOMM) ET T+ (GEOMP)
-    call dcopy(nddl, geomi, 1, geomm, 1)
-    call daxpy(nddl, 1.d0, deplm, 1, geomm,&
-               1)
-    call dcopy(nddl, geomm, 1, geomp, 1)
-    call daxpy(nddl, 1.d0, depld, 1, geomp,&
-               1)
+! - Update configuration
+! - geomPrev = geomInit + dispPrev
+! - geomCurr = geomPrev + dispIncr
 !
-!    MISE A ZERO
+    call dcopy(nddl, geomInit, 1, geomPrev, 1)
+    call daxpy(nddl, 1.d0, dispPrev, 1, geomPrev, 1)
+    call dcopy(nddl, geomPrev, 1, geomCurr, 1)
+    call daxpy(nddl, 1.d0, dispIncr, 1, geomCurr, 1)
 !
-    call r8inir(6, 0.d0, taup, 1)
-    call r8inir(54, 0.d0, dsidep, 1)
-    cod(:)=0
+! - Loop on Gauss points
 !
-!
-! - CALCUL POUR CHAQUE POINT DE GAUSS
-    do g = 1, npg
-!
-!      CALCUL DES DEFORMATIONS
-        call dfdmip(ndim, nno, axi, geomi, g,&
-                    iw, vff(1, g), idff, r, w,&
+    cod = 0
+    do kpg = 1, npg
+        tauCurr = 0.d0
+        dsidep  = 0.d0
+! ----- Kinematic - Previous strains
+        call dfdmip(ndim, nno, axi, geomInit, kpg,&
+                    iw, vff(1, kpg), idff, r, w,&
                     dff)
-        call nmepsi(ndim, nno, axi, grand, vff(1, g),&
-                    r, dff, deplm, fm)
-        call dfdmip(ndim, nno, axi, geomm, g,&
-                    iw, vff(1, g), idff, r, rbid,&
+        call nmepsi(ndim, nno, axi, grand, vff(1, kpg),&
+                    r, dff, dispPrev, fPrev)
+! ----- Kinematic - Increment of strains
+        call dfdmip(ndim, nno, axi, geomPrev, kpg,&
+                    iw, vff(1, kpg), idff, r, rbid,&
                     dff)
-        call nmepsi(ndim, nno, axi, grand, vff(1, g),&
-                    r, dff, depld, fd)
-        call dfdmip(ndim, nno, axi, geomp, g,&
-                    iw, vff(1, g), idff, r, rbid,&
+        call nmepsi(ndim, nno, axi, grand, vff(1, kpg),&
+                    r, dff, dispIncr, fIncr)
+! ----- LU decomposition of GRAD U
+        call dfdmip(ndim, nno, axi, geomCurr, kpg,&
+                    iw, vff(1, kpg), idff, r, rbid,&
                     dff)
-        call nmmalu(nno, axi, r, vff(1, g), dff,&
+        call nmmalu(nno, axi, r, vff(1, kpg), dff,&
                     lij)
-!
-        jm = fm(1,1)*(fm(2,2)*fm(3,3)-fm(2,3)*fm(3,2)) - fm(2,1)*(fm( 1,2)*fm(3,3)-fm(1,3)*fm(3,2&
-             &)) + fm(3,1)*(fm(1,2)*fm(2,3)-fm(1, 3)*fm(2,2))
-        jd = fd(1,1)*(fd(2,2)*fd(3,3)-fd(2,3)*fd(3,2)) - fd(2,1)*(fd( 1,2)*fd(3,3)-fd(1,3)*fd(3,2&
-             &)) + fd(3,1)*(fd(1,2)*fd(2,3)-fd(1, 3)*fd(2,2))
-        jp = jm*jd
-!
-!
-!      PERTINENCE DES GRANDEURS
-        if (jd .le. 1.d-2 .or. jd .gt. 1.d2) then
-            codret = 1
+! ----- Kinematic - Jacobians
+        jacoPrev = fPrev(1,1)*(fPrev(2,2)*fPrev(3,3)-fPrev(2,3)*fPrev(3,2)) -&
+                   fPrev(2,1)*(fPrev(1,2)*fPrev(3,3)-fPrev(1,3)*fPrev(3,2)) +&
+                   fPrev(3,1)*(fPrev(1,2)*fPrev(2,3)-fPrev(1,3)*fPrev(2,2))
+        jacoIncr = fIncr(1,1)*(fIncr(2,2)*fIncr(3,3)-fIncr(2,3)*fIncr(3,2)) -&
+                   fIncr(2,1)*(fIncr(1,2)*fIncr(3,3)-fIncr(1,3)*fIncr(3,2)) +&
+                   fIncr(3,1)*(fIncr(1,2)*fIncr(2,3)-fIncr(1, 3)*fIncr(2,2))
+        jacoCurr = jacoPrev*jacoIncr
+! ----- Check jacobian
+        if (jacoIncr .le. 1.d-2 .or. jacoIncr .gt. 1.d2) then
+            cod(kpg) = 1
             goto 999
         endif
-!
-! -   APPEL A LA LOI DE COMPORTEMENT
-!
-!      POUR LES LOIS QUI NE RESPECTENT PAS ENCORE LA NOUVELLE INTERFACE
-!      ET QUI ONT ENCORE BESOIN DES CONTRAINTES EN T-
-        call r8inir(6, 0.d0, sigmam, 1)
-        call dcopy(ndim*2, sigm(1, g), 1, sigmam, 1)
-!
-        cod(g) = 0
-        call nmcomp(BEHinteg,&
-                    fami, g, 1, 3, typmod,&
-                    mate, compor, crit, instm, instp,&
-                    9, fm, fd, 6, sigmam,&
-                    vim(1, g), option, angmas, &
-                    taup, vip( 1, g), 54, dsidep, cod(g), mult_comp)
-!
-        if (cod(g) .eq. 1) then
-            codret = 1
-            if (.not. resi) then
-                call utmess('F', 'ALGORITH11_88')
-            endif
+! ----- Prepare stresses (for compatibility with behaviour using previous stress)
+        sigmPrevComp = 0.d0
+        call dcopy(ndim*2, sigmPrev(1, kpg), 1, sigmPrevComp, 1)
+! ----- Compute behaviour
+        cod(kpg) = 0
+        call nmcomp(BEHinteg   ,&
+                    fami       , kpg        , 1     , 3     , typmod      ,&
+                    imate      , compor     , carcri, instm , instp       ,&
+                    9          , fPrev      , fIncr , 6     , sigmPrevComp,&
+                    vim(1, kpg), option     , angmas, & 
+                    tauCurr    , vip(1, kpg), 54    , dsidep,&
+                    cod(kpg)   , mult_comp)
+        if (cod(kpg) .eq. 1) then
             goto 999
         endif
-!
-!      SUPPRESSION DES RACINES DE 2
-        if (resi) call dscal(3, 1/rac2, taup(4), 1)
-!
-!      MATRICE TANGENTE SANS LES RACINES DE 2
-        if (rigi) then
+! ----- Conversion from/to Voigt notation
+        if (resi) then
+            call dscal(3, 1/rac2, tauCurr(4), 1)
+        endif
+        if (lMatr) then
             coef=1.d0/rac2
             call dscal(9, coef, dsidep(4, 1, 1), 6)
             call dscal(9, coef, dsidep(5, 1, 1), 6)
             call dscal(9, coef, dsidep(6, 1, 1), 6)
         endif
-!
-!
-! - CONTRAINTE ET FORCES INTERIEURES
-!
+! ----- Internal forces and Cauchy stresses
         if (resi) then
-!
-!        CONTRAINTE DE CAUCHY A PARTIR DE KIRCHHOFF
-            call dcopy(2*ndim, taup, 1, sigp(1, g), 1)
-            coef=1.d0/jp
-            call dscal(2*ndim, coef, sigp(1, g), 1)
-!
-!        VECTEUR FINT
+            call dcopy(2*ndim, tauCurr, 1, sigmCurr(1, kpg), 1)
+            coef = 1.d0/jacoCurr
+            call dscal(2*ndim, coef, sigmCurr(1, kpg), 1)
             do na = 1, nno
                 do ia = 1, ndu
                     kk = vu(ia,na)
                     t1 = 0
                     do ja = 1, ndu
-                        t2 = taup(vij(ia,ja))
+                        t2 = tauCurr(vij(ia,ja))
                         t1 = t1 + t2*dff(na,lij(ia,ja))
                     end do
                     fint(kk) = fint(kk) + w*t1
                 end do
             end do
         endif
-!
-!
-! - MATRICE TANGENTE (NON SYMETRIQUE)
-!  REM : ON DUPLIQUE LES CAS 2D ET 3D POUR EVITER DE PERDRE TROP EN
-!         TERME DE TEMPS DE CALCULS
-!
-        if (rigi) then
-!
-!
+! ----- Tangent matrix (non-symmetric)
+        if (lMatr) then
             if (.not. resi) then
-                call dcopy(2*ndim, sigm(1, g), 1, taup, 1)
-                call dscal(2*ndim, jm, taup, 1)
+                call dcopy(2*ndim, sigmPrev(1, kpg), 1, tauCurr, 1)
+                call dscal(2*ndim, jacoPrev, tauCurr, 1)
             endif
-!
             if (ndu .eq. 3) then
                 do  na = 1, nno
                     do ia = 1, 3
@@ -257,26 +240,27 @@ real(kind=8) :: matr(*), fint(*)
                             do ib = 1, 3
                                 kk = os + vu(ib,nb)
                                 t1 = 0.d0
+! ----------------------------- Material part
                                 do ja = 1, 3
                                     do jb = 1, 3
                                         ija = vij(ia,ja)
                                         t2 = dsidep(ija,ib,jb)
-                                        t1 = t1 + dff( na, lij(ia, ja))* t2*dff(nb, lij(ib, jb) )
+                                        t1 = t1 +&
+                                             dff(na, lij(ia, ja))*t2*dff(nb, lij(ib, jb))
                                     end do
                                 end do
-!
-!               RIGIDITE GEOMETRIQUE
+! ----------------------------- Geometric part
                                 do jb = 1, 3
-                                    t1 = t1 - dff(&
-                                         na, lij(ia, ib))*dff( nb, lij(ib, jb)) *taup(vij(ia, jb)&
-                                         )
+                                    t1 = t1 -&
+                                         dff(na, lij(ia, ib))*&
+                                         dff(nb, lij(ib, jb))*&
+                                         tauCurr(vij(ia, jb))
                                 end do
                                 matr(kk) = matr(kk) + w*t1
                             end do
                         end do
                     end do
                 end do
-!
             else if (ndu.eq.2) then
                 do na = 1, nno
                     do ia = 1, 2
@@ -285,18 +269,21 @@ real(kind=8) :: matr(*), fint(*)
                             do ib = 1, 2
                                 kk = os + vu(ib,nb)
                                 t1 = 0.d0
+! ----------------------------- Material part
                                 do ja = 1, 2
                                     do jb = 1, 2
                                         ija = vij(ia,ja)
                                         t2 = dsidep(ija,ib,jb)
-                                        t1 = t1 + dff( na, lij(ia, ja))* t2*dff(nb, lij(ib, jb) )
+                                        t1 = t1 +&
+                                             dff(na, lij(ia, ja))*t2*dff(nb, lij(ib, jb))
                                     end do
                                 end do
-!               RIGIDITE GEOMETRIQUE
+! ----------------------------- Geometric part
                                 do jb = 1, 2
-                                    t1 = t1 - dff(&
-                                         na, lij(ia, ib))*dff( nb, lij(ib, jb)) *taup(vij(ia, jb)&
-                                         )
+                                    t1 = t1 -&
+                                         dff(na, lij(ia, ib))*&
+                                         dff(nb, lij(ib, jb))*&
+                                         tauCurr(vij(ia, jb))
                                 end do
                                 matr(kk) = matr(kk) + w*t1
                             end do
@@ -307,17 +294,17 @@ real(kind=8) :: matr(*), fint(*)
         endif
     end do
 !
+! - For POST_ITER='CRIT_RUPT'
 !
-!     POST_ITER='CRIT_RUPT'
-    if (crit(13) .gt. 0.d0) then
-        call crirup(fami, mate, ndim, npg, lgpg,&
-                    option, compor, sigp, vip, vim,&
-                    instm, instp)
+    if (carcri(13) .gt. 0.d0) then
+        call crirup(fami  , imate , ndim    , npg, lgpg,&
+                    option, compor, sigmCurr, vip, vim ,&
+                    instm , instp)
     endif
 !
-!
-! - SYNTHESE DES CODES RETOURS
-    call codere(cod, npg, codret)
-!
 999 continue
+!
+! - Return code summary
+!
+    call codere(cod, npg, codret)
 end subroutine

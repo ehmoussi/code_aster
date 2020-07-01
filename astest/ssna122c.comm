@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -39,9 +39,17 @@ FONC=DEFI_FONCTION(NOM_PARA='INST',VALE=(0.0,0.0,
                          1.0,1.0,
                          ),PROL_DROITE='LINEAIRE',PROL_GAUCHE='LINEAIRE',);
 
-L_INST=DEFI_LIST_REEL(DEBUT=0.0,
+LINST=DEFI_LIST_REEL(DEBUT=0.0,
                       INTERVALLE=_F(JUSQU_A=1.0,
                                     NOMBRE=10,),);
+
+L_INST=DEFI_LIST_INST(METHODE='MANUEL',
+                      DEFI_LIST=_F(LIST_INST=LINST,),
+                      ECHEC=_F(EVENEMENT='ERREUR',
+                              ACTION='DECOUPE',
+                              SUBD_METHODE = 'MANUEL',
+                              SUBD_PAS=5,
+                              SUBD_NIVEAU=5,),);
 
 MO=AFFE_MODELE(MAILLAGE=MESH,
                AFFE=(_F(TOUT='OUI',

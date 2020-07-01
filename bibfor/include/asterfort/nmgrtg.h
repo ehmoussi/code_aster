@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,34 +15,18 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine nmgrtg(ndim, nno, poids, kpg, vff,&
-                      dfdi, def, pff, option, axi,&
-                      r, fm, f, dsidep, sign,&
-                      sigma, matsym, matuu, vectu)
-        integer :: ndim
-        integer :: nno
-        real(kind=8) :: poids
-        integer :: kpg
-        real(kind=8) :: vff(*)
-        real(kind=8) :: dfdi(*)
-        real(kind=8) :: def(*)
-        real(kind=8) :: pff(*)
-        character(len=16) :: option
-        aster_logical :: axi
-        real(kind=8) :: r
-        real(kind=8) :: fm(3, 3)
-        real(kind=8) :: f(3, 3)
-        real(kind=8) :: dsidep(6, 6)
-        real(kind=8) :: sign(6)
-        real(kind=8) :: sigma(6)
-        aster_logical :: matsym
-        real(kind=8) :: matuu(*)
-        real(kind=8) :: vectu(*)
+    subroutine nmgrtg(ndim    , nno   , poids    , kpg   , vff     ,&
+                      dfdi    , def   , pff      , axi   ,&
+                      lVect   , lMatr , lMatrPred,&
+                      r       , fPrev , fCurr    , dsidep, sigmPrev,&
+                      sigmCurr, matsym, matuu    , vectu)
+        integer :: ndim, nno, kpg
+        real(kind=8) :: pff(*), def(*), r, dsidep(6, 6), poids, vectu(*)
+        real(kind=8) :: sigmCurr(6), sigmPrev(6), matuu(*), vff(*)
+        real(kind=8) :: fPrev(3, 3), fCurr(3, 3), dfdi(*)
+        aster_logical :: matsym, axi, lVect, lMatr, lMatrPred
     end subroutine nmgrtg
 end interface

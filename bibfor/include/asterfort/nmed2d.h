@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,11 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
 !
 interface
     subroutine nmed2d(nno, npg, ipoids, ivf, idfde,&
                       geom, typmod, option, imate, compor,&
-                      lgpg, crit, ideplm, iddepl, sigm,&
+                      lgpg, ideplm, iddepl, sigm,&
                       vim, dfdi, def, sigp, vip,&
                       matuu, ivectu, codret)
         integer :: lgpg
@@ -35,7 +33,6 @@ interface
         character(len=16) :: option
         integer :: imate
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(3)
         integer :: ideplm
         integer :: iddepl
         real(kind=8) :: sigm(4, npg)

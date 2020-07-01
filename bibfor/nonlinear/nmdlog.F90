@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,12 @@
 ! --------------------------------------------------------------------
 ! aslint: disable=W1306,W1504
 !
-subroutine nmdlog(fami, option, typmod, ndim, nno,&
-                  npg, iw, ivf, vff, idff,&
-                  geomi, dff, compor, mult_comp, mate, lgpg,&
-                  carcri, angmas, instm, instp, matsym,&
-                  deplm, depld, sigm, vim, sigp,&
-                  vip, fint, matuu, codret)
+subroutine nmdlog(fami    , option  , typmod  , ndim     , nno     ,&
+                  npg     , iw      , ivf     , vff      , idff    ,&
+                  geomInit, dff     , compor  , mult_comp, mate    , lgpg,&
+                  carcri  , angmas  , instm   , instp    , matsym  ,&
+                  dispPrev, dispIncr, sigmPrev, vim      , sigmCurr,&
+                  vip     , fint    , matuu   , codret)
 !
 use Behaviour_type
 use Behaviour_module
@@ -44,11 +44,21 @@ implicit none
 #include "blas/dcopy.h"
 #include "asterfort/Behaviour_type.h"
 !
-! ----------------------------------------------------------------------
-!     BUT:  CALCUL  DES OPTIONS RIGI_MECA_*, RAPH_MECA ET FULL_MECA_*
-!           EN GRANDES DEFORMATIONS 2D (D_PLAN ET AXI) ET 3D LOG
-!           SUIVANT ARTICLE MIEHE APEL LAMBRECHT CMAME 2002
-! ----------------------------------------------------------------------
+integer, intent(in) :: ndim, nno, npg
+!
+! --------------------------------------------------------------------------------------------------
+!
+! Elementary computation
+!
+! Elements: D_PLAN, C_PLAN, AXIS
+!           AXIS_SI, C_PLAN_SI (QUAD8), D_PLAN_SI (QUAD8)
+!           3D
+!           3D_SI (HEXA20)
+!
+! Options: RIGI_MECA_TANG, RAPH_MECA and FULL_MECA - GDEF_LOG
+!
+! --------------------------------------------------------------------------------------------------
+!
 ! IN  FAMI    : FAMILLE DE POINTS DE GAUSS
 ! IN  OPTION  : OPTION DE CALCUL
 ! IN  TYPMOD  : TYPE DE MODELISATION
@@ -79,132 +89,132 @@ implicit none
 ! OUT MATUU   : MATR. DE RIGIDITE NON SYM. (RIGI_MECA_* ET FULL_MECA_*)
 ! OUT CODRET  : CODE RETOUR DE L'INTEGRATION DE LA LDC
 !
-    aster_logical :: grand, axi, resi, rigi, matsym, cplan, lintbo
-    parameter (grand = .true._1)
-    integer :: g, nddl, cod(27), ivf
-    integer :: ndim, nno, npg, mate, lgpg, codret, iw, idff, iret
+! --------------------------------------------------------------------------------------------------
+!
+    aster_logical :: grand, axi, cplan
+    aster_logical :: matsym, lintbo
+    aster_logical :: lVect, lMatr, lSigm, lMatrPred
+    integer :: kpg, nddl, cod(npg), ivf
+    integer :: mate, lgpg, codret, iw, idff, iret
     character(len=8) :: typmod(*)
     character(len=*) :: fami
     character(len=16) :: option
     character(len=16), intent(in) :: compor(*)
     character(len=16), intent(in) :: mult_comp
     real(kind=8), intent(in) :: carcri(*)
-    real(kind=8) :: geomi(*), dff(nno, *), instm, instp
+    real(kind=8) :: geomInit(*), dff(nno, *), instm, instp
     real(kind=8) :: vff(nno, npg), dtde(6, 6)
-    real(kind=8) :: angmas(3), deplm(*), depld(*), sigm(2*ndim, npg), epsml(6)
-    real(kind=8) :: vim(lgpg, npg), sigp(2*ndim, npg), vip(lgpg, npg)
+    real(kind=8) :: angmas(3), dispPrev(*), dispIncr(*), sigmPrev(2*ndim, npg), epslPrev(6)
+    real(kind=8) :: vim(lgpg, npg), sigmCurr(2*ndim, npg), vip(lgpg, npg)
     real(kind=8) :: matuu(*), fint(ndim*nno)
-    real(kind=8) :: geomm(3*27), geomp(3*27), fm(3, 3), fp(3, 3), deplt(3*27)
-    real(kind=8) :: r, poids, tn(6), tp(6), deps(6)
+    real(kind=8) :: geomPrev(3*27), fPrev(3, 3), fCurr(3, 3), dispCurr(3*27)
+    real(kind=8) :: r, poids, tlogPrev(6), tlogCurr(6), epslIncr(6)
     real(kind=8) :: gn(3, 3), lamb(3), logl(3)
     real(kind=8) :: def(2*ndim, nno, ndim), pff(2*ndim, nno, nno)
-    real(kind=8) :: dsidep(6, 6), pk2(6), pk2m(6)
+    real(kind=8) :: dsidep(6, 6), pk2Curr(6), pk2Prev(6)
     type(Behaviour_Integ) :: BEHinteg
+    aster_logical :: resi
 !
-!-----------------------------TEST AVANT CALCUL---------------------
+! --------------------------------------------------------------------------------------------------
 !
-!     TEST SUR LE NOMBRE DE NOEUDS SI TEST NON VERIFIE MESSAGE ERREUR
-    ASSERT(nno.le.27)
-    if (compor(5)(1:7) .eq. 'DEBORST') then
-        ASSERT(.false.)
-    endif
-!
-! -----------------------------DECLARATION-----------------------------
-    nddl = ndim*nno
-!
-!     AFFECTATION DES VARIABLES LOGIQUES  OPTIONS ET MODELISATION
-    axi = typmod(1).eq.'AXIS'
-    cplan= typmod(1).eq.'C_PLAN'
     resi = option(1:4).eq.'RAPH' .or. option(1:4).eq.'FULL'
-    rigi = option(1:4).eq.'RIGI' .or. option(1:4).eq.'FULL'
+    grand     = ASTER_TRUE
+    axi       = typmod(1) .eq. 'AXIS'
+    cplan     = typmod(1).eq.'C_PLAN'
+    lSigm     = L_SIGM(option)
+    lVect     = L_VECT(option)
+    lMatr     = L_MATR(option)
+    lMatrPred = L_MATR_PRED(option)
+    nddl      = ndim*nno
 !
 ! - Initialisation of behaviour datastructure
 !
     call behaviourInit(BEHinteg)
 !
-! - Prepare external state variables
-!
-    call behaviourPrepESVAElem(carcri, typmod  ,&
-                               nno   , npg     , ndim ,&
-                               iw    , ivf     , idff ,&
-                               geomi , BEHinteg,&
-                               deplm , depld)
-!
-!--------------------------INITIALISATION------------------------
-!
-    cod(:) = 0
-    lintbo = .false.
-!
-!------------------------------DEPLACEMENT ET GEOMETRIE-------------
-!
-!    DETERMINATION DES CONFIGURATIONS EN T- (GEOMM) ET T+ (GEOMP)
-    call dcopy(nddl, geomi, 1, geomm, 1)
-    call daxpy(nddl, 1.d0, deplm, 1, geomm, 1)
-    call dcopy(nddl, geomm, 1, geomp, 1)
-!     DEPLT : DEPLACEMENT TOTAL ENTRE CONF DE REF ET INSTANT T_N+1
-    call dcopy(nddl, deplm, 1, deplt, 1)
-    if (resi) then
-        call daxpy(nddl, 1.d0, depld, 1, geomp, 1)
-        call daxpy(nddl, 1.d0, depld, 1, deplt, 1)
+    ASSERT(nno.le.27)
+    if (compor(PLANESTRESS)(1:7) .eq. 'DEBORST') then
+        ASSERT(.false.)
     endif
 !
-!****************************BOUCLE SUR LES POINTS DE GAUSS************
+! - Prepare external state variables
 !
-! - CALCUL POUR CHAQUE POINT DE GAUSS
-    do g = 1, npg
+    call behaviourPrepESVAElem(carcri  , typmod  ,&
+                               nno     , npg     , ndim,&
+                               iw      , ivf     , idff,&
+                               geomInit, BEHinteg,&
+                               dispPrev, dispIncr)
 !
-!---     CALCUL DE F_N, F_N+1 PAR RAPPORT A GEOMI GEOM INITIAL
-        call dfdmip(ndim, nno, axi, geomi, g,&
-                    iw, vff(1, g), idff, r, poids,&
+! - Update configuration
+!
+    call dcopy(nddl, geomInit, 1, geomPrev, 1)
+    call daxpy(nddl, 1.d0, dispPrev, 1, geomPrev, 1)
+    call dcopy(nddl, dispPrev, 1, dispCurr, 1)
+    if (resi) then
+        call daxpy(nddl, 1.d0, dispIncr, 1, dispCurr, 1)
+    endif
+!
+! - Loop on Gauss points
+!
+    lintbo = ASTER_FALSE
+    cod    = 0
+    do kpg = 1, npg
+! ----- Kinematic - Previous strains
+        call dfdmip(ndim, nno, axi, geomInit, kpg,&
+                    iw, vff(1, kpg), idff, r, poids,&
                     dff)
-!
-        call nmepsi(ndim, nno, axi, grand, vff(1, g),&
-                    r, dff, deplm, fm)
-        call nmepsi(ndim, nno, axi, grand, vff(1, g),&
-                    r, dff, deplt, fp)
-!
-        call prelog(ndim, lgpg, vim(1, g), gn, lamb,&
-                    logl, fm, fp, epsml, deps,&
-                    tn, resi, cod(g))
-!
-        if (cod(g) .ne. 0) goto 999
-!
-        call r8inir(36, 0.d0, dtde, 1)
-        call r8inir(6, 0.d0, tp, 1)
-        call nmcomp(BEHinteg,&
-                    fami, g, 1, ndim, typmod,&
-                    mate, compor, carcri, instm, instp,&
-                    6, epsml, deps, 6, tn,&
-                    vim(1, g), option, angmas, &
-                    tp, vip(1, g), 36, dtde, cod(g), mult_comp)
-!
-!        TEST SUR LES CODES RETOUR DE LA LOI DE COMPORTEMENT
-!
-        if (cod(g) .eq. 1) goto 999
-        if (cod(g) .eq. 4) lintbo= .true.
-!
-        call poslog(resi, rigi, tn, tp, fm,&
-                    lgpg, vip(1, g), ndim, fp, g,&
-                    dtde, sigm(1, g), cplan, fami, mate,&
-                    instp, angmas, gn, lamb, logl,&
-                    sigp(1, g), dsidep, pk2m, pk2, iret)
-!
+        call nmepsi(ndim, nno, axi, grand, vff(1, kpg),&
+                    r, dff, dispPrev, fPrev)
+! ----- Kinematic - Current strains
+        call nmepsi(ndim, nno, axi, grand, vff(1, kpg),&
+                    r, dff, dispCurr, fCurr)
+! ----- Pre-treatment of kinematic quantities
+        call prelog(ndim    , lgpg , vim(1, kpg), gn      , lamb    ,&
+                    logl    , fPrev, fCurr      , epslPrev, epslIncr,&
+                    tlogPrev, resi , cod(kpg))
+        if (cod(kpg) .ne. 0) then
+            goto 999
+        endif
+! ----- Compute behaviour
+        cod(kpg) = 0
+        dtde     = 0.d0
+        tlogCurr    = 0.d0
+        call nmcomp(BEHinteg   ,&
+                    fami       , kpg        , 1       , ndim , typmod  ,&
+                    mate       , compor     , carcri  , instm, instp   ,&
+                    6          , epslPrev   , epslIncr, 6    , tlogPrev,&
+                    vim(1, kpg), option     , angmas  , &
+                    tlogCurr   , vip(1, kpg), 36      , dtde ,&
+                    cod(kpg)   , mult_comp)
+        if (cod(kpg) .eq. 1) then
+            goto 999
+        endif
+        if (cod(kpg) .eq. 4) then
+            lintbo= .true.
+        endif
+! ----- Post-treatment of sthenic quantities
+        call poslog(resi            , lMatr           , tlogPrev, tlogCurr, fPrev,&
+                    lgpg            , vip(1, kpg)     , ndim    , fCurr   , kpg  ,&
+                    dtde            , sigmPrev(1, kpg), cplan   , fami    , mate ,&
+                    instp           , angmas          , gn      , lamb    , logl ,&
+                    sigmCurr(1, kpg), dsidep          , pk2Prev , pk2Curr , iret)
         if (iret .eq. 1) then
-            cod(g) = 1
+            cod(kpg) = 1
             goto 999
         end if
-!
-!     CALCUL DE LA MATRICE DE RIGIDITE ET DE LA FORCE INTERIEURE
-!     CONFG LAGRANGIENNE COMME NMGR3D / NMGR2D
-        call nmgrtg(ndim, nno, poids, g, vff,&
-                    dff, def, pff, option, axi,&
-                    r, fm, fp, dsidep, pk2m,&
-                    pk2, matsym, matuu, fint)
-!
+! ----- Compute internal forces and matrix
+        call nmgrtg(ndim   , nno   , poids    , kpg   , vff    ,&
+                    dff    , def   , pff      , axi    ,&
+                    lVect  , lMatr , lMatrPred,&
+                    r      , fPrev , fCurr    , dsidep, pk2Prev,&
+                    pk2Curr, matsym, matuu    , fint)
     end do
-    if (lintbo) cod(1) = 4
+    if (lintbo) then
+        cod(1) = 4
+    endif
+!
 999 continue
-! - SYNTHESE DES CODES RETOURS
+!
+! - Return code summary
 !
     call codere(cod, npg, codret)
 !

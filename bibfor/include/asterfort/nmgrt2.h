@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,32 +15,19 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
     subroutine nmgrt2(nno, poids, kpg, vff, def,&
-                      pff, option, axi, r, resi,&
-                      rigi, dsidep, sign, sigma, matsym,&
+                      pff, axi, r,&
+                      lVect, lMatr, lMatrPred,&
+                      dsidep, sigmPrev, sigmCurr, matsym,&
                       matuu, vectu)
-        integer :: nno
-        real(kind=8) :: poids
-        integer :: kpg
-        real(kind=8) :: vff(*)
-        real(kind=8) :: def(4, nno, 2)
-        real(kind=8) :: pff(4, nno, nno)
-        character(len=16) :: option
-        aster_logical :: axi
-        real(kind=8) :: r
-        aster_logical :: resi
-        aster_logical :: rigi
-        real(kind=8) :: dsidep(6, 6)
-        real(kind=8) :: sign(6)
-        real(kind=8) :: sigma(6)
-        aster_logical :: matsym
-        real(kind=8) :: matuu(*)
+        integer :: nno, kpg
+        real(kind=8) :: pff(4, nno, nno), def(4, nno, 2), dsidep(6, 6), poids
         real(kind=8) :: vectu(*)
+        real(kind=8) :: sigmCurr(6), sigmPrev(6), matuu(*), vff(*)
+        real(kind=8) :: r
+        aster_logical :: matsym, axi, lVect, lMatr, lMatrPred
     end subroutine nmgrt2
 end interface

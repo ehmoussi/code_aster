@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,22 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine nmdlog(fami, option, typmod, ndim, nno,&
-                      npg, iw, ivf, vff, idff,&
-                      geomi, dff, compor, mult_comp, mate, lgpg,&
-                      carcri, angmas, instm, instp, matsym,&
-                      deplm, depld, sigm, vim, sigp,&
-                      vip, fint, matuu, codret)
+    subroutine nmdlog(fami    , option  , typmod  , ndim     , nno     ,&
+                      npg     , iw      , ivf     , vff      , idff    ,&
+                      geomInit, dff     , compor  , mult_comp, mate    , lgpg,&
+                      carcri  , angmas  , instm   , instp    , matsym  ,&
+                      dispPrev, dispIncr, sigmPrev, vim      , sigmCurr,&
+                      vip     , fint    , matuu   , codret)
         integer :: lgpg
-        integer :: npg
-        integer :: nno
-        integer :: ndim
+        integer, intent(in) :: ndim, nno, npg
         character(len=*) :: fami
         character(len=16) :: option
         character(len=8) :: typmod(*)
@@ -38,7 +33,7 @@ interface
         integer :: ivf
         real(kind=8) :: vff(nno, npg)
         integer :: idff
-        real(kind=8) :: geomi(*)
+        real(kind=8) :: geomInit(*)
         real(kind=8) :: dff(nno, *)
         character(len=16), intent(in) :: compor(*)
         character(len=16), intent(in) :: mult_comp
@@ -48,11 +43,11 @@ interface
         real(kind=8) :: instm
         real(kind=8) :: instp
         aster_logical :: matsym
-        real(kind=8) :: deplm(*)
-        real(kind=8) :: depld(*)
-        real(kind=8) :: sigm(2*ndim, npg)
+        real(kind=8) :: dispPrev(*)
+        real(kind=8) :: dispIncr(*)
+        real(kind=8) :: sigmPrev(2*ndim, npg)
         real(kind=8) :: vim(lgpg, npg)
-        real(kind=8) :: sigp(2*ndim, npg)
+        real(kind=8) :: sigmCurr(2*ndim, npg)
         real(kind=8) :: vip(lgpg, npg)
         real(kind=8) :: fint(ndim*nno)
         real(kind=8) :: matuu(*)
