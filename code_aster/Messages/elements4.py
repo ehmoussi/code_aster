@@ -181,20 +181,6 @@ Le module de Young est nul.
 On ne trouve pas le coefficient de Poisson
 """),
 
-    73 : _("""
-Les comportements écrits en configuration de référence ne sont pas disponibles
-sur les éléments linéaires pour la modélisation 3D_SI.
-
-Pour contourner le problème et passer à un comportement en configuration actuelle,
-ajoutez un état initial nul au calcul.
-"""),
-
-
-
-
-
-
-
     78 : _("""
  Problème récupération donnée matériau dans THM_DIFFU %(k1)s
 """),

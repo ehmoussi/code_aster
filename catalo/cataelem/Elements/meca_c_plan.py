@@ -214,15 +214,15 @@ MMATZZR  = ArrayOfComponents(phys=PHY.MSIZ_R, locatedComponents=LC.DDL_NOZ1)
 
 
 #------------------------------------------------------------
-class MECPQS8(Element):
+class MECPQU4(Element):
     """Please document this element"""
-    meshType = MT.QUAD8
+    meshType = MT.QUAD4
     nodes = (
-            SetOfNodes('EN1', (1,2,3,4,5,6,7,8,)),
+            SetOfNodes('EN1', (1,2,3,4,)),
         )
     elrefe =(
-            ElrefeLoc(MT.QU8, gauss = ('RIGI=FPG4','FPG1=FPG1','MASS=FPG9','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
-            ElrefeLoc(MT.SE3, gauss = ('RIGI=FPG4',),),
+            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','FPG1=FPG1','MASS=FPG4','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
+            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
         )
     calculs = (
 
@@ -1007,22 +1007,8 @@ class MECPQS8(Element):
 
     )
 
-
 #------------------------------------------------------------
-class MECPQU4(MECPQS8):
-    """Please document this element"""
-    meshType = MT.QUAD4
-    nodes = (
-            SetOfNodes('EN1', (1,2,3,4,)),
-        )
-    elrefe =(
-            ElrefeLoc(MT.QU4, gauss = ('RIGI=FPG4','FPG1=FPG1','MASS=FPG4','NOEU_S=NOEU_S','NOEU=NOEU',), mater=('RIGI','NOEU','FPG1',),),
-            ElrefeLoc(MT.SE2, gauss = ('RIGI=FPG2',),),
-        )
-
-
-#------------------------------------------------------------
-class MECPQU8(MECPQS8):
+class MECPQU8(MECPQU4):
     """Please document this element"""
     meshType = MT.QUAD8
     nodes = (
@@ -1036,7 +1022,7 @@ class MECPQU8(MECPQS8):
 
 
 #------------------------------------------------------------
-class MECPQU9(MECPQS8):
+class MECPQU9(MECPQU4):
     """Please document this element"""
     meshType = MT.QUAD9
     nodes = (
@@ -1049,7 +1035,7 @@ class MECPQU9(MECPQS8):
 
 
 #------------------------------------------------------------
-class MECPTR3(MECPQS8):
+class MECPTR3(MECPQU4):
     """Please document this element"""
     meshType = MT.TRIA3
     nodes = (
@@ -1062,7 +1048,7 @@ class MECPTR3(MECPQS8):
 
 
 #------------------------------------------------------------
-class MECPTR6(MECPQS8):
+class MECPTR6(MECPQU4):
     """Please document this element"""
     meshType = MT.TRIA6
     nodes = (

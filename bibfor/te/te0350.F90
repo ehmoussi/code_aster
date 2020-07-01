@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,11 +15,14 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+!
 subroutine te0350(option, nomte)
+!
+use Behaviour_module, only : behaviourOption
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/elrefe_info.h"
@@ -30,149 +33,156 @@ implicit none
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
 #include "blas/dcopy.h"
+#include "asterfort/Behaviour_type.h"
 !
+character(len=16), intent(in) :: option, nomte
 !
-    character(len=16) :: option, nomte
-
-! ======================================================================
-!    CALCUL DES OPTIONS MECANIQUES POUR LES ELEMENTS QUAS4
-!    => 1 POINT DE GAUSS + STABILISATION ASSUMED STRAIN
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
 !
+! Elementary computation
 !
-    character(len=16) :: mult_comp
+! Elements: C_PLAN_SI / D_PLAN_SI (for QUAD4)
+!
+! Options: FULL_MECA_*, RIGI_MECA_*, RAPH_MECA
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  option           : name of option to compute
+! In  nomte            : type of finite element
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=16) :: mult_comp, defo_comp, rela_comp, type_comp
+    aster_logical :: lVect, lMatr, lVari, lSigm
     character(len=8) :: typmod(2)
-    character(len=4) :: fami
-    integer :: nno, npg1, i, imatuu, lgpg, lgpg1
+    character(len=4), parameter :: fami  = 'RIGI'
+    integer :: nno, npg, i, imatuu, lgpg, ndim
     integer :: ipoids, ivf, idfde, igeom, imate
     integer :: icontm, ivarim, jv_mult_comp
     integer :: iinstm, iinstp, ideplm, ideplp, icompo, icarcr
     integer :: ivectu, icontp, ivarip
     integer :: ivarix, iret, idim
-    integer :: jtab(7), jcret, codret, ndim
-    real(kind=8) :: vect1(54), vect3(4*27*2), xyz(3)
-    real(kind=8) :: angmas(7)
+    integer :: jtab(7), jcret, codret
+    real(kind=8) :: def(4*27*2), dfdi(54)
+    real(kind=8) :: angl_naut(7), bary(3)
 !
+! --------------------------------------------------------------------------------------------------
 !
-!
-!
-!
-    fami = 'RIGI'
-    call elrefe_info(fami=fami,ndim=ndim,nno=nno,&
-                      npg=npg1,jpoids=ipoids,jvf=ivf,jdfde=idfde)
-!
-!     MATNS MAL DIMENSIONNEE
-    ASSERT(nno.le.9)
-! - TYPE DE MODELISATION
-!
-    if (lteatt('AXIS','OUI')) then
-        typmod(1) = 'AXIS    '
-    else if (lteatt('C_PLAN','OUI')) then
-        typmod(1) = 'C_PLAN  '
-    else if (lteatt('D_PLAN','OUI')) then
-        typmod(1) = 'D_PLAN  '
-    else
-!       NOM D'ELEMENT ILLICITE
-        ASSERT(lteatt('C_PLAN', 'OUI'))
-    endif
-!
-    typmod(2) = 'ASSU    '
-!
+    imatuu = 1
+    ivectu = 1
+    icontp = 1
+    ivarip = 1
     codret = 0
 !
+! - Get element parameters
 !
-! - PARAMETRES EN ENTREE
+    call elrefe_info(fami=fami,ndim=ndim,nno=nno,&
+                      npg=npg,jpoids=ipoids,jvf=ivf,jdfde=idfde)
+    ASSERT(nno .eq. 4)
+!
+! - Type of finite element
+!
+    if (lteatt('C_PLAN','OUI')) then
+        typmod(1) = 'C_PLAN'
+    else if (lteatt('D_PLAN','OUI')) then
+        typmod(1) = 'D_PLAN'
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+    typmod(2) = ' '
+!
+! - Get input fields
+!
     call jevech('PGEOMER', 'L', igeom)
     call jevech('PMATERC', 'L', imate)
     call jevech('PCONTMR', 'L', icontm)
+    call jevech('PINSTMR', 'L', iinstm)
+    call jevech('PINSTPR', 'L', iinstp)
     call jevech('PVARIMR', 'L', ivarim)
     call jevech('PDEPLMR', 'L', ideplm)
     call jevech('PDEPLPR', 'L', ideplp)
     call jevech('PCOMPOR', 'L', icompo)
     call jevech('PCARCRI', 'L', icarcr)
-    call jevech('PCOMPOR', 'L', icompo)
     call jevech('PMULCOM', 'L', jv_mult_comp)
-    mult_comp = zk16(jv_mult_comp-1+1)
+    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7, itab=jtab)
+    lgpg = max(jtab(6),1)*jtab(7)
 !
-    call tecach('OOO', 'PVARIMR', 'L', iret, nval=7,&
-                itab=jtab)
-    lgpg1 = max(jtab(6),1)*jtab(7)
-    lgpg = lgpg1
+! - Compute barycentric center
 !
-!     ORIENTATION DU MASSIF
-!     COORDONNEES DU BARYCENTRE ( POUR LE REPRE CYLINDRIQUE )
-!
-    xyz(1) = 0.d0
-    xyz(2) = 0.d0
-    xyz(3) = 0.d0
+    bary = 0.d0
     do i = 1, nno
         do idim = 1, ndim
-            xyz(idim) = xyz(idim)+zr(igeom+idim+ndim*(i-1)-1)/nno
+            bary(idim) = bary(idim)+zr(igeom+idim+ndim*(i-1)-1)/nno
         end do
     end do
-    call rcangm(ndim, xyz, angmas)
 !
-! - VARIABLES DE COMMANDE
+! - Get orientation
 !
-    call jevech('PINSTMR', 'L', iinstm)
-    call jevech('PINSTPR', 'L', iinstp)
+    call rcangm(ndim, bary, angl_naut)
 !
-! PARAMETRES EN SORTIE
+! - Select objects to construct from option name
 !
-    imatuu=1
-    if (option(1:10) .eq. 'RIGI_MECA_' .or. option(1:9) .eq. 'FULL_MECA') then
+    call behaviourOption(option, zk16(icompo),&
+                         lMatr , lVect ,&
+                         lVari , lSigm ,&
+                         codret)
+!
+! - Properties of behaviour
+!
+    mult_comp = zk16(jv_mult_comp-1+1)
+    rela_comp = zk16(icompo-1+RELA_NAME)
+    defo_comp = zk16(icompo-1+DEFO)
+    type_comp = zk16(icompo-1+INCRELAS)
+!
+! - Get output fields
+!
+    if (lMatr) then
         call jevech('PMATUUR', 'E', imatuu)
     endif
-!
-    if (option(1:9) .eq. 'RAPH_MECA' .or. option(1:9) .eq. 'FULL_MECA') then
+    if (lVect) then
         call jevech('PVECTUR', 'E', ivectu)
-        call jevech('PCONTPR', 'E', icontp)
-        call jevech('PVARIPR', 'E', ivarip)
-!
-!      ESTIMATION VARIABLES INTERNES A L'ITERATION PRECEDENTE
-        call jevech('PVARIMP', 'L', ivarix)
-        call dcopy(npg1*lgpg, zr(ivarix), 1, zr(ivarip), 1)
-    else
-        ivectu=1
-        icontp=1
-        ivarip=1
     endif
-!
-!
+    if (lSigm) then
+        call jevech('PCONTPR', 'E', icontp)
+        call jevech('PCODRET', 'E', jcret)
+    endif
+    if (lVari) then
+        call jevech('PVARIPR', 'E', ivarip)
+        call jevech('PVARIMP', 'L', ivarix)
+        call dcopy(npg*lgpg, zr(ivarix), 1, zr(ivarip), 1)
+    endif
 !
 ! - HYPER-ELASTICITE
 !
-    if (zk16(icompo+3) (1:9) .eq. 'COMP_ELAS') then
-        if (zk16(icompo).ne.'ELAS') then
-            call utmess('F', 'ALGORITH10_88')
+    if (type_comp .eq. 'COMP_ELAS') then
+        if (rela_comp .ne. 'ELAS') then
+            call utmess('F', 'ELEMENTSSI_2')
         endif
     endif
-!
 !
 ! - HYPO-ELASTICITE
 !
-        if (zk16(icompo+2) (6:10) .eq. '_REAC') then
-            do i = 1, 2*nno
-                zr(igeom+i-1) = zr(igeom+i-1) + zr(ideplm+i-1) + zr(ideplp+i-1)
-            end do
-        endif
+    if (defo_comp (6:10) .eq. '_REAC') then
+        do i = 1, ndim*nno
+            zr(igeom+i-1) = zr(igeom+i-1) + zr(ideplm+i-1) + zr(ideplp+i-1)
+        end do
+    endif
 !
-        if (zk16(icompo+2) (1:5) .eq. 'PETIT') then
+    if (defo_comp(1:5) .eq. 'PETIT') then
+        call nmas2d(fami, nno, npg, ipoids, ivf,&
+                    idfde, zr(igeom), typmod, option, zi(imate),&
+                    zk16(icompo), mult_comp, lgpg, zr(icarcr), zr(iinstm), zr(iinstp),&
+                    zr(ideplm), zr(ideplp), angl_naut, zr(icontm), zr(ivarim),&
+                    dfdi, def, zr(icontp), zr(ivarip), zr(imatuu),&
+                    zr(ivectu), codret)
+    else
+        call utmess('F', 'ELEMENTSSI_1', sk=defo_comp)
+    endif
 !
-            call nmas2d(fami, nno, npg1, ipoids, ivf,&
-                        idfde, zr(igeom), typmod, option, zi(imate),&
-                        zk16(icompo), mult_comp, lgpg, zr(icarcr), zr(iinstm), zr(iinstp),&
-                        zr(ideplm), zr(ideplp), angmas, zr(icontm), zr(ivarim),&
-                        vect1, vect3, zr(icontp), zr(ivarip), zr(imatuu),&
-                        zr(ivectu), codret)
+! - Save return code
 !
-        else
-            call utmess('F', 'ELEMENTS3_16', sk=zk16(icompo+2))
-        endif
-!
-
-    if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then
-        call jevech('PCODRET', 'E', jcret)
+    if (lSigm) then
         zi(jcret) = codret
     endif
+!
 end subroutine
