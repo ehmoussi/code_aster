@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,17 +15,17 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-!
 #include "asterf_types.h"
 !
 interface
     subroutine nifilg(ndim, nnod, nnog, nnop, npg,&
                       iw, vffd, vffg, vffp, idff1,&
                       vu, vg, vp, geomi, typmod,&
-                      option, mate, compor, lgpg, crit,&
+                      option, mate, compor, lgpg, carcri,&
                       instm, instp, ddlm, ddld, angmas,&
-                      sigm, vim, sigp, vip, resi,&
-                      rigi, vect, matr, matsym, codret)
+                      sigm, vim, sigp, vip,&
+                      lMatr, lVect, &
+                      vect, matr, matsym, codret)
         integer :: lgpg
         integer :: npg
         integer :: nnop
@@ -45,7 +45,7 @@ interface
         character(len=16) :: option
         integer :: mate
         character(len=16) :: compor(*)
-        real(kind=8) :: crit(*)
+        real(kind=8) :: carcri(*)
         real(kind=8) :: instm
         real(kind=8) :: instp
         real(kind=8) :: ddlm(*)
@@ -59,7 +59,7 @@ interface
         aster_logical :: rigi
         real(kind=8) :: vect(*)
         real(kind=8) :: matr(*)
-        aster_logical :: matsym
+        aster_logical :: matsym, lMatr, lVect
         integer :: codret
     end subroutine nifilg
 end interface

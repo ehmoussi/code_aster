@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -20,10 +20,11 @@
 subroutine nifipd(ndim, nno1, nno2, nno3, npg,&
                   iw, vff1, vff2, vff3, idff1,&
                   vu, vg, vp, geomi, typmod,&
-                  option, mate, compor, lgpg, crit,&
+                  option, mate, compor, lgpg, carcri,&
                   instm, instp, ddlm, ddld, angmas,&
-                  sigm, vim, sigp, vip, resi,&
-                  rigi, vect, matr, codret)
+                  sigm, vim, sigp, vip,&
+                  lMatr, lVect, &
+                  vect, matr, codret)
 !
 use Behaviour_type
 use Behaviour_module
@@ -31,6 +32,7 @@ use Behaviour_module
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nmcomp.h"
@@ -40,7 +42,7 @@ implicit none
 #include "asterfort/utmess.h"
 #include "blas/ddot.h"
 !
-aster_logical :: resi, rigi
+aster_logical :: lMatr, lVect
 integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, lgpg
 integer :: mate
 integer :: vu(3, 27), vg(27), vp(27)
@@ -51,7 +53,7 @@ real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
 real(kind=8) :: sigm(2*ndim+1, npg), sigp(2*ndim+1, npg)
 real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
 real(kind=8) :: vect(*), matr(*)
-real(kind=8) :: crit(*)
+real(kind=8) :: carcri(*)
 character(len=8) :: typmod(*)
 character(len=16) :: compor(*), option
 !
@@ -61,8 +63,6 @@ character(len=16) :: compor(*), option
 !          3D/D_PLAN/AXIS
 !          ROUTINE APPELEE PAR TE0590
 !-----------------------------------------------------------------------
-! IN  RESI    : CALCUL DES FORCES INTERNES
-! IN  RIGI    : CALCUL DE LA MATRICE DE RIGIDITE
 ! IN  NDIM    : DIMENSION DE L'ESPACE
 ! IN  NNO1    : NOMBRE DE NOEUDS DE L'ELEMENT LIES AUX DEPLACEMENTS
 ! IN  NNO2    : NOMBRE DE NOEUDS DE L'ELEMENT LIES AU GONFLEMENT
@@ -157,8 +157,12 @@ character(len=16) :: compor(*), option
         presd(sa) = ddld(vp(sa))
     end do
 !
-    if (resi) call r8inir(nddl, 0.d0, vect, 1)
-    if (rigi) call r8inir(nddl*(nddl+1)/2, 0.d0, matr, 1)
+    if (lVect) then
+        call r8inir(nddl, 0.d0, vect, 1)
+    endif
+    if (lMatr) then
+        call r8inir(nddl*(nddl+1)/2, 0.d0, matr, 1)
+    endif
 !
     call r8inir(36, 0.d0, dsidep, 1)
 !
@@ -242,21 +246,19 @@ character(len=16) :: compor(*), option
 ! - APPEL A LA LOI DE COMPORTEMENT
         call nmcomp(BEHinteg,&
                     'RIGI', g, 1, ndim, typmod,&
-                    mate, compor, crit, instm, instp,&
+                    mate, compor, carcri, instm, instp,&
                     6, epsm, deps, 6, sigmam,&
                     vim(1, g), option, angmas, &
                     sigma, vip(1, g), 36, dsidep, cod(g))
 !
         if (cod(g) .eq. 1) then
             codret = 1
-            if (.not. resi) then
-                call utmess('F', 'ALGORITH14_75')
-            endif
+            ASSERT(lVect)
             goto 999
         endif
 !
 ! - CALCUL DE LA FORCE INTERIEURE ET DES CONTRAINTES DE CAUCHY
-        if (resi) then
+        if (lVect) then
 ! - CONTRAINTES A L'EQUILIBRE
             sigtr = sigma(1) + sigma(2) + sigma(3)
             do ia = 1, 3
@@ -299,7 +301,7 @@ character(len=16) :: compor(*), option
         endif
 !
 ! - MATRICE TANGENTE
-        if (rigi) then
+        if (lMatr) then
 !
             call pmat(6, idev/3.d0, dsidep, devd)
             call pmat(6, dsidep, idev/3.d0, ddev)

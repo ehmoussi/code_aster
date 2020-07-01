@@ -21,10 +21,11 @@
 subroutine nifilg(ndim, nnod, nnog, nnop, npg,&
                   iw, vffd, vffg, vffp, idff1,&
                   vu, vg, vp, geomi, typmod,&
-                  option, mate, compor, lgpg, crit,&
+                  option, mate, compor, lgpg, carcri,&
                   instm, instp, ddlm, ddld, angmas,&
-                  sigm, vim, sigp, vip, resi,&
-                  rigi, vect, matr, matsym, codret)
+                  sigm, vim, sigp, vip,&
+                  lMatr, lVect, &
+                  vect, matr, matsym, codret)
 !
 use Behaviour_type
 use Behaviour_module
@@ -32,6 +33,7 @@ use Behaviour_module
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/dsde2d.h"
@@ -47,18 +49,19 @@ implicit none
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"
-aster_logical :: resi, rigi, matsym
+!
+aster_logical :: matsym, lMatr, lVect
 integer :: ndim, nnod, nnog, nnop, npg, iw, idff1, lgpg
 integer :: mate
 integer :: vu(3, 27), vg(27), vp(27)
-integer :: codret, iret
+integer :: codret
 real(kind=8) :: vffd(nnod, npg), vffg(nnog, npg), vffp(nnop, npg)
 real(kind=8) :: instm, instp
 real(kind=8) :: geomi(ndim, nnod), ddlm(*), ddld(*), angmas(*)
 real(kind=8) :: sigm(2*ndim+1, npg), sigp(2*ndim+1, npg)
 real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
 real(kind=8) :: vect(*), matr(*)
-real(kind=8) :: crit(*)
+real(kind=8) :: carcri(*)
 character(len=8) :: typmod(*)
 character(len=16) :: compor(*), option
 !-----------------------------------------------------------------------
@@ -66,8 +69,6 @@ character(len=16) :: compor(*), option
 !          INCOMPRESSIBLES POUR LES GRANDES DEFORMATIONS
 !          3D/D_PLAN/AXIS
 !-----------------------------------------------------------------------
-! IN  RESI    : CALCUL DES FORCES INTERNES
-! IN  RIGI    : CALCUL DE LA MATRICE DE RIGIDITE
 ! IN  MATSYM  : MATRICE TANGENTE SYMETRIQUE OU NON
 ! IN  NDIM    : DIMENSION DE L'ESPACE
 ! IN  nnod    : NOMBRE DE NOEUDS DE L'ELEMENT LIES AUX DEPLACEMENTS
@@ -109,7 +110,7 @@ character(len=16) :: compor(*), option
     integer :: ia, na, ra, sa, ib, nb, rb, sb, ja, jb
     integer :: lij(3, 3), vij(3, 3), os, kk
     integer :: viaja, vibjb, vuiana, vgra, vpsa
-    integer :: cod(27)
+    integer :: cod(27), iret
     real(kind=8) :: geomm(3*27), geomp(3*27), deplm(3*27), deplp(3*27)
     real(kind=8) :: r, w, wp, dff1(nnod, 4)
     real(kind=8) :: presm(27), presd(27)
@@ -177,8 +178,10 @@ character(len=16) :: compor(*), option
         presd(sa) = ddld(vp(sa))
     end do
 !
-    if (resi) call r8inir(nddl, 0.d0, vect, 1)
-    if (rigi) then
+    if (lVect) then
+        call r8inir(nddl, 0.d0, vect, 1)
+    endif
+    if (lMatr) then
         if (matsym) then
             call r8inir(nddl*(nddl+1)/2, 0.d0, matr, 1)
         else
@@ -252,19 +255,17 @@ character(len=16) :: compor(*), option
 !
         call prelog(ndim, lgpg, vim(1, g), gn, lamb,&
                     logl, ftm, ftp, epsml, deps,&
-                    tn, resi, cod(g))
+                    tn, lVect, cod(g))
 !
         if (cod(g) .ne. 0) then
             codret = cod(g)
-            if (.not. resi) then
-                call utmess('F', 'ALGORITH14_75')
-            endif
+            ASSERT(lVect)
             goto 999
         endif
 !
         call nmcomp(BEHinteg,&
                     'RIGI', g, 1, ndim, typmod,&
-                    mate, compor, crit, instm, instp,&
+                    mate, compor, carcri, instm, instp,&
                     6, epsml, deps, 6, tn,&
                     vim(1, g), option, angmas, &
                     tp, vip(1, g), 36, dtde, cod(g))
@@ -278,7 +279,7 @@ character(len=16) :: compor(*), option
             sigm_ldc(ia) = sigm(ia,g)
         end do
 !
-        call poslog(resi, rigi, tn, tp, ftm,&
+        call poslog(lVect, lMatr, tn, tp, ftm,&
                     lgpg, vip(1, g), ndim, ftp, g,&
                     dtde, sigm_ldc, .false._1, 'RIGI', mate,&
                     instp, angmas, gn, lamb, logl,&
@@ -286,14 +287,12 @@ character(len=16) :: compor(*), option
 !
         if (cod(g) .ne. 0) then
             codret = cod(g)
-            if (.not. resi) then
-                call utmess('F', 'ALGORITH14_75')
-            endif
+            ASSERT(lVect)
             goto 999
         endif
 !
 ! - CALCUL DE LA FORCE INTERIEURE ET DES CONTRAINTES DE CAUCHY
-        if (resi) then
+        if (lVect) then
             call dscal(2*ndim, exp(gp), sigp_ldc, 1)
             call dcopy(2*ndim, sigp_ldc, 1, taup, 1)
 !
@@ -339,8 +338,8 @@ character(len=16) :: compor(*), option
         endif
 !
 ! - MATRICE TANGENTE
-        if (rigi) then
-            if (resi) then
+        if (lMatr) then
+            if (lVect) then
                 call dcopy(9, ftp, 1, ftr, 1)
             else
                 call dcopy(2*ndim, sigm_ldc, 1, taup, 1)
@@ -361,9 +360,9 @@ character(len=16) :: compor(*), option
 ! - CALCUL DE D^DEV:ID ET ID:D^DEV ET ID:D:ID
             iddid = 0.d0
             do ia = 1, 6
-                devdi(ia)  = devd(ia,1)+devd(ia,2)+devd(ia,3)
-                iddev(ia)  = ddev(1,ia)+ddev(2,ia)+ddev(3,ia)
-                taudv(ia)  = taup(ia) - tauhy*kr(ia)
+                devdi(ia) = devd(ia,1)+devd(ia,2)+devd(ia,3)
+                iddev(ia) = ddev(1,ia)+ddev(2,ia)+ddev(3,ia)
+                taudv(ia) = taup(ia) - tauhy*kr(ia)
                 tauldc(ia) = taup(ia) + (pp*bb-tauhy)*kr(ia)
                 do ja = 1, 3
                     iddid = iddid+kr(ia)*d(ia,ja)

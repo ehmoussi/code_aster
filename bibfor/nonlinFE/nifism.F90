@@ -22,9 +22,10 @@ subroutine nifism(ndim, nno1, nno2, nno3, npg,&
                   iw, vff1, vff2, vff3, idff1,&
                   idff2, vu, vg, vp, geomi,&
                   typmod, option, mate, compor, lgpg,&
-                  crit, instm, instp, ddlm, ddld,&
+                  carcri, instm, instp, ddlm, ddld,&
                   angmas, sigm, vim, sigp, vip,&
-                  resi, rigi, vect, matr, codret)
+                  lMatr, lVect, lMatrPred,&
+                  vect, matr, codret)
 !
 use Behaviour_type
 use Behaviour_module
@@ -32,6 +33,7 @@ use Behaviour_module
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/codere.h"
 #include "asterfort/dfdmip.h"
 #include "asterfort/nirela.h"
@@ -44,18 +46,19 @@ implicit none
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
 #include "blas/dscal.h"
-aster_logical :: resi, rigi
+!
+aster_logical :: lMatr, lVect, lMatrPred
 integer :: ndim, nno1, nno2, nno3, npg, iw, idff1, idff2, lgpg
 integer :: mate
 integer :: vu(3, 27), vg(27), vp(27)
-integer :: codret, iret
+integer :: codret
 real(kind=8) :: vff1(nno1, npg), vff2(nno2, npg), vff3(nno3, npg)
 real(kind=8) :: instm, instp
 real(kind=8) :: geomi(ndim, nno1), ddlm(*), ddld(*), angmas(*)
 real(kind=8) :: sigm(2*ndim+1, npg), sigp(2*ndim+1, npg)
 real(kind=8) :: vim(lgpg, npg), vip(lgpg, npg)
 real(kind=8) :: vect(*), matr(*)
-real(kind=8) :: crit(*)
+real(kind=8) :: carcri(*)
 character(len=8) :: typmod(*)
 character(len=16) :: compor(*), option
 !-----------------------------------------------------------------------
@@ -103,7 +106,7 @@ character(len=16) :: compor(*), option
 !-----------------------------------------------------------------------
 !
     aster_logical :: axi, grand, nonloc
-    integer :: g, nddl, ndu
+    integer :: g, nddl, ndu, iret
     integer :: ia, na, ra, sa, ib, nb, rb, sb, ja, jb
     integer :: k2ret(1), lij(3, 3), vij(3, 3), os, kk
     integer :: viaja
@@ -169,8 +172,12 @@ character(len=16) :: compor(*), option
         presd(sa) = ddld(vp(sa))
     end do
 !
-    if (resi) call r8inir(nddl, 0.d0, vect, 1)
-    if (rigi) call r8inir(nddl*nddl, 0.d0, matr, 1)
+    if (lVect) then
+        call r8inir(nddl, 0.d0, vect, 1)
+    endif
+    if (lMatr) then
+        call r8inir(nddl*nddl, 0.d0, matr, 1)
+    endif
 !
     call r8inir(6, 0.d0, taup, 1)
     call r8inir(54, 0.d0, dsidep, 1)
@@ -256,24 +263,24 @@ character(len=16) :: compor(*), option
 !
         call nmcomp(BEHinteg,&
                     'RIGI', g, 1, 3, typmod,&
-                    mate, compor, crit, instm, instp,&
+                    mate, compor, carcri, instm, instp,&
                     9, ftm, ftd, 6, sigm_ldc,&
                     vim(1, g), option, angmas, &
                     taup, vip( 1, g), 54, dsidep, cod(g))
 !
         if (cod(g) .eq. 1) then
             codret = 1
-            if (.not. resi) then
-                call utmess('F', 'ALGORITH14_75')
-            endif
+            ASSERT(lVect)
             goto 999
         endif
 !
 ! - SUPPRESSION DES RACINES DE 2
-        if (resi) call dscal(3, 1/rac2, taup(4), 1)
+        if (lVect) then
+            call dscal(3, 1/rac2, taup(4), 1)
+        endif
 !
 ! - MATRICE TANGENTE SANS LES RACINES DE 2
-        if (rigi) then
+        if (lMatr) then
             call dscal(9, 1/rac2, dsidep(4, 1, 1), 6)
             call dscal(9, 1/rac2, dsidep(5, 1, 1), 6)
             call dscal(9, 1/rac2, dsidep(6, 1, 1), 6)
@@ -281,7 +288,7 @@ character(len=16) :: compor(*), option
 !
 !
 ! - CALCUL DE LA FORCE INTERIEURE ET DES CONTRAINTES DE CAUCHY
-        if (resi) then
+        if (lVect) then
 ! - CONTRAINTE HYDROSTATIQUE ET DEVIATEUR
             tauhy = (taup(1)+taup(2)+taup(3))/3.d0
             do ia = 1, 6
@@ -332,8 +339,8 @@ character(len=16) :: compor(*), option
         endif
 !
 ! - MATRICE TANGENTE
-        if (rigi) then
-            if (.not. resi) then
+        if (lMatr) then
+            if (lMatrPred) then
                 do ia = 1, 3
                     taup(ia) = (sigm(ia,g) + sigm(2*ndim+1,g))*jm
                 end do

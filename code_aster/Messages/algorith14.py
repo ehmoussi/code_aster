@@ -193,12 +193,6 @@ cata_msg = {
  arrêt sur incompatibilité de sous-structures
 """),
 
-    75 : _("""
-Erreur développement : code retour 1 dans en calculant la matrice tangente
-Ce message est un message d'erreur développeur.
-Contactez le support technique.
- """),
-
     77 : _("""
  les types des deux matrices sont différents
  type de la matrice de raideur :  %(k1)s
