@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -31,7 +31,6 @@ subroutine cmmoma(mailla, momanu, nbno, nbnoaj)
 #include "asterfort/normev.h"
 #include "asterfort/provec.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
 !
     integer :: nbno, nbnoaj
@@ -73,25 +72,21 @@ subroutine cmmoma(mailla, momanu, nbno, nbnoaj)
     call jenonu(jexnom('&CATA.TM.NOMTM', 'SEG3'), itse3)
     call jenonu(jexnom('&CATA.TM.NOMTM', 'SEG4'), itse4)
 !
-    do 10 im = 1, nbnoaj
+    do im = 1, nbnoaj
 !
         numa = zi(jmail+im-1)
         call jeveuo(typmai, 'E', iatyma)
         jtyp=iatyma-1+numa
         ityp = zi(jtyp)
-!
         if (ityp .eq. ittr6) then
             zi(jtyp) = ittr7
             ino = 7
-!
         else if (ityp .eq. itqu8) then
             zi(jtyp) = itqu9
             ino = 9
-!
         else if (ityp .eq. itse3) then
             zi(jtyp) = itse4
             ino = 4
-!
         endif
 !
         call jeveuo(jexnum(connex, numa), 'E', jpt)
@@ -102,68 +97,47 @@ subroutine cmmoma(mailla, momanu, nbno, nbnoaj)
 !
             if (ityp .eq. ittr6) then
 !             -- TRIA6_7
-                do 777, k=1,3
-                w= 0.d0
-                w= w + zr(jvale+3*(zi(jpt-1+1)-1)-1+k) * (-1.d0/&
-                    9.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+2)-1)-1+k) * (-1.d0/&
-                    9.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+3)-1)-1+k) * (-1.d0/&
-                    9.d0)
-!
-                w= w + zr(jvale+3*(zi(jpt-1+4)-1)-1+k) * (4.d0/&
-                    9.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+5)-1)-1+k) * (4.d0/&
-                    9.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+6)-1)-1+k) * (4.d0/&
-                    9.d0)
-!
-                zr(jvale+3*(nuno-1)-1+k) = w
-777              continue
-!
+                do k=1,3
+                    w= 0.d0
+                    w= w + zr(jvale+3*(zi(jpt-1+1)-1)-1+k) * (-1.d0/9.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+2)-1)-1+k) * (-1.d0/9.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+3)-1)-1+k) * (-1.d0/9.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+4)-1)-1+k) * (4.d0/9.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+5)-1)-1+k) * (4.d0/9.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+6)-1)-1+k) * (4.d0/9.d0)
+                    zr(jvale+3*(nuno-1)-1+k) = w
+                end do
             else if (ityp.eq.itqu8) then
 !             -- QUAD8_9
-                do 778, k=1,3
-                w= 0.d0
-                w= w + zr(jvale+3*(zi(jpt-1+1)-1)-1+k) * (-1.d0/&
-                    4.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+2)-1)-1+k) * (-1.d0/&
-                    4.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+3)-1)-1+k) * (-1.d0/&
-                    4.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+4)-1)-1+k) * (-1.d0/&
-                    4.d0)
-!
-                w= w + zr(jvale+3*(zi(jpt-1+5)-1)-1+k) * (1.d0/&
-                    2.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+6)-1)-1+k) * (1.d0/&
-                    2.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+7)-1)-1+k) * (1.d0/&
-                    2.d0)
-                w= w + zr(jvale+3*(zi(jpt-1+8)-1)-1+k) * (1.d0/&
-                    2.d0)
-!
-                zr(jvale+3*(nuno-1)-1+k) = w
-778              continue
-!
+                do k=1,3
+                    w= 0.d0
+                    w= w + zr(jvale+3*(zi(jpt-1+1)-1)-1+k) * (-1.d0/4.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+2)-1)-1+k) * (-1.d0/4.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+3)-1)-1+k) * (-1.d0/4.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+4)-1)-1+k) * (-1.d0/4.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+5)-1)-1+k) * (1.d0/2.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+6)-1)-1+k) * (1.d0/2.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+7)-1)-1+k) * (1.d0/2.d0)
+                    w= w + zr(jvale+3*(zi(jpt-1+8)-1)-1+k) * (1.d0/2.d0)
+                    zr(jvale+3*(nuno-1)-1+k) = w
+                end do
             else
                 ASSERT(.false.)
             endif
-!
         else
 !
-            do 30 i = 1, 3
+            do i = 1, 3
                 nuno1 = zi(jpt+1-1)
                 coo1(i) = zr(jvale-1+3*(nuno1-1)+i )
                 nuno2 = zi(jpt+2-1)
                 coo2(i) = zr(jvale-1+3*(nuno2-1)+i )
                 nuno3 = zi(jpt+3-1)
                 coo3(i) = zr(jvale-1+3*(nuno3-1)+i )
-30          continue
+            end do
 !
-            call vdiff(3, coo3, coo1, t13)
-            call vdiff(3, coo2, coo3, t32)
-            call vdiff(3, coo2, coo1, t12)
+            t13 = coo3 - coo1
+            t32 = coo2 - coo3
+            t12 = coo2 - coo1
             call normev(t13, norme1)
             call normev(t32, norme2)
             call normev(t12, dn1n2)
@@ -203,10 +177,10 @@ subroutine cmmoma(mailla, momanu, nbno, nbnoaj)
 !
 !           CAS DU TUYAU DROIT
 !              SEGMENT N1-N2 DIVISE EN 3
-                do 40 i = 1, 3
+                do i = 1, 3
                     x3(i)=coo1(i)+t12(i)*dn1n2/3.d0
                     x4(i)=coo1(i)+2.d0*t12(i)*dn1n2/3.d0
-40              continue
+                end do
 !
             else
 !
@@ -217,7 +191,7 @@ subroutine cmmoma(mailla, momanu, nbno, nbnoaj)
                 t2=tan(theta/2.d0)
                 t6=tan(theta/6.d0)
 !
-                do 50 i = 1, 3
+                do i = 1, 3
                     om(i)=(coo1(i)+coo2(i))*0.5d0
                     n3m(i)=om(i)-coo3(i)
                     mc(i)=n3m(i)*c2/(1.d0-c2)
@@ -226,7 +200,7 @@ subroutine cmmoma(mailla, momanu, nbno, nbnoaj)
                     mr(i)=(coo2(i)-om(i))*t6/t2
                     x3(i)=oc(i)+(mp(i)-mc(i))*c6/c2
                     x4(i)=oc(i)+(mr(i)-mc(i))*c6/c2
-50              continue
+                end do
             endif
 !
 !
@@ -244,7 +218,7 @@ subroutine cmmoma(mailla, momanu, nbno, nbnoaj)
 !
         endif
 !
-10  end do
+    end do
 !
     call jedema()
 end subroutine

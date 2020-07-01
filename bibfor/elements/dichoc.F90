@@ -44,10 +44,9 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
 #include "asterfort/rcvala.h"
 #include "asterfort/ut2vgl.h"
 #include "asterfort/utpvgl.h"
-#include "asterfort/vdiff.h"
 #include "blas/dcopy.h"
 !
-    integer :: nbt, neq, nno, nc, icodma, dimele
+    integer :: nbt, neq, nno, nc, icodma, dimele, i
     real(kind=8) :: dul(neq), utl(neq), dvl(neq)
     real(kind=8) :: dpe(neq), dve(neq)
     real(kind=8) :: klv(nbt), duly, xg(6), pgl(3, 3)
@@ -68,7 +67,7 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
 ! ----------------------------------------------------------------------
 !
 ! --- DEFINITION DES PARAMETRES
-    xl(:) = 0.0 ; dirl(:) = 0.0 ; xd(:) = 0.0
+    xl = 0.d0 ; dirl = 0.d0 ; xd = 0.d0
 !   COORDONNEES DANS LE REPERE LOCAL
     if (dimele .eq. 3) then
         call utpvgl(nno, 3, pgl, xg, xl)
@@ -109,7 +108,9 @@ subroutine dichoc(nbt, neq, nno, nc, icodma,&
             vit3 = dvl(3+nc)-dvl(3)
         endif
 !       LONGUEUR DU DISCRET
-        call vdiff(dimele, xl(1+dimele), xl(1), xd)
+        do i = 1, dimele
+            xd(i) = xl(dimele+i) - xl(i)
+        end do
         call dcopy(dimele, dpe(1), 1, dirl, 1)
         call dcopy(dimele, dpe(1+nc), 1, dirl(4), 1)
         depx = xd(1) - dist12 + utot + dirl(4) - dirl(1)

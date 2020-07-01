@@ -221,8 +221,8 @@ subroutine te0516(option, nomte)
                gamma, vecteu, pgl, xl, angp)
        else
 !         Rotation sur dernier pas convergee
-          call porea3(nno, nc, zr(ideplm), zr(ideplp), zr(igeom+1),&
-               gamma, vecteu, pgl, xl, angp)
+          call porea3(nno, nc, zr(ideplm), zr(igeom+1),&
+               gamma, pgl, xl, angp)
        endif
 !      sauvegarde des angles nautiques
        if (vecteu) then

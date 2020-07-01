@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ subroutine porea2(nno, nc, geom, gamma, pgl,&
 #include "asterfort/assert.h"
 #include "asterfort/matrot.h"
 #include "asterfort/tecach.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
 !
     integer :: nno, nc
@@ -54,28 +53,26 @@ subroutine porea2(nno, nc, geom, gamma, pgl,&
 !
     call tecach('ONO', 'PDEPLMR', 'L', iret, iad=ideplm)
     if (iret .ne. 0) then
-        do 100 i = 1, 2*nc
-            utg(i) = 0.d0
-100      continue
+        utg = 0.d0
     else
-        do 102 i = 1, 2*nc
+        do i = 1, 2*nc
             utg(i) = zr(ideplm-1+i)
-102      continue
+        end do
     endif
 !
     call tecach('ONO', 'PDEPLPR', 'L', iret, iad=ideplp)
     if (iret .eq. 0) then
-        do 104 i = 1, 2*nc
+        do i = 1, 2*nc
             utg(i) = utg(i) + zr(ideplp-1+i)
-104      continue
+        end do
     endif
 !
-    do 110 i = 1, 3
+    do i = 1, 3
         xug(i) = utg(i) + geom(i,1)
         xug(i+3) = utg(i+nc) + geom(i,2)
-110  end do
+        xd(i)    = xug(i+3) - xug(i)
+    end do
 !
-    call vdiff(3, xug(4), xug(1), xd)
     xl2=ddot(3,xd,1,xd,1)
     xl = sqrt(xl2)
     tet1=ddot(3,utg(4),1,xd,1)

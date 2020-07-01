@@ -46,7 +46,6 @@ subroutine op0154()
 #include "asterfort/symema.h"
 #include "asterfort/tranma.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "asterfort/vecini.h"
 #include "asterfort/vtgpld.h"
 #include "asterfort/assert.h"
@@ -197,7 +196,7 @@ subroutine op0154()
                 if (n2 .ne. 0) then
                     call getvr8('ROTATION', 'POIN_2', iocc=i, nbval=3, vect=pt2,&
                                 nbret=n1)
-                    call vdiff(3, pt2, pt, dir)
+                    dir = pt2 - pt
                 else
                     call getvr8('ROTATION', 'DIR', iocc=i, nbval=3, vect=dir,&
                                 nbret=n1)

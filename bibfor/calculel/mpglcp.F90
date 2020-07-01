@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ subroutine mpglcp(typecp, nbnolo, coordo, alpha, beta,&
 #include "asterfort/dxtpgl.h"
 #include "asterfort/matrot.h"
 #include "asterfort/pmat.h"
-#include "asterfort/vdiff.h"
     character(len=1) :: typecp
     integer :: nbnolo, iret
     real(kind=8) :: coordo(*), alpha, beta, gamma, pgl(3, 3)
@@ -72,7 +71,7 @@ subroutine mpglcp(typecp, nbnolo, coordo, alpha, beta,&
     if ((typecp.eq.'P').or.(typecp.eq.'D')) then
         ASSERT( (nbnolo.eq.2).or.(nbnolo.eq.3) )
 !       CALCUL DE ALPHA ET BETA
-        call vdiff(3, coordo(1), coordo(4), xd)
+        xd = coordo(1:3) - coordo(4:6)
         call angvx(xd, alphal, betal)
         angl(1) = alphal
         angl(2) = betal

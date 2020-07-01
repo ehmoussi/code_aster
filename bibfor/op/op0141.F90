@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -50,7 +50,6 @@ subroutine op0141()
 #include "asterfort/tbimpr.h"
 #include "asterfort/titre.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/zerlag.h"
 #include "blas/dcopy.h"
@@ -60,7 +59,7 @@ subroutine op0141()
     integer :: n1, n2, n3, ibid, nbmod1, nbmod2, neq, idbas1
     integer :: idbas2, idbas3, idvec3, i, j, nbpara, inom, ityp, ind, imatra
     integer :: idvec1, idvec2, ifm, niv, neq1, llneq2, iret
-    integer :: iddl, indv, tmod(1)
+    integer :: iddl, indv, tmod(1), ieq
     real(kind=8) :: rbid, pij, pii, pjj
     complex(kind=8) :: cbid, dcmplx, ztemp, dconjg
     character(len=1) :: typsca
@@ -368,9 +367,10 @@ subroutine op0141()
                 pjj = abs(ddot( neq, zr(idbas2+(j-1)*neq),1, zr( idvec2),1))
 !
                 if (ieri) then
-                    call vdiff(neq, zr(idbas1+(i-1)*neq), zr(idbas2+(j- 1)*neq), zr(idbas3))
-                    call mrmult('ZERO', imatra, zr(idbas3), zr(idvec3), 1,&
-                                .true._1)
+                    do ieq = 1, neq
+                        zr(idbas3-1+ieq) = zr(idbas1+neq*(i-1)-1+ieq) - zr(idbas2+neq*(i-1)-1+ieq)
+                    end do
+                    call mrmult('ZERO', imatra, zr(idbas3), zr(idvec3), 1, ASTER_TRUE)
                     call zerlag(neq, deeq, vectr=zr(idvec3))
 !
                     pij = abs(ddot( neq,zr(idbas3) ,1, zr(idvec3),1))

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -62,7 +62,6 @@ subroutine te0337(option, nomte)
 #include "asterfort/matrot.h"
 #include "asterfort/normev.h"
 #include "asterfort/provec.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
     character(len=16) :: nomte, option
     real(kind=8) :: jacpoi, e1(3), e2(3)
@@ -131,7 +130,9 @@ subroutine te0337(option, nomte)
 !         COORDONNES DU POINT P TEL QUE GP EST L'ORIGINE
 !         DE L'ANGLE PHI
 !
-        call vdiff(3, zr(iorifi), zr(iorig), gp0)
+        do i = 1, 3
+            gp0(i) = zr(iorifi-1+i) - zr(iorig-1+i)
+        end do
         call normev(gp0, norgp0)
 !
 !         NUMERO DE MODE DE FOURIER
@@ -455,7 +456,9 @@ subroutine te0337(option, nomte)
 !
 !  CALCUL DU VECTEUR G-PG ET DE L'ANGLE PHI ENTRE G-P0 ET G-PG
 !
-            call vdiff(3, xpg, zr(iorig), gpg)
+            do i = 1, 3
+                gpg(i) = xpg(i) - zr(iorig-1+i)
+            end do
             call normev(gpg, norgpg)
             cosphi=ddot(3,gp0,1,gpg,1)
 !PM          CALL PROVEC(GP0,GPG,VSIN)

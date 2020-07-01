@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -39,7 +39,6 @@ subroutine raorfi(noma, ligrel, noepou, cara, coorig,&
 #include "asterfort/normev.h"
 #include "asterfort/utmess.h"
 #include "asterfort/utpvlg.h"
-#include "asterfort/vdiff.h"
 !
     integer :: info, ifm
     character(len=8) :: noepou, noma, cara
@@ -126,9 +125,6 @@ subroutine raorfi(noma, ligrel, noepou, cara, coorig,&
         igd = ptma(ima)
         idebgd = (igd-1)*ncmpmx
 !        RECUPERATION DE L'ORIENTATION
-!         DO 10 I=1,3
-!            ORIEN(I) = ZR(IVALE+IDEBGD+I-1)
-!10       CONTINUE
         call carcou(zr(ivale+idebgd), l, pgl, r, theta,&
                     pgl1, pgl2, pgl3, pgl4, nno,&
                     omega, icoude)
@@ -145,7 +141,7 @@ subroutine raorfi(noma, ligrel, noepou, cara, coorig,&
     coono2(1) = coor(3*(inopo2-1)+1)
     coono2(2) = coor(3*(inopo2-1)+2)
     coono2(3) = coor(3*(inopo2-1)+3)
-    call vdiff(3, coono2, coono1, e1)
+    e1 = coono2 - coono1
     call normev(e1, nore1)
     nocmp(1) = 'X'
     nocmp(2) = 'Y'
@@ -158,8 +154,6 @@ subroutine raorfi(noma, ligrel, noepou, cara, coorig,&
 !
     gpl(1)=0.d0
     gpl(2)=0.d0
-!1      GPL(3)=RAYON FORTRAN ACTUEL
-!2      GPL(3)=-RAYON  LOGIQUE SUIVANT DOC R
     gpl(3)=-rayon
 !
 !     PASSAGE DE GPL DANS LE REPERE GLOBAL ET COORDONNEES DE P

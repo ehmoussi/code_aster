@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -37,7 +37,6 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
 #include "asterfort/normev.h"
 #include "asterfort/raorfi.h"
 #include "asterfort/reajre.h"
-#include "asterfort/vdiff.h"
 !
     integer :: lonlis, iprno(*)
     character(len=2) :: typlag
@@ -67,7 +66,7 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
     coori1(1) = vale(3* (numno1-1)+1)
     coori1(2) = vale(3* (numno1-1)+2)
     coori1(3) = vale(3* (numno1-1)+3)
-    call vdiff(3, coorig, coori1, gp1)
+    gp1 = coorig - coori1
     call normev(gp1, rayon)
 !
 !     CREATION D'UNE CARTE CONTENANT LE POINT P ORIGINE DE PHI
@@ -137,7 +136,6 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
     call afretu(iprno, lonlis, klisno, noepou, noma,&
                 valech, nbcoef, idec, coef, nomddl,&
                 typlag, lisrel)
-!        FIN IMOD=0
 !
 !   RELATIONS ENTRE LES NOEUDS DE COQUE ET LE NOEUD POUTRE
 !   DDL UIM, UOM, VIM, VOM, WIM, WOM, M VARIANT DE 2 A NBMODE
@@ -205,7 +203,6 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
         if (imod .ne. 1) then
             nbcoef = 1
             nomddl(1) = nocmp(6* (imod-2)+5)
-!CCC            COEF(1)  =  -1.D0
             coef(1) = -1.d0
             call afretu(iprno, lonlis, klisno, noepou, noma,&
                         valech, nbcoef, idec, coef, nomddl,&
@@ -219,7 +216,6 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
         if (imod .ne. 1) then
             nbcoef = 1
             nomddl(1) = nocmp(6* (imod-2)+2)
-!CCC            COEF(1)  =  1.D0
             coef(1) = -1.d0
             call afretu(iprno, lonlis, klisno, noepou, noma,&
                         valech, nbcoef, idec, coef, nomddl,&
@@ -248,7 +244,6 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
             coef(3) = eg3(3)
             coef(4) = -1.d0
         else
-!         IF (IMOD.NE.1) THEN
             nbcoef = 1
             nomddl(1) = nocmp(6* (imod-2)+3)
             coef(1) = -1.d0
@@ -256,7 +251,6 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
         call afretu(iprno, lonlis, klisno, noepou, noma,&
                     valech, nbcoef, idec, coef, nomddl,&
                     typlag, lisrel)
-!         ENDIF
 !
 !        RELATIONS ENTRE LES NOEUDS DE COQUE ET LE NOEUD POUTRE DDL WOM
 !        OU SI IMOD=1 LE DDL DY DANS REPERE LOCAL DU TUYAU ET WO1
@@ -274,7 +268,6 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
             coef(3) = eg2(3)
             coef(4) = -1.d0
         else
-!         IF (IMOD.NE.1) THEN
             nbcoef = 1
             nomddl(1) = nocmp(6* (imod-2)+6)
             coef(1) = -1.d0
@@ -282,10 +275,6 @@ subroutine racotu(iprno, lonlis, klisno, noepou, noma,&
         call afretu(iprno, lonlis, klisno, noepou, noma,&
                     valech, nbcoef, idec, coef, nomddl,&
                     typlag, lisrel)
-!         ENDIF
-!
-!     FIN DE LA BOUCLE SUR LES MODES
-!
     end do
 !
 ! --- DESTRUCTION DES OBJETS DE TRAVAIL

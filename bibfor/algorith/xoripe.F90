@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -41,8 +41,6 @@ subroutine xoripe(modele)
 #include "asterfort/provec.h"
 #include "asterfort/utmasu.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
-#include "asterfort/vecini.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/xelfis_lists.h"
 #include "blas/ddot.h"
@@ -208,7 +206,7 @@ subroutine xoripe(modele)
         nbnopr=zi(jconx2+numapr) - zi(jconx2+numapr-1)
 !
 !       GBO : CENTRE DE GRAVITÉ DE LA MAILLE DE BORD
-        call vecini(3, 0.d0, gbo)
+        gbo = 0.d0
         do ino = 1, nbnobo
             nuno=connex(zi(jconx2+numab-1)+ino-1)
             do j = 1, ndim
@@ -217,7 +215,7 @@ subroutine xoripe(modele)
         end do
 !
 !     GPR : CENTRE DE GRAVITÉ DE LA MAILLE PRICIPALE
-        call vecini(3, 0.d0, gpr)
+        gpr = 0.d0
         do ino = 1, nbnopr
             nuno=connex(zi(jconx2+numapr-1)+ino-1)
             do j = 1, ndim
@@ -226,8 +224,7 @@ subroutine xoripe(modele)
         end do
 !
 !       NORMALE EXTERIEURE : NEXT = GBO - GPR
-        call vecini(3, 0.d0, next)
-        call vdiff(3, gbo, gpr, next)
+        next = gbo - gpr
         call normev(next, norme)
 !
         do j = 1, ndim
@@ -342,12 +339,12 @@ subroutine xoripe(modele)
             endif
 !
 !         NORMALE AU SOUS-ELEMENT 2D
-            call vecini(3, 0.d0, ab)
-            call vdiff(3, b, a, ab)
-            call vecini(3, 0.d0, n2d)
+            ab = 0.d0
+            ab = b - a
+            n2d = 0.d0
             if (ndim .eq. 3) then
-                call vecini(3, 0.d0, ac)
-                call vdiff(3, c, a, ac)
+                ac = 0.d0
+                ac = c - a
                 call provec(ab, ac, n2d)
             else if (ndim.eq.2) then
                 n2d(1) = ab(2)

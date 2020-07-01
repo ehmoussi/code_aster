@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -68,7 +68,6 @@ subroutine te0570(option, nomte)
 #include "asterfort/provec.h"
 #include "asterfort/tecach.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
 !
     character(len=8) :: elrefe
@@ -103,8 +102,7 @@ subroutine te0570(option, nomte)
 !
 ! --- RECUPERATION L'EPAISSEUR DE L'ELEMENT :
 !     -------------------------------------
-    call tecach('OOO', 'PCACOQU', 'L', iret, nval=8,&
-                itab=itabm)
+    call tecach('OOO', 'PCACOQU', 'L', iret, nval=8, itab=itabm)
 !
     if (.not.zl(itabm(8))) then
         call utmess('F', 'ELEMENTS4_32')
@@ -121,9 +119,9 @@ subroutine te0570(option, nomte)
     if (option .eq. 'CARA_SECT_POUT3') then
         call jevech('PCASECT', 'E', isect)
         iopt = 3
-        do 10 i = 1, 10
+        do i = 1, 10
             zr(isect+i-1) = zero
-10      continue
+        end do
 !
     else if (option.eq.'CARA_SECT_POUT4') then
         call jevech('PORIGIN', 'L', iorig)
@@ -134,9 +132,9 @@ subroutine te0570(option, nomte)
         yg = zr(iorig+2-1)
         zg = zr(iorig+3-1)
 !
-        do 20 i = 1, 6*nno
+        do i = 1, 6*nno
             zr(ivect1+i-1) = zero
-20      continue
+        end do
 !
     else if (option.eq.'CARA_SECT_POUT5') then
         call jevech('PORIGIN', 'L', iorig)
@@ -153,18 +151,19 @@ subroutine te0570(option, nomte)
 !         COORDONNES DU POINT P TEL QUE GP EST L'ORIGINE
 !         DE L'ANGLE PHI
 !
-        call vdiff(3, zr(iorifi), zr(iorig), gp0)
+        do i = 1, 3
+            gp0(i) = zr(iorifi-1+i) - zr(iorig-1+i)
+        end do
         call normev(gp0, norgp0)
 !
 !         NUMERO DE MODE DE FOURIER
 !
         m = zi(inumod)
-        do 30 i = 1, 6*nno
+        do i = 1, 6*nno
             zr(ivect1+i-1) = zero
             zr(ivect2+i-1) = zero
             zr(ivect3+i-1) = zero
-30      continue
-!
+        end do
     endif
 !
     call jevech('PCAORIE', 'L', iaxe)
@@ -180,7 +179,7 @@ subroutine te0570(option, nomte)
 !
 ! --- BOUCLE SUR LES POINTS DE GAUSS :
 !     ------------------------------
-        do 70 ipg = 1, npg
+        do ipg = 1, npg
 !
             ldec = (ipg-1)*nno
 !
@@ -190,11 +189,11 @@ subroutine te0570(option, nomte)
 !
 ! ---   DERIVEES DES FONCTION DE FORME SUR L'ELEMENT REEL :
 !       -------------------------------------------------
-            do 40 i = 1, nno
+            do i = 1, nno
                 dxdk = dxdk + zr(igeom+3* (i-1)+1-1)*zr(idfdk+ldec+i- 1)
                 dydk = dydk + zr(igeom+3* (i-1)+2-1)*zr(idfdk+ldec+i- 1)
                 dzdk = dzdk + zr(igeom+3* (i-1)+3-1)*zr(idfdk+ldec+i- 1)
-40          continue
+            end do
 !
 ! ---   JACOBIEN :
 !       --------
@@ -224,13 +223,12 @@ subroutine te0570(option, nomte)
             aygau = zero
             azgau = zero
 !
-            do 50 ino = 1, nno
+            do ino = 1, nno
                 i = igeom + 3* (ino-1) - 1
-!
                 axgau = axgau + zr(ivf+ldec+ino-1)*zr(i+1)
                 aygau = aygau + zr(ivf+ldec+ino-1)*zr(i+2)
                 azgau = azgau + zr(ivf+ldec+ino-1)*zr(i+3)
-50          continue
+            end do
 !
 ! ---   CALCUL DE  AXX, AYY, AZZ, AXY, AXZ, AYZ
 ! ---   = SOMME(X*X.DS, Y*Y.DS, Z*Z.DS, X*Y.DS, X*Z.DS, Y*Z.DS) :
@@ -239,13 +237,12 @@ subroutine te0570(option, nomte)
             ygau = zero
             zgau = zero
 !
-            do 60 ino = 1, nno
+            do ino = 1, nno
                 i = igeom + 3* (ino-1) - 1
-!
                 xgau = xgau + zr(ivf+ldec+ino-1)*zr(i+1)
                 ygau = ygau + zr(ivf+ldec+ino-1)*zr(i+2)
                 zgau = zgau + zr(ivf+ldec+ino-1)*zr(i+3)
-60          continue
+            end do
 !
             axxgau = xgau*xgau
             ayygau = ygau*ygau
@@ -284,7 +281,7 @@ subroutine te0570(option, nomte)
 !---  AYZ
             zr(isect+10-1) = zr(isect+10-1) + ayzgau*jacpoi + e3yz
 !
-70      continue
+        end do
 ! --- FIN DE LA BOUCLE SUR LES POINTS D'INTEGRATION
 ! --- ET FIN DE L'OPTION 'CARA_SECT_POUT3'
 !
@@ -297,7 +294,7 @@ subroutine te0570(option, nomte)
 ! --- BOUCLE SUR LES POINTS DE GAUSS :
 !     ------------------------------
 !
-        do 110 ipg = 1, npg
+        do ipg = 1, npg
 !
             ldec = (ipg-1)*nno
 !
@@ -307,11 +304,11 @@ subroutine te0570(option, nomte)
 !
 ! ---   DERIVEES DES FONCTION DE FORME SUR L'ELEMENT REEL :
 !       -------------------------------------------------
-            do 80 i = 1, nno
+            do i = 1, nno
                 dxdk = dxdk + zr(igeom+3* (i-1)+1-1)*zr(idfdk+ldec+i- 1)
                 dydk = dydk + zr(igeom+3* (i-1)+2-1)*zr(idfdk+ldec+i- 1)
                 dzdk = dzdk + zr(igeom+3* (i-1)+3-1)*zr(idfdk+ldec+i- 1)
-80          continue
+            end do
 !
 ! ---   JACOBIEN :
 !       --------
@@ -351,58 +348,40 @@ subroutine te0570(option, nomte)
             ygau = zero
             zgau = zero
 !
-            do 90 ino = 1, nno
+            do ino = 1, nno
                 i = igeom + 3* (ino-1) - 1
-!
                 xgau = xgau + zr(ivf+ldec+ino-1)*zr(i+1)
                 ygau = ygau + zr(ivf+ldec+ino-1)*zr(i+2)
                 zgau = zgau + zr(ivf+ldec+ino-1)*zr(i+3)
-90          continue
+            end do
 !
 ! --- CALCUL DE VECT1(I)
 !
-            do 100 ino = 1, nno
+            do ino = 1, nno
                 i = igeom + 3* (ino-1) - 1
 !
-                zr(ivect1+6* (ino-1)+1-1) = zr(&
-                                            ivect1+6* (ino-1)+1-1) + zr(ivf+ldec+ino-1)* (xgau-xg&
-                                            )* jacpoi
-!
-                zr(ivect1+6* (ino-1)+2-1) = zr(&
-                                            ivect1+6* (ino-1)+2-1) + zr(ivf+ldec+ino-1)* (ygau-yg&
-                                            )* jacpoi
-!
-                zr(ivect1+6* (ino-1)+3-1) = zr(&
-                                            ivect1+6* (ino-1)+3-1) + zr(ivf+ldec+ino-1)* (zgau-zg&
-                                            )* jacpoi
-!
-                zr(ivect1+6* (ino-1)+4-1) = zr(ivect1+6* (ino-1)+4-1 ) + zr(ivf+ldec+ino-1&
-                                            )*jacpoi
-!
-                zr(ivect1+6* (ino-1)+5-1) = zr(ivect1+6* (ino-1)+5-1 ) + zr(ivf+ldec+ino-1&
-                                            )*jacpo2
+                zr(ivect1+6* (ino-1)+1-1) = zr(ivect1+6* (ino-1)+1-1) +&
+                                            zr(ivf+ldec+ino-1)* (xgau-xg)* jacpoi
+                zr(ivect1+6* (ino-1)+2-1) = zr(ivect1+6* (ino-1)+2-1) +&
+                                            zr(ivf+ldec+ino-1)* (ygau-yg)* jacpoi
+                zr(ivect1+6* (ino-1)+3-1) = zr(ivect1+6* (ino-1)+3-1) +&
+                                            zr(ivf+ldec+ino-1)* (zgau-zg)* jacpoi
+                zr(ivect1+6* (ino-1)+4-1) = zr(ivect1+6* (ino-1)+4-1 ) + zr(ivf+ldec+ino-1)*jacpoi
+                zr(ivect1+6* (ino-1)+5-1) = zr(ivect1+6* (ino-1)+5-1 ) + zr(ivf+ldec+ino-1)*jacpo2
 !
 !            PRODUIT VECTORIEL N.(THETA.N).
 !
-                zr(ivect2+6* (ino-1)+1-1) = zr(&
-                                            ivect2+6* (ino-1)+1-1) + zr(ivf+ldec+ino-1)* (e3yy+e3&
-                                            &zz&
-                                            )
+                zr(ivect2+6* (ino-1)+1-1) = zr(ivect2+6* (ino-1)+1-1) +&
+                                            zr(ivf+ldec+ino-1)* (e3yy+e3zz)
                 zr(ivect2+6* (ino-1)+2-1) = zr(ivect2+6* (ino-1)+2-1 ) - zr(ivf+ldec+ino-1)*e3xy
                 zr(ivect2+6* (ino-1)+3-1) = zr(ivect2+6* (ino-1)+3-1 ) - zr(ivf+ldec+ino-1)*e3xz
-                zr(ivect2+6* (ino-1)+4-1) = zr(&
-                                            ivect2+6* (ino-1)+4-1) + zr(ivf+ldec+ino-1)* (e3zz+e3&
-                                            &xx&
-                                            )
+                zr(ivect2+6* (ino-1)+4-1) = zr(ivect2+6* (ino-1)+4-1) +&
+                                            zr(ivf+ldec+ino-1)* (e3zz+e3xx)
                 zr(ivect2+6* (ino-1)+5-1) = zr(ivect2+6* (ino-1)+5-1 ) - zr(ivf+ldec+ino-1)*e3yz
-                zr(ivect2+6* (ino-1)+6-1) = zr(&
-                                            ivect2+6* (ino-1)+6-1) + zr(ivf+ldec+ino-1)* (e3yy+e3&
-                                            &xx&
-                                            )
-!
-100          continue
-!
-110      continue
+                zr(ivect2+6* (ino-1)+6-1) = zr(ivect2+6* (ino-1)+6-1) +&
+                                            zr(ivf+ldec+ino-1)* (e3yy+e3xx)
+            end do
+        end do
 !
 ! ---  FIN DE LA BOUCLE SUR LES POINTS D'INTEGRATION
 ! ---  ET FIN DE L'OPTION 'CARA_SECT_POUT4'
@@ -411,7 +390,7 @@ subroutine te0570(option, nomte)
 !     ---------------------------
 !
     else if (iopt.eq.5) then
-        do 170 ipg = 1, npg
+        do ipg = 1, npg
             dxdk = zero
             dydk = zero
             dzdk = zero
@@ -419,18 +398,20 @@ subroutine te0570(option, nomte)
 ! ---   DERIVEES DES FONCTION DE FORME SUR L'ELEMENT REEL :
 !       -------------------------------------------------
             ldec = (ipg-1)*nno
-            do 120 i = 1, nno
+            do i = 1, nno
                 dxdk = dxdk + zr(igeom+3* (i-1)+1-1)*zr(idfdk+ldec+i- 1)
                 dydk = dydk + zr(igeom+3* (i-1)+2-1)*zr(idfdk+ldec+i- 1)
                 dzdk = dzdk + zr(igeom+3* (i-1)+3-1)*zr(idfdk+ldec+i- 1)
-120          continue
+            end do
 !
 ! ---   CALCUL DU RAYON
 !
             xn1(1) = zr(igeom+1-1)
             xn1(2) = zr(igeom+2-1)
             xn1(3) = zr(igeom+3-1)
-            call vdiff(3, xn1, zr(iorig), gn1)
+            do i = 1, 3
+                gn1(i) = xn1(i) - zr(iorig-1+i)
+            end do
             call normev(gn1, rayon)
 !
 ! ---   JACOBIEN :
@@ -441,26 +422,24 @@ subroutine te0570(option, nomte)
 !
 ! ---   COORDONNEES DU POINT D'INTEGRATION COURANT :
 !       ------------------------------------------
-            do 130 ii = 1, 3
-                xpg(ii) = zero
-130          continue
-            do 140 ino = 1, nno
+            xpg = zero
+            do ino = 1, nno
                 i = igeom + 3* (ino-1) - 1
                 xpg(1) = xpg(1) + zr(ivf+ldec+ino-1)*zr(i+1)
                 xpg(2) = xpg(2) + zr(ivf+ldec+ino-1)*zr(i+2)
                 xpg(3) = xpg(3) + zr(ivf+ldec+ino-1)*zr(i+3)
-140          continue
+            end do
 !
 !  CALCUL DU VECTEUR G-PG ET DE L'ANGLE PHI ENTRE G-P0 ET G-PG
 !
-            call vdiff(3, xpg, zr(iorig), gpg)
+            do i = 1, 3
+                gpg(i) = xpg(i) - zr(iorig-1+i)
+            end do
             call normev(gpg, norgpg)
             cosphi=ddot(3,gp0,1,gpg,1)
-!PM          CALL PROVEC(GP0,GPG,VSIN)
             call provec(gpg, gp0, vsin)
             sinphi=ddot(3,e1,1,vsin,1)
             phi0 = atan2(sinphi,cosphi)
-!JMP          PHI=-PHI0
             phi = phi0
             cosmfi = cos(m*phi)
             sinmfi = sin(m*phi)
@@ -471,46 +450,32 @@ subroutine te0570(option, nomte)
             call angvxy(e1, e2, angl)
             call matrot(angl, pgl)
 !
-            do 160 ino = 1, nno
-                do 150 ii = 1, 3
+            do ino = 1, nno
+                do ii = 1, 3
 !
 ! CALCUL DE VECT1(I) : TERMES EN UMI(COS(M.PHI)) ET UMO (SIN(M.PHI))
 !
-                    zr(ivect1+6* (ino-1)+ii-1) = zr(&
-                                                 ivect1+6* (ino-1)+ ii-1 ) + cosmfi*pgl(1,&
-                                                 ii)*zr(ivf+ldec+ino-1&
-                                                 )* jacpoi
-                    zr(ivect1+6* (ino-1)+3+ii-1) = zr(&
-                                                   ivect1+6* (ino- 1)+3+ii- 1 ) + sinmfi*pgl(1,&
-                                                   ii)*zr(ivf+ldec+ino-1&
-                                                   )* jacpoi
+                    zr(ivect1+6* (ino-1)+ii-1) = zr(ivect1+6* (ino-1)+ ii-1 ) +&
+                                                 cosmfi*pgl(1,ii)*zr(ivf+ldec+ino-1)*jacpoi
+                    zr(ivect1+6* (ino-1)+3+ii-1) = zr(ivect1+6* (ino- 1)+3+ii- 1 ) +&
+                                                   sinmfi*pgl(1,ii)*zr(ivf+ldec+ino-1)*jacpoi
 !
 ! CALCUL DE VECT2(I) : TERMES EN VMI(COS(M.PHI)) ET VMO (SIN(M.PHI))
 !
-                    zr(ivect2+6* (ino-1)+ii-1) = zr(&
-                                                 ivect2+6* (ino-1)+ ii-1 ) + cosmfi*pgl(2,&
-                                                 ii)*zr(ivf+ldec+ino-1&
-                                                 )* jacpoi
-                    zr(ivect2+6* (ino-1)+3+ii-1) = zr(&
-                                                   ivect2+6* (ino- 1)+3+ii- 1 ) + sinmfi*pgl(2,&
-                                                   ii)*zr(ivf+ldec+ino-1&
-                                                   )* jacpoi
+                    zr(ivect2+6* (ino-1)+ii-1) = zr(ivect2+6* (ino-1)+ ii-1 ) +&
+                                                 cosmfi*pgl(2,ii)*zr(ivf+ldec+ino-1)* jacpoi
+                    zr(ivect2+6* (ino-1)+3+ii-1) = zr(ivect2+6* (ino- 1)+3+ii- 1 ) +&
+                                                   sinmfi*pgl(2,ii)*zr(ivf+ldec+ino-1)* jacpoi
 !
 ! CALCUL DE VECT3(I) : TERMES EN WMI(COS(M.PHI)) ET WMO (SIN(M.PHI))
 !
-                    zr(ivect3+6* (ino-1)+ii-1) = zr(&
-                                                 ivect3+6* (ino-1)+ ii-1 ) + cosmfi*pgl(3,&
-                                                 ii)*zr(ivf+ldec+ino-1&
-                                                 )* jacpoi
-                    zr(ivect3+6* (ino-1)+3+ii-1) = zr(&
-                                                   ivect3+6* (ino- 1)+3+ii- 1 ) + sinmfi*pgl(3,&
-                                                   ii)*zr(ivf+ldec+ino-1&
-                                                   )* jacpoi
-150              continue
-160          continue
-170      continue
-! ---  FIN DE LA BOUCLE SUR LES POINTS D'INTEGRATION
-! ---  ET FIN DE L'OPTION 'CARA_SECT_POUT5'
+                    zr(ivect3+6* (ino-1)+ii-1) = zr(ivect3+6* (ino-1)+ ii-1 ) +&
+                                                 cosmfi*pgl(3,ii)*zr(ivf+ldec+ino-1)* jacpoi
+                    zr(ivect3+6* (ino-1)+3+ii-1) = zr(ivect3+6* (ino- 1)+3+ii- 1 ) +&
+                                                   sinmfi*pgl(3,ii)*zr(ivf+ldec+ino-1)* jacpoi
+                end do
+            end do
+        end do
     endif
 !
 end subroutine

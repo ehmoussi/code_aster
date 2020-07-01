@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ subroutine porea1(nno, nc, deplm, deplp, geom,&
 #include "asterfort/tecael.h"
 #include "asterfort/trigom.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
     integer :: nno, nc
     real(kind=8) :: deplm(nno*nc), deplp(nno*nc), geom(3, nno), gamma
@@ -77,8 +76,8 @@ subroutine porea1(nno, nc, deplm, deplp, geom,&
     do i = 1, 3
         xug(i)   = geom(i,1) + deplm(i)
         xug(i+3) = geom(i,2) + deplm(i+nc)
+        xd0(i)   = xug(i+3) - xug(i)
     enddo
-    call vdiff(3, xug(4), xug(1), xd0)
 !   Déplacement total a t+
     do i = 1, nno*nc
         utg(i) = deplm(i) + deplp(i)
@@ -87,8 +86,8 @@ subroutine porea1(nno, nc, deplm, deplp, geom,&
     do i = 1, 3
         xug(i)   = geom(i,1) + utg(i)
         xug(i+3) = geom(i,2) + utg(i+nc)
+        xd1(i)   = xug(i+3) - xug(i)
     enddo
-    call vdiff(3, xug(4), xug(1), xd1)
 !   Angle entre xd0 et xd1
     xdn0(:) = xd0(:)
     xdn1(:) = xd1(:)

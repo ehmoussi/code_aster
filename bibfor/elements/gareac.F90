@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ subroutine gareac(xdm, xdp, dgamma)
 #include "asterfort/promat.h"
 #include "asterfort/provec.h"
 #include "asterfort/trigom.h"
-#include "asterfort/vdiff.h"
 #include "blas/daxpy.h"
 #include "blas/dcopy.h"
 #include "blas/ddot.h"
@@ -49,7 +48,7 @@ subroutine gareac(xdm, xdp, dgamma)
     call normev(xdmnor, normm)
     call dcopy(3, xdp, 1, xdpnor, 1)
     call normev(xdpnor, normp)
-    call vdiff(3, xdpnor, xdmnor, dd)
+    dd = xdpnor - xdmnor
     if (abs(ddot(3,dd,1,dd,1)) .lt. r8prem()) then
         dgamma = 0.d0
         goto 9999

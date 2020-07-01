@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,6 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
 #include "asterfort/normev.h"
 #include "asterfort/provec.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
@@ -195,8 +194,8 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
             endif
 !
         end do
-        call vdiff(3, coon3, coon1, n1n3)
-        call vdiff(3, coon2, coon1, n1n2)
+        n1n3 = coon3 - coon1
+        n1n2 = coon2 - coon1
         call provec(n1n2, n1n3, nt)
 !
         call normev(nt, norme)
@@ -205,8 +204,8 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
 ! --- ELEMENT QUAD: ON VERIFIE QUE LE NOEUD 4 N'EST PAS GAUCHE
 ! --- ON CALCULE LE PDV ET ON MOYENNE AVEC CELUI CALCULER PRECEDEMMENT
 !
-            call vdiff(3, coon2, coon4, n4n2)
-            call vdiff(3, coon3, coon4, n4n3)
+            n4n2 = coon2 - coon4
+            n4n3 = coon3 - coon4
 !
             call provec(n4n2, n4n3, nq)
 !
@@ -240,7 +239,7 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
 !
     call wkvect('&&CMCOVO.NORM_NO', 'V V R8', 3*nbnin, jnorm)
     do ino = 1, nbnin
-        if (noeuds(ino) .eq. 0) goto 70
+        if (noeuds(ino) .eq. 0) cycle
         nbnuma = zi(jnbnum+ino-1)
         numa = zi(jlisma-1+27*(ino-1)+1)
         call jenuno(jexnum(nommav, numa), ma1)
@@ -283,7 +282,6 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
         zr(jnorm+3*(ino-1)+1) =zr(jnorm+3*(ino-1)+1) / nbnuma
         zr(jnorm+3*(ino-1)+2) =zr(jnorm+3*(ino-1)+2) / nbnuma
         call normev(zr(jnorm+3*(ino-1)), norme)
- 70     continue
     end do
 !
 !
@@ -321,7 +319,7 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
     lgno = lxlgut(prefno)
     inov = inima - 1
     do ino = 1, nbnin
-        if (noeuds(ino) .eq. 0) goto 50
+        if (noeuds(ino) .eq. 0) cycle
         inov = inov + 1
         call codent(inov, 'G', knume)
         lgnu = lxlgut(knume)
@@ -338,7 +336,6 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
             valk(1) = nomg
             call utmess('F', 'ALGELINE4_5', sk=valk(1))
         endif
- 50     continue
     end do
 !
 ! --- RECUPERATION DES COORDONNES DU MAIN ET CREATION
@@ -367,7 +364,7 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
 !
     jno = nbnin
     do ino = 1, nbnin
-        if (noeuds(ino) .eq. 0) goto 80
+        if (noeuds(ino) .eq. 0) cycle
         jno = jno + 1
 !
         nx = zr(jnorm+3*(ino-1))
@@ -408,7 +405,6 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
 !
             endif
         endif
- 80     continue
     end do
 !
 ! ----------------------------------------------------------------------
@@ -606,9 +602,9 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
 ! ----------------------------------------------------------------------
 !
     if (niv .ge. 1) then
-        write(ifm,1000) 1
-        if (iq4 .ne. 0) write(ifm,1002) iq4
-        if (it3 .ne. 0) write(ifm,1004) it3
+        write(ifm,100) 1
+        if (iq4 .ne. 0) write(ifm,102) iq4
+        if (it3 .ne. 0) write(ifm,104) it3
     endif
 !
     AS_DEALLOCATE(vk24=new_noeuds)
@@ -621,9 +617,9 @@ subroutine cmcovo(main, maout, nbma, lima, prefno,&
     call jedetr(nonuma)
     call jedetr(newma)
 !
-    1000 format('MOT CLE FACTEUR "COQU_VOLU", OCCURRENCE ',i4)
-    1002 format('  EXTRUSION DE ',i6,' MAILLES "QUAD4" EN "HEXA8"')
-    1004 format('  EXTRUSION DE ',i6,' MAILLES "TRIA3" EN "PENTA6"')
+100 format('MOT CLE FACTEUR "COQU_VOLU", OCCURRENCE ',i4)
+102 format('  EXTRUSION DE ',i6,' MAILLES "QUAD4" EN "HEXA8"')
+104 format('  EXTRUSION DE ',i6,' MAILLES "TRIA3" EN "PENTA6"')
 !
     call jedema()
 !

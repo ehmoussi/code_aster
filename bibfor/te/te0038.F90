@@ -38,11 +38,11 @@ subroutine te0038(option, nomte)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! aslint: disable=
     implicit none
 #include "jeveux.h"
 #include "asterc/r8pi.h"
 #include "asterc/r8prem.h"
+#include "asterfort/assert.h"
 #include "asterfort/angvxy.h"
 #include "asterfort/carcou.h"
 #include "asterfort/jevech.h"
@@ -59,7 +59,6 @@ subroutine te0038(option, nomte)
 #include "asterfort/utmess.h"
 #include "asterfort/utpslg.h"
 #include "asterfort/utpvlg.h"
-#include "asterfort/vdiff.h"
 #include "asterfort/get_value_mode_local.h"
 !
     character(len=*) :: option, nomte
@@ -67,7 +66,7 @@ subroutine te0038(option, nomte)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: codres(1)
-    character(len=16) :: ch16, phenom
+    character(len=16) :: phenom
     real(kind=8) :: rho(1), a1, iy1, iz1, a2, cdg(3), ab2, ab3, ab4, amb, apb, ep
     real(kind=8) :: angs2, xl, xl2, matinl(6)
     real(kind=8) :: matine(6), pgl(3, 3), pgl1(3, 3), pgl2(3, 3), angl(3)
@@ -182,14 +181,14 @@ subroutine te0038(option, nomte)
                     coo1(i) = zr(igeom+i)
                     coo2(i) = zr(igeom+3+i)
                     coo3(i) = (zr(igeom+6+i)+zr(igeom+9+i))*0.5d0
-                enddo
-                call vdiff(3, coo3, coo1, t1)
-                call vdiff(3, coo2, coo3, t2)
+                    t1(i) = coo3(i) - coo1(i)
+                    t2(i) = coo2(i) - coo3(i)
+                    x3(i) = coo2(i) - coo1(i)
+                end do
                 call normev(t1, norme1)
                 call normev(t2, norme2)
                 call provec(t2, t1, n)
                 call normev(n, normen)
-                call vdiff(3, coo2, coo1, x3)
                 call provec(x3, n, y3)
                 call angvxy(x3, y3, angl)
                 call matrot(angl, pgl3)
@@ -375,7 +374,6 @@ subroutine te0038(option, nomte)
         zr(lcastr+3+6) = matine(5)
 !
     else
-        ch16 = option
-        call utmess('F', 'ELEMENTS2_84', sk=ch16)
+        ASSERT(ASTER_FALSE)
     endif
 end subroutine

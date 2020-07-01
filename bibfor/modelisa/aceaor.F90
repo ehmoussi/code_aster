@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,7 +61,6 @@ subroutine aceaor(noma, nomo, lmax, nbepo, ntyele, nomele, ivr, nbocc)
 #include "asterfort/jexnum.h"
 #include "asterfort/nocart.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "asterfort/wkvect.h"
 #include "blas/ddot.h"
 !
@@ -148,8 +147,8 @@ subroutine aceaor(noma, nomo, lmax, nbepo, ntyele, nomele, ivr, nbocc)
             do ii = 1, 3
                 x1(ii) = zr(jdco+(no1-1)*3+ii-1)
                 x2(ii) = zr(jdco+(no2-1)*3+ii-1)
+                x3(ii) = x2(ii) - x1(ii)
             enddo
-            call vdiff(3, x2, x1, x3)
             longseg = sqrt( ddot(3,x3,1,x3,1) )
             if ( longseg .gt. 0.0d0 ) then
                 call angvx(x3, alpha, beta)

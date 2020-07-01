@@ -25,7 +25,6 @@ subroutine porea4(nno, nc, geom, gamma, pgl,&
 #include "asterfort/matrot.h"
 #include "asterfort/tecach.h"
 #include "asterfort/normev.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
 !
     integer :: nno, nc
@@ -64,11 +63,11 @@ subroutine porea4(nno, nc, geom, gamma, pgl,&
     endif
 !
     do i = 1, 3
-       xug(i) = utg(i) + geom(i,1)
+       xug(i)   = utg(i) + geom(i,1)
        xug(i+3) = utg(i+nc) + geom(i,2)
+       xd(i)    = xug(i+3) - xug(i)
     enddo
-! 
-    call vdiff(3, xug(4), xug(1), xd)
+!
     call angvx(xd, alfa1, beta1)
     call normev(xd, xl)
 

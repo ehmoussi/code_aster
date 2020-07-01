@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ subroutine peair1(modele, nbma, lisma, aire, long)
 #include "asterfort/normev.h"
 #include "asterfort/provec.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "asterfort/wkvect.h"
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
@@ -50,7 +49,7 @@ subroutine peair1(modele, nbma, lisma, aire, long)
 !
     integer :: jma, ifm, niv,     ima, numa
     integer :: nutyma, nbel, jdno, nbext1, nbext2, iext1
-    integer :: iext2, ni1, ni2, nj1, nj2, nbe, nj3, nj0, jdco
+    integer :: iext2, ni1, ni2, nj1, nj2, nbe, nj3, nj0, jdco, i
     real(kind=8) :: orig(3), zero, vgn1(3), vn1n2(3), aire1, aire2, vgn3(3)
     real(kind=8) :: vn1n3(3)
     real(kind=8) :: xx1(3), xx2(3), xx3(3), xn(3), pv(3), xnorm, vn3n2(3)
@@ -233,8 +232,10 @@ subroutine peair1(modele, nbma, lisma, aire, long)
     xx2(1) = zr(jdco-1+3*nj2-2)
     xx2(2) = zr(jdco-1+3*nj2-1)
     xx2(3) = zr(jdco-1+3*nj2)
-    call vdiff(3, xx1, orig, vgn1)
-    call vdiff(3, xx2, orig, vgn2)
+    do i = 1, 3
+        vgn1(i) = xx1(i) - orig(i)
+        vgn2(i) = xx2(i) - orig(i)
+    end do
     call provec(vgn1, vgn2, xn)
     call normev(xn, xnorm)
     aire=0.d0
@@ -249,8 +250,10 @@ subroutine peair1(modele, nbma, lisma, aire, long)
             xx2(1) = zr(jdco-1+3*nj2-2)
             xx2(2) = zr(jdco-1+3*nj2-1)
             xx2(3) = zr(jdco-1+3*nj2)
-            call vdiff(3, xx1, orig, vgn1)
-            call vdiff(3, xx2, xx1, vn1n2)
+            do i = 1, 3
+                vgn1(i) = xx1(i) - orig(i)
+                vn1n2(i) = xx2(i) - xx1(i)
+            end do
             call provec(vgn1, vn1n2, pv)
             aire1=ddot(3,pv,1,xn,1)
             aire=aire+aire1/2.d0
@@ -264,13 +267,17 @@ subroutine peair1(modele, nbma, lisma, aire, long)
             xx3(1) = zr(jdco-1+3*nj3-2)
             xx3(2) = zr(jdco-1+3*nj3-1)
             xx3(3) = zr(jdco-1+3*nj3)
-            call vdiff(3, xx1, orig, vgn1)
-            call vdiff(3, xx3, xx1, vn1n3)
+            do i = 1, 3
+                vgn1(i) = xx1(i) - orig(i)
+                vn1n3(i) = xx3(i) - xx1(i)
+            end do
             call provec(vgn1, vn1n3, pv)
             aire1=ddot(3,pv,1,xn,1)
             aire=aire+aire1/2.d0
-            call vdiff(3, xx3, orig, vgn3)
-            call vdiff(3, xx2, xx3, vn3n2)
+            do i = 1, 3
+                vgn3(i) = xx3(i) - orig(i)
+                vn3n2(i) = xx2(i) - xx3(i)
+            end do
             call provec(vgn3, vn3n2, pv)
             aire2=ddot(3,pv,1,xn,1)
             aire=aire+aire2/2.d0

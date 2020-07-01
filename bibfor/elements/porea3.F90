@@ -16,8 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine porea3(nno, nc, deplm, deplp, geom,&
-                  gamma, vecteu, pgl, xl1, angp)
+subroutine porea3(nno, nc, deplm, geom,&
+                  gamma, pgl, xl1, angp)
     implicit none
 #include "asterf_types.h"
 #include "jeveux.h"
@@ -30,14 +30,11 @@ subroutine porea3(nno, nc, deplm, deplp, geom,&
 #include "asterfort/tecael.h"
 #include "asterfort/trigom.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
 
-    integer :: nno, nc
-    real(kind=8) :: deplm(nno*nc), deplp(nno*nc), geom(3, nno), gamma
-!
-    real(kind=8) :: pgl(3, 3), xl1, angp(3)
-    aster_logical :: vecteu
+integer :: nno, nc
+real(kind=8) :: deplm(nno*nc),  geom(3, nno), gamma
+real(kind=8) :: pgl(3, 3), xl1, angp(3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -52,10 +49,8 @@ subroutine porea3(nno, nc, deplm, deplp, geom,&
 ! IN  NNO    : NOMBRE DE NOEUDS
 ! IN  NC     : NOMBRE DE COMPOSANTE DU CHAMP DE DEPLACEMENTS
 ! IN  DEPLM  : DEPLACEMENT AU TEMPS -
-! IN  DEPLP  : INCREMENT DE DEPLACEMENT AU TEMPS +
 ! IN  GEOM   : COORDONNEES DES NOEUDS
 ! IN  GAMMA  : ANGLE DE VRILLE AU TEMPS -
-! IN  VECTEU : TRUE SI FULL_MECA OU RAPH_MECA
 ! OUT PGL    : MATRICE DE PASSAGE GLOBAL/LOCAL
 ! OUT XL     : LONGUEUR DE L'ELEMENT
 ! OUT ANGP   : ANGLES NAUTIQUES ACTUALISEE
@@ -70,10 +65,10 @@ subroutine porea3(nno, nc, deplm, deplp, geom,&
     ASSERT(nno.eq.2)
     !   Calcul du vecteur xlocal au temps t-
     do i = 1, 3
-       xug(i)   = geom(i,1) + deplm(i)
-       xug(i+3) = geom(i,2) + deplm(i+nc)
+        xug(i)   = geom(i,1) + deplm(i)
+        xug(i+3) = geom(i,2) + deplm(i+nc)
+        xd0(i)   = xug(i+3) - xug(i)
     enddo
-    call vdiff(3, xug(4), xug(1), xd0)
 !
     call normev(xd0,xl1)
 

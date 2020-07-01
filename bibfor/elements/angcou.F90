@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -28,7 +28,6 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
 #include "asterfort/normev.h"
 #include "asterfort/provec.h"
 #include "asterfort/utmess.h"
-#include "asterfort/vdiff.h"
 #include "blas/ddot.h"
     real(kind=8) :: coor(9), rayon, theta, epsi, t1(3), t2(3), coo1(3), coo2(3)
     real(kind=8) :: coo3(3), norme1, norme2, normez, x3(3), x1(3), x2(3), ct2
@@ -66,7 +65,7 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
 !-----------------------------------------------------------------------
 !
 !     NOEUD 3 = NOEUD MILIEU
-    do 1 i = 1, 3
+    do i = 1, 3
         angl1(i)=0.d0
         angl2(i)=0.d0
         angl3(i)=0.d0
@@ -74,7 +73,7 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
         coo2(i)=coor(3+i)
         coo3(i)=coor(6+i)
         zkini(i)=zk1(i)
- 1  end do
+    end do
 !
 !     POUR VERIFICATIONS (PAS TRES EXIGEANTES) SUR LA GEOMETRIE
 !     SINON, IL FAUDRAIT INTRODUIRE UN AUTRE MOT CLE PRECISON2
@@ -85,8 +84,8 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
 !
     dn1n2 = sqrt( (coo1(1)-coo2(1) )**2 + ( coo1(2)-coo2(2) )**2 + ( coo1(3)-coo2(3) )**2 )
 !
-    call vdiff(3, coo3, coo1, t1)
-    call vdiff(3, coo2, coo3, t2)
+    t1 = coo3 - coo1
+    t2 = coo2 - coo3
     call normev(t1, norme1)
     call normev(t2, norme2)
     call provec(t2, t1, zcoud)
@@ -115,7 +114,7 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
         rayon = 0.d0
         theta = 0.d0
         omega = 0.d0
-        call vdiff(3, coo2, coo1, x1)
+        x1 = coo2 - coo1
 !
 !        ON VEUT UN ZK1 PERPENDICULAIRE A X1
 !        ON PROJETTE ZK1 SUR LE PLAN NORMAL A X1
@@ -134,16 +133,16 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
 !
         call provec(a, x1, zk1)
         call normev(zk1, norme2)
-        do 5 i = 1, 3
+        do i = 1, 3
             zk2(i)=zk1(i)
             zk3(i)=zk1(i)
- 5      continue
+        end do
         call provec(x1, zk1, y1)
         call angvxy(x1, y1, angl1)
-        do 51 i = 1, 3
+        do i = 1, 3
             angl2(i)=angl1(i)
             angl3(i)=angl1(i)
-51      continue
+        end do
 !
         call matrot(angl1, pgl1)
         call matrot(angl2, pgl2)
@@ -160,14 +159,14 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
         endif
         rayon = dn1n2/2.d0/normez
 !        CALCUL DES REPERES LOCAUX EN CHAQUE NOEUD
-        call vdiff(3, coo2, coo1, x3)
+        x3 = coo2 - coo1
         call provec(x3, zcoud, y3)
         ct2=cos(theta/2.d0)
         st2=sin(theta/2.d0)
-        do 2 i = 1, 3
+        do i = 1, 3
             x1(i)=x3(i)*ct2-y3(i)*st2
             x2(i)=x3(i)*ct2+y3(i)*st2
- 2      continue
+        end do
         call provec(x1, zcoud, y1)
         call provec(x2, zcoud, y2)
         call angvxy(x1, y1, angl1)
@@ -183,15 +182,13 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
 !        DE THETA AUTOUR DE -Z. SINON, AUTOUR DE Z
 !
         if (izk .lt. 0) then
-            do 6 i = 1, 3
-!JMP               AXE(I)= -ZCOUD(I)
+            do i = 1, 3
                 axe(i)= zcoud(i)
- 6          continue
+            end do
         else
-            do 3 i = 1, 3
-!JMP               AXE(I)= ZCOUD(I)
+            do i = 1, 3
                 axe(i)= - zcoud(i)
- 3          continue
+            end do
         endif
 !
 !        ON VEUT UN ZK1 PERPENDICULAIRE A X1
@@ -221,12 +218,12 @@ subroutine angcou(coor, zk1, izk, icoude, zk2,&
         ct=cos(theta)
         st=sin(theta)
 !
-        do 4 i = 1, 3
+        do i = 1, 3
             zk2(i)=zk1(i)+st*zzk1(i)+(1.d0-ct)*zzzk1(i)
- 4      continue
-        do 41 i = 1, 3
+        end do
+        do i = 1, 3
             zk3(i)=zk1(i)+st2*zzk1(i)+(1.d0-ct2)*zzzk1(i)
-41      continue
+        end do
         call normev(zk1, norme1)
         call normev(zk2, norme2)
         call normev(zk3, norme3)
