@@ -221,7 +221,7 @@ implicit none
 ! --------- Get elements
             call jedetr(list_elem)
             call getelem(mesh, keywordfact, iaffe, ' ', list_elem, nb_elem)
-            ASSERT(nb_elem.gt.0)
+            ASSERT(lparallel_mesh .or. nb_elem.gt.0)
 ! --------- Check dimensions
             call dismoi('DIM_TOPO', phemod, 'PHEN_MODE', repi=dim_topo_curr)
             if (dim_topo_init .eq. -99) then
