@@ -639,7 +639,9 @@ class MECA_POU_D_EM(Element):
                      (SP.PVARCMR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARCPR, LC.ZVARCPG),
                      (SP.PVARCRR, LC.ZVARCPG), (OP.RIGI_MECA_TANG.PVARIMR, ZVARIPG),
                      ),
-            para_out=((SP.PMATUUR, MMATUUR), ),
+            para_out=((SP.PMATUUR, MMATUUR), 
+                       (SP.PVECTUR, MVECTUR), (OP.RIGI_MECA_TANG.PCONTPR, ECONTPG),
+                       (SP.PCOPRED, LC.ECODRET), (SP.PCODRET, LC.ECODRET),),
         ),
 
         OP.SIEF_ELGA(te=537,

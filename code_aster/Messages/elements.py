@@ -66,13 +66,6 @@ Il est impératif d'utiliser un champ de contrainte complet pour le calcul de FO
   -> Risque & Conseil : mailler plus fin
 """),
 
-    8 : _("""
-La raideur tangente de la section est nulle.
-Vérifier votre matériau, vous avez peut être défini un matériau élastoplastique parfait.
-
-Risque & Conseil : mettre un léger écrouissage peut permettre de passer cette difficulté.
-"""),
-
     10 : _("""
  le champ  %(k1)s n'a pas le bon type :
    type autorisé  :%(k2)s

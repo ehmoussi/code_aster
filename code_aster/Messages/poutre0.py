@@ -170,6 +170,8 @@ Vous risquez d'avoir des résultats inattendus, si vous ne renseignez ni :
 
     15 : _("""La raideur tangente de la section de la poutre est nulle. Vérifier votre matériau, vous avez peut être défini un matériau élastoplastique parfait. Mettre un léger écrouissage peut permettre de passer cette difficulté."""),
 
+    16 : _("""Vous utilisez un élément de type multifibre avec DEFORMATION='%(k1)s'. L'option RIGI_GEOM='OUI' n'est pas autorisée dans ce cas."""),
+
     20 : _("""
 Problème lors de l'utilisation de MACR_CARA_POUTRE
 

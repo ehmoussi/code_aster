@@ -41,14 +41,6 @@ cata_msg = {
 
  Vous pouvez utiliser des poutres multifibres pour calculer cette option.
 """),
-    14 : _("""
-  Vous utilisez un élément de type multifibre <%(k1)s>.
-  Il faut que sous COMPORTEMENT le mot clef RELATION='MULTIFIBRE'.
-"""),
-    15 : _("""
-    Vous utilisez un élément de type multifibre <%(k1)s> avec DEFORMATION='%(k2)s'.
-    L'option RIGI_GEOM='OUI' n'est pas autorisée.
-"""),
 
     32 : _("""
  vous utilisez le mot clé LIAISON_ELEM avec l'option COQ_POU: l'épaisseur des éléments de bord de coque n'a pas été affectée.
