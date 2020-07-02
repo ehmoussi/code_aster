@@ -1,6 +1,9 @@
 # This file set the environment for code_aster.
 # Configuration for Gaia STD
 
+# keep path to this file
+export WAFBUILD_ENV=$(readlink -n -f ${BASH_SOURCE})
+
 # DEVTOOLS_COMPUTER_ID avoids waf to re-source the environment
 export DEVTOOLS_COMPUTER_ID=gaia
 # expected version of official prerequisites

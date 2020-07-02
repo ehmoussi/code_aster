@@ -43,12 +43,14 @@ waf_main()
             fi
         fi
     else
-        export WAFBUILD_ENV="${prefix}/env.d/${DEVTOOLS_COMPUTER_ID}_${WAF_SUFFIX}.sh"
+        if [ -z "${WAFBUILD_ENV}" ]; then
+            export WAFBUILD_ENV="${prefix}/env.d/${DEVTOOLS_COMPUTER_ID}_${WAF_SUFFIX}.sh"
+        fi
         if [ -e ${WAFBUILD_ENV} ]; then
             echo "already set: ${WAFBUILD_ENV}"
         else
-            unset WAFBUILD_ENV
             echo "no found: ${WAFBUILD_ENV}"
+            unset WAFBUILD_ENV
         fi
     fi
 
