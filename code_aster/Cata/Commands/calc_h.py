@@ -62,9 +62,9 @@ CALC_H=OPER(nom="CALC_H",op=27,sd_prod=table_container,
 
 
         # Create theta-field
-         CHAM_THETA   =SIMP(statut='f',typ=CO, max=1),
          THETA          =FACT(statut='o',
             FISSURE         =SIMP(statut='o',typ=(fiss_xfem, fond_fissure),max=1),
+            CHAM_THETA      =SIMP(statut='f',typ=CO, max=1),
             DISCRETISATION  =SIMP(statut='f',typ='TXM',into=("LINEAIRE","LEGENDRE"), defaut="LINEAIRE" ),
             b_nb_lin=BLOC(condition="""(equal_to("DISCRETISATION", 'LINEAIRE'))""",
                                 NB_POINT_FOND = SIMP(statut='f',typ='I', min=1),

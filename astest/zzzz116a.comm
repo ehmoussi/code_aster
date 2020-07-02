@@ -147,9 +147,9 @@ FISSH=DEFI_FISSURE(MAILLAGE=mesh, SYME='OUI',
                     )
 
 H0 = CALC_H(RESULTAT=RES0,
-            CHAM_THETA=CO('cham_theta_no2'),
             OPTION=("G",),
             THETA=_F(FISSURE=FISSH,
+                     CHAM_THETA=CO('cham_theta_no2'),
                      R_INF=0.0203282,
                      R_SUP=0.025))
 

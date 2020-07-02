@@ -50,7 +50,7 @@ def calc_h_with_co(self, **args):
         )
 
     # On fait quoi de theta ?
-    if "CHAM_THETA" in args:
+    if "CHAM_THETA" in args["THETA"]:
         # number of CHAM_THETA fields
         _nb_cham_theta = EXTR_TABLE(TYPE_RESU='ENTIER',
                 TABLE=_result_calc_g, NOM_PARA='NUME_ORDRE',
@@ -80,7 +80,7 @@ def calc_h_with_co(self, **args):
 
             DETRUIRE(CONCEPT=_F(NOM=_cham_theta_no,))
 
-        self.register_result(_cham_theta, args["CHAM_THETA"])
+        self.register_result(_cham_theta, args["THETA"]["CHAM_THETA"])
 
     return _table_g
 
