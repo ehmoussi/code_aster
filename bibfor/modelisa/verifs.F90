@@ -50,7 +50,7 @@ integer, optional, intent(out) :: isech_
 ! In  poum         : parameters evaluation
 !                     '-' for previous temperature
 !                     '+' for current temperature
-!                     'T' for current and previous temperature => epshy/epsse is increment
+!                     'T' for current and previous temperature => epsse is increment
 ! In  j_mater      : coded material address
 ! In  materi       : name of material if multi-material Gauss point (PMF)
 ! Out epsse        : strain from drying shrinkage (retrait de dessication)

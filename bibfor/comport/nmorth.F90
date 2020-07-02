@@ -30,10 +30,11 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
 #include "asterfort/matrot.h"
 #include "asterfort/r8inir.h"
 #include "asterfort/utmess.h"
-#include "asterfort/utpslg.h"
 #include "asterfort/verift.h"
 #include "asterfort/verifh.h"
 #include "asterfort/verifs.h"
+#include "asterfort/verifepsa.h"
+#include "asterfort/utbtab.h"
     character(len=*) :: fami, poum
     integer :: kpg, ksp, ndim, imate
     real(kind=8) :: deps(6), sigm(6), sigp(6)
@@ -62,8 +63,9 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
     real(kind=8) :: rbid, repere(7), hookf(36), mkooh(36), xyzgau(3)
     real(kind=8) :: depstr(6)
     real(kind=8) :: epsth_anis(3), deplth(6), depgth(6)
-    real(kind=8) :: depghy, depgse
-    real(kind=8) :: depsme(6), rac2, vepst1(6), vepst2(6), epsm2(6)
+    real(kind=8) :: depghy, depgse, depgepsa(6)
+    real(kind=8) :: depsme(6), rac2, epsm2(6)
+    real(kind=8) :: work(3,3), deplth_mat(3,3), depgth_mat(3,3)
     integer :: nbsigm, i, j
     character(len=2) :: k2bid
     aster_logical :: vrai
@@ -183,25 +185,30 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
         deplth(6)=0.d0
 !
 !       RECUPERATION DE LA MATRICE DE PASSAGE
+!
         call matrot(angmas, p)
 !
 !       PASSAGE DU TENSEUR DES DEFORMATIONS THERMIQUES DANS LE REPERE GLOBAL
 !
-        vepst1(1)=deplth(1)
-        vepst1(2)=deplth(4)
-        vepst1(3)=deplth(2)
-        vepst1(4)=deplth(5)
-        vepst1(5)=deplth(6)
-        vepst1(6)=deplth(3)
-        call utpslg(1, 3, p, vepst1, vepst2)
+        do i = 1,3
+            deplth_mat(i,i) = deplth(i)
+        enddo
+        deplth_mat(1,2) = deplth(4)
+        deplth_mat(1,3) = deplth(5)
+        deplth_mat(2,3) = deplth(6)
+        deplth_mat(2,1) = deplth_mat(1,2)
+        deplth_mat(3,1) = deplth_mat(1,3)
+        deplth_mat(3,2) = deplth_mat(2,3)
 !
-        depgth(1)=vepst2(1)
-        depgth(2)=vepst2(3)
-        depgth(3)=vepst2(6)
-        depgth(4)=vepst2(2)
-        depgth(5)=vepst2(4)
-        depgth(6)=vepst2(5)
+        call utbtab('ZERO', 3, 3, deplth_mat, p,&
+                  work, depgth_mat)
 !
+        depgth(1) = depgth_mat(1,1)
+        depgth(2) = depgth_mat(2,2)
+        depgth(3) = depgth_mat(3,3)
+        depgth(4) = depgth_mat(1,2)
+        depgth(5) = depgth_mat(1,3)
+        depgth(6) = depgth_mat(2,3)
 !
 !   RETRAIT ENDOGENE ET RETRAIT DE DESSICCATION (SCALAIRE)
 !       IDENTIQUES DANS LES 2 REPERES L ET G CAR ISOTROPES
@@ -210,16 +217,19 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
         call verifs(fami, kpg , ksp , poum , imate ,&
                      depgse)
 !
+!   DEFORMATIONS ANELASTIQUES EPSAXX, EPSAYY, EPSAZZ, EPSAXY, EPSAXZ, EPSAYZ
+!       DEFINIES DANS LE REPERE GLOBAL
+!       
+        call verifepsa(fami, kpg, ksp, poum, depgepsa)
+                     
+!
 ! CALCUL DES DEFORMATIONS MECANIQUES
-! ATTENTION LES TERMES EXTRA DIAGONAUX DE DEFORMATIONS THERMIQUES
-! DOIVENT ETRE MULTIPLIES PAR DEUX POUR ETRE CONFORME AVEC
-! LA MATRICE DE RIGIDITE ISSU DE DMATMC (ET DONC AVEC DEPSTR AUSSI)
 !
         do i = 1, nbsigm
             if (i .le. 3) then
-                depsme(i)=depstr(i)-depgth(i)-depghy-depgse
+                depsme(i)=depstr(i)-depgth(i)-depghy-depgse-depgepsa(i)
             else
-                depsme(i)=depstr(i)-2.d0*depgth(i)
+                depsme(i)=depstr(i)-depgth(i)-depgepsa(i)
             endif
         end do
 !

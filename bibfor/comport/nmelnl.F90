@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
 ! ----------------------------------------------------------------------
 ! CORPS DU PROGRAMME
 
-    integer :: kpg, ksp, ndim, imate, iret, isec, ihyd
+    integer :: kpg, ksp, ndim, imate, iret, isec, ihyd, ieps
     character(len=*) :: fami, poum
     character(len=8) :: typmod(*)
     character(len=16) :: compor(*), option
@@ -76,15 +76,16 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
 ! DECLARATION VARIABLES LOCALES
     aster_logical :: cplan, elas, vmis, line, nonlin, inco, puis
     integer :: icodre(5)
-    character(len=16) :: nomres(5)
+    character(len=16) :: nomres(5), epsa_data(6)
     character(len=32) :: phenom
     integer :: jprol, jvale, nbvale, ndimsi, niter, k, l, ibid
 !
     real(kind=8) :: valres(5), e, nu, troisk, deuxmu, sigy, dsde
     real(kind=8) :: kdess, bendo, ther, epsth(6), epsmo, epsdv(6), epseq, sieleq
     real(kind=8) :: p, rp, rprim, g, coef, epsi, airerp
-    real(kind=8) :: approx, prec, x, kron(6), divu, biot
+    real(kind=8) :: approx, prec, x, kron(6), rac2, divu, biot
     real(kind=8) :: coco, dp0, rprim0, xap, precr
+    real(kind=8) :: epsa(6)
     integer, parameter :: elas_id = 1
     character(len=16), parameter :: elas_keyword = 'ELAS'
 !
@@ -104,6 +105,7 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
 ! - INITIALISATIONS
 !====================================================================
     data  kron/1.d0,1.d0,1.d0,0.d0,0.d0,0.d0/
+    data  epsa_data/ 'EPSAXX','EPSAYY','EPSAZZ','EPSAXY','EPSAXZ','EPSAYZ'/
     cplan = typmod(1) .eq. 'C_PLAN'
     inco = typmod(2) .eq. 'INCO'
     elas = (compor(1)(1:5) .eq. 'ELAS ')
@@ -113,6 +115,7 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
     epsi = r8prem()
     energi(1) = 0.d0
     energi(2) = 0.d0
+    rac2 = sqrt(2.d0)
 !
     if (.not.(elas .or. vmis)) then
         call utmess('F', 'ALGORITH4_50', sk=compor(1))
@@ -185,6 +188,19 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
     if (icodre(5) .ne. 0) valres(5) = 0.d0
     kdess = valres(5)
 !
+! --- DEFORMATIONS ANELASTIQUES
+!     + MISE AU FORMAT DES TERMES NON DIAGONAUX
+!
+    do k = 1, ndimsi
+        call rcvarc(' ', epsa_data(k), poum, fami, kpg,&
+                    ksp, epsa(k), ieps)
+        if (ieps .ne. 0) epsa(k) = 0.d0
+    end do
+!
+    do k = 4, ndimsi
+        epsa(k) = epsa(k)*rac2
+    end do
+!
 !====================================================================
 ! - LECTURE DES CARACTERISTIQUES DE NON LINEARITE DU MATERIAU
 !====================================================================
@@ -221,8 +237,8 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
 !
 ! TRAITEMENT PARTICULIER EN CONTRAINTE PLANE
     if (cplan) then
-        eps(3)=-nu/(1.d0-nu)*(eps(1)+eps(2)) +(1.d0+nu)/(1.d0-nu)*&
-        ther
+        eps(3)= - nu/(1.d0-nu)*(eps(1)+eps(2)) +(1.d0+nu)/(1.d0-nu)*ther&
+                + nu/(1.d0-nu)*(epsa(1)+epsa(2)) + epsa(3)
     endif
     epsmo = 0.d0
 !
@@ -251,8 +267,8 @@ type(Behaviour_Integ), intent(in) :: BEHinteg
     endif
 !
     do k = 1, 3
-        epsth(k) = eps(k) - ther - epspto
-        epsth(k+3) = eps(k+3)
+        epsth(k) = eps(k) - ther - epspto - epsa(k)
+        epsth(k+3) = eps(k+3) - epsa(k+3)
         epsmo = epsmo + epsth(k)
     end do
     epsmo = epsmo/3.d0

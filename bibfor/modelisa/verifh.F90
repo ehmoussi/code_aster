@@ -50,7 +50,7 @@ integer, optional, intent(out) :: ihydr_
 ! In  poum         : parameters evaluation
 !                     '-' for previous temperature
 !                     '+' for current temperature
-!                     'T' for current and previous temperature => epshy/epsse is increment
+!                     'T' for current and previous temperature => epshy is increment
 ! In  j_mater      : coded material address
 ! In  materi       : name of material if multi-material Gauss point (PMF)
 ! Out epshy        : strain from autogenous shrinkage (retrait endogène)
@@ -59,7 +59,7 @@ integer, optional, intent(out) :: ihydr_
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: materi, elem_name
+    character(len=8) :: materi
     integer :: iret_hydr, iret_hydrm, iret_hydrp
     real(kind=8) :: hydrm, hydrp
     real(kind=8) :: bendom, bendop

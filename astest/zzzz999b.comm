@@ -28,6 +28,9 @@ GLN = DEFI_CONSTANTE (VALE=  5.)
 NULT = DEFI_CONSTANTE (VALE=  0.0)
 NULN = DEFI_CONSTANTE (VALE=  0.0)
 NUTN = DEFI_CONSTANTE (VALE=  0.0)
+ALPHAL = DEFI_CONSTANTE (VALE=  1.0)
+ALPHAT = DEFI_CONSTANTE (VALE=  2.0)
+ALPHAN = DEFI_CONSTANTE (VALE=  3.0)
 
 MAIL = LIRE_MAILLAGE(FORMAT='ASTER',)
 
@@ -46,6 +49,10 @@ MAT = DEFI_MATERIAU( ELAS_ORTH_FO =_F(  E_L   = EL,
                                         NU_LT = NULT,
                                         NU_LN = NULN,
                                         NU_TN = NUTN,
+                                        ALPHA_L = ALPHAL,
+                                        ALPHA_T = ALPHAT,
+                                        ALPHA_N = ALPHAN,
+                                        TEMP_DEF_ALPHA = 20.,
                                         B_ENDOGE = 1.5,
                                         K_DESSIC = 3.5), )
                                     
@@ -53,6 +60,136 @@ MOD = AFFE_MODELE(MAILLAGE = MAIL,
                   AFFE=(_F(GROUP_MA='TOUT',
                            PHENOMENE='MECANIQUE',
                            MODELISATION='3D',),),)
+                       
+BLOC = AFFE_CHAR_CINE(
+                      MODELE=MOD,
+                      MECA_IMPO=(_F(DX=0.0,
+                                    DY=0.0,
+                                    DZ=0.0,
+                                    GROUP_NO=('ORIG',),),
+                                 _F(DY=0.0,
+                                    DZ=0.0,
+                                    GROUP_MA=('S34',),),
+                                 _F(
+                                    DY=0.0,
+                                    GROUP_NO=('NO7',),),)
+                            )
+                       
+LINST = DEFI_LIST_REEL(DEBUT=0.0,
+                       INTERVALLE=(_F(JUSQU_A=1.0,
+                                      NOMBRE=1,),
+                                        ),);
+
+           
+# - Test de la bonne prise en compte de la déformation thermique (TEMP)
+                                                       
+# --- Angles permettant d'avoir des composantes de cisaillement
+#     non nulles pour la déformation
+
+ang1 = 45.0
+ang2 = 0.0
+ang3 = 0.0
+
+tref = 20.0
+tempi = tref
+tempf = 3*tref  
+              
+                       
+ELEMPRO1 = AFFE_CARA_ELEM(MASSIF=_F(ANGL_EULER=(ang1, ang2, ang3),
+                                    GROUP_MA='TOUT',),
+                          MODELE=MOD)
+                            
+TEMPI = CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                   OPERATION='AFFE',
+                   MODELE = MOD,
+                   AFFE=_F(GROUP_MA='TOUT',
+                           NOM_CMP='TEMP',
+                           VALE=tempi),)
+
+TEMPF = CREA_CHAMP(TYPE_CHAM='NOEU_TEMP_R',
+                   OPERATION='AFFE',
+                   MODELE = MOD,
+                   AFFE=_F(GROUP_MA='TOUT',
+                           NOM_CMP='TEMP',
+                           VALE=tempf),)
+
+CHTEMP = CREA_RESU(OPERATION='AFFE',
+                   TYPE_RESU='EVOL_THER',
+                   NOM_CHAM='TEMP',
+                   AFFE=(_F(CHAM_GD=TEMPI,
+                            INST=0.0,),
+                         _F(CHAM_GD=TEMPF,
+                            INST=1.0,),),)
+                                    
+CHMATT = AFFE_MATERIAU(MAILLAGE=MAIL,
+                       AFFE=_F(GROUP_MA='TOUT',
+                               MATER=MAT,),
+                       AFFE_VARC=(_F(GROUP_MA='TOUT',
+                                     EVOL=CHTEMP,
+                                     NOM_VARC='TEMP',
+                                     NOM_CHAM='TEMP',
+                                     VALE_REF=tref),),)
+                      
+UTEMP = STAT_NON_LINE(CHAM_MATER=CHMATT,
+                      COMPORTEMENT=(_F(RELATION='ELAS'),),
+                      CARA_ELEM=ELEMPRO1,
+                      EXCIT=_F(CHARGE=BLOC,),
+                      INCREMENT=_F(LIST_INST=LINST),
+                      MODELE=MOD)
+
+epsl11 = 1.0*(tempf-tempi)
+epsl22 = 2.0*(tempf-tempi)
+epsl33 = 3.0*(tempf-tempi)
+
+epsg11 = (epsl11+epsl22)/2.
+epsg12 = (epsl11-epsl22)/2.
+epsg33 = epsl33
+
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='NO1',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=UTEMP,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=epsg12,
+                  VALE_REFE=epsg12,
+                  CRITERE='RELATIF',
+                  PRECISION=0.001,),
+          )
+          
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='NO4',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=UTEMP,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=epsg11,
+                  VALE_REFE=epsg11,
+                  CRITERE='RELATIF',
+                  PRECISION=0.001,),
+          )
+                     
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='NO7',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=UTEMP,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DZ',
+                  VALE_CALC=epsg33,
+                  VALE_REFE=epsg33,
+                  CRITERE='RELATIF',
+                  PRECISION=0.001,),
+          )
+                     
+# - Test de la bonne prise en compte du retrait endogène (HYDR)
+                    
+ang1 = 75.2
+ang2 = 12.3
+ang3 = 46.5
+                       
+ELEMPRO2 = AFFE_CARA_ELEM(MASSIF=_F(ANGL_EULER=(ang1, ang2, ang3),
+                                    GROUP_MA='TOUT',),
+                          MODELE=MOD)
                                     
 HYDRI = CREA_CHAMP(TYPE_CHAM='NOEU_HYDR_R',
                    OPERATION='AFFE',
@@ -84,6 +221,27 @@ CHMATH = AFFE_MATERIAU(MAILLAGE=MAIL,
                                      NOM_VARC='HYDR',
                                      NOM_CHAM='HYDR_NOEU',),),)
                                     
+UHYDR = STAT_NON_LINE(CHAM_MATER=CHMATH,
+                      COMPORTEMENT=(_F(RELATION='ELAS'),),
+                      CARA_ELEM=ELEMPRO2,
+                      EXCIT=_F(CHARGE=BLOC,),
+                      INCREMENT=_F(LIST_INST=LINST),
+                      MODELE=MOD)
+               
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='NO4',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=UHYDR,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=-3.0,
+                  VALE_REFE=-3.0,
+                  CRITERE='RELATIF',
+                  PRECISION=0.001,),
+          )
+                      
+# - Test de la bonne prise en compte du retrait de dessication (SECH)
+
 sechref = 2.0
 sechi = sechref
 sechf = 3*sechref
@@ -118,57 +276,10 @@ CHMATS = AFFE_MATERIAU(MAILLAGE=MAIL,
                                      NOM_VARC='SECH',
                                      NOM_CHAM='TEMP',
                                      VALE_REF=sechref),),)
-
-# Angles choisis au hasard                    
-ang1 = 75.1
-ang2 = 45.4
-ang3 = 12.7
-                       
-ELEMPROP = AFFE_CARA_ELEM(MASSIF=_F(ANGL_EULER=(ang1, ang2, ang3),
-                                    GROUP_MA='TOUT',),
-                          MODELE=MOD)
-                       
-BLOC = AFFE_CHAR_CINE(
-                      MODELE=MOD,
-                      MECA_IMPO=(_F(DX=0.0,
-                                    DY=0.0,
-                                    DZ=0.0,
-                                    GROUP_NO=('ORIG',),),
-                                 _F(DY=0.0,
-                                    DZ=0.0,
-                                    GROUP_MA=('S34',),),
-                                 _F(
-                                    DY=0.0,
-                                    GROUP_NO=('NO7',),),)
-                            )
-                       
-LINST = DEFI_LIST_REEL(DEBUT=0.0,
-                       INTERVALLE=(_F(JUSQU_A=1.0,
-                                      NOMBRE=1,),
-                                        ),);
-                       
-UHYDR = STAT_NON_LINE(CHAM_MATER=CHMATH,
-                      COMPORTEMENT=(_F(RELATION='ELAS'),),
-                      CARA_ELEM=ELEMPROP,
-                      EXCIT=_F(CHARGE=BLOC,),
-                      INCREMENT=_F(LIST_INST=LINST),
-                      MODELE=MOD)
-               
-TEST_RESU(RESU=_F(NUME_ORDRE=1,
-                  GROUP_NO='NO4',
-                  REFERENCE='ANALYTIQUE',
-                  RESULTAT=UHYDR,
-                  NOM_CHAM='DEPL',
-                  NOM_CMP='DX',
-                  VALE_CALC=-3.0,
-                  VALE_REFE=-3.0,
-                  CRITERE='RELATIF',
-                  PRECISION=0.001,),
-          )
                       
 USECH = STAT_NON_LINE(CHAM_MATER=CHMATS,
                       COMPORTEMENT=(_F(RELATION='ELAS'),),
-                      CARA_ELEM=ELEMPROP,
+                      CARA_ELEM=ELEMPRO2,
                       EXCIT=_F(CHARGE=BLOC,),
                       INCREMENT=_F(LIST_INST=LINST),
                       MODELE=MOD)
@@ -184,97 +295,107 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   CRITERE='RELATIF',
                   PRECISION=0.001,),
           )
+
+# - Test de la bonne prise en compte des déformations anélastiques EPSA*6
+
+EPS0 = CREA_CHAMP(TYPE_CHAM='ELNO_EPSI_R',
+                  OPERATION='AFFE',
+                  MODELE=MOD,
+                  AFFE=(_F(TOUT='OUI',
+                           NOM_CMP=('EPXX','EPYY','EPZZ',),
+                           VALE=(0.,0.,0.,)),
+                        _F(TOUT='OUI',
+                           NOM_CMP=('EPXY','EPXZ','EPYZ',),
+                           VALE=(0.,0.,0.),),),);
+
+EPSXXIMP=CREA_CHAMP(TYPE_CHAM='ELNO_EPSI_R',
+                    OPERATION='AFFE',
+                    MODELE=MOD,
+                AFFE=(_F(TOUT='OUI',
+                         NOM_CMP=('EPXX','EPYY','EPZZ',),
+                         VALE=(7.,0.,0.,),),
+                      _F(TOUT='OUI',
+                         NOM_CMP=('EPXY','EPXZ','EPYZ',),
+                         VALE=(0.,0.,0.),),),);
+                         
+EPSXYIMP=CREA_CHAMP(TYPE_CHAM='ELNO_EPSI_R',
+                    OPERATION='AFFE',
+                    MODELE=MOD,
+                AFFE=(_F(TOUT='OUI',
+                         NOM_CMP=('EPXX','EPYY','EPZZ',),
+                         VALE=(0.,0.,0.,),),
+                      _F(TOUT='OUI',
+                         NOM_CMP=('EPXY','EPXZ','EPYZ',),
+                         VALE=(12.,0.,0.),),),);
+
+# --- Test pour EPSAXX
+
+EPSA1=CREA_RESU(OPERATION='AFFE',
+               TYPE_RESU='EVOL_VARC',
+               NOM_CHAM='EPSA_ELNO',
+               AFFE=(_F(CHAM_GD=EPS0    ,  INST=0.,),
+                     _F(CHAM_GD=EPSXXIMP,  INST=1.,),),)
+
+CHMAT1 = AFFE_MATERIAU(MAILLAGE=MAIL,
+                       AFFE=_F(GROUP_MA='TOUT',
+                               MATER=MAT,),
+                       AFFE_VARC=_F(TOUT='OUI',
+                                    EVOL=EPSA1,
+                                    NOM_VARC='EPSA',
+                                    NOM_CHAM='EPSA_ELNO',),)
                       
-"""
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-3.0,
-           VALE_REFE=-3.0,
-           NOM_PARA='EPXX',
-           TABLE=UHYDR,
-           FILTRE=_F(PRECISION=1.0000000000000001E-05,
-                     NOM_PARA='INST',
-                     VALE=1.0,),
-           )
-           
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-3.0,
-           VALE_REFE=-3.0,
-           NOM_PARA='EPYY',
-           TABLE=UHYDR,
-           FILTRE=_F(PRECISION=1.0000000000000001E-05,
-                     NOM_PARA='INST',
-                     VALE=1.0,),
-           )
-           
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=-3.0,
-           VALE_REFE=-3.0,
-           NOM_PARA='EPZZ',
-           TABLE=UHYDR,
-           FILTRE=_F(PRECISION=1.0000000000000001E-05,
-                     NOM_PARA='INST',
-                     VALE=1.0,),
-           )
-           
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=0.0,
-           VALE_REFE=0.0,
-           NOM_PARA='EPXY',
-           TABLE=UHYDR,
-           FILTRE=_F(PRECISION=1.0000000000000001E-05,
-                     NOM_PARA='INST',
-                     VALE=1.0,),
-           )
+UEPSA1 = STAT_NON_LINE(CHAM_MATER=CHMAT1,
+                       COMPORTEMENT=(_F(RELATION='ELAS'),),
+                       CARA_ELEM=ELEMPRO2,
+                       EXCIT=_F(CHARGE=BLOC,),
+                       INCREMENT=_F(LIST_INST=LINST),
+                       MODELE=MOD)
+               
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='NO4',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=UEPSA1,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=7.0,
+                  VALE_REFE=7.0,
+                  CRITERE='RELATIF',
+                  PRECISION=0.001,),
+          )
 
-USECH = SIMU_POINT_MAT(COMPORTEMENT=_F(RELATION='ELAS',),
-                       MATER=MAT,
-                       SUPPORT='POINT',
-                       AFFE_VARC=(_F(  NOM_VARC = 'SECH',
-                                       VALE_FONC = SECHIMP,
-                                       VALE_REF = SECHREF),
-                                    ),
-                       INCREMENT=_F(LIST_INST=LINST,),
-                       INFO=1,);
-
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=14.0,
-           VALE_REFE=14.0,
-           NOM_PARA='EPXX',
-           TABLE=USECH,
-           FILTRE=_F(PRECISION=1.0000000000000001E-05,
-                     NOM_PARA='INST',
-                     VALE=1.0,),
-           )
-           
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=14.0,
-           VALE_REFE=14.0,
-           NOM_PARA='EPYY',
-           TABLE=USECH,
-           FILTRE=_F(PRECISION=1.0000000000000001E-05,
-                     NOM_PARA='INST',
-                     VALE=1.0,),
-           )
-           
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=14.0,
-           VALE_REFE=14.0,
-           NOM_PARA='EPZZ',
-           TABLE=USECH,
-           FILTRE=_F(PRECISION=1.0000000000000001E-05,
-                     NOM_PARA='INST',
-                     VALE=1.0,),
-           )
-           
-TEST_TABLE(REFERENCE='ANALYTIQUE',
-           VALE_CALC=0.0,
-           VALE_REFE=0.0,
-           NOM_PARA='EPXY',
-           TABLE=USECH,
-           FILTRE=_F(PRECISION=1.0000000000000001E-05,
-                     NOM_PARA='INST',
-                     VALE=1.0,),
-           )
-"""
-
+# --- Test pour EPSAXY
+                 
+EPSA2=CREA_RESU(OPERATION='AFFE',
+               TYPE_RESU='EVOL_VARC',
+               NOM_CHAM='EPSA_ELNO',
+               AFFE=(_F(CHAM_GD=EPS0    ,  INST=0.,),
+                     _F(CHAM_GD=EPSXYIMP,  INST=1.,),),)
+          
+CHMAT2 = AFFE_MATERIAU(MAILLAGE=MAIL,
+                       AFFE=_F(GROUP_MA='TOUT',
+                               MATER=MAT,),
+                       AFFE_VARC=_F(TOUT='OUI',
+                                    EVOL=EPSA2,
+                                    NOM_VARC='EPSA',
+                                    NOM_CHAM='EPSA_ELNO',),)
+          
+UEPSA2 = STAT_NON_LINE(CHAM_MATER=CHMAT2,
+                       COMPORTEMENT=(_F(RELATION='ELAS'),),
+                       CARA_ELEM=ELEMPRO2,
+                       EXCIT=_F(CHARGE=BLOC,),
+                       INCREMENT=_F(LIST_INST=LINST),
+                       MODELE=MOD)
+               
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='NO1',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=UEPSA2,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=12.0,
+                  VALE_REFE=12.0,
+                  CRITERE='RELATIF',
+                  PRECISION=0.001,),
+          )
+   
 FIN()

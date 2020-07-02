@@ -120,7 +120,6 @@ implicit none
 !
         if (hydr .ne. 0.d0) then
             call get_elas_id(j_mater, elas_id, elas_keyword)
-!            phenom = 'ELAS'
             nomres(1) = 'B_ENDOGE'
             nbv = 1
             call rcvalb(fami, kpg, ksp, poum, j_mater,&
@@ -167,7 +166,6 @@ implicit none
 ! ----- Drying strains
 !
         call get_elas_id(j_mater, elas_id, elas_keyword)
-!        phenom = 'ELAS'
         nomres(1) = 'K_DESSIC'
         nbv = 1
         call rcvalb(fami, kpg, ksp, poum, j_mater,&
