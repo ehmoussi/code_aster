@@ -223,7 +223,7 @@ for i in range(0,nbc) :
                   THETA=_F(R_INF=RI[i],
                            R_SUP=RS[i],
                            DISCRETISATION="LINEAIRE",
-                           NOMBRE=10,
+                           NB_POINT_FOND=10,
                            FISSURE=FISS,),)
 
    #IMPR_TABLE(TABLE=SIF2[i],)
@@ -233,7 +233,8 @@ for i in range(0,nbc) :
 
                   THETA=_F(R_INF=RI[i],
                            R_SUP=RS[i],
-                           DISCRETISATION="LINEAIRE", NOMBRE=4,
+                           DISCRETISATION="LINEAIRE",
+                           NB_POINT_FOND=4,
                            FISSURE=FISS,),)
 
    #IMPR_TABLE(TABLE=SIF3[i],)
@@ -263,14 +264,16 @@ SIF2[nbc]=CALC_H(RESULTAT=UTOT2,
 
 SIF3[nbc]=CALC_H(RESULTAT=UTOT3,
                   OPTION=("G", "K"),
-                  THETA=_F(FISSURE=FISS, DISCRETISATION="LINEAIRE", NOMBRE=3, NB_COUCHE_INF=1,
+                  THETA=_F(FISSURE=FISS, DISCRETISATION="LINEAIRE",
+                           NB_POINT_FOND=3, NB_COUCHE_INF=1,
                            NB_COUCHE_SUP=3,),)
 
 #IMPR_TABLE(TABLE=SIF3[nbc],)
 
 SIF4[nbc]=CALC_H(RESULTAT=UTOT4,
                   OPTION=("G", "K", "KJ", "G_EPSI"),
-                  THETA=_F(FISSURE=FISS, DISCRETISATION="LEGENDRE", NOMBRE=4, NB_COUCHE_INF=1,
+                  THETA=_F(FISSURE=FISS, DISCRETISATION="LEGENDRE",
+                           DEGRE=4, NB_COUCHE_INF=1,
                            NB_COUCHE_SUP=3,),)
 
 IMPR_TABLE(TABLE=SIF4[nbc],)

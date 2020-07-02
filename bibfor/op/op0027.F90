@@ -48,8 +48,6 @@ implicit none
 !
     integer :: iopt, istore, nume_ordre
     character(len=8) :: option
-    character(len=24) :: law
-    aster_logical :: l_comput_stress
 !
     call infmaj()
     call deprecated_algom('CALC_H')
@@ -82,9 +80,7 @@ implicit none
 !
     do iopt = 1, cgField%nb_option
         option = cgField%list_option(iopt)
-        law = "ELAS"
-        l_comput_stress = ASTER_TRUE
-        call cgStudy%setOption(option, law, l_comput_stress)
+        call cgStudy%setOption(option)
 !
         if(cgField%level_info > 1) then
             call utmess("I", "RUPTURE3_5", sk=option)

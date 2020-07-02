@@ -87,10 +87,6 @@ implicit none
         integer            :: nume_ordre = -1
 ! ----- option to compute
         character(len=8)   :: option    = ' '
-! ----- name of the law
-        character(len=24)  :: law       = ' '
-! ----- compute stress ?
-        aster_logical      :: l_comp_stress = ASTER_TRUE
 ! ----- member function
         contains
         procedure, pass    :: initialize => initialize_study
@@ -137,8 +133,10 @@ implicit none
         integer                 :: nb_couche_inf = 0, nb_couche_sup = 0
 ! ----- type of discretization
         character(len=8)        :: discretization = ' '
-! ----- numer of nodes or degree
-        integer                 :: nombre = 0
+! ----- nubmer of nodes (for linear discretization)
+        integer                 :: nb_point_fond = 0
+! ----- nubmer of nodes (for legendre discretization)
+        integer                 :: degree = 0
 ! ----- nume_fond for XFem only
         integer                 :: nume_fond = 0
 ! ----- the crack is closed ?
@@ -366,8 +364,6 @@ contains
         print*, "----------------------------------------------------------------------"
         print*, "Informations about CalcG_Study"
         print*, "Option: ", this%option
-        print*, "Law: ", this%law
-        print*, "Compute stress: ", this%l_comp_stress
         print*, "Model: ", this%model
         print*, "Mesh: ", this%mesh
         print*, "Material: ", this%material
@@ -382,31 +378,20 @@ contains
 !
 !===================================================================================================
 !
-    subroutine setOption(this, option, law, l_comput_stress)
+    subroutine setOption(this, option)
 !
     implicit none
 !
         class(CalcG_Study), intent(inout)  :: this
         character(len=8), intent(in)       :: option
-        character(len=24), intent(in)      :: law
-        aster_logical, intent(in)          :: l_comput_stress
-
 !
 ! --------------------------------------------------------------------------------------------------
-!#include "asterfort/assert.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/exixfe.h"
-#include "asterc/getfac.h"
 !   print informations of a CalcG_Study type
 !   In this     : study type
 !   In option   : name of option
-!   In law      : name of the behavior law
-!   In l_comput : recompute stress ?
 ! --------------------------------------------------------------------------------------------------
 !
         this%option = option
-        this%law    = law
-        this%l_comp_stress = l_comput_stress
 !
     end subroutine
 !
@@ -480,15 +465,24 @@ contains
         call getvtx('THETA', 'DISCRETISATION', iocc=1, scal=this%discretization, nbret=ier)
         l_disc = (this%discretization == "LINEAIRE") .or. (this%discretization == "LEGENDRE")
         ASSERT(l_disc)
-        call getvis('THETA', 'NOMBRE', iocc=1, scal=this%nombre, nbret=ier)
-        ASSERT(this%nombre >= 0)
-
-        if(this%discretization == "LINEAIRE" .and. this%nombre == 0) then
-            this%nombre = this%nb_fondNoeud
+!
+        call getvis('THETA', 'DEGRE', iocc=1, scal=this%degree, nbret=ier)
+        call getvis('THETA', 'NB_POINT_FOND', iocc=1, scal=this%nb_point_fond, nbret=ier)
+!
+        if(this%discretization == "LINEAIRE") then
+            ASSERT(this%nb_point_fond >= 0)
+            ASSERT(this%degree == 0)
+            if(this%nb_point_fond == 0) then
+                this%nb_point_fond = this%nb_fondNoeud
+            end if
         end if
 !
-        if(this%discretization == "LEGENDRE" .and. this%l_closed) then
-            call utmess('F', 'RUPTURE0_90')
+        if(this%discretization == "LEGENDRE") then
+            ASSERT(this%nb_point_fond == 0)
+            ASSERT(this%degree >= 0)
+            if(this%l_closed) then
+                call utmess('F', 'RUPTURE0_90')
+            end if
         end if
 !
         call getvr8('THETA', 'R_INF', iocc=1, scal=this%r_inf, nbret=ier)
@@ -565,7 +559,8 @@ contains
         print*, "Initial configuration: ", this%config_init
         print*, "The crack is closed ?: ", this%l_closed
         print*, "XFEM ?: ", this%lxfem, " with discontinuity: ", this%XfemDisc_type
-        print*, "Discretization : ", this%discretization,  " with number/degree ", this%nombre
+        print*, "Discretization : ", this%discretization,  " with number/degree ", &
+                this%nb_point_fond, this%degree
         print*, "Radius:"
         print*, "*** Inferior: ", this%r_inf
         print*, "*** Superior: ", this%r_sup
