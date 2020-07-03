@@ -17,12 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Code_Aster.  If not, see <http://www.gnu.org/licenses/>.
 
-# person_in_charge: nicolas.sellenet@edf.fr
+# person_in_charge: mathieu.courtois@edf.fr
 
 import numpy
 
 from .. import Objects as all_types
 from ..Cata.Language.SyntaxObjects import _F
+from ..Messages import UTMESS
 from ..Objects import (DataStructure, Formula, Function,
                        GenericMaterialProperty, Material, MaterialProperty,
                        Function2D, Table)
@@ -53,10 +54,13 @@ class MaterialDefinition(ExecuteCommand):
         Arguments:
             keywords (dict): User's keywords.
         """
+        check_keywords(keywords)
+
         mater = keywords.get("MATER")
         if mater is not None:
             if mater.getName() != self._result.getName():
                 self._result.setReferenceMaterial(mater)
+
         classByName = MaterialDefinition._byKeyword()
         materByName = self._buildInstance(keywords, classByName)
         for fkwName, fkw in keywords.items():
@@ -120,7 +124,7 @@ class MaterialDefinition(ExecuteCommand):
                                                   "{0} <{1}>"
                                                   .format(skwName, type(skw)))
                 elif type(skw) in (list, tuple) and type(skw[0]) in (float, int, numpy.float64):
-                        cRet = matBehav.setVectorOfRealValue(iName, list(skw))
+                    cRet = matBehav.setVectorOfRealValue(iName, list(skw))
                 else:
                     raise NotImplementedError("Unsupported type for keyword: "
                                               "{0} <{1}>"
@@ -224,3 +228,262 @@ class MaterialDefinition(ExecuteCommand):
 
 
 DEFI_MATERIAU = MaterialDefinition.run
+
+
+def check_keywords(kwargs):
+    """Check for DEFI_MATERIAU keywords
+
+    Arguments:
+        kwargs (dict): User's keywords, changed in place.
+    """
+    if 'DIS_ECRO_TRAC' in kwargs:
+        kwargs['DIS_ECRO_TRAC'] = check_dis_ecro_trac(kwargs['DIS_ECRO_TRAC'])
+    if 'DIS_CHOC_ENDO' in kwargs:
+        kwargs['DIS_CHOC_ENDO'] = check_dis_choc_endo(kwargs['DIS_CHOC_ENDO'])
+
+
+def check_dis_ecro_trac(keywords):
+    """Check for function for DIS_ECRO_TRAC
+
+    Arguments:
+        keywords (dict): DIS_ECRO_TRAC keyword, changed in place.
+
+    Returns:
+        dict: DIS_ECRO_TRAC keyword changed in place.
+
+        Raises '<F>' in case of error.
+    """
+    #
+    # jean-luc.flejou@edf.fr
+    #
+    def _message(num,mess=''):
+        UTMESS('F', 'DISCRETS_62',
+               valk=('DIS_ECRO_TRAC', 'FX=f(DX) | FTAN=f(DTAN)', mess),
+               vali=num)
+
+    precis = 1.0e-08
+    #
+    Clefs = keywords
+    #
+    Clefs['ECRO'] = 0.0
+    if 'FX' in Clefs:
+        iffx = True
+        fct = Clefs['FX']
+    elif 'FTAN' in Clefs:
+        iffx = False
+        fct = Clefs['FTAN']
+        if 'ECROUISSAGE' in Clefs:
+            Ecro = Clefs['ECROUISSAGE']
+            if Ecro == 'ISOTROPE':
+                Clefs['ECRO'] = 1.0
+            elif Ecro == 'CINEMATIQUE':
+                Clefs['ECRO'] = 2.0
+            # Suppression de la Clef ECROUISSAGE
+            del Clefs['ECROUISSAGE']
+        else:
+            _message(1)
+    else:
+        _message(2)
+    # Les vérifications sur la fonction
+    #       interpolation LIN LIN
+    #       prolongée à gauche et à droite exclue
+    #       paramètre 'DX' ou 'DTAN'
+    OkFct = type(fct) is Function
+    param = fct.Parametres()
+    OkFct = OkFct and param['INTERPOL'][0] == 'LIN'
+    OkFct = OkFct and param['INTERPOL'][1] == 'LIN'
+    OkFct = OkFct and param['PROL_DROITE'] == 'EXCLU'
+    OkFct = OkFct and param['PROL_GAUCHE'] == 'EXCLU'
+    if iffx:
+        OkFct = OkFct and param['NOM_PARA'] == 'DX'
+    else:
+        OkFct = OkFct and param['NOM_PARA'] == 'DTAN'
+    if not OkFct:
+        _message(3, "%s" % param)
+    # avoir 3 points minimum ou exactement
+    absc, ordo = fct.Valeurs()
+    if iffx:
+        OkFct = OkFct and len(absc) >= 3
+    else:
+        if Clefs['ECRO'] == 1:
+            OkFct = OkFct and len(absc) >= 3
+        elif Clefs['ECRO'] == 2:
+            OkFct = OkFct and len(absc) == 3
+    #
+    if not OkFct:
+        _message(4, "%s" % len(absc))
+    # Point n°1: (DX=0, FX=0)
+    dx = absc[0]
+    fx = ordo[0]
+    OkFct = OkFct and dx >= 0.0 and abs(dx) <= precis
+    OkFct = OkFct and fx >= 0.0 and abs(fx) <= precis
+    if not OkFct:
+        _message(5,"[%s %s]" % (dx, fx))
+    # FX et DX sont strictement positifs, dFx >0 , dDx >0
+    #   Au lieu de la boucle, on peut faire :
+    #       xx=np.where(np.diff(absc) <= 0.0 or np.diff(ordo) <= 0.0)[0]
+    #       if ( len(xx) != 0):
+    #           message 6 : absc[xx[0]] ordo[xx[0]] absc[xx[0]+1] ordo[xx[0]+1]
+    #       dfx= np.diff(ordo)/np.diff(absc)
+    #       xx=np.where(np.diff(dfx) <= 0.0 )[0]
+    #       if ( len(xx) != 0):
+    #           message 7 : xx[0] dfx[xx[0]] dfx[xx[0]+1]
+    for ii in range(1, len(absc)):
+        if absc[ii] <= dx or ordo[ii] <= fx:
+            _message(6, "Ddx, Dfx > 0 : p(i)[%s %s]  "
+                     "p(i+1)[%s %s]" % (dx, fx, absc[ii], ordo[ii]))
+        if ii == 1:
+            dfx = (ordo[ii] - fx)/(absc[ii] - dx)
+            raidex = dfx
+        else:
+            dfx = (ordo[ii] - fx)/(absc[ii] - dx)
+            if dfx > raidex:
+                _message(7, "(%d) : %s > %s" % (ii, dfx, raidex))
+
+        dx = absc[ii]
+        fx = ordo[ii]
+        raidex = dfx
+
+    return Clefs
+
+
+def check_dis_choc_endo(keywords):
+    """Check for functions for DIS_CHOC_ENDO
+
+    Arguments:
+        keywords (dict): DIS_CHOC_ENDO keyword, changed in place.
+
+    Returns:
+        dict: DIS_CHOC_ENDO keyword changed in place. Raises '<F>' in case of
+        error.
+    """
+    #
+    # jean-luc.flejou@edf.fr
+    #
+    def _message(num, mess2='', mess3=''):
+        UTMESS('F', 'DISCRETS_63',
+               valk=('DIS_CHOC_ENDO', mess2, mess3),
+               vali=(num,))
+
+    precis = 1.0e-08
+    #
+    Clefs = keywords
+    if 'CRIT_AMOR' in Clefs:
+        if Clefs['CRIT_AMOR'] == 'INCLUS':
+            Clefs['AMORIN'] = 1.0
+        elif Clefs['CRIT_AMOR'] == 'EXCLUS':
+            Clefs['AMORIN'] = 2.0
+        else:
+            Clefs['AMORIN'] = 0.0
+        # Supression de la Clef CRIT_AMOR
+        del Clefs['CRIT_AMOR']
+    else:
+        _message(1)
+
+    # Conditions communes aux 3 fonctions
+    #   paramètre 'DX'
+    #   interpolation LIN LIN
+    #   prolongée à gauche et à droite : constant ou exclue (donc pas linéaire)
+    LesFcts = [Clefs['FX'], Clefs['RIGI_NOR'], Clefs['AMOR_NOR']]
+    LesFctsName = []
+    for fct in LesFcts:
+        OkFct = type(fct) is Function
+        param = fct.Parametres()
+        OkFct = OkFct and param['NOM_PARA'] == 'DX'
+        OkFct = OkFct and param['INTERPOL'][0] == 'LIN'
+        OkFct = OkFct and param['INTERPOL'][1] == 'LIN'
+        OkFct = OkFct and param['PROL_DROITE'] != 'LINEAIRE'
+        OkFct = OkFct and param['PROL_GAUCHE'] != 'LINEAIRE'
+        LesFctsName.append(fct.getName())
+        if not OkFct:
+            _message(2, fct.getName(), "%s" % param)
+    # Même nombre de point, 5 points minimum
+    Fxx, Fxy = Clefs['FX'].Valeurs()
+    Rix, Riy = Clefs['RIGI_NOR'].Valeurs()
+    Amx, Amy = Clefs['AMOR_NOR'].Valeurs()
+    OkFct = len(Fxx) == len(Rix) == len(Amx)
+    OkFct = OkFct and (len(Fxx) >= 5)
+    if not OkFct:
+        _message(3, "%s" % LesFctsName, "%d, %d, %d" % (len(Fxx), len(Rix), len(Amx)))
+    # La 1ère abscisse c'est ZERO
+    x1 = Fxx[0]
+    if not (0.0 <= x1 <= precis):
+        _message(4, "%s" % LesFctsName, "%s" % x1)
+    # Même abscisses pour les 3 fonctions, à la précision près
+    # Abscisses strictement croissantes, à la précision près
+    #   Au lieu de la boucle, on peut faire :
+    #       xx=np.where(np.abs(Fxx-Rix) + np.abs(Fxx-Amx) > precis )[0]
+    #       if ( len(xx) != 0):
+    #           message 5 : xx[0] Fxx[xx[0]] Rix[xx[0]] Amx[xx[0]]
+    #       xx=np.where(np.diff(Fxx)<0 or np.diff(Rix)<0 or np.diff(Amx)<0)[0]
+    #       if ( len(xx) != 0):
+    #           message 6 : xx[0] Fxx[xx[0]] Fxx[xx[0]+1]
+    xp1 = -1.0
+    for ii in range(len(Fxx)):
+        x1 = Fxx[ii]
+        x2 = Rix[ii]
+        x3 = Amx[ii]
+        ddx = abs(x1-x2)+abs(x1-x3)
+        if ddx > precis:
+            _message(5, "%s" % LesFctsName, "(%d) : %s, %s, %s" % (ii+1, x1, x2, x3))
+        if xp1 >= x1:
+            _message(6, "%s" % LesFctsName, "(%d) : %s, %s" % (ii+1, xp1, x1))
+        xp1 = x1
+    # FX : les 2 premiers points ont la même valeur à la précision relative près
+    if abs(Fxy[0]-Fxy[1]) > Fxy[0]*precis:
+        _message(7, Clefs['FX'].getName())
+    # RIGI_NOR : les 2 premiers points ont la même valeur à la précision relative près
+    if abs(Riy[0]-Riy[1]) > Riy[0]*precis:
+        _message(8, Clefs['RIGI_NOR'].getName())
+    # RIGI_NOR : pente décroissante, à partir du 3ème point.
+    #   Au lieu de la boucle, on peut faire :
+    #       xx=np.where(np.diff(Riy[2:]) > 0.0 )[0]+2
+    #       if ( len(xx) != 0):
+    #           message 9 : xx[0] Riy[xx[0]] Riy[xx[0]+1]
+    pente = Riy[2]
+    for ii in range(3, len(Riy)):
+        if pente < Riy[ii]:
+            _message(9, "%s" % Clefs['RIGI_NOR'].getName(),"(%d) : %s %s" %(ii,pente, Riy[ii]))
+        pente = Riy[ii]
+    # --------------------------------------------------------------- Fin des vérifications
+    # Création des fonctions
+    newFx = Function()
+    newFx.setResultName('Force   (plast cumulée)')
+    newRi = Function()
+    newRi.setResultName('Raideur (plast cumulée)')
+    newAm = Function()
+    newAm.setResultName('Amort.  (plast cumulée)')
+    newFx.setExtrapolation('CC')
+    newRi.setExtrapolation('CC')
+    newAm.setExtrapolation('CC')
+    newFx.setInterpolation('LIN LIN')
+    newRi.setInterpolation('LIN LIN')
+    newAm.setInterpolation('LIN LIN')
+    newFx.setParameterName('PCUM')
+    newRi.setParameterName('PCUM')
+    newAm.setParameterName('PCUM')
+    # Modification des abscisses pour avoir la plasticité cumulée et plus le déplacement
+    pp9 = numpy.round(numpy.array(Fxx) - numpy.array(Fxy) / numpy.array(Riy), 10)
+    # Le 1er point a une abscisse négative et la valeur du 2ème point
+    pp9[0] = -pp9[2]
+    # Vérification que p est strictement croissant.
+    #   Au lieu de la boucle, on peut faire :
+    #       xx=np.where(np.diff(pp9) < 0)[0]
+    #       if ( len(xx) != 0):
+    #           message 10 : xx[0] pp9[xx[0]] pp9[xx[0]+1]
+    pp = pp9[0]
+    for ii in range(1, len(pp9)):
+        if pp > pp9[ii]:
+            _message(10, mess3="(%d) : %s %s" % (ii, pp, pp9[ii]))
+        pp = pp9[ii]
+    #
+    # Affectations des valeurs
+    newFx.setValues(pp9, Fxy)
+    newRi.setValues(pp9, Riy)
+    newAm.setValues(pp9, Amy)
+    # Affectation des nouvelles fonctions
+    Clefs['FXP'] = newFx
+    Clefs['RIGIP'] = newRi
+    Clefs['AMORP'] = newAm
+    #
+    return Clefs

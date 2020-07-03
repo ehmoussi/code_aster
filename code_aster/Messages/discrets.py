@@ -48,7 +48,7 @@ La raideur tangente : 1/K1 + 1/K3 + K2/(K1*K3) ne doit pas être nulle ou trop p
 
 Pour information :
    Modèle   : <%(k1)s>, Option   : <%(k2)s>
-   Comportement : <%(k3)s>, Relation : <%(k4)s>
+   Comportement : <%(k3)s>, Matériau : <%(k4)s>
    Maille   : <%(k5)s>
 """),
 
@@ -72,7 +72,7 @@ Pour information :
 """),
 
     7 : _("""
-Le Comportement <%(k4)s> affecté à un DISCRET est non valide.
+La relation <%(k4)s> affectée à un DISCRET est non valide.
 
 Pour information :
    Modèle   : <%(k1)s>, Option   : <%(k2)s>
@@ -160,7 +160,7 @@ Pour ce comportement la modélisation doit être 3D.
 
 Pour information :
    Modèle   : <%(k1)s>, Option   : <%(k2)s>
-   Comportement : <%(k3)s>, Relation : <%(k4)s>
+   Comportement : <%(k3)s>, Matériau : <%(k4)s>
    Maille   : <%(k5)s>
 """),
 
@@ -254,22 +254,50 @@ possible d'extrapoler la fonction au delà de %(r1)f
 """),
 
     62 : _("""
-Le Comportement <%(k1)s> est non valide.
-La définition de la fonction <%(k2)s> est incorrecte.
-    - Elle doit être définie avec DEFI_FONCTION
-    - Le premier point doit être (0.0, 0.0)
-    - Le nom du paramètre est 'DX' pour 'FX' ou 'DTAN' pour 'FTAN'
-    - Si FX  la fonction est définie par au moins 3 points
-    - Si FTAN la fonction est définie par :
-        - au moins   3 points, dans le cas isotrope
-        - exactement 3 points, dans le cas cinématique
-    - L'interpolation doit être linéaire entre les points
-    - La fonction doit être monotone croissante
-    - La tangente à la fonction doit être toujours inférieure ou égale à la pente initiale
-Elle ne peut pas être :
-    - une constante
-    - une nappe
-    - prolongée à gauche ou à droite
+Le Comportement %(k1)s est non valide.
+La définition de la fonction %(k2)s est incorrecte.
+    1)  Il manque la définition de ECROUISSAGE
+    2)  FX ou FTAN non définie
+    3)  Elle doit être définie avec DEFI_FONCTION
+        Le nom du paramètre est 'DX' pour 'FX' ou 'DTAN' pour 'FTAN'
+        L'interpolation doit être linéaire entre les points
+        Elle ne peut pas être :
+            - une constante
+            - une nappe
+            - prolongée à gauche ou à droite
+    4)  Si FX  la fonction est définie par au moins 3 points
+        Si FTAN la fonction est définie par :
+            - au moins   3 points, dans le cas isotrope
+            - exactement 3 points, dans le cas cinématique
+    5)  Le premier point doit être (0.0, 0.0)
+    6)  La fonction doit être monotone croissante
+    7)  La tangente à la fonction doit être toujours inférieure ou égale à la pente initiale
+----------------------------------------------------------
+Condition non respectée :: <%(i1)d>
+    %(k3)s
+"""),
+
+    63 : _("""
+Le Comportement %(k1)s est non valide.
+La définition d'une des fonctions %(k2)s est incorrecte.
+    1)  CRIT_AMOR non définie
+    2)  Elles doivent être définie avec DEFI_FONCTION
+        Le nom du paramètre est 'DX'
+        L'interpolation doit être linéaire entre les points
+        Elles ne peuvent pas :
+            - Être une constante ou une nappe
+            - Prolongée linéairement à gauche ou à gauche
+    3)  Les fonctions sont définies par au moins 5 points
+    4)  La 1ère abcisses doit être est 0.0
+    5)  Les abcisses des fonctions doivent être identiques
+    6)  Les abcisses des fonctions doivent être strictement croissantes
+    7)  Pour FX, les 2ères ordonnées doivent être identiques
+    8)  Pour RIGI_NOR, les 2ères ordonnées doivent être identiques
+    9)  Pour RIGI_NOR, la fonction doit être décroissante
+   10)  Le paramètre plastique doit être strictement croissant
+----------------------------------------------------------
+Condition non respectée :: <%(i1)d>
+    %(k3)s
 """),
 
 }

@@ -1,0 +1,210 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+#
+import numpy as NU
+#
+from code_aster import AsterError
+from code_aster.Commands import *
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),
+      DEBUG=_F(SDVERI='OUI'),
+      ERREUR=_F(ERREUR_F='EXCEPTION',),
+      PAR_LOT='NON',)
+
+fmt_raison='-'*80+"""
+
+   Exception interceptee
+   Message : %s
+
+"""+'-'*80+'\n'
+#
+# Les différents plantages
+# 1 : ECROUISSAGE non défini            <== pas possible cf catalogue
+# 2 : FX | FTAN non définie             <== pas possible cf catalogue
+# 3 : Paramètres de la fonction
+# 4 : nb points = %s" % len(absc)
+# 5 : 1er point doit être [ZERO,ZERO]
+# 6 : Ddx ou Dfx > 0
+# 7 : Raideur doit être décroissante
+#
+# --------------------------------------------------------------------------------------------------
+# 0 : Pas de plantage
+# Fonction d'écrouissage
+ldepla   = NU.array( [0.00 , 0.100 , 20.1 ] )
+lforce   = NU.array( [0.00 , 100.0 , 350.0 ] )
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN', ABSCISSE=ldepla, ORDONNEE=lforce, )
+# Définition des matériaux
+Fusib01 =DEFI_MATERIAU(
+    DIS_ECRO_TRAC=_F(FTAN= fctsy, ECROUISSAGE='CINEMATIQUE' ), )
+# --------------------------------------------------------------------------------------------------
+# 4 : Plantage sur nb point
+ldepla   = NU.array( [0.00 , 0.100 , 20.1  , 50.0 ] )
+lforce   = NU.array( [0.00 , 100.0 , 350.0 , 350.0 ] )
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN', ABSCISSE=ldepla, ORDONNEE=lforce, )
+# Définition des matériaux
+is_ok = 0
+try:
+    Fusib01 =DEFI_MATERIAU( DIS_ECRO_TRAC=_F(FTAN= fctsy, ECROUISSAGE='CINEMATIQUE' ), )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_62":
+        is_ok = zz.find(":: <4>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# --------------------------------------------------------------------------------------------------
+# 3 : Plantage sur Paramètres de la fonction
+ldepla   = NU.array( [0.00 , 0.100 , 20.1  ] )
+lforce   = NU.array( [0.00 , 100.0 , 350.0 ] )
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN', ABSCISSE=ldepla, ORDONNEE=lforce,PROL_DROITE='LINEAIRE' )
+# Définition des matériaux
+is_ok = 0
+try:
+    Fusib01 =DEFI_MATERIAU( DIS_ECRO_TRAC=_F(FTAN= fctsy, ECROUISSAGE='CINEMATIQUE' ), )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_62":
+        is_ok = zz.find(":: <3>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# --------------------------------------------------------------------------------------------------
+# 3 : Plantage sur Paramètres de la fonction
+ldepla   = NU.array( [0.00 , 0.100 , 20.1  ] )
+lforce   = NU.array( [0.00 , 100.0 , 350.0 ] )
+fctsy=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lforce,)
+# Définition des matériaux
+is_ok = 0
+try:
+    Fusib01 =DEFI_MATERIAU( DIS_ECRO_TRAC=_F(FTAN= fctsy, ECROUISSAGE='CINEMATIQUE' ), )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_62":
+        is_ok = zz.find(":: <3>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# --------------------------------------------------------------------------------------------------
+# 3 : Plantage sur Paramètres de la fonction
+ldepla   = NU.array( [0.00 , 0.100 , 20.1  ] )
+lforce   = NU.array( [0.00 , 100.0 , 350.0 ] )
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN', ABSCISSE=ldepla, ORDONNEE=lforce,)
+# Définition des matériaux
+is_ok = 0
+try:
+    Fusib01 =DEFI_MATERIAU( DIS_ECRO_TRAC=_F(FX= fctsy ), )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_62":
+        is_ok = zz.find(":: <3>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# --------------------------------------------------------------------------------------------------
+# 5 : Plantage sur 1er point doit être [ZERO,ZERO]
+ldepla   = NU.array( [0.01 , 0.100 , 20.1  ] )
+lforce   = NU.array( [0.00 , 100.0 , 350.0 ] )
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN', ABSCISSE=ldepla, ORDONNEE=lforce,)
+# Définition des matériaux
+is_ok = 0
+try:
+    Fusib01 =DEFI_MATERIAU( DIS_ECRO_TRAC=_F(FTAN= fctsy, ECROUISSAGE='CINEMATIQUE' ), )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_62":
+        is_ok = zz.find(":: <5>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# --------------------------------------------------------------------------------------------------
+# 6 : Ddx ou Dfx > 0
+ldepla   = NU.array( [0.00 , 0.100 , 20.1  ] )
+lforce   = NU.array( [0.00 , 100.0 , 50.0 ] )
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN', ABSCISSE=ldepla, ORDONNEE=lforce,)
+# Définition des matériaux
+is_ok = 0
+try:
+    Fusib01 =DEFI_MATERIAU( DIS_ECRO_TRAC=_F(FTAN= fctsy, ECROUISSAGE='CINEMATIQUE' ), )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_62":
+        is_ok = zz.find(":: <6>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# --------------------------------------------------------------------------------------------------
+# 7 : Raideur doit être décroissante : dfx=%s  raidex=%s" % (dfx,raidex)
+ldepla   = NU.array( [0.00 , 0.100 ,   0.2  ] )
+lforce   = NU.array( [0.00 , 100.0 , 500.0 ] )
+fctsy=DEFI_FONCTION(NOM_PARA='DTAN', ABSCISSE=ldepla, ORDONNEE=lforce,)
+# Définition des matériaux
+is_ok = 0
+try:
+    Fusib01 =DEFI_MATERIAU( DIS_ECRO_TRAC=_F(FTAN= fctsy, ECROUISSAGE='CINEMATIQUE' ), )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_62":
+        is_ok = zz.find(":: <7>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+
+FIN()

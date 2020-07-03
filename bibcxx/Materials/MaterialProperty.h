@@ -255,45 +255,6 @@ class BetonRagMaterialPropertyClass : public GenericMaterialPropertyClass {
 typedef boost::shared_ptr< BetonRagMaterialPropertyClass > BetonRagMaterialPropertyPtr;
 
 /**
- * @class DisEcroTracMaterialPropertyClass
- * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau DisEcroTrac
- * @author Jean-Pierre Lefebvre
- */
-class DisEcroTracMaterialPropertyClass : public GenericMaterialPropertyClass {
-  public:
-    /**
-     * @brief Constructeur
-     */
-    DisEcroTracMaterialPropertyClass() {
-        // Mot cle "DIS_ECRO_TRAC" dans Aster
-        _asterName = "DIS_ECRO_TRAC";
-
-        // Parametres matériau
-        this->addFunctionProperty( "Fx", ElementaryMaterialPropertyDataStructure( "FX", false ) );
-        this->addFunctionProperty( "Ftan",
-                                   ElementaryMaterialPropertyDataStructure( "FTAN", false ) );
-        this->addConvertibleProperty(
-            "Ecrouissage",
-            ElementaryMaterialPropertyConvertible(
-                "ECRO", StringToRealValue( {{"ISOTROPE", 1.}, {"CINEMATIQUE", 2.}} ), false ) );
-    };
-
-    /**
-     * @brief Get name link to the class
-     * @return name
-     */
-    static std::string getName() { return "DIS_ECRO_TRAC"; };
-
-    /**
-     * @brief To know if a MaterialProperty has ConvertibleValues
-     */
-    static bool hasConvertibleValues() { return true; };
-};
-
-/** @typedef Pointeur intelligent vers un comportement materiau DisEcroTrac */
-typedef boost::shared_ptr< DisEcroTracMaterialPropertyClass > DisEcroTracMaterialPropertyPtr;
-
-/**
  * @class CableGaineFrotMaterialPropertyClass
  * @brief Classe fille de GenericMaterialPropertyClass definissant un materiau CableGaineFrot
  */

@@ -82,16 +82,6 @@ void exportMaterialPropertyToPython() {
         .def( "hasConvertibleValues", &BetonRagMaterialPropertyClass::hasConvertibleValues )
         .staticmethod( "hasConvertibleValues" );
 
-    py::class_< DisEcroTracMaterialPropertyClass, DisEcroTracMaterialPropertyPtr,
-                py::bases< GenericMaterialPropertyClass > >( "DisEcroTracMaterialProperty",
-                                                                 py::no_init )
-        .def( "__init__",
-              py::make_constructor(&initFactoryPtr< DisEcroTracMaterialPropertyClass >))
-        .def( "getName", &DisEcroTracMaterialPropertyClass::getName )
-        .staticmethod( "getName" )
-        .def( "hasConvertibleValues", &DisEcroTracMaterialPropertyClass::hasConvertibleValues )
-        .staticmethod( "hasConvertibleValues" );
-
     py::class_< ElasMetaMaterialPropertyClass, ElasMetaMaterialPropertyPtr,
                 py::bases< GenericMaterialPropertyClass > >( "ElasMetaMaterialProperty",
                                                                  py::no_init )

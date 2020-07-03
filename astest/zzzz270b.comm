@@ -1,0 +1,349 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+#
+import numpy as NU
+#
+from code_aster import AsterError
+from code_aster.Commands import *
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET', ),
+      DEBUG=_F(SDVERI='OUI'),
+      ERREUR=_F(ERREUR_F='EXCEPTION',),
+      PAR_LOT='NON',)
+
+fmt_raison='-'*80+"""
+
+   Exception interceptee
+   Message : %s
+
+"""+'-'*80+'\n'
+#
+# Les différents plantages
+#  1 : CRIT_AMOR non défini                                 <== pas possible cf catalogue
+#  2 : paramètres
+#  3 : Nb points
+#  4 : La 1ère abscisse doit être ZERO
+#  5 : Abscisses différentes
+#  6 : Abscisses strictement croissantes                    <== pas possible à cause de DEFI_FONCTION
+#  7 : FX : Même valeur pour les 2 premiers points
+#  8 : RIGI_NOR : Même valeur pour les 2 premiers points
+#  9 : RIGI_NOR : La pente doit être décroissante
+# 10 : Le paramètre plastique doit être strictement croissant
+#
+# --------------------------------------------------------------------------------------------------
+# 0 : Pas de plantage
+# Fonction d'écrouissage
+ldepla = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+lraide = NU.array( [2.00, 2.00, 2.00, 2.000, 2.000,  2.000,  2.000,] )*1000.0
+# Amortissement
+lamort = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+#
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lforce,)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lraide,)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lamort,)
+#
+mater01=DEFI_MATERIAU(
+    DIS_CHOC_ENDO=_F(
+        FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+        DIST_1   = 11.0, DIST_2   = 22.0,
+        CRIT_AMOR = 'INCLUS',
+    ),
+)
+# IMPR_CO(UNITE=6,CONCEPT=_F(NOM=mater01),NIVEAU=2,ATTRIBUT='OUI',)
+# -------------------------------------------------------------------------------------------------
+# 2 : Plantage sur paramètres
+ldepla = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+lraide = NU.array( [2.00, 2.00, 2.00, 2.000, 2.000,  2.000,  2.000,] )*1000.0
+# Amortissement
+lamort = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lforce,
+                    PROL_DROITE='LINEAIRE',)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lraide,
+                    PROL_DROITE='EXCLU',)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lamort,
+                    PROL_GAUCHE='LINEAIRE',PROL_DROITE='CONSTANT',)
+# Définition des matériaux
+is_ok = 0
+try:
+    mater01=DEFI_MATERIAU(
+        DIS_CHOC_ENDO=_F(
+            FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+            DIST_1   = 11.0, DIST_2   = 22.0,
+            CRIT_AMOR = 'INCLUS',
+        ),
+    )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_63":
+        is_ok = zz.find(":: <2>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# -------------------------------------------------------------------------------------------------
+# 3 : Nb points
+ldepla = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+ldepla1 = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000, 25.000,] )/10.0
+lraide  = NU.array( [2.00, 2.00, 2.00, 2.000, 2.000,  2.000,  2.000,  2.000,] )*1000.0
+# Amortissement
+lamort = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla,  ORDONNEE=lforce,)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lraide,)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla,  ORDONNEE=lamort,)
+# Définition des matériaux
+is_ok = 0
+try:
+    mater01=DEFI_MATERIAU(
+        DIS_CHOC_ENDO=_F(
+            FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+            DIST_1   = 11.0, DIST_2   = 22.0,
+            CRIT_AMOR = 'INCLUS',
+        ),
+    )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_63":
+        is_ok = zz.find(":: <3>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# -------------------------------------------------------------------------------------------------
+# 4 : La 1ère abscisse doit être ZERO
+ldepla = NU.array( [0.01, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+lraide  = NU.array( [2.00, 2.00, 2.00, 2.000, 2.000,  2.000,  2.000,] )*1000.0
+# Amortissement
+lamort = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lforce,)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lraide,)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lamort,)
+# Définition des matériaux
+is_ok = 0
+try:
+    mater01=DEFI_MATERIAU(
+        DIS_CHOC_ENDO=_F(
+            FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+            DIST_1   = 11.0, DIST_2   = 22.0,
+            CRIT_AMOR = 'INCLUS',
+        ),
+    )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_63":
+        is_ok = zz.find(":: <4>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# -------------------------------------------------------------------------------------------------
+# 5 : Abscisses différentes
+ldepla1 = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+ldepla2 = NU.array( [0.00, 2.00, 5.03, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce  = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+lraide  = NU.array( [2.00, 2.00, 2.00, 2.000, 2.000,  2.000,  2.000,] )*1000.0
+# Amortissement
+lamort  = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lforce,)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla2, ORDONNEE=lraide,)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lamort,)
+# Définition des matériaux
+is_ok = 0
+try:
+    mater01=DEFI_MATERIAU(
+        DIS_CHOC_ENDO=_F(
+            FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+            DIST_1   = 11.0, DIST_2   = 22.0,
+            CRIT_AMOR = 'INCLUS',
+        ),
+    )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_63":
+        is_ok = zz.find(":: <5>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# -------------------------------------------------------------------------------------------------
+# 7 : FX : Même valeur pour les 2 premiers points
+ldepla1 = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce  = NU.array( [4.00, 4.10, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+lraide  = NU.array( [2.00, 2.00, 2.00, 2.000, 2.000,  2.000,  2.000,] )*1000.0
+# Amortissement
+lamort  = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lforce,VERIF='NON',)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lraide,VERIF='NON',)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lamort,VERIF='NON',)
+# Définition des matériaux
+is_ok = 0
+try:
+    mater01=DEFI_MATERIAU(
+        DIS_CHOC_ENDO=_F(
+            FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+            DIST_1   = 11.0, DIST_2   = 22.0,
+            CRIT_AMOR = 'INCLUS',
+        ),
+    )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_63":
+        is_ok = zz.find(":: <7>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# -------------------------------------------------------------------------------------------------
+# 8 : RIGI_NOR : Même valeur pour les 2 premiers points
+ldepla1 = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce  = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+lraide  = NU.array( [2.00, 2.20, 2.00, 2.000, 2.000,  2.000,  2.000,] )*1000.0
+# Amortissement
+lamort  = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lforce,VERIF='NON',)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lraide,VERIF='NON',)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lamort,VERIF='NON',)
+# Définition des matériaux
+is_ok = 0
+try:
+    mater01=DEFI_MATERIAU(
+        DIS_CHOC_ENDO=_F(
+            FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+            DIST_1   = 11.0, DIST_2   = 22.0,
+            CRIT_AMOR = 'INCLUS',
+        ),
+    )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_63":
+        is_ok = zz.find(":: <8>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# -------------------------------------------------------------------------------------------------
+#  9 : RIGI_NOR : La pente doit être décroissante
+ldepla1 = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce  = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+lraide  = NU.array( [2.00, 2.00, 2.00, 2.500, 1.800,  1.700,  1.500,] )*1000.0
+# Amortissement
+lamort  = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lforce,VERIF='NON',)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lraide,VERIF='NON',)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lamort,VERIF='NON',)
+# Définition des matériaux
+is_ok = 0
+try:
+    mater01=DEFI_MATERIAU(
+        DIS_CHOC_ENDO=_F(
+            FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+            DIST_1   = 11.0, DIST_2   = 22.0,
+            CRIT_AMOR = 'INCLUS',
+        ),
+    )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_63":
+        is_ok = zz.find(":: <9>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+# -------------------------------------------------------------------------------------------------
+# 10 : Le paramètre plastique doit être strictement croissant
+ldepla1 = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce  = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur
+lraide  = NU.array( [2.00, 2.00, 2.00, 2.000, 0.800,  0.700,  0.500,] )*1000.0
+# Amortissement
+lamort  = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lforce,VERIF='NON',)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lraide,VERIF='NON',)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla1, ORDONNEE=lamort,VERIF='NON',)
+# Définition des matériaux
+is_ok = 0
+try:
+    mater01=DEFI_MATERIAU(
+        DIS_CHOC_ENDO=_F(
+            FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+            DIST_1   = 11.0, DIST_2   = 22.0,
+            CRIT_AMOR = 'INCLUS',
+        ),
+    )
+except AsterError as err:
+    zz = str(err)
+    #print(fmt_raison % zz )
+    if err.id_message == "DISCRETS_63":
+        is_ok = zz.find(":: <10>") != -1
+
+TAB11=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),
+                        _F(PARA='BOOLEEN',LISTE_I=is_ok,),),)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE', VALE_CALC_I=1, VALE_REFE_I=1,
+    NOM_PARA='BOOLEEN', TABLE=TAB11,
+    FILTRE=_F(NOM_PARA='TEST', VALE_K='VALEUR  ',),
+)
+
+FIN()
