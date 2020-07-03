@@ -62,11 +62,11 @@ implicit none
 #include "asterfort/disc_isotr.h"
 #include "blas/dcopy.h"
 !
-aster_logical, intent(in) :: lMatr, lVect, lSigm, lMatrPred, lVari
+aster_logical, intent(in)    :: lMatr, lVect, lSigm, lMatrPred, lVari
 character(len=*), intent(in) :: type_comp, rela_comp
-character(len=*) :: nomte
-integer :: ndim, nbt, nno, nc, iret
-real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+character(len=*)             :: nomte
+integer                      :: ndim, nbt, nno, nc, iret
+real(kind=8)                 :: ulm(12), dul(12), pgl(3, 3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,15 +77,16 @@ real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
     character(len=8) :: k8bid
     character(len=24) :: messak(6)
 !   pour le matériau
-    integer      :: codret(1)
-    real(kind=8) :: valres(1)
+    integer             :: codret(1)
+    real(kind=8)        :: valres(1)
+    character(len=16)   :: materiau
 !   pour la loi de comportement
-    integer :: nbpara, nbfct, iloi
-    parameter  (nbpara=2, nbfct=1*5)
-    integer          :: ldcfct(nbfct)
-    real(kind=8)     :: ldcpar(nbpara)
-    real(kind=8)     :: temps0, temps1, dtemps
-    character(len=8) :: ldccar(1)
+    integer, parameter      :: nbpara=2, nbfct=1*5
+    integer                 :: ldcfct(nbfct)
+    real(kind=8)            :: ldcpar(nbpara)
+    integer                 :: iloi
+    real(kind=8)            :: temps0, temps1, dtemps
+    character(len=8)        :: ldccar(1)
 !   Équations du système
     integer :: nbequa, nbdecp
     parameter  (nbequa=14)
@@ -146,10 +147,11 @@ real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
     ASSERT(nbmat.eq.1)
 !   Adresse du matériau codé
     imate = jmat+zi(jmat+nbmat+1)
-!   Recherche du comportement dans la SD compor
+!   Recherche du matériau dans la SD compor
+    materiau = 'DIS_ECRO_TRAC'
     ipi = 0
     do kk = 1, zi(imate+1)
-        if ( zk32(zi(imate)+kk-1)(1:16) .eq. rela_comp ) then
+        if ( zk32(zi(imate)+kk-1)(1:16) .eq. materiau ) then
             ipi = zi(imate+2+kk-1)
             goto 10
         endif
@@ -157,7 +159,7 @@ real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
     messak(1) = nomte
     messak(2) = 'NON_LINEAR'
     messak(3) = type_comp
-    messak(4) = rela_comp
+    messak(4) = materiau
     call tecael(iadzi, iazk24)
     messak(5) = zk24(iazk24-1+3)
     call utmess('F', 'DISCRETS_7', nk=5, valk=messak)
@@ -230,8 +232,8 @@ real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
     dtemps = temps1 - temps0
 !   contrôle de rk5 : découpage successif, erreur maximale
     call jevech('PCARCRI', 'L', icarcr)
-!   nombre d'itérations maxi (ITER_INTE_MAXI)
-    nbdecp = int(zr(icarcr))
+!   nombre d'itérations maxi (ITER_INTE_MAXI=-20 par défaut)
+    nbdecp = abs( nint(zr(icarcr)) )
 !   tolérance de convergence (RESI_INTE_RELA)
     errmax = zr(icarcr+2)
 !   équations du système :

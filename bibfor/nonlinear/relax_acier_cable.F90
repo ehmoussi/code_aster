@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -96,8 +96,8 @@ subroutine relax_acier_cable(fami, kpg, ksp, imate, sigm, epsm, deps, vim, optio
     dtemps = temps1 - temps0
 !   contrôle de rk5 : découpage successif, erreur maximale
     call jevech('PCARCRI', 'L', icarcr)
-!   nombre d'itérations maxi (ITER_INTE_MAXI)
-    nbdecp = int(zr(icarcr))
+!   nombre d'itérations maxi (ITER_INTE_MAXI=-20 par défaut)
+    nbdecp = abs( nint(zr(icarcr)) )
 !   tolérance de convergence (RESI_INTE_RELA)
     errmax = zr(icarcr+2)
 !   Température à t-

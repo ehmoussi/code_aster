@@ -1,0 +1,26 @@
+ %
+ COOR_3D
+ N1        0.00  0.00  0.00
+ N2        0.10  0.00  0.00
+ FINSF
+ %
+ SEG2
+ M1       N1       N2
+ FINSF
+ %
+ GROUP_NO
+ PT1
+ N1
+ FINSF
+ %
+ GROUP_NO
+ PT2
+ N2
+ FINSF
+ %
+ GROUP_MA
+ GAC
+ M1
+ FINSF
+ %
+ FIN

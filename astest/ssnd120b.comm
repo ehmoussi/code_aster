@@ -1,0 +1,306 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+#
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='NON'))
+# SDVERI='NON' car la verification est trop couteuse en CPU
+import numpy as NU
+
+mail=LIRE_MAILLAGE(UNITE=20,FORMAT='ASTER')
+
+modele=AFFE_MODELE(MAILLAGE=mail,
+    AFFE=_F(GROUP_MA='GAC', PHENOMENE='MECANIQUE', MODELISATION='DIS_T'),
+)
+
+Raidxyz = 2.0
+Masse   = 1.5
+carael=AFFE_CARA_ELEM(
+    MODELE=modele,
+    DISCRET=(
+        _F(GROUP_MA = 'GAC', REPERE='LOCAL',
+           CARA = 'K_T_D_L', VALE = (Raidxyz, Raidxyz, Raidxyz,),),
+        _F(GROUP_MA = 'GAC', CARA = 'M_T_D_L',  VALE = (Masse,),),
+    ),
+)
+
+depl = 0.10
+charge=AFFE_CHAR_MECA(MODELE=modele,
+    DDL_IMPO=(
+        _F(GROUP_NO='PT2', DX=0.0,  DY=0.0, DZ=0.0,),
+        _F(GROUP_NO='PT1', DX=depl, DY=0.0, DZ=0.0,),
+    ),
+)
+
+rampe=DEFI_FONCTION(
+    NOM_PARA='INST',
+    VALE=( 0.0  ,  0.0,
+           1.0  ,  0.8,
+           2.0  ,  2.0,
+           3.0  ,  5.8,
+           3.5  ,  0.8,
+           5.0  , 10.0,
+           8.0  ,  2.0,
+          10.0  , 15.0,),
+)
+Tfin = 10.0
+#
+#
+ldepla = NU.array( [0.00, 2.00, 5.00, 7.000, 9.500, 13.000, 16.000,] )/10.0
+lforce = NU.array( [4.00, 4.00, 4.50, 4.000, 3.750,  3.500,  3.000,] )*100.0
+# Raideur variable
+lraide = NU.array( [2.00, 2.00, 1.80, 1.400, 1.400,  1.350,  1.330,] )*1000.0
+# Amortissement ne sert pas en statique mais c'est obligatoire de le donner
+lamort = NU.array( [1.00, 1.00, 1.00, 0.800, 0.800,  0.700,  0.600,] )*0.0
+#
+fctfx=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lforce,)
+fctrd=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lraide,)
+fctam=DEFI_FONCTION(NOM_PARA='DX', ABSCISSE=ldepla, ORDONNEE=lamort,)
+#
+grilleac=DEFI_MATERIAU(INFO=2,
+    DIS_CHOC_ENDO=_F(
+        FX       = fctfx, RIGI_NOR = fctrd, AMOR_NOR = fctam,
+        DIST_1   = 0.0, DIST_2   = 0.0,
+        CRIT_AMOR = 'INCLUS',
+    ),
+)
+#
+chmat=AFFE_MATERIAU(MAILLAGE=mail,
+    AFFE=_F(GROUP_MA = 'GAC',  MATER = grilleac),
+)
+# ---------------------------------------------------
+pas1= 0.10
+l_inst1=DEFI_LIST_REEL(DEBUT=0.0,
+    INTERVALLE=(
+        _F(JUSQU_A = 1.0,  NOMBRE= 1),
+        _F(JUSQU_A = 2.0,  PAS   = pas1*2.0),
+        _F(JUSQU_A = Tfin, PAS   = pas1),
+    ),
+)
+
+resu1=STAT_NON_LINE(
+    MODELE      = modele,
+    CHAM_MATER  = chmat,
+    CARA_ELEM   = carael,
+    EXCIT=(
+        _F(CHARGE=charge,FONC_MULT=rampe,),
+    ),
+    COMPORTEMENT=(
+        _F(GROUP_MA='GAC',RELATION='CHOC_ENDO',),
+    ),
+    INCREMENT=_F(LIST_INST=l_inst1,),
+    CONVERGENCE=_F(RESI_REFE_RELA=5.0E-02, EFFORT_REFE=1.0),
+    NEWTON=_F(REAC_INCR=1, MATRICE='TANGENTE', REAC_ITER=1,),
+)
+
+# ---------------------------------------------------
+pas2= 0.005
+l_inst2=DEFI_LIST_REEL(DEBUT=0.0,
+    INTERVALLE=(
+        _F(JUSQU_A = 1.0,  NOMBRE= 1),
+        _F(JUSQU_A = 2.0,  PAS   = pas2*2.0),
+        _F(JUSQU_A = Tfin, PAS   = pas2),
+    ),
+)
+
+resu2=STAT_NON_LINE(
+    MODELE      = modele,
+    CHAM_MATER  = chmat,
+    CARA_ELEM   = carael,
+    EXCIT=(
+        _F(CHARGE=charge,FONC_MULT=rampe,),
+    ),
+    COMPORTEMENT=(
+        _F(GROUP_MA='GAC',RELATION='CHOC_ENDO',),
+    ),
+    INCREMENT=_F(LIST_INST=l_inst2,),
+    CONVERGENCE=_F(RESI_REFE_RELA=5.0E-02, EFFORT_REFE=1.0),
+    NEWTON=_F(REAC_INCR=1, MATRICE='TANGENTE', REAC_ITER=1,),
+)
+#
+DEPL1=RECU_FONCTION(RESULTAT=resu1, NOM_CHAM='DEPL',      NOM_CMP='DX', GROUP_NO='PT1', )
+FORC1=RECU_FONCTION(RESULTAT=resu1, NOM_CHAM='SIEF_ELGA', NOM_CMP='N',  MAILLE='M1', POINT=1 )
+PCUM1=RECU_FONCTION(RESULTAT=resu1, NOM_CHAM='VARI_ELGA', NOM_CMP='V1', MAILLE='M1', POINT=1 )
+#
+DEPL2=RECU_FONCTION(RESULTAT=resu2, NOM_CHAM='DEPL',      NOM_CMP='DX', GROUP_NO='PT1', )
+FORC2=RECU_FONCTION(RESULTAT=resu2, NOM_CHAM='SIEF_ELGA', NOM_CMP='N',  MAILLE='M1', POINT=1 )
+PCUM2=RECU_FONCTION(RESULTAT=resu2, NOM_CHAM='VARI_ELGA', NOM_CMP='V1', MAILLE='M1', POINT=1 )
+#
+#
+# INST             DEPL              FORC              PCUM
+Resultat1 = [
+ 2.0000000000E+00, 2.0000000000E-01,-2.0001462638E+02, 0.0000000000E+00,
+ 2.1000000000E+00, 2.3800000000E-01,-2.7601462638E+02, 0.0000000000E+00,
+ 2.2000000000E+00, 2.7600000000E-01,-3.5201462638E+02, 0.0000000000E+00,
+ 2.5000000000E+00, 3.9000000000E-01,-4.1520124444E+02, 7.5906268464E-02,
+ 3.3000000000E+00, 2.8000000000E-01,-1.1595775952E-02, 2.3361239854E-01,
+ 3.9000000000E+00, 3.2533333333E-01,-1.1595775950E-02, 2.3361239854E-01,
+ 4.0000000000E+00, 3.8666666667E-01,-9.6198838128E+01, 2.3361239854E-01,
+ 4.4000000000E+00, 6.3200000000E-01,-4.4173585305E+02, 2.7721337624E-01,
+ 5.0000000000E+00, 1.0000000000E+00,-3.8001850517E+02, 6.2855705505E-01,
+ 5.8000000000E+00, 7.8666666667E-01,-8.1351838499E+01, 6.2855705505E-01,
+ 8.9000000000E+00, 7.8500000000E-01,-7.9023144969E+01, 6.2855705505E-01,
+ 9.0000000000E+00, 8.5000000000E-01,-1.7002314497E+02, 6.2855705505E-01,
+ 9.1000000000E+00, 9.1500000000E-01,-2.6102314497E+02, 6.2855705505E-01,
+ 9.2000000000E+00, 9.8000000000E-01,-3.5202314497E+02, 6.2855705505E-01,
+ 9.5000000000E+00, 1.1750000000E+00,-3.6609241209E+02, 8.1013137650E-01,
+ 1.0000000000E+01, 1.5000000000E+00,-3.3336940286E+02, 1.1518378695E+00,
+]
+Instant = Resultat1[0::4]
+Deplace = Resultat1[1::4]
+Force   = Resultat1[2::4]
+Pcumul  = Resultat1[3::4]
+motclef = {}; motclef['VALEUR'] = []
+for ii in range(len(Instant)):
+    # Pour Force
+    if ( abs(Force[ii]) > 1.0 ):
+        motclef['VALEUR'].append( _F(FONCTION=FORC1,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Force[ii],),)
+    else:
+        motclef['VALEUR'].append( _F(FONCTION=FORC1,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Force[ii], CRITERE= 'ABSOLU',),)
+    # Pour Pcumul
+    if ( abs(Pcumul[ii]) > 0.001 ):
+        motclef['VALEUR'].append( _F(FONCTION=PCUM1,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Pcumul[ii],),)
+    else:
+        motclef['VALEUR'].append( _F(FONCTION=PCUM1,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Pcumul[ii], CRITERE= 'ABSOLU',),)
+    # Pour Deplace
+    if ( abs(Deplace[ii]) > 0.001 ):
+        motclef['VALEUR'].append( _F(FONCTION=DEPL1,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Deplace[ii],),)
+    else:
+        motclef['VALEUR'].append( _F(FONCTION=DEPL1,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Deplace[ii], CRITERE= 'ABSOLU',),)
+TEST_FONCTION(**motclef)
+#
+# INST             DEPL              FORC              PCUM
+Resultat2 = [
+ 2.0000000000E+00, 2.0000000000E-01,-1.9999787570E+02, 0.0000000000E+00,
+ 2.1000000000E+00, 2.3800000000E-01,-2.7599787570E+02, 0.0000000000E+00,
+ 2.2000000000E+00, 2.7600000000E-01,-3.5199787570E+02, 0.0000000000E+00,
+ 2.5000000000E+00, 3.9000000000E-01,-4.1518164811E+02, 7.5907616765E-02,
+ 3.3000000000E+00, 2.8000000000E-01,-2.5567297446E-03, 2.3361380805E-01,
+ 3.9000000000E+00, 3.2533333333E-01,-2.5567297446E-03, 2.3361380805E-01,
+ 4.0000000000E+00, 3.8666666667E-01,-9.6189531029E+01, 2.3361380805E-01,
+ 4.4000000000E+00, 6.3200000000E-01,-4.4171726875E+02, 2.7722037953E-01,
+ 5.0000000000E+00, 1.0000000000E+00,-3.8000200358E+02, 6.2857009447E-01,
+ 5.8000000000E+00, 7.8666666667E-01,-8.1335336917E+01, 6.2857009447E-01,
+ 8.9000000000E+00, 7.8500000000E-01,-7.9008545293E+01, 6.2857009447E-01,
+ 9.0000000000E+00, 8.5000000000E-01,-1.7000854529E+02, 6.2857009447E-01,
+ 9.1000000000E+00, 9.1500000000E-01,-2.6100854529E+02, 6.2857009447E-01,
+ 9.2000000000E+00, 9.8000000000E-01,-3.5200854529E+02, 6.2857009447E-01,
+ 9.5000000000E+00, 1.1750000000E+00,-3.6609728723E+02, 8.1012978619E-01,
+ 1.0000000000E+01, 1.5000000000E+00,-3.3337555543E+02, 1.1518350835E+00,
+]
+Instant = Resultat2[0::4]
+Deplace = Resultat2[1::4]
+Force   = Resultat2[2::4]
+Pcumul  = Resultat2[3::4]
+motclef = {}; motclef['VALEUR'] = []
+for ii in range(len(Instant)):
+    # Pour Force
+    if ( abs(Force[ii]) > 1.0 ):
+        motclef['VALEUR'].append( _F(FONCTION=FORC2,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Force[ii],),)
+    else:
+        motclef['VALEUR'].append( _F(FONCTION=FORC2,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Force[ii], CRITERE= 'ABSOLU',),)
+    # Pour Pcumul
+    if ( abs(Pcumul[ii]) > 0.001 ):
+        motclef['VALEUR'].append( _F(FONCTION=PCUM2,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Pcumul[ii],),)
+    else:
+        motclef['VALEUR'].append( _F(FONCTION=PCUM2,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Pcumul[ii], CRITERE= 'ABSOLU',),)
+    # Pour Deplace
+    if ( abs(Deplace[ii]) > 0.001):
+        motclef['VALEUR'].append( _F(FONCTION=DEPL2,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Deplace[ii],),)
+    else:
+        motclef['VALEUR'].append( _F(FONCTION=DEPL2,  NOM_PARA='INST', VALE_PARA=Instant[ii],
+                                     VALE_CALC=Deplace[ii], CRITERE= 'ABSOLU',),)
+TEST_FONCTION(**motclef)
+"""
+# Pour l'impression des courbes
+XInstant=DEFI_LIST_REEL(VALE=Instant)
+# LIST_PARA=XInstant,
+#
+VITE1=RECU_FONCTION(RESULTAT=resu1, NOM_CHAM='VARI_ELGA', NOM_CMP='V3', MAILLE='M1', POINT=1 )
+UXAN1=RECU_FONCTION(RESULTAT=resu1, NOM_CHAM='VARI_ELGA', NOM_CMP='V2', MAILLE='M1', POINT=1 )
+JEUX1=RECU_FONCTION(RESULTAT=resu1, NOM_CHAM='VARI_ELGA', NOM_CMP='V4', MAILLE='M1', POINT=1 )
+#
+VITE2=RECU_FONCTION(RESULTAT=resu2, NOM_CHAM='VARI_ELGA', NOM_CMP='V3', MAILLE='M1', POINT=1 )
+UXAN2=RECU_FONCTION(RESULTAT=resu2, NOM_CHAM='VARI_ELGA', NOM_CMP='V2', MAILLE='M1', POINT=1 )
+JEUX2=RECU_FONCTION(RESULTAT=resu2, NOM_CHAM='VARI_ELGA', NOM_CMP='V4', MAILLE='M1', POINT=1 )
+#
+fic_courbe = './REPE_OUT/ssnd120b_filtre_%04d.dat' % (int(pas1*1000))
+unite = DEFI_FICHIER(FICHIER = fic_courbe, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
+IMPR_FONCTION(UNITE=unite, FORMAT='TABLEAU', SEPARATEUR=',', FORMAT_R='E17.10',
+    COURBE=(
+        _F(FONCTION=DEPL1, LIST_PARA=XInstant,),
+        _F(FONCTION=FORC1, LIST_PARA=XInstant,),
+        _F(FONCTION=PCUM1, LIST_PARA=XInstant,),
+    ),
+)
+DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1, CONCEPT=(_F(NOM=unite,),),)
+#
+fic_courbe = './REPE_OUT/ssnd120b_filtre_%04d.dat' % (int(pas2*1000))
+unite = DEFI_FICHIER(FICHIER = fic_courbe, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
+IMPR_FONCTION(UNITE=unite, FORMAT='TABLEAU', SEPARATEUR=',', FORMAT_R='E17.10',
+    COURBE=(
+        _F(FONCTION=DEPL2, LIST_PARA=XInstant,),
+        _F(FONCTION=FORC2, LIST_PARA=XInstant,),
+        _F(FONCTION=PCUM2, LIST_PARA=XInstant,),
+    ),
+)
+DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1, CONCEPT=(_F(NOM=unite,),),)
+
+fic_courbe = './REPE_OUT/ssnd120b_%04d.dat' % (int(pas1*1000))
+unite = DEFI_FICHIER(FICHIER = fic_courbe, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
+IMPR_FONCTION(UNITE=unite, FORMAT='TABLEAU', SEPARATEUR=',', FORMAT_R='E17.10',
+    COURBE=(
+        _F(FONCTION=DEPL1,),
+        _F(FONCTION=FORC1,),
+        _F(FONCTION=PCUM1,),
+        _F(FONCTION=VITE1,),
+        _F(FONCTION=UXAN1,),
+        _F(FONCTION=JEUX1,),
+    ),
+)
+DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1, CONCEPT=(_F(NOM=unite,),),)
+#
+fic_courbe = './REPE_OUT/ssnd120b_%04d.dat' % (int(pas2*1000))
+unite = DEFI_FICHIER(FICHIER = fic_courbe, ACTION='ASSOCIER', TYPE='ASCII',ACCES='NEW')
+IMPR_FONCTION(UNITE=unite, FORMAT='TABLEAU', SEPARATEUR=',', FORMAT_R='E17.10',
+    COURBE=(
+        _F(FONCTION=DEPL2,),
+        _F(FONCTION=FORC2,),
+        _F(FONCTION=PCUM2,),
+        _F(FONCTION=VITE2,),
+        _F(FONCTION=UXAN2,),
+        _F(FONCTION=JEUX2,),
+    ),
+)
+DEFI_FICHIER(UNITE = unite, ACTION='LIBERER',)
+DETRUIRE(INFO=1, CONCEPT=(_F(NOM=unite,),),)
+"""
+FIN()

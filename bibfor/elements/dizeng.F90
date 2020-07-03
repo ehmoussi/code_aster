@@ -67,11 +67,11 @@ implicit none
 #include "asterfort/zengen.h"
 #include "blas/dcopy.h"
 !
-aster_logical, intent(in) :: lMatr, lVect, lSigm, lMatrPred, lVari
+aster_logical, intent(in)    :: lMatr, lVect, lSigm, lMatrPred, lVari
 character(len=*), intent(in) :: type_comp, rela_comp
-character(len=*) :: nomte
-integer :: ndim, nbt, nno, nc, iret
-real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
+character(len=*)             :: nomte
+integer                      :: ndim, nbt, nno, nc, iret
+real(kind=8)                 :: ulm(12), dul(12), pgl(3, 3)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -99,11 +99,10 @@ real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
     parameter (precis=1.0e-08)
 !
 !   paramètres issus de DEFI_MATERIAU
-    integer :: nbcar, ie1, ie2, ie3, in3, ia3, is1, is2, is3
-    parameter  (nbcar=8, ie1=1, ie2=2, ie3=3, in3=4, ia3=5, is1=6,is2=7, is3=8)
-    character(len=16) :: nomcar(nbcar)
-    real(kind=8) :: valcar(nbcar)
-    integer :: codcar(nbcar)
+    integer, parameter  :: nbcar=8, ie1=1, ie2=2, ie3=3, in3=4, ia3=5, is1=6, is2=7, is3=8
+    character(len=16)   :: nomcar(nbcar)
+    real(kind=8)        :: valcar(nbcar)
+    integer             :: codcar(nbcar)
     data nomcar /'K1','K2','K3','C','PUIS_ALPHA','UNSUR_K1','UNSUR_K2','UNSUR_K3'/
 ! --------------------------------------------------------------------------------------------------
 !
@@ -205,8 +204,8 @@ real(kind=8) :: ulm(12), dul(12), pgl(3, 3)
     dtemps = temps1 - temps0
 !   contrôle de rk5 : découpage successif, erreur maximale
     call jevech('PCARCRI', 'L', icarcr)
-!   nombre d'itérations maxi (ITER_INTE_MAXI)
-    nbdecp = int(zr(icarcr))
+!   nombre d'itérations maxi  (ITER_INTE_MAXI=-20 par défaut)
+    nbdecp = abs( nint(zr(icarcr)) )
 !   tolérance de convergence (RESI_INTE_RELA)
     errmax = zr(icarcr+2)
 !   comportement non-linéaire suivant le x local

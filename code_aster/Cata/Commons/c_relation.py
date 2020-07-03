@@ -89,6 +89,8 @@ def C_RELATION( COMMAND ):
                                         "DIS_GOUJ2E_ELAS",
                                         "DIS_GOUJ2E_PLAS",
                                         "DIS_GRICRA",
+                                        "CHOC_ENDO",
+                                        "CHOC_ENDO_PENA",
                                         "DIS_VISC",
                                         "DIS_ECRO_TRAC",
                                         "DRUCK_PRAGER",

@@ -300,4 +300,14 @@ Condition non respectée :: <%(i1)d>
     %(k3)s
 """),
 
+    64 : _("""
+Le matériau <%(k1)s> est non valide.
+Les définitions des fonctions <%(k2)s> sont incorrectes.
+
+Le paramètre plastique doit être strictement croissant.
+
+Vérifiez les messages d'alarme de DEFI_MATERIAU
+"""),
+
+
 }

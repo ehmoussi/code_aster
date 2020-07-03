@@ -34,7 +34,9 @@ use Behaviour_module, only : behaviourOption
 #include "asterfort/dielas.h"
 #include "asterfort/digou2.h"
 #include "asterfort/digric.h"
+#include "asterfort/dichoc_endo_pena.h"
 #include "asterfort/diisotrope.h"
+#include "asterfort/dichoc_endo_ldc.h"
 #include "asterfort/dizeng.h"
 #include "asterfort/infdis.h"
 #include "asterfort/infted.h"
@@ -50,7 +52,7 @@ use Behaviour_module, only : behaviourOption
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! COMPORTEMENT NON-LINEAIRE POUR LES DISCRETS
+!         COMPORTEMENT LINEAIRE ET NON-LINEAIRE POUR LES DISCRETS
 !
 ! person_in_charge: jean-luc.flejou at edf.fr
 ! --------------------------------------------------------------------------------------------------
@@ -93,7 +95,7 @@ use Behaviour_module, only : behaviourOption
     character(len=24) :: messak(5)
     character(len=16) :: defo_comp, rela_comp, type_comp
 !
-    aster_logical :: lVect, lMatr, lVari, lSigm, lMatrPred
+    aster_logical     :: lVect, lMatr, lVari, lSigm, lMatrPred
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -131,6 +133,12 @@ use Behaviour_module, only : behaviourOption
     call jevech('PDEPLMR', 'L', ideplm)
     call jevech('PDEPLPR', 'L', ideplp)
 !
+!   récupération des infos concernant les comportements :
+!    rela_comp   zk16(icompo)      NOM_DU_COMPORTEMENT
+!                zk16(icompo+1)    nbvar = read (zk16(icompo+1),'(i16)')
+!    defo_comp   zk16(icompo+2)    PETIT   PETIT_REAC  GROT_GDEP
+!    type_comp   zk16(icompo+3)    COMP_ELAS   COMP_INCR
+!
 ! - Properties of behaviour
 !
     call jevech('PCOMPOR', 'L', icompo)
@@ -140,12 +148,9 @@ use Behaviour_module, only : behaviourOption
 !
 ! - Select objects to construct from option name
 !
-    call behaviourOption(option, rela_comp,&
-                         lMatr , lVect ,&
-                         lVari , lSigm ,&
-                         codret)
+    call behaviourOption(option, rela_comp, lMatr, lVect, lVari , lSigm , codret)
     lMatrPred = option .eq. 'RIGI_MECA_TANG'
-
+!
     if (defo_comp .ne. 'PETIT') then
         call utmess('A', 'DISCRETS_18')
     endif
@@ -209,28 +214,21 @@ use Behaviour_module, only : behaviourOption
     codret = 0
     if (rela_comp .eq. 'ELAS') then
 !       comportement élastique
-        call dielas(lMatr, lVect, lSigm,&
-                    ndim , nbt, nno, nc, dul, pgl)
+        call dielas(lMatr, lVect, lSigm, ndim , nbt, nno, nc, dul, pgl)
     else if (rela_comp .eq. 'DASHPOT') then
 !       comportement dashpot
-        call didashpot(lMatr, lVect, lSigm,&
-                       nomte, ndim, nbt, nno,&
-                       nc, dul, pgl)
+        call didashpot(lMatr, lVect, lSigm, nomte, ndim, nbt, nno, nc, dul, pgl)
     else if (rela_comp.eq.'DIS_VISC') then
 !       comportement DIS_ZENER
-        call dizeng(lMatrPred, lMatr, lVect, lSigm, lVari,&
-                    type_comp, rela_comp,&
+        call dizeng(lMatrPred, lMatr, lVect, lSigm, lVari, type_comp, rela_comp, &
                     nomte, ndim, nbt, nno, nc, ulm, dul, pgl, codret)
     else if (rela_comp.eq.'DIS_ECRO_TRAC') then
 !       comportement ISOTROPE
-        call diisotrope(lMatrPred, lMatr, lVect, lSigm, lVari,&
-                        type_comp, rela_comp,&
+        call diisotrope(lMatrPred, lMatr, lVect, lSigm, lVari, type_comp, rela_comp, &
                         nomte, ndim, nbt, nno, nc, ulm, dul, pgl, codret)
     else if (rela_comp(1:10).eq.'DIS_GOUJ2E') then
 !       comportement DIS_GOUJON : application : gouj2ech
-        call digou2(option, nomte,&
-                    lMatr, lVect, lSigm, lVari,&
-                    rela_comp,&
+        call digou2(option, nomte, lMatr, lVect, lSigm, lVari, rela_comp, &
                     ndim, nbt, nno, nc, dul, pgl)
     else if (rela_comp.eq.'ARME') then
 !       comportement armement
@@ -238,22 +236,19 @@ use Behaviour_module, only : behaviourOption
                     nbt, nno, nc, ulm, dul, pgl)
     else if (rela_comp.eq.'ASSE_CORN') then
 !       comportement CORNIÈRE
-        call dicora(lMatrPred, lMatr, lVect, lSigm, lVari,&
+        call dicora(lMatrPred, lMatr, lVect, lSigm, lVari, &
                     nbt, nno, nc, ulm, dul, pgl)
     else if (rela_comp.eq.'DIS_GRICRA') then
 !       comportement DIS_GRICRA : liaison grille-crayon combu
-        call digric(option, nomte,&
-                      lMatr, lVect, lSigm, lVari,&
-                      rela_comp, type_comp,&
-                      nno, nc, ulm, dul, pgl)
+        call digric(option, nomte, lMatr, lVect, lSigm, lVari, rela_comp, type_comp, &
+                    nno, nc, ulm, dul, pgl)
     else if (rela_comp.eq.'DIS_CHOC') then
 !       comportement choc sans frottement de coulomb et sans amortissement
-        call dicho0(lMatr, lVect, lSigm, lVari,&
+        call dicho0(lMatr, lVect, lSigm, lVari, &
                     ndim, nbt, nno, nc, ulm, dul, pgl)
     else if (rela_comp.eq.'DIS_CONTACT') then
 !       comportement choc avec frottement de coulomb avec amortissement
-        call dis_contact_frot(option, nomte,&
-                              lMatr, lVect, lSigm, lVari,&
+        call dis_contact_frot(option, nomte, lMatr, lVect, lSigm, lVari, &
                               ndim, nbt, nno, nc, ulm, dul, pgl, codret)
     else if (rela_comp.eq.'DIS_ECRO_CINE') then
 !       comportement DIS_ECRO_CINE : DISCRET_NON_LINE
@@ -263,10 +258,14 @@ use Behaviour_module, only : behaviourOption
                     ndim, nbt, nno, nc, ulm, dul, pgl)
     else if (rela_comp.eq.'DIS_BILI_ELAS') then
 !       comportement DIS_BILI_ELAS : DISCRET_NON_LINE
-        call dibili(nomte, &
-                    lMatr, lVect, lSigm, lVari,&
-                    rela_comp, type_comp,&
+        call dibili(nomte, lMatr, lVect, lSigm, lVari, rela_comp, type_comp, &
                     ndim, nbt, nno, nc, ulm, dul, pgl)
+    else if (zk16(icompo).eq.'CHOC_ENDO') then
+!       comportement CHOC_ENDO      : choc avec flambage
+        call dichoc_endo_ldc(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, codret)
+    else if (zk16(icompo).eq.'CHOC_ENDO_PENA') then
+!       comportement CHOC_ENDO_PENA : choc avec flambage par pénalisation
+        call dichoc_endo_pena(option, nomte, ndim, nbt, nno, nc, ulm, dul, pgl, codret)
     else
 !       si on passe par ici c'est qu'aucun comportement n'est valide
         messak(1) = nomte

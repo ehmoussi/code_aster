@@ -1,0 +1,306 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+#
+DEBUT(PAR_LOT = 'NON',CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+
+import numpy as np
+
+
+
+M_Mobile=1./100.
+Hmaillage=1
+Dist= Hmaillage/2.
+
+# Vitesse initiale
+Vini=2.828427125 *10.
+
+# Duree de calcul
+Duree=0.92
+
+# Pas de calcul
+pas = 0.0002
+
+
+# Parametres DYNA_VIBRA de flambage
+KN=1.
+F_max=1.
+F_max2=0.5
+AMOR_NOR=0.
+AMOR_FL=0.
+LARG_PLAT=1
+ENFO_FL=1
+DEPL_POST_FL=[2., 3.,4.,5.]
+RIGI_POST_FL=[0.2,0.15,0.125,0.1]
+AMOR_POST_FL=[0.,0.,0.,0.]
+
+# Passage des parametres DYNA_VIBRA - A DYNA_NON_LINE
+# Calcul de la liste de deformation totale
+DEPL_TOT_POST_FL=[j+F_max2/RIGI_POST_FL[i] for i,j in enumerate(DEPL_POST_FL)]
+
+# Listes pour un calcul en base physique
+utot=[]
+crit=[]
+kchoc=[]
+cchoc=[]
+
+# Point 0
+utot.append(0.)
+crit.append(F_max)
+kchoc.append(KN)
+cchoc.append(AMOR_NOR)
+
+# debut du plateau
+utot.append(F_max/KN)
+crit.append(F_max)
+kchoc.append(KN)
+cchoc.append(AMOR_NOR)
+
+# bout du plateau
+utot.append(F_max/KN+LARG_PLAT)
+crit.append(F_max)
+kchoc.append(KN)
+cchoc.append(AMOR_NOR)
+
+
+# Pendant le flambage
+nb=100
+u= np.linspace(F_max/KN+LARG_PLAT+1E-8,F_max/KN+LARG_PLAT+ENFO_FL,100,endpoint=True)
+for i in range(len(u)):
+    # u=F_max/KN+LARG_PLAT+ENFO_FL/(nb+1)*(i+1)
+    f=F_max-((F_max2-F_max)/ENFO_FL)*(-u[i]+F_max/KN+LARG_PLAT)
+    c=AMOR_NOR-((AMOR_FL-AMOR_NOR)/ENFO_FL)*(-u[i]+F_max/KN+LARG_PLAT)
+    utot.append(u[i])
+    crit.append(f)
+    kchoc.append(f/(u[i]-LARG_PLAT))
+    cchoc.append(c)
+
+# Entre fl et 1er point
+u= np.linspace(F_max/KN+LARG_PLAT+ENFO_FL+1e-8,DEPL_TOT_POST_FL[0],10,endpoint=False)
+for i in range(len(u)):
+    alpha= (u[i]-(F_max/KN+LARG_PLAT+ENFO_FL))/(DEPL_TOT_POST_FL[0]-(F_max/KN+LARG_PLAT+ENFO_FL))
+    defpla = (LARG_PLAT)+alpha*(DEPL_POST_FL[0]-(LARG_PLAT))
+    rigifl = F_max2/(u[i]-defpla)
+    cfl = AMOR_FL+alpha*(AMOR_POST_FL[0]-AMOR_FL)
+    utot.append(u[i])
+    crit.append(F_max2)
+    kchoc.append(rigifl)
+    cchoc.append(cfl)
+
+
+# Apres flambage
+for i in range(len(DEPL_POST_FL)-1):
+    u= np.linspace(DEPL_TOT_POST_FL[i]+1e-8,DEPL_TOT_POST_FL[i+1]+1e-8,50,endpoint=False)
+    for j in range(len(u)):
+        alpha= (u[j]-DEPL_TOT_POST_FL[i])/(DEPL_TOT_POST_FL[i+1]-DEPL_TOT_POST_FL[i])
+        defpla = DEPL_POST_FL[i]+alpha*(DEPL_POST_FL[i+1]-DEPL_POST_FL[i])
+        rigifl = F_max2/(u[j]-defpla)
+        cfl = AMOR_POST_FL[i]+alpha*(AMOR_POST_FL[i+1]-AMOR_POST_FL[i])
+        utot.append(u[j])
+        crit.append(F_max2)
+        kchoc.append(rigifl)
+        cchoc.append(cfl)
+
+
+MAILLAG0=LIRE_MAILLAGE(FORMAT="ASTER", )
+
+MAILLAGE=CREA_MAILLAGE(MAILLAGE=MAILLAG0,
+    CREA_POI1=(
+        _F(NOM_GROUP_MA='AUTRE', GROUP_NO=('AUTRE',),),
+    ),
+)
+
+
+
+MODELE=AFFE_MODELE( MAILLAGE=MAILLAGE,AFFE=(
+                  _F( PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_T', GROUP_MA = 'STRUC'),
+                  _F( PHENOMENE = 'MECANIQUE', MODELISATION = 'DIS_T', GROUP_MA = 'AUTRE'))
+                                           )
+
+CON_LIM=AFFE_CHAR_MECA( MODELE=MODELE,DDL_IMPO=(
+                              _F(  GROUP_NO = 'ENCASTRE',
+                                         DX = 0., DY = 0., DZ = 0.,),
+                              _F(  GROUP_NO = 'AUTRE',
+                                                  DY = 0., DZ = 0.,))
+                           )
+
+CARA_ELE=AFFE_CARA_ELEM(  MODELE=MODELE,DISCRET=(
+                       _F(  GROUP_MA = 'AUTRE',
+                                 CARA = 'M_T_D_N',
+                                 VALE = ( M_Mobile)),
+                       _F(  GROUP_MA = 'STRUC',  CARA = 'K_T_D_L',
+                                 VALE = ( 0., 0., 0.),
+                                 REPERE = 'GLOBAL'))                )
+
+
+
+SEUIL = DEFI_FONCTION(
+             NOM_PARA = 'DX',
+             ABSCISSE = (utot),
+             ORDONNEE = (crit),
+             PROL_DROITE = 'CONSTANT',
+             PROL_GAUCHE = 'CONSTANT',
+          )
+
+RIGI = DEFI_FONCTION(
+             NOM_PARA = 'DX',
+             ABSCISSE = (utot),
+             ORDONNEE = (kchoc),
+             PROL_DROITE = 'CONSTANT',
+             PROL_GAUCHE = 'CONSTANT',
+          )
+
+AMOR = DEFI_FONCTION(
+             NOM_PARA = 'DX',
+             ABSCISSE = (utot),
+             ORDONNEE = (cchoc),
+             PROL_DROITE = 'CONSTANT',
+             PROL_GAUCHE = 'CONSTANT',
+          )
+
+MAT1 = DEFI_MATERIAU (DIS_CHOC_ENDO=_F(FX=SEUIL,
+                                       RIGI_NOR = RIGI,
+                                       AMOR_NOR = AMOR,
+                                       DIST_1=Dist,
+                                       DIST_2=Dist,
+                                       CRIT_AMOR='INCLUS',
+                                    ), )
+
+
+CHAMPMAT=AFFE_MATERIAU(MAILLAGE=MAILLAGE,AFFE=(_F(GROUP_MA = 'STRUC', MATER = MAT1,),),)
+
+V_INI = CREA_CHAMP(OPERATION= 'AFFE',
+                    MODELE=MODELE,
+                    TYPE_CHAM='NOEU_DEPL_R',
+                    AFFE=_F( GROUP_MA = 'AUTRE', NOM_CMP=('DX'),VALE= -1*Vini),
+                   )
+
+
+
+L_INST1=DEFI_LIST_REEL(DEBUT=0.0, INTERVALLE=_F(JUSQU_A=Duree, PAS=pas,),)
+
+L_INST=DEFI_LIST_INST(DEFI_LIST=_F(LIST_INST=L_INST1),)
+
+
+
+
+DYNA = DYNA_NON_LINE ( MODELE=MODELE,
+                           CHAM_MATER=CHAMPMAT,
+                           CARA_ELEM=CARA_ELE,
+                           EXCIT = (_F(CHARGE = CON_LIM),),
+                           ETAT_INIT = _F(VITE=V_INI,),
+                           COMPORTEMENT=_F(RELATION='CHOC_ENDO_PENA',GROUP_MA='STRUC'),
+                           INCREMENT=_F(LIST_INST=L_INST, INST_FIN=Duree ,),
+                           SCHEMA_TEMPS=_F(SCHEMA='DIFF_CENT',FORMULATION='ACCELERATION',STOP_CFL='NON',),
+                           NEWTON=_F(REAC_ITER=1,),
+                           CONVERGENCE=_F(ITER_GLOB_MAXI=30,),
+                           )
+
+
+
+
+# reference
+Ecin=1./2.*M_Mobile*Vini**2
+# Enfoncement max theorique
+du=(Ecin-(F_max**2/(2*KN)+LARG_PLAT*F_max+ENFO_FL*(F_max2+(F_max-F_max2)/2.)))/F_max2+F_max/KN+LARG_PLAT+ENFO_FL
+
+
+"""
+import matplotlib.pyplot as plt
+plt.plot(utot, kchoc)
+plt.plot([du,du],[0., max(kchoc)],'r')
+plt.show()
+
+D=RECU_FONCTION(RESULTAT=DYNA,
+                   NOM_CHAM='DEPL',
+                   NOM_CMP='DX',
+                   GROUP_NO='AUTRE',
+                   )
+
+V=RECU_FONCTION(RESULTAT=DYNA,
+                   NOM_CHAM='VITE',
+                   NOM_CMP='DX',
+                   GROUP_NO='AUTRE',
+                   )
+
+N=RECU_FONCTION(RESULTAT=DYNA,
+                    NOM_CHAM='SIEF_ELGA',
+                    NOM_CMP='N',
+                    GROUP_MA='STRUC',
+                    POINT=1,
+                    )
+
+
+DEPL  = -1*np.array(D.Ordo())
+
+TEMPS  = np.array(V.Absc())
+EFFORT=-1*np.array(N.Ordo())
+VZ=np.array(V.Ordo())
+
+
+plt.plot(utot, crit)
+plt.plot([du,du],[0., max(crit)],'r')
+plt.plot(DEPL, EFFORT,'-+')
+plt.show()
+
+"""
+# defmax
+TEST_RESU(RESU=_F(INST=Duree,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNA,
+                  NOM_CHAM='VARI_ELGA',
+                  NOM_VARI='DIS1',
+                  GROUP_MA='STRUC',
+                  POINT=1,
+                  VALE_CALC=-6.500022093284439,
+                  VALE_REFE=-du,
+                  CRITERE=('ABSOLU', 'RELATIF'),
+                  PRECISION=1.0E-3,  ),
+          )
+
+# defpla
+TEST_RESU(RESU=_F(INST=Duree,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNA,
+                  NOM_CHAM='VARI_ELGA',
+                  NOM_VARI='DIS2',
+                  GROUP_MA='STRUC',
+                  POINT=1,
+                  VALE_CALC=-3.100013290453025,
+                  VALE_REFE=-3.1,
+                  CRITERE=('ABSOLU', 'RELATIF'),
+                  PRECISION=1.0E-3,  ),
+          )
+
+
+TEST_RESU(RESU=_F(INST=Duree,
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=DYNA,
+                  NOM_CHAM='VITE',
+                  NOM_CMP='DX',
+                  GROUP_NO='AUTRE',
+                  VALE_CALC=13.038421975631541,
+                  VALE_REFE=13.03840481,
+                  CRITERE=('ABSOLU', 'RELATIF'),
+                  PRECISION=1.0E-3,  ),
+          )
+
+FIN()
