@@ -268,6 +268,7 @@ character(len=24) :: grpnoe, grpmai
                     if( ilmed.gt.24 ) then
                         valk(1) = nomgrp
                         call utmess('A', 'MED_7', nk=1, valk=valk)
+                        zi(jgrp+igrp-1) = 0
                     else
                         nomgro = nomgrp(1:24)
                         call lxnoac(nomgro, newgrm)
@@ -331,7 +332,9 @@ character(len=24) :: grpnoe, grpmai
                         do igrp = 1, nbgr
                             ngro = zi(jgrp+igrp-1)
                             ASSERT(ngro.le.nbgrno)
-                            zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                            if(ngro .ne. 0) then
+                                zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                            end if
                         enddo
                     endif
                 endif
@@ -369,11 +372,13 @@ character(len=24) :: grpnoe, grpmai
                         nbgr = zi(jv4+ifam-1)
                         do igrp = 1, nbgr
                             ngro = zi(jgrp+igrp-1)
-                            nbno = zi(jnbno+ngro-1)
-                            ASSERT(nbno.le.zi(jnbnog+ngro-1))
-                            jvec = zi(jcolno+ngro-1)
-                            zi(jvec+nbno) = ino
-                            zi(jnbno+ngro-1) = nbno + 1
+                            if(ngro .ne. 0) then
+                                nbno = zi(jnbno+ngro-1)
+                                ASSERT(nbno.le.zi(jnbnog+ngro-1))
+                                jvec = zi(jcolno+ngro-1)
+                                zi(jvec+nbno) = ino
+                                zi(jnbno+ngro-1) = nbno + 1
+                            end if
                         enddo
                     endif
                 endif
@@ -401,7 +406,9 @@ character(len=24) :: grpnoe, grpmai
                                 do igrp = 1, nbgr
                                     ngro = zi(jgrp+igrp-1)
                                     ASSERT(ngro.le.nbgrma)
-                                    zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                                    if(ngro .ne. 0) then
+                                        zi(jnbnog+ngro-1) = zi(jnbnog+ngro-1) + 1
+                                    end if
                                 enddo
                             endif
                         endif
@@ -448,11 +455,13 @@ character(len=24) :: grpnoe, grpmai
                                 nummai = zi(jnumty(ityp)+ima-1)
                                 do igrp = 1, nbgr
                                     ngro = zi(jgrp+igrp-1)
-                                    nbma = zi(jnbma+ngro-1)
-                                    ASSERT(nbma.le.zi(jnbnog+ngro-1))
-                                    jvec = zi(jcolma+ngro-1)
-                                    zi(jvec+nbma) = nummai
-                                    zi(jnbma+ngro-1) = nbma + 1
+                                    if(ngro .ne. 0) then
+                                        nbma = zi(jnbma+ngro-1)
+                                        ASSERT(nbma.le.zi(jnbnog+ngro-1))
+                                        jvec = zi(jcolma+ngro-1)
+                                        zi(jvec+nbma) = nummai
+                                        zi(jnbma+ngro-1) = nbma + 1
+                                    end if
                                 enddo
                             endif
                         endif
