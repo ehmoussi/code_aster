@@ -41,6 +41,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
     real(kind=8) :: angmas(3), dsidep(6, 6), p(3, 3), vip
     character(len=16) :: option, phenom
 !
+! --------------------------------------------------------------------
 !  IN    FAMI   : FAMILLE DE POINT DE GAUSS
 !  IN    KPG    : NUMERO DU POINT DE GAUSS
 !  IN    KSP    : NUMERO DU SOUS POINT DE GAUSS
@@ -60,6 +61,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
 !                 CAR IL EN EXISTE FORCEMENT UNE)
 !  OUT   DSIDEP : MATRICE DE RIGIDITE TANGENTE
 !
+! --------------------------------------------------------------------
     real(kind=8) :: rbid, repere(7), hookf(36), mkooh(36), xyzgau(3)
     real(kind=8) :: depstr(6)
     real(kind=8) :: epsth_anis(3), deplth(6), depgth(6)
@@ -69,6 +71,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
     integer :: nbsigm, i, j
     character(len=2) :: k2bid
     aster_logical :: vrai
+! --------------------------------------------------------------------
 !
     k2bid = '  '
 !
@@ -229,7 +232,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
             if (i .le. 3) then
                 depsme(i)=depstr(i)-depgth(i)-depghy-depgse-depgepsa(i)
             else
-                depsme(i)=depstr(i)-depgth(i)-depgepsa(i)
+                depsme(i)=depstr(i)-2.0*depgth(i)-2.0*depgepsa(i)
             endif
         end do
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -108,27 +108,36 @@ subroutine te0426(option, nomte)
 !
 ! ---- CONSTRUCTION DU VECTEUR DES DEFORMATIONS ANELASTIQUES DEFINIES
 ! ---- AUX POINTS D'INTEGRATION A PARTIR DES DONNEES UTILISATEUR
+! ---- + MISE AU FORMAT DES TERMES EXTRA-DIAGONAUX (COHERENT AVEC DMATMC)
 !      --------------------------------------------------------------
 !
     do 30 igau = 1, npg1
         call rcvarc(' ', 'EPSAXX', '+', 'RIGI', igau,&
                     1, epsi(nbsig*(igau- 1)+1), iret)
         if (iret .eq. 1) epsi(nbsig*(igau-1)+1)=0.d0
+!
         call rcvarc(' ', 'EPSAYY', '+', 'RIGI', igau,&
                     1, epsi(nbsig*(igau- 1)+2), iret)
         if (iret .eq. 1) epsi(nbsig*(igau-1)+2)=0.d0
+!
         call rcvarc(' ', 'EPSAZZ', '+', 'RIGI', igau,&
                     1, epsi(nbsig*(igau- 1)+3), iret)
         if (iret .eq. 1) epsi(nbsig*(igau-1)+3)=0.d0
+!
         call rcvarc(' ', 'EPSAXY', '+', 'RIGI', igau,&
                     1, epsi(nbsig*(igau- 1)+4), iret)
         if (iret .eq. 1) epsi(nbsig*(igau-1)+4)=0.d0
+        epsi(nbsig*(igau- 1)+4) = 2.0*epsi(nbsig*(igau- 1)+4)
+!
         call rcvarc(' ', 'EPSAXZ', '+', 'RIGI', igau,&
                     1, epsi(nbsig*(igau- 1)+5), iret)
         if (iret .eq. 1) epsi(nbsig*(igau-1)+5)=0.d0
+        epsi(nbsig*(igau- 1)+5) = 2.0*epsi(nbsig*(igau- 1)+5)
+!
         call rcvarc(' ', 'EPSAYZ', '+', 'RIGI', igau,&
                     1, epsi(nbsig*(igau- 1)+6), iret)
         if (iret .eq. 1) epsi(nbsig*(igau-1)+6)=0.d0
+        epsi(nbsig*(igau- 1)+6) = 2.0*epsi(nbsig*(igau- 1)+6)
 30  end do
 !
 ! ---- CALCUL DU VECTEUR DES CONTRAINTES ANELASTIQUES AUX POINTS

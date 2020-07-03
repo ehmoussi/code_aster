@@ -49,7 +49,7 @@ subroutine pmimpr(ind, inst, indimp, valimp,&
 !-----------------------------------------------------------------------
 !
     call infniv(ifm, niv)
-    idbg=1
+    idbg=0
 !
     if (niv .ge. 2) then
         if (ind .eq. 0) then

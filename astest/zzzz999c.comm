@@ -1,0 +1,164 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+#
+# VALIDATION DE LA BONNE PRISE EN COMPTE DES VARIABLES DE COMMANDE
+# EN ELASTIQUE
+#
+# - Modélisation C : Validation de la prise en compte de TEMP, HYDR,
+#   SECH et EPSA*6 en ELAS_ORTH (via nmelnl) avec SNL en 3D
+#
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+ 
+MAIL = LIRE_MAILLAGE(UNITE = 20,
+                     FORMAT='ASTER',)
+
+MAIL = DEFI_GROUP(reuse = MAIL,
+                  MAILLAGE = MAIL,
+                  CREA_GROUP_MA=(_F(NOM='TOUT' ,
+                                    TOUT='OUI',
+                                    TYPE_MAILLE='3D',),),)
+
+MAT = DEFI_MATERIAU(ELAS =_F(E = 10.,
+                             NU = 0.3,),)
+                                    
+MOD = AFFE_MODELE(MAILLAGE = MAIL,
+                  AFFE=(_F(GROUP_MA='TOUT',
+                           PHENOMENE='MECANIQUE',
+                           MODELISATION='3D',),),)
+                       
+BLOC = AFFE_CHAR_CINE(
+                      MODELE=MOD,
+                      MECA_IMPO=(_F(DX=0.0,
+                                    DY=0.0,
+                                    DZ=0.0,
+                                    GROUP_NO=('ORIG',),),
+                                 _F(DY=0.0,
+                                    DZ=0.0,
+                                    GROUP_MA=('S34',),),
+                                 _F(
+                                    DY=0.0,
+                                    GROUP_NO=('NO7',),),)
+                            )
+                       
+LINST = DEFI_LIST_REEL(DEBUT=0.0,
+                       INTERVALLE=(_F(JUSQU_A=1.0,
+                                      NOMBRE=1,),
+                                        ),);
+
+EPS0 = CREA_CHAMP(TYPE_CHAM='ELNO_EPSI_R',
+                  OPERATION='AFFE',
+                  MODELE=MOD,
+                  AFFE=(_F(TOUT='OUI',
+                           NOM_CMP=('EPXX','EPYY','EPZZ',),
+                           VALE=(0.,0.,0.,)),
+                        _F(TOUT='OUI',
+                           NOM_CMP=('EPXY','EPXZ','EPYZ',),
+                           VALE=(0.,0.,0.),),),);
+
+EPSXXIMP=CREA_CHAMP(TYPE_CHAM='ELNO_EPSI_R',
+                    OPERATION='AFFE',
+                    MODELE=MOD,
+                AFFE=(_F(TOUT='OUI',
+                         NOM_CMP=('EPXX','EPYY','EPZZ',),
+                         VALE=(7.,0.,0.,),),
+                      _F(TOUT='OUI',
+                         NOM_CMP=('EPXY','EPXZ','EPYZ',),
+                         VALE=(0.,0.,0.),),),);
+                         
+EPSXYIMP=CREA_CHAMP(TYPE_CHAM='ELNO_EPSI_R',
+                    OPERATION='AFFE',
+                    MODELE=MOD,
+                AFFE=(_F(TOUT='OUI',
+                         NOM_CMP=('EPXX','EPYY','EPZZ',),
+                         VALE=(0.,0.,0.,),),
+                      _F(TOUT='OUI',
+                         NOM_CMP=('EPXY','EPXZ','EPYZ',),
+                         VALE=(12.,0.,0.),),),);
+
+# --- Test pour EPSAXX
+
+EPSA1=CREA_RESU(OPERATION='AFFE',
+               TYPE_RESU='EVOL_VARC',
+               NOM_CHAM='EPSA_ELNO',
+               AFFE=(_F(CHAM_GD=EPS0    ,  INST=0.,),
+                     _F(CHAM_GD=EPSXXIMP,  INST=1.,),),)
+
+CHMAT1 = AFFE_MATERIAU(MAILLAGE=MAIL,
+                       AFFE=_F(GROUP_MA='TOUT',
+                               MATER=MAT,),
+                       AFFE_VARC=_F(TOUT='OUI',
+                                    EVOL=EPSA1,
+                                    NOM_VARC='EPSA',
+                                    NOM_CHAM='EPSA_ELNO',),)
+                      
+UEPSA1 = STAT_NON_LINE(CHAM_MATER=CHMAT1,
+                       COMPORTEMENT=(_F(RELATION='ELAS'),),
+                       EXCIT=_F(CHARGE=BLOC,),
+                       INCREMENT=_F(LIST_INST=LINST),
+                       MODELE=MOD)
+               
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='NO4',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=UEPSA1,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=7.0,
+                  VALE_REFE=7.0,
+                  CRITERE='RELATIF',
+                  PRECISION=0.001,),
+          )
+
+# --- Test pour EPSAXY
+                 
+EPSA2=CREA_RESU(OPERATION='AFFE',
+               TYPE_RESU='EVOL_VARC',
+               NOM_CHAM='EPSA_ELNO',
+               AFFE=(_F(CHAM_GD=EPS0    ,  INST=0.,),
+                     _F(CHAM_GD=EPSXYIMP,  INST=1.,),),)
+          
+CHMAT2 = AFFE_MATERIAU(MAILLAGE=MAIL,
+                       AFFE=_F(GROUP_MA='TOUT',
+                               MATER=MAT,),
+                       AFFE_VARC=_F(TOUT='OUI',
+                                    EVOL=EPSA2,
+                                    NOM_VARC='EPSA',
+                                    NOM_CHAM='EPSA_ELNO',),)
+          
+UEPSA2 = STAT_NON_LINE(CHAM_MATER=CHMAT2,
+                       COMPORTEMENT=(_F(RELATION='ELAS'),),
+                       EXCIT=_F(CHARGE=BLOC,),
+                       INCREMENT=_F(LIST_INST=LINST),
+                       MODELE=MOD)
+               
+TEST_RESU(RESU=_F(NUME_ORDRE=1,
+                  GROUP_NO='NO1',
+                  REFERENCE='ANALYTIQUE',
+                  RESULTAT=UEPSA2,
+                  NOM_CHAM='DEPL',
+                  NOM_CMP='DX',
+                  VALE_CALC=2*12.0,
+                  VALE_REFE=2*12.0,
+                  CRITERE='RELATIF',
+                  PRECISION=0.001,),
+          )
+          
+FIN()

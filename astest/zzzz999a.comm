@@ -16,6 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+#
+# VALIDATION DE LA BONNE PRISE EN COMPTE DES VARIABLES DE COMMANDE
+# EN ELASTIQUE
+#
+# - Modélisation A : Validation de la prise en compte de HYDR et SECH
+#   en ELAS_ORTH (via nmorth) avec SIMU_POINT_MAT
+#
+# --------------------------------------------------------------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 

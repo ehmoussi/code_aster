@@ -16,6 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
+#
+# VALIDATION DE LA BONNE PRISE EN COMPTE DES VARIABLES DE COMMANDE
+# EN ELASTIQUE
+#
+# - Modélisation B : Validation de la prise en compte de TEMP, HYDR,
+#   SECH et EPSA*6 en ELAS_ORTH (via nmorth) avec STAT_NON_LINE
+#
+# --------------------------------------------------------------------
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
 
@@ -151,8 +159,8 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   RESULTAT=UTEMP,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DX',
-                  VALE_CALC=epsg12,
-                  VALE_REFE=epsg12,
+                  VALE_CALC=2*epsg12,
+                  VALE_REFE=2*epsg12,
                   CRITERE='RELATIF',
                   PRECISION=0.001,),
           )
@@ -370,7 +378,7 @@ EPSA2=CREA_RESU(OPERATION='AFFE',
                NOM_CHAM='EPSA_ELNO',
                AFFE=(_F(CHAM_GD=EPS0    ,  INST=0.,),
                      _F(CHAM_GD=EPSXYIMP,  INST=1.,),),)
-          
+                                    
 CHMAT2 = AFFE_MATERIAU(MAILLAGE=MAIL,
                        AFFE=_F(GROUP_MA='TOUT',
                                MATER=MAT,),
@@ -392,8 +400,8 @@ TEST_RESU(RESU=_F(NUME_ORDRE=1,
                   RESULTAT=UEPSA2,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DX',
-                  VALE_CALC=12.0,
-                  VALE_REFE=12.0,
+                  VALE_CALC=2*12.0,
+                  VALE_REFE=2*12.0,
                   CRITERE='RELATIF',
                   PRECISION=0.001,),
           )
