@@ -33,6 +33,7 @@ import re
 
 from . import junit_xml_output as JUNIT
 from .config import CFG
+from .error_messages import search_msg
 
 
 class XUnitReport:
@@ -123,9 +124,6 @@ class XUnitReport:
             fobj.write(junit.dump())
 
 
-RE_ERRMSG = re.compile(r"(\<[ESF]\>.*?)!\-\-\-", re.M | re.DOTALL)
-RE_EXCEP = re.compile(r"(\<EXCEPTION\>.*?)!\-\-\-", re.M | re.DOTALL)
-RE_SUPERV = re.compile("DEBUT RAPPORT(.*?)FIN RAPPORT", re.M | re.DOTALL)
 RE_STATE = re.compile("DIAGNOSTIC JOB : (.*)", re.M)
 
 def get_state(txt):
@@ -151,11 +149,12 @@ def get_err_msg(txt):
     Returns:
         str: Error messages.
     """
-    found = (RE_ERRMSG.findall(txt)
-             or RE_EXCEP.findall(txt)
-             or RE_SUPERV.findall(txt))
-    msg = _clean_msg(found)
-    return os.linesep.join(msg)
+    warn = re.compile("^ *<(?:INFO|I|A)>")
+    dmsg = search_msg(txt, maxlines=1000)
+    errors = []
+    for lmsg in dmsg.values():
+        errors.extend([msg[1] for msg in lmsg if not warn.search(msg[1])])
+    return os.linesep.join(errors)
 
 def get_nook(txt):
     """Extract NOOK values from a 'message' file content.
@@ -170,24 +169,7 @@ def get_nook(txt):
     lines = reg_resu.findall(txt)
     return os.linesep.join(lines)
 
-def _clean_msg(lmsg):
-    """Some cleanups in the found messages."""
-    out = []
-    redeb = re.compile(r"^\s*!\s*", re.M)
-    refin = re.compile(r"\s*!\s*$", re.M)
-    reefs = re.compile("Cette erreur sera suivie .*", re.M | re.DOTALL)
-    reefa = re.compile("Cette erreur est fatale.*", re.M | re.DOTALL)
-    for msg in lmsg:
-        msg = redeb.sub("", msg)
-        msg = refin.sub("", msg)
-        msg = reefs.sub("", msg)
-        msg = reefa.sub("", msg)
-        msg = [line for line in msg.splitlines() if line.strip() != ""]
-        out.append(os.linesep.join(msg))
-    return out
-
-
-if __name__ == "__main__":
+def _dbg():
     report = XUnitReport(".")
     report.read_ctest()
     junit = JUNIT.JunitXml("code_aster", report.junit_test)
