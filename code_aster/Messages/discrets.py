@@ -288,9 +288,9 @@ La définition d'une des fonctions %(k2)s est incorrecte.
             - Être une constante ou une nappe
             - Prolongée linéairement à gauche ou à gauche
     3)  Les fonctions sont définies par au moins 5 points
-    4)  La 1ère abcisses doit être est 0.0
-    5)  Les abcisses des fonctions doivent être identiques
-    6)  Les abcisses des fonctions doivent être strictement croissantes
+    4)  La 1ère abscisses doit être est 0.0
+    5)  Les abscisses des fonctions doivent être identiques
+    6)  Les abscisses des fonctions doivent être strictement croissantes
     7)  Pour FX, les 2ères ordonnées doivent être identiques
     8)  Pour RIGI_NOR, les 2ères ordonnées doivent être identiques
     9)  Pour RIGI_NOR, la fonction doit être décroissante
