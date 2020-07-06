@@ -56,15 +56,6 @@
 
 
 ================================================================================
-:py:class:`~code_aster.Objects.DisEcroTracMaterialProperty` object
-================================================================================
-
-.. autoclass:: code_aster.Objects.DisEcroTracMaterialProperty
-   :show-inheritance:
-   :members:
-
-
-================================================================================
 :py:class:`~code_aster.Objects.ElasMetaFoMaterialProperty` object
 ================================================================================
 
