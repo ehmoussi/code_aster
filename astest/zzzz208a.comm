@@ -562,4 +562,62 @@ TEST_RESU(OBJET=(_F(VALE_CALC=-2.00831839696E-07,
                  ),
           )
 
+
+# VERIFICATION CHARGES CINEMATIQUE EXTR_MATR EN COMPLEXE
+#-------------------------------------------------------
+import numpy as np
+
+M = MASSC.EXTR_MATR()
+data, rows, cols, dim = MASSC.EXTR_MATR(sparse=True)
+
+# Comparaison des matrices creuse et pleine
+# -------------------------------------------------------------
+Mspf=np.zeros((dim, dim), dtype=complex)
+for idx,_ in enumerate(data):
+   Mspf[rows[idx], cols[idx]] = data[idx]
+
+diff = np.linalg.norm(M - Mspf)
+
+TAB=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),  _F(PARA='BOOLEEN',LISTE_R=diff,),),)
+TEST_TABLE(REFERENCE='ANALYTIQUE',CRITERE='ABSOLU',
+           VALE_CALC=0.,
+           VALE_REFE=0.,
+           NOM_PARA='BOOLEEN',
+           ORDRE_GRANDEUR = 1.0,PRECISION=1.e-12, 
+           TABLE=TAB,
+           FILTRE=_F(NOM_PARA='TEST',
+                     VALE_K='VALEUR  ',),
+           )
+
+DETRUIRE(CONCEPT=_F(NOM=(TAB),),)
+
+
+
+# Comparaison des solutions aster et numpy
+# -------------------------------------------------------------
+MASSC = FACTORISER(reuse=MASSC,MATR_ASSE=MASSC, METHODE= 'LDLT');
+VCINE = CALC_CHAR_CINE (NUME_DDL=NUME, CHAR_CINE=CHARCINE);
+VCINEC=CREA_CHAMP(OPERATION='R2C',TYPE_CHAM='NOEU_DEPL_C',CHAM_GD=VCINE)
+u=RESOUDRE( MATR = MASSC, CHAM_NO= FASC2 , CHAM_CINE= VCINEC)
+uref=u.EXTR_COMP().valeurs
+
+f=np.zeros(1260, dtype=complex)
+f[287] = 1. +1j*0.
+u=np.linalg.solve(M,f)
+
+diff = np.linalg.norm(u - uref)
+
+TAB=CREA_TABLE(LISTE=(_F(PARA='TEST',TYPE_K='K8',LISTE_K='VALEUR  ',),  _F(PARA='BOOLEEN',LISTE_R=diff,),),)
+TEST_TABLE(REFERENCE='ANALYTIQUE',CRITERE='ABSOLU',
+           VALE_CALC=0.,
+           VALE_REFE=0.,
+           NOM_PARA='BOOLEEN',
+           ORDRE_GRANDEUR = 1.0,PRECISION=1.e-12, 
+           TABLE=TAB,
+           FILTRE=_F(NOM_PARA='TEST',
+                     VALE_K='VALEUR  ',),
+           )
+
+DETRUIRE(CONCEPT=_F(NOM=(TAB),),)
+
 FIN();
