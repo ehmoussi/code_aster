@@ -74,6 +74,10 @@ detect_host()
         printf scibian9
     elif [ -f /home/aster/clap0f0q ]; then
         printf clap0f0q
+    elif [ ! -z "${SINGULARITY_NAME}" ]; then
+        if egrep -q "Ubuntu" /etc/issue; then
+            printf singularity_ubuntu
+        fi
     fi
     printf ""
 }

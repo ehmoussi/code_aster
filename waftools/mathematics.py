@@ -187,14 +187,20 @@ def detect_math_lib(self):
     if self.get_define('HAVE_MPI'):
         self.env.stash()
         try:
-            _blacs() and _scalapack()
+            # try first without blacs since now embedded by scalapack
+            _scalapack()
             _optional()
             self.check_math_libs_call()
         except:
-            self.env.revert()
-            _scalapack() and _blacs()
-            _optional()
-            self.check_math_libs_call()
+            try:
+                _blacs() and _scalapack()
+                _optional()
+                self.check_math_libs_call()
+            except:
+                self.env.revert()
+                _scalapack() and _blacs()
+                _optional()
+                self.check_math_libs_call()
 
     self.start_msg('Detected math libraries')
     self.end_msg(self.env[varlib])
