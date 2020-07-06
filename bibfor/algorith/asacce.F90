@@ -66,15 +66,14 @@ subroutine asacce(nomsy, monoap, nbsup, neq,&
 
     recmot(:,:,id) = recmod(:,:,id)
 
-    if (monoap) then
-!       SOMME DES CARRES DES REPONSES PERIO ET RIGIDES
+!   SOMME DES CARRES DES REPONSES PERIO ET RIGIDES
+    do ioc =1, nbsup
         do in = 1, neq
-            ioc = nbdis(1, 1)
 !         VALEUR DE IOC REFERENCE A ASCORM.F
             recmor(ioc,in,id) = recmor(ioc,in,id)* recmor(ioc,in,id)
             recmot(ioc,in,id) = recmot(ioc,in,id)+ recmor(ioc,in,id)
         enddo
-    endif
+    enddo
 !
     if (nomsy(1:4) .eq. 'ACCE') then
         if (monoap) then

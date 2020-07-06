@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -154,12 +154,12 @@ subroutine astron(nomsy, psmo, monoap, muapde, nbsup,&
                 if (muapde) then
                     do in = 1, neq
                         xxx = gamma0(is+nbsup*(id-1)) * ( zr(jvale+in-1) - zr(jmod+in- 1) )
-                        recmop(is,in,id) = recmop(is,in,id) + xxx*xxx
+                        recmor(is,in,id) = recmor(is,in,id) + xxx
                     enddo
                 else
                     do in = 1, neq
                         xxx = gamma0(is+nbsup*(id-1)) * ( zr(jvale+in-1) - zr(jmod+in- 1) )
-                        recmop(1,in,id) = recmop(1,in,id) + xxx*xxx
+                        recmor(1,in,id) = recmor(1,in,id) + xxx
                     enddo
                 endif
                 call jedetr('&&ASTRON.VECTEUR_MODA')
