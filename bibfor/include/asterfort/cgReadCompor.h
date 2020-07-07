@@ -15,21 +15,13 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
-!
-#include "asterf_types.h"
 !
 interface
-    subroutine gcou2d(base, resu, noma, nomno, noeud,&
-                      coor, rinf, rsup)
-        character(len=1) :: base
-        character(len=24) :: resu
-        character(len=8) :: noma
-        character(len=24) :: nomno
-        character(len=8) :: noeud
-        real(kind=8) :: coor(*)
-        real(kind=8) :: rinf
-        real(kind=8) :: rsup
-    end subroutine gcou2d
+    subroutine cgReadCompor(result_in, compor, iord0, l_incr)
+        character(len=8), intent(in)  :: result_in
+        character(len=19), intent(in) :: compor
+        integer, intent(in)           :: iord0
+        aster_logical, intent(out)    :: l_incr
+    end subroutine cgReadCompor
 end interface

@@ -216,7 +216,7 @@ for i in range(0,nbc) :
                            R_SUP=RS[i],
                            FISSURE=FISS,),)
 
-   #IMPR_TABLE(TABLE=SIF1[i],)
+   IMPR_TABLE(TABLE=SIF1[i], UNITE=6)
 
    SIF2[i]=CALC_H(RESULTAT=UTOT2,
                   OPTION=("G", "K"),

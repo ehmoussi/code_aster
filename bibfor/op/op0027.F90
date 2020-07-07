@@ -15,76 +15,60 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-subroutine op0027()
-
-!      OPERATEUR :     CALC_H
-!
-!      BUT:CALCUL DU TAUX DE RESTITUTION D'ENERGIE PAR LA METHODE THETA
-!          CALCUL DES FACTEURS D'INTENSITE DE CONTRAINTES
-! ======================================================================
 ! person_in_charge: tanguy.mathieu at edf.fr
+!
+subroutine op0027()
 !
 use calcG_type
 !
 implicit none
 !
-!
-#include "asterc/getres.h"
 #include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/cgcrtb.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/getvid.h"
-#include "asterfort/getvis.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/infmaj.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/tbajli.h"
-#include "asterfort/tbajvi.h"
-#include "asterfort/tbajvk.h"
-#include "asterfort/tbajvr.h"
-#include "asterfort/titre.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
+#include "asterfort/cgComputeTheta.h"
+#include "asterfort/cgTableG.h"
 #include "asterfort/cgVerification.h"
-#include "jeveux.h"
-!
 #include "asterfort/deprecated_algom.h"
-#include "asterfort/utimsd.h"
+#include "asterfort/infmaj.h"
+#include "asterfort/utmess.h"
 !
-    integer, parameter :: nxpara = 15
-    character(len=8) :: litypa(nxpara), typfis, k8bid
-
-    integer :: nbmxpa
-    parameter (nbmxpa = 20)
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: livi(nbmxpa), iord, iadfis
-    real(kind=8) :: livr(nbmxpa), time, g(1)
-    complex(kind=8) :: livc(nbmxpa)
-    character(len=24) :: livk(nbmxpa)
+!      OPERATEUR :     CALC_H
 !
-    character(len=16) :: option, linopa(nxpara)
-    integer :: nbpara, ndim, numfon, ibid, lfond
-    aster_logical, parameter :: lmoda = ASTER_FALSE
+!      BUT:CALCUL DU TAUX DE RESTITUTION D'ENERGIE PAR LA METHODE THETA
+!          CALCUL DES FACTEURS D'INTENSITE DE CONTRAINTES
 !
-    character(len=24), parameter :: chfond='&&0100.FONDFISS'
-!
+!---------------------------------------------------------------------------------------------------
 !
     type(CalcG_field) :: cgField
-    type(CalcG_study) :: cgStudy
     type(CalcG_theta) :: cgTheta
+    type(CalcG_study) :: cgStudy
 !
-    call jemarq()
+    integer :: iopt, istore, nume_ordre
+    character(len=8) :: option
+    character(len=24) :: law
+    aster_logical :: l_comput_stress
+!
     call infmaj()
     call deprecated_algom('CALC_H')
+!
+! Fiches concernées par le chantier (A supprimer à la fin)
+!
+! A Faire: #29573, #27931, #29703
+!
+! Faite :
 !
 ! --- Initialization
 !
     call cgField%initialize()
-    call cgStudy%initialize()
     call cgTheta%initialize()
+!
+!
+    if(cgField%level_info > 1) then
+        call cgField%print()
+        call cgTheta%print()
+    end if
 !
 ! --- Verification
 !
@@ -92,58 +76,37 @@ implicit none
 !
 ! --- Compute Theta
 !
-!    call cgComputeTheta(cgField, cgTheta)
-
-
-
-
-
-
-
-
-
-
-
-
+    call cgComputeTheta(cgField, cgTheta)
 !
+! --- Loop on option
 !
-!     CREATION DE LA cgField%table_out // TEMPORAIRE
+    do iopt = 1, cgField%nb_option
+        option = cgField%list_option(iopt)
+        law = "ELAS"
+        l_comput_stress = ASTER_TRUE
+        call cgStudy%setOption(option, law, l_comput_stress)
 !
-    call cgcrtb(cgField%table_out, option, ndim, typfis, nxpara, lmoda, nbpara, linopa, litypa)
+        if(cgField%level_info > 1) then
+            call utmess("I", "RUPTURE3_5", sk=option)
+        end if
 !
-    call getvis('THETA', 'NUME_FOND', iocc=1, scal=numfon, nbret=ibid)
-
-    call tbajvi(cgField%table_out, nbpara, 'NUME_FOND', numfon, livi)
-    lfond=10
-    if (typfis.ne.'THETA') then
-        call wkvect(chfond, 'V V R', lfond, iadfis)
-    else
-        iadfis=0
-    endif
-    k8bid = 'K8_BIDON'
-   ! call tbajvk(cgField%table_out, nbpara, 'ABSC_CURV_NORM', 0.0, livr)
-   ! call tbajvk(cgField%table_out, nbpara, 'TEMP', 0.0, livr)
-   ! call tbajvk(cgField%table_out, nbpara, 'COMPORTEMENT', k8bid, livk)
-
-
+! ------ Loop on nume_store
 !
-    iord = 1
-    call tbajvi(cgField%table_out, nbpara, 'NUME_ORDRE', iord, livi)
-    time = 2.0
-    call tbajvr(cgField%table_out, nbpara, 'INST', time, livr)
+        do istore = 1, cgField%nb_nume
+            nume_ordre = cgField%list_nume(istore)
+            call cgStudy%initialize(cgField%result_in, nume_ordre)
+            ASSERT(cgTheta%mesh == cgStudy%mesh)
 !
-    call tbajvr(cgField%table_out, nbpara, 'COOR_X', zr(iadfis),   livr)
-    call tbajvr(cgField%table_out, nbpara, 'COOR_Y', zr(iadfis+1), livr)
-
-    g(1)= 123456789.0
-    call tbajvr(cgField%table_out, nbpara, 'G', g(1), livr)
-    call tbajli(cgField%table_out, nbpara, linopa, livi, livr, livc, livk, 0)
+            if(cgField%level_info > 1) then
+                call cgStudy%print()
+            end if
+! TODO ADD TE
+        end do
 !
-    !call utimsd(6, 2, .true._1, .true._1,cgField%table_out, 1, ' ')
-
+    end do
 !
-    call titre()
+! --- Create Table for G (temporary)
 !
-    call jedema()
+    call cgTableG(cgField, cgTheta)
 !
 end subroutine

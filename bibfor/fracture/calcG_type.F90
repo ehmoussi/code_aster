@@ -40,11 +40,17 @@ implicit none
 ! ----- type of result (in)
         character(len=16)  :: result_in_type = ' '
 ! ----- name of table container (out)
-        character(len=8)   :: table_out = ' '
+        character(len=24)  :: table_out = ' '
+! ----- CARTE for behavior
+        character(len=24)  :: compor = ' '
 ! ----- topological dimension
         integer            :: ndim      = 0
-! ----- topological dimension
-        integer            :: nb_order = 0
+! ----- name of list of NUME
+        character(len=24)  :: list_nume_name = ' '
+! ----- list of nume
+        integer, pointer   :: list_nume(:) => null()
+! ----- number of order
+        integer            :: nb_nume = 0
 ! ----- number option to compute
         integer            :: nb_option = 0
 ! ----- list of options
@@ -54,6 +60,8 @@ implicit none
         contains
         procedure, pass    :: initialize => initialize_field
         procedure, pass    :: print      => print_field
+        procedure, pass    :: isModeMeca
+        procedure, pass    :: isDynaTrans
 !
     end type CalcG_Field
 !
@@ -63,28 +71,28 @@ implicit none
 !
     type CalcG_Study
 ! ----- name of model
-        character(len=8)   :: modele    = ' '
+        character(len=8)   :: model     = ' '
 ! ----- name of mesh
         character(len=8)   :: mesh      = ' '
 ! ----- name of material
         character(len=24)  :: material  = ' '
 ! ----- name of coded material
         character(len=24)  :: mateco    = ' '
+! ----- name of loading
+        character(len=24)  :: loading   = ' '
 ! ----- index order
         integer            :: nume_ordre = -1
+! ----- option to compute
+        character(len=8)   :: option    = ' '
+! ----- name of the law
+        character(len=24)  :: law       = ' '
+! ----- compute stress ?
+        aster_logical      :: l_comp_stress = ASTER_TRUE
 ! ----- member function
         contains
         procedure, pass    :: initialize => initialize_study
-        ! procedure, pass    :: face_degree
-        ! procedure, pass    :: cell_degree
-        ! procedure, pass    :: grad_degree
-        ! procedure, pass    :: debug => debug_data
-        ! procedure, pass    :: stabilize
-        ! procedure, pass    :: precompute
-        ! procedure, pass    :: adapt
-        ! procedure, pass    :: coeff_stab
-        ! procedure, pass    :: setCoeffStab
-        ! procedure, pass    :: print => print_data
+        procedure, pass    :: print => print_study
+        procedure, pass    :: setOption
     end type CalcG_Study
 !
 !===================================================================================================
@@ -93,32 +101,47 @@ implicit none
 !
     type CalcG_Theta
 ! ----- name of theta field
-        character(len=8)   :: theta_field = ' '
+        character(len=24)       :: theta_field = ' '
 ! ----- name of crack
-        character(len=8)   :: crack = ' '
+        character(len=8)        :: crack = ' '
 ! ----- type of crack
-        character(len=8)   :: crack_type = ' '
-! ----- nodes of the crack
-        character(len=24)   :: fondNoeud = ' '
-! ----- size estimation of radial diameter of cells
-        character(len=24)   :: fondTailleR = ' '
-! ----- curvilign abscise
-        character(len=24)   :: abscurv = ' '
-! ----- local coordinate of nodes
-        character(len=24)   :: basloc = ' '
+        character(len=24)       :: crack_type = ' '
+! ----- initial configuration of the crack
+        character(len=8)        :: config_init = ' '
+! ----- name of the mesh (support of crack)
+        character(len=8)        :: mesh = ' '
+! ----- name of the nodes of the mesh (support of crack)
+        character(len=24)       :: nomNoeud = ' '
+! ----- coordinate of nodes of the mesh
+        real(kind=8), pointer   :: coorNoeud(:) => null()
+! ----- size of cell in radial direction
+        real(kind=8), pointer   :: fondTailleR(:) => null()
+! ----- abscisse curviligne of nodes in the crack
+        real(kind=8), pointer   :: abscur(:) => null()
+! ----- list of nodes in the crack
+        character(len=8), pointer :: fondNoeud(:) => null()
+! ----- number of nodes in the crack
+        integer                 :: nb_fondNoeud = 0
+! ----- xFem crack
+        aster_logical           :: lxfem
+! ----- type of discontinuity (for XFEM)
+        character(len=16)       :: XfemDisc_type = ' '
+! ----- rayon
+        real(kind=8)            :: r_inf = 0.d0, r_sup = 0.d0
+! ----- number of layer
+        integer                 :: nb_couche_inf = 0, nb_couche_sup = 0
+! ----- type of discretization
+        character(len=8)        :: discretization = ' '
+! ----- numer of nodes or degree
+        integer                 :: nombre = 0
+! ----- nume_fond for XFem only
+        integer                 :: nume_fond = 0
+! ----- the crack is closed ?
+        aster_logical           :: l_closed = ASTER_FALSE
 ! ----- member function
         contains
         procedure, pass    :: initialize => initialize_theta
         procedure, pass    :: print => print_theta
-        ! procedure, pass    :: cell_degree
-        ! procedure, pass    :: grad_degree
-        ! procedure, pass    :: debug => debug_data
-        ! procedure, pass    :: stabilize
-        ! procedure, pass    :: precompute
-        ! procedure, pass    :: adapt
-        ! procedure, pass    :: coeff_stab
-        ! procedure, pass    :: setCoeffStab
-        ! procedure, pass    :: print => print_data
     end type CalcG_Theta
 !
 !
@@ -137,13 +160,16 @@ contains
     implicit none
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
-#include "asterfort/getvid.h"
+#include "asterfort/cgcrio.h"
+#include "asterfort/cgReadCompor.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/gettco.h"
+#include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
-#include "asterfort/dismoi.h"
 #include "asterfort/jedema.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
 !
         class(CalcG_Field), intent(inout)  :: this
 !
@@ -156,6 +182,7 @@ contains
         integer :: ier, ifm
         character(len=16) :: k16bid
         character(len=8)  :: modele
+        aster_logical     :: l_incr
 !
         call jemarq()
 !
@@ -174,17 +201,28 @@ contains
 ! --- Get name of option
 !
         call getvtx(' ', 'OPTION', nbret=ier)
-        this%nb_option = -ier
-        ASSERT(this%nb_option <= MAX_NB_OPT)
-        call getvtx(' ', 'OPTION', nbval=this%nb_option, vect=this%list_option)
+        if(ier == 1) then
+            this%nb_option = ier
+            call getvtx(' ', 'OPTION', scal=this%list_option(1))
+        else
+            this%nb_option = -ier
+            ASSERT(this%nb_option <= MAX_NB_OPT)
+            call getvtx(' ', 'OPTION', nbval=this%nb_option, vect=this%list_option)
+        end if
 !
 ! --- Level of information
 !
         call infniv(ifm, this%level_info)
 !
-        if(this%level_info > 1) then
-            call this%print()
-        end if
+! --- List of nume
+!
+        this%list_nume_name = '&&OP0100.VECTORDR'
+        call cgcrio(this%result_in, this%list_nume_name, this%nb_nume)
+        call jeveuo(this%list_nume_name, 'L', vi=this%list_nume)
+!
+! --- Read <CARTE> COMPORTEMENT
+!
+        call cgReadCompor(this%result_in, this%compor, this%list_nume(1), l_incr)
 !
         call jedema()
 !
@@ -208,6 +246,7 @@ contains
 !
         integer :: i
 !
+        print*, "----------------------------------------------------------------------"
         print*, "Informations about CalcG_Field"
         print*, "Level of informations: ", this%level_info
         print*, "Dimension of the problem: ", this%ndim
@@ -217,25 +256,148 @@ contains
         do i =1, this%nb_option
             print*, "** option ", i, ": ", this%list_option(i)
         end do
+        print*, "Number of step/mode to compute: ", this%nb_nume
+        print*, "----------------------------------------------------------------------"
+!
     end subroutine
 !
 !===================================================================================================
 !
 !===================================================================================================
 !
-    subroutine initialize_study(this)
+    function isModeMeca(this) result(lmode)
+!
+    implicit none
+!
+        class(CalcG_Field), intent(in)  :: this
+        aster_logical                   :: lmode
+!
+! --------------------------------------------------------------------------------------------------
+!
+!   The result is a MODE_MECA ?
+!   In this     : calG field
+! --------------------------------------------------------------------------------------------------
+!
+        if(this%result_in_type == "MODE_MECA") then
+            lmode = ASTER_TRUE
+        else
+            lmode = ASTER_FALSE
+        end if
+    end function
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    function isDynaTrans(this) result(lmode)
+!
+    implicit none
+!
+        class(CalcG_Field), intent(in)  :: this
+        aster_logical                   :: lmode
+!
+! --------------------------------------------------------------------------------------------------
+!
+!   The result is a DYNA_TRANS ?
+!   In this     : calG field
+! --------------------------------------------------------------------------------------------------
+!
+        if(this%result_in_type == "DYNA_TRANS") then
+            lmode = ASTER_TRUE
+        else
+            lmode = ASTER_FALSE
+        end if
+    end function
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    subroutine initialize_study(this, result_in, nume_index)
+!
+    implicit none
+!
+#include "asterfort/dismoi.h"
+#include "asterfort/medomg.h"
+!
+        class(CalcG_Study), intent(inout)  :: this
+        character(len=8), intent(in)       :: result_in
+        integer, intent(in)                :: nume_index
+!
+! --------------------------------------------------------------------------------------------------
+!
+!   initialization of a CalcG_Study type
+!   In this     : study type
+!   In nume_index : index nume
+! --------------------------------------------------------------------------------------------------
+!
+        this%nume_ordre = nume_index
+        this%loading    = "&&STUDY.CHARGES"
+        call medomg(result_in, nume_index, this%model, this%material, this%mateco, this%loading)
+        call dismoi('NOM_MAILLA', this%model,'MODELE', repk=this%mesh)
+!
+    end subroutine
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    subroutine print_study(this)
+!
+    implicit none
+!
+        class(CalcG_Study), intent(in)  :: this
+!
+! --------------------------------------------------------------------------------------------------
+!
+!   print informations of a CalcG_Study type
+!   In this     : study type
+! --------------------------------------------------------------------------------------------------
+!
+        print*, "----------------------------------------------------------------------"
+        print*, "Informations about CalcG_Study"
+        print*, "Option: ", this%option
+        print*, "Law: ", this%law
+        print*, "Compute stress: ", this%l_comp_stress
+        print*, "Model: ", this%model
+        print*, "Mesh: ", this%mesh
+        print*, "Material: ", this%material
+        print*, "Coded material: ", this%mateco
+        print*, "Loading: ", this%loading
+        print*, "Nume index: ", this%nume_ordre
+        print*, "----------------------------------------------------------------------"
+!
+    end subroutine
+!
+!===================================================================================================
+!
+!===================================================================================================
+!
+    subroutine setOption(this, option, law, l_comput_stress)
 !
     implicit none
 !
         class(CalcG_Study), intent(inout)  :: this
+        character(len=8), intent(in)       :: option
+        character(len=24), intent(in)      :: law
+        aster_logical, intent(in)          :: l_comput_stress
+
 !
 ! --------------------------------------------------------------------------------------------------
-!
-!   initialization of a CalcG_Field type
-!   In this     : calG field
+!#include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/exixfe.h"
+#include "asterc/getfac.h"
+!   print informations of a CalcG_Study type
+!   In this     : study type
+!   In option   : name of option
+!   In law      : name of the behavior law
+!   In l_comput : recompute stress ?
 ! --------------------------------------------------------------------------------------------------
 !
-        this%modele = "AA"
+        this%option = option
+        this%law    = law
+        this%l_comp_stress = l_comput_stress
 !
     end subroutine
 !
@@ -248,10 +410,17 @@ contains
     implicit none
 !
 #include "asterfort/assert.h"
-#include "asterfort/getvid.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/gettco.h"
+#include "asterfort/getvis.h"
+#include "asterfort/getvr8.h"
+#include "asterfort/getvtx.h"
 #include "asterfort/jedema.h"
+#include "asterfort/jelira.h"
 #include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/utmess.h"
 !
         class(CalcG_Theta), intent(inout)  :: this
 !
@@ -261,26 +430,103 @@ contains
 !   In this     : theta type
 ! --------------------------------------------------------------------------------------------------
 !
+        integer :: ier, ndim
+        character(len=8) :: typfon
+        aster_logical :: l_disc
+!
         call jemarq()
 ! --- to do get name
         this%theta_field = "&&THETA"
 !
 ! --- get informations about the crack
 !
-        call getvid('THETA', 'FISSURE', iocc=1, scal=this%crack)
+        call getvtx('THETA', 'FISSURE', iocc=1, scal=this%crack, nbret=ier)
+        ASSERT(ier==1)
         call gettco(this%crack, this%crack_type, ASTER_TRUE)
 ! to do - type of discotinuity if xfem
+        this%lxfem = ASTER_FALSE
+        ASSERT(.not.this%lxfem)
 !
-        this%fondNoeud = this%crack//'.FOND.NOEUD'
-        this%fondTailleR = this%crack//'.FOND.TAILLE_R'
-        this%abscurv = this%crack//'.ABSCUR'
-        this%basloc  = this%crack//'.BASLOC'
+        if(this%lxfem) then
+            call dismoi('NOM_MAILLA',this%crack,'FISS_XFEM', arret='F', repk=this%mesh)
+            call dismoi('TYPE_FOND', this%crack,'FISS_XFEM', arret='F', repk=typfon)
+            call dismoi('TYPE_DISCONTINUITE', this%crack, 'FISS_XFEM' , repk=this%XfemDisc_type)
+            ASSERT(this%XfemDisc_type.eq.'COHESIF' .or. this%XfemDisc_type.eq.'FISSURE')
+        else
+            call dismoi('NOM_MAILLA',this%crack,'FOND_FISS', arret='F', repk=this%mesh)
+            call dismoi('TYPE_FOND', this%crack,'FOND_FISS', arret='F', repk=typfon)
+            call dismoi('CONFIG_INIT', this%crack, 'FOND_FISS', repk=this%config_init)
+        end if
+! --- the crack is closed ?
+        if (typfon .eq. 'FERME') then
+            this%l_closed = .true.
+        else
+            this%l_closed = .false.
+        endif
+! --- number of nodes in the crack
+        call jelira(this%crack//'.FOND.NOEU', 'LONMAX', this%nb_fondNoeud)
+!
+! --- get informations about theta discretization
+!
+        call getvtx('THETA', 'DISCRETISATION', iocc=1, scal=this%discretization, nbret=ier)
+        l_disc = (this%discretization == "LINEAIRE") .or. (this%discretization == "LEGENDRE")
+        ASSERT(l_disc)
+        call getvis('THETA', 'NOMBRE', iocc=1, scal=this%nombre, nbret=ier)
+        ASSERT(this%nombre >= 0)
 
+        if(this%discretization == "LINEAIRE" .and. this%nombre == 0) then
+            this%nombre = this%nb_fondNoeud
+        end if
+!
+        if(this%discretization == "LEGENDRE" .and. this%l_closed) then
+            call utmess('F', 'RUPTURE0_90')
+        end if
+!
+        call getvr8('THETA', 'R_INF', iocc=1, scal=this%r_inf, nbret=ier)
+        call getvr8('THETA', 'R_SUP', iocc=1, scal=this%r_sup, nbret=ier)
+!
+        if(ier == 1 .and. ((this%r_inf < 0.d0) .or. (this%r_inf >= this%r_sup))) then
+            call utmess('F', 'RUPTURE3_3', nr=2, valr=[this%r_inf, this%r_sup])
+        end if
+!
+        call getvis('THETA', 'NB_COUCHE_INF', iocc=1, scal=this%nb_couche_inf, nbret=ier)
+        call getvis('THETA', 'NB_COUCHE_SUP', iocc=1, scal=this%nb_couche_sup, nbret=ier)
+!
+        if(ier == 1 .and. ((this%nb_couche_inf < 0) .or. &
+            (this%nb_couche_inf >= this%nb_couche_sup))) then
+            call utmess('F', 'RUPTURE3_4', ni=2, vali=[this%nb_couche_inf, this%nb_couche_sup])
+        end if
+!
+        if(this%lxfem) then
+            call getvis('THETA', 'NUME_FOND', iocc=1, scal=this%nume_fond)
+        end if
+!
+! --- Get pointers on object
+!
+        call jeveuo(this%mesh//'.COORDO    .VALE', 'L', vr=this%coorNoeud)
+        call jeveuo(this%crack//'.FOND.TAILLE_R' , 'L', vr=this%fondTailleR)
+        call jeveuo(this%crack//'.ABSCUR'        , 'L', vr=this%abscur)
+        call jeveuo(this%crack//'.FOND.NOEU'     , 'L', vk8=this%fondNoeud)
+!
+        this%nomNoeud = this%mesh//'.NOMNOE'
+!
+! --- Some verification
+!
+        call dismoi('DIM_GEOM', this%mesh, 'MAILLAGE', repi=ndim)
 
-
-
-
-        call this%print()
+        ! if(this%lxfem) then
+        !     call jeexin(this%crack//'.FONDFISS', ier)
+        !     ASSERT(ier.ne.0)
+        !     call jeexin(this%crack//'.BASEFOND', ier)
+        !     ASSERT(ier.ne.0)
+        ! else
+        !     call dismoi('CONFIG_INIT', this%crack, 'FOND_FISS', repk=conf)
+        !     if (conf .eq. 'COLLEE') then
+        !         call jeexin(this%crack//'.BASLOC', ier)
+        !         ASSERT(ier.ne.0)
+        !     endif
+        ! end if
+!
         call jedema()
 !
     end subroutine
@@ -301,9 +547,23 @@ contains
 !   In this     : theta type
 ! --------------------------------------------------------------------------------------------------
 !
+        print*, "----------------------------------------------------------------------"
         print*, "Informations about CalcG_Theta"
         print*, "Field theta: ", this%theta_field
-        print*, "Crack: ", this%crack, "of type ", this%crack_type
+        print*, "Crack: ", this%crack, " of type ", this%crack_type
+        print*, "Number of nodes in the crack: ", this%nb_fondNoeud
+        print*, "Mesh support: ", this%mesh
+        print*, "Initial configuration: ", this%config_init
+        print*, "The crack is closed ?: ", this%l_closed
+        print*, "XFEM ?: ", this%lxfem, " with discontinuity: ", this%XfemDisc_type
+        print*, "Discretization : ", this%discretization,  " with number/degree ", this%nombre
+        print*, "Radius:"
+        print*, "*** Inferior: ", this%r_inf
+        print*, "*** Superior: ", this%r_sup
+        print*, "Number of cell layers:"
+        print*, "*** Inferior: ", this%nb_couche_inf
+        print*, "*** Superior: ", this%nb_couche_sup
+        print*, "----------------------------------------------------------------------"
 !
     end subroutine
 !

@@ -29,17 +29,24 @@ use calcG_type
 #include "asterfort/utmess.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/exixfe.h"
+#include "asterc/getfac.h"
 !
     type(CalcG_field), intent(in) :: cgField
     type(CalcG_theta), intent(in) :: cgTheta
+!
+! --------------------------------------------------------------------------------------------------
 !
 !     CALC_G --- Utilities
 !
 !     Verification of inputs
 !
-! ======================================================================
+! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: modele, mesh1, mesh2
+!
+    character(len=8) :: model, mesh
+    aster_logical :: lmodemeca, ldynatrans, lXfemModel
+    integer :: nexci, ixfem, netatinit
 !
     call jemarq()
 !
@@ -47,15 +54,56 @@ use calcG_type
         call utmess('I', 'RUPTURE3_1')
     end if
 !
+    call dismoi('MODELE', cgField%result_in, 'RESULTAT', repk=model)
+    call dismoi('NOM_MAILLA',model,'MODELE', repk=mesh)
+    ASSERT(cgTheta%mesh .eq. mesh)
 !
-!   TEST POUR IDENTIFIER SI LE MEME MAILLAGE EST UTILISÉ DANS LA SD FOND_FISS
-!   ET LA SD RESU (test zzzz415a)
-    call dismoi('MODELE', cgField%result_in, 'RESULTAT', repk=modele)
-    call dismoi('NOM_MAILLA',modele,'MODELE', repk=mesh1)
-    call dismoi('NOM_MAILLA',cgTheta%crack,'FOND_FISS', repk=mesh2)
-    ASSERT(mesh1 .eq. mesh2)
-
-    print*, "TODO: Finish verification"
+    lmodemeca = cgField%isModeMeca()
+    ldynatrans= cgField%isDynaTrans()
+!
+! --- Compatibility between Model and Crack
+!
+    lXfemModel = ASTER_FALSE
+    call exixfe(model, ixfem)
+    if(ixfem==1) then
+        lXfemModel = ASTER_TRUE
+    end if
+!
+    if(cgTheta%lxfem .and. lXfemModel) then
+        if(cgTheta%lxfem .neqv. lXfemModel) then
+            call utmess('F', 'RUPTURE3_8')
+        end if
+    end if
+!
+! --- EXCIT is allowed only for MODE_MECA and DYNA_TRANS
+!
+    call getfac('EXCIT', nexci)
+    if(lmodemeca .or. ldynatrans) then
+        if (nexci == 0) then
+            call utmess('F', 'RUPTURE3_6')
+        endif
+    else
+        if (nexci == 1) then
+            call utmess('F', 'RUPTURE3_7')
+        endif
+    end if
+!
+! --- If Xfem -> COHESIF is forbidden
+!
+    if(cgTheta%lxfem) then
+        if(cgField%ndim .eq. 2 .and. cgTheta%XfemDisc_type.eq.'COHESIF') then
+            call utmess('F', 'RUPTURE2_5')
+        end if
+    endif
+!
+! --- Verification option (not allowed for the moment)
+!
+    ASSERT(.not.cgTheta%lxfem)
+    ASSERT(.not.cgField%isModeMeca())
+    ASSERT(.not.cgField%isDynaTrans())
+    ASSERT(nexci==0)
+    call getfac('ETAT_INIT', netatinit)
+    ASSERT(netatinit==0)
 !
     call jedema()
 !

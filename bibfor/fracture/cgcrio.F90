@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine cgcrio(resu, vecord)
+subroutine cgcrio(resu, vecord, nbnume)
     implicit none
 !
 #include "asterfort/assert.h"
@@ -27,6 +27,7 @@ subroutine cgcrio(resu, vecord)
 #include "asterfort/rsutnu.h"
     character(len=8) :: resu
     character(len=19) :: vecord
+    integer, optional :: nbnume
 !
 ! person_in_charge: samuel.geniaut at edf.fr
 !
@@ -52,6 +53,10 @@ subroutine cgcrio(resu, vecord)
     call rsutnu(resu, ' ', 0, vecord, nbord,&
                 prec, crit, ier)
     ASSERT(ier.eq.0)
+
+    if(present(nbnume)) then
+        nbnume = nbord
+    end if
 !
     call jedema()
 !

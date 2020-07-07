@@ -81,7 +81,7 @@ subroutine op0100()
     integer :: ndimte, ndim, jopt, nb_objet, nb_cham_theta
     integer, parameter :: nxpara = 15
 !
-    real(kind=8) :: time, dir(3), rinf, rsup, puls
+    real(kind=8) :: time, rinf, rsup, puls
     character(len=6) :: nompro
     parameter  ( nompro = 'OP0100' )
     character(len=8) :: modele, resu, k8bid, calsig, resuc2
@@ -206,8 +206,7 @@ subroutine op0100()
 !
 !
         call gver2d(1, noeud,rinf, rsup)
-        call gcou2d('G', theta, noma, nomno, noeud,zr(iadrco),&
-                         rinf, rsup,  dir)
+        call gcou2d('G', theta, noma, nomno, noeud,zr(iadrco), rinf, rsup)
     endif
 !
 !     DETERMINATION AUTOMATIQUE DE THETA (CAS 3D)

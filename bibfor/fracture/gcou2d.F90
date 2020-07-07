@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine gcou2d(base, resu, noma, nomno, noeud,&
-                  coor, rinf, rsup, dir)
+                  coor, rinf, rsup)
     implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
@@ -40,7 +40,7 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 #include "asterfort/utmess.h"
 #include "asterfort/wkvect.h"
 !
-    real(kind=8) :: rinf, rsup, dir(3), coor(*)
+    real(kind=8) :: rinf, rsup, coor(*)
     character(len=1) :: base
     character(len=8) :: noma, noeud
     character(len=24) :: resu, nomno
@@ -65,8 +65,6 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
 !        COOR   : COORDONNEES DES NOEUDS
 !        RINF   : RAYON INFERIEURE DE LA COURONNE
 !        RSUP   : RAYON SUPERIEURE DE LA COURONNE
-!        MODULE : MODULE(THETA)
-!        DIR    : DIRECTION DU CHAMPS THETA
 !
 ! SORTIE:
 !        DIR    : DIRECTION DU CHAMPS THETA NORMALISEE
@@ -76,7 +74,7 @@ subroutine gcou2d(base, resu, noma, nomno, noeud,&
     integer :: itheta, i, irefe, idesc, num, nbel, numa
     integer :: nec, ibid, numfon, n1, n2, ndim, jgtl, estbf
     parameter     (ndim=2)
-    real(kind=8) :: xm, ym, xi, yi, eps, d, norme, alpha, valx, valy
+    real(kind=8) :: xm, ym, xi, yi, eps, d, norme, alpha, valx, valy, dir(3)
     character(len=8) :: k8b, fiss, fonfis
     character(len=19) :: grlt, chgrs
     character(len=24) :: chamno

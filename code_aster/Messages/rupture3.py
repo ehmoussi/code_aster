@@ -25,5 +25,42 @@ cata_msg = {
 Verification des paramètres d'entrée
 """),
 
+    2 : _("""
+Calcul du champ theta
+"""),
+
+    3 : _("""
+Les rayons inférieur et supérieur pour le calcul de theta ne sont pas valables. Ils doivent être positifs et le rayon inférieur doit être strictement plus petit que le rayon supérieur:
+    Rayon inférieur: %(r1)d
+    Rayon supérieur: %(r2)d
+"""),
+
+    4 : _("""
+Le nombre de couches d'élément inférieur et supérieur pour le calcul de theta ne sont pas valables. Ils doivent être positifs et le nombre de couches inférieur doit être strictement plus petit que le nombre de couches supérieur:
+    Nombre de couches inférieur: %(i1)d
+    Nombre de couches supérieur: %(i2)d
+"""),
+
+    5 : _("""
+Calcul de l'option: %(k1)s
+"""),
+
+    6: _("""
+Dans le cas d'une structure de données résultat de type DYNA_TRANS ou MODE_MECA,
+le mot-clé EXCIT est obligatoire.
+Veuillez le renseigner.
+"""),
+
+    7: _("""
+Dans le cas d'une structure de données résultat de type EVOL_ELAS ou EVOL_NOLI,
+le mot-clé EXCIT est inderdit. Le chargement sera directement lu dans las structure de donnée RESULTAT
+Veuillez l'enlever.
+"""),
+
+    8: _("""
+Le modèle et la fissure ne sont pas tout les deux FEM ou XFEM. Un mélange FEM-XFEM n'est pas autorisé.
+
+Conseil: Vérifiez votre mise en donnée
+"""),
 
 }

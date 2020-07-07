@@ -15,21 +15,12 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
 !
-!
-#include "asterf_types.h"
 !
 interface
-    subroutine gcou2d(base, resu, noma, nomno, noeud,&
-                      coor, rinf, rsup)
-        character(len=1) :: base
-        character(len=24) :: resu
-        character(len=8) :: noma
-        character(len=24) :: nomno
-        character(len=8) :: noeud
-        real(kind=8) :: coor(*)
-        real(kind=8) :: rinf
-        real(kind=8) :: rsup
-    end subroutine gcou2d
+    subroutine cgTableG(cgField, cgTheta)
+    use calcG_type
+        type(CalcG_field), intent(in) :: cgField
+        type(CalcG_theta), intent(in) :: cgTheta
+    end subroutine cgTableG
 end interface
