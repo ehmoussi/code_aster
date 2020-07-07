@@ -518,8 +518,8 @@ use lmp_module, only : lmp_update
             slvi(5) = nmaxit
         endif
 !
-!        -- TRAITEMENT PARTICULIER DU PRECONDITIONNEUR LDLT_SP
-        if (precon .eq. 'LDLT_SP') then
+!        -- TRAITEMENT PARTICULIER DU PRECONDITIONNEUR LDLT_SP et LDLT_DP
+        if (precon .eq. 'LDLT_SP' .or. precon .eq. 'LDLT_DP') then
 !           MENAGE
             spsomu = slvk(3)(1:19)
             call detrsd('SOLVEUR', spsomu)
