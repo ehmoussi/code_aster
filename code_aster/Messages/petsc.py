@@ -129,6 +129,8 @@ Solveur PETSc :
 16 : _("""
 Solveur PETSc :
   La résolution du système linéaire a abouti mais la solution obtenue ne vérifie pas le critère de convergence.
+  Le résidu vaut %(r1)f
+  
   Cela peut arriver:
      - si la matrice du système linéaire est mal conditionnée
      - si vous avez utilisé le préconditionneur 'LDLT_SP' avec ALGORITHME='GMRES'

@@ -460,7 +460,7 @@ use lmp_module, only : lmp_update
             ASSERT(ierr.eq.0)
 !
             if (fres .gt. sqrt(rtol)*ires) then
-                call utmess('F', 'PETSC_16')
+                call utmess('F', 'PETSC_16', sr=fres)
             endif
         endif
 !
