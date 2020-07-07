@@ -434,7 +434,7 @@ use lmp_module, only : lmp_update
 !
 !        -- DOIT-ON VERIFIER LE CRITERE EN NORME NON PRECONDITIONNEE ?
         call jeveuo(nosolv//'.SLVR', 'L', vr=slvr)
-        resipc = slvr(4)
+        resipc = slvr(5)
 !
         if (resipc .ge. 0.d0) then
             call VecDuplicate(x, r, ierr)
