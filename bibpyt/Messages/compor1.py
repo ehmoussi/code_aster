@@ -403,10 +403,6 @@ Comportement  %(k1)s : avec ELAS_ORTH, il faut renseigner le mot clé MU_MOY.
 Vérifiez les valeurs de la fonction.
 """),
 
-    92 : _("""
-Seule la modélisation 3D est disponible avec la loi d'endommagement de KIT_RGI.
-"""),
-
     93 : _("""
 La donnée de l'énergie de fissuration initiale G_INIT est trop élevée. Elle doit être inférieure à 0.453*GF.
 """),
