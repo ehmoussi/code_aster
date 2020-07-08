@@ -714,7 +714,7 @@ U9B=DYNA_NON_LINE(
                               PRECISION=1.E-6,),
                  ARCHIVAGE=_F(LIST_INST=L_ARCH,),
 
-                 SCHEMA_TEMPS=_F(SCHEMA='HHT',ALPHA=-0.35,
+                 SCHEMA_TEMPS=_F(SCHEMA='HHT',ALPHA=-0.35, MODI_EQUI='NON',
                                  FORMULATION='DEPLACEMENT'),
                  NEWTON=_F(REAC_ITER=1, ), #MATR_RIGI_SYME='OUI',),
                  CONVERGENCE=_F(RESI_GLOB_RELA=1e-05,

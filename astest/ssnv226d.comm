@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -120,7 +120,7 @@ SOLNL=DYNA_NON_LINE(MODELE=TROISD,
                                  DEFORMATION='SIMO_MIEHE',
                                  POST_ITER='CRIT_RUPT',),
                     INCREMENT=_F(LIST_INST=DEFLIST1,),
-                    SCHEMA_TEMPS=_F(SCHEMA='HHT',
+                    SCHEMA_TEMPS=_F(SCHEMA='HHT', MODI_EQUI='NON',
                                     FORMULATION='DEPLACEMENT',),
                     NEWTON=_F(REAC_ITER=1,),
                     SUIVI_DDL=(_F(NOM_CHAM='VARI_ELGA',

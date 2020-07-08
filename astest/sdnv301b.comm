@@ -88,7 +88,7 @@ resu=DYNA_NON_LINE(MODELE=model,
                    EXCIT=_F(CHARGE=clim),
                    COMPORTEMENT=_F(RELATION='ELAS',),
                    INCREMENT=_F(LIST_INST=deflist,),
-                   SCHEMA_TEMPS=_F(SCHEMA='HHT', ALPHA=-0.3,
+                   SCHEMA_TEMPS=_F(SCHEMA='HHT', ALPHA=-0.3, MODI_EQUI='NON',
                                    FORMULATION='DEPLACEMENT',),);
 
 IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT=resu))

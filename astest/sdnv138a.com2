@@ -66,7 +66,7 @@ U_JF=DYNA_NON_LINE(reuse=U_JF,
                               PRECISION=1.E-6,),
                   ARCHIVAGE=_F(LIST_INST=L_ARCH,),
                  
-                  SCHEMA_TEMPS=_F(SCHEMA='HHT',
+                  SCHEMA_TEMPS=_F(SCHEMA='HHT', MODI_EQUI='NON',
                                  FORMULATION='DEPLACEMENT',
                                  ALPHA=-0.1,
                                  ),

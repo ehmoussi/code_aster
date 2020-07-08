@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ TRAN_DI=DYNA_NON_LINE(
                 COMPORTEMENT=_F(  RELATION = 'DIS_CHOC',
                            MAILLE = 'EL1'),
                 INCREMENT=_F(  LIST_INST = DEFLIST),
-                SCHEMA_TEMPS=_F(SCHEMA='HHT',
+                SCHEMA_TEMPS=_F(SCHEMA='HHT', MODI_EQUI='NON',
                                 FORMULATION='DEPLACEMENT',
                                 ALPHA = -0.02),  #0.01
                 CONVERGENCE=_F(  RESI_GLOB_RELA = 1.E-4,

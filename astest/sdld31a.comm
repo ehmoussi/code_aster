@@ -193,7 +193,7 @@ REPACCP=DYNA_NON_LINE( reuse=REPACCP,
 #
 REPACM=DYNA_NON_LINE(
                 SCHEMA_TEMPS=_F(SCHEMA='HHT', ALPHA=-0.3,
-                               FORMULATION='DEPLACEMENT',),
+                               FORMULATION='DEPLACEMENT',MODI_EQUI='NON',),
                 MODELE=MO,
                   CARA_ELEM = CARA_ELE,
                 CHAM_MATER=CHMAT,EXCIT=(

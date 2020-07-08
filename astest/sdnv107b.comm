@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -364,7 +364,7 @@ DYTREX=DYNA_NON_LINE(MODELE=MODELB,
                                ),
                      INCREMENT=_F(LIST_INST=LINSDY2,),
                      ARCHIVAGE=_F(LIST_INST=LINSDYN,),
-                     SCHEMA_TEMPS=_F(SCHEMA='HHT',
+                     SCHEMA_TEMPS=_F(SCHEMA='HHT', MODI_EQUI='NON',
                                  FORMULATION='DEPLACEMENT',
                                  ALPHA=-0.0,
                                  ),
@@ -403,7 +403,7 @@ DYTREX0=DYNA_NON_LINE(MODELE=MODELE,
                                ),
                      INCREMENT=_F(LIST_INST=LINSDY2,),
                      ARCHIVAGE=_F(LIST_INST=LINSDYN,),
-                     SCHEMA_TEMPS=_F(SCHEMA='HHT',
+                     SCHEMA_TEMPS=_F(SCHEMA='HHT', MODI_EQUI='NON',
                                  FORMULATION='DEPLACEMENT',
                                  ALPHA=-0.0,
                                  ),

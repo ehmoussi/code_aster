@@ -1068,7 +1068,7 @@ EVOL=DYNA_NON_LINE(reuse=EVOL,MODELE=STICKMOD,
 #  a cause du modele (discrets sans masses), on ne peut calculer une acceleration non nulle :
                                    ACCE=ACCE0,),
                       INCREMENT=_F(LIST_INST=TEMPLI,INST_FIN=3.2,),
-                      SCHEMA_TEMPS=_F(SCHEMA='HHT',ALPHA=-0.0,
+                      SCHEMA_TEMPS=_F(SCHEMA='HHT',ALPHA=-0.0, MODI_EQUI='NON',
                                       FORMULATION='DEPLACEMENT'),
                       NEWTON=_F(REAC_ITER=1,),
                       CONVERGENCE=_F(RESI_GLOB_RELA=1e-06,

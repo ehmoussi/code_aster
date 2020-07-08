@@ -560,7 +560,7 @@ DYNA=DYNA_NON_LINE(
                            ),
                  ETAT_INIT=_F(EVOL_NOLI=DYNA, INST=TFIN,
                               ),
-                 SCHEMA_TEMPS = _F(SCHEMA='HHT',ALPHA=-0.0,
+                 SCHEMA_TEMPS = _F(SCHEMA='HHT',ALPHA=-0.0, MODI_EQUI='NON',
                                    FORMULATION='DEPLACEMENT',),
                  CONVERGENCE=_F(RESI_GLOB_RELA = 1.E-8,
                                 ITER_GLOB_MAXI = 20,

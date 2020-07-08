@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ RESUD=DYNA_NON_LINE(
         EFFORT_REFE = 1.0,
         MOMENT_REFE = 1.0,
 ),
-    SCHEMA_TEMPS=_F(SCHEMA='HHT',FORMULATION='DEPLACEMENT',),
+    SCHEMA_TEMPS=_F(SCHEMA='HHT',FORMULATION='DEPLACEMENT', MODI_EQUI='NON',),
     MODE_VIBR=_F(INST=(TMilieu,Tfin),MATR_RIGI='TANGENTE',NMAX_FREQ=15,),
 )
 
@@ -190,7 +190,7 @@ RESUE=DYNA_NON_LINE(
         EFFORT_REFE = 1.0,
         MOMENT_REFE = 1.0,
 ),
-    SCHEMA_TEMPS=_F(SCHEMA='HHT',FORMULATION='DEPLACEMENT',),
+    SCHEMA_TEMPS=_F(SCHEMA='HHT',FORMULATION='DEPLACEMENT', MODI_EQUI='NON',),
     MODE_VIBR=_F(INST=(TMilieu,Tfin),MATR_RIGI='TANGENTE',OPTION='CALIBRATION',FREQ=(60,100),),
 )
 
