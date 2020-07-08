@@ -985,8 +985,7 @@ def corrcoefmodel(Period, f_beta=None):
     if PMIN < 0.01:
         UTMESS('F', 'SEISME_37', valk=(str(1. / PMIN)))
     if max(Period) > 10.:
-        nb = len(NP.extract(Period > 10., Period))
-        Periods = Period[nb:]
+        Periods = NP.extract(NP.array(Period) <= 10., NP.array(Period))
     else:
         Periods = Period
     nbT = len(Periods)
