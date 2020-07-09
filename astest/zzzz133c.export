@@ -5,5 +5,5 @@ P mpi_nbcpu 1
 P mpi_nbnoeud 1
 P testlist verification sequential
 
-F comm zzzz999c.comm D 1
-F mail zzzz999b.mail D 20
+F comm zzzz133c.comm D 1
+F mail zzzz133b.mail D 20

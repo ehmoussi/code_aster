@@ -144,7 +144,7 @@ integer, optional, intent(out) :: isech_
 !
     if ((icodrm(1)+icodrp(1)).ne.0) then
         call tecael(iadzi, iazk24)
-        valk(1) = zk24(iazk24-1+3)
+        valk(1) = zk24(iazk24-1+3)(1:8)
         valk(2) = 'SECH'
         valk(3) = nomres
         call utmess('F', 'COMPOR5_32', nk=3, valk=valk)

@@ -30,8 +30,7 @@ subroutine btldth(fami, xi3, nb1, kpg, btild,&
     integer :: nb1, kpg
     real(kind=8) :: wgt, young, nu, alpha, xi3
     real(kind=8) :: btild(5, 42), forthi(1), vecthr(2)
-    integer :: jcou, imoy, iadzi, iazk24
-    character(len=24) :: valk(3)
+    integer :: jcou, imoy
     character(len=4) :: fami
     real(kind=8) :: p1xi3, p2xi3, p3xi3
 !

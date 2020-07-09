@@ -54,14 +54,14 @@ integer, optional, intent(out) :: iepsa_(6)
 !
     integer :: i, iretm(6), iretp(6), iret(6)
     real(kind=8) :: defam(6), defap(6)
-    character(len=6) :: name_epsa(6)
+    character(len=6), parameter :: name_epsa(6) = (/'EPSAXX','EPSAYY','EPSAZZ',&
+                                                    'EPSAXY','EPSAXZ','EPSAYZ'/)
 !
 ! --------------------------------------------------------------------------------------------------
-    data name_epsa /'EPSAXX','EPSAYY','EPSAZZ','EPSAXY','EPSAXZ','EPSAYZ'/
-! --------------------------------------------------------------------------------------------------
 !
-    defam(1:6)   = 0.d0
-    defap(1:6)   = 0.d0
+    defam = 0.d0
+    defap = 0.d0
+    epsa  = 0.d0
 !
 ! - Get anelastic strains
 !
@@ -69,6 +69,9 @@ integer, optional, intent(out) :: iepsa_(6)
         do i = 1, 6
             call rcvarc(' ', name_epsa(i), '-', fami, kpg,&
                         ksp, defam(i), iretm(i))
+            if (iretm(i) .ne. 0) then
+                defam(i) = 0.d0
+            endif
         enddo
     endif
 !
@@ -76,6 +79,9 @@ integer, optional, intent(out) :: iepsa_(6)
         do i = 1, 6
             call rcvarc(' ', name_epsa(i), '+', fami, kpg,&
                         ksp, defap(i), iretp(i))
+            if (iretp(i) .ne. 0) then
+                defap(i) = 0.d0
+            endif
         enddo
     endif
 !
