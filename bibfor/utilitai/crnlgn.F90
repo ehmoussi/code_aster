@@ -38,22 +38,23 @@ subroutine crnlgn(numddl)
     character(len=14) :: numddl
 
 #ifdef _USE_MPI
+#include "mpif.h"
 !
     integer :: ili, nunoel, l, idprn1, idprn2, ntot, lonmax, nbno_prno, jdeeq
     integer :: nbddll, iaux, jposdd, jnequ, jnoext, ino, jnugll, iret, nbcmp
     integer :: numero_noeud, numero_cmp, rang, nbproc, jrefn, jown, jprno
     integer :: jnbddl, nec, numglo, dime, jmult, jmult2, nbddl_lag, jmdlag
-    integer :: pos, jdelg, jmults, jmult1
+    integer :: pos, jdelg, jmults, jmult1, nuno, jmlogl
     integer(kind=4) :: un, iaux4
     mpi_int :: mrank, msize, mpicou
+    integer, pointer :: v_noext(:) => null()
 !
     character(len=4) :: chnbjo
     character(len=8) :: k8bid, noma
     character(len=19) :: nomlig
-    character(len=24) :: owner, mult1, mult2
+    character(len=24) :: owner, mult1, mult2, nonulg
 !
 !----------------------------------------------------------------------
-    integer :: zzprno
 !
 !---- FONCTION D ACCES AUX ELEMENTS DES CHAMPS PRNO DES S.D. LIGREL
 !     REPERTORIEES DANS LE CHAMP LILI DE NUME_DDL ET A LEURS ADRESSES
@@ -64,7 +65,7 @@ subroutine crnlgn(numddl)
 !     ZZPRNO(ILI,NUNOEL,2+1) = 1ER CODE
 !     ZZPRNO(ILI,NUNOEL,2+NEC) = NEC IEME CODE
 !
-    zzprno(ili,nunoel,l) = zi(idprn1-1+zi(idprn2+ili-1)+ (nunoel-1)* (nec+2)+l-1)
+#define zzprno(ili,nunoel,l)  zi(idprn1-1+zi(idprn2+ili-1)+ (nunoel-1)* (nec+2)+l-1)
 !
     call jemarq()
     call asmpi_comm('GET', mpicou)
@@ -83,7 +84,7 @@ subroutine crnlgn(numddl)
     call jelira(jexnum(numddl//'.NUME.PRNO', 1), 'LONMAX', ntot, k8bid)
     nec = ntot/zi(dime) - 2
 !
-    call jeveuo(noma//'.NOEX', 'L', jnoext)
+    call jeveuo(noma//'.NOEX', 'L', vi=v_noext)
 !
     call jeveuo(numddl//'.NUME.DEEQ', 'L', jdeeq)
     call jeveuo(numddl//'.NUME.NEQU', 'L', jnequ)
@@ -95,6 +96,9 @@ subroutine crnlgn(numddl)
     call wkvect(numddl//'.NUME.PDDL', 'G V I', nbddll, jposdd)
     call wkvect('&&CRNUGL.MULT_DDL', 'V V I', nbddll, jmult)
     call wkvect('&&CRNUGL.MULT_DDL2', 'V V I', nbddll, jmults)
+!
+! --- Il ne faut pas changer la valeur d'initialisation car on s'en sert pour detecter
+!     qui est propriétaire d'un noeud (-1 si pas propriétaire)
     do iaux = 0, nbddll - 1
         zi(jnugll + iaux) = -1
         zi(jposdd + iaux) = -1
@@ -104,7 +108,7 @@ subroutine crnlgn(numddl)
         numero_noeud = zi(jdeeq + iaux*2)
         numero_cmp = zi(jdeeq + iaux*2 + 1)
         if( numero_noeud.gt.0 .and. numero_cmp.gt.0 ) then
-            if ( zi(jnoext + numero_noeud - 1).eq.rang ) then
+            if (v_noext(numero_noeud) == rang) then
                 zi(jnugll + iaux) = numglo
                 zi(jposdd + iaux) = rang
                 numglo = numglo + 1
@@ -184,6 +188,21 @@ subroutine crnlgn(numddl)
         endif
     end do
     ASSERT(nbddl_lag.eq.pos)
+!
+! --- Pour debuggage en hpc
+    if(ASTER_FALSE) then
+        nonulg = noma//'.NULOGL'
+        call jeveuo(nonulg, 'L', jmlogl)
+        do iaux = 0, nbddll - 1
+            nuno = zi(jdeeq + iaux*2)
+            if(nuno.ne.0) nuno = zi(jmlogl + nuno - 1) + 1
+! numero ddl local, numéro noeud local, numéro noeud global, num composante du noeud,
+!            num ddl global, num proc proprio
+            write(120+rang, *) iaux, zi(jdeeq + iaux*2), nuno , zi(jdeeq + iaux*2 + 1), &
+             zi(jnugll + iaux), zi(jposdd + iaux)
+        end do
+        flush(120+rang)
+    end if
 !
     call jedema()
 #endif

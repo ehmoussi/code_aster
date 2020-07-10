@@ -65,6 +65,7 @@ subroutine crnlgc(numddl)
     real(kind=8) :: dx, dy, dz
     integer(kind=4) :: iaux4, num4, numpr4, n4e, n4r
     mpi_int :: mrank, msize, mpicou
+    integer, pointer :: v_noex(:) => null()
 !
     character(len=4) :: chnbjo
     character(len=8) :: noma, k8bid, nomgdr
@@ -282,6 +283,7 @@ subroutine crnlgc(numddl)
             do icmp = 1, ncmpmx
                 if ( zi(jcpnec + icmp - 1) .eq. 1 ) then
                     if ( zi(jcpne2 + icmp - 1) .eq. 1 ) then
+                        ASSERT(nddlg .ne. -1)
                         zi(jenvoi2 + nbddl) = nddlg + ico2
                         zi(jnujoi1 + nbddl) = nddl + ico2
                     endif
@@ -310,6 +312,7 @@ subroutine crnlgc(numddl)
             nddll = zzprno(1, numno1, 1)
             nbcmp = zzprno(1, numno1, 2)
             do icmp = 0, nbcmp - 1
+                ASSERT(zi(jrecep2 + curpos) .ne. -1)
                 zi(jnugll - 1 + nddll + icmp) = zi(jrecep2 + curpos)
                 zi(jposdd - 1 + nddll + icmp) = numpro
                 zi(jnujoi2 + curpos) = nddll + icmp
@@ -398,6 +401,31 @@ subroutine crnlgc(numddl)
     enddo
 !
     call jedetc('V', '&&CRNULG', 1)
+!
+! --- Vérification de la numérotation
+!
+    call jeveuo(noma//'.NOEX', 'L', vi=v_noex)
+    do iaux = 0, nbddll - 1
+        nuno = zi(jdeeq + iaux*2)
+        if(nuno.ne.0) then
+            ASSERT(zi(jposdd + iaux) == v_noex(nuno))
+        end if
+    end do
+!
+! --- Pour debuggage en hpc
+    if(ASTER_FALSE) then
+        nonulg = noma//'.NULOGL'
+        call jeveuo(nonulg, 'L', jmlogl)
+        do iaux = 0, nbddll - 1
+            nuno = zi(jdeeq + iaux*2)
+            if(nuno.ne.0) nuno = zi(jmlogl + nuno - 1) + 1
+! numero ddl local, numéro noeud local, numéro noeud global, num composante du noeud,
+!            num ddl global, num proc proprio
+            write(130+rang, *) iaux, zi(jdeeq + iaux*2), nuno , zi(jdeeq + iaux*2 + 1), &
+             zi(jnugll + iaux), zi(jposdd + iaux)
+        end do
+        flush(130+rang)
+    end if
 !
     call jedema()
 #endif
