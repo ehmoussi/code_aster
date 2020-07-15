@@ -161,21 +161,7 @@ class ElementaryVectorClass : public DataStructure {
     /**
      * @brief function to update ElementaryTermClass
      */
-    bool update()
-    {
-        _listOfElementaryTerms->updateValuePointer();
-        _realVector.clear();
-        for ( int pos = 0; pos < _listOfElementaryTerms->size(); ++pos )
-        {
-            const std::string name = ( *_listOfElementaryTerms )[pos].toString();
-            if ( trim( name ) != "" )
-            {
-                ElementaryTermRealPtr toPush( new ElementaryTermClass< double >( name ) );
-                _realVector.push_back( toPush );
-            }
-        }
-        return true;
-    };
+    bool update();
 
     friend class DiscreteProblemClass;
 };

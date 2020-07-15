@@ -189,15 +189,7 @@ class ModelClass : public DataStructure {
      * @param mod Modelisation a ajouter
      * @param nameOfGroup Nom du groupe de mailles
      */
-    void addModelingOnGroupOfCells( Physics phys, Modelings mod, std::string nameOfGroup ) {
-        if ( !_baseMesh )
-            throw std::runtime_error( "Mesh is not defined" );
-        if ( !_baseMesh->hasGroupOfCells( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in mesh" );
-
-        _modelisations.push_back( listOfModsAndGrpsValue(
-            ElementaryModeling( phys, mod ), MeshEntityPtr( new GroupOfCells( nameOfGroup ) ) ) );
-    };
+    void addModelingOnGroupOfCells( Physics phys, Modelings mod, std::string nameOfGroup );
 
     /**
      * @brief Ajout d'une nouvelle modelisation sur une entite du maillage
@@ -205,15 +197,7 @@ class ModelClass : public DataStructure {
      * @param mod Modelisation a ajouter
      * @param nameOfGroup Nom du groupe de noeuds
      */
-    void addModelingOnGroupOfNodes( Physics phys, Modelings mod, std::string nameOfGroup ) {
-        if ( !_baseMesh )
-            throw std::runtime_error( "Mesh is not defined" );
-        if ( !_baseMesh->hasGroupOfNodes( nameOfGroup ) )
-            throw std::runtime_error( nameOfGroup + " not in mesh" );
-
-        _modelisations.push_back( listOfModsAndGrpsValue(
-            ElementaryModeling( phys, mod ), MeshEntityPtr( new GroupOfNodes( nameOfGroup ) ) ) );
-    };
+    void addModelingOnGroupOfNodes( Physics phys, Modelings mod, std::string nameOfGroup );
 
     /**
      * @brief Construction (au sens Jeveux fortran) de la sd_modele

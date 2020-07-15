@@ -104,3 +104,25 @@ void CrackShapeClass::setLineCrackShape( VectorReal startingPoint,
     _startingPoint = startingPoint;
     _tangent = tangent;
 };
+
+
+std::string CrackShapeClass::getShapeName() const {
+    if ( _shape == Shape::NoShape )
+        return "NoShape";
+    else if ( _shape == Shape::Ellipse )
+        return "ELLIPSE";
+    else if ( _shape == Shape::Square )
+        return "RECTANGLE";
+    else if ( _shape == Shape::Cylinder )
+        return "CYLINDRE";
+    else if ( _shape == Shape::Notch )
+        return "ENTAILLE";
+    else if ( _shape == Shape::HalfPlane )
+        return "DEMI_PLAN";
+    else if ( _shape == Shape::Segment )
+        return "SEGMENT";
+    else if ( _shape == Shape::HalfLine )
+        return "DEMI_DROITE";
+    else if ( _shape == Shape::Line )
+        return "DROITE";
+};
