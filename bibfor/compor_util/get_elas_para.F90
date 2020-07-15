@@ -127,7 +127,8 @@ type(Behaviour_Integ), optional, intent(in) :: BEHinteg
             para_vale(nb_para) = xyzgau_(3)
     endif
     if (present(BEHinteg)) then
-        if (.not.BEHinteg%l_varext_geom) then
+        if (.not.BEHinteg%l_varext_geom .and. (fami.ne."XFEM")) then
+            ASSERT(ipg <= 27)
             nb_para   = nb_para + 1
             para_name(nb_para) = 'X'
             para_vale(nb_para) = BEHinteg%elem%coor_elga(ipg,1)
