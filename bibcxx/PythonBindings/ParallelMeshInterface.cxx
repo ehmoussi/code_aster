@@ -42,7 +42,9 @@ void exportParallelMeshToPython() {
         .def( "hasLocalGroupOfNodes", &ParallelMeshClass::hasLocalGroupOfNodes )
         .def( "updateGlobalGroupOfCells", &ParallelMeshClass::updateGlobalGroupOfCells )
         .def( "updateGlobalGroupOfNodes", &ParallelMeshClass::updateGlobalGroupOfNodes )
-        .def( "readMedFile", &ParallelMeshClass::readMedFile );
+        .def( "readMedFile", &ParallelMeshClass::readMedFile )
+        .def( "getOwnerNodes", &ParallelMeshClass::getOuterNodesVector )
+        .def( "getGlobalNodesNumbering", &ParallelMeshClass::getGlobalNodesNumbering );
 };
 
 #endif /* _USE_MPI */
