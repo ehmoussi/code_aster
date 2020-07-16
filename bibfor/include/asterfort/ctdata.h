@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,23 +18,25 @@
 
 !
 !
-          interface 
-            subroutine ctdata(mesnoe,mesmai,nkcha,tych,toucmp,nkcmp,    &
-     &nkvari,nbcmp,ndim,chpgs,noma,nbno,nbma,nbval,tsca)
-              character(len=24) :: mesnoe
-              character(len=24) :: mesmai
-              character(len=24) :: nkcha
-              character(len=4) :: tych
-              aster_logical :: toucmp
-              character(len=24) :: nkcmp
-              character(len=24) :: nkvari
-              integer :: nbcmp
-              integer :: ndim
-              character(len=19) :: chpgs
-              character(len=8) :: noma
-              integer :: nbno
-              integer :: nbma
-              integer :: nbval
-              character(len=1) :: tsca
-            end subroutine ctdata
-          end interface 
+interface
+    subroutine ctdata(mesnoe,   mesmai, nkcha,  tych,   toucmp, &
+                      nkcmp,    nkvari, nbcmp,  ndim,   chpgs, &
+                      chpsu,    noma,   nbno,   nbma,   nbval,  tsca)
+        character(len=24) :: mesnoe
+        character(len=24) :: mesmai
+        character(len=24) :: nkcha
+        character(len=4) :: tych
+        aster_logical :: toucmp
+        character(len=24) :: nkcmp
+        character(len=24) :: nkvari
+        integer :: nbcmp
+        integer :: ndim
+        character(len=19) :: chpgs
+        character(len=19) :: chpsu
+        character(len=8) :: noma
+        integer :: nbno
+        integer :: nbma
+        integer :: nbval
+        character(len=1) :: tsca
+    end subroutine ctdata
+end interface

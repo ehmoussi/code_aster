@@ -52,7 +52,7 @@ comment="""  XFEM - NBRE DE TETRAEDRES ET DE SOUS-ELEMENTS  """)
 
 
 PCOORPG  = OutputParameter(phys=PHY.GEOM_R, type='ELGA')
-
+PCOORSU  = OutputParameter(phys=PHY.GEOM_R, type='ELGA')
 
 COOR_ELGA = Option(
     para_in=(
@@ -69,6 +69,7 @@ COOR_ELGA = Option(
     ),
     para_out=(
            PCOORPG,
+           PCOORSU,
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),)),

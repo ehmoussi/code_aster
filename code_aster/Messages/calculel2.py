@@ -279,14 +279,16 @@ Erreur utilisateur :
 
 
     52: _("""
+Pour le champ %(k1)s
 Vous utilisez la commande CREA_TABLE sur un champ incomplet issu d'éléments à sous-points :
-    poutres multi-fibres, plaques multi-couches, tuyaux , ...
+    poutres multifibres, plaques multicouches, tuyaux , ...
 Ce champ a peut-être été crée par POST_CHAMP/EXTR_**
 
-Le champ extrait a  %(i1)d sous-point(s).
-L'élément support a %(i2)d sous-point(s).
+Le champ extrait  a %(i1)4d sous-point(s).
+L'élément support a %(i2)4d sous-point(s).
 
-Les coordonnées qui sont écrites dans la table ne correspondront pas au lieu d'extraction.
+Conseil : Il ne faut pas modifier le nombre de composantes d'un champ pour ensuite
+          le réutiliser dans une autre commande.
 """),
 
 

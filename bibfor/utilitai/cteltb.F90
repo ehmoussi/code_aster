@@ -18,43 +18,14 @@
 
 subroutine cteltb(nbma, mesmai, noma, nbval, nkcha,&
                   nkcmp, nkvari, toucmp, nbcmp, typac, ndim,&
-                  nrval, resu, nomtb, nsymb, chpgs, &
+                  nrval, resu, nomtb, nsymb, chpgs, chpsu, &
                   tych, nival, niord)
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
 !
-#include "asterc/indik8.h"
-#include "asterfort/assert.h"
-#include "asterfort/carces.h"
-#include "asterfort/celces.h"
-#include "asterfort/cesexi.h"
-#include "asterfort/indiis.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jeexin.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jexatr.h"
-#include "asterfort/jexnum.h"
-#include "asterfort/tbajli.h"
-#include "asterfort/utmess.h"
-#include "asterfort/wkvect.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/as_allocate.h"
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbcmp, ndim, nbval, nbma
-    character(len=4) :: tych
-    character(len=8) :: typac, noma, resu, nomtb
-    character(len=16) :: nsymb
-    character(len=19) :: chpgs
-    character(len=24) :: nkcha, nkcmp, nkvari, mesmai, nival, nrval, niord
-    aster_logical :: toucmp
-!     ----- OPERATEUR CREA_TABLE , MOT-CLE FACTEUR RESU   --------------
+!                       OPERATEUR CREA_TABLE , MOT-CLE FACTEUR RESU
 !
-!        BUT : REMPLISSAGE DE LA TABLE POUR UN CHAM_ELEM OU UNE CARTE
+!     REMPLISSAGE DE LA TABLE POUR UN CHAM_ELEM OU UNE CARTE
 !
 !        IN     : NKCHA (K24)  : OBJET DES NOMS DE CHAMP
 !                 RESU  (K8)   : NOM DU RESULTAT (SI RESULTAT,SINON ' ')
@@ -77,31 +48,67 @@ subroutine cteltb(nbma, mesmai, noma, nbval, nkcha,&
 !
 !        IN/OUT : NOMTB (K24)  : OBJET TABLE
 !
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
 !
-    integer :: jcmp, jkcha, jlma, jrval, jival, jniord, jconx2
-    integer :: jcpgaussl, jcpgaussd
-    integer :: i, j, jcesl, jcesd, nbmax
-    integer :: nbcmpx
+    implicit none
+#include "asterf_types.h"
+#include "jeveux.h"
+!
+#include "asterc/indik8.h"
+#include "asterfort/assert.h"
+#include "asterfort/carces.h"
+#include "asterfort/celces.h"
+#include "asterfort/cesexi.h"
+#include "asterfort/exisd.h"
+#include "asterfort/indiis.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jeexin.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jenuno.h"
+#include "asterfort/jelira.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jexatr.h"
+#include "asterfort/jexnum.h"
+#include "asterfort/tbajli.h"
+#include "asterfort/utmess.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/as_allocate.h"
+!
+    integer :: nbcmp, ndim, nbval, nbma
+    character(len=4) :: tych
+    character(len=8) :: typac, noma, resu, nomtb
+    character(len=16) :: nsymb
+    character(len=19) :: chpgs, chpsu
+    character(len=24) :: nkcha, nkcmp, nkvari, mesmai, nival, nrval, niord
+    aster_logical :: toucmp
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: jcmp, jkcha, jlma, jrval, jival, jniord, jconx2, ierr
+    integer :: jcpgaussl, jcpgaussd, jcpsuppol, jcpsuppod
+    integer :: i, j, jcesl, jcesd, nbmax, nbcmpx
     integer :: n, ima, ipt, ispt, icmp, indma, nbpt, kk
     integer :: nbcmpt, nbspt, inot, kcp, indcmp, iad, ni, nk, nr
     integer :: nbpara, iret, jvari, iexi, nbvari, nbspt_coord
-    character(len=8) :: kma, kno
     complex(kind=8) :: cbid
+    character(len= 8) :: kma, kno
     character(len=19) :: chames
-    character(len=16), pointer :: nom_cmp(:) => null()
-    character(len=16), pointer :: table_parak(:) => null()
-    integer, pointer :: table_vali(:) => null()
-    character(len=16), pointer :: table_valk(:) => null()
-    real(kind=8), pointer :: table_valr(:) => null()
-    real(kind=8), pointer :: val_cmp(:) => null()
-    character(len=8), pointer :: cesc(:) => null()
-    real(kind=8), pointer :: cesv(:) => null()
-    real(kind=8), pointer :: vcpgaussv(:) => null()
-    integer, pointer :: connex(:) => null()
-    real(kind=8), pointer :: vale(:) => null()
     logical :: au_sous_point
 !
+    integer,            pointer :: table_vali(:) => null()
+    integer,            pointer :: connex(:) => null()
+    character(len= 8),  pointer :: cesc(:) => null()
+    character(len=16),  pointer :: nom_cmp(:) => null()
+    character(len=16),  pointer :: table_parak(:) => null()
+    character(len=16),  pointer :: table_valk(:) => null()
+    real(kind=8),       pointer :: table_valr(:) => null()
+    real(kind=8),       pointer :: val_cmp(:) => null()
+    real(kind=8),       pointer :: cesv(:) => null()
+    real(kind=8),       pointer :: vcpgaussv(:) => null()
+    real(kind=8),       pointer :: vcpsuppov(:) => null()
+    real(kind=8),       pointer :: vale(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
@@ -128,11 +135,21 @@ subroutine cteltb(nbma, mesmai, noma, nbval, nkcha,&
     call jeveuo(noma//'.CONNEX', 'L', vi=connex)
     call jeveuo(jexatr(noma//'.CONNEX', 'LONCUM'), 'L', jconx2)
 !
-    au_sous_point = .true.
+!   Coordonnées des points de gauss des sous-points
     if (tych .eq. 'ELGA') then
         call jeveuo(chpgs//'.CESV', 'L', vr=vcpgaussv)
         call jeveuo(chpgs//'.CESL', 'L',    jcpgaussl)
         call jeveuo(chpgs//'.CESD', 'L',    jcpgaussd)
+    endif
+!
+!   Coordonnées des points de gauss de l'élément support des sous-points
+    if ( chpsu .ne. ' ' ) then
+        call exisd('CHAM_ELEM_S', chpsu, ierr)
+        if ( ierr.eq.1 ) then
+            call jeveuo(chpsu//'.CESV', 'L', vr=vcpsuppov)
+            call jeveuo(chpsu//'.CESL', 'L',    jcpsuppol)
+            call jeveuo(chpsu//'.CESD', 'L',    jcpsuppod)
+        endif
     endif
 !
 !   TABLEAU D'ENTIERS DE LA TABLE: ZI(JI)
@@ -183,14 +200,23 @@ subroutine cteltb(nbma, mesmai, noma, nbval, nkcha,&
                 if (indma .eq. 0) cycle cyima
 !               NOMBRE DE POINTS DE LA MAILLE IMA : NBPT
                 nbpt=zi(jcesd+5+4*(ima-1))
-!               Nombre de composantes portees par les points de la maille ima
+!               NOMBRE DE COMPOSANTES PORTEES PAR LES POINTS DE LA MAILLE IMA
                 nbcmpt=zi(jcesd+5+4*(ima-1)+2)
-!               Nombre de sous-points portes par les points de la maille ima
+!               NOMBRE DE SOUS-POINTS PORTES PAR LES POINTS
                 nbspt=zi(jcesd+5+4*(ima-1)+1)
+!               On vérifie que le champ a le bon nombre de sous-point par rapport aux COOR_ELGA
+                au_sous_point = .true.
+                nbspt_coord = nbspt
                 if (tych .eq. 'ELGA') then
                     nbspt_coord=zi(jcpgaussd+5+4*(ima-1)+1)
                     if ( nbspt .ne. nbspt_coord ) then
-                        call utmess('A', 'CALCULEL2_52',ni=2,vali=[nbspt,nbspt_coord])
+                        au_sous_point = .false.
+!                       Derniere chance !!
+                        nbspt_coord = zi(jcpsuppod+5+4*(ima-1)+1)
+                        if ( nbspt .ne. nbspt_coord ) then
+                            call utmess('F', 'CALCULEL2_52', ni=2, vali=[nbspt,nbspt_coord], &
+                                         sk=zk24(jkcha+i-1))
+                        endif
                     endif
                 endif
 !
@@ -203,11 +229,12 @@ subroutine cteltb(nbma, mesmai, noma, nbval, nkcha,&
                         kcp=0
 !                       ON PARCOURT LES COMPOSANTES PORTEES PAR LE POINT IPT
                         cyicmp: do icmp = 1, nbcmpt
+                            indcmp = 0
                             if (.not.toucmp) then
                                 indcmp=indik8(zk8(jcmp),cesc(icmp), 1,nbcmp)
 !                               si la composante fait partie des composantes desirees,
 !                               on poursuit, sinon on va a la composante suivante
-                                if (indcmp .eq. 0) cycle cyicmp
+                                if (indcmp.eq.0) cycle cyicmp
                             endif
 !                           Valeur de icmp au point ipt de la maille ima: zr(jcesv+iad-1)
                             call cesexi('C', jcesd, jcesl, ima, ipt, ispt, icmp, iad)
@@ -273,13 +300,23 @@ subroutine cteltb(nbma, mesmai, noma, nbval, nkcha,&
                                 kk=kk+1
                             enddo
                         else if (tych.eq.'ELGA') then
-                            do j = 1, ndim
-                                call cesexi('C', jcpgaussd, jcpgaussl, ima, ipt, ispt, j, iad)
-                                if (iad .gt. 0) then
-                                    table_valr(kk+1)=vcpgaussv(iad)
-                                    kk=kk+1
-                                endif
-                            enddo
+                            if ( au_sous_point ) then
+                                do j = 1, ndim
+                                    call cesexi('C', jcpgaussd, jcpgaussl, ima, ipt, ispt, j, iad)
+                                    if (iad .gt. 0) then
+                                        table_valr(kk+1)=vcpgaussv(iad)
+                                        kk=kk+1
+                                    endif
+                                enddo
+                            else
+                                do j = 1, ndim
+                                    call cesexi('C', jcpsuppod, jcpsuppol, ima, ipt, ispt, j, iad)
+                                    if (iad .gt. 0) then
+                                        table_valr(kk+1)=vcpsuppov(iad)
+                                        kk=kk+1
+                                    endif
+                                enddo
+                            endif
                         endif
                         do j = 1, kcp
                             table_valr(kk+1)=val_cmp(j)
