@@ -94,8 +94,13 @@ implicit none
     call infniv(ifm, niv)
 !
     call getres(kbid, concep, cmd)
+    l_parallel_mesh = isParallelMesh(ma)
     lisma = '&&SSCGMA.LISTE_MAILLES'
-    call jelira(ma//'.GROUPEMA', 'NMAXOC', nbgrmn)
+    if(l_parallel_mesh) then
+        call jelira(ma//'.PAR_GRPMAI', 'LONMAX', nbgrmn)
+    else
+        call jelira(ma//'.GROUPEMA', 'NMAXOC', nbgrmn)
+    end if
     nbis = nbgrmn
     nbk8 = nbgrmn
     AS_ALLOCATE(vk24=lik8, size=nbk8)
@@ -104,7 +109,6 @@ implicit none
     call dismoi('NB_MA_MAILLA', ma, 'MAILLAGE', repi=nbmat)
 !
     call getvtx(' ', 'ALARME', scal=alarm, nbret=nalar)
-    l_parallel_mesh = isParallelMesh(ma)
 !
     nbgnaj = 0
     do iocc = 1, nbgmp
@@ -245,8 +249,9 @@ implicit none
 !       -- MOT CLEF INTER:
 !       -------------------
         if (n3 .gt. 0) then
-            call getvtx('CREA_GROUP_MA', 'INTERSEC', iocc=iocc, nbval=n3, vect=lik8,&
-                        nbret=nbid)
+            call getvem(ma, 'GROUP_MA', 'CREA_GROUP_MA', 'INTERSEC', iocc,&
+                        iarg, n3, lik8, nbid)
+            n3 = nbid
             do igm = 1, n3
                 call jenonu(jexnom(ma//'.GROUPEMA', lik8(igm)), igm2)
                 if (igm2 .eq. 0) then
@@ -299,8 +304,9 @@ implicit none
 !       -- MOT CLEF UNION:
 !       -------------------
         if (n4 .gt. 0) then
-            call getvtx('CREA_GROUP_MA', 'UNION', iocc=iocc, nbval=n4, vect=lik8,&
-                        nbret=nbid)
+            call getvem(ma, 'GROUP_MA', 'CREA_GROUP_MA', 'UNION', iocc,&
+                        iarg, n4, lik8, nbid)
+            n4 = nbid
             do igm = 1, n4
                 call jenonu(jexnom(ma//'.GROUPEMA', lik8(igm)), igm2)
                 if (igm2 .eq. 0) then
@@ -363,8 +369,9 @@ implicit none
 !       -- MOT CLEF DIFFE:
 !       -------------------
         if (n5 .gt. 0) then
-            call getvtx('CREA_GROUP_MA', 'DIFFE', iocc=iocc, nbval=n5, vect=lik8,&
-                        nbret=nbid)
+            call getvem(ma, 'GROUP_MA', 'CREA_GROUP_MA', 'DIFFE', iocc,&
+                        iarg, n5, lik8, nbid)
+            n5 = nbid
             do igm = 1, n5
                 call jenonu(jexnom(ma//'.GROUPEMA', lik8(igm)), igm2)
                 if (igm2 .eq. 0) then
