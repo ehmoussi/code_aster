@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ comment="""  XFEM - NBRE DE TETRAEDRES ET DE SOUS-ELEMENTS  """)
 
 
 PCOORPG  = OutputParameter(phys=PHY.GEOM_R, type='ELGA')
-
+PCOORSU  = OutputParameter(phys=PHY.GEOM_R, type='ELGA')
 
 COOR_ELGA = Option(
     para_in=(
@@ -69,6 +69,7 @@ COOR_ELGA = Option(
     ),
     para_out=(
            PCOORPG,
+           PCOORSU,
     ),
     condition=(
       CondCalcul('+', ((AT.PHENO,'ME'),)),

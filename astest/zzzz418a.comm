@@ -1,0 +1,142 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+MAIL=LIRE_MAILLAGE(UNITE=20, FORMAT='ASTER',)
+
+MODELE=AFFE_MODELE(
+    MAILLAGE=MAIL,
+    AFFE=_F(GROUP_MA='TUBE', PHENOMENE='MECANIQUE', MODELISATION='TUYAU_3M',),
+)
+
+# Caractéristiques des tuyaux
+Ncou = 3; Nsect = 8; Rext = 0.50; Ep =0.20
+
+CAREL=AFFE_CARA_ELEM(
+    MODELE=MODELE,
+    POUTRE=(
+        _F(SECTION='CERCLE', GROUP_MA='TUBE', CARA=('R','EP',), VALE=(Rext,Ep,),
+           TUYAU_NSEC=Nsect, TUYAU_NCOU=Ncou,),
+    ),
+    ORIENTATION=_F(CARA='GENE_TUYAU',GROUP_NO='ENC',VALE=(0.0,1.0, 0.0),),
+)
+
+#
+coor3d=CALC_CHAM_ELEM(MODELE=MODELE, OPTION='COOR_ELGA',CARA_ELEM=CAREL,)
+
+# Création du champ de contraintes
+FXX = FORMULE(NOM_PARA=['X', 'Y', 'Z'] , VALE='X')
+FYY = FORMULE(NOM_PARA=['X', 'Y', 'Z'] , VALE='Y')
+FXY = FORMULE(NOM_PARA=['X', 'Y', 'Z'] , VALE='X*Y')
+FXZ = FORMULE(NOM_PARA=['X', 'Y', 'Z'] , VALE='X*Z')
+
+CHFONC=CREA_CHAMP(
+    OPERATION='AFFE', TYPE_CHAM='ELGA_NEUT_F', MODELE=MODELE, PROL_ZERO='OUI',
+    AFFE_SP=_F( CARA_ELEM = CAREL,),
+    AFFE= _F(TOUT='OUI', NOM_CMP = ('X1','X2','X3','X4',),
+                         VALE_F  = ( FXX, FYY, FXY, FXZ,),)
+)
+
+CHREEL=CREA_CHAMP( OPERATION='EVAL', TYPE_CHAM='ELGA_NEUT_R',
+              CHAM_F=CHFONC,CHAM_PARA=coor3d)
+
+CSIEF=CREA_CHAMP(OPERATION='ASSE', TYPE_CHAM='ELGA_SIEF_R',
+            MODELE=MODELE , PROL_ZERO='OUI',
+            ASSE=_F(TOUT='OUI', CHAM_GD=CHREEL,
+                    NOM_CMP     = ('X1',  'X2',  'X3',  'X4', ),
+                    NOM_CMP_RESU= ('SIXX','SIYY','SIXY','SIXZ',),)
+)
+
+RESU=CREA_RESU(TYPE_RESU = "EVOL_NOLI", OPERATION ="AFFE", NOM_CHAM='SIEF_ELGA',
+   AFFE= _F(CHAM_GD = CSIEF, MODELE = MODELE, CARA_ELEM =CAREL, INST =0.0,),
+)
+
+TSIEF = CREA_TABLE(
+    RESU=_F(RESULTAT=RESU, NOM_CHAM=('SIEF_ELGA',), INST=0.0,
+            TOUT_CMP='OUI', GROUP_MA=('TUBE',),),
+)
+
+# Coordonnées des Points de Gauss sur l'axe X
+LongPoutre = 3.0
+xpg = pow(3.0/5.0,0.5)
+Points={1: LongPoutre*(1.0-xpg)*0.5,
+        2: LongPoutre*0.5,
+        3: LongPoutre*(1.0+xpg)*0.5,}
+
+import numpy as NP
+# Coordonnées des Sous-Points !!!
+def CoordFibre(ifib):
+    Rint = Rext-Ep
+    # index des coordonnées
+    numAng = ((ifib-1)%(2*Nsect+1))/(2.0*Nsect)
+    numCou = ((ifib-1)//(2*Nsect+1))/(2.0*Ncou)
+    y =  (Rint+Ep*numCou)*NP.cos(2.0*NP.pi*numAng)
+    z = -(Rint+Ep*numCou)*NP.sin(2.0*NP.pi*numAng)
+    if (abs(y) < 1.0E-08): y = 0.0
+    if (abs(z) < 1.0E-08): z = 0.0
+    return y,z
+
+
+Nbfibre = (2*Ncou+1)*(2*Nsect+1)
+for ipt in [1,2,3]:
+    xx = Points[ipt]
+    for ifib in range(1,Nbfibre+1):
+        yy,zz = CoordFibre(ifib)
+        #
+        val_sief = ( (xx,'SIXX'), (yy,'SIYY'), (xx*yy,'SIXY'), (xx*zz,'SIXZ') )
+        for siefv, siefc in val_sief:
+            motclef = {}
+            if ( abs(siefv) < 1.0E-10 ): motclef = {'ORDRE_GRANDEUR':1.0, 'CRITERE':'ABSOLU'}
+            TEST_TABLE(REFERENCE='ANALYTIQUE',
+                VALE_CALC=siefv, VALE_REFE=siefv, NOM_PARA=siefc, TABLE=TSIEF,
+                FILTRE=(_F(NOM_PARA='POINT',      VALE_I= ipt,),
+                        _F(NOM_PARA='SOUS_POINT', VALE_I=ifib,),),
+                **motclef
+            )
+
+# Extraction de la fibre 103
+Fibre = POST_CHAMP(RESULTAT=RESU, INST=0.0,
+    GROUP_MA=('TUBE',),
+    EXTR_TUYAU=_F(NOM_CHAM='SIEF_ELGA', NUME_COUCHE=3, NIVE_COUCHE='SUP', ANGLE=0.0,),
+)
+TFibre=CREA_TABLE(
+    RESU=_F(RESULTAT=Fibre, NOM_CHAM='SIEF_ELGA', INST=0.0,
+            TOUT_CMP='OUI', GROUP_MA=('TUBE',),),
+)
+
+ifib = 103
+yy,zz = CoordFibre(ifib)
+for ipt in [1,2,3]:
+    xx = Points[ipt]
+    #
+    val_sief = ( (xx,'SIXX'),   (yy,'SIYY'),    (xx*yy,'SIXY'), (xx*zz,'SIXZ'),
+                 (xx,'COOR_X'), (0.0,'COOR_Y'), (0.0,'COOR_Z'), )
+    for siefv, siefc in val_sief:
+        motclef = {}
+        if ( abs(siefv) < 1.0E-10 ): motclef = {'ORDRE_GRANDEUR':1.0, 'CRITERE':'ABSOLU'}
+        TEST_TABLE(REFERENCE='ANALYTIQUE',
+            VALE_CALC=siefv, VALE_REFE=siefv, NOM_PARA=siefc, TABLE=TFibre,
+            FILTRE=(_F(NOM_PARA='POINT',      VALE_I= ipt,),
+                    _F(NOM_PARA='SOUS_POINT', VALE_I=1,),),
+            **motclef
+        )
+
+FIN()
+

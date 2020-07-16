@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,8 +17,6 @@
 ! --------------------------------------------------------------------
 
 subroutine te0478(option, nomte)
-!
-! aslint: disable=W0104
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,7 +46,7 @@ subroutine te0478(option, nomte)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: ndim, nno, nnos, npg, jgano, icopg, idfde, ipoids, ivf, igeom
+    integer :: ndim, nno, nnos, npg, jgano, icopg, icosu, idfde, ipoids, ivf, igeom
     integer :: tab(2), iret, ndim1
     integer :: inbf, jacf, iorien, nbsp, nbcou, nbsec, nbptcou, nbptsec
     integer :: isec, icou, isp, icoq, ig, ifi, kk, ii, jadr
@@ -56,6 +54,7 @@ subroutine te0478(option, nomte)
     real(kind=8) :: epcou, alpha, rayon, ep, yy, zz, hh, rr, rayonsp, wspicou,wspisec
     real(kind=8) :: dfdx(3), cour, jacp, cosa, sina, spoid
 !
+    logical :: gauss_support
     integer :: nbfibr, nbgrfi, tygrfi, nbcarm, nug(10)
 ! --------------------------------------------------------------------------------------------------
     integer, parameter :: nb_cara1 = 2
@@ -72,18 +71,31 @@ subroutine te0478(option, nomte)
     call tecach('OOO', 'PGEOMER', 'L', iret, nval=2, itab=tab)
     ndim  = tab(2)/nno
     igeom = tab(1)
-!   zr(icopg) : coordonnees points de gauss + poids
+!   zr(icopg) : coordonnées points de gauss aux sous-points + poids
     call jevech('PCOORPG', 'E', icopg)
 !
-! --------------------------------------------------------------------------------------------------
+!   Calcul des coordonnées des points de Gauss du support si besoin
+    call tecach('NNN','PCOORSU', 'E', iret, iad=icosu)
+    gauss_support = (iret.eq.0)
+!
 !   POUTRES MULTIFIBRES
     if (nomte .eq. 'MECA_POU_D_EM' .or. nomte .eq. 'MECA_POU_D_TGM') then
 !       Récupération des caractéristiques des fibres
         call pmfinfo(nbfibr,nbgrfi,tygrfi,nbcarm,nug,jacf=jacf)
         call jevech('PCAORIE', 'L', iorien)
         call matrot(zr(iorien), pgl)
-!       position et poids des points de gauss, dans l'espace utilisateur
+!       Position et poids des points de gauss de l'élément support
         call ppga1d(ndim, nno, npg, zr(ipoids), zr(ivf), zr(idfde), zr(igeom), copg)
+        if ( gauss_support ) then
+            do ig = 1, npg
+                jadr = icosu+(ig-1)*4
+                zr(jadr + 0 ) = copg(1,ig)
+                zr(jadr + 1 ) = copg(2,ig)
+                zr(jadr + 2 ) = copg(3,ig)
+                zr(jadr + 3 ) = copg(4,ig)
+            enddo
+        endif
+!
         gm1(1)=0.d0
 !       boucle sur les fibres/sous-points
 !           données   : nbcarm valeurs par fibre <yf,zf,Aire> + <yp,zp,Numgr>
@@ -105,8 +117,8 @@ subroutine te0478(option, nomte)
 !
 ! --------------------------------------------------------------------------------------------------
 !   TUYAUX
-    else if((nomte.eq.'MET3SEG3').or.(nomte.eq.'MET3SEG4').or.(nomte.eq.'MET6SEG3')) then
-!       nombre de couches et nombre de sections
+    else if ( (nomte.eq.'MET3SEG3').or.(nomte.eq.'MET3SEG4').or.(nomte.eq.'MET6SEG3') ) then
+!       Nombre de couches et nombre de sections
         call jevech('PNBSP_I', 'L', inbf)
         nbcou = zi(inbf)
         nbsec = zi(inbf+1)
@@ -121,8 +133,17 @@ subroutine te0478(option, nomte)
         ep    = vale_cara1(2)
 !
         call jevech('PCAORIE', 'L', iorien)
-!       position et poids des points de gauss
+!       position et poids des points de gauss de l'élément support
         call ppga1d(ndim, nno, npg, zr(ipoids), zr(ivf), zr(idfde), zr(igeom), copg)
+        if ( gauss_support ) then
+            do ig = 1, npg
+                jadr = icosu+(ig-1)*4
+                zr(jadr + 0 ) = copg(1,ig)
+                zr(jadr + 1 ) = copg(2,ig)
+                zr(jadr + 2 ) = copg(3,ig)
+                zr(jadr + 3 ) = copg(4,ig)
+            enddo
+        endif
 !
         gm1(1)=0.d0
         alpha = r8pi()/(nbsec)
@@ -185,12 +206,22 @@ subroutine te0478(option, nomte)
 !   COQUE(2D)
     else if(nomte.eq.'MECXSE3') then
         ASSERT(ndim.eq.2)
+!       nombre de couches
         call jevech('PNBSP_I', 'L', inbf)
         nbcou=zi(inbf)
         call jevech('PCACOQU', 'L', icoq)
         ep=zr(icoq)
         epcou=ep/nbcou
+!       position et poids des points de gauss de l'élément support
         call ppga1d(ndim, nno, npg, zr(ipoids), zr(ivf), zr(idfde), zr(igeom), copg2)
+        if ( gauss_support ) then
+            do ig = 1, npg
+                jadr = icosu+(ig-1)*3
+                zr(jadr + 0 ) = copg2(1,ig)
+                zr(jadr + 1 ) = copg2(2,ig)
+                zr(jadr + 2 ) = copg2(3,ig)
+            enddo
+        endif
 !
 !       Nombre de point par couche
         nbptcou = 3
@@ -198,7 +229,7 @@ subroutine te0478(option, nomte)
         nbsp= nbptcou*nbcou
 !
         do ig = 1, npg
-!           CALCUL DU VECTEUR NORMAL UNITAIRE AU POINT DE GAUSS
+!           Calcul du vecteur normal unitaire au point de gauss
             kk = (ig-1)*nno
             call dfdm1d(nno, zr(ipoids+ig-1), zr(idfde+kk), zr(igeom), dfdx,&
                         cour, jacp, cosa, sina)
@@ -212,7 +243,7 @@ subroutine te0478(option, nomte)
 !
             do icou = 1, nbcou
                 do isp = 1, nbptcou
-                    hh=-ep/2+(icou-1+0.5d0*(isp-1))*epcou
+                    hh=-ep/2.0+(icou-1+0.5d0*(isp-1))*epcou
                     jadr = icopg+((ig-1)*nbsp+(icou-1)*nbptcou+(isp-1))*3
                     zr(jadr+0) = copg2(1,ig)+hh*gm2(1)
                     zr(jadr+1) = copg2(2,ig)+hh*gm2(2)
@@ -228,7 +259,7 @@ subroutine te0478(option, nomte)
         enddo
 !
 ! --------------------------------------------------------------------------------------------------
-!   autres elements
+!   autres éléments
     else
         call ppga1d(ndim, nno, npg, zr(ipoids), zr(ivf), zr(idfde), zr( igeom), zr(icopg))
     endif

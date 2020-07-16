@@ -17,42 +17,17 @@
 ! --------------------------------------------------------------------
 
 subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
-                  nkcmp, nkvari, nbcmp, ndim, chpgs, noma,&
+                  nkcmp, nkvari, nbcmp, ndim, chpgs, chpsu, noma,&
                   nbno, nbma, nbval, tsca)
-    implicit none
-#include "asterf_types.h"
-#include "jeveux.h"
-#include "asterfort/assert.h"
-#include "asterfort/calcul.h"
-#include "asterfort/celces.h"
-#include "asterfort/cesvar.h"
-#include "asterfort/detrsd.h"
-#include "asterfort/dismoi.h"
-#include "asterfort/exlim1.h"
-#include "asterfort/getvid.h"
-#include "asterfort/getvtx.h"
-#include "asterfort/jedetr.h"
-#include "asterfort/jedema.h"
-#include "asterfort/jemarq.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jelira.h"
-#include "asterfort/megeom.h"
-#include "asterfort/reliem.h"
-#include "asterfort/utmess.h"
-#include "asterfort/varinonu.h"
-#include "asterfort/wkvect.h"
-
-    integer :: nbcmp, ndim, nbno, nbma, nbval
-    character(len=1) :: tsca
-    character(len=4) :: tych
-    character(len=8) :: noma
-    character(len=24) :: mesnoe, mesmai, nkcha, nkvari, nkcmp
-    character(len=19) :: chpgs
-    aster_logical :: toucmp
-!     ----- OPERATEUR CREA_TABLE , MOT-CLE FACTEUR RESU   --------------
 !
-!        BUT : RECUPERER LES DONNEES UTILES POUR CONSTRUIRE LA TABLE
+! --------------------------------------------------------------------------------------------------
+!
+!                 OPERATEUR CREA_TABLE , MOT-CLE FACTEUR RESU
+!
+!          RECUPERER LES DONNEES UTILES POUR CONSTRUIRE LA TABLE
 !              (COMPOSANTES,NOEUDS,MAILLES,...)
+!
+! --------------------------------------------------------------------------------------------------
 !
 !        IN     : NKCHA  (K24) : OBJET DES NOMS DE CHAMP
 !                 NBVAL (I)    : NOMBRE DE VALEURS D'ACCES
@@ -72,23 +47,56 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
 !                 NBMA   (I)   : NOMBRE DE MAILLES UTILISATEUR
 !                 TSCA  (K1)  : TYPE DE LA GRANDEUR (REEL)
 !
-! ----------------------------------------------------------------------
-    integer :: jkcha, i, ibid, iret, jlno, jcmp, n1, jlma, n2, n3, nchi, n0, n4
+! --------------------------------------------------------------------------------------------------
+!
+    implicit none
+#include "asterf_types.h"
+#include "jeveux.h"
+#include "asterfort/assert.h"
+#include "asterfort/calcul.h"
+#include "asterfort/celces.h"
+#include "asterfort/cesvar.h"
+#include "asterfort/detrsd.h"
+#include "asterfort/dismoi.h"
+#include "asterfort/exisd.h"
+#include "asterfort/exlim1.h"
+#include "asterfort/getvid.h"
+#include "asterfort/getvtx.h"
+#include "asterfort/jedema.h"
+#include "asterfort/jemarq.h"
+#include "asterfort/jeveuo.h"
+#include "asterfort/jelira.h"
+#include "asterfort/megeom.h"
+#include "asterfort/reliem.h"
+#include "asterfort/utmess.h"
+#include "asterfort/varinonu.h"
+#include "asterfort/wkvect.h"
+!
+    integer :: nbcmp, ndim, nbno, nbma, nbval
+    character(len=1) :: tsca
+    character(len=4) :: tych
+    character(len=8) :: noma
+    character(len=24) :: mesnoe, mesmai, nkcha, nkvari, nkcmp
+    character(len=19) :: chpgs, chpsu
+    aster_logical :: toucmp
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: jkcha, i, ibid, iret, jlno, jcmp, n1, jlma, n2, n3, nchi, n0, n4, ncho, ierr
     integer :: n5, igrel,jcmp16
     integer, pointer :: repe(:) => null()
     character(len=8) :: nomo, nomgd, noca
-    character(len=8) :: typmcl(4), lpain(6), lpaout(1),sdresu
+    character(len=8) :: typmcl(4), lpain(6), lpaout(2), sdresu
     character(len=16) :: motcle(4),nocham
-    character(len=19) :: ligrel, ligrmo
-    character(len=24) :: chgeom, lchin(6), lchout(1)
+    character(len=19) :: ligrel, ligrmo, cel19
+    character(len=24) :: chgeom, lchin(6), lchout(2)
     aster_logical :: exicar
-!     ------------------------------------------------------------------
+!
+! --------------------------------------------------------------------------------------------------
 !
     call jemarq()
 !
-!
-!  --- 1. DETERMINATION DU TYPE DE CHAMP
-!
+!   DETERMINATION DU TYPE DE CHAMP
     call jeveuo(nkcha, 'L', jkcha)
     tych=' '
     ligrel = '&&CTDATA.LIGREL'
@@ -142,13 +150,12 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
             endif
             goto 61
         endif
-    end do
+    enddo
  61 continue
 !
-!  --- 2. RECUPERATION DES NOEUDS,MAILLES
-!
+
+!   RECUPERATION DES NOEUDS,MAILLES
     if (tych .eq. 'NOEU') then
-!
         motcle(1) = 'NOEUD'
         motcle(2) = 'GROUP_NO'
         motcle(3) = 'MAILLE'
@@ -171,8 +178,7 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
         nbma=0
 !
     else if (tych(1:2).eq.'EL'.or.tych.eq.'CART') then
-!
-!          VERIFICATIONS
+!       VERIFICATIONS
         call getvtx('RESU', 'NOEUD', iocc=1, nbval=0, nbret=n1)
         call getvtx('RESU', 'GROUP_NO', iocc=1, nbval=0, nbret=n2)
         n3=-n1-n2
@@ -190,13 +196,13 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
             if (tych.eq.'CART') then
                 do i = 1, nbma
                     zi(jlma+i-1)=i
-                end do
+                enddo
             else
-!               -- on ne garde que les mailles du modele :
+!               on ne garde que les mailles du modele :
                 do i = 1, nbma
                     igrel = repe(1+2*(i-1))
                     if (igrel.gt.0) zi(jlma+i-1)=i
-                end do
+                enddo
             endif
         else
             call reliem(' ', noma, 'NU_MAILLE', 'RESU', 1,&
@@ -205,9 +211,7 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
         nbno=0
 !
         if (tych .eq. 'ELGA') then
-
-!           -- calcul de ligrel :
-!           ---------------------
+!           calcul de ligrel
             call jeveuo(mesmai, 'L', jlma)
             call jelira(mesmai, 'LONMAX', nbma)
             call exlim1(zi(jlma), nbma, nomo, 'V', ligrel)
@@ -216,6 +220,7 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
             lchin(1)=chgeom(1:19)
             lpain(1)='PGEOMER'
             nchi=1
+            ncho=1
             if (exicar) then
                 nchi=6
                 lchin(2)=noca//'.CARORIEN'
@@ -230,24 +235,36 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
                 lpain(6)='PCAGEPO'
                 lchout(1)='&&CTDATA.PGCOOR'
                 lpaout(1)='PCOORPG'
+                lchout(2)='&&CTDATA.SUCOOR'
+                lpaout(2)='PCOORSU'
+                ncho=2
+!               Champ ELGA aux sous-points
                 call cesvar(noca, ' ', ligrel, lchout(1))
             else
                 lchout(1)='&&CTDATA.PGCOOR'
                 lpaout(1)='PCOORPG'
+                chpsu = ' '
             endif
 !
             call calcul('S', 'COOR_ELGA', ligrel, nchi, lchin,&
-                        lpain, 1, lchout, lpaout, 'V',&
-                        'OUI')
+                        lpain, ncho, lchout, lpaout, 'V', 'OUI')
             call celces(lchout(1), 'V', chpgs)
+            if ( ncho .eq. 2 ) then
+!               Si c'est un élément sans sous-point le champ n'est pas calculé
+                cel19 = lchout(2)(1:19)
+                call exisd('CHAM_ELEM', cel19, ierr)
+!               Si le champ existe (ierr=1), il est transformé en CES
+                if ( ierr.eq.1 ) then
+                    call celces(lchout(2), 'V', chpsu)
+                else
+                    chpsu = ' '
+                endif
+            endif
             call detrsd('LIGREL', ligrel)
-!
         endif
-!
     endif
 !
-!  --- 3. RECUPERATION DES COMPOSANTES
-!
+!   RECUPERATION DES COMPOSANTES
     call getvtx('RESU', 'TOUT_CMP', iocc=1, nbval=0, nbret=n1)
     if (n1.ne.0) then
         nbcmp=0
@@ -260,16 +277,14 @@ subroutine ctdata(mesnoe, mesmai, nkcha, tych, toucmp,&
         if (n1 .ne. 0) then
             nbcmp=-n1
             call wkvect(nkcmp, 'V V K8', nbcmp, jcmp)
-            call getvtx('RESU', 'NOM_CMP', iocc=1, nbval=nbcmp, vect=zk8(jcmp),&
-                        nbret=n1)
+            call getvtx('RESU', 'NOM_CMP', iocc=1, nbval=nbcmp, vect=zk8(jcmp), nbret=n1)
         else
             call getvtx('RESU', 'NOM_VARI', iocc=1, nbval=0, nbret=n1)
             nbcmp=-n1
             ASSERT(nbcmp.gt.0)
             call wkvect(nkcmp, 'V V K8', nbma*nbcmp, jcmp)
             call wkvect(nkvari, 'V V K16', nbcmp, jcmp16)
-            call getvtx('RESU', 'NOM_VARI', iocc=1, nbval=nbcmp, vect=zk16(jcmp16),&
-                         nbret=n1)
+            call getvtx('RESU', 'NOM_VARI', iocc=1, nbval=nbcmp, vect=zk16(jcmp16), nbret=n1)
             if (sdresu.eq.' ') then
                 call utmess('F', 'EXTRACTION_24')
             endif
