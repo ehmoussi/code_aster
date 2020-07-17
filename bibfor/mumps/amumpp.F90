@@ -90,12 +90,14 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
     type(zmumps_struc), pointer :: zmpsk => null()
     integer :: n, nnbsol, rang, lmat, i, ierd, idvalc, k, ifm, niv
     integer :: jj, nbeql, nuglo, jrhs, j
+    integer :: jrefn, jmlogl, jdeeq, nuno, nucmp
     character(len=1) :: rouc
     character(len=4) :: etam
+    character(len=8) :: mesh
     character(len=14) :: nonu
     character(len=19) :: nomat, nosolv
-    character(len=24) :: vcival
-    aster_logical :: ltypr
+    character(len=24) :: vcival, nonulg
+    aster_logical :: ltypr, l_debug
     real(kind=8) :: rr4max, raux, rmin, rmax, rtest, valr(2)
     complex(kind=8) :: cbid, caux
     integer, pointer :: delg(:) => null()
@@ -174,6 +176,18 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
     else
         nbeql=n
     endif
+!   Adresses needed to get the solution wrt nodes and dof numbers (see below)
+    l_debug=ASTER_FALSE
+    if (l_debug) then
+        call jeveuo(nonu//'.NUME.REFN', 'L', jrefn)
+        call jeveuo(nonu//'.NUME.DEEQ', 'L', jdeeq)
+        mesh = zk24(jrefn)(1:8)
+        if (lmhpc) then
+            nonulg = mesh//'.NULOGL'
+            call jeveuo(nonulg, 'L', jmlogl)
+        endif
+    endif
+!
 !
 !
     if (option .eq. 0) then
@@ -449,6 +463,19 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
             if (lmhpc) then
                 if (ltypr) then
                     call asmpi_comm_vect('BCAST', 'R', nbval=nnbsol, bcrank=0, vr=rsolu2)
+                    if(l_debug) then
+                        do j = 1, nbeql
+                            nuno  = zi(jdeeq+2*(j-1))
+                            if( nuno.ne.0 ) nuno = zi(jmlogl + nuno - 1) + 1
+                            nucmp = zi(jdeeq+2*(j-1) + 1)
+!                    numero ddl local, numéro noeud local, numéro noeud global, num comp du noeud,
+!                                num ddl global, num proc proprio, solution
+                            ! write(51+rang,*) j, zi(jdeeq+2*(j-1)), nuno, nucmp,  &
+                            !                      nulg(j), pddl(j), rsolu(j)
+                            write(51+rang,*) nuno, nucmp, rsolu(j)
+                        end do
+                        flush(51+rang)
+                    end if
                     if (.not.lpreco) then
                         do j = 1, nbeql
                             rsolu(j) = rsolu2(nulg(j)+1)
@@ -544,6 +571,16 @@ subroutine amumpp(option, nbsol, kxmps, ldist, type,&
                 write(ifmump,*) 'MUMPS FIN SOLUTION'
             endif
         endif
+
+        if(l_debug .and. .not. lmhpc) then
+            do j = 1, nnbsol
+                nuno  = zi(jdeeq+2*(j-1))
+                nucmp = zi(jdeeq+2*(j-1) + 1)
+!                numéro noeud, num comp du noeud, solution
+                write(50,*) nuno, nucmp, rsolu(j)
+            end do
+            flush(50)
+        end if
         if (lmhpc) call jedetr('&&AMUMPP.RHS')
     else
 !       ------------------------------------------------
