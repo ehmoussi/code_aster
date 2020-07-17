@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -112,7 +112,7 @@ integer, intent(out) :: retcom
             varbio = varbio + tbiot(i)*deps(i)/rac2
         end do
         varbio = varbio-(&
-                 vintm(advico+vicphi)-phi0)*depsv - 3.d0*alphfi*dtemp + cs0*(dp2-satur*signe*dp1)
+                 vintm(advico+vicphi)+phi0)*depsv - 3.d0*alphfi*dtemp + cs0*(dp2-satur*signe*dp1)
         if (varbio .gt. epxmax) then
             retcom = 2
             goto 99

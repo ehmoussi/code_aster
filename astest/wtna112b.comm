@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -278,7 +278,7 @@ TEST_RESU(
              NOM_CMP = 'PRE1',
              NOEUD = 'N1',
              VALE_REFE = PREF,
-             VALE_CALC = 1.257696E+07,
+             VALE_CALC = 12979463.494948607,
              CRITERE = 'RELATIF',
              PRECISION = 0.05,
                   REFERENCE='ANALYTIQUE',)
@@ -290,7 +290,7 @@ TEST_RESU(
              NOM_CMP = 'PRE1',
              NOEUD = 'N2',
              VALE_REFE = PREF,
-             VALE_CALC = 1.2585286268E+07,
+             VALE_CALC = 12987304.885155883,
              CRITERE = 'RELATIF',
              PRECISION = 0.05,
              REFERENCE='ANALYTIQUE',)
@@ -330,7 +330,7 @@ TEST_RESU(
              NOM_CMP = 'PRE1',
              NOEUD = 'N1',
              VALE_REFE = PREF,
-             VALE_CALC = 1.2994293E+07,
+             VALE_CALC = 12980692.393709268,
              CRITERE = 'RELATIF',
              PRECISION = 0.01,
                   REFERENCE='ANALYTIQUE',)
@@ -342,7 +342,7 @@ TEST_RESU(
              NOM_CMP = 'PRE1',
              NOEUD = 'N2',
              VALE_REFE = PREF,
-             VALE_CALC = 1.3001383540208E+07,
+             VALE_CALC =  12987695.947907034,
              CRITERE = 'RELATIF',
              PRECISION = 0.01,
              REFERENCE='ANALYTIQUE',)
