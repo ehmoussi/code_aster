@@ -49,6 +49,7 @@ void exportAssemblyMatrixToPython() {
         .def( "appendElementaryMatrix",
               &AssemblyMatrixDisplacementRealClass::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixDisplacementRealClass::build )
+        .def( "transpose", &AssemblyMatrixDisplacementRealClass::transpose )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementRealClass::getDOFNumbering )
         .def( "getModel", &AssemblyMatrixDisplacementRealClass::getModel, R"(
 Return the model.
@@ -104,6 +105,8 @@ Returns:
               &AssemblyMatrixDisplacementComplexClass::appendElementaryMatrix )
         .def( "build", &AssemblyMatrixDisplacementComplexClass::build )
         .def( "getDOFNumbering", &AssemblyMatrixDisplacementComplexClass::getDOFNumbering )
+        .def( "transpose", &AssemblyMatrixDisplacementComplexClass::transpose )
+        .def( "transposeConjugate", &AssemblyMatrixDisplacementComplexClass::transposeConjugate )
         .def( "getMaterialField", &AssemblyMatrixDisplacementComplexClass::getMaterialField )
         .def( "getNumberOfElementaryMatrix",
               &AssemblyMatrixDisplacementComplexClass::getNumberOfElementaryMatrix )

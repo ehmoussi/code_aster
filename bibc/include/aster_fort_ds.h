@@ -53,6 +53,13 @@ extern void DEFS( DETMATRIX, detmatrix, const char *, STRING_SIZE );
 #define CALLO_DELETE_MATRIX( a, b ) CALLOO( DELETE_MATRIX, delete_matrix, a, b )
 void DEFSS( DELETE_MATRIX, delete_matrix, const char *, STRING_SIZE, const char *, STRING_SIZE );
 
+#define CALLO_MATR_ASSE_TRANSPOSE( a ) CALLO( MATR_ASSE_TRANSPOSE, matr_asse_transpose, a)
+void DEFS( MATR_ASSE_TRANSPOSE, matr_asse_transpose, const char *, STRING_SIZE);
+
+#define CALLO_MATR_ASSE_TRANSPOSE_CONJUGATE( a )                                                   \
+    CALLO( MATR_ASSE_TRANSPOSE_CONJUGATE, matr_asse_transpose_conjugate, a)
+void DEFS( MATR_ASSE_TRANSPOSE_CONJUGATE, matr_asse_transpose_conjugate, const char *, STRING_SIZE);
+
 #define CALLO_DETRSD( a, b ) CALLOO( DETRSD, detrsd, a, b )
 extern void DEFSS( DETRSD, detrsd, const char *, STRING_SIZE, const char *, STRING_SIZE );
 

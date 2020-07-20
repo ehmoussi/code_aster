@@ -199,6 +199,24 @@ class AssemblyMatrixClass : public DataStructure {
     };
 
     /**
+     * @brief Transpose
+     */
+    void transpose() {
+        if (get_sh_jeveux_status() == 1 ) {
+            CALLO_MATR_ASSE_TRANSPOSE(getName());
+        }
+    };
+
+    /**
+     * @brief Transpose and conjugate
+     */
+    void transposeConjugate() {
+        if (get_sh_jeveux_status() == 1 ) {
+            CALLO_MATR_ASSE_TRANSPOSE_CONJUGATE(getName());
+        }
+    };
+
+    /**
      * @brief Get MaterialField
      * @return MaterialField of the first ElementaryMatrix (all others must be the same)
      */

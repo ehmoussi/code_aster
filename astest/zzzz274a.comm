@@ -203,4 +203,37 @@ TEST_RESU(RESU=(_F(NUME_ORDRE=1,
                 ),
           )
 
+# Transpose validation
+# ---------------------
+import numpy as np
+test = code_aster.TestCase()
+
+# Real Matrix
+ASSEMBLAGE(CHAM_MATER=AFMA,
+           CARA_ELEM=CARNS_L,
+           MATR_ASSE=(_F(MATRICE=CO('RIGIDITE'),
+                         OPTION='RIGI_MECA'),
+                      ),
+           MODELE=MO,
+           NUME_DDL=CO('NUME'))
+
+K=RIGIDITE.EXTR_MATR()
+RIGIDITE.transpose()
+Kt=RIGIDITE.EXTR_MATR()
+test.assertEqual(np.linalg.norm(K.transpose() - Kt), 0)
+
+# Complex Matrix
+RIGIDITC=COMB_MATR_ASSE(COMB_C=_F(MATR_ASSE=RIGIDITE,COEF_C=('RI',0.,1.),),)
+
+KC=RIGIDITC.EXTR_MATR()
+RIGIDITC.transpose()
+KCt=RIGIDITC.EXTR_MATR()
+test.assertEqual(np.linalg.norm(KC.transpose() - KCt), 0)
+
+KC=RIGIDITC.EXTR_MATR()
+RIGIDITC.transposeConjugate()
+KCh=RIGIDITC.EXTR_MATR()
+test.assertEqual(np.linalg.norm(KC.transpose().conj() - KCh), 0)
+
+
 FIN();
