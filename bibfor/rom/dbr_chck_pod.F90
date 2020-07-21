@@ -113,12 +113,4 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
         endif
     endif
 !
-! - Only on nodal fields for POD_INCR
-!
-    if (operation .eq. 'POD_INCR') then
-        if (ds_empi%ds_mode%fieldSupp .ne. 'NOEU') then
-            call utmess('F','ROM2_2')
-        endif
-    endif
-!
 end subroutine

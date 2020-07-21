@@ -54,7 +54,7 @@ real(kind=8), pointer :: q(:)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_snap, i_equa
+    integer :: i_snap, iEqua
     integer :: nb_snap, nbEqua
     integer :: nume_inst, iret
     character(len=8)  :: base_type, result
@@ -62,6 +62,7 @@ real(kind=8), pointer :: q(:)
     integer, pointer :: v_list_snap(:) => null()
     real(kind=8), pointer :: v_field_resu(:) => null()
     character(len=24) :: field_resu
+    character(len=4) :: fieldSupp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -69,6 +70,8 @@ real(kind=8), pointer :: q(:)
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_1')
     endif
+!
+! - Initializations
 !
     field_resu = '&&ROM_FIELDRESU'
 !
@@ -80,6 +83,7 @@ real(kind=8), pointer :: q(:)
     nbEqua    = ds_empi%ds_mode%nbEqua
     base_type = ds_empi%base_type
     fieldName = ds_empi%ds_mode%fieldName
+    fieldSupp = ds_empi%ds_mode%fieldSupp
     ASSERT(nb_snap .gt. 0)
     ASSERT(nbEqua .gt. 0)
 !
@@ -95,7 +99,7 @@ real(kind=8), pointer :: q(:)
 !
     if (base_type .eq. 'LINEIQUE') then
         call dbr_calcpod_ql(ds_empi, &
-                            result , fieldName , nbEqua,&
+                            result , fieldName  , nbEqua,&
                             nb_snap, v_list_snap,&
                             q)
     else
@@ -106,11 +110,23 @@ real(kind=8), pointer :: q(:)
             if (iret .ne. 0) then
                 call utmess('F','ROM2_11',sk = result)
             endif
-            call jeveuo(field_resu(1:19)//'.VALE', 'L', vr = v_field_resu)
-            do i_equa = 1, nbEqua
-                q(i_equa + nbEqua*(i_snap - 1)) = v_field_resu(i_equa)
+            if (fieldSupp == 'NOEU') then
+                call jeveuo(field_resu(1:19)//'.VALE', 'L', vr = v_field_resu)
+            else if (fieldSupp == 'ELGA') then
+                call jeveuo(field_resu(1:19)//'.CELV', 'L', vr = v_field_resu)
+            else
+                ASSERT(ASTER_FALSE)
+            endif
+            do iEqua = 1, nbEqua
+                q(iEqua + nbEqua*(i_snap - 1)) = v_field_resu(iEqua)
             end do
-            call jelibe(field_resu(1:19)//'.VALE')
+            if (fieldSupp == 'NOEU') then
+                call jelibe(field_resu(1:19)//'.VALE')
+            elseif (fieldSupp == 'ELGA') then
+                call jelibe(field_resu(1:19)//'.CELV')
+            else
+                ASSERT(ASTER_FALSE)
+            endif
         enddo
     endif
 !

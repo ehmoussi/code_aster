@@ -82,6 +82,14 @@ character(len=*), optional, intent(in) :: fieldName_
         chckCmpName(4) = 'SIXZ'
         chckCmpName(5) = 'SIYZ'
         chckCmpName(6) = 'SIXY'
+    elseif (fieldName .eq. 'SIEF_ELGA') then
+        nbCmpChck      = 6
+        chckCmpName(1) = 'SIXX'
+        chckCmpName(2) = 'SIYY'
+        chckCmpName(3) = 'SIZZ'
+        chckCmpName(4) = 'SIXZ'
+        chckCmpName(5) = 'SIYZ'
+        chckCmpName(6) = 'SIXY'
     elseif (fieldName .eq. 'UPPHI_2D') then
         nbCmpChck      = 4
         chckCmpName(1) = 'DX'

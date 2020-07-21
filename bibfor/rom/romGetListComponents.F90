@@ -26,11 +26,14 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/indik8.h"
 #include "asterfort/assert.h"
+#include "asterfort/cmpcha.h"
+#include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jelira.h"
 #include "asterfort/as_allocate.h"
+#include "asterfort/as_deallocate.h"
 !
 character(len=24), intent(in) :: fieldRefe
 character(len=4), intent(in) :: fieldSupp
@@ -60,9 +63,12 @@ aster_logical, intent(out) :: lLagr
 !
     character(len=8) :: physName
     character(len=19) :: pfchno
-    integer :: iEqua, nbLagr, cmpNume, nbCmpMaxi, cmpIndx
+    integer :: iEqua, nbLagr, cmpNume, nbCmpMaxi, cmpIndx, iCmp
     integer, pointer :: deeq(:) => null()
     character(len=8), pointer :: physCmpName(:) => null()
+    character(len=8), pointer :: cmpName(:) => null()
+    integer, pointer :: cataToField(:) => null()
+    integer, pointer :: fieldToCata(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -106,6 +112,22 @@ aster_logical, intent(out) :: lLagr
             endif
         end do
         lLagr = nbLagr .gt. 0
+    else if (fieldSupp == 'ELGA') then
+! ----- Create objects for global components (catalog) <=> local components (field)
+        call cmpcha(fieldRefe, cmpName, cataToField, fieldToCata, nbCmp)
+! ----- Allocate object for name of components
+        AS_ALLOCATE(vk8 = listCmpName, size = nbCmpMaxi)
+        do iCmp = 1, nbCmp
+            listCmpName(iCmp) = cmpName(iCmp)
+        end do
+        AS_DEALLOCATE(vi=cataToField)
+        AS_DEALLOCATE(vi=fieldToCata)
+        AS_DEALLOCATE(vk8=cmpName)
+! ----- To change ! Find the index of name of compoennt for each equation
+        do iEqua = 1, nbEqua
+            equaCmpName(iEqua) = 0
+        end do
+        lLagr = ASTER_FALSE
     else
         ASSERT(ASTER_FALSE)
     endif

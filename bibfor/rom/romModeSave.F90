@@ -114,6 +114,12 @@ integer, optional, intent(in)     :: nb_snap_
         else
             call jeveuo(field(1:19)//'.VALE', 'E', vr = v_field_r)
         endif
+    elseif (fieldSupp .eq. 'ELGA') then
+        if (present(mode_vectc_)) then
+            call jeveuo(field(1:19)//'.CELV', 'E', vc = v_field_c)
+        else
+            call jeveuo(field(1:19)//'.CELV', 'E', vr = v_field_r)
+        endif
     else
         ASSERT(ASTER_FALSE)
     endif

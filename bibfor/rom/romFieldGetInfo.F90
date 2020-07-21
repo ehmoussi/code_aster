@@ -26,6 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
+#include "asterfort/jelira.h"
 #include "asterfort/modelNodeEF.h"
 #include "asterfort/romGetListComponents.h"
 #include "asterfort/romFieldChck.h"
@@ -77,7 +78,9 @@ aster_logical, optional, intent(in) :: l_chck_
     call dismoi('NOM_MAILLA', model, 'MODELE' , repk = mesh)
     call dismoi('TYPE_CHAMP', fieldRefe, 'CHAMP', repk = fieldSupp)
     if (fieldSupp .eq. 'NOEU') then
-        call dismoi('NB_EQUA'     , fieldRefe, 'CHAM_NO', repi = nbEqua)
+        call dismoi('NB_EQUA', fieldRefe, 'CHAM_NO', repi = nbEqua)
+    elseif (fieldSupp .eq. 'ELGA') then
+        call jelira(fieldRefe(1:19)//'.CELV', 'LONUTI', nbEqua)
     else
         call utmess('F', 'ROM3_1', sk = fieldSupp)
     endif
