@@ -1,0 +1,87 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'), DEBUG=_F(SDVERI='OUI'))
+
+# Maillage : plancher à 2.0
+mesh20 = LIRE_MAILLAGE(UNITE=20, FORMAT='MED',)
+# Maillage : plancher à 2.5
+mesh25 = LIRE_MAILLAGE(UNITE=25, FORMAT='MED',)
+
+model20 = AFFE_MODELE(
+    MAILLAGE=mesh20,
+    AFFE=_F(MODELISATION=('DKT', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+)
+
+model25 = AFFE_MODELE(
+    MAILLAGE=mesh25,
+    AFFE=_F(MODELISATION=('DKT', ), PHENOMENE='MECANIQUE', TOUT='OUI'),
+)
+
+TrFxE = FORMULE(NOM_PARA= ['X',], VALE=' X ', )
+TrFyE = FORMULE(NOM_PARA= ['Y',], VALE=' Y ', )
+TrFzE = FORMULE(NOM_PARA= ['Z',], VALE=' Z+0.50 ', )
+
+
+load20 = AFFE_CHAR_MECA(
+    MODELE=model20,
+    LIAISON_MAIL=(
+        _F(GROUP_MA_ESCL=('MGBordPlaGau', ),
+           GROUP_MA_MAIT=('MGFaceMur', ),
+           TYPE_RACCORD='COQUE',
+           TRANSF_GEOM_ESCL= (TrFxE, TrFyE, TrFzE),
+        ),
+    ),
+)
+
+load25 = AFFE_CHAR_MECA(
+    MODELE=model25,
+    LIAISON_MAIL=(
+        _F(GROUP_MA_ESCL=('MGBordPlaGau', ),
+           GROUP_MA_MAIT=('MGFaceMur', ),
+           TYPE_RACCORD='COQUE',
+        ),
+    ),
+)
+
+unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER='./REPE_OUT/load20.concept',ACCES='NEW')
+IMPR_CO(UNITE=unite,CONCEPT=_F(NOM=load20),ATTRIBUT='OUI', NIVEAU=2,)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
+
+unite=DEFI_FICHIER(ACTION='ASSOCIER', FICHIER='./REPE_OUT/load25.concept',ACCES='NEW')
+IMPR_CO(UNITE=unite,CONCEPT=_F(NOM=load25),ATTRIBUT='OUI', NIVEAU=2,)
+DEFI_FICHIER(ACTION='LIBERER', UNITE=unite)
+
+
+TEST_FICHIER(
+    FICHIER     ='./REPE_OUT/load20.concept',
+    EXPR_IGNORE=('JEIMPA','IADM','DATE','LTYP','LONO','IMPRESSION','====','- >'),
+    NB_VALE_I   =  6223, VALE_CALC_I =  338293,
+    NB_VALE     =  924, TYPE_TEST='SOMM_ABS', VALE_CALC   = 108.0,
+)
+
+TEST_FICHIER(
+    FICHIER     ='./REPE_OUT/load25.concept',
+    EXPR_IGNORE=('JEIMPA','IADM','DATE','LTYP','LONO','IMPRESSION','====','- >'),
+    NB_VALE_I   =  6223, VALE_CALC_I =  338293,
+    NB_VALE     =  924, TYPE_TEST='SOMM_ABS', VALE_CALC   = 108.0,
+)
+
+
+FIN()

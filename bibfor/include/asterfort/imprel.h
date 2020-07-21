@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 !
 !
 interface
-    subroutine imprel(titre, nbterm, coef, lisddl, lisno,&
-                      beta)
-        integer :: nbterm
-        character(len=*) :: titre
-        real(kind=8) :: coef(nbterm)
-        character(len=8) :: lisddl(nbterm)
-        character(len=8) :: lisno(nbterm)
-        real(kind=8) :: beta
+    subroutine imprel(titre, nbterm, coef, lisddl, lisno, beta, epsi)
+!
+        integer, intent(in)             :: nbterm
+        real(kind=8), intent(in)        :: coef(nbterm), beta
+        character(len=8), intent(in)    :: lisddl(nbterm), lisno(nbterm)
+        character(len=*), intent(in)    :: titre
+!
+        real(kind=8), intent(in), optional :: epsi
     end subroutine imprel
 end interface

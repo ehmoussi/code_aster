@@ -386,6 +386,15 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
 
               TYPE_RACCORD    =SIMP(statut='f',typ='TXM',defaut="MASSIF",into=("MASSIF","COQUE","COQUE_MASSIF","MASSIF_COQUE",)),
 
+              b_COQUE     =BLOC( condition = """equal_to("TYPE_RACCORD", 'COQUE')""",
+                TRANSF_GEOM_MAIT=SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule),min=3,max=3,
+                  fr=tr("3 fonctions fx,fy,fz définissant la transformation géométrique à appliquer"
+                     " aux noeuds des mailles MAITRE avant la liaison."),),
+                TRANSF_GEOM_ESCL=SIMP(statut='f',typ=(fonction_sdaster,nappe_sdaster,formule),min=3,max=3,
+                  fr=tr("3 fonctions fx,fy,fz définissant la transformation géométrique à appliquer"
+                     " aux noeuds des mailles ESCLAVE avant la liaison."),),
+              ),
+
               b_MASSIF     =BLOC ( condition = """equal_to("TYPE_RACCORD", 'MASSIF')""",
                  regles=( PRESENT_PRESENT('DDL_MAIT','DDL_ESCL'),),
               TRAN            =SIMP(statut='f',typ='R',max=3 ),
@@ -634,7 +643,6 @@ AFFE_CHAR_MECA=OPER(nom="AFFE_CHAR_MECA",op=   7,sd_prod=char_meca,
                                  'KY','KZ','EXX','EYY','EXY','KXX','KYY','KXY'),
                      PRESENT_ABSENT('EPSI','EPXX','EPYY','EPZZ','EPXY','EPXZ','EPYZ','EPX',
                                  'KY','KZ','EXX','EYY','EXY','KXX','KYY','KXY'),),
-                     
              TOUT            =SIMP(statut='f',typ='TXM',into=("OUI",) ),
              GROUP_MA        =SIMP(statut='f',typ=grma,validators=NoRepeat(),max='**'),
              MAILLE          =SIMP(statut='c',typ=ma  ,validators=NoRepeat(),max='**'),

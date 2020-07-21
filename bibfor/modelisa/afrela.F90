@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -131,8 +131,8 @@ subroutine afrela(coef_real, coef_cplx, dof_name, node_name, repe_type,&
 !
     if (niv .eq. 2) then
         write (ifm,*) ' '
-        write (ifm,*) '_RELA IMPRESSION D''UNE RELATION LINEAIRE ENTRE '&
-     &    ,nbterm,' DDLS. (AVANT NORMALISATION DE LA RELATION)'
+        write (ifm,'(A,I4,A)') ' _RELA IMPRESSION D''UNE RELATION LINEAIRE ENTRE ', nbterm, &
+                               ' DDLS. (AVANT NORMALISATION DE LA RELATION)'
         do iterm = 1, nbterm
             if (repe_type(iterm) .eq. 0) then
                 if (type_coef .eq. 'REEL') then
