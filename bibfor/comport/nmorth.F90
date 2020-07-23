@@ -151,7 +151,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
         endif
     endif
 !
-    if (option .eq. 'RIGI_MECA_TANG' .or. option .eq. 'FULL_MECA') then
+    if (option(1:10) .eq. 'RIGI_MECA_' .or. option(1:9) .eq. 'FULL_MECA') then
         do i = 1, nbsigm
             do j = 1, nbsigm
                 dsidep(i,j)=hookf(nbsigm*(j-1)+i)
@@ -267,7 +267,7 @@ subroutine nmorth(fami, kpg, ksp, ndim, phenom,&
         end do
     endif
 !
-    if (option .eq. 'RIGI_MECA_TANG' .or. option .eq. 'FULL_MECA') then
+    if  (option(1:10) .eq. 'RIGI_MECA_' .or. option(1:9) .eq. 'FULL_MECA') then
         do i = 1, 6
             do j = 4, 6
                 dsidep(i,j) = dsidep(i,j)*sqrt(2.d0)

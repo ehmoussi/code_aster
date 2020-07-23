@@ -246,7 +246,7 @@ ORIREP=AFFE_CARA_ELEM(MODELE=MODELE,
        MASSIF=( _F(GROUP_MA=('TOUT'),
                    ANGL_REP=(ALPHA,BETA),
                         ),),);
-# On passe au calcul avec NORDRE CORRESPONDANT A WTNA112A
+# On passe au calcul avec NORDRE CORRESPONDANT A WTNA112A - on teste aussi la matrice secante pour ELAS_ORTH
 
 U0=STAT_NON_LINE(MODELE=MODELE,
                  CARA_ELEM=ORIREP,
@@ -263,7 +263,8 @@ U0=STAT_NON_LINE(MODELE=MODELE,
                                 ),
                  ETAT_INIT =_F(SIGM=SIGINIT,DEPL=DDL_INIT),
                  NEWTON=_F(MATRICE='TANGENTE',
-                           REAC_ITER=1,),
+                           REAC_ITER=1,
+                           PAS_MINI_ELAS=4000,),
                  CONVERGENCE=_F(ITER_GLOB_MAXI=50,),
                  ARCHIVAGE  = _F( LIST_INST  = INST1,),
                        );
