@@ -193,7 +193,7 @@ integer :: codret
                 ntncmp    , ntucmp)
     AS_DEALLOCATE(vk8 = cmpUserName)
     AS_DEALLOCATE(vk8 = cmpCataName)
-    if (ncmpve .gt. 80) then
+    if (ncmpve .gt. 200) then
         call utmess('A', 'MED_99', sk=nochmd)
         goto 999
     endif

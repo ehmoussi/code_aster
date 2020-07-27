@@ -533,7 +533,7 @@ Contactez le support technique.
 
     99 : _("""
   Le nombre de composantes à imprimer est trop grand pour le champ %(k1)s.
-  Le format MED accepte au maximum 80 composantes dans un champ.
+  Le format MED accepte au maximum 200 composantes dans un champ.
 
   Le champ ne sera donc pas imprimé au format MED.
 """),
