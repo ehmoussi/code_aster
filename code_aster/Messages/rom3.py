@@ -23,11 +23,13 @@ from ..Utilities import _
 
 cata_msg = {
 
+    1 : _("""Les champs ont pour support %(k1)s, ce qui n'est pas autorisé."""),
+
     4 : _("""La base empirique contient des champs de type %(k1)s."""),
 
     5 : _("""La base contient %(i1)d modes empiriques."""),
 
-    6 : _("""Un mode est défini sur %(i1)d noeuds."""),
+    6 : _("""Un mode est défini sur %(i1)d noeuds (uniquement ceux qui appartiennent au modèle)."""),
 
     7 : _("""Un mode contient %(i1)d équations."""),
 

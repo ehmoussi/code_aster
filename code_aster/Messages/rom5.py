@@ -90,6 +90,8 @@ cata_msg = {
 
    35 : _("""La base empirique est vide."""),
 
+   36 : _("""Les modes empiriques ne sont pas nodaux."""),
+
    37 : _("""Initialisation pour réaliser le calcul non-linéaire avec réduction de modèle."""),
 
    38 : _("""Création de la table pour sauver les coordonnées réduites."""),

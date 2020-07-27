@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -119,14 +119,14 @@ aster_logical, intent(in) :: l_stab_fsi
         end do
     endif
 !
-! - Check composant PRES and PHI is in the model if we active l_stab_fsi
+! - Check components PRES and PHI are in the model if we active l_stab_fsi
 !
     if (l_stab_fsi) then
         call dismoi('DIM_GEOM', ds_multipara%field%model, 'MODELE', repi=ndim)
         if (ndim .eq. 2) then
-            call romFieldChck(ds_multipara%field, field_name_ = 'UPPHI_2D')
+            call romFieldChck(ds_multipara%field, fieldName_ = 'UPPHI_2D')
         elseif (ndim .eq. 3) then
-            call romFieldChck(ds_multipara%field, field_name_ = 'UPPHI_3D')
+            call romFieldChck(ds_multipara%field, fieldName_ = 'UPPHI_3D')
         else
             ASSERT(ASTER_FALSE)
         endif

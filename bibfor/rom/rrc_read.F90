@@ -87,12 +87,18 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
     call getvid(' ', 'BASE_PRIMAL', scal = base_prim)
     call romBaseGetInfo(base_prim, empi_prim)
+    if (empi_prim%ds_mode%fieldSupp .ne. 'NOEU') then
+        call utmess('F', 'ROM6_5')
+    endif
 !
 ! - Get informations about bases - Dual
 !
     if (l_prev_dual) then
         call getvid(' ', 'BASE_DUAL', scal = base_dual)
         call romBaseGetInfo(base_dual, empi_dual)
+        if (empi_dual%ds_mode%fieldSupp .ne. 'NOEU') then
+            call utmess('F', 'ROM6_5')
+        endif
         call getvtx(' ', 'GROUP_NO_INTERF', scal = grnode_int)
     endif
 !
@@ -116,15 +122,15 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! - Save parameters in datastructure
 !
-    ds_para%result_rom    = result_rom
-    ds_para%result_dom    = result_dom
-    ds_para%model_dom     = model_dom
-    ds_para%ds_empi_prim  = empi_prim
-    ds_para%ds_empi_dual  = empi_dual
-    ds_para%grnode_int    = grnode_int
-    ds_para%l_prev_dual   = l_prev_dual
-    ds_para%l_corr_ef     = l_corr_ef
-    ds_para%l_tabl_user   = l_tabl_user
-    ds_para%tabl_user     = tabl_user
+    ds_para%result_rom   = result_rom
+    ds_para%result_dom   = result_dom
+    ds_para%model_dom    = model_dom
+    ds_para%ds_empi_prim = empi_prim
+    ds_para%ds_empi_dual = empi_dual
+    ds_para%grnode_int   = grnode_int
+    ds_para%l_prev_dual  = l_prev_dual
+    ds_para%l_corr_ef    = l_corr_ef
+    ds_para%l_tabl_user  = l_tabl_user
+    ds_para%tabl_user    = tabl_user
 !
 end subroutine

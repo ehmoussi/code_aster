@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romBaseSave(ds_empi      , nb_mode, nb_snap, mode_type, field_iden,&
+subroutine romBaseSave(ds_empi      , nb_mode, nb_snap, mode_type, fieldIden,&
                        mode_vectr_  ,&
                        mode_vectc_  ,&
                        v_mode_freq_ ,&
@@ -27,7 +27,6 @@ use Rom_Datastructure_type
 !
 implicit none
 !
-#include "jeveux.h"
 #include "asterfort/assert.h"
 #include "asterfort/infniv.h"
 #include "asterfort/utmess.h"
@@ -37,7 +36,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 integer, intent(in) :: nb_mode
 integer, intent(in) :: nb_snap
 character(len=1), intent(in) :: mode_type
-character(len=24), intent(in) :: field_iden
+character(len=24), intent(in) :: fieldIden
 real(kind=8), optional, pointer :: mode_vectr_(:)
 complex(kind=8), optional, pointer :: mode_vectc_(:)
 real(kind=8), optional, pointer :: v_mode_freq_(:)
@@ -55,7 +54,7 @@ integer, optional, pointer      :: v_nume_slice_(:)
 ! In  nb_mode          : number of empiric modes
 ! In  nb_snap          : number of snapshots used to construct empiric base
 ! In  mode_type        : type of mode (real or complex, 'R' ou 'C')
-! In  field_iden       : identificator of field (name in results datastructure)
+! In  fieldIden        : identificator of field (name in results datastructure)
 ! In  mode_vectr       : singular vectors (R)
 ! In  mode_vectc       : singular vectors (C)
 ! In  v_mode_freq      : singular values
@@ -64,11 +63,12 @@ integer, optional, pointer      :: v_nume_slice_(:)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_mode
-    integer :: nb_equa, nume_slice
+    integer :: iMode
+    integer :: nbEqua, nume_slice
     real(kind=8) :: mode_freq
     character(len=8)  :: base , model
-    character(len=24) :: field_refe, field_name
+    character(len=24) :: fieldRefe, fieldName
+    character(len=4) :: fieldSupp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -79,43 +79,46 @@ integer, optional, pointer      :: v_nume_slice_(:)
 !
 ! - Initializations
 !
-    nb_equa = 0
+    nbEqua     = 0
     nume_slice = 0
     mode_freq  = 0.d0
 !
 ! - Get parameters
 !
-    base         = ds_empi%base
-    nb_equa      = ds_empi%ds_mode%nb_equa
-    field_name   = ds_empi%ds_mode%field_name
-    field_refe   = ds_empi%ds_mode%field_refe
-    model        = ds_empi%ds_mode%model
+    base      = ds_empi%base
+    nbEqua    = ds_empi%ds_mode%nbEqua
+    fieldName = ds_empi%ds_mode%fieldName
+    fieldRefe = ds_empi%ds_mode%fieldRefe
+    fieldSupp = ds_empi%ds_mode%fieldSupp
+    model     = ds_empi%ds_mode%model
 !
 ! - Save modes
 !
-    do i_mode = 1, nb_mode
+    do iMode = 1, nb_mode
         if (present(v_nume_slice_)) then
-            nume_slice = v_nume_slice_(i_mode)
+            nume_slice = v_nume_slice_(iMode)
         endif
         if (present(v_mode_freq_)) then
-            mode_freq  = v_mode_freq_(i_mode)
+            mode_freq  = v_mode_freq_(iMode)
         endif
-        if (mode_type.eq.'R') then
-            call romModeSave(base                , i_mode    , model  ,&
-                             field_name, field_iden, field_refe, nb_equa,&
-                             mode_vectr_   = mode_vectr_(nb_equa*(i_mode-1)+1:),&
-                             mode_freq_    = mode_freq   ,&
-                             nume_slice_   = nume_slice  ,&
-                             nb_snap_      = nb_snap)
-        elseif (mode_type.eq.'C') then
-            call romModeSave(base      , i_mode    , model     ,&
-                             field_name, field_iden, field_refe, nb_equa,&
-                             mode_vectc_ = mode_vectc_(nb_equa*(i_mode-1)+1:),&
-                             mode_freq_    = mode_freq   ,&
-                             nume_slice_   = nume_slice  ,&
-                             nb_snap_      = nb_snap)
+        if (mode_type .eq. 'R') then
+            call romModeSave(base     , iMode    , model ,&
+                             fieldName, fieldIden,&
+                             fieldRefe, fieldSupp, nbEqua,&
+                             mode_vectr_ = mode_vectr_(nbEqua*(iMode-1)+1:),&
+                             mode_freq_  = mode_freq   ,&
+                             nume_slice_ = nume_slice  ,&
+                             nb_snap_    = nb_snap)
+        elseif (mode_type .eq. 'C') then
+            call romModeSave(base     , iMode    , model    ,&
+                             fieldName, fieldIden,&
+                             fieldRefe, fieldSupp, nbEqua,&
+                             mode_vectc_ = mode_vectc_(nbEqua*(iMode-1)+1:),&
+                             mode_freq_  = mode_freq   ,&
+                             nume_slice_ = nume_slice  ,&
+                             nb_snap_    = nb_snap)
         else
-            ASSERT(.false.)
+            ASSERT(ASTER_FALSE)
         endif
     end do
 !

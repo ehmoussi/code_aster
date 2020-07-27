@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -45,23 +45,23 @@ integer, intent(out) :: m, n
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_equa, nb_slice, nb_snap
+    integer :: nbEqua, nb_slice, nb_snap
     character(len=8)  :: base_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_snap      = ds_snap%nb_snap
-    base_type    = ds_empi%base_type
-    nb_slice     = ds_empi%ds_lineic%nb_slice
-    nb_equa      = ds_empi%ds_mode%nb_equa
+    nb_snap   = ds_snap%nb_snap
+    base_type = ds_empi%base_type
+    nb_slice  = ds_empi%ds_lineic%nb_slice
+    nbEqua    = ds_empi%ds_mode%nbEqua
 !
 ! - Prepare parameters for LAPACK
 !
     if (base_type .eq. 'LINEIQUE') then
-        m      = nb_equa/nb_slice
-        n      = nb_slice*nb_snap        
+        m      = nbEqua/nb_slice
+        n      = nb_slice*nb_snap
     else
-        m      = nb_equa
+        m      = nbEqua
         n      = nb_snap
     endif
 !

@@ -29,6 +29,8 @@ cata_msg = {
 
    4  : _("""On ne trouve pas la table des coordonnées réduites dans la structure de données résultat. Vérifiez qu'il vient bien d'un calcul réduit et que les résultats n'ont pas été produits par LIRE_RESU ou CREA_RESU. Vous pouvez utiliser le mot-clef TABL_COOR_REDUIT."""),
 
+   5  : _("""Les modes empiriques ne sont pas des champs nodaux."""),
+
    7  : _("""Le résultat sur le modèle complet sera de type %(k1)s."""),
 
    8  : _("""Le modèle est le même pour la reconstruction que le modèle réduit d'origine."""),

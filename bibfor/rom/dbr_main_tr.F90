@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_mode, nb_mode, i_equa, iret, nb_equa_dom, nb_equa_rom, idx_rom
+    integer :: i_mode, nb_mode, iEqua, iret, nbEquaDom, nbEquaRom, idx_rom
     character(len=24) :: mode_dom, mode_rom, field_name
     character(len=8) :: model_rom
     real(kind=8) :: mode_freq
@@ -71,10 +71,10 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get parameters
 !
-    nb_mode     = ds_para_tr%ds_empi_init%nb_mode
-    nb_equa_dom = ds_para_tr%ds_empi_init%ds_mode%nb_equa
-    nb_equa_rom = ds_para_tr%nb_equa_rom
-    model_rom   = ds_para_tr%model_rom
+    nb_mode   = ds_para_tr%ds_empi_init%nb_mode
+    nbEquaDom = ds_para_tr%ds_empi_init%ds_mode%nbEqua
+    nbEquaRom = ds_para_tr%nb_equa_rom
+    model_rom = ds_para_tr%model_rom
 !
 ! - Compute
 !
@@ -98,15 +98,15 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
                     meshz = ds_para_tr%ds_empi_init%ds_mode%mesh,&
                     prof_chnoz = ds_para_tr%prof_chno_rom,&
                     idx_gdz = ds_para_tr%idx_gd,&
-                    nb_equa_inz = ds_para_tr%nb_equa_rom)
+                    nb_equa_inz = nbEquaRom)
         call jeveuo(mode_rom(1:19)//'.VALE', 'E', vr = v_mode_rom)
 ! ----- Truncation
         idx_rom = 0
-        do i_equa = 1, nb_equa_dom
-            if (ds_para_tr%v_equa_rom(i_equa) .ne. 0) then
+        do iEqua = 1, nbEquaDom
+            if (ds_para_tr%v_equa_rom(iEqua) .ne. 0) then
                 idx_rom = idx_rom + 1
-                ASSERT(idx_rom .le. nb_equa_rom)
-                v_mode_rom(idx_rom) = v_mode_dom(i_equa)
+                ASSERT(idx_rom .le. nbEquaRom)
+                v_mode_rom(idx_rom) = v_mode_dom(iEqua)
             endif
         enddo
 ! ----- Save mode

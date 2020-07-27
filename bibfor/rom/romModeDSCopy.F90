@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1403
 !
 subroutine romModeDSCopy(ds_mode_in, ds_mode_out)
 !
@@ -39,11 +40,12 @@ type(ROM_DS_Field), intent(out) :: ds_mode_out
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_mode_out%field_name = ds_mode_in%field_name
-    ds_mode_out%field_refe = ds_mode_in%field_refe
-    ds_mode_out%mesh       = ds_mode_in%mesh
-    ds_mode_out%model      = ds_mode_in%model
-    ds_mode_out%nb_equa    = ds_mode_in%nb_equa
-    ds_mode_out%nb_node    = ds_mode_in%nb_node
+    ds_mode_out%fieldName     = ds_mode_in%fieldName
+    ds_mode_out%fieldRefe     = ds_mode_in%fieldRefe
+    ds_mode_out%fieldSupp     = ds_mode_in%fieldSupp
+    ds_mode_out%mesh          = ds_mode_in%mesh
+    ds_mode_out%model         = ds_mode_in%model
+    ds_mode_out%nbEqua        = ds_mode_in%nbEqua
+    ds_mode_out%nbNodeWithDof = ds_mode_in%nbNodeWithDof
 !
 end subroutine

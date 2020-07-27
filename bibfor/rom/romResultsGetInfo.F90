@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romResultsGetInfo(result, field_namez, model_user, ds_result)
+subroutine romResultsGetInfo(result, fieldNamez, model_user, ds_result)
 !
 use Rom_Datastructure_type
 !
@@ -34,7 +34,7 @@ implicit none
 #include "asterfort/romFieldGetInfo.h"
 !
 character(len=8), intent(in)  :: result
-character(len=*), intent(in) :: field_namez
+character(len=*), intent(in) :: fieldNamez
 character(len=8), intent(in)  :: model_user
 type(ROM_DS_Result), intent(inout) :: ds_result
 !
@@ -47,7 +47,7 @@ type(ROM_DS_Result), intent(inout) :: ds_result
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  result           : name of results datastructure (EVOL_*)
-! In  field_name       : name of field where empiric modes have been constructed (NOM_CHAM)
+! In  fieldName        : name of field where empiric modes have been constructed (NOM_CHAM)
 ! In  model_user       : model from user (if required)
 ! IO  ds_result        : results datastructure
 !
@@ -56,16 +56,15 @@ type(ROM_DS_Result), intent(inout) :: ds_result
     integer :: iret, nume_first
     integer :: nb_node
     character(len=8)  :: model, mesh
-    character(len=24) :: field_refe
-    character(len=24) :: field_name
+    character(len=24) :: fieldRefe, fieldName
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    field_name = field_namez
-    nb_node = 0
-    model = ' '
-    mesh  = ' '
-    field_refe = '&&ROM_COMP.FIELD'
+    fieldName = fieldNamez
+    nb_node   = 0
+    model     = ' '
+    mesh      = ' '
+    fieldRefe = '&&ROM_COMP.FIELD'
 !
 ! - Get information about model
 !
@@ -81,11 +80,11 @@ type(ROM_DS_Result), intent(inout) :: ds_result
 ! - Get informations about fields
 !
     call rs_getfirst(result, nume_first)
-    call rsexch(' ', result, field_name, nume_first, field_refe, iret)
+    call rsexch(' ', result, fieldName, nume_first, fieldRefe, iret)
     if (iret .ne. 0) then
-        call utmess('F', 'ROM5_11', sk = field_name)
+        call utmess('F', 'ROM5_11', sk = fieldName)
     endif
-    call dismoi('NOM_MAILLA', field_refe, 'CHAM_NO', repk = mesh)
+    call dismoi('NOM_MAILLA', fieldRefe, 'CHAMP', repk = mesh)
 !
 ! - Get number of nodes affected by model
 !
@@ -93,7 +92,7 @@ type(ROM_DS_Result), intent(inout) :: ds_result
 !
 ! - Get informations from (reference) field
 !
-    call romFieldGetInfo(model, field_name, field_refe, ds_result%field)
+    call romFieldGetInfo(model, fieldName, fieldRefe, ds_result%field)
 !
 ! - Save parameters in datastructures
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romResultSetZero(result, nume_store, ds_mode)
+    subroutine romResultSetZero(resultName, numeStore, ds_mode)
         use Rom_Datastructure_type
-        character(len=8), intent(in) :: result
-        integer, intent(in) :: nume_store
+        character(len=8), intent(in) :: resultName
+        integer, intent(in) :: numeStore
         type(ROM_DS_Field), intent(in) :: ds_mode
     end subroutine romResultSetZero
 end interface

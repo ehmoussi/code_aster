@@ -55,7 +55,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
     integer :: niv, ifm
     type(ROM_DS_LineicNumb) :: ds_line
-    integer :: nb_node, nb_slice, i_node, nb_node_slice, nb_cmp, nb_equa
+    integer :: nb_node, nb_slice, i_node, nb_node_slice, nb_cmp, nbEqua
     real(kind=8) :: tole_node
     character(len=8) :: axe_line, mesh
     character(len=24) :: surf_num
@@ -78,12 +78,12 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get parameters
 !
-    mesh      = ds_empi%ds_mode%mesh
-    axe_line  = ds_empi%axe_line
-    surf_num  = ds_empi%surf_num
-    ds_line   = ds_empi%ds_lineic
-    nb_node   = ds_empi%ds_mode%nb_node
-    nb_equa   = ds_empi%ds_mode%nb_equa
+    mesh     = ds_empi%ds_mode%mesh
+    axe_line = ds_empi%axe_line
+    surf_num = ds_empi%surf_num
+    ds_line  = ds_empi%ds_lineic
+    nb_node  = ds_empi%ds_mode%nbNodeWithDof
+    nbEqua   = ds_empi%ds_mode%nbEqua
     tole_node = ds_line%tole_node
     if (niv .ge. 2) then
         call utmess('I', 'ROM2_6', sr = tole_node)
@@ -91,7 +91,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Count number of components by node for lineic model
 !
-    call romLineicNumberComponents(nb_node, nb_equa, nb_cmp)
+    call romLineicNumberComponents(nb_node, nbEqua, nb_cmp)
 !
 ! - Allocate pointers for lineic objects
 !

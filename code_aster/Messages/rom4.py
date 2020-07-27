@@ -35,6 +35,8 @@ cata_msg = {
 
    13 : _("""Le GROUP_MA %(k1)s fait déjà partie du maillage."""),
 
+   15 : _("""Les modes empiriques ne sont pas des champs nodaux."""),
+
    16 : _("""Les modes empiriques ne sont pas des champs du type attendu."""),
 
    17 : _("""Les modes empiriques ne sont pas des champs gradients du type attendu (on attend %(k1)s). """),

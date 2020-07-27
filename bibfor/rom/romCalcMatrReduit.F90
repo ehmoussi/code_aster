@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ character(len=1), intent(in) :: mode_type
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_mode_curr
-    integer :: nb_mode_maxi, nb_equa, i_equa
+    integer :: nb_mode_maxi, nbEqua, iEqua
     integer :: i_matr, j_mode, iret
     character(len=24) :: field_iden
     character(len=8) :: base
@@ -75,10 +75,10 @@ character(len=1), intent(in) :: mode_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    base           = ds_empi%base
-    nb_mode_maxi   = ds_empi%nb_mode_maxi
-    nb_equa        = ds_empi%ds_mode%nb_equa
-    i_mode_curr    = i_mode
+    base         = ds_empi%base
+    nb_mode_maxi = ds_empi%nb_mode_maxi
+    nbEqua       = ds_empi%ds_mode%nbEqua
+    i_mode_curr  = i_mode
 !
 ! - Get acess to mode_current
 !
@@ -100,11 +100,11 @@ character(len=1), intent(in) :: mode_type
            call jeveuo(matr_redu(i_matr), 'E', vr = vr_matr_red)
            call jeveuo(prod_matr_mode(i_matr), 'L', vr = vr_matr_mode)
            do j_mode = 1, i_mode_curr
-              AS_ALLOCATE(vr = vr_matr_jmode, size=nb_equa)
-              do i_equa = 1, nb_equa
-                 vr_matr_jmode(i_equa) = vr_matr_mode(i_equa+nb_equa*(j_mode-1))
+              AS_ALLOCATE(vr = vr_matr_jmode, size=nbEqua)
+              do iEqua = 1, nbEqua
+                 vr_matr_jmode(iEqua) = vr_matr_mode(iEqua+nbEqua*(j_mode-1))
               end do
-              termr = ddot(nb_equa, vr_mode, 1, vr_matr_jmode, 1)
+              termr = ddot(nbEqua, vr_mode, 1, vr_matr_jmode, 1)
               vr_matr_red(nb_mode_maxi*(i_mode_curr-1)+j_mode) = termr
               vr_matr_red(nb_mode_maxi*(j_mode-1)+i_mode_curr) = termr
               AS_DEALLOCATE(vr = vr_matr_jmode)
@@ -115,11 +115,11 @@ character(len=1), intent(in) :: mode_type
            call jeveuo(matr_redu(i_matr), 'E', vc = vc_matr_red)
            call jeveuo(prod_matr_mode(i_matr), 'L', vc = vc_matr_mode)
            do j_mode = 1, i_mode_curr
-              AS_ALLOCATE(vc = vc_matr_jmode, size=nb_equa)
-              do i_equa = 1, nb_equa
-                 vc_matr_jmode(i_equa) = vc_matr_mode(i_equa+nb_equa*(j_mode-1))
+              AS_ALLOCATE(vc = vc_matr_jmode, size=nbEqua)
+              do iEqua = 1, nbEqua
+                 vc_matr_jmode(iEqua) = vc_matr_mode(iEqua+nbEqua*(j_mode-1))
               end do
-              termc = zdotc(nb_equa, vc_mode, 1, vc_matr_jmode, 1)
+              termc = zdotc(nbEqua, vc_mode, 1, vc_matr_jmode, 1)
               vc_matr_red(nb_mode_maxi*(i_mode_curr-1)+j_mode) = termc
               vc_matr_red(nb_mode_maxi*(j_mode-1)+i_mode_curr) = dconjg(termc)
               AS_DEALLOCATE(vc = vc_matr_jmode)

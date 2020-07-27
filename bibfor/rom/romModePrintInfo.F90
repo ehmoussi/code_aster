@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -40,8 +40,8 @@ type(ROM_DS_Field), intent(in) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    call utmess('I', 'ROM3_4', sk = ds_mode%field_name)
-    call utmess('I', 'ROM3_6', si = ds_mode%nb_node)
-    call utmess('I', 'ROM3_7', si = ds_mode%nb_equa)
+    call utmess('I', 'ROM3_4', sk = ds_mode%fieldName)
+    call utmess('I', 'ROM3_6', si = ds_mode%nbNodeWithDof)
+    call utmess('I', 'ROM3_7', si = ds_mode%nbEqua)
 !
 end subroutine

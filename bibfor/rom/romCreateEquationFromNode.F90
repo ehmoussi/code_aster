@@ -65,7 +65,7 @@ integer, pointer, optional :: v_list_node_(:)
     integer :: nb_node, nb_equa, nb_cmp
     integer, pointer :: v_list_node(:) => null()
     character(len=8), pointer :: v_list_cmp(:) => null()
-    character(len=24) :: field_name
+    character(len=24) :: fieldName
     character(len=8) :: mesh
 !
 ! --------------------------------------------------------------------------------------------------
@@ -77,8 +77,9 @@ integer, pointer, optional :: v_list_node_(:)
 !
 ! - Get parameters
 !
-    mesh       = ds_mode%mesh
-    field_name = ds_mode%field_name
+    mesh      = ds_mode%mesh
+    fieldName = ds_mode%fieldName
+    ASSERT(ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Access to list of nodes
 !
@@ -96,18 +97,18 @@ integer, pointer, optional :: v_list_node_(:)
 !
 ! - List of components to search
 !
-    if (field_name .eq. 'TEMP') then
+    if (fieldName .eq. 'TEMP') then
         nb_cmp        = 1
         AS_ALLOCATE(vk8 = v_list_cmp, size = nb_cmp)
         v_list_cmp(1) = 'TEMP'
-    elseif (field_name .eq. 'DEPL') then
+    elseif (fieldName .eq. 'DEPL') then
         nb_cmp        = 3
         AS_ALLOCATE(vk8 = v_list_cmp, size = nb_cmp)
         v_list_cmp(1) = 'DX'
         v_list_cmp(2) = 'DY'
         v_list_cmp(3) = 'DZ'
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Find index of equations

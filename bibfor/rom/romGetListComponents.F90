@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,28 +17,28 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romGetListComponents(field_refe , nb_equa   ,&
-                                v_equa_type, v_list_cmp,&
-                                nb_cmp     , l_lagr)
+subroutine romGetListComponents(fieldRefe  , fieldSupp  , nbEqua,&
+                                equaCmpName, listCmpName,&
+                                nbCmp      , lLagr)
 !
 implicit none
 !
 #include "asterf_types.h"
 #include "asterc/indik8.h"
 #include "asterfort/assert.h"
-#include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jexnom.h"
 #include "asterfort/jelira.h"
 #include "asterfort/as_allocate.h"
 !
-character(len=24), intent(in) :: field_refe
-integer, intent(in) :: nb_equa
-integer, pointer :: v_equa_type(:)
-character(len=8), pointer :: v_list_cmp(:)
-integer, intent(out) :: nb_cmp
-aster_logical, intent(out) :: l_lagr
+character(len=24), intent(in) :: fieldRefe
+character(len=4), intent(in) :: fieldSupp
+integer, intent(in) :: nbEqua
+integer, pointer :: equaCmpName(:)
+character(len=8), pointer :: listCmpName(:)
+integer, intent(out) :: nbCmp
+aster_logical, intent(out) :: lLagr
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -48,61 +48,66 @@ aster_logical, intent(out) :: l_lagr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  field_refe       : field to analyze
-! In  nb_equa          : number of equations (length of empiric mode)
-! In  v_equa_type      : pointer to name of component for each dof (-1 if Lagrange multiplier)
-! In  v_list_cmp       : pointer to list of components
-! Out nb_cmp           : length of v_list_type
-! Out l_lagr           : flag if vector contains at least one Lagrange multiplier
+! In  fieldRefe        : field to analyze
+! In  fieldSupp        : cell support of field (NOEU, ELNO, ELEM, ...)
+! In  nbEequa          : number of equations (length of empiric mode)
+! Ptr equaCmpName      : pointer to the index of name (in listCmpName) for each dof
+! Ptr listCmpName      : pointer to the list of name of compoenents
+! Out nbCmp            : length of v_list_type
+! Out lLagr            : flag if vector contains at least one Lagrange multiplier
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: gran_name, name_cmp
+    character(len=8) :: physName
     character(len=19) :: pfchno
-    integer :: i_equa, nb_lagr, nume_cmp, nb_cmp_maxi, indx_cmp
-    integer, pointer :: v_deeq(:) => null()
-    character(len=8), pointer :: v_cmp(:) => null()
+    integer :: iEqua, nbLagr, cmpNume, nbCmpMaxi, cmpIndx
+    integer, pointer :: deeq(:) => null()
+    character(len=8), pointer :: physCmpName(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    l_lagr = ASTER_FALSE
+    lLagr = ASTER_FALSE
+    nbCmp = 0
 !
 ! - Get list of components on physical_quantities
 !
-    call dismoi('NOM_GD', field_refe, 'CHAM_NO', repk = gran_name)
-    call jelira(jexnom('&CATA.GD.NOMCMP', gran_name), 'LONMAX', nb_cmp_maxi)
-    call jeveuo(jexnom('&CATA.GD.NOMCMP', gran_name), 'L', vk8 = v_cmp)
+    call dismoi('NOM_GD', fieldRefe, 'CHAMP', repk = physName)
+    call jelira(jexnom('&CATA.GD.NOMCMP', physName), 'LONMAX', nbCmpMaxi)
+    call jeveuo(jexnom('&CATA.GD.NOMCMP', physName), 'L', vk8 = physCmpName)
 !
-! - Access to numbering
+! - Allocate object for type of equation
 !
-    call dismoi('PROF_CHNO' , field_refe, 'CHAM_NO', repk = pfchno)
-    call jeveuo(pfchno//'.DEEQ', 'L', vi = v_deeq)
+    AS_ALLOCATE(vi = equaCmpName, size = nbEqua)
 !
-! - Allocate lists
+! - Get name of compoenents and type of components (-1 if Lagrangian)
 !
-    AS_ALLOCATE(vk8 = v_list_cmp, size = nb_cmp_maxi)
-    AS_ALLOCATE(vi = v_equa_type, size = nb_equa)
-!
-! - Count
-!
-    nb_lagr = 0
-    nb_cmp  = 0
-    do i_equa = 1, nb_equa
-        nume_cmp = v_deeq(2*(i_equa-1)+2)
-        if (nume_cmp .gt. 0) then
-            name_cmp = v_cmp(nume_cmp)
-            indx_cmp = indik8(v_list_cmp, name_cmp, 1, nb_cmp)
-            if (indx_cmp .eq. 0) then
-                nb_cmp   = nb_cmp + 1
-                v_list_cmp(nb_cmp) = name_cmp
-                indx_cmp = nb_cmp
+    if (fieldSupp == 'NOEU') then
+! ----- Access to numbering
+        call dismoi('PROF_CHNO' , fieldRefe, 'CHAM_NO', repk = pfchno)
+        call jeveuo(pfchno//'.DEEQ', 'L', vi = deeq)
+! ----- Allocate object for name of components
+        AS_ALLOCATE(vk8 = listCmpName, size = nbCmpMaxi)
+        nbLagr = 0
+        nbCmp  = 0
+        do iEqua = 1, nbEqua
+            cmpNume = deeq(2*(iEqua-1)+2)
+            if (cmpNume .gt. 0) then
+                cmpIndx = indik8(listCmpName, physCmpName(cmpNume), 1, nbCmp)
+                if (cmpIndx .eq. 0) then
+! ----------------- Add this name in the list
+                    nbCmp              = nbCmp + 1
+                    listCmpName(nbCmp) = physCmpName(cmpNume)
+                    cmpIndx            = nbCmp
+                endif
+                equaCmpName(iEqua) = cmpIndx
+            else
+                nbLagr             = nbLagr + 1
+                equaCmpName(iEqua) = -1
             endif
-            v_equa_type(i_equa) = indx_cmp
-        else
-            nb_lagr = nb_lagr + 1
-            v_equa_type(i_equa) = -1
-        endif
-    end do
-    l_lagr = nb_lagr .gt. 0
+        end do
+        lLagr = nbLagr .gt. 0
+    else
+        ASSERT(ASTER_FALSE)
+    endif
 !
 end subroutine

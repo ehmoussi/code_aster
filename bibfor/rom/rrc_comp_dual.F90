@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,8 +54,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode, nb_equa, nb_equa_ridi, nb_store
-    integer :: iret, i_mode, i_equa, i_store, nume_store, i_ord, nume_equa
+    integer :: nb_mode, nbEqua, nb_equa_ridi, nbStore
+    integer :: iret, i_mode, i_equa, iStore, numeStore, i_ord, nume_equa
     character(len=8) :: result_rom, result_dom
     real(kind=8), pointer :: v_dual(:) => null()
     real(kind=8), pointer :: v_dual_rom(:) => null()
@@ -63,8 +63,8 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     real(kind=8), pointer :: v_sigm_rid(:) => null()
     real(kind=8), pointer :: v_sigm_rom(:) => null()
     real(kind=8), pointer :: v_cohr(:) => null()
-    character(len=24) :: field_save, sigm_rid
-    real(kind=8), pointer :: v_field_save(:) => null()
+    character(len=24) :: resultField, sigm_rid
+    real(kind=8), pointer :: v_resultField(:) => null()
     type(ROM_DS_Field) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
@@ -76,13 +76,14 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Get parameters
 !
-    nb_store     = ds_para%nb_store
+    nbStore      = ds_para%nb_store
     ds_mode      = ds_para%ds_empi_dual%ds_mode
     nb_mode      = ds_para%ds_empi_dual%nb_mode
-    nb_equa      = ds_mode%nb_equa
+    nbEqua       = ds_mode%nbEqua
     result_rom   = ds_para%result_rom
     result_dom   = ds_para%result_dom
     nb_equa_ridi = ds_para%nb_equa_ridi
+    ASSERT(ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Create [PHI] matrix for dual base
 !
@@ -92,43 +93,42 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
     AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_ridi*nb_mode)
     do i_mode = 1, nb_mode
-        do i_equa = 1, nb_equa
+        do i_equa = 1, nbEqua
             if (ds_para%v_equa_ridd(i_equa) .ne. 0) then
                 v_dual_rom(ds_para%v_equa_ridd(i_equa)+nb_equa_ridi*(i_mode-1)) = &
-                  v_dual(i_equa+nb_equa*(i_mode-1))
+                  v_dual(i_equa+nbEqua*(i_mode-1))
             endif 
         end do
     end do
 !
 ! - Gappy POD 
 !
-    call romEvalGappyPOD(ds_para, result_rom, nb_store, v_dual_rom,&
-                         v_cohr , 1)
+    call romEvalGappyPOD(ds_para, result_rom, nbStore, v_dual_rom, v_cohr , 1)
 !
 ! - Initial state
 !
-    nume_store = 0
-    call romResultSetZero(result_dom, nume_store, ds_mode)
+    numeStore = 0
+    call romResultSetZero(result_dom, numeStore, ds_mode)
 !
 ! - Compute new fields
 !
-    AS_ALLOCATE(vr = v_sigm_dom, size = nb_equa*(nb_store-1))
-    call dgemm('N', 'N', nb_equa, nb_store-1, nb_mode, 1.d0, &
-               v_dual, nb_equa, v_cohr, nb_mode, 0.d0, v_sigm_dom, nb_equa)
+    AS_ALLOCATE(vr = v_sigm_dom, size = nbEqua*(nbStore-1))
+    call dgemm('N', 'N', nbEqua, nbStore-1, nb_mode, 1.d0, &
+               v_dual, nbEqua, v_cohr, nb_mode, 0.d0, v_sigm_dom, nbEqua)
 !
 ! - Compute new field
 !
-    do i_store = 1, nb_store-1
-        nume_store = i_store
+    do iStore = 1, nbStore-1
+        numeStore = iStore
 ! ----- Get field to save
-        call rsexch(' ', result_dom, ds_mode%field_name,&
-                    nume_store, field_save, iret)
+        call rsexch(' ', result_dom, ds_mode%fieldName,&
+                    numeStore, resultField, iret)
         ASSERT(iret .eq. 100)
-        call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
-        call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
+        call copisd('CHAMP_GD', 'G', ds_mode%fieldRefe, resultField)
+        call jeveuo(resultField(1:19)//'.VALE', 'E', vr = v_resultField)
 ! ----- Get field on RID
-        call rsexch(' ', result_rom, ds_mode%field_name,&
-                    nume_store, sigm_rid, iret)
+        call rsexch(' ', result_rom, ds_mode%fieldName,&
+                    numeStore, sigm_rid, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(sigm_rid(1:19)//'.VALE', 'L', vr = v_sigm_rid)
 ! ----- Truncate the field
@@ -139,15 +139,15 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
             endif
         enddo
 ! ----- Set field
-        do i_equa = 1, nb_equa
+        do i_equa = 1, nbEqua
             nume_equa = ds_para%v_equa_ridd(i_equa)
             if (nume_equa .eq. 0) then
-                v_field_save(i_equa) = v_sigm_dom(i_equa+nb_equa*(nume_store-1))
+                v_resultField(i_equa) = v_sigm_dom(i_equa+nbEqua*(numeStore-1))
             else
-                v_field_save(i_equa) = v_sigm_rom(nume_equa)
+                v_resultField(i_equa) = v_sigm_rom(nume_equa)
             endif
         enddo
-        call rsnoch(result_dom, ds_mode%field_name, nume_store)
+        call rsnoch(result_dom, ds_mode%fieldName, numeStore)
         AS_DEALLOCATE(vr = v_sigm_rom)
     enddo
 !

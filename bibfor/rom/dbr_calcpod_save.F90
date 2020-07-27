@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_save(ds_empi, nb_mode, nb_snap_redu, field_iden, s, v)
+subroutine dbr_calcpod_save(ds_empi, nb_mode, nb_snap_redu, fieldIden, s, v)
 !
 use Rom_Datastructure_type
 !
@@ -30,11 +30,9 @@ implicit none
 #include "asterfort/dbr_calcpod_savel.h"
 !
 type(ROM_DS_Empi), intent(in) :: ds_empi
-integer, intent(in) :: nb_mode
-integer, intent(in) :: nb_snap_redu
-character(len=24), intent(in) :: field_iden
-real(kind=8), pointer :: v(:)
-real(kind=8), pointer :: s(:)
+integer, intent(in) :: nb_mode, nb_snap_redu
+character(len=24), intent(in) :: fieldIden
+real(kind=8), pointer :: v(:), s(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,27 +45,27 @@ real(kind=8), pointer :: s(:)
 ! In  ds_empi          : datastructure for empiric modes
 ! In  nb_mode          : number of empiric modes
 ! In  nb_snap_redu     : number of snapshots used to construct empiric base
-! In  field_iden       : identificator of field (name in results datastructure)
+! In  fieldIden        : identificator of field (name in results datastructure)
 ! In  s                : singular values
 ! In  v                : singular vectors
 !
 ! --------------------------------------------------------------------------------------------------
 !
     character(len=8) :: base_type
-    integer :: nb_equa
+    integer :: nbEqua
     integer, pointer :: v_nume_slice(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_equa      = ds_empi%ds_mode%nb_equa
-    base_type    = ds_empi%base_type
+    nbEqua    = ds_empi%ds_mode%nbEqua
+    base_type = ds_empi%base_type
 !
     if (base_type .eq. 'LINEIQUE') then
-        call dbr_calcpod_savel(ds_empi, nb_mode, nb_snap_redu, field_iden, nb_equa, s, v)
+        call dbr_calcpod_savel(ds_empi, nb_mode, nb_snap_redu, fieldIden, nbEqua, s, v)
     else
         AS_ALLOCATE(vi=v_nume_slice, size = nb_mode)
         call romBaseSave(ds_empi, nb_mode, nb_snap_redu, mode_type = 'R',&
-                         field_iden    = field_iden,&
+                         fieldIden     = fieldIden,&
                          mode_vectr_   = v, &
                          v_mode_freq_  = s, &
                          v_nume_slice_ = v_nume_slice)

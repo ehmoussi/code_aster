@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ real(kind=8), pointer :: v_vect(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_equa, nb_mode
+    integer :: nbEqua, nb_mode
     integer(kind=4) :: info
     real(kind=8), pointer    :: v_matr_phi(:) => null()
     real(kind=8), pointer    :: v_matr(:) => null()
@@ -60,7 +60,7 @@ real(kind=8), pointer :: v_vect(:)
 ! --------------------------------------------------------------------------------------------------
 !
     nb_mode = ds_empi%nb_mode
-    nb_equa = ds_empi%ds_mode%nb_equa
+    nbEqua  = ds_empi%ds_mode%nbEqua
 !
 ! - Allocate objects
 !
@@ -73,10 +73,10 @@ real(kind=8), pointer :: v_vect(:)
 !
 ! - COmpute reduced coefficients
 !
-    call dgemm('T', 'N', nb_mode, 1, nb_equa, 1.d0,&
-               v_matr_phi, nb_equa, v_field, nb_equa, 0.d0, v_vect, nb_mode)
-    call dgemm('T', 'N', nb_mode, nb_mode, nb_equa, 1.d0,&
-               v_matr_phi, nb_equa, v_matr_phi, nb_equa, 0.d0, v_matr, nb_mode)
+    call dgemm('T', 'N', nb_mode, 1, nbEqua, 1.d0,&
+               v_matr_phi, nbEqua, v_field, nbEqua, 0.d0, v_vect, nb_mode)
+    call dgemm('T', 'N', nb_mode, nb_mode, nbEqua, 1.d0,&
+               v_matr_phi, nbEqua, v_matr_phi, nbEqua, 0.d0, v_matr, nb_mode)
     call dgesv(nb_mode, 1, v_matr, nb_mode, IPIV, v_vect, nb_mode, info)
     if (info .ne. 0) then
         call utmess('F', 'ROM6_32')

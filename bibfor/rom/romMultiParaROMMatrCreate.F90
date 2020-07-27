@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ character(len=19), intent(in) :: syst_matr
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_matr, nb_mode, nb_equa, nb_mode_maxi
+    integer :: nb_matr, nb_mode, nb_mode_maxi
     integer :: i_mode, i_matr, j_mode
     aster_logical :: l_coef_cplx, l_coef_real
     real(kind=8) :: coef_r
@@ -73,10 +73,9 @@ character(len=19), intent(in) :: syst_matr
 !
 ! - Initializations
 !
-    nb_mode        = ds_empi%nb_mode
-    nb_mode_maxi   = ds_empi%nb_mode_maxi
-    nb_equa        = ds_empi%ds_mode%nb_equa
-    nb_matr        = ds_multipara%nb_matr
+    nb_mode      = ds_empi%nb_mode
+    nb_mode_maxi = ds_empi%nb_mode_maxi
+    nb_matr      = ds_multipara%nb_matr
 !
     if(ds_multipara%syst_type .eq.'R') then 
        call jeveuo(syst_matr, 'E', vr = vr_syst_matr)

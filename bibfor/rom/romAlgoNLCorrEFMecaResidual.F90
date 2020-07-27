@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@ implicit none
 #include "asterfort/jeveuo.h"
 #include "asterfort/jelira.h"
 #include "asterfort/rsexch.h"
+#include "asterfort/assert.h"
 #include "blas/ddot.h"
 !
 real(kind=8), pointer :: v_fint(:)
@@ -57,8 +58,8 @@ real(kind=8), intent(out) :: resi
 !
     aster_logical :: l_hrom
     character(len=8) :: base
-    character(len=24) :: field_name
-    integer :: i_equa, nb_equa, nb_mode
+    character(len=24) :: fieldName
+    integer :: i_equa, nbEqua, nb_mode
     real(kind=8), pointer :: v_resi(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -67,16 +68,17 @@ real(kind=8), intent(out) :: resi
 !
 ! - Get parameters
 !
-    l_hrom     = ds_algorom%l_hrom
-    base       = ds_algorom%ds_empi%base
-    nb_equa    = ds_algorom%ds_empi%ds_mode%nb_equa
-    nb_mode    = ds_algorom%ds_empi%nb_mode
-    field_name = ds_algorom%ds_empi%ds_mode%field_name
+    l_hrom    = ds_algorom%l_hrom
+    base      = ds_algorom%ds_empi%base
+    nbEqua    = ds_algorom%ds_empi%ds_mode%nbEqua
+    nb_mode   = ds_algorom%ds_empi%nb_mode
+    fieldName = ds_algorom%ds_empi%ds_mode%fieldName
+    ASSERT(ds_algorom%ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Compute equilibrium residual
 !
-    AS_ALLOCATE(vr=v_resi, size=nb_equa)
-    do i_equa = 1, nb_equa
+    AS_ALLOCATE(vr=v_resi, size=nbEqua)
+    do i_equa = 1, nbEqua
         if (l_cine) then
             if (v_ccid(i_equa) .ne. 1) then
                 v_resi(i_equa) = v_fint(i_equa) - v_fext(i_equa)
@@ -87,7 +89,7 @@ real(kind=8), intent(out) :: resi
 ! - Truncation of residual
 !
     if (l_hrom) then
-        do i_equa = 1, nb_equa
+        do i_equa = 1, nbEqua
             if (ds_algorom%v_equa_sub(i_equa) .eq. 1) then
                 v_resi(i_equa) = 0.d0
             endif
@@ -96,7 +98,7 @@ real(kind=8), intent(out) :: resi
 !
 ! - Find the residual
 !
-    do i_equa = 1, nb_equa
+    do i_equa = 1, nbEqua
         resi = max (resi, abs(v_resi(i_equa)))
     enddo
 !

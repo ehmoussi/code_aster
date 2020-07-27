@@ -58,7 +58,8 @@ aster_logical, intent(in), optional :: l_line_search_
     integer :: iret, nb_mode
     character(len=8) :: mesh_base, model_base
     character(len=8) :: mesh_algo, model_algo
-    character(len=24) :: field_name
+    character(len=24) :: fieldName
+    character(len=4) :: fieldSupp
     character(len=24) :: grnode_int
     aster_logical :: l_hrom
     type(ROM_DS_Empi) :: ds_empi
@@ -94,17 +95,21 @@ aster_logical, intent(in), optional :: l_line_search_
 !
 ! - Check field in base
 !
-    field_name = ds_empi%ds_mode%field_name
+    fieldName = ds_empi%ds_mode%fieldName
     if (phenom .eq. 'THER') then
-        if (field_name .ne. 'TEMP') then
+        if (fieldName .ne. 'TEMP') then
             call utmess('F', 'ROM5_32')
         endif
     elseif (phenom .eq. 'MECA') then
-        if (field_name .ne. 'DEPL') then
+        if (fieldName .ne. 'DEPL') then
             call utmess('F', 'ROM5_32')
         endif
     else
-        ASSERT(.false.)
+        ASSERT(ASTER_FALSE)
+    endif
+    fieldSupp = ds_empi%ds_mode%fieldSupp
+    if (fieldSupp .ne. 'NOEU') then
+        call utmess('F', 'ROM5_36')
     endif
 !
 ! - Check group of nodes

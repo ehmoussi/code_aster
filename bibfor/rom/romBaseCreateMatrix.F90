@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -48,8 +48,8 @@ real(kind=8), pointer :: v_matr_phi(:)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_mode, iret, i_equa
-    integer :: nb_equa, nb_mode
+    integer :: i_mode, iret, iEqua
+    integer :: nbEqua, nb_mode
     character(len=24) :: mode
     real(kind=8), pointer :: v_mode(:) => null()
 !
@@ -59,21 +59,21 @@ real(kind=8), pointer :: v_matr_phi(:)
 !
 ! - Get parameters
 !
-    nb_equa = ds_empi%ds_mode%nb_equa
+    nbEqua  = ds_empi%ds_mode%nbEqua
     nb_mode = ds_empi%nb_mode
     if (niv .ge. 2) then
-        call utmess('I', 'ROM6_30', ni = 2, vali = [nb_equa,nb_mode])
+        call utmess('I', 'ROM6_30', ni = 2, vali = [nbEqua, nb_mode])
     endif
 !
 ! - Create [PHI] matrix
 !
-    AS_ALLOCATE(vr = v_matr_phi, size = nb_equa*nb_mode)
+    AS_ALLOCATE(vr = v_matr_phi, size = nbEqua*nb_mode)
     do i_mode = 1, nb_mode
-        call rsexch(' ', ds_empi%base, ds_empi%ds_mode%field_name, i_mode, mode, iret)
+        call rsexch(' ', ds_empi%base, ds_empi%ds_mode%fieldName, i_mode, mode, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
-        do i_equa = 1, nb_equa
-            v_matr_phi(i_equa+nb_equa*(i_mode-1)) = v_mode(i_equa)    
+        do iEqua = 1, nbEqua
+            v_matr_phi(iEqua+nbEqua*(i_mode-1)) = v_mode(iEqua)
         end do
     end do
 !

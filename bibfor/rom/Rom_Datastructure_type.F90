@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,6 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
+! aslint: disable=W1501
 !
 module Rom_Datastructure_type
 !
@@ -61,23 +62,26 @@ implicit none
 !
     type ROM_DS_Field
 ! ----- Name of field for read (NOM_CHAM)
-        character(len=24)       :: field_name = ' '
+        character(len=24)         :: fieldName = ' '
 ! ----- A field for reference (to manipulate)
-        character(len=24)       :: field_refe = ' '
+        character(len=24)         :: fieldRefe = ' '
+! ----- Type of field (NOEU/ELGA
+        character(len=4)          :: fieldSupp = ' '
 ! ----- Model
-        character(len=8)        :: model = ' '
+        character(len=8)          :: model = ' '
 ! ----- Mesh
-        character(len=8)        :: mesh  = ' '
-! ----- Components in the field
-        integer, pointer          :: v_equa_type(:) => null()
-        character(len=8), pointer :: v_list_cmp(:) => null()
-        integer                   :: nb_cmp = 0
+        character(len=8)          :: mesh  = ' '
+! ----- Components in the field: number and name
+        character(len=8), pointer :: listCmpName(:) => null()
+        integer                   :: nbCmp = 0
+! ----- For each dof: index of name of compoenent (from listCmpName)
+        integer, pointer          :: equaCmpName(:) => null()
 ! ----- Flag if has Lagrange multipliers
-        aster_logical           :: l_lagr = ASTER_FALSE
+        aster_logical             :: lLagr = ASTER_FALSE
 ! ----- Number of nodes with dof
-        integer                 :: nb_node = 0
+        integer                   :: nbNodeWithDof = 0
 ! ----- Number of equations
-        integer                 :: nb_equa = 0
+        integer                   :: nbEqua = 0
     end type ROM_DS_Field
 !
 ! - Datastructure for empiric base

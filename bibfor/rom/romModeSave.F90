@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,12 +17,13 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romModeSave(base        , i_mode     , model      ,&
-                       field_name  , field_iden , field_refe , nb_equa,&
-                       mode_vectr_ ,&
-                       mode_vectc_ ,&
-                       mode_freq_  ,&
-                       nume_slice_ ,&
+subroutine romModeSave(base       , iMode    , model    ,&
+                       fieldName  , fieldIden, fieldRefe,&
+                       fieldSupp  , nbEqua   ,&
+                       mode_vectr_,&
+                       mode_vectc_,&
+                       mode_freq_ ,&
+                       nume_slice_,&
                        nb_snap_)
 !
 implicit none
@@ -36,14 +37,13 @@ implicit none
 #include "asterfort/romModeParaSave.h"
 !
 character(len=8), intent(in) :: base
-integer, intent(in) :: i_mode
+integer, intent(in) :: iMode
 character(len=8), intent(in) :: model
-character(len=24), intent(in) :: field_name
-character(len=24), intent(in) :: field_iden
-character(len=24), intent(in) :: field_refe
-integer, intent(in) :: nb_equa
-real(kind=8), optional, intent(in) :: mode_vectr_(nb_equa)
-complex(kind=8), optional, intent(in) :: mode_vectc_(nb_equa)
+character(len=24), intent(in) :: fieldName, fieldIden, fieldRefe
+character(len=4), intent(in) :: fieldSupp
+integer, intent(in) :: nbEqua
+real(kind=8), optional, intent(in) :: mode_vectr_(nbEqua)
+complex(kind=8), optional, intent(in) :: mode_vectc_(nbEqua)
 integer, optional, intent(in)     :: nume_slice_
 real(kind=8), optional, intent(in) :: mode_freq_
 integer, optional, intent(in)     :: nb_snap_
@@ -57,12 +57,13 @@ integer, optional, intent(in)     :: nb_snap_
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  base             : name of empiric base
-! In  i_mode           : index of empiric modes
+! In  iMode            : index of empiric modes
 ! In  model            : name of model
-! In  field_name       : name of field where empiric modes have been constructed (NOM_CHAM)
-! In  field_iden       : identificator of field (name in results datastructure)
-! In  field_refe       : name of a reference field if necessary
-! In  nb_equa          : length of empiric mode
+! In  fieldName        : name of field where empiric modes have been constructed (NOM_CHAM)
+! In  fieldIden        : identificator of field (name in results datastructure)
+! In  fieldRefe        : name of a reference field if necessary
+! In  fieldSupp        : cell support of field (NOEU, ELNO, ELEM, ...)
+! In  nbEqua           : length of empiric mode
 ! In  mode_vectr       : singular vector for empiric mode (real)
 ! In  mode_vectc       : singular vector for empiric mode (complex)
 ! In  nume_slice       : index of slices (for lineic bases)
@@ -94,37 +95,41 @@ integer, optional, intent(in)     :: nb_snap_
 !
 ! - Get current mode
 !
-    call rsexch(' ', base, field_iden, i_mode, field, iret)
+    call rsexch(' ', base, fieldIden, iMode, field, iret)
     ASSERT(iret .eq. 100 .or. iret.eq.0 .or. iret .eq. 110)
     if (iret .eq. 110) then
         call rsagsd(base, 0)
-        call rsexch(' ', base, field_iden, i_mode, field, iret)
+        call rsexch(' ', base, fieldIden, iMode, field, iret)
         ASSERT(iret .eq. 100 .or. iret.eq.0)
     endif
     if (iret .eq. 100) then
-        call copisd('CHAMP_GD', 'G', field_refe, field)
+        call copisd('CHAMP_GD', 'G', fieldRefe, field)
     endif
 !
 ! - Access to current mode
 !
-    if (present(mode_vectc_)) then
-        call jeveuo(field(1:19)//'.VALE', 'E', vc = v_field_c)
+    if (fieldSupp .eq. 'NOEU') then
+        if (present(mode_vectc_)) then
+            call jeveuo(field(1:19)//'.VALE', 'E', vc = v_field_c)
+        else
+            call jeveuo(field(1:19)//'.VALE', 'E', vr = v_field_r)
+        endif
     else
-        call jeveuo(field(1:19)//'.VALE', 'E', vr = v_field_r)
+        ASSERT(ASTER_FALSE)
     endif
 !
 ! - Save mode
 !
     if (present(mode_vectc_)) then
-        v_field_c(:) = mode_vectc_(1:nb_equa)
+        v_field_c(:) = mode_vectc_(1:nbEqua)
     else
-        v_field_r(:) = mode_vectr_(1:nb_equa)
+        v_field_r(:) = mode_vectr_(1:nbEqua)
     endif
-    call rsnoch(base, field_iden, i_mode)
+    call rsnoch(base, fieldIden, iMode)
 !
 ! - Save parameters
 !
-    call romModeParaSave(base , i_mode    ,&
-                         model, field_name, mode_freq, nume_slice, nb_snap)
+    call romModeParaSave(base , iMode    ,&
+                         model, fieldName, mode_freq, nume_slice, nb_snap)
 !
 end subroutine

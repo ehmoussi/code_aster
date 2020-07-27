@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 ! --------------------------------------------------------------------------------------------------
 !
     aster_logical :: l_hrom
-    integer :: i_equa, nb_equa
+    integer :: iEqua, nbEqua
     real(kind=8) :: vnorm
     real(kind=8), pointer :: v_cn2mbr(:) => null()
     real(kind=8), pointer :: v_cn2mbrr(:) => null()
@@ -68,8 +68,8 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! - Get parameters
 !
-    l_hrom     = ds_algorom%l_hrom
-    nb_equa    = ds_algorom%ds_empi%ds_mode%nb_equa
+    l_hrom = ds_algorom%l_hrom
+    nbEqua = ds_algorom%ds_empi%ds_mode%nbEqua
 !
 ! - Access to vectors
 !
@@ -80,33 +80,33 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! - Create residual
 !
-    do i_equa = 1, nb_equa
-        v_cn2mbr(i_equa)  = v_vec2nd(i_equa) - v_cnresi(i_equa) - v_cnvabt(i_equa)
+    do iEqua = 1, nbEqua
+        v_cn2mbr(iEqua)  = v_vec2nd(iEqua) - v_cnresi(iEqua) - v_cnvabt(iEqua)
     enddo
 !
 ! - Truncation of residual
 !
     if (l_hrom) then
-        do i_equa = 1, nb_equa
-            if (ds_algorom%v_equa_sub(i_equa) .eq. 1) then
-                v_vec2nd(i_equa) = 0.d0
-                v_cnvabt(i_equa) = 0.d0
-                v_cnresi(i_equa) = 0.d0
+        do iEqua = 1, nbEqua
+            if (ds_algorom%v_equa_sub(iEqua) .eq. 1) then
+                v_vec2nd(iEqua) = 0.d0
+                v_cnvabt(iEqua) = 0.d0
+                v_cnresi(iEqua) = 0.d0
             endif
         enddo
     endif
 !
 ! - Product of modes by second member
 !
-    AS_ALLOCATE(vr=v_cn2mbrr, size=nb_equa)
+    AS_ALLOCATE(vr=v_cn2mbrr, size=nbEqua)
 !
 ! - Compute maximum
 !
-    do i_equa = 1, nb_equa
-        v_cn2mbrr(i_equa) = v_vec2nd(i_equa) - v_cnresi(i_equa) - v_cnvabt(i_equa)
-        resi_rela         = resi_rela + ( v_cn2mbrr(i_equa) )**2
-        vnorm             = vnorm + ( v_vec2nd(i_equa) - v_cnvabt(i_equa) )**2
-        resi_maxi         = max( resi_maxi,abs( v_cn2mbrr(i_equa) ) )
+    do iEqua = 1, nbEqua
+        v_cn2mbrr(iEqua) = v_vec2nd(iEqua) - v_cnresi(iEqua) - v_cnvabt(iEqua)
+        resi_rela         = resi_rela + ( v_cn2mbrr(iEqua) )**2
+        vnorm             = vnorm + ( v_vec2nd(iEqua) - v_cnvabt(iEqua) )**2
+        resi_maxi         = max( resi_maxi,abs( v_cn2mbrr(iEqua) ) )
     end do
 !
 ! - Compute relative

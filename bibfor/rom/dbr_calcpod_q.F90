@@ -55,10 +55,10 @@ real(kind=8), pointer :: q(:)
 !
     integer :: ifm, niv
     integer :: i_snap, i_equa
-    integer :: nb_snap, nb_equa
+    integer :: nb_snap, nbEqua
     integer :: nume_inst, iret
     character(len=8)  :: base_type, result
-    character(len=24) :: field_name, list_snap
+    character(len=24) :: fieldName, list_snap
     integer, pointer :: v_list_snap(:) => null()
     real(kind=8), pointer :: v_field_resu(:) => null()
     character(len=24) :: field_resu
@@ -74,14 +74,14 @@ real(kind=8), pointer :: q(:)
 !
 ! - Get parameters
 !
-    result       = ds_snap%result
-    nb_snap      = ds_snap%nb_snap
-    list_snap    = ds_snap%list_snap
-    nb_equa      = ds_empi%ds_mode%nb_equa
-    base_type    = ds_empi%base_type
-    field_name   = ds_empi%ds_mode%field_name
+    result    = ds_snap%result
+    nb_snap   = ds_snap%nb_snap
+    list_snap = ds_snap%list_snap
+    nbEqua    = ds_empi%ds_mode%nbEqua
+    base_type = ds_empi%base_type
+    fieldName = ds_empi%ds_mode%fieldName
     ASSERT(nb_snap .gt. 0)
-    ASSERT(nb_equa .gt. 0)
+    ASSERT(nbEqua .gt. 0)
 !
 ! - Get list of snapshots to select
 !
@@ -95,20 +95,20 @@ real(kind=8), pointer :: q(:)
 !
     if (base_type .eq. 'LINEIQUE') then
         call dbr_calcpod_ql(ds_empi, &
-                            result , field_name , nb_equa,&
+                            result , fieldName , nbEqua,&
                             nb_snap, v_list_snap,&
                             q)
     else
         do i_snap = 1, nb_snap
             nume_inst = v_list_snap(i_snap)
-            call rsexch(' '  , result, field_name, nume_inst, field_resu, iret)
+            call rsexch(' '  , result, fieldName, nume_inst, field_resu, iret)
             ! Error if nume_inst does not exist in result
             if (iret .ne. 0) then
                 call utmess('F','ROM2_11',sk = result)
             endif
             call jeveuo(field_resu(1:19)//'.VALE', 'L', vr = v_field_resu)
-            do i_equa = 1, nb_equa
-                q(i_equa + nb_equa*(i_snap - 1)) = v_field_resu(i_equa)
+            do i_equa = 1, nbEqua
+                q(i_equa + nbEqua*(i_snap - 1)) = v_field_resu(i_equa)
             end do
             call jelibe(field_resu(1:19)//'.VALE')
         enddo

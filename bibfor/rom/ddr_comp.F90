@@ -55,12 +55,12 @@ integer, pointer  :: v_equa(:)
 !
     integer :: ifm, niv, iret
     integer :: i_equa, i_mode, i_vect, i_matr, k_mode
-    integer :: nb_equa, nb_mode, nb_vect, jv_para, nb_motr
+    integer :: nbEqua, nb_mode, nb_vect, jv_para, nb_motr
     integer :: equa_maxi, lval, ntp, ntm
     integer(kind=4) :: info
     integer(kind=4), pointer :: IPIV(:) => null()
     character(len=8)  :: base
-    character(len=24) :: field_name
+    character(len=24) :: fieldName
     character(len=24) :: mode
     real(kind=8) :: vale_maxi, term
     real(kind=8), pointer :: v_mode(:) => null()
@@ -81,15 +81,16 @@ integer, pointer  :: v_equa(:)
 !
 ! - Get parameters
 !
-    mode        = '&&CEIM_MODE'
-    nb_equa     = ds_empi%ds_mode%nb_equa
-    nb_mode     = ds_empi%nb_mode
-    base        = ds_empi%base
-    field_name  = ds_empi%ds_mode%field_name
+    mode      = '&&CEIM_MODE'
+    nbEqua    = ds_empi%ds_mode%nbEqua
+    nb_mode   = ds_empi%nb_mode
+    base      = ds_empi%base
+    fieldName = ds_empi%ds_mode%fieldName
+    ASSERT(ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Prepare working objects
 !
-    AS_ALLOCATE(vr = v_resi, size = nb_equa)
+    AS_ALLOCATE(vr = v_resi, size = nbEqua)
     AS_ALLOCATE(vi = v_npl , size = nb_mode)
     AS_ALLOCATE(vi = v_tuan, size = nb_mode)
 !
@@ -119,16 +120,16 @@ integer, pointer  :: v_equa(:)
 ! - Check the mode (linear or 3D, how many slices?)
         if (v_tuan(i_mode) .ne. 0) then
             nb_motr = v_tuan(i_mode)
-            AS_ALLOCATE(vr=v_base, size=nb_equa*nb_motr)
+            AS_ALLOCATE(vr=v_base, size=nbEqua*nb_motr)
             AS_ALLOCATE(vi=v_list_loca, size=nb_motr)
 ! - First mode of slice
             k_mode = 1
-            call rsexch(' ', base, field_name, i_mode+k_mode-1, mode, iret)
+            call rsexch(' ', base, fieldName, i_mode+k_mode-1, mode, iret)
             ASSERT(iret .eq. 0)
             call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
             vale_maxi   = -r8gaem()
             equa_maxi   = 0
-            do i_equa = 1, nb_equa
+            do i_equa = 1, nbEqua
                 v_base(i_equa) = v_mode(i_equa)
                 if (abs(v_mode(i_equa)) .ge. vale_maxi) then
                     vale_maxi = abs(v_mode(i_equa))
@@ -139,7 +140,7 @@ integer, pointer  :: v_equa(:)
             v_list_loca(k_mode) = equa_maxi
 ! - Loop on mode of slice
             do k_mode = 2, nb_motr
-                call rsexch(' ', base, field_name, i_mode+k_mode-1, mode, iret)
+                call rsexch(' ', base, fieldName, i_mode+k_mode-1, mode, iret)
                 ASSERT(iret .eq. 0)
                 call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
                 nb_vect = k_mode-1
@@ -150,7 +151,7 @@ integer, pointer  :: v_equa(:)
                     v_vect(i_vect) = v_mode(v_list_loca(i_vect))
                     do i_matr = 1, nb_vect
                         v_matr(i_vect+nb_vect*(i_matr-1)) =&
-                            v_base(v_list_loca(i_vect)+nb_equa*(i_matr-1))
+                            v_base(v_list_loca(i_vect)+nbEqua*(i_matr-1))
                     enddo
                 enddo
                 lval = MAX(1,nb_vect)
@@ -158,17 +159,17 @@ integer, pointer  :: v_equa(:)
                 if (info .ne. 0) then
                     call utmess('F', 'ROM4_7')
                 endif
-                do i_equa = 1, nb_equa
+                do i_equa = 1, nbEqua
                     term = 0
                     do i_vect = 1, nb_vect
-                        term = term+v_base(i_equa+nb_equa*(i_vect-1))*v_vect(i_vect)
+                        term = term+v_base(i_equa+nbEqua*(i_vect-1))*v_vect(i_vect)
                     enddo
                     v_resi(i_equa)=v_mode(i_equa)-term
                 enddo
                 vale_maxi   = -r8gaem()
                 equa_maxi   = 0
-                do i_equa = 1, nb_equa
-                    v_base(i_equa+nb_equa*(k_mode-1)) = v_mode(i_equa)
+                do i_equa = 1, nbEqua
+                    v_base(i_equa+nbEqua*(k_mode-1)) = v_mode(i_equa)
                     if (abs(v_resi(i_equa)) .ge. vale_maxi) then
                         vale_maxi = abs(v_resi(i_equa))
                         equa_maxi = i_equa

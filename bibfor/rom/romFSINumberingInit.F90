@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,9 +54,9 @@ type(ROM_DS_AlgoGreedy), intent(inout) :: ds_algoGreedy
         call utmess('I', 'ROM2_53')
     endif
 !
-    indx_cmp = indik8(field%v_list_cmp, 'PRES', 1, field%nb_cmp)
+    indx_cmp = indik8(field%listCmpName, 'PRES', 1, field%nbCmp)
     ds_algoGreedy%nume_pres = indx_cmp
-    indx_cmp = indik8(field%v_list_cmp, 'PHI', 1, field%nb_cmp)
+    indx_cmp = indik8(field%listCmpName, 'PHI', 1, field%nbCmp)
     ds_algoGreedy%nume_phi  = indx_cmp
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,7 +53,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: lmatb, nb_mode, nb_equa, nb_snap
+    integer :: lmatb, nb_mode, nbEqua, nb_snap
     real(kind=8) :: alpha
     real(kind=8), pointer :: trav1(:) => null()
     real(kind=8), pointer :: trav3(:) => null()
@@ -73,21 +73,21 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get parameters
 !
-    nb_mode    = ds_empi%nb_mode
-    nb_equa    = ds_empi%ds_mode%nb_equa
-    nb_snap    = ds_empi%nb_snap
-    alpha      = ds_para_ortho%alpha
-    mode_type  = 'R'
+    nb_mode   = ds_empi%nb_mode
+    nbEqua    = ds_empi%ds_mode%nbEqua
+    nb_snap   = ds_empi%nb_snap
+    alpha     = ds_para_ortho%alpha
+    mode_type = 'R'
 !
 ! - Working vectors
 !
-    AS_ALLOCATE(vr=trav1, size=nb_equa)
+    AS_ALLOCATE(vr=trav1, size=nbEqua)
     AS_ALLOCATE(vr=trav3, size=nb_mode)
-    AS_ALLOCATE(vi=ddlexc, size=nb_equa)
+    AS_ALLOCATE(vi=ddlexc, size=nbEqua)
 !
 ! - All DOF
 !
-    ddlexc(1:nb_equa) = 1
+    ddlexc(1:nbEqua) = 1
 !
 ! - Get empiric base
 !
@@ -95,12 +95,12 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Compute
 !
-    call vpgskp(nb_equa, nb_mode, v_matr_phi, alpha, lmatb,&
-                0      , trav1  , ddlexc    , trav3)
+    call vpgskp(nbEqua, nb_mode, v_matr_phi, alpha, lmatb,&
+                0     , trav1  , ddlexc    , trav3)
 !
 ! - Compute empiric modes by SVD
 !
-    call dbr_calcpod_svd(nb_mode, nb_equa, v_matr_phi, s, v, nb_sing, nb_line_svd)
+    call dbr_calcpod_svd(nb_mode, nbEqua, v_matr_phi, s, v, nb_sing, nb_line_svd)
 !
 ! - Save new base
 !

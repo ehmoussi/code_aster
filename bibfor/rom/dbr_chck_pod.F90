@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
         'CARAELEM',&
         'EXCIT   '/)
     character(len=19) :: tabl_user, tabl_coor
-    aster_logical :: l_tabl_user, l_lagr
+    aster_logical :: l_tabl_user, lLagr
     integer :: nb_mode, nb_snap, nb_line
     integer, pointer :: v_tbnp(:) => null()
 !
@@ -78,8 +78,8 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
 !
 ! - Get components in fields
 !
-    l_lagr = ds_para_pod%ds_result_in%field%l_lagr
-    if (l_lagr) then
+    lLagr = ds_para_pod%ds_result_in%field%lLagr
+    if (lLagr) then
         call utmess('F', 'ROM5_22')
     endif
 !
@@ -110,6 +110,14 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
             nb_mode = ds_empi%nb_mode
             nb_snap = ds_para_pod%ds_snap%nb_snap
             call dbr_chck_table(tabl_user, nb_mode, nb_snap)
+        endif
+    endif
+!
+! - Only on nodal fields for POD_INCR
+!
+    if (operation .eq. 'POD_INCR') then
+        if (ds_empi%ds_mode%fieldSupp .ne. 'NOEU') then
+            call utmess('F','ROM2_2')
         endif
     endif
 !

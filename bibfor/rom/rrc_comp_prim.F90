@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
     integer :: ifm, niv
     integer :: iret, jv_para
-    integer :: nb_mode, nb_equa, nb_store, nb_equa_ridp
+    integer :: nb_mode, nbEqua, nb_store, nb_equa_ridp
     integer :: i_mode, i_equa, i_store
     integer :: nume_store, nume_equa
     character(len=8) :: result_rom, result_dom
@@ -88,12 +88,13 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     nb_store     = ds_para%nb_store
     ds_mode      = ds_para%ds_empi_prim%ds_mode
     nb_mode      = ds_para%ds_empi_prim%nb_mode
-    nb_equa      = ds_mode%nb_equa
+    nbEqua       = ds_mode%nbEqua
     nb_equa_ridp = ds_para%nb_equa_ridp
     result_rom   = ds_para%result_rom
     result_dom   = ds_para%result_dom
     model_dom    = ds_para%model_dom
     l_corr_ef    = ds_para%l_corr_ef
+    ASSERT(ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Create [PHI] matrix for primal base
 !
@@ -104,10 +105,10 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
     if (l_corr_ef) then
         AS_ALLOCATE(vr = v_prim_rom, size = nb_equa_ridp*nb_mode)
         do i_mode = 1, nb_mode
-            do i_equa = 1, nb_equa
+            do i_equa = 1, nbEqua
                 if (ds_para%v_equa_ridp(i_equa) .ne. 0) then
                     v_prim_rom(ds_para%v_equa_ridp(i_equa)+nb_equa_ridp*(i_mode-1)) = &
-                               v_prim(i_equa+nb_equa*(i_mode-1))
+                               v_prim(i_equa+nbEqua*(i_mode-1))
                 endif
             enddo
         enddo
@@ -129,30 +130,30 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! - Compute new fields
 !
-    AS_ALLOCATE(vr = v_disp_dom, size = nb_equa*(nb_store-1))
-    call dgemm('N', 'N', nb_equa, nb_store-1, nb_mode, 1.d0,&
-                v_prim, nb_equa, v_cohr, nb_mode, 0.d0, v_disp_dom, nb_equa)
+    AS_ALLOCATE(vr = v_disp_dom, size = nbEqua*(nb_store-1))
+    call dgemm('N', 'N', nbEqua, nb_store-1, nb_mode, 1.d0,&
+                v_prim, nbEqua, v_cohr, nb_mode, 0.d0, v_disp_dom, nbEqua)
 !
 ! - Compute new field
 !
     do i_store = 1, nb_store-1
         nume_store = i_store
 ! ----- Get field to save
-        call rsexch(' ', result_dom, ds_mode%field_name,&
+        call rsexch(' ', result_dom, ds_mode%fieldName,&
                     nume_store, field_save, iret)
         ASSERT(iret .eq. 100)
-        call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
+        call copisd('CHAMP_GD', 'G', ds_mode%fieldRefe, field_save)
         call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
 ! ----- Get field on RID
-        call rsexch(' ', result_rom, ds_mode%field_name,&
+        call rsexch(' ', result_rom, ds_mode%fieldName,&
                     nume_store, disp_rid, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(disp_rid(1:19)//'.VALE', 'L', vr = v_disp_rid)
 ! ----- Set field
-        do i_equa = 1, nb_equa
+        do i_equa = 1, nbEqua
             nume_equa = ds_para%v_equa_ridp(i_equa)
             if (ds_para%v_equa_ridp(i_equa).eq. 0) then
-                v_field_save(i_equa) = v_disp_dom(i_equa+nb_equa*(nume_store-1))
+                v_field_save(i_equa) = v_disp_dom(i_equa+nbEqua*(nume_store-1))
             else
                 v_field_save(i_equa) = v_disp_rid(nume_equa)
             endif
@@ -169,7 +170,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
                     list_load)
         call rsadpa(result_dom, 'E', 1, 'INST', nume_store, 0, sjv=jv_para)
         zr(jv_para) = time
-        call rsnoch(result_dom, ds_mode%field_name,&
+        call rsnoch(result_dom, ds_mode%fieldName,&
                     nume_store)
     end do
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,10 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine romResultsGetInfo(result, field_namez, model_user, ds_result)
+    subroutine romResultsGetInfo(result, fieldNamez, model_user, ds_result)
         use Rom_Datastructure_type
         character(len=8), intent(in)  :: result
-        character(len=*), intent(in) :: field_namez
+        character(len=*), intent(in) :: fieldNamez
         character(len=8), intent(in)  :: model_user
         type(ROM_DS_Result), intent(inout) :: ds_result
     end subroutine romResultsGetInfo

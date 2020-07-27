@@ -23,6 +23,8 @@ from ..Utilities import _
 
 cata_msg = {
 
+    2 : _("""Seuls les champs nodaux sont utilisables avec cette opération."""),
+
     4 : _("""Lecture des données pour sélectionner les clichés."""),
 
     6 : _("""Tolérance pour détecter les noeuds: %(r1)19.12e."""),

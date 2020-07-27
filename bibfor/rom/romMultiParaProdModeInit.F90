@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ integer, intent(in) :: nb_mode_maxi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_matr, nb_matr, i_vect, nb_vect,jv_dummy, nb_equa
+    integer :: i_matr, nb_matr, i_vect, nb_vect,jv_dummy, nbEqua
     character(len=24) :: prod_matr_mode, matr_mode_curr
     character(len=8) :: matr_name, matr_type
     character(len=1) :: prod_type, syst_type
@@ -66,7 +66,7 @@ integer, intent(in) :: nb_mode_maxi
     nb_matr   = ds_multipara%nb_matr
     nb_vect   = ds_multipara%nb_vect
     syst_type = ds_multipara%syst_type
-    nb_equa   = ds_multipara%field%nb_equa
+    nbEqua    = ds_multipara%field%nbEqua
 !
 ! - Generate names of datastructures
 !
@@ -98,7 +98,7 @@ integer, intent(in) :: nb_mode_maxi
         call wkvect(ds_multipara%matr_redu(i_matr), 'V V '//syst_type, nb_mode_maxi*nb_mode_maxi,&
                     jv_dummy)
         prod_matr_mode = ds_multipara%prod_matr_mode(i_matr)
-        call wkvect(prod_matr_mode, 'V V '//syst_type, nb_mode_maxi*nb_equa, jv_dummy)
+        call wkvect(prod_matr_mode, 'V V '//syst_type, nb_mode_maxi*nbEqua, jv_dummy)
     end do
 !
 ! - Prepare Reduced Vector

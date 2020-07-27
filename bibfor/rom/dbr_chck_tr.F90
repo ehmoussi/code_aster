@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -73,6 +73,12 @@ aster_logical, intent(in) :: l_reuse
         if (base_init .ne. ' ') then
             call utmess('F', 'ROM6_40')
         endif
+    endif
+!
+! - Only on nodal fields 
+!
+    if (ds_mode%fieldSupp .ne. 'NOEU') then
+        call utmess('F','ROM2_2')
     endif
 !
 end subroutine

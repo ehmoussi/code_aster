@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -43,11 +43,11 @@ type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: i_matr, i_vect, i_vari_para
-    integer :: nb_matr, nb_vect, nb_vari_para, nb_equa
+    integer :: nb_matr, nb_vect, nb_vari_para, nbEqua
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    nb_equa      = ds_multipara%field%nb_equa
+    nbEqua       = ds_multipara%field%nbEqua
     nb_matr      = ds_multipara%nb_matr
     nb_vect      = ds_multipara%nb_vect
     nb_vari_para = ds_multipara%nb_vari_para
@@ -82,7 +82,7 @@ type(ROM_DS_MultiPara), intent(in) :: ds_multipara
 !
 ! - Global system type
 !
-    call utmess('I', 'ROM3_29', si = nb_equa)
+    call utmess('I', 'ROM3_29', si = nbEqua)
     if (ds_multipara%syst_type .eq. 'R') then
         call utmess('I', 'ROM3_35')
     elseif (ds_multipara%syst_type .eq. 'C') then

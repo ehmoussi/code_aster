@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -23,15 +23,8 @@ use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterfort/assert.h"
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
-#include "asterfort/jelira.h"
-#include "asterfort/jeveuo.h"
-#include "asterfort/jenuno.h"
-#include "asterfort/jexnom.h"
-#include "asterfort/jexnum.h"
-#include "asterc/indik8.h"
 !
 type(ROM_DS_Field), intent(in) :: ds_mode
 !
@@ -49,17 +42,17 @@ type(ROM_DS_Field), intent(in) :: ds_mode
 !
     character(len=8) :: mesh, model
     character(len=16) :: modeli
-    integer :: nb_dime
+    integer :: nbDimGeom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    mesh       = ds_mode%mesh
-    model      = ds_mode%model
+    mesh  = ds_mode%mesh
+    model = ds_mode%model
 !
 ! - Check mesh
 !
-    call dismoi('DIM_GEOM', mesh, 'MAILLAGE', repi = nb_dime)
-    if (nb_dime .ne. 3) then
+    call dismoi('DIM_GEOM', mesh, 'MAILLAGE', repi = nbDimGeom)
+    if (nbDimGeom .ne. 3) then
         call utmess('F','ROM5_20')
     endif
 !

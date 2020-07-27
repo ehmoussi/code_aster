@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldGetInfo(model, field_name, field_refe, ds_field, l_chck_)
+subroutine romFieldGetInfo(model, fieldName, fieldRefe, ds_field, l_chck_)
 !
 use Rom_Datastructure_type
 !
@@ -29,9 +29,10 @@ implicit none
 #include "asterfort/modelNodeEF.h"
 #include "asterfort/romGetListComponents.h"
 #include "asterfort/romFieldChck.h"
+#include "asterfort/utmess.h"
 !
 character(len=8), intent(in)        :: model
-character(len=24), intent(in)       :: field_refe, field_name
+character(len=24), intent(in)       :: fieldRefe, fieldName
 type(ROM_DS_Field), intent(inout)   :: ds_field
 aster_logical, optional, intent(in) :: l_chck_
 !
@@ -44,16 +45,17 @@ aster_logical, optional, intent(in) :: l_chck_
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  model            : name of model
-! In  field_name       : name of field (NOM_CHAM)
-! In  field_refe       : field to analyse
+! In  fieldName        : name of field (NOM_CHAM)
+! In  fieldRefe        : field to analyse
 ! IO  ds_field         : datastructure for field
 ! In  l_chck           : flag to check components
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_equa, nb_node, nb_cmp
-    character(len=8)  :: mesh
-    aster_logical :: l_lagr, l_chck
+    integer :: nbEqua, nbNodeWithDof, nbCmp
+    character(len=8) :: mesh
+    character(len=4) :: fieldSupp
+    aster_logical :: lLagr, l_chck
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -62,37 +64,45 @@ aster_logical, optional, intent(in) :: l_chck_
         l_chck = l_chck_
     endif
 !
-    l_lagr = ASTER_FALSE
-    mesh = ' '
-    nb_equa = 0
-    nb_node = 0
-    nb_cmp  = 0
+! - Initializations
+!
+    lLagr         = ASTER_FALSE
+    fieldSupp  = ' '
+    nbEqua        = 0
+    nbNodeWithDof = 0
+    nbCmp         = 0
 !
 ! - Get main parameters
 !
-    call dismoi('NB_EQUA'     , field_refe, 'CHAM_NO' , repi = nb_equa)
-    call dismoi('NOM_MAILLA'  , model, 'MODELE'  , repk = mesh)
+    call dismoi('NOM_MAILLA', model, 'MODELE' , repk = mesh)
+    call dismoi('TYPE_CHAMP', fieldRefe, 'CHAMP', repk = fieldSupp)
+    if (fieldSupp .eq. 'NOEU') then
+        call dismoi('NB_EQUA'     , fieldRefe, 'CHAM_NO', repi = nbEqua)
+    else
+        call utmess('F', 'ROM3_1', sk = fieldSupp)
+    endif
 !
 ! - Get number of nodes affected by model
 !
-    call modelNodeEF(model, nb_node)
+    call modelNodeEF(model, nbNodeWithDof)
 !
 ! - Get list of components in field
 !
-    call romGetListComponents(field_refe          , nb_equa            ,&
-                              ds_field%v_equa_type, ds_field%v_list_cmp,&
-                              nb_cmp              , l_lagr)
+    call romGetListComponents(fieldRefe           , fieldSupp           , nbEqua,&
+                              ds_field%equaCmpName, ds_field%listCmpName,&
+                              nbCmp               , lLagr)
 !
 ! - Save informations
 !
-    ds_field%field_name  = field_name
-    ds_field%field_refe  = field_refe
-    ds_field%mesh        = mesh
-    ds_field%model       = model
-    ds_field%nb_equa     = nb_equa
-    ds_field%nb_node     = nb_node
-    ds_field%l_lagr      = l_lagr
-    ds_field%nb_cmp      = nb_cmp
+    ds_field%fieldName     = fieldName
+    ds_field%fieldRefe     = fieldRefe
+    ds_field%fieldSupp     = fieldSupp
+    ds_field%mesh          = mesh
+    ds_field%model         = model
+    ds_field%nbEqua        = nbEqua
+    ds_field%nbNodeWithDof = nbNodeWithDof
+    ds_field%lLagr         = lLagr
+    ds_field%nbCmp         = nbCmp
 !
 ! - Check components in field
 !

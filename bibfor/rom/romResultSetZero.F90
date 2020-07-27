@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romResultSetZero(result, nume_store, ds_mode)
+subroutine romResultSetZero(resultName, numeStore, ds_mode)
 !
 use Rom_Datastructure_type
 !
@@ -32,43 +32,47 @@ implicit none
 #include "asterfort/rsexch.h"
 #include "asterfort/rsnoch.h"
 !
-character(len=8), intent(in) :: result
-integer, intent(in) :: nume_store
+character(len=8), intent(in) :: resultName
+integer, intent(in) :: numeStore
 type(ROM_DS_Field), intent(in) :: ds_mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
 ! Model reduction
 !
-! Set zero value in result datastructure
+! Set zero value in resultName datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  result           : name of results datastructure
-! In  nume_store       : index to set zero in results
+! In  resultName       : name of results datastructure
+! In  numeStore       : index to set zero in results
 ! In  ds_mode          : datastructure for empiric mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     integer :: iret
-    character(len=24) :: field_save
-    real(kind=8), pointer :: v_field_save(:) => null()
+    character(len=24) :: resultField
+    real(kind=8), pointer :: v_resultField(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM6_33', si = nume_store)
+        call utmess('I', 'ROM6_33', si = numeStore)
     endif
 !
 ! - Set zero
 !
-    call rsexch(' ', result, ds_mode%field_name, nume_store, field_save, iret)
+    call rsexch(' ', resultName, ds_mode%fieldName, numeStore, resultField, iret)
     ASSERT(iret .eq. 100)
-    call copisd('CHAMP_GD', 'G', ds_mode%field_refe, field_save)
-    call jeveuo(field_save(1:19)//'.VALE', 'E', vr = v_field_save)
-    v_field_save(:) = 0.d0
-    call rsnoch(result, ds_mode%field_name, nume_store)
+    call copisd('CHAMP_GD', 'G', ds_mode%fieldRefe, resultField)
+    if (ds_mode%fieldSupp .eq. 'NOEU') then
+        call jeveuo(resultField(1:19)//'.VALE', 'E', vr = v_resultField)
+        v_resultField(:) = 0.d0
+    else
+        ASSERT(ASTER_FALSE)
+    endif
+    call rsnoch(resultName, ds_mode%fieldName, numeStore)
 !
 end subroutine

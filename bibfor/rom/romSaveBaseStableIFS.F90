@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -95,11 +95,11 @@ integer, intent(in) :: i_mode
         vr_base_2(:) = 0.d0 
         vr_base_3(:) = 0.d0
         do i_equa = 1, nb_equa
-            if (field%v_equa_type(i_equa) .eq. nume_pres) then
+            if (field%equaCmpName(i_equa) .eq. nume_pres) then
                 vr_base_2(i_equa) = vr_syst_solu(i_equa)
-            elseif (field%v_equa_type(i_equa) .eq. nume_phi) then
+            elseif (field%equaCmpName(i_equa) .eq. nume_phi) then
                 vr_base_3(i_equa) = vr_syst_solu(i_equa)
-            elseif (field%v_equa_type(i_equa) .gt. 0) then
+            elseif (field%equaCmpName(i_equa) .gt. 0) then
                 vr_base_1(i_equa) = vr_syst_solu(i_equa)
             else
                 ASSERT(ASTER_FALSE)
@@ -114,11 +114,11 @@ integer, intent(in) :: i_mode
         vc_base_2(:) = dcmplx(0.d0,0.d0)
         vc_base_3(:) = dcmplx(0.d0,0.d0)
         do i_equa = 1, nb_equa
-            if (field%v_equa_type(i_equa) .eq. nume_pres) then
+            if (field%equaCmpName(i_equa) .eq. nume_pres) then
                 vc_base_2(i_equa) = vc_syst_solu(i_equa)
-            elseif (field%v_equa_type(i_equa) .eq. nume_phi) then
+            elseif (field%equaCmpName(i_equa) .eq. nume_phi) then
                 vc_base_3(i_equa) = vc_syst_solu(i_equa)
-            elseif (field%v_equa_type(i_equa) .gt. 0) then
+            elseif (field%equaCmpName(i_equa) .gt. 0) then
                 vc_base_1(i_equa) = vc_syst_solu(i_equa)
             else
                 ASSERT(ASTER_FALSE)

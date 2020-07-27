@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -53,11 +53,11 @@ type(ROM_DS_ParaDBR), intent(inout) :: ds_para
     elseif (ds_para%operation .eq. 'TRONCATURE') then
         call dbr_init_base_tr(ds_para%result_out, ds_para%para_tr,&
                               ds_para%l_reuse   , ds_para%ds_empi)
-        ds_para%field_iden = ds_para%para_tr%ds_empi_init%ds_mode%field_name
+        ds_para%field_iden = ds_para%para_tr%ds_empi_init%ds_mode%fieldName
     elseif (ds_para%operation .eq. 'ORTHO') then
         call dbr_init_base_ortho(ds_para%result_out, ds_para%para_ortho,&
                                  ds_para%l_reuse   , ds_para%ds_empi)
-        ds_para%field_iden = ds_para%para_ortho%ds_empi_init%ds_mode%field_name
+        ds_para%field_iden = ds_para%para_ortho%ds_empi_init%ds_mode%fieldName
     else
         ASSERT(ASTER_FALSE)
     endif

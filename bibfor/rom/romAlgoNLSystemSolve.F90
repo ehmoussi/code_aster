@@ -69,10 +69,10 @@ aster_logical, optional, intent(in) :: l_update_redu_
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    character(len=24) :: gamma, field_name
+    character(len=24) :: gamma, fieldName
     real(kind=8), pointer :: v_gamma(:) => null()
     real(kind=8), pointer :: v_vect_2mbr(:) => null()
-    integer :: nb_equa_2mbr, nb_equa_matr, nb_equa, nb_mode
+    integer :: nbEqua_2mbr, nbEqua_matr, nbEqua, nb_mode
     integer :: i_mode, j_mode, i_equa
     integer :: jv_matr, iret
     aster_logical :: l_hrom, l_rom, l_update_redu
@@ -97,14 +97,15 @@ aster_logical, optional, intent(in) :: l_update_redu_
 !
 ! - Get parameters
 !
-    l_rom       = ds_algorom%l_rom
-    l_hrom      = ds_algorom%l_hrom
-    gamma       = ds_algorom%gamma
-    base        = ds_algorom%ds_empi%base
-    nb_mode     = ds_algorom%ds_empi%nb_mode
-    nb_equa     = ds_algorom%ds_empi%ds_mode%nb_equa
-    field_name  = ds_algorom%ds_empi%ds_mode%field_name
-    vcine19     = vect_cine(1:19)
+    l_rom     = ds_algorom%l_rom
+    l_hrom    = ds_algorom%l_hrom
+    gamma     = ds_algorom%gamma
+    base      = ds_algorom%ds_empi%base
+    nb_mode   = ds_algorom%ds_empi%nb_mode
+    nbEqua    = ds_algorom%ds_empi%ds_mode%nbEqua
+    fieldName = ds_algorom%ds_empi%ds_mode%fieldName
+    vcine19   = vect_cine(1:19)
+    ASSERT(ds_algorom%ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
     ASSERT(l_rom)
     l_update_redu = ASTER_TRUE
     if (present(l_update_redu_)) then
@@ -118,15 +119,15 @@ aster_logical, optional, intent(in) :: l_update_redu_
 ! - Access to second member
 !
     call jeveuo(vect_2mbr(1:19)//'.VALE', 'E'     , vr = v_vect_2mbr)
-    call jelira(vect_2mbr(1:19)//'.VALE', 'LONMAX', nb_equa_2mbr)
-    ASSERT(nb_equa .eq. nb_equa_2mbr)
+    call jelira(vect_2mbr(1:19)//'.VALE', 'LONMAX', nbEqua_2mbr)
+    ASSERT(nbEqua .eq. nbEqua_2mbr)
 !
 ! - Access to matrix
 !
     call mtmchc(matr_asse, 'ELIMF')
     call jeveuo(matr_asse(1:19)//'.&INT', 'L', jv_matr)
-    call dismoi('NB_EQUA', matr_asse, 'MATR_ASSE', repi = nb_equa_matr)
-    ASSERT(nb_equa .eq. zi(jv_matr+2))
+    call dismoi('NB_EQUA', matr_asse, 'MATR_ASSE', repi = nbEqua_matr)
+    ASSERT(nbEqua .eq. zi(jv_matr+2))
 
 
 !
@@ -139,7 +140,7 @@ aster_logical, optional, intent(in) :: l_update_redu_
 ! - Truncation of second member
 !
     if (l_hrom) then
-        do i_equa = 1, nb_equa
+        do i_equa = 1, nbEqua
             if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
                 v_vect_2mbr(i_equa) = 0.d0
             endif
@@ -150,27 +151,27 @@ aster_logical, optional, intent(in) :: l_update_redu_
 !
     AS_ALLOCATE(vr = v_matr_rom, size = nb_mode*nb_mode)
     AS_ALLOCATE(vr = v_vect_rom, size = nb_mode)
-    AS_ALLOCATE(vr = v_mrmult  , size = nb_equa)
+    AS_ALLOCATE(vr = v_mrmult  , size = nbEqua)
 !
 ! - Compute reduced objects
 !
     do i_mode = 1, nb_mode
-        call rsexch(' ', base, field_name, i_mode, mode, iret)
+        call rsexch(' ', base, fieldName, i_mode, mode, iret)
         call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
-        term1 = ddot(nb_equa, v_mode, 1, v_vect_2mbr, 1)
+        term1 = ddot(nbEqua, v_mode, 1, v_vect_2mbr, 1)
         v_vect_rom(i_mode) = term1
         call mrmult('ZERO', jv_matr, v_mode, v_mrmult, 1, .false._1,l_rom)
         if (l_hrom) then
-            do i_equa = 1, nb_equa
+            do i_equa = 1, nbEqua
                 if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
                     v_mrmult(i_equa) = 0.d0
                 endif
             end do
         endif
         do j_mode = 1, nb_mode
-            call rsexch(' ', base, field_name, j_mode, mode, iret)
+            call rsexch(' ', base, fieldName, j_mode, mode, iret)
             call jeveuo(mode(1:19)//'.VALE', 'L', vr = v_mode)
-            term2 = ddot(nb_equa, v_mode, 1, v_mrmult, 1)
+            term2 = ddot(nbEqua, v_mode, 1, v_mrmult, 1)
             v_matr_rom(nb_mode*(i_mode-1)+j_mode) = term2
         end do
     end do
@@ -187,7 +188,7 @@ aster_logical, optional, intent(in) :: l_update_redu_
     call vtzero(vect_solu)
     do i_mode = 1 , nb_mode
         term = v_vect_rom(i_mode)
-        call rsexch(' ', base, field_name, i_mode, mode, iret)
+        call rsexch(' ', base, fieldName, i_mode, mode, iret)
         call vtaxpy(term, mode, vect_solu)
     enddo
     call jeveuo(vect_solu(1:19)//'.VALE', 'E'     , vr = v_vect_solu)

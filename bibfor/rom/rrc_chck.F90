@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -59,16 +59,16 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 !
 ! - Get parameters
 !
-    l_corr_ef   = ds_para%l_corr_ef
-    l_prev_dual = ds_para%l_prev_dual
+    l_corr_ef    = ds_para%l_corr_ef
+    l_prev_dual  = ds_para%l_prev_dual
     ds_mode_prim = ds_para%ds_empi_prim%ds_mode
     ds_mode_dual = ds_para%ds_empi_dual%ds_mode
-    mesh_prim   = ds_mode_prim%mesh
-    mesh_dual   = ds_mode_dual%mesh
-    model_prim  = ds_mode_prim%model
-    model_dual  = ds_mode_dual%model
-    model_rom   = ds_para%model_rom
-    model_dom   = ds_para%model_dom
+    mesh_prim    = ds_mode_prim%mesh
+    mesh_dual    = ds_mode_dual%mesh
+    model_prim   = ds_mode_prim%model
+    model_dual   = ds_mode_dual%model
+    model_rom    = ds_para%model_rom
+    model_dom    = ds_para%model_dom
 !
 ! - Check mesh
 !
@@ -105,8 +105,14 @@ type(ROM_DS_ParaRRC), intent(inout) :: ds_para
 ! - Check empiric mode
 !
     call romModeChck(ds_mode_prim)
+    if (ds_mode_prim%fieldSupp .ne. 'NOEU') then
+        call utmess('F', 'ROM6_5')
+    endif
     if (l_prev_dual) then
         call romModeChck(ds_mode_dual)
+        if (ds_mode_dual%fieldSupp .ne. 'NOEU') then
+            call utmess('F', 'ROM6_5')
+        endif
     endif
 !
 end subroutine

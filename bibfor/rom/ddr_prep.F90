@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -76,11 +76,13 @@ integer, intent(out) :: nb_node_rid
 ! - Get parameters
 !
     nb_mode_prim  = ds_para%ds_empi_prim%nb_mode
-    mode_prim     = ds_para%ds_empi_prim%ds_mode%field_refe
+    mode_prim     = ds_para%ds_empi_prim%ds_mode%fieldRefe
     nb_mode_dual  = ds_para%ds_empi_dual%nb_mode
-    mode_dual     = ds_para%ds_empi_dual%ds_mode%field_refe
+    mode_dual     = ds_para%ds_empi_dual%ds_mode%fieldRefe
     nb_mode_total = nb_mode_prim + nb_mode_dual
     nb_rid_mini   = ds_para%nb_rid_mini
+    ASSERT(ds_para%ds_empi_prim%ds_mode%fieldSupp .eq. 'NOEU')
+    ASSERT(ds_para%ds_empi_dual%ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Prepare working objects
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,13 +17,11 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_calcpod_save(ds_empi, nb_mode, nb_snap_redu, field_iden, s, v)
+    subroutine dbr_calcpod_save(ds_empi, nb_mode, nb_snap_redu, fieldIden, s, v)
         use Rom_Datastructure_type
         type(ROM_DS_Empi), intent(in) :: ds_empi
-        integer, intent(in) :: nb_mode
-        integer, intent(in) :: nb_snap_redu
-        character(len=24), intent(in) :: field_iden
-        real(kind=8), pointer :: v(:)
-        real(kind=8), pointer :: s(:)
+        integer, intent(in) :: nb_mode, nb_snap_redu
+        character(len=24), intent(in) :: fieldIden
+        real(kind=8), pointer :: v(:), s(:)
     end subroutine dbr_calcpod_save
 end interface

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,13 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
-!
-!
 #include "asterf_types.h"
 !
 interface
-    subroutine romBaseSave(ds_empi      , nb_mode, nb_snap, mode_type, field_iden,&
+    subroutine romBaseSave(ds_empi      , nb_mode, nb_snap, mode_type, fieldIden,&
                            mode_vectr_  ,&
                            mode_vectc_  ,&
                            v_mode_freq_ ,&
@@ -31,7 +28,7 @@ interface
         integer, intent(in) :: nb_mode
         integer, intent(in) :: nb_snap
         character(len=1), intent(in) :: mode_type
-        character(len=24), intent(in) :: field_iden
+        character(len=24), intent(in) :: fieldIden
         real(kind=8), optional, pointer :: mode_vectr_(:)
         complex(kind=8), optional, pointer :: mode_vectc_(:)
         real(kind=8), optional, pointer :: v_mode_freq_(:)

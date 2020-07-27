@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,7 +57,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: i_mode, i_coef_maxi, i_coef, nb_mode_maxi, nb_equa
+    integer :: i_mode, i_coef_maxi, i_coef, nb_mode_maxi, nbEqua
     real(kind=8) :: tole, tole_greedy
     character(len=1) :: syst_type
     character(len=19) :: syst_solu
@@ -75,18 +75,18 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Initializations
 !
-    i_mode         = 1
-    i_coef         = 1
-    ds_algoGreedy  = ds_para_rb%algoGreedy
-    ds_multipara   = ds_para_rb%multipara
-    ds_solveDOM    = ds_algoGreedy%solveDOM
-    nb_equa        = ds_multipara%field%nb_equa
-    tole_greedy    = ds_para_rb%tole_greedy
-    l_stab_fsi     = ds_para_rb%l_stab_fsi
-    l_ortho_base   = ds_para_rb%l_ortho_base
-    nb_mode_maxi   = ds_para_rb%nb_mode_maxi
-    syst_type      = ds_solveDOM%syst_type
-    syst_solu      = ds_solveDOM%syst_solu
+    i_mode        = 1
+    i_coef        = 1
+    ds_algoGreedy = ds_para_rb%algoGreedy
+    ds_multipara  = ds_para_rb%multipara
+    ds_solveDOM   = ds_algoGreedy%solveDOM
+    nbEqua        = ds_multipara%field%nbEqua
+    tole_greedy   = ds_para_rb%tole_greedy
+    l_stab_fsi    = ds_para_rb%l_stab_fsi
+    l_ortho_base  = ds_para_rb%l_ortho_base
+    nb_mode_maxi  = ds_para_rb%nb_mode_maxi
+    syst_type     = ds_solveDOM%syst_type
+    syst_solu     = ds_solveDOM%syst_solu
 !
 ! - First mode
 !
@@ -115,7 +115,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
     if (l_stab_fsi) then
          call romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
     else 
-         call romNormalize(syst_type, syst_solu, nb_equa)
+         call romNormalize(syst_type, syst_solu, nbEqua)
          call romGreedyModeSave(ds_multipara, ds_empi, i_mode, syst_solu)
     end if 
 !
@@ -157,7 +157,7 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         if (l_stab_fsi) then 
             call romSaveBaseStableIFS(l_ortho_base, ds_multipara, ds_algoGreedy, ds_empi, i_mode)
         else
-            call romNormalize(syst_type, syst_solu, nb_equa)
+            call romNormalize(syst_type, syst_solu, nbEqua)
             if (l_ortho_base) then 
                 call romOrthoBasis(ds_multipara, ds_empi, syst_solu)
             endif 

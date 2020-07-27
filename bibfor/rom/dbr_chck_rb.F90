@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -57,6 +57,12 @@ aster_logical, intent(in) :: l_reuse
 !
     if (ds_para_rb%multipara%nb_vari_coef .eq. 0) then
         call utmess('F', 'ROM2_43')
+    endif
+!
+! - Only on nodal fields
+!
+    if (ds_para_rb%multipara%field%fieldSupp .ne. 'NOEU') then
+        call utmess('F','ROM2_2')
     endif
 !
 end subroutine

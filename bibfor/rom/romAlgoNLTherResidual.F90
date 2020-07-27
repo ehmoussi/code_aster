@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
+#include "asterfort/assert.h"
 #include "asterfort/jeveuo.h"
 #include "asterfort/jelira.h"
 #include "asterfort/rsexch.h"
@@ -57,8 +58,8 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
     aster_logical :: l_hrom
     character(len=8) :: base
     character(len=19) :: mode
-    character(len=24) :: field_name
-    integer :: i_equa, nb_equa, nb_mode, i_mode, iret
+    character(len=24) :: fieldName
+    integer :: i_equa, nbEqua, nb_mode, i_mode, iret
     real(kind=8) :: vnorm, resi
     real(kind=8), pointer :: v_mode(:)=> null()
     real(kind=8), pointer :: v_cn2mbr(:) => null()
@@ -79,11 +80,12 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! - Get parameters
 !
-    l_hrom     = ds_algorom%l_hrom
-    base       = ds_algorom%ds_empi%base
-    nb_equa    = ds_algorom%ds_empi%ds_mode%nb_equa
-    nb_mode    = ds_algorom%ds_empi%nb_mode
-    field_name = ds_algorom%ds_empi%ds_mode%field_name
+    l_hrom    = ds_algorom%l_hrom
+    base      = ds_algorom%ds_empi%base
+    nbEqua    = ds_algorom%ds_empi%ds_mode%nbEqua
+    nb_mode   = ds_algorom%ds_empi%nb_mode
+    fieldName = ds_algorom%ds_empi%ds_mode%fieldName
+    ASSERT(ds_algorom%ds_empi%ds_mode%fieldSupp .eq. 'NOEU')
 !
 ! - Access to vectors
 !
@@ -94,14 +96,14 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
 !
 ! - Create residual
 !
-    do i_equa = 1, nb_equa
+    do i_equa = 1, nbEqua
         v_cn2mbr(i_equa)  = v_vec2nd(i_equa) - v_cnresi(i_equa) - v_cnvabt(i_equa)
     enddo
 !
 ! - Truncation of residual
 !    
     if (l_hrom) then
-        do i_equa = 1, nb_equa
+        do i_equa = 1, nbEqua
             if (ds_algorom%v_equa_int(i_equa) .eq. 1) then
                 v_vec2nd(i_equa) = 0.d0
                 v_cnvabt(i_equa) = 0.d0
@@ -117,11 +119,11 @@ real(kind=8)     , intent(out):: resi_rela, resi_maxi
     AS_ALLOCATE(vr=v_cnresir, size=nb_mode)
     AS_ALLOCATE(vr=v_cnvabtr, size=nb_mode)
     do i_mode = 1, nb_mode
-        call rsexch(' ', base, field_name, i_mode, mode, iret)
+        call rsexch(' ', base, fieldName, i_mode, mode, iret)
         call jeveuo(mode(1:19)//'.VALE', 'E', vr = v_mode)
-        v_vec2ndr(i_mode)= ddot(nb_equa, v_mode, 1, v_vec2nd, 1)
-        v_cnvabtr(i_mode)= ddot(nb_equa, v_mode, 1, v_cnvabt, 1)
-        v_cnresir(i_mode)= ddot(nb_equa, v_mode, 1, v_cnresi, 1)
+        v_vec2ndr(i_mode)= ddot(nbEqua, v_mode, 1, v_vec2nd, 1)
+        v_cnvabtr(i_mode)= ddot(nbEqua, v_mode, 1, v_cnvabt, 1)
+        v_cnresir(i_mode)= ddot(nbEqua, v_mode, 1, v_cnresi, 1)
     enddo
 !
 ! - Compute maximum

@@ -48,10 +48,10 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_equa, nb_node, nb_mode_maxi
+    integer :: nbEqua, nbNodeWithDof, nb_mode_maxi
     character(len=8)  :: model, mesh, matr_name
-    character(len=24) :: field_refe
-    character(len=24) :: field_name
+    character(len=24) :: fieldRefe, fieldName
+    character(len=4) :: fieldSupp
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -60,13 +60,15 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
         call utmess('I', 'ROM2_28')
     endif
 !
-    model = ' '
-    mesh = ' '
-    matr_name = ' '
-    field_name = ' '
-    nb_equa = 0
-    nb_node = 0
-    nb_mode_maxi = 0
+! - Initializations
+!
+    model         = ' '
+    mesh          = ' '
+    matr_name     = ' '
+    fieldName     = ' '
+    nbEqua        = 0
+    nbNodeWithDof = 0
+    nb_mode_maxi  = 0
 !
 ! - Get "representative" matrix
 !
@@ -78,17 +80,18 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get informations about fields
 !
-    call dismoi('NB_EQUA'     , matr_name, 'MATR_ASSE', repi = nb_equa)
+    call dismoi('NB_EQUA'     , matr_name, 'MATR_ASSE', repi = nbEqua)
     call dismoi('NOM_MAILLA'  , model    , 'MODELE'   , repk = mesh)
 !
 ! - Get number of nodes affected by model
 !
-    call modelNodeEF(model, nb_node)
+    call modelNodeEF(model, nbNodeWithDof)
 !
 ! - For greedy algorithm: only displacements
 !
-    field_name = 'DEPL'
-    field_refe = ds_para_rb%algoGreedy%solveDOM%syst_solu
+    fieldName = 'DEPL'
+    fieldSupp = 'NOEU'
+    fieldRefe = ds_para_rb%algoGreedy%solveDOM%syst_solu
 !
 ! - Nomber of mode maxi given by user
 !
@@ -102,18 +105,19 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Save in empiric base
 !
-    ds_empi%base                 = base
-    ds_empi%base_type            = ' '
-    ds_empi%axe_line             = ' '
-    ds_empi%surf_num             = ' '
-    ds_empi%nb_mode              = 0
-    ds_empi%nb_mode_maxi         = nb_mode_maxi
-    ds_empi%ds_mode%field_name   = field_name
-    ds_empi%ds_mode%field_refe   = field_refe
-    ds_empi%ds_mode%mesh         = mesh
-    ds_empi%ds_mode%model        = model
-    ds_empi%ds_mode%nb_node      = nb_node
-    ds_empi%ds_mode%nb_equa      = nb_equa
+    ds_empi%base                  = base
+    ds_empi%base_type             = ' '
+    ds_empi%axe_line              = ' '
+    ds_empi%surf_num              = ' '
+    ds_empi%nb_mode               = 0
+    ds_empi%nb_mode_maxi          = nb_mode_maxi
+    ds_empi%ds_mode%fieldName     = fieldName
+    ds_empi%ds_mode%fieldRefe     = fieldRefe
+    ds_empi%ds_mode%fieldSupp     = fieldSupp
+    ds_empi%ds_mode%mesh          = mesh
+    ds_empi%ds_mode%model         = model
+    ds_empi%ds_mode%nbNodeWithDof = nbNodeWithDof
+    ds_empi%ds_mode%nbEqua        = nbEqua
 !
 ! - Create output datastructure
 !
