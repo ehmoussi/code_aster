@@ -17,19 +17,16 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine irmama(meshNameZ , meshNbCell  ,&
+    subroutine irmama(meshNameZ , &
                       nbCell    , cellName    ,&
                       nbGrCell  , grCellName  ,&
-                      cellSelect, nbCellSelect,&
-                      cellFlag)
+                      nbCellSelect, cellFlag)
         character(len=*), intent(in) :: meshNameZ
-        integer, intent(in) :: meshNbCell
         integer, intent(in) :: nbCell
         character(len=8), pointer :: cellName(:)
         integer, intent(in) :: nbGrCell
         character(len=24), pointer :: grCellName(:)
-        integer, pointer :: cellSelect(:)
         integer, intent(out) :: nbCellSelect
-        integer, pointer :: cellFlag(:)
+        aster_logical, pointer :: cellFlag(:)
     end subroutine irmama
 end interface

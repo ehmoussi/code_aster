@@ -30,6 +30,9 @@ mesh = LIRE_MAILLAGE(FORMAT='MED')
 mesh = MODI_MAILLAGE(reuse=mesh, MAILLAGE=mesh,
                      ORIE_PEAU_2D=_F(GROUP_MA=('Encast', 'load',),),)
 
+mesh= DEFI_GROUP(reuse=mesh, MAILLAGE=mesh,
+                 CREA_GROUP_MA=_F(  NOM = 'TOUT', TOUT = 'OUI'),)
+
 model = AFFE_MODELE(
     AFFE=_F(MODELISATION=('D_PLAN_INCO_UPG', ),
             PHENOMENE='MECANIQUE', TOUT='OUI'),
@@ -81,7 +84,7 @@ resnonl = STAT_NON_LINE(
     MODELE=model,
     NEWTON=_F(MATRICE='TANGENTE', PREDICTION='TANGENTE', REAC_ITER=1,),
     SOLVEUR=_F(METHODE='MUMPS'),
-    INFO=2,
+    INFO=1,
 )
 
 
@@ -93,11 +96,36 @@ resnonl = CALC_CHAMP(
     RESULTAT=resnonl,
 )
 
+# Check IMPR_RESU / LIRE_RESU
+IMPR_RESU(
+        FORMAT='MED',UNITE=80,
+        RESU=_F(RESULTAT=resnonl,
+                GROUP_MA=('TOUT',),
+                NOM_CHAM =("DEPL","SIEQ_NOEU"),),
+    )
+
+DEPL=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
+              FORMAT='MED',
+              MODELE=model,
+              TOUT_ORDRE='OUI',
+              UNITE=80,
+              FORMAT_MED=_F(NOM_RESU='0000000b',
+                            NOM_CHAM=("DEPL",),),
+              )
+
+SIEQ=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
+              FORMAT='MED',
+              MODELE=model,
+              TOUT_ORDRE='OUI',
+              UNITE=80,
+              FORMAT_MED=_F(NOM_RESU='0000000b',
+                            NOM_CHAM=("SIEQ_NOEU",),),
+              )
 
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('A', ),
                   REFERENCE='AUTRE_ASTER',
-                  RESULTAT=resnonl,
+                  RESULTAT=DEPL,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DY',
                   VALE_CALC=2.24084161927,
@@ -109,7 +137,7 @@ TEST_RESU(RESU=_F(INST=1.0,
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('A', ),
                   REFERENCE='AUTRE_ASTER',
-                  RESULTAT=resnonl,
+                  RESULTAT=DEPL,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DX',
                   VALE_CALC=-1.69640391995,
@@ -120,7 +148,7 @@ TEST_RESU(RESU=_F(INST=1.0,
 
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('A', ),
-                  RESULTAT=resnonl,
+                  RESULTAT=SIEQ,
                   NOM_CHAM='SIEQ_NOEU',
                   NOM_CMP='TRSIG',
                   VALE_CALC=-0.122497874539,
@@ -129,7 +157,7 @@ TEST_RESU(RESU=_F(INST=1.0,
 
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('C', ),
-                  RESULTAT=resnonl,
+                  RESULTAT=DEPL,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DY',
                   VALE_CALC=0.367541131815,
@@ -138,7 +166,7 @@ TEST_RESU(RESU=_F(INST=1.0,
 
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('C', ),
-                  RESULTAT=resnonl,
+                  RESULTAT=DEPL,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DX',
                   VALE_CALC=-0.0249341812012,
@@ -147,7 +175,7 @@ TEST_RESU(RESU=_F(INST=1.0,
 
 TEST_RESU(RESU=_F(INST=1.0,
                   GROUP_NO=('C', ),
-                  RESULTAT=resnonl,
+                  RESULTAT=SIEQ,
                   NOM_CHAM='SIEQ_NOEU',
                   NOM_CMP='TRSIG',
                   VALE_CALC=0.415488296153,

@@ -26,6 +26,7 @@ subroutine irtopo(keywf     , keywfIocc   ,&
 implicit none
 !
 #include "asterf_types.h"
+#include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/irmama.h"
@@ -72,14 +73,14 @@ integer, intent(out) :: codret
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: meshNbNode, meshNbCell
-    integer :: nbNodePrev, nbCellSelect, nbNodeSelect
+    integer :: nbCellSelect, nbNodeSelect
     integer :: iGrCell, iGrNode, iCell, iNode
     integer :: nbCell, nbGrCell, nbNode, nbGrNode
-    integer :: nbOcc
+    integer :: nbOcc, nodeNume, cellNume
     integer :: imxno, imxgn, imxma, imxgm, idebu, iutil
     character(len=8) :: meshName
-    integer, pointer :: nodeFlag(:) => null()
-    integer, pointer :: cellFlag(:) => null()
+    aster_logical, pointer :: nodeFlag(:) => null()
+    aster_logical, pointer :: cellFlag(:) => null()
     character(len=24), pointer :: grNodeName(:) => null()
     character(len=8), pointer :: nodeName(:) => null()
     character(len=24), pointer :: grCellName(:) => null()
@@ -147,22 +148,22 @@ integer, intent(out) :: codret
         endif
         call dismoi('NB_NO_MAILLA', meshName, 'MAILLAGE', repi=meshNbNode)
         call dismoi('NB_MA_MAILLA', meshName, 'MAILLAGE', repi=meshNbCell)
-        AS_ALLOCATE(vi = nodeFlag, size=meshNbNode)
+        AS_ALLOCATE(vl = nodeFlag, size=meshNbNode)
         AS_ALLOCATE(vi = nodeListNume, size = meshNbNode)
         AS_ALLOCATE(vi = cellListNume, size = meshNbCell)
-        AS_ALLOCATE(vi = cellFlag, size=meshNbCell)
+        AS_ALLOCATE(vl = cellFlag, size=meshNbCell)
+        nodeFlag = ASTER_FALSE
+        cellFlag = ASTER_FALSE
     endif
 !
 ! - Select nodes
 !
     nbNodeSelect = 0
     if (nbNode .ne. 0 .or. nbGrNode .ne. 0) then
-        call irnono(meshName    , meshNbNode  ,&
+        call irnono(meshName    , &
                     nbNode      , nodeName    ,&
                     nbGrNode    , grNodeName  ,&
-                    nodeListNume, nbNodeSelect,&
-                    nodeFlag)
-        nodeListNb = nodeListNb + nbNodeSelect
+                    nbNodeSelect, nodeFlag)
     endif
 !
 ! - Select cells and nodes from cells
@@ -170,26 +171,36 @@ integer, intent(out) :: codret
     nbCellSelect = 0
     if (nbCell .ne. 0 .or. nbGrCell .ne. 0) then
 ! ----- Select cells
-        call irmama(meshName    , meshNbCell  ,&
+        call irmama(meshName    , &
                     nbCell      , cellName    ,&
                     nbGrCell    , grCellName  ,&
-                    cellListNume, nbCellSelect,&
-                    cellFlag)
-        cellListNb = cellListNb + nbCellSelect
+                    nbCellSelect, cellFlag)
+!
+        do cellNume = 1, meshNbCell
+            if (cellFlag(cellNume)) then
+                cellListNb = cellListNb + 1
+                ASSERT(cellListNb .le. meshNbCell)
+                cellListNume(cellListNb) = cellNume
+            endif
+        end do
 ! ----- Nodes from cells
-        nbNodePrev = nbNodeSelect
-        call irmano(meshName    , meshNbNode  ,&
-                    nbCellSelect, cellListNume,&
-                    nodeListNume, nbNodeSelect,&
-                    nodeFlag)
-        nodeListNb = nodeListNb + (nbNodeSelect - nbNodePrev)
-        nbNodeSelect = nbNodePrev
+        call irmano(meshName, cellListNb, cellListNume, nodeFlag)
     endif
     if (nbNode .ne. 0 .or. nbGrNode .ne. 0 .or. nbCell .ne. 0 .or. nbGrCell .ne. 0) then
         if (nbNodeSelect .eq. 0 .and. nbCellSelect .eq. 0) then
-            codret =1 
+            codret =1
             goto 999
         endif
+!
+! --- Order nodes
+!
+        do nodeNume = 1, meshNbNode
+            if (nodeFlag(nodeNume)) then
+                nodeListNb = nodeListNb + 1
+                ASSERT(nodeListNb .le. meshNbNode)
+                nodeListNume(nodeListNb) = nodeNume
+            endif
+        end do
     endif
 !
 ! - Print for FORMAT='RESULTAT'
@@ -298,8 +309,8 @@ integer, intent(out) :: codret
     AS_DEALLOCATE(vk80 = grNodeFile)
     AS_DEALLOCATE(vk80 = grCellFile)
     AS_DEALLOCATE(vk80 = cellFile)
-    AS_DEALLOCATE(vi   = nodeFlag)
-    AS_DEALLOCATE(vi   = cellFlag)
+    AS_DEALLOCATE(vl   = nodeFlag)
+    AS_DEALLOCATE(vl   = cellFlag)
 !
     call jedema()
 !

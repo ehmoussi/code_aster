@@ -16,11 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine irnono(meshNameZ , meshNbNode  ,&
+subroutine irnono(meshNameZ , &
                   nbNode    , nodeName    ,&
                   nbGrNode  , grNodeName  ,&
-                  nodeSelect, nbNodeSelect,&
-                  nodeFlag)
+                  nbNodeSelect, nodeFlag)
 !
 implicit none
 !
@@ -35,14 +34,12 @@ implicit none
 #include "asterfort/utmess.h"
 !
 character(len=*), intent(in) :: meshNameZ
-integer, intent(in) :: meshNbNode
 integer, intent(in) :: nbNode
 character(len=8), pointer :: nodeName(:)
 integer, intent(in) :: nbGrNode
 character(len=24), pointer :: grNodeName(:)
-integer, pointer :: nodeSelect(:)
 integer, intent(out) :: nbNodeSelect
-integer, pointer :: nodeFlag(:)
+aster_logical, pointer :: nodeFlag(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -74,11 +71,9 @@ integer, pointer :: nodeFlag(:)
                 call utmess('A', 'RESULT3_6', sk=nodeName(iNode))
                 nodeName(iNode) = ' '
             else
-                if (nodeFlag(nodeNume) .eq. 0) then
+                if (.not.nodeFlag(nodeNume)) then
+                    nodeFlag(nodeNume) = ASTER_TRUE
                     nbNodeSelect = nbNodeSelect + 1
-                    ASSERT(nbNodeSelect .le. meshNbNode)
-                    nodeSelect(nbNodeSelect) = nodeNume
-                    nodeFlag(nodeNume) = 1
                 endif
             endif
         end do
@@ -103,11 +98,9 @@ integer, pointer :: nodeFlag(:)
                                 'L', vi = listNode)
                     do iNode = 1, grNodeNbNode
                         nodeNume = listNode(iNode)
-                        if (nodeFlag(nodeNume) .eq. 0) then
+                        if (.not.nodeFlag(nodeNume)) then
+                            nodeFlag(nodeNume) = ASTER_TRUE
                             nbNodeSelect = nbNodeSelect + 1
-                            ASSERT(nbNodeSelect .le. meshNbNode)
-                            nodeSelect(nbNodeSelect) = nodeNume
-                            nodeFlag(nodeNume) = 1
                         endif
                     end do
                 endif

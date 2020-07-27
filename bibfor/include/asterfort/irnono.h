@@ -17,19 +17,16 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine irnono(meshNameZ , meshNbNode  ,&
+    subroutine irnono(meshNameZ , &
                       nbNode    , nodeName    ,&
                       nbGrNode  , grNodeName  ,&
-                      nodeSelect, nbNodeSelect,&
-                      nodeFlag)
+                      nbNodeSelect, nodeFlag)
         character(len=*), intent(in) :: meshNameZ
-        integer, intent(in) :: meshNbNode
         integer, intent(in) :: nbNode
         character(len=8), pointer :: nodeName(:)
         integer, intent(in) :: nbGrNode
         character(len=24), pointer :: grNodeName(:)
-        integer, pointer :: nodeSelect(:)
         integer, intent(out) :: nbNodeSelect
-        integer, pointer :: nodeFlag(:)
+        aster_logical, pointer :: nodeFlag(:)
     end subroutine irnono
 end interface

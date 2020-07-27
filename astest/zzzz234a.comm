@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ CoefRef = 1.0E-05
 
 
 
-MA = LIRE_MAILLAGE(FORMAT="ASTER",INFO=2);
+MA = LIRE_MAILLAGE(FORMAT="ASTER",INFO=2)
 
 # Poutes multifibres POU_D_EM et POU_D_TGM
 # lecture du maillage de la section
@@ -101,7 +101,7 @@ RE_D_T=STAT_NON_LINE(MODELE     = MO_D_T,
                      CONVERGENCE = _F(RESI_REFE_RELA=1.0,
                                       EFFORT_REFE = CoefRef,
                                       MOMENT_REFE = CoefRef,),
-   );
+   )
 
 TB_D_T = RECU_TABLE(CO=RE_D_T,NOM_PARA=('ITER_GLOB'),)
 
@@ -293,7 +293,7 @@ RE_D_E=STAT_NON_LINE(MODELE     = MO_D_E,
                      CONVERGENCE = _F(RESI_REFE_RELA=1.0,
                                       EFFORT_REFE = CoefRef,
                                       MOMENT_REFE = CoefRef,),
-   );
+   )
 TB_D_E = RECU_TABLE(CO=RE_D_E,NOM_PARA=('ITER_GLOB'),)
 
 IMPR_TABLE(TABLE=TB_D_E)
@@ -478,7 +478,7 @@ RE_D_TG=STAT_NON_LINE(MODELE     = MO_D_TG,
                      CONVERGENCE = _F(RESI_REFE_RELA=1.0,
                                       EFFORT_REFE = CoefRef,
                                       MOMENT_REFE = CoefRef,),
-   );
+   )
 
 TB_D_TG = RECU_TABLE(CO=RE_D_TG,NOM_PARA=('ITER_GLOB'),)
 
@@ -669,7 +669,7 @@ RE_D_EM=STAT_NON_LINE(MODELE     = MO_D_EM,
                      CONVERGENCE = _F(RESI_REFE_RELA=1.0,
                                       EFFORT_REFE = CoefRef,
                                       MOMENT_REFE = CoefRef,),
-   );
+   )
 
 CALC_CHAMP(reuse      = RE_D_EM,
            RESULTAT   = RE_D_EM,
@@ -922,7 +922,7 @@ RE_D_TGD=STAT_NON_LINE(
                      CONVERGENCE = _F(RESI_REFE_RELA=1.0,
                                       EFFORT_REFE = CoefRef,
                                       MOMENT_REFE = CoefRef,),
-   );
+   )
 
 TB_D_TGD = RECU_TABLE(CO=RE_D_TGD,NOM_PARA=('ITER_GLOB'),)
 
@@ -935,9 +935,27 @@ TEST_TABLE(CRITERE='ABSOLU',
                      VALE_I=1,),
            )
 
+# Check IMPR_RESU / LIRE_RESU
+IMPR_RESU(
+        FORMAT='MED',UNITE=80,
+        RESU=_F(RESULTAT=RE_D_TGD, CARA_ELEM=CA_D_TGD,
+                GROUP_NO=('C','B',), NOM_CHAM =("DEPL",),  IMPR_NOM_VARI='NON',),
+    )
+
+RESU=LIRE_RESU(TYPE_RESU='EVOL_NOLI',
+              CARA_ELEM=CA_D_TGD,
+              FORMAT='MED',
+              MODELE=MO_D_TGD,
+              TOUT_ORDRE='OUI',
+              UNITE=80,
+              FORMAT_MED=_F(NOM_RESU='00000076',
+                            NOM_CHAM=('DEPL'),),
+              )
+
+
 TEST_RESU(RESU=_F(GROUP_NO='B',
                   INST=1.0,
-                  RESULTAT=RE_D_TGD,
+                  RESULTAT=RESU,
                   NOM_CHAM='DEPL',
                   NOM_CMP='DY',
                   VALE_CALC=0.000388516506539,

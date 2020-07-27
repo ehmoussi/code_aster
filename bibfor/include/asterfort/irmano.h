@@ -17,16 +17,12 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine irmano(meshNameZ   , meshNbNode  ,&
+    subroutine irmano(meshNameZ   , &
                       nbCellSelect, cellSelect  ,&
-                      nodeSelect  , nbNodeSelect,&
                       nodeFlag)
         character(len=*), intent(in) :: meshNameZ
-        integer, intent(in) :: meshNbNode
         integer, intent(in) :: nbCellSelect
         integer, pointer :: cellSelect(:)
-        integer, intent(inout) :: nbNodeSelect
-        integer, pointer :: nodeSelect(:)
-        integer, pointer :: nodeFlag(:)
+        aster_logical, pointer :: nodeFlag(:)
     end subroutine irmano
 end interface

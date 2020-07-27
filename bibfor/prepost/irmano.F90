@@ -16,9 +16,8 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine irmano(meshNameZ   , meshNbNode  ,&
+subroutine irmano(meshNameZ   , &
                   nbCellSelect, cellSelect  ,&
-                  nodeSelect  , nbNodeSelect,&
                   nodeFlag)
 !
 implicit none
@@ -31,12 +30,9 @@ implicit none
 #include "asterfort/jexatr.h"
 !
 character(len=*), intent(in) :: meshNameZ
-integer, intent(in) :: meshNbNode
 integer, intent(in) :: nbCellSelect
 integer, pointer :: cellSelect(:)
-integer, intent(inout) :: nbNodeSelect
-integer, pointer :: nodeSelect(:)
-integer, pointer :: nodeFlag(:)
+aster_logical, pointer :: nodeFlag(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,7 +43,7 @@ integer, pointer :: nodeFlag(:)
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: cellNbNode
-    character(len=8) :: meshName 
+    character(len=8) :: meshName
     integer :: iCell, cellNume, iNode, nodeFirst, nodeNume
     integer, pointer :: conxLong(:) => null()
     integer, pointer :: connex(:) => null()
@@ -73,11 +69,8 @@ integer, pointer :: nodeFlag(:)
         cellNbNode = conxLong(cellNume+1)-nodeFirst
         do iNode = 1, cellNbNode
             nodeNume = connex(nodeFirst-1+iNode)
-            if (nodeFlag(nodeNume) .eq. 0) then
-                nbNodeSelect = nbNodeSelect + 1
-                ASSERT(nbNodeSelect .le. meshNbNode)
-                nodeSelect(nbNodeSelect) = nodeNume
-                nodeFlag(nodeNume) = 1
+            if (.not.nodeFlag(nodeNume)) then
+                nodeFlag(nodeNume) = ASTER_TRUE
             endif
         end do
     end do

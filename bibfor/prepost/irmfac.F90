@@ -288,7 +288,7 @@ character(len=8), intent(in) :: fileFormat, modelIn
                 fileFormat, fileUnit    ,&
                 iret)
     if (iret .ne. 0) goto 99
-! 
+!
 ! - What to print ? Extremas values
 !
     call irextv(fileFormat,&

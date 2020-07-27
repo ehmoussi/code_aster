@@ -16,11 +16,10 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 !
-subroutine irmama(meshNameZ , meshNbCell  ,&
+subroutine irmama(meshNameZ , &
                   nbCell    , cellName    ,&
                   nbGrCell  , grCellName  ,&
-                  cellSelect, nbCellSelect,&
-                  cellFlag)
+                  nbCellSelect, cellFlag)
 !
 implicit none
 !
@@ -36,14 +35,12 @@ implicit none
 #include "asterfort/utmess.h"
 !
 character(len=*), intent(in) :: meshNameZ
-integer, intent(in) :: meshNbCell
 integer, intent(in) :: nbCell
 character(len=8), pointer :: cellName(:)
 integer, intent(in) :: nbGrCell
 character(len=24), pointer :: grCellName(:)
-integer, pointer :: cellSelect(:)
 integer, intent(out) :: nbCellSelect
-integer, pointer :: cellFlag(:)
+aster_logical, pointer :: cellFlag(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -76,11 +73,9 @@ integer, pointer :: cellFlag(:)
                 call utmess('A', 'RESULT3_9', sk=cellName(iCell))
                 cellName(iCell) = ' '
             else
-                if (cellFlag(cellNume) .eq. 0) then
+                if (.not.cellFlag(cellNume)) then
                     nbCellSelect = nbCellSelect + 1
-                    ASSERT(nbCellSelect .le. nbCell)
-                    cellSelect(nbCellSelect) = cellNume
-                    cellFlag(cellNume) = 1
+                    cellFlag(cellNume) = ASTER_TRUE
                 endif
             endif
         end do
@@ -105,11 +100,9 @@ integer, pointer :: cellFlag(:)
                                 'L', vi = listCell)
                     do iCell = 1, grCellNbCell
                         cellNume = listCell(iCell)
-                        if (cellFlag(cellNume) .eq. 0) then
-                            nbCellSelect = nbCellSelect+1
-                            ASSERT(nbCellSelect .le. meshNbCell)
-                            cellSelect(nbCellSelect) = cellNume
-                            cellFlag(cellNume) = 1
+                        if (.not.cellFlag(cellNume)) then
+                            nbCellSelect = nbCellSelect + 1
+                            cellFlag(cellNume) = ASTER_TRUE
                         endif
                     end do
                 endif
