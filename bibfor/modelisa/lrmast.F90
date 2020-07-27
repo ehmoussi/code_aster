@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -447,10 +447,6 @@ subroutine lrmast(nomu, ifm, ifl, nbnoeu, nbmail,&
     call jecreo(nomnoe, 'G N K8')
     call jeecra(nomnoe, 'NOMMAX', nbnoeu)
 !
-!
-    nbgrmp = nbgrma
-    nbgrnp = nbgrno
-!
 ! -   OBJET TITRE             = VECTEUR DE K80
 !
     call jecreo(titre, 'G V K80')
@@ -531,28 +527,6 @@ subroutine lrmast(nomu, ifm, ifl, nbnoeu, nbmail,&
     call jecrec(conxv, 'V V K8', 'NO', 'CONTIG', 'VARIABLE',&
                 nbmail)
     call jeecra(conxv, 'LONT', nbnoma)
-!
-! -   OBJET GROUPENO   = FAMILLE DISPERSEE DE VECTEURS N*IS
-!                       POINTEUR DE LONGUEUR  = GROUPENO.$$LONC
-!                       LONGUEUR TOTALE       = NBNOGN
-!
-    if (nbgrno .ne. 0) then
-        call jecreo(gpptnn, 'G N K24')
-        call jeecra(gpptnn, 'NOMMAX', nbgrnp)
-        call jecrec(grpnoe, 'G V I', 'NO '//gpptnn, 'DISPERSE', 'VARIABLE',&
-                    nbgrnp)
-    endif
-!
-! -   OBJET GROUPEMA  = FAMILLE CONTIGUE DE VECTEURS N*IS
-!                       POINTEUR DE LONGUEUR  = GROUPEMA.$$LONC
-!                       LONGUEUR TOTALE       = NBMAGM
-!
-    if (nbgrma .ne. 0) then
-        call jecreo(gpptnm, 'G N K24')
-        call jeecra(gpptnm, 'NOMMAX', nbgrmp)
-        call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE',&
-                    nbgrmp)
-    endif
 !
 ! -   OBJET CONNEX    = FAMILLE CONTIGUE DE VECTEURS N*IS
 !                       POINTEUR DE NOM       = NOMMAI
@@ -641,6 +615,40 @@ subroutine lrmast(nomu, ifm, ifl, nbnoeu, nbmail,&
 800 continue
 !
 !
+    nbgrnp = 0
+    do i = 1, nbgrno
+        call jelira(jexnum(grpnov, i), 'LONUTI', nbno)
+        if (nbno > 0) nbgrnp = nbgrnp + 1
+    end do
+!
+    nbgrmp = 0
+    do i = 1, nbgrma
+        call jelira(jexnum(grpmav, i), 'LONUTI', nbma)
+        if (nbma > 0) nbgrmp = nbgrmp + 1
+    end do
+!
+!
+! -   OBJET GROUPENO   = FAMILLE DISPERSEE DE VECTEURS N*IS
+!                       POINTEUR DE LONGUEUR  = GROUPENO.$$LONC
+!                       LONGUEUR TOTALE       = NBNOGN
+!
+    if (nbgrnp .ne. 0) then
+        call jecreo(gpptnn, 'G N K24')
+        call jeecra(gpptnn, 'NOMMAX', nbgrnp)
+        call jecrec(grpnoe, 'G V I', 'NO '//gpptnn, 'DISPERSE', 'VARIABLE',&
+                    nbgrnp)
+    endif
+!
+! -   OBJET GROUPEMA  = FAMILLE CONTIGUE DE VECTEURS N*IS
+!                       POINTEUR DE LONGUEUR  = GROUPEMA.$$LONC
+!                       LONGUEUR TOTALE       = NBMAGM
+!
+    if (nbgrmp .ne. 0) then
+        call jecreo(gpptnm, 'G N K24')
+        call jeecra(gpptnm, 'NOMMAX', nbgrmp)
+        call jecrec(grpmai, 'G V I', 'NO '//gpptnm, 'DISPERSE', 'VARIABLE',&
+                    nbgrmp)
+    endif
 !
 !
 !  6  TRANSCODAGE EN REPRESENTATION INTERNE ET STOCKAGE
@@ -685,37 +693,39 @@ subroutine lrmast(nomu, ifm, ifl, nbnoeu, nbmail,&
             call jeveuo(jexnum(grpnov, i), 'L', jvg)
             call jelira(jexnum(grpnov, i), 'LONUTI', nbno)
 !         --- ON VERIFIE QUE TOUS LES NOEUDS SONT DISTINCTS ---
-            nbno1 = 0
-            do im1 = 1, nbno
-                nom1 = zk8(jvg+im1-1)
-                ASSERT(nom1.ne.' ')
-                call jenonu(jexnom(nomnoe, nom1), num)
-                if (num .eq. 0) then
-                    ier = ier + 1
-                    valk(1) = nom1
-                    valk(2) = nomg
-                    call utmess('F', 'MODELISA5_5', nk=2, valk=valk)
-                    goto 610
-                endif
-                zi(jnoeu2-1+num)=zi(jnoeu2-1+num)+1
-                if (zi(jnoeu2-1+num) .ge. 2) then
-                    valk(1) = nom1
-                    valk(2) = nomg
-                    call utmess('A', 'MODELISA5_6', nk=2, valk=valk)
-                    goto 610
-                endif
-                nbno1 = nbno1 + 1
-                zi(jnoeu+nbno1-1) = num
-610             continue
-            end do
-            call jecroc(jexnom(grpnoe, nomg))
-            call jeecra(jexnom(grpnoe, nomg), 'LONMAX', max(nbno1, 1))
-            call jeecra(jexnom(grpnoe, nomg), 'LONUTI', nbno1)
-            call jeveuo(jexnom(grpnoe, nomg), 'E', jgg)
-            zi(jgg)=-ismaem()
-            do j = 0, nbno1-1
-                zi(jgg+j) = zi(jnoeu+j)
-            end do
+            if(nbno > 0) then
+                nbno1 = 0
+                do im1 = 1, nbno
+                    nom1 = zk8(jvg+im1-1)
+                    ASSERT(nom1.ne.' ')
+                    call jenonu(jexnom(nomnoe, nom1), num)
+                    if (num .eq. 0) then
+                        ier = ier + 1
+                        valk(1) = nom1
+                        valk(2) = nomg
+                        call utmess('F', 'MODELISA5_5', nk=2, valk=valk)
+                        goto 610
+                    endif
+                    zi(jnoeu2-1+num)=zi(jnoeu2-1+num)+1
+                    if (zi(jnoeu2-1+num) .ge. 2) then
+                        valk(1) = nom1
+                        valk(2) = nomg
+                        call utmess('A', 'MODELISA5_6', nk=2, valk=valk)
+                        goto 610
+                    endif
+                    nbno1 = nbno1 + 1
+                    zi(jnoeu+nbno1-1) = num
+610                 continue
+                end do
+                call jecroc(jexnom(grpnoe, nomg))
+                call jeecra(jexnom(grpnoe, nomg), 'LONMAX', nbno1)
+                call jeecra(jexnom(grpnoe, nomg), 'LONUTI', nbno1)
+                call jeveuo(jexnom(grpnoe, nomg), 'E', jgg)
+                zi(jgg)=-ismaem()
+                do j = 0, nbno1-1
+                    zi(jgg+j) = zi(jnoeu+j)
+                end do
+            end if
         end do
         call jedetr('&&OP0001.NOEUD')
         call jedetr('&&OP0001.NOEUD2')
@@ -737,36 +747,38 @@ subroutine lrmast(nomu, ifm, ifl, nbnoeu, nbmail,&
             call jeveuo(jexnum(grpmav, i), 'L', jvg)
             call jelira(jexnum(grpmav, i), 'LONUTI', nbma)
 !         --- ON VERIFIE QUE TOUTES LES MAILLES SONT DISTINCTES ---
-            nbma1 = 0
-            do im1 = 1, nbma
-                nom1 = zk8(jvg+im1-1)
-                call jenonu(jexnom(nommai, nom1), num)
-                if (num .eq. 0) then
-                    ier = ier + 1
-                    valk(1) = nom1
-                    valk(2) = nomg
-                    call utmess('F', 'MODELISA5_7', nk=2, valk=valk)
-                    goto 710
-                endif
-                zi(jmail2-1+num)=zi(jmail2-1+num)+1
-                if (zi(jmail2-1+num) .ge. 2) then
-                    valk(1) = nom1
-                    valk(2) = nomg
-                    call utmess('A', 'MODELISA5_8', nk=2, valk=valk)
-                    goto 710
-                endif
-                nbma1 = nbma1 + 1
-                zi(jmail+nbma1-1) = num
-710             continue
-            end do
-            call jecroc(jexnom(grpmai, nomg))
-            call jeecra(jexnom(grpmai, nomg), 'LONMAX', max(nbma1, 1))
-            call jeecra(jexnom(grpmai, nomg), 'LONUTI', nbma1)
-            call jeveuo(jexnom(grpmai, nomg), 'E', jgg)
-            zi(jgg)=-ismaem()
-            do j = 0, nbma1-1
-                zi(jgg+j) = zi(jmail+j)
-            end do
+            if(nbma > 0) then
+                nbma1 = 0
+                do im1 = 1, nbma
+                    nom1 = zk8(jvg+im1-1)
+                    call jenonu(jexnom(nommai, nom1), num)
+                    if (num .eq. 0) then
+                        ier = ier + 1
+                        valk(1) = nom1
+                        valk(2) = nomg
+                        call utmess('F', 'MODELISA5_7', nk=2, valk=valk)
+                        goto 710
+                    endif
+                    zi(jmail2-1+num)=zi(jmail2-1+num)+1
+                    if (zi(jmail2-1+num) .ge. 2) then
+                        valk(1) = nom1
+                        valk(2) = nomg
+                        call utmess('A', 'MODELISA5_8', nk=2, valk=valk)
+                        goto 710
+                    endif
+                    nbma1 = nbma1 + 1
+                    zi(jmail+nbma1-1) = num
+710                 continue
+                end do
+                call jecroc(jexnom(grpmai, nomg))
+                call jeecra(jexnom(grpmai, nomg), 'LONMAX', nbma1)
+                call jeecra(jexnom(grpmai, nomg), 'LONUTI', nbma1)
+                call jeveuo(jexnom(grpmai, nomg), 'E', jgg)
+                zi(jgg)=-ismaem()
+                do j = 0, nbma1-1
+                    zi(jgg+j) = zi(jmail+j)
+                end do
+            end if
         end do
         call jedetr('&&OP0001.MAILLE')
         call jedetr('&&OP0001.MAILLE2')

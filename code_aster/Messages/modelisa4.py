@@ -317,15 +317,8 @@ Contactez le support technique.
 """),
 
     80 : _("""
-  %(k1)s  le groupe  %(k2)s  est vide
+  %(k1)s  le groupe  %(k2)s  est vide. On l'ignore.
 """),
-
-
-
-
-
-
-
 
 
     83 : _("""
