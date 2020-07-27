@@ -30,6 +30,7 @@
 #include <assert.h>
 
 #include "astercxx.h"
+#include "aster_fort_superv.h"
 
 #include "aster_fort_ds.h"
 #include "MemoryManager/JeveuxVector.h"
@@ -37,6 +38,9 @@
 #include "DataFields/SimpleFieldOnCells.h"
 #include "Modeling/Model.h"
 #include "Modeling/FiniteElementDescriptor.h"
+#include "PythonBindings/LogicalUnitManager.h"
+#include "Supervis/CommandSyntax.h"
+
 
 /**
  * @class FieldOnCellsClass
@@ -169,7 +173,37 @@ template < class ValueType > class FieldOnCellsClass : public DataFieldClass {
         return retour;
     };
 
+    bool printMedFile( const std::string fileName ) const;
+
     friend class FieldBuilder;
+};
+
+template < class ValueType >
+bool FieldOnCellsClass< ValueType >::printMedFile( const std::string fileName ) const {
+    LogicalUnitFile a( fileName, Binary, New );
+    int retour = a.getLogicalUnit();
+    CommandSyntax cmdSt( "IMPR_RESU" );
+
+    SyntaxMapContainer dict;
+    dict.container["FORMAT"] = "MED";
+    dict.container["UNITE"] = (ASTERINTEGER)retour;
+
+    ListSyntaxMapContainer listeResu;
+    SyntaxMapContainer dict2;
+    dict2.container["CHAM_GD"] = getName();
+    listeResu.push_back( dict2 );
+    dict.container["RESU"] = listeResu;
+
+    cmdSt.define( dict );
+
+    try {
+        ASTERINTEGER op = 39;
+        CALL_EXECOP( &op );
+    } catch ( ... ) {
+        throw;
+    }
+
+    return true;
 };
 
 /** @typedef FieldOnCellsClassReal Class d'une carte de double */

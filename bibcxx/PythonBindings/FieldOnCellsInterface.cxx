@@ -42,5 +42,15 @@ void exportFieldOnCellsToPython() {
         .def( "getModel", &FieldOnCellsRealClass::getModel )
         .def( "setDescription", &FieldOnCellsRealClass::setDescription )
         .def( "setModel", &FieldOnCellsRealClass::setModel )
-        .def( "update", &FieldOnCellsRealClass::update );
+        .def( "update", &FieldOnCellsRealClass::update )
+        .def( "printMedFile", &FieldOnCellsRealClass::printMedFile, R"(
+Print the field in MED format.
+
+Arguments:
+    filename (str): Path to the file to be printed.
+
+Returns:
+    bool: *True* if succeeds, *False* otherwise.
+        )",
+              ( py::arg( "self" ), py::arg( "filename" ) )  );
 };
