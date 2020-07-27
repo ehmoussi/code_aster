@@ -280,7 +280,7 @@ TEST_RESU(
              VALE_REFE = PREF,
              VALE_CALC = 12979463.494948607,
              CRITERE = 'RELATIF',
-             PRECISION = 0.05,
+             PRECISION = 0.01,
                   REFERENCE='ANALYTIQUE',)
            )
 TEST_RESU(
@@ -292,7 +292,7 @@ TEST_RESU(
              VALE_REFE = PREF,
              VALE_CALC = 12987304.885155883,
              CRITERE = 'RELATIF',
-             PRECISION = 0.05,
+             PRECISION = 0.01,
              REFERENCE='ANALYTIQUE',)
            )
 
