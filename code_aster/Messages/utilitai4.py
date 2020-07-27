@@ -99,10 +99,6 @@ Contactez le support technique.
  problème dans le décodage de ( %(k1)s , %(k2)s )
 """),
 
-    31: _("""
- type_RESULTAT inconnu : %(k1)s
-"""),
-
     34: _("""
 Structure de données %(k1)s  inexistante
 Ce message est un message d'erreur développeur.

@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! person_in_charge: mickael.abbas at edf.fr
 ! aslint: disable=W1502
 !
-subroutine rscrsd(base, nomsd, typesd, nbordr)
+subroutine rscrsd(baseZ, resultNameZ, resultTypeZ, nbStore)
 !
 implicit none
 !
@@ -35,457 +36,397 @@ implicit none
 #include "asterfort/utpara.h"
 #include "asterfort/wkvect.h"
 !
-character(len=*) :: base, nomsd, typesd
-integer :: nbordr
+character(len=*), intent(in) :: baseZ, resultNameZ, resultTypeZ
+integer, intent(in) :: nbStore
 !
-! ----------------------------------------------------------------------
-!      CREATION D'UNE STRUCTURE DE DONNEES "RESULTAT-COMPOSE".
-!      (SI CETTE STRUCTURE EXISTE DEJA, ON LA DETRUIT).
-!     ------------------------------------------------------------------
-! IN  NOMSD  : NOM DE LA STRUCTURE "RESULTAT" A CREER.
-! IN  TYPESD : TYPE DE LA STRUCTURE "RESULTAT" A CREER.
-! IN  NBORDR : NOMBRE MAX DE NUM. D'ORDRE.
-! ----------------------------------------------------------------------
-    integer :: i, k, iret, jordr
-    integer :: nbcham, nbnova
-    integer :: ncmec1, ncmec2, ncmec3, ncmuti, ncmeca
-    integer :: ncthe1, ncther, ncvarc, ncacou
-    character(len=1) :: bas1
-    character(len=16) :: types2
-    character(len=19) :: noms2
-!     ------------------------------------------------------------------
-!                      C H A M P _ T H E R M O M E C A (ROM)
-!     ------------------------------------------------------------------
-    integer, parameter :: ncthme = 4
+! --------------------------------------------------------------------------------------------------
+!
+! Results datastructure - Utility
+!
+! Create result datastructure
+!
+! --------------------------------------------------------------------------------------------------
+!
+! In  base             : JEVEUX base to create datastructure
+! In  resultName       : name of input results datastructure
+! In  resultType       : type of results datastructure
+! In  nbStore          : number of storing index
+!
+! --------------------------------------------------------------------------------------------------
+!
+    integer :: iField, iNova, iret, jvDummy
+    integer :: nbField, nbNova
+    character(len=1) :: base
+    character(len=16) :: resultType
+    character(len=19) :: resultName
+!
+! --------------------------------------------------------------------------------------------------
+!
 
 !     ------------------------------------------------------------------
-!                      C H A M P _ M E C A N I Q U E
+!                      For thermic
 !     ------------------------------------------------------------------
-    parameter (ncmec1=38)
-    parameter (ncmec2=53)
-    parameter (ncmec3=36)
-    parameter (ncmuti=40)
-    parameter (ncmeca=ncmec1+ncmec2+ncmec3+ncmuti)
-    character(len=16) :: chmec1(ncmec1)
-    character(len=16) :: chmec2(ncmec2)
-    character(len=16) :: chmec3(ncmec3)
-    character(len=16) :: chmuti(ncmuti)
-    character(len=16) :: chmeca(ncmeca)
-!     ------------------------------------------------------------------
-!                      C H A M P _ T H E R M I Q U E
-!     ------------------------------------------------------------------
-    parameter (ncthe1=18)
-    parameter (ncther=ncthe1+ncmuti)
-    character(len=16) :: chthe1(ncthe1)
-    character(len=16) :: chther(ncther)
-!     ------------------------------------------------------------------
-!                      C H A M P _ V A R C
-!     ------------------------------------------------------------------
-    parameter (ncvarc=9)
-    character(len=16) :: chvarc(ncvarc)
-!     ------------------------------------------------------------------
-!                      C H A M P _ A C O U S T I Q U E
-!     ------------------------------------------------------------------
-    parameter (ncacou=5)
-    character(len=16) :: chacou(ncacou)
-!     ------------------------------------------------------------------
-!                      C H A M P _ T H E R M O M E C A (ROM)
-!     ------------------------------------------------------------------
-    character(len=16), parameter :: chthme(ncthme) = (/&
-            'TEMP            ',&
-            'DEPL            ',&
-            'FLUX_NOEU       ',&
-            'SIEF_NOEU       '/)
+    integer, parameter :: nbFieldTher = 18
+    character(len=16), parameter :: fieldTher(nbFieldTher) = (/&
+        'TEMP            ',&
+        'FLUX_ELGA       ', 'FLUX_ELNO       ', 'FLUX_NOEU       ',&
+        'META_ELNO       ', 'META_NOEU       ',&
+        'DURT_ELNO       ', 'DURT_NOEU       ', 'ETHE_ELEM       ',&
+        'HYDR_ELNO       ', 'HYDR_NOEU       ',&
+        'SOUR_ELGA       ', 'COMPORTHER      ', 'COMPORMETA      ',&
+        'ERTH_ELEM       ', 'ERTH_ELNO       ', 'ERTH_NOEU       ',&
+        'TEMP_ELGA       '/)
 
 !     ------------------------------------------------------------------
-!                      C H A M P _ M E C A N I Q U E
+!                      For external state variables
 !     ------------------------------------------------------------------
-!      '1234567890123456','1234567890123456','1234567890123456',
-    data chmec1/&
-     & 'DEPL',            'VITE',            'ACCE',&
-     & 'DEPL_ABSOLU',     'VITE_ABSOLU',     'ACCE_ABSOLU',&
-     & 'EFGE_ELNO',       'EFGE_NOEU',&
-     & 'EPSI_ELGA',       'EPSI_ELNO',&
-     & 'EPSI_NOEU',       'SIEF_ELGA',&
-     & 'SIGM_ELGA',       'EFGE_ELGA',&
-     & 'SIEF_ELNO',       'SIEF_NOEU',       'SIGM_ELNO',&
-     & 'SIGM_NOEU',       'SIZ1_NOEU',       'SIZ2_NOEU',&
-     & 'SIPO_ELNO',       'SIPO_NOEU',&
-     & 'SIEQ_ELGA',       'SIEQ_ELNO',       'SIEQ_NOEU',&
-     & 'EPEQ_ELGA',       'EPEQ_ELNO',       'EPEQ_NOEU',&
-     & 'SIRO_ELEM',       'FLHN_ELGA',&
-     & 'SIPM_ELNO',       'STRX_ELGA',       'FORC_EXTE',&
-     & 'FORC_AMOR',       'FORC_LIAI',&
-     & 'EPGQ_ELGA',       'EPGQ_ELNO',       'EPGQ_NOEU'/
-!
-!      '1234567890123456','1234567890123456','1234567890123456',
-    data chmec2/&
-     & 'DEGE_ELNO',       'DEGE_NOEU',       'DEGE_ELGA',&
-     & 'EPOT_ELEM',&
-     & 'ECIN_ELEM',       'FORC_NODA',       'REAC_NODA',&
-     & 'ERME_ELEM',       'ERME_ELNO',       'ERME_NOEU',&
-     & 'ERZ1_ELEM',       'ERZ2_ELEM',       'QIRE_ELEM',&
-     & 'QIRE_ELNO',       'QIRE_NOEU',       'QIZ1_ELEM',&
-     & 'QIZ2_ELEM',       'EPSG_ELGA',       'EPSG_ELNO',&
-     & 'EPSG_NOEU',       'EPSP_ELGA',       'EPSP_ELNO',&
-     & 'EPSP_NOEU',       'VARI_ELGA',&
-     & 'VARI_NOEU',       'VARI_ELNO',&
-     & 'EPSA_ELNO',       'EPSA_NOEU',&
-     & 'COMPORTEMENT',    'DERA_ELGA',       'DERA_ELNO',&
-     & 'DERA_NOEU',       'PRME_ELNO',       'EPME_NOEU',&
-     & 'EPME_ELNO',       'EPME_ELGA',       'EPMG_ELNO',&
-     & 'EPMG_ELGA',       'ENEL_ELGA',       'ENEL_ELNO',&
-     & 'ENEL_NOEU',       'ENEL_ELEM',       'ENTR_ELEM',&
-     & 'EPMG_NOEU',       'SING_ELEM',       'SING_ELNO',&
-     & 'DISS_ELGA',       'DISS_ELNO',       'DISS_NOEU',&
-     & 'DISS_ELEM',       'EPSL_ELGA',       'EPSL_ELNO',&
-     & 'EPSL_NOEU'/
-!
-!      '1234567890123456','1234567890123456','1234567890123456',
-    data chmec3/&
-     & 'EPMQ_ELGA',       'EPMQ_ELNO',       'EPMQ_NOEU',&
-     & 'EPFP_ELNO',       'EPFP_ELGA',&
-     & 'EPFD_ELNO',       'EPFD_ELGA',&
-     & 'EPVC_ELNO',       'EPVC_ELGA',       'CONT_NOEU',&
-     & 'ETOT_ELGA',       'ETOT_ELNO',       'ETOT_ELEM',&
-     & 'ETOT_NOEU',       'CONT_ELEM',&
-     & 'ENDO_ELGA',       'ENDO_ELNO',       'ENDO_NOEU',&
-     & 'INDL_ELGA',       'VAEX_ELGA',       'VAEX_ELNO',&
-     & 'VAEX_NOEU',       'SISE_ELNO',&
-     & 'COHE_ELEM',       'INDC_ELEM',       'SECO_ELEM',&
-     & 'VARC_ELGA',       'FERRAILLAGE',     'EPVC_NOEU',&
-     & 'EPFD_NOEU',       'EPFP_NOEU',       'PDIL_ELGA',&
-     & 'MATE_ELGA',       'MATE_ELEM',       'HHO_CELL ',&
-     & 'HHO_FACE '/
-!
-!      '1234567890123456','1234567890123456','1234567890123456',
-    data chmuti/&
-     & 'UT01_ELGA',       'UT01_ELNO',      'UT01_ELEM', 'UT01_NOEU',&
-     & 'UT02_ELGA',       'UT02_ELNO',      'UT02_ELEM', 'UT02_NOEU',&
-     & 'UT03_ELGA',       'UT03_ELNO',      'UT03_ELEM', 'UT03_NOEU',&
-     & 'UT04_ELGA',       'UT04_ELNO',      'UT04_ELEM', 'UT04_NOEU',&
-     & 'UT05_ELGA',       'UT05_ELNO',      'UT05_ELEM', 'UT05_NOEU',&
-     & 'UT06_ELGA',       'UT06_ELNO',      'UT06_ELEM', 'UT06_NOEU',&
-     & 'UT07_ELGA',       'UT07_ELNO',      'UT07_ELEM', 'UT07_NOEU',&
-     & 'UT08_ELGA',       'UT08_ELNO',      'UT08_ELEM', 'UT08_NOEU',&
-     & 'UT09_ELGA',       'UT09_ELNO',      'UT09_ELEM', 'UT09_NOEU',&
-     & 'UT10_ELGA',       'UT10_ELNO',      'UT10_ELEM', 'UT10_NOEU'/
-!     ------------------------------------------------------------------
-!                      C H A M P _ T H E R M I Q U E
-!     ------------------------------------------------------------------
-!      '1234567890123456','1234567890123456','1234567890123456',
-    data chthe1/&
-     & 'TEMP',&
-     & 'FLUX_ELGA',       'FLUX_ELNO',       'FLUX_NOEU',&
-     & 'META_ELNO',       'META_NOEU',&
-     & 'DURT_ELNO',       'DURT_NOEU',       'ETHE_ELEM',&
-     & 'HYDR_ELNO',       'HYDR_NOEU',&
-     & 'SOUR_ELGA',       'COMPORTHER',      'COMPORMETA',&
-     & 'ERTH_ELEM',       'ERTH_ELNO',       'ERTH_NOEU',&
-     & 'TEMP_ELGA'/
-!     ------------------------------------------------------------------
-!                      C H A M P _ V A R C
-!     ------------------------------------------------------------------
-!      '1234567890123456','1234567890123456','1234567890123456',
-    data chvarc/&
-     & 'IRRA',            'TEMP',            'HYDR_ELNO',&
-     & 'HYDR_NOEU',       'EPSA_ELNO',       'META_ELNO',&
-     & 'PTOT',            'DIVU',            'NEUT'         /
-!     ------------------------------------------------------------------
-!                      C H A M P _ A C O U S T I Q U E
-!     ------------------------------------------------------------------
-!      '1234567890123456','1234567890123456','1234567890123456',
-    data chacou/&
-     & 'PRES',            'PRAC_ELNO',       'PRAC_NOEU',&
-     & 'INTE_ELNO',       'INTE_NOEU'/
-!     ------------------------------------------------------------------
-!
-    noms2=nomsd
-    types2=typesd
-    bas1=base
-!
-!     --- SI LA SD EXISTE DEJA, ON S'ARRETE EN ERREUR F :
-    call jeexin(noms2//'.DESC', iret)
-    ASSERT(iret.eq.0)
-!
-!     --- CREATION DE .DESC  ET  .ORDR ---
-    call jecreo(noms2//'.DESC', bas1//' N K16')
-    call wkvect(noms2//'.ORDR', bas1//' V I', nbordr, jordr)
-    call jeecra(noms2//'.ORDR', 'LONUTI', 0)
-!
-    do i = 1, ncmec1
-        chmeca(i)=chmec1(i)
-    end do
-    do i = 1, ncmec2
-        chmeca(i+ncmec1)=chmec2(i)
-    end do
-    do i = 1, ncmec3
-        chmeca(i+ncmec1+ncmec2)=chmec3(i)
-    end do
-    do i = 1, ncmuti
-        chmeca(i+ncmec1+ncmec2+ncmec3)=chmuti(i)
-    end do
-!
-    do i = 1, ncthe1
-        chther(i)=chthe1(i)
-    end do
-    do i = 1, ncmuti
-        chther(i+ncthe1)=chmuti(i)
-    end do
-!
-!     -- DECLARATION ET INITIALISATION DES PARAMETRES ET VAR. D'ACCES :
-!     ------------------------------------------------------------------
-    call utpara(bas1, nomsd, types2, nbordr)
-!
-!     ------------------------------------------------------------------
-    if (types2 .eq. 'EVOL_ELAS') then
-!
-        nbcham=ncmeca + 1
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='EVEL')
-        do i = 1, ncmeca
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
+    integer, parameter :: nbFieldVarc = 9
+    character(len=16), parameter :: fieldVarc(nbFieldVarc) = (/&
+        'IRRA            ', 'TEMP            ', 'HYDR_ELNO       ',&
+        'HYDR_NOEU       ', 'EPSA_ELNO       ', 'META_ELNO       ',&
+        'PTOT            ', 'DIVU            ', 'NEUT            '/)
 
-        call jecroc(jexnom(noms2//'.DESC', 'PRES_NOEU'))
-!
-        goto 99
-!
 !     ------------------------------------------------------------------
-    else if (types2.eq.'MULT_ELAS') then
-!
-        nbcham=ncmeca
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='MUEL')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-        goto 99
-!
+!                      For acoustic (transient)
 !     ------------------------------------------------------------------
-    else if (types2.eq.'FOURIER_ELAS') then
-!
-        nbcham=ncmeca
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='FOEL')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-!
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'FOURIER_THER') then
-!
-        nbcham=ncther
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='FOTH')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chther(i)))
-        enddo
-!
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'EVOL_NOLI') then
-!
-        nbcham=ncmeca + 1
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='EVNO')
-        do i = 1, ncmeca
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-               
-        call jecroc(jexnom(noms2//'.DESC', 'PRES_NOEU'))
-!
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'DYNA_TRANS') then
-!
-        nbcham=ncmeca
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='DYTR')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'DYNA_HARMO') then
-!
-        nbcham=ncmeca
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='DYHA')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'HARM_GENE') then
-!
-        nbcham=ncmeca
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='HAGE')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'ACOU_HARMO') then
-!
-        nbcham=ncacou
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='ACHA')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chacou(i)))
-        enddo
-!
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'EVOL_CHAR') then
-!
-        nbcham=10
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='EVCH')
-        call jecroc(jexnom(noms2//'.DESC', 'FORC_NODA'))
-        call jecroc(jexnom(noms2//'.DESC', 'PRES'))
-        call jecroc(jexnom(noms2//'.DESC', 'FVOL_3D'))
-        call jecroc(jexnom(noms2//'.DESC', 'FVOL_2D'))
-        call jecroc(jexnom(noms2//'.DESC', 'FSUR_3D'))
-        call jecroc(jexnom(noms2//'.DESC', 'FSUR_2D'))
-        call jecroc(jexnom(noms2//'.DESC', 'VITE_VENT'))
-        call jecroc(jexnom(noms2//'.DESC', 'T_EXT'))
-        call jecroc(jexnom(noms2//'.DESC', 'COEF_H'))
-        call jecroc(jexnom(noms2//'.DESC', 'FLUN'))
+    integer, parameter :: nbFieldAcou = 5
+    character(len=16), parameter :: fieldAcou(nbFieldAcou) = (/&
+        'PRES            ', 'PRAC_ELNO       ', 'PRAC_NOEU       ',&
+        'INTE_ELNO       ', 'INTE_NOEU       '/)
 
-        goto 99
-!
 !     ------------------------------------------------------------------
-    else if (types2.eq.'EVOL_THER') then
-!
-        nbcham=ncther
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='EVTH')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chther(i)))
-        enddo
-        goto 99
-!
+!                      For acoustic (modal)
 !     ------------------------------------------------------------------
-    else if (types2.eq.'EVOL_VARC') then
-!
-        nbcham=ncvarc
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='EVVA')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chvarc(i)))
-        enddo
-        goto 99
-!
-!     ------------------------------------------------------------------
-        elseif (types2 .eq. 'MODE_MECA'   .or.&
-                types2 .eq. 'MODE_MECA_C' .or.&
-                types2 .eq. 'MODE_GENE'   .or.&
-                types2 .eq. 'MODE_ACOU'   .or.&
-                types2 .eq. 'DYNAMIQUE' ) then
-!
-        if (types2 .eq. 'MODE_MECA') then
-            call jeecra(noms2//'.DESC', 'DOCU', cval='MOME')
-        else if (types2.eq.'MODE_MECA_C') then
-            call jeecra(noms2//'.DESC', 'DOCU', cval='MOME')
-        else if (types2.eq.'MODE_GENE') then
-            call jeecra(noms2//'.DESC', 'DOCU', cval='MOGE')
-        else if (types2.eq.'DYNAMIQUE') then
-            call jeecra(noms2//'.DESC', 'DOCU', cval='BAMO')
-        else if (types2.eq.'MODE_ACOU') then
-            call jeecra(noms2//'.DESC', 'DOCU', cval='MOAC')
-        endif
-!
-        if (types2 .eq. 'MODE_ACOU') then
-            nbcham=1
-            call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-            call jecroc(jexnom(noms2//'.DESC', 'PRES'))
-        else
-            nbcham=ncmeca
-            call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-            do i = 1, nbcham
-                call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-            enddo
-        endif
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'MODE_FLAMB') then
-!
-        nbcham=ncmeca
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='MOFL')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-        goto 99
-!
-!     ------------------------------------------------------------------
-    else if (types2.eq.'MODE_STAB') then
-!
-        nbcham=ncmeca
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='MOSB')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-        goto 99
+    integer, parameter :: nbFieldMoac = 1
+    character(len=16), parameter :: fieldMoac(nbFieldMoac) = (/&
+        'PRES            '/)
 
-    elseif (types2 .eq. 'MODE_EMPI') then
-!
-        nbcham=ncthme
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='MOEM')
-        do i = 1, nbcham
-            call jecroc(jexnom(noms2//'.DESC', chthme(i)))
-        enddo
-        goto 99
-!
 !     ------------------------------------------------------------------
-    else if (types2.eq.'COMB_FOURIER') then
-!
-        nbcham=ncmeca+ncthe1
-        call jeecra(noms2//'.DESC', 'NOMMAX', nbcham)
-        call jeecra(noms2//'.DESC', 'DOCU', cval='COFO')
-        do i = 1, ncmeca
-            call jecroc(jexnom(noms2//'.DESC', chmeca(i)))
-        enddo
-        do i = 1, ncthe1
-            call jecroc(jexnom(noms2//'.DESC', chthe1(i)))
-        enddo
-        goto 99
+!                      For reduced mode
+!     ------------------------------------------------------------------
+    integer, parameter :: nbFieldRom = 5
+    character(len=16), parameter :: fieldRom(nbFieldRom) = (/&
+        'TEMP            ',&
+        'DEPL            ',&
+        'FLUX_NOEU       ',&
+        'SIEF_NOEU       ',&
+        'SIEF_ELGA       '/)
 
+!     ------------------------------------------------------------------
+!                      For mechanic
+!     ------------------------------------------------------------------
+    integer, parameter :: nbFieldMeca = 128
+    character(len=16), parameter :: fieldMeca(nbFieldMeca) = (/&
+        'DEPL            ', 'VITE            ', 'ACCE            ',&
+        'DEPL_ABSOLU     ', 'VITE_ABSOLU     ', 'ACCE_ABSOLU     ',&
+        'EFGE_ELNO       ', 'EFGE_NOEU       ',&
+        'EPSI_ELGA       ', 'EPSI_ELNO       ',&
+        'EPSI_NOEU       ', 'SIEF_ELGA       ',&
+        'SIGM_ELGA       ', 'EFGE_ELGA       ',&
+        'SIEF_ELNO       ', 'SIEF_NOEU       ', 'SIGM_ELNO       ',&
+        'SIGM_NOEU       ', 'SIZ1_NOEU       ', 'SIZ2_NOEU       ',&
+        'SIPO_ELNO       ', 'SIPO_NOEU       ',&
+        'SIEQ_ELGA       ', 'SIEQ_ELNO       ', 'SIEQ_NOEU       ',&
+        'EPEQ_ELGA       ', 'EPEQ_ELNO       ', 'EPEQ_NOEU       ',&
+        'SIRO_ELEM       ', 'FLHN_ELGA       ',&
+        'SIPM_ELNO       ', 'STRX_ELGA       ', 'FORC_EXTE       ',&
+        'FORC_AMOR       ', 'FORC_LIAI       ',&
+        'EPGQ_ELGA       ', 'EPGQ_ELNO       ', 'EPGQ_NOEU       ',&
+        'DEGE_ELNO       ', 'DEGE_NOEU       ', 'DEGE_ELGA       ',&
+        'EPOT_ELEM       ',&
+        'ECIN_ELEM       ', 'FORC_NODA       ', 'REAC_NODA       ',&
+        'ERME_ELEM       ', 'ERME_ELNO       ', 'ERME_NOEU       ',&
+        'ERZ1_ELEM       ', 'ERZ2_ELEM       ', 'QIRE_ELEM       ',&
+        'QIRE_ELNO       ', 'QIRE_NOEU       ', 'QIZ1_ELEM       ',&
+        'QIZ2_ELEM       ', 'EPSG_ELGA       ', 'EPSG_ELNO       ',&
+        'EPSG_NOEU       ', 'EPSP_ELGA       ', 'EPSP_ELNO       ',&
+        'EPSP_NOEU       ', 'VARI_ELGA       ',&
+        'VARI_NOEU       ', 'VARI_ELNO       ',&
+        'EPSA_ELNO       ', 'EPSA_NOEU       ',&
+        'COMPORTEMENT    ', 'DERA_ELGA       ', 'DERA_ELNO       ',&
+        'DERA_NOEU       ', 'PRME_ELNO       ', 'EPME_NOEU       ',&
+        'EPME_ELNO       ', 'EPME_ELGA       ', 'EPMG_ELNO       ',&
+        'EPMG_ELGA       ', 'ENEL_ELGA       ', 'ENEL_ELNO       ',&
+        'ENEL_NOEU       ', 'ENEL_ELEM       ', 'ENTR_ELEM       ',&
+        'EPMG_NOEU       ', 'SING_ELEM       ', 'SING_ELNO       ',&
+        'DISS_ELGA       ', 'DISS_ELNO       ', 'DISS_NOEU       ',&
+        'DISS_ELEM       ', 'EPSL_ELGA       ', 'EPSL_ELNO       ',&
+        'EPSL_NOEU       ',&
+        'EPMQ_ELGA       ', 'EPMQ_ELNO       ', 'EPMQ_NOEU       ',&
+        'EPFP_ELNO       ', 'EPFP_ELGA       ',&
+        'EPFD_ELNO       ', 'EPFD_ELGA       ',&
+        'EPVC_ELNO       ', 'EPVC_ELGA       ', 'CONT_NOEU       ',&
+        'ETOT_ELGA       ', 'ETOT_ELNO       ', 'ETOT_ELEM       ',&
+        'ETOT_NOEU       ', 'CONT_ELEM       ',&
+        'ENDO_ELGA       ', 'ENDO_ELNO       ', 'ENDO_NOEU       ',&
+        'INDL_ELGA       ', 'VAEX_ELGA       ', 'VAEX_ELNO       ',&
+        'VAEX_NOEU       ', 'SISE_ELNO       ',&
+        'COHE_ELEM       ', 'INDC_ELEM       ', 'SECO_ELEM       ',&
+        'VARC_ELGA       ', 'FERRAILLAGE     ', 'EPVC_NOEU       ',&
+        'EPFD_NOEU       ', 'EPFP_NOEU       ', 'PDIL_ELGA       ',&
+        'MATE_ELGA       ', 'MATE_ELEM       ', 'HHO_CELL        ',&
+        'HHO_FACE        ', 'PRES_NOEU       '/)
+
+!     ------------------------------------------------------------------
+!                      For loads (EVOl_CHAR)
+!     ------------------------------------------------------------------
+    integer, parameter :: nbFieldChar = 10
+    character(len=16), parameter :: fieldChar(nbFieldChar) = (/&
+        'FORC_NODA       ', 'PRES            ',&
+        'FVOL_3D         ', 'FVOL_2D         ',&
+        'FSUR_3D         ', 'FSUR_2D         ',&
+        'VITE_VENT       ', 'T_EXT           ',&
+        'COEF_H          ', 'FLUN            '/)
+
+!     ------------------------------------------------------------------
+!                      For keyword UTIL in CALC_CHAMP
+!     ------------------------------------------------------------------
+    integer, parameter :: nbFieldUtil = 40
+    character(len=16), parameter :: fieldUtil(nbFieldUtil) = (/&
+        'UT01_ELGA       ', 'UT01_ELNO       ', 'UT01_ELEM       ', 'UT01_NOEU       ',&
+        'UT02_ELGA       ', 'UT02_ELNO       ', 'UT02_ELEM       ', 'UT02_NOEU       ',&
+        'UT03_ELGA       ', 'UT03_ELNO       ', 'UT03_ELEM       ', 'UT03_NOEU       ',&
+        'UT04_ELGA       ', 'UT04_ELNO       ', 'UT04_ELEM       ', 'UT04_NOEU       ',&
+        'UT05_ELGA       ', 'UT05_ELNO       ', 'UT05_ELEM       ', 'UT05_NOEU       ',&
+        'UT06_ELGA       ', 'UT06_ELNO       ', 'UT06_ELEM       ', 'UT06_NOEU       ',&
+        'UT07_ELGA       ', 'UT07_ELNO       ', 'UT07_ELEM       ', 'UT07_NOEU       ',&
+        'UT08_ELGA       ', 'UT08_ELNO       ', 'UT08_ELEM       ', 'UT08_NOEU       ',&
+        'UT09_ELGA       ', 'UT09_ELNO       ', 'UT09_ELEM       ', 'UT09_NOEU       ',&
+        'UT10_ELGA       ', 'UT10_ELNO       ', 'UT10_ELEM       ', 'UT10_NOEU       '/)
+!
+! --------------------------------------------------------------------------------------------------
+!
+    resultName = resultNameZ
+    resultType = resultTypeZ
+    base       = baseZ
+!
+! - Create datastructure
+!
+    call jeexin(resultName//'.DESC', iret)
+    ASSERT(iret .eq. 0)
+    call jecreo(resultName//'.DESC', base//' N K16')
+    call wkvect(resultName//'.ORDR', base//' V I', nbStore, jvDummy)
+    call jeecra(resultName//'.ORDR', 'LONUTI', 0)
+!
+! - Create list of parameters
+!
+    call utpara(base, resultNameZ, resultTypeZ, nbStore)
+!
+! - Create list of fields
+!
+    if (resultType .eq. 'EVOL_ELAS') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='EVEL')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'MULT_ELAS') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='MUEL')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'FOURIER_ELAS') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='FOEL')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'FOURIER_THER') then
+        nbField = nbFieldTher + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='FOTH')
+        do iField = 1, nbFieldTher
+            call jecroc(jexnom(resultName//'.DESC', fieldTher(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'EVOL_NOLI') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='EVNO')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'DYNA_TRANS') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='DYTR')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'DYNA_HARMO') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='DYHA')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'HARM_GENE') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='HAGE')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'ACOU_HARMO') then
+        nbField = nbFieldAcou
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='ACHA')
+        do iField = 1, nbField
+            call jecroc(jexnom(resultName//'.DESC', fieldAcou(iField)))
+        enddo
+!
+    else if (resultType .eq. 'EVOL_CHAR') then
+        nbField = nbFieldChar
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='EVCH')
+        do iField = 1, nbField
+            call jecroc(jexnom(resultName//'.DESC', fieldChar(iField)))
+        enddo
+!
+    else if (resultType .eq. 'EVOL_THER') then
+        nbField = nbFieldTher + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='EVTH')
+        do iField = 1, nbFieldTher
+            call jecroc(jexnom(resultName//'.DESC', fieldTher(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'EVOL_VARC') then
+        nbField = nbFieldVarc
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='EVVA')
+        do iField = 1, nbField
+            call jecroc(jexnom(resultName//'.DESC', fieldVarc(iField)))
+        enddo
+!
+    elseif (resultType .eq. 'MODE_MECA') then
+        nbField = nbFieldMeca
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='MOME')
+        do iField = 1, nbField
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+!
+    elseif (resultType .eq. 'MODE_MECA_C') then
+        nbField = nbFieldMeca
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='MOME')
+        do iField = 1, nbField
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+!
+    elseif (resultType .eq. 'MODE_GENE') then
+        nbField = nbFieldMeca
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='MOGE')
+        do iField = 1, nbField
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+!
+    else if (resultType.eq.'MODE_ACOU') then
+        nbField = nbFieldMoac
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='MOAC')
+        do iField = 1, nbField
+            call jecroc(jexnom(resultName//'.DESC', fieldMoac(iField)))
+        enddo
+!
+    else if (resultType .eq. 'MODE_FLAMB') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='MOFL')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    else if (resultType .eq. 'MODE_STAB') then
+        nbField = nbFieldMeca + nbFieldUtil
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='MOSB')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldUtil
+            call jecroc(jexnom(resultName//'.DESC', fieldUtil(iField)))
+        enddo
+!
+    elseif (resultType .eq. 'MODE_EMPI') then
+        nbField = nbFieldRom
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='MOEM')
+        do iField = 1, nbField
+            call jecroc(jexnom(resultName//'.DESC', fieldRom(iField)))
+        enddo
+!
+    else if (resultType .eq. 'COMB_FOURIER') then
+        nbField = nbFieldMeca + nbFieldTher
+        call jeecra(resultName//'.DESC', 'NOMMAX', nbField)
+        call jeecra(resultName//'.DESC', 'DOCU', cval='COFO')
+        do iField = 1, nbFieldMeca
+            call jecroc(jexnom(resultName//'.DESC', fieldMeca(iField)))
+        enddo
+        do iField = 1, nbFieldTher
+            call jecroc(jexnom(resultName//'.DESC', fieldTher(iField)))
+        enddo
+!
     else
-        call utmess('F', 'UTILITAI4_31', sk=types2)
+        ASSERT(ASTER_FALSE)
     endif
 !
-!     ------------------------------------------------------------------
-99  continue
+! - Create TACH object
 !
-!     --- CREATION DE .TACH
-!     -------------------------
-    call jecrec(noms2//'.TACH', bas1//' V K24', 'NU', 'CONTIG', 'CONSTANT',&
-                nbcham)
-    call jeecra(noms2//'.TACH', 'LONMAX', nbordr)
-!
-!
-!     -- POUR QUE LES COLLECTIONS .TACH ET .TAVA SOIENT BIEN CREEES :
-!     ---------------------------------------------------------------
-    do k = 1, nbcham
-        call jecroc(jexnum(noms2//'.TACH', k))
+    call jecrec(resultName//'.TACH', base//' V K24', 'NU', 'CONTIG', 'CONSTANT', nbField)
+    call jeecra(resultName//'.TACH', 'LONMAX', nbStore)
+    do iField = 1, nbField
+        call jecroc(jexnum(resultName//'.TACH', iField))
     end do
-    call jelira(noms2//'.NOVA', 'NOMMAX', nbnova)
-    do k = 1, nbnova
-        call jecroc(jexnum(noms2//'.TAVA', k))
+!
+! - Create NOVA object (parameters)
+!
+    call jelira(resultName//'.NOVA', 'NOMMAX', nbNova)
+    do iNova = 1, nbNova
+        call jecroc(jexnum(resultName//'.TAVA', iNova))
     end do
 !
 end subroutine
