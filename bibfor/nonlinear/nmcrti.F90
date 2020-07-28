@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,9 +15,10 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
+! aslint: disable=W1303
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nmcrti(list_func_acti, result, ds_contact, ds_measure)
+subroutine nmcrti(list_func_acti, resultName, ds_contact, ds_measure)
 !
 use NonLin_Datastructure_type
 !
@@ -34,12 +35,13 @@ implicit none
 #include "asterfort/ActivateDevice.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/nonlinDSTableIOGetName.h"
 #include "asterfort/SetTableColumn.h"
 #include "asterfort/ComputeTableHead.h"
 #include "asterfort/ComputeTableWidth.h"
 !
 integer, intent(in) :: list_func_acti(*)
-character(len=8), intent(in) :: result
+character(len=8), intent(in) :: resultName
 type(NL_DS_Contact), intent(in) :: ds_contact
 type(NL_DS_Measure), intent(inout) :: ds_measure
 !
@@ -52,7 +54,7 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 ! --------------------------------------------------------------------------------------------------
 !
 ! In  list_func_acti   : list of active functionnalities
-! In  result           : name of results datastructure
+! In  resultName       : name of results datastructure
 ! In  ds_contact       : datastructure for contact management
 ! IO  ds_measure       : datastructure for measure and statistics management
 !
@@ -66,7 +68,6 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
     aster_logical :: l_cont, l_fric, l_cont_disc, l_cont_cont,l_cont_lac
     aster_logical :: l_loop_cont, l_loop_fric, l_loop_geom, l_newt_geom
     aster_logical :: l_all_verif, l_device_acti, l_hho
-    type(NL_DS_Table) :: table
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -152,75 +153,64 @@ type(NL_DS_Measure), intent(inout) :: ds_measure
 ! - Create table
 !
     if (ds_measure%l_table .or. ds_measure%table%l_csv) then
-!
-! ----- Get table
-!
-        table = ds_measure%table
-!
+
 ! ----- First column: time
-!
         i_col = 1
-        table%l_cols_acti(i_col) = .true._1
-        ASSERT(table%cols(i_col)%name(1:4) .eq. 'INST')
-!
+        ds_measure%table%l_cols_acti(i_col) = .true._1
+        ASSERT(ds_measure%table%cols(i_col)%name(1:4) .eq. 'INST')
+
 ! ----- Loop on active devices to activate columns
-!
         do i_device = 1, ds_measure%nb_device
             l_device_acti = ds_measure%l_device_acti(i_device)
             if (l_device_acti) then
                 i_col = ds_measure%indx_cols(2*(i_device-1)+1)
                 if (i_col .ne. 0) then
-                    table%l_cols_acti(i_col) = .true._1
-                    ASSERT(table%cols(i_col)%name(1:5) .eq. 'Time_')
+                    ds_measure%table%l_cols_acti(i_col) = .true._1
+                    ASSERT(ds_measure%table%cols(i_col)%name(1:5) .eq. 'Time_')
                 endif
                 i_col = ds_measure%indx_cols(2*(i_device-1)+2)
                 if (i_col .ne. 0) then
-                    table%l_cols_acti(i_col) = .true._1
-                    ASSERT(table%cols(i_col)%name(1:6) .eq. 'Count_')
+                    ds_measure%table%l_cols_acti(i_col) = .true._1
+                    ASSERT(ds_measure%table%cols(i_col)%name(1:6) .eq. 'Count_')
                 endif
             endif
         end do
-!
+
 ! ----- Activate state and memory
-!
-        if (table%l_csv) then
-            call SetTableColumn(table, 'State' , flag_acti_ = .true._1)
-            call SetTableColumn(table, 'Memory' , flag_acti_ = .true._1)
+        if (ds_measure%table%l_csv) then
+            call SetTableColumn(ds_measure%table, 'State' , flag_acti_ = .true._1)
+            call SetTableColumn(ds_measure%table, 'Memory' , flag_acti_ = .true._1)
         endif
-!
-! ----- Set table
-!
-        ds_measure%table  = table
-!
+
 ! ----- Create list of parameters
-!
-        call nonlinDSTableIOSetPara(table)
-!
+        call nonlinDSTableIOSetPara(ds_measure%table)
+
+! ----- Set other parameters
+        ds_measure%table%table_io%resultName   = resultName
+        ds_measure%table%table_io%tablSymbName = 'STAT'
+
+! ----- Get name of table in results datastructure
+        call nonlinDSTableIOGetName(ds_measure%table%table_io)
+
 ! ----- Create table in results datastructure
-!
-        call nonlinDSTableIOCreate(result, 'STAT', table%table_io)
-!
+        call nonlinDSTableIOCreate(ds_measure%table%table_io)
+
 ! ----- Prepare table in output CSV file
-!
-        call ComputeTableWidth(table, line_width, nb_cols_active)
-        table%width        = line_width
-!
+        call ComputeTableWidth(ds_measure%table, line_width, nb_cols_active)
+        ds_measure%table%width = line_width
+
 ! ----- Print table head in output CSV file
-!
-        if (table%l_csv) then
-            call ulopen(table%unit_csv, ' ', ' ', 'NEW', 'O')
-            call ComputeTableHead(table, ',', table_head)
-            call nonlinDSColumnWriteValue(table%width,&
-                                          output_unit_ = table%unit_csv,&
+        if (ds_measure%table%l_csv) then
+            call ulopen(ds_measure%table%unit_csv, ' ', ' ', 'NEW', 'O')
+            call ComputeTableHead(ds_measure%table, ',', table_head)
+            call nonlinDSColumnWriteValue(ds_measure%table%width,&
+                                          output_unit_ = ds_measure%table%unit_csv,&
                                           value_k_     = table_head(1) )
-            call nonlinDSColumnWriteValue(table%width,&
-                                          output_unit_ = table%unit_csv,&
+            call nonlinDSColumnWriteValue(ds_measure%table%width,&
+                                          output_unit_ = ds_measure%table%unit_csv,&
                                           value_k_     = table_head(2) )
         endif
-!
-! ----- Set table
-!
-        ds_measure%table  = table
+
     endif
 !
 end subroutine

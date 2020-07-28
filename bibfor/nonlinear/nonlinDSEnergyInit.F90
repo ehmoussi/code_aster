@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSEnergyInit(result, ds_energy)
+subroutine nonlinDSEnergyInit(resultName, ds_energy)
 !
 use NonLin_Datastructure_type
 !
@@ -29,8 +29,9 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/nonlinDSTableIOGetName.h"
 !
-character(len=8), intent(in) :: result
+character(len=8), intent(in) :: resultName
 type(NL_DS_Energy), intent(inout) :: ds_energy
 !
 ! --------------------------------------------------------------------------------------------------
@@ -41,7 +42,7 @@ type(NL_DS_Energy), intent(inout) :: ds_energy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  result           : name of results datastructure
+! In  resultName       : name of results datastructure
 ! IO  ds_energy        : datastructure for energy management
 !
 ! --------------------------------------------------------------------------------------------------
@@ -81,9 +82,18 @@ type(NL_DS_Energy), intent(inout) :: ds_energy
 !
     call nonlinDSTableIOSetPara(table)
 !
+! - Set other parameters
+!
+    table%table_io%resultName   = resultName
+    table%table_io%tablSymbName = 'PARA_CALC'
+!
+! - Get name of table in results datastructure
+!
+    call nonlinDSTableIOGetName(table%table_io)
+!
 ! - Create table in results datastructure
 !
-    call nonlinDSTableIOCreate(result, 'PARA_CALC', table%table_io)
+    call nonlinDSTableIOCreate(table%table_io)
 !
 ! - Save table
 !

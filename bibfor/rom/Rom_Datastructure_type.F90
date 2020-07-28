@@ -89,7 +89,7 @@ implicit none
 ! ----- Name of empiric base to save
         character(len=8)        :: base = ' '
 ! ----- Name of table to save reduced coordinates
-        character(len=19)       :: tabl_coor = ' '
+        character(len=24)       :: tabl_coor = ' '
 ! ----- Datastructure for mode
         type(ROM_DS_Field)      :: ds_mode
 ! ----- Type of reduced base

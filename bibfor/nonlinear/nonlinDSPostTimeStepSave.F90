@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -116,9 +116,9 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
                 valk(2) = ' '
                 valk(3) = ' '
             endif
-            call tbajli(ds_posttimestep%table_io%table_name,&
-                        ds_posttimestep%table_io%nb_para,&
-                        ds_posttimestep%table_io%list_para,&
+            call tbajli(ds_posttimestep%table_io%tablName,&
+                        ds_posttimestep%table_io%nbPara,&
+                        ds_posttimestep%table_io%paraName,&
                         vali, valr, [c16bid], valk, 0)
         else if (mod45 .eq. 'FLAM') then
             if (nb_dof_stab .eq. 0) then
@@ -150,9 +150,9 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
                     valk(2) = ' '
                     valk(3) = ' '
                 endif
-                call tbajli(ds_posttimestep%table_io%table_name,&
-                            ds_posttimestep%table_io%nb_para,&
-                            ds_posttimestep%table_io%list_para,&
+                call tbajli(ds_posttimestep%table_io%tablName,&
+                            ds_posttimestep%table_io%nbPara,&
+                            ds_posttimestep%table_io%paraName,&
                             vali, valr, [c16bid], valk, 0)
             endif
         endif
@@ -191,9 +191,9 @@ type(NL_DS_PostTimeStep), intent(inout) :: ds_posttimestep
                 valk(2) = ' '
                 valk(3) = ' '
             endif
-            call tbajli(ds_posttimestep%table_io%table_name,&
-                        ds_posttimestep%table_io%nb_para,&
-                        ds_posttimestep%table_io%list_para,&
+            call tbajli(ds_posttimestep%table_io%tablName,&
+                        ds_posttimestep%table_io%nbPara,&
+                        ds_posttimestep%table_io%paraName,&
                         vali, valr, [c16bid], valk, 0)
         endif
     endif

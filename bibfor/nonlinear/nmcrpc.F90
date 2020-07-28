@@ -57,8 +57,8 @@ real(kind=8), intent(in) :: time_curr
 !
 ! - Add line in table
 !
-    call tbajli(ds_inout%table_io%table_name,&
-                ds_inout%table_io%nb_para, ds_inout%table_io%list_para,&
+    call tbajli(ds_inout%table_io%tablName,&
+                ds_inout%table_io%nbPara, ds_inout%table_io%paraName,&
                 vali, valr, [c16bid], k8bid, 0)
 !
 end subroutine

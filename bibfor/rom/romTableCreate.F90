@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romTableCreate(result, tabl_name)
+subroutine romTableCreate(resultName, tablName)
 !
 use Rom_Datastructure_type
 use NonLin_Datastructure_type
@@ -29,10 +29,11 @@ implicit none
 #include "asterfort/nonlinDSTableIOSetPara.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/nonlinDSTableIOClean.h"
+#include "asterfort/nonlinDSTableIOGetName.h"
 #include "asterfort/utmess.h"
 !
-character(len=8), intent(in) :: result
-character(len=19), intent(out) :: tabl_name
+character(len=8), intent(in) :: resultName
+character(len=24), intent(out) :: tablName
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,18 +43,18 @@ character(len=19), intent(out) :: tabl_name
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  result           : name of datastructure for results
-! Out tabl_name        : name of table in results datastructure
+! In  resultName       : name of datastructure for results
+! Out tablName         : name of table in results datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
     type(NL_DS_TableIO) :: tableio
-    integer, parameter :: nb_para = 5
-    character(len=8), parameter :: type_para(nb_para) = (/'R','R','I','I','I'/)
-    character(len=24), parameter :: list_para(nb_para) = (/'COOR_REDUIT','INST       ',&
-                                                           'NUME_MODE  ','NUME_ORDRE ',&
-                                                           'NUME_SNAP  '/)
+    integer, parameter :: nbPara = 5
+    character(len=8), parameter :: paraType(nbPara) = (/'R','R','I','I','I'/)
+    character(len=24), parameter :: paraName(nbPara) = (/'COOR_REDUIT','INST       ',&
+                                                         'NUME_MODE  ','NUME_ORDRE ',&
+                                                         'NUME_SNAP  '/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -61,22 +62,28 @@ character(len=19), intent(out) :: tabl_name
     if (niv .ge. 2) then
         call utmess('I', 'ROM5_38')
     endif
-    tabl_name = ' '
+    tablName = ' '
 !
 ! - Create list of parameters
 !
-    call nonlinDSTableIOSetPara(tableio_   = tableio,&
-                                nb_para_   = nb_para,&
-                                list_para_ = list_para,&
-                                type_para_ = type_para)
+    call nonlinDSTableIOSetPara(tableio_  = tableio,&
+                                nbPara_   = nbPara,&
+                                paraName_ = paraName,&
+                                paraType_ = paraType)
+!
+! - Set other parameters
+!
+    tableio%resultName   = resultName
+    tableio%tablSymbName = 'COOR_REDUIT'
+!
+! - Get name of table in results datastructure
+!
+    call nonlinDSTableIOGetName(tableio)
+    tablName = tableio%tablName
 !
 ! - Create table in results datastructure (if necessary)
 !
-    call nonlinDSTableIOCreate(result, 'COOR_REDUIT', tableio)
-!
-! - Save name of table
-!
-    tabl_name = tableio%table_name
+    call nonlinDSTableIOCreate(tableio)
 !
 ! - Clean tableio datastructure
 !

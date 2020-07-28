@@ -28,7 +28,6 @@ implicit none
 #include "asterc/r8vide.h"
 #include "asterfort/assert.h"
 #include "asterfort/nonlinDSColumnVoid.h"
-#include "asterfort/nonlinDSTableIOVoid.h"
 !
 type(NL_DS_Energy), intent(out) :: ds_energy
 !
@@ -61,13 +60,11 @@ type(NL_DS_Energy), intent(out) :: ds_energy
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    table%table_io%tablSymbName = 'PARA_CALC'
 !
 ! - Create table
 !
-    call nonlinDSTableIOVoid(table%table_io)
-    table%table_io%table_type = 'PARA_CALC'
-    table%nb_cols             = nb_col_defi
+    table%nb_cols               = nb_col_defi
     ASSERT(table%nb_cols .le. table%nb_cols_maxi)
     do i_col = 1, nb_col_defi
         call nonlinDSColumnVoid(column)

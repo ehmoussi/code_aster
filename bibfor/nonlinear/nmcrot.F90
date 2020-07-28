@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ use NonLin_Datastructure_type
 implicit none
 !
 #include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/nonlinDSTableIOGetName.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/nonlinDSTableIOClean.h"
 #include "asterfort/wkvect.h"
@@ -44,9 +45,9 @@ character(len=19), intent(in) :: sd_obsv
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_para = 16
+    integer, parameter :: nbPara = 16
     type(NL_DS_TableIO) :: tableio
-    character(len=24), parameter :: list_para(nb_para) = (/'NOM_OBSERVATION','TYPE_OBJET     ',&
+    character(len=24), parameter :: paraName(nbPara) = (/'NOM_OBSERVATION','TYPE_OBJET     ',&
                                                            'NUME_REUSE     ','NUME_OBSE      ',&
                                                            'INST           ','NOM_CHAM       ',&
                                                            'EVAL_CHAM      ','NOM_CMP        ',&
@@ -54,7 +55,7 @@ character(len=19), intent(in) :: sd_obsv
                                                            'NOEUD          ','MAILLE         ',&
                                                            'EVAL_ELGA      ','POINT          ',&
                                                            'SOUS_POINT     ','VALE           '/)
-    character(len=8),  parameter :: type_para(nb_para) = (/'K16','K16',&
+    character(len=8),  parameter :: paraType(nbPara) = (/'K16','K16',&
                                                            'I  ','I  ',&
                                                            'R  ','K16',&
                                                            'K8 ','K8 ',&
@@ -67,7 +68,8 @@ character(len=19), intent(in) :: sd_obsv
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    tableio%tablSymbName = 'OBSERVATION'
+    tableio%resultName   = result
 !
 ! - Create vector for table name
 !
@@ -76,18 +78,22 @@ character(len=19), intent(in) :: sd_obsv
 !
 ! - Create list of parameters
 !
-    call nonlinDSTableIOSetPara(tableio_   = tableio,&
-                                nb_para_   = nb_para,&
-                                list_para_ = list_para,&
-                                type_para_ = type_para)
+    call nonlinDSTableIOSetPara(tableio_  = tableio,&
+                                nbPara_   = nbPara,&
+                                paraName_ = paraName,&
+                                paraType_ = paraType)
+!
+! - Get name of table in results datastructure
+!
+    call nonlinDSTableIOGetName(tableio)
 !
 ! - Create table in results datastructure
 !
-    call nonlinDSTableIOCreate(result, 'OBSERVATION', tableio)
+    call nonlinDSTableIOCreate(tableio)
 !
 ! - Save name of table
 !
-    v_obsv_tabl(1) = tableio%table_name
+    v_obsv_tabl(1) = tableio%tablName
 !
 ! - Clean table in results datastructure
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinDSEnergyInit(result, ds_energy)
+    subroutine nonlinDSEnergyInit(resultName, ds_energy)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: result
+        character(len=8), intent(in) :: resultName
         type(NL_DS_Energy), intent(inout) :: ds_energy
     end subroutine nonlinDSEnergyInit
 end interface

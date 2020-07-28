@@ -56,7 +56,7 @@ real(kind=8), intent(in) :: time_curr
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    table    = ds_energy%table
+    table = ds_energy%table
     k8bid = ' '
 !
 ! - Get table parameters
@@ -85,7 +85,7 @@ real(kind=8), intent(in) :: time_curr
 !
 ! - Add line in table
 !
-    call tbajli(table%table_io%table_name, table%table_io%nb_para, table%table_io%list_para,&
+    call tbajli(table%table_io%tablName, table%table_io%nbPara, table%table_io%paraName,&
                 vali, valr, [c16bid], k8bid, 0)
 !
 end subroutine

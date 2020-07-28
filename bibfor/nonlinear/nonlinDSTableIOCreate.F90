@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine nonlinDSTableIOCreate(result, table_typez, tableio)
+subroutine nonlinDSTableIOCreate(tableio)
 !
 use NonLin_Datastructure_type
 !
@@ -26,15 +26,11 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/assert.h"
 #include "asterfort/jeexin.h"
-#include "asterfort/ltcrsd.h"
 #include "asterfort/exisd.h"
-#include "asterfort/ltnotb.h"
 #include "asterfort/tbcrsd.h"
 #include "asterfort/tbajpa.h"
 !
-character(len=8), intent(in) :: result
-character(len=*), intent(in) :: table_typez
-type(NL_DS_TableIO), intent(inout) :: tableio
+type(NL_DS_TableIO), intent(in) :: tableio
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -44,44 +40,30 @@ type(NL_DS_TableIO), intent(inout) :: tableio
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  result           : name of results datastructure
-! In  table_type       : type of table
-! IO  tableio          : table in output datastructure
+! In  tableio          : table in output datastructure
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: iret
-    character(len=19) :: table_name
-    character(len=24) :: table_type
+    character(len=8) :: resultName
+    character(len=24) :: tablName
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    table_name = ' '
-    table_type = table_typez
+    tablName   = tableio%tablName
+    resultName = tableio%resultName
 !
-! - Create list of tables if necessary
+! - Access to list of tables
 !  
-    call jeexin(result//'           .LTNT', iret)
-    if (iret .eq. 0) then
-        call ltcrsd(result, 'G')
-    endif
-!
-! - Get name of table
-! 
-    call ltnotb(result, table_type, table_name)
+    call jeexin(resultName//'           .LTNT', iret)
+    ASSERT(iret .gt. 0)
 !
 ! - Create table if necessary
 !
-    call exisd('TABLE', table_name, iret)
+    call exisd('TABLE', tablName, iret)
     if (iret .eq. 0) then
-        call tbcrsd(table_name, 'G')
-        call tbajpa(table_name, tableio%nb_para, tableio%list_para, tableio%type_para)
+        call tbcrsd(tablName, 'G')
+        call tbajpa(tablName, tableio%nbPara, tableio%paraName, tableio%paraType)
     endif
-!
-! - Set table parameters
-!
-    tableio%result     = result
-    tableio%table_name = table_name
-    tableio%table_type = table_type
 !
 end subroutine

@@ -44,15 +44,15 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=19) :: tabl_name
+    character(len=24) :: tablName
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    tabl_name = ' '
-    call romTableCreate(result, tabl_name)
+    tablName = ' '
+    call romTableCreate(result, tablName)
 !
 ! - Save name of table
 !
-    ds_algorom%tabl_name = tabl_name
+    ds_algorom%tabl_name = tablName
 !
 end subroutine

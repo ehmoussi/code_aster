@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ type(NL_DS_TableIO), intent(inout) :: tableio
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    AS_DEALLOCATE(vk24 = tableio%list_para)
-    AS_DEALLOCATE(vk8 = tableio%type_para)
+    AS_DEALLOCATE(vk24 = tableio%paraName)
+    AS_DEALLOCATE(vk8 = tableio%paraType)
 !
 end subroutine

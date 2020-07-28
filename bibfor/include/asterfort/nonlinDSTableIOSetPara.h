@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@
 interface
     subroutine nonlinDSTableIOSetPara(table_  ,&
                                       tableio_,&
-                                      nb_para_, list_para_, type_para_)
+                                      nbPara_, paraName_, paraType_)
         use NonLin_Datastructure_type
         type(NL_DS_Table), optional, intent(inout) :: table_
         type(NL_DS_TableIO), optional, intent(inout) :: tableio_
-        integer, optional :: nb_para_
-        character(len=24), optional :: list_para_(:)
-        character(len=8), optional :: type_para_(:)
+        integer, optional :: nbPara_
+        character(len=24), optional :: paraName_(:)
+        character(len=8), optional :: paraType_(:)
     end subroutine nonlinDSTableIOSetPara
 end interface

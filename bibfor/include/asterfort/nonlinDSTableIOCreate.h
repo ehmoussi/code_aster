@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,10 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine nonlinDSTableIOCreate(result, table_typez, tableio)
+    subroutine nonlinDSTableIOCreate(tableio)
         use NonLin_Datastructure_type
-        character(len=8), intent(in) :: result
-        character(len=*), intent(in) :: table_typez
-        type(NL_DS_TableIO), intent(inout) :: tableio
+        type(NL_DS_TableIO), intent(in) :: tableio
     end subroutine nonlinDSTableIOCreate
 end interface

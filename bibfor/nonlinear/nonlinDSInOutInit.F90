@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/nonlinDSTableIOSetPara.h"
+#include "asterfort/nonlinDSTableIOGetName.h"
 !
 character(len=4), intent(in) :: phenom
 type(NL_DS_InOut), intent(inout) :: ds_inout
@@ -44,20 +45,29 @@ type(NL_DS_InOut), intent(inout) :: ds_inout
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, parameter :: nb_para = 2
-    character(len=24), parameter :: list_para(nb_para) = (/'NUME_REUSE','INST      '/)
-    character(len=8),  parameter :: type_para(nb_para) = (/'I','R'/)
+    integer, parameter :: nbPara = 2
+    character(len=24), parameter :: paraName(nbPara) = (/'NUME_REUSE','INST      '/)
+    character(len=8),  parameter :: paraType(nbPara) = (/'I','R'/)
 !
 ! --------------------------------------------------------------------------------------------------
 !
     if ((phenom.eq.'MECA') .or. (phenom.eq.'VIBR')) then
 ! ----- Create list of parameters
-        call nonlinDSTableIOSetPara(tableio_   = ds_inout%table_io,&
-                                    nb_para_   = nb_para,&
-                                    list_para_ = list_para,&
-                                    type_para_ = type_para)
+        call nonlinDSTableIOSetPara(tableio_  = ds_inout%table_io,&
+                                    nbPara_   = nbPara,&
+                                    paraName_ = paraName,&
+                                    paraType_ = paraType)
+
+! ----- Set other parameters
+        ds_inout%table_io%resultName   = ds_inout%result
+        ds_inout%table_io%tablSymbName = 'PARA_CALC'
+
+! ----- Get name of table in results datastructure
+        call nonlinDSTableIOGetName(ds_inout%table_io)
+
 ! ----- Create table in results datastructure
-        call nonlinDSTableIOCreate(ds_inout%result, 'PARA_CALC', ds_inout%table_io)  
+        call nonlinDSTableIOCreate(ds_inout%table_io)
+
     else
         ASSERT(ASTER_FALSE)
     endif

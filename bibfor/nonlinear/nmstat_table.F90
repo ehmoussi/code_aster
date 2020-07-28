@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -92,7 +92,7 @@ type(NL_DS_Measure), intent(in) :: ds_measure
 !
 ! - Add line in table
 !
-    call tbajli(table%table_io%table_name, table%table_io%nb_para, table%table_io%list_para,&
+    call tbajli(table%table_io%tablName, table%table_io%nbPara, table%table_io%paraName,&
                 vali, valr, [c16bid], k8bid, 0)
 !
 end subroutine
