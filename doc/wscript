@@ -20,7 +20,7 @@
 import os.path as osp
 import sys
 
-from waflib import Errors, Logs
+from waflib import Configure, Errors, Logs
 
 """
 Build code_aster documentation using Sphinx.
@@ -45,6 +45,7 @@ def configure(self):
         self.find_program('dot', var='DOT')
         self.find_program('convert', var='CONVERT')
         self.find_program("sphinx-build", var="SPHINX_BUILD")
+        self.check_sphinx()
         self.env.SPHINX_ARGS = ['-W']
     except Errors.ConfigurationError:
         if opts.enable_doc == True:
@@ -52,6 +53,19 @@ def configure(self):
     else:
         self.env.BUILD_DOC = True
 
+@Configure.conf
+def check_sphinx(self):
+    """Check if sphinx-build is callable in the current environment.
+    """
+    self.start_msg('Checking for sphinx version')
+    cmd = ['python3'] + self.env.SPHINX_BUILD + ['--version']
+    try:
+        res = self.cmd_and_log(cmd)
+    except Errors.WafError:
+        del self.env['SPHINX_BUILD']
+        self.end_msg("no, 'sphinx-build' disabled", "YELLOW")
+        raise Errors.ConfigurationError
+    self.end_msg(res.strip())
 
 def _setup_doc(self):
     self.path.make_node('_static').mkdir()
