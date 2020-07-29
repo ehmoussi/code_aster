@@ -37,7 +37,8 @@ implicit none
 integer :: nuord
 character(len=8) :: result
 character(len=19) :: lischa
-character(len=24) :: modele, mateco, carele, mater
+character(len=24):: modele, mateco, carele
+character(len=*), intent(out) :: mater
 !
 ! ----------------------------------------------------------------------
 !

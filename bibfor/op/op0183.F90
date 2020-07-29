@@ -81,7 +81,7 @@ implicit none
     character(len=16) :: compex
     character(len=19) :: resuco, knum, ligrel, resuc1, chdep2
     character(len=19), parameter :: list_load = '&&OP0183.LIST_LOAD'
-    character(len=24) :: model, mater, caraElem, chamno, mateco
+    character(len=24) :: model, caraElem, chamno, mateco
     character(len=24) :: nume, vafono, sigma, chdepl, k24bid
     character(len=24) :: compor, chvive, chacve, raide
     character(len=24), parameter :: vefnod = '&&OP0183.VEFNOD'
@@ -238,7 +238,7 @@ implicit none
             time=zr(iad)
         endif
 !
-        call vrcins(model, mater, caraElem, time, chvarc(1:19),&
+        call vrcins(model, materi, caraElem, time, chvarc(1:19),&
                     codret)
 !
 !       --- CALCUL DES VECTEURS ELEMENTAIRES ---
@@ -286,7 +286,7 @@ implicit none
         end do
 !
         call rsnoch(resuc1, 'DEPL', iordr)
-        call nmdome(model, mater, mateco, caraElem, list_load, resuc1(1:8),&
+        call nmdome(model, materi, mateco, caraElem, list_load, resuc1(1:8),&
                     iordr)
 !
         call detrsd('CHAMP_GD', '&&'//nompro//'.SIEF')
