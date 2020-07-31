@@ -56,9 +56,7 @@ avec deux ancrages actifs, il est nécessaire de définir les noeuds d'ancrage �
 GROUP_NO_ANCRAGE (et non NOEUD_ANCRAGE) dans DEFI_CABLE_BP.
 """),
 
-    6: _("""
-Erreur de mise en donnée
-"""),
+    6: _("""La déformation %(k1)s n'est pas disponible pour l'élément CABLE_GAINE"""),
     
     7: _("""
 Pour modéliser la relaxation des câblesavec MODI_CABLE_ETCC, vous devez sélectionner TYPE_RELAX='SANS'.      
@@ -124,5 +122,19 @@ Les coefficients de frottement considérés sont ceux de la loi CABLE_GAINE_FROT
  la carte des caractéristiques géométriques des éléments de barre de section générale n existe pas. il faut préalablement affecter ces caractéristiques en utilisant la commande <AFFE_CARA_ELEM>
 """),
 
-    22: _("""La déformation %(k1)s n'est pas disponible pour l'élément CABLE_GAINE"""),
+    22 : _("""
+ mot-clé <DEFI_CABLE>, aucune câble ne semble défini : vérifier la table fournie
+"""), 
+
+    23 : _("""
+ mot-clé <DEFI_CABLE>, la table fournie dans TABL_CABLE n'est pas correcte : vérifier la présence des 3 colonnes :  GROUP_MA, GROUP_NO1 et GROUP_NO2
+"""),  
+
+   24 : _("""
+ mot-clé <DEFI_CABLE>, la table fournie dans TABL_CABLE contient %(k1)s câbles
+"""),
+
+    25: _("""
+Erreur de mise en donnée
+"""),
 }

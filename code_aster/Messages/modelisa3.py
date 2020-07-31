@@ -154,20 +154,6 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
-    38: _("""
- Le concept issu de DEFI_CABLE_BP donné en entrée de AFFE_CHAR_MECA/RELA_CINE_BP
- a son mot-clé ADHERENT égal à 'NON'.
- Il est interdit de renseigner SIGM_BPEL = 'OUI' dans ce cas.
-"""),
-
-    39: _("""
- Cas ADHERENT = 'NON' :
- Attention le profil de tension calculé dans DEFI_CABLE_BP ne sera pas utilisé si vous poursuivez le calcul avec CALC_PRECONT.
- Les paramètres des lois BPEL_**** ou ETCC_**** ne sont donc pas pris en compte lors de la mise en tension.
- Les coefficients de frottement considérés sont ceux de la loi CABLE_GAINE_FROT.
-
-"""),
-
     44: _("""
  Erreur utilisateur dans CREA_MAILLAGE / LINE_QUAD :
   Vous avez demandé de transformer des mailles linéaires en mailles quadratiques.

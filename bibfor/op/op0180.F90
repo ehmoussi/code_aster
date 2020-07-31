@@ -129,8 +129,8 @@ subroutine op0180()
                           'TENSION                 ',&
                           'RECUL_ANCRAGE           ',&
                           'ADHERENT                ',&
-                          'TYPE_MAILLE             ',&
                           'ANALYSE                 ',&
+                          'TYPE_MAILLE             ',&
                           'SENS                    '/
 !
 !-------------------   DEBUT DU CODE EXECUTABLE    ---------------------
@@ -157,7 +157,6 @@ subroutine op0180()
     valr(2)=delta
     valk(7)= adher
     valk(8)= analy
-!
     if (adher .eq. 'NON') then
         call utmess('I', 'CABLE0_13')
     endif
@@ -444,7 +443,7 @@ subroutine op0180()
         else
             typ_ma = 'SEG2'
         endif
-        call tbajli(nomg19, 2, nompa2(10:11), [sens], [rbid],&
+        call tbajli(nomg19, 2, nompa2(11:12), [sens], [rbid],&
                     [cbid], [typ_ma], icabl)
 !
 ! 4.8.2  RECUPERATION DES CARACTERISTIQUES ELEMENTAIRES DU CABLE

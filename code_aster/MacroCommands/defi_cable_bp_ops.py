@@ -50,18 +50,30 @@ from .Utils.defi_cable_op import DEFI_CABLE_OP
 #  - INFO               1 / 2
 #
 # ===========================================================================
-
+def verif_table(tabin, analy):
+    """ verification que l'on a le bon nombre de colonnes et les bons noms """
+   
+    nbcab=len(tabin)
+    if  nbcab  < 1:
+        UTMESS('F', 'CABLE0_22')
+    for nom_para in ('GROUP_MA', 'GROUP_NO1','GROUP_NO2'):
+        if not nom_para in tabin.para:  
+            UTMESS('F', 'CABLE0_23')     
+    UTMESS('I', 'CABLE0_24', vali=nbcab)
+    return nbcab
+        
+        
 
 def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
-                      DEFI_CABLE, MODI_CABLE_ETCC,MODI_CABLE_RUPT,
                       ADHERENT, TYPE_ANCRAGE, TENSION_INIT,
-                      RECUL_ANCRAGE, TYPE_RELAX, TITRE, INFO, CONE=None,
+                      RECUL_ANCRAGE, TYPE_RELAX, INFO, CONE=None,
                       **args):
     """
        Ecriture de la macro DEFI_CABLE_BP
     """
     motscles = {}
-
+    args = _F(args)
+    
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "CONE"
 
     if CONE:
@@ -92,36 +104,45 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "DEFI_CABLE"
     dDEFI_CABLE = []
-    if DEFI_CABLE: 
-      __ANALY='DEFI'
-      print ('defi_cable_op',__ANALY)
-      for j in DEFI_CABLE:
-          dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
+    if args['DEFI_CABLE'] is not None: 
+      ANALY='DEFI'
+      for j in args['DEFI_CABLE']:
+          dDEFI_CABLE.append(j)
           for i in list(dDEFI_CABLE[-1].keys()):
               if dDEFI_CABLE[-1][i] is None:
                   del dDEFI_CABLE[-1][i]
-    elif MODI_CABLE_ETCC:
-      __ANALY='ETCC'
-      print ('defi_cable_op',__ANALY)
+          if 'TABL_CABLE' in j:
+            __TAB = j['TABL_CABLE'].EXTR_TABLE()
+            nbcab=verif_table(__TAB, ANALY)
+            for ic in range(nbcab):
+              __gma= __TAB.GROUP_MA.values()[ic]
+              __gno1=__TAB.GROUP_NO1.values()[ic]
+              __gno2=__TAB.GROUP_NO2.values()[ic]
+#              print(__gma,__gno1,__gno2)
+              dDEFI_CABLE.append(_F(GROUP_MA=__gma,
+                                    GROUP_NO_ANCRAGE=(__gno1,__gno2)
+                                                 ))              
+          
+    elif args['MODI_CABLE_ETCC'] is not None:
+      ANALY='ETCC'
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "MODI_CABLE_ETCC"
-      for j in MODI_CABLE_ETCC:
-          dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
+      for j in args['MODI_CABLE_ETCC']:
+          dDEFI_CABLE.append(j)
           for i in list(dDEFI_CABLE[-1].keys()):
               if dDEFI_CABLE[-1][i] is None:
                   del dDEFI_CABLE[-1][i]
 
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "MODI_CABLE_RUPT"
-    elif MODI_CABLE_RUPT:
-      __ANALY='RUPT'
-      print ('defi_cable_op',__ANALY)
-      for j in MODI_CABLE_RUPT:
-          dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
+    elif args['MODI_CABLE_RUPT'] is not None:
+      ANALY='RUPT'
+      for j in args['MODI_CABLE_RUPT']:
+          dDEFI_CABLE.append(j)
           for i in list(dDEFI_CABLE[-1].keys()):
               if dDEFI_CABLE[-1][i] is None:
                   del dDEFI_CABLE[-1][i]
 
     else:
-       UTMESS('F', 'CABLE0_6')
+       UTMESS('F', 'CABLE0_25')
 
     # BOUCLE SUR LES FACTEURS DU MOT-CLE "DEFI_CABLE" et "MODI_CABLE"
     motscles['DEFI_CABLE'] = []
@@ -294,20 +315,20 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 # FIN BOUCLE sur i in DEFI_CABLE
     # LANCEMENT DE DEFI_CABLE_BP
 #    TRAITEMENT DE LA RELAXATION
-    if TYPE_RELAX == 'ETCC_DIRECT' or __ANALY == 'ETCC':
+    if TYPE_RELAX == 'ETCC_DIRECT' or ANALY == 'ETCC':
         motscles['NBH_RELAX'] = args['NBH_RELAX']
 
     if TYPE_RELAX == 'BPEL':
         motscles['R_J'] = args['R_J']
 
+#  Traitement mot-cle facultatif
+    tit=args.get('TITRE')
+    if tit is not None:
+        motscles['TITRE'] = tit
 #  if PERT_ELAS=='OUI':
 #    motscles['ESP_CABLE']=args['ESP_CABLE'] ;
 #    motscles['EP_BETON']=args['EP_BETON'] ;
 
-#    dRelaxation=RELAXATION[0].cree_dict_valeurs(RELAXATION[0].mc_liste)
-#    for i in dRelaxation.keys():
-#      if dRelaxation[i] is None : del dRelaxation[i]
-#  if TYPE_RELAX!='SANS':
     __DC = DEFI_CABLE_OP(MODELE=MODELE,
                          CHAM_MATER=CHAM_MATER,
                          CARA_ELEM=CARA_ELEM,
@@ -317,7 +338,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
                          TENSION_INIT=TENSION_INIT,
                          RECUL_ANCRAGE=RECUL_ANCRAGE,
                          TYPE_RELAX=TYPE_RELAX,
-                         ANALYSE=__ANALY,
+                         ANALYSE=ANALY,
                          INFO=INFO,
                          **motscles
                          )

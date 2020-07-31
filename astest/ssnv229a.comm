@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -122,7 +122,9 @@ mat=AFFE_MATERIAU(MAILLAGE=mail1,
                   AFFE=( _F(GROUP_MA='FUT', MATER=bet,),
                          _F(GROUP_MA='CABLES', MATER=aci_h,),),); 
 
-
+TT = LIRE_TABLE(FORMAT = 'TABLEAU',
+                UNITE=38)
+IMPR_TABLE(TABLE=TT)
 ########################################################################
 ################################## DEFINITION DES CABLES ###############
 #########################################################################
@@ -137,6 +139,11 @@ cab_odd0=DEFI_CABLE_BP(MODELE=mod,CHAM_MATER=mat,CARA_ELEM=cara,GROUP_MA_BETON='
                      _F(GROUP_MA='CAB9', GROUP_NO_ANCRAGE=('CAB9_I','CAB9_F',),),),
                       TYPE_ANCRAGE=('ACTIF','ACTIF'), 
                       TENSION_INIT=T0,RECUL_ANCRAGE=g_cab,);
+                      
+cab_oddb=DEFI_CABLE_BP(MODELE=mod,CHAM_MATER=mat,CARA_ELEM=cara,GROUP_MA_BETON='FUT',
+               DEFI_CABLE=_F(TABL_CABLE=TT),
+                      TYPE_ANCRAGE=('ACTIF','ACTIF'), 
+                      TENSION_INIT=T0,RECUL_ANCRAGE=g_cab,);                      
 
 # CABLES PAIRS : AVEC RELAXATION DES ACIERS
 cab_eve0=DEFI_CABLE_BP(MODELE=mod,CHAM_MATER=mat,CARA_ELEM=cara,GROUP_MA_BETON='FUT', 
