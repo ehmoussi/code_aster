@@ -216,7 +216,7 @@ RE_EXCEPT = re.compile("<AsterError>")
 RE_ERRS = re.compile("^ *. *<S>", re.M)
 RE_ERRF = re.compile("^ *. *<F>", re.M)
 RE_SYNTAX = re.compile("SyntaxError")
-RE_ELAPS = re.compile("TOTAL_JOB +" + r": +([0-9\.]+)" * 4)
+RE_ELAPS = re.compile("TOTAL_JOB" + r" +: +([0-9\.]+)" * 4, re.M)
 
 def get_status(exitcode, output, test=False):
     """Return the diagnostic after a Code_Aster execution.
