@@ -140,6 +140,22 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
     oldfon = '&&GCHARG.FONCI'
     if (nbchar .gt. 0) call wkvect(oldfon, 'V V L', nbchar, jfonci)
 !
+!
+! - UNE DES CHARGES EST-ELLE UNE FONCTION ? -> REMPLISSAGE DE LFONC
+!
+    do 20 ichar = 1, nbchar
+! ----- NOM DE LA CHARGE
+        call lislch(lischa, ichar, charge)
+! ----- TYPE DE LA CHARGE (REELLE OU FONCTION)
+        call lisltc(lischa, ichar, typech)
+        if (typech(1:4) .eq. 'FONC') then
+            lfonc = .true.
+            goto 20
+        endif
+20  continue
+!
+! ----- BOUCLE SUR LES CHARGES
+!
     do 10 ichar = 1, nbchar
 !
 ! ----- NOM DE LA CHARGE
@@ -154,7 +170,6 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 !
         call lisltc(lischa, ichar, typech)
         if (typech(1:4) .eq. 'FONC') then
-            lfonc = .true.
             lfchar = .true.
         else
             lfchar = .false.
@@ -234,21 +249,35 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
 !
                     call gcsele(motcle, chvolu, ch1d2d, ch2d3d, chpres,&
                                 chepsi, chpesa, chrota, lvolu, l1d2d,&
-                                l2d3d, lpres, lepsi, lpesa, lrota,&
+                                l2d3d, lpres, lepsi, lpesa, lrota,lfchar,&
                                 lfvolu, lf1d2d, lf2d3d, lfpres, lfepsi,&
-                                lfpesa, lfrota, carteo, lformu, lpchar,&
+                                lfpesa, lfrota, carteo, lpchar,&
                                 lccomb)
 !
 ! ----------------- PREPARATION NOM DE LA FONCTION RESULTANTE
 !
                     call gcfonc(ichar, iord, cartei, lfchar, lfmult,&
                                 newfct, lformu)
+
+! ----------------- CAS PARTICULIER (CARACTERE GENERIQUE A D'AUTRE CAS A DETERMINER):
+! ----------------- LE CHARGEMENT DE TYPE PRES_REP DOIT ETRE UNE FONCTION S'IL EXITE UN
+! ----------------- AUTRE CAHRGEMENT FONCTION
+! ----------------- DANS LE CAS CONTRAIRE, ON CREE UN CHAMPS FONCTION UNIFORME
+                    if(motcle.eq.'PRES_REP') then
+                        if(lfonc .and. (.not.lfpres))then
+                            call jeveuo(cartei//'.VALE', 'L', iret)
+                            call mepres(modele, cartei, lfonc, zr(iret), 0.0)
+                            lfpres=.true.
+                            lfchar=.true.
+                        endif
+                    endif
 !
 ! ----------------- CONSTRUIT LA CARTE A PARTIR DU CHARGEMENT
 !
                     call gcchar(ichar, iprec, time, carteo, lfchar,&
                                 lpchar, lformu, lfmult, lccomb, cartei,&
                                 nomfct, newfct, oldfon)
+
 !
  12                 continue
                 endif
@@ -268,8 +297,9 @@ subroutine gcharg(modele, lischa, chvolu, ch1d2d, ch2d3d,&
         call mefor0(modele, ch2d3d, lfonc)
     endif
     if (.not.lpres) then
-        call mepres(modele, chpres, lfonc)
+        call mepres(modele, chpres, lfonc, 0.0, 0.0)
     endif
+   
 !
     call jedetr(oldfon)
     call jedema()

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -18,9 +18,9 @@
 
 subroutine gcsele(motcle, chvolu, ch1d2d, ch2d3d, chpres,&
                   chepsi, chpesa, chrota, lvolu, l1d2d,&
-                  l2d3d, lpres, lepsi, lpesa, lrota,&
+                  l2d3d, lpres, lepsi, lpesa, lrota, lfchar,&
                   lfvolu, lf1d2d, lf2d3d, lfpres, lfepsi,&
-                  lfpesa, lfrota, carte0, lformu, lpchar,&
+                  lfpesa, lfrota, carte0, lpchar,&
                   lccomb)
 !
     implicit none
@@ -32,10 +32,10 @@ subroutine gcsele(motcle, chvolu, ch1d2d, ch2d3d, chpres,&
 !
     character(len=16) :: motcle
     character(len=19) :: carte0
-    aster_logical :: lformu, lpchar, lccomb
+    aster_logical :: lpchar, lccomb
     character(len=19) :: chvolu, ch1d2d, ch2d3d, chpres
     character(len=19) :: chepsi, chpesa, chrota
-    aster_logical :: lvolu, l1d2d, l2d3d, lpres
+    aster_logical :: lvolu, l1d2d, l2d3d, lpres, lfchar
     aster_logical :: lepsi, lpesa, lrota
     aster_logical :: lfvolu, lf1d2d, lf2d3d, lfpres
     aster_logical :: lfepsi, lfpesa, lfrota
@@ -57,13 +57,14 @@ subroutine gcsele(motcle, chvolu, ch1d2d, ch2d3d, chpres,&
 ! I/O lepsi  : .TRUE.  SI ON AU MOINS UNE CHARGE EPSI_INIT
 ! I/O lpesa  : .TRUE.  SI ON AU MOINS UNE CHARGE PESANTEUR
 ! I/O lrota  : .TRUE.  SI ON AU MOINS UNE CHARGE ROTATION
-! IN  lfvolu : .TRUE.  SI CHARGE FORCE_INTERNE DE TYPE 'FONCTION'
-! IN  lf1d2d : .TRUE.  SI CHARGE FORCE_CONTOUR DE TYPE 'FONCTION'
-! IN  lf2d3d : .TRUE.  SI CHARGE FORCE_FACE DE TYPE 'FONCTION'
-! IN  lfpres : .TRUE.  SI CHARGE PRES_REP DE TYPE 'FONCTION'
-! IN  lfepsi : .TRUE.  SI CHARGE EPSI_INIT DE TYPE 'FONCTION'
-! IN  lfpesa : .TRUE.  SI CHARGE PESANTEUR DE TYPE 'FONCTION'
-! IN  lfrota : .TRUE.  SI CHARGE ROTATION DE TYPE 'FONCTION'
+! IN  lfvolu : .TRUE.  SI CHARGE DE TYPE 'FONCTION'
+! OUT  lfvolu : .TRUE.  SI CHARGE FORCE_INTERNE DE TYPE 'FONCTION'
+! OUT  lf1d2d : .TRUE.  SI CHARGE FORCE_CONTOUR DE TYPE 'FONCTION'
+! OUT  lf2d3d : .TRUE.  SI CHARGE FORCE_FACE DE TYPE 'FONCTION'
+! OUT  lfpres : .TRUE.  SI CHARGE PRES_REP DE TYPE 'FONCTION'
+! OUT  lfepsi : .TRUE.  SI CHARGE EPSI_INIT DE TYPE 'FONCTION'
+! OUT  lfpesa : .TRUE.  SI CHARGE PESANTEUR DE TYPE 'FONCTION'
+! OUT  lfrota : .TRUE.  SI CHARGE ROTATION DE TYPE 'FONCTION'
 ! IN  CHVOLU : CARTE POUR FORCE_INTERNE
 ! IN  ch1d2d : CARTE POUR FORCE_CONTOUR
 ! IN  ch2d3d : CARTE POUR FORCE_FACE
@@ -83,43 +84,43 @@ subroutine gcsele(motcle, chvolu, ch1d2d, ch2d3d, chpres,&
         carte0 = chvolu
         if (.not.lvolu) lpchar = .true.
         lvolu = .true.
-        lformu = lfvolu
+        lfvolu = lfchar
         lccomb = .true.
     else if (motcle.eq.'FORCE_CONTOUR') then
         carte0 = ch1d2d
         if (.not.l1d2d) lpchar = .true.
         l1d2d = .true.
-        lformu = lf1d2d
+        lf1d2d = lfchar
         lccomb = .true.
     else if (motcle.eq.'FORCE_FACE') then
         carte0 = ch2d3d
         if (.not.l2d3d) lpchar = .true.
         l2d3d = .true.
-        lformu = lf2d3d
+        lf2d3d = lfchar
         lccomb = .true.
     else if (motcle.eq.'PRES_REP') then
         carte0 = chpres
         if (.not.lpres) lpchar = .true.
         lpres = .true.
-        lformu = lfpres
+        lfpres = lfchar
         lccomb = .true.
     else if (motcle.eq.'EPSI_INIT') then
         carte0 = chepsi
         if (.not.lepsi) lpchar = .true.
         lepsi = .true.
-        lformu = lfepsi
+        lfepsi = lfchar
         lccomb = .false.
     else if (motcle.eq.'PESANTEUR') then
         carte0 = chpesa
         if (.not.lpesa) lpchar = .true.
         lpesa = .true.
-        lformu = lfpesa
+        lfpesa = lfchar
         lccomb = .false.
     else if (motcle.eq.'ROTATION') then
         carte0 = chrota
         if (.not.lrota) lpchar = .true.
         lrota = .true.
-        lformu = lfrota
+        lfrota = lfchar
         lccomb = .false.
     else
         write(6,*) 'MOT-CLEF:',motcle

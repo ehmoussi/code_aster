@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@
 #include "asterf_types.h"
 !
 interface
-    subroutine mepres(nomo, chpres, fonc)
+    subroutine mepres(nomo, chpres, fonc, pres, cisa)
         character(len=8) :: nomo
         character(len=*) :: chpres
         aster_logical :: fonc
+        real(kind=8) :: pres, cisa
     end subroutine mepres
 end interface

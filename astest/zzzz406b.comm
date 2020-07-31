@@ -1,0 +1,187 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),DEBUG=_F(SDVERI='OUI'))
+
+# MODELIDATION B : FEM 2D SANS SYMETRIE
+
+# Ce test correspond au test forma05a, sauf que l'on y decoupe le 
+# chargement issu de AFFE_CHAR_MECA en deux chargements fournis par
+# AFFE_CHAR_MECA et AFFE_CHAR_MECA_F. On définit dans AFFE_CHAR_MECA_F 
+# un chargement constant de telle sorte que la combinaison de ces deux
+# charges soit identique à la charge unique de forma05b.
+
+MA=DEFI_MATERIAU(ELAS=_F(E=210000e6,
+                         NU=0.3))
+
+MAILLIN=LIRE_MAILLAGE(FORMAT='MED')
+
+
+MAILLIN=MODI_MAILLAGE(reuse=MAILLIN,
+                   MAILLAGE=MAILLIN,
+                   ORIE_PEAU_2D=_F(GROUP_MA=('HAUT','BAS','LEV_SUP','LEV_INF')))
+
+# Passage en quadratique
+# PREF_NOEUD sert a definir le prefix du nom des noeuds milieux. Par defaut 
+# c'est NS. Pour les gros maillages, il est preferable de mettre un prefix
+# en une seule lettre. Z est libre donc on peut l'utiliser.
+MAIL=CREA_MAILLAGE(MAILLAGE=MAILLIN,
+                   LINE_QUAD=_F(TOUT='OUI',
+                                PREF_NOEUD='Z'))
+                                  
+# Barsoum
+MAIL=MODI_MAILLAGE(reuse=MAIL,
+                   MAILLAGE=MAIL,
+                   MODI_MAILLE=_F(OPTION='NOEUD_QUART',
+                                  GROUP_NO_FOND='FRONT'))
+
+MODE=AFFE_MODELE(MAILLAGE=MAIL,
+                 AFFE=_F(TOUT='OUI',
+                         PHENOMENE='MECANIQUE',
+                         MODELISATION= 'D_PLAN'))
+                         
+MATE=AFFE_MATERIAU(MAILLAGE=MAIL,
+                   AFFE=_F(TOUT='OUI',
+                           MATER=MA))
+
+#CHAR DECOUPE EN CHAR1 et CHAR2
+
+ZERO=DEFI_CONSTANTE(VALE=0.0)
+
+CHAR1=AFFE_CHAR_MECA_F(MODELE=MODE,
+                    DDL_IMPO=(_F(GROUP_NO='HAUT_G',DY=ZERO,DX=ZERO),
+                              _F(GROUP_NO='HAUT_D',DY=ZERO),),
+                    )
+                    
+CHAR2=AFFE_CHAR_MECA(MODELE=MODE,
+                    PRES_REP=_F(GROUP_MA=('HAUT','BAS'),PRES=-10e6),
+                    )
+
+RESU=MECA_STATIQUE(MODELE=MODE,
+                   CHAM_MATER=MATE,
+                   EXCIT=(_F(CHARGE=CHAR1),
+                          _F(CHARGE=CHAR2),
+                          )
+                    )
+
+RESU=CALC_CHAMP(reuse=RESU,RESULTAT=RESU,CRITERES=('SIEQ_ELNO'),CONTRAINTE=('SIGM_ELNO'))
+
+
+RESU=CALC_CHAMP(reuse =RESU,
+             RESULTAT=RESU,
+             CONTRAINTE='SIGM_NOEU',CRITERES='SIEQ_NOEU')
+
+IMPR_RESU(FORMAT='MED',
+          UNITE=80,
+          RESU=_F(MAILLAGE=MAIL,
+                  RESULTAT=RESU,
+                  NOM_CHAM=('SIGM_NOEU','SIEQ_NOEU','DEPL')))
+
+#----------------------------------------------------------------------------------
+#                        fin du calcul mecanique
+#----------------------------------------------------------------------------------
+
+# post-traitements a completer
+FISS=DEFI_FOND_FISS(MAILLAGE=MAIL,
+                    SYME='NON',
+                    FOND_FISS=_F(GROUP_NO='FRONT'),
+                    LEVRE_SUP=_F(GROUP_MA='LEV_SUP'),
+                    LEVRE_INF=_F(GROUP_MA='LEV_INF'),)
+
+RSUP=0.005 * 5
+RINF=0.005 * 2
+
+
+# CALC_G
+G=CALC_G(OPTION='CALC_G',
+         RESULTAT=RESU,
+         THETA=_F(FOND_FISS=FISS,
+                  R_INF=RINF,
+                  R_SUP=RSUP,
+                  ),
+         )
+
+IMPR_TABLE(TABLE=G)
+
+GK=CALC_G(OPTION='CALC_K_G',
+          RESULTAT=RESU,
+          THETA=_F(FOND_FISS=FISS,
+                   R_INF=RINF,
+                   R_SUP=RSUP,
+                   ),
+          )
+
+IMPR_TABLE(TABLE=GK),
+
+
+# POST_K1_K2_K3
+K=POST_K1_K2_K3(RESULTAT=RESU,
+                FOND_FISS=FISS,)
+
+IMPR_TABLE(TABLE=K )
+
+# tests sur G
+Gref = 192
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=3.0000000000000001E-3,
+           VALE_CALC=192.511256986,
+           VALE_REFE=192,
+           NOM_PARA='G',
+           TABLE=G,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=3.0000000000000001E-3,
+           VALE_CALC=192.511256986,
+           VALE_REFE=192,
+           NOM_PARA='G',
+           TABLE=GK,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=3.0000000000000001E-3,
+           VALE_CALC=192.527315126,
+           VALE_REFE=192,
+           NOM_PARA='G_IRWIN',
+           TABLE=GK,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=0.012,
+           VALE_CALC=193.008786982,
+           VALE_REFE=192,
+           NOM_PARA='G',
+           TABLE=K,)
+
+# tests sur K1
+K1ref = 6.65e6
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=3.0000000000000001E-3,
+           VALE_CALC=6665536.76861,
+           VALE_REFE=6.650000E6,
+           NOM_PARA='K1',
+           TABLE=GK,)
+
+TEST_TABLE(REFERENCE='ANALYTIQUE',
+           PRECISION=5.0000000000000001E-3,
+           VALE_CALC=6673866.14366,
+           VALE_REFE=6.650000E6,
+           NOM_PARA='K1',
+           TABLE=K,)
+
+FIN()
