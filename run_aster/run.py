@@ -284,8 +284,7 @@ class RunAster:
             ]
         else:
             cmd.extend([">>", TMPMESS, "2>&1"])
-        if idx == 0:
-            cmd.insert(0, "ulimit -c unlimited ;")
+        cmd.insert(0, "ulimit -c unlimited ;")
         return cmd
 
     def _get_status(self, exitcode, last):
