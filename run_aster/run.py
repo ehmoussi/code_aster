@@ -169,7 +169,8 @@ class RunAster:
         elif nbcomm > 1:
             os.makedirs("BASE_PREC", exist_ok=True)
 
-        timeout = self.export.get("time_limit", 0) * 1.25
+        timeout = (self.export.get("time_limit", 86400) * 1.25 *
+                   self.export.get("ncpus", 1))
         status = Status()
         for idx, comm in enumerate(commfiles):
             last = idx + 1 == nbcomm
@@ -193,7 +194,8 @@ class RunAster:
             timeout (float): Remaining time.
         """
         logger.info(f"TITLE Command line #{idx + 1}:")
-        cmd = self._get_cmdline(idx, comm)
+        timeout = int(max(1, timeout))
+        cmd = self._get_cmdline(idx, comm, timeout)
         logger.info(f"    {' '.join(cmd)}")
 
         exitcode = run_command(cmd, timeout, exitcode_file=EXITCODE_FILE)
@@ -265,12 +267,13 @@ class RunAster:
         cmd = ["gdb", "-batch", "-x", tmpf, "-e", python3, "-c", core[0]]
         run_command(cmd)
 
-    def _get_cmdline(self, idx, commfile):
+    def _get_cmdline(self, idx, commfile, timeout):
         """Build the command line.
 
         Arguments:
             idx (int): Index of execution.
             commfile (str): Command file name.
+            timeout (float): Remaining time.
 
         Returns:
             list[str]: List of command line arguments.
@@ -284,7 +287,7 @@ class RunAster:
             ]
         else:
             cmd.extend([">>", TMPMESS, "2>&1"])
-        cmd.insert(0, "ulimit -c unlimited ;")
+        cmd.insert(0, f"ulimit -c unlimited -t {timeout} ;")
         return cmd
 
     def _get_status(self, exitcode, last):
@@ -338,6 +341,8 @@ class RunOnlyEnv(RunAster):
         logger.info(f"    cd {os.getcwd()}")
         logger.info(f"    . {profile}")
         logger.info("    ulimit -c unlimited")
+        timeout = self.export.get("time_limit", 0) * 1.25
+        logger.info(f"    ulimit -t {timeout}")
         return super().execute_study()
 
     def _exec_one(self, comm, idx, last, timeout):
