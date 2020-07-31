@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-subroutine mepres(nomo, chpres, fonc)
+subroutine mepres(nomo, chpres, fonc, pres, cisa)
     implicit none
 !
 #include "asterf_types.h"
@@ -24,12 +24,15 @@ subroutine mepres(nomo, chpres, fonc)
 #include "asterfort/mecact.h"
     character(len=8) :: nomo
     character(len=*) :: chpres
+    real(kind=8) :: pres, cisa
 !
     aster_logical :: fonc
 !
-!    CETTE ROUTINE GENERE UN CHAMP DE PRESSION NUL (CARTE CONSTANTE)
+!    CETTE ROUTINE GENERE UN CHAMP DE PRESSION CONSTANT (CARTE CONSTANTE)
 !     FONC = .TRUE.  FORCE FONCTION
 !     FONC = .FALSE. FORCE REELLE
+!     PRES = COMPOSANTE DE PRESSION  DU CHAMP A GENERER
+!     CISA = COMPOSANTE DE CISAILLEMENT  DU CHAMP A GENERER
 !
 !
     real(kind=8) :: rcmp(2)
@@ -43,8 +46,8 @@ subroutine mepres(nomo, chpres, fonc)
     ligrmo = nomo//'.MODELE    '
     licmp(1) = 'PRES'
     licmp(2) = 'CISA'
-    rcmp(1) = 0.d0
-    rcmp(2) = 0.d0
+    rcmp(1) = pres
+    rcmp(2) = cisa
     if (fonc) then
         nomf(1) = zero
         nomf(2) = zero
