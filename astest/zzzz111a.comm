@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -86,11 +86,11 @@ CABLEPR=DEFI_CABLE_BP(            MODELE=MODELE,
                               GROUP_MA_BETON='VOILE',DEFI_CABLE=(
                                   _F(
                                GROUP_MA = 'CABLE001',
-                               NOEUD_ANCRAGE = ( 'NC001001',  'NC001129', ),),
+                               GROUP_NO_ANCRAGE = ( 'NC001001',  'NC001129', ),),
 #                               TYPE_ANCRAGE = ( 'ACTIF',   'ACTIF',  )),
                                   _F(
                                GROUP_MA = 'CABLE002',
-                               NOEUD_ANCRAGE = ( 'NC002001',  'NC002129', ),),
+                               GROUP_NO_ANCRAGE = ( 'NC002001',  'NC002129', ),),
 #                               TYPE_ANCRAGE = ( 'ACTIF',   'ACTIF',  )),
                                   _F(
                                GROUP_MA = 'CABLE003',
@@ -98,7 +98,7 @@ CABLEPR=DEFI_CABLE_BP(            MODELE=MODELE,
 #                               TYPE_ANCRAGE = ( 'ACTIF',   'ACTIF',  )),
                                   _F(
                                GROUP_MA = 'CABLE004',
-                               NOEUD_ANCRAGE = ( 'NC004001',  'NC004129', ),)),
+                               GROUP_NO_ANCRAGE = ( 'NC004001',  'NC004129', ),)),
 #                               TYPE_ANCRAGE = ( 'ACTIF',   'ACTIF',  ))),
                                TYPE_ANCRAGE = ( 'ACTIF',   'ACTIF',  ),
                                 TENSION_INIT=2.0E+5,
@@ -124,7 +124,7 @@ TEST_RESU(MAILLAGE=(
        _F( REFERENCE='ANALYTIQUE', MAILLAGE=MAILLAGE,
            CARA='NB_GROUP_MA', VALE_REFE_I=5, VALE_CALC_I=5,),
        _F( REFERENCE='ANALYTIQUE', MAILLAGE=MAILLAGE,
-           CARA='NB_GROUP_NO', VALE_REFE_I=520, VALE_CALC_I=520,),
+           CARA='NB_GROUP_NO', VALE_REFE_I=526, VALE_CALC_I=526,),
        _F( REFERENCE='ANALYTIQUE', MAILLAGE=MAILLAGE,
            CARA='NB_NO_GROUP_NO', NOM_GROUP_NO='RCBPNC001001', VALE_REFE_I=6, VALE_CALC_I=6,),
        _F( REFERENCE='ANALYTIQUE', MAILLAGE=MAILLAGE,

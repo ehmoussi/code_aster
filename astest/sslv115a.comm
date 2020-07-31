@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -47,7 +47,7 @@ MAILLAGE = DEFI_GROUP( reuse=MAILLAGE, MAILLAGE=MAILLAGE, INFO=1,
                                    OPTION = 'TUNNEL',
                                    MAILLE = 'toto1',
                                    MAILLE_AXE = ('SG001001','SG001002'),
-                                   GROUP_NO_ORIG = 'GXXXXXX_NC1',
+                                   GROUP_NO_ORIG = 'NC1',
                                    LONGUEUR = 0.75 ,
                                    RAYON = 3. ,
                                  ),
@@ -93,7 +93,7 @@ CHMATER=AFFE_MATERIAU(AFFE=(_F(MATER=BETON,
 
 CABLEPR=DEFI_CABLE_BP(CHAM_MATER=CHMATER,
                       MODELE=MODELE,
-                      DEFI_CABLE=_F(NOEUD_ANCRAGE=('NC001001','NC001005'),
+                      DEFI_CABLE=_F(GROUP_NO_ANCRAGE=('NC1','NC5'),
                                     GROUP_MA='GXXXXXX_CABLE001',),
                       TYPE_ANCRAGE=('ACTIF','ACTIF'),
                       GROUP_MA_BETON='GXXXXXX_VOILE',
@@ -278,7 +278,7 @@ CH2=AFFE_MATERIAU(AFFE=(_F(MATER=BETON,
 
 CAB2=DEFI_CABLE_BP(CHAM_MATER=CH2,
                       MODELE=MO2,
-                      DEFI_CABLE=_F(NOEUD_ANCRAGE=('NC001001','NC001005'),
+                      DEFI_CABLE=_F(GROUP_NO_ANCRAGE=('NC1','NC5'),
                                     GROUP_MA='GXXXXXX_CABLE001',),
                       TYPE_ANCRAGE=('ACTIF','ACTIF'),
                       GROUP_MA_BETON='GXXXXXX_VOILE',

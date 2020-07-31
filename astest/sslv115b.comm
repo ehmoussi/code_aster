@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -66,7 +66,8 @@ CHMATER=AFFE_MATERIAU(AFFE=(_F(MATER=BETON,
 
 CABLEPR=DEFI_CABLE_BP(CHAM_MATER=CHMATER,
                       MODELE=MODELE,
-                      DEFI_CABLE=_F(NOEUD_ANCRAGE=('NC001001','NC001005'),
+                      DEFI_CABLE=_F(GROUP_NO_ANCRAGE=('NC1','NC5'),
+                                   # NOEUD_ANCRAGE=('NC001001','NC001005'),
                                     GROUP_MA='CABLE001',),
                       TYPE_ANCRAGE=('ACTIF','ACTIF'),
                       GROUP_MA_BETON='VOILE',
