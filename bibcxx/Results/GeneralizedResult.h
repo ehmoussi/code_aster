@@ -97,6 +97,8 @@ public:
     bool setGeneralizedDOFNumbering( const GeneralizedDOFNumberingPtr& genDOFNum )
     {
         _genDOFNum = genDOFNum;
+
+        return true;
     };
 
     DOFNumberingPtr getDOFNumbering() const
@@ -107,6 +109,8 @@ public:
     bool setDOFNumbering( const DOFNumberingPtr& DOFNum )
     {
         _DOFNum = DOFNum;
+
+        return true;
     };
 };
 

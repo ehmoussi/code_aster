@@ -52,10 +52,14 @@ class GenericLoadFunction {
     std::string getName() const {
         if ( _generic.type() == typeid( FunctionPtr ) )
             return boost::get< FunctionPtr >( _generic )->getName();
-        if ( _generic.type() == typeid( FormulaPtr ) )
+        else if ( _generic.type() == typeid( FormulaPtr ) )
             return boost::get< FormulaPtr >( _generic )->getName();
-        if ( _generic.type() == typeid( Function2DPtr ) )
+        else if ( _generic.type() == typeid( Function2DPtr ) )
             return boost::get< Function2DPtr >( _generic )->getName();
+        else
+            throw std::runtime_error( "Unknown type" );
+
+        return std::string();
     };
 };
 

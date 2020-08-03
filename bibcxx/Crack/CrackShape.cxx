@@ -125,4 +125,10 @@ std::string CrackShapeClass::getShapeName() const {
         return "DEMI_DROITE";
     else if ( _shape == Shape::Line )
         return "DROITE";
+    else
+    {
+        throw std::runtime_error( "Unknown shape" );
+    }
+
+    return std::string();
 };

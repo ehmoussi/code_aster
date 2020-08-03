@@ -86,7 +86,7 @@ class JeveuxVectorClass : public JeveuxObjectClass, private AllowedJeveuxType< V
         if ( this->size() != 0 )
             this->deallocate();
         this->allocate( _mem, toCopy.size() );
-        for ( int i = 0; i < toCopy.size(); ++i )
+        for ( int i = 0; i < int(toCopy.size()); ++i )
             this->operator[]( i ) = toCopy[i];
         return *this;
     };

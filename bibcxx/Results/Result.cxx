@@ -370,7 +370,7 @@ bool ResultClass::update()
                     if ( curIter2 == _dictOfVectorOfFieldsNodes.end() )
                         _dictOfVectorOfFieldsNodes[nomSymb] = VectorOfFieldsNodes(
                             numberOfSerialNum, FieldOnNodesRealPtr( nullptr ) );
-                    else if ( curIter2->second.size() != numberOfSerialNum ) {
+                    else if ( int(curIter2->second.size()) != numberOfSerialNum ) {
                         curIter2->second.resize( numberOfSerialNum,
                                                  FieldOnNodesRealPtr( nullptr ) );
                     }
@@ -386,7 +386,7 @@ bool ResultClass::update()
                     if ( curIter2 == _dictOfVectorOfFieldsCells.end() )
                         _dictOfVectorOfFieldsCells[nomSymb] = VectorOfFieldsCells(
                             numberOfSerialNum, FieldOnCellsRealPtr( nullptr ) );
-                    else if ( curIter2->second.size() != numberOfSerialNum ) {
+                    else if ( int(curIter2->second.size()) != numberOfSerialNum ) {
                         curIter2->second.resize( numberOfSerialNum,
                                                  FieldOnCellsRealPtr( nullptr ) );
                     }

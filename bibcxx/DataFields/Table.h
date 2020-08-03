@@ -150,7 +150,7 @@ class TableOfFunctionsClass : public TableClass {
      */
     GenericFunctionPtr getFunction( int pos ) const
     {
-        if( pos < _vecOfFunctions.size() )
+        if( pos < int(_vecOfFunctions.size()) )
             return _vecOfFunctions[ pos ];
         return BaseFunctionPtr( nullptr );
     };

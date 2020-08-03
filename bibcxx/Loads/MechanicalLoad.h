@@ -421,7 +421,7 @@ class GenericMechanicalLoadClass : public DataStructure {
         return _mecaLoad._model;
     };
 
-    virtual bool build(){};
+    virtual bool build(){ return false;};
 };
 
 /**

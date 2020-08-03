@@ -52,7 +52,7 @@ ConvergenceState NonLinearControlClass::check( const DiscreteProblemPtr &dProble
     double relativeResNorm = dProblem-> getRelativeResidualNorm( "NORM2" );
     */
     // Store the residual norm
-    if ( nIter < _relResNorm.size() ) {
+    if ( nIter < int(_relResNorm.size()) ) {
         _relResNorm[nIter] = relativeResNorm;
     }
     // Has the linear solver converged?
@@ -77,7 +77,7 @@ void NonLinearControlClass::cleanLog() {
 
 /* Print convergence history */
 void NonLinearControlClass::printLog() {
-    for ( int ii( 0 ); ii < _relResNorm.size(); ii++ ) {
+    for ( int ii( 0 ); ii < int(_relResNorm.size()); ii++ ) {
         if ( _relResNorm[ii] > 0.0 )
             std::cout << " Résidu à l'itération  " << ii << " : " << _relResNorm[ii] << std::endl;
     }

@@ -34,6 +34,8 @@ bool FullResultClass::_setDOFNumbering( const BaseDOFNumberingPtr &dofNum ) {
 
 bool FullResultClass::setDOFNumbering( const DOFNumberingPtr &dofNum ) {
     FullResultClass::_setDOFNumbering( dofNum );
+
+    return true;
 }
 
 #ifdef _USE_MPI

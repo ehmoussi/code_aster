@@ -127,7 +127,7 @@ class MaterialClass: public DataStructure
          */
         int getNumberOfListOfRealProperties( int position )
         {
-            if( position >= _vectorOfUserRealValues.size() )
+            if( position >= int(_vectorOfUserRealValues.size()) )
                 throw std::runtime_error("Out of bound");
             return _vectorOfUserRealValues[ position ].size();
         };
@@ -138,7 +138,7 @@ class MaterialClass: public DataStructure
          */
         int getNumberOfListOfFunctionProperties( int position )
         {
-            if( position >= _vectorOfUserFunctionValues.size() )
+            if( position >= int(_vectorOfUserFunctionValues.size()) )
                 throw std::runtime_error("Out of bound");
             return _vectorOfUserFunctionValues[ position ].size();
         };
@@ -168,7 +168,7 @@ class MaterialClass: public DataStructure
          */
         VectorOfJeveuxVectorReal getBehaviourVectorOfRealValues( int position )
         {
-            if( position >= _vectorOfUserRealValues.size() )
+            if( position >= int(_vectorOfUserRealValues.size()) )
                 throw std::runtime_error("Out of bound");
             return _vectorOfUserRealValues[ position ];
         };
@@ -180,7 +180,7 @@ class MaterialClass: public DataStructure
          */
         VectorOfJeveuxVectorChar8 getBehaviourVectorOfFunctions( int position )
         {
-            if( position >= _vectorOfUserFunctionValues.size() )
+            if( position >= int(_vectorOfUserFunctionValues.size()) )
                 throw std::runtime_error("Out of bound");
             return _vectorOfUserFunctionValues[ position ];
         };

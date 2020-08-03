@@ -581,7 +581,7 @@ class JeveuxCollectionClass : public JeveuxObjectClass, private AllowedAccessTyp
         if ( _isEmpty )
             throw std::runtime_error( "Collection not built" );
 
-        if ( position > _listObjects.size() || position <= 0 )
+        if ( position > int(_listObjects.size()) || position <= 0 )
             throw std::runtime_error( "Out of collection bounds" );
 
         return _listObjects[position - 1];
@@ -591,7 +591,7 @@ class JeveuxCollectionClass : public JeveuxObjectClass, private AllowedAccessTyp
         if ( _isEmpty )
             throw std::runtime_error( "Collection not built" );
 
-        if ( position > _listObjects.size() || position <= 0 )
+        if ( position > int(_listObjects.size()) || position <= 0 )
             throw std::runtime_error( "Out of collection bounds" );
 
         return _listObjects[position - 1];
@@ -691,7 +691,6 @@ bool JeveuxCollectionClass< ValueType, AccessType >::existsObject( const std::st
 template < class ValueType, class AccessType >
 bool JeveuxCollectionClass< ValueType, AccessType >::existsObject(
     const ASTERINTEGER &number ) const {
-    const char *collName = _name.c_str();
     std::string charJeveuxName( 32, ' ' );
     ASTERINTEGER returnBool = number;
     CALLO_JEXNUM( charJeveuxName, _name, &returnBool );

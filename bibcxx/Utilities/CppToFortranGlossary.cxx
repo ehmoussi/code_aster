@@ -36,7 +36,6 @@ Glossary::Glossary() {
 
     int i = 0;
     for ( const auto &component : ComponentNames ) {
-        const std::string &toto = component.second;
         _strToInt[component.second] = i;
         ++i;
     }

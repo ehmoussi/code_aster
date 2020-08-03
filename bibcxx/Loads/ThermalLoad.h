@@ -139,13 +139,10 @@ class ThermalLoadClass : public DataStructure {
      * @return Booleen indiquant que tout s'est bien passe
      */
     bool addUnitaryThermalLoad( const UnitaryThermalLoadPtr &toAdd ) {
-        //         if ( ! _model ) throw std::runtime_error( "Model is not defined"
-        //         );
-        //         MeshPtr mesh = _model->getMesh();
-        //         if ( ! _mesh->hasGroupOfNodes( nameOfGroup ) )
-        //             throw std::runtime_error( nameOfGroup + "not in mesh" );
-        //         throw std::runtime_error( "Not yet implemented" );
+
         _thermalLoads.push_back( toAdd );
+
+        return true;
     };
 
     /**

@@ -76,7 +76,6 @@ bool BaseDOFNumberingClass::computeNumbering()
         _listOfLoads->build();
         JeveuxVectorChar24 jvListOfLoads = _listOfLoads->getListVector();
         jvListOfLoads->updateValuePointer();
-        ASTERINTEGER nbLoad = jvListOfLoads->size();
 
         const std::string base( "VG" );
         const std::string null( " " );

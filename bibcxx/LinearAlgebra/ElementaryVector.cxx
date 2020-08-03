@@ -72,7 +72,7 @@ ElementaryVectorClass::assembleVector( const BaseDOFNumberingPtr &currentNumerot
     cmdSt.define( dict );
     if ( !_corichRept->exists() ) {
         _listOfElementaryTerms->updateValuePointer();
-        for ( ASTERINTEGER i = 1; i <= _listOfLoads->getListOfMechanicalLoads().size(); ++i ) {
+        for ( ASTERINTEGER i = 1; i <= int(_listOfLoads->getListOfMechanicalLoads().size()); ++i ) {
             std::string detr( "E" );
             std::string vectElem( ( *_listOfElementaryTerms )[i - 1].c_str() );
             vectElem.resize( 24, ' ' );

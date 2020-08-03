@@ -175,7 +175,7 @@ void DEFPPSPPPPP( EVAL_FORMULA, eval_formula, ASTERINTEGER *pcode, ASTERINTEGER 
     VectorReal retvalues = evaluate_formula( code, globals, vars, values, &ret );
     *iret = (ASTERINTEGER)ret;
     if ( ret == 0 ) {
-        for ( long i = 0; i < retvalues.size() && i < ( *nbres ); ++i ) {
+        for ( long i = 0; i < int(retvalues.size()) && i < ( *nbres ); ++i ) {
             result[i] = (ASTERDOUBLE)retvalues[i];
         }
     }

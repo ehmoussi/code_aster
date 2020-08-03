@@ -43,7 +43,7 @@ bool GenericMaterialPropertyClass::buildJeveuxVectors(
     bool bOrdr = false;
     if ( _vectOrdr.size() != 0 ) {
         ordr->allocate( Permanent, _vectOrdr.size() );
-        for ( int i = 0; i < _vectOrdr.size(); ++i ) {
+        for ( int i = 0; i < int(_vectOrdr.size()); ++i ) {
             ( *ordr )[i] = _vectOrdr[i];
             mapTmp[_vectOrdr[i]] = i + 1;
         }
@@ -54,7 +54,7 @@ bool GenericMaterialPropertyClass::buildJeveuxVectors(
     }
 
     int position = 0, position2 = nbOfMaterialProperties, pos3 = 0;
-    for ( int i = 0; i < _vectKW.size() / 2; ++i ) {
+    for ( int i = 0; i < int(_vectKW.size()) / 2; ++i ) {
         auto nameOfProperty2 = _vectKW[2 * i];
         auto nameOfProperty = _vectKW[2 * i + 1];
         auto curIter1 = _mapOfRealMaterialProperties.find( nameOfProperty2 );
@@ -131,7 +131,7 @@ bool GenericMaterialPropertyClass::buildJeveuxVectors(
                                       " is missing" );
     }
 
-    for ( int i = 0; i < _vectKW.size() / 2; ++i ) {
+    for ( int i = 0; i < int(_vectKW.size()) / 2; ++i ) {
         auto nameOfProperty2 = _vectKW[2 * i];
         auto nameOfProperty = _vectKW[2 * i + 1];
         auto curIter1 = _mapOfFunctionMaterialProperties.find( nameOfProperty2 );
@@ -190,7 +190,7 @@ bool GenericMaterialPropertyClass::buildJeveuxVectors(
 
             auto values = curIter.second.getValue();
             userFunctions[0]->allocate( Permanent, values.size() );
-            for ( int i = 0; i < values.size(); ++i )
+            for ( int i = 0; i < int(values.size()); ++i )
                 ( *userFunctions[0] )[i] = values[i]->getName();
             ++position;
             ++position2;
