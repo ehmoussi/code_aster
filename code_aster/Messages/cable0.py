@@ -57,10 +57,6 @@ GROUP_NO_ANCRAGE (et non NOEUD_ANCRAGE) dans DEFI_CABLE_BP.
 """),
 
     6: _("""La déformation %(k1)s n'est pas disponible pour l'élément CABLE_GAINE"""),
-    
-    7: _("""
-Pour modéliser la relaxation des câblesavec MODI_CABLE_ETCC, vous devez sélectionner TYPE_RELAX='SANS'.      
-"""),
 
     8 : _("""
 Problème de lecture de la table donnant la tension dans le câble (MODI_CABLE_ETCC ou MODI_CABLE_RUPT).

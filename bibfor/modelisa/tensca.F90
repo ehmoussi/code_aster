@@ -154,9 +154,7 @@ subroutine tensca(tablca, icabl, nbnoca, nbf0, f0,&
  10     continue
         goto 999
     endif
-    if ((analy.eq. 'ETCC').and. (typrel.ne.'SANS')) then
-      call utmess('F', 'CABLE0_7')
-    endif
+
 !
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ! 2   RECUPERATION DE L'ABSCISSE CURVILIGNE ET DE LA DEVIATION ANGULAIRE
