@@ -73,9 +73,9 @@ subroutine op0180()
 #include "asterfort/voisca.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: ibid, icabl, icmp, irana1, iret, jcaba, jnbno, jsief
+    integer :: ibid, icabl, icmp, irana1, iret, jcaba, jnbno
     integer :: n1, n2, nbancr, nbcabl, nbf0, nbmama, nbnobe, nbnoma
-    integer :: ncaba, nsief, nbmabe, jlimab, nbnoca
+    integer :: ncaba, nbmabe, jlimab, nbnoca
     real(kind=8) :: delta, ea, f0, frco, frli, mu0, rh1000, sa, fprg, xflu, xret
     real(kind=8) :: trelax, valr(2), rbid
     aster_logical :: mail2d, relax, quad, eval
@@ -94,7 +94,7 @@ subroutine op0180()
     character(len=3) :: typpar(nbpar)
     character(len=24) :: nompar(nbpar), typrel
     character(len=4) :: regl
-    parameter    (nbpar2=12)
+    parameter    (nbpar2=10)
     character(len=3) :: typpa2(nbpar2)
     character(len=24) :: nompa2(nbpar2)
     character(len=8), pointer :: ncmp(:) => null(), nogd(:) => null()
@@ -119,12 +119,10 @@ subroutine op0180()
                           'NOM_ANCRAGE2            ',&
                           'NOEUD_MILIEU'/
 !
-    data          typpa2 /'K8','K8','K24','K8','K8','K24','R','R','K8','K8','K8','I'/
+    data          typpa2 /'K8','K24','K8','K24','R','R','K8','K8','K8','I'/
     data          nompa2 /'TYPE_ANCRAGE1           ',&
-                          'TYPE_NOEUD1             ',&
                           'NOM_ANCRAGE1            ',&
                           'TYPE_ANCRAGE2           ',&
-                          'TYPE_NOEUD2             ',&
                           'NOM_ANCRAGE2            ',&
                           'TENSION                 ',&
                           'RECUL_ANCRAGE           ',&
@@ -155,8 +153,9 @@ subroutine op0180()
     call getvtx(' ', 'ANALYSE', scal=analy, nbret=ibid)
     valr(1)=f0
     valr(2)=delta
-    valk(7)= adher
-    valk(8)= analy
+    valk(5)= adher
+    valk(6)= analy
+    valk(7)= ' '
     if (adher .eq. 'NON') then
         call utmess('I', 'CABLE0_13')
     endif
@@ -188,40 +187,20 @@ subroutine op0180()
 !
     do icabl = 1, nbcabl
 !
-        call getvtx('DEFI_CABLE', 'NOEUD_ANCRAGE', iocc=icabl, nbval=0, nbret=n1)
-        call getvtx('DEFI_CABLE', 'GROUP_NO_ANCRAGE', iocc=icabl, nbval=0, nbret=n2)
-        nbancr = n1 + n2
+        call getvtx('DEFI_CABLE', 'GROUP_NO_ANCRAGE', iocc=icabl, nbval=0, nbret=n1)
+        nbancr = n1 
         if (abs(nbancr) .ne. 2) then
             write(k3b,'(I3)') icabl
-            if (n1 .ne. 0) then
-                call utmess('F', 'CABLE0_14', sk=k3b)
-            else
-                call utmess('F', 'CABLE0_15', sk=k3b)
-            endif
+            call utmess('F', 'CABLE0_15', sk=k3b)
         else
-            if (n1 .ne. 0) then
-                call getvtx('DEFI_CABLE', 'NOEUD_ANCRAGE', iocc=icabl, nbval=2, vect=noancr(1),&
-                            nbret=ibid)
-                if (noancr(1) .eq. noancr(2)) then
-                    write(k3b,'(I3)') icabl
-                    call utmess('F', 'CABLE0_16', sk=k3b)
-                endif
-                valk(2) = 'NOEUD'
-                valk(5) = 'NOEUD'
-                valk(3) = noancr(1)
-                valk(6) = noancr(2)
-            else
-                call getvtx('DEFI_CABLE', 'GROUP_NO_ANCRAGE', iocc=icabl, nbval=2,&
-                            vect=noancr(1), nbret=ibid)
-                if (noancr(1) .eq. noancr(2)) then
-                    write(k3b,'(I3)') icabl
-                    call utmess('F', 'CABLE0_17', sk=k3b)
-                endif
-                valk(2) = 'GROUP_NO'
-                valk(5) = 'GROUP_NO'
-                valk(3) = noancr(1)
-                valk(6) = noancr(2)
+            call getvtx('DEFI_CABLE', 'GROUP_NO_ANCRAGE', iocc=icabl, nbval=2,&
+                        vect=noancr(1), nbret=ibid)
+            if (noancr(1) .eq. noancr(2)) then
+                write(k3b,'(I3)') icabl
+                call utmess('F', 'CABLE0_17', sk=k3b)
             endif
+            valk(2) = noancr(1)
+            valk(4) = noancr(2)
         endif
 !
 ! TEST DU TYPE D'ANCRAGE
@@ -233,9 +212,9 @@ subroutine op0180()
             valk(1) = 'PASSIF'
         endif
         if (typanc(2)(1:5) .eq. 'ACTIF') then
-            valk(4) = 'ACTIF'
+            valk(3) = 'ACTIF'
         else
-            valk(4) = 'PASSIF'
+            valk(3) = 'PASSIF'
         endif
 !
 !    SI TYPES D'ANCRAGE SONT TOUS LES DEUX PASSIFS
@@ -443,7 +422,7 @@ subroutine op0180()
         else
             typ_ma = 'SEG2'
         endif
-        call tbajli(nomg19, 2, nompa2(11:12), [sens], [rbid],&
+        call tbajli(nomg19, 2, nompa2(9:10), [sens], [rbid],&
                     [cbid], [typ_ma], icabl)
 !
 ! 4.8.2  RECUPERATION DES CARACTERISTIQUES ELEMENTAIRES DU CABLE

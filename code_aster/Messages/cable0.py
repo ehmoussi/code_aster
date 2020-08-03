@@ -85,17 +85,9 @@ Attention le profil de tension calculé dans DEFI_CABLE_BP ne sera pas utilisé 
 Les paramètres des lois BPEL_**** ou ETCC_**** ne sont donc pas pris en compte lors de la mise en tension.
 Les coefficients de frottement considérés sont ceux de la loi CABLE_GAINE_FROT.
 """),
-    
-    14 : _("""
- mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <NOEUD_ANCRAGE> : il faut définir 2 noeuds d'ancrage
-"""),
 
     15 : _("""
  mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <GROUP_NO_ANCRAGE> : il faut définir 2 GROUP_NO d'ancrage
-"""),
-
-    16  : _("""
- mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <NOEUD_ANCRAGE> : les 2 noeuds d'ancrage doivent être distincts
 """),
 
     17 : _("""
