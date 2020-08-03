@@ -99,4 +99,11 @@ Conseil :
  - Assurez vous de ne pas utiliser MATR_DISTRIBUEE.
 """),
 
+    20 : _("""
+Au moins une maille de peau sans volume a été détecté. L'orientation ne peut pas être vérifiée.
+Si l'orientation est incorrecte vous pouvez avoir des problèmes de détection de contact avec la méthode de gestion du contact LAC.
+
+Pour désactiver cette alarme, utilisez VERI_NORM='NON' dans DEFI_CONTACT.
+"""),
+
 }

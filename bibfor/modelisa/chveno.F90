@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ subroutine chveno(fonree, noma, nomo)
     integer :: norien, norie1, norie2, jlima, nbmamo
     real(kind=8) :: dnor
     aster_logical :: reorie, mcfl(nbt)
-    character(len=8) :: mot, nomma, nommo, typel
+    character(len=8) :: mot, nomma, nommo, typel, algo
     character(len=16) :: mcft(nbt), motfac, valmc(4), typmc(4)
     character(len=19) :: limamo
     character(len=24) :: grmama, mailma, nogr, nomail
@@ -87,9 +87,10 @@ subroutine chveno(fonree, noma, nomo)
 !     ------------------------------------------------------------------
 !
 !     INITIALISATIONS
-    ier = 0
-    zero = 0
+    ier    = 0
+    zero   = 0
     reorie = .false.
+    algo   = ''
 !
 !     NOMBRE DE MOTS-CLES FACTEUR A VERIFIER
     nbmfac = nbt
@@ -177,6 +178,8 @@ subroutine chveno(fonree, noma, nomo)
                     do iobj = 1, nbobj
                         nogr = objet(iobj)
                         if (motfac .eq. 'ZONE') then
+
+                            call getvtx(motfac, 'ALGO_CONT', iocc=1, scal=algo, nbret=iret)
 !
 ! ---             RECUPERATION DU NOMBRE DE MAILLES DU GROUP_MA :
 !                 ---------------------------------------------
@@ -242,6 +245,9 @@ subroutine chveno(fonree, noma, nomo)
                                 endif
                                 call orilma(nomma, ndim, zi(jgro), nbmail, norie1,&
                                             ntrait, reorie, nbmamo, zi(jlima ))
+                                if ((algo.eq.'LAC' ).and.(ntrait .ne. 0)) then
+                                    !call utmess('A', 'CONTACT2_20')
+                                endif
                                 call jedetr(limamo)
                                 elseif ( nbmapr.eq.0 .and. nbmabo.eq.0 )&
                             then
