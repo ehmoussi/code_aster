@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_rnum(ds_empi)
+subroutine dbr_rnum( base, nbNodeWithDof)
 !
 use Rom_Datastructure_type
 !
@@ -39,7 +39,8 @@ implicit none
 #include "asterfort/romLineicIndexSurf.h"
 #include "asterfort/utmess.h"
 !
-type(ROM_DS_Empi), intent(inout) :: ds_empi
+type(ROM_DS_Empi), intent(inout) ::  base
+integer, intent(in) ::  nbNodeWithDof
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -49,16 +50,16 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! IO  ds_empi          : datastructure for empiric modes
+! IO   base          :  base
 !
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: niv, ifm
-    type(ROM_DS_LineicNumb) :: ds_line
-    integer :: nb_node, nb_slice, i_node, nb_node_slice, nb_cmp, nbEqua
-    real(kind=8) :: tole_node
-    character(len=8) :: axe_line, mesh
-    character(len=24) :: surf_num
+    type(ROM_DS_LineicNumb) :: lineicNume
+    integer :: nbNode, nbSlice, iNode, nbNodeSlice, nbCmp, nbEqua
+    real(kind=8) :: toleNode
+    character(len=8) :: lineicAxis, mesh
+    character(len=24) :: numeSection
     integer          , pointer :: v_grno(:) => null()
     real(kind=8)     , pointer :: v_coor(:) => null()
     real(kind=8)     , pointer :: v_coor_x(:) => null()
@@ -78,100 +79,100 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Get parameters
 !
-    mesh     = ds_empi%ds_mode%mesh
-    axe_line = ds_empi%axe_line
-    surf_num = ds_empi%surf_num
-    ds_line  = ds_empi%ds_lineic
-    nb_node  = ds_empi%ds_mode%nbNodeWithDof
-    nbEqua   = ds_empi%ds_mode%nbEqua
-    tole_node = ds_line%tole_node
+    mesh        = base%ds_mode%mesh
+    lineicAxis  = base%axe_line
+    numeSection = base%surf_num
+    lineicNume  = base%lineicNume
+    nbNode      = nbNodeWithDof
+    nbEqua      = base%ds_mode%nbEqua
+    toleNode    = lineicNume%toleNode
     if (niv .ge. 2) then
-        call utmess('I', 'ROM2_6', sr = tole_node)
+        call utmess('I', 'ROM2_6', sr = toleNode)
     endif
 !
 ! - Count number of components by node for lineic model
 !
-    call romLineicNumberComponents(nb_node, nbEqua, nb_cmp)
+    call romLineicNumberComponents(nbNode, nbEqua, nbCmp)
 !
 ! - Allocate pointers for lineic objects
 !
-    nb_slice = nb_node
-    AS_ALLOCATE(vi = ds_line%v_nume_pl, size = nb_node)
-    AS_ALLOCATE(vi = ds_line%v_nume_sf, size = nb_node)
+    nbSlice = nbNode
+    AS_ALLOCATE(vi = lineicNume%numeSlice, size = nbNode)
+    AS_ALLOCATE(vi = lineicNume%numeSection, size = nbNode)
 !
 ! - Get coordinates of nodes
 !
     call jeveuo(mesh//'.COORDO    .VALE', 'L', vr = v_coor)
-    AS_ALLOCATE(vr = v_coor_x, size = nb_node)
-    AS_ALLOCATE(vr = v_coor_y, size = nb_node)
-    AS_ALLOCATE(vr = v_coor_z, size = nb_node)
-    AS_ALLOCATE(vr = v_coor_w, size = nb_node)
-    do i_node = 1, nb_node
-        v_coor_x(i_node) = v_coor(1+3*(i_node-1)+0)
-        v_coor_y(i_node) = v_coor(1+3*(i_node-1)+1)
-        v_coor_z(i_node) = v_coor(1+3*(i_node-1)+2)
+    AS_ALLOCATE(vr = v_coor_x, size = nbNode)
+    AS_ALLOCATE(vr = v_coor_y, size = nbNode)
+    AS_ALLOCATE(vr = v_coor_z, size = nbNode)
+    AS_ALLOCATE(vr = v_coor_w, size = nbNode)
+    do iNode = 1, nbNode
+        v_coor_x(iNode) = v_coor(1+3*(iNode-1)+0)
+        v_coor_y(iNode) = v_coor(1+3*(iNode-1)+1)
+        v_coor_z(iNode) = v_coor(1+3*(iNode-1)+2)
     enddo
 !
 ! - Get coordinates of nodes for one slice
 !
-    call jelira(jexnom(mesh//'.GROUPENO',surf_num), 'LONUTI', nb_node_slice)
-    call jeveuo(jexnom(mesh//'.GROUPENO',surf_num), 'L'     , vi = v_grno)
-    AS_ALLOCATE(vr = v_coor_1, size = nb_node_slice)
-    AS_ALLOCATE(vr = v_coor_2, size = nb_node_slice)
+    call jelira(jexnom(mesh//'.GROUPENO',numeSection), 'LONUTI', nbNodeSlice)
+    call jeveuo(jexnom(mesh//'.GROUPENO',numeSection), 'L'     , vi = v_grno)
+    AS_ALLOCATE(vr = v_coor_1, size = nbNodeSlice)
+    AS_ALLOCATE(vr = v_coor_2, size = nbNodeSlice)
 !
 ! - In case of lineic model, we must create a new numbering for the nodes on mesh
 !
-    if (axe_line .eq. 'OX') then
-        v_coor_w(1:nb_node) = v_coor_x(1:nb_node)
-        call uttrir(nb_slice, v_coor_w, tole_node)
-        AS_ALLOCATE(vr = v_coor_p, size = nb_slice)
-        v_coor_p(1:nb_slice) = v_coor_w(1:nb_slice)
-        call romLineicIndexList(tole_node,&
-                                nb_node      , v_coor_x,&
-                                nb_slice     , v_coor_p,&
-                                ds_line%v_nume_pl)
-        do i_node = 1, nb_node_slice
-            v_coor_1(i_node) = v_coor(1+3*(v_grno(i_node)-1)+1)
-            v_coor_2(i_node) = v_coor(1+3*(v_grno(i_node)-1)+2)
+    if (lineicAxis .eq. 'OX') then
+        v_coor_w(1:nbNode) = v_coor_x(1:nbNode)
+        call uttrir(nbSlice, v_coor_w, toleNode)
+        AS_ALLOCATE(vr = v_coor_p, size = nbSlice)
+        v_coor_p(1:nbSlice) = v_coor_w(1:nbSlice)
+        call romLineicIndexList(toleNode,&
+                                nbNode  , v_coor_x,&
+                                nbSlice , v_coor_p,&
+                                lineicNume%numeSlice)
+        do iNode = 1, nbNodeSlice
+            v_coor_1(iNode) = v_coor(1+3*(v_grno(iNode)-1)+1)
+            v_coor_2(iNode) = v_coor(1+3*(v_grno(iNode)-1)+2)
         enddo
-        call romLineicIndexSurf(tole_node        ,&
-                                nb_node          , v_coor_y , v_coor_z,&
-                                nb_node_slice    , v_coor_1 , v_coor_2,&
-                                ds_line%v_nume_sf)
-    elseif (axe_line .eq. 'OY') then
-        v_coor_w(1:nb_node) = v_coor_y(1:nb_node)
-        call uttrir(nb_slice, v_coor_w, tole_node)
-        AS_ALLOCATE(vr=v_coor_p, size=nb_slice)
-        v_coor_p(1:nb_slice) = v_coor_w(1:nb_slice)
-        call romLineicIndexList(tole_node,&
-                                nb_node      , v_coor_y,&
-                                nb_slice     , v_coor_p,&
-                                ds_line%v_nume_pl)
-        do i_node = 1, nb_node_slice
-            v_coor_1(i_node) = v_coor(1+3*(v_grno(i_node)-1)+2)
-            v_coor_2(i_node) = v_coor(1+3*(v_grno(i_node)-1)+0)
+        call romLineicIndexSurf(toleNode   ,&
+                                nbNode     , v_coor_y , v_coor_z,&
+                                nbNodeSlice, v_coor_1 , v_coor_2,&
+                                lineicNume%numeSection)
+    elseif (lineicAxis .eq. 'OY') then
+        v_coor_w(1:nbNode) = v_coor_y(1:nbNode)
+        call uttrir(nbSlice, v_coor_w, toleNode)
+        AS_ALLOCATE(vr=v_coor_p, size=nbSlice)
+        v_coor_p(1:nbSlice) = v_coor_w(1:nbSlice)
+        call romLineicIndexList(toleNode,&
+                                nbNode      , v_coor_y,&
+                                nbSlice     , v_coor_p,&
+                                lineicNume%numeSlice)
+        do iNode = 1, nbNodeSlice
+            v_coor_1(iNode) = v_coor(1+3*(v_grno(iNode)-1)+2)
+            v_coor_2(iNode) = v_coor(1+3*(v_grno(iNode)-1)+0)
         enddo
-        call romLineicIndexSurf(tole_node        ,&
-                                nb_node          , v_coor_z , v_coor_x,&
-                                nb_node_slice    , v_coor_1 , v_coor_2,&
-                                ds_line%v_nume_sf)
-    elseif (axe_line .eq. 'OZ') then
-        v_coor_w(1:nb_node) = v_coor_z(1:nb_node)
-        call uttrir(nb_slice, v_coor_w, tole_node)
-        AS_ALLOCATE(vr=v_coor_p, size=nb_slice)
-        v_coor_p(1:nb_slice) = v_coor_w(1:nb_slice)
-        call romLineicIndexList(tole_node,&
-                                nb_node      , v_coor_z,&
-                                nb_slice     , v_coor_p,&
-                                ds_line%v_nume_pl)
-        do i_node = 1, nb_node_slice
-            v_coor_1(i_node) = v_coor(1+3*(v_grno(i_node)-1)+0)
-            v_coor_2(i_node) = v_coor(1+3*(v_grno(i_node)-1)+1)
+        call romLineicIndexSurf(toleNode   ,&
+                                nbNode     , v_coor_z , v_coor_x,&
+                                nbNodeSlice, v_coor_1 , v_coor_2,&
+                                lineicNume%numeSection)
+    elseif (lineicAxis .eq. 'OZ') then
+        v_coor_w(1:nbNode) = v_coor_z(1:nbNode)
+        call uttrir(nbSlice, v_coor_w, toleNode)
+        AS_ALLOCATE(vr=v_coor_p, size=nbSlice)
+        v_coor_p(1:nbSlice) = v_coor_w(1:nbSlice)
+        call romLineicIndexList(toleNode,&
+                                nbNode  , v_coor_z,&
+                                nbSlice , v_coor_p,&
+                                lineicNume%numeSlice)
+        do iNode = 1, nbNodeSlice
+            v_coor_1(iNode) = v_coor(1+3*(v_grno(iNode)-1)+0)
+            v_coor_2(iNode) = v_coor(1+3*(v_grno(iNode)-1)+1)
         enddo
-        call romLineicIndexSurf(tole_node        ,&
-                                nb_node          , v_coor_x , v_coor_y,&
-                                nb_node_slice    , v_coor_1 , v_coor_2,&
-                                ds_line%v_nume_sf)
+        call romLineicIndexSurf(toleNode   ,&
+                                nbNode     , v_coor_x , v_coor_y,&
+                                nbNodeSlice, v_coor_1 , v_coor_2,&
+                                lineicNume%numeSection)
     else
         ASSERT(ASTER_FALSE)
     endif
@@ -188,8 +189,8 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 !
 ! - Save
 !
-    ds_line%nb_slice  = nb_slice
-    ds_line%nb_cmp    = nb_cmp
-    ds_empi%ds_lineic = ds_line
+    lineicNume%nbSlice = nbSlice
+    lineicNume%nbCmp   = nbCmp
+    base%lineicNume    = lineicNume
 !
 end subroutine

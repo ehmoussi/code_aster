@@ -46,6 +46,5 @@ type(ROM_DS_Field), intent(out) :: modeOut
     modeOut%mesh          = modeIn%mesh
     modeOut%model         = modeIn%model
     modeOut%nbEqua        = modeIn%nbEqua
-    modeOut%nbNodeWithDof = modeIn%nbNodeWithDof
 !
 end subroutine

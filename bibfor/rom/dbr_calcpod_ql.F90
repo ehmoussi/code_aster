@@ -17,9 +17,9 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine dbr_calcpod_ql(ds_empi, &
-                          result , field_name , nb_equa,&
-                          nb_snap, v_list_snap,&
+subroutine dbr_calcpod_ql(lineicNume, &
+                          resultName, modeSymbName, nbEqua,&
+                          nbSnap    , listSnap    ,&
                           q)
 !
 use Rom_Datastructure_type
@@ -31,11 +31,11 @@ implicit none
 #include "asterfort/jelibe.h"
 #include "asterfort/jeveuo.h"
 !
-type(ROM_DS_Empi), intent(in) :: ds_empi
-character(len=8), intent(in) :: result
-character(len=24), intent(in) :: field_name
-integer, intent(in) :: nb_equa, nb_snap
-integer, intent(in) :: v_list_snap(:)
+type(ROM_DS_LineicNumb) , intent(in):: lineicNume
+character(len=8), intent(in) :: resultName
+character(len=24), intent(in) :: modeSymbName
+integer, intent(in) :: nbEqua, nbSnap
+integer, intent(in) :: listSnap(:)
 real(kind=8), intent(inout) :: q(:)
 !
 ! --------------------------------------------------------------------------------------------------
@@ -46,47 +46,44 @@ real(kind=8), intent(inout) :: q(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_empi          : datastructure for empiric modes
-! In  result           : results datastructure for selection (EVOL_*)
-! In  field_name       : name of field where empiric modes have been constructed (NOM_CHAM)
-! In  nb_equa          : number of equations (length of empiric mode)
-! In  nb_snap          : number of snapshots used to construct empiric base
-! In  v_list_snap      : pointer to snap selected to construct empiric base
+! In  lineicNume       : lineic numbering
+! In  resultName       : results datastructure for selection (EVOL_*)
+! In  modeSymbName     : name of field where empiric modes have been constructed (NOM_CHAM)
+! In  nbEqua           : number of equations (length of mode)
+! In  nbSnap           : number of snapshots used to construct base
+! Ptr listSnap         : pointer to snap selected to construct base
 ! IO  q                : pointer to [Q] matrix
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: i_snap, i_equa, i_node, i_cmp, i_pl, i_2d
-    integer :: nb_slice, n_2d, nb_cmp
-    integer :: nume_inst, iret
-    type(ROM_DS_LineicNumb) :: ds_line
-    real(kind=8), pointer :: v_field_resu(:) => null()
-    character(len=24) :: field_resu
+    integer :: iSnap, iEqua, nodeNume, cmpNume, iSlice, i_2d
+    integer :: nbSlice, n_2d, nbCmp
+    integer :: numeInst, iret
+    real(kind=8), pointer :: resuFieldVale(:) => null()
+    character(len=24) :: resultField
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    field_resu= '&&ROM_FIELDRESU'
-    ds_line   = ds_empi%ds_lineic
-    nb_slice  = ds_line%nb_slice
-    nb_cmp    = ds_line%nb_cmp
-    ASSERT(nb_snap .gt. 0)
-    ASSERT(nb_equa .gt. 0)
-    ASSERT(nb_cmp .gt. 0)
+    nbSlice     = lineicNume%nbSlice
+    nbCmp       = lineicNume%nbCmp
+    ASSERT(nbSnap .gt. 0)
+    ASSERT(nbEqua .gt. 0)
+    ASSERT(nbCmp .gt. 0)
 !
-    do i_snap = 1, nb_snap
-        nume_inst = v_list_snap(i_snap)
-        call rsexch(' '  , result, field_name, nume_inst, field_resu, iret)
+    do iSnap = 1, nbSnap
+        numeInst = listSnap(iSnap)
+        call rsexch(' '  , resultName, modeSymbName, numeInst, resultField, iret)
         ASSERT(iret .eq. 0)
-        call jeveuo(field_resu(1:19)//'.VALE', 'L', vr = v_field_resu)
-        do i_equa = 1, nb_equa
-            i_node = (i_equa - 1)/nb_cmp + 1
-            i_cmp  = i_equa - (i_node - 1)*nb_cmp
-            i_pl   = ds_line%v_nume_pl(i_node)
-            n_2d   = ds_line%v_nume_sf(i_node)
-            i_2d   = (n_2d - 1)*nb_cmp + i_cmp
-            q(i_2d + nb_equa*(i_pl - 1)/nb_slice + nb_equa*(i_snap - 1))= v_field_resu(i_equa)
+        call jeveuo(resultField(1:19)//'.VALE', 'L', vr = resuFieldVale)
+        do iEqua = 1, nbEqua
+            nodeNume = (iEqua - 1)/nbCmp + 1
+            cmpNume  = iEqua - (nodeNume - 1)*nbCmp
+            iSlice   = lineicNume%numeSlice(nodeNume)
+            n_2d     = lineicNume%numeSection(nodeNume)
+            i_2d     = (n_2d - 1)*nbCmp + cmpNume
+            q(i_2d + nbEqua*(iSlice - 1)/nbSlice + nbEqua*(iSnap - 1)) = resuFieldVale(iEqua)
         enddo
-        call jelibe(field_resu(1:19)//'.VALE')
+        call jelibe(resultField(1:19)//'.VALE')
     enddo
 !
 end subroutine

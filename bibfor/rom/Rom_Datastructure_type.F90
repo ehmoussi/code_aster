@@ -61,15 +61,15 @@ implicit none
 !
     type ROM_DS_LineicNumb
 ! ----- Number of slices
-        integer           :: nb_slice = 0
+        integer           :: nbSlice        = 0
 ! ----- For each node => which slice ?
-        integer, pointer  :: v_nume_pl(:) => null()
+        integer, pointer  :: numeSlice(:)   => null()
 ! ----- For each node => which IN slice ?
-        integer, pointer  :: v_nume_sf(:) => null()
+        integer, pointer  :: numeSection(:) => null()
 ! ----- Tolerance for separating nodes
-        real(kind=8)      :: tole_node = 1.d-7
+        real(kind=8)      :: toleNode       = 1.d-7
 ! ----- Number of components by node
-        integer           :: nb_cmp = 0
+        integer           :: nbCmp          = 0
     end type ROM_DS_LineicNumb
 !
 ! - Parameters for field
@@ -92,8 +92,6 @@ implicit none
         integer, pointer          :: equaCmpName(:) => null()
 ! ----- Flag if has Lagrange multipliers
         aster_logical             :: lLagr = ASTER_FALSE
-! ----- Number of nodes with dof
-        integer                   :: nbNodeWithDof = 0
 ! ----- Number of equations
         integer                   :: nbEqua = 0
     end type ROM_DS_Field
@@ -117,7 +115,7 @@ implicit none
 ! ----- Number of snapshots when created base
         integer                 :: nb_snap = 0
 ! ----- Datastructure for lineic base numbering
-        type(ROM_DS_LineicNumb) :: ds_lineic
+        type(ROM_DS_LineicNumb) :: lineicNume
     end type ROM_DS_Empi
 !
 ! - Parameters for REST_REDUIT_COMPLET operator

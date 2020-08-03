@@ -44,11 +44,11 @@ type(ROM_DS_Empi), intent(out) :: ds_empi_out
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    ds_empi_out%base_type = ds_empi_in%base_type
-    ds_empi_out%axe_line  = ds_empi_in%axe_line
-    ds_empi_out%surf_num  = ds_empi_in%surf_num
-    ds_empi_out%nb_mode   = ds_empi_in%nb_mode
-    ds_empi_out%ds_lineic = ds_empi_in%ds_lineic
+    ds_empi_out%base_type  = ds_empi_in%base_type
+    ds_empi_out%axe_line   = ds_empi_in%axe_line
+    ds_empi_out%surf_num   = ds_empi_in%surf_num
+    ds_empi_out%nb_mode    = ds_empi_in%nb_mode
+    ds_empi_out%lineicNume = ds_empi_in%lineicNume
 !
 ! - Copy mode
 !

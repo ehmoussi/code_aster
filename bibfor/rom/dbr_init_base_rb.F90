@@ -27,7 +27,6 @@ implicit none
 #include "asterfort/utmess.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/romBaseCreate.h"
-#include "asterfort/modelNodeEF.h"
 !
 character(len=8), intent(in) :: resultName
 type(ROM_DS_ParaDBR_RB), intent(in) :: paraRb
@@ -48,7 +47,7 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nbEqua, nbNodeWithDof, nb_mode_maxi
+    integer :: nbEqua, nb_mode_maxi
     character(len=8)  :: model, mesh, matr_name
     character(len=24) :: fieldRefe, fieldName
     character(len=4) :: fieldSupp
@@ -67,7 +66,6 @@ type(ROM_DS_Empi), intent(inout) :: base
     matr_name     = ' '
     fieldName     = ' '
     nbEqua        = 0
-    nbNodeWithDof = 0
     nb_mode_maxi  = 0
 !
 ! - Get "representative" matrix
@@ -82,10 +80,6 @@ type(ROM_DS_Empi), intent(inout) :: base
 !
     call dismoi('NB_EQUA'     , matr_name, 'MATR_ASSE', repi = nbEqua)
     call dismoi('NOM_MAILLA'  , model    , 'MODELE'   , repk = mesh)
-!
-! - Get number of nodes affected by model
-!
-    call modelNodeEF(model, nbNodeWithDof)
 !
 ! - For greedy algorithm: only displacements
 !
@@ -116,7 +110,6 @@ type(ROM_DS_Empi), intent(inout) :: base
     base%ds_mode%fieldSupp     = fieldSupp
     base%ds_mode%mesh          = mesh
     base%ds_mode%model         = model
-    base%ds_mode%nbNodeWithDof = nbNodeWithDof
     base%ds_mode%nbEqua        = nbEqua
 !
 ! - Create output datastructure

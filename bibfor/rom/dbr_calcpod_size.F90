@@ -45,21 +45,21 @@ integer, intent(out) :: m, n
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbEqua, nb_slice, nb_snap
+    integer :: nbEqua, nbSlice, nb_snap
     character(len=8)  :: base_type
 !
 ! --------------------------------------------------------------------------------------------------
 !
     nb_snap   = ds_snap%nb_snap
     base_type = ds_empi%base_type
-    nb_slice  = ds_empi%ds_lineic%nb_slice
+    nbSlice   = ds_empi%lineicNume%nbSlice
     nbEqua    = ds_empi%ds_mode%nbEqua
 !
 ! - Prepare parameters for LAPACK
 !
     if (base_type .eq. 'LINEIQUE') then
-        m      = nbEqua/nb_slice
-        n      = nb_slice*nb_snap
+        m      = nbEqua/nbSlice
+        n      = nbSlice*nb_snap
     else
         m      = nbEqua
         n      = nb_snap

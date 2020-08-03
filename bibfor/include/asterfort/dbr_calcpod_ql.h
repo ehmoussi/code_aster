@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,16 +17,16 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine dbr_calcpod_ql(ds_empi, &
-                              result , field_name , nb_equa,&
-                              nb_snap, v_list_snap,&
+    subroutine dbr_calcpod_ql(lineicNume, &
+                              resultName, modeSymbName, nbEqua,&
+                              nbSnap    , listSnap    ,&
                               q)
         use Rom_Datastructure_type
-        type(ROM_DS_Empi), intent(in) :: ds_empi
-        character(len=8), intent(in) :: result
-        character(len=24), intent(in) :: field_name
-        integer, intent(in) :: nb_equa, nb_snap
-        integer, intent(in) :: v_list_snap(:)
+        type(ROM_DS_LineicNumb) , intent(in):: lineicNume
+        character(len=8), intent(in) :: resultName
+        character(len=24), intent(in) :: modeSymbName
+        integer, intent(in) :: nbEqua, nbSnap
+        integer, intent(in) :: listSnap(:)
         real(kind=8), intent(inout) :: q(:)
     end subroutine dbr_calcpod_ql
 end interface

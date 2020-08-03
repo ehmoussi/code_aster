@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -46,7 +46,6 @@ type(ROM_DS_Empi), intent(in) :: ds_empi
         call utmess('I', 'ROM3_10')
         call utmess('I', 'ROM3_11', sk = ds_empi%axe_line)
         call utmess('I', 'ROM3_12', sk = ds_empi%surf_num)
-        call utmess('I', 'ROM5_13', si = ds_empi%ds_lineic%nb_slice)
     else
         call utmess('I', 'ROM3_20')
     endif

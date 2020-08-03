@@ -26,6 +26,7 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/dbr_rnum.h"
 #include "asterfort/infniv.h"
+#include "asterfort/modelNodeEF.h"
 #include "asterfort/nonlinDSTableIOCreate.h"
 #include "asterfort/romBaseCreate.h"
 #include "asterfort/romBaseGetInfo.h"
@@ -53,6 +54,8 @@ type(ROM_DS_Empi), intent(inout) :: base
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
+    integer :: nbNodeWithDof
+    character(len=8) :: model
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -96,7 +99,9 @@ type(ROM_DS_Empi), intent(inout) :: base
         if (niv .ge. 2) then
             call utmess('I', 'ROM2_40')
         endif
-        call dbr_rnum(base)
+        model = base%ds_mode%model
+        call modelNodeEF(model, nbNodeWithDof)
+        call dbr_rnum(base, nbNodeWithDof)
     endif
 !
 end subroutine

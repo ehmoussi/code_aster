@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine romFieldGetInfo(model, fieldName, fieldRefe, ds_field, l_chck_)
+subroutine romFieldGetInfo(model, fieldName, fieldRefe, field, l_chck_)
 !
 use Rom_Datastructure_type
 !
@@ -27,14 +27,13 @@ implicit none
 #include "asterfort/assert.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/jelira.h"
-#include "asterfort/modelNodeEF.h"
 #include "asterfort/romGetListComponents.h"
 #include "asterfort/romFieldChck.h"
 #include "asterfort/utmess.h"
 !
 character(len=8), intent(in)        :: model
 character(len=24), intent(in)       :: fieldRefe, fieldName
-type(ROM_DS_Field), intent(inout)   :: ds_field
+type(ROM_DS_Field), intent(inout)   :: field
 aster_logical, optional, intent(in) :: l_chck_
 !
 ! --------------------------------------------------------------------------------------------------
@@ -48,12 +47,12 @@ aster_logical, optional, intent(in) :: l_chck_
 ! In  model            : name of model
 ! In  fieldName        : name of field (NOM_CHAM)
 ! In  fieldRefe        : field to analyse
-! IO  ds_field         : datastructure for field
+! IO  field            : field
 ! In  l_chck           : flag to check components
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nbEqua, nbNodeWithDof, nbCmp
+    integer :: nbEqua, nbCmp
     character(len=8) :: mesh
     character(len=4) :: fieldSupp
     aster_logical :: lLagr, l_chck
@@ -67,11 +66,10 @@ aster_logical, optional, intent(in) :: l_chck_
 !
 ! - Initializations
 !
-    lLagr         = ASTER_FALSE
+    lLagr      = ASTER_FALSE
     fieldSupp  = ' '
-    nbEqua        = 0
-    nbNodeWithDof = 0
-    nbCmp         = 0
+    nbEqua     = 0
+    nbCmp      = 0
 !
 ! - Get main parameters
 !
@@ -85,32 +83,27 @@ aster_logical, optional, intent(in) :: l_chck_
         call utmess('F', 'ROM3_1', sk = fieldSupp)
     endif
 !
-! - Get number of nodes affected by model
-!
-    call modelNodeEF(model, nbNodeWithDof)
-!
 ! - Get list of components in field
 !
-    call romGetListComponents(fieldRefe           , fieldSupp           , nbEqua,&
-                              ds_field%equaCmpName, ds_field%listCmpName,&
-                              nbCmp               , lLagr)
+    call romGetListComponents(fieldRefe        , fieldSupp        , nbEqua,&
+                              field%equaCmpName, field%listCmpName,&
+                              nbCmp            , lLagr)
 !
 ! - Save informations
 !
-    ds_field%fieldName     = fieldName
-    ds_field%fieldRefe     = fieldRefe
-    ds_field%fieldSupp     = fieldSupp
-    ds_field%mesh          = mesh
-    ds_field%model         = model
-    ds_field%nbEqua        = nbEqua
-    ds_field%nbNodeWithDof = nbNodeWithDof
-    ds_field%lLagr         = lLagr
-    ds_field%nbCmp         = nbCmp
+    field%fieldName = fieldName
+    field%fieldRefe = fieldRefe
+    field%fieldSupp = fieldSupp
+    field%mesh      = mesh
+    field%model     = model
+    field%nbEqua    = nbEqua
+    field%lLagr     = lLagr
+    field%nbCmp     = nbCmp
 !
 ! - Check components in field
 !
     if (l_chck) then
-        call romFieldChck(ds_field)
+        call romFieldChck(field)
     endif
 !
 end subroutine

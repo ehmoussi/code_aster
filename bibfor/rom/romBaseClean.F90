@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -42,8 +42,8 @@ type(ROM_DS_Empi), intent(inout) :: ds_empi
 ! --------------------------------------------------------------------------------------------------
 !
     if (ds_empi%base_type .eq. 'LINEIQUE') then
-        AS_DEALLOCATE(vi = ds_empi%ds_lineic%v_nume_pl)
-        AS_DEALLOCATE(vi = ds_empi%ds_lineic%v_nume_sf)
+        AS_DEALLOCATE(vi = ds_empi%lineicNume%numeSlice)
+        AS_DEALLOCATE(vi = ds_empi%lineicNume%numeSection)
     endif
     call romFieldClean(ds_empi%ds_mode)
 !

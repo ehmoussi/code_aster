@@ -55,14 +55,14 @@ real(kind=8), pointer :: modesVale(:), modesSing(:)
     real(kind=8), pointer :: lineModesVale(:) => null()
     real(kind=8), pointer :: lineModesSing(:) => null()
     integer, pointer :: numeSlice(:) => null()
-    type(ROM_DS_LineicNumb) :: lineicBase
+    type(ROM_DS_LineicNumb) :: lineicNume
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    lineicBase = base%ds_lineic
+    lineicNume = base%lineicNume
     nbEqua     = base%ds_mode%nbEqua
-    nbCmp      = lineicBase%nb_cmp
-    nbSlice    = lineicBase%nb_slice
+    nbCmp      = lineicNume%nbCmp
+    nbSlice    = lineicNume%nbSlice
     nbLineMode = nbMode*nbSlice
 !
 ! - Create working objects
@@ -85,8 +85,8 @@ real(kind=8), pointer :: modesVale(:), modesSing(:)
     do iEqua = 1, nbEqua
         nodeNume = (iEqua - 1)/nbCmp + 1
         cmpNume  = iEqua - (nodeNume - 1)*nbCmp
-        iSlice   = lineicBase%v_nume_pl(nodeNume)
-        n_2d     = lineicBase%v_nume_sf(nodeNume)
+        iSlice   = lineicNume%numeSlice(nodeNume)
+        n_2d     = lineicNume%numeSection(nodeNume)
         i_2d     = (n_2d - 1)*nbCmp + cmpNume
         do iMode = 1, nbMode
             lineModesVale(iEqua + nbEqua*(iMode - 1 + nbMode*(iSlice - 1))) =&

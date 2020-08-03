@@ -45,10 +45,10 @@ real(kind=8), pointer :: q(:)
 !
 ! --------------------------------------------------------------------------------------------------
 !
+! In  ds_empi          : base
+! In  ds_snap          : datastructure for snapshot selection
 ! In  m                : first dimension of snapshot matrix
 ! In  m                : second dimension of snapshot matrix
-! In  ds_empi          : datastructure for empiric modes
-! In  ds_snap          : datastructure for snapshot selection
 ! Out q                : pointer to [Q] matrix
 !
 ! --------------------------------------------------------------------------------------------------
@@ -63,6 +63,7 @@ real(kind=8), pointer :: q(:)
     real(kind=8), pointer :: v_field_resu(:) => null()
     character(len=24) :: field_resu
     character(len=4) :: fieldSupp
+    type(ROM_DS_LineicNumb) :: lineicNume
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -77,13 +78,14 @@ real(kind=8), pointer :: q(:)
 !
 ! - Get parameters
 !
-    result    = ds_snap%result
-    nb_snap   = ds_snap%nb_snap
-    list_snap = ds_snap%list_snap
-    nbEqua    = ds_empi%ds_mode%nbEqua
-    base_type = ds_empi%base_type
-    fieldName = ds_empi%ds_mode%fieldName
-    fieldSupp = ds_empi%ds_mode%fieldSupp
+    result     = ds_snap%result
+    nb_snap    = ds_snap%nb_snap
+    list_snap  = ds_snap%list_snap
+    nbEqua     = ds_empi%ds_mode%nbEqua
+    base_type  = ds_empi%base_type
+    fieldName  = ds_empi%ds_mode%fieldName
+    fieldSupp  = ds_empi%ds_mode%fieldSupp
+    lineicNume = ds_empi%lineicNume
     ASSERT(nb_snap .gt. 0)
     ASSERT(nbEqua .gt. 0)
 !
@@ -98,9 +100,9 @@ real(kind=8), pointer :: q(:)
 ! - Save the [Q] matrix depend on which type of reduced base
 !
     if (base_type .eq. 'LINEIQUE') then
-        call dbr_calcpod_ql(ds_empi, &
-                            result , fieldName  , nbEqua,&
-                            nb_snap, v_list_snap,&
+        call dbr_calcpod_ql(lineicNume, &
+                            result    , fieldName  , nbEqua,&
+                            nb_snap   , v_list_snap,&
                             q)
     else
         do i_snap = 1, nb_snap
