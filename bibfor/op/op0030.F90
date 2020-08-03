@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -140,7 +140,7 @@ implicit none
 !
 ! - Check mesh orientation (normals)
 !
-    if ((cont_form.eq.1) .or. (cont_form.eq.2)) then
+    if ((cont_form.eq.1) .or. (cont_form.eq.2) .or. (cont_form.eq.5)) then
         call chveno(vale_type, mesh, model)
     endif
 !
