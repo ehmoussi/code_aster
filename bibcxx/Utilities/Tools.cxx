@@ -45,3 +45,33 @@ char *vectorStringAsFStrArray( const VectorString &vector, const int size ) {
     }
     return tabFStr;
 }
+
+VectorInt irange(const int begin, const int end)
+{
+    const int size = end - begin + 1;
+    VectorInt v(size);
+
+    int pos = 0;
+    for (int i = begin; i <= end; i++)
+    {
+        v[pos] = i;
+        pos++;
+    }
+
+    return v;
+}
+
+VectorLong irange(const long begin, const long end)
+{
+    const long size = end - begin + 1;
+    VectorLong v(size);
+
+    long pos = 0;
+    for (long i = begin; i <= end; i++)
+    {
+        v[pos] = i;
+        pos++;
+    }
+
+    return v;
+}

@@ -44,21 +44,21 @@ bool MeshClass::readGmshFile( const std::string &fileName ) {
     return true;
 }
 
-bool MeshClass::hasGroupOfCells( const std::string &name ) const {
+bool MeshClass::hasGroupOfCells( const std::string &name, const bool local ) const {
     if ( _groupsOfCells->size() < 0 && !_groupsOfCells->buildFromJeveux() ) {
         return false;
     }
     return _groupsOfCells->existsObject( name );
 }
 
-bool MeshClass::hasGroupOfNodes( const std::string &name ) const {
+bool MeshClass::hasGroupOfNodes( const std::string &name, const bool local ) const {
     if ( _groupsOfNodes->size() < 0 && !_groupsOfNodes->buildFromJeveux() ) {
         return false;
     }
     return _groupsOfNodes->existsObject( name );
 }
 
-VectorString MeshClass::getGroupsOfCells() const {
+VectorString MeshClass::getGroupsOfCells(const bool local) const {
     ASTERINTEGER size = _nameOfGrpCells->size();
     VectorString names;
     for ( int i = 0; i < size; i++ ) {
@@ -67,7 +67,7 @@ VectorString MeshClass::getGroupsOfCells() const {
     return names;
 }
 
-VectorString MeshClass::getGroupsOfNodes() const {
+VectorString MeshClass::getGroupsOfNodes(const bool local) const {
     ASTERINTEGER size = _nameOfGrpNodes->size();
     VectorString names;
     for ( int i = 0; i < size; i++ ) {
@@ -77,14 +77,25 @@ VectorString MeshClass::getGroupsOfNodes() const {
 }
 
 const VectorLong MeshClass::getCells( const std::string name ) const {
-    if ( !hasGroupOfCells( name ) ) {
+
+    if ( name.empty())
+    {
+        return irange(long(1), long(getNumberOfCells()));
+    }
+    else if ( !hasGroupOfCells( name ) ) {
         return VectorLong();
     }
+
     return _groupsOfCells->getObjectFromName( name ).toVector();
 }
 
-const VectorLong MeshClass::getNodes( const std::string name ) const {
-    if ( !hasGroupOfNodes( name ) ) {
+const VectorLong MeshClass::getNodes( const std::string name, const bool local,
+                                      const bool same_rank) const {
+    if ( name.empty())
+    {
+        return irange(long(1), long(getNumberOfNodes()));
+    }
+    else if ( !hasGroupOfNodes( name ) ) {
         return VectorLong();
     }
     return _groupsOfNodes->getObjectFromName( name ).toVector();

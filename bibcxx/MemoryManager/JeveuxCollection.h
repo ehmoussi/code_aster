@@ -251,6 +251,7 @@ template < class ValueType > class JeveuxCollectionObject : private AllowedJeveu
         if ( _valuePtr == nullptr )
             throw std::runtime_error( "Pointer is null" );
         std::vector< ValueType > toReturn;
+        toReturn.reserve(size());
         for ( int i = 0; i < size(); ++i )
             toReturn.push_back( _valuePtr[i] );
         return toReturn;

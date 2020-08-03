@@ -90,4 +90,165 @@ bool ParallelMeshClass::updateGlobalGroupOfCells( void ) {
     return true;
 };
 
+bool ParallelMeshClass::hasGroupOfCells( const std::string &name, const bool local ) const {
+
+    if(local)
+    {
+        if ( _groupsOfCells->size() < 0 && !_groupsOfCells->buildFromJeveux() ) {
+                return false;
+        }
+
+        return _groupsOfCells->existsObject( name );
+    }
+
+    SetOfStringCIter curIter = _setOfAllGOE.find( name );
+    if ( curIter != _setOfAllGOE.end() )
+        return true;
+    return false;
+}
+
+bool ParallelMeshClass::hasGroupOfNodes( const std::string &name, const bool local) const {
+    if( local)
+    {
+        if ( _groupsOfNodes->size() < 0 && !_groupsOfNodes->buildFromJeveux() ) {
+            return false;
+        }
+        return _groupsOfNodes->existsObject( name );
+    }
+
+    SetOfStringCIter curIter = _setOfAllGON.find( name );
+    if ( curIter != _setOfAllGON.end() )
+        return true;
+    return false;
+
+}
+
+VectorString ParallelMeshClass::getGroupsOfCells(const bool local) const {
+
+    if( local )
+    {
+        ASTERINTEGER size = _nameOfGrpCells->size();
+        VectorString names;
+        for ( int i = 0; i < size; i++ ) {
+            names.push_back( trim( _nameOfGrpCells->getStringFromIndex( i + 1 ) ) );
+        }
+        return names;
+    }
+
+    return VectorString(_setOfAllGOE.begin(), _setOfAllGOE.end());
+
+}
+
+VectorString ParallelMeshClass::getGroupsOfNodes(const bool local) const {
+
+    if( local )
+    {
+        ASTERINTEGER size = _nameOfGrpNodes->size();
+        VectorString names;
+        for ( int i = 0; i < size; i++ ) {
+            names.push_back( trim( _nameOfGrpNodes->getStringFromIndex( i + 1 ) ) );
+        }
+        return names;
+    }
+
+    return VectorString(_setOfAllGON.begin(), _setOfAllGON.end());
+}
+
+const VectorLong ParallelMeshClass::getCells( const std::string name ) const {
+
+    if ( name.empty())
+    {
+        return irange(long(1), long(getNumberOfCells()));
+    }
+    else if ( !hasGroupOfCells( name ) ) {
+        return VectorLong();
+    }
+
+    return _groupsOfCells->getObjectFromName( name ).toVector();
+}
+
+const VectorLong ParallelMeshClass::getNodes( const std::string name , const bool local ) const {
+
+    VectorLong listOfNodes;
+    if ( name.empty())
+    {
+        listOfNodes = irange(long(1), long(getNumberOfNodes()));
+    }
+    else if ( !hasGroupOfNodes( name ) ) {
+        return VectorLong();
+    }
+    else
+    {
+        listOfNodes = _groupsOfNodes->getObjectFromName( name ).toVector();
+    }
+
+    if (local)
+        return listOfNodes;
+
+    VectorLong newNumbering;
+    newNumbering.reserve(listOfNodes.size());
+    _globalNumbering->updateValuePointer();
+
+    for (auto& nodeId : listOfNodes)
+        newNumbering.push_back((*_globalNumbering)[nodeId-1]);
+
+    return newNumbering;
+}
+
+const VectorLong ParallelMeshClass::getNodes( const std::string name, const bool local,
+                                              const bool same_rank ) const {
+
+    VectorLong listOfNodes;
+    if ( name.empty())
+    {
+        listOfNodes = irange(long(1), long(getNumberOfNodes()));
+    }
+    else if ( !hasGroupOfNodes( name ) ) {
+        return VectorLong();
+    }
+    else
+    {
+        listOfNodes = _groupsOfNodes->getObjectFromName( name ).toVector();
+    }
+
+    const int rank = getMPIRank();
+    VectorLong newRank;
+    newRank.reserve(listOfNodes.size());
+
+    int size = 0;
+    _outerNodes->updateValuePointer();
+    for (int nodeId : listOfNodes)
+    {
+        if(same_rank)
+        {
+            if (rank == (*_outerNodes)[nodeId-1])
+            {
+                newRank.push_back(nodeId);
+                size++;
+            }
+        }
+        else
+        {
+            if (rank != (*_outerNodes)[nodeId-1])
+            {
+                newRank.push_back(nodeId);
+                size++;
+            }
+        }
+    }
+    newRank.resize(size);
+
+    if (local)
+        return newRank;
+
+    VectorLong newNumbering;
+    newNumbering.reserve(newRank.size());
+    _globalNumbering->updateValuePointer();
+    for (auto& nodeId : newRank)
+        newNumbering.push_back((*_globalNumbering)[nodeId-1]);
+
+    return newNumbering;
+};
+
+
 #endif /* _USE_MPI */

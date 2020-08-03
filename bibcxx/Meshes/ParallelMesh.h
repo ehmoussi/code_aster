@@ -58,8 +58,6 @@ class ParallelMeshClass : public BaseMeshClass {
     JeveuxVectorLong _globalNumbering;
     /** @brief List of opposite domain */
     JeveuxVectorChar24 _listOfOppositeDomain;
-    /** @brief Vector of JeveuxVectorLong which contains matching nodes */
-    std::vector< JeveuxVectorLong > _vectorOfMatchingNodes;
 
   public:
     /**
@@ -83,54 +81,89 @@ class ParallelMeshClass : public BaseMeshClass {
           _listOfOppositeDomain( getName() + ".DOMJOINTS" ){};
 
     /**
-     * @brief Get the JeveuxVector for global nodes numbering
-     * @return _globalNumbering
-     */
-    const JeveuxVectorLong getGlobalNodesNumbering() const { return _globalNumbering; };
-
-    /**
      * @brief Get the JeveuxVector for outer subdomain nodes
      * @return _outerNodes
      */
-    const JeveuxVectorLong getOuterNodesVector() const { return _outerNodes; };
+    const JeveuxVectorLong getNodesRank() const { return _outerNodes; };
 
-    /**
-     * @brief Teste l'existence d'un groupe de mailles dans le maillage
-     * @return true si le groupe existe
-     */
-    bool hasGroupOfCells( const std::string &name ) const {
-        SetOfStringCIter curIter = _setOfAllGOE.find( name );
-        if ( curIter != _setOfAllGOE.end() )
-            return true;
-        return false;
+
+    bool hasGroupOfCells( const std::string &name, const bool local) const;
+
+    bool hasGroupOfCells( const std::string &name) const
+    {
+        return hasGroupOfCells(name, false);
+    };
+
+    bool hasGroupOfNodes( const std::string &name, const bool local) const;
+
+    bool hasGroupOfNodes( const std::string &name ) const
+    {
+        return hasGroupOfNodes(name, false);
+    };
+
+    VectorString getGroupsOfCells(const bool local) const;
+
+    VectorString getGroupsOfCells() const
+    {
+        return getGroupsOfCells(false);
+    };
+
+    VectorString getGroupsOfNodes(const bool local) const;
+
+    VectorString getGroupsOfNodes() const
+    {
+        return getGroupsOfNodes(false);
+    };
+
+    const VectorLong getCells( const std::string name ) const;
+
+    const VectorLong getCells(  ) const
+    {
+        return getCells( std::string() );
     };
 
     /**
-     * @brief Teste l'existence d'un groupe de noeuds dans le maillage
-     * @return true si le groupe existe
+     * @brief Return lisr of nodes
+     * @param name name of group (if empty all the nodes)
+     * @param local node id in local or global numbering
+     * @param same_rank keep or not the nodes owned by the current domain
+     * @return list of Nodes
      */
-    bool hasGroupOfNodes( const std::string &name ) const {
-        SetOfStringCIter curIter = _setOfAllGON.find( name );
-        if ( curIter != _setOfAllGON.end() )
-            return true;
-        return false;
+    const VectorLong getNodes( const std::string name, const bool local,
+                                                        const bool same_rank ) const; // 1
+
+    const VectorLong getNodes( const bool local, const bool same_rank ) const
+    {
+        return getNodes( std::string(), local, same_rank); // ->1
+    };
+    /**
+     * @brief Return lisr of nodes
+     * @param name name of group (if empty all the nodes)
+     * @param local node id in local or global numbering
+     * @return list of Nodes
+     */
+    const VectorLong getNodes( const std::string name, const bool local) const; // 0
+
+    const VectorLong getNodes(  ) const
+    {
+        return getNodes ( std::string(), true);// ->0
     };
 
-    /**
-     * @brief Teste l'existence d'un groupe de mailles dans le maillage
-     * @return true si le groupe existe
-     */
-    bool hasLocalGroupOfCells( const std::string &name ) const {
-        return _groupsOfCells->existsObject( name );
+    const VectorLong getNodes( const std::string name ) const
+    {
+        return getNodes ( name, true);// ->0
     };
 
-    /**
-     * @brief Teste l'existence d'un groupe de noeuds dans le maillage
-     * @return true si le groupe existe
-     */
-    bool hasLocalGroupOfNodes( const std::string &name ) const {
-        return _groupsOfNodes->existsObject( name );
+    const VectorLong getNodes( const bool local) const
+    {
+        return getNodes(std::string(), local); // ->0
     };
+
+    // const VectorLong getNodes( const bool same_rank ) const; //not possible
+
+    // const VectorLong getNodes( const std::string name, const bool same_rank )
+    // const; //not possible
+
 
     /**
      * @brief Fonction permettant de savoir si un maillage est parallel

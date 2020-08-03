@@ -46,8 +46,8 @@ class GroupDefinition(ExecuteCommand):
             keywords (dict): User's keywords.
         """
         if isinstance(self._result, ParallelMesh):
-            self._result.updateGlobalGroupOfCells()
-            self._result.updateGlobalGroupOfNodes()
+            self._result._updateGlobalGroupOfCells()
+            self._result._updateGlobalGroupOfNodes()
 
 
 

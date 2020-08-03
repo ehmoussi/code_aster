@@ -33,9 +33,36 @@ test.assertFalse(mesh.isParallel())
 test.assertEqual(mesh.getDimension(), 3)
 test.assertEqual(mesh.getNumberOfNodes(), 27)
 test.assertEqual(mesh.getNumberOfCells(), 56)
+
+# test groups
+# do the same thing (compatibily with ParallelMesh)
 test.assertSequenceEqual(sorted(mesh.getGroupsOfNodes()),
                          ['A', 'B', 'Bas', 'C', 'D', 'E', 'F', 'G', 'H', 'Haut'])
+test.assertSequenceEqual(sorted(mesh.getGroupsOfNodes()), sorted(mesh.getGroupsOfNodes(True)))
+test.assertSequenceEqual(sorted(mesh.getGroupsOfNodes()), sorted(mesh.getGroupsOfNodes(False)))
+# do the same thing (compatibily with ParallelMesh)
+test.assertTrue(mesh.hasGroupOfNodes('A'))
+test.assertTrue(mesh.hasGroupOfNodes('A', True))
+test.assertTrue(mesh.hasGroupOfNodes('A', False))
+test.assertFalse(mesh.hasGroupOfNodes('AA'))
+test.assertFalse(mesh.hasGroupOfNodes('AA', True))
+test.assertFalse(mesh.hasGroupOfNodes('AA', False))
+
+
+# do the same thing (compatibily with ParallelMesh)
 test.assertSequenceEqual(sorted(mesh.getGroupsOfCells()), ['Bas', 'Haut'])
+test.assertSequenceEqual(sorted(mesh.getGroupsOfCells()), sorted(mesh.getGroupsOfCells(False)))
+test.assertSequenceEqual(sorted(mesh.getGroupsOfCells()), sorted(mesh.getGroupsOfCells(True)))
+
+# do the same thing (compatibily with ParallelMesh)
+test.assertTrue(mesh.hasGroupOfCells('Bas'))
+test.assertTrue(mesh.hasGroupOfCells('Bas', True))
+test.assertTrue(mesh.hasGroupOfCells('Bas', False))
+test.assertFalse(mesh.hasGroupOfCells('Droit'))
+test.assertFalse(mesh.hasGroupOfCells('Droit', True))
+test.assertFalse(mesh.hasGroupOfCells('Droit', False))
+
+# test coordiantes
 coord = mesh.getCoordinates()
 test.assertEqual(coord[3], 0.0)
 values = coord.getValues()
@@ -46,6 +73,28 @@ cellsHaut = mesh.getCells('Haut')
 test.assertSequenceEqual(cellsHaut, [45, 46, 47, 48])
 nodesHaut = mesh.getNodes('Haut')
 test.assertSequenceEqual(nodesHaut, [1, 3, 5, 7, 10, 14, 18, 20, 26])
+# do the same thing (compatibily with ParallelMesh)
+test.assertSequenceEqual(mesh.getNodes('Haut', True), [1, 3, 5, 7, 10, 14, 18, 20, 26])
+test.assertSequenceEqual(mesh.getNodes('Haut', True, True), [1, 3, 5, 7, 10, 14, 18, 20, 26])
+test.assertSequenceEqual(mesh.getNodes('Haut', False), [1, 3, 5, 7, 10, 14, 18, 20, 26])
+test.assertSequenceEqual(mesh.getNodes('Haut', False, False), [1, 3, 5, 7, 10, 14, 18, 20, 26])
+test.assertSequenceEqual(mesh.getNodes('Haut', True, False), [1, 3, 5, 7, 10, 14, 18, 20, 26])
+test.assertSequenceEqual(mesh.getNodes('Haut', False, True), [1, 3, 5, 7, 10, 14, 18, 20, 26])
+
+# test different variant
+test.assertEqual(mesh.getNumberOfNodes(), len(mesh.getNodes()))
+test.assertEqual(mesh.getNumberOfCells(), len(mesh.getCells()))
+
+test.assertSequenceEqual(mesh.getNodes(), range(1, mesh.getNumberOfNodes()+1))
+test.assertSequenceEqual(mesh.getCells(), range(1, mesh.getNumberOfCells()+1))
+
+# do the same thing (compatibily with ParallelMesh)
+test.assertSequenceEqual(sorted(mesh.getNodes()), sorted(mesh.getNodes(True)))
+test.assertSequenceEqual(sorted(mesh.getNodes()), sorted(mesh.getNodes(True, True)))
+test.assertSequenceEqual(sorted(mesh.getNodes()), sorted(mesh.getNodes(False)))
+test.assertSequenceEqual(sorted(mesh.getNodes()), sorted(mesh.getNodes(False, True)))
+test.assertSequenceEqual(sorted(mesh.getNodes()), sorted(mesh.getNodes(False, False)))
+test.assertSequenceEqual(sorted(mesh.getNodes()), sorted(mesh.getNodes(True, False)))
 
 medconn = mesh.getMedConnectivity()
 medtypes = np.array(mesh.getMedCellsTypes())

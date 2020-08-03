@@ -31,6 +31,15 @@
 std::string trim( const std::string &str, const std::string &whitespace = " \t" );
 
 /**
+ * @brief irange Create a vector of integer from begin to end (included).
+ *      for exemple {-1, 0, 1, 2, 3}
+ */
+VectorInt irange(const int begin, const int end);
+
+VectorLong irange(const long begin, const long end);
+
+
+/**
  * @brief vectorStringToFStr Create an array of Fortran strings from a vector of strings.
  *      The output array must be freed by the caller.
  */

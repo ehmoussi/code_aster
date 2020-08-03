@@ -41,7 +41,7 @@ ConnectionMeshClass::ConnectionMeshClass( const std::string &name, const Paralle
 
     const int rank = getMPIRank();
     const int nbProcs = getMPINumberOfProcs();
-    auto outers = mesh->getOuterNodesVector();
+    auto outers = mesh->getNodesRank();
     outers->updateValuePointer();
     int nbNodes = mesh->getNumberOfNodes();
     VectorLong boolToSend( nbNodes, -1 );
@@ -50,7 +50,7 @@ ConnectionMeshClass::ConnectionMeshClass( const std::string &name, const Paralle
     MapStringVecInt myMap, gatheredMap;
     int count = 1;
     for ( const auto &nameOfGrp : toFind2 ) {
-        if ( mesh->hasLocalGroupOfNodes( nameOfGrp ) ) {
+        if ( mesh->hasGroupOfNodes( nameOfGrp, true ) ) {
             const auto &grp = mesh->getGroupOfNodesObject( nameOfGrp );
             const int nbNodesGrp = grp.size();
             VectorLong toSendGrp;
@@ -104,15 +104,14 @@ ConnectionMeshClass::ConnectionMeshClass( const std::string &name, const Paralle
     VectorLong numbering;
     const auto &meshCoords = mesh->getCoordinates();
     meshCoords->updateValuePointers();
-    const auto globalNum = mesh->getGlobalNodesNumbering();
-    globalNum->updateValuePointer();
+    const auto globalNum = mesh->getNodes(false);
 
     for ( const auto &nodeNum : toSend ) {
         coords.push_back( ( *meshCoords )[nodeNum * 3] );
         coords.push_back( ( *meshCoords )[nodeNum * 3 + 1] );
         coords.push_back( ( *meshCoords )[nodeNum * 3 + 2] );
         numbering.push_back( nodeNum + 1 );
-        numbering.push_back( ( *globalNum )[nodeNum] );
+        numbering.push_back( globalNum[nodeNum] );
         numbering.push_back( rank );
     }
     VectorReal completeCoords;

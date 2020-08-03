@@ -245,6 +245,17 @@ class JeveuxVectorClass : public JeveuxObjectClass, private AllowedJeveuxType< V
             return false;
         return true;
     };
+
+    /** @brief Convert to std::vector */
+    std::vector< ValueType > toVector() const {
+        if ( _valuePtr == nullptr )
+            throw std::runtime_error( "Pointer is null" );
+        std::vector< ValueType > toReturn;
+        toReturn.reserve(size());
+        for ( int i = 0; i < size(); ++i )
+            toReturn.push_back( _valuePtr[i] );
+        return toReturn;
+    };
 };
 
 /**
