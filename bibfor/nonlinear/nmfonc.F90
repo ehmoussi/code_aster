@@ -101,7 +101,8 @@ integer, intent(inout) :: list_func_acti(*)
     integer :: ixfem
     aster_logical :: l_load_undead, l_load_laplace, l_load_elim, l_load_didi
     character(len=8) :: k8bid, repk
-    character(len=16) :: command, k16bid, matr_distr
+    character(len=16) :: command, k16bid
+    character(len=3)  :: matr_distr
     character(len=24) :: solv_type, solv_precond
     aster_logical :: l_stat, l_dyna
     aster_logical :: l_newt_cont, l_newt_frot, l_newt_geom
