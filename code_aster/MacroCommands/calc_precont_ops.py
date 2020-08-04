@@ -535,8 +535,8 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
 
                 __typ_ancr = (table_cable.TYPE_ANCRAGE1.values()[
                               icable], table_cable.TYPE_ANCRAGE2.values()[icable])
-                __typ_noeu = (table_cable.TYPE_NOEUD1.values()[
-                              icable], table_cable.TYPE_NOEUD2.values()[icable])
+#                __typ_noeu = (table_cable.TYPE_NOEUD1.values()[
+#                              icable], table_cable.TYPE_NOEUD2.values()[icable])
                 __nom_noeu = (table_cable.NOM_ANCRAGE1.values()[
                               icable], table_cable.NOM_ANCRAGE2.values()[icable])
                 __tension = table_cable.TENSION.values()[icable]
@@ -551,77 +551,74 @@ def calc_precont_ops(self, MODELE, CHAM_MATER, CARA_ELEM, EXCIT,
                     if __typ_ancr[j].strip() == 'PASSIF':
                         if j == 0:
                             ancr1_passif = -1
-                        if __typ_noeu[j].strip() == 'NOEUD':
-                            motscle2[
-                                'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
-                                                      GLIS=0.))
-                            if __recul_exists:
-                                motscle5[
-                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
-                                                          GLIS=0.))
-                        else:
-                            motscle2[
-                                'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
+#                        if __typ_noeu[j].strip() == 'NOEUD':
+#                            motscle2[
+#                                'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
+#                                                      GLIS=0.))
+#                            if __recul_exists:
+#                                motscle5[
+#                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
+#                                                          GLIS=0.))
+#                        else:
+                        motscle2[
+                            'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                    GLIS=0.))
-                            if __recul_exists:
-                                motscle5[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
-                                                          GLIS=0.))
+                        if __recul_exists:
+                            motscle5[
+                                'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
+                                                      GLIS=0.))
                     else:
                         actif += 1
-                        if __typ_noeu[j].strip() == 'NOEUD':
-                            motscle3[
-                                'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
-                                                  VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
-                            if j == 0:
-                                motscle3b[
-                                    'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
-                                                      VALE=__sens * __tension * (-1) ** (j + 1)))
-                                motscle2a[
-                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
-                                                          GLIS=0.))
-                            else:
-                                motscle3a[
-                                    'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
-                                                      VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
-                                motscle2b[
-                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
-                                                          GLIS=0.))
-                            if __recul_exists:
-                                motscle5[
-                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
-                                                          GLIS=ancr1_passif * __sens * __recul * (-1) ** (j)))
+#                        if __typ_noeu[j].strip() == 'NOEUD':
+#                            motscle3[
+#                                'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
+#                                                  VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
+#                            if j == 0:
+#                                motscle3b[
+#                                    'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
+#                                                      VALE=__sens * __tension * (-1) ** (j + 1)))
+#                                motscle2a[
+#                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
+#                                                          GLIS=0.))
+#                            else:
+#                                motscle3a[
+#                                    'AFFE'].append(_F(NOEUD=__nom_noeu[j].strip(), NOM_CMP='GLIS',
+#                                                      VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
+#                                motscle2b[
+#                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
+#                                                          GLIS=0.))
+#                            if __recul_exists:
+#                                motscle5[
+#                                    'DDL_IMPO'].append(_F(NOEUD=__nom_noeu[j].strip(),
+#                                                          GLIS=ancr1_passif * __sens * __recul * (-1) ** (j)))
+#                        else:
+                        motscle3[
+                            'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
+                                              VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
+                        if j == 0:
+                            motscle3b[
+                                'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
+                                                  VALE=__sens * __tension * (-1) ** (j + 1)))
+                            motscle2a[
+                                'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
+                                                      GLIS=0.))
                         else:
-                            motscle3[
+                            motscle3a[
                                 'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
                                                   VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
-                            if j == 0:
-                                motscle3b[
-                                    'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
-                                                      VALE=__sens * __tension * (-1) ** (j + 1)))
-                                motscle2a[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
-                                                          GLIS=0.))
-                            else:
-                                motscle3a[
-                                    'AFFE'].append(_F(GROUP_NO=__nom_noeu[j].strip(), NOM_CMP='GLIS',
-                                                      VALE=ancr1_passif * __sens * __tension * (-1) ** (j + 1)))
-                                motscle2b[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
-                                                          GLIS=0.))
-                            if __recul_exists:
-                                motscle5[
-                                    'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
+                            motscle2b[
+                                'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
+                                                      GLIS=0.))
+                        if __recul_exists:
+                            motscle5[
+                                'DDL_IMPO'].append(_F(GROUP_NO=__nom_noeu[j].strip(),
                                                           GLIS=ancr1_passif * __sens * __recul * (-1) ** (j)))
                 if (actif == 2):
                     __ActifActif = True
 #                   on stocke les infos pour la construction de la fonction multiplicatrice
 #                   lors de la deuxième phase de mise en tension (sur l'ancrage 1)
                     info = { 'tension' : __tension}
-                    if __typ_noeu[0].strip() == 'NOEUD':
-                        UTMESS('F', 'CABLE0_5')
-                    else:
-                        info['GROUP_NO'] = __nom_noeu[0].strip()
+                    info['GROUP_NO'] = __nom_noeu[0].strip()
 
                     info_actif_actif.append(info)
 

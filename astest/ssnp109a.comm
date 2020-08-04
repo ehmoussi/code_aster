@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -97,7 +97,7 @@ CABLEPR=DEFI_CABLE_BP(            MODELE=MODELE,
                               GROUP_MA_BETON=('POUTRE_1','POUTRE_2','POUTRE_3'),
                                   DEFI_CABLE=_F(
                                GROUP_MA = 'CABLE001',
-                               NOEUD_ANCRAGE = ( 'NC001001',  'NC001021', ),),
+                               GROUP_NO_ANCRAGE = ( 'NC001001',  'NC001021', ),),
                                TYPE_ANCRAGE = ( 'PASSIF',  'ACTIF',  ),
                                 TENSION_INIT=2.0E+5,
                                RECUL_ANCRAGE=0. )

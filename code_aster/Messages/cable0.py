@@ -50,12 +50,6 @@ est la dernière valeur de la liste d'instants fournie.
 
 """),
 
-    5: _("""
-Pour que CALC_PRECONT puisse traiter correctement la mise en tension de câbles frottants
-avec deux ancrages actifs, il est nécessaire de définir les noeuds d'ancrage à l'aide du mot-clé
-GROUP_NO_ANCRAGE (et non NOEUD_ANCRAGE) dans DEFI_CABLE_BP.
-"""),
-
     6: _("""La déformation %(k1)s n'est pas disponible pour l'élément CABLE_GAINE"""),
 
     8 : _("""
