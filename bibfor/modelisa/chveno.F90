@@ -246,7 +246,7 @@ subroutine chveno(fonree, noma, nomo)
                                 call orilma(nomma, ndim, zi(jgro), nbmail, norie1,&
                                             ntrait, reorie, nbmamo, zi(jlima ))
                                 if ((algo.eq.'LAC' ).and.(ntrait .ne. 0)) then
-                                    !call utmess('A', 'CONTACT2_20')
+                                    call utmess('A', 'CONTACT2_20')
                                 endif
                                 call jedetr(limamo)
                                 elseif ( nbmapr.eq.0 .and. nbmabo.eq.0 )&
