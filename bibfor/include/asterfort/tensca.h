@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ interface
     subroutine tensca(tablca, icabl, nbnoca, nbf0, f0,&
                       delta, typrel, trelax, xflu, xret,&
                       ea, rh1000, mu0, fprg, frco,&
-                      frli, sa, regl)
+                      frli, sa, regl,analy)
         character(len=19) :: tablca
         integer :: icabl
         integer :: nbnoca
@@ -41,5 +41,6 @@ interface
         real(kind=8) :: frli
         real(kind=8) :: sa
         character(len=4) :: regl
+        character(len=4) :: analy
     end subroutine tensca
 end interface

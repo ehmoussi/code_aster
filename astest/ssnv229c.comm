@@ -1,0 +1,371 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+# MODELISATION C : MODELISATION DE LA RUPTURE D'UN CABLE AVEC REANCRAGE
+DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'))
+
+# <CALCULEL3_47> AVEC CALC_PRECONT, ON PASSE CONSCIEMMENT DE LDC 'SANS'
+# A UNE AUTRE LOI DE COMPORTEMENT
+# -----------------------------------------------------------#
+# -----------------------------------------------------------#
+# VALIDATION DE LA METHODOLOGIE PERMETTANT DE                #
+# SIMULER LA RUPTURE D'UN CABLE DE PRECONTRAINTE             #
+# AVEC REANCRAGE                                             #
+# -----------------------------------------------------------#
+# UNITES
+# LONGUEUR     [M]
+# FORCE        [N]
+# PRESSION     [PA]
+# -----------------------------------------------------------#
+# -----------------------------------------------------------#
+# ######################################################################
+# ################################# DEFINITION DES PARAMETRES ##########
+# ######################################################################
+# PARAMETRES DES MATERIAUX
+# Béton
+E_bet = 30000.E6
+
+NU_bet = 0.13
+
+ALPHA_b = 0.00001
+
+# Câbles
+E_cab = 191500.E6
+
+NU_cab = 0.3
+
+S_cab = 3 * 0.002641
+
+f_prg = 1814.E6
+
+f0 = 0.82 * f_prg
+
+T0 = f0 * S_cab
+
+mu_h = 0.17
+
+phi_h = 0.0015
+
+phi = 0.0015 / mu_h
+
+g_cab = 0.008
+
+# RELAXATION ACIER
+
+rh1000 = 0
+
+
+from numpy import sign
+
+# #######################################################################
+# ################################# DEFINITION DU MODELE ################
+# #######################################################################
+# LECTURE DU MAILLAGE
+mail1 = LIRE_MAILLAGE(FORMAT='ASTER',
+                      UNITE=20)
+
+#  Creation des groupes
+mail1 = DEFI_GROUP(reuse=mail1,
+                   CREA_GROUP_MA=(_F(NOM='CAB_ODD',
+                                     UNION=('CAB1', 'CAB3', 'CAB5', 'CAB7', 'CAB9')),
+                                  _F(NOM='CAB_EVEN',
+                                     UNION=('CAB2', 'CAB4', 'CAB6', 'CAB8', 'CAB10')),
+                                  _F(NOM='CABLES',
+                                     UNION=('CAB1', 'CAB3', 'CAB5', 'CAB7', 'CAB9', 'CAB2', 'CAB4', 'CAB6', 'CAB8', 'CAB10'))),
+                   CREA_GROUP_NO=_F(TOUT_GROUP_MA='OUI'),
+                   MAILLAGE=mail1)
+
+# DEFINING MECHANICAL PROBLEM AND MODELISATION
+# Defines the type of equation to solve and the type of elements used for the modelisation of the mesh
+mod = AFFE_MODELE(AFFE=(_F(GROUP_MA=('FUT', ),
+                           MODELISATION='3D',
+                           PHENOMENE='MECANIQUE'),
+                        _F(GROUP_MA=('CABLES', ),
+                           MODELISATION='BARRE',
+                           PHENOMENE='MECANIQUE')),
+                  MAILLAGE=mail1)
+
+# ATTRIBUTING GEOMETRICAL CHARACTERISTICS AND RELATED PROPERTIES TO GROUPS OF ELEMENTS
+cara = AFFE_CARA_ELEM(BARRE=_F(CARA='A',
+                               GROUP_MA=('CABLES', ),
+                               SECTION='GENERALE',
+                               VALE=S_cab),
+                      MODELE=mod)
+
+# DEFINITION DES MATERIAUX
+bet = DEFI_MATERIAU(ELAS=_F(ALPHA=ALPHA_b,
+                            E=E_bet,
+                            NU=NU_bet),
+                    ETCC_BETON=_F())
+
+aci_h = DEFI_MATERIAU(ELAS=_F(E=E_cab,
+                              NU=NU_cab),
+                      ETCC_ACIER=_F(COEF_FROT=mu_h,
+                                    F_PRG=f_prg,
+                                    PERT_LIGNE=phi,
+                                    RELAX_1000=rh1000))
+
+# ATTRIBUTING MATERIAL PROPERTIES TO GROUPS OF ELEMENTS
+mat = AFFE_MATERIAU(AFFE=(_F(GROUP_MA='FUT',
+                             MATER=bet),
+                          _F(GROUP_MA='CABLES',
+                             MATER=aci_h)),
+                    MAILLAGE=mail1,
+                    MODELE=mod)
+
+# DEFINITION DES INSTANTS DE CALCUL
+tps = DEFI_LIST_REEL(VALE=(0, 1.0, 2.0))
+
+# #######################################################################################################
+# ################################# DEFINITION DES CABLES ##########################################
+# #######################################################################################################
+# DEFINITION DES CABLES (SANS RELAXATION)
+cab_ref = DEFI_CABLE_BP(CARA_ELEM=cara,
+                         CHAM_MATER=mat,
+                         DEFI_CABLE=(_F(GROUP_MA='CAB1',
+                                        GROUP_NO_ANCRAGE=('CAB1_I', 'CAB1_F')),
+                                     _F(GROUP_MA='CAB3',
+                                        GROUP_NO_ANCRAGE=('CAB3_I', 'CAB3_F')),
+                                     #_F(GROUP_MA='CAB5',
+                                     #   GROUP_NO_ANCRAGE=('CAB5_I', 'CAB5_F')),
+                                     _F(GROUP_MA='CAB7',
+                                        GROUP_NO_ANCRAGE=('CAB7_I', 'CAB7_F')),
+                                     _F(GROUP_MA='CAB9',
+                                        GROUP_NO_ANCRAGE=('CAB9_I', 'CAB9_F')),
+                                     _F(GROUP_MA='CAB2',
+                                        GROUP_NO_ANCRAGE=('CAB2_I', 'CAB2_F')),
+                                     _F(GROUP_MA='CAB4',
+                                        GROUP_NO_ANCRAGE=('CAB4_I', 'CAB4_F')),
+                                     _F(GROUP_MA='CAB6',
+                                        GROUP_NO_ANCRAGE=('CAB6_I', 'CAB6_F')),
+                                     _F(GROUP_MA='CAB8',
+                                        GROUP_NO_ANCRAGE=('CAB8_I', 'CAB8_F')),
+                                     _F(GROUP_MA='CAB10',
+                                        GROUP_NO_ANCRAGE=('CAB10_I', 'CAB10_F'))),
+                         GROUP_MA_BETON='FUT',
+                         MODELE=mod,
+                         RECUL_ANCRAGE=g_cab,
+                         TENSION_INIT=T0,
+                         TYPE_ANCRAGE=('ACTIF', 'ACTIF'))
+cab_5 = DEFI_CABLE_BP(CARA_ELEM=cara,
+                        CHAM_MATER=mat,
+                        DEFI_CABLE=(_F(GROUP_MA='CAB5',
+                                       GROUP_NO_ANCRAGE=('CAB5_I', 'CAB5_F'),)),
+                        GROUP_MA_BETON='FUT',
+                        MODELE=mod,
+                        #NBH_RELAX=nbhrelax,
+                        RECUL_ANCRAGE=g_cab,
+                        TENSION_INIT=T0,
+                        TYPE_ANCRAGE=('ACTIF', 'ACTIF'),
+                        )
+#tensc5i = RECU_TABLE(CO=cab_5, NOM_TABLE='CABLE_BP')
+#IMPR_TABLE(TABLE=tensc5i, UNITE=8)
+# #######################################################################################################
+# ################################# DEFINITION DES CHARGEMENTS ##########################################
+# #######################################################################################################
+# DEFINITION LIAISONS CINEMATIQUES DES CABLES
+ch_cab = AFFE_CHAR_MECA(MODELE=mod,
+                         RELA_CINE_BP=_F(CABLE_BP=cab_ref,
+                                         RELA_CINE='OUI',
+                                         SIGM_BPEL='NON'))
+ch_cab5 = AFFE_CHAR_MECA(MODELE=mod,
+                         RELA_CINE_BP=_F(CABLE_BP=cab_5,
+                                         RELA_CINE='OUI',
+                                         SIGM_BPEL='NON'))
+# DEFINITION DES CONDITIONS LIMITES
+clim = AFFE_CHAR_MECA(DDL_IMPO=(_F(DX=0,
+                                   GROUP_NO=('ND_BASE', 'PMY')),
+                                _F(DZ=0,
+                                   GROUP_NO=('INF', ))),
+                      LIAISON_DDL=_F(COEF_IMPO=0.0,
+                                     COEF_MULT=(1.0, 1.0),
+                                     DDL=('DY', 'DY'),
+                                     GROUP_NO=('ND_BASE', 'PMY')),
+                      MODELE=mod)
+
+# ################################################################
+#  PAHSE 2 : MISE EN TENSION DES CABLES
+# ################################################################
+# #######################################################################################################
+# ############################################ CALCUL ###################################################
+# #######################################################################################################
+res0 = CALC_PRECONT(                   
+                    CABLE_BP=(cab_ref,cab_5),
+                    CARA_ELEM=cara,
+                    CHAM_MATER=mat,
+                    COMPORTEMENT=_F(RELATION='ELAS'),
+                    EXCIT=(_F(CHARGE=clim),
+                     ),
+                    INCREMENT=_F(INST_FIN=1.0,
+                                 LIST_INST=tps),
+                    MODELE=mod)
+
+# ############################################################
+# # RECUPERATION DES EFFORTS DANS LES CABLES
+# ############################################################
+# Calcul des contraintes et déformations dans les éléments
+res0 = CALC_CHAMP(reuse=res0,
+                  CONTRAINTE=('SIEF_ELNO'),
+                  DEFORMATION=('EPSI_ELGA','EPSI_ELNO'),
+                  INST=1.0,
+                  RESULTAT=res0)
+
+# #######################################################################################################
+# ################################# EXTRACTION DES TENSIONS DANS LES CABLES ######################################
+# #######################################################################################################
+tensc5 = POST_RELEVE_T(ACTION=_F(GROUP_MA='CAB5',
+                                 GROUP_NO='CAB5',
+                                 INST=1.0,
+                                 INTITULE='N',
+                                 NOM_CHAM='SIEF_ELNO',
+                                 NOM_CMP='N',
+                                 OPERATION='EXTRACTION',
+                                 RESULTAT=res0))
+
+
+tensc6 = POST_RELEVE_T(ACTION=_F(GROUP_MA='CAB6',
+                                 GROUP_NO='CAB6',
+                                 INST=1.0,
+                                 INTITULE='N',
+                                 NOM_CHAM='SIEF_ELNO',
+                                 NOM_CMP='N',
+                                 OPERATION='EXTRACTION',
+                                 RESULTAT=res0))
+
+                               
+
+# impression de la tension initiale
+#IMPR_TABLE(TABLE=tensc5,UNITE=8)
+#IMPR_TABLE(TABLE=tensc5,UNITE=28,FORMAT='XMGRACE',NOM_PARA=('ABSC_CURV', 'N'),)
+
+# Estimation de la tension dans le cable apres rupture
+# hypothese : rupture a l'abscisse s0, "reancrage lineaire" sur une distance lc (de part et d'autre du point de rupture) 
+s0=64.39464
+lc=20.
+TENSLIN= FORMULE(NOM_PARA= ('ABSC_CURV', 'N'),
+                VALE = 'N -( N *0.5*( 1.- copysign(1,ABSC_CURV-s0)*(ABSC_CURV-s0)/lc+ abs(1.-copysign(1,ABSC_CURV-s0)*(ABSC_CURV-s0)/lc)) )',
+                s0=s0,lc=lc
+                )
+tensc5=CALC_TABLE(TABLE=tensc5,
+           reuse=tensc5,
+           ACTION=(_F(OPERATION='OPER',
+                      FORMULE= TENSLIN,
+                      NOM_PARA = 'TENSKC'),
+                   _F(OPERATION='SUPPRIME', NOM_PARA='N'),
+                   _F(OPERATION='RENOMME', NOM_PARA = ('TENSKC','N')),
+                   )) 
+                     
+
+# impression de la tension après rupture
+#IMPR_TABLE(TABLE=tensc5,UNITE=8)    
+#IMPR_TABLE(TABLE=tensc5,UNITE=29,FORMAT='XMGRACE', NOM_PARA=('ABSC_CURV', 'N'),)    
+# definition du concept lie au nouveau cable casse
+
+cab_KC = DEFI_CABLE_BP(CARA_ELEM=cara,
+                        CHAM_MATER=mat,
+                        MODI_CABLE_RUPT=(_F(GROUP_MA='CAB5',
+                                            GROUP_NO_ANCRAGE=('CAB5_I', 'CAB5_F'),
+                                            TENSION=tensc5),),
+                        GROUP_MA_BETON='FUT',
+                        MODELE=mod,
+                        RECUL_ANCRAGE=g_cab,
+                        TENSION_INIT=T0,
+                        TYPE_ANCRAGE=('ACTIF', 'ACTIF'),
+                        )
+
+tensc5nw = RECU_TABLE(CO=cab_KC, 
+                      NOM_TABLE='CABLE_BP')
+
+
+# impression de la tension dns defi_cable_bp
+#IMPR_TABLE(TABLE=tensc5nw,UNITE=8)
+#IMPR_TABLE(TABLE=tensc5,UNITE=30,FORMAT='XMGRACE',NOM_PARA= ('ABSC_CURV','N'))
+# #######################################################################################################
+# on applique la nouvelle tension
+res0 = CALC_PRECONT(reuse = res0,                   
+                    CABLE_BP=(cab_KC),
+                    CARA_ELEM=cara,
+                    CHAM_MATER=mat,
+                    COMPORTEMENT=_F(RELATION='ELAS'),
+                    EXCIT=(_F(CHARGE=clim),
+                           _F(CHARGE=ch_cab)),
+                    INCREMENT=_F(INST_FIN=2.0,
+                                 LIST_INST=tps),
+                    ETAT_INIT=_F(EVOL_NOLI=res0),
+                    MODELE=mod)
+
+# ############################################################
+# # RECUPERATION DES EFFORTS DANS LES CABLES
+# ############################################################
+# Calcul des contraintes et déformations dans les éléments
+res0 = CALC_CHAMP(reuse=res0,
+                  CONTRAINTE=('SIEF_ELNO', ),
+                  DEFORMATION=( 'EPSI_ELGA','EPSI_ELNO'),
+                  INST=2.0,
+                  RESULTAT=res0)
+
+tensc5f = POST_RELEVE_T(ACTION=_F(GROUP_MA='CAB5',
+                                 GROUP_NO='CAB5',
+                                 INST=2.0,
+                                 INTITULE='N',
+                                 NOM_CHAM='SIEF_ELNO',
+                                 NOM_CMP='N',
+                                 OPERATION='EXTRACTION',
+                                 RESULTAT=res0))
+
+#IMPR_TABLE(TABLE=tensc5f, UNITE=8)
+#IMPR_TABLE(TABLE=tensc5f,UNITE=31,FORMAT='XMGRACE', NOM_PARA=('ABSC_CURV', 'N'),)
+#IMPR_RESU(FORMAT='MED',RESU=_F(RESULTAT= res0),UNITE=80)
+
+TABRES = CALC_TABLE(TABLE=tensc5f,
+                    ACTION=_F (OPERATION='CALCUL',
+                               NOM_PARA='N',
+                               TYPE_CALCUL=('MAXI','MINI','SOMM')))
+         
+IMPR_TABLE(TABLE=TABRES)
+
+
+########################################################
+#VALIDATION
+########################################################
+#VERIFICATION RESULTAT FORMULE
+#---------------------------------
+TEST_TABLE(TABLE=tensc5, TYPE_TEST='MIN',NOM_PARA='N',VALE_CALC=561.2384876376018,CRITERE='RELATIF')
+
+TEST_TABLE(TABLE=tensc5, TYPE_TEST='SOMM',NOM_PARA='N',VALE_CALC=957773249.6324579,CRITERE='RELATIF') 
+
+# VERIFICATION A LA SORTIE DE DEFI_CABLE_BP
+#---------------------------------
+TEST_TABLE(TABLE=tensc5nw, TYPE_TEST='MIN',NOM_PARA='TENSION',VALE_CALC=561.2384876376018,
+    VALE_REFE=561.2384876376018,VALE_ABS='OUI',CRITERE='RELATIF',PRECISION=1.E-4,REFERENCE='AUTRE_ASTER')
+
+TEST_TABLE(TABLE=tensc5nw, TYPE_TEST='SOMM',NOM_PARA='TENSION',VALE_CALC=957773249.6324579,
+    VALE_REFE=957773249.6324579,CRITERE='RELATIF',PRECISION=1.E-4,REFERENCE='AUTRE_ASTER')
+    
+# VERIFICATION A LA SORTIE DE CALC_PRECONT
+#---------------------------------    
+TEST_TABLE(TABLE=tensc5f, TYPE_TEST='MIN',NOM_PARA='N',VALE_CALC=162511.58200605563,
+    VALE_REFE=561.2384876376018,VALE_ABS='OUI',CRITERE='RELATIF',REFERENCE='AUTRE_ASTER',PRECISION=3.E4)
+
+TEST_TABLE(TABLE=tensc5f, TYPE_TEST='SOMM',NOM_PARA='N',VALE_CALC=957795674.8002765,
+    VALE_REFE=957773249.6324579,VALE_ABS='OUI',CRITERE='RELATIF',PRECISION=1E-2, REFERENCE='AUTRE_ASTER')
+    
+ 
+    
+FIN()

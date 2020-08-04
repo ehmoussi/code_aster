@@ -35,6 +35,8 @@ from .Utils.defi_cable_op import DEFI_CABLE_OP
 #  - CARA_ELEM
 #  - GROUP_MA_BETON
 #  - DEFI_CABLE
+#  - MODI_CABLE_ETCC
+#  - MODI_CABLE_RUPT
 #  - ADHERENT
 #  - TYPE_ANCRAGE
 #  - TENSION_INIT
@@ -51,8 +53,9 @@ from .Utils.defi_cable_op import DEFI_CABLE_OP
 
 
 def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
-                      DEFI_CABLE, ADHERENT, TYPE_ANCRAGE, TENSION_INIT,
-                      RECUL_ANCRAGE, TYPE_RELAX, INFO, CONE=None,
+                      DEFI_CABLE, MODI_CABLE_ETCC,MODI_CABLE_RUPT,
+                      ADHERENT, TYPE_ANCRAGE, TENSION_INIT,
+                      RECUL_ANCRAGE, TYPE_RELAX, TITRE, INFO, CONE=None,
                       **args):
     """
        Ecriture de la macro DEFI_CABLE_BP
@@ -89,20 +92,45 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 
     # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "DEFI_CABLE"
     dDEFI_CABLE = []
-    for j in DEFI_CABLE:
-        dDEFI_CABLE.append(j)
-        for i in list(dDEFI_CABLE[-1].keys()):
-            if dDEFI_CABLE[-1][i] is None:
-                del dDEFI_CABLE[-1][i]
+    if DEFI_CABLE: 
+      __ANALY='DEFI'
+      print ('defi_cable_op',__ANALY)
+      for j in DEFI_CABLE:
+          dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
+          for i in list(dDEFI_CABLE[-1].keys()):
+              if dDEFI_CABLE[-1][i] is None:
+                  del dDEFI_CABLE[-1][i]
+    elif MODI_CABLE_ETCC:
+      __ANALY='ETCC'
+      print ('defi_cable_op',__ANALY)
+    # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "MODI_CABLE_ETCC"
+      for j in MODI_CABLE_ETCC:
+          dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
+          for i in list(dDEFI_CABLE[-1].keys()):
+              if dDEFI_CABLE[-1][i] is None:
+                  del dDEFI_CABLE[-1][i]
 
-    # BOUCLE SUR LES FACTEURS DU MOT-CLE "DEFI_CABLE"
+    # RECUPERATION DES INFOS DONNEES PAR LE MOT-CLE "MODI_CABLE_RUPT"
+    elif MODI_CABLE_RUPT:
+      __ANALY='RUPT'
+      print ('defi_cable_op',__ANALY)
+      for j in MODI_CABLE_RUPT:
+          dDEFI_CABLE.append(j.cree_dict_valeurs(j.mc_liste))
+          for i in list(dDEFI_CABLE[-1].keys()):
+              if dDEFI_CABLE[-1][i] is None:
+                  del dDEFI_CABLE[-1][i]
+
+    else:
+       UTMESS('F', 'CABLE0_6')
+
+    # BOUCLE SUR LES FACTEURS DU MOT-CLE "DEFI_CABLE" et "MODI_CABLE"
     motscles['DEFI_CABLE'] = []
 
     for i in dDEFI_CABLE:
 #   CAS OU ON RENTRE UNE TENSION INITIALE DU CABLE (TYPE_RELAX='ETCC_REPRISE')
         motscle3 = {}
-        if ('TENSION_CT' in i) == 1:
-            motscle3 = {'TENSION_CT': i['TENSION_CT']}
+        if ('TENSION' in i) == 1:
+            motscle3 = {'TENSION': i['TENSION']}
 
         # CAS OU L'ON A DEFINI LE MOT-CLE "CONE"
         if CONE:
@@ -266,10 +294,7 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
 # FIN BOUCLE sur i in DEFI_CABLE
     # LANCEMENT DE DEFI_CABLE_BP
 #    TRAITEMENT DE LA RELAXATION
-    if TYPE_RELAX == 'ETCC_DIRECT':
-        motscles['NBH_RELAX'] = args['NBH_RELAX']
-
-    if TYPE_RELAX == 'ETCC_REPRISE':
+    if TYPE_RELAX == 'ETCC_DIRECT' or __ANALY == 'ETCC':
         motscles['NBH_RELAX'] = args['NBH_RELAX']
 
     if TYPE_RELAX == 'BPEL':
@@ -292,23 +317,9 @@ def defi_cable_bp_ops(self, MODELE, CHAM_MATER, CARA_ELEM, GROUP_MA_BETON,
                          TENSION_INIT=TENSION_INIT,
                          RECUL_ANCRAGE=RECUL_ANCRAGE,
                          TYPE_RELAX=TYPE_RELAX,
-                         #  RELAXATION=dRelaxation,
+                         ANALYSE=__ANALY,
                          INFO=INFO,
                          **motscles
                          )
-
-#  else:
-
-#    __DC=DEFI_CABLE_OP(MODELE=MODELE,
-#                       CHAM_MATER=CHAM_MATER,
-#                       CARA_ELEM=CARA_ELEM,
-#                       GROUP_MA_BETON=GROUP_MA_BETON,
-#                       TYPE_ANCRAGE=TYPE_ANCRAGE,
-#                       TENSION_INIT=TENSION_INIT,
-#                       RECUL_ANCRAGE=RECUL_ANCRAGE,
-#                       PERT_ELAS=PERT_ELAS,
-#                       INFO=INFO,
-#                       **motscles
-#                       );
 
     return __DC

@@ -56,6 +56,73 @@ avec deux ancrages actifs, il est nécessaire de définir les noeuds d'ancrage �
 GROUP_NO_ANCRAGE (et non NOEUD_ANCRAGE) dans DEFI_CABLE_BP.
 """),
 
-    6: _("""La déformation %(k1)s n'est pas disponible pour l'élément CABLE_GAINE"""),
+    6: _("""
+Erreur de mise en donnée
+"""),
+    
+    7: _("""
+Pour modéliser la relaxation des câblesavec MODI_CABLE_ETCC, vous devez sélectionner TYPE_RELAX='SANS'.      
+"""),
 
+    8 : _("""
+Problème de lecture de la table donnant la tension dans le câble (MODI_CABLE_ETCC ou MODI_CABLE_RUPT).
+"""),
+    
+    9 : _("""
+La table fournie dans DEFI_CABLE doit contenir l'abscisse curviligne et la tension du câble.
+"""),
+
+    10 : _("""
+La table fournie n'a pas la bonne dimension : vérifiez qu'il s'agit du bon câble ou que plusieurs
+instants ne sont pas contenus dans la table.
+"""),
+
+    11 : _("""
+Les abscisses curvilignes de la table fournie ne correspondent pas à celles du câble étudié
+"""),
+    
+    12 : _(""" Attention, vous voulez calculer les pertes par relaxation de l'acier, mais
+      le coefficient RELAX_1000 est nul. Les pertes associées sont donc nulles.
+"""),    
+ 
+    13: _("""
+Cas ADHERENT = 'NON' :
+Attention le profil de tension calculé dans DEFI_CABLE_BP ne sera pas utilisé si vous poursuivez le calcul avec CALC_PRECONT.
+Les paramètres des lois BPEL_**** ou ETCC_**** ne sont donc pas pris en compte lors de la mise en tension.
+Les coefficients de frottement considérés sont ceux de la loi CABLE_GAINE_FROT.
+"""),
+    
+    14 : _("""
+ mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <NOEUD_ANCRAGE> : il faut définir 2 noeuds d'ancrage
+"""),
+
+    15 : _("""
+ mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <GROUP_NO_ANCRAGE> : il faut définir 2 GROUP_NO d'ancrage
+"""),
+
+    16  : _("""
+ mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <NOEUD_ANCRAGE> : les 2 noeuds d'ancrage doivent être distincts
+"""),
+
+    17 : _("""
+ mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <GROUP_NO_ANCRAGE> : les 2 GROUP_NO d'ancrage doivent être distincts
+"""),
+
+    18 : _("""
+ mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande type ancrage : les 2 extrémités sont passives -> armature passive
+"""),
+
+    19 : _("""
+ mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande type ancrage : les 2 extrémités sont passives et la tension que vous voulez imposer est non nulle. C'est impossible 
+"""),
+
+    20 : _("""
+ La carte des caractéristiques matérielles des éléments n existe pas. il faut préalablement affecter ces caractéristiques en utilisant la commande <AFFE_MATERIAU>
+"""),
+    
+    21 : _("""
+ la carte des caractéristiques géométriques des éléments de barre de section générale n existe pas. il faut préalablement affecter ces caractéristiques en utilisant la commande <AFFE_CARA_ELEM>
+"""),
+
+    22: _("""La déformation %(k1)s n'est pas disponible pour l'élément CABLE_GAINE"""),
 }

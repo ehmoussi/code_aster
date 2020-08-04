@@ -33,6 +33,7 @@ subroutine op0180()
 #include "jeveux.h"
 #include "asterc/getfac.h"
 #include "asterc/getres.h"
+#include "asterc/r8prem.h"
 #include "asterfort/alcart.h"
 #include "asterfort/assert.h"
 #include "asterfort/caelca.h"
@@ -72,14 +73,14 @@ subroutine op0180()
 #include "asterfort/voisca.h"
 #include "asterfort/wkvect.h"
 !
-    integer :: ibid, icabl, icmp, irana1, iret, jcaba, jnbno
+    integer :: ibid, icabl, icmp, irana1, iret, jcaba, jnbno, jsief
     integer :: n1, n2, nbancr, nbcabl, nbf0, nbmama, nbnobe, nbnoma
-    integer :: ncaba, nbmabe, jlimab, nbnoca
+    integer :: ncaba, nsief, nbmabe, jlimab, nbnoca
     real(kind=8) :: delta, ea, f0, frco, frli, mu0, rh1000, sa, fprg, xflu, xret
     real(kind=8) :: trelax, valr(2), rbid
     aster_logical :: mail2d, relax, quad, eval
     character(len=3) :: k3b
-    character(len=8) :: caelem, chmat, mailla, modele, nomu, adher
+    character(len=8) :: caelem, chmat, mailla, modele, nomu, adher, analy
     character(len=8) :: typanc(2), typ_ma
     character(len=16) :: cmd, concep
     character(len=19) :: carte, ligrmo, lirela, numaca, nunobe, xnoca
@@ -93,7 +94,7 @@ subroutine op0180()
     character(len=3) :: typpar(nbpar)
     character(len=24) :: nompar(nbpar), typrel
     character(len=4) :: regl
-    parameter    (nbpar2=11)
+    parameter    (nbpar2=12)
     character(len=3) :: typpa2(nbpar2)
     character(len=24) :: nompa2(nbpar2)
     character(len=8), pointer :: ncmp(:) => null(), nogd(:) => null()
@@ -118,7 +119,7 @@ subroutine op0180()
                           'NOM_ANCRAGE2            ',&
                           'NOEUD_MILIEU'/
 !
-    data          typpa2 /'K8','K8','K24','K8','K8','K24','R','R','K8','K8','I'/
+    data          typpa2 /'K8','K8','K24','K8','K8','K24','R','R','K8','K8','K8','I'/
     data          nompa2 /'TYPE_ANCRAGE1           ',&
                           'TYPE_NOEUD1             ',&
                           'NOM_ANCRAGE1            ',&
@@ -129,6 +130,7 @@ subroutine op0180()
                           'RECUL_ANCRAGE           ',&
                           'ADHERENT                ',&
                           'TYPE_MAILLE             ',&
+                          'ANALYSE                 ',&
                           'SENS                    '/
 !
 !-------------------   DEBUT DU CODE EXECUTABLE    ---------------------
@@ -150,20 +152,21 @@ subroutine op0180()
     call getvr8(' ', 'TENSION_INIT', scal=f0, nbret=ibid)
     call getvr8(' ', 'RECUL_ANCRAGE', scal=delta, nbret=ibid)
     call getvtx(' ', 'ADHERENT', scal=adher, nbret=ibid)
+    call getvtx(' ', 'ANALYSE', scal=analy, nbret=ibid)
     valr(1)=f0
     valr(2)=delta
     valk(7)= adher
-    valk(8)= ' '
+    valk(8)= analy
 !
     if (adher .eq. 'NON') then
-        call utmess('I', 'MODELISA3_39')
+        call utmess('I', 'CABLE0_13')
     endif
 !
     call getvtx(' ', 'TYPE_RELAX', scal=typrel, nbret=ibid)
     if (typrel .eq. 'BPEL') then
         relax = .true.
         call getvr8(' ', 'R_J', scal=trelax, nbret=ibid)
-    else if (typrel(1:4).eq.'ETCC') then
+    else if ((typrel(1:4).eq.'ETCC').or.(analy(1:4).eq.'ETCC')) then
         relax = .true.
         call getvr8(' ', 'NBH_RELAX', scal=trelax, nbret=ibid)
     else
@@ -192,9 +195,9 @@ subroutine op0180()
         if (abs(nbancr) .ne. 2) then
             write(k3b,'(I3)') icabl
             if (n1 .ne. 0) then
-                call utmess('F', 'MODELISA5_83', sk=k3b)
+                call utmess('F', 'CABLE0_14', sk=k3b)
             else
-                call utmess('F', 'MODELISA5_84', sk=k3b)
+                call utmess('F', 'CABLE0_15', sk=k3b)
             endif
         else
             if (n1 .ne. 0) then
@@ -202,7 +205,7 @@ subroutine op0180()
                             nbret=ibid)
                 if (noancr(1) .eq. noancr(2)) then
                     write(k3b,'(I3)') icabl
-                    call utmess('F', 'MODELISA5_85', sk=k3b)
+                    call utmess('F', 'CABLE0_16', sk=k3b)
                 endif
                 valk(2) = 'NOEUD'
                 valk(5) = 'NOEUD'
@@ -213,7 +216,7 @@ subroutine op0180()
                             vect=noancr(1), nbret=ibid)
                 if (noancr(1) .eq. noancr(2)) then
                     write(k3b,'(I3)') icabl
-                    call utmess('F', 'MODELISA5_86', sk=k3b)
+                    call utmess('F', 'CABLE0_17', sk=k3b)
                 endif
                 valk(2) = 'GROUP_NO'
                 valk(5) = 'GROUP_NO'
@@ -240,11 +243,11 @@ subroutine op0180()
         if ((typanc(1).eq.'PASSIF') .and. (typanc(2).eq.'PASSIF')) then
             write(k3b,'(I3)') icabl
 !    SI LA TENSION EST NULLE : SIMPLE ALARME
-            if (f0 .eq. 0.d0) then
-                call utmess('A', 'MODELISA5_87', sk=k3b)
+            if (f0 .le. r8prem()) then
+                call utmess('A', 'CABLE0_18', sk=k3b)
 !    SI LA TENSION EST NON-NULLE : ARRET FATAL
             else
-                call utmess('F', 'MODELISA5_88', sk=k3b)
+                call utmess('F', 'CABLE0_19', sk=k3b)
 !
             endif
         endif
@@ -307,7 +310,7 @@ subroutine op0180()
     cadesc = carte//'.DESC'
     call jeexin(cadesc, iret)
     if (iret .eq. 0) then
-        call utmess('F', 'MODELISA5_89')
+        call utmess('F', 'CABLE0_20')
     endif
     call etenca(carte, ligrmo, iret)
     if (iret .ne. 0) then
@@ -318,7 +321,7 @@ subroutine op0180()
     cadesc = carte//'.DESC'
     call jeexin(cadesc, iret)
     if (iret .eq. 0) then
-        call utmess('F', 'MODELISA5_90')
+        call utmess('F', 'CABLE0_21')
     endif
     call etenca(carte, ligrmo, iret)
     if (iret .ne. 0) then
@@ -391,14 +394,14 @@ subroutine op0180()
     call wkvect(nunobi, 'V V I', nbnobe, ibid)
 !
 ! ---
-!   ALLOCATION DU STOCKAGE DES CONTRAINTES DANS LES MAILLES BETON 
+!   ALLOCATION DU STOCKAGE DES CONTRAINTES DANS LES MAILLES BETON
 !   DUES AU PASSAGE DES CABLES
-!   
+!
     do icabl = 1, nbcabl
         eval=.true.
         call topoca(kbid19, mailla, icabl, nbf0, zi(jnbno), kbid19, &
                     quad, ibid, eval)
-    enddo 
+    enddo
 !
     nbnoca_total=sum( zi(jnbno-1+1: jnbno-1+nbcabl))
     if (quad) then
@@ -409,14 +412,14 @@ subroutine op0180()
     endif
     sigmcabl=nomu//'.SIGMACABLE'
 !
-!   GRANDEUR ET COMPOSANTES A STOCKER 
-!   SIEF_R 
-    nbgd = 1 
+!   GRANDEUR ET COMPOSANTES A STOCKER
+!   SIEF_R
+    nbgd = 1
     call wkvect(sigmcabl//'.NOGD', 'G V K8',nbgd, vk8=nogd)
     nogd(1)='SIEF_R'
 !   Composantes utilisées
     nbcmp=3
-!   Liste de ces composantes  
+!   Liste de ces composantes
     call wkvect(sigmcabl//'.NCMP', 'G V K8', nbcmp, vk8=ncmp)
     ncmp(1:3)=effnor(1:3)
 !   Valeur de la contrainte (3 valeurs par maille)
@@ -425,7 +428,7 @@ subroutine op0180()
     call wkvect(sigmcabl//'.NUMA', 'G V I', nbmaca_total, ibid)
 !
 !   Indice du premier emplacement libre dans le vecteur numa
-    prem=1 
+    prem=1
 !
 ! 4.8 BOUCLE SUR LE NOMBRE DE CABLES
 ! ---
@@ -467,7 +470,7 @@ subroutine op0180()
         call tensca(nomt19, icabl, nbnoca, nbf0, f0,&
                     delta, typrel, trelax, xflu, xret,&
                     ea, rh1000, mu0, fprg, frco,&
-                    frli, sa, regl)
+                    frli, sa, regl(1:4),analy(1:4))
 !
 ! 4.8.5  MISE A JOUR DE LA CARTE ELEMENTAIRE DES CONTRAINTES INITIALES
 ! .....

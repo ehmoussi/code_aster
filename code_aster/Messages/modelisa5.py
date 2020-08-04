@@ -254,37 +254,7 @@ La présence de la caractéristique %(k1)s est obligatoire.
     soit les mailles de béton autour de ce noeud sont trop déformées.
 """),
 
-    83 : _("""
- mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <NOEUD_ANCRAGE> : il faut définir 2 noeuds d'ancrage
-"""),
 
-    84 : _("""
- mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <GROUP_NO_ANCRAGE> : il faut définir 2 GROUP_NO d'ancrage
-"""),
-
-    85 : _("""
- mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <NOEUD_ANCRAGE> : les 2 noeuds d'ancrage doivent être distincts
-"""),
-
-    86 : _("""
- mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande <GROUP_NO_ANCRAGE> : les 2 GROUP_NO d'ancrage doivent être distincts
-"""),
-
-    87 : _("""
- mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande type ancrage : les 2 extrémités sont passives -> armature passive
-"""),
-
-    88 : _("""
- mot-clé <DEFI_CABLE>, occurrence no  %(k1)s , opérande type ancrage : les 2 extrémités sont passives et la tension que vous voulez imposer est non nulle : impossible !
-"""),
-
-    89 : _("""
- la carte des caractéristiques matérielles des éléments n existe pas. il faut préalablement affecter ces caractéristiques en utilisant la commande <AFFE_MATERIAU>
-"""),
-
-    90 : _("""
- la carte des caractéristiques géométriques des éléments de barre de section générale n existe pas. il faut préalablement affecter ces caractéristiques en utilisant la commande <AFFE_CARA_ELEM>
-"""),
 
     91 : _("""
  problème pour déterminer le rang de la composante de la grandeur

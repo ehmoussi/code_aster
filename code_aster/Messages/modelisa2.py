@@ -230,9 +230,6 @@ Opérateur DEFI_CABLE_BP:
     55: _("""
  récupération des caractéristiques du matériau ACIER associé au câble no %(k1)s , relation de comportement <BPEL_ACIER> : Le paramètre F_PRG doit être positif et non nul
  """),
-    56 : _("""
- Pour faire un calcul de relaxation type ETCC_REPRISE, vous devez  renseigner le mot-clé TENSION_CT de DEFI_CABLE pour chaque câble de précontrainte,
-"""),
 
     57: _("""
  les caractéristiques géométriques n'ont pas été affectées à la maille no %(k1)s  appartenant au câble no %(k2)s
@@ -254,8 +251,6 @@ Opérateur DEFI_CABLE_BP:
   numéro d'occurrence négatif
 """),
 
-
-
     64: _("""
  il faut choisir entre : FLUX_X ,  FLUX_Y , FLUX_Z et FLUN , FLUN_INF , FLUN_SUP.
 """),
@@ -267,24 +262,6 @@ Opérateur DEFI_CABLE_BP:
     66: _("""
  trop de valeurs d'angles, on ne garde que les 3 premiers.
 """),
-
-    67 : _("""
-La table fournie dans DEFI_CABLE doit contenir l'abscisse curviligne et la tension du câble.
-"""),
-
-    68 : _("""
-La table fournie n'a pas la bonne dimension : vérifiez qu'il s'agit du bon câble ou que plusieurs
-instants ne sont pas contenus dans la table.
-"""),
-
-    69 : _("""
-Les abscisses curvilignes de la table fournie ne correspondent pas à celles du câble étudié
-"""),
-
-    70 : _(""" Attention, vous voulez calculer les pertes par relaxation de l'acier, mais
-      le coefficient RELAX_1000 est nul. Les pertes associées sont donc nulles.
- """),
-
 
 71: _("""
  LIAISON_PROJ : Le noeud %(k1)s ne porte pas le DDL %(k2)s.

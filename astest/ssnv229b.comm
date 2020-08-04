@@ -1,6 +1,6 @@
 # coding=utf-8
 # --------------------------------------------------------------------
-# Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 # This file is part of code_aster.
 #
 # code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 # along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 # --------------------------------------------------------------------
 
-# MODELISATION b : TYPE_RELAX = ETCC_REPRISE
+# MODELISATION B : RELAXATION DES ACIERS VIA MODI_ETCC_REPRISE
 
 DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
           );
@@ -29,6 +29,7 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
 # VALIDATION DU CALCUL DES TENSIONS PAR METHODE ETCC        #
 # AVEC PRISE EN COMPTE DES PERTES ELASTIQUES                #
 # ET DES PERTES PAR RELAXATION  DES ACIERS                  #
+#  METHODE EXACTE (MOT-CLE MODI_CABLE_ETCC)
 #-----------------------------------------------------------#
 # UNITES
 # LONGUEUR     [M]
@@ -68,7 +69,7 @@ nbhrelax=65*365.25*24;
 
 # DEFINITION DES INSTANTS DE CALCUL
 
-tps=DEFI_LIST_REEL(VALE=(0, 1.,2.),);
+tps=DEFI_LIST_REEL(VALE=(0, 1.,2.,3.),);
 
 ########################################################################
 ################################## DEFINITION DU MODELE ################
@@ -305,28 +306,81 @@ tensc10= POST_RELEVE_T(ACTION=_F(RESULTAT=res0,
                                  INST=2.0))
 
 #################################################################
-#  PAHSE 2 : CALCUL AVEC PRISE EN COMPTE DE LA RELAXATION
+#  PHASE 2 : CALCUL AVEC PRISE EN COMPTE DE LA RELAXATION
 #################################################################
 
 # DEFINITION DES CABLES (AVEC RELAXATION)
-cab_odd=DEFI_CABLE_BP(MODELE=mod,CHAM_MATER=mat,CARA_ELEM=cara,GROUP_MA_BETON='FUT',DEFI_CABLE=(
-_F(GROUP_MA='CAB1', GROUP_NO_ANCRAGE=('CAB1_I','CAB1_F',),TENSION_CT=tensc1),
-_F(GROUP_MA='CAB3', GROUP_NO_ANCRAGE=('CAB3_I','CAB3_F',),TENSION_CT=tensc3),
-_F(GROUP_MA='CAB5', GROUP_NO_ANCRAGE=('CAB5_I','CAB5_F',),TENSION_CT=tensc5),
-_F(GROUP_MA='CAB7', GROUP_NO_ANCRAGE=('CAB7_I','CAB7_F',),TENSION_CT=tensc7),
-_F(GROUP_MA='CAB9', GROUP_NO_ANCRAGE=('CAB9_I','CAB9_F',),TENSION_CT=tensc9),
-),TYPE_ANCRAGE=('ACTIF','ACTIF'),TENSION_INIT=T0,RECUL_ANCRAGE=g_cab,TYPE_RELAX='ETCC_REPRISE',NBH_RELAX=nbhrelax);
+cab_odd=DEFI_CABLE_BP(MODELE=mod,
+                      CHAM_MATER=mat,
+                      CARA_ELEM=cara,
+                      GROUP_MA_BETON='FUT',
+                MODI_CABLE_ETCC=(
+  _F(GROUP_MA='CAB1', GROUP_NO_ANCRAGE=('CAB1_I','CAB1_F',),TENSION=tensc1),
+  _F(GROUP_MA='CAB3', GROUP_NO_ANCRAGE=('CAB3_I','CAB3_F',),TENSION=tensc3),
+  _F(GROUP_MA='CAB5', GROUP_NO_ANCRAGE=('CAB5_I','CAB5_F',),TENSION=tensc5),
+  _F(GROUP_MA='CAB7', GROUP_NO_ANCRAGE=('CAB7_I','CAB7_F',),TENSION=tensc7),
+  _F(GROUP_MA='CAB9', GROUP_NO_ANCRAGE=('CAB9_I','CAB9_F',),TENSION=tensc9),
+  ), 
+                TYPE_ANCRAGE=('ACTIF','ACTIF'),
+                TENSION_INIT=T0,
+                RECUL_ANCRAGE=g_cab,
+                NBH_RELAX=nbhrelax, );
 
-cab_eve=DEFI_CABLE_BP(MODELE=mod,CHAM_MATER=mat,CARA_ELEM=cara,GROUP_MA_BETON='FUT',DEFI_CABLE=(
-_F(GROUP_MA='CAB2', GROUP_NO_ANCRAGE=('CAB2_I','CAB2_F',),TENSION_CT=tensc2),
-_F(GROUP_MA='CAB4', GROUP_NO_ANCRAGE=('CAB4_I','CAB4_F',),TENSION_CT=tensc4),
-_F(GROUP_MA='CAB6', GROUP_NO_ANCRAGE=('CAB6_I','CAB6_F',),TENSION_CT=tensc6),
-_F(GROUP_MA='CAB8', GROUP_NO_ANCRAGE=('CAB8_I','CAB8_F',),TENSION_CT=tensc8),
-_F(GROUP_MA='CAB10', GROUP_NO_ANCRAGE=('CAB10_I','CAB10_F',),TENSION_CT=tensc10),
-),TYPE_ANCRAGE=('ACTIF','ACTIF'),TENSION_INIT=T0,RECUL_ANCRAGE=g_cab,TYPE_RELAX='ETCC_REPRISE',NBH_RELAX=nbhrelax);
+cab_eve=DEFI_CABLE_BP(MODELE=mod,
+                      CHAM_MATER=mat,
+                      CARA_ELEM=cara,
+                      GROUP_MA_BETON='FUT',
+                      MODI_CABLE_ETCC=(
+_F(GROUP_MA='CAB2', GROUP_NO_ANCRAGE=('CAB2_I','CAB2_F',),TENSION=tensc2),
+_F(GROUP_MA='CAB4', GROUP_NO_ANCRAGE=('CAB4_I','CAB4_F',),TENSION=tensc4),
+_F(GROUP_MA='CAB6', GROUP_NO_ANCRAGE=('CAB6_I','CAB6_F',),TENSION=tensc6),
+_F(GROUP_MA='CAB8', GROUP_NO_ANCRAGE=('CAB8_I','CAB8_F',),TENSION=tensc8),
+_F(GROUP_MA='CAB10', GROUP_NO_ANCRAGE=('CAB10_I','CAB10_F',),TENSION=tensc10),
+),
+                      TYPE_ANCRAGE=('ACTIF','ACTIF'),
+                      TENSION_INIT=T0,
+                      RECUL_ANCRAGE=g_cab,
+                      NBH_RELAX=nbhrelax
+                      );
 
 tab_odd=RECU_TABLE(CO=cab_odd, NOM_TABLE='CABLE_BP',);
 tab_eve=RECU_TABLE(CO=cab_eve, NOM_TABLE='CABLE_BP',);
+#IMPR_TABLE(TABLE=tab_odd,UNITE=8)
+#IMPR_TABLE(TABLE=tab_eve,UNITE=8)
+
+#  ETAPE 3 : PRISE EN COMPTE DE LA RELAXATION
+res0=CALC_PRECONT(reuse=res0,
+     ETAT_INIT=_F(EVOL_NOLI=res0),
+     MODELE     = mod,
+     CHAM_MATER = mat,
+     CARA_ELEM  = cara,
+     COMPORTEMENT=_F(RELATION='ELAS',),
+     EXCIT      = (_F(CHARGE = clim,),),
+     CABLE_BP=(cab_eve,cab_odd),
+     INCREMENT=_F(LIST_INST=tps,INST_FIN=3.0,),);
+
+res0=CALC_CHAMP(reuse      = res0,
+                RESULTAT   = res0,
+                INST      = 3.,
+                CONTRAINTE     = ('SIEF_ELNO',),);
+                
+tensc9f= POST_RELEVE_T(ACTION=_F(RESULTAT=res0,
+                                 INTITULE='N',
+                                 NOM_CHAM='SIEF_ELNO',
+                                 NOM_CMP='N',
+                                 GROUP_NO='CAB9',
+                                 GROUP_MA='CAB9',
+                                 OPERATION = 'EXTRACTION',
+                                 INST=3.0))
+
+tensc10f= POST_RELEVE_T(ACTION=_F(RESULTAT=res0,
+                                 INTITULE='N',
+                                 NOM_CHAM='SIEF_ELNO',
+                                 NOM_CMP='N',
+                                 GROUP_NO='CAB10',
+                                 GROUP_MA='CAB10',
+                                 OPERATION = 'EXTRACTION',
+                                 INST=3.0))
 
 ###################################################
 #       TEST DES RESULTATS                    ####
@@ -404,5 +458,39 @@ TEST_TABLE(CRITERE='RELATIF',
            FILTRE=(_F(NOM_PARA='NOM_CABLE',VALE_K='CAB10'),
                    _F(NOM_PARA='ABSC_CURV', VALE=64.403)))
 
+# VERIFICATION GLOBALE AVANT ET APRES MISE EN TENSION
 
+TEST_TABLE(CRITERE='RELATIF',
+           TYPE_TEST='SOMM',
+           VALE_CALC=1066341600.5904781,
+           NOM_PARA='TENSION',
+           TABLE=tab_odd,
+           FILTRE=(_F(NOM_PARA='NOM_CABLE',VALE_K='CAB9'),))
+                   
+TEST_TABLE(TABLE=tensc9f, 
+           TYPE_TEST='SOMM',
+           NOM_PARA='N',
+           VALE_CALC=1066373265.9033507,
+           VALE_REFE=1066341600.5904781,
+           REFERENCE='AUTRE_ASTER',
+           CRITERE='RELATIF',
+           PRECISION=0.05E-2) 
+
+TEST_TABLE(CRITERE='RELATIF',
+           TYPE_TEST='SOMM',
+           VALE_CALC=1063650103.5108216,
+           NOM_PARA='TENSION',
+           TABLE=tab_eve,
+           FILTRE=(_F(NOM_PARA='NOM_CABLE',VALE_K='CAB10'),))
+                   
+TEST_TABLE(TABLE=tensc10f, 
+           TYPE_TEST='SOMM',
+           NOM_PARA='N',
+           VALE_CALC=1063681449.2213774,
+           VALE_REFE=1063650103.5108216,
+           REFERENCE='AUTRE_ASTER',
+           CRITERE='RELATIF',
+           PRECISION=0.05E-2) 
+
+           
 FIN();
