@@ -372,7 +372,7 @@ def C_SOLVEUR(COMMAND, BASE=None):  # COMMUN#
 # --------------------------------------------------------------------
 
     _BlocXX_SP['RENUM'] = SIMP(
-        statut='f', typ='TXM', defaut="PARMETIS", into=("SANS", "PARMETIS"), )
+        statut='f', typ='TXM', defaut="PARMETIS", into=("SANS", "METIS", "PARMETIS"), )
     _BlocXX_SP['REAC_PRECOND'] = SIMP(statut='f', typ='I', defaut=30, )
     _BlocXX_SP['PCENT_PIVOT'] = SIMP(
         statut='f', typ='I', defaut=20, val_min=1, )

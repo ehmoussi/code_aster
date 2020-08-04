@@ -33,14 +33,12 @@ bool FullResultClass::_setDOFNumbering( const BaseDOFNumberingPtr &dofNum ) {
 }
 
 bool FullResultClass::setDOFNumbering( const DOFNumberingPtr &dofNum ) {
-    FullResultClass::_setDOFNumbering( dofNum );
-
-    return true;
+   return FullResultClass::_setDOFNumbering( dofNum );
 }
 
 #ifdef _USE_MPI
 bool FullResultClass::setParallelDOFNumbering(
         const ParallelDOFNumberingPtr &dofNum ) {
-    FullResultClass::_setDOFNumbering( dofNum );
+    return FullResultClass::_setDOFNumbering( dofNum );
 }
 #endif
