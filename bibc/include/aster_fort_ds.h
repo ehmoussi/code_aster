@@ -70,9 +70,6 @@ void DEFSPPSSPSPS( NOCART_C, nocart_c, const char *, STRING_SIZE, const ASTERINT
                    const ASTERINTEGER *, const char *, STRING_SIZE, const ASTERINTEGER *,
                    const char *, STRING_SIZE );
 
-#define CALL_OPTDEP( a, b, c ) CALLSSP( OPTDEP, optdep, a, b, c )
-extern void DEFSSP( OPTDEP, optdep, char *, STRING_SIZE, char *, STRING_SIZE, ASTERINTEGER * );
-
 #ifdef _STRLEN_AT_END
 #define CALL_RSACCH( nomsd, numch, nomch, nbord, liord, nbcmp, liscmp )                            \
     F_FUNC( RSACCH, rsacch )                                                                       \

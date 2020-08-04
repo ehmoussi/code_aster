@@ -1846,37 +1846,6 @@ PyObject *args;
 }
 
 /* ---------------------------------------------------------------------- */
-static char getoptdep_doc[] =
-"Interface d'appel a la routine fortran CCLIOP.\n"
-"   usage: parent_options = aster.get_option_dependency(option) \n\n"
-"     option       : option dont on veut les dependances\n"
-"   Retourne :\n"
-"     parent_options : listes des options parentes\n";
-
-static PyObject * aster_getoptdep(self, args)
-PyObject *self; /* Not used */
-PyObject *args;
-{
-    char *Fopt, *Fres, *opt;
-    int tmax = 100;  /* taille maximale dans OPTDEP/CCLIOP */
-    ASTERINTEGER nbopt;
-    PyObject *res;
-
-    if (!PyArg_ParseTuple(args, "s", &opt))
-        return NULL;
-
-    Fopt = MakeFStrFromCStr(opt, 16);
-    Fres = MakeBlankFStr(24 * tmax);
-    CALL_OPTDEP(Fopt, Fres, &nbopt);
-
-    res = MakeTupleString((long)(nbopt), Fres, 24, NULL);
-
-    FreeStr(Fopt);
-    FreeStr(Fres);
-    return res;
-}
-
-/* ---------------------------------------------------------------------- */
 static PyObject * aster_mdnoma(self, args)
 PyObject *self; /* Not used */
 PyObject *args;
@@ -2358,7 +2327,6 @@ static PyMethodDef aster_methods[] = {
                 {"dismoi",       aster_dismoi,       METH_VARARGS, dismoi_doc},
                 {"gmardm",       aster_gmardm,       METH_VARARGS},
                 {"postkutil",    aster_postkutil,    METH_VARARGS, postkutil_doc},
-                {"get_option_dependency", aster_getoptdep, METH_VARARGS, getoptdep_doc},
                 {"argv",         aster_argv,         METH_VARARGS},
                 {"prepcompcham", aster_prepcompcham, METH_VARARGS},
                 {"getvectjev",   aster_getvectjev,   METH_VARARGS, getvectjev_doc},
