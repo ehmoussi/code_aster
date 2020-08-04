@@ -121,7 +121,7 @@ MESTAT = CALC_CHAMP(reuse=MESTAT,RESULTAT=MESTAT,CONTRAINTE=('SIEF_NOEU'))
 # else:
 #     MESTAT.printMedFile('/tmp/seq.resu.med')
 
-if MAIL.hasLocalGroupOfNodes('A') : 
+if MAIL.hasGroupOfNodes('A', True) :
     TEST_RESU(
        RESU=_F(
        CRITERE='ABSOLU',
@@ -132,11 +132,11 @@ if MAIL.hasLocalGroupOfNodes('A') :
        PRECISION=1.e-6,
        REFERENCE='AUTRE_ASTER',
         RESULTAT=MESTAT,
-        VALE_CALC=-1.09e-5, 
-        VALE_REFE=-1.09e-5, 
+        VALE_CALC=-1.09e-5,
+        VALE_REFE=-1.09e-5,
     ))
 
-elif MAIL.hasLocalGroupOfNodes('B') : 
+elif MAIL.hasGroupOfNodes('B', True) :
     TEST_RESU(
        RESU=_F(
        CRITERE='ABSOLU',
@@ -147,9 +147,9 @@ elif MAIL.hasLocalGroupOfNodes('B') :
        PRECISION=1.e-6,
        REFERENCE='AUTRE_ASTER',
         RESULTAT=MESTAT,
-        VALE_CALC=-9809.9999999, 
-        VALE_REFE=-9809.9999999, 
-    )) 
+        VALE_CALC=-9809.9999999,
+        VALE_REFE=-9809.9999999,
+    ))
 
 
 test.printSummary()

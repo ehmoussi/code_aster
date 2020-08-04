@@ -191,7 +191,7 @@ resnonl = STAT_NON_LINE(
 )
 
 # ajouter TEST_RESU comme petsc04c
-if MAIL.hasLocalGroupOfNodes('N_test') :
+if MAIL.hasGroupOfNodes('N_test', True) :
     TEST_RESU(
        RESU=_F(
        CRITERE='ABSOLU',
@@ -206,7 +206,7 @@ if MAIL.hasLocalGroupOfNodes('N_test') :
         VALE_REFE=7.98054129752E-06,
     ))
 
-elif MAIL.hasLocalGroupOfNodes('N_test2') :
+elif MAIL.hasGroupOfNodes('N_test2', True) :
     TEST_RESU(
        RESU=_F(
        CRITERE='ABSOLU',

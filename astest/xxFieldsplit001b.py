@@ -61,7 +61,7 @@ resnonl = STAT_NON_LINE(
 
 
 # ajouter TEST_RESU comme petsc04c
-if MAIL.hasLocalGroupOfNodes('N_test') : 
+if MAIL.hasGroupOfNodes('N_test', True) :
     TEST_RESU(
        RESU=_F(
        CRITERE='ABSOLU',
@@ -72,11 +72,11 @@ if MAIL.hasLocalGroupOfNodes('N_test') :
        PRECISION=1.e-6,
        REFERENCE='AUTRE_ASTER',
         RESULTAT=resnonl,
-        VALE_CALC=-0.121908649820, 
-        VALE_REFE=-0.121908649820, 
+        VALE_CALC=-0.121908649820,
+        VALE_REFE=-0.121908649820,
     ))
 
-elif MAIL.hasLocalGroupOfNodes('N_test2') : 
+elif MAIL.hasGroupOfNodes('N_test2', True) :
     TEST_RESU(
        RESU=_F(
        CRITERE='ABSOLU',
@@ -87,9 +87,9 @@ elif MAIL.hasLocalGroupOfNodes('N_test2') :
        PRECISION=1.e-6,
        REFERENCE='AUTRE_ASTER',
         RESULTAT=resnonl,
-        VALE_CALC=0.09623615926, 
-        VALE_REFE=0.09623615926, 
-    )) 
+        VALE_CALC=0.09623615926,
+        VALE_REFE=0.09623615926,
+    ))
 
 
 # at least it pass here!
