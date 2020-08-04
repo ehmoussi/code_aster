@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -61,11 +61,11 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_elem_type, nb_cmp, nb_node_found, nb_equa
+    integer :: nb_elem_type, nbCmp, nb_node_found, nbEqua
     character(len=16) :: defo_comp
-    character(len=8), pointer :: list_cmp(:) => null()
-    integer, pointer :: list_equa(:) => null()
-    integer, pointer :: list_node(:) => null()
+    character(len=8), pointer :: listCmp(:) => null()
+    integer, pointer :: listEqua(:) => null()
+    integer, pointer :: listNode(:) => null()
     character(len=16), pointer :: list_elem_type(:) => null()
     integer, pointer :: list_elem_comp(:) => null()
 !
@@ -82,11 +82,11 @@ implicit none
 !
 ! - Create list of components
 !
-    nb_cmp = 3
-    AS_ALLOCATE(vk8=list_cmp, size = nb_cmp)
-    list_cmp(1) = 'DRX'
-    list_cmp(2) = 'DRY'
-    list_cmp(3) = 'DRZ'
+    nbCmp = 3
+    AS_ALLOCATE(vk8=listCmp, size = nbCmp)
+    listCmp(1) = 'DRX'
+    listCmp(2) = 'DRY'
+    listCmp(3) = 'DRZ'
 !
 ! - Pre-selection of elements which have GROT_GDEP
 !
@@ -95,29 +95,29 @@ implicit none
 !
 ! - Select nodes by element type
 !
-    call sele_node_elem(modelz        , nb_elem_type, list_elem_type, list_node, nb_node_found,&
+    call sele_node_elem(modelz        , nb_elem_type, list_elem_type, listNode, nb_node_found,&
                         list_elem_comp)
 !
 ! - Create list of equations
 !
-    call dismoi('NB_EQUA', nume_ddl, 'NUME_DDL', repi=nb_equa)
+    call dismoi('NB_EQUA', nume_ddl, 'NUME_DDL', repi=nbEqua)
     if (nb_node_found .gt. 0) then
-        call wkvect(sdnuro, 'V V I', nb_equa, vi = list_equa)
+        call wkvect(sdnuro, 'V V I', nbEqua, vi = listEqua)
     else
         goto 999
     endif
 !
 ! - Find components in list of equations
 !
-    call select_dof(list_equa, &
-                    nume_ddlz = nume_ddl,&
-                    nb_nodez  = nb_node_found , list_nodez = list_node,&
-                    nb_cmpz   = nb_cmp        , list_cmpz  = list_cmp)
+    call select_dof(listEqua, &
+                    numeDofZ_ = nume_ddl,&
+                    nbNodeToSelect_ = nb_node_found, listNodeToSelect_ = listNode,&
+                    nbCmpToSelect_  = nbCmp        , listCmpToSelect_  = listCmp)
 !
 999 continue
 !
-    AS_DEALLOCATE(vi=list_node)
+    AS_DEALLOCATE(vi=listNode)
     AS_DEALLOCATE(vi=list_elem_comp)
-    AS_DEALLOCATE(vk8=list_cmp)
+    AS_DEALLOCATE(vk8=listCmp)
     AS_DEALLOCATE(vk16=list_elem_type)
 end subroutine

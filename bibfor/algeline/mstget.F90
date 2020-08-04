@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -134,9 +134,9 @@ implicit none
 !
 ! ----- Select dof
 !
-        call select_dof(list_equa = list_equa, &
-                        nume_ddlz = nume_ddl  ,&
-                        nb_nodez  = nb_node , list_nodez = p_list_node)
+        call select_dof(listEqua_ = list_equa, &
+                        numeDofZ_ = nume_ddl ,&
+                        nbNodeToSelect_ = nb_node, listNodeToSelect_ = p_list_node)
 !
 ! ----- Get all components
 !

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -49,29 +49,29 @@ integer, intent(inout) :: nueq
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer, pointer :: list_idx_dof(:) => null()
-    integer, pointer :: list_node_p(:) => null()
-    character(len=8), pointer :: list_cmp_p(:) => null()
+    integer, pointer :: tablCmp(:) => null()
+    integer, pointer :: listNodeToSelect(:) => null()
+    character(len=8), pointer :: listCmpToSelect(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    AS_ALLOCATE(vi = list_idx_dof, size = 1)
-    AS_ALLOCATE(vi = list_node_p, size = 1)
-    AS_ALLOCATE(vk8 = list_cmp_p, size = 1)
+    AS_ALLOCATE(vi = tablCmp, size = 1)
+    AS_ALLOCATE(vi = listNodeToSelect, size = 1)
+    AS_ALLOCATE(vk8 = listCmpToSelect, size = 1)
 !
-    list_node_p(1) = nume_node
-    list_cmp_p(1)  = cmp_name
+    listNodeToSelect(1) = nume_node
+    listCmpToSelect(1)  = cmp_name
 !
 ! - Find component in list of equations
 !
-    call select_dof(list_idx_dof = list_idx_dof, &
-                    chamnoz      = chamno,&
-                    nb_nodez     = 1  , list_nodez = list_node_p,&
-                    nb_cmpz      = 1  , list_cmpz  = list_cmp_p)
+    call select_dof(tablCmp_    = tablCmp, &
+                    fieldNodeZ_ = chamno,&
+                    nbNodeToSelect_ = 1, listNodeToSelect_ = listNodeToSelect,&
+                    nbCmpToSelect_  = 1, listCmpToSelect_  = listCmpToSelect)
 !
 ! - Check
 !
-    if (list_idx_dof(1).eq.0) then
+    if (tablCmp(1).eq.0) then
         if (error .ne. ' ') then
             call utmess(error, 'MECANONLINE5_50', sk = cmp_name)
         endif
@@ -79,10 +79,10 @@ integer, intent(inout) :: nueq
 !
 ! - Copy
 !
-    nueq = list_idx_dof(1)
+    nueq = tablCmp(1)
 !
-    AS_DEALLOCATE(vi = list_idx_dof)
-    AS_DEALLOCATE(vi = list_node_p)
-    AS_DEALLOCATE(vk8 = list_cmp_p)
+    AS_DEALLOCATE(vi = tablCmp)
+    AS_DEALLOCATE(vi = listNodeToSelect)
+    AS_DEALLOCATE(vk8 = listCmpToSelect)
 !
 end subroutine

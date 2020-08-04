@@ -114,11 +114,13 @@ integer, pointer, optional :: v_list_node_(:)
 ! - Find index of equations
 !
     if (present(v_list_node_)) then
-        call select_dof(list_equa  = v_equa      , nume_ddlz = nume_dof, nb_nodez  = nb_node,&
-                        list_nodez = v_list_node_, nb_cmpz   = nb_cmp  , list_cmpz = v_list_cmp)
+        call select_dof(listEqua_  = v_equa , numeDofZ_ = nume_dof,&
+                        nbNodeToSelect_= nb_node, listNodeToSelect_ = v_list_node_,&
+                        nbCmpToSelect_ = nb_cmp , listCmpToSelect_  = v_list_cmp)
     else
-        call select_dof(list_equa  = v_equa     , nume_ddlz = nume_dof, nb_nodez  = nb_node,&
-                        list_nodez = v_list_node, nb_cmpz   = nb_cmp  , list_cmpz = v_list_cmp)
+        call select_dof(listEqua_ = v_equa , numeDofZ_ = nume_dof,&
+                        nbNodeToSelect_= nb_node, listNodeToSelect_ = v_list_node,&
+                        nbCmpToSelect_ = nb_cmp , listCmpToSelect_ = v_list_cmp)
     endif
 !
 ! - Clean

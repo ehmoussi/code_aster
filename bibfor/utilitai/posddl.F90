@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,9 +54,9 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_cmp, nb_node
+    integer :: nbCmp, nbNode
     character(len=8) :: mesh
-    integer, pointer :: list_idx_dof(:) => null()
+    integer, pointer :: tablCmp(:) => null()
     integer, pointer :: list_node(:) => null()
     character(len=8), pointer :: list_cmp(:) => null()
 !
@@ -74,41 +74,41 @@ implicit none
 !
     if (node_nume .ne. 0) then
 !
-        nb_cmp = 1
+        nbCmp = 1
 !
 ! ----- Create list of components to ssek
 !
-        AS_ALLOCATE(vk8=list_cmp, size = nb_cmp)
+        AS_ALLOCATE(vk8=list_cmp, size = nbCmp)
         list_cmp(1) = cmp_name
 !
 ! ----- Create list of results
 !
-        AS_ALLOCATE(vi=list_idx_dof, size = nb_cmp)
+        AS_ALLOCATE(vi=tablCmp, size = nbCmp)
 !
 ! ----- Create list of nodes
 !
-        nb_node = 1
-        AS_ALLOCATE(vi=list_node, size = nb_node)
+        nbNode = 1
+        AS_ALLOCATE(vi=list_node, size = nbNode)
         list_node(1) = node_nume
 !
 ! ----- Find specific dof
 !
         if (typesd .eq. 'NUME_DDL') then
-            call select_dof(list_idx_dof = list_idx_dof, &
-                            nume_ddlz = resu, &
-                            nb_nodez  = nb_node, list_nodez = list_node,&
-                            nb_cmpz   = nb_cmp , list_cmpz  = list_cmp)
+            call select_dof(tablCmp_ = tablCmp, &
+                            numeDofZ_ = resu, &
+                            nbNodeToSelect_  = nbNode, listNodeToSelect_ = list_node,&
+                            nbCmpToSelect_   = nbCmp , listCmpToSelect_  = list_cmp)
         else if (typesd .eq. 'CHAM_NO') then
-            call select_dof(list_idx_dof = list_idx_dof,&
-                            chamnoz   = resu,&
-                            nb_nodez  = nb_node, list_nodez = list_node,&
-                            nb_cmpz   = nb_cmp , list_cmpz  = list_cmp)
+            call select_dof(tablCmp_    = tablCmp,&
+                            fieldNodeZ_ = resu,&
+                            nbNodeToSelect_ = nbNode, listNodeToSelect_ = list_node,&
+                            nbCmpToSelect_  = nbCmp , listCmpToSelect_  = list_cmp)
         else
             ASSERT(.false.)
         endif
-        dof_nume = list_idx_dof(1)
+        dof_nume = tablCmp(1)
 !
-        AS_DEALLOCATE(vi=list_idx_dof)
+        AS_DEALLOCATE(vi=tablCmp)
         AS_DEALLOCATE(vi=list_node)
         AS_DEALLOCATE(vk8=list_cmp)
 !

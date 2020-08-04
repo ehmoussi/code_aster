@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nuendo(modelz, nume_ddl, sdnuen)
 !
 implicit none
@@ -27,11 +28,9 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=*), intent(in) :: modelz
-    character(len=24), intent(in) :: nume_ddl
-    character(len=24), intent(in) :: sdnuen
+character(len=*), intent(in) :: modelz
+character(len=24), intent(in) :: nume_ddl
+character(len=24), intent(in) :: sdnuen
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -47,10 +46,10 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_elem_type, nb_node_found, nb_equa, nb_cmp
-    integer, pointer :: list_node(:) => null()
-    character(len=8), pointer :: list_cmp(:) => null()
-    integer, pointer :: list_equa(:) => null()
+    integer :: nb_elem_type, nb_node_found, nbEqua, nb_cmp
+    integer, pointer :: listNode(:) => null()
+    character(len=8), pointer :: listCmp(:) => null()
+    integer, pointer :: listEqua(:) => null()
     character(len=16), pointer :: list_elem_type(:)  => null()
 !
 ! --------------------------------------------------------------------------------------------------
@@ -71,33 +70,33 @@ implicit none
 ! - Create list of components
 !
     nb_cmp = 1
-    AS_ALLOCATE(vk8=list_cmp, size = nb_cmp)
-    list_cmp(1) = 'DAMG'
+    AS_ALLOCATE(vk8=listCmp, size = nb_cmp)
+    listCmp(1) = 'DAMG'
 !
 ! - Select nodes by element type
 !
-    call sele_node_elem(modelz, nb_elem_type, list_elem_type, list_node, nb_node_found)
+    call sele_node_elem(modelz, nb_elem_type, list_elem_type, listNode, nb_node_found)
 !
 ! - Create list of equations
 !
-    call dismoi('NB_EQUA', nume_ddl, 'NUME_DDL', repi=nb_equa)
+    call dismoi('NB_EQUA', nume_ddl, 'NUME_DDL', repi = nbEqua)
     if (nb_node_found .gt. 0) then
-        call wkvect(sdnuen, 'V V I', nb_equa, vi = list_equa)
+        call wkvect(sdnuen, 'V V I', nbEqua, vi = listEqua)
     else
         goto 999
     endif
 !
 ! - Find components in list of equations
 !
-    call select_dof(list_equa,&
-                    nume_ddlz = nume_ddl,&
-                    nb_nodez  = nb_node_found, list_nodez = list_node,&
-                    nb_cmpz   = nb_cmp       , list_cmpz  = list_cmp)
+    call select_dof(listEqua ,&
+                    numeDofZ_ = nume_ddl,&
+                    nbNodeToSelect_ = nb_node_found, listNodeToSelect_ = listNode,&
+                    nbCmpToSelect_  = nb_cmp       , listCmpToSelect_  = listCmp)
 !
 999 continue
 !
-    AS_DEALLOCATE(vi=list_node)
-    AS_DEALLOCATE(vk8=list_cmp)
+    AS_DEALLOCATE(vi=listNode)
+    AS_DEALLOCATE(vk8=listCmp)
     AS_DEALLOCATE(vk16=list_elem_type)
 !
 end subroutine

@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 
 subroutine rvchn1(deplaz, nomjv, nbno, numnd, pgl)
-    implicit none
+implicit none
 #include "jeveux.h"
 #include "asterfort/dismoi.h"
 #include "asterfort/exisdg.h"
@@ -35,22 +35,24 @@ subroutine rvchn1(deplaz, nomjv, nbno, numnd, pgl)
 #include "asterfort/as_allocate.h"
 #include "asterfort/as_deallocate.h"
 !
-    integer :: nbno, numnd(*)
-    character(len=*) :: deplaz, nomjv
-    real(kind=8) :: pgl(3, 3)
+integer :: nbno, numnd(*)
+character(len=*) :: deplaz, nomjv
+real(kind=8) :: pgl(3, 3)
 !
-! ----------------------------------------------------------------------
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!
     integer :: ino
     integer :: iavald, numdx, numdy, numdz, numdrx
-    integer :: numdry, numdrz, nb_node, nb_cmp
+    integer :: numdry, numdrz, nbNode, nbCmp
     real(kind=8) :: valed(3), vald(3), valer(3), valr(3)
     character(len=8) :: gran_name
     character(len=19) :: depla
-    integer, pointer :: list_idx_dof(:) => null()
-    integer, pointer :: list_node(:) => null()
-    character(len=8), pointer :: list_cmp(:) => null()
-!     ------------------------------------------------------------------
+    integer, pointer :: tablCmp(:) => null()
+    integer, pointer :: listNode(:) => null()
+    character(len=8), pointer :: listCmp(:) => null()
+!
+! --------------------------------------------------------------------------------------------------
+!
     call jemarq()
 !
     depla = deplaz
@@ -61,41 +63,41 @@ subroutine rvchn1(deplaz, nomjv, nbno, numnd, pgl)
 !
 ! - Create list of components
 !
-    nb_cmp = 6
-    AS_ALLOCATE(vk8=list_cmp, size = nb_cmp)
-    list_cmp(1) = 'DX'
-    list_cmp(2) = 'DY'
-    list_cmp(3) = 'DZ'
-    list_cmp(4) = 'DRX'
-    list_cmp(5) = 'DRY'
-    list_cmp(6) = 'DRZ'
+    nbCmp = 6
+    AS_ALLOCATE(vk8=listCmp, size = nbCmp)
+    listCmp(1) = 'DX'
+    listCmp(2) = 'DY'
+    listCmp(3) = 'DZ'
+    listCmp(4) = 'DRX'
+    listCmp(5) = 'DRY'
+    listCmp(6) = 'DRZ'
 !
 ! - Create list of equations
 !
-    AS_ALLOCATE(vi=list_idx_dof, size = nb_cmp)
+    AS_ALLOCATE(vi=tablCmp, size = nbCmp)
 !
 ! - Create list of equations
 !
-    nb_node = 1
-    AS_ALLOCATE(vi=list_node, size = nb_node)
+    nbNode = 1
+    AS_ALLOCATE(vi=listNode, size = nbNode)
 !
     call jedupo(depla//'.VALE', 'V', nomjv, .false._1)
     call jeveuo(nomjv, 'E', iavald)
 !
     do ino = 1, nbno
-        list_node(1) = numnd(ino)
-        list_idx_dof(1:nb_cmp) = 0
-        call select_dof(list_idx_dof = list_idx_dof,&
-                        chamnoz  = depla,&
-                        nb_nodez = nb_node, list_nodez = list_node,&
-                        nb_cmpz  = nb_cmp , list_cmpz  = list_cmp)
+        listNode(1) = numnd(ino)
+        tablCmp(1:nbCmp) = 0
+        call select_dof(tablCmp_ = tablCmp,&
+                        fieldNodeZ_  = depla,&
+                        nbNodeToSelect_ = nbNode, listNodeToSelect_ = listNode,&
+                        nbCmpToSelect_  = nbCmp , listCmpToSelect_  = listCmp)
 
-        numdx  = list_idx_dof(1)
-        numdy  = list_idx_dof(2)
-        numdz  = list_idx_dof(3)
-        numdrx = list_idx_dof(4)
-        numdry = list_idx_dof(5)
-        numdrz = list_idx_dof(6)
+        numdx  = tablCmp(1)
+        numdy  = tablCmp(2)
+        numdz  = tablCmp(3)
+        numdrx = tablCmp(4)
+        numdry = tablCmp(5)
+        numdrz = tablCmp(6)
         valed(1) = 0.0d0
         valed(2) = 0.0d0
         valed(3) = 0.0d0
@@ -134,9 +136,9 @@ subroutine rvchn1(deplaz, nomjv, nbno, numnd, pgl)
         endif
     end do
 !
-    AS_DEALLOCATE(vi=list_idx_dof)
-    AS_DEALLOCATE(vi=list_node)
-    AS_DEALLOCATE(vk8=list_cmp)
+    AS_DEALLOCATE(vi=tablCmp)
+    AS_DEALLOCATE(vi=listNode)
+    AS_DEALLOCATE(vk8=listCmp)
 !
     call jedema()
 end subroutine

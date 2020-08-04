@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -15,7 +15,8 @@
 ! You should have received a copy of the GNU General Public License
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
-
+! person_in_charge: mickael.abbas at edf.fr
+!
 subroutine nunuco(nume_ddl, sdnuco)
 !
 implicit none
@@ -27,10 +28,7 @@ implicit none
 #include "asterfort/as_deallocate.h"
 #include "asterfort/as_allocate.h"
 !
-! person_in_charge: mickael.abbas at edf.fr
-!
-    character(len=24), intent(in) :: nume_ddl
-    character(len=24), intent(in) :: sdnuco
+character(len=24), intent(in) :: nume_ddl, sdnuco
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -45,32 +43,32 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    integer :: nb_equa, nb_cmp
-    character(len=8), pointer :: list_cmp(:) => null()
-    integer, pointer :: list_equa(:) => null()
+    integer :: nbEqua, nbCmp
+    character(len=8), pointer :: listCmp(:) => null()
+    integer, pointer :: listEqua(:) => null()
 !
 ! --------------------------------------------------------------------------------------------------
 !
 !
 ! - Create list of components
 !
-    nb_cmp = 3
-    AS_ALLOCATE(vk8=list_cmp, size = nb_cmp)
-    list_cmp(1) = 'LAGS_C'
-    list_cmp(2) = 'LAGS_F1'
-    list_cmp(3) = 'LAGS_F2'
+    nbCmp = 3
+    AS_ALLOCATE(vk8 = listCmp, size = nbCmp)
+    listCmp(1) = 'LAGS_C'
+    listCmp(2) = 'LAGS_F1'
+    listCmp(3) = 'LAGS_F2'
 !
 ! - Create list of equations
 !
-    call dismoi('NB_EQUA', nume_ddl, 'NUME_DDL', repi=nb_equa)
-    call wkvect(sdnuco, 'V V I', nb_equa, vi = list_equa)
+    call dismoi('NB_EQUA', nume_ddl, 'NUME_DDL', repi = nbEqua)
+    call wkvect(sdnuco, 'V V I', nbEqua, vi = listEqua)
 !
 ! - Find components in list of equations
 !
-    call select_dof(list_equa, &
-                    nume_ddlz = nume_ddl,&
-                    nb_cmpz   = nb_cmp  , list_cmpz  = list_cmp)
+    call select_dof(listEqua, &
+                    numeDofZ_      = nume_ddl,&
+                    nbCmpToSelect_ = nbCmp  , listCmpToSelect_ = listCmp)
 !
-    AS_DEALLOCATE(vk8=list_cmp)
+    AS_DEALLOCATE(vk8=listCmp)
 !
 end subroutine
