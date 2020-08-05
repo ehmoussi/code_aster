@@ -22,7 +22,7 @@ interface
                       typmod, option, mate, compor, carcri,&
                       instam, instap, angmas, ddlm, ddld,&
                       sigm, lgpg, vim, sigp, vip,&
-                      matr, vect, codret, dfdi2, livois,&
+                      matr, vect, codret, livois,&
                       nbvois, numa, lisoco, nbsoco,&
                       lVari, lSigm, lMatr, lVect)
         integer :: lgpg
@@ -53,7 +53,6 @@ interface
         real(kind=8) :: matr(*)
         real(kind=8) :: vect(*)
         integer :: codret
-        real(kind=8) :: dfdi2(nno2, ndim)
         integer, parameter :: nvoima=12, nscoma=4
         integer :: livois(1:nvoima)
         integer :: nbvois

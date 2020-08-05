@@ -67,7 +67,7 @@ character(len=16), intent(in) :: option, nomte
     integer :: ivarix
     integer :: jtab(7), iadzi, iazk24, icoret, codret
     integer :: ndim, iret, ntrou, idim, i, vali(2)
-    real(kind=8) :: trav1(3*8), angmas(7), bary(3)
+    real(kind=8) :: angmas(7), bary(3)
     character(len=16) :: codvoi
     integer :: nvoima, nscoma, nbvois
     parameter(nvoima=12,nscoma=4)
@@ -88,6 +88,7 @@ character(len=16), intent(in) :: option, nomte
     ivarix = 1
     icoret = 1
     codret = 0
+    !trav1(:) = 0.d0
 !
     lMass = option(1:9) .eq. 'MASS_MECA'
 !
@@ -206,6 +207,7 @@ character(len=16), intent(in) :: option, nomte
         call tecael(iadzi, iazk24)
         numa=zi(iadzi-1+1)
         codvoi='A2'
+
         call voiuti(numa, codvoi, nvoima, nscoma, ca_jrepe_,&
                     ca_jptvoi_, ca_jelvoi_, nbvois, livois, tyvois,&
                     nbnovo, nbsoco, lisoco)
@@ -215,7 +217,7 @@ character(len=16), intent(in) :: option, nomte
                     typmod, option, zi(imate), zk16(icompo), zr(icarcr),&
                     zr(iinstm), zr(iinstp), angmas, zr(idplgm), zr(iddplg),&
                     zr(icontm), lgpg, zr(ivarim), zr(icontp), zr(ivarip),&
-                    zr(imatuu), zr(ivectu), codret, trav1, livois,&
+                    zr(imatuu), zr(ivectu), codret, livois,&
                     nbvois, numa, lisoco, nbsoco,&
                     lVari, lSigm, lMatr, lVect)
 ! ----- Save return code

@@ -22,7 +22,7 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                   typmod, option, mate, compor, carcri,&
                   instam, instap, angmas, ddlm, ddld,&
                   sigm, lgpg, vim, sigp, vip,&
-                  matr, vect, codret, dfdi2, livois,&
+                  matr, vect, codret, livois,&
                   nbvois, numa, lisoco, nbsoco,&
                   lVari, lSigm, lMatr, lVect)
 !
@@ -123,6 +123,7 @@ implicit none
     ndimsi = 2*ndim
     nddl   = nno1*ndim + nno2*ndimsi
     cod    = 0
+    dfdi2(:,:) = 0.
 !
 ! - Get length
 !
@@ -645,7 +646,7 @@ implicit none
                 end do
             end do
         endif
-    end do
+    end do   
 !
 ! - SYNTHESE DES CODES RETOUR
 !
