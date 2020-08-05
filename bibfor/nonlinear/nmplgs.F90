@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
                   typmod, option, mate, compor, crit,&
                   instam, instap, angmas, ddlm, ddld,&
                   sigm, lgpg, vim, sigp, vip,&
-                  matr, vect, codret, dfdi2, livois,&
+                  matr, vect, codret, livois,&
                   nbvois, numa, lisoco, nbsoco)
 !
 ! CALCUL  RAPH_MECA, RIGI_MECA_* ET FULL_MECA_* POUR GRAD_SIGM(2D ET 3D)
@@ -115,6 +115,7 @@ subroutine nmplgs(ndim, nno1, vff1, idfde1, nno2,&
     axi = .false.
     ndimsi = 2*ndim
     nddl = nno1*ndim + nno2*ndimsi
+    dfdi2(:,:) = 0.
     fami='FPG1'
     kpg=1
     spt=1

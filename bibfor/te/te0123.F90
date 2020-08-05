@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -54,8 +54,7 @@ implicit none
     integer :: ivarix
     integer :: jtab(7), iadzi, iazk24, jcret, codret
     integer :: ndim, iret, ntrou, idim, i, vali(2)
-!
-    real(kind=8) :: trav1(3*8), angmas(7), bary(3)
+    real(kind=8) :: angmas(7), bary(3)
     character(len=16) :: codvoi
     integer :: nvoima, nscoma, nbvois
     parameter(nvoima=12,nscoma=4)
@@ -205,7 +204,7 @@ implicit none
         call tecael(iadzi, iazk24)
         numa=zi(iadzi-1+1)
         codvoi='A2'
-!
+
         call voiuti(numa, codvoi, nvoima, nscoma, ca_jrepe_,&
                     ca_jptvoi_, ca_jelvoi_, nbvois, livois, tyvois,&
                     nbnovo, nbsoco, lisoco)
@@ -220,7 +219,7 @@ implicit none
                     typmod, option, zi(imate), zk16(icompo), zr(icarcr),&
                     zr(iinstm), zr(iinstp), angmas, zr(idplgm), zr(iddplg),&
                     zr(icontm), lgpg, zr(ivarim), zr(icontp), zr(ivarip),&
-                    zr(imatuu), zr(ivectu), codret, trav1, livois,&
+                    zr(imatuu), zr(ivectu), codret, livois,&
                     nbvois, numa, lisoco, nbsoco)
 !
         if (option(1:9) .eq. 'FULL_MECA' .or. option(1:9) .eq. 'RAPH_MECA') then

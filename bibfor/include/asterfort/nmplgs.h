@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ interface
                       typmod, option, mate, compor, crit,&
                       instam, instap, angmas, ddlm, ddld,&
                       sigm, lgpg, vim, sigp, vip,&
-                      matr, vect, codret, dfdi2, livois,&
+                      matr, vect, codret, livois,&
                       nbvois, numa, lisoco, nbsoco)
         integer :: lgpg
         integer :: npg
@@ -54,7 +54,6 @@ interface
         real(kind=8) :: matr(*)
         real(kind=8) :: vect(*)
         integer :: codret
-        real(kind=8) :: dfdi2(nno2, ndim)
         integer, parameter :: nvoima=12, nscoma=4
         integer :: livois(1:nvoima)
         integer :: nbvois
