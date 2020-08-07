@@ -20,7 +20,7 @@
 !
 !
 interface
-    subroutine lc0076(fami, kpg, ksp, ndim, imate,&
+    subroutine lc6076(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps, &
                     epsm, deps, nsig, sigm, nvi, &
                     vim, option, angmas, sigp, vip, &
@@ -50,5 +50,5 @@ interface
         integer :: ndsde
         real(kind=8) :: dsidep(nsig,neps)
         integer :: codret
-    end subroutine lc0076
+    end subroutine lc6076
 end interface

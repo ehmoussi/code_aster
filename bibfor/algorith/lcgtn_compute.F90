@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ function lcgtn_compute(resi,rigi,elas, itemax, prec, m, dt, eps, phi, ep, ka, f,
     iret    = 0
     kr      = kron(1:size(eps))
     jac     = exp(sum(eps(1:3)))
-    presig  = min(jac,1.d0)*m%r0*prec
+    presig  = min(jac,1.d0)*f_ecro(0.d0)*prec
     preg    = prec*1.d-1
     kam     = ka
     epmh    = sum(ep(1:3))/3.d0
@@ -901,4 +901,3 @@ end function bnd_pmax
 
 
 end function
-

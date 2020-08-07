@@ -1,0 +1,241 @@
+# coding=utf-8
+# --------------------------------------------------------------------
+# Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
+# This file is part of code_aster.
+#
+# code_aster is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# code_aster is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
+# --------------------------------------------------------------------
+
+DEBUT(
+    CODE  = _F(NIV_PUB_WEB='INTERNET'),
+    DEBUG = _F(SDVERI='NON'),
+    )
+
+#......................................................................
+# CYLINDRE A COMPOSANTE DE CONTRAINTES DONNEES DANS LE REPERE CYL.
+# ELASTOPLASTICITE ISOTROPE VON MISES A ECROUISSAGE NON LINERAIRE
+#......................................................................
+
+
+# Geometrie
+Rint =  50.0
+Rext = 100.0
+L    =  15.0
+
+
+# Composantes des contraintes normalisees
+srr = 1/6.
+stt = 1/6.
+szz = 2./3.
+srz = 0.5
+
+nrr = -1/6.
+ntt = -1/6.
+nzz =  2/6.
+nrz =  0.5
+
+
+# Parametres du materiau
+E  = 195000.
+NU = 0.3
+R0 = 490
+RH = 3000.0
+R1 = 60.0
+G1 = 8500.0
+R2 = 250.0
+G2 = 10.0
+RK = 50.0
+P0 = 1.e-3
+GM = 0.15                    
+
+
+# Cible de chargement
+ka = 0.05
+qe = R0 + RK*P0**GM
+q  = R0 + RH*ka + R1*(1-exp(-G1*ka)) + R2*(1-exp(-G2*ka)) + RK*(ka+P0)**GM
+
+
+# Reponse
+err = 1.5*ka*nrr + (1+NU)/E*q*srr - NU/E*q*(srr+stt+szz)
+ezz = 1.5*ka*nzz + (1+NU)/E*q*szz - NU/E*q*(srr+stt+szz)
+erz = 1.5*ka*nrz + (1+NU)/E*q*srz 
+ur  = Rext*err
+uz  = ezz*L + 2*erz*(Rext-Rint)
+
+
+# Simulation
+
+MA = LIRE_MAILLAGE()
+
+
+MO = AFFE_MODELE(
+    MAILLAGE =  MA,
+    AFFE     = _F(
+        TOUT         = 'OUI',
+        PHENOMENE    = 'MECANIQUE',
+        MODELISATION = '3D_GRAD_VARI',
+        ),
+    )
+
+
+ACIER = DEFI_MATERIAU(
+    ELAS      = _F(E=E, NU=NU),
+    ECRO_NL   = _F(R0=R0, RH=RH, GAMMA_1=G1, R1=R1, GAMMA_2=G2, R2=R2, RK=RK, P0=P0, GAMMA_M=GM),
+    NON_LOCAL = _F(C_GRAD_VARI=R0*(L/5.)**2, PENA_LAGR=R0),
+    )
+
+
+CM = AFFE_MATERIAU(
+    MAILLAGE = MA,
+    AFFE     = _F(TOUT='OUI', MATER=ACIER),
+    )
+
+
+RAY     = FORMULE(NOM_PARA=('X','Y'), VALE='(X**2+Y**2)**0.5')
+CISA_SX = FORMULE(NOM_PARA=('X','Y'), VALE='srz*X/RAY(X,Y)' , srz=srz, RAY=RAY)
+CISA_SY = FORMULE(NOM_PARA=('X','Y'), VALE='srz*Y/RAY(X,Y)' , srz=srz, RAY=RAY)
+CISA_IX = FORMULE(NOM_PARA=('X','Y'), VALE='-srz*X/RAY(X,Y)', srz=srz, RAY=RAY)
+CISA_IY = FORMULE(NOM_PARA=('X','Y'), VALE='-srz*Y/RAY(X,Y)', srz=srz, RAY=RAY)
+F_VOLU  = FORMULE(NOM_PARA=('X','Y'), VALE='-srz/RAY(X,Y)'  , srz=srz, RAY=RAY) 
+
+
+CH1_BORD = AFFE_CHAR_MECA(
+    MODELE     =  MO,
+    FORCE_FACE = (
+        _F(GROUP_MA = 'INT', FZ=-srz),
+        _F(GROUP_MA = 'EXT', FZ= srz),
+        _F(GROUP_MA = 'SUP', FZ= szz),
+        _F(GROUP_MA = 'INF', FZ=-szz),
+        ),
+    PRES_REP = (
+        _F(GROUP_MA = 'INT', PRES=-srr),
+        _F(GROUP_MA = 'EXT', PRES=-srr),
+        ),
+    )
+    
+    
+CH2_BORD = AFFE_CHAR_MECA_F(
+    MODELE     =  MO,
+    FORCE_FACE = (
+        _F(GROUP_MA = 'SUP', FX=CISA_SX, FY=CISA_SY),
+        _F(GROUP_MA = 'INF', FX=CISA_IX, FY=CISA_IY),
+        ),
+    )
+    
+
+CH_VOLU = AFFE_CHAR_MECA_F(
+    MODELE     =  MO,
+    FORCE_INTERNE = _F(GROUP_MA='VOLU', FZ=F_VOLU),
+    )
+    
+
+LIAISON = AFFE_CHAR_MECA(
+    MODELE    = MO,
+    DDL_IMPO  = _F(GROUP_NO='INF_INT', DZ=0),
+    FACE_IMPO = (
+        _F(GROUP_MA='LNX', DX=0),
+        _F(GROUP_MA='LNY', DY=0),
+        ),
+    )
+    
+
+
+L_INST = DEFI_LIST_REEL(
+    DEBUT      =  0.0,
+    INTERVALLE = (
+        _F(JUSQU_A=0.99*qe/q, NOMBRE=1),
+        _F(JUSQU_A=1        , NOMBRE=2),
+        ),
+    )
+    
+RAMPE = DEFI_FONCTION(
+    NOM_PARA    = 'INST',
+    VALE        = (0,0, 1,q),
+    )
+    
+    
+EVOL = STAT_NON_LINE(
+    MODELE=MO,
+    CHAM_MATER=CM,
+    EXCIT = (
+        _F(CHARGE=LIAISON),
+        _F(CHARGE=CH_VOLU,  FONC_MULT=RAMPE),
+        _F(CHARGE=CH1_BORD, FONC_MULT=RAMPE),
+        _F(CHARGE=CH2_BORD, FONC_MULT=RAMPE),
+        ),
+    COMPORTEMENT = _F(RELATION='VMIS_ISOT_NL'),
+    INCREMENT    = _F(LIST_INST=L_INST),
+    NEWTON       = _F(REAC_ITER=1),
+    )
+
+
+EVOL = CALC_CHAMP(reuse=EVOL,
+    RESULTAT     = EVOL, 
+    CONTRAINTE   = 'SIEF_NOEU',
+    VARI_INTERNE = 'VARI_NOEU',
+    DEFORMATION  = 'EPSI_NOEU',
+    )
+
+
+TEST_RESU(
+    RESU = (
+        _F(
+            INST=1.0, 
+            RESULTAT=EVOL, 
+            NOM_CHAM='SIEF_NOEU', 
+            NOM_CMP='SIXX',
+            GROUP_NO='SUP_EXT', 
+            VALE_REFE=q*srr, 
+            VALE_CALC=138.4236549071261,
+            REFERENCE='ANALYTIQUE',
+            PRECISION=1.E-3,
+            ),
+        _F(
+            INST=1.0, 
+            RESULTAT=EVOL, 
+            NOM_CHAM='DEPL', 
+            NOM_CMP='DX',
+            GROUP_NO='SUP_EXT', 
+            VALE_REFE=ur, 
+            VALE_CALC=-1.285531826890588,
+            REFERENCE='ANALYTIQUE',
+            PRECISION=1.E-3,
+            ),
+        _F(
+            INST=1.0, 
+            RESULTAT=EVOL, 
+            NOM_CHAM='DEPL', 
+            NOM_CMP='DZ',
+            GROUP_NO='SUP_EXT', 
+            VALE_REFE=uz, 
+            VALE_CALC=4.438167776227641,
+            REFERENCE='ANALYTIQUE',
+            PRECISION=1.E-3,
+            ),
+        _F(
+            INST=1.0, 
+            RESULTAT=EVOL, 
+            NOM_CHAM='VARI_NOEU', 
+            NOM_CMP='V7',
+            GROUP_NO='SUP_EXT', 
+            VALE_REFE=1.5*ka*nrz, 
+            VALE_CALC=0.03749551589160953,
+            REFERENCE='ANALYTIQUE',
+            PRECISION=1.E-3,
+            ),
+        ),
+    )
+
+
+FIN()

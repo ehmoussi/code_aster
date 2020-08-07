@@ -24,11 +24,12 @@ module tenseur_dime_module
 
     implicit none
     private
-    public:: rs,kron,proten
+    public:: rs,kron,voigt,proten,identity
     
 #include "asterfort/assert.h"
     
-    real(kind=8),parameter,dimension(6)::KRONECKER = [1.d0,1.d0,1.d0,0.d0,0.d0,0.d0]
+    real(kind=8),parameter,dimension(6)::KRONECKER=[1.d0,1.d0,1.d0,0.d0,0.d0,0.d0]
+    real(kind=8),parameter,dimension(6)::RACINE_2=[1.d0,1.d0,1.d0,sqrt(2.d0),sqrt(2.d0),sqrt(2.d0)]
 
 
 contains
@@ -75,6 +76,44 @@ end function kron
 
 
     
+! =====================================================================
+!  Vecteur de transformation pour representation de Voigt (*rac2 sur cis)
+! =====================================================================
+
+function voigt(ndimsi) result(rac2)
+    
+    implicit none
+    integer,intent(in)            ::ndimsi
+    real(kind=8),dimension(ndimsi):: rac2
+! ---------------------------------------------------------------------
+    ASSERT(ndimsi.eq.4 .or. ndimsi.eq.6)
+    rac2 = RACINE_2(1:ndimsi)
+
+end function voigt    
+
+
+    
+! =====================================================================
+!  matrice identite de taille n
+! =====================================================================
+    
+function identity(n) result(idm)
+    implicit none
+    integer,intent(in) :: n
+    real(kind=8),dimension(n,n) :: idm
+! ---------------------------------------------------------------------
+    integer :: i
+! ---------------------------------------------------------------------
+    idm = 0.d0
+    do i =1, n
+        idm(i,i) = 1.d0
+    end do
+
+
+ end function identity
+    
+
+
 ! =====================================================================
 !  Produit tensoriel de deux vecteurs de dimension quelconque
 ! =====================================================================

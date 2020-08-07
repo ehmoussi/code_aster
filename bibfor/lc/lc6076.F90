@@ -16,21 +16,21 @@
 ! along with code_aster.  If not, see <http://www.gnu.org/licenses/>.
 ! --------------------------------------------------------------------
 
-
-subroutine lc0076(fami, kpg, ksp, ndim, imate,&
+subroutine lc6076(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, neps, &
-                    epsm, deps, nsig, sigm, nvi, vim, &
-                    option, angmas, sigp, vip, typmod, icomp,&
-                    ndsde, dsidep, codret) 
+                    epsm, deps, nsig, sigm, nvi, &
+                    vim, option, angmas, sigp, vip, &
+                    typmod, icomp, ndsde, dsidep, codret)
 
 
- 
 ! aslint: disable=W1504,W0104
-    use vmis_isot_nl_module, only: CONSTITUTIVE_LAW, Init, Integrate 
+    use vmis_isot_nl_module, only: CONSTITUTIVE_LAW, Init, InitGradVari, Integrate 
     implicit none
+    
+#include "asterf_types.h"
 #include "asterfort/assert.h"
+#include "asterfort/lcgrad.h"
 
-! ----------------------------------------------------------------------
     integer             :: imate, ndim, kpg, ksp, codret, icomp
     integer             :: nvi,neps,nsig,ndsde
     real(kind=8)        :: carcri(*), angmas(*)
@@ -42,30 +42,42 @@ subroutine lc0076(fami, kpg, ksp, ndim, imate,&
     character(len=16)   :: compor(*), option
     character(len=8)    :: typmod(*)
     character(len=*)    :: fami
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
+!  Loi de comportement VMIS_ISOT_NL + GRAD_VARI
+! --------------------------------------------------------------------------------------------------
     integer     :: ndimsi
-    real(kind=8):: eps(2*ndim), sig(2*ndim),dsde(2*ndim,2*ndim),vi(nvi)
+    real(kind=8):: sig(2*ndim),vi(nvi),ka
+    real(kind=8):: deps_sig(2*ndim,2*ndim),deps_vi(2*ndim),dphi_sig(2*ndim),dphi_vi
+    real(kind=8):: apg,lag,grad(ndim),eps(neps)
     type(CONSTITUTIVE_LAW):: cl
-! ----------------------------------------------------------------------
+! --------------------------------------------------------------------------------------------------
     ASSERT (neps*nsig .eq. ndsde)
     ASSERT (neps .eq. nsig)
     ASSERT (neps .ge. 2*ndim)
+    ASSERT (neps .ge. 3*ndim+2)
 ! --------------------------------------------------------------------------------------------------
-    
     ndimsi = 2*ndim
-    eps    = epsm(1:ndimsi) + deps(1:ndimsi)
-    
+    eps    = epsm(1:neps)+deps(1:neps)
+    apg    = eps(ndimsi+1)
+    lag    = eps(ndimsi+2)
+    grad   = eps(ndimsi+3:ndimsi+2+ndim)
+
     cl = Init(ndimsi, option, fami, kpg, ksp, imate, nint(carcri(1)), &
             carcri(3), instap-instam)
-            
-    call Integrate(cl, eps, vim(1:nvi), sig, vi, dsde)
+
+    call InitGradVari(cl,fami,kpg,ksp,imate,lag,apg)
+
+    call Integrate(cl, eps(1:ndimsi), vim(1:nvi), sig, &
+            vi, deps_sig, dphi_sig, deps_vi, dphi_vi)
 
     codret = cl%exception
     if (codret.ne.0) goto 999
 
-    if (cl%resi) sigp(1:ndimsi) = sig
     if (cl%vari) vip(1:nvi) = vi
-    if (cl%rigi) dsidep(1:ndimsi,1:ndimsi) = dsde
 
-999 continue                      
-end subroutine
+    ka = merge(vi(1),vim(1),cl%vari)
+    call lcgrad(cl%resi, cl%rigi, sig, apg, lag, grad, ka, &
+              cl%mat%r, cl%mat%c, deps_sig, dphi_sig, deps_vi, dphi_vi, sigp, dsidep)
+
+999 continue    
+end subroutine lc6076

@@ -215,6 +215,7 @@ def C_RELATION( COMMAND ):
                                         "VMIS_ECMI_LINE",
                                         "VMIS_ECMI_TRAC",
                                         "VMIS_ISOT_LINE",
+                                        "VMIS_ISOT_NL",
                                         "VMIS_ISOT_PUIS",
                                         "VMIS_ISOT_TRAC",
                                         "VMIS_JOHN_COOK",

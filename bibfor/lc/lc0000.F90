@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2019 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -133,6 +133,7 @@ implicit none
 #include "asterfort/lc6046.h"
 #include "asterfort/lc6057.h"
 #include "asterfort/lc6075.h"
+#include "asterfort/lc6076.h"
 #include "asterfort/lc7010.h"
 #include "asterfort/lc7011.h"
 #include "asterfort/lc7013.h"
@@ -639,10 +640,10 @@ integer :: codret
                     dsidep, codret)
     case (76)
         call lc0076(fami, kpg, ksp, ndim, imate,&
-                    compor, carcri, instam, instap, epsm,&
-                    deps, sigm, vim, option, angmas,&
-                    sigp, vip, typmod, icomp,&
-                    nvi, dsidep, codret)
+                    compor, carcri, instam, instap, neps, &
+                    epsm, deps, nsig, sigm, nvi, vim, &
+                    option, angmas, sigp, vip, typmod, icomp,&
+                    ndsde, dsidep, codret)             
     case (77)
         call lc0077(fami, kpg, ksp, ndim, imate,&
                     compor, carcri, instam, instap, epsm,&
@@ -998,6 +999,15 @@ integer :: codret
                     option, angmas, sigp, vip,&
                     typmod, icomp, ndsde,&
                     dsidep, codret)
+!
+    case (6076)
+!     VMIS_ISOT_NL
+        call lc6076(fami, kpg, ksp, ndim, imate,&
+                    compor, carcri, instam, instap, neps,&
+                    epsm, deps, nsig, sigm, nvi, vim,&
+                    option, angmas, sigp, vip,&
+                    typmod, icomp, ndsde,&
+                    dsidep, codret)                    
 !
 ! --------------------------------------------------------------------------------------------------
 ! - With INTERFAC/ELEMDISC/EJ_HYME/ELEMJOIN
