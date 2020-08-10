@@ -24,33 +24,6 @@ DEBUT(CODE=_F(NIV_PUB_WEB='INTERNET'),
       PAR_LOT='NON', IGNORE_ALARM='SUPERVIS_1',
       LANG='EN')
 
-import aster
-lopt = set(aster.get_option_dependency('SIGM_ELGA'))
-assert len(lopt) == 4, lopt
-assert len(lopt.difference(('DEPL', 'SIEF_ELGA', 'SIGM_ELGA', 'STRX_ELGA'))) == 0, lopt
-
-lopt = aster.get_option_dependency('ACCE')
-assert len(lopt) == 0, lopt
-
-lopt = aster.get_option_dependency('SING_ELEM')
-assert len(lopt) == 0, lopt
-
-lopt = aster.get_option_dependency('SING_NOEU')
-assert len(lopt) == 2, lopt
-assert lopt == ('SING_ELNO', 'SING_NOEU'), lopt
-
-tab = CREA_TABLE(LISTE=(_F(PARA='NBVAL',
-                           LISTE_I=len(lopt),),),)
-TEST_TABLE(CRITERE='ABSOLU',
-           REFERENCE='ANALYTIQUE',
-           VALE_CALC_I=2,
-           VALE_REFE_I=2,
-           PRECISION=0,
-           NOM_PARA='NBVAL',
-           TABLE=tab,)
-
-help(aster.get_option_dependency)
-
 # test que le dictionnaire anglais est disponible
 # Noyau/N_ASSD.py: assd.__convert__
 from code_aster.Cata.Syntax import tr
