@@ -162,6 +162,11 @@ Ce message est un message d'erreur développeur.
 Contactez le support technique.
 """),
 
+    24 : _("""
+L'impression du contenu détaillé des objets en mémoire est désactivée.
+Il faut définir '%(k1)s' dans '%(k2)s' pour l'activer.
+"""),
+
     27 : _("""
 Le paramètre d'accès %(r1)f est invalide.
 Ce message est un message d'erreur développeur.

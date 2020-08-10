@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -19,9 +19,11 @@
 subroutine jeimpm(unit)
 ! person_in_charge: j-pierre.lefebvre at edf.fr
     implicit none
+#include "asterf_types.h"
 #include "jeveux_private.h"
 #include "asterfort/assert.h"
 #include "asterfort/jxveri.h"
+#include "asterfort/utmess.h"
     integer :: unit
 ! ----------------------------------------------------------------------
 ! IMPRIME LA SEGMENTATION DE LA MEMOIRE
@@ -62,13 +64,23 @@ subroutine jeimpm(unit)
     parameter    ( ivnmax = 0   , idiadm = 3 ,&
      &               idmarq = 4   )
 ! ----------------------------------------------------------------------
-    character(len=32) :: nom32
+    character(len=32) :: nom32, valk(2)
     character(len=8) :: nom8
     character(len=1) :: cla, cgenr
     integer :: k
     real(kind=8) :: vusta, vudyn, vxsta, vxdyn
+    aster_logical :: dbg
 ! DEB ------------------------------------------------------------------
-!
+
+!   dbg : une variable pour provoquer des ecritures de debug :
+    dbg = .false.
+    if (.not. dbg ) then
+        valk(1) = 'dbg = .true.'
+        valk(2) = 'jeimpm.F90'
+        call utmess('A', 'JEVEUX1_24', nk=2, valk=valk)
+        goto 9999
+    endif
+
     if (unit .le. 0) goto 9999
     vusta = 0.d0
     vudyn = 0.d0
