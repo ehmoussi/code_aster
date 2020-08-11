@@ -23,43 +23,13 @@ from ..Utilities import _
 
 cata_msg = {
 
-   2  : _("""Le modèle doit être le même sur les deux bases."""),
-
-   3  : _("""Initialisations pour le post-traitement du calcul réduit."""),
-
-   5  : _("""Les modes empiriques ne sont pas des champs nodaux."""),
-
-   7  : _("""Le résultat sur le modèle complet sera de type %(k1)s."""),
-
-   8  : _("""Le modèle est le même pour la reconstruction que le modèle réduit d'origine."""),
-
-   9  : _("""Le modèle de la base %(k1)s n'est pas celui du modèle complet. Vérifiez que vous n'utilisez pas la base tronquée."""),
-
-   11 : _("""Le résultat sur le modèle réduit contient %(i1)d numéros d'ordre."""),
-
    12 : _("""La base empirique est construite sur un maillage différent du modèle. Ce n'est pas possible."""),
 
    13 : _("""Les deux modèles sont identiques, on ne peut rien tronquer !"""),
 
-   14 : _("""On évalue le champ dual."""),
-
-   15 : _("""Correction par le calcul éléments finis."""),
-
-   20 : _("""Reconstruction des champs sur tout le domaine."""),
-
-   21 : _("""Reconstruction du champ primal."""),
-
-   22 : _("""Reconstruction du champ dual."""),
-
    31 : _("""Calcul des coordonnées réduites."""),
 
    32 : _("""Échec lors du calcul des coordonnées réduites."""),
-
-   36 : _("""Le modèle est variable pendant le calcul, ce n'est pas possible en réduction de modèle."""),
-
-   38 : _("""Initialisations pour le post-traitement du calcul réduit, quantités primales."""),
-
-   39 : _("""Initialisations pour le post-traitement du calcul réduit, quantités duales."""),
 
    40 : _("""Vous avez donné le nom de la base à tronquer (BASE_INIT) alors que vous voulez tronquer une base déjà existante."""),
 }

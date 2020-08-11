@@ -165,7 +165,6 @@ integer, optional, intent(in) :: nbSnapIn_, nbStoreIn_
 !
 ! - Check number of modes
 !
-    nbMode = tablNbLine / nbSnap
     if (nbMode .ne. nbModeIn) then
         call utmess('F', 'ROM15_31')
     endif

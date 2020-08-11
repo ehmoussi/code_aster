@@ -17,16 +17,20 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_chck(cmdPara)
+subroutine rrcInit(cmdPara)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/romModeChck.h"
+#include "asterfort/infniv.h"
+#include "asterfort/rrcInfo.h"
+#include "asterfort/rscrsd.h"
 #include "asterfort/utmess.h"
+#include "asterfort/rrc_init_dual.h"
+#include "asterfort/rrc_init_prim.h"
+#include "asterfort/romTableRead.h"
 !
 type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
@@ -34,7 +38,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! REST_REDUIT_COMPLET - Initializations
 !
-! Some checks
+! Initializations
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -42,59 +46,43 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=8) :: meshPrim, meshDual, modelPrim, modelDual
-    character(len=8) :: modelRom, modelDom
-    aster_logical :: l_corr_ef, l_prev_dual
-    type(ROM_DS_Field) :: modePrim, modeDual
+    integer :: ifm, niv
+    type(ROM_DS_Result) :: resultDom, resultRom
 !
 ! --------------------------------------------------------------------------------------------------
 !
-
+    call infniv(ifm, niv)
+    if (niv .ge. 2) then
+        call utmess('I', 'ROM16_2')
+    endif
 !
 ! - Get parameters
 !
-    l_corr_ef   = cmdPara%l_corr_ef
-    l_prev_dual = cmdPara%l_prev_dual
-    modePrim    = cmdPara%ds_empi_prim%mode
-    modeDual    = cmdPara%ds_empi_dual%mode
-    meshPrim    = modePrim%mesh
-    meshDual    = modeDual%mesh
-    modelPrim   = modePrim%model
-    modelDual   = modeDual%model
-    modelRom    = cmdPara%model_rom
-    modelDom    = cmdPara%model_dom
+    resultRom = cmdPara%resultRom
+    resultDom = cmdPara%resultDom
 !
-! - Check mesh
+! - Get reduced coordinates
 !
-    if (l_prev_dual) then
-        if (meshPrim .ne. meshDual) then
-            call utmess('F','ROM4_9')
-        endif
+    call romTableRead(cmdPara%tablReduCoor)
+!
+! - Create output result datastructure
+!
+    call rscrsd('G', resultDom%resultName, resultDom%resultType, resultDom%nbStore)
+!
+! - Initializations for primal base
+!
+    call rrc_init_prim(cmdPara)
+!
+! - Initializations for dual base
+!
+    if (cmdPara%l_prev_dual) then
+        call rrc_init_dual(cmdPara)
     endif
 !
-! - Check model
+! - Print parameters (debug)
 !
-    if (modelRom .eq. modelDom) then
-        call utmess('A', 'ROM6_8')
-    endif
-    if (modelPrim .ne. modelDom) then
-        call utmess('F', 'ROM6_9', sk = cmdPara%ds_empi_prim%resultName)
-    endif
-!
-    if (l_prev_dual) then
-        if (modelPrim .ne. modelDual) then
-            call utmess('F', 'ROM6_2')
-        endif
-        if (modelDual .ne. modelDom) then
-            call utmess('F', 'ROM6_9', sk = cmdPara%ds_empi_dual%resultName)
-        endif
-    endif
-!
-! - Check mode
-!
-    call romModeChck(modePrim)
-    if (l_prev_dual) then
-        call romModeChck(modeDual)
+    if (niv .ge. 2) then
+        call rrcInfo(cmdPara)
     endif
 !
 end subroutine

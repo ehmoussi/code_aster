@@ -17,38 +17,49 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_clean(cmdPara)
+subroutine rrcInfo(cmdPara)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
+#include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/as_deallocate.h"
-#include "asterfort/romBaseClean.h"
-#include "asterfort/romTableClean.h"
+#include "asterfort/utmess.h"
 !
-type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
+type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! REST_REDUIT_COMPLET - Compute
+! REST_REDUIT_COMPLET - Initializations
 !
-! Clean datastructures
-!
-! --------------------------------------------------------------------------------------------------
-!
-! IO  cmdPara          : datastructure for parameters
+! Informations
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    AS_DEALLOCATE(vi = cmdPara%v_equa_ridp)
-    if (cmdPara%l_prev_dual) then
-        AS_DEALLOCATE(vi = cmdPara%v_equa_ridd)
-        AS_DEALLOCATE(vi = cmdPara%v_equa_ridi)
+! In  cmdPara          : datastructure for parameters
+!
+! --------------------------------------------------------------------------------------------------
+!
+    character(len=8) :: model_dom, model_rom
+    aster_logical :: l_prev_dual, l_corr_ef
+!
+! --------------------------------------------------------------------------------------------------
+!
+    model_rom    = cmdPara%model_rom
+    model_dom    = cmdPara%model_dom
+    l_prev_dual  = cmdPara%l_prev_dual
+    l_corr_ef    = cmdPara%l_corr_ef
+!
+! - Print
+!
+    call utmess('I', 'ROM16_50', sk = cmdPara%resultRom%resultType)
+    call utmess('I', 'ROM16_51', si = cmdPara%resultRom%nbStore)
+    if (l_prev_dual) then
+        call utmess('I', 'ROM16_52')
     endif
-    call romBaseClean(cmdPara%ds_empi_prim)
-    call romBaseClean(cmdPara%ds_empi_dual)
-    call romTableClean(cmdPara%tablReduCoor)
+    if (l_corr_ef) then
+        call utmess('I', 'ROM16_53')
+    endif
 !
 end subroutine

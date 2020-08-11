@@ -54,9 +54,9 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     integer :: ifm, niv
-    integer :: nb_mode, nbEqua, nb_equa_ridi, nbStore
+    integer :: nbMode, nbEqua, nb_equa_ridi, nbStore
     integer :: iret, i_mode, i_equa, iStore, numeStore, i_ord, nume_equa
-    character(len=8) :: result_rom, result_dom
+    character(len=8) :: resultRomName, resultDomName
     real(kind=8), pointer :: v_dual(:) => null()
     real(kind=8), pointer :: v_dual_rom(:) => null()
     real(kind=8), pointer :: v_sigm_dom(:) => null()
@@ -65,25 +65,22 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
     real(kind=8), pointer :: v_cohr(:) => null()
     character(len=24) :: resultField, sigm_rid
     real(kind=8), pointer :: v_resultField(:) => null()
-    type(ROM_DS_Field) :: ds_mode
+    type(ROM_DS_Field) :: mode
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM6_22')
-    endif
 !
 ! - Get parameters
 !
-    nbStore      = cmdPara%nb_store
-    ds_mode      = cmdPara%ds_empi_dual%mode
-    nb_mode      = cmdPara%ds_empi_dual%nbMode
-    nbEqua       = ds_mode%nbEqua
-    result_rom   = cmdPara%result_rom
-    result_dom   = cmdPara%result_dom
-    nb_equa_ridi = cmdPara%nb_equa_ridi
-    ASSERT(ds_mode%fieldSupp .eq. 'NOEU')
+    mode          = cmdPara%ds_empi_dual%mode
+    nbMode        = cmdPara%ds_empi_dual%nbMode
+    nbEqua        = mode%nbEqua
+    nb_equa_ridi  = cmdPara%nb_equa_ridi
+    nbStore       = cmdPara%resultRom%nbStore
+    resultRomName = cmdPara%resultRom%resultName
+    resultDomName = cmdPara%resultDom%resultName
+    ASSERT(mode%fieldSupp .eq. 'NOEU')
 !
 ! - Create [PHI] matrix for dual base
 !
@@ -91,8 +88,8 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! - Reduce [PHI] matrix on RID
 !
-    AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_ridi*nb_mode)
-    do i_mode = 1, nb_mode
+    AS_ALLOCATE(vr = v_dual_rom, size = nb_equa_ridi*nbMode)
+    do i_mode = 1, nbMode
         do i_equa = 1, nbEqua
             if (cmdPara%v_equa_ridd(i_equa) .ne. 0) then
                 v_dual_rom(cmdPara%v_equa_ridd(i_equa)+nb_equa_ridi*(i_mode-1)) = &
@@ -103,31 +100,31 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! - Gappy POD 
 !
-    call romEvalGappyPOD(cmdPara, result_rom, nbStore, v_dual_rom, v_cohr , 1)
+    call romEvalGappyPOD(cmdPara, resultRomName, nbStore, v_dual_rom, v_cohr , 1)
 !
 ! - Initial state
 !
     numeStore = 0
-    call romResultSetZero(result_dom, numeStore, ds_mode)
+    call romResultSetZero(resultDomName, numeStore, mode)
 !
 ! - Compute new fields
 !
     AS_ALLOCATE(vr = v_sigm_dom, size = nbEqua*(nbStore-1))
-    call dgemm('N', 'N', nbEqua, nbStore-1, nb_mode, 1.d0, &
-               v_dual, nbEqua, v_cohr, nb_mode, 0.d0, v_sigm_dom, nbEqua)
+    call dgemm('N', 'N', nbEqua, nbStore-1, nbMode, 1.d0, &
+               v_dual, nbEqua, v_cohr, nbMode, 0.d0, v_sigm_dom, nbEqua)
 !
 ! - Compute new field
 !
     do iStore = 1, nbStore-1
         numeStore = iStore
 ! ----- Get field to save
-        call rsexch(' ', result_dom, ds_mode%fieldName,&
+        call rsexch(' ', resultDomName, mode%fieldName,&
                     numeStore, resultField, iret)
         ASSERT(iret .eq. 100)
-        call copisd('CHAMP_GD', 'G', ds_mode%fieldRefe, resultField)
+        call copisd('CHAMP_GD', 'G', mode%fieldRefe, resultField)
         call jeveuo(resultField(1:19)//'.VALE', 'E', vr = v_resultField)
 ! ----- Get field on RID
-        call rsexch(' ', result_rom, ds_mode%fieldName,&
+        call rsexch(' ', resultRomName, mode%fieldName,&
                     numeStore, sigm_rid, iret)
         ASSERT(iret .eq. 0)
         call jeveuo(sigm_rid(1:19)//'.VALE', 'L', vr = v_sigm_rid)
@@ -147,7 +144,7 @@ type(ROM_DS_ParaRRC), intent(in) :: cmdPara
                 v_resultField(i_equa) = v_sigm_rom(nume_equa)
             endif
         enddo
-        call rsnoch(result_dom, ds_mode%fieldName, numeStore)
+        call rsnoch(resultDomName, mode%fieldName, numeStore)
         AS_DEALLOCATE(vr = v_sigm_rom)
     enddo
 !

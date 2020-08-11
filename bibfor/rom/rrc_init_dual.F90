@@ -52,7 +52,7 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
     integer :: ifm, niv
     character(len=24) :: fieldName, fieldRom, fieldDom
-    character(len=8) :: mesh, resultRom
+    character(len=8) :: mesh, resultRomName
     integer, pointer  :: listNode(:) => null()
     integer :: nbNodeMesh, nbEquaRom, iret, nbEquaDom
     integer :: noeq, nord
@@ -64,22 +64,19 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
-    if (niv .ge. 2) then
-        call utmess('I', 'ROM6_39')
-    endif
 !
 ! - Get parameters
 !
-    resultRom = cmdPara%result_rom
-    fieldName = cmdPara%ds_empi_dual%mode%fieldName
-    mesh      = cmdPara%ds_empi_dual%mode%mesh
+    resultRomName = cmdPara%resultRom%resultName
+    fieldName     = cmdPara%ds_empi_dual%mode%fieldName
+    mesh          = cmdPara%ds_empi_dual%mode%mesh
     call dismoi('NB_NO_MAILLA', mesh, 'MAILLAGE', repi = nbNodeMesh)
 !
 ! - Get representative field on reduced domain
 !
-    call rsexch(' ', resultRom, fieldName, 1, fieldRom, iret)
+    call rsexch(' ', resultRomName, fieldName, 1, fieldRom, iret)
     if (iret .ne. 0) then
-        call utmess('F', 'ROM7_25', sk = fieldName)
+        call utmess('F', 'ROM16_24', sk = fieldName)
     endif
     call jelira(fieldRom(1:19)//'.VALE', 'LONMAX', nbEquaRom)
 !

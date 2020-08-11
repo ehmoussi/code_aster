@@ -17,8 +17,8 @@
 ! --------------------------------------------------------------------
 !
 interface
-    subroutine rrc_info(cmdPara)
+    subroutine rrcChck(cmdPara)
         use Rom_Datastructure_type
         type(ROM_DS_ParaRRC), intent(in) :: cmdPara
-    end subroutine rrc_info
+    end subroutine rrcChck
 end interface

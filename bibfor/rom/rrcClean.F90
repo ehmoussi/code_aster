@@ -17,55 +17,38 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_info(cmdPara)
+subroutine rrcClean(cmdPara)
 !
 use Rom_Datastructure_type
 !
 implicit none
 !
-#include "asterf_types.h"
 #include "asterfort/assert.h"
-#include "asterfort/utmess.h"
+#include "asterfort/as_deallocate.h"
+#include "asterfort/romBaseClean.h"
+#include "asterfort/romTableClean.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: cmdPara
-!
-! --------------------------------------------------------------------------------------------------
-!
-! REST_REDUIT_COMPLET - Initializations
-!
-! Informations
+type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  cmdPara          : datastructure for parameters
+! REST_REDUIT_COMPLET - Compute
+!
+! Clean datastructures
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    character(len=16) :: type_resu
-    character(len=8) :: result_rom, result_dom, model_dom, model_rom
-    integer :: nb_store
-    aster_logical :: l_prev_dual, l_corr_ef
+! IO  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type_resu    = cmdPara%type_resu
-    result_rom   = cmdPara%result_rom
-    model_rom    = cmdPara%model_rom
-    nb_store     = cmdPara%nb_store
-    result_dom   = cmdPara%result_dom
-    model_dom    = cmdPara%model_dom
-    l_prev_dual  = cmdPara%l_prev_dual
-    l_corr_ef    = cmdPara%l_corr_ef
-!
-! - Print
-!
-    call utmess('I', 'ROM6_7', sk = type_resu)
-    call utmess('I', 'ROM6_11', si = nb_store)
-    if (l_prev_dual) then
-        call utmess('I', 'ROM6_14')
+    AS_DEALLOCATE(vi = cmdPara%v_equa_ridp)
+    if (cmdPara%l_prev_dual) then
+        AS_DEALLOCATE(vi = cmdPara%v_equa_ridd)
+        AS_DEALLOCATE(vi = cmdPara%v_equa_ridi)
     endif
-    if (l_corr_ef) then
-        call utmess('I', 'ROM6_15')
-    endif
+    call romBaseClean(cmdPara%ds_empi_prim)
+    call romBaseClean(cmdPara%ds_empi_dual)
+    call romTableClean(cmdPara%tablReduCoor)
 !
 end subroutine

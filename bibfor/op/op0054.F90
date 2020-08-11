@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2018 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -25,11 +25,11 @@ implicit none
 #include "asterf_types.h"
 #include "asterfort/infmaj.h"
 #include "asterfort/titre.h"
-#include "asterfort/rrc_read.h"
-#include "asterfort/rrc_init.h"
-#include "asterfort/rrc_chck.h"
-#include "asterfort/rrc_comp.h"
-#include "asterfort/rrc_clean.h"
+#include "asterfort/rrcRead.h"
+#include "asterfort/rrcInit.h"
+#include "asterfort/rrcChck.h"
+#include "asterfort/rrcComp.h"
+#include "asterfort/rrcClean.h"
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -37,7 +37,7 @@ implicit none
 !
 ! --------------------------------------------------------------------------------------------------
 !
-    type(ROM_DS_ParaRRC) :: ds_para
+    type(ROM_DS_ParaRRC) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -46,22 +46,22 @@ implicit none
 !
 ! - Read parameters
 !
-    call rrc_read(ds_para)
-!
-! - Initializations
-!
-    call rrc_init(ds_para)
+    call rrcRead(cmdPara)
 !
 ! - Check parameters
 !
-    call rrc_chck(ds_para)
+    call rrcChck(cmdPara)
+!
+! - Initializations
+!
+    call rrcInit(cmdPara)
 !
 ! - Compute 
 !
-    call rrc_comp(ds_para)
+    call rrcComp(cmdPara)
 !
 ! - Clean
 !
-    call rrc_clean(ds_para)
+    call rrcClean(cmdPara)
 !
 end subroutine

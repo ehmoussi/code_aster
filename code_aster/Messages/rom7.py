@@ -51,9 +51,6 @@ cata_msg = {
 
    22 : _("""Paramètres spécifiques à la méthode de troncature."""),
 
-   25 : _("""Vous demandez à calculer un champ de type %(k1)s par REST_REDUIT_COMPLET alors que ce champ n'existe pas dans le résultat réduit.
-Conseil: utilisez CALC_CHAMP pour calculer ce champ."""),
-
    31 : _("""Paramètres spécifiques à la méthode d'orthogonalisation."""),
 
    32 : _("""Paramètre pour l'algorithme: %(r1)13.6G."""),

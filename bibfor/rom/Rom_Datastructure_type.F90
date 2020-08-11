@@ -135,18 +135,17 @@ implicit none
 ! - Parameters for REST_REDUIT_COMPLET operator
 !
     type ROM_DS_ParaRRC
-! ----- Phenomenon
-        character(len=16)         :: type_resu = ' '
-! ----- Number of time steps
-        integer                   :: nb_store = 0
-! ----- Reduced results datastructure to read
-        character(len=8)          :: result_rom = ' '
+! ----- Input result datastructure (ROM)
+        type(ROM_DS_Result)              :: resultRom
+
+! ----- Output result datastructure (DOM)
+        type(ROM_DS_Result)              :: resultDom
 ! ----- Model for reduced model
         character(len=8)          :: model_rom = ' '
-! ----- Complete results datastructure to create
-        character(len=8)          :: result_dom = ' '
+
 ! ----- Model for complete model
         character(len=8)          :: model_dom = ' '
+
 ! ----- Datastructure for empiric modes (primal)
         type(ROM_DS_Empi)         :: ds_empi_prim
 ! ----- Datastructure for empiric modes (dual)

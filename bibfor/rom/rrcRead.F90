@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_read(cmdPara)
+subroutine rrcRead(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -26,12 +26,15 @@ implicit none
 #include "asterf_types.h"
 #include "asterc/getres.h"
 #include "asterfort/assert.h"
+#include "asterfort/dismoi.h"
 #include "asterfort/getvid.h"
 #include "asterfort/getvtx.h"
 #include "asterfort/infniv.h"
-#include "asterfort/utmess.h"
-#include "asterfort/romTableParaRead.h"
 #include "asterfort/romBaseGetInfo.h"
+#include "asterfort/romResultGetInfo.h"
+#include "asterfort/romTableCreate.h"
+#include "asterfort/romTableParaRead.h"
+#include "asterfort/utmess.h"
 !
 type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
@@ -50,30 +53,60 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
     integer :: ifm, niv
     type(ROM_DS_Empi) :: modePrim, modeDual
     character(len=8)  :: basePrim, baseDual
-    character(len=8)  :: result_dom , result_rom , model_dom
-    character(len=16) :: k16bid , answer
+    character(len=8)  :: model_dom, modelRom
+    character(len=16) :: k16bid , answer, resultType
     character(len=24) :: grnode_int
     aster_logical :: l_prev_dual, l_corr_ef
+    character(len=8)  :: resultDomName, resultRomName
+    type(ROM_DS_Result) :: resultDom, resultRom
 !
 ! --------------------------------------------------------------------------------------------------
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM5_10')
+        call utmess('I', 'ROM16_1')
     endif
 !
 ! - Initializations
 !
-    basePrim   = ' '
-    baseDual   = ' '
-    result_dom = ' '
-    result_rom = ' '
-    model_dom  = ' '
-    k16bid     = ' '
+    resultDomName = ' '
+    resultRomName = ' '
+    basePrim      = ' '
+    baseDual      = ' '
+    model_dom     = ' '
+    k16bid        = ' '
 !
-! - Output datastructure
+! - Get input results datastructures (reduced)
 !
-    call getres(result_dom, k16bid, k16bid)
+    call getvid(' ', 'RESULTAT_REDUIT', scal = resultRomName)
+!
+! - Construct datastructure for result (reduced)
+!
+    call romResultGetInfo(resultRomName, resultRom)
+!
+! - Get output datastructure (high fidelity)
+!
+    call getres(resultDomName, resultType, k16bid)
+!
+! - Construct datastructure for result (high fidelity)
+!
+    resultDom%resultType    = resultType
+    resultDom%resultName    = resultDomName
+    resultDom%nbStore       = resultRom%nbStore
+    resultDom%lTablFromResu = ASTER_FALSE
+!
+! - Get reduced coordinates table (from user ? )
+!
+    call romTableParaRead(cmdPara%tablReduCoor)
+    call romTableCreate(resultRom%resultName, cmdPara%tablReduCoor%tablResu)
+!
+! - Get model from reduced results
+!
+    call dismoi('MODELE', resultRom%resultName, 'RESULTAT', repk = modelRom)
+!
+! - Get model for high fidelity model
+!
+    call getvid(' ', 'MODELE', scal = model_dom)
 !
 ! - Compute dual quantities ?
 !
@@ -84,18 +117,12 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
 !
     call getvid(' ', 'BASE_PRIMAL', scal = basePrim)
     call romBaseGetInfo(basePrim, modePrim)
-    if (modePrim%mode%fieldSupp .ne. 'NOEU') then
-        call utmess('F', 'ROM6_5')
-    endif
 !
 ! - Get informations about bases - Dual
 !
     if (l_prev_dual) then
         call getvid(' ', 'BASE_DUAL', scal = baseDual)
         call romBaseGetInfo(baseDual, modeDual)
-        if (modeDual%mode%fieldSupp .ne. 'NOEU') then
-            call utmess('F', 'ROM6_5')
-        endif
         call getvtx(' ', 'GROUP_NO_INTERF', scal = grnode_int)
     endif
 !
@@ -104,23 +131,12 @@ type(ROM_DS_ParaRRC), intent(inout) :: cmdPara
     call getvtx(' ', 'CORR_COMPLET', scal = answer)
     l_corr_ef = answer .eq. 'OUI'
 !
-! - Get input results datastructures
-!
-    call getvid(' ', 'RESULTAT_REDUIT', scal = result_rom)
-!
-! - Get model
-!
-    call getvid(' ', 'MODELE', scal = model_dom)
-!
-! - Get parameters
-!
-    call romTableParaRead(cmdPara%tablReduCoor)
-!
 ! - Save parameters in datastructure
 !
-    cmdPara%result_rom   = result_rom
-    cmdPara%result_dom   = result_dom
+    cmdPara%resultDom    = resultDom
+    cmdPara%resultRom    = resultRom
     cmdPara%model_dom    = model_dom
+    cmdPara%model_rom    = modelRom
     cmdPara%ds_empi_prim = modePrim
     cmdPara%ds_empi_dual = modeDual
     cmdPara%grnode_int   = grnode_int

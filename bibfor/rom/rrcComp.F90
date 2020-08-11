@@ -1,5 +1,5 @@
 ! --------------------------------------------------------------------
-! Copyright (C) 1991 - 2017 - EDF R&D - www.code-aster.org
+! Copyright (C) 1991 - 2020 - EDF R&D - www.code-aster.org
 ! This file is part of code_aster.
 !
 ! code_aster is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
 ! --------------------------------------------------------------------
 ! person_in_charge: mickael.abbas at edf.fr
 !
-subroutine rrc_comp(ds_para)
+subroutine rrcComp(cmdPara)
 !
 use Rom_Datastructure_type
 !
@@ -30,7 +30,7 @@ implicit none
 #include "asterfort/rrc_comp_prim.h"
 #include "asterfort/rrc_comp_dual.h"
 !
-type(ROM_DS_ParaRRC), intent(in) :: ds_para
+type(ROM_DS_ParaRRC), intent(in) :: cmdPara
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -40,7 +40,7 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
 ! --------------------------------------------------------------------------------------------------
 !
-! In  ds_para          : datastructure for parameters
+! In  cmdPara          : datastructure for parameters
 !
 ! --------------------------------------------------------------------------------------------------
 !
@@ -50,17 +50,17 @@ type(ROM_DS_ParaRRC), intent(in) :: ds_para
 !
     call infniv(ifm, niv)
     if (niv .ge. 2) then
-        call utmess('I', 'ROM6_20')
+        call utmess('I', 'ROM16_3')
     endif
 !
 ! - For primal field
 !
-    call rrc_comp_prim(ds_para)
+    call rrc_comp_prim(cmdPara)
 !
 ! - For dual field
 !
-    if (ds_para%l_prev_dual) then
-        call rrc_comp_dual(ds_para)
+    if (cmdPara%l_prev_dual) then
+        call rrc_comp_dual(cmdPara)
     endif
 !
 end subroutine
